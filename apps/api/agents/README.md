@@ -208,11 +208,11 @@ The frontend connects through the main API server:
 
 ```typescript
 // Frontend (React with CopilotKit)
-import { HttpAgent } from '@ag-ui/client';
+import { HttpAgent } from '@ag-ui/client'
 
 const agent = new HttpAgent({
   url: 'http://127.0.0.1:3004/api/ai/data-agent',
-});
+})
 ```
 
 ## Troubleshooting

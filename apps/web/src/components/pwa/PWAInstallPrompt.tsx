@@ -1,8 +1,8 @@
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Toaster } from '@/components/ui/toaster';
-import { usePWA } from '@/hooks/usePWA';
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
+import { Toaster } from '@/components/ui/toaster'
+import { usePWA } from '@/hooks/usePWA'
 import {
   AlertCircle,
   CheckCircle,
@@ -12,11 +12,11 @@ import {
   Wifi,
   WifiOff,
   X,
-} from 'lucide-react';
-import React from 'react';
+} from 'lucide-react'
+import React from 'react'
 
 export interface PWAInstallPromptProps {
-  className?: string;
+  className?: string
 }
 
 export const PWAInstallPrompt: React.FC<PWAInstallPromptProps> = ({ className }) => {
@@ -29,45 +29,45 @@ export const PWAInstallPrompt: React.FC<PWAInstallPromptProps> = ({ className })
     syncOfflineData,
     isSyncing,
     syncFailed,
-  } = usePWA();
+  } = usePWA()
 
-  const [showInstallPrompt, setShowInstallPrompt] = React.useState(false);
-  const [showSyncStatus, setShowSyncStatus] = React.useState(false);
+  const [showInstallPrompt, setShowInstallPrompt] = React.useState(false)
+  const [showSyncStatus, setShowSyncStatus] = React.useState(false)
 
   React.useEffect(() => {
     // Show install prompt if installable and not installed
     if (isInstallable && !isInstalled) {
-      const timer = setTimeout(() => setShowInstallPrompt(true), 3000);
-      return () => clearTimeout(timer);
+      const timer = setTimeout(() => setShowInstallPrompt(true), 3000)
+      return () => clearTimeout(timer)
     }
-    return undefined;
-  }, [isInstallable, isInstalled]);
+    return undefined
+  }, [isInstallable, isInstalled])
 
   React.useEffect(() => {
     // Show sync status when offline or has offline data
     if (!isOnline || hasOfflineData) {
-      setShowSyncStatus(true);
-      return undefined;
+      setShowSyncStatus(true)
+      return undefined
     } else {
-      const timer = setTimeout(() => setShowSyncStatus(false), 5000);
-      return () => clearTimeout(timer);
+      const timer = setTimeout(() => setShowSyncStatus(false), 5000)
+      return () => clearTimeout(timer)
     }
-  }, [isOnline, hasOfflineData]);
+  }, [isOnline, hasOfflineData])
 
   const handleInstall = async () => {
-    const outcome = await installPWA();
+    const outcome = await installPWA()
     if (outcome === 'accepted') {
-      setShowInstallPrompt(false);
+      setShowInstallPrompt(false)
     }
-  };
+  }
 
   const handleSync = async () => {
-    await syncOfflineData();
-    setTimeout(() => setShowSyncStatus(false), 3000);
-  };
+    await syncOfflineData()
+    setTimeout(() => setShowSyncStatus(false), 3000)
+  }
 
   if (!showInstallPrompt && !showSyncStatus) {
-    return null;
+    return null
   }
 
   return (
@@ -177,7 +177,7 @@ export const PWAInstallPrompt: React.FC<PWAInstallPromptProps> = ({ className })
         </CardContent>
       </Card>
     </div>
-  );
-};
+  )
+}
 
-export default PWAInstallPrompt;
+export default PWAInstallPrompt

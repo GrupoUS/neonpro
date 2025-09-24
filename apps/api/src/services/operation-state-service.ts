@@ -12,49 +12,49 @@
  * - Efficient querying with proper indexes
  */
 
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '@prisma/client'
 
 export interface OperationStateData {
-  operationId: string;
-  step: 'intent' | 'confirm' | 'execute';
-  status: 'pending' | 'processing' | 'completed' | 'failed';
-  entity: string;
-  operation: string;
-  _userId: string;
-  clinicId?: string;
-  sessionId?: string;
-  data?: any;
-  metadata?: any;
-  errorMessage?: string;
-  aiValidationResult?: any;
-  lgpdComplianceResult?: any;
+  operationId: string
+  step: 'intent' | 'confirm' | 'execute'
+  status: 'pending' | 'processing' | 'completed' | 'failed'
+  entity: string
+  operation: string
+  _userId: string
+  clinicId?: string
+  sessionId?: string
+  data?: any
+  metadata?: any
+  errorMessage?: string
+  aiValidationResult?: any
+  lgpdComplianceResult?: any
 }
 
 export interface OperationState {
-  id: string;
-  operationId: string;
-  step: 'intent' | 'confirm' | 'execute';
-  status: 'pending' | 'processing' | 'completed' | 'failed';
-  entity: string;
-  operation: string;
-  _userId: string;
-  clinicId?: string;
-  sessionId?: string;
-  data: any;
-  metadata: any;
-  errorMessage?: string;
-  aiValidationResult?: any;
-  lgpdComplianceResult?: any;
-  createdAt: Date;
-  updatedAt: Date;
-  completedAt?: Date;
+  id: string
+  operationId: string
+  step: 'intent' | 'confirm' | 'execute'
+  status: 'pending' | 'processing' | 'completed' | 'failed'
+  entity: string
+  operation: string
+  _userId: string
+  clinicId?: string
+  sessionId?: string
+  data: any
+  metadata: any
+  errorMessage?: string
+  aiValidationResult?: any
+  lgpdComplianceResult?: any
+  createdAt: Date
+  updatedAt: Date
+  completedAt?: Date
 }
 
 export class OperationStateService {
-  private prisma: PrismaClient;
+  private prisma: PrismaClient
 
   constructor(prisma: PrismaClient) {
-    this.prisma = prisma;
+    this.prisma = prisma
   }
 
   /**
@@ -77,9 +77,9 @@ export class OperationStateService {
         ai_validation_result: data.aiValidationResult,
         lgpd_compliance_result: data.lgpdComplianceResult,
       },
-    });
+    })
 
-    return this.mapToOperationState(state);
+    return this.mapToOperationState(state)
   }
 
   /**
@@ -95,9 +95,9 @@ export class OperationStateService {
       orderBy: {
         created_at: 'desc',
       },
-    });
+    })
 
-    return state ? this.mapToOperationState(state) : null;
+    return state ? this.mapToOperationState(state) : null
   }
 
   /**
@@ -108,11 +108,11 @@ export class OperationStateService {
     updates: Partial<OperationStateData>,
     _changeReason?: string,
   ): Promise<OperationState> {
-    const currentState = await this.getStateByOperationId(operationId);
+    const currentState = await this.getStateByOperationId(operationId)
     if (!currentState) {
       throw new Error(
         `Operation state not found for operation ID: ${operationId}`,
-      );
+      )
     }
 
     // Update the state using the unique ID
@@ -133,7 +133,7 @@ export class OperationStateService {
           ? new Date()
           : null,
       },
-    });
+    })
 
     // Create audit entry for state change
     if (
@@ -154,10 +154,10 @@ export class OperationStateService {
             timestamp: new Date().toISOString(),
           },
         },
-      });
+      })
     }
 
-    return this.mapToOperationState(updatedState);
+    return this.mapToOperationState(updatedState)
   }
 
   /**
@@ -175,9 +175,9 @@ export class OperationStateService {
         created_at: 'desc',
       },
       take: limit,
-    });
+    })
 
-    return states.map(state => this.mapToOperationState(state));
+    return states.map((state) => this.mapToOperationState(state))
   }
 
   /**
@@ -195,9 +195,9 @@ export class OperationStateService {
         created_at: 'desc',
       },
       take: limit,
-    });
+    })
 
-    return states.map(state => this.mapToOperationState(state));
+    return states.map((state) => this.mapToOperationState(state))
   }
 
   /**
@@ -215,17 +215,17 @@ export class OperationStateService {
         created_at: 'desc',
       },
       take: limit,
-    });
+    })
 
-    return states.map(state => this.mapToOperationState(state));
+    return states.map((state) => this.mapToOperationState(state))
   }
 
   /**
    * Delete old completed states (cleanup)
    */
   async cleanupOldStates(daysToKeep: number = 30): Promise<number> {
-    const cutoffDate = new Date();
-    cutoffDate.setDate(cutoffDate.getDate() - daysToKeep);
+    const cutoffDate = new Date()
+    cutoffDate.setDate(cutoffDate.getDate() - daysToKeep)
 
     const result = await this.prisma.operationState.deleteMany({
       where: {
@@ -236,19 +236,19 @@ export class OperationStateService {
           in: ['completed', 'failed'],
         },
       },
-    });
+    })
 
-    return result.count;
+    return result.count
   }
 
   /**
    * Get state statistics
    */
   async getStateStats(): Promise<{
-    total: number;
-    byStatus: Record<string, number>;
-    byStep: Record<string, number>;
-    byEntity: Record<string, number>;
+    total: number
+    byStatus: Record<string, number>
+    byStep: Record<string, number>
+    byEntity: Record<string, number>
   }> {
     const [total, statusStats, stepStats, entityStats] = await Promise.all([
       this.prisma.operationState.count(),
@@ -270,32 +270,32 @@ export class OperationStateService {
           entity: true,
         },
       }),
-    ]);
+    ])
 
     return {
       total,
       byStatus: statusStats.reduce(
         (acc, _stat) => {
-          acc[stat.status] = stat._count.status;
-          return acc;
+          acc[stat.status] = stat._count.status
+          return acc
         },
         {} as Record<string, number>,
       ),
       byStep: stepStats.reduce(
         (acc, _stat) => {
-          acc[stat.step] = stat._count.step;
-          return acc;
+          acc[stat.step] = stat._count.step
+          return acc
         },
         {} as Record<string, number>,
       ),
       byEntity: entityStats.reduce(
         (acc, _stat) => {
-          acc[stat.entity] = stat._count.entity;
-          return acc;
+          acc[stat.entity] = stat._count.entity
+          return acc
         },
         {} as Record<string, number>,
       ),
-    };
+    }
   }
 
   /**
@@ -320,7 +320,7 @@ export class OperationStateService {
       createdAt: record.created_at,
       updatedAt: record.updated_at,
       completedAt: record.completed_at,
-    };
+    }
   }
 }
 
@@ -328,5 +328,5 @@ export class OperationStateService {
 export function createOperationStateService(
   prisma: PrismaClient,
 ): OperationStateService {
-  return new OperationStateService(prisma);
+  return new OperationStateService(prisma)
 }

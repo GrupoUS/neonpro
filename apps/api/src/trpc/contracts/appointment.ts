@@ -10,8 +10,8 @@ import {
   HealthcareTRPCError,
   PaginationSchema,
   UpdateAppointmentRequestSchema,
-} from '@neonpro/types';
-import { protectedProcedure, router } from '../trpc';
+} from '@neonpro/types'
+import { protectedProcedure, router } from '../trpc'
 
 export const appointmentRouter = router({
   /**
@@ -33,7 +33,7 @@ export const appointmentRouter = router({
           isActive: true,
           clinicId: input.clinicId,
         },
-      });
+      })
 
       if (!patient) {
         throw new HealthcareTRPCError(
@@ -41,7 +41,7 @@ export const appointmentRouter = router({
           'Patient not found or inactive',
           'PATIENT_NOT_FOUND',
           { patientId: input.patientId },
-        );
+        )
       }
 
       // Validate professional exists and is available
@@ -51,7 +51,7 @@ export const appointmentRouter = router({
           isActive: true,
           clinicId: input.clinicId,
         },
-      });
+      })
 
       if (!professional) {
         throw new HealthcareTRPCError(
@@ -59,14 +59,14 @@ export const appointmentRouter = router({
           'Professional not found or unavailable',
           'PROFESSIONAL_UNAVAILABLE',
           { professionalId: input.professionalId },
-        );
+        )
       }
 
       // Check for appointment conflicts
-      const appointmentDate = new Date(input.scheduledDate);
+      const appointmentDate = new Date(input.scheduledDate)
       const endDate = new Date(
         appointmentDate.getTime() + input.duration * 60000,
-      );
+      )
 
       const conflictingAppointment = await ctx.prisma.appointment.findFirst({
         where: {
@@ -87,7 +87,7 @@ export const appointmentRouter = router({
             },
           ],
         },
-      });
+      })
 
       if (conflictingAppointment) {
         throw new HealthcareTRPCError(
@@ -98,7 +98,7 @@ export const appointmentRouter = router({
             conflictingAppointmentId: conflictingAppointment.id,
             conflictDate: conflictingAppointment.startTime,
           },
-        );
+        )
       }
 
       // Validate appointment is not in the past (except for emergency)
@@ -108,7 +108,7 @@ export const appointmentRouter = router({
           'Cannot schedule appointment in the past',
           'APPOINTMENT_PAST_DUE',
           { scheduledDate: input.scheduledDate },
-        );
+        )
       }
 
       // Calculate no-show risk using AI prediction
@@ -118,7 +118,7 @@ export const appointmentRouter = router({
         appointmentDate: appointmentDate,
         treatmentType: input.treatmentType,
         priority: input.priority,
-      });
+      })
 
       // Create appointment
       const appointment = await ctx.prisma.appointment.create({
@@ -145,13 +145,13 @@ export const appointmentRouter = router({
             },
           },
         },
-      });
+      })
 
       // Send notifications based on priority
       if (input.priority === 'emergency') {
-        await sendEmergencyNotification(appointment);
+        await sendEmergencyNotification(appointment)
       } else {
-        await scheduleAppointmentReminders(appointment);
+        await scheduleAppointmentReminders(appointment)
       }
 
       // Audit log
@@ -169,7 +169,7 @@ export const appointmentRouter = router({
           },
           _userId: ctx.user.id,
         },
-      });
+      })
 
       return {
         success: true,
@@ -177,7 +177,7 @@ export const appointmentRouter = router({
         message: 'Appointment created successfully',
         timestamp: new Date().toISOString(),
         requestId: ctx.requestId,
-      };
+      }
     }),
 
   /**
@@ -227,7 +227,7 @@ export const appointmentRouter = router({
             : false,
           medicalHistory: input.includeMedicalHistory,
         },
-      });
+      })
 
       if (!appointment) {
         throw new HealthcareTRPCError(
@@ -235,18 +235,18 @@ export const appointmentRouter = router({
           'Appointment not found',
           'APPOINTMENT_NOT_FOUND',
           { appointmentId: input.id },
-        );
+        )
       }
 
       // Validate clinic access
-      await validateClinicAccess(ctx.user.id, appointment.clinicId);
+      await validateClinicAccess(ctx.user.id, appointment.clinicId)
 
       return {
         success: true,
         data: appointment,
         timestamp: new Date().toISOString(),
         requestId: ctx.requestId,
-      };
+      }
     }),
 
   /**
@@ -287,7 +287,7 @@ export const appointmentRouter = router({
     .output(AppointmentsListResponseSchema)
     .query(async ({ input, _ctx }) => {
       // Validate clinic access
-      await validateClinicAccess(ctx.user.id, input.clinicId);
+      await validateClinicAccess(ctx.user.id, input.clinicId)
 
       const where = {
         clinicId: input.clinicId,
@@ -305,7 +305,7 @@ export const appointmentRouter = router({
             ...(input.dateTo && { lte: new Date(input.dateTo) }),
           },
         }),
-      };
+      }
 
       const [appointments, total] = await Promise.all([
         ctx.prisma.appointment.findMany({
@@ -331,7 +331,7 @@ export const appointmentRouter = router({
           },
         }),
         ctx.prisma.appointment.count({ where }),
-      ]);
+      ])
 
       return {
         success: true,
@@ -346,7 +346,7 @@ export const appointmentRouter = router({
         },
         timestamp: new Date().toISOString(),
         requestId: ctx.requestId,
-      };
+      }
     }),
 
   /**
@@ -363,7 +363,7 @@ export const appointmentRouter = router({
     .mutation(async ({ input, _ctx }) => {
       const currentAppointment = await ctx.prisma.appointment.findUnique({
         where: { id: input.id },
-      });
+      })
 
       if (!currentAppointment) {
         throw new HealthcareTRPCError(
@@ -371,11 +371,11 @@ export const appointmentRouter = router({
           'Appointment not found',
           'APPOINTMENT_NOT_FOUND',
           { appointmentId: input.id },
-        );
+        )
       }
 
       // Validate clinic access
-      await validateClinicAccess(ctx.user.id, currentAppointment.clinicId);
+      await validateClinicAccess(ctx.user.id, currentAppointment.clinicId)
 
       // Check if status change is valid
       if (
@@ -390,7 +390,7 @@ export const appointmentRouter = router({
             currentStatus: currentAppointment.status,
             requestedStatus: input.status,
           },
-        );
+        )
       }
 
       // Handle rescheduling conflicts
@@ -403,7 +403,7 @@ export const appointmentRouter = router({
           currentAppointment.professionalId,
           new Date(input.scheduledDate),
           input.duration || currentAppointment.duration,
-        );
+        )
       }
 
       // Update appointment
@@ -435,7 +435,7 @@ export const appointmentRouter = router({
             },
           },
         },
-      });
+      })
 
       // Handle status-specific actions
       if (input.status) {
@@ -444,7 +444,7 @@ export const appointmentRouter = router({
           currentAppointment.status,
           input.status,
           ctx,
-        );
+        )
       }
 
       // Audit log
@@ -460,7 +460,7 @@ export const appointmentRouter = router({
           },
           _userId: ctx.user.id,
         },
-      });
+      })
 
       return {
         success: true,
@@ -468,7 +468,7 @@ export const appointmentRouter = router({
         message: 'Appointment updated successfully',
         timestamp: new Date().toISOString(),
         requestId: ctx.requestId,
-      };
+      }
     }),
 
   /**
@@ -503,7 +503,7 @@ export const appointmentRouter = router({
             select: { fullName: true, phone: true, email: true },
           },
         },
-      });
+      })
 
       if (!appointment) {
         throw new HealthcareTRPCError(
@@ -511,11 +511,11 @@ export const appointmentRouter = router({
           'Appointment not found',
           'APPOINTMENT_NOT_FOUND',
           { appointmentId: input.id },
-        );
+        )
       }
 
       // Validate clinic access
-      await validateClinicAccess(ctx.user.id, appointment.clinicId);
+      await validateClinicAccess(ctx.user.id, appointment.clinicId)
 
       // Check if appointment can be cancelled
       if (!['scheduled', 'confirmed'].includes(appointment.status)) {
@@ -524,7 +524,7 @@ export const appointmentRouter = router({
           `Cannot cancel appointment with status: ${appointment.status}`,
           'INVALID_CANCELLATION',
           { currentStatus: appointment.status },
-        );
+        )
       }
 
       // Update appointment status
@@ -536,11 +536,11 @@ export const appointmentRouter = router({
           cancelledAt: new Date(),
           cancelledBy: ctx.user.id,
         },
-      });
+      })
 
       // Send cancellation notification
       if (input.notifyPatient) {
-        await sendCancellationNotification(appointment, input.reason);
+        await sendCancellationNotification(appointment, input.reason)
       }
 
       // Audit log
@@ -556,31 +556,31 @@ export const appointmentRouter = router({
           },
           _userId: ctx.user.id,
         },
-      });
+      })
 
       return {
         success: true,
         message: 'Appointment cancelled successfully',
         timestamp: new Date().toISOString(),
         requestId: ctx.requestId,
-      };
+      }
     }),
-});
+})
 
 // Helper functions
 async function calculateNoShowRisk(_params: {
-  patientId: string;
-  professionalId: string;
-  appointmentDate: Date;
-  treatmentType: string;
-  priority: string;
+  patientId: string
+  professionalId: string
+  appointmentDate: Date
+  treatmentType: string
+  priority: string
 }): Promise<{ risk: number; factors: string[] }> {
   // Placeholder for AI no-show prediction
   // This would integrate with your ML model
   return {
     risk: 0.2,
     factors: ['no_previous_no_shows', 'confirmed_appointment'],
-  };
+  }
 }
 
 function isValidStatusTransition(current: string, next: string): boolean {
@@ -591,9 +591,9 @@ function isValidStatusTransition(current: string, next: string): boolean {
     completed: [], // Terminal state
     cancelled: [], // Terminal state
     no_show: [], // Terminal state
-  };
+  }
 
-  return validTransitions[current]?.includes(next) || false;
+  return validTransitions[current]?.includes(next) || false
 }
 
 async function checkRescheduleConflicts(
@@ -615,20 +615,20 @@ async function handleStatusChange(
   // Handle status-specific notifications and actions
   switch (newStatus) {
     case 'confirmed':
-      await sendConfirmationNotification(appointment);
-      break;
+      await sendConfirmationNotification(appointment)
+      break
     case 'completed':
-      await scheduleFollowUpReminder(appointment);
-      break;
+      await scheduleFollowUpReminder(appointment)
+      break
     case 'no_show':
-      await updateNoShowStatistics(appointment.patientId);
-      break;
+      await updateNoShowStatistics(appointment.patientId)
+      break
   }
 }
 
 function getChanges(current: any, input: any): Record<string, any> {
-  const changes = {};
-  Object.keys(input).forEach(key => {
+  const changes = {}
+  Object.keys(input).forEach((key) => {
     if (
       key !== 'id'
       && input[key] !== undefined
@@ -637,10 +637,10 @@ function getChanges(current: any, input: any): Record<string, any> {
       changes[key] = {
         from: current[key],
         to: input[key],
-      };
+      }
     }
-  });
-  return changes;
+  })
+  return changes
 }
 
 // Notification helpers (placeholders)
@@ -676,5 +676,5 @@ async function validateClinicAccess(
   _clinicId: string,
 ): Promise<void> {
   // Implementation for clinic access validation
-  return Promise.resolve();
+  return Promise.resolve()
 }

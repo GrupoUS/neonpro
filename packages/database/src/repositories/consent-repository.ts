@@ -7,17 +7,17 @@ import {
   ConsentSearchResult,
   ConsentStatus,
   ConsentType,
-} from '@neonpro/domain';
-import { SupabaseClient } from '@supabase/supabase-js';
-import { databaseLogger, logHealthcareError } from '../../../shared/src/logging/healthcare-logger';
-import { DatabasePerformanceService } from '../services/database-performance.service.js';
+} from '@neonpro/domain'
+import { SupabaseClient } from '@supabase/supabase-js'
+import { databaseLogger, logHealthcareError } from '../../../shared/src/logging/healthcare-logger'
+import { DatabasePerformanceService } from '../services/database-performance.service.js'
 
 /**
  * Supabase implementation of ConsentRepository
  * Handles all consent data access operations with LGPD compliance
  */
 export class ConsentRepository implements IConsentRepository {
-  private performanceService: DatabasePerformanceService;
+  private performanceService: DatabasePerformanceService
 
   constructor(private supabase: SupabaseClient) {
     this.performanceService = new DatabasePerformanceService(supabase, {
@@ -25,7 +25,7 @@ export class ConsentRepository implements IConsentRepository {
       cacheTTL: 300000, // 5 minutes
       slowQueryThreshold: 1000,
       enablePerformanceLogging: true,
-    });
+    })
   }
 
   async findById(id: string): Promise<ConsentRecord | null> {
@@ -33,7 +33,7 @@ export class ConsentRepository implements IConsentRepository {
       return await this.performanceService.optimizedQuery(
         'consent_records',
         'select',
-        async client => {
+        async (client) => {
           const { data, error } = await client
             .from('consent_records')
             .select(
@@ -45,21 +45,21 @@ export class ConsentRepository implements IConsentRepository {
             `,
             )
             .eq('id', id)
-            .single();
+            .single()
 
-          if (error) throw error;
-          if (!data) return null;
-          return this.mapDatabaseConsentToDomain(data);
+          if (error) throw error
+          if (!data) return null
+          return this.mapDatabaseConsentToDomain(data)
         },
         {
           cacheKey: `findById:${id}`,
           columns:
             'id, patient_id, consent_type, status, expires_at, patient:patients(id, full_name, cpf)',
         },
-      );
+      )
     } catch (error) {
-      logHealthcareError('database', error, { method: 'findById', consentId: id });
-      return null;
+      logHealthcareError('database', error, { method: 'findById', consentId: id })
+      return null
     }
   }
 
@@ -69,19 +69,19 @@ export class ConsentRepository implements IConsentRepository {
         .from('consent_records')
         .select('*')
         .eq('patient_id', patientId)
-        .order('granted_at', { ascending: false });
+        .order('granted_at', { ascending: false })
 
       if (error) {
-        logHealthcareError('database', error, { method: 'findByPatientId', patientId });
-        return [];
+        logHealthcareError('database', error, { method: 'findByPatientId', patientId })
+        return []
       }
 
-      if (!data) return [];
+      if (!data) return []
 
-      return data.map(this.mapDatabaseConsentToDomain);
+      return data.map(this.mapDatabaseConsentToDomain)
     } catch (error) {
-      logHealthcareError('database', error, { method: 'findByPatientId', patientId });
-      return [];
+      logHealthcareError('database', error, { method: 'findByPatientId', patientId })
+      return []
     }
   }
 
@@ -92,65 +92,65 @@ export class ConsentRepository implements IConsentRepository {
     try {
       let query = this.supabase
         .from('consent_records')
-        .select('*', { count: 'exact' });
+        .select('*', { count: 'exact' })
 
       // Apply filters
       if (filter.patientId) {
-        query = query.eq('patient_id', filter.patientId);
+        query = query.eq('patient_id', filter.patientId)
       }
 
       if (filter.consentType) {
-        query = query.eq('consent_type', filter.consentType);
+        query = query.eq('consent_type', filter.consentType)
       }
 
       if (filter.status) {
-        query = query.eq('status', filter.status);
+        query = query.eq('status', filter.status)
       }
 
       if (filter.dateRange) {
         query = query
           .gte('granted_at', filter.dateRange.start.toISOString())
-          .lte('granted_at', filter.dateRange.end.toISOString());
+          .lte('granted_at', filter.dateRange.end.toISOString())
       }
 
       // Apply pagination
       if (options?.limit) {
-        query = query.limit(options.limit);
+        query = query.limit(options.limit)
       }
 
       if (options?.offset) {
         query = query.range(
           options.offset,
           options.offset + (options.limit || 10) - 1,
-        );
+        )
       }
 
       // Apply sorting
       if (options?.sortBy) {
-        const sortOrder = options.sortOrder === 'desc' ? false : true;
-        query = query.order(options.sortBy, { ascending: sortOrder });
+        const sortOrder = options.sortOrder === 'desc' ? false : true
+        query = query.order(options.sortBy, { ascending: sortOrder })
       } else {
-        query = query.order('granted_at', { ascending: false });
+        query = query.order('granted_at', { ascending: false })
       }
 
-      const { data, error, count } = await query;
+      const { data, error, count } = await query
 
       if (error) {
-        logHealthcareError('database', error, { method: 'findWithFilter', filter });
-        return { consents: [], total: 0 };
+        logHealthcareError('database', error, { method: 'findWithFilter', filter })
+        return { consents: [], total: 0 }
       }
 
-      const consents = data ? data.map(this.mapDatabaseConsentToDomain) : [];
+      const consents = data ? data.map(this.mapDatabaseConsentToDomain) : []
 
       return {
         consents,
         total: count || 0,
         limit: options?.limit || 10,
         offset: options?.offset || 0,
-      };
+      }
     } catch (error) {
-      logHealthcareError('database', error, { method: 'findWithFilter', filter });
-      return { consents: [], total: 0 };
+      logHealthcareError('database', error, { method: 'findWithFilter', filter })
+      return { consents: [], total: 0 }
     }
   }
 
@@ -169,23 +169,23 @@ export class ConsentRepository implements IConsentRepository {
         granted_by: grantedBy,
         granted_at: new Date().toISOString(),
         status: ConsentStatus.ACTIVE,
-      };
+      }
 
       const { data, error } = await this.supabase
         .from('consent_records')
         .insert(dbConsent)
         .select()
-        .single();
+        .single()
 
       if (error) {
-        logHealthcareError('database', error, { method: 'create', consentData });
-        throw new Error(`Failed to create consent: ${error.message}`);
+        logHealthcareError('database', error, { method: 'create', consentData })
+        throw new Error(`Failed to create consent: ${error.message}`)
       }
 
-      return this.mapDatabaseConsentToDomain(data);
+      return this.mapDatabaseConsentToDomain(data)
     } catch (error) {
-      logHealthcareError('database', error, { method: 'create', consentData });
-      throw error;
+      logHealthcareError('database', error, { method: 'create', consentData })
+      throw error
     }
   }
 
@@ -194,24 +194,24 @@ export class ConsentRepository implements IConsentRepository {
     updateData: Partial<ConsentRecord>,
   ): Promise<ConsentRecord> {
     try {
-      const dbUpdate = this.mapUpdateRequestToDatabase(updateData);
+      const dbUpdate = this.mapUpdateRequestToDatabase(updateData)
 
       const { data, error } = await this.supabase
         .from('consent_records')
         .update(dbUpdate)
         .eq('id', id)
         .select()
-        .single();
+        .single()
 
       if (error) {
-        logHealthcareError('database', error, { method: 'update', consentId: id });
-        throw new Error(`Failed to update consent: ${error.message}`);
+        logHealthcareError('database', error, { method: 'update', consentId: id })
+        throw new Error(`Failed to update consent: ${error.message}`)
       }
 
-      return this.mapDatabaseConsentToDomain(data);
+      return this.mapDatabaseConsentToDomain(data)
     } catch (error) {
-      logHealthcareError('database', error, { method: 'update', consentId: id });
-      throw error;
+      logHealthcareError('database', error, { method: 'update', consentId: id })
+      throw error
     }
   }
 
@@ -226,17 +226,17 @@ export class ConsentRepository implements IConsentRepository {
         })
         .eq('id', id)
         .select()
-        .single();
+        .single()
 
       if (error) {
-        logHealthcareError('database', error, { method: 'revoke', consentId: id });
-        throw new Error(`Failed to revoke consent: ${error.message}`);
+        logHealthcareError('database', error, { method: 'revoke', consentId: id })
+        throw new Error(`Failed to revoke consent: ${error.message}`)
       }
 
-      return this.mapDatabaseConsentToDomain(data);
+      return this.mapDatabaseConsentToDomain(data)
     } catch (error) {
-      logHealthcareError('database', error, { method: 'revoke', consentId: id });
-      throw error;
+      logHealthcareError('database', error, { method: 'revoke', consentId: id })
+      throw error
     }
   }
 
@@ -245,17 +245,17 @@ export class ConsentRepository implements IConsentRepository {
       const { error } = await this.supabase
         .from('consent_records')
         .delete()
-        .eq('id', id);
+        .eq('id', id)
 
       if (error) {
-        logHealthcareError('database', error, { method: 'delete', consentId: id });
-        return false;
+        logHealthcareError('database', error, { method: 'delete', consentId: id })
+        return false
       }
 
-      return true;
+      return true
     } catch (error) {
-      logHealthcareError('database', error, { method: 'delete', consentId: id });
-      return false;
+      logHealthcareError('database', error, { method: 'delete', consentId: id })
+      return false
     }
   }
 
@@ -268,17 +268,17 @@ export class ConsentRepository implements IConsentRepository {
         'status',
         ConsentStatus.ACTIVE,
         ConsentStatus.EXPIRED,
-      );
+      )
 
       if (result.updatedCount === 0) {
-        return [];
+        return []
       }
 
       // Fetch the updated records
       return await this.performanceService.optimizedQuery(
         'consent_records',
         'select',
-        async client => {
+        async (client) => {
           const { data, error } = await client
             .from('consent_records')
             .select(
@@ -288,19 +288,19 @@ export class ConsentRepository implements IConsentRepository {
             `,
             )
             .in('id', result.expiredIds)
-            .order('expires_at', { ascending: false });
+            .order('expires_at', { ascending: false })
 
-          if (error) throw error;
-          return data ? data.map(this.mapDatabaseConsentToDomain) : [];
+          if (error) throw error
+          return data ? data.map(this.mapDatabaseConsentToDomain) : []
         },
         {
           cacheKey: `checkExpiration:${Date.now()}`,
           columns: 'id, patient_id, consent_type, status, expires_at',
         },
-      );
+      )
     } catch (error) {
-      logHealthcareError('database', error, { method: 'checkExpiration' });
-      return [];
+      logHealthcareError('database', error, { method: 'checkExpiration' })
+      return []
     }
   }
 
@@ -309,8 +309,8 @@ export class ConsentRepository implements IConsentRepository {
       return await this.performanceService.optimizedQuery(
         'consent_records',
         'select',
-        async client => {
-          const now = new Date().toISOString();
+        async (client) => {
+          const now = new Date().toISOString()
           const { data, error } = await client
             .from('consent_records')
             .select(
@@ -322,19 +322,19 @@ export class ConsentRepository implements IConsentRepository {
             .eq('patient_id', patientId)
             .eq('status', ConsentStatus.ACTIVE)
             .or('expires_at.is.null,expires_at.gt.' + now)
-            .order('granted_at', { ascending: false });
+            .order('granted_at', { ascending: false })
 
-          if (error) throw error;
-          return data ? data.map(this.mapDatabaseConsentToDomain) : [];
+          if (error) throw error
+          return data ? data.map(this.mapDatabaseConsentToDomain) : []
         },
         {
           cacheKey: `getActiveConsents:${patientId}`,
           columns: 'id, patient_id, consent_type, status, expires_at, granted_at',
         },
-      );
+      )
     } catch (error) {
-      logHealthcareError('database', error, { method: 'getActiveConsents', patientId });
-      return [];
+      logHealthcareError('database', error, { method: 'getActiveConsents', patientId })
+      return []
     }
   }
 
@@ -346,8 +346,8 @@ export class ConsentRepository implements IConsentRepository {
       return await this.performanceService.optimizedQuery(
         'consent_records',
         'select',
-        async client => {
-          const now = new Date().toISOString();
+        async (client) => {
+          const now = new Date().toISOString()
           const { data, error } = await client
             .from('consent_records')
             .select('id')
@@ -355,23 +355,23 @@ export class ConsentRepository implements IConsentRepository {
             .eq('consent_type', consentType)
             .eq('status', ConsentStatus.ACTIVE)
             .or('expires_at.is.null,expires_at.gt.' + now)
-            .single();
+            .single()
 
           if (error && error.code !== 'PGRST116') {
             // PGRST116 = not found
-            throw error;
+            throw error
           }
 
-          return !!data;
+          return !!data
         },
         {
           cacheKey: `hasActiveConsent:${patientId}:${consentType}`,
           columns: 'id',
         },
-      );
+      )
     } catch (error) {
-      logHealthcareError('database', error, { method: 'hasActiveConsent', patientId, consentType });
-      return false;
+      logHealthcareError('database', error, { method: 'hasActiveConsent', patientId, consentType })
+      return false
     }
   }
 
@@ -393,27 +393,27 @@ export class ConsentRepository implements IConsentRepository {
       revokedBy: dbConsent.revoked_by,
       metadata: dbConsent.metadata || {},
       auditTrail: dbConsent.audit_trail || [],
-    };
+    }
   }
 
   /**
    * Maps update request to database format
    */
   private mapUpdateRequestToDatabase(updateData: Partial<ConsentRecord>): any {
-    const dbUpdate: any = {};
+    const dbUpdate: any = {}
 
-    if (updateData.purpose !== undefined) dbUpdate.purpose = updateData.purpose;
+    if (updateData.purpose !== undefined) dbUpdate.purpose = updateData.purpose
     if (updateData.dataTypes !== undefined) {
-      dbUpdate.data_types = updateData.dataTypes;
+      dbUpdate.data_types = updateData.dataTypes
     }
     if (updateData.expiresAt !== undefined) {
-      dbUpdate.expires_at = updateData.expiresAt;
+      dbUpdate.expires_at = updateData.expiresAt
     }
     if (updateData.metadata !== undefined) {
-      dbUpdate.metadata = updateData.metadata;
+      dbUpdate.metadata = updateData.metadata
     }
-    if (updateData.status !== undefined) dbUpdate.status = updateData.status;
+    if (updateData.status !== undefined) dbUpdate.status = updateData.status
 
-    return dbUpdate;
+    return dbUpdate
   }
 }

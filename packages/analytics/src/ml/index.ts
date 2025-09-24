@@ -28,9 +28,9 @@
 // Core Interfaces
 // ============================================================================
 
-import type { PredictionInput, PredictionType } from './interfaces';
+import type { PredictionInput, PredictionType } from './interfaces'
 
-import { StubModelProvider } from './stub-provider';
+import { StubModelProvider } from './stub-provider'
 
 export type {
   BatchPredictionInput,
@@ -43,24 +43,19 @@ export type {
   PredictionInput,
   PredictionResult,
   PredictionType,
-} from './interfaces';
+} from './interfaces'
 
 // ============================================================================
 // Error Classes
 // ============================================================================
 
-export {
-  InvalidInputError,
-  MLError,
-  ModelInitializationError,
-  PredictionError,
-} from './interfaces';
+export { InvalidInputError, MLError, ModelInitializationError, PredictionError } from './interfaces'
 
 // ============================================================================
 // Stub Implementation
 // ============================================================================
 
-export { StubModelProvider };
+export { StubModelProvider }
 
 // ============================================================================
 // Utility Functions
@@ -73,15 +68,15 @@ export { StubModelProvider };
  * @returns Configured stub model provider
  */
 export function createStubModelProvider(overrides?: {
-  id?: string;
-  name?: string;
-  version?: string;
-  supportedTypes?: PredictionType[];
-  accuracy?: number;
-  latencyMs?: number;
-  failureRate?: number;
+  id?: string
+  name?: string
+  version?: string
+  supportedTypes?: PredictionType[]
+  accuracy?: number
+  latencyMs?: number
+  failureRate?: number
 }) {
-  return new StubModelProvider(overrides);
+  return new StubModelProvider(overrides)
 }
 
 /**
@@ -94,20 +89,20 @@ export function validatePredictionInputStructure(
   input: unknown,
 ): input is PredictionInput {
   if (!input || typeof input !== 'object') {
-    throw new Error('Prediction input must be an object');
+    throw new Error('Prediction input must be an object')
   }
 
-  const obj = input as Record<string, unknown>;
+  const obj = input as Record<string, unknown>
 
   if (!obj.type || typeof obj.type !== 'string') {
-    throw new Error('Prediction input must have a valid type');
+    throw new Error('Prediction input must have a valid type')
   }
 
   if (!obj.features || typeof obj.features !== 'object') {
-    throw new Error('Prediction input must have features object');
+    throw new Error('Prediction input must have features object')
   }
 
-  return true;
+  return true
 }
 
 /**
@@ -131,7 +126,7 @@ export function createMockPredictionInput(
       heart_rate: 72,
       temperature: 36.5,
     },
-  };
+  }
 
   return {
     type,
@@ -142,7 +137,7 @@ export function createMockPredictionInput(
       timestamp: new Date().toISOString(),
       source: 'test',
     },
-  };
+  }
 }
 
 // ============================================================================
@@ -161,7 +156,7 @@ export const PREDICTION_TYPES: readonly PredictionType[] = [
   'resource_utilization',
   'clinical_deterioration',
   'medication_adherence',
-] as const;
+] as const
 
 /**
  * Standard confidence thresholds
@@ -170,14 +165,14 @@ export const CONFIDENCE_THRESHOLDS = {
   HIGH: 0.8,
   MEDIUM: 0.6,
   LOW: 0.0,
-} as const;
+} as const
 
 /**
  * Default timeout for prediction operations (ms)
  */
-export const DEFAULT_PREDICTION_TIMEOUT_MS = 5000;
+export const DEFAULT_PREDICTION_TIMEOUT_MS = 5000
 
 /**
  * Maximum batch size for batch predictions
  */
-export const MAX_BATCH_SIZE = 100;
+export const MAX_BATCH_SIZE = 100

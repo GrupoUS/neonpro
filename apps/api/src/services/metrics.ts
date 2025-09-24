@@ -2,25 +2,25 @@
 // Comprehensive metrics system for LGPD, CFM, ANVISA compliance tracking
 // Note: Keep PII out of labels and logs
 
-import { createAdminClient } from '../clients/supabase';
+import { createAdminClient } from '../clients/supabase'
 
-export type Timer = { start: bigint };
+export type Timer = { start: bigint }
 
 // Healthcare-specific metric types
 export interface HealthcareMetric {
-  id: string;
-  timestamp: Date;
-  type: HealthcareMetricType;
-  value: number;
-  metadata: Record<string, any>;
-  clinicId?: string;
-  _userId?: string;
+  id: string
+  timestamp: Date
+  type: HealthcareMetricType
+  value: number
+  metadata: Record<string, any>
+  clinicId?: string
+  _userId?: string
   complianceFlags: {
-    lgpd_compliant: boolean;
-    cfm_validated: boolean;
-    anvisa_compliant: boolean;
-    rls_enforced: boolean;
-  };
+    lgpd_compliant: boolean
+    cfm_validated: boolean
+    anvisa_compliant: boolean
+    rls_enforced: boolean
+  }
 }
 
 export enum HealthcareMetricType {
@@ -57,35 +57,35 @@ export enum HealthcareMetricType {
 }
 
 export interface ComplianceKPI {
-  id: string;
-  name: string;
-  type: HealthcareMetricType;
-  target: number;
-  direction: 'higher-better' | 'lower-better';
-  unit: string;
-  description: string;
-  complianceLevel: 'critical' | 'high' | 'medium' | 'low';
+  id: string
+  name: string
+  type: HealthcareMetricType
+  target: number
+  direction: 'higher-better' | 'lower-better'
+  unit: string
+  description: string
+  complianceLevel: 'critical' | 'high' | 'medium' | 'low'
 }
 
 export interface MetricAggregation {
-  type: HealthcareMetricType;
-  period: 'hour' | 'day' | 'week' | 'month';
-  value: number;
-  count: number;
-  min: number;
-  max: number;
-  avg: number;
-  complianceRate: number;
-  timestamp: Date;
+  type: HealthcareMetricType
+  period: 'hour' | 'day' | 'week' | 'month'
+  value: number
+  count: number
+  min: number
+  max: number
+  avg: number
+  complianceRate: number
+  timestamp: Date
 }
 
 export class HealthcareMetricsService {
-  private supabase;
-  private kpis: Map<string, ComplianceKPI> = new Map();
+  private supabase
+  private kpis: Map<string, ComplianceKPI> = new Map()
 
   constructor() {
-    this.supabase = createAdminClient();
-    this.initializeHealthcareKPIs();
+    this.supabase = createAdminClient()
+    this.initializeHealthcareKPIs()
   }
 
   private initializeHealthcareKPIs() {
@@ -140,9 +140,9 @@ export class HealthcareMetricsService {
         description: 'Integrity score of audit log chain validation',
         complianceLevel: 'critical',
       },
-    ];
+    ]
 
-    defaultKPIs.forEach(kpi => this.kpis.set(kpi.id, kpi));
+    defaultKPIs.forEach((kpi) => this.kpis.set(kpi.id, kpi))
   }
 
   /**
@@ -153,9 +153,9 @@ export class HealthcareMetricsService {
     value: number,
     metadata: Record<string, any> = {},
     _context: {
-      clinicId?: string;
-      _userId?: string;
-      complianceFlags?: Partial<HealthcareMetric['complianceFlags']>;
+      clinicId?: string
+      _userId?: string
+      complianceFlags?: Partial<HealthcareMetric['complianceFlags']>
     } = {},
   ): Promise<{ success: boolean; metricId?: string; error?: string }> {
     try {
@@ -173,7 +173,7 @@ export class HealthcareMetricsService {
           anvisa_compliant: context.complianceFlags?.anvisa_compliant ?? true,
           rls_enforced: context.complianceFlags?.rls_enforced ?? true,
         },
-      };
+      }
 
       // Store in database
       const { data, error } = await this.supabase
@@ -190,19 +190,19 @@ export class HealthcareMetricsService {
           created_at: new Date().toISOString(),
         })
         .select()
-        .single();
+        .single()
 
       if (error) {
-        console.error('Error storing healthcare metric:', error);
+        console.error('Error storing healthcare metric:', error)
         // Fallback to console logging
-        this.logMetricToConsole(metric);
-        return { success: false, error: 'Failed to store metric in database' };
+        this.logMetricToConsole(metric)
+        return { success: false, error: 'Failed to store metric in database' }
       }
 
-      return { success: true, metricId: data.id };
+      return { success: true, metricId: data.id }
     } catch {
-      console.error('Error recording healthcare metric:', error);
-      return { success: false, error: 'Internal metric recording error' };
+      console.error('Error recording healthcare metric:', error)
+      return { success: false, error: 'Internal metric recording error' }
     }
   }
 
@@ -213,44 +213,44 @@ export class HealthcareMetricsService {
     kpiId: string,
     period: 'hour' | 'day' | 'week' | 'month' = 'day',
   ): Promise<{
-    success: boolean;
-    kpi?: ComplianceKPI;
-    currentValue?: number;
-    complianceStatus?: 'compliant' | 'warning' | 'violation';
-    trend?: 'improving' | 'stable' | 'declining';
-    error?: string;
+    success: boolean
+    kpi?: ComplianceKPI
+    currentValue?: number
+    complianceStatus?: 'compliant' | 'warning' | 'violation'
+    trend?: 'improving' | 'stable' | 'declining'
+    error?: string
   }> {
     try {
-      const kpi = this.kpis.get(kpiId);
+      const kpi = this.kpis.get(kpiId)
       if (!kpi) {
-        return { success: false, error: 'KPI not found' };
+        return { success: false, error: 'KPI not found' }
       }
 
-      const aggregation = await this.getMetricAggregation(kpi.type, period);
+      const aggregation = await this.getMetricAggregation(kpi.type, period)
       if (!aggregation.success || !aggregation.data) {
-        return { success: false, error: 'Failed to get metric aggregation' };
+        return { success: false, error: 'Failed to get metric aggregation' }
       }
 
-      const currentValue = aggregation.data.avg;
-      const complianceStatus = this.evaluateCompliance(currentValue, kpi);
+      const currentValue = aggregation.data.avg
+      const complianceStatus = this.evaluateCompliance(currentValue, kpi)
 
       // Calculate trend (simplified - compare with previous period)
       const previousPeriod = await this.getMetricAggregation(
         kpi.type,
         period,
         1,
-      );
-      let trend: 'improving' | 'stable' | 'declining' = 'stable';
+      )
+      let trend: 'improving' | 'stable' | 'declining' = 'stable'
 
       if (previousPeriod.success && previousPeriod.data) {
-        const previousValue = previousPeriod.data.avg;
+        const previousValue = previousPeriod.data.avg
         const improvement = kpi.direction === 'higher-better'
           ? currentValue > previousValue
-          : currentValue < previousValue;
+          : currentValue < previousValue
 
         if (Math.abs(currentValue - previousValue) > kpi.target * 0.05) {
           // 5% threshold
-          trend = improvement ? 'improving' : 'declining';
+          trend = improvement ? 'improving' : 'declining'
         }
       }
 
@@ -260,10 +260,10 @@ export class HealthcareMetricsService {
         currentValue,
         complianceStatus,
         trend,
-      };
+      }
     } catch {
-      console.error('Error getting KPI status:', error);
-      return { success: false, error: 'Internal KPI status error' };
+      console.error('Error getting KPI status:', error)
+      return { success: false, error: 'Internal KPI status error' }
     }
   }
 
@@ -275,32 +275,32 @@ export class HealthcareMetricsService {
     period: 'hour' | 'day' | 'week' | 'month',
     periodsBack: number = 0,
   ): Promise<{
-    success: boolean;
-    data?: MetricAggregation;
-    error?: string;
+    success: boolean
+    data?: MetricAggregation
+    error?: string
   }> {
     try {
-      const now = new Date();
+      const now = new Date()
       const periodMs = {
         hour: 60 * 60 * 1000,
         day: 24 * 60 * 60 * 1000,
         week: 7 * 24 * 60 * 60 * 1000,
         month: 30 * 24 * 60 * 60 * 1000,
-      };
+      }
 
-      const endTime = new Date(now.getTime() - periodsBack * periodMs[period]);
-      const startTime = new Date(endTime.getTime() - periodMs[period]);
+      const endTime = new Date(now.getTime() - periodsBack * periodMs[period])
+      const startTime = new Date(endTime.getTime() - periodMs[period])
 
       const { data, error } = await this.supabase
         .from('healthcare_metrics')
         .select('value, compliance_flags')
         .eq('type', type)
         .gte('timestamp', startTime.toISOString())
-        .lt('timestamp', endTime.toISOString());
+        .lt('timestamp', endTime.toISOString())
 
       if (error) {
-        console.error('Error querying metrics:', error);
-        return { success: false, error: 'Failed to query metrics' };
+        console.error('Error querying metrics:', error)
+        return { success: false, error: 'Failed to query metrics' }
       }
 
       if (!data || data.length === 0) {
@@ -317,16 +317,16 @@ export class HealthcareMetricsService {
             complianceRate: 0,
             timestamp: endTime,
           },
-        };
+        }
       }
 
-      const values = data.map(d => d.value);
+      const values = data.map((d) => d.value)
       const compliantCount = data.filter(
-        d =>
+        (d) =>
           d.compliance_flags.lgpd_compliant
           && d.compliance_flags.cfm_validated
           && d.compliance_flags.anvisa_compliant,
-      ).length;
+      ).length
 
       const aggregation: MetricAggregation = {
         type,
@@ -338,12 +338,12 @@ export class HealthcareMetricsService {
         avg: values.reduce((sum, _v) => sum + v, 0) / values.length,
         complianceRate: (compliantCount / data.length) * 100,
         timestamp: endTime,
-      };
+      }
 
-      return { success: true, data: aggregation };
+      return { success: true, data: aggregation }
     } catch {
-      console.error('Error in getMetricAggregation:', error);
-      return { success: false, error: 'Internal aggregation error' };
+      console.error('Error in getMetricAggregation:', error)
+      return { success: false, error: 'Internal aggregation error' }
     }
   }
 
@@ -351,68 +351,68 @@ export class HealthcareMetricsService {
    * Generate compliance dashboard data
    */
   async getComplianceDashboard(clinicId?: string): Promise<{
-    success: boolean;
+    success: boolean
     dashboard?: {
       kpis: Array<{
-        kpi: ComplianceKPI;
-        currentValue: number;
-        complianceStatus: 'compliant' | 'warning' | 'violation';
-        trend: 'improving' | 'stable' | 'declining';
-      }>;
-      overallScore: number;
-      criticalViolations: number;
+        kpi: ComplianceKPI
+        currentValue: number
+        complianceStatus: 'compliant' | 'warning' | 'violation'
+        trend: 'improving' | 'stable' | 'declining'
+      }>
+      overallScore: number
+      criticalViolations: number
       recentAlerts: Array<{
-        type: HealthcareMetricType;
-        message: string;
-        severity: 'critical' | 'high' | 'medium' | 'low';
-        timestamp: Date;
-      }>;
-    };
-    error?: string;
+        type: HealthcareMetricType
+        message: string
+        severity: 'critical' | 'high' | 'medium' | 'low'
+        timestamp: Date
+      }>
+    }
+    error?: string
   }> {
     try {
-      const kpiStatuses = [];
-      let totalScore = 0;
-      let criticalViolations = 0;
+      const kpiStatuses = []
+      let totalScore = 0
+      let criticalViolations = 0
 
       // Process each KPI using forEach to avoid iteration issues
       for (const kpiId of this.kpis.keys()) {
-        const kpi = this.kpis.get(kpiId);
-        if (!kpi) continue;
+        const kpi = this.kpis.get(kpiId)
+        if (!kpi) continue
 
-        const status = await this.getKPIStatus(kpiId);
+        const status = await this.getKPIStatus(kpiId)
         if (status.success && status.currentValue !== undefined) {
           const kpiData = {
             kpi,
             currentValue: status.currentValue,
             complianceStatus: status.complianceStatus || 'violation',
             trend: status.trend || 'stable',
-          };
+          }
 
-          kpiStatuses.push(kpiData);
+          kpiStatuses.push(kpiData)
 
           // Calculate weighted score
           const weight = kpi.complianceLevel === 'critical'
             ? 3
             : kpi.complianceLevel === 'high'
             ? 2
-            : 1;
-          const kpiScore = this.calculateKPIScore(status.currentValue, kpi);
-          totalScore += kpiScore * weight;
+            : 1
+          const kpiScore = this.calculateKPIScore(status.currentValue, kpi)
+          totalScore += kpiScore * weight
 
           if (
             status.complianceStatus === 'violation'
             && kpi.complianceLevel === 'critical'
           ) {
-            criticalViolations++;
+            criticalViolations++
           }
         }
       }
 
-      const overallScore = kpiStatuses.length > 0 ? totalScore / kpiStatuses.length : 0;
+      const overallScore = kpiStatuses.length > 0 ? totalScore / kpiStatuses.length : 0
 
       // Get recent alerts (simplified - would be more sophisticated in production)
-      const recentAlerts = await this.getRecentAlerts(clinicId);
+      const recentAlerts = await this.getRecentAlerts(clinicId)
 
       return {
         success: true,
@@ -422,10 +422,10 @@ export class HealthcareMetricsService {
           criticalViolations,
           recentAlerts: recentAlerts.success ? recentAlerts.alerts! : [],
         },
-      };
+      }
     } catch {
-      console.error('Error generating compliance dashboard:', error);
-      return { success: false, error: 'Internal dashboard generation error' };
+      console.error('Error generating compliance dashboard:', error)
+      return { success: false, error: 'Internal dashboard generation error' }
     }
   }
 
@@ -435,33 +435,33 @@ export class HealthcareMetricsService {
     value: number,
     kpi: ComplianceKPI,
   ): 'compliant' | 'warning' | 'violation' {
-    const target = kpi.target;
-    const warningThreshold = target * 0.9; // 10% tolerance for warning
+    const target = kpi.target
+    const warningThreshold = target * 0.9 // 10% tolerance for warning
 
     if (kpi.direction === 'higher-better') {
-      if (value >= target) return 'compliant';
-      if (value >= warningThreshold) return 'warning';
-      return 'violation';
+      if (value >= target) return 'compliant'
+      if (value >= warningThreshold) return 'warning'
+      return 'violation'
     } else {
-      if (value <= target) return 'compliant';
-      if (value <= target * 1.1) return 'warning'; // 10% over target
-      return 'violation';
+      if (value <= target) return 'compliant'
+      if (value <= target * 1.1) return 'warning' // 10% over target
+      return 'violation'
     }
   }
 
   private calculateKPIScore(value: number, kpi: ComplianceKPI): number {
-    const target = kpi.target;
+    const target = kpi.target
 
     if (kpi.direction === 'higher-better') {
-      return Math.min(100, (value / target) * 100);
+      return Math.min(100, (value / target) * 100)
     } else {
-      return Math.min(100, (target / Math.max(value, 0.1)) * 100);
+      return Math.min(100, (target / Math.max(value, 0.1)) * 100)
     }
   }
 
   private async getRecentAlerts(clinicId?: string) {
     try {
-      const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+      const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000)
 
       let query = this.supabase
         .from('healthcare_metrics')
@@ -471,19 +471,19 @@ export class HealthcareMetricsService {
           'compliance_flags->lgpd_compliant.eq.false,compliance_flags->cfm_validated.eq.false,compliance_flags->anvisa_compliant.eq.false',
         )
         .order('timestamp', { ascending: false })
-        .limit(10);
+        .limit(10)
 
       if (clinicId) {
-        query = query.eq('clinic_id', clinicId);
+        query = query.eq('clinic_id', clinicId)
       }
 
-      const { data, error } = await query;
+      const { data, error } = await query
 
       if (error) {
-        return { success: false, error: 'Failed to get recent alerts' };
+        return { success: false, error: 'Failed to get recent alerts' }
       }
 
-      const alerts = data.map(record => ({
+      const alerts = data.map((record) => ({
         type: record.type as HealthcareMetricType,
         message: this.generateAlertMessage(record),
         severity: this.determineSeverity(record) as
@@ -492,32 +492,32 @@ export class HealthcareMetricsService {
           | 'medium'
           | 'low',
         timestamp: new Date(record.timestamp),
-      }));
+      }))
 
-      return { success: true, alerts };
+      return { success: true, alerts }
     } catch {
-      console.error('Failed to aggregate alerts:', error);
-      return { success: false, error: 'Internal alerts error' };
+      console.error('Failed to aggregate alerts:', error)
+      return { success: false, error: 'Internal alerts error' }
     }
   }
 
   private generateAlertMessage(record: any): string {
-    const flags = record.compliance_flags;
-    const violations = [];
+    const flags = record.compliance_flags
+    const violations = []
 
-    if (!flags.lgpd_compliant) violations.push('LGPD');
-    if (!flags.cfm_validated) violations.push('CFM');
-    if (!flags.anvisa_compliant) violations.push('ANVISA');
+    if (!flags.lgpd_compliant) violations.push('LGPD')
+    if (!flags.cfm_validated) violations.push('CFM')
+    if (!flags.anvisa_compliant) violations.push('ANVISA')
 
-    return `Compliance violation detected: ${violations.join(', ')} - ${record.type}`;
+    return `Compliance violation detected: ${violations.join(', ')} - ${record.type}`
   }
 
   private determineSeverity(record: any): string {
-    const flags = record.compliance_flags;
+    const flags = record.compliance_flags
 
-    if (!flags.lgpd_compliant || !flags.anvisa_compliant) return 'critical';
-    if (!flags.cfm_validated) return 'high';
-    return 'medium';
+    if (!flags.lgpd_compliant || !flags.anvisa_compliant) return 'critical'
+    if (!flags.cfm_validated) return 'high'
+    return 'medium'
   }
 
   private logMetricToConsole(metric: HealthcareMetric) {
@@ -530,7 +530,7 @@ export class HealthcareMetricsService {
           compliance_flags: metric.complianceFlags,
           timestamp: metric.timestamp.toISOString(),
         }),
-      );
+      )
     } catch {
       // noop
     }
@@ -538,17 +538,17 @@ export class HealthcareMetricsService {
 
   // Legacy compatibility methods
   startTimer(): Timer {
-    return { start: process.hrtime.bigint() };
+    return { start: process.hrtime.bigint() }
   }
 
   endTimerMs(t: Timer): number {
-    const ns = process.hrtime.bigint() - t.start;
-    return Number(ns / BigInt(1000000));
+    const ns = process.hrtime.bigint() - t.start
+    return Number(ns / BigInt(1000000))
   }
 
   logMetric(event: Record<string, unknown>) {
     try {
-      console.log(JSON.stringify({ type: 'metrics', ...event }));
+      console.log(JSON.stringify({ type: 'metrics', ...event }))
     } catch {
       // noop
     }
@@ -556,21 +556,21 @@ export class HealthcareMetricsService {
 }
 
 // Export singleton instance
-export const healthcareMetrics = new HealthcareMetricsService();
+export const healthcareMetrics = new HealthcareMetricsService()
 
 // Legacy exports for backward compatibility
 export function startTimer(): Timer {
-  return { start: process.hrtime.bigint() };
+  return { start: process.hrtime.bigint() }
 }
 
 export function endTimerMs(t: Timer): number {
-  const ns = process.hrtime.bigint() - t.start;
-  return Number(ns / BigInt(1000000));
+  const ns = process.hrtime.bigint() - t.start
+  return Number(ns / BigInt(1000000))
 }
 
 export function logMetric(event: Record<string, unknown>) {
   try {
-    console.log(JSON.stringify({ type: 'metrics', ...event }));
+    console.log(JSON.stringify({ type: 'metrics', ...event }))
   } catch {
     // noop
   }

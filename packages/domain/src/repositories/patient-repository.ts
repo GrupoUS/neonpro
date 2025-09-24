@@ -1,4 +1,4 @@
-import type { Patient } from '../entities/patient';
+import type { Patient } from '../entities/patient'
 
 /**
  * Patient Repository Interface
@@ -10,14 +10,14 @@ export interface PatientRepository {
    * @param id Patient ID
    * @returns Patient or null if not found
    */
-  findById(id: string): Promise<Patient | null>;
+  findById(id: string): Promise<Patient | null>
 
   /**
    * Find patients by clinic ID
    * @param clinicId Clinic ID
    * @returns Array of patients
    */
-  findByClinicId(clinicId: string): Promise<Patient[]>;
+  findByClinicId(clinicId: string): Promise<Patient[]>
 
   /**
    * Find patients by medical record number
@@ -26,14 +26,14 @@ export interface PatientRepository {
    */
   findByMedicalRecordNumber(
     medicalRecordNumber: string,
-  ): Promise<Patient | null>;
+  ): Promise<Patient | null>
 
   /**
    * Find patients by CPF
    * @param cpf CPF number
    * @returns Array of patients (CPF may not be unique across clinics)
    */
-  findByCPF(cpf: string): Promise<Patient[]>;
+  findByCPF(cpf: string): Promise<Patient[]>
 
   /**
    * Search patients by name or other criteria
@@ -41,7 +41,7 @@ export interface PatientRepository {
    * @param clinicId Optional clinic ID to scope search
    * @returns Array of matching patients
    */
-  search(_query: string, clinicId?: string): Promise<Patient[]>;
+  search(_query: string, clinicId?: string): Promise<Patient[]>
 
   /**
    * Find active patients
@@ -54,7 +54,7 @@ export interface PatientRepository {
     clinicId: string,
     limit?: number,
     offset?: number,
-  ): Promise<Patient[]>;
+  ): Promise<Patient[]>
 
   /**
    * Create a new patient
@@ -63,7 +63,7 @@ export interface PatientRepository {
    */
   create(
     patient: Omit<Patient, 'id' | 'createdAt' | 'updatedAt'>,
-  ): Promise<Patient>;
+  ): Promise<Patient>
 
   /**
    * Update an existing patient
@@ -71,7 +71,7 @@ export interface PatientRepository {
    * @param updates Partial patient data to update
    * @returns Updated patient
    */
-  update(id: string, updates: Partial<Patient>): Promise<Patient>;
+  update(id: string, updates: Partial<Patient>): Promise<Patient>
 
   /**
    * Delete a patient (soft delete)
@@ -79,14 +79,14 @@ export interface PatientRepository {
    * @param deletedBy User who deleted the patient
    * @returns Success status
    */
-  delete(id: string, deletedBy: string): Promise<boolean>;
+  delete(id: string, deletedBy: string): Promise<boolean>
 
   /**
    * Count patients by clinic
    * @param clinicId Clinic ID
    * @returns Patient count
    */
-  countByClinic(clinicId: string): Promise<number>;
+  countByClinic(clinicId: string): Promise<number>
 
   /**
    * Check if medical record number exists
@@ -99,7 +99,7 @@ export interface PatientRepository {
     medicalRecordNumber: string,
     clinicId: string,
     excludePatientId?: string,
-  ): Promise<boolean>;
+  ): Promise<boolean>
 }
 
 /**
@@ -112,56 +112,56 @@ export interface PatientQueryRepository {
    * @param filters Filter criteria
    * @returns Array of matching patients
    */
-  findWithFilters(filters: PatientFilters): Promise<Patient[]>;
+  findWithFilters(filters: PatientFilters): Promise<Patient[]>
 
   /**
    * Count patients with filters
    * @param filters Filter criteria
    * @returns Patient count
    */
-  countWithFilters(filters: PatientFilters): Promise<number>;
+  countWithFilters(filters: PatientFilters): Promise<number>
 
   /**
    * Get patient statistics
    * @param clinicId Clinic ID
    * @returns Patient statistics
    */
-  getStatistics(clinicId: string): Promise<PatientStatistics>;
+  getStatistics(clinicId: string): Promise<PatientStatistics>
 }
 
 /**
  * Patient filters interface
  */
 export interface PatientFilters {
-  clinicId?: string;
-  isActive?: boolean;
-  gender?: string;
-  birthDateFrom?: string;
-  birthDateTo?: string;
-  hasInsurance?: boolean;
-  hasAllergies?: boolean;
-  hasChronicConditions?: boolean;
-  searchQuery?: string;
-  createdFrom?: string;
-  createdTo?: string;
-  limit?: number;
-  offset?: number;
-  sortBy?: keyof Patient;
-  sortOrder?: 'asc' | 'desc';
+  clinicId?: string
+  isActive?: boolean
+  gender?: string
+  birthDateFrom?: string
+  birthDateTo?: string
+  hasInsurance?: boolean
+  hasAllergies?: boolean
+  hasChronicConditions?: boolean
+  searchQuery?: string
+  createdFrom?: string
+  createdTo?: string
+  limit?: number
+  offset?: number
+  sortBy?: keyof Patient
+  sortOrder?: 'asc' | 'desc'
 }
 
 /**
  * Patient statistics interface
  */
 export interface PatientStatistics {
-  total: number;
-  active: number;
-  inactive: number;
-  byGender: Record<string, number>;
-  byAgeGroup: Record<string, number>;
-  withInsurance: number;
-  withAllergies: number;
-  withChronicConditions: number;
-  newThisMonth: number;
-  newThisYear: number;
+  total: number
+  active: number
+  inactive: number
+  byGender: Record<string, number>
+  byAgeGroup: Record<string, number>
+  withInsurance: number
+  withAllergies: number
+  withChronicConditions: number
+  newThisMonth: number
+  newThisYear: number
 }

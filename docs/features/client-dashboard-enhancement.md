@@ -111,16 +111,16 @@ apps/web/src/components/
 // State management pattern example
 interface ClientDashboardState {
   // Server state (TanStack Query)
-  clients: UseQueryResult<Client[], Error>;
-  clientDetail: UseQueryResult<ClientDetail, Error>;
+  clients: UseQueryResult<Client[], Error>
+  clientDetail: UseQueryResult<ClientDetail, Error>
 
   // Client state (Zustand)
-  selectedClients: string[];
-  tableFilters: ClientFilters;
-  sidebarCollapsed: boolean;
+  selectedClients: string[]
+  tableFilters: ClientFilters
+  sidebarCollapsed: boolean
 
   // Form state (React Hook Form)
-  registrationForm: UseFormReturn<ClientRegistration>;
+  registrationForm: UseFormReturn<ClientRegistration>
 }
 ```
 
@@ -203,26 +203,26 @@ interface ClientDashboardState {
 ```typescript
 interface ClientDataTableProps {
   // Data management
-  data: Client[];
-  loading?: boolean;
-  error?: Error | null;
+  data: Client[]
+  loading?: boolean
+  error?: Error | null
 
   // Advanced features
-  filters: ClientFilters;
-  sorting: SortingState;
-  pagination: PaginationState;
-  selection: RowSelectionState;
+  filters: ClientFilters
+  sorting: SortingState
+  pagination: PaginationState
+  selection: RowSelectionState
 
   // Actions
-  onClientSelect: (client: Client) => void;
-  onBulkAction: (action: BulkAction, clientIds: string[]) => void;
-  onFilterChange: (filters: ClientFilters) => void;
-  onExport: (format: ExportFormat) => void;
+  onClientSelect: (client: Client) => void
+  onBulkAction: (action: BulkAction, clientIds: string[]) => void
+  onFilterChange: (filters: ClientFilters) => void
+  onExport: (format: ExportFormat) => void
 
   // Customization
-  columns?: ColumnDef<Client>[];
-  actions?: TableAction[];
-  density?: 'comfortable' | 'compact';
+  columns?: ColumnDef<Client>[]
+  actions?: TableAction[]
+  density?: 'comfortable' | 'compact'
 }
 ```
 
@@ -231,24 +231,24 @@ interface ClientDataTableProps {
 ```typescript
 interface ClientRegistrationFormProps {
   // Form configuration
-  initialData?: Partial<ClientRegistration>;
-  steps: FormStep[];
-  validationSchema: ZodSchema;
+  initialData?: Partial<ClientRegistration>
+  steps: FormStep[]
+  validationSchema: ZodSchema
 
   // Form behavior
-  autoSave?: boolean;
-  allowSkipOptional?: boolean;
-  showProgress?: boolean;
+  autoSave?: boolean
+  allowSkipOptional?: boolean
+  showProgress?: boolean
 
   // Callbacks
-  onSubmit: (data: ClientRegistration) => Promise<void>;
-  onSave: (data: Partial<ClientRegistration>) => Promise<void>;
-  onCancel: () => void;
+  onSubmit: (data: ClientRegistration) => Promise<void>
+  onSave: (data: Partial<ClientRegistration>) => Promise<void>
+  onCancel: () => void
 
   // Brazilian compliance
-  cpfValidation: CPFValidationConfig;
-  phoneFormats: BrazilianPhoneFormats;
-  addressDefaults: BrazilianAddressDefaults;
+  cpfValidation: CPFValidationConfig
+  phoneFormats: BrazilianPhoneFormats
+  addressDefaults: BrazilianAddressDefaults
 }
 ```
 
@@ -283,36 +283,36 @@ WEBSOCKET /realtime/clients      // Real-time client updates
 ```typescript
 interface Client {
   // Core identification
-  id: string;
-  cpf: string; // Brazilian tax ID (validated)
-  rg?: string; // State ID (optional)
-  full_name: string;
-  preferred_name?: string;
+  id: string
+  cpf: string // Brazilian tax ID (validated)
+  rg?: string // State ID (optional)
+  full_name: string
+  preferred_name?: string
 
   // Contact information
-  email: string;
-  phone: BrazilianPhone;
-  address: BrazilianAddress;
+  email: string
+  phone: BrazilianPhone
+  address: BrazilianAddress
 
   // Aesthetic profile information
-  birth_date: Date;
-  gender: Gender;
-  skin_type: 'oily' | 'dry' | 'combination' | 'sensitive' | 'normal';
-  concerns: string[]; // acne, aging, pigmentation, etc.
-  treatment_history: TreatmentHistory[];
-  product_preferences: string[];
-  contraindications: string[];
+  birth_date: Date
+  gender: Gender
+  skin_type: 'oily' | 'dry' | 'combination' | 'sensitive' | 'normal'
+  concerns: string[] // acne, aging, pigmentation, etc.
+  treatment_history: TreatmentHistory[]
+  product_preferences: string[]
+  contraindications: string[]
 
   // Emergency contact
-  emergency_contact: EmergencyContact;
+  emergency_contact: EmergencyContact
 
   // Compliance & audit
-  consent_lgpd: LGPDConsent;
-  photo_consent: PhotoConsent;
-  created_at: Date;
-  updated_at: Date;
-  created_by: string;
-  updated_by: string;
+  consent_lgpd: LGPDConsent
+  photo_consent: PhotoConsent
+  created_at: Date
+  updated_at: Date
+  created_by: string
+  updated_by: string
 }
 ```
 
@@ -343,7 +343,7 @@ const ClientRegistrationSchema = z.object({
     marketing_communications: z.boolean().optional(),
     date_consented: z.date(),
   }),
-});
+})
 ```
 
 ## 🧪 Testing Strategy & Acceptance Criteria
@@ -378,33 +378,33 @@ const ClientRegistrationSchema = z.object({
 // apps/web/src/components/client/__tests__/ClientDataTable.test.tsx
 describe('ClientDataTable', () => {
   describe('Rendering', () => {
-    it('displays client data correctly');
-    it('shows loading state appropriately');
-    it('handles empty state gracefully');
-    it('renders accessibility attributes');
-  });
+    it('displays client data correctly')
+    it('shows loading state appropriately')
+    it('handles empty state gracefully')
+    it('renders accessibility attributes')
+  })
 
   describe('Filtering & Sorting', () => {
-    it('filters clients by name, CPF, email');
-    it('sorts by all sortable columns');
-    it('persists filter state in URL');
-    it('combines multiple filters correctly');
-  });
+    it('filters clients by name, CPF, email')
+    it('sorts by all sortable columns')
+    it('persists filter state in URL')
+    it('combines multiple filters correctly')
+  })
 
   describe('Selection & Actions', () => {
-    it('selects individual clients');
-    it('handles bulk selection');
-    it('executes bulk actions safely');
-    it('shows confirmation for destructive actions');
-  });
+    it('selects individual clients')
+    it('handles bulk selection')
+    it('executes bulk actions safely')
+    it('shows confirmation for destructive actions')
+  })
 
   describe('Accessibility', () => {
-    it('supports keyboard navigation');
-    it('works with screen readers');
-    it('maintains focus management');
-    it('provides ARIA labels and descriptions');
-  });
-});
+    it('supports keyboard navigation')
+    it('works with screen readers')
+    it('maintains focus management')
+    it('provides ARIA labels and descriptions')
+  })
+})
 ```
 
 **Form Testing Requirements**:
@@ -413,26 +413,26 @@ describe('ClientDataTable', () => {
 // Client registration form tests
 describe('ClientRegistrationForm', () => {
   describe('Brazilian Compliance', () => {
-    it('validates CPF format and checksum');
-    it('validates Brazilian phone numbers');
-    it('supports CEP address lookup');
-    it('enforces LGPD consent requirements');
-  });
+    it('validates CPF format and checksum')
+    it('validates Brazilian phone numbers')
+    it('supports CEP address lookup')
+    it('enforces LGPD consent requirements')
+  })
 
   describe('Multi-step Workflow', () => {
-    it('navigates between form steps');
-    it('validates each step before proceeding');
-    it('saves progress automatically');
-    it('recovers from browser refresh');
-  });
+    it('navigates between form steps')
+    it('validates each step before proceeding')
+    it('saves progress automatically')
+    it('recovers from browser refresh')
+  })
 
   describe('File Upload', () => {
-    it('accepts valid aesthetic document formats');
-    it('rejects invalid file types');
-    it('handles file size limitations');
-    it('shows upload progress feedback');
-  });
-});
+    it('accepts valid aesthetic document formats')
+    it('rejects invalid file types')
+    it('handles file size limitations')
+    it('shows upload progress feedback')
+  })
+})
 ```
 
 ### Performance Benchmarks
@@ -473,23 +473,23 @@ describe('ClientRegistrationForm', () => {
 ```typescript
 // LGPD compliance utilities (packages/security/src/lgpd/)
 interface LGPDConsent {
-  data_processing: boolean; // Required for basic operations
-  marketing_communications?: boolean; // Optional marketing consent
-  data_sharing?: boolean; // Optional third-party sharing
-  date_consented: Date;
-  ip_address: string; // For audit purposes
-  consent_version: string; // Track consent form versions
+  data_processing: boolean // Required for basic operations
+  marketing_communications?: boolean // Optional marketing consent
+  data_sharing?: boolean // Optional third-party sharing
+  date_consented: Date
+  ip_address: string // For audit purposes
+  consent_version: string // Track consent form versions
 }
 
 // Audit trail implementation
 interface ClientAuditLog {
-  client_id: string;
-  action: 'create' | 'read' | 'update' | 'delete' | 'export';
-  user_id: string;
-  timestamp: Date;
-  ip_address: string;
-  user_agent: string;
-  data_changed?: Record<string, any>; // What fields were modified
+  client_id: string
+  action: 'create' | 'read' | 'update' | 'delete' | 'export'
+  user_id: string
+  timestamp: Date
+  ip_address: string
+  user_agent: string
+  data_changed?: Record<string, any> // What fields were modified
 }
 ```
 
@@ -529,7 +529,7 @@ const AccessibilityChecklist = {
   // Robust
   valid_markup: true, // Valid HTML5 markup
   compatibility: true, // Works with assistive technologies
-};
+}
 ```
 
 **Implementation in Components**:
@@ -547,7 +547,7 @@ const AccessibilityChecklist = {
     </TableRow>
   </TableHeader>
   <TableBody>
-    {clients.map(client => (
+    {clients.map((client) => (
       <TableRow key={client.id} role='row' aria-rowindex={index + 1}>
         <TableCell role='gridcell'>{client.full_name}</TableCell>
         <TableCell role='gridcell'>{formatCPF(client.cpf)}</TableCell>
@@ -555,7 +555,7 @@ const AccessibilityChecklist = {
       </TableRow>
     ))}
   </TableBody>
-</Table>;
+</Table>
 ```
 
 ## 🔗 Dependencies & Integration Points
@@ -610,12 +610,12 @@ const useClientSubscription = (clientId: string) => {
       table: 'clients',
       filter: `id=eq.${clientId}`,
     },
-    payload => {
+    (payload) => {
       // Invalidate queries and update UI
-      queryClient.invalidateQueries(['clients', clientId]);
+      queryClient.invalidateQueries(['clients', clientId])
     },
-  );
-};
+  )
+}
 ```
 
 **Authentication Integration** (`packages/shared/src/auth/`):
@@ -623,7 +623,7 @@ const useClientSubscription = (clientId: string) => {
 ```typescript
 // Client data access control
 const useClientAccess = (clientId: string) => {
-  const { user, permissions } = useAuth();
+  const { user, permissions } = useAuth()
 
   return useMemo(
     () => ({
@@ -633,8 +633,8 @@ const useClientAccess = (clientId: string) => {
       isOwner: user?.id === client?.created_by,
     }),
     [user, permissions, client],
-  );
-};
+  )
+}
 ```
 
 **Analytics Integration** (`packages/utils/src/analytics/`):

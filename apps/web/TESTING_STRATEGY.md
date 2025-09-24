@@ -101,18 +101,18 @@ src/
 ```typescript
 describe('ComponentName', () => {
   it('should render with required props', () => {
-    render(<ComponentName prop='value' />);
-    expect(screen.getByText('value')).toBeInTheDocument();
-  });
+    render(<ComponentName prop='value' />)
+    expect(screen.getByText('value')).toBeInTheDocument()
+  })
 
   it('should handle user interactions', async () => {
-    const user = userEvent.setup();
-    render(<ComponentName />);
+    const user = userEvent.setup()
+    render(<ComponentName />)
 
-    await user.click(screen.getByRole('button'));
-    expect(screen.getByText('Expected Result')).toBeInTheDocument();
-  });
-});
+    await user.click(screen.getByRole('button'))
+    expect(screen.getByText('Expected Result')).toBeInTheDocument()
+  })
+})
 ```
 
 ### 3. Integration Testing
@@ -120,16 +120,16 @@ describe('ComponentName', () => {
 ```typescript
 describe('Feature Integration', () => {
   it('should complete user flow', async () => {
-    render(<FeatureComponent />);
+    render(<FeatureComponent />)
 
-    await userEvent.type(screen.getByLabelText('Email'), 'test@example.com');
-    await userEvent.click(screen.getByRole('button', { name: 'Submit' }));
+    await userEvent.type(screen.getByLabelText('Email'), 'test@example.com')
+    await userEvent.click(screen.getByRole('button', { name: 'Submit' }))
 
     await waitFor(() => {
-      expect(screen.getByText('Success')).toBeInTheDocument();
-    });
-  });
-});
+      expect(screen.getByText('Success')).toBeInTheDocument()
+    })
+  })
+})
 ```
 
 ### 4. E2E Testing
@@ -137,16 +137,16 @@ describe('Feature Integration', () => {
 ```typescript
 test.describe('User Journey', () => {
   test('should complete appointment booking', async ({ page }) => {
-    await page.goto('/');
-    await page.fill('[data-testid="email"]', 'test@example.com');
-    await page.click('[data-testid="login-button"]');
+    await page.goto('/')
+    await page.fill('[data-testid="email"]', 'test@example.com')
+    await page.click('[data-testid="login-button"]')
 
-    await expect(page).toHaveURL('/dashboard');
-    await page.click('[data-testid="new-appointment"]');
+    await expect(page).toHaveURL('/dashboard')
+    await page.click('[data-testid="new-appointment"]')
 
     // Complete appointment flow
-  });
-});
+  })
+})
 ```
 
 ## Test Data Management
@@ -165,7 +165,7 @@ export const generateMockPatient = (overrides = {}) => ({
   fullName: 'Test Patient',
   email: 'test@example.com',
   ...overrides,
-});
+})
 ```
 
 ## Performance Testing
@@ -245,27 +245,27 @@ test:
 ```typescript
 expect.extend({
   toBeValidEmail(received) {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const pass = emailRegex.test(received);
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    const pass = emailRegex.test(received)
     return {
       message: () => `expected ${received} to be a valid email`,
       pass,
-    };
+    }
   },
-});
+})
 ```
 
 ### Test Helpers
 
 ```typescript
 export const renderWithProviders = (ui: ReactElement) => {
-  const queryClient = new QueryClient();
+  const queryClient = new QueryClient()
   return render(
     <QueryClientProvider client={queryClient}>
       {ui}
     </QueryClientProvider>,
-  );
-};
+  )
+}
 ```
 
 ## Running Tests

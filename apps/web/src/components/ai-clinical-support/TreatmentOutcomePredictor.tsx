@@ -1,18 +1,18 @@
-'use client';
+'use client'
 
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
-import { Separator } from '@/components/ui/separator';
-import { Slider } from '@/components/ui/slider';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { api } from '@/lib/api';
-import { PredictionTimeline, TreatmentOutcomePrediction } from '@/types/ai-clinical-support';
-import { useQuery } from '@tanstack/react-query';
-import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Progress } from '@/components/ui/progress'
+import { Separator } from '@/components/ui/separator'
+import { Slider } from '@/components/ui/slider'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { api } from '@/lib/api'
+import { PredictionTimeline, TreatmentOutcomePrediction } from '@/types/ai-clinical-support'
+import { useQuery } from '@tanstack/react-query'
+import { format } from 'date-fns'
+import { ptBR } from 'date-fns/locale'
 import {
   Activity,
   AlertTriangle,
@@ -31,14 +31,14 @@ import {
   ThumbsUp,
   TrendingDown,
   TrendingUp,
-} from 'lucide-react';
-import React, { useEffect, useState } from 'react';
+} from 'lucide-react'
+import React, { useEffect, useState } from 'react'
 
 interface TreatmentOutcomePredictorProps {
-  patientId: string;
-  treatmentPlanId?: string;
-  procedureIds?: string[];
-  onPredictionUpdate?: (prediction: TreatmentOutcomePrediction) => void;
+  patientId: string
+  treatmentPlanId?: string
+  procedureIds?: string[]
+  onPredictionUpdate?: (prediction: TreatmentOutcomePrediction) => void
 }
 
 export function TreatmentOutcomePredictor({
@@ -47,10 +47,10 @@ export function TreatmentOutcomePredictor({
   procedureIds,
   onPredictionUpdate,
 }: TreatmentOutcomePredictorProps) {
-  const [timeHorizon, setTimeHorizon] = useState([6]); // months
-  const [confidenceThreshold, setConfidenceThreshold] = useState([0.7]);
-  const [_selectedMetric, _setSelectedMetric] = useState('overall');
-  const [activeTab, setActiveTab] = useState('predictions');
+  const [timeHorizon, setTimeHorizon] = useState([6]) // months
+  const [confidenceThreshold, setConfidenceThreshold] = useState([0.7])
+  const [_selectedMetric, _setSelectedMetric] = useState('overall')
+  const [activeTab, setActiveTab] = useState('predictions')
 
   // Fetch treatment outcome predictions
   const { data: prediction, isLoading, error, refetch } = useQuery({
@@ -69,62 +69,62 @@ export function TreatmentOutcomePredictor({
         timeHorizonMonths: timeHorizon[0],
         includeDetailedAnalysis: true,
         confidenceThreshold: confidenceThreshold[0],
-      });
+      })
     },
     enabled: !!patientId && (treatmentPlanId || procedureIds),
-  });
+  })
 
   useEffect(() => {
     if (prediction && onPredictionUpdate) {
-      onPredictionUpdate(prediction);
+      onPredictionUpdate(prediction)
     }
-  }, [prediction, onPredictionUpdate]);
+  }, [prediction, onPredictionUpdate])
 
   const getConfidenceColor = (score: number) => {
-    if (score >= 0.8) return 'text-green-600';
-    if (score >= 0.6) return 'text-yellow-600';
-    return 'text-red-600';
-  };
+    if (score >= 0.8) return 'text-green-600'
+    if (score >= 0.6) return 'text-yellow-600'
+    return 'text-red-600'
+  }
 
   const getConfidenceIcon = (score: number) => {
-    if (score >= 0.8) return <ThumbsUp className='h-4 w-4' />;
-    if (score >= 0.6) return <Meh className='h-4 w-4' />;
-    return <ThumbsDown className='h-4 w-4' />;
-  };
+    if (score >= 0.8) return <ThumbsUp className='h-4 w-4' />
+    if (score >= 0.6) return <Meh className='h-4 w-4' />
+    return <ThumbsDown className='h-4 w-4' />
+  }
 
   const getOutcomeIcon = (outcome: string) => {
     switch (outcome) {
       case 'excellent':
-        return <Star className='h-4 w-4 text-yellow-500' />;
+        return <Star className='h-4 w-4 text-yellow-500' />
       case 'good':
-        return <Smile className='h-4 w-4 text-green-500' />;
+        return <Smile className='h-4 w-4 text-green-500' />
       case 'moderate':
-        return <Meh className='h-4 w-4 text-yellow-500' />;
+        return <Meh className='h-4 w-4 text-yellow-500' />
       case 'poor':
-        return <Frown className='h-4 w-4 text-red-500' />;
+        return <Frown className='h-4 w-4 text-red-500' />
       default:
-        return <Activity className='h-4 w-4' />;
+        return <Activity className='h-4 w-4' />
     }
-  };
+  }
 
   const getOutcomeColor = (outcome: string) => {
     switch (outcome) {
       case 'excellent':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'bg-yellow-100 text-yellow-800'
       case 'good':
-        return 'bg-green-100 text-green-800';
+        return 'bg-green-100 text-green-800'
       case 'moderate':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'bg-yellow-100 text-yellow-800'
       case 'poor':
-        return 'bg-red-100 text-red-800';
+        return 'bg-red-100 text-red-800'
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-gray-100 text-gray-800'
     }
-  };
+  }
 
   const _formatDate = (date: Date) => {
-    return format(date, 'dd/MM/yyyy', { locale: ptBR });
-  };
+    return format(date, 'dd/MM/yyyy', { locale: ptBR })
+  }
 
   if (isLoading) {
     return (
@@ -134,7 +134,7 @@ export function TreatmentOutcomePredictor({
           <div className='h-32 bg-gray-200 rounded'></div>
         </div>
       </div>
-    );
+    )
   }
 
   if (error) {
@@ -146,7 +146,7 @@ export function TreatmentOutcomePredictor({
           Não foi possível gerar predições de tratamento. Por favor, tente novamente.
         </AlertDescription>
       </Alert>
-    );
+    )
   }
 
   if (!prediction) {
@@ -164,7 +164,7 @@ export function TreatmentOutcomePredictor({
           </div>
         </CardContent>
       </Card>
-    );
+    )
   }
 
   return (
@@ -327,7 +327,7 @@ export function TreatmentOutcomePredictor({
               </CardHeader>
               <CardContent>
                 <div className='space-y-4'>
-                  {prediction.outcomeProbabilities.map(outcome => (
+                  {prediction.outcomeProbabilities.map((outcome) => (
                     <div key={outcome.outcome} className='space-y-2'>
                       <div className='flex items-center justify-between'>
                         <div className='flex items-center gap-2'>
@@ -364,7 +364,7 @@ export function TreatmentOutcomePredictor({
               </CardHeader>
               <CardContent>
                 <div className='space-y-4'>
-                  {prediction.metrics.map(metric => (
+                  {prediction.metrics.map((metric) => (
                     <div key={metric.name} className='space-y-2'>
                       <div className='flex items-center justify-between'>
                         <span className='text-sm font-medium'>{metric.name}</span>
@@ -422,7 +422,7 @@ export function TreatmentOutcomePredictor({
               <CardContent>
                 <div className='space-y-3'>
                   {prediction.influencingFactors
-                    .filter(f => f.impact === 'positive')
+                    .filter((f) => f.impact === 'positive')
                     .map((factor, index) => (
                       <div key={index} className='flex items-start gap-3'>
                         <ThumbsUp className='h-4 w-4 text-green-500 mt-0.5 flex-shrink-0' />
@@ -449,7 +449,7 @@ export function TreatmentOutcomePredictor({
               <CardContent>
                 <div className='space-y-3'>
                   {prediction.influencingFactors
-                    .filter(f => f.impact === 'negative')
+                    .filter((f) => f.impact === 'negative')
                     .map((factor, index) => (
                       <div key={index} className='flex items-start gap-3'>
                         <ThumbsDown className='h-4 w-4 text-red-500 mt-0.5 flex-shrink-0' />
@@ -562,12 +562,12 @@ export function TreatmentOutcomePredictor({
         </TabsContent>
       </Tabs>
     </div>
-  );
+  )
 }
 
 interface TimelinePhaseProps {
-  phase: PredictionTimeline;
-  index: number;
+  phase: PredictionTimeline
+  index: number
 }
 
 function TimelinePhase({ phase, index }: TimelinePhaseProps) {
@@ -602,5 +602,5 @@ function TimelinePhase({ phase, index }: TimelinePhaseProps) {
         </div>
       </div>
     </div>
-  );
+  )
 }

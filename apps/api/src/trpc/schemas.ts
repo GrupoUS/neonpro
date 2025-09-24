@@ -3,13 +3,13 @@
  * Using Valibot for type-safe validation with Brazilian healthcare standards
  */
 
-import * as v from 'valibot';
+import * as v from 'valibot'
 
 // Brazilian CPF validation regex
-const CPF_REGEX = /^\d{3}\.\d{3}\.\d{3}-\d{2}$/;
+const CPF_REGEX = /^\d{3}\.\d{3}\.\d{3}-\d{2}$/
 
 // Brazilian phone validation regex
-const PHONE_REGEX = /^\(\d{2}\)\s\d{4,5}-\d{4}$/;
+const PHONE_REGEX = /^\(\d{2}\)\s\d{4,5}-\d{4}$/
 
 /**
  * Patient Creation Schema
@@ -78,19 +78,19 @@ export const CreatePatientSchema = v.object({
   // Communication preferences
   preferredContactMethod: v.optional(v.string()),
   communicationPreferences: v.optional(v.any()),
-}); /**
+}) /**
  * Patient Update Schema
  * Allows partial updates while maintaining validation
  */
 
-export const UpdatePatientSchema = v.partial(CreatePatientSchema);
+export const UpdatePatientSchema = v.partial(CreatePatientSchema)
 
 /**
  * Patient Query Schema
  */
 export const GetPatientSchema = v.object({
   id: v.string([v.uuid('Invalid patient ID format')]),
-});
+})
 
 /**
  * Patient List Schema
@@ -100,7 +100,7 @@ export const ListPatientsSchema = v.object({
   offset: v.optional(v.number([v.integer(), v.minValue(0)])),
   search: v.optional(v.string()),
   isActive: v.optional(v.boolean()),
-});
+})
 
 /**
  * Appointment Creation Schema
@@ -114,18 +114,18 @@ export const CreateAppointmentSchema = v.object({
   endTime: v.date(),
   notes: v.optional(v.string()),
   priority: v.optional(v.number([v.integer(), v.minValue(1), v.maxValue(5)])),
-}); /**
+}) /**
  * Appointment Update Schema
  */
 
-export const UpdateAppointmentSchema = v.partial(CreateAppointmentSchema);
+export const UpdateAppointmentSchema = v.partial(CreateAppointmentSchema)
 
 /**
  * Appointment Query Schema
  */
 export const GetAppointmentSchema = v.object({
   id: v.string([v.uuid('Invalid appointment ID format')]),
-});
+})
 
 /**
  * Appointment List Schema
@@ -138,7 +138,7 @@ export const ListAppointmentsSchema = v.object({
   status: v.optional(v.string()),
   startDate: v.optional(v.date()),
   endDate: v.optional(v.date()),
-});
+})
 
 /**
  * Aesthetic Scheduling Schema
@@ -172,7 +172,7 @@ export const ScheduleAestheticProceduresSchema = v.object({
     min: v.number([v.minValue(0, 'Minimum budget must be positive')]),
     max: v.number([v.minValue(0, 'Maximum budget must be positive')]),
   })),
-});
+})
 
 /**
  * Treatment Package Scheduling Schema
@@ -186,7 +186,7 @@ export const ScheduleTreatmentPackageSchema = v.object({
     timePreferences: v.optional(v.picklist(['morning', 'afternoon', 'evening'])),
     dayPreferences: v.array(v.string()),
   })),
-});
+})
 
 /**
  * Professional Certification Validation Schema
@@ -196,7 +196,7 @@ export const ValidateProfessionalCertificationsSchema = v.object({
   procedureIds: v.array(v.string([v.uuid('Invalid procedure ID')]), [
     v.minLength(1, 'At least one procedure is required'),
   ]),
-});
+})
 
 /**
  * Room Allocation Optimization Schema
@@ -209,7 +209,7 @@ export const OptimizeRoomAllocationSchema = v.object({
     endTime: v.date(),
     specialRequirements: v.array(v.string()),
   })),
-});
+})
 
 /**
  * Contraindication Check Schema
@@ -227,7 +227,7 @@ export const CheckContraindicationsSchema = v.object({
     contraindications: v.array(v.string()),
     pregnancyStatus: v.optional(v.picklist(['not_pregnant', 'pregnant', 'breastfeeding'])),
   })),
-});
+})
 
 /**
  * Duration Variable Factor Schema
@@ -237,7 +237,7 @@ export const DurationVariableFactorSchema = v.object({
   impact: v.picklist(['add_minutes', 'multiply_duration']),
   value: v.number([v.minValue(0, 'Factor value must be positive')]),
   description: v.string([v.minLength(1, 'Description is required')]),
-});
+})
 
 /**
  * Variable Duration Calculation Schema
@@ -245,7 +245,7 @@ export const DurationVariableFactorSchema = v.object({
 export const CalculateVariableDurationSchema = v.object({
   baseDuration: v.number([v.minValue(1, 'Base duration must be positive')]),
   factors: v.array(DurationVariableFactorSchema),
-});
+})
 
 /**
  * Get Aesthetic Procedures Schema
@@ -258,7 +258,7 @@ export const GetAestheticProceduresSchema = v.object({
   search: v.optional(v.string()),
   limit: v.optional(v.number([v.integer(), v.minValue(1), v.maxValue(100)])),
   offset: v.optional(v.number([v.integer(), v.minValue(0)])),
-});
+})
 
 /**
  * Get Treatment Packages Schema
@@ -270,7 +270,7 @@ export const GetTreatmentPackagesSchema = v.object({
   maxPrice: v.optional(v.number([v.minValue(0)])),
   limit: v.optional(v.number([v.integer(), v.minValue(1), v.maxValue(100)])),
   offset: v.optional(v.number([v.integer(), v.minValue(0)])),
-});
+})
 
 /**
  * Aesthetic Procedure Details Schema
@@ -291,7 +291,7 @@ export const AestheticProcedureDetailsSchema = v.object({
   sessionCount: v.number([v.minValue(1, 'Session count must be positive')]),
   intervalBetweenSessionsDays: v.number([v.minValue(0, 'Interval must be non-negative')]),
   specialRequirements: v.array(v.string()),
-});
+})
 
 /**
  * Treatment Package Details Schema
@@ -307,19 +307,19 @@ export const TreatmentPackageDetailsSchema = v.object({
   recoveryPeriodDays: v.number([v.minValue(0, 'Recovery period must be non-negative')]),
   recommendedIntervalWeeks: v.number([v.minValue(0, 'Interval must be non-negative')]),
   packageDiscount: v.number([v.minValue(0), v.maxValue(100, 'Discount must be between 0-100%')]),
-});
+})
 
 // Type exports for use in routers
-export type ScheduleAestheticProceduresInput = v.Input<typeof ScheduleAestheticProceduresSchema>;
-export type ScheduleTreatmentPackageInput = v.Input<typeof ScheduleTreatmentPackageSchema>;
+export type ScheduleAestheticProceduresInput = v.Input<typeof ScheduleAestheticProceduresSchema>
+export type ScheduleTreatmentPackageInput = v.Input<typeof ScheduleTreatmentPackageSchema>
 export type ValidateProfessionalCertificationsInput = v.Input<
   typeof ValidateProfessionalCertificationsSchema
->;
-export type OptimizeRoomAllocationInput = v.Input<typeof OptimizeRoomAllocationSchema>;
-export type CheckContraindicationsInput = v.Input<typeof CheckContraindicationsSchema>;
-export type CalculateVariableDurationInput = v.Input<typeof CalculateVariableDurationSchema>;
-export type GetAestheticProceduresInput = v.Input<typeof GetAestheticProceduresSchema>;
-export type GetTreatmentPackagesInput = v.Input<typeof GetTreatmentPackagesSchema>;
+>
+export type OptimizeRoomAllocationInput = v.Input<typeof OptimizeRoomAllocationSchema>
+export type CheckContraindicationsInput = v.Input<typeof CheckContraindicationsSchema>
+export type CalculateVariableDurationInput = v.Input<typeof CalculateVariableDurationSchema>
+export type GetAestheticProceduresInput = v.Input<typeof GetAestheticProceduresSchema>
+export type GetTreatmentPackagesInput = v.Input<typeof GetTreatmentPackagesSchema>
 
 /**
  * LGPD Consent Schema
@@ -332,18 +332,18 @@ export const CreateConsentSchema = v.object({
   dataCategories: v.array(v.string()),
   collectionMethod: v.string([v.minLength(1)]),
   evidence: v.optional(v.any()),
-});
+})
 
 // Type exports for use in routers
-export type CreatePatientInput = v.Input<typeof CreatePatientSchema>;
-export type UpdatePatientInput = v.Input<typeof UpdatePatientSchema>;
-export type GetPatientInput = v.Input<typeof GetPatientSchema>;
-export type ListPatientsInput = v.Input<typeof ListPatientsSchema>;
-export type CreateAppointmentInput = v.Input<typeof CreateAppointmentSchema>;
-export type UpdateAppointmentInput = v.Input<typeof UpdateAppointmentSchema>;
-export type GetAppointmentInput = v.Input<typeof GetAppointmentSchema>;
-export type ListAppointmentsInput = v.Input<typeof ListAppointmentsSchema>;
-export type CreateConsentInput = v.Input<typeof CreateConsentSchema>;
+export type CreatePatientInput = v.Input<typeof CreatePatientSchema>
+export type UpdatePatientInput = v.Input<typeof UpdatePatientSchema>
+export type GetPatientInput = v.Input<typeof GetPatientSchema>
+export type ListPatientsInput = v.Input<typeof ListPatientsSchema>
+export type CreateAppointmentInput = v.Input<typeof CreateAppointmentSchema>
+export type UpdateAppointmentInput = v.Input<typeof UpdateAppointmentSchema>
+export type GetAppointmentInput = v.Input<typeof GetAppointmentSchema>
+export type ListAppointmentsInput = v.Input<typeof ListAppointmentsSchema>
+export type CreateConsentInput = v.Input<typeof CreateConsentSchema>
 
 /**
  * Aesthetic Clinic Client Profile Schemas
@@ -381,19 +381,19 @@ export const CreateAestheticClientProfileSchema = v.object({
     phone: v.string([v.regex(PHONE_REGEX, 'Invalid phone format')]),
     relationship: v.string([v.minLength(1, 'Relationship is required')]),
   })),
-});
+})
 
 /**
  * Aesthetic Client Profile Update Schema
  */
-export const UpdateAestheticClientProfileSchema = v.partial(CreateAestheticClientProfileSchema);
+export const UpdateAestheticClientProfileSchema = v.partial(CreateAestheticClientProfileSchema)
 
 /**
  * Get Aesthetic Client Profile Schema
  */
 export const GetAestheticClientProfileSchema = v.object({
   id: v.string([v.uuid('Invalid client profile ID format')]),
-});
+})
 
 /**
  * Search Aesthetic Clients Schema
@@ -407,7 +407,7 @@ export const SearchAestheticClientsSchema = v.object({
   isActive: v.optional(v.boolean()),
   limit: v.optional(v.number([v.integer(), v.minValue(1), v.maxValue(100)])),
   offset: v.optional(v.number([v.integer(), v.minValue(0)])),
-});
+})
 
 /**
  * Aesthetic Treatment Catalog Schemas
@@ -435,19 +435,19 @@ export const CreateAestheticTreatmentSchema = v.object({
   anvisaRegistration: v.optional(v.string()),
   manufacturer: v.optional(v.string()),
   productCode: v.optional(v.string()),
-});
+})
 
 /**
  * Update Aesthetic Treatment Schema
  */
-export const UpdateAestheticTreatmentSchema = v.partial(CreateAestheticTreatmentSchema);
+export const UpdateAestheticTreatmentSchema = v.partial(CreateAestheticTreatmentSchema)
 
 /**
  * Get Aesthetic Treatment Schema
  */
 export const GetAestheticTreatmentSchema = v.object({
   id: v.string([v.uuid('Invalid treatment ID format')]),
-});
+})
 
 /**
  * Get Treatment Catalog Schema
@@ -463,7 +463,7 @@ export const GetTreatmentCatalogSchema = v.object({
   search: v.optional(v.string()),
   limit: v.optional(v.number([v.integer(), v.minValue(1), v.maxValue(100)])),
   offset: v.optional(v.number([v.integer(), v.minValue(0)])),
-});
+})
 
 /**
  * Aesthetic Session Management Schemas
@@ -488,19 +488,19 @@ export const CreateAestheticSessionSchema = v.object({
     readiness: v.picklist(['ready', 'needs_consultation', 'contraindicated']),
   })),
   status: v.optional(v.picklist(['scheduled', 'in_progress', 'completed', 'cancelled', 'no_show'])),
-});
+})
 
 /**
  * Update Aesthetic Session Schema
  */
-export const UpdateAestheticSessionSchema = v.partial(CreateAestheticSessionSchema);
+export const UpdateAestheticSessionSchema = v.partial(CreateAestheticSessionSchema)
 
 /**
  * Get Aesthetic Session Schema
  */
 export const GetAestheticSessionSchema = v.object({
   id: v.string([v.uuid('Invalid session ID format')]),
-});
+})
 
 /**
  * List Aesthetic Sessions Schema
@@ -514,7 +514,7 @@ export const ListAestheticSessionsSchema = v.object({
   endDate: v.optional(v.date()),
   limit: v.optional(v.number([v.integer(), v.minValue(1), v.maxValue(100)])),
   offset: v.optional(v.number([v.integer(), v.minValue(0)])),
-});
+})
 
 /**
  * Photo Assessment Schemas
@@ -547,19 +547,19 @@ export const CreatePhotoAssessmentSchema = v.object({
   followUpDate: v.optional(v.date()),
   professionalId: v.string([v.uuid('Invalid professional ID')]),
   consentForAnalysis: v.boolean([v.literal(true, 'Consent for photo analysis is required')]),
-});
+})
 
 /**
  * Update Photo Assessment Schema
  */
-export const UpdatePhotoAssessmentSchema = v.partial(CreatePhotoAssessmentSchema);
+export const UpdatePhotoAssessmentSchema = v.partial(CreatePhotoAssessmentSchema)
 
 /**
  * Get Photo Assessment Schema
  */
 export const GetPhotoAssessmentSchema = v.object({
   id: v.string([v.uuid('Invalid assessment ID format')]),
-});
+})
 
 /**
  * List Photo Assessments Schema
@@ -572,7 +572,7 @@ export const ListPhotoAssessmentsSchema = v.object({
   endDate: v.optional(v.date()),
   limit: v.optional(v.number([v.integer(), v.minValue(1), v.maxValue(100)])),
   offset: v.optional(v.number([v.integer(), v.minValue(0)])),
-});
+})
 
 /**
  * Treatment Planning Schemas
@@ -603,19 +603,19 @@ export const CreateTreatmentPlanSchema = v.object({
   specialInstructions: v.optional(v.array(v.string())),
   professionalId: v.string([v.uuid('Invalid professional ID')]),
   status: v.optional(v.picklist(['draft', 'active', 'completed', 'paused', 'cancelled'])),
-});
+})
 
 /**
  * Update Treatment Plan Schema
  */
-export const UpdateTreatmentPlanSchema = v.partial(CreateTreatmentPlanSchema);
+export const UpdateTreatmentPlanSchema = v.partial(CreateTreatmentPlanSchema)
 
 /**
  * Get Treatment Plan Schema
  */
 export const GetTreatmentPlanSchema = v.object({
   id: v.string([v.uuid('Invalid treatment plan ID format')]),
-});
+})
 
 /**
  * Get Treatment Plans by Client Schema
@@ -625,7 +625,7 @@ export const GetTreatmentPlansByClientSchema = v.object({
   status: v.optional(v.picklist(['draft', 'active', 'completed', 'paused', 'cancelled'])),
   limit: v.optional(v.number([v.integer(), v.minValue(1), v.maxValue(100)])),
   offset: v.optional(v.number([v.integer(), v.minValue(0)])),
-});
+})
 
 /**
  * Financial Transaction Schemas
@@ -656,19 +656,19 @@ export const CreateFinancialTransactionSchema = v.object({
   status: v.optional(v.picklist(['pending', 'completed', 'failed', 'refunded', 'cancelled'])),
   notes: v.optional(v.string()),
   professionalId: v.string([v.uuid('Invalid professional ID')]),
-});
+})
 
 /**
  * Update Financial Transaction Schema
  */
-export const UpdateFinancialTransactionSchema = v.partial(CreateFinancialTransactionSchema);
+export const UpdateFinancialTransactionSchema = v.partial(CreateFinancialTransactionSchema)
 
 /**
  * Get Financial Transaction Schema
  */
 export const GetFinancialTransactionSchema = v.object({
   id: v.string([v.uuid('Invalid transaction ID format')]),
-});
+})
 
 /**
  * List Financial Transactions Schema
@@ -682,7 +682,7 @@ export const ListFinancialTransactionsSchema = v.object({
   endDate: v.optional(v.date()),
   limit: v.optional(v.number([v.integer(), v.minValue(1), v.maxValue(100)])),
   offset: v.optional(v.number([v.integer(), v.minValue(0)])),
-});
+})
 
 /**
  * Client Analytics Schemas
@@ -696,7 +696,7 @@ export const GetClientRetentionMetricsSchema = v.object({
   endDate: v.date(),
   groupBy: v.optional(v.picklist(['month', 'quarter', 'year'])),
   segmentBy: v.optional(v.picklist(['treatment_type', 'spending_level', 'visit_frequency'])),
-});
+})
 
 /**
  * Get Revenue Analytics Schema
@@ -707,7 +707,7 @@ export const GetRevenueAnalyticsSchema = v.object({
   groupBy: v.optional(v.picklist(['day', 'week', 'month', 'quarter'])),
   category: v.optional(v.string()),
   professionalId: v.optional(v.string([v.uuid('Invalid professional ID')])),
-});
+})
 
 /**
  * Get Predictive Analytics Schema
@@ -717,33 +717,33 @@ export const GetPredictiveAnalyticsSchema = v.object({
   modelType: v.optional(
     v.picklist(['retention', 'spending', 'treatment_completion', 'satisfaction']),
   ),
-});
+})
 
 // Type exports for use in routers
-export type CreateAestheticClientProfileInput = v.Input<typeof CreateAestheticClientProfileSchema>;
-export type UpdateAestheticClientProfileInput = v.Input<typeof UpdateAestheticClientProfileSchema>;
-export type GetAestheticClientProfileInput = v.Input<typeof GetAestheticClientProfileSchema>;
-export type SearchAestheticClientsInput = v.Input<typeof SearchAestheticClientsSchema>;
-export type CreateAestheticTreatmentInput = v.Input<typeof CreateAestheticTreatmentSchema>;
-export type UpdateAestheticTreatmentInput = v.Input<typeof UpdateAestheticTreatmentSchema>;
-export type GetAestheticTreatmentInput = v.Input<typeof GetAestheticTreatmentSchema>;
-export type GetTreatmentCatalogInput = v.Input<typeof GetTreatmentCatalogSchema>;
-export type CreateAestheticSessionInput = v.Input<typeof CreateAestheticSessionSchema>;
-export type UpdateAestheticSessionInput = v.Input<typeof UpdateAestheticSessionSchema>;
-export type GetAestheticSessionInput = v.Input<typeof GetAestheticSessionSchema>;
-export type ListAestheticSessionsInput = v.Input<typeof ListAestheticSessionsSchema>;
-export type CreatePhotoAssessmentInput = v.Input<typeof CreatePhotoAssessmentSchema>;
-export type UpdatePhotoAssessmentInput = v.Input<typeof UpdatePhotoAssessmentSchema>;
-export type GetPhotoAssessmentInput = v.Input<typeof GetPhotoAssessmentSchema>;
-export type ListPhotoAssessmentsInput = v.Input<typeof ListPhotoAssessmentsSchema>;
-export type CreateTreatmentPlanInput = v.Input<typeof CreateTreatmentPlanSchema>;
-export type UpdateTreatmentPlanInput = v.Input<typeof UpdateTreatmentPlanSchema>;
-export type GetTreatmentPlanInput = v.Input<typeof GetTreatmentPlanSchema>;
-export type GetTreatmentPlansByClientInput = v.Input<typeof GetTreatmentPlansByClientSchema>;
-export type CreateFinancialTransactionInput = v.Input<typeof CreateFinancialTransactionSchema>;
-export type UpdateFinancialTransactionInput = v.Input<typeof UpdateFinancialTransactionSchema>;
-export type GetFinancialTransactionInput = v.Input<typeof GetFinancialTransactionSchema>;
-export type ListFinancialTransactionsInput = v.Input<typeof ListFinancialTransactionsSchema>;
-export type GetClientRetentionMetricsInput = v.Input<typeof GetClientRetentionMetricsSchema>;
-export type GetRevenueAnalyticsInput = v.Input<typeof GetRevenueAnalyticsSchema>;
-export type GetPredictiveAnalyticsInput = v.Input<typeof GetPredictiveAnalyticsSchema>;
+export type CreateAestheticClientProfileInput = v.Input<typeof CreateAestheticClientProfileSchema>
+export type UpdateAestheticClientProfileInput = v.Input<typeof UpdateAestheticClientProfileSchema>
+export type GetAestheticClientProfileInput = v.Input<typeof GetAestheticClientProfileSchema>
+export type SearchAestheticClientsInput = v.Input<typeof SearchAestheticClientsSchema>
+export type CreateAestheticTreatmentInput = v.Input<typeof CreateAestheticTreatmentSchema>
+export type UpdateAestheticTreatmentInput = v.Input<typeof UpdateAestheticTreatmentSchema>
+export type GetAestheticTreatmentInput = v.Input<typeof GetAestheticTreatmentSchema>
+export type GetTreatmentCatalogInput = v.Input<typeof GetTreatmentCatalogSchema>
+export type CreateAestheticSessionInput = v.Input<typeof CreateAestheticSessionSchema>
+export type UpdateAestheticSessionInput = v.Input<typeof UpdateAestheticSessionSchema>
+export type GetAestheticSessionInput = v.Input<typeof GetAestheticSessionSchema>
+export type ListAestheticSessionsInput = v.Input<typeof ListAestheticSessionsSchema>
+export type CreatePhotoAssessmentInput = v.Input<typeof CreatePhotoAssessmentSchema>
+export type UpdatePhotoAssessmentInput = v.Input<typeof UpdatePhotoAssessmentSchema>
+export type GetPhotoAssessmentInput = v.Input<typeof GetPhotoAssessmentSchema>
+export type ListPhotoAssessmentsInput = v.Input<typeof ListPhotoAssessmentsSchema>
+export type CreateTreatmentPlanInput = v.Input<typeof CreateTreatmentPlanSchema>
+export type UpdateTreatmentPlanInput = v.Input<typeof UpdateTreatmentPlanSchema>
+export type GetTreatmentPlanInput = v.Input<typeof GetTreatmentPlanSchema>
+export type GetTreatmentPlansByClientInput = v.Input<typeof GetTreatmentPlansByClientSchema>
+export type CreateFinancialTransactionInput = v.Input<typeof CreateFinancialTransactionSchema>
+export type UpdateFinancialTransactionInput = v.Input<typeof UpdateFinancialTransactionSchema>
+export type GetFinancialTransactionInput = v.Input<typeof GetFinancialTransactionSchema>
+export type ListFinancialTransactionsInput = v.Input<typeof ListFinancialTransactionsSchema>
+export type GetClientRetentionMetricsInput = v.Input<typeof GetClientRetentionMetricsSchema>
+export type GetRevenueAnalyticsInput = v.Input<typeof GetRevenueAnalyticsSchema>
+export type GetPredictiveAnalyticsInput = v.Input<typeof GetPredictiveAnalyticsSchema>

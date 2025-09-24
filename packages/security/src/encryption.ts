@@ -4,23 +4,23 @@
  * @version 1.0.0
  */
 
-import * as crypto from 'crypto';
+import * as crypto from 'crypto'
 
 /**
  * Encryption Manager for handling sensitive data encryption/decryption
  * Implements AES-256-CBC for secure encryption
  */
 export class EncryptionManager {
-  private algorithm = 'aes-256-cbc';
-  private keyLength = 32; // 256 bits
-  private ivLength = 16; // 128 bits for CBC
+  private algorithm = 'aes-256-cbc'
+  private keyLength = 32 // 256 bits
+  private ivLength = 16 // 128 bits for CBC
 
   /**
    * Generate a secure random encryption key
    * @returns Base64 encoded encryption key
    */
   generateKey(): string {
-    return crypto.randomBytes(this.keyLength).toString('base64');
+    return crypto.randomBytes(this.keyLength).toString('base64')
   }
 
   /**
@@ -30,10 +30,10 @@ export class EncryptionManager {
    */
   validateKey(key: string): boolean {
     try {
-      const buffer = Buffer.from(key, 'base64');
-      return buffer.length === this.keyLength;
+      const buffer = Buffer.from(key, 'base64')
+      return buffer.length === this.keyLength
     } catch {
-      return false;
+      return false
     }
   }
 
@@ -45,28 +45,28 @@ export class EncryptionManager {
    */
   encryptData(data: string, key: string): string {
     if (!this.validateKey(key)) {
-      throw new Error('Invalid encryption key');
+      throw new Error('Invalid encryption key')
     }
 
-    const iv = crypto.randomBytes(this.ivLength);
+    const iv = crypto.randomBytes(this.ivLength)
 
     try {
       const cipher = crypto.createCipheriv(
         this.algorithm,
         Buffer.from(key, 'base64'),
         iv,
-      );
+      )
 
-      let encrypted = cipher.update(data, 'utf8', 'binary');
-      encrypted += cipher.final('binary');
+      let encrypted = cipher.update(data, 'utf8', 'binary')
+      encrypted += cipher.final('binary')
 
       // Combine IV + encrypted data and encode as base64
-      const combined = Buffer.concat([iv, Buffer.from(encrypted, 'binary')]);
-      return combined.toString('base64');
+      const combined = Buffer.concat([iv, Buffer.from(encrypted, 'binary')])
+      return combined.toString('base64')
     } catch (error) {
       throw new Error(
         `Encryption failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
-      );
+      )
     }
   }
 
@@ -78,28 +78,28 @@ export class EncryptionManager {
    */
   decryptData(encryptedData: string, key: string): string {
     if (!this.validateKey(key)) {
-      throw new Error('Invalid decryption key');
+      throw new Error('Invalid decryption key')
     }
 
     try {
-      const combined = Buffer.from(encryptedData, 'base64');
+      const combined = Buffer.from(encryptedData, 'base64')
 
       // Extract IV (first 16 bytes) and encrypted data (rest)
-      const iv = combined.subarray(0, this.ivLength);
-      const encrypted = combined.subarray(this.ivLength);
+      const iv = combined.subarray(0, this.ivLength)
+      const encrypted = combined.subarray(this.ivLength)
 
       const decipher = crypto.createDecipheriv(
         this.algorithm,
         Buffer.from(key, 'base64'),
         iv,
-      );
+      )
 
-      let decrypted = decipher.update(encrypted, 'binary', 'utf8');
-      decrypted += decipher.final('utf8');
+      let decrypted = decipher.update(encrypted, 'binary', 'utf8')
+      decrypted += decipher.final('utf8')
 
-      return decrypted;
+      return decrypted
     } catch (error) {
-      throw new Error('Invalid encrypted data');
+      throw new Error('Invalid encrypted data')
     }
   }
 
@@ -111,28 +111,28 @@ export class EncryptionManager {
    */
   decryptDataWithKeyError(encryptedData: string, key: string): string {
     if (!this.validateKey(key)) {
-      throw new Error('Invalid decryption key');
+      throw new Error('Invalid decryption key')
     }
 
     try {
-      const combined = Buffer.from(encryptedData, 'base64');
+      const combined = Buffer.from(encryptedData, 'base64')
 
       // Extract IV (first 16 bytes) and encrypted data (rest)
-      const iv = combined.subarray(0, this.ivLength);
-      const encrypted = combined.subarray(this.ivLength);
+      const iv = combined.subarray(0, this.ivLength)
+      const encrypted = combined.subarray(this.ivLength)
 
       const decipher = crypto.createDecipheriv(
         this.algorithm,
         Buffer.from(key, 'base64'),
         iv,
-      );
+      )
 
-      let decrypted = decipher.update(encrypted, 'binary', 'utf8');
-      decrypted += decipher.final('utf8');
+      let decrypted = decipher.update(encrypted, 'binary', 'utf8')
+      decrypted += decipher.final('utf8')
 
-      return decrypted;
+      return decrypted
     } catch (error) {
-      throw new Error('Invalid encrypted data');
+      throw new Error('Invalid encrypted data')
     }
   }
 
@@ -148,18 +148,18 @@ export class EncryptionManager {
     key: string,
     sensitiveFields: string[],
   ): T {
-    const result = { ...obj } as T;
+    const result = { ...obj } as T
 
     for (const field of sensitiveFields) {
       if (result[field] && typeof result[field] === 'string') {
-        (result as Record<string, unknown>)[field] = this.encryptData(
+        ;(result as Record<string, unknown>)[field] = this.encryptData(
           result[field] as string,
           key,
-        );
+        )
       }
     }
 
-    return result;
+    return result
   }
 
   /**
@@ -174,24 +174,24 @@ export class EncryptionManager {
     key: string,
     sensitiveFields: string[],
   ): T {
-    const result = { ...obj } as T;
+    const result = { ...obj } as T
 
     for (const field of sensitiveFields) {
       if (result[field] && typeof result[field] === 'string') {
         try {
-          (result as Record<string, unknown>)[field] = this.decryptData(
+          ;(result as Record<string, unknown>)[field] = this.decryptData(
             result[field] as string,
             key,
-          );
+          )
         } catch (error) {
           // Field might not be encrypted, leave as is
-          void error;
+          void error
           // Note: Decryption failures are expected for non-encrypted fields
         }
       }
     }
 
-    return result;
+    return result
   }
 
   /**
@@ -200,7 +200,7 @@ export class EncryptionManager {
    * @returns SHA-256 hash of the data
    */
   hashData(data: string): string {
-    return crypto.createHash('sha256').update(data, 'utf8').digest('hex');
+    return crypto.createHash('sha256').update(data, 'utf8').digest('hex')
   }
 
   /**
@@ -210,7 +210,7 @@ export class EncryptionManager {
    * @returns True if the plaintext matches the hash
    */
   compareHash(plaintext: string, hash: string): boolean {
-    return this.hashData(plaintext) === hash;
+    return this.hashData(plaintext) === hash
   }
 }
 
@@ -218,18 +218,18 @@ export class EncryptionManager {
  * Key management utilities for secure key storage and rotation
  */
 export class KeyManager {
-  private static instance: KeyManager;
-  private keys: Map<string, string> = new Map();
-  private keyMetadata: Map<string, { createdAt: Date; expiresAt?: Date }> = new Map();
+  private static instance: KeyManager
+  private keys: Map<string, string> = new Map()
+  private keyMetadata: Map<string, { createdAt: Date; expiresAt?: Date }> = new Map()
 
   /**
    * Get singleton instance of KeyManager
    */
   static getInstance(): KeyManager {
     if (!KeyManager.instance) {
-      KeyManager.instance = new KeyManager();
+      KeyManager.instance = new KeyManager()
     }
-    return KeyManager.instance;
+    return KeyManager.instance
   }
 
   /**
@@ -239,11 +239,11 @@ export class KeyManager {
    * @param expiresAt Optional expiration date
    */
   storeKey(keyId: string, key: string, expiresAt?: Date): void {
-    this.keys.set(keyId, key);
+    this.keys.set(keyId, key)
     this.keyMetadata.set(keyId, {
       createdAt: new Date(),
       expiresAt,
-    });
+    })
   }
 
   /**
@@ -252,21 +252,21 @@ export class KeyManager {
    * @returns The key value or null if not found/expired
    */
   getKey(keyId: string): string | null {
-    const key = this.keys.get(keyId);
-    const metadata = this.keyMetadata.get(keyId);
+    const key = this.keys.get(keyId)
+    const metadata = this.keyMetadata.get(keyId)
 
     if (!key || !metadata) {
-      return null;
+      return null
     }
 
     // Check if key has expired
     if (metadata.expiresAt && new Date() > metadata.expiresAt) {
-      this.keys.delete(keyId);
-      this.keyMetadata.delete(keyId);
-      return null;
+      this.keys.delete(keyId)
+      this.keyMetadata.delete(keyId)
+      return null
     }
 
-    return key;
+    return key
   }
 
   /**
@@ -274,8 +274,8 @@ export class KeyManager {
    * @param keyId The key identifier
    */
   removeKey(keyId: string): void {
-    this.keys.delete(keyId);
-    this.keyMetadata.delete(keyId);
+    this.keys.delete(keyId)
+    this.keyMetadata.delete(keyId)
   }
 
   /**
@@ -283,7 +283,7 @@ export class KeyManager {
    * @returns Array of key identifiers
    */
   listKeys(): string[] {
-    return Array.from(this.keys.keys());
+    return Array.from(this.keys.keys())
   }
 
   /**
@@ -293,35 +293,35 @@ export class KeyManager {
    * @returns The new key value
    */
   rotateKey(keyId: string, ttl: number = 3600): string {
-    const oldKey = this.getKey(keyId);
-    const encryptionManager = new EncryptionManager();
-    const newKey = encryptionManager.generateKey();
+    const oldKey = this.getKey(keyId)
+    const encryptionManager = new EncryptionManager()
+    const newKey = encryptionManager.generateKey()
 
     // Store new key
-    this.storeKey(keyId, newKey);
+    this.storeKey(keyId, newKey)
 
     // Keep old key for TTL period
     if (oldKey) {
-      const expiresAt = new Date(Date.now() + ttl * 1000);
-      this.storeKey(`${keyId}_old`, oldKey, expiresAt);
+      const expiresAt = new Date(Date.now() + ttl * 1000)
+      this.storeKey(`${keyId}_old`, oldKey, expiresAt)
     }
 
-    return newKey;
+    return newKey
   }
 
   /**
    * Clean up expired keys
    */
   cleanup(): void {
-    const now = new Date();
+    const now = new Date()
     this.keyMetadata.forEach((metadata, keyId) => {
       if (metadata.expiresAt && now > metadata.expiresAt) {
-        this.removeKey(keyId);
+        this.removeKey(keyId)
       }
-    });
+    })
   }
 }
 
 // Export singleton instances
-export const encryptionManager = new EncryptionManager();
-export const keyManager = KeyManager.getInstance();
+export const encryptionManager = new EncryptionManager()
+export const keyManager = KeyManager.getInstance()

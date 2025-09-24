@@ -199,10 +199,10 @@ src/
 
 ```typescript
 // Custom matchers for Brazilian data protection
-expect(patientData).toBeLGPDCompliant();
-expect(email).toBeRedacted();
-expect(cpf).toHaveValidCPF();
-expect(phone).toMatchBrazilianPhoneFormat();
+expect(patientData).toBeLGPDCompliant()
+expect(email).toBeRedacted()
+expect(cpf).toHaveValidCPF()
+expect(phone).toMatchBrazilianPhoneFormat()
 ```
 
 #### **Healthcare Workflow Testing**
@@ -212,12 +212,12 @@ expect(phone).toMatchBrazilianPhoneFormat();
 describe('Patient Registration Flow', () => {
   it('should register patient with LGPD consent', async () => {
     // Complete patient registration with compliance validation
-  });
+  })
 
   it('should handle AI risk assessment for appointments', async () => {
     // Anti-No-Show Engine integration testing
-  });
-});
+  })
+})
 ```
 
 #### **WhatsApp Integration Testing**
@@ -227,8 +227,8 @@ describe('Patient Registration Flow', () => {
 describe('WhatsApp Notifications', () => {
   it('should send appointment confirmation via WhatsApp', async () => {
     // Real-time communication flow testing
-  });
-});
+  })
+})
 ```
 
 ---

@@ -6,7 +6,7 @@
  * @compliance LGPD, ANVISA SaMD, Healthcare Standards
  */
 
-import { z } from 'zod';
+import { z } from 'zod'
 
 // Enhanced log levels mapping to Winston levels
 export const WinstonLogLevelSchema = z.enum([
@@ -17,9 +17,9 @@ export const WinstonLogLevelSchema = z.enum([
   'verbose', // Winston verbose level
   'debug', // Winston debug level
   'silly', // Winston silly level
-]);
+])
 
-export type WinstonLogLevel = z.infer<typeof WinstonLogLevelSchema>;
+export type WinstonLogLevel = z.infer<typeof WinstonLogLevelSchema>
 
 // Healthcare-specific severity levels mapped to Winston levels
 export const HealthcareSeveritySchema = z.enum([
@@ -31,9 +31,9 @@ export const HealthcareSeveritySchema = z.enum([
   'critical', // Critical conditions requiring immediate attention (winston: error)
   'alert', // Action must be taken immediately (patient safety) (winston: error)
   'emergency', // System is unusable (life-critical scenarios) (winston: error)
-]);
+])
 
-export type HealthcareSeverity = z.infer<typeof HealthcareSeveritySchema>;
+export type HealthcareSeverity = z.infer<typeof HealthcareSeveritySchema>
 
 // Brazilian PII identifier patterns
 export const BrazilianIdentifierSchema = z.object({
@@ -41,9 +41,9 @@ export const BrazilianIdentifierSchema = z.object({
   value: z.string(),
   masked: z.string(),
   isValid: z.boolean(),
-});
+})
 
-export type BrazilianIdentifier = z.infer<typeof BrazilianIdentifierSchema>;
+export type BrazilianIdentifier = z.infer<typeof BrazilianIdentifierSchema>
 
 // Enhanced healthcare context with Brazilian compliance
 export const BrazilianHealthcareContextSchema = z.object({
@@ -129,11 +129,11 @@ export const BrazilianHealthcareContextSchema = z.object({
       hasExplicitConsent: z.boolean().optional(),
     })
     .optional(),
-});
+})
 
 export type BrazilianHealthcareContext = z.infer<
   typeof BrazilianHealthcareContextSchema
->;
+>
 
 // Enhanced LGPD compliance metadata
 export const EnhancedLGPDComplianceSchema = z.object({
@@ -163,11 +163,11 @@ export const EnhancedLGPDComplianceSchema = z.object({
   brazilianIdentifiers: z.array(BrazilianIdentifierSchema).optional(),
   dataMinimizationApplied: z.boolean(),
   purposeLimitation: z.string().optional(),
-});
+})
 
 export type EnhancedLGPDCompliance = z.infer<
   typeof EnhancedLGPDComplianceSchema
->;
+>
 
 // Winston-compatible log entry
 export const WinstonLogEntrySchema = z.object({
@@ -215,9 +215,9 @@ export const WinstonLogEntrySchema = z.object({
   // Additional fields
   tags: z.array(z.string()).optional(),
   source: z.string().optional(),
-});
+})
 
-export type WinstonLogEntry = z.infer<typeof WinstonLogEntrySchema>;
+export type WinstonLogEntry = z.infer<typeof WinstonLogEntrySchema>
 
 // Winston transport configuration
 export const WinstonTransportConfigSchema = z.object({
@@ -261,11 +261,11 @@ export const WinstonTransportConfigSchema = z.object({
       maxFiles: z.string().default('14d'),
     })
     .optional(),
-});
+})
 
 export type WinstonTransportConfig = z.infer<
   typeof WinstonTransportConfigSchema
->;
+>
 
 // Main configuration schema
 export const EnhancedStructuredLoggingConfigSchema = z.object({
@@ -325,8 +325,8 @@ export const EnhancedStructuredLoggingConfigSchema = z.object({
       showLevel: z.boolean().default(true),
     })
     .default({}),
-});
+})
 
 export type EnhancedStructuredLoggingConfig = z.infer<
   typeof EnhancedStructuredLoggingConfigSchema
->;
+>

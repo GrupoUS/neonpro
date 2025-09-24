@@ -1,22 +1,22 @@
-import { Hono } from 'hono';
-import { prisma } from '../lib/prisma';
-import { dataProtection } from '../middleware/lgpd-middleware';
-import { ok, serverError } from '../utils/responses';
+import { Hono } from 'hono'
+import { prisma } from '../lib/prisma'
+import { dataProtection } from '../middleware/lgpd-middleware'
+import { ok, serverError } from '../utils/responses'
 
-import { requireAuth } from '../middleware/authn';
+import { requireAuth } from '../middleware/authn'
 
-const appointments = new Hono();
+const appointments = new Hono()
 
 // Apply data protection to all appointment routes
-appointments.use('*', requireAuth);
-appointments.use('*', dataProtection.appointments);
+appointments.use('*', requireAuth)
+appointments.use('*', dataProtection.appointments)
 
 // Get all appointments (with LGPD consent validation and multi-tenant scoping)
-appointments.get('/', async c => {
+appointments.get('/', async (c) => {
   try {
-    const clinicId = c.get('clinicId');
+    const clinicId = c.get('clinicId')
     if (!clinicId) {
-      return c.json({ error: 'Clinic ID required' }, 400);
+      return c.json({ error: 'Clinic ID required' }, 400)
     }
 
     const items = await prisma.appointment.findMany({
@@ -52,25 +52,25 @@ appointments.get('/', async c => {
           isActive: true,
         },
       },
-    });
-    return ok(c, { items });
+    })
+    return ok(c, { items })
   } catch {
-    console.error('Error fetching appointments:', error);
+    console.error('Error fetching appointments:', error)
     return serverError(
       c,
       'Failed to fetch appointments',
       error instanceof Error ? error : undefined,
-    );
+    )
   }
-});
+})
 
 // Get appointments for a specific patient (with LGPD consent validation and multi-tenant scoping)
-appointments.get('/patient/:patientId', async c => {
+appointments.get('/patient/:patientId', async (c) => {
   try {
-    const patientId = c.req.param('patientId');
-    const clinicId = c.get('clinicId');
+    const patientId = c.req.param('patientId')
+    const clinicId = c.get('clinicId')
     if (!clinicId) {
-      return c.json({ error: 'Clinic ID required' }, 400);
+      return c.json({ error: 'Clinic ID required' }, 400)
     }
 
     const items = await prisma.appointment.findMany({
@@ -96,21 +96,21 @@ appointments.get('/patient/:patientId', async c => {
           },
         },
       },
-    });
+    })
 
-    return ok(c, { items });
+    return ok(c, { items })
   } catch {
-    console.error('Error fetching patient appointments:', error);
+    console.error('Error fetching patient appointments:', error)
     return serverError(
       c,
       'Failed to fetch patient appointments',
       error instanceof Error ? error : undefined,
-    );
+    )
   }
-});
+})
 
-import { zValidator } from '@hono/zod-validator';
-import { badRequest, created, notFound } from '../utils/responses';
+import { zValidator } from '@hono/zod-validator'
+import { badRequest, created, notFound } from '../utils/responses'
 
 // Schemas
 const AppointmentCreateSchema = z.object({
@@ -122,32 +122,32 @@ const AppointmentCreateSchema = z.object({
   status: z
     .enum(['scheduled', 'confirmed', 'completed', 'cancelled'])
     .default('scheduled'),
-});
+})
 
 const AppointmentUpdateSchema = AppointmentCreateSchema.partial().extend({
   id: z.string().uuid(),
-});
+})
 
 // Conflict detection helper
 // moved to utils/appointments
-import { hasConflict } from '../utils/appointments';
+import { hasConflict } from '../utils/appointments'
 
 // Create appointment
 appointments.post(
   '/',
   zValidator('json', AppointmentCreateSchema),
-  async c => {
-    const _data = c.req.valid('json');
+  async (c) => {
+    const _data = c.req.valid('json')
     try {
-      const startTime = new Date(data.startTime);
-      const endTime = new Date(data.endTime);
+      const startTime = new Date(data.startTime)
+      const endTime = new Date(data.endTime)
 
       if (endTime <= startTime) {
         return badRequest(
           c,
           'INVALID_TIME_RANGE',
           'endTime must be after startTime',
-        );
+        )
       }
 
       const conflict = await hasConflict({
@@ -155,13 +155,13 @@ appointments.post(
         professionalId: data.professionalId,
         startTime,
         endTime,
-      });
+      })
       if (conflict) {
         return badRequest(
           c,
           'APPOINTMENT_CONFLICT',
           'Time slot overlaps an existing appointment',
-        );
+        )
       }
 
       const appt = await prisma.appointment.create({
@@ -170,46 +170,46 @@ appointments.post(
           startTime,
           endTime,
         },
-      });
+      })
 
-      return created(c, appt);
+      return created(c, appt)
     } catch {
-      console.error('Error creating appointment:', error);
+      console.error('Error creating appointment:', error)
       return serverError(
         c,
         'Failed to create appointment',
         error instanceof Error ? error : undefined,
-      );
+      )
     }
   },
-);
+)
 
 // Update appointment
 appointments.put(
   '/:id',
   zValidator('json', AppointmentUpdateSchema),
-  async c => {
-    const id = c.req.param('id');
-    const payload = c.req.valid('json');
+  async (c) => {
+    const id = c.req.param('id')
+    const payload = c.req.valid('json')
     try {
-      const existing = await prisma.appointment.findUnique({ where: { id } });
+      const existing = await prisma.appointment.findUnique({ where: { id } })
       if (!existing) {
-        return notFound(c, 'Appointment not found');
+        return notFound(c, 'Appointment not found')
       }
 
       const startTime = payload.startTime
         ? new Date(payload.startTime)
-        : existing.startTime;
+        : existing.startTime
       const endTime = payload.endTime
         ? new Date(payload.endTime)
-        : existing.endTime;
+        : existing.endTime
 
       if (endTime <= startTime) {
         return badRequest(
           c,
           'INVALID_TIME_RANGE',
           'endTime must be after startTime',
-        );
+        )
       }
 
       const conflict = await hasConflict({
@@ -218,13 +218,13 @@ appointments.put(
         startTime,
         endTime,
         excludeId: id,
-      });
+      })
       if (conflict) {
         return badRequest(
           c,
           'APPOINTMENT_CONFLICT',
           'Time slot overlaps an existing appointment',
-        );
+        )
       }
 
       const appt = await prisma.appointment.update({
@@ -234,18 +234,18 @@ appointments.put(
           startTime,
           endTime,
         },
-      });
+      })
 
-      return ok(c, appt);
+      return ok(c, appt)
     } catch {
-      console.error('Error updating appointment:', error);
+      console.error('Error updating appointment:', error)
       return serverError(
         c,
         'Failed to update appointment',
         error instanceof Error ? error : undefined,
-      );
+      )
     }
   },
-);
+)
 
-export default appointments;
+export default appointments

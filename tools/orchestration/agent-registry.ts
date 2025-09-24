@@ -10,4 +10,4 @@ export {
   type OrchestrationContext,
   TDDAgentRegistry,
   type TDDPhase,
-} from './src/agent-registry';
+} from './src/agent-registry'

@@ -9,7 +9,7 @@ export const AESTHETIC_PURPOSES = {
   BILLING_AND_PAYMENT: 'billing_and_payment',
   COMMUNICATION: 'communication',
   MARKETING: 'marketing',
-} as const;
+} as const
 
 export const CLIENT_DATA_CATEGORIES = {
   // Basic client data categories
@@ -19,8 +19,8 @@ export const CLIENT_DATA_CATEGORIES = {
   BILLING_INFO: 'billing_info', // Payment data
   PHOTOS: 'photos', // Before/after photos
   PREFERENCES: 'preferences', // Communication preferences
-} as const;
+} as const
 
-export type AestheticPurpose = (typeof AESTHETIC_PURPOSES)[keyof typeof AESTHETIC_PURPOSES];
+export type AestheticPurpose = (typeof AESTHETIC_PURPOSES)[keyof typeof AESTHETIC_PURPOSES]
 export type ClientDataCategory =
-  (typeof CLIENT_DATA_CATEGORIES)[keyof typeof CLIENT_DATA_CATEGORIES];
+  (typeof CLIENT_DATA_CATEGORIES)[keyof typeof CLIENT_DATA_CATEGORIES]

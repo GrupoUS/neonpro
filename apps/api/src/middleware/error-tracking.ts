@@ -4,7 +4,7 @@
  * Global error handlers and tracking setup for the API
  */
 
-import { logger } from '../lib/logger';
+import { logger } from '../lib/logger'
 
 /**
  * Setup global error handlers for unhandled errors
@@ -16,14 +16,14 @@ export function setupGlobalErrorHandlers(): void {
       error: error.message,
       stack: error.stack,
       type: 'uncaughtException',
-    });
+    })
 
     // In production, we might want to exit the process
     if (process.env.NODE_ENV === 'production') {
-      logger.error('Uncaught exception in production, exiting...');
-      process.exit(1);
+      logger.error('Uncaught exception in production, exiting...')
+      process.exit(1)
     }
-  });
+  })
 
   // Handle unhandled promise rejections
   process.on(
@@ -33,29 +33,29 @@ export function setupGlobalErrorHandlers(): void {
         reason: reason instanceof Error ? reason.message : String(reason),
         stack: reason instanceof Error ? reason.stack : undefined,
         type: 'unhandledRejection',
-      });
+      })
 
       // In production, we might want to exit the process
       if (process.env.NODE_ENV === 'production') {
-        logger.error('Unhandled promise rejection in production, exiting...');
-        process.exit(1);
+        logger.error('Unhandled promise rejection in production, exiting...')
+        process.exit(1)
       }
     },
-  );
+  )
 
   // Handle SIGTERM for graceful shutdown
   process.on('SIGTERM', () => {
-    logger.info('Received SIGTERM, shutting down gracefully...');
-    process.exit(0);
-  });
+    logger.info('Received SIGTERM, shutting down gracefully...')
+    process.exit(0)
+  })
 
   // Handle SIGINT for graceful shutdown
   process.on('SIGINT', () => {
-    logger.info('Received SIGINT, shutting down gracefully...');
-    process.exit(0);
-  });
+    logger.info('Received SIGINT, shutting down gracefully...')
+    process.exit(0)
+  })
 
-  logger.info('Global error handlers configured');
+  logger.info('Global error handlers configured')
 }
 
 /**
@@ -64,7 +64,7 @@ export function setupGlobalErrorHandlers(): void {
 export function errorTrackingMiddleware() {
   return async (c: any, next: () => Promise<void>) => {
     try {
-      await next();
+      await next()
     } catch (error) {
       // Log the error
       logger.error('Request error', {
@@ -72,12 +72,12 @@ export function errorTrackingMiddleware() {
         stack: error instanceof Error ? error.stack : undefined,
         path: c.req?.path,
         method: c.req?.method,
-      });
+      })
 
       // Re-throw the error to be handled by the main error handler
-      throw error;
+      throw error
     }
-  };
+  }
 }
 
 /**
@@ -95,7 +95,7 @@ export function globalErrorHandler(
     timestamp: new Date().toISOString(),
     url: req?.url,
     method: req?.method,
-  });
+  })
 
   if (res && !res.headersSent) {
     res.status(500).json({
@@ -104,10 +104,10 @@ export function globalErrorHandler(
         ? error.message
         : 'An unexpected error occurred',
       timestamp: new Date().toISOString(),
-    });
+    })
   }
 
   if (next) {
-    next(error);
+    next(error)
   }
 }

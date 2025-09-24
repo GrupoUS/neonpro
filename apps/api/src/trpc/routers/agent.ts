@@ -5,9 +5,9 @@
  * Full LGPD/ANVISA/CFM compliance for healthcare data interactions
  */
 
-import { HealthcareTRPCError } from '@neonpro/utils/healthcare-errors';
-import { AuditAction, AuditStatus, ResourceType, RiskLevel } from '@prisma/client';
-import { TRPCError } from '@trpc/server';
+import { HealthcareTRPCError } from '@neonpro/utils/healthcare-errors'
+import { AuditAction, AuditStatus, ResourceType, RiskLevel } from '@prisma/client'
+import { TRPCError } from '@trpc/server'
 import {
   AgentMessageResponseSchema,
   AgentSessionResponseSchema,
@@ -20,28 +20,28 @@ import {
   RAGQuerySchema,
   RAGResponseSchema,
   SearchKnowledgeBaseSchema,
-} from '../contracts/agent';
-import { protectedProcedure, router } from '../trpc';
+} from '../contracts/agent'
+import { protectedProcedure, router } from '../trpc'
 
 // =====================================
 // AGENT TYPES AND INTERFACES
 // =====================================
 
 interface AgentProvider {
-  name: string;
-  endpoint: string;
-  apiKey?: string;
-  maxTokens: number;
-  temperature: number;
-  capabilities: string[];
+  name: string
+  endpoint: string
+  apiKey?: string
+  maxTokens: number
+  temperature: number
+  capabilities: string[]
 }
 
 interface RAGResult {
-  id: string;
-  content: string;
-  source: string;
-  score: number;
-  metadata: Record<string, unknown>;
+  id: string
+  content: string
+  source: string
+  score: number
+  metadata: Record<string, unknown>
 }
 
 // =====================================
@@ -72,7 +72,7 @@ const AGENT_PROVIDERS: Record<string, AgentProvider> = {
     temperature: 0.2,
     capabilities: ['chat'],
   },
-};
+}
 
 /**
  * Portuguese Healthcare Context for Agents
@@ -112,7 +112,7 @@ const HEALTHCARE_CONTEXTS = {
     
     Ajude pacientes a agendar, remarcar e confirmar consultas de forma eficiente.
   `,
-};
+}
 
 // =====================================
 // UTILITY FUNCTIONS
@@ -147,7 +147,7 @@ async function createAgentAuditTrail(
         ...additionalInfo,
       }),
     },
-  });
+  })
 }
 
 /**
@@ -159,7 +159,7 @@ async function performRAGSearch(
   limit: number = 10,
 ): Promise<RAGResult[]> {
   // Simulate RAG search delay
-  await new Promise(resolve => setTimeout(resolve, 100));
+  await new Promise((resolve) => setTimeout(resolve, 100))
 
   // Mock results based on agent type
   const mockResults = {
@@ -212,12 +212,12 @@ async function performRAGSearch(
         metadata: { type: 'recommendation', category: 'efficiency' },
       },
     ],
-  };
+  }
 
   return (mockResults[agentType as keyof typeof mockResults] || []).slice(
     0,
     limit,
-  );
+  )
 }
 
 // =====================================
@@ -252,7 +252,7 @@ export const agentRouter = router({
             'Insufficient permissions for client agent',
             'INSUFFICIENT_PERMISSIONS',
             { required: 'patient:read' },
-          );
+          )
         }
 
         // Create session in database
@@ -267,7 +267,7 @@ export const agentRouter = router({
               created_via: 'api',
             },
           },
-        });
+        })
 
         // Create audit trail
         await createAgentAuditTrail(
@@ -279,7 +279,7 @@ export const agentRouter = router({
             session_id: session.id,
             initial_context: input.initial_context,
           },
-        );
+        )
 
         return {
           success: true,
@@ -295,16 +295,16 @@ export const agentRouter = router({
           message: 'Agent session created successfully',
           timestamp: new Date().toISOString(),
           requestId: ctx.requestId,
-        };
+        }
       } catch {
         if (error instanceof HealthcareTRPCError) {
-          throw error;
+          throw error
         }
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to create agent session',
           cause: error,
-        });
+        })
       }
     }),
 
@@ -336,7 +336,7 @@ export const agentRouter = router({
           _userId: ctx.user.id,
           ...(input.agent_type && { agentType: input.agent_type }),
           ...(input.status && { status: input.status }),
-        };
+        }
 
         const [sessions, total] = await Promise.all([
           ctx.prisma.agentSession.findMany({
@@ -348,12 +348,12 @@ export const agentRouter = router({
             },
           }),
           ctx.prisma.agentSession.count({ where }),
-        ]);
+        ])
 
         return {
           success: true,
           data: {
-            sessions: sessions.map(session => ({
+            sessions: sessions.map((session) => ({
               id: session.id,
               user_id: session.userId,
               agent_type: session.agentType as any,
@@ -371,13 +371,13 @@ export const agentRouter = router({
           },
           timestamp: new Date().toISOString(),
           requestId: ctx.requestId,
-        };
+        }
       } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to list agent sessions',
           cause: error,
-        });
+        })
       }
     }),
 
@@ -410,7 +410,7 @@ export const agentRouter = router({
             id: input.session_id,
             _userId: ctx.user.id,
           },
-        });
+        })
 
         if (!session) {
           throw new HealthcareTRPCError(
@@ -418,15 +418,15 @@ export const agentRouter = router({
             'Agent session not found',
             'SESSION_NOT_FOUND',
             { session_id: input.session_id },
-          );
+          )
         }
 
-        let messages = [];
+        let messages = []
         if (input.include_messages) {
           messages = await ctx.prisma.agentMessage.findMany({
             where: { sessionId: input.session_id },
             orderBy: { createdAt: 'asc' },
-          });
+          })
         }
 
         return {
@@ -441,7 +441,7 @@ export const agentRouter = router({
               created_at: session.createdAt,
               updated_at: session.updatedAt,
             },
-            messages: messages.map(msg => ({
+            messages: messages.map((msg) => ({
               id: msg.id,
               session_id: msg.sessionId,
               _role: msg.role as any,
@@ -453,16 +453,16 @@ export const agentRouter = router({
           },
           timestamp: new Date().toISOString(),
           requestId: ctx.requestId,
-        };
+        }
       } catch {
         if (error instanceof HealthcareTRPCError) {
-          throw error;
+          throw error
         }
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to get agent session',
           cause: error,
-        });
+        })
       }
     }),
 
@@ -496,7 +496,7 @@ export const agentRouter = router({
             _userId: ctx.user.id,
             status: 'active',
           },
-        });
+        })
 
         if (!session) {
           throw new HealthcareTRPCError(
@@ -504,7 +504,7 @@ export const agentRouter = router({
             'Active agent session not found',
             'SESSION_NOT_FOUND',
             { session_id: input.session_id },
-          );
+          )
         }
 
         // Save user message
@@ -516,26 +516,26 @@ export const agentRouter = router({
             metadata: input.metadata,
             attachments: input.attachments,
           },
-        });
+        })
 
         // Process message with RAG
-        const startTime = Date.now();
+        const startTime = Date.now()
 
         // Perform RAG search for relevant context
         const ragResults = await performRAGSearch(
           input.content,
           session.agentType,
           5,
-        );
+        )
 
         // Build context for AI
-        const _context = HEALTHCARE_CONTEXTS[session.agentType];
+        const _context = HEALTHCARE_CONTEXTS[session.agentType]
         const _ragContext = ragResults
-          .map(r => `${r.content} (Fonte: ${r.source})`)
-          .join('\n\n');
+          .map((r) => `${r.content} (Fonte: ${r.source})`)
+          .join('\n\n')
 
         // Select AI provider
-        const provider = AGENT_PROVIDERS.local; // Default to local for now
+        const provider = AGENT_PROVIDERS.local // Default to local for now
 
         // Mock AI response (replace with real AI call)
         const aiResponse = `Entendi sua mensagem. Como assistente de ${
@@ -544,7 +544,7 @@ export const agentRouter = router({
             : session.agentType === 'financial'
             ? 'finanças'
             : 'agendamento'
-        }, estou aqui para ajudar.`;
+        }, estou aqui para ajudar.`
 
         // Save agent response
         const _agentMessage = await ctx.prisma.agentMessage.create({
@@ -558,13 +558,13 @@ export const agentRouter = router({
               processing_time: Date.now() - startTime,
             },
           },
-        });
+        })
 
         // Update session timestamp
         await ctx.prisma.agentSession.update({
           where: { id: input.session_id },
           data: { updatedAt: new Date() },
-        });
+        })
 
         // Create audit trail
         await createAgentAuditTrail(
@@ -577,7 +577,7 @@ export const agentRouter = router({
             rag_results_count: ragResults.length,
             processing_time: Date.now() - startTime,
           },
-        );
+        )
 
         return {
           success: true,
@@ -599,16 +599,16 @@ export const agentRouter = router({
           },
           timestamp: new Date().toISOString(),
           requestId: ctx.requestId,
-        };
+        }
       } catch {
         if (error instanceof HealthcareTRPCError) {
-          throw error;
+          throw error
         }
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to send message to agent',
           cause: error,
-        });
+        })
       }
     }),
 
@@ -640,7 +640,7 @@ export const agentRouter = router({
             metadata: input.metadata || {},
             embedding: [], // TODO: Generate real embeddings
           },
-        });
+        })
 
         // Create audit trail
         await createAgentAuditTrail(
@@ -653,7 +653,7 @@ export const agentRouter = router({
             title: input.title,
             tags: input.tags,
           },
-        );
+        )
 
         return {
           success: true,
@@ -672,13 +672,13 @@ export const agentRouter = router({
           message: 'Knowledge entry added successfully',
           timestamp: new Date().toISOString(),
           requestId: ctx.requestId,
-        };
+        }
       } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to add knowledge entry',
           cause: error,
-        });
+        })
       }
     }),
 
@@ -713,12 +713,12 @@ export const agentRouter = router({
             ],
           },
           take: input.limit,
-        });
+        })
 
         return {
           success: true,
           data: {
-            results: results.map(entry => ({
+            results: results.map((entry) => ({
               id: entry.id,
               agent_type: entry.agentType as any,
               title: entry.title,
@@ -735,13 +735,13 @@ export const agentRouter = router({
           },
           timestamp: new Date().toISOString(),
           requestId: ctx.requestId,
-        };
+        }
       } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to search knowledge base',
           cause: error,
-        });
+        })
       }
     }),
 
@@ -754,7 +754,7 @@ export const agentRouter = router({
     .output(RAGResponseSchema)
     .mutation(async ({ ctx, _input }) => {
       try {
-        const startTime = Date.now();
+        const startTime = Date.now()
 
         // Get session to determine agent type
         const session = await ctx.prisma.agentSession.findFirst({
@@ -762,7 +762,7 @@ export const agentRouter = router({
             id: input.session_id,
             _userId: ctx.user.id,
           },
-        });
+        })
 
         if (!session) {
           throw new HealthcareTRPCError(
@@ -770,7 +770,7 @@ export const agentRouter = router({
             'Agent session not found',
             'SESSION_NOT_FOUND',
             { session_id: input.session_id },
-          );
+          )
         }
 
         // Perform RAG search
@@ -778,13 +778,13 @@ export const agentRouter = router({
           input.query,
           session.agentType,
           input.max_results,
-        );
+        )
 
         // Build context
-        const context = ragResults.map(r => r.content).join('\n\n');
+        const context = ragResults.map((r) => r.content).join('\n\n')
 
         // Generate response (mock implementation)
-        const response = `Com base nas informações disponíveis: ${context.substring(0, 200)}...`;
+        const response = `Com base nas informações disponíveis: ${context.substring(0, 200)}...`
 
         return {
           _query: input.query,
@@ -793,16 +793,16 @@ export const agentRouter = router({
           response,
           tokens_used: Math.floor(response.length / 4),
           processing_time: Date.now() - startTime,
-        };
+        }
       } catch {
         if (error instanceof HealthcareTRPCError) {
-          throw error;
+          throw error
         }
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to perform RAG query',
           cause: error,
-        });
+        })
       }
     }),
 
@@ -832,7 +832,7 @@ export const agentRouter = router({
             id: input.session_id,
             _userId: ctx.user.id,
           },
-        });
+        })
 
         if (!session) {
           throw new HealthcareTRPCError(
@@ -840,7 +840,7 @@ export const agentRouter = router({
             'Agent session not found',
             'SESSION_NOT_FOUND',
             { session_id: input.session_id },
-          );
+          )
         }
 
         // Archive session
@@ -855,7 +855,7 @@ export const agentRouter = router({
               archive_reason: input.reason,
             },
           },
-        });
+        })
 
         // Create audit trail
         await createAgentAuditTrail(
@@ -866,23 +866,23 @@ export const agentRouter = router({
           {
             reason: input.reason,
           },
-        );
+        )
 
         return {
           success: true,
           message: 'Agent session archived successfully',
           timestamp: new Date().toISOString(),
           requestId: ctx.requestId,
-        };
+        }
       } catch {
         if (error instanceof HealthcareTRPCError) {
-          throw error;
+          throw error
         }
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to archive agent session',
           cause: error,
-        });
+        })
       }
     }),
 
@@ -928,7 +928,7 @@ export const agentRouter = router({
           ...(input.end_date && {
             createdAt: { lte: new Date(input.end_date) },
           }),
-        };
+        }
 
         const [sessions, messages] = await Promise.all([
           ctx.prisma.agentSession.findMany({ where }),
@@ -937,7 +937,7 @@ export const agentRouter = router({
               session: where,
             },
           }),
-        ]);
+        ])
 
         // Mock analytics (replace with real aggregation)
         const analytics = {
@@ -950,20 +950,20 @@ export const agentRouter = router({
             { _query: 'valor da consulta', count: 12 },
             { _query: 'horário de funcionamento', count: 8 },
           ],
-        };
+        }
 
         return {
           success: true,
           data: analytics,
           timestamp: new Date().toISOString(),
           requestId: ctx.requestId,
-        };
+        }
       } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to get agent analytics',
           cause: error,
-        });
+        })
       }
     }),
-});
+})

@@ -9,129 +9,129 @@
  * @compliance LGPD, ANVISA, CFM
  */
 
-import { RedisCacheBackend } from '@neonpro/shared/src/services/redis-cache-backend';
-import { logger } from '../lib/logger';
-import { WebSocketSecurityMiddleware } from '../middleware/websocket-security-middleware';
-import { getErrorTrackingHealth } from '../services/error-tracking-init';
-import { EnhancedAIDataService } from './enhanced-ai-data-service';
+import { RedisCacheBackend } from '@neonpro/shared/src/services/redis-cache-backend'
+import { logger } from '../lib/logger'
+import { WebSocketSecurityMiddleware } from '../middleware/websocket-security-middleware'
+import { getErrorTrackingHealth } from '../services/error-tracking-init'
+import { EnhancedAIDataService } from './enhanced-ai-data-service'
 
 /**
  * Monitoring metrics structure
  */
 export interface MonitoringMetrics {
   system: {
-    uptime: number;
-    memoryUsage: NodeJS.MemoryUsage;
-    cpuUsage: NodeJS.CpuUsage;
+    uptime: number
+    memoryUsage: NodeJS.MemoryUsage
+    cpuUsage: NodeJS.CpuUsage
     diskUsage: {
-      total: number;
-      used: number;
-      free: number;
-      percentage: number;
-    };
-  };
+      total: number
+      used: number
+      free: number
+      percentage: number
+    }
+  }
   performance: {
-    avgResponseTime: number;
-    requestsPerSecond: number;
-    errorRate: number;
-    slowQueries: number;
-    cacheHitRate: number;
-    databaseConnections: number;
-  };
+    avgResponseTime: number
+    requestsPerSecond: number
+    errorRate: number
+    slowQueries: number
+    cacheHitRate: number
+    databaseConnections: number
+  }
   security: {
-    authenticationFailures: number;
-    authorizationFailures: number;
-    suspiciousActivities: number;
-    rateLimitViolations: number;
-    securityEvents: SecurityEvent[];
-  };
+    authenticationFailures: number
+    authorizationFailures: number
+    suspiciousActivities: number
+    rateLimitViolations: number
+    securityEvents: SecurityEvent[]
+  }
   healthcare: {
-    lgpdCompliance: boolean;
-    dataAccessAudit: DataAccessRecord[];
-    consentViolations: number;
-    dataRetentionCompliance: boolean;
-  };
+    lgpdCompliance: boolean
+    dataAccessAudit: DataAccessRecord[]
+    consentViolations: number
+    dataRetentionCompliance: boolean
+  }
   ai: {
-    activeSessions: number;
-    totalQueries: number;
-    avgProcessingTime: number;
-    successRate: number;
-    errorAnalysis: AIPerformanceMetrics;
-  };
+    activeSessions: number
+    totalQueries: number
+    avgProcessingTime: number
+    successRate: number
+    errorAnalysis: AIPerformanceMetrics
+  }
 }
 
 /**
  * Security event structure
  */
 export interface SecurityEvent {
-  id: string;
-  timestamp: Date;
+  id: string
+  timestamp: Date
   type:
     | 'authentication_failure'
     | 'authorization_failure'
     | 'suspicious_activity'
-    | 'rate_limit_violation';
-  severity: 'low' | 'medium' | 'high' | 'critical';
-  description: string;
-  _userId?: string;
-  ipAddress: string;
-  userAgent?: string;
-  metadata?: Record<string, any>;
+    | 'rate_limit_violation'
+  severity: 'low' | 'medium' | 'high' | 'critical'
+  description: string
+  _userId?: string
+  ipAddress: string
+  userAgent?: string
+  metadata?: Record<string, any>
 }
 
 /**
  * Data access audit record
  */
 export interface DataAccessRecord {
-  id: string;
-  timestamp: Date;
-  _userId: string;
+  id: string
+  timestamp: Date
+  _userId: string
   resourceType:
     | 'client_data'
     | 'appointments'
     | 'financial'
-    | 'medical_records';
-  resourceId: string;
-  action: 'read' | 'write' | 'delete';
-  ipAddress: string;
-  success: boolean;
-  errorMessage?: string;
+    | 'medical_records'
+  resourceId: string
+  action: 'read' | 'write' | 'delete'
+  ipAddress: string
+  success: boolean
+  errorMessage?: string
 }
 
 /**
  * AI performance metrics
  */
 export interface AIPerformanceMetrics {
-  queryTypes: Record<string, number>;
-  avgResponseByType: Record<string, number>;
-  errorRatesByType: Record<string, number>;
-  cacheEffectiveness: number;
-  databaseLoad: number;
+  queryTypes: Record<string, number>
+  avgResponseByType: Record<string, number>
+  errorRatesByType: Record<string, number>
+  cacheEffectiveness: number
+  databaseLoad: number
 }
 
 /**
  * Comprehensive monitoring service
  */
 export class MonitoringService {
-  private metrics: MonitoringMetrics;
-  private securityEvents: SecurityEvent[] = [];
-  private dataAccessRecords: DataAccessRecord[] = [];
-  private startTime: Date;
-  private healthCheckInterval?: NodeJS.Timeout;
-  private metricsInterval?: NodeJS.Timeout;
-  private cleanupInterval?: NodeJS.Timeout;
+  private metrics: MonitoringMetrics
+  private securityEvents: SecurityEvent[] = []
+  private dataAccessRecords: DataAccessRecord[] = []
+  private startTime: Date
+  private healthCheckInterval?: NodeJS.Timeout
+  private metricsInterval?: NodeJS.Timeout
+  private cleanupInterval?: NodeJS.Timeout
 
   // Service references
-  private dataService?: EnhancedAIDataService;
-  private wsSecurity?: WebSocketSecurityMiddleware;
-  private cache?: RedisCacheBackend;
+  private dataService?: EnhancedAIDataService
+  private wsSecurity?: WebSocketSecurityMiddleware
+  private cache?: RedisCacheBackend
 
   constructor() {
-    this.startTime = new Date();
-    this.metrics = this.initializeMetrics();
+    this.startTime = new Date()
+    this.metrics = this.initializeMetrics()
 
     // Start monitoring processes
-    this.startMonitoring();
+    this.startMonitoring()
   }
 
   /**
@@ -179,7 +179,7 @@ export class MonitoringService {
           databaseLoad: 0,
         },
       },
-    };
+    }
   }
 
   /**
@@ -190,9 +190,9 @@ export class MonitoringService {
     wsSecurity: WebSocketSecurityMiddleware,
     cache: RedisCacheBackend,
   ): void {
-    this.dataService = dataService;
-    this.wsSecurity = wsSecurity;
-    this.cache = cache;
+    this.dataService = dataService
+    this.wsSecurity = wsSecurity
+    this.cache = cache
   }
 
   /**
@@ -203,13 +203,13 @@ export class MonitoringService {
     this.healthCheckInterval = setInterval(
       () => this.performHealthChecks(),
       30000,
-    );
+    )
 
     // Metrics collection every 10 seconds
-    this.metricsInterval = setInterval(() => this.collectMetrics(), 10000);
+    this.metricsInterval = setInterval(() => this.collectMetrics(), 10000)
 
     // Cleanup old data every hour
-    this.cleanupInterval = setInterval(() => this.cleanupOldData(), 3600000);
+    this.cleanupInterval = setInterval(() => this.cleanupOldData(), 3600000)
   }
 
   /**
@@ -218,22 +218,22 @@ export class MonitoringService {
   private async performHealthChecks(): Promise<void> {
     try {
       // System health
-      await this.checkSystemHealth();
+      await this.checkSystemHealth()
 
       // Service health
-      await this.checkServiceHealth();
+      await this.checkServiceHealth()
 
       // Database health
-      await this.checkDatabaseHealth();
+      await this.checkDatabaseHealth()
 
       // Cache health
-      await this.checkCacheHealth();
+      await this.checkCacheHealth()
 
       // Security health
-      await this.checkSecurityHealth();
+      await this.checkSecurityHealth()
     } catch {
       // Error caught but not used - handled by surrounding logic
-      logger.error('Health check failed:', error);
+      logger.error('Health check failed:', error)
     }
   }
 
@@ -241,29 +241,29 @@ export class MonitoringService {
    * Check system health
    */
   private async checkSystemHealth(): Promise<void> {
-    const memUsage = process.memoryUsage();
-    const cpuUsage = process.cpuUsage();
-    const uptime = process.uptime();
+    const memUsage = process.memoryUsage()
+    const cpuUsage = process.cpuUsage()
+    const uptime = process.uptime()
 
     this.metrics.system = {
       uptime,
       memoryUsage: memUsage,
       cpuUsage,
       diskUsage: await this.getDiskUsage(),
-    };
+    }
 
     // Check for memory leaks
     if (memUsage.heapUsed > 500 * 1024 * 1024) {
       // 500MB
       logger.warn('High memory usage detected', {
         heapUsed: memUsage.heapUsed,
-      });
+      })
     }
 
     // Check for high CPU usage
-    const cpuPercent = this.calculateCPUUsage(cpuUsage);
+    const cpuPercent = this.calculateCPUUsage(cpuUsage)
     if (cpuPercent > 80) {
-      logger.warn('High CPU usage detected', { cpuPercent });
+      logger.warn('High CPU usage detected', { cpuPercent })
     }
   }
 
@@ -271,17 +271,17 @@ export class MonitoringService {
    * Check service health
    */
   private async checkServiceHealth(): Promise<void> {
-    if (!this.dataService) return;
+    if (!this.dataService) return
 
     try {
-      const health = await this.dataService.healthCheck();
+      const health = await this.dataService.healthCheck()
 
       if (!health.cache.healthy || !health.database.healthy) {
-        logger.error('Service health check failed', health);
+        logger.error('Service health check failed', health)
       }
     } catch {
       // Error caught but not used - handled by surrounding logic
-      logger.error('Service health check error:', error);
+      logger.error('Service health check error:', error)
     }
   }
 
@@ -291,20 +291,20 @@ export class MonitoringService {
   private async checkDatabaseHealth(): Promise<void> {
     try {
       // Check database connectivity and performance
-      const startTime = Date.now();
+      const startTime = Date.now()
 
       // This would be implemented with actual database health checks
-      const _dbHealthy = true; // Placeholder
+      const _dbHealthy = true // Placeholder
 
-      const responseTime = Date.now() - startTime;
+      const responseTime = Date.now() - startTime
 
       if (responseTime > 2000) {
         // > 2s is concerning
-        logger.warn('Slow database response', { responseTime });
+        logger.warn('Slow database response', { responseTime })
       }
     } catch {
       // Error caught but not used - handled by surrounding logic
-      logger.error('Database health check failed:', error);
+      logger.error('Database health check failed:', error)
     }
   }
 
@@ -312,18 +312,18 @@ export class MonitoringService {
    * Check cache health
    */
   private async checkCacheHealth(): Promise<void> {
-    if (!this.cache) return;
+    if (!this.cache) return
 
     try {
-      const stats = await this.cache.getStats();
-      this.metrics.performance.cacheHitRate = stats.hitRate;
+      const stats = await this.cache.getStats()
+      this.metrics.performance.cacheHitRate = stats.hitRate
 
       if (stats.hitRate < 0.3) {
-        logger.warn('Low cache hit rate', { hitRate: stats.hitRate });
+        logger.warn('Low cache hit rate', { hitRate: stats.hitRate })
       }
     } catch {
       // Error caught but not used - handled by surrounding logic
-      logger.error('Cache health check failed:', error);
+      logger.error('Cache health check failed:', error)
     }
   }
 
@@ -332,21 +332,21 @@ export class MonitoringService {
    */
   private async checkSecurityHealth(): Promise<void> {
     try {
-      const _errorTracking = getErrorTrackingHealth();
+      const _errorTracking = getErrorTrackingHealth()
 
       // Check for recent security events
       const recentEvents = this.securityEvents.filter(
-        event => Date.now() - event.timestamp.getTime() < 300000, // 5 minutes
-      );
+        (event) => Date.now() - event.timestamp.getTime() < 300000, // 5 minutes
+      )
 
       if (recentEvents.length > 10) {
         logger.error('High volume of security events detected', {
           count: recentEvents.length,
-        });
+        })
       }
     } catch {
       // Error caught but not used - handled by surrounding logic
-      logger.error('Security health check failed:', error);
+      logger.error('Security health check failed:', error)
     }
   }
 
@@ -356,17 +356,17 @@ export class MonitoringService {
   private async collectMetrics(): Promise<void> {
     try {
       // Update system metrics
-      this.metrics.system.uptime = process.uptime();
-      this.metrics.system.memoryUsage = process.memoryUsage();
+      this.metrics.system.uptime = process.uptime()
+      this.metrics.system.memoryUsage = process.memoryUsage()
 
       // Update performance metrics
-      await this.updatePerformanceMetrics();
+      await this.updatePerformanceMetrics()
 
       // Update AI metrics
-      await this.updateAIMetrics();
+      await this.updateAIMetrics()
     } catch {
       // Error caught but not used - handled by surrounding logic
-      logger.error('Metrics collection failed:', error);
+      logger.error('Metrics collection failed:', error)
     }
   }
 
@@ -376,11 +376,11 @@ export class MonitoringService {
   private async updatePerformanceMetrics(): Promise<void> {
     if (this.dataService) {
       try {
-        const cacheStats = await this.dataService.getCacheStats();
-        this.metrics.performance.cacheHitRate = cacheStats.customStats?.hitRate || 0;
+        const cacheStats = await this.dataService.getCacheStats()
+        this.metrics.performance.cacheHitRate = cacheStats.customStats?.hitRate || 0
       } catch {
         // Error caught but not used - handled by surrounding logic
-        logger.error('Failed to update performance metrics:', error);
+        logger.error('Failed to update performance metrics:', error)
       }
     }
   }
@@ -401,30 +401,30 @@ export class MonitoringService {
       ...event,
       id: this.generateId(),
       timestamp: new Date(),
-    };
+    }
 
-    this.securityEvents.push(securityEvent);
-    this.metrics.security.securityEvents.push(securityEvent);
+    this.securityEvents.push(securityEvent)
+    this.metrics.security.securityEvents.push(securityEvent)
 
     // Update counters
     switch (event.type) {
       case 'authentication_failure':
-        this.metrics.security.authenticationFailures++;
-        break;
+        this.metrics.security.authenticationFailures++
+        break
       case 'authorization_failure':
-        this.metrics.security.authorizationFailures++;
-        break;
+        this.metrics.security.authorizationFailures++
+        break
       case 'suspicious_activity':
-        this.metrics.security.suspiciousActivities++;
-        break;
+        this.metrics.security.suspiciousActivities++
+        break
       case 'rate_limit_violation':
-        this.metrics.security.rateLimitViolations++;
-        break;
+        this.metrics.security.rateLimitViolations++
+        break
     }
 
     // Log high severity events
     if (event.severity === 'high' || event.severity === 'critical') {
-      logger.error('High severity security event', securityEvent);
+      logger.error('High severity security event', securityEvent)
     }
   }
 
@@ -436,15 +436,15 @@ export class MonitoringService {
       ...record,
       id: this.generateId(),
       timestamp: new Date(),
-    };
+    }
 
-    this.dataAccessRecords.push(accessRecord);
-    this.metrics.healthcare.dataAccessAudit.push(accessRecord);
+    this.dataAccessRecords.push(accessRecord)
+    this.metrics.healthcare.dataAccessAudit.push(accessRecord)
 
     // Check for compliance violations
     if (!record.success) {
-      this.metrics.healthcare.consentViolations++;
-      logger.warn('Data access violation', accessRecord);
+      this.metrics.healthcare.consentViolations++
+      logger.warn('Data access violation', accessRecord)
     }
   }
 
@@ -453,18 +453,18 @@ export class MonitoringService {
    */
   async getDashboard(): Promise<{
     overview: {
-      status: 'healthy' | 'degraded' | 'critical';
-      uptime: string;
-      activeUsers: number;
-      systemLoad: number;
-    };
-    metrics: MonitoringMetrics;
-    alerts: Alert[];
-    recommendations: Recommendation[];
+      status: 'healthy' | 'degraded' | 'critical'
+      uptime: string
+      activeUsers: number
+      systemLoad: number
+    }
+    metrics: MonitoringMetrics
+    alerts: Alert[]
+    recommendations: Recommendation[]
   }> {
-    const status = this.calculateSystemStatus();
-    const alerts = this.generateAlerts();
-    const recommendations = this.generateRecommendations();
+    const status = this.calculateSystemStatus()
+    const alerts = this.generateAlerts()
+    const recommendations = this.generateRecommendations()
 
     return {
       overview: {
@@ -476,19 +476,19 @@ export class MonitoringService {
       metrics: this.metrics,
       alerts,
       recommendations,
-    };
+    }
   }
 
   /**
    * Calculate system status
    */
   private calculateSystemStatus(): 'healthy' | 'degraded' | 'critical' {
-    const memUsage = this.metrics.system.memoryUsage.heapUsed;
-    const cpuPercent = this.calculateCPUUsage(this.metrics.system.cpuUsage);
-    const errorRate = this.metrics.performance.errorRate;
+    const memUsage = this.metrics.system.memoryUsage.heapUsed
+    const cpuPercent = this.calculateCPUUsage(this.metrics.system.cpuUsage)
+    const errorRate = this.metrics.performance.errorRate
     const recentSecurityEvents = this.securityEvents.filter(
-      event => Date.now() - event.timestamp.getTime() < 300000, // 5 minutes
-    ).length;
+      (event) => Date.now() - event.timestamp.getTime() < 300000, // 5 minutes
+    ).length
 
     if (
       memUsage > 800 * 1024 * 1024
@@ -496,7 +496,7 @@ export class MonitoringService {
       || errorRate > 0.1
       || recentSecurityEvents > 20
     ) {
-      return 'critical';
+      return 'critical'
     }
 
     if (
@@ -505,17 +505,17 @@ export class MonitoringService {
       || errorRate > 0.05
       || recentSecurityEvents > 10
     ) {
-      return 'degraded';
+      return 'degraded'
     }
 
-    return 'healthy';
+    return 'healthy'
   }
 
   /**
    * Generate alerts based on metrics
    */
   private generateAlerts(): Alert[] {
-    const alerts: Alert[] = [];
+    const alerts: Alert[] = []
 
     // Memory alerts
     if (this.metrics.system.memoryUsage.heapUsed > 500 * 1024 * 1024) {
@@ -525,11 +525,11 @@ export class MonitoringService {
         severity: 'warning',
         message: 'High memory usage detected',
         timestamp: new Date(),
-      });
+      })
     }
 
     // CPU alerts
-    const cpuPercent = this.calculateCPUUsage(this.metrics.system.cpuUsage);
+    const cpuPercent = this.calculateCPUUsage(this.metrics.system.cpuUsage)
     if (cpuPercent > 80) {
       alerts.push({
         id: this.generateId(),
@@ -537,13 +537,13 @@ export class MonitoringService {
         severity: 'warning',
         message: 'High CPU usage detected',
         timestamp: new Date(),
-      });
+      })
     }
 
     // Security alerts
     const recentSecurityEvents = this.securityEvents.filter(
-      event => Date.now() - event.timestamp.getTime() < 300000,
-    );
+      (event) => Date.now() - event.timestamp.getTime() < 300000,
+    )
     if (recentSecurityEvents.length > 10) {
       alerts.push({
         id: this.generateId(),
@@ -551,17 +551,17 @@ export class MonitoringService {
         severity: 'critical',
         message: 'High volume of security events detected',
         timestamp: new Date(),
-      });
+      })
     }
 
-    return alerts;
+    return alerts
   }
 
   /**
    * Generate recommendations based on metrics
    */
   private generateRecommendations(): Recommendation[] {
-    const recommendations: Recommendation[] = [];
+    const recommendations: Recommendation[] = []
 
     // Cache recommendations
     if (this.metrics.performance.cacheHitRate < 0.5) {
@@ -572,7 +572,7 @@ export class MonitoringService {
         title: 'Optimize Cache Strategy',
         description: 'Cache hit rate is below 50%. Consider adjusting TTL values or cache keys.',
         estimatedImpact: '20-30% performance improvement',
-      });
+      })
     }
 
     // Memory recommendations
@@ -584,32 +584,32 @@ export class MonitoringService {
         title: 'Monitor Memory Usage',
         description: 'Memory usage is elevated. Consider scaling or optimizing memory usage.',
         estimatedImpact: 'Improved stability',
-      });
+      })
     }
 
-    return recommendations;
+    return recommendations
   }
 
   /**
    * Cleanup old data
    */
   private cleanupOldData(): void {
-    const oneDayAgo = Date.now() - 24 * 60 * 60 * 1000;
+    const oneDayAgo = Date.now() - 24 * 60 * 60 * 1000
 
     // Cleanup old security events
     this.securityEvents = this.securityEvents.filter(
-      event => event.timestamp.getTime() > oneDayAgo,
-    );
+      (event) => event.timestamp.getTime() > oneDayAgo,
+    )
 
     // Cleanup old data access records
     this.dataAccessRecords = this.dataAccessRecords.filter(
-      record => record.timestamp.getTime() > oneDayAgo,
-    );
+      (record) => record.timestamp.getTime() > oneDayAgo,
+    )
 
     // Cleanup old healthcare audit records
     this.metrics.healthcare.dataAccessAudit = this.metrics.healthcare.dataAccessAudit.filter(
-      record => new Date(record.timestamp).getTime() > oneDayAgo,
-    );
+      (record) => new Date(record.timestamp).getTime() > oneDayAgo,
+    )
   }
 
   /**
@@ -619,29 +619,29 @@ export class MonitoringService {
     return (
       Math.random().toString(36).substring(2, 15)
       + Math.random().toString(36).substring(2, 15)
-    );
+    )
   }
 
   private async getDiskUsage() {
     // This would implement actual disk usage checking
-    return { total: 0, used: 0, free: 0, percentage: 0 };
+    return { total: 0, used: 0, free: 0, percentage: 0 }
   }
 
   private calculateCPUUsage(_cpuUsage: NodeJS.CpuUsage): number {
     // This would calculate actual CPU usage percentage
-    return 0; // Placeholder
+    return 0 // Placeholder
   }
 
   private formatUptime(seconds: number): string {
-    const hours = Math.floor(seconds / 3600);
-    const minutes = Math.floor((seconds % 3600) / 60);
-    return `${hours}h ${minutes}m`;
+    const hours = Math.floor(seconds / 3600)
+    const minutes = Math.floor((seconds % 3600) / 60)
+    return `${hours}h ${minutes}m`
   }
 
   private calculateSystemLoad(): number {
-    const memUsage = this.metrics.system.memoryUsage.heapUsed;
-    const cpuPercent = this.calculateCPUUsage(this.metrics.system.cpuUsage);
-    return (memUsage / (1024 * 1024 * 1024)) * 0.7 + cpuPercent * 0.3; // Weighted average
+    const memUsage = this.metrics.system.memoryUsage.heapUsed
+    const cpuPercent = this.calculateCPUUsage(this.metrics.system.cpuUsage)
+    return (memUsage / (1024 * 1024 * 1024)) * 0.7 + cpuPercent * 0.3 // Weighted average
   }
 
   /**
@@ -649,13 +649,13 @@ export class MonitoringService {
    */
   destroy(): void {
     if (this.healthCheckInterval) {
-      clearInterval(this.healthCheckInterval);
+      clearInterval(this.healthCheckInterval)
     }
     if (this.metricsInterval) {
-      clearInterval(this.metricsInterval);
+      clearInterval(this.metricsInterval)
     }
     if (this.cleanupInterval) {
-      clearInterval(this.cleanupInterval);
+      clearInterval(this.cleanupInterval)
     }
   }
 }
@@ -664,28 +664,28 @@ export class MonitoringService {
  * Alert structure
  */
 interface Alert {
-  id: string;
-  type: 'memory' | 'cpu' | 'security' | 'performance' | 'database';
-  severity: 'info' | 'warning' | 'critical';
-  message: string;
-  timestamp: Date;
+  id: string
+  type: 'memory' | 'cpu' | 'security' | 'performance' | 'database'
+  severity: 'info' | 'warning' | 'critical'
+  message: string
+  timestamp: Date
 }
 
 /**
  * Recommendation structure
  */
 interface Recommendation {
-  id: string;
-  type: 'performance' | 'security' | 'infrastructure' | 'compliance';
-  priority: 'low' | 'medium' | 'high';
-  title: string;
-  description: string;
-  estimatedImpact: string;
+  id: string
+  type: 'performance' | 'security' | 'infrastructure' | 'compliance'
+  priority: 'low' | 'medium' | 'high'
+  title: string
+  description: string
+  estimatedImpact: string
 }
 
 /**
  * Global monitoring service instance
  */
-export const monitoringService = new MonitoringService();
+export const monitoringService = new MonitoringService()
 
-export default MonitoringService;
+export default MonitoringService

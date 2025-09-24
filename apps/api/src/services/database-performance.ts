@@ -10,55 +10,55 @@
  * - Brazilian healthcare compliance monitoring
  */
 
-import { QueryPerformanceMonitor } from '../utils/query-optimizer';
+import { QueryPerformanceMonitor } from '../utils/query-optimizer'
 
 // Database performance metrics
 export interface DatabaseMetrics {
   connectionPool: {
-    active: number;
-    idle: number;
-    waiting: number;
-    total: number;
-    utilization: number;
-  };
+    active: number
+    idle: number
+    waiting: number
+    total: number
+    utilization: number
+  }
   queryPerformance: {
-    averageResponseTime: number;
-    slowQueries: number;
-    totalQueries: number;
-    errorRate: number;
-  };
+    averageResponseTime: number
+    slowQueries: number
+    totalQueries: number
+    errorRate: number
+  }
   indexUsage: {
-    totalIndexes: number;
-    unusedIndexes: number;
-    missingIndexes: string[];
-    indexEfficiency: number;
-  };
+    totalIndexes: number
+    unusedIndexes: number
+    missingIndexes: string[]
+    indexEfficiency: number
+  }
   healthcareCompliance: {
-    patientDataQueries: number;
-    avgPatientQueryTime: number;
-    lgpdCompliantQueries: number;
-    auditTrailQueries: number;
-  };
+    patientDataQueries: number
+    avgPatientQueryTime: number
+    lgpdCompliantQueries: number
+    auditTrailQueries: number
+  }
 }
 
 // Index recommendation
 export interface IndexRecommendation {
-  table: string;
-  columns: string[];
-  type: 'btree' | 'gin' | 'gist' | 'hash';
-  reason: string;
-  estimatedImprovement: number; // Percentage
-  priority: 'low' | 'medium' | 'high' | 'critical';
-  healthcareRelevant: boolean;
+  table: string
+  columns: string[]
+  type: 'btree' | 'gin' | 'gist' | 'hash'
+  reason: string
+  estimatedImprovement: number // Percentage
+  priority: 'low' | 'medium' | 'high' | 'critical'
+  healthcareRelevant: boolean
 }
 
 // Database health status
 export interface DatabaseHealth {
-  status: 'healthy' | 'warning' | 'critical';
-  score: number; // 0-100
-  issues: string[];
-  recommendations: string[];
-  lastChecked: Date;
+  status: 'healthy' | 'warning' | 'critical'
+  score: number // 0-100
+  issues: string[]
+  recommendations: string[]
+  lastChecked: Date
 }
 
 // Healthcare-specific query patterns
@@ -87,7 +87,7 @@ export const HEALTHCARE_QUERY_PATTERNS = {
     ],
     expectedResponseTime: 25, // ms - Critical for compliance
   },
-};
+}
 
 // Recommended indexes for healthcare workloads
 export const HEALTHCARE_RECOMMENDED_INDEXES = [
@@ -147,24 +147,24 @@ export const HEALTHCARE_RECOMMENDED_INDEXES = [
     reason: 'Audit trail queries for compliance',
     priority: 'medium' as const,
   },
-];
+]
 
 /**
  * Database Performance Analysis Service
  */
 export class DatabasePerformanceService {
-  private queryMonitor: QueryPerformanceMonitor;
-  private healthCheckInterval?: NodeJS.Timeout;
+  private queryMonitor: QueryPerformanceMonitor
+  private healthCheckInterval?: NodeJS.Timeout
 
   constructor() {
-    this.queryMonitor = new QueryPerformanceMonitor();
+    this.queryMonitor = new QueryPerformanceMonitor()
   }
 
   /**
    * Analyze current database performance
    */
   async analyzePerformance(): Promise<DatabaseMetrics> {
-    const queryStats = this.queryMonitor.getStats();
+    const queryStats = this.queryMonitor.getStats()
 
     return {
       connectionPool: await this.getConnectionPoolMetrics(),
@@ -176,7 +176,7 @@ export class DatabasePerformanceService {
       },
       indexUsage: await this.analyzeIndexUsage(),
       healthcareCompliance: await this.analyzeHealthcareCompliance(),
-    };
+    }
   }
 
   /**
@@ -185,10 +185,10 @@ export class DatabasePerformanceService {
   private async getConnectionPoolMetrics() {
     // In a real implementation, this would query the actual connection pool
     // For now, we'll simulate realistic metrics
-    const active = Math.floor(Math.random() * 10) + 2;
-    const idle = Math.floor(Math.random() * 5) + 1;
-    const waiting = Math.floor(Math.random() * 3);
-    const total = active + idle;
+    const active = Math.floor(Math.random() * 10) + 2
+    const idle = Math.floor(Math.random() * 5) + 1
+    const waiting = Math.floor(Math.random() * 3)
+    const total = active + idle
 
     return {
       active,
@@ -196,7 +196,7 @@ export class DatabasePerformanceService {
       waiting,
       total,
       utilization: (active / total) * 100,
-    };
+    }
   }
 
   /**
@@ -204,48 +204,48 @@ export class DatabasePerformanceService {
    */
   private async analyzeIndexUsage() {
     // Simulate index analysis
-    const totalIndexes = 25;
-    const unusedIndexes = 3;
+    const totalIndexes = 25
+    const unusedIndexes = 3
     const missingIndexes = [
       'patients(clinic_id, created_at)',
       'appointments(status, start_time)',
       'professionals(clinic_id, is_active)',
-    ];
+    ]
 
     return {
       totalIndexes,
       unusedIndexes,
       missingIndexes,
       indexEfficiency: ((totalIndexes - unusedIndexes) / totalIndexes) * 100,
-    };
+    }
   }
 
   /**
    * Analyze healthcare-specific compliance metrics
    */
   private async analyzeHealthcareCompliance() {
-    const queryStats = this.queryMonitor.getStats();
+    const queryStats = this.queryMonitor.getStats()
 
     // Ensure we have at least some baseline metrics
-    const totalQueries = Math.max(queryStats.totalQueries, 100);
+    const totalQueries = Math.max(queryStats.totalQueries, 100)
 
     return {
       patientDataQueries: Math.floor(totalQueries * 0.4), // 40% patient-related
       avgPatientQueryTime: 45, // Target: <50ms
       lgpdCompliantQueries: Math.floor(totalQueries * 0.9), // 90% compliant
       auditTrailQueries: Math.floor(totalQueries * 0.1), // 10% audit
-    };
+    }
   }
 
   /**
    * Generate index recommendations based on query patterns
    */
   generateIndexRecommendations(): IndexRecommendation[] {
-    return HEALTHCARE_RECOMMENDED_INDEXES.map(index => ({
+    return HEALTHCARE_RECOMMENDED_INDEXES.map((index) => ({
       ...index,
       estimatedImprovement: this.calculateIndexImprovement(index),
       healthcareRelevant: this.isHealthcareRelevant(index.table),
-    }));
+    }))
   }
 
   /**
@@ -253,8 +253,8 @@ export class DatabasePerformanceService {
    */
   private calculateIndexImprovement(index: any): number {
     // Healthcare-critical tables get higher improvement estimates
-    const healthcareCritical = ['patients', 'appointments', 'consent_records'];
-    const baseImprovement = healthcareCritical.includes(index.table) ? 40 : 25;
+    const healthcareCritical = ['patients', 'appointments', 'consent_records']
+    const baseImprovement = healthcareCritical.includes(index.table) ? 40 : 25
 
     // Adjust based on priority
     const priorityMultiplier = {
@@ -262,9 +262,9 @@ export class DatabasePerformanceService {
       high: 1.2,
       medium: 1.0,
       low: 0.8,
-    };
+    }
 
-    return Math.floor(baseImprovement * priorityMultiplier[index.priority]);
+    return Math.floor(baseImprovement * priorityMultiplier[index.priority])
   }
 
   /**
@@ -280,48 +280,48 @@ export class DatabasePerformanceService {
       'audit_logs',
       'clinics',
       'services',
-    ];
-    return healthcareTables.includes(table);
+    ]
+    return healthcareTables.includes(table)
   }
 
   /**
    * Perform comprehensive database health check
    */
   async performHealthCheck(): Promise<DatabaseHealth> {
-    const metrics = await this.analyzePerformance();
-    const issues: string[] = [];
-    const recommendations: string[] = [];
-    let score = 100;
+    const metrics = await this.analyzePerformance()
+    const issues: string[] = []
+    const recommendations: string[] = []
+    let score = 100
 
     // Check connection pool health
     if (metrics.connectionPool.utilization > 80) {
-      issues.push('High connection pool utilization');
-      recommendations.push('Consider increasing connection pool size');
-      score -= 15;
+      issues.push('High connection pool utilization')
+      recommendations.push('Consider increasing connection pool size')
+      score -= 15
     }
 
     // Check query performance
     if (metrics.queryPerformance.averageResponseTime > 100) {
-      issues.push('Slow average query response time');
-      recommendations.push('Optimize slow queries and add missing indexes');
-      score -= 20;
+      issues.push('Slow average query response time')
+      recommendations.push('Optimize slow queries and add missing indexes')
+      score -= 20
     }
 
     // Check healthcare compliance
     if (metrics.healthcareCompliance.avgPatientQueryTime > 50) {
-      issues.push('Patient data queries exceeding healthcare thresholds');
-      recommendations.push('Optimize patient data indexes for LGPD compliance');
-      score -= 25;
+      issues.push('Patient data queries exceeding healthcare thresholds')
+      recommendations.push('Optimize patient data indexes for LGPD compliance')
+      score -= 25
     }
 
     // Check index efficiency
     if (metrics.indexUsage.indexEfficiency < 80) {
-      issues.push('Low index efficiency detected');
-      recommendations.push('Remove unused indexes and add missing ones');
-      score -= 10;
+      issues.push('Low index efficiency detected')
+      recommendations.push('Remove unused indexes and add missing ones')
+      score -= 10
     }
 
-    const status = score >= 80 ? 'healthy' : score >= 60 ? 'warning' : 'critical';
+    const status = score >= 80 ? 'healthy' : score >= 60 ? 'warning' : 'critical'
 
     return {
       status,
@@ -329,7 +329,7 @@ export class DatabasePerformanceService {
       issues,
       recommendations,
       lastChecked: new Date(),
-    };
+    }
   }
 
   /**
@@ -338,17 +338,17 @@ export class DatabasePerformanceService {
   startHealthMonitoring(intervalMs: number = 300000) {
     // 5 minutes default
     this.healthCheckInterval = setInterval(async () => {
-      const health = await this.performHealthCheck();
+      const health = await this.performHealthCheck()
 
       if (health.status === 'critical') {
         console.error(
           'CRITICAL: Database health issues detected:',
           health.issues,
-        );
+        )
       } else if (health.status === 'warning') {
-        console.warn('WARNING: Database performance issues:', health.issues);
+        console.warn('WARNING: Database performance issues:', health.issues)
       }
-    }, intervalMs);
+    }, intervalMs)
   }
 
   /**
@@ -356,8 +356,8 @@ export class DatabasePerformanceService {
    */
   stopHealthMonitoring() {
     if (this.healthCheckInterval) {
-      clearInterval(this.healthCheckInterval);
-      this.healthCheckInterval = undefined;
+      clearInterval(this.healthCheckInterval)
+      this.healthCheckInterval = undefined
     }
   }
 
@@ -365,8 +365,8 @@ export class DatabasePerformanceService {
    * Get query monitor instance
    */
   getQueryMonitor(): QueryPerformanceMonitor {
-    return this.queryMonitor;
+    return this.queryMonitor
   }
 }
 
-export default DatabasePerformanceService;
+export default DatabasePerformanceService

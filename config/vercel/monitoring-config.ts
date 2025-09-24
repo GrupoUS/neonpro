@@ -63,7 +63,7 @@ export const monitoringConfig = {
     ],
 
     // Before send callback for sensitive data filtering
-    beforeSend: event => {
+    beforeSend: (event) => {
       if (event.request && event.request.headers) {
         // Filter sensitive headers
         const sensitiveHeaders = [
@@ -71,13 +71,13 @@ export const monitoringConfig = {
           'cookie',
           'set-cookie',
           'proxy-authorization',
-        ];
+        ]
         event.request.headers = Object.keys(event.request.headers)
-          .filter(key => !sensitiveHeaders.includes(key.toLowerCase()))
+          .filter((key) => !sensitiveHeaders.includes(key.toLowerCase()))
           .reduce((obj, key) => {
-            obj[key] = event.request.headers[key];
-            return obj;
-          }, {});
+            obj[key] = event.request.headers[key]
+            return obj
+          }, {})
       }
 
       // Filter sensitive data in request body
@@ -85,7 +85,7 @@ export const monitoringConfig = {
         try {
           const data = typeof event.request.data === 'string'
             ? JSON.parse(event.request.data)
-            : event.request.data;
+            : event.request.data
 
           // Mask sensitive fields
           const sensitiveFields = [
@@ -95,28 +95,28 @@ export const monitoringConfig = {
             'rg',
             'medical_record',
             'patient_id',
-          ];
+          ]
           const maskData = (obj: any) => {
-            Object.keys(obj).forEach(key => {
+            Object.keys(obj).forEach((key) => {
               if (
-                sensitiveFields.some(field => key.toLowerCase().includes(field))
+                sensitiveFields.some((field) => key.toLowerCase().includes(field))
               ) {
-                obj[key] = '***MASKED***';
+                obj[key] = '***MASKED***'
               } else if (typeof obj[key] === 'object' && obj[key] !== null) {
-                maskData(obj[key]);
+                maskData(obj[key])
               }
-            });
-          };
+            })
+          }
 
-          maskData(data);
-          event.request.data = JSON.stringify(data);
+          maskData(data)
+          event.request.data = JSON.stringify(data)
         } catch (_e) {
-          void _e;
+          void _e
           // If parsing fails, leave as is
         }
       }
 
-      return event;
+      return event
     },
   },
 
@@ -477,6 +477,6 @@ export const monitoringConfig = {
       documentationTracking: true,
     },
   },
-};
+}
 
-export default monitoringConfig;
+export default monitoringConfig

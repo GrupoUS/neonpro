@@ -164,14 +164,14 @@ The JWT authentication system is highly configurable through security settings t
 
 ```typescript
 interface JWTSecurityConfig {
-  algorithms: Algorithm[]; // Allowed signing algorithms
-  allowedAudiences: string[]; // Permitted audience values
-  allowedIssuers: string[]; // Trusted token issuers
-  maxExpirationHours: number; // Maximum token lifetime
-  requireKeyId: boolean; // Whether kid claim is required
-  enforceHttpsInProduction: boolean; // HTTPS enforcement
-  rateLimitWindowMs: number; // Rate limiting window
-  rateLimitMaxAttempts: number; // Maximum attempts per window
+  algorithms: Algorithm[] // Allowed signing algorithms
+  allowedAudiences: string[] // Permitted audience values
+  allowedIssuers: string[] // Trusted token issuers
+  maxExpirationHours: number // Maximum token lifetime
+  requireKeyId: boolean // Whether kid claim is required
+  enforceHttpsInProduction: boolean // HTTPS enforcement
+  rateLimitWindowMs: number // Rate limiting window
+  rateLimitMaxAttempts: number // Maximum attempts per window
 }
 ```
 
@@ -290,7 +290,7 @@ export function authenticationMiddleware() {
     // Extract user data from validated token
     // Set user context for downstream handlers
     // Proceed to next middleware or handler
-  };
+  }
 }
 ```
 
@@ -301,12 +301,12 @@ Complementary middleware enforces role-based access:
 ```typescript
 export function authorizationMiddleware(allowedRoles: string[] = []) {
   return async (c: Context, next: Next) => {
-    const user = c.get('user');
+    const user = c.get('user')
     if (!user || !allowedRoles.includes(user._role)) {
-      throw new HTTPException(403, { message: 'Insufficient permissions' });
+      throw new HTTPException(403, { message: 'Insufficient permissions' })
     }
-    await next();
-  };
+    await next()
+  }
 }
 ```
 
@@ -314,8 +314,8 @@ Multiple middleware functions can be combined to create comprehensive protection
 
 ```typescript
 // Require authentication and specific roles
-app.use('/admin/*', requireAuth(['admin']));
-app.use('/provider/*', requireAuth(['healthcare_professional', 'admin']));
+app.use('/admin/*', requireAuth(['admin']))
+app.use('/provider/*', requireAuth(['healthcare_professional', 'admin']))
 ```
 
 The middleware extracts user information from the validated token and makes it available to downstream handlers through the context object.

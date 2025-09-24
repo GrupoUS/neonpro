@@ -4,22 +4,22 @@
  * for secure telemedicine sessions with comprehensive compliance
  */
 
-import { TRPCError } from '@trpc/server';
+import { TRPCError } from '@trpc/server'
 import {
   healthcareProcedure,
   patientProcedure,
   publicProcedure,
   router,
   telemedicineProcedure,
-} from '../trpc';
+} from '../trpc'
 
 // Import services
-import { CFMComplianceService } from '../../services/cfm-compliance';
-import { telemedicineService } from '../../services/telemedicine-service';
+import { CFMComplianceService } from '../../services/cfm-compliance'
+import { telemedicineService } from '../../services/telemedicine-service'
 // import { PatientIdentityService } from '@neonpro/database/src/services/patient-identity.service';
 
 // Initialize services
-const cfmService = new CFMComplianceService();
+const cfmService = new CFMComplianceService()
 // const identityService = new PatientIdentityService();
 
 // Input validation schemas
@@ -36,7 +36,7 @@ const createSessionSchema = z.object({
   scheduledFor: z.date().optional(),
   estimatedDuration: z.number().min(5).max(180).default(30), // 5-180 minutes
   notes: z.string().max(500).optional(),
-});
+})
 
 const joinSessionSchema = z.object({
   sessionId: z.string().uuid(),
@@ -47,7 +47,7 @@ const joinSessionSchema = z.object({
     device: z.string(),
     connection: z.string(),
   }),
-});
+})
 
 const _patientVerificationSchema = z.object({
   patientId: z.string().uuid(),
@@ -61,13 +61,13 @@ const _patientVerificationSchema = z.object({
     }),
   ),
   enableBiometric: z.boolean().default(false),
-});
+})
 
 const _licenseVerificationSchema = z.object({
   cfmNumber: z.string(),
   physicianState: z.string().length(2),
   requestedSpecialty: z.string().optional(),
-});
+})
 
 const consentSchema = z.object({
   patientId: z.string().uuid(),
@@ -79,7 +79,7 @@ const consentSchema = z.object({
     'second_opinion',
   ]),
   consentData: z.record(z.any()),
-});
+})
 
 const complianceReportSchema = z.object({
   sessionId: z.string().uuid().optional(),
@@ -97,7 +97,7 @@ const complianceReportSchema = z.object({
     'license_status',
     'consent_status',
   ]),
-});
+})
 
 export const telemedicineRouter = router({
   /**
@@ -115,26 +115,26 @@ export const telemedicineRouter = router({
           .select('cfm_number, state, specialty')
           .eq('id', input.physicianId)
           .eq('role', 'physician')
-          .single();
+          .single()
 
         if (!physician) {
           throw new TRPCError({
             code: 'NOT_FOUND',
             message: 'Physician not found',
-          });
+          })
         }
 
         // Verify medical license using telemedicine service
         const licenseVerification = await telemedicineService[
           'verifyPhysicianLicense'
-        ](input.physicianId, input.specialty || physician.specialty);
+        ](input.physicianId, input.specialty || physician.specialty)
 
         if (!licenseVerification.complianceStatus.telemedicineCompliant) {
           throw new TRPCError({
             code: 'FORBIDDEN',
             message: 'Physician not authorized for telemedicine',
             cause: licenseVerification.riskIndicators,
-          });
+          })
         }
 
         // Create WebRTC session using telemedicine service
@@ -147,7 +147,7 @@ export const telemedicineRouter = router({
           estimatedDuration: input.estimatedDuration,
           notes: input.notes,
           clinicId: physician.clinic_id,
-        });
+        })
 
         // Create CFM compliance record
         const complianceRecord = await cfmService.createComplianceRecord({
@@ -158,7 +158,7 @@ export const telemedicineRouter = router({
           physicianState: physician.state,
           sessionType: input.sessionType,
           licenseVerification,
-        });
+        })
 
         return {
           session,
@@ -168,19 +168,19 @@ export const telemedicineRouter = router({
             telemedicineCompliant: licenseVerification.complianceStatus.telemedicineCompliant,
             restrictions: licenseVerification.telemedicineAuth.restrictions,
           },
-        };
+        }
       } catch {
-        console.error('Error creating telemedicine session:', error);
+        console.error('Error creating telemedicine session:', error)
 
         if (error instanceof TRPCError) {
-          throw error;
+          throw error
         }
 
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to create telemedicine session',
           cause: error,
-        });
+        })
       }
     }),
 
@@ -203,7 +203,7 @@ export const telemedicineRouter = router({
           participantType: input.participantType,
           status: 'joined',
           joinedAt: new Date(),
-        };
+        }
 
         // Log compliance event
         await cfmService.logComplianceEvent({
@@ -212,16 +212,16 @@ export const telemedicineRouter = router({
           _userId: ctx.userId!,
           participantType: input.participantType,
           metadata: { deviceInfo: input.deviceInfo },
-        });
+        })
 
-        return sessionDetails;
+        return sessionDetails
       } catch {
-        console.error('Error joining telemedicine session:', error);
+        console.error('Error joining telemedicine session:', error)
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to join session',
           cause: error,
-        });
+        })
       }
     }),
 
@@ -247,7 +247,7 @@ export const telemedicineRouter = router({
           endReason: input.endReason,
           endedBy: ctx.userId!,
           recordingStopped: true,
-        });
+        })
 
         const sessionSummary = {
           sessionId: sessionResult.sessionId,
@@ -255,23 +255,23 @@ export const telemedicineRouter = router({
           endedBy: ctx.userId!,
           endedAt: sessionResult.endedAt,
           duration: sessionResult.duration,
-        };
+        }
 
         // Complete compliance record
         await cfmService.completeComplianceRecord(input.sessionId, {
           endReason: input.endReason,
           sessionSummary,
           endedBy: ctx.userId!,
-        });
+        })
 
-        return sessionSummary;
+        return sessionSummary
       } catch {
-        console.error('Error ending telemedicine session:', error);
+        console.error('Error ending telemedicine session:', error)
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to end session',
           cause: error,
-        });
+        })
       }
     }),
 
@@ -283,7 +283,7 @@ export const telemedicineRouter = router({
         // Get session status using telemedicine service
         const sessionStatus = await telemedicineService.getSessionStatus(
           input.sessionId,
-        );
+        )
 
         return {
           sessionId: sessionStatus.session.sessionId,
@@ -293,14 +293,14 @@ export const telemedicineRouter = router({
           qualityMetrics: sessionStatus.qualityMetrics,
           recording: sessionStatus.recording,
           createdAt: sessionStatus.session.scheduledFor,
-        };
+        }
       } catch {
-        console.error('Error getting session status:', error);
+        console.error('Error getting session status:', error)
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to get session status',
           cause: error,
-        });
+        })
       }
     }),
 
@@ -435,16 +435,16 @@ export const telemedicineRouter = router({
           consentData: input.consentData,
           recordedBy: ctx.userId!,
           timestamp: new Date(),
-        });
+        })
 
-        return consent;
+        return consent
       } catch {
-        console.error('Error recording patient consent:', error);
+        console.error('Error recording patient consent:', error)
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to record patient consent',
           cause: error,
-        });
+        })
       }
     }),
 
@@ -468,14 +468,14 @@ export const telemedicineRouter = router({
         return await cfmService.getPatientConsentStatus(
           input.patientId,
           input.consentType,
-        );
+        )
       } catch {
-        console.error('Error getting consent status:', error);
+        console.error('Error getting consent status:', error)
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to get consent status',
           cause: error,
-        });
+        })
       }
     }),
 
@@ -494,14 +494,14 @@ export const telemedicineRouter = router({
           physicianId: input.physicianId,
           dateRange: input.dateRange,
           reportType: input.reportType,
-        });
+        })
       } catch {
-        console.error('Error generating compliance report:', error);
+        console.error('Error generating compliance report:', error)
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to generate compliance report',
           cause: error,
-        });
+        })
       }
     }),
 
@@ -510,14 +510,14 @@ export const telemedicineRouter = router({
     .input(z.object({ sessionId: z.string().uuid() }))
     .query(async ({ input }) => {
       try {
-        return await cfmService.getSessionAuditTrail(input.sessionId);
+        return await cfmService.getSessionAuditTrail(input.sessionId)
       } catch {
-        console.error('Error getting session audit trail:', error);
+        console.error('Error getting session audit trail:', error)
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to get session audit trail',
           cause: error,
-        });
+        })
       }
     }),
 
@@ -546,14 +546,14 @@ export const telemedicineRouter = router({
           total: 0,
           limit: input.limit,
           offset: input.offset,
-        };
+        }
       } catch {
-        console.error('Error listing active sessions:', error);
+        console.error('Error listing active sessions:', error)
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to list active sessions',
           cause: error,
-        });
+        })
       }
     }),
 
@@ -588,16 +588,16 @@ export const telemedicineRouter = router({
           fromUserId: ctx.userId,
           targetParticipant: input.targetParticipant,
           signalType: input.signal.type,
-        });
+        })
 
-        return { success: true };
+        return { success: true }
       } catch {
-        console.error('Error sending WebRTC signal:', error);
+        console.error('Error sending WebRTC signal:', error)
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to send WebRTC signal',
           cause: error,
-        });
+        })
       }
     }),
 
@@ -614,14 +614,14 @@ export const telemedicineRouter = router({
           isRecording: false,
           recordingType: null,
           startedAt: null,
-        };
+        }
       } catch {
-        console.error('Error getting recording status:', error);
+        console.error('Error getting recording status:', error)
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to get recording status',
           cause: error,
-        });
+        })
       }
     }),
 
@@ -640,13 +640,13 @@ export const telemedicineRouter = router({
           // We'll need to get patientId from session
           input.sessionId,
           'recording',
-        );
+        )
 
         if (!consentStatus.hasValidConsent) {
           throw new TRPCError({
             code: 'FORBIDDEN',
             message: 'Recording consent required',
-          });
+          })
         }
 
         // return await webrtcService.startRecording(
@@ -662,14 +662,14 @@ export const telemedicineRouter = router({
           recordingType: input.recordingType,
           startedAt: new Date(),
           startedBy: ctx.userId,
-        };
+        }
       } catch {
-        console.error('Error starting recording:', error);
+        console.error('Error starting recording:', error)
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to start recording',
           cause: error,
-        });
+        })
       }
     }),
 
@@ -681,21 +681,21 @@ export const telemedicineRouter = router({
         // Stop recording using telemedicine service
         const recordingResult = await telemedicineService.stopRecording(
           input.sessionId,
-        );
+        )
 
         return {
           sessionId: input.sessionId,
           isRecording: false,
           stoppedAt: new Date(),
           duration: recordingResult.duration,
-        };
+        }
       } catch {
-        console.error('Error stopping recording:', error);
+        console.error('Error stopping recording:', error)
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to stop recording',
           cause: error,
-        });
+        })
       }
     }),
-});
+})

@@ -16,12 +16,12 @@ import { BigCalendar } from '@/components/big-calendar';
 
 ```typescript
 interface BigCalendarProps {
-  events?: CalendarEvent[]; // Array of calendar events to display
-  onEventUpdate?: (event: CalendarEvent) => void; // Callback when event is updated
-  onEventDelete?: (eventId: string) => void; // Callback when event is deleted
-  onEventCreate?: (event: CalendarEvent) => void; // Callback when new event is created
-  className?: string; // Additional CSS classes
-  initialView?: 'day' | 'week' | 'month' | 'agenda'; // Initial calendar view
+  events?: CalendarEvent[] // Array of calendar events to display
+  onEventUpdate?: (event: CalendarEvent) => void // Callback when event is updated
+  onEventDelete?: (eventId: string) => void // Callback when event is deleted
+  onEventCreate?: (event: CalendarEvent) => void // Callback when new event is created
+  className?: string // Additional CSS classes
+  initialView?: 'day' | 'week' | 'month' | 'agenda' // Initial calendar view
 }
 ```
 
@@ -29,15 +29,15 @@ interface BigCalendarProps {
 
 ```typescript
 interface CalendarEvent {
-  id: string; // Unique event identifier
-  title: string; // Event title
-  description?: string; // Event description (optional)
-  start: Date; // Event start time
-  end: Date; // Event end time
-  allDay?: boolean; // Is this an all-day event?
-  color?: EventColor; // Event color for visual distinction
-  label?: string; // Event label/category
-  location?: string; // Event location (optional)
+  id: string // Unique event identifier
+  title: string // Event title
+  description?: string // Event description (optional)
+  start: Date // Event start time
+  end: Date // Event end time
+  allDay?: boolean // Is this an all-day event?
+  color?: EventColor // Event color for visual distinction
+  label?: string // Event label/category
+  location?: string // Event location (optional)
 }
 ```
 
@@ -50,13 +50,13 @@ type EventColor =
   | 'secondary'
   | 'success'
   | 'warning'
-  | 'error';
+  | 'error'
 ```
 
 ## CalendarView Type
 
 ```typescript
-type CalendarView = 'month' | 'week' | 'day' | 'agenda';
+type CalendarView = 'month' | 'week' | 'day' | 'agenda'
 ```
 
 ## Usage Examples
@@ -64,8 +64,8 @@ type CalendarView = 'month' | 'week' | 'day' | 'agenda';
 ### Basic Usage
 
 ```typescript
-import { BigCalendar } from '@/components/big-calendar';
-import { CalendarEvent } from '@/components/event-calendar/types';
+import { BigCalendar } from '@/components/big-calendar'
+import { CalendarEvent } from '@/components/event-calendar/types'
 
 const sampleEvents: CalendarEvent[] = [
   {
@@ -84,7 +84,7 @@ const sampleEvents: CalendarEvent[] = [
     end: new Date('2024-01-15T15:00:00'),
     color: 'secondary',
   },
-];
+]
 
 function AppointmentsPage() {
   return (
@@ -98,7 +98,7 @@ function AppointmentsPage() {
         onEventDelete={handleEventDelete}
       />
     </div>
-  );
+  )
 }
 ```
 
@@ -115,7 +115,7 @@ function AppointmentsPage() {
         onEventCreate={handleEventCreate}
       />
     </div>
-  );
+  )
 }
 ```
 
@@ -131,7 +131,7 @@ function AgendaPage() {
         className='max-h-96 overflow-y-auto'
       />
     </div>
-  );
+  )
 }
 ```
 
@@ -144,10 +144,10 @@ Events are created through the calendar's built-in UI. The `onEventCreate` callb
 ```typescript
 const handleEventCreate = (event: CalendarEvent) => {
   // Save event to database
-  await saveEvent(event);
+  await saveEvent(event)
   // Update local state
-  setEvents(prev => [...prev, event]);
-};
+  setEvents((prev) => [...prev, event])
+}
 ```
 
 ### Updating Events
@@ -157,10 +157,10 @@ When existing events are modified (dragged, resized, or edited), the `onEventUpd
 ```typescript
 const handleEventUpdate = (updatedEvent: CalendarEvent) => {
   // Update event in database
-  await updateEvent(updatedEvent.id, updatedEvent);
+  await updateEvent(updatedEvent.id, updatedEvent)
   // Update local state
-  setEvents(prev => prev.map(event => (event.id === updatedEvent.id ? updatedEvent : event)));
-};
+  setEvents((prev) => prev.map((event) => (event.id === updatedEvent.id ? updatedEvent : event)))
+}
 ```
 
 ### Deleting Events
@@ -170,10 +170,10 @@ Events can be deleted through the calendar UI, triggering the `onEventDelete` ca
 ```typescript
 const handleEventDelete = (eventId: string) => {
   // Remove event from database
-  await deleteEvent(eventId);
+  await deleteEvent(eventId)
   // Update local state
-  setEvents(prev => prev.filter(event => event.id !== eventId));
-};
+  setEvents((prev) => prev.filter((event) => event.id !== eventId))
+}
 ```
 
 ## Accessibility
@@ -194,14 +194,14 @@ For calendars with many events, consider these optimizations:
 
 ```typescript
 // Use memoization for event data
-const memoizedEvents = useMemo(() => events, [events]);
+const memoizedEvents = useMemo(() => events, [events])
 
 // Implement virtualization for large datasets
 const visibleEvents = useMemo(() => {
-  const start = getCurrentViewStart();
-  const end = getCurrentViewEnd();
-  return events.filter(event => event.start >= start && event.end <= end);
-}, [events, currentView]);
+  const start = getCurrentViewStart()
+  const end = getCurrentViewEnd()
+  return events.filter((event) => event.start >= start && event.end <= end)
+}, [events, currentView])
 ```
 
 ### Lazy Loading
@@ -209,11 +209,11 @@ const visibleEvents = useMemo(() => {
 ```typescript
 // Load events on demand when view changes
 const loadEventsForView = async (view: CalendarView, date: Date) => {
-  const start = getViewStart(view, date);
-  const end = getViewEnd(view, date);
-  const events = await fetchEvents(start, end);
-  setEvents(events);
-};
+  const start = getViewStart(view, date)
+  const end = getViewEnd(view, date)
+  const events = await fetchEvents(start, end)
+  setEvents(events)
+}
 ```
 
 ## Error Handling
@@ -226,20 +226,20 @@ const handleEventCreate = (event: CalendarEvent) => {
   try {
     // Validate event data
     if (!event.title || !event.start || !event.end) {
-      throw new Error('Event must have title, start, and end times');
+      throw new Error('Event must have title, start, and end times')
     }
 
     if (event.start >= event.end) {
-      throw new Error('Event end time must be after start time');
+      throw new Error('Event end time must be after start time')
     }
 
-    await saveEvent(event);
+    await saveEvent(event)
   } catch (error) {
-    console.error('Failed to create event:', error);
+    console.error('Failed to create event:', error)
     // Show user-friendly error message
-    showErrorToast('Failed to create event. Please check your input.');
+    showErrorToast('Failed to create event. Please check your input.')
   }
-};
+}
 ```
 
 ## Integration with Backend
@@ -252,8 +252,8 @@ class CalendarService {
   async getEvents(start: Date, end: Date): Promise<CalendarEvent[]> {
     const response = await fetch(
       `/api/events?start=${start.toISOString()}&end=${end.toISOString()}`,
-    );
-    return response.json();
+    )
+    return response.json()
   }
 
   async createEvent(event: Omit<CalendarEvent, 'id'>): Promise<CalendarEvent> {
@@ -261,8 +261,8 @@ class CalendarService {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(event),
-    });
-    return response.json();
+    })
+    return response.json()
   }
 
   async updateEvent(
@@ -273,12 +273,12 @@ class CalendarService {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(event),
-    });
-    return response.json();
+    })
+    return response.json()
   }
 
   async deleteEvent(id: string): Promise<void> {
-    await fetch(`/api/events/${id}`, { method: 'DELETE' });
+    await fetch(`/api/events/${id}`, { method: 'DELETE' })
   }
 }
 ```

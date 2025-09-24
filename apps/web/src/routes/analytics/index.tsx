@@ -3,7 +3,7 @@
  * Comprehensive analytics interface for aesthetic clinic business intelligence
  */
 
-import { createFileRoute, Link } from '@tanstack/react-router';
+import { createFileRoute, Link } from '@tanstack/react-router'
 import {
   Activity,
   AlertTriangle,
@@ -28,25 +28,25 @@ import {
   Users,
   XCircle,
   Zap,
-} from 'lucide-react';
-import * as React from 'react';
-import { useEffect, useState } from 'react';
-import { api } from '~/lib/api';
+} from 'lucide-react'
+import * as React from 'react'
+import { useEffect, useState } from 'react'
+import { api } from '~/lib/api'
 
 export const Route = createFileRoute('/analytics/')({
   component: AnalyticsDashboard,
-});
+})
 
 function AnalyticsDashboard() {
-  const [activeTab, setActiveTab] = useState('overview');
-  const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState('overview')
+  const [loading, setLoading] = useState(true)
   const [realtimeMetrics, setRealtimeMetrics] = useState({
     revenueTotal: 0,
     appointmentCount: 0,
     newPatients: 0,
     noShowRate: 0,
-  });
-  const [dashboardData, setDashboardData] = useState<any>(null);
+  })
+  const [dashboardData, setDashboardData] = useState<any>(null)
 
   // Mock data for demonstration
   const kpis = [
@@ -68,7 +68,7 @@ function AnalyticsDashboard() {
     },
     { name: 'Satisfação', value: '4.8', change: '+2%', icon: Target, color: 'text-indigo-600' },
     { name: 'Ocupação', value: '87%', change: '+3%', icon: Activity, color: 'text-orange-600' },
-  ];
+  ]
 
   const alerts = [
     {
@@ -92,7 +92,7 @@ function AnalyticsDashboard() {
       severity: 'critical',
       triggered: '30 minutos atrás',
     },
-  ];
+  ]
 
   const reports = [
     {
@@ -116,7 +116,7 @@ function AnalyticsDashboard() {
       lastRun: 'Segunda, 10:00',
       nextRun: 'Próxima Segunda',
     },
-  ];
+  ]
 
   const models = [
     {
@@ -140,12 +140,12 @@ function AnalyticsDashboard() {
       accuracy: 0.78,
       lastTrained: '2 dias atrás',
     },
-  ];
+  ]
 
   useEffect(() => {
     // Simulate loading analytics data
     const loadAnalyticsData = async () => {
-      setLoading(true);
+      setLoading(true)
       // In a real implementation, this would fetch from the API
       setTimeout(() => {
         setRealtimeMetrics({
@@ -153,48 +153,48 @@ function AnalyticsDashboard() {
           appointmentCount: 24,
           newPatients: 12,
           noShowRate: 8,
-        });
-        setLoading(false);
-      }, 1500);
-    };
+        })
+        setLoading(false)
+      }, 1500)
+    }
 
-    loadAnalyticsData();
-  }, []);
+    loadAnalyticsData()
+  }, [])
 
   const handleRefresh = () => {
-    setLoading(true);
+    setLoading(true)
     setTimeout(() => {
-      setLoading(false);
-    }, 1000);
-  };
+      setLoading(false)
+    }, 1000)
+  }
 
   const getSeverityColor = (severity: string) => {
     switch (severity) {
       case 'critical':
-        return 'bg-red-100 text-red-800';
+        return 'bg-red-100 text-red-800'
       case 'high':
-        return 'bg-orange-100 text-orange-800';
+        return 'bg-orange-100 text-orange-800'
       case 'medium':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'bg-yellow-100 text-yellow-800'
       case 'low':
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-blue-100 text-blue-800'
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-gray-100 text-gray-800'
     }
-  };
+  }
 
   const getSeverityIcon = (severity: string) => {
     switch (severity) {
       case 'critical':
-        return <XCircle className='h-4 w-4' />;
+        return <XCircle className='h-4 w-4' />
       case 'high':
-        return <AlertTriangle className='h-4 w-4' />;
+        return <AlertTriangle className='h-4 w-4' />
       case 'medium':
-        return <AlertTriangle className='h-4 w-4' />;
+        return <AlertTriangle className='h-4 w-4' />
       default:
-        return <CheckCircle className='h-4 w-4' />;
+        return <CheckCircle className='h-4 w-4' />
     }
-  };
+  }
 
   return (
     <div className='min-h-screen bg-gray-50'>
@@ -249,7 +249,7 @@ function AnalyticsDashboard() {
               { id: 'reports', name: 'Relatórios', icon: Download },
               { id: 'predictions', name: 'Previsões', icon: Brain },
               { id: 'exports', name: 'Exportações', icon: Download },
-            ].map(tab => (
+            ].map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
@@ -350,7 +350,7 @@ function AnalyticsDashboard() {
                 </Link>
               </div>
               <div className='divide-y divide-gray-200'>
-                {alerts.map(alert => (
+                {alerts.map((alert) => (
                   <div key={alert.id} className='px-6 py-4'>
                     <div className='flex items-center justify-between'>
                       <div className='flex items-center'>
@@ -424,7 +424,7 @@ function AnalyticsDashboard() {
                   lastUpdated: '3 horas atrás',
                   isPublic: false,
                 },
-              ].map(dashboard => (
+              ].map((dashboard) => (
                 <div
                   key={dashboard.id}
                   className='bg-white rounded-lg shadow hover:shadow-md transition-shadow'
@@ -526,7 +526,7 @@ function AnalyticsDashboard() {
                     frequency: 'Diário',
                     isActive: true,
                   },
-                ].map(kpi => (
+                ].map((kpi) => (
                   <div key={kpi.id} className='px-6 py-4'>
                     <div className='flex items-center justify-between'>
                       <div className='flex items-center space-x-4'>
@@ -610,7 +610,7 @@ function AnalyticsDashboard() {
                   <h3 className='text-lg font-medium text-gray-900'>Alertas Recentes</h3>
                 </div>
                 <div className='divide-y divide-gray-200'>
-                  {alerts.map(alert => (
+                  {alerts.map((alert) => (
                     <div key={alert.id} className='px-6 py-4'>
                       <div className='flex items-center justify-between'>
                         <div className='flex items-center'>
@@ -674,7 +674,7 @@ function AnalyticsDashboard() {
                 </div>
               </div>
               <div className='divide-y divide-gray-200'>
-                {reports.map(report => (
+                {reports.map((report) => (
                   <div key={report.id} className='px-6 py-4'>
                     <div className='flex items-center justify-between'>
                       <div className='flex items-center space-x-4'>
@@ -718,7 +718,7 @@ function AnalyticsDashboard() {
             </div>
 
             <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
-              {models.map(model => (
+              {models.map((model) => (
                 <div
                   key={model.id}
                   className='bg-white rounded-lg shadow hover:shadow-md transition-shadow'
@@ -825,5 +825,5 @@ function AnalyticsDashboard() {
         )}
       </div>
     </div>
-  );
+  )
 }

@@ -10,99 +10,99 @@
  * - Portuguese healthcare workflows
  */
 
-import { useCoAgent, useCopilotAction, useCopilotReadable } from '@copilotkit/react-core';
-import React, { useCallback } from 'react';
-import { Button } from '../../ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '../../ui/card';
-import { NeonProAppointmentCard } from '../NeonProChatComponents';
-import { useNeonProChat } from '../NeonProChatProvider';
+import { useCoAgent, useCopilotAction, useCopilotReadable } from '@copilotkit/react-core'
+import React, { useCallback } from 'react'
+import { Button } from '../../ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '../../ui/card'
+import { NeonProAppointmentCard } from '../NeonProChatComponents'
+import { useNeonProChat } from '../NeonProChatProvider'
 // Removed unused Badge import
 // Removed unused Alert imports
 // Removed unused Input import
 // Removed unused Label import
 // Removed unused Textarea import
 // Removed unused Select imports
-import { addDays, format, isBefore } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
-import { Brain, Calendar, CheckCircle, Clock, Search, TrendingUp } from 'lucide-react';
+import { addDays, format, isBefore } from 'date-fns'
+import { ptBR } from 'date-fns/locale'
+import { Brain, Calendar, CheckCircle, Clock, Search, TrendingUp } from 'lucide-react'
 
 // Types
 interface TimeSlot {
-  id: string;
-  start: Date;
-  end: Date;
-  professional: string;
-  room: string;
-  confidence: number;
-  efficiency: number;
-  noShowRisk: number;
-  optimizationScore: number;
+  id: string
+  start: Date
+  end: Date
+  professional: string
+  room: string
+  confidence: number
+  efficiency: number
+  noShowRisk: number
+  optimizationScore: number
 }
 
 interface Appointment {
-  id: string;
-  patientId: string;
-  patientName: string;
-  service: string;
-  dateTime: Date;
-  duration: number;
-  professional: string;
-  room: string;
-  status: 'scheduled' | 'confirmed' | 'completed' | 'cancelled' | 'no-show';
-  priority: 'low' | 'medium' | 'high' | 'urgent';
-  notes?: string;
-  revenue?: number;
+  id: string
+  patientId: string
+  patientName: string
+  service: string
+  dateTime: Date
+  duration: number
+  professional: string
+  room: string
+  status: 'scheduled' | 'confirmed' | 'completed' | 'cancelled' | 'no-show'
+  priority: 'low' | 'medium' | 'high' | 'urgent'
+  notes?: string
+  revenue?: number
 }
 
 interface Professional {
-  id: string;
-  name: string;
-  specialty: string;
+  id: string
+  name: string
+  specialty: string
   availability: Array<{
-    day: string;
-    startTime: string;
-    endTime: string;
-  }>;
+    day: string
+    startTime: string
+    endTime: string
+  }>
   performance: {
-    completionRate: number;
-    noShowRate: number;
-    patientSatisfaction: number;
-  };
+    completionRate: number
+    noShowRate: number
+    patientSatisfaction: number
+  }
 }
 
 interface AppointmentAgentState {
-  currentOperation: 'idle' | 'searching_slots' | 'scheduling' | 'optimizing' | 'confirming';
+  currentOperation: 'idle' | 'searching_slots' | 'scheduling' | 'optimizing' | 'confirming'
   searchCriteria: {
-    service: string;
-    duration: number;
-    preferredDates: Date[];
-    preferredProfessionals: string[];
-    urgency: 'low' | 'medium' | 'high' | 'urgent';
-    patientId?: string;
-  };
-  availableSlots: TimeSlot[];
-  selectedSlot?: TimeSlot;
-  scheduledAppointments: Appointment[];
+    service: string
+    duration: number
+    preferredDates: Date[]
+    preferredProfessionals: string[]
+    urgency: 'low' | 'medium' | 'high' | 'urgent'
+    patientId?: string
+  }
+  availableSlots: TimeSlot[]
+  selectedSlot?: TimeSlot
+  scheduledAppointments: Appointment[]
   optimization: {
-    suggestions: string[];
-    riskFactors: string[];
-    recommendations: string[];
-    efficiency: number;
-  };
-  professionals: Professional[];
+    suggestions: string[]
+    riskFactors: string[]
+    recommendations: string[]
+    efficiency: number
+  }
+  professionals: Professional[]
   metrics: {
-    totalSlots: number;
-    optimalSlots: number;
-    conflicts: number;
-    utilization: number;
-  };
+    totalSlots: number
+    optimalSlots: number
+    conflicts: number
+    utilization: number
+  }
 }
 
 interface AppointmentAgentProps {
-  clinicId: string;
-  onAppointmentScheduled?: (appointmentId: string) => void;
-  onAppointmentAction?: (action: string, appointmentId: string) => void;
-  onError?: (error: string) => void;
+  clinicId: string
+  onAppointmentScheduled?: (appointmentId: string) => void
+  onAppointmentAction?: (action: string, appointmentId: string) => void
+  onError?: (error: string) => void
 }
 
 // Mock data
@@ -137,7 +137,7 @@ const mockProfessionals: Professional[] = [
       patientSatisfaction: 4.6,
     },
   },
-];
+]
 
 const mockServices = [
   { name: 'Botox', duration: 30, baseRevenue: 800 },
@@ -146,7 +146,7 @@ const mockServices = [
   { name: 'Laser CO2', duration: 90, baseRevenue: 1800 },
   { name: 'Limpeza de Pele', duration: 60, baseRevenue: 300 },
   { name: 'Peeling Químico', duration: 45, baseRevenue: 600 },
-];
+]
 
 export const NeonProAppointmentAgent: React.FC<AppointmentAgentProps> = ({
   clinicId: _clinicId,
@@ -154,7 +154,7 @@ export const NeonProAppointmentAgent: React.FC<AppointmentAgentProps> = ({
   onAppointmentAction,
   onError,
 }) => {
-  const { config: _config } = useNeonProChat();
+  const { config: _config } = useNeonProChat()
 
   // Initialize agent state
   const initialState: AppointmentAgentState = {
@@ -181,12 +181,12 @@ export const NeonProAppointmentAgent: React.FC<AppointmentAgentProps> = ({
       conflicts: 0,
       utilization: 0,
     },
-  };
+  }
 
   const { state, setState } = useCoAgent<AppointmentAgentState>({
     name: 'appointment-agent',
     initialState,
-  });
+  })
 
   // Provide context to CopilotKit
   useCopilotReadable({
@@ -199,7 +199,7 @@ export const NeonProAppointmentAgent: React.FC<AppointmentAgentProps> = ({
       optimization: state.optimization,
       metrics: state.metrics,
     },
-  }, [state]);
+  }, [state])
 
   // Find available time slots action
   useCopilotAction({
@@ -235,51 +235,51 @@ export const NeonProAppointmentAgent: React.FC<AppointmentAgentProps> = ({
       urgency: string = 'medium',
     ) => {
       try {
-        setState(prev => ({
+        setState((prev) => ({
           ...prev,
           currentOperation: 'searching_slots',
           searchCriteria: {
             ...prev.searchCriteria,
             service,
             duration,
-            preferredDates: preferredDates.map(d => new Date(d)),
+            preferredDates: preferredDates.map((d) => new Date(d)),
             preferredProfessionals,
             urgency: urgency as 'low' | 'medium' | 'high' | 'urgent',
           },
-        }));
+        }))
 
         // Simulate search delay
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        await new Promise((resolve) => setTimeout(resolve, 2000))
 
         // Generate available slots with AI optimization
         const slots = generateOptimalSlots(
           service,
           duration,
-          preferredDates.map(d => new Date(d)),
+          preferredDates.map((d) => new Date(d)),
           preferredProfessionals,
-        );
+        )
 
-        const optimization = generateOptimizationInsights(slots, service, urgency);
+        const optimization = generateOptimizationInsights(slots, service, urgency)
 
-        setState(prev => ({
+        setState((prev) => ({
           ...prev,
           currentOperation: 'idle',
           availableSlots: slots,
           optimization,
           metrics: calculateMetrics(slots),
-        }));
+        }))
 
-        return `Found ${slots.length} optimal time slots for ${service}`;
+        return `Found ${slots.length} optimal time slots for ${service}`
       } catch (error) {
         const errorMessage = error instanceof Error
           ? error.message
-          : 'Failed to find available slots';
-        onError?.(errorMessage);
-        setState(prev => ({ ...prev, currentOperation: 'idle' }));
-        throw error;
+          : 'Failed to find available slots'
+        onError?.(errorMessage)
+        setState((prev) => ({ ...prev, currentOperation: 'idle' }))
+        throw error
       }
     },
-  });
+  })
 
   // Schedule appointment action
   useCopilotAction({
@@ -293,15 +293,15 @@ export const NeonProAppointmentAgent: React.FC<AppointmentAgentProps> = ({
     ],
     handler: async (patientId: string, patientName: string, slotId: string, notes?: string) => {
       try {
-        setState(prev => ({ ...prev, currentOperation: 'scheduling' }));
+        setState((prev) => ({ ...prev, currentOperation: 'scheduling' }))
 
-        const selectedSlot = state.availableSlots.find(slot => slot.id === slotId);
+        const selectedSlot = state.availableSlots.find((slot) => slot.id === slotId)
         if (!selectedSlot) {
-          throw new Error('Selected slot not found');
+          throw new Error('Selected slot not found')
         }
 
         // Simulate scheduling delay
-        await new Promise(resolve => setTimeout(resolve, 1500));
+        await new Promise((resolve) => setTimeout(resolve, 1500))
 
         // Create appointment
         const newAppointment: Appointment = {
@@ -317,29 +317,29 @@ export const NeonProAppointmentAgent: React.FC<AppointmentAgentProps> = ({
           priority: state.searchCriteria.urgency,
           notes,
           revenue: calculateRevenue(state.searchCriteria.service),
-        };
+        }
 
-        setState(prev => ({
+        setState((prev) => ({
           ...prev,
           currentOperation: 'idle',
           scheduledAppointments: [...prev.scheduledAppointments, newAppointment],
           selectedSlot: undefined,
-        }));
+        }))
 
-        onAppointmentScheduled?.(newAppointment.id);
+        onAppointmentScheduled?.(newAppointment.id)
         return `Appointment scheduled successfully for ${patientName} on ${
           format(selectedSlot.start, 'PPP', { locale: ptBR })
-        }`;
+        }`
       } catch (error) {
         const errorMessage = error instanceof Error
           ? error.message
-          : 'Failed to schedule appointment';
-        onError?.(errorMessage);
-        setState(prev => ({ ...prev, currentOperation: 'idle' }));
-        throw error;
+          : 'Failed to schedule appointment'
+        onError?.(errorMessage)
+        setState((prev) => ({ ...prev, currentOperation: 'idle' }))
+        throw error
       }
     },
-  });
+  })
 
   // Optimize schedule action
   useCopilotAction({
@@ -361,40 +361,40 @@ export const NeonProAppointmentAgent: React.FC<AppointmentAgentProps> = ({
     ],
     handler: async (dateRange: string, objective: string = 'efficiency') => {
       try {
-        setState(prev => ({ ...prev, currentOperation: 'optimizing' }));
+        setState((prev) => ({ ...prev, currentOperation: 'optimizing' }))
 
         // Simulate optimization delay
-        await new Promise(resolve => setTimeout(resolve, 3000));
+        await new Promise((resolve) => setTimeout(resolve, 3000))
 
-        const optimization = generateAdvancedOptimization(objective);
+        const optimization = generateAdvancedOptimization(objective)
 
-        setState(prev => ({
+        setState((prev) => ({
           ...prev,
           currentOperation: 'idle',
           optimization: {
             ...prev.optimization,
             ...optimization,
           },
-        }));
+        }))
 
-        return `Schedule optimized successfully for ${objective}`;
+        return `Schedule optimized successfully for ${objective}`
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'Failed to optimize schedule';
-        onError?.(errorMessage);
-        setState(prev => ({ ...prev, currentOperation: 'idle' }));
-        throw error;
+        const errorMessage = error instanceof Error ? error.message : 'Failed to optimize schedule'
+        onError?.(errorMessage)
+        setState((prev) => ({ ...prev, currentOperation: 'idle' }))
+        throw error
       }
     },
-  });
+  })
 
   // Handle slot selection
   const handleSlotSelect = useCallback((slot: TimeSlot) => {
-    setState(prev => ({
+    setState((prev) => ({
       ...prev,
       selectedSlot: slot,
       currentOperation: 'confirming',
-    }));
-  }, []);
+    }))
+  }, [])
 
   // Generate optimal time slots (mock implementation)
   const generateOptimalSlots = (
@@ -403,42 +403,42 @@ export const NeonProAppointmentAgent: React.FC<AppointmentAgentProps> = ({
     preferredDates: Date[],
     preferredProfessionals: string[],
   ): TimeSlot[] => {
-    const slots: TimeSlot[] = [];
-    const serviceInfo = mockServices.find(s =>
+    const slots: TimeSlot[] = []
+    const serviceInfo = mockServices.find((s) =>
       s.name.toLowerCase().includes(service.toLowerCase())
-    );
-    const actualDuration = serviceInfo?.duration || duration;
+    )
+    const actualDuration = serviceInfo?.duration || duration
 
     // Generate slots for the next 7 days
     const startDate = preferredDates.length > 0
-      ? new Date(Math.min(...preferredDates.map(d => d.getTime())))
-      : new Date();
+      ? new Date(Math.min(...preferredDates.map((d) => d.getTime())))
+      : new Date()
 
     for (let day = 0; day < 7; day++) {
-      const currentDate = addDays(startDate, day);
+      const currentDate = addDays(startDate, day)
 
-      mockProfessionals.forEach(professional => {
+      mockProfessionals.forEach((professional) => {
         if (
           preferredProfessionals.length > 0 && !preferredProfessionals.includes(professional.name)
         ) {
-          return;
+          return
         }
 
         // Generate slots during working hours
         for (let hour = 9; hour < 18; hour++) {
           for (let minute = 0; minute < 60; minute += 30) {
-            const slotStart = new Date(currentDate);
-            slotStart.setHours(hour, minute, 0, 0);
-            const slotEnd = new Date(slotStart.getTime() + actualDuration * 60000);
+            const slotStart = new Date(currentDate)
+            slotStart.setHours(hour, minute, 0, 0)
+            const slotEnd = new Date(slotStart.getTime() + actualDuration * 60000)
 
             // Skip if in the past
-            if (isBefore(slotEnd, new Date())) continue;
+            if (isBefore(slotEnd, new Date())) continue
 
             // Calculate optimization metrics
-            const confidence = Math.random() * 0.4 + 0.6; // 60-100%
-            const efficiency = Math.random() * 0.3 + 0.7; // 70-100%
-            const noShowRisk = Math.random() * 0.2; // 0-20%
-            const optimizationScore = (confidence + efficiency - noShowRisk) / 2;
+            const confidence = Math.random() * 0.4 + 0.6 // 60-100%
+            const efficiency = Math.random() * 0.3 + 0.7 // 70-100%
+            const noShowRisk = Math.random() * 0.2 // 0-20%
+            const optimizationScore = (confidence + efficiency - noShowRisk) / 2
 
             slots.push({
               id: `slot-${slots.length}`,
@@ -450,23 +450,23 @@ export const NeonProAppointmentAgent: React.FC<AppointmentAgentProps> = ({
               efficiency,
               noShowRisk,
               optimizationScore,
-            });
+            })
           }
         }
-      });
+      })
     }
 
     // Sort by optimization score and return top 20
     return slots
       .sort((a, b) => b.optimizationScore - a.optimizationScore)
-      .slice(0, 20);
-  };
+      .slice(0, 20)
+  }
 
   // Generate optimization insights
   const generateOptimizationInsights = (slots: TimeSlot[], service: string, urgency: string) => {
-    const _avgConfidence = slots.reduce((sum, slot) => sum + slot.confidence, 0) / slots.length;
-    const avgEfficiency = slots.reduce((sum, slot) => sum + slot.efficiency, 0) / slots.length;
-    const avgNoShowRisk = slots.reduce((sum, slot) => sum + slot.noShowRisk, 0) / slots.length;
+    const _avgConfidence = slots.reduce((sum, slot) => sum + slot.confidence, 0) / slots.length
+    const avgEfficiency = slots.reduce((sum, slot) => sum + slot.efficiency, 0) / slots.length
+    const avgNoShowRisk = slots.reduce((sum, slot) => sum + slot.noShowRisk, 0) / slots.length
 
     const suggestions = [
       urgency === 'urgent' ? 'Prioritize slots within 24 hours for urgent cases' : undefined,
@@ -474,52 +474,52 @@ export const NeonProAppointmentAgent: React.FC<AppointmentAgentProps> = ({
       avgEfficiency < 0.8 ? 'Optimize resource allocation for better efficiency' : undefined,
       'Morning slots show 15% higher attendance rates',
       'Mid-week appointments have optimal professional availability',
-    ].filter(Boolean) as string[];
+    ].filter(Boolean) as string[]
 
     const riskFactors = slots
-      .filter(slot => slot.noShowRisk > 0.15)
-      .map(slot =>
+      .filter((slot) => slot.noShowRisk > 0.15)
+      .map((slot) =>
         `${format(slot.start, 'HH:mm')} - ${
           slot.noShowRisk > 0.2 ? 'Alto risco' : 'Médio risco'
         } de não comparecimento`
-      );
+      )
 
     const recommendations = [
       'Envie lembretes 24h antes via WhatsApp',
       'Considere horários vespertinos para maior taxa de comparecimento',
       'Agrupe procedimentos similares para otimizar tempo do profissional',
       'Mantenha 10% de buffer entre agendamentos para atrasos',
-    ];
+    ]
 
     return {
       suggestions,
       riskFactors,
       recommendations,
       efficiency: avgEfficiency,
-    };
-  };
+    }
+  }
 
   // Calculate metrics
   const calculateMetrics = (slots: TimeSlot[]) => {
-    const optimalSlots = slots.filter(slot => slot.optimizationScore > 0.8);
-    const conflicts = Math.floor(slots.length * 0.1); // Mock conflicts
-    const utilization = (optimalSlots.length / slots.length) * 100;
+    const optimalSlots = slots.filter((slot) => slot.optimizationScore > 0.8)
+    const conflicts = Math.floor(slots.length * 0.1) // Mock conflicts
+    const utilization = (optimalSlots.length / slots.length) * 100
 
     return {
       totalSlots: slots.length,
       optimalSlots: optimalSlots.length,
       conflicts,
       utilization,
-    };
-  };
+    }
+  }
 
   // Calculate revenue
   const calculateRevenue = (service: string) => {
-    const serviceInfo = mockServices.find(s =>
+    const serviceInfo = mockServices.find((s) =>
       s.name.toLowerCase().includes(service.toLowerCase())
-    );
-    return serviceInfo?.baseRevenue || 500;
-  };
+    )
+    return serviceInfo?.baseRevenue || 500
+  }
 
   // Generate advanced optimization
   const generateAdvancedOptimization = (objective: string) => {
@@ -527,7 +527,7 @@ export const NeonProAppointmentAgent: React.FC<AppointmentAgentProps> = ({
       'Redistribuir agendamentos para melhor utilização de recursos',
       'Identificar padrões de não comparecimento e ajustar estratégias',
       'Otimizar intervalos entre procedimentos para reduzir tempo ocioso',
-    ];
+    ]
 
     const specificRecommendations = {
       efficiency: [
@@ -545,7 +545,7 @@ export const NeonProAppointmentAgent: React.FC<AppointmentAgentProps> = ({
         'Reduzir tempo de espera entre check-in e procedimento',
         'Personalizar experiência baseada no histórico do paciente',
       ],
-    };
+    }
 
     return {
       suggestions: baseSuggestions,
@@ -557,24 +557,24 @@ export const NeonProAppointmentAgent: React.FC<AppointmentAgentProps> = ({
       recommendations: specificRecommendations[objective as keyof typeof specificRecommendations]
         || specificRecommendations.efficiency,
       efficiency: Math.random() * 0.3 + 0.7,
-    };
-  };
+    }
+  }
 
   // Get status icon
   const getStatusIcon = () => {
     switch (state.currentOperation) {
       case 'searching_slots':
-        return <Search className='h-4 w-4 text-blue-500' />;
+        return <Search className='h-4 w-4 text-blue-500' />
       case 'scheduling':
-        return <Calendar className='h-4 w-4 text-yellow-500' />;
+        return <Calendar className='h-4 w-4 text-yellow-500' />
       case 'optimizing':
-        return <Brain className='h-4 w-4 text-purple-500' />;
+        return <Brain className='h-4 w-4 text-purple-500' />
       case 'confirming':
-        return <CheckCircle className='h-4 w-4 text-green-500' />;
+        return <CheckCircle className='h-4 w-4 text-green-500' />
       default:
-        return <Clock className='h-4 w-4 text-gray-500' />;
+        return <Clock className='h-4 w-4 text-gray-500' />
     }
-  };
+  }
 
   return (
     <div className='space-y-6'>
@@ -692,7 +692,7 @@ export const NeonProAppointmentAgent: React.FC<AppointmentAgentProps> = ({
           </CardHeader>
           <CardContent>
             <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
-              {state.availableSlots.slice(0, 12).map(slot => (
+              {state.availableSlots.slice(0, 12).map((slot) => (
                 <div
                   key={slot.id}
                   className={`p-4 border rounded-lg cursor-pointer transition-colors ${
@@ -751,11 +751,11 @@ export const NeonProAppointmentAgent: React.FC<AppointmentAgentProps> = ({
           </CardHeader>
           <CardContent>
             <div className='space-y-3'>
-              {state.scheduledAppointments.slice(-5).map(appointment => (
+              {state.scheduledAppointments.slice(-5).map((appointment) => (
                 <NeonProAppointmentCard
                   key={appointment.id}
                   appointment={appointment}
-                  onAction={action => onAppointmentAction?.(action, appointment.id)}
+                  onAction={(action) => onAppointmentAction?.(action, appointment.id)}
                 />
               ))}
             </div>
@@ -795,7 +795,7 @@ export const NeonProAppointmentAgent: React.FC<AppointmentAgentProps> = ({
               <div className='flex gap-2'>
                 <Button
                   variant='outline'
-                  onClick={() => setState(prev => ({ ...prev, selectedSlot: undefined }))}
+                  onClick={() => setState((prev) => ({ ...prev, selectedSlot: undefined }))}
                 >
                   Cancelar
                 </Button>
@@ -803,7 +803,7 @@ export const NeonProAppointmentAgent: React.FC<AppointmentAgentProps> = ({
                   className='flex-1'
                   onClick={() => {
                     // This would trigger the schedule_appointment action
-                    setState(prev => ({ ...prev, currentOperation: 'scheduling' }));
+                    setState((prev) => ({ ...prev, currentOperation: 'scheduling' }))
                   }}
                 >
                   Confirmar Agendamento
@@ -814,7 +814,7 @@ export const NeonProAppointmentAgent: React.FC<AppointmentAgentProps> = ({
         </Card>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default NeonProAppointmentAgent;
+export default NeonProAppointmentAgent

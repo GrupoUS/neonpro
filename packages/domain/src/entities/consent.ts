@@ -1,4 +1,4 @@
-import { LegalBasis } from '../value-objects/gender';
+import { LegalBasis } from '../value-objects/gender'
 
 /**
  * Consent status enum
@@ -29,48 +29,48 @@ export enum ConsentType {
  * Consent Request
  */
 export interface ConsentRequest {
-  patientId: string;
-  consentType: ConsentType;
-  purpose: string;
-  dataTypes: string[];
-  expiration?: string;
-  metadata?: Record<string, unknown> | undefined;
-  requestorId?: string;
-  requestorRole?: string;
+  patientId: string
+  consentType: ConsentType
+  purpose: string
+  dataTypes: string[]
+  expiration?: string
+  metadata?: Record<string, unknown> | undefined
+  requestorId?: string
+  requestorRole?: string
 }
 
 /**
  * Consent Record - Domain entity
  */
 export interface ConsentRecord {
-  id: string;
-  patientId: string;
-  consentType: ConsentType;
-  status: ConsentStatus;
-  purpose: string;
-  dataTypes: string[];
-  grantedAt: string;
-  expiresAt?: string | undefined;
-  revokedAt?: string;
-  revokedBy?: string;
-  revocationReason?: string;
-  legalBasis: LegalBasis;
-  consentVersion: string;
-  metadata?: Record<string, unknown> | undefined;
-  auditTrail: ConsentAuditEvent[];
+  id: string
+  patientId: string
+  consentType: ConsentType
+  status: ConsentStatus
+  purpose: string
+  dataTypes: string[]
+  grantedAt: string
+  expiresAt?: string | undefined
+  revokedAt?: string
+  revokedBy?: string
+  revocationReason?: string
+  legalBasis: LegalBasis
+  consentVersion: string
+  metadata?: Record<string, unknown> | undefined
+  auditTrail: ConsentAuditEvent[]
 }
 
 /**
  * Consent Audit Event
  */
 export interface ConsentAuditEvent {
-  id: string;
-  timestamp: string;
-  action: ConsentAction;
-  actorId: string;
-  actorRole?: string;
-  patientIdHash: string;
-  details?: Record<string, unknown> | undefined;
+  id: string
+  timestamp: string
+  action: ConsentAction
+  actorId: string
+  actorRole?: string
+  patientIdHash: string
+  details?: Record<string, unknown> | undefined
 }
 
 /**
@@ -90,30 +90,30 @@ export enum ConsentAction {
  * Compliance check result
  */
 export interface ComplianceCheck {
-  patientId: string;
-  status: 'COMPLIANT' | 'NON_COMPLIANT' | 'PARTIALLY_COMPLIANT';
-  riskLevel: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
-  risk_level?: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL'; // legacy support
-  violations: ComplianceViolation[];
-  isCompliant: boolean;
-  lastChecked: string;
-  recommendations: string[];
+  patientId: string
+  status: 'COMPLIANT' | 'NON_COMPLIANT' | 'PARTIALLY_COMPLIANT'
+  riskLevel: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL'
+  risk_level?: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL' // legacy support
+  violations: ComplianceViolation[]
+  isCompliant: boolean
+  lastChecked: string
+  recommendations: string[]
 }
 
 /**
  * Compliance violation
  */
 export interface ComplianceViolation {
-  id: string;
-  type: string;
-  severity: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
-  description: string;
-  affectedConsentId?: string;
-  recommendation: string;
-  dueDate?: string;
-  resolved: boolean;
-  resolvedAt?: string;
-  resolvedBy?: string;
+  id: string
+  type: string
+  severity: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL'
+  description: string
+  affectedConsentId?: string
+  recommendation: string
+  dueDate?: string
+  resolved: boolean
+  resolvedAt?: string
+  resolvedBy?: string
 }
 
 /**
@@ -124,48 +124,48 @@ export class ConsentValidator {
    * Validate consent request
    */
   static validateRequest(_request: ConsentRequest): string[] {
-    const errors: string[] = [];
+    const errors: string[] = []
 
-    if (!_request.patientId) errors.push('Patient ID is required');
-    if (!_request.consentType) errors.push('Consent type is required');
-    if (!_request.purpose) errors.push('Purpose is required');
+    if (!_request.patientId) errors.push('Patient ID is required')
+    if (!_request.consentType) errors.push('Consent type is required')
+    if (!_request.purpose) errors.push('Purpose is required')
     if (!_request.dataTypes || _request.dataTypes.length === 0) {
-      errors.push('At least one data type must be specified');
+      errors.push('At least one data type must be specified')
     }
 
     // Validate expiration date is in the future
     if (_request.expiration) {
-      const expirationDate = new Date(_request.expiration);
+      const expirationDate = new Date(_request.expiration)
       if (expirationDate <= new Date()) {
-        errors.push('Expiration date must be in the future');
+        errors.push('Expiration date must be in the future')
       }
     }
 
-    return errors;
+    return errors
   }
 
   /**
    * Check if consent is currently valid
    */
   static isValid(consent: ConsentRecord): boolean {
-    const now = new Date();
+    const now = new Date()
 
     // Check status
     if (consent.status !== ConsentStatus.ACTIVE) {
-      return false;
+      return false
     }
 
     // Check expiration
     if (consent.expiresAt && new Date(consent.expiresAt) <= now) {
-      return false;
+      return false
     }
 
     // Check revocation
     if (consent.revokedAt && new Date(consent.revokedAt) <= now) {
-      return false;
+      return false
     }
 
-    return true;
+    return true
   }
 
   /**
@@ -175,21 +175,21 @@ export class ConsentValidator {
     consent: ConsentRecord,
     requiredDataTypes: string[],
   ): boolean {
-    return requiredDataTypes.every(type => consent.dataTypes.includes(type));
+    return requiredDataTypes.every((type) => consent.dataTypes.includes(type))
   }
 
   /**
    * Get remaining validity period in days
    */
   static getRemainingDays(consent: ConsentRecord): number {
-    if (!consent.expiresAt) return Infinity;
+    if (!consent.expiresAt) return Infinity
 
-    const now = new Date();
-    const expirationDate = new Date(consent.expiresAt);
-    const diffTime = expirationDate.getTime() - now.getTime();
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    const now = new Date()
+    const expirationDate = new Date(consent.expiresAt)
+    const diffTime = expirationDate.getTime() - now.getTime()
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
 
-    return Math.max(0, diffDays);
+    return Math.max(0, diffDays)
   }
 }
 
@@ -204,7 +204,7 @@ export class ConsentFactory {
     _request: ConsentRequest,
     grantedBy: string,
   ): ConsentRecord {
-    const now = new Date().toISOString();
+    const now = new Date().toISOString()
 
     return {
       id: `consent_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
@@ -232,7 +232,7 @@ export class ConsentFactory {
           },
         },
       ],
-    };
+    }
   }
 
   /**
@@ -251,7 +251,7 @@ export class ConsentFactory {
       actorId,
       patientIdHash: this.hashPatientId(patientId),
       details,
-    };
+    }
   }
 
   /**
@@ -261,7 +261,7 @@ export class ConsentFactory {
     // Simple hash for demo - in production use proper crypto hash
     const hash = Array.from(patientId)
       .reduce((acc, char) => ((acc << 5) - acc + char.charCodeAt(0)) | 0, 0)
-      .toString(16);
-    return `patient_${hash.slice(-8)}`;
+      .toString(16)
+    return `patient_${hash.slice(-8)}`
   }
 }

@@ -5,285 +5,285 @@
  * treatment workflow management, and Brazilian healthcare compliance.
  */
 
-import { AestheticComplianceService } from '../agui-protocol/aesthetic-compliance-service';
-import { AestheticDataHandlingService } from '../agui-protocol/aesthetic-data-handling';
+import { AestheticComplianceService } from '../agui-protocol/aesthetic-compliance-service'
+import { AestheticDataHandlingService } from '../agui-protocol/aesthetic-data-handling'
 import {
   AestheticAguiService,
   AestheticClientProfile,
   AestheticTreatmentData,
-} from '../agui-protocol/aesthetic-service';
-import { CopilotKitSessionIntegration } from './copilotkit-session-integration';
-import { EnhancedAgentSessionService } from './enhanced-agent-session-service';
+} from '../agui-protocol/aesthetic-service'
+import { CopilotKitSessionIntegration } from './copilotkit-session-integration'
+import { EnhancedAgentSessionService } from './enhanced-agent-session-service'
 
 export interface AestheticSessionConfig {
-  enableTreatmentWorkflow: boolean;
-  enablePhotoAnalysis: boolean;
-  enableClientManagement: boolean;
-  enableFinancialIntegration: boolean;
-  enableComplianceValidation: boolean;
-  enableRealtimeCollaboration: boolean;
-  treatmentWorkflowSteps: TreatmentWorkflowStep[];
-  photoAnalysisConfig: PhotoAnalysisConfig;
-  clientAssessmentConfig: ClientAssessmentConfig;
+  enableTreatmentWorkflow: boolean
+  enablePhotoAnalysis: boolean
+  enableClientManagement: boolean
+  enableFinancialIntegration: boolean
+  enableComplianceValidation: boolean
+  enableRealtimeCollaboration: boolean
+  treatmentWorkflowSteps: TreatmentWorkflowStep[]
+  photoAnalysisConfig: PhotoAnalysisConfig
+  clientAssessmentConfig: ClientAssessmentConfig
 }
 
 export interface TreatmentWorkflowStep {
-  id: string;
-  name: string;
-  description: string;
-  type: 'consultation' | 'assessment' | 'treatment' | 'follow_up' | 'documentation';
-  requiredFields: string[];
-  estimatedDuration: number; // in minutes
-  canSkip: boolean;
-  dependencies?: string[];
-  complianceRequirements?: string[];
+  id: string
+  name: string
+  description: string
+  type: 'consultation' | 'assessment' | 'treatment' | 'follow_up' | 'documentation'
+  requiredFields: string[]
+  estimatedDuration: number // in minutes
+  canSkip: boolean
+  dependencies?: string[]
+  complianceRequirements?: string[]
 }
 
 export interface PhotoAnalysisConfig {
-  enableSkinAnalysis: boolean;
-  enableProgressTracking: boolean;
-  enableComparisonTools: boolean;
-  supportedFormats: string[];
-  maxFileSize: number; // in bytes
-  retentionPeriod: number; // in days
-  requireConsent: boolean;
-  analysisTypes: PhotoAnalysisType[];
+  enableSkinAnalysis: boolean
+  enableProgressTracking: boolean
+  enableComparisonTools: boolean
+  supportedFormats: string[]
+  maxFileSize: number // in bytes
+  retentionPeriod: number // in days
+  requireConsent: boolean
+  analysisTypes: PhotoAnalysisType[]
 }
 
 export interface PhotoAnalysisType {
-  id: string;
-  name: string;
-  description: string;
-  parameters: Record<string, any>;
-  confidenceThreshold: number;
-  regulatoryCompliance: string[];
+  id: string
+  name: string
+  description: string
+  parameters: Record<string, any>
+  confidenceThreshold: number
+  regulatoryCompliance: string[]
 }
 
 export interface ClientAssessmentConfig {
-  enableSkinTyping: boolean;
-  enableMedicalHistory: boolean;
-  enableAllergyScreening: boolean;
-  enableRiskAssessment: boolean;
-  assessmentForms: AssessmentForm[];
+  enableSkinTyping: boolean
+  enableMedicalHistory: boolean
+  enableAllergyScreening: boolean
+  enableRiskAssessment: boolean
+  assessmentForms: AssessmentForm[]
 }
 
 export interface AssessmentForm {
-  id: string;
-  name: string;
-  description: string;
-  fields: AssessmentField[];
-  scoringLogic?: ScoringLogic;
-  requiredForTreatments: string[];
+  id: string
+  name: string
+  description: string
+  fields: AssessmentField[]
+  scoringLogic?: ScoringLogic
+  requiredForTreatments: string[]
 }
 
 export interface AssessmentField {
-  id: string;
-  name: string;
-  type: 'text' | 'number' | 'select' | 'multiselect' | 'checkbox' | 'date' | 'photo';
-  required: boolean;
-  validation?: ValidationRule[];
-  options?: string[];
-  sensitivity: 'standard' | 'sensitive' | 'critical';
+  id: string
+  name: string
+  type: 'text' | 'number' | 'select' | 'multiselect' | 'checkbox' | 'date' | 'photo'
+  required: boolean
+  validation?: ValidationRule[]
+  options?: string[]
+  sensitivity: 'standard' | 'sensitive' | 'critical'
 }
 
 export interface ValidationRule {
-  type: 'required' | 'min_length' | 'max_length' | 'pattern' | 'range' | 'custom';
-  value: any;
-  message: string;
+  type: 'required' | 'min_length' | 'max_length' | 'pattern' | 'range' | 'custom'
+  value: any
+  message: string
 }
 
 export interface ScoringLogic {
-  type: 'sum' | 'average' | 'weighted' | 'custom';
-  weights?: Record<string, number>;
-  thresholds: Array<{ score: number; result: string }>;
+  type: 'sum' | 'average' | 'weighted' | 'custom'
+  weights?: Record<string, number>
+  thresholds: Array<{ score: number; result: string }>
 }
 
 export interface AestheticTreatmentSession {
-  sessionId: string;
-  clientProfile: AestheticClientProfile;
-  currentWorkflow?: TreatmentWorkflow;
-  treatmentHistory: TreatmentRecord[];
-  photoHistory: PhotoRecord[];
-  assessmentResults: AssessmentResult[];
-  consentRecords: ConsentRecord[];
-  financialSummary: FinancialSummary;
-  complianceStatus: ComplianceStatus;
-  createdAt: Date;
-  updatedAt: Date;
+  sessionId: string
+  clientProfile: AestheticClientProfile
+  currentWorkflow?: TreatmentWorkflow
+  treatmentHistory: TreatmentRecord[]
+  photoHistory: PhotoRecord[]
+  assessmentResults: AssessmentResult[]
+  consentRecords: ConsentRecord[]
+  financialSummary: FinancialSummary
+  complianceStatus: ComplianceStatus
+  createdAt: Date
+  updatedAt: Date
 }
 
 export interface TreatmentWorkflow {
-  id: string;
-  treatmentType: string;
-  currentStep: number;
-  steps: WorkflowStepProgress[];
-  status: 'not_started' | 'in_progress' | 'completed' | 'cancelled' | 'on_hold';
-  estimatedCompletion: Date;
-  actualCompletion?: Date;
-  notes?: string;
+  id: string
+  treatmentType: string
+  currentStep: number
+  steps: WorkflowStepProgress[]
+  status: 'not_started' | 'in_progress' | 'completed' | 'cancelled' | 'on_hold'
+  estimatedCompletion: Date
+  actualCompletion?: Date
+  notes?: string
 }
 
 export interface WorkflowStepProgress {
-  stepId: string;
-  status: 'pending' | 'in_progress' | 'completed' | 'skipped';
-  startedAt?: Date;
-  completedAt?: Date;
-  data: Record<string, any>;
-  notes?: string;
+  stepId: string
+  status: 'pending' | 'in_progress' | 'completed' | 'skipped'
+  startedAt?: Date
+  completedAt?: Date
+  data: Record<string, any>
+  notes?: string
 }
 
 export interface TreatmentRecord {
-  id: string;
-  treatmentType: string;
-  date: Date;
-  professional: string;
-  products: TreatmentProduct[];
-  results: TreatmentResult;
-  followUpRequired: boolean;
-  followUpDate?: Date;
-  notes?: string;
-  satisfaction?: number;
+  id: string
+  treatmentType: string
+  date: Date
+  professional: string
+  products: TreatmentProduct[]
+  results: TreatmentResult
+  followUpRequired: boolean
+  followUpDate?: Date
+  notes?: string
+  satisfaction?: number
 }
 
 export interface TreatmentProduct {
-  id: string;
-  name: string;
-  brand: string;
-  quantity: number;
-  unit: string;
-  lotNumber?: string;
-  expirationDate?: Date;
+  id: string
+  name: string
+  brand: string
+  quantity: number
+  unit: string
+  lotNumber?: string
+  expirationDate?: Date
 }
 
 export interface TreatmentResult {
-  effectiveness: number; // 1-10 scale
-  sideEffects: string[];
-  clientFeedback?: string;
-  professionalAssessment?: string;
-  photos?: string[];
+  effectiveness: number // 1-10 scale
+  sideEffects: string[]
+  clientFeedback?: string
+  professionalAssessment?: string
+  photos?: string[]
 }
 
 export interface PhotoRecord {
-  id: string;
-  type: 'pre_treatment' | 'post_treatment' | 'follow_up' | 'progress';
-  date: Date;
-  description?: string;
-  analysisResults?: PhotoAnalysisResult;
-  consentStatus: 'granted' | 'revoked' | 'expired';
-  fileUrl: string;
-  thumbnailUrl?: string;
+  id: string
+  type: 'pre_treatment' | 'post_treatment' | 'follow_up' | 'progress'
+  date: Date
+  description?: string
+  analysisResults?: PhotoAnalysisResult
+  consentStatus: 'granted' | 'revoked' | 'expired'
+  fileUrl: string
+  thumbnailUrl?: string
 }
 
 export interface PhotoAnalysisResult {
-  skinType?: string;
-  conditions: SkinCondition[];
-  recommendations: string[];
-  confidence: number;
-  measurements: Record<string, number>;
-  comparison?: PhotoComparison;
+  skinType?: string
+  conditions: SkinCondition[]
+  recommendations: string[]
+  confidence: number
+  measurements: Record<string, number>
+  comparison?: PhotoComparison
 }
 
 export interface SkinCondition {
-  type: string;
-  severity: 'mild' | 'moderate' | 'severe';
-  description: string;
-  recommendedTreatments: string[];
+  type: string
+  severity: 'mild' | 'moderate' | 'severe'
+  description: string
+  recommendedTreatments: string[]
 }
 
 export interface PhotoComparison {
-  previousPhotoId?: string;
-  changes: string[];
-  improvementScore?: number;
-  areasOfConcern: string[];
+  previousPhotoId?: string
+  changes: string[]
+  improvementScore?: number
+  areasOfConcern: string[]
 }
 
 export interface AssessmentResult {
-  id: string;
-  formId: string;
-  formName: string;
-  score?: number;
-  result: string;
-  data: Record<string, any>;
-  assessedAt: Date;
-  assessedBy: string;
-  validityPeriod?: Date;
+  id: string
+  formId: string
+  formName: string
+  score?: number
+  result: string
+  data: Record<string, any>
+  assessedAt: Date
+  assessedBy: string
+  validityPeriod?: Date
 }
 
 export interface ConsentRecord {
-  id: string;
-  type: 'treatment' | 'photo' | 'data_sharing' | 'marketing';
-  granted: boolean;
-  grantedAt: Date;
-  expiresAt?: Date;
-  revokedAt?: Date;
-  documentUrl?: string;
-  ipAddress?: string;
-  userAgent?: string;
+  id: string
+  type: 'treatment' | 'photo' | 'data_sharing' | 'marketing'
+  granted: boolean
+  grantedAt: Date
+  expiresAt?: Date
+  revokedAt?: Date
+  documentUrl?: string
+  ipAddress?: string
+  userAgent?: string
 }
 
 export interface FinancialSummary {
-  totalCost: number;
-  amountPaid: number;
-  balance: number;
-  paymentMethod: string;
-  installments?: InstallmentPlan[];
-  insuranceClaims?: InsuranceClaim[];
+  totalCost: number
+  amountPaid: number
+  balance: number
+  paymentMethod: string
+  installments?: InstallmentPlan[]
+  insuranceClaims?: InsuranceClaim[]
 }
 
 export interface InstallmentPlan {
-  id: string;
-  totalAmount: number;
-  installmentCount: number;
-  installmentAmount: number;
-  frequency: 'weekly' | 'monthly' | 'quarterly';
-  nextPaymentDate: Date;
-  completedInstallments: number;
-  status: 'active' | 'completed' | 'defaulted';
+  id: string
+  totalAmount: number
+  installmentCount: number
+  installmentAmount: number
+  frequency: 'weekly' | 'monthly' | 'quarterly'
+  nextPaymentDate: Date
+  completedInstallments: number
+  status: 'active' | 'completed' | 'defaulted'
 }
 
 export interface InsuranceClaim {
-  id: string;
-  claimNumber: string;
-  provider: string;
-  amount: number;
-  status: 'pending' | 'approved' | 'denied' | 'partial';
-  submittedAt: Date;
-  processedAt?: Date;
-  notes?: string;
+  id: string
+  claimNumber: string
+  provider: string
+  amount: number
+  status: 'pending' | 'approved' | 'denied' | 'partial'
+  submittedAt: Date
+  processedAt?: Date
+  notes?: string
 }
 
 export interface ComplianceStatus {
-  overall: 'compliant' | 'warning' | 'non_compliant';
-  flags: ComplianceFlag[];
-  lastAudit: Date;
-  nextAudit?: Date;
-  recommendations: string[];
+  overall: 'compliant' | 'warning' | 'non_compliant'
+  flags: ComplianceFlag[]
+  lastAudit: Date
+  nextAudit?: Date
+  recommendations: string[]
 }
 
 export interface ComplianceFlag {
-  type: 'missing_consent' | 'expired_document' | 'data_retention' | 'privacy_violation';
-  severity: 'low' | 'medium' | 'high' | 'critical';
-  description: string;
-  resolution?: string;
-  deadline?: Date;
+  type: 'missing_consent' | 'expired_document' | 'data_retention' | 'privacy_violation'
+  severity: 'low' | 'medium' | 'high' | 'critical'
+  description: string
+  resolution?: string
+  deadline?: Date
 }
 
 export class AestheticSessionHandler {
-  private enhancedSessionService: EnhancedAgentSessionService;
-  private copilotKitIntegration: CopilotKitSessionIntegration;
-  private aestheticService: AestheticAguiService;
-  private dataHandlingService: AestheticDataHandlingService;
-  private complianceService: AestheticComplianceService;
-  private config: AestheticSessionConfig;
+  private enhancedSessionService: EnhancedAgentSessionService
+  private copilotKitIntegration: CopilotKitSessionIntegration
+  private aestheticService: AestheticAguiService
+  private dataHandlingService: AestheticDataHandlingService
+  private complianceService: AestheticComplianceService
+  private config: AestheticSessionConfig
 
   // Active aesthetic sessions
-  private aestheticSessions: Map<string, AestheticTreatmentSession> = new Map();
+  private aestheticSessions: Map<string, AestheticTreatmentSession> = new Map()
 
   // Treatment workflows
-  private treatmentWorkflows: Map<string, TreatmentWorkflow> = new Map();
+  private treatmentWorkflows: Map<string, TreatmentWorkflow> = new Map()
 
   // Session analytics
-  private sessionAnalytics: Map<string, AestheticSessionAnalytics> = new Map();
+  private sessionAnalytics: Map<string, AestheticSessionAnalytics> = new Map()
 
   constructor(
     enhancedSessionService: EnhancedAgentSessionService,
@@ -293,11 +293,11 @@ export class AestheticSessionHandler {
     complianceService: AestheticComplianceService,
     config: Partial<AestheticSessionConfig> = {},
   ) {
-    this.enhancedSessionService = enhancedSessionService;
-    this.copilotKitIntegration = copilotKitIntegration;
-    this.aestheticService = aestheticService;
-    this.dataHandlingService = dataHandlingService;
-    this.complianceService = complianceService;
+    this.enhancedSessionService = enhancedSessionService
+    this.copilotKitIntegration = copilotKitIntegration
+    this.aestheticService = aestheticService
+    this.dataHandlingService = dataHandlingService
+    this.complianceService = complianceService
 
     this.config = {
       enableTreatmentWorkflow: true,
@@ -310,7 +310,7 @@ export class AestheticSessionHandler {
       photoAnalysisConfig: this.getDefaultPhotoAnalysisConfig(),
       clientAssessmentConfig: this.getDefaultClientAssessmentConfig(),
       ...config,
-    };
+    }
   }
 
   /**
@@ -320,18 +320,18 @@ export class AestheticSessionHandler {
     sessionId: string,
     clientProfile: AestheticClientProfile,
     options: {
-      userId?: string;
-      treatmentType?: string;
-      initialAssessment?: Record<string, any>;
-      enableWorkflow?: boolean;
+      userId?: string
+      treatmentType?: string
+      initialAssessment?: Record<string, any>
+      enableWorkflow?: boolean
     } = {},
   ): Promise<AestheticTreatmentSession> {
     try {
       // Get or create enhanced session
-      let enhancedSession = await this.enhancedSessionService.getEnhancedSession(sessionId);
+      let enhancedSession = await this.enhancedSessionService.getEnhancedSession(sessionId)
       if (!enhancedSession) {
         if (!options.userId) {
-          throw new Error('User ID required for session creation');
+          throw new Error('User ID required for session creation')
         }
 
         enhancedSession = await this.enhancedSessionService.createEnhancedSession(
@@ -355,7 +355,7 @@ export class AestheticSessionHandler {
               complianceMode: 'enhanced',
             },
           },
-        );
+        )
       }
 
       // Initialize CopilotKit with aesthetic features
@@ -364,7 +364,7 @@ export class AestheticSessionHandler {
         enableAestheticFeatures: true,
         customFeatures: ['aesthetic_consultation', 'photo_analysis', 'treatment_planning'],
         securityLevel: 'enhanced',
-      });
+      })
 
       // Create aesthetic treatment session
       const aestheticSession: AestheticTreatmentSession = {
@@ -388,26 +388,27 @@ export class AestheticSessionHandler {
         },
         createdAt: new Date(),
         updatedAt: new Date(),
-      };
+      }
 
       // Initialize treatment workflow if enabled
       if (
-        this.config.enableTreatmentWorkflow && options.enableWorkflow !== false
+        this.config.enableTreatmentWorkflow
+        && options.enableWorkflow !== false
         && options.treatmentType
       ) {
         aestheticSession.currentWorkflow = await this.initializeTreatmentWorkflow(
           sessionId,
           options.treatmentType,
           clientProfile,
-        );
+        )
       }
 
       // Apply LGPD data protection to client profile
-      const protectedProfile = await this.dataHandlingService.encryptSensitiveData(clientProfile);
-      aestheticSession.clientProfile = protectedProfile;
+      const protectedProfile = await this.dataHandlingService.encryptSensitiveData(clientProfile)
+      aestheticSession.clientProfile = protectedProfile
 
       // Store aesthetic session
-      this.aestheticSessions.set(sessionId, aestheticSession);
+      this.aestheticSessions.set(sessionId, aestheticSession)
 
       // Log session initialization for compliance
       await this.complianceService.logDataAccess({
@@ -417,16 +418,16 @@ export class AestheticSessionHandler {
         timestamp: new Date(),
         purpose: 'aesthetic_clinic_session',
         dataFields: Object.keys(clientProfile),
-      });
+      })
 
-      return aestheticSession;
+      return aestheticSession
     } catch {
-      console.error('Error initializing aesthetic session:', error);
+      console.error('Error initializing aesthetic session:', error)
       throw new Error(
         `Failed to initialize aesthetic session: ${
           error instanceof Error ? error.message : 'Unknown error'
         }`,
-      );
+      )
     }
   }
 
@@ -438,90 +439,90 @@ export class AestheticSessionHandler {
     stepId: string,
     data: Record<string, any>,
     options: {
-      skipValidation?: boolean;
-      notes?: string;
-      requireCompletion?: boolean;
+      skipValidation?: boolean
+      notes?: string
+      requireCompletion?: boolean
     } = {},
   ): Promise<{
-    success: boolean;
-    nextStep?: string;
-    workflowCompleted?: boolean;
-    errors?: string[];
+    success: boolean
+    nextStep?: string
+    workflowCompleted?: boolean
+    errors?: string[]
   }> {
     try {
-      const aestheticSession = this.aestheticSessions.get(sessionId);
+      const aestheticSession = this.aestheticSessions.get(sessionId)
       if (!aestheticSession || !aestheticSession.currentWorkflow) {
-        throw new Error('No active treatment workflow found');
+        throw new Error('No active treatment workflow found')
       }
 
-      const workflow = aestheticSession.currentWorkflow;
-      const stepProgress = workflow.steps.find(s => s.stepId === stepId);
+      const workflow = aestheticSession.currentWorkflow
+      const stepProgress = workflow.steps.find((s) => s.stepId === stepId)
 
       if (!stepProgress) {
-        throw new Error(`Workflow step ${stepId} not found`);
+        throw new Error(`Workflow step ${stepId} not found`)
       }
 
       // Validate step dependencies
       if (!options.skipValidation) {
-        const dependencyErrors = await this.validateStepDependencies(workflow, stepId);
+        const dependencyErrors = await this.validateStepDependencies(workflow, stepId)
         if (dependencyErrors.length > 0) {
-          return { success: false, errors: dependencyErrors };
+          return { success: false, errors: dependencyErrors }
         }
       }
 
       // Validate step data
       if (!options.skipValidation) {
-        const validationErrors = await this.validateStepData(stepId, data);
+        const validationErrors = await this.validateStepData(stepId, data)
         if (validationErrors.length > 0) {
-          return { success: false, errors: validationErrors };
+          return { success: false, errors: validationErrors }
         }
       }
 
       // Process step based on type
-      let stepResult: any;
-      const stepConfig = this.config.treatmentWorkflowSteps.find(s => s.id === stepId);
+      let stepResult: any
+      const stepConfig = this.config.treatmentWorkflowSteps.find((s) => s.id === stepId)
 
       if (stepConfig) {
-        stepResult = await this.executeWorkflowStep(sessionId, stepConfig, data);
+        stepResult = await this.executeWorkflowStep(sessionId, stepConfig, data)
       }
 
       // Update step progress
-      stepProgress.status = 'completed';
-      stepProgress.completedAt = new Date();
-      stepProgress.data = { ...stepProgress.data, ...data };
+      stepProgress.status = 'completed'
+      stepProgress.completedAt = new Date()
+      stepProgress.data = { ...stepProgress.data, ...data }
       if (options.notes) {
-        stepProgress.notes = options.notes;
+        stepProgress.notes = options.notes
       }
 
       // Update session data based on step results
-      await this.updateSessionFromStepResult(sessionId, stepId, stepResult);
+      await this.updateSessionFromStepResult(sessionId, stepId, stepResult)
 
       // Determine next step
-      const nextStep = await this.determineNextStep(workflow, stepId);
-      let workflowCompleted = false;
+      const nextStep = await this.determineNextStep(workflow, stepId)
+      let workflowCompleted = false
 
       if (nextStep) {
         // Mark next step as in progress
-        const nextStepProgress = workflow.steps.find(s => s.stepId === nextStep);
+        const nextStepProgress = workflow.steps.find((s) => s.stepId === nextStep)
         if (nextStepProgress) {
-          nextStepProgress.status = 'in_progress';
-          nextStepProgress.startedAt = new Date();
+          nextStepProgress.status = 'in_progress'
+          nextStepProgress.startedAt = new Date()
         }
       } else {
         // Workflow completed
-        workflow.status = 'completed';
-        workflow.actualCompletion = new Date();
-        workflowCompleted = true;
+        workflow.status = 'completed'
+        workflow.actualCompletion = new Date()
+        workflowCompleted = true
       }
 
       // Update workflow
-      workflow.currentStep = workflow.steps.findIndex(s => s.stepId === nextStep)
-        ?? workflow.steps.length;
-      this.treatmentWorkflows.set(sessionId, workflow);
+      workflow.currentStep = workflow.steps.findIndex((s) => s.stepId === nextStep)
+        ?? workflow.steps.length
+      this.treatmentWorkflows.set(sessionId, workflow)
 
       // Update aesthetic session
-      aestheticSession.updatedAt = new Date();
-      this.aestheticSessions.set(sessionId, aestheticSession);
+      aestheticSession.updatedAt = new Date()
+      this.aestheticSessions.set(sessionId, aestheticSession)
 
       // Log step completion for compliance
       await this.complianceService.logDataAccess({
@@ -531,19 +532,19 @@ export class AestheticSessionHandler {
         timestamp: new Date(),
         purpose: `workflow_step_${stepId}`,
         dataFields: Object.keys(data),
-      });
+      })
 
       return {
         success: true,
         nextStep,
         workflowCompleted,
-      };
+      }
     } catch {
-      console.error('Error processing treatment step:', error);
+      console.error('Error processing treatment step:', error)
       return {
         success: false,
         errors: [error instanceof Error ? error.message : 'Unknown error'],
-      };
+      }
     }
   }
 
@@ -553,32 +554,32 @@ export class AestheticSessionHandler {
   async uploadTreatmentPhoto(
     sessionId: string,
     photoData: {
-      file: Buffer | string;
-      type: 'pre_treatment' | 'post_treatment' | 'follow_up' | 'progress';
-      description?: string;
-      requireAnalysis?: boolean;
-      consentVerified?: boolean;
+      file: Buffer | string
+      type: 'pre_treatment' | 'post_treatment' | 'follow_up' | 'progress'
+      description?: string
+      requireAnalysis?: boolean
+      consentVerified?: boolean
     },
   ): Promise<{
-    success: boolean;
-    photoId?: string;
-    analysisResults?: PhotoAnalysisResult;
-    errors?: string[];
+    success: boolean
+    photoId?: string
+    analysisResults?: PhotoAnalysisResult
+    errors?: string[]
   }> {
     try {
-      const aestheticSession = this.aestheticSessions.get(sessionId);
+      const aestheticSession = this.aestheticSessions.get(sessionId)
       if (!aestheticSession) {
-        throw new Error('Aesthetic session not found');
+        throw new Error('Aesthetic session not found')
       }
 
       // Validate photo consent
       if (!photoData.consentVerified) {
-        const consentStatus = await this.validatePhotoConsent(sessionId);
+        const consentStatus = await this.validatePhotoConsent(sessionId)
         if (!consentStatus.granted) {
           return {
             success: false,
             errors: ['Photo consent not granted or expired'],
-          };
+          }
         }
       }
 
@@ -590,24 +591,24 @@ export class AestheticSessionHandler {
         description: photoData.description,
         consentStatus: 'granted',
         fileUrl: `https://storage.example.com/photos/${this.generatePhotoId()}`,
-      };
+      }
 
       // Analyze photo if requested
-      let analysisResults: PhotoAnalysisResult | undefined;
+      let analysisResults: PhotoAnalysisResult | undefined
       if (photoData.requireAnalysis && this.config.enablePhotoAnalysis) {
-        analysisResults = await this.analyzeTreatmentPhoto(sessionId, photoRecord);
-        photoRecord.analysisResults = analysisResults;
+        analysisResults = await this.analyzeTreatmentPhoto(sessionId, photoRecord)
+        photoRecord.analysisResults = analysisResults
       }
 
       // Add to session photo history
-      aestheticSession.photoHistory.push(photoRecord);
-      aestheticSession.updatedAt = new Date();
-      this.aestheticSessions.set(sessionId, aestheticSession);
+      aestheticSession.photoHistory.push(photoRecord)
+      aestheticSession.updatedAt = new Date()
+      this.aestheticSessions.set(sessionId, aestheticSession)
 
       // Update enhanced session with photo data
       await this.enhancedSessionService.updateAestheticSessionData(sessionId, {
         photos: [photoRecord],
-      });
+      })
 
       // Log photo upload for compliance
       await this.complianceService.logDataAccess({
@@ -617,19 +618,19 @@ export class AestheticSessionHandler {
         timestamp: new Date(),
         purpose: 'treatment_documentation',
         dataFields: ['photo_type', 'description', 'analysis_results'],
-      });
+      })
 
       return {
         success: true,
         photoId: photoRecord.id,
         analysisResults,
-      };
+      }
     } catch {
-      console.error('Error uploading treatment photo:', error);
+      console.error('Error uploading treatment photo:', error)
       return {
         success: false,
         errors: [error instanceof Error ? error.message : 'Unknown error'],
-      };
+      }
     }
   }
 
@@ -641,57 +642,57 @@ export class AestheticSessionHandler {
     formId: string,
     responses: Record<string, any>,
     options: {
-      skipValidation?: boolean;
-      assessor?: string;
-      notes?: string;
+      skipValidation?: boolean
+      assessor?: string
+      notes?: string
     } = {},
   ): Promise<{
-    success: boolean;
-    result?: AssessmentResult;
-    errors?: string[];
+    success: boolean
+    result?: AssessmentResult
+    errors?: string[]
   }> {
     try {
-      const aestheticSession = this.aestheticSessions.get(sessionId);
+      const aestheticSession = this.aestheticSessions.get(sessionId)
       if (!aestheticSession) {
-        throw new Error('Aesthetic session not found');
+        throw new Error('Aesthetic session not found')
       }
 
       // Get assessment form configuration
       const formConfig = this.config.clientAssessmentConfig.assessmentForms.find(
-        f => f.id === formId,
-      );
+        (f) => f.id === formId,
+      )
 
       if (!formConfig) {
         return {
           success: false,
           errors: [`Assessment form ${formId} not found`],
-        };
+        }
       }
 
       // Validate responses if not skipped
       if (!options.skipValidation) {
-        const validationErrors = this.validateAssessmentResponses(formConfig, responses);
+        const validationErrors = this.validateAssessmentResponses(formConfig, responses)
         if (validationErrors.length > 0) {
           return {
             success: false,
             errors: validationErrors,
-          };
+          }
         }
       }
 
       // Calculate score if scoring logic is defined
-      let score: number | undefined;
-      let result: string;
+      let score: number | undefined
+      let result: string
 
       if (formConfig.scoringLogic) {
-        score = this.calculateAssessmentScore(formConfig.scoringLogic, responses);
-        result = this.determineAssessmentResult(formConfig.scoringLogic, score);
+        score = this.calculateAssessmentScore(formConfig.scoringLogic, responses)
+        result = this.determineAssessmentResult(formConfig.scoringLogic, score)
       } else {
-        result = 'completed';
+        result = 'completed'
       }
 
       // Apply data protection to sensitive responses
-      const protectedResponses = await this.dataHandlingService.encryptSensitiveData(responses);
+      const protectedResponses = await this.dataHandlingService.encryptSensitiveData(responses)
 
       // Create assessment result
       const assessmentResult: AssessmentResult = {
@@ -703,24 +704,24 @@ export class AestheticSessionHandler {
         data: protectedResponses,
         assessedAt: new Date(),
         assessedBy: options.assessor || 'system',
-      };
+      }
 
       // Determine validity period
       if (formConfig.scoringLogic) {
         assessmentResult.validityPeriod = new Date(
           Date.now() + (90 * 24 * 60 * 60 * 1000), // 90 days validity
-        );
+        )
       }
 
       // Add to session assessment results
-      aestheticSession.assessmentResults.push(assessmentResult);
-      aestheticSession.updatedAt = new Date();
-      this.aestheticSessions.set(sessionId, aestheticSession);
+      aestheticSession.assessmentResults.push(assessmentResult)
+      aestheticSession.updatedAt = new Date()
+      this.aestheticSessions.set(sessionId, aestheticSession)
 
       // Update enhanced session with assessment data
       await this.enhancedSessionService.updateAestheticSessionData(sessionId, {
         skinAssessment: assessmentResult,
-      });
+      })
 
       // Log assessment for compliance
       await this.complianceService.logDataAccess({
@@ -730,18 +731,18 @@ export class AestheticSessionHandler {
         timestamp: new Date(),
         purpose: `assessment_${formId}`,
         dataFields: Object.keys(responses),
-      });
+      })
 
       return {
         success: true,
         result: assessmentResult,
-      };
+      }
     } catch {
-      console.error('Error conducting client assessment:', error);
+      console.error('Error conducting client assessment:', error)
       return {
         success: false,
         errors: [error instanceof Error ? error.message : 'Unknown error'],
-      };
+      }
     }
   }
 
@@ -751,24 +752,24 @@ export class AestheticSessionHandler {
   async manageConsent(
     sessionId: string,
     consentAction: {
-      type: 'grant' | 'revoke' | 'update' | 'expire';
-      consentType: 'treatment' | 'photo' | 'data_sharing' | 'marketing';
-      data?: Record<string, any>;
+      type: 'grant' | 'revoke' | 'update' | 'expire'
+      consentType: 'treatment' | 'photo' | 'data_sharing' | 'marketing'
+      data?: Record<string, any>
     },
   ): Promise<{
-    success: boolean;
-    consentId?: string;
-    status?: string;
-    errors?: string[];
+    success: boolean
+    consentId?: string
+    status?: string
+    errors?: string[]
   }> {
     try {
-      const aestheticSession = this.aestheticSessions.get(sessionId);
+      const aestheticSession = this.aestheticSessions.get(sessionId)
       if (!aestheticSession) {
-        throw new Error('Aesthetic session not found');
+        throw new Error('Aesthetic session not found')
       }
 
       // Create or update consent record
-      let consentRecord: ConsentRecord;
+      let consentRecord: ConsentRecord
 
       switch (consentAction.type) {
         case 'grant':
@@ -783,8 +784,8 @@ export class AestheticSessionHandler {
             documentUrl: consentAction.data?.documentUrl,
             ipAddress: consentAction.data?.ipAddress,
             userAgent: consentAction.data?.userAgent,
-          };
-          break;
+          }
+          break
 
         case 'revoke':
           consentRecord = {
@@ -793,68 +794,68 @@ export class AestheticSessionHandler {
             granted: false,
             grantedAt: new Date(),
             revokedAt: new Date(),
-          };
-          break;
+          }
+          break
 
         case 'update':
           // Find existing consent and update it
           const existingConsent = aestheticSession.consentRecords.find(
-            c => c.type === consentAction.consentType && c.granted,
-          );
+            (c) => c.type === consentAction.consentType && c.granted,
+          )
 
           if (!existingConsent) {
             return {
               success: false,
               errors: ['No active consent found to update'],
-            };
+            }
           }
 
           existingConsent.expiresAt = consentAction.data?.expiresAt
             ? new Date(consentAction.data.expiresAt)
-            : existingConsent.expiresAt;
+            : existingConsent.expiresAt
 
-          consentRecord = existingConsent;
-          break;
+          consentRecord = existingConsent
+          break
 
         case 'expire':
           // Find and expire existing consent
           const activeConsent = aestheticSession.consentRecords.find(
-            c => c.type === consentAction.consentType && c.granted,
-          );
+            (c) => c.type === consentAction.consentType && c.granted,
+          )
 
           if (!activeConsent) {
             return {
               success: false,
               errors: ['No active consent found to expire'],
-            };
+            }
           }
 
-          activeConsent.expiresAt = new Date();
-          consentRecord = activeConsent;
-          break;
+          activeConsent.expiresAt = new Date()
+          consentRecord = activeConsent
+          break
 
         default:
-          throw new Error(`Unsupported consent action: ${consentAction.type}`);
+          throw new Error(`Unsupported consent action: ${consentAction.type}`)
       }
 
       // Update consent records in session
       if (consentAction.type === 'update' || consentAction.type === 'expire') {
         // Consent already exists in array, just update the reference
         const index = aestheticSession.consentRecords.findIndex(
-          c => c.id === consentRecord.id,
-        );
+          (c) => c.id === consentRecord.id,
+        )
         if (index !== -1) {
-          aestheticSession.consentRecords[index] = consentRecord;
+          aestheticSession.consentRecords[index] = consentRecord
         }
       } else {
-        aestheticSession.consentRecords.push(consentRecord);
+        aestheticSession.consentRecords.push(consentRecord)
       }
 
       // Update session compliance status
-      await this.updateComplianceStatus(sessionId);
+      await this.updateComplianceStatus(sessionId)
 
-      aestheticSession.updatedAt = new Date();
-      this.aestheticSessions.set(sessionId, aestheticSession);
+      aestheticSession.updatedAt = new Date()
+      this.aestheticSessions.set(sessionId, aestheticSession)
 
       // Log consent action for compliance
       await this.complianceService.logDataAccess({
@@ -864,19 +865,19 @@ export class AestheticSessionHandler {
         timestamp: new Date(),
         purpose: `consent_${consentAction.type}`,
         dataFields: ['consent_type', 'action'],
-      });
+      })
 
       return {
         success: true,
         consentId: consentRecord.id,
         status: consentRecord.granted ? 'granted' : 'revoked',
-      };
+      }
     } catch {
-      console.error('Error managing consent:', error);
+      console.error('Error managing consent:', error)
       return {
         success: false,
         errors: [error instanceof Error ? error.message : 'Unknown error'],
-      };
+      }
     }
   }
 
@@ -887,24 +888,24 @@ export class AestheticSessionHandler {
     sessionId: string,
   ): Promise<
     {
-      session: AestheticTreatmentSession;
-      workflowProgress?: TreatmentWorkflow;
-      analytics?: AestheticSessionAnalytics;
-      complianceStatus: ComplianceStatus;
-      recommendations?: string[];
+      session: AestheticTreatmentSession
+      workflowProgress?: TreatmentWorkflow
+      analytics?: AestheticSessionAnalytics
+      complianceStatus: ComplianceStatus
+      recommendations?: string[]
     } | null
   > {
     try {
-      const aestheticSession = this.aestheticSessions.get(sessionId);
+      const aestheticSession = this.aestheticSessions.get(sessionId)
       if (!aestheticSession) {
-        return null;
+        return null
       }
 
-      const workflowProgress = this.treatmentWorkflows.get(sessionId);
-      const analytics = await this.calculateSessionAnalytics(sessionId);
+      const workflowProgress = this.treatmentWorkflows.get(sessionId)
+      const analytics = await this.calculateSessionAnalytics(sessionId)
 
       // Generate recommendations based on session state
-      const recommendations = await this.generateSessionRecommendations(sessionId);
+      const recommendations = await this.generateSessionRecommendations(sessionId)
 
       return {
         session: aestheticSession,
@@ -912,10 +913,10 @@ export class AestheticSessionHandler {
         analytics,
         complianceStatus: aestheticSession.complianceStatus,
         recommendations,
-      };
+      }
     } catch {
-      console.error('Error getting aesthetic session status:', error);
-      return null;
+      console.error('Error getting aesthetic session status:', error)
+      return null
     }
   }
 
@@ -987,7 +988,7 @@ export class AestheticSessionHandler {
         canSkip: true,
         dependencies: ['post_treatment_care'],
       },
-    ];
+    ]
   }
 
   private getDefaultPhotoAnalysisConfig(): PhotoAnalysisConfig {
@@ -1034,7 +1035,7 @@ export class AestheticSessionHandler {
           regulatoryCompliance: ['data_retention_policies'],
         },
       ],
-    };
+    }
   }
 
   private getDefaultClientAssessmentConfig(): ClientAssessmentConfig {
@@ -1123,7 +1124,7 @@ export class AestheticSessionHandler {
           requiredForTreatments: ['laser', 'chemical_peel', 'microneedling'],
         },
       ],
-    };
+    }
   }
 
   private async initializeTreatmentWorkflow(
@@ -1135,59 +1136,59 @@ export class AestheticSessionHandler {
       id: this.generateWorkflowId(),
       treatmentType,
       currentStep: 0,
-      steps: this.config.treatmentWorkflowSteps.map(step => ({
+      steps: this.config.treatmentWorkflowSteps.map((step) => ({
         stepId: step.id,
         status: step.dependencies?.length ? 'pending' : 'in_progress',
         data: {},
       })),
       status: 'in_progress',
       estimatedCompletion: new Date(Date.now() + 3 * 60 * 60 * 1000), // 3 hours estimate
-    };
+    }
 
     // Mark first step as in progress
     if (workflow.steps.length > 0) {
-      workflow.steps[0].status = 'in_progress';
-      workflow.steps[0].startedAt = new Date();
+      workflow.steps[0].status = 'in_progress'
+      workflow.steps[0].startedAt = new Date()
     }
 
-    this.treatmentWorkflows.set(sessionId, workflow);
-    return workflow;
+    this.treatmentWorkflows.set(sessionId, workflow)
+    return workflow
   }
 
   private async validateStepDependencies(
     workflow: TreatmentWorkflow,
     stepId: string,
   ): Promise<string[]> {
-    const stepConfig = this.config.treatmentWorkflowSteps.find(s => s.id === stepId);
+    const stepConfig = this.config.treatmentWorkflowSteps.find((s) => s.id === stepId)
     if (!stepConfig?.dependencies?.length) {
-      return [];
+      return []
     }
 
-    const errors: string[] = [];
+    const errors: string[] = []
 
     for (const dependency of stepConfig.dependencies) {
-      const dependencyStep = workflow.steps.find(s => s.stepId === dependency);
+      const dependencyStep = workflow.steps.find((s) => s.stepId === dependency)
 
       if (!dependencyStep || dependencyStep.status !== 'completed') {
-        errors.push(`Dependency ${dependency} not completed`);
+        errors.push(`Dependency ${dependency} not completed`)
       }
     }
 
-    return errors;
+    return errors
   }
 
   private async validateStepData(stepId: string, data: Record<string, any>): Promise<string[]> {
-    const stepConfig = this.config.treatmentWorkflowSteps.find(s => s.id === stepId);
+    const stepConfig = this.config.treatmentWorkflowSteps.find((s) => s.id === stepId)
     if (!stepConfig) {
-      return ['Step configuration not found'];
+      return ['Step configuration not found']
     }
 
-    const errors: string[] = [];
+    const errors: string[] = []
 
     // Validate required fields
     for (const field of stepConfig.requiredFields) {
       if (!(field in data) || data[field] === undefined || data[field] === null) {
-        errors.push(`Required field ${field} is missing`);
+        errors.push(`Required field ${field} is missing`)
       }
     }
 
@@ -1196,19 +1197,19 @@ export class AestheticSessionHandler {
       case 'assessment':
         // Validate assessment data
         if (data.score && (data.score < 0 || data.score > 10)) {
-          errors.push('Score must be between 0 and 10');
+          errors.push('Score must be between 0 and 10')
         }
-        break;
+        break
 
       case 'treatment':
         // Validate treatment data
         if (data.products && !Array.isArray(data.products)) {
-          errors.push('Products must be an array');
+          errors.push('Products must be an array')
         }
-        break;
+        break
     }
 
-    return errors;
+    return errors
   }
 
   private async executeWorkflowStep(
@@ -1232,7 +1233,7 @@ export class AestheticSessionHandler {
             sessionId,
             version: '1.0.0',
           },
-        });
+        })
 
       case 'assessment':
         return await this.aestheticService.sendAestheticMessage({
@@ -1248,7 +1249,7 @@ export class AestheticSessionHandler {
             sessionId,
             version: '1.0.0',
           },
-        });
+        })
 
       case 'treatment':
         return await this.aestheticService.sendAestheticMessage({
@@ -1264,10 +1265,10 @@ export class AestheticSessionHandler {
             sessionId,
             version: '1.0.0',
           },
-        });
+        })
 
       default:
-        return { success: true, stepProcessed: true };
+        return { success: true, stepProcessed: true }
     }
   }
 
@@ -1276,9 +1277,9 @@ export class AestheticSessionHandler {
     stepId: string,
     result: any,
   ): Promise<void> {
-    const aestheticSession = this.aestheticSessions.get(sessionId);
+    const aestheticSession = this.aestheticSessions.get(sessionId)
     if (!aestheticSession) {
-      return;
+      return
     }
 
     // Update session based on step type and results
@@ -1289,9 +1290,9 @@ export class AestheticSessionHandler {
             ...aestheticSession.clientProfile,
             skinType: result.assessmentData.skin_type,
             skinConditions: result.assessmentData.conditions,
-          };
+          }
         }
-        break;
+        break
 
       case 'treatment_execution':
         if (result.treatmentData) {
@@ -1307,11 +1308,11 @@ export class AestheticSessionHandler {
             },
             followUpRequired: true,
             followUpDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 1 week follow-up
-          };
+          }
 
-          aestheticSession.treatmentHistory.push(treatmentRecord);
+          aestheticSession.treatmentHistory.push(treatmentRecord)
         }
-        break;
+        break
     }
   }
 
@@ -1319,55 +1320,53 @@ export class AestheticSessionHandler {
     workflow: TreatmentWorkflow,
     currentStepId: string,
   ): Promise<string | undefined> {
-    const currentStepIndex = workflow.steps.findIndex(s => s.stepId === currentStepId);
+    const currentStepIndex = workflow.steps.findIndex((s) => s.stepId === currentStepId)
     if (currentStepIndex === -1) {
-      return undefined;
+      return undefined
     }
 
     // Find next available step
     for (let i = currentStepIndex + 1; i < workflow.steps.length; i++) {
-      const nextStep = workflow.steps[i];
-      const stepConfig = this.config.treatmentWorkflowSteps.find(s => s.id === nextStep.stepId);
+      const nextStep = workflow.steps[i]
+      const stepConfig = this.config.treatmentWorkflowSteps.find((s) => s.id === nextStep.stepId)
 
       // Check if step can be accessed (dependencies met)
       if (stepConfig && !stepConfig.dependencies?.length) {
-        return nextStep.stepId;
+        return nextStep.stepId
       }
 
       // Check dependencies
       if (stepConfig && stepConfig.dependencies) {
-        const dependenciesMet = stepConfig.dependencies.every(depId =>
-          workflow.steps.find(s => s.stepId === depId && s.status === 'completed')
-        );
+        const dependenciesMet = stepConfig.dependencies.every((depId) =>
+          workflow.steps.find((s) => s.stepId === depId && s.status === 'completed')
+        )
 
         if (dependenciesMet) {
-          return nextStep.stepId;
+          return nextStep.stepId
         }
       }
     }
 
-    return undefined;
+    return undefined
   }
 
   private async validatePhotoConsent(
     sessionId: string,
   ): Promise<{ granted: boolean; reason?: string }> {
-    const aestheticSession = this.aestheticSessions.get(sessionId);
+    const aestheticSession = this.aestheticSessions.get(sessionId)
     if (!aestheticSession) {
-      return { granted: false, reason: 'Session not found' };
+      return { granted: false, reason: 'Session not found' }
     }
 
     const photoConsent = aestheticSession.consentRecords.find(
-      c =>
-        c.type === 'photo' && c.granted
-        && (!c.expiresAt || c.expiresAt > new Date()),
-    );
+      (c) => c.type === 'photo' && c.granted && (!c.expiresAt || c.expiresAt > new Date()),
+    )
 
     if (!photoConsent) {
-      return { granted: false, reason: 'No active photo consent found' };
+      return { granted: false, reason: 'No active photo consent found' }
     }
 
-    return { granted: true };
+    return { granted: true }
   }
 
   private async analyzeTreatmentPhoto(
@@ -1389,7 +1388,7 @@ export class AestheticSessionHandler {
         sessionId,
         version: '1.0.0',
       },
-    });
+    })
 
     return {
       skinType: analysisResponse.skinType,
@@ -1398,31 +1397,31 @@ export class AestheticSessionHandler {
       confidence: analysisResponse.confidence || 0,
       measurements: analysisResponse.measurements || {},
       comparison: analysisResponse.comparison,
-    };
+    }
   }
 
   private validateAssessmentResponses(
     formConfig: AssessmentForm,
     responses: Record<string, any>,
   ): string[] {
-    const errors: string[] = [];
+    const errors: string[] = []
 
     for (const field of formConfig.fields) {
       if (field.required && !responses[field.id]) {
-        errors.push(`Field ${field.name} is required`);
+        errors.push(`Field ${field.name} is required`)
       }
 
       if (responses[field.id] && field.validation) {
         for (const validation of field.validation) {
-          const error = this.validateFieldValue(field.id, responses[field.id], validation);
+          const error = this.validateFieldValue(field.id, responses[field.id], validation)
           if (error) {
-            errors.push(error);
+            errors.push(error)
           }
         }
       }
     }
 
-    return errors;
+    return errors
   }
 
   private validateFieldValue(
@@ -1432,31 +1431,31 @@ export class AestheticSessionHandler {
   ): string | null {
     switch (validation.type) {
       case 'required':
-        return !value ? validation.message : null;
+        return !value ? validation.message : null
 
       case 'min_length':
         return typeof value === 'string' && value.length < validation.value
           ? validation.message
-          : null;
+          : null
 
       case 'max_length':
         return typeof value === 'string' && value.length > validation.value
           ? validation.message
-          : null;
+          : null
 
       case 'pattern':
         return typeof value === 'string' && !new RegExp(validation.value).test(value)
           ? validation.message
-          : null;
+          : null
 
       case 'range':
         return typeof value === 'number'
             && (value < validation.value.min || value > validation.value.max)
           ? validation.message
-          : null;
+          : null
 
       default:
-        return null;
+        return null
     }
   }
 
@@ -1468,72 +1467,70 @@ export class AestheticSessionHandler {
       return Object.values(responses).reduce(
         (sum: number, value: any) => sum + (Number(value) || 0),
         0,
-      );
+      )
     }
 
     if (scoringLogic.type === 'average') {
-      const values = Object.values(responses).map(v => Number(v) || 0);
-      return values.reduce((sum, val) => sum + val, 0) / values.length;
+      const values = Object.values(responses).map((v) => Number(v) || 0)
+      return values.reduce((sum, val) => sum + val, 0) / values.length
     }
 
     if (scoringLogic.type === 'weighted' && scoringLogic.weights) {
-      let weightedSum = 0;
-      let totalWeight = 0;
+      let weightedSum = 0
+      let totalWeight = 0
 
       for (const [field, weight] of Object.entries(scoringLogic.weights)) {
         if (field in responses) {
-          weightedSum += (Number(responses[field]) || 0) * weight;
-          totalWeight += weight;
+          weightedSum += (Number(responses[field]) || 0) * weight
+          totalWeight += weight
         }
       }
 
-      return totalWeight > 0 ? weightedSum / totalWeight : 0;
+      return totalWeight > 0 ? weightedSum / totalWeight : 0
     }
 
-    return 0; // Default for custom or unknown types
+    return 0 // Default for custom or unknown types
   }
 
   private determineAssessmentResult(scoringLogic: ScoringLogic, score: number): string {
     for (const threshold of scoringLogic.thresholds) {
       if (score >= threshold.score) {
-        return threshold.result;
+        return threshold.result
       }
     }
 
-    return scoringLogic.thresholds[scoringLogic.thresholds.length - 1].result;
+    return scoringLogic.thresholds[scoringLogic.thresholds.length - 1].result
   }
 
   private async updateComplianceStatus(sessionId: string): Promise<void> {
-    const aestheticSession = this.aestheticSessions.get(sessionId);
+    const aestheticSession = this.aestheticSessions.get(sessionId)
     if (!aestheticSession) {
-      return;
+      return
     }
 
-    const flags: ComplianceFlag[] = [];
-    let overall: 'compliant' | 'warning' | 'non_compliant' = 'compliant';
+    const flags: ComplianceFlag[] = []
+    let overall: 'compliant' | 'warning' | 'non_compliant' = 'compliant'
 
     // Check consents
-    const requiredConsents = ['treatment', 'photo'];
+    const requiredConsents = ['treatment', 'photo']
     for (const consentType of requiredConsents) {
       const activeConsent = aestheticSession.consentRecords.find(
-        c =>
-          c.type === consentType && c.granted
-          && (!c.expiresAt || c.expiresAt > new Date()),
-      );
+        (c) => c.type === consentType && c.granted && (!c.expiresAt || c.expiresAt > new Date()),
+      )
 
       if (!activeConsent) {
         flags.push({
           type: 'missing_consent',
           severity: 'high',
           description: `Missing or expired ${consentType} consent`,
-        });
-        overall = 'warning';
+        })
+        overall = 'warning'
       }
     }
 
     // Check data retention
-    const cutoffDate = new Date(Date.now() - 365 * 24 * 60 * 60 * 1000); // 1 year
-    const oldPhotos = aestheticSession.photoHistory.filter(p => p.date < cutoffDate);
+    const cutoffDate = new Date(Date.now() - 365 * 24 * 60 * 60 * 1000) // 1 year
+    const oldPhotos = aestheticSession.photoHistory.filter((p) => p.date < cutoffDate)
 
     if (oldPhotos.length > 0) {
       flags.push({
@@ -1541,27 +1538,27 @@ export class AestheticSessionHandler {
         severity: 'medium',
         description: `${oldPhotos.length} photos exceed retention period`,
         deadline: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days to resolve
-      });
+      })
     }
 
     aestheticSession.complianceStatus = {
       overall,
       flags,
       lastAudit: new Date(),
-      recommendations: flags.map(f => f.resolution || `Address ${f.description}`),
-    };
+      recommendations: flags.map((f) => f.resolution || `Address ${f.description}`),
+    }
   }
 
   private async calculateSessionAnalytics(sessionId: string): Promise<AestheticSessionAnalytics> {
-    const aestheticSession = this.aestheticSessions.get(sessionId);
+    const aestheticSession = this.aestheticSessions.get(sessionId)
     if (!aestheticSession) {
-      throw new Error('Session not found');
+      throw new Error('Session not found')
     }
 
-    const sessionDuration = Date.now() - aestheticSession.createdAt.getTime();
+    const sessionDuration = Date.now() - aestheticSession.createdAt.getTime()
     const completedSteps =
-      aestheticSession.currentWorkflow?.steps.filter(s => s.status === 'completed').length || 0;
-    const totalSteps = aestheticSession.currentWorkflow?.steps.length || 0;
+      aestheticSession.currentWorkflow?.steps.filter((s) => s.status === 'completed').length || 0
+    const totalSteps = aestheticSession.currentWorkflow?.steps.length || 0
 
     return {
       sessionId,
@@ -1575,144 +1572,143 @@ export class AestheticSessionHandler {
       consentStatus: this.calculateConsentScore(aestheticSession.consentRecords),
       workflowEfficiency: this.calculateWorkflowEfficiency(aestheticSession.currentWorkflow),
       clientEngagement: this.calculateClientEngagement(aestheticSession),
-    };
+    }
   }
 
   private calculateConsentScore(consentRecords: ConsentRecord[]): number {
-    const requiredTypes = ['treatment', 'photo'];
-    let activeCount = 0;
+    const requiredTypes = ['treatment', 'photo']
+    let activeCount = 0
 
     for (const type of requiredTypes) {
       const activeConsent = consentRecords.find(
-        c =>
-          c.type === type && c.granted
-          && (!c.expiresAt || c.expiresAt > new Date()),
-      );
+        (c) => c.type === type && c.granted && (!c.expiresAt || c.expiresAt > new Date()),
+      )
 
       if (activeConsent) {
-        activeCount++;
+        activeCount++
       }
     }
 
-    return (activeCount / requiredTypes.length) * 100;
+    return (activeCount / requiredTypes.length) * 100
   }
 
   private calculateWorkflowEfficiency(workflow?: TreatmentWorkflow): number {
     if (!workflow || workflow.steps.length === 0) {
-      return 100;
+      return 100
     }
 
-    const completedSteps = workflow.steps.filter(s => s.status === 'completed').length;
-    const estimatedTimePerStep = 30; // minutes
-    const _actualTime = Date.now() - workflow.estimatedCompletion.getTime()
-      + (workflow.steps.length * estimatedTimePerStep * 60 * 1000);
+    const completedSteps = workflow.steps.filter((s) => s.status === 'completed').length
+    const estimatedTimePerStep = 30 // minutes
+    const _actualTime = Date.now()
+      - workflow.estimatedCompletion.getTime()
+      + (workflow.steps.length * estimatedTimePerStep * 60 * 1000)
 
-    return Math.min(100, (completedSteps / workflow.steps.length) * 100);
+    return Math.min(100, (completedSteps / workflow.steps.length) * 100)
   }
 
   private calculateClientEngagement(session: AestheticTreatmentSession): number {
-    let engagementScore = 0;
+    let engagementScore = 0
 
     // Photo uploads contribute to engagement
-    engagementScore += Math.min(session.photoHistory.length * 10, 30);
+    engagementScore += Math.min(session.photoHistory.length * 10, 30)
 
     // Assessment completion
-    engagementScore += Math.min(session.assessmentResults.length * 15, 30);
+    engagementScore += Math.min(session.assessmentResults.length * 15, 30)
 
     // Treatment adherence
-    engagementScore += Math.min(session.treatmentHistory.length * 20, 40);
+    engagementScore += Math.min(session.treatmentHistory.length * 20, 40)
 
-    return Math.min(engagementScore, 100);
+    return Math.min(engagementScore, 100)
   }
 
   private async generateSessionRecommendations(sessionId: string): Promise<string[]> {
-    const aestheticSession = this.aestheticSessions.get(sessionId);
+    const aestheticSession = this.aestheticSessions.get(sessionId)
     if (!aestheticSession) {
-      return [];
+      return []
     }
 
-    const recommendations: string[] = [];
+    const recommendations: string[] = []
 
     // Workflow recommendations
     if (
       aestheticSession.currentWorkflow && aestheticSession.currentWorkflow.status === 'in_progress'
     ) {
       const currentStep =
-        aestheticSession.currentWorkflow.steps[aestheticSession.currentWorkflow.currentStep];
+        aestheticSession.currentWorkflow.steps[aestheticSession.currentWorkflow.currentStep]
       if (currentStep && currentStep.status === 'in_progress') {
-        const stepDuration = Date.now() - (currentStep.startedAt?.getTime() || Date.now());
+        const stepDuration = Date.now() - (currentStep.startedAt?.getTime() || Date.now())
         if (stepDuration > 60 * 60 * 1000) { // 1 hour
           recommendations.push(
             'Consider completing the current workflow step or adding notes about any delays',
-          );
+          )
         }
       }
     }
 
     // Photo recommendations
     if (aestheticSession.photoHistory.length > 0 && this.config.enablePhotoAnalysis) {
-      const latestPhoto = aestheticSession.photoHistory[aestheticSession.photoHistory.length - 1];
-      const daysSinceLastPhoto = (Date.now() - latestPhoto.date.getTime()) / (24 * 60 * 60 * 1000);
+      const latestPhoto = aestheticSession.photoHistory[aestheticSession.photoHistory.length - 1]
+      const daysSinceLastPhoto = (Date.now() - latestPhoto.date.getTime()) / (24 * 60 * 60 * 1000)
 
       if (daysSinceLastPhoto > 30) {
-        recommendations.push('Consider taking progress photos to track treatment effectiveness');
+        recommendations.push('Consider taking progress photos to track treatment effectiveness')
       }
     }
 
     // Follow-up recommendations
     const overdueFollowUps = aestheticSession.treatmentHistory.filter(
-      t => t.followUpRequired && t.followUpDate && t.followUpDate < new Date(),
-    );
+      (t) => t.followUpRequired && t.followUpDate && t.followUpDate < new Date(),
+    )
 
     if (overdueFollowUps.length > 0) {
-      recommendations.push(`${overdueFollowUps.length} follow-up assessments are overdue`);
+      recommendations.push(`${overdueFollowUps.length} follow-up assessments are overdue`)
     }
 
     // Compliance recommendations
     if (aestheticSession.complianceStatus.overall !== 'compliant') {
-      recommendations.push('Address compliance flags to ensure regulatory requirements are met');
+      recommendations.push('Address compliance flags to ensure regulatory requirements are met')
     }
 
-    return recommendations;
+    return recommendations
   }
 
   // ID generators
   private generatePhotoId(): string {
-    return `photo_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    return `photo_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
   }
 
   private generateAssessmentId(): string {
-    return `assessment_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    return `assessment_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
   }
 
   private generateConsentId(): string {
-    return `consent_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    return `consent_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
   }
 
   private generateWorkflowId(): string {
-    return `workflow_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    return `workflow_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
   }
 
   private generateTreatmentId(): string {
-    return `treatment_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    return `treatment_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
   }
 
   private generateMessageId(): string {
-    return `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    return `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
   }
 }
 
 // Type definitions for analytics
 export interface AestheticSessionAnalytics {
-  sessionId: string;
-  sessionDuration: number;
-  progressPercentage: number;
-  completedSteps: number;
-  totalSteps: number;
-  photoCount: number;
-  assessmentCount: number;
-  treatmentCount: number;
-  consentStatus: number;
-  workflowEfficiency: number;
-  clientEngagement: number;
+  sessionId: string
+  sessionDuration: number
+  progressPercentage: number
+  completedSteps: number
+  totalSteps: number
+  photoCount: number
+  assessmentCount: number
+  treatmentCount: number
+  consentStatus: number
+  workflowEfficiency: number
+  clientEngagement: number
 }

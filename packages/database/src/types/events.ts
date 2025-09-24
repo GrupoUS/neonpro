@@ -27,10 +27,10 @@ export type ComplianceEventType =
   | 'participant_timeout'
   | 'connection_issue'
   | 'webrtc_offer'
-  | 'webrtc_answer';
+  | 'webrtc_answer'
 
 export type WebRTCSignalType =
   | 'offer'
   | 'answer'
   | 'ice-candidate'
-  | 'connection-state';
+  | 'connection-state'

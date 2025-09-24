@@ -4,24 +4,24 @@
  * Common helper functions for testing across the NeonPro project.
  */
 
-import { expect } from 'vitest';
+import { expect } from 'vitest'
 
 /**
  * Assert that a function throws an error with a specific message
  */
 export function expectToThrow(fn: () => void, expectedMessage?: string): void {
-  let thrownError: Error | null = null;
+  let thrownError: Error | null = null
 
   try {
-    fn();
+    fn()
   } catch (error) {
-    thrownError = error instanceof Error ? error : new Error(String(error));
+    thrownError = error instanceof Error ? error : new Error(String(error))
   }
 
-  expect(thrownError).not.toBeNull();
+  expect(thrownError).not.toBeNull()
 
   if (expectedMessage && thrownError) {
-    expect(thrownError.message).toContain(expectedMessage);
+    expect(thrownError.message).toContain(expectedMessage)
   }
 }
 
@@ -32,18 +32,18 @@ export async function expectToThrowAsync(
   fn: () => Promise<void>,
   expectedMessage?: string,
 ): Promise<void> {
-  let thrownError: Error | null = null;
+  let thrownError: Error | null = null
 
   try {
-    await fn();
+    await fn()
   } catch (error) {
-    thrownError = error instanceof Error ? error : new Error(String(error));
+    thrownError = error instanceof Error ? error : new Error(String(error))
   }
 
-  expect(thrownError).not.toBeNull();
+  expect(thrownError).not.toBeNull()
 
   if (expectedMessage && thrownError) {
-    expect(thrownError.message).toContain(expectedMessage);
+    expect(thrownError.message).toContain(expectedMessage)
   }
 }
 
@@ -53,25 +53,25 @@ export async function expectToThrowAsync(
 export function createSpy<T extends (...args: any[]) => any>(
   implementation?: T,
 ): T & { calls: Parameters<T>[][]; results: ReturnType<T>[] } {
-  const calls: Parameters<T>[][] = [];
-  const results: ReturnType<T>[] = [];
+  const calls: Parameters<T>[][] = []
+  const results: ReturnType<T>[] = []
 
   const spy = ((...args: Parameters<T>) => {
-    calls.push(args);
+    calls.push(args)
 
     if (implementation) {
-      const result = implementation(...args);
-      results.push(result);
-      return result;
+      const result = implementation(...args)
+      results.push(result)
+      return result
     }
 
-    return undefined;
-  }) as T & { calls: Parameters<T>[][]; results: ReturnType<T>[] };
+    return undefined
+  }) as T & { calls: Parameters<T>[][]; results: ReturnType<T>[] }
 
-  spy.calls = calls;
-  spy.results = results;
+  spy.calls = calls
+  spy.results = results
 
-  return spy;
+  return spy
 }
 
 /**
@@ -83,40 +83,41 @@ export function createMock<T extends Record<string, any>>(
   return new Proxy({} as T, {
     get(_target, prop) {
       if (prop in methods) {
-        return methods[prop as keyof T];
+        return methods[prop as keyof T]
       }
 
       if (typeof prop === 'string') {
-        return createSpy();
+        return createSpy()
       }
 
-      return undefined;
+      return undefined
     },
-  });
+  })
 }
 
 /**
  * Sleep for a specified number of milliseconds
  */
-export const sleep = (ms: number): Promise<void> => new Promise(resolve => setTimeout(resolve, ms));
+export const sleep = (ms: number): Promise<void> =>
+  new Promise((resolve) => setTimeout(resolve, ms))
 
 /**
  * Create a deferred promise for testing async scenarios
  */
 export function createDeferred<T>(): {
-  promise: Promise<T>;
-  resolve: (value: T) => void;
-  reject: (error: Error) => void;
+  promise: Promise<T>
+  resolve: (value: T) => void
+  reject: (error: Error) => void
 } {
-  let resolve!: (value: T) => void;
-  let reject!: (error: Error) => void;
+  let resolve!: (value: T) => void
+  let reject!: (error: Error) => void
 
-  const promise = new Promise<T>((res, rej) => {
-    resolve = res;
-    reject = rej;
-  });
+  const promise = new Promise<T>((_resolve, _reject) => {
+    resolve = _resolve
+    reject = _reject
+  })
 
-  return { promise, resolve, reject };
+  return { promise, resolve, reject }
 }
 
 /**
@@ -126,10 +127,10 @@ export function expectObjectToHaveProperties<T extends Record<string, any>>(
   obj: T,
   properties: (keyof T)[],
 ): void {
-  properties.forEach(prop => {
-    expect(obj).toHaveProperty(prop as string);
-    expect(obj[prop]).toBeDefined();
-  });
+  properties.forEach((prop) => {
+    expect(obj).toHaveProperty(prop as string)
+    expect(obj[prop]).toBeDefined()
+  })
 }
 
 /**
@@ -139,11 +140,11 @@ export function expectArrayToContainObjects<T>(
   array: T[],
   expectedObjects: Partial<T>[],
 ): void {
-  expect(array).toHaveLength(expectedObjects.length);
+  expect(array).toHaveLength(expectedObjects.length)
 
   expectedObjects.forEach((expectedObj, index) => {
-    expect(array[index]).toMatchObject(expectedObj);
-  });
+    expect(array[index]).toMatchObject(expectedObj)
+  })
 }
 
 /**
@@ -153,10 +154,10 @@ export function expectDateToBeRecent(
   date: Date,
   maxAgeMs: number = 5000,
 ): void {
-  const now = new Date();
-  const diff = now.getTime() - date.getTime();
-  expect(diff).toBeLessThanOrEqual(maxAgeMs);
-  expect(diff).toBeGreaterThanOrEqual(0);
+  const now = new Date()
+  const diff = now.getTime() - date.getTime()
+  expect(diff).toBeLessThanOrEqual(maxAgeMs)
+  expect(diff).toBeGreaterThanOrEqual(0)
 }
 
 /**
@@ -166,35 +167,35 @@ export async function expectExecutionTime<T>(
   fn: () => Promise<T> | T,
   maxTimeMs: number,
 ): Promise<T> {
-  const startTime = Date.now();
-  const result = await fn();
-  const executionTime = Date.now() - startTime;
+  const startTime = Date.now()
+  const result = await fn()
+  const executionTime = Date.now() - startTime
 
-  expect(executionTime).toBeLessThanOrEqual(maxTimeMs);
+  expect(executionTime).toBeLessThanOrEqual(maxTimeMs)
 
-  return result;
+  return result
 }
 
 /**
  * Test utility for checking email format
  */
 export function expectValidEmail(email: string): void {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  expect(emailRegex.test(email)).toBe(true);
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  expect(emailRegex.test(email)).toBe(true)
 }
 
 /**
  * Test utility for checking Brazilian CPF format
  */
 export function expectValidCPF(cpf: string): void {
-  const cpfRegex = /^\d{3}\.\d{3}\.\d{3}-\d{2}$/;
-  expect(cpfRegex.test(cpf)).toBe(true);
+  const cpfRegex = /^\d{3}\.\d{3}\.\d{3}-\d{2}$/
+  expect(cpfRegex.test(cpf)).toBe(true)
 }
 
 /**
  * Test utility for checking Brazilian CNPJ format
  */
 export function expectValidCNPJ(cnpj: string): void {
-  const cnpjRegex = /^\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}$/;
-  expect(cnpjRegex.test(cnpj)).toBe(true);
+  const cnpjRegex = /^\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}$/
+  expect(cnpjRegex.test(cnpj)).toBe(true)
 }

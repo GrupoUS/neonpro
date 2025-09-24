@@ -5,130 +5,130 @@
  * for Brazilian aesthetic clinic financial operations with LGPD compliance.
  */
 
-import { randomUUID } from 'crypto';
-import { z } from 'zod';
-import { Billing } from '../billing-service';
+import { randomUUID } from 'crypto'
+import { z } from 'zod'
+import { Billing } from '../billing-service'
 
 /**
  * Anomaly Detection Types
  */
 export interface AnomalyRule {
-  id: string;
-  name: string;
-  description: string;
-  type: 'statistical' | 'ml' | 'rule_based';
-  severity: 'low' | 'medium' | 'high' | 'critical';
-  enabled: boolean;
-  config: Record<string, any>;
-  lastUpdated: string;
+  id: string
+  name: string
+  description: string
+  type: 'statistical' | 'ml' | 'rule_based'
+  severity: 'low' | 'medium' | 'high' | 'critical'
+  enabled: boolean
+  config: Record<string, any>
+  lastUpdated: string
 }
 
 export interface AnomalyAlert {
-  id: string;
-  ruleId: string;
-  ruleName: string;
-  type: 'billing' | 'payment' | 'revenue' | 'pattern' | 'behavior';
-  severity: 'low' | 'medium' | 'high' | 'critical';
-  confidence: number;
-  description: string;
-  detectedAt: string;
+  id: string
+  ruleId: string
+  ruleName: string
+  type: 'billing' | 'payment' | 'revenue' | 'pattern' | 'behavior'
+  severity: 'low' | 'medium' | 'high' | 'critical'
+  confidence: number
+  description: string
+  detectedAt: string
   affectedEntities: Array<{
-    type: 'billing' | 'patient' | 'professional' | 'clinic';
-    id: string;
-    name?: string;
-  }>;
-  metadata: Record<string, any>;
-  recommendedAction: string;
-  status: 'open' | 'investigating' | 'resolved' | 'false_positive';
-  assignedTo?: string;
-  resolvedAt?: string;
-  resolutionNotes?: string;
+    type: 'billing' | 'patient' | 'professional' | 'clinic'
+    id: string
+    name?: string
+  }>
+  metadata: Record<string, any>
+  recommendedAction: string
+  status: 'open' | 'investigating' | 'resolved' | 'false_positive'
+  assignedTo?: string
+  resolvedAt?: string
+  resolutionNotes?: string
 }
 
 export interface FraudDetectionResult {
-  id: string;
-  riskScore: number;
-  riskLevel: 'low' | 'medium' | 'high' | 'critical';
+  id: string
+  riskScore: number
+  riskLevel: 'low' | 'medium' | 'high' | 'critical'
   indicators: Array<{
-    indicator: string;
-    value: any;
-    threshold: number;
-    triggered: boolean;
-    weight: number;
-  }>;
-  description: string;
-  recommendedAction: string;
-  requiresReview: boolean;
-  requiresInvestigation: boolean;
-  createdAt: string;
-  entityId: string;
-  entityType: 'billing' | 'payment' | 'patient' | 'professional';
+    indicator: string
+    value: any
+    threshold: number
+    triggered: boolean
+    weight: number
+  }>
+  description: string
+  recommendedAction: string
+  requiresReview: boolean
+  requiresInvestigation: boolean
+  createdAt: string
+  entityId: string
+  entityType: 'billing' | 'payment' | 'patient' | 'professional'
 }
 
 export interface DetectionConfig {
-  enableStatisticalAnalysis: boolean;
-  enableMLDetection: boolean;
-  enableRuleBasedDetection: boolean;
-  sensitivity: 'low' | 'medium' | 'high';
-  autoResolutionThreshold: number;
+  enableStatisticalAnalysis: boolean
+  enableMLDetection: boolean
+  enableRuleBasedDetection: boolean
+  sensitivity: 'low' | 'medium' | 'high'
+  autoResolutionThreshold: number
   escalationRules: Array<{
-    condition: string;
-    action: 'alert' | 'block' | 'review';
-    recipients: string[];
-  }>;
+    condition: string
+    action: 'alert' | 'block' | 'review'
+    recipients: string[]
+  }>
   notificationSettings: {
-    email: boolean;
-    sms: boolean;
-    webhook: boolean;
-    inApp: boolean;
-  };
+    email: boolean
+    sms: boolean
+    webhook: boolean
+    inApp: boolean
+  }
   retentionPolicy: {
-    alerts: number; // days
-    resolvedAlerts: number; // days
-    auditLogs: number; // days
-  };
+    alerts: number // days
+    resolvedAlerts: number // days
+    auditLogs: number // days
+  }
 }
 
 /**
  * Pattern Analysis Types
  */
 export interface BehaviorPattern {
-  id: string;
-  entityType: 'patient' | 'professional' | 'clinic';
-  entityId: string;
-  patternType: 'billing_frequency' | 'payment_behavior' | 'service_preference' | 'timing_pattern';
+  id: string
+  entityType: 'patient' | 'professional' | 'clinic'
+  entityId: string
+  patternType: 'billing_frequency' | 'payment_behavior' | 'service_preference' | 'timing_pattern'
   baseline: {
-    average: number;
-    stdDev: number;
-    min: number;
-    max: number;
-    trend: 'increasing' | 'decreasing' | 'stable';
-  };
-  currentDeviation: number;
-  deviationSignificance: number;
-  lastUpdated: string;
-  sampleSize: number;
+    average: number
+    stdDev: number
+    min: number
+    max: number
+    trend: 'increasing' | 'decreasing' | 'stable'
+  }
+  currentDeviation: number
+  deviationSignificance: number
+  lastUpdated: string
+  sampleSize: number
 }
 
 export interface NetworkAnalysis {
   nodes: Array<{
-    id: string;
-    type: 'patient' | 'professional' | 'clinic' | 'billing';
-    attributes: Record<string, any>;
-  }>;
+    id: string
+    type: 'patient' | 'professional' | 'clinic' | 'billing'
+    attributes: Record<string, any>
+  }>
   edges: Array<{
-    source: string;
-    target: string;
-    type: 'patient_billing' | 'professional_billing' | 'clinic_billing' | 'payment';
-    weight: number;
-    attributes: Record<string, any>;
-  }>;
+    source: string
+    target: string
+    type: 'patient_billing' | 'professional_billing' | 'clinic_billing' | 'payment'
+    weight: number
+    attributes: Record<string, any>
+  }>
   anomalies: Array<{
-    type: 'suspicious_connection' | 'circular_billing' | 'unusual_network';
-    description: string;
-    confidence: number;
-    affectedNodes: string[];
-  }>;
+    type: 'suspicious_connection' | 'circular_billing' | 'unusual_network'
+    description: string
+    confidence: number
+    affectedNodes: string[]
+  }>
 }
 
 /**
@@ -156,7 +156,7 @@ const detectionConfigSchema = z.object({
     resolvedAlerts: z.number().default(90),
     auditLogs: z.number().default(1825), // 5 years
   }).default(),
-});
+})
 
 /**
  * Statistical Analysis Configuration
@@ -168,7 +168,7 @@ const statisticalConfigSchema = z.object({
   windowSize: z.number().default(30), // days
   seasonalityDetection: z.boolean().default(true),
   trendDetection: z.boolean().default(true),
-});
+})
 
 /**
  * ML Detection Configuration
@@ -187,7 +187,7 @@ const mlConfigSchema = z.object({
   ]),
   retrainInterval: z.number().default(7), // days
   confidenceThreshold: z.number().default(0.8),
-});
+})
 
 /**
  * Rule-Based Detection Configuration
@@ -212,40 +212,40 @@ const ruleConfigSchema = z.object({
     severity: z.enum(['low', 'medium', 'high', 'critical']),
     action: z.enum(['alert', 'block', 'review']),
   })).default([]),
-});
+})
 
 /**
  * Anomaly Detection Service
  */
 export class AnomalyDetectionService {
-  private config: DetectionConfig;
-  private statisticalConfig: z.infer<typeof statisticalConfigSchema>;
-  private mlConfig: z.infer<typeof mlConfigSchema>;
-  private ruleConfig: z.infer<typeof ruleConfigSchema>;
+  private config: DetectionConfig
+  private statisticalConfig: z.infer<typeof statisticalConfigSchema>
+  private mlConfig: z.infer<typeof mlConfigSchema>
+  private ruleConfig: z.infer<typeof ruleConfigSchema>
 
-  private alerts: Map<string, AnomalyAlert> = new Map();
-  private rules: Map<string, AnomalyRule> = new Map();
-  private behaviorPatterns: Map<string, BehaviorPattern> = new Map();
-  private mlModels: Map<string, any> = new Map();
+  private alerts: Map<string, AnomalyAlert> = new Map()
+  private rules: Map<string, AnomalyRule> = new Map()
+  private behaviorPatterns: Map<string, BehaviorPattern> = new Map()
+  private mlModels: Map<string, any> = new Map()
 
-  private isInitialized = false;
+  private isInitialized = false
 
   constructor(config: Partial<DetectionConfig> = {}) {
-    this.config = detectionConfigSchema.parse(config);
-    this.statisticalConfig = statisticalConfigSchema.parse({});
-    this.mlConfig = mlConfigSchema.parse({});
-    this.ruleConfig = ruleConfigSchema.parse({});
+    this.config = detectionConfigSchema.parse(config)
+    this.statisticalConfig = statisticalConfigSchema.parse({})
+    this.mlConfig = mlConfigSchema.parse({})
+    this.ruleConfig = ruleConfigSchema.parse({})
 
-    this.initialize();
+    this.initialize()
   }
 
   /**
    * Initialize the anomaly detection system
    */
   private initialize(): void {
-    this.setupDefaultRules();
-    this.initializeMLModels();
-    this.isInitialized = true;
+    this.setupDefaultRules()
+    this.initializeMLModels()
+    this.isInitialized = true
   }
 
   /**
@@ -322,11 +322,11 @@ export class AnomalyDetectionService {
         },
         lastUpdated: new Date().toISOString(),
       },
-    ];
+    ]
 
-    defaultRules.forEach(rule => {
-      this.rules.set(rule.id, rule);
-    });
+    defaultRules.forEach((rule) => {
+      this.rules.set(rule.id, rule)
+    })
   }
 
   /**
@@ -334,7 +334,7 @@ export class AnomalyDetectionService {
    */
   private initializeMLModels(): void {
     // In a real implementation, this would load or train ML models
-    console.log('Initializing ML models for anomaly detection...');
+    console.log('Initializing ML models for anomaly detection...')
 
     // Mock model initialization
     this.mlModels.set('isolation_forest', {
@@ -342,14 +342,14 @@ export class AnomalyDetectionService {
       trained: true,
       accuracy: 0.92,
       lastTrained: new Date().toISOString(),
-    });
+    })
 
     this.mlModels.set('billing_anomaly_detector', {
       type: 'ensemble',
       trained: true,
       accuracy: 0.88,
       lastTrained: new Date().toISOString(),
-    });
+    })
   }
 
   /**
@@ -359,47 +359,47 @@ export class AnomalyDetectionService {
     billing: Billing,
     historicalData: Billing[] = [],
   ): Promise<{
-    alerts: AnomalyAlert[];
-    fraudResults: FraudDetectionResult[];
-    behaviorAnalysis?: BehaviorPattern[];
-    networkAnalysis?: NetworkAnalysis;
+    alerts: AnomalyAlert[]
+    fraudResults: FraudDetectionResult[]
+    behaviorAnalysis?: BehaviorPattern[]
+    networkAnalysis?: NetworkAnalysis
   }> {
     try {
-      const alerts: AnomalyAlert[] = [];
-      const fraudResults: FraudDetectionResult[] = [];
+      const alerts: AnomalyAlert[] = []
+      const fraudResults: FraudDetectionResult[] = []
 
       // Run different types of detection
       if (this.config.enableStatisticalAnalysis) {
-        const statisticalAlerts = await this.runStatisticalDetection(billing, historicalData);
-        alerts.push(...statisticalAlerts);
+        const statisticalAlerts = await this.runStatisticalDetection(billing, historicalData)
+        alerts.push(...statisticalAlerts)
       }
 
       if (this.config.enableMLDetection) {
-        const mlAlerts = await this.runMLDetection(billing, historicalData);
-        alerts.push(...mlAlerts);
+        const mlAlerts = await this.runMLDetection(billing, historicalData)
+        alerts.push(...mlAlerts)
       }
 
       if (this.config.enableRuleBasedDetection) {
-        const ruleAlerts = await this.runRuleBasedDetection(billing, historicalData);
-        alerts.push(...ruleAlerts);
+        const ruleAlerts = await this.runRuleBasedDetection(billing, historicalData)
+        alerts.push(...ruleAlerts)
       }
 
       // Run fraud detection
-      const fraudResult = await this.runFraudDetection(billing, historicalData);
+      const fraudResult = await this.runFraudDetection(billing, historicalData)
       if (fraudResult) {
-        fraudResults.push(fraudResult);
+        fraudResults.push(fraudResult)
       }
 
       // Analyze behavior patterns
-      const behaviorAnalysis = await this.analyzeBehaviorPatterns(billing, historicalData);
+      const behaviorAnalysis = await this.analyzeBehaviorPatterns(billing, historicalData)
 
       // Analyze network patterns
-      const networkAnalysis = await this.analyzeNetworkPatterns(billing, historicalData);
+      const networkAnalysis = await this.analyzeNetworkPatterns(billing, historicalData)
 
       // Store alerts and send notifications
       for (const alert of alerts) {
-        this.alerts.set(alert.id, alert);
-        await this.sendAlertNotification(alert);
+        this.alerts.set(alert.id, alert)
+        await this.sendAlertNotification(alert)
       }
 
       return {
@@ -407,10 +407,10 @@ export class AnomalyDetectionService {
         fraudResults,
         behaviorAnalysis,
         networkAnalysis,
-      };
+      }
     } catch {
-      console.error('Anomaly detection failed:', error);
-      throw error;
+      console.error('Anomaly detection failed:', error)
+      throw error
     }
   }
 
@@ -421,21 +421,21 @@ export class AnomalyDetectionService {
     billing: Billing,
     historicalData: Billing[],
   ): Promise<AnomalyAlert[]> {
-    const alerts: AnomalyAlert[] = [];
+    const alerts: AnomalyAlert[] = []
 
     // Z-score analysis for billing amounts
-    const amountAlert = this.detectAmountAnomaly(billing, historicalData);
-    if (amountAlert) alerts.push(amountAlert);
+    const amountAlert = this.detectAmountAnomaly(billing, historicalData)
+    if (amountAlert) alerts.push(amountAlert)
 
     // IQR-based outlier detection
-    const iqrAlert = this.detectIQROutlier(billing, historicalData);
-    if (iqrAlert) alerts.push(iqrAlert);
+    const iqrAlert = this.detectIQROutlier(billing, historicalData)
+    if (iqrAlert) alerts.push(iqrAlert)
 
     // Time-based anomaly detection
-    const timeAlert = this.detectTimeAnomaly(billing, historicalData);
-    if (timeAlert) alerts.push(timeAlert);
+    const timeAlert = this.detectTimeAnomaly(billing, historicalData)
+    if (timeAlert) alerts.push(timeAlert)
 
-    return alerts;
+    return alerts
   }
 
   /**
@@ -446,19 +446,19 @@ export class AnomalyDetectionService {
     historicalData: Billing[],
   ): AnomalyAlert | null {
     if (historicalData.length < this.statisticalConfig.minSampleSize) {
-      return null;
+      return null
     }
 
     const amounts = historicalData
-      .filter(b => b.paymentStatus === 'paid')
-      .map(b => b.total);
+      .filter((b) => b.paymentStatus === 'paid')
+      .map((b) => b.total)
 
-    const mean = amounts.reduce((sum, amount) => sum + amount, 0) / amounts.length;
+    const mean = amounts.reduce((sum, amount) => sum + amount, 0) / amounts.length
     const variance = amounts.reduce((sum, amount) => sum + Math.pow(amount - mean, 2), 0)
-      / amounts.length;
-    const stdDev = Math.sqrt(variance);
+      / amounts.length
+    const stdDev = Math.sqrt(variance)
 
-    const zScore = Math.abs((billing.total - mean) / stdDev);
+    const zScore = Math.abs((billing.total - mean) / stdDev)
 
     if (zScore > this.statisticalConfig.zScoreThreshold) {
       return {
@@ -490,10 +490,10 @@ export class AnomalyDetectionService {
         },
         recommendedAction: 'Revisar cobrança para possível erro ou atividade suspeita',
         status: 'open',
-      };
+      }
     }
 
-    return null;
+    return null
   }
 
   /**
@@ -504,27 +504,27 @@ export class AnomalyDetectionService {
     historicalData: Billing[],
   ): AnomalyAlert | null {
     if (historicalData.length < this.statisticalConfig.minSampleSize) {
-      return null;
+      return null
     }
 
     const amounts = historicalData
-      .filter(b => b.paymentStatus === 'paid')
-      .map(b => b.total)
-      .sort((a, b) => a - b);
+      .filter((b) => b.paymentStatus === 'paid')
+      .map((b) => b.total)
+      .sort((a, b) => a - b)
 
-    const q1Index = Math.floor(amounts.length * 0.25);
-    const q3Index = Math.floor(amounts.length * 0.75);
-    const q1 = amounts[q1Index];
-    const q3 = amounts[q3Index];
-    const iqr = q3 - q1;
+    const q1Index = Math.floor(amounts.length * 0.25)
+    const q3Index = Math.floor(amounts.length * 0.75)
+    const q1 = amounts[q1Index]
+    const q3 = amounts[q3Index]
+    const iqr = q3 - q1
 
-    const lowerBound = q1 - this.statisticalConfig.iqrMultiplier * iqr;
-    const upperBound = q3 + this.statisticalConfig.iqrMultiplier * iqr;
+    const lowerBound = q1 - this.statisticalConfig.iqrMultiplier * iqr
+    const upperBound = q3 + this.statisticalConfig.iqrMultiplier * iqr
 
     if (billing.total < lowerBound || billing.total > upperBound) {
       const deviation = billing.total < lowerBound
         ? (lowerBound - billing.total) / lowerBound
-        : (billing.total - upperBound) / upperBound;
+        : (billing.total - upperBound) / upperBound
 
       return {
         id: randomUUID(),
@@ -557,10 +557,10 @@ export class AnomalyDetectionService {
         recommendedAction:
           'Investigar cobrança que se desvia significativamente dos valores típicos',
         status: 'open',
-      };
+      }
     }
 
-    return null;
+    return null
   }
 
   /**
@@ -570,31 +570,31 @@ export class AnomalyDetectionService {
     billing: Billing,
     historicalData: Billing[],
   ): AnomalyAlert | null {
-    const billingTime = new Date(billing.createdAt);
-    const hour = billingTime.getHours();
-    const dayOfWeek = billingTime.getDay();
+    const billingTime = new Date(billing.createdAt)
+    const hour = billingTime.getHours()
+    const dayOfWeek = billingTime.getDay()
 
     // Check if billing is outside business hours
-    const isOutsideHours = hour < 8 || hour > 18;
-    const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+    const isOutsideHours = hour < 8 || hour > 18
+    const isWeekend = dayOfWeek === 0 || dayOfWeek === 6
 
     if (isOutsideHours || isWeekend) {
       // Check if this is unusual for this entity
-      const similarBillings = historicalData.filter(b =>
+      const similarBillings = historicalData.filter((b) =>
         b.patientId === billing.patientId
         || b.professionalId === billing.professionalId
-      );
+      )
 
-      const outsideHoursCount = similarBillings.filter(b => {
-        const time = new Date(b.createdAt);
-        const h = time.getHours();
-        const dow = time.getDay();
-        return h < 8 || h > 18 || dow === 0 || dow === 6;
-      }).length;
+      const outsideHoursCount = similarBillings.filter((b) => {
+        const time = new Date(b.createdAt)
+        const h = time.getHours()
+        const dow = time.getDay()
+        return h < 8 || h > 18 || dow === 0 || dow === 6
+      }).length
 
       const outsideHoursRate = similarBillings.length > 0
         ? outsideHoursCount / similarBillings.length
-        : 0;
+        : 0
 
       if (outsideHoursRate < 0.1 && similarBillings.length >= 5) {
         return {
@@ -627,11 +627,11 @@ export class AnomalyDetectionService {
           },
           recommendedAction: 'Verificar se cobrança fora de horário é legítima',
           status: 'open',
-        };
+        }
       }
     }
 
-    return null;
+    return null
   }
 
   /**
@@ -641,13 +641,13 @@ export class AnomalyDetectionService {
     billing: Billing,
     historicalData: Billing[],
   ): Promise<AnomalyAlert[]> {
-    const alerts: AnomalyAlert[] = [];
+    const alerts: AnomalyAlert[] = []
 
     // Prepare features for ML model
-    const features = this.extractFeatures(billing, historicalData);
+    const features = this.extractFeatures(billing, historicalData)
 
     // Get anomaly score from ML model
-    const anomalyScore = await this.getMLAnomalyScore(features);
+    const anomalyScore = await this.getMLAnomalyScore(features)
 
     if (anomalyScore > (1 - this.mlConfig.contaminationRate)) {
       alerts.push({
@@ -672,33 +672,33 @@ export class AnomalyDetectionService {
         },
         recommendedAction: 'Investigar anomalia detectada por modelo de ML',
         status: 'open',
-      });
+      })
     }
 
-    return alerts;
+    return alerts
   }
 
   /**
    * Extract features for ML models
    */
   private extractFeatures(billing: Billing, historicalData: Billing[]): number[] {
-    const billingTime = new Date(billing.createdAt);
-    const hour = billingTime.getHours();
-    const dayOfWeek = billingTime.getDay();
+    const billingTime = new Date(billing.createdAt)
+    const hour = billingTime.getHours()
+    const dayOfWeek = billingTime.getDay()
 
     // Calculate historical statistics
-    const patientHistory = historicalData.filter(b => b.patientId === billing.patientId);
-    const professionalHistory = historicalData.filter(b =>
+    const patientHistory = historicalData.filter((b) => b.patientId === billing.patientId)
+    const professionalHistory = historicalData.filter((b) =>
       b.professionalId === billing.professionalId
-    );
+    )
 
     const avgPatientAmount = patientHistory.length > 0
       ? patientHistory.reduce((sum, b) => sum + b.total, 0) / patientHistory.length
-      : 0;
+      : 0
 
     const avgProfessionalAmount = professionalHistory.length > 0
       ? professionalHistory.reduce((sum, b) => sum + b.total, 0) / professionalHistory.length
-      : 0;
+      : 0
 
     // Normalize features
     return [
@@ -710,7 +710,7 @@ export class AnomalyDetectionService {
       avgPatientAmount / 10000,
       avgProfessionalAmount / 10000,
       billingTime.getTime() / (1000 * 60 * 60 * 24), // Days since epoch
-    ];
+    ]
   }
 
   /**
@@ -722,12 +722,12 @@ export class AnomalyDetectionService {
 
     // Simple anomaly score based on feature deviations
     const score = features.reduce((acc, feature, index) => {
-      const expected = [0.5, 0.5, 0.5, 0.3, 0.1, 0.5, 0.5, 0.5][index] || 0.5;
-      const deviation = Math.abs(feature - expected);
-      return acc + deviation;
-    }, 0) / features.length;
+      const expected = [0.5, 0.5, 0.5, 0.3, 0.1, 0.5, 0.5, 0.5][index] || 0.5
+      const deviation = Math.abs(feature - expected)
+      return acc + deviation
+    }, 0) / features.length
 
-    return Math.min(score, 1);
+    return Math.min(score, 1)
   }
 
   /**
@@ -737,21 +737,21 @@ export class AnomalyDetectionService {
     billing: Billing,
     historicalData: Billing[],
   ): Promise<AnomalyAlert[]> {
-    const alerts: AnomalyAlert[] = [];
+    const alerts: AnomalyAlert[] = []
 
     // Velocity detection
-    const velocityAlert = this.detectBillingVelocity(billing, historicalData);
-    if (velocityAlert) alerts.push(velocityAlert);
+    const velocityAlert = this.detectBillingVelocity(billing, historicalData)
+    if (velocityAlert) alerts.push(velocityAlert)
 
     // Duplicate detection
-    const duplicateAlert = this.detectDuplicateBilling(billing, historicalData);
-    if (duplicateAlert) alerts.push(duplicateAlert);
+    const duplicateAlert = this.detectDuplicateBilling(billing, historicalData)
+    if (duplicateAlert) alerts.push(duplicateAlert)
 
     // Discount pattern detection
-    const discountAlert = this.detectSuspiciousDiscounts(billing);
-    if (discountAlert) alerts.push(discountAlert);
+    const discountAlert = this.detectSuspiciousDiscounts(billing)
+    if (discountAlert) alerts.push(discountAlert)
 
-    return alerts;
+    return alerts
   }
 
   /**
@@ -761,16 +761,16 @@ export class AnomalyDetectionService {
     billing: Billing,
     historicalData: Billing[],
   ): AnomalyAlert | null {
-    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
-    const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000)
+    const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000)
 
     const billingsLastHour = historicalData.filter(
-      b => new Date(b.createdAt) >= oneHourAgo,
-    ).length;
+      (b) => new Date(b.createdAt) >= oneHourAgo,
+    ).length
 
     const billingsLastDay = historicalData.filter(
-      b => new Date(b.createdAt) >= oneDayAgo,
-    ).length;
+      (b) => new Date(b.createdAt) >= oneDayAgo,
+    ).length
 
     if (billingsLastHour > this.ruleConfig.velocityThresholds.billingPerHour) {
       return {
@@ -799,7 +799,7 @@ export class AnomalyDetectionService {
         },
         recommendedAction: 'Investigar atividade incomum de cobranças',
         status: 'open',
-      };
+      }
     }
 
     if (billingsLastDay > this.ruleConfig.velocityThresholds.billingPerDay) {
@@ -826,10 +826,10 @@ export class AnomalyDetectionService {
         },
         recommendedAction: 'Monitorar volume elevado de cobranças',
         status: 'open',
-      };
+      }
     }
 
-    return null;
+    return null
   }
 
   /**
@@ -839,18 +839,18 @@ export class AnomalyDetectionService {
     billing: Billing,
     historicalData: Billing[],
   ): AnomalyAlert | null {
-    const timeWindow = this.ruleConfig.duplicateBillingDetection?.timeWindow || 24;
-    const cutoffDate = new Date(Date.now() - timeWindow * 60 * 60 * 1000);
+    const timeWindow = this.ruleConfig.duplicateBillingDetection?.timeWindow || 24
+    const cutoffDate = new Date(Date.now() - timeWindow * 60 * 60 * 1000)
 
-    const similarBillings = historicalData.filter(b => {
-      if (new Date(b.createdAt) < cutoffDate) return false;
-      if (b.patientId !== billing.patientId) return false;
-      if (b.professionalId !== billing.professionalId) return false;
+    const similarBillings = historicalData.filter((b) => {
+      if (new Date(b.createdAt) < cutoffDate) return false
+      if (b.patientId !== billing.patientId) return false
+      if (b.professionalId !== billing.professionalId) return false
 
       // Check for similar amounts (within 5%)
-      const amountDiff = Math.abs(b.total - billing.total) / billing.total;
-      return amountDiff < 0.05;
-    });
+      const amountDiff = Math.abs(b.total - billing.total) / billing.total
+      return amountDiff < 0.05
+    })
 
     if (similarBillings.length > 0) {
       return {
@@ -874,24 +874,24 @@ export class AnomalyDetectionService {
           },
         ],
         metadata: {
-          similarBillings: similarBillings.map(b => b.id),
+          similarBillings: similarBillings.map((b) => b.id),
           timeWindow,
           similarityThreshold: 0.05,
         },
         recommendedAction: 'Verificar possíveis cobranças duplicadas',
         status: 'open',
-      };
+      }
     }
 
-    return null;
+    return null
   }
 
   /**
    * Detect suspicious discounts
    */
   private detectSuspiciousDiscounts(billing: Billing): AnomalyAlert | null {
-    const discountRate = billing.discounts / billing.total;
-    const maxDiscount = this.ruleConfig.velocityThresholds?.discountThreshold || 0.3;
+    const discountRate = billing.discounts / billing.total
+    const maxDiscount = this.ruleConfig.velocityThresholds?.discountThreshold || 0.3
 
     if (discountRate > maxDiscount) {
       return {
@@ -923,10 +923,10 @@ export class AnomalyDetectionService {
         },
         recommendedAction: 'Justificar desconto acima do limite permitido',
         status: 'open',
-      };
+      }
     }
 
-    return null;
+    return null
   }
 
   /**
@@ -936,8 +936,8 @@ export class AnomalyDetectionService {
     billing: Billing,
     historicalData: Billing[],
   ): Promise<FraudDetectionResult | null> {
-    const indicators: FraudDetectionResult['indicators'] = [];
-    let totalRiskScore = 0;
+    const indicators: FraudDetectionResult['indicators'] = []
+    let totalRiskScore = 0
 
     // Check various fraud indicators
     indicators.push(
@@ -946,21 +946,21 @@ export class AnomalyDetectionService {
       this.checkTimeRisk(billing),
       this.checkDiscountRisk(billing),
       this.checkHistoryRisk(billing, historicalData),
-    );
+    )
 
     // Calculate weighted risk score
-    const validIndicators = indicators.filter(ind => ind.triggered);
+    const validIndicators = indicators.filter((ind) => ind.triggered)
     totalRiskScore = validIndicators.reduce(
       (sum, ind) => sum + (ind.weight * (ind.triggered ? 1 : 0)),
       0,
-    );
+    )
 
     // Determine risk level
-    let riskLevel: 'low' | 'medium' | 'high' | 'critical';
-    if (totalRiskScore < 0.3) riskLevel = 'low';
-    else if (totalRiskScore < 0.6) riskLevel = 'medium';
-    else if (totalRiskScore < 0.8) riskLevel = 'high';
-    else riskLevel = 'critical';
+    let riskLevel: 'low' | 'medium' | 'high' | 'critical'
+    if (totalRiskScore < 0.3) riskLevel = 'low'
+    else if (totalRiskScore < 0.6) riskLevel = 'medium'
+    else if (totalRiskScore < 0.8) riskLevel = 'high'
+    else riskLevel = 'critical'
 
     // Only return result if there's significant risk
     if (riskLevel !== 'low') {
@@ -976,10 +976,10 @@ export class AnomalyDetectionService {
         createdAt: new Date().toISOString(),
         entityId: billing.id,
         entityType: 'billing',
-      };
+      }
     }
 
-    return null;
+    return null
   }
 
   /**
@@ -989,10 +989,10 @@ export class AnomalyDetectionService {
     billing: Billing,
     historicalData: Billing[],
   ): FraudDetectionResult['indicators'][0] {
-    const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+    const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000)
     const recentBillings = historicalData.filter(
-      b => b.patientId === billing.patientId && new Date(b.createdAt) >= oneDayAgo,
-    ).length;
+      (b) => b.patientId === billing.patientId && new Date(b.createdAt) >= oneDayAgo,
+    ).length
 
     return {
       indicator: 'Velocidade de Cobrança',
@@ -1000,7 +1000,7 @@ export class AnomalyDetectionService {
       threshold: 3,
       triggered: recentBillings > 3,
       weight: 0.3,
-    };
+    }
   }
 
   /**
@@ -1010,12 +1010,12 @@ export class AnomalyDetectionService {
     billing: Billing,
     historicalData: Billing[],
   ): FraudDetectionResult['indicators'][0] {
-    const patientHistory = historicalData.filter(b => b.patientId === billing.patientId);
+    const patientHistory = historicalData.filter((b) => b.patientId === billing.patientId)
     const avgAmount = patientHistory.length > 0
       ? patientHistory.reduce((sum, b) => sum + b.total, 0) / patientHistory.length
-      : billing.total;
+      : billing.total
 
-    const amountRatio = billing.total / avgAmount;
+    const amountRatio = billing.total / avgAmount
 
     return {
       indicator: 'Valor Incomum',
@@ -1023,15 +1023,15 @@ export class AnomalyDetectionService {
       threshold: avgAmount * 3,
       triggered: amountRatio > 3,
       weight: 0.25,
-    };
+    }
   }
 
   /**
    * Check time risk indicator
    */
   private checkTimeRisk(billing: Billing): FraudDetectionResult['indicators'][0] {
-    const hour = new Date(billing.createdAt).getHours();
-    const isNightTime = hour < 6 || hour > 22;
+    const hour = new Date(billing.createdAt).getHours()
+    const isNightTime = hour < 6 || hour > 22
 
     return {
       indicator: 'Horário Incomum',
@@ -1039,14 +1039,14 @@ export class AnomalyDetectionService {
       threshold: 22,
       triggered: isNightTime,
       weight: 0.15,
-    };
+    }
   }
 
   /**
    * Check discount risk indicator
    */
   private checkDiscountRisk(billing: Billing): FraudDetectionResult['indicators'][0] {
-    const discountRate = billing.discounts / billing.total;
+    const discountRate = billing.discounts / billing.total
 
     return {
       indicator: 'Desconto Elevado',
@@ -1054,7 +1054,7 @@ export class AnomalyDetectionService {
       threshold: 0.3,
       triggered: discountRate > 0.3,
       weight: 0.2,
-    };
+    }
   }
 
   /**
@@ -1064,8 +1064,8 @@ export class AnomalyDetectionService {
     billing: Billing,
     historicalData: Billing[],
   ): FraudDetectionResult['indicators'][0] {
-    const patientHistory = historicalData.filter(b => b.patientId === billing.patientId);
-    const overduePayments = patientHistory.filter(b => b.paymentStatus === 'overdue').length;
+    const patientHistory = historicalData.filter((b) => b.patientId === billing.patientId)
+    const overduePayments = patientHistory.filter((b) => b.paymentStatus === 'overdue').length
 
     return {
       indicator: 'Histórico de Pagamentos',
@@ -1073,7 +1073,7 @@ export class AnomalyDetectionService {
       threshold: 0,
       triggered: overduePayments > 0,
       weight: 0.1,
-    };
+    }
   }
 
   /**
@@ -1083,15 +1083,15 @@ export class AnomalyDetectionService {
     indicators: FraudDetectionResult['indicators'],
     riskLevel: string,
   ): string {
-    const triggeredIndicators = indicators.filter(ind => ind.triggered);
+    const triggeredIndicators = indicators.filter((ind) => ind.triggered)
 
-    if (triggeredIndicators.length === 0) return '';
+    if (triggeredIndicators.length === 0) return ''
 
-    const indicatorNames = triggeredIndicators.map(ind => ind.indicator);
+    const indicatorNames = triggeredIndicators.map((ind) => ind.indicator)
 
     return `Risco ${riskLevel} de fraude detectado. Indicadores acionados: ${
       indicatorNames.join(', ')
-    }`;
+    }`
   }
 
   /**
@@ -1100,15 +1100,15 @@ export class AnomalyDetectionService {
   private getFraudRecommendation(riskLevel: string): string {
     switch (riskLevel) {
       case 'low':
-        return 'Monitorar transação';
+        return 'Monitorar transação'
       case 'medium':
-        return 'Revisão manual necessária';
+        return 'Revisão manual necessária'
       case 'high':
-        return 'Investigação urgente requerida';
+        return 'Investigação urgente requerida'
       case 'critical':
-        return 'Bloquear transação e investigar imediatamente';
+        return 'Bloquear transação e investigar imediatamente'
       default:
-        return 'Monitorar transação';
+        return 'Monitorar transação'
     }
   }
 
@@ -1119,7 +1119,7 @@ export class AnomalyDetectionService {
     billing: Billing,
     historicalData: Billing[],
   ): Promise<BehaviorPattern[]> {
-    const patterns: BehaviorPattern[] = [];
+    const patterns: BehaviorPattern[] = []
 
     // Analyze patient billing frequency
     const patientPattern = await this.analyzeEntityBehavior(
@@ -1127,8 +1127,8 @@ export class AnomalyDetectionService {
       billing.patientId,
       'billing_frequency',
       historicalData,
-    );
-    if (patientPattern) patterns.push(patientPattern);
+    )
+    if (patientPattern) patterns.push(patientPattern)
 
     // Analyze professional billing patterns
     const professionalPattern = await this.analyzeEntityBehavior(
@@ -1136,10 +1136,10 @@ export class AnomalyDetectionService {
       billing.professionalId,
       'billing_frequency',
       historicalData,
-    );
-    if (professionalPattern) patterns.push(professionalPattern);
+    )
+    if (professionalPattern) patterns.push(professionalPattern)
 
-    return patterns;
+    return patterns
   }
 
   /**
@@ -1151,31 +1151,31 @@ export class AnomalyDetectionService {
     patternType: 'billing_frequency',
     historicalData: Billing[],
   ): Promise<BehaviorPattern | null> {
-    const entityData = historicalData.filter(b => {
-      if (entityType === 'patient') return b.patientId === entityId;
-      if (entityType === 'professional') return b.professionalId === entityId;
-      return false;
-    });
+    const entityData = historicalData.filter((b) => {
+      if (entityType === 'patient') return b.patientId === entityId
+      if (entityType === 'professional') return b.professionalId === entityId
+      return false
+    })
 
-    if (entityData.length < 5) return null;
+    if (entityData.length < 5) return null
 
     // Calculate billing frequency pattern
-    const dailyBillings = this.calculateDailyFrequency(entityData);
+    const dailyBillings = this.calculateDailyFrequency(entityData)
     const avgFrequency = dailyBillings.reduce((sum, count) => sum + count, 0)
-      / dailyBillings.length;
+      / dailyBillings.length
     const variance =
       dailyBillings.reduce((sum, count) => sum + Math.pow(count - avgFrequency, 2), 0)
-      / dailyBillings.length;
-    const stdDev = Math.sqrt(variance);
+      / dailyBillings.length
+    const stdDev = Math.sqrt(variance)
 
     // Calculate current deviation
-    const recentBillings = entityData.filter(b => {
-      const daysSince = (Date.now() - new Date(b.createdAt).getTime()) / (1000 * 60 * 60 * 24);
-      return daysSince <= 7;
-    }).length;
+    const recentBillings = entityData.filter((b) => {
+      const daysSince = (Date.now() - new Date(b.createdAt).getTime()) / (1000 * 60 * 60 * 24)
+      return daysSince <= 7
+    }).length
 
-    const currentFrequency = recentBillings / 7;
-    const deviation = Math.abs(currentFrequency - avgFrequency) / (stdDev || 1);
+    const currentFrequency = recentBillings / 7
+    const deviation = Math.abs(currentFrequency - avgFrequency) / (stdDev || 1)
 
     return {
       id: randomUUID(),
@@ -1193,21 +1193,21 @@ export class AnomalyDetectionService {
       deviationSignificance: Math.min(deviation / 2, 1),
       lastUpdated: new Date().toISOString(),
       sampleSize: entityData.length,
-    };
+    }
   }
 
   /**
    * Calculate daily billing frequency
    */
   private calculateDailyFrequency(billings: Billing[]): number[] {
-    const dailyCount = new Map<string, number>();
+    const dailyCount = new Map<string, number>()
 
-    billings.forEach(billing => {
-      const date = new Date(billing.createdAt).toISOString().split('T')[0];
-      dailyCount.set(date, (dailyCount.get(date) || 0) + 1);
-    });
+    billings.forEach((billing) => {
+      const date = new Date(billing.createdAt).toISOString().split('T')[0]
+      dailyCount.set(date, (dailyCount.get(date) || 0) + 1)
+    })
 
-    return Array.from(dailyCount.values());
+    return Array.from(dailyCount.values())
   }
 
   /**
@@ -1218,63 +1218,63 @@ export class AnomalyDetectionService {
     historicalData: Billing[],
   ): Promise<NetworkAnalysis> {
     // Build network graph from billing relationships
-    const nodes = new Map<string, any>();
-    const edges = new Map<string, any>();
+    const nodes = new Map<string, any>()
+    const edges = new Map<string, any>()
 
     // Add nodes
     nodes.set(`patient_${billing.patientId}`, {
       id: `patient_${billing.patientId}`,
       type: 'patient',
       attributes: {},
-    });
+    })
 
     nodes.set(`professional_${billing.professionalId}`, {
       id: `professional_${billing.professionalId}`,
       type: 'professional',
       attributes: {},
-    });
+    })
 
     nodes.set(`clinic_${billing.clinicId}`, {
       id: `clinic_${billing.clinicId}`,
       type: 'clinic',
       attributes: {},
-    });
+    })
 
     // Add edges
-    const edgeKey = `${billing.patientId}-${billing.professionalId}`;
+    const edgeKey = `${billing.patientId}-${billing.professionalId}`
     edges.set(edgeKey, {
       source: `patient_${billing.patientId}`,
       target: `professional_${billing.professionalId}`,
       type: 'patient_billing',
       weight: 1,
       attributes: { totalAmount: billing.total },
-    });
+    })
 
     // Analyze historical data for network patterns
-    historicalData.forEach(hBilling => {
+    historicalData.forEach((hBilling) => {
       // Add nodes if not present
-      [
+      ;[
         `patient_${hBilling.patientId}`,
         `professional_${hBilling.professionalId}`,
         `clinic_${hBilling.clinicId}`,
-      ].forEach(nodeId => {
+      ].forEach((nodeId) => {
         if (!nodes.has(nodeId)) {
-          const [type, _id] = nodeId.split('_');
+          const [type, _id] = nodeId.split('_')
           nodes.set(nodeId, {
             id: nodeId,
             type,
             attributes: {},
-          });
+          })
         }
-      });
+      })
 
       // Update or add edges
-      const hEdgeKey = `${hBilling.patientId}-${hBilling.professionalId}`;
-      const existingEdge = edges.get(hEdgeKey);
+      const hEdgeKey = `${hBilling.patientId}-${hBilling.professionalId}`
+      const existingEdge = edges.get(hEdgeKey)
 
       if (existingEdge) {
-        existingEdge.weight += 1;
-        existingEdge.attributes.totalAmount += hBilling.total;
+        existingEdge.weight += 1
+        existingEdge.attributes.totalAmount += hBilling.total
       } else {
         edges.set(hEdgeKey, {
           source: `patient_${hBilling.patientId}`,
@@ -1282,43 +1282,43 @@ export class AnomalyDetectionService {
           type: 'patient_billing',
           weight: 1,
           attributes: { totalAmount: hBilling.total },
-        });
+        })
       }
-    });
+    })
 
     // Detect network anomalies
     const anomalies = this.detectNetworkAnomalies(
       Array.from(nodes.values()),
       Array.from(edges.values()),
-    );
+    )
 
     return {
       nodes: Array.from(nodes.values()),
       edges: Array.from(edges.values()),
       anomalies,
-    };
+    }
   }
 
   /**
    * Detect network anomalies
    */
   private detectNetworkAnomalies(nodes: any[], edges: any[]): NetworkAnalysis['anomalies'] {
-    const anomalies: NetworkAnalysis['anomalies'] = [];
+    const anomalies: NetworkAnalysis['anomalies'] = []
 
     // Find nodes with unusually high connectivity
-    const nodeDegrees = new Map<string, number>();
-    edges.forEach(edge => {
-      nodeDegrees.set(edge.source, (nodeDegrees.get(edge.source) || 0) + 1);
-      nodeDegrees.set(edge.target, (nodeDegrees.get(edge.target) || 0) + 1);
-    });
+    const nodeDegrees = new Map<string, number>()
+    edges.forEach((edge) => {
+      nodeDegrees.set(edge.source, (nodeDegrees.get(edge.source) || 0) + 1)
+      nodeDegrees.set(edge.target, (nodeDegrees.get(edge.target) || 0) + 1)
+    })
 
     const avgDegree = Array.from(nodeDegrees.values()).reduce((sum, deg) => sum + deg, 0)
-      / nodeDegrees.size;
-    const stdDev = this.calculateStandardDeviation(Array.from(nodeDegrees.values()));
+      / nodeDegrees.size
+    const stdDev = this.calculateStandardDeviation(Array.from(nodeDegrees.values()))
 
     const highDegreeNodes = Array.from(nodeDegrees.entries())
       .filter(([, degree]) => degree > avgDegree + 2 * stdDev)
-      .map(([nodeId]) => nodeId);
+      .map(([nodeId]) => nodeId)
 
     if (highDegreeNodes.length > 0) {
       anomalies.push({
@@ -1326,10 +1326,10 @@ export class AnomalyDetectionService {
         description: `${highDegreeNodes.length} nós com conectividade incomumente alta`,
         confidence: 0.7,
         affectedNodes: highDegreeNodes,
-      });
+      })
     }
 
-    return anomalies;
+    return anomalies
   }
 
   /**
@@ -1337,17 +1337,17 @@ export class AnomalyDetectionService {
    */
   private async sendAlertNotification(alert: AnomalyAlert): Promise<void> {
     // In a real implementation, this would send notifications via email, SMS, webhook, etc.
-    console.log(`Anomaly Alert: ${alert.description} (${alert.severity})`);
+    console.log(`Anomaly Alert: ${alert.description} (${alert.severity})`)
 
     // Check escalation rules
-    const escalationRule = this.config.escalationRules.find(rule =>
+    const escalationRule = this.config.escalationRules.find((rule) =>
       this.evaluateCondition(rule.condition, alert)
-    );
+    )
 
     if (escalationRule) {
       console.log(
         `Escalating alert: ${escalationRule.action} to ${escalationRule.recipients.join(', ')}`,
-      );
+      )
     }
   }
 
@@ -1360,10 +1360,10 @@ export class AnomalyDetectionService {
     try {
       // Example: "severity === 'high' || severity === 'critical'"
       // eslint-disable-next-line no-eval
-      return eval(condition.replace(/severity/g, `"${alert.severity}"`));
+      return eval(condition.replace(/severity/g, `"${alert.severity}"`))
     } catch {
-      console.error('Condition evaluation failed:', error);
-      return false;
+      console.error('Condition evaluation failed:', error)
+      return false
     }
   }
 
@@ -1371,14 +1371,14 @@ export class AnomalyDetectionService {
    * Get active alerts
    */
   getActiveAlerts(): AnomalyAlert[] {
-    return Array.from(this.alerts.values()).filter(alert => alert.status === 'open');
+    return Array.from(this.alerts.values()).filter((alert) => alert.status === 'open')
   }
 
   /**
    * Get alert by ID
    */
   getAlert(alertId: string): AnomalyAlert | null {
-    return this.alerts.get(alertId) || null;
+    return this.alerts.get(alertId) || null
   }
 
   /**
@@ -1390,51 +1390,51 @@ export class AnomalyDetectionService {
     resolutionNotes?: string,
     assignedTo?: string,
   ): boolean {
-    const alert = this.alerts.get(alertId);
-    if (!alert) return false;
+    const alert = this.alerts.get(alertId)
+    if (!alert) return false
 
-    alert.status = status;
-    alert.assignedTo = assignedTo;
+    alert.status = status
+    alert.assignedTo = assignedTo
 
     if (status === 'resolved') {
-      alert.resolvedAt = new Date().toISOString();
+      alert.resolvedAt = new Date().toISOString()
     }
 
     if (resolutionNotes) {
-      alert.resolutionNotes = resolutionNotes;
+      alert.resolutionNotes = resolutionNotes
     }
 
-    return true;
+    return true
   }
 
   /**
    * Get detection rules
    */
   getRules(): AnomalyRule[] {
-    return Array.from(this.rules.values());
+    return Array.from(this.rules.values())
   }
 
   /**
    * Update rule
    */
   updateRule(ruleId: string, updates: Partial<AnomalyRule>): boolean {
-    const rule = this.rules.get(ruleId);
-    if (!rule) return false;
+    const rule = this.rules.get(ruleId)
+    if (!rule) return false
 
     this.rules.set(ruleId, {
       ...rule,
       ...updates,
       lastUpdated: new Date().toISOString(),
-    });
+    })
 
-    return true;
+    return true
   }
 
   /**
    * Get configuration
    */
   getConfiguration(): DetectionConfig {
-    return { ...this.config };
+    return { ...this.config }
   }
 
   /**
@@ -1444,9 +1444,9 @@ export class AnomalyDetectionService {
     this.config = detectionConfigSchema.parse({
       ...this.config,
       ...updates,
-    });
+    })
 
-    return this.config;
+    return this.config
   }
 
   /**
@@ -1460,6 +1460,6 @@ export class AnomalyDetectionService {
       modelsLoaded: this.mlModels.size,
       activeAlerts: this.getActiveAlerts().length,
       configuration: this.config,
-    };
+    }
   }
 }

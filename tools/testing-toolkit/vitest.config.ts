@@ -1,5 +1,5 @@
-import { resolve } from 'path';
-import { defineConfig } from 'vitest/config';
+import { resolve } from 'path'
+import { defineConfig } from 'vitest/config'
 
 export default defineConfig({
   test: {
@@ -109,4 +109,4 @@ export default defineConfig({
     __HEALTHCARE_COMPLIANCE__: JSON.stringify(true),
     __AGENT_COORDINATION__: JSON.stringify(true),
   },
-});
+})

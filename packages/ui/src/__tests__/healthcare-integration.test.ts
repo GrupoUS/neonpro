@@ -5,66 +5,62 @@
  * and can be imported without errors.
  */
 
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from 'vitest'
 
-describe("Healthcare Components Integration", () => {
-  it("should export healthcare validation utilities", async () => {
+describe('Healthcare Components Integration', () => {
+  it('should export healthcare validation utilities', async () => {
     const { healthcareValidationSchemas, DataSensitivity } = await import(
-      "../utils/healthcare-validation"
-    );
-    
+      '../utils/healthcare-validation'
+    )
 
-    expect(healthcareValidationSchemas).toBeDefined();
-    expect(DataSensitivity).toBeDefined();
-  });
+    expect(healthcareValidationSchemas).toBeDefined()
+    expect(DataSensitivity).toBeDefined()
+  })
 
-  it("should export accessibility utilities", async () => {
-    const { announceToScreenReader, HealthcarePriority, generateAccessibleId } =
-      await import("../utils/accessibility"
-    );
+  it('should export accessibility utilities', async () => {
+    const { announceToScreenReader, HealthcarePriority, generateAccessibleId } = await import(
+      '../utils/accessibility'
+    )
 
-    expect(announceToScreenReader).toBeDefined();
-    expect(HealthcarePriority).toBeDefined();
-    expect(generateAccessibleId).toBeDefined();
-  });
+    expect(announceToScreenReader).toBeDefined()
+    expect(HealthcarePriority).toBeDefined()
+    expect(generateAccessibleId).toBeDefined()
+  })
 
-  it("should export healthcare theme provider", async () => {
+  it('should export healthcare theme provider', async () => {
     const { HealthcareThemeProvider, useHealthcareTheme } = await import(
-      "../components/healthcare/healthcare-theme-provider"
-    );
-    
+      '../components/healthcare/healthcare-theme-provider'
+    )
 
-    expect(HealthcareThemeProvider).toBeDefined();
-    expect(useHealthcareTheme).toBeDefined();
-  });
+    expect(HealthcareThemeProvider).toBeDefined()
+    expect(useHealthcareTheme).toBeDefined()
+  })
 
-  it("should export LGPD consent banner", async () => {
+  it('should export LGPD consent banner', async () => {
     const { LGPDConsentBanner, useLGPDConsent, ConsentType } = await import(
-      "../components/healthcare/lgpd-consent-banner"
-    );
-    
+      '../components/healthcare/lgpd-consent-banner'
+    )
 
-    expect(LGPDConsentBanner).toBeDefined();
-    expect(useLGPDConsent).toBeDefined();
-    expect(ConsentType).toBeDefined();
-  });
+    expect(LGPDConsentBanner).toBeDefined()
+    expect(useLGPDConsent).toBeDefined()
+    expect(ConsentType).toBeDefined()
+  })
 
-  it("should export healthcare form components", async () => {
+  it('should export healthcare form components', async () => {
     const { HealthcareForm } = await import(
-      "../components/forms/healthcare-form"
-    );
-    
-    const { HealthcareTextField } = await import(
-      "../components/forms/healthcare-text-field"
-    );
-    
-    const { HealthcareSelect } = await import(
-      "../components/forms/healthcare-select"
-    );
-    
+      '../components/forms/healthcare-form'
+    )
 
-    expect(HealthcareForm).toBeDefined();
-    expect(HealthcareTextField).toBeDefined();
-    expect(HealthcareSelect).toBeDefined();
-  });
-});
+    const { HealthcareTextField } = await import(
+      '../components/forms/healthcare-text-field'
+    )
+
+    const { HealthcareSelect } = await import(
+      '../components/forms/healthcare-select'
+    )
+
+    expect(HealthcareForm).toBeDefined()
+    expect(HealthcareTextField).toBeDefined()
+    expect(HealthcareSelect).toBeDefined()
+  })
+})

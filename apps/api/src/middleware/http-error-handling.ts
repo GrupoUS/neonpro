@@ -1,6 +1,6 @@
-import { Context, Next } from 'hono';
-import { HTTPException } from 'hono/http-exception';
-import { logger } from '../lib/logger';
+import { Context, Next } from 'hono'
+import { HTTPException } from 'hono/http-exception'
+import { logger } from '../lib/logger'
 
 /**
  * HTTP error handling middleware with enhanced error processing
@@ -8,7 +8,7 @@ import { logger } from '../lib/logger';
 export function httpErrorHandlingMiddleware() {
   return async (c: Context, next: Next) => {
     try {
-      await next();
+      await next()
     } catch {
       // Log the error with context
       const errorContext = {
@@ -17,7 +17,7 @@ export function httpErrorHandlingMiddleware() {
         userAgent: c.req.header('user-agent'),
         ip: c.req.header('x-forwarded-for') || c.req.header('x-real-ip'),
         requestId: c.get('requestId'),
-      };
+      }
 
       // Handle different error types
       if (error instanceof HTTPException) {
@@ -26,7 +26,7 @@ export function httpErrorHandlingMiddleware() {
           ...errorContext,
           status: error.status,
           message: error.message,
-        });
+        })
 
         return c.json(
           {
@@ -39,7 +39,7 @@ export function httpErrorHandlingMiddleware() {
             timestamp: new Date().toISOString(),
           },
           error.status,
-        );
+        )
       }
 
       // Validation errors
@@ -47,7 +47,7 @@ export function httpErrorHandlingMiddleware() {
         logger.warn('Validation Error', {
           ...errorContext,
           validationErrors: error.errors || error.message,
-        });
+        })
 
         return c.json(
           {
@@ -61,7 +61,7 @@ export function httpErrorHandlingMiddleware() {
             timestamp: new Date().toISOString(),
           },
           400,
-        );
+        )
       }
 
       // Database errors
@@ -70,7 +70,7 @@ export function httpErrorHandlingMiddleware() {
           ...errorContext,
           error: error.message,
           stack: error.stack,
-        });
+        })
 
         return c.json(
           {
@@ -83,7 +83,7 @@ export function httpErrorHandlingMiddleware() {
             timestamp: new Date().toISOString(),
           },
           500,
-        );
+        )
       }
 
       // Authentication/Authorization errors
@@ -91,11 +91,11 @@ export function httpErrorHandlingMiddleware() {
         logger.warn('Authentication/Authorization Error', {
           ...errorContext,
           error: error.message,
-        });
+        })
 
         const status = error.message.toLowerCase().includes('unauthorized')
           ? 401
-          : 403;
+          : 403
 
         return c.json(
           {
@@ -108,7 +108,7 @@ export function httpErrorHandlingMiddleware() {
             timestamp: new Date().toISOString(),
           },
           status,
-        );
+        )
       }
 
       // Network/timeout errors
@@ -116,7 +116,7 @@ export function httpErrorHandlingMiddleware() {
         logger.error('Network Error', {
           ...errorContext,
           error: error.message,
-        });
+        })
 
         return c.json(
           {
@@ -129,7 +129,7 @@ export function httpErrorHandlingMiddleware() {
             timestamp: new Date().toISOString(),
           },
           503,
-        );
+        )
       }
 
       // Generic errors
@@ -137,7 +137,7 @@ export function httpErrorHandlingMiddleware() {
         ...errorContext,
         error: error instanceof Error ? error.message : String(error),
         stack: error instanceof Error ? error.stack : undefined,
-      });
+      })
 
       return c.json(
         {
@@ -150,9 +150,9 @@ export function httpErrorHandlingMiddleware() {
           timestamp: new Date().toISOString(),
         },
         500,
-      );
+      )
     }
-  };
+  }
 }
 
 /**
@@ -161,33 +161,33 @@ export function httpErrorHandlingMiddleware() {
 function getErrorCode(status: number): string {
   switch (status) {
     case 400:
-      return 'BAD_REQUEST';
+      return 'BAD_REQUEST'
     case 401:
-      return 'UNAUTHORIZED';
+      return 'UNAUTHORIZED'
     case 403:
-      return 'FORBIDDEN';
+      return 'FORBIDDEN'
     case 404:
-      return 'NOT_FOUND';
+      return 'NOT_FOUND'
     case 405:
-      return 'METHOD_NOT_ALLOWED';
+      return 'METHOD_NOT_ALLOWED'
     case 409:
-      return 'CONFLICT';
+      return 'CONFLICT'
     case 410:
-      return 'GONE';
+      return 'GONE'
     case 422:
-      return 'UNPROCESSABLE_ENTITY';
+      return 'UNPROCESSABLE_ENTITY'
     case 429:
-      return 'TOO_MANY_REQUESTS';
+      return 'TOO_MANY_REQUESTS'
     case 500:
-      return 'INTERNAL_ERROR';
+      return 'INTERNAL_ERROR'
     case 502:
-      return 'BAD_GATEWAY';
+      return 'BAD_GATEWAY'
     case 503:
-      return 'SERVICE_UNAVAILABLE';
+      return 'SERVICE_UNAVAILABLE'
     case 504:
-      return 'GATEWAY_TIMEOUT';
+      return 'GATEWAY_TIMEOUT'
     default:
-      return 'UNKNOWN_ERROR';
+      return 'UNKNOWN_ERROR'
   }
 }
 
@@ -201,7 +201,7 @@ function isValidationError(error: any): boolean {
     || error.name === 'ValibotError'
     || (error.message && error.message.includes('validation'))
     || Array.isArray(error.errors)
-  );
+  )
 }
 
 /**
@@ -215,7 +215,7 @@ function isDatabaseError(error: any): boolean {
     || error.name === 'DatabaseError'
     || error.name === 'SequelizeError'
     || (error.code && typeof error.code === 'string' && error.code.startsWith('P')) // Prisma error codes
-  );
+  )
 }
 
 /**
@@ -232,7 +232,7 @@ function isAuthError(error: any): boolean {
         || error.message.toLowerCase().includes('forbidden')
         || error.message.toLowerCase().includes('access denied')
         || error.message.toLowerCase().includes('not authorized')))
-  );
+  )
 }
 
 /**
@@ -250,5 +250,5 @@ function isNetworkError(error: any): boolean {
       && (error.message.includes('timeout')
         || error.message.includes('network')
         || error.message.includes('connection')))
-  );
+  )
 }

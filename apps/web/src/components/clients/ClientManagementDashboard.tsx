@@ -5,14 +5,14 @@
  * retention analytics, and intelligent workflow automation.
  */
 
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { createClient } from '@/integrations/supabase/client';
-import { useCoAgent, useCopilotAction } from '@copilotkit/react-core';
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Progress } from '@/components/ui/progress'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { createClient } from '@/integrations/supabase/client'
+import { useCoAgent, useCopilotAction } from '@copilotkit/react-core'
 import {
   AlertTriangle,
   BarChart3,
@@ -28,57 +28,57 @@ import {
   TrendingUp,
   UserPlus,
   Users,
-} from 'lucide-react';
-import React, { useEffect, useState } from 'react';
+} from 'lucide-react'
+import React, { useEffect, useState } from 'react'
 
 // Types
 interface ClientMetrics {
-  totalClients: number;
-  newClientsThisMonth: number;
-  retentionRate: number;
-  highRiskClients: number;
-  averageSatisfaction: number;
+  totalClients: number
+  newClientsThisMonth: number
+  retentionRate: number
+  highRiskClients: number
+  averageSatisfaction: number
 }
 
 interface RetentionAnalytics {
-  clientId: string;
-  riskLevel: 'low' | 'medium' | 'high';
-  riskScore: number;
+  clientId: string
+  riskLevel: 'low' | 'medium' | 'high'
+  riskScore: number
   factors: Array<{
-    factor: string;
-    impact: 'positive' | 'negative';
-    weight: number;
-    description: string;
-  }>;
+    factor: string
+    impact: 'positive' | 'negative'
+    weight: number
+    description: string
+  }>
   recommendations: Array<{
-    id: string;
-    type: 'communication' | 'incentive' | 'intervention' | 'follow_up';
-    priority: 'low' | 'medium' | 'high';
-    title: string;
-    description: string;
-    actionItems: string[];
-    expectedImpact: string;
-    timeline: string;
-  }>;
+    id: string
+    type: 'communication' | 'incentive' | 'intervention' | 'follow_up'
+    priority: 'low' | 'medium' | 'high'
+    title: string
+    description: string
+    actionItems: string[]
+    expectedImpact: string
+    timeline: string
+  }>
 }
 
 interface ClientAction {
-  id: string;
-  clientId: string;
-  type: 'call' | 'email' | 'whatsapp' | 'appointment' | 'review';
-  priority: 'low' | 'medium' | 'high' | 'urgent';
-  title: string;
-  description: string;
-  dueDate?: string;
-  completed: boolean;
+  id: string
+  clientId: string
+  type: 'call' | 'email' | 'whatsapp' | 'appointment' | 'review'
+  priority: 'low' | 'medium' | 'high' | 'urgent'
+  title: string
+  description: string
+  dueDate?: string
+  completed: boolean
 }
 
 interface CommunicationStats {
-  totalMessages: number;
-  responseRate: number;
-  averageResponseTime: number; // in hours
-  preferredChannel: 'whatsapp' | 'sms' | 'email';
-  lastCommunicationDate?: string;
+  totalMessages: number
+  responseRate: number
+  averageResponseTime: number // in hours
+  preferredChannel: 'whatsapp' | 'sms' | 'email'
+  lastCommunicationDate?: string
 }
 
 export const ClientManagementDashboard: React.FC = () => {
@@ -88,25 +88,25 @@ export const ClientManagementDashboard: React.FC = () => {
     retentionRate: 0,
     highRiskClients: 0,
     averageSatisfaction: 0,
-  });
+  })
 
   const [retentionAnalytics, setRetentionAnalytics] = useState<
     RetentionAnalytics[]
-  >([]);
-  const [pendingActions, setPendingActions] = useState<ClientAction[]>([]);
+  >([])
+  const [pendingActions, setPendingActions] = useState<ClientAction[]>([])
   const [communicationStats, setCommunicationStats] = useState<CommunicationStats>({
     totalMessages: 0,
     responseRate: 0,
     averageResponseTime: 0,
     preferredChannel: 'whatsapp',
-  });
+  })
 
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true)
   const [selectedTimeRange, setSelectedTimeRange] = useState<
     '7d' | '30d' | '90d' | '1y'
-  >('30d');
+  >('30d')
 
-  const _supabase = createClient();
+  const _supabase = createClient()
 
   // CopilotKit integration
   const { state: _state, setState } = useCoAgent({
@@ -118,7 +118,7 @@ export const ClientManagementDashboard: React.FC = () => {
       recommendations: [],
       processingStatus: 'idle',
     },
-  });
+  })
 
   const generateInsightsAction = useCopilotAction({
     name: 'generateClientInsights',
@@ -133,17 +133,17 @@ export const ClientManagementDashboard: React.FC = () => {
     ],
     handler: async ({ timeRange: _timeRange, metrics: _metrics }) => {
       // AI insights generation would be handled by backend
-      return { insights: [] };
+      return { insights: [] }
     },
-  });
+  })
 
   // Load dashboard data
   useEffect(() => {
-    loadDashboardData();
-  }, [selectedTimeRange]);
+    loadDashboardData()
+  }, [selectedTimeRange])
 
   const loadDashboardData = async () => {
-    setIsLoading(true);
+    setIsLoading(true)
 
     try {
       // Load metrics (simulated - would call backend services)
@@ -153,7 +153,7 @@ export const ClientManagementDashboard: React.FC = () => {
         retentionRate: 87.3,
         highRiskClients: 23,
         averageSatisfaction: 4.2,
-      };
+      }
 
       // Load retention analytics (simulated)
       const mockRetentionAnalytics: RetentionAnalytics[] = [
@@ -248,7 +248,7 @@ export const ClientManagementDashboard: React.FC = () => {
             },
           ],
         },
-      ];
+      ]
 
       // Load pending actions (simulated)
       const mockPendingActions: ClientAction[] = [
@@ -282,7 +282,7 @@ export const ClientManagementDashboard: React.FC = () => {
           dueDate: '2024-01-16',
           completed: false,
         },
-      ];
+      ]
 
       // Load communication stats (simulated)
       const mockCommunicationStats: CommunicationStats = {
@@ -291,12 +291,12 @@ export const ClientManagementDashboard: React.FC = () => {
         averageResponseTime: 2.4,
         preferredChannel: 'whatsapp',
         lastCommunicationDate: '2024-01-13T10:30:00Z',
-      };
+      }
 
-      setMetrics(mockMetrics);
-      setRetentionAnalytics(mockRetentionAnalytics);
-      setPendingActions(mockPendingActions);
-      setCommunicationStats(mockCommunicationStats);
+      setMetrics(mockMetrics)
+      setRetentionAnalytics(mockRetentionAnalytics)
+      setPendingActions(mockPendingActions)
+      setCommunicationStats(mockCommunicationStats)
 
       // Update CopilotKit state
       setState({
@@ -306,69 +306,69 @@ export const ClientManagementDashboard: React.FC = () => {
           timeRange: selectedTimeRange,
         },
         processingStatus: 'completed',
-      });
+      })
 
       // Generate AI insights
       await generateInsightsAction.execute({
         timeRange: selectedTimeRange,
         metrics: mockMetrics,
-      });
+      })
     } catch (error) {
-      console.error('Error loading dashboard data:', error);
+      console.error('Error loading dashboard data:', error)
       setState({
         processingStatus: 'error',
-      });
+      })
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
 
   const handleActionComplete = async (actionId: string) => {
-    setPendingActions(prev =>
-      prev.map(action => action.id === actionId ? { ...action, completed: true } : action)
-    );
-  };
+    setPendingActions((prev) =>
+      prev.map((action) => action.id === actionId ? { ...action, completed: true } : action)
+    )
+  }
 
   const getRiskColor = (riskLevel: string) => {
     switch (riskLevel) {
       case 'high':
-        return 'bg-red-500';
+        return 'bg-red-500'
       case 'medium':
-        return 'bg-yellow-500';
+        return 'bg-yellow-500'
       case 'low':
-        return 'bg-green-500';
+        return 'bg-green-500'
       default:
-        return 'bg-gray-500';
+        return 'bg-gray-500'
     }
-  };
+  }
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
       case 'urgent':
-        return 'bg-red-100 text-red-800 border-red-200';
+        return 'bg-red-100 text-red-800 border-red-200'
       case 'high':
-        return 'bg-orange-100 text-orange-800 border-orange-200';
+        return 'bg-orange-100 text-orange-800 border-orange-200'
       case 'medium':
-        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+        return 'bg-yellow-100 text-yellow-800 border-yellow-200'
       case 'low':
-        return 'bg-green-100 text-green-800 border-green-200';
+        return 'bg-green-100 text-green-800 border-green-200'
       default:
-        return 'bg-gray-100 text-gray-800 border-gray-200';
+        return 'bg-gray-100 text-gray-800 border-gray-200'
     }
-  };
+  }
 
   const getChannelIcon = (channel: string) => {
     switch (channel) {
       case 'whatsapp':
-        return <MessageSquare className='h-4 w-4' />;
+        return <MessageSquare className='h-4 w-4' />
       case 'email':
-        return <Mail className='h-4 w-4' />;
+        return <Mail className='h-4 w-4' />
       case 'sms':
-        return <Phone className='h-4 w-4' />;
+        return <Phone className='h-4 w-4' />
       default:
-        return <MessageSquare className='h-4 w-4' />;
+        return <MessageSquare className='h-4 w-4' />
     }
-  };
+  }
 
   if (isLoading) {
     return (
@@ -379,7 +379,7 @@ export const ClientManagementDashboard: React.FC = () => {
           <p>Carregando dashboard...</p>
         </div>
       </div>
-    );
+    )
   }
 
   return (
@@ -399,7 +399,7 @@ export const ClientManagementDashboard: React.FC = () => {
         <div className='flex items-center space-x-4'>
           <select
             value={selectedTimeRange}
-            onChange={e => setSelectedTimeRange(e.target.value as any)}
+            onChange={(e) => setSelectedTimeRange(e.target.value as any)}
             className='px-3 py-2 border rounded-md'
           >
             <option value='7d'>Últimos 7 dias</option>
@@ -612,7 +612,7 @@ export const ClientManagementDashboard: React.FC = () => {
         </TabsContent>
 
         <TabsContent value='retention' className='space-y-4'>
-          {retentionAnalytics.map(analytics => (
+          {retentionAnalytics.map((analytics) => (
             <Card key={analytics.clientId}>
               <CardHeader>
                 <CardTitle className='flex items-center justify-between'>
@@ -676,7 +676,7 @@ export const ClientManagementDashboard: React.FC = () => {
                   <div>
                     <h4 className='font-medium mb-2'>Recomendações AI</h4>
                     <div className='space-y-3'>
-                      {analytics.recommendations.map(rec => (
+                      {analytics.recommendations.map((rec) => (
                         <Alert key={rec.id}>
                           <Brain className='h-4 w-4' />
                           <AlertDescription>
@@ -732,7 +732,7 @@ export const ClientManagementDashboard: React.FC = () => {
           </div>
 
           <div className='space-y-3'>
-            {pendingActions.map(action => (
+            {pendingActions.map((action) => (
               <Card
                 key={action.id}
                 className={action.completed ? 'opacity-50' : ''}
@@ -866,5 +866,5 @@ export const ClientManagementDashboard: React.FC = () => {
         </TabsContent>
       </Tabs>
     </div>
-  );
-};
+  )
+}

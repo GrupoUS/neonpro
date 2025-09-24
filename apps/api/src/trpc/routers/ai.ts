@@ -11,23 +11,23 @@
  * - ANVISA compliance for AI-powered medical assistance
  */
 
-import { AuditAction, AuditStatus, ResourceType, RiskLevel } from '@prisma/client';
-import { TRPCError } from '@trpc/server';
-import * as v from 'valibot';
-import { healthcareProcedure, protectedProcedure, router } from '../trpc';
+import { AuditAction, AuditStatus, ResourceType, RiskLevel } from '@prisma/client'
+import { TRPCError } from '@trpc/server'
+import * as v from 'valibot'
+import { healthcareProcedure, protectedProcedure, router } from '../trpc'
 
 // =====================================
 // AI PROVIDER CONFIGURATION
 // =====================================
 
 interface AIProvider {
-  name: 'openai' | 'anthropic';
-  model: string;
-  maxTokens: number;
-  temperature: number;
-  costPerToken: number;
-  maxConcurrency: number;
-  healthScore: number;
+  name: 'openai' | 'anthropic'
+  model: string
+  maxTokens: number
+  temperature: number
+  costPerToken: number
+  maxConcurrency: number
+  healthScore: number
 }
 
 const AI_PROVIDERS: AIProvider[] = [
@@ -49,7 +49,7 @@ const AI_PROVIDERS: AIProvider[] = [
     maxConcurrency: 50,
     healthScore: 0.98,
   },
-];
+]
 
 /**
  * Portuguese Medical Terminology Dictionary
@@ -97,7 +97,7 @@ const MEDICAL_TERMINOLOGY_PT = {
   stomach: 'estômago',
   skin: 'pele',
   bone: 'osso',
-};
+}
 
 /**
  * Brazilian Healthcare Context Prompts
@@ -139,7 +139,7 @@ const HEALTHCARE_CONTEXT_PROMPTS = {
     
     Forneça análises estatisticamente robustas e clinicamente relevantes.
   `,
-}; // =====================================
+} // =====================================
 // AI PROVIDER ROUTING & OPTIMIZATION
 // =====================================
 
@@ -153,13 +153,13 @@ async function selectOptimalProvider(
   maxCost?: number,
 ): Promise<AIProvider> {
   // Filter providers based on cost constraints
-  let availableProviders = AI_PROVIDERS.filter(provider => {
-    if (maxCost && provider.costPerToken > maxCost) return false;
-    return provider.healthScore > 0.8; // Only healthy providers
-  });
+  let availableProviders = AI_PROVIDERS.filter((provider) => {
+    if (maxCost && provider.costPerToken > maxCost) return false
+    return provider.healthScore > 0.8 // Only healthy providers
+  })
 
   if (availableProviders.length === 0) {
-    availableProviders = AI_PROVIDERS; // Fallback to all providers
+    availableProviders = AI_PROVIDERS // Fallback to all providers
   }
 
   // Select based on request type and complexity
@@ -167,24 +167,24 @@ async function selectOptimalProvider(
     case 'conversation':
       // Prefer OpenAI for conversations (better Portuguese support)
       return (
-        availableProviders.find(p => p.name === 'openai')
+        availableProviders.find((p) => p.name === 'openai')
         || availableProviders[0]
-      );
+      )
 
     case 'prediction':
       // Prefer lower cost for prediction tasks
       return availableProviders.sort(
         (a, _b) => a.costPerToken - b.costPerToken,
-      )[0];
+      )[0]
 
     case 'analysis':
       // Prefer higher quality for analysis
       return availableProviders.sort(
         (a, _b) => b.healthScore - a.healthScore,
-      )[0];
+      )[0]
 
     default:
-      return availableProviders[0];
+      return availableProviders[0]
   }
 }
 
@@ -196,7 +196,7 @@ async function callAIProvider(
   prompt: string,
 ): Promise<{ response: string; tokensUsed: number; cost: number }> {
   // Simulate API call delay
-  await new Promise(resolve => setTimeout(resolve, 200 + Math.random() * 300));
+  await new Promise((resolve) => setTimeout(resolve, 200 + Math.random() * 300))
 
   // Mock response based on provider
   const responses = {
@@ -216,20 +216,20 @@ async function callAIProvider(
       analysis:
         'Insights de dados revelam padrões significativos na aderência ao tratamento, com variações regionais importantes.',
     },
-  };
+  }
 
   const responseType = prompt.includes('no-show') || prompt.includes('probabilidade')
     ? 'prediction'
     : prompt.includes('análise') || prompt.includes('insights')
     ? 'analysis'
-    : 'conversation';
+    : 'conversation'
 
   const response = responses[provider.name][responseType]
-    || responses[provider.name].conversation;
-  const tokensUsed = Math.floor(response.length / 4); // Rough token estimation
-  const cost = tokensUsed * provider.costPerToken;
+    || responses[provider.name].conversation
+  const tokensUsed = Math.floor(response.length / 4) // Rough token estimation
+  const cost = tokensUsed * provider.costPerToken
 
-  return { response, tokensUsed, cost };
+  return { response, tokensUsed, cost }
 }
 
 /**
@@ -237,34 +237,34 @@ async function callAIProvider(
  * Ensures LGPD compliance by removing identifying information
  */
 function anonymizePatientDataForAI(data: any): any {
-  if (!data) return {};
+  if (!data) return {}
 
-  const anonymized = { ...data };
+  const anonymized = { ...data }
 
   // Remove direct identifiers
-  delete anonymized.fullName;
-  delete anonymized.cpf;
-  delete anonymized.rg;
-  delete anonymized.email;
-  delete anonymized.phonePrimary;
-  delete anonymized.phoneSecondary;
-  delete anonymized.addressLine1;
-  delete anonymized.addressLine2;
-  delete anonymized.passportNumber;
+  delete anonymized.fullName
+  delete anonymized.cpf
+  delete anonymized.rg
+  delete anonymized.email
+  delete anonymized.phonePrimary
+  delete anonymized.phoneSecondary
+  delete anonymized.addressLine1
+  delete anonymized.addressLine2
+  delete anonymized.passportNumber
 
   // Generalize sensitive data
   if (anonymized.birthDate) {
-    const birthYear = new Date(anonymized.birthDate).getFullYear();
-    const currentYear = new Date().getFullYear();
-    anonymized.ageRange = Math.floor((currentYear - birthYear) / 10) * 10; // Age in decades
-    delete anonymized.birthDate;
+    const birthYear = new Date(anonymized.birthDate).getFullYear()
+    const currentYear = new Date().getFullYear()
+    anonymized.ageRange = Math.floor((currentYear - birthYear) / 10) * 10 // Age in decades
+    delete anonymized.birthDate
   }
 
   if (anonymized.city) {
     anonymized.regionType = anonymized.city.includes('São Paulo') || anonymized.city.includes('Rio')
       ? 'metropolitan'
-      : 'other';
-    delete anonymized.city;
+      : 'other'
+    delete anonymized.city
   }
 
   // Keep relevant behavioral/medical data
@@ -280,28 +280,28 @@ function anonymizePatientDataForAI(data: any): any {
     'ageRange',
     'regionType',
     'gender',
-  ];
+  ]
 
   return Object.keys(anonymized).reduce((acc, _key) => {
     if (allowedFields.includes(key)) {
-      acc[key] = anonymized[key];
+      acc[key] = anonymized[key]
     }
-    return acc;
-  }, {});
+    return acc
+  }, {})
 }
 
 /**
  * Translate medical terms to Portuguese
  */
 function translateMedicalTerms(text: string): string {
-  let translatedText = text;
+  let translatedText = text
 
   Object.entries(MEDICAL_TERMINOLOGY_PT).forEach(([english, _portuguese]) => {
-    const regex = new RegExp(`\\b${english}\\b`, 'gi');
-    translatedText = translatedText.replace(regex, portuguese);
-  });
+    const regex = new RegExp(`\\b${english}\\b`, 'gi')
+    translatedText = translatedText.replace(regex, portuguese)
+  })
 
-  return translatedText;
+  return translatedText
 }
 
 // =====================================
@@ -330,17 +330,17 @@ export const aiRouter = router({
     .mutation(async ({ ctx, _input }) => {
       try {
         // Select optimal AI provider
-        const provider = await selectOptimalProvider('conversation', 'medium');
+        const provider = await selectOptimalProvider('conversation', 'medium')
 
         // Build prompt with healthcare context
         const prompt =
-          `${HEALTHCARE_CONTEXT_PROMPTS.medicalAssistant}\n\nPaciente: ${input.message}`;
+          `${HEALTHCARE_CONTEXT_PROMPTS.medicalAssistant}\n\nPaciente: ${input.message}`
 
         // Call AI provider
-        const result = await callAIProvider(provider, prompt, input._context);
+        const result = await callAIProvider(provider, prompt, input._context)
 
         // Translate medical terms to Portuguese if needed
-        const translatedResponse = translateMedicalTerms(result.response);
+        const translatedResponse = translateMedicalTerms(result.response)
 
         // Create audit trail
         await ctx.prisma.auditTrail.create({
@@ -364,7 +364,7 @@ export const aiRouter = router({
               hasPatientContext: !!input.context?.patientId,
             }),
           },
-        });
+        })
 
         return {
           response: translatedResponse,
@@ -377,13 +377,13 @@ export const aiRouter = router({
             cfmCompliant: true,
             anvisaCompliant: true,
           },
-        };
+        }
       } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to process AI chat request',
           cause: error,
-        });
+        })
       }
     }),
 
@@ -421,20 +421,20 @@ export const aiRouter = router({
               take: 10,
             },
           },
-        });
+        })
 
         if (!patient) {
           throw new TRPCError({
             code: 'NOT_FOUND',
             message: 'Patient not found',
-          });
+          })
         }
 
         // Anonymize patient data for AI processing
-        const anonymizedData = anonymizePatientDataForAI(patient);
+        const anonymizedData = anonymizePatientDataForAI(patient)
 
         // Select optimal AI provider for prediction
-        const provider = await selectOptimalProvider('prediction', 'high');
+        const provider = await selectOptimalProvider('prediction', 'high')
 
         // Build prediction prompt
         const prompt = `${HEALTHCARE_CONTEXT_PROMPTS.noShowPrediction}
@@ -445,10 +445,10 @@ ${JSON.stringify(anonymizedData, null, 2)}
 Horário da consulta: ${input.appointmentTime.toISOString()}
 Fatores adicionais: ${JSON.stringify(input.additionalFactors || {}, null, 2)}
 
-Analise a probabilidade de não comparecimento e forneça recomendações preventivas.`;
+Analise a probabilidade de não comparecimento e forneça recomendações preventivas.`
 
         // Get AI prediction
-        const result = await callAIProvider(provider, prompt, anonymizedData);
+        const result = await callAIProvider(provider, prompt, anonymizedData)
 
         // Create audit trail
         await ctx.prisma.auditTrail.create({
@@ -473,7 +473,7 @@ Analise a probabilidade de não comparecimento e forneça recomendações preven
               dataAnonymized: true,
             }),
           },
-        });
+        })
 
         return {
           prediction: {
@@ -503,13 +503,13 @@ Analise a probabilidade de não comparecimento e forneça recomendações preven
             dataAnonymized: true,
             auditTrail: true,
           },
-        };
+        }
       } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to predict no-show risk',
           cause: error,
-        });
+        })
       }
     }),
 
@@ -542,7 +542,7 @@ Analise a probabilidade de não comparecimento e forneça recomendações preven
     .query(async ({ ctx, _input }) => {
       try {
         // Select optimal AI provider for analysis
-        const provider = await selectOptimalProvider('analysis', 'high');
+        const provider = await selectOptimalProvider('analysis', 'high')
 
         // Build analysis prompt
         const prompt = `${HEALTHCARE_CONTEXT_PROMPTS.healthcareInsights}
@@ -552,10 +552,10 @@ Período: ${input.timeRange.startDate.toISOString()} até ${input.timeRange.endD
 Filtros: ${JSON.stringify(input.filters || {}, null, 2)}
 Tipo de análise: ${input.analysisType || 'trends'}
 
-Gere insights relevantes para gestão de clínica no Brasil, considerando regulamentações locais.`;
+Gere insights relevantes para gestão de clínica no Brasil, considerando regulamentações locais.`
 
         // Get AI insights
-        const result = await callAIProvider(provider, prompt);
+        const result = await callAIProvider(provider, prompt)
 
         // Create audit trail
         await ctx.prisma.auditTrail.create({
@@ -579,7 +579,7 @@ Gere insights relevantes para gestão de clínica no Brasil, considerando regula
               cost: result.cost,
             }),
           },
-        });
+        })
 
         return {
           insights: {
@@ -606,13 +606,13 @@ Gere insights relevantes para gestão de clínica no Brasil, considerando regula
             anvisaCompliant: true,
             auditTrail: true,
           },
-        };
+        }
       } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to generate healthcare insights',
           cause: error,
-        });
+        })
       }
     }),
 
@@ -646,12 +646,12 @@ Gere insights relevantes para gestão de clínica no Brasil, considerando regula
           timeOfDay: input.appointment_time.getHours() < 12 ? 'morning' : 'afternoon',
           seasonality: new Date().getMonth() < 6 ? 'winter' : 'summer',
         },
-      };
+      }
 
       // Delegate to predictNoShow procedure
       const result = await aiRouter
         .createCaller(ctx)
-        .predictNoShow(transformedInput);
+        .predictNoShow(transformedInput)
 
       return {
         prediction: result.prediction,
@@ -659,7 +659,7 @@ Gere insights relevantes para gestão de clínica no Brasil, considerando regula
         provider_used: result.provider,
         cost: result.cost,
         lgpd_compliance: result.compliance,
-      };
+      }
     }),
 
   /**
@@ -683,20 +683,20 @@ Gere insights relevantes para gestão de clínica no Brasil, considerando regula
             id: input.patient_id,
             clinicId: ctx.clinicId,
           },
-        });
+        })
 
         if (!patient) {
           throw new TRPCError({
             code: 'NOT_FOUND',
             message: 'Patient not found',
-          });
+          })
         }
 
         // Anonymize patient data
-        const anonymizedData = anonymizePatientDataForAI(patient);
+        const anonymizedData = anonymizePatientDataForAI(patient)
 
         // Select AI provider
-        const provider = await selectOptimalProvider('analysis', 'high');
+        const provider = await selectOptimalProvider('analysis', 'high')
 
         // Build aesthetic risk analysis prompt
         const prompt = `
@@ -711,9 +711,9 @@ Procedimento: ${input.procedure_type}
 Especialização: ${input.specialization || 'medicina_estetica'}
 Dados do paciente: ${JSON.stringify(anonymizedData, null, 2)}
 
-Forneça análise de risco e recomendações.`;
+Forneça análise de risco e recomendações.`
 
-        const result = await callAIProvider(provider, prompt);
+        const result = await callAIProvider(provider, prompt)
 
         // Create audit trail
         await ctx.prisma.auditTrail.create({
@@ -737,7 +737,7 @@ Forneça análise de risco e recomendações.`;
               cost: result.cost,
             }),
           },
-        });
+        })
 
         return {
           risk_assessment: {
@@ -759,13 +759,13 @@ Forneça análise de risco e recomendações.`;
             anvisa_compliant: true,
             cfm_compliant: true,
           },
-        };
+        }
       } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to analyze aesthetic risk',
           cause: error,
-        });
+        })
       }
     }),
 
@@ -793,16 +793,16 @@ Forneça análise de risco e recomendações.`;
           input.request_type as any,
           input.complexity as any,
           input.max_cost,
-        );
+        )
 
         // If preferred provider is specified and available, use it
-        let selectedProvider = provider;
+        let selectedProvider = provider
         if (input.preferred_provider) {
           const preferredProvider = AI_PROVIDERS.find(
-            p => p.name === input.preferred_provider,
-          );
+            (p) => p.name === input.preferred_provider,
+          )
           if (preferredProvider && preferredProvider.healthScore > 0.8) {
-            selectedProvider = preferredProvider;
+            selectedProvider = preferredProvider
           }
         }
 
@@ -826,7 +826,7 @@ Forneça análise de risco e recomendações.`;
               complexity: input.complexity,
             }),
           },
-        });
+        })
 
         return {
           selected_provider: selectedProvider.name,
@@ -837,20 +837,20 @@ Forneça análise de risco e recomendações.`;
             max_concurrency: selectedProvider.maxConcurrency,
           },
           fallback_providers: AI_PROVIDERS.filter(
-            p => p.name !== selectedProvider.name,
-          ).map(p => ({ name: p.name, health_score: p.healthScore })),
+            (p) => p.name !== selectedProvider.name,
+          ).map((p) => ({ name: p.name, health_score: p.healthScore })),
           compliance: {
             cost_optimized: true,
             health_checked: true,
             fallback_available: true,
           },
-        };
+        }
       } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to route AI provider',
           cause: error,
-        });
+        })
       }
     }),
 
@@ -883,28 +883,28 @@ Forneça análise de risco e recomendações.`;
     )
     .mutation(async ({ ctx, _input }) => {
       try {
-        const { requests, batch_settings } = input;
-        const maxConcurrent = batch_settings?.max_concurrent || 5;
-        const timeoutMs = batch_settings?.timeout_ms || 30000;
+        const { requests, batch_settings } = input
+        const maxConcurrent = batch_settings?.max_concurrent || 5
+        const timeoutMs = batch_settings?.timeout_ms || 30000
 
         // Process requests in batches
-        const results = [];
+        const results = []
         for (let i = 0; i < requests.length; i += maxConcurrent) {
-          const batch = requests.slice(i, i + maxConcurrent);
+          const batch = requests.slice(i, i + maxConcurrent)
 
-          const batchPromises = batch.map(async request => {
+          const batchPromises = batch.map(async (request) => {
             try {
               const provider = await selectOptimalProvider(
                 request.type as any,
                 'medium',
-              );
+              )
 
               const result = (await Promise.race([
                 callAIProvider(provider, JSON.stringify(request.data)),
                 new Promise((resolve, reject) =>
                   setTimeout(() => reject(new Error('Timeout')), timeoutMs)
                 ),
-              ])) as any;
+              ])) as any
 
               return {
                 id: request.id,
@@ -912,18 +912,18 @@ Forneça análise de risco e recomendações.`;
                 result: result.response,
                 provider: provider.name,
                 cost: result.cost,
-              };
+              }
             } catch {
               return {
                 id: request.id,
                 status: 'error',
                 error: error instanceof Error ? error.message : 'Unknown error',
-              };
+              }
             }
-          });
+          })
 
-          const batchResults = await Promise.all(batchPromises);
-          results.push(...batchResults);
+          const batchResults = await Promise.all(batchPromises)
+          results.push(...batchResults)
         }
 
         // Create audit trail
@@ -942,19 +942,19 @@ Forneça análise de risco e recomendações.`;
             additionalInfo: JSON.stringify({
               action: 'batch_analysis_completed',
               total_requests: requests.length,
-              successful: results.filter(r => r.status === 'success').length,
-              failed: results.filter(r => r.status === 'error').length,
+              successful: results.filter((r) => r.status === 'success').length,
+              failed: results.filter((r) => r.status === 'error').length,
             }),
           },
-        });
+        })
 
         return {
           batch_id: ctx.auditMeta.sessionId,
           total_requests: requests.length,
           results,
           summary: {
-            successful: results.filter(r => r.status === 'success').length,
-            failed: results.filter(r => r.status === 'error').length,
+            successful: results.filter((r) => r.status === 'success').length,
+            failed: results.filter((r) => r.status === 'error').length,
             total_cost: results.reduce((sum, _r) => sum + (r.cost || 0), 0),
           },
           compliance: {
@@ -962,13 +962,13 @@ Forneça análise de risco e recomendações.`;
             audit_logged: true,
             batch_processed: true,
           },
-        };
+        }
       } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to process batch analysis',
           cause: error,
-        });
+        })
       }
     }),
-});
+})

@@ -18,11 +18,11 @@ This comprehensive video training program provides visual, step-by-step guidance
 
 ```typescript
 interface VideoProgram {
-  series: VideoSeries[];
-  episodes: VideoEpisode[];
-  learningPaths: LearningPath[];
-  supplementaryMaterials: SupportMaterial[];
-  assessmentTools: AssessmentTool[];
+  series: VideoSeries[]
+  episodes: VideoEpisode[]
+  learningPaths: LearningPath[]
+  supplementaryMaterials: SupportMaterial[]
+  assessmentTools: AssessmentTool[]
 }
 ```
 
@@ -38,11 +38,11 @@ interface VideoProgram {
 
 ```typescript
 interface Episode1 {
-  introduction: SystemOverview[];
-  keyFeatures: FeatureHighlight[];
-  userInterface: InterfaceTour[];
-  navigationBasics: NavigationGuide[];
-  nextSteps: LearningPath[];
+  introduction: SystemOverview[]
+  keyFeatures: FeatureHighlight[]
+  userInterface: InterfaceTour[]
+  navigationBasics: NavigationGuide[]
+  nextSteps: LearningPath[]
 }
 ```
 
@@ -79,11 +79,11 @@ NARRATOR: "Vamos começar explorando a interface principal do sistema..."
 
 ```typescript
 interface Episode2 {
-  accountSetup: AccountCreation[];
-  profileConfiguration: ProfileSetup[];
-  securitySettings: SecurityConfiguration[];
-  notificationPreferences: NotificationSetup[];
-  personalizationOptions: CustomizationGuide[];
+  accountSetup: AccountCreation[]
+  profileConfiguration: ProfileSetup[]
+  securitySettings: SecurityConfiguration[]
+  notificationPreferences: NotificationSetup[]
+  personalizationOptions: CustomizationGuide[]
 }
 ```
 
@@ -172,11 +172,11 @@ NARRATOR: "Primeiro, vamos criar seu perfil e definir suas preferências de segu
 
 ```typescript
 interface ProfessionalEpisode1 {
-  clinicalOverview: ClinicalDashboard[];
-  patientQueue: QueueManagement[];
-  treatmentSchedule: ScheduleOverview[];
-  aiInsights: AIRecommendationPanel[];
-  complianceAlerts: ComplianceMonitoring[];
+  clinicalOverview: ClinicalDashboard[]
+  patientQueue: QueueManagement[]
+  treatmentSchedule: ScheduleOverview[]
+  aiInsights: AIRecommendationPanel[]
+  complianceAlerts: ComplianceMonitoring[]
 }
 ```
 
@@ -566,12 +566,12 @@ NARRATOR: "Seu dashboard profissional é o centro de suas operações clínicas.
 
 ```typescript
 interface VideoSpecifications {
-  resolution: '4K' | '1080p';
-  format: 'MP4' | 'WebM';
-  codec: 'H.264' | 'H.265';
-  audio: 'AAC' | 'Opus';
-  bitrate: number;
-  frameRate: 30 | 60;
+  resolution: '4K' | '1080p'
+  format: 'MP4' | 'WebM'
+  codec: 'H.264' | 'H.265'
+  audio: 'AAC' | 'Opus'
+  bitrate: number
+  frameRate: 30 | 60
 }
 ```
 
@@ -597,11 +597,11 @@ interface VideoSpecifications {
 
 ```typescript
 interface SupportMaterials {
-  transcripts: VideoTranscript[];
-  exerciseFiles: PracticeFile[];
-  quickReference: CheatSheet[];
-  assessmentQuizzes: KnowledgeTest[];
-  discussionGuides: FacilitatorGuide[];
+  transcripts: VideoTranscript[]
+  exerciseFiles: PracticeFile[]
+  quickReference: CheatSheet[]
+  assessmentQuizzes: KnowledgeTest[]
+  discussionGuides: FacilitatorGuide[]
 }
 ```
 
@@ -619,11 +619,11 @@ interface SupportMaterials {
 
 ```typescript
 interface VideoAnalytics {
-  viewCount: number;
-  completionRate: number;
-  engagementScore: number;
-  knowledgeRetention: number;
-  userSatisfaction: number;
+  viewCount: number
+  completionRate: number
+  engagementScore: number
+  knowledgeRetention: number
+  userSatisfaction: number
 }
 ```
 

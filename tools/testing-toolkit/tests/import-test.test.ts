@@ -1,5 +1,5 @@
-import { describe, expect, it } from 'vitest';
-import { createTDDSuite } from '../src/core/tdd-cycle';
+import { describe, expect, it } from 'vitest'
+import { createTDDSuite } from '../src/core/tdd-cycle'
 
 describe('TDD Suite Test', () => {
   it('should create TDD suite successfully', () => {
@@ -10,18 +10,18 @@ describe('TDD Suite Test', () => {
     }, {
       redPhase: () => {
         // This should fail initially
-        expect(false).toBe(true);
+        expect(false).toBe(true)
       },
       greenPhase: () => {
         // Make it pass
-        expect(true).toBe(true);
+        expect(true).toBe(true)
       },
       refactorPhase: () => {
         // Refactor code
-        expect(true).toBe(true);
+        expect(true).toBe(true)
       },
-    });
+    })
 
-    expect(result).toBeDefined();
-  });
-});
+    expect(result).toBeDefined()
+  })
+})

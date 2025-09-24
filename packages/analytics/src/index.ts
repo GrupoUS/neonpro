@@ -7,23 +7,23 @@
  */
 
 // Core Types and Interfaces
-export * from './types/base-metrics';
-export * from './types/clinical-kpis';
-export * from './types/financial-kpis';
-export * from './types/ingestion';
+export * from './types/base-metrics'
+export * from './types/clinical-kpis'
+export * from './types/financial-kpis'
+export * from './types/ingestion'
 
 // Ingestion System
-export * from './adapters/ingestion-adapter';
-export * from './ingestion';
+export * from './adapters/ingestion-adapter'
+export * from './ingestion'
 
 // Aggregation System
-export * from './aggregation';
+export * from './aggregation'
 
 // Machine Learning Pipeline
-export * from './ml';
+export * from './ml'
 
 // Advanced AI Analytics (T103)
-export * from './ai-analytics';
+export * from './ai-analytics'
 
 // Re-export commonly used types for convenience
 export type {
@@ -35,7 +35,7 @@ export type {
   Frequency,
   MetricType,
   RiskLevel,
-} from './types/base-metrics';
+} from './types/base-metrics'
 
 export type {
   ClinicalCategory,
@@ -43,7 +43,7 @@ export type {
   InfectionControlKPI,
   PatientOutcomeKPI,
   PatientSafetyKPI,
-} from './types/clinical-kpis';
+} from './types/clinical-kpis'
 
 export type {
   CostManagementKPI,
@@ -53,9 +53,9 @@ export type {
   PaymentSource,
   ProfitabilityKPI,
   RevenueCycleKPI,
-} from './types/financial-kpis';
+} from './types/financial-kpis'
 
-export type { IngestionAdapter } from './adapters/ingestion-adapter';
+export type { IngestionAdapter } from './adapters/ingestion-adapter'
 
 export type {
   IngestionConfig,
@@ -63,9 +63,9 @@ export type {
   IngestionResult,
   TransformationRule,
   ValidationRule,
-} from './types/ingestion';
+} from './types/ingestion'
 
-export type { ComputedKPIs, KPIComputationOptions } from './aggregation';
+export type { ComputedKPIs, KPIComputationOptions } from './aggregation'
 
 // Main factory functions for easy metric creation
 export {
@@ -74,14 +74,14 @@ export {
   createMockAnalyticsEvent,
   createMockMetric,
   validateMetricCompliance,
-} from './types/base-metrics';
+} from './types/base-metrics'
 
 export {
   calculateClinicalRiskScore,
   createPatientOutcomeKPI,
   createPatientSafetyKPI,
   validateClinicalCompliance,
-} from './types/clinical-kpis';
+} from './types/clinical-kpis'
 
 export {
   calculateFinancialHealthScore,
@@ -89,17 +89,17 @@ export {
   createInsuranceClaimsKPI,
   createRevenueCycleKPI,
   validateBrazilianFinancialCompliance,
-} from './types/financial-kpis';
+} from './types/financial-kpis'
 
 // Adapter implementations
 export {
   APIIngestionAdapter,
   BaseIngestionAdapter,
   DatabaseIngestionAdapter,
-} from './adapters/ingestion-adapter';
+} from './adapters/ingestion-adapter'
 
 // KPI computation functions
-export { computeKPIs, createMockEvents } from './aggregation';
+export { computeKPIs, createMockEvents } from './aggregation'
 
 /**
  * Analytics Module Constants
@@ -161,17 +161,17 @@ export const ANALYTICS_CONSTANTS = {
     timeout: 30000,
     bufferTime: 5000,
   },
-} as const;
+} as const
 
 /**
  * Utility function to create a complete analytics configuration
  */
 export function createAnalyticsConfig(options: {
-  clinicId: string;
-  complianceFrameworks?: string[];
-  enableEncryption?: boolean;
-  enableAnonymization?: boolean;
-  retentionDays?: number;
+  clinicId: string
+  complianceFrameworks?: string[]
+  enableEncryption?: boolean
+  enableAnonymization?: boolean
+  retentionDays?: number
 }) {
   return {
     clinicId: options.clinicId,
@@ -191,13 +191,13 @@ export function createAnalyticsConfig(options: {
       monitoring: true,
       alerting: true,
     },
-  };
+  }
 }
 
 /**
  * Version information
  */
-export const ANALYTICS_VERSION = '1.0.0';
+export const ANALYTICS_VERSION = '1.0.0'
 export const ANALYTICS_MODULE_INFO = {
   name: '@neonpro/analytics',
   version: ANALYTICS_VERSION,
@@ -211,4 +211,4 @@ export const ANALYTICS_MODULE_INFO = {
     'Data quality assessment',
     'Brazilian healthcare standards',
   ],
-} as const;
+} as const

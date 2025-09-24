@@ -3,53 +3,53 @@
  * Integrates with Hono.js for automatic tracing and monitoring
  */
 
-import type { Context, Next } from 'hono';
-import { auditLogger } from '../logging/healthcare-logger';
-import { getGlobalTelemetryManager, HealthcareOperations } from './index';
-import { ComplianceLevel, DataClassification, HealthcareOperationType } from './types';
+import type { Context, Next } from 'hono'
+import { auditLogger } from '../logging/healthcare-logger'
+import { getGlobalTelemetryManager, HealthcareOperations } from './index'
+import { ComplianceLevel, DataClassification, HealthcareOperationType } from './types'
 
-const telemetryMiddlewareLogger = auditLogger.child({ component: 'telemetry-middleware' });
+const telemetryMiddlewareLogger = auditLogger.child({ component: 'telemetry-middleware' })
 
 // Extract healthcare context from request
 function extractHealthcareContext(
   c: Context,
 ): Record<string, string | number | boolean> {
-  const headers = c.req.header();
-  const url = c.req.url;
-  const method = c.req.method;
+  const headers = c.req.header()
+  const url = c.req.url
+  const method = c.req.method
 
   // Determine if this is a patient data operation
   const isPatientDataInvolved = url.includes('/patient')
     || url.includes('/medical-record')
     || url.includes('/appointment')
-    || url.includes('/prescription');
+    || url.includes('/prescription')
 
   // Determine compliance level based on route
-  let complianceLevel: ComplianceLevel = ComplianceLevel.PUBLIC;
+  let complianceLevel: ComplianceLevel = ComplianceLevel.PUBLIC
   if (url.includes('/admin') || url.includes('/internal')) {
-    complianceLevel = ComplianceLevel.INTERNAL;
+    complianceLevel = ComplianceLevel.INTERNAL
   }
   if (isPatientDataInvolved || url.includes('/sensitive')) {
-    complianceLevel = ComplianceLevel.SENSITIVE;
+    complianceLevel = ComplianceLevel.SENSITIVE
   }
 
   // Determine operation type
-  let operationType: HealthcareOperationType = HealthcareOperationType.READ;
+  let operationType: HealthcareOperationType = HealthcareOperationType.READ
   switch (method.toUpperCase()) {
     case 'POST':
-      operationType = HealthcareOperationType.WRITE;
-      break;
+      operationType = HealthcareOperationType.WRITE
+      break
     case 'PUT':
     case 'PATCH':
-      operationType = HealthcareOperationType.UPDATE;
-      break;
+      operationType = HealthcareOperationType.UPDATE
+      break
     case 'DELETE':
-      operationType = HealthcareOperationType.DELETE;
-      break;
+      operationType = HealthcareOperationType.DELETE
+      break
     case 'GET':
     default:
-      operationType = HealthcareOperationType.READ;
-      break;
+      operationType = HealthcareOperationType.READ
+      break
   }
 
   return {
@@ -62,15 +62,15 @@ function extractHealthcareContext(
     'healthcare.data_classification': isPatientDataInvolved
       ? 'medical'
       : 'personal',
-  };
+  }
 }
 
 // Extract feature name from URL
 function extractFeatureFromUrl(url: string): string {
-  const path = new URL(url).pathname;
-  const segments = path.split('/').filter(Boolean);
+  const path = new URL(url).pathname
+  const segments = path.split('/').filter(Boolean)
 
-  if (segments.length === 0) return 'home';
+  if (segments.length === 0) return 'home'
 
   // Map API endpoints to features
   const featureMap: Record<string, string> = {
@@ -85,55 +85,55 @@ function extractFeatureFromUrl(url: string): string {
     reports: 'reporting',
     billing: 'billing',
     admin: 'administration',
-  };
+  }
 
-  return featureMap[segments[0]!] || segments[0]! || 'unknown';
+  return featureMap[segments[0]!] || segments[0]! || 'unknown'
 }
 
 // Healthcare-aware telemetry middleware
 export function healthcareTelemetryMiddleware() {
   return async (c: Context, next: Next) => {
-    const startTime = Date.now();
-    const url = c.req.url;
-    const method = c.req.method;
-    const healthcareContext = extractHealthcareContext(c);
+    const startTime = Date.now()
+    const url = c.req.url
+    const method = c.req.method
+    const healthcareContext = extractHealthcareContext(c)
 
     try {
       // Trace the API operation
-      const telemetryManager = getGlobalTelemetryManager();
+      const telemetryManager = getGlobalTelemetryManager()
       if (telemetryManager) {
         const span = telemetryManager.createHealthcareSpan(
           url,
           HealthcareOperations.PATIENT_DATA_READ,
           healthcareContext,
-        );
+        )
         try {
-          await next();
-          span.end();
+          await next()
+          span.end()
         } catch (error) {
-          span.recordException(error as Error);
+          span.recordException(error as Error)
           span.setStatus({
             code: 2,
             message: error instanceof Error ? error.message : 'Unknown error',
-          });
-          span.end();
-          throw error;
+          })
+          span.end()
+          throw error
         }
       } else {
         // Fallback if telemetry is not initialized
-        await next();
+        await next()
       }
 
       // Record metrics
-      const duration = Date.now() - startTime;
-      recordApiMetrics(c, duration, healthcareContext);
+      const duration = Date.now() - startTime
+      recordApiMetrics(c, duration, healthcareContext)
     } catch (error) {
       // Record error metrics
-      const duration = Date.now() - startTime;
-      recordApiError(c, error as Error, duration, healthcareContext);
-      throw error;
+      const duration = Date.now() - startTime
+      recordApiError(c, error as Error, duration, healthcareContext)
+      throw error
     }
-  };
+  }
 }
 
 // Record API metrics
@@ -147,23 +147,23 @@ function recordApiMetrics(
     process.env.NODE_ENV !== 'production'
     && process.env.ENABLE_METRICS !== 'true'
   ) {
-    return;
+    return
   }
 
   try {
-    const { metrics } = require('@opentelemetry/api');
-    const meter = metrics.getMeter('healthcare-api-metrics');
+    const { metrics } = require('@opentelemetry/api')
+    const meter = metrics.getMeter('healthcare-api-metrics')
 
     // Request duration histogram
     const requestDuration = meter.createHistogram('api_request_duration_ms', {
       description: 'API request duration in milliseconds',
       unit: 'ms',
-    });
+    })
 
     // Request counter
     const requestTotal = meter.createCounter('api_requests_total', {
       description: 'Total number of API requests',
-    });
+    })
 
     // Labels for metrics
     const labels = {
@@ -172,10 +172,10 @@ function recordApiMetrics(
       feature: _context['healthcare.feature'] || 'unknown',
       compliance_level: _context['healthcare.compliance_level'] || 'public',
       patient_data_involved: _context['healthcare.patient_data_involved']?.toString() || 'false',
-    };
+    }
 
-    requestDuration.record(duration, labels);
-    requestTotal.add(1, labels);
+    requestDuration.record(duration, labels)
+    requestTotal.add(1, labels)
 
     // Healthcare-specific metrics
     if (_context['healthcare.patient_data_involved']) {
@@ -184,11 +184,11 @@ function recordApiMetrics(
         {
           description: 'Total patient data access operations',
         },
-      );
+      )
       patientDataAccess.add(1, {
         operation_type: _context['healthcare.operation_type'] || 'read',
         clinic_id: _context['healthcare.clinic_id'] || 'unknown',
-      });
+      })
     }
   } catch (error) {
     // Silently fail metric recording to not impact application
@@ -197,7 +197,7 @@ function recordApiMetrics(
       action: 'metrics_recording_error',
       error: error instanceof Error ? error.message : 'Unknown error',
       timestamp: new Date().toISOString(),
-    });
+    })
   }
 }
 
@@ -209,36 +209,36 @@ function recordApiError(
   _context: Record<string, string | number | boolean>,
 ) {
   try {
-    const { metrics } = require('@opentelemetry/api');
-    const meter = metrics.getMeter('healthcare-api-metrics');
+    const { metrics } = require('@opentelemetry/api')
+    const meter = metrics.getMeter('healthcare-api-metrics')
 
     // Error counter
     const errorTotal = meter.createCounter('api_errors_total', {
       description: 'Total number of API errors',
-    });
+    })
 
     const labels = {
       method: c.req.method,
       feature: _context['healthcare.feature'] || 'unknown',
       error_type: error.constructor.name,
       compliance_level: _context['healthcare.compliance_level'] || 'public',
-    };
+    }
 
-    errorTotal.add(1, labels);
+    errorTotal.add(1, labels)
   } catch (metricError) {
     telemetryMiddlewareLogger.warn('Failed to record error metrics', {
       component: 'telemetry-middleware',
       action: 'error_metrics_recording_error',
       error: metricError instanceof Error ? metricError.message : 'Unknown error',
       timestamp: new Date().toISOString(),
-    });
+    })
   }
 }
 
 // Middleware for compliance audit logging
 export function complianceAuditMiddleware() {
   return async (c: Context, next: Next) => {
-    const healthcareContext = extractHealthcareContext(c);
+    const healthcareContext = extractHealthcareContext(c)
 
     // Only audit sensitive operations
     if (
@@ -255,7 +255,7 @@ export function complianceAuditMiddleware() {
         data_classification: healthcareContext['healthcare.data_classification'],
         user_agent: c.req.header('user-agent'),
         ip_address: getClientIp(c),
-      };
+      }
 
       // Log audit event (this would typically go to a secure audit log system)
       telemetryMiddlewareLogger.info('[HEALTHCARE_AUDIT]', {
@@ -263,11 +263,11 @@ export function complianceAuditMiddleware() {
         action: 'compliance_audit',
         auditEvent,
         timestamp: new Date().toISOString(),
-      });
+      })
     }
 
-    await next();
-  };
+    await next()
+  }
 }
 
 // Sanitize URL for audit logging
@@ -277,7 +277,7 @@ function sanitizeUrlForAudit(url: string): string {
     .replace(/\/clinic\/[a-zA-Z0-9-]+/g, '/clinic/[ID]')
     .replace(/\/appointment\/[a-zA-Z0-9-]+/g, '/appointment/[ID]')
     .replace(/\/medical-record\/[a-zA-Z0-9-]+/g, '/medical-record/[ID]')
-    .replace(/[?&](cpf|rg|email|phone)=[^&]*/gi, '&$1=[REDACTED]');
+    .replace(/[?&](cpf|rg|email|phone)=[^&]*/gi, '&$1=[REDACTED]')
 }
 
 // Get client IP address
@@ -287,8 +287,8 @@ function getClientIp(c: Context): string {
     || c.req.header('x-real-ip')
     || c.req.header('cf-connecting-ip')
     || 'unknown'
-  );
+  )
 }
 
 // Export middleware functions
-export { extractFeatureFromUrl, extractHealthcareContext, recordApiError, recordApiMetrics };
+export { extractFeatureFromUrl, extractHealthcareContext, recordApiError, recordApiMetrics }

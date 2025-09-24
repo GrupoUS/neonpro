@@ -37,14 +37,14 @@ POST /api/telemedicine/webrtc/candidate  # ICE candidate
 
 ```typescript
 interface TelemedicineSessionInput {
-  patientId: string;
-  physicianId: string;
-  sessionType: 'consultation' | 'follow_up' | 'emergency';
-  specialty: string;
-  scheduledFor: Date;
-  estimatedDuration: number; // minutes
-  clinicId: string;
-  notes?: string;
+  patientId: string
+  physicianId: string
+  sessionType: 'consultation' | 'follow_up' | 'emergency'
+  specialty: string
+  scheduledFor: Date
+  estimatedDuration: number // minutes
+  clinicId: string
+  notes?: string
 }
 
 const session = await fetch('/api/telemedicine/session/create', {
@@ -62,19 +62,19 @@ const session = await fetch('/api/telemedicine/session/create', {
     estimatedDuration: 30,
     clinicId: 'clinic_789',
   }),
-});
+})
 
 // Response
 interface TelemedicineSession {
-  sessionId: string;
-  roomId: string;
-  status: 'scheduled' | 'active' | 'ended' | 'cancelled';
+  sessionId: string
+  roomId: string
+  status: 'scheduled' | 'active' | 'ended' | 'cancelled'
   compliance: {
-    licenseVerified: boolean;
-    telemedicineCompliant: boolean;
-    consentObtained: boolean;
-  };
-  recordingEnabled: boolean;
+    licenseVerified: boolean
+    telemedicineCompliant: boolean
+    consentObtained: boolean
+  }
+  recordingEnabled: boolean
 }
 ```
 
@@ -85,25 +85,25 @@ interface TelemedicineSession {
 await fetch('/api/telemedicine/session/start', {
   method: 'POST',
   body: JSON.stringify({ sessionId: 'session_123' }),
-});
+})
 
 // WebSocket connection for real-time communication
-const ws = new WebSocket('wss://api.neonpro.com/telemedicine/ws');
+const ws = new WebSocket('wss://api.neonpro.com/telemedicine/ws')
 
 ws.send(JSON.stringify({
   type: 'join_room',
   sessionId: 'session_123',
   roomId: 'room_456',
   role: 'physician', // or 'patient'
-}));
+}))
 ```
 
 ### WebRTC Integration
 
 ```typescript
 // WebRTC offer/answer exchange
-const offer = await peerConnection.createOffer();
-await peerConnection.setLocalDescription(offer);
+const offer = await peerConnection.createOffer()
+await peerConnection.setLocalDescription(offer)
 
 await fetch('/api/telemedicine/webrtc/offer', {
   method: 'POST',
@@ -111,10 +111,10 @@ await fetch('/api/telemedicine/webrtc/offer', {
     sessionId: 'session_123',
     offer: offer,
   }),
-});
+})
 
 // Handle ICE candidates
-peerConnection.onicecandidate = async event => {
+peerConnection.onicecandidate = async (event) => {
   if (event.candidate) {
     await fetch('/api/telemedicine/webrtc/candidate', {
       method: 'POST',
@@ -122,9 +122,9 @@ peerConnection.onicecandidate = async event => {
         sessionId: 'session_123',
         candidate: event.candidate,
       }),
-    });
+    })
   }
-};
+}
 ```
 
 ## CFM Compliance Features
@@ -196,7 +196,7 @@ const rtcConfiguration = {
     },
   ],
   iceCandidatePoolSize: 10,
-};
+}
 ```
 
 ### Media Constraints
@@ -213,7 +213,7 @@ const mediaConstraints = {
     noiseSuppression: true,
     autoGainControl: true,
   },
-};
+}
 ```
 
 ## Quality Monitoring

@@ -12,40 +12,40 @@ import {
   RequestContext,
   STANDARD_CIRCUIT_CONFIG,
   withCircuitBreaker,
-} from './circuit-breaker-service';
+} from './circuit-breaker-service'
 import {
   ExternalServiceHealthChecker,
   HEALTHCARE_HEALTH_CONFIG,
   ServiceDependency,
-} from './health-checker';
+} from './health-checker'
 
 // Example 1: Enhanced AG-UI Service with Circuit Breaker
 export class AguiServiceWithCircuitBreaker {
-  private ragAgentCircuitBreaker: CircuitBreakerService;
-  private databaseCircuitBreaker: CircuitBreakerService;
-  private healthChecker: ExternalServiceHealthChecker;
+  private ragAgentCircuitBreaker: CircuitBreakerService
+  private databaseCircuitBreaker: CircuitBreakerService
+  private healthChecker: ExternalServiceHealthChecker
 
   constructor(_config: any) {
     // Create circuit breakers for different external dependencies
     this.ragAgentCircuitBreaker = new CircuitBreakerService({
       ...HEALTHCARE_CIRCUIT_CONFIG,
       customFallback: this.createRagAgentFallback(),
-    });
+    })
 
     this.databaseCircuitBreaker = new CircuitBreakerService({
       ...HEALTHCARE_CIRCUIT_CONFIG,
       failureThreshold: 3,
       resetTimeout: 30000,
       customFallback: this.createDatabaseFallback(),
-    });
+    })
 
     // Initialize health checker
     this.healthChecker = new ExternalServiceHealthChecker(
       HEALTHCARE_HEALTH_CONFIG,
-    );
+    )
 
     // Register services for health monitoring
-    this.registerServicesForHealthMonitoring();
+    this.registerServicesForHealthMonitoring()
   }
 
   /**
@@ -68,14 +68,14 @@ export class AguiServiceWithCircuitBreaker {
         queryIntent: this.extractIntent(query),
         dataClassification: this.classifyData(query),
       },
-    };
+    }
 
     // Execute with circuit breaker protection
     return this.ragAgentCircuitBreaker.execute(
       () => this.sendToRagAgent(query, _context),
       requestContext,
       this.createFallbackResponse(query, _context),
-    );
+    )
   }
 
   /**
@@ -94,12 +94,12 @@ export class AguiServiceWithCircuitBreaker {
         operation: 'store_message',
         dataClassification: message.dataClassification,
       },
-    };
+    }
 
     return this.databaseCircuitBreaker.execute(
       () => this.storeMessageInDatabase(message),
       requestContext,
-    );
+    )
   }
 
   /**
@@ -121,15 +121,15 @@ export class AguiServiceWithCircuitBreaker {
           patient_id: context.patientId,
         }),
       },
-    );
+    )
 
     if (!response.ok) {
       throw new Error(
         `RAG agent error: ${response.status} ${response.statusText}`,
-      );
+      )
     }
 
-    return await response.json();
+    return await response.json()
   }
 
   /**
@@ -137,7 +137,7 @@ export class AguiServiceWithCircuitBreaker {
    */
   private async storeMessageInDatabase(message: any): Promise<void> {
     // Database operation would go here
-    console.log('Storing message in database:', message.id);
+    console.log('Storing message in database:', message.id)
   }
 
   /**
@@ -145,7 +145,7 @@ export class AguiServiceWithCircuitBreaker {
    */
   private createRagAgentFallback() {
     return async (error: Error, _context?: RequestContext) => {
-      console.log('RAG Agent fallback activated:', error.message);
+      console.log('RAG Agent fallback activated:', error.message)
 
       // For healthcare-critical queries, provide a safe response
       if (context?.metadata?.dataClassification === 'restricted') {
@@ -157,7 +157,7 @@ export class AguiServiceWithCircuitBreaker {
           sources: [],
           fallback: true,
           error: 'SERVICE_UNAVAILABLE',
-        };
+        }
       }
 
       // For general queries, provide cached or simplified response
@@ -169,8 +169,8 @@ export class AguiServiceWithCircuitBreaker {
         sources: [],
         fallback: true,
         error: 'SERVICE_UNAVAILABLE',
-      };
-    };
+      }
+    }
   }
 
   /**
@@ -178,7 +178,7 @@ export class AguiServiceWithCircuitBreaker {
    */
   private createDatabaseFallback() {
     return async (error: Error, _context?: RequestContext) => {
-      console.log('Database fallback activated:', error.message);
+      console.log('Database fallback activated:', error.message)
 
       // For database failures, we might want to queue the operation
       // or temporarily store in memory/cache
@@ -187,8 +187,8 @@ export class AguiServiceWithCircuitBreaker {
       console.warn('Database operation failed, operation skipped:', {
         error: error.message,
         context,
-      });
-    };
+      })
+    }
   }
 
   /**
@@ -203,7 +203,7 @@ export class AguiServiceWithCircuitBreaker {
       sources: [],
       fallback: true,
       error: 'SERVICE_UNAVAILABLE',
-    };
+    }
   }
 
   /**
@@ -219,7 +219,7 @@ export class AguiServiceWithCircuitBreaker {
       healthcareCritical: true,
       dataSensitivity: 'high',
       requiredFor: ['ai-assistant', 'patient-queries', 'diagnostic-support'],
-    });
+    })
 
     // Register database service
     this.healthChecker.registerService({
@@ -230,7 +230,7 @@ export class AguiServiceWithCircuitBreaker {
       healthcareCritical: true,
       dataSensitivity: 'critical',
       requiredFor: ['all-operations'],
-    });
+    })
 
     // Register cache service
     this.healthChecker.registerService({
@@ -241,14 +241,14 @@ export class AguiServiceWithCircuitBreaker {
       healthcareCritical: false,
       dataSensitivity: 'medium',
       requiredFor: ['performance', 'caching'],
-    });
+    })
   }
 
   /**
    * Get comprehensive health status
    */
   getHealthStatus() {
-    return this.healthChecker.getComprehensiveHealthStatus();
+    return this.healthChecker.getComprehensiveHealthStatus()
   }
 
   /**
@@ -258,38 +258,38 @@ export class AguiServiceWithCircuitBreaker {
     return {
       ragAgent: this.ragAgentCircuitBreaker.getMetrics(),
       database: this.databaseCircuitBreaker.getMetrics(),
-    };
+    }
   }
 
   // Helper methods (simplified from original _service)
   private extractIntent(_query: string): string {
-    const lowerQuery = query.toLowerCase();
+    const lowerQuery = query.toLowerCase()
     if (lowerQuery.includes('agendamento') || lowerQuery.includes('consulta')) {
-      return 'scheduling';
+      return 'scheduling'
     } else if (
       lowerQuery.includes('paciente')
       || lowerQuery.includes('patient')
     ) {
-      return 'patient_inquiry';
+      return 'patient_inquiry'
     }
-    return 'general_inquiry';
+    return 'general_inquiry'
   }
 
   private classifyData(text: string): string {
-    const lowerText = text.toLowerCase();
+    const lowerText = text.toLowerCase()
     if (lowerText.includes('diagnóstico') || lowerText.includes('hiv')) {
-      return 'restricted';
+      return 'restricted'
     } else if (lowerText.includes('paciente') || lowerText.includes('médico')) {
-      return 'confidential';
+      return 'confidential'
     }
-    return 'public';
+    return 'public'
   }
 }
 
 // Example 2: Google Calendar Service with Circuit Breaker
 export class GoogleCalendarServiceWithCircuitBreaker {
-  private circuitBreaker: CircuitBreakerService;
-  private healthChecker: ExternalServiceHealthChecker;
+  private circuitBreaker: CircuitBreakerService
+  private healthChecker: ExternalServiceHealthChecker
 
   constructor() {
     this.circuitBreaker = new CircuitBreakerService({
@@ -298,12 +298,12 @@ export class GoogleCalendarServiceWithCircuitBreaker {
       resetTimeout: 60000,
       healthcareCritical: false, // Calendar is not healthcare-critical
       customFallback: this.createCalendarFallback(),
-    });
+    })
 
     this.healthChecker = new ExternalServiceHealthChecker(
       STANDARD_HEALTH_CONFIG,
-    );
-    this.registerForHealthMonitoring();
+    )
+    this.registerForHealthMonitoring()
   }
 
   /**
@@ -319,12 +319,12 @@ export class GoogleCalendarServiceWithCircuitBreaker {
       metadata: {
         operation: 'oauth_token_exchange',
       },
-    };
+    }
 
     return this.circuitBreaker.execute(
       () => this.exchangeCodeForToken(code, _userId),
       requestContext,
-    );
+    )
   }
 
   /**
@@ -344,13 +344,13 @@ export class GoogleCalendarServiceWithCircuitBreaker {
         operation: 'sync_events',
         eventCount: events.length,
       },
-    };
+    }
 
     return this.circuitBreaker.execute(
       () => this.syncEventsToGoogle(userId, events),
       requestContext,
       { success: false, synced: 0, failed: events.length }, // Fallback value
-    );
+    )
   }
 
   private async exchangeCodeForToken(
@@ -369,13 +369,13 @@ export class GoogleCalendarServiceWithCircuitBreaker {
         grant_type: 'authorization_code',
         redirect_uri: process.env.GOOGLE_REDIRECT_URI!,
       }),
-    });
+    })
 
     if (!response.ok) {
-      throw new Error('Failed to exchange code for token');
+      throw new Error('Failed to exchange code for token')
     }
 
-    return await response.json();
+    return await response.json()
   }
 
   private async syncEventsToGoogle(
@@ -383,12 +383,12 @@ export class GoogleCalendarServiceWithCircuitBreaker {
     events: any[],
   ): Promise<any> {
     // Calendar sync logic would go here
-    return { success: true, synced: events.length, failed: 0 };
+    return { success: true, synced: events.length, failed: 0 }
   }
 
   private createCalendarFallback() {
     return async (error: Error, _context?: RequestContext) => {
-      console.log('Google Calendar fallback activated:', error.message);
+      console.log('Google Calendar fallback activated:', error.message)
 
       // For calendar sync failures, return a failure response
       // The system can retry later or use local storage
@@ -397,8 +397,8 @@ export class GoogleCalendarServiceWithCircuitBreaker {
         error: 'CALENDAR_SERVICE_UNAVAILABLE',
         message: 'Calendar sync failed, will retry later',
         timestamp: new Date().toISOString(),
-      };
-    };
+      }
+    }
   }
 
   private registerForHealthMonitoring(): void {
@@ -410,14 +410,14 @@ export class GoogleCalendarServiceWithCircuitBreaker {
       healthcareCritical: false,
       dataSensitivity: 'medium',
       requiredFor: ['appointment-sync', 'calendar-integration'],
-    });
+    })
   }
 }
 
 // Example 3: AI Agent Service with Circuit Breaker
 export class AIAgentServiceWithCircuitBreaker {
-  private circuitBreaker: CircuitBreakerService;
-  private healthChecker: ExternalServiceHealthChecker;
+  private circuitBreaker: CircuitBreakerService
+  private healthChecker: ExternalServiceHealthChecker
 
   constructor() {
     this.circuitBreaker = new CircuitBreakerService({
@@ -426,12 +426,12 @@ export class AIAgentServiceWithCircuitBreaker {
       resetTimeout: 45000,
       healthcareCritical: true,
       customFallback: this.createAIAgentFallback(),
-    });
+    })
 
     this.healthChecker = new ExternalServiceHealthChecker(
       HEALTHCARE_HEALTH_CONFIG,
-    );
-    this.registerForHealthMonitoring();
+    )
+    this.registerForHealthMonitoring()
   }
 
   /**
@@ -453,13 +453,13 @@ export class AIAgentServiceWithCircuitBreaker {
         requestType: request.type,
         dataClassification: this.classifyRequestData(request),
       },
-    };
+    }
 
     return this.circuitBreaker.execute(
       () => this.processAIRequest(request, _context),
       requestContext,
       this.createAIFallbackResponse(request),
-    );
+    )
   }
 
   private async processAIRequest(_request: any, _context: any): Promise<any> {
@@ -476,20 +476,20 @@ export class AIAgentServiceWithCircuitBreaker {
           context,
         }),
       },
-    );
+    )
 
     if (!response.ok) {
       throw new Error(
         `AI Agent error: ${response.status} ${response.statusText}`,
-      );
+      )
     }
 
-    return await response.json();
+    return await response.json()
   }
 
   private createAIAgentFallback() {
     return async (error: Error, _context?: RequestContext) => {
-      console.log('AI Agent fallback activated:', error.message);
+      console.log('AI Agent fallback activated:', error.message)
 
       // For healthcare-critical AI requests, provide a safe response
       if (context?.metadata?.dataClassification === 'restricted') {
@@ -500,7 +500,7 @@ export class AIAgentServiceWithCircuitBreaker {
           sources: [],
           fallback: true,
           error: 'AI_SERVICE_UNAVAILABLE',
-        };
+        }
       }
 
       // For general AI requests, provide a helpful error message
@@ -511,8 +511,8 @@ export class AIAgentServiceWithCircuitBreaker {
         sources: [],
         fallback: true,
         error: 'AI_SERVICE_UNAVAILABLE',
-      };
-    };
+      }
+    }
   }
 
   private createAIFallbackResponse(_request: any) {
@@ -522,7 +522,7 @@ export class AIAgentServiceWithCircuitBreaker {
       sources: [],
       fallback: true,
       error: 'AI_SERVICE_UNAVAILABLE',
-    };
+    }
   }
 
   private classifyRequestData(_request: any): string {
@@ -531,14 +531,14 @@ export class AIAgentServiceWithCircuitBreaker {
       request.type === 'medical_diagnosis'
       || request.type === 'patient_analysis'
     ) {
-      return 'restricted';
+      return 'restricted'
     } else if (
       request.type === 'appointment_scheduling'
       || request.type === 'patient_lookup'
     ) {
-      return 'confidential';
+      return 'confidential'
     }
-    return 'public';
+    return 'public'
   }
 
   private registerForHealthMonitoring(): void {
@@ -550,7 +550,7 @@ export class AIAgentServiceWithCircuitBreaker {
       healthcareCritical: true,
       dataSensitivity: 'high',
       requiredFor: ['ai-assistant', 'patient-support', 'medical-analysis'],
-    });
+    })
   }
 }
 
@@ -568,38 +568,38 @@ export function withCircuitBreakerProtection<T>(
     context,
     fallbackValue,
     config,
-  );
+  )
 }
 
 // Example 5: Health monitoring setup utility
 export function setupHealthMonitoring(services: ServiceDependency[]) {
   const healthChecker = new ExternalServiceHealthChecker(
     HEALTHCARE_HEALTH_CONFIG,
-  );
+  )
 
-  services.forEach(service => {
-    healthChecker.registerService(service);
-  });
+  services.forEach((service) => {
+    healthChecker.registerService(service)
+  })
 
   // Set up event listeners for alerts
-  healthChecker.onEvent(event => {
+  healthChecker.onEvent((event) => {
     console.log('Health Check Event:', {
       type: event.type,
       _service: event.serviceName,
       status: event.currentStatus,
       timestamp: event.timestamp,
-    });
+    })
 
     // Send alerts for critical health issues
     if (
       event.type === 'SERVICE_UNHEALTHY'
       || event.type === 'COMPLIANCE_VIOLATION'
     ) {
-      sendHealthAlert(event);
+      sendHealthAlert(event)
     }
-  });
+  })
 
-  return healthChecker;
+  return healthChecker
 }
 
 // Helper function to send health alerts
@@ -611,7 +611,7 @@ function sendHealthAlert(event: any) {
     status: event.currentStatus,
     details: event.details,
     timestamp: event.timestamp,
-  });
+  })
 
   // Could integrate with:
   // - Email alerts
@@ -627,4 +627,4 @@ export {
   GoogleCalendarServiceWithCircuitBreaker,
   setupHealthMonitoring,
   withCircuitBreakerProtection,
-};
+}

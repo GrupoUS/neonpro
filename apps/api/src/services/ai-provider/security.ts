@@ -3,9 +3,9 @@
  * Extracted from ai-provider-router.ts for better modularity
  */
 
-import { AIProviderOpt, HealthcareAIUseCase } from '@neonpro/shared';
-import { AuditEventType, AuditTrailService } from '../audit-trail';
-import { RoutingRequest } from './types';
+import { AIProviderOpt, HealthcareAIUseCase } from '@neonpro/shared'
+import { AuditEventType, AuditTrailService } from '../audit-trail'
+import { RoutingRequest } from './types'
 
 /**
  * Security and compliance utilities for AI provider routing
@@ -24,26 +24,26 @@ export class AISecurityManager {
     ) {
       throw new Error(
         'LGPD Violation: Patient ID required when PII is present',
-      );
+      )
     }
 
     // Sanitize prompt content
-    const sanitized_prompt = this.sanitizePrompt(request.prompt);
+    const sanitized_prompt = this.sanitizePrompt(request.prompt)
     if (!sanitized_prompt) {
       throw new Error(
         'Prompt sanitization failed - potential injection detected',
-      );
+      )
     }
 
     // Apply PII redaction if required
     const redacted_prompt = request.healthcare_context.contains_pii
       ? this.redactPII(sanitized_prompt, request.healthcare_context)
-      : sanitized_prompt;
+      : sanitized_prompt
 
     return {
       ...request,
       prompt: redacted_prompt,
-    };
+    }
   }
 
   /**
@@ -51,7 +51,7 @@ export class AISecurityManager {
    */
   private sanitizePrompt(prompt: string): string | null {
     if (!prompt || typeof prompt !== 'string') {
-      return null;
+      return null
     }
 
     // Remove dangerous patterns
@@ -61,14 +61,14 @@ export class AISecurityManager {
       .replace(/on\w+\s*=/gi, '') // Remove event handlers
       .replace(/[<>"']/g, '') // Remove HTML/SQL injection chars
       .replace(/\b(SELECT|INSERT|UPDATE|DELETE|DROP|CREATE|ALTER)\b/gi, '') // Remove SQL keywords
-      .trim();
+      .trim()
 
     // Check if sanitization removed everything
     if (sanitized.length === 0) {
-      return null;
+      return null
     }
 
-    return sanitized;
+    return sanitized
   }
 
   /**
@@ -78,7 +78,7 @@ export class AISecurityManager {
     prompt: string,
     healthcare_context: RoutingRequest['healthcare_context'],
   ): Promise<string> {
-    let redacted = prompt;
+    let redacted = prompt
 
     // Common PII patterns for Brazilian healthcare
     const pii_patterns = [
@@ -101,11 +101,11 @@ export class AISecurityManager {
         pattern: /\b[A-Z][a-z]+\s+[A-Z][a-z]+(?:\s+[A-Z][a-z]+)*\b/g,
         replacement: '[NAME_REDACTED]',
       },
-    ];
+    ]
 
     // Apply redaction patterns
     for (const { pattern, replacement } of pii_patterns) {
-      redacted = redacted.replace(pattern, replacement);
+      redacted = redacted.replace(pattern, replacement)
     }
 
     // Log PII redaction for audit
@@ -122,10 +122,10 @@ export class AISecurityManager {
           original_length: prompt.length,
           redacted_length: redacted.length,
         },
-      });
+      })
     }
 
-    return redacted;
+    return redacted
   }
 
   /**
@@ -135,16 +135,16 @@ export class AISecurityManager {
     provider: any, // ProviderConfig type
     healthcare_context: RoutingRequest['healthcare_context'],
   ): boolean {
-    const compliance = provider.healthcare_compliance;
+    const compliance = provider.healthcare_compliance
 
     // LGPD compliance is mandatory for all healthcare data
     if (!compliance.lgpd_approved) {
-      return false;
+      return false
     }
 
     // PII handling approval required when PII is present
     if (healthcare_context.contains_pii && !compliance.pii_handling_approved) {
-      return false;
+      return false
     }
 
     // ANVISA certification required for certain use cases
@@ -152,13 +152,13 @@ export class AISecurityManager {
       HealthcareAIUseCase.SYMPTOMS_ANALYSIS,
       HealthcareAIUseCase.TREATMENT_PLANNING,
       HealthcareAIUseCase.MEDICAL_TRANSCRIPTION,
-    ];
+    ]
 
     if (
       anvisa_required_use_cases.includes(healthcare_context.use_case)
       && !compliance.anvisa_certified
     ) {
-      return false;
+      return false
     }
 
     // CFM approval required for professional medical use
@@ -166,16 +166,16 @@ export class AISecurityManager {
       HealthcareAIUseCase.TREATMENT_PLANNING,
       HealthcareAIUseCase.SYMPTOMS_ANALYSIS,
       HealthcareAIUseCase.MEDICAL_TRANSCRIPTION,
-    ];
+    ]
 
     if (
       cfm_required_use_cases.includes(healthcare_context.use_case)
       && !compliance.cfm_approved
     ) {
-      return false;
+      return false
     }
 
-    return true;
+    return true
   }
 
   /**
@@ -195,7 +195,7 @@ export class AISecurityManager {
         routing_strategy: request.routing_config.strategy,
         model_category: request.ai_config.model_category,
       },
-    });
+    })
   }
 
   /**
@@ -216,7 +216,7 @@ export class AISecurityManager {
         cache_latency_ms,
         cost_saved: 'cache_hit',
       },
-    });
+    })
   }
 
   /**
@@ -244,7 +244,7 @@ export class AISecurityManager {
         pii_redacted: compliance.pii_redacted,
         lgpd_compliant: compliance.lgpd_compliant,
       },
-    });
+    })
   }
 
   /**
@@ -267,7 +267,7 @@ export class AISecurityManager {
         use_case: request.healthcare_context.use_case,
         patient_id: request.healthcare_context.patient_id,
       },
-    });
+    })
   }
 
   /**
@@ -290,7 +290,7 @@ export class AISecurityManager {
         patient_id: healthcare_context.patient_id,
         emergency_justification: 'Emergency AI request routing',
       },
-    });
+    })
   }
 
   /**
@@ -314,6 +314,6 @@ export class AISecurityManager {
         fallback_provider,
         attempt,
       },
-    });
+    })
   }
 }

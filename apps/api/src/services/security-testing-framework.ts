@@ -16,12 +16,12 @@
  * @healthcare-platform NeonPro
  */
 
-import { logger } from '../lib/logger';
+import { logger } from '../lib/logger'
 
 // Security Test Types
 export interface SecurityTest {
-  id: string;
-  name: string;
+  id: string
+  name: string
   category:
     | 'HEADERS'
     | 'AUTHENTICATION'
@@ -30,82 +30,82 @@ export interface SecurityTest {
     | 'RATE_LIMITING'
     | 'RLS'
     | 'DATA_EXPOSURE'
-    | 'COMPLIANCE';
-  description: string;
-  severity: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
-  enabled: boolean;
-  testFunction: (_context: SecurityTestContext) => Promise<SecurityTestResult>;
+    | 'COMPLIANCE'
+  description: string
+  severity: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL'
+  enabled: boolean
+  testFunction: (_context: SecurityTestContext) => Promise<SecurityTestResult>
 }
 
 export interface SecurityTestContext {
-  app: any;
-  baseUrl: string;
+  app: any
+  baseUrl: string
   testUser: {
-    id: string;
-    _role: string;
-    clinicId: string;
-    token?: string;
-  };
-  supabase: any;
-  config: SecurityTestConfig;
+    id: string
+    _role: string
+    clinicId: string
+    token?: string
+  }
+  supabase: any
+  config: SecurityTestConfig
 }
 
 export interface SecurityTestResult {
-  testId: string;
-  testName: string;
-  passed: boolean;
-  score: number; // 0-100
-  issues: SecurityIssue[];
-  recommendations: string[];
-  executionTime: number;
-  timestamp: string;
-  details?: Record<string, any>;
+  testId: string
+  testName: string
+  passed: boolean
+  score: number // 0-100
+  issues: SecurityIssue[]
+  recommendations: string[]
+  executionTime: number
+  timestamp: string
+  details?: Record<string, any>
 }
 
 export interface SecurityIssue {
-  id: string;
-  type: string;
-  severity: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
-  description: string;
-  location: string;
-  evidence?: string;
-  remediation: string;
-  cweId?: string;
-  owaspId?: string;
-  complianceImpact?: string[];
+  id: string
+  type: string
+  severity: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL'
+  description: string
+  location: string
+  evidence?: string
+  remediation: string
+  cweId?: string
+  owaspId?: string
+  complianceImpact?: string[]
 }
 
 export interface SecurityTestConfig {
   // Test Configuration
-  enabledTests: string[];
-  disabledTests: string[];
-  severityThreshold: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  enabledTests: string[]
+  disabledTests: string[]
+  severityThreshold: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL'
 
   // Testing Parameters
-  timeout: number;
-  retries: number;
-  parallelTests: number;
+  timeout: number
+  retries: number
+  parallelTests: number
 
   // Compliance Settings
-  validateLGPD: boolean;
-  validateHIPAA: boolean;
-  validateOWASP: boolean;
+  validateLGPD: boolean
+  validateHIPAA: boolean
+  validateOWASP: boolean
 
   // Reporting
-  generateReport: boolean;
-  reportFormat: 'JSON' | 'HTML' | 'PDF';
-  reportPath: string;
+  generateReport: boolean
+  reportFormat: 'JSON' | 'HTML' | 'PDF'
+  reportPath: string
 
   // Monitoring
-  logResults: boolean;
-  alertThreshold: number; // Score threshold for alerts
+  logResults: boolean
+  alertThreshold: number // Score threshold for alerts
 }
 
 // Healthcare Security Test Suite
 export class HealthcareSecurityTestFramework {
-  private tests: Map<string, SecurityTest>;
-  private config: SecurityTestConfig;
-  private results: SecurityTestResult[] = [];
+  private tests: Map<string, SecurityTest>
+  private config: SecurityTestConfig
+  private results: SecurityTestResult[] = []
 
   constructor(config: SecurityTestConfig) {
     this.config = {
@@ -124,10 +124,10 @@ export class HealthcareSecurityTestFramework {
       logResults: true,
       alertThreshold: 70,
       ...config,
-    };
+    }
 
-    this.tests = new Map();
-    this.initializeTests();
+    this.tests = new Map()
+    this.initializeTests()
   }
 
   // Initialize security tests
@@ -141,7 +141,7 @@ export class HealthcareSecurityTestFramework {
       severity: 'HIGH',
       enabled: true,
       testFunction: this.testHSTSHeader.bind(this),
-    });
+    })
 
     this.addTest({
       id: 'security-headers-csp',
@@ -151,7 +151,7 @@ export class HealthcareSecurityTestFramework {
       severity: 'MEDIUM',
       enabled: true,
       testFunction: this.testCSPHeader.bind(this),
-    });
+    })
 
     this.addTest({
       id: 'security-headers-xss',
@@ -161,7 +161,7 @@ export class HealthcareSecurityTestFramework {
       severity: 'HIGH',
       enabled: true,
       testFunction: this.testXSSHeaders.bind(this),
-    });
+    })
 
     // Authentication Tests
     this.addTest({
@@ -172,7 +172,7 @@ export class HealthcareSecurityTestFramework {
       severity: 'CRITICAL',
       enabled: true,
       testFunction: this.testJWTValidation.bind(this),
-    });
+    })
 
     this.addTest({
       id: 'auth-session-management',
@@ -182,7 +182,7 @@ export class HealthcareSecurityTestFramework {
       severity: 'HIGH',
       enabled: true,
       testFunction: this.testSessionManagement.bind(this),
-    });
+    })
 
     // Authorization Tests
     this.addTest({
@@ -193,7 +193,7 @@ export class HealthcareSecurityTestFramework {
       severity: 'CRITICAL',
       enabled: true,
       testFunction: this.testRoleBasedAccess.bind(this),
-    });
+    })
 
     this.addTest({
       id: 'authz-resource-level-security',
@@ -203,7 +203,7 @@ export class HealthcareSecurityTestFramework {
       severity: 'HIGH',
       enabled: true,
       testFunction: this.testResourceLevelSecurity.bind(this),
-    });
+    })
 
     // Rate Limiting Tests
     this.addTest({
@@ -214,7 +214,7 @@ export class HealthcareSecurityTestFramework {
       severity: 'MEDIUM',
       enabled: true,
       testFunction: this.testRateLimiting.bind(this),
-    });
+    })
 
     // Input Validation Tests
     this.addTest({
@@ -225,7 +225,7 @@ export class HealthcareSecurityTestFramework {
       severity: 'CRITICAL',
       enabled: true,
       testFunction: this.testSQLInjectionProtection.bind(this),
-    });
+    })
 
     this.addTest({
       id: 'input-validation-xss',
@@ -235,7 +235,7 @@ export class HealthcareSecurityTestFramework {
       severity: 'HIGH',
       enabled: true,
       testFunction: this.testXSSProtection.bind(this),
-    });
+    })
 
     // RLS Tests
     this.addTest({
@@ -246,7 +246,7 @@ export class HealthcareSecurityTestFramework {
       severity: 'CRITICAL',
       enabled: true,
       testFunction: this.testPatientDataRLS.bind(this),
-    });
+    })
 
     // Data Exposure Tests
     this.addTest({
@@ -257,7 +257,7 @@ export class HealthcareSecurityTestFramework {
       severity: 'HIGH',
       enabled: true,
       testFunction: this.testSensitiveDataExposure.bind(this),
-    });
+    })
 
     // Compliance Tests
     this.addTest({
@@ -268,56 +268,56 @@ export class HealthcareSecurityTestFramework {
       severity: 'CRITICAL',
       enabled: this.config.validateLGPD,
       testFunction: this.testLGPDCompliance.bind(this),
-    });
+    })
   }
 
   // Add security test
   addTest(test: SecurityTest): void {
-    this.tests.set(test.id, test);
+    this.tests.set(test.id, test)
   }
 
   // Remove security test
   removeTest(testId: string): void {
-    this.tests.delete(testId);
+    this.tests.delete(testId)
   }
 
   // Run all security tests
   async runAllTests(
     _context: SecurityTestContext,
   ): Promise<SecurityTestResult[]> {
-    this.results = [];
+    this.results = []
 
-    const enabledTests = Array.from(this.tests.values()).filter(test => {
-      if (!test.enabled) return false;
-      if (this.config.disabledTests.includes(test.id)) return false;
-      if (this.config.enabledTests.includes('*')) return true;
-      return this.config.enabledTests.includes(test.id);
-    });
+    const enabledTests = Array.from(this.tests.values()).filter((test) => {
+      if (!test.enabled) return false
+      if (this.config.disabledTests.includes(test.id)) return false
+      if (this.config.enabledTests.includes('*')) return true
+      return this.config.enabledTests.includes(test.id)
+    })
 
-    logger.info(`Running ${enabledTests.length} security tests`);
+    logger.info(`Running ${enabledTests.length} security tests`)
 
     // Run tests in parallel batches
-    const batchSize = this.config.parallelTests;
+    const batchSize = this.config.parallelTests
     for (let i = 0; i < enabledTests.length; i += batchSize) {
-      const batch = enabledTests.slice(i, i + batchSize);
-      const batchPromises = batch.map(test => this.runSingleTest(test, context));
-      const batchResults = await Promise.allSettled(batchPromises);
+      const batch = enabledTests.slice(i, i + batchSize)
+      const batchPromises = batch.map((test) => this.runSingleTest(test, context))
+      const batchResults = await Promise.allSettled(batchPromises)
 
       batchResults.forEach((result, index) => {
         if (result.status === 'fulfilled') {
-          this.results.push(result.value);
+          this.results.push(result.value)
         } else {
-          logger.error(`Test ${batch[index].id} failed:`, result.reason);
+          logger.error(`Test ${batch[index].id} failed:`, result.reason)
         }
-      });
+      })
     }
 
     // Generate report if enabled
     if (this.config.generateReport) {
-      await this.generateTestReport();
+      await this.generateTestReport()
     }
 
-    return this.results;
+    return this.results
   }
 
   // Run single security test
@@ -325,10 +325,10 @@ export class HealthcareSecurityTestFramework {
     test: SecurityTest,
     _context: SecurityTestContext,
   ): Promise<SecurityTestResult> {
-    const startTime = Date.now();
+    const startTime = Date.now()
 
     try {
-      logger.info(`Running security test: ${test.name}`);
+      logger.info(`Running security test: ${test.name}`)
 
       const result = await Promise.race([
         test.testFunction(context),
@@ -338,9 +338,9 @@ export class HealthcareSecurityTestFramework {
             this.config.timeout,
           )
         ),
-      ]);
+      ])
 
-      const executionTime = Date.now() - startTime;
+      const executionTime = Date.now() - startTime
 
       const finalResult: SecurityTestResult = {
         testId: test.id,
@@ -352,21 +352,21 @@ export class HealthcareSecurityTestFramework {
         executionTime,
         timestamp: new Date().toISOString(),
         details: result.details,
-      };
+      }
 
       // Log result if enabled
       if (this.config.logResults) {
-        this.logTestResult(finalResult);
+        this.logTestResult(finalResult)
       }
 
       // Check if alert threshold is exceeded
       if (finalResult.score < this.config.alertThreshold) {
-        this.sendSecurityAlert(finalResult);
+        this.sendSecurityAlert(finalResult)
       }
 
-      return finalResult;
+      return finalResult
     } catch {
-      const executionTime = Date.now() - startTime;
+      const executionTime = Date.now() - startTime
 
       const errorResult: SecurityTestResult = {
         testId: test.id,
@@ -389,10 +389,10 @@ export class HealthcareSecurityTestFramework {
         ],
         executionTime,
         timestamp: new Date().toISOString(),
-      };
+      }
 
-      logger.error(`Security test ${test.name} failed:`, error);
-      return errorResult;
+      logger.error(`Security test ${test.name} failed:`, error)
+      return errorResult
     }
   }
 
@@ -400,12 +400,12 @@ export class HealthcareSecurityTestFramework {
   private async testHSTSHeader(
     _context: SecurityTestContext,
   ): Promise<SecurityTestResult> {
-    const issues: SecurityIssue[] = [];
-    const recommendations: string[] = [];
+    const issues: SecurityIssue[] = []
+    const recommendations: string[] = []
 
     try {
-      const response = await fetch(`${context.baseUrl}/health`);
-      const hstsHeader = response.headers.get('Strict-Transport-Security');
+      const response = await fetch(`${context.baseUrl}/health`)
+      const hstsHeader = response.headers.get('Strict-Transport-Security')
 
       if (!hstsHeader) {
         issues.push({
@@ -416,13 +416,13 @@ export class HealthcareSecurityTestFramework {
           location: 'Response headers',
           remediation: 'Implement HSTS header with appropriate max-age',
           owaspId: 'A5-2017',
-        });
-        recommendations.push('Implement HSTS header with max-age >= 31536000');
+        })
+        recommendations.push('Implement HSTS header with max-age >= 31536000')
       } else {
         // Validate HSTS configuration
-        const hasMaxAge = hstsHeader.includes('max-age=');
-        const hasIncludeSubDomains = hstsHeader.includes('includeSubDomains');
-        const hasPreload = hstsHeader.includes('preload');
+        const hasMaxAge = hstsHeader.includes('max-age=')
+        const hasIncludeSubDomains = hstsHeader.includes('includeSubDomains')
+        const hasPreload = hstsHeader.includes('preload')
 
         if (!hasMaxAge) {
           issues.push({
@@ -432,19 +432,19 @@ export class HealthcareSecurityTestFramework {
             description: 'HSTS header missing max-age directive',
             location: 'HSTS header',
             remediation: 'Add max-age directive to HSTS header',
-          });
+          })
         }
 
         if (!hasIncludeSubDomains) {
           recommendations.push(
             'Consider adding includeSubDomains to HSTS header',
-          );
+          )
         }
 
         if (!hasPreload) {
           recommendations.push(
             'Consider adding preload to HSTS header for enhanced security',
-          );
+          )
         }
       }
     } catch {
@@ -455,7 +455,7 @@ export class HealthcareSecurityTestFramework {
         description: `HSTS test failed: ${(error as Error).message}`,
         location: 'HSTS test',
         remediation: 'Check network connectivity and server response',
-      });
+      })
     }
 
     return {
@@ -467,18 +467,18 @@ export class HealthcareSecurityTestFramework {
       recommendations,
       executionTime: 0,
       timestamp: new Date().toISOString(),
-    };
+    }
   }
 
   private async testCSPHeader(
     _context: SecurityTestContext,
   ): Promise<SecurityTestResult> {
-    const issues: SecurityIssue[] = [];
-    const recommendations: string[] = [];
+    const issues: SecurityIssue[] = []
+    const recommendations: string[] = []
 
     try {
-      const response = await fetch(`${context.baseUrl}/health`);
-      const cspHeader = response.headers.get('Content-Security-Policy');
+      const response = await fetch(`${context.baseUrl}/health`)
+      const cspHeader = response.headers.get('Content-Security-Policy')
 
       if (!cspHeader) {
         issues.push({
@@ -489,26 +489,26 @@ export class HealthcareSecurityTestFramework {
           location: 'Response headers',
           remediation: 'Implement Content Security Policy header',
           owaspId: 'A6-2017',
-        });
-        recommendations.push('Implement Content Security Policy header');
+        })
+        recommendations.push('Implement Content Security Policy header')
       } else {
         // Validate CSP directives
-        const hasDefaultSrc = cspHeader.includes('default-src');
-        const hasScriptSrc = cspHeader.includes('script-src');
-        const hasObjectSrcNone = cspHeader.includes('object-src \'none\'');
+        const hasDefaultSrc = cspHeader.includes('default-src')
+        const hasScriptSrc = cspHeader.includes('script-src')
+        const hasObjectSrcNone = cspHeader.includes("object-src 'none'")
 
         if (!hasDefaultSrc) {
-          recommendations.push('Consider adding default-src directive to CSP');
+          recommendations.push('Consider adding default-src directive to CSP')
         }
 
         if (!hasScriptSrc) {
-          recommendations.push('Consider adding script-src directive to CSP');
+          recommendations.push('Consider adding script-src directive to CSP')
         }
 
         if (!hasObjectSrcNone) {
           recommendations.push(
-            'Add object-src \'none\' to prevent object/embed attacks',
-          );
+            "Add object-src 'none' to prevent object/embed attacks",
+          )
         }
       }
     } catch {
@@ -519,7 +519,7 @@ export class HealthcareSecurityTestFramework {
         description: `CSP test failed: ${(error as Error).message}`,
         location: 'CSP test',
         remediation: 'Check network connectivity and server response',
-      });
+      })
     }
 
     return {
@@ -531,20 +531,20 @@ export class HealthcareSecurityTestFramework {
       recommendations,
       executionTime: 0,
       timestamp: new Date().toISOString(),
-    };
+    }
   }
 
   private async testXSSHeaders(
     _context: SecurityTestContext,
   ): Promise<SecurityTestResult> {
-    const issues: SecurityIssue[] = [];
-    const recommendations: string[] = [];
+    const issues: SecurityIssue[] = []
+    const recommendations: string[] = []
 
     try {
-      const response = await fetch(`${context.baseUrl}/health`);
-      const xssHeader = response.headers.get('X-XSS-Protection');
-      const contentTypeHeader = response.headers.get('X-Content-Type-Options');
-      const frameOptionsHeader = response.headers.get('X-Frame-Options');
+      const response = await fetch(`${context.baseUrl}/health`)
+      const xssHeader = response.headers.get('X-XSS-Protection')
+      const contentTypeHeader = response.headers.get('X-Content-Type-Options')
+      const frameOptionsHeader = response.headers.get('X-Frame-Options')
 
       if (!xssHeader) {
         issues.push({
@@ -555,7 +555,7 @@ export class HealthcareSecurityTestFramework {
           location: 'Response headers',
           remediation: 'Add X-XSS-Protection: 1; mode=block header',
           owaspId: 'A7-2017',
-        });
+        })
       }
 
       if (!contentTypeHeader) {
@@ -566,7 +566,7 @@ export class HealthcareSecurityTestFramework {
           description: 'X-Content-Type-Options header not found',
           location: 'Response headers',
           remediation: 'Add X-Content-Type-Options: nosniff header',
-        });
+        })
       }
 
       if (!frameOptionsHeader) {
@@ -578,7 +578,7 @@ export class HealthcareSecurityTestFramework {
           location: 'Response headers',
           remediation: 'Add X-Frame-Options: DENY header',
           owaspId: 'A8-2017',
-        });
+        })
       }
     } catch {
       issues.push({
@@ -588,7 +588,7 @@ export class HealthcareSecurityTestFramework {
         description: `XSS headers test failed: ${(error as Error).message}`,
         location: 'XSS test',
         remediation: 'Check network connectivity and server response',
-      });
+      })
     }
 
     return {
@@ -600,7 +600,7 @@ export class HealthcareSecurityTestFramework {
       recommendations,
       executionTime: 0,
       timestamp: new Date().toISOString(),
-    };
+    }
   }
 
   // Placeholder implementations for other tests
@@ -618,7 +618,7 @@ export class HealthcareSecurityTestFramework {
       ],
       executionTime: 0,
       timestamp: new Date().toISOString(),
-    };
+    }
   }
 
   private async testSessionManagement(
@@ -635,7 +635,7 @@ export class HealthcareSecurityTestFramework {
       ],
       executionTime: 0,
       timestamp: new Date().toISOString(),
-    };
+    }
   }
 
   private async testRoleBasedAccess(
@@ -650,7 +650,7 @@ export class HealthcareSecurityTestFramework {
       recommendations: ['Implement comprehensive role-based access control'],
       executionTime: 0,
       timestamp: new Date().toISOString(),
-    };
+    }
   }
 
   private async testResourceLevelSecurity(
@@ -665,7 +665,7 @@ export class HealthcareSecurityTestFramework {
       recommendations: ['Implement resource-level access controls'],
       executionTime: 0,
       timestamp: new Date().toISOString(),
-    };
+    }
   }
 
   private async testRateLimiting(
@@ -680,7 +680,7 @@ export class HealthcareSecurityTestFramework {
       recommendations: ['Rate limiting is properly implemented'],
       executionTime: 0,
       timestamp: new Date().toISOString(),
-    };
+    }
   }
 
   private async testSQLInjectionProtection(
@@ -695,7 +695,7 @@ export class HealthcareSecurityTestFramework {
       recommendations: ['SQL injection protection is in place'],
       executionTime: 0,
       timestamp: new Date().toISOString(),
-    };
+    }
   }
 
   private async testXSSProtection(
@@ -710,7 +710,7 @@ export class HealthcareSecurityTestFramework {
       recommendations: ['XSS protection is implemented'],
       executionTime: 0,
       timestamp: new Date().toISOString(),
-    };
+    }
   }
 
   private async testPatientDataRLS(
@@ -727,7 +727,7 @@ export class HealthcareSecurityTestFramework {
       ],
       executionTime: 0,
       timestamp: new Date().toISOString(),
-    };
+    }
   }
 
   private async testSensitiveDataExposure(
@@ -742,7 +742,7 @@ export class HealthcareSecurityTestFramework {
       recommendations: ['Sensitive data exposure controls are in place'],
       executionTime: 0,
       timestamp: new Date().toISOString(),
-    };
+    }
   }
 
   private async testLGPDCompliance(
@@ -757,18 +757,18 @@ export class HealthcareSecurityTestFramework {
       recommendations: ['LGPD compliance requirements are met'],
       executionTime: 0,
       timestamp: new Date().toISOString(),
-    };
+    }
   }
 
   // Log test result
   private logTestResult(result: SecurityTestResult): void {
-    const level = result.passed ? 'info' : 'warn';
+    const level = result.passed ? 'info' : 'warn'
     logger[level](`Security test completed: ${result.testName}`, {
       passed: result.passed,
       score: result.score,
       issuesCount: result.issues.length,
       executionTime: result.executionTime,
-    });
+    })
   }
 
   // Send security alert
@@ -779,7 +779,7 @@ export class HealthcareSecurityTestFramework {
       score: result.score,
       issuesCount: result.issues.length,
       severity: result.issues[0]?.severity,
-    });
+    })
   }
 
   // Generate test report
@@ -790,36 +790,36 @@ export class HealthcareSecurityTestFramework {
       results: this.results,
       summary: {
         totalTests: this.results.length,
-        passedTests: this.results.filter(r => r.passed).length,
-        failedTests: this.results.filter(r => !r.passed).length,
+        passedTests: this.results.filter((r) => r.passed).length,
+        failedTests: this.results.filter((r) => !r.passed).length,
         averageScore: this.results.reduce((sum, _r) => sum + r.score, 0)
           / this.results.length,
         criticalIssues: this.results
-          .flatMap(r => r.issues)
-          .filter(i => i.severity === 'CRITICAL').length,
+          .flatMap((r) => r.issues)
+          .filter((i) => i.severity === 'CRITICAL').length,
       },
-    };
+    }
 
     const reportPath =
-      `${this.config.reportPath}/security-test-report-${Date.now()}.${this.config.reportFormat.toLowerCase()}`;
+      `${this.config.reportPath}/security-test-report-${Date.now()}.${this.config.reportFormat.toLowerCase()}`
 
     // Write report to file
-    await Bun.write(reportPath, JSON.stringify(report, null, 2));
+    await Bun.write(reportPath, JSON.stringify(report, null, 2))
 
-    logger.info(`Security test report generated: ${reportPath}`);
+    logger.info(`Security test report generated: ${reportPath}`)
   }
 
   // Get test results
   getResults(): SecurityTestResult[] {
-    return this.results;
+    return this.results
   }
 
   // Get security score
   getSecurityScore(): number {
-    if (this.results.length === 0) return 0;
+    if (this.results.length === 0) return 0
     return (
       this.results.reduce((sum, r) => sum + r.score, 0) / this.results.length
-    );
+    )
   }
 }
 
@@ -843,9 +843,9 @@ export function createSecurityTestingFramework(
     logResults: true,
     alertThreshold: 70,
     ...config,
-  };
+  }
 
-  return new HealthcareSecurityTestFramework(defaultConfig);
+  return new HealthcareSecurityTestFramework(defaultConfig)
 }
 
 // Export types and utilities
@@ -855,5 +855,5 @@ export type {
   SecurityTestConfig,
   SecurityTestContext,
   SecurityTestResult,
-};
-export { HealthcareSecurityTestFramework };
+}
+export { HealthcareSecurityTestFramework }

@@ -100,26 +100,26 @@ export enum AuditOutcome {
 
 export interface AuditEvent {
   // Event identification
-  id: string;
-  timestamp: string;
-  eventType: AuditEventType;
-  severity: AuditSeverity;
-  outcome: AuditOutcome;
+  id: string
+  timestamp: string
+  eventType: AuditEventType
+  severity: AuditSeverity
+  outcome: AuditOutcome
 
   // Actor information
   actor: {
-    _userId?: string;
+    _userId?: string
     userType:
       | 'patient'
       | 'healthcare_professional'
       | 'admin'
       | 'system'
-      | 'ai_agent';
-    userName?: string;
-    _role?: string;
-    professionalRegistration?: string;
-    sessionId?: string;
-  };
+      | 'ai_agent'
+    userName?: string
+    _role?: string
+    professionalRegistration?: string
+    sessionId?: string
+  }
 
   // Resource information
   resource: {
@@ -129,68 +129,68 @@ export interface AuditEvent {
       | 'appointment'
       | 'prescription'
       | 'system'
-      | 'ai_model';
-    id?: string;
-    description?: string;
-    sensitivity: 'public' | 'internal' | 'confidential' | 'restricted';
-  };
+      | 'ai_model'
+    id?: string
+    description?: string
+    sensitivity: 'public' | 'internal' | 'confidential' | 'restricted'
+  }
 
   // Healthcare context
   healthcareContext?: {
-    patientId?: string;
-    clinicId?: string;
-    departmentId?: string;
-    procedureCode?: string;
-    diagnosisCode?: string;
-    treatmentProtocol?: string;
-    emergencyFlag?: boolean;
-    clinicalJustification?: string;
-  };
+    patientId?: string
+    clinicId?: string
+    departmentId?: string
+    procedureCode?: string
+    diagnosisCode?: string
+    treatmentProtocol?: string
+    emergencyFlag?: boolean
+    clinicalJustification?: string
+  }
 
   // Technical context
   technicalContext: {
-    ipAddress?: string;
-    userAgent?: string;
-    endpoint?: string;
-    httpMethod?: string;
-    statusCode?: number;
-    responseTime?: number;
-    deviceId?: string;
+    ipAddress?: string
+    userAgent?: string
+    endpoint?: string
+    httpMethod?: string
+    statusCode?: number
+    responseTime?: number
+    deviceId?: string
     geolocation?: {
-      country: string;
-      city?: string;
-      coordinates?: { lat: number; lng: number };
-    };
-  };
+      country: string
+      city?: string
+      coordinates?: { lat: number; lng: number }
+    }
+  }
 
   // Event details
   details: {
-    action: string;
-    description: string;
-    changedFields?: string[];
-    oldValues?: Record<string, any>;
-    newValues?: Record<string, any>;
-    additionalData?: Record<string, any>;
-  };
+    action: string
+    description: string
+    changedFields?: string[]
+    oldValues?: Record<string, any>
+    newValues?: Record<string, any>
+    additionalData?: Record<string, any>
+  }
 
   // Compliance metadata
   compliance: {
-    lgpdRelevant: boolean;
-    anvisaRelevant: boolean;
-    cfmRelevant: boolean;
-    retentionPeriod: number; // Days
-    dataClassification: 'public' | 'internal' | 'confidential' | 'restricted';
-    legalBasis?: string;
-    auditRequired: boolean;
-  };
+    lgpdRelevant: boolean
+    anvisaRelevant: boolean
+    cfmRelevant: boolean
+    retentionPeriod: number // Days
+    dataClassification: 'public' | 'internal' | 'confidential' | 'restricted'
+    legalBasis?: string
+    auditRequired: boolean
+  }
 
   // Risk assessment
   riskAssessment?: {
-    riskLevel: 'low' | 'medium' | 'high' | 'critical';
-    riskFactors: string[];
-    mitigationActions: string[];
-    followUpRequired: boolean;
-  };
+    riskLevel: 'low' | 'medium' | 'high' | 'critical'
+    riskFactors: string[]
+    mitigationActions: string[]
+    followUpRequired: boolean
+  }
 }
 
 // ============================================================================
@@ -199,53 +199,53 @@ export interface AuditEvent {
 
 export interface AuditTrailConfig {
   // General settings
-  enabled: boolean;
-  logLevel: 'minimal' | 'standard' | 'comprehensive' | 'detailed';
-  realTimeLogging: boolean;
+  enabled: boolean
+  logLevel: 'minimal' | 'standard' | 'comprehensive' | 'detailed'
+  realTimeLogging: boolean
 
   // Storage settings
   storage: {
-    provider: 'database' | 'file' | 'cloud' | 'siem';
-    retentionPeriod: number; // Days
-    archivalEnabled: boolean;
-    compressionEnabled: boolean;
-    encryptionEnabled: boolean;
-  };
+    provider: 'database' | 'file' | 'cloud' | 'siem'
+    retentionPeriod: number // Days
+    archivalEnabled: boolean
+    compressionEnabled: boolean
+    encryptionEnabled: boolean
+  }
 
   // Filtering settings
   filtering: {
-    enabledEventTypes: AuditEventType[];
-    minimumSeverity: AuditSeverity;
-    excludeSuccessfulLogins: boolean;
-    excludeReadOperations: boolean;
-    patientDataAccessLogging: boolean;
-  };
+    enabledEventTypes: AuditEventType[]
+    minimumSeverity: AuditSeverity
+    excludeSuccessfulLogins: boolean
+    excludeReadOperations: boolean
+    patientDataAccessLogging: boolean
+  }
 
   // Healthcare specific
   healthcare: {
-    trackPatientDataAccess: boolean;
-    trackEmergencyAccess: boolean;
-    trackPrescriptionChanges: boolean;
-    trackDiagnosisChanges: boolean;
-    anonymizePatientData: boolean;
-  };
+    trackPatientDataAccess: boolean
+    trackEmergencyAccess: boolean
+    trackPrescriptionChanges: boolean
+    trackDiagnosisChanges: boolean
+    anonymizePatientData: boolean
+  }
 
   // Compliance settings
   compliance: {
-    lgpdCompliance: boolean;
-    anvisaCompliance: boolean;
-    cfmCompliance: boolean;
-    automaticReporting: boolean;
-    alertOnViolations: boolean;
-  };
+    lgpdCompliance: boolean
+    anvisaCompliance: boolean
+    cfmCompliance: boolean
+    automaticReporting: boolean
+    alertOnViolations: boolean
+  }
 
   // Security settings
   security: {
-    tamperProtection: boolean;
-    digitalSignatures: boolean;
-    accessLogging: boolean;
-    anomalyDetection: boolean;
-  };
+    tamperProtection: boolean
+    digitalSignatures: boolean
+    accessLogging: boolean
+    anomalyDetection: boolean
+  }
 }
 
 export const defaultAuditConfig: AuditTrailConfig = {
@@ -291,34 +291,34 @@ export const defaultAuditConfig: AuditTrailConfig = {
     accessLogging: true,
     anomalyDetection: true,
   },
-};
+}
 
 // ============================================================================
 // Audit Storage Interface
 // ============================================================================
 
 export interface AuditStorage {
-  store(event: AuditEvent): Promise<void>;
-  query(filters: AuditQueryFilters): Promise<AuditEvent[]>;
+  store(event: AuditEvent): Promise<void>
+  query(filters: AuditQueryFilters): Promise<AuditEvent[]>
   export(
     filters: AuditQueryFilters,
     format: 'json' | 'csv' | 'pdf',
-  ): Promise<string>;
-  archive(olderThan: Date): Promise<number>;
-  count(filters: AuditQueryFilters): Promise<number>;
+  ): Promise<string>
+  archive(olderThan: Date): Promise<number>
+  count(filters: AuditQueryFilters): Promise<number>
 }
 
 export interface AuditQueryFilters {
-  fromDate?: Date;
-  toDate?: Date;
-  eventTypes?: AuditEventType[];
-  _userId?: string;
-  patientId?: string;
-  severity?: AuditSeverity;
-  outcome?: AuditOutcome;
-  resourceType?: string;
-  limit?: number;
-  offset?: number;
+  fromDate?: Date
+  toDate?: Date
+  eventTypes?: AuditEventType[]
+  _userId?: string
+  patientId?: string
+  severity?: AuditSeverity
+  outcome?: AuditOutcome
+  resourceType?: string
+  limit?: number
+  offset?: number
 }
 
 // ============================================================================
@@ -333,19 +333,19 @@ export class DatabaseAuditStorage implements AuditStorage {
       // Encrypt sensitive data if required
       const encryptedEvent = this.config.storage.encryptionEnabled
         ? await this.encryptSensitiveData(event)
-        : event;
+        : event
 
       // Add digital signature if required
       const _signedEvent = this.config.security.digitalSignatures
         ? await this.addDigitalSignature(encryptedEvent)
-        : encryptedEvent;
+        : encryptedEvent
 
       // Store in database (pseudo-code - replace with actual DB implementation)
       // await db.auditEvents.create(signedEvent);
 
-      console.log('[Audit] Event stored:', event.id);
+      console.log('[Audit] Event stored:', event.id)
     } catch {
-      console.error('[Audit] Failed to store event:', error);
+      console.error('[Audit] Failed to store event:', error)
       // Don't throw - audit failures shouldn't break application flow
     }
   }
@@ -353,24 +353,24 @@ export class DatabaseAuditStorage implements AuditStorage {
   async query(_filters: AuditQueryFilters): Promise<AuditEvent[]> {
     // Implement database query logic
     // This would use your actual database implementation
-    return [];
+    return []
   }
 
   async export(
     filters: AuditQueryFilters,
     format: 'json' | 'csv' | 'pdf',
   ): Promise<string> {
-    const events = await this.query(filters);
+    const events = await this.query(filters)
 
     switch (format) {
       case 'json':
-        return JSON.stringify(events, null, 2);
+        return JSON.stringify(events, null, 2)
       case 'csv':
-        return this.convertToCSV(events);
+        return this.convertToCSV(events)
       case 'pdf':
-        return this.convertToPDF(events);
+        return this.convertToPDF(events)
       default:
-        throw new Error(`Unsupported export format: ${format}`);
+        throw new Error(`Unsupported export format: ${format}`)
     }
   }
 
@@ -378,47 +378,47 @@ export class DatabaseAuditStorage implements AuditStorage {
     // Implement archival logic
     console.log(
       `[Audit] Archiving events older than ${olderThan.toISOString()}`,
-    );
-    return 0; // Return number of archived events
+    )
+    return 0 // Return number of archived events
   }
 
   async count(_filters: AuditQueryFilters): Promise<number> {
     // Implement count query
-    return 0;
+    return 0
   }
 
   private async encryptSensitiveData(event: AuditEvent): Promise<AuditEvent> {
     // Implement encryption for sensitive fields
-    const encryptedEvent = { ...event };
+    const encryptedEvent = { ...event }
 
     // Encrypt sensitive fields
     if (encryptedEvent.healthcareContext?.patientId) {
       encryptedEvent.healthcareContext.patientId = await this.encrypt(
         encryptedEvent.healthcareContext.patientId,
-      );
+      )
     }
 
-    return encryptedEvent;
+    return encryptedEvent
   }
 
   private async addDigitalSignature(
     event: AuditEvent,
   ): Promise<AuditEvent & { signature: string }> {
     // Implement digital signature
-    const eventString = JSON.stringify(event);
-    const signature = await this.generateSignature(eventString);
+    const eventString = JSON.stringify(event)
+    const signature = await this.generateSignature(eventString)
 
-    return { ...event, signature };
+    return { ...event, signature }
   }
 
   private async encrypt(data: string): Promise<string> {
     // Implement encryption - placeholder
-    return `encrypted_${Buffer.from(data).toString('base64')}`;
+    return `encrypted_${Buffer.from(data).toString('base64')}`
   }
 
   private async generateSignature(data: string): Promise<string> {
     // Implement digital signature - placeholder
-    return `sig_${Buffer.from(data).toString('base64').substring(0, 32)}`;
+    return `sig_${Buffer.from(data).toString('base64').substring(0, 32)}`
   }
 
   private convertToCSV(events: AuditEvent[]): string {
@@ -429,21 +429,21 @@ export class DatabaseAuditStorage implements AuditStorage {
       'userId',
       'outcome',
       'description',
-    ];
-    const rows = events.map(event => [
+    ]
+    const rows = events.map((event) => [
       event.timestamp,
       event.eventType,
       event.actor.userId || 'N/A',
       event.outcome,
       event.details.description,
-    ]);
+    ])
 
-    return [headers, ...rows].map(row => row.join(',')).join('\n');
+    return [headers, ...rows].map((row) => row.join(',')).join('\n')
   }
 
   private convertToPDF(events: AuditEvent[]): string {
     // Implement PDF conversion - placeholder
-    return `PDF audit report with ${events.length} events`;
+    return `PDF audit report with ${events.length} events`
   }
 }
 
@@ -452,12 +452,12 @@ export class DatabaseAuditStorage implements AuditStorage {
 // ============================================================================
 
 export class AuditTrailService {
-  private storage: AuditStorage;
-  private config: AuditTrailConfig;
+  private storage: AuditStorage
+  private config: AuditTrailConfig
 
   constructor(config: Partial<AuditTrailConfig> = {}) {
-    this.config = { ...defaultAuditConfig, ...config };
-    this.storage = new DatabaseAuditStorage(this.config);
+    this.config = { ...defaultAuditConfig, ...config }
+    this.storage = new DatabaseAuditStorage(this.config)
   }
 
   /**
@@ -469,11 +469,11 @@ export class AuditTrailService {
     resource: AuditEvent['resource'],
     details: AuditEvent['details'],
     options: {
-      severity?: AuditSeverity;
-      outcome?: AuditOutcome;
-      healthcareContext?: AuditEvent['healthcareContext'];
-      technicalContext?: Partial<AuditEvent['technicalContext']>;
-      riskAssessment?: AuditEvent['riskAssessment'];
+      severity?: AuditSeverity
+      outcome?: AuditOutcome
+      healthcareContext?: AuditEvent['healthcareContext']
+      technicalContext?: Partial<AuditEvent['technicalContext']>
+      riskAssessment?: AuditEvent['riskAssessment']
     } = {},
   ): Promise<void> {
     try {
@@ -481,7 +481,7 @@ export class AuditTrailService {
       if (
         !this.shouldLogEvent(eventType, options.severity || AuditSeverity.LOW)
       ) {
-        return;
+        return
       }
 
       // Build audit event
@@ -505,19 +505,19 @@ export class AuditTrailService {
           options.healthcareContext,
         ),
         riskAssessment: options.riskAssessment,
-      };
+      }
 
       // Store the event
-      await this.storage.store(auditEvent);
+      await this.storage.store(auditEvent)
 
       // Real-time processing
       if (this.config.realTimeLogging) {
-        await this.processRealTimeEvent(auditEvent);
+        await this.processRealTimeEvent(auditEvent)
       }
     } catch {
-      console.error('[AuditTrail] Failed to log event:', error);
+      console.error('[AuditTrail] Failed to log event:', error)
       // Log audit failure as a separate event
-      await this.logAuditFailure(eventType, error);
+      await this.logAuditFailure(eventType, error)
     }
   }
 
@@ -533,7 +533,7 @@ export class AuditTrailService {
     technicalContext: Partial<AuditEvent['technicalContext']> = {},
     clinicalJustification?: string,
   ): Promise<void> {
-    const eventType = this.getPatientDataEventType(action);
+    const eventType = this.getPatientDataEventType(action)
 
     await this.logEvent(
       eventType,
@@ -562,7 +562,7 @@ export class AuditTrailService {
         },
         technicalContext,
       },
-    );
+    )
   }
 
   /**
@@ -609,7 +609,7 @@ export class AuditTrailService {
           followUpRequired: true,
         },
       },
-    );
+    )
   }
 
   /**
@@ -650,7 +650,7 @@ export class AuditTrailService {
           followUpRequired: true,
         },
       },
-    );
+    )
   }
 
   /**
@@ -686,14 +686,14 @@ export class AuditTrailService {
           patientId: dataSubjectId,
         },
       },
-    );
+    )
   }
 
   /**
    * Query audit events
    */
   async queryEvents(filters: AuditQueryFilters): Promise<AuditEvent[]> {
-    return await this.storage.query(filters);
+    return await this.storage.query(filters)
   }
 
   /**
@@ -724,9 +724,9 @@ export class AuditTrailService {
         severity: AuditSeverity.HIGH,
         outcome: AuditOutcome.SUCCESS,
       },
-    );
+    )
 
-    return await this.storage.export(filters, format);
+    return await this.storage.export(filters, format)
   }
 
   /**
@@ -736,17 +736,17 @@ export class AuditTrailService {
     fromDate: Date,
     toDate: Date,
   ): Promise<{
-    totalEvents: number;
-    eventsByType: Record<string, number>;
-    eventsBySeverity: Record<string, number>;
-    securityViolations: number;
-    emergencyAccesses: number;
-    patientDataAccesses: number;
+    totalEvents: number
+    eventsByType: Record<string, number>
+    eventsBySeverity: Record<string, number>
+    securityViolations: number
+    emergencyAccesses: number
+    patientDataAccesses: number
   }> {
-    const filters = { fromDate, toDate };
+    const filters = { fromDate, toDate }
 
     // This would be implemented with proper database aggregation queries
-    const totalEvents = await this.storage.count(filters);
+    const totalEvents = await this.storage.count(filters)
 
     return {
       totalEvents,
@@ -767,7 +767,7 @@ export class AuditTrailService {
           AuditEventType.MEDICAL_RECORD_VIEW,
         ],
       }),
-    };
+    }
   }
 
   // ============================================================================
@@ -778,10 +778,10 @@ export class AuditTrailService {
     eventType: AuditEventType,
     severity: AuditSeverity,
   ): boolean {
-    if (!this.config.enabled) return false;
+    if (!this.config.enabled) return false
 
     if (!this.config.filtering.enabledEventTypes.includes(eventType)) {
-      return false;
+      return false
     }
 
     const severityOrder = {
@@ -789,12 +789,12 @@ export class AuditTrailService {
       [AuditSeverity.MEDIUM]: 1,
       [AuditSeverity.HIGH]: 2,
       [AuditSeverity.CRITICAL]: 3,
-    };
+    }
 
     return (
       severityOrder[severity]
         >= severityOrder[this.config.filtering.minimumSeverity]
-    );
+    )
   }
 
   private determineSeverity(
@@ -810,7 +810,7 @@ export class AuditTrailService {
         AuditEventType.UNAUTHORIZED_ACCESS,
       ].includes(eventType)
     ) {
-      return AuditSeverity.CRITICAL;
+      return AuditSeverity.CRITICAL
     }
 
     // High severity events
@@ -822,7 +822,7 @@ export class AuditTrailService {
         AuditEventType.DATA_DELETION,
       ].includes(eventType)
     ) {
-      return AuditSeverity.HIGH;
+      return AuditSeverity.HIGH
     }
 
     // Medium severity events
@@ -834,29 +834,29 @@ export class AuditTrailService {
         AuditEventType.ROLE_CHANGE,
       ].includes(eventType)
     ) {
-      return AuditSeverity.MEDIUM;
+      return AuditSeverity.MEDIUM
     }
 
     // Failure outcomes increase severity
     if (outcome === AuditOutcome.FAILURE || outcome === AuditOutcome.BLOCKED) {
-      return AuditSeverity.HIGH;
+      return AuditSeverity.HIGH
     }
 
-    return AuditSeverity.LOW;
+    return AuditSeverity.LOW
   }
 
   private getPatientDataEventType(action: string): AuditEventType {
     switch (action) {
       case 'view':
-        return AuditEventType.PATIENT_VIEW;
+        return AuditEventType.PATIENT_VIEW
       case 'create':
-        return AuditEventType.PATIENT_CREATE;
+        return AuditEventType.PATIENT_CREATE
       case 'update':
-        return AuditEventType.PATIENT_UPDATE;
+        return AuditEventType.PATIENT_UPDATE
       case 'delete':
-        return AuditEventType.PATIENT_DELETE;
+        return AuditEventType.PATIENT_DELETE
       default:
-        return AuditEventType.PATIENT_VIEW;
+        return AuditEventType.PATIENT_VIEW
     }
   }
 
@@ -865,8 +865,8 @@ export class AuditTrailService {
     resource: AuditEvent['resource'],
     healthcareContext?: AuditEvent['healthcareContext'],
   ): AuditEvent['compliance'] {
-    const isPatientData = resource.type === 'patient' || resource.type === 'medical_record';
-    const _isSecurityEvent = eventType.includes('security') || eventType.includes('violation');
+    const isPatientData = resource.type === 'patient' || resource.type === 'medical_record'
+    const _isSecurityEvent = eventType.includes('security') || eventType.includes('violation')
 
     return {
       lgpdRelevant: isPatientData || eventType.includes('data_subject'),
@@ -878,36 +878,36 @@ export class AuditTrailService {
         ? 'healthcare_treatment'
         : 'legitimate_interests',
       auditRequired: true,
-    };
+    }
   }
 
   private async processRealTimeEvent(event: AuditEvent): Promise<void> {
     // Real-time event processing
     if (event.severity === AuditSeverity.CRITICAL) {
-      await this.sendCriticalAlert(event);
+      await this.sendCriticalAlert(event)
     }
 
     if (event.eventType === AuditEventType.EMERGENCY_ACCESS) {
-      await this.notifyEmergencyAccess(event);
+      await this.notifyEmergencyAccess(event)
     }
 
     if (event.riskAssessment?.followUpRequired) {
-      await this.scheduleFollowUp(event);
+      await this.scheduleFollowUp(event)
     }
   }
 
   private async sendCriticalAlert(event: AuditEvent): Promise<void> {
-    console.log('[Audit] CRITICAL ALERT:', event.details.description);
+    console.log('[Audit] CRITICAL ALERT:', event.details.description)
     // Implement alerting mechanism (email, SMS, etc.)
   }
 
   private async notifyEmergencyAccess(event: AuditEvent): Promise<void> {
-    console.log('[Audit] Emergency access logged:', event.id);
+    console.log('[Audit] Emergency access logged:', event.id)
     // Implement emergency access notification
   }
 
   private async scheduleFollowUp(event: AuditEvent): Promise<void> {
-    console.log('[Audit] Follow-up required for event:', event.id);
+    console.log('[Audit] Follow-up required for event:', event.id)
     // Implement follow-up scheduling
   }
 
@@ -948,13 +948,13 @@ export class AuditTrailService {
           dataClassification: 'internal',
           auditRequired: true,
         },
-      };
+      }
 
       // Try to store the failure event
-      console.error('[Audit] Audit failure event:', failureEvent);
+      console.error('[Audit] Audit failure event:', failureEvent)
     } catch (nestedError) {
       // If we can't even log the failure, just console log
-      console.error('[Audit] Critical: Cannot log audit failure:', nestedError);
+      console.error('[Audit] Critical: Cannot log audit failure:', nestedError)
     }
   }
 }
@@ -965,21 +965,21 @@ export class AuditTrailService {
 
 export function createAuditTrailMiddleware(auditService: AuditTrailService) {
   return async (req: any, res: any, next: any) => {
-    const startTime = Date.now();
+    const startTime = Date.now()
 
     // Extract request information
-    const userId = req.headers['x-user-id'];
-    const sessionId = req.headers['x-session-id'];
+    const userId = req.headers['x-user-id']
+    const sessionId = req.headers['x-session-id']
     const patientId = req.headers['x-patient-id']
       || req.body?.patientId
-      || req.query?.patientId;
+      || req.query?.patientId
 
     try {
       // Continue with request
-      await next();
+      await next()
 
       // Log successful request
-      const responseTime = Date.now() - startTime;
+      const responseTime = Date.now() - startTime
 
       if (patientId) {
         await auditService.logPatientDataAccess(
@@ -995,7 +995,7 @@ export function createAuditTrailMiddleware(auditService: AuditTrailService) {
             ipAddress: req.ip,
             userAgent: req.headers['user-agent'],
           },
-        );
+        )
       }
     } catch {
       // Log failed request
@@ -1028,17 +1028,17 @@ export function createAuditTrailMiddleware(auditService: AuditTrailService) {
             userAgent: req.headers['user-agent'],
           },
         },
-      );
+      )
 
-      throw error;
+      throw error
     }
-  };
+  }
 }
 
 // ============================================================================
 // Export Service and Types
 // ============================================================================
 
-export default AuditTrailService;
+export default AuditTrailService
 
-export type { AuditEvent, AuditQueryFilters, AuditStorage, AuditTrailConfig };
+export type { AuditEvent, AuditQueryFilters, AuditStorage, AuditTrailConfig }

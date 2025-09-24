@@ -1,7 +1,7 @@
 // Realistic zod schemas for compliance integration tests (Phase 1)
 // --- Compliance Validation Schemas (Phase 1 minimal) ---
 
-import * as z from 'zod';
+import * as z from 'zod'
 
 // Basic patient schema focusing on fields used in prediction & compliance flows
 export const patientSchema = z.object({
@@ -12,9 +12,9 @@ export const patientSchema = z.object({
   email: z.string().email().optional(),
   phone: z.string().optional(),
   createdAt: z.string().datetime().optional(),
-});
+})
 
-export type Patient = z.infer<typeof patientSchema>;
+export type Patient = z.infer<typeof patientSchema>
 
 export const appointmentSchema = z.object({
   id: z.string().uuid().optional(),
@@ -26,9 +26,9 @@ export const appointmentSchema = z.object({
     .default('scheduled'),
   daysSinceScheduled: z.number().int().min(0).optional(),
   previousNoShows: z.number().int().min(0).optional(),
-});
+})
 
-export type Appointment = z.infer<typeof appointmentSchema>;
+export type Appointment = z.infer<typeof appointmentSchema>
 
 // Compliance policy schema: minimal for tests
 export const compliancePolicySchema = z.object({
@@ -36,18 +36,18 @@ export const compliancePolicySchema = z.object({
   encryption: z.boolean().default(true),
   piiMasking: z.boolean().default(true),
   retentionDays: z.number().int().min(0).max(3650).default(365),
-});
-export type CompliancePolicy = z.infer<typeof compliancePolicySchema>;
+})
+export type CompliancePolicy = z.infer<typeof compliancePolicySchema>
 
 // Validation helpers (used in integration tests)
 export function validatePatient(input: unknown) {
-  return patientSchema.parse(input);
+  return patientSchema.parse(input)
 }
 export function validateAppointment(input: unknown) {
-  return appointmentSchema.parse(input);
+  return appointmentSchema.parse(input)
 }
 export function validateCompliancePolicy(input: unknown) {
-  return compliancePolicySchema.parse(input);
+  return compliancePolicySchema.parse(input)
 }
 
 // Aggregator for dynamic resolution
@@ -55,9 +55,9 @@ export const schemas = {
   patient: patientSchema,
   appointment: appointmentSchema,
   compliancePolicy: compliancePolicySchema,
-};
+}
 
-export type SchemaKey = keyof typeof schemas;
+export type SchemaKey = keyof typeof schemas
 
 // --- Extended Compliance Schemas (simplified) ---
 
@@ -65,7 +65,7 @@ const phiPatientSchema = z.object({
   id: z.string().uuid().optional(),
   firstName: z.string().min(1),
   lastName: z.string().min(1),
-  dateOfBirth: z.date().refine(d => d.getTime() <= Date.now(), {
+  dateOfBirth: z.date().refine((d) => d.getTime() <= Date.now(), {
     message: 'Birth date cannot be in future',
   }),
   cpf: z
@@ -83,7 +83,7 @@ const phiPatientSchema = z.object({
         .optional(),
     })
     .optional(),
-});
+})
 
 const consentRecordSchema = z.object({
   patientId: z.string().uuid(),
@@ -114,7 +114,7 @@ const consentRecordSchema = z.object({
       userAgent: z.string().optional(),
     }),
   ),
-});
+})
 
 const kpiSchema = z.object({
   kpiId: z.string().regex(/^KPI-[A-Z0-9_]+$/, {
@@ -132,14 +132,14 @@ const kpiSchema = z.object({
       totalPatients: z.number().int().min(1),
       ageRange: z
         .object({ min: z.number().int().min(0), max: z.number().int().min(0) })
-        .refine(r => r.min <= r.max, {
+        .refine((r) => r.min <= r.max, {
           message: 'ageRange.min must be <= max',
         }),
       conditions: z.array(z.string()).optional(),
       excludePHI: z.boolean().optional(),
     })
     .optional(),
-});
+})
 
 const aiGovernanceSchema = z.object({
   modelId: z.string().min(3),
@@ -164,7 +164,7 @@ const aiGovernanceSchema = z.object({
       ]),
     )
     .default([]),
-});
+})
 
 const riskAssessmentSchema = z.object({
   riskId: z.string().regex(/^RISK-[A-Z0-9_-]+$/),
@@ -186,7 +186,7 @@ const riskAssessmentSchema = z.object({
   reviewCadence: z.enum(['monthly', 'quarterly']).optional(),
   status: z.enum(['mitigating', 'accepted', 'transferred']).optional(),
   complianceMapping: z.array(z.string()).optional(),
-});
+})
 
 const performanceBudgetSchema = z.object({
   metric: z.enum(['lcp', 'cls', 'fid', 'api_latency', 'bundle_size']),
@@ -196,7 +196,7 @@ const performanceBudgetSchema = z.object({
   monitoringEnabled: z.boolean().optional(),
   alertThreshold: z.number().min(0).max(1).optional(),
   escalationPath: z.string().optional(),
-});
+})
 
 const auditTrailSchema = z.object({
   id: z.string().uuid(),
@@ -216,7 +216,7 @@ const auditTrailSchema = z.object({
     .optional(),
   phi_accessed: z.boolean().optional(),
   retention_expires: z.date().optional(),
-});
+})
 
 export const COMPLIANCE_SCHEMAS = {
   PHIPatient: phiPatientSchema,
@@ -226,25 +226,25 @@ export const COMPLIANCE_SCHEMAS = {
   RiskAssessment: riskAssessmentSchema,
   PerformanceBudget: performanceBudgetSchema,
   AuditTrail: auditTrailSchema,
-};
+}
 
 // --- Validator Functions ---
 export function validatePHI(data: unknown) {
-  return COMPLIANCE_SCHEMAS.PHIPatient.parse(data);
+  return COMPLIANCE_SCHEMAS.PHIPatient.parse(data)
 }
 export function validateConsent(data: unknown) {
-  return COMPLIANCE_SCHEMAS.ConsentRecord.parse(data);
+  return COMPLIANCE_SCHEMAS.ConsentRecord.parse(data)
 }
 export function validateKPI(data: unknown) {
-  return COMPLIANCE_SCHEMAS.HealthcareKPI.parse(data);
+  return COMPLIANCE_SCHEMAS.HealthcareKPI.parse(data)
 }
 export function validateAIGovernance(data: unknown) {
   try {
-    const parsed = COMPLIANCE_SCHEMAS.AIEvaluation.parse(data);
-    return { valid: true, data: parsed, errors: [] };
+    const parsed = COMPLIANCE_SCHEMAS.AIEvaluation.parse(data)
+    return { valid: true, data: parsed, errors: [] }
   } catch (_err: unknown) {
     if (_err && typeof _err === 'object' && 'issues' in _err) {
-      return { valid: false, data: null, errors: (_err as { issues: unknown[] }).issues };
+      return { valid: false, data: null, errors: (_err as { issues: unknown[] }).issues }
     }
     return {
       valid: false,
@@ -254,11 +254,11 @@ export function validateAIGovernance(data: unknown) {
           ? (_err as { message: string }).message
           : 'Unknown error',
       }],
-    };
+    }
   }
 }
 export function validateRisk(data: unknown) {
-  return COMPLIANCE_SCHEMAS.RiskAssessment.parse(data);
+  return COMPLIANCE_SCHEMAS.RiskAssessment.parse(data)
 }
 
 export function checkComplianceRequirements(
@@ -267,11 +267,11 @@ export function checkComplianceRequirements(
 ) {
   try {
     // @ts-ignore dynamic index
-    const parsed = COMPLIANCE_SCHEMAS[schemaType].parse(data);
-    return { valid: true, data: parsed, errors: [] };
+    const parsed = COMPLIANCE_SCHEMAS[schemaType].parse(data)
+    return { valid: true, data: parsed, errors: [] }
   } catch (_err: unknown) {
     if (_err && typeof _err === 'object' && 'issues' in _err) {
-      return { valid: false, data: null, errors: (_err as { issues: unknown[] }).issues };
+      return { valid: false, data: null, errors: (_err as { issues: unknown[] }).issues }
     }
     return {
       valid: false,
@@ -281,10 +281,10 @@ export function checkComplianceRequirements(
           ? (_err as { message: string }).message
           : 'Unknown error',
       }],
-    };
+    }
   }
 }
 
 export function validate<K extends SchemaKey>(key: K, data: unknown) {
-  return schemas[key].parse(data);
+  return schemas[key].parse(data)
 }

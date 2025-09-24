@@ -7,9 +7,9 @@ import {
   AppointmentStatus,
   CreateAppointmentRequest,
   UpdateAppointmentRequest,
-} from '@neonpro/domain';
-import { SupabaseClient } from '@supabase/supabase-js';
-import { databaseLogger, logHealthcareError } from '../../../shared/src/logging/healthcare-logger';
+} from '@neonpro/domain'
+import { SupabaseClient } from '@supabase/supabase-js'
+import { databaseLogger, logHealthcareError } from '../../../shared/src/logging/healthcare-logger'
 
 /**
  * Supabase implementation of AppointmentRepository
@@ -31,19 +31,19 @@ export class AppointmentRepository implements IAppointmentRepository {
         `,
         )
         .eq('id', id)
-        .single();
+        .single()
 
       if (error) {
-        logHealthcareError('database', error, { method: 'findById', appointmentId: id });
-        return null;
+        logHealthcareError('database', error, { method: 'findById', appointmentId: id })
+        return null
       }
 
-      if (!data) return null;
+      if (!data) return null
 
-      return this.mapDatabaseAppointmentToDomain(data);
+      return this.mapDatabaseAppointmentToDomain(data)
     } catch (error) {
-      logHealthcareError('database', error, { method: 'findById', appointmentId: id });
-      return null;
+      logHealthcareError('database', error, { method: 'findById', appointmentId: id })
+      return null
     }
   }
 
@@ -55,62 +55,62 @@ export class AppointmentRepository implements IAppointmentRepository {
       let query = this.supabase
         .from('appointments')
         .select('*', { count: 'exact' })
-        .eq('patient_id', patientId);
+        .eq('patient_id', patientId)
 
       // Apply filters
       if (options?.status) {
-        query = query.eq('status', options.status);
+        query = query.eq('status', options.status)
       }
 
       // Apply date range filter
       if (options?.startDate) {
-        query = query.gte('start_time', options.startDate.toISOString());
+        query = query.gte('start_time', options.startDate.toISOString())
       }
 
       if (options?.endDate) {
-        query = query.lte('end_time', options.endDate.toISOString());
+        query = query.lte('end_time', options.endDate.toISOString())
       }
 
       // Apply pagination
       if (options?.limit) {
-        query = query.limit(options.limit);
+        query = query.limit(options.limit)
       }
 
       if (options?.offset) {
         query = query.range(
           options.offset,
           options.offset + (options.limit || 10) - 1,
-        );
+        )
       }
 
       // Apply sorting
       if (options?.sortBy) {
-        const sortOrder = options.sortOrder === 'desc' ? false : true;
-        query = query.order(options.sortBy, { ascending: sortOrder });
+        const sortOrder = options.sortOrder === 'desc' ? false : true
+        query = query.order(options.sortBy, { ascending: sortOrder })
       } else {
-        query = query.order('start_time', { ascending: false });
+        query = query.order('start_time', { ascending: false })
       }
 
-      const { data, error, count } = await query;
+      const { data, error, count } = await query
 
       if (error) {
-        logHealthcareError('database', error, { method: 'findByPatientId', patientId });
-        return { appointments: [], total: 0 };
+        logHealthcareError('database', error, { method: 'findByPatientId', patientId })
+        return { appointments: [], total: 0 }
       }
 
       const appointments = data
         ? data.map(this.mapDatabaseAppointmentToDomain)
-        : [];
+        : []
 
       return {
         appointments,
         total: count || 0,
         limit: options?.limit || 10,
         offset: options?.offset || 0,
-      };
+      }
     } catch (error) {
-      logHealthcareError('database', error, { method: 'findByPatientId', patientId });
-      return { appointments: [], total: 0 };
+      logHealthcareError('database', error, { method: 'findByPatientId', patientId })
+      return { appointments: [], total: 0 }
     }
   }
 
@@ -122,62 +122,62 @@ export class AppointmentRepository implements IAppointmentRepository {
       let query = this.supabase
         .from('appointments')
         .select('*', { count: 'exact' })
-        .eq('professional_id', professionalId);
+        .eq('professional_id', professionalId)
 
       // Apply filters
       if (options?.status) {
-        query = query.eq('status', options.status);
+        query = query.eq('status', options.status)
       }
 
       // Apply date range filter
       if (options?.startDate) {
-        query = query.gte('start_time', options.startDate.toISOString());
+        query = query.gte('start_time', options.startDate.toISOString())
       }
 
       if (options?.endDate) {
-        query = query.lte('end_time', options.endDate.toISOString());
+        query = query.lte('end_time', options.endDate.toISOString())
       }
 
       // Apply pagination
       if (options?.limit) {
-        query = query.limit(options.limit);
+        query = query.limit(options.limit)
       }
 
       if (options?.offset) {
         query = query.range(
           options.offset,
           options.offset + (options.limit || 10) - 1,
-        );
+        )
       }
 
       // Apply sorting
       if (options?.sortBy) {
-        const sortOrder = options.sortOrder === 'desc' ? false : true;
-        query = query.order(options.sortBy, { ascending: sortOrder });
+        const sortOrder = options.sortOrder === 'desc' ? false : true
+        query = query.order(options.sortBy, { ascending: sortOrder })
       } else {
-        query = query.order('start_time', { ascending: false });
+        query = query.order('start_time', { ascending: false })
       }
 
-      const { data, error, count } = await query;
+      const { data, error, count } = await query
 
       if (error) {
-        logHealthcareError('database', error, { method: 'findByProfessionalId', professionalId });
-        return { appointments: [], total: 0 };
+        logHealthcareError('database', error, { method: 'findByProfessionalId', professionalId })
+        return { appointments: [], total: 0 }
       }
 
       const appointments = data
         ? data.map(this.mapDatabaseAppointmentToDomain)
-        : [];
+        : []
 
       return {
         appointments,
         total: count || 0,
         limit: options?.limit || 10,
         offset: options?.offset || 0,
-      };
+      }
     } catch (error) {
-      logHealthcareError('database', error, { method: 'findByProfessionalId', professionalId });
-      return { appointments: [], total: 0 };
+      logHealthcareError('database', error, { method: 'findByProfessionalId', professionalId })
+      return { appointments: [], total: 0 }
     }
   }
 
@@ -189,62 +189,62 @@ export class AppointmentRepository implements IAppointmentRepository {
       let query = this.supabase
         .from('appointments')
         .select('*', { count: 'exact' })
-        .eq('clinic_id', clinicId);
+        .eq('clinic_id', clinicId)
 
       // Apply filters
       if (options?.status) {
-        query = query.eq('status', options.status);
+        query = query.eq('status', options.status)
       }
 
       // Apply date range filter
       if (options?.startDate) {
-        query = query.gte('start_time', options.startDate.toISOString());
+        query = query.gte('start_time', options.startDate.toISOString())
       }
 
       if (options?.endDate) {
-        query = query.lte('end_time', options.endDate.toISOString());
+        query = query.lte('end_time', options.endDate.toISOString())
       }
 
       // Apply pagination
       if (options?.limit) {
-        query = query.limit(options.limit);
+        query = query.limit(options.limit)
       }
 
       if (options?.offset) {
         query = query.range(
           options.offset,
           options.offset + (options.limit || 10) - 1,
-        );
+        )
       }
 
       // Apply sorting
       if (options?.sortBy) {
-        const sortOrder = options.sortOrder === 'desc' ? false : true;
-        query = query.order(options.sortBy, { ascending: sortOrder });
+        const sortOrder = options.sortOrder === 'desc' ? false : true
+        query = query.order(options.sortBy, { ascending: sortOrder })
       } else {
-        query = query.order('start_time', { ascending: false });
+        query = query.order('start_time', { ascending: false })
       }
 
-      const { data, error, count } = await query;
+      const { data, error, count } = await query
 
       if (error) {
-        logHealthcareError('database', error, { method: 'findByClinicId', clinicId });
-        return { appointments: [], total: 0 };
+        logHealthcareError('database', error, { method: 'findByClinicId', clinicId })
+        return { appointments: [], total: 0 }
       }
 
       const appointments = data
         ? data.map(this.mapDatabaseAppointmentToDomain)
-        : [];
+        : []
 
       return {
         appointments,
         total: count || 0,
         limit: options?.limit || 10,
         offset: options?.offset || 0,
-      };
+      }
     } catch (error) {
-      logHealthcareError('database', error, { method: 'findByClinicId', clinicId });
-      return { appointments: [], total: 0 };
+      logHealthcareError('database', error, { method: 'findByClinicId', clinicId })
+      return { appointments: [], total: 0 }
     }
   }
 
@@ -255,76 +255,76 @@ export class AppointmentRepository implements IAppointmentRepository {
     try {
       let query = this.supabase
         .from('appointments')
-        .select('*', { count: 'exact' });
+        .select('*', { count: 'exact' })
 
       // Apply filters
       if (filter.clinicId) {
-        query = query.eq('clinic_id', filter.clinicId);
+        query = query.eq('clinic_id', filter.clinicId)
       }
 
       if (filter.patientId) {
-        query = query.eq('patient_id', filter.patientId);
+        query = query.eq('patient_id', filter.patientId)
       }
 
       if (filter.professionalId) {
-        query = query.eq('professional_id', filter.professionalId);
+        query = query.eq('professional_id', filter.professionalId)
       }
 
       if (filter.status) {
-        query = query.eq('status', filter.status);
+        query = query.eq('status', filter.status)
       }
 
       if (filter.serviceTypeId) {
-        query = query.eq('service_type_id', filter.serviceTypeId);
+        query = query.eq('service_type_id', filter.serviceTypeId)
       }
 
       // Apply date range filter
       if (filter.dateRange) {
         query = query
           .gte('start_time', filter.dateRange.start.toISOString())
-          .lte('end_time', filter.dateRange.end.toISOString());
+          .lte('end_time', filter.dateRange.end.toISOString())
       }
 
       // Apply pagination
       if (options?.limit) {
-        query = query.limit(options.limit);
+        query = query.limit(options.limit)
       }
 
       if (options?.offset) {
         query = query.range(
           options.offset,
           options.offset + (options.limit || 10) - 1,
-        );
+        )
       }
 
       // Apply sorting
       if (options?.sortBy) {
-        const sortOrder = options.sortOrder === 'desc' ? false : true;
-        query = query.order(options.sortBy, { ascending: sortOrder });
+        const sortOrder = options.sortOrder === 'desc' ? false : true
+        query = query.order(options.sortBy, { ascending: sortOrder })
       } else {
-        query = query.order('start_time', { ascending: false });
+        query = query.order('start_time', { ascending: false })
       }
 
-      const { data, error, count } = await query;
+      const { data, error, count } = await query
 
       if (error) {
-        logHealthcareError('database', error, { method: 'findWithFilter', filter });
-        return { appointments: [], total: 0 };
+        logHealthcareError('database', error, { method: 'findWithFilter', filter })
+        return { appointments: [], total: 0 }
       }
 
       const appointments = data
         ? data.map(this.mapDatabaseAppointmentToDomain)
-        : [];
+        : []
 
       return {
         appointments,
         total: count || 0,
         limit: options?.limit || 10,
         offset: options?.offset || 0,
-      };
+      }
     } catch (error) {
-      logHealthcareError('database', error, { method: 'findWithFilter', filter });
-      return { appointments: [], total: 0 };
+      logHealthcareError('database', error, { method: 'findWithFilter', filter })
+      return { appointments: [], total: 0 }
     }
   }
 
@@ -332,23 +332,23 @@ export class AppointmentRepository implements IAppointmentRepository {
     appointmentData: CreateAppointmentRequest,
   ): Promise<Appointment> {
     try {
-      const dbAppointment = this.mapCreateRequestToDatabase(appointmentData);
+      const dbAppointment = this.mapCreateRequestToDatabase(appointmentData)
 
       const { data, error } = await this.supabase
         .from('appointments')
         .insert(dbAppointment)
         .select()
-        .single();
+        .single()
 
       if (error) {
-        logHealthcareError('database', error, { method: 'create', appointmentData });
-        throw new Error(`Failed to create appointment: ${error.message}`);
+        logHealthcareError('database', error, { method: 'create', appointmentData })
+        throw new Error(`Failed to create appointment: ${error.message}`)
       }
 
-      return this.mapDatabaseAppointmentToDomain(data);
+      return this.mapDatabaseAppointmentToDomain(data)
     } catch (error) {
-      logHealthcareError('database', error, { method: 'create', appointmentData });
-      throw error;
+      logHealthcareError('database', error, { method: 'create', appointmentData })
+      throw error
     }
   }
 
@@ -357,32 +357,32 @@ export class AppointmentRepository implements IAppointmentRepository {
     appointmentData: UpdateAppointmentRequest,
   ): Promise<Appointment> {
     try {
-      const updateData = this.mapUpdateRequestToDatabase(appointmentData);
+      const updateData = this.mapUpdateRequestToDatabase(appointmentData)
 
       const { data, error } = await this.supabase
         .from('appointments')
         .update(updateData)
         .eq('id', id)
         .select()
-        .single();
+        .single()
 
       if (error) {
         logHealthcareError('database', error, {
           method: 'update',
           appointmentId: id,
           appointmentData,
-        });
-        throw new Error(`Failed to update appointment: ${error.message}`);
+        })
+        throw new Error(`Failed to update appointment: ${error.message}`)
       }
 
-      return this.mapDatabaseAppointmentToDomain(data);
+      return this.mapDatabaseAppointmentToDomain(data)
     } catch (error) {
       logHealthcareError('database', error, {
         method: 'update',
         appointmentId: id,
         appointmentData,
-      });
-      throw error;
+      })
+      throw error
     }
   }
 
@@ -391,17 +391,17 @@ export class AppointmentRepository implements IAppointmentRepository {
       const { error } = await this.supabase
         .from('appointments')
         .delete()
-        .eq('id', id);
+        .eq('id', id)
 
       if (error) {
-        logHealthcareError('database', error, { method: 'delete', appointmentId: id });
-        return false;
+        logHealthcareError('database', error, { method: 'delete', appointmentId: id })
+        return false
       }
 
-      return true;
+      return true
     } catch (error) {
-      logHealthcareError('database', error, { method: 'delete', appointmentId: id });
-      return false;
+      logHealthcareError('database', error, { method: 'delete', appointmentId: id })
+      return false
     }
   }
 
@@ -415,15 +415,15 @@ export class AppointmentRepository implements IAppointmentRepository {
         .from('appointments')
         .select('*')
         .gte('start_time', startDate.toISOString())
-        .lte('end_time', endDate.toISOString());
+        .lte('end_time', endDate.toISOString())
 
       if (clinicId) {
-        query = query.eq('clinic_id', clinicId);
+        query = query.eq('clinic_id', clinicId)
       }
 
-      query = query.order('start_time', { ascending: true });
+      query = query.order('start_time', { ascending: true })
 
-      const { data, error } = await query;
+      const { data, error } = await query
 
       if (error) {
         logHealthcareError('database', error, {
@@ -431,21 +431,21 @@ export class AppointmentRepository implements IAppointmentRepository {
           startDate,
           endDate,
           clinicId,
-        });
-        return [];
+        })
+        return []
       }
 
-      if (!data) return [];
+      if (!data) return []
 
-      return data.map(this.mapDatabaseAppointmentToDomain);
+      return data.map(this.mapDatabaseAppointmentToDomain)
     } catch (error) {
       logHealthcareError('database', error, {
         method: 'findByDateRange',
         startDate,
         endDate,
         clinicId,
-      });
-      return [];
+      })
+      return []
     }
   }
 
@@ -453,45 +453,45 @@ export class AppointmentRepository implements IAppointmentRepository {
     try {
       let query = this.supabase
         .from('appointments')
-        .select('*', { count: 'exact', head: true });
+        .select('*', { count: 'exact', head: true })
 
       if (filter.clinicId) {
-        query = query.eq('clinic_id', filter.clinicId);
+        query = query.eq('clinic_id', filter.clinicId)
       }
 
       if (filter.patientId) {
-        query = query.eq('patient_id', filter.patientId);
+        query = query.eq('patient_id', filter.patientId)
       }
 
       if (filter.professionalId) {
-        query = query.eq('professional_id', filter.professionalId);
+        query = query.eq('professional_id', filter.professionalId)
       }
 
       if (filter.status) {
-        query = query.eq('status', filter.status);
+        query = query.eq('status', filter.status)
       }
 
       if (filter.serviceTypeId) {
-        query = query.eq('service_type_id', filter.serviceTypeId);
+        query = query.eq('service_type_id', filter.serviceTypeId)
       }
 
       if (filter.dateRange) {
         query = query
           .gte('start_time', filter.dateRange.start.toISOString())
-          .lte('end_time', filter.dateRange.end.toISOString());
+          .lte('end_time', filter.dateRange.end.toISOString())
       }
 
-      const { count, error } = await query;
+      const { count, error } = await query
 
       if (error) {
-        logHealthcareError('database', error, { method: 'count', filter });
-        return 0;
+        logHealthcareError('database', error, { method: 'count', filter })
+        return 0
       }
 
-      return count || 0;
+      return count || 0
     } catch (error) {
-      logHealthcareError('database', error, { method: 'count', filter });
-      return 0;
+      logHealthcareError('database', error, { method: 'count', filter })
+      return 0
     }
   }
 
@@ -528,7 +528,7 @@ export class AppointmentRepository implements IAppointmentRepository {
       end: dbAppointment.end_time,
       color: dbAppointment.color,
       description: dbAppointment.notes,
-    };
+    }
   }
 
   /**
@@ -550,50 +550,50 @@ export class AppointmentRepository implements IAppointmentRepository {
       created_by: request.createdBy,
       title: request.title,
       color: request.color,
-    };
+    }
   }
 
   /**
    * Maps update request to database format
    */
   private mapUpdateRequestToDatabase(request: UpdateAppointmentRequest): any {
-    const updateData: any = {};
+    const updateData: any = {}
 
-    if (request.status !== undefined) updateData.status = request.status;
+    if (request.status !== undefined) updateData.status = request.status
     if (request.startTime !== undefined) {
-      updateData.start_time = request.startTime;
+      updateData.start_time = request.startTime
     }
-    if (request.endTime !== undefined) updateData.end_time = request.endTime;
-    if (request.notes !== undefined) updateData.notes = request.notes;
+    if (request.endTime !== undefined) updateData.end_time = request.endTime
+    if (request.notes !== undefined) updateData.notes = request.notes
     if (request.internalNotes !== undefined) {
-      updateData.internal_notes = request.internalNotes;
+      updateData.internal_notes = request.internalNotes
     }
     if (request.reminderSentAt !== undefined) {
-      updateData.reminder_sent_at = request.reminderSentAt;
+      updateData.reminder_sent_at = request.reminderSentAt
     }
     if (request.confirmationSentAt !== undefined) {
-      updateData.confirmation_sent_at = request.confirmationSentAt;
+      updateData.confirmation_sent_at = request.confirmationSentAt
     }
     if (request.whatsappReminderSent !== undefined) {
-      updateData.whatsapp_reminder_sent = request.whatsappReminderSent;
+      updateData.whatsapp_reminder_sent = request.whatsappReminderSent
     }
     if (request.smsReminderSent !== undefined) {
-      updateData.sms_reminder_sent = request.smsReminderSent;
+      updateData.sms_reminder_sent = request.smsReminderSent
     }
-    if (request.roomId !== undefined) updateData.room_id = request.roomId;
-    if (request.priority !== undefined) updateData.priority = request.priority;
+    if (request.roomId !== undefined) updateData.room_id = request.roomId
+    if (request.priority !== undefined) updateData.priority = request.priority
     if (request.cancelledAt !== undefined) {
-      updateData.cancelled_at = request.cancelledAt;
+      updateData.cancelled_at = request.cancelledAt
     }
     if (request.cancelledBy !== undefined) {
-      updateData.cancelled_by = request.cancelledBy;
+      updateData.cancelled_by = request.cancelledBy
     }
     if (request.cancellationReason !== undefined) {
-      updateData.cancellation_reason = request.cancellationReason;
+      updateData.cancellation_reason = request.cancellationReason
     }
-    if (request.title !== undefined) updateData.title = request.title;
-    if (request.color !== undefined) updateData.color = request.color;
+    if (request.title !== undefined) updateData.title = request.title
+    if (request.color !== undefined) updateData.color = request.color
 
-    return updateData;
+    return updateData
   }
 }

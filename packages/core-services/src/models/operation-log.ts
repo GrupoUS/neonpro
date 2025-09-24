@@ -9,8 +9,8 @@ import type {
   EnhancedAIModel,
   MedicalSpecialty,
   SubscriptionTier,
-} from '@neonpro/types';
-import { getLogger } from '../config/logger';
+} from '@neonpro/types'
+import { getLogger } from '../config/logger'
 
 // ================================================
 // OPERATION LOG INTERFACES
@@ -28,12 +28,12 @@ export type OperationCategory =
   | 'security_event'
   | 'billing_event'
   | 'data_processing'
-  | 'admin_action';
+  | 'admin_action'
 
 /**
  * Operation severity levels for alerting and monitoring
  */
-export type OperationSeverity = 'info' | 'warning' | 'error' | 'critical';
+export type OperationSeverity = 'info' | 'warning' | 'error' | 'critical'
 
 /**
  * Compliance frameworks for regulatory tracking
@@ -43,7 +43,7 @@ export type ComplianceFramework =
   | 'CFM'
   | 'ANVISA'
   | 'ISO27001'
-  | 'HIPAA';
+  | 'HIPAA'
 
 /**
  * Data processing purposes for LGPD compliance
@@ -52,123 +52,123 @@ export type DataProcessingPurpose =
   | 'analytics'
   | 'diagnosis'
   | 'training'
-  | 'audit';
+  | 'audit'
 
 /**
  * Comprehensive operation log entry
  */
 export interface OperationLogEntry {
-  readonly id: string;
-  readonly timestamp: Date;
+  readonly id: string
+  readonly timestamp: Date
 
   // Basic Operation Info
-  readonly category: OperationCategory;
-  readonly operation: string;
-  readonly description: string;
-  readonly severity: OperationSeverity;
+  readonly category: OperationCategory
+  readonly operation: string
+  readonly description: string
+  readonly severity: OperationSeverity
 
   // User and Context
-  readonly clinicId: string;
-  readonly _userId?: string;
-  readonly sessionId?: string;
-  readonly userRole?: string;
-  readonly ipAddress?: string;
-  readonly userAgent?: string;
+  readonly clinicId: string
+  readonly _userId?: string
+  readonly sessionId?: string
+  readonly userRole?: string
+  readonly ipAddress?: string
+  readonly userAgent?: string
 
   // AI-Specific Context
-  readonly modelCode?: EnhancedAIModel;
-  readonly planCode?: SubscriptionTier;
-  readonly featureCode?: AIFeatureCode;
-  readonly medicalSpecialty?: MedicalSpecialty;
+  readonly modelCode?: EnhancedAIModel
+  readonly planCode?: SubscriptionTier
+  readonly featureCode?: AIFeatureCode
+  readonly medicalSpecialty?: MedicalSpecialty
 
   // Request/Response Data
-  readonly requestData?: Record<string, any>;
-  readonly responseData?: Record<string, any>;
+  readonly requestData?: Record<string, any>
+  readonly responseData?: Record<string, any>
   readonly errorDetails?: {
-    readonly code: string;
-    readonly message: string;
-    readonly stack?: string;
-  };
+    readonly code: string
+    readonly message: string
+    readonly stack?: string
+  }
 
   // Performance Metrics
-  readonly duration?: number; // milliseconds
-  readonly costUsd?: number;
-  readonly tokensUsed?: number;
-  readonly cacheHit?: boolean;
+  readonly duration?: number // milliseconds
+  readonly costUsd?: number
+  readonly tokensUsed?: number
+  readonly cacheHit?: boolean
 
   // Compliance and Security
-  readonly complianceFrameworks: ComplianceFramework[];
-  readonly dataProcessingPurpose?: DataProcessingPurpose;
-  readonly personalDataInvolved: boolean;
-  readonly sensitiveDataLevel: 'none' | 'low' | 'medium' | 'high' | 'critical';
-  readonly anonymizationApplied: boolean;
-  readonly consentId?: string;
-  readonly consentStatus: 'valid' | 'missing' | 'invalid' | 'withdrawn';
+  readonly complianceFrameworks: ComplianceFramework[]
+  readonly dataProcessingPurpose?: DataProcessingPurpose
+  readonly personalDataInvolved: boolean
+  readonly sensitiveDataLevel: 'none' | 'low' | 'medium' | 'high' | 'critical'
+  readonly anonymizationApplied: boolean
+  readonly consentId?: string
+  readonly consentStatus: 'valid' | 'missing' | 'invalid' | 'withdrawn'
 
   // Audit Trail
-  readonly auditTrail: AuditTrail;
+  readonly auditTrail: AuditTrail
 
   // Healthcare Specific
-  readonly patientInvolved?: boolean;
-  readonly diagnosisAssistance?: boolean;
-  readonly prescriptionInvolved?: boolean;
-  readonly medicalAdviceGiven?: boolean;
-  readonly regulatoryFlags: string[];
+  readonly patientInvolved?: boolean
+  readonly diagnosisAssistance?: boolean
+  readonly prescriptionInvolved?: boolean
+  readonly medicalAdviceGiven?: boolean
+  readonly regulatoryFlags: string[]
 
   // System Context
-  readonly systemVersion?: string;
-  readonly environmentType: 'development' | 'staging' | 'production';
-  readonly correlationId?: string;
-  readonly parentOperationId?: string;
+  readonly systemVersion?: string
+  readonly environmentType: 'development' | 'staging' | 'production'
+  readonly correlationId?: string
+  readonly parentOperationId?: string
 
   // Additional Metadata
-  readonly tags: string[];
-  readonly metadata: Record<string, any>;
+  readonly tags: string[]
+  readonly metadata: Record<string, any>
 }
 
 /**
  * Log query filters for searching and filtering
  */
 export interface LogQueryFilters {
-  readonly startDate?: Date;
-  readonly endDate?: Date;
-  readonly categories?: OperationCategory[];
-  readonly severities?: OperationSeverity[];
-  readonly clinicIds?: string[];
-  readonly userIds?: string[];
-  readonly operations?: string[];
-  readonly complianceFrameworks?: ComplianceFramework[];
-  readonly personalDataOnly?: boolean;
-  readonly errorOnly?: boolean;
-  readonly tags?: string[];
-  readonly searchQuery?: string;
-  readonly limit?: number;
-  readonly offset?: number;
+  readonly startDate?: Date
+  readonly endDate?: Date
+  readonly categories?: OperationCategory[]
+  readonly severities?: OperationSeverity[]
+  readonly clinicIds?: string[]
+  readonly userIds?: string[]
+  readonly operations?: string[]
+  readonly complianceFrameworks?: ComplianceFramework[]
+  readonly personalDataOnly?: boolean
+  readonly errorOnly?: boolean
+  readonly tags?: string[]
+  readonly searchQuery?: string
+  readonly limit?: number
+  readonly offset?: number
 }
 
 /**
  * Log aggregation results for analytics
  */
 export interface LogAggregation {
-  readonly period: 'hour' | 'day' | 'week' | 'month';
-  readonly timestamp: Date;
+  readonly period: 'hour' | 'day' | 'week' | 'month'
+  readonly timestamp: Date
   readonly counts: {
-    readonly total: number;
-    readonly byCategory: Record<OperationCategory, number>;
-    readonly bySeverity: Record<OperationSeverity, number>;
-    readonly errors: number;
-    readonly complianceEvents: number;
-  };
+    readonly total: number
+    readonly byCategory: Record<OperationCategory, number>
+    readonly bySeverity: Record<OperationSeverity, number>
+    readonly errors: number
+    readonly complianceEvents: number
+  }
   readonly performance: {
-    readonly averageDuration: number;
-    readonly totalCost: number;
-    readonly totalTokens: number;
-  };
+    readonly averageDuration: number
+    readonly totalCost: number
+    readonly totalTokens: number
+  }
   readonly compliance: {
-    readonly personalDataEvents: number;
-    readonly consentIssues: number;
-    readonly regulatoryFlags: string[];
-  };
+    readonly personalDataEvents: number
+    readonly consentIssues: number
+    readonly regulatoryFlags: string[]
+  }
 }
 
 // ================================================
@@ -179,8 +179,8 @@ export interface LogAggregation {
  * Operation log model for comprehensive audit trails and compliance tracking
  */
 export class OperationLog {
-  private _entries: Map<string, OperationLogEntry> = new Map();
-  private _aggregations: Map<string, LogAggregation> = new Map();
+  private _entries: Map<string, OperationLogEntry> = new Map()
+  private _aggregations: Map<string, LogAggregation> = new Map()
 
   constructor() {}
 
@@ -194,8 +194,8 @@ export class OperationLog {
   logOperation(
     entry: Omit<OperationLogEntry, 'id' | 'timestamp' | 'auditTrail'>,
   ): OperationLogEntry {
-    const now = new Date();
-    const id = this.generateLogId();
+    const now = new Date()
+    const id = this.generateLogId()
 
     const fullEntry: OperationLogEntry = {
       ...entry,
@@ -222,41 +222,41 @@ export class OperationLog {
           ...entry.metadata,
         },
       },
-    };
+    }
 
-    this._entries.set(id, fullEntry);
-    this.updateAggregations(fullEntry);
+    this._entries.set(id, fullEntry)
+    this.updateAggregations(fullEntry)
 
     // Trigger alerts for critical operations
     if (fullEntry.severity === 'critical') {
-      this.triggerCriticalAlert(fullEntry);
+      this.triggerCriticalAlert(fullEntry)
     }
 
-    return fullEntry;
+    return fullEntry
   }
 
   /**
    * Logs an AI request operation
    */
   logAIRequest(params: {
-    clinicId: string;
-    _userId: string;
-    sessionId?: string;
-    modelCode: EnhancedAIModel;
-    planCode: SubscriptionTier;
-    medicalSpecialty?: MedicalSpecialty;
-    requestData?: Record<string, any>;
-    responseData?: Record<string, any>;
-    duration: number;
-    costUsd: number;
-    tokensUsed: number;
-    cacheHit: boolean;
-    personalDataInvolved: boolean;
-    consentId?: string;
-    patientInvolved?: boolean;
-    diagnosisAssistance?: boolean;
-    ipAddress?: string;
-    userAgent?: string;
+    clinicId: string
+    _userId: string
+    sessionId?: string
+    modelCode: EnhancedAIModel
+    planCode: SubscriptionTier
+    medicalSpecialty?: MedicalSpecialty
+    requestData?: Record<string, any>
+    responseData?: Record<string, any>
+    duration: number
+    costUsd: number
+    tokensUsed: number
+    cacheHit: boolean
+    personalDataInvolved: boolean
+    consentId?: string
+    patientInvolved?: boolean
+    diagnosisAssistance?: boolean
+    ipAddress?: string
+    userAgent?: string
   }): OperationLogEntry {
     return this.logOperation({
       category: 'ai_request',
@@ -306,20 +306,20 @@ export class OperationLog {
         cacheEfficiency: params.cacheHit ? 'high' : 'none',
         costOptimization: params.cacheHit ? 'applied' : 'opportunity',
       },
-    });
+    })
   }
 
   /**
    * Logs a plan change operation
    */
   logPlanChange(params: {
-    clinicId: string;
-    _userId: string;
-    fromPlan: SubscriptionTier;
-    toPlan: SubscriptionTier;
-    reason: string;
-    ipAddress?: string;
-    userAgent?: string;
+    clinicId: string
+    _userId: string
+    fromPlan: SubscriptionTier
+    toPlan: SubscriptionTier
+    reason: string
+    ipAddress?: string
+    userAgent?: string
   }): OperationLogEntry {
     return this.logOperation({
       category: 'plan_change',
@@ -345,20 +345,20 @@ export class OperationLog {
         fromPlan: params.fromPlan,
         toPlan: params.toPlan,
       },
-    });
+    })
   }
 
   /**
    * Logs a compliance check operation
    */
   logComplianceCheck(params: {
-    clinicId: string;
-    _userId?: string;
-    framework: ComplianceFramework;
-    checkType: string;
-    result: 'pass' | 'fail' | 'warning';
-    details: Record<string, any>;
-    violations?: string[];
+    clinicId: string
+    _userId?: string
+    framework: ComplianceFramework
+    checkType: string
+    result: 'pass' | 'fail' | 'warning'
+    details: Record<string, any>
+    violations?: string[]
   }): OperationLogEntry {
     return this.logOperation({
       category: 'compliance_check',
@@ -386,22 +386,22 @@ export class OperationLog {
         details: params.details,
         violations: params.violations,
       },
-    });
+    })
   }
 
   /**
    * Logs a security event
    */
   logSecurityEvent(params: {
-    clinicId: string;
-    _userId?: string;
-    eventType: string;
-    severity: OperationSeverity;
-    description: string;
-    ipAddress?: string;
-    userAgent?: string;
-    threatLevel?: 'low' | 'medium' | 'high' | 'critical';
-    blocked?: boolean;
+    clinicId: string
+    _userId?: string
+    eventType: string
+    severity: OperationSeverity
+    description: string
+    ipAddress?: string
+    userAgent?: string
+    threatLevel?: 'low' | 'medium' | 'high' | 'critical'
+    blocked?: boolean
   }): OperationLogEntry {
     return this.logOperation({
       category: 'security_event',
@@ -432,7 +432,7 @@ export class OperationLog {
         blocked: params.blocked,
         eventType: params.eventType,
       },
-    });
+    })
   }
 
   // ================================================
@@ -443,41 +443,41 @@ export class OperationLog {
    * Queries log entries with filters
    */
   queryLogs(filters: LogQueryFilters): OperationLogEntry[] {
-    let entries = Array.from(this._entries.values());
+    let entries = Array.from(this._entries.values())
 
     // Apply date filters
     if (filters.startDate) {
-      entries = entries.filter(e => e.timestamp >= filters.startDate!);
+      entries = entries.filter((e) => e.timestamp >= filters.startDate!)
     }
     if (filters.endDate) {
-      entries = entries.filter(e => e.timestamp <= filters.endDate!);
+      entries = entries.filter((e) => e.timestamp <= filters.endDate!)
     }
 
     // Apply category filters
     if (filters.categories && filters.categories.length > 0) {
-      entries = entries.filter(e => filters.categories!.includes(e.category));
+      entries = entries.filter((e) => filters.categories!.includes(e.category))
     }
 
     // Apply severity filters
     if (filters.severities && filters.severities.length > 0) {
-      entries = entries.filter(e => filters.severities!.includes(e.severity));
+      entries = entries.filter((e) => filters.severities!.includes(e.severity))
     }
 
     // Apply clinic filters
     if (filters.clinicIds && filters.clinicIds.length > 0) {
-      entries = entries.filter(e => filters.clinicIds!.includes(e.clinicId));
+      entries = entries.filter((e) => filters.clinicIds!.includes(e.clinicId))
     }
 
     // Apply user filters
     if (filters.userIds && filters.userIds.length > 0) {
       entries = entries.filter(
-        e => e._userId && filters.userIds!.includes(e._userId),
-      );
+        (e) => e._userId && filters.userIds!.includes(e._userId),
+      )
     }
 
     // Apply operation filters
     if (filters.operations && filters.operations.length > 0) {
-      entries = entries.filter(e => filters.operations!.includes(e.operation));
+      entries = entries.filter((e) => filters.operations!.includes(e.operation))
     }
 
     // Apply compliance filters
@@ -485,58 +485,58 @@ export class OperationLog {
       filters.complianceFrameworks
       && filters.complianceFrameworks.length > 0
     ) {
-      entries = entries.filter(e =>
-        e.complianceFrameworks.some(f => filters.complianceFrameworks!.includes(f))
-      );
+      entries = entries.filter((e) =>
+        e.complianceFrameworks.some((f) => filters.complianceFrameworks!.includes(f))
+      )
     }
 
     // Apply personal data filter
     if (filters.personalDataOnly) {
-      entries = entries.filter(e => e.personalDataInvolved);
+      entries = entries.filter((e) => e.personalDataInvolved)
     }
 
     // Apply error filter
     if (filters.errorOnly) {
       entries = entries.filter(
-        e => e.severity === 'error' || e.severity === 'critical' || e.errorDetails,
-      );
+        (e) => e.severity === 'error' || e.severity === 'critical' || e.errorDetails,
+      )
     }
 
     // Apply tag filters
     if (filters.tags && filters.tags.length > 0) {
-      entries = entries.filter(e => filters.tags!.some(tag => e.tags.includes(tag)));
+      entries = entries.filter((e) => filters.tags!.some((tag) => e.tags.includes(tag)))
     }
 
     // Apply text search
     if (filters.searchQuery) {
-      const query = filters.searchQuery.toLowerCase();
+      const query = filters.searchQuery.toLowerCase()
       entries = entries.filter(
-        e =>
+        (e) =>
           e.operation.toLowerCase().includes(query)
           || e.description.toLowerCase().includes(query)
-          || e.tags.some(tag => tag.toLowerCase().includes(query)),
-      );
+          || e.tags.some((tag) => tag.toLowerCase().includes(query)),
+      )
     }
 
     // Sort by timestamp (newest first)
-    entries.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
+    entries.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime())
 
     // Apply pagination
     if (filters.offset) {
-      entries = entries.slice(filters.offset);
+      entries = entries.slice(filters.offset)
     }
     if (filters.limit) {
-      entries = entries.slice(0, filters.limit);
+      entries = entries.slice(0, filters.limit)
     }
 
-    return entries;
+    return entries
   }
 
   /**
    * Gets a specific log entry by ID
    */
   getLogEntry(id: string): OperationLogEntry | null {
-    return this._entries.get(id) || null;
+    return this._entries.get(id) || null
   }
 
   /**
@@ -549,7 +549,7 @@ export class OperationLog {
     return this.queryLogs({
       userIds: [_userId],
       limit,
-    });
+    })
   }
 
   /**
@@ -564,7 +564,7 @@ export class OperationLog {
       complianceFrameworks: [framework],
       startDate,
       endDate,
-    });
+    })
   }
 
   /**
@@ -578,7 +578,7 @@ export class OperationLog {
       categories: ['security_event'],
       severities: severity ? [severity] : undefined,
       limit,
-    });
+    })
   }
 
   // ================================================
@@ -594,10 +594,10 @@ export class OperationLog {
     endDate?: Date,
   ): LogAggregation[] {
     return Array.from(this._aggregations.values())
-      .filter(agg => agg.period === period)
-      .filter(agg => !startDate || agg.timestamp >= startDate)
-      .filter(agg => !endDate || agg.timestamp <= endDate)
-      .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
+      .filter((agg) => agg.period === period)
+      .filter((agg) => !startDate || agg.timestamp >= startDate)
+      .filter((agg) => !endDate || agg.timestamp <= endDate)
+      .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime())
   }
 
   /**
@@ -607,17 +607,17 @@ export class OperationLog {
     startDate?: Date,
     endDate?: Date,
   ): {
-    totalEvents: number;
-    byFramework: Record<ComplianceFramework, number>;
-    personalDataEvents: number;
-    consentIssues: number;
-    violations: string[];
-    complianceScore: number;
+    totalEvents: number
+    byFramework: Record<ComplianceFramework, number>
+    personalDataEvents: number
+    consentIssues: number
+    violations: string[]
+    complianceScore: number
   } {
     const complianceLogs = this.queryLogs({
       startDate,
       endDate,
-    }).filter(log => log.complianceFrameworks.length > 0);
+    }).filter((log) => log.complianceFrameworks.length > 0)
 
     const byFramework: Record<ComplianceFramework, number> = {
       LGPD: 0,
@@ -625,33 +625,33 @@ export class OperationLog {
       ANVISA: 0,
       ISO27001: 0,
       HIPAA: 0,
-    };
+    }
 
-    let personalDataEvents = 0;
-    let consentIssues = 0;
-    const violations = new Set<string>();
+    let personalDataEvents = 0
+    let consentIssues = 0
+    const violations = new Set<string>()
 
     for (const log of complianceLogs) {
       for (const framework of log.complianceFrameworks) {
-        byFramework[framework]++;
+        byFramework[framework]++
       }
 
       if (log.personalDataInvolved) {
-        personalDataEvents++;
+        personalDataEvents++
       }
 
       if (log.consentStatus !== 'valid') {
-        consentIssues++;
+        consentIssues++
       }
 
       for (const flag of log.regulatoryFlags) {
-        violations.add(flag);
+        violations.add(flag)
       }
     }
 
     const complianceScore = complianceLogs.length > 0
       ? Math.max(0, 100 - (consentIssues / complianceLogs.length) * 100)
-      : 100;
+      : 100
 
     return {
       totalEvents: complianceLogs.length,
@@ -660,7 +660,7 @@ export class OperationLog {
       consentIssues,
       violations: Array.from(violations),
       complianceScore,
-    };
+    }
   }
 
   /**
@@ -670,51 +670,51 @@ export class OperationLog {
     startDate?: Date,
     endDate?: Date,
   ): {
-    averageDuration: number;
-    totalCost: number;
-    totalTokens: number;
-    requestCount: number;
-    errorRate: number;
-    cacheHitRate: number;
+    averageDuration: number
+    totalCost: number
+    totalTokens: number
+    requestCount: number
+    errorRate: number
+    cacheHitRate: number
   } {
-    const entries = this.queryLogs({ startDate, endDate });
+    const entries = this.queryLogs({ startDate, endDate })
 
-    let totalDuration = 0;
-    let totalCost = 0;
-    let totalTokens = 0;
-    let requestCount = 0;
-    let errorCount = 0;
-    let cacheHits = 0;
-    let durationsCount = 0;
-    let cacheRequests = 0;
+    let totalDuration = 0
+    let totalCost = 0
+    let totalTokens = 0
+    let requestCount = 0
+    let errorCount = 0
+    let cacheHits = 0
+    let durationsCount = 0
+    let cacheRequests = 0
 
     for (const entry of entries) {
       if (entry.category === 'ai_request') {
-        requestCount++;
+        requestCount++
 
         if (entry.duration !== undefined) {
-          totalDuration += entry.duration;
-          durationsCount++;
+          totalDuration += entry.duration
+          durationsCount++
         }
 
         if (entry.costUsd !== undefined) {
-          totalCost += entry.costUsd;
+          totalCost += entry.costUsd
         }
 
         if (entry.tokensUsed !== undefined) {
-          totalTokens += entry.tokensUsed;
+          totalTokens += entry.tokensUsed
         }
 
         if (entry.cacheHit !== undefined) {
-          cacheRequests++;
+          cacheRequests++
           if (entry.cacheHit) {
-            cacheHits++;
+            cacheHits++
           }
         }
       }
 
       if (entry.severity === 'error' || entry.severity === 'critical') {
-        errorCount++;
+        errorCount++
       }
     }
 
@@ -725,7 +725,7 @@ export class OperationLog {
       requestCount,
       errorRate: entries.length > 0 ? errorCount / entries.length : 0,
       cacheHitRate: cacheRequests > 0 ? cacheHits / cacheRequests : 0,
-    };
+    }
   }
 
   // ================================================
@@ -733,30 +733,30 @@ export class OperationLog {
   // ================================================
 
   private generateLogId(): string {
-    return `log-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    return `log-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
   }
 
   private generateRegulatoryFlags(
     specialty?: MedicalSpecialty,
     diagnosisAssistance?: boolean,
   ): string[] {
-    const flags: string[] = [];
+    const flags: string[] = []
 
     if (specialty) {
-      flags.push('CFM_OVERSIGHT');
+      flags.push('CFM_OVERSIGHT')
 
       if (
         ['dermatologia', 'cirurgia_plastica', 'cosmiatria'].includes(specialty)
       ) {
-        flags.push('ANVISA_OVERSIGHT');
+        flags.push('ANVISA_OVERSIGHT')
       }
     }
 
     if (diagnosisAssistance) {
-      flags.push('MEDICAL_ADVICE');
+      flags.push('MEDICAL_ADVICE')
     }
 
-    return flags;
+    return flags
   }
 
   private updateAggregations(entry: OperationLogEntry): void {
@@ -765,11 +765,11 @@ export class OperationLog {
       'day',
       'week',
       'month',
-    ];
+    ]
 
-    periods.forEach(period => {
-      const key = this.getAggregationKey(entry.timestamp, period);
-      const existing = this._aggregations.get(key);
+    periods.forEach((period) => {
+      const key = this.getAggregationKey(entry.timestamp, period)
+      const existing = this._aggregations.get(key)
 
       if (existing) {
         // Create new objects with updated values since properties are readonly
@@ -789,7 +789,7 @@ export class OperationLog {
               : 0),
           complianceEvents: existing.counts.complianceEvents
             + (entry.complianceFrameworks.length > 0 ? 1 : 0),
-        };
+        }
 
         const updatedPerformance = {
           averageDuration: entry.duration !== undefined
@@ -797,7 +797,7 @@ export class OperationLog {
             : existing.performance.averageDuration,
           totalCost: existing.performance.totalCost + (entry.costUsd || 0),
           totalTokens: existing.performance.totalTokens + (entry.tokensUsed || 0),
-        };
+        }
 
         const updatedCompliance = {
           personalDataEvents: existing.compliance.personalDataEvents
@@ -810,7 +810,7 @@ export class OperationLog {
               ...entry.regulatoryFlags,
             ]),
           ),
-        };
+        }
 
         // Replace the entire aggregation object
         const updatedAggregation: LogAggregation = {
@@ -818,9 +818,9 @@ export class OperationLog {
           counts: updatedCounts,
           performance: updatedPerformance,
           compliance: updatedCompliance,
-        };
+        }
 
-        this._aggregations.set(key, updatedAggregation);
+        this._aggregations.set(key, updatedAggregation)
       } else {
         const aggregation: LogAggregation = {
           period,
@@ -861,30 +861,30 @@ export class OperationLog {
             consentIssues: entry.consentStatus !== 'valid' ? 1 : 0,
             regulatoryFlags: [...entry.regulatoryFlags],
           },
-        };
+        }
 
-        this._aggregations.set(key, aggregation);
+        this._aggregations.set(key, aggregation)
       }
-    });
+    })
   }
 
   private getAggregationKey(
     date: Date,
     period: 'hour' | 'day' | 'week' | 'month',
   ): string {
-    const d = new Date(date);
+    const d = new Date(date)
 
     switch (period) {
       case 'hour':
-        return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}-${d.getHours()}`;
+        return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}-${d.getHours()}`
       case 'day':
-        return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+        return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`
       case 'week':
-        const weekStart = new Date(d);
-        weekStart.setDate(d.getDate() - d.getDay());
-        return `${weekStart.getFullYear()}-W${Math.ceil(weekStart.getDate() / 7)}`;
+        const weekStart = new Date(d)
+        weekStart.setDate(d.getDate() - d.getDay())
+        return `${weekStart.getFullYear()}-W${Math.ceil(weekStart.getDate() / 7)}`
       case 'month':
-        return `${d.getFullYear()}-${d.getMonth()}`;
+        return `${d.getFullYear()}-${d.getMonth()}`
     }
   }
 
@@ -892,7 +892,7 @@ export class OperationLog {
     date: Date,
     period: 'hour' | 'day' | 'week' | 'month',
   ): Date {
-    const d = new Date(date);
+    const d = new Date(date)
 
     switch (period) {
       case 'hour':
@@ -901,32 +901,32 @@ export class OperationLog {
           d.getMonth(),
           d.getDate(),
           d.getHours(),
-        );
+        )
       case 'day':
-        return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+        return new Date(d.getFullYear(), d.getMonth(), d.getDate())
       case 'week':
-        const weekStart = new Date(d);
-        weekStart.setDate(d.getDate() - d.getDay());
+        const weekStart = new Date(d)
+        weekStart.setDate(d.getDate() - d.getDay())
         return new Date(
           weekStart.getFullYear(),
           weekStart.getMonth(),
           weekStart.getDate(),
-        );
+        )
       case 'month':
-        return new Date(d.getFullYear(), d.getMonth(), 1);
+        return new Date(d.getFullYear(), d.getMonth(), 1)
     }
   }
 
   private triggerCriticalAlert(entry: OperationLogEntry): void {
     // In a real implementation, this would integrate with alerting systems
-    const logger = getLogger();
+    const logger = getLogger()
     logger.warn(`Critical operation logged`, {
       id: entry.id,
       operation: entry.operation,
       clinicId: entry.clinicId,
       timestamp: entry.timestamp,
       severity: 'critical',
-    });
+    })
   }
 
   // ================================================
@@ -941,13 +941,13 @@ export class OperationLog {
     startDate: Date,
     endDate: Date,
   ): {
-    framework: ComplianceFramework;
-    period: { start: Date; end: Date };
-    totalEntries: number;
-    entries: OperationLogEntry[];
-    summary: ReturnType<OperationLog['getComplianceSummary']>;
+    framework: ComplianceFramework
+    period: { start: Date; end: Date }
+    totalEntries: number
+    entries: OperationLogEntry[]
+    summary: ReturnType<OperationLog['getComplianceSummary']>
   } {
-    const entries = this.getComplianceLogs(framework, startDate, endDate);
+    const entries = this.getComplianceLogs(framework, startDate, endDate)
 
     return {
       framework,
@@ -955,30 +955,30 @@ export class OperationLog {
       totalEntries: entries.length,
       entries,
       summary: this.getComplianceSummary(startDate, endDate),
-    };
+    }
   }
 
   /**
    * Converts to serializable object
    */
   toJSON(): {
-    totalEntries: number;
-    recentActivity: OperationLogEntry[];
-    complianceSummary: ReturnType<OperationLog['getComplianceSummary']>;
-    performanceAnalytics: ReturnType<OperationLog['getPerformanceAnalytics']>;
+    totalEntries: number
+    recentActivity: OperationLogEntry[]
+    complianceSummary: ReturnType<OperationLog['getComplianceSummary']>
+    performanceAnalytics: ReturnType<OperationLog['getPerformanceAnalytics']>
   } {
     return {
       totalEntries: this._entries.size,
       recentActivity: this.queryLogs({ limit: 100 }),
       complianceSummary: this.getComplianceSummary(),
       performanceAnalytics: this.getPerformanceAnalytics(),
-    };
+    }
   }
 
   /**
    * Creates OperationLog instance
    */
   static create(): OperationLog {
-    return new OperationLog();
+    return new OperationLog()
   }
 }

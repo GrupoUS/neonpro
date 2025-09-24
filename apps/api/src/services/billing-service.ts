@@ -5,8 +5,8 @@
  * SUS integration, health plan processing, and LGPD data protection.
  */
 
-import { randomUUID } from 'crypto';
-import { z } from 'zod';
+import { randomUUID } from 'crypto'
+import { z } from 'zod'
 export enum BillingType {
   SUS = 'sus',
   HEALTH_PLAN = 'health_plan',
@@ -41,7 +41,7 @@ const procedureCodeSchema = z.object({
   value: z.number().positive(),
   category: z.string(),
   specialtyRequired: z.string().optional(),
-});
+})
 
 const taxInfoSchema = z.object({
   issRetention: z.number().min(0).max(1), // ISS retention percentage
@@ -52,7 +52,7 @@ const taxInfoSchema = z.object({
   issAliquot: z.number().min(0).max(1), // ISS rate
   nfseNumber: z.string().optional(), // Electronic service invoice number
   municipalInscription: z.string().optional(),
-});
+})
 
 const billingItemSchema = z.object({
   id: z.string().uuid(),
@@ -64,7 +64,7 @@ const billingItemSchema = z.object({
   discountType: z.enum(['percentage', 'fixed']).default('percentage'),
   professionalId: z.string().uuid(),
   date: z.string().datetime(),
-});
+})
 
 const healthPlanSchema = z.object({
   planId: z.string(),
@@ -76,7 +76,7 @@ const healthPlanSchema = z.object({
   coveragePercentage: z.number().min(0).max(100),
   preAuthRequired: z.boolean().default(false),
   preAuthNumber: z.string().optional(),
-});
+})
 
 const billingSchema = z.object({
   id: z.string().uuid(),
@@ -132,59 +132,59 @@ const billingSchema = z.object({
       details: z.string().optional(),
     }),
   ),
-});
+})
 
-export type Billing = z.infer<typeof billingSchema>;
-export type BillingItem = z.infer<typeof billingItemSchema>;
-export type ProcedureCode = z.infer<typeof procedureCodeSchema>;
-export type HealthPlan = z.infer<typeof healthPlanSchema>;
-export type TaxInfo = z.infer<typeof taxInfoSchema>;
+export type Billing = z.infer<typeof billingSchema>
+export type BillingItem = z.infer<typeof billingItemSchema>
+export type ProcedureCode = z.infer<typeof procedureCodeSchema>
+export type HealthPlan = z.infer<typeof healthPlanSchema>
+export type TaxInfo = z.infer<typeof taxInfoSchema>
 
 export interface ServiceResponse<T = any> {
-  success: boolean;
-  data?: T;
-  error?: string;
-  errors?: Array<{ field: string; message: string; code: string }>;
-  message?: string;
+  success: boolean
+  data?: T
+  error?: string
+  errors?: Array<{ field: string; message: string; code: string }>
+  message?: string
 }
 
 export interface BillingSearchOptions {
-  patientId?: string;
-  clinicId?: string;
-  professionalId?: string;
-  billingType?: BillingType;
-  paymentStatus?: PaymentStatus;
-  dateFrom?: Date;
-  dateTo?: Date;
-  page?: number;
-  limit?: number;
-  sortBy?: string;
-  sortOrder?: 'asc' | 'desc';
+  patientId?: string
+  clinicId?: string
+  professionalId?: string
+  billingType?: BillingType
+  paymentStatus?: PaymentStatus
+  dateFrom?: Date
+  dateTo?: Date
+  page?: number
+  limit?: number
+  sortBy?: string
+  sortOrder?: 'asc' | 'desc'
 }
 
 export interface FinancialSummary {
-  totalRevenue: number;
-  totalPending: number;
-  totalPaid: number;
-  totalOverdue: number;
-  averageTicket: number;
-  revenueByType: Record<BillingType, number>;
-  revenueByMonth: Array<{ month: string; revenue: number }>;
-  topProcedures: Array<{ procedure: string; count: number; revenue: number }>;
+  totalRevenue: number
+  totalPending: number
+  totalPaid: number
+  totalOverdue: number
+  averageTicket: number
+  revenueByType: Record<BillingType, number>
+  revenueByMonth: Array<{ month: string; revenue: number }>
+  topProcedures: Array<{ procedure: string; count: number; revenue: number }>
 }
 
 export interface PaymentProcessingRequest {
-  billingId: string;
-  paymentMethod: PaymentMethod;
-  amount: number;
-  installments?: number;
-  cardToken?: string;
-  pixKey?: string;
+  billingId: string
+  paymentMethod: PaymentMethod
+  amount: number
+  installments?: number
+  cardToken?: string
+  pixKey?: string
   bankAccount?: {
-    bank: string;
-    agency: string;
-    account: string;
-  };
+    bank: string
+    agency: string
+    account: string
+  }
 }
 
 /**
@@ -194,12 +194,12 @@ export interface PaymentProcessingRequest {
  * including SUS integration, health plan processing, and tax compliance.
  */
 export class BillingService {
-  private billings: Map<string, Billing> = new Map();
-  private procedureCodes: Map<string, ProcedureCode> = new Map();
-  private isInitialized = false;
+  private billings: Map<string, Billing> = new Map()
+  private procedureCodes: Map<string, ProcedureCode> = new Map()
+  private isInitialized = false
 
   constructor() {
-    this.initialize();
+    this.initialize()
   }
 
   /**
@@ -228,11 +228,11 @@ export class BillingService {
         category: 'Imagem',
         specialtyRequired: 'Radiologia',
       },
-    ];
+    ]
 
-    sampleProcedures.forEach(proc => {
-      this.procedureCodes.set(proc.cbhpmCode, proc);
-    });
+    sampleProcedures.forEach((proc) => {
+      this.procedureCodes.set(proc.cbhpmCode, proc)
+    })
 
     // Sample billing record
     const sampleBilling: Billing = {
@@ -280,10 +280,10 @@ export class BillingService {
           timestamp: new Date().toISOString(),
         },
       ],
-    };
+    }
 
-    this.billings.set(sampleBilling.id, sampleBilling);
-    this.isInitialized = true;
+    this.billings.set(sampleBilling.id, sampleBilling)
+    this.isInitialized = true
   }
 
   /**
@@ -302,27 +302,27 @@ export class BillingService {
         return {
           success: false,
           error: 'patientId, clinicId e professionalId são obrigatórios',
-        };
+        }
       }
 
       if (!billingData.items || billingData.items.length === 0) {
         return {
           success: false,
           error: 'Pelo menos um item deve ser adicionado à cobrança',
-        };
+        }
       }
 
       // Calculate totals
       const subtotal = billingData.items.reduce(
         (sum, item) => sum + item.totalValue,
         0,
-      );
-      const discounts = billingData.discounts || 0;
+      )
+      const discounts = billingData.discounts || 0
       const taxes = this.calculateTaxes(
         subtotal - discounts,
         billingData.taxInfo,
-      );
-      const total = subtotal - discounts + taxes;
+      )
+      const total = subtotal - discounts + taxes
 
       // Generate billing
       const billing: Billing = {
@@ -357,34 +357,34 @@ export class BillingService {
             timestamp: new Date().toISOString(),
           },
         ],
-      };
+      }
 
       // Validate schema
-      const validationResult = billingSchema.safeParse(billing);
+      const validationResult = billingSchema.safeParse(billing)
       if (!validationResult.success) {
         return {
           success: false,
-          errors: validationResult.error.errors.map(err => ({
+          errors: validationResult.error.errors.map((err) => ({
             field: err.path.join('.'),
             message: err.message,
             code: 'VALIDATION_ERROR',
           })),
-        };
+        }
       }
 
-      this.billings.set(billing.id, billing);
+      this.billings.set(billing.id, billing)
 
       return {
         success: true,
         data: billing,
         message: 'Cobrança criada com sucesso',
-      };
+      }
     } catch {
-      console.error('Billing operation failed:', error);
+      console.error('Billing operation failed:', error)
       return {
         success: false,
         error: 'Erro interno do servidor',
-      };
+      }
     }
   }
 
@@ -393,25 +393,25 @@ export class BillingService {
    */
   async getBilling(billingId: string): Promise<ServiceResponse<Billing>> {
     try {
-      const billing = this.billings.get(billingId);
+      const billing = this.billings.get(billingId)
 
       if (!billing) {
         return {
           success: false,
           error: 'Cobrança não encontrada',
-        };
+        }
       }
 
       return {
         success: true,
         data: billing,
-      };
+      }
     } catch {
-      console.error('Billing operation failed:', error);
+      console.error('Billing operation failed:', error)
       return {
         success: false,
         error: 'Erro interno do servidor',
-      };
+      }
     }
   }
 
@@ -422,71 +422,71 @@ export class BillingService {
     options: BillingSearchOptions,
   ): Promise<ServiceResponse<{ billings: Billing[]; pagination: any }>> {
     try {
-      let allBillings = Array.from(this.billings.values());
+      let allBillings = Array.from(this.billings.values())
 
       // Apply filters
       if (options.patientId) {
         allBillings = allBillings.filter(
-          billing => billing.patientId === options.patientId,
-        );
+          (billing) => billing.patientId === options.patientId,
+        )
       }
 
       if (options.clinicId) {
         allBillings = allBillings.filter(
-          billing => billing.clinicId === options.clinicId,
-        );
+          (billing) => billing.clinicId === options.clinicId,
+        )
       }
 
       if (options.professionalId) {
         allBillings = allBillings.filter(
-          billing => billing.professionalId === options.professionalId,
-        );
+          (billing) => billing.professionalId === options.professionalId,
+        )
       }
 
       if (options.billingType) {
         allBillings = allBillings.filter(
-          billing => billing.billingType === options.billingType,
-        );
+          (billing) => billing.billingType === options.billingType,
+        )
       }
 
       if (options.paymentStatus) {
         allBillings = allBillings.filter(
-          billing => billing.paymentStatus === options.paymentStatus,
-        );
+          (billing) => billing.paymentStatus === options.paymentStatus,
+        )
       }
 
       if (options.dateFrom) {
         allBillings = allBillings.filter(
-          billing => new Date(billing.createdAt) >= options.dateFrom!,
-        );
+          (billing) => new Date(billing.createdAt) >= options.dateFrom!,
+        )
       }
 
       if (options.dateTo) {
         allBillings = allBillings.filter(
-          billing => new Date(billing.createdAt) <= options.dateTo!,
-        );
+          (billing) => new Date(billing.createdAt) <= options.dateTo!,
+        )
       }
 
       // Sorting
       if (options.sortBy) {
         allBillings.sort((a, b) => {
-          const aValue = (a as any)[options.sortBy!];
-          const bValue = (b as any)[options.sortBy!];
+          const aValue = (a as any)[options.sortBy!]
+          const bValue = (b as any)[options.sortBy!]
 
           if (options.sortOrder === 'desc') {
-            return bValue > aValue ? 1 : -1;
+            return bValue > aValue ? 1 : -1
           }
-          return aValue > bValue ? 1 : -1;
-        });
+          return aValue > bValue ? 1 : -1
+        })
       }
 
       // Pagination
-      const page = options.page || 1;
-      const limit = options.limit || 20;
-      const startIndex = (page - 1) * limit;
-      const endIndex = startIndex + limit;
+      const page = options.page || 1
+      const limit = options.limit || 20
+      const startIndex = (page - 1) * limit
+      const endIndex = startIndex + limit
 
-      const paginatedBillings = allBillings.slice(startIndex, endIndex);
+      const paginatedBillings = allBillings.slice(startIndex, endIndex)
 
       return {
         success: true,
@@ -499,13 +499,13 @@ export class BillingService {
             totalPages: Math.ceil(allBillings.length / limit),
           },
         },
-      };
+      }
     } catch {
-      console.error('Billing operation failed:', error);
+      console.error('Billing operation failed:', error)
       return {
         success: false,
         error: 'Erro interno do servidor',
-      };
+      }
     }
   }
 
@@ -516,56 +516,56 @@ export class BillingService {
     _request: PaymentProcessingRequest,
   ): Promise<ServiceResponse<{ paymentId: string; status: PaymentStatus }>> {
     try {
-      const billing = this.billings.get(_request.billingId);
+      const billing = this.billings.get(_request.billingId)
 
       if (!billing) {
         return {
           success: false,
           error: 'Cobrança não encontrada',
-        };
+        }
       }
 
       if (billing.paymentStatus === PaymentStatus.PAID) {
         return {
           success: false,
           error: 'Cobrança já foi paga',
-        };
+        }
       }
 
       // Process payment based on method
-      let paymentStatus = PaymentStatus.AUTHORIZED;
-      const paymentId = randomUUID();
+      let paymentStatus = PaymentStatus.AUTHORIZED
+      const paymentId = randomUUID()
 
       switch (_request.paymentMethod) {
         case PaymentMethod.CASH:
-          paymentStatus = PaymentStatus.PAID;
-          break;
+          paymentStatus = PaymentStatus.PAID
+          break
         case PaymentMethod.PIX:
-          paymentStatus = PaymentStatus.PAID; // PIX is instant
-          break;
+          paymentStatus = PaymentStatus.PAID // PIX is instant
+          break
         case PaymentMethod.CREDIT_CARD:
         case PaymentMethod.DEBIT_CARD:
-          paymentStatus = PaymentStatus.AUTHORIZED; // Pending bank confirmation
-          break;
+          paymentStatus = PaymentStatus.AUTHORIZED // Pending bank confirmation
+          break
         case PaymentMethod.BANK_TRANSFER:
-          paymentStatus = PaymentStatus.PENDING;
-          break;
+          paymentStatus = PaymentStatus.PENDING
+          break
         case PaymentMethod.HEALTH_PLAN:
-          paymentStatus = PaymentStatus.AUTHORIZED; // Pending health plan approval
-          break;
+          paymentStatus = PaymentStatus.AUTHORIZED // Pending health plan approval
+          break
       }
 
       // Update billing
-      billing.paymentStatus = paymentStatus;
-      billing.paymentMethod = _request.paymentMethod;
+      billing.paymentStatus = paymentStatus
+      billing.paymentMethod = _request.paymentMethod
       if (paymentStatus === PaymentStatus.PAID) {
-        billing.paymentDate = new Date().toISOString();
+        billing.paymentDate = new Date().toISOString()
       }
 
       // Handle installments
       if (_request.installments && _request.installments > 1) {
-        const installmentAmount = billing.total / _request.installments;
-        billing.installments = [];
+        const installmentAmount = billing.total / _request.installments
+        billing.installments = []
 
         for (let i = 1; i <= _request.installments; i++) {
           billing.installments.push({
@@ -581,31 +581,31 @@ export class BillingService {
               ? new Date().toISOString()
               : undefined,
             paymentMethod: request.paymentMethod,
-          });
+          })
         }
       }
 
-      billing.updatedAt = new Date().toISOString();
+      billing.updatedAt = new Date().toISOString()
       billing.auditTrail.push({
         action: 'payment_processed',
         performedBy: 'system',
         timestamp: new Date().toISOString(),
         details: `Payment processed via ${_request.paymentMethod}`,
-      });
+      })
 
-      this.billings.set(_request.billingId, billing);
+      this.billings.set(_request.billingId, billing)
 
       return {
         success: true,
         data: { paymentId, status: paymentStatus },
         message: 'Pagamento processado com sucesso',
-      };
+      }
     } catch {
-      console.error('Billing operation failed:', error);
+      console.error('Billing operation failed:', error)
       return {
         success: false,
         error: 'Erro interno do servidor',
-      };
+      }
     }
   }
 
@@ -618,65 +618,65 @@ export class BillingService {
     dateTo?: Date,
   ): Promise<ServiceResponse<FinancialSummary>> {
     try {
-      let billings = Array.from(this.billings.values());
+      let billings = Array.from(this.billings.values())
 
       // Filter by clinic
       if (clinicId) {
-        billings = billings.filter(billing => billing.clinicId === clinicId);
+        billings = billings.filter((billing) => billing.clinicId === clinicId)
       }
 
       // Filter by date range
       if (dateFrom) {
         billings = billings.filter(
-          billing => new Date(billing.createdAt) >= dateFrom,
-        );
+          (billing) => new Date(billing.createdAt) >= dateFrom,
+        )
       }
 
       if (dateTo) {
         billings = billings.filter(
-          billing => new Date(billing.createdAt) <= dateTo,
-        );
+          (billing) => new Date(billing.createdAt) <= dateTo,
+        )
       }
 
       // Calculate summary
       const totalRevenue = billings
-        .filter(b => b.paymentStatus === PaymentStatus.PAID)
-        .reduce((sum, b) => sum + b.total, 0);
+        .filter((b) => b.paymentStatus === PaymentStatus.PAID)
+        .reduce((sum, b) => sum + b.total, 0)
 
       const totalPending = billings
-        .filter(b => b.paymentStatus === PaymentStatus.PENDING)
-        .reduce((sum, b) => sum + b.total, 0);
+        .filter((b) => b.paymentStatus === PaymentStatus.PENDING)
+        .reduce((sum, b) => sum + b.total, 0)
 
-      const totalPaid = totalRevenue;
+      const totalPaid = totalRevenue
 
       const totalOverdue = billings
-        .filter(b => b.paymentStatus === PaymentStatus.OVERDUE)
-        .reduce((sum, b) => sum + b.total, 0);
+        .filter((b) => b.paymentStatus === PaymentStatus.OVERDUE)
+        .reduce((sum, b) => sum + b.total, 0)
 
       const averageTicket = billings.length > 0
         ? billings.reduce((sum, b) => sum + b.total, 0) / billings.length
-        : 0;
+        : 0
 
       // Revenue by type
       const revenueByType = Object.values(BillingType).reduce(
         (acc, type) => {
           acc[type] = billings
             .filter(
-              b =>
+              (b) =>
                 b.billingType === type
                 && b.paymentStatus === PaymentStatus.PAID,
             )
-            .reduce((sum, b) => sum + b.total, 0);
-          return acc;
+            .reduce((sum, b) => sum + b.total, 0)
+          return acc
         },
         {} as Record<BillingType, number>,
-      );
+      )
 
       // Revenue by month
-      const revenueByMonth = this.calculateRevenueByMonth(billings);
+      const revenueByMonth = this.calculateRevenueByMonth(billings)
 
       // Top procedures
-      const topProcedures = this.calculateTopProcedures(billings);
+      const topProcedures = this.calculateTopProcedures(billings)
 
       const summary: FinancialSummary = {
         totalRevenue,
@@ -687,18 +687,18 @@ export class BillingService {
         revenueByType,
         revenueByMonth,
         topProcedures,
-      };
+      }
 
       return {
         success: true,
         data: summary,
-      };
+      }
     } catch {
-      console.error('Billing operation failed:', error);
+      console.error('Billing operation failed:', error)
       return {
         success: false,
         error: 'Erro interno do servidor',
-      };
+      }
     }
   }
 
@@ -707,13 +707,13 @@ export class BillingService {
    */
   private calculateTaxes(amount: number, taxInfo?: TaxInfo): number {
     if (!taxInfo) {
-      return amount * 0.05; // Default 5% ISS
+      return amount * 0.05 // Default 5% ISS
     }
 
-    const issAmount = amount * (taxInfo.issAliquot || 0.05);
+    const issAmount = amount * (taxInfo.issAliquot || 0.05)
     // Add other taxes if needed (PIS, COFINS, etc.)
 
-    return issAmount;
+    return issAmount
   }
 
   /**
@@ -722,19 +722,19 @@ export class BillingService {
   private calculateRevenueByMonth(
     billings: Billing[],
   ): Array<{ month: string; revenue: number }> {
-    const monthRevenue: Record<string, number> = {};
+    const monthRevenue: Record<string, number> = {}
 
     billings
-      .filter(b => b.paymentStatus === PaymentStatus.PAID)
-      .forEach(billing => {
-        const date = new Date(billing.paymentDate || billing.createdAt);
-        const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
-        monthRevenue[monthKey] = (monthRevenue[monthKey] || 0) + billing.total;
-      });
+      .filter((b) => b.paymentStatus === PaymentStatus.PAID)
+      .forEach((billing) => {
+        const date = new Date(billing.paymentDate || billing.createdAt)
+        const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`
+        monthRevenue[monthKey] = (monthRevenue[monthKey] || 0) + billing.total
+      })
 
     return Object.entries(monthRevenue)
       .map(([month, revenue]) => ({ month, revenue }))
-      .sort((a, b) => a.month.localeCompare(b.month));
+      .sort((a, b) => a.month.localeCompare(b.month))
   }
 
   /**
@@ -743,32 +743,32 @@ export class BillingService {
   private calculateTopProcedures(
     billings: Billing[],
   ): Array<{ procedure: string; count: number; revenue: number }> {
-    const procedureStats: Record<string, { count: number; revenue: number }> = {};
+    const procedureStats: Record<string, { count: number; revenue: number }> = {}
 
     billings
-      .filter(b => b.paymentStatus === PaymentStatus.PAID)
-      .forEach(billing => {
-        billing.items.forEach(item => {
-          const key = item.procedureCode.description;
+      .filter((b) => b.paymentStatus === PaymentStatus.PAID)
+      .forEach((billing) => {
+        billing.items.forEach((item) => {
+          const key = item.procedureCode.description
           if (!procedureStats[key]) {
-            procedureStats[key] = { count: 0, revenue: 0 };
+            procedureStats[key] = { count: 0, revenue: 0 }
           }
-          procedureStats[key].count += item.quantity;
-          procedureStats[key].revenue += item.totalValue;
-        });
-      });
+          procedureStats[key].count += item.quantity
+          procedureStats[key].revenue += item.totalValue
+        })
+      })
 
     return Object.entries(procedureStats)
       .map(([procedure, stats]) => ({ procedure, ...stats }))
       .sort((a, b) => b.revenue - a.revenue)
-      .slice(0, 10);
+      .slice(0, 10)
   }
 
   /**
    * Check service configuration
    */
   isConfigured(): boolean {
-    return this.isInitialized;
+    return this.isInitialized
   }
 
   /**
@@ -792,6 +792,6 @@ export class BillingService {
       ],
       supportedPaymentMethods: Object.values(PaymentMethod),
       supportedBillingTypes: Object.values(BillingType),
-    };
+    }
   }
 }

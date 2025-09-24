@@ -6,8 +6,8 @@
  * Following LGPD compliance and Brazilian financial regulations.
  */
 
-import { randomUUID } from 'crypto';
-import { z } from 'zod';
+import { randomUUID } from 'crypto'
+import { z } from 'zod'
 
 // Import existing billing types and services
 import {
@@ -22,61 +22,61 @@ import {
   // PaymentProcessingRequest,
   // ProcedureCode,
   // TaxInfo,
-} from '../billing-service';
+} from '../billing-service'
 
 /**
  * AI-Powered Financial Analytics Types
  */
 export interface FinancialPrediction {
-  predictedRevenue: number;
-  confidence: number;
-  timeFrame: '7d' | '30d' | '90d' | '1y';
+  predictedRevenue: number
+  confidence: number
+  timeFrame: '7d' | '30d' | '90d' | '1y'
   factors: Array<{
-    factor: string;
-    impact: 'positive' | 'negative' | 'neutral';
-    weight: number;
-  }>;
-  recommendations: string[];
+    factor: string
+    impact: 'positive' | 'negative' | 'neutral'
+    weight: number
+  }>
+  recommendations: string[]
 }
 
 export interface AnomalyDetection {
-  id: string;
-  type: 'billing' | 'payment' | 'revenue' | 'pattern';
-  severity: 'low' | 'medium' | 'high' | 'critical';
-  confidence: number;
-  description: string;
-  detectedAt: string;
-  affectedTransactions: string[];
-  recommendedAction: string;
+  id: string
+  type: 'billing' | 'payment' | 'revenue' | 'pattern'
+  severity: 'low' | 'medium' | 'high' | 'critical'
+  confidence: number
+  description: string
+  detectedAt: string
+  affectedTransactions: string[]
+  recommendedAction: string
 }
 
 export interface FraudDetectionAlert {
-  id: string;
-  riskScore: number;
-  riskLevel: 'low' | 'medium' | 'high' | 'critical';
+  id: string
+  riskScore: number
+  riskLevel: 'low' | 'medium' | 'high' | 'critical'
   indicators: Array<{
-    indicator: string;
-    value: any;
-    threshold: number;
-    triggered: boolean;
-  }>;
-  description: string;
-  recommendedAction: string;
-  requiresReview: boolean;
-  createdAt: string;
+    indicator: string
+    value: any
+    threshold: number
+    triggered: boolean
+  }>
+  description: string
+  recommendedAction: string
+  requiresReview: boolean
+  createdAt: string
 }
 
 export interface AIBillingOptimization {
   suggestions: Array<{
-    type: 'pricing' | 'discount' | 'payment_method' | 'scheduling';
-    description: string;
+    type: 'pricing' | 'discount' | 'payment_method' | 'scheduling'
+    description: string
     potentialImpact: {
-      revenue: number;
-      probability: number;
-      timeframe: string;
-    };
-    confidence: number;
-  }>;
+      revenue: number
+      probability: number
+      timeframe: string
+    }
+    confidence: number
+  }>
 }
 
 /**
@@ -119,41 +119,41 @@ const financialAIAgentSchema = z.object({
     optimizationSuggestions: z.boolean().default(true),
     complianceAlerts: z.boolean().default(true),
   }),
-});
+})
 
-export type FinancialAIAgentConfig = z.infer<typeof financialAIAgentSchema>;
+export type FinancialAIAgentConfig = z.infer<typeof financialAIAgentSchema>
 
 /**
  * Enhanced Financial AI Agent Service
  */
 export class FinancialAIAgent {
-  private config: FinancialAIAgentConfig;
-  private billingService: BillingService;
-  private anomalyDetectors: Map<string, Function> = new Map();
-  private fraudDetectionRules: Map<string, Function> = new Map();
-  private predictions: Map<string, FinancialPrediction> = new Map();
-  private alerts: Map<string, AnomalyDetection | FraudDetectionAlert> = new Map();
-  private isInitialized = false;
+  private config: FinancialAIAgentConfig
+  private billingService: BillingService
+  private anomalyDetectors: Map<string, Function> = new Map()
+  private fraudDetectionRules: Map<string, Function> = new Map()
+  private predictions: Map<string, FinancialPrediction> = new Map()
+  private alerts: Map<string, AnomalyDetection | FraudDetectionAlert> = new Map()
+  private isInitialized = false
 
   constructor(config: Partial<FinancialAIAgentConfig>) {
     this.config = financialAIAgentSchema.parse({
       ...config,
       id: config.id || randomUUID(),
       clinicId: config.clinicId || randomUUID(),
-    });
+    })
 
-    this.billingService = new BillingService();
-    this.initialize();
+    this.billingService = new BillingService()
+    this.initialize()
   }
 
   /**
    * Initialize the AI agent with detectors and rules
    */
   private initialize(): void {
-    this.setupAnomalyDetectors();
-    this.setupFraudDetectionRules();
-    this.initializePredictiveModels();
-    this.isInitialized = true;
+    this.setupAnomalyDetectors()
+    this.setupFraudDetectionRules()
+    this.initializePredictiveModels()
+    this.isInitialized = true
   }
 
   /**
@@ -161,23 +161,23 @@ export class FinancialAIAgent {
    */
   private setupAnomalyDetectors(): void {
     // Revenue anomaly detector
-    this.anomalyDetectors.set('revenue_spike', this.detectRevenueSpike.bind(this));
-    this.anomalyDetectors.set('revenue_drop', this.detectRevenueDrop.bind(this));
-    this.anomalyDetectors.set('billing_pattern', this.detectBillingPatternAnomaly.bind(this));
-    this.anomalyDetectors.set('payment_anomaly', this.detectPaymentAnomaly.bind(this));
+    this.anomalyDetectors.set('revenue_spike', this.detectRevenueSpike.bind(this))
+    this.anomalyDetectors.set('revenue_drop', this.detectRevenueDrop.bind(this))
+    this.anomalyDetectors.set('billing_pattern', this.detectBillingPatternAnomaly.bind(this))
+    this.anomalyDetectors.set('payment_anomaly', this.detectPaymentAnomaly.bind(this))
   }
 
   /**
    * Setup fraud detection rules
    */
   private setupFraudDetectionRules(): void {
-    this.fraudDetectionRules.set('rapid_fire_billing', this.detectRapidFireBilling.bind(this));
+    this.fraudDetectionRules.set('rapid_fire_billing', this.detectRapidFireBilling.bind(this))
     this.fraudDetectionRules.set(
       'unusual_payment_methods',
       this.detectUnusualPaymentMethods.bind(this),
-    );
-    this.fraudDetectionRules.set('suspicious_discounts', this.detectSuspiciousDiscounts.bind(this));
-    this.fraudDetectionRules.set('duplicate_billing', this.detectDuplicateBilling.bind(this));
+    )
+    this.fraudDetectionRules.set('suspicious_discounts', this.detectSuspiciousDiscounts.bind(this))
+    this.fraudDetectionRules.set('duplicate_billing', this.detectDuplicateBilling.bind(this))
   }
 
   /**
@@ -186,7 +186,7 @@ export class FinancialAIAgent {
   private initializePredictiveModels(): void {
     // Initialize ML models for predictions
     // In a real implementation, this would load trained models
-    console.log('Initializing predictive models for financial analytics...');
+    console.log('Initializing predictive models for financial analytics...')
   }
 
   /**
@@ -198,41 +198,41 @@ export class FinancialAIAgent {
   ): Promise<ServiceResponse<Billing & { aiOptimizations?: AIBillingOptimization }>> {
     try {
       // Step 1: Create standard billing
-      const billingResult = await this.billingService.createBilling(billingData);
+      const billingResult = await this.billingService.createBilling(billingData)
 
       if (!billingResult.success || !billingResult.data) {
-        return billingResult;
+        return billingResult
       }
 
-      const billing = billingResult.data;
+      const billing = billingResult.data
 
       // Step 2: AI-powered optimization if enabled
-      let aiOptimizations: AIBillingOptimization | undefined;
+      let aiOptimizations: AIBillingOptimization | undefined
 
       if (aiOptimization && this.config.features.includes('billing_optimization')) {
-        aiOptimizations = await this.generateBillingOptimizations(billing);
+        aiOptimizations = await this.generateBillingOptimizations(billing)
 
         // Apply automated optimizations with high confidence
         if (aiOptimizations.suggestions.length > 0) {
           const highConfidenceSuggestions = aiOptimizations.suggestions.filter(
-            s => s.confidence > 0.85,
-          );
+            (s) => s.confidence > 0.85,
+          )
 
           // Apply optimizations (in real implementation, would require user confirmation)
           for (const suggestion of highConfidenceSuggestions) {
-            await this.applyBillingOptimization(billing, suggestion);
+            await this.applyBillingOptimization(billing, suggestion)
           }
         }
       }
 
       // Step 3: Run anomaly detection
       if (this.config.features.includes('anomaly_detection')) {
-        await this.runAnomalyDetection(billing);
+        await this.runAnomalyDetection(billing)
       }
 
       // Step 4: Run fraud detection
       if (this.config.features.includes('fraud_prevention')) {
-        await this.runFraudDetection(billing);
+        await this.runFraudDetection(billing)
       }
 
       return {
@@ -242,13 +242,13 @@ export class FinancialAIAgent {
           aiOptimizations,
         },
         message: 'Cobrança inteligente criada com sucesso',
-      };
+      }
     } catch {
-      console.error('Intelligent billing creation failed:', error);
+      console.error('Intelligent billing creation failed:', error)
       return {
         success: false,
         error: 'Erro interno do servidor',
-      };
+      }
     }
   }
 
@@ -256,10 +256,10 @@ export class FinancialAIAgent {
    * Generate AI-powered billing optimizations
    */
   private async generateBillingOptimizations(billing: Billing): Promise<AIBillingOptimization> {
-    const suggestions: AIBillingOptimization['suggestions'] = [];
+    const suggestions: AIBillingOptimization['suggestions'] = []
 
     // Analyze billing patterns and suggest optimizations
-    const suggestionsData = await this.analyzeBillingPatterns(billing);
+    const suggestionsData = await this.analyzeBillingPatterns(billing)
 
     // Pricing optimization
     if (suggestionsData.pricingOpportunity) {
@@ -272,7 +272,7 @@ export class FinancialAIAgent {
           timeframe: '30d',
         },
         confidence: suggestionsData.pricingOpportunity.confidence,
-      });
+      })
     }
 
     // Payment method optimization
@@ -286,7 +286,7 @@ export class FinancialAIAgent {
           timeframe: '7d',
         },
         confidence: suggestionsData.paymentMethodOpportunity.confidence,
-      });
+      })
     }
 
     // Discount optimization
@@ -300,10 +300,10 @@ export class FinancialAIAgent {
           timeframe: '14d',
         },
         confidence: suggestionsData.discountOpportunity.confidence,
-      });
+      })
     }
 
-    return { suggestions };
+    return { suggestions }
   }
 
   /**
@@ -326,7 +326,7 @@ export class FinancialAIAgent {
         impact: billing.total * 0.02, // 2% potential increase
         confidence: 0.75,
       },
-    };
+    }
   }
 
   /**
@@ -337,7 +337,7 @@ export class FinancialAIAgent {
     suggestion: AIBillingOptimization['suggestions'][0],
   ): Promise<void> {
     // In a real implementation, this would apply the optimization
-    console.log(`Applying optimization: ${suggestion.description}`);
+    console.log(`Applying optimization: ${suggestion.description}`)
   }
 
   /**
@@ -346,17 +346,17 @@ export class FinancialAIAgent {
   private async runAnomalyDetection(billing: Billing): Promise<void> {
     for (const [detectorName, detector] of this.anomalyDetectors) {
       try {
-        const result = await detector(billing);
+        const result = await detector(billing)
         if (result) {
-          this.alerts.set(result.id, result);
+          this.alerts.set(result.id, result)
 
           // Trigger notification if enabled
           if (this.config.notificationSettings.anomalyAlerts) {
-            await this.sendAnomalyAlert(result);
+            await this.sendAnomalyAlert(result)
           }
         }
       } catch {
-        console.error(`Anomaly detector ${detectorName} failed:`, error);
+        console.error(`Anomaly detector ${detectorName} failed:`, error)
       }
     }
   }
@@ -367,17 +367,17 @@ export class FinancialAIAgent {
   private async runFraudDetection(billing: Billing): Promise<void> {
     for (const [ruleName, rule] of this.fraudDetectionRules) {
       try {
-        const result = await rule(billing);
+        const result = await rule(billing)
         if (result) {
-          this.alerts.set(result.id, result);
+          this.alerts.set(result.id, result)
 
           // Trigger notification if enabled
           if (this.config.notificationSettings.fraudAlerts) {
-            await this.sendFraudAlert(result);
+            await this.sendFraudAlert(result)
           }
         }
       } catch {
-        console.error(`Fraud detection rule ${ruleName} failed:`, error);
+        console.error(`Fraud detection rule ${ruleName} failed:`, error)
       }
     }
   }
@@ -388,22 +388,22 @@ export class FinancialAIAgent {
   private async detectRevenueSpike(_billing: Billing): Promise<AnomalyDetection | null> {
     // Implement revenue spike detection logic
     // Compare with historical patterns and detect unusual increases
-    return null; // Placeholder
+    return null // Placeholder
   }
 
   private async detectRevenueDrop(_billing: Billing): Promise<AnomalyDetection | null> {
     // Implement revenue drop detection logic
-    return null; // Placeholder
+    return null // Placeholder
   }
 
   private async detectBillingPatternAnomaly(_billing: Billing): Promise<AnomalyDetection | null> {
     // Implement billing pattern anomaly detection
-    return null; // Placeholder
+    return null // Placeholder
   }
 
   private async detectPaymentAnomaly(_billing: Billing): Promise<AnomalyDetection | null> {
     // Implement payment anomaly detection
-    return null; // Placeholder
+    return null // Placeholder
   }
 
   /**
@@ -411,31 +411,31 @@ export class FinancialAIAgent {
    */
   private async detectRapidFireBilling(_billing: Billing): Promise<FraudDetectionAlert | null> {
     // Detect unusually rapid billing from same patient/professional
-    return null; // Placeholder
+    return null // Placeholder
   }
 
   private async detectUnusualPaymentMethods(
     _billing: Billing,
   ): Promise<FraudDetectionAlert | null> {
     // Detect unusual payment method patterns
-    return null; // Placeholder
+    return null // Placeholder
   }
 
   private async detectSuspiciousDiscounts(_billing: Billing): Promise<FraudDetectionAlert | null> {
     // Detect suspicious discount patterns
-    return null; // Placeholder
+    return null // Placeholder
   }
 
   private async detectDuplicateBilling(_billing: Billing): Promise<FraudDetectionAlert | null> {
     // Detect potential duplicate billing
-    return null; // Placeholder
+    return null // Placeholder
   }
 
   /**
    * Send anomaly alert notification
    */
   private async sendAnomalyAlert(anomaly: AnomalyDetection): Promise<void> {
-    console.log('Anomaly Alert:', anomaly);
+    console.log('Anomaly Alert:', anomaly)
     // In real implementation, would send email, SMS, or in-app notification
   }
 
@@ -443,7 +443,7 @@ export class FinancialAIAgent {
    * Send fraud alert notification
    */
   private async sendFraudAlert(fraud: FraudDetectionAlert): Promise<void> {
-    console.log('Fraud Alert:', fraud);
+    console.log('Fraud Alert:', fraud)
     // In real implementation, would send email, SMS, or in-app notification
   }
 
@@ -458,33 +458,33 @@ export class FinancialAIAgent {
         return {
           success: false,
           error: 'Predictive analytics not enabled',
-        };
+        }
       }
 
       // Get historical financial data
-      const summary = await this.billingService.getFinancialSummary(this.config.clinicId);
+      const summary = await this.billingService.getFinancialSummary(this.config.clinicId)
 
       if (!summary.success || !summary.data) {
         return {
           success: false,
           error: 'Unable to retrieve financial data',
-        };
+        }
       }
 
       // Generate prediction using AI models
-      const prediction = await this.generatePrediction(summary.data, timeFrame);
+      const prediction = await this.generatePrediction(summary.data, timeFrame)
 
       return {
         success: true,
         data: prediction,
         message: 'Predição financeira gerada com sucesso',
-      };
+      }
     } catch {
-      console.error('Financial prediction failed:', error);
+      console.error('Financial prediction failed:', error)
       return {
         success: false,
         error: 'Erro interno do servidor',
-      };
+      }
     }
   }
 
@@ -498,31 +498,31 @@ export class FinancialAIAgent {
     // In a real implementation, this would use ML models
     // For now, we'll use rule-based predictions
 
-    const baseRevenue = summary.totalRevenue;
-    const growthRate = this.calculateGrowthRate(summary);
+    const baseRevenue = summary.totalRevenue
+    const growthRate = this.calculateGrowthRate(summary)
 
-    let predictedRevenue: number;
-    let confidence: number;
-    const factors: FinancialPrediction['factors'] = [];
-    const recommendations: string[] = [];
+    let predictedRevenue: number
+    let confidence: number
+    const factors: FinancialPrediction['factors'] = []
+    const recommendations: string[] = []
 
     switch (timeFrame) {
       case '7d':
-        predictedRevenue = baseRevenue * (1 + growthRate * 0.02); // Weekly prediction
-        confidence = 0.85;
-        break;
+        predictedRevenue = baseRevenue * (1 + growthRate * 0.02) // Weekly prediction
+        confidence = 0.85
+        break
       case '30d':
-        predictedRevenue = baseRevenue * (1 + growthRate * 0.1); // Monthly prediction
-        confidence = 0.80;
-        break;
+        predictedRevenue = baseRevenue * (1 + growthRate * 0.1) // Monthly prediction
+        confidence = 0.80
+        break
       case '90d':
-        predictedRevenue = baseRevenue * (1 + growthRate * 0.3); // Quarterly prediction
-        confidence = 0.75;
-        break;
+        predictedRevenue = baseRevenue * (1 + growthRate * 0.3) // Quarterly prediction
+        confidence = 0.75
+        break
       case '1y':
-        predictedRevenue = baseRevenue * (1 + growthRate * 1.2); // Yearly prediction
-        confidence = 0.70;
-        break;
+        predictedRevenue = baseRevenue * (1 + growthRate * 1.2) // Yearly prediction
+        confidence = 0.70
+        break
     }
 
     // Analyze factors affecting prediction
@@ -530,23 +530,23 @@ export class FinancialAIAgent {
       factor: 'Histórico de receita',
       impact: growthRate > 0 ? 'positive' : 'negative',
       weight: Math.abs(growthRate),
-    });
+    })
 
     if (summary.totalPending > 0) {
       factors.push({
         factor: 'Pagamentos pendentes',
         impact: 'negative',
         weight: summary.totalPending / summary.totalRevenue,
-      });
+      })
     }
 
     // Generate recommendations
     if (summary.totalOverdue > 0) {
-      recommendations.push('Implementar estratégias de cobrança para pagamentos em atraso');
+      recommendations.push('Implementar estratégias de cobrança para pagamentos em atraso')
     }
 
     if (summary.averageTicket < 100) {
-      recommendations.push('Considerar aumento de preços ou pacotes de serviços');
+      recommendations.push('Considerar aumento de preços ou pacotes de serviços')
     }
 
     return {
@@ -555,7 +555,7 @@ export class FinancialAIAgent {
       timeFrame,
       factors,
       recommendations,
-    };
+    }
   }
 
   /**
@@ -564,11 +564,11 @@ export class FinancialAIAgent {
   private calculateGrowthRate(summary: FinancialSummary): number {
     // In a real implementation, this would analyze historical trends
     // For now, use a simple calculation based on revenue distribution
-    const totalRevenue = summary.totalRevenue;
-    const totalPending = summary.totalPending;
+    const totalRevenue = summary.totalRevenue
+    const totalPending = summary.totalPending
 
     // Simple growth rate calculation
-    return (totalRevenue - totalPending) / (totalRevenue || 1) - 1;
+    return (totalRevenue - totalPending) / (totalRevenue || 1) - 1
   }
 
   /**
@@ -586,20 +586,20 @@ export class FinancialAIAgent {
         features: this.config.features,
         alerts: {
           total: this.alerts.size,
-          anomalies: Array.from(this.alerts.values()).filter(a => 'type' in a).length,
-          fraudAlerts: Array.from(this.alerts.values()).filter(a => 'riskScore' in a).length,
+          anomalies: Array.from(this.alerts.values()).filter((a) => 'type' in a).length,
+          fraudAlerts: Array.from(this.alerts.values()).filter((a) => 'riskScore' in a).length,
         },
         uptime: Date.now(), // In real implementation, would track actual uptime
         lastActivity: new Date().toISOString(),
       },
-    };
+    }
   }
 
   /**
    * Get agent configuration
    */
   getConfiguration(): FinancialAIAgentConfig {
-    return { ...this.config };
+    return { ...this.config }
   }
 
   /**
@@ -612,18 +612,18 @@ export class FinancialAIAgent {
       this.config = financialAIAgentSchema.parse({
         ...this.config,
         ...updates,
-      });
+      })
 
       return {
         success: true,
         data: this.config,
         message: 'Configuração atualizada com sucesso',
-      };
+      }
     } catch {
       return {
         success: false,
         error: 'Configuração inválida',
-      };
+      }
     }
   }
 
@@ -634,26 +634,26 @@ export class FinancialAIAgent {
     return {
       success: true,
       data: Array.from(this.alerts.values()),
-    };
+    }
   }
 
   /**
    * Clear alert by ID
    */
   clearAlert(alertId: string): ServiceResponse<boolean> {
-    const cleared = this.alerts.delete(alertId);
+    const cleared = this.alerts.delete(alertId)
 
     return {
       success: true,
       data: cleared,
       message: cleared ? 'Alerta removido com sucesso' : 'Alerta não encontrado',
-    };
+    }
   }
 
   /**
    * Check if agent is ready
    */
   isReady(): boolean {
-    return this.isInitialized && this.billingService.isConfigured();
+    return this.isInitialized && this.billingService.isConfigured()
   }
 }

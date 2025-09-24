@@ -4,8 +4,8 @@
  */
 
 // Legacy exports for backward compatibility
-export { RealtimeManager } from './realtime-manager';
-export type { RealtimeSubscriptionOptions } from './realtime-manager';
+export { RealtimeManager } from './realtime-manager'
+export type { RealtimeSubscriptionOptions } from './realtime-manager'
 
 // Enhanced resilience-focused exports
 export {
@@ -14,23 +14,23 @@ export {
   EnhancedRealtimeManager,
   type EnhancedRealtimeOptions,
   type RealtimeMetrics,
-} from './enhanced-realtime-manager';
+} from './enhanced-realtime-manager'
 
 // Legacy adapter system
-import type { RealtimeAdapterConfig, RealtimeEventAdapter } from './event-adapter';
-import { MockRealtimeAdapter } from './mock-adapter';
-import { SupabaseRealtimeAdapter } from './supabase-adapter';
+import type { RealtimeAdapterConfig, RealtimeEventAdapter } from './event-adapter'
+import { MockRealtimeAdapter } from './mock-adapter'
+import { SupabaseRealtimeAdapter } from './supabase-adapter'
 
 export function createRealtimeAdapter(
   config: RealtimeAdapterConfig,
 ): RealtimeEventAdapter {
   switch (config.provider) {
     case 'supabase':
-      return new SupabaseRealtimeAdapter(config);
+      return new SupabaseRealtimeAdapter(config)
     case 'mock':
-      return new MockRealtimeAdapter(config);
+      return new MockRealtimeAdapter(config)
     default:
-      throw new Error(`Unsupported provider: ${config.provider}`);
+      throw new Error(`Unsupported provider: ${config.provider}`)
   }
 }
 
@@ -85,7 +85,7 @@ export const defaultConfigs = {
     },
     ...overrides,
   }),
-};
+}
 
 // Re-export all types and utilities
 export type {
@@ -97,13 +97,9 @@ export type {
   RealtimeEventHandlers,
   RealtimeEventType,
   RealtimeParticipant,
-} from './event-adapter.js';
+} from './event-adapter.js'
 
-export {
-  createRealtimeEvent,
-  isHealthcareCompliant,
-  validateParticipant,
-} from './event-adapter.js';
+export { createRealtimeEvent, isHealthcareCompliant, validateParticipant } from './event-adapter.js'
 
-export { MockRealtimeAdapter } from './mock-adapter.js';
-export { SupabaseRealtimeAdapter } from './supabase-adapter.js';
+export { MockRealtimeAdapter } from './mock-adapter.js'
+export { SupabaseRealtimeAdapter } from './supabase-adapter.js'

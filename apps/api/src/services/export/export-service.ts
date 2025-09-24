@@ -1,4 +1,4 @@
-import { ExportLGPDCompliance } from './lgpd-compliance';
+import { ExportLGPDCompliance } from './lgpd-compliance'
 import {
   ExportConfig,
   ExportFilter,
@@ -7,8 +7,8 @@ import {
   ExportPagination,
   LGPDComplianceOptions,
   PatientExportField,
-} from './types';
-import { DEFAULT_EXPORT_FIELDS } from './types';
+} from './types'
+import { DEFAULT_EXPORT_FIELDS } from './types'
 
 export class ExportService {
   private static readonly DEFAULT_CONFIG: ExportConfig = {
@@ -16,9 +16,9 @@ export class ExportService {
     chunkSize: 1000,
     timeout: 300000, // 5 minutes
     rateLimit: 100, // requests per minute
-  };
+  }
 
-  private static readonly ACTIVE_JOBS = new Map<string, ExportJob>();
+  private static readonly ACTIVE_JOBS = new Map<string, ExportJob>()
 
   static async createExportJob(
     _userId: string,
@@ -27,7 +27,7 @@ export class ExportService {
     pagination: ExportPagination,
     lgpdOptions: LGPDComplianceOptions,
   ): Promise<ExportJob> {
-    const jobId = this.generateJobId();
+    const jobId = this.generateJobId()
 
     const job: ExportJob = {
       id: jobId,
@@ -43,36 +43,36 @@ export class ExportService {
       },
       createdAt: new Date(),
       updatedAt: new Date(),
-    };
+    }
 
-    this.ACTIVE_JOBS.set(jobId, job);
+    this.ACTIVE_JOBS.set(jobId, job)
 
-    this.processExportJob(jobId, lgpdOptions);
+    this.processExportJob(jobId, lgpdOptions)
 
-    return job;
+    return job
   }
 
   static async getExportJob(jobId: string): Promise<ExportJob | null> {
-    return this.ACTIVE_JOBS.get(jobId) || null;
+    return this.ACTIVE_JOBS.get(jobId) || null
   }
 
   static async cancelExportJob(
     jobId: string,
     _userId: string,
   ): Promise<boolean> {
-    const job = this.ACTIVE_JOBS.get(jobId);
+    const job = this.ACTIVE_JOBS.get(jobId)
 
     if (!job || job.userId !== _userId) {
-      return false;
+      return false
     }
 
     if (job.status === 'processing') {
-      job.status = 'cancelled';
-      job.updatedAt = new Date();
-      return true;
+      job.status = 'cancelled'
+      job.updatedAt = new Date()
+      return true
     }
 
-    return false;
+    return false
   }
 
   static async getExportFormats(): Promise<
@@ -87,11 +87,11 @@ export class ExportService {
         format: 'xlsx',
         description: 'Formato Excel nativo com múltiplas planilhas',
       },
-    ];
+    ]
   }
 
   static async getExportFields(): Promise<PatientExportField[]> {
-    return DEFAULT_EXPORT_FIELDS;
+    return DEFAULT_EXPORT_FIELDS
   }
 
   static async getExportHistory(
@@ -99,76 +99,76 @@ export class ExportService {
     limit: number = 10,
   ): Promise<ExportJob[]> {
     const userJobs = Array.from(this.ACTIVE_JOBS.values())
-      .filter(job => job.userId === _userId)
+      .filter((job) => job.userId === _userId)
       .sort((a, _b) => b.createdAt.getTime() - a.createdAt.getTime())
-      .slice(0, limit);
+      .slice(0, limit)
 
-    return userJobs;
+    return userJobs
   }
 
   private static async processExportJob(
     jobId: string,
     lgpdOptions: LGPDComplianceOptions,
   ): Promise<void> {
-    const job = this.ACTIVE_JOBS.get(jobId);
-    if (!job) return;
+    const job = this.ACTIVE_JOBS.get(jobId)
+    if (!job) return
 
     try {
-      job.status = 'processing';
-      job.updatedAt = new Date();
+      job.status = 'processing'
+      job.updatedAt = new Date()
 
       const { data, total } = await this.fetchPatientData(
         job.filters,
         job.pagination,
-      );
+      )
 
-      job.progress.total = total;
+      job.progress.total = total
 
       const validated = await ExportLGPDCompliance.validateExportRequest(
         job.userId,
         lgpdOptions,
         total,
-      );
+      )
 
       if (!validated.valid) {
-        throw new Error(validated.error);
+        throw new Error(validated.error)
       }
 
       const processedData = ExportLGPDCompliance.anonymizeData(
         data,
         DEFAULT_EXPORT_FIELDS,
         lgpdOptions,
-      );
+      )
 
       const exportUrl = await this.generateExportFile(
         processedData,
         job.format,
         job.id,
-      );
+      )
 
-      job.status = 'completed';
+      job.status = 'completed'
       job.result = {
         url: exportUrl,
         size: this.calculateFileSize(processedData, job.format),
         recordCount: processedData.length,
         expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours
-      };
-      job.completedAt = new Date();
+      }
+      job.completedAt = new Date()
 
       await ExportLGPDCompliance.logDataAccess(
         job.userId,
         job.id,
         DEFAULT_EXPORT_FIELDS,
         processedData.length,
-      );
+      )
     } catch {
-      job.status = 'failed';
-      job.error = error instanceof Error ? error.message : 'Erro desconhecido';
-      job.updatedAt = new Date();
+      job.status = 'failed'
+      job.error = error instanceof Error ? error.message : 'Erro desconhecido'
+      job.updatedAt = new Date()
     } finally {
-      job.progress.processed = job.progress.total;
-      job.progress.percentage = 100;
-      job.updatedAt = new Date();
+      job.progress.processed = job.progress.total
+      job.progress.percentage = 100
+      job.updatedAt = new Date()
     }
   }
 
@@ -176,16 +176,16 @@ export class ExportService {
     filters: ExportFilter,
     pagination: ExportPagination,
   ): Promise<{ data: any[]; total: number }> {
-    const mockData = this.generateMockPatientData(pagination.limit);
+    const mockData = this.generateMockPatientData(pagination.limit)
 
     return {
       data: mockData,
       total: mockData.length,
-    };
+    }
   }
 
   private static generateMockPatientData(count: number): any[] {
-    const _data = [];
+    const _data = []
 
     for (let i = 1; i <= count; i++) {
       data.push({
@@ -224,10 +224,10 @@ export class ExportService {
         updatedAt: new Date(
           Date.now() - Math.floor(Math.random() * 30) * 24 * 60 * 60 * 1000,
         ),
-      });
+      })
     }
 
-    return data;
+    return data
   }
 
   private static async generateExportFile(
@@ -236,9 +236,9 @@ export class ExportService {
     jobId: string,
   ): Promise<string> {
     if (format === 'csv') {
-      return this.generateCSV(data, jobId);
+      return this.generateCSV(data, jobId)
     } else {
-      return this.generateXLSX(data, jobId);
+      return this.generateXLSX(data, jobId)
     }
   }
 
@@ -246,48 +246,48 @@ export class ExportService {
     data: any[],
     jobId: string,
   ): Promise<string> {
-    const Papa = await import('papaparse');
+    const Papa = await import('papaparse')
 
-    const fields = DEFAULT_EXPORT_FIELDS.filter(f => f.required);
-    const headers = fields.map(f => f.label);
+    const fields = DEFAULT_EXPORT_FIELDS.filter((f) => f.required)
+    const headers = fields.map((f) => f.label)
 
-    const csvData = data.map(record => {
-      return fields.map(field => {
-        const value = record[field.field];
-        return field.formatter ? field.formatter(value) : value || '';
-      });
-    });
+    const csvData = data.map((record) => {
+      return fields.map((field) => {
+        const value = record[field.field]
+        return field.formatter ? field.formatter(value) : value || ''
+      })
+    })
 
     /* const csv = */ Papa.unparse({
       fields: headers,
       data: csvData,
-    });
+    })
 
-    return `/api/exports/${jobId}/data.csv`;
+    return `/api/exports/${jobId}/data.csv`
   }
 
   private static async generateXLSX(
     data: any[],
     jobId: string,
   ): Promise<string> {
-    return `/api/exports/${jobId}/data.xlsx`;
+    return `/api/exports/${jobId}/data.xlsx`
   }
 
   private static calculateFileSize(
     data: any[],
     format: 'csv' | 'xlsx',
   ): number {
-    const estimatedSize = data.length * 500; // rough estimate
-    return format === 'csv' ? estimatedSize : estimatedSize * 1.2;
+    const estimatedSize = data.length * 500 // rough estimate
+    return format === 'csv' ? estimatedSize : estimatedSize * 1.2
   }
 
   private static generateJobId(): string {
-    return `export_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    return `export_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
   }
 
   static async getExportMetrics(jobId: string): Promise<ExportMetrics | null> {
-    const job = this.ACTIVE_JOBS.get(jobId);
-    if (!job) return null;
+    const job = this.ACTIVE_JOBS.get(jobId)
+    if (!job) return null
 
     return {
       totalRecords: job.progress.total,
@@ -300,15 +300,15 @@ export class ExportService {
         ? job.progress.processed
           / ((job.updatedAt.getTime() - job.createdAt.getTime()) / 1000)
         : 0,
-    };
+    }
   }
 
   static async cleanupExpiredJobs(): Promise<void> {
-    const now = new Date();
+    const now = new Date()
 
     for (const [jobId, job] of this.ACTIVE_JOBS.entries()) {
       if (job.result && job.result.expiresAt < now) {
-        this.ACTIVE_JOBS.delete(jobId);
+        this.ACTIVE_JOBS.delete(jobId)
       }
     }
   }

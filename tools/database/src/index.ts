@@ -4,11 +4,11 @@
  */
 
 // Re-export shared utilities for convenience
-export * from '@neonpro/tools-shared';
+export * from '@neonpro/tools-shared'
 
 // Version information
-export const DATABASE_TESTING_VERSION = '1.0.0';
-export const DATABASE_TESTING_PACKAGE = '@neonpro/tools-database-tests';
+export const DATABASE_TESTING_VERSION = '1.0.0'
+export const DATABASE_TESTING_PACKAGE = '@neonpro/tools-database-tests'
 
 // Default configurations
 export const DEFAULT_DATABASE_CONFIG = {
@@ -25,4 +25,4 @@ export const DEFAULT_DATABASE_CONFIG = {
     },
   },
   testTimeout: 30000, // Longer timeout for database operations
-};
+}

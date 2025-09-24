@@ -14,7 +14,7 @@
  * @compliance LGPD, ANVISA, ISO 27001, NIST Cybersecurity Framework
  */
 
-import { z } from 'zod';
+import { z } from 'zod'
 
 // ============================================================================
 // TYPES & SCHEMAS
@@ -90,9 +90,9 @@ export const HealthcareJobContextSchema = z.object({
   regulatoryRequirement: z
     .enum(['anvisa', 'lgpd', 'iso27001', 'hipaa'])
     .optional(),
-});
+})
 
-export type HealthcareJobContext = z.infer<typeof HealthcareJobContextSchema>;
+export type HealthcareJobContext = z.infer<typeof HealthcareJobContextSchema>
 
 /**
  * Job configuration schema
@@ -128,9 +128,9 @@ export const JobConfigSchema = z.object({
   // Metadata
   tags: z.array(z.string()).default([]),
   metadata: z.record(z.any()).default({}),
-});
+})
 
-export type JobConfig = z.infer<typeof JobConfigSchema>;
+export type JobConfig = z.infer<typeof JobConfigSchema>
 
 /**
  * Job data schema
@@ -187,9 +187,9 @@ export const JobDataSchema = z.object({
   // Metadata
   tags: z.array(z.string()).default([]),
   metadata: z.record(z.any()).default({}),
-});
+})
 
-export type JobData = z.infer<typeof JobDataSchema>;
+export type JobData = z.infer<typeof JobDataSchema>
 
 /**
  * Job creation request schema
@@ -204,9 +204,9 @@ export const CreateJobRequestSchema = z.object({
   dependencies: z.array(z.string().uuid()).default([]),
   tags: z.array(z.string()).default([]),
   metadata: z.record(z.any()).default({}),
-});
+})
 
-export type CreateJobRequest = z.infer<typeof CreateJobRequestSchema>;
+export type CreateJobRequest = z.infer<typeof CreateJobRequestSchema>
 
 /**
  * Job execution result schema
@@ -226,9 +226,9 @@ export const JobExecutionResultSchema = z.object({
     .optional(),
   auditEvents: z.array(z.record(z.any())).default([]),
   metadata: z.record(z.any()).default({}),
-});
+})
 
-export type JobExecutionResult = z.infer<typeof JobExecutionResultSchema>;
+export type JobExecutionResult = z.infer<typeof JobExecutionResultSchema>
 
 /**
  * Worker configuration schema
@@ -266,9 +266,9 @@ export const WorkerConfigSchema = z.object({
   // Metadata
   tags: z.array(z.string()).default([]),
   metadata: z.record(z.any()).default({}),
-});
+})
 
-export type WorkerConfig = z.infer<typeof WorkerConfigSchema>;
+export type WorkerConfig = z.infer<typeof WorkerConfigSchema>
 
 /**
  * Queue statistics schema
@@ -309,9 +309,9 @@ export const QueueStatisticsSchema = z.object({
   // Time-based metrics
   lastUpdateTime: z.date().default(() => new Date()),
   uptime: z.number().default(0),
-});
+})
 
-export type QueueStatistics = z.infer<typeof QueueStatisticsSchema>;
+export type QueueStatistics = z.infer<typeof QueueStatisticsSchema>
 
 // ============================================================================
 // JOB HANDLER INTERFACE
@@ -324,22 +324,22 @@ export interface JobHandler {
   /**
    * Execute a job
    */
-  execute(job: JobData): Promise<JobExecutionResult>;
+  execute(job: JobData): Promise<JobExecutionResult>
 
   /**
    * Get supported job types
    */
-  getSupportedTypes(): HealthcareJobType[];
+  getSupportedTypes(): HealthcareJobType[]
 
   /**
    * Validate job payload
    */
-  validatePayload(_payload: Record<string, any>): Promise<boolean>;
+  validatePayload(_payload: Record<string, any>): Promise<boolean>
 
   /**
    * Get estimated execution time
    */
-  getEstimatedExecutionTime(_payload: Record<string, any>): Promise<number>;
+  getEstimatedExecutionTime(_payload: Record<string, any>): Promise<number>
 }
 
 // ============================================================================
@@ -353,47 +353,47 @@ export interface JobQueue {
   /**
    * Add a job to the queue
    */
-  enqueue(job: JobData): Promise<void>;
+  enqueue(job: JobData): Promise<void>
 
   /**
    * Get next job from queue
    */
-  dequeue(priority?: JobPriority): Promise<JobData | null>;
+  dequeue(priority?: JobPriority): Promise<JobData | null>
 
   /**
    * Get next job for specific types and priority
    */
-  getNextJob(allowedTypes: HealthcareJobType[], maxPriority: JobPriority): Promise<JobData | null>;
+  getNextJob(allowedTypes: HealthcareJobType[], maxPriority: JobPriority): Promise<JobData | null>
 
   /**
    * Get job by ID
    */
-  getJob(jobId: string): Promise<JobData | null>;
+  getJob(jobId: string): Promise<JobData | null>
 
   /**
    * Update job status
    */
-  updateJob(jobId: string, updates: Partial<JobData>): Promise<void>;
+  updateJob(jobId: string, updates: Partial<JobData>): Promise<void>
 
   /**
    * Delete job
    */
-  deleteJob(jobId: string): Promise<boolean>;
+  deleteJob(jobId: string): Promise<boolean>
 
   /**
    * Get jobs by status
    */
-  getJobsByStatus(status: JobStatus, limit?: number): Promise<JobData[]>;
+  getJobsByStatus(status: JobStatus, limit?: number): Promise<JobData[]>
 
   /**
    * Get queue statistics
    */
-  getStatistics(): Promise<QueueStatistics>;
+  getStatistics(): Promise<QueueStatistics>
 
   /**
    * Clear completed jobs
    */
-  cleanup(olderThan?: Date): Promise<number>;
+  cleanup(olderThan?: Date): Promise<number>
 }
 
 // ============================================================================
@@ -405,13 +405,13 @@ export interface JobQueue {
  */
 export function generateJobId(): string {
   if (typeof crypto !== 'undefined' && crypto.randomUUID) {
-    return crypto.randomUUID();
+    return crypto.randomUUID()
   }
 
   // Fallback implementation
-  const timestamp = Date.now().toString(36);
-  const random = Math.random().toString(36).substring(2);
-  return `job_${timestamp}_${random}`;
+  const timestamp = Date.now().toString(36)
+  const random = Math.random().toString(36).substring(2)
+  return `job_${timestamp}_${random}`
 }
 
 /**
@@ -422,25 +422,25 @@ export function calculatePriorityScore(
   healthcareContext?: HealthcareJobContext,
   createdAt?: Date,
 ): number {
-  let score = 0;
+  let score = 0
 
   // Base priority scores
   switch (priority) {
     case JobPriority.CRITICAL:
-      score = 1000;
-      break;
+      score = 1000
+      break
     case JobPriority.HIGH:
-      score = 750;
-      break;
+      score = 750
+      break
     case JobPriority.MEDIUM:
-      score = 500;
-      break;
+      score = 500
+      break
     case JobPriority.LOW:
-      score = 250;
-      break;
+      score = 250
+      break
     case JobPriority.BACKGROUND:
-      score = 100;
-      break;
+      score = 100
+      break
   }
 
   // Healthcare context adjustments
@@ -448,36 +448,36 @@ export function calculatePriorityScore(
     // Urgency level bonus
     switch (healthcareContext.urgencyLevel) {
       case 'emergency':
-        score += 500;
-        break;
+        score += 500
+        break
       case 'critical':
-        score += 300;
-        break;
+        score += 300
+        break
       case 'urgent':
-        score += 150;
-        break;
+        score += 150
+        break
     }
 
     // Clinical context bonus
     if (healthcareContext.clinicalContext === 'emergency') {
-      score += 400;
+      score += 400
     } else if (healthcareContext.clinicalContext === 'surgery') {
-      score += 200;
+      score += 200
     }
 
     // Patient data handling
     if (healthcareContext.patientId) {
-      score += 50; // Patient-related jobs get slight priority
+      score += 50 // Patient-related jobs get slight priority
     }
   }
 
   // Age penalty (older jobs get lower priority)
   if (createdAt) {
-    const ageMinutes = (Date.now() - createdAt.getTime()) / (1000 * 60);
-    score -= Math.floor(ageMinutes / 10); // -1 point per 10 minutes
+    const ageMinutes = (Date.now() - createdAt.getTime()) / (1000 * 60)
+    score -= Math.floor(ageMinutes / 10) // -1 point per 10 minutes
   }
 
-  return Math.max(0, score);
+  return Math.max(0, score)
 }
 
 /**
@@ -490,13 +490,13 @@ export function calculateRetryDelay(
   maxDelay: number,
 ): number {
   if (!exponentialBackoff) {
-    return Math.min(baseDelay, maxDelay);
+    return Math.min(baseDelay, maxDelay)
   }
 
-  const exponentialDelay = baseDelay * Math.pow(2, attemptCount);
-  const jitteredDelay = exponentialDelay * (0.5 + Math.random() * 0.5); // Add jitter
+  const exponentialDelay = baseDelay * Math.pow(2, attemptCount)
+  const jitteredDelay = exponentialDelay * (0.5 + Math.random() * 0.5) // Add jitter
 
-  return Math.min(jitteredDelay, maxDelay);
+  return Math.min(jitteredDelay, maxDelay)
 }
 
 /**
@@ -506,7 +506,7 @@ export function validateHealthcareContext(
   _context: HealthcareJobContext,
   jobType: HealthcareJobType,
 ): { isValid: boolean; errors: string[] } {
-  const errors: string[] = [];
+  const errors: string[] = []
 
   // Emergency jobs must have emergency urgency
   if (
@@ -515,7 +515,7 @@ export function validateHealthcareContext(
   ) {
     errors.push(
       'Emergency notification jobs must have emergency urgency level',
-    );
+    )
   }
 
   // Patient-related jobs must have patient ID
@@ -523,10 +523,10 @@ export function validateHealthcareContext(
     HealthcareJobType.PATIENT_DATA_SYNC,
     HealthcareJobType.CLINICAL_REPORT_GENERATION,
     HealthcareJobType.LAB_RESULT_PROCESSING,
-  ];
+  ]
 
   if (patientJobTypes.includes(jobType) && !_context.patientId) {
-    errors.push('Patient-related jobs require patientId in healthcare context');
+    errors.push('Patient-related jobs require patientId in healthcare context')
   }
 
   // LGPD jobs must have consent ID
@@ -534,23 +534,23 @@ export function validateHealthcareContext(
     jobType === HealthcareJobType.LGPD_DATA_PROCESSING
     && !_context.lgpdConsentId
   ) {
-    errors.push('LGPD data processing jobs require lgpdConsentId');
+    errors.push('LGPD data processing jobs require lgpdConsentId')
   }
 
   // Compliance jobs must have audit trail
   const complianceJobTypes = [
     HealthcareJobType.COMPLIANCE_AUDIT,
     HealthcareJobType.ANVISA_REPORTING,
-  ];
+  ]
 
   if (complianceJobTypes.includes(jobType) && !_context.auditTrailId) {
-    errors.push('Compliance jobs require auditTrailId');
+    errors.push('Compliance jobs require auditTrailId')
   }
 
   return {
     isValid: errors.length === 0,
     errors,
-  };
+  }
 }
 
 /**
@@ -562,7 +562,7 @@ export function requiresEmergencyProcessing(
 ): boolean {
   // Emergency notification jobs are always urgent
   if (jobType === HealthcareJobType.EMERGENCY_NOTIFICATION) {
-    return true;
+    return true
   }
 
   // Jobs with emergency context
@@ -570,10 +570,10 @@ export function requiresEmergencyProcessing(
     _context?.urgencyLevel === 'emergency'
     || _context?.clinicalContext === 'emergency'
   ) {
-    return true;
+    return true
   }
 
-  return false;
+  return false
 }
 
 /**
@@ -601,7 +601,7 @@ export function getDefaultJobConfig(
         cpuLimit: 1,
         tags: [],
         metadata: {},
-      };
+      }
     case HealthcareJobType.PATIENT_DATA_SYNC:
       return {
         maxRetries: 2,
@@ -619,7 +619,7 @@ export function getDefaultJobConfig(
         cpuLimit: 1,
         tags: [],
         metadata: {},
-      };
+      }
     case HealthcareJobType.COMPLIANCE_AUDIT:
       return {
         maxRetries: 1,
@@ -637,7 +637,7 @@ export function getDefaultJobConfig(
         cpuLimit: 1,
         tags: [],
         metadata: {},
-      };
+      }
     default:
       return {
         maxRetries: 3,
@@ -655,7 +655,7 @@ export function getDefaultJobConfig(
         cpuLimit: 1,
         tags: [],
         metadata: {},
-      };
+      }
   }
 }
 
@@ -667,43 +667,43 @@ export function getDefaultJobConfig(
  * In-memory job queue implementation for development and testing
  */
 export class InMemoryJobQueue implements JobQueue {
-  private jobs: Map<string, JobData> = new Map();
-  private priorityQueues: Map<JobPriority, string[]> = new Map();
-  private scheduledJobs: Map<string, NodeJS.Timeout> = new Map();
-  private statistics: QueueStatistics;
-  private startTime: Date;
+  private jobs: Map<string, JobData> = new Map()
+  private priorityQueues: Map<JobPriority, string[]> = new Map()
+  private scheduledJobs: Map<string, NodeJS.Timeout> = new Map()
+  private statistics: QueueStatistics
+  private startTime: Date
 
   constructor() {
     // Initialize priority queues
-    Object.values(JobPriority).forEach(priority => {
-      this.priorityQueues.set(priority, []);
-    });
+    Object.values(JobPriority).forEach((priority) => {
+      this.priorityQueues.set(priority, [])
+    })
 
-    this.statistics = QueueStatisticsSchema.parse({});
-    this.startTime = new Date();
+    this.statistics = QueueStatisticsSchema.parse({})
+    this.startTime = new Date()
   }
 
   async enqueue(job: JobData): Promise<void> {
-    const validatedJob = JobDataSchema.parse(job);
+    const validatedJob = JobDataSchema.parse(job)
 
     // Store job
-    this.jobs.set(validatedJob.jobId, validatedJob);
+    this.jobs.set(validatedJob.jobId, validatedJob)
 
     // Handle scheduling
     if (validatedJob.scheduledAt && validatedJob.scheduledAt > new Date()) {
-      const delay = validatedJob.scheduledAt.getTime() - Date.now();
+      const delay = validatedJob.scheduledAt.getTime() - Date.now()
       const timeout = setTimeout(() => {
-        this.moveToQueue(validatedJob.jobId, validatedJob.priority);
-        this.scheduledJobs.delete(validatedJob.jobId);
-      }, delay);
+        this.moveToQueue(validatedJob.jobId, validatedJob.priority)
+        this.scheduledJobs.delete(validatedJob.jobId)
+      }, delay)
 
-      this.scheduledJobs.set(validatedJob.jobId, timeout);
+      this.scheduledJobs.set(validatedJob.jobId, timeout)
     } else {
       // Add to appropriate priority queue immediately
-      this.moveToQueue(validatedJob.jobId, validatedJob.priority);
+      this.moveToQueue(validatedJob.jobId, validatedJob.priority)
     }
 
-    this.updateStatistics();
+    this.updateStatistics()
   }
 
   async getNextJob(
@@ -717,151 +717,151 @@ export class InMemoryJobQueue implements JobQueue {
       JobPriority.MEDIUM,
       JobPriority.LOW,
       JobPriority.BACKGROUND,
-    ];
+    ]
 
-    const maxPriorityIndex = allPriorities.indexOf(maxPriority);
+    const maxPriorityIndex = allPriorities.indexOf(maxPriority)
     const prioritiesToCheck = maxPriorityIndex >= 0
       ? allPriorities.slice(0, maxPriorityIndex + 1)
-      : allPriorities;
+      : allPriorities
 
     for (const priority of prioritiesToCheck) {
-      const queue = this.priorityQueues.get(priority);
+      const queue = this.priorityQueues.get(priority)
       if (queue && queue.length > 0) {
         // Filter jobs by allowed types
-        const eligibleJobs = queue.filter(jobId => {
-          const job = this.jobs.get(jobId);
+        const eligibleJobs = queue.filter((jobId) => {
+          const job = this.jobs.get(jobId)
           return job
             && job.status === JobStatus.PENDING
-            && allowedTypes.includes(job.type);
-        });
+            && allowedTypes.includes(job.type)
+        })
 
         if (eligibleJobs.length > 0) {
           // Sort by priority score
           eligibleJobs.sort((a, b) => {
-            const jobA = this.jobs.get(a);
-            const jobB = this.jobs.get(b);
-            if (!jobA || !jobB) return 0;
+            const jobA = this.jobs.get(a)
+            const jobB = this.jobs.get(b)
+            if (!jobA || !jobB) return 0
 
             const scoreA = calculatePriorityScore(
               jobA.priority,
               jobA.healthcareContext,
               jobA.createdAt,
-            );
+            )
             const scoreB = calculatePriorityScore(
               jobB.priority,
               jobB.healthcareContext,
               jobB.createdAt,
-            );
+            )
 
-            return scoreB - scoreA; // Higher score first
-          });
+            return scoreB - scoreA // Higher score first
+          })
 
-          const jobId = eligibleJobs[0];
-          if (!jobId) continue;
-          const job = this.jobs.get(jobId);
+          const jobId = eligibleJobs[0]
+          if (!jobId) continue
+          const job = this.jobs.get(jobId)
 
           if (job) {
             // Remove from queue
-            const index = queue.indexOf(jobId);
+            const index = queue.indexOf(jobId)
             if (index > -1) {
-              queue.splice(index, 1);
+              queue.splice(index, 1)
             }
 
             // Update job status
             await this.updateJob(jobId, {
               status: JobStatus.RUNNING,
               startedAt: new Date(),
-            });
+            })
 
-            this.updateStatistics();
-            return { ...job };
+            this.updateStatistics()
+            return { ...job }
           }
         }
       }
     }
 
-    return null;
+    return null
   }
   async dequeue(priority?: JobPriority): Promise<JobData | null> {
     // Use getNextJob with all allowed types if no specific priority
     if (!priority) {
-      return this.getNextJob(Object.values(HealthcareJobType), JobPriority.BACKGROUND);
+      return this.getNextJob(Object.values(HealthcareJobType), JobPriority.BACKGROUND)
     }
 
-    const queue = this.priorityQueues.get(priority);
+    const queue = this.priorityQueues.get(priority)
     if (queue && queue.length > 0) {
-      const jobId = queue.shift()!;
-      const job = this.jobs.get(jobId);
+      const jobId = queue.shift()!
+      const job = this.jobs.get(jobId)
 
       if (job && job.status === JobStatus.PENDING) {
         await this.updateJob(jobId, {
           status: JobStatus.RUNNING,
           startedAt: new Date(),
-        });
+        })
 
-        this.updateStatistics();
-        return { ...job };
+        this.updateStatistics()
+        return { ...job }
       }
     }
 
-    return null;
+    return null
   }
 
   async getJob(jobId: string): Promise<JobData | null> {
-    const job = this.jobs.get(jobId);
-    return job ? { ...job } : null;
+    const job = this.jobs.get(jobId)
+    return job ? { ...job } : null
   }
 
   async updateJob(jobId: string, updates: Partial<JobData>): Promise<void> {
-    const job = this.jobs.get(jobId);
+    const job = this.jobs.get(jobId)
     if (job) {
-      const updatedJob = { ...job, ...updates };
-      this.jobs.set(jobId, JobDataSchema.parse(updatedJob));
-      this.updateStatistics();
+      const updatedJob = { ...job, ...updates }
+      this.jobs.set(jobId, JobDataSchema.parse(updatedJob))
+      this.updateStatistics()
     }
   }
 
   async deleteJob(jobId: string): Promise<boolean> {
-    const deleted = this.jobs.delete(jobId);
+    const deleted = this.jobs.delete(jobId)
 
     if (deleted) {
       // Remove from priority queues
       for (const queue of Array.from(this.priorityQueues.values())) {
-        const index = queue.indexOf(jobId);
+        const index = queue.indexOf(jobId)
         if (index > -1) {
-          queue.splice(index, 1);
+          queue.splice(index, 1)
         }
       }
 
       // Cancel scheduled timeout
-      const timeout = this.scheduledJobs.get(jobId);
+      const timeout = this.scheduledJobs.get(jobId)
       if (timeout) {
-        clearTimeout(timeout);
-        this.scheduledJobs.delete(jobId);
+        clearTimeout(timeout)
+        this.scheduledJobs.delete(jobId)
       }
 
-      this.updateStatistics();
+      this.updateStatistics()
     }
 
-    return deleted;
+    return deleted
   }
 
   async getJobsByStatus(status: JobStatus, limit = 100): Promise<JobData[]> {
     return Array.from(this.jobs.values())
-      .filter(job => job.status === status)
+      .filter((job) => job.status === status)
       .slice(0, limit)
-      .map(job => ({ ...job }));
+      .map((job) => ({ ...job }))
   }
 
   async getStatistics(): Promise<QueueStatistics> {
-    this.updateStatistics();
-    return { ...this.statistics };
+    this.updateStatistics()
+    return { ...this.statistics }
   }
 
   async cleanup(
     olderThan: Date = new Date(Date.now() - 24 * 60 * 60 * 1000),
   ): Promise<number> {
-    let cleanedCount = 0;
+    let cleanedCount = 0
 
     for (const [jobId, job] of Array.from(this.jobs.entries())) {
       if (
@@ -870,48 +870,48 @@ export class InMemoryJobQueue implements JobQueue {
         && job.completedAt
         && job.completedAt < olderThan
       ) {
-        await this.deleteJob(jobId);
-        cleanedCount++;
+        await this.deleteJob(jobId)
+        cleanedCount++
       }
     }
 
-    return cleanedCount;
+    return cleanedCount
   }
 
   private moveToQueue(jobId: string, priority: JobPriority): void {
-    const queue = this.priorityQueues.get(priority);
+    const queue = this.priorityQueues.get(priority)
     if (queue && !queue.includes(jobId)) {
-      queue.push(jobId);
+      queue.push(jobId)
     }
   }
 
   private updateStatistics(): void {
-    const allJobs = Array.from(this.jobs.values());
+    const allJobs = Array.from(this.jobs.values())
 
     this.statistics = {
       totalJobs: allJobs.length,
-      pendingJobs: allJobs.filter(j => j.status === JobStatus.PENDING).length,
-      runningJobs: allJobs.filter(j => j.status === JobStatus.RUNNING).length,
-      completedJobs: allJobs.filter(j => j.status === JobStatus.COMPLETED)
+      pendingJobs: allJobs.filter((j) => j.status === JobStatus.PENDING).length,
+      runningJobs: allJobs.filter((j) => j.status === JobStatus.RUNNING).length,
+      completedJobs: allJobs.filter((j) => j.status === JobStatus.COMPLETED)
         .length,
-      failedJobs: allJobs.filter(j => j.status === JobStatus.FAILED).length,
-      deadLetterJobs: allJobs.filter(j => j.status === JobStatus.DEAD_LETTER)
+      failedJobs: allJobs.filter((j) => j.status === JobStatus.FAILED).length,
+      deadLetterJobs: allJobs.filter((j) => j.status === JobStatus.DEAD_LETTER)
         .length,
 
       priorityDistribution: {
         [JobPriority.CRITICAL]: allJobs.filter(
-          j => j.priority === JobPriority.CRITICAL,
+          (j) => j.priority === JobPriority.CRITICAL,
         ).length,
         [JobPriority.HIGH]: allJobs.filter(
-          j => j.priority === JobPriority.HIGH,
+          (j) => j.priority === JobPriority.HIGH,
         ).length,
         [JobPriority.MEDIUM]: allJobs.filter(
-          j => j.priority === JobPriority.MEDIUM,
+          (j) => j.priority === JobPriority.MEDIUM,
         ).length,
-        [JobPriority.LOW]: allJobs.filter(j => j.priority === JobPriority.LOW)
+        [JobPriority.LOW]: allJobs.filter((j) => j.priority === JobPriority.LOW)
           .length,
         [JobPriority.BACKGROUND]: allJobs.filter(
-          j => j.priority === JobPriority.BACKGROUND,
+          (j) => j.priority === JobPriority.BACKGROUND,
         ).length,
       },
 
@@ -920,13 +920,13 @@ export class InMemoryJobQueue implements JobQueue {
       errorRate: this.calculateErrorRate(allJobs),
 
       emergencyJobsProcessed: allJobs.filter(
-        j => j.healthcareContext?.urgencyLevel === 'emergency',
+        (j) => j.healthcareContext?.urgencyLevel === 'emergency',
       ).length,
       patientSafetyJobsProcessed: allJobs.filter(
-        j => j.config.patientSafetyRelevant,
+        (j) => j.config.patientSafetyRelevant,
       ).length,
       complianceJobsCompleted: allJobs.filter(
-        j =>
+        (j) =>
           j.type === HealthcareJobType.COMPLIANCE_AUDIT
           || j.type === HealthcareJobType.ANVISA_REPORTING
           || j.type === HealthcareJobType.LGPD_DATA_PROCESSING,
@@ -937,44 +937,44 @@ export class InMemoryJobQueue implements JobQueue {
 
       lastUpdateTime: new Date(),
       uptime: Date.now() - this.startTime.getTime(),
-    };
+    }
   }
 
   private calculateAverageExecutionTime(jobs: JobData[]): number {
-    const completedJobs = jobs.filter(j => j.executionTime);
-    if (completedJobs.length === 0) return 0;
+    const completedJobs = jobs.filter((j) => j.executionTime)
+    if (completedJobs.length === 0) return 0
 
     const totalTime = completedJobs.reduce(
       (sum, job) => sum + (job.executionTime || 0),
       0,
-    );
-    return totalTime / completedJobs.length;
+    )
+    return totalTime / completedJobs.length
   }
 
   private calculateThroughput(jobs: JobData[]): number {
-    const lastHour = new Date(Date.now() - 60 * 60 * 1000);
+    const lastHour = new Date(Date.now() - 60 * 60 * 1000)
     const recentJobs = jobs.filter(
-      j => j.completedAt && j.completedAt > lastHour,
-    );
+      (j) => j.completedAt && j.completedAt > lastHour,
+    )
 
-    return recentJobs.length;
+    return recentJobs.length
   }
 
   private calculateErrorRate(jobs: JobData[]): number {
     const totalJobs = jobs.filter(
-      j =>
+      (j) =>
         j.status === JobStatus.COMPLETED
         || j.status === JobStatus.FAILED
         || j.status === JobStatus.DEAD_LETTER,
-    ).length;
+    ).length
 
-    if (totalJobs === 0) return 0;
+    if (totalJobs === 0) return 0
 
     const failedJobs = jobs.filter(
-      j => j.status === JobStatus.FAILED || j.status === JobStatus.DEAD_LETTER,
-    ).length;
+      (j) => j.status === JobStatus.FAILED || j.status === JobStatus.DEAD_LETTER,
+    ).length
 
-    return failedJobs / totalJobs;
+    return failedJobs / totalJobs
   }
 }
 
@@ -986,11 +986,11 @@ export class InMemoryJobQueue implements JobQueue {
  * Job scheduler for cron-like recurring jobs
  */
 export class JobScheduler {
-  private scheduledJobs: Map<string, NodeJS.Timeout> = new Map();
-  private jobQueue: JobQueue;
+  private scheduledJobs: Map<string, NodeJS.Timeout> = new Map()
+  private jobQueue: JobQueue
 
   constructor(jobQueue: JobQueue) {
-    this.jobQueue = jobQueue;
+    this.jobQueue = jobQueue
   }
 
   /**
@@ -1002,7 +1002,7 @@ export class JobScheduler {
     jobTemplate: CreateJobRequest,
   ): void {
     // Simple cron parser (in production, use proper cron library)
-    const interval = this.parseCronExpression(cronExpression);
+    const interval = this.parseCronExpression(cronExpression)
 
     const scheduleNext = () => {
       // Create job instance
@@ -1028,55 +1028,55 @@ export class JobScheduler {
         auditEvents: [],
         lgpdCompliant: true,
         dependents: [],
-      };
+      }
 
       // Enqueue job
-      this.jobQueue.enqueue(job);
+      this.jobQueue.enqueue(job)
 
       // Schedule next execution
-      const timeout = setTimeout(scheduleNext, interval);
-      this.scheduledJobs.set(name, timeout);
-    };
+      const timeout = setTimeout(scheduleNext, interval)
+      this.scheduledJobs.set(name, timeout)
+    }
 
     // Start scheduling
-    scheduleNext();
+    scheduleNext()
   }
 
   /**
    * Cancel scheduled job
    */
   cancelScheduledJob(name: string): boolean {
-    const timeout = this.scheduledJobs.get(name);
+    const timeout = this.scheduledJobs.get(name)
     if (timeout) {
-      clearTimeout(timeout);
-      this.scheduledJobs.delete(name);
-      return true;
+      clearTimeout(timeout)
+      this.scheduledJobs.delete(name)
+      return true
     }
-    return false;
+    return false
   }
 
   /**
    * Get scheduled jobs
    */
   getScheduledJobs(): string[] {
-    return Array.from(this.scheduledJobs.keys());
+    return Array.from(this.scheduledJobs.keys())
   }
 
   private parseCronExpression(cronExpression: string): number {
     // Simplified cron parser - in production use proper library
     // This only handles basic minute intervals
-    const parts = cronExpression.split(' ');
+    const parts = cronExpression.split(' ')
 
     if (parts.length >= 2) {
-      const minutes = parts[0];
+      const minutes = parts[0]
       if (minutes?.startsWith('*/')) {
-        const interval = parseInt(minutes!.substring(2));
-        return interval * 60 * 1000; // Convert to milliseconds
+        const interval = parseInt(minutes!.substring(2))
+        return interval * 60 * 1000 // Convert to milliseconds
       }
     }
 
     // Default to 1 hour
-    return 60 * 60 * 1000;
+    return 60 * 60 * 1000
   }
 }
 
@@ -1085,4 +1085,4 @@ export class JobScheduler {
 // ============================================================================
 
 // Removed duplicate named re-exports to avoid conflicts with existing exported declarations
-export default InMemoryJobQueue;
+export default InMemoryJobQueue

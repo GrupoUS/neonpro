@@ -1,19 +1,19 @@
-import * as React from 'react';
+import * as React from 'react'
 
-import { cn } from '../../utils';
+import { cn } from '../../utils'
 
 const Card = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement> & {
     /** Back-compat props */
-    magic?: boolean;
-    disableShine?: boolean;
+    magic?: boolean
+    disableShine?: boolean
     /** New explicit flag (optional) */
-    enableShineBorder?: boolean;
+    enableShineBorder?: boolean
     /** Effect tuning */
-    shineDuration?: number;
-    shineColor?: string | string[];
-    borderWidth?: number;
+    shineDuration?: number
+    shineColor?: string | string[]
+    borderWidth?: number
   }
 >(
   (
@@ -30,12 +30,12 @@ const Card = React.forwardRef<
     },
     ref,
   ) => {
-    const show = enableShineBorder ?? (magic || !disableShine);
+    const show = enableShineBorder ?? (magic || !disableShine)
     if (show) {
-      const duration = Math.max(0.1, shineDuration ?? 8);
+      const duration = Math.max(0.1, shineDuration ?? 8)
       const colorValue = Array.isArray(shineColor)
         ? (shineColor[0] ?? '#AC9469')
-        : (shineColor ?? '#AC9469');
+        : (shineColor ?? '#AC9469')
 
       return (
         <div
@@ -67,7 +67,7 @@ const Card = React.forwardRef<
             {children}
           </div>
         </div>
-      );
+      )
     }
 
     return (
@@ -81,10 +81,10 @@ const Card = React.forwardRef<
       >
         {children}
       </div>
-    );
+    )
   },
-);
-Card.displayName = 'Card';
+)
+Card.displayName = 'Card'
 
 const CardHeader = React.forwardRef<
   HTMLDivElement,
@@ -95,8 +95,8 @@ const CardHeader = React.forwardRef<
     className={cn('flex flex-col space-y-1.5 p-6', className)}
     {...props}
   />
-));
-CardHeader.displayName = 'CardHeader';
+))
+CardHeader.displayName = 'CardHeader'
 
 const CardTitle = React.forwardRef<
   HTMLDivElement,
@@ -107,8 +107,8 @@ const CardTitle = React.forwardRef<
     className={cn('font-semibold leading-none tracking-tight', className)}
     {...props}
   />
-));
-CardTitle.displayName = 'CardTitle';
+))
+CardTitle.displayName = 'CardTitle'
 
 const CardDescription = React.forwardRef<
   HTMLDivElement,
@@ -119,16 +119,16 @@ const CardDescription = React.forwardRef<
     className={cn('text-sm text-muted-foreground', className)}
     {...props}
   />
-));
-CardDescription.displayName = 'CardDescription';
+))
+CardDescription.displayName = 'CardDescription'
 
 const CardContent = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => (
   <div ref={ref} className={cn('p-6 pt-0', className)} {...props} />
-));
-CardContent.displayName = 'CardContent';
+))
+CardContent.displayName = 'CardContent'
 
 const CardFooter = React.forwardRef<
   HTMLDivElement,
@@ -139,7 +139,7 @@ const CardFooter = React.forwardRef<
     className={cn('flex items-center p-6 pt-0', className)}
     {...props}
   />
-));
-CardFooter.displayName = 'CardFooter';
+))
+CardFooter.displayName = 'CardFooter'
 
-export { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle };
+export { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }

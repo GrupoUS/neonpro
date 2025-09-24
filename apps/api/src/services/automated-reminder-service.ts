@@ -10,172 +10,172 @@
  * - No-show prevention strategies
  */
 
-import { prisma } from '../lib/prisma';
-import { aguiAppointmentProtocol } from './ag-ui-appointment-protocol';
-import { AIAppointmentSchedulingService } from './ai-appointment-scheduling-service';
+import { prisma } from '../lib/prisma'
+import { aguiAppointmentProtocol } from './ag-ui-appointment-protocol'
+import { AIAppointmentSchedulingService } from './ai-appointment-scheduling-service'
 
 export interface ReminderConfig {
-  id: string;
-  appointmentId: string;
-  type: 'email' | 'sms' | 'whatsapp';
-  timing: 'week_before' | 'three_days_before' | 'day_before' | 'two_hours_before';
-  scheduledTime: Date;
-  message: string;
-  personalization: ReminderPersonalization;
-  priority: 'low' | 'medium' | 'high' | 'urgent';
-  status: 'pending' | 'sent' | 'delivered' | 'failed' | 'cancelled';
-  retryCount: number;
-  maxRetries: number;
-  deliveryTracking: DeliveryTracking;
+  id: string
+  appointmentId: string
+  type: 'email' | 'sms' | 'whatsapp'
+  timing: 'week_before' | 'three_days_before' | 'day_before' | 'two_hours_before'
+  scheduledTime: Date
+  message: string
+  personalization: ReminderPersonalization
+  priority: 'low' | 'medium' | 'high' | 'urgent'
+  status: 'pending' | 'sent' | 'delivered' | 'failed' | 'cancelled'
+  retryCount: number
+  maxRetries: number
+  deliveryTracking: DeliveryTracking
 }
 
 export interface ReminderPersonalization {
-  patientName: string;
-  patientLanguage: string;
-  preferredContactMethod: string;
-  communicationStyle: 'formal' | 'casual' | 'friendly';
+  patientName: string
+  patientLanguage: string
+  preferredContactMethod: string
+  communicationStyle: 'formal' | 'casual' | 'friendly'
   accessibility: {
-    largeText: boolean;
-    simpleLanguage: boolean;
-    voiceEnabled: boolean;
-  };
-  interests: string[];
+    largeText: boolean
+    simpleLanguage: boolean
+    voiceEnabled: boolean
+  }
+  interests: string[]
   behavioralFactors: {
-    responseRate: number;
-    preferredTimes: string[];
-    engagementLevel: 'low' | 'medium' | 'high';
-  };
+    responseRate: number
+    preferredTimes: string[]
+    engagementLevel: 'low' | 'medium' | 'high'
+  }
 }
 
 export interface DeliveryTracking {
-  sentAt?: Date;
-  deliveredAt?: Date;
-  readAt?: Date;
-  respondedAt?: Date;
-  failedReason?: string;
-  providerMessageId?: string;
-  statusCode?: number;
-  retries: DeliveryRetry[];
+  sentAt?: Date
+  deliveredAt?: Date
+  readAt?: Date
+  respondedAt?: Date
+  failedReason?: string
+  providerMessageId?: string
+  statusCode?: number
+  retries: DeliveryRetry[]
 }
 
 export interface DeliveryRetry {
-  attempt: number;
-  timestamp: Date;
-  success: boolean;
-  error?: string;
-  providerResponse?: any;
+  attempt: number
+  timestamp: Date
+  success: boolean
+  error?: string
+  providerResponse?: any
 }
 
 export interface ReminderTemplate {
-  id: string;
-  name: string;
-  type: 'email' | 'sms' | 'whatsapp';
-  timing: 'week_before' | 'three_days_before' | 'day_before' | 'two_hours_before';
-  content: ReminderContent;
-  conditions: ReminderCondition[];
-  priority: number;
-  isActive: boolean;
+  id: string
+  name: string
+  type: 'email' | 'sms' | 'whatsapp'
+  timing: 'week_before' | 'three_days_before' | 'day_before' | 'two_hours_before'
+  content: ReminderContent
+  conditions: ReminderCondition[]
+  priority: number
+  isActive: boolean
 }
 
 export interface ReminderContent {
-  subject?: string; // For email
-  body: string;
-  variables: string[];
-  attachments?: ReminderAttachment[];
+  subject?: string // For email
+  body: string
+  variables: string[]
+  attachments?: ReminderAttachment[]
   callToAction?: {
-    text: string;
-    action: string;
-    url?: string;
-  };
+    text: string
+    action: string
+    url?: string
+  }
 }
 
 export interface ReminderAttachment {
-  name: string;
-  type: string;
-  url: string;
-  size: number;
+  name: string
+  type: string
+  url: string
+  size: number
 }
 
 export interface ReminderCondition {
-  field: string;
-  operator: 'equals' | 'greater_than' | 'less_than' | 'contains' | 'in';
-  value: any;
+  field: string
+  operator: 'equals' | 'greater_than' | 'less_than' | 'contains' | 'in'
+  value: any
 }
 
 export interface ReminderAnalytics {
-  totalSent: number;
-  totalDelivered: number;
-  totalRead: number;
-  totalResponded: number;
-  totalFailed: number;
-  deliveryRate: number;
-  readRate: number;
-  responseRate: number;
-  averageResponseTime: number;
+  totalSent: number
+  totalDelivered: number
+  totalRead: number
+  totalResponded: number
+  totalFailed: number
+  deliveryRate: number
+  readRate: number
+  responseRate: number
+  averageResponseTime: number
   channelPerformance: {
-    email: number;
-    sms: number;
-    whatsapp: number;
-  };
+    email: number
+    sms: number
+    whatsapp: number
+  }
   timingPerformance: {
-    week_before: number;
-    three_days_before: number;
-    day_before: number;
-    two_hours_before: number;
-  };
+    week_before: number
+    three_days_before: number
+    day_before: number
+    two_hours_before: number
+  }
 }
 
 export interface PatientCommunicationProfile {
-  id: string;
-  patientId: string;
-  preferredLanguage: string;
-  preferredContactMethod: 'email' | 'sms' | 'whatsapp' | 'phone';
-  communicationStyle: 'formal' | 'casual' | 'friendly';
-  bestContactTimes: string[];
-  messageFrequency: 'low' | 'medium' | 'high';
-  interests: string[];
+  id: string
+  patientId: string
+  preferredLanguage: string
+  preferredContactMethod: 'email' | 'sms' | 'whatsapp' | 'phone'
+  communicationStyle: 'formal' | 'casual' | 'friendly'
+  bestContactTimes: string[]
+  messageFrequency: 'low' | 'medium' | 'high'
+  interests: string[]
   accessibility: {
-    largeText: boolean;
-    simpleLanguage: boolean;
-    voiceEnabled: boolean;
-    visualAids: boolean;
-  };
+    largeText: boolean
+    simpleLanguage: boolean
+    voiceEnabled: boolean
+    visualAids: boolean
+  }
   behavioralData: {
-    responseRate: number;
-    averageResponseTime: number;
-    preferredTopics: string[];
-    engagementScore: number;
-  };
+    responseRate: number
+    averageResponseTime: number
+    preferredTopics: string[]
+    engagementScore: number
+  }
   consentStatus: {
-    email: boolean;
-    sms: boolean;
-    whatsapp: boolean;
-    phone: boolean;
-    lastUpdated: Date;
-  };
-  createdAt: Date;
-  updatedAt: Date;
+    email: boolean
+    sms: boolean
+    whatsapp: boolean
+    phone: boolean
+    lastUpdated: Date
+  }
+  createdAt: Date
+  updatedAt: Date
 }
 
 export class AutomatedReminderService {
-  private static instance: AutomatedReminderService;
-  private processingQueue = false;
-  private reminderQueue: ReminderConfig[] = [];
-  private templates: Map<string, ReminderTemplate> = new Map();
-  private analytics: ReminderAnalytics;
+  private static instance: AutomatedReminderService
+  private processingQueue = false
+  private reminderQueue: ReminderConfig[] = []
+  private templates: Map<string, ReminderTemplate> = new Map()
+  private analytics: ReminderAnalytics
 
   private constructor() {
-    this.analytics = this.initializeAnalytics();
-    this.loadTemplates();
-    this.startReminderProcessor();
-    this.setupProtocolHandlers();
+    this.analytics = this.initializeAnalytics()
+    this.loadTemplates()
+    this.startReminderProcessor()
+    this.setupProtocolHandlers()
   }
 
   static getInstance(): AutomatedReminderService {
     if (!AutomatedReminderService.instance) {
-      AutomatedReminderService.instance = new AutomatedReminderService();
+      AutomatedReminderService.instance = new AutomatedReminderService()
     }
-    return AutomatedReminderService.instance;
+    return AutomatedReminderService.instance
   }
 
   /**
@@ -194,28 +194,28 @@ export class AutomatedReminderService {
           clinic: true,
           serviceType: true,
         },
-      });
+      })
 
       if (!appointment) {
-        throw new Error('Appointment not found');
+        throw new Error('Appointment not found')
       }
 
       // Get or create patient communication profile
-      let communicationProfile = await this.getPatientCommunicationProfile(appointment.patientId);
+      let communicationProfile = await this.getPatientCommunicationProfile(appointment.patientId)
 
       if (customPreferences) {
-        communicationProfile = { ...communicationProfile, ...customPreferences };
+        communicationProfile = { ...communicationProfile, ...customPreferences }
       }
 
       // Calculate no-show risk
-      const _aiService = AIAppointmentSchedulingService.getInstance();
-      const noShowRisk = appointment.noShowRiskScore || 0;
+      const _aiService = AIAppointmentSchedulingService.getInstance()
+      const noShowRisk = appointment.noShowRiskScore || 0
 
       // Determine reminder strategy based on risk and preferences
-      const reminderStrategy = this.determineReminderStrategy(noShowRisk, communicationProfile);
+      const reminderStrategy = this.determineReminderStrategy(noShowRisk, communicationProfile)
 
       // Generate reminders
-      const reminders: ReminderConfig[] = [];
+      const reminders: ReminderConfig[] = []
 
       for (const reminderType of reminderStrategy) {
         const reminder = await this.createReminder(
@@ -223,15 +223,15 @@ export class AutomatedReminderService {
           communicationProfile,
           reminderType,
           noShowRisk,
-        );
+        )
 
         if (reminder) {
-          reminders.push(reminder);
+          reminders.push(reminder)
         }
       }
 
       // Save reminders to database
-      await this.saveReminders(reminders);
+      await this.saveReminders(reminders)
 
       // Send notification via AG-UI Protocol
       for (const reminder of reminders) {
@@ -241,13 +241,13 @@ export class AutomatedReminderService {
           scheduledTime: reminder.scheduledTime,
           message: reminder.message,
           priority: reminder.priority,
-        });
+        })
       }
 
-      return reminders;
+      return reminders
     } catch {
-      console.error('Error generating reminder schedule:', error);
-      throw new Error('Failed to generate reminder schedule');
+      console.error('Error generating reminder schedule:', error)
+      throw new Error('Failed to generate reminder schedule')
     }
   }
 
@@ -267,13 +267,13 @@ export class AutomatedReminderService {
           professional: true,
           clinic: true,
         },
-      });
+      })
 
       if (!appointment) {
-        throw new Error('Appointment not found');
+        throw new Error('Appointment not found')
       }
 
-      const communicationProfile = await this.getPatientCommunicationProfile(appointment.patientId);
+      const communicationProfile = await this.getPatientCommunicationProfile(appointment.patientId)
 
       const reminder: ReminderConfig = {
         id: this.generateReminderId(),
@@ -292,15 +292,15 @@ export class AutomatedReminderService {
         retryCount: 0,
         maxRetries: 3,
         deliveryTracking: { retries: [] },
-      };
+      }
 
       // Send immediately
-      await this.sendReminder(reminder);
+      await this.sendReminder(reminder)
 
-      return reminder;
+      return reminder
     } catch {
-      console.error('Error sending immediate reminder:', error);
-      throw new Error('Failed to send immediate reminder');
+      console.error('Error sending immediate reminder:', error)
+      throw new Error('Failed to send immediate reminder')
     }
   }
 
@@ -308,9 +308,9 @@ export class AutomatedReminderService {
    * Process reminder queue and send pending reminders
    */
   async processReminderQueue(): Promise<void> {
-    if (this.processingQueue) return;
+    if (this.processingQueue) return
 
-    this.processingQueue = true;
+    this.processingQueue = true
     try {
       const pendingReminders = await prisma.reminder.findMany({
         where: {
@@ -326,19 +326,19 @@ export class AutomatedReminderService {
             },
           },
         },
-      });
+      })
 
       for (const reminder of pendingReminders) {
         try {
-          await this.sendReminder(reminder);
+          await this.sendReminder(reminder)
         } catch {
-          console.error(`Error sending reminder ${reminder.id}:`, error);
+          console.error(`Error sending reminder ${reminder.id}:`, error)
         }
       }
     } catch {
-      console.error('Error processing reminder queue:', error);
+      console.error('Error processing reminder queue:', error)
     } finally {
-      this.processingQueue = false;
+      this.processingQueue = false
     }
   }
 
@@ -348,11 +348,11 @@ export class AutomatedReminderService {
   async trackReminderDelivery(
     reminderId: string,
     deliveryData: {
-      status: 'delivered' | 'read' | 'responded' | 'failed';
-      timestamp: Date;
-      providerMessageId?: string;
-      statusCode?: number;
-      error?: string;
+      status: 'delivered' | 'read' | 'responded' | 'failed'
+      timestamp: Date
+      providerMessageId?: string
+      statusCode?: number
+      error?: string
     },
   ): Promise<void> {
     try {
@@ -361,10 +361,10 @@ export class AutomatedReminderService {
         include: {
           appointment: true,
         },
-      });
+      })
 
       if (!reminder) {
-        throw new Error('Reminder not found');
+        throw new Error('Reminder not found')
       }
 
       // Update reminder tracking
@@ -383,7 +383,7 @@ export class AutomatedReminderService {
         ...(deliveryData.providerMessageId
           && { providerMessageId: deliveryData.providerMessageId }),
         ...(deliveryData.statusCode && { statusCode: deliveryData.statusCode }),
-      };
+      }
 
       await prisma.reminder.update({
         where: { id: reminderId },
@@ -391,10 +391,10 @@ export class AutomatedReminderService {
           status: deliveryData.status === 'failed' ? 'failed' : deliveryData.status,
           deliveryTracking: trackingData,
         },
-      });
+      })
 
       // Update analytics
-      this.updateAnalytics(deliveryData.status);
+      this.updateAnalytics(deliveryData.status)
 
       // Send notification via AG-UI Protocol
       if (deliveryData.status === 'delivered' || deliveryData.status === 'read') {
@@ -417,11 +417,11 @@ export class AutomatedReminderService {
             patientId: reminder.appointment.patientId,
             relatedAppointmentId: reminder.appointmentId,
           },
-        });
+        })
       }
     } catch {
-      console.error('Error tracking reminder delivery:', error);
-      throw new Error('Failed to track reminder delivery');
+      console.error('Error tracking reminder delivery:', error)
+      throw new Error('Failed to track reminder delivery')
     }
   }
 
@@ -430,28 +430,28 @@ export class AutomatedReminderService {
    */
   async getReminderAnalytics(
     filters?: {
-      clinicId?: string;
-      dateRange?: { start: Date; end: Date };
-      type?: 'email' | 'sms' | 'whatsapp';
+      clinicId?: string
+      dateRange?: { start: Date; end: Date }
+      type?: 'email' | 'sms' | 'whatsapp'
     },
   ): Promise<ReminderAnalytics> {
     try {
       // Build query filters
-      const whereClause: any = {};
+      const whereClause: any = {}
 
       if (filters?.clinicId) {
-        whereClause.appointment = { clinicId: filters.clinicId };
+        whereClause.appointment = { clinicId: filters.clinicId }
       }
 
       if (filters?.dateRange) {
         whereClause.scheduledTime = {
           gte: filters.dateRange.start,
           lte: filters.dateRange.end,
-        };
+        }
       }
 
       if (filters?.type) {
-        whereClause.type = filters.type;
+        whereClause.type = filters.type
       }
 
       // Get reminder statistics from database
@@ -460,15 +460,15 @@ export class AutomatedReminderService {
         include: {
           appointment: true,
         },
-      });
+      })
 
       // Calculate analytics
-      const analytics = this.calculateAnalytics(reminders);
+      const analytics = this.calculateAnalytics(reminders)
 
-      return analytics;
+      return analytics
     } catch {
-      console.error('Error getting reminder analytics:', error);
-      throw new Error('Failed to get reminder analytics');
+      console.error('Error getting reminder analytics:', error)
+      throw new Error('Failed to get reminder analytics')
     }
   }
 
@@ -482,7 +482,7 @@ export class AutomatedReminderService {
     try {
       const existingProfile = await prisma.patientCommunicationProfile.findUnique({
         where: { patientId },
-      });
+      })
 
       if (existingProfile) {
         const updatedProfile = await prisma.patientCommunicationProfile.update({
@@ -491,9 +491,9 @@ export class AutomatedReminderService {
             ...profileData,
             updatedAt: new Date(),
           },
-        });
+        })
 
-        return updatedProfile;
+        return updatedProfile
       } else {
         const newProfile = await prisma.patientCommunicationProfile.create({
           data: {
@@ -502,13 +502,13 @@ export class AutomatedReminderService {
             createdAt: new Date(),
             updatedAt: new Date(),
           },
-        });
+        })
 
-        return newProfile;
+        return newProfile
       }
     } catch {
-      console.error('Error updating patient communication profile:', error);
-      throw new Error('Failed to update patient communication profile');
+      console.error('Error updating patient communication profile:', error)
+      throw new Error('Failed to update patient communication profile')
     }
   }
 
@@ -518,22 +518,22 @@ export class AutomatedReminderService {
   ): Promise<PatientCommunicationProfile> {
     let profile = await prisma.patientCommunicationProfile.findUnique({
       where: { patientId },
-    });
+    })
 
     if (!profile) {
       // Create default profile from patient data
       const patient = await prisma.patient.findUnique({
         where: { id: patientId },
-      });
+      })
 
       if (!patient) {
-        throw new Error('Patient not found');
+        throw new Error('Patient not found')
       }
 
-      profile = await this.createDefaultProfile(patient);
+      profile = await this.createDefaultProfile(patient)
     }
 
-    return profile;
+    return profile
   }
 
   private async createDefaultProfile(patient: any): Promise<PatientCommunicationProfile> {
@@ -567,11 +567,11 @@ export class AutomatedReminderService {
       },
       createdAt: new Date(),
       updatedAt: new Date(),
-    };
+    }
 
     return await prisma.patientCommunicationProfile.create({
       data: defaultProfile,
-    });
+    })
   }
 
   private determineReminderStrategy(
@@ -579,50 +579,50 @@ export class AutomatedReminderService {
     profile: PatientCommunicationProfile,
   ): Array<
     {
-      type: 'email' | 'sms' | 'whatsapp';
-      timing: 'week_before' | 'three_days_before' | 'day_before' | 'two_hours_before';
+      type: 'email' | 'sms' | 'whatsapp'
+      timing: 'week_before' | 'three_days_before' | 'day_before' | 'two_hours_before'
     }
   > {
     const strategy: Array<
       {
-        type: 'email' | 'sms' | 'whatsapp';
-        timing: 'week_before' | 'three_days_before' | 'day_before' | 'two_hours_before';
+        type: 'email' | 'sms' | 'whatsapp'
+        timing: 'week_before' | 'three_days_before' | 'day_before' | 'two_hours_before'
       }
-    > = [];
+    > = []
 
     // Base strategy for all appointments
-    strategy.push({ type: 'email', timing: 'three_days_before' });
-    strategy.push({ type: profile.preferredContactMethod, timing: 'day_before' });
-    strategy.push({ type: 'sms', timing: 'two_hours_before' });
+    strategy.push({ type: 'email', timing: 'three_days_before' })
+    strategy.push({ type: profile.preferredContactMethod, timing: 'day_before' })
+    strategy.push({ type: 'sms', timing: 'two_hours_before' })
 
     // Enhanced strategy for high-risk appointments
     if (noShowRisk > 50) {
-      strategy.unshift({ type: 'email', timing: 'week_before' });
-      strategy.push({ type: profile.preferredContactMethod, timing: 'day_before' }); // Second day-before reminder
+      strategy.unshift({ type: 'email', timing: 'week_before' })
+      strategy.push({ type: profile.preferredContactMethod, timing: 'day_before' }) // Second day-before reminder
     }
 
     // WhatsApp strategy for highly engaged patients
     if (profile.consentStatus.whatsapp && profile.behavioralData.engagementScore > 0.7) {
-      strategy.push({ type: 'whatsapp', timing: 'day_before' });
+      strategy.push({ type: 'whatsapp', timing: 'day_before' })
     }
 
-    return strategy;
+    return strategy
   }
 
   private async createReminder(
     appointment: any,
     profile: PatientCommunicationProfile,
     reminderType: {
-      type: 'email' | 'sms' | 'whatsapp';
-      timing: 'week_before' | 'three_days_before' | 'day_before' | 'two_hours_before';
+      type: 'email' | 'sms' | 'whatsapp'
+      timing: 'week_before' | 'three_days_before' | 'day_before' | 'two_hours_before'
     },
     noShowRisk: number,
   ): Promise<ReminderConfig | null> {
-    const scheduledTime = this.calculateReminderTime(appointment.startTime, reminderType.timing);
+    const scheduledTime = this.calculateReminderTime(appointment.startTime, reminderType.timing)
 
     // Check if patient has consented to this communication type
     if (!profile.consentStatus[reminderType.type]) {
-      return null;
+      return null
     }
 
     const reminder: ReminderConfig = {
@@ -638,33 +638,33 @@ export class AutomatedReminderService {
       retryCount: 0,
       maxRetries: 3,
       deliveryTracking: { retries: [] },
-    };
+    }
 
-    return reminder;
+    return reminder
   }
 
   private calculateReminderTime(
     appointmentTime: Date,
     timing: 'week_before' | 'three_days_before' | 'day_before' | 'two_hours_before',
   ): Date {
-    const reminderTime = new Date(appointmentTime);
+    const reminderTime = new Date(appointmentTime)
 
     switch (timing) {
       case 'week_before':
-        reminderTime.setDate(reminderTime.getDate() - 7);
-        break;
+        reminderTime.setDate(reminderTime.getDate() - 7)
+        break
       case 'three_days_before':
-        reminderTime.setDate(reminderTime.getDate() - 3);
-        break;
+        reminderTime.setDate(reminderTime.getDate() - 3)
+        break
       case 'day_before':
-        reminderTime.setDate(reminderTime.getDate() - 1);
-        break;
+        reminderTime.setDate(reminderTime.getDate() - 1)
+        break
       case 'two_hours_before':
-        reminderTime.setHours(reminderTime.getHours() - 2);
-        break;
+        reminderTime.setHours(reminderTime.getHours() - 2)
+        break
     }
 
-    return reminderTime;
+    return reminderTime
   }
 
   private generatePersonalizedMessage(
@@ -672,17 +672,17 @@ export class AutomatedReminderService {
     profile: PatientCommunicationProfile,
     timing: 'week_before' | 'three_days_before' | 'day_before' | 'two_hours_before' | 'immediate',
   ): string {
-    const { patient, professional, clinic } = appointment;
+    const { patient, professional, clinic } = appointment
     const formattedDate = appointment.startTime.toLocaleDateString(profile.preferredLanguage, {
       weekday: 'long',
       year: 'numeric',
       month: 'long',
       day: 'numeric',
-    });
+    })
     const formattedTime = appointment.startTime.toLocaleTimeString(profile.preferredLanguage, {
       hour: '2-digit',
       minute: '2-digit',
-    });
+    })
 
     const templates = {
       week_before: {
@@ -725,9 +725,9 @@ export class AutomatedReminderService {
         friendly:
           `${patient.fullName}, seu agendamento é hoje às ${formattedTime} com ${professional.fullName}. Te esperamos!`,
       },
-    };
+    }
 
-    return templates[timing][profile.communicationStyle];
+    return templates[timing][profile.communicationStyle]
   }
 
   private createPersonalization(
@@ -750,18 +750,18 @@ export class AutomatedReminderService {
           ? 'medium'
           : 'low',
       },
-    };
+    }
   }
 
   private calculateReminderPriority(
     noShowRisk: number,
     timing: 'week_before' | 'three_days_before' | 'day_before' | 'two_hours_before',
   ): 'low' | 'medium' | 'high' | 'urgent' {
-    if (noShowRisk > 70) return 'urgent';
-    if (noShowRisk > 50) return 'high';
-    if (timing === 'two_hours_before') return 'high';
-    if (timing === 'day_before') return 'medium';
-    return 'low';
+    if (noShowRisk > 70) return 'urgent'
+    if (noShowRisk > 50) return 'high'
+    if (timing === 'two_hours_before') return 'high'
+    if (timing === 'day_before') return 'medium'
+    return 'low'
   }
 
   private async sendReminder(reminder: ReminderConfig): Promise<void> {
@@ -776,35 +776,35 @@ export class AutomatedReminderService {
             sentAt: new Date(),
           },
         },
-      });
+      })
 
       // Actually send the message (integration with email/SMS/WhatsApp providers)
-      const deliveryResult = await this.deliverMessage(reminder);
+      const deliveryResult = await this.deliverMessage(reminder)
 
       // Track delivery
-      await this.trackReminderDelivery(reminder.id, deliveryResult);
+      await this.trackReminderDelivery(reminder.id, deliveryResult)
     } catch {
-      console.error('Error sending reminder:', error);
+      console.error('Error sending reminder:', error)
 
       // Handle retry logic
       if (reminder.retryCount < reminder.maxRetries) {
-        await this.scheduleRetry(reminder);
+        await this.scheduleRetry(reminder)
       } else {
         await this.trackReminderDelivery(reminder.id, {
           status: 'failed',
           timestamp: new Date(),
           error: error instanceof Error ? error.message : 'Unknown error',
-        });
+        })
       }
     }
   }
 
   private async deliverMessage(_reminder: ReminderConfig): Promise<{
-    status: 'delivered' | 'failed';
-    timestamp: Date;
-    providerMessageId?: string;
-    statusCode?: number;
-    error?: string;
+    status: 'delivered' | 'failed'
+    timestamp: Date
+    providerMessageId?: string
+    statusCode?: number
+    error?: string
   }> {
     // This would integrate with actual email/SMS/WhatsApp providers
     // For now, simulate successful delivery
@@ -813,12 +813,12 @@ export class AutomatedReminderService {
       timestamp: new Date(),
       providerMessageId: `msg_${Date.now()}`,
       statusCode: 200,
-    };
+    }
   }
 
   private async scheduleRetry(reminder: ReminderConfig): Promise<void> {
-    const retryDelay = Math.pow(2, reminder.retryCount) * 5 * 60 * 1000; // Exponential backoff
-    const retryTime = new Date(Date.now() + retryDelay);
+    const retryDelay = Math.pow(2, reminder.retryCount) * 5 * 60 * 1000 // Exponential backoff
+    const retryTime = new Date(Date.now() + retryDelay)
 
     await prisma.reminder.update({
       where: { id: reminder.id },
@@ -839,7 +839,7 @@ export class AutomatedReminderService {
           ],
         },
       },
-    });
+    })
   }
 
   private async saveReminders(reminders: ReminderConfig[]): Promise<void> {
@@ -858,7 +858,7 @@ export class AutomatedReminderService {
           maxRetries: reminder.maxRetries,
           deliveryTracking: reminder.deliveryTracking,
         },
-      });
+      })
     }
   }
 
@@ -884,15 +884,15 @@ export class AutomatedReminderService {
         day_before: 0,
         two_hours_before: 0,
       },
-    };
+    }
   }
 
   private calculateAnalytics(reminders: any[]): ReminderAnalytics {
-    const total = reminders.length;
-    const delivered = reminders.filter(r => r.status === 'delivered').length;
-    const read = reminders.filter(r => r.deliveryTracking.readAt).length;
-    const responded = reminders.filter(r => r.deliveryTracking.respondedAt).length;
-    const failed = reminders.filter(r => r.status === 'failed').length;
+    const total = reminders.length
+    const delivered = reminders.filter((r) => r.status === 'delivered').length
+    const read = reminders.filter((r) => r.deliveryTracking.readAt).length
+    const responded = reminders.filter((r) => r.deliveryTracking.respondedAt).length
+    const failed = reminders.filter((r) => r.status === 'failed').length
 
     return {
       totalSent: total,
@@ -906,89 +906,89 @@ export class AutomatedReminderService {
       averageResponseTime: this.calculateAverageResponseTime(reminders),
       channelPerformance: this.calculateChannelPerformance(reminders),
       timingPerformance: this.calculateTimingPerformance(reminders),
-    };
+    }
   }
 
   private calculateAverageResponseTime(reminders: any[]): number {
-    const respondedReminders = reminders.filter(r =>
+    const respondedReminders = reminders.filter((r) =>
       r.deliveryTracking.readAt && r.deliveryTracking.respondedAt
-    );
+    )
 
-    if (respondedReminders.length === 0) return 0;
+    if (respondedReminders.length === 0) return 0
 
     const totalTime = respondedReminders.reduce((sum, r) => {
-      return sum + (r.deliveryTracking.respondedAt.getTime() - r.deliveryTracking.readAt.getTime());
-    }, 0);
+      return sum + (r.deliveryTracking.respondedAt.getTime() - r.deliveryTracking.readAt.getTime())
+    }, 0)
 
-    return totalTime / respondedReminders.length / (1000 * 60); // Return in minutes
+    return totalTime / respondedReminders.length / (1000 * 60) // Return in minutes
   }
 
   private calculateChannelPerformance(reminders: any[]) {
-    const email = reminders.filter(r => r.type === 'email');
-    const sms = reminders.filter(r => r.type === 'sms');
-    const whatsapp = reminders.filter(r => r.type === 'whatsapp');
+    const email = reminders.filter((r) => r.type === 'email')
+    const sms = reminders.filter((r) => r.type === 'sms')
+    const whatsapp = reminders.filter((r) => r.type === 'whatsapp')
 
     return {
       email: email.length > 0
-        ? (email.filter(r => r.status === 'delivered').length / email.length) * 100
+        ? (email.filter((r) => r.status === 'delivered').length / email.length) * 100
         : 0,
       sms: sms.length > 0
-        ? (sms.filter(r => r.status === 'delivered').length / sms.length) * 100
+        ? (sms.filter((r) => r.status === 'delivered').length / sms.length) * 100
         : 0,
       whatsapp: whatsapp.length > 0
-        ? (whatsapp.filter(r => r.status === 'delivered').length / whatsapp.length) * 100
+        ? (whatsapp.filter((r) => r.status === 'delivered').length / whatsapp.length) * 100
         : 0,
-    };
+    }
   }
 
   private calculateTimingPerformance(reminders: any[]) {
-    const weekBefore = reminders.filter(r => r.timing === 'week_before');
-    const threeDaysBefore = reminders.filter(r => r.timing === 'three_days_before');
-    const dayBefore = reminders.filter(r => r.timing === 'day_before');
-    const twoHoursBefore = reminders.filter(r => r.timing === 'two_hours_before');
+    const weekBefore = reminders.filter((r) => r.timing === 'week_before')
+    const threeDaysBefore = reminders.filter((r) => r.timing === 'three_days_before')
+    const dayBefore = reminders.filter((r) => r.timing === 'day_before')
+    const twoHoursBefore = reminders.filter((r) => r.timing === 'two_hours_before')
 
     return {
       week_before: weekBefore.length > 0
-        ? (weekBefore.filter(r => r.status === 'delivered').length / weekBefore.length) * 100
+        ? (weekBefore.filter((r) => r.status === 'delivered').length / weekBefore.length) * 100
         : 0,
       three_days_before: threeDaysBefore.length > 0
-        ? (threeDaysBefore.filter(r => r.status === 'delivered').length / threeDaysBefore.length)
+        ? (threeDaysBefore.filter((r) => r.status === 'delivered').length / threeDaysBefore.length)
           * 100
         : 0,
       day_before: dayBefore.length > 0
-        ? (dayBefore.filter(r => r.status === 'delivered').length / dayBefore.length) * 100
+        ? (dayBefore.filter((r) => r.status === 'delivered').length / dayBefore.length) * 100
         : 0,
       two_hours_before: twoHoursBefore.length > 0
-        ? (twoHoursBefore.filter(r => r.status === 'delivered').length / twoHoursBefore.length)
+        ? (twoHoursBefore.filter((r) => r.status === 'delivered').length / twoHoursBefore.length)
           * 100
         : 0,
-    };
+    }
   }
 
   private updateAnalytics(status: string): void {
     switch (status) {
       case 'delivered':
-        this.analytics.totalDelivered++;
-        break;
+        this.analytics.totalDelivered++
+        break
       case 'read':
-        this.analytics.totalRead++;
-        break;
+        this.analytics.totalRead++
+        break
       case 'responded':
-        this.analytics.totalResponded++;
-        break;
+        this.analytics.totalResponded++
+        break
       case 'failed':
-        this.analytics.totalFailed++;
-        break;
+        this.analytics.totalFailed++
+        break
     }
 
-    this.analytics.totalSent++;
-    this.analytics.deliveryRate = (this.analytics.totalDelivered / this.analytics.totalSent) * 100;
+    this.analytics.totalSent++
+    this.analytics.deliveryRate = (this.analytics.totalDelivered / this.analytics.totalSent) * 100
     this.analytics.readRate = this.analytics.totalDelivered > 0
       ? (this.analytics.totalRead / this.analytics.totalDelivered) * 100
-      : 0;
+      : 0
     this.analytics.responseRate = this.analytics.totalRead > 0
       ? (this.analytics.totalResponded / this.analytics.totalRead) * 100
-      : 0;
+      : 0
   }
 
   private loadTemplates(): void {
@@ -999,33 +999,33 @@ export class AutomatedReminderService {
   private startReminderProcessor(): void {
     // Process reminder queue every minute
     setInterval(() => {
-      this.processReminderQueue();
-    }, 60 * 1000);
+      this.processReminderQueue()
+    }, 60 * 1000)
   }
 
   private setupProtocolHandlers(): void {
     // Set up handlers for AG-UI Protocol messages
-    aguiAppointmentProtocol.on('reminder.sent', async _message => {
+    aguiAppointmentProtocol.on('reminder.sent', async (_message) => {
       // Handle reminder sent notifications
-    });
+    })
 
-    aguiAppointmentProtocol.on('reminder.failed', async _message => {
+    aguiAppointmentProtocol.on('reminder.failed', async (_message) => {
       // Handle reminder failure notifications
-    });
+    })
   }
 
   private generateReminderId(): string {
-    return `reminder_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    return `reminder_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
   }
 
   private generateProfileId(): string {
-    return `profile_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    return `profile_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
   }
 
   private generateMessageId(): string {
-    return `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    return `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
   }
 }
 
 // Export singleton instance
-export const automatedReminderService = AutomatedReminderService.getInstance();
+export const automatedReminderService = AutomatedReminderService.getInstance()

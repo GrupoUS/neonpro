@@ -1,12 +1,4 @@
-import type {
-  AgentName,
-  AgentResult,
-  ComplexityLevel,
-  FeatureContext,
-  Finding,
-  Recommendation,
-  TDDPhase,
-} from '../types'
+import { AgentName, AgentResult, FeatureContext, Finding, Recommendation, TDDPhase } from '../types'
 import { normalizeComplexity } from '../types'
 import { BaseAgent } from './base-agent'
 

@@ -1,29 +1,29 @@
-import { Express, Response } from 'express';
-import http from 'http';
-import https from 'https';
-import { HealthcareLogger } from '../logging/healthcare-logger';
-import { CertificateConfig, TLSConfigManager } from './tls-config';
-import { ERROR_CONSTANTS, HTTPS_CONSTANTS, LOGGING_CONSTANTS } from './tls-constants';
+import { Express, Response } from 'express'
+import http from 'http'
+import https from 'https'
+import { HealthcareLogger } from '../logging/healthcare-logger'
+import { CertificateConfig, TLSConfigManager } from './tls-config'
+import { ERROR_CONSTANTS, HTTPS_CONSTANTS, LOGGING_CONSTANTS } from './tls-constants'
 
 export interface HTTPSServerConfig {
-  port: number;
-  host: string;
-  tlsConfig: CertificateConfig;
-  redirectHTTP?: boolean;
-  httpPort?: number;
-  enableHSTS?: boolean;
-  maxConnections?: number;
-  timeout?: number;
-  keepAliveTimeout?: number;
+  port: number
+  host: string
+  tlsConfig: CertificateConfig
+  redirectHTTP?: boolean
+  httpPort?: number
+  enableHSTS?: boolean
+  maxConnections?: number
+  timeout?: number
+  keepAliveTimeout?: number
 }
 
 export interface ServerMetrics {
-  totalConnections: number;
-  activeConnections: number;
-  httpsRequests: number;
-  httpRedirects: number;
-  averageResponseTime: number;
-  uptime: number;
+  totalConnections: number
+  activeConnections: number
+  httpsRequests: number
+  httpRedirects: number
+  averageResponseTime: number
+  uptime: number
 }
 
 /**
@@ -62,21 +62,21 @@ export interface ServerMetrics {
  * ```
  */
 export class HTTPSServerManager {
-  private httpsServer: https.Server | null = null;
-  private httpServer: http.Server | null = null;
-  private config: HTTPSServerConfig;
-  private logger: HealthcareLogger;
-  private tlsManager: TLSConfigManager;
-  private metrics: ServerMetrics;
-  private eventListeners: Map<string, Function[]> = new Map();
+  private httpsServer: https.Server | null = null
+  private httpServer: http.Server | null = null
+  private config: HTTPSServerConfig
+  private logger: HealthcareLogger
+  private tlsManager: TLSConfigManager
+  private metrics: ServerMetrics
+  private eventListeners: Map<string, Function[]> = new Map()
 
   constructor(config: HTTPSServerConfig, logger: HealthcareLogger) {
     // Validate input configuration
-    this.validateServerConfig(config);
+    this.validateServerConfig(config)
 
-    this.config = config;
-    this.logger = logger;
-    this.tlsManager = TLSConfigManager.getInstance();
+    this.config = config
+    this.logger = logger
+    this.tlsManager = TLSConfigManager.getInstance()
     this.metrics = {
       totalConnections: 0,
       activeConnections: 0,
@@ -84,10 +84,10 @@ export class HTTPSServerManager {
       httpRedirects: 0,
       averageResponseTime: 0,
       uptime: 0,
-    };
+    }
 
-    this.initializeTLS();
-    this.setupMetricsReset();
+    this.initializeTLS()
+    this.setupMetricsReset()
   }
 
   /**
@@ -95,17 +95,17 @@ export class HTTPSServerManager {
    */
   private setupMetricsReset(): void {
     setInterval(() => {
-      this.resetMetrics();
-    }, HTTPS_CONSTANTS.METRICS.METRICS_RESET_INTERVAL);
+      this.resetMetrics()
+    }, HTTPS_CONSTANTS.METRICS.METRICS_RESET_INTERVAL)
   }
 
   /**
    * Reset metrics to prevent accumulation and memory leaks
    */
   private resetMetrics(): void {
-    this.metrics.httpsRequests = 0;
-    this.metrics.httpRedirects = 0;
-    this.metrics.averageResponseTime = 0;
+    this.metrics.httpsRequests = 0
+    this.metrics.httpRedirects = 0
+    this.metrics.averageResponseTime = 0
   }
 
   /**
@@ -114,7 +114,7 @@ export class HTTPSServerManager {
    */
   private validateServerConfig(config: HTTPSServerConfig): void {
     if (!config) {
-      throw new Error(ERROR_CONSTANTS.MESSAGES.INVALID_CONFIGURATION);
+      throw new Error(ERROR_CONSTANTS.MESSAGES.INVALID_CONFIGURATION)
     }
 
     if (
@@ -125,19 +125,19 @@ export class HTTPSServerManager {
     ) {
       throw new Error(
         'Port is required and must be a valid number between 1 and 65535',
-      );
+      )
     }
 
     if (!config.host || typeof config.host !== 'string') {
-      throw new Error('Host is required and must be a string');
+      throw new Error('Host is required and must be a string')
     }
 
     if (!config.tlsConfig) {
-      throw new Error('TLS configuration is required');
+      throw new Error('TLS configuration is required')
     }
 
     if (config.redirectHTTP && !config.httpPort) {
-      throw new Error('HTTP port is required when redirectHTTP is enabled');
+      throw new Error('HTTP port is required when redirectHTTP is enabled')
     }
 
     if (
@@ -146,19 +146,19 @@ export class HTTPSServerManager {
         || config.httpPort < 1
         || config.httpPort > 65535)
     ) {
-      throw new Error('HTTP port must be a valid number between 1 and 65535');
+      throw new Error('HTTP port must be a valid number between 1 and 65535')
     }
   }
 
   private initializeTLS(): void {
     try {
-      this.tlsManager.initialize(this.config.tlsConfig);
+      this.tlsManager.initialize(this.config.tlsConfig)
 
-      const validation = this.tlsManager.validateConfiguration();
+      const validation = this.tlsManager.validateConfiguration()
       if (!validation.valid) {
         throw new Error(
           `TLS validation failed: ${validation.errors.join(', ')}`,
-        );
+        )
       }
 
       if (validation.warnings.length > 0) {
@@ -168,7 +168,7 @@ export class HTTPSServerManager {
             warnings: validation.warnings,
             timestamp: new Date().toISOString(),
           },
-        );
+        )
       }
 
       this.logger.logSystemEvent(LOGGING_CONSTANTS.EVENTS.TLS_INITIALIZED, {
@@ -176,7 +176,7 @@ export class HTTPSServerManager {
         minVersion: this.config.tlsConfig,
         validation: validation,
         timestamp: new Date().toISOString(),
-      });
+      })
     } catch {
       this.logger.logError('tls_initialization_failed', {
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -186,23 +186,23 @@ export class HTTPSServerManager {
           hasCAPath: !!this.config.tlsConfig.caPath,
         },
         timestamp: new Date().toISOString(),
-      });
-      throw error;
+      })
+      throw error
     }
   }
 
   public createServer(app: Express): https.Server {
     try {
-      const httpsOptions = this.tlsManager.getHTTPSOptions();
+      const httpsOptions = this.tlsManager.getHTTPSOptions()
 
-      this.httpsServer = https.createServer(httpsOptions, app);
+      this.httpsServer = https.createServer(httpsOptions, app)
 
       // Configure server settings
-      this.configureServer(this.httpsServer);
+      this.configureServer(this.httpsServer)
 
-      this.httpsServer.on('secureConnection', tlsSocket => {
-        this.metrics.totalConnections++;
-        this.metrics.activeConnections++;
+      this.httpsServer.on('secureConnection', (tlsSocket) => {
+        this.metrics.totalConnections++
+        this.metrics.activeConnections++
 
         this.logger.logSystemEvent(LOGGING_CONSTANTS.EVENTS.TLS_CONNECTION, {
           protocol: tlsSocket.getProtocol(),
@@ -210,34 +210,34 @@ export class HTTPSServerManager {
           serverName: tlsSocket.servername,
           authorized: tlsSocket.authorized,
           timestamp: new Date().toISOString(),
-        });
-      });
+        })
+      })
 
       this.httpsServer.on('close', () => {
-        this.metrics.activeConnections--;
-      });
+        this.metrics.activeConnections--
+      })
 
       this.httpsServer.on('request', (req, res) => {
-        this.metrics.httpsRequests++;
-        const startTime = Date.now();
+        this.metrics.httpsRequests++
+        const startTime = Date.now()
 
         // Add HSTS header if enabled
         if (this.config.enableHSTS) {
-          this.addHSTSHeaders(res);
+          this.addHSTSHeaders(res)
         }
 
         // Add security headers
-        this.addSecurityHeaders(res);
+        this.addSecurityHeaders(res)
 
         res.on('finish', () => {
-          const responseTime = Date.now() - startTime;
-          this.updateAverageResponseTime(responseTime);
-        });
-      });
+          const responseTime = Date.now() - startTime
+          this.updateAverageResponseTime(responseTime)
+        })
+      })
 
       // Handle HTTP to HTTPS redirect if enabled
       if (this.config.redirectHTTP && this.config.httpPort) {
-        this.createHTTPRedirectServer();
+        this.createHTTPRedirectServer()
       }
 
       this.logger.logSystemEvent(
@@ -249,83 +249,83 @@ export class HTTPSServerManager {
           httpPort: this.config.httpPort,
           timestamp: new Date().toISOString(),
         },
-      );
+      )
 
-      return this.httpsServer;
+      return this.httpsServer
     } catch {
       this.logger.logError('https_server_creation_failed', {
         error: error instanceof Error ? error.message : 'Unknown error',
         port: this.config.port,
         timestamp: new Date().toISOString(),
-      });
-      throw error;
+      })
+      throw error
     }
   }
 
   private createHTTPRedirectServer(): void {
     if (!this.config.httpPort) {
-      return;
+      return
     }
 
     this.httpServer = http.createServer((req, res) => {
-      this.metrics.httpRedirects++;
+      this.metrics.httpRedirects++
 
       // Get the host header
-      const host = req.headers.host || this.config.host;
+      const host = req.headers.host || this.config.host
 
       // Construct the HTTPS URL
-      const httpsUrl = `https://${host}${req.url}`;
+      const httpsUrl = `https://${host}${req.url}`
 
       // Permanent redirect to HTTPS
       res.writeHead(301, {
         Location: httpsUrl,
         Connection: 'close',
-      });
-      res.end();
+      })
+      res.end()
 
       this.logger.logSystemEvent(LOGGING_CONSTANTS.EVENTS.HTTP_REDIRECT, {
         originalUrl: req.url,
         redirectUrl: httpsUrl,
         userAgent: req.headers['user-agent'],
         timestamp: new Date().toISOString(),
-      });
-    });
+      })
+    })
 
     this.httpServer.listen(this.config.httpPort, this.config.host, () => {
       this.logger.logSystemEvent('http_redirect_server_started', {
         port: this.config.httpPort,
         redirectingTo: this.config.port,
         timestamp: new Date().toISOString(),
-      });
-    });
+      })
+    })
 
-    this.httpServer.on('error', error => {
+    this.httpServer.on('error', (error) => {
       this.logger.logError('http_redirect_server_error', {
         error: error instanceof Error ? error.message : 'Unknown error',
         port: this.config.httpPort,
         timestamp: new Date().toISOString(),
-      });
-    });
+      })
+    })
   }
 
   private configureServer(server: https.Server): void {
     // Configure connection limits
-    server.maxConnections = this.config.maxConnections || HTTPS_CONSTANTS.SERVER.MAX_CONNECTIONS;
+    server.maxConnections = this.config.maxConnections || HTTPS_CONSTANTS.SERVER.MAX_CONNECTIONS
 
     // Configure timeouts
-    server.timeout = this.config.timeout || HTTPS_CONSTANTS.SERVER.TIMEOUT;
+    server.timeout = this.config.timeout || HTTPS_CONSTANTS.SERVER.TIMEOUT
     server.keepAliveTimeout = this.config.keepAliveTimeout
-      || HTTPS_CONSTANTS.SERVER.KEEP_ALIVE_TIMEOUT;
-    server.headersTimeout = HTTPS_CONSTANTS.SERVER.HEADERS_TIMEOUT;
+      || HTTPS_CONSTANTS.SERVER.KEEP_ALIVE_TIMEOUT
+    server.headersTimeout = HTTPS_CONSTANTS.SERVER.HEADERS_TIMEOUT
 
     // Handle server errors
-    server.on('error', error => {
+    server.on('error', (error) => {
       this.logger.logError(LOGGING_CONSTANTS.EVENTS.SERVER_ERROR, {
         error: error instanceof Error ? error.message : 'Unknown error',
         port: this.config.port,
         timestamp: new Date().toISOString(),
-      });
-    });
+      })
+    })
 
     // Handle client errors
     server.on('clientError', (error, _socket) => {
@@ -333,27 +333,27 @@ export class HTTPSServerManager {
         error: error instanceof Error ? error.message : 'Unknown error',
         remoteAddress: socket.remoteAddress,
         timestamp: new Date().toISOString(),
-      });
+      })
 
-      socket.end('HTTP/1.1 400 Bad Request\r\n\r\n');
-    });
+      socket.end('HTTP/1.1 400 Bad Request\r\n\r\n')
+    })
 
     // Handle TLS errors
-    server.on('tlsClientError', error => {
+    server.on('tlsClientError', (error) => {
       this.logger.logError('tls_client_error', {
         error: error instanceof Error ? error.message : 'Unknown error',
         timestamp: new Date().toISOString(),
-      });
-    });
+      })
+    })
 
     // Handle connection timeout
-    server.on('timeout', socket => {
+    server.on('timeout', (socket) => {
       this.logger.logWarning(LOGGING_CONSTANTS.EVENTS.CONNECTION_TIMEOUT, {
         remoteAddress: socket.remoteAddress,
         timestamp: new Date().toISOString(),
-      });
-      socket.destroy();
-    });
+      })
+      socket.destroy()
+    })
   }
 
   public start(): Promise<void> {
@@ -361,8 +361,8 @@ export class HTTPSServerManager {
       if (!this.httpsServer) {
         reject(
           new Error('HTTPS server not created. Call createServer() first.'),
-        );
-        return;
+        )
+        return
       }
 
       this.httpsServer.listen(this.config.port, this.config.host, () => {
@@ -374,23 +374,23 @@ export class HTTPSServerManager {
             certificateInfo: this.tlsManager.getCertificateInfo(),
             timestamp: new Date().toISOString(),
           },
-        );
-        resolve();
-      });
+        )
+        resolve()
+      })
 
-      this.httpsServer.on('error', error => {
-        reject(error);
-      });
-    });
+      this.httpsServer.on('error', (error) => {
+        reject(error)
+      })
+    })
   }
 
   public stop(): Promise<void> {
-    return new Promise(resolve => {
-      const stopPromises: Promise<void>[] = [];
+    return new Promise((resolve) => {
+      const stopPromises: Promise<void>[] = []
 
       if (this.httpsServer) {
         stopPromises.push(
-          new Promise<void>(closeResolve => {
+          new Promise<void>((closeResolve) => {
             this.httpsServer!.close(() => {
               this.logger.logSystemEvent(
                 LOGGING_CONSTANTS.EVENTS.HTTPS_SERVER_STOPPED,
@@ -398,32 +398,32 @@ export class HTTPSServerManager {
                   port: this.config.port,
                   timestamp: new Date().toISOString(),
                 },
-              );
-              closeResolve();
-            });
+              )
+              closeResolve()
+            })
           }),
-        );
+        )
       }
 
       if (this.httpServer) {
         stopPromises.push(
-          new Promise<void>(closeResolve => {
+          new Promise<void>((closeResolve) => {
             this.httpServer!.close(() => {
               this.logger.logSystemEvent('http_redirect_server_stopped', {
                 port: this.config.httpPort,
                 timestamp: new Date().toISOString(),
-              });
-              closeResolve();
-            });
+              })
+              closeResolve()
+            })
           }),
-        );
+        )
       }
 
       Promise.all(stopPromises).then(() => {
-        this.cleanupEventListeners();
-        resolve();
-      });
-    });
+        this.cleanupEventListeners()
+        resolve()
+      })
+    })
   }
 
   /**
@@ -431,40 +431,40 @@ export class HTTPSServerManager {
    */
   private cleanupEventListeners(): void {
     if (this.httpsServer) {
-      this.httpsServer.removeAllListeners();
+      this.httpsServer.removeAllListeners()
     }
     if (this.httpServer) {
-      this.httpServer.removeAllListeners();
+      this.httpServer.removeAllListeners()
     }
-    this.eventListeners.clear();
+    this.eventListeners.clear()
   }
 
   public getMetrics(): ServerMetrics {
-    return { ...this.metrics };
+    return { ...this.metrics }
   }
 
   private updateAverageResponseTime(responseTime: number): void {
-    const alpha = HTTPS_CONSTANTS.METRICS.RESPONSE_TIME_SMOOTHING_FACTOR;
+    const alpha = HTTPS_CONSTANTS.METRICS.RESPONSE_TIME_SMOOTHING_FACTOR
     this.metrics.averageResponseTime = alpha * responseTime
-      + (1 - alpha) * this.metrics.averageResponseTime;
+      + (1 - alpha) * this.metrics.averageResponseTime
   }
 
   public getCertificateInfo() {
-    return this.tlsManager.getCertificateInfo();
+    return this.tlsManager.getCertificateInfo()
   }
 
   public rotateSessionTickets(): void {
-    this.tlsManager.rotateSessionTickets();
+    this.tlsManager.rotateSessionTickets()
     this.logger.logSystemEvent(
       LOGGING_CONSTANTS.EVENTS.SESSION_TICKETS_ROTATED,
       {
         timestamp: new Date().toISOString(),
       },
-    );
+    )
   }
 
   public getTLSConfiguration() {
-    return this.tlsManager.getHTTPSOptions();
+    return this.tlsManager.getHTTPSOptions()
   }
 
   /**
@@ -474,9 +474,9 @@ export class HTTPSServerManager {
   private addHSTSHeaders(res: Response): void {
     const hstsValue = `max-age=${HTTPS_CONSTANTS.HSTS.MAX_AGE}${
       HTTPS_CONSTANTS.HSTS.INCLUDE_SUBDOMAINS ? '; includeSubDomains' : ''
-    }${HTTPS_CONSTANTS.HSTS.PRELOAD ? '; preload' : ''}`;
+    }${HTTPS_CONSTANTS.HSTS.PRELOAD ? '; preload' : ''}`
 
-    res.setHeader('Strict-Transport-Security', hstsValue);
+    res.setHeader('Strict-Transport-Security', hstsValue)
   }
 
   /**
@@ -484,16 +484,16 @@ export class HTTPSServerManager {
    * These headers help prevent various types of attacks
    */
   private addSecurityHeaders(res: Response): void {
-    const headers = HTTPS_CONSTANTS.SECURITY_HEADERS;
+    const headers = HTTPS_CONSTANTS.SECURITY_HEADERS
 
-    res.setHeader('Content-Security-Policy', headers.CONTENT_SECURITY_POLICY);
-    res.setHeader('X-Frame-Options', headers.X_FRAME_OPTIONS);
-    res.setHeader('X-Content-Type-Options', headers.X_CONTENT_TYPE_OPTIONS);
-    res.setHeader('X-XSS-Protection', headers.X_XSS_PROTECTION);
-    res.setHeader('Referrer-Policy', headers.REFERRER_POLICY);
+    res.setHeader('Content-Security-Policy', headers.CONTENT_SECURITY_POLICY)
+    res.setHeader('X-Frame-Options', headers.X_FRAME_OPTIONS)
+    res.setHeader('X-Content-Type-Options', headers.X_CONTENT_TYPE_OPTIONS)
+    res.setHeader('X-XSS-Protection', headers.X_XSS_PROTECTION)
+    res.setHeader('Referrer-Policy', headers.REFERRER_POLICY)
 
     // Remove server info header for security
-    res.removeHeader('X-Powered-By');
+    res.removeHeader('X-Powered-By')
   }
 
   // Graceful shutdown handler
@@ -502,22 +502,22 @@ export class HTTPSServerManager {
       this.logger.logSystemEvent(LOGGING_CONSTANTS.EVENTS.GRACEFUL_SHUTDOWN, {
         signal,
         timestamp: new Date().toISOString(),
-      });
+      })
 
       try {
-        await this.stop();
-        process.exit(0);
+        await this.stop()
+        process.exit(0)
       } catch {
         this.logger.logError('graceful_shutdown_failed', {
           error: error instanceof Error ? error.message : 'Unknown error',
           signal,
           timestamp: new Date().toISOString(),
-        });
-        process.exit(1);
+        })
+        process.exit(1)
       }
-    };
+    }
 
-    process.on('SIGTERM', () => shutdown('SIGTERM'));
-    process.on('SIGINT', () => shutdown('SIGINT'));
+    process.on('SIGTERM', () => shutdown('SIGTERM'))
+    process.on('SIGINT', () => shutdown('SIGINT'))
   }
 }

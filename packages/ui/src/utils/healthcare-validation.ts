@@ -7,7 +7,7 @@
  * @fileoverview Healthcare-specific validation patterns and utilities
  */
 
-import { z } from 'zod';
+import { z } from 'zod'
 
 // Healthcare-specific validation schemas
 export const healthcareValidationSchemas = {
@@ -20,30 +20,30 @@ export const healthcareValidationSchemas = {
     )
     .refine((cpf: string) => {
       // CPF validation algorithm
-      const cleanCpf = cpf.replace(/[^\d]/g, '');
-      if (cleanCpf.length !== 11) {return false;}
+      const cleanCpf = cpf.replace(/[^\d]/g, '')
+      if (cleanCpf.length !== 11) return false
 
       // Check for repeated digits
-      if (/^(\d)\1{10}$/.test(cleanCpf)) {return false;}
+      if (/^(\d)\1{10}$/.test(cleanCpf)) return false
 
       // Validate check digits
-      let sum = 0;
+      let sum = 0
       for (let i = 0; i < 9; i++) {
-        sum += parseInt(cleanCpf[i] || '0') * (10 - i);
+        sum += parseInt(cleanCpf[i] || '0') * (10 - i)
       }
-      let remainder = (sum * 10) % 11;
-      if (remainder === 10 || remainder === 11) {remainder = 0;}
-      if (remainder !== parseInt(cleanCpf[9] || '0')) {return false;}
+      let remainder = (sum * 10) % 11
+      if (remainder === 10 || remainder === 11) remainder = 0
+      if (remainder !== parseInt(cleanCpf[9] || '0')) return false
 
-      sum = 0;
+      sum = 0
       for (let i = 0; i < 10; i++) {
-        sum += parseInt(cleanCpf[i] || '0') * (11 - i);
+        sum += parseInt(cleanCpf[i] || '0') * (11 - i)
       }
-      remainder = (sum * 10) % 11;
-      if (remainder === 10 || remainder === 11) {remainder = 0;}
-      if (remainder !== parseInt(cleanCpf[10] || '0')) {return false;}
+      remainder = (sum * 10) % 11
+      if (remainder === 10 || remainder === 11) remainder = 0
+      if (remainder !== parseInt(cleanCpf[10] || '0')) return false
 
-      return true;
+      return true
     }, 'CPF inválido'),
 
   // Medical record number validation
@@ -64,10 +64,10 @@ export const healthcareValidationSchemas = {
       'CRM deve estar no formato CRM/UF 0000000',
     )
     .refine((crm: string) => {
-      const match = crm.match(/^CRM\/([A-Z]{2})\s(\d{4,6})$/);
-      if (!match) {return false;}
+      const match = crm.match(/^CRM\/([A-Z]{2})\s(\d{4,6})$/)
+      if (!match) return false
 
-      const [, state, number] = match;
+      const [, state, number] = match
       const validStates = [
         'AC',
         'AL',
@@ -96,9 +96,9 @@ export const healthcareValidationSchemas = {
         'SP',
         'SE',
         'TO',
-      ];
+      ]
 
-      return state && number && validStates.includes(state) && number.length >= 4;
+      return state && number && validStates.includes(state) && number.length >= 4
     }, 'Estado inválido no CRM'),
 
   // Phone number validation (Brazilian format)
@@ -109,8 +109,8 @@ export const healthcareValidationSchemas = {
       'Telefone deve estar no formato (00) 00000-0000',
     )
     .refine((phone: string) => {
-      const digits = phone.replace(/[^\d]/g, '');
-      return digits.length === 10 || digits.length === 11;
+      const digits = phone.replace(/[^\d]/g, '')
+      return digits.length === 10 || digits.length === 11
     }, 'Número de telefone inválido'),
 
   // Medical specialty validation
@@ -128,10 +128,10 @@ export const healthcareValidationSchemas = {
     .string()
     .regex(/^\d{2}\/\d{2}\/\d{4}$/, 'Data deve estar no formato DD/MM/AAAA')
     .refine((dateStr: string) => {
-      const [day, month, year] = dateStr.split('/').map(Number);
-      if (!day || !month || !year) {return false;}
-      const date = new Date(year, month - 1, day);
-      const now = new Date();
+      const [day, month, year] = dateStr.split('/').map(Number)
+      if (!day || !month || !year) return false
+      const date = new Date(year, month - 1, day)
+      const now = new Date()
 
       // Check if date is valid
       if (
@@ -139,15 +139,15 @@ export const healthcareValidationSchemas = {
         || date.getMonth() !== month - 1
         || date.getFullYear() !== year
       ) {
-        return false;
+        return false
       }
 
       // Check if date is not in the future
-      if (date > now) {return false;}
+      if (date > now) return false
 
       // Check reasonable age limits (0-150 years)
-      const age = now.getFullYear() - year;
-      return age >= 0 && age <= 150;
+      const age = now.getFullYear() - year
+      return age >= 0 && age <= 150
     }, 'Data de nascimento inválida'),
 
   // Emergency contact validation
@@ -209,7 +209,7 @@ export const healthcareValidationSchemas = {
         'CRM do prescritor deve estar no formato CRM/UF 0000000',
       ),
   }),
-};
+}
 
 // Data sensitivity classification for LGPD compliance
 export enum DataSensitivity {
@@ -249,9 +249,9 @@ export function classifyHealthcareData(fieldType: string): DataSensitivity {
     medical_history: DataSensitivity.RESTRICTED,
     lab_results: DataSensitivity.RESTRICTED,
     images: DataSensitivity.RESTRICTED,
-  };
+  }
 
-  return classifications[fieldType] || DataSensitivity.CONFIDENTIAL;
+  return classifications[fieldType] || DataSensitivity.CONFIDENTIAL
 }
 
 // Validation error message localization (Portuguese for Brazil)
@@ -270,7 +270,7 @@ export const healthcareValidationMessages = {
   invalidAge: 'Idade inválida',
   missingConsent: 'Consentimento LGPD necessário',
   dataRetentionExpired: 'Período de retenção de dados expirado',
-};
+}
 
 // LGPD consent validation
 export const lgpdConsentSchema = z.object({
@@ -286,47 +286,47 @@ export const lgpdConsentSchema = z.object({
   consentVersion: z.string().min(1),
   ipAddress: z.string().ip().optional(),
   userAgent: z.string().optional(),
-});
+})
 
 // Patient safety validation helpers
 export function validateEmergencyData(data: Record<string, unknown>): {
-  isValid: boolean;
-  errors: string[];
+  isValid: boolean
+  errors: string[]
 } {
-  const errors: string[] = [];
+  const errors: string[] = []
 
   // Emergency contact validation
   if (!data.emergencyContact) {
-    errors.push('Contato de emergência é obrigatório');
+    errors.push('Contato de emergência é obrigatório')
   }
 
   // Critical allergy validation
   if (data.allergies && Array.isArray(data.allergies)) {
     const criticalAllergies = data.allergies.filter(
       (a: Record<string, unknown>) => a.severity === 'grave',
-    );
+    )
     if (criticalAllergies.length > 0 && !data.allergyAlert) {
-      errors.push('Alerta de alergia grave deve estar ativo');
+      errors.push('Alerta de alergia grave deve estar ativo')
     }
   }
 
   // Medical record completeness
   if (!data.medicalRecordNumber) {
-    errors.push('Número do prontuário é obrigatório');
+    errors.push('Número do prontuário é obrigatório')
   }
 
   return {
     isValid: errors.length === 0,
     errors,
-  };
+  }
 }
 
 // Accessibility validation helpers
 export function validateAccessibilityRequirements(element: HTMLElement): {
-  isValid: boolean;
-  violations: string[];
+  isValid: boolean
+  violations: string[]
 } {
-  const violations: string[] = [];
+  const violations: string[] = []
 
   // Check for proper labeling
   if (
@@ -336,18 +336,18 @@ export function validateAccessibilityRequirements(element: HTMLElement): {
   ) {
     const label = element.getAttribute('aria-label')
       || element.getAttribute('aria-labelledby')
-      || document.querySelector(`label[for="${element.id}"]`);
+      || document.querySelector(`label[for="${element.id}"]`)
 
     if (!label) {
-      violations.push('Campo sem rótulo acessível');
+      violations.push('Campo sem rótulo acessível')
     }
   }
 
   // Check for error messages
   if (element.getAttribute('aria-invalid') === 'true') {
-    const errorElement = element.getAttribute('aria-describedby');
+    const errorElement = element.getAttribute('aria-describedby')
     if (!errorElement) {
-      violations.push('Erro sem descrição acessível');
+      violations.push('Erro sem descrição acessível')
     }
   }
 
@@ -356,30 +356,30 @@ export function validateAccessibilityRequirements(element: HTMLElement): {
     element.hasAttribute('required')
     && !element.getAttribute('aria-required')
   ) {
-    violations.push('Campo obrigatório sem indicação acessível');
+    violations.push('Campo obrigatório sem indicação acessível')
   }
 
   return {
     isValid: violations.length === 0,
     violations,
-  };
+  }
 }
 
 // Medical data anonymization helper
 export function anonymizePatientData(
   data: Record<string, unknown>,
 ): Record<string, unknown> {
-  const anonymized = { ...data };
+  const anonymized = { ...data }
 
   // Remove or hash sensitive identifiers
-  const sensitiveFields = ['cpf', 'name', 'phone', 'email', 'address'];
+  const sensitiveFields = ['cpf', 'name', 'phone', 'email', 'address']
 
-  sensitiveFields.forEach(field => {
+  sensitiveFields.forEach((field) => {
     if (anonymized[field]) {
       // Replace with anonymized placeholder
-      anonymized[field] = `[ANONIMIZADO_${field.toUpperCase()}]`;
+      anonymized[field] = `[ANONIMIZADO_${field.toUpperCase()}]`
     }
-  });
+  })
 
   // Keep only essential medical information
   const allowedFields = [
@@ -390,13 +390,13 @@ export function anonymizePatientData(
     'treatment_type',
     'outcome',
     'duration',
-  ];
+  ]
 
-  Object.keys(anonymized).forEach(key => {
+  Object.keys(anonymized).forEach((key) => {
     if (!allowedFields.includes(key) && sensitiveFields.includes(key)) {
-      delete anonymized[key];
+      delete anonymized[key]
     }
-  });
+  })
 
-  return anonymized;
+  return anonymized
 }

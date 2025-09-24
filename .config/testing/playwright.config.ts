@@ -1,4 +1,4 @@
-import { defineConfig, devices } from '@playwright/test';
+import { defineConfig, devices } from '@playwright/test'
 
 // Basic Playwright configuration for NeonPro
 // - Points tests to tools/e2e/tests
@@ -6,7 +6,7 @@ import { defineConfig, devices } from '@playwright/test';
 // - Stores reports under tools/e2e/reports
 // - Allows selecting baseURL via env BASE_URL (default http://localhost:3000)
 
-const BASE_URL = process.env['BASE_URL'] || 'http://localhost:3000';
+const BASE_URL = process.env['BASE_URL'] || 'http://localhost:3000'
 
 export default defineConfig({
   testDir: '../../tools/frontend/src/e2e',
@@ -54,4 +54,4 @@ export default defineConfig({
     //   use: { ...devices['Pixel 5'] },
     // },
   ],
-});
+})

@@ -387,27 +387,27 @@ pnpm test
 
 ```typescript
 // apps/api/src/utils/debug-config.ts
-import debug from 'debug';
+import debug from 'debug'
 
 // Configure debug namespaces
-debug.enable('neonpro:*');
+debug.enable('neonpro:*')
 
-export const debugLog = debug('neonpro:api');
-export const debugDB = debug('neonpro:database');
-export const debugAuth = debug('neonpro:auth');
-export const debugCache = debug('neonpro:cache');
-export const debugPerf = debug('neonpro:performance');
+export const debugLog = debug('neonpro:api')
+export const debugDB = debug('neonpro:database')
+export const debugAuth = debug('neonpro:auth')
+export const debugCache = debug('neonpro:cache')
+export const debugPerf = debug('neonpro:performance')
 
 // Performance monitoring
 export class PerformanceMonitor {
   static time(label: string): void {
-    debugPerf(`Timer started: ${label}`);
-    console.time(label);
+    debugPerf(`Timer started: ${label}`)
+    console.time(label)
   }
 
   static timeEnd(label: string): void {
-    console.timeEnd(label);
-    debugPerf(`Timer ended: ${label}`);
+    console.timeEnd(label)
+    debugPerf(`Timer ended: ${label}`)
   }
 }
 
@@ -419,7 +419,7 @@ export class ErrorTracker {
       stack: error.stack,
       context,
       timestamp: new Date().toISOString(),
-    });
+    })
 
     // Send to error tracking service
     if (process.env.NODE_ENV === 'production') {
@@ -474,7 +474,7 @@ Content-Type: application/json
 
 ```typescript
 // apps/api/src/trpc/playground.ts
-import { createTRPCPlayground } from 'trpc-playground';
+import { createTRPCPlayground } from 'trpc-playground'
 
 export const playgroundHandler = createTRPCPlayground({
   endpoint: '/api/trpc',
@@ -484,10 +484,10 @@ export const playgroundHandler = createTRPCPlayground({
       Authorization: 'Bearer your-token-here',
     },
   },
-});
+})
 
 // Add to Express app
-app.use('/playground', playgroundHandler);
+app.use('/playground', playgroundHandler)
 ```
 
 ## 🎨 Frontend Development
@@ -496,12 +496,12 @@ app.use('/playground', playgroundHandler);
 
 ```typescript
 // apps/web/src/components/shared/dev-helpers.tsx
-import { ComponentMeta, ComponentStory } from '@storybook/react';
-import React, { useState } from 'react';
+import { ComponentMeta, ComponentStory } from '@storybook/react'
+import React, { useState } from 'react'
 
 // Development props panel
 export const DevPanel: React.FC<{ data: any }> = ({ data }) => {
-  const [isVisible, setIsVisible] = useState(false);
+  const [isVisible, setIsVisible] = useState(false)
 
   return (
     <div className='fixed bottom-4 right-4 z-50'>
@@ -520,42 +520,42 @@ export const DevPanel: React.FC<{ data: any }> = ({ data }) => {
         </div>
       )}
     </div>
-  );
-};
+  )
+}
 
 // Mock data provider
 export const withMockData = <P extends object>(
   Component: React.ComponentType<P>,
   mockData: P,
 ) => {
-  return (props: P) => <Component {...mockData} {...props} />;
-};
+  return (props: P) => <Component {...mockData} {...props} />
+}
 
 // Development utilities
 export const devUtils = {
   logRender: (componentName: string) => {
     if (process.env.NODE_ENV === 'development') {
-      console.log(`🎨 ${componentName} rendered`);
+      console.log(`🎨 ${componentName} rendered`)
     }
   },
 
   logInteraction: (componentName: string, action: string) => {
     if (process.env.NODE_ENV === 'development') {
-      console.log(`🖱️ ${componentName} ${action}`);
+      console.log(`🖱️ ${componentName} ${action}`)
     }
   },
 
   measurePerformance: (componentName: string, fn: () => void) => {
     if (process.env.NODE_ENV === 'development') {
-      const start = performance.now();
-      fn();
-      const end = performance.now();
-      console.log(`⏱️ ${componentName} took ${end - start}ms`);
+      const start = performance.now()
+      fn()
+      const end = performance.now()
+      console.log(`⏱️ ${componentName} took ${end - start}ms`)
     } else {
-      fn();
+      fn()
     }
   },
-};
+}
 ```
 
 ### Storybook Configuration
@@ -580,7 +580,7 @@ module.exports = {
   features: {
     storyStoreV7: true,
   },
-};
+}
 ```
 
 ## 🔄 Development Workflow
@@ -670,9 +670,9 @@ echo "Git hooks installed successfully!"
 
 ```typescript
 // apps/api/src/__tests__/utils/test-utils.ts
-import { PrismaClient } from '@prisma/client';
-import { Redis } from 'ioredis';
-import { app } from '../src/app';
+import { PrismaClient } from '@prisma/client'
+import { Redis } from 'ioredis'
+import { app } from '../src/app'
 
 // Test database client
 export const testPrisma = new PrismaClient({
@@ -682,21 +682,21 @@ export const testPrisma = new PrismaClient({
         || 'postgresql://postgres:postgres@localhost:5432/neonpro_test',
     },
   },
-});
+})
 
 // Test Redis client
-export const testRedis = new Redis(process.env.TEST_REDIS_URL || 'redis://localhost:6379/1');
+export const testRedis = new Redis(process.env.TEST_REDIS_URL || 'redis://localhost:6379/1')
 
 // Test app instance
-export const testApp = app;
+export const testApp = app
 
 // Cleanup utilities
 export const cleanup = async () => {
-  await testPrisma.aestheticClientProfile.deleteMany();
-  await testPrisma.aestheticTreatment.deleteMany();
-  await testPrisma.aestheticSession.deleteMany();
-  await testRedis.flushdb();
-};
+  await testPrisma.aestheticClientProfile.deleteMany()
+  await testPrisma.aestheticTreatment.deleteMany()
+  await testPrisma.aestheticSession.deleteMany()
+  await testRedis.flushdb()
+}
 
 // Test data factories
 export const factories = {
@@ -715,7 +715,7 @@ export const factories = {
         status: 'active',
         ...overrides,
       },
-    });
+    })
   },
 
   createTreatment: async (clientId: string, overrides = {}) => {
@@ -732,7 +732,7 @@ export const factories = {
         status: 'active',
         ...overrides,
       },
-    });
+    })
   },
 
   createSession: async (treatmentId: string, overrides = {}) => {
@@ -745,23 +745,23 @@ export const factories = {
         notes: 'Test session',
         ...overrides,
       },
-    });
+    })
   },
-};
+}
 
 // Test helpers
 export const auth = {
   generateToken: (userId: string) => {
     return jwt.sign({ userId }, process.env.JWT_SECRET || 'test-secret', {
       expiresIn: '1h',
-    });
+    })
   },
 
   generateHeaders: (token: string) => ({
     Authorization: `Bearer ${token}`,
     'Content-Type': 'application/json',
   }),
-};
+}
 ```
 
 ## 🌐 Local Development with ngrok
@@ -798,16 +798,16 @@ HTTPS=true SSL_KEY_PATH=./key.pem SSL_CERT_PATH=./cert.pem pnpm dev
 
 ```typescript
 // apps/api/src/monitoring/dev-monitoring.ts
-import express from 'express';
-import prometheus from 'prom-client';
+import express from 'express'
+import prometheus from 'prom-client'
 
-const app = express();
+const app = express()
 
 // Create a Registry to register the metrics
-const register = new prometheus.Registry();
+const register = new prometheus.Registry()
 
 // Enable the collection of default metrics
-prometheus.collectDefaultMetrics({ register });
+prometheus.collectDefaultMetrics({ register })
 
 // Custom metrics
 const httpRequestDurationMicroseconds = new prometheus.Histogram({
@@ -815,28 +815,28 @@ const httpRequestDurationMicroseconds = new prometheus.Histogram({
   help: 'Duration of HTTP requests in ms',
   labelNames: ['method', 'route', 'code'],
   buckets: [0.1, 5, 15, 50, 100, 500],
-});
+})
 
-register.registerMetric(httpRequestDurationMicroseconds);
+register.registerMetric(httpRequestDurationMicroseconds)
 
 // Middleware to collect metrics
 app.use((req, res, next) => {
-  const end = httpRequestDurationMicroseconds.startTimer();
+  const end = httpRequestDurationMicroseconds.startTimer()
   res.on('finish', () => {
-    end({ route: req.route?.path || req.path, code: res.statusCode, method: req.method });
-  });
-  next();
-});
+    end({ route: req.route?.path || req.path, code: res.statusCode, method: req.method })
+  })
+  next()
+})
 
 // Metrics endpoint
 app.get('/metrics', async (req, res) => {
   try {
-    res.set('Content-Type', register.contentType);
-    res.end(await register.metrics());
+    res.set('Content-Type', register.contentType)
+    res.end(await register.metrics())
   } catch (err) {
-    res.status(500).end(err);
+    res.status(500).end(err)
   }
-});
+})
 
 // Health check endpoint
 app.get('/health', (req, res) => {
@@ -846,10 +846,10 @@ app.get('/health', (req, res) => {
     uptime: process.uptime(),
     memory: process.memoryUsage(),
     version: process.env.npm_package_version || '1.0.0',
-  });
-});
+  })
+})
 
-export default app;
+export default app
 ```
 
 This comprehensive development setup guide ensures developers can quickly and efficiently set up their local development environment with all necessary tools, configurations, and best practices for contributing to the NeonPro Aesthetic Clinic system.

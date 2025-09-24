@@ -299,7 +299,7 @@ const result = await runTDDCycle('patient-authentication', {
     'security-vulnerabilities',
     'healthcare-compliance',
   ],
-});
+})
 ```
 
 This configuration ensures that:
@@ -523,10 +523,10 @@ const healthcareAuditAgent: AgentCapability = {
     anvisa: true,
     cfm: true,
   },
-};
+}
 
 // Register the agent with the registry
-agentRegistry.registerAgent(healthcareAuditAgent);
+agentRegistry.registerAgent(healthcareAuditAgent)
 ```
 
 New agents can be integrated into the existing TDD cycle without modifying the core orchestration logic, thanks to the framework's modular design.
@@ -558,7 +558,7 @@ const healthcareQualityConfig = {
     threshold: 90,
     requirement: 'Lighthouse performance score must exceed 90',
   },
-};
+}
 ```
 
 These custom quality gates are automatically enforced during the quality gate validation phase, ensuring that project-specific requirements are consistently applied.

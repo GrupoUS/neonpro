@@ -14,20 +14,20 @@
  */
 
 export interface AGUIAppointmentMessage {
-  id: string;
-  type: AGUIAppointmentMessageType;
-  timestamp: Date;
-  source: 'system' | 'user' | 'ai' | 'professional';
-  clinicId: string;
-  data: any;
+  id: string
+  type: AGUIAppointmentMessageType
+  timestamp: Date
+  source: 'system' | 'user' | 'ai' | 'professional'
+  clinicId: string
+  data: any
   metadata?: {
-    priority: 'low' | 'medium' | 'high' | 'urgent';
-    requiresConfirmation: boolean;
-    expiresAt?: Date;
-    relatedAppointmentId?: string;
-    patientId?: string;
-    professionalId?: string;
-  };
+    priority: 'low' | 'medium' | 'high' | 'urgent'
+    requiresConfirmation: boolean
+    expiresAt?: Date
+    relatedAppointmentId?: string
+    patientId?: string
+    professionalId?: string
+  }
 }
 
 export type AGUIAppointmentMessageType =
@@ -67,106 +67,106 @@ export type AGUIAppointmentMessageType =
   | 'system.sync_completed'
   | 'system.error'
   | 'compliance.checked'
-  | 'backup.completed';
+  | 'backup.completed'
 
 export interface AppointmentRequestedData {
-  patientId: string;
-  serviceTypeId: string;
-  preferredDates: DateRange[];
-  preferredProfessionals: string[];
-  duration: number;
-  urgency: 'low' | 'medium' | 'high' | 'urgent';
-  accessibility: string[];
-  specialRequirements?: string[];
+  patientId: string
+  serviceTypeId: string
+  preferredDates: DateRange[]
+  preferredProfessionals: string[]
+  duration: number
+  urgency: 'low' | 'medium' | 'high' | 'urgent'
+  accessibility: string[]
+  specialRequirements?: string[]
 }
 
 export interface AppointmentScheduledData {
-  appointmentId: string;
-  patientId: string;
-  professionalId: string;
-  roomId: string;
-  startTime: Date;
-  endTime: Date;
-  serviceType: string;
-  noShowRiskScore: number;
-  optimizationScore: number;
-  aiRecommendations: string[];
+  appointmentId: string
+  patientId: string
+  professionalId: string
+  roomId: string
+  startTime: Date
+  endTime: Date
+  serviceType: string
+  noShowRiskScore: number
+  optimizationScore: number
+  aiRecommendations: string[]
 }
 
 export interface AvailabilityUpdatedData {
-  professionalId: string;
-  date: Date;
-  availableSlots: TimeSlot[];
-  utilization: number;
-  efficiency: number;
+  professionalId: string
+  date: Date
+  availableSlots: TimeSlot[]
+  utilization: number
+  efficiency: number
 }
 
 export interface NoShowPredictedData {
-  appointmentId: string;
-  riskScore: number;
-  confidence: number;
-  riskFactors: string[];
-  preventionActions: string[];
-  modelVersion: string;
+  appointmentId: string
+  riskScore: number
+  confidence: number
+  riskFactors: string[]
+  preventionActions: string[]
+  modelVersion: string
 }
 
 export interface SlotOptimizedData {
-  originalSlot: TimeSlot;
-  optimizedSlot: TimeSlot;
-  improvementReason: string;
-  efficiencyGain: number;
-  conflictResolution: boolean;
+  originalSlot: TimeSlot
+  optimizedSlot: TimeSlot
+  improvementReason: string
+  efficiencyGain: number
+  conflictResolution: boolean
 }
 
 export interface ReminderScheduledData {
-  appointmentId: string;
-  reminderType: 'email' | 'sms' | 'whatsapp';
-  scheduledTime: Date;
-  message: string;
-  priority: 'low' | 'medium' | 'high';
+  appointmentId: string
+  reminderType: 'email' | 'sms' | 'whatsapp'
+  scheduledTime: Date
+  message: string
+  priority: 'low' | 'medium' | 'high'
 }
 
 export interface AvailabilityConflictData {
-  type: 'professional' | 'room' | 'equipment';
-  resourceId: string;
-  conflictingAppointments: string[];
-  suggestedResolution: 'reschedule' | 'extend_hours' | 'add_resource';
-  severity: 'low' | 'medium' | 'high';
+  type: 'professional' | 'room' | 'equipment'
+  resourceId: string
+  conflictingAppointments: string[]
+  suggestedResolution: 'reschedule' | 'extend_hours' | 'add_resource'
+  severity: 'low' | 'medium' | 'high'
 }
 
 // Helper types
 export interface DateRange {
-  start: Date;
-  end: Date;
+  start: Date
+  end: Date
 }
 
 export interface TimeSlot {
-  start: Date;
-  end: Date;
+  start: Date
+  end: Date
 }
 
 export interface ResourceUtilization {
-  professionals: number;
-  rooms: number;
-  equipment: number;
-  overall: number;
+  professionals: number
+  rooms: number
+  equipment: number
+  overall: number
 }
 
 export class AGUIAppointmentProtocol {
-  private static instance: AGUIAppointmentProtocol;
-  private messageHandlers: Map<AGUIAppointmentMessageType, Function[]> = new Map();
-  private eventBus: EventTarget;
+  private static instance: AGUIAppointmentProtocol
+  private messageHandlers: Map<AGUIAppointmentMessageType, Function[]> = new Map()
+  private eventBus: EventTarget
 
   private constructor() {
-    this.eventBus = new EventTarget();
-    this.setupDefaultHandlers();
+    this.eventBus = new EventTarget()
+    this.setupDefaultHandlers()
   }
 
   static getInstance(): AGUIAppointmentProtocol {
     if (!AGUIAppointmentProtocol.instance) {
-      AGUIAppointmentProtocol.instance = new AGUIAppointmentProtocol();
+      AGUIAppointmentProtocol.instance = new AGUIAppointmentProtocol()
     }
-    return AGUIAppointmentProtocol.instance;
+    return AGUIAppointmentProtocol.instance
   }
 
   /**
@@ -175,34 +175,34 @@ export class AGUIAppointmentProtocol {
   async sendMessage(message: AGUIAppointmentMessage): Promise<void> {
     try {
       // Validate message
-      this.validateMessage(message);
+      this.validateMessage(message)
 
       // Add timestamp if not present
       if (!message.timestamp) {
-        message.timestamp = new Date();
+        message.timestamp = new Date()
       }
 
       // Dispatch to event bus
       const event = new CustomEvent(message.type, {
         detail: message,
-      });
-      this.eventBus.dispatchEvent(event);
+      })
+      this.eventBus.dispatchEvent(event)
 
       // Call registered handlers
-      const handlers = this.messageHandlers.get(message.type) || [];
+      const handlers = this.messageHandlers.get(message.type) || []
       for (const handler of handlers) {
         try {
-          await handler(message);
+          await handler(message)
         } catch {
-          console.error(`Error in handler for ${message.type}:`, error);
+          console.error(`Error in handler for ${message.type}:`, error)
         }
       }
 
       // Log for compliance and debugging
-      await this.logMessage(message);
+      await this.logMessage(message)
     } catch {
-      console.error('Error sending AG-UI message:', error);
-      throw error;
+      console.error('Error sending AG-UI message:', error)
+      throw error
     }
   }
 
@@ -211,19 +211,19 @@ export class AGUIAppointmentProtocol {
    */
   on(messageType: AGUIAppointmentMessageType, handler: Function): void {
     if (!this.messageHandlers.has(messageType)) {
-      this.messageHandlers.set(messageType, []);
+      this.messageHandlers.set(messageType, [])
     }
-    this.messageHandlers.get(messageType)!.push(handler);
+    this.messageHandlers.get(messageType)!.push(handler)
   }
 
   /**
    * Remove a handler for specific message types
    */
   off(messageType: AGUIAppointmentMessageType, handler: Function): void {
-    const handlers = this.messageHandlers.get(messageType) || [];
-    const index = handlers.indexOf(handler);
+    const handlers = this.messageHandlers.get(messageType) || []
+    const index = handlers.indexOf(handler)
     if (index > -1) {
-      handlers.splice(index, 1);
+      handlers.splice(index, 1)
     }
   }
 
@@ -248,9 +248,9 @@ export class AGUIAppointmentProtocol {
         patientId: data.patientId,
         ...metadata,
       },
-    };
+    }
 
-    await this.sendMessage(message);
+    await this.sendMessage(message)
   }
 
   /**
@@ -276,9 +276,9 @@ export class AGUIAppointmentProtocol {
         professionalId: data.professionalId,
         ...metadata,
       },
-    };
+    }
 
-    await this.sendMessage(message);
+    await this.sendMessage(message)
   }
 
   /**
@@ -302,9 +302,9 @@ export class AGUIAppointmentProtocol {
         professionalId: data.professionalId,
         ...metadata,
       },
-    };
+    }
 
-    await this.sendMessage(message);
+    await this.sendMessage(message)
   }
 
   /**
@@ -328,9 +328,9 @@ export class AGUIAppointmentProtocol {
         relatedAppointmentId: data.appointmentId,
         ...metadata,
       },
-    };
+    }
 
-    await this.sendMessage(message);
+    await this.sendMessage(message)
   }
 
   /**
@@ -353,9 +353,9 @@ export class AGUIAppointmentProtocol {
         requiresConfirmation: false,
         ...metadata,
       },
-    };
+    }
 
-    await this.sendMessage(message);
+    await this.sendMessage(message)
   }
 
   /**
@@ -379,9 +379,9 @@ export class AGUIAppointmentProtocol {
         relatedAppointmentId: data.appointmentId,
         ...metadata,
       },
-    };
+    }
 
-    await this.sendMessage(message);
+    await this.sendMessage(message)
   }
 
   /**
@@ -404,9 +404,9 @@ export class AGUIAppointmentProtocol {
         requiresConfirmation: data.severity === 'high',
         ...metadata,
       },
-    };
+    }
 
-    await this.sendMessage(message);
+    await this.sendMessage(message)
   }
 
   /**
@@ -434,25 +434,25 @@ export class AGUIAppointmentProtocol {
           requiresConfirmation: false,
           professionalId,
         },
-      };
+      }
 
       // Set up response handler
       const timeout = setTimeout(() => {
-        this.off('availability.updated', responseHandler);
-        reject(new Error('Availability query timeout'));
-      }, 10000);
+        this.off('availability.updated', responseHandler)
+        reject(new Error('Availability query timeout'))
+      }, 10000)
 
       const responseHandler = (msg: AGUIAppointmentMessage) => {
         if (msg.data.professionalId === professionalId) {
-          clearTimeout(timeout);
-          this.off('availability.updated', responseHandler);
-          resolve(msg.data);
+          clearTimeout(timeout)
+          this.off('availability.updated', responseHandler)
+          resolve(msg.data)
         }
-      };
+      }
 
-      this.on('availability.updated', responseHandler);
-      this.sendMessage(message);
-    });
+      this.on('availability.updated', responseHandler)
+      this.sendMessage(message)
+    })
   }
 
   /**
@@ -462,10 +462,10 @@ export class AGUIAppointmentProtocol {
     clinicId: string,
     slot: TimeSlot,
     constraints: {
-      patientId?: string;
-      serviceType?: string;
-      preferredProfessionals?: string[];
-      duration?: number;
+      patientId?: string
+      serviceType?: string
+      preferredProfessionals?: string[]
+      duration?: number
     },
   ): Promise<SlotOptimizedData> {
     return new Promise((resolve, reject) => {
@@ -485,45 +485,45 @@ export class AGUIAppointmentProtocol {
           requiresConfirmation: false,
           patientId: constraints.patientId,
         },
-      };
+      }
 
       // Set up response handler
       const timeout = setTimeout(() => {
-        this.off('slot.optimized', responseHandler);
-        reject(new Error('Slot optimization timeout'));
-      }, 15000);
+        this.off('slot.optimized', responseHandler)
+        reject(new Error('Slot optimization timeout'))
+      }, 15000)
 
       const responseHandler = (msg: AGUIAppointmentMessage) => {
         if (msg.data.originalSlot.start.getTime() === slot.start.getTime()) {
-          clearTimeout(timeout);
-          this.off('slot.optimized', responseHandler);
-          resolve(msg.data);
+          clearTimeout(timeout)
+          this.off('slot.optimized', responseHandler)
+          resolve(msg.data)
         }
-      };
+      }
 
-      this.on('slot.optimized', responseHandler);
-      this.sendMessage(message);
-    });
+      this.on('slot.optimized', responseHandler)
+      this.sendMessage(message)
+    })
   }
 
   // Private helper methods
   private validateMessage(message: AGUIAppointmentMessage): void {
     if (!message.id) {
-      throw new Error('Message ID is required');
+      throw new Error('Message ID is required')
     }
     if (!message.type) {
-      throw new Error('Message type is required');
+      throw new Error('Message type is required')
     }
     if (!message.clinicId) {
-      throw new Error('Clinic ID is required');
+      throw new Error('Clinic ID is required')
     }
     if (!message.data) {
-      throw new Error('Message data is required');
+      throw new Error('Message data is required')
     }
   }
 
   private generateMessageId(): string {
-    return `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    return `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
   }
 
   private async logMessage(message: AGUIAppointmentMessage): Promise<void> {
@@ -534,7 +534,7 @@ export class AGUIAppointmentProtocol {
       timestamp: message.timestamp,
       source: message.source,
       metadata: message.metadata,
-    });
+    })
 
     // Here you would typically log to a database or external service
     // This is important for LGPD compliance and audit trails
@@ -543,54 +543,54 @@ export class AGUIAppointmentProtocol {
   private setupDefaultHandlers(): void {
     // Handler for system errors
     this.on('system.error', async (message: AGUIAppointmentMessage) => {
-      console.error('System error:', message.data);
+      console.error('System error:', message.data)
 
       // Send alert to administrators
       // This would integrate with your notification system
-    });
+    })
 
     // Handler for compliance checks
     this.on('compliance.checked', async (message: AGUIAppointmentMessage) => {
-      console.log('Compliance check completed:', message.data);
+      console.log('Compliance check completed:', message.data)
 
       // Log compliance status for audit purposes
       // This is critical for LGPD compliance
-    });
+    })
 
     // Handler for real-time updates
     this.on('status.changed', async (message: AGUIAppointmentMessage) => {
-      console.log('Status changed:', message.data);
+      console.log('Status changed:', message.data)
 
       // Update real-time displays and notifications
       // This would integrate with your WebSocket system
-    });
+    })
   }
 
   /**
    * Get protocol statistics and health
    */
   getStats(): {
-    registeredHandlers: number;
-    messageTypes: string[];
-    uptime: number;
+    registeredHandlers: number
+    messageTypes: string[]
+    uptime: number
   } {
     return {
       registeredHandlers: Array.from(this.messageHandlers.values())
         .reduce((sum, handlers) => sum + handlers.length, 0),
       messageTypes: Array.from(this.messageHandlers.keys()),
       uptime: process.uptime(), // This would be replaced with actual uptime tracking
-    };
+    }
   }
 
   /**
    * Clean up resources and handlers
    */
   destroy(): void {
-    this.messageHandlers.clear();
+    this.messageHandlers.clear()
     // Clean up event listeners
-    this.eventBus = new EventTarget();
+    this.eventBus = new EventTarget()
   }
 }
 
 // Export singleton instance
-export const aguiAppointmentProtocol = AGUIAppointmentProtocol.getInstance();
+export const aguiAppointmentProtocol = AGUIAppointmentProtocol.getInstance()

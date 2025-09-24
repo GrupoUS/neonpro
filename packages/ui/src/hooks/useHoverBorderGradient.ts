@@ -4,59 +4,59 @@
  * Inspired by AceternityUI effects with 60fps performance optimization
  */
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 // Type for CSS custom properties
 type CSSPropertiesWithVars = React.CSSProperties & {
-  [key: `--${string}`]: string | number;
-};
+  [key: `--${string}`]: string | number
+}
 
 interface MousePosition {
-  x: number;
-  y: number;
+  x: number
+  y: number
 }
 
 interface HoverBorderGradientConfig {
   /** Enable/disable the hover border gradient effect */
-  enabled?: boolean;
+  enabled?: boolean
   /** Animation intensity (subtle, normal, vibrant) */
-  intensity?: 'subtle' | 'normal' | 'vibrant';
+  intensity?: 'subtle' | 'normal' | 'vibrant'
   /** Gradient direction (left-right, top-bottom, diagonal-tl-br, diagonal-tr-bl, radial) */
   direction?:
     | 'left-right'
     | 'top-bottom'
     | 'diagonal-tl-br'
     | 'diagonal-tr-bl'
-    | 'radial';
+    | 'radial'
   /** Gradient color theme */
-  theme?: 'gold' | 'silver' | 'copper' | 'blue' | 'purple' | 'green' | 'red';
+  theme?: 'gold' | 'silver' | 'copper' | 'blue' | 'purple' | 'green' | 'red'
   /** Animation speed (slow, normal, fast) */
-  speed?: 'slow' | 'normal' | 'fast';
+  speed?: 'slow' | 'normal' | 'fast'
   /** Border width in pixels */
-  borderWidth?: number;
+  borderWidth?: number
   /** Custom gradient colors */
-  colors?: string[];
+  colors?: string[]
   /** Debounce mouse tracking for performance (ms) */
-  debounce?: number;
+  debounce?: number
 }
 
 interface HoverBorderGradientReturn {
   /** Ref to attach to the element */
-  elementRef: React.RefObject<HTMLElement | null>;
+  elementRef: React.RefObject<HTMLElement | null>
   /** Current mouse position relative to element */
-  mousePosition: MousePosition;
+  mousePosition: MousePosition
   /** Whether mouse is currently hovering */
-  isHovering: boolean;
+  isHovering: boolean
   /** CSS class names to apply */
-  classNames: string;
+  classNames: string
   /** CSS custom properties object */
-  style: CSSPropertiesWithVars;
+  style: CSSPropertiesWithVars
   /** Manual trigger methods */
   handlers: {
-    onMouseEnter: (event: React.MouseEvent) => void;
-    onMouseLeave: (event: React.MouseEvent) => void;
-    onMouseMove: (event: React.MouseEvent) => void;
-  };
+    onMouseEnter: (event: React.MouseEvent) => void
+    onMouseLeave: (event: React.MouseEvent) => void
+    onMouseMove: (event: React.MouseEvent) => void
+  }
 }
 
 export function useHoverBorderGradient(
@@ -71,84 +71,84 @@ export function useHoverBorderGradient(
     borderWidth = 1,
     colors,
     debounce = 16, // ~60fps
-  } = config;
+  } = config
 
-  const elementRef = useRef<HTMLElement | null>(null);
+  const elementRef = useRef<HTMLElement | null>(null)
   const [mousePosition, setMousePosition] = useState<MousePosition>({
     x: 0,
     y: 0,
-  });
-  const [isHovering, setIsHovering] = useState(false);
-  const debounceTimeoutRef = useRef<number | null>(null);
-  const rafRef = useRef<number | null>(null);
+  })
+  const [isHovering, setIsHovering] = useState(false)
+  const debounceTimeoutRef = useRef<number | null>(null)
+  const rafRef = useRef<number | null>(null)
 
   // Performance-optimized mouse tracking with RAF
   const updateMousePosition = useCallback(
     (event: React.MouseEvent) => {
-      if (!enabled || !elementRef.current) {return;}
+      if (!enabled || !elementRef.current) return
 
       // Cancel previous RAF if pending
       if (rafRef.current) {
-        cancelAnimationFrame(rafRef.current);
+        cancelAnimationFrame(rafRef.current)
       }
 
       rafRef.current = requestAnimationFrame(() => {
-        if (!elementRef.current) {return;}
+        if (!elementRef.current) return
 
-        const rect = elementRef.current.getBoundingClientRect();
-        const x = ((event.clientX - rect.left) / rect.width) * 100;
-        const y = ((event.clientY - rect.top) / rect.height) * 100;
+        const rect = elementRef.current.getBoundingClientRect()
+        const x = ((event.clientX - rect.left) / rect.width) * 100
+        const y = ((event.clientY - rect.top) / rect.height) * 100
 
         setMousePosition({
           x: Math.max(0, Math.min(100, x)),
           y: Math.max(0, Math.min(100, y)),
-        });
-      });
+        })
+      })
     },
     [enabled],
-  );
+  )
 
   // Debounced mouse move handler
   const debouncedMouseMove = useCallback(
     (event: React.MouseEvent) => {
       if (debounceTimeoutRef.current) {
-        clearTimeout(debounceTimeoutRef.current);
+        clearTimeout(debounceTimeoutRef.current)
       }
 
       debounceTimeoutRef.current = window.setTimeout(() => {
-        updateMousePosition(event);
-      }, debounce);
+        updateMousePosition(event)
+      }, debounce)
     },
     [updateMousePosition, debounce],
-  );
+  )
 
   // Event handlers
   const handleMouseEnter = useCallback(
     (event: React.MouseEvent) => {
-      if (!enabled) {return;}
-      setIsHovering(true);
-      updateMousePosition(event);
+      if (!enabled) return
+      setIsHovering(true)
+      updateMousePosition(event)
     },
     [enabled, updateMousePosition],
-  );
+  )
 
   const handleMouseLeave = useCallback(() => {
-    if (!enabled) {return;}
-    setIsHovering(false);
-    setMousePosition({ x: 50, y: 50 }); // Reset to center
-  }, [enabled]);
+    if (!enabled) return
+    setIsHovering(false)
+    setMousePosition({ x: 50, y: 50 }) // Reset to center
+  }, [enabled])
 
   // Cleanup on unmount
   useEffect(() => {
     return () => {
       if (debounceTimeoutRef.current) {
-        clearTimeout(debounceTimeoutRef.current);
+        clearTimeout(debounceTimeoutRef.current)
       }
       if (rafRef.current) {
-        cancelAnimationFrame(rafRef.current);
+        cancelAnimationFrame(rafRef.current)
       }
-    };
-  }, []);
+    }
+  }, [])
 
   // Generate CSS class names
   const classNames = enabled
@@ -159,7 +159,7 @@ export function useHoverBorderGradient(
       `hover-border-gradient--${theme}`,
       `hover-border-gradient--${speed}`,
     ].join(' ')
-    : '';
+    : ''
 
   // Generate CSS custom properties
   const style: CSSPropertiesWithVars = enabled
@@ -173,7 +173,7 @@ export function useHoverBorderGradient(
         '--gradient-color-3': colors[2] || '#FFD700',
       }),
     }
-    : {};
+    : {}
 
   return {
     elementRef,
@@ -186,8 +186,8 @@ export function useHoverBorderGradient(
       onMouseLeave: handleMouseLeave,
       onMouseMove: debouncedMouseMove,
     },
-  };
+  }
 }
 
 // Export types for external use
-export type { HoverBorderGradientConfig, HoverBorderGradientReturn };
+export type { HoverBorderGradientConfig, HoverBorderGradientReturn }

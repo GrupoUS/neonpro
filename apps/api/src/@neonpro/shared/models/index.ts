@@ -1,5 +1,5 @@
 /**
- * Index file for @neonpro/shared/models
+ * Index file for neonpro/shared/models
  * Exports all models and utilities
  */
 

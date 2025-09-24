@@ -13,8 +13,8 @@
  * - CFM professional license validation
  */
 
-import { validatePatientData } from '../../../../packages/shared/src';
-import { Patient } from '../../../../packages/shared/src/types/patient';
+import { validatePatientData } from '../../../../packages/shared/src'
+import { Patient } from '../../../../packages/shared/src/types/patient'
 import {
   createPrismaWithContext,
   getHealthcarePrismaClient,
@@ -22,95 +22,95 @@ import {
   type HealthcareContext,
   type HealthcarePrismaClient,
   UnauthorizedHealthcareAccessError,
-} from '../clients/prisma';
+} from '../clients/prisma'
 
 // Service response interface
 export interface ServiceResponse<T = any> {
-  success: boolean;
-  data?: T;
-  error?: string;
-  errors?: Array<{ field: string; message: string; code: string }>;
-  message?: string;
+  success: boolean
+  data?: T
+  error?: string
+  errors?: Array<{ field: string; message: string; code: string }>
+  message?: string
 }
 
 // Pagination interface
 export interface PaginationOptions {
-  page: number;
-  limit: number;
-  sortBy?: string;
-  sortOrder?: 'asc' | 'desc';
+  page: number
+  limit: number
+  sortBy?: string
+  sortOrder?: 'asc' | 'desc'
 }
 
 // Enhanced search options interface with healthcare context
 export interface SearchOptions extends PaginationOptions {
-  _userId: string;
-  _query?: string;
-  search?: string;
-  filters?: Record<string, any>;
-  healthcareContext?: string;
+  _userId: string
+  _query?: string
+  search?: string
+  filters?: Record<string, any>
+  healthcareContext?: string
 }
 
 // Patient list response
 export interface PatientListResponse {
-  patients: Patient[];
+  patients: Patient[]
   pagination: {
-    page: number;
-    limit: number;
-    total: number;
-    totalPages: number;
-  };
+    page: number
+    limit: number
+    total: number
+    totalPages: number
+  }
 }
 
 // Healthcare data interface
 export interface HealthcareData {
-  susCard?: string;
-  healthPlan?: string;
-  allergies?: string[];
-  chronicConditions?: string[];
-  medications?: string[];
+  susCard?: string
+  healthPlan?: string
+  allergies?: string[]
+  chronicConditions?: string[]
+  medications?: string[]
   emergencyContact?: {
-    name: string;
-    phone: string;
-    relationship: string;
-  };
+    name: string
+    phone: string
+    relationship: string
+  }
 }
 
 // Patient summary interface
 export interface PatientSummary {
   basicInfo: {
-    id: string;
-    name: string;
-    age: number;
-    gender: string;
-    phone: string;
-    email: string;
-  };
+    id: string
+    name: string
+    age: number
+    gender: string
+    phone: string
+    email: string
+  }
   healthcareInfo: {
-    susCard?: string;
-    healthPlan?: string;
-    allergies: string[];
-    chronicConditions: string[];
-  };
+    susCard?: string
+    healthPlan?: string
+    allergies: string[]
+    chronicConditions: string[]
+  }
   lgpdStatus: {
-    consentGiven: boolean;
-    dataProcessing: boolean;
-    marketing: boolean;
-    lastUpdated: Date;
-  };
+    consentGiven: boolean
+    dataProcessing: boolean
+    marketing: boolean
+    lastUpdated: Date
+  }
 } // Access tracking interface
 export interface AccessInfo {
-  _userId: string;
-  action: string;
-  ipAddress?: string;
-  userAgent?: string;
+  _userId: string
+  action: string
+  ipAddress?: string
+  userAgent?: string
 }
 
 // Notification data interface
 export interface NotificationData {
-  type: string;
-  message: string;
-  channel: string;
-  priority?: string;
+  type: string
+  message: string
+  channel: string
+  priority?: string
 }
 
 /**
@@ -119,13 +119,13 @@ export interface NotificationData {
  * Now using real Prisma database operations
  */
 export class PatientService {
-  private prismaClient: HealthcarePrismaClient;
+  private prismaClient: HealthcarePrismaClient
 
   constructor(healthcareContext?: HealthcareContext) {
     if (healthcareContext) {
-      this.prismaClient = createPrismaWithContext(healthcareContext);
+      this.prismaClient = createPrismaWithContext(healthcareContext)
     } else {
-      this.prismaClient = getHealthcarePrismaClient();
+      this.prismaClient = getHealthcarePrismaClient()
     }
   }
 
@@ -133,7 +133,7 @@ export class PatientService {
    * Set healthcare context for the service
    */
   withContext(_context: HealthcareContext): PatientService {
-    return new PatientService(context);
+    return new PatientService(context)
   }
 
   /**
@@ -150,13 +150,13 @@ export class PatientService {
         phone: patientData.phone || '',
         email: patientData.email || '',
         cep: patientData.address?.cep || '',
-      });
+      })
 
       if (!validation.isValid) {
         return {
           success: false,
           errors: validation.errors,
-        };
+        }
       }
 
       // Validate healthcare context
@@ -165,16 +165,16 @@ export class PatientService {
           'Invalid healthcare context for patient creation',
           'CONTEXT_VALIDATION_FAILED',
           'LGPD',
-        );
+        )
       }
 
-      const clinicId = this.prismaClient.currentContext?.clinicId;
+      const clinicId = this.prismaClient.currentContext?.clinicId
       if (!clinicId) {
         throw new HealthcareComplianceError(
           'Clinic context required for patient creation',
           'CLINIC_CONTEXT_REQUIRED',
           'CFM',
-        );
+        )
       }
 
       // Check for duplicate CPF
@@ -185,18 +185,18 @@ export class PatientService {
             clinicId,
             isActive: true,
           },
-        });
+        })
 
         if (existingPatient) {
           return {
             success: false,
             error: 'CPF já cadastrado no sistema',
-          };
+          }
         }
       }
 
       // Generate medical record number
-      const medicalRecordNumber = `MR-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      const medicalRecordNumber = `MR-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
 
       // Create patient record
       const newPatient = await this.prismaClient.patient.create({
@@ -224,30 +224,30 @@ export class PatientService {
           createdBy: this.prismaClient.currentContext?.userId,
           updatedBy: this.prismaClient.currentContext?.userId,
         },
-      });
+      })
 
       // Convert Prisma result to Patient interface
-      const patient = this.convertPrismaToPatient(newPatient);
+      const patient = this.convertPrismaToPatient(newPatient)
 
       return {
         success: true,
         data: patient,
         message: 'Paciente criado com sucesso',
-      };
+      }
     } catch {
-      console.error('Error creating patient:', error);
+      console.error('Error creating patient:', error)
 
       if (
         error instanceof HealthcareComplianceError
         || error instanceof UnauthorizedHealthcareAccessError
       ) {
-        throw error;
+        throw error
       }
 
       return {
         success: false,
         error: 'Erro interno do servidor',
-      };
+      }
     }
   } /**
    * Get patient by ID with RLS validation
@@ -261,10 +261,10 @@ export class PatientService {
           'Invalid healthcare context for patient access',
           'patient',
           patientId,
-        );
+        )
       }
 
-      const clinicId = this.prismaClient.currentContext?.clinicId;
+      const clinicId = this.prismaClient.currentContext?.clinicId
 
       const patientRecord = await this.prismaClient.patient.findFirst({
         where: {
@@ -284,35 +284,35 @@ export class PatientService {
             take: 5, // Last 5 appointments
           },
         },
-      });
+      })
 
       if (!patientRecord) {
         return {
           success: false,
           error: 'Paciente não encontrado',
-        };
+        }
       }
 
-      const patient = this.convertPrismaToPatient(patientRecord);
+      const patient = this.convertPrismaToPatient(patientRecord)
 
       return {
         success: true,
         data: patient,
-      };
+      }
     } catch {
-      console.error('Error getting patient by ID:', error);
+      console.error('Error getting patient by ID:', error)
 
       if (
         error instanceof HealthcareComplianceError
         || error instanceof UnauthorizedHealthcareAccessError
       ) {
-        throw error;
+        throw error
       }
 
       return {
         success: false,
         error: 'Erro interno do servidor',
-      };
+      }
     }
   }
 
@@ -331,30 +331,30 @@ export class PatientService {
         filters = {},
         sortBy = 'fullName',
         sortOrder = 'asc',
-      } = options;
+      } = options
 
       // Validate healthcare context
       if (!(await this.prismaClient.validateContext())) {
         throw new UnauthorizedHealthcareAccessError(
           'Invalid healthcare context for patient listing',
           'patient_list',
-        );
+        )
       }
 
-      const clinicId = this.prismaClient.currentContext?.clinicId;
+      const clinicId = this.prismaClient.currentContext?.clinicId
       if (!clinicId) {
         throw new HealthcareComplianceError(
           'Clinic context required for patient listing',
           'CLINIC_CONTEXT_REQUIRED',
           'CFM',
-        );
+        )
       }
 
       // Build where clause with filters
       const whereClause: any = {
         clinicId,
         isActive: true,
-      };
+      }
 
       // Add search functionality
       if (search) {
@@ -363,32 +363,32 @@ export class PatientService {
           { email: { contains: search, mode: 'insensitive' } },
           { cpf: { contains: search, mode: 'insensitive' } },
           { medicalRecordNumber: { contains: search, mode: 'insensitive' } },
-        ];
+        ]
       }
 
       // Add status filter
       if (filters.status) {
-        whereClause.patientStatus = filters.status;
+        whereClause.patientStatus = filters.status
       }
 
       // Add gender filter
       if (filters.gender) {
-        whereClause.gender = filters.gender;
+        whereClause.gender = filters.gender
       }
 
       // Calculate pagination
-      const skip = (page - 1) * limit;
+      const skip = (page - 1) * limit
 
       // Build order by clause
-      const orderBy: any = {};
+      const orderBy: any = {}
       if (sortBy === 'name') {
-        orderBy.fullName = sortOrder;
+        orderBy.fullName = sortOrder
       } else if (sortBy === 'createdAt') {
-        orderBy.createdAt = sortOrder;
+        orderBy.createdAt = sortOrder
       } else if (sortBy === 'updatedAt') {
-        orderBy.updatedAt = sortOrder;
+        orderBy.updatedAt = sortOrder
       } else {
-        orderBy[sortBy] = sortOrder;
+        orderBy[sortBy] = sortOrder
       }
 
       // Execute queries in parallel
@@ -432,12 +432,12 @@ export class PatientService {
         this.prismaClient.patient.count({
           where: whereClause,
         }),
-      ]);
+      ])
 
       // Convert Prisma results to Patient interface
-      const patients = patientRecords.map(record => this.convertPrismaToPatient(record));
+      const patients = patientRecords.map((record) => this.convertPrismaToPatient(record))
 
-      const totalPages = Math.ceil(totalCount / limit);
+      const totalPages = Math.ceil(totalCount / limit)
 
       return {
         success: true,
@@ -450,21 +450,21 @@ export class PatientService {
             totalPages,
           },
         },
-      };
+      }
     } catch {
-      console.error('Error listing patients:', error);
+      console.error('Error listing patients:', error)
 
       if (
         error instanceof HealthcareComplianceError
         || error instanceof UnauthorizedHealthcareAccessError
       ) {
-        throw error;
+        throw error
       }
 
       return {
         success: false,
         error: 'Erro interno do servidor',
-      };
+      }
     }
   } /**
    * Convert Prisma patient record to Patient interface
@@ -520,7 +520,7 @@ export class PatientService {
         organDonor: false,
         medicalNotes: record.patientNotes,
       },
-    };
+    }
   } /**
    * Search patients by name or other criteria - Updated for real database
    */
@@ -539,27 +539,27 @@ export class PatientService {
         filters: options?.filters || {},
         sortBy: options?.sortBy || 'fullName',
         sortOrder: options?.sortOrder || 'asc',
-      };
+      }
 
-      const result = await this.listPatients(searchOptions);
+      const result = await this.listPatients(searchOptions)
 
       if (!result.success) {
         return {
           success: false,
           error: result.error,
-        };
+        }
       }
 
       return {
         success: true,
         data: result.data?.patients || [],
-      };
+      }
     } catch {
-      console.error('Error searching patients:', error);
+      console.error('Error searching patients:', error)
       return {
         success: false,
         error: 'Erro interno do servidor',
-      };
+      }
     }
   }
 
@@ -573,10 +573,10 @@ export class PatientService {
         throw new UnauthorizedHealthcareAccessError(
           'Invalid healthcare context for CPF search',
           'patient_cpf',
-        );
+        )
       }
 
-      const clinicId = this.prismaClient.currentContext?.clinicId;
+      const clinicId = this.prismaClient.currentContext?.clinicId
 
       const patientRecord = await this.prismaClient.patient.findFirst({
         where: {
@@ -584,35 +584,35 @@ export class PatientService {
           clinicId,
           isActive: true,
         },
-      });
+      })
 
       if (!patientRecord) {
         return {
           success: false,
           error: 'Paciente não encontrado',
-        };
+        }
       }
 
-      const patient = this.convertPrismaToPatient(patientRecord);
+      const patient = this.convertPrismaToPatient(patientRecord)
 
       return {
         success: true,
         data: patient,
-      };
+      }
     } catch {
-      console.error('Error finding patient by CPF:', error);
+      console.error('Error finding patient by CPF:', error)
 
       if (
         error instanceof HealthcareComplianceError
         || error instanceof UnauthorizedHealthcareAccessError
       ) {
-        throw error;
+        throw error
       }
 
       return {
         success: false,
         error: 'Erro interno do servidor',
-      };
+      }
     }
   } /**
    * Update patient information - Updated for real database
@@ -629,10 +629,10 @@ export class PatientService {
           'Invalid healthcare context for patient update',
           'patient',
           patientId,
-        );
+        )
       }
 
-      const clinicId = this.prismaClient.currentContext?.clinicId;
+      const clinicId = this.prismaClient.currentContext?.clinicId
 
       // Check if patient exists and belongs to clinic
       const existingPatient = await this.prismaClient.patient.findFirst({
@@ -641,25 +641,25 @@ export class PatientService {
           clinicId,
           isActive: true,
         },
-      });
+      })
 
       if (!existingPatient) {
         return {
           success: false,
           error: 'Paciente não encontrado',
-        };
+        }
       }
 
       // Validate update data
       if (updateData.email && updateData.email !== existingPatient.email) {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
         if (!emailRegex.test(updateData.email)) {
           return {
             success: false,
             errors: [
               { field: 'email', message: 'E-mail inválido', code: 'INVALID' },
             ],
-          };
+          }
         }
       }
 
@@ -667,14 +667,14 @@ export class PatientService {
         updateData.phone
         && updateData.phone !== existingPatient.phonePrimary
       ) {
-        const phoneRegex = /^\(\d{2}\)\s\d{4,5}-\d{4}$/;
+        const phoneRegex = /^\(\d{2}\)\s\d{4,5}-\d{4}$/
         if (!phoneRegex.test(updateData.phone)) {
           return {
             success: false,
             errors: [
               { field: 'phone', message: 'Telefone inválido', code: 'INVALID' },
             ],
-          };
+          }
         }
       }
 
@@ -694,29 +694,29 @@ export class PatientService {
           updatedBy: this.prismaClient.currentContext?.userId,
           updatedAt: new Date(),
         },
-      });
+      })
 
-      const patient = this.convertPrismaToPatient(updatedPatient);
+      const patient = this.convertPrismaToPatient(updatedPatient)
 
       return {
         success: true,
         data: patient,
         message: 'Paciente atualizado com sucesso',
-      };
+      }
     } catch {
-      console.error('Error updating patient:', error);
+      console.error('Error updating patient:', error)
 
       if (
         error instanceof HealthcareComplianceError
         || error instanceof UnauthorizedHealthcareAccessError
       ) {
-        throw error;
+        throw error
       }
 
       return {
         success: false,
         error: 'Erro interno do servidor',
-      };
+      }
     }
   } /**
    * Soft delete patient (LGPD compliance) - Updated for real database
@@ -730,10 +730,10 @@ export class PatientService {
           'Invalid healthcare context for patient deletion',
           'patient',
           patientId,
-        );
+        )
       }
 
-      const clinicId = this.prismaClient.currentContext?.clinicId;
+      const clinicId = this.prismaClient.currentContext?.clinicId
 
       const patient = await this.prismaClient.patient.findFirst({
         where: {
@@ -741,13 +741,13 @@ export class PatientService {
           clinicId,
           isActive: true,
         },
-      });
+      })
 
       if (!patient) {
         return {
           success: false,
           error: 'Paciente não encontrado',
-        };
+        }
       }
 
       // Soft delete - mark as inactive
@@ -759,26 +759,26 @@ export class PatientService {
           updatedBy: this.prismaClient.currentContext?.userId,
           updatedAt: new Date(),
         },
-      });
+      })
 
       return {
         success: true,
         message: 'Paciente removido com sucesso',
-      };
+      }
     } catch {
-      console.error('Error deleting patient:', error);
+      console.error('Error deleting patient:', error)
 
       if (
         error instanceof HealthcareComplianceError
         || error instanceof UnauthorizedHealthcareAccessError
       ) {
-        throw error;
+        throw error
       }
 
       return {
         success: false,
         error: 'Erro interno do servidor',
-      };
+      }
     }
   }
 
@@ -786,7 +786,7 @@ export class PatientService {
    * Check if service is properly configured
    */
   isConfigured(): boolean {
-    return !!this.prismaClient;
+    return !!this.prismaClient
   }
 
   /**
@@ -810,6 +810,6 @@ export class PatientService {
         'multi_tenant',
         'cfm_validation',
       ],
-    };
+    }
   }
 }

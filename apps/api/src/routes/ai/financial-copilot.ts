@@ -5,18 +5,18 @@
  * Supports Brazilian aesthetic clinic financial workflows with LGPD compliance
  */
 
-import { Hono } from 'hono';
-import type { Context, Next } from 'hono';
-import { cors } from 'hono/cors';
-import { streamText } from 'hono/streaming';
-import { z } from 'zod';
-import { logger } from '../../lib/logger';
-import { AnomalyDetectionService } from '../../services/financial-ai-agent/anomaly-detection';
-import { FinancialAIAgent } from '../../services/financial-ai-agent/financial-ai-agent';
-import { PredictiveAnalyticsService } from '../../services/financial-ai-agent/predictive-analytics';
+import { Hono } from 'hono'
+import type { Context, Next } from 'hono'
+import { cors } from 'hono/cors'
+import { streamText } from 'hono/streaming'
+import { z } from 'zod'
+import { logger } from '../../lib/logger'
+import { AnomalyDetectionService } from '../../services/financial-ai-agent/anomaly-detection'
+import { FinancialAIAgent } from '../../services/financial-ai-agent/financial-ai-agent'
+import { PredictiveAnalyticsService } from '../../services/financial-ai-agent/predictive-analytics'
 
 // Create dedicated router for Financial CopilotKit
-const financialCopilot = new Hono();
+const financialCopilot = new Hono()
 
 // Enhanced CORS configuration for Financial CopilotKit
 financialCopilot.use(
@@ -42,35 +42,35 @@ financialCopilot.use(
     ],
     credentials: true,
   }),
-);
+)
 
 // Financial security headers middleware
 financialCopilot.use('*', async (c: Context, next: Next) => {
-  c.header('X-Healthcare-Platform', 'NeonPro');
-  c.header('X-LGPD-Compliance', 'true');
-  c.header('X-Financial-Agent', 'enabled');
-  c.header('X-Content-Type-Options', 'nosniff');
-  c.header('X-Frame-Options', 'DENY');
-  c.header('X-XSS-Protection', '1; mode=block');
+  c.header('X-Healthcare-Platform', 'NeonPro')
+  c.header('X-LGPD-Compliance', 'true')
+  c.header('X-Financial-Agent', 'enabled')
+  c.header('X-Content-Type-Options', 'nosniff')
+  c.header('X-Frame-Options', 'DENY')
+  c.header('X-XSS-Protection', '1; mode=block')
 
-  await next();
-});
+  await next()
+})
 
 /**
  * Financial CopilotKit Chat Completions Endpoint
  * Handles streaming financial AI agent responses with specialized workflows
  */
-financialCopilot.post('/chat/completions', async c => {
-  const requestId = crypto.randomUUID();
-  const startTime = Date.now();
+financialCopilot.post('/chat/completions', async (c) => {
+  const requestId = crypto.randomUUID()
+  const startTime = Date.now()
 
   try {
     // Parse CopilotKit request
-    const body = await c.req.json();
-    const { messages, stream = true, model, financial_context } = body;
+    const body = await c.req.json()
+    const { messages, stream = true, model, financial_context } = body
 
     // Extract the latest user message
-    const latestMessage = messages[messages.length - 1];
+    const latestMessage = messages[messages.length - 1]
     if (!latestMessage || latestMessage.role !== 'user') {
       return c.json(
         {
@@ -80,11 +80,11 @@ financialCopilot.post('/chat/completions', async c => {
           },
         },
         400,
-      );
+      )
     }
 
-    const userQuery = latestMessage.content;
-    const clinicId = c.req.header('X-Clinic-ID') || financial_context?.clinicId;
+    const userQuery = latestMessage.content
+    const clinicId = c.req.header('X-Clinic-ID') || financial_context?.clinicId
 
     // Extract user context from headers or financial context
     const userContext = {
@@ -93,14 +93,14 @@ financialCopilot.post('/chat/completions', async c => {
       role: c.req.header('X-User-Role') || financial_context?.role || 'receptionist',
       sessionId: c.req.header('X-Session-ID') || financial_context?.sessionId || requestId,
       clinicId,
-    };
+    }
 
     logger.info('Financial CopilotKit request received', {
       requestId,
       userQuery: userQuery.substring(0, 100) + '...',
       userContext,
       messageCount: messages.length,
-    });
+    })
 
     // Process financial query through specialized agents
     const agentResponse = await processFinancialQuery(
@@ -108,18 +108,18 @@ financialCopilot.post('/chat/completions', async c => {
       userContext,
       financial_context,
       requestId,
-    );
+    )
 
     if (stream) {
       // Return streaming response for real-time financial UI updates
-      return streamText(c, async stream => {
+      return streamText(c, async (stream) => {
         // Send initial response
         const response = formatFinancialCopilotResponse(
           agentResponse,
           requestId,
           startTime,
-        );
-        await stream.write(`data: ${JSON.stringify(response)}\n\n`);
+        )
+        await stream.write(`data: ${JSON.stringify(response)}\n\n`)
 
         // If agent response has financial actions, send them as follow-up
         if (agentResponse.actions && agentResponse.actions.length > 0) {
@@ -139,8 +139,8 @@ financialCopilot.post('/chat/completions', async c => {
                 finish_reason: null,
               },
             ],
-          };
-          await stream.write(`data: ${JSON.stringify(actionsResponse)}\n\n`);
+          }
+          await stream.write(`data: ${JSON.stringify(actionsResponse)}\n\n`)
         }
 
         // Send financial data visualizations if available
@@ -161,8 +161,8 @@ financialCopilot.post('/chat/completions', async c => {
                 finish_reason: null,
               },
             ],
-          };
-          await stream.write(`data: ${JSON.stringify(vizResponse)}\n\n`);
+          }
+          await stream.write(`data: ${JSON.stringify(vizResponse)}\n\n`)
         }
 
         // Send final completion
@@ -178,25 +178,25 @@ financialCopilot.post('/chat/completions', async c => {
               finish_reason: 'stop',
             },
           ],
-        };
-        await stream.write(`data: ${JSON.stringify(finalResponse)}\n\n`);
-        await stream.write('data: [DONE]\n\n');
-      });
+        }
+        await stream.write(`data: ${JSON.stringify(finalResponse)}\n\n`)
+        await stream.write('data: [DONE]\n\n')
+      })
     } else {
       // Return non-streaming response
       const response = formatFinancialCopilotResponse(
         agentResponse,
         requestId,
         startTime,
-      );
-      return c.json(response);
+      )
+      return c.json(response)
     }
   } catch {
     logger.error('Financial CopilotKit error', {
       requestId,
       error: error instanceof Error ? error.message : 'Unknown error',
       stack: error instanceof Error ? error.stack : undefined,
-    });
+    })
 
     return c.json(
       {
@@ -208,20 +208,20 @@ financialCopilot.post('/chat/completions', async c => {
         },
       },
       500,
-    );
+    )
   }
-});
+})
 
 /**
  * Financial Actions Endpoint
  * Handles specific financial workflow actions
  */
-financialCopilot.post('/actions', async c => {
-  const requestId = crypto.randomUUID();
+financialCopilot.post('/actions', async (c) => {
+  const requestId = crypto.randomUUID()
 
   try {
-    const body = await c.req.json();
-    const { action_type, payload, context } = body;
+    const body = await c.req.json()
+    const { action_type, payload, context } = body
 
     // Validate financial action request
     const FinancialActionRequestSchema = z.object({
@@ -241,26 +241,26 @@ financialCopilot.post('/actions', async c => {
         clinicId: z.string(),
         sessionId: z.string(),
       }),
-    });
+    })
 
     const validatedRequest = FinancialActionRequestSchema.parse({
       action_type,
       payload,
       context,
-    });
+    })
 
     logger.info('Financial action request received', {
       requestId,
       actionType: validatedRequest.action_type,
       userId: validatedRequest.context.userId,
       clinicId: validatedRequest.context.clinicId,
-    });
+    })
 
     // Initialize financial agents
     const financialAgent = new FinancialAIAgent(
       {} as any, // Supabase client would be injected
       validatedRequest.context.userId,
-    );
+    )
 
     // Execute financial action
     const result = await executeFinancialAction(
@@ -268,7 +268,7 @@ financialCopilot.post('/actions', async c => {
       validatedRequest.payload,
       validatedRequest.context,
       financialAgent,
-    );
+    )
 
     return c.json({
       success: true,
@@ -276,12 +276,12 @@ financialCopilot.post('/actions', async c => {
       action_type: validatedRequest.action_type,
       result,
       timestamp: new Date().toISOString(),
-    });
+    })
   } catch {
     logger.error('Financial action execution error', {
       requestId,
       error: error instanceof Error ? error.message : 'Unknown error',
-    });
+    })
 
     return c.json(
       {
@@ -293,28 +293,28 @@ financialCopilot.post('/actions', async c => {
         timestamp: new Date().toISOString(),
       },
       500,
-    );
+    )
   }
-});
+})
 
 /**
  * Financial Analytics Endpoint
  * Provides comprehensive financial analytics and reporting
  */
-financialCopilot.post('/analytics', async c => {
-  const requestId = crypto.randomUUID();
+financialCopilot.post('/analytics', async (c) => {
+  const requestId = crypto.randomUUID()
 
   try {
-    const body = await c.req.json();
+    const body = await c.req.json()
     const {
       time_range,
       metrics,
       group_by = 'month',
       filters,
-    } = body;
+    } = body
 
-    const userId = c.req.header('X-User-ID');
-    const clinicId = c.req.header('X-Clinic-ID');
+    const userId = c.req.header('X-User-ID')
+    const clinicId = c.req.header('X-Clinic-ID')
 
     if (!userId || !clinicId) {
       return c.json(
@@ -325,14 +325,14 @@ financialCopilot.post('/analytics', async c => {
           },
         },
         400,
-      );
+      )
     }
 
     // Initialize analytics service
     const analyticsService = new PredictiveAnalyticsService(
       {} as any, // Supabase client would be injected
       userId,
-    );
+    )
 
     // Generate comprehensive analytics
     const analytics = await analyticsService.generateComprehensiveAnalytics({
@@ -340,13 +340,13 @@ financialCopilot.post('/analytics', async c => {
       metrics,
       groupBy: group_by,
       filters,
-    });
+    })
 
     // Add predictions
     const predictions = await analyticsService.generateFinancialPredictions({
       timeRange: time_range,
       metrics,
-    });
+    })
 
     return c.json({
       success: true,
@@ -356,12 +356,12 @@ financialCopilot.post('/analytics', async c => {
         predictions,
       },
       timestamp: new Date().toISOString(),
-    });
+    })
   } catch {
     logger.error('Financial analytics error', {
       requestId,
       error: error instanceof Error ? error.message : 'Unknown error',
-    });
+    })
 
     return c.json(
       {
@@ -373,9 +373,9 @@ financialCopilot.post('/analytics', async c => {
         timestamp: new Date().toISOString(),
       },
       500,
-    );
+    )
   }
-});
+})
 
 /**
  * Process Financial Query through Specialized Agents
@@ -389,10 +389,10 @@ async function processFinancialQuery(
   const financialAgent = new FinancialAIAgent(
     {} as any, // Supabase client would be injected
     userContext.userId,
-  );
+  )
 
   // Analyze query intent and route to appropriate agent
-  const intent = analyzeFinancialIntent(query);
+  const intent = analyzeFinancialIntent(query)
 
   try {
     switch (intent.type) {
@@ -400,39 +400,39 @@ async function processFinancialQuery(
         return await financialAgent.processBillingRequest(
           { query, context: financialContext },
           userContext,
-        );
+        )
 
       case 'analytics':
-        return await financialAgent.generateFinancialPredictions(userContext);
+        return await financialAgent.generateFinancialPredictions(userContext)
 
       case 'payment':
         return await financialAgent.processPayment(
           { query, context: financialContext },
           userContext,
-        );
+        )
 
       case 'fraud_detection':
         const anomalyService = new AnomalyDetectionService(
           {} as any, // Supabase client would be injected
           userContext.userId,
-        );
+        )
         return await anomalyService.detectAnomalies({
           query,
           context: userContext,
-        });
+        })
 
       case 'compliance':
-        return await financialAgent.checkCompliance(userContext);
+        return await financialAgent.checkCompliance(userContext)
 
       default:
-        return await financialAgent.processFinancialMessage(query, intent.type);
+        return await financialAgent.processFinancialMessage(query, intent.type)
     }
   } catch {
     logger.error('Financial query processing failed', {
       requestId,
       intent,
       error: error instanceof Error ? error.message : 'Unknown error',
-    });
+    })
 
     return {
       id: requestId,
@@ -443,7 +443,7 @@ async function processFinancialQuery(
         fallback: true,
         intent: intent.type,
       },
-    };
+    }
   }
 }
 
@@ -451,7 +451,7 @@ async function processFinancialQuery(
  * Analyze Financial Query Intent
  */
 function analyzeFinancialIntent(query: string) {
-  const normalizedQuery = query.toLowerCase();
+  const normalizedQuery = query.toLowerCase()
 
   // Billing-related queries
   if (
@@ -460,7 +460,7 @@ function analyzeFinancialIntent(query: string) {
     || normalizedQuery.includes('pagamento')
     || normalizedQuery.includes('faturamento')
   ) {
-    return { type: 'billing', confidence: 0.9 };
+    return { type: 'billing', confidence: 0.9 }
   }
 
   // Analytics-related queries
@@ -471,7 +471,7 @@ function analyzeFinancialIntent(query: string) {
     || normalizedQuery.includes('previsão')
     || normalizedQuery.includes('forecast')
   ) {
-    return { type: 'analytics', confidence: 0.9 };
+    return { type: 'analytics', confidence: 0.9 }
   }
 
   // Payment-related queries
@@ -481,7 +481,7 @@ function analyzeFinancialIntent(query: string) {
     || normalizedQuery.includes('transação')
     || normalizedQuery.includes('parcelamento')
   ) {
-    return { type: 'payment', confidence: 0.9 };
+    return { type: 'payment', confidence: 0.9 }
   }
 
   // Fraud detection queries
@@ -491,7 +491,7 @@ function analyzeFinancialIntent(query: string) {
     || normalizedQuery.includes('anomalia')
     || normalizedQuery.includes('segurança')
   ) {
-    return { type: 'fraud_detection', confidence: 0.9 };
+    return { type: 'fraud_detection', confidence: 0.9 }
   }
 
   // Compliance queries
@@ -501,10 +501,10 @@ function analyzeFinancialIntent(query: string) {
     || normalizedQuery.includes('auditoria')
     || normalizedQuery.includes('lei')
   ) {
-    return { type: 'compliance', confidence: 0.9 };
+    return { type: 'compliance', confidence: 0.9 }
   }
 
-  return { type: 'general', confidence: 0.5 };
+  return { type: 'general', confidence: 0.5 }
 }
 
 /**
@@ -521,33 +521,33 @@ async function executeFinancialAction(
       return await financialAgent.processBillingOperation({
         ...payload,
         userId: context.userId,
-      });
+      })
 
     case 'process_payment':
       return await financialAgent.processPayment({
         ...payload,
         userId: context.userId,
-      });
+      })
 
     case 'generate_invoice':
-      return await financialAgent.generateInvoice(payload);
+      return await financialAgent.generateInvoice(payload)
 
     case 'run_analytics':
       const analyticsService = new PredictiveAnalyticsService(
         {} as any,
         context.userId,
-      );
-      return await analyticsService.generateComprehensiveAnalytics(payload);
+      )
+      return await analyticsService.generateComprehensiveAnalytics(payload)
 
     case 'detect_fraud':
       const anomalyService = new AnomalyDetectionService(
         {} as any,
         context.userId,
-      );
-      return await anomalyService.detectAnomalies(payload);
+      )
+      return await anomalyService.detectAnomalies(payload)
 
     default:
-      throw new Error(`Unsupported action type: ${actionType}`);
+      throw new Error(`Unsupported action type: ${actionType}`)
   }
 }
 
@@ -559,42 +559,42 @@ function formatFinancialCopilotResponse(
   requestId: string,
   startTime: number,
 ) {
-  const processingTime = Date.now() - startTime;
+  const processingTime = Date.now() - startTime
 
-  let content = agentResponse.content || 'Análise financeira processada com sucesso.';
+  let content = agentResponse.content || 'Análise financeira processada com sucesso.'
 
   // Add structured financial data formatting
   if (agentResponse.data) {
-    const _data = agentResponse.data;
+    const _data = agentResponse.data
 
     if (data.type === 'financial_summary') {
-      content += `\n\n💰 **${data.title}**`;
-      content += `\n📈 Receita Total: **${formatCurrency(data.totalRevenue)}**`;
-      content += `\n⏱️ Pagamentos Pendentes: ${formatCurrency(data.pendingPayments)}`;
-      content += `\n✅ Transações Completadas: ${data.completedTransactions}`;
-      content += `\n📊 Taxa de Conversão: ${((data.conversionRate || 0) * 100).toFixed(1)}%`;
+      content += `\n\n💰 **${data.title}**`
+      content += `\n📈 Receita Total: **${formatCurrency(data.totalRevenue)}**`
+      content += `\n⏱️ Pagamentos Pendentes: ${formatCurrency(data.pendingPayments)}`
+      content += `\n✅ Transações Completadas: ${data.completedTransactions}`
+      content += `\n📊 Taxa de Conversão: ${((data.conversionRate || 0) * 100).toFixed(1)}%`
     } else if (data.type === 'billing_analysis') {
-      content += `\n\n📋 **Análise de Faturamento**`;
-      content += `\n🏥 Procedimentos: ${data.proceduresCount}`;
-      content += `\n💵 Valor Total: ${formatCurrency(data.totalAmount)}`;
-      content += `\n📝 Faturas Pendentes: ${data.pendingInvoices}`;
+      content += `\n\n📋 **Análise de Faturamento**`
+      content += `\n🏥 Procedimentos: ${data.proceduresCount}`
+      content += `\n💵 Valor Total: ${formatCurrency(data.totalAmount)}`
+      content += `\n📝 Faturas Pendentes: ${data.pendingInvoices}`
       content += `\n💳 Métodos de Pagamento: ${
         Object.entries(data.paymentMethods)
           .map(([method, count]) => `${method}: ${count}`)
           .join(', ')
-      }`;
+      }`
     } else if (data.type === 'fraud_alert') {
-      content += `\n\n🚨 **Alerta de Segurança**`;
-      content += `\n⚠️ Risco: ${data.riskLevel}`;
-      content += `\n📊 Score: ${(data.riskScore * 100).toFixed(1)}%`;
-      content += `\n🎯 Ação Recomendada: ${data.recommendedAction}`;
-      content += `\n📝 Descrição: ${data.description}`;
+      content += `\n\n🚨 **Alerta de Segurança**`
+      content += `\n⚠️ Risco: ${data.riskLevel}`
+      content += `\n📊 Score: ${(data.riskScore * 100).toFixed(1)}%`
+      content += `\n🎯 Ação Recomendada: ${data.recommendedAction}`
+      content += `\n📝 Descrição: ${data.description}`
     }
   }
 
   // Add performance information
   if (processingTime > 1000) {
-    content += `\n\n_Processado em ${(processingTime / 1000).toFixed(1)}s_`;
+    content += `\n\n_Processado em ${(processingTime / 1000).toFixed(1)}s_`
   }
 
   return {
@@ -629,7 +629,7 @@ function formatFinancialCopilotResponse(
       lgpd_compliant: true,
       accessibility_features: true,
     },
-  };
+  }
 }
 
 /**
@@ -639,7 +639,7 @@ function formatCurrency(value: number): string {
   return new Intl.NumberFormat('pt-BR', {
     style: 'currency',
     currency: 'BRL',
-  }).format(value);
+  }).format(value)
 }
 
 /**
@@ -658,15 +658,15 @@ function getFinancialFallbackResponse(intentType: string): string {
       'Falha na verificação de compliance. Por favor, contacte o departamento de compliance.',
     general:
       'Desculpe, estou temporariamente indisponível para operações financeiras. Tente novamente em alguns momentos.',
-  };
+  }
 
-  return fallbacks[intentType as keyof typeof fallbacks] || fallbacks.general;
+  return fallbacks[intentType as keyof typeof fallbacks] || fallbacks.general
 }
 
 /**
  * Health check endpoint for Financial CopilotKit
  */
-financialCopilot.get('/health', c => {
+financialCopilot.get('/health', (c) => {
   return c.json({
     status: 'healthy',
     service: 'financial-copilot-agent',
@@ -685,7 +685,7 @@ financialCopilot.get('/health', c => {
       lgpd_compliance: true,
     },
     timestamp: new Date().toISOString(),
-  });
-});
+  })
+})
 
-export default financialCopilot;
+export default financialCopilot

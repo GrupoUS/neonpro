@@ -13,20 +13,20 @@
  */
 
 // Import types needed for configurations
-import { LogLevel } from './types';
+import { LogLevel } from './types'
 
 // Export logger system
-export * from './logger';
+export * from './logger'
 
 // Export utilities
-export * from './utils';
+export * from './utils'
 
 // Export types
-export * from './types';
+export * from './types'
 
 // Version information
-export const VERSION = '1.0.0';
-export const PACKAGE_NAME = '@neonpro/tools-shared';
+export const VERSION = '1.0.0'
+export const PACKAGE_NAME = '@neonpro/tools-shared'
 
 // Default configurations
 export const DEFAULT_LOGGER_CONFIG = {
@@ -36,7 +36,7 @@ export const DEFAULT_LOGGER_CONFIG = {
   enableFile: true,
   enablePerformance: true,
   enableConstitutional: true,
-};
+}
 
 export const HEALTHCARE_COMPLIANCE_STANDARDS = {
   LGPD: 'Lei Geral de Proteção de Dados',
@@ -45,7 +45,7 @@ export const HEALTHCARE_COMPLIANCE_STANDARDS = {
   HIPAA: 'Health Insurance Portability and Accountability Act',
   GDPR: 'General Data Protection Regulation',
   ISO27001: 'ISO/IEC 27001 Information Security',
-} as const;
+} as const
 
 export const QUALITY_THRESHOLDS = {
   MINIMUM_SCORE: 9.5,
@@ -55,4 +55,4 @@ export const QUALITY_THRESHOLDS = {
   COVERAGE_THRESHOLD_CRITICAL: 95, // %
   COVERAGE_THRESHOLD_HIGH: 85, // %
   COVERAGE_THRESHOLD_MEDIUM: 75, // %
-} as const;
+} as const

@@ -1,23 +1,23 @@
 // ChatService orchestrator (Phase 2) - Enhanced with real AI providers and streaming
 
-import { logHealthcareError } from '@neonpro/shared';
-import type { ChatMessage, ChatSession } from '@neonpro/types';
-import { AIProviderFactory } from './ai-provider-factory.js';
-import { PIIRedactionService } from './pii-redaction.js';
+import { logHealthcareError } from '@neonpro/shared'
+import type { ChatMessage, ChatSession } from '@neonpro/types'
+import { AIProviderFactory } from './ai-provider-factory.js'
+import { PIIRedactionService } from './pii-redaction.js'
 
 export class ChatService {
   constructor(private pii = new PIIRedactionService()) {}
 
   async ask(session: ChatSession, input: string, stream = false) {
-    const redacted = this.pii.redact(input);
+    const redacted = this.pii.redact(input)
 
     // Prepare system prompt for healthcare context
-    const systemPrompt = this.buildSystemPrompt(session.locale);
+    const systemPrompt = this.buildSystemPrompt(session.locale)
 
     if (stream) {
-      return this.askStream(session, redacted, systemPrompt);
+      return this.askStream(session, redacted, systemPrompt)
     } else {
-      return this.askSync(session, redacted, systemPrompt);
+      return this.askSync(session, redacted, systemPrompt)
     }
   }
 
@@ -33,7 +33,7 @@ export class ChatService {
         locale: session.locale,
         maxTokens: 1000,
         temperature: 0.7,
-      });
+      })
 
       const message: ChatMessage = {
         id: crypto.randomUUID(),
@@ -42,17 +42,17 @@ export class ChatService {
         content: res.content,
         createdAt: new Date().toISOString(),
         redactionFlags: ['lgpd'],
-      };
+      }
 
-      return message;
+      return message
     } catch (error) {
       logHealthcareError('chat', error as Error, {
         method: 'askSync',
         component: 'ChatService',
         severity: 'high',
         sessionId: session.id,
-      });
-      throw new Error('Failed to generate response');
+      })
+      throw new Error('Failed to generate response')
     }
   }
 
@@ -79,9 +79,9 @@ export class ChatService {
           content: chunk.content,
           createdAt: new Date().toISOString(),
           redactionFlags: ['lgpd'],
-        };
+        }
 
-        yield message;
+        yield message
       }
     } catch (error) {
       logHealthcareError('chat', error as Error, {
@@ -89,15 +89,15 @@ export class ChatService {
         component: 'ChatService',
         severity: 'high',
         sessionId: session.id,
-      });
-      throw new Error('Failed to generate streaming response');
+      })
+      throw new Error('Failed to generate streaming response')
     }
   }
 
   async explain(messageId: string, locale: 'pt-BR' | 'en-US' = 'pt-BR') {
     const systemPrompt = locale === 'pt-BR'
       ? 'Você é um assistente que explica respostas médicas de forma clara e educativa, removendo informações pessoais sensíveis.'
-      : 'You are an assistant that explains medical responses clearly and educatively, removing sensitive personal information.';
+      : 'You are an assistant that explains medical responses clearly and educatively, removing sensitive personal information.'
 
     try {
       const res = await AIProviderFactory.generateWithFailover({
@@ -107,22 +107,22 @@ export class ChatService {
         locale,
         maxTokens: 500,
         temperature: 0.3,
-      });
+      })
 
       return {
         id: crypto.randomUUID(),
         messageId,
         content: res.content,
         createdAt: new Date().toISOString(),
-      };
+      }
     } catch (error) {
       logHealthcareError('chat', error as Error, {
         method: 'explain',
         component: 'ChatService',
         severity: 'high',
         sessionId: '', // No session context for explain method
-      });
-      throw new Error('Failed to generate explanation');
+      })
+      throw new Error('Failed to generate explanation')
     }
   }
 
@@ -141,7 +141,7 @@ IMPORTANTE:
 - Não forneça diagnósticos médicos
 - Quando em dúvida, solicite mais informações
 
-Responda em português brasileiro profissional.`;
+Responda em português brasileiro profissional.`
     } else {
       return `You are an assistant specialized in Brazilian aesthetic clinics.
 Provide accurate, concise, and professional responses about:
@@ -156,7 +156,7 @@ IMPORTANT:
 - Do not provide medical diagnoses
 - When in doubt, ask for more information
 
-Respond in professional Brazilian Portuguese.`;
+Respond in professional Brazilian Portuguese.`
     }
   }
 }

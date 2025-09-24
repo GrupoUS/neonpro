@@ -3,59 +3,59 @@
  * Provides common functionality for all database services
  */
 
-import type { PrismaClient } from '@prisma/client';
-import { logHealthcareError } from '../../../shared/src/logging/healthcare-logger';
+import type { PrismaClient } from '@prisma/client'
+import { logHealthcareError } from '../../../shared/src/logging/healthcare-logger'
 
 // Lazy load prisma to avoid test environment issues
-let _prismaInstance: PrismaClient | null = null;
+let _prismaInstance: PrismaClient | null = null
 
 // Prisma operation parameters interface
 export interface PrismaCreateParams<T> {
-  data: T;
+  data: T
 }
 
 export interface PrismaUpdateParams<T> {
-  where: { id: string };
-  data: T;
+  where: { id: string }
+  data: T
 }
 
 export interface PrismaDeleteParams {
-  where: { id: string };
+  where: { id: string }
 }
 
 const getPrisma = async (): Promise<PrismaClient> => {
   if (!_prismaInstance) {
     // Dynamic import to avoid module-level initialization
-    const { prisma } = await import('../client.js');
-    _prismaInstance = prisma;
+    const { prisma } = await import('../client.js')
+    _prismaInstance = prisma
   }
-  return prismaInstance;
-};
+  return prismaInstance
+}
 
 // Audit context interface
 export interface AuditContext {
-  _userId?: string;
-  action: string;
-  resource: string;
-  details?: Record<string, unknown>;
-  timestamp?: Date;
+  _userId?: string
+  action: string
+  resource: string
+  details?: Record<string, unknown>
+  timestamp?: Date
 }
 
 // Error details interface
 export interface ErrorDetails {
-  code?: string;
-  message: string;
-  stack?: string;
-  _context?: Record<string, unknown>;
+  code?: string
+  message: string
+  stack?: string
+  _context?: Record<string, unknown>
 }
 
 // Base service class
 export abstract class BaseService {
-  protected abstract serviceName: string;
+  protected abstract serviceName: string
 
   // Get Prisma client instance
   protected async getPrisma(): Promise<PrismaClient> {
-    return getPrisma();
+    return getPrisma()
   }
 
   // Create audit log entry
@@ -78,7 +78,7 @@ export abstract class BaseService {
     _userId?: string,
   ): Promise<void> {
     try {
-      const prisma = await this.getPrisma();
+      const prisma = await this.getPrisma()
       await prisma.auditTrail.create({
         data: {
           _userId: userId || 'system',
@@ -92,9 +92,9 @@ export abstract class BaseService {
           userAgent: 'NeonPro-Service',
           status: 'SUCCESS',
         },
-      });
+      })
     } catch (error) {
-      logHealthcareError('database', error, { method: 'createAuditLog', action, resource });
+      logHealthcareError('database', error, { method: 'createAuditLog', action, resource })
     }
   }
 
@@ -104,23 +104,23 @@ export abstract class BaseService {
     data: T,
     _userId?: string,
   ): Promise<T> {
-    const prisma = await this.getPrisma();
+    const prisma = await this.getPrisma()
 
     try {
       const result = await (prisma as any)[model].create({
         data,
-      });
+      })
 
       await this.createAuditLog(
         'CREATE',
         model,
         { id: (result as any).id, data },
         userId,
-      );
+      )
 
-      return result;
+      return result
     } catch (_error) {
-      void _error;
+      void _error
       await this.createAuditLog(
         'CREATE',
         model,
@@ -130,8 +130,8 @@ export abstract class BaseService {
           data,
         },
         userId,
-      );
-      throw error;
+      )
+      throw error
     }
   }
 
@@ -142,19 +142,19 @@ export abstract class BaseService {
     data: Partial<T>,
     _userId?: string,
   ): Promise<T> {
-    const prisma = await this.getPrisma();
+    const prisma = await this.getPrisma()
 
     try {
       const result = await (prisma as any)[model].update({
         where: { id },
         data,
-      });
+      })
 
-      await this.createAuditLog('UPDATE', model, { id, data }, userId);
+      await this.createAuditLog('UPDATE', model, { id, data }, userId)
 
-      return result;
+      return result
     } catch (_error) {
-      void _error;
+      void _error
       await this.createAuditLog(
         'UPDATE',
         model,
@@ -165,8 +165,8 @@ export abstract class BaseService {
           data,
         },
         userId,
-      );
-      throw error;
+      )
+      throw error
     }
   }
 
@@ -176,16 +176,16 @@ export abstract class BaseService {
     id: string,
     _userId?: string,
   ): Promise<void> {
-    const prisma = await this.getPrisma();
+    const prisma = await this.getPrisma()
 
     try {
       await (prisma as any)[model].delete({
         where: { id },
-      });
+      })
 
-      await this.createAuditLog('DELETE', model, { id }, userId);
+      await this.createAuditLog('DELETE', model, { id }, userId)
     } catch (_error) {
-      void _error;
+      void _error
       await this.createAuditLog(
         'DELETE',
         model,
@@ -195,23 +195,23 @@ export abstract class BaseService {
           error: (error as Error).message,
         },
         userId,
-      );
-      throw error;
+      )
+      throw error
     }
   }
 
   // Generic find method with error handling
   protected async findById<T>(model: string, id: string): Promise<T | null> {
-    const prisma = await this.getPrisma();
+    const prisma = await this.getPrisma()
 
     try {
       const result = await (prisma as any)[model].findUnique({
         where: { id },
-      });
-      return result;
+      })
+      return result
     } catch (error) {
-      logHealthcareError('database', error, { method: 'findById', model, id });
-      throw error;
+      logHealthcareError('database', error, { method: 'findById', model, id })
+      throw error
     }
   }
 
@@ -220,37 +220,37 @@ export abstract class BaseService {
     model: string,
     options: Record<string, unknown> = {},
   ): Promise<T[]> {
-    const prisma = await this.getPrisma();
+    const prisma = await this.getPrisma()
 
     try {
-      const result = await (prisma as any)[model].findMany(options);
-      return result;
+      const result = await (prisma as any)[model].findMany(options)
+      return result
     } catch (error) {
-      logHealthcareError('database', error, { method: 'findMany', model, options });
-      throw error;
+      logHealthcareError('database', error, { method: 'findMany', model, options })
+      throw error
     }
   }
 
   // Health check method
   async healthCheck(): Promise<{
-    status: string;
-    timestamp: Date;
-    _service: string;
+    status: string
+    timestamp: Date
+    _service: string
   }> {
     try {
-      await this.getPrisma();
+      await this.getPrisma()
       return {
         status: 'healthy',
         timestamp: new Date(),
         _service: this.serviceName,
-      };
+      }
     } catch (_error) {
-      void _error;
+      void _error
       return {
         status: 'unhealthy',
         timestamp: new Date(),
         _service: this.serviceName,
-      };
+      }
     }
   }
 }

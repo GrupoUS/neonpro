@@ -1,5 +1,5 @@
-import { api } from '@/lib/api';
-import { createFileRoute, Link } from '@tanstack/react-router';
+import { api } from '@/lib/api'
+import { createFileRoute, Link } from '@tanstack/react-router'
 import {
   AlertTriangle,
   Calendar,
@@ -17,53 +17,53 @@ import {
   TrendingUp,
   User,
   XCircle,
-} from 'lucide-react';
-import * as React from 'react';
-import { useState } from 'react';
+} from 'lucide-react'
+import * as React from 'react'
+import { useState } from 'react'
 
 export const Route = (createFileRoute as any)('/treatment-plans')({
   component: TreatmentPlansDashboard,
-});
+})
 
 interface TreatmentPlan {
-  id: string;
-  plan_name: string;
-  description: string;
-  status: 'draft' | 'active' | 'completed' | 'paused' | 'cancelled';
-  priority_level: 'low' | 'medium' | 'high' | 'urgent';
-  progress_percentage: number;
-  start_date: string;
-  target_completion_date: string;
+  id: string
+  plan_name: string
+  description: string
+  status: 'draft' | 'active' | 'completed' | 'paused' | 'cancelled'
+  priority_level: 'low' | 'medium' | 'high' | 'urgent'
+  progress_percentage: number
+  start_date: string
+  target_completion_date: string
   patient: {
-    name: string;
-    email: string;
-    phone: string;
-  };
+    name: string
+    email: string
+    phone: string
+  }
   professional: {
-    name: string;
-    professional_license: string;
-    council_type: string;
-  };
-  estimated_sessions: number;
-  total_estimated_cost: number;
-  created_at: string;
-  updated_at: string;
+    name: string
+    professional_license: string
+    council_type: string
+  }
+  estimated_sessions: number
+  total_estimated_cost: number
+  created_at: string
+  updated_at: string
 }
 
 interface TreatmentPlansStats {
-  total: number;
-  draft: number;
-  active: number;
-  completed: number;
-  paused: number;
-  cancelled: number;
+  total: number
+  draft: number
+  active: number
+  completed: number
+  paused: number
+  cancelled: number
 }
 
 function TreatmentPlansDashboard() {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedStatus, setSelectedStatus] = useState('all');
-  const [selectedPriority, setSelectedPriority] = useState('all');
-  const [plans, setPlans] = useState<TreatmentPlan[]>([]);
+  const [searchTerm, setSearchTerm] = useState('')
+  const [selectedStatus, setSelectedStatus] = useState('all')
+  const [selectedPriority, setSelectedPriority] = useState('all')
+  const [plans, setPlans] = useState<TreatmentPlan[]>([])
   const [stats, setStats] = useState<TreatmentPlansStats>({
     total: 0,
     draft: 0,
@@ -71,125 +71,125 @@ function TreatmentPlansDashboard() {
     completed: 0,
     paused: 0,
     cancelled: 0,
-  });
-  const [loading, setLoading] = useState(true);
+  })
+  const [loading, setLoading] = useState(true)
 
   React.useEffect(() => {
-    loadTreatmentPlansData();
-  }, []);
+    loadTreatmentPlansData()
+  }, [])
 
   const loadTreatmentPlansData = async () => {
     try {
       const [plansResponse, statsResponse] = await Promise.all([
         api.treatmentPlans.getTreatmentPlansByClinic.query({}),
         api.treatmentPlans.getTreatmentPlanStats.query({}),
-      ]);
+      ])
 
-      setPlans(plansResponse);
-      setStats(statsResponse);
+      setPlans(plansResponse)
+      setStats(statsResponse)
     } catch (error) {
-      console.error('Error loading treatment plans data:', error);
+      console.error('Error loading treatment plans data:', error)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
-  const filteredPlans = plans.filter(plan => {
+  const filteredPlans = plans.filter((plan) => {
     const matchesSearch = plan.plan_name.toLowerCase().includes(searchTerm.toLowerCase())
       || plan.patient.name.toLowerCase().includes(searchTerm.toLowerCase())
-      || plan.professional.name.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = selectedStatus === 'all' || plan.status === selectedStatus;
-    const matchesPriority = selectedPriority === 'all' || plan.priority_level === selectedPriority;
-    return matchesSearch && matchesStatus && matchesPriority;
-  });
+      || plan.professional.name.toLowerCase().includes(searchTerm.toLowerCase())
+    const matchesStatus = selectedStatus === 'all' || plan.status === selectedStatus
+    const matchesPriority = selectedPriority === 'all' || plan.priority_level === selectedPriority
+    return matchesSearch && matchesStatus && matchesPriority
+  })
 
   const getStatusIcon = (status: TreatmentPlan['status']) => {
     switch (status) {
       case 'draft':
-        return <FileText className='h-4 w-4' />;
+        return <FileText className='h-4 w-4' />
       case 'active':
-        return <TrendingUp className='h-4 w-4' />;
+        return <TrendingUp className='h-4 w-4' />
       case 'completed':
-        return <CheckCircle className='h-4 w-4' />;
+        return <CheckCircle className='h-4 w-4' />
       case 'paused':
-        return <Pause className='h-4 w-4' />;
+        return <Pause className='h-4 w-4' />
       case 'cancelled':
-        return <XCircle className='h-4 w-4' />;
+        return <XCircle className='h-4 w-4' />
       default:
-        return <FileText className='h-4 w-4' />;
+        return <FileText className='h-4 w-4' />
     }
-  };
+  }
 
   const getStatusColor = (status: TreatmentPlan['status']) => {
     switch (status) {
       case 'draft':
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-gray-100 text-gray-800'
       case 'active':
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-blue-100 text-blue-800'
       case 'completed':
-        return 'bg-green-100 text-green-800';
+        return 'bg-green-100 text-green-800'
       case 'paused':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'bg-yellow-100 text-yellow-800'
       case 'cancelled':
-        return 'bg-red-100 text-red-800';
+        return 'bg-red-100 text-red-800'
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-gray-100 text-gray-800'
     }
-  };
+  }
 
   const getStatusText = (status: TreatmentPlan['status']) => {
     switch (status) {
       case 'draft':
-        return 'Rascunho';
+        return 'Rascunho'
       case 'active':
-        return 'Ativo';
+        return 'Ativo'
       case 'completed':
-        return 'Concluído';
+        return 'Concluído'
       case 'paused':
-        return 'Pausado';
+        return 'Pausado'
       case 'cancelled':
-        return 'Cancelado';
+        return 'Cancelado'
       default:
-        return status;
+        return status
     }
-  };
+  }
 
   const getPriorityColor = (priority: TreatmentPlan['priority_level']) => {
     switch (priority) {
       case 'low':
-        return 'bg-green-100 text-green-800';
+        return 'bg-green-100 text-green-800'
       case 'medium':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'bg-yellow-100 text-yellow-800'
       case 'high':
-        return 'bg-orange-100 text-orange-800';
+        return 'bg-orange-100 text-orange-800'
       case 'urgent':
-        return 'bg-red-100 text-red-800';
+        return 'bg-red-100 text-red-800'
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-gray-100 text-gray-800'
     }
-  };
+  }
 
   const getPriorityText = (priority: TreatmentPlan['priority_level']) => {
     switch (priority) {
       case 'low':
-        return 'Baixa';
+        return 'Baixa'
       case 'medium':
-        return 'Média';
+        return 'Média'
       case 'high':
-        return 'Alta';
+        return 'Alta'
       case 'urgent':
-        return 'Urgente';
+        return 'Urgente'
       default:
-        return priority;
+        return priority
     }
-  };
+  }
 
   if (loading) {
     return (
       <div className='flex items-center justify-center h-64'>
         <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600'></div>
       </div>
-    );
+    )
   }
 
   return (
@@ -279,7 +279,7 @@ function TreatmentPlansDashboard() {
                   Urgentes
                 </dt>
                 <dd className='text-2xl font-semibold text-gray-900'>
-                  {plans.filter(p => p.priority_level === 'urgent').length}
+                  {plans.filter((p) => p.priority_level === 'urgent').length}
                 </dd>
               </dl>
             </div>
@@ -334,14 +334,14 @@ function TreatmentPlansDashboard() {
                   placeholder='Buscar planos...'
                   className='block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm'
                   value={searchTerm}
-                  onChange={e => setSearchTerm(e.target.value)}
+                  onChange={(e) => setSearchTerm(e.target.value)}
                 />
               </div>
               <div className='relative'>
                 <select
                   className='block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md'
                   value={selectedStatus}
-                  onChange={e => setSelectedStatus(e.target.value)}
+                  onChange={(e) => setSelectedStatus(e.target.value)}
                 >
                   <option value='all'>Todos Status</option>
                   <option value='draft'>Rascunho</option>
@@ -355,7 +355,7 @@ function TreatmentPlansDashboard() {
                 <select
                   className='block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md'
                   value={selectedPriority}
-                  onChange={e => setSelectedPriority(e.target.value)}
+                  onChange={(e) => setSelectedPriority(e.target.value)}
                 >
                   <option value='all'>Todas Prioridades</option>
                   <option value='low'>Baixa</option>
@@ -369,7 +369,7 @@ function TreatmentPlansDashboard() {
         </div>
 
         <div className='divide-y divide-gray-200'>
-          {filteredPlans.map(plan => (
+          {filteredPlans.map((plan) => (
             <div key={plan.id} className='px-6 py-4'>
               <div className='flex items-center justify-between'>
                 <div className='flex items-center space-x-4'>
@@ -458,5 +458,5 @@ function TreatmentPlansDashboard() {
         </div>
       </div>
     </div>
-  );
+  )
 }

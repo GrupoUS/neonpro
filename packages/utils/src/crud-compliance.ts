@@ -2,7 +2,7 @@
 // Integrates with existing consent-service.ts and redaction patterns
 // Date: 2025-09-15
 
-import type { AIUsageRecord, AuditTrail, MedicalSpecialty } from '@neonpro/types';
+import type { AIUsageRecord, AuditTrail, MedicalSpecialty } from '@neonpro/types'
 
 // ================================================
 // LGPD COMPLIANCE INTERFACES
@@ -12,35 +12,35 @@ import type { AIUsageRecord, AuditTrail, MedicalSpecialty } from '@neonpro/types
  * LGPD-compliant CRUD operation options
  */
 export interface LGPDCRUDOptions {
-  readonly purpose: 'analytics' | 'diagnosis' | 'training' | 'audit';
-  readonly retentionDays: number;
-  readonly anonymizationLevel: 'none' | 'pseudonymized' | 'anonymized';
-  readonly consentRequired: boolean;
-  readonly consentId?: string;
+  readonly purpose: 'analytics' | 'diagnosis' | 'training' | 'audit'
+  readonly retentionDays: number
+  readonly anonymizationLevel: 'none' | 'pseudonymized' | 'anonymized'
+  readonly consentRequired: boolean
+  readonly consentId?: string
   readonly legalBasis:
     | 'consent'
     | 'legitimate_interest'
     | 'legal_obligation'
     | 'vital_interest'
     | 'public_task'
-    | 'contract';
-  readonly dataMinimization: boolean;
-  readonly auditTrailRequired: boolean;
+    | 'contract'
+  readonly dataMinimization: boolean
+  readonly auditTrailRequired: boolean
 }
 
 /**
  * Data processing context for LGPD compliance
  */
 export interface DataProcessingContext {
-  readonly clinicId: string;
-  readonly _userId: string;
-  readonly sessionId?: string;
-  readonly patientId?: string;
-  readonly professionalId?: string;
-  readonly medicalSpecialty?: MedicalSpecialty;
-  readonly ipAddress?: string;
-  readonly userAgent?: string;
-  readonly processingLocation: 'brazil' | 'international';
+  readonly clinicId: string
+  readonly _userId: string
+  readonly sessionId?: string
+  readonly patientId?: string
+  readonly professionalId?: string
+  readonly medicalSpecialty?: MedicalSpecialty
+  readonly ipAddress?: string
+  readonly userAgent?: string
+  readonly processingLocation: 'brazil' | 'international'
 }
 
 /**
@@ -52,36 +52,36 @@ export interface LGPDDataClassification {
     | 'sensitive'
     | 'health'
     | 'biometric'
-    | 'anonymous';
-  readonly subcategory?: string;
-  readonly sensitivity: 'low' | 'medium' | 'high' | 'critical';
-  readonly requiresExplicitConsent: boolean;
-  readonly restrictedProcessing: boolean;
-  readonly dataResidencyRequired: boolean;
+    | 'anonymous'
+  readonly subcategory?: string
+  readonly sensitivity: 'low' | 'medium' | 'high' | 'critical'
+  readonly requiresExplicitConsent: boolean
+  readonly restrictedProcessing: boolean
+  readonly dataResidencyRequired: boolean
 }
 
 /**
  * Anonymization configuration
  */
 export interface AnonymizationConfig {
-  readonly preserveFields?: string[];
-  readonly redactFields?: string[];
-  readonly aggregateFields?: string[];
-  readonly hashingAlgorithm: 'sha256' | 'sha512' | 'argon2';
-  readonly saltLength: number;
-  readonly preserveStructure: boolean;
+  readonly preserveFields?: string[]
+  readonly redactFields?: string[]
+  readonly aggregateFields?: string[]
+  readonly hashingAlgorithm: 'sha256' | 'sha512' | 'argon2'
+  readonly saltLength: number
+  readonly preserveStructure: boolean
 }
 
 /**
  * Data retention policy
  */
 export interface DataRetentionPolicy {
-  readonly defaultRetentionDays: number;
-  readonly purposeSpecificRetention: Record<string, number>;
-  readonly automaticDeletion: boolean;
-  readonly deletionMethod: 'hard_delete' | 'soft_delete' | 'anonymize';
-  readonly archivalRequired: boolean;
-  readonly complianceReporting: boolean;
+  readonly defaultRetentionDays: number
+  readonly purposeSpecificRetention: Record<string, number>
+  readonly automaticDeletion: boolean
+  readonly deletionMethod: 'hard_delete' | 'soft_delete' | 'anonymize'
+  readonly archivalRequired: boolean
+  readonly complianceReporting: boolean
 }
 
 // ================================================
@@ -93,8 +93,8 @@ export interface DataRetentionPolicy {
  * Provides LGPD-compliant CRUD operations for AI usage data
  */
 export class LGPDComplianceService {
-  private readonly dataRetentionPolicy: DataRetentionPolicy;
-  private readonly anonymizationConfig: AnonymizationConfig;
+  private readonly dataRetentionPolicy: DataRetentionPolicy
+  private readonly anonymizationConfig: AnonymizationConfig
 
   constructor(
     dataRetentionPolicyParam?: Partial<DataRetentionPolicy>,
@@ -113,7 +113,7 @@ export class LGPDComplianceService {
       archivalRequired: true,
       complianceReporting: true,
       ...dataRetentionPolicyParam,
-    };
+    }
 
     this.anonymizationConfig = {
       preserveFields: ['id', 'created_at', 'clinic_id'],
@@ -123,11 +123,11 @@ export class LGPDComplianceService {
       saltLength: 32,
       preserveStructure: true,
       ...anonymizationConfigParam,
-    };
+    }
 
     // Mark as used to avoid unused variable warnings
-    void this.dataRetentionPolicy.defaultRetentionDays;
-    void this.anonymizationConfig.hashingAlgorithm;
+    void this.dataRetentionPolicy.defaultRetentionDays
+    void this.anonymizationConfig.hashingAlgorithm
   }
 
   // ================================================
@@ -142,19 +142,19 @@ export class LGPDComplianceService {
     _context: DataProcessingContext,
     options: LGPDCRUDOptions,
   ): Promise<{
-    success: boolean;
-    record?: AIUsageRecord;
-    violations?: string[];
+    success: boolean
+    record?: AIUsageRecord
+    violations?: string[]
   }> {
-    const violations: string[] = [];
+    const violations: string[] = []
 
     // 1. Consent validation
     if (options.consentRequired && !options.consentId) {
-      violations.push('Consent required but not provided');
+      violations.push('Consent required but not provided')
     }
 
     if (violations.length > 0) {
-      return { success: false, violations };
+      return { success: false, violations }
     }
 
     // 2. Generate LGPD-compliant audit trail
@@ -163,7 +163,7 @@ export class LGPDComplianceService {
       _context,
       options,
       { dataProcessed: true, patientInvolved: usageData.patientInvolved },
-    );
+    )
 
     // 3. Create final record
     const record: AIUsageRecord = {
@@ -172,9 +172,9 @@ export class LGPDComplianceService {
       clinicId: usageData.clinicId || _context.clinicId,
       auditTrail,
       createdAt: new Date(),
-    };
+    }
 
-    return { success: true, record };
+    return { success: true, record }
   }
 
   // ================================================
@@ -212,7 +212,7 @@ export class LGPDComplianceService {
         processingLocation: _context.processingLocation,
         ...metadata,
       },
-    };
+    }
   }
 
   // ================================================
@@ -224,21 +224,21 @@ export class LGPDComplianceService {
    */
   private generateSecureId(): string {
     // In a real implementation, use a proper UUID library
-    return `ai_usage_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    return `ai_usage_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
   }
 
   /**
    * Gets the current data retention policy
    */
   getDataRetentionPolicy(): DataRetentionPolicy {
-    return this.dataRetentionPolicy;
+    return this.dataRetentionPolicy
   }
 
   /**
    * Gets the current anonymization configuration
    */
   getAnonymizationConfig(): AnonymizationConfig {
-    return this.anonymizationConfig;
+    return this.anonymizationConfig
   }
 
   /**
@@ -246,28 +246,28 @@ export class LGPDComplianceService {
    */
   validateDataRetention(dataAge: number, purpose: string): boolean {
     const retentionDays = this.dataRetentionPolicy.purposeSpecificRetention[purpose]
-      || this.dataRetentionPolicy.defaultRetentionDays;
-    return dataAge <= retentionDays * 24 * 60 * 60 * 1000; // Convert days to milliseconds
+      || this.dataRetentionPolicy.defaultRetentionDays
+    return dataAge <= retentionDays * 24 * 60 * 60 * 1000 // Convert days to milliseconds
   }
 
   /**
    * Applies anonymization based on current configuration
    */
   applyAnonymization(data: Record<string, unknown>): Record<string, unknown> {
-    const result = { ...data } as Record<string, unknown>;
+    const result = { ...data } as Record<string, unknown>
 
     // Remove redacted fields
-    this.anonymizationConfig.redactFields?.forEach(field => {
-      delete result[field];
-    });
+    this.anonymizationConfig.redactFields?.forEach((field) => {
+      delete result[field]
+    })
 
     // Aggregate numeric fields
-    this.anonymizationConfig.aggregateFields?.forEach(field => {
+    this.anonymizationConfig.aggregateFields?.forEach((field) => {
       if (typeof result[field] === 'number') {
-        result[field] = Math.round(result[field]); // Simple aggregation
+        result[field] = Math.round(result[field]) // Simple aggregation
       }
-    });
+    })
 
-    return result;
+    return result
   }
 }

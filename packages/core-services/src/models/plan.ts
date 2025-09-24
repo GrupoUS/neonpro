@@ -8,14 +8,14 @@ import {
   PLAN_CONFIG,
   validateFeatureAccess,
   validateModelAccess,
-} from '@neonpro/config/plans';
+} from '@neonpro/config/plans'
 import type {
   AIFeatureCode,
   CFMComplianceLevel,
   EnhancedAIModel,
   SubscriptionPlan,
   SubscriptionTier,
-} from '@neonpro/types';
+} from '@neonpro/types'
 
 // ================================================
 // PLAN MODEL CLASS
@@ -26,15 +26,15 @@ import type {
  * Provides plan validation, feature access control, and upgrade recommendations
  */
 export class Plan {
-  private readonly _config: (typeof PLAN_CONFIG)[SubscriptionTier];
-  private readonly _tier: SubscriptionTier;
+  private readonly _config: (typeof PLAN_CONFIG)[SubscriptionTier]
+  private readonly _tier: SubscriptionTier
 
   constructor(tier: SubscriptionTier) {
-    this._tier = tier;
-    this._config = PLAN_CONFIG[tier];
+    this._tier = tier
+    this._config = PLAN_CONFIG[tier]
 
     if (!this._config) {
-      throw new Error(`Plano inválido: ${tier}`);
+      throw new Error(`Plano inválido: ${tier}`)
     }
   }
 
@@ -43,19 +43,19 @@ export class Plan {
   // ================================================
 
   get tier(): SubscriptionTier {
-    return this._tier;
+    return this._tier
   }
 
   get displayName(): string {
-    return this._config.displayName;
+    return this._config.displayName
   }
 
   get description(): string {
-    return this._config.description;
+    return this._config.description
   }
 
   get isActive(): boolean {
-    return true; // All configured plans are active
+    return true // All configured plans are active
   }
 
   // ================================================
@@ -63,31 +63,31 @@ export class Plan {
   // ================================================
 
   get monthlyQueryLimit(): number {
-    return this._config.monthlyQueryLimit;
+    return this._config.monthlyQueryLimit
   }
 
   get dailyRateLimit(): number {
-    return this._config.dailyRateLimit;
+    return this._config.dailyRateLimit
   }
 
   get concurrentRequests(): number {
-    return this._config.concurrentRequests;
+    return this._config.concurrentRequests
   }
 
   get maxTokensPerRequest(): number {
-    return this._config.maxTokensPerRequest;
+    return this._config.maxTokensPerRequest
   }
 
   get maxClinics(): number {
-    return this._config.maxClinics;
+    return this._config.maxClinics
   }
 
   get costBudgetUsdMonthly(): number {
-    return this._config.costBudgetUsdMonthly;
+    return this._config.costBudgetUsdMonthly
   }
 
   get isUnlimited(): boolean {
-    return this._config.monthlyQueryLimit === -1;
+    return this._config.monthlyQueryLimit === -1
   }
 
   // ================================================
@@ -95,23 +95,23 @@ export class Plan {
   // ================================================
 
   get cfmComplianceLevel(): CFMComplianceLevel {
-    return this._config.compliance.cfmLevel;
+    return this._config.compliance.cfmLevel
   }
 
   get isAnvisaCertified(): boolean {
-    return this._config.compliance.anvisaCertified;
+    return this._config.compliance.anvisaCertified
   }
 
   get hasLgpdEnhancedFeatures(): boolean {
-    return this._config.compliance.lgpdEnhanced;
+    return this._config.compliance.lgpdEnhanced
   }
 
   get dataRetentionDays(): number {
-    return this._config.compliance.dataRetentionDays;
+    return this._config.compliance.dataRetentionDays
   }
 
   get hasEnhancedAuditTrail(): boolean {
-    return this._config.compliance.auditTrailEnhanced;
+    return this._config.compliance.auditTrailEnhanced
   }
 
   // ================================================
@@ -119,25 +119,25 @@ export class Plan {
   // ================================================
 
   get availableFeatures(): AIFeatureCode[] {
-    return [...this._config.features];
+    return [...this._config.features]
   }
 
   get availableModels(): EnhancedAIModel[] {
-    return [...this._config.availableModels];
+    return [...this._config.availableModels]
   }
 
   /**
    * Checks if the plan has access to a specific feature
    */
   hasFeature(featureCode: AIFeatureCode): boolean {
-    return validateFeatureAccess(this._tier, featureCode);
+    return validateFeatureAccess(this._tier, featureCode)
   }
 
   /**
    * Checks if the plan has access to a specific AI model
    */
   hasModelAccess(modelCode: EnhancedAIModel): boolean {
-    return validateModelAccess(this._tier, modelCode);
+    return validateModelAccess(this._tier, modelCode)
   }
 
   /**
@@ -146,7 +146,7 @@ export class Plan {
   getPreferredModel(
     useCase: 'chat' | 'analysis' | 'prediction' = 'chat',
   ): EnhancedAIModel {
-    return getPreferredModel(this._tier, useCase);
+    return getPreferredModel(this._tier, useCase)
   }
 
   // ================================================
@@ -154,15 +154,15 @@ export class Plan {
   // ================================================
 
   get hasSemanticCaching(): boolean {
-    return this._config.costOptimization.semanticCaching;
+    return this._config.costOptimization.semanticCaching
   }
 
   get hasRateLimiting(): boolean {
-    return this._config.costOptimization.rateLimiting;
+    return this._config.costOptimization.rateLimiting
   }
 
   get hasCostAlerts(): boolean {
-    return this._config.costOptimization.costAlerts;
+    return this._config.costOptimization.costAlerts
   }
 
   // ================================================
@@ -170,15 +170,15 @@ export class Plan {
   // ================================================
 
   get hasPrioritySupport(): boolean {
-    return this._config.support.priority;
+    return this._config.support.priority
   }
 
   get supportSlaHours(): number {
-    return this._config.support.slaHours;
+    return this._config.support.slaHours
   }
 
   get hasDedicatedSupport(): boolean {
-    return this._config.support.dedicatedSupport;
+    return this._config.support.dedicatedSupport
   }
 
   // ================================================
@@ -189,26 +189,26 @@ export class Plan {
    * Validates if the plan can handle a specific request
    */
   canHandleRequest(_request: {
-    tokens?: number;
-    concurrentRequests?: number;
-    features?: AIFeatureCode[];
-    models?: EnhancedAIModel[];
+    tokens?: number
+    concurrentRequests?: number
+    features?: AIFeatureCode[]
+    models?: EnhancedAIModel[]
   }): {
-    canHandle: boolean;
-    issues: string[];
-    recommendations: string[];
+    canHandle: boolean
+    issues: string[]
+    recommendations: string[]
   } {
-    const issues: string[] = [];
-    const recommendations: string[] = [];
+    const issues: string[] = []
+    const recommendations: string[] = []
 
     // Check token limits
     if (_request.tokens && _request.tokens > this.maxTokensPerRequest) {
       issues.push(
         `Solicitação excede limite de tokens (${_request.tokens} > ${this.maxTokensPerRequest})`,
-      );
+      )
       recommendations.push(
         'Reduza o tamanho da consulta ou faça upgrade do plano',
-      );
+      )
     }
 
     // Check concurrent requests
@@ -218,18 +218,18 @@ export class Plan {
     ) {
       issues.push(
         `Muitas solicitações simultâneas (${_request.concurrentRequests} > ${this.concurrentRequests})`,
-      );
+      )
       recommendations.push(
         'Aguarde solicitações em andamento finalizarem ou faça upgrade do plano',
-      );
+      )
     }
 
     // Check feature access
     if (_request.features) {
       for (const feature of _request.features) {
         if (!this.hasFeature(feature)) {
-          issues.push(`Feature não disponível no plano atual: ${feature}`);
-          recommendations.push(`Faça upgrade para acessar ${feature}`);
+          issues.push(`Feature não disponível no plano atual: ${feature}`)
+          recommendations.push(`Faça upgrade para acessar ${feature}`)
         }
       }
     }
@@ -238,8 +238,8 @@ export class Plan {
     if (_request.models) {
       for (const model of _request.models) {
         if (!this.hasModelAccess(model)) {
-          issues.push(`Modelo AI não disponível no plano atual: ${model}`);
-          recommendations.push(`Faça upgrade para acessar ${model}`);
+          issues.push(`Modelo AI não disponível no plano atual: ${model}`)
+          recommendations.push(`Faça upgrade para acessar ${model}`)
         }
       }
     }
@@ -248,24 +248,24 @@ export class Plan {
       canHandle: issues.length === 0,
       issues,
       recommendations,
-    };
+    }
   }
 
   /**
    * Validates healthcare compliance requirements
    */
   validateHealthcareCompliance(requirement: {
-    cfmLevel?: CFMComplianceLevel;
-    anvisaRequired?: boolean;
-    lgpdEnhanced?: boolean;
-    dataRetentionDays?: number;
+    cfmLevel?: CFMComplianceLevel
+    anvisaRequired?: boolean
+    lgpdEnhanced?: boolean
+    dataRetentionDays?: number
   }): {
-    isCompliant: boolean;
-    violations: string[];
-    recommendations: string[];
+    isCompliant: boolean
+    violations: string[]
+    recommendations: string[]
   } {
-    const violations: string[] = [];
-    const recommendations: string[] = [];
+    const violations: string[] = []
+    const recommendations: string[] = []
 
     // Check CFM compliance level
     if (requirement.cfmLevel) {
@@ -273,17 +273,17 @@ export class Plan {
         basic: 1,
         advanced: 2,
         full: 3,
-      };
+      }
 
       if (
         levelOrder[this.cfmComplianceLevel] < levelOrder[requirement.cfmLevel]
       ) {
         violations.push(
           `CFM compliance insuficiente: requer ${requirement.cfmLevel}, atual ${this.cfmComplianceLevel}`,
-        );
+        )
         recommendations.push(
           'Faça upgrade para plano com maior compliance CFM',
-        );
+        )
       }
     }
 
@@ -291,18 +291,18 @@ export class Plan {
     if (requirement.anvisaRequired && !this.isAnvisaCertified) {
       violations.push(
         'Certificação ANVISA requerida mas não disponível no plano atual',
-      );
-      recommendations.push('Faça upgrade para plano certificado pela ANVISA');
+      )
+      recommendations.push('Faça upgrade para plano certificado pela ANVISA')
     }
 
     // Check LGPD enhanced features
     if (requirement.lgpdEnhanced && !this.hasLgpdEnhancedFeatures) {
       violations.push(
         'Recursos LGPD avançados requeridos mas não disponíveis no plano atual',
-      );
+      )
       recommendations.push(
         'Faça upgrade para plano com recursos LGPD avançados',
-      );
+      )
     }
 
     // Check data retention requirements
@@ -312,17 +312,17 @@ export class Plan {
     ) {
       violations.push(
         `Retenção de dados insuficiente: requer ${requirement.dataRetentionDays} dias, atual ${this.dataRetentionDays}`,
-      );
+      )
       recommendations.push(
         'Faça upgrade para plano com maior retenção de dados',
-      );
+      )
     }
 
     return {
       isCompliant: violations.length === 0,
       violations,
       recommendations,
-    };
+    }
   }
 
   // ================================================
@@ -333,15 +333,15 @@ export class Plan {
    * Gets upgrade recommendations for accessing missing features
    */
   getUpgradeRecommendations(desiredFeatures: AIFeatureCode[]): {
-    currentPlan: SubscriptionTier;
-    recommendedPlan: SubscriptionTier | null;
-    missingFeatures: AIFeatureCode[];
-    additionalBenefits: string[];
-    costDifference?: string;
+    currentPlan: SubscriptionTier
+    recommendedPlan: SubscriptionTier | null
+    missingFeatures: AIFeatureCode[]
+    additionalBenefits: string[]
+    costDifference?: string
   } {
     const missingFeatures = desiredFeatures.filter(
-      feature => !this.hasFeature(feature),
-    );
+      (feature) => !this.hasFeature(feature),
+    )
 
     if (missingFeatures.length === 0) {
       return {
@@ -349,53 +349,53 @@ export class Plan {
         recommendedPlan: null,
         missingFeatures: [],
         additionalBenefits: [],
-      };
+      }
     }
 
     // Find the lowest tier that includes all desired features
-    const tiers: SubscriptionTier[] = ['free', 'trial', 'pro', 'enterprise'];
-    const currentIndex = tiers.indexOf(this._tier);
+    const tiers: SubscriptionTier[] = ['free', 'trial', 'pro', 'enterprise']
+    const currentIndex = tiers.indexOf(this._tier)
 
-    let recommendedPlan: SubscriptionTier | null = null;
+    let recommendedPlan: SubscriptionTier | null = null
     if (currentIndex !== -1) {
       for (let i = currentIndex + 1; i < tiers.length; i++) {
-        const tier = tiers[i];
-        if (!tier) continue;
-        const plan = new Plan(tier);
+        const tier = tiers[i]
+        if (!tier) continue
+        const plan = new Plan(tier)
 
-        if (desiredFeatures.every(feature => plan.hasFeature(feature))) {
-          recommendedPlan = tier;
-          break;
+        if (desiredFeatures.every((feature) => plan.hasFeature(feature))) {
+          recommendedPlan = tier
+          break
         }
       }
     }
 
     // Calculate additional benefits
-    const additionalBenefits: string[] = [];
+    const additionalBenefits: string[] = []
     if (recommendedPlan) {
-      const upgradePlan = new Plan(recommendedPlan);
+      const upgradePlan = new Plan(recommendedPlan)
 
       if (upgradePlan.monthlyQueryLimit > this.monthlyQueryLimit) {
         additionalBenefits.push(
           `Mais consultas mensais (${
             upgradePlan.monthlyQueryLimit === -1 ? 'ilimitadas' : upgradePlan.monthlyQueryLimit
           })`,
-        );
+        )
       }
 
       if (upgradePlan.availableModels.length > this.availableModels.length) {
-        additionalBenefits.push('Acesso a modelos AI mais avançados');
+        additionalBenefits.push('Acesso a modelos AI mais avançados')
       }
 
       if (upgradePlan.hasPrioritySupport && !this.hasPrioritySupport) {
-        additionalBenefits.push('Suporte prioritário');
+        additionalBenefits.push('Suporte prioritário')
       }
 
       if (
         upgradePlan.hasLgpdEnhancedFeatures
         && !this.hasLgpdEnhancedFeatures
       ) {
-        additionalBenefits.push('Recursos LGPD avançados');
+        additionalBenefits.push('Recursos LGPD avançados')
       }
     }
 
@@ -407,7 +407,7 @@ export class Plan {
       costDifference: recommendedPlan
         ? `Consulte valores no painel de configurações`
         : undefined,
-    };
+    }
   }
 
   // ================================================
@@ -452,14 +452,14 @@ export class Plan {
         : this._tier === 'pro'
         ? 3
         : 4,
-    };
+    }
   }
 
   /**
    * Creates a Plan instance from a tier
    */
   static fromTier(tier: SubscriptionTier): Plan {
-    return new Plan(tier);
+    return new Plan(tier)
   }
 
   /**
@@ -467,8 +467,8 @@ export class Plan {
    */
   static getAllPlans(): Plan[] {
     return (['free', 'trial', 'pro', 'enterprise'] as SubscriptionTier[]).map(
-      tier => new Plan(tier),
-    );
+      (tier) => new Plan(tier),
+    )
   }
 
   /**
@@ -476,9 +476,9 @@ export class Plan {
    */
   static findByTier(tier: SubscriptionTier): Plan | null {
     try {
-      return new Plan(tier);
+      return new Plan(tier)
     } catch {
-      return null;
+      return null
     }
   }
 }

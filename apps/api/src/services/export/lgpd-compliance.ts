@@ -1,5 +1,5 @@
-import { BrazilianComplianceService } from '../brazilian-compliance';
-import { LGPDComplianceOptions, PatientExportField } from './types';
+import { BrazilianComplianceService } from '../brazilian-compliance'
+import { LGPDComplianceOptions, PatientExportField } from './types'
 
 export class ExportLGPDCompliance {
   private static readonly SENSITIVE_FIELDS = [
@@ -15,7 +15,7 @@ export class ExportLGPDCompliance {
     'medicalHistory',
     'diagnosis',
     'treatment',
-  ];
+  ]
 
   private static readonly RESTRICTED_FIELDS = [
     'medicalRecord',
@@ -23,7 +23,7 @@ export class ExportLGPDCompliance {
     'treatment',
     'prescriptions',
     'insuranceDetails',
-  ];
+  ]
 
   static async validateExportRequest(
     userId: string,
@@ -31,30 +31,30 @@ export class ExportLGPDCompliance {
     patientCount: number,
   ): Promise<{ valid: boolean; error?: string }> {
     if (!userId) {
-      return { valid: false, error: 'ID do usuário é obrigatório' };
+      return { valid: false, error: 'ID do usuário é obrigatório' }
     }
 
     if (patientCount > 10000) {
       return {
         valid: false,
         error: 'Exportação limitada a 10.000 registros por solicitação',
-      };
+      }
     }
 
     if (options.consentRequired) {
       const hasConsent = await BrazilianComplianceService.hasDataProcessingConsent(
         userId,
         options.purpose,
-      );
+      )
       if (!hasConsent) {
         return {
           valid: false,
           error: 'Consentimento do paciente não encontrado',
-        };
+        }
       }
     }
 
-    return { valid: true };
+    return { valid: true }
   }
 
   static async checkUserConsent(
@@ -65,10 +65,10 @@ export class ExportLGPDCompliance {
       return await BrazilianComplianceService.hasDataProcessingConsent(
         userId,
         purpose,
-      );
+      )
     } catch (error) {
-      console.error('Erro ao verificar consentimento LGPD:', error);
-      return false;
+      console.error('Erro ao verificar consentimento LGPD:', error)
+      return false
     }
   }
 
@@ -77,71 +77,71 @@ export class ExportLGPDCompliance {
     fields: PatientExportField[],
     options: LGPDComplianceOptions,
   ): any[] {
-    return data.map(record => {
-      const anonymizedRecord = { ...record };
+    return data.map((record) => {
+      const anonymizedRecord = { ...record }
 
-      fields.forEach(field => {
+      fields.forEach((field) => {
         if (field.sensitive && options.anonymizeSensitiveFields) {
           anonymizedRecord[field.field] = this.anonymizeField(
             anonymizedRecord[field.field],
             field.type,
-          );
+          )
         }
 
         if (
           options.excludeRestrictedFields
           && this.isRestrictedField(field.field)
         ) {
-          delete anonymizedRecord[field.field];
+          delete anonymizedRecord[field.field]
         }
-      });
+      })
 
-      return anonymizedRecord;
-    });
+      return anonymizedRecord
+    })
   }
 
   private static anonymizeField(value: any, type: string): any {
     if (value === null || value === undefined) {
-      return value;
+      return value
     }
 
     switch (type) {
       case 'string':
-        return this.anonymizeString(value);
+        return this.anonymizeString(value)
       case 'date':
-        return this.anonymizeDate(value);
+        return this.anonymizeDate(value)
       case 'number':
-        return this.anonymizeNumber(value);
+        return this.anonymizeNumber(value)
       case 'array':
-        return Array.isArray(value) ? value.map(() => '[REDACTED]') : value;
+        return Array.isArray(value) ? value.map(() => '[REDACTED]') : value
       default:
-        return '[REDACTED]';
+        return '[REDACTED]'
     }
   }
 
   private static anonymizeString(value: string): string {
-    if (typeof value !== 'string') return '[REDACTED]';
+    if (typeof value !== 'string') return '[REDACTED]'
 
     if (value.includes('@')) {
-      return value.split('@')[0] + '@***.***';
+      return value.split('@')[0] + '@***.***'
     }
 
-    if (value.length <= 2) return '**';
+    if (value.length <= 2) return '**'
 
-    return value[0] + '*'.repeat(value.length - 2) + value[value.length - 1];
+    return value[0] + '*'.repeat(value.length - 2) + value[value.length - 1]
   }
 
   private static anonymizeDate(date: Date | string): string {
-    const d = new Date(date);
-    return `${d.getFullYear()}-**-**`;
+    const d = new Date(date)
+    return `${d.getFullYear()}-**-**`
   }
 
   private static anonymizeNumber(value: number): string {
-    return value.toString().replace(/\d(?=\d{2})/g, '*');
+    return value.toString().replace(/\d(?=\d{2})/g, '*')
   }
 
   private static isRestrictedField(field: string): boolean {
-    return this.RESTRICTED_FIELDS.includes(field);
+    return this.RESTRICTED_FIELDS.includes(field)
   }
 
   static generateAuditTrail(
@@ -161,7 +161,7 @@ export class ExportLGPDCompliance {
       compliance: 'LGPD',
       dataCategory: 'PATIENT_DATA',
       retentionDays: 30,
-    };
+    }
   }
 
   static getFieldComplianceInfo(field: PatientExportField) {
@@ -172,7 +172,7 @@ export class ExportLGPDCompliance {
       requiresConsent: field.sensitive,
       legalBasis: field.sensitive ? 'CONSENT' : 'LEGITIMATE_INTEREST',
       retentionPeriod: field.sensitive ? '365_days' : '1825_days',
-    };
+    }
   }
 
   static async logDataAccess(
@@ -186,7 +186,7 @@ export class ExportLGPDCompliance {
       exportId,
       recordCount,
       'DATA_EXPORT',
-    );
+    )
 
     try {
       await BrazilianComplianceService.logDataAccess({
@@ -194,14 +194,14 @@ export class ExportLGPDCompliance {
         action: 'EXPORT',
         resourceId: exportId,
         resourceType: 'PATIENT_DATA_EXPORT',
-        fieldsAccessed: fields.map(f => f.field),
+        fieldsAccessed: fields.map((f) => f.field),
         recordCount,
         purpose: 'DATA_EXPORT',
         legalBasis: 'CONSENT',
         timestamp: new Date(),
-      });
+      })
     } catch (error) {
-      console.error('Erro ao registrar acesso de dados LGPD:', error);
+      console.error('Erro ao registrar acesso de dados LGPD:', error)
     }
   }
 }

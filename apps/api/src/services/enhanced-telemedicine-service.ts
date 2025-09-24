@@ -5,10 +5,10 @@
  * Following KISS/YAGNI principles and avoiding overengineering
  */
 
-import { z } from 'zod';
-import { createAdminClient } from '../clients/supabase';
-import { logger } from '../lib/logger';
-import { aiSecurityService } from './ai-security-service';
+import { z } from 'zod'
+import { createAdminClient } from '../clients/supabase'
+import { logger } from '../lib/logger'
+import { aiSecurityService } from './ai-security-service'
 
 // Mock audit logger for startup - TODO: Replace with actual @neonpro/security auditLogger
 const auditLogger = {
@@ -18,7 +18,7 @@ const auditLogger = {
   error: (..._args: any[]) => {},
   logError: (..._args: any[]) => {},
   logSecurityEvent: (..._args: any[]) => {},
-};
+}
 
 // Zod schemas for validation
 const TelemedicineSessionSchema = z.object({
@@ -37,7 +37,7 @@ const TelemedicineSessionSchema = z.object({
   requiresPrescription: z.boolean().default(false),
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime(),
-});
+})
 
 const TelemedicineMessageSchema = z.object({
   id: z.string().uuid(),
@@ -49,7 +49,7 @@ const TelemedicineMessageSchema = z.object({
   encrypted: z.boolean().default(true),
   timestamp: z.string().datetime(),
   readAt: z.string().datetime().optional(),
-});
+})
 
 const TelemedicinePrescriptionSchema = z.object({
   id: z.string().uuid(),
@@ -67,50 +67,50 @@ const TelemedicinePrescriptionSchema = z.object({
   issuedAt: z.string().datetime(),
   expiresAt: z.string().datetime(),
   digitalSignature: z.string().optional(),
-});
+})
 
 // Type definitions
-export type TelemedicineSession = z.infer<typeof TelemedicineSessionSchema>;
-export type TelemedicineMessage = z.infer<typeof TelemedicineMessageSchema>;
-export type TelemedicinePrescription = z.infer<typeof TelemedicinePrescriptionSchema>;
+export type TelemedicineSession = z.infer<typeof TelemedicineSessionSchema>
+export type TelemedicineMessage = z.infer<typeof TelemedicineMessageSchema>
+export type TelemedicinePrescription = z.infer<typeof TelemedicinePrescriptionSchema>
 
 export interface CreateTelemedicineSessionInput {
-  patientId: string;
-  professionalId: string;
-  clinicId: string;
-  sessionType: 'consultation' | 'follow_up' | 'emergency';
-  scheduledFor: Date;
-  estimatedDuration: number;
-  specialty: string;
-  notes?: string;
-  videoProvider?: 'zoom' | 'teams' | 'meet' | 'custom';
-  recordingEnabled?: boolean;
+  patientId: string
+  professionalId: string
+  clinicId: string
+  sessionType: 'consultation' | 'follow_up' | 'emergency'
+  scheduledFor: Date
+  estimatedDuration: number
+  specialty: string
+  notes?: string
+  videoProvider?: 'zoom' | 'teams' | 'meet' | 'custom'
+  recordingEnabled?: boolean
 }
 
 export interface SendMessageInput {
-  sessionId: string;
-  senderId: string;
-  senderRole: 'patient' | 'professional' | 'admin';
-  messageType: 'text' | 'image' | 'file' | 'system';
-  content: string;
+  sessionId: string
+  senderId: string
+  senderRole: 'patient' | 'professional' | 'admin'
+  messageType: 'text' | 'image' | 'file' | 'system'
+  content: string
 }
 
 export interface CreatePrescriptionInput {
-  sessionId: string;
-  patientId: string;
-  professionalId: string;
+  sessionId: string
+  patientId: string
+  professionalId: string
   medications: Array<{
-    name: string;
-    dosage: string;
-    frequency: string;
-    duration: string;
-    instructions: string;
-  }>;
-  notes?: string;
+    name: string
+    dosage: string
+    frequency: string
+    duration: string
+    instructions: string
+  }>
+  notes?: string
 }
 
 export class EnhancedTelemedicineService {
-  private supabase = createAdminClient();
+  private supabase = createAdminClient()
 
   /**
    * Create a new telemedicine session
@@ -121,16 +121,16 @@ export class EnhancedTelemedicineService {
         patientId: input.patientId,
         professionalId: input.professionalId,
         sessionType: input.sessionType,
-      });
+      })
 
       // Validate professional authorization
       const isAuthorized = await this.validateProfessionalAuthorization(
         input.professionalId,
         input.clinicId,
-      );
+      )
 
       if (!isAuthorized) {
-        throw new Error('Professional not authorized for telemedicine');
+        throw new Error('Professional not authorized for telemedicine')
       }
 
       // Create session record
@@ -149,19 +149,19 @@ export class EnhancedTelemedicineService {
         requiresPrescription: false,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
-      };
+      }
 
       const { data: session, error } = await this.supabase
         .from('telemedicine_sessions')
         .insert(sessionData)
         .select()
-        .single();
+        .single()
 
       if (error) {
-        throw new Error(`Failed to create telemedicine session: ${error.message}`);
+        throw new Error(`Failed to create telemedicine session: ${error.message}`)
       }
 
-      const validatedSession = TelemedicineSessionSchema.parse(session);
+      const validatedSession = TelemedicineSessionSchema.parse(session)
 
       // Log for compliance
       auditLogger.logSecurityEvent({
@@ -170,12 +170,12 @@ export class EnhancedTelemedicineService {
         patientId: validatedSession.patientId,
         professionalId: validatedSession.professionalId,
         timestamp: new Date().toISOString(),
-      });
+      })
 
-      return validatedSession;
+      return validatedSession
     } catch (error) {
-      logger.error('Error creating telemedicine session', { error });
-      throw error;
+      logger.error('Error creating telemedicine session', { error })
+      throw error
     }
   }
 
@@ -188,16 +188,16 @@ export class EnhancedTelemedicineService {
         .from('telemedicine_sessions')
         .select('*')
         .eq('id', sessionId)
-        .single();
+        .single()
 
       if (error) {
-        return null;
+        return null
       }
 
-      return TelemedicineSessionSchema.parse(session);
+      return TelemedicineSessionSchema.parse(session)
     } catch (error) {
-      logger.error('Error getting telemedicine session', { error, sessionId });
-      return null;
+      logger.error('Error getting telemedicine session', { error, sessionId })
+      return null
     }
   }
 
@@ -212,22 +212,22 @@ export class EnhancedTelemedicineService {
       let query = this.supabase
         .from('telemedicine_sessions')
         .select('*')
-        .eq('professionalId', professionalId);
+        .eq('professionalId', professionalId)
 
       if (status) {
-        query = query.eq('status', status);
+        query = query.eq('status', status)
       }
 
-      const { data: sessions, error } = await query.order('scheduledFor', { ascending: true });
+      const { data: sessions, error } = await query.order('scheduledFor', { ascending: true })
 
       if (error) {
-        throw new Error(`Failed to get sessions: ${error.message}`);
+        throw new Error(`Failed to get sessions: ${error.message}`)
       }
 
-      return sessions.map(session => TelemedicineSessionSchema.parse(session));
+      return sessions.map((session) => TelemedicineSessionSchema.parse(session))
     } catch (error) {
-      logger.error('Error getting professional sessions', { error, professionalId });
-      throw error;
+      logger.error('Error getting professional sessions', { error, professionalId })
+      throw error
     }
   }
 
@@ -242,22 +242,22 @@ export class EnhancedTelemedicineService {
       let query = this.supabase
         .from('telemedicine_sessions')
         .select('*')
-        .eq('patientId', patientId);
+        .eq('patientId', patientId)
 
       if (status) {
-        query = query.eq('status', status);
+        query = query.eq('status', status)
       }
 
-      const { data: sessions, error } = await query.order('scheduledFor', { ascending: true });
+      const { data: sessions, error } = await query.order('scheduledFor', { ascending: true })
 
       if (error) {
-        throw new Error(`Failed to get sessions: ${error.message}`);
+        throw new Error(`Failed to get sessions: ${error.message}`)
       }
 
-      return sessions.map(session => TelemedicineSessionSchema.parse(session));
+      return sessions.map((session) => TelemedicineSessionSchema.parse(session))
     } catch (error) {
-      logger.error('Error getting patient sessions', { error, patientId });
-      throw error;
+      logger.error('Error getting patient sessions', { error, patientId })
+      throw error
     }
   }
 
@@ -267,13 +267,13 @@ export class EnhancedTelemedicineService {
   async startSession(sessionId: string, professionalId: string): Promise<void> {
     try {
       // Verify session ownership
-      const session = await this.getSession(sessionId);
+      const session = await this.getSession(sessionId)
       if (!session || session.professionalId !== professionalId) {
-        throw new Error('Session not found or access denied');
+        throw new Error('Session not found or access denied')
       }
 
       if (session.status !== 'scheduled') {
-        throw new Error('Session cannot be started');
+        throw new Error('Session cannot be started')
       }
 
       const { error } = await this.supabase
@@ -282,10 +282,10 @@ export class EnhancedTelemedicineService {
           status: 'active',
           updatedAt: new Date().toISOString(),
         })
-        .eq('id', sessionId);
+        .eq('id', sessionId)
 
       if (error) {
-        throw new Error(`Failed to start session: ${error.message}`);
+        throw new Error(`Failed to start session: ${error.message}`)
       }
 
       auditLogger.logSecurityEvent({
@@ -293,10 +293,10 @@ export class EnhancedTelemedicineService {
         sessionId,
         professionalId,
         timestamp: new Date().toISOString(),
-      });
+      })
     } catch (error) {
-      logger.error('Error starting telemedicine session', { error, sessionId });
-      throw error;
+      logger.error('Error starting telemedicine session', { error, sessionId })
+      throw error
     }
   }
 
@@ -310,13 +310,13 @@ export class EnhancedTelemedicineService {
   ): Promise<void> {
     try {
       // Verify session ownership
-      const session = await this.getSession(sessionId);
+      const session = await this.getSession(sessionId)
       if (!session || session.professionalId !== professionalId) {
-        throw new Error('Session not found or access denied');
+        throw new Error('Session not found or access denied')
       }
 
       if (session.status !== 'active') {
-        throw new Error('Session is not active');
+        throw new Error('Session is not active')
       }
 
       const { error } = await this.supabase
@@ -325,10 +325,10 @@ export class EnhancedTelemedicineService {
           status: 'ended',
           updatedAt: new Date().toISOString(),
         })
-        .eq('id', sessionId);
+        .eq('id', sessionId)
 
       if (error) {
-        throw new Error(`Failed to end session: ${error.message}`);
+        throw new Error(`Failed to end session: ${error.message}`)
       }
 
       auditLogger.logSecurityEvent({
@@ -337,10 +337,10 @@ export class EnhancedTelemedicineService {
         professionalId,
         endReason,
         timestamp: new Date().toISOString(),
-      });
+      })
     } catch (error) {
-      logger.error('Error ending telemedicine session', { error, sessionId });
-      throw error;
+      logger.error('Error ending telemedicine session', { error, sessionId })
+      throw error
     }
   }
 
@@ -350,17 +350,17 @@ export class EnhancedTelemedicineService {
   async sendMessage(input: SendMessageInput): Promise<TelemedicineMessage> {
     try {
       // Validate session access
-      const session = await this.getSession(input.sessionId);
+      const session = await this.getSession(input.sessionId)
       if (!session) {
-        throw new Error('Session not found');
+        throw new Error('Session not found')
       }
 
       if (session.status !== 'active') {
-        throw new Error('Session is not active');
+        throw new Error('Session is not active')
       }
 
       // Sanitize message content
-      const sanitizedContent = aiSecurityService.sanitizeForAI(input.content);
+      const sanitizedContent = aiSecurityService.sanitizeForAI(input.content)
 
       const messageData = {
         sessionId: input.sessionId,
@@ -370,19 +370,19 @@ export class EnhancedTelemedicineService {
         content: sanitizedContent,
         encrypted: true,
         timestamp: new Date().toISOString(),
-      };
+      }
 
       const { data: message, error } = await this.supabase
         .from('telemedicine_messages')
         .insert(messageData)
         .select()
-        .single();
+        .single()
 
       if (error) {
-        throw new Error(`Failed to send message: ${error.message}`);
+        throw new Error(`Failed to send message: ${error.message}`)
       }
 
-      const validatedMessage = TelemedicineMessageSchema.parse(message);
+      const validatedMessage = TelemedicineMessageSchema.parse(message)
 
       auditLogger.logSecurityEvent({
         event: 'telemedicine_message_sent',
@@ -390,12 +390,12 @@ export class EnhancedTelemedicineService {
         senderId: input.senderId,
         messageType: input.messageType,
         timestamp: new Date().toISOString(),
-      });
+      })
 
-      return validatedMessage;
+      return validatedMessage
     } catch (error) {
-      logger.error('Error sending telemedicine message', { error, sessionId: input.sessionId });
-      throw error;
+      logger.error('Error sending telemedicine message', { error, sessionId: input.sessionId })
+      throw error
     }
   }
 
@@ -408,16 +408,16 @@ export class EnhancedTelemedicineService {
         .from('telemedicine_messages')
         .select('*')
         .eq('sessionId', sessionId)
-        .order('timestamp', { ascending: true });
+        .order('timestamp', { ascending: true })
 
       if (error) {
-        throw new Error(`Failed to get messages: ${error.message}`);
+        throw new Error(`Failed to get messages: ${error.message}`)
       }
 
-      return messages.map(message => TelemedicineMessageSchema.parse(message));
+      return messages.map((message) => TelemedicineMessageSchema.parse(message))
     } catch (error) {
-      logger.error('Error getting session messages', { error, sessionId });
-      throw error;
+      logger.error('Error getting session messages', { error, sessionId })
+      throw error
     }
   }
 
@@ -427,13 +427,13 @@ export class EnhancedTelemedicineService {
   async createPrescription(input: CreatePrescriptionInput): Promise<TelemedicinePrescription> {
     try {
       // Validate session access and status
-      const session = await this.getSession(input.sessionId);
+      const session = await this.getSession(input.sessionId)
       if (!session || session.professionalId !== input.professionalId) {
-        throw new Error('Session not found or access denied');
+        throw new Error('Session not found or access denied')
       }
 
       if (session.status !== 'active' && session.status !== 'ended') {
-        throw new Error('Session must be active or ended to create prescription');
+        throw new Error('Session must be active or ended to create prescription')
       }
 
       const prescriptionData = {
@@ -444,19 +444,19 @@ export class EnhancedTelemedicineService {
         notes: input.notes,
         issuedAt: new Date().toISOString(),
         expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(), // 30 days
-      };
+      }
 
       const { data: prescription, error } = await this.supabase
         .from('telemedicine_prescriptions')
         .insert(prescriptionData)
         .select()
-        .single();
+        .single()
 
       if (error) {
-        throw new Error(`Failed to create prescription: ${error.message}`);
+        throw new Error(`Failed to create prescription: ${error.message}`)
       }
 
-      const validatedPrescription = TelemedicinePrescriptionSchema.parse(prescription);
+      const validatedPrescription = TelemedicinePrescriptionSchema.parse(prescription)
 
       auditLogger.logSecurityEvent({
         event: 'telemedicine_prescription_created',
@@ -464,15 +464,15 @@ export class EnhancedTelemedicineService {
         patientId: input.patientId,
         professionalId: input.professionalId,
         timestamp: new Date().toISOString(),
-      });
+      })
 
-      return validatedPrescription;
+      return validatedPrescription
     } catch (error) {
       logger.error('Error creating telemedicine prescription', {
         error,
         sessionId: input.sessionId,
-      });
-      throw error;
+      })
+      throw error
     }
   }
 
@@ -489,10 +489,10 @@ export class EnhancedTelemedicineService {
         .from('professionals')
         .select('active, telemedicine_authorized')
         .eq('id', professionalId)
-        .single();
+        .single()
 
       if (error || !professional) {
-        return false;
+        return false
       }
 
       // Check if professional is associated with the clinic
@@ -501,16 +501,16 @@ export class EnhancedTelemedicineService {
         .select('id')
         .eq('professional_id', professionalId)
         .eq('clinic_id', clinicId)
-        .single();
+        .single()
 
       if (associationError || !clinicAssociation) {
-        return false;
+        return false
       }
 
-      return professional.active && professional.telemedicine_authorized;
+      return professional.active && professional.telemedicine_authorized
     } catch (error) {
-      logger.error('Error validating professional authorization', { error, professionalId });
-      return false;
+      logger.error('Error validating professional authorization', { error, professionalId })
+      return false
     }
   }
 
@@ -526,19 +526,19 @@ export class EnhancedTelemedicineService {
         .eq('status', 'scheduled')
         .gte('scheduledFor', new Date().toISOString())
         .order('scheduledFor', { ascending: true })
-        .limit(50);
+        .limit(50)
 
       if (error) {
-        throw new Error(`Failed to get upcoming sessions: ${error.message}`);
+        throw new Error(`Failed to get upcoming sessions: ${error.message}`)
       }
 
-      return sessions.map(session => TelemedicineSessionSchema.parse(session));
+      return sessions.map((session) => TelemedicineSessionSchema.parse(session))
     } catch (error) {
-      logger.error('Error getting upcoming sessions', { error, clinicId });
-      throw error;
+      logger.error('Error getting upcoming sessions', { error, clinicId })
+      throw error
     }
   }
 }
 
 // Export singleton instance
-export const enhancedTelemedicineService = new EnhancedTelemedicineService();
+export const enhancedTelemedicineService = new EnhancedTelemedicineService()

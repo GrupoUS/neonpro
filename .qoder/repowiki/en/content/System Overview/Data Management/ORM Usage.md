@@ -53,7 +53,7 @@ const healthcareConfig: HealthcareConnectionConfig = {
   healthCheckInterval: parseInt(
     process.env.DATABASE_HEALTH_CHECK_INTERVAL || '30000',
   ),
-};
+}
 ```
 
 The client is extended with healthcare-specific methods beyond standard Prisma functionality, including:
@@ -78,10 +78,10 @@ The implementation uses explicit typing for all repository interfaces, ensuring 
 
 ```typescript
 export interface PatientRepository {
-  findById(id: string): Promise<Patient | null>;
-  findByClinicId(clinicId: string): Promise<Patient[]>;
-  create(patient: Omit<Patient, 'id' | 'createdAt' | 'updatedAt'>): Promise<Patient>;
-  update(id: string, updates: Partial<Patient>): Promise<Patient>;
+  findById(id: string): Promise<Patient | null>
+  findByClinicId(clinicId: string): Promise<Patient[]>
+  create(patient: Omit<Patient, 'id' | 'createdAt' | 'updatedAt'>): Promise<Patient>
+  update(id: string, updates: Partial<Patient>): Promise<Patient>
 }
 ```
 
@@ -100,7 +100,7 @@ await this.prisma.patient.findMany({
     birthDate: true,
     gender: true,
   },
-});
+})
 ```
 
 This approach ensures developers receive immediate feedback on invalid operations during development rather than encountering errors at runtime.
@@ -117,25 +117,25 @@ Transaction management in NeonPro follows a structured approach using Prisma's `
 The `deletePatientData` method demonstrates a comprehensive transaction pattern that handles cascading deletions while respecting audit requirements:
 
 ```typescript
-await this.$transaction(async tx => {
+await this.$transaction(async (tx) => {
   await this.createAuditLog('DELETE', 'PATIENT_RECORD', patientId, {
     cascadeDelete,
     retainAuditTrail,
     reason,
     deletedBy: this.currentContext?.userId,
-  });
+  })
 
   if (cascadeDelete) {
-    await tx.appointment.deleteMany({ where: { patientId } });
-    await tx.consentRecord.deleteMany({ where: { patientId } });
+    await tx.appointment.deleteMany({ where: { patientId } })
+    await tx.consentRecord.deleteMany({ where: { patientId } })
 
     if (!retainAuditTrail) {
-      await tx.auditTrail.deleteMany({ where: { patientId } });
+      await tx.auditTrail.deleteMany({ where: { patientId } })
     }
   }
 
-  await tx.patient.delete({ where: { id: patientId } });
-});
+  await tx.patient.delete({ where: { id: patientId } })
+})
 ```
 
 Transactions are used strategically for operations that modify multiple related records, ensuring either complete success or full rollback. The system combines transactions with proper error handling and audit logging to maintain both data integrity and compliance requirements.
@@ -181,9 +181,9 @@ The container acts as a service locator for repository instances, ensuring singl
 
 ```typescript
 export class RepositoryContainer {
-  private static instance: RepositoryContainer;
-  private patientRepository: IPatientRepository | null = null;
-  private appointmentRepository: IAppointmentRepository | null = null;
+  private static instance: RepositoryContainer
+  private patientRepository: IPatientRepository | null = null
+  private appointmentRepository: IAppointmentRepository | null = null
 
   static initialize(supabase: SupabaseClient): RepositoryContainer {/* ... */}
   static getInstance(): RepositoryContainer {/* ... */}
@@ -338,14 +338,14 @@ Domain-level error classes extend base error types with healthcare-specific cont
 ```typescript
 export class RepositoryError extends DomainError {
   constructor(message: string, originalError?: Error) {
-    super(`Repository error: ${message}`, 'REPOSITORY_ERROR', 500);
-    this.cause = originalError;
+    super(`Repository error: ${message}`, 'REPOSITORY_ERROR', 500)
+    this.cause = originalError
   }
 }
 
 export class QueryTimeoutError extends RepositoryError {
   constructor(query: string, timeoutMs: number) {
-    super(`Query timeout after ${timeoutMs}ms: ${query}`);
+    super(`Query timeout after ${timeoutMs}ms: ${query}`)
   }
 }
 ```
@@ -401,8 +401,8 @@ Key optimization strategies include:
 **Proper Pagination**: Implementing both offset-based and cursor-based pagination to handle large datasets efficiently:
 
 ```typescript
-if (options?.limit) query = query.limit(options.limit);
-if (options?.offset) query = query.range(/* ... */);
+if (options?.limit) query = query.limit(options.limit)
+if (options?.offset) query = query.range() /* ... */
 ```
 
 **Index-Aware Filtering**: Structuring queries to leverage database indexes, particularly on commonly filtered fields like clinicId, status, and date ranges.
@@ -410,7 +410,7 @@ if (options?.offset) query = query.range(/* ... */);
 **Batch Operations**: Processing multiple records in single operations when possible to reduce round trips:
 
 ```typescript
-await tx.appointment.deleteMany({ where: { patientId } });
+await tx.appointment.deleteMany({ where: { patientId } })
 ```
 
 **Caching Strategy**: Implementing query result caching for frequently accessed, relatively static data to reduce database load.

@@ -17,158 +17,158 @@ import {
   AIInsightType,
   AIProvider,
   createAIInsight,
-} from '../../../../packages/shared/src/types/ai-insights';
+} from '../../../../packages/shared/src/types/ai-insights'
 
 // Service response interface
 export interface ServiceResponse<T = any> {
-  success: boolean;
-  data?: T;
-  error?: string;
-  errors?: Array<{ field: string; message: string; code: string }>;
-  message?: string;
+  success: boolean
+  data?: T
+  error?: string
+  errors?: Array<{ field: string; message: string; code: string }>
+  message?: string
 }
 
 // Chat message interface
 export interface ChatMessage {
-  id?: string;
-  _role: 'user' | 'assistant' | 'system';
-  content: string;
-  timestamp: Date;
-  metadata?: Record<string, any>;
+  id?: string
+  _role: 'user' | 'assistant' | 'system'
+  content: string
+  timestamp: Date
+  metadata?: Record<string, any>
 }
 
 // Conversation interface
 export interface Conversation {
-  id: string;
-  patientId: string;
-  title: string;
-  _context: string;
-  messages: ChatMessage[];
-  createdAt: Date;
-  updatedAt: Date;
-  status: 'active' | 'archived' | 'anonymized';
-  metadata?: Record<string, any>;
+  id: string
+  patientId: string
+  title: string
+  _context: string
+  messages: ChatMessage[]
+  createdAt: Date
+  updatedAt: Date
+  status: 'active' | 'archived' | 'anonymized'
+  metadata?: Record<string, any>
 }
 
 // AI request interface
 export interface AIRequest {
-  provider: string;
-  model: string;
-  messages: ChatMessage[];
-  patientId: string;
-  temperature?: number;
-  maxTokens?: number;
-  timeout?: number;
+  provider: string
+  model: string
+  messages: ChatMessage[]
+  patientId: string
+  temperature?: number
+  maxTokens?: number
+  timeout?: number
 }
 
 // AI response interface
 export interface AIResponse {
-  response: string;
-  provider: string;
-  model: string;
-  responseTime: number;
-  tokensUsed?: number;
-  cost?: number;
-  confidence?: number;
+  response: string
+  provider: string
+  model: string
+  responseTime: number
+  tokensUsed?: number
+  cost?: number
+  confidence?: number
 }
 
 // Healthcare response interface
 export interface HealthcareResponse {
-  response: string;
-  language: string;
-  _context: string;
-  disclaimer?: string;
-  sources?: string[];
+  response: string
+  language: string
+  _context: string
+  disclaimer?: string
+  sources?: string[]
 }
 
 // Personalized response interface
 export interface PersonalizedResponse {
-  response: string;
-  personalized: boolean;
-  patientId: string;
-  patientContext?: Record<string, any>;
+  response: string
+  personalized: boolean
+  patientId: string
+  patientContext?: Record<string, any>
 }
 
 // Medical info interface
 export interface MedicalInfo {
-  response: string;
-  compliance: string;
-  disclaimer: string;
-  sources?: string[];
-  lastUpdated?: Date;
+  response: string
+  compliance: string
+  disclaimer: string
+  sources?: string[]
+  lastUpdated?: Date
 }
 
 // Conversation creation interface
 export interface ConversationCreation {
-  patientId: string;
-  title: string;
-  _context: string;
-  metadata?: Record<string, any>;
+  patientId: string
+  title: string
+  _context: string
+  metadata?: Record<string, any>
 }
 
 // Message addition interface
 export interface MessageAddition {
-  conversationId: string;
-  _role: 'user' | 'assistant' | 'system';
-  content: string;
-  timestamp: Date;
-  metadata?: Record<string, any>;
+  conversationId: string
+  _role: 'user' | 'assistant' | 'system'
+  content: string
+  timestamp: Date
+  metadata?: Record<string, any>
 }
 
 // Insights generation interface
 export interface InsightsGeneration {
-  conversationId: string;
-  analysisType: string;
-  includeHistory?: boolean;
+  conversationId: string
+  analysisType: string
+  includeHistory?: boolean
 }
 
 // Follow-up suggestion interface
 export interface FollowUpSuggestion {
-  conversationId: string;
-  lastMessage: string;
-  maxSuggestions?: number;
+  conversationId: string
+  lastMessage: string
+  maxSuggestions?: number
 }
 
 // Urgent symptoms detection interface
 export interface UrgentSymptomsDetection {
-  messages: ChatMessage[];
-  patientId?: string;
+  messages: ChatMessage[]
+  patientId?: string
 }
 
 // Access tracking interface
 export interface AccessTracking {
-  conversationId: string;
-  _userId: string;
-  action: string;
-  ipAddress?: string;
-  userAgent?: string;
+  conversationId: string
+  _userId: string
+  action: string
+  ipAddress?: string
+  userAgent?: string
 }
 
 // Data export interface
 export interface DataExport {
-  patientId: string;
-  format: 'json' | 'pdf' | 'csv';
-  includeMetadata?: boolean;
+  patientId: string
+  format: 'json' | 'pdf' | 'csv'
+  includeMetadata?: boolean
   dateRange?: {
-    start: Date;
-    end: Date;
-  };
+    start: Date
+    end: Date
+  }
 }
 
 // Rate limit interface
 export interface RateLimit {
-  allowed: boolean;
-  remaining: number;
-  resetTime: Date;
-  limit: number;
+  allowed: boolean
+  remaining: number
+  resetTime: Date
+  limit: number
 }
 
 // Health status interface
 export interface HealthStatus {
-  status: 'healthy' | 'degraded' | 'unhealthy';
-  providers: Record<string, boolean>;
-  uptime: number;
-  lastCheck: Date;
+  status: 'healthy' | 'degraded' | 'unhealthy'
+  providers: Record<string, boolean>
+  uptime: number
+  lastCheck: Date
 }
 
 /**
@@ -176,13 +176,13 @@ export interface HealthStatus {
  * Handles all AI chat operations with multi-model support and Brazilian healthcare compliance
  */
 export class AIChatService {
-  private conversations: Map<string, Conversation> = new Map();
-  private rateLimits: Map<string, RateLimit> = new Map();
-  private startTime: Date = new Date();
-  private isInitialized = false;
+  private conversations: Map<string, Conversation> = new Map()
+  private rateLimits: Map<string, RateLimit> = new Map()
+  private startTime: Date = new Date()
+  private isInitialized = false
 
   constructor() {
-    this.initialize();
+    this.initialize()
   }
 
   /**
@@ -213,9 +213,9 @@ export class AIChatService {
       createdAt: new Date(),
       updatedAt: new Date(),
       status: 'active',
-    };
+    }
 
-    this.conversations.set('conv-123', mockConversation);
+    this.conversations.set('conv-123', mockConversation)
 
     // Initialize rate limits
     this.rateLimits.set('patient-123', {
@@ -223,9 +223,9 @@ export class AIChatService {
       remaining: 100,
       resetTime: new Date(Date.now() + 3600000), // 1 hour from now
       limit: 100,
-    });
+    })
 
-    this.isInitialized = true;
+    this.isInitialized = true
   }
 
   /**
@@ -235,24 +235,24 @@ export class AIChatService {
     _request: AIRequest,
   ): Promise<ServiceResponse<AIResponse>> {
     try {
-      const startTime = Date.now();
+      const startTime = Date.now()
 
       // Validate input
-      const validation = this.validateAIRequest(request);
+      const validation = this.validateAIRequest(request)
       if (!validation.isValid) {
         return {
           success: false,
           errors: validation.errors,
-        };
+        }
       }
 
       // Check provider support
-      const supportedProviders = ['openai', 'anthropic', 'google', 'local'];
+      const supportedProviders = ['openai', 'anthropic', 'google', 'local']
       if (!supportedProviders.includes(request.provider)) {
         return {
           success: false,
           error: 'Provedor de IA não suportado',
-        };
+        }
       }
 
       // Mock AI response generation
@@ -261,9 +261,9 @@ export class AIChatService {
         anthropic: 'Resposta gerada pelo Claude-3 com foco em saúde e conformidade ANVISA.',
         google: 'Resposta do Gemini Pro adaptada para o sistema de saúde brasileiro.',
         local: 'Resposta do modelo local Llama-2 com contexto de saúde brasileiro.',
-      };
+      }
 
-      const responseTime = Date.now() - startTime;
+      const responseTime = Date.now() - startTime
       const response: AIResponse = {
         response: mockResponses[request.provider as keyof typeof mockResponses]
           || 'Resposta padrão',
@@ -273,17 +273,17 @@ export class AIChatService {
         tokensUsed: Math.floor(Math.random() * 1000) + 100,
         cost: Math.random() * 0.1,
         confidence: 0.85 + Math.random() * 0.1,
-      };
+      }
 
       return {
         success: true,
         data: response,
-      };
+      }
     } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
-      };
+      }
     }
   }
 
@@ -291,9 +291,9 @@ export class AIChatService {
    * Generate healthcare-specific response in Portuguese
    */
   async generateHealthcareResponse(params: {
-    _query: string;
-    patientId: string;
-    _context: string;
+    _query: string
+    patientId: string
+    _context: string
   }): Promise<ServiceResponse<HealthcareResponse>> {
     try {
       const response: HealthcareResponse = {
@@ -304,17 +304,17 @@ export class AIChatService {
         disclaimer:
           'Esta informação não substitui consulta médica profissional. Procure sempre orientação médica qualificada.',
         sources: ['ANVISA', 'Ministério da Saúde', 'SUS'],
-      };
+      }
 
       return {
         success: true,
         data: response,
-      };
+      }
     } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
-      };
+      }
     }
   }
 
@@ -322,9 +322,9 @@ export class AIChatService {
    * Generate personalized response based on patient data
    */
   async generatePersonalizedResponse(params: {
-    _query: string;
-    patientId: string;
-    includeHistory?: boolean;
+    _query: string
+    patientId: string
+    includeHistory?: boolean
   }): Promise<ServiceResponse<PersonalizedResponse>> {
     try {
       const response: PersonalizedResponse = {
@@ -337,17 +337,17 @@ export class AIChatService {
           lastConsultation: new Date(),
           riskFactors: ['diabetes', 'hipertensão'],
         },
-      };
+      }
 
       return {
         success: true,
         data: response,
-      };
+      }
     } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
-      };
+      }
     }
   }
 
@@ -355,9 +355,9 @@ export class AIChatService {
    * Generate ANVISA-compliant medical information
    */
   async generateMedicalInfo(params: {
-    topic: string;
-    _query: string;
-    complianceLevel: string;
+    topic: string
+    _query: string
+    complianceLevel: string
   }): Promise<ServiceResponse<MedicalInfo>> {
     try {
       const response: MedicalInfo = {
@@ -368,17 +368,17 @@ export class AIChatService {
           'Informação regulamentada pela ANVISA. Não substitui prescrição médica. Consulte sempre um profissional de saúde.',
         sources: ['ANVISA', 'Bulário Eletrônico', 'RDC ANVISA'],
         lastUpdated: new Date(),
-      };
+      }
 
       return {
         success: true,
         data: response,
-      };
+      }
     } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
-      };
+      }
     }
   }
 
@@ -399,19 +399,19 @@ export class AIChatService {
         updatedAt: new Date(),
         status: 'active',
         metadata: params.metadata,
-      };
+      }
 
-      this.conversations.set(conversation.id, conversation);
+      this.conversations.set(conversation.id, conversation)
 
       return {
         success: true,
         data: conversation,
-      };
+      }
     } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
-      };
+      }
     }
   }
 
@@ -422,13 +422,13 @@ export class AIChatService {
     params: MessageAddition,
   ): Promise<ServiceResponse<ChatMessage>> {
     try {
-      const conversation = this.conversations.get(params.conversationId);
+      const conversation = this.conversations.get(params.conversationId)
 
       if (!conversation) {
         return {
           success: false,
           error: 'Conversa não encontrada',
-        };
+        }
       }
 
       const message: ChatMessage = {
@@ -437,21 +437,21 @@ export class AIChatService {
         content: params.content,
         timestamp: params.timestamp,
         metadata: params.metadata,
-      };
+      }
 
-      conversation.messages.push(message);
-      conversation.updatedAt = new Date();
-      this.conversations.set(params.conversationId, conversation);
+      conversation.messages.push(message)
+      conversation.updatedAt = new Date()
+      this.conversations.set(params.conversationId, conversation)
 
       return {
         success: true,
         data: message,
-      };
+      }
     } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
-      };
+      }
     }
   }
 
@@ -460,18 +460,18 @@ export class AIChatService {
    */
   async getConversationHistory(conversationId: string): Promise<
     ServiceResponse<{
-      conversationId: string;
-      messages: ChatMessage[];
+      conversationId: string
+      messages: ChatMessage[]
     }>
   > {
     try {
-      const conversation = this.conversations.get(conversationId);
+      const conversation = this.conversations.get(conversationId)
 
       if (!conversation) {
         return {
           success: false,
           error: 'Conversa não encontrada',
-        };
+        }
       }
 
       return {
@@ -480,12 +480,12 @@ export class AIChatService {
           conversationId,
           messages: conversation.messages,
         },
-      };
+      }
     } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
-      };
+      }
     }
   }
 
@@ -494,14 +494,14 @@ export class AIChatService {
    */
   async listConversations(patientId: string): Promise<
     ServiceResponse<{
-      patientId: string;
-      conversations: Conversation[];
+      patientId: string
+      conversations: Conversation[]
     }>
   > {
     try {
       const patientConversations = Array.from(this.conversations.values())
-        .filter(conv => conv.patientId === patientId)
-        .sort((a, _b) => b.updatedAt.getTime() - a.updatedAt.getTime());
+        .filter((conv) => conv.patientId === patientId)
+        .sort((a, _b) => b.updatedAt.getTime() - a.updatedAt.getTime())
 
       return {
         success: true,
@@ -509,12 +509,12 @@ export class AIChatService {
           patientId,
           conversations: patientConversations,
         },
-      };
+      }
     } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
-      };
+      }
     }
   }
 
@@ -523,18 +523,18 @@ export class AIChatService {
    */
   async generateInsights(params: InsightsGeneration): Promise<
     ServiceResponse<{
-      insights: AIInsight[];
-      analysisType: string;
+      insights: AIInsight[]
+      analysisType: string
     }>
   > {
     try {
-      const conversation = this.conversations.get(params.conversationId);
+      const conversation = this.conversations.get(params.conversationId)
 
       if (!conversation) {
         return {
           success: false,
           error: 'Conversa não encontrada',
-        };
+        }
       }
 
       // Mock insights generation
@@ -552,7 +552,7 @@ export class AIChatService {
           model: 'gpt-4',
           provider: AIProvider.OPENAI,
         }),
-      ];
+      ]
 
       return {
         success: true,
@@ -560,12 +560,12 @@ export class AIChatService {
           insights,
           analysisType: params.analysisType,
         },
-      };
+      }
     } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
-      };
+      }
     }
   }
 
@@ -574,7 +574,7 @@ export class AIChatService {
    */
   async suggestFollowUp(params: FollowUpSuggestion): Promise<
     ServiceResponse<{
-      suggestions: string[];
+      suggestions: string[]
     }>
   > {
     try {
@@ -584,19 +584,19 @@ export class AIChatService {
         'Você está tomando algum medicamento atualmente?',
         'Já teve sintomas similares antes?',
         'Gostaria de agendar uma consulta médica?',
-      ];
+      ]
 
       return {
         success: true,
         data: {
           suggestions: suggestions.slice(0, params.maxSuggestions || 3),
         },
-      };
+      }
     } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
-      };
+      }
     }
   }
 
@@ -605,9 +605,9 @@ export class AIChatService {
    */
   async detectUrgentSymptoms(params: UrgentSymptomsDetection): Promise<
     ServiceResponse<{
-      urgent: boolean;
-      urgencyLevel: 'low' | 'medium' | 'high' | 'critical';
-      recommendation: string;
+      urgent: boolean
+      urgencyLevel: 'low' | 'medium' | 'high' | 'critical'
+      recommendation: string
     }>
   > {
     try {
@@ -617,10 +617,10 @@ export class AIChatService {
         'falta de ar',
         'desmaio',
         'sangramento',
-      ];
-      const hasUrgentSymptoms = params.messages.some(msg =>
-        urgentKeywords.some(keyword => msg.content.toLowerCase().includes(keyword))
-      );
+      ]
+      const hasUrgentSymptoms = params.messages.some((msg) =>
+        urgentKeywords.some((keyword) => msg.content.toLowerCase().includes(keyword))
+      )
 
       return {
         success: true,
@@ -631,12 +631,12 @@ export class AIChatService {
             ? 'Procure atendimento médico imediatamente ou ligue para o SAMU (192)'
             : 'Continue monitorando os sintomas e agende consulta se necessário',
         },
-      };
+      }
     } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
-      };
+      }
     }
   }
 
@@ -645,26 +645,26 @@ export class AIChatService {
    */
   async trackConversationAccess(params: AccessTracking): Promise<
     ServiceResponse<{
-      accessLogged: boolean;
+      accessLogged: boolean
     }>
   > {
     try {
-      const conversation = this.conversations.get(params.conversationId);
+      const conversation = this.conversations.get(params.conversationId)
 
       if (!conversation) {
         return {
           success: false,
           error: 'Conversa não encontrada',
-        };
+        }
       }
 
       // Mock access logging
       if (!conversation.metadata) {
-        conversation.metadata = {};
+        conversation.metadata = {}
       }
 
       if (!conversation.metadata.accessLog) {
-        conversation.metadata.accessLog = [];
+        conversation.metadata.accessLog = []
       }
 
       conversation.metadata.accessLog.push({
@@ -673,19 +673,19 @@ export class AIChatService {
         timestamp: new Date(),
         ipAddress: params.ipAddress,
         userAgent: params.userAgent,
-      });
+      })
 
-      this.conversations.set(params.conversationId, conversation);
+      this.conversations.set(params.conversationId, conversation)
 
       return {
         success: true,
         data: { accessLogged: true },
-      };
+      }
     } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
-      };
+      }
     }
   }
 
@@ -694,40 +694,40 @@ export class AIChatService {
    */
   async anonymizeConversation(conversationId: string): Promise<
     ServiceResponse<{
-      anonymized: boolean;
+      anonymized: boolean
     }>
   > {
     try {
-      const conversation = this.conversations.get(conversationId);
+      const conversation = this.conversations.get(conversationId)
 
       if (!conversation) {
         return {
           success: false,
           error: 'Conversa não encontrada',
-        };
+        }
       }
 
       // Anonymize conversation data
-      conversation.title = `CONVERSA ANONIMIZADA - ${Date.now()}`;
-      conversation.messages = conversation.messages.map(msg => ({
+      conversation.title = `CONVERSA ANONIMIZADA - ${Date.now()}`
+      conversation.messages = conversation.messages.map((msg) => ({
         ...msg,
         content: `MENSAGEM ANONIMIZADA - ${Date.now()}`,
-      }));
-      conversation.status = 'anonymized';
-      conversation.updatedAt = new Date();
+      }))
+      conversation.status = 'anonymized'
+      conversation.updatedAt = new Date()
 
-      this.conversations.set(conversationId, conversation);
+      this.conversations.set(conversationId, conversation)
 
       return {
         success: true,
         data: { anonymized: true },
         message: 'Conversa anonimizada com sucesso',
-      };
+      }
     } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
-      };
+      }
     }
   }
 
@@ -736,13 +736,13 @@ export class AIChatService {
    */
   async exportConversationData(params: DataExport): Promise<
     ServiceResponse<{
-      exportUrl: string;
-      format: string;
+      exportUrl: string
+      format: string
     }>
   > {
     try {
       // Mock export URL generation
-      const exportUrl = `/exports/conversations-${params.patientId}-${Date.now()}.${params.format}`;
+      const exportUrl = `/exports/conversations-${params.patientId}-${Date.now()}.${params.format}`
 
       return {
         success: true,
@@ -750,12 +750,12 @@ export class AIChatService {
           exportUrl,
           format: params.format,
         },
-      };
+      }
     } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
-      };
+      }
     }
   }
 
@@ -769,17 +769,17 @@ export class AIChatService {
         remaining: 100,
         resetTime: new Date(Date.now() + 3600000),
         limit: 100,
-      };
+      }
 
       return {
         success: true,
         data: rateLimit,
-      };
+      }
     } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
-      };
+      }
     }
   }
 
@@ -794,15 +794,15 @@ export class AIChatService {
         return {
           success: false,
           error: 'Timeout na requisição para o provedor de IA',
-        };
+        }
       }
 
-      return this.generateResponse(request);
+      return this.generateResponse(request)
     } catch {
       return {
         success: false,
         error: 'Erro interno do servidor',
-      };
+      }
     }
   }
 
@@ -810,7 +810,7 @@ export class AIChatService {
    * Get service health status
    */
   getHealthStatus(): HealthStatus {
-    const uptime = Date.now() - this.startTime.getTime();
+    const uptime = Date.now() - this.startTime.getTime()
 
     return {
       status: 'healthy',
@@ -822,24 +822,24 @@ export class AIChatService {
       },
       uptime: Math.floor(uptime / 1000), // seconds
       lastCheck: new Date(),
-    };
+    }
   }
 
   /**
    * Validate AI request parameters
    */
   private validateAIRequest(_request: AIRequest): {
-    isValid: boolean;
-    errors: Array<{ field: string; message: string; code: string }>;
+    isValid: boolean
+    errors: Array<{ field: string; message: string; code: string }>
   } {
-    const errors: Array<{ field: string; message: string; code: string }> = [];
+    const errors: Array<{ field: string; message: string; code: string }> = []
 
     if (!request.provider || request.provider.trim() === '') {
       errors.push({
         field: 'provider',
         message: 'Provedor de IA é obrigatório',
         code: 'REQUIRED',
-      });
+      })
     }
 
     if (!request.model || request.model.trim() === '') {
@@ -847,7 +847,7 @@ export class AIChatService {
         field: 'model',
         message: 'Modelo de IA é obrigatório',
         code: 'REQUIRED',
-      });
+      })
     }
 
     if (!request.messages || request.messages.length === 0) {
@@ -855,7 +855,7 @@ export class AIChatService {
         field: 'messages',
         message: 'Mensagens são obrigatórias',
         code: 'REQUIRED',
-      });
+      })
     }
 
     if (!request.patientId || request.patientId.trim() === '') {
@@ -863,12 +863,12 @@ export class AIChatService {
         field: 'patientId',
         message: 'ID do paciente é obrigatório',
         code: 'REQUIRED',
-      });
+      })
     }
 
     return {
       isValid: errors.length === 0,
       errors,
-    };
+    }
   }
 }

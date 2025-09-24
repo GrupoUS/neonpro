@@ -40,18 +40,18 @@ related:
 ```typescript
 // ✅ CORRECT - Clear medical terminology
 interface PatientRecord {
-  patientId: string;
-  medicalRecordNumber: string;
-  healthInsuranceNumber: string;
-  emergencyContact: EmergencyContact;
-  lgpdConsent: ConsentStatus;
+  patientId: string
+  medicalRecordNumber: string
+  healthInsuranceNumber: string
+  emergencyContact: EmergencyContact
+  lgpdConsent: ConsentStatus
 }
 
 // ❌ INCORRECT - Confusing abbreviations
 interface PatRec {
-  id: string;
-  mrn: string;
-  ins: string;
+  id: string
+  mrn: string
+  ins: string
 }
 ```
 
@@ -63,20 +63,20 @@ class HealthcareError extends Error {
   constructor(
     message: string,
     public readonly healthcareContext: {
-      patientId?: string;
-      appointmentId?: string;
-      clinicId?: string;
-      action?: string;
-      severity: 'low' | 'medium' | 'high' | 'critical';
+      patientId?: string
+      appointmentId?: string
+      clinicId?: string
+      action?: string
+      severity: 'low' | 'medium' | 'high' | 'critical'
     },
   ) {
-    super(message);
-    this.name = 'HealthcareError';
+    super(message)
+    this.name = 'HealthcareError'
   }
 }
 
 // ❌ INCORRECT - Generic error
-throw new Error('Something went wrong');
+throw new Error('Something went wrong')
 ```
 
 ## 🔧 TypeScript 5.7.2 Standards
@@ -85,13 +85,13 @@ throw new Error('Something went wrong');
 
 ```typescript
 // Branded types for healthcare safety
-type PatientId = string & { readonly __brand: unique symbol };
-type CPF = string & { readonly __brand: unique symbol };
-type AppointmentId = string & { readonly __brand: unique symbol };
+type PatientId = string & { readonly __brand: unique symbol }
+type CPF = string & { readonly __brand: unique symbol }
+type AppointmentId = string & { readonly __brand: unique symbol }
 
 // Utility types for sensitive data
-type SensitiveData<T> = T & { readonly __sensitive: true };
-type AuditableAction = 'create' | 'read' | 'update' | 'delete' | 'export';
+type SensitiveData<T> = T & { readonly __sensitive: true }
+type AuditableAction = 'create' | 'read' | 'update' | 'delete' | 'export'
 
 // Zod schema for runtime validation
 const PatientSchema = z.object({
@@ -102,7 +102,7 @@ const PatientSchema = z.object({
       .string()
       .regex(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/)
       .transform((val): CPF => val as CPF),
-    dateOfBirth: z.date().refine(date => date < new Date(), {
+    dateOfBirth: z.date().refine((date) => date < new Date(), {
       message: 'Data de nascimento deve ser no passado',
     }),
   }),
@@ -111,9 +111,9 @@ const PatientSchema = z.object({
     consentDate: z.date(),
     dataRetentionUntil: z.date(),
   }),
-});
+})
 
-type Patient = z.infer<typeof PatientSchema>;
+type Patient = z.infer<typeof PatientSchema>
 ```
 
 ### Advanced Type Patterns
@@ -122,23 +122,23 @@ type Patient = z.infer<typeof PatientSchema>;
 // Mapped types for audit trails
 type AuditLog<T> = {
   [K in keyof T]: {
-    oldValue: T[K];
-    newValue: T[K];
-    changedAt: Date;
-    changedBy: string;
-  };
-};
+    oldValue: T[K]
+    newValue: T[K]
+    changedAt: Date
+    changedBy: string
+  }
+}
 
 // Discriminated unions for user types
 type HealthcareUser =
   | { role: 'doctor'; crm: string; specialization: string }
   | { role: 'nurse'; coren: string; department: string }
   | { role: 'admin'; permissions: string[] }
-  | { role: 'receptionist'; clinicId: string };
+  | { role: 'receptionist'; clinicId: string }
 
 // Type guards for runtime validation
 function isPatient(obj: unknown): obj is Patient {
-  return PatientSchema.safeParse(obj).success;
+  return PatientSchema.safeParse(obj).success
 }
 ```
 
@@ -183,7 +183,7 @@ export const Route = createFileRoute('/patients/$patientId')({
         patientId: params.patientId,
         action: 'view_patient',
         severity: 'high',
-      });
+      })
     }
   },
   loader: async ({ params }) => {
@@ -192,11 +192,11 @@ export const Route = createFileRoute('/patients/$patientId')({
       patientId: params.patientId,
       action: 'view',
       timestamp: new Date(),
-    });
-    return await getPatientData(params.patientId);
+    })
+    return await getPatientData(params.patientId)
   },
   errorComponent: PatientErrorBoundary,
-});
+})
 ```
 
 ### Type-Safe Navigation
@@ -204,7 +204,7 @@ export const Route = createFileRoute('/patients/$patientId')({
 ```typescript
 // ✅ CORRECT - Type-safe navigation with audit
 function usePatientNavigation() {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
   const goToPatient = (patientId: PatientId) => {
     navigate({
@@ -215,10 +215,10 @@ function usePatientNavigation() {
         timestamp: Date.now(),
         auditTrail: true,
       },
-    });
-  };
+    })
+  }
 
-  return { goToPatient };
+  return { goToPatient }
 }
 ```
 
@@ -229,7 +229,7 @@ function usePatientNavigation() {
 export const protectedPatientRoute = createFileRoute('/patients/$patientId')({
   beforeLoad: ({ params, context }) => {
     if (!context.user) {
-      throw redirect({ to: '/auth/login' });
+      throw redirect({ to: '/auth/login' })
     }
 
     if (!hasPatientAccess(context.user.id, params.patientId)) {
@@ -238,7 +238,7 @@ export const protectedPatientRoute = createFileRoute('/patients/$patientId')({
         userId: context.user.id,
         action: 'view_patient',
         severity: 'high',
-      });
+      })
     }
   },
   loader: async ({ params, context }) => {
@@ -248,10 +248,10 @@ export const protectedPatientRoute = createFileRoute('/patients/$patientId')({
       userId: context.user.id,
       action: 'view',
       timestamp: new Date(),
-    });
-    return await getPatientData(params.patientId);
+    })
+    return await getPatientData(params.patientId)
   },
-});
+})
 ```
 
 ## 🏗️ Vite Build Optimization
@@ -283,7 +283,7 @@ export default defineConfig({
     host: '0.0.0.0', // Local network access
     port: 3000,
   },
-});
+})
 ```
 
 ### Performance Monitoring
@@ -291,7 +291,7 @@ export default defineConfig({
 ```typescript
 // ✅ CORRECT - Healthcare-critical performance monitoring
 function initHealthcareMetrics() {
-  onLCP(metric => {
+  onLCP((metric) => {
     // LCP < 2.5s critical for emergency forms
     if (metric.value > 2500) {
       reportHealthcareMetric('lcp_slow', {
@@ -299,15 +299,15 @@ function initHealthcareMetrics() {
         page: window.location.pathname,
         severity: 'critical',
         impact: 'emergency_response_delay',
-      });
+      })
     }
-  });
+  })
 
   // Patient record loading SLA: < 1.5s
-  performance.mark('patient-load-start');
+  performance.mark('patient-load-start')
   // ... data loading
-  performance.mark('patient-load-end');
-  performance.measure('patient-load', 'patient-load-start', 'patient-load-end');
+  performance.mark('patient-load-end')
+  performance.measure('patient-load', 'patient-load-start', 'patient-load-end')
 }
 ```
 
@@ -318,37 +318,37 @@ function initHealthcareMetrics() {
 ```typescript
 // ✅ CORRECT - useOptimistic for patient updates
 function usePatientUpdates(patientId: PatientId) {
-  const [patient, setPatient] = useState<Patient>();
+  const [patient, setPatient] = useState<Patient>()
   const [optimisticPatient, updateOptimisticPatient] = useOptimistic(
     patient,
     (current, update: Partial<Patient>) => ({ ...current, ...update }),
-  );
-  const [isPending, startTransition] = useTransition();
+  )
+  const [isPending, startTransition] = useTransition()
 
   const updatePatient = async (updates: Partial<Patient>) => {
-    updateOptimisticPatient(updates);
+    updateOptimisticPatient(updates)
 
     startTransition(async () => {
       try {
-        await updatePatientInDatabase(patientId, updates);
+        await updatePatientInDatabase(patientId, updates)
         await logPatientUpdate({
           patientId,
           changes: updates,
           timestamp: new Date(),
-        });
-        setPatient(prev => ({ ...prev, ...updates }));
+        })
+        setPatient((prev) => ({ ...prev, ...updates }))
       } catch (error) {
-        setPatient(patient); // Revert optimistic update
+        setPatient(patient) // Revert optimistic update
         throw new HealthcareError('Falha ao atualizar prontuário', {
           patientId,
           action: 'update',
           severity: 'high',
-        });
+        })
       }
-    });
-  };
+    })
+  }
 
-  return { optimisticPatient, updatePatient, isPending };
+  return { optimisticPatient, updatePatient, isPending }
 }
 ```
 
@@ -357,12 +357,12 @@ function usePatientUpdates(patientId: PatientId) {
 ```typescript
 // ✅ CORRECT - Well-structured component with React 19
 interface PatientCardProps {
-  patient: Patient;
-  onEdit: (patientId: PatientId) => void;
-  onDelete: (patientId: PatientId) => Promise<void>;
-  readOnly?: boolean;
-  className?: string;
-  'data-testid'?: string;
+  patient: Patient
+  onEdit: (patientId: PatientId) => void
+  onDelete: (patientId: PatientId) => Promise<void>
+  readOnly?: boolean
+  className?: string
+  'data-testid'?: string
 }
 
 export function PatientCard({
@@ -373,33 +373,33 @@ export function PatientCard({
   className,
   'data-testid': testId,
 }: PatientCardProps) {
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [isPending, startTransition] = useTransition();
+  const [isDeleting, setIsDeleting] = useState(false)
+  const [isPending, startTransition] = useTransition()
 
   const handleDelete = () => {
     startTransition(async () => {
-      setIsDeleting(true);
+      setIsDeleting(true)
       try {
-        await onDelete(patient.id);
+        await onDelete(patient.id)
         await logHealthcareAction({
           action: 'delete_patient',
           patientId: patient.id,
           timestamp: new Date(),
-        });
+        })
       } catch (error) {
         throw new HealthcareError('Falha ao excluir paciente', {
           patientId: patient.id,
           action: 'delete',
           severity: 'critical',
-        });
+        })
       } finally {
-        setIsDeleting(false);
+        setIsDeleting(false)
       }
-    });
-  };
+    })
+  }
 
   if (!patient) {
-    return <PatientCardSkeleton />;
+    return <PatientCardSkeleton />
   }
 
   return (
@@ -412,7 +412,7 @@ export function PatientCard({
     >
       {/* Component content */}
     </Card>
-  );
+  )
 }
 ```
 
@@ -421,8 +421,8 @@ export function PatientCard({
 ```typescript
 // ✅ CORRECT - Suspense with concurrent features
 function PatientDataProvider({ patientId, children }: {
-  patientId: PatientId;
-  children: React.ReactNode;
+  patientId: PatientId
+  children: React.ReactNode
 }) {
   return (
     <Suspense fallback={<PatientDataSkeleton />}>
@@ -430,25 +430,25 @@ function PatientDataProvider({ patientId, children }: {
         {children}
       </PatientDataBoundary>
     </Suspense>
-  );
+  )
 }
 
 function PatientDataBoundary({ patientId, children }: {
-  patientId: PatientId;
-  children: React.ReactNode;
+  patientId: PatientId
+  children: React.ReactNode
 }) {
-  const patientPromise = getPatientData(patientId);
-  const patient = use(patientPromise); // React 19 'use' hook
+  const patientPromise = getPatientData(patientId)
+  const patient = use(patientPromise) // React 19 'use' hook
 
   if (!patient || !hasPatientAccess(patient.id)) {
-    throw new HealthcareError('Acesso ao paciente não autorizado');
+    throw new HealthcareError('Acesso ao paciente não autorizado')
   }
 
   return (
     <PatientContext.Provider value={patient}>
       {children}
     </PatientContext.Provider>
-  );
+  )
 }
 ```
 
@@ -500,7 +500,7 @@ export const supabase = createClient(
       },
     },
   },
-);
+)
 
 // Healthcare-specific query helpers
 export const healthcareQueries = {
@@ -511,11 +511,11 @@ export const healthcareQueries = {
       action: 'view',
       timestamp: new Date().toISOString(),
       user_id: (await supabase.auth.getUser()).data.user?.id,
-    });
+    })
 
-    return supabase.from('patients').select('*').eq('id', patientId).single();
+    return supabase.from('patients').select('*').eq('id', patientId).single()
   },
-};
+}
 ```
 
 ### Real-time Healthcare Subscriptions
@@ -523,7 +523,7 @@ export const healthcareQueries = {
 ```typescript
 // ✅ CORRECT - Real-time subscriptions for clinics
 function useAppointmentUpdates(clinicId: string) {
-  const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const [appointments, setAppointments] = useState<Appointment[]>([])
 
   useEffect(() => {
     const subscription = supabase
@@ -536,13 +536,13 @@ function useAppointmentUpdates(clinicId: string) {
           table: 'appointments',
           filter: `clinic_id=eq.${clinicId}`,
         },
-        payload => {
+        (payload) => {
           if (payload.eventType === 'INSERT') {
             showHealthcareNotification({
               type: 'new_appointment',
               message: 'Novo agendamento recebido',
               priority: 'medium',
-            });
+            })
           }
 
           if (
@@ -553,35 +553,35 @@ function useAppointmentUpdates(clinicId: string) {
               type: 'emergency',
               message: 'Agendamento de emergência!',
               priority: 'critical',
-            });
+            })
           }
 
-          setAppointments(prev => {
+          setAppointments((prev) => {
             switch (payload.eventType) {
               case 'INSERT':
-                return [...prev, payload.new as Appointment];
+                return [...prev, payload.new as Appointment]
               case 'UPDATE':
-                return prev.map(apt =>
+                return prev.map((apt) =>
                   apt.id === payload.new.id
                     ? (payload.new as Appointment)
                     : apt
-                );
+                )
               case 'DELETE':
-                return prev.filter(apt => apt.id !== payload.old.id);
+                return prev.filter((apt) => apt.id !== payload.old.id)
               default:
-                return prev;
+                return prev
             }
-          });
+          })
         },
       )
-      .subscribe();
+      .subscribe()
 
     return () => {
-      subscription.unsubscribe();
-    };
-  }, [clinicId]);
+      subscription.unsubscribe()
+    }
+  }, [clinicId])
 
-  return appointments;
+  return appointments
 }
 ```
 
@@ -614,7 +614,7 @@ const buttonVariants = cva(
       size: 'md',
     },
   },
-);
+)
 ```
 
 ### Healthcare Card Patterns
@@ -622,10 +622,10 @@ const buttonVariants = cva(
 ```typescript
 // ✅ CORRECT - Card for sensitive data
 interface PatientDataCardProps {
-  patient: Patient;
-  accessLevel: 'public' | 'sensitive' | 'confidential';
-  showSensitiveData?: boolean;
-  className?: string;
+  patient: Patient
+  accessLevel: 'public' | 'sensitive' | 'confidential'
+  showSensitiveData?: boolean
+  className?: string
 }
 
 export function PatientDataCard({
@@ -673,7 +673,7 @@ export function PatientDataCard({
         </div>
       </CardContent>
     </Card>
-  );
+  )
 }
 ```
 
@@ -682,11 +682,11 @@ export function PatientDataCard({
 ```typescript
 // ✅ CORRECT - Accessible emergency alert
 interface EmergencyAlertProps {
-  severity: 'low' | 'medium' | 'high' | 'critical';
-  message: string;
-  patientName?: string;
-  onAcknowledge: () => void;
-  autoFocus?: boolean;
+  severity: 'low' | 'medium' | 'high' | 'critical'
+  message: string
+  patientName?: string
+  onAcknowledge: () => void
+  autoFocus?: boolean
 }
 
 export function EmergencyAlert({
@@ -696,13 +696,13 @@ export function EmergencyAlert({
   onAcknowledge,
   autoFocus = false,
 }: EmergencyAlertProps) {
-  const alertRef = useRef<HTMLDivElement>(null);
+  const alertRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     if (autoFocus && severity === 'critical' && alertRef.current) {
-      alertRef.current.focus();
+      alertRef.current.focus()
     }
-  }, [autoFocus, severity]);
+  }, [autoFocus, severity])
 
   return (
     <Alert
@@ -741,7 +741,7 @@ export function EmergencyAlert({
         </Button>
       </div>
     </Alert>
-  );
+  )
 }
 ```
 
@@ -752,65 +752,65 @@ export function EmergencyAlert({
 ```typescript
 // ✅ CORRECT - Healthcare tests with Vitest
 describe('PatientService - Healthcare Security', () => {
-  let patientService: PatientService;
-  let mockAuditLog: any;
+  let patientService: PatientService
+  let mockAuditLog: any
 
   beforeEach(() => {
-    patientService = new PatientService();
-    mockAuditLog = vi.spyOn(patientService, 'logPatientAccess');
-  });
+    patientService = new PatientService()
+    mockAuditLog = vi.spyOn(patientService, 'logPatientAccess')
+  })
 
   afterEach(() => {
-    vi.restoreAllMocks();
-  });
+    vi.restoreAllMocks()
+  })
 
   describe('createPatient', () => {
     it('should create patient with valid data and log audit', async () => {
-      const authorizedUser = createMockUser({ role: 'doctor' });
+      const authorizedUser = createMockUser({ role: 'doctor' })
       const validPatientData = createMockPatient({
         fullName: 'João Silva',
         cpf: '123.456.789-00',
         dateOfBirth: new Date('1990-01-01'),
-      });
+      })
 
       const result = await patientService.createPatient(
         validPatientData,
         authorizedUser,
-      );
+      )
 
-      expect(result.success).toBe(true);
-      expect(result.data).toHaveProperty('id');
-      expect(result.data?.fullName).toBe(validPatientData.fullName);
+      expect(result.success).toBe(true)
+      expect(result.data).toHaveProperty('id')
+      expect(result.data?.fullName).toBe(validPatientData.fullName)
 
       expect(mockAuditLog).toHaveBeenCalledWith({
         action: 'create_patient',
         patientId: result.data?.id,
         userId: authorizedUser.id,
         timestamp: expect.any(Date),
-      });
-    });
+      })
+    })
 
     it('should reject patient creation without proper authorization', async () => {
-      const unauthorizedUser = createMockUser({ role: 'receptionist' });
-      const patientData = createMockPatient();
+      const unauthorizedUser = createMockUser({ role: 'receptionist' })
+      const patientData = createMockPatient()
 
       await expect(
         patientService.createPatient(patientData, unauthorizedUser),
-      ).rejects.toThrow('Permissão insuficiente para criar pacientes');
-    });
+      ).rejects.toThrow('Permissão insuficiente para criar pacientes')
+    })
 
     it('should validate CPF format and reject invalid CPF', async () => {
-      const user = createMockUser({ role: 'doctor' });
+      const user = createMockUser({ role: 'doctor' })
       const invalidPatientData = createMockPatient({
         cpf: '111.111.111-11', // Invalid CPF
-      });
+      })
 
       await expect(
         patientService.createPatient(invalidPatientData, user),
-      ).rejects.toThrow('CPF inválido');
-    });
-  });
-});
+      ).rejects.toThrow('CPF inválido')
+    })
+  })
+})
 ```
 
 ### Integration Testing with MSW
@@ -826,11 +826,11 @@ const server = setupServer(
         email: 'doctor@clinic.com',
         role: 'doctor',
       },
-    });
+    })
   }),
   http.get('/rest/v1/patients', ({ request }) => {
-    const url = new URL(request.url);
-    const select = url.searchParams.get('select');
+    const url = new URL(request.url)
+    const select = url.searchParams.get('select')
 
     return HttpResponse.json([
       {
@@ -838,13 +838,13 @@ const server = setupServer(
         name: 'João Silva',
         ...(select?.includes('cpf') ? { cpf: '123.456.789-00' } : {}),
       },
-    ]);
+    ])
   }),
-);
+)
 
-beforeAll(() => server.listen());
-afterEach(() => server.resetHandlers());
-afterAll(() => server.close());
+beforeAll(() => server.listen())
+afterEach(() => server.resetHandlers())
+afterAll(() => server.close())
 ```
 
 ### E2E Testing with Playwright
@@ -853,44 +853,44 @@ afterAll(() => server.close());
 // ✅ CORRECT - E2E tests for critical healthcare flows
 test.describe('Emergency Patient Registration', () => {
   test('should allow quick patient registration in emergency scenarios', async ({ page }) => {
-    await page.goto('/emergency/register');
+    await page.goto('/emergency/register')
 
-    await page.fill('[data-testid="patient-name"]', 'Maria Silva');
-    await page.fill('[data-testid="patient-cpf"]', '987.654.321-00');
-    await page.selectOption('[data-testid="emergency-level"]', 'high');
+    await page.fill('[data-testid="patient-name"]', 'Maria Silva')
+    await page.fill('[data-testid="patient-cpf"]', '987.654.321-00')
+    await page.selectOption('[data-testid="emergency-level"]', 'high')
 
-    await page.click('[data-testid="emergency-submit"]');
+    await page.click('[data-testid="emergency-submit"]')
 
-    await expect(page.locator('[data-testid="success-message"]')).toBeVisible();
-    await expect(page).toHaveURL(/\/patients\/.*\/emergency/);
+    await expect(page.locator('[data-testid="success-message"]')).toBeVisible()
+    await expect(page).toHaveURL(/\/patients\/.*\/emergency/)
 
     const auditLogs = await page.request.get(
       '/api/audit-logs?action=emergency_registration',
-    );
-    expect(auditLogs.ok()).toBeTruthy();
-  });
+    )
+    expect(auditLogs.ok()).toBeTruthy()
+  })
 
   test('should handle LGPD consent flow during registration', async ({ page }) => {
-    await page.goto('/patients/register');
+    await page.goto('/patients/register')
 
-    await page.fill('[data-testid="patient-name"]', 'Pedro Santos');
-    await page.fill('[data-testid="patient-email"]', 'pedro@email.com');
+    await page.fill('[data-testid="patient-name"]', 'Pedro Santos')
+    await page.fill('[data-testid="patient-email"]', 'pedro@email.com')
 
     await expect(
       page.locator('[data-testid="lgpd-consent-dialog"]'),
-    ).toBeVisible();
+    ).toBeVisible()
 
-    await page.check('[data-testid="consent-data-processing"]');
-    await page.check('[data-testid="consent-medical-records"]');
-    await page.click('[data-testid="accept-consent"]');
+    await page.check('[data-testid="consent-data-processing"]')
+    await page.check('[data-testid="consent-medical-records"]')
+    await page.click('[data-testid="accept-consent"]')
 
-    await page.click('[data-testid="register-patient"]');
+    await page.click('[data-testid="register-patient"]')
 
     await expect(
       page.locator('[data-testid="consent-confirmation"]'),
-    ).toBeVisible();
-  });
-});
+    ).toBeVisible()
+  })
+})
 ```
 
 ## 🔒 Security & LGPD Standards
@@ -900,10 +900,10 @@ test.describe('Emergency Patient Registration', () => {
 ```typescript
 // ✅ CORRECT - Protected sensitive data
 interface PatientPublicView {
-  id: PatientId;
-  firstName: string; // Only first name
-  appointmentCount: number;
-  lastVisit: Date;
+  id: PatientId
+  firstName: string // Only first name
+  appointmentCount: number
+  lastVisit: Date
   // CPF, address, phone omitted
 }
 
@@ -913,12 +913,12 @@ function getPatientPublicView(patient: Patient): PatientPublicView {
     firstName: patient.personalInfo.fullName.split(' ')[0],
     appointmentCount: patient.appointments.length,
     lastVisit: patient.lastAppointment?.date ?? new Date(),
-  };
+  }
 }
 
 // ❌ INCORRECT - Exposing sensitive data
 function getPatientData(patient: Patient) {
-  return patient; // Exposes all data
+  return patient // Exposes all data
 }
 ```
 
@@ -938,7 +938,7 @@ const validatePatientInput = z.object({
     .refine(validateCPF),
   email: z.string().email(),
   phone: z.string().regex(/^\+55\d{2}\d{8,9}$/),
-});
+})
 
 // ❌ INCORRECT - No validation
 function createPatient(data: any) {
@@ -952,11 +952,11 @@ function createPatient(data: any) {
 
 ```typescript
 // ✅ CORRECT - Specific imports
-import { formatDate } from '@neonpro/utils/date';
-import { validateCPF } from '@neonpro/utils/validation';
+import { formatDate } from '@neonpro/utils/date'
+import { validateCPF } from '@neonpro/utils/validation'
 
 // ❌ INCORRECT - Full import
-import * as utils from '@neonpro/utils';
+import * as utils from '@neonpro/utils'
 ```
 
 ### Component Lazy Loading
@@ -983,7 +983,7 @@ const PatientReportsModal = lazy(() =>
 // ✅ CORRECT - Explains the "why"
 // Apply special discount for SUS patients according to
 // ANVISA 2023 regulation, article 15.3
-const susDiscount = basePrice * 0.15;
+const susDiscount = basePrice * 0.15
 
 /**
  * Calculate average wait time considering medical priorities
@@ -1001,7 +1001,7 @@ function calculateWaitTime(
 
 // ❌ INCORRECT - Obvious comment
 // Increment counter
-counter++;
+counter++
 ```
 
 ## ✅ Quality Checklist

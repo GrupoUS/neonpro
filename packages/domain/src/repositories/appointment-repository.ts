@@ -4,7 +4,7 @@ import {
   AppointmentPriority,
   AppointmentStatus,
   AppointmentType,
-} from '../entities/appointment';
+} from '../entities/appointment'
 
 /**
  * Appointment Repository Interface
@@ -16,7 +16,7 @@ export interface AppointmentRepository {
    * @param id Appointment ID
    * @returns Appointment or null if not found
    */
-  findById(id: string): Promise<Appointment | null>;
+  findById(id: string): Promise<Appointment | null>
 
   /**
    * Find appointments by patient ID
@@ -27,7 +27,7 @@ export interface AppointmentRepository {
   findByPatientId(
     patientId: string,
     includePast?: boolean,
-  ): Promise<Appointment[]>;
+  ): Promise<Appointment[]>
 
   /**
    * Find appointments by professional ID
@@ -40,7 +40,7 @@ export interface AppointmentRepository {
     professionalId: string,
     startDate?: string,
     endDate?: string,
-  ): Promise<Appointment[]>;
+  ): Promise<Appointment[]>
 
   /**
    * Find appointments by clinic ID
@@ -53,7 +53,7 @@ export interface AppointmentRepository {
     clinicId: string,
     startDate?: string,
     endDate?: string,
-  ): Promise<Appointment[]>;
+  ): Promise<Appointment[]>
 
   /**
    * Find appointments by room ID
@@ -66,7 +66,7 @@ export interface AppointmentRepository {
     roomId: string,
     startDate?: string,
     endDate?: string,
-  ): Promise<Appointment[]>;
+  ): Promise<Appointment[]>
 
   /**
    * Find appointments by status
@@ -77,7 +77,7 @@ export interface AppointmentRepository {
   findByStatus(
     status: AppointmentStatus,
     clinicId?: string,
-  ): Promise<Appointment[]>;
+  ): Promise<Appointment[]>
 
   /**
    * Find appointments by date range
@@ -90,7 +90,7 @@ export interface AppointmentRepository {
     startDate: string,
     endDate: string,
     clinicId?: string,
-  ): Promise<Appointment[]>;
+  ): Promise<Appointment[]>
 
   /**
    * Find appointments for calendar view
@@ -105,7 +105,7 @@ export interface AppointmentRepository {
     endDate: string,
     clinicId?: string,
     professionalId?: string,
-  ): Promise<AppointmentCalendarView[]>;
+  ): Promise<AppointmentCalendarView[]>
 
   /**
    * Check for time conflicts
@@ -120,7 +120,7 @@ export interface AppointmentRepository {
     startTime: string,
     endTime: string,
     excludeAppointmentId?: string,
-  ): Promise<boolean>;
+  ): Promise<boolean>
 
   /**
    * Create a new appointment
@@ -129,7 +129,7 @@ export interface AppointmentRepository {
    */
   create(
     appointment: Omit<Appointment, 'id' | 'createdAt' | 'updatedAt'>,
-  ): Promise<Appointment>;
+  ): Promise<Appointment>
 
   /**
    * Update an existing appointment
@@ -137,7 +137,7 @@ export interface AppointmentRepository {
    * @param updates Partial appointment data to update
    * @returns Updated appointment
    */
-  update(id: string, updates: Partial<Appointment>): Promise<Appointment>;
+  update(id: string, updates: Partial<Appointment>): Promise<Appointment>
 
   /**
    * Cancel an appointment
@@ -152,7 +152,7 @@ export interface AppointmentRepository {
     cancelledBy: string,
     reason: string,
     notes?: string,
-  ): Promise<Appointment>;
+  ): Promise<Appointment>
 
   /**
    * Reschedule an appointment
@@ -167,14 +167,14 @@ export interface AppointmentRepository {
     newStartTime: string,
     newEndTime: string,
     rescheduledBy: string,
-  ): Promise<Appointment>;
+  ): Promise<Appointment>
 
   /**
    * Delete an appointment
    * @param id Appointment ID
    * @returns Success status
    */
-  delete(id: string): Promise<boolean>;
+  delete(id: string): Promise<boolean>
 
   /**
    * Count appointments by clinic
@@ -187,7 +187,7 @@ export interface AppointmentRepository {
     clinicId: string,
     startDate?: string,
     endDate?: string,
-  ): Promise<number>;
+  ): Promise<number>
 
   /**
    * Get appointment statistics
@@ -200,7 +200,7 @@ export interface AppointmentRepository {
     clinicId: string,
     startDate?: string,
     endDate?: string,
-  ): Promise<AppointmentStatistics>;
+  ): Promise<AppointmentStatistics>
 }
 
 /**
@@ -213,14 +213,14 @@ export interface AppointmentQueryRepository {
    * @param filters Filter criteria
    * @returns Array of matching appointments
    */
-  findWithFilters(filters: AppointmentFilters): Promise<Appointment[]>;
+  findWithFilters(filters: AppointmentFilters): Promise<Appointment[]>
 
   /**
    * Count appointments with filters
    * @param filters Filter criteria
    * @returns Appointment count
    */
-  countWithFilters(filters: AppointmentFilters): Promise<number>;
+  countWithFilters(filters: AppointmentFilters): Promise<number>
 
   /**
    * Get appointment timeline
@@ -233,7 +233,7 @@ export interface AppointmentQueryRepository {
     patientId: string,
     startDate: string,
     endDate: string,
-  ): Promise<AppointmentTimeline[]>;
+  ): Promise<AppointmentTimeline[]>
 
   /**
    * Get daily appointment counts
@@ -246,60 +246,60 @@ export interface AppointmentQueryRepository {
     clinicId: string,
     startDate: string,
     endDate: string,
-  ): Promise<DailyAppointmentCount[]>;
+  ): Promise<DailyAppointmentCount[]>
 }
 
 /**
  * Appointment filters interface
  */
 export interface AppointmentFilters {
-  clinicId?: string;
-  patientId?: string;
-  professionalId?: string;
-  roomId?: string;
-  status?: AppointmentStatus;
-  type?: AppointmentType;
-  priority?: AppointmentPriority;
-  startDate?: string;
-  endDate?: string;
-  createdFrom?: string;
-  createdTo?: string;
-  limit?: number;
-  offset?: number;
-  sortBy?: keyof Appointment;
-  sortOrder?: 'asc' | 'desc';
+  clinicId?: string
+  patientId?: string
+  professionalId?: string
+  roomId?: string
+  status?: AppointmentStatus
+  type?: AppointmentType
+  priority?: AppointmentPriority
+  startDate?: string
+  endDate?: string
+  createdFrom?: string
+  createdTo?: string
+  limit?: number
+  offset?: number
+  sortBy?: keyof Appointment
+  sortOrder?: 'asc' | 'desc'
 }
 
 /**
  * Appointment statistics interface
  */
 export interface AppointmentStatistics {
-  total: number;
-  byStatus: Record<AppointmentStatus, number>;
-  byType: Record<AppointmentType, number>;
-  byPriority: Record<AppointmentPriority, number>;
-  noShowRate: number;
-  cancellationRate: number;
-  averageDuration: number;
-  revenue: number;
+  total: number
+  byStatus: Record<AppointmentStatus, number>
+  byType: Record<AppointmentType, number>
+  byPriority: Record<AppointmentPriority, number>
+  noShowRate: number
+  cancellationRate: number
+  averageDuration: number
+  revenue: number
 }
 
 /**
  * Appointment timeline entry
  */
 export interface AppointmentTimeline {
-  date: string;
-  appointments: Appointment[];
-  total: number;
+  date: string
+  appointments: Appointment[]
+  total: number
 }
 
 /**
  * Daily appointment count
  */
 export interface DailyAppointmentCount {
-  date: string;
-  total: number;
-  completed: number;
-  cancelled: number;
-  noShow: number;
+  date: string
+  total: number
+  completed: number
+  cancelled: number
+  noShow: number
 }

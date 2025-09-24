@@ -11,121 +11,121 @@
  * - Multi-tenant clinic isolation
  */
 
-import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.38.4';
-import { corsHeaders } from '../_shared/cors.ts';
+import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.38.4'
+import { corsHeaders } from '../_shared/cors.ts'
 
 // Environment validation
-const SUPABASE_URL = Deno.env.get('SUPABASE_URL');
-const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+const SUPABASE_URL = Deno.env.get('SUPABASE_URL')
+const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
 
 if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
-  throw new Error('Missing required environment variables');
+  throw new Error('Missing required environment variables')
 }
 
 // Create Supabase client with service role for RLS bypass when needed
-const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)
 
 // Patient lookup request schema
 interface PatientLookupRequest {
-  searchType: 'cpf' | 'cns' | 'name' | 'medical_record' | 'phone' | 'email';
-  searchValue: string;
-  clinicId: string;
-  requesterId: string;
-  requesterRole: 'doctor' | 'nurse' | 'receptionist' | 'admin';
-  purpose: 'consultation' | 'emergency' | 'administrative' | 'audit';
-  consentRequired?: boolean;
-  dataMinimization?: boolean;
-  auditMetadata?: Record<string, any>;
+  searchType: 'cpf' | 'cns' | 'name' | 'medical_record' | 'phone' | 'email'
+  searchValue: string
+  clinicId: string
+  requesterId: string
+  requesterRole: 'doctor' | 'nurse' | 'receptionist' | 'admin'
+  purpose: 'consultation' | 'emergency' | 'administrative' | 'audit'
+  consentRequired?: boolean
+  dataMinimization?: boolean
+  auditMetadata?: Record<string, any>
 }
 
 // Patient lookup response (with data minimization)
 interface PatientLookupResponse {
-  success: boolean;
-  patients: MinimizedPatient[];
-  totalCount: number;
-  searchPerformed: string;
-  dataMinimized: boolean;
-  consentStatus: 'verified' | 'required' | 'expired' | 'not_applicable';
-  auditLogId: string;
-  responseTime: number;
+  success: boolean
+  patients: MinimizedPatient[]
+  totalCount: number
+  searchPerformed: string
+  dataMinimized: boolean
+  consentStatus: 'verified' | 'required' | 'expired' | 'not_applicable'
+  auditLogId: string
+  responseTime: number
   complianceInfo: {
-    lgpdCompliant: boolean;
-    cfmCompliant: boolean;
-    dataRetentionApplied: boolean;
-    emergencyOverride: boolean;
-  };
+    lgpdCompliant: boolean
+    cfmCompliant: boolean
+    dataRetentionApplied: boolean
+    emergencyOverride: boolean
+  }
 }
 
 // Minimized patient data for LGPD compliance
 interface MinimizedPatient {
-  id: string;
-  medicalRecordNumber: string;
-  displayName: string; // Anonymized or minimized name
-  birthDate?: string; // Optional based on purpose
-  gender?: string;
-  phone?: string; // Masked or full based on role
-  email?: string; // Masked or full based on role
-  emergencyContact?: string;
-  consentStatus: string;
-  dataRetentionUntil?: string;
-  lastVisitDate?: string;
-  clinicId: string;
+  id: string
+  medicalRecordNumber: string
+  displayName: string // Anonymized or minimized name
+  birthDate?: string // Optional based on purpose
+  gender?: string
+  phone?: string // Masked or full based on role
+  email?: string // Masked or full based on role
+  emergencyContact?: string
+  consentStatus: string
+  dataRetentionUntil?: string
+  lastVisitDate?: string
+  clinicId: string
   // Sensitive data excluded by default
   metadata: {
-    hasActiveTreatment: boolean;
-    hasAllergies: boolean;
-    hasChronicConditions: boolean;
-    insuranceStatus: 'active' | 'inactive' | 'unknown';
-    accessLevel: 'full' | 'limited' | 'emergency_only';
-  };
+    hasActiveTreatment: boolean
+    hasAllergies: boolean
+    hasChronicConditions: boolean
+    insuranceStatus: 'active' | 'inactive' | 'unknown'
+    accessLevel: 'full' | 'limited' | 'emergency_only'
+  }
 }
 
 /**
  * Validate CPF (Brazilian national identifier)
  */
 function validateCPF(cpf: string): boolean {
-  const cleanCPF = cpf.replace(/[^\d]/g, '');
+  const cleanCPF = cpf.replace(/[^\d]/g, '')
 
   if (cleanCPF.length !== 11 || /^(\d)\1{10}$/.test(cleanCPF)) {
-    return false;
+    return false
   }
 
   // Calculate verification digits
-  let sum = 0;
+  let sum = 0
   for (let i = 0; i < 9; i++) {
-    sum += parseInt(cleanCPF[i]) * (10 - i);
+    sum += parseInt(cleanCPF[i]) * (10 - i)
   }
-  let digit1 = (sum * 10) % 11;
-  if (digit1 === 10) digit1 = 0;
+  let digit1 = (sum * 10) % 11
+  if (digit1 === 10) digit1 = 0
 
-  sum = 0;
+  sum = 0
   for (let i = 0; i < 10; i++) {
-    sum += parseInt(cleanCPF[i]) * (11 - i);
+    sum += parseInt(cleanCPF[i]) * (11 - i)
   }
-  let digit2 = (sum * 10) % 11;
-  if (digit2 === 10) digit2 = 0;
+  let digit2 = (sum * 10) % 11
+  if (digit2 === 10) digit2 = 0
 
-  return digit1 === parseInt(cleanCPF[9]) && digit2 === parseInt(cleanCPF[10]);
+  return digit1 === parseInt(cleanCPF[9]) && digit2 === parseInt(cleanCPF[10])
 }
 
 /**
  * Validate CNS (Brazilian health card number)
  */
 function validateCNS(cns: string): boolean {
-  const cleanCNS = cns.replace(/[^\d]/g, '');
+  const cleanCNS = cns.replace(/[^\d]/g, '')
 
   if (cleanCNS.length !== 15) {
-    return false;
+    return false
   }
 
   // CNS validation algorithm (simplified)
-  let sum = 0;
+  let sum = 0
   for (let i = 0; i < 15; i++) {
-    sum += parseInt(cleanCNS[i]) * (15 - i);
+    sum += parseInt(cleanCNS[i]) * (15 - i)
   }
 
-  return sum % 11 === 0;
+  return sum % 11 === 0
 }
 
 /**
@@ -151,7 +151,7 @@ function applyDataMinimization(
       insuranceStatus: patient.insurance_provider ? 'active' : 'unknown',
       accessLevel: 'limited',
     },
-  };
+  }
 
   // Emergency access - more data available
   if (purpose === 'emergency') {
@@ -169,7 +169,7 @@ function applyDataMinimization(
         ...baseData.metadata,
         accessLevel: 'emergency_only',
       },
-    };
+    }
   }
 
   // Role-based data access
@@ -186,7 +186,7 @@ function applyDataMinimization(
           ...baseData.metadata,
           accessLevel: consentStatus === 'given' ? 'full' : 'limited',
         },
-      };
+      }
 
     case 'nurse':
       return {
@@ -198,7 +198,7 @@ function applyDataMinimization(
           ...baseData.metadata,
           accessLevel: 'limited',
         },
-      };
+      }
 
     case 'receptionist':
       return {
@@ -209,7 +209,7 @@ function applyDataMinimization(
           ...baseData.metadata,
           accessLevel: 'limited',
         },
-      };
+      }
 
     case 'admin':
       if (purpose === 'audit') {
@@ -221,12 +221,12 @@ function applyDataMinimization(
             ...baseData.metadata,
             accessLevel: 'full',
           },
-        };
+        }
       }
-      return baseData;
+      return baseData
 
     default:
-      return baseData;
+      return baseData
   }
 }
 
@@ -234,22 +234,22 @@ function applyDataMinimization(
  * Mask phone number for privacy
  */
 function maskPhoneNumber(phone: string): string {
-  if (!phone) return '';
-  const cleaned = phone.replace(/[^\d]/g, '');
+  if (!phone) return ''
+  const cleaned = phone.replace(/[^\d]/g, '')
   if (cleaned.length === 11) {
-    return `(${cleaned.slice(0, 2)}) ${cleaned.slice(2, 3)}****-${cleaned.slice(-4)}`;
+    return `(${cleaned.slice(0, 2)}) ${cleaned.slice(2, 3)}****-${cleaned.slice(-4)}`
   }
-  return `****-${phone.slice(-4)}`;
+  return `****-${phone.slice(-4)}`
 }
 
 /**
  * Mask email for privacy
  */
 function maskEmail(email: string): string {
-  if (!email) return '';
-  const [local, domain] = email.split('@');
-  if (local.length <= 2) return `**@${domain}`;
-  return `${local.slice(0, 2)}***@${domain}`;
+  if (!email) return ''
+  const [local, domain] = email.split('@')
+  if (local.length <= 2) return `**@${domain}`
+  return `${local.slice(0, 2)}***@${domain}`
 }
 
 /**
@@ -263,7 +263,7 @@ async function logAuditEvent(
   resultCount: number,
   metadata: any,
 ): Promise<string> {
-  const auditLogId = crypto.randomUUID();
+  const auditLogId = crypto.randomUUID()
 
   const { error } = await supabase.from('audit_logs').insert({
     id: auditLogId,
@@ -284,24 +284,24 @@ async function logAuditEvent(
       ? 'vital_interests'
       : 'legitimate_interests',
     created_at: new Date().toISOString(),
-  });
+  })
 
   if (error) {
-    console.error('Audit logging failed:', error);
+    console.error('Audit logging failed:', error)
   }
 
-  return auditLogId;
+  return auditLogId
 }
 
 /**
  * Hash sensitive search values for audit logs
  */
 async function hashValue(value: string): Promise<string> {
-  const encoder = new TextEncoder();
-  const data = encoder.encode(value);
-  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  const encoder = new TextEncoder()
+  const data = encoder.encode(value)
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data)
+  const hashArray = Array.from(new Uint8Array(hashBuffer))
+  return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('')
 }
 
 /**
@@ -311,28 +311,28 @@ async function validateConsent(
   patientId: string,
   purpose: string,
 ): Promise<{
-  isValid: boolean;
-  status: string;
-  expiresAt?: string;
+  isValid: boolean
+  status: string
+  expiresAt?: string
 }> {
   const { data: patient, error } = await supabase
     .from('patients')
     .select('lgpd_consent_given, data_consent_status, data_retention_until')
     .eq('id', patientId)
-    .single();
+    .single()
 
   if (error || !patient) {
-    return { isValid: false, status: 'not_found' };
+    return { isValid: false, status: 'not_found' }
   }
 
   // Emergency override
   if (purpose === 'emergency') {
-    return { isValid: true, status: 'emergency_override' };
+    return { isValid: true, status: 'emergency_override' }
   }
 
   // Check consent status
   if (!patient.lgpd_consent_given || patient.data_consent_status !== 'given') {
-    return { isValid: false, status: 'consent_not_given' };
+    return { isValid: false, status: 'consent_not_given' }
   }
 
   // Check data retention period
@@ -340,14 +340,14 @@ async function validateConsent(
     patient.data_retention_until
     && new Date(patient.data_retention_until) < new Date()
   ) {
-    return { isValid: false, status: 'retention_expired' };
+    return { isValid: false, status: 'retention_expired' }
   }
 
   return {
     isValid: true,
     status: 'valid',
     expiresAt: patient.data_retention_until,
-  };
+  }
 }
 
 /**
@@ -381,58 +381,58 @@ function buildSearchQuery(
     `,
     )
     .eq('clinic_id', clinicId)
-    .eq('is_active', true);
+    .eq('is_active', true)
 
   switch (searchType) {
     case 'cpf':
       if (!validateCPF(searchValue)) {
-        throw new Error('Invalid CPF format');
+        throw new Error('Invalid CPF format')
       }
-      query = query.eq('cpf', searchValue.replace(/[^\d]/g, ''));
-      break;
+      query = query.eq('cpf', searchValue.replace(/[^\d]/g, ''))
+      break
 
     case 'cns':
       if (!validateCNS(searchValue)) {
-        throw new Error('Invalid CNS format');
+        throw new Error('Invalid CNS format')
       }
-      query = query.eq('cns', searchValue.replace(/[^\d]/g, ''));
-      break;
+      query = query.eq('cns', searchValue.replace(/[^\d]/g, ''))
+      break
 
     case 'medical_record':
-      query = query.eq('medical_record_number', searchValue);
-      break;
+      query = query.eq('medical_record_number', searchValue)
+      break
 
     case 'phone':
-      const cleanPhone = searchValue.replace(/[^\d]/g, '');
+      const cleanPhone = searchValue.replace(/[^\d]/g, '')
       query = query.or(
         `phone_primary.eq.${cleanPhone},phone_secondary.eq.${cleanPhone}`,
-      );
-      break;
+      )
+      break
 
     case 'email':
-      query = query.ilike('email', `%${searchValue}%`);
-      break;
+      query = query.ilike('email', `%${searchValue}%`)
+      break
 
     case 'name':
-      query = query.ilike('full_name', `%${searchValue}%`);
-      break;
+      query = query.ilike('full_name', `%${searchValue}%`)
+      break
 
     default:
-      throw new Error('Invalid search type');
+      throw new Error('Invalid search type')
   }
 
-  return query;
+  return query
 }
 
 /**
  * Main patient lookup handler
  */
-serve(async req => {
-  const startTime = Date.now();
+serve(async (req) => {
+  const startTime = Date.now()
 
   // Handle CORS preflight
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
+    return new Response(null, { headers: corsHeaders })
   }
 
   try {
@@ -441,11 +441,11 @@ serve(async req => {
       return new Response(JSON.stringify({ error: 'Method not allowed' }), {
         status: 405,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
+      })
     }
 
     // Parse and validate request
-    const requestData: PatientLookupRequest = await req.json();
+    const requestData: PatientLookupRequest = await req.json()
 
     // Validate required fields
     if (
@@ -462,7 +462,7 @@ serve(async req => {
           status: 400,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         },
-      );
+      )
     }
 
     // Set clinic context for RLS
@@ -474,17 +474,17 @@ serve(async req => {
         user_role: requestData.requesterRole || 'user',
         consent_verification: requestData.consentRequired ?? true,
       },
-    );
+    )
 
     if (contextError) {
-      console.error('Failed to set clinic context:', contextError);
+      console.error('Failed to set clinic context:', contextError)
       return new Response(
         JSON.stringify({ error: 'Failed to set security context' }),
         {
           status: 403,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         },
-      );
+      )
     }
 
     // Build and execute search query
@@ -492,21 +492,21 @@ serve(async req => {
       requestData.searchType,
       requestData.searchValue,
       requestData.clinicId,
-    );
+    )
 
-    const { data: patients, error: searchError } = await searchQuery;
+    const { data: patients, error: searchError } = await searchQuery
 
     if (searchError) {
-      console.error('Patient search failed:', searchError);
+      console.error('Patient search failed:', searchError)
       return new Response(JSON.stringify({ error: 'Patient search failed' }), {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
+      })
     }
 
     // Apply LGPD data minimization
-    const minimizedPatients: MinimizedPatient[] = [];
-    let overallConsentStatus = 'not_applicable';
+    const minimizedPatients: MinimizedPatient[] = []
+    let overallConsentStatus = 'not_applicable'
 
     if (patients && patients.length > 0) {
       for (const patient of patients) {
@@ -515,16 +515,16 @@ serve(async req => {
           const consentValidation = await validateConsent(
             patient.id,
             requestData.purpose,
-          );
+          )
           if (
             !consentValidation.isValid
             && requestData.purpose !== 'emergency'
           ) {
-            overallConsentStatus = consentValidation.status;
-            continue; // Skip patients without valid consent
+            overallConsentStatus = consentValidation.status
+            continue // Skip patients without valid consent
           }
           if (consentValidation.isValid) {
-            overallConsentStatus = 'verified';
+            overallConsentStatus = 'verified'
           }
         }
 
@@ -534,9 +534,9 @@ serve(async req => {
           requestData.requesterRole,
           requestData.purpose,
           patient.data_consent_status || 'unknown',
-        );
+        )
 
-        minimizedPatients.push(minimizedPatient);
+        minimizedPatients.push(minimizedPatient)
       }
     }
 
@@ -553,9 +553,9 @@ serve(async req => {
         data_minimized: requestData.dataMinimization ?? true,
         response_time_ms: Date.now() - startTime,
       },
-    );
+    )
 
-    const responseTime = Date.now() - startTime;
+    const responseTime = Date.now() - startTime
 
     // Build response
     const response: PatientLookupResponse = {
@@ -573,7 +573,7 @@ serve(async req => {
         dataRetentionApplied: true,
         emergencyOverride: requestData.purpose === 'emergency',
       },
-    };
+    }
 
     return new Response(JSON.stringify(response), {
       status: 200,
@@ -584,11 +584,11 @@ serve(async req => {
         'X-LGPD-Compliant': 'true',
         'X-Audit-Log-ID': auditLogId,
       },
-    });
+    })
   } catch (error: any) {
-    console.error('Patient lookup error:', error);
+    console.error('Patient lookup error:', error)
 
-    const responseTime = Date.now() - startTime;
+    const responseTime = Date.now() - startTime
 
     return new Response(
       JSON.stringify({
@@ -605,6 +605,6 @@ serve(async req => {
           'X-Response-Time': `${responseTime}ms`,
         },
       },
-    );
+    )
   }
-});
+})

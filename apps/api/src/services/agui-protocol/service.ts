@@ -5,88 +5,88 @@
  * Provides high-level methods for agent communication and session management.
  */
 
-import { EventEmitter } from 'events';
-import { v4 as uuidv4 } from 'uuid';
-import { createHealthcareCacheConfig, ResponseCacheService } from '../cache/response-cache-service';
-import { ConversationContextService } from '../conversation';
-import type { ConversationMessage } from '../conversation/conversation-context-service';
-import { AgentPermissionService } from '../permissions';
-import { RealtimeSubscriptionService } from '../realtime';
-import { AguiProtocol, AguiProtocolConfig } from './protocol';
-import { AguiAction, AguiHealthStatus, AguiSession, AguiSource, AguiUsageStats } from './types';
+import { EventEmitter } from 'events'
+import { v4 as uuidv4 } from 'uuid'
+import { createHealthcareCacheConfig, ResponseCacheService } from '../cache/response-cache-service'
+import { ConversationContextService } from '../conversation'
+import type { ConversationMessage } from '../conversation/conversation-context-service'
+import { AgentPermissionService } from '../permissions'
+import { RealtimeSubscriptionService } from '../realtime'
+import { AguiProtocol, AguiProtocolConfig } from './protocol'
+import { AguiAction, AguiHealthStatus, AguiSession, AguiSource, AguiUsageStats } from './types'
 
 export interface AguiServiceConfig extends AguiProtocolConfig {
-  ragAgentEndpoint: string;
-  enableMetrics: boolean;
-  metricsInterval?: number;
-  supabaseUrl?: string;
-  supabaseServiceKey?: string;
+  ragAgentEndpoint: string
+  enableMetrics: boolean
+  metricsInterval?: number
+  supabaseUrl?: string
+  supabaseServiceKey?: string
 }
 
 export interface QueryContext {
-  sessionId: string;
-  _userId: string;
-  patientId?: string;
-  userPreferences?: Record<string, any>;
-  previousTopics?: string[];
+  sessionId: string
+  _userId: string
+  patientId?: string
+  userPreferences?: Record<string, any>
+  previousTopics?: string[]
 }
 
 export interface QueryResult {
-  content: string;
-  type: 'text' | 'structured' | 'error';
-  sources?: AguiSource[];
-  confidence?: number;
-  usage?: AguiUsageStats;
-  actions?: AguiAction[];
-  processingTimeMs: number;
+  content: string
+  type: 'text' | 'structured' | 'error'
+  sources?: AguiSource[]
+  confidence?: number
+  usage?: AguiUsageStats
+  actions?: AguiAction[]
+  processingTimeMs: number
 }
 
 export class AguiService extends EventEmitter {
-  private protocol: AguiProtocol;
-  private config: AguiServiceConfig;
-  private activeQueries: Map<string, AbortController> = new Map();
-  private metrics: ServiceMetrics;
-  private metricsInterval?: NodeJS.Timeout;
-  private permissionService: AgentPermissionService;
-  private conversationService: ConversationContextService;
-  private realtimeService: RealtimeSubscriptionService;
-  private cacheService: ResponseCacheService;
+  private protocol: AguiProtocol
+  private config: AguiServiceConfig
+  private activeQueries: Map<string, AbortController> = new Map()
+  private metrics: ServiceMetrics
+  private metricsInterval?: NodeJS.Timeout
+  private permissionService: AgentPermissionService
+  private conversationService: ConversationContextService
+  private realtimeService: RealtimeSubscriptionService
+  private cacheService: ResponseCacheService
 
   constructor(config: AguiServiceConfig) {
-    super();
-    this.config = config;
-    this.protocol = new AguiProtocol(config);
-    this.metrics = this.initializeMetrics();
+    super()
+    this.config = config
+    this.protocol = new AguiProtocol(config)
+    this.metrics = this.initializeMetrics()
 
     // Initialize permission service if Supabase config is provided
     if (config.supabaseUrl && config.supabaseServiceKey) {
       this.permissionService = new AgentPermissionService(
         config.supabaseUrl,
         config.supabaseServiceKey,
-      );
+      )
 
       // Initialize conversation context service
       this.conversationService = new ConversationContextService(
         config.supabaseUrl,
         config.supabaseServiceKey,
-      );
+      )
 
       // Initialize real-time subscription service
       this.realtimeService = new RealtimeSubscriptionService(
         config.supabaseUrl,
         config.supabaseServiceKey,
-      );
+      )
 
       // Initialize cache service
       this.cacheService = new ResponseCacheService(
         createHealthcareCacheConfig(),
-      );
+      )
     }
 
-    this.setupEventHandlers();
+    this.setupEventHandlers()
 
     if (config.enableMetrics && config.metricsInterval) {
-      this.startMetricsCollection(config.metricsInterval);
+      this.startMetricsCollection(config.metricsInterval)
     }
   }
 
@@ -94,19 +94,19 @@ export class AguiService extends EventEmitter {
    * Initialize the service
    */
   async initialize(): Promise<void> {
-    this.emit('initializing');
+    this.emit('initializing')
 
     try {
       // Test RAG agent connectivity
-      await this.testRagAgentConnectivity();
+      await this.testRagAgentConnectivity()
 
       // Initialize protocol
-      this.protocol.getHealthStatus();
+      this.protocol.getHealthStatus()
 
-      this.emit('initialized');
+      this.emit('initialized')
     } catch {
-      this.emit('initializationError', error);
-      throw error;
+      this.emit('initializationError', error)
+      throw error
     }
   }
 
@@ -117,20 +117,20 @@ export class AguiService extends EventEmitter {
     _query: string,
     _context: QueryContext,
     options?: {
-      streaming?: boolean;
-      maxResults?: number;
-      timeout?: number;
-      includeSources?: boolean;
-      skipCache?: boolean;
+      streaming?: boolean
+      maxResults?: number
+      timeout?: number
+      includeSources?: boolean
+      skipCache?: boolean
     },
   ): Promise<QueryResult> {
-    const queryId = uuidv4();
-    const startTime = Date.now();
+    const queryId = uuidv4()
+    const startTime = Date.now()
 
     try {
       // Create abort controller for timeout
-      const abortController = new AbortController();
-      this.activeQueries.set(queryId, abortController);
+      const abortController = new AbortController()
+      this.activeQueries.set(queryId, abortController)
 
       // Check cache first if available and not skipped
       if (this.cacheService && !options?.skipCache) {
@@ -146,7 +146,7 @@ export class AguiService extends EventEmitter {
             options,
           },
           context._userId,
-        );
+        )
 
         if (cachedResponse) {
           const cachedResult: QueryResult = {
@@ -157,22 +157,22 @@ export class AguiService extends EventEmitter {
             usage: cachedResponse.usage,
             actions: cachedResponse.actions,
             processingTimeMs: Date.now() - startTime,
-          };
+          }
 
           // Update metrics for cache hit
           this.updateMetrics({
             queryCount: 1,
             processingTimeMs: cachedResult.processingTimeMs,
             success: true,
-          });
+          })
 
           this.emit('queryCompleted', {
             queryId,
             result: cachedResult,
             context,
             cached: true,
-          });
-          return cachedResult;
+          })
+          return cachedResult
         }
       }
 
@@ -189,13 +189,13 @@ export class AguiService extends EventEmitter {
           previous_topics: context.previousTopics,
         },
         options,
-      };
+      }
 
       // Send query to RAG agent
       const response = await this.sendToRagAgent(ragQuery, {
         signal: abortController.signal,
         timeout: options?.timeout || 30000,
-      });
+      })
 
       // Process response
       const result: QueryResult = {
@@ -206,7 +206,7 @@ export class AguiService extends EventEmitter {
         usage: response.usage,
         actions: response.actions,
         processingTimeMs: Date.now() - startTime,
-      };
+      }
 
       // Cache the response if caching is enabled
       if (this.cacheService && !options?.skipCache) {
@@ -227,9 +227,9 @@ export class AguiService extends EventEmitter {
             {
               skipCache: false,
             },
-          );
+          )
         } catch {
-          console.error('[AguiService] Error caching response:', error);
+          console.error('[AguiService] Error caching response:', error)
           // Don't fail the query if caching fails
         }
       }
@@ -249,7 +249,7 @@ export class AguiService extends EventEmitter {
               entitiesExtracted: this.extractEntities(query),
             },
             dataClassification: this.classifyData(query),
-          });
+          })
 
           // Store assistant response
           await this.conversationService.storeMessage({
@@ -266,12 +266,12 @@ export class AguiService extends EventEmitter {
               actionTaken: response.actions?.[0]?.type,
             },
             dataClassification: this.classifyData(response.content),
-          });
+          })
         } catch {
           console.error(
             '[AguiService] Error storing conversation _context:',
             error,
-          );
+          )
           // Don't fail the query if context storage fails
         }
       }
@@ -298,7 +298,7 @@ export class AguiService extends EventEmitter {
               urgency: 'medium',
               dataClassification: this.classifyData(query),
             },
-          });
+          })
 
           // Broadcast assistant response event
           await this.realtimeService.broadcastEvent({
@@ -321,12 +321,12 @@ export class AguiService extends EventEmitter {
               urgency: result.type === 'error' ? 'high' : 'medium',
               dataClassification: this.classifyData(result.content),
             },
-          });
+          })
         } catch {
           console.error(
             '[AguiService] Error broadcasting real-time events:',
             error,
-          );
+          )
           // Don't fail the query if real-time broadcasting fails
         }
       }
@@ -336,28 +336,28 @@ export class AguiService extends EventEmitter {
         queryCount: 1,
         processingTimeMs: result.processingTimeMs,
         success: true,
-      });
+      })
 
-      this.emit('queryCompleted', { queryId, result, context });
+      this.emit('queryCompleted', { queryId, result, context })
 
-      return result;
+      return result
     } catch {
       // Update metrics
       this.updateMetrics({
         queryCount: 1,
         errorCount: 1,
         success: false,
-      });
+      })
 
-      this.emit('queryError', { queryId, error, context });
+      this.emit('queryError', { queryId, error, context })
 
       if (error.name === 'AbortError') {
-        throw new Error('Query timeout');
+        throw new Error('Query timeout')
       }
 
-      throw error;
+      throw error
     } finally {
-      this.activeQueries.delete(queryId);
+      this.activeQueries.delete(queryId)
     }
   }
 
@@ -369,48 +369,48 @@ export class AguiService extends EventEmitter {
     _context: QueryContext,
     onChunk: (chunk: string) => void,
     options?: {
-      maxResults?: number;
-      timeout?: number;
-      includeSources?: boolean;
+      maxResults?: number
+      timeout?: number
+      includeSources?: boolean
     },
   ): Promise<QueryResult> {
-    const queryId = uuidv4();
+    const queryId = uuidv4()
 
     try {
-      const abortController = new AbortController();
-      this.activeQueries.set(queryId, abortController);
+      const abortController = new AbortController()
+      this.activeQueries.set(queryId, abortController)
 
       // For streaming, we'll simulate chunks for now
       // In a real implementation, this would use Server-Sent Events or WebSocket streaming
       const response = await this.processQuery(query, context, {
         ...options,
         streaming: true,
-      });
+      })
 
       // Simulate streaming by breaking response into chunks
-      const chunks = this.splitIntoChunks(response.content, 50); // 50 characters per chunk
+      const chunks = this.splitIntoChunks(response.content, 50) // 50 characters per chunk
 
       for (const chunk of chunks) {
         if (abortController.signal.aborted) {
-          throw new Error('Query aborted');
+          throw new Error('Query aborted')
         }
 
-        onChunk(chunk);
-        await new Promise(resolve => setTimeout(resolve, 50)); // Simulate streaming delay
+        onChunk(chunk)
+        await new Promise((resolve) => setTimeout(resolve, 50)) // Simulate streaming delay
       }
 
       this.emit('streamingQueryCompleted', {
         queryId,
         result: response,
         context,
-      });
+      })
 
-      return response;
+      return response
     } catch {
-      this.emit('streamingQueryError', { queryId, error, context });
-      throw error;
+      this.emit('streamingQueryError', { queryId, error, context })
+      throw error
     } finally {
-      this.activeQueries.delete(queryId);
+      this.activeQueries.delete(queryId)
     }
   }
 
@@ -420,12 +420,12 @@ export class AguiService extends EventEmitter {
   async createSession(
     _userId: string,
     options?: {
-      title?: string;
-      _context?: Record<string, any>;
-      expiresAt?: Date;
+      title?: string
+      _context?: Record<string, any>
+      expiresAt?: Date
     },
   ): Promise<AguiSession> {
-    const sessionId = uuidv4();
+    const sessionId = uuidv4()
     const session: AguiSession = {
       id: sessionId,
       userId,
@@ -438,14 +438,14 @@ export class AguiService extends EventEmitter {
       isActive: true,
       messageCount: 0,
       lastActivity: new Date().toISOString(),
-    };
+    }
 
     // Store session in database or cache
-    await this.storeSession(session);
+    await this.storeSession(session)
 
-    this.emit('sessionCreated', session);
+    this.emit('sessionCreated', session)
 
-    return session;
+    return session
   }
 
   /**
@@ -454,16 +454,16 @@ export class AguiService extends EventEmitter {
   async getSession(sessionId: string): Promise<AguiSession | null> {
     try {
       // Retrieve session from database or cache
-      const session = await this.retrieveSession(sessionId);
+      const session = await this.retrieveSession(sessionId)
 
       if (session && new Date(session.expiresAt) > new Date()) {
-        return session;
+        return session
       }
 
-      return null;
+      return null
     } catch {
-      this.emit('sessionError', { sessionId, error });
-      return null;
+      this.emit('sessionError', { sessionId, error })
+      return null
     }
   }
 
@@ -473,29 +473,29 @@ export class AguiService extends EventEmitter {
   async updateSession(
     sessionId: string,
     updates: {
-      title?: string;
-      _context?: Record<string, any>;
-      expiresAt?: Date;
+      title?: string
+      _context?: Record<string, any>
+      expiresAt?: Date
     },
   ): Promise<AguiSession | null> {
     try {
-      const session = await this.getSession(sessionId);
+      const session = await this.getSession(sessionId)
       if (!session) {
-        return null;
+        return null
       }
 
       // Apply updates
-      Object.assign(session, updates, { updatedAt: new Date().toISOString() });
+      Object.assign(session, updates, { updatedAt: new Date().toISOString() })
 
       // Store updated session
-      await this.storeSession(session);
+      await this.storeSession(session)
 
-      this.emit('sessionUpdated', { session, updates });
+      this.emit('sessionUpdated', { session, updates })
 
-      return session;
+      return session
     } catch {
-      this.emit('sessionError', { sessionId, error });
-      return null;
+      this.emit('sessionError', { sessionId, error })
+      return null
     }
   }
 
@@ -517,17 +517,17 @@ export class AguiService extends EventEmitter {
         feedback,
         category,
         timestamp: new Date().toISOString(),
-      };
+      }
 
       // Store feedback in database
-      await this.storeFeedback(feedbackData);
+      await this.storeFeedback(feedbackData)
 
-      this.updateMetrics({ feedbackCount: 1 });
+      this.updateMetrics({ feedbackCount: 1 })
 
-      this.emit('feedbackSubmitted', feedbackData);
+      this.emit('feedbackSubmitted', feedbackData)
     } catch {
-      this.emit('feedbackError', { sessionId, messageId, error });
-      throw error;
+      this.emit('feedbackError', { sessionId, messageId, error })
+      throw error
     }
   }
 
@@ -535,19 +535,19 @@ export class AguiService extends EventEmitter {
    * Get service health status
    */
   async getHealthStatus(): Promise<AguiHealthStatus> {
-    const protocolHealth = this.protocol.getHealthStatus();
+    const protocolHealth = this.protocol.getHealthStatus()
 
     // Test RAG agent connectivity
-    let ragAgentHealthy = true;
+    let ragAgentHealthy = true
     try {
-      await this.testRagAgentConnectivity();
+      await this.testRagAgentConnectivity()
     } catch {
       // Log error securely without exposing sensitive information
       console.error(
         'RAG agent connectivity test failed:',
         error instanceof Error ? error.message : 'Unknown error',
-      );
-      ragAgentHealthy = false;
+      )
+      ragAgentHealthy = false
     }
 
     return {
@@ -556,53 +556,53 @@ export class AguiService extends EventEmitter {
         ...protocolHealth.components,
         rag_agent: ragAgentHealthy ? 'healthy' : 'unhealthy',
       },
-    };
+    }
   }
 
   /**
    * Get service metrics
    */
   getMetrics(): ServiceMetrics {
-    return { ...this.metrics };
+    return { ...this.metrics }
   }
 
   /**
    * Abort a running query
    */
   abortQuery(queryId: string): boolean {
-    const abortController = this.activeQueries.get(queryId);
+    const abortController = this.activeQueries.get(queryId)
     if (abortController) {
-      abortController.abort();
-      this.activeQueries.delete(queryId);
-      this.emit('queryAborted', { queryId });
-      return true;
+      abortController.abort()
+      this.activeQueries.delete(queryId)
+      this.emit('queryAborted', { queryId })
+      return true
     }
-    return false;
+    return false
   }
 
   /**
    * Shutdown the service
    */
   async shutdown(): Promise<void> {
-    this.emit('shuttingDown');
+    this.emit('shuttingDown')
 
     // Abort all active queries
     for (const [_queryId, abortController] of this.activeQueries) {
-      abortController.abort();
+      abortController.abort()
     }
-    this.activeQueries.clear();
+    this.activeQueries.clear()
 
     // Stop metrics collection
     if (this.metricsInterval) {
-      clearInterval(this.metricsInterval);
+      clearInterval(this.metricsInterval)
     }
 
     // Shutdown real-time service
     if (this.realtimeService) {
-      await this.realtimeService.shutdown();
+      await this.realtimeService.shutdown()
     }
 
-    this.emit('shutdown');
+    this.emit('shutdown')
   }
 
   /**
@@ -611,18 +611,18 @@ export class AguiService extends EventEmitter {
   private async sendToRagAgent(
     _query: any,
     options: {
-      signal?: AbortSignal;
-      timeout?: number;
+      signal?: AbortSignal
+      timeout?: number
     },
   ): Promise<any> {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), options.timeout);
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), options.timeout)
 
     try {
       // Combine signals
       const combinedSignal = options.signal
         ? AbortSignal.any([options.signal, controller.signal])
-        : controller.signal;
+        : controller.signal
 
       const response = await fetch(
         `${this.config.ragAgentEndpoint}/api/ai/data-agent`,
@@ -634,17 +634,17 @@ export class AguiService extends EventEmitter {
           body: JSON.stringify(query),
           signal: combinedSignal,
         },
-      );
+      )
 
       if (!response.ok) {
         throw new Error(
           `RAG agent error: ${response.status} ${response.statusText}`,
-        );
+        )
       }
 
-      return await response.json();
+      return await response.json()
     } finally {
-      clearTimeout(timeoutId);
+      clearTimeout(timeoutId)
     }
   }
 
@@ -655,10 +655,10 @@ export class AguiService extends EventEmitter {
     const response = await fetch(`${this.config.ragAgentEndpoint}/health`, {
       method: 'GET',
       signal: AbortSignal.timeout(5000),
-    });
+    })
 
     if (!response.ok) {
-      throw new Error(`RAG agent health check failed: ${response.status}`);
+      throw new Error(`RAG agent health check failed: ${response.status}`)
     }
   }
 
@@ -668,7 +668,7 @@ export class AguiService extends EventEmitter {
   private async storeSession(session: AguiSession): Promise<void> {
     // This would store the session in your database
     // For now, it's a placeholder implementation
-    console.log('Storing session:', session.id);
+    console.log('Storing session:', session.id)
   }
 
   /**
@@ -679,8 +679,8 @@ export class AguiService extends EventEmitter {
   ): Promise<AguiSession | null> {
     // This would retrieve the session from your database
     // For now, it's a placeholder implementation
-    console.log('Retrieving session:', sessionId);
-    return null;
+    console.log('Retrieving session:', sessionId)
+    return null
   }
 
   /**
@@ -689,14 +689,14 @@ export class AguiService extends EventEmitter {
   private async storeFeedback(feedback: any): Promise<void> {
     // This would store the feedback in your database
     // For now, it's a placeholder implementation
-    console.log('Storing feedback:', feedback);
+    console.log('Storing feedback:', feedback)
   }
 
   /**
    * Setup event handlers
    */
   private setupEventHandlers(): void {
-    this.protocol.on('query', async data => {
+    this.protocol.on('query', async (data) => {
       try {
         const result = await this.processQuery(
           data.query,
@@ -708,40 +708,40 @@ export class AguiService extends EventEmitter {
             previousTopics: data.query.context?.previousTopics,
           },
           data.query.options,
-        );
+        )
 
-        this.protocol.sendResponse(data.connection.id, result, data.messageId);
+        this.protocol.sendResponse(data.connection.id, result, data.messageId)
       } catch {
         // Log error for debugging while protecting sensitive information
         console.error(
           'Query processing failed:',
           error instanceof Error ? error.message : 'Unknown error',
-        );
+        )
         this.protocol.sendError(
           data.connection.ws,
           'INTERNAL_ERROR',
           'Failed to process query',
-        );
+        )
       }
-    });
+    })
 
-    this.protocol.on('sessionCreated', session => {
-      this.emit('sessionCreated', session);
-    });
+    this.protocol.on('sessionCreated', (session) => {
+      this.emit('sessionCreated', session)
+    })
 
-    this.protocol.on('sessionUpdated', data => {
-      this.emit('sessionUpdated', data);
-    });
+    this.protocol.on('sessionUpdated', (data) => {
+      this.emit('sessionUpdated', data)
+    })
 
-    this.protocol.on('feedback', async data => {
+    this.protocol.on('feedback', async (data) => {
       await this.submitFeedback(
         data.sessionId,
         data.messageId,
         data.rating,
         data.feedback,
         data.category,
-      );
-    });
+      )
+    })
   }
 
   /**
@@ -755,21 +755,21 @@ export class AguiService extends EventEmitter {
       feedbackCount: 0,
       averageProcessingTimeMs: 0,
       lastReset: new Date().toISOString(),
-    };
+    }
   }
 
   /**
    * Update metrics
    */
   private updateMetrics(updates: Partial<ServiceMetrics>): void {
-    Object.assign(this.metrics, updates);
+    Object.assign(this.metrics, updates)
 
     // Calculate average processing time
     if (updates.processingTimeMs && this.metrics.queryCount > 0) {
       this.metrics.averageProcessingTimeMs =
         (this.metrics.averageProcessingTimeMs * (this.metrics.queryCount - 1)
           + updates.processingTimeMs)
-        / this.metrics.queryCount;
+        / this.metrics.queryCount
     }
   }
 
@@ -778,26 +778,26 @@ export class AguiService extends EventEmitter {
    */
   private startMetricsCollection(interval: number): void {
     this.metricsInterval = setInterval(() => {
-      this.emit('metrics', this.getMetrics());
-    }, interval);
+      this.emit('metrics', this.getMetrics())
+    }, interval)
   }
 
   /**
    * Split text into chunks for streaming
    */
   private splitIntoChunks(text: string, chunkSize: number): string[] {
-    const chunks: string[] = [];
+    const chunks: string[] = []
     for (let i = 0; i < text.length; i += chunkSize) {
-      chunks.push(text.slice(i, i + chunkSize));
+      chunks.push(text.slice(i, i + chunkSize))
     }
-    return chunks;
+    return chunks
   }
 
   /**
    * Get WebSocket server instance for integration
    */
   getProtocolInstance(): AguiProtocol {
-    return this.protocol;
+    return this.protocol
   }
 
   /**
@@ -806,22 +806,22 @@ export class AguiService extends EventEmitter {
   async createRealtimeSubscription(
     _userId: string,
     options: {
-      sessionId?: string;
+      sessionId?: string
       eventTypes?: (
         | 'message'
         | 'session_update'
         | 'context_change'
         | 'system_event'
-      )[];
-      includeSystemEvents?: boolean;
-      heartbeatInterval?: number;
+      )[]
+      includeSystemEvents?: boolean
+      heartbeatInterval?: number
     } = {},
   ) {
     if (!this.realtimeService) {
-      throw new Error('Real-time service not available');
+      throw new Error('Real-time service not available')
     }
 
-    return await this.realtimeService.createSubscription(userId, options);
+    return await this.realtimeService.createSubscription(userId, options)
   }
 
   /**
@@ -829,10 +829,10 @@ export class AguiService extends EventEmitter {
    */
   async removeRealtimeSubscription(subscriptionId: string): Promise<void> {
     if (!this.realtimeService) {
-      return;
+      return
     }
 
-    await this.realtimeService.removeSubscription(subscriptionId);
+    await this.realtimeService.removeSubscription(subscriptionId)
   }
 
   /**
@@ -840,10 +840,10 @@ export class AguiService extends EventEmitter {
    */
   getRealtimeAnalytics() {
     if (!this.realtimeService) {
-      return null;
+      return null
     }
 
-    return this.realtimeService.getAnalytics();
+    return this.realtimeService.getAnalytics()
   }
 
   /**
@@ -851,50 +851,50 @@ export class AguiService extends EventEmitter {
    */
   getUserRealtimeSubscriptions(_userId: string) {
     if (!this.realtimeService) {
-      return [];
+      return []
     }
 
-    return this.realtimeService.getUserSubscriptions(userId);
+    return this.realtimeService.getUserSubscriptions(userId)
   }
 
   /**
    * Extract intent from query text
    */
   private extractIntent(_query: string): string {
-    const lowerQuery = query.toLowerCase();
+    const lowerQuery = query.toLowerCase()
 
     if (
       lowerQuery.includes('agendamento')
       || lowerQuery.includes('consulta')
       || lowerQuery.includes('appointment')
     ) {
-      return 'scheduling';
+      return 'scheduling'
     } else if (
       lowerQuery.includes('paciente')
       || lowerQuery.includes('patient')
       || lowerQuery.includes('cliente')
     ) {
-      return 'patient_inquiry';
+      return 'patient_inquiry'
     } else if (
       lowerQuery.includes('financeiro')
       || lowerQuery.includes('pagamento')
       || lowerQuery.includes('financial')
     ) {
-      return 'financial_inquiry';
+      return 'financial_inquiry'
     } else if (
       lowerQuery.includes('exame')
       || lowerQuery.includes('resultado')
       || lowerQuery.includes('exam')
     ) {
-      return 'results_inquiry';
+      return 'results_inquiry'
     } else if (
       lowerQuery.includes('tratamento')
       || lowerQuery.includes('medicamento')
       || lowerQuery.includes('treatment')
     ) {
-      return 'treatment_inquiry';
+      return 'treatment_inquiry'
     } else {
-      return 'general_inquiry';
+      return 'general_inquiry'
     }
   }
 
@@ -902,30 +902,30 @@ export class AguiService extends EventEmitter {
    * Extract entities from query text
    */
   private extractEntities(_query: string): string[] {
-    const entities: string[] = [];
+    const entities: string[] = []
 
     // Extract potential names (simple implementation)
-    const namePattern = /\b([A-Z][a-z]+ [A-Z][a-z]+)\b/g;
-    const names = query.match(namePattern);
+    const namePattern = /\b([A-Z][a-z]+ [A-Z][a-z]+)\b/g
+    const names = query.match(namePattern)
     if (names) {
-      entities.push(...names);
+      entities.push(...names)
     }
 
     // Extract dates
-    const datePattern = /\d{2}\/\d{2}\/\d{4}|\d{4}-\d{2}-\d{2}/g;
-    const dates = query.match(datePattern);
+    const datePattern = /\d{2}\/\d{2}\/\d{4}|\d{4}-\d{2}-\d{2}/g
+    const dates = query.match(datePattern)
     if (dates) {
-      entities.push(...dates);
+      entities.push(...dates)
     }
 
     // Extract phone numbers
-    const phonePattern = /\(\d{2}\)\s*\d{4,5}-\d{4}|\d{10,11}/g;
-    const phones = query.match(phonePattern);
+    const phonePattern = /\(\d{2}\)\s*\d{4,5}-\d{4}|\d{10,11}/g
+    const phones = query.match(phonePattern)
     if (phones) {
-      entities.push(...phones);
+      entities.push(...phones)
     }
 
-    return entities;
+    return entities
   }
 
   /**
@@ -934,7 +934,7 @@ export class AguiService extends EventEmitter {
   private classifyData(
     text: string,
   ): ConversationMessage['dataClassification'] {
-    const lowerText = text.toLowerCase();
+    const lowerText = text.toLowerCase()
 
     // Check for highly sensitive healthcare information
     if (
@@ -948,7 +948,7 @@ export class AguiService extends EventEmitter {
       || lowerText.includes('doença sexualmente transmissível')
       || lowerText.includes('std')
     ) {
-      return 'restricted';
+      return 'restricted'
     }
 
     // Check for confidential healthcare information
@@ -964,7 +964,7 @@ export class AguiService extends EventEmitter {
       || lowerText.includes('cpf')
       || lowerText.includes('rg')
     ) {
-      return 'confidential';
+      return 'confidential'
     }
 
     // Check for internal operational data
@@ -976,11 +976,11 @@ export class AguiService extends EventEmitter {
       || lowerText.includes('clinica')
       || lowerText.includes('clinic')
     ) {
-      return 'internal';
+      return 'internal'
     }
 
     // Default to public for general information
-    return 'public';
+    return 'public'
   }
 
   /**
@@ -989,7 +989,7 @@ export class AguiService extends EventEmitter {
   async processCopilotRequest(
     _request: CopilotRequest,
   ): Promise<CopilotResponse> {
-    const startTime = Date.now();
+    const startTime = Date.now()
 
     try {
       logger.info('Processing CopilotKit request', {
@@ -997,7 +997,7 @@ export class AguiService extends EventEmitter {
         sessionId: request.sessionId,
         _userId: request.userId,
         type: request.type,
-      });
+      })
 
       // Convert CopilotKit request to AG-UI format
       const aguiRequest: AguiRequest = {
@@ -1010,10 +1010,10 @@ export class AguiService extends EventEmitter {
           ...request.metadata,
           source: 'copilotkit',
         },
-      };
+      }
 
       // Process through AG-UI protocol
-      const aguiResponse = await this.processQuery(aguiRequest);
+      const aguiResponse = await this.processQuery(aguiRequest)
 
       // Convert AG-UI response to CopilotKit format
       const copilotResponse: CopilotResponse = {
@@ -1027,20 +1027,20 @@ export class AguiService extends EventEmitter {
           ...aguiResponse.metadata,
           processingTime: Date.now() - startTime,
         },
-      };
+      }
 
       logger.info('CopilotKit request processed successfully', {
         requestId: request.id,
         sessionId: request.sessionId,
         processingTime: copilotResponse.metadata?.processingTime,
-      });
+      })
 
-      return copilotResponse;
+      return copilotResponse
     } catch {
       logger.error('Failed to process CopilotKit request', error, {
         requestId: request.id,
         sessionId: request.sessionId,
-      });
+      })
 
       const errorResponse: CopilotResponse = {
         id: request.id,
@@ -1054,19 +1054,19 @@ export class AguiService extends EventEmitter {
           error: error instanceof Error ? error.message : 'Unknown error',
           processingTime: Date.now() - startTime,
         },
-      };
+      }
 
-      return errorResponse;
+      return errorResponse
     }
   }
 }
 
 // Metrics interface
 export interface ServiceMetrics {
-  uptime: number;
-  queryCount: number;
-  errorCount: number;
-  feedbackCount: number;
-  averageProcessingTimeMs: number;
-  lastReset: string;
+  uptime: number
+  queryCount: number
+  errorCount: number
+  feedbackCount: number
+  averageProcessingTimeMs: number
+  lastReset: string
 }

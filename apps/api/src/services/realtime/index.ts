@@ -4,7 +4,7 @@
  * Exports all real-time subscription services for AI agent integration
  */
 
-export { RealtimeSubscriptionService } from './realtime-subscription-service';
+export { RealtimeSubscriptionService } from './realtime-subscription-service'
 
 // Re-export types for convenience
 export type {
@@ -12,7 +12,7 @@ export type {
   RealtimeEvent,
   SubscriptionHandle,
   SubscriptionOptions,
-} from './realtime-subscription-service';
+} from './realtime-subscription-service'
 
 // Default export for easy importing
-export default RealtimeSubscriptionService;
+export default RealtimeSubscriptionService

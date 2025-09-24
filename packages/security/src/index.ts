@@ -4,10 +4,10 @@
  */
 
 // Version export
-export const SECURITY_VERSION = '1.0.0';
+export const SECURITY_VERSION = '1.0.0'
 
 // Core encryption and key management
-export { EncryptionManager, encryptionManager, KeyManager, keyManager } from './encryption';
+export { EncryptionManager, encryptionManager, KeyManager, keyManager } from './encryption'
 
 // Audit logging
 export {
@@ -15,7 +15,7 @@ export {
   AuditLogger,
   auditLogger,
   type AuditLoggerOptions,
-} from './audit/logger';
+} from './audit/logger'
 
 // Security utilities and validation
 export {
@@ -25,7 +25,7 @@ export {
   secureLogger,
   SecurityUtils,
   securityUtils,
-} from './utils';
+} from './utils'
 
 // LGPD anonymization and data masking utilities
 export {
@@ -45,7 +45,7 @@ export {
   maskPatientData,
   maskPhone,
   type PatientData,
-} from './anonymization';
+} from './anonymization'
 
 // Security middleware for Hono framework
 export {
@@ -60,16 +60,16 @@ export {
   requestId,
   securityHeaders,
   securityLogging,
-} from './middleware';
+} from './middleware'
 
 // Import required classes for default export
-import { EncryptionManager, encryptionManager, KeyManager, keyManager } from './encryption';
+import { EncryptionManager, encryptionManager, KeyManager, keyManager } from './encryption'
 
-import { RateLimiter, rateLimiter, SecurityUtils, securityUtils } from './utils';
+import { RateLimiter, rateLimiter, SecurityUtils, securityUtils } from './utils'
 
 // Named facade for common usage
 export function maskSensitiveData(data: string, maskChar: string = '*') {
-  return SecurityUtils.maskSensitiveData(data, maskChar);
+  return SecurityUtils.maskSensitiveData(data, maskChar)
 }
 
 import {
@@ -84,7 +84,7 @@ import {
   requestId,
   securityHeaders,
   securityLogging,
-} from './middleware';
+} from './middleware'
 
 // Import anonymization utilities
 import {
@@ -93,7 +93,7 @@ import {
   DEFAULT_MASKING_OPTIONS,
   generatePrivacyReport,
   maskPatientData,
-} from './anonymization';
+} from './anonymization'
 
 // Default export with all components
 export default {
@@ -161,7 +161,7 @@ export default {
     DEFAULT_MASKING_OPTIONS,
     ANONYMIZATION_VERSION,
   },
-};
+}
 
 // Re-export Hono types for convenience
-export type { Context, Next } from 'hono';
+export type { Context, Next } from 'hono'

@@ -25,41 +25,41 @@ Test calendar components effectively with minimal complexity.
 ### Component Tests
 
 ```typescript
-import { render, screen } from '@testing-library/react';
-import { EventCalendar } from './EventCalendar';
+import { render, screen } from '@testing-library/react'
+import { EventCalendar } from './EventCalendar'
 
 test('renders calendar events', () => {
-  render(<EventCalendar events={mockEvents} />);
-  expect(screen.getByText('Patient Consultation')).toBeInTheDocument();
-});
+  render(<EventCalendar events={mockEvents} />)
+  expect(screen.getByText('Patient Consultation')).toBeInTheDocument()
+})
 ```
 
 ### Integration Tests
 
 ```typescript
 test('creates new appointment', async () => {
-  render(<EventCalendar />);
-  fireEvent.click(screen.getByText('New Appointment'));
-  fireEvent.change(screen.getByLabelText('Title'), { target: { value: 'Test' } });
-  fireEvent.click(screen.getByText('Save'));
+  render(<EventCalendar />)
+  fireEvent.click(screen.getByText('New Appointment'))
+  fireEvent.change(screen.getByLabelText('Title'), { target: { value: 'Test' } })
+  fireEvent.click(screen.getByText('Save'))
 
   await waitFor(() => {
-    expect(screen.getByText('Test')).toBeInTheDocument();
-  });
-});
+    expect(screen.getByText('Test')).toBeInTheDocument()
+  })
+})
 ```
 
 ## E2E Tests
 
 ```typescript
 test('complete appointment flow', async ({ page }) => {
-  await page.goto('/calendar');
-  await page.click('[data-testid=new-appointment]');
-  await page.fill('[name=title]', 'E2E Test Appointment');
-  await page.click('[data-testid=save-appointment]');
+  await page.goto('/calendar')
+  await page.click('[data-testid=new-appointment]')
+  await page.fill('[name=title]', 'E2E Test Appointment')
+  await page.click('[data-testid=save-appointment]')
 
-  await expect(page.locator('text=E2E Test Appointment')).toBeVisible();
-});
+  await expect(page.locator('text=E2E Test Appointment')).toBeVisible()
+})
 ```
 
 ## Key Scenarios

@@ -248,6 +248,6 @@ export const healthcareComplianceConfig = {
     reporting: true,
     dashboards: true,
   },
-};
+}
 
-export default healthcareComplianceConfig;
+export default healthcareComplianceConfig

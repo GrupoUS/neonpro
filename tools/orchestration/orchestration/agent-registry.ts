@@ -1,11 +1,11 @@
-import type { AgentCapability, AgentStats, AgentType } from './types';
+import type { AgentCapability, AgentStats, AgentType } from './types'
 
 export class TDDAgentRegistry {
-  private agents: Map<AgentType, AgentCapability> = new Map();
-  public agentStats: Map<AgentType, AgentStats> = new Map();
+  private agents: Map<AgentType, AgentCapability> = new Map()
+  public agentStats: Map<AgentType, AgentStats> = new Map()
 
   constructor() {
-    this.initializeDefaultAgents();
+    this.initializeDefaultAgents()
   }
 
   initializeDefaultAgents(): void {
@@ -65,127 +65,127 @@ export class TDDAgentRegistry {
         triggers: ['review', 'quality'],
         configuration: {},
       },
-    ];
+    ]
 
     for (const agent of defaultAgents) {
-      this.registerAgent(agent);
+      this.registerAgent(agent)
     }
   }
 
   registerAgent(capability: AgentCapability): void {
-    this.agents.set(capability.type, capability);
+    this.agents.set(capability.type, capability)
     this.agentStats.set(capability.type, {
       executionCount: 0,
       successRate: 0,
       averageExecutionTime: 0,
       lastExecution: null,
-    });
+    })
   }
 
   getAllAgents(): AgentCapability[] {
-    return Array.from(this.agents.values());
+    return Array.from(this.agents.values())
   }
 
   getAgent(type: AgentType): AgentCapability | undefined {
-    return this.agents.get(type);
+    return this.agents.get(type)
   }
 
   // Method names expected by tests
   getAgentsForPhase(phase: string, _context?: any): AgentCapability[] {
-    return this.getAllAgents().filter(agent => agent.phases.includes(phase as any));
+    return this.getAllAgents().filter((agent) => agent.phases.includes(phase as any))
   }
 
   getAgentsForCapability(capability: string): AgentCapability[] {
-    return this.getAllAgents().filter(agent => agent.capabilities.includes(capability));
+    return this.getAllAgents().filter((agent) => agent.capabilities.includes(capability))
   }
 
   selectOptimalAgents(_context: any, _requirements?: any): AgentCapability[] {
     // Mock implementation for tests
-    const allAgents = this.getAllAgents();
-    return allAgents.slice(0, 2);
+    const allAgents = this.getAllAgents()
+    return allAgents.slice(0, 2)
   }
 
-  validateAgentCapability(agent: AgentCapability): boolean;
-  validateAgentCapability(agentName: string, capability: string): boolean;
+  validateAgentCapability(agent: AgentCapability): boolean
+  validateAgentCapability(agentName: string, capability: string): boolean
   validateAgentCapability(
     agentOrName: AgentCapability | string,
     capability?: string,
   ): boolean {
     if (typeof agentOrName === 'string' && capability) {
       const agent = Array.from(this.agents.values()).find(
-        a => a.name === agentOrName,
-      );
-      return agent?.capabilities?.includes(capability) || false;
+        (a) => a.name === agentOrName,
+      )
+      return agent?.capabilities?.includes(capability) || false
     } else if (typeof agentOrName === 'object') {
       // Validate if agent has all required capabilities based on context
-      return true; // Simplified validation for tests
+      return true // Simplified validation for tests
     }
-    return false;
+    return false
   }
 
   getRecommendedWorkflow(_context: any): string {
-    return 'standard-workflow';
+    return 'standard-workflow'
   }
 
   updateAgentConfiguration(agentName: string, config: any): boolean {
     const agent = Array.from(this.agents.values()).find(
-      a => a.name === agentName,
-    );
+      (a) => a.name === agentName,
+    )
     if (agent) {
-      Object.assign(agent.configuration, config);
-      return true;
+      Object.assign(agent.configuration, config)
+      return true
     }
-    return false;
+    return false
   }
 
   getAgentStats(): Map<AgentType, AgentStats> {
-    return new Map(this.agentStats);
+    return new Map(this.agentStats)
   }
 
   // Alias methods for backward compatibility
   getAgentsByPhase(phase: string): AgentCapability[] {
-    return this.getAgentsForPhase(phase);
+    return this.getAgentsForPhase(phase)
   }
 
   getAgentsByCapability(capability: string): AgentCapability[] {
-    return this.getAgentsForCapability(capability);
+    return this.getAgentsForCapability(capability)
   }
 
   updateAgentStats(type: AgentType, success: boolean, duration: number): void {
-    const stats = this.agentStats.get(type);
+    const stats = this.agentStats.get(type)
     if (stats) {
-      stats.executionCount++;
-      stats.lastExecution = new Date();
+      stats.executionCount++
+      stats.lastExecution = new Date()
       stats.averageExecutionTime =
         (stats.averageExecutionTime * (stats.executionCount - 1) + duration)
-        / stats.executionCount;
+        / stats.executionCount
 
       const successCount = Math.floor(
         stats.successRate * (stats.executionCount - 1),
-      );
-      stats.successRate = (successCount + (success ? 1 : 0)) / stats.executionCount;
+      )
+      stats.successRate = (successCount + (success ? 1 : 0)) / stats.executionCount
     }
   }
 
   getStats(type: AgentType): AgentStats | undefined {
-    return this.agentStats.get(type);
+    return this.agentStats.get(type)
   }
 
   getAllStats(): Map<AgentType, AgentStats> {
-    return new Map(this.agentStats);
+    return new Map(this.agentStats)
   }
 
   isRegistered(type: AgentType): boolean {
-    return this.agents.has(type);
+    return this.agents.has(type)
   }
 
   unregisterAgent(type: AgentType): void {
-    this.agents.delete(type);
-    this.agentStats.delete(type);
+    this.agents.delete(type)
+    this.agentStats.delete(type)
   }
 
   clear(): void {
-    this.agents.clear();
-    this.agentStats.clear();
+    this.agents.clear()
+    this.agentStats.clear()
   }
 }

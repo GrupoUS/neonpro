@@ -697,9 +697,9 @@ The application uses functional composition to build middleware chains, where hi
 
 ```typescript
 // Example from app.ts
-app.use('*', httpsRedirectMiddleware());
-app.use('*', healthcareSecurityHeadersMiddleware());
-app.use('*', rateLimitMiddleware());
+app.use('*', httpsRedirectMiddleware())
+app.use('*', healthcareSecurityHeadersMiddleware())
+app.use('*', rateLimitMiddleware())
 ```
 
 Each middleware function returns a handler that can be registered with the application, allowing for clean, readable pipeline construction.
@@ -714,11 +714,11 @@ export function rateLimitMiddleware() {
   return async (c: Context, next: Next) => {
     // Different limits for different endpoint types
     if (path.includes('/patients')) {
-      const healthcareLimit = createRateLimit({ windowMs: 900000, maxRequests: 50 });
-      return healthcareLimit(c, next);
+      const healthcareLimit = createRateLimit({ windowMs: 900000, maxRequests: 50 })
+      return healthcareLimit(c, next)
     }
     // ... other conditions
-  };
+  }
 }
 ```
 
@@ -743,7 +743,7 @@ Several middleware components implement early termination, stopping the request 
 ```typescript
 // From authn.ts
 if (!authHeader || !authHeader.startsWith('Bearer ')) {
-  throw new HTTPException(401, { message: 'Authorization header required' });
+  throw new HTTPException(401, { message: 'Authorization header required' })
 }
 ```
 

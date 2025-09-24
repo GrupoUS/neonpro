@@ -1,13 +1,13 @@
 /**
  * Enhanced Telemedicine Service Tests
- * 
+ *
  * Comprehensive test suite for the enhanced telemedicine service with proper database integration
  * Following RED-GREEN methodology and TDD principles
  */
 
-import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
-import { EnhancedTelemedicineService } from '../services/enhanced-telemedicine-service';
-import { z } from 'zod';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { z } from 'zod'
+import { EnhancedTelemedicineService } from '../services/enhanced-telemedicine-service'
 
 // Mock dependencies
 const mockSupabase = {
@@ -38,23 +38,23 @@ const mockSupabase = {
       })),
     })),
   })),
-};
+}
 
 const mockAuditLogger = {
   logSecurityEvent: vi.fn(),
   logError: vi.fn(),
   log: vi.fn(),
-};
+}
 
 const mockAiSecurityService = {
   sanitizeForAI: vi.fn((content) => `Sanitized: ${content}`),
   validatePromptSecurity: vi.fn(() => true),
   validateAIOutputSafety: vi.fn(() => true),
-};
+}
 
 vi.mock('../clients/supabase', () => ({
   createAdminClient: () => mockSupabase,
-}));
+}))
 
 vi.mock('../lib/logger', () => ({
   logger: {
@@ -62,19 +62,19 @@ vi.mock('../lib/logger', () => ({
     error: vi.fn(),
     warn: vi.fn(),
   },
-}));
+}))
 
 vi.mock('../services/ai-security-service', () => ({
   aiSecurityService: mockAiSecurityService,
-}));
+}))
 
 describe('EnhancedTelemedicineService', () => {
-  let service: EnhancedTelemedicineService;
+  let service: EnhancedTelemedicineService
 
   beforeEach(() => {
-    vi.clearAllMocks();
-    service = new EnhancedTelemedicineService();
-  });
+    vi.clearAllMocks()
+    service = new EnhancedTelemedicineService()
+  })
 
   describe('Session Management', () => {
     it('should create a new telemedicine session', async () => {
@@ -89,7 +89,7 @@ describe('EnhancedTelemedicineService', () => {
         notes: 'Consulta de acompanhamento',
         videoProvider: 'meet' as const,
         recordingEnabled: false,
-      };
+      }
 
       const mockSession = {
         id: 'session-123',
@@ -99,7 +99,7 @@ describe('EnhancedTelemedicineService', () => {
         requiresPrescription: false,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
-      };
+      }
 
       // Mock professional authorization check
       mockSupabase.from().select().eq().single.mockResolvedValueOnce({
@@ -109,30 +109,30 @@ describe('EnhancedTelemedicineService', () => {
           telemedicine_authorized: true,
         },
         error: null,
-      });
+      })
 
       mockSupabase.from().select().eq().single.mockResolvedValueOnce({
         data: { id: 'assoc-123' },
         error: null,
-      });
+      })
 
       mockSupabase.from().insert().select().single.mockResolvedValue({
         data: mockSession,
         error: null,
-      });
+      })
 
-      const result = await service.createSession(sessionInput);
+      const result = await service.createSession(sessionInput)
 
-      expect(result).toEqual(mockSession);
-      expect(mockSupabase.from).toHaveBeenCalledWith('telemedicine_sessions');
+      expect(result).toEqual(mockSession)
+      expect(mockSupabase.from).toHaveBeenCalledWith('telemedicine_sessions')
       expect(mockAuditLogger.logSecurityEvent).toHaveBeenCalledWith({
         event: 'telemedicine_session_created',
         sessionId: 'session-123',
         patientId: 'patient-123',
         professionalId: 'prof-123',
         timestamp: expect.any(String),
-      });
-    });
+      })
+    })
 
     it('should validate professional authorization before creating session', async () => {
       const sessionInput = {
@@ -143,7 +143,7 @@ describe('EnhancedTelemedicineService', () => {
         scheduledFor: new Date('2024-01-15T10:00:00'),
         estimatedDuration: 30,
         specialty: 'Dermatologia Estética',
-      };
+      }
 
       // Mock unauthorized professional
       mockSupabase.from().select().eq().single.mockResolvedValue({
@@ -153,10 +153,12 @@ describe('EnhancedTelemedicineService', () => {
           telemedicine_authorized: true,
         },
         error: null,
-      });
+      })
 
-      await expect(service.createSession(sessionInput)).rejects.toThrow('Professional not authorized for telemedicine');
-    });
+      await expect(service.createSession(sessionInput)).rejects.toThrow(
+        'Professional not authorized for telemedicine',
+      )
+    })
 
     it('should get session by ID', async () => {
       const mockSession = {
@@ -171,28 +173,28 @@ describe('EnhancedTelemedicineService', () => {
         specialty: 'Dermatologia Estética',
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
-      };
+      }
 
       mockSupabase.from().select().eq().single.mockResolvedValue({
         data: mockSession,
         error: null,
-      });
+      })
 
-      const result = await service.getSession('session-123');
+      const result = await service.getSession('session-123')
 
-      expect(result).toEqual(mockSession);
-    });
+      expect(result).toEqual(mockSession)
+    })
 
     it('should return null for non-existent session', async () => {
       mockSupabase.from().select().eq().single.mockResolvedValue({
         data: null,
         error: { message: 'Not found' },
-      });
+      })
 
-      const result = await service.getSession('non-existent');
+      const result = await service.getSession('non-existent')
 
-      expect(result).toBeNull();
-    });
+      expect(result).toBeNull()
+    })
 
     it('should get professional sessions', async () => {
       const mockSessions = [
@@ -212,18 +214,18 @@ describe('EnhancedTelemedicineService', () => {
           status: 'active',
           scheduledFor: new Date().toISOString(),
         },
-      ];
+      ]
 
       mockSupabase.from().select().eq().order.mockResolvedValue({
         data: mockSessions,
         error: null,
-      });
+      })
 
-      const result = await service.getProfessionalSessions('prof-123');
+      const result = await service.getProfessionalSessions('prof-123')
 
-      expect(result).toHaveLength(2);
-      expect(result[0].professionalId).toBe('prof-123');
-    });
+      expect(result).toHaveLength(2)
+      expect(result[0].professionalId).toBe('prof-123')
+    })
 
     it('should get patient sessions', async () => {
       const mockSessions = [
@@ -235,18 +237,18 @@ describe('EnhancedTelemedicineService', () => {
           status: 'scheduled',
           scheduledFor: new Date().toISOString(),
         },
-      ];
+      ]
 
       mockSupabase.from().select().eq().order.mockResolvedValue({
         data: mockSessions,
         error: null,
-      });
+      })
 
-      const result = await service.getPatientSessions('patient-123');
+      const result = await service.getPatientSessions('patient-123')
 
-      expect(result).toHaveLength(1);
-      expect(result[0].patientId).toBe('patient-123');
-    });
+      expect(result).toHaveLength(1)
+      expect(result[0].patientId).toBe('patient-123')
+    })
 
     it('should filter sessions by status', async () => {
       const mockSessions = [
@@ -258,19 +260,19 @@ describe('EnhancedTelemedicineService', () => {
           status: 'scheduled',
           scheduledFor: new Date().toISOString(),
         },
-      ];
+      ]
 
       mockSupabase.from().select().eq().eq().order.mockResolvedValue({
         data: mockSessions,
         error: null,
-      });
+      })
 
-      const result = await service.getProfessionalSessions('prof-123', 'scheduled');
+      const result = await service.getProfessionalSessions('prof-123', 'scheduled')
 
-      expect(result).toHaveLength(1);
-      expect(result[0].status).toBe('scheduled');
-    });
-  });
+      expect(result).toHaveLength(1)
+      expect(result[0].status).toBe('scheduled')
+    })
+  })
 
   describe('Session Lifecycle', () => {
     it('should start a telemedicine session', async () => {
@@ -279,33 +281,33 @@ describe('EnhancedTelemedicineService', () => {
         patientId: 'patient-123',
         professionalId: 'prof-123',
         status: 'scheduled',
-      };
+      }
 
       mockSupabase.from().select().eq().single.mockResolvedValue({
         data: mockSession,
         error: null,
-      });
+      })
 
       mockSupabase.from().update().eq().mockResolvedValue({
         data: null,
         error: null,
-      });
+      })
 
-      await service.startSession('session-123', 'prof-123');
+      await service.startSession('session-123', 'prof-123')
 
-      expect(mockSupabase.from).toHaveBeenCalledWith('telemedicine_sessions');
+      expect(mockSupabase.from).toHaveBeenCalledWith('telemedicine_sessions')
       expect(mockSupabase.from().update).toHaveBeenCalledWith({
         status: 'active',
         updatedAt: expect.any(String),
-      });
+      })
 
       expect(mockAuditLogger.logSecurityEvent).toHaveBeenCalledWith({
         event: 'telemedicine_session_started',
         sessionId: 'session-123',
         professionalId: 'prof-123',
         timestamp: expect.any(String),
-      });
-    });
+      })
+    })
 
     it('should prevent starting session from wrong professional', async () => {
       const mockSession = {
@@ -313,15 +315,17 @@ describe('EnhancedTelemedicineService', () => {
         patientId: 'patient-123',
         professionalId: 'prof-123', // Different from requesting professional
         status: 'scheduled',
-      };
+      }
 
       mockSupabase.from().select().eq().single.mockResolvedValue({
         data: mockSession,
         error: null,
-      });
+      })
 
-      await expect(service.startSession('session-123', 'prof-456')).rejects.toThrow('Session not found or access denied');
-    });
+      await expect(service.startSession('session-123', 'prof-456')).rejects.toThrow(
+        'Session not found or access denied',
+      )
+    })
 
     it('should prevent starting non-scheduled session', async () => {
       const mockSession = {
@@ -329,15 +333,17 @@ describe('EnhancedTelemedicineService', () => {
         patientId: 'patient-123',
         professionalId: 'prof-123',
         status: 'active', // Already active
-      };
+      }
 
       mockSupabase.from().select().eq().single.mockResolvedValue({
         data: mockSession,
         error: null,
-      });
+      })
 
-      await expect(service.startSession('session-123', 'prof-123')).rejects.toThrow('Session cannot be started');
-    });
+      await expect(service.startSession('session-123', 'prof-123')).rejects.toThrow(
+        'Session cannot be started',
+      )
+    })
 
     it('should end a telemedicine session', async () => {
       const mockSession = {
@@ -345,24 +351,24 @@ describe('EnhancedTelemedicineService', () => {
         patientId: 'patient-123',
         professionalId: 'prof-123',
         status: 'active',
-      };
+      }
 
       mockSupabase.from().select().eq().single.mockResolvedValue({
         data: mockSession,
         error: null,
-      });
+      })
 
       mockSupabase.from().update().eq().mockResolvedValue({
         data: null,
         error: null,
-      });
+      })
 
-      await service.endSession('session-123', 'prof-123', 'completed');
+      await service.endSession('session-123', 'prof-123', 'completed')
 
       expect(mockSupabase.from().update).toHaveBeenCalledWith({
         status: 'ended',
         updatedAt: expect.any(String),
-      });
+      })
 
       expect(mockAuditLogger.logSecurityEvent).toHaveBeenCalledWith({
         event: 'telemedicine_session_ended',
@@ -370,16 +376,16 @@ describe('EnhancedTelemedicineService', () => {
         professionalId: 'prof-123',
         endReason: 'completed',
         timestamp: expect.any(String),
-      });
-    });
-  });
+      })
+    })
+  })
 
   describe('Messaging', () => {
     it('should send a message in active session', async () => {
       const mockSession = {
         id: 'session-123',
         status: 'active',
-      };
+      }
 
       const messageInput = {
         sessionId: 'session-123',
@@ -387,7 +393,7 @@ describe('EnhancedTelemedicineService', () => {
         senderRole: 'patient' as const,
         messageType: 'text' as const,
         content: 'Olá, doutor!',
-      };
+      }
 
       const mockMessage = {
         id: 'message-123',
@@ -398,36 +404,36 @@ describe('EnhancedTelemedicineService', () => {
         content: 'Sanitized: Olá, doutor!',
         encrypted: true,
         timestamp: new Date().toISOString(),
-      };
+      }
 
       mockSupabase.from().select().eq().single.mockResolvedValue({
         data: mockSession,
         error: null,
-      });
+      })
 
       mockSupabase.from().insert().select().single.mockResolvedValue({
         data: mockMessage,
         error: null,
-      });
+      })
 
-      const result = await service.sendMessage(messageInput);
+      const result = await service.sendMessage(messageInput)
 
-      expect(result).toEqual(mockMessage);
-      expect(mockAiSecurityService.sanitizeForAI).toHaveBeenCalledWith('Olá, doutor!');
+      expect(result).toEqual(mockMessage)
+      expect(mockAiSecurityService.sanitizeForAI).toHaveBeenCalledWith('Olá, doutor!')
       expect(mockAuditLogger.logSecurityEvent).toHaveBeenCalledWith({
         event: 'telemedicine_message_sent',
         sessionId: 'session-123',
         senderId: 'patient-123',
         messageType: 'text',
         timestamp: expect.any(String),
-      });
-    });
+      })
+    })
 
     it('should prevent sending message in non-active session', async () => {
       const mockSession = {
         id: 'session-123',
         status: 'scheduled', // Not active
-      };
+      }
 
       const messageInput = {
         sessionId: 'session-123',
@@ -435,15 +441,15 @@ describe('EnhancedTelemedicineService', () => {
         senderRole: 'patient' as const,
         messageType: 'text' as const,
         content: 'Olá, doutor!',
-      };
+      }
 
       mockSupabase.from().select().eq().single.mockResolvedValue({
         data: mockSession,
         error: null,
-      });
+      })
 
-      await expect(service.sendMessage(messageInput)).rejects.toThrow('Session is not active');
-    });
+      await expect(service.sendMessage(messageInput)).rejects.toThrow('Session is not active')
+    })
 
     it('should get session messages', async () => {
       const mockMessages = [
@@ -465,20 +471,20 @@ describe('EnhancedTelemedicineService', () => {
           content: 'Olá! Como posso ajudar?',
           timestamp: new Date().toISOString(),
         },
-      ];
+      ]
 
       mockSupabase.from().select().eq().order.mockResolvedValue({
         data: mockMessages,
         error: null,
-      });
+      })
 
-      const result = await service.getSessionMessages('session-123');
+      const result = await service.getSessionMessages('session-123')
 
-      expect(result).toHaveLength(2);
-      expect(result[0].content).toBe('Olá, doutor!');
-      expect(result[1].content).toBe('Olá! Como posso ajudar?');
-    });
-  });
+      expect(result).toHaveLength(2)
+      expect(result[0].content).toBe('Olá, doutor!')
+      expect(result[1].content).toBe('Olá! Como posso ajudar?')
+    })
+  })
 
   describe('Prescriptions', () => {
     it('should create prescription from active session', async () => {
@@ -487,7 +493,7 @@ describe('EnhancedTelemedicineService', () => {
         patientId: 'patient-123',
         professionalId: 'prof-123',
         status: 'active',
-      };
+      }
 
       const prescriptionInput = {
         sessionId: 'session-123',
@@ -503,7 +509,7 @@ describe('EnhancedTelemedicineService', () => {
           },
         ],
         notes: 'Tratamento para acne',
-      };
+      }
 
       const mockPrescription = {
         id: 'prescription-123',
@@ -514,29 +520,29 @@ describe('EnhancedTelemedicineService', () => {
         notes: prescriptionInput.notes,
         issuedAt: new Date().toISOString(),
         expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-      };
+      }
 
       mockSupabase.from().select().eq().single.mockResolvedValue({
         data: mockSession,
         error: null,
-      });
+      })
 
       mockSupabase.from().insert().select().single.mockResolvedValue({
         data: mockPrescription,
         error: null,
-      });
+      })
 
-      const result = await service.createPrescription(prescriptionInput);
+      const result = await service.createPrescription(prescriptionInput)
 
-      expect(result).toEqual(mockPrescription);
+      expect(result).toEqual(mockPrescription)
       expect(mockAuditLogger.logSecurityEvent).toHaveBeenCalledWith({
         event: 'telemedicine_prescription_created',
         sessionId: 'session-123',
         patientId: 'patient-123',
         professionalId: 'prof-123',
         timestamp: expect.any(String),
-      });
-    });
+      })
+    })
 
     it('should prevent prescription creation from unauthorized professional', async () => {
       const mockSession = {
@@ -544,7 +550,7 @@ describe('EnhancedTelemedicineService', () => {
         patientId: 'patient-123',
         professionalId: 'prof-123',
         status: 'active',
-      };
+      }
 
       const prescriptionInput = {
         sessionId: 'session-123',
@@ -559,15 +565,17 @@ describe('EnhancedTelemedicineService', () => {
             instructions: 'Aplicar à noite',
           },
         ],
-      };
+      }
 
       mockSupabase.from().select().eq().single.mockResolvedValue({
         data: mockSession,
         error: null,
-      });
+      })
 
-      await expect(service.createPrescription(prescriptionInput)).rejects.toThrow('Session not found or access denied');
-    });
+      await expect(service.createPrescription(prescriptionInput)).rejects.toThrow(
+        'Session not found or access denied',
+      )
+    })
 
     it('should validate medication data', async () => {
       const mockSession = {
@@ -575,7 +583,7 @@ describe('EnhancedTelemedicineService', () => {
         patientId: 'patient-123',
         professionalId: 'prof-123',
         status: 'active',
-      };
+      }
 
       const invalidPrescriptionInput = {
         sessionId: 'session-123',
@@ -590,16 +598,16 @@ describe('EnhancedTelemedicineService', () => {
             instructions: 'Aplicar à noite',
           },
         ],
-      };
+      }
 
       mockSupabase.from().select().eq().single.mockResolvedValue({
         data: mockSession,
         error: null,
-      });
+      })
 
-      await expect(service.createPrescription(invalidPrescriptionInput)).rejects.toThrow();
-    });
-  });
+      await expect(service.createPrescription(invalidPrescriptionInput)).rejects.toThrow()
+    })
+  })
 
   describe('Professional Authorization', () => {
     it('should validate professional authorization correctly', async () => {
@@ -610,17 +618,17 @@ describe('EnhancedTelemedicineService', () => {
           telemedicine_authorized: true,
         },
         error: null,
-      });
+      })
 
       mockSupabase.from().select().eq().single.mockResolvedValueOnce({
         data: { id: 'assoc-123' },
         error: null,
-      });
+      })
 
-      const result = await service['validateProfessionalAuthorization']('prof-123', 'clinic-123');
+      const result = await service['validateProfessionalAuthorization']('prof-123', 'clinic-123')
 
-      expect(result).toBe(true);
-    });
+      expect(result).toBe(true)
+    })
 
     it('should reject inactive professional', async () => {
       mockSupabase.from().select().eq().single.mockResolvedValue({
@@ -629,12 +637,12 @@ describe('EnhancedTelemedicineService', () => {
           telemedicine_authorized: true,
         },
         error: null,
-      });
+      })
 
-      const result = await service['validateProfessionalAuthorization']('prof-123', 'clinic-123');
+      const result = await service['validateProfessionalAuthorization']('prof-123', 'clinic-123')
 
-      expect(result).toBe(false);
-    });
+      expect(result).toBe(false)
+    })
 
     it('should reject professional without telemedicine authorization', async () => {
       mockSupabase.from().select().eq().single.mockResolvedValue({
@@ -643,12 +651,12 @@ describe('EnhancedTelemedicineService', () => {
           telemedicine_authorized: false, // Not authorized
         },
         error: null,
-      });
+      })
 
-      const result = await service['validateProfessionalAuthorization']('prof-123', 'clinic-123');
+      const result = await service['validateProfessionalAuthorization']('prof-123', 'clinic-123')
 
-      expect(result).toBe(false);
-    });
+      expect(result).toBe(false)
+    })
 
     it('should reject professional without clinic association', async () => {
       mockSupabase.from().select().eq().single.mockResolvedValueOnce({
@@ -657,18 +665,18 @@ describe('EnhancedTelemedicineService', () => {
           telemedicine_authorized: true,
         },
         error: null,
-      });
+      })
 
       mockSupabase.from().select().eq().single.mockResolvedValue({
         data: null,
         error: { message: 'No association found' },
-      });
+      })
 
-      const result = await service['validateProfessionalAuthorization']('prof-123', 'clinic-123');
+      const result = await service['validateProfessionalAuthorization']('prof-123', 'clinic-123')
 
-      expect(result).toBe(false);
-    });
-  });
+      expect(result).toBe(false)
+    })
+  })
 
   describe('Clinic Operations', () => {
     it('should get upcoming sessions for clinic', async () => {
@@ -682,27 +690,27 @@ describe('EnhancedTelemedicineService', () => {
           status: 'scheduled',
           scheduledFor: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // Tomorrow
         },
-      ];
+      ]
 
       mockSupabase.from().select().eq().eq().gte().order().limit.mockResolvedValue({
         data: mockSessions,
         error: null,
-      });
+      })
 
-      const result = await service.getUpcomingSessions('clinic-123');
+      const result = await service.getUpcomingSessions('clinic-123')
 
-      expect(result).toHaveLength(1);
-      expect(result[0].clinicId).toBe('clinic-123');
-      expect(result[0].status).toBe('scheduled');
-    });
-  });
+      expect(result).toHaveLength(1)
+      expect(result[0].clinicId).toBe('clinic-123')
+      expect(result[0].status).toBe('scheduled')
+    })
+  })
 
   describe('Error Handling', () => {
     it('should handle database errors gracefully', async () => {
       mockSupabase.from().insert().select().single.mockResolvedValue({
         data: null,
         error: { message: 'Database connection failed' },
-      });
+      })
 
       await expect(service.createSession({
         patientId: 'patient-123',
@@ -712,8 +720,8 @@ describe('EnhancedTelemedicineService', () => {
         scheduledFor: new Date(),
         estimatedDuration: 30,
         specialty: 'Dermatologia Estética',
-      })).rejects.toThrow('Database connection failed');
-    });
+      })).rejects.toThrow('Database connection failed')
+    })
 
     it('should validate session duration limits', async () => {
       await expect(service.createSession({
@@ -724,8 +732,8 @@ describe('EnhancedTelemedicineService', () => {
         scheduledFor: new Date(),
         estimatedDuration: 180, // Exceeds 120 minute limit
         specialty: 'Dermatologia Estética',
-      })).rejects.toThrow();
-    });
+      })).rejects.toThrow()
+    })
 
     it('should validate session type', async () => {
       await expect(service.createSession({
@@ -736,16 +744,16 @@ describe('EnhancedTelemedicineService', () => {
         scheduledFor: new Date(),
         estimatedDuration: 30,
         specialty: 'Dermatologia Estética',
-      })).rejects.toThrow();
-    });
-  });
+      })).rejects.toThrow()
+    })
+  })
 
   describe('Security and Compliance', () => {
     it('should sanitize message content', async () => {
       const mockSession = {
         id: 'session-123',
         status: 'active',
-      };
+      }
 
       const messageInput = {
         sessionId: 'session-123',
@@ -753,12 +761,12 @@ describe('EnhancedTelemedicineService', () => {
         senderRole: 'patient' as const,
         messageType: 'text' as const,
         content: 'Sensitive information: CPF 123.456.789-00',
-      };
+      }
 
       mockSupabase.from().select().eq().single.mockResolvedValue({
         data: mockSession,
         error: null,
-      });
+      })
 
       mockSupabase.from().insert().select().single.mockResolvedValue({
         data: {
@@ -767,12 +775,14 @@ describe('EnhancedTelemedicineService', () => {
           content: 'Sanitized: Sensitive information: CPF 123.456.789-00',
         },
         error: null,
-      });
+      })
 
-      await service.sendMessage(messageInput);
+      await service.sendMessage(messageInput)
 
-      expect(mockAiSecurityService.sanitizeForAI).toHaveBeenCalledWith('Sensitive information: CPF 123.456.789-00');
-    });
+      expect(mockAiSecurityService.sanitizeForAI).toHaveBeenCalledWith(
+        'Sensitive information: CPF 123.456.789-00',
+      )
+    })
 
     it('should log security events for all sensitive operations', async () => {
       const sessionInput = {
@@ -783,7 +793,7 @@ describe('EnhancedTelemedicineService', () => {
         scheduledFor: new Date(),
         estimatedDuration: 30,
         specialty: 'Dermatologia Estética',
-      };
+      }
 
       mockSupabase.from().select().eq().single.mockResolvedValueOnce({
         data: {
@@ -791,12 +801,12 @@ describe('EnhancedTelemedicineService', () => {
           telemedicine_authorized: true,
         },
         error: null,
-      });
+      })
 
       mockSupabase.from().select().eq().single.mockResolvedValueOnce({
         data: { id: 'assoc-123' },
         error: null,
-      });
+      })
 
       mockSupabase.from().insert().select().single.mockResolvedValue({
         data: {
@@ -806,9 +816,9 @@ describe('EnhancedTelemedicineService', () => {
           status: 'scheduled',
         },
         error: null,
-      });
+      })
 
-      await service.createSession(sessionInput);
+      await service.createSession(sessionInput)
 
       expect(mockAuditLogger.logSecurityEvent).toHaveBeenCalledWith({
         event: 'telemedicine_session_created',
@@ -816,7 +826,7 @@ describe('EnhancedTelemedicineService', () => {
         patientId: 'patient-123',
         professionalId: 'prof-123',
         timestamp: expect.any(String),
-      });
-    });
-  });
-});
+      })
+    })
+  })
+})

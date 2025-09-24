@@ -5,7 +5,7 @@
  * validation and OpenAPI documentation metadata for LGPD compliance.
  */
 
-import { z } from '@hono/zod-openapi';
+import { z } from '@hono/zod-openapi'
 
 // Base response schemas
 export const ErrorResponseSchema = z
@@ -23,7 +23,7 @@ export const ErrorResponseSchema = z
       example: '2025-01-11T12:00:00.000Z',
     }),
   })
-  .openapi('ErrorResponse');
+  .openapi('ErrorResponse')
 
 export const HealthResponseSchema = z
   .object({
@@ -32,7 +32,7 @@ export const HealthResponseSchema = z
       example: 'ok',
     }),
   })
-  .openapi('HealthResponse');
+  .openapi('HealthResponse')
 
 export const DetailedHealthResponseSchema = z
   .object({
@@ -64,7 +64,7 @@ export const DetailedHealthResponseSchema = z
         description: 'Environment information for system diagnostics',
       }),
   })
-  .openapi('DetailedHealthResponse');
+  .openapi('DetailedHealthResponse')
 
 export const ApiInfoResponseSchema = z
   .object({
@@ -93,7 +93,7 @@ export const ApiInfoResponseSchema = z
       example: '2025-01-11T12:00:00.000Z',
     }),
   })
-  .openapi('ApiInfoResponse');
+  .openapi('ApiInfoResponse')
 
 // Healthcare-specific schemas
 export const ClinicSchema = z
@@ -107,7 +107,7 @@ export const ClinicSchema = z
       example: 'Clínica Estética São Paulo',
     }),
   })
-  .openapi('Clinic');
+  .openapi('Clinic')
 
 export const ProfessionalSchema = z
   .object({
@@ -124,7 +124,7 @@ export const ProfessionalSchema = z
       example: 'Dermatologia Estética',
     }),
   })
-  .openapi('Professional');
+  .openapi('Professional')
 
 export const ClientSchema = z
   .object({
@@ -160,7 +160,7 @@ export const ClientSchema = z
       description: 'Associated clinic information',
     }),
   })
-  .openapi('Client');
+  .openapi('Client')
 
 export const AppointmentSchema = z
   .object({
@@ -196,7 +196,7 @@ export const AppointmentSchema = z
       description: 'Professional information',
     }),
   })
-  .openapi('Appointment');
+  .openapi('Appointment')
 
 // Request parameter schemas
 export const ClientIdParamSchema = z
@@ -214,7 +214,7 @@ export const ClientIdParamSchema = z
         description: 'Must be a valid client ID with LGPD consent',
       }),
   })
-  .openapi('ClientIdParam');
+  .openapi('ClientIdParam')
 
 // Response collections
 export const ClientsListResponseSchema = z
@@ -224,7 +224,7 @@ export const ClientsListResponseSchema = z
       example: [],
     }),
   })
-  .openapi('ClientsListResponse');
+  .openapi('ClientsListResponse')
 
 export const ClientDetailResponseSchema = z
   .object({
@@ -232,7 +232,7 @@ export const ClientDetailResponseSchema = z
       description: 'Client details (requires LGPD consent)',
     }),
   })
-  .openapi('ClientDetailResponse');
+  .openapi('ClientDetailResponse')
 
 export const AppointmentsListResponseSchema = z
   .object({
@@ -241,7 +241,7 @@ export const AppointmentsListResponseSchema = z
       example: [],
     }),
   })
-  .openapi('AppointmentsListResponse');
+  .openapi('AppointmentsListResponse')
 
 export const AuthStatusResponseSchema = z
   .object({
@@ -254,7 +254,7 @@ export const AuthStatusResponseSchema = z
       example: 'ok',
     }),
   })
-  .openapi('AuthStatusResponse');
+  .openapi('AuthStatusResponse')
 
 // Common response status codes for healthcare API
 export const CommonResponses = {
@@ -295,4 +295,4 @@ export const CommonResponses = {
       },
     },
   },
-} as const;
+} as const

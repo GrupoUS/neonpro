@@ -13,12 +13,12 @@
  * @compliance LGPD, ANVISA, Brazilian Healthcare Standards
  */
 
-import { nanoid } from 'nanoid';
-import * as winston from 'winston';
-import { z } from 'zod';
+import { nanoid } from 'nanoid'
+import * as winston from 'winston'
+import { z } from 'zod'
 
 // Import types and services
-import { brazilianPIIRedactionService } from './brazilian-pii-redaction';
+import { brazilianPIIRedactionService } from './brazilian-pii-redaction'
 
 // Define schemas inline to avoid circular imports
 const WinstonLogLevelSchema = z.enum([
@@ -29,7 +29,7 @@ const WinstonLogLevelSchema = z.enum([
   'verbose',
   'debug',
   'silly',
-]);
+])
 
 const HealthcareSeveritySchema = z.enum([
   'debug',
@@ -40,14 +40,14 @@ const HealthcareSeveritySchema = z.enum([
   'critical',
   'alert',
   'emergency',
-]);
+])
 
 const BrazilianIdentifierSchema = z.object({
   type: z.enum(['cpf', 'cnpj', 'rg', 'sus', 'crm', 'coren', 'cro', 'cfo']),
   value: z.string(),
   masked: z.string(),
   isValid: z.boolean(),
-});
+})
 
 const BrazilianHealthcareContextSchema = z.object({
   workflowType: z
@@ -122,7 +122,7 @@ const BrazilianHealthcareContextSchema = z.object({
       hasExplicitConsent: z.boolean().optional(),
     })
     .optional(),
-});
+})
 
 const EnhancedLGPDComplianceSchema = z.object({
   dataClassification: z.enum([
@@ -151,7 +151,7 @@ const EnhancedLGPDComplianceSchema = z.object({
   brazilianIdentifiers: z.array(BrazilianIdentifierSchema).optional(),
   dataMinimizationApplied: z.boolean(),
   purposeLimitation: z.string().optional(),
-});
+})
 
 export const WinstonLogEntrySchema = z.object({
   level: WinstonLogLevelSchema,
@@ -183,7 +183,7 @@ export const WinstonLogEntrySchema = z.object({
   lgpdCompliance: EnhancedLGPDComplianceSchema,
   tags: z.array(z.string()).optional(),
   source: z.string().optional(),
-});
+})
 
 export const EnhancedStructuredLoggingConfigSchema = z.object({
   _service: z.string(),
@@ -261,7 +261,7 @@ export const EnhancedStructuredLoggingConfigSchema = z.object({
       showLevel: z.boolean().default(true),
     })
     .default({}),
-});
+})
 
 // Import types
 import {
@@ -271,30 +271,30 @@ import {
   HealthcareSeverity,
   WinstonLogEntry,
   WinstonLogLevel,
-} from './types';
+} from './types'
 
 // Custom Winston format for healthcare logs
 const healthcareLogFormat = winston.format((info: any) => {
   // Apply PII redaction to all string fields
   if (info.message && typeof info.message === 'string') {
-    info.message = brazilianPIIRedactionService.redactText(info.message);
+    info.message = brazilianPIIRedactionService.redactText(info.message)
   }
 
   if (info.error && typeof info.error === 'object') {
-    info.error = brazilianPIIRedactionService.redactObject(info.error);
+    info.error = brazilianPIIRedactionService.redactObject(info.error)
   }
 
   if (info.metadata && typeof info.metadata === 'object') {
-    info.metadata = brazilianPIIRedactionService.redactObject(info.metadata);
+    info.metadata = brazilianPIIRedactionService.redactObject(info.metadata)
   }
 
   // Add healthcare-specific formatting
   if (info.severity && info.severity !== info.level) {
-    info.severityEmoji = getSeverityEmoji(info.severity);
+    info.severityEmoji = getSeverityEmoji(info.severity)
   }
 
-  return info;
-});
+  return info
+})
 
 function getSeverityEmoji(severity: HealthcareSeverity): string {
   const emojis = {
@@ -306,22 +306,22 @@ function getSeverityEmoji(severity: HealthcareSeverity): string {
     critical: '🔥',
     alert: '🚨',
     emergency: '🆘',
-  };
-  return emojis[severity] || '';
+  }
+  return emojis[severity] || ''
 }
 
 /**
  * Enhanced Structured Logger with Winston integration
  */
 export class EnhancedStructuredLogger {
-  private winston: winston.Logger;
-  private config: EnhancedStructuredLoggingConfig;
-  private correlationIdStore: Map<string, string> = new Map();
-  private requestContext: Map<string, any> = new Map();
+  private winston: winston.Logger
+  private config: EnhancedStructuredLoggingConfig
+  private correlationIdStore: Map<string, string> = new Map()
+  private requestContext: Map<string, any> = new Map()
 
   constructor(config: EnhancedStructuredLoggingConfig) {
-    this.config = this.validateConfig(config);
-    this.winston = this.createWinstonLogger();
+    this.config = this.validateConfig(config)
+    this.winston = this.createWinstonLogger()
   }
 
   /**
@@ -332,16 +332,16 @@ export class EnhancedStructuredLogger {
   ): EnhancedStructuredLoggingConfig {
     // Basic validation - could be enhanced with schema validation
     if (!config._service) {
-      throw new Error('Service name is required in logging configuration');
+      throw new Error('Service name is required in logging configuration')
     }
-    return config;
+    return config
   }
 
   /**
    * Create Winston logger with healthcare configuration
    */
   private createWinstonLogger(): winston.Logger {
-    const transports: winston.transport[] = [];
+    const transports: winston.transport[] = []
 
     // Console transport
     if (this.config.transports.console?.enabled) {
@@ -350,7 +350,7 @@ export class EnhancedStructuredLogger {
           level: this.config.transports.console.level,
           format: this.createConsoleFormat(),
         }),
-      );
+      )
     }
 
     // File transport
@@ -363,12 +363,12 @@ export class EnhancedStructuredLogger {
           maxFiles: this.config.transports.file.maxFiles,
           format: this.createFileFormat(),
         }),
-      );
+      )
     }
 
     // Daily rotate transport
     if (this.config.transports.dailyRotate?.enabled) {
-      const DailyRotateFile = require('winston-daily-rotate-file');
+      const DailyRotateFile = require('winston-daily-rotate-file')
       transports.push(
         new DailyRotateFile({
           level: this.config.transports.dailyRotate.level,
@@ -379,7 +379,7 @@ export class EnhancedStructuredLogger {
           maxFiles: this.config.transports.dailyRotate.maxFiles,
           format: this.createFileFormat(),
         }),
-      );
+      )
     }
 
     return winston.createLogger({
@@ -389,7 +389,7 @@ export class EnhancedStructuredLogger {
       handleExceptions: this.config.performance.handleExceptions,
       handleRejections: this.config.performance.handleRejections,
       silent: this.config.performance.silent,
-    });
+    })
   }
 
   /**
@@ -400,22 +400,22 @@ export class EnhancedStructuredLogger {
       winston.format.timestamp(),
       winston.format.errors({ stack: true }),
       healthcareLogFormat(),
-    ];
+    ]
 
     if (this.config.transports.console?.format === 'json') {
-      formats.push(winston.format.json());
+      formats.push(winston.format.json())
     } else if (this.config.transports.console?.format === 'simple') {
-      formats.push(winston.format.simple());
+      formats.push(winston.format.simple())
     } else {
       formats.push(
-        winston.format.printf(info => {
+        winston.format.printf((info) => {
           const timestamp = info.timestamp
             ? new Date(info.timestamp as string).toLocaleTimeString()
-            : '';
-          const severityEmoji = info.severityEmoji || '';
+            : ''
+          const severityEmoji = info.severityEmoji || ''
           const correlationId = info.correlationId
             ? `[${info.correlationId}]`
-            : '';
+            : ''
 
           return `${timestamp} ${severityEmoji} [${info.level.toUpperCase()}] ${correlationId} ${info.service}: ${info.message} ${
             info.metadata ? JSON.stringify(info.metadata) : ''
@@ -423,12 +423,12 @@ export class EnhancedStructuredLogger {
             info.error
               ? `\nError: ${(info.error as Error).stack || (info.error as Error).message}`
               : ''
-          }`;
+          }`
         }),
-      );
+      )
     }
 
-    return winston.format.combine(...formats);
+    return winston.format.combine(...formats)
   }
 
   /**
@@ -440,33 +440,33 @@ export class EnhancedStructuredLogger {
       winston.format.errors({ stack: true }),
       healthcareLogFormat(),
       winston.format.json(),
-    );
+    )
   }
 
   /**
    * Parse size string to bytes
    */
   private parseSize(size: string): number {
-    const units = { b: 1, k: 1024, m: 1024 * 1024, g: 1024 * 1024 * 1024 };
-    const match = size.match(/^(\d+)([bkm])$/i);
-    if (!match) return 20 * 1024 * 1024; // Default 20MB
+    const units = { b: 1, k: 1024, m: 1024 * 1024, g: 1024 * 1024 * 1024 }
+    const match = size.match(/^(\d+)([bkm])$/i)
+    if (!match) return 20 * 1024 * 1024 // Default 20MB
     return (
       parseInt(match[1]!) * (units[match[2]!.toLowerCase() as keyof typeof units] || 1024)
-    );
+    )
   }
 
   /**
    * Generate correlation ID
    */
   generateCorrelationId(): string {
-    return `corr_${nanoid(16)}`;
+    return `corr_${nanoid(16)}`
   }
 
   /**
    * Set correlation ID for current context
    */
   setCorrelationId(correlationId: string): void {
-    this.correlationIdStore.set('current', correlationId);
+    this.correlationIdStore.set('current', correlationId)
   }
 
   /**
@@ -475,35 +475,35 @@ export class EnhancedStructuredLogger {
   getCorrelationId(): string {
     return (
       this.correlationIdStore.get('current') || this.generateCorrelationId()
-    );
+    )
   }
 
   /**
    * Clear correlation ID
    */
   clearCorrelationId(): void {
-    this.correlationIdStore.delete('current');
+    this.correlationIdStore.delete('current')
   }
 
   /**
    * Set request context
    */
   setRequestContext(_context: any): void {
-    this.requestContext.set('current', _context);
+    this.requestContext.set('current', _context)
   }
 
   /**
    * Get request context
    */
   getRequestContext(): any {
-    return this.requestContext.get('current') || {};
+    return this.requestContext.get('current') || {}
   }
 
   /**
    * Clear request context
    */
   clearRequestContext(): void {
-    this.requestContext.delete('current');
+    this.requestContext.delete('current')
   }
 
   /**
@@ -519,8 +519,8 @@ export class EnhancedStructuredLogger {
       critical: 'error',
       alert: 'error',
       emergency: 'error',
-    };
-    return mapping[severity];
+    }
+    return mapping[severity]
   }
 
   /**
@@ -532,21 +532,21 @@ export class EnhancedStructuredLogger {
     healthcareContext?: BrazilianHealthcareContext,
   ): EnhancedLGPDCompliance {
     // Detect PII in data
-    const containsPII = this.detectPII(data);
-    const containsPHI = this.detectPHI(data, healthcareContext);
+    const containsPII = this.detectPII(data)
+    const containsPHI = this.detectPHI(data, healthcareContext)
 
     // Extract Brazilian identifiers
-    const brazilianIdentifiers = this.extractBrazilianIdentifiers(data);
+    const brazilianIdentifiers = this.extractBrazilianIdentifiers(data)
 
     // Determine data classification
-    let dataClassification: EnhancedLGPDCompliance['dataClassification'] = 'internal';
+    let dataClassification: EnhancedLGPDCompliance['dataClassification'] = 'internal'
 
     if (['emergency', 'alert', 'critical'].includes(severity)) {
-      dataClassification = 'critical';
+      dataClassification = 'critical'
     } else if (healthcareContext?.patientContext || containsPHI) {
-      dataClassification = 'restricted';
+      dataClassification = 'restricted'
     } else if (containsPII) {
-      dataClassification = 'confidential';
+      dataClassification = 'confidential'
     }
 
     return {
@@ -561,22 +561,23 @@ export class EnhancedStructuredLogger {
       anonymized: this.config.lgpdCompliance.anonymizeByDefault,
       auditRequired: ['emergency', 'alert', 'critical'].includes(severity)
         || healthcareContext?.patientContext !== undefined
-        || healthcareContext?.clinicalContext?.requiresAudit || false,
+        || healthcareContext?.clinicalContext?.requiresAudit
+        || false,
       brazilianIdentifiers,
       dataMinimizationApplied: this.config.lgpdCompliance.enableDataMinimization,
       purposeLimitation: healthcareContext?.brazilianCompliance?.lgpdLegalBasis
         || 'healthcare_provision',
-    };
+    }
   }
 
   /**
    * Detect PII in data
    */
   private detectPII(data: any): boolean {
-    if (!data) return false;
+    if (!data) return false
 
-    const dataString = JSON.stringify(data);
-    return brazilianPIIRedactionService.containsPII(dataString);
+    const dataString = JSON.stringify(data)
+    return brazilianPIIRedactionService.containsPII(dataString)
   }
 
   /**
@@ -586,7 +587,7 @@ export class EnhancedStructuredLogger {
     data: any,
     healthcareContext?: BrazilianHealthcareContext,
   ): boolean {
-    if (healthcareContext?.patientContext) return true;
+    if (healthcareContext?.patientContext) return true
 
     // Check for healthcare-related sensitive data
     const healthKeywords = [
@@ -604,20 +605,20 @@ export class EnhancedStructuredLogger {
       'prescription',
       'allergy',
       'condition',
-    ];
+    ]
 
-    const dataString = JSON.stringify(data).toLowerCase();
-    return healthKeywords.some(keyword => dataString.includes(keyword));
+    const dataString = JSON.stringify(data).toLowerCase()
+    return healthKeywords.some((keyword) => dataString.includes(keyword))
   }
 
   /**
    * Extract Brazilian identifiers from data
    */
   private extractBrazilianIdentifiers(data: any) {
-    if (!data) return [];
+    if (!data) return []
 
-    const dataString = JSON.stringify(data);
-    return brazilianPIIRedactionService.extractBrazilianIdentifiers(dataString);
+    const dataString = JSON.stringify(data)
+    return brazilianPIIRedactionService.extractBrazilianIdentifiers(dataString)
   }
 
   /**
@@ -629,12 +630,12 @@ export class EnhancedStructuredLogger {
     message: string,
     data?: any,
     _context?: {
-      healthcare?: BrazilianHealthcareContext;
-      technical?: any;
+      healthcare?: BrazilianHealthcareContext
+      technical?: any
     },
   ): void {
-    const correlationId = this.getCorrelationId();
-    const requestContext = this.getRequestContext();
+    const correlationId = this.getCorrelationId()
+    const requestContext = this.getRequestContext()
 
     // Create log entry
     const logEntry: WinstonLogEntry = {
@@ -666,14 +667,14 @@ export class EnhancedStructuredLogger {
       ),
       tags: [severity, this.config._service, this.config.environment],
       source: this.config._service,
-    };
+    }
 
     // Log with Winston
-    this.winston.log(level, logEntry);
+    this.winston.log(level, logEntry)
 
     // Special handling for critical events
     if (['critical', 'alert', 'emergency'].includes(severity)) {
-      this.handleCriticalEvent(logEntry);
+      this.handleCriticalEvent(logEntry)
     }
   }
 
@@ -682,11 +683,11 @@ export class EnhancedStructuredLogger {
    */
   private handleCriticalEvent(logEntry: WinstonLogEntry): void {
     // Immediate end for critical events
-    this.winston.end();
+    this.winston.end()
 
     // TODO: Implement alert system integration
     if (this.config.healthcareCompliance.criticalEventAlerts) {
-      this.sendCriticalAlert(logEntry);
+      this.sendCriticalAlert(logEntry)
     }
   }
 
@@ -697,7 +698,7 @@ export class EnhancedStructuredLogger {
     // Create alert message with proper redaction
     const alertMessage = brazilianPIIRedactionService.redactText(
       `🚨 CRITICAL EVENT: ${logEntry.message}`,
-    );
+    )
 
     // Log alert (will be redacted again but that's fine)
     this.winston.error('CRITICAL_ALERT', {
@@ -705,7 +706,7 @@ export class EnhancedStructuredLogger {
       severity: logEntry.severity,
       correlationId: logEntry.correlationId,
       timestamp: logEntry.timestamp,
-    });
+    })
   }
 
   // ============================================================================
@@ -713,35 +714,35 @@ export class EnhancedStructuredLogger {
   // ============================================================================
 
   debug(message: string, data?: any, _context?: any): void {
-    this.log('debug', 'debug', message, data, _context);
+    this.log('debug', 'debug', message, data, _context)
   }
 
   info(message: string, data?: any, _context?: any): void {
-    this.log('info', 'info', message, data, _context);
+    this.log('info', 'info', message, data, _context)
   }
 
   notice(message: string, data?: any, _context?: any): void {
-    this.log('verbose', 'notice', message, data, _context);
+    this.log('verbose', 'notice', message, data, _context)
   }
 
   warn(message: string, data?: any, _context?: any): void {
-    this.log('warn', 'warn', message, data, _context);
+    this.log('warn', 'warn', message, data, _context)
   }
 
   error(message: string, error?: Error, data?: any, _context?: any): void {
-    this.log('error', 'error', message, { ...data, error }, _context);
+    this.log('error', 'error', message, { ...data, error }, _context)
   }
 
   critical(message: string, data?: any, _context?: any): void {
-    this.log('error', 'critical', message, data, _context);
+    this.log('error', 'critical', message, data, _context)
   }
 
   alert(message: string, data?: any, _context?: any): void {
-    this.log('error', 'alert', message, data, _context);
+    this.log('error', 'alert', message, data, _context)
   }
 
   emergency(message: string, data?: any, _context?: any): void {
-    this.log('error', 'emergency', message, data, _context);
+    this.log('error', 'emergency', message, data, _context)
   }
 
   // ============================================================================
@@ -763,7 +764,7 @@ export class EnhancedStructuredLogger {
       ? 'critical'
       : severity === 'medium'
       ? 'error'
-      : 'warn';
+      : 'warn'
 
     this.log(
       this.mapSeverityToLevel(healthcareSeverity),
@@ -775,7 +776,7 @@ export class EnhancedStructuredLogger {
         severity,
       },
       { healthcare: healthcareContext },
-    );
+    )
   }
 
   /**
@@ -792,12 +793,12 @@ export class EnhancedStructuredLogger {
       workflowType,
       workflowStage: stage,
       ..._context?.healthcare,
-    };
+    }
 
     this.info(`[WORKFLOW:${workflowType?.toUpperCase()}] ${message}`, data, {
       healthcare: healthcareContext,
       technical: _context?.technical,
-    });
+    })
   }
 
   /**
@@ -820,7 +821,7 @@ export class EnhancedStructuredLogger {
         action,
       },
       { healthcare: healthcareContext },
-    );
+    )
   }
 
   /**
@@ -833,7 +834,7 @@ export class EnhancedStructuredLogger {
     healthcareContext: BrazilianHealthcareContext,
     data?: any,
   ): void {
-    const severity = responseTime > 30000 ? 'critical' : 'alert'; // 30 second threshold
+    const severity = responseTime > 30000 ? 'critical' : 'alert' // 30 second threshold
 
     this.log(
       this.mapSeverityToLevel(severity),
@@ -846,25 +847,25 @@ export class EnhancedStructuredLogger {
         responseTime,
       },
       { healthcare: healthcareContext },
-    );
+    )
   }
 
   /**
    * Create child logger with context
    */
   child(_context: any): EnhancedStructuredLogger {
-    const childLogger = Object.create(this);
-    childLogger.config = { ...this.config };
-    childLogger.correlationIdStore = new Map(this.correlationIdStore);
-    childLogger.requestContext = new Map(this.requestContext);
+    const childLogger = Object.create(this)
+    childLogger.config = { ...this.config }
+    childLogger.correlationIdStore = new Map(this.correlationIdStore)
+    childLogger.requestContext = new Map(this.requestContext)
 
     // Set child context
     childLogger.setRequestContext({
       ...this.getRequestContext(),
       ..._context,
-    });
+    })
 
-    return childLogger;
+    return childLogger
   }
 
   /**
@@ -878,17 +879,17 @@ export class EnhancedStructuredLogger {
       transports: this.winston.transports.length,
       memoryUsage: process.memoryUsage(),
       uptime: process.uptime(),
-    };
+    }
   }
 
   /**
    * Graceful shutdown
    */
   async shutdown(): Promise<void> {
-    this.winston.info('Shutting down enhanced structured logger...');
-    await new Promise<void>(resolve => {
-      this.winston.on('finish', resolve);
-      this.winston.end();
-    });
+    this.winston.info('Shutting down enhanced structured logger...')
+    await new Promise<void>((resolve) => {
+      this.winston.on('finish', resolve)
+      this.winston.end()
+    })
   }
 }

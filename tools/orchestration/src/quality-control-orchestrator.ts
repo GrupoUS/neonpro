@@ -3,81 +3,81 @@
  * Provides comprehensive quality control orchestration with healthcare compliance
  */
 
-import type { AgentName, AgentResult, QualityControlContext } from './types';
+import type { AgentName, AgentResult, QualityControlContext } from './types'
 
 interface QualityControlSession {
-  id: string;
-  action: string;
-  target: string;
-  status: 'pending' | 'running' | 'completed' | 'failed';
-  duration: number;
+  id: string
+  action: string
+  target: string
+  status: 'pending' | 'running' | 'completed' | 'failed'
+  duration: number
   phases: Array<{
-    name: string;
-    status: string;
-    type: string;
-    duration: number;
-  }>;
+    name: string
+    status: string
+    type: string
+    duration: number
+  }>
   healthcareCompliance: {
-    required: boolean;
-    lgpd: boolean;
-    anvisa: boolean;
-    cfm: boolean;
+    required: boolean
+    lgpd: boolean
+    anvisa: boolean
+    cfm: boolean
     lgpdValidation?: {
-      compliant: boolean;
-      violations: any[];
-    };
+      compliant: boolean
+      violations: any[]
+    }
     anvisaValidation?: {
-      compliant: boolean;
-    };
+      compliant: boolean
+    }
     cfmValidation?: {
-      compliant: boolean;
-    };
-  };
+      compliant: boolean
+    }
+  }
   metrics: {
-    qualityScore: number;
-    complianceScore: number;
-    performanceScore: number;
-    executionTime: number;
-  };
-  parallel: boolean;
+    qualityScore: number
+    complianceScore: number
+    performanceScore: number
+    executionTime: number
+  }
+  parallel: boolean
   executionPlan: {
     parallelGroups: Array<{
-      agents: string[];
-      phase: string;
-    }>;
-  };
+      agents: string[]
+      phase: string
+    }>
+  }
   strategy: {
-    type: string;
+    type: string
     phases: Array<{
-      name: string;
-      type: string;
-    }>;
-  };
-  agentResults: AgentResult[];
-  conflicts: any[];
-  resolutions: any[];
+      name: string
+      type: string
+    }>
+  }
+  agentResults: AgentResult[]
+  conflicts: any[]
+  resolutions: any[]
   aggregatedResult: {
-    qualityScore: number;
-    recommendations: string[];
-  };
-  recommendations: string[];
-  nextActions: string[];
-  errors: any[];
+    qualityScore: number
+    recommendations: string[]
+  }
+  recommendations: string[]
+  nextActions: string[]
+  errors: any[]
   performanceAnalytics: {
-    throughput: number;
-    utilization: number;
-  };
+    throughput: number
+    utilization: number
+  }
 }
 
 export class QualityControlOrchestrator {
   async executeQualityControlOrchestration(
     context: QualityControlContext & {
-      target?: string;
-      orchestrator?: boolean;
-      agents?: AgentName[];
+      target?: string
+      orchestrator?: boolean
+      agents?: AgentName[]
     },
   ): Promise<QualityControlSession> {
-    const startTime = Date.now();
+    const startTime = Date.now()
 
     // Minimal implementation to pass tests
     const session: QualityControlSession = {
@@ -154,7 +154,7 @@ export class QualityControlOrchestrator {
           },
         ],
       },
-      agentResults: (context.agents || ['test']).map(agent => ({
+      agentResults: (context.agents || ['test']).map((agent) => ({
         agentName: agent,
         success: agent !== 'non-existent-agent',
         duration: Math.floor(Math.random() * 2000) + 500, // Simulate agent execution duration
@@ -181,7 +181,7 @@ export class QualityControlOrchestrator {
         throughput: 10.5,
         utilization: 0.75,
       },
-    };
+    }
 
     // Handle invalid contexts
     if (
@@ -189,10 +189,10 @@ export class QualityControlOrchestrator {
       || context.target === ''
       || !context.agents?.length
     ) {
-      session.status = 'failed';
-      session.errors = [{ message: 'Invalid context provided' }];
+      session.status = 'failed'
+      session.errors = [{ message: 'Invalid context provided' }]
     }
 
-    return session;
+    return session
   }
 }

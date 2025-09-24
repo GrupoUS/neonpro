@@ -1,15 +1,15 @@
-import { createFileRoute, Link } from '@tanstack/react-router';
-import { Building2, Eye, EyeOff, Lock, Mail, Phone, User } from 'lucide-react';
-import * as React from 'react';
-import { useState } from 'react';
+import { createFileRoute, Link } from '@tanstack/react-router'
+import { Building2, Eye, EyeOff, Lock, Mail, Phone, User } from 'lucide-react'
+import * as React from 'react'
+import { useState } from 'react'
 
 export const Route = createFileRoute('/auth/register')({
   component: Register,
-});
+})
 
 function Register() {
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -18,24 +18,24 @@ function Register() {
     confirmPassword: '',
     clinicName: '',
     acceptTerms: false,
-  });
-  const [isLoading, setIsLoading] = useState(false);
+  })
+  const [isLoading, setIsLoading] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
+    e.preventDefault()
+    setIsLoading(true)
 
     // Simulate registration - replace with actual API call
     setTimeout(() => {
-      setIsLoading(false);
+      setIsLoading(false)
       // Redirect to login after successful registration
-      window.location.href = '/auth/login';
-    }, 2000);
-  };
+      window.location.href = '/auth/login'
+    }, 2000)
+  }
 
   const handleChange = (field: string, value: string | boolean) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-  };
+    setFormData((prev) => ({ ...prev, [field]: value }))
+  }
 
   return (
     <div className='min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 py-12 px-4 sm:px-6 lg:px-8'>
@@ -69,7 +69,7 @@ function Register() {
                   type='text'
                   required
                   value={formData.name}
-                  onChange={e => handleChange('name', e.target.value)}
+                  onChange={(e) => handleChange('name', e.target.value)}
                   className='appearance-none block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md placeholder-gray-500 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm'
                   placeholder='Seu nome completo'
                 />
@@ -93,7 +93,7 @@ function Register() {
                   type='email'
                   required
                   value={formData.email}
-                  onChange={e => handleChange('email', e.target.value)}
+                  onChange={(e) => handleChange('email', e.target.value)}
                   className='appearance-none block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md placeholder-gray-500 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm'
                   placeholder='seu@email.com'
                 />
@@ -117,7 +117,7 @@ function Register() {
                   type='tel'
                   required
                   value={formData.phone}
-                  onChange={e => handleChange('phone', e.target.value)}
+                  onChange={(e) => handleChange('phone', e.target.value)}
                   className='appearance-none block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md placeholder-gray-500 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm'
                   placeholder='(11) 99999-9999'
                 />
@@ -141,7 +141,7 @@ function Register() {
                   type='text'
                   required
                   value={formData.clinicName}
-                  onChange={e => handleChange('clinicName', e.target.value)}
+                  onChange={(e) => handleChange('clinicName', e.target.value)}
                   className='appearance-none block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md placeholder-gray-500 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm'
                   placeholder='Nome da sua clínica'
                 />
@@ -165,7 +165,7 @@ function Register() {
                   type={showPassword ? 'text' : 'password'}
                   required
                   value={formData.password}
-                  onChange={e => handleChange('password', e.target.value)}
+                  onChange={(e) => handleChange('password', e.target.value)}
                   className='appearance-none block w-full pl-10 pr-10 py-2 border border-gray-300 rounded-md placeholder-gray-500 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm'
                   placeholder='••••••••'
                 />
@@ -198,7 +198,7 @@ function Register() {
                   type={showConfirmPassword ? 'text' : 'password'}
                   required
                   value={formData.confirmPassword}
-                  onChange={e => handleChange('confirmPassword', e.target.value)}
+                  onChange={(e) => handleChange('confirmPassword', e.target.value)}
                   className='appearance-none block w-full pl-10 pr-10 py-2 border border-gray-300 rounded-md placeholder-gray-500 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm'
                   placeholder='••••••••'
                 />
@@ -222,7 +222,7 @@ function Register() {
               type='checkbox'
               required
               checked={formData.acceptTerms}
-              onChange={e => handleChange('acceptTerms', e.target.checked)}
+              onChange={(e) => handleChange('acceptTerms', e.target.checked)}
               className='h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded'
             />
             <label
@@ -274,5 +274,5 @@ function Register() {
         </form>
       </div>
     </div>
-  );
+  )
 }

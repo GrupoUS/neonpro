@@ -10,8 +10,8 @@ import {
   ProfessionalResponseSchema,
   ProfessionalsListResponseSchema,
   UpdateProfessionalRequestSchema,
-} from '@neonpro/types/api/contracts';
-import { protectedProcedure, router } from '../trpc';
+} from '@neonpro/types/api/contracts'
+import { protectedProcedure, router } from '../trpc'
 
 export const professionalRouter = router({
   /**
@@ -29,7 +29,7 @@ export const professionalRouter = router({
       // Validate clinic exists and user has permission
       const clinic = await ctx.prisma.clinic.findUnique({
         where: { id: input.clinicId },
-      });
+      })
 
       if (!clinic) {
         throw new HealthcareTRPCError(
@@ -37,11 +37,11 @@ export const professionalRouter = router({
           'Clinic not found',
           'CLINIC_NOT_FOUND',
           { clinicId: input.clinicId },
-        );
+        )
       }
 
       // Validate user has permission to add professionals to this clinic
-      await validateClinicAdminAccess(ctx.user.id, input.clinicId);
+      await validateClinicAdminAccess(ctx.user.id, input.clinicId)
 
       // Validate license number format and uniqueness
       if (!isValidLicenseFormat(input.licenseType, input.licenseNumber)) {
@@ -53,7 +53,7 @@ export const professionalRouter = router({
             licenseType: input.licenseType,
             licenseNumber: input.licenseNumber,
           },
-        );
+        )
       }
 
       // Check if license number already exists
@@ -63,7 +63,7 @@ export const professionalRouter = router({
           licenseType: input.licenseType,
           isActive: true,
         },
-      });
+      })
 
       if (existingProfessional) {
         throw new HealthcareTRPCError(
@@ -74,14 +74,14 @@ export const professionalRouter = router({
             existingProfessionalId: existingProfessional.id,
             licenseNumber: input.licenseNumber,
           },
-        );
+        )
       }
 
       // Validate license with regulatory authority (CFM, CRO, etc.)
       const licenseValidation = await validateLicenseWithAuthority(
         input.licenseType,
         input.licenseNumber,
-      );
+      )
 
       if (!licenseValidation.isValid) {
         throw new HealthcareTRPCError(
@@ -93,7 +93,7 @@ export const professionalRouter = router({
             licenseNumber: input.licenseNumber,
             validationErrors: licenseValidation.errors,
           },
-        );
+        )
       }
 
       // Create professional record
@@ -114,20 +114,20 @@ export const professionalRouter = router({
           },
           workingHours: true,
         },
-      });
+      })
 
       // Create default working hours if not provided
       if (input.workingHours && input.workingHours.length > 0) {
         await ctx.prisma.professionalWorkingHours.createMany({
-          data: input.workingHours.map(wh => ({
+          data: input.workingHours.map((wh) => ({
             ...wh,
             professionalId: professional.id,
           })),
-        });
+        })
       }
 
       // Send welcome notification
-      await sendProfessionalWelcomeNotification(professional);
+      await sendProfessionalWelcomeNotification(professional)
 
       // Audit log
       await ctx.prisma.auditLog.create({
@@ -143,7 +143,7 @@ export const professionalRouter = router({
           },
           _userId: ctx.user.id,
         },
-      });
+      })
 
       return {
         success: true,
@@ -151,7 +151,7 @@ export const professionalRouter = router({
         message: 'Professional registered successfully',
         timestamp: new Date().toISOString(),
         requestId: ctx.requestId,
-      };
+      }
     }),
 
   /**
@@ -204,7 +204,7 @@ export const professionalRouter = router({
             },
           }),
         },
-      });
+      })
 
       if (!professional) {
         throw new HealthcareTRPCError(
@@ -212,20 +212,20 @@ export const professionalRouter = router({
           'Professional not found',
           'PROFESSIONAL_NOT_FOUND',
           { professionalId: input.id },
-        );
+        )
       }
 
       // Validate clinic access
-      await validateClinicAccess(ctx.user.id, professional.clinicId);
+      await validateClinicAccess(ctx.user.id, professional.clinicId)
 
       // Add performance metrics if requested
-      let performanceMetrics = null;
+      let performanceMetrics = null
       if (input.includePerformanceMetrics && input.metricsDateRange) {
         performanceMetrics = await calculateProfessionalMetrics(
           input.id,
           new Date(input.metricsDateRange.from),
           new Date(input.metricsDateRange.to),
-        );
+        )
       }
 
       return {
@@ -236,7 +236,7 @@ export const professionalRouter = router({
         },
         timestamp: new Date().toISOString(),
         requestId: ctx.requestId,
-      };
+      }
     }),
 
   /**
@@ -276,7 +276,7 @@ export const professionalRouter = router({
     .output(ProfessionalsListResponseSchema)
     .query(async ({ input, _ctx }) => {
       // Validate clinic access
-      await validateClinicAccess(ctx.user.id, input.clinicId);
+      await validateClinicAccess(ctx.user.id, input.clinicId)
 
       const where = {
         clinicId: input.clinicId,
@@ -295,14 +295,14 @@ export const professionalRouter = router({
           },
         }),
         ...(input.licenseType && { licenseType: input.licenseType }),
-      };
+      }
 
-      let professionalIds = null;
+      let professionalIds = null
 
       // Filter by availability if requested
       if (input.availableOn && input.availabilityTimeSlot) {
-        const availableDate = new Date(input.availableOn);
-        const dayOfWeek = availableDate.getDay();
+        const availableDate = new Date(input.availableOn)
+        const dayOfWeek = availableDate.getDay()
 
         const availableProfessionals = await ctx.prisma.professional.findMany({
           where: {
@@ -317,9 +317,9 @@ export const professionalRouter = router({
             },
           },
           select: { id: true },
-        });
+        })
 
-        professionalIds = availableProfessionals.map(p => p.id);
+        professionalIds = availableProfessionals.map((p) => p.id)
 
         // Filter out professionals with conflicting appointments
         const conflictingAppointments = await ctx.prisma.appointment.findMany({
@@ -340,19 +340,19 @@ export const professionalRouter = router({
             status: { in: ['scheduled', 'confirmed', 'in_progress'] },
           },
           select: { professionalId: true },
-        });
+        })
 
         const busyProfessionalIds = new Set(
-          conflictingAppointments.map(a => a.professionalId),
-        );
+          conflictingAppointments.map((a) => a.professionalId),
+        )
         professionalIds = professionalIds.filter(
-          id => !busyProfessionalIds.has(id),
-        );
+          (id) => !busyProfessionalIds.has(id),
+        )
       }
 
       const finalWhere = professionalIds
         ? { ...where, id: { in: professionalIds } }
-        : where;
+        : where
 
       const [professionals, total] = await Promise.all([
         ctx.prisma.professional.findMany({
@@ -384,7 +384,7 @@ export const professionalRouter = router({
           },
         }),
         ctx.prisma.professional.count({ where: finalWhere }),
-      ]);
+      ])
 
       return {
         success: true,
@@ -399,7 +399,7 @@ export const professionalRouter = router({
         },
         timestamp: new Date().toISOString(),
         requestId: ctx.requestId,
-      };
+      }
     }),
 
   /**
@@ -416,7 +416,7 @@ export const professionalRouter = router({
     .mutation(async ({ input, _ctx }) => {
       const currentProfessional = await ctx.prisma.professional.findUnique({
         where: { id: input.id },
-      });
+      })
 
       if (!currentProfessional) {
         throw new HealthcareTRPCError(
@@ -424,23 +424,23 @@ export const professionalRouter = router({
           'Professional not found',
           'PROFESSIONAL_NOT_FOUND',
           { professionalId: input.id },
-        );
+        )
       }
 
       // Validate clinic access
-      await validateClinicAccess(ctx.user.id, currentProfessional.clinicId);
+      await validateClinicAccess(ctx.user.id, currentProfessional.clinicId)
 
       // Check if license information is being updated
       const licenseChanged = (input.licenseNumber
         && input.licenseNumber !== currentProfessional.licenseNumber)
         || (input.licenseType
-          && input.licenseType !== currentProfessional.licenseType);
+          && input.licenseType !== currentProfessional.licenseType)
 
-      let licenseValidation = null;
+      let licenseValidation = null
       if (licenseChanged) {
         // Validate new license number format
-        const newLicenseType = input.licenseType || currentProfessional.licenseType;
-        const newLicenseNumber = input.licenseNumber || currentProfessional.licenseNumber;
+        const newLicenseType = input.licenseType || currentProfessional.licenseType
+        const newLicenseNumber = input.licenseNumber || currentProfessional.licenseNumber
 
         if (!isValidLicenseFormat(newLicenseType, newLicenseNumber)) {
           throw new HealthcareTRPCError(
@@ -451,7 +451,7 @@ export const professionalRouter = router({
               licenseType: newLicenseType,
               licenseNumber: newLicenseNumber,
             },
-          );
+          )
         }
 
         // Check for license conflicts
@@ -462,7 +462,7 @@ export const professionalRouter = router({
             isActive: true,
             NOT: { id: input.id },
           },
-        });
+        })
 
         if (existingProfessional) {
           throw new HealthcareTRPCError(
@@ -473,14 +473,14 @@ export const professionalRouter = router({
               existingProfessionalId: existingProfessional.id,
               licenseNumber: newLicenseNumber,
             },
-          );
+          )
         }
 
         // Re-validate license with authority
         licenseValidation = await validateLicenseWithAuthority(
           newLicenseType,
           newLicenseNumber,
-        );
+        )
 
         if (!licenseValidation.isValid) {
           throw new HealthcareTRPCError(
@@ -492,7 +492,7 @@ export const professionalRouter = router({
               licenseNumber: newLicenseNumber,
               validationErrors: licenseValidation.errors,
             },
-          );
+          )
         }
       }
 
@@ -517,22 +517,22 @@ export const professionalRouter = router({
           },
           workingHours: true,
         },
-      });
+      })
 
       // Update working hours if provided
       if (input.workingHours) {
         // Delete existing working hours
         await ctx.prisma.professionalWorkingHours.deleteMany({
           where: { professionalId: input.id },
-        });
+        })
 
         // Create new working hours
         await ctx.prisma.professionalWorkingHours.createMany({
-          data: input.workingHours.map(wh => ({
+          data: input.workingHours.map((wh) => ({
             ...wh,
             professionalId: input.id,
           })),
-        });
+        })
       }
 
       // Audit log
@@ -547,7 +547,7 @@ export const professionalRouter = router({
           },
           _userId: ctx.user.id,
         },
-      });
+      })
 
       return {
         success: true,
@@ -555,7 +555,7 @@ export const professionalRouter = router({
         message: 'Professional updated successfully',
         timestamp: new Date().toISOString(),
         requestId: ctx.requestId,
-      };
+      }
     }),
 
   /**
@@ -611,7 +611,7 @@ export const professionalRouter = router({
             where: { isActive: true },
           },
         },
-      });
+      })
 
       if (!professional) {
         throw new HealthcareTRPCError(
@@ -619,11 +619,11 @@ export const professionalRouter = router({
           'Professional not found',
           'PROFESSIONAL_NOT_FOUND',
           { professionalId: input.professionalId },
-        );
+        )
       }
 
       // Validate clinic access
-      await validateClinicAccess(ctx.user.id, professional.clinicId);
+      await validateClinicAccess(ctx.user.id, professional.clinicId)
 
       // Get existing appointments in the date range
       const existingAppointments = await ctx.prisma.appointment.findMany({
@@ -640,7 +640,7 @@ export const professionalRouter = router({
           endDate: true,
           status: true,
         },
-      });
+      })
 
       // Calculate available time slots
       const availableSlots = calculateAvailableSlots(
@@ -650,7 +650,7 @@ export const professionalRouter = router({
         existingAppointments,
         input.slotDuration,
         input.includeBookedSlots,
-      );
+      )
 
       return {
         success: true,
@@ -661,7 +661,7 @@ export const professionalRouter = router({
         },
         timestamp: new Date().toISOString(),
         requestId: ctx.requestId,
-      };
+      }
     }),
 
   /**
@@ -699,7 +699,7 @@ export const professionalRouter = router({
     .mutation(async ({ input, _ctx }) => {
       const professional = await ctx.prisma.professional.findUnique({
         where: { id: input.id },
-      });
+      })
 
       if (!professional) {
         throw new HealthcareTRPCError(
@@ -707,11 +707,11 @@ export const professionalRouter = router({
           'Professional not found',
           'PROFESSIONAL_NOT_FOUND',
           { professionalId: input.id },
-        );
+        )
       }
 
       // Validate clinic access
-      await validateClinicAdminAccess(ctx.user.id, professional.clinicId);
+      await validateClinicAdminAccess(ctx.user.id, professional.clinicId)
 
       // Get active appointments
       const activeAppointments = await ctx.prisma.appointment.findMany({
@@ -720,10 +720,10 @@ export const professionalRouter = router({
           status: { in: ['scheduled', 'confirmed'] },
           scheduledDate: { gte: new Date() },
         },
-      });
+      })
 
       // Handle active appointments based on strategy
-      let affectedAppointments = 0;
+      let affectedAppointments = 0
       switch (input.handleActiveAppointments) {
         case 'cancel':
           await ctx.prisma.appointment.updateMany({
@@ -738,9 +738,9 @@ export const professionalRouter = router({
               cancelledAt: new Date(),
               cancelledBy: ctx.user.id,
             },
-          });
-          affectedAppointments = activeAppointments.length;
-          break;
+          })
+          affectedAppointments = activeAppointments.length
+          break
 
         case 'reassign':
           if (!input.reassignToProfessionalId) {
@@ -748,7 +748,7 @@ export const professionalRouter = router({
               'BAD_REQUEST',
               'Reassign target professional ID is required',
               'REASSIGN_TARGET_REQUIRED',
-            );
+            )
           }
 
           await ctx.prisma.appointment.updateMany({
@@ -761,14 +761,14 @@ export const professionalRouter = router({
               professionalId: input.reassignToProfessionalId,
               notes: `Reassigned from deactivated professional: ${input.reason}`,
             },
-          });
-          affectedAppointments = activeAppointments.length;
-          break;
+          })
+          affectedAppointments = activeAppointments.length
+          break
 
         case 'keep':
           // Keep appointments as-is
-          affectedAppointments = 0;
-          break;
+          affectedAppointments = 0
+          break
       }
 
       // Deactivate professional
@@ -780,7 +780,7 @@ export const professionalRouter = router({
           deactivationReason: input.reason,
           deactivatedBy: ctx.user.id,
         },
-      });
+      })
 
       // Audit log
       await ctx.prisma.auditLog.create({
@@ -796,7 +796,7 @@ export const professionalRouter = router({
           },
           _userId: ctx.user.id,
         },
-      });
+      })
 
       return {
         success: true,
@@ -808,9 +808,9 @@ export const professionalRouter = router({
         message: 'Professional deactivated successfully',
         timestamp: new Date().toISOString(),
         requestId: ctx.requestId,
-      };
+      }
     }),
-});
+})
 
 // Helper functions
 function isValidLicenseFormat(
@@ -823,9 +823,9 @@ function isValidLicenseFormat(
     CRF: /^CRF\/[A-Z]{2}\s\d{4,6}$/, // CRF/SP 123456
     CREF: /^CREF\d{6}-[A-Z]\/[A-Z]{2}$/, // CREF123456-G/SP
     CRP: /^CRP\s\d{2}\/\d{4,6}$/, // CRP 06/12345
-  };
+  }
 
-  return formats[licenseType]?.test(licenseNumber) || false;
+  return formats[licenseType]?.test(licenseNumber) || false
 }
 
 async function validateLicenseWithAuthority(
@@ -837,7 +837,7 @@ async function validateLicenseWithAuthority(
   return {
     isValid: true,
     source: `${_licenseType}_AUTHORITY`,
-  };
+  }
 }
 
 async function calculateProfessionalMetrics(
@@ -852,7 +852,7 @@ async function calculateProfessionalMetrics(
     noShowRate: 0,
     averageRating: 0,
     revenue: 0,
-  };
+  }
 }
 
 function calculateAvailableSlots(
@@ -864,7 +864,7 @@ function calculateAvailableSlots(
   _includeBookedSlots: boolean,
 ): any[] {
   // Placeholder for slot calculation algorithm
-  return [];
+  return []
 }
 
 async function sendProfessionalWelcomeNotification(
@@ -874,8 +874,8 @@ async function sendProfessionalWelcomeNotification(
 }
 
 function getChanges(current: any, input: any): Record<string, any> {
-  const changes = {} as Record<string, any>;
-  Object.keys(input).forEach(key => {
+  const changes = {} as Record<string, any>
+  Object.keys(input).forEach((key) => {
     if (
       key !== 'id'
       && input[key] !== undefined
@@ -884,10 +884,10 @@ function getChanges(current: any, input: any): Record<string, any> {
       changes[key] = {
         from: current[key],
         to: input[key],
-      };
+      }
     }
-  });
-  return changes;
+  })
+  return changes
 }
 
 async function validateClinicAccess(
@@ -895,7 +895,7 @@ async function validateClinicAccess(
   _clinicId: string,
 ): Promise<void> {
   // Implementation for clinic access validation
-  return Promise.resolve();
+  return Promise.resolve()
 }
 
 async function validateClinicAdminAccess(
@@ -903,5 +903,5 @@ async function validateClinicAdminAccess(
   _clinicId: string,
 ): Promise<void> {
   // Implementation for clinic admin access validation
-  return Promise.resolve();
+  return Promise.resolve()
 }

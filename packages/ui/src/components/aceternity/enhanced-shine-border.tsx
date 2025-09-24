@@ -1,11 +1,11 @@
-'use client';
+'use client'
 
-import { type ClassValue, clsx } from 'clsx';
-import React from 'react';
-import { twMerge } from 'tailwind-merge';
+import { type ClassValue, clsx } from 'clsx'
+import React from 'react'
+import { twMerge } from 'tailwind-merge'
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
+  return twMerge(clsx(inputs))
 }
 import {
   type HoverGradientTheme,
@@ -14,36 +14,36 @@ import {
   type ShineSpeed,
   type ShineTheme,
   useShineBorderAnimation,
-} from '../../hooks/useShineBorderAnimation';
+} from '../../hooks/useShineBorderAnimation'
 
 interface EnhancedShineBorderProps extends React.HTMLAttributes<HTMLElement> {
-  children: React.ReactNode;
-  containerClassName?: string;
-  className?: string;
-  as?: React.ElementType;
+  children: React.ReactNode
+  containerClassName?: string
+  className?: string
+  as?: React.ElementType
 
   // Shine Border options
-  enableShine?: boolean;
-  pattern?: ShinePattern;
-  intensity?: ShineIntensity;
-  theme?: ShineTheme;
-  speed?: ShineSpeed;
-  borderWidth?: number;
-  color?: string;
-  duration?: number;
-  blur?: number;
-  autoStart?: boolean;
-  hoverOnly?: boolean;
+  enableShine?: boolean
+  pattern?: ShinePattern
+  intensity?: ShineIntensity
+  theme?: ShineTheme
+  speed?: ShineSpeed
+  borderWidth?: number
+  color?: string
+  duration?: number
+  blur?: number
+  autoStart?: boolean
+  hoverOnly?: boolean
 
   // Aceternity Hover Border Gradient options
-  enableHoverGradient?: boolean;
-  hoverGradientTheme?: HoverGradientTheme;
-  hoverClockwise?: boolean;
-  hoverDuration?: number;
+  enableHoverGradient?: boolean
+  hoverGradientTheme?: HoverGradientTheme
+  hoverClockwise?: boolean
+  hoverDuration?: number
   hoverGradientColors?: {
-    moving?: string;
-    highlight?: string;
-  };
+    moving?: string
+    highlight?: string
+  }
 }
 
 export function EnhancedShineBorder({
@@ -91,13 +91,13 @@ export function EnhancedShineBorder({
     hoverClockwise,
     hoverDuration,
     hoverGradientColors,
-  });
+  })
 
   // Combine container classes for both effects
   const combinedContainerClassName = cn(
     enableHoverGradient && hoverGradient.containerClassName,
     containerClassName,
-  );
+  )
 
   return (
     <Tag
@@ -137,7 +137,7 @@ export function EnhancedShineBorder({
         </>
       )}
     </Tag>
-  );
+  )
 }
 
-export type { EnhancedShineBorderProps };
+export type { EnhancedShineBorderProps }

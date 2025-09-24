@@ -8,8 +8,8 @@
  * @compliance LGPD, ANVISA, Brazilian Healthcare Standards
  */
 
-import { brazilianPIIRedactionService } from './brazilian-pii-redaction';
-import { EnhancedStructuredLogger } from './enhanced-structured-logger';
+import { brazilianPIIRedactionService } from './brazilian-pii-redaction'
+import { EnhancedStructuredLogger } from './enhanced-structured-logger'
 
 // Import types from types file
 import {
@@ -18,10 +18,10 @@ import {
   EnhancedStructuredLoggingConfig,
   HealthcareSeverity,
   WinstonLogEntry,
-} from './types';
+} from './types'
 
 // Re-export types and services
-export { brazilianPIIRedactionService, EnhancedStructuredLogger };
+export { brazilianPIIRedactionService, EnhancedStructuredLogger }
 
 export type {
   BrazilianHealthcareContext,
@@ -29,7 +29,7 @@ export type {
   EnhancedStructuredLoggingConfig,
   HealthcareSeverity,
   WinstonLogEntry,
-};
+}
 
 // Default configuration for healthcare applications
 const defaultConfig: EnhancedStructuredLoggingConfig = {
@@ -94,10 +94,10 @@ const defaultConfig: EnhancedStructuredLoggingConfig = {
     timestamp: true,
     showLevel: true,
   },
-};
+}
 
 // Create default logger instance
-export const enhancedLogger = new EnhancedStructuredLogger(defaultConfig);
+export const enhancedLogger = new EnhancedStructuredLogger(defaultConfig)
 
 // Export convenience functions for direct usage
 export const logger = {
@@ -188,7 +188,7 @@ export const logger = {
   clearRequestContext: () => enhancedLogger.clearRequestContext(),
   getStatistics: () => enhancedLogger.getStatistics(),
   shutdown: () => enhancedLogger.shutdown(),
-};
+}
 
 // Export factory function for creating custom loggers
 export function createHealthcareLogger(
@@ -198,9 +198,9 @@ export function createHealthcareLogger(
     ...defaultConfig,
     ...config,
     _service: config._service || defaultConfig._service, // Ensure service is overridden
-  };
+  }
 
-  return new EnhancedStructuredLogger(mergedConfig);
+  return new EnhancedStructuredLogger(mergedConfig)
 }
 
 // Export middleware for request correlation ID management
@@ -211,10 +211,10 @@ export function createCorrelationMiddleware(
     // Generate or extract correlation ID
     const correlationId = req.headers['x-correlation-id']
       || req.headers['x-request-id']
-      || loggerInstance.generateCorrelationId();
+      || loggerInstance.generateCorrelationId()
 
     // Set correlation ID in logger
-    loggerInstance.setCorrelationId(correlationId);
+    loggerInstance.setCorrelationId(correlationId)
 
     // Set request context
     loggerInstance.setRequestContext({
@@ -232,19 +232,19 @@ export function createCorrelationMiddleware(
       userAgent: req.headers['user-agent'],
       method: req.method,
       url: req.url,
-    });
+    })
 
     // Add correlation ID to response headers
-    res.setHeader('x-correlation-id', correlationId);
+    res.setHeader('x-correlation-id', correlationId)
 
     // Clear context when response finishes
     res.on('finish', () => {
-      loggerInstance.clearCorrelationId();
-      loggerInstance.clearRequestContext();
-    });
+      loggerInstance.clearCorrelationId()
+      loggerInstance.clearRequestContext()
+    })
 
-    next();
-  };
+    next()
+  }
 }
 
 // Global error handling hook
@@ -252,28 +252,28 @@ export function setupGlobalErrorHandling(
   loggerInstance: EnhancedStructuredLogger = enhancedLogger,
 ) {
   if (typeof process !== 'undefined') {
-    process.on('uncaughtException', error => {
+    process.on('uncaughtException', (error) => {
       loggerInstance.emergency('Uncaught Exception', {
         error: error.message,
         stack: error.stack,
-      });
-      process.exit(1);
-    });
+      })
+      process.exit(1)
+    })
 
     process.on('unhandledRejection', (reason, promise) => {
       const errorData = {
         reason: reason instanceof Error ? reason.message : reason,
         promise: promise.toString(),
-      };
+      }
       // Pass error as error parameter and additional data as data parameter
-      const error = reason instanceof Error ? reason : new Error(String(reason));
-      loggerInstance.error('Unhandled Rejection', error, errorData);
-    });
+      const error = reason instanceof Error ? reason : new Error(String(reason))
+      loggerInstance.error('Unhandled Rejection', error, errorData)
+    })
   }
 }
 
 // Initialize global error handling
-setupGlobalErrorHandling(enhancedLogger);
+setupGlobalErrorHandling(enhancedLogger)
 
 // Export for testing and debugging
-export { defaultConfig, EnhancedStructuredLogger as LoggerClass };
+export { defaultConfig, EnhancedStructuredLogger as LoggerClass }

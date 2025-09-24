@@ -76,19 +76,19 @@ POST /api/taxes/nfse               # Generate NFSe
 
 ```typescript
 interface CreateBillingRequest {
-  patientId: string;
-  clinicId: string;
-  professionalId: string;
-  billingType: 'sus' | 'health_plan' | 'private' | 'mixed';
-  items: BillingItem[];
+  patientId: string
+  clinicId: string
+  professionalId: string
+  billingType: 'sus' | 'health_plan' | 'private' | 'mixed'
+  items: BillingItem[]
   healthPlan?: {
-    planId: string;
-    ansNumber: string;
-    cardNumber: string;
-    coveragePercentage: number;
-    preAuthRequired: boolean;
-  };
-  paymentMethod?: 'cash' | 'pix' | 'credit_card' | 'health_plan';
+    planId: string
+    ansNumber: string
+    cardNumber: string
+    coveragePercentage: number
+    preAuthRequired: boolean
+  }
+  paymentMethod?: 'cash' | 'pix' | 'credit_card' | 'health_plan'
 }
 
 const billing = await fetch('/api/billing/create', {
@@ -98,7 +98,7 @@ const billing = await fetch('/api/billing/create', {
     'Content-Type': 'application/json',
   },
   body: JSON.stringify(billingData),
-});
+})
 ```
 
 ### Process PIX Payment
@@ -111,7 +111,7 @@ const pixPayment = await fetch('/api/billing/payment/pix', {
     amount: 150.00,
     pixKey: '+5511999999999',
   }),
-});
+})
 ```
 
 ### CBHPM Procedure Lookup

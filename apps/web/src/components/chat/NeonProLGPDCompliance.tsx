@@ -10,14 +10,14 @@
  * - Compliance reporting
  */
 
-import React, { useCallback, useState } from 'react';
-import { Alert, AlertDescription } from '../../ui/alert';
-import { Textarea } from '../../ui/textarea';
-import { Badge } from '../ui/badge';
-import { Button } from '../ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
-import { Input } from '../ui/input';
-import { Label } from '../ui/label';
+import React, { useCallback, useState } from 'react'
+import { Alert, AlertDescription } from '../../ui/alert'
+import { Textarea } from '../../ui/textarea'
+import { Badge } from '../ui/badge'
+import { Button } from '../ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card'
+import { Input } from '../ui/input'
+import { Label } from '../ui/label'
 // Removed unused Select imports
 import {
   Audit,
@@ -30,73 +30,73 @@ import {
   Shield,
   Unlock,
   UserCheck,
-} from 'lucide-react';
+} from 'lucide-react'
 
 // Types
 interface ConsentRecord {
-  id: string;
-  userId: string;
-  patientId?: string;
-  consentType: 'data_processing' | 'marketing' | 'sharing' | 'storage';
-  purpose: string;
-  scope: string[];
-  grantedAt: Date;
-  expiresAt?: Date;
-  revokedAt?: Date;
-  ipAddress: string;
-  userAgent: string;
-  version: string;
+  id: string
+  userId: string
+  patientId?: string
+  consentType: 'data_processing' | 'marketing' | 'sharing' | 'storage'
+  purpose: string
+  scope: string[]
+  grantedAt: Date
+  expiresAt?: Date
+  revokedAt?: Date
+  ipAddress: string
+  userAgent: string
+  version: string
 }
 
 interface AuditLog {
-  id: string;
-  timestamp: Date;
-  userId: string;
-  action: string;
-  resource: string;
-  details: Record<string, any>;
-  ipAddress: string;
-  complianceLevel: 'standard' | 'enhanced' | 'restricted';
-  outcome: 'success' | 'failure' | 'blocked';
-  riskLevel: 'low' | 'medium' | 'high' | 'critical';
+  id: string
+  timestamp: Date
+  userId: string
+  action: string
+  resource: string
+  details: Record<string, any>
+  ipAddress: string
+  complianceLevel: 'standard' | 'enhanced' | 'restricted'
+  outcome: 'success' | 'failure' | 'blocked'
+  riskLevel: 'low' | 'medium' | 'high' | 'critical'
 }
 
 interface DataSubject {
-  id: string;
-  name: string;
-  contact: string;
-  contactType: 'email' | 'phone';
-  dataCategories: string[];
+  id: string
+  name: string
+  contact: string
+  contactType: 'email' | 'phone'
+  dataCategories: string[]
   retentionPolicy: {
-    duration: number; // days
-    automaticDeletion: boolean;
-  };
-  consentRecords: ConsentRecord[];
+    duration: number // days
+    automaticDeletion: boolean
+  }
+  consentRecords: ConsentRecord[]
   accessRequests: Array<{
-    id: string;
-    requestedAt: Date;
-    fulfilledAt?: Date;
-    status: 'pending' | 'fulfilled' | 'denied';
-    purpose: string;
-  }>;
+    id: string
+    requestedAt: Date
+    fulfilledAt?: Date
+    status: 'pending' | 'fulfilled' | 'denied'
+    purpose: string
+  }>
 }
 
 interface ComplianceMetrics {
-  totalConsents: number;
-  activeConsents: number;
-  expiredConsents: number;
-  auditEvents: number;
-  complianceScore: number;
-  dataRetentionScore: number;
-  accessRequestScore: number;
-  riskLevel: 'low' | 'medium' | 'high';
+  totalConsents: number
+  activeConsents: number
+  expiredConsents: number
+  auditEvents: number
+  complianceScore: number
+  dataRetentionScore: number
+  accessRequestScore: number
+  riskLevel: 'low' | 'medium' | 'high'
 }
 
 interface LGPDComplianceProps {
-  clinicId: string;
-  userId: string;
-  userRole: 'admin' | 'aesthetician' | 'coordinator' | 'receptionist';
-  onComplianceAction?: (action: string, data: any) => void;
+  clinicId: string
+  userId: string
+  userRole: 'admin' | 'aesthetician' | 'coordinator' | 'receptionist'
+  onComplianceAction?: (action: string, data: any) => void
 }
 
 // Mock data for demonstration
@@ -128,7 +128,7 @@ const mockDataSubjects: DataSubject[] = [
     ],
     accessRequests: [],
   },
-];
+]
 
 export const NeonProLGPDCompliance: React.FC<LGPDComplianceProps> = ({
   clinicId: _clinicId,
@@ -136,47 +136,47 @@ export const NeonProLGPDCompliance: React.FC<LGPDComplianceProps> = ({
   userRole: _userRole,
   onComplianceAction,
 }) => {
-  const [showSensitiveData, setShowSensitiveData] = useState(false);
-  const [selectedSubject, setSelectedSubject] = useState<DataSubject | null>(null);
+  const [showSensitiveData, setShowSensitiveData] = useState(false)
+  const [selectedSubject, setSelectedSubject] = useState<DataSubject | null>(null)
   const [consentForm, setConsentForm] = useState({
     purpose: '',
     scope: [] as string[],
     duration: 365,
-  });
-  const [auditLogs, setAuditLogs] = useState<AuditLog[]>([]);
-  const [metrics, setMetrics] = useState<ComplianceMetrics>(calculateComplianceMetrics());
+  })
+  const [auditLogs, setAuditLogs] = useState<AuditLog[]>([])
+  const [metrics, setMetrics] = useState<ComplianceMetrics>(calculateComplianceMetrics())
 
   // Calculate compliance metrics
   function calculateComplianceMetrics(): ComplianceMetrics {
     const totalConsents = mockDataSubjects.reduce(
       (sum, subject) => sum + subject.consentRecords.length,
       0,
-    );
+    )
 
     const activeConsents = mockDataSubjects.reduce(
       (sum, subject) =>
         sum
-        + subject.consentRecords.filter(c =>
+        + subject.consentRecords.filter((c) =>
           !c.revokedAt && (!c.expiresAt || c.expiresAt > new Date())
         ).length,
       0,
-    );
+    )
 
     const expiredConsents = mockDataSubjects.reduce(
       (sum, subject) =>
-        sum + subject.consentRecords.filter(c => c.expiresAt && c.expiresAt <= new Date()).length,
+        sum + subject.consentRecords.filter((c) => c.expiresAt && c.expiresAt <= new Date()).length,
       0,
-    );
+    )
 
-    const complianceScore = Math.min(100, (activeConsents / Math.max(totalConsents, 1)) * 100);
-    const dataRetentionScore = 95; // Mock score
-    const accessRequestScore = 100; // Mock score
+    const complianceScore = Math.min(100, (activeConsents / Math.max(totalConsents, 1)) * 100)
+    const dataRetentionScore = 95 // Mock score
+    const accessRequestScore = 100 // Mock score
 
     const riskLevel: 'low' | 'medium' | 'high' = complianceScore >= 90
       ? 'low'
       : complianceScore >= 70
       ? 'medium'
-      : 'high';
+      : 'high'
 
     return {
       totalConsents,
@@ -187,31 +187,31 @@ export const NeonProLGPDCompliance: React.FC<LGPDComplianceProps> = ({
       dataRetentionScore,
       accessRequestScore,
       riskLevel,
-    };
+    }
   }
 
   // Mask sensitive data
   const maskSensitiveData = (data: string, dataType: string): string => {
-    if (showSensitiveData) return data;
+    if (showSensitiveData) return data
 
     switch (dataType) {
       case 'email':
-        const [username, domain] = data.split('@');
-        return `${username.substring(0, 2)}***@${domain}`;
+        const [username, domain] = data.split('@')
+        return `${username.substring(0, 2)}***@${domain}`
 
       case 'phone':
-        return data.replace(/\d(?=\d{3})/g, '*');
+        return data.replace(/\d(?=\d{3})/g, '*')
 
       case 'name':
-        return `${data.split(' ')[0]} ${'*'.repeat(data.split(' ').length - 1)}`;
+        return `${data.split(' ')[0]} ${'*'.repeat(data.split(' ').length - 1)}`
 
       case 'cpf':
-        return `***.${data.slice(3, 7)}.**`;
+        return `***.${data.slice(3, 7)}.**`
 
       default:
-        return data.replace(/./g, '*');
+        return data.replace(/./g, '*')
     }
-  };
+  }
 
   // Log audit event
   const logAuditEvent = useCallback((
@@ -232,18 +232,18 @@ export const NeonProLGPDCompliance: React.FC<LGPDComplianceProps> = ({
       complianceLevel: details.complianceLevel || 'standard',
       outcome,
       riskLevel,
-    };
+    }
 
-    setAuditLogs(prev => [...prev, auditEvent]);
-    setMetrics(calculateComplianceMetrics());
+    setAuditLogs((prev) => [...prev, auditEvent])
+    setMetrics(calculateComplianceMetrics())
 
-    onComplianceAction?.('audit_log', auditEvent);
-  }, [userId, onComplianceAction]);
+    onComplianceAction?.('audit_log', auditEvent)
+  }, [userId, onComplianceAction])
 
   // Handle consent grant
   const handleGrantConsent = useCallback(async () => {
     if (!selectedSubject || !consentForm.purpose || consentForm.scope.length === 0) {
-      return;
+      return
     }
 
     try {
@@ -252,7 +252,7 @@ export const NeonProLGPDCompliance: React.FC<LGPDComplianceProps> = ({
         purpose: consentForm.purpose,
         scope: consentForm.scope,
         duration: consentForm.duration,
-      });
+      })
 
       // In real implementation, this would save to database
       const newConsent: ConsentRecord = {
@@ -267,13 +267,13 @@ export const NeonProLGPDCompliance: React.FC<LGPDComplianceProps> = ({
         ipAddress: '127.0.0.1',
         userAgent: 'NeonPro Web App',
         version: '1.0',
-      };
+      }
 
-      selectedSubject.consentRecords.push(newConsent);
-      setConsentForm({ purpose: '', scope: [], duration: 365 });
+      selectedSubject.consentRecords.push(newConsent)
+      setConsentForm({ purpose: '', scope: [], duration: 365 })
 
       // Update metrics
-      setMetrics(calculateComplianceMetrics());
+      setMetrics(calculateComplianceMetrics())
     } catch (error) {
       logAuditEvent(
         'consent_failed',
@@ -283,9 +283,9 @@ export const NeonProLGPDCompliance: React.FC<LGPDComplianceProps> = ({
         },
         'failure',
         'medium',
-      );
+      )
     }
-  }, [selectedSubject, consentForm, userId, logAuditEvent]);
+  }, [selectedSubject, consentForm, userId, logAuditEvent])
 
   // Handle data access request
   const handleDataAccessRequest = useCallback(async (subjectId: string, purpose: string) => {
@@ -293,9 +293,9 @@ export const NeonProLGPDCompliance: React.FC<LGPDComplianceProps> = ({
       logAuditEvent('data_access_requested', 'patient_data', {
         patientId: subjectId,
         purpose,
-      });
+      })
 
-      const subject = mockDataSubjects.find(s => s.id === subjectId);
+      const subject = mockDataSubjects.find((s) => s.id === subjectId)
       if (subject) {
         const accessRequest = {
           id: `access-${Date.now()}`,
@@ -303,9 +303,9 @@ export const NeonProLGPDCompliance: React.FC<LGPDComplianceProps> = ({
           fulfilledAt: new Date(),
           status: 'fulfilled' as const,
           purpose,
-        };
+        }
 
-        subject.accessRequests.push(accessRequest);
+        subject.accessRequests.push(accessRequest)
       }
     } catch (error) {
       logAuditEvent(
@@ -317,9 +317,9 @@ export const NeonProLGPDCompliance: React.FC<LGPDComplianceProps> = ({
         },
         'failure',
         'high',
-      );
+      )
     }
-  }, [logAuditEvent]);
+  }, [logAuditEvent])
 
   // Handle data export
   const handleDataExport = useCallback(async (subjectId: string) => {
@@ -328,9 +328,9 @@ export const NeonProLGPDCompliance: React.FC<LGPDComplianceProps> = ({
         patientId: subjectId,
         format: 'json',
         compressed: true,
-      });
+      })
 
-      const subject = mockDataSubjects.find(s => s.id === subjectId);
+      const subject = mockDataSubjects.find((s) => s.id === subjectId)
       if (subject) {
         const exportData = {
           patient: {
@@ -339,7 +339,7 @@ export const NeonProLGPDCompliance: React.FC<LGPDComplianceProps> = ({
             contact: maskSensitiveData(subject.contact, subject.contactType),
             dataCategories: subject.dataCategories,
           },
-          consents: subject.consentRecords.map(consent => ({
+          consents: subject.consentRecords.map((consent) => ({
             id: consent.id,
             type: consent.consentType,
             purpose: consent.purpose,
@@ -349,17 +349,17 @@ export const NeonProLGPDCompliance: React.FC<LGPDComplianceProps> = ({
           exportedAt: new Date().toISOString(),
           exportedBy: userId,
           version: '1.0',
-        };
+        }
 
-        const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `lgpd-export-${subjectId}-${new Date().toISOString().split('T')[0]}.json`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
+        const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' })
+        const url = URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = url
+        a.download = `lgpd-export-${subjectId}-${new Date().toISOString().split('T')[0]}.json`
+        document.body.appendChild(a)
+        a.click()
+        document.body.removeChild(a)
+        URL.revokeObjectURL(url)
       }
     } catch (error) {
       logAuditEvent(
@@ -371,9 +371,9 @@ export const NeonProLGPDCompliance: React.FC<LGPDComplianceProps> = ({
         },
         'failure',
         'high',
-      );
+      )
     }
-  }, [showSensitiveData, userId, logAuditEvent]);
+  }, [showSensitiveData, userId, logAuditEvent])
 
   // Handle data deletion
   const _handleDataDeletion = useCallback(async (subjectId: string) => {
@@ -387,14 +387,14 @@ export const NeonProLGPDCompliance: React.FC<LGPDComplianceProps> = ({
         },
         'success',
         'high',
-      );
+      )
 
       // In real implementation, this would trigger anonymization process
-      const subject = mockDataSubjects.find(s => s.id === subjectId);
+      const subject = mockDataSubjects.find((s) => s.id === subjectId)
       if (subject) {
-        subject.name = 'REDACTED';
-        subject.contact = 'REDACTED';
-        subject.consentRecords = [];
+        subject.name = 'REDACTED'
+        subject.contact = 'REDACTED'
+        subject.consentRecords = []
       }
     } catch (error) {
       logAuditEvent(
@@ -406,25 +406,25 @@ export const NeonProLGPDCompliance: React.FC<LGPDComplianceProps> = ({
         },
         'failure',
         'critical',
-      );
+      )
     }
-  }, [logAuditEvent]);
+  }, [logAuditEvent])
 
   // Get risk level color
   const getRiskLevelColor = (riskLevel: string) => {
     switch (riskLevel) {
       case 'low':
-        return 'bg-green-100 text-green-800';
+        return 'bg-green-100 text-green-800'
       case 'medium':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'bg-yellow-100 text-yellow-800'
       case 'high':
-        return 'bg-red-100 text-red-800';
+        return 'bg-red-100 text-red-800'
       case 'critical':
-        return 'bg-red-200 text-red-900';
+        return 'bg-red-200 text-red-900'
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-gray-100 text-gray-800'
     }
-  };
+  }
 
   return (
     <div className='space-y-6'>
@@ -497,7 +497,7 @@ export const NeonProLGPDCompliance: React.FC<LGPDComplianceProps> = ({
         </CardHeader>
         <CardContent>
           <div className='space-y-4'>
-            {mockDataSubjects.map(subject => (
+            {mockDataSubjects.map((subject) => (
               <div key={subject.id} className='border rounded-lg p-4'>
                 <div className='flex items-center justify-between mb-3'>
                   <div>
@@ -508,7 +508,7 @@ export const NeonProLGPDCompliance: React.FC<LGPDComplianceProps> = ({
                       {maskSensitiveData(subject.contact, subject.contactType)}
                     </p>
                     <div className='flex gap-2 mt-1'>
-                      {subject.dataCategories.map(category => (
+                      {subject.dataCategories.map((category) => (
                         <Badge key={category} variant='outline' className='text-xs'>
                           {category}
                         </Badge>
@@ -532,7 +532,7 @@ export const NeonProLGPDCompliance: React.FC<LGPDComplianceProps> = ({
                   <h4 className='text-sm font-medium mb-2'>
                     Consentimentos ({subject.consentRecords.length})
                   </h4>
-                  {subject.consentRecords.map(consent => (
+                  {subject.consentRecords.map((consent) => (
                     <div key={consent.id} className='bg-gray-50 p-2 rounded text-xs'>
                       <div className='flex justify-between'>
                         <span className='font-medium'>{consent.consentType}</span>
@@ -577,7 +577,7 @@ export const NeonProLGPDCompliance: React.FC<LGPDComplianceProps> = ({
               <Textarea
                 id='purpose'
                 value={consentForm.purpose}
-                onChange={e => setConsentForm(prev => ({ ...prev, purpose: e.target.value }))}
+                onChange={(e) => setConsentForm((prev) => ({ ...prev, purpose: e.target.value }))}
                 placeholder='Descreva a finalidade do tratamento de dados...'
                 rows={3}
               />
@@ -592,22 +592,22 @@ export const NeonProLGPDCompliance: React.FC<LGPDComplianceProps> = ({
                   'financial_data',
                   'contact_data',
                   'treatment_data',
-                ].map(scope => (
+                ].map((scope) => (
                   <label key={scope} className='flex items-center gap-2'>
                     <input
                       type='checkbox'
                       checked={consentForm.scope.includes(scope)}
-                      onChange={e => {
+                      onChange={(e) => {
                         if (e.target.checked) {
-                          setConsentForm(prev => ({
+                          setConsentForm((prev) => ({
                             ...prev,
                             scope: [...prev.scope, scope],
-                          }));
+                          }))
                         } else {
-                          setConsentForm(prev => ({
+                          setConsentForm((prev) => ({
                             ...prev,
-                            scope: prev.scope.filter(s => s !== scope),
-                          }));
+                            scope: prev.scope.filter((s) => s !== scope),
+                          }))
                         }
                       }}
                     />
@@ -635,8 +635,8 @@ export const NeonProLGPDCompliance: React.FC<LGPDComplianceProps> = ({
                 id='duration'
                 type='number'
                 value={consentForm.duration}
-                onChange={e =>
-                  setConsentForm(prev => ({ ...prev, duration: parseInt(e.target.value) }))}
+                onChange={(e) =>
+                  setConsentForm((prev) => ({ ...prev, duration: parseInt(e.target.value) }))}
                 min='1'
                 max='3650'
               />
@@ -684,7 +684,7 @@ export const NeonProLGPDCompliance: React.FC<LGPDComplianceProps> = ({
                 </p>
               )
               : (
-                auditLogs.slice(-20).reverse().map(log => (
+                auditLogs.slice(-20).reverse().map((log) => (
                   <div key={log.id} className='flex items-center gap-3 p-3 border rounded'>
                     <div
                       className={`w-2 h-2 rounded-full ${
@@ -730,7 +730,7 @@ export const NeonProLGPDCompliance: React.FC<LGPDComplianceProps> = ({
         </AlertDescription>
       </Alert>
     </div>
-  );
-};
+  )
+}
 
-export default NeonProLGPDCompliance;
+export default NeonProLGPDCompliance

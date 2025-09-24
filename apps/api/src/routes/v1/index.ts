@@ -3,12 +3,12 @@
  * Main router for v1 API endpoints
  */
 
-import { Hono } from 'hono';
-import aiRoutes from './ai';
+import { Hono } from 'hono'
+import aiRoutes from './ai'
 
-const app = new Hono();
+const app = new Hono()
 
 // Mount AI routes under /ai
-app.route('/ai', aiRoutes);
+app.route('/ai', aiRoutes)
 
-export default app;
+export default app

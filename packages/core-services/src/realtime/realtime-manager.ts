@@ -3,26 +3,26 @@
  * Optimized for healthcare applications with intelligent caching
  */
 
-import { logHealthcareError, realtimeLogger } from '@neonpro/shared';
+import { logHealthcareError, realtimeLogger } from '@neonpro/shared'
 import {
   createClient,
   RealtimeChannel,
   RealtimePostgresChangesPayload,
-} from '@supabase/supabase-js';
-import { QueryClient } from '@tanstack/react-query';
+} from '@supabase/supabase-js'
+import { QueryClient } from '@tanstack/react-query'
 
 export interface RealtimeSubscriptionOptions<T = any> {
-  onInsert?: (_payload: T) => void;
-  onUpdate?: (_payload: T) => void;
-  onDelete?: (_payload: { old: T }) => void;
-  queryKeys?: string[][];
-  optimisticUpdates?: boolean;
-  rateLimitMs?: number;
+  onInsert?: (_payload: T) => void
+  onUpdate?: (_payload: T) => void
+  onDelete?: (_payload: { old: T }) => void
+  queryKeys?: string[][]
+  optimisticUpdates?: boolean
+  rateLimitMs?: number
 }
 
 export class RealtimeManager {
-  private channels = new Map<string, RealtimeChannel>();
-  private queryClient: QueryClient;
+  private channels = new Map<string, RealtimeChannel>()
+  private queryClient: QueryClient
   private supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -33,11 +33,11 @@ export class RealtimeManager {
         },
       },
     },
-  );
-  private rateLimitMap = new Map<string, number>();
+  )
+  private rateLimitMap = new Map<string, number>()
 
   constructor(queryClient: QueryClient) {
-    this.queryClient = queryClient;
+    this.queryClient = queryClient
   }
 
   /**
@@ -48,10 +48,10 @@ export class RealtimeManager {
     filter?: string,
     options: RealtimeSubscriptionOptions<T> = {},
   ): RealtimeChannel {
-    const channelName = `${tableName}-${filter || 'all'}`;
+    const channelName = `${tableName}-${filter || 'all'}`
 
     if (this.channels.has(channelName)) {
-      return this.channels.get(channelName)!;
+      return this.channels.get(channelName)!
     }
 
     const channel = this.supabase
@@ -69,52 +69,52 @@ export class RealtimeManager {
         ) => {
           // Rate limiting for healthcare data
           if (this.shouldRateLimit(channelName, options.rateLimitMs || 100)) {
-            return;
+            return
           }
 
-          await this.handleRealtimeEvent(payload, tableName, options);
+          await this.handleRealtimeEvent(payload, tableName, options)
         },
       )
-      .subscribe(status => {
+      .subscribe((status) => {
         realtimeLogger.info(`Realtime subscription status update`, {
           channelName,
           status,
           timestamp: new Date().toISOString(),
-        });
+        })
 
         if (status === 'SUBSCRIBED') {
           realtimeLogger.info(`Successfully subscribed to realtime changes`, {
             tableName,
             channelName,
             timestamp: new Date().toISOString(),
-          });
+          })
         } else if (status === 'CHANNEL_ERROR') {
           realtimeLogger.error(`Error subscribing to realtime changes`, {
             tableName,
             channelName,
             timestamp: new Date().toISOString(),
-          });
+          })
           // Implement retry logic
           setTimeout(() => {
-            this.retrySubscription(tableName, filter, options);
-          }, 5000);
+            this.retrySubscription(tableName, filter, options)
+          }, 5000)
         }
-      });
+      })
 
-    this.channels.set(channelName, channel);
-    return channel;
+    this.channels.set(channelName, channel)
+    return channel
   }
 
   private shouldRateLimit(channelName: string, rateLimitMs: number): boolean {
-    const now = Date.now();
-    const lastUpdate = this.rateLimitMap.get(channelName) || 0;
+    const now = Date.now()
+    const lastUpdate = this.rateLimitMap.get(channelName) || 0
 
     if (now - lastUpdate < rateLimitMs) {
-      return true;
+      return true
     }
 
-    this.rateLimitMap.set(channelName, now);
-    return false;
+    this.rateLimitMap.set(channelName, now)
+    return false
   }
 
   private async handleRealtimeEvent<T extends { id: string }>(
@@ -125,33 +125,33 @@ export class RealtimeManager {
     try {
       switch (_payload.eventType) {
         case 'INSERT':
-          options.onInsert?.(_payload.new as T);
+          options.onInsert?.(_payload.new as T)
           if (options.optimisticUpdates !== false) {
-            await this.optimisticInsert(tableName, _payload.new as T);
+            await this.optimisticInsert(tableName, _payload.new as T)
           }
-          break;
+          break
         case 'UPDATE':
-          options.onUpdate?.(_payload.new as T);
+          options.onUpdate?.(_payload.new as T)
           if (options.optimisticUpdates !== false) {
-            await this.optimisticUpdate(tableName, _payload.new as T);
+            await this.optimisticUpdate(tableName, _payload.new as T)
           }
-          break;
+          break
         case 'DELETE':
-          options.onDelete?.({ old: _payload.old as T });
+          options.onDelete?.({ old: _payload.old as T })
           if (options.optimisticUpdates !== false) {
-            await this.optimisticDelete(tableName, _payload.old as T);
+            await this.optimisticDelete(tableName, _payload.old as T)
           }
-          break;
+          break
       }
 
       // Invalidate related queries for data consistency
       if (options.queryKeys) {
         await Promise.all(
-          options.queryKeys.map(queryKey => this.queryClient.invalidateQueries({ queryKey })),
-        );
+          options.queryKeys.map((queryKey) => this.queryClient.invalidateQueries({ queryKey })),
+        )
       }
     } catch (error) {
-      logHealthcareError('realtime', error as Error, { method: 'handleRealtimeEvent', tableName });
+      logHealthcareError('realtime', error as Error, { method: 'handleRealtimeEvent', tableName })
     }
   }
   private async optimisticInsert<T extends { id: string }>(
@@ -159,47 +159,47 @@ export class RealtimeManager {
     newRecord: T,
   ) {
     // Cancel outgoing refetches to prevent race conditions
-    await this.queryClient.cancelQueries({ queryKey: [tableName] });
+    await this.queryClient.cancelQueries({ queryKey: [tableName] })
 
     // Optimistically update cache with new record
     this.queryClient.setQueryData([tableName], (old: T[] | undefined) => {
-      return old ? [...old, newRecord] : [newRecord];
-    });
+      return old ? [...old, newRecord] : [newRecord]
+    })
 
     // Update specific record cache if it exists
-    this.queryClient.setQueryData([tableName, newRecord.id], newRecord);
+    this.queryClient.setQueryData([tableName, newRecord.id], newRecord)
   }
 
   private async optimisticUpdate<T extends { id: string }>(
     tableName: string,
     updatedRecord: T,
   ) {
-    await this.queryClient.cancelQueries({ queryKey: [tableName] });
+    await this.queryClient.cancelQueries({ queryKey: [tableName] })
 
     // Update list cache
     this.queryClient.setQueryData([tableName], (old: T[] | undefined) => {
       return (
-        old?.map(item => item.id === updatedRecord.id ? updatedRecord : item) || []
-      );
-    });
+        old?.map((item) => item.id === updatedRecord.id ? updatedRecord : item) || []
+      )
+    })
 
     // Update specific record cache
-    this.queryClient.setQueryData([tableName, updatedRecord.id], updatedRecord);
+    this.queryClient.setQueryData([tableName, updatedRecord.id], updatedRecord)
   }
 
   private async optimisticDelete<T extends { id: string }>(
     tableName: string,
     deletedRecord: T,
   ) {
-    await this.queryClient.cancelQueries({ queryKey: [tableName] });
+    await this.queryClient.cancelQueries({ queryKey: [tableName] })
 
     // Remove from list cache
     this.queryClient.setQueryData([tableName], (old: T[] | undefined) => {
-      return old?.filter(item => item.id !== deletedRecord.id) || [];
-    });
+      return old?.filter((item) => item.id !== deletedRecord.id) || []
+    })
 
     // Remove specific record cache
-    this.queryClient.removeQueries({ queryKey: [tableName, deletedRecord.id] });
+    this.queryClient.removeQueries({ queryKey: [tableName, deletedRecord.id] })
   }
 
   private async retrySubscription<T extends { id: string }>(
@@ -208,7 +208,7 @@ export class RealtimeManager {
     options: RealtimeSubscriptionOptions<T> = {},
     retryCount = 0,
   ) {
-    const maxRetries = 3;
+    const maxRetries = 3
 
     if (retryCount >= maxRetries) {
       realtimeLogger.error(`Max retries reached for subscription`, {
@@ -216,29 +216,29 @@ export class RealtimeManager {
         retryCount,
         maxRetries: 3,
         timestamp: new Date().toISOString(),
-      });
-      return;
+      })
+      return
     }
 
     realtimeLogger.info(`Retrying subscription`, {
       tableName,
       retryCount: retryCount + 1,
       timestamp: new Date().toISOString(),
-    });
+    })
 
     // Remove failed channel
-    const channelName = `${tableName}-${filter || 'all'}`;
-    const existingChannel = this.channels.get(channelName);
+    const channelName = `${tableName}-${filter || 'all'}`
+    const existingChannel = this.channels.get(channelName)
     if (existingChannel) {
-      this.supabase.removeChannel(existingChannel);
-      this.channels.delete(channelName);
+      this.supabase.removeChannel(existingChannel)
+      this.channels.delete(channelName)
     }
 
     // Wait before retry with exponential backoff
-    await new Promise(resolve => setTimeout(resolve, Math.pow(2, retryCount) * 1000));
+    await new Promise((resolve) => setTimeout(resolve, Math.pow(2, retryCount) * 1000))
 
     // Retry subscription
-    this.subscribeToTable(tableName, filter, options);
+    this.subscribeToTable(tableName, filter, options)
   }
 
   /**
@@ -249,18 +249,18 @@ export class RealtimeManager {
     initialState: Record<string, any> = {},
   ): RealtimeChannel {
     if (this.channels.has(channelName)) {
-      return this.channels.get(channelName)!;
+      return this.channels.get(channelName)!
     }
 
     const channel = this.supabase
       .channel(channelName)
       .on('presence', { event: 'sync' }, () => {
-        const state = channel.presenceState();
+        const state = channel.presenceState()
         realtimeLogger.info(`Presence sync`, {
           state,
           channelName,
           timestamp: new Date().toISOString(),
-        });
+        })
       })
       .on('presence', { event: 'join' }, ({ key, newPresences }) => {
         realtimeLogger.info(`User joined presence channel`, {
@@ -268,7 +268,7 @@ export class RealtimeManager {
           newPresences,
           channelName,
           timestamp: new Date().toISOString(),
-        });
+        })
       })
       .on('presence', { event: 'leave' }, ({ key, leftPresences }) => {
         realtimeLogger.info(`User left presence channel`, {
@@ -276,31 +276,31 @@ export class RealtimeManager {
           leftPresences,
           channelName,
           timestamp: new Date().toISOString(),
-        });
+        })
       })
-      .subscribe(async status => {
+      .subscribe(async (status) => {
         if (status === 'SUBSCRIBED') {
-          await channel.track(initialState);
+          await channel.track(initialState)
         }
-      });
+      })
 
-    this.channels.set(channelName, channel);
-    return channel;
+    this.channels.set(channelName, channel)
+    return channel
   }
 
   /**
    * Unsubscribe from specific channel
    */
   unsubscribe(channelName: string) {
-    const channel = this.channels.get(channelName);
+    const channel = this.channels.get(channelName)
     if (channel) {
-      this.supabase.removeChannel(channel);
-      this.channels.delete(channelName);
-      this.rateLimitMap.delete(channelName);
+      this.supabase.removeChannel(channel)
+      this.channels.delete(channelName)
+      this.rateLimitMap.delete(channelName)
       realtimeLogger.info(`Unsubscribed from realtime channel`, {
         channelName,
         timestamp: new Date().toISOString(),
-      });
+      })
     }
   }
 
@@ -309,14 +309,14 @@ export class RealtimeManager {
    */
   unsubscribeAll() {
     this.channels.forEach((channel, name) => {
-      this.supabase.removeChannel(channel);
+      this.supabase.removeChannel(channel)
       realtimeLogger.info(`Unsubscribed from all realtime channels`, {
         channelName: name,
         timestamp: new Date().toISOString(),
-      });
-    });
-    this.channels.clear();
-    this.rateLimitMap.clear();
+      })
+    })
+    this.channels.clear()
+    this.rateLimitMap.clear()
   }
 
   /**
@@ -324,13 +324,13 @@ export class RealtimeManager {
    */
   getConnectionStatus(): string {
     // Note: connection property may not be available in all versions
-    return 'connected'; // Simplified for now
+    return 'connected' // Simplified for now
   }
 
   /**
    * Get active channels count
    */
   getActiveChannelsCount(): number {
-    return this.channels.size;
+    return this.channels.size
   }
 }

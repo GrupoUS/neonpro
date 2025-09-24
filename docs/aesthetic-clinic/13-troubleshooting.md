@@ -247,7 +247,7 @@ export const clientRouter = t.router({
   getClient: t.procedure
     .input(z.object({ id: z.string() }))
     .query(async ({ input }) => {
-      return await prisma.client.findUnique({ where: { id: input.id } });
+      return await prisma.client.findUnique({ where: { id: input.id } })
     }),
 
   // ❌ Missing input validation
@@ -255,7 +255,7 @@ export const clientRouter = t.router({
     .query(async ({ input }) => {
       // input will be undefined
     }),
-});
+})
 
 // 2. Missing context
 export const createProtectedRouter = () => {
@@ -264,15 +264,15 @@ export const createProtectedRouter = () => {
     protectedProcedure: t.procedure
       .use(({ ctx, next }) => {
         if (!ctx.user) {
-          throw new Error('Unauthorized');
+          throw new Error('Unauthorized')
         }
-        return next({ ctx: { ...ctx, user: ctx.user } });
+        return next({ ctx: { ...ctx, user: ctx.user } })
       })
       .query(async ({ ctx }) => {
-        return ctx.user;
+        return ctx.user
       }),
-  });
-};
+  })
+}
 ```
 
 ## 🎨 Frontend Issues
@@ -306,66 +306,66 @@ NODE_OPTIONS="--max-old-space-size=4096" npm run build
 // 1. Infinite loops in useEffect
 // ❌ Problem: Missing dependency array
 useEffect(() => {
-  fetchClients();
-});
+  fetchClients()
+})
 
 // ✅ Solution: Add empty dependency array for initial load
 useEffect(() => {
-  fetchClients();
-}, []);
+  fetchClients()
+}, [])
 
 // ✅ Solution: Add dependencies when needed
 useEffect(() => {
-  fetchClients(searchTerm);
-}, [searchTerm]);
+  fetchClients(searchTerm)
+}, [searchTerm])
 
 // 2. State mutation
 // ❌ Problem: Direct state mutation
-const updateClient = client => {
-  client.name = 'New Name'; // Direct mutation
-  setClients(clients);
-};
+const updateClient = (client) => {
+  client.name = 'New Name' // Direct mutation
+  setClients(clients)
+}
 
 // ✅ Solution: Create new reference
 const updateClient = (clientId, newName) => {
-  setClients(prev =>
-    prev.map(client =>
+  setClients((prev) =>
+    prev.map((client) =>
       client.id === clientId
         ? { ...client, name: newName }
         : client
     )
-  );
-};
+  )
+}
 
 // 3. Prop drilling issues
 // ❌ Problem: Passing props through many levels
 function GrandParent() {
-  const [user, setUser] = useState(null);
-  return <Parent user={user} setUser={setUser} />;
+  const [user, setUser] = useState(null)
+  return <Parent user={user} setUser={setUser} />
 }
 
 function Parent({ user, setUser }) {
-  return <Child user={user} setUser={setUser} />;
+  return <Child user={user} setUser={setUser} />
 }
 
 function Child({ user, setUser }) {
-  return <GrandChild user={user} setUser={setUser} />;
+  return <GrandChild user={user} setUser={setUser} />
 }
 
 // ✅ Solution: Use Context API
-const UserContext = createContext();
+const UserContext = createContext()
 
 function UserProvider({ children }) {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(null)
   return (
     <UserContext.Provider value={{ user, setUser }}>
       {children}
     </UserContext.Provider>
-  );
+  )
 }
 
 function GrandChild() {
-  const { user, setUser } = useContext(UserContext);
+  const { user, setUser } = useContext(UserContext)
   // Use user and setUser directly
 }
 ```
@@ -427,20 +427,20 @@ function GrandChild() {
 
 // 1. Token expiration
 // ❌ Problem: Token expired but still trying to use
-const token = localStorage.getItem('token');
+const token = localStorage.getItem('token')
 // Token is expired but still being sent
 
 // ✅ Solution: Check token expiration
 const isTokenExpired = (token: string): boolean => {
   try {
-    const decoded = jwt.decode(token) as { exp: number };
-    return decoded.exp < Date.now() / 1000;
+    const decoded = jwt.decode(token) as { exp: number }
+    return decoded.exp < Date.now() / 1000
   } catch {
-    return true;
+    return true
   }
-};
+}
 
-const token = localStorage.getItem('token');
+const token = localStorage.getItem('token')
 if (token && !isTokenExpired(token)) {
   // Use valid token
 } else {
@@ -449,19 +449,19 @@ if (token && !isTokenExpired(token)) {
 
 // 2. Token validation issues
 // ❌ Problem: Insecure token validation
-jwt.verify(token, 'hardcoded-secret');
+jwt.verify(token, 'hardcoded-secret')
 
 // ✅ Solution: Use environment variable
-jwt.verify(token, process.env.JWT_SECRET);
+jwt.verify(token, process.env.JWT_SECRET)
 
 // 3. Token storage issues
 // ❌ Problem: Storing sensitive data in localStorage
-localStorage.setItem('token', token);
-localStorage.setItem('user', JSON.stringify(user));
+localStorage.setItem('token', token)
+localStorage.setItem('user', JSON.stringify(user))
 
 // ✅ Solution: Use more secure options
 // Use httpOnly cookies for production
-document.cookie = `token=${token}; path=/; secure; httpOnly; samesite=strict`;
+document.cookie = `token=${token}; path=/; secure; httpOnly; samesite=strict`
 ```
 
 ### Session Management Issues
@@ -474,7 +474,7 @@ document.cookie = `token=${token}; path=/; secure; httpOnly; samesite=strict`;
 const session = {
   userId: user.id,
   token: jwt.sign({ userId: user.id }, secret),
-};
+}
 
 // ✅ Solution: Add session timeout
 const session = {
@@ -485,24 +485,24 @@ const session = {
     { expiresIn: '24h' },
   ),
   expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
-};
+}
 
 // 2. Concurrent session issues
 // ❌ Problem: Multiple sessions for same user
 const sessions = await db.session.findMany({
   where: { userId: user.id },
-});
+})
 
 // ✅ Solution: Single active session
 const existingSession = await db.session.findFirst({
   where: { userId: user.id, isActive: true },
-});
+})
 
 if (existingSession) {
   await db.session.update({
     where: { id: existingSession.id },
     data: { isActive: false },
-  });
+  })
 }
 
 // Create new session
@@ -512,7 +512,7 @@ const newSession = await db.session.create({
     token,
     isActive: true,
   },
-});
+})
 ```
 
 ### Permission Issues
@@ -531,34 +531,34 @@ const permissions = {
   admin: ['clients:create', 'clients:read', 'clients:update', 'clients:delete'],
   professional: ['clients:read', 'clients:update'],
   receptionist: ['clients:read', 'clients:create'],
-};
+}
 
 const hasPermission = (user: User, permission: string): boolean => {
-  return permissions[user.role]?.includes(permission) || false;
-};
+  return permissions[user.role]?.includes(permission) || false
+}
 
 // 2. Resource ownership issues
 // ❌ Problem: No ownership check
 app.put('/clients/:id', authMiddleware, async (req, res) => {
   // Anyone can update any client
-});
+})
 
 // ✅ Solution: Check ownership
 app.put('/clients/:id', authMiddleware, async (req, res) => {
   const client = await prisma.client.findUnique({
     where: { id: req.params.id },
-  });
+  })
 
   if (!client) {
-    return res.status(404).json({ error: 'Client not found' });
+    return res.status(404).json({ error: 'Client not found' })
   }
 
   if (client.professionalId !== req.user.id && req.user.role !== 'admin') {
-    return res.status(403).json({ error: 'Access denied' });
+    return res.status(403).json({ error: 'Access denied' })
   }
 
   // Update client
-});
+})
 ```
 
 ## ⚡ Performance Issues
@@ -571,47 +571,47 @@ app.put('/clients/:id', authMiddleware, async (req, res) => {
 // 1. Unnecessary re-renders
 // ❌ Problem: Component re-renders on every state change
 const Parent = () => {
-  const [count, setCount] = useState(0);
+  const [count, setCount] = useState(0)
 
   return (
     <div>
-      <button onClick={() => setCount(c => c + 1)}>
+      <button onClick={() => setCount((c) => c + 1)}>
         Count: {count}
       </button>
       <ExpensiveComponent />
     </div>
-  );
-};
+  )
+}
 
 // ✅ Solution: Use React.memo and useMemo
 const ExpensiveComponent = memo(({ data }) => {
   const processedData = useMemo(() => {
-    return expensiveOperation(data);
-  }, [data]);
+    return expensiveOperation(data)
+  }, [data])
 
-  return <div>{processedData}</div>;
-});
+  return <div>{processedData}</div>
+})
 
 // 2. Large bundle size
 // ❌ Problem: Large JavaScript bundle
-import { Calendar, Chart, DatePicker } from 'heavy-library';
+import { Calendar, Chart, DatePicker } from 'heavy-library'
 
 // ✅ Solution: Code splitting and lazy loading
-const Chart = lazy(() => import('heavy-library').then(mod => ({ default: mod.Chart })));
-const Calendar = lazy(() => import('heavy-library').then(mod => ({ default: mod.Calendar })));
+const Chart = lazy(() => import('heavy-library').then((mod) => ({ default: mod.Chart })))
+const Calendar = lazy(() => import('heavy-library').then((mod) => ({ default: mod.Calendar })))
 
 // 3. Inefficient data fetching
 // ❌ Problem: Multiple API calls for related data
 useEffect(() => {
-  fetchClients();
-  fetchTreatments();
-  fetchAppointments();
-}, []);
+  fetchClients()
+  fetchTreatments()
+  fetchAppointments()
+}, [])
 
 // ✅ Solution: Use GraphQL or batch requests
 const { data, loading } = useQuery(GET_DASHBOARD_DATA, {
   variables: { clientId },
-});
+})
 ```
 
 ### API Performance Issues
@@ -621,11 +621,11 @@ const { data, loading } = useQuery(GET_DASHBOARD_DATA, {
 
 // 1. N+1 query problem
 // ❌ Problem: N+1 database queries
-const clients = await prisma.client.findMany();
+const clients = await prisma.client.findMany()
 for (const client of clients) {
   client.treatments = await prisma.treatment.findMany({
     where: { clientId: client.id },
-  });
+  })
 }
 
 // ✅ Solution: Use eager loading
@@ -634,46 +634,46 @@ const clients = await prisma.client.findMany({
     treatments: true,
     appointments: true,
   },
-});
+})
 
 // 2. No caching
 // ❌ Problem: No caching for frequent requests
 app.get('/api/v1/clients', async (req, res) => {
-  const clients = await prisma.client.findMany();
-  res.json(clients);
-});
+  const clients = await prisma.client.findMany()
+  res.json(clients)
+})
 
 // ✅ Solution: Implement caching
-const cache = new Map();
+const cache = new Map()
 
 app.get('/api/v1/clients', async (req, res) => {
-  const cacheKey = 'clients:' + JSON.stringify(req.query);
+  const cacheKey = 'clients:' + JSON.stringify(req.query)
 
   if (cache.has(cacheKey)) {
-    return res.json(cache.get(cacheKey));
+    return res.json(cache.get(cacheKey))
   }
 
-  const clients = await prisma.client.findMany();
-  cache.set(cacheKey, clients);
+  const clients = await prisma.client.findMany()
+  cache.set(cacheKey, clients)
 
   // Set cache expiration
-  setTimeout(() => cache.delete(cacheKey), 5 * 60 * 1000);
+  setTimeout(() => cache.delete(cacheKey), 5 * 60 * 1000)
 
-  res.json(clients);
-});
+  res.json(clients)
+})
 
 // 3. Pagination issues
 // ❌ Problem: Loading all data at once
 app.get('/api/v1/clients', async (req, res) => {
-  const clients = await prisma.client.findMany(); // All clients
-  res.json(clients);
-});
+  const clients = await prisma.client.findMany() // All clients
+  res.json(clients)
+})
 
 // ✅ Solution: Implement pagination
 app.get('/api/v1/clients', async (req, res) => {
-  const page = parseInt(req.query.page) || 1;
-  const limit = parseInt(req.query.limit) || 10;
-  const offset = (page - 1) * limit;
+  const page = parseInt(req.query.page) || 1
+  const limit = parseInt(req.query.limit) || 10
+  const offset = (page - 1) * limit
 
   const [clients, total] = await Promise.all([
     prisma.client.findMany({
@@ -682,7 +682,7 @@ app.get('/api/v1/clients', async (req, res) => {
       orderBy: { createdAt: 'desc' },
     }),
     prisma.client.count(),
-  ]);
+  ])
 
   res.json({
     clients,
@@ -692,8 +692,8 @@ app.get('/api/v1/clients', async (req, res) => {
       total,
       totalPages: Math.ceil(total / limit),
     },
-  });
-});
+  })
+})
 ```
 
 ### Database Performance Issues
@@ -818,50 +818,50 @@ kubectl describe service service-name
 // 1. Test environment setup
 // ❌ Problem: Tests not isolated
 describe('ClientService', () => {
-  let service: ClientService;
+  let service: ClientService
 
   beforeAll(() => {
-    service = new ClientService();
-  });
+    service = new ClientService()
+  })
 
   it('should create client', async () => {
     // Tests might interfere with each other
-  });
-});
+  })
+})
 
 // ✅ Solution: Proper test isolation
 describe('ClientService', () => {
-  let service: ClientService;
-  let prisma: PrismaClient;
+  let service: ClientService
+  let prisma: PrismaClient
 
   beforeEach(async () => {
-    prisma = new TestPrismaClient();
-    service = new ClientService(prisma);
-    await prisma.aestheticClientProfile.deleteMany();
-  });
+    prisma = new TestPrismaClient()
+    service = new ClientService(prisma)
+    await prisma.aestheticClientProfile.deleteMany()
+  })
 
   afterEach(async () => {
-    await prisma.$disconnect();
-  });
+    await prisma.$disconnect()
+  })
 
   it('should create client', async () => {
-    const client = await service.createClient(validClientData);
-    expect(client).toMatchObject(validClientData);
-  });
-});
+    const client = await service.createClient(validClientData)
+    expect(client).toMatchObject(validClientData)
+  })
+})
 
 // 2. Mock setup issues
 // ❌ Problem: Incomplete mock setup
 jest.mock('nodemailer', () => ({
   createTransport: jest.fn(),
-}));
+}))
 
 // ✅ Solution: Complete mock setup
 jest.mock('nodemailer', () => ({
   createTransport: jest.fn(() => ({
     sendMail: jest.fn().mockResolvedValue({ messageId: 'test-id' }),
   })),
-}));
+}))
 ```
 
 ### Integration Test Issues
@@ -872,41 +872,41 @@ jest.mock('nodemailer', () => ({
 // 1. Database cleanup
 // ❌ Problem: Tests leaving data behind
 afterAll(async () => {
-  await prisma.$disconnect();
-});
+  await prisma.$disconnect()
+})
 
 // ✅ Solution: Proper cleanup
 afterAll(async () => {
-  await prisma.aestheticClientProfile.deleteMany();
-  await prisma.aestheticTreatment.deleteMany();
-  await prisma.$disconnect();
-});
+  await prisma.aestheticClientProfile.deleteMany()
+  await prisma.aestheticTreatment.deleteMany()
+  await prisma.$disconnect()
+})
 
 // 2. Test dependencies
 // ❌ Problem: Tests running in wrong order
 describe('Client Workflow', () => {
   it('should create client', async () => {
     // Depends on client being created first
-  });
+  })
 
   it('should create treatment', async () => {
     // Depends on treatment being created second
-  });
-});
+  })
+})
 
 // ✅ Solution: Independent tests or proper setup
 describe('Client Workflow', () => {
-  let client: any;
+  let client: any
 
   beforeEach(async () => {
-    client = await createTestClient();
-  });
+    client = await createTestClient()
+  })
 
   it('should create treatment', async () => {
-    const treatment = await createTestTreatment(client.id);
-    expect(treatment.clientId).toBe(client.id);
-  });
-});
+    const treatment = await createTestTreatment(client.id)
+    expect(treatment.clientId).toBe(client.id)
+  })
+})
 ```
 
 ### E2E Test Issues
@@ -917,39 +917,39 @@ describe('Client Workflow', () => {
 // 1. Flaky tests
 // ❌ Problem: Tests failing due to timing issues
 test('should create client', async ({ page }) => {
-  await page.click('[data-testid="add-client"]');
-  await page.fill('[data-testid="fullName"]', 'Test Client');
-  await page.click('[data-testid="submit"]');
+  await page.click('[data-testid="add-client"]')
+  await page.fill('[data-testid="fullName"]', 'Test Client')
+  await page.click('[data-testid="submit"]')
   // Might fail if not waiting for element
-  expect(page.locator('[data-testid="success-message"]')).toBeVisible();
-});
+  expect(page.locator('[data-testid="success-message"]')).toBeVisible()
+})
 
 // ✅ Solution: Proper waiting
 test('should create client', async ({ page }) => {
-  await page.click('[data-testid="add-client"]');
-  await page.fill('[data-testid="fullName"]', 'Test Client');
-  await page.click('[data-testid="submit"]');
-  await page.waitForSelector('[data-testid="success-message"]');
-  expect(page.locator('[data-testid="success-message"]')).toBeVisible();
-});
+  await page.click('[data-testid="add-client"]')
+  await page.fill('[data-testid="fullName"]', 'Test Client')
+  await page.click('[data-testid="submit"]')
+  await page.waitForSelector('[data-testid="success-message"]')
+  expect(page.locator('[data-testid="success-message"]')).toBeVisible()
+})
 
 // 2. Test data setup
 // ❌ Problem: Tests depending on specific data
 test('should display client list', async ({ page }) => {
   // Assumes clients exist in database
-  await page.goto('/clients');
-  expect(page.locator('[data-testid="client-item"]')).toHaveCount(5);
-});
+  await page.goto('/clients')
+  expect(page.locator('[data-testid="client-item"]')).toHaveCount(5)
+})
 
 // ✅ Solution: Create test data
 test('should display client list', async ({ page }) => {
   // Create test clients via API or setup script
-  await createTestClients(5);
+  await createTestClients(5)
 
-  await page.goto('/clients');
-  await page.waitForSelector('[data-testid="client-item"]');
-  expect(page.locator('[data-testid="client-item"]')).toHaveCount(5);
-});
+  await page.goto('/clients')
+  await page.waitForSelector('[data-testid="client-item"]')
+  expect(page.locator('[data-testid="client-item"]')).toHaveCount(5)
+})
 ```
 
 ## 📋 Compliance Issues
@@ -967,7 +967,7 @@ const client = await prisma.aestheticClientProfile.create({
     email: 'test@example.com',
     // Missing lgpdConsent field
   },
-});
+})
 
 // ✅ Solution: Require consent
 const client = await prisma.aestheticClientProfile.create({
@@ -978,22 +978,22 @@ const client = await prisma.aestheticClientProfile.create({
     consentDate: new Date(), // When consent was given
     consentVersion: '1.0', // Version of privacy policy
   },
-});
+})
 
 // 2. Data retention issues
 // ❌ Problem: Keeping data indefinitely
-const clients = await prisma.aestheticClientProfile.findMany();
+const clients = await prisma.aestheticClientProfile.findMany()
 
 // ✅ Solution: Implement data retention
-const retentionDate = new Date();
-retentionDate.setFullYear(retentionDate.getFullYear() - 7); // 7 years
+const retentionDate = new Date()
+retentionDate.setFullYear(retentionDate.getFullYear() - 7) // 7 years
 
 const clientsToArchive = await prisma.aestheticClientProfile.findMany({
   where: {
     status: 'inactive',
     updatedAt: { lt: retentionDate },
   },
-});
+})
 
 // Archive or delete old data
 for (const client of clientsToArchive) {
@@ -1003,7 +1003,7 @@ for (const client of clientsToArchive) {
       status: 'archived',
       archivedAt: new Date(),
     },
-  });
+  })
 }
 
 // 3. Data access requests
@@ -1020,10 +1020,10 @@ export async function exportUserData(userId: string): Promise<UserDataExport> {
         },
       },
     },
-  });
+  })
 
   if (!user) {
-    throw new Error('User not found');
+    throw new Error('User not found')
   }
 
   return {
@@ -1034,7 +1034,7 @@ export async function exportUserData(userId: string): Promise<UserDataExport> {
     },
     clientProfiles: user.aestheticClientProfiles,
     exportedAt: new Date(),
-  };
+  }
 }
 ```
 
@@ -1050,7 +1050,7 @@ const treatment = await prisma.aestheticTreatment.create({
     name: 'Botox Treatment',
     // Missing ANVISA code
   },
-});
+})
 
 // ✅ Solution: Track ANVISA codes
 const treatment = await prisma.aestheticTreatment.create({
@@ -1062,7 +1062,7 @@ const treatment = await prisma.aestheticTreatment.create({
     manufacturer: 'Allergan', // Manufacturer name
     // ... other fields
   },
-});
+})
 
 // 2. Adverse event reporting
 // ❌ Problem: No adverse event tracking
@@ -1080,14 +1080,14 @@ export async function reportAdverseEvent(data: AdverseEventReport) {
       reportedAt: new Date(),
       anvisaNotified: false,
     },
-  });
+  })
 
   // Notify ANVISA if required
   if (event.severity === 'severe') {
-    await notifyANVISA(event);
+    await notifyANVISA(event)
   }
 
-  return event;
+  return event
 }
 ```
 
@@ -1100,15 +1100,15 @@ export async function reportAdverseEvent(data: AdverseEventReport) {
 
 // 1. SQL Injection
 // ❌ Problem: Raw SQL with user input
-const query = `SELECT * FROM clients WHERE email = '${req.body.email}'`;
-const result = await prisma.$queryRawUnsafe(query);
+const query = `SELECT * FROM clients WHERE email = '${req.body.email}'`
+const result = await prisma.$queryRawUnsafe(query)
 
 // ✅ Solution: Use parameterized queries
 const result = await prisma.client.findMany({
   where: {
     email: req.body.email,
   },
-});
+})
 
 // 2. XSS vulnerabilities
 // ❌ Problem: Direct rendering of user input
@@ -1117,10 +1117,10 @@ const UserCard = ({ user }) => (
     <h3>{user.fullName}</h3>
     <p>{user.bio}</p> {/* Vulnerable to XSS */}
   </div>
-);
+)
 
 // ✅ Solution: Sanitize user input
-import DOMPurify from 'dompurify';
+import DOMPurify from 'dompurify'
 
 const UserCard = ({ user }) => (
   <div>
@@ -1131,22 +1131,22 @@ const UserCard = ({ user }) => (
       }}
     />
   </div>
-);
+)
 
 // 3. CSRF vulnerabilities
 // ❌ Problem: No CSRF protection
 app.post('/api/v1/clients', (req, res) => {
   // Vulnerable to CSRF
-});
+})
 
 // ✅ Solution: Implement CSRF protection
-import csrf from 'csurf';
+import csrf from 'csurf'
 
-const csrfProtection = csrf({ cookie: true });
+const csrfProtection = csrf({ cookie: true })
 
 app.post('/api/v1/clients', csrfProtection, (req, res) => {
   // Protected from CSRF
-});
+})
 
 // 4. Insecure data storage
 // ❌ Problem: Storing sensitive data in plaintext
@@ -1156,10 +1156,10 @@ const client = await prisma.client.create({
     cpf: '12345678900', // Sensitive data in plaintext
     phone: '+5511999999999', // Sensitive data in plaintext
   },
-});
+})
 
 // ✅ Solution: Encrypt sensitive data
-import { encrypt } from '../utils/encryption';
+import { encrypt } from '../utils/encryption'
 
 const client = await prisma.client.create({
   data: {
@@ -1167,7 +1167,7 @@ const client = await prisma.client.create({
     cpf: await encrypt('12345678900'),
     phone: await encrypt('+5511999999999'),
   },
-});
+})
 ```
 
 ## 📞 Getting Help

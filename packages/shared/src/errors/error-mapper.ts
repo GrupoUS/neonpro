@@ -1,24 +1,24 @@
 export interface ErrorContext {
-  _userId?: string;
-  clinicId?: string;
-  sessionId?: string;
-  action?: string;
-  timestamp?: string;
+  _userId?: string
+  clinicId?: string
+  sessionId?: string
+  action?: string
+  timestamp?: string
 }
 
 export interface MappedError {
-  code: string;
-  message: string;
-  userMessage: string;
-  statusCode: number;
-  logLevel: 'error' | 'warn' | 'info';
-  shouldLog: boolean;
-  metadata?: Record<string, any>;
+  code: string
+  message: string
+  userMessage: string
+  statusCode: number
+  logLevel: 'error' | 'warn' | 'info'
+  shouldLog: boolean
+  metadata?: Record<string, any>
 }
 
 export class ErrorMapper {
   private static readonly DEFAULT_USER_MESSAGE =
-    'Um erro inesperado ocorreu. Nossa equipe foi notificada.';
+    'Um erro inesperado ocorreu. Nossa equipe foi notificada.'
 
   /**
    * Maps internal errors to user-safe responses
@@ -27,15 +27,15 @@ export class ErrorMapper {
     error: Error | unknown,
     _context?: ErrorContext,
   ): MappedError {
-    const timestamp = new Date().toISOString();
+    const timestamp = new Date().toISOString()
 
     // Handle known error types
     if (error instanceof Error) {
-      return this.mapKnownError(error, _context, timestamp);
+      return this.mapKnownError(error, _context, timestamp)
     }
 
     // Handle unknown errors
-    return this.mapUnknownError(error, _context, timestamp);
+    return this.mapUnknownError(error, _context, timestamp)
   }
 
   private static mapKnownError(
@@ -43,8 +43,8 @@ export class ErrorMapper {
     _context?: ErrorContext,
     timestamp?: string,
   ): MappedError {
-    const errorName = error.name.toLowerCase();
-    const errorMessage = error.message.toLowerCase();
+    const errorName = error.name.toLowerCase()
+    const errorMessage = error.message.toLowerCase()
 
     // Rate limiting errors
     if (errorName.includes('rate') || errorMessage.includes('rate limit')) {
@@ -60,7 +60,7 @@ export class ErrorMapper {
           timestamp,
           originalError: 'Rate limit exceeded',
         },
-      };
+      }
     }
 
     // Validation errors
@@ -76,7 +76,7 @@ export class ErrorMapper {
           _userId: _context?._userId,
           timestamp,
         },
-      };
+      }
     }
 
     // Permission/Authorization errors
@@ -99,7 +99,7 @@ export class ErrorMapper {
           action: _context?.action,
           timestamp,
         },
-      };
+      }
     }
 
     // LGPD/Consent errors
@@ -118,7 +118,7 @@ export class ErrorMapper {
           timestamp,
           complianceIssue: true,
         },
-      };
+      }
     }
 
     // AI/LLM service errors
@@ -142,7 +142,7 @@ export class ErrorMapper {
           timestamp,
           serviceType: 'ai',
         },
-      };
+      }
     }
 
     // Database/Network errors
@@ -165,7 +165,7 @@ export class ErrorMapper {
           timestamp,
           serviceType: 'database',
         },
-      };
+      }
     }
 
     // PII/Data protection errors
@@ -189,11 +189,11 @@ export class ErrorMapper {
           complianceIssue: true,
           dataProtection: true,
         },
-      };
+      }
     }
 
     // Default for unrecognized errors
-    return this.mapUnknownError(error, _context, timestamp);
+    return this.mapUnknownError(error, _context, timestamp)
   }
 
   private static mapUnknownError(
@@ -216,7 +216,7 @@ export class ErrorMapper {
         errorType: typeof error,
         hasStack: error instanceof Error && !!error.stack,
       },
-    };
+    }
   }
 
   /**
@@ -232,14 +232,14 @@ export class ErrorMapper {
         '[EMAIL]',
       ) // Email addresses
       .replace(/\b\(\d{2}\)\s*\d{4,5}-?\d{4}\b/g, '[PHONE]') // Phone numbers
-      .replace(/\b\d{5}-?\d{3}\b/g, '[CEP]'); // CEP codes
+      .replace(/\b\d{5}-?\d{3}\b/g, '[CEP]') // CEP codes
   }
 
   /**
    * Creates a safe error response for API endpoints
    */
   static createAPIResponse(error: Error | unknown, _context?: ErrorContext) {
-    const mapped = this.mapError(error, _context);
+    const mapped = this.mapError(error, _context)
 
     return {
       success: false,
@@ -250,17 +250,17 @@ export class ErrorMapper {
       },
       // Include request ID if available for support debugging
       ...(_context?.sessionId && { requestId: _context.sessionId }),
-    };
+    }
   }
 
   /**
    * Creates structured log entry for internal error tracking
    */
   static createLogEntry(error: Error | unknown, _context?: ErrorContext) {
-    const mapped = this.mapError(error, _context);
+    const mapped = this.mapError(error, _context)
 
     if (!mapped.shouldLog) {
-      return null;
+      return null
     }
 
     return {
@@ -278,46 +278,47 @@ export class ErrorMapper {
       metadata: mapped.metadata,
       // Include stack trace only for server errors
       ...(mapped.statusCode >= 500
-        && error instanceof Error && { stack: error.stack }),
-    };
+        && error instanceof Error
+        && { stack: error.stack }),
+    }
   }
 }
 
 // Predefined error creators for common scenarios
 export const createRateLimitError = (_userId?: string) => {
-  const error = new Error('Rate limit exceeded for user');
-  error.name = 'RateLimitError';
-  return ErrorMapper.mapError(error, { _userId, action: 'rate_limit_check' });
-};
+  const error = new Error('Rate limit exceeded for user')
+  error.name = 'RateLimitError'
+  return ErrorMapper.mapError(error, { _userId, action: 'rate_limit_check' })
+}
 
 export const createConsentError = (_userId?: string, clinicId?: string) => {
-  const error = new Error('LGPD consent required for data processing');
-  error.name = 'ConsentError';
+  const error = new Error('LGPD consent required for data processing')
+  error.name = 'ConsentError'
   return ErrorMapper.mapError(error, {
     _userId,
     clinicId,
     action: 'consent_validation',
-  });
-};
+  })
+}
 
 export const createAIServiceError = (sessionId?: string) => {
-  const error = new Error('AI service temporarily unavailable');
-  error.name = 'AIServiceError';
-  return ErrorMapper.mapError(error, { sessionId, action: 'ai_query' });
-};
+  const error = new Error('AI service temporarily unavailable')
+  error.name = 'AIServiceError'
+  return ErrorMapper.mapError(error, { sessionId, action: 'ai_query' })
+}
 
 export const createDataProtectionError = (
   _userId?: string,
   sessionId?: string,
 ) => {
-  const error = new Error('PII detected in user input');
-  error.name = 'DataProtectionError';
+  const error = new Error('PII detected in user input')
+  error.name = 'DataProtectionError'
   return ErrorMapper.mapError(error, {
     _userId,
     sessionId,
     action: 'pii_detection',
-  });
-};
+  })
+}
 
 // Export for middleware usage
-export default ErrorMapper;
+export default ErrorMapper

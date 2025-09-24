@@ -1,17 +1,17 @@
 export default function handler(req: any, res: any) {
-  res.setHeader('Content-Type', 'application/json');
+  res.setHeader('Content-Type', 'application/json')
 
   const baseUrl = (() => {
-    const fromEnv = process.env.API_URL as string | undefined;
+    const fromEnv = process.env.API_URL as string | undefined
     if (fromEnv) {
       return fromEnv.startsWith('http')
         ? `${fromEnv}/api`
-        : `https://${fromEnv}/api`;
+        : `https://${fromEnv}/api`
     }
-    const host = req.headers?.host ?? 'localhost:3000';
-    const proto = (req.headers?.['x-forwarded-proto'] as string) || 'https';
-    return `${proto}://${host}/api`;
-  })();
+    const host = req.headers?.host ?? 'localhost:3000'
+    const proto = (req.headers?.['x-forwarded-proto'] as string) || 'https'
+    return `${proto}://${host}/api`
+  })()
 
   const doc = {
     openapi: '3.0.0',
@@ -1279,8 +1279,8 @@ All data modifications are automatically logged for compliance.
         description: 'Healthcare billing and payment processing for Brazilian market',
       },
     ],
-  } as const;
+  } as const
 
-  res.statusCode = 200;
-  res.end(JSON.stringify(doc));
+  res.statusCode = 200
+  res.end(JSON.stringify(doc))
 }

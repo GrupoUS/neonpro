@@ -1,4 +1,4 @@
-import { type DomainEvent, type DomainEventBus } from '../events/domain-events';
+import { type DomainEvent, type DomainEventBus } from '../events/domain-events'
 import {
   type AppointmentCancelledEvent,
   type AppointmentCompletedEvent,
@@ -10,7 +10,7 @@ import {
   type PatientCreatedEvent,
   type PatientDeletedEvent,
   type PatientUpdatedEvent,
-} from '../events/domain-events';
+} from '../events/domain-events'
 
 /**
  * Audit event types
@@ -61,62 +61,62 @@ export enum MedicalDataClassification {
  * Audit log entry interface
  */
 export interface AuditLogEntry {
-  id: string;
-  timestamp: string;
-  eventType: AuditEventType;
-  _userId: string;
-  userRole: string;
-  resourceType: string;
-  resourceId?: string;
-  action: string;
-  description: string;
-  ipAddress?: string;
-  userAgent?: string;
-  clinicId?: string;
-  dataClassification?: MedicalDataClassification;
-  severity?: AuditSeverity;
-  metadata?: Record<string, unknown>;
-  complianceStatus?: 'COMPLIANT' | 'NON_COMPLIANT';
+  id: string
+  timestamp: string
+  eventType: AuditEventType
+  _userId: string
+  userRole: string
+  resourceType: string
+  resourceId?: string
+  action: string
+  description: string
+  ipAddress?: string
+  userAgent?: string
+  clinicId?: string
+  dataClassification?: MedicalDataClassification
+  severity?: AuditSeverity
+  metadata?: Record<string, unknown>
+  complianceStatus?: 'COMPLIANT' | 'NON_COMPLIANT'
 }
 
 /**
  * Audit search criteria
  */
 export interface AuditSearchCriteria {
-  eventTypes?: AuditEventType[];
-  userIds?: string[];
-  resourceIds?: string[];
-  clinicId?: string;
-  startDate?: Date | string;
-  endDate?: Date | string;
-  dataClassifications?: MedicalDataClassification[];
-  severities?: AuditSeverity[];
-  complianceStatus?: boolean;
-  limit?: number;
-  offset?: number;
+  eventTypes?: AuditEventType[]
+  userIds?: string[]
+  resourceIds?: string[]
+  clinicId?: string
+  startDate?: Date | string
+  endDate?: Date | string
+  dataClassifications?: MedicalDataClassification[]
+  severities?: AuditSeverity[]
+  complianceStatus?: boolean
+  limit?: number
+  offset?: number
 }
 
 /**
  * Compliance report interface
  */
 export interface ComplianceReport {
-  id: string;
-  generatedAt: string;
-  reportType: string;
-  periodStart: string;
-  periodEnd: string;
+  id: string
+  generatedAt: string
+  reportType: string
+  periodStart: string
+  periodEnd: string
   summary: {
-    totalEvents: number;
-    complianceScore: number;
-    violationsCount: number;
-    riskLevel: AuditSeverity;
-    compliantEvents: number;
-    nonCompliantEvents: number;
-    complianceRate: number;
-  };
-  riskLevels: Record<string, number>;
-  violations: Record<string, number>;
-  recommendations: string[];
+    totalEvents: number
+    complianceScore: number
+    violationsCount: number
+    riskLevel: AuditSeverity
+    compliantEvents: number
+    nonCompliantEvents: number
+    complianceRate: number
+  }
+  riskLevels: Record<string, number>
+  violations: Record<string, number>
+  recommendations: string[]
 }
 
 /**
@@ -126,11 +126,11 @@ export interface ComplianceReport {
  * This service contains the business logic that was previously in the database layer
  */
 export class AuditDomainService {
-  private eventBus: DomainEventBus;
-  private auditRepository: any; // TODO: Replace with actual repository type
+  private eventBus: DomainEventBus
+  private auditRepository: any // TODO: Replace with actual repository type
 
   constructor(eventBus: DomainEventBus) {
-    this.eventBus = eventBus;
+    this.eventBus = eventBus
   }
 
   /**
@@ -147,11 +147,11 @@ export class AuditDomainService {
     patientId: string,
     reason: string,
     metadata?: {
-      ipAddress?: string;
-      userAgent?: string;
-      clinicId?: string;
-      dataClassification?: MedicalDataClassification;
-      legalBasis?: string;
+      ipAddress?: string
+      userAgent?: string
+      clinicId?: string
+      dataClassification?: MedicalDataClassification
+      legalBasis?: string
     },
   ): Promise<void> {
     const auditEvent: AuditLogEntry = {
@@ -175,17 +175,17 @@ export class AuditDomainService {
         legalBasis: metadata?.legalBasis,
         timestamp: new Date().toISOString(),
       },
-    };
+    }
 
     // Check compliance
     const complianceStatus = await this.checkAccessCompliance(
       _userId,
       patientId,
       metadata?.legalBasis,
-    );
+    )
     auditEvent.complianceStatus = complianceStatus
       ? 'COMPLIANT'
-      : 'NON_COMPLIANT';
+      : 'NON_COMPLIANT'
 
     // Publish domain event
     await this.eventBus.publish({
@@ -204,10 +204,10 @@ export class AuditDomainService {
         timestamp: auditEvent.timestamp,
         isCompliant: complianceStatus,
       },
-    });
+    })
 
     // Persist audit log to repository
-    await this.auditRepository.create(auditEvent);
+    await this.auditRepository.create(auditEvent)
   }
 
   /**
@@ -224,11 +224,11 @@ export class AuditDomainService {
     description: string,
     _userId: string | null,
     metadata?: {
-      ipAddress?: string;
-      userAgent?: string;
-      clinicId?: string;
-      sessionId?: string;
-      additionalData?: Record<string, unknown>;
+      ipAddress?: string
+      userAgent?: string
+      clinicId?: string
+      sessionId?: string
+      additionalData?: Record<string, unknown>
     },
   ): Promise<void> {
     const auditEvent: AuditLogEntry = {
@@ -249,7 +249,7 @@ export class AuditDomainService {
         severity,
         ...metadata?.additionalData,
       },
-    };
+    }
 
     // Publish domain event
     await this.eventBus.publish({
@@ -267,17 +267,17 @@ export class AuditDomainService {
         userId: _userId,
         timestamp: auditEvent.timestamp,
       },
-    });
+    })
 
     // Persist audit log to repository
-    await this.auditRepository.create(auditEvent);
+    await this.auditRepository.create(auditEvent)
 
     // If high or critical severity, trigger immediate alerts
     if (
       severity === AuditSeverity.HIGH
       || severity === AuditSeverity.CRITICAL
     ) {
-      await this.handleSecurityAlert(auditEvent);
+      await this.handleSecurityAlert(auditEvent)
     }
   }
 
@@ -297,11 +297,11 @@ export class AuditDomainService {
     recordCount: number,
     format: string,
     metadata?: {
-      ipAddress?: string;
-      userAgent?: string;
-      clinicId?: string;
-      patientIds?: string[];
-      legalBasis?: string;
+      ipAddress?: string
+      userAgent?: string
+      clinicId?: string
+      patientIds?: string[]
+      legalBasis?: string
     },
   ): Promise<void> {
     const auditEvent: AuditLogEntry = {
@@ -325,7 +325,7 @@ export class AuditDomainService {
         patientIds: metadata?.patientIds,
         legalBasis: metadata?.legalBasis,
       },
-    };
+    }
 
     // Check export compliance
     const complianceStatus = await this.checkExportCompliance(
@@ -333,10 +333,10 @@ export class AuditDomainService {
       dataType,
       recordCount,
       metadata?.legalBasis,
-    );
+    )
     auditEvent.complianceStatus = complianceStatus
       ? 'COMPLIANT'
-      : 'NON_COMPLIANT';
+      : 'NON_COMPLIANT'
 
     // Publish domain event
     await this.eventBus.publish({
@@ -356,10 +356,10 @@ export class AuditDomainService {
         isCompliant: complianceStatus,
         timestamp: auditEvent.timestamp,
       },
-    });
+    })
 
     // Persist audit log to repository
-    await this.auditRepository.create(auditEvent);
+    await this.auditRepository.create(auditEvent)
   }
 
   /**
@@ -374,10 +374,10 @@ export class AuditDomainService {
     patientId: string,
     reason: 'gdpr_request' | 'data_retention' | 'other',
     metadata?: {
-      ipAddress?: string;
-      userAgent?: string;
-      clinicId?: string;
-      fieldsAnonymized?: string[];
+      ipAddress?: string
+      userAgent?: string
+      clinicId?: string
+      fieldsAnonymized?: string[]
     },
   ): Promise<void> {
     const auditEvent: AuditLogEntry = {
@@ -400,7 +400,7 @@ export class AuditDomainService {
         patientId,
         fieldsAnonymized: metadata?.fieldsAnonymized,
       },
-    };
+    }
 
     // Publish domain event
     await this.eventBus.publish({
@@ -417,10 +417,10 @@ export class AuditDomainService {
         reason,
         timestamp: auditEvent.timestamp,
       },
-    });
+    })
 
     // Persist audit log to repository
-    await this.auditRepository.create(auditEvent);
+    await this.auditRepository.create(auditEvent)
   }
 
   /**
@@ -432,7 +432,7 @@ export class AuditDomainService {
     criteria: AuditSearchCriteria,
   ): Promise<AuditLogEntry[]> {
     // Implement search using audit repository
-    return await this.auditRepository.search(criteria);
+    return await this.auditRepository.search(criteria)
   }
 
   /**
@@ -478,9 +478,9 @@ export class AuditDomainService {
         'Compliance training',
         'Access control reviews',
       ],
-    };
+    }
 
-    return report;
+    return report
   }
 
   /**
@@ -499,7 +499,7 @@ export class AuditDomainService {
     // This would check if user has proper consent, authorization, etc.
 
     // For now, check basic authorization - implement proper logic later
-    return legalBasis !== undefined && legalBasis.length > 0;
+    return legalBasis !== undefined && legalBasis.length > 0
   }
 
   /**
@@ -520,10 +520,10 @@ export class AuditDomainService {
     // This would check if user has proper authorization for data export
 
     // For now, check basic authorization and reasonable limits
-    const hasLegalBasis = legalBasis !== undefined && legalBasis.length > 0;
-    const reasonableRecordCount = recordCount <= 10000; // Limit for reasonable exports
+    const hasLegalBasis = legalBasis !== undefined && legalBasis.length > 0
+    const reasonableRecordCount = recordCount <= 10000 // Limit for reasonable exports
 
-    return hasLegalBasis && reasonableRecordCount;
+    return hasLegalBasis && reasonableRecordCount
   }
 
   /**
@@ -539,7 +539,7 @@ export class AuditDomainService {
       userId: auditEvent._userId,
       timestamp: auditEvent.timestamp,
       metadata: auditEvent.metadata,
-    });
+    })
   }
 
   /**
@@ -548,39 +548,39 @@ export class AuditDomainService {
   async handleDomainEvent(event: DomainEvent): Promise<void> {
     switch (event.eventType) {
       case 'PatientCreated':
-        await this.handlePatientCreated(event as PatientCreatedEvent);
-        break;
+        await this.handlePatientCreated(event as PatientCreatedEvent)
+        break
       case 'PatientUpdated':
-        await this.handlePatientUpdated(event as PatientUpdatedEvent);
-        break;
+        await this.handlePatientUpdated(event as PatientUpdatedEvent)
+        break
       case 'PatientDeleted':
-        await this.handlePatientDeleted(event as PatientDeletedEvent);
-        break;
+        await this.handlePatientDeleted(event as PatientDeletedEvent)
+        break
       case 'AppointmentCreated':
-        await this.handleAppointmentCreated(event as AppointmentCreatedEvent);
-        break;
+        await this.handleAppointmentCreated(event as AppointmentCreatedEvent)
+        break
       case 'AppointmentCancelled':
         await this.handleAppointmentCancelled(
           event as AppointmentCancelledEvent,
-        );
-        break;
+        )
+        break
       case 'AppointmentCompleted':
         await this.handleAppointmentCompleted(
           event as AppointmentCompletedEvent,
-        );
-        break;
+        )
+        break
       case 'ConsentCreated':
-        await this.handleConsentCreated(event as ConsentCreatedEvent);
-        break;
+        await this.handleConsentCreated(event as ConsentCreatedEvent)
+        break
       case 'ConsentRevoked':
-        await this.handleConsentRevoked(event as ConsentRevokedEvent);
-        break;
+        await this.handleConsentRevoked(event as ConsentRevokedEvent)
+        break
       case 'ComplianceChecked':
-        await this.handleComplianceChecked(event as ComplianceCheckedEvent);
-        break;
+        await this.handleComplianceChecked(event as ComplianceCheckedEvent)
+        break
       case 'ComplianceViolation':
-        await this.handleComplianceViolation(event as ComplianceViolationEvent);
-        break;
+        await this.handleComplianceViolation(event as ComplianceViolationEvent)
+        break
     }
   }
 

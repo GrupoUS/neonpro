@@ -1,4 +1,4 @@
-import { test, expect } from 'vitest';
+import { expect, test } from 'vitest'
 
 test('debug environment', () => {
   console.log('Global objects:', {
@@ -6,7 +6,7 @@ test('debug environment', () => {
     window: typeof window !== 'undefined' ? 'window exists' : 'window undefined',
     global: typeof global !== 'undefined' ? 'global exists' : 'global undefined',
     globalThis: typeof globalThis !== 'undefined' ? 'globalThis exists' : 'globalThis undefined',
-  });
-  
-  expect(true).toBe(true);
-});
+  })
+
+  expect(true).toBe(true)
+})

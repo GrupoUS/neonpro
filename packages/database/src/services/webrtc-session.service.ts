@@ -3,75 +3,75 @@
  * Handles real-time video calling for telemedicine with CFM compliance
  */
 
-import { databaseLogger, logHealthcareError } from '../../../shared/src/logging/healthcare-logger';
-import { createClient } from '../client';
+import { databaseLogger, logHealthcareError } from '../../../shared/src/logging/healthcare-logger'
+import { createClient } from '../client'
 // import type { Database } from '../types/supabase';
 
 export interface WebRTCConfig {
-  iceServers: RTCIceServer[];
+  iceServers: RTCIceServer[]
   turnCredentials?: {
-    username: string;
-    credential: string;
-    urls: string[];
-  };
-  videoConstraints: MediaStreamConstraints['video'];
-  audioConstraints: MediaStreamConstraints['audio'];
+    username: string
+    credential: string
+    urls: string[]
+  }
+  videoConstraints: MediaStreamConstraints['video']
+  audioConstraints: MediaStreamConstraints['audio']
 }
 
 export interface SessionParticipant {
-  id: string;
-  _role: 'doctor' | 'patient' | 'observer';
-  peerId: string;
-  platform: string;
-  deviceInfo: any;
-  ipAddress: string;
+  id: string
+  _role: 'doctor' | 'patient' | 'observer'
+  peerId: string
+  platform: string
+  deviceInfo: any
+  ipAddress: string
   connectionState:
     | 'new'
     | 'connecting'
     | 'connected'
     | 'disconnected'
-    | 'failed';
-  joinedAt: Date;
-  lastActivity: Date;
+    | 'failed'
+  joinedAt: Date
+  lastActivity: Date
 }
 
 export interface SessionQualityMetrics {
-  bandwidth: number; // Mbps
-  latency: number; // ms
-  jitter: number; // ms
-  packetLoss: number; // percentage
-  videoQuality: 1 | 2 | 3 | 4 | 5;
-  audioQuality: 1 | 2 | 3 | 4 | 5;
-  connectionStability: 1 | 2 | 3 | 4 | 5;
+  bandwidth: number // Mbps
+  latency: number // ms
+  jitter: number // ms
+  packetLoss: number // percentage
+  videoQuality: 1 | 2 | 3 | 4 | 5
+  audioQuality: 1 | 2 | 3 | 4 | 5
+  connectionStability: 1 | 2 | 3 | 4 | 5
 }
 
 export interface SessionRecording {
-  enabled: boolean;
-  consentObtained: boolean;
-  consentMethod: 'verbal' | 'digital' | 'written';
-  consentTimestamp: Date;
-  fileHash?: string;
-  storageLocation?: string;
-  retentionUntil: Date;
-  encrypted: boolean;
+  enabled: boolean
+  consentObtained: boolean
+  consentMethod: 'verbal' | 'digital' | 'written'
+  consentTimestamp: Date
+  fileHash?: string
+  storageLocation?: string
+  retentionUntil: Date
+  encrypted: boolean
   accessLog: Array<{
-    _userId: string;
-    action: string;
-    timestamp: Date;
-    ipAddress: string;
-  }>;
+    _userId: string
+    action: string
+    timestamp: Date
+    ipAddress: string
+  }>
 }
 
 export class WebRTCSessionService {
-  public supabase = createClient();
+  public supabase = createClient()
 
   /**
    * Initializes a WebRTC session for telemedicine
    */
   async initializeSession(telemedicineSessionId: string): Promise<{
-    roomId: string;
-    config: WebRTCConfig;
-    sessionToken: string;
+    roomId: string
+    config: WebRTCConfig
+    sessionToken: string
   }> {
     try {
       // Get telemedicine session details
@@ -84,10 +84,10 @@ export class WebRTCSessionService {
         `,
         )
         .eq('id', telemedicineSessionId)
-        .single();
+        .single()
 
       if (sessionError || !session) {
-        throw new Error('Telemedicine session not found');
+        throw new Error('Telemedicine session not found')
       }
 
       // Check if WebRTC session already exists
@@ -95,15 +95,15 @@ export class WebRTCSessionService {
         .from('webrtc_sessions')
         .select('*')
         .eq('telemedicine_session_id', telemedicineSessionId)
-        .single();
+        .single()
 
       if (webrtcError && webrtcError.code !== 'PGRST116') {
-        throw new Error(`WebRTC session error: ${webrtcError.message}`);
+        throw new Error(`WebRTC session error: ${webrtcError.message}`)
       }
 
       // Create WebRTC session if it doesn't exist
       if (!webrtcSession) {
-        const roomId = this.generateRoomId();
+        const roomId = this.generateRoomId()
 
         const { data: newSession, error: createError } = await this.supabase
           .from('webrtc_sessions')
@@ -118,15 +118,15 @@ export class WebRTCSessionService {
             connection_state: 'new',
           })
           .select()
-          .single();
+          .single()
 
         if (createError) {
           throw new Error(
             `Failed to create WebRTC session: ${createError.message}`,
-          );
+          )
         }
 
-        webrtcSession = newSession;
+        webrtcSession = newSession
       }
 
       // Generate WebRTC configuration
@@ -144,7 +144,7 @@ export class WebRTCSessionService {
           autoGainControl: true,
           sampleRate: 44100,
         },
-      };
+      }
 
       // Add TURN servers for production (encrypted)
       if (process.env.NODE_ENV === 'production') {
@@ -155,17 +155,17 @@ export class WebRTCSessionService {
             'turn:turn.neonpro.com.br:3478',
             'turns:turn.neonpro.com.br:5349',
           ],
-        };
+        }
       }
 
       return {
         roomId: webrtcSession.room_id,
         config,
         sessionToken: session.session_token,
-      };
+      }
     } catch (error) {
-      logHealthcareError('database', error, { method: 'initializeSession', telemedicineSessionId });
-      throw error;
+      logHealthcareError('database', error, { method: 'initializeSession', telemedicineSessionId })
+      throw error
     }
   }
 
@@ -179,13 +179,13 @@ export class WebRTCSessionService {
    * @returns Promise containing the session ID and room ID
    */
   async createSession(sessionData: {
-    patientId: string;
-    physicianId: string;
-    sessionType: string;
-    specialtyCode?: string;
+    patientId: string
+    physicianId: string
+    sessionType: string
+    specialtyCode?: string
   }): Promise<{ sessionId: string; roomId: string }> {
     try {
-      const roomId = this.generateRoomId();
+      const roomId = this.generateRoomId()
 
       const { data, error } = await this.supabase
         .from('telemedicine_sessions')
@@ -199,19 +199,19 @@ export class WebRTCSessionService {
           created_at: new Date().toISOString(),
         })
         .select('id')
-        .single();
+        .single()
 
       if (error) {
-        throw new Error(`Failed to create session: ${error.message}`);
+        throw new Error(`Failed to create session: ${error.message}`)
       }
 
       return {
         sessionId: data.id,
         roomId,
-      };
+      }
     } catch (error) {
-      logHealthcareError('database', error, { method: 'createSession', sessionData });
-      throw error;
+      logHealthcareError('database', error, { method: 'createSession', sessionData })
+      throw error
     }
   }
 
@@ -233,23 +233,23 @@ export class WebRTCSessionService {
           status: 'active',
           started_at: new Date().toISOString(),
         })
-        .eq('id', sessionId);
+        .eq('id', sessionId)
 
       if (error) {
-        throw new Error(`Failed to start session: ${error.message}`);
+        throw new Error(`Failed to start session: ${error.message}`)
       }
 
       // Log session start event
       await this.logSessionEvent(sessionId, {
         event: 'session_started',
         timestamp: new Date().toISOString(),
-      });
+      })
 
       // Initialize WebRTC connections
-      await this.initializeSession(sessionId);
+      await this.initializeSession(sessionId)
     } catch (error) {
-      logHealthcareError('database', error, { method: 'startSession', sessionId });
-      throw error;
+      logHealthcareError('database', error, { method: 'startSession', sessionId })
+      throw error
     }
   }
 
@@ -269,20 +269,20 @@ export class WebRTCSessionService {
         .from('webrtc_sessions')
         .select('*')
         .eq('room_id', roomId)
-        .single();
+        .single()
 
       if (error || !webrtcSession) {
-        throw new Error('WebRTC session not found');
+        throw new Error('WebRTC session not found')
       }
 
       // Add participant to the session
-      const participants = webrtcSession.additional_participants || [];
+      const participants = webrtcSession.additional_participants || []
       participants.push({
         ...participant,
         joinedAt: new Date().toISOString(),
         lastActivity: new Date().toISOString(),
         connectionState: 'connecting',
-      });
+      })
 
       // Update session with new participant
       const { error: updateError } = await this.supabase
@@ -291,10 +291,10 @@ export class WebRTCSessionService {
           additional_participants: participants,
           last_activity_at: new Date().toISOString(),
         })
-        .eq('id', webrtcSession.id);
+        .eq('id', webrtcSession.id)
 
       if (updateError) {
-        throw new Error(`Failed to add participant: ${updateError.message}`);
+        throw new Error(`Failed to add participant: ${updateError.message}`)
       }
 
       // Log the event for audit trail
@@ -304,14 +304,14 @@ export class WebRTCSessionService {
         participant_role: participant.role,
         timestamp: new Date().toISOString(),
         platform: participant.platform,
-      });
+      })
     } catch (error) {
       logHealthcareError('database', error, {
         method: 'addParticipant',
         roomId,
         participantId: participant.id,
-      });
-      throw error;
+      })
+      throw error
     }
   }
 
@@ -335,10 +335,10 @@ export class WebRTCSessionService {
           connection_stability_score: metrics.connectionStability,
           last_activity_at: new Date().toISOString(),
         })
-        .eq('room_id', roomId);
+        .eq('room_id', roomId)
 
       if (error) {
-        throw new Error(`Failed to update quality metrics: ${error.message}`);
+        throw new Error(`Failed to update quality metrics: ${error.message}`)
       }
 
       // Check if quality is below acceptable thresholds
@@ -347,11 +347,11 @@ export class WebRTCSessionService {
         || metrics.latency > 300
         || metrics.videoQuality <= 2
       ) {
-        await this.handleQualityIssues(roomId, metrics);
+        await this.handleQualityIssues(roomId, metrics)
       }
     } catch (error) {
-      logHealthcareError('database', error, { method: 'updateQualityMetrics', roomId });
-      throw error;
+      logHealthcareError('database', error, { method: 'updateQualityMetrics', roomId })
+      throw error
     }
   }
 
@@ -374,26 +374,26 @@ export class WebRTCSessionService {
         `,
         )
         .eq('room_id', roomId)
-        .single();
+        .single()
 
       if (webrtcError || !webrtcSession) {
-        throw new Error('WebRTC session not found');
+        throw new Error('WebRTC session not found')
       }
 
-      const telemedicineSession = webrtcSession.telemedicine_session;
+      const telemedicineSession = webrtcSession.telemedicine_session
 
       // Verify recording consent
       if (!telemedicineSession.recording_consent) {
         throw new Error(
           'Recording consent not obtained (CFM Resolution 2314/2022 violation)',
-        );
+        )
       }
 
       // Generate recording metadata
-      const recordingId = crypto.randomUUID();
-      const storageLocation = `recordings/${telemedicineSession.clinic_id}/${recordingId}`;
-      const retentionUntil = new Date();
-      retentionUntil.setFullYear(retentionUntil.getFullYear() + 20); // 20 years retention as per CFM
+      const recordingId = crypto.randomUUID()
+      const storageLocation = `recordings/${telemedicineSession.clinic_id}/${recordingId}`
+      const retentionUntil = new Date()
+      retentionUntil.setFullYear(retentionUntil.getFullYear() + 20) // 20 years retention as per CFM
 
       // Update telemedicine session with recording details
       const { error: updateError } = await this.supabase
@@ -415,10 +415,10 @@ export class WebRTCSessionService {
             },
           ],
         })
-        .eq('id', telemedicineSession.id);
+        .eq('id', telemedicineSession.id)
 
       if (updateError) {
-        throw new Error(`Failed to start recording: ${updateError.message}`);
+        throw new Error(`Failed to start recording: ${updateError.message}`)
       }
 
       // Update WebRTC session
@@ -427,7 +427,7 @@ export class WebRTCSessionService {
         .update({
           recording_enabled: true,
         })
-        .eq('id', webrtcSession.id);
+        .eq('id', webrtcSession.id)
 
       // Log the event
       await this.logSessionEvent(telemedicineSession.id, {
@@ -436,15 +436,15 @@ export class WebRTCSessionService {
         consent_method: consentMethod,
         storage_location: storageLocation,
         timestamp: new Date().toISOString(),
-      });
+      })
 
       return {
         recordingId,
         storageLocation,
-      };
+      }
     } catch (error) {
-      logHealthcareError('database', error, { method: 'startRecording', roomId, consentMethod });
-      throw error;
+      logHealthcareError('database', error, { method: 'startRecording', roomId, consentMethod })
+      throw error
     }
   }
 
@@ -452,9 +452,9 @@ export class WebRTCSessionService {
    * Stops session recording and generates file hash for integrity
    */
   async stopRecording(roomId: string): Promise<{
-    recordingId: string;
-    fileHash: string;
-    duration: number;
+    recordingId: string
+    fileHash: string
+    duration: number
   }> {
     try {
       const { data: webrtcSession, error } = await this.supabase
@@ -466,40 +466,40 @@ export class WebRTCSessionService {
         `,
         )
         .eq('room_id', roomId)
-        .single();
+        .single()
 
       if (error || !webrtcSession) {
-        throw new Error('WebRTC session not found');
+        throw new Error('WebRTC session not found')
       }
 
-      const telemedicineSession = webrtcSession.telemedicine_session;
+      const telemedicineSession = webrtcSession.telemedicine_session
 
       if (!telemedicineSession.recording_enabled) {
-        throw new Error('Recording is not active');
+        throw new Error('Recording is not active')
       }
 
       // Calculate recording duration
       const startTime = new Date(
         telemedicineSession.recording_consent_given_at!,
-      );
-      const endTime = new Date();
+      )
+      const endTime = new Date()
       const duration = Math.floor(
         (endTime.getTime() - startTime.getTime()) / 1000,
-      ); // seconds
+      ) // seconds
 
       // Generate file hash for integrity (simulated - in production this would be calculated from actual file)
-      const recordingId = crypto.randomUUID();
-      const fileHash = this.generateFileHash(recordingId, duration);
+      const recordingId = crypto.randomUUID()
+      const fileHash = this.generateFileHash(recordingId, duration)
 
       // Update telemedicine session
-      const accessLog = telemedicineSession.recording_access_log || [];
+      const accessLog = telemedicineSession.recording_access_log || []
       accessLog.push({
         user_id: 'system',
         action: 'recording_stopped',
         timestamp: new Date().toISOString(),
         duration_seconds: duration,
         file_hash: fileHash,
-      });
+      })
 
       const { error: updateError } = await this.supabase
         .from('telemedicine_sessions')
@@ -507,10 +507,10 @@ export class WebRTCSessionService {
           recording_file_hash: fileHash,
           recording_access_log: accessLog,
         })
-        .eq('id', telemedicineSession.id);
+        .eq('id', telemedicineSession.id)
 
       if (updateError) {
-        throw new Error(`Failed to stop recording: ${updateError.message}`);
+        throw new Error(`Failed to stop recording: ${updateError.message}`)
       }
 
       // Update WebRTC session
@@ -519,7 +519,7 @@ export class WebRTCSessionService {
         .update({
           recording_enabled: false,
         })
-        .eq('id', webrtcSession.id);
+        .eq('id', webrtcSession.id)
 
       // Log the event
       await this.logSessionEvent(telemedicineSession.id, {
@@ -528,16 +528,16 @@ export class WebRTCSessionService {
         file_hash: fileHash,
         duration_seconds: duration,
         timestamp: new Date().toISOString(),
-      });
+      })
 
       return {
         recordingId,
         fileHash,
         duration,
-      };
+      }
     } catch (error) {
-      logHealthcareError('database', error, { method: 'stopRecording', roomId });
-      throw error;
+      logHealthcareError('database', error, { method: 'stopRecording', roomId })
+      throw error
     }
   }
 
@@ -558,10 +558,10 @@ export class WebRTCSessionService {
         .from('telemedicine_sessions')
         .select('recording_enabled')
         .eq('id', sessionId)
-        .single();
+        .single()
 
       if (session?.recording_enabled) {
-        await this.stopRecording(sessionId);
+        await this.stopRecording(sessionId)
       }
 
       // Update session status
@@ -572,10 +572,10 @@ export class WebRTCSessionService {
           ended_at: new Date().toISOString(),
           end_reason: reason,
         })
-        .eq('id', sessionId);
+        .eq('id', sessionId)
 
       if (error) {
-        throw new Error(`Failed to end session: ${error.message}`);
+        throw new Error(`Failed to end session: ${error.message}`)
       }
 
       // Log session end event
@@ -583,10 +583,10 @@ export class WebRTCSessionService {
         event: 'session_ended',
         timestamp: new Date().toISOString(),
         reason,
-      });
+      })
     } catch (error) {
-      logHealthcareError('database', error, { method: 'endSession', sessionId, reason });
-      throw error;
+      logHealthcareError('database', error, { method: 'endSession', sessionId, reason })
+      throw error
     }
   }
 
@@ -594,11 +594,11 @@ export class WebRTCSessionService {
    * Gets real-time session status
    */
   async getSessionStatus(roomId: string): Promise<{
-    connectionState: string;
-    participants: SessionParticipant[];
-    qualityMetrics: SessionQualityMetrics;
-    recording: SessionRecording;
-    duration: number;
+    connectionState: string
+    participants: SessionParticipant[]
+    qualityMetrics: SessionQualityMetrics
+    recording: SessionRecording
+    duration: number
   }> {
     try {
       const { data: webrtcSession, error } = await this.supabase
@@ -610,22 +610,22 @@ export class WebRTCSessionService {
         `,
         )
         .eq('room_id', roomId)
-        .single();
+        .single()
 
       if (error || !webrtcSession) {
-        throw new Error('WebRTC session not found');
+        throw new Error('WebRTC session not found')
       }
 
-      const telemedicineSession = webrtcSession.telemedicine_session;
-      const participants = webrtcSession.additional_participants || [];
+      const telemedicineSession = webrtcSession.telemedicine_session
+      const participants = webrtcSession.additional_participants || []
 
       // Calculate session duration
       const startTime = new Date(
         webrtcSession.session_started_at || webrtcSession.created_at,
-      );
+      )
       const duration = Math.floor(
         (new Date().getTime() - startTime.getTime()) / 1000,
-      );
+      )
 
       const qualityMetrics: SessionQualityMetrics = {
         bandwidth: webrtcSession.bandwidth_usage_mbps || 0,
@@ -635,7 +635,7 @@ export class WebRTCSessionService {
         videoQuality: webrtcSession.video_quality_score || 5,
         audioQuality: webrtcSession.audio_quality_score || 5,
         connectionStability: webrtcSession.connection_stability_score || 5,
-      };
+      }
 
       const recording: SessionRecording = {
         enabled: telemedicineSession.recording_enabled || false,
@@ -651,7 +651,7 @@ export class WebRTCSessionService {
         ),
         encrypted: telemedicineSession.recording_encrypted || true,
         accessLog: telemedicineSession.recording_access_log || [],
-      };
+      }
 
       return {
         connectionState: webrtcSession.connection_state,
@@ -659,10 +659,10 @@ export class WebRTCSessionService {
         qualityMetrics,
         recording,
         duration,
-      };
+      }
     } catch (error) {
-      logHealthcareError('database', error, { method: 'getSessionStatus', roomId });
-      throw error;
+      logHealthcareError('database', error, { method: 'getSessionStatus', roomId })
+      throw error
     }
   }
 
@@ -674,17 +674,17 @@ export class WebRTCSessionService {
       { urls: 'stun:stun.l.google.com:19302' },
       { urls: 'stun:stun1.l.google.com:19302' },
       { urls: 'stun:stun2.l.google.com:19302' },
-    ];
+    ]
   }
 
   private generateRoomId(): string {
-    return 'room-' + crypto.randomUUID();
+    return 'room-' + crypto.randomUUID()
   }
 
   private generateFileHash(_recordingId: string, _duration: number): string {
     // Simulated hash generation - in production, this would be SHA-256 of actual file
     // const data = `${recordingId}-${duration}-${Date.now()}`;
-    return crypto.randomUUID().replace(/-/g, '');
+    return crypto.randomUUID().replace(/-/g, '')
   }
 
   private async handleQualityIssues(
@@ -692,18 +692,18 @@ export class WebRTCSessionService {
     metrics: SessionQualityMetrics,
   ): Promise<void> {
     try {
-      const issues: string[] = [];
+      const issues: string[] = []
 
       if (metrics.packetLoss > 5) {
-        issues.push(`High packet loss: ${metrics.packetLoss}%`);
+        issues.push(`High packet loss: ${metrics.packetLoss}%`)
       }
 
       if (metrics.latency > 300) {
-        issues.push(`High latency: ${metrics.latency}ms`);
+        issues.push(`High latency: ${metrics.latency}ms`)
       }
 
       if (metrics.videoQuality <= 2) {
-        issues.push(`Poor video quality: ${metrics.videoQuality}/5`);
+        issues.push(`Poor video quality: ${metrics.videoQuality}/5`)
       }
 
       if (issues.length > 0) {
@@ -719,14 +719,14 @@ export class WebRTCSessionService {
               },
             ],
           })
-          .eq('room_id', roomId);
+          .eq('room_id', roomId)
 
         if (error) {
-          logHealthcareError('database', error, { method: 'handleQualityIssues', roomId, metrics });
+          logHealthcareError('database', error, { method: 'handleQualityIssues', roomId, metrics })
         }
       }
     } catch (error) {
-      logHealthcareError('database', error, { method: 'handleQualityIssues', roomId });
+      logHealthcareError('database', error, { method: 'handleQualityIssues', roomId })
     }
   }
 
@@ -740,19 +740,19 @@ export class WebRTCSessionService {
         .from('telemedicine_sessions')
         .select('audit_events')
         .eq('id', telemedicineSessionId)
-        .single();
+        .single()
 
       if (getError) {
         logHealthcareError('database', getError, {
           method: 'logSessionEvent',
           telemedicineSessionId,
           step: 'getCurrentEvents',
-        });
-        return;
+        })
+        return
       }
 
-      const auditEvents = session.audit_events || [];
-      auditEvents.push(event);
+      const auditEvents = session.audit_events || []
+      auditEvents.push(event)
 
       // Update with new event
       const { error: updateError } = await this.supabase
@@ -760,17 +760,17 @@ export class WebRTCSessionService {
         .update({
           audit_events: auditEvents,
         })
-        .eq('id', telemedicineSessionId);
+        .eq('id', telemedicineSessionId)
 
       if (updateError) {
         logHealthcareError('database', updateError, {
           method: 'logSessionEvent',
           telemedicineSessionId,
           step: 'updateEvents',
-        });
+        })
       }
     } catch (error) {
-      logHealthcareError('database', error, { method: 'logSessionEvent', telemedicineSessionId });
+      logHealthcareError('database', error, { method: 'logSessionEvent', telemedicineSessionId })
     }
   }
 
@@ -779,10 +779,10 @@ export class WebRTCSessionService {
    */
   async getSessionDetails(sessionId: string): Promise<
     {
-      session: any;
-      participants: SessionParticipant[];
-      metrics: SessionQualityMetrics | null;
-      recording: SessionRecording | null;
+      session: any
+      participants: SessionParticipant[]
+      metrics: SessionQualityMetrics | null
+      recording: SessionRecording | null
     } | null
   > {
     try {
@@ -791,17 +791,17 @@ export class WebRTCSessionService {
         .from('webrtc_sessions')
         .select('*')
         .eq('id', sessionId)
-        .single();
+        .single()
 
       if (sessionError || !session) {
-        return null;
+        return null
       }
 
       // Get participants
       const { data: participants } = await this.supabase
         .from('session_participants')
         .select('*')
-        .eq('session_id', sessionId);
+        .eq('session_id', sessionId)
 
       // Get metrics
       const { data: metrics } = await this.supabase
@@ -810,24 +810,24 @@ export class WebRTCSessionService {
         .eq('session_id', sessionId)
         .order('timestamp', { ascending: false })
         .limit(1)
-        .single();
+        .single()
 
       // Get recording info
       const { data: recording } = await this.supabase
         .from('session_recordings')
         .select('*')
         .eq('session_id', sessionId)
-        .single();
+        .single()
 
       return {
         session,
         participants: participants || [],
         metrics: metrics || null,
         recording: recording || null,
-      };
+      }
     } catch (error) {
-      logHealthcareError('database', error, { method: 'getSessionDetails', sessionId });
-      return null;
+      logHealthcareError('database', error, { method: 'getSessionDetails', sessionId })
+      return null
     }
   }
 
@@ -841,12 +841,12 @@ export class WebRTCSessionService {
         .from('webrtc_sessions')
         .select('telemedicine_session_id')
         .eq('id', sessionId)
-        .single();
+        .single()
 
       if (getError || !webrtcSession) {
         throw new Error(
           `WebRTC session not found: ${getError?.message || 'Session not found'}`,
-        );
+        )
       }
 
       const { error } = await this.supabase
@@ -856,10 +856,10 @@ export class WebRTCSessionService {
           ended_at: new Date().toISOString(),
           metadata: { cancellation_reason: reason },
         })
-        .eq('id', sessionId);
+        .eq('id', sessionId)
 
       if (error) {
-        throw new Error(`Failed to cancel session: ${error.message}`);
+        throw new Error(`Failed to cancel session: ${error.message}`)
       }
 
       // Log the cancellation event
@@ -867,10 +867,10 @@ export class WebRTCSessionService {
         type: 'session_cancelled',
         reason,
         cancelled_at: new Date().toISOString(),
-      });
+      })
     } catch (error) {
-      logHealthcareError('database', error, { method: 'cancelSession', sessionId, reason });
-      throw error;
+      logHealthcareError('database', error, { method: 'cancelSession', sessionId, reason })
+      throw error
     }
   }
 
@@ -887,17 +887,17 @@ export class WebRTCSessionService {
         .eq('session_id', sessionId)
         .order('timestamp', { ascending: false })
         .limit(1)
-        .single();
+        .single()
 
       if (error && error.code !== 'PGRST116') {
         // PGRST116 is "not found"
-        throw new Error(`Failed to get quality metrics: ${error.message}`);
+        throw new Error(`Failed to get quality metrics: ${error.message}`)
       }
 
-      return data || null;
+      return data || null
     } catch (error) {
-      logHealthcareError('database', error, { method: 'getQualityMetrics', sessionId });
-      return null;
+      logHealthcareError('database', error, { method: 'getQualityMetrics', sessionId })
+      return null
     }
   }
 }

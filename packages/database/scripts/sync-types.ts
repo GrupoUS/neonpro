@@ -4,34 +4,34 @@
  * Run with: npx tsx scripts/sync-types.ts
  */
 
-import fs from 'fs';
-import path from 'path';
-import { dirname } from 'path';
-import { fileURLToPath } from 'url';
+import fs from 'fs'
+import path from 'path'
+import { dirname } from 'path'
+import { fileURLToPath } from 'url'
 
 // ES module equivalents for __dirname
-const _filename = fileURLToPath(import.meta.url);
-void _filename;
-const dirname = dirname(__filename);
+const _filename = fileURLToPath(import.meta.url)
+void _filename
+const dirname = dirname(__filename)
 
 // Read Prisma schema and generate basic Supabase types
-const _prismaSchemaPath = path.join(__dirname, '..', 'prisma', 'schema.prisma');
-void _prismaSchemaPath;
+const _prismaSchemaPath = path.join(__dirname, '..', 'prisma', 'schema.prisma')
+void _prismaSchemaPath
 const typesOutputPath = path.join(
   __dirname,
   '..',
   'src',
   'types',
   'supabase-generated.ts',
-);
+)
 
 function generateSupabaseTypes() {
-  console.log('🔄 Synchronizing Supabase types with Prisma schema...');
+  console.log('🔄 Synchronizing Supabase types with Prisma schema...')
 
   // Ensure the types directory exists
-  const typesDir = path.dirname(typesOutputPath);
+  const typesDir = path.dirname(typesOutputPath)
   if (!fs.existsSync(typesDir)) {
-    fs.mkdirSync(typesDir, { recursive: true });
+    fs.mkdirSync(typesDir, { recursive: true })
   }
 
   const generatedTypes = `
@@ -669,16 +669,16 @@ export type Tables<T extends keyof Database['public']['Tables']> = Database['pub
 export type TablesInsert<T extends keyof Database['public']['Tables']> = Database['public']['Tables'][T]['Insert'];
 export type TablesUpdate<T extends keyof Database['public']['Tables']> = Database['public']['Tables'][T]['Update'];
 export type Enums<T extends keyof Database['public']['Enums']> = Database['public']['Enums'][T];
-`;
+`
 
-  fs.writeFileSync(typesOutputPath, generatedTypes);
-  console.log('✅ Supabase types synchronized successfully!');
-  console.log(`📁 Generated: ${typesOutputPath}`);
+  fs.writeFileSync(typesOutputPath, generatedTypes)
+  console.log('✅ Supabase types synchronized successfully!')
+  console.log(`📁 Generated: ${typesOutputPath}`)
 }
 
 // Check if this script is being run directly
 if (import.meta.url === `file://${process.argv[1]}`) {
-  generateSupabaseTypes();
+  generateSupabaseTypes()
 }
 
-export { generateSupabaseTypes };
+export { generateSupabaseTypes }

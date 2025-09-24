@@ -13,7 +13,7 @@
  * @compliance LGPD, ANVISA, CFM, OpenAPI 3.1
  */
 
-import { z } from 'zod';
+import { z } from 'zod'
 
 // ============================================================================
 // CORE API CONTRACT TYPES
@@ -50,9 +50,9 @@ export const APIVersionSchema = z.object({
   supportedEnvironments: z
     .array(z.enum(['development', 'staging', 'production']))
     .describe('Supported deployment environments'),
-});
+})
 
-export type APIVersion = z.infer<typeof APIVersionSchema>;
+export type APIVersion = z.infer<typeof APIVersionSchema>
 
 /**
  * API endpoint configuration with healthcare-specific metadata
@@ -139,9 +139,9 @@ export const APIEndpointSchema = z.object({
         .optional(),
     })
     .optional(),
-});
+})
 
-export type APIEndpoint = z.infer<typeof APIEndpointSchema>;
+export type APIEndpoint = z.infer<typeof APIEndpointSchema>
 
 /**
  * API contract definition
@@ -254,9 +254,9 @@ export const APIContractSchema = z.object({
       documentationUrl: z.string().url().optional(),
     })
     .describe('Contract metadata'),
-});
+})
 
-export type APIContract = z.infer<typeof APIContractSchema>;
+export type APIContract = z.infer<typeof APIContractSchema>
 
 // ============================================================================
 // OPENAPI HEALTHCARE EXTENSIONS
@@ -347,9 +347,9 @@ export const OpenAPISpecSchema = z.object({
       }),
     )
     .optional(),
-});
+})
 
-export type OpenAPISpec = z.infer<typeof OpenAPISpecSchema>;
+export type OpenAPISpec = z.infer<typeof OpenAPISpecSchema>
 
 // ============================================================================
 // HEALTHCARE-SPECIFIC API CONTRACTS
@@ -404,9 +404,9 @@ export const PatientAPIContractSchema = APIContractSchema.extend({
     .array(APIEndpointSchema)
     .min(1)
     .describe('Patient-related endpoints'),
-});
+})
 
-export type PatientAPIContract = z.infer<typeof PatientAPIContractSchema>;
+export type PatientAPIContract = z.infer<typeof PatientAPIContractSchema>
 
 /**
  * Medical device API contract for ANVISA compliance
@@ -438,11 +438,11 @@ export const MedicalDeviceAPIContractSchema = APIContractSchema.extend({
     }),
   }),
   endpoints: z.array(APIEndpointSchema).describe('Medical device endpoints'),
-});
+})
 
 export type MedicalDeviceAPIContract = z.infer<
   typeof MedicalDeviceAPIContractSchema
->;
+>
 
 /**
  * Telemedicine API contract with CFM compliance
@@ -479,11 +479,11 @@ export const TelemedicineAPIContractSchema = APIContractSchema.extend({
     }),
   }),
   endpoints: z.array(APIEndpointSchema).describe('Telemedicine endpoints'),
-});
+})
 
 export type TelemedicineAPIContract = z.infer<
   typeof TelemedicineAPIContractSchema
->;
+>
 
 // ============================================================================
 // API VERSIONING AND COMPATIBILITY
@@ -518,11 +518,11 @@ export const APICompatibilityMatrixSchema = z.object({
       }),
     )
     .describe('Version compatibility rules'),
-});
+})
 
 export type APICompatibilityMatrix = z.infer<
   typeof APICompatibilityMatrixSchema
->;
+>
 
 /**
  * API migration plan
@@ -558,9 +558,9 @@ export const APIMigrationPlanSchema = z.object({
       .number()
       .describe('Maximum rollback time in minutes'),
   }),
-});
+})
 
-export type APIMigrationPlan = z.infer<typeof APIMigrationPlanSchema>;
+export type APIMigrationPlan = z.infer<typeof APIMigrationPlanSchema>
 
 // ============================================================================
 // API CONTRACT VALIDATION
@@ -595,21 +595,21 @@ export const APIContractValidationResultSchema = z.object({
     .max(100)
     .describe('Compliance score percentage'),
   recommendations: z.array(z.string()).optional(),
-});
+})
 
 export type APIContractValidationResult = z.infer<
   typeof APIContractValidationResultSchema
->;
+>
 
 /**
  * API contract validator interface
  */
 export interface APIContractValidator {
-  validateContract(contract: APIContract): Promise<APIContractValidationResult>;
-  validateOpenAPISpec(spec: OpenAPISpec): Promise<APIContractValidationResult>;
+  validateContract(contract: APIContract): Promise<APIContractValidationResult>
+  validateOpenAPISpec(spec: OpenAPISpec): Promise<APIContractValidationResult>
   validateHealthcareCompliance(
     contract: APIContract,
-  ): Promise<APIContractValidationResult>;
+  ): Promise<APIContractValidationResult>
 }
 
 // ============================================================================
@@ -654,7 +654,7 @@ export const DEFAULT_HEALTHCARE_API_CONTRACT: Partial<APIContract> = {
       algorithm: 'AES-256',
     },
   },
-};
+}
 
 /**
  * Healthcare-specific OpenAPI extensions
@@ -676,7 +676,7 @@ export const HEALTHCARE_OPENAPI_EXTENSIONS = {
       dataMinimization: true,
     },
   },
-};
+}
 
 /**
  * Export utility functions
@@ -698,37 +698,37 @@ export class APIContractUtils {
       requiresAuthentication: true,
       supportedEnvironments: ['development', 'staging', 'production'],
       ...metadata,
-    });
+    })
   }
 
   /**
    * Validate API contract against healthcare requirements
    */
   static validateHealthcareCompliance(contract: APIContract): string[] {
-    const issues: string[] = [];
+    const issues: string[] = []
 
     // Check LGPD compliance
     if (!contract.healthcareCompliance.lgpdCompliant) {
-      issues.push('LGPD compliance is required for healthcare APIs');
+      issues.push('LGPD compliance is required for healthcare APIs')
     }
 
     // Check healthcare compliance requirements
     if (!contract.healthcareCompliance.securityMeasures.length) {
-      issues.push('Security measures must be defined for healthcare APIs');
+      issues.push('Security measures must be defined for healthcare APIs')
     }
 
     // Validate patient data endpoints
     const patientDataEndpoints = contract.endpoints.filter(
-      e => e.healthcareContext.involvesPatientData,
-    );
+      (e) => e.healthcareContext.involvesPatientData,
+    )
     if (
       patientDataEndpoints.length > 0
       && !contract.healthcareCompliance.auditRequirements
     ) {
-      issues.push('Audit logging is required for APIs processing patient data');
+      issues.push('Audit logging is required for APIs processing patient data')
     }
 
-    return issues;
+    return issues
   }
 
   /**
@@ -755,6 +755,6 @@ export class APIContractUtils {
           description: 'Healthcare API endpoints',
         },
       ],
-    });
+    })
   }
 }

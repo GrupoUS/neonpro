@@ -11,24 +11,24 @@
  * @performance <150ms validation target
  */
 
-import { PrismaClient } from '@prisma/client';
-import { TRPCError } from '@trpc/server';
-import { logger } from '../lib/logger';
+import { PrismaClient } from '@prisma/client'
+import { TRPCError } from '@trpc/server'
+import { logger } from '../lib/logger'
 
 export interface ProfessionalAuthorizationResult {
-  isAuthorized: boolean;
-  professionalId: string;
-  crmNumber: string;
-  crmState: string;
-  specialties: string[];
-  status: 'active' | 'suspended' | 'cancelled' | 'inactive';
-  _role: ProfessionalRole;
-  permissions: Permission[];
-  restrictions: string[];
-  telemedicineAuthorized: boolean;
-  ethicsCompliant: boolean;
-  lastValidated: Date;
-  validationSource: 'database' | 'cfm_api' | 'cache';
+  isAuthorized: boolean
+  professionalId: string
+  crmNumber: string
+  crmState: string
+  specialties: string[]
+  status: 'active' | 'suspended' | 'cancelled' | 'inactive'
+  _role: ProfessionalRole
+  permissions: Permission[]
+  restrictions: string[]
+  telemedicineAuthorized: boolean
+  ethicsCompliant: boolean
+  lastValidated: Date
+  validationSource: 'database' | 'cfm_api' | 'cache'
 }
 
 export type ProfessionalRole =
@@ -38,7 +38,7 @@ export type ProfessionalRole =
   | 'intern'
   | 'nurse'
   | 'technician'
-  | 'administrator';
+  | 'administrator'
 
 export type Permission =
   | 'read_patient_data'
@@ -51,14 +51,14 @@ export type Permission =
   | 'create_medical_records'
   | 'telemedicine_consultation'
   | 'emergency_access'
-  | 'admin_access';
+  | 'admin_access'
 
 export interface SpecialtyPermission {
-  specialtyCode: string;
-  specialtyName: string;
-  allowedOperations: string[];
-  requiresSupervision: boolean;
-  maxComplexity: number;
+  specialtyCode: string
+  specialtyName: string
+  allowedOperations: string[]
+  requiresSupervision: boolean
+  maxComplexity: number
 }
 
 /**
@@ -68,11 +68,11 @@ export interface SpecialtyPermission {
 const ROLE_CONFIG: Record<
   ProfessionalRole,
   {
-    permissions: Permission[];
-    defaultRestrictions: string[];
-    requiresSupervision: boolean;
-    canPrescribe: boolean;
-    canPerformSurgery: boolean;
+    permissions: Permission[]
+    defaultRestrictions: string[]
+    requiresSupervision: boolean
+    canPrescribe: boolean
+    canPerformSurgery: boolean
   }
 > = {
   medical_doctor: {
@@ -162,7 +162,7 @@ const ROLE_CONFIG: Record<
     canPrescribe: false,
     canPerformSurgery: false,
   },
-};
+}
 
 /**
  * CFM Medical Specialties with Operation Permissions
@@ -217,22 +217,22 @@ const SPECIALTY_PERMISSIONS: Record<string, SpecialtyPermission> = {
     maxComplexity: 9,
   },
   // Add more specialties as needed
-};
+}
 
 /**
  * Healthcare Professional Authorization Service
  */
 export class HealthcareProfessionalAuthorizationService {
-  private prisma: PrismaClient;
+  private prisma: PrismaClient
   private cache: Map<
     string,
     { result: ProfessionalAuthorizationResult; expiry: number }
-  >;
-  private readonly CACHE_DURATION = 10 * 60 * 1000; // 10 minutes
+  >
+  private readonly CACHE_DURATION = 10 * 60 * 1000 // 10 minutes
 
   constructor(prisma: PrismaClient) {
-    this.prisma = prisma;
-    this.cache = new Map();
+    this.prisma = prisma
+    this.cache = new Map()
   }
 
   /**
@@ -243,20 +243,20 @@ export class HealthcareProfessionalAuthorizationService {
     operation: string,
     _entityType?: string,
     _context?: {
-      patientId?: string;
-      clinicId?: string;
-      emergency?: boolean;
+      patientId?: string
+      clinicId?: string
+      emergency?: boolean
     },
   ): Promise<ProfessionalAuthorizationResult> {
     // Check cache first
-    const cachedResult = this.getCachedAuthorization(professionalId);
+    const cachedResult = this.getCachedAuthorization(professionalId)
     if (cachedResult) {
       return this.validateOperationPermissions(
         cachedResult,
         operation,
         entityType,
         _context,
-      );
+      )
     }
 
     // Get professional data from database
@@ -277,43 +277,43 @@ export class HealthcareProfessionalAuthorizationService {
           },
         },
       },
-    });
+    })
 
     if (!professional) {
       throw new TRPCError({
         code: 'NOT_FOUND',
         message: 'Profissional não encontrado',
-      });
+      })
     }
 
     if (professional.user.status !== 'active') {
       throw new TRPCError({
         code: 'FORBIDDEN',
         message: 'Conta de profissional inativa',
-      });
+      })
     }
 
     // Validate CFM license (real implementation)
     const cfmValidation = await this.validateCFMLicense(
       professional.crmNumber,
       professional.crmState,
-    );
+    )
 
     if (!cfmValidation.isValid) {
       throw new TRPCError({
         code: 'FORBIDDEN',
         message: 'Licença médica inválida ou expirada',
-      });
+      })
     }
 
     // Determine professional role and permissions
-    const role = this.determineProfessionalRole(professional);
-    const roleConfig = ROLE_CONFIG[role];
+    const role = this.determineProfessionalRole(professional)
+    const roleConfig = ROLE_CONFIG[role]
 
     // Check specialty permissions
     const specialtyPermissions = professional.specialties
-      .map(specialty => SPECIALTY_PERMISSIONS[specialty])
-      .filter(Boolean);
+      .map((specialty) => SPECIALTY_PERMISSIONS[specialty])
+      .filter(Boolean)
 
     // Build authorization result
     const authorizationResult: ProfessionalAuthorizationResult = {
@@ -330,29 +330,29 @@ export class HealthcareProfessionalAuthorizationService {
       ethicsCompliant: cfmValidation.ethicsCompliant,
       lastValidated: new Date(),
       validationSource: 'database',
-    };
+    }
 
     // Add specialty-specific restrictions
     if (specialtyPermissions.length > 0) {
-      specialtyPermissions.forEach(sp => {
+      specialtyPermissions.forEach((sp) => {
         if (
           sp.requiresSupervision
           && !authorizationResult.restrictions.includes('requires_supervision')
         ) {
-          authorizationResult.restrictions.push('requires_supervision');
+          authorizationResult.restrictions.push('requires_supervision')
         }
-      });
+      })
     }
 
     // Cache the result
-    this.setCachedAuthorization(professionalId, authorizationResult);
+    this.setCachedAuthorization(professionalId, authorizationResult)
 
     return this.validateOperationPermissions(
       authorizationResult,
       operation,
       entityType,
       _context,
-    );
+    )
   }
 
   /**
@@ -363,10 +363,10 @@ export class HealthcareProfessionalAuthorizationService {
     crmNumber: string,
     state: string,
   ): Promise<{
-    isValid: boolean;
-    status: 'active' | 'suspended' | 'cancelled' | 'inactive';
-    ethicsCompliant: boolean;
-    expirationDate?: Date;
+    isValid: boolean
+    status: 'active' | 'suspended' | 'cancelled' | 'inactive'
+    ethicsCompliant: boolean
+    expirationDate?: Date
   }> {
     try {
       // For now, validate against our database with real-time checks
@@ -376,31 +376,31 @@ export class HealthcareProfessionalAuthorizationService {
           crmState: state,
           cfmValidationStatus: 'active',
         },
-      });
+      })
 
       if (!professional) {
         return {
           isValid: false,
           status: 'inactive',
           ethicsCompliant: false,
-        };
+        }
       }
 
       // Check if validation is recent (within 24 hours)
-      const validationExpiry = new Date(Date.now() - 24 * 60 * 60 * 1000);
+      const validationExpiry = new Date(Date.now() - 24 * 60 * 60 * 1000)
       const needsRevalidation = !professional.cfmLastValidated
-        || professional.cfmLastValidated < validationExpiry;
+        || professional.cfmLastValidated < validationExpiry
 
       if (needsRevalidation) {
         // Implement real CFM API integration with fallback
-        const cfmValidation = await this.validateCFMLicenseWithObject(professional);
+        const cfmValidation = await this.validateCFMLicenseWithObject(professional)
 
         if (!cfmValidation.isValid) {
           return {
             isValid: false,
             status: cfmValidation.status || 'suspended',
             ethicsCompliant: false,
-          };
+          }
         }
 
         // Update validation timestamp and status
@@ -411,7 +411,7 @@ export class HealthcareProfessionalAuthorizationService {
             ethicsCompliant: cfmValidation.ethicsCompliant,
             licenseStatus: cfmValidation.status,
           },
-        });
+        })
       }
 
       return {
@@ -419,14 +419,14 @@ export class HealthcareProfessionalAuthorizationService {
         status: 'active',
         ethicsCompliant: professional.ethicsCompliant,
         expirationDate: professional.licenseExpiration,
-      };
+      }
     } catch {
-      console.error('CFM validation error:', error);
+      console.error('CFM validation error:', error)
       return {
         isValid: false,
         status: 'inactive',
         ethicsCompliant: false,
-      };
+      }
     }
   }
 
@@ -434,26 +434,26 @@ export class HealthcareProfessionalAuthorizationService {
    * Determine professional role based on profile and experience
    */
   private determineProfessionalRole(professional: any): ProfessionalRole {
-    const userRole = professional.user.role;
+    const userRole = professional.user.role
 
     // Map user roles to professional roles
     switch (userRole) {
       case 'admin':
-        return 'administrator';
+        return 'administrator'
       case 'doctor':
         return professional.specialties.length > 1
           ? 'specialist'
-          : 'medical_doctor';
+          : 'medical_doctor'
       case 'nurse':
-        return 'nurse';
+        return 'nurse'
       case 'technician':
-        return 'technician';
+        return 'technician'
       case 'resident':
-        return 'resident';
+        return 'resident'
       case 'intern':
-        return 'intern';
+        return 'intern'
       default:
-        return 'medical_doctor'; // Default fallback
+        return 'medical_doctor' // Default fallback
     }
   }
 
@@ -466,12 +466,12 @@ export class HealthcareProfessionalAuthorizationService {
     _entityType?: string,
     _context?: { patientId?: string; clinicId?: string; emergency?: boolean },
   ): ProfessionalAuthorizationResult {
-    const { permissions, restrictions, _role: _roleAlias } = authorization;
+    const { permissions, restrictions, _role: _roleAlias } = authorization
 
     // Emergency access override
     if (context?.emergency && permissions.includes('emergency_access')) {
-      authorization.isAuthorized = true;
-      return authorization;
+      authorization.isAuthorized = true
+      return authorization
     }
 
     // Map operations to required permissions
@@ -487,17 +487,17 @@ export class HealthcareProfessionalAuthorizationService {
       read_medical_record: 'view_medical_records',
       create_medical_record: 'create_medical_records',
       telemedicine_consult: 'telemedicine_consultation',
-    };
+    }
 
-    const requiredPermission = operationPermissions[operation];
+    const requiredPermission = operationPermissions[operation]
 
     if (!requiredPermission) {
-      authorization.isAuthorized = false;
-      return authorization;
+      authorization.isAuthorized = false
+      return authorization
     }
 
     // Check if professional has required permission
-    authorization.isAuthorized = permissions.includes(requiredPermission);
+    authorization.isAuthorized = permissions.includes(requiredPermission)
 
     // Apply role-based restrictions
     if (authorization.isAuthorized && restrictions.length > 0) {
@@ -506,18 +506,18 @@ export class HealthcareProfessionalAuthorizationService {
         restrictions.includes('no_prescribing')
         && operation === 'create_prescription'
       ) {
-        authorization.isAuthorized = false;
+        authorization.isAuthorized = false
       }
 
       if (
         restrictions.includes('no_diagnosis')
         && operation.includes('medical_record')
       ) {
-        authorization.isAuthorized = false;
+        authorization.isAuthorized = false
       }
     }
 
-    return authorization;
+    return authorization
   }
 
   /**
@@ -526,12 +526,12 @@ export class HealthcareProfessionalAuthorizationService {
   private getCachedAuthorization(
     professionalId: string,
   ): ProfessionalAuthorizationResult | null {
-    const cached = this.cache.get(professionalId);
+    const cached = this.cache.get(professionalId)
     if (cached && Date.now() < cached.expiry) {
-      return cached.result;
+      return cached.result
     }
-    this.cache.delete(professionalId);
-    return null;
+    this.cache.delete(professionalId)
+    return null
   }
 
   private setCachedAuthorization(
@@ -541,40 +541,40 @@ export class HealthcareProfessionalAuthorizationService {
     this.cache.set(professionalId, {
       result,
       expiry: Date.now() + this.CACHE_DURATION,
-    });
+    })
   }
 
   /**
    * Clear authorization cache (for testing and manual invalidation)
    */
   clearCache(): void {
-    this.cache.clear();
+    this.cache.clear()
   }
 
   /**
    * Validate CFM license through API or fallback validation
    */
   private async validateCFMLicenseWithObject(professional: any): Promise<{
-    isValid: boolean;
-    status: 'active' | 'suspended' | 'cancelled' | 'inactive';
-    ethicsCompliant: boolean;
-    errorMessage?: string;
+    isValid: boolean
+    status: 'active' | 'suspended' | 'cancelled' | 'inactive'
+    ethicsCompliant: boolean
+    errorMessage?: string
   }> {
     try {
       // Try real CFM API integration first
       if (process.env.CFM_API_ENABLED === 'true') {
-        return await this.validateWithCFMAPI(professional);
+        return await this.validateWithCFMAPI(professional)
       }
 
       // Fallback to database validation with business rules
-      return await this.validateWithDatabaseRules(professional);
+      return await this.validateWithDatabaseRules(professional)
     } catch {
       logger.error('CFM license validation failed', {
         professionalId: professional.id,
         crmNumber: professional.crmNumber,
         crmState: professional.crmState,
         error: error instanceof Error ? error.message : String(error),
-      });
+      })
 
       // In case of API failure, use conservative fallback
       return {
@@ -582,7 +582,7 @@ export class HealthcareProfessionalAuthorizationService {
         status: 'suspended',
         ethicsCompliant: false,
         errorMessage: 'CFM validation service unavailable',
-      };
+      }
     }
   }
 
@@ -590,18 +590,18 @@ export class HealthcareProfessionalAuthorizationService {
    * Real CFM API integration (placeholder for actual implementation)
    */
   private async validateWithCFMAPI(professional: any): Promise<{
-    isValid: boolean;
-    status: 'active' | 'suspended' | 'cancelled' | 'inactive';
-    ethicsCompliant: boolean;
-    errorMessage?: string;
+    isValid: boolean
+    status: 'active' | 'suspended' | 'cancelled' | 'inactive'
+    ethicsCompliant: boolean
+    errorMessage?: string
   }> {
     try {
       // CFM API endpoint configuration
-      const cfmApiUrl = process.env.CFM_API_URL || 'https://api.portal.cfm.org.br/v1';
-      const cfmApiKey = process.env.CFM_API_KEY;
+      const cfmApiUrl = process.env.CFM_API_URL || 'https://api.portal.cfm.org.br/v1'
+      const cfmApiKey = process.env.CFM_API_KEY
 
       if (!cfmApiKey) {
-        throw new Error('CFM API key not configured');
+        throw new Error('CFM API key not configured')
       }
 
       // Construct CFM API request
@@ -610,7 +610,7 @@ export class HealthcareProfessionalAuthorizationService {
         uf: professional.crmState,
         nome: professional.user.name,
         data_nascimento: professional.dateOfBirth, // If available
-      };
+      }
 
       const response = await fetch(`${cfmApiUrl}/medicos/validar`, {
         method: 'POST',
@@ -621,15 +621,15 @@ export class HealthcareProfessionalAuthorizationService {
         },
         body: JSON.stringify(requestData),
         timeout: 10000, // 10 second timeout
-      });
+      })
 
       if (!response.ok) {
         throw new Error(
           `CFM API request failed: ${response.status} ${response.statusText}`,
-        );
+        )
       }
 
-      const cfmData = await response.json();
+      const cfmData = await response.json()
 
       // Parse CFM API response
       if (cfmData.situacao === 'ATIVO') {
@@ -637,37 +637,37 @@ export class HealthcareProfessionalAuthorizationService {
           isValid: true,
           status: 'active',
           ethicsCompliant: !cfmData.temProcessoEtico,
-        };
+        }
       } else if (cfmData.situacao === 'SUSPENSO') {
         return {
           isValid: false,
           status: 'suspended',
           ethicsCompliant: false,
           errorMessage: cfmData.motivoSuspensao || 'License suspended',
-        };
+        }
       } else if (cfmData.situacao === 'CANCELADO') {
         return {
           isValid: false,
           status: 'cancelled',
           ethicsCompliant: false,
           errorMessage: cfmData.motivoCancelamento || 'License cancelled',
-        };
+        }
       } else {
         return {
           isValid: false,
           status: 'inactive',
           ethicsCompliant: false,
           errorMessage: `Unknown status: ${cfmData.situacao}`,
-        };
+        }
       }
     } catch {
       logger.warn('CFM API validation failed, falling back to database rules', {
         professionalId: professional.id,
         error: error instanceof Error ? error.message : String(error),
-      });
+      })
 
       // Fallback to database validation
-      return await this.validateWithDatabaseRules(professional);
+      return await this.validateWithDatabaseRules(professional)
     }
   }
 
@@ -675,17 +675,17 @@ export class HealthcareProfessionalAuthorizationService {
    * Database-based validation with business rules when API is unavailable
    */
   private async validateWithDatabaseRules(professional: any): Promise<{
-    isValid: boolean;
-    status: 'active' | 'suspended' | 'cancelled' | 'inactive';
-    ethicsCompliant: boolean;
-    errorMessage?: string;
+    isValid: boolean
+    status: 'active' | 'suspended' | 'cancelled' | 'inactive'
+    ethicsCompliant: boolean
+    errorMessage?: string
   }> {
     try {
       // Check license expiration
-      const now = new Date();
+      const now = new Date()
       const licenseExpiration = professional.licenseExpiration
         ? new Date(professional.licenseExpiration)
-        : null;
+        : null
 
       if (licenseExpiration && licenseExpiration < now) {
         return {
@@ -693,20 +693,20 @@ export class HealthcareProfessionalAuthorizationService {
           status: 'inactive',
           ethicsCompliant: false,
           errorMessage: 'Medical license expired',
-        };
+        }
       }
 
       // Check if license expires within 30 days (warn but still valid)
       if (licenseExpiration) {
         const thirtyDaysFromNow = new Date(
           now.getTime() + 30 * 24 * 60 * 60 * 1000,
-        );
+        )
         if (licenseExpiration < thirtyDaysFromNow) {
           logger.warn('Professional license nearing expiration', {
             professionalId: professional.id,
             crmNumber: professional.crmNumber,
             expirationDate: licenseExpiration,
-          });
+          })
         }
       }
 
@@ -717,18 +717,18 @@ export class HealthcareProfessionalAuthorizationService {
           status: 'suspended',
           ethicsCompliant: false,
           errorMessage: 'Professional has disciplinary actions',
-        };
+        }
       }
 
       // Validate CRM format
-      const crmRegex = /^\d{4,6}\/[A-Z]{2}$/;
+      const crmRegex = /^\d{4,6}\/[A-Z]{2}$/
       if (!crmRegex.test(professional.crmNumber)) {
         return {
           isValid: false,
           status: 'inactive',
           ethicsCompliant: false,
           errorMessage: 'Invalid CRM number format',
-        };
+        }
       }
 
       // Validate CRM state (Brazilian states)
@@ -760,7 +760,7 @@ export class HealthcareProfessionalAuthorizationService {
         'SP',
         'SE',
         'TO',
-      ];
+      ]
 
       if (!validStates.includes(professional.crmState)) {
         return {
@@ -768,7 +768,7 @@ export class HealthcareProfessionalAuthorizationService {
           status: 'inactive',
           ethicsCompliant: false,
           errorMessage: 'Invalid CRM state',
-        };
+        }
       }
 
       // All checks passed
@@ -776,19 +776,19 @@ export class HealthcareProfessionalAuthorizationService {
         isValid: true,
         status: 'active',
         ethicsCompliant: professional.ethicsCompliant !== false,
-      };
+      }
     } catch {
       logger.error('Database validation failed', {
         professionalId: professional.id,
         error: error instanceof Error ? error.message : String(error),
-      });
+      })
 
       return {
         isValid: false,
         status: 'suspended',
         ethicsCompliant: false,
         errorMessage: 'Validation service error',
-      };
+      }
     }
   }
 
@@ -796,17 +796,17 @@ export class HealthcareProfessionalAuthorizationService {
    * Get professional authorization status for audit purposes
    */
   async getAuthorizationStatus(professionalId: string): Promise<{
-    isAuthorized: boolean;
-    lastValidated: Date;
-    validationSource: string;
-    _role: ProfessionalRole;
-    permissions: Permission[];
-    restrictions: string[];
+    isAuthorized: boolean
+    lastValidated: Date
+    validationSource: string
+    _role: ProfessionalRole
+    permissions: Permission[]
+    restrictions: string[]
   }> {
     const result = await this.validateAuthorization(
       professionalId,
       'status_check',
-    );
+    )
     return {
       isAuthorized: result.isAuthorized,
       lastValidated: result.lastValidated,
@@ -814,6 +814,6 @@ export class HealthcareProfessionalAuthorizationService {
       _role: result.role,
       permissions: result.permissions,
       restrictions: result.restrictions,
-    };
+    }
   }
 }

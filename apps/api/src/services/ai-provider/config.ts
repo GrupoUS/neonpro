@@ -3,68 +3,68 @@
  * Extracted from ai-provider-router.ts for better modularity
  */
 
-import { AIModelCategory, AIProviderOpt } from '@neonpro/shared';
-import { ProviderConfig, ProviderHealthCheck, ProviderStatus } from './types';
+import { AIModelCategory, AIProviderOpt } from '@neonpro/shared'
+import { ProviderConfig, ProviderHealthCheck, ProviderStatus } from './types'
 
 /**
  * Configuration utilities for AI providers
  */
 export class ProviderConfigManager {
-  private providers: Map<AIProviderOpt, ProviderConfig> = new Map();
+  private providers: Map<AIProviderOpt, ProviderConfig> = new Map()
 
   /**
    * Initialize providers from configuration array
    */
   initializeProviders(providerConfigs: ProviderConfig[]): void {
-    providerConfigs.forEach(config => {
-      this.providers.set(config.provider, config);
-    });
+    providerConfigs.forEach((config) => {
+      this.providers.set(config.provider, config)
+    })
   }
 
   /**
    * Add or update provider configuration
    */
   addProviderConfig(config: ProviderConfig): void {
-    this.providers.set(config.provider, config);
+    this.providers.set(config.provider, config)
   }
 
   /**
    * Get provider configuration
    */
   getProviderConfig(provider: AIProviderOpt): ProviderConfig | undefined {
-    return this.providers.get(provider);
+    return this.providers.get(provider)
   }
 
   /**
    * Get all provider configurations
    */
   getAllProviderConfigs(): ProviderConfig[] {
-    return Array.from(this.providers.values());
+    return Array.from(this.providers.values())
   }
 
   /**
    * Check if provider exists
    */
   hasProvider(provider: AIProviderOpt): boolean {
-    return this.providers.has(provider);
+    return this.providers.has(provider)
   }
 
   /**
    * Remove provider configuration
    */
   removeProvider(provider: AIProviderOpt): boolean {
-    return this.providers.delete(provider);
+    return this.providers.delete(provider)
   }
 
   /**
    * Enable/disable provider
    */
   setProviderEnabled(provider: AIProviderOpt, enabled: boolean): boolean {
-    const config = this.providers.get(provider);
-    if (!config) return false;
+    const config = this.providers.get(provider)
+    if (!config) return false
 
-    config.enabled = enabled;
-    return true;
+    config.enabled = enabled
+    return true
   }
 
   /**
@@ -117,7 +117,7 @@ export class ProviderConfigManager {
         cfm_approved: true,
         pii_handling_approved: true,
       },
-    });
+    })
 
     // Anthropic - Claude models
     this.addProviderConfig({
@@ -165,7 +165,7 @@ export class ProviderConfigManager {
         cfm_approved: true,
         pii_handling_approved: true,
       },
-    });
+    })
 
     // Azure OpenAI - Enterprise healthcare compliance
     this.addProviderConfig({
@@ -214,7 +214,7 @@ export class ProviderConfigManager {
         cfm_approved: true,
         pii_handling_approved: true,
       },
-    });
+    })
 
     // AWS Bedrock - Healthcare certified models
     this.addProviderConfig({
@@ -263,7 +263,7 @@ export class ProviderConfigManager {
         cfm_approved: true,
         pii_handling_approved: true,
       },
-    });
+    })
   }
 
   /**
@@ -278,14 +278,14 @@ export class ProviderConfigManager {
       rate_limit_remaining: this.providers.get(provider)?.rate_limit_rpm || 0,
       cost_efficiency: 0.8,
       last_check: new Date(),
-    };
+    }
   }
 
   /**
    * Get enabled providers only
    */
   getEnabledProviders(): ProviderConfig[] {
-    return this.getAllProviderConfigs().filter(config => config.enabled);
+    return this.getAllProviderConfigs().filter((config) => config.enabled)
   }
 
   /**
@@ -293,8 +293,8 @@ export class ProviderConfigManager {
    */
   getProviderByName(providerName: string): ProviderConfig | undefined {
     const provider = Object.values(AIProviderOpt).find(
-      p => p === providerName,
-    );
-    return provider ? this.getProviderConfig(provider) : undefined;
+      (p) => p === providerName,
+    )
+    return provider ? this.getProviderConfig(provider) : undefined
   }
 }

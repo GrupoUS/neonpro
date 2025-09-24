@@ -10,7 +10,7 @@
  * - Data anonymization and audit trail helpers
  */
 
-import { type HealthcarePrismaClient } from '../clients/prisma';
+import { type HealthcarePrismaClient } from '../clients/prisma'
 
 // Brazilian healthcare regulatory validation
 export class BrazilianHealthcareValidator {
@@ -18,77 +18,77 @@ export class BrazilianHealthcareValidator {
    * Validates Brazilian CPF (Cadastro de Pessoas Físicas)
    */
   static validateCPF(cpf: string): boolean {
-    if (!cpf) return false;
+    if (!cpf) return false
 
     // Remove non-numeric characters
-    const cleanCPF = cpf.replace(/[^\d]/g, '');
+    const cleanCPF = cpf.replace(/[^\d]/g, '')
 
     // Check basic format
     if (cleanCPF.length !== 11 || /^(\d)\1{10}$/.test(cleanCPF)) {
-      return false;
+      return false
     }
 
     // Validate first check digit
-    let sum = 0;
+    let sum = 0
     for (let i = 0; i < 9; i++) {
-      sum += parseInt(cleanCPF.charAt(i)) * (10 - i);
+      sum += parseInt(cleanCPF.charAt(i)) * (10 - i)
     }
-    let remainder = (sum * 10) % 11;
-    if (remainder === 10 || remainder === 11) remainder = 0;
-    if (remainder !== parseInt(cleanCPF.charAt(9))) return false;
+    let remainder = (sum * 10) % 11
+    if (remainder === 10 || remainder === 11) remainder = 0
+    if (remainder !== parseInt(cleanCPF.charAt(9))) return false
 
     // Validate second check digit
-    sum = 0;
+    sum = 0
     for (let i = 0; i < 10; i++) {
-      sum += parseInt(cleanCPF.charAt(i)) * (11 - i);
+      sum += parseInt(cleanCPF.charAt(i)) * (11 - i)
     }
-    remainder = (sum * 10) % 11;
-    if (remainder === 10 || remainder === 11) remainder = 0;
-    if (remainder !== parseInt(cleanCPF.charAt(10))) return false;
+    remainder = (sum * 10) % 11
+    if (remainder === 10 || remainder === 11) remainder = 0
+    if (remainder !== parseInt(cleanCPF.charAt(10))) return false
 
-    return true;
+    return true
   }
 
   /**
    * Validates Brazilian phone number formats
    */
   static validateBrazilianPhone(phone: string): boolean {
-    if (!phone) return false;
+    if (!phone) return false
 
-    const cleanPhone = phone.replace(/[^\d]/g, '');
+    const cleanPhone = phone.replace(/[^\d]/g, '')
 
     // Mobile: 11 digits (2 digit area code + 9 + 8 digits)
     // Landline: 10 digits (2 digit area code + 8 digits)
-    return cleanPhone.length === 10 || cleanPhone.length === 11;
+    return cleanPhone.length === 10 || cleanPhone.length === 11
   }
 
   /**
    * Validates CFM (Conselho Federal de Medicina) license numbers
    */
   static validateCFM(cfmNumber: string, _state?: string): boolean {
-    if (!cfmNumber) return false;
+    if (!cfmNumber) return false
 
-    const cleanCFM = cfmNumber.replace(/[^\d]/g, '');
+    const cleanCFM = cfmNumber.replace(/[^\d]/g, '')
 
     // CFM numbers are typically 4-6 digits
     if (cleanCFM.length < 4 || cleanCFM.length > 6) {
-      return false;
+      return false
     }
 
     // Additional state-specific validation could be added here
-    return true;
+    return true
   }
 
   /**
    * Validates RG (Registro Geral) document numbers
    */
   static validateRG(rg: string): boolean {
-    if (!rg) return false;
+    if (!rg) return false
 
-    const cleanRG = rg.replace(/[^\dXx]/g, '');
+    const cleanRG = rg.replace(/[^\dXx]/g, '')
 
     // RG format varies by state, but generally 7-9 characters
-    return cleanRG.length >= 7 && cleanRG.length <= 9;
+    return cleanRG.length >= 7 && cleanRG.length <= 9
   }
 }
 
@@ -98,40 +98,40 @@ export class LGPDComplianceHelper {
    * Sanitizes patient data for AI processing (removes PII)
    */
   static sanitizeForAI(text: string): string {
-    if (!text) return text;
+    if (!text) return text
 
-    let sanitized = text;
+    let sanitized = text
 
     // Remove CPF patterns
     sanitized = sanitized.replace(
       /\d{3}\.\d{3}\.\d{3}-\d{2}/g,
       '[CPF_REMOVED]',
-    );
-    sanitized = sanitized.replace(/\d{11}/g, '[CPF_REMOVED]');
+    )
+    sanitized = sanitized.replace(/\d{11}/g, '[CPF_REMOVED]')
 
     // Remove phone patterns
     sanitized = sanitized.replace(
       /\(\d{2}\)\s*\d{4,5}-\d{4}/g,
       '[PHONE_REMOVED]',
-    );
-    sanitized = sanitized.replace(/\d{2}\s*\d{4,5}-\d{4}/g, '[PHONE_REMOVED]');
+    )
+    sanitized = sanitized.replace(/\d{2}\s*\d{4,5}-\d{4}/g, '[PHONE_REMOVED]')
 
     // Remove email patterns
     sanitized = sanitized.replace(
       /[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}/g,
       '[EMAIL_REMOVED]',
-    );
+    )
 
     // Remove RG patterns
     sanitized = sanitized.replace(
       /\d{1,2}\.\d{3}\.\d{3}-\d{1}/g,
       '[RG_REMOVED]',
-    );
+    )
 
     // Remove addresses (basic patterns)
-    sanitized = sanitized.replace(/\b\d{5}-?\d{3}\b/g, '[CEP_REMOVED]');
+    sanitized = sanitized.replace(/\b\d{5}-?\d{3}\b/g, '[CEP_REMOVED]')
 
-    return sanitized;
+    return sanitized
   }
 
   /**
@@ -143,9 +143,9 @@ export class LGPDComplianceHelper {
     purpose: string,
     dataCategories: string[],
   ): Promise<{
-    isValid: boolean;
-    consentRecord?: any;
-    missingCategories?: string[];
+    isValid: boolean
+    consentRecord?: any
+    missingCategories?: string[]
   }> {
     try {
       const consentRecords = await prisma.consentRecord.findMany({
@@ -155,30 +155,30 @@ export class LGPDComplianceHelper {
           status: 'given',
           OR: [{ expiresAt: null }, { expiresAt: { gte: new Date() } }],
         },
-      });
+      })
 
       if (consentRecords.length === 0) {
-        return { isValid: false };
+        return { isValid: false }
       }
 
       // Check if all required data categories are covered
       const consentedCategories = consentRecords.flatMap(
-        record => record.dataCategories,
-      );
+        (record) => record.dataCategories,
+      )
       const missingCategories = dataCategories.filter(
-        category => !consentedCategories.includes(category),
-      );
+        (category) => !consentedCategories.includes(category),
+      )
 
-      const isValid = missingCategories.length === 0;
+      const isValid = missingCategories.length === 0
 
       return {
         isValid,
         consentRecord: consentRecords[0],
         missingCategories: isValid ? undefined : missingCategories,
-      };
+      }
     } catch {
-      console.error('Consent validity check failed:', error);
-      return { isValid: false };
+      console.error('Consent validity check failed:', error)
+      return { isValid: false }
     }
   }
 
@@ -190,14 +190,14 @@ export class LGPDComplianceHelper {
     patientId: string,
     clinicId: string,
     consentData: {
-      consentType: string;
-      purpose: string;
-      legalBasis: string;
-      dataCategories: string[];
-      collectionMethod: string;
-      ipAddress?: string;
-      userAgent?: string;
-      expiresAt?: Date;
+      consentType: string
+      purpose: string
+      legalBasis: string
+      dataCategories: string[]
+      collectionMethod: string
+      ipAddress?: string
+      userAgent?: string
+      expiresAt?: Date
     },
   ): Promise<any> {
     try {
@@ -221,7 +221,7 @@ export class LGPDComplianceHelper {
             categories: consentData.dataCategories,
           },
         },
-      });
+      })
 
       // Create audit log for consent recording
       await prisma.createAuditLog(
@@ -233,12 +233,12 @@ export class LGPDComplianceHelper {
           purpose: consentData.purpose,
           dataCategories: consentData.dataCategories,
         },
-      );
+      )
 
-      return consentRecord;
+      return consentRecord
     } catch {
-      console.error('Consent recording failed:', error);
-      throw error;
+      console.error('Consent recording failed:', error)
+      throw error
     }
   }
 
@@ -261,16 +261,16 @@ export class LGPDComplianceHelper {
             withdrawalTimestamp: new Date().toISOString(),
           },
         },
-      });
+      })
 
       // Create audit log for consent withdrawal
       await prisma.createAuditLog('UPDATE', 'CONSENT_RECORD', consentId, {
         action: 'consent_withdrawn',
         reason,
-      });
+      })
     } catch {
-      console.error('Consent withdrawal failed:', error);
-      throw error;
+      console.error('Consent withdrawal failed:', error)
+      throw error
     }
   }
 }
@@ -301,47 +301,47 @@ export class HealthcareAppointmentHelper {
             },
           },
         },
-      });
+      })
 
-      if (!appointment) return 0;
+      if (!appointment) return 0
 
-      let riskScore = 0;
+      let riskScore = 0
 
       // Previous no-shows (15 points each, max 60)
-      const noShowCount = appointment.patient.appointments.length;
-      riskScore += Math.min(noShowCount * 15, 60);
+      const noShowCount = appointment.patient.appointments.length
+      riskScore += Math.min(noShowCount * 15, 60)
 
       // Weekend appointments (+10 points)
-      const appointmentDay = new Date(appointment.startTime).getDay();
+      const appointmentDay = new Date(appointment.startTime).getDay()
       if (appointmentDay === 0 || appointmentDay === 6) {
-        riskScore += 10;
+        riskScore += 10
       }
 
       // Late afternoon appointments (+5 points)
-      const appointmentHour = new Date(appointment.startTime).getHours();
+      const appointmentHour = new Date(appointment.startTime).getHours()
       if (appointmentHour >= 17) {
-        riskScore += 5;
+        riskScore += 5
       }
 
       // Short notice appointments (+15 points)
       const hoursUntilAppointment = (new Date(appointment.startTime).getTime() - Date.now())
-        / (1000 * 60 * 60);
+        / (1000 * 60 * 60)
       if (hoursUntilAppointment < 24) {
-        riskScore += 15;
+        riskScore += 15
       }
 
       // First-time patient (+10 points)
       const totalAppointments = await prisma.appointment.count({
         where: { patientId: appointment.patientId },
-      });
+      })
       if (totalAppointments === 1) {
-        riskScore += 10;
+        riskScore += 10
       }
 
-      return Math.min(riskScore, 100); // Cap at 100
+      return Math.min(riskScore, 100) // Cap at 100
     } catch {
-      console.error('No-show risk calculation failed:', error);
-      return 0;
+      console.error('No-show risk calculation failed:', error)
+      return 0
     }
   }
 
@@ -396,12 +396,12 @@ export class HealthcareAppointmentHelper {
             },
           },
         },
-      });
+      })
 
-      return conflicts;
+      return conflicts
     } catch {
-      console.error('Appointment conflict check failed:', error);
-      return [];
+      console.error('Appointment conflict check failed:', error)
+      return []
     }
   }
 
@@ -423,16 +423,16 @@ export class HealthcareAppointmentHelper {
           defaultBreakStart: true,
           defaultBreakEnd: true,
         },
-      });
+      })
 
-      if (!professional) return [];
+      if (!professional) return []
 
       // Get existing appointments for the date
-      const startOfDay = new Date(date);
-      startOfDay.setHours(0, 0, 0, 0);
+      const startOfDay = new Date(date)
+      startOfDay.setHours(0, 0, 0, 0)
 
-      const endOfDay = new Date(date);
-      endOfDay.setHours(23, 59, 59, 999);
+      const endOfDay = new Date(date)
+      endOfDay.setHours(23, 59, 59, 999)
 
       const _existingAppointments = await prisma.appointment.findMany({
         where: {
@@ -448,18 +448,18 @@ export class HealthcareAppointmentHelper {
         orderBy: {
           startTime: 'asc',
         },
-      });
+      })
 
       // Calculate available slots (simplified logic)
-      const availableSlots: Array<{ startTime: Date; endTime: Date }> = [];
+      const availableSlots: Array<{ startTime: Date; endTime: Date }> = []
 
       // This would contain more complex logic for calculating available slots
       // based on professional schedule, breaks, and existing appointments
 
-      return availableSlots;
+      return availableSlots
     } catch {
-      console.error('Available time slots calculation failed:', error);
-      return [];
+      console.error('Available time slots calculation failed:', error)
+      return []
     }
   }
 }
@@ -470,9 +470,9 @@ export class PatientDataHelper {
    * Validates patient data completeness for LGPD compliance
    */
   static validatePatientDataCompleteness(patientData: any): {
-    isComplete: boolean;
-    missingFields: string[];
-    warnings: string[];
+    isComplete: boolean
+    missingFields: string[]
+    warnings: string[]
   } {
     const requiredFields = [
       'givenNames',
@@ -480,39 +480,39 @@ export class PatientDataHelper {
       'birthDate',
       'gender',
       'lgpdConsentGiven',
-    ];
+    ]
 
-    const missingFields = requiredFields.filter(field => !patientData[field]);
+    const missingFields = requiredFields.filter((field) => !patientData[field])
 
-    const warnings: string[] = [];
+    const warnings: string[] = []
 
     // Check for Brazilian-specific requirements
     if (!patientData.cpf && !patientData.passportNumber) {
-      warnings.push('Either CPF or passport number should be provided');
+      warnings.push('Either CPF or passport number should be provided')
     }
 
     if (!patientData.phonePrimary && !patientData.email) {
-      warnings.push('At least one contact method should be provided');
+      warnings.push('At least one contact method should be provided')
     }
 
     return {
       isComplete: missingFields.length === 0,
       missingFields,
       warnings,
-    };
+    }
   }
 
   /**
    * Generates a unique medical record number
    */
   static generateMedicalRecordNumber(clinicId: string): string {
-    const prefix = clinicId.substring(0, 4).toUpperCase();
-    const timestamp = Date.now().toString().slice(-6);
+    const prefix = clinicId.substring(0, 4).toUpperCase()
+    const timestamp = Date.now().toString().slice(-6)
     const random = Math.floor(Math.random() * 1000)
       .toString()
-      .padStart(3, '0');
+      .padStart(3, '0')
 
-    return `${prefix}${timestamp}${random}`;
+    return `${prefix}${timestamp}${random}`
   }
 
   /**
@@ -543,6 +543,6 @@ export class PatientDataHelper {
       bloodType: patientData.bloodType,
       allergies: patientData.allergies,
       chronicConditions: patientData.chronicConditions,
-    };
+    }
   }
 }

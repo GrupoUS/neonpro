@@ -10,7 +10,7 @@
  * @compliance LGPD Art. 7º, 11º - Brazilian Data Protection Law
  */
 
-import * as v from 'valibot';
+import * as v from 'valibot'
 
 // =====================================
 // BRANDED TYPES FOR TYPE SAFETY
@@ -19,24 +19,24 @@ import * as v from 'valibot';
 /**
  * Branded type for LGPD Consent ID - ensures type safety
  */
-export type LGPDConsentId = string & { readonly __brand: 'LGPDConsentId' };
+export type LGPDConsentId = string & { readonly __brand: 'LGPDConsentId' }
 
 /**
  * Branded type for Consent Hash - SHA-256 cryptographic proof
  */
-export type ConsentHash = string & { readonly __brand: 'ConsentHash' };
+export type ConsentHash = string & { readonly __brand: 'ConsentHash' }
 
 /**
  * Branded type for Digital Signature
  */
 export type DigitalSignature = string & {
-  readonly __brand: 'DigitalSignature';
-};
+  readonly __brand: 'DigitalSignature'
+}
 
 /**
  * Branded type for Timestamp Token - cryptographic timestamp
  */
-export type TimestampToken = string & { readonly __brand: 'TimestampToken' };
+export type TimestampToken = string & { readonly __brand: 'TimestampToken' }
 
 // =====================================
 // LGPD VALIDATION UTILITIES
@@ -46,9 +46,9 @@ export type TimestampToken = string & { readonly __brand: 'TimestampToken' };
  * Validates SHA-256 hash format
  */
 const validateSHA256Hash = (hash: string): boolean => {
-  const sha256Regex = /^[a-f0-9]{64}$/i;
-  return sha256Regex.test(hash);
-};
+  const sha256Regex = /^[a-f0-9]{64}$/i
+  return sha256Regex.test(hash)
+}
 
 /**
  * Validates cryptographic timestamp token format
@@ -56,9 +56,9 @@ const validateSHA256Hash = (hash: string): boolean => {
 const validateTimestampToken = (token: string): boolean => {
   // Basic validation for timestamp token format
   // Should be base64 encoded cryptographic timestamp
-  const base64Regex = /^[A-Za-z0-9+/]*={0,2}$/;
-  return base64Regex.test(token) && token.length >= 20;
-};
+  const base64Regex = /^[A-Za-z0-9+/]*={0,2}$/
+  return base64Regex.test(token) && token.length >= 20
+}
 
 /**
  * Validates retention period format (ISO 8601 duration or specific values)
@@ -72,22 +72,22 @@ const validateRetentionPeriod = (period: string): boolean => {
     'permanent', // Some legal requirements
     'patient_lifetime', // Lifetime + 20 years
     'indefinite', // With legal basis
-  ];
+  ]
 
   // ISO 8601 duration pattern (P[n]Y[n]M[n]DT[n]H[n]M[n]S)
   const iso8601Pattern =
-    /^P(?:(\d+)Y)?(?:(\d+)M)?(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?)?$/;
+    /^P(?:(\d+)Y)?(?:(\d+)M)?(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?)?$/
 
-  return healthcareRetentions.includes(period) || iso8601Pattern.test(period);
-};
+  return healthcareRetentions.includes(period) || iso8601Pattern.test(period)
+}
 
 /**
  * Validates email format with enhanced security
  */
 export const validateSecureEmail = (email: string): boolean => {
-  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-  return emailRegex.test(email) && email.length <= 254;
-};
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+  return emailRegex.test(email) && email.length <= 254
+}
 
 // =====================================
 // LGPD ENUM SCHEMAS
@@ -111,7 +111,7 @@ export const LegalBasisSchema = v.picklist(
     'pharmaceutical_vigilance', // Art. 11º, IV - Farmacovigilância
   ],
   'Base legal LGPD inválida',
-);
+)
 
 /**
  * Data Categories Schema with healthcare specificity
@@ -134,7 +134,7 @@ export const DataCategorySchema = v.picklist(
     'location_health', // Dados de localização para saúde
   ],
   'Categoria de dados inválida',
-);
+)
 
 /**
  * Consent Type Schema
@@ -151,7 +151,7 @@ export const ConsentTypeSchema = v.picklist(
     'renewed', // Consentimento renovado
   ],
   'Tipo de consentimento inválido',
-);
+)
 
 /**
  * Consent Status Schema
@@ -167,7 +167,7 @@ export const ConsentStatusSchema = v.picklist(
     'under_review', // Em revisão
   ],
   'Status de consentimento inválido',
-);
+)
 
 /**
  * Collection Method Schema
@@ -186,7 +186,7 @@ export const CollectionMethodSchema = v.picklist(
     'video_recording', // Gravação de vídeo
   ],
   'Método de coleta inválido',
-);
+)
 
 /**
  * Withdrawal Method Schema
@@ -203,7 +203,7 @@ export const WithdrawalMethodSchema = v.picklist(
     'automated_system', // Sistema automatizado
   ],
   'Método de retirada inválido',
-);
+)
 
 /**
  * Language Schema with Brazilian focus
@@ -216,7 +216,7 @@ export const LanguageSchema = v.picklist(
     'libras', // Língua Brasileira de Sinais
   ],
   'Idioma inválido',
-);
+)
 
 // =====================================
 // CORE VALIBOT SCHEMAS
@@ -232,8 +232,8 @@ export const SHA256HashSchema = v.pipe(
   v.length(64, 'Hash SHA-256 deve ter exatamente 64 caracteres'),
   v.regex(/^[a-f0-9]{64}$/i, 'Hash deve estar em formato hexadecimal válido'),
   v.check(validateSHA256Hash, 'Hash SHA-256 inválido'),
-  v.transform(value => value.toLowerCase() as ConsentHash),
-);
+  v.transform((value) => value.toLowerCase() as ConsentHash),
+)
 
 /**
  * Timestamp Token Validation Schema
@@ -245,8 +245,8 @@ export const TimestampTokenSchema = v.pipe(
   v.minLength(20, 'Token de timestamp deve ter pelo menos 20 caracteres'),
   v.maxLength(500, 'Token de timestamp não pode exceder 500 caracteres'),
   v.check(validateTimestampToken, 'Token de timestamp inválido'),
-  v.transform(value => value as TimestampToken),
-);
+  v.transform((value) => value as TimestampToken),
+)
 
 /**
  * Digital Signature Validation Schema
@@ -261,8 +261,8 @@ export const DigitalSignatureSchema = v.pipe(
     /^[A-Za-z0-9+/=]+$/,
     'Assinatura digital deve estar em formato base64',
   ),
-  v.transform(value => value as DigitalSignature),
-);
+  v.transform((value) => value as DigitalSignature),
+)
 
 /**
  * Retention Period Validation Schema
@@ -275,8 +275,8 @@ export const RetentionPeriodSchema = v.pipe(
     validateRetentionPeriod,
     'Período de retenção inválido para dados de saúde',
   ),
-  v.transform(value => value.toLowerCase()),
-);
+  v.transform((value) => value.toLowerCase()),
+)
 
 /**
  * Consent Version Schema
@@ -290,7 +290,7 @@ export const ConsentVersionSchema = v.pipe(
     'Versão deve seguir formato semântico (ex: v1.0.0, 2.1.0-beta)',
   ),
   v.maxLength(20, 'Versão não pode exceder 20 caracteres'),
-);
+)
 
 /**
  * Processing Purpose Schema
@@ -302,7 +302,7 @@ export const ProcessingPurposeSchema = v.pipe(
   v.minLength(10, 'Finalidade deve ter pelo menos 10 caracteres'),
   v.maxLength(500, 'Finalidade não pode exceder 500 caracteres'),
   v.regex(/^[^<>{}|\\`]*$/, 'Finalidade contém caracteres não permitidos'),
-);
+)
 
 /**
  * Consent Text Schema
@@ -317,7 +317,7 @@ export const ConsentTextSchema = v.pipe(
     'Texto do consentimento não pode exceder 10000 caracteres',
   ),
   v.regex(/^[^<>{}|\\`]*$/, 'Texto contém caracteres não permitidos'),
-);
+)
 
 /**
  * IP Address Validation Schema
@@ -330,7 +330,7 @@ export const IPAddressSchema = v.pipe(
     /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$|^(?:[0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}$/,
     'Formato de endereço IP inválido',
   ),
-);
+)
 
 /**
  * User Agent Validation Schema
@@ -342,7 +342,7 @@ export const UserAgentSchema = v.pipe(
   v.minLength(10, 'User Agent deve ter pelo menos 10 caracteres'),
   v.maxLength(1000, 'User Agent não pode exceder 1000 caracteres'),
   v.regex(/^[^<>{}|\\`]*$/, 'User Agent contém caracteres não permitidos'),
-);
+)
 
 /**
  * Withdrawal Reason Schema
@@ -353,7 +353,7 @@ export const WithdrawalReasonSchema = v.pipe(
   v.minLength(5, 'Motivo da retirada deve ter pelo menos 5 caracteres'),
   v.maxLength(1000, 'Motivo da retirada não pode exceder 1000 caracteres'),
   v.regex(/^[^<>{}|\\`]*$/, 'Motivo contém caracteres não permitidos'),
-);
+)
 
 // =====================================
 // COMPLEX OBJECT SCHEMAS
@@ -382,7 +382,7 @@ export const CryptographicProofSchema = v.object({
       v.minLength(32, 'Hash da transação blockchain inválido'),
     ),
   ),
-});
+})
 
 /**
  * Geolocation Schema
@@ -405,7 +405,7 @@ export const GeolocationSchema = v.object({
   ),
   region: v.optional(v.string()),
   city: v.optional(v.string()),
-});
+})
 
 /**
  * Evidence Document Schema
@@ -439,7 +439,7 @@ export const EvidenceDocumentSchema = v.object({
     v.string(),
     v.isoDateTime('Data de retenção deve estar em formato ISO'),
   ),
-});
+})
 
 /**
  * Audit Log Entry Schema
@@ -473,7 +473,7 @@ export const AuditLogEntrySchema = v.object({
   session_id: v.optional(v.string()),
   details: v.optional(v.record(v.string(), v.unknown())),
   compliance_validated: v.optional(v.boolean()),
-});
+})
 
 // =====================================
 // MAIN LGPD CONSENT SCHEMAS
@@ -532,7 +532,7 @@ export const LGPDConsentCreationSchema = v.object({
   // Evidence and proof
   evidence_documents: v.optional(v.array(EvidenceDocumentSchema)),
   cryptographic_proof: CryptographicProofSchema,
-});
+})
 
 /**
  * LGPD Consent Withdrawal Schema
@@ -563,7 +563,7 @@ export const LGPDConsentWithdrawalSchema = v.object({
   // Evidence
   evidence_documents: v.optional(v.array(EvidenceDocumentSchema)),
   cryptographic_proof: v.optional(CryptographicProofSchema),
-});
+})
 
 /**
  * LGPD Consent Update Schema
@@ -596,7 +596,7 @@ export const LGPDConsentUpdateSchema = v.object({
   // Evidence
   evidence_documents: v.optional(v.array(EvidenceDocumentSchema)),
   cryptographic_proof: v.optional(CryptographicProofSchema),
-});
+})
 
 /**
  * LGPD Consent Query Schema
@@ -613,7 +613,7 @@ export const LGPDConsentQuerySchema = v.object({
   expires_before: v.optional(v.pipe(v.string(), v.isoDateTime())),
   limit: v.optional(v.pipe(v.number(), v.minValue(1), v.maxValue(1000))),
   offset: v.optional(v.pipe(v.number(), v.minValue(0))),
-});
+})
 
 // =====================================
 // VALIDATION HELPER FUNCTIONS
@@ -626,11 +626,11 @@ export const validateLGPDConsentLifecycle = (_consent: unknown): boolean => {
   try {
     // This would contain more complex business logic validation
     // For now, we'll use the basic schema validation
-    return true;
+    return true
   } catch {
-    return false;
+    return false
   }
-};
+}
 
 /**
  * Validates cryptographic integrity of consent
@@ -641,50 +641,50 @@ export const validateConsentIntegrity = (
 ): boolean => {
   // This would implement actual cryptographic validation
   // For now, we validate the hash format
-  return validateSHA256Hash(consentHash);
-};
+  return validateSHA256Hash(consentHash)
+}
 
 /**
  * Checks if consent is still valid (not expired or withdrawn)
  */
 export const isConsentValid = (consent: {
-  status: string;
-  expires_at?: string | null;
-  withdrawn_at?: string | null;
+  status: string
+  expires_at?: string | null
+  withdrawn_at?: string | null
 }): boolean => {
   if (consent.status === 'withdrawn' || consent.status === 'revoked') {
-    return false;
+    return false
   }
 
   if (consent.withdrawn_at) {
-    return false;
+    return false
   }
 
   if (consent.expires_at) {
-    const expiryDate = new Date(consent.expires_at);
-    return expiryDate > new Date();
+    const expiryDate = new Date(consent.expires_at)
+    return expiryDate > new Date()
   }
 
-  return consent.status === 'active';
-};
+  return consent.status === 'active'
+}
 
 /**
  * Validates LGPD compliance for healthcare data processing
  */
 export const validateHealthcareCompliance = (consent: {
-  legal_basis: string;
-  data_categories: string[];
-  processing_purpose: string;
+  legal_basis: string
+  data_categories: string[]
+  processing_purpose: string
 }): boolean => {
   // Check if health data requires proper legal basis
-  const hasHealthData = consent.data_categories.some(cat =>
+  const hasHealthData = consent.data_categories.some((cat) =>
     [
       'health_data',
       'sensitive_personal',
       'medical_history',
       'clinical_records',
     ].includes(cat)
-  );
+  )
 
   if (hasHealthData) {
     const validHealthBases = [
@@ -693,9 +693,9 @@ export const validateHealthcareCompliance = (consent: {
       'public_health',
       'health_research',
       'consent',
-    ];
-    return validHealthBases.includes(consent.legal_basis);
+    ]
+    return validHealthBases.includes(consent.legal_basis)
   }
 
-  return true;
-};
+  return true
+}

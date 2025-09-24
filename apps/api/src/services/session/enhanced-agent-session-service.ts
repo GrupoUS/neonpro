@@ -5,11 +5,11 @@
  * improved security, and aesthetic clinic-specific session handling.
  */
 
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import { v4 as uuidv4 } from 'uuid';
-import { Database } from '../../types/database';
-import { AestheticComplianceService } from '../agui-protocol/aesthetic-compliance-service';
-import { AestheticDataHandlingService } from '../agui-protocol/aesthetic-data-handling';
+import { createClient, SupabaseClient } from '@supabase/supabase-js'
+import { v4 as uuidv4 } from 'uuid'
+import { Database } from '../../types/database'
+import { AestheticComplianceService } from '../agui-protocol/aesthetic-compliance-service'
+import { AestheticDataHandlingService } from '../agui-protocol/aesthetic-data-handling'
 import {
   AestheticAguiService,
   AestheticClientProfile,
@@ -17,142 +17,142 @@ import {
   // AestheticAguiMessageType,
   // AestheticSessionContext,
   AestheticTreatmentData,
-} from '../agui-protocol/aesthetic-service';
+} from '../agui-protocol/aesthetic-service'
 
 // Enhanced session types with CopilotKit integration
 export interface EnhancedSessionConfig {
-  defaultExpirationMs: number;
-  maxSessionLengthMs: number;
-  cleanupIntervalMs: number;
-  maxConcurrentSessions: number;
-  enableCopilotKit: boolean;
-  copilotKitEndpoint?: string;
-  enableAestheticFeatures: boolean;
-  securityLevel: 'standard' | 'enhanced' | 'strict';
-  enableSessionAnalytics: boolean;
-  enableRealtimeCollaboration: boolean;
+  defaultExpirationMs: number
+  maxSessionLengthMs: number
+  cleanupIntervalMs: number
+  maxConcurrentSessions: number
+  enableCopilotKit: boolean
+  copilotKitEndpoint?: string
+  enableAestheticFeatures: boolean
+  securityLevel: 'standard' | 'enhanced' | 'strict'
+  enableSessionAnalytics: boolean
+  enableRealtimeCollaboration: boolean
 }
 
 export interface EnhancedSessionContext extends SessionContext {
   // CopilotKit integration
-  copilotKitSessionId?: string;
-  copilotKitContext?: Record<string, any>;
+  copilotKitSessionId?: string
+  copilotKitContext?: Record<string, any>
 
   // Aesthetic clinic specific
   aestheticData?: {
-    currentTreatment?: AestheticTreatmentData;
-    clientProfile?: AestheticClientProfile;
-    treatmentPlan?: any[];
-    skinAssessment?: any;
-    photos?: any[];
-    consentRecords?: any[];
-  };
+    currentTreatment?: AestheticTreatmentData
+    clientProfile?: AestheticClientProfile
+    treatmentPlan?: any[]
+    skinAssessment?: any
+    photos?: any[]
+    consentRecords?: any[]
+  }
 
   // Security and compliance
   securityContext?: {
-    authenticationLevel: 'basic' | 'enhanced' | 'mfa';
-    dataAccessLevel: 'standard' | 'sensitive' | 'critical';
-    complianceMode: 'standard' | 'enhanced';
-  };
+    authenticationLevel: 'basic' | 'enhanced' | 'mfa'
+    dataAccessLevel: 'standard' | 'sensitive' | 'critical'
+    complianceMode: 'standard' | 'enhanced'
+  }
 
   // Real-time collaboration
   collaborationContext?: {
-    enabled: boolean;
-    participants: string[];
-    sharedData: Record<string, any>;
-  };
+    enabled: boolean
+    participants: string[]
+    sharedData: Record<string, any>
+  }
 }
 
 export interface CopilotKitIntegration {
-  sessionId: string;
-  endpoint: string;
-  status: 'connected' | 'disconnected' | 'error';
-  lastSync: Date;
-  messageCount: number;
-  errorCount: number;
-  capabilities: string[];
+  sessionId: string
+  endpoint: string
+  status: 'connected' | 'disconnected' | 'error'
+  lastSync: Date
+  messageCount: number
+  errorCount: number
+  capabilities: string[]
 }
 
 export interface EnhancedSessionData extends SessionData {
   // Enhanced features
-  enhancedContext: EnhancedSessionContext;
-  copilotKitIntegration?: CopilotKitIntegration;
+  enhancedContext: EnhancedSessionContext
+  copilotKitIntegration?: CopilotKitIntegration
 
   // Analytics and metrics
   analytics?: {
-    totalProcessingTime: number;
-    averageResponseTime: number;
-    featureUsage: Record<string, number>;
-    satisfactionScore?: number;
+    totalProcessingTime: number
+    averageResponseTime: number
+    featureUsage: Record<string, number>
+    satisfactionScore?: number
     engagementMetrics: {
-      messagesPerHour: number;
-      sessionDuration: number;
-      interactionDepth: number;
-    };
-  };
+      messagesPerHour: number
+      sessionDuration: number
+      interactionDepth: number
+    }
+  }
 
   // Security and compliance
   securityMetadata?: {
-    riskScore: number;
-    complianceFlags: string[];
-    auditTrail: any[];
-    dataEncryptionLevel: string;
-  };
+    riskScore: number
+    complianceFlags: string[]
+    auditTrail: any[]
+    dataEncryptionLevel: string
+  }
 
   // Aesthetic specific
   aestheticMetadata?: {
-    treatmentsDiscussed: number;
-    consultationsProvided: number;
-    photosAnalyzed: number;
-    recommendationsGenerated: number;
-  };
+    treatmentsDiscussed: number
+    consultationsProvided: number
+    photosAnalyzed: number
+    recommendationsGenerated: number
+  }
 }
 
 export interface SessionAnalytics {
-  sessionId: string;
-  userId: string;
-  duration: number;
-  messageCount: number;
-  featureUsage: Record<string, number>;
+  sessionId: string
+  userId: string
+  duration: number
+  messageCount: number
+  featureUsage: Record<string, number>
   performanceMetrics: {
-    averageResponseTime: number;
-    totalProcessingTime: number;
-    errorRate: number;
-  };
-  engagementScore: number;
-  satisfactionScore?: number;
+    averageResponseTime: number
+    totalProcessingTime: number
+    errorRate: number
+  }
+  engagementScore: number
+  satisfactionScore?: number
   conversionMetrics?: {
-    treatmentsBooked: number;
-    consultationsScheduled: number;
-    revenueGenerated?: number;
-  };
-  createdAt: Date;
+    treatmentsBooked: number
+    consultationsScheduled: number
+    revenueGenerated?: number
+  }
+  createdAt: Date
 }
 
 export class EnhancedAgentSessionService {
-  private supabase: SupabaseClient<Database>;
-  private config: EnhancedSessionConfig;
-  private cleanupTimer?: NodeJS.Timeout;
-  private sessionCache: Map<string, EnhancedSessionData> = new Map();
-  private cacheTimeout = 300000; // 5 minutes
+  private supabase: SupabaseClient<Database>
+  private config: EnhancedSessionConfig
+  private cleanupTimer?: NodeJS.Timeout
+  private sessionCache: Map<string, EnhancedSessionData> = new Map()
+  private cacheTimeout = 300000 // 5 minutes
 
   // Service integrations
-  private aestheticService?: AestheticAguiService;
-  private dataHandlingService?: AestheticDataHandlingService;
-  private complianceService?: AestheticComplianceService;
+  private aestheticService?: AestheticAguiService
+  private dataHandlingService?: AestheticDataHandlingService
+  private complianceService?: AestheticComplianceService
 
   // CopilotKit integration
-  private copilotKitConnections: Map<string, CopilotKitIntegration> = new Map();
+  private copilotKitConnections: Map<string, CopilotKitIntegration> = new Map()
 
   // Analytics
-  private sessionAnalytics: Map<string, SessionAnalytics[]> = new Map();
+  private sessionAnalytics: Map<string, SessionAnalytics[]> = new Map()
 
   constructor(
     supabaseUrl: string,
     supabaseServiceKey: string,
     config: Partial<EnhancedSessionConfig> = {},
   ) {
-    this.supabase = createClient<Database>(supabaseUrl, supabaseServiceKey);
+    this.supabase = createClient<Database>(supabaseUrl, supabaseServiceKey)
 
     this.config = {
       defaultExpirationMs: 24 * 60 * 60 * 1000, // 24 hours
@@ -165,10 +165,10 @@ export class EnhancedAgentSessionService {
       enableSessionAnalytics: true,
       enableRealtimeCollaboration: false,
       ...config,
-    };
+    }
 
-    this.initializeServices();
-    this.startCleanupTimer();
+    this.initializeServices()
+    this.startCleanupTimer()
   }
 
   /**
@@ -179,17 +179,17 @@ export class EnhancedAgentSessionService {
       this.aestheticService = new AestheticAguiService(
         this.supabase.supabaseUrl,
         this.supabase.supabaseKey,
-      );
+      )
 
       this.dataHandlingService = new AestheticDataHandlingService(
         this.supabase.supabaseUrl,
         this.supabase.supabaseKey,
-      );
+      )
 
       this.complianceService = new AestheticComplianceService(
         this.supabase.supabaseUrl,
         this.supabase.supabaseKey,
-      );
+      )
     }
   }
 
@@ -199,24 +199,24 @@ export class EnhancedAgentSessionService {
   async createEnhancedSession(
     userId: string,
     options: {
-      title?: string;
-      context?: Partial<EnhancedSessionContext>;
-      metadata?: Record<string, any>;
-      enableCopilotKit?: boolean;
-      aestheticData?: any;
-      securityContext?: any;
+      title?: string
+      context?: Partial<EnhancedSessionContext>
+      metadata?: Record<string, any>
+      enableCopilotKit?: boolean
+      aestheticData?: any
+      securityContext?: any
     } = {},
   ): Promise<EnhancedSessionData> {
     try {
       // Check concurrent session limit
-      await this.validateConcurrentSessionLimit(userId);
+      await this.validateConcurrentSessionLimit(userId)
 
-      const sessionId = uuidv4();
-      const now = new Date();
+      const sessionId = uuidv4()
+      const now = new Date()
       const expirationMs = options.context?.expiresAt
         ? new Date(options.context.expiresAt).getTime() - now.getTime()
-        : this.config.defaultExpirationMs;
-      const expiresAt = new Date(now.getTime() + expirationMs);
+        : this.config.defaultExpirationMs
+      const expiresAt = new Date(now.getTime() + expirationMs)
 
       // Build enhanced context
       const enhancedContext: EnhancedSessionContext = {
@@ -245,7 +245,7 @@ export class EnhancedAgentSessionService {
           participants: [],
           sharedData: {},
         },
-      };
+      }
 
       const sessionData: EnhancedSessionData = {
         id: sessionId,
@@ -289,21 +289,21 @@ export class EnhancedAgentSessionService {
           photosAnalyzed: 0,
           recommendationsGenerated: 0,
         },
-      };
+      }
 
       // Initialize CopilotKit integration if enabled
       if (this.config.enableCopilotKit && (options.enableCopilotKit !== false)) {
         sessionData.copilotKitIntegration = await this.initializeCopilotKitIntegration(
           sessionId,
           enhancedContext,
-        );
+        )
       }
 
       // Store session in database
-      await this.storeEnhancedSession(sessionData);
+      await this.storeEnhancedSession(sessionData)
 
       // Cache session
-      this.cacheEnhancedSession(sessionData);
+      this.cacheEnhancedSession(sessionData)
 
       // Log session creation for compliance
       if (this.complianceService) {
@@ -314,17 +314,17 @@ export class EnhancedAgentSessionService {
           timestamp: now,
           purpose: 'enhanced_session_creation',
           dataFields: Object.keys(enhancedContext),
-        });
+        })
       }
 
-      return sessionData;
+      return sessionData
     } catch {
-      console.error('Error creating enhanced session:', error);
+      console.error('Error creating enhanced session:', error)
       throw new Error(
         `Failed to create enhanced session: ${
           error instanceof Error ? error.message : 'Unknown error'
         }`,
-      );
+      )
     }
   }
 
@@ -350,10 +350,10 @@ export class EnhancedAgentSessionService {
           'file_analysis',
           'aesthetic_consultation',
         ],
-      };
+      }
 
       // Store CopilotKit connection
-      this.copilotKitConnections.set(sessionId, integration);
+      this.copilotKitConnections.set(sessionId, integration)
 
       // Initialize CopilotKit session context
       if (this.aestheticService) {
@@ -372,12 +372,12 @@ export class EnhancedAgentSessionService {
             sessionId,
             version: '1.0.0',
           },
-        });
+        })
       }
 
-      return integration;
+      return integration
     } catch {
-      console.error('Error initializing CopilotKit integration:', error);
+      console.error('Error initializing CopilotKit integration:', error)
       return {
         sessionId,
         endpoint: this.config.copilotKitEndpoint || '/api/copilotkit',
@@ -386,7 +386,7 @@ export class EnhancedAgentSessionService {
         messageCount: 0,
         errorCount: 1,
         capabilities: [],
-      };
+      }
     }
   }
 
@@ -396,30 +396,30 @@ export class EnhancedAgentSessionService {
   async getEnhancedSession(sessionId: string): Promise<EnhancedSessionData | null> {
     try {
       // Check cache first
-      const cached = this.sessionCache.get(sessionId);
+      const cached = this.sessionCache.get(sessionId)
       if (cached && cached.expiresAt > new Date().toISOString()) {
-        return cached;
+        return cached
       }
 
       // Retrieve from database
-      const session = await this.retrieveEnhancedSession(sessionId);
+      const session = await this.retrieveEnhancedSession(sessionId)
       if (!session) {
-        return null;
+        return null
       }
 
       // Validate session expiration
       if (new Date(session.expiresAt) <= new Date()) {
-        await this.expireEnhancedSession(sessionId);
-        return null;
+        await this.expireEnhancedSession(sessionId)
+        return null
       }
 
       // Cache valid session
-      this.cacheEnhancedSession(session);
+      this.cacheEnhancedSession(session)
 
-      return session;
+      return session
     } catch {
-      console.error('Error retrieving enhanced session:', error);
-      return null;
+      console.error('Error retrieving enhanced session:', error)
+      return null
     }
   }
 
@@ -429,53 +429,53 @@ export class EnhancedAgentSessionService {
   async updateAestheticSessionData(
     sessionId: string,
     aestheticData: {
-      currentTreatment?: AestheticTreatmentData;
-      clientProfile?: AestheticClientProfile;
-      treatmentPlan?: any[];
-      skinAssessment?: any;
-      photos?: any[];
-      consentRecords?: any[];
+      currentTreatment?: AestheticTreatmentData
+      clientProfile?: AestheticClientProfile
+      treatmentPlan?: any[]
+      skinAssessment?: any
+      photos?: any[]
+      consentRecords?: any[]
     },
   ): Promise<EnhancedSessionData | null> {
     try {
-      const session = await this.getEnhancedSession(sessionId);
+      const session = await this.getEnhancedSession(sessionId)
       if (!session) {
-        return null;
+        return null
       }
 
       // Update aesthetic context
       session.enhancedContext.aestheticData = {
         ...session.enhancedContext.aestheticData,
         ...aestheticData,
-      };
+      }
 
       // Update aesthetic metadata
       if (aestheticData.currentTreatment) {
-        session.aestheticMetadata!.treatmentsDiscussed += 1;
+        session.aestheticMetadata!.treatmentsDiscussed += 1
       }
       if (aestheticData.photos && aestheticData.photos.length > 0) {
-        session.aestheticMetadata!.photosAnalyzed += aestheticData.photos.length;
+        session.aestheticMetadata!.photosAnalyzed += aestheticData.photos.length
       }
 
       // Apply LGPD compliance if sensitive data is present
       if (this.dataHandlingService && aestheticData.clientProfile) {
         const encryptedProfile = await this.dataHandlingService.encryptSensitiveData(
           aestheticData.clientProfile,
-        );
-        session.enhancedContext.aestheticData!.clientProfile = encryptedProfile;
+        )
+        session.enhancedContext.aestheticData!.clientProfile = encryptedProfile
       }
 
-      session.updatedAt = new Date().toISOString();
-      session.lastActivity = new Date().toISOString();
+      session.updatedAt = new Date().toISOString()
+      session.lastActivity = new Date().toISOString()
 
       // Store updated session
-      await this.storeEnhancedSession(session);
-      this.cacheEnhancedSession(session);
+      await this.storeEnhancedSession(session)
+      this.cacheEnhancedSession(session)
 
-      return session;
+      return session
     } catch {
-      console.error('Error updating aesthetic session data:', error);
-      return null;
+      console.error('Error updating aesthetic session data:', error)
+      return null
     }
   }
 
@@ -485,63 +485,63 @@ export class EnhancedAgentSessionService {
   async recordEnhancedActivity(
     sessionId: string,
     activity: {
-      type: 'user_message' | 'assistant_message' | 'system_message' | 'copilotkit_message';
-      content?: string;
-      processingTime?: number;
-      features?: string[];
-      satisfaction?: number;
+      type: 'user_message' | 'assistant_message' | 'system_message' | 'copilotkit_message'
+      content?: string
+      processingTime?: number
+      features?: string[]
+      satisfaction?: number
     },
   ): Promise<void> {
     try {
-      const session = await this.getEnhancedSession(sessionId);
+      const session = await this.getEnhancedSession(sessionId)
       if (!session) {
-        return;
+        return
       }
 
       // Update basic metrics
-      session.messageCount += 1;
-      session.lastActivity = new Date().toISOString();
-      session.updatedAt = new Date().toISOString();
+      session.messageCount += 1
+      session.lastActivity = new Date().toISOString()
+      session.updatedAt = new Date().toISOString()
 
       // Update analytics
       if (session.analytics && activity.processingTime) {
-        session.analytics.totalProcessingTime += activity.processingTime;
+        session.analytics.totalProcessingTime += activity.processingTime
         session.analytics.averageResponseTime = session.analytics.totalProcessingTime
-          / session.messageCount;
+          / session.messageCount
       }
 
       // Track feature usage
       if (activity.features && session.analytics) {
-        activity.features.forEach(feature => {
+        activity.features.forEach((feature) => {
           session.analytics!.featureUsage[feature] = (session.analytics!.featureUsage[feature] || 0)
-            + 1;
-        });
+            + 1
+        })
       }
 
       // Update satisfaction score
       if (activity.satisfaction !== undefined && session.analytics) {
-        session.analytics.satisfactionScore = activity.satisfaction;
+        session.analytics.satisfactionScore = activity.satisfaction
       }
 
       // Update CopilotKit metrics
       if (activity.type === 'copilotkit_message' && session.copilotKitIntegration) {
-        session.copilotKitIntegration.messageCount += 1;
-        session.copilotKitIntegration.lastSync = new Date();
+        session.copilotKitIntegration.messageCount += 1
+        session.copilotKitIntegration.lastSync = new Date()
       }
 
       // Calculate engagement metrics
       if (session.analytics) {
-        const sessionDuration = new Date().getTime() - new Date(session.createdAt).getTime();
+        const sessionDuration = new Date().getTime() - new Date(session.createdAt).getTime()
         session.analytics.engagementMetrics = {
           messagesPerHour: (session.messageCount / sessionDuration) * 3600000,
           sessionDuration,
           interactionDepth: Object.keys(session.analytics.featureUsage).length,
-        };
+        }
       }
 
       // Store updated session
-      await this.storeEnhancedSession(session);
-      this.cacheEnhancedSession(session);
+      await this.storeEnhancedSession(session)
+      this.cacheEnhancedSession(session)
 
       // Log to compliance service if sensitive data
       if (this.complianceService && activity.content) {
@@ -552,10 +552,10 @@ export class EnhancedAgentSessionService {
           timestamp: new Date(),
           purpose: 'session_activity_logging',
           dataFields: ['message_content'],
-        });
+        })
       }
     } catch {
-      console.error('Error recording enhanced activity:', error);
+      console.error('Error recording enhanced activity:', error)
     }
   }
 
@@ -567,9 +567,9 @@ export class EnhancedAgentSessionService {
     _timeRange?: { start: Date; end: Date },
   ): Promise<SessionAnalytics | null> {
     try {
-      const session = await this.getEnhancedSession(sessionId);
+      const session = await this.getEnhancedSession(sessionId)
       if (!session || !session.analytics) {
-        return null;
+        return null
       }
 
       const analytics: SessionAnalytics = {
@@ -592,12 +592,12 @@ export class EnhancedAgentSessionService {
           }
           : undefined,
         createdAt: new Date(session.createdAt),
-      };
+      }
 
-      return analytics;
+      return analytics
     } catch {
-      console.error('Error getting session analytics:', error);
-      return null;
+      console.error('Error getting session analytics:', error)
+      return null
     }
   }
 
@@ -606,24 +606,24 @@ export class EnhancedAgentSessionService {
    */
   async expireEnhancedSession(sessionId: string): Promise<boolean> {
     try {
-      const session = await this.getEnhancedSession(sessionId);
+      const session = await this.getEnhancedSession(sessionId)
       if (!session) {
-        return false;
+        return false
       }
 
       // Cleanup CopilotKit integration
       if (session.copilotKitIntegration) {
-        this.copilotKitConnections.delete(sessionId);
+        this.copilotKitConnections.delete(sessionId)
       }
 
       // Archive session analytics
       if (this.config.enableSessionAnalytics && session.analytics) {
-        await this.archiveSessionAnalytics(sessionId, session.analytics);
+        await this.archiveSessionAnalytics(sessionId, session.analytics)
       }
 
       // Perform compliance cleanup
       if (this.dataHandlingService) {
-        await this.dataHandlingService.cleanupSessionData(sessionId);
+        await this.dataHandlingService.cleanupSessionData(sessionId)
       }
 
       // Mark session as expired
@@ -637,15 +637,15 @@ export class EnhancedAgentSessionService {
           security_metadata: session.securityMetadata,
           aesthetic_metadata: session.aestheticMetadata,
         })
-        .eq('session_id', sessionId);
+        .eq('session_id', sessionId)
 
       // Remove from cache
-      this.sessionCache.delete(sessionId);
+      this.sessionCache.delete(sessionId)
 
-      return true;
+      return true
     } catch {
-      console.error('Error expiring enhanced session:', error);
-      return false;
+      console.error('Error expiring enhanced session:', error)
+      return false
     }
   }
 
@@ -653,29 +653,29 @@ export class EnhancedAgentSessionService {
    * Security risk assessment for session
    */
   async assessSessionRisk(sessionId: string): Promise<{
-    riskScore: number;
-    riskFactors: string[];
-    recommendations: string[];
+    riskScore: number
+    riskFactors: string[]
+    recommendations: string[]
   }> {
     try {
-      const session = await this.getEnhancedSession(sessionId);
+      const session = await this.getEnhancedSession(sessionId)
       if (!session) {
-        return { riskScore: 0, riskFactors: [], recommendations: [] };
+        return { riskScore: 0, riskFactors: [], recommendations: [] }
       }
 
-      const riskFactors: string[] = [];
-      let riskScore = 0;
+      const riskFactors: string[] = []
+      let riskScore = 0
 
       // Analyze message patterns
       if (session.messageCount > 100) {
-        riskFactors.push('high_message_volume');
-        riskScore += 20;
+        riskFactors.push('high_message_volume')
+        riskScore += 20
       }
 
       // Check for unusual activity patterns
       if (session.analytics && session.analytics.averageResponseTime > 10000) {
-        riskFactors.push('slow_response_times');
-        riskScore += 15;
+        riskFactors.push('slow_response_times')
+        riskScore += 15
       }
 
       // Assess data access patterns
@@ -683,25 +683,25 @@ export class EnhancedAgentSessionService {
         session.enhancedContext.aestheticData
         && Object.keys(session.enhancedContext.aestheticData).length > 10
       ) {
-        riskFactors.push('extensive_data_access');
-        riskScore += 25;
+        riskFactors.push('extensive_data_access')
+        riskScore += 25
       }
 
       // Check session duration
-      const sessionDuration = new Date().getTime() - new Date(session.createdAt).getTime();
+      const sessionDuration = new Date().getTime() - new Date(session.createdAt).getTime()
       if (sessionDuration > this.config.maxSessionLengthMs * 0.8) {
-        riskFactors.push('long_session_duration');
-        riskScore += 10;
+        riskFactors.push('long_session_duration')
+        riskScore += 10
       }
 
       // Generate recommendations
-      const recommendations: string[] = [];
+      const recommendations: string[] = []
       if (riskScore > 50) {
-        recommendations.push('Consider ending session and starting fresh');
-        recommendations.push('Review data access patterns');
+        recommendations.push('Consider ending session and starting fresh')
+        recommendations.push('Review data access patterns')
       }
       if (riskFactors.includes('high_message_volume')) {
-        recommendations.push('Implement rate limiting');
+        recommendations.push('Implement rate limiting')
       }
 
       // Update security metadata
@@ -709,18 +709,18 @@ export class EnhancedAgentSessionService {
         ...session.securityMetadata,
         riskScore,
         complianceFlags: riskFactors,
-      };
+      }
 
-      await this.storeEnhancedSession(session);
+      await this.storeEnhancedSession(session)
 
       return {
         riskScore,
         riskFactors,
         recommendations,
-      };
+      }
     } catch {
-      console.error('Error assessing session risk:', error);
-      return { riskScore: 0, riskFactors: [], recommendations: [] };
+      console.error('Error assessing session risk:', error)
+      return { riskScore: 0, riskFactors: [], recommendations: [] }
     }
   }
 
@@ -745,10 +745,10 @@ export class EnhancedAgentSessionService {
       security_metadata: session.securityMetadata,
       aesthetic_metadata: session.aestheticMetadata,
       copilotkit_integration: session.copilotKitIntegration,
-    });
+    })
 
     if (error) {
-      throw error;
+      throw error
     }
   }
 
@@ -762,13 +762,13 @@ export class EnhancedAgentSessionService {
       .from('enhanced_agent_sessions')
       .select('*')
       .eq('session_id', sessionId)
-      .single();
+      .single()
 
     if (error || !data) {
-      return null;
+      return null
     }
 
-    return this.mapEnhancedSessionRecord(data);
+    return this.mapEnhancedSessionRecord(data)
   }
 
   /**
@@ -793,46 +793,46 @@ export class EnhancedAgentSessionService {
       securityMetadata: record.security_metadata,
       aestheticMetadata: record.aesthetic_metadata,
       copilotKitIntegration: record.copilotkit_integration,
-    };
+    }
   }
 
   /**
    * Cache enhanced session
    */
   private cacheEnhancedSession(session: EnhancedSessionData): void {
-    this.sessionCache.set(session.sessionId, session);
+    this.sessionCache.set(session.sessionId, session)
 
     // Set expiration for cache entry
     setTimeout(() => {
-      this.sessionCache.delete(session.sessionId);
-    }, this.cacheTimeout);
+      this.sessionCache.delete(session.sessionId)
+    }, this.cacheTimeout)
   }
 
   /**
    * Calculate error rate for session
    */
   private calculateErrorRate(sessionId: string): number {
-    const integration = this.copilotKitConnections.get(sessionId);
+    const integration = this.copilotKitConnections.get(sessionId)
     if (!integration || integration.messageCount === 0) {
-      return 0;
+      return 0
     }
-    return integration.errorCount / integration.messageCount;
+    return integration.errorCount / integration.messageCount
   }
 
   /**
    * Calculate engagement score
    */
   private calculateEngagementScore(analytics: any): number {
-    const { featureUsage, engagementMetrics } = analytics;
-    const featureCount = Object.keys(featureUsage).length;
-    const messageRate = engagementMetrics.messagesPerHour;
+    const { featureUsage, engagementMetrics } = analytics
+    const featureCount = Object.keys(featureUsage).length
+    const messageRate = engagementMetrics.messagesPerHour
 
     // Simple scoring algorithm (can be enhanced)
-    let score = Math.min(featureCount * 10, 30); // Max 30 points for features
-    score += Math.min(messageRate * 2, 40); // Max 40 points for message rate
-    score += Math.min(engagementMetrics.interactionDepth * 5, 30); // Max 30 points for depth
+    let score = Math.min(featureCount * 10, 30) // Max 30 points for features
+    score += Math.min(messageRate * 2, 40) // Max 40 points for message rate
+    score += Math.min(engagementMetrics.interactionDepth * 5, 30) // Max 30 points for depth
 
-    return Math.min(score, 100);
+    return Math.min(score, 100)
   }
 
   /**
@@ -847,9 +847,9 @@ export class EnhancedAgentSessionService {
         session_id: sessionId,
         analytics_data: analytics,
         archived_at: new Date().toISOString(),
-      });
+      })
     } catch {
-      console.error('Error archiving session analytics:', error);
+      console.error('Error archiving session analytics:', error)
     }
   }
 
@@ -862,16 +862,16 @@ export class EnhancedAgentSessionService {
       .select('*', { count: 'exact' })
       .eq('user_id', userId)
       .eq('is_active', true)
-      .gt('expires_at', new Date().toISOString());
+      .gt('expires_at', new Date().toISOString())
 
     if (error) {
-      throw error;
+      throw error
     }
 
     if ((data?.length || 0) >= this.config.maxConcurrentSessions) {
       throw new Error(
         `Maximum concurrent sessions (${this.config.maxConcurrentSessions}) exceeded`,
-      );
+      )
     }
   }
 
@@ -881,11 +881,11 @@ export class EnhancedAgentSessionService {
   private startCleanupTimer(): void {
     this.cleanupTimer = setInterval(async () => {
       try {
-        await this.cleanupExpiredEnhancedSessions();
+        await this.cleanupExpiredEnhancedSessions()
       } catch {
-        console.error('Error in enhanced session cleanup:', error);
+        console.error('Error in enhanced session cleanup:', error)
       }
-    }, this.config.cleanupIntervalMs);
+    }, this.config.cleanupIntervalMs)
   }
 
   /**
@@ -898,29 +898,29 @@ export class EnhancedAgentSessionService {
         .from('enhanced_agent_sessions')
         .select('session_id')
         .lte('expires_at', new Date().toISOString())
-        .eq('is_active', true);
+        .eq('is_active', true)
 
       if (error) {
-        throw error;
+        throw error
       }
 
       if (!expiredSessions || expiredSessions.length === 0) {
-        return 0;
+        return 0
       }
 
       // Clean up each expired session
-      let cleanupCount = 0;
+      let cleanupCount = 0
       for (const session of expiredSessions) {
-        const success = await this.expireEnhancedSession(session.session_id);
+        const success = await this.expireEnhancedSession(session.session_id)
         if (success) {
-          cleanupCount++;
+          cleanupCount++
         }
       }
 
-      return cleanupCount;
+      return cleanupCount
     } catch {
-      console.error('Error cleaning up expired enhanced sessions:', error);
-      return 0;
+      console.error('Error cleaning up expired enhanced sessions:', error)
+      return 0
     }
   }
 
@@ -930,29 +930,29 @@ export class EnhancedAgentSessionService {
   async shutdown(): Promise<void> {
     // Clear cleanup timer
     if (this.cleanupTimer) {
-      clearInterval(this.cleanupTimer);
+      clearInterval(this.cleanupTimer)
     }
 
     // Clear cache
-    this.sessionCache.clear();
-    this.copilotKitConnections.clear();
+    this.sessionCache.clear()
+    this.copilotKitConnections.clear()
 
     // Final cleanup
     try {
-      await this.cleanupExpiredEnhancedSessions();
+      await this.cleanupExpiredEnhancedSessions()
     } catch {
-      console.error('Error in final enhanced cleanup:', error);
+      console.error('Error in final enhanced cleanup:', error)
     }
 
     // Shutdown service integrations
     if (this.aestheticService) {
-      await this.aestheticService.shutdown();
+      await this.aestheticService.shutdown()
     }
     if (this.dataHandlingService) {
-      await this.dataHandlingService.shutdown();
+      await this.dataHandlingService.shutdown()
     }
     if (this.complianceService) {
-      await this.complianceService.shutdown();
+      await this.complianceService.shutdown()
     }
   }
 }

@@ -1,4 +1,4 @@
-import { ShineBorder } from '../components/magicui';
+import { ShineBorder } from '../components/magicui'
 
 export function ShineBorderDemo() {
   return (
@@ -106,7 +106,7 @@ export function ShineBorderDemo() {
         </div>
       </div>
     </div>
-  );
+  )
 }
 
-export default ShineBorderDemo;
+export default ShineBorderDemo

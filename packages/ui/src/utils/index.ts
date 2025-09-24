@@ -4,5 +4,5 @@
  * Exports all healthcare utilities
  */
 
-export * from './accessibility';
-export * from './healthcare-validation';
+export * from './accessibility'
+export * from './healthcare-validation'

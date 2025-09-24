@@ -7,7 +7,7 @@ function mockRandomSequence(values: number[]) {
     const value = values[index] ?? values[values.length - 1] ?? 0.99;
     index += 1;
     return value;
-  }
+  });
 }
 
 describe('AgentCoordinator', () => {
@@ -39,7 +39,7 @@ describe('AgentCoordinator', () => {
     expect(summary.results['architect-review']?.recommendations).toContain(
       'Improve patterns metrics for architect-review'
     );
-  }
+  });
 
   it('executes agents in parallel and aggregates results', async () => {
     const coordinator = new AgentCoordinator({
@@ -278,5 +278,6 @@ describe('AgentCoordinator', () => {
     );
 
     expect(evaluateSuccess('unknown-agent' as any, {})).toBe(true);
-  }
+  });
+})
 }

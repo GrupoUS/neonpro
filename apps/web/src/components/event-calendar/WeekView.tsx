@@ -2,9 +2,9 @@
  * Week View Component
  */
 
-import React from 'react';
-import type { WeekViewProps } from '../../types/event-calendar';
-import { formatCalendarDate, getEventColor } from './utils';
+import React from 'react'
+import type { WeekViewProps } from '../../types/event-calendar'
+import { formatCalendarDate, getEventColor } from './utils'
 
 export function WeekView({
   date,
@@ -15,16 +15,16 @@ export function WeekView({
   workingHours,
 }: WeekViewProps) {
   // Calculate week start and end
-  const weekStart = new Date(date);
-  weekStart.setDate(weekStart.getDate() - weekStart.getDay());
+  const weekStart = new Date(date)
+  weekStart.setDate(weekStart.getDate() - weekStart.getDay())
 
   const weekDays = Array.from({ length: 7 }, (_, i) => {
-    const day = new Date(weekStart);
-    day.setDate(day.getDate() + i);
-    return day;
-  });
+    const day = new Date(weekStart)
+    day.setDate(day.getDate() + i)
+    return day
+  })
 
-  const dayNames = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+  const dayNames = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb']
 
   return (
     <div className='week-view flex-1 overflow-auto'>
@@ -54,7 +54,7 @@ export function WeekView({
 
         {/* Time slots */}
         {Array.from({ length: workingHours.end - workingHours.start }, (_, hour) => {
-          const currentHour = workingHours.start + hour;
+          const currentHour = workingHours.start + hour
 
           return (
             <div key={hour} className='week-row flex border-b border-gray-100'>
@@ -63,24 +63,24 @@ export function WeekView({
               </div>
 
               {weekDays.map((day, dayIndex) => {
-                const dayEvents = events.filter(event => {
-                  const eventDate = new Date(event.start);
+                const dayEvents = events.filter((event) => {
+                  const eventDate = new Date(event.start)
                   return (
                     eventDate.getDate() === day.getDate()
                     && eventDate.getMonth() === day.getMonth()
                     && eventDate.getFullYear() === day.getFullYear()
                     && eventDate.getHours() === currentHour
-                  );
-                });
+                  )
+                })
 
                 return (
                   <div
                     key={dayIndex}
                     className='time-slot flex-1 border-r border-gray-100 min-h-[60px] p-1 hover:bg-gray-50 cursor-pointer'
                     onClick={() => {
-                      const clickDate = new Date(day);
-                      clickDate.setHours(currentHour, 0, 0, 0);
-                      onDateClick(clickDate);
+                      const clickDate = new Date(day)
+                      clickDate.setHours(currentHour, 0, 0, 0)
+                      onDateClick(clickDate)
                     }}
                   >
                     {dayEvents.map((event, eventIndex) => (
@@ -93,9 +93,9 @@ export function WeekView({
                           backgroundColor: getEventColor(event) + '20',
                           borderLeft: `3px solid ${getEventColor(event)}`,
                         }}
-                        onClick={e => {
-                          e.stopPropagation();
-                          onEventClick(event);
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          onEventClick(event)
                         }}
                       >
                         <div className='event-title font-medium truncate'>
@@ -115,14 +115,14 @@ export function WeekView({
                       </div>
                     ))}
                   </div>
-                );
+                )
               })}
             </div>
-          );
+          )
         })}
       </div>
     </div>
-  );
+  )
 }
 
-export default WeekView;
+export default WeekView

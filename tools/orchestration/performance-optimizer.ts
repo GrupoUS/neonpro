@@ -7,101 +7,100 @@
  * management for the NeonPro healthcare platform.
  */
 
-import { execSync } from 'child_process';
-import fs from 'fs/promises';
-import path from 'path';
+import fs from 'fs/promises'
+import path from 'path'
 
 interface PerformanceMetrics {
   bundleSize: {
-    total: number;
-    gzipped: number;
-    packages: Record<string, number>;
-  };
+    total: number
+    gzipped: number
+    packages: Record<string, number>
+  }
   lighthouse: {
-    performance: number;
-    accessibility: number;
-    bestPractices: number;
-    seo: number;
-  };
+    performance: number
+    accessibility: number
+    bestPractices: number
+    seo: number
+  }
   loadTime: {
-    firstContentfulPaint: number;
-    largestContentfulPaint: number;
-    timeToInteractive: number;
-  };
+    firstContentfulPaint: number
+    largestContentfulPaint: number
+    timeToInteractive: number
+  }
   memory: {
-    heapUsed: number;
-    heapTotal: number;
-    external: number;
-  };
+    heapUsed: number
+    heapTotal: number
+    external: number
+  }
 }
 
 interface OptimizationResult {
-  status: 'success' | 'warning' | 'error';
-  metrics: PerformanceMetrics;
-  optimizations: string[];
-  recommendations: string[];
+  status: 'success' | 'warning' | 'error'
+  metrics: PerformanceMetrics
+  optimizations: string[]
+  recommendations: string[]
   savings: {
-    bundleSize: number;
-    loadTime: number;
-    memoryUsage: number;
-  };
+    bundleSize: number
+    loadTime: number
+    memoryUsage: number
+  }
 }
 
 class PerformanceOptimizer {
-  private workspaceRoot: string;
+  private workspaceRoot: string
   private thresholds: {
-    bundleSize: number; // 500KB
-    gzippedSize: number; // 150KB
-    performanceScore: number; // 90
-    loadTime: number; // 2000ms
-    memoryUsage: number; // 50MB
-  };
+    bundleSize: number // 500KB
+    gzippedSize: number // 150KB
+    performanceScore: number // 90
+    loadTime: number // 2000ms
+    memoryUsage: number // 50MB
+  }
 
   constructor(workspaceRoot: string) {
-    this.workspaceRoot = workspaceRoot;
+    this.workspaceRoot = workspaceRoot
     this.thresholds = {
       bundleSize: 500 * 1024, // 500KB
       gzippedSize: 150 * 1024, // 150KB
       performanceScore: 90,
       loadTime: 2000, // 2 seconds
       memoryUsage: 50 * 1024 * 1024, // 50MB
-    };
+    }
   }
 
   async optimizePerformance(): Promise<OptimizationResult> {
-    console.log('🚀 Starting Performance Optimization for NeonPro Healthcare Platform...');
+    console.log('🚀 Starting Performance Optimization for NeonPro Healthcare Platform...')
 
-    const optimizations: string[] = [];
-    const recommendations: string[] = [];
+    const optimizations: string[] = []
+    const recommendations: string[] = []
 
     try {
       // Step 1: Analyze current bundle size
-      console.log('📊 Analyzing bundle sizes...');
-      await this.analyzeBundleSize(optimizations, recommendations);
+      console.log('📊 Analyzing bundle sizes...')
+      await this.analyzeBundleSize(optimizations, recommendations)
 
       // Step 2: Implement code splitting
-      console.log('✂️ Implementing code splitting...');
-      await this.implementCodeSplitting(optimizations, recommendations);
+      console.log('✂️ Implementing code splitting...')
+      await this.implementCodeSplitting(optimizations, recommendations)
 
       // Step 3: Optimize dependencies
-      console.log('📦 Optimizing dependencies...');
-      await this.optimizeDependencies(optimizations, recommendations);
+      console.log('📦 Optimizing dependencies...')
+      await this.optimizeDependencies(optimizations, recommendations)
 
       // Step 4: Enable tree shaking
-      console.log('🌳 Enhancing tree shaking...');
-      await this.enhanceTreeShaking(optimizations, recommendations);
+      console.log('🌳 Enhancing tree shaking...')
+      await this.enhanceTreeShaking(optimizations, recommendations)
 
       // Step 5: Implement asset optimization
-      console.log('🖼️ Optimizing assets...');
-      await this.optimizeAssets(optimizations, recommendations);
+      console.log('🖼️ Optimizing assets...')
+      await this.optimizeAssets(optimizations, recommendations)
 
       // Step 6: Configure compression
-      console.log('🗜️ Configuring compression...');
-      await this.configureCompression(optimizations, recommendations);
+      console.log('🗜️ Configuring compression...')
+      await this.configureCompression(optimizations, recommendations)
 
       // Step 7: Measure performance
-      console.log('📈 Measuring performance improvements...');
-      const metrics = await this.measurePerformance();
+      console.log('📈 Measuring performance improvements...')
+      const metrics = await this.measurePerformance()
 
       const result: OptimizationResult = {
         status: this.determineStatus(metrics),
@@ -113,13 +112,13 @@ class PerformanceOptimizer {
           loadTime: 0,
           memoryUsage: 0,
         },
-      };
+      }
 
-      console.log('✅ Performance optimization completed!');
-      return result;
+      console.log('✅ Performance optimization completed!')
+      return result
     } catch (error) {
-      console.error('❌ Performance optimization failed:', error);
-      throw error;
+      console.error('❌ Performance optimization failed:', error)
+      throw error
     }
   }
 
@@ -157,17 +156,17 @@ export default defineConfig({
     }
   }
 });
-      `;
+      `
 
       await fs.writeFile(
         path.join(this.workspaceRoot, 'vite.bundle-analyzer.config.ts'),
         analyzerConfig.trim(),
-      );
+      )
 
-      optimizations.push('Created bundle analysis configuration');
-      recommendations.push('Run bundle analysis to identify large dependencies');
+      optimizations.push('Created bundle analysis configuration')
+      recommendations.push('Run bundle analysis to identify large dependencies')
     } catch (error) {
-      console.warn('Warning: Could not create bundle analyzer config:', error);
+      console.warn('Warning: Could not create bundle analyzer config:', error)
     }
   }
 
@@ -177,7 +176,7 @@ export default defineConfig({
   ): Promise<void> {
     try {
       // Update Vite configuration for optimal code splitting
-      const viteConfigPath = path.join(this.workspaceRoot, 'apps/web/vite.config.ts');
+      const viteConfigPath = path.join(this.workspaceRoot, 'apps/web/vite.config.ts')
 
       const codeSpilitingConfig = `
 // Code Splitting Configuration for Healthcare Platform
@@ -228,15 +227,15 @@ export const codeSplittingConfig = {
     chunkSizeWarningLimit: 500 // 500KB warning limit
   }
 };
-      `;
+      `
 
-      await fs.appendFile(viteConfigPath, codeSpilitingConfig);
+      await fs.appendFile(viteConfigPath, codeSpilitingConfig)
 
-      optimizations.push('Implemented strategic code splitting for healthcare modules');
-      recommendations.push('Consider route-based lazy loading for large features');
+      optimizations.push('Implemented strategic code splitting for healthcare modules')
+      recommendations.push('Consider route-based lazy loading for large features')
     } catch (error) {
-      console.warn('Warning: Could not update Vite config for code splitting:', error);
-      recommendations.push('Manually implement code splitting in Vite configuration');
+      console.warn('Warning: Could not update Vite config for code splitting:', error)
+      recommendations.push('Manually implement code splitting in Vite configuration')
     }
   }
 
@@ -246,8 +245,8 @@ export const codeSplittingConfig = {
   ): Promise<void> {
     try {
       // Analyze package.json for optimization opportunities
-      const packageJsonPath = path.join(this.workspaceRoot, 'package.json');
-      const packageJson = JSON.parse(await fs.readFile(packageJsonPath, 'utf-8'));
+      const packageJsonPath = path.join(this.workspaceRoot, 'package.json')
+      const packageJson = JSON.parse(await fs.readFile(packageJsonPath, 'utf-8'))
 
       // Heavy dependencies that can be optimized
       const heavyDependencies = [
@@ -257,15 +256,15 @@ export const codeSplittingConfig = {
         'date-fns',
         '@emotion/react',
         'material-ui',
-      ];
+      ]
 
       const foundHeavyDeps = Object.keys(packageJson.dependencies || {})
-        .filter(dep => heavyDependencies.some(heavy => dep.includes(heavy)));
+        .filter((dep) => heavyDependencies.some((heavy) => dep.includes(heavy)))
 
       if (foundHeavyDeps.length > 0) {
-        recommendations.push(`Consider lighter alternatives for: ${foundHeavyDeps.join(', ')}`);
-        recommendations.push('Use dynamic imports for heavy libraries');
-        recommendations.push('Implement tree shaking for large utility libraries');
+        recommendations.push(`Consider lighter alternatives for: ${foundHeavyDeps.join(', ')}`)
+        recommendations.push('Use dynamic imports for heavy libraries')
+        recommendations.push('Implement tree shaking for large utility libraries')
       }
 
       // Create dependency optimization suggestions
@@ -273,7 +272,7 @@ export const codeSplittingConfig = {
 # Dependency Optimization Suggestions
 
 ## Heavy Dependencies Found:
-${foundHeavyDeps.map(dep => `- ${dep}`).join('\n')}
+${foundHeavyDeps.map((dep) => `- ${dep}`).join('\n')}
 
 ## Recommended Optimizations:
 
@@ -304,16 +303,16 @@ const ComplexChart = lazy(() => import('./ComplexChart'));
 - Replace moment.js with date-fns (smaller)
 - Use native fetch instead of axios for simple requests
 - Consider lightweight UI libraries for specific components
-      `;
+      `
 
       await fs.writeFile(
         path.join(this.workspaceRoot, 'docs/performance-optimization-guide.md'),
         optimizationSuggestions.trim(),
-      );
+      )
 
-      optimizations.push('Created dependency optimization guide');
+      optimizations.push('Created dependency optimization guide')
     } catch (error) {
-      console.warn('Warning: Could not analyze dependencies:', error);
+      console.warn('Warning: Could not analyze dependencies:', error)
     }
   }
 
@@ -338,18 +337,18 @@ const ComplexChart = lazy(() => import('./ComplexChart'));
         },
         include: ['src/**/*'],
         exclude: ['node_modules', 'dist'],
-      };
+      }
 
       await fs.writeFile(
         path.join(this.workspaceRoot, 'apps/web/tsconfig.optimized.json'),
         JSON.stringify(tsconfigOptimized, null, 2),
-      );
+      )
 
-      optimizations.push('Created optimized TypeScript configuration for tree shaking');
-      recommendations.push('Use ESNext modules for better tree shaking');
-      recommendations.push('Mark packages as side-effect free in package.json');
+      optimizations.push('Created optimized TypeScript configuration for tree shaking')
+      recommendations.push('Use ESNext modules for better tree shaking')
+      recommendations.push('Mark packages as side-effect free in package.json')
     } catch (error) {
-      console.warn('Warning: Could not create optimized tsconfig:', error);
+      console.warn('Warning: Could not create optimized tsconfig:', error)
     }
   }
 
@@ -399,18 +398,18 @@ export default defineConfig({
     }
   }
 });
-      `;
+      `
 
       await fs.writeFile(
         path.join(this.workspaceRoot, 'config/asset-optimization.ts'),
         assetOptimizationConfig.trim(),
-      );
+      )
 
-      optimizations.push('Created asset optimization configuration');
-      recommendations.push('Implement WebP/AVIF image formats for better compression');
-      recommendations.push('Use CSS purging to remove unused styles');
+      optimizations.push('Created asset optimization configuration')
+      recommendations.push('Implement WebP/AVIF image formats for better compression')
+      recommendations.push('Use CSS purging to remove unused styles')
     } catch (error) {
-      console.warn('Warning: Could not create asset optimization config:', error);
+      console.warn('Warning: Could not create asset optimization config:', error)
     }
   }
 
@@ -454,18 +453,18 @@ export default defineConfig({
     })
   ]
 });
-      `;
+      `
 
       await fs.writeFile(
         path.join(this.workspaceRoot, 'config/compression.ts'),
         compressionConfig.trim(),
-      );
+      )
 
-      optimizations.push('Configured Gzip and Brotli compression');
-      recommendations.push('Enable server-side compression for static assets');
-      recommendations.push('Use CDN for optimal content delivery');
+      optimizations.push('Configured Gzip and Brotli compression')
+      recommendations.push('Enable server-side compression for static assets')
+      recommendations.push('Use CDN for optimal content delivery')
     } catch (error) {
-      console.warn('Warning: Could not create compression config:', error);
+      console.warn('Warning: Could not create compression config:', error)
     }
   }
 
@@ -497,44 +496,44 @@ export default defineConfig({
         heapTotal: 45 * 1024 * 1024, // 45MB
         external: 8 * 1024 * 1024, // 8MB
       },
-    };
+    }
   }
 
   private determineStatus(metrics: PerformanceMetrics): 'success' | 'warning' | 'error' {
-    const issues = [];
+    const issues = []
 
     if (metrics.bundleSize.total > this.thresholds.bundleSize) {
-      issues.push('Bundle size exceeds threshold');
+      issues.push('Bundle size exceeds threshold')
     }
 
     if (metrics.lighthouse.performance < this.thresholds.performanceScore) {
-      issues.push('Performance score below threshold');
+      issues.push('Performance score below threshold')
     }
 
     if (metrics.loadTime.timeToInteractive > this.thresholds.loadTime) {
-      issues.push('Load time exceeds threshold');
+      issues.push('Load time exceeds threshold')
     }
 
     if (metrics.memory.heapUsed > this.thresholds.memoryUsage) {
-      issues.push('Memory usage exceeds threshold');
+      issues.push('Memory usage exceeds threshold')
     }
 
-    if (issues.length === 0) return 'success';
-    if (issues.length <= 2) return 'warning';
-    return 'error';
+    if (issues.length === 0) return 'success'
+    if (issues.length <= 2) return 'warning'
+    return 'error'
   }
 
   async generatePerformanceReport(result: OptimizationResult): Promise<void> {
     const reportPath = path.join(
       this.workspaceRoot,
       'tools/orchestration/performance-optimization-report.md',
-    );
+    )
 
     const statusEmoji = result.status === 'success'
       ? '✅'
       : result.status === 'warning'
       ? '⚠️'
-      : '❌';
+      : '❌'
 
     const report = `# Performance Optimization Report
 
@@ -583,10 +582,10 @@ ${
 - **External**: ${(result.metrics.memory.external / 1024 / 1024).toFixed(1)}MB
 
 ## Optimizations Applied
-${result.optimizations.map(opt => `- ✅ ${opt}`).join('\n')}
+${result.optimizations.map((opt) => `- ✅ ${opt}`).join('\n')}
 
 ## Recommendations
-${result.recommendations.map(rec => `- 📋 ${rec}`).join('\n')}
+${result.recommendations.map((rec) => `- 📋 ${rec}`).join('\n')}
 
 ## Healthcare Platform Specific Optimizations
 
@@ -637,35 +636,35 @@ ${result.recommendations.map(rec => `- 📋 ${rec}`).join('\n')}
 ---
 **Generated by**: NeonPro Performance Optimizer v2.0.0  
 **Next Optimization**: Recommended within 30 days
-    `;
+    `
 
-    await fs.writeFile(reportPath, report, 'utf-8');
-    console.log(`\n📊 Performance Optimization Report: ${reportPath}`);
+    await fs.writeFile(reportPath, report, 'utf-8')
+    console.log(`\n📊 Performance Optimization Report: ${reportPath}`)
   }
 }
 
 // Main execution
 async function main() {
-  const workspaceRoot = process.cwd();
+  const workspaceRoot = process.cwd()
 
-  const optimizer = new PerformanceOptimizer(workspaceRoot);
-  const result = await optimizer.optimizePerformance();
-  await optimizer.generatePerformanceReport(result);
+  const optimizer = new PerformanceOptimizer(workspaceRoot)
+  const result = await optimizer.optimizePerformance()
+  await optimizer.generatePerformanceReport(result)
 
   // Output summary
-  console.log('\n' + '='.repeat(80));
-  console.log(`🎯 PERFORMANCE OPTIMIZATION COMPLETE`);
-  console.log(`📊 Status: ${result.status.toUpperCase()}`);
-  console.log(`📦 Bundle Size: ${(result.metrics.bundleSize.total / 1024).toFixed(1)}KB`);
-  console.log(`⚡ Performance Score: ${result.metrics.lighthouse.performance}%`);
-  console.log(`🚀 Load Time: ${result.metrics.loadTime.timeToInteractive}ms`);
-  console.log('='.repeat(80));
+  console.log('\n' + '='.repeat(80))
+  console.log(`🎯 PERFORMANCE OPTIMIZATION COMPLETE`)
+  console.log(`📊 Status: ${result.status.toUpperCase()}`)
+  console.log(`📦 Bundle Size: ${(result.metrics.bundleSize.total / 1024).toFixed(1)}KB`)
+  console.log(`⚡ Performance Score: ${result.metrics.lighthouse.performance}%`)
+  console.log(`🚀 Load Time: ${result.metrics.loadTime.timeToInteractive}ms`)
+  console.log('='.repeat(80))
 
-  process.exit(result.status === 'error' ? 1 : 0);
+  process.exit(result.status === 'error' ? 1 : 0)
 }
 
 if (import.meta.main) {
-  main().catch(console.error);
+  main().catch(console.error)
 }
 
-export { type OptimizationResult, PerformanceOptimizer };
+export { type OptimizationResult, PerformanceOptimizer }

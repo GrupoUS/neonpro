@@ -20,12 +20,12 @@ describe('TestRunner', () => {
       retries: 1,
     };
 
-    testRunner = new TestRunner(mockConfig
+    testRunner = new TestRunner(mockConfig);
   }
 
   describe('constructor', () => {
     it('should initialize with correct configuration', () => {
-      expect(testRunner).toBeDefined(
+      expect(testRunner).toBeDefined();
       // TestRunner should have a private config property
       // We'll test its behavior rather than direct access
     }
@@ -38,25 +38,25 @@ describe('TestRunner', () => {
         retries: 3,
       };
 
-      const integrationRunner = new TestRunner(integrationConfig
-      expect(integrationRunner).toBeDefined(
+      const integrationRunner = new TestRunner(integrationConfig);
+      expect(integrationRunner).toBeDefined();
     }
   }
 
   describe('runTest', () => {
     it('should run a successful test', async () => {
       const testName = 'successful test';
-      const testFn = vi.fn().mockResolvedValue(undefined
+      const testFn = vi.fn().mockResolvedValue(undefined);
 
-      const result = await testRunner.runTest(testName, testFn
+      const result = await testRunner.runTest(testName, testFn);
 
-      expect(result).toBeDefined(
-      expect(result.name).toBe(testName
-      expect(result.category).toBe('unit')
+      expect(result).toBeDefined();
+      expect(result.name).toBe(testName);
+      expect(result.category).toBe('unit');
       expect(result.passed).toBe(true);
-      expect(result.duration).toBeGreaterThanOrEqual(0
-      expect(result.errors).toBeUndefined(
-      expect(testFn).toHaveBeenCalledTimes(1
+      expect(result.duration).toBeGreaterThanOrEqual(0);
+      expect(result.errors).toBeUndefined();
+      expect(testFn).toHaveBeenCalledTimes(1);
     }
 
     it('should run a successful synchronous test', async () => {

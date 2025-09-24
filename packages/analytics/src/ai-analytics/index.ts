@@ -9,11 +9,11 @@ export {
   PredictiveAnalyticsService,
   type PredictiveInsight,
   type PredictiveRequest,
-} from './predictive-analytics.service';
+} from './predictive-analytics.service'
 
-export { HealthcareAIOrchestrator } from './healthcare-ai-orchestrator';
+export { HealthcareAIOrchestrator } from './healthcare-ai-orchestrator'
 export {
   type AIAnalyticsConfig,
   type HealthcareComplianceAudit,
   type HealthcareInsights,
-} from './types';
+} from './types'

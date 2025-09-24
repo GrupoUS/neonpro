@@ -1,17 +1,17 @@
-'use client';
+'use client'
 
-import { motion } from 'framer-motion';
-import { RotateCcw } from 'lucide-react';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { usePersistedDashboardLayout } from '../../hooks/use-persisted-dashboard-layout';
-import { Button } from './button';
-import { TiltedCard } from './tilted-card';
+import { motion } from 'framer-motion'
+import { RotateCcw } from 'lucide-react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
+import { usePersistedDashboardLayout } from '../../hooks/use-persisted-dashboard-layout'
+import { Button } from './button'
+import { TiltedCard } from './tilted-card'
 
 interface DashboardCardProps {
-  children: React.ReactNode;
-  className?: string;
-  enableTilt?: boolean;
-  cardId?: string;
+  children: React.ReactNode
+  className?: string
+  enableTilt?: boolean
+  cardId?: string
 }
 
 export function DashboardCard({
@@ -20,32 +20,32 @@ export function DashboardCard({
   enableTilt = true,
   cardId = `card-${Math.random()}`,
 }: DashboardCardProps) {
-  const { updateCardPosition, getCardPosition, gridConfig } = usePersistedDashboardLayout();
+  const { updateCardPosition, getCardPosition, gridConfig } = usePersistedDashboardLayout()
 
-  const [isDragging, setIsDragging] = useState(false);
-  const cardRef = useRef<HTMLDivElement>(null);
+  const [isDragging, setIsDragging] = useState(false)
+  const cardRef = useRef<HTMLDivElement>(null)
 
-  const position = getCardPosition(cardId);
+  const position = getCardPosition(cardId)
 
   const handleDragEnd = useCallback(() => {
-    setIsDragging(false);
+    setIsDragging(false)
 
     if (cardRef.current) {
-      const rect = cardRef.current.getBoundingClientRect();
-      const containerRect = cardRef.current.offsetParent?.getBoundingClientRect();
+      const rect = cardRef.current.getBoundingClientRect()
+      const containerRect = cardRef.current.offsetParent?.getBoundingClientRect()
 
       if (containerRect) {
-        const relativeX = rect.left - containerRect.left;
-        const relativeY = rect.top - containerRect.top;
+        const relativeX = rect.left - containerRect.left
+        const relativeY = rect.top - containerRect.top
 
         updateCardPosition(
           cardId,
           { x: relativeX, y: relativeY },
           { width: rect.width, height: rect.height },
-        );
+        )
       }
     }
-  }, [cardId, updateCardPosition]);
+  }, [cardId, updateCardPosition])
 
   return (
     <motion.div
@@ -94,11 +94,11 @@ export function DashboardCard({
         ? <TiltedCard className='h-full w-full'>{children}</TiltedCard>
         : <div className='h-full w-full'>{children}</div>}
     </motion.div>
-  );
+  )
 }
 interface DashboardLayoutProps {
-  children: React.ReactNode;
-  className?: string;
+  children: React.ReactNode
+  className?: string
 }
 
 export function DashboardLayout({
@@ -106,8 +106,8 @@ export function DashboardLayout({
   className = '',
 }: DashboardLayoutProps) {
   const { resetLayout, updateContainerSize, autoDistributeCards, gridConfig } =
-    usePersistedDashboardLayout();
-  const containerRef = useRef<HTMLDivElement>(null);
+    usePersistedDashboardLayout()
+  const containerRef = useRef<HTMLDivElement>(null)
 
   // Extract card IDs from children
   const cardIds = React.Children.toArray(children).map((child, index): string => {
@@ -116,38 +116,38 @@ export function DashboardLayout({
         child.key?.toString()
         || ((child.props as Record<string, unknown>)?.id as string)
         || `dashboard-card-${index}`
-      );
+      )
     }
-    return `dashboard-card-${index}`;
-  });
+    return `dashboard-card-${index}`
+  })
 
   // Update container size on mount and resize
   useEffect(() => {
     const updateSize = () => {
       if (containerRef.current) {
-        const rect = containerRef.current.getBoundingClientRect();
-        updateContainerSize({ width: rect.width, height: rect.height });
+        const rect = containerRef.current.getBoundingClientRect()
+        updateContainerSize({ width: rect.width, height: rect.height })
       }
-    };
+    }
 
-    updateSize();
-    window.addEventListener('resize', updateSize);
+    updateSize()
+    window.addEventListener('resize', updateSize)
 
-    return () => window.removeEventListener('resize', updateSize);
-  }, [updateContainerSize]);
+    return () => window.removeEventListener('resize', updateSize)
+  }, [updateContainerSize])
 
   // Auto-distribute cards when container size is available and children change
   useEffect(() => {
     if (cardIds.length > 0) {
       // Small delay to ensure container size is updated
       const timer = setTimeout(() => {
-        autoDistributeCards(cardIds);
-      }, 100);
+        autoDistributeCards(cardIds)
+      }, 100)
 
-      return () => clearTimeout(timer);
+      return () => clearTimeout(timer)
     }
-    return undefined;
-  }, [cardIds, autoDistributeCards]);
+    return undefined
+  }, [cardIds, autoDistributeCards])
 
   return (
     <div className={`relative min-h-[600px] ${className}`} ref={containerRef}>
@@ -171,7 +171,7 @@ export function DashboardLayout({
             // Generate consistent ID for each card
             const cardId = child.key?.toString()
               || ((child.props as Record<string, unknown>)?.id as string)
-              || `dashboard-card-${index}`;
+              || `dashboard-card-${index}`
 
             return React.cloneElement(child as React.ReactElement<Record<string, unknown>>, {
               key: cardId as React.Key,
@@ -179,9 +179,9 @@ export function DashboardLayout({
               className: `${
                 ((child.props as Record<string, unknown>)?.className as string) || ''
               } w-80 h-64`, // Fixed size for consistent layout
-            });
+            })
           }
-          return child;
+          return child
         })}
       </div>
 
@@ -197,5 +197,5 @@ export function DashboardLayout({
         </div>
       </div>
     </div>
-  );
+  )
 }

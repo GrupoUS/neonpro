@@ -44,132 +44,132 @@ export enum InsightStatus {
 
 // AI model configuration
 export interface AIModelConfig {
-  provider: AIProvider | string;
-  model: string;
-  temperature?: number;
-  maxTokens?: number;
-  systemPrompt?: string;
-  language: 'pt-BR' | 'en-US';
-  healthcareContext: boolean;
-  complianceMode?: boolean;
+  provider: AIProvider | string
+  model: string
+  temperature?: number
+  maxTokens?: number
+  systemPrompt?: string
+  language: 'pt-BR' | 'en-US'
+  healthcareContext: boolean
+  complianceMode?: boolean
 }
 
 // Brazilian healthcare context
 export interface BrazilianHealthcareContext {
   anvisa: {
-    medicationCodes: string[];
-    deviceCodes: string[];
-    regulations?: string[];
-  };
+    medicationCodes: string[]
+    deviceCodes: string[]
+    regulations?: string[]
+  }
   cfm: {
-    specialties: string[];
-    procedures: string[];
-    ethicalGuidelines?: string[];
-  };
+    specialties: string[]
+    procedures: string[]
+    ethicalGuidelines?: string[]
+  }
   sus: {
-    cid10Codes: string[];
-    procedureCodes: string[];
-    protocols?: string[];
-  };
+    cid10Codes: string[]
+    procedureCodes: string[]
+    protocols?: string[]
+  }
   lgpd: {
-    dataCategories: string[];
-    legalBasis: string;
-    consentRequired: boolean;
-  };
+    dataCategories: string[]
+    legalBasis: string
+    consentRequired: boolean
+  }
 }
 
 // Insight content structure
 export interface InsightContent {
-  summary: string;
-  recommendations: string[];
-  riskFactors?: string[];
-  keyFindings?: string[];
-  confidence?: number;
-  sources?: string[];
-  limitations?: string[];
-  followUpActions?: string[];
+  summary: string
+  recommendations: string[]
+  riskFactors?: string[]
+  keyFindings?: string[]
+  confidence?: number
+  sources?: string[]
+  limitations?: string[]
+  followUpActions?: string[]
 }
 
 // Insight template
 export interface InsightTemplate {
-  id: string;
-  name: string;
-  type: AIInsightType | string;
-  prompt: string;
-  outputFormat: Record<string, string>;
-  language: 'pt-BR' | 'en-US';
-  healthcareSpecific: boolean;
-  requiredData?: string[];
-  validationCriteria?: string[];
+  id: string
+  name: string
+  type: AIInsightType | string
+  prompt: string
+  outputFormat: Record<string, string>
+  language: 'pt-BR' | 'en-US'
+  healthcareSpecific: boolean
+  requiredData?: string[]
+  validationCriteria?: string[]
 }
 
 // AI model performance tracking
 export interface AIModelPerformance {
-  modelId: string;
-  provider: AIProvider | string;
-  totalInsights: number;
-  validatedInsights: number;
-  rejectedInsights: number;
-  averageConfidence: number;
-  averageReliability: number;
-  responseTime: number; // seconds
-  lastUpdated: Date;
-  errorRate?: number;
-  costPerInsight?: number;
+  modelId: string
+  provider: AIProvider | string
+  totalInsights: number
+  validatedInsights: number
+  rejectedInsights: number
+  averageConfidence: number
+  averageReliability: number
+  responseTime: number // seconds
+  lastUpdated: Date
+  errorRate?: number
+  costPerInsight?: number
 }
 
 // Main AI insight interface
 export interface AIInsight {
-  id: string;
-  patientId: string;
+  id: string
+  patientId: string
 
   // Insight metadata
-  type: AIInsightType | string;
-  title: string;
-  description?: string;
-  content: InsightContent;
+  type: AIInsightType | string
+  title: string
+  description?: string
+  content: InsightContent
 
   // AI model information
-  confidence: number; // 0-1
-  model: string;
-  provider: AIProvider | string;
-  modelConfig?: Partial<AIModelConfig>;
+  confidence: number // 0-1
+  model: string
+  provider: AIProvider | string
+  modelConfig?: Partial<AIModelConfig>
 
   // Generation metadata
-  generatedAt: Date;
-  processingTime?: number; // milliseconds
-  tokensUsed?: number;
-  cost?: number;
+  generatedAt: Date
+  processingTime?: number // milliseconds
+  tokensUsed?: number
+  cost?: number
 
   // Validation and approval
-  status: InsightStatus | string;
-  validatedAt?: Date;
-  validatedBy?: string;
-  validationNotes?: string;
-  rejectionReason?: string;
+  status: InsightStatus | string
+  validatedAt?: Date
+  validatedBy?: string
+  validationNotes?: string
+  rejectionReason?: string
 
   // Healthcare context
-  healthcareContext?: BrazilianHealthcareContext;
-  relatedInsights?: string[]; // IDs of related insights
+  healthcareContext?: BrazilianHealthcareContext
+  relatedInsights?: string[] // IDs of related insights
 
   // Metadata
-  createdAt: Date;
-  updatedAt: Date;
-  expiresAt?: Date;
+  createdAt: Date
+  updatedAt: Date
+  expiresAt?: Date
 
   // LGPD compliance
-  lgpdConsent?: boolean;
+  lgpdConsent?: boolean
   accessLog?: Array<{
-    _userId: string;
-    action: string;
-    timestamp: Date;
-    ipAddress?: string;
-  }>;
+    _userId: string
+    action: string
+    timestamp: Date
+    ipAddress?: string
+  }>
 }
 
 // Validate confidence score
 export function validateConfidenceScore(confidence: number): boolean {
-  return confidence >= 0 && confidence <= 1;
+  return confidence >= 0 && confidence <= 1
 }
 
 // Generate patient analysis
@@ -177,7 +177,7 @@ export function generatePatientAnalysis(
   patientData: any,
   config: Partial<AIModelConfig>,
 ): Partial<AIInsight> {
-  const now = new Date();
+  const now = new Date()
 
   return {
     id: `insight_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
@@ -198,35 +198,35 @@ export function generatePatientAnalysis(
     status: InsightStatus.GENERATED,
     createdAt: now,
     updatedAt: now,
-  };
+  }
 }
 
 // Validate AI insight
 export function validateAIInsight(insight: Partial<AIInsight>): boolean {
   if (!insight.patientId || insight.patientId.trim() === '') {
-    return false;
+    return false
   }
 
   if (!insight.type) {
-    return false;
+    return false
   }
 
   if (!insight.title || insight.title.trim() === '') {
-    return false;
+    return false
   }
 
   if (
     insight.confidence !== undefined
     && !validateConfidenceScore(insight.confidence)
   ) {
-    return false;
+    return false
   }
 
   if (!insight.model || !insight.provider) {
-    return false;
+    return false
   }
 
-  return true;
+  return true
 }
 
 // Approve insight
@@ -242,7 +242,7 @@ export function approveInsight(
     validatedBy,
     validationNotes: notes,
     updatedAt: new Date(),
-  };
+  }
 }
 
 // Reject insight
@@ -258,21 +258,21 @@ export function rejectInsight(
     validatedBy: rejectedBy,
     rejectionReason: reason,
     updatedAt: new Date(),
-  };
+  }
 }
 
 // Anonymize AI insight for LGPD compliance
 export function anonymizeAIInsight(
   insight: Partial<AIInsight>,
 ): Partial<AIInsight> {
-  const anonymized = { ...insight };
+  const anonymized = { ...insight }
 
   if (anonymized.title) {
-    anonymized.title = `ANÁLISE ANONIMIZADA - ${Date.now()}`;
+    anonymized.title = `ANÁLISE ANONIMIZADA - ${Date.now()}`
   }
 
   if (anonymized.description) {
-    anonymized.description = `DESCRIÇÃO ANONIMIZADA - ${Date.now()}`;
+    anonymized.description = `DESCRIÇÃO ANONIMIZADA - ${Date.now()}`
   }
 
   if (anonymized.content) {
@@ -282,46 +282,46 @@ export function anonymizeAIInsight(
       recommendations: ['RECOMENDAÇÃO ANONIMIZADA'],
       riskFactors: ['FATOR DE RISCO ANONIMIZADO'],
       keyFindings: ['ACHADO ANONIMIZADO'],
-    };
+    }
   }
 
   if (anonymized.validationNotes) {
-    anonymized.validationNotes = `NOTAS ANONIMIZADAS - ${Date.now()}`;
+    anonymized.validationNotes = `NOTAS ANONIMIZADAS - ${Date.now()}`
   }
 
-  return anonymized;
+  return anonymized
 }
 
 // Calculate insight reliability score
 export function calculateReliabilityScore(insight: Partial<AIInsight>): number {
-  let score = 0;
+  let score = 0
 
   // Base confidence score (40% weight)
   if (insight.confidence) {
-    score += insight.confidence * 0.4;
+    score += insight.confidence * 0.4
   }
 
   // Model reliability (20% weight)
-  const modelReliability = getModelReliability(insight.model, insight.provider);
-  score += modelReliability * 0.2;
+  const modelReliability = getModelReliability(insight.model, insight.provider)
+  score += modelReliability * 0.2
 
   // Validation status (25% weight)
   if (insight.status === InsightStatus.VALIDATED) {
-    score += 0.25;
+    score += 0.25
   } else if (insight.status === InsightStatus.REJECTED) {
-    score += 0;
+    score += 0
   } else {
-    score += 0.1; // Pending validation
+    score += 0.1 // Pending validation
   }
 
   // Data quality (15% weight)
   if (insight.content?.sources && insight.content.sources.length > 0) {
-    score += 0.15;
+    score += 0.15
   } else {
-    score += 0.05;
+    score += 0.05
   }
 
-  return Math.min(score, 1.0);
+  return Math.min(score, 1.0)
 }
 
 // Helper function to get model reliability
@@ -332,9 +332,9 @@ function getModelReliability(model?: string, _provider?: string): number {
     'claude-3': 0.9,
     'gemini-pro': 0.85,
     local: 0.7,
-  };
+  }
 
-  return reliabilityMap[model || ''] || 0.7;
+  return reliabilityMap[model || ''] || 0.7
 }
 
 // Create AI insight with defaults
@@ -344,7 +344,7 @@ export function createAIInsight(
     'id' | 'createdAt' | 'updatedAt' | 'generatedAt' | 'status'
   >,
 ): AIInsight {
-  const now = new Date();
+  const now = new Date()
 
   return {
     ...data,
@@ -353,7 +353,7 @@ export function createAIInsight(
     generatedAt: now,
     createdAt: now,
     updatedAt: now,
-  };
+  }
 }
 
 // Get insights by patient ID
@@ -362,8 +362,8 @@ export function getInsightsByPatientId(
   patientId: string,
 ): AIInsight[] {
   return insights
-    .filter(insight => insight.patientId === patientId)
-    .sort((a, b) => b.generatedAt.getTime() - a.generatedAt.getTime());
+    .filter((insight) => insight.patientId === patientId)
+    .sort((a, b) => b.generatedAt.getTime() - a.generatedAt.getTime())
 }
 
 // Get insights by type
@@ -371,14 +371,14 @@ export function getInsightsByType(
   insights: AIInsight[],
   type: AIInsightType,
 ): AIInsight[] {
-  return insights.filter(insight => insight.type === type);
+  return insights.filter((insight) => insight.type === type)
 }
 
 // Get validated insights
 export function getValidatedInsights(insights: AIInsight[]): AIInsight[] {
   return insights.filter(
-    insight => insight.status === InsightStatus.VALIDATED,
-  );
+    (insight) => insight.status === InsightStatus.VALIDATED,
+  )
 }
 
 // Get insights requiring validation
@@ -386,19 +386,19 @@ export function getInsightsRequiringValidation(
   insights: AIInsight[],
 ): AIInsight[] {
   return insights.filter(
-    insight =>
+    (insight) =>
       insight.status === InsightStatus.GENERATED
       || insight.status === InsightStatus.PENDING_REVIEW,
-  );
+  )
 }
 
 // Calculate insights statistics
 export function calculateInsightsStatistics(insights: AIInsight[]): {
-  total: number;
-  byStatus: Record<string, number>;
-  byType: Record<string, number>;
-  averageConfidence: number;
-  averageReliability: number;
+  total: number
+  byStatus: Record<string, number>
+  byType: Record<string, number>
+  averageConfidence: number
+  averageReliability: number
 } {
   const stats = {
     total: insights.length,
@@ -406,27 +406,27 @@ export function calculateInsightsStatistics(insights: AIInsight[]): {
     byType: {} as Record<string, number>,
     averageConfidence: 0,
     averageReliability: 0,
-  };
-
-  let totalConfidence = 0;
-  let totalReliability = 0;
-
-  insights.forEach(insight => {
-    // Count by status
-    stats.byStatus[insight.status] = (stats.byStatus[insight.status] || 0) + 1;
-
-    // Count by type
-    stats.byType[insight.type] = (stats.byType[insight.type] || 0) + 1;
-
-    // Sum confidence and reliability
-    totalConfidence += insight.confidence;
-    totalReliability += calculateReliabilityScore(insight);
-  });
-
-  if (insights.length > 0) {
-    stats.averageConfidence = totalConfidence / insights.length;
-    stats.averageReliability = totalReliability / insights.length;
   }
 
-  return stats;
+  let totalConfidence = 0
+  let totalReliability = 0
+
+  insights.forEach((insight) => {
+    // Count by status
+    stats.byStatus[insight.status] = (stats.byStatus[insight.status] || 0) + 1
+
+    // Count by type
+    stats.byType[insight.type] = (stats.byType[insight.type] || 0) + 1
+
+    // Sum confidence and reliability
+    totalConfidence += insight.confidence
+    totalReliability += calculateReliabilityScore(insight)
+  })
+
+  if (insights.length > 0) {
+    stats.averageConfidence = totalConfidence / insights.length
+    stats.averageReliability = totalReliability / insights.length
+  }
+
+  return stats
 }

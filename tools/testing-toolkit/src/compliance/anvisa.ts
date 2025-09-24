@@ -5,22 +5,22 @@
  * compliance validation for medical device software.
  */
 
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest'
 
 export interface ANVISATestData {
-  deviceClassification: 'I' | 'II' | 'III' | 'IV';
-  riskLevel: 'low' | 'medium' | 'high' | 'critical';
-  clinicalWorkflows: string[];
+  deviceClassification: 'I' | 'II' | 'III' | 'IV'
+  riskLevel: 'low' | 'medium' | 'high' | 'critical'
+  clinicalWorkflows: string[]
   riskManagement: {
-    riskAssessmentCompleted: boolean;
-    mitigationStrategies: string[];
-    residualRisks: string[];
-  };
+    riskAssessmentCompleted: boolean
+    mitigationStrategies: string[]
+    residualRisks: string[]
+  }
   postMarketSurveillance: {
-    enabled: boolean;
-    reportingMechanism: string;
-    adverseEventTracking: boolean;
-  };
+    enabled: boolean
+    reportingMechanism: string
+    adverseEventTracking: boolean
+  }
 }
 
 /**
@@ -31,8 +31,8 @@ export class ANVISAValidator {
    * Validate medical device classification
    */
   static validateDeviceClassification(data: ANVISATestData): boolean {
-    const validClassifications = ['I', 'II', 'III', 'IV'];
-    return validClassifications.includes(data.deviceClassification);
+    const validClassifications = ['I', 'II', 'III', 'IV']
+    return validClassifications.includes(data.deviceClassification)
   }
 
   /**
@@ -43,81 +43,81 @@ export class ANVISAValidator {
       Array.isArray(data.clinicalWorkflows)
       && data.clinicalWorkflows.length > 0
       && data.clinicalWorkflows.every(
-        workflow => typeof workflow === 'string' && workflow.length > 0,
+        (workflow) => typeof workflow === 'string' && workflow.length > 0,
       )
-    );
+    )
   }
 
   /**
    * Validate risk management implementation
    */
   static validateRiskManagement(data: ANVISATestData): boolean {
-    const rm = data.riskManagement;
+    const rm = data.riskManagement
     return (
       rm.riskAssessmentCompleted === true
       && Array.isArray(rm.mitigationStrategies)
       && rm.mitigationStrategies.length > 0
       && Array.isArray(rm.residualRisks)
-    );
+    )
   }
 
   /**
    * Validate post-market surveillance
    */
   static validatePostMarketSurveillance(data: ANVISATestData): boolean {
-    const pms = data.postMarketSurveillance;
+    const pms = data.postMarketSurveillance
     return (
       pms.enabled === true
       && typeof pms.reportingMechanism === 'string'
       && pms.reportingMechanism.length > 0
       && pms.adverseEventTracking === true
-    );
+    )
   }
 
   /**
    * Comprehensive ANVISA validation
    */
   static validateCompliance(data: ANVISATestData): {
-    isCompliant: boolean;
-    violations: string[];
-    recommendations: string[];
+    isCompliant: boolean
+    violations: string[]
+    recommendations: string[]
   } {
-    const violations: string[] = [];
-    const recommendations: string[] = [];
+    const violations: string[] = []
+    const recommendations: string[] = []
 
     if (!this.validateDeviceClassification(data)) {
-      violations.push('Invalid medical device classification');
+      violations.push('Invalid medical device classification')
       recommendations.push(
         'Ensure device is properly classified according to ANVISA standards',
-      );
+      )
     }
 
     if (!this.validateClinicalWorkflows(data)) {
-      violations.push('Clinical workflows not properly defined');
+      violations.push('Clinical workflows not properly defined')
       recommendations.push(
         'Define and validate all clinical workflows supported by the system',
-      );
+      )
     }
 
     if (!this.validateRiskManagement(data)) {
-      violations.push('Risk management requirements not met');
+      violations.push('Risk management requirements not met')
       recommendations.push(
         'Complete risk assessment and implement mitigation strategies',
-      );
+      )
     }
 
     if (!this.validatePostMarketSurveillance(data)) {
-      violations.push('Post-market surveillance not properly implemented');
+      violations.push('Post-market surveillance not properly implemented')
       recommendations.push(
         'Implement adverse event tracking and reporting mechanisms',
-      );
+      )
     }
 
     return {
       isCompliant: violations.length === 0,
       violations,
       recommendations,
-    };
+    }
   }
 }
 
@@ -130,29 +130,29 @@ export function createANVISATestSuite(
 ) {
   describe(`ANVISA Compliance: ${testName}`, () => {
     it('should have valid device classification', () => {
-      expect(ANVISAValidator.validateDeviceClassification(testData)).toBe(true);
-    });
+      expect(ANVISAValidator.validateDeviceClassification(testData)).toBe(true)
+    })
 
     it('should have defined clinical workflows', () => {
-      expect(ANVISAValidator.validateClinicalWorkflows(testData)).toBe(true);
-    });
+      expect(ANVISAValidator.validateClinicalWorkflows(testData)).toBe(true)
+    })
 
     it('should have proper risk management', () => {
-      expect(ANVISAValidator.validateRiskManagement(testData)).toBe(true);
-    });
+      expect(ANVISAValidator.validateRiskManagement(testData)).toBe(true)
+    })
 
     it('should have post-market surveillance', () => {
       expect(ANVISAValidator.validatePostMarketSurveillance(testData)).toBe(
         true,
-      );
-    });
+      )
+    })
 
     it('should be fully ANVISA compliant', () => {
-      const result = ANVISAValidator.validateCompliance(testData);
-      expect(result.isCompliant).toBe(true);
-      expect(result.violations).toHaveLength(0);
-    });
-  });
+      const result = ANVISAValidator.validateCompliance(testData)
+      expect(result.isCompliant).toBe(true)
+      expect(result.violations).toHaveLength(0)
+    })
+  })
 }
 
 /**
@@ -189,5 +189,5 @@ export function createMockANVISAData(
       adverseEventTracking: true,
     },
     ...overrides,
-  };
+  }
 }

@@ -24,7 +24,7 @@ describe('TDDCycle', () => {
       agents: ['tdd-orchestrator', 'code-reviewer'],
       coverageThreshold: 80,
     };
-  }
+  });
 
   describe('constructor', () => {
     it('should initialize with valid config', () => {
@@ -367,71 +367,71 @@ describe('TDDCycle', () => {
       };
 
       expect(() => {
-        createTDDSuite(complexConfig, implementation
-      }).not.toThrow(
-    }
-  }
+        createTDDSuite(complexConfig, implementation);
+      }).not.toThrow();
+    });
+  });
 
   describe('error handling', () => {
     it('should handle errors in test functions gracefully', async () => {
       const cycle = new TDDCycle(config);
 
       const result = await cycle.redPhase(() => {
-        throw new Error('Unexpected error')
-      }
+        throw new Error('Unexpected error');
+      });
 
       expect(result).toBe(true); // Should pass because test failed as expected
-    }
+    });
 
     it('should handle errors in implementation functions', async () => {
       const cycle = new TDDCycle(config);
 
       const result = await cycle.greenPhase(() => {
-        throw new Error('Implementation error')
-      }
+        throw new Error('Implementation error');
+      });
 
       expect(result).toBe(false);
       expect(mockConsoleError).toHaveBeenCalledWith(
         '❌ GREEN Phase failed:',
         expect.any(Error),
       );
-    }
+    });
 
     it('should handle errors in refactoring functions', async () => {
       const cycle = new TDDCycle(config);
 
       const result = await cycle.refactorPhase(() => {
-        throw new Error('Refactoring error')
-      }
+        throw new Error('Refactoring error');
+      });
 
       expect(result).toBe(false);
       expect(mockConsoleError).toHaveBeenCalledWith(
         '❌ REFACTOR Phase failed:',
         expect.any(Error),
       );
-    }
-  }
+    });
+  });
 
   describe('phase transitions', () => {
     it('should track current phase correctly', async () => {
       const cycle = new TDDCycle(config);
 
-      expect(cycle.getResults().currentPhase).toBe('COMPLETE')
+      expect(cycle.getResults().currentPhase).toBe('COMPLETE');
 
       await cycle.redPhase(() => {
-        throw new Error('Test failure')
-      }
-      expect(cycle.getResults().currentPhase).toBe('RED')
+        throw new Error('Test failure');
+      });
+      expect(cycle.getResults().currentPhase).toBe('RED');
 
       await cycle.greenPhase(() => {
         // Implementation passes
-      }
-      expect(cycle.getResults().currentPhase).toBe('GREEN')
+      });
+      expect(cycle.getResults().currentPhase).toBe('GREEN');
 
       await cycle.refactorPhase(() => {
         // Refactoring succeeds
-      }
-      expect(cycle.getResults().currentPhase).toBe('REFACTOR')
-    }
-  }
-}
+      });
+      expect(cycle.getResults().currentPhase).toBe('REFACTOR');
+    });
+  });
+});

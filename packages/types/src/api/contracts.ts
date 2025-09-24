@@ -3,58 +3,58 @@
  * tRPC v11 API contracts with comprehensive type safety
  */
 
-import { TRPCError } from '@trpc/server';
-import { z } from 'zod';
+import { TRPCError } from '@trpc/server'
+import { z } from 'zod'
 
 // Healthcare-compliant constraint types for API contracts
 export interface HealthcareErrorMetadata {
-  patientId?: string;
-  appointmentId?: string;
-  professionalId?: string;
-  clinicId?: string;
-  timestamp?: string;
-  severity?: 'low' | 'medium' | 'high' | 'critical';
-  category?: string;
-  [key: string]: unknown;
+  patientId?: string
+  appointmentId?: string
+  professionalId?: string
+  clinicId?: string
+  timestamp?: string
+  severity?: 'low' | 'medium' | 'high' | 'critical'
+  category?: string
+  [key: string]: unknown
 }
 
 export interface ClinicSettings {
-  timezone?: string;
-  language?: string;
-  dateFormat?: string;
+  timezone?: string
+  language?: string
+  dateFormat?: string
   notifications?: {
-    email: boolean;
-    sms: boolean;
-    push: boolean;
-  };
+    email: boolean
+    sms: boolean
+    push: boolean
+  }
   appointment?: {
-    defaultDuration: number;
-    allowOverlap: boolean;
-    bufferTime: number;
-  };
+    defaultDuration: number
+    allowOverlap: boolean
+    bufferTime: number
+  }
   billing?: {
-    currency: string;
-    autoInvoice: boolean;
-  };
-  [key: string]: unknown;
+    currency: string
+    autoInvoice: boolean
+  }
+  [key: string]: unknown
 }
 
 export interface ClinicData {
-  id: string;
-  name: string;
-  cnpj?: string;
-  healthLicenseNumber?: string;
+  id: string
+  name: string
+  cnpj?: string
+  healthLicenseNumber?: string
   address?: {
-    street: string;
-    number: string;
-    city: string;
-    state: string;
-    zip: string;
-  };
-  settings?: ClinicSettings;
-  createdAt?: string;
-  updatedAt?: string;
-  isActive?: boolean;
+    street: string
+    number: string
+    city: string
+    state: string
+    zip: string
+  }
+  settings?: ClinicSettings
+  createdAt?: string
+  updatedAt?: string
+  isActive?: boolean
 }
 
 // Zod schemas for validation
@@ -84,7 +84,7 @@ export const ClinicSettingsSchema = z
       })
       .optional(),
   })
-  .passthrough();
+  .passthrough()
 
 export const ClinicDataSchema = z.object({
   id: z.string(),
@@ -104,7 +104,7 @@ export const ClinicDataSchema = z.object({
   createdAt: z.string().optional(),
   updatedAt: z.string().optional(),
   isActive: z.boolean().optional(),
-});
+})
 // =======================
 // Base API Response Types
 // =======================
@@ -114,7 +114,7 @@ export const BaseResponseSchema = z.object({
   message: z.string().optional(),
   timestamp: z.string().datetime(),
   requestId: z.string().uuid().optional(),
-});
+})
 
 // Request schemas for professionals
 export const CreateProfessionalRequestSchema = z.object({
@@ -142,7 +142,7 @@ export const CreateProfessionalRequestSchema = z.object({
       }),
     )
     .optional(),
-});
+})
 
 export const UpdateProfessionalRequestSchema = z.object({
   fullName: z.string().min(2).max(100).optional(),
@@ -167,13 +167,13 @@ export const UpdateProfessionalRequestSchema = z.object({
       }),
     )
     .optional(),
-});
+})
 export const PaginationSchema = z.object({
   page: z.number().int().min(1).default(1),
   limit: z.number().int().min(1).max(100).default(20),
   total: z.number().int().min(0).optional(),
   totalPages: z.number().int().min(0).optional(),
-});
+})
 
 export const ErrorResponseSchema = BaseResponseSchema.extend({
   error: z.object({
@@ -183,7 +183,7 @@ export const ErrorResponseSchema = BaseResponseSchema.extend({
     stack: z.string().optional(),
   }),
   success: z.literal(false),
-});
+})
 
 // =======================
 // Healthcare Data Types
@@ -211,7 +211,7 @@ export const PatientContractSchema = z.object({
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime(),
   isActive: z.boolean().default(true),
-});
+})
 
 export const AppointmentContractSchema = z.object({
   id: z.string().uuid(),
@@ -244,7 +244,7 @@ export const AppointmentContractSchema = z.object({
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime(),
   createdBy: z.string().uuid(),
-});
+})
 
 export const ProfessionalContractSchema = z.object({
   id: z.string().uuid(),
@@ -274,12 +274,12 @@ export const ProfessionalContractSchema = z.object({
   // Audit
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime(),
-});
+})
 // Response schemas for professionals
 export const ProfessionalResponseSchema = BaseResponseSchema.extend({
   data: ProfessionalContractSchema,
   success: z.literal(true),
-});
+})
 
 export const ProfessionalsListResponseSchema = BaseResponseSchema.extend({
   data: z.object({
@@ -287,7 +287,7 @@ export const ProfessionalsListResponseSchema = BaseResponseSchema.extend({
     pagination: PaginationSchema,
   }),
   success: z.literal(true),
-});
+})
 
 // =======================
 // AI Integration Types
@@ -318,7 +318,7 @@ export const AIChatContractSchema = z.object({
   // Audit
   createdAt: z.string().datetime(),
   processedAt: z.string().datetime().optional(),
-});
+})
 
 // =======================
 // AI Request/Response Schemas
@@ -347,7 +347,7 @@ export const AIRequestSchema = z.object({
       temperature: z.number().min(0).max(2).default(0.7),
     })
     .optional(),
-});
+})
 
 export const AIResponseSchema = BaseResponseSchema.extend({
   data: z.object({
@@ -361,7 +361,7 @@ export const AIResponseSchema = BaseResponseSchema.extend({
     model: z.string(),
     confidence: z.number().min(0).max(1).optional(),
   }),
-});
+})
 
 export const AIChatResponseSchema = BaseResponseSchema.extend({
   data: z.object({
@@ -370,7 +370,7 @@ export const AIChatResponseSchema = BaseResponseSchema.extend({
     totalMessages: z.number().int(),
     conversationSummary: z.string().optional(),
   }),
-});
+})
 
 export const AIHealthcheckResponseSchema = BaseResponseSchema.extend({
   data: z.object({
@@ -390,7 +390,7 @@ export const AIHealthcheckResponseSchema = BaseResponseSchema.extend({
     }),
     lastCheck: z.string().datetime(),
   }),
-});
+})
 
 // =======================
 // Request/Response Schemas
@@ -407,17 +407,17 @@ export const CreatePatientRequestSchema = z.object({
     .optional(),
   lgpdConsent: z.boolean(),
   clinicId: z.string().uuid(),
-});
+})
 
 export const UpdatePatientRequestSchema = CreatePatientRequestSchema.partial().extend({
   id: z.string().uuid(),
-});
+})
 
 export const GetPatientRequestSchema = z.object({
   id: z.string().uuid(),
   includeAppointments: z.boolean().default(false),
   includeMedicalHistory: z.boolean().default(false),
-});
+})
 
 export const ListPatientsRequestSchema = PaginationSchema.extend({
   clinicId: z.string().uuid(),
@@ -425,7 +425,7 @@ export const ListPatientsRequestSchema = PaginationSchema.extend({
   status: z.enum(['active', 'inactive', 'all']).default('active'),
   sortBy: z.enum(['name', 'createdAt', 'lastAppointment']).default('name'),
   sortOrder: z.enum(['asc', 'desc']).default('asc'),
-});
+})
 
 export const CreateAppointmentRequestSchema = z.object({
   patientId: z.string().uuid(),
@@ -436,7 +436,7 @@ export const CreateAppointmentRequestSchema = z.object({
   treatmentType: z.string().min(1).max(100),
   priority: z.enum(['routine', 'urgent', 'emergency']).default('routine'),
   notes: z.string().max(2000).optional(),
-});
+})
 
 export const UpdateAppointmentRequestSchema = CreateAppointmentRequestSchema.partial().extend({
   id: z.string().uuid(),
@@ -450,7 +450,7 @@ export const UpdateAppointmentRequestSchema = CreateAppointmentRequestSchema.par
       'no_show',
     ])
     .optional(),
-});
+})
 
 // =======================
 // Response Schemas
@@ -459,7 +459,7 @@ export const UpdateAppointmentRequestSchema = CreateAppointmentRequestSchema.par
 export const PatientResponseSchema = BaseResponseSchema.extend({
   data: PatientContractSchema,
   success: z.literal(true),
-});
+})
 
 export const PatientsListResponseSchema = BaseResponseSchema.extend({
   data: z.object({
@@ -467,12 +467,12 @@ export const PatientsListResponseSchema = BaseResponseSchema.extend({
     pagination: PaginationSchema,
   }),
   success: z.literal(true),
-});
+})
 
 export const AppointmentResponseSchema = BaseResponseSchema.extend({
   data: AppointmentContractSchema,
   success: z.literal(true),
-});
+})
 
 export const AppointmentsListResponseSchema = BaseResponseSchema.extend({
   data: z.object({
@@ -480,7 +480,7 @@ export const AppointmentsListResponseSchema = BaseResponseSchema.extend({
     pagination: PaginationSchema,
   }),
   success: z.literal(true),
-});
+})
 
 // =======================
 // Error Handling Types
@@ -503,7 +503,7 @@ export const HealthcareErrorCodes = z.enum([
   'TOO_MANY_REQUESTS',
   'SERVICE_UNAVAILABLE',
   'CONTENT_FILTERED',
-]);
+])
 
 export class HealthcareTRPCError extends TRPCError {
   constructor(
@@ -526,7 +526,7 @@ export class HealthcareTRPCError extends TRPCError {
         metadata,
         timestamp: new Date().toISOString(),
       },
-    });
+    })
   }
 }
 
@@ -535,9 +535,9 @@ export class HealthcareTRPCError extends TRPCError {
  * Replace with your project's canonical error type if/when available.
  */
 export class HealthcareError extends Error {
-  public status: string;
-  public codeName?: string;
-  public meta?: HealthcareErrorMetadata;
+  public status: string
+  public codeName?: string
+  public meta?: HealthcareErrorMetadata
 
   constructor(
     status: string,
@@ -545,13 +545,13 @@ export class HealthcareError extends Error {
     codeName?: string,
     meta?: HealthcareErrorMetadata,
   ) {
-    super(message);
-    this.name = 'HealthcareError';
-    this.status = status;
-    if (codeName !== undefined) this.codeName = codeName;
-    if (meta !== undefined) this.meta = meta;
+    super(message)
+    this.name = 'HealthcareError'
+    this.status = status
+    if (codeName !== undefined) this.codeName = codeName
+    if (meta !== undefined) this.meta = meta
     // preserve prototype chain
-    Object.setPrototypeOf(this, new.target.prototype);
+    Object.setPrototypeOf(this, new.target.prototype)
   }
 }
 
@@ -559,35 +559,35 @@ export class HealthcareError extends Error {
 // Type Exports
 // =======================
 
-export type BaseResponse = z.infer<typeof BaseResponseSchema>;
-export type ErrorResponse = z.infer<typeof ErrorResponseSchema>;
-export type Pagination = z.infer<typeof PaginationSchema>;
+export type BaseResponse = z.infer<typeof BaseResponseSchema>
+export type ErrorResponse = z.infer<typeof ErrorResponseSchema>
+export type Pagination = z.infer<typeof PaginationSchema>
 
-export type PatientContract = z.infer<typeof PatientContractSchema>;
-export type AppointmentContract = z.infer<typeof AppointmentContractSchema>;
-export type ProfessionalContract = z.infer<typeof ProfessionalContractSchema>;
-export type AIChatContract = z.infer<typeof AIChatContractSchema>;
+export type PatientContract = z.infer<typeof PatientContractSchema>
+export type AppointmentContract = z.infer<typeof AppointmentContractSchema>
+export type ProfessionalContract = z.infer<typeof ProfessionalContractSchema>
+export type AIChatContract = z.infer<typeof AIChatContractSchema>
 
-export type CreatePatientRequest = z.infer<typeof CreatePatientRequestSchema>;
-export type UpdatePatientRequest = z.infer<typeof UpdatePatientRequestSchema>;
-export type GetPatientRequest = z.infer<typeof GetPatientRequestSchema>;
-export type ListPatientsRequest = z.infer<typeof ListPatientsRequestSchema>;
+export type CreatePatientRequest = z.infer<typeof CreatePatientRequestSchema>
+export type UpdatePatientRequest = z.infer<typeof UpdatePatientRequestSchema>
+export type GetPatientRequest = z.infer<typeof GetPatientRequestSchema>
+export type ListPatientsRequest = z.infer<typeof ListPatientsRequestSchema>
 
 export type CreateAppointmentRequest = z.infer<
   typeof CreateAppointmentRequestSchema
->;
+>
 export type UpdateAppointmentRequest = z.infer<
   typeof UpdateAppointmentRequestSchema
->;
+>
 
-export type PatientResponse = z.infer<typeof PatientResponseSchema>;
-export type PatientsListResponse = z.infer<typeof PatientsListResponseSchema>;
-export type AppointmentResponse = z.infer<typeof AppointmentResponseSchema>;
+export type PatientResponse = z.infer<typeof PatientResponseSchema>
+export type PatientsListResponse = z.infer<typeof PatientsListResponseSchema>
+export type AppointmentResponse = z.infer<typeof AppointmentResponseSchema>
 export type AppointmentsListResponse = z.infer<
   typeof AppointmentsListResponseSchema
->;
+>
 
-export type HealthcareErrorCode = z.infer<typeof HealthcareErrorCodes>;
+export type HealthcareErrorCode = z.infer<typeof HealthcareErrorCodes>
 
 // =======================
 // Minimal, consumable schemas and error class used by the API.
@@ -597,7 +597,7 @@ export type HealthcareErrorCode = z.infer<typeof HealthcareErrorCodes>;
 export const MinimalPaginationSchema = z.object({
   page: z.number().min(1).default(1),
   limit: z.number().min(1).default(20),
-});
+})
 
 export const CreateClinicRequestSchema = z.object({
   name: z.string(),
@@ -611,7 +611,7 @@ export const CreateClinicRequestSchema = z.object({
     zip: z.string().optional(),
   }),
   settings: z.record(z.unknown()).optional(),
-});
+})
 
 export const UpdateClinicRequestSchema = z
   .object({
@@ -630,7 +630,7 @@ export const UpdateClinicRequestSchema = z
       .optional(),
     settings: z.record(z.unknown()).optional(),
   })
-  .strict();
+  .strict()
 
 export const ClinicResponseSchema = z.object({
   success: z.literal(true),
@@ -638,7 +638,7 @@ export const ClinicResponseSchema = z.object({
   message: z.string().optional(),
   timestamp: z.string().optional(),
   requestId: z.string().optional(),
-});
+})
 
 export const ClinicsListResponseSchema = z.object({
   success: z.literal(true),
@@ -653,4 +653,4 @@ export const ClinicsListResponseSchema = z.object({
   }),
   timestamp: z.string().optional(),
   requestId: z.string().optional(),
-});
+})

@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute } from '@tanstack/react-router'
 import {
   BarChart3,
   Bell,
@@ -14,62 +14,62 @@ import {
   UserPlus,
   Users,
   Video,
-} from 'lucide-react';
-import * as React from 'react';
-import { useEffect, useState } from 'react';
+} from 'lucide-react'
+import * as React from 'react'
+import { useEffect, useState } from 'react'
 
 export const Route = createFileRoute('/coordination/')({
   component: CoordinationDashboard,
-});
+})
 
 interface CoordinationStats {
-  totalTeams: number;
-  activeReferrals: number;
-  pendingSessions: number;
-  unreadMessages: number;
-  supervisionRequests: number;
-  protocolExecutions: number;
+  totalTeams: number
+  activeReferrals: number
+  pendingSessions: number
+  unreadMessages: number
+  supervisionRequests: number
+  protocolExecutions: number
 }
 
 interface Team {
-  id: string;
-  name: string;
-  teamType: string;
-  memberCount: number;
-  isActive: boolean;
-  createdAt: string;
+  id: string
+  name: string
+  teamType: string
+  memberCount: number
+  isActive: boolean
+  createdAt: string
 }
 
 interface Referral {
-  id: string;
-  patientId: string;
-  patientName: string;
-  referringProfessional: string;
-  referredProfessional: string;
-  referralType: string;
-  urgencyLevel: string;
-  status: string;
-  createdAt: string;
+  id: string
+  patientId: string
+  patientName: string
+  referringProfessional: string
+  referredProfessional: string
+  referralType: string
+  urgencyLevel: string
+  status: string
+  createdAt: string
 }
 
 interface Session {
-  id: string;
-  title: string;
-  patientName: string;
-  sessionType: string;
-  scheduledStart: string;
-  status: string;
-  teamName: string;
+  id: string
+  title: string
+  patientName: string
+  sessionType: string
+  scheduledStart: string
+  status: string
+  teamName: string
 }
 
 interface Thread {
-  id: string;
-  subject: string;
-  contextType: string;
-  priority: string;
-  messageCount: number;
-  lastMessage: string;
-  createdAt: string;
+  id: string
+  subject: string
+  contextType: string
+  priority: string
+  messageCount: number
+  lastMessage: string
+  createdAt: string
 }
 
 function CoordinationDashboard() {
@@ -80,14 +80,14 @@ function CoordinationDashboard() {
     unreadMessages: 0,
     supervisionRequests: 0,
     protocolExecutions: 0,
-  });
+  })
 
-  const [teams, setTeams] = useState<Team[]>([]);
-  const [referrals, setReferrals] = useState<Referral[]>([]);
-  const [sessions, setSessions] = useState<Session[]>([]);
-  const [threads, setThreads] = useState<Thread[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [selectedTab, setSelectedTab] = useState('overview');
+  const [teams, setTeams] = useState<Team[]>([])
+  const [referrals, setReferrals] = useState<Referral[]>([])
+  const [sessions, setSessions] = useState<Session[]>([])
+  const [threads, setThreads] = useState<Thread[]>([])
+  const [loading, setLoading] = useState(true)
+  const [selectedTab, setSelectedTab] = useState('overview')
 
   // Mock data for demonstration
   useEffect(() => {
@@ -100,7 +100,7 @@ function CoordinationDashboard() {
         unreadMessages: 23,
         supervisionRequests: 3,
         protocolExecutions: 7,
-      });
+      })
 
       setTeams([
         {
@@ -127,7 +127,7 @@ function CoordinationDashboard() {
           isActive: true,
           createdAt: '2024-01-20',
         },
-      ]);
+      ])
 
       setReferrals([
         {
@@ -152,7 +152,7 @@ function CoordinationDashboard() {
           status: 'accepted',
           createdAt: '2024-03-14',
         },
-      ]);
+      ])
 
       setSessions([
         {
@@ -173,7 +173,7 @@ function CoordinationDashboard() {
           status: 'in_progress',
           teamName: 'Especialistas em Preenchimento',
         },
-      ]);
+      ])
 
       setThreads([
         {
@@ -194,103 +194,103 @@ function CoordinationDashboard() {
           lastMessage: 'O protocolo foi atualizado com as novas diretrizes',
           createdAt: '2024-03-14',
         },
-      ]);
+      ])
 
-      setLoading(false);
-    }, 1000);
-  }, []);
+      setLoading(false)
+    }, 1000)
+  }, [])
 
   const getUrgencyColor = (urgency: string) => {
     switch (urgency) {
       case 'emergency':
-        return 'text-red-600 bg-red-100';
+        return 'text-red-600 bg-red-100'
       case 'high':
-        return 'text-orange-600 bg-orange-100';
+        return 'text-orange-600 bg-orange-100'
       case 'medium':
-        return 'text-yellow-600 bg-yellow-100';
+        return 'text-yellow-600 bg-yellow-100'
       case 'low':
-        return 'text-green-600 bg-green-100';
+        return 'text-green-600 bg-green-100'
       default:
-        return 'text-gray-600 bg-gray-100';
+        return 'text-gray-600 bg-gray-100'
     }
-  };
+  }
 
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'scheduled':
-        return 'text-blue-600 bg-blue-100';
+        return 'text-blue-600 bg-blue-100'
       case 'in_progress':
-        return 'text-green-600 bg-green-100';
+        return 'text-green-600 bg-green-100'
       case 'completed':
-        return 'text-gray-600 bg-gray-100';
+        return 'text-gray-600 bg-gray-100'
       case 'cancelled':
-        return 'text-red-600 bg-red-100';
+        return 'text-red-600 bg-red-100'
       case 'pending':
-        return 'text-yellow-600 bg-yellow-100';
+        return 'text-yellow-600 bg-yellow-100'
       case 'accepted':
-        return 'text-green-600 bg-green-100';
+        return 'text-green-600 bg-green-100'
       case 'declined':
-        return 'text-red-600 bg-red-100';
+        return 'text-red-600 bg-red-100'
       default:
-        return 'text-gray-600 bg-gray-100';
+        return 'text-gray-600 bg-gray-100'
     }
-  };
+  }
 
   const getTeamTypeLabel = (type: string) => {
     switch (type) {
       case 'multidisciplinary':
-        return 'Multidisciplinar';
+        return 'Multidisciplinar'
       case 'specialized':
-        return 'Especializada';
+        return 'Especializada'
       case 'consultation':
-        return 'Consulta';
+        return 'Consulta'
       case 'emergency':
-        return 'Emergência';
+        return 'Emergência'
       default:
-        return type;
+        return type
     }
-  };
+  }
 
   const getReferralTypeLabel = (type: string) => {
     switch (type) {
       case 'consultation':
-        return 'Consulta';
+        return 'Consulta'
       case 'treatment':
-        return 'Tratamento';
+        return 'Tratamento'
       case 'assessment':
-        return 'Avaliação';
+        return 'Avaliação'
       case 'supervision':
-        return 'Supervisão';
+        return 'Supervisão'
       case 'second_opinion':
-        return 'Segunda Opinião';
+        return 'Segunda Opinião'
       default:
-        return type;
+        return type
     }
-  };
+  }
 
   const getSessionTypeLabel = (type: string) => {
     switch (type) {
       case 'planning':
-        return 'Planejamento';
+        return 'Planejamento'
       case 'treatment':
-        return 'Tratamento';
+        return 'Tratamento'
       case 'assessment':
-        return 'Avaliação';
+        return 'Avaliação'
       case 'follow_up':
-        return 'Acompanhamento';
+        return 'Acompanhamento'
       case 'emergency':
-        return 'Emergência';
+        return 'Emergência'
       default:
-        return type;
+        return type
     }
-  };
+  }
 
   if (loading) {
     return (
       <div className='flex items-center justify-center h-screen'>
         <div className='animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600'></div>
       </div>
-    );
+    )
   }
 
   return (
@@ -459,7 +459,7 @@ function CoordinationDashboard() {
         {/* Tabs */}
         <div className='border-b border-gray-200 mb-6'>
           <nav className='-mb-px flex space-x-8'>
-            {['overview', 'teams', 'referrals', 'sessions', 'messages'].map(tab => (
+            {['overview', 'teams', 'referrals', 'sessions', 'messages'].map((tab) => (
               <button
                 key={tab}
                 onClick={() => setSelectedTab(tab)}
@@ -488,7 +488,7 @@ function CoordinationDashboard() {
                 <h3 className='text-lg font-medium text-gray-900'>Equipes Recentes</h3>
               </div>
               <div className='divide-y divide-gray-200'>
-                {teams.slice(0, 3).map(team => (
+                {teams.slice(0, 3).map((team) => (
                   <div key={team.id} className='px-6 py-4'>
                     <div className='flex items-center justify-between'>
                       <div>
@@ -515,7 +515,7 @@ function CoordinationDashboard() {
                 <h3 className='text-lg font-medium text-gray-900'>Encaminhamentos Recentes</h3>
               </div>
               <div className='divide-y divide-gray-200'>
-                {referrals.slice(0, 3).map(referral => (
+                {referrals.slice(0, 3).map((referral) => (
                   <div key={referral.id} className='px-6 py-4'>
                     <div className='flex items-center justify-between'>
                       <div>
@@ -548,7 +548,7 @@ function CoordinationDashboard() {
                 <h3 className='text-lg font-medium text-gray-900'>Próximas Sessões</h3>
               </div>
               <div className='divide-y divide-gray-200'>
-                {sessions.slice(0, 3).map(session => (
+                {sessions.slice(0, 3).map((session) => (
                   <div key={session.id} className='px-6 py-4'>
                     <div className='flex items-center justify-between'>
                       <div>
@@ -581,7 +581,7 @@ function CoordinationDashboard() {
                 <h3 className='text-lg font-medium text-gray-900'>Discussões Recentes</h3>
               </div>
               <div className='divide-y divide-gray-200'>
-                {threads.slice(0, 3).map(thread => (
+                {threads.slice(0, 3).map((thread) => (
                   <div key={thread.id} className='px-6 py-4'>
                     <div className='flex items-center justify-between'>
                       <div className='flex-1'>
@@ -612,7 +612,7 @@ function CoordinationDashboard() {
               </button>
             </div>
             <div className='divide-y divide-gray-200'>
-              {teams.map(team => (
+              {teams.map((team) => (
                 <div key={team.id} className='px-6 py-4'>
                   <div className='flex items-center justify-between'>
                     <div>
@@ -651,7 +651,7 @@ function CoordinationDashboard() {
               </button>
             </div>
             <div className='divide-y divide-gray-200'>
-              {referrals.map(referral => (
+              {referrals.map((referral) => (
                 <div key={referral.id} className='px-6 py-4'>
                   <div className='flex items-center justify-between'>
                     <div>
@@ -706,7 +706,7 @@ function CoordinationDashboard() {
               </button>
             </div>
             <div className='divide-y divide-gray-200'>
-              {sessions.map(session => (
+              {sessions.map((session) => (
                 <div key={session.id} className='px-6 py-4'>
                   <div className='flex items-center justify-between'>
                     <div>
@@ -760,7 +760,7 @@ function CoordinationDashboard() {
               </button>
             </div>
             <div className='divide-y divide-gray-200'>
-              {threads.map(thread => (
+              {threads.map((thread) => (
                 <div key={thread.id} className='px-6 py-4'>
                   <div className='flex items-center justify-between'>
                     <div className='flex-1'>
@@ -802,5 +802,5 @@ function CoordinationDashboard() {
         )}
       </div>
     </div>
-  );
+  )
 }

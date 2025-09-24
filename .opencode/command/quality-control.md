@@ -1134,18 +1134,18 @@ Type safety
 
 ```ts
 // Before
-type Handler = (c: any) => any;
+type Handler = (c: any) => any
 // After
-type Handler = (c: import('hono').Context) => Response | Promise<Response>;
+type Handler = (c: import('hono').Context) => Response | Promise<Response>
 ```
 
 ESM imports
 
 ```ts
 // Before
-const { execSync } = require('node:child_process');
+const { execSync } = require('node:child_process')
 // After
-import { execSync } from 'node:child_process';
+import { execSync } from 'node:child_process'
 ```
 
 ---

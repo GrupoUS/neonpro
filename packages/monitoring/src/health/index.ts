@@ -1,2 +1,2 @@
-export * from './checks';
-export { initializeHealthChecks } from './init';
+export * from './checks'
+export { initializeHealthChecks } from './init'

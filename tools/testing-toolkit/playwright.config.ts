@@ -1,4 +1,4 @@
-import { defineConfig, devices } from '@playwright/test';
+import { defineConfig, devices } from '@playwright/test'
 
 /**
  * Playwright Configuration for NeonPro Testing Toolkit
@@ -74,4 +74,4 @@ export default defineConfig({
 
   // Output directories
   outputDir: 'coverage/playwright-artifacts',
-});
+})

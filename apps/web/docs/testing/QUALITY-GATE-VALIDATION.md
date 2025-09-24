@@ -183,138 +183,138 @@ jobs:
 // scripts/quality-score-calculator.ts
 export interface QualityMetrics {
   coverage: {
-    overall: number;
-    critical: number;
-    integration: number;
-    e2e: number;
-  };
+    overall: number
+    critical: number
+    integration: number
+    e2e: number
+  }
   performance: {
-    executionTime: number;
-    memoryUsage: number;
-    flakinessRate: number;
-  };
+    executionTime: number
+    memoryUsage: number
+    flakinessRate: number
+  }
   security: {
-    vulnerabilities: number;
-    complianceScore: number;
-    dataProtectionScore: number;
-  };
+    vulnerabilities: number
+    complianceScore: number
+    dataProtectionScore: number
+  }
   maintainability: {
-    documentation: number;
-    codeQuality: number;
-    complexity: number;
-  };
+    documentation: number
+    codeQuality: number
+    complexity: number
+  }
 }
 
 export class QualityScoreCalculator {
   static calculate(metrics: QualityMetrics): {
-    score: number;
-    rating: 'excellent' | 'very-good' | 'good' | 'needs-improvement' | 'failing';
-    details: Record<string, number>;
-    recommendations: string[];
+    score: number
+    rating: 'excellent' | 'very-good' | 'good' | 'needs-improvement' | 'failing'
+    details: Record<string, number>
+    recommendations: string[]
   } {
     const weights = {
       coverage: 0.3,
       performance: 0.25,
       security: 0.3,
       maintainability: 0.15,
-    };
+    }
 
     const scores = {
       coverage: this.calculateCoverageScore(metrics.coverage),
       performance: this.calculatePerformanceScore(metrics.performance),
       security: this.calculateSecurityScore(metrics.security),
       maintainability: this.calculateMaintainabilityScore(metrics.maintainability),
-    };
+    }
 
     const weightedScore = scores.coverage * weights.coverage
       + scores.performance * weights.performance
       + scores.security * weights.security
-      + scores.maintainability * weights.maintainability;
+      + scores.maintainability * weights.maintainability
 
     return {
       score: Math.round(weightedScore),
       rating: this.getRating(weightedScore),
       details: scores,
       recommendations: this.generateRecommendations(metrics, scores),
-    };
+    }
   }
 
   private static calculateCoverageScore(coverage: QualityMetrics['coverage']): number {
-    const overallScore = Math.min(coverage.overall / 0.85, 1) * 100;
-    const criticalScore = Math.min(coverage.critical / 0.95, 1) * 100;
-    const integrationScore = Math.min(coverage.integration / 0.90, 1) * 100;
-    const e2eScore = Math.min(coverage.e2e / 0.80, 1) * 100;
+    const overallScore = Math.min(coverage.overall / 0.85, 1) * 100
+    const criticalScore = Math.min(coverage.critical / 0.95, 1) * 100
+    const integrationScore = Math.min(coverage.integration / 0.90, 1) * 100
+    const e2eScore = Math.min(coverage.e2e / 0.80, 1) * 100
 
-    return (overallScore + criticalScore + integrationScore + e2eScore) / 4;
+    return (overallScore + criticalScore + integrationScore + e2eScore) / 4
   }
 
   private static calculatePerformanceScore(performance: QualityMetrics['performance']): number {
     const executionScore = performance.executionTime <= 120
       ? 100
-      : Math.max(0, 100 - (performance.executionTime - 120) / 2);
+      : Math.max(0, 100 - (performance.executionTime - 120) / 2)
     const memoryScore = performance.memoryUsage <= 500
       ? 100
-      : Math.max(0, 100 - (performance.memoryUsage - 500) / 5);
-    const flakinessScore = Math.max(0, 100 - performance.flakinessRate * 100);
+      : Math.max(0, 100 - (performance.memoryUsage - 500) / 5)
+    const flakinessScore = Math.max(0, 100 - performance.flakinessRate * 100)
 
-    return (executionScore + memoryScore + flakinessScore) / 3;
+    return (executionScore + memoryScore + flakinessScore) / 3
   }
 
   private static calculateSecurityScore(security: QualityMetrics['security']): number {
     const vulnerabilityScore = security.vulnerabilities === 0
       ? 100
-      : Math.max(0, 100 - security.vulnerabilities * 20);
-    const complianceScore = security.complianceScore;
-    const dataProtectionScore = security.dataProtectionScore;
+      : Math.max(0, 100 - security.vulnerabilities * 20)
+    const complianceScore = security.complianceScore
+    const dataProtectionScore = security.dataProtectionScore
 
-    return (vulnerabilityScore + complianceScore + dataProtectionScore) / 3;
+    return (vulnerabilityScore + complianceScore + dataProtectionScore) / 3
   }
 
   private static calculateMaintainabilityScore(
     maintainability: QualityMetrics['maintainability'],
   ): number {
-    const documentationScore = maintainability.documentation;
-    const codeQualityScore = maintainability.codeQuality;
+    const documentationScore = maintainability.documentation
+    const codeQualityScore = maintainability.codeQuality
     const complexityScore = maintainability.complexity <= 10
       ? 100
-      : Math.max(0, 100 - (maintainability.complexity - 10) * 5);
+      : Math.max(0, 100 - (maintainability.complexity - 10) * 5)
 
-    return (documentationScore + codeQualityScore + complexityScore) / 3;
+    return (documentationScore + codeQualityScore + complexityScore) / 3
   }
 
   private static getRating(
     score: number,
   ): 'excellent' | 'very-good' | 'good' | 'needs-improvement' | 'failing' {
-    if (score >= 95) return 'excellent';
-    if (score >= 85) return 'very-good';
-    if (score >= 70) return 'good';
-    if (score >= 50) return 'needs-improvement';
-    return 'failing';
+    if (score >= 95) return 'excellent'
+    if (score >= 85) return 'very-good'
+    if (score >= 70) return 'good'
+    if (score >= 50) return 'needs-improvement'
+    return 'failing'
   }
 
   private static generateRecommendations(
     metrics: QualityMetrics,
     scores: Record<string, number>,
   ): string[] {
-    const recommendations: string[] = [];
+    const recommendations: string[] = []
 
     if (scores.coverage < 85) {
-      recommendations.push('Improve test coverage, especially for critical paths');
+      recommendations.push('Improve test coverage, especially for critical paths')
     }
 
     if (scores.performance < 85) {
-      recommendations.push('Optimize test execution time and memory usage');
+      recommendations.push('Optimize test execution time and memory usage')
     }
 
     if (scores.security < 95) {
-      recommendations.push('Address security vulnerabilities and compliance gaps');
+      recommendations.push('Address security vulnerabilities and compliance gaps')
     }
 
     if (scores.maintainability < 80) {
-      recommendations.push('Improve documentation and reduce code complexity');
+      recommendations.push('Improve documentation and reduce code complexity')
     }
 
-    return recommendations;
+    return recommendations
   }
 }
 ```
@@ -326,35 +326,35 @@ export class QualityScoreCalculator {
 ```typescript
 // src/quality/dashboard-metrics.ts
 export interface QualityDashboardMetrics {
-  timestamp: string;
-  overallScore: number;
-  rating: string;
+  timestamp: string
+  overallScore: number
+  rating: string
   categories: {
-    coverage: QualityCategoryMetrics;
-    performance: QualityCategoryMetrics;
-    security: QualityCategoryMetrics;
-    maintainability: QualityCategoryMetrics;
-  };
+    coverage: QualityCategoryMetrics
+    performance: QualityCategoryMetrics
+    security: QualityCategoryMetrics
+    maintainability: QualityCategoryMetrics
+  }
   trends: {
-    daily: TrendData[];
-    weekly: TrendData[];
-    monthly: TrendData[];
-  };
-  alerts: QualityAlert[];
+    daily: TrendData[]
+    weekly: TrendData[]
+    monthly: TrendData[]
+  }
+  alerts: QualityAlert[]
 }
 
 export interface QualityCategoryMetrics {
-  score: number;
-  status: 'passing' | 'warning' | 'failing';
-  checks: QualityCheck[];
+  score: number
+  status: 'passing' | 'warning' | 'failing'
+  checks: QualityCheck[]
 }
 
 export interface QualityCheck {
-  name: string;
-  value: number;
-  threshold: number;
-  status: 'pass' | 'fail' | 'warning';
-  description: string;
+  name: string
+  value: number
+  threshold: number
+  status: 'pass' | 'fail' | 'warning'
+  description: string
 }
 
 export class QualityDashboardService {
@@ -365,15 +365,15 @@ export class QualityDashboardService {
       this.getPerformanceMetrics(),
       this.getSecurityMetrics(),
       this.getMaintainabilityMetrics(),
-    ]);
+    ])
 
-    const calculator = new QualityScoreCalculator();
+    const calculator = new QualityScoreCalculator()
     const result = calculator.calculate({
       coverage,
       performance,
       security,
       maintainability,
-    });
+    })
 
     return {
       timestamp: new Date().toISOString(),
@@ -391,7 +391,7 @@ export class QualityDashboardService {
       },
       trends: await this.getTrendData(),
       alerts: this.generateAlerts(result),
-    };
+    }
   }
 
   private async getTrendData(): Promise<
@@ -402,11 +402,11 @@ export class QualityDashboardService {
       daily: await this.getDailyTrends(),
       weekly: await this.getWeeklyTrends(),
       monthly: await this.getMonthlyTrends(),
-    };
+    }
   }
 
   private generateAlerts(result: any): QualityAlert[] {
-    const alerts: QualityAlert[] = [];
+    const alerts: QualityAlert[] = []
 
     if (result.score < 70) {
       alerts.push({
@@ -414,7 +414,7 @@ export class QualityDashboardService {
         message: 'Quality score below acceptable threshold',
         severity: 'high',
         timestamp: new Date().toISOString(),
-      });
+      })
     }
 
     if (result.details.security < 90) {
@@ -423,10 +423,10 @@ export class QualityDashboardService {
         message: 'Security quality requires attention',
         severity: 'high',
         timestamp: new Date().toISOString(),
-      });
+      })
     }
 
-    return alerts;
+    return alerts
   }
 }
 ```
@@ -476,8 +476,8 @@ _Generated automatically by Quality Gate System_
 // scripts/weekly-quality-report.ts
 export class WeeklyQualityReport {
   async generate(): Promise<string> {
-    const weekData = await this.getWeekData();
-    const previousWeekData = await this.getPreviousWeekData();
+    const weekData = await this.getWeekData()
+    const previousWeekData = await this.getPreviousWeekData()
 
     const analysis = {
       overallTrend: this.calculateTrend(weekData.overallScore, previousWeekData.overallScore),
@@ -496,34 +496,34 @@ export class WeeklyQualityReport {
       achievements: this.identifyAchievements(weekData),
       concerns: this.identifyConcerns(weekData, previousWeekData),
       recommendations: this.generateRecommendations(weekData),
-    };
+    }
 
-    return this.formatReport(analysis);
+    return this.formatReport(analysis)
   }
 
   private calculateTrend(current: number, previous: number): 'improving' | 'stable' | 'declining' {
-    const change = ((current - previous) / previous) * 100;
-    if (change > 2) return 'improving';
-    if (change < -2) return 'declining';
-    return 'stable';
+    const change = ((current - previous) / previous) * 100
+    if (change > 2) return 'improving'
+    if (change < -2) return 'declining'
+    return 'stable'
   }
 
   private identifyAchievements(data: any): string[] {
-    const achievements: string[] = [];
+    const achievements: string[] = []
 
     if (data.overallScore >= 95) {
-      achievements.push('Achieved excellent quality rating');
+      achievements.push('Achieved excellent quality rating')
     }
 
     if (data.security.score === 100) {
-      achievements.push('Perfect security compliance achieved');
+      achievements.push('Perfect security compliance achieved')
     }
 
     if (data.performance.executionTime < 60) {
-      achievements.push('Outstanding test performance');
+      achievements.push('Outstanding test performance')
     }
 
-    return achievements;
+    return achievements
   }
 }
 ```
@@ -592,22 +592,22 @@ export enum AlertLevel {
 }
 
 export interface QualityAlert {
-  id: string;
-  level: AlertLevel;
-  type: 'coverage' | 'performance' | 'security' | 'maintainability';
-  message: string;
-  description: string;
-  timestamp: string;
-  resolved: boolean;
-  resolution?: string;
-  assignedTo?: string;
+  id: string
+  level: AlertLevel
+  type: 'coverage' | 'performance' | 'security' | 'maintainability'
+  message: string
+  description: string
+  timestamp: string
+  resolved: boolean
+  resolution?: string
+  assignedTo?: string
 }
 
 export class AlertSystem {
-  private alerts: Map<string, QualityAlert> = new Map();
+  private alerts: Map<string, QualityAlert> = new Map()
 
   checkQualityGates(metrics: QualityMetrics): QualityAlert[] {
-    const alerts: QualityAlert[] = [];
+    const alerts: QualityAlert[] = []
 
     // Coverage alerts
     if (metrics.coverage.overall < 80) {
@@ -616,7 +616,7 @@ export class AlertSystem {
         'coverage',
         'Test coverage below minimum threshold',
         `Overall coverage is ${metrics.coverage.overall}%, below the 80% minimum requirement`,
-      ));
+      ))
     }
 
     // Security alerts
@@ -626,7 +626,7 @@ export class AlertSystem {
         'security',
         'Security vulnerabilities detected',
         `${metrics.security.vulnerabilities} security vulnerabilities require immediate attention`,
-      ));
+      ))
     }
 
     // Performance alerts
@@ -636,10 +636,10 @@ export class AlertSystem {
         'performance',
         'High test flakiness detected',
         `Flakiness rate is ${metrics.performance.flakinessRate}%, above the 5% threshold`,
-      ));
+      ))
     }
 
-    return alerts;
+    return alerts
   }
 
   private createAlert(
@@ -656,21 +656,21 @@ export class AlertSystem {
       description,
       timestamp: new Date().toISOString(),
       resolved: false,
-    };
+    }
 
-    this.alerts.set(alert.id, alert);
-    this.notify(alert);
+    this.alerts.set(alert.id, alert)
+    this.notify(alert)
 
-    return alert;
+    return alert
   }
 
   private notify(alert: QualityAlert): void {
     // Send notifications based on alert level
     if (alert.level === AlertLevel.CRITICAL) {
-      this.sendEmailNotification(alert);
-      this.sendSlackNotification(alert);
+      this.sendEmailNotification(alert)
+      this.sendSlackNotification(alert)
     } else if (alert.level === AlertLevel.HIGH) {
-      this.sendSlackNotification(alert);
+      this.sendSlackNotification(alert)
     }
   }
 }
@@ -685,17 +685,17 @@ export class QualityResolutionWorkflow {
   async handleAlert(alert: QualityAlert): Promise<void> {
     switch (alert.type) {
       case 'coverage':
-        await this.handleCoverageAlert(alert);
-        break;
+        await this.handleCoverageAlert(alert)
+        break
       case 'security':
-        await this.handleSecurityAlert(alert);
-        break;
+        await this.handleSecurityAlert(alert)
+        break
       case 'performance':
-        await this.handlePerformanceAlert(alert);
-        break;
+        await this.handlePerformanceAlert(alert)
+        break
       case 'maintainability':
-        await this.handleMaintainabilityAlert(alert);
-        break;
+        await this.handleMaintainabilityAlert(alert)
+        break
     }
   }
 
@@ -705,10 +705,10 @@ export class QualityResolutionWorkflow {
       title: `Improve Test Coverage - ${alert.message}`,
       body: this.generateCoverageIssueBody(alert),
       labels: ['quality-gate', 'coverage', 'testing'],
-    });
+    })
 
     // Assign to appropriate team
-    await this.assignIssue(issue.id, 'frontend-team');
+    await this.assignIssue(issue.id, 'frontend-team')
   }
 
   private async handleSecurityAlert(alert: QualityAlert): Promise<void> {
@@ -717,11 +717,11 @@ export class QualityResolutionWorkflow {
       description: alert.description,
       priority: 'critical',
       assignedTo: 'security-team',
-    });
+    })
 
     // Block deployment if necessary
     if (alert.level === AlertLevel.CRITICAL) {
-      await this.blockDeployment(securityTask.id);
+      await this.blockDeployment(securityTask.id)
     }
   }
 }

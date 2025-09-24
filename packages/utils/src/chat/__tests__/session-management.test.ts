@@ -2,619 +2,612 @@
 // Purpose: Test session lifecycle, timeouts, and cleanup for healthcare compliance
 // File: packages/utils/src/chat/__tests__/session-management.test.ts
 
-import { describe, expect, it, beforeEach, afterEach, vi } from "vitest";
-import type {
-  ChatSession,
-
-  SessionConfig,
-} from "@neonpro/types/ai-chat";
+import type { ChatSession, SessionConfig } from '@neonpro/types/ai-chat'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 // Import the functions we'll be testing
 import {
-  createChatSession,
-  getChatSession,
-  updateSessionActivity,
-  endChatSession,
-  cleanupExpiredSessions,
-  validateSessionAccess,
-  archiveInactiveSessions,
-  getSessionMetrics,
   __resetSessionsForTests,
-} from "../session-management";
+  archiveInactiveSessions,
+  cleanupExpiredSessions,
+  createChatSession,
+  endChatSession,
+  getChatSession,
+  getSessionMetrics,
+  updateSessionActivity,
+  validateSessionAccess,
+} from '../session-management'
 
-describe("T010: Session Management for AI Chat", () => {
-  let _mockSessionStore: Map<string, ChatSession>;
-  let mockTimestamp: number;
+describe('T010: Session Management for AI Chat', () => {
+  let _mockSessionStore: Map<string, ChatSession>
+  let mockTimestamp: number
 
   const advanceTime = (ms: number) => {
     // @ts-ignore
     if (typeof vi.advanceTimersByTime === 'function') {
       // @ts-ignore
-      vi.advanceTimersByTime(ms);
+      vi.advanceTimersByTime(ms)
     } else {
-      mockTimestamp += ms;
-      vi.setSystemTime?.(mockTimestamp);
-    }
-    // Always advance utils module clock offset so internal getNow() reflects time
+      mockTimestamp += ms
+      vi.setSystemTime?.(mockTimestamp)
+    } // Always advance utils module clock offset so internal getNow() reflects time
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (globalThis as any).__CHAT_TIME_OFFSET_MS = ((globalThis as any).__CHAT_TIME_OFFSET_MS ?? 0) + ms;
-  };
 
-
+    ;(globalThis as any).__CHAT_TIME_OFFSET_MS = ((globalThis as any).__CHAT_TIME_OFFSET_MS ?? 0)
+      + ms
+  }
 
   beforeEach(() => {
-    _mockSessionStore = new Map();
-    mockTimestamp = Date.now();
+    _mockSessionStore = new Map()
+    mockTimestamp = Date.now()
     // Bun's test env may not implement vi.useFakeTimers; fall back safely
     // @ts-ignore
     if (typeof vi.useFakeTimers === 'function') {
       // @ts-ignore
-      vi.useFakeTimers();
+      vi.useFakeTimers()
     }
     // Provide minimal vi.advanceTimersByTime fallback for Bun if missing
     // @ts-ignore
     if (typeof vi.advanceTimersByTime !== 'function') {
-      let __offset = 0;
+      let __offset = 0
       // @ts-ignore
       vi.advanceTimersByTime = (ms: number) => {
-        __offset += ms;
-        vi.setSystemTime?.(mockTimestamp + __offset);
-      };
+        __offset += ms
+        vi.setSystemTime?.(mockTimestamp + __offset)
+      }
     }
-    vi.setSystemTime?.(mockTimestamp);
-    // Reset module-level clock offset used by utils
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    ;(globalThis as any).__CHAT_TIME_OFFSET_MS = 0;
-
-  });
+    vi.setSystemTime?.(mockTimestamp) // Reset module-level clock offset used by utils
+     // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ;(globalThis as any).__CHAT_TIME_OFFSET_MS = 0
+  })
 
   afterEach(() => {
     // Bun's test env may not implement vi.useRealTimers; fall back safely
     // @ts-ignore
     if (typeof vi.useRealTimers === 'function') {
       // @ts-ignore
-      vi.useRealTimers();
+      vi.useRealTimers()
     } else {
-      try { vi.setSystemTime?.(Date.now()); } catch {}
+      try {
+        vi.setSystemTime?.(Date.now())
+      } catch {}
     }
-    vi.clearAllMocks();
-  });
+    vi.clearAllMocks()
+  })
 
-  describe("Session Creation", () => {
-    it("should create new session with valid parameters", async () => {
+  describe('Session Creation', () => {
+    it('should create new session with valid parameters', async () => {
       const sessionConfig: SessionConfig = {
-        _userId: "user-123",
-        clinicId: "clinic-456",
-        locale: "pt-BR",
-        sessionType: "general",
+        _userId: 'user-123',
+        clinicId: 'clinic-456',
+        locale: 'pt-BR',
+        sessionType: 'general',
         maxDurationMinutes: 60,
-      };
+      }
 
-      const session = await createChatSession(sessionConfig);
+      const session = await createChatSession(sessionConfig)
 
       expect(session).toMatchObject({
         id: expect.any(String),
-        _userId: "user-123",
-        clinicId: "clinic-456",
-        status: "active",
+        _userId: 'user-123',
+        clinicId: 'clinic-456',
+        status: 'active',
         startedAt: expect.any(Date),
-        locale: "pt-BR",
+        locale: 'pt-BR',
         isActive: true,
         totalMessages: 0,
         maxDurationMinutes: 60,
-      });
-    });
+      })
+    })
 
-    it("should generate unique session IDs", async () => {
+    it('should generate unique session IDs', async () => {
       const config: SessionConfig = {
-        _userId: "user-123",
-        clinicId: "clinic-456",
-      };
+        _userId: 'user-123',
+        clinicId: 'clinic-456',
+      }
 
-      const session1 = await createChatSession(config);
-      const session2 = await createChatSession(config);
+      const session1 = await createChatSession(config)
+      const session2 = await createChatSession(config)
 
-      expect(session1.id).not.toBe(session2.id);
-    });
+      expect(session1.id).not.toBe(session2.id)
+    })
 
-    it("should set default values for optional parameters", async () => {
+    it('should set default values for optional parameters', async () => {
       const config: SessionConfig = {
-        _userId: "user-123",
-        clinicId: "clinic-456",
-      };
+        _userId: 'user-123',
+        clinicId: 'clinic-456',
+      }
 
-      const session = await createChatSession(config);
+      const session = await createChatSession(config)
 
-      expect(session.locale).toBe("pt-BR"); // Default for Brazil
-      expect(session.maxDurationMinutes).toBe(120); // Default 2 hours
-      expect(session.sessionType).toBe("general");
-      expect(session.consentStatus).toBe("pending");
-    });
+      expect(session.locale).toBe('pt-BR') // Default for Brazil
+      expect(session.maxDurationMinutes).toBe(120) // Default 2 hours
+      expect(session.sessionType).toBe('general')
+      expect(session.consentStatus).toBe('pending')
+    })
 
-    it("should validate required parameters", async () => {
+    it('should validate required parameters', async () => {
       const invalidConfigs = [
-        { _userId: "", clinicId: "clinic-456" },
-        { _userId: "user-123", clinicId: "" },
-        { _userId: "user-123" }, // Missing clinicId
+        { _userId: '', clinicId: 'clinic-456' },
+        { _userId: 'user-123', clinicId: '' },
+        { _userId: 'user-123' }, // Missing clinicId
         {}, // Missing both
-      ];
+      ]
 
       for (const config of invalidConfigs) {
         await expect(
           createChatSession(config as SessionConfig),
-        ).rejects.toThrow(/required/i);
+        ).rejects.toThrow(/required/i)
       }
-    });
+    })
 
-    it("should enforce clinic user relationship", async () => {
+    it('should enforce clinic user relationship', async () => {
       const config: SessionConfig = {
-        _userId: "user-123",
-        clinicId: "invalid-clinic",
-      };
+        _userId: 'user-123',
+        clinicId: 'invalid-clinic',
+      }
 
       await expect(createChatSession(config)).rejects.toThrow(
         /not authorized/i,
-      );
-    });
-  });
+      )
+    })
+  })
 
-  describe("Session Retrieval", () => {
-    let testSession: ChatSession;
+  describe('Session Retrieval', () => {
+    let testSession: ChatSession
 
     beforeEach(async () => {
       const config: SessionConfig = {
-        _userId: "user-123",
-        clinicId: "clinic-456",
-      };
-      testSession = await createChatSession(config);
-    });
+        _userId: 'user-123',
+        clinicId: 'clinic-456',
+      }
+      testSession = await createChatSession(config)
+    })
 
-    it("should retrieve existing session", async () => {
+    it('should retrieve existing session', async () => {
       const retrieved = await getChatSession(
         testSession.id,
-        "user-123",
-        "clinic-456",
-      );
+        'user-123',
+        'clinic-456',
+      )
 
-      expect(retrieved).toEqual(testSession);
-    });
+      expect(retrieved).toEqual(testSession)
+    })
 
-    it("should throw error for non-existent session", async () => {
+    it('should throw error for non-existent session', async () => {
       await expect(
-        getChatSession("invalid-id", "user-123", "clinic-456"),
-      ).rejects.toThrow(/not found/i);
-    });
+        getChatSession('invalid-id', 'user-123', 'clinic-456'),
+      ).rejects.toThrow(/not found/i)
+    })
 
-    it("should enforce tenant isolation", async () => {
+    it('should enforce tenant isolation', async () => {
       await expect(
-        getChatSession(testSession.id, "user-123", "other-clinic"),
-      ).rejects.toThrow(/not authorized/i);
+        getChatSession(testSession.id, 'user-123', 'other-clinic'),
+      ).rejects.toThrow(/not authorized/i)
 
       await expect(
-        getChatSession(testSession.id, "other-user", "clinic-456"),
-      ).rejects.toThrow(/not authorized/i);
-    });
+        getChatSession(testSession.id, 'other-user', 'clinic-456'),
+      ).rejects.toThrow(/not authorized/i)
+    })
 
-    it("should update last accessed timestamp on retrieval", async () => {
-      const originalAccessed = testSession.lastAccessedAt;
+    it('should update last accessed timestamp on retrieval', async () => {
+      const originalAccessed = testSession.lastAccessedAt
 
-      advanceTime(5000); // 5 seconds later
+      advanceTime(5000) // 5 seconds later
 
       const retrieved = await getChatSession(
         testSession.id,
-        "user-123",
-        "clinic-456",
-      );
+        'user-123',
+        'clinic-456',
+      )
 
       expect(retrieved.lastAccessedAt?.getTime()).toBeGreaterThan(
         originalAccessed?.getTime() || 0,
-      );
-    });
-  });
+      )
+    })
+  })
 
-  describe("Session Activity Management", () => {
-    let testSession: ChatSession;
+  describe('Session Activity Management', () => {
+    let testSession: ChatSession
 
     beforeEach(async () => {
       const config: SessionConfig = {
-        _userId: "user-123",
-        clinicId: "clinic-456",
-      };
-      testSession = await createChatSession(config);
-    });
+        _userId: 'user-123',
+        clinicId: 'clinic-456',
+      }
+      testSession = await createChatSession(config)
+    })
 
-    it("should update session activity", async () => {
+    it('should update session activity', async () => {
       const activityData = {
         messageCount: 5,
         lastMessageAt: new Date(),
         totalTokens: 150,
-      };
+      }
 
-      const updated = await updateSessionActivity(testSession.id, activityData);
+      const updated = await updateSessionActivity(testSession.id, activityData)
 
-      expect(updated.totalMessages).toBe(5);
-      expect(updated.lastActivityAt).toEqual(activityData.lastMessageAt);
-      expect(updated.metadata?.totalTokens).toBe(150);
-    });
+      expect(updated.totalMessages).toBe(5)
+      expect(updated.lastActivityAt).toEqual(activityData.lastMessageAt)
+      expect(updated.metadata?.totalTokens).toBe(150)
+    })
 
-    it("should track session metrics", async () => {
-      await updateSessionActivity(testSession.id, { messageCount: 5 }); // +2 messages
+    it('should track session metrics', async () => {
+      await updateSessionActivity(testSession.id, { messageCount: 5 }) // +2 messages
 
       const session = await getChatSession(
         testSession.id,
-        "user-123",
-        "clinic-456",
-      );
+        'user-123',
+        'clinic-456',
+      )
 
-      expect(session.totalMessages).toBe(5);
-    });
+      expect(session.totalMessages).toBe(5)
+    })
 
-    it("should handle concurrent updates safely", async () => {
+    it('should handle concurrent updates safely', async () => {
       const updates = Array(10)
         .fill(null)
-        .map((_, i) =>
-          updateSessionActivity(testSession.id, { messageCount: i + 1 }),
-        );
+        .map((_, i) => updateSessionActivity(testSession.id, { messageCount: i + 1 }))
 
-      await Promise.all(updates);
+      await Promise.all(updates)
       const session = await getChatSession(
         testSession.id,
-        "user-123",
-        "clinic-456",
-      );
+        'user-123',
+        'clinic-456',
+      )
 
-      expect(session.totalMessages).toBe(10);
-    });
-  });
+      expect(session.totalMessages).toBe(10)
+    })
+  })
 
-  describe("Session Timeout and Expiration", () => {
-    let testSession: ChatSession;
+  describe('Session Timeout and Expiration', () => {
+    let testSession: ChatSession
 
     beforeEach(async () => {
       const config: SessionConfig = {
-        _userId: "user-123",
-        clinicId: "clinic-456",
+        _userId: 'user-123',
+        clinicId: 'clinic-456',
         maxDurationMinutes: 30, // 30 minutes for testing
-      };
-      testSession = await createChatSession(config);
-    });
+      }
+      testSession = await createChatSession(config)
+    })
 
-    it("should detect expired sessions", async () => {
+    it('should detect expired sessions', async () => {
       // Advance time beyond max duration
-      advanceTime(31 * 60 * 1000); // 31 minutes
+      advanceTime(31 * 60 * 1000) // 31 minutes
 
-      const isExpired = await validateSessionAccess(testSession.id);
+      const isExpired = await validateSessionAccess(testSession.id)
 
-      expect(isExpired.isValid).toBe(false);
-      expect(isExpired.reason).toContain("expired");
-    });
+      expect(isExpired.isValid).toBe(false)
+      expect(isExpired.reason).toContain('expired')
+    })
 
-    it("should detect inactive sessions", async () => {
+    it('should detect inactive sessions', async () => {
       // Advance time beyond inactivity threshold (default 15 minutes)
-      advanceTime(16 * 60 * 1000); // 16 minutes
+      advanceTime(16 * 60 * 1000) // 16 minutes
 
-      const isValid = await validateSessionAccess(testSession.id);
+      const isValid = await validateSessionAccess(testSession.id)
 
-      expect(isValid.isValid).toBe(false);
-      expect(isValid.reason).toContain("inactive");
-    });
+      expect(isValid.isValid).toBe(false)
+      expect(isValid.reason).toContain('inactive')
+    })
 
-    it("should allow extending session if not expired", async () => {
+    it('should allow extending session if not expired', async () => {
       // Update activity before expiration
-      advanceTime(10 * 60 * 1000); // 10 minutes
-      await updateSessionActivity(testSession.id, { messageCount: 1 });
+      advanceTime(10 * 60 * 1000) // 10 minutes
+      await updateSessionActivity(testSession.id, { messageCount: 1 })
 
-      const isValid = await validateSessionAccess(testSession.id);
+      const isValid = await validateSessionAccess(testSession.id)
 
-      expect(isValid.isValid).toBe(true);
-    });
+      expect(isValid.isValid).toBe(true)
+    })
 
-    it("should prevent extension of expired sessions", async () => {
+    it('should prevent extension of expired sessions', async () => {
       // Let session expire
-      advanceTime(31 * 60 * 1000); // 31 minutes
+      advanceTime(31 * 60 * 1000) // 31 minutes
 
       await expect(
         updateSessionActivity(testSession.id, { messageCount: 1 }),
-      ).rejects.toThrow(/expired/i);
-    });
-  });
+      ).rejects.toThrow(/expired/i)
+    })
+  })
 
-  describe("Session Cleanup", () => {
-    let _activeSessions: ChatSession[];
-    let expiredSessions: ChatSession[];
+  describe('Session Cleanup', () => {
+    let _activeSessions: ChatSession[]
+    let expiredSessions: ChatSession[]
 
     beforeEach(async () => {
-      __resetSessionsForTests();
+      __resetSessionsForTests()
       // Create active sessions
       _activeSessions = await Promise.all([
-        createChatSession({ _userId: "user-1", clinicId: "clinic-456" }),
-        createChatSession({ _userId: "user-2", clinicId: "clinic-456" }),
-      ]);
+        createChatSession({ _userId: 'user-1', clinicId: 'clinic-456' }),
+        createChatSession({ _userId: 'user-2', clinicId: 'clinic-456' }),
+      ])
 
       // Create expired sessions
       expiredSessions = await Promise.all([
         createChatSession({
-          _userId: "user-3",
-          clinicId: "clinic-456",
+          _userId: 'user-3',
+          clinicId: 'clinic-456',
           maxDurationMinutes: 10,
         }),
         createChatSession({
-          _userId: "user-4",
-          clinicId: "clinic-456",
+          _userId: 'user-4',
+          clinicId: 'clinic-456',
           maxDurationMinutes: 10,
         }),
-      ]);
+      ])
 
       // Advance time to expire some sessions
-      advanceTime(11 * 60 * 1000); // 11 minutes
-    });
+      advanceTime(11 * 60 * 1000) // 11 minutes
+    })
 
-    it("should clean up expired sessions", async () => {
-      const result = await cleanupExpiredSessions();
+    it('should clean up expired sessions', async () => {
+      const result = await cleanupExpiredSessions()
 
-      expect(result.cleanedCount).toBe(2);
-      expect(result.activeCount).toBe(2);
-      expect(result.errors).toHaveLength(0);
-    });
+      expect(result.cleanedCount).toBe(2)
+      expect(result.activeCount).toBe(2)
+      expect(result.errors).toHaveLength(0)
+    })
 
-    it("should archive inactive sessions before cleanup", async () => {
-      const archiveResult = await archiveInactiveSessions();
+    it('should archive inactive sessions before cleanup', async () => {
+      const archiveResult = await archiveInactiveSessions()
 
-      expect(archiveResult.archivedCount).toBeGreaterThan(0);
-      expect(archiveResult.totalProcessed).toBe(4);
-    });
+      expect(archiveResult.archivedCount).toBeGreaterThan(0)
+      expect(archiveResult.totalProcessed).toBe(4)
+    })
 
-    it("should preserve session data for audit", async () => {
-      const sessionId = expiredSessions[0].id;
-      await cleanupExpiredSessions();
+    it('should preserve session data for audit', async () => {
+      const sessionId = expiredSessions[0].id
+      await cleanupExpiredSessions()
 
       // Session should be moved to archive, not deleted
-      const archived = await getChatSession(sessionId, "user-3", "clinic-456", {
+      const archived = await getChatSession(sessionId, 'user-3', 'clinic-456', {
         includeArchived: true,
-      });
+      })
 
-      expect(archived.status).toBe("archived");
-      expect(archived.archivedAt).toBeDefined();
-    });
+      expect(archived.status).toBe('archived')
+      expect(archived.archivedAt).toBeDefined()
+    })
 
-    it("should handle cleanup errors gracefully", async () => {
+    it('should handle cleanup errors gracefully', async () => {
       // Mock cleanup failure for one session
       // Simulate an error path without using the mocked error directly
-      await vi.fn().mockRejectedValueOnce(new Error("Database error"));
+      await vi.fn().mockRejectedValueOnce(new Error('Database error'))
 
-      const result = await cleanupExpiredSessions();
+      const result = await cleanupExpiredSessions()
 
-      expect(result.errors.length).toBeGreaterThanOrEqual(0);
-      expect(result.cleanedCount).toBeGreaterThanOrEqual(0);
-    });
-  });
+      expect(result.errors.length).toBeGreaterThanOrEqual(0)
+      expect(result.cleanedCount).toBeGreaterThanOrEqual(0)
+    })
+  })
 
-  describe("Session Security and Access Control", () => {
-    let testSession: ChatSession;
+  describe('Session Security and Access Control', () => {
+    let testSession: ChatSession
 
     beforeEach(async () => {
       const config: SessionConfig = {
-        _userId: "user-123",
-        clinicId: "clinic-456",
-      };
-      testSession = await createChatSession(config);
-    });
+        _userId: 'user-123',
+        clinicId: 'clinic-456',
+      }
+      testSession = await createChatSession(config)
+    })
 
-    it("should validate user access permissions", async () => {
+    it('should validate user access permissions', async () => {
       const access = await validateSessionAccess(testSession.id, {
-        _userId: "user-123",
-        clinicId: "clinic-456",
-        _role: "patient",
-      });
+        _userId: 'user-123',
+        clinicId: 'clinic-456',
+        _role: 'patient',
+      })
 
-      expect(access.isValid).toBe(true);
-      expect(access.permissions).toContain("read");
-      expect(access.permissions).toContain("write");
-    });
+      expect(access.isValid).toBe(true)
+      expect(access.permissions).toContain('read')
+      expect(access.permissions).toContain('write')
+    })
 
-    it("should allow healthcare professionals to access patient sessions", async () => {
+    it('should allow healthcare professionals to access patient sessions', async () => {
       const access = await validateSessionAccess(testSession.id, {
-        _userId: "doctor-456",
-        clinicId: "clinic-456",
-        _role: "doctor",
-      });
+        _userId: 'doctor-456',
+        clinicId: 'clinic-456',
+        _role: 'doctor',
+      })
 
-      expect(access.isValid).toBe(true);
-      expect(access.permissions).toContain("read");
-      expect(access.permissions).not.toContain("write"); // Read-only for care providers
-    });
+      expect(access.isValid).toBe(true)
+      expect(access.permissions).toContain('read')
+      expect(access.permissions).not.toContain('write') // Read-only for care providers
+    })
 
-    it("should deny cross-clinic access", async () => {
+    it('should deny cross-clinic access', async () => {
       const access = await validateSessionAccess(testSession.id, {
-        _userId: "user-123",
-        clinicId: "other-clinic",
-        _role: "patient",
-      });
+        _userId: 'user-123',
+        clinicId: 'other-clinic',
+        _role: 'patient',
+      })
 
-      expect(access.isValid).toBe(false);
-      expect(access.reason).toContain("clinic access");
-    });
+      expect(access.isValid).toBe(false)
+      expect(access.reason).toContain('clinic access')
+    })
 
-    it("should log access attempts for audit", async () => {
-      const logSpy = vi.spyOn(console, "log");
+    it('should log access attempts for audit', async () => {
+      const logSpy = vi.spyOn(console, 'log')
 
       await validateSessionAccess(testSession.id, {
-        _userId: "user-123",
-        clinicId: "clinic-456",
-        _role: "patient",
-      });
+        _userId: 'user-123',
+        clinicId: 'clinic-456',
+        _role: 'patient',
+      })
 
       expect(logSpy).toHaveBeenCalledWith(
         expect.objectContaining({
-          event: "session_access",
+          event: 'session_access',
           sessionId: testSession.id,
-          _userId: "user-123",
-          result: "allowed",
+          _userId: 'user-123',
+          result: 'allowed',
         }),
-      );
+      )
 
-      logSpy.mockRestore();
-    });
-  });
+      logSpy.mockRestore()
+    })
+  })
 
-  describe("Session End and Finalization", () => {
-    let testSession: ChatSession;
+  describe('Session End and Finalization', () => {
+    let testSession: ChatSession
 
     beforeEach(async () => {
       const config: SessionConfig = {
-        _userId: "user-123",
-        clinicId: "clinic-456",
-      };
-      testSession = await createChatSession(config);
-    });
+        _userId: 'user-123',
+        clinicId: 'clinic-456',
+      }
+      testSession = await createChatSession(config)
+    })
 
-    it("should properly end active session", async () => {
+    it('should properly end active session', async () => {
       const endResult = await endChatSession(testSession.id, {
-        reason: "user_ended",
+        reason: 'user_ended',
         finalMessageCount: 10,
         duration: 15, // minutes
-      });
+      })
 
-      expect(endResult.status).toBe("ended");
-      expect(endResult.endedAt).toBeDefined();
-      expect(endResult.isActive).toBe(false);
-      expect(endResult.metadata?.endReason).toBe("user_ended");
-    });
+      expect(endResult.status).toBe('ended')
+      expect(endResult.endedAt).toBeDefined()
+      expect(endResult.isActive).toBe(false)
+      expect(endResult.metadata?.endReason).toBe('user_ended')
+    })
 
-    it("should calculate session statistics on end", async () => {
+    it('should calculate session statistics on end', async () => {
       // Add some activity
       await updateSessionActivity(testSession.id, {
         messageCount: 15,
         totalTokens: 500,
-      });
+      })
 
       const endResult = await endChatSession(testSession.id, {
-        reason: "completed",
-      });
+        reason: 'completed',
+      })
 
-      expect(endResult.totalMessages).toBe(15);
-      expect(endResult.metadata?.totalTokens).toBe(500);
-      expect(endResult.metadata?.duration).toBeGreaterThan(0);
-    });
+      expect(endResult.totalMessages).toBe(15)
+      expect(endResult.metadata?.totalTokens).toBe(500)
+      expect(endResult.metadata?.duration).toBeGreaterThan(0)
+    })
 
-    it("should prevent operations on ended sessions", async () => {
-      await endChatSession(testSession.id, { reason: "completed" });
+    it('should prevent operations on ended sessions', async () => {
+      await endChatSession(testSession.id, { reason: 'completed' })
 
       await expect(
         updateSessionActivity(testSession.id, { messageCount: 1 }),
-      ).rejects.toThrow(/ended|closed/i);
-    });
+      ).rejects.toThrow(/ended|closed/i)
+    })
 
-    it("should handle double-end gracefully", async () => {
-      await endChatSession(testSession.id, { reason: "user_ended" });
+    it('should handle double-end gracefully', async () => {
+      await endChatSession(testSession.id, { reason: 'user_ended' })
 
       // Second end should not throw but return existing end state
       const secondEnd = await endChatSession(testSession.id, {
-        reason: "timeout",
-      });
+        reason: 'timeout',
+      })
 
-      expect(secondEnd.status).toBe("ended");
-      expect(secondEnd.metadata?.endReason).toBe("user_ended"); // Original reason preserved
-    });
-  });
+      expect(secondEnd.status).toBe('ended')
+      expect(secondEnd.metadata?.endReason).toBe('user_ended') // Original reason preserved
+    })
+  })
 
-  describe("Session Metrics and Analytics", () => {
+  describe('Session Metrics and Analytics', () => {
     beforeEach(async () => {
-      __resetSessionsForTests();
+      __resetSessionsForTests()
       // Create multiple sessions for metrics testing
       await Promise.all([
-        createChatSession({ _userId: "user-1", clinicId: "clinic-456" }),
-        createChatSession({ _userId: "user-2", clinicId: "clinic-456" }),
-        createChatSession({ _userId: "user-3", clinicId: "clinic-789" }),
-      ]);
-    });
+        createChatSession({ _userId: 'user-1', clinicId: 'clinic-456' }),
+        createChatSession({ _userId: 'user-2', clinicId: 'clinic-456' }),
+        createChatSession({ _userId: 'user-3', clinicId: 'clinic-789' }),
+      ])
+    })
 
-    it("should provide clinic-specific metrics", async () => {
-      const metrics = await getSessionMetrics("clinic-456");
+    it('should provide clinic-specific metrics', async () => {
+      const metrics = await getSessionMetrics('clinic-456')
 
       expect(metrics).toMatchObject({
         totalSessions: 2,
         activeSessions: 2,
         averageDuration: expect.any(Number),
         totalMessages: expect.any(Number),
-        clinicId: "clinic-456",
-      });
-    });
+        clinicId: 'clinic-456',
+      })
+    })
 
-    it("should track session usage patterns", async () => {
-      const metrics = await getSessionMetrics("clinic-456", {
+    it('should track session usage patterns', async () => {
+      const metrics = await getSessionMetrics('clinic-456', {
         includeHourlyDistribution: true,
         includeDurationHistogram: true,
-      });
+      })
 
-      expect(metrics.hourlyDistribution).toBeDefined();
-      expect(metrics.durationHistogram).toBeDefined();
-    });
+      expect(metrics.hourlyDistribution).toBeDefined()
+      expect(metrics.durationHistogram).toBeDefined()
+    })
 
-    it("should provide performance insights", async () => {
-      const metrics = await getSessionMetrics("clinic-456", {
+    it('should provide performance insights', async () => {
+      const metrics = await getSessionMetrics('clinic-456', {
         includePerformance: true,
-      });
+      })
 
       expect(metrics.performance).toMatchObject({
         averageResponseTime: expect.any(Number),
         sessionSuccessRate: expect.any(Number),
         errorRate: expect.any(Number),
-      });
-    });
-  });
+      })
+    })
+  })
 
-  describe("LGPD Compliance Features", () => {
-    let testSession: ChatSession;
+  describe('LGPD Compliance Features', () => {
+    let testSession: ChatSession
 
     beforeEach(async () => {
       const config: SessionConfig = {
-        _userId: "user-123",
-        clinicId: "clinic-456",
-        consentStatus: "granted",
-      };
-      testSession = await createChatSession(config);
-    });
+        _userId: 'user-123',
+        clinicId: 'clinic-456',
+        consentStatus: 'granted',
+      }
+      testSession = await createChatSession(config)
+    })
 
-    it("should track data processing consent", async () => {
+    it('should track data processing consent', async () => {
       // Implementation would be here
-    });
+    })
 
-    it("should handle consent revocation", async () => {
+    it('should handle consent revocation', async () => {
       const updated = await updateSessionActivity(testSession.id, {
-        consentStatus: "revoked",
-      });
+        consentStatus: 'revoked',
+      })
 
-      expect(updated.consentStatus).toBe("revoked");
-      expect(updated.isActive).toBe(false); // Should auto-deactivate
-    });
+      expect(updated.consentStatus).toBe('revoked')
+      expect(updated.isActive).toBe(false) // Should auto-deactivate
+    })
 
-    it("should provide data export for portability", async () => {
+    it('should provide data export for portability', async () => {
       const exportData = await getChatSession(
         testSession.id,
-        "user-123",
-        "clinic-456",
+        'user-123',
+        'clinic-456',
         {
-          format: "export",
+          format: 'export',
         },
-      );
+      )
 
       expect(exportData).toMatchObject({
         sessionData: expect.any(Object),
         exportTimestamp: expect.any(Date),
-        format: "lgpd_compliant",
+        format: 'lgpd_compliant',
         dataTypes: expect.any(Array),
-      });
-    });
+      })
+    })
 
-    it("should support data deletion requests", async () => {
+    it('should support data deletion requests', async () => {
       const deleteResult = await endChatSession(testSession.id, {
-        reason: "data_deletion_request",
+        reason: 'data_deletion_request',
         deleteData: true,
-      });
+      })
 
-      expect(deleteResult.status).toBe("deleted");
-      expect(deleteResult.deletedAt).toBeDefined();
-    });
-  });
-});
+      expect(deleteResult.status).toBe('deleted')
+      expect(deleteResult.deletedAt).toBeDefined()
+    })
+  })
+})

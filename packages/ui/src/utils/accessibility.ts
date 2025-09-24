@@ -7,18 +7,18 @@
  * @fileoverview Accessibility utilities and helpers for healthcare UI
  */
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react'
 
 // ARIA live region types for healthcare announcements
-export type AriaLiveType = 'off' | 'polite' | 'assertive';
+export type AriaLiveType = 'off' | 'polite' | 'assertive'
 
 // Healthcare-specific accessibility context
 export interface HealthcareA11yContext {
-  isEmergencyMode: boolean;
-  patientDataVisible: boolean;
-  highContrastMode: boolean;
-  reduceMotion: boolean;
-  screenReaderMode: boolean;
+  isEmergencyMode: boolean
+  patientDataVisible: boolean
+  highContrastMode: boolean
+  reduceMotion: boolean
+  screenReaderMode: boolean
 }
 
 // WCAG 2.1 compliance levels
@@ -48,85 +48,85 @@ export function announceToScreenReader(
   const liveType: AriaLiveType = priority === HealthcarePriority.EMERGENCY
       || priority === HealthcarePriority.HIGH
     ? 'assertive'
-    : 'polite';
+    : 'polite'
 
   setTimeout(() => {
-    const announcement = document.createElement('div');
-    announcement.setAttribute('aria-live', liveType);
-    announcement.setAttribute('aria-atomic', 'true');
-    announcement.className = 'sr-only absolute -top-full left-0 w-1 h-1 overflow-hidden';
+    const announcement = document.createElement('div')
+    announcement.setAttribute('aria-live', liveType)
+    announcement.setAttribute('aria-atomic', 'true')
+    announcement.className = 'sr-only absolute -top-full left-0 w-1 h-1 overflow-hidden'
 
     // Add priority context for medical announcements
     const priorityPrefix = priority === HealthcarePriority.EMERGENCY
       ? 'ALERTA MÉDICO: '
       : priority === HealthcarePriority.HIGH
       ? 'IMPORTANTE: '
-      : '';
+      : ''
 
-    announcement.textContent = priorityPrefix + message;
-    document.body.appendChild(announcement);
+    announcement.textContent = priorityPrefix + message
+    document.body.appendChild(announcement)
 
     // Clean up after announcement
     setTimeout(() => {
       if (announcement.parentNode) {
-        announcement.parentNode.removeChild(announcement);
+        announcement.parentNode.removeChild(announcement)
       }
-    }, 1000);
-  }, delay);
+    }, 1000)
+  }, delay)
 }
 
 /**
  * Custom hook for managing focus in healthcare forms
  */
 export function useHealthcareFocus(shouldFocus: boolean = false) {
-  const elementRef = useRef<HTMLElement>(null);
+  const elementRef = useRef<HTMLElement>(null)
 
   useEffect(() => {
     if (shouldFocus && elementRef.current) {
       // Small delay to ensure element is rendered
       const timeoutId = setTimeout(() => {
-        elementRef.current?.focus();
-      }, 100);
+        elementRef.current?.focus()
+      }, 100)
 
-      return () => clearTimeout(timeoutId);
+      return () => clearTimeout(timeoutId)
     }
-    return undefined; // Explicit return for non-active case
-  }, [shouldFocus]);
+    return undefined // Explicit return for non-active case
+  }, [shouldFocus])
 
-  return elementRef;
+  return elementRef
 }
 
 /**
  * Focus trap for modal dialogs and emergency alerts
  */
 export function useFocusTrap(isActive: boolean) {
-  const containerRef = useRef<HTMLElement>(null);
+  const containerRef = useRef<HTMLElement>(null)
 
   useEffect(() => {
-    if (!isActive || !containerRef.current) {return;}
+    if (!isActive || !containerRef.current) return
 
-    const container = containerRef.current;
+    const container = containerRef.current
     const focusableElements = container.querySelectorAll(
       'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
-    );
+    )
 
-    const firstElement = focusableElements[0] as HTMLElement;
+    const firstElement = focusableElements[0] as HTMLElement
     const lastElement = focusableElements[
       focusableElements.length - 1
-    ] as HTMLElement;
+    ] as HTMLElement
 
     function handleTabKey(event: KeyboardEvent) {
-      if (event.key !== 'Tab') {return;}
+      if (event.key !== 'Tab') return
 
       if (event.shiftKey) {
         if (document.activeElement === firstElement) {
-          event.preventDefault();
-          lastElement?.focus();
+          event.preventDefault()
+          lastElement?.focus()
         }
       } else {
         if (document.activeElement === lastElement) {
-          event.preventDefault();
-          firstElement?.focus();
+          event.preventDefault()
+          firstElement?.focus()
         }
       }
     }
@@ -134,144 +134,144 @@ export function useFocusTrap(isActive: boolean) {
     function handleEscapeKey(event: KeyboardEvent) {
       if (event.key === 'Escape') {
         // For emergency mode, require confirmation before closing
-        const isEmergencyModal = container.getAttribute('data-emergency') === 'true';
+        const isEmergencyModal = container.getAttribute('data-emergency') === 'true'
         if (isEmergencyModal) {
           const confirmed = window.confirm(
             'Tem certeza que deseja fechar este alerta de emergência?',
-          );
+          )
           if (!confirmed) {
-            event.preventDefault();
-            return;
+            event.preventDefault()
+            return
           }
         }
 
         // Focus the element that triggered the modal
         const triggerElement = document.querySelector(
           '[data-modal-trigger]',
-        ) as HTMLElement;
-        triggerElement?.focus();
+        ) as HTMLElement
+        triggerElement?.focus()
       }
     }
 
-    container.addEventListener('keydown', handleTabKey);
-    container.addEventListener('keydown', handleEscapeKey);
+    container.addEventListener('keydown', handleTabKey)
+    container.addEventListener('keydown', handleEscapeKey)
 
     // Focus first element when trap activates
-    firstElement?.focus();
+    firstElement?.focus()
 
     return () => {
-      container.removeEventListener('keydown', handleTabKey);
-      container.removeEventListener('keydown', handleEscapeKey);
-    };
-  }, [isActive]);
+      container.removeEventListener('keydown', handleTabKey)
+      container.removeEventListener('keydown', handleEscapeKey)
+    }
+  }, [isActive])
 
-  return containerRef;
+  return containerRef
 }
 
 /**
  * Keyboard navigation support for healthcare data tables
  */
 export function useTableNavigation() {
-  const tableRef = useRef<HTMLTableElement>(null);
+  const tableRef = useRef<HTMLTableElement>(null)
 
   useEffect(() => {
-    const table = tableRef.current;
-    if (!table) {return;}
+    const table = tableRef.current
+    if (!table) return
 
     function handleKeyDown(event: KeyboardEvent) {
-      const currentTable = tableRef.current;
-      if (!currentTable || !currentTable.contains(event.target as Node)) {return;}
+      const currentTable = tableRef.current
+      if (!currentTable || !currentTable.contains(event.target as Node)) return
 
-      const currentCell = event.target as HTMLElement;
-      const row = currentCell.closest('tr');
-      const allRows = Array.from(currentTable.querySelectorAll('tbody tr'));
-      const allCellsInRow = Array.from(row?.querySelectorAll('td, th') || []);
+      const currentCell = event.target as HTMLElement
+      const row = currentCell.closest('tr')
+      const allRows = Array.from(currentTable.querySelectorAll('tbody tr'))
+      const allCellsInRow = Array.from(row?.querySelectorAll('td, th') || [])
 
-      const currentRowIndex = allRows.indexOf(row as HTMLTableRowElement);
-      const currentCellIndex = allCellsInRow.indexOf(currentCell);
+      const currentRowIndex = allRows.indexOf(row as HTMLTableRowElement)
+      const currentCellIndex = allCellsInRow.indexOf(currentCell)
 
       switch (event.key) {
         case 'ArrowUp':
-          event.preventDefault();
+          event.preventDefault()
           if (currentRowIndex > 0) {
-            const prevRow = allRows[currentRowIndex - 1];
+            const prevRow = allRows[currentRowIndex - 1]
             if (prevRow) {
               const targetCell = prevRow.querySelectorAll('td, th')[
                 currentCellIndex
-              ] as HTMLElement;
-              targetCell?.focus();
+              ] as HTMLElement
+              targetCell?.focus()
             }
           }
-          break;
+          break
 
         case 'ArrowDown':
-          event.preventDefault();
+          event.preventDefault()
           if (currentRowIndex < allRows.length - 1) {
-            const nextRow = allRows[currentRowIndex + 1];
+            const nextRow = allRows[currentRowIndex + 1]
             if (nextRow) {
               const targetCell = nextRow.querySelectorAll('td, th')[
                 currentCellIndex
-              ] as HTMLElement;
-              targetCell?.focus();
+              ] as HTMLElement
+              targetCell?.focus()
             }
           }
-          break;
+          break
 
         case 'ArrowLeft':
-          event.preventDefault();
+          event.preventDefault()
           if (currentCellIndex > 0) {
             const targetCell = allCellsInRow[
               currentCellIndex - 1
-            ] as HTMLElement;
-            targetCell?.focus();
+            ] as HTMLElement
+            targetCell?.focus()
           }
-          break;
+          break
 
         case 'ArrowRight':
-          event.preventDefault();
+          event.preventDefault()
           if (currentCellIndex < allCellsInRow.length - 1) {
             const targetCell = allCellsInRow[
               currentCellIndex + 1
-            ] as HTMLElement;
-            targetCell?.focus();
+            ] as HTMLElement
+            targetCell?.focus()
           }
-          break;
+          break
 
         case 'Home':
-          event.preventDefault();
+          event.preventDefault()
           {
-            const firstCellInRow = allCellsInRow[0] as HTMLElement;
-            firstCellInRow?.focus();
+            const firstCellInRow = allCellsInRow[0] as HTMLElement
+            firstCellInRow?.focus()
           }
-          break;
+          break
 
         case 'End':
-          event.preventDefault();
+          event.preventDefault()
           {
             const lastCellInRow = allCellsInRow[
               allCellsInRow.length - 1
-            ] as HTMLElement;
-            lastCellInRow?.focus();
+            ] as HTMLElement
+            lastCellInRow?.focus()
           }
-          break;
+          break
       }
     }
 
-    table.addEventListener('keydown', handleKeyDown);
+    table.addEventListener('keydown', handleKeyDown)
 
     return () => {
-      table.removeEventListener('keydown', handleKeyDown);
-    };
-  }, []);
+      table.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [])
 
-  return tableRef;
+  return tableRef
 }
 
 /**
  * Generates accessible IDs for form elements
  */
 export function generateAccessibleId(prefix: string = 'healthcare'): string {
-  return `${prefix}-${Math.random().toString(36).substr(2, 9)}`;
+  return `${prefix}-${Math.random().toString(36).substr(2, 9)}`
 }
 
 /**
@@ -285,46 +285,46 @@ export function validateColorContrast(
   // Convert colors to RGB values (simplified implementation)
   // In a real implementation, you'd use a proper color library
   function hexToRgb(hex: string) {
-    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
     return result
       ? {
         r: parseInt(result[1] ?? '0', 16),
         g: parseInt(result[2] ?? '0', 16),
         b: parseInt(result[3] ?? '0', 16),
       }
-      : { r: 0, g: 0, b: 0 };
+      : { r: 0, g: 0, b: 0 }
   }
 
   function getLuminance(r: number, g: number, b: number) {
-    const [rs, gs, bs] = [r, g, b].map(c => {
-      c = c / 255;
-      return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
-    });
-    return 0.2126 * (rs ?? 0) + 0.7152 * (gs ?? 0) + 0.0722 * (bs ?? 0);
+    const [rs, gs, bs] = [r, g, b].map((c) => {
+      c = c / 255
+      return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4)
+    })
+    return 0.2126 * (rs ?? 0) + 0.7152 * (gs ?? 0) + 0.0722 * (bs ?? 0)
   }
 
-  const fg = hexToRgb(foregroundColor);
-  const bg = hexToRgb(backgroundColor);
+  const fg = hexToRgb(foregroundColor)
+  const bg = hexToRgb(backgroundColor)
 
-  const fgLuminance = getLuminance(fg.r, fg.g, fg.b);
-  const bgLuminance = getLuminance(bg.r, bg.g, bg.b);
+  const fgLuminance = getLuminance(fg.r, fg.g, fg.b)
+  const bgLuminance = getLuminance(bg.r, bg.g, bg.b)
 
   const ratio = (Math.max(fgLuminance, bgLuminance) + 0.05)
-    / (Math.min(fgLuminance, bgLuminance) + 0.05);
+    / (Math.min(fgLuminance, bgLuminance) + 0.05)
 
   const minimumRatios = {
     [WCAGLevel.A]: 3,
     [WCAGLevel.AA]: 4.5,
     [WCAGLevel.AAA]: 7,
-  };
+  }
 
-  const minimumRatio = minimumRatios[targetLevel];
+  const minimumRatio = minimumRatios[targetLevel]
 
   return {
     isValid: ratio >= minimumRatio,
     ratio: Math.round(ratio * 100) / 100,
     minimumRatio,
-  };
+  }
 }
 
 /**
@@ -335,23 +335,23 @@ export function createAccessibleErrorMessage(
   errors: string[],
   priority: HealthcarePriority = HealthcarePriority.MEDIUM,
 ): HTMLElement {
-  const errorContainer = document.createElement('div');
-  errorContainer.id = `${fieldId}-error`;
-  errorContainer.className = 'healthcare-error-message text-sm text-destructive mt-1';
+  const errorContainer = document.createElement('div')
+  errorContainer.id = `${fieldId}-error`
+  errorContainer.className = 'healthcare-error-message text-sm text-destructive mt-1'
   errorContainer.setAttribute(
     'aria-live',
     priority === HealthcarePriority.HIGH
       || priority === HealthcarePriority.EMERGENCY
       ? 'assertive'
       : 'polite',
-  );
-  errorContainer.setAttribute('role', 'alert');
+  )
+  errorContainer.setAttribute('role', 'alert')
 
   if (errors.length > 0) {
-    errorContainer.textContent = errors.join('. ');
+    errorContainer.textContent = errors.join('. ')
   }
 
-  return errorContainer;
+  return errorContainer
 }
 
 /**
@@ -380,7 +380,7 @@ export const healthcareKeyboardShortcuts = {
     F2: 'Editar campo selecionado',
     F5: 'Atualizar dados',
   },
-};
+}
 
 /**
  * Keyboard shortcut handler for healthcare applications
@@ -390,7 +390,7 @@ export function useHealthcareKeyboardShortcuts(
   isEnabled: boolean = true,
 ) {
   useEffect(() => {
-    if (!isEnabled) {return;}
+    if (!isEnabled) return
 
     function handleKeyDown(event: KeyboardEvent) {
       const key = [
@@ -400,21 +400,21 @@ export function useHealthcareKeyboardShortcuts(
         event.key,
       ]
         .filter(Boolean)
-        .join('+');
+        .join('+')
 
-      const handler = shortcuts[key];
+      const handler = shortcuts[key]
       if (handler) {
-        event.preventDefault();
-        handler();
+        event.preventDefault()
+        handler()
       }
     }
 
-    document.addEventListener('keydown', handleKeyDown);
+    document.addEventListener('keydown', handleKeyDown)
 
     return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [shortcuts, isEnabled]);
+      document.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [shortcuts, isEnabled])
 }
 
 /**
@@ -444,9 +444,9 @@ export function createScreenReaderDescription(
       `Exame: ${data.type || 'Tipo não informado'}. `
       + `Data: ${data.date || 'Data não informada'}. `
       + `Status: ${data.status || 'Status não informado'}.`,
-  };
+  }
 
-  return descriptions[type](data);
+  return descriptions[type](data)
 }
 
 /**
@@ -454,18 +454,18 @@ export function createScreenReaderDescription(
  */
 export function useHighContrastMode() {
   const getHighContrastPreference = () => {
-    if (typeof window === 'undefined') {return false;}
+    if (typeof window === 'undefined') return false
     return (
       window.matchMedia('(prefers-contrast: high)').matches
       || localStorage.getItem('healthcare-high-contrast') === 'true'
-    );
-  };
+    )
+  }
 
   const setHighContrastMode = (enabled: boolean) => {
-    if (typeof window === 'undefined') {return;}
+    if (typeof window === 'undefined') return
 
-    localStorage.setItem('healthcare-high-contrast', enabled.toString());
-    document.documentElement.classList.toggle('high-contrast', enabled);
+    localStorage.setItem('healthcare-high-contrast', enabled.toString())
+    document.documentElement.classList.toggle('high-contrast', enabled)
 
     // Announce change to screen readers
     announceToScreenReader(
@@ -473,13 +473,13 @@ export function useHighContrastMode() {
         ? 'Modo de alto contraste ativado'
         : 'Modo de alto contraste desativado',
       HealthcarePriority.MEDIUM,
-    );
-  };
+    )
+  }
 
   return {
     isHighContrast: getHighContrastPreference(),
     setHighContrastMode,
-  };
+  }
 }
 
 /**
@@ -487,11 +487,11 @@ export function useHighContrastMode() {
  */
 export function useReducedMotion() {
   const prefersReducedMotion = () => {
-    if (typeof window === 'undefined') {return false;}
-    return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  };
+    if (typeof window === 'undefined') return false
+    return window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  }
 
   return {
     prefersReducedMotion: prefersReducedMotion(),
-  };
+  }
 }

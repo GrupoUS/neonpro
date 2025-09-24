@@ -5,9 +5,9 @@
  * Provides types, protocol implementation, and service integration.
  */
 
-export * from './protocol';
-export * from './service';
-export * from './types';
+export * from './protocol'
+export * from './service'
+export * from './types'
 
 // Re-export commonly used types and classes
 export {
@@ -21,7 +21,7 @@ export {
   QueryContext,
   QueryResult,
   ServiceMetrics,
-} from './types';
+} from './types'
 
 // Default configuration
 export const DEFAULT_AGUI_CONFIG = {
@@ -38,12 +38,12 @@ export const DEFAULT_AGUI_CONFIG = {
   ragAgentEndpoint: process.env.RAG_AGENT_ENDPOINT || 'http://localhost:8080',
   enableMetrics: true,
   metricsInterval: 30000, // 30 seconds
-};
+}
 
 // Service factory function
 export function createAguiService(
   config?: Partial<typeof DEFAULT_AGUI_CONFIG>,
 ) {
-  const finalConfig = { ...DEFAULT_AGUI_CONFIG, ...config };
-  return new AguiService(finalConfig);
+  const finalConfig = { ...DEFAULT_AGUI_CONFIG, ...config }
+  return new AguiService(finalConfig)
 }

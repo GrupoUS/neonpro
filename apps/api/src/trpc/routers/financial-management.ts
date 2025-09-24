@@ -4,7 +4,7 @@
  * Brazilian tax compliance and payment processing
  */
 
-import { FinancialManagementService } from '@neonpro/core-services';
+import { FinancialManagementService } from '@neonpro/core-services'
 import {
   FinancialAccountInputSchema,
   FinancialGoalInputSchema,
@@ -13,9 +13,9 @@ import {
   ProfessionalCommissionInputSchema,
   ServicePriceInputSchema,
   TreatmentPackageInputSchema,
-} from '@neonpro/core-services';
-import { z } from 'zod';
-import { createTRPCRouter } from '../../trpc';
+} from '@neonpro/core-services'
+import { z } from 'zod'
+import { createTRPCRouter } from '../../trpc'
 
 // Response schemas
 const SuccessResponseSchema = <T extends z.ZodSchemaAny>(dataSchema: T) =>
@@ -24,7 +24,7 @@ const SuccessResponseSchema = <T extends z.ZodSchemaAny>(dataSchema: T) =>
     message: z.string(),
     data: dataSchema.optional(),
     error: z.string().optional(),
-  });
+  })
 
 const FinancialAccountSchema = z.object({
   id: z.string().uuid(),
@@ -42,7 +42,7 @@ const FinancialAccountSchema = z.object({
   metadata: z.record(z.any()),
   created_at: z.string(),
   updated_at: z.string(),
-});
+})
 
 const ServicePriceSchema = z.object({
   id: z.string().uuid(),
@@ -60,7 +60,7 @@ const ServicePriceSchema = z.object({
   notes: z.string().optional(),
   created_at: z.string(),
   updated_at: z.string(),
-});
+})
 
 const TreatmentPackageSchema = z.object({
   id: z.string().uuid(),
@@ -80,7 +80,7 @@ const TreatmentPackageSchema = z.object({
   terms_conditions: z.string().optional(),
   created_at: z.string(),
   updated_at: z.string(),
-});
+})
 
 const InvoiceItemSchema = z.object({
   id: z.string().uuid(),
@@ -98,7 +98,7 @@ const InvoiceItemSchema = z.object({
   reference_id: z.string().uuid().optional(),
   metadata: z.record(z.any()),
   created_at: z.string(),
-});
+})
 
 const InvoiceSchema = z.object({
   id: z.string().uuid(),
@@ -122,7 +122,7 @@ const InvoiceSchema = z.object({
   created_at: z.string(),
   updated_at: z.string(),
   items: z.array(InvoiceItemSchema),
-});
+})
 
 const PaymentTransactionSchema = z.object({
   id: z.string().uuid(),
@@ -163,7 +163,7 @@ const PaymentTransactionSchema = z.object({
   metadata: z.record(z.any()),
   created_at: z.string(),
   updated_at: z.string(),
-});
+})
 
 const ProfessionalCommissionSchema = z.object({
   id: z.string().uuid(),
@@ -181,7 +181,7 @@ const ProfessionalCommissionSchema = z.object({
   metadata: z.record(z.any()),
   created_at: z.string(),
   updated_at: z.string(),
-});
+})
 
 const FinancialGoalSchema = z.object({
   id: z.string().uuid(),
@@ -198,7 +198,7 @@ const FinancialGoalSchema = z.object({
   notes: z.string().optional(),
   created_at: z.string(),
   updated_at: z.string(),
-});
+})
 
 const FinancialDashboardSchema = z.object({
   totalRevenue: z.number(),
@@ -214,7 +214,7 @@ const FinancialDashboardSchema = z.object({
     revenue: z.number(),
     count: z.number(),
   })),
-});
+})
 
 const FinancialReportSchema = z.object({
   period: z.object({
@@ -229,7 +229,7 @@ const FinancialReportSchema = z.object({
   new_patients: z.number(),
   average_ticket: z.number(),
   payment_methods: z.record(z.number()),
-});
+})
 
 const TaxConfigurationSchema = z.object({
   id: z.string().uuid(),
@@ -239,14 +239,14 @@ const TaxConfigurationSchema = z.object({
   effective_date: z.string(),
   end_date: z.string().optional(),
   description: z.string().optional(),
-});
+})
 
 const NFSeResponseSchema = z.object({
   nfse_number: z.string(),
   verification_code: z.string(),
   issuance_date: z.string(),
   pdf_url: z.string().optional(),
-});
+})
 
 const BoletoResponseSchema = z.object({
   barcode: z.string(),
@@ -254,47 +254,47 @@ const BoletoResponseSchema = z.object({
   due_date: z.string(),
   amount: z.number(),
   pdf_url: z.string().optional(),
-});
+})
 
 // Input schemas with Brazilian Portuguese validation messages
 const CreateFinancialAccountInputSchema = FinancialAccountInputSchema.refine(
-  data => {
+  (data) => {
     if (data.isDefault && data.accountType === 'credit') {
-      return false;
+      return false
     }
-    return true;
+    return true
   },
   {
     message: 'Contas de crédito não podem ser definidas como padrão',
     path: ['isDefault'],
   },
-);
+)
 
 const CreateInvoiceInputSchema = InvoiceInputSchema.refine(
-  data => {
+  (data) => {
     if (new Date(data.dueDate) < new Date(data.issueDate)) {
-      return false;
+      return false
     }
-    return true;
+    return true
   },
   {
     message: 'A data de vencimento não pode ser anterior à data de emissão',
     path: ['dueDate'],
   },
-);
+)
 
 const CreatePaymentInputSchema = PaymentTransactionInputSchema.refine(
-  data => {
+  (data) => {
     if (data.installmentNumber > data.totalInstallments) {
-      return false;
+      return false
     }
-    return true;
+    return true
   },
   {
     message: 'O número da parcela não pode ser maior que o total de parcelas',
     path: ['installmentNumber'],
   },
-);
+)
 
 export const financialManagementRouter = createTRPCRouter({
   // Financial Account Management
@@ -306,22 +306,22 @@ export const financialManagementRouter = createTRPCRouter({
         const financialManagementService = new FinancialManagementService({
           supabaseUrl: process.env.SUPABASE_URL!,
           supabaseKey: process.env.SUPABASE_SERVICE_ROLE_KEY!,
-        });
+        })
 
-        const account = await financialManagementService.createFinancialAccount(input);
+        const account = await financialManagementService.createFinancialAccount(input)
 
         return {
           success: true,
           message: 'Conta financeira criada com sucesso',
           data: account,
-        };
+        }
       } catch {
-        console.error('Error creating financial account:', error);
+        console.error('Error creating financial account:', error)
         return {
           success: false,
           message: error instanceof Error ? error.message : 'Erro ao criar conta financeira',
           data: null,
-        };
+        }
       }
     },
   },
@@ -337,25 +337,25 @@ export const financialManagementRouter = createTRPCRouter({
         const financialManagementService = new FinancialManagementService({
           supabaseUrl: process.env.SUPABASE_URL!,
           supabaseKey: process.env.SUPABASE_SERVICE_ROLE_KEY!,
-        });
+        })
 
         const account = await financialManagementService.updateFinancialAccount(
           input.id,
           input.updates,
-        );
+        )
 
         return {
           success: true,
           message: 'Conta financeira atualizada com sucesso',
           data: account,
-        };
+        }
       } catch {
-        console.error('Error updating financial account:', error);
+        console.error('Error updating financial account:', error)
         return {
           success: false,
           message: error instanceof Error ? error.message : 'Erro ao atualizar conta financeira',
           data: null,
-        };
+        }
       }
     },
   },
@@ -370,22 +370,22 @@ export const financialManagementRouter = createTRPCRouter({
         const financialManagementService = new FinancialManagementService({
           supabaseUrl: process.env.SUPABASE_URL!,
           supabaseKey: process.env.SUPABASE_SERVICE_ROLE_KEY!,
-        });
+        })
 
-        const accounts = await financialManagementService.getFinancialAccounts(input.clinicId);
+        const accounts = await financialManagementService.getFinancialAccounts(input.clinicId)
 
         return {
           success: true,
           message: 'Contas financeiras recuperadas com sucesso',
           data: accounts,
-        };
+        }
       } catch {
-        console.error('Error fetching financial accounts:', error);
+        console.error('Error fetching financial accounts:', error)
         return {
           success: false,
           message: error instanceof Error ? error.message : 'Erro ao buscar contas financeiras',
           data: null,
-        };
+        }
       }
     },
   },
@@ -393,11 +393,11 @@ export const financialManagementRouter = createTRPCRouter({
   // Service Pricing Management
   createServicePrice: {
     input: ServicePriceInputSchema.refine(
-      data => {
+      (data) => {
         if (data.professionalCommissionRate + data.clinicRevenueRate > 100) {
-          return false;
+          return false
         }
-        return true;
+        return true
       },
       {
         message: 'A soma das taxas de comissão e receita não pode exceder 100%',
@@ -410,22 +410,22 @@ export const financialManagementRouter = createTRPCRouter({
         const financialManagementService = new FinancialManagementService({
           supabaseUrl: process.env.SUPABASE_URL!,
           supabaseKey: process.env.SUPABASE_SERVICE_ROLE_KEY!,
-        });
+        })
 
-        const price = await financialManagementService.createServicePrice(input);
+        const price = await financialManagementService.createServicePrice(input)
 
         return {
           success: true,
           message: 'Preço de serviço criado com sucesso',
           data: price,
-        };
+        }
       } catch {
-        console.error('Error creating service price:', error);
+        console.error('Error creating service price:', error)
         return {
           success: false,
           message: error instanceof Error ? error.message : 'Erro ao criar preço de serviço',
           data: null,
-        };
+        }
       }
     },
   },
@@ -441,25 +441,25 @@ export const financialManagementRouter = createTRPCRouter({
         const financialManagementService = new FinancialManagementService({
           supabaseUrl: process.env.SUPABASE_URL!,
           supabaseKey: process.env.SUPABASE_SERVICE_ROLE_KEY!,
-        });
+        })
 
         const prices = await financialManagementService.getServicePrices(
           input.clinicId,
           input.serviceId,
-        );
+        )
 
         return {
           success: true,
           message: 'Preços de serviços recuperados com sucesso',
           data: prices,
-        };
+        }
       } catch {
-        console.error('Error fetching service prices:', error);
+        console.error('Error fetching service prices:', error)
         return {
           success: false,
           message: error instanceof Error ? error.message : 'Erro ao buscar preços de serviços',
           data: null,
-        };
+        }
       }
     },
   },
@@ -467,11 +467,11 @@ export const financialManagementRouter = createTRPCRouter({
   // Treatment Package Management
   createTreatmentPackage: {
     input: TreatmentPackageInputSchema.refine(
-      data => {
+      (data) => {
         if (data.packagePrice > data.originalPrice) {
-          return false;
+          return false
         }
-        return true;
+        return true
       },
       {
         message: 'O preço do pacote não pode ser maior que o preço original',
@@ -484,22 +484,22 @@ export const financialManagementRouter = createTRPCRouter({
         const financialManagementService = new FinancialManagementService({
           supabaseUrl: process.env.SUPABASE_URL!,
           supabaseKey: process.env.SUPABASE_SERVICE_ROLE_KEY!,
-        });
+        })
 
-        const pkg = await financialManagementService.createTreatmentPackage(input);
+        const pkg = await financialManagementService.createTreatmentPackage(input)
 
         return {
           success: true,
           message: 'Pacote de tratamento criado com sucesso',
           data: pkg,
-        };
+        }
       } catch {
-        console.error('Error creating treatment package:', error);
+        console.error('Error creating treatment package:', error)
         return {
           success: false,
           message: error instanceof Error ? error.message : 'Erro ao criar pacote de tratamento',
           data: null,
-        };
+        }
       }
     },
   },
@@ -514,22 +514,22 @@ export const financialManagementRouter = createTRPCRouter({
         const financialManagementService = new FinancialManagementService({
           supabaseUrl: process.env.SUPABASE_URL!,
           supabaseKey: process.env.SUPABASE_SERVICE_ROLE_KEY!,
-        });
+        })
 
-        const packages = await financialManagementService.getTreatmentPackages(input.clinicId);
+        const packages = await financialManagementService.getTreatmentPackages(input.clinicId)
 
         return {
           success: true,
           message: 'Pacotes de tratamento recuperados com sucesso',
           data: packages,
-        };
+        }
       } catch {
-        console.error('Error fetching treatment packages:', error);
+        console.error('Error fetching treatment packages:', error)
         return {
           success: false,
           message: error instanceof Error ? error.message : 'Erro ao buscar pacotes de tratamento',
           data: null,
-        };
+        }
       }
     },
   },
@@ -543,22 +543,22 @@ export const financialManagementRouter = createTRPCRouter({
         const financialManagementService = new FinancialManagementService({
           supabaseUrl: process.env.SUPABASE_URL!,
           supabaseKey: process.env.SUPABASE_SERVICE_ROLE_KEY!,
-        });
+        })
 
-        const invoice = await financialManagementService.createInvoice(input);
+        const invoice = await financialManagementService.createInvoice(input)
 
         return {
           success: true,
           message: 'Fatura criada com sucesso',
           data: invoice,
-        };
+        }
       } catch {
-        console.error('Error creating invoice:', error);
+        console.error('Error creating invoice:', error)
         return {
           success: false,
           message: error instanceof Error ? error.message : 'Erro ao criar fatura',
           data: null,
-        };
+        }
       }
     },
   },
@@ -573,22 +573,22 @@ export const financialManagementRouter = createTRPCRouter({
         const financialManagementService = new FinancialManagementService({
           supabaseUrl: process.env.SUPABASE_URL!,
           supabaseKey: process.env.SUPABASE_SERVICE_ROLE_KEY!,
-        });
+        })
 
-        const invoice = await financialManagementService.getInvoice(input.id);
+        const invoice = await financialManagementService.getInvoice(input.id)
 
         return {
           success: true,
           message: 'Fatura recuperada com sucesso',
           data: invoice,
-        };
+        }
       } catch {
-        console.error('Error fetching invoice:', error);
+        console.error('Error fetching invoice:', error)
         return {
           success: false,
           message: error instanceof Error ? error.message : 'Erro ao buscar fatura',
           data: null,
-        };
+        }
       }
     },
   },
@@ -608,27 +608,27 @@ export const financialManagementRouter = createTRPCRouter({
         const financialManagementService = new FinancialManagementService({
           supabaseUrl: process.env.SUPABASE_URL!,
           supabaseKey: process.env.SUPABASE_SERVICE_ROLE_KEY!,
-        });
+        })
 
         const invoices = await financialManagementService.getInvoices(input.clinicId, {
           status: input.status,
           patientId: input.patientId,
           startDate: input.startDate,
           endDate: input.endDate,
-        });
+        })
 
         return {
           success: true,
           message: 'Faturas recuperadas com sucesso',
           data: invoices,
-        };
+        }
       } catch {
-        console.error('Error fetching invoices:', error);
+        console.error('Error fetching invoices:', error)
         return {
           success: false,
           message: error instanceof Error ? error.message : 'Erro ao buscar faturas',
           data: null,
-        };
+        }
       }
     },
   },
@@ -642,22 +642,22 @@ export const financialManagementRouter = createTRPCRouter({
         const financialManagementService = new FinancialManagementService({
           supabaseUrl: process.env.SUPABASE_URL!,
           supabaseKey: process.env.SUPABASE_SERVICE_ROLE_KEY!,
-        });
+        })
 
-        const payment = await financialManagementService.createPaymentTransaction(input);
+        const payment = await financialManagementService.createPaymentTransaction(input)
 
         return {
           success: true,
           message: 'Transação de pagamento criada com sucesso',
           data: payment,
-        };
+        }
       } catch {
-        console.error('Error creating payment transaction:', error);
+        console.error('Error creating payment transaction:', error)
         return {
           success: false,
           message: error instanceof Error ? error.message : 'Erro ao criar transação de pagamento',
           data: null,
-        };
+        }
       }
     },
   },
@@ -684,7 +684,7 @@ export const financialManagementRouter = createTRPCRouter({
         const financialManagementService = new FinancialManagementService({
           supabaseUrl: process.env.SUPABASE_URL!,
           supabaseKey: process.env.SUPABASE_SERVICE_ROLE_KEY!,
-        });
+        })
 
         const transactions = await financialManagementService.getPaymentTransactions(
           input.clinicId,
@@ -694,22 +694,22 @@ export const financialManagementRouter = createTRPCRouter({
             startDate: input.startDate,
             endDate: input.endDate,
           },
-        );
+        )
 
         return {
           success: true,
           message: 'Transações de pagamento recuperadas com sucesso',
           data: transactions,
-        };
+        }
       } catch {
-        console.error('Error fetching payment transactions:', error);
+        console.error('Error fetching payment transactions:', error)
         return {
           success: false,
           message: error instanceof Error
             ? error.message
             : 'Erro ao buscar transações de pagamento',
           data: null,
-        };
+        }
       }
     },
   },
@@ -723,22 +723,22 @@ export const financialManagementRouter = createTRPCRouter({
         const financialManagementService = new FinancialManagementService({
           supabaseUrl: process.env.SUPABASE_URL!,
           supabaseKey: process.env.SUPABASE_SERVICE_ROLE_KEY!,
-        });
+        })
 
-        const commission = await financialManagementService.createProfessionalCommission(input);
+        const commission = await financialManagementService.createProfessionalCommission(input)
 
         return {
           success: true,
           message: 'Comissão profissional criada com sucesso',
           data: commission,
-        };
+        }
       } catch {
-        console.error('Error creating professional commission:', error);
+        console.error('Error creating professional commission:', error)
         return {
           success: false,
           message: error instanceof Error ? error.message : 'Erro ao criar comissão profissional',
           data: null,
-        };
+        }
       }
     },
   },
@@ -754,27 +754,27 @@ export const financialManagementRouter = createTRPCRouter({
         const financialManagementService = new FinancialManagementService({
           supabaseUrl: process.env.SUPABASE_URL!,
           supabaseKey: process.env.SUPABASE_SERVICE_ROLE_KEY!,
-        });
+        })
 
         const commissions = await financialManagementService.getProfessionalCommissions(
           input.clinicId,
           input.professionalId,
-        );
+        )
 
         return {
           success: true,
           message: 'Comissões profissionais recuperadas com sucesso',
           data: commissions,
-        };
+        }
       } catch {
-        console.error('Error fetching professional commissions:', error);
+        console.error('Error fetching professional commissions:', error)
         return {
           success: false,
           message: error instanceof Error
             ? error.message
             : 'Erro ao buscar comissões profissionais',
           data: null,
-        };
+        }
       }
     },
   },
@@ -782,11 +782,11 @@ export const financialManagementRouter = createTRPCRouter({
   // Financial Goals Management
   createFinancialGoal: {
     input: FinancialGoalInputSchema.refine(
-      data => {
+      (data) => {
         if (new Date(data.endDate) < new Date(data.startDate)) {
-          return false;
+          return false
         }
-        return true;
+        return true
       },
       {
         message: 'A data final não pode ser anterior à data inicial',
@@ -799,22 +799,22 @@ export const financialManagementRouter = createTRPCRouter({
         const financialManagementService = new FinancialManagementService({
           supabaseUrl: process.env.SUPABASE_URL!,
           supabaseKey: process.env.SUPABASE_SERVICE_ROLE_KEY!,
-        });
+        })
 
-        const goal = await financialManagementService.createFinancialGoal(input);
+        const goal = await financialManagementService.createFinancialGoal(input)
 
         return {
           success: true,
           message: 'Meta financeira criada com sucesso',
           data: goal,
-        };
+        }
       } catch {
-        console.error('Error creating financial goal:', error);
+        console.error('Error creating financial goal:', error)
         return {
           success: false,
           message: error instanceof Error ? error.message : 'Erro ao criar meta financeira',
           data: null,
-        };
+        }
       }
     },
   },
@@ -830,27 +830,27 @@ export const financialManagementRouter = createTRPCRouter({
         const financialManagementService = new FinancialManagementService({
           supabaseUrl: process.env.SUPABASE_URL!,
           supabaseKey: process.env.SUPABASE_SERVICE_ROLE_KEY!,
-        });
+        })
 
         const goal = await financialManagementService.updateFinancialGoalProgress(
           input.goalId,
           input.currentValue,
-        );
+        )
 
         return {
           success: true,
           message: 'Progresso da meta financeira atualizado com sucesso',
           data: goal,
-        };
+        }
       } catch {
-        console.error('Error updating financial goal progress:', error);
+        console.error('Error updating financial goal progress:', error)
         return {
           success: false,
           message: error instanceof Error
             ? error.message
             : 'Erro ao atualizar progresso da meta financeira',
           data: null,
-        };
+        }
       }
     },
   },
@@ -865,22 +865,22 @@ export const financialManagementRouter = createTRPCRouter({
         const financialManagementService = new FinancialManagementService({
           supabaseUrl: process.env.SUPABASE_URL!,
           supabaseKey: process.env.SUPABASE_SERVICE_ROLE_KEY!,
-        });
+        })
 
-        const goals = await financialManagementService.getFinancialGoals(input.clinicId);
+        const goals = await financialManagementService.getFinancialGoals(input.clinicId)
 
         return {
           success: true,
           message: 'Metas financeiras recuperadas com sucesso',
           data: goals,
-        };
+        }
       } catch {
-        console.error('Error fetching financial goals:', error);
+        console.error('Error fetching financial goals:', error)
         return {
           success: false,
           message: error instanceof Error ? error.message : 'Erro ao buscar metas financeiras',
           data: null,
-        };
+        }
       }
     },
   },
@@ -897,25 +897,25 @@ export const financialManagementRouter = createTRPCRouter({
         const financialManagementService = new FinancialManagementService({
           supabaseUrl: process.env.SUPABASE_URL!,
           supabaseKey: process.env.SUPABASE_SERVICE_ROLE_KEY!,
-        });
+        })
 
         const report = await financialManagementService.generateFinancialReport(
           input.clinicId,
           input.reportDate,
-        );
+        )
 
         return {
           success: true,
           message: 'Relatório financeiro gerado com sucesso',
           data: report,
-        };
+        }
       } catch {
-        console.error('Error generating financial report:', error);
+        console.error('Error generating financial report:', error)
         return {
           success: false,
           message: error instanceof Error ? error.message : 'Erro ao gerar relatório financeiro',
           data: null,
-        };
+        }
       }
     },
   },
@@ -930,22 +930,22 @@ export const financialManagementRouter = createTRPCRouter({
         const financialManagementService = new FinancialManagementService({
           supabaseUrl: process.env.SUPABASE_URL!,
           supabaseKey: process.env.SUPABASE_SERVICE_ROLE_KEY!,
-        });
+        })
 
-        const dashboard = await financialManagementService.getFinancialDashboard(input.clinicId);
+        const dashboard = await financialManagementService.getFinancialDashboard(input.clinicId)
 
         return {
           success: true,
           message: 'Dashboard financeiro recuperado com sucesso',
           data: dashboard,
-        };
+        }
       } catch {
-        console.error('Error fetching financial dashboard:', error);
+        console.error('Error fetching financial dashboard:', error)
         return {
           success: false,
           message: error instanceof Error ? error.message : 'Erro ao buscar dashboard financeiro',
           data: null,
-        };
+        }
       }
     },
   },
@@ -961,24 +961,24 @@ export const financialManagementRouter = createTRPCRouter({
         const financialManagementService = new FinancialManagementService({
           supabaseUrl: process.env.SUPABASE_URL!,
           supabaseKey: process.env.SUPABASE_SERVICE_ROLE_KEY!,
-        });
+        })
 
         const configurations = await financialManagementService.getTaxConfigurations(
           input.clinicId,
-        );
+        )
 
         return {
           success: true,
           message: 'Configurações fiscais recuperadas com sucesso',
           data: configurations,
-        };
+        }
       } catch {
-        console.error('Error fetching tax configurations:', error);
+        console.error('Error fetching tax configurations:', error)
         return {
           success: false,
           message: error instanceof Error ? error.message : 'Erro ao buscar configurações fiscais',
           data: null,
-        };
+        }
       }
     },
   },
@@ -994,22 +994,22 @@ export const financialManagementRouter = createTRPCRouter({
         const financialManagementService = new FinancialManagementService({
           supabaseUrl: process.env.SUPABASE_URL!,
           supabaseKey: process.env.SUPABASE_SERVICE_ROLE_KEY!,
-        });
+        })
 
-        const nfse = await financialManagementService.generateNFSe(input.invoiceId);
+        const nfse = await financialManagementService.generateNFSe(input.invoiceId)
 
         return {
           success: true,
           message: 'NFSe gerada com sucesso',
           data: nfse,
-        };
+        }
       } catch {
-        console.error('Error generating NFSe:', error);
+        console.error('Error generating NFSe:', error)
         return {
           success: false,
           message: error instanceof Error ? error.message : 'Erro ao gerar NFSe',
           data: null,
-        };
+        }
       }
     },
   },
@@ -1027,22 +1027,22 @@ export const financialManagementRouter = createTRPCRouter({
         const financialManagementService = new FinancialManagementService({
           supabaseUrl: process.env.SUPABASE_URL!,
           supabaseKey: process.env.SUPABASE_SERVICE_ROLE_KEY!,
-        });
+        })
 
-        const payment = await financialManagementService.processPixPayment(input);
+        const payment = await financialManagementService.processPixPayment(input)
 
         return {
           success: true,
           message: 'Pagamento PIX processado com sucesso',
           data: payment,
-        };
+        }
       } catch {
-        console.error('Error processing PIX payment:', error);
+        console.error('Error processing PIX payment:', error)
         return {
           success: false,
           message: error instanceof Error ? error.message : 'Erro ao processar pagamento PIX',
           data: null,
-        };
+        }
       }
     },
   },
@@ -1058,26 +1058,26 @@ export const financialManagementRouter = createTRPCRouter({
         const financialManagementService = new FinancialManagementService({
           supabaseUrl: process.env.SUPABASE_URL!,
           supabaseKey: process.env.SUPABASE_SERVICE_ROLE_KEY!,
-        });
+        })
 
         const boleto = await financialManagementService.calculateBoleto(
           input.invoiceId,
           input.dueDays,
-        );
+        )
 
         return {
           success: true,
           message: 'Boleto calculado com sucesso',
           data: boleto,
-        };
+        }
       } catch {
-        console.error('Error calculating boleto:', error);
+        console.error('Error calculating boleto:', error)
         return {
           success: false,
           message: error instanceof Error ? error.message : 'Erro ao calcular boleto',
           data: null,
-        };
+        }
       }
     },
   },
-});
+})

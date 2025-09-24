@@ -14,22 +14,18 @@
  * @compliance LGPD, ANVISA SaMD, Healthcare Standards
  */
 
-import type { Context } from 'hono';
-import { nanoid } from 'nanoid';
-import { z } from 'zod';
+import type { Context } from 'hono'
+import { nanoid } from 'nanoid'
+import { z } from 'zod'
 import {
   auditLogger,
   createHealthcareLogger,
   logHealthcareError,
-} from '../logging/healthcare-logger';
-import type {
-  AuthSession,
-  HealthcarePermission,
-  HealthcareRole,
-} from './authentication-middleware';
+} from '../logging/healthcare-logger'
+import type { AuthSession, HealthcarePermission, HealthcareRole } from './authentication-middleware'
 
 // Create authorization logger
-const authorizationLogger = createHealthcareLogger('authorization');
+const authorizationLogger = createHealthcareLogger('authorization')
 
 // ============================================================================
 // SCHEMAS & TYPES
@@ -100,11 +96,11 @@ export const HealthcareResourceTypeSchema = z.enum([
   'emergency_procedure',
   'emergency_alert',
   'disaster_plan',
-]);
+])
 
 export type HealthcareResourceType = z.infer<
   typeof HealthcareResourceTypeSchema
->;
+>
 
 /**
  * Resource sensitivity levels
@@ -115,9 +111,9 @@ export const ResourceSensitivitySchema = z.enum([
   'confidential', // Level 2: Healthcare confidential data
   'restricted', // Level 3: Highly sensitive patient data
   'top_secret', // Level 4: Critical system/emergency data
-]);
+])
 
-export type ResourceSensitivity = z.infer<typeof ResourceSensitivitySchema>;
+export type ResourceSensitivity = z.infer<typeof ResourceSensitivitySchema>
 
 /**
  * Authorization context schema
@@ -268,9 +264,9 @@ export const AuthorizationContextSchema = z.object({
       purposeLimitation: z.boolean().describe('Purpose limitation applies'),
     })
     .describe('Compliance context'),
-});
+})
 
-export type AuthorizationContext = z.infer<typeof AuthorizationContextSchema>;
+export type AuthorizationContext = z.infer<typeof AuthorizationContextSchema>
 
 /**
  * Authorization decision schema
@@ -337,9 +333,9 @@ export const AuthorizationDecisionSchema = z.object({
 
   timestamp: z.string().datetime().describe('Decision timestamp'),
   contextId: z.string().describe('Authorization context ID'),
-});
+})
 
-export type AuthorizationDecision = z.infer<typeof AuthorizationDecisionSchema>;
+export type AuthorizationDecision = z.infer<typeof AuthorizationDecisionSchema>
 
 /**
  * Authorization policy schema
@@ -405,9 +401,9 @@ export const AuthorizationPolicySchema = z.object({
       tags: z.array(z.string()).describe('Policy tags'),
     })
     .describe('Policy metadata'),
-});
+})
 
-export type AuthorizationPolicy = z.infer<typeof AuthorizationPolicySchema>;
+export type AuthorizationPolicy = z.infer<typeof AuthorizationPolicySchema>
 
 /**
  * Authorization configuration schema
@@ -582,9 +578,9 @@ export const AuthorizationConfigSchema = z.object({
         .describe('Max concurrent evaluations'),
     })
     .describe('Performance settings'),
-});
+})
 
-export type AuthorizationConfig = z.infer<typeof AuthorizationConfigSchema>;
+export type AuthorizationConfig = z.infer<typeof AuthorizationConfigSchema>
 
 // ============================================================================
 // HEALTHCARE AUTHORIZATION RULES
@@ -597,25 +593,25 @@ export type AuthorizationConfig = z.infer<typeof AuthorizationConfigSchema>;
  * LGPD compliance decision interface
  */
 export interface ComplianceDecision {
-  decision: 'allow' | 'deny';
-  reasons: string[];
-  advice: ComplianceAdvice[];
-  complianceScore: number;
-  lastEvaluated: string;
+  decision: 'allow' | 'deny'
+  reasons: string[]
+  advice: ComplianceAdvice[]
+  complianceScore: number
+  lastEvaluated: string
   obligations?: Array<{
-    type: string;
-    description: string;
-    deadline?: string;
-  }>;
+    type: string
+    description: string
+    deadline?: string
+  }>
 }
 
 /**
  * LGPD compliance advice interface
  */
 export interface ComplianceAdvice {
-  type: string;
-  description: string;
-  severity: 'info' | 'warning' | 'error' | 'critical';
+  type: string
+  description: string
+  severity: 'info' | 'warning' | 'error' | 'critical'
 }
 
 export class HealthcareAuthorizationRules {
@@ -625,26 +621,26 @@ export class HealthcareAuthorizationRules {
   static evaluatePatientDataAccess(
     _context: AuthorizationContext,
   ): Partial<AuthorizationDecision> {
-    const { subject, resource, action, environment } = _context;
-    const reasons: string[] = [];
-    const obligations: AuthorizationDecision['obligations'] = [];
-    const advice: AuthorizationDecision['advice'] = [];
-    let decision: 'permit' | 'deny' = 'deny';
+    const { subject, resource, action, environment } = _context
+    const reasons: string[] = []
+    const obligations: AuthorizationDecision['obligations'] = []
+    const advice: AuthorizationDecision['advice'] = []
+    let decision: 'permit' | 'deny' = 'deny'
 
     // Emergency access override
     if (subject.emergencyMode && environment.workflow?.emergencyFlag) {
-      decision = 'permit';
-      reasons.push('Emergency access override activated');
+      decision = 'permit'
+      reasons.push('Emergency access override activated')
       obligations.push({
         type: 'audit',
         description: 'Emergency access must be audited within 24 hours',
         deadline: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
-      });
+      })
       advice.push({
         type: 'compliance',
         description: 'Emergency access requires supervisor approval within 48 hours',
         severity: 'critical' as const,
-      });
+      })
     }
 
     // Patient-owned data access
@@ -652,8 +648,8 @@ export class HealthcareAuthorizationRules {
       resource.owner?._userId === subject._userId
       && subject._role === 'patient'
     ) {
-      decision = 'permit';
-      reasons.push('Patient accessing own data');
+      decision = 'permit'
+      reasons.push('Patient accessing own data')
     }
 
     // Healthcare provider access to assigned patients
@@ -662,24 +658,24 @@ export class HealthcareAuthorizationRules {
         resource.attributes.assignedProvider === subject._userId
         || resource.attributes.careTeam?.includes(subject._userId)
       ) {
-        decision = 'permit';
-        reasons.push('Assigned healthcare provider access');
+        decision = 'permit'
+        reasons.push('Assigned healthcare provider access')
       }
     }
 
     // Department-based access
     if (subject.departmentId === resource.owner?.departmentId) {
       if (['doctor', 'nurse', 'technician'].includes(subject._role)) {
-        decision = 'permit';
-        reasons.push('Department-based access authorization');
+        decision = 'permit'
+        reasons.push('Department-based access authorization')
       }
     }
 
     // Facility-based access for administrative roles
     if (subject.facilityId === resource.owner?.facilityId) {
       if (['department_head', 'compliance_officer'].includes(subject._role)) {
-        decision = 'permit';
-        reasons.push('Facility-based administrative access');
+        decision = 'permit'
+        reasons.push('Facility-based administrative access')
       }
     }
 
@@ -690,11 +686,11 @@ export class HealthcareAuthorizationRules {
           type: 'consent',
           description: 'Parental consent required for minor patient data access',
           deadline: new Date(Date.now() + 60 * 60 * 1000).toISOString(), // 1 hour
-        });
+        })
       }
     }
 
-    return { decision, reasons, obligations, advice };
+    return { decision, reasons, obligations, advice }
   }
 
   /**
@@ -703,44 +699,44 @@ export class HealthcareAuthorizationRules {
   static evaluateMedicationAccess(
     _context: AuthorizationContext,
   ): Partial<AuthorizationDecision> {
-    const { subject, action } = _context;
-    const reasons: string[] = [];
-    const obligations: AuthorizationDecision['obligations'] = [];
-    let decision: 'permit' | 'deny' = 'deny';
+    const { subject, action } = _context
+    const reasons: string[] = []
+    const obligations: AuthorizationDecision['obligations'] = []
+    let decision: 'permit' | 'deny' = 'deny'
 
     // Prescribing privileges
     if (action.operation === 'create' || action.operation === 'write') {
       if (['doctor', 'specialist'].includes(subject._role)) {
-        decision = 'permit';
-        reasons.push('Prescribing privileges for medical provider');
+        decision = 'permit'
+        reasons.push('Prescribing privileges for medical provider')
         obligations.push({
           type: 'verification',
           description: 'Prescription requires digital signature verification',
           deadline: new Date(Date.now() + 30 * 60 * 1000).toISOString(), // 30 minutes
-        });
+        })
       }
     }
 
     // Medication administration
     if (action.operation === 'execute') {
       if (['nurse', 'pharmacist'].includes(subject._role)) {
-        decision = 'permit';
-        reasons.push('Medication administration authorization');
+        decision = 'permit'
+        reasons.push('Medication administration authorization')
         obligations.push({
           type: 'documentation',
           description: 'Administration must be documented immediately',
           deadline: new Date(Date.now() + 15 * 60 * 1000).toISOString(), // 15 minutes
-        });
+        })
       }
     }
 
     // Pharmacy access
     if (subject._role === 'pharmacist') {
-      decision = 'permit';
-      reasons.push('Pharmacist access to medication records');
+      decision = 'permit'
+      reasons.push('Pharmacist access to medication records')
     }
 
-    return { decision, reasons, obligations };
+    return { decision, reasons, obligations }
   }
 
   /**
@@ -749,17 +745,17 @@ export class HealthcareAuthorizationRules {
   static evaluateLabDataAccess(
     _context: AuthorizationContext,
   ): Partial<AuthorizationDecision> {
-    const { subject, action } = _context;
-    const reasons: string[] = [];
-    let decision: 'permit' | 'deny' = 'deny';
+    const { subject, action } = _context
+    const reasons: string[] = []
+    let decision: 'permit' | 'deny' = 'deny'
 
     // Lab technician can write results
     if (
       subject._role === 'lab_technician'
       && ['write', 'create', 'update'].includes(action.operation)
     ) {
-      decision = 'permit';
-      reasons.push('Lab technician result entry authorization');
+      decision = 'permit'
+      reasons.push('Lab technician result entry authorization')
     }
 
     // Healthcare providers can read results
@@ -767,17 +763,17 @@ export class HealthcareAuthorizationRules {
       ['doctor', 'nurse', 'specialist'].includes(subject._role)
       && action.operation === 'read'
     ) {
-      decision = 'permit';
-      reasons.push('Healthcare provider lab result access');
+      decision = 'permit'
+      reasons.push('Healthcare provider lab result access')
     }
 
     // Patients can read their own results
     if (subject._role === 'patient' && action.operation === 'read') {
-      decision = 'permit';
-      reasons.push('Patient access to own laboratory results');
+      decision = 'permit'
+      reasons.push('Patient access to own laboratory results')
     }
 
-    return { decision, reasons };
+    return { decision, reasons }
   }
 
   /**
@@ -786,42 +782,42 @@ export class HealthcareAuthorizationRules {
   static evaluateAdminAccess(
     _context: AuthorizationContext,
   ): Partial<AuthorizationDecision> {
-    const { subject, action } = _context;
-    const reasons: string[] = [];
-    const obligations: AuthorizationDecision['obligations'] = [];
-    let decision: 'permit' | 'deny' = 'deny';
+    const { subject, action } = _context
+    const reasons: string[] = []
+    const obligations: AuthorizationDecision['obligations'] = []
+    let decision: 'permit' | 'deny' = 'deny'
 
     // System administration
     if (subject._role === 'system_admin') {
-      decision = 'permit';
-      reasons.push('System administrator access');
+      decision = 'permit'
+      reasons.push('System administrator access')
 
       if (['write', 'delete', 'execute'].includes(action.operation)) {
         obligations.push({
           type: 'approval',
           description: 'Administrative changes require supervisor approval',
           deadline: new Date(Date.now() + 4 * 60 * 60 * 1000).toISOString(), // 4 hours
-        });
+        })
       }
     }
 
     // Compliance officer access
     if (subject._role === 'compliance_officer') {
       if (['read', 'export'].includes(action.operation)) {
-        decision = 'permit';
-        reasons.push('Compliance officer audit access');
+        decision = 'permit'
+        reasons.push('Compliance officer audit access')
       }
     }
 
     // Department head access
     if (subject._role === 'department_head') {
       if (action.scope === 'basic' || action.scope === 'full') {
-        decision = 'permit';
-        reasons.push('Department head management access');
+        decision = 'permit'
+        reasons.push('Department head management access')
       }
     }
 
-    return { decision, reasons, obligations };
+    return { decision, reasons, obligations }
   }
 
   /**
@@ -830,40 +826,40 @@ export class HealthcareAuthorizationRules {
   static evaluateEmergencyAccess(
     _context: AuthorizationContext,
   ): Partial<AuthorizationDecision> {
-    const { subject, environment } = _context;
-    const reasons: string[] = [];
-    const obligations: AuthorizationDecision['obligations'] = [];
-    const advice: AuthorizationDecision['advice'] = [];
-    let decision: 'permit' | 'deny' = 'deny';
+    const { subject, environment } = _context
+    const reasons: string[] = []
+    const obligations: AuthorizationDecision['obligations'] = []
+    const advice: AuthorizationDecision['advice'] = []
+    let decision: 'permit' | 'deny' = 'deny'
 
     // Emergency responder access
     if (subject._role === 'emergency_responder') {
-      decision = 'permit';
-      reasons.push('Emergency responder access authorization');
+      decision = 'permit'
+      reasons.push('Emergency responder access authorization')
       obligations.push({
         type: 'audit',
         description: 'Emergency access requires immediate audit logging',
         deadline: new Date(Date.now() + 60 * 60 * 1000).toISOString(), // 1 hour
-      });
+      })
     }
 
     // Break-glass access for emergency situations
     if (environment.workflow?.emergencyFlag && subject.emergencyMode) {
-      decision = 'permit';
-      reasons.push('Break-glass emergency access');
+      decision = 'permit'
+      reasons.push('Break-glass emergency access')
       obligations.push({
         type: 'justification',
         description: 'Emergency access justification required within 2 hours',
         deadline: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(),
-      });
+      })
       advice.push({
         type: 'compliance',
         description: 'Emergency access will be reviewed by compliance team',
         severity: 'warning' as const,
-      });
+      })
     }
 
-    return { decision, reasons, obligations, advice };
+    return { decision, reasons, obligations, advice }
   }
 
   /**
@@ -872,84 +868,86 @@ export class HealthcareAuthorizationRules {
   static evaluateLGPDCompliance(
     context: AuthorizationContext,
   ): ComplianceDecision {
-    const { action, compliance, resource } = context;
+    const { action, compliance, resource } = context
 
-    let decision: ComplianceDecision['decision'] = 'allow';
-    const reasons: string[] = [];
-    const advice: ComplianceAdvice[] = [];
+    let decision: ComplianceDecision['decision'] = 'allow'
+    const reasons: string[] = []
+    const advice: ComplianceAdvice[] = []
 
     // Consent validation for processing (highest priority)
     if (compliance.consentStatus.dataProcessing === false && action.operation !== 'read') {
-      decision = 'deny';
-      reasons.push('LGPD consent required for data processing');
+      decision = 'deny'
+      reasons.push('LGPD consent required for data processing')
       advice.push({
         type: 'lgpd',
         description: 'Obtain explicit consent before processing personal data',
         severity: 'error' as const,
-      });
+      })
     }
 
     // Data minimization
     if (compliance.dataMinimization && action.scope === 'full') {
-      decision = 'deny';
-      reasons.push('Data minimization principle violation');
+      decision = 'deny'
+      reasons.push('Data minimization principle violation')
       advice.push({
         type: 'lgpd',
         description: 'Consider using basic scope to comply with data minimization',
         severity: 'warning' as const,
-      });
+      })
     }
 
     // Purpose limitation
     if (compliance.purposeLimitation && (!action.purpose || action.purpose === 'unspecified')) {
-      decision = 'deny';
-      reasons.push('Purpose limitation requires explicit purpose specification');
+      decision = 'deny'
+      reasons.push('Purpose limitation requires explicit purpose specification')
       advice.push({
         type: 'lgpd',
         description: 'Specify a clear purpose for data processing',
         severity: 'warning' as const,
-      });
+      })
     }
 
     // Storage limitation check
-    const now = new Date();
-    const retentionDays = resource.metadata.retentionPeriod || 0;
-    const createdAt = new Date(resource.metadata.createdAt);
-    const daysStored = Math.floor((now.getTime() - createdAt.getTime()) / (1000 * 60 * 60 * 24));
+    const now = new Date()
+    const retentionDays = resource.metadata.retentionPeriod || 0
+    const createdAt = new Date(resource.metadata.createdAt)
+    const daysStored = Math.floor((now.getTime() - createdAt.getTime()) / (1000 * 60 * 60 * 24))
 
     if (retentionDays > 0 && daysStored > retentionDays) {
-      decision = 'deny';
-      reasons.push('Retention period exceeded');
+      decision = 'deny'
+      reasons.push('Retention period exceeded')
       advice.push({
         type: 'retention',
         description: 'Data retention period exceeded - consider anonymization or deletion',
         severity: 'error' as const,
-      });
+      })
     }
 
     // Third-party sharing validation (only if not already denied for consent)
     if (
-      decision === 'allow' && compliance.lgpdBasis === 'consent'
-      && !compliance.consentStatus.thirdPartySharing && !resource.attributes.allowSharing
+      decision === 'allow'
+      && compliance.lgpdBasis === 'consent'
+      && !compliance.consentStatus.thirdPartySharing
+      && !resource.attributes.allowSharing
     ) {
-      decision = 'deny';
-      reasons.push('Third-party sharing not authorized');
+      decision = 'deny'
+      reasons.push('Third-party sharing not authorized')
       advice.push({
         type: 'lgpd',
         description: 'Ensure data sharing agreements are in place',
         severity: 'warning' as const,
-      });
+      })
     }
 
     // Right to erasure for patients
     if (context.subject._role === 'patient' && action.operation === 'delete') {
-      decision = 'allow';
-      reasons.push('Patient right to erasure under LGPD');
+      decision = 'allow'
+      reasons.push('Patient right to erasure under LGPD')
       advice.push({
         type: 'lgpd',
         description: 'Patient has right to request deletion of their personal data',
         severity: 'info' as const,
-      });
+      })
     }
 
     return {
@@ -958,7 +956,7 @@ export class HealthcareAuthorizationRules {
       advice,
       complianceScore: decision === 'allow' ? 100 : 50,
       lastEvaluated: new Date().toISOString(),
-    };
+    }
   }
 }
 
@@ -970,13 +968,13 @@ export class HealthcareAuthorizationRules {
  * Healthcare Authorization Engine
  */
 export class HealthcareAuthorizationEngine {
-  private config: AuthorizationConfig;
-  private policies: Map<string, AuthorizationPolicy> = new Map();
+  private config: AuthorizationConfig
+  private policies: Map<string, AuthorizationPolicy> = new Map()
   private decisionCache: Map<
     string,
     { decision: AuthorizationDecision; expiry: number }
-  > = new Map();
-  private isInitialized = false;
+  > = new Map()
+  private isInitialized = false
   private stats = {
     cacheSize: 0,
     policiesLoaded: 0,
@@ -986,14 +984,14 @@ export class HealthcareAuthorizationEngine {
     denyDecisions: 0,
     averageEvaluationTime: 0,
     config: {} as AuthorizationConfig,
-  };
+  }
 
   constructor(config: Partial<AuthorizationConfig> = {}) {
     try {
       this.config = AuthorizationConfigSchema.parse({
         ...this.getDefaultConfig(),
         ...config,
-      });
+      })
     } catch (error) {
       // If configuration validation fails, use default configuration
       // This allows the system to continue operating even with invalid config
@@ -1001,18 +999,18 @@ export class HealthcareAuthorizationEngine {
         error: error instanceof Error ? error.message : 'Unknown error',
         component: 'authorization-system',
         timestamp: new Date().toISOString(),
-      });
+      })
 
-      this.config = this.getDefaultConfig() as AuthorizationConfig;
+      this.config = this.getDefaultConfig() as AuthorizationConfig
     }
 
     if (this.config.enabled) {
-      this.initialize();
+      this.initialize()
     } else {
       // When disabled, don't initialize but set config
-      this.stats.config = this.config;
-      this.isInitialized = false; // Explicitly set private property
-      this.stats.isInitialized = false; // Set stats property
+      this.stats.config = this.config
+      this.isInitialized = false // Explicitly set private property
+      this.stats.isInitialized = false // Set stats property
     }
   }
 
@@ -1025,24 +1023,24 @@ export class HealthcareAuthorizationEngine {
    */
   private initialize(): void {
     try {
-      this.loadDefaultPolicies();
-      this.setupCacheManagement();
-      this.setupPerformanceMonitoring();
-      this.isInitialized = true;
-      this.stats.isInitialized = true;
-      this.stats.policiesLoaded = this.policies.size;
-      this.stats.config = this.config;
+      this.loadDefaultPolicies()
+      this.setupCacheManagement()
+      this.setupPerformanceMonitoring()
+      this.isInitialized = true
+      this.stats.isInitialized = true
+      this.stats.policiesLoaded = this.policies.size
+      this.stats.config = this.config
 
       authorizationLogger.info(
         'Healthcare authorization engine initialized',
         { component: 'authorization-system', timestamp: new Date().toISOString() },
-      );
+      )
     } catch (error) {
       logHealthcareError(
         'authorization-system',
         error instanceof Error ? error : new Error(String(error)),
         { method: 'initialize' },
-      );
+      )
     }
   }
 
@@ -1054,7 +1052,7 @@ export class HealthcareAuthorizationEngine {
     authorizationLogger.info(
       'Default authorization policies loaded',
       { component: 'authorization-system', timestamp: new Date().toISOString() },
-    );
+    )
   }
 
   /**
@@ -1063,8 +1061,8 @@ export class HealthcareAuthorizationEngine {
   private setupCacheManagement(): void {
     if (this.config.decisionEngine.enableCaching) {
       setInterval(() => {
-        this.cleanupExpiredCacheEntries();
-      }, 60000); // Every minute
+        this.cleanupExpiredCacheEntries()
+      }, 60000) // Every minute
     }
   }
 
@@ -1074,8 +1072,8 @@ export class HealthcareAuthorizationEngine {
   private setupPerformanceMonitoring(): void {
     if (this.config.performance.enableMetrics) {
       setInterval(() => {
-        this.collectPerformanceMetrics();
-      }, this.config.performance.metricsInterval);
+        this.collectPerformanceMetrics()
+      }, this.config.performance.metricsInterval)
     }
   }
 
@@ -1136,7 +1134,7 @@ export class HealthcareAuthorizationEngine {
         enableOptimization: true,
         maxConcurrentEvaluations: 50,
       },
-    };
+    }
   }
 
   // ============================================================================
@@ -1149,41 +1147,41 @@ export class HealthcareAuthorizationEngine {
   async authorize(
     _context: AuthorizationContext,
   ): Promise<AuthorizationDecision> {
-    const startTime = Date.now();
-    const contextId = `authz_${nanoid(12)}`;
+    const startTime = Date.now()
+    const contextId = `authz_${nanoid(12)}`
 
     try {
       // Check cache first
       if (this.config.decisionEngine.enableCaching) {
-        const cached = this.getCachedDecision(_context);
+        const cached = this.getCachedDecision(_context)
         if (cached) {
-          return cached;
+          return cached
         }
       }
 
       // Evaluate authorization
-      const decision = await this.evaluateAuthorization(_context, contextId);
+      const decision = await this.evaluateAuthorization(_context, contextId)
 
       // Cache decision
       if (
         this.config.decisionEngine.enableCaching
         && decision.decision !== 'indeterminate'
       ) {
-        this.cacheDecision(_context, decision);
+        this.cacheDecision(_context, decision)
       }
 
       // Log decision
       if (this.config.audit.enableDecisionLogging) {
-        await this.logAuthorizationDecision(_context, decision, startTime);
+        await this.logAuthorizationDecision(_context, decision, startTime)
       }
 
-      return decision;
+      return decision
     } catch (error) {
       logHealthcareError(
         'authorization-system',
         error instanceof Error ? error : new Error(String(error)),
         { method: 'evaluateAuthorization' },
-      );
+      )
 
       return {
         decision: 'indeterminate',
@@ -1211,7 +1209,7 @@ export class HealthcareAuthorizationEngine {
         conditions: [],
         timestamp: new Date().toISOString(),
         contextId,
-      };
+      }
     }
   }
 
@@ -1222,29 +1220,29 @@ export class HealthcareAuthorizationEngine {
     _context: AuthorizationContext,
     contextId: string,
   ): Promise<AuthorizationDecision> {
-    const startTime = Date.now();
+    const startTime = Date.now()
 
     // Add minimal processing time to ensure evaluationTime > 0
-    await new Promise(resolve => setTimeout(resolve, 1));
+    await new Promise((resolve) => setTimeout(resolve, 1))
 
     // Initialize decision components
     let finalDecision: 'permit' | 'deny' | 'not_applicable' | 'indeterminate' =
-      this.config.decisionEngine.defaultDecision;
-    const allReasons: string[] = [];
-    const allObligations: AuthorizationDecision['obligations'] = [];
-    const allAdvice: AuthorizationDecision['advice'] = [];
-    const conditions: AuthorizationDecision['conditions'] = [];
+      this.config.decisionEngine.defaultDecision
+    const allReasons: string[] = []
+    const allObligations: AuthorizationDecision['obligations'] = []
+    const allAdvice: AuthorizationDecision['advice'] = []
+    const conditions: AuthorizationDecision['conditions'] = []
 
     // Risk assessment
-    const riskScore = await this.assessRisk(_context);
+    const riskScore = await this.assessRisk(_context)
 
     // Evaluate resource-specific rules
-    const resourceDecision = await this.evaluateResourceSpecificRules(_context);
+    const resourceDecision = await this.evaluateResourceSpecificRules(_context)
     if (resourceDecision.decision) {
-      finalDecision = resourceDecision.decision;
-      allReasons.push(...(resourceDecision.reasons || []));
-      allObligations.push(...(resourceDecision.obligations || []));
-      allAdvice.push(...(resourceDecision.advice || []));
+      finalDecision = resourceDecision.decision
+      allReasons.push(...(resourceDecision.reasons || []))
+      allObligations.push(...(resourceDecision.obligations || []))
+      allAdvice.push(...(resourceDecision.advice || []))
     }
 
     // Evaluate LGPD compliance (but don't override permit decisions)
@@ -1252,30 +1250,30 @@ export class HealthcareAuthorizationEngine {
       this.config.lgpdCompliance.enableConsentValidation
       && finalDecision !== 'permit'
     ) {
-      const lgpdDecision = HealthcareAuthorizationRules.evaluateLGPDCompliance(_context);
+      const lgpdDecision = HealthcareAuthorizationRules.evaluateLGPDCompliance(_context)
       if (lgpdDecision.decision === 'deny') {
-        finalDecision = 'deny';
-        allReasons.push(...lgpdDecision.reasons);
+        finalDecision = 'deny'
+        allReasons.push(...lgpdDecision.reasons)
         // Map advice to compatible schema types (filter out 'error' severity)
         allAdvice.push(
           ...lgpdDecision.advice
-            .filter(advice => advice.severity !== 'error')
-            .map(advice => ({
+            .filter((advice) => advice.severity !== 'error')
+            .map((advice) => ({
               type: advice.type,
               description: advice.description,
               severity: advice.severity as 'info' | 'warning' | 'critical',
             })),
-        );
+        )
       }
     }
 
     // Evaluate emergency access rules (only if emergency conditions are met)
-    const emergencyDecision = HealthcareAuthorizationRules.evaluateEmergencyAccess(_context);
+    const emergencyDecision = HealthcareAuthorizationRules.evaluateEmergencyAccess(_context)
     if (emergencyDecision.decision === 'permit') {
-      finalDecision = 'permit';
-      allReasons.push(...(emergencyDecision.reasons || []));
-      allObligations.push(...(emergencyDecision.obligations || []));
-      allAdvice.push(...(emergencyDecision.advice || []));
+      finalDecision = 'permit'
+      allReasons.push(...(emergencyDecision.reasons || []))
+      allObligations.push(...(emergencyDecision.obligations || []))
+      allAdvice.push(...(emergencyDecision.advice || []))
     }
 
     // Generate obligations for high-risk scenarios
@@ -1284,19 +1282,19 @@ export class HealthcareAuthorizationEngine {
         type: 'additional_verification',
         description: 'Additional verification required for high-risk access',
         deadline: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // 24 hours
-      });
+      })
     }
 
     // Determine monitoring requirements
-    const monitoring = this.determineMonitoringRequirements(_context, finalDecision, riskScore);
+    const monitoring = this.determineMonitoringRequirements(_context, finalDecision, riskScore)
 
     // Generate context conditions if needed
     if (finalDecision === 'permit') {
-      conditions.push(...this.generateContextConditions(_context));
+      conditions.push(...this.generateContextConditions(_context))
     }
 
     // Update statistics
-    this.updateStatistics(finalDecision, Date.now() - startTime);
+    this.updateStatistics(finalDecision, Date.now() - startTime)
 
     return {
       decision: finalDecision,
@@ -1310,7 +1308,7 @@ export class HealthcareAuthorizationEngine {
       conditions,
       timestamp: new Date().toISOString(),
       contextId,
-    };
+    }
   }
 
   /**
@@ -1319,7 +1317,7 @@ export class HealthcareAuthorizationEngine {
   private async evaluateResourceSpecificRules(
     _context: AuthorizationContext,
   ): Promise<Partial<AuthorizationDecision>> {
-    const resourceType = _context.resource.type;
+    const resourceType = _context.resource.type
 
     switch (resourceType) {
       case 'patient_profile':
@@ -1333,20 +1331,20 @@ export class HealthcareAuthorizationEngine {
       case 'vital_signs':
       case 'progress_note':
       case 'allergy_record':
-        return HealthcareAuthorizationRules.evaluatePatientDataAccess(_context);
+        return HealthcareAuthorizationRules.evaluatePatientDataAccess(_context)
 
       case 'prescription':
       case 'medication_order':
       case 'medication_administration':
       case 'medication_reconciliation':
       case 'pharmacy_order':
-        return HealthcareAuthorizationRules.evaluateMedicationAccess(_context);
+        return HealthcareAuthorizationRules.evaluateMedicationAccess(_context)
 
       case 'lab_order':
       case 'lab_result':
       case 'lab_report':
       case 'specimen':
-        return HealthcareAuthorizationRules.evaluateLabDataAccess(_context);
+        return HealthcareAuthorizationRules.evaluateLabDataAccess(_context)
 
       case 'user_account':
       case 'role_assignment':
@@ -1355,19 +1353,19 @@ export class HealthcareAuthorizationEngine {
       case 'system_config':
       case 'backup_data':
       case 'compliance_report':
-        return HealthcareAuthorizationRules.evaluateAdminAccess(_context);
+        return HealthcareAuthorizationRules.evaluateAdminAccess(_context)
 
       case 'emergency_contact':
       case 'emergency_procedure':
       case 'emergency_alert':
       case 'disaster_plan':
-        return HealthcareAuthorizationRules.evaluateEmergencyAccess(_context);
+        return HealthcareAuthorizationRules.evaluateEmergencyAccess(_context)
 
       default:
         return {
           decision: this.config.decisionEngine.defaultDecision,
           reasons: [`No specific rules for resource type: ${resourceType}`],
-        };
+        }
     }
   }
 
@@ -1379,10 +1377,10 @@ export class HealthcareAuthorizationEngine {
    */
   private async assessRisk(_context: AuthorizationContext): Promise<number> {
     if (!this.config.security.enableRiskAssessment) {
-      return 0;
+      return 0
     }
 
-    let riskScore = 0;
+    let riskScore = 0
 
     // Resource sensitivity risk
     const sensitivityRisk = {
@@ -1391,8 +1389,8 @@ export class HealthcareAuthorizationEngine {
       confidential: 3,
       restricted: 5,
       top_secret: 7,
-    };
-    riskScore += sensitivityRisk[_context.resource.sensitivity] || 0;
+    }
+    riskScore += sensitivityRisk[_context.resource.sensitivity] || 0
 
     // Action risk
     const actionRisk = {
@@ -1404,29 +1402,29 @@ export class HealthcareAuthorizationEngine {
       execute: 3,
       export: 4,
       share: 5,
-    };
-    riskScore += actionRisk[_context.action.operation] || 0;
+    }
+    riskScore += actionRisk[_context.action.operation] || 0
 
     // Time-based risk
-    const currentHour = new Date().getHours();
+    const currentHour = new Date().getHours()
     if (currentHour < 6 || currentHour > 22) {
-      riskScore += 1; // After hours access
+      riskScore += 1 // After hours access
     }
 
     // Geographic risk (if available)
     if (_context.environment.location?.country) {
-      const higherRiskCountries = ['unknown', 'restricted'];
+      const higherRiskCountries = ['unknown', 'restricted']
       if (higherRiskCountries.includes(_context.environment.location.country)) {
-        riskScore += 2;
+        riskScore += 2
       }
     }
 
     // Emergency mode risk adjustment (with safety check)
     if (_context.subject && _context.subject.emergencyMode) {
-      riskScore += 2; // Emergency access is inherently riskier
+      riskScore += 2 // Emergency access is inherently riskier
     }
 
-    return Math.min(riskScore, 10); // Cap at 10
+    return Math.min(riskScore, 10) // Cap at 10
   }
 
   // ============================================================================
@@ -1437,40 +1435,40 @@ export class HealthcareAuthorizationEngine {
    * Get service statistics
    */
   getStatistics(): {
-    isInitialized: boolean;
-    cacheSize: number;
-    policiesLoaded: number;
-    totalDecisions: number;
-    permitDecisions: number;
-    denyDecisions: number;
-    averageEvaluationTime: number;
-    config: AuthorizationConfig;
+    isInitialized: boolean
+    cacheSize: number
+    policiesLoaded: number
+    totalDecisions: number
+    permitDecisions: number
+    denyDecisions: number
+    averageEvaluationTime: number
+    config: AuthorizationConfig
   } {
     // Clean up expired cache entries before returning statistics
-    this.cleanupExpiredCacheEntries();
+    this.cleanupExpiredCacheEntries()
 
-    this.stats.cacheSize = this.decisionCache.size;
-    this.stats.policiesLoaded = this.policies.size;
-    this.stats.isInitialized = this.isInitialized;
+    this.stats.cacheSize = this.decisionCache.size
+    this.stats.policiesLoaded = this.policies.size
+    this.stats.isInitialized = this.isInitialized
     return {
       ...this.stats,
       config: this.config,
-    };
+    }
   }
 
   /**
    * Destroy the authorization engine and clean up resources
    */
   destroy(): void {
-    this.decisionCache.clear();
-    this.policies.clear();
-    this.isInitialized = false;
-    this.stats.isInitialized = false;
+    this.decisionCache.clear()
+    this.policies.clear()
+    this.isInitialized = false
+    this.stats.isInitialized = false
 
     authorizationLogger.info(
       'Healthcare authorization engine destroyed',
       { component: 'authorization-system', timestamp: new Date().toISOString() },
-    );
+    )
   }
 
   // ============================================================================
@@ -1496,8 +1494,8 @@ export class HealthcareAuthorizationEngine {
     c: Context,
     additionalContext: Partial<AuthorizationContext> = {},
   ): AuthorizationContext {
-    const requestId = `req_${nanoid(12)}`;
-    const correlationId = `corr_${nanoid(8)}`;
+    const requestId = `req_${nanoid(12)}`
+    const correlationId = `corr_${nanoid(8)}`
 
     const baseContext: AuthorizationContext = {
       requestId,
@@ -1574,10 +1572,10 @@ export class HealthcareAuthorizationEngine {
         dataMinimization: this.config.lgpdCompliance.enableDataMinimization,
         purposeLimitation: this.config.lgpdCompliance.enablePurposeLimitation,
       },
-    };
+    }
 
     // Merge with additional context
-    return { ...baseContext, ...additionalContext };
+    return { ...baseContext, ...additionalContext }
   }
 
   /**
@@ -1648,9 +1646,9 @@ export class HealthcareAuthorizationEngine {
       emergency_procedure: 'restricted',
       emergency_alert: 'top_secret',
       disaster_plan: 'restricted',
-    };
+    }
 
-    return sensitivityMap[resourceType] || 'internal';
+    return sensitivityMap[resourceType] || 'internal'
   }
 
   /**
@@ -1659,20 +1657,20 @@ export class HealthcareAuthorizationEngine {
   private getDataClassification(
     resourceType: HealthcareResourceType,
   ): 'public' | 'internal' | 'confidential' | 'restricted' {
-    const sensitivity = this.getResourceSensitivity(resourceType);
+    const sensitivity = this.getResourceSensitivity(resourceType)
 
     switch (sensitivity) {
       case 'public':
-        return 'public';
+        return 'public'
       case 'internal':
-        return 'internal';
+        return 'internal'
       case 'confidential':
-        return 'confidential';
+        return 'confidential'
       case 'restricted':
       case 'top_secret':
-        return 'restricted';
+        return 'restricted'
       default:
-        return 'internal';
+        return 'internal'
     }
   }
 
@@ -1706,11 +1704,11 @@ export class HealthcareAuthorizationEngine {
 
       // Emergency - permanent or 10 years
       emergency: 3650, // 10 years
-    };
+    }
 
     // Determine category from resource type
-    const resourceCategory = resourceType.split('_')[0];
-    return retentionMap[resourceCategory as keyof typeof retentionMap] || 365; // Default 1 year
+    const resourceCategory = resourceType.split('_')[0]
+    return retentionMap[resourceCategory as keyof typeof retentionMap] || 365 // Default 1 year
   }
 
   /**
@@ -1719,20 +1717,20 @@ export class HealthcareAuthorizationEngine {
   private getCachedDecision(
     _context: AuthorizationContext,
   ): AuthorizationDecision | null {
-    const cacheKey = this.generateCacheKey(_context);
-    const cached = this.decisionCache.get(cacheKey);
-    const now = Date.now();
+    const cacheKey = this.generateCacheKey(_context)
+    const cached = this.decisionCache.get(cacheKey)
+    const now = Date.now()
 
     if (cached) {
       if (cached.expiry > now) {
-        return cached.decision;
+        return cached.decision
       } else {
         // Clean up expired entry
-        this.decisionCache.delete(cacheKey);
+        this.decisionCache.delete(cacheKey)
       }
     }
 
-    return null;
+    return null
   }
 
   /**
@@ -1742,10 +1740,10 @@ export class HealthcareAuthorizationEngine {
     _context: AuthorizationContext,
     decision: AuthorizationDecision,
   ): void {
-    const cacheKey = this.generateCacheKey(_context);
-    const expiry = Date.now() + this.config.decisionEngine.cacheTimeout * 1000;
+    const cacheKey = this.generateCacheKey(_context)
+    const expiry = Date.now() + this.config.decisionEngine.cacheTimeout * 1000
 
-    this.decisionCache.set(cacheKey, { decision, expiry });
+    this.decisionCache.set(cacheKey, { decision, expiry })
   }
 
   /**
@@ -1753,21 +1751,21 @@ export class HealthcareAuthorizationEngine {
    */
   private generateCacheKey(_context: AuthorizationContext): string {
     const key =
-      `${_context.subject._userId}:${_context.subject._role}:${_context.resource.type}:${_context.resource.id}:${_context.action.operation}:${_context.action.scope}`;
-    return Buffer.from(key).toString('base64');
+      `${_context.subject._userId}:${_context.subject._role}:${_context.resource.type}:${_context.resource.id}:${_context.action.operation}:${_context.action.scope}`
+    return Buffer.from(key).toString('base64')
   }
 
   /**
    * Clean up expired cache entries
    */
   private cleanupExpiredCacheEntries(): void {
-    const now = Date.now();
-    let cleanedCount = 0;
+    const now = Date.now()
+    let cleanedCount = 0
 
     for (const [key, cached] of Array.from(this.decisionCache.entries())) {
       if (cached.expiry <= now) {
-        this.decisionCache.delete(key);
-        cleanedCount++;
+        this.decisionCache.delete(key)
+        cleanedCount++
       }
     }
 
@@ -1776,7 +1774,7 @@ export class HealthcareAuthorizationEngine {
         cleanedCount,
         component: 'authorization-system',
         timestamp: new Date().toISOString(),
-      });
+      })
     }
   }
 
@@ -1788,12 +1786,12 @@ export class HealthcareAuthorizationEngine {
       cacheSize: this.decisionCache.size,
       policiesLoaded: this.policies.size,
       timestamp: new Date().toISOString(),
-    };
+    }
 
     authorizationLogger.info('Performance metrics collected', {
       ...metrics,
       component: 'authorization-system',
-    });
+    })
   }
 
   /**
@@ -1821,12 +1819,12 @@ export class HealthcareAuthorizationEngine {
       advice: decision.advice.length,
       auditRequired: decision.monitoring.auditRequired,
       timestamp: decision.timestamp,
-    };
+    }
 
     authorizationLogger.info('Authorization decision logged', {
       ...decisionLog,
       component: 'authorization-system',
-    });
+    })
   }
   /**
    * Determine monitoring requirements for authorization decision
@@ -1841,35 +1839,35 @@ export class HealthcareAuthorizationEngine {
       alertRequired: false,
       notificationRequired: false,
       complianceTracking: false,
-    };
+    }
 
     // Check compliance context audit requirement first
     if (_context.compliance?.auditRequired) {
-      monitoring.auditRequired = true;
-      monitoring.alertRequired = true;
-      monitoring.complianceTracking = true;
+      monitoring.auditRequired = true
+      monitoring.alertRequired = true
+      monitoring.complianceTracking = true
     } // Basic monitoring logic based on decision and risk
     else if (decision === 'permit') {
-      monitoring.auditRequired = riskScore > 5;
-      monitoring.alertRequired = riskScore > 7;
-      monitoring.notificationRequired = riskScore > 8;
-      monitoring.complianceTracking = riskScore > 3;
+      monitoring.auditRequired = riskScore > 5
+      monitoring.alertRequired = riskScore > 7
+      monitoring.notificationRequired = riskScore > 8
+      monitoring.complianceTracking = riskScore > 3
     } else if (decision === 'deny') {
-      monitoring.auditRequired = true;
-      monitoring.alertRequired = true;
-      monitoring.notificationRequired = false;
-      monitoring.complianceTracking = true;
+      monitoring.auditRequired = true
+      monitoring.alertRequired = true
+      monitoring.notificationRequired = false
+      monitoring.complianceTracking = true
     }
 
     // Emergency monitoring
     if (_context.environment?.workflow?.emergencyFlag) {
-      monitoring.auditRequired = true;
-      monitoring.alertRequired = true;
-      monitoring.notificationRequired = true;
-      monitoring.complianceTracking = true;
+      monitoring.auditRequired = true
+      monitoring.alertRequired = true
+      monitoring.notificationRequired = true
+      monitoring.complianceTracking = true
     }
 
-    return monitoring;
+    return monitoring
   }
 
   /**
@@ -1878,17 +1876,17 @@ export class HealthcareAuthorizationEngine {
   private generateContextConditions(
     _context: AuthorizationContext,
   ): AuthorizationDecision['conditions'] {
-    const conditions: AuthorizationDecision['conditions'] = [];
+    const conditions: AuthorizationDecision['conditions'] = []
 
     // Time-based conditions
     if (_context.environment?.timestamp) {
-      const hour = new Date(_context.environment.timestamp).getHours();
+      const hour = new Date(_context.environment.timestamp).getHours()
       if (hour < 6 || hour > 22) {
         conditions.push({
           type: 'time_restriction',
           description: 'Access restricted to business hours',
           satisfied: hour >= 6 && hour <= 22,
-        });
+        })
       }
     }
 
@@ -1898,7 +1896,7 @@ export class HealthcareAuthorizationEngine {
         type: 'facility_access',
         description: 'Access limited to assigned facility',
         satisfied: _context.environment?.location?.facility === _context.subject.facilityId,
-      });
+      })
     }
 
     // Role-specific conditions
@@ -1908,10 +1906,10 @@ export class HealthcareAuthorizationEngine {
         description: 'Valid medical license required',
         satisfied: _context.subject.attributes?.license?.valid
           && new Date(_context.subject.attributes?.license?.expiry) > new Date(),
-      });
+      })
     }
 
-    return conditions;
+    return conditions
   }
 
   /**
@@ -1930,22 +1928,22 @@ export class HealthcareAuthorizationEngine {
         averageEvaluationTime: 0,
         cacheHits: 0,
         cacheMisses: 0,
-      };
+      }
     }
 
-    this.statistics.totalEvaluations++;
+    this.statistics.totalEvaluations++
     this.statistics.averageEvaluationTime =
       (this.statistics.averageEvaluationTime * (this.statistics.totalEvaluations - 1)
         + evaluationTime)
-      / this.statistics.totalEvaluations;
+      / this.statistics.totalEvaluations
 
     switch (decision) {
       case 'permit':
-        this.statistics.permitCount++;
-        break;
+        this.statistics.permitCount++
+        break
       case 'deny':
-        this.statistics.denyCount++;
-        break;
+        this.statistics.denyCount++
+        break
     }
   }
 
@@ -1953,13 +1951,13 @@ export class HealthcareAuthorizationEngine {
    * Initialize statistics
    */
   private statistics: {
-    totalEvaluations: number;
-    permitCount: number;
-    denyCount: number;
-    averageEvaluationTime: number;
-    cacheHits: number;
-    cacheMisses: number;
-  } | null = null;
+    totalEvaluations: number
+    permitCount: number
+    denyCount: number
+    averageEvaluationTime: number
+    cacheHits: number
+    cacheMisses: number
+  } | null = null
 }
 
 // ============================================================================
@@ -2022,7 +2020,7 @@ export const healthcareAuthorizationEngine = new HealthcareAuthorizationEngine({
     enableOptimization: true,
     maxConcurrentEvaluations: 50,
   },
-});
+})
 
 /**
  * Export types for external use

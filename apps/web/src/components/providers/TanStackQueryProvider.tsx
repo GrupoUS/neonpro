@@ -1,6 +1,6 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import * as React from 'react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import * as React from 'react'
 
 // Create a single QueryClient instance with optimized configuration
 const queryClient = new QueryClient({
@@ -10,8 +10,8 @@ const queryClient = new QueryClient({
       staleTime: 1000 * 60 * 5,
       // Don't retry on 4xx errors
       retry: (failureCount, error: any) => {
-        if (error?.status >= 400 && error?.status < 500) return false;
-        return failureCount < 3;
+        if (error?.status >= 400 && error?.status < 500) return false
+        return failureCount < 3
       },
       // Cache time - keep data in cache for 30 minutes
       gcTime: 1000 * 60 * 30,
@@ -27,10 +27,10 @@ const queryClient = new QueryClient({
       gcTime: 1000 * 60 * 5,
     },
   },
-});
+})
 
 interface TanStackQueryProviderProps {
-  children: React.ReactNode;
+  children: React.ReactNode
 }
 
 export function TanStackQueryProvider({ children }: TanStackQueryProviderProps) {
@@ -40,13 +40,13 @@ export function TanStackQueryProvider({ children }: TanStackQueryProviderProps) 
       {/* Include React Query Devtools in development */}
       {process.env.NODE_ENV === 'development' && <ReactQueryDevtools initialIsOpen={false} />}
     </QueryClientProvider>
-  );
+  )
 }
 
 // Export the QueryClient for use in other components if needed
-export { queryClient };
+export { queryClient }
 
 // Export hooks for common patterns
 export const useTanStackQuery = () => {
-  return queryClient;
-};
+  return queryClient
+}

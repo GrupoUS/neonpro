@@ -2,9 +2,9 @@
  * Calendar Header Component
  */
 
-import React from 'react';
-import type { CalendarHeaderProps, CalendarNavigationProps } from '../../types/event-calendar';
-import { formatCalendarDate } from './utils';
+import React from 'react'
+import type { CalendarHeaderProps, CalendarNavigationProps } from '../../types/event-calendar'
+import { formatCalendarDate } from './utils'
 
 function CalendarNavigation({
   currentDate,
@@ -35,7 +35,7 @@ function CalendarNavigation({
         ▶
       </button>
     </div>
-  );
+  )
 }
 
 export function CalendarHeader({
@@ -46,55 +46,55 @@ export function CalendarHeader({
   onTodayClick,
 }: CalendarHeaderProps) {
   const handlePrevious = () => {
-    const newDate = new Date(currentDate);
+    const newDate = new Date(currentDate)
     switch (view.type) {
       case 'day':
-        newDate.setDate(newDate.getDate() - 1);
-        break;
+        newDate.setDate(newDate.getDate() - 1)
+        break
       case 'week':
-        newDate.setDate(newDate.getDate() - 7);
-        break;
+        newDate.setDate(newDate.getDate() - 7)
+        break
       case 'month':
-        newDate.setMonth(newDate.getMonth() - 1);
-        break;
+        newDate.setMonth(newDate.getMonth() - 1)
+        break
     }
-    onDateChange(newDate);
-  };
+    onDateChange(newDate)
+  }
 
   const handleNext = () => {
-    const newDate = new Date(currentDate);
+    const newDate = new Date(currentDate)
     switch (view.type) {
       case 'day':
-        newDate.setDate(newDate.getDate() + 1);
-        break;
+        newDate.setDate(newDate.getDate() + 1)
+        break
       case 'week':
-        newDate.setDate(newDate.getDate() + 7);
-        break;
+        newDate.setDate(newDate.getDate() + 7)
+        break
       case 'month':
-        newDate.setMonth(newDate.getMonth() + 1);
-        break;
+        newDate.setMonth(newDate.getMonth() + 1)
+        break
     }
-    onDateChange(newDate);
-  };
+    onDateChange(newDate)
+  }
 
   const getViewLabel = () => {
     switch (view.type) {
       case 'day':
-        return formatCalendarDate(view.date, 'dd \'de\' MMMM \'de\' yyyy');
+        return formatCalendarDate(view.date, "dd 'de' MMMM 'de' yyyy")
       case 'week':
-        const weekStart = new Date(view.date);
-        weekStart.setDate(weekStart.getDate() - weekStart.getDay());
-        const weekEnd = new Date(weekStart);
-        weekEnd.setDate(weekEnd.getDate() + 6);
+        const weekStart = new Date(view.date)
+        weekStart.setDate(weekStart.getDate() - weekStart.getDay())
+        const weekEnd = new Date(weekStart)
+        weekEnd.setDate(weekEnd.getDate() + 6)
         return `${formatCalendarDate(weekStart, 'dd/MM')} - ${
           formatCalendarDate(weekEnd, 'dd/MM/yyyy')
-        }`;
+        }`
       case 'month':
-        return formatCalendarDate(view.date, 'MMMM \'de\' yyyy');
+        return formatCalendarDate(view.date, "MMMM 'de' yyyy")
       default:
-        return '';
+        return ''
     }
-  };
+  }
 
   return (
     <div className='calendar-header bg-gray-50 border-b border-gray-200 p-4'>
@@ -145,7 +145,7 @@ export function CalendarHeader({
         </div>
       </div>
     </div>
-  );
+  )
 }
 
-export default CalendarHeader;
+export default CalendarHeader

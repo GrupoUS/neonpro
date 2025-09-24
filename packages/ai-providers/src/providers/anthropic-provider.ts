@@ -3,25 +3,25 @@ import type {
   GenerateAnswerInput,
   GenerateAnswerResult,
   StreamChunk,
-} from '@neonpro/types';
+} from '@neonpro/types'
 
 // Placeholder Anthropic provider. Real integration will be implemented in a later phase.
 export class AnthropicProvider implements AIProviderInterface {
   constructor(private readonly _apiKey: string) {
     if (!this._apiKey) {
-      throw new Error('Anthropic API key is required');
+      throw new Error('Anthropic API key is required')
     }
   }
 
   async generateAnswer(
     _input: GenerateAnswerInput,
   ): Promise<GenerateAnswerResult> {
-    throw new Error('Anthropic provider is not implemented yet.');
+    throw new Error('Anthropic provider is not implemented yet.')
   }
 
   async *generateStream(
     _input: GenerateAnswerInput,
   ): AsyncIterable<StreamChunk> {
-    throw new Error('Anthropic streaming provider is not implemented yet.');
+    throw new Error('Anthropic streaming provider is not implemented yet.')
   }
 }

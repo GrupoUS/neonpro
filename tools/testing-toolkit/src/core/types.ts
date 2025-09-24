@@ -10,45 +10,45 @@ export type TestCategory =
   | 'e2e'
   | 'security'
   | 'performance'
-  | 'compliance';
+  | 'compliance'
 
-export type TestEnvironment = 'jsdom' | 'node' | 'happy-dom';
+export type TestEnvironment = 'jsdom' | 'node' | 'happy-dom'
 
-export type CoverageThreshold = 'critical' | 'important' | 'useful';
+export type CoverageThreshold = 'critical' | 'important' | 'useful'
 
 export interface TestConfig {
-  category: TestCategory;
-  environment: TestEnvironment;
-  timeout?: number;
-  retries?: number;
+  category: TestCategory
+  environment: TestEnvironment
+  timeout?: number
+  retries?: number
   coverage?: {
-    threshold: CoverageThreshold;
-    minimum: number;
-  };
+    threshold: CoverageThreshold
+    minimum: number
+  }
 }
 
 export interface TestResult {
-  name: string;
-  category: TestCategory;
-  passed: boolean;
-  duration: number;
-  coverage?: number;
-  errors?: string[];
-  warnings?: string[];
+  name: string
+  category: TestCategory
+  passed: boolean
+  duration: number
+  coverage?: number
+  errors?: string[]
+  warnings?: string[]
 }
 
 export interface TestSuite {
-  name: string;
-  tests: TestResult[];
-  totalDuration: number;
-  passRate: number;
-  coverageRate: number;
+  name: string
+  tests: TestResult[]
+  totalDuration: number
+  passRate: number
+  coverageRate: number
 }
 
 export interface QualityGateResult {
-  gate: string;
-  passed: boolean;
-  actual: number;
-  expected: number;
-  critical: boolean;
+  gate: string
+  passed: boolean
+  actual: number
+  expected: number
+  critical: boolean
 }

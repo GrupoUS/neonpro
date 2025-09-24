@@ -2,7 +2,7 @@
  * Main Event Calendar Component
  */
 
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState } from 'react'
 import type {
   CalendarComponentProps,
   CalendarEvent,
@@ -10,14 +10,14 @@ import type {
   CalendarState,
   CalendarView,
   TimeSlot,
-} from '../../types/event-calendar';
-import { CalendarHeader } from './CalendarHeader';
-import { DayView } from './DayView';
-import { EventForm } from './EventForm';
-import { EventModal } from './EventModal';
-import { MonthView } from './MonthView';
-import { formatCalendarDate } from './utils';
-import { WeekView } from './WeekView';
+} from '../../types/event-calendar'
+import { CalendarHeader } from './CalendarHeader'
+import { DayView } from './DayView'
+import { EventForm } from './EventForm'
+import { EventModal } from './EventModal'
+import { MonthView } from './MonthView'
+import { formatCalendarDate } from './utils'
+import { WeekView } from './WeekView'
 
 export function EventCalendar({
   events,
@@ -42,31 +42,31 @@ export function EventCalendar({
     isCreatingEvent: false,
     filters: initialFilters,
     isLoading,
-  }));
+  }))
 
   // Actions
   const setDate = useCallback((date: Date) => {
-    setState(prev => ({ ...prev, currentDate: date }));
-    onDateChange?.(date);
-  }, [onDateChange]);
+    setState((prev) => ({ ...prev, currentDate: date }))
+    onDateChange?.(date)
+  }, [onDateChange])
 
   const setView = useCallback((view: CalendarView) => {
-    setState(prev => ({ ...prev, currentView: view }));
-    onViewChange?.(view);
-  }, [onViewChange]);
+    setState((prev) => ({ ...prev, currentView: view }))
+    onViewChange?.(view)
+  }, [onViewChange])
 
   const setSelectedEvent = useCallback((event?: CalendarEvent) => {
-    setState(prev => ({ ...prev, selectedEvent: event }));
-  }, []);
+    setState((prev) => ({ ...prev, selectedEvent: event }))
+  }, [])
 
   const setFilters = useCallback((newFilters: Partial<CalendarFilters>) => {
-    const updatedFilters = { ...state.filters, ...newFilters };
-    setState(prev => ({ ...prev, filters: updatedFilters }));
-    onFiltersChange?.(updatedFilters);
-  }, [state.filters, onFiltersChange]);
+    const updatedFilters = { ...state.filters, ...newFilters }
+    setState((prev) => ({ ...prev, filters: updatedFilters }))
+    onFiltersChange?.(updatedFilters)
+  }, [state.filters, onFiltersChange])
 
   const startCreatingEvent = useCallback((date?: Date, timeSlot?: TimeSlot) => {
-    setState(prev => ({
+    setState((prev) => ({
       ...prev,
       isCreatingEvent: true,
       selectedEvent: date
@@ -80,70 +80,70 @@ export function EventCalendar({
           status: 'scheduled',
         }
         : undefined,
-    }));
-  }, []);
+    }))
+  }, [])
 
   const stopCreatingEvent = useCallback(() => {
-    setState(prev => ({ ...prev, isCreatingEvent: false, selectedEvent: undefined }));
-  }, []);
+    setState((prev) => ({ ...prev, isCreatingEvent: false, selectedEvent: undefined }))
+  }, [])
 
   const setLoading = useCallback((loading: boolean) => {
-    setState(prev => ({ ...prev, isLoading: loading }));
-  }, []);
+    setState((prev) => ({ ...prev, isLoading: loading }))
+  }, [])
 
   // Event handlers
   const handleEventClick = useCallback((event: CalendarEvent) => {
-    setSelectedEvent(event);
-    onEventClick?.(event);
-  }, [onEventClick]);
+    setSelectedEvent(event)
+    onEventClick?.(event)
+  }, [onEventClick])
 
   const handleDateClick = useCallback((date: Date, timeSlot?: TimeSlot) => {
     if (onEventCreate) {
-      startCreatingEvent(date, timeSlot);
+      startCreatingEvent(date, timeSlot)
     }
-  }, [onEventCreate, startCreatingEvent]);
+  }, [onEventCreate, startCreatingEvent])
 
   const handleEventSave = useCallback(async (eventData: Omit<CalendarEvent, 'id'>) => {
     try {
       if (state.selectedEvent?.id) {
-        await onEventUpdate?.({ ...(eventData as any), id: state.selectedEvent.id } as any);
+        await onEventUpdate?.({ ...(eventData as any), id: state.selectedEvent.id } as any)
       } else {
-        await onEventCreate?.(eventData as any);
+        await onEventCreate?.(eventData as any)
       }
-      stopCreatingEvent();
-      setSelectedEvent(undefined);
+      stopCreatingEvent()
+      setSelectedEvent(undefined)
     } catch (error) {
-      console.error('Failed to save event:', error);
+      console.error('Failed to save event:', error)
     }
-  }, [state.selectedEvent, onEventCreate, onEventUpdate, stopCreatingEvent, setSelectedEvent]);
+  }, [state.selectedEvent, onEventCreate, onEventUpdate, stopCreatingEvent, setSelectedEvent])
 
   const handleEventDelete = useCallback(async (eventId: string) => {
     try {
-      await onEventDelete?.(eventId);
-      setSelectedEvent(undefined);
+      await onEventDelete?.(eventId)
+      setSelectedEvent(undefined)
     } catch (error) {
-      console.error('Failed to delete event:', error);
+      console.error('Failed to delete event:', error)
     }
-  }, [onEventDelete, setSelectedEvent]);
+  }, [onEventDelete, setSelectedEvent])
 
   // Render current view
   const renderCurrentView = () => {
-    const filteredEvents = events.filter(event => {
+    const filteredEvents = events.filter((event) => {
       // Apply filters
-      if (state.filters.type && !state.filters.type.includes(event.type)) return false;
-      if (state.filters.status && !state.filters.status.includes(event.status)) return false;
+      if (state.filters.type && !state.filters.type.includes(event.type)) return false
+      if (state.filters.status && !state.filters.status.includes(event.status)) return false
       if (state.filters.professionalId && event.professionalId !== state.filters.professionalId) {
-        return false;
+        return false
       }
-      if (state.filters.patientId && event.patientId !== state.filters.patientId) return false;
+      if (state.filters.patientId && event.patientId !== state.filters.patientId) return false
       if (state.filters.searchQuery) {
-        const query = state.filters.searchQuery.toLowerCase();
+        const query = state.filters.searchQuery.toLowerCase()
         const searchText = `${event.title} ${event.patientName || ''} ${event.notes || ''}`
-          .toLowerCase();
-        if (!searchText.includes(query)) return false;
+          .toLowerCase()
+        if (!searchText.includes(query)) return false
       }
-      return true;
-    });
+      return true
+    })
 
     const commonProps = {
       events: filteredEvents,
@@ -151,7 +151,7 @@ export function EventCalendar({
       onEventClick: handleEventClick,
       workingHours,
       intervalMinutes,
-    };
+    }
 
     switch (state.currentView.type) {
       case 'day':
@@ -161,7 +161,7 @@ export function EventCalendar({
             date={state.currentDate}
             onTimeSlotClick={handleDateClick}
           />
-        );
+        )
       case 'week':
         return (
           <WeekView
@@ -169,7 +169,7 @@ export function EventCalendar({
             date={state.currentDate}
             onDateClick={handleDateClick}
           />
-        );
+        )
       case 'month':
         return (
           <MonthView
@@ -177,11 +177,11 @@ export function EventCalendar({
             date={state.currentDate}
             onDateClick={handleDateClick}
           />
-        );
+        )
       default:
-        return null;
+        return null
     }
-  };
+  }
 
   return (
     <div className='calendar-container w-full h-full flex flex-col bg-white'>
@@ -213,9 +213,9 @@ export function EventCalendar({
           event={state.selectedEvent}
           isOpen={!!state.selectedEvent}
           onClose={() => setSelectedEvent(undefined)}
-          onEdit={event => {
-            setSelectedEvent(event);
-            setState(prev => ({ ...prev, isCreatingEvent: true }));
+          onEdit={(event) => {
+            setSelectedEvent(event)
+            setState((prev) => ({ ...prev, isCreatingEvent: true }))
           }}
           onDelete={handleEventDelete}
           canEdit={true}
@@ -237,14 +237,14 @@ export function EventCalendar({
             : undefined}
           onSave={handleEventSave}
           onCancel={() => {
-            stopCreatingEvent();
-            setSelectedEvent(undefined);
+            stopCreatingEvent()
+            setSelectedEvent(undefined)
           }}
           isLoading={state.isLoading}
         />
       )}
     </div>
-  );
+  )
 }
 
-export default EventCalendar;
+export default EventCalendar

@@ -1,10 +1,10 @@
-import { defineConfig, devices } from '@playwright/test';
-import { resolve } from 'path';
-import { fileURLToPath } from 'url';
+import { defineConfig, devices } from '@playwright/test'
+import { resolve } from 'path'
+import { fileURLToPath } from 'url'
 
 // ES module __dirname equivalent
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = resolve(__filename, '..');
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = resolve(__filename, '..')
 
 export default defineConfig({
   // Test directory and output
@@ -216,4 +216,4 @@ export default defineConfig({
 
   // Artifacts configuration
   preserveOutput: process.env.CI ? 'always' : 'failures-only',
-});
+})

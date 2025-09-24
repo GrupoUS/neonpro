@@ -307,9 +307,9 @@ These middleware functions follow the Hono framework's middleware pattern, accep
 The middleware pipeline is typically structured with authentication first, followed by authorization, and then business logic. This ensures that all protected routes have consistent security enforcement. For example:
 
 ```typescript
-app.use('/protected/*', authenticationMiddleware());
-app.use('/admin/*', authorizationMiddleware(['admin', 'system_admin']));
-app.post('/clinic/:clinicId/patients', clinicAccessMiddleware(), createPatientHandler);
+app.use('/protected/*', authenticationMiddleware())
+app.use('/admin/*', authorizationMiddleware(['admin', 'system_admin']))
+app.post('/clinic/:clinicId/patients', clinicAccessMiddleware(), createPatientHandler)
 ```
 
 The healthcareAuthMiddleware variable in the healthcare routes file demonstrates this pattern, applying authentication to all routes under the healthcare API. It extracts the bearer token from the Authorization header, validates it using Supabase's authentication system, retrieves the user's profile and permissions, and sets the user context for downstream handlers.

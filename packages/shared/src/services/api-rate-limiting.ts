@@ -14,12 +14,12 @@
  * @compliance LGPD, ANVISA SaMD, Healthcare Standards
  */
 
-import { z } from 'zod';
+import { z } from 'zod'
 // import { nanoid } from "nanoid";
-import { auditLogger, logHealthcareError } from '../logging/healthcare-logger';
+import { auditLogger, logHealthcareError } from '../logging/healthcare-logger'
 
 // Create rate limit logger from audit logger
-const rateLimitLogger = auditLogger.child({ component: 'rate-limiting' });
+const rateLimitLogger = auditLogger.child({ component: 'rate-limiting' })
 
 // ============================================================================
 // SCHEMAS & TYPES
@@ -33,9 +33,9 @@ export const RateLimitAlgorithmSchema = z.enum([
   'token_bucket', // Token bucket algorithm
   'fixed_window', // Fixed window counter
   'leaky_bucket', // Leaky bucket algorithm
-]);
+])
 
-export type RateLimitAlgorithm = z.infer<typeof RateLimitAlgorithmSchema>;
+export type RateLimitAlgorithm = z.infer<typeof RateLimitAlgorithmSchema>
 
 /**
  * Healthcare request priority levels
@@ -48,9 +48,9 @@ export const RequestPrioritySchema = z.enum([
   'normal', // Standard healthcare requests
   'low', // Administrative/reporting requests
   'background', // Background tasks, analytics
-]);
+])
 
-export type RequestPriority = z.infer<typeof RequestPrioritySchema>;
+export type RequestPriority = z.infer<typeof RequestPrioritySchema>
 
 /**
  * Healthcare request categories for rate limiting
@@ -92,11 +92,11 @@ export const HealthcareRequestCategorySchema = z.enum([
   'lab_integration',
   'imaging_integration',
   'pharmacy_integration',
-]);
+])
 
 export type HealthcareRequestCategory = z.infer<
   typeof HealthcareRequestCategorySchema
->;
+>
 
 /**
  * Rate limit tier configuration
@@ -128,9 +128,9 @@ export const RateLimitTierSchema = z.object({
     .number()
     .min(0)
     .describe('Grace period before enforcement'),
-});
+})
 
-export type RateLimitTier = z.infer<typeof RateLimitTierSchema>;
+export type RateLimitTier = z.infer<typeof RateLimitTierSchema>
 
 /**
  * Rate limiting context for healthcare requests
@@ -197,9 +197,9 @@ export const RateLimitContextSchema = z.object({
         .describe('Consent level'),
     })
     .describe('Compliance requirements'),
-});
+})
 
-export type RateLimitContext = z.infer<typeof RateLimitContextSchema>;
+export type RateLimitContext = z.infer<typeof RateLimitContextSchema>
 
 /**
  * Rate limit result and decision
@@ -231,9 +231,9 @@ export const RateLimitResultSchema = z.object({
   // Metadata
   metadata: z.record(z.unknown()).optional().describe('Additional metadata'),
   timestamp: z.string().datetime().describe('Decision timestamp'),
-});
+})
 
-export type RateLimitResult = z.infer<typeof RateLimitResultSchema>;
+export type RateLimitResult = z.infer<typeof RateLimitResultSchema>
 
 /**
  * Rate limiting configuration
@@ -370,9 +370,9 @@ export const RateLimitConfigSchema = z.object({
         .describe('Audit log retention days'),
     })
     .describe('Audit configuration'),
-});
+})
 
-export type RateLimitConfig = z.infer<typeof RateLimitConfigSchema>;
+export type RateLimitConfig = z.infer<typeof RateLimitConfigSchema>
 
 // ============================================================================
 // RATE LIMITING ALGORITHMS
@@ -382,19 +382,19 @@ export type RateLimitConfig = z.infer<typeof RateLimitConfigSchema>;
  * Abstract base class for rate limiting algorithms
  */
 abstract class RateLimitAlgorithmBase {
-  protected config: RateLimitTier;
-  protected storage: Map<string, any> = new Map();
+  protected config: RateLimitTier
+  protected storage: Map<string, any> = new Map()
 
   constructor(config: RateLimitTier) {
-    this.config = config;
+    this.config = config
   }
 
   abstract checkLimit(
     key: string,
     _context: RateLimitContext,
-  ): Promise<RateLimitResult>;
-  abstract reset(key: string): Promise<void>;
-  abstract getUsage(key: string): Promise<number>;
+  ): Promise<RateLimitResult>
+  abstract reset(key: string): Promise<void>
+  abstract getUsage(key: string): Promise<number>
 }
 
 /**
@@ -405,34 +405,34 @@ class SlidingWindowAlgorithm extends RateLimitAlgorithmBase {
     key: string,
     _context: RateLimitContext,
   ): Promise<RateLimitResult> {
-    const _now = Date.now();
-    const now = Date.now();
-    const windowMs = 60 * 1000; // 1 minute window
-    const limit = this.config.requestsPerMinute;
+    const _now = Date.now()
+    const now = Date.now()
+    const windowMs = 60 * 1000 // 1 minute window
+    const limit = this.config.requestsPerMinute
 
     // Get or create window data
     let windowData = this.storage.get(key) || {
       requests: [],
       firstRequest: now,
-    };
+    }
 
     // Remove requests outside the window
     windowData.requests = windowData.requests.filter(
       (timestamp: number) => now - timestamp < windowMs,
-    );
+    )
 
     // Check if limit exceeded
-    const currentUsage = windowData.requests.length;
-    const allowed = currentUsage < limit;
+    const currentUsage = windowData.requests.length
+    const allowed = currentUsage < limit
 
     if (allowed) {
-      windowData.requests.push(_now);
-      this.storage.set(key, windowData);
+      windowData.requests.push(_now)
+      this.storage.set(key, windowData)
     }
 
-    const windowStart = new Date(_now - windowMs);
-    const windowEnd = new Date(_now);
-    const resetTime = new Date(_now + windowMs);
+    const windowStart = new Date(_now - windowMs)
+    const windowEnd = new Date(_now)
+    const resetTime = new Date(_now + windowMs)
 
     return {
       allowed,
@@ -448,16 +448,16 @@ class SlidingWindowAlgorithm extends RateLimitAlgorithmBase {
       retryAfter: allowed ? undefined : Math.ceil(windowMs / 1000),
       bypassApplied: false,
       timestamp: new Date().toISOString(),
-    };
+    }
   }
 
   async reset(key: string): Promise<void> {
-    this.storage.delete(key);
+    this.storage.delete(key)
   }
 
   async getUsage(key: string): Promise<number> {
-    const windowData = this.storage.get(key);
-    return windowData ? windowData.requests.length : 0;
+    const windowData = this.storage.get(key)
+    return windowData ? windowData.requests.length : 0
   }
 }
 
@@ -469,37 +469,37 @@ class TokenBucketAlgorithm extends RateLimitAlgorithmBase {
     key: string,
     _context: RateLimitContext,
   ): Promise<RateLimitResult> {
-    const _now = Date.now();
-    void _now;
-    const capacity = this.config.burstSize;
-    const refillRate = this.config.requestsPerMinute / 60; // tokens per second
+    const _now = Date.now()
+    void _now
+    const capacity = this.config.burstSize
+    const refillRate = this.config.requestsPerMinute / 60 // tokens per second
 
     // Get or create bucket data
     let bucket = this.storage.get(key) || {
       tokens: capacity,
       lastRefill: _now,
-    };
+    }
 
     // Calculate tokens to add based on time elapsed
-    const now = Date.now();
-    const timeDelta = (now - bucket.lastRefill) / 1000; // seconds
-    const tokensToAdd = Math.floor(timeDelta * refillRate);
+    const now = Date.now()
+    const timeDelta = (now - bucket.lastRefill) / 1000 // seconds
+    const tokensToAdd = Math.floor(timeDelta * refillRate)
 
     // Refill bucket (capped at capacity)
-    bucket.tokens = Math.min(capacity, bucket.tokens + tokensToAdd);
-    bucket.lastRefill = now;
+    bucket.tokens = Math.min(capacity, bucket.tokens + tokensToAdd)
+    bucket.lastRefill = now
 
     // Check if token available
-    const allowed = bucket.tokens > 0;
+    const allowed = bucket.tokens > 0
 
     if (allowed) {
-      bucket.tokens--;
-      this.storage.set(key, bucket);
+      bucket.tokens--
+      this.storage.set(key, bucket)
     }
 
     const resetTime = new Date(
       now + ((capacity - bucket.tokens) / refillRate) * 1000,
-    );
+    )
 
     return {
       allowed,
@@ -515,16 +515,16 @@ class TokenBucketAlgorithm extends RateLimitAlgorithmBase {
       retryAfter: allowed ? undefined : Math.ceil(1 / refillRate),
       bypassApplied: false,
       timestamp: new Date().toISOString(),
-    };
+    }
   }
 
   async reset(key: string): Promise<void> {
-    this.storage.delete(key);
+    this.storage.delete(key)
   }
 
   async getUsage(key: string): Promise<number> {
-    const bucket = this.storage.get(key);
-    return bucket ? this.config.burstSize - bucket.tokens : 0;
+    const bucket = this.storage.get(key)
+    return bucket ? this.config.burstSize - bucket.tokens : 0
   }
 }
 
@@ -536,19 +536,19 @@ class TokenBucketAlgorithm extends RateLimitAlgorithmBase {
  * Healthcare API Rate Limiting Service
  */
 export class APIRateLimitingService {
-  private config: RateLimitConfig;
-  private algorithms: Map<string, RateLimitAlgorithmBase> = new Map();
-  private metrics: Map<string, any> = new Map();
-  private isInitialized = false;
+  private config: RateLimitConfig
+  private algorithms: Map<string, RateLimitAlgorithmBase> = new Map()
+  private metrics: Map<string, any> = new Map()
+  private isInitialized = false
 
   constructor(config: Partial<RateLimitConfig> = {}) {
     this.config = RateLimitConfigSchema.parse({
       ...this.getDefaultConfig(),
       ...config,
-    });
+    })
 
     if (this.config.enabled) {
-      this.initialize();
+      this.initialize()
     }
   }
 
@@ -561,20 +561,20 @@ export class APIRateLimitingService {
    */
   private initialize(): void {
     try {
-      this.initializeAlgorithms();
-      this.setupMetricsCollection();
-      this.isInitialized = true;
+      this.initializeAlgorithms()
+      this.setupMetricsCollection()
+      this.isInitialized = true
 
       rateLimitLogger.info(
         'Healthcare API rate limiting service initialized',
         { component: 'api-rate-limiting', timestamp: new Date().toISOString() },
-      );
+      )
     } catch (error) {
       logHealthcareError(
         'api-rate-limiting',
         error instanceof Error ? error : new Error(String(error)),
         { method: 'initialize' },
-      );
+      )
     }
   }
 
@@ -583,21 +583,21 @@ export class APIRateLimitingService {
    */
   private initializeAlgorithms(): void {
     for (const tier of this.config.tiers) {
-      const algorithmType = this.config.defaultAlgorithm;
+      const algorithmType = this.config.defaultAlgorithm
 
-      let algorithm: RateLimitAlgorithmBase;
+      let algorithm: RateLimitAlgorithmBase
       switch (algorithmType) {
         case 'sliding_window':
-          algorithm = new SlidingWindowAlgorithm(tier);
-          break;
+          algorithm = new SlidingWindowAlgorithm(tier)
+          break
         case 'token_bucket':
-          algorithm = new TokenBucketAlgorithm(tier);
-          break;
+          algorithm = new TokenBucketAlgorithm(tier)
+          break
         default:
-          algorithm = new SlidingWindowAlgorithm(tier);
+          algorithm = new SlidingWindowAlgorithm(tier)
       }
 
-      this.algorithms.set(tier.name, algorithm);
+      this.algorithms.set(tier.name, algorithm)
     }
   }
 
@@ -607,8 +607,8 @@ export class APIRateLimitingService {
   private setupMetricsCollection(): void {
     if (this.config.monitoring.enableMetrics) {
       setInterval(() => {
-        this.collectMetrics();
-      }, this.config.monitoring.metricsInterval);
+        this.collectMetrics()
+      }, this.config.monitoring.metricsInterval)
     }
   }
 
@@ -712,7 +712,7 @@ export class APIRateLimitingService {
           gracePeriodSeconds: 0,
         },
       ],
-    };
+    }
   }
 
   // ============================================================================
@@ -725,43 +725,43 @@ export class APIRateLimitingService {
   async checkRateLimit(_context: RateLimitContext): Promise<RateLimitResult> {
     try {
       // Classify request and determine tier
-      const tier = this.determineRateLimitTier(_context);
-      const algorithm = this.algorithms.get(tier.name);
+      const tier = this.determineRateLimitTier(_context)
+      const algorithm = this.algorithms.get(tier.name)
 
       if (!algorithm) {
-        throw new Error(`No algorithm found for tier: ${tier.name}`);
+        throw new Error(`No algorithm found for tier: ${tier.name}`)
       }
 
       // Generate rate limit key
-      const key = this.generateRateLimitKey(_context, tier);
+      const key = this.generateRateLimitKey(_context, tier)
 
       // Check for emergency bypass
-      const bypassResult = this.checkEmergencyBypass(_context, tier);
+      const bypassResult = this.checkEmergencyBypass(_context, tier)
       if (bypassResult.allowed) {
-        return bypassResult;
+        return bypassResult
       }
 
       // Apply rate limiting algorithm
-      const result = await algorithm.checkLimit(key, _context);
+      const result = await algorithm.checkLimit(key, _context)
 
       // Log rate limiting decision
-      await this.logRateLimitDecision(_context, result);
+      await this.logRateLimitDecision(_context, result)
 
       // Update metrics
-      this.updateMetrics(_context, result);
+      this.updateMetrics(_context, result)
 
       // Check for alerting thresholds
       if (this.config.monitoring.enableAlerting) {
-        await this.checkAlertingThresholds(_context, result);
+        await this.checkAlertingThresholds(_context, result)
       }
 
-      return result;
+      return result
     } catch (error) {
       logHealthcareError(
         'api-rate-limiting',
         error instanceof Error ? error : new Error(String(error)),
         { method: 'checkRateLimit' },
-      );
+      )
 
       // Default to allow in case of service failure (fail-open for healthcare)
       return {
@@ -778,7 +778,7 @@ export class APIRateLimitingService {
         bypassApplied: true,
         bypassReason: 'Service error bypass',
         timestamp: new Date().toISOString(),
-      };
+      }
     }
   }
 
@@ -788,15 +788,15 @@ export class APIRateLimitingService {
   private determineRateLimitTier(_context: RateLimitContext): RateLimitTier {
     // Emergency and patient safety requests get highest priority
     if (_context.healthcareContext?.emergencyFlag) {
-      return this.config.tiers.find(t => t.name === 'emergency')!;
+      return this.config.tiers.find((t) => t.name === 'emergency')!
     }
 
     if (_context.healthcareContext?.patientSafetyFlag) {
-      return this.config.tiers.find(t => t.name === 'critical')!;
+      return this.config.tiers.find((t) => t.name === 'critical')!
     }
 
     if (_context.healthcareContext?.criticalSystemFlag) {
-      return this.config.tiers.find(t => t.name === 'critical')!;
+      return this.config.tiers.find((t) => t.name === 'critical')!
     }
 
     // Map request category to priority
@@ -829,13 +829,13 @@ export class APIRateLimitingService {
       lab_integration: 'urgent',
       imaging_integration: 'urgent',
       pharmacy_integration: 'urgent',
-    };
+    }
 
-    const priority = _context.priority || categoryPriorityMap[_context.category] || 'normal';
+    const priority = _context.priority || categoryPriorityMap[_context.category] || 'normal'
 
     // Find tier matching priority
-    const tier = this.config.tiers.find(t => t.priority === priority);
-    return tier || this.config.tiers.find(t => t.name === 'normal')!;
+    const tier = this.config.tiers.find((t) => t.priority === priority)
+    return tier || this.config.tiers.find((t) => t.name === 'normal')!
   }
 
   /**
@@ -845,11 +845,11 @@ export class APIRateLimitingService {
     _context: RateLimitContext,
     tier: RateLimitTier,
   ): string {
-    const parts = [this.config.storage.keyPrefix, tier.name, _context.clientId];
+    const parts = [this.config.storage.keyPrefix, tier.name, _context.clientId]
 
     // Add user ID if available
     if (_context._userId) {
-      parts.push(_context._userId);
+      parts.push(_context._userId)
     }
 
     // Add facility ID for facility-based limits
@@ -857,13 +857,13 @@ export class APIRateLimitingService {
       this.config.healthcareConfig.facilityBasedLimits
       && _context.healthcareContext?.facilityId
     ) {
-      parts.push(_context.healthcareContext?.facilityId);
+      parts.push(_context.healthcareContext?.facilityId)
     }
 
     // Add endpoint for endpoint-specific limits
-    parts.push(_context.endpoint);
+    parts.push(_context.endpoint)
 
-    return parts.join(':');
+    return parts.join(':')
   }
 
   /**
@@ -873,27 +873,27 @@ export class APIRateLimitingService {
     _context: RateLimitContext,
     tier: RateLimitTier,
   ): RateLimitResult {
-    let bypassApplied = false;
-    let bypassReason = '';
+    let bypassApplied = false
+    let bypassReason = ''
 
     // Emergency request bypass
     if (tier.emergencyBypass && _context.healthcareContext?.emergencyFlag) {
-      bypassApplied = true;
-      bypassReason = 'Emergency request bypass';
+      bypassApplied = true
+      bypassReason = 'Emergency request bypass'
     } // Patient safety bypass
     else if (
       tier.patientSafetyBypass
       && _context.healthcareContext?.patientSafetyFlag
     ) {
-      bypassApplied = true;
-      bypassReason = 'Patient safety bypass';
+      bypassApplied = true
+      bypassReason = 'Patient safety bypass'
     } // Critical system bypass
     else if (
       this.config.healthcareConfig.criticalSystemBypass
       && _context.healthcareContext?.criticalSystemFlag
     ) {
-      bypassApplied = true;
-      bypassReason = 'Critical system bypass';
+      bypassApplied = true
+      bypassReason = 'Critical system bypass'
     }
 
     if (bypassApplied) {
@@ -911,10 +911,10 @@ export class APIRateLimitingService {
         bypassApplied: true,
         bypassReason,
         timestamp: new Date().toISOString(),
-      };
+      }
     }
 
-    return { allowed: false } as RateLimitResult;
+    return { allowed: false } as RateLimitResult
   }
 
   /**
@@ -927,9 +927,9 @@ export class APIRateLimitingService {
     // Only log violations and bypasses unless configured otherwise
     const shouldLog = !result.allowed
       || result.bypassApplied
-      || this.config.audit.logAllRequests;
+      || this.config.audit.logAllRequests
 
-    if (!shouldLog) return;
+    if (!shouldLog) return
 
     const logData = {
       requestId: _context.requestId,
@@ -949,13 +949,13 @@ export class APIRateLimitingService {
       facilityId: _context.healthcareContext?.facilityId,
       emergencyFlag: _context.healthcareContext?.emergencyFlag,
       patientSafetyFlag: _context.healthcareContext?.patientSafetyFlag,
-    };
+    }
 
     // TODO: Integrate with structured logging service
     rateLimitLogger.info('Rate limit decision made', {
       ...logData,
       component: 'api-rate-limiting',
-    });
+    })
   }
 
   /**
@@ -965,7 +965,7 @@ export class APIRateLimitingService {
     _context: RateLimitContext,
     result: RateLimitResult,
   ): void {
-    const metricKey = `${result.tier}:${_context.category}`;
+    const metricKey = `${result.tier}:${_context.category}`
 
     if (!this.metrics.has(metricKey)) {
       this.metrics.set(metricKey, {
@@ -974,23 +974,23 @@ export class APIRateLimitingService {
         blockedRequests: 0,
         bypassedRequests: 0,
         lastUpdate: Date.now(),
-      });
+      })
     }
 
-    const metrics = this.metrics.get(metricKey);
-    metrics.totalRequests++;
+    const metrics = this.metrics.get(metricKey)
+    metrics.totalRequests++
 
     if (result.allowed) {
-      metrics.allowedRequests++;
+      metrics.allowedRequests++
     } else {
-      metrics.blockedRequests++;
+      metrics.blockedRequests++
     }
 
     if (result.bypassApplied) {
-      metrics.bypassedRequests++;
+      metrics.bypassedRequests++
     }
 
-    metrics.lastUpdate = Date.now();
+    metrics.lastUpdate = Date.now()
   }
 
   /**
@@ -1000,10 +1000,10 @@ export class APIRateLimitingService {
     _context: RateLimitContext,
     result: RateLimitResult,
   ): Promise<void> {
-    const usageRatio = result.currentUsage / result.limitValue;
+    const usageRatio = result.currentUsage / result.limitValue
 
     if (usageRatio >= this.config.monitoring.alertThreshold) {
-      await this.sendRateLimitAlert(_context, result, usageRatio);
+      await this.sendRateLimitAlert(_context, result, usageRatio)
     }
   }
 
@@ -1025,12 +1025,12 @@ export class APIRateLimitingService {
       facilityId: _context.healthcareContext?.facilityId,
       endpoint: _context.endpoint,
       timestamp: new Date().toISOString(),
-    };
+    }
 
     rateLimitLogger.warn('Rate limit alert triggered', {
       ...alertData,
       component: 'api-rate-limiting',
-    });
+    })
     // TODO: Integrate with notification service
   }
 
@@ -1038,9 +1038,9 @@ export class APIRateLimitingService {
    * Collect metrics
    */
   private collectMetrics(): void {
-    const _now = Date.now();
-    void _now;
-    const metricsSnapshot = new Map(this.metrics);
+    const _now = Date.now()
+    void _now
+    const metricsSnapshot = new Map(this.metrics)
 
     rateLimitLogger.info('Metrics collected', {
       timestamp: new Date().toISOString(),
@@ -1050,7 +1050,7 @@ export class APIRateLimitingService {
         0,
       ),
       component: 'api-rate-limiting',
-    });
+    })
 
     // TODO: Send metrics to observability platform
   }
@@ -1063,13 +1063,13 @@ export class APIRateLimitingService {
    * Reset rate limit for specific key
    */
   async resetRateLimit(clientId: string, tier?: string): Promise<void> {
-    const tiersToReset = tier ? [tier] : this.config.tiers.map(t => t.name);
+    const tiersToReset = tier ? [tier] : this.config.tiers.map((t) => t.name)
 
     for (const tierName of tiersToReset) {
-      const algorithm = this.algorithms.get(tierName);
+      const algorithm = this.algorithms.get(tierName)
       if (algorithm) {
-        const key = `${this.config.storage.keyPrefix}${tierName}:${clientId}`;
-        await algorithm.reset(key);
+        const key = `${this.config.storage.keyPrefix}${tierName}:${clientId}`
+        await algorithm.reset(key)
       }
     }
 
@@ -1078,31 +1078,31 @@ export class APIRateLimitingService {
       tiersReset: tiersToReset,
       component: 'api-rate-limiting',
       timestamp: new Date().toISOString(),
-    });
+    })
   }
 
   /**
    * Get current usage for client
    */
   async getCurrentUsage(clientId: string, tier: string): Promise<number> {
-    const algorithm = this.algorithms.get(tier);
+    const algorithm = this.algorithms.get(tier)
     if (!algorithm) {
-      throw new Error(`No algorithm found for tier: ${tier}`);
+      throw new Error(`No algorithm found for tier: ${tier}`)
     }
 
-    const key = `${this.config.storage.keyPrefix}${tier}:${clientId}`;
-    return await algorithm.getUsage(key);
+    const key = `${this.config.storage.keyPrefix}${tier}:${clientId}`
+    return await algorithm.getUsage(key)
   }
 
   /**
    * Get service statistics
    */
   getStatistics(): {
-    isInitialized: boolean;
-    tiersCount: number;
-    algorithmsCount: number;
-    metricsCount: number;
-    config: RateLimitConfig;
+    isInitialized: boolean
+    tiersCount: number
+    algorithmsCount: number
+    metricsCount: number
+    config: RateLimitConfig
   } {
     return {
       isInitialized: this.isInitialized,
@@ -1110,21 +1110,21 @@ export class APIRateLimitingService {
       algorithmsCount: this.algorithms.size,
       metricsCount: this.metrics.size,
       config: this.config,
-    };
+    }
   }
 
   /**
    * Destroy service and clean up resources
    */
   destroy(): void {
-    this.algorithms.clear();
-    this.metrics.clear();
-    this.isInitialized = false;
+    this.algorithms.clear()
+    this.metrics.clear()
+    this.isInitialized = false
 
     rateLimitLogger.info('API rate limiting service destroyed', {
       component: 'api-rate-limiting',
       timestamp: new Date().toISOString(),
-    });
+    })
   }
 }
 
@@ -1176,7 +1176,7 @@ export const apiRateLimitingService = new APIRateLimitingService({
     logBypasses: true,
     retentionDays: 90,
   },
-});
+})
 
 /**
  * Export types for external use

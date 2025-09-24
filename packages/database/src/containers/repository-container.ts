@@ -5,34 +5,34 @@ import {
   ConsentRepository as IConsentRepository,
   MedicalLicenseDomainService,
   PatientRepository as IPatientRepository,
-} from '@neonpro/domain';
-import { SupabaseClient } from '@supabase/supabase-js';
-import { AppointmentRepository } from '../repositories/appointment-repository.js';
-import { ConsentRepository } from '../repositories/consent-repository.js';
-import { PatientRepository } from '../repositories/patient-repository.js';
-import { AuditService } from '../services/audit-service.js';
-import { ConsentService } from '../services/consent-service.js';
+} from '@neonpro/domain'
+import { SupabaseClient } from '@supabase/supabase-js'
+import { AppointmentRepository } from '../repositories/appointment-repository.js'
+import { ConsentRepository } from '../repositories/consent-repository.js'
+import { PatientRepository } from '../repositories/patient-repository.js'
+import { AuditService } from '../services/audit-service.js'
+import { ConsentService } from '../services/consent-service.js'
 
 /**
  * Dependency injection container for repositories and services
  * Provides centralized management of database-related dependencies
  */
 export class RepositoryContainer {
-  private static instance: RepositoryContainer;
-  private supabase: SupabaseClient;
+  private static instance: RepositoryContainer
+  private supabase: SupabaseClient
 
   // Repository instances
-  private patientRepository: IPatientRepository | null = null;
-  private consentRepository: IConsentRepository | null = null;
-  private appointmentRepository: IAppointmentRepository | null = null;
+  private patientRepository: IPatientRepository | null = null
+  private consentRepository: IConsentRepository | null = null
+  private appointmentRepository: IAppointmentRepository | null = null
 
   // Service instances
-  private auditService: AuditDomainService | null = null;
-  private consentService: ConsentDomainService | null = null;
-  private medicalLicenseService: MedicalLicenseDomainService | null = null;
+  private auditService: AuditDomainService | null = null
+  private consentService: ConsentDomainService | null = null
+  private medicalLicenseService: MedicalLicenseDomainService | null = null
 
   private constructor(supabase: SupabaseClient) {
-    this.supabase = supabase;
+    this.supabase = supabase
   }
 
   /**
@@ -40,9 +40,9 @@ export class RepositoryContainer {
    */
   static initialize(supabase: SupabaseClient): RepositoryContainer {
     if (!RepositoryContainer.instance) {
-      RepositoryContainer.instance = new RepositoryContainer(supabase);
+      RepositoryContainer.instance = new RepositoryContainer(supabase)
     }
-    return RepositoryContainer.instance;
+    return RepositoryContainer.instance
   }
 
   /**
@@ -52,9 +52,9 @@ export class RepositoryContainer {
     if (!RepositoryContainer.instance) {
       throw new Error(
         'RepositoryContainer not initialized. Call initialize() first.',
-      );
+      )
     }
-    return RepositoryContainer.instance;
+    return RepositoryContainer.instance
   }
 
   /**
@@ -62,9 +62,9 @@ export class RepositoryContainer {
    */
   getPatientRepository(): IPatientRepository {
     if (!this.patientRepository) {
-      this.patientRepository = new PatientRepository(this.supabase);
+      this.patientRepository = new PatientRepository(this.supabase)
     }
-    return this.patientRepository;
+    return this.patientRepository
   }
 
   /**
@@ -72,9 +72,9 @@ export class RepositoryContainer {
    */
   getConsentRepository(): IConsentRepository {
     if (!this.consentRepository) {
-      this.consentRepository = new ConsentRepository(this.supabase);
+      this.consentRepository = new ConsentRepository(this.supabase)
     }
-    return this.consentRepository;
+    return this.consentRepository
   }
 
   /**
@@ -82,9 +82,9 @@ export class RepositoryContainer {
    */
   getAppointmentRepository(): IAppointmentRepository {
     if (!this.appointmentRepository) {
-      this.appointmentRepository = new AppointmentRepository(this.supabase);
+      this.appointmentRepository = new AppointmentRepository(this.supabase)
     }
-    return this.appointmentRepository;
+    return this.appointmentRepository
   }
 
   /**
@@ -92,10 +92,10 @@ export class RepositoryContainer {
    */
   getAuditService(): AuditDomainService {
     if (!this.auditService) {
-      const auditInfrastructureService = new AuditService(this.supabase);
-      this.auditService = auditInfrastructureService as unknown as AuditDomainService;
+      const auditInfrastructureService = new AuditService(this.supabase)
+      this.auditService = auditInfrastructureService as unknown as AuditDomainService
     }
-    return this.auditService;
+    return this.auditService
   }
 
   /**
@@ -103,10 +103,10 @@ export class RepositoryContainer {
    */
   getConsentService(): ConsentDomainService {
     if (!this.consentService) {
-      const consentInfrastructureService = new ConsentService();
-      this.consentService = consentInfrastructureService as unknown as ConsentDomainService;
+      const consentInfrastructureService = new ConsentService()
+      this.consentService = consentInfrastructureService as unknown as ConsentDomainService
     }
-    return this.consentService;
+    return this.consentService
   }
 
   /**
@@ -117,21 +117,21 @@ export class RepositoryContainer {
       // This would need to be implemented in the database layer
       throw new Error(
         'MedicalLicenseService not implemented in database layer',
-      );
+      )
     }
-    return this.medicalLicenseService;
+    return this.medicalLicenseService
   }
 
   /**
    * Reset all instances (useful for testing)
    */
   reset(): void {
-    this.patientRepository = null;
-    this.consentRepository = null;
-    this.appointmentRepository = null;
-    this.auditService = null;
-    this.consentService = null;
-    this.medicalLicenseService = null;
+    this.patientRepository = null
+    this.consentRepository = null
+    this.appointmentRepository = null
+    this.auditService = null
+    this.consentService = null
+    this.medicalLicenseService = null
   }
 
   /**
@@ -142,7 +142,7 @@ export class RepositoryContainer {
       patient: this.getPatientRepository(),
       consent: this.getConsentRepository(),
       appointment: this.getAppointmentRepository(),
-    };
+    }
   }
 
   /**
@@ -153,7 +153,7 @@ export class RepositoryContainer {
       audit: this.getAuditService(),
       consent: this.getConsentService(),
       medicalLicense: this.getMedicalLicenseService(),
-    };
+    }
   }
 
   /**
@@ -163,6 +163,6 @@ export class RepositoryContainer {
     return {
       repositories: this.getRepositories(),
       services: this.getServices(),
-    };
+    }
   }
 }

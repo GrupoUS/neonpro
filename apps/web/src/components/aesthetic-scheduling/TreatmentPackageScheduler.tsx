@@ -3,19 +3,19 @@
  * Brazilian healthcare compliant aesthetic treatment package scheduling interface
  */
 
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { trpc } from '@/lib/trpc';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Progress } from '@/components/ui/progress'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { trpc } from '@/lib/trpc'
 import {
   type PackageProcedure,
   type TreatmentPackage,
   type TreatmentPackageResponse,
-} from '@/types/aesthetic-scheduling';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+} from '@/types/aesthetic-scheduling'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
   Calendar,
   CheckCircle,
@@ -25,66 +25,66 @@ import {
   Loader2,
   Package,
   XCircle,
-} from 'lucide-react';
-import React, { useEffect, useState } from 'react';
+} from 'lucide-react'
+import React, { useEffect, useState } from 'react'
 
 interface TreatmentPackageSchedulerProps {
-  patientId: string;
-  onSuccess?: (response: TreatmentPackageResponse) => void;
-  onError?: (error: Error) => void;
+  patientId: string
+  onSuccess?: (response: TreatmentPackageResponse) => void
+  onError?: (error: Error) => void
 }
 
 export function TreatmentPackageScheduler(
   { patientId, onSuccess, onError }: TreatmentPackageSchedulerProps,
 ) {
-  const queryClient = useQueryClient();
-  const [selectedPackage, setSelectedPackage] = useState<TreatmentPackage | null>(null);
-  const [startDate, setStartDate] = useState<string>('');
-  const [preferences, setPreferences] = useState<Record<string, any>>({});
+  const queryClient = useQueryClient()
+  const [selectedPackage, setSelectedPackage] = useState<TreatmentPackage | null>(null)
+  const [startDate, setStartDate] = useState<string>('')
+  const [preferences, setPreferences] = useState<Record<string, any>>({})
 
   // Fetch treatment packages
   const { data: packagesData, isLoading: packagesLoading } = trpc.aestheticScheduling
     .getTreatmentPackages.useQuery(
       { limit: 100, offset: 0 },
       {
-        select: data => data.packages,
+        select: (data) => data.packages,
       },
-    );
+    )
 
   // Schedule treatment package mutation
   const scheduleMutation = trpc.aestheticScheduling.scheduleTreatmentPackage.useMutation({
-    onSuccess: data => {
-      queryClient.invalidateQueries(['appointments']);
-      queryClient.invalidateQueries(['patients', patientId]);
-      onSuccess?.(data);
+    onSuccess: (data) => {
+      queryClient.invalidateQueries(['appointments'])
+      queryClient.invalidateQueries(['patients', patientId])
+      onSuccess?.(data)
     },
-    onError: error => {
-      onError?.(error as Error);
+    onError: (error) => {
+      onError?.(error as Error)
     },
-  });
+  })
 
   const handlePackageSelect = (pkg: TreatmentPackage) => {
-    setSelectedPackage(pkg);
+    setSelectedPackage(pkg)
     // Set default start date to tomorrow
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    setStartDate(tomorrow.toISOString().split('T')[0]);
-  };
+    const tomorrow = new Date()
+    tomorrow.setDate(tomorrow.getDate() + 1)
+    setStartDate(tomorrow.toISOString().split('T')[0])
+  }
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+    e.preventDefault()
 
-    if (!selectedPackage || !startDate) return;
+    if (!selectedPackage || !startDate) return
 
     scheduleMutation.mutate({
       packageId: selectedPackage.id,
       patientId,
       startDate: new Date(startDate),
       preferences,
-    });
-  };
+    })
+  }
 
-  const isSubmitting = scheduleMutation.isLoading;
+  const isSubmitting = scheduleMutation.isLoading
 
   if (packagesLoading) {
     return (
@@ -94,7 +94,7 @@ export function TreatmentPackageScheduler(
           <span className='ml-3 text-lg'>Carregando pacotes de tratamento...</span>
         </div>
       </div>
-    );
+    )
   }
 
   return (
@@ -128,7 +128,7 @@ export function TreatmentPackageScheduler(
 
           <TabsContent value='packages' className='space-y-6'>
             <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
-              {packagesData?.map(pkg => (
+              {packagesData?.map((pkg) => (
                 <Card
                   key={pkg.id}
                   className={`cursor-pointer transition-all hover:shadow-lg ${
@@ -253,7 +253,8 @@ export function TreatmentPackageScheduler(
                             <div className='flex justify-between'>
                               <span className='text-gray-600'>Valor Descontado:</span>
                               <span className='font-medium text-green-600'>
-                                -R$ {(selectedPackage.totalPrice * selectedPackage.packageDiscount
+                                -R$ {(selectedPackage.totalPrice
+                                  * selectedPackage.packageDiscount
                                   / 100).toLocaleString('pt-BR')}
                               </span>
                             </div>
@@ -269,7 +270,8 @@ export function TreatmentPackageScheduler(
                             <div className='flex justify-between text-sm'>
                               <span className='text-gray-600'>Economia Total:</span>
                               <span className='font-medium text-green-600'>
-                                R$ {(selectedPackage.totalPrice * selectedPackage.packageDiscount
+                                R$ {(selectedPackage.totalPrice
+                                  * selectedPackage.packageDiscount
                                   / 100).toLocaleString('pt-BR')}
                               </span>
                             </div>
@@ -382,7 +384,7 @@ export function TreatmentPackageScheduler(
                         <input
                           type='date'
                           value={startDate}
-                          onChange={e => setStartDate(e.target.value)}
+                          onChange={(e) => setStartDate(e.target.value)}
                           min={new Date().toISOString().split('T')[0]}
                           className='w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500'
                           required
@@ -401,7 +403,7 @@ export function TreatmentPackageScheduler(
                             </label>
                             <select
                               value={preferences.preferredTime || ''}
-                              onChange={e =>
+                              onChange={(e) =>
                                 setPreferences({ ...preferences, preferredTime: e.target.value })}
                               className='w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500'
                             >
@@ -418,7 +420,7 @@ export function TreatmentPackageScheduler(
                             </label>
                             <select
                               value={preferences.frequency || ''}
-                              onChange={e =>
+                              onChange={(e) =>
                                 setPreferences({ ...preferences, frequency: e.target.value })}
                               className='w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500'
                             >
@@ -441,7 +443,7 @@ export function TreatmentPackageScheduler(
                             </label>
                             <textarea
                               value={preferences.notes || ''}
-                              onChange={e =>
+                              onChange={(e) =>
                                 setPreferences({ ...preferences, notes: e.target.value })}
                               rows={3}
                               className='w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500'
@@ -462,25 +464,25 @@ export function TreatmentPackageScheduler(
                                 'sexta',
                                 'sábado',
                                 'domingo',
-                              ].map(day => (
+                              ].map((day) => (
                                 <label key={day} className='flex items-center'>
                                   <input
                                     type='checkbox'
                                     checked={preferences.restrictedDays?.includes(day) || false}
-                                    onChange={e => {
-                                      const restrictedDays = preferences.restrictedDays || [];
+                                    onChange={(e) => {
+                                      const restrictedDays = preferences.restrictedDays || []
                                       if (e.target.checked) {
                                         setPreferences({
                                           ...preferences,
                                           restrictedDays: [...restrictedDays, day],
-                                        });
+                                        })
                                       } else {
                                         setPreferences({
                                           ...preferences,
                                           restrictedDays: restrictedDays.filter((d: string) =>
                                             d !== day
                                           ),
-                                        });
+                                        })
                                       }
                                     }}
                                     className='rounded border-gray-300 text-blue-600 focus:ring-blue-500'
@@ -521,7 +523,8 @@ export function TreatmentPackageScheduler(
                               <p className='text-sm text-gray-600'>
                                 Economia:{' '}
                                 <span className='font-medium text-green-600'>
-                                  R$ {(selectedPackage.totalPrice * selectedPackage.packageDiscount
+                                  R$ {(selectedPackage.totalPrice
+                                    * selectedPackage.packageDiscount
                                     / 100).toLocaleString('pt-BR')}
                                 </span>
                               </p>
@@ -573,5 +576,5 @@ export function TreatmentPackageScheduler(
         </div>
       </form>
     </div>
-  );
+  )
 }

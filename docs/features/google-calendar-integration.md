@@ -253,7 +253,7 @@ Enable debug logging:
 ```typescript
 const service = new GoogleCalendarService({
   debug: true,
-});
+})
 ```
 
 ## Security Considerations

@@ -4,44 +4,44 @@
  */
 
 export interface LGPDConsentData {
-  userId: string;
-  consentType: string;
-  granted: boolean;
-  timestamp: string;
-  version: string;
-  purposes: string[];
-  dataCategories: string[];
-  processingBasis: string;
-  retentionPeriod: string;
+  userId: string
+  consentType: string
+  granted: boolean
+  timestamp: string
+  version: string
+  purposes: string[]
+  dataCategories: string[]
+  processingBasis: string
+  retentionPeriod: string
 }
 
 export interface DataSubjectRequest {
-  requestId: string;
-  userId: string;
+  requestId: string
+  userId: string
   requestType:
     | 'data_access'
     | 'data_portability'
     | 'data_correction'
     | 'data_deletion'
     | 'processing_restriction'
-    | 'consent_withdrawal';
-  status: 'pending' | 'in_progress' | 'completed' | 'rejected';
-  submittedAt: string;
-  completedAt?: string;
-  details: Record<string, any>;
+    | 'consent_withdrawal'
+  status: 'pending' | 'in_progress' | 'completed' | 'rejected'
+  submittedAt: string
+  completedAt?: string
+  details: Record<string, any>
 }
 
 export interface DataProcessingRecord {
-  id: string;
-  controller: string;
-  processor: string;
-  purposes: string[];
-  categories: string[];
-  retention: string;
-  securityMeasures: string[];
-  crossBorderTransfer: boolean;
-  adequacyDecision?: string;
-  safeguards?: string[];
+  id: string
+  controller: string
+  processor: string
+  purposes: string[]
+  categories: string[]
+  retention: string
+  securityMeasures: string[]
+  crossBorderTransfer: boolean
+  adequacyDecision?: string
+  safeguards?: string[]
 }
 
 export const LGPD_CONSENT_FIXTURES: LGPDConsentData[] = [
@@ -78,7 +78,7 @@ export const LGPD_CONSENT_FIXTURES: LGPDConsentData[] = [
     processingBasis: 'consent',
     retentionPeriod: '10_years',
   },
-];
+]
 
 export const DATA_SUBJECT_REQUEST_FIXTURES: DataSubjectRequest[] = [
   {
@@ -119,7 +119,7 @@ export const DATA_SUBJECT_REQUEST_FIXTURES: DataSubjectRequest[] = [
       dataRetention: 'delete_immediately',
     },
   },
-];
+]
 
 export const DATA_PROCESSING_RECORD_FIXTURES: DataProcessingRecord[] = [
   {
@@ -171,7 +171,7 @@ export const DATA_PROCESSING_RECORD_FIXTURES: DataProcessingRecord[] = [
     adequacyDecision: 'european_commission_adequacy',
     safeguards: ['standard_contractual_clauses', 'bcr_certification'],
   },
-];
+]
 
 export class LGPDTestDataGenerator {
   static generateConsentData(
@@ -187,9 +187,9 @@ export class LGPDTestDataGenerator {
       dataCategories: ['health_data', 'personal_data'],
       processingBasis: 'consent',
       retentionPeriod: '7_years',
-    };
+    }
 
-    return { ...base, ...overrides };
+    return { ...base, ...overrides }
   }
 
   static generateDataSubjectRequest(
@@ -202,9 +202,9 @@ export class LGPDTestDataGenerator {
       status: 'pending',
       submittedAt: new Date().toISOString(),
       details: {},
-    };
+    }
 
-    return { ...base, ...overrides };
+    return { ...base, ...overrides }
   }
 
   static generateDataProcessingRecord(
@@ -219,9 +219,9 @@ export class LGPDTestDataGenerator {
       retention: '7_years',
       securityMeasures: ['encryption', 'access_control'],
       crossBorderTransfer: false,
-    };
+    }
 
-    return { ...base, ...overrides };
+    return { ...base, ...overrides }
   }
 
   static generateMaskedPatientData() {
@@ -253,6 +253,6 @@ export class LGPDTestDataGenerator {
           Date.now() + 7 * 365 * 24 * 60 * 60 * 1000,
         ).toISOString(), // 7 years
       },
-    };
+    }
   }
 }

@@ -1,5 +1,5 @@
-import { type BloodType, type ContactMethod, type Gender } from '../value-objects/gender';
-import { formatCPF, validateCPF } from '../value-objects/healthcare';
+import { type BloodType, type ContactMethod, type Gender } from '../value-objects/gender'
+import { formatCPF, validateCPF } from '../value-objects/healthcare'
 
 /**
  * Consolidated Patient Entity - Single source of truth for patient data
@@ -15,75 +15,75 @@ import { formatCPF, validateCPF } from '../value-objects/healthcare';
  */
 export interface Patient {
   // Core identification
-  id: string;
-  clinicId: string;
-  medicalRecordNumber: string;
-  externalIds?: Record<string, any>;
+  id: string
+  clinicId: string
+  medicalRecordNumber: string
+  externalIds?: Record<string, any>
 
   // Names and personal information
-  givenNames: string[];
-  familyName: string;
-  fullName: string;
-  preferredName?: string;
+  givenNames: string[]
+  familyName: string
+  fullName: string
+  preferredName?: string
 
   // Contact information
-  phonePrimary?: string;
-  phoneSecondary?: string;
-  email?: string;
-  preferredContactMethod?: ContactMethod;
+  phonePrimary?: string
+  phoneSecondary?: string
+  email?: string
+  preferredContactMethod?: ContactMethod
 
   // Address information
-  addressLine1?: string;
-  addressLine2?: string;
-  city?: string;
-  state?: string;
-  postalCode?: string;
-  country?: string;
+  addressLine1?: string
+  addressLine2?: string
+  city?: string
+  state?: string
+  postalCode?: string
+  country?: string
 
   // Demographics
-  birthDate?: string;
-  gender?: Gender | string;
-  maritalStatus?: string;
-  bloodType?: BloodType;
+  birthDate?: string
+  gender?: Gender | string
+  maritalStatus?: string
+  bloodType?: BloodType
 
   // Status and flags
-  isActive?: boolean;
-  deceasedIndicator?: boolean;
-  deceasedDate?: string;
+  isActive?: boolean
+  deceasedIndicator?: boolean
+  deceasedDate?: string
 
   // Healthcare information
-  allergies: string[];
-  chronicConditions: string[];
-  currentMedications: string[];
+  allergies: string[]
+  chronicConditions: string[]
+  currentMedications: string[]
 
   // Insurance information
-  insuranceProvider?: string;
-  insuranceNumber?: string;
-  insurancePlan?: string;
+  insuranceProvider?: string
+  insuranceNumber?: string
+  insurancePlan?: string
 
   // Emergency contact
-  emergencyContactName?: string;
-  emergencyContactPhone?: string;
-  emergencyContactRelationship?: string;
+  emergencyContactName?: string
+  emergencyContactPhone?: string
+  emergencyContactRelationship?: string
 
   // LGPD compliance
-  dataConsentStatus?: string;
-  dataConsentDate?: string;
-  dataRetentionUntil?: string;
-  lgpdConsentGiven: boolean;
+  dataConsentStatus?: string
+  dataConsentDate?: string
+  dataRetentionUntil?: string
+  lgpdConsentGiven: boolean
 
   // Metadata
-  dataSource?: string;
-  createdAt?: string;
-  updatedAt?: string;
-  createdBy?: string;
-  updatedBy?: string;
+  dataSource?: string
+  createdAt?: string
+  updatedAt?: string
+  createdBy?: string
+  updatedBy?: string
 
   // Additional fields
-  photoUrl?: string;
-  cpf?: string;
-  rg?: string;
-  passportNumber?: string;
+  photoUrl?: string
+  cpf?: string
+  rg?: string
+  passportNumber?: string
 }
 
 /**
@@ -94,43 +94,43 @@ export class PatientValidator {
    * Validate patient CPF
    */
   static validateCPF(patient: Patient): boolean {
-    if (!patient.cpf) return true; // CPF is optional
-    return validateCPF(patient.cpf);
+    if (!patient.cpf) return true // CPF is optional
+    return validateCPF(patient.cpf)
   }
 
   /**
    * Format patient CPF for display
    */
   static formatCPF(patient: Patient): string {
-    if (!patient.cpf) return '';
-    return formatCPF(patient.cpf);
+    if (!patient.cpf) return ''
+    return formatCPF(patient.cpf)
   }
 
   /**
    * Validate required patient fields
    */
   static validateRequired(patient: Patient): string[] {
-    const errors: string[] = [];
+    const errors: string[] = []
 
-    if (!patient.id) errors.push('Patient ID is required');
-    if (!patient.clinicId) errors.push('Clinic ID is required');
+    if (!patient.id) errors.push('Patient ID is required')
+    if (!patient.clinicId) errors.push('Clinic ID is required')
     if (!patient.medicalRecordNumber) {
-      errors.push('Medical record number is required');
+      errors.push('Medical record number is required')
     }
     if (!patient.givenNames || patient.givenNames.length === 0) {
-      errors.push('Given names are required');
+      errors.push('Given names are required')
     }
-    if (!patient.familyName) errors.push('Family name is required');
-    if (!patient.fullName) errors.push('Full name is required');
+    if (!patient.familyName) errors.push('Family name is required')
+    if (!patient.fullName) errors.push('Full name is required')
 
-    return errors;
+    return errors
   }
 
   /**
    * Check if patient is active
    */
   static isActive(patient: Patient): boolean {
-    return patient.isActive !== false && !patient.deceasedIndicator;
+    return patient.isActive !== false && !patient.deceasedIndicator
   }
 }
 
@@ -144,7 +144,7 @@ export class PatientFactory {
   static create(
     data: Omit<Patient, 'id' | 'createdAt' | 'updatedAt'>,
   ): Patient {
-    const now = new Date().toISOString();
+    const now = new Date().toISOString()
 
     return {
       ...data,
@@ -156,17 +156,17 @@ export class PatientFactory {
       lgpdConsentGiven: data.lgpdConsentGiven ?? false,
       createdAt: now,
       updatedAt: now,
-    };
+    }
   }
 
   /**
    * Create a minimal patient record
    */
   static createMinimal(data: {
-    clinicId: string;
-    medicalRecordNumber: string;
-    givenNames: string[];
-    familyName: string;
+    clinicId: string
+    medicalRecordNumber: string
+    givenNames: string[]
+    familyName: string
   }): Patient {
     return this.create({
       ...data,
@@ -175,6 +175,6 @@ export class PatientFactory {
       chronicConditions: [],
       currentMedications: [],
       lgpdConsentGiven: false,
-    });
+    })
   }
 }

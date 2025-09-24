@@ -1,15 +1,15 @@
-'use client';
+'use client'
 
-import * as DialogPrimitive from '@radix-ui/react-dialog';
-import { XIcon } from 'lucide-react';
-import * as React from 'react';
-import { cn } from '../../utils';
+import * as DialogPrimitive from '@radix-ui/react-dialog'
+import { XIcon } from 'lucide-react'
+import * as React from 'react'
+import { cn } from '../../utils'
 
 // Smooth Drawer built on Radix Dialog with slide-in animation
 
-export const SmoothDrawer = DialogPrimitive.Root;
-export const SmoothDrawerTrigger = DialogPrimitive.Trigger;
-export const SmoothDrawerClose = DialogPrimitive.Close;
+export const SmoothDrawer = DialogPrimitive.Root
+export const SmoothDrawerTrigger = DialogPrimitive.Trigger
+export const SmoothDrawerClose = DialogPrimitive.Close
 
 export function SmoothDrawerContent({
   className,
@@ -17,11 +17,11 @@ export function SmoothDrawerContent({
   children,
   ...props
 }: React.ComponentProps<typeof DialogPrimitive.Content> & {
-  side?: 'right' | 'left';
+  side?: 'right' | 'left'
 }) {
   const sideClasses = side === 'right'
     ? 'right-0 translate-x-0 data-[state=closed]:translate-x-full'
-    : 'left-0 translate-x-0 data-[state=closed]:-translate-x-full';
+    : 'left-0 translate-x-0 data-[state=closed]:-translate-x-full'
 
   return (
     <DialogPrimitive.Portal>
@@ -49,14 +49,14 @@ export function SmoothDrawerContent({
         </DialogPrimitive.Close>
       </DialogPrimitive.Content>
     </DialogPrimitive.Portal>
-  );
+  )
 }
 
 export function SmoothDrawerHeader({
   className,
   ...props
 }: React.ComponentProps<'div'>) {
-  return <div className={cn('mb-4 flex flex-col gap-1', className)} {...props} />;
+  return <div className={cn('mb-4 flex flex-col gap-1', className)} {...props} />
 }
 
 export const SmoothDrawerTitle = React.forwardRef<
@@ -71,8 +71,8 @@ export const SmoothDrawerTitle = React.forwardRef<
     )}
     {...props}
   />
-));
-SmoothDrawerTitle.displayName = 'SmoothDrawerTitle';
+))
+SmoothDrawerTitle.displayName = 'SmoothDrawerTitle'
 
 export const SmoothDrawerDescription = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Description>,
@@ -83,5 +83,5 @@ export const SmoothDrawerDescription = React.forwardRef<
     className={cn('text-sm text-muted-foreground', className)}
     {...props}
   />
-));
-SmoothDrawerDescription.displayName = 'SmoothDrawerDescription';
+))
+SmoothDrawerDescription.displayName = 'SmoothDrawerDescription'

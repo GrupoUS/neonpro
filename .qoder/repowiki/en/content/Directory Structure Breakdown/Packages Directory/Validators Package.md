@@ -255,9 +255,9 @@ const patientData = [
   { value: formData.cns, type: 'cns' as const },
   { value: formData.phone, type: 'phone' as const },
   { value: formData.crm, type: 'crm' as const },
-];
+]
 
-const results = validateHealthcareDocuments(patientData);
+const results = validateHealthcareDocuments(patientData)
 ```
 
 For API endpoints, the validators can be used in middleware or service layers to ensure incoming data meets regulatory requirements before being processed or stored. The detailed error information returned by the comprehensive validation functions can be mapped directly to API response formats, providing clear feedback to clients about validation failures.

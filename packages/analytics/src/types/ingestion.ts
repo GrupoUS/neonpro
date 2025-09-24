@@ -1,40 +1,40 @@
-import { AnalyticsEvent, BaseMetric } from './base-metrics';
-import { ClinicalKPI } from './clinical-kpis';
-import { FinancialKPI } from './financial-kpis';
+import { AnalyticsEvent, BaseMetric } from './base-metrics'
+import { ClinicalKPI } from './clinical-kpis'
+import { FinancialKPI } from './financial-kpis'
 
 /**
  * Ingestion Pipeline Configuration
  */
 export interface IngestionConfig {
   /** Ingestion source identifier */
-  sourceId: string;
+  sourceId: string
 
   /** Source type and connection details */
-  sourceType: 'database' | 'api' | 'file' | 'stream' | 'webhook';
+  sourceType: 'database' | 'api' | 'file' | 'stream' | 'webhook'
 
   /** Data processing options */
   processing: {
-    batchSize: number;
-    frequency: 'realtime' | 'hourly' | 'daily' | 'weekly';
-    validation: boolean;
-    transformation: boolean;
-    deduplication: boolean;
-  };
+    batchSize: number
+    frequency: 'realtime' | 'hourly' | 'daily' | 'weekly'
+    validation: boolean
+    transformation: boolean
+    deduplication: boolean
+  }
 
   /** Security and compliance */
   security: {
-    encryption: boolean;
-    anonymization: boolean;
-    auditTrail: boolean;
-    complianceFrameworks: string[];
-  };
+    encryption: boolean
+    anonymization: boolean
+    auditTrail: boolean
+    complianceFrameworks: string[]
+  }
 
   /** Error handling */
   errorHandling: {
-    retryAttempts: number;
-    failureNotification: boolean;
-    deadLetterQueue: boolean;
-  };
+    retryAttempts: number
+    failureNotification: boolean
+    deadLetterQueue: boolean
+  }
 }
 
 /**
@@ -42,25 +42,25 @@ export interface IngestionConfig {
  */
 export interface ValidationRule {
   /** Rule identifier */
-  ruleId: string;
+  ruleId: string
 
   /** Rule description */
-  description: string;
+  description: string
 
   /** Field to validate */
-  field: string;
+  field: string
 
   /** Validation type */
-  type: 'required' | 'format' | 'range' | 'custom' | 'compliance';
+  type: 'required' | 'format' | 'range' | 'custom' | 'compliance'
 
   /** Validation parameters */
-  parameters: Record<string, any>;
+  parameters: Record<string, any>
 
   /** Error handling */
-  onError: 'reject' | 'warn' | 'transform' | 'skip';
+  onError: 'reject' | 'warn' | 'transform' | 'skip'
 
   /** Compliance framework */
-  complianceFramework?: string;
+  complianceFramework?: string
 }
 
 /**
@@ -68,25 +68,25 @@ export interface ValidationRule {
  */
 export interface TransformationRule {
   /** Transformation identifier */
-  transformId: string;
+  transformId: string
 
   /** Transformation description */
-  description: string;
+  description: string
 
   /** Source field path */
-  sourceField: string;
+  sourceField: string
 
   /** Target field path */
-  targetField: string;
+  targetField: string
 
   /** Transformation type */
-  type: 'map' | 'aggregate' | 'filter' | 'anonymize' | 'calculate';
+  type: 'map' | 'aggregate' | 'filter' | 'anonymize' | 'calculate'
 
   /** Transformation logic */
-  logic: Record<string, any>;
+  logic: Record<string, any>
 
   /** Conditional application */
-  condition?: string;
+  condition?: string
 }
 
 /**
@@ -104,38 +104,38 @@ export type IngestionEventType =
   | 'storage_completed'
   | 'storage_failed'
   | 'processing_completed'
-  | 'error_occurred';
+  | 'error_occurred'
 
 /**
  * Ingestion Event
  */
 export interface IngestionEvent extends AnalyticsEvent {
-  eventType: IngestionEventType;
+  eventType: IngestionEventType
 
   /** Source information */
   source: {
-    sourceId: string;
-    sourceType: string;
-    recordCount: number;
-    dataSize: number;
-  };
+    sourceId: string
+    sourceType: string
+    recordCount: number
+    dataSize: number
+  }
 
   /** Processing details */
   processing: {
-    startTime: Date;
-    endTime?: Date;
-    duration?: number;
-    status: 'pending' | 'processing' | 'completed' | 'failed';
-    errors?: string[];
-  };
+    startTime: Date
+    endTime?: Date
+    duration?: number
+    status: 'pending' | 'processing' | 'completed' | 'failed'
+    errors?: string[]
+  }
 
   /** Data quality metrics */
   quality: {
-    validRecords: number;
-    invalidRecords: number;
-    duplicateRecords: number;
-    transformedRecords: number;
-  };
+    validRecords: number
+    invalidRecords: number
+    duplicateRecords: number
+    transformedRecords: number
+  }
 }
 
 /**
@@ -143,34 +143,34 @@ export interface IngestionEvent extends AnalyticsEvent {
  */
 export interface IngestionResult {
   /** Operation identifier */
-  operationId: string;
+  operationId: string
 
   /** Pipeline status */
-  status: 'success' | 'partial_success' | 'failure';
+  status: 'success' | 'partial_success' | 'failure'
 
   /** Processing summary */
   summary: {
-    totalRecords: number;
-    processedRecords: number;
-    validRecords: number;
-    invalidRecords: number;
-    errors: string[];
-    warnings: string[];
-  };
+    totalRecords: number
+    processedRecords: number
+    validRecords: number
+    invalidRecords: number
+    errors: string[]
+    warnings: string[]
+  }
 
   /** Generated metrics */
-  metrics: Array<BaseMetric | ClinicalKPI | FinancialKPI>;
+  metrics: Array<BaseMetric | ClinicalKPI | FinancialKPI>
 
   /** Processing events */
-  events: IngestionEvent[];
+  events: IngestionEvent[]
 
   /** Timing information */
   timing: {
-    startTime: Date;
-    endTime: Date;
-    duration: number;
-    stages: Record<string, number>;
-  };
+    startTime: Date
+    endTime: Date
+    duration: number
+    stages: Record<string, number>
+  }
 }
 
 /**
@@ -178,33 +178,33 @@ export interface IngestionResult {
  */
 export interface StreamConfig {
   /** Stream identifier */
-  streamId: string;
+  streamId: string
 
   /** Stream source */
   source: {
-    type: 'kafka' | 'rabbitmq' | 'websocket' | 'webhook';
-    endpoint: string;
-    authentication?: Record<string, any>;
-  };
+    type: 'kafka' | 'rabbitmq' | 'websocket' | 'webhook'
+    endpoint: string
+    authentication?: Record<string, any>
+  }
 
   /** Message processing */
   processing: {
-    messageFormat: 'json' | 'xml' | 'csv' | 'binary';
-    batchProcessing: boolean;
-    batchSize?: number;
-    bufferTime?: number;
-  };
+    messageFormat: 'json' | 'xml' | 'csv' | 'binary'
+    batchProcessing: boolean
+    batchSize?: number
+    bufferTime?: number
+  }
 
   /** Error handling and recovery */
   reliability: {
-    acknowledgments: boolean;
+    acknowledgments: boolean
     retryPolicy: {
-      maxRetries: number;
-      backoffStrategy: 'linear' | 'exponential';
-      baseDelay: number;
-    };
-    deadLetterHandling: boolean;
-  };
+      maxRetries: number
+      backoffStrategy: 'linear' | 'exponential'
+      baseDelay: number
+    }
+    deadLetterHandling: boolean
+  }
 }
 
 /**
@@ -212,31 +212,31 @@ export interface StreamConfig {
  */
 export interface WebhookConfig {
   /** Webhook identifier */
-  webhookId: string;
+  webhookId: string
 
   /** Webhook URL and security */
   endpoint: {
-    url: string;
-    method: 'POST' | 'PUT' | 'PATCH';
-    headers: Record<string, string>;
+    url: string
+    method: 'POST' | 'PUT' | 'PATCH'
+    headers: Record<string, string>
     authentication?: {
-      type: 'bearer' | 'basic' | 'api_key' | 'hmac';
-      credentials: Record<string, string>;
-    };
-  };
+      type: 'bearer' | 'basic' | 'api_key' | 'hmac'
+      credentials: Record<string, string>
+    }
+  }
 
   /** Event filtering */
   triggers: {
-    eventTypes: IngestionEventType[];
-    conditions: Record<string, any>;
-  };
+    eventTypes: IngestionEventType[]
+    conditions: Record<string, any>
+  }
 
   /** Retry and reliability */
   delivery: {
-    retryAttempts: number;
-    timeout: number;
-    retryDelay: number;
-  };
+    retryAttempts: number
+    timeout: number
+    retryDelay: number
+  }
 }
 
 /**
@@ -244,37 +244,37 @@ export interface WebhookConfig {
  */
 export interface DataQualityAssessment {
   /** Assessment identifier */
-  assessmentId: string;
+  assessmentId: string
 
   /** Assessment timestamp */
-  timestamp: Date;
+  timestamp: Date
 
   /** Source being assessed */
-  sourceId: string;
+  sourceId: string
 
   /** Quality dimensions */
   dimensions: {
-    completeness: number; // 0-100 percentage
-    accuracy: number; // 0-100 percentage
-    consistency: number; // 0-100 percentage
-    validity: number; // 0-100 percentage
-    timeliness: number; // 0-100 percentage
-  };
+    completeness: number // 0-100 percentage
+    accuracy: number // 0-100 percentage
+    consistency: number // 0-100 percentage
+    validity: number // 0-100 percentage
+    timeliness: number // 0-100 percentage
+  }
 
   /** Overall quality score */
-  overallScore: number;
+  overallScore: number
 
   /** Quality issues found */
   issues: Array<{
-    type: string;
-    description: string;
-    severity: 'low' | 'medium' | 'high' | 'critical';
-    field?: string;
-    count: number;
-  }>;
+    type: string
+    description: string
+    severity: 'low' | 'medium' | 'high' | 'critical'
+    field?: string
+    count: number
+  }>
 
   /** Recommendations */
-  recommendations: string[];
+  recommendations: string[]
 }
 
 /**
@@ -282,33 +282,33 @@ export interface DataQualityAssessment {
  */
 export interface ComplianceValidationResult {
   /** Validation identifier */
-  validationId: string;
+  validationId: string
 
   /** Compliance framework */
-  framework: string;
+  framework: string
 
   /** Validation status */
-  status: 'compliant' | 'non_compliant' | 'warning';
+  status: 'compliant' | 'non_compliant' | 'warning'
 
   /** Validation details */
   details: {
-    rulesChecked: number;
-    rulesPassed: number;
-    rulesFailed: number;
-    warnings: number;
-  };
+    rulesChecked: number
+    rulesPassed: number
+    rulesFailed: number
+    warnings: number
+  }
 
   /** Violations found */
   violations: Array<{
-    rule: string;
-    description: string;
-    severity: 'low' | 'medium' | 'high' | 'critical';
-    field?: string;
-    remediation: string;
-  }>;
+    rule: string
+    description: string
+    severity: 'low' | 'medium' | 'high' | 'critical'
+    field?: string
+    remediation: string
+  }>
 
   /** Compliance score */
-  complianceScore: number;
+  complianceScore: number
 }
 
 /**
@@ -323,45 +323,45 @@ export type IngestionErrorType =
   | 'compliance_error'
   | 'timeout_error'
   | 'resource_error'
-  | 'unknown_error';
+  | 'unknown_error'
 
 /**
  * Ingestion Error
  */
 export interface IngestionError {
   /** Error identifier */
-  errorId: string;
+  errorId: string
 
   /** Error type */
-  type: IngestionErrorType;
+  type: IngestionErrorType
 
   /** Error message */
-  message: string;
+  message: string
 
   /** Detailed error information */
-  details?: Record<string, any>;
+  details?: Record<string, any>
 
   /** Source information */
   source: {
-    sourceId: string;
-    recordId?: string;
-    field?: string;
-  };
+    sourceId: string
+    recordId?: string
+    field?: string
+  }
 
   /** Error context */
   _context: {
-    operation: string;
-    timestamp: Date;
-    retryCount: number;
-    stackTrace?: string;
-  };
+    operation: string
+    timestamp: Date
+    retryCount: number
+    stackTrace?: string
+  }
 
   /** Recovery suggestions */
   recovery?: {
-    recoverable: boolean;
-    suggestions: string[];
-    retryAfter?: number;
-  };
+    recoverable: boolean
+    suggestions: string[]
+    retryAfter?: number
+  }
 }
 
 /**
@@ -370,42 +370,42 @@ export interface IngestionError {
 export interface IngestionMonitoringMetrics {
   /** Monitoring period */
   period: {
-    start: Date;
-    end: Date;
-  };
+    start: Date
+    end: Date
+  }
 
   /** Throughput metrics */
   throughput: {
-    recordsPerSecond: number;
-    bytesPerSecond: number;
-    peakThroughput: number;
-    averageThroughput: number;
-  };
+    recordsPerSecond: number
+    bytesPerSecond: number
+    peakThroughput: number
+    averageThroughput: number
+  }
 
   /** Performance metrics */
   performance: {
-    averageLatency: number;
-    p95Latency: number;
-    p99Latency: number;
-    errorRate: number;
-    uptime: number;
-  };
+    averageLatency: number
+    p95Latency: number
+    p99Latency: number
+    errorRate: number
+    uptime: number
+  }
 
   /** Resource utilization */
   resources: {
-    cpuUsage: number;
-    memoryUsage: number;
-    diskUsage: number;
-    networkIO: number;
-  };
+    cpuUsage: number
+    memoryUsage: number
+    diskUsage: number
+    networkIO: number
+  }
 
   /** Quality metrics */
   quality: {
-    dataQualityScore: number;
-    complianceScore: number;
-    validationSuccessRate: number;
-    transformationSuccessRate: number;
-  };
+    dataQualityScore: number
+    complianceScore: number
+    validationSuccessRate: number
+    transformationSuccessRate: number
+  }
 }
 
 /**
@@ -426,7 +426,7 @@ export function isIngestionEvent(obj: any): obj is IngestionEvent {
     && typeof obj.processing.status === 'string'
     && obj.quality
     && typeof obj.quality.validRecords === 'number'
-  );
+  )
 }
 
 /**
@@ -442,7 +442,7 @@ export function isIngestionConfig(obj: any): obj is IngestionConfig {
     && typeof obj.processing.batchSize === 'number'
     && obj.security
     && typeof obj.security.encryption === 'boolean'
-  );
+  )
 }
 
 /**
@@ -456,5 +456,5 @@ export function isValidationRule(obj: any): obj is ValidationRule {
     && typeof obj.field === 'string'
     && typeof obj.type === 'string'
     && typeof obj.onError === 'string'
-  );
+  )
 }

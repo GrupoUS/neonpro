@@ -18,7 +18,7 @@ import {
   PredictionInput,
   PredictionResult,
   PredictionType,
-} from './interfaces';
+} from './interfaces'
 
 // ============================================================================
 // Stub Configuration
@@ -26,19 +26,19 @@ import {
 
 interface StubModelConfig {
   /** Model ID */
-  id: string;
+  id: string
   /** Model name */
-  name: string;
+  name: string
   /** Model version */
-  version: string;
+  version: string
   /** Supported prediction types */
-  supportedTypes: PredictionType[];
+  supportedTypes: PredictionType[]
   /** Simulated accuracy */
-  accuracy?: number;
+  accuracy?: number
   /** Prediction latency simulation (ms) */
-  latencyMs?: number;
+  latencyMs?: number
   /** Failure rate for testing error scenarios (0-1) */
-  failureRate?: number;
+  failureRate?: number
 }
 
 const DEFAULT_STUB_CONFIG: StubModelConfig = {
@@ -55,7 +55,7 @@ const DEFAULT_STUB_CONFIG: StubModelConfig = {
   accuracy: 0.85,
   latencyMs: 100,
   failureRate: 0.05,
-};
+}
 
 // ============================================================================
 // Stub Model Provider Implementation
@@ -65,12 +65,12 @@ const DEFAULT_STUB_CONFIG: StubModelConfig = {
  * Stub implementation of ModelProvider for development and testing
  */
 export class StubModelProvider implements ModelProvider {
-  private _initialized = false;
-  private _config: StubModelConfig;
-  private _metadata: ModelMetadata;
+  private _initialized = false
+  private _config: StubModelConfig
+  private _metadata: ModelMetadata
 
   constructor(config: Partial<StubModelConfig> = {}) {
-    this._config = { ...DEFAULT_STUB_CONFIG, ...config };
+    this._config = { ...DEFAULT_STUB_CONFIG, ...config }
     this._metadata = {
       id: this._config.id,
       name: this._config.name,
@@ -87,45 +87,45 @@ export class StubModelProvider implements ModelProvider {
         'current_symptoms',
         'vital_signs',
       ],
-    };
+    }
   }
 
   get metadata(): ModelMetadata {
-    return this._metadata;
+    return this._metadata
   }
 
   async initialize(config?: Record<string, unknown>): Promise<void> {
     if (config) {
-      this._config = { ...this._config, ...config };
+      this._config = { ...this._config, ...config }
     }
 
     // Simulate initialization delay
-    await this._delay(this._config.latencyMs || 100);
+    await this._delay(this._config.latencyMs || 100)
 
-    this._initialized = true;
+    this._initialized = true
   }
 
   async predict(input: PredictionInput): Promise<PredictionResult> {
     if (!this._initialized) {
-      throw new ModelInitializationError('Model not initialized');
+      throw new ModelInitializationError('Model not initialized')
     }
 
     // Validate input
-    this.validateInput(input);
+    this.validateInput(input)
 
     // Simulate prediction latency
-    await this._delay(this._config.latencyMs || 100);
+    await this._delay(this._config.latencyMs || 100)
 
     // Simulate random failures for testing
     if (Math.random() < (this._config.failureRate || 0)) {
       throw new PredictionError('Simulated prediction failure', {
         input: input.type,
         modelId: this._config.id,
-      });
+      })
     }
 
     // Generate mock prediction based on type
-    const prediction = this._generateMockPrediction(input);
+    const prediction = this._generateMockPrediction(input)
 
     return {
       prediction: prediction.value,
@@ -138,30 +138,30 @@ export class StubModelProvider implements ModelProvider {
         processingTimeMs: this._config.latencyMs || 100,
       },
       timestamp: new Date(),
-    };
+    }
   }
 
   async batchPredict(
     input: BatchPredictionInput,
   ): Promise<BatchPredictionResult> {
-    const startTime = Date.now();
-    const results: PredictionResult[] = [];
-    const maxConcurrency = input.options?.maxConcurrency || 5;
+    const startTime = Date.now()
+    const results: PredictionResult[] = []
+    const maxConcurrency = input.options?.maxConcurrency || 5
 
-    let successful = 0;
-    let failed = 0;
+    let successful = 0
+    let failed = 0
 
     // Process in batches to respect concurrency limits
     for (let i = 0; i < input.inputs.length; i += maxConcurrency) {
-      const batch = input.inputs.slice(i, i + maxConcurrency);
+      const batch = input.inputs.slice(i, i + maxConcurrency)
 
-      const batchPromises = batch.map(async predInput => {
+      const batchPromises = batch.map(async (predInput) => {
         try {
-          const result = await this.predict(predInput);
-          successful++;
-          return result;
+          const result = await this.predict(predInput)
+          successful++
+          return result
         } catch (error) {
-          failed++;
+          failed++
           // Return error as prediction result for batch processing
           return {
             prediction: null,
@@ -172,15 +172,15 @@ export class StubModelProvider implements ModelProvider {
               modelId: this._config.id,
             },
             timestamp: new Date(),
-          };
+          }
         }
-      });
+      })
 
-      const batchResults = await Promise.all(batchPromises);
-      results.push(...batchResults);
+      const batchResults = await Promise.all(batchPromises)
+      results.push(...batchResults)
     }
 
-    const processingTimeMs = Date.now() - startTime;
+    const processingTimeMs = Date.now() - startTime
 
     return {
       results,
@@ -190,7 +190,7 @@ export class StubModelProvider implements ModelProvider {
         failed,
         processingTimeMs,
       },
-    };
+    }
   }
 
   validateInput(input: PredictionInput): boolean {
@@ -202,14 +202,14 @@ export class StubModelProvider implements ModelProvider {
           supportedTypes: this._config.supportedTypes,
           requestedType: input.type,
         },
-      );
+      )
     }
 
     // Check required features
-    const requiredFeatures = this._metadata.requiredFeatures;
+    const requiredFeatures = this._metadata.requiredFeatures
     const missingFeatures = requiredFeatures.filter(
-      feature => !(feature in input.features),
-    );
+      (feature) => !(feature in input.features),
+    )
 
     if (missingFeatures.length > 0) {
       throw new InvalidInputError(
@@ -219,20 +219,20 @@ export class StubModelProvider implements ModelProvider {
           providedFeatures: Object.keys(input.features),
           missingFeatures,
         },
-      );
+      )
     }
 
-    return true;
+    return true
   }
 
   async healthCheck(): Promise<{
-    status: 'healthy' | 'degraded' | 'unhealthy';
-    details?: Record<string, unknown>;
+    status: 'healthy' | 'degraded' | 'unhealthy'
+    details?: Record<string, unknown>
   }> {
     // Simulate health check
-    await this._delay(50);
+    await this._delay(50)
 
-    const isHealthy = this._initialized && Math.random() > 0.1; // 90% healthy
+    const isHealthy = this._initialized && Math.random() > 0.1 // 90% healthy
 
     return {
       status: isHealthy ? 'healthy' : 'degraded',
@@ -242,13 +242,13 @@ export class StubModelProvider implements ModelProvider {
         accuracy: this._config.accuracy,
         lastChecked: new Date().toISOString(),
       },
-    };
+    }
   }
 
   async dispose(): Promise<void> {
-    this._initialized = false;
+    this._initialized = false
     // Simulate cleanup delay
-    await this._delay(50);
+    await this._delay(50)
   }
 
   // ============================================================================
@@ -256,25 +256,25 @@ export class StubModelProvider implements ModelProvider {
   // ============================================================================
 
   private async _delay(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms))
   }
 
   private _generateMockPrediction(input: PredictionInput): {
-    value: unknown;
-    confidence: number;
+    value: unknown
+    confidence: number
   } {
-    const features = input.features;
+    const features = input.features
 
     switch (input.type) {
       case 'patient_outcome':
         return {
           value: Math.random() > 0.7 ? 'positive' : 'negative',
           confidence: 0.7 + Math.random() * 0.3,
-        };
+        }
 
       case 'readmission_risk':
-        const age = Number(features.age) || 50;
-        const riskScore = Math.min(1, age / 100 + Math.random() * 0.3);
+        const age = Number(features.age) || 50
+        const riskScore = Math.min(1, age / 100 + Math.random() * 0.3)
         return {
           value: {
             riskLevel: riskScore > 0.7 ? 'high' : riskScore > 0.4 ? 'medium' : 'low',
@@ -282,7 +282,7 @@ export class StubModelProvider implements ModelProvider {
             factors: ['age', 'medical_history', 'previous_admissions'],
           },
           confidence: 0.8 + Math.random() * 0.2,
-        };
+        }
 
       case 'no_show_risk':
         return {
@@ -296,11 +296,11 @@ export class StubModelProvider implements ModelProvider {
             factors: ['appointment_history', 'distance', 'weather'],
           },
           confidence: 0.75 + Math.random() * 0.25,
-        };
+        }
 
       case 'cost_prediction':
-        const baseCost = 500;
-        const predictedCost = baseCost + Math.random() * 1000;
+        const baseCost = 500
+        const predictedCost = baseCost + Math.random() * 1000
         return {
           value: {
             estimatedCost: Math.round(predictedCost * 100) / 100,
@@ -312,7 +312,7 @@ export class StubModelProvider implements ModelProvider {
             ],
           },
           confidence: 0.6 + Math.random() * 0.3,
-        };
+        }
 
       case 'treatment_effectiveness':
         return {
@@ -322,26 +322,26 @@ export class StubModelProvider implements ModelProvider {
             alternativeTreatments: ['Protocol B', 'Protocol C'],
           },
           confidence: 0.7 + Math.random() * 0.3,
-        };
+        }
 
       default:
         return {
           value: 'unknown',
           confidence: 0.5,
-        };
+        }
     }
   }
 
   private _getConfidenceLevel(confidence: number): ConfidenceLevel {
-    if (confidence >= 0.8) return 'high';
-    if (confidence >= 0.6) return 'medium';
-    return 'low';
+    if (confidence >= 0.8) return 'high'
+    if (confidence >= 0.6) return 'medium'
+    return 'low'
   }
 
   private _generateFeatureImportance(
     input: PredictionInput,
   ): FeatureImportance[] {
-    const features = Object.keys(input.features);
+    const features = Object.keys(input.features)
 
     return features
       .slice(0, 5)
@@ -350,6 +350,6 @@ export class StubModelProvider implements ModelProvider {
         importance: Math.max(0.1, Math.random() * (1 - index * 0.15)),
         description: `Impact of ${feature} on ${input.type} prediction`,
       }))
-      .sort((a, b) => b.importance - a.importance);
+      .sort((a, b) => b.importance - a.importance)
   }
 }

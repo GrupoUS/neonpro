@@ -104,7 +104,7 @@ The system includes utility functions for announcing important events to screen 
 ```typescript
 const announceToScreenReader = (message: string, priority: 'polite' | 'assertive' = 'polite') => {
   // Implementation for announcing messages to screen readers
-};
+}
 ```
 
 ### Keyboard Navigation
@@ -181,8 +181,8 @@ export const NeonProChatProvider: React.FC<NeonProChatProviderProps> = ({
     <ChatContext.Provider value={value}>
       {children}
     </ChatContext.Provider>
-  );
-};
+  )
+}
 ```
 
 This pattern allows multiple components to access and update shared state without prop drilling, while maintaining a clean separation between presentation and logic.
@@ -199,7 +199,7 @@ This pattern allows multiple components to access and update shared state withou
 The theming system is built around React Context, providing a `ThemeContext` that components can consume to access current theme settings. The context exposes methods for changing theme properties and persists user preferences using localStorage.
 
 ```typescript
-const ThemeContext = createContext<ThemeContextValue | null>(null);
+const ThemeContext = createContext<ThemeContextValue | null>(null)
 ```
 
 The theme provider component wraps the application and injects CSS custom properties into the document root, allowing both JavaScript and CSS to access theme values. This approach enables runtime theme switching without requiring page reloads.
@@ -225,22 +225,22 @@ const customTheme = {
   background: '#D2D0C8',
   text: '#112031',
   // Additional theme properties
-};
+}
 ```
 
 Theme installation is handled by a utility function that injects CSS into the document head, ensuring styles are available before component rendering:
 
 ```typescript
 export function installThemeStyles(target?: Document) {
-  if (typeof document === 'undefined') return;
-  const head = (target ?? document).head;
-  if (!head) return;
+  if (typeof document === 'undefined') return
+  const head = (target ?? document).head
+  if (!head) return
   // avoid duplicate injection
-  if (head.querySelector('style[data-neonpro-theme]')) return;
-  const style = document.createElement('style');
-  style.setAttribute('data-neonpro-theme', 'true');
-  style.textContent = themeCss;
-  head.appendChild(style);
+  if (head.querySelector('style[data-neonpro-theme]')) return
+  const style = document.createElement('style')
+  style.setAttribute('data-neonpro-theme', 'true')
+  style.textContent = themeCss
+  head.appendChild(style)
 }
 ```
 

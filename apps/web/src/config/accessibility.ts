@@ -5,15 +5,15 @@
  */
 
 export interface HighContrastTheme {
-  primary: string;
-  secondary: string;
-  background: string;
-  text: string;
-  border: string;
-  focus: string;
-  success: string;
-  warning: string;
-  error: string;
+  primary: string
+  secondary: string
+  background: string
+  text: string
+  border: string
+  focus: string
+  success: string
+  warning: string
+  error: string
 }
 
 export const highContrastTheme: HighContrastTheme = {
@@ -26,11 +26,11 @@ export const highContrastTheme: HighContrastTheme = {
   success: '#008000',
   warning: '#ff8c00',
   error: '#ff0000',
-};
+}
 
 export const fontSizeMap = {
   small: '14px',
   medium: '16px',
   large: '18px',
   'x-large': '20px',
-};
+}

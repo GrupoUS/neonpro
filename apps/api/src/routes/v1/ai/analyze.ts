@@ -4,24 +4,24 @@
  * Routes to V2 implementation with backward compatibility
  */
 
-import { zValidator } from '@hono/zod-validator';
-import { Context, Hono, Next } from 'hono';
-import { AIChatService } from '../../../services/ai-chat-service.js';
-import { ComprehensiveAuditService } from '../../../services/audit-service.js';
-import { LGPDService } from '../../../services/lgpd-service.js';
-import { PatientService } from '../../../services/patient-service.js';
+import { zValidator } from '@hono/zod-validator'
+import { Context, Hono, Next } from 'hono'
+import { AIChatService } from '../../../services/ai-chat-service.js'
+import { ComprehensiveAuditService } from '../../../services/audit-service.js'
+import { LGPDService } from '../../../services/lgpd-service.js'
+import { PatientService } from '../../../services/patient-service.js'
 
 // Type definitions
 interface ServiceInterface {
-  aiChatService: AIChatService;
-  patientService: PatientService;
-  auditService: ComprehensiveAuditService;
-  lgpdService: LGPDService;
+  aiChatService: AIChatService
+  patientService: PatientService
+  auditService: ComprehensiveAuditService
+  lgpdService: LGPDService
 }
 
 // Mock middleware for testing
 const mockAuthMiddleware = (c: Context, next: Next) => {
-  const authHeader = c.req.header('authorization');
+  const authHeader = c.req.header('authorization')
   if (!authHeader) {
     return c.json(
       {
@@ -29,15 +29,15 @@ const mockAuthMiddleware = (c: Context, next: Next) => {
         error: 'Não autorizado. Token de acesso necessário.',
       },
       401,
-    );
+    )
   }
-  c.set('user', { id: 'user-123', _role: 'healthcare_professional' });
-  return next();
-};
+  c.set('user', { id: 'user-123', _role: 'healthcare_professional' })
+  return next()
+}
 
-const mockLGPDMiddleware = (c: Context, next: Next) => next();
+const mockLGPDMiddleware = (c: Context, next: Next) => next()
 
-const app = new Hono();
+const app = new Hono()
 
 // V1 Request validation schema (simplified for backward compatibility)
 const v1AnalyzeRequestSchema = z
@@ -209,19 +209,19 @@ const v1AnalyzeRequestSchema = z
     criticalOperation: z.boolean().optional(),
     fallbackChain: z.array(z.string()).optional(),
   })
-  .passthrough(); // Allow additional fields for compatibility
+  .passthrough() // Allow additional fields for compatibility
 
 // Services - will be injected during testing or use real services in production
-let services: ServiceInterface | null = null;
+let services: ServiceInterface | null = null
 
 // Function to set services (used by tests)
 export const setServices = (injectedServices: ServiceInterface) => {
-  services = injectedServices;
-};
+  services = injectedServices
+}
 
 // Default services for production
 const getServices = () => {
-  if (services) return services;
+  if (services) return services
 
   // Use real service instances in production
   return {
@@ -229,8 +229,8 @@ const getServices = () => {
     auditService: new ComprehensiveAuditService(),
     lgpdService: new LGPDService(),
     patientService: new PatientService(),
-  };
-};
+  }
+}
 
 // Convert V1 request to V2 format
 const convertV1ToV2Request = (v1Request: any) => {
@@ -258,11 +258,11 @@ const convertV1ToV2Request = (v1Request: any) => {
     semantic_consistency_analysis: 'structured_data',
     patient_safety_analysis: 'diagnostic_support',
     emergency_assessment: 'diagnostic_support',
-  };
+  }
 
   const v2AnalysisType = analysisTypeMapping[v1Request.analysisType]
     || v1Request.analysisType
-    || 'structured_data';
+    || 'structured_data'
 
   return {
     analysisType: v2AnalysisType,
@@ -287,15 +287,15 @@ const convertV1ToV2Request = (v1Request: any) => {
       extractTopics: true,
       identifyActionItems: true,
     },
-  };
-};
+  }
+}
 
 // Convert V2 response to V1 format
 const convertV2ToV1Response = (v2Response: any, originalRequest: any) => {
   const baseResponse = {
     analysisId: v2Response.analysisId || `v1-${Date.now()}`,
     success: v2Response.success !== false,
-  };
+  }
 
   if (!v2Response.success) {
     return {
@@ -303,11 +303,11 @@ const convertV2ToV1Response = (v2Response: any, originalRequest: any) => {
       error: v2Response.error || 'Erro interno do servidor',
       code: v2Response.code || 'INTERNAL_ERROR',
       locale: 'pt-BR',
-    };
+    }
   }
 
   // Extract metadata for v1 compatibility
-  const metadata = v2Response.data?.metadata || {};
+  const metadata = v2Response.data?.metadata || {}
 
   return {
     ...baseResponse,
@@ -348,26 +348,26 @@ const convertV2ToV1Response = (v2Response: any, originalRequest: any) => {
       medicalSupervision: true,
       patientConsentDocumented: true,
     },
-  };
-};
+  }
+}
 
 app.post(
   '/',
   mockAuthMiddleware,
   mockLGPDMiddleware,
   zValidator('json', v1AnalyzeRequestSchema),
-  async c => {
-    const startTime = Date.now();
-    const user = c.get('user');
-    const v1RequestData = c.req.valid('json');
-    const ipAddress = c.req.header('X-Real-IP') || c.req.header('X-Forwarded-For') || 'unknown';
-    const userAgent = c.req.header('User-Agent') || 'unknown';
+  async (c) => {
+    const startTime = Date.now()
+    const user = c.get('user')
+    const v1RequestData = c.req.valid('json')
+    const ipAddress = c.req.header('X-Real-IP') || c.req.header('X-Forwarded-For') || 'unknown'
+    const userAgent = c.req.header('User-Agent') || 'unknown'
 
     try {
-      const currentServices = getServices();
+      const currentServices = getServices()
 
       // Convert V1 request to V2 format
-      const v2RequestData = convertV1ToV2Request(v1RequestData);
+      const v2RequestData = convertV1ToV2Request(v1RequestData)
 
       // LGPD validation
       const lgpdValidation = await currentServices.lgpdService.validateDataAccess({
@@ -376,7 +376,7 @@ app.post(
         purpose: 'healthcare_analysis',
         legalBasis: 'legitimate_interest',
         analysisType: v2RequestData.analysisType,
-      });
+      })
 
       if (!lgpdValidation.success) {
         return c.json(
@@ -387,7 +387,7 @@ app.post(
             locale: 'pt-BR',
           },
           403,
-        );
+        )
       }
 
       // Prepare analysis request for V2 service
@@ -398,29 +398,29 @@ app.post(
         options: v2RequestData.options,
         healthcareProfessional: c.req.header('X-Healthcare-Professional'),
         healthcareContext: c.req.header('X-Healthcare-Context'),
-      };
+      }
 
       // Perform analysis using V2 logic
-      let analysisResponse;
+      let analysisResponse
       switch (v2RequestData.analysisType) {
         case 'structured_data':
         case 'diagnostic_support':
-          analysisResponse = await currentServices.aiChatService.analyzeData(analysisRequest);
-          break;
+          analysisResponse = await currentServices.aiChatService.analyzeData(analysisRequest)
+          break
         case 'medical_image':
-          analysisResponse = await currentServices.aiChatService.analyzeImage(analysisRequest);
-          break;
+          analysisResponse = await currentServices.aiChatService.analyzeImage(analysisRequest)
+          break
         case 'patient_feedback':
-          analysisResponse = await currentServices.aiChatService.analyzeText(analysisRequest);
-          break;
+          analysisResponse = await currentServices.aiChatService.analyzeText(analysisRequest)
+          break
         case 'multi_modal':
           analysisResponse = await currentServices.aiChatService.analyzeMultiModal(
             analysisRequest,
-          );
-          break;
+          )
+          break
         default:
-          analysisResponse = await currentServices.aiChatService.analyzeData(analysisRequest);
-          break;
+          analysisResponse = await currentServices.aiChatService.analyzeData(analysisRequest)
+          break
       }
 
       if (!analysisResponse.success) {
@@ -433,11 +433,11 @@ app.post(
             locale: 'pt-BR',
           },
           500,
-        );
+        )
       }
 
       // Calculate processing time
-      const processingTime = Date.now() - startTime;
+      const processingTime = Date.now() - startTime
 
       // Log activity for audit trail
       await currentServices.auditService.logActivity({
@@ -457,41 +457,41 @@ app.post(
         userAgent,
         complianceContext: 'LGPD',
         sensitivityLevel: 'high',
-      });
+      })
 
       // Convert V2 response to V1 format
-      const v1Response = convertV2ToV1Response(analysisResponse, v1RequestData);
+      const v1Response = convertV2ToV1Response(analysisResponse, v1RequestData)
 
       // Set V1-compatible headers
-      c.header('X-Response-Time', `${processingTime}ms`);
-      c.header('X-CFM-Compliant', 'true');
-      c.header('X-AI-Medical-Analysis', 'performed');
-      c.header('X-LGPD-Compliant', 'true');
-      c.header('X-Medical-AI-Logged', 'true');
-      c.header('X-API-Version', 'v1');
-      c.header('X-Backend-Version', 'v2');
+      c.header('X-Response-Time', `${processingTime}ms`)
+      c.header('X-CFM-Compliant', 'true')
+      c.header('X-AI-Medical-Analysis', 'performed')
+      c.header('X-LGPD-Compliant', 'true')
+      c.header('X-Medical-AI-Logged', 'true')
+      c.header('X-API-Version', 'v1')
+      c.header('X-Backend-Version', 'v2')
 
       if (analysisResponse.data.metadata) {
         c.header(
           'X-AI-Model',
           analysisResponse.data.metadata.model || 'unknown',
-        );
+        )
         c.header(
           'X-AI-Confidence',
           (analysisResponse.data.metadata.confidence || 0).toString(),
-        );
+        )
         c.header(
           'X-AI-Processing-Time',
           `${analysisResponse.data.metadata.processingTime || 0}ms`,
-        );
+        )
       }
 
-      return c.json(v1Response);
+      return c.json(v1Response)
     } catch {
-      console.error('V1 AI Analyze endpoint error:', error);
+      console.error('V1 AI Analyze endpoint error:', error)
 
       // Log error for audit
-      const currentServices = getServices();
+      const currentServices = getServices()
       await currentServices.auditService.logActivity({
         _userId: user.id,
         action: 'ai_analysis_error_v1',
@@ -506,7 +506,7 @@ app.post(
         userAgent,
         complianceContext: 'LGPD',
         sensitivityLevel: 'high',
-      });
+      })
 
       return c.json(
         {
@@ -516,9 +516,9 @@ app.post(
           locale: 'pt-BR',
         },
         500,
-      );
+      )
     }
   },
-);
+)
 
-export default app;
+export default app

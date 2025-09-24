@@ -1,9 +1,9 @@
-import * as React from 'react';
-import { trpc, trpcClient } from '../../lib/trpc';
-import { queryClient } from './TanStackQueryProvider';
+import * as React from 'react'
+import { trpc, trpcClient } from '../../lib/trpc'
+import { queryClient } from './TanStackQueryProvider'
 
 interface TRPCProviderProps {
-  children: React.ReactNode;
+  children: React.ReactNode
 }
 
 export function TRPCProvider({ children }: TRPCProviderProps) {
@@ -12,5 +12,5 @@ export function TRPCProvider({ children }: TRPCProviderProps) {
     <trpc.Provider client={trpcClient} queryClient={queryClient}>
       {children}
     </trpc.Provider>
-  );
+  )
 }

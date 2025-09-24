@@ -1,7 +1,7 @@
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
-import { usePWA } from '@/hooks/usePWA';
+import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
+import { Progress } from '@/components/ui/progress'
+import { usePWA } from '@/hooks/usePWA'
 import {
   ArrowRight,
   Bell,
@@ -20,26 +20,26 @@ import {
   WifiOff,
   X,
   Zap,
-} from 'lucide-react';
-import * as React from 'react';
-import { PWABottomSheet, PWATouchAction } from './PWAMobileComponents';
+} from 'lucide-react'
+import * as React from 'react'
+import { PWABottomSheet, PWATouchAction } from './PWAMobileComponents'
 
 export interface PWAOnboardingProps {
-  open: boolean;
-  onClose: () => void;
-  onComplete?: () => void;
+  open: boolean
+  onClose: () => void
+  onComplete?: () => void
 }
 
 interface OnboardingStep {
-  id: number;
-  title: string;
-  description: string;
-  icon: React.ComponentType<any>;
+  id: number
+  title: string
+  description: string
+  icon: React.ComponentType<any>
   action?: {
-    label: string;
-    onClick: () => void;
-    primary?: boolean;
-  };
+    label: string
+    onClick: () => void
+    primary?: boolean
+  }
 }
 
 export const PWAOnboarding: React.FC<PWAOnboardingProps> = ({
@@ -47,9 +47,9 @@ export const PWAOnboarding: React.FC<PWAOnboardingProps> = ({
   onClose,
   onComplete,
 }) => {
-  const [currentStep, setCurrentStep] = React.useState(0);
-  const { isInstalled, installPWA, requestNotificationPermission, isOnline } = usePWA();
-  const [completedSteps, setCompletedSteps] = React.useState<Set<number>>(new Set());
+  const [currentStep, setCurrentStep] = React.useState(0)
+  const { isInstalled, installPWA, requestNotificationPermission, isOnline } = usePWA()
+  const [completedSteps, setCompletedSteps] = React.useState<Set<number>>(new Set())
 
   const steps: OnboardingStep[] = [
     {
@@ -69,8 +69,8 @@ export const PWAOnboarding: React.FC<PWAOnboardingProps> = ({
         label: isInstalled ? 'Instalado' : 'Instalar Aplicativo',
         onClick: async () => {
           if (!isInstalled) {
-            await installPWA();
-            setCompletedSteps(prev => new Set([...prev, 1]));
+            await installPWA()
+            setCompletedSteps((prev) => new Set([...prev, 1]))
           }
         },
         primary: !isInstalled,
@@ -85,8 +85,8 @@ export const PWAOnboarding: React.FC<PWAOnboardingProps> = ({
       action: {
         label: 'Ativar Notificações',
         onClick: async () => {
-          await requestNotificationPermission();
-          setCompletedSteps(prev => new Set([...prev, 2]));
+          await requestNotificationPermission()
+          setCompletedSteps((prev) => new Set([...prev, 2]))
         },
         primary: true,
       },
@@ -105,7 +105,7 @@ export const PWAOnboarding: React.FC<PWAOnboardingProps> = ({
         'Acesse todas as funcionalidades principais da clínica estética diretamente do seu celular.',
       icon: Zap,
     },
-  ];
+  ]
 
   const features = [
     { icon: Calendar, title: 'Agendamentos', description: 'Gerencie consultas e horários' },
@@ -114,31 +114,31 @@ export const PWAOnboarding: React.FC<PWAOnboardingProps> = ({
     { icon: TrendingUp, title: 'Analytics', description: 'Relatórios e métricas' },
     { icon: Shield, title: 'Segurança', description: 'Dados criptografados LGPD' },
     { icon: Star, title: 'Suporte', description: 'Ajuda 24/7 especializada' },
-  ];
+  ]
 
   const handleNext = () => {
     if (currentStep < steps.length - 1) {
-      setCurrentStep(currentStep + 1);
+      setCurrentStep(currentStep + 1)
     } else {
-      onComplete?.();
-      onClose();
+      onComplete?.()
+      onClose()
     }
-  };
+  }
 
   const handlePrevious = () => {
     if (currentStep > 0) {
-      setCurrentStep(currentStep - 1);
+      setCurrentStep(currentStep - 1)
     }
-  };
+  }
 
   const handleSkip = () => {
-    onComplete?.();
-    onClose();
-  };
+    onComplete?.()
+    onClose()
+  }
 
-  const progress = ((currentStep + 1) / steps.length) * 100;
+  const progress = ((currentStep + 1) / steps.length) * 100
 
-  if (!open) return null;
+  if (!open) return null
 
   return (
     <PWABottomSheet open={open} onClose={onClose} title='Configuração do NeonPro Mobile'>
@@ -247,7 +247,7 @@ export const PWAOnboarding: React.FC<PWAOnboardingProps> = ({
         <div className='space-y-2'>
           <h4 className='text-sm font-medium text-gray-900'>Configurações concluídas:</h4>
           <div className='space-y-1'>
-            {steps.slice(1).map(step => (
+            {steps.slice(1).map((step) => (
               <div key={step.id} className='flex items-center space-x-2'>
                 {completedSteps.has(step.id) || (step.id === 1 && isInstalled)
                   ? <CheckCircle className='h-4 w-4 text-green-500' />
@@ -279,40 +279,40 @@ export const PWAOnboarding: React.FC<PWAOnboardingProps> = ({
         )}
       </div>
     </PWABottomSheet>
-  );
-};
+  )
+}
 
 // PWA Installation Banner
 export interface PWAInstallBannerProps {
-  className?: string;
+  className?: string
 }
 
 export const PWAInstallBanner: React.FC<PWAInstallBannerProps> = ({ className }) => {
-  const { isInstallable, isInstalled, installPWA } = usePWA();
-  const [dismissed, setDismissed] = React.useState(false);
+  const { isInstallable, isInstalled, installPWA } = usePWA()
+  const [dismissed, setDismissed] = React.useState(false)
 
   React.useEffect(() => {
     // Check if user has dismissed the banner
-    const dismissed = localStorage.getItem('pwa-banner-dismissed');
+    const dismissed = localStorage.getItem('pwa-banner-dismissed')
     if (dismissed) {
-      setDismissed(true);
+      setDismissed(true)
     }
-  }, []);
+  }, [])
 
   const handleInstall = async () => {
-    const outcome = await installPWA();
+    const outcome = await installPWA()
     if (outcome === 'accepted') {
-      setDismissed(true);
+      setDismissed(true)
     }
-  };
+  }
 
   const handleDismiss = () => {
-    setDismissed(true);
-    localStorage.setItem('pwa-banner-dismissed', 'true');
-  };
+    setDismissed(true)
+    localStorage.setItem('pwa-banner-dismissed', 'true')
+  }
 
   if (dismissed || !isInstallable || isInstalled) {
-    return null;
+    return null
   }
 
   return (
@@ -350,12 +350,12 @@ export const PWAInstallBanner: React.FC<PWAInstallBannerProps> = ({ className })
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
 // PWA Features Highlight
 export interface PWAFeaturesProps {
-  className?: string;
+  className?: string
 }
 
 export const PWAFeatures: React.FC<PWAFeaturesProps> = ({ className }) => {
@@ -380,7 +380,7 @@ export const PWAFeatures: React.FC<PWAFeaturesProps> = ({ className }) => {
       title: 'Rápido e Responsivo',
       description: 'Performance otimizada para dispositivos móveis',
     },
-  ];
+  ]
 
   return (
     <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 ${className}`}>
@@ -394,5 +394,5 @@ export const PWAFeatures: React.FC<PWAFeaturesProps> = ({ className }) => {
         </Card>
       ))}
     </div>
-  );
-};
+  )
+}

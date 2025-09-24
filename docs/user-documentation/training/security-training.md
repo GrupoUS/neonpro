@@ -17,11 +17,11 @@ This comprehensive security training program ensures all users understand and im
 
 ```typescript
 interface SecurityTraining {
-  foundation: SecurityFundamentals[];
-  technicalImplementation: TechnicalSecurity[];
-  humanFactors: HumanSecurity[];
-  incidentResponse: ResponseProtocol[];
-  compliance: SecurityCompliance[];
+  foundation: SecurityFundamentals[]
+  technicalImplementation: TechnicalSecurity[]
+  humanFactors: HumanSecurity[]
+  incidentResponse: ResponseProtocol[]
+  compliance: SecurityCompliance[]
 }
 ```
 
@@ -31,11 +31,11 @@ interface SecurityTraining {
 
 ```typescript
 interface SecurityPrinciples {
-  confidentiality: DataProtection[];
-  integrity: DataIntegrity[];
-  availability: SystemAvailability[];
-  accountability: AccessTracking[];
-  nonRepudiation: ActionProof[];
+  confidentiality: DataProtection[]
+  integrity: DataIntegrity[]
+  availability: SystemAvailability[]
+  accountability: AccessTracking[]
+  nonRepudiation: ActionProof[]
 }
 ```
 
@@ -43,11 +43,11 @@ interface SecurityPrinciples {
 
 ```typescript
 interface SecurityLandscape {
-  threatIdentification: ThreatType[];
-  vulnerabilityAssessment: VulnerabilityScanner[];
-  riskManagement: RiskAssessment[];
-  regulatoryRequirements: ComplianceFramework[];
-  industryStandards: SecurityStandard[];
+  threatIdentification: ThreatType[]
+  vulnerabilityAssessment: VulnerabilityScanner[]
+  riskManagement: RiskAssessment[]
+  regulatoryRequirements: ComplianceFramework[]
+  industryStandards: SecurityStandard[]
 }
 ```
 
@@ -84,11 +84,11 @@ async function exerciseThreatAssessment() {
 
 ```typescript
 interface DataClassification {
-  sensitivityLevels: SensitivityLevel[];
-  classificationCriteria: ClassificationRule[];
-  protectionMeasures: ProtectionControl[];
-  handlingProcedures: HandlingGuideline[];
-  disposalMethods: DisposalProtocol[];
+  sensitivityLevels: SensitivityLevel[]
+  classificationCriteria: ClassificationRule[]
+  protectionMeasures: ProtectionControl[]
+  handlingProcedures: HandlingGuideline[]
+  disposalMethods: DisposalProtocol[]
 }
 ```
 
@@ -127,11 +127,11 @@ async function exerciseDataClassification() {
 
 ```typescript
 interface Authentication {
-  multiFactorAuth: MFAImplementation[];
-  passwordManagement: PasswordPolicy[];
-  biometricAuthentication: BiometricSystem[];
-  singleSignOn: SSOConfiguration[];
-  sessionManagement: SessionControl[];
+  multiFactorAuth: MFAImplementation[]
+  passwordManagement: PasswordPolicy[]
+  biometricAuthentication: BiometricSystem[]
+  singleSignOn: SSOConfiguration[]
+  sessionManagement: SessionControl[]
 }
 ```
 
@@ -139,11 +139,11 @@ interface Authentication {
 
 ```typescript
 interface AdvancedAuthentication {
-  adaptiveAuthentication: AdaptiveAuth[];
-  riskBasedAuth: RiskBasedAuth[];
-  contextualAuthentication: ContextualAuth[];
-  continuousAuthentication: ContinuousAuth[];
-  behavioralBiometrics: BehavioralAuth[];
+  adaptiveAuthentication: AdaptiveAuth[]
+  riskBasedAuth: RiskBasedAuth[]
+  contextualAuthentication: ContextualAuth[]
+  continuousAuthentication: ContinuousAuth[]
+  behavioralBiometrics: BehavioralAuth[]
 }
 ```
 
@@ -172,11 +172,11 @@ async function exerciseAuthenticationSetup() {
 
 ```typescript
 interface Encryption {
-  dataAtRest: StorageEncryption[];
-  dataInTransit: TransportEncryption[];
-  endToEndEncryption: E2EEncryption[];
-  keyManagement: KeyRotation[];
-  cryptographicProtocols: CryptoStandard[];
+  dataAtRest: StorageEncryption[]
+  dataInTransit: TransportEncryption[]
+  endToEndEncryption: E2EEncryption[]
+  keyManagement: KeyRotation[]
+  cryptographicProtocols: CryptoStandard[]
 }
 ```
 
@@ -205,11 +205,11 @@ async function exerciseEncryptionImplementation() {
 
 ```typescript
 interface NetworkSecurity {
-  firewallConfiguration: FirewallRule[];
-  intrusionDetection: IDSSystem[];
-  networkSegmentation: NetworkSegment[];
-  VPNConfiguration: VPNSetup[];
-  wirelessSecurity: WiFiSecurity[];
+  firewallConfiguration: FirewallRule[]
+  intrusionDetection: IDSSystem[]
+  networkSegmentation: NetworkSegment[]
+  VPNConfiguration: VPNSetup[]
+  wirelessSecurity: WiFiSecurity[]
 }
 ```
 
@@ -240,11 +240,11 @@ async function exerciseNetworkSecurity() {
 
 ```typescript
 interface SecurityAwareness {
-  phishingPrevention: PhishingTraining[];
-  socialEngineering: SocialEngineeringDefense[];
-  passwordSecurity: PasswordBestPractices[];
-  physicalSecurity: PhysicalAccessControl[];
-  mobileDeviceSecurity: MobileSecurity[];
+  phishingPrevention: PhishingTraining[]
+  socialEngineering: SocialEngineeringDefense[]
+  passwordSecurity: PasswordBestPractices[]
+  physicalSecurity: PhysicalAccessControl[]
+  mobileDeviceSecurity: MobileSecurity[]
 }
 ```
 
@@ -252,11 +252,11 @@ interface SecurityAwareness {
 
 ```typescript
 interface SocialEngineeringDefense {
-  phishingRecognition: PhishingDetector[];
-  pretextingDefense: PretextingPrevention[];
-  baitingProtection: BaitingDefense[];
-  tailgatingPrevention: TailgadingControl[];
-  quidProQuoDefense: QuidProQuoPrevention[];
+  phishingRecognition: PhishingDetector[]
+  pretextingDefense: PretextingPrevention[]
+  baitingProtection: BaitingDefense[]
+  tailgatingPrevention: TailgadingControl[]
+  quidProQuoDefense: QuidProQuoPrevention[]
 }
 ```
 
@@ -285,11 +285,11 @@ async function exerciseSocialEngineeringDefense() {
 
 ```typescript
 interface PhysicalSecurity {
-  accessControl: AccessSystem[];
-  surveillanceSystem: CameraMonitoring[];
-  visitorManagement: VisitorProtocol[];
-  environmentalControls: EnvironmentalSecurity[];
-  disasterRecovery: DisasterPlanning[];
+  accessControl: AccessSystem[]
+  surveillanceSystem: CameraMonitoring[]
+  visitorManagement: VisitorProtocol[]
+  environmentalControls: EnvironmentalSecurity[]
+  disasterRecovery: DisasterPlanning[]
 }
 ```
 
@@ -320,13 +320,13 @@ async function exercisePhysicalSecurity() {
 
 ```typescript
 interface IncidentResponse {
-  preparation: ResponsePlan[];
-  detection: IncidentDetection[];
-  analysis: IncidentAnalysis[];
-  containment: IncidentContainment[];
-  eradication: IncidentEradication[];
-  recovery: IncidentRecovery[];
-  postIncident: PostMortem[];
+  preparation: ResponsePlan[]
+  detection: IncidentDetection[]
+  analysis: IncidentAnalysis[]
+  containment: IncidentContainment[]
+  eradication: IncidentEradication[]
+  recovery: IncidentRecovery[]
+  postIncident: PostMortem[]
 }
 ```
 
@@ -334,11 +334,11 @@ interface IncidentResponse {
 
 ```typescript
 interface IncidentDetection {
-  monitoringTools: SecurityMonitor[];
-  alertSystems: AlertManagement[];
-  correlationEngines: EventCorrelation[];
-  behavioralAnalysis: UserBehavior[];
-  threatIntelligence: ThreatFeed[];
+  monitoringTools: SecurityMonitor[]
+  alertSystems: AlertManagement[]
+  correlationEngines: EventCorrelation[]
+  behavioralAnalysis: UserBehavior[]
+  threatIntelligence: ThreatFeed[]
 }
 ```
 
@@ -367,11 +367,11 @@ async function exerciseIncidentDetection() {
 
 ```typescript
 interface IncidentContainment {
-  isolationProcedures: SystemIsolation[];
-  evidencePreservation: EvidenceHandling[];
-  forensicAnalysis: ForensicInvestigation[];
-  systemRestoration: RecoveryProcess[];
-  businessContinuity: ContinuityPlan[];
+  isolationProcedures: SystemIsolation[]
+  evidencePreservation: EvidenceHandling[]
+  forensicAnalysis: ForensicInvestigation[]
+  systemRestoration: RecoveryProcess[]
+  businessContinuity: ContinuityPlan[]
 }
 ```
 
@@ -400,11 +400,11 @@ async function exerciseIncidentContainment() {
 
 ```typescript
 interface PostIncident {
-  documentation: IncidentReport[];
-  lessonsLearned: ImprovementAnalysis[];
-  policyUpdates: PolicyRevision[];
-  trainingEnhancement: TrainingUpdate[];
-  monitoringImprovement: MonitoringEnhancement[];
+  documentation: IncidentReport[]
+  lessonsLearned: ImprovementAnalysis[]
+  policyUpdates: PolicyRevision[]
+  trainingEnhancement: TrainingUpdate[]
+  monitoringImprovement: MonitoringEnhancement[]
 }
 ```
 
@@ -435,11 +435,11 @@ async function exercisePostIncident() {
 
 ```typescript
 interface MedicalDeviceSecurity {
-  deviceInventory: DeviceManagement[];
-  patchManagement: UpdateSystem[];
-  networkSegmentation: DeviceIsolation[];
-  accessControl: DeviceAccess[];
-  monitoring: DeviceMonitoring[];
+  deviceInventory: DeviceManagement[]
+  patchManagement: UpdateSystem[]
+  networkSegmentation: DeviceIsolation[]
+  accessControl: DeviceAccess[]
+  monitoring: DeviceMonitoring[]
 }
 ```
 
@@ -447,11 +447,11 @@ interface MedicalDeviceSecurity {
 
 ```typescript
 interface DeviceProtection {
-  riskAssessment: DeviceRisk[];
-  securityControls: DeviceSecurity[];
-  vendorManagement: VendorSecurity[];
-  incidentResponse: DeviceIncident[];
-  compliance: DeviceCompliance[];
+  riskAssessment: DeviceRisk[]
+  securityControls: DeviceSecurity[]
+  vendorManagement: VendorSecurity[]
+  incidentResponse: DeviceIncident[]
+  compliance: DeviceCompliance[]
 }
 ```
 
@@ -480,11 +480,11 @@ async function exerciseDeviceSecurity() {
 
 ```typescript
 interface PatientPrivacy {
-  dataMinimization: DataReduction[];
-  consentManagement: ConsentSystem[];
-  accessControls: PatientAccess[];
-  auditLogging: PrivacyAudit[];
-  breachNotification: PrivacyBreach[];
+  dataMinimization: DataReduction[]
+  consentManagement: ConsentSystem[]
+  accessControls: PatientAccess[]
+  auditLogging: PrivacyAudit[]
+  breachNotification: PrivacyBreach[]
 }
 ```
 
@@ -515,11 +515,11 @@ async function exercisePatientPrivacy() {
 
 ```typescript
 interface SecurityMonitoring {
-  siemImplementation: SIEMSystem[];
-  logManagement: LogAnalysis[];
-  threatHunting: ThreatDetection[];
-  vulnerabilityScanning: VulnerabilityAssessment[];
-  complianceMonitoring: ComplianceCheck[];
+  siemImplementation: SIEMSystem[]
+  logManagement: LogAnalysis[]
+  threatHunting: ThreatDetection[]
+  vulnerabilityScanning: VulnerabilityAssessment[]
+  complianceMonitoring: ComplianceCheck[]
 }
 ```
 
@@ -527,11 +527,11 @@ interface SecurityMonitoring {
 
 ```typescript
 interface SIEMImplementation {
-  correlationRules: CorrelationEngine[];
-  alertConfiguration: AlertThreshold[];
-  dashboardCreation: MonitoringDashboard[];
-  reportingSystem: SecurityReport[];
-  integrationManagement: ThirdPartyIntegration[];
+  correlationRules: CorrelationEngine[]
+  alertConfiguration: AlertThreshold[]
+  dashboardCreation: MonitoringDashboard[]
+  reportingSystem: SecurityReport[]
+  integrationManagement: ThirdPartyIntegration[]
 }
 ```
 
@@ -560,11 +560,11 @@ async function exerciseSIEMImplementation() {
 
 ```typescript
 interface ThreatHunting {
-  hypothesisDevelopment: ThreatHypothesis[];
-  dataCollection: EvidenceCollection[];
-  analysisTechniques: HuntingMethod[];
-  threatIntelligence: IntelligenceFeed[];
-  proactiveDefense: DefenseStrategy[];
+  hypothesisDevelopment: ThreatHypothesis[]
+  dataCollection: EvidenceCollection[]
+  analysisTechniques: HuntingMethod[]
+  threatIntelligence: IntelligenceFeed[]
+  proactiveDefense: DefenseStrategy[]
 }
 ```
 
@@ -595,11 +595,11 @@ async function exerciseThreatHunting() {
 
 ```typescript
 interface SecurityCertification {
-  foundation: FoundationCert[];
-  technical: TechnicalCert[];
-  advanced: AdvancedCert[];
-  expert: ExpertCert[];
-  leadership: LeadershipCert[];
+  foundation: FoundationCert[]
+  technical: TechnicalCert[]
+  advanced: AdvancedCert[]
+  expert: ExpertCert[]
+  leadership: LeadershipCert[]
 }
 ```
 
@@ -607,11 +607,11 @@ interface SecurityCertification {
 
 ```typescript
 interface FoundationCert {
-  securityAwareness: AwarenessTraining[];
-  basicControls: ControlImplementation[];
-  incidentResponse: ResponseBasics[];
-  complianceUnderstanding: ComplianceKnowledge[];
-  practicalAssessment: HandsOnExercise[];
+  securityAwareness: AwarenessTraining[]
+  basicControls: ControlImplementation[]
+  incidentResponse: ResponseBasics[]
+  complianceUnderstanding: ComplianceKnowledge[]
+  practicalAssessment: HandsOnExercise[]
 }
 ```
 
@@ -627,11 +627,11 @@ interface FoundationCert {
 
 ```typescript
 interface TechnicalCert {
-  advancedConfiguration: SystemSetup[];
-  threatDetection: MonitoringImplementation[];
-  forensicAnalysis: InvestigationSkills[];
-  securityArchitecture: DesignPrinciples[];
-  penetrationTesting: SecurityAssessment[];
+  advancedConfiguration: SystemSetup[]
+  threatDetection: MonitoringImplementation[]
+  forensicAnalysis: InvestigationSkills[]
+  securityArchitecture: DesignPrinciples[]
+  penetrationTesting: SecurityAssessment[]
 }
 ```
 
@@ -647,11 +647,11 @@ interface TechnicalCert {
 
 ```typescript
 interface AdvancedCert {
-  threatHunting: AdvancedHunting[];
-  incidentCommand: LeadershipSkills[];
-  securityEngineering: SystemDevelopment[];
-  riskManagement: AdvancedRisk[];
-  securityStrategy: StrategicPlanning[];
+  threatHunting: AdvancedHunting[]
+  incidentCommand: LeadershipSkills[]
+  securityEngineering: SystemDevelopment[]
+  riskManagement: AdvancedRisk[]
+  securityStrategy: StrategicPlanning[]
 }
 ```
 
@@ -669,11 +669,11 @@ interface AdvancedCert {
 
 ```typescript
 interface SecurityMetrics {
-  incidentMetrics: IncidentKPI[];
-  vulnerabilityMetrics: VulnerabilityKPI[];
-  complianceMetrics: ComplianceKPI[];
-  trainingMetrics: TrainingKPI[];
-  performanceMetrics: SecurityPerformance[];
+  incidentMetrics: IncidentKPI[]
+  vulnerabilityMetrics: VulnerabilityKPI[]
+  complianceMetrics: ComplianceKPI[]
+  trainingMetrics: TrainingKPI[]
+  performanceMetrics: SecurityPerformance[]
 }
 ```
 
@@ -681,11 +681,11 @@ interface SecurityMetrics {
 
 ```typescript
 interface SecurityScorecard {
-  overallScore: SecurityScore[];
-  categoryScores: CategoryBreakdown[];
-  trendAnalysis: TrendData[];
-  benchmarkComparison: IndustryBenchmark[];
-  improvementRecommendations: ActionItem[];
+  overallScore: SecurityScore[]
+  categoryScores: CategoryBreakdown[]
+  trendAnalysis: TrendData[]
+  benchmarkComparison: IndustryBenchmark[]
+  improvementRecommendations: ActionItem[]
 }
 ```
 
@@ -693,11 +693,11 @@ interface SecurityScorecard {
 
 ```typescript
 interface ContinuousImprovement {
-  regularAssessments: SecurityAudit[];
-  penetrationTesting: PenetrationTest[];
-  securityReviews: SecurityReview[];
-  trainingUpdates: TrainingRefresh[];
-  policyReviews: PolicyUpdate[];
+  regularAssessments: SecurityAudit[]
+  penetrationTesting: PenetrationTest[]
+  securityReviews: SecurityReview[]
+  trainingUpdates: TrainingRefresh[]
+  policyReviews: PolicyUpdate[]
 }
 ```
 

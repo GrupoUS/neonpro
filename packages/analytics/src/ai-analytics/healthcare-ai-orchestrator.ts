@@ -5,41 +5,41 @@
  * Coordinates multiple AI services and ensures regulatory compliance.
  */
 
-import { PredictiveAnalyticsService } from './predictive-analytics.service';
+import { PredictiveAnalyticsService } from './predictive-analytics.service'
 import type {
   AnalyticsMetrics,
   PredictiveInsight,
   PredictiveRequest,
-} from './predictive-analytics.service';
+} from './predictive-analytics.service'
 import type {
   BrazilianHealthcareKPIs,
   HealthcareComplianceAudit,
   HealthcareInsights,
-} from './types';
+} from './types'
 
 // ============================================================================
 // Healthcare AI Orchestrator Implementation
 // ============================================================================
 
 export class HealthcareAIOrchestrator {
-  private predictiveService: PredictiveAnalyticsService;
-  private config: Record<string, unknown>;
+  private predictiveService: PredictiveAnalyticsService
+  private config: Record<string, unknown>
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   constructor(
     predictiveService?: PredictiveAnalyticsService,
     _config: Record<string, unknown> = {},
   ) {
-    this.predictiveService = predictiveService || new PredictiveAnalyticsService();
-    const _configLocal = _config; // avoid unused warning
-    void _configLocal;
+    this.predictiveService = predictiveService || new PredictiveAnalyticsService()
+    const _configLocal = _config // avoid unused warning
+    void _configLocal
     this.config = {
       enableCompliance: true,
       region: 'brazil',
       dataRetentionDays: 2555, // 7 years as per Brazilian healthcare regulations
       ..._config,
-    };
-    void this.config; // mark as read to satisfy TS unused private property rule
+    }
+    void this.config // mark as read to satisfy TS unused private property rule
   }
 
   /**
@@ -50,13 +50,13 @@ export class HealthcareAIOrchestrator {
   ): Promise<HealthcareInsights> {
     try {
       // Generate insights using the predictive service
-      const insights = await this.predictiveService.generateInsights(request);
+      const insights = await this.predictiveService.generateInsights(request)
 
       // Get analytics metrics
-      const metrics = await this.predictiveService.getAnalyticsMetrics();
+      const metrics = await this.predictiveService.getAnalyticsMetrics()
 
       // Assess compliance status
-      const complianceStatus = await this.assessComplianceStatus(insights);
+      const complianceStatus = await this.assessComplianceStatus(insights)
 
       return {
         category: 'operational',
@@ -64,10 +64,10 @@ export class HealthcareAIOrchestrator {
         metrics,
         complianceStatus,
         generatedAt: new Date(),
-      };
+      }
     } catch (error) {
-      console.error('Error generating healthcare insights:', error);
-      throw new Error('Failed to generate healthcare insights');
+      console.error('Error generating healthcare insights:', error)
+      throw new Error('Failed to generate healthcare insights')
     }
   }
 
@@ -76,12 +76,12 @@ export class HealthcareAIOrchestrator {
    */
   async performComplianceAudit(): Promise<HealthcareComplianceAudit> {
     try {
-      const report = await this.predictiveService.generateComplianceReport();
+      const report = await this.predictiveService.generateComplianceReport()
 
       // Determine compliance status based on the report
-      const lgpdCompliant = report.anonymizationEnabled && report.complianceScore > 0.8;
-      const anvisaCompliant = true; // Stub implementation - would check actual ANVISA requirements
-      const cfmCompliant = true; // Stub implementation - would check CFM professional standards
+      const lgpdCompliant = report.anonymizationEnabled && report.complianceScore > 0.8
+      const anvisaCompliant = true // Stub implementation - would check actual ANVISA requirements
+      const cfmCompliant = true // Stub implementation - would check CFM professional standards
 
       return {
         lgpdCompliant,
@@ -103,9 +103,9 @@ export class HealthcareAIOrchestrator {
         ],
         lastAuditDate: new Date(),
         nextAuditDue: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000), // 90 days
-      };
+      }
     } catch (error) {
-      console.error('Error performing compliance audit:', error);
+      console.error('Error performing compliance audit:', error)
       // Return default compliant status for graceful error handling with proper Brazilian terms
       return {
         lgpdCompliant: true,
@@ -122,7 +122,7 @@ export class HealthcareAIOrchestrator {
         recommendations: ['Review compliance status'],
         lastAuditDate: new Date(),
         nextAuditDue: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
-      };
+      }
     }
   }
 
@@ -132,21 +132,21 @@ export class HealthcareAIOrchestrator {
   async getDashboardData(
     timeframe: 'week' | 'month' | 'quarter' = 'month',
   ): Promise<{
-    insights: HealthcareInsights;
-    compliance: HealthcareComplianceAudit;
-    kpis: BrazilianHealthcareKPIs;
-    metrics: AnalyticsMetrics;
-    status: 'healthy' | 'warning' | 'critical';
+    insights: HealthcareInsights
+    compliance: HealthcareComplianceAudit
+    kpis: BrazilianHealthcareKPIs
+    metrics: AnalyticsMetrics
+    status: 'healthy' | 'warning' | 'critical'
   }> {
     const [insights, compliance, kpis, metrics] = await Promise.all([
       this.generateHealthcareInsights({ timeframe }),
       this.performComplianceAudit(),
       this.getBrazilianHealthcareKPIs(),
       this.predictiveService.getAnalyticsMetrics(),
-    ]);
+    ])
 
     // Determine overall system status
-    const status = this.determineSystemStatus(insights, compliance);
+    const status = this.determineSystemStatus(insights, compliance)
 
     return {
       insights,
@@ -154,7 +154,7 @@ export class HealthcareAIOrchestrator {
       kpis,
       metrics,
       status,
-    };
+    }
   }
 
   /**
@@ -179,7 +179,7 @@ export class HealthcareAIOrchestrator {
         breachCount: 0,
       },
       lastUpdated: new Date(),
-    };
+    }
   }
 
   // ============================================================================
@@ -191,10 +191,10 @@ export class HealthcareAIOrchestrator {
   ): Promise<'compliant' | 'warning' | 'violation'> {
     // Check if all insights are generated with compliance
     const hasCompliantInsights = insights.every(
-      insight => insight.metadata.complianceStatus === 'compliant',
-    );
+      (insight) => insight.metadata.complianceStatus === 'compliant',
+    )
 
-    return hasCompliantInsights ? 'compliant' : 'warning';
+    return hasCompliantInsights ? 'compliant' : 'warning'
   }
 
   private determineSystemStatus(
@@ -202,18 +202,18 @@ export class HealthcareAIOrchestrator {
     compliance: HealthcareComplianceAudit,
   ): 'healthy' | 'warning' | 'critical' {
     // Determine status based on insights and compliance
-    const hasIssues = compliance.issues.length > 0;
+    const hasIssues = compliance.issues.length > 0
     const hasLowConfidenceInsights = insights.insights.some(
-      insight => insight.confidence < 0.5,
-    );
-    const complianceScore = compliance.overallScore;
+      (insight) => insight.confidence < 0.5,
+    )
+    const complianceScore = compliance.overallScore
 
     if (complianceScore < 0.7 || hasIssues) {
-      return 'critical';
+      return 'critical'
     } else if (hasLowConfidenceInsights || complianceScore < 0.9) {
-      return 'warning';
+      return 'warning'
     } else {
-      return 'healthy';
+      return 'healthy'
     }
   }
 }

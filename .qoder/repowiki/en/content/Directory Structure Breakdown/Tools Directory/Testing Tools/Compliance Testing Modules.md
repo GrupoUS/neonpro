@@ -437,17 +437,17 @@ For example, adding a new HIPAA compliance module would follow the same pattern 
 // Example structure for a new compliance module
 export interface HIPAATestData {
   hipaaCompliance: {
-    privacyRule: boolean;
-    securityRule: boolean;
-    breachNotification: boolean;
-    businessAssociateAgreements: boolean;
-  };
+    privacyRule: boolean
+    securityRule: boolean
+    breachNotification: boolean
+    businessAssociateAgreements: boolean
+  }
   electronicHealthRecords: {
-    accessControls: boolean;
-    auditLogging: boolean;
-    encryption: boolean;
-    integrityControls: boolean;
-  };
+    accessControls: boolean
+    auditLogging: boolean
+    encryption: boolean
+    integrityControls: boolean
+  }
 }
 
 export class HIPAAValidator {

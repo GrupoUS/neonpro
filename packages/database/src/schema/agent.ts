@@ -7,9 +7,9 @@ export const AgentSessionSchema = z.object({
   metadata: z.record(z.unknown()).default({}),
   created_at: z.date(),
   updated_at: z.date(),
-});
+})
 
-export type AgentSession = z.infer<typeof AgentSessionSchema>;
+export type AgentSession = z.infer<typeof AgentSessionSchema>
 
 // Agent Message Schema
 export const AgentMessageSchema = z.object({
@@ -19,9 +19,9 @@ export const AgentMessageSchema = z.object({
   content: z.string().min(1),
   metadata: z.record(z.unknown()).default({}),
   created_at: z.date(),
-});
+})
 
-export type AgentMessage = z.infer<typeof AgentMessageSchema>;
+export type AgentMessage = z.infer<typeof AgentMessageSchema>
 
 // Agent Knowledge Base Schema
 export const AgentKnowledgeBaseSchema = z.object({
@@ -33,9 +33,9 @@ export const AgentKnowledgeBaseSchema = z.object({
   metadata: z.record(z.unknown()).default({}),
   created_at: z.date(),
   updated_at: z.date(),
-});
+})
 
-export type AgentKnowledgeBase = z.infer<typeof AgentKnowledgeBaseSchema>;
+export type AgentKnowledgeBase = z.infer<typeof AgentKnowledgeBaseSchema>
 
 // Agent Analytics Schema
 export const AgentAnalyticsSchema = z.object({
@@ -47,9 +47,9 @@ export const AgentAnalyticsSchema = z.object({
   metric_value: z.number(),
   metadata: z.record(z.unknown()).default({}),
   created_at: z.date(),
-});
+})
 
-export type AgentAnalytics = z.infer<typeof AgentAnalyticsSchema>;
+export type AgentAnalytics = z.infer<typeof AgentAnalyticsSchema>
 
 // API Schemas
 
@@ -58,9 +58,9 @@ export const ChatRequestSchema = z.object({
   agentType: z.enum(['client', 'financial', 'appointment']),
   message: z.string().min(1).max(2000),
   sessionId: z.string().uuid().optional(),
-});
+})
 
-export type ChatRequest = z.infer<typeof ChatRequestSchema>;
+export type ChatRequest = z.infer<typeof ChatRequestSchema>
 
 // Chat Response
 export const ChatResponseSchema = z.object({
@@ -76,51 +76,51 @@ export const ChatResponseSchema = z.object({
     )
     .default([]),
   metadata: z.record(z.unknown()).default({}),
-});
+})
 
-export type ChatResponse = z.infer<typeof ChatResponseSchema>;
+export type ChatResponse = z.infer<typeof ChatResponseSchema>
 
 // Session Response
 export const SessionResponseSchema = z.object({
   session: AgentSessionSchema.extend({
     messages: z.array(AgentMessageSchema),
   }),
-});
+})
 
-export type SessionResponse = z.infer<typeof SessionResponseSchema>;
+export type SessionResponse = z.infer<typeof SessionResponseSchema>
 
 // Knowledge Entry Response
 export const KnowledgeEntryResponseSchema = AgentKnowledgeBaseSchema.omit({
   embedding: true,
-});
+})
 
 export type KnowledgeEntryResponse = z.infer<
   typeof KnowledgeEntryResponseSchema
->;
+>
 
 // Agent Types
-export type AgentType = 'client' | 'financial' | 'appointment';
+export type AgentType = 'client' | 'financial' | 'appointment'
 
 // Agent Configuration
 export interface AgentConfig {
-  type: AgentType;
-  name: string;
-  description: string;
-  systemPrompt: string;
-  temperature: number;
-  maxTokens: number;
-  allowedOperations: string[];
+  type: AgentType
+  name: string
+  description: string
+  systemPrompt: string
+  temperature: number
+  maxTokens: number
+  allowedOperations: string[]
 }
 
 // Agent Context
 export interface AgentContext {
   user: {
-    id: string;
-    email: string;
-    _role: string;
-  };
-  session: AgentSession | null;
-  permissions: string[];
+    id: string
+    email: string
+    _role: string
+  }
+  session: AgentSession | null
+  permissions: string[]
 }
 
 // Search Parameters
@@ -129,9 +129,9 @@ export const KnowledgeSearchParamsSchema = z.object({
   _query: z.string().min(1),
   limit: z.number().min(1).max(100).default(5),
   threshold: z.number().min(0).max(1).default(0.7),
-});
+})
 
-export type KnowledgeSearchParams = z.infer<typeof KnowledgeSearchParamsSchema>;
+export type KnowledgeSearchParams = z.infer<typeof KnowledgeSearchParamsSchema>
 
 // Error Types
 export enum AgentErrorType {
@@ -147,6 +147,6 @@ export const AgentErrorSchema = z.object({
   message: z.string(),
   code: z.string(),
   details: z.record(z.unknown()).optional(),
-});
+})
 
-export type AgentError = z.infer<typeof AgentErrorSchema>;
+export type AgentError = z.infer<typeof AgentErrorSchema>

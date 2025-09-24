@@ -7,7 +7,7 @@ import {
   IngestionResult,
   TransformationRule,
   ValidationRule,
-} from '../types/ingestion';
+} from '../types/ingestion'
 // Remove unused import - AnalyticsEvent not needed directly here
 
 /**
@@ -18,54 +18,54 @@ import {
  */
 export interface IngestionAdapter {
   /** Adapter identifier */
-  readonly adapterId: string;
+  readonly adapterId: string
 
   /** Adapter configuration */
-  readonly config: IngestionConfig;
+  readonly config: IngestionConfig
 
   /** Connection and lifecycle management */
-  connect(): Promise<void>;
-  disconnect(): Promise<void>;
-  isConnected(): boolean;
+  connect(): Promise<void>
+  disconnect(): Promise<void>
+  isConnected(): boolean
 
   /** Data ingestion methods */
-  ingestBatch(data: any[]): Promise<IngestionResult>;
-  ingestStream(stream: ReadableStream): Promise<IngestionResult>;
-  ingestSingle(record: any): Promise<IngestionResult>;
+  ingestBatch(data: any[]): Promise<IngestionResult>
+  ingestStream(stream: ReadableStream): Promise<IngestionResult>
+  ingestSingle(record: any): Promise<IngestionResult>
 
   /** Configuration management */
-  updateConfig(config: Partial<IngestionConfig>): Promise<void>;
-  addValidationRule(rule: ValidationRule): Promise<void>;
-  addTransformationRule(rule: TransformationRule): Promise<void>;
+  updateConfig(config: Partial<IngestionConfig>): Promise<void>
+  addValidationRule(rule: ValidationRule): Promise<void>
+  addTransformationRule(rule: TransformationRule): Promise<void>
 
   /** Monitoring and health */
-  getMetrics(): Promise<IngestionMonitoringMetrics>;
-  getHealthStatus(): Promise<HealthStatus>;
+  getMetrics(): Promise<IngestionMonitoringMetrics>
+  getHealthStatus(): Promise<HealthStatus>
 
   /** Event handling */
   addEventListener(
     eventType: IngestionEventType,
     handler: (event: IngestionEvent) => void,
-  ): void;
+  ): void
   removeEventListener(
     eventType: IngestionEventType,
     handler: (event: IngestionEvent) => void,
-  ): void;
+  ): void
 }
 
 /**
  * Health Status for Ingestion Adapter
  */
 export interface HealthStatus {
-  status: 'healthy' | 'degraded' | 'unhealthy';
-  lastCheck: Date;
+  status: 'healthy' | 'degraded' | 'unhealthy'
+  lastCheck: Date
   details: {
-    connection: boolean;
-    processing: boolean;
-    validation: boolean;
-    storage: boolean;
-  };
-  errors: IngestionError[];
+    connection: boolean
+    processing: boolean
+    validation: boolean
+    storage: boolean
+  }
+  errors: IngestionError[]
 }
 
 /**
@@ -78,10 +78,10 @@ export abstract class BaseIngestionAdapter implements IngestionAdapter {
   protected eventHandlers: Map<
     IngestionEventType,
     Set<(event: IngestionEvent) => void>
-  > = new Map();
-  protected validationRules: ValidationRule[] = [];
-  protected transformationRules: TransformationRule[] = [];
-  protected isConnectedFlag = false;
+  > = new Map()
+  protected validationRules: ValidationRule[] = []
+  protected transformationRules: TransformationRule[] = []
+  protected isConnectedFlag = false
 
   constructor(
     public readonly adapterId: string,
@@ -89,24 +89,24 @@ export abstract class BaseIngestionAdapter implements IngestionAdapter {
   ) {}
 
   /** Abstract methods to be implemented by specific adapters */
-  abstract connect(): Promise<void>;
-  abstract disconnect(): Promise<void>;
-  abstract ingestBatch(data: any[]): Promise<IngestionResult>;
-  abstract ingestStream(stream: ReadableStream): Promise<IngestionResult>;
-  abstract getMetrics(): Promise<IngestionMonitoringMetrics>;
+  abstract connect(): Promise<void>
+  abstract disconnect(): Promise<void>
+  abstract ingestBatch(data: any[]): Promise<IngestionResult>
+  abstract ingestStream(stream: ReadableStream): Promise<IngestionResult>
+  abstract getMetrics(): Promise<IngestionMonitoringMetrics>
 
   /** Common implementation methods */
 
   isConnected(): boolean {
-    return this.isConnectedFlag;
+    return this.isConnectedFlag
   }
 
   async ingestSingle(record: any): Promise<IngestionResult> {
-    return this.ingestBatch([record]);
+    return this.ingestBatch([record])
   }
 
   async updateConfig(config: Partial<IngestionConfig>): Promise<void> {
-    Object.assign(this.config, config);
+    Object.assign(this.config, config)
     this.emitEvent({
       id: `config_update_${Date.now()}`,
       type: 'config_update',
@@ -127,15 +127,15 @@ export abstract class BaseIngestionAdapter implements IngestionAdapter {
         duplicateRecords: 0,
         transformedRecords: 0,
       },
-    } as IngestionEvent);
+    } as IngestionEvent)
   }
 
   async addValidationRule(rule: ValidationRule): Promise<void> {
-    this.validationRules.push(rule);
+    this.validationRules.push(rule)
   }
 
   async addTransformationRule(rule: TransformationRule): Promise<void> {
-    this.transformationRules.push(rule);
+    this.transformationRules.push(rule)
   }
 
   async getHealthStatus(): Promise<HealthStatus> {
@@ -149,7 +149,7 @@ export abstract class BaseIngestionAdapter implements IngestionAdapter {
         storage: true,
       },
       errors: [],
-    };
+    }
   }
 
   addEventListener(
@@ -157,44 +157,44 @@ export abstract class BaseIngestionAdapter implements IngestionAdapter {
     handler: (event: IngestionEvent) => void,
   ): void {
     if (!this.eventHandlers.has(eventType)) {
-      this.eventHandlers.set(eventType, new Set());
+      this.eventHandlers.set(eventType, new Set())
     }
-    this.eventHandlers.get(eventType)!.add(handler);
+    this.eventHandlers.get(eventType)!.add(handler)
   }
 
   removeEventListener(
     eventType: IngestionEventType,
     handler: (event: IngestionEvent) => void,
   ): void {
-    const handlers = this.eventHandlers.get(eventType);
+    const handlers = this.eventHandlers.get(eventType)
     if (handlers) {
-      handlers.delete(handler);
+      handlers.delete(handler)
     }
   }
 
   protected emitEvent(event: IngestionEvent): void {
-    const handlers = this.eventHandlers.get(event.eventType);
+    const handlers = this.eventHandlers.get(event.eventType)
     if (handlers) {
-      handlers.forEach(handler => handler(event));
+      handlers.forEach((handler) => handler(event))
     }
   }
 
   protected validateData(data: any[]): {
-    valid: any[];
-    invalid: any[];
-    errors: IngestionError[];
+    valid: any[]
+    invalid: any[]
+    errors: IngestionError[]
   } {
-    const valid: any[] = [];
-    const invalid: any[] = [];
-    const errors: IngestionError[] = [];
+    const valid: any[] = []
+    const invalid: any[] = []
+    const errors: IngestionError[] = []
 
     data.forEach((record, _index) => {
-      let isValid = true;
+      let isValid = true
 
       for (const rule of this.validationRules) {
         try {
           if (!this.applyValidationRule(record, rule)) {
-            isValid = false;
+            isValid = false
             errors.push({
               errorId: `validation_${Date.now()}_${_index}`,
               type: 'validation_error',
@@ -213,12 +213,12 @@ export abstract class BaseIngestionAdapter implements IngestionAdapter {
                 recoverable: true,
                 suggestions: ['Check data format', 'Review validation rules'],
               },
-            });
-            break;
+            })
+            break
           }
         } catch (_error) {
-          void _error;
-          isValid = false;
+          void _error
+          isValid = false
           errors.push({
             errorId: `validation_error_${Date.now()}_${_index}`,
             type: 'validation_error',
@@ -237,39 +237,39 @@ export abstract class BaseIngestionAdapter implements IngestionAdapter {
               recoverable: false,
               suggestions: ['Review validation rule logic'],
             },
-          });
-          break;
+          })
+          break
         }
       }
 
       if (isValid) {
-        valid.push(record);
+        valid.push(record)
       } else {
-        invalid.push(record);
+        invalid.push(record)
       }
-    });
+    })
 
-    return { valid, invalid, errors };
+    return { valid, invalid, errors }
   }
 
   protected transformData(data: any[]): {
-    transformed: any[];
-    errors: IngestionError[];
+    transformed: any[]
+    errors: IngestionError[]
   } {
-    const transformed: any[] = [];
-    const errors: IngestionError[] = [];
+    const transformed: any[] = []
+    const errors: IngestionError[] = []
 
     data.forEach((record, _index) => {
-      let transformedRecord = { ...record };
+      let transformedRecord = { ...record }
 
       for (const rule of this.transformationRules) {
         try {
           transformedRecord = this.applyTransformationRule(
             transformedRecord,
             rule,
-          );
+          )
         } catch (_error) {
-          void _error;
+          void _error
           errors.push({
             errorId: `transformation_error_${Date.now()}_${_index}`,
             type: 'transformation_error',
@@ -288,108 +288,108 @@ export abstract class BaseIngestionAdapter implements IngestionAdapter {
               recoverable: true,
               suggestions: ['Review transformation rule logic'],
             },
-          });
+          })
         }
       }
 
-      transformed.push(transformedRecord);
-    });
+      transformed.push(transformedRecord)
+    })
 
-    return { transformed, errors };
+    return { transformed, errors }
   }
 
   private applyValidationRule(record: any, rule: ValidationRule): boolean {
-    const fieldValue = this.getFieldValue(record, rule.field);
+    const fieldValue = this.getFieldValue(record, rule.field)
 
     switch (rule.type) {
       case 'required':
         return (
           fieldValue !== null && fieldValue !== undefined && fieldValue !== ''
-        );
+        )
 
       case 'format':
         if (rule.parameters.pattern) {
-          const regex = new RegExp(rule.parameters.pattern);
-          return regex.test(String(fieldValue));
+          const regex = new RegExp(rule.parameters.pattern)
+          return regex.test(String(fieldValue))
         }
-        return true;
+        return true
 
       case 'range':
-        const numValue = Number(fieldValue);
-        if (isNaN(numValue)) return false;
+        const numValue = Number(fieldValue)
+        if (isNaN(numValue)) return false
         if (rule.parameters.min !== undefined && numValue < rule.parameters.min) {
-          return false;
+          return false
         }
         if (rule.parameters.max !== undefined && numValue > rule.parameters.max) {
-          return false;
+          return false
         }
-        return true;
+        return true
 
       case 'compliance':
         // Implement compliance-specific validation
-        return this.validateCompliance(record, rule);
+        return this.validateCompliance(record, rule)
 
       default:
-        return true;
+        return true
     }
   }
 
   private applyTransformationRule(record: any, rule: TransformationRule): any {
-    const sourceValue = this.getFieldValue(record, rule.sourceField);
-    let transformedValue = sourceValue;
+    const sourceValue = this.getFieldValue(record, rule.sourceField)
+    let transformedValue = sourceValue
 
     switch (rule.type) {
       case 'map':
-        transformedValue = rule.logic.mapping[sourceValue] || sourceValue;
-        break;
+        transformedValue = rule.logic.mapping[sourceValue] || sourceValue
+        break
 
       case 'anonymize':
-        transformedValue = this.anonymizeValue(sourceValue, rule.logic);
-        break;
+        transformedValue = this.anonymizeValue(sourceValue, rule.logic)
+        break
 
       case 'calculate':
-        transformedValue = this.calculateValue(record, rule.logic);
-        break;
+        transformedValue = this.calculateValue(record, rule.logic)
+        break
 
       case 'filter':
         // Filter logic would be applied at the record level
-        break;
+        break
     }
 
-    this.setFieldValue(record, rule.targetField, transformedValue);
-    return record;
+    this.setFieldValue(record, rule.targetField, transformedValue)
+    return record
   }
 
   private getFieldValue(record: any, fieldPath: string): any {
-    return fieldPath.split('.').reduce((obj, _key) => obj?.[_key], record);
+    return fieldPath.split('.').reduce((obj, _key) => obj?.[_key], record)
   }
 
   private setFieldValue(record: any, fieldPath: string, value: any): void {
-    const keys = fieldPath.split('.');
-    const lastKey = keys.pop()!;
+    const keys = fieldPath.split('.')
+    const lastKey = keys.pop()!
     const target = keys.reduce((obj, _key) => {
-      if (!obj[_key]) obj[_key] = {};
-      return obj[_key];
-    }, record);
-    target[lastKey] = value;
+      if (!obj[_key]) obj[_key] = {}
+      return obj[_key]
+    }, record)
+    target[lastKey] = value
   }
 
   private validateCompliance(_record: any, _rule: ValidationRule): boolean {
     // Placeholder for compliance validation logic
     // Would integrate with actual compliance frameworks
-    return true;
+    return true
   }
 
   private anonymizeValue(value: any, _logic: any): any {
     // Placeholder for anonymization logic
     // Would implement various anonymization techniques
-    return `***${String(value).slice(-3)}`;
+    return `***${String(value).slice(-3)}`
   }
 
   private calculateValue(_record: any, _logic: any): any {
     // Placeholder for calculation logic
     // Would implement formula evaluation
-    return 0;
+    return 0
   }
 }
 
@@ -402,11 +402,11 @@ export class DatabaseIngestionAdapter extends BaseIngestionAdapter {
   // Connection pool for database operations (intentionally unused in this implementation)
   // @ts-ignore
   // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
-  private _connectionPool: any = null;
+  private _connectionPool: any = null
 
   async connect(): Promise<void> {
     // Placeholder for database connection logic
-    this.isConnectedFlag = true;
+    this.isConnectedFlag = true
     this.emitEvent({
       id: `db_connect_${Date.now()}`,
       type: 'database_connection',
@@ -427,24 +427,24 @@ export class DatabaseIngestionAdapter extends BaseIngestionAdapter {
         duplicateRecords: 0,
         transformedRecords: 0,
       },
-    } as IngestionEvent);
+    } as IngestionEvent)
   }
 
   async disconnect(): Promise<void> {
-    this.isConnectedFlag = false;
-    this._connectionPool = null;
+    this.isConnectedFlag = false
+    this._connectionPool = null
   }
 
   async ingestBatch(data: any[]): Promise<IngestionResult> {
-    const startTime = new Date();
-    const operationId = `db_batch_${Date.now()}`;
+    const startTime = new Date()
+    const operationId = `db_batch_${Date.now()}`
 
     const {
       valid,
       invalid,
       errors: validationErrors,
-    } = this.validateData(data);
-    const { transformed, errors: transformationErrors } = this.transformData(valid);
+    } = this.validateData(data)
+    const { transformed, errors: transformationErrors } = this.transformData(valid)
 
     const events: IngestionEvent[] = [
       {
@@ -474,7 +474,7 @@ export class DatabaseIngestionAdapter extends BaseIngestionAdapter {
           transformedRecords: transformed.length,
         },
       },
-    ];
+    ]
 
     return {
       operationId,
@@ -485,7 +485,7 @@ export class DatabaseIngestionAdapter extends BaseIngestionAdapter {
         validRecords: valid.length,
         invalidRecords: invalid.length,
         errors: [...validationErrors, ...transformationErrors].map(
-          e => e.message,
+          (e) => e.message,
         ),
         warnings: [],
       },
@@ -497,12 +497,12 @@ export class DatabaseIngestionAdapter extends BaseIngestionAdapter {
         duration: Date.now() - startTime.getTime(),
         stages: { validation: 100, transformation: 50, storage: 25 },
       },
-    };
+    }
   }
 
   async ingestStream(_stream: ReadableStream): Promise<IngestionResult> {
     // Placeholder for stream processing logic
-    return this.ingestBatch([]);
+    return this.ingestBatch([])
   }
 
   async getMetrics(): Promise<IngestionMonitoringMetrics> {
@@ -533,7 +533,7 @@ export class DatabaseIngestionAdapter extends BaseIngestionAdapter {
         validationSuccessRate: 99,
         transformationSuccessRate: 97,
       },
-    };
+    }
   }
 }
 
@@ -546,26 +546,26 @@ export class APIIngestionAdapter extends BaseIngestionAdapter {
   // Webhook server for API operations (intentionally unused in this implementation)
   // @ts-ignore
   // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
-  private _webhookServer: any = null;
+  private _webhookServer: any = null
 
   async connect(): Promise<void> {
     // Placeholder for API connection logic
-    this.isConnectedFlag = true;
+    this.isConnectedFlag = true
   }
 
   async disconnect(): Promise<void> {
-    this.isConnectedFlag = false;
-    this._webhookServer = null;
+    this.isConnectedFlag = false
+    this._webhookServer = null
   }
 
   async ingestBatch(data: any[]): Promise<IngestionResult> {
     // Similar implementation to DatabaseIngestionAdapter
-    return this.ingestBatch(data);
+    return this.ingestBatch(data)
   }
 
   async ingestStream(_stream: ReadableStream): Promise<IngestionResult> {
     // Stream processing for API data
-    return this.ingestBatch([]);
+    return this.ingestBatch([])
   }
 
   async getMetrics(): Promise<IngestionMonitoringMetrics> {
@@ -596,6 +596,6 @@ export class APIIngestionAdapter extends BaseIngestionAdapter {
         validationSuccessRate: 98,
         transformationSuccessRate: 95,
       },
-    };
+    }
   }
 }

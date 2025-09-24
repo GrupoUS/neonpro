@@ -1,35 +1,35 @@
-import { AlertCircle, Camera, Check, Clock, Download, FlipHorizontal, User, X } from 'lucide-react';
-import * as React from 'react';
+import { AlertCircle, Camera, Check, Clock, Download, FlipHorizontal, User, X } from 'lucide-react'
+import * as React from 'react'
 
 interface CameraConfig {
-  facingMode?: 'user' | 'environment';
+  facingMode?: 'user' | 'environment'
   resolution?: {
-    width: number;
-    height: number;
-  };
-  flash?: boolean;
+    width: number
+    height: number
+  }
+  flash?: boolean
 }
 
 interface PhotoMetadata {
-  timestamp: Date;
+  timestamp: Date
   location?: {
-    latitude: number;
-    longitude: number;
-  };
-  patientId?: string;
-  procedureType: string;
-  beforeAfter: 'before' | 'after';
-  notes?: string;
-  professionalId: string;
+    latitude: number
+    longitude: number
+  }
+  patientId?: string
+  procedureType: string
+  beforeAfter: 'before' | 'after'
+  notes?: string
+  professionalId: string
 }
 
 interface PWACameraCaptureProps {
-  className?: string;
-  patientId?: string;
-  procedureType?: string;
-  onCapture?: (photoData: string, metadata: PhotoMetadata) => void;
-  onClose?: () => void;
-  showControls?: boolean;
+  className?: string
+  patientId?: string
+  procedureType?: string
+  onCapture?: (photoData: string, metadata: PhotoMetadata) => void
+  onClose?: () => void
+  showControls?: boolean
 }
 
 export const PWACameraCapture: React.FC<PWACameraCaptureProps> = ({
@@ -40,22 +40,22 @@ export const PWACameraCapture: React.FC<PWACameraCaptureProps> = ({
   onClose,
   showControls = true,
 }) => {
-  const videoRef = React.useRef<HTMLVideoElement>(null);
-  const canvasRef = React.useRef<HTMLCanvasElement>(null);
-  const [stream, setStream] = React.useState<MediaStream | null>(null);
-  const [isActive, setIsActive] = React.useState(false);
-  const [capturedPhoto, setCapturedPhoto] = React.useState<string | null>(null);
-  const [facingMode, setFacingMode] = React.useState<'user' | 'environment'>('environment');
-  const [flashEnabled, setFlashEnabled] = React.useState(false);
-  const [isLoading, setIsLoading] = React.useState(false);
-  const [error, setError] = React.useState<string | null>(null);
-  const [photoMode, setPhotoMode] = React.useState<'before' | 'after'>('before');
-  const [notes, setNotes] = React.useState('');
-  const [showMetadata, setShowMetadata] = React.useState(false);
+  const videoRef = React.useRef<HTMLVideoElement>(null)
+  const canvasRef = React.useRef<HTMLCanvasElement>(null)
+  const [stream, setStream] = React.useState<MediaStream | null>(null)
+  const [isActive, setIsActive] = React.useState(false)
+  const [capturedPhoto, setCapturedPhoto] = React.useState<string | null>(null)
+  const [facingMode, setFacingMode] = React.useState<'user' | 'environment'>('environment')
+  const [flashEnabled, setFlashEnabled] = React.useState(false)
+  const [isLoading, setIsLoading] = React.useState(false)
+  const [error, setError] = React.useState<string | null>(null)
+  const [photoMode, setPhotoMode] = React.useState<'before' | 'after'>('before')
+  const [notes, setNotes] = React.useState('')
+  const [showMetadata, setShowMetadata] = React.useState(false)
 
   const initCamera = async () => {
-    setIsLoading(true);
-    setError(null);
+    setIsLoading(true)
+    setError(null)
 
     try {
       const constraints: MediaStreamConstraints = {
@@ -65,71 +65,71 @@ export const PWACameraCapture: React.FC<PWACameraCaptureProps> = ({
           height: { ideal: 1080 },
         },
         audio: false,
-      };
+      }
 
-      const mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
+      const mediaStream = await navigator.mediaDevices.getUserMedia(constraints)
 
       if (videoRef.current) {
-        videoRef.current.srcObject = mediaStream;
-        await videoRef.current.play();
-        setStream(mediaStream);
-        setIsActive(true);
+        videoRef.current.srcObject = mediaStream
+        await videoRef.current.play()
+        setStream(mediaStream)
+        setIsActive(true)
       }
     } catch (err) {
-      console.error('Camera initialization error:', err);
-      setError('Não foi possível acessar a câmera. Verifique as permissões.');
+      console.error('Camera initialization error:', err)
+      setError('Não foi possível acessar a câmera. Verifique as permissões.')
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
 
   const stopCamera = () => {
     if (stream) {
-      stream.getTracks().forEach(track => track.stop());
-      setStream(null);
+      stream.getTracks().forEach((track) => track.stop())
+      setStream(null)
     }
-    setIsActive(false);
-  };
+    setIsActive(false)
+  }
 
   const switchCamera = async () => {
-    const newFacingMode = facingMode === 'user' ? 'environment' : 'user';
-    setFacingMode(newFacingMode);
+    const newFacingMode = facingMode === 'user' ? 'environment' : 'user'
+    setFacingMode(newFacingMode)
 
     if (isActive) {
-      stopCamera();
-      setTimeout(initCamera, 100);
+      stopCamera()
+      setTimeout(initCamera, 100)
     }
-  };
+  }
 
   const capturePhoto = () => {
-    if (!videoRef.current || !canvasRef.current) return;
+    if (!videoRef.current || !canvasRef.current) return
 
-    const video = videoRef.current;
-    const canvas = canvasRef.current;
-    const context = canvas.getContext('2d');
+    const video = videoRef.current
+    const canvas = canvasRef.current
+    const context = canvas.getContext('2d')
 
-    if (!context) return;
+    if (!context) return
 
     // Set canvas dimensions to match video
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
+    canvas.width = video.videoWidth
+    canvas.height = video.videoHeight
 
     // Draw current video frame to canvas
-    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+    context.drawImage(video, 0, 0, canvas.width, canvas.height)
 
     // Convert to data URL
-    const photoData = canvas.toDataURL('image/jpeg', 0.9);
-    setCapturedPhoto(photoData);
-  };
+    const photoData = canvas.toDataURL('image/jpeg', 0.9)
+    setCapturedPhoto(photoData)
+  }
 
   const retakePhoto = () => {
-    setCapturedPhoto(null);
-    setNotes('');
-    setShowMetadata(false);
-  };
+    setCapturedPhoto(null)
+    setNotes('')
+    setShowMetadata(false)
+  }
 
   const savePhoto = async () => {
-    if (!capturedPhoto) return;
+    if (!capturedPhoto) return
 
     const metadata: PhotoMetadata = {
       timestamp: new Date(),
@@ -138,43 +138,43 @@ export const PWACameraCapture: React.FC<PWACameraCaptureProps> = ({
       beforeAfter: photoMode,
       notes: notes.trim() || undefined,
       professionalId: 'current-user', // This should come from auth context
-    };
+    }
 
     // Get location if available and permitted
     try {
       if ('geolocation' in navigator) {
         const position = await new Promise<GeolocationPosition>((resolve, reject) => {
-          navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 5000 });
-        });
+          navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 5000 })
+        })
         metadata.location = {
           latitude: position.coords.latitude,
           longitude: position.coords.longitude,
-        };
+        }
       }
     } catch {
       // Location access denied or unavailable
     }
 
-    onCapture?.(capturedPhoto, metadata);
+    onCapture?.(capturedPhoto, metadata)
 
     // Reset for next photo
-    retakePhoto();
-  };
+    retakePhoto()
+  }
 
   const downloadPhoto = () => {
-    if (!capturedPhoto) return;
+    if (!capturedPhoto) return
 
-    const link = document.createElement('a');
-    link.download = `neonpro-${procedureType}-${photoMode}-${Date.now()}.jpg`;
-    link.href = capturedPhoto;
-    link.click();
-  };
+    const link = document.createElement('a')
+    link.download = `neonpro-${procedureType}-${photoMode}-${Date.now()}.jpg`
+    link.href = capturedPhoto
+    link.click()
+  }
 
   React.useEffect(() => {
     return () => {
-      stopCamera();
-    };
-  }, []);
+      stopCamera()
+    }
+  }, [])
 
   if (!isActive && !capturedPhoto) {
     return (
@@ -228,7 +228,7 @@ export const PWACameraCapture: React.FC<PWACameraCaptureProps> = ({
           )}
         </div>
       </div>
-    );
+    )
   }
 
   if (capturedPhoto) {
@@ -299,7 +299,7 @@ export const PWACameraCapture: React.FC<PWACameraCaptureProps> = ({
             </label>
             <textarea
               value={notes}
-              onChange={e => setNotes(e.target.value)}
+              onChange={(e) => setNotes(e.target.value)}
               placeholder='Adicione observações sobre o procedimento, condições da pele, etc.'
               className='w-full p-2 border border-gray-300 rounded-md text-sm'
               rows={3}
@@ -325,7 +325,7 @@ export const PWACameraCapture: React.FC<PWACameraCaptureProps> = ({
           </div>
         </div>
       </div>
-    );
+    )
   }
 
   return (
@@ -395,5 +395,5 @@ export const PWACameraCapture: React.FC<PWACameraCaptureProps> = ({
         )}
       </div>
     </div>
-  );
-};
+  )
+}

@@ -14,11 +14,11 @@
  * - Comprehensive audit trails with cryptographic proof
  */
 
-import { AuditAction, AuditStatus, ResourceType, RiskLevel } from '@prisma/client';
-import { TRPCError } from '@trpc/server';
+import { AuditAction, AuditStatus, ResourceType, RiskLevel } from '@prisma/client'
+import { TRPCError } from '@trpc/server'
 // import * as v from 'valibot';
 
-import { AestheticRepository } from '@neonpro/database';
+import { AestheticRepository } from '@neonpro/database'
 import {
   CreateAestheticClientProfileSchema,
   CreateAestheticSessionSchema,
@@ -47,11 +47,11 @@ import {
   UpdateFinancialTransactionSchema,
   UpdatePhotoAssessmentSchema,
   UpdateTreatmentPlanSchema,
-} from '../schemas';
-import { healthcareProcedure, protectedProcedure, router } from '../trpc';
+} from '../schemas'
+import { healthcareProcedure, protectedProcedure, router } from '../trpc'
 
 // Initialize the aesthetic repository
-const aestheticRepository = new AestheticRepository();
+const aestheticRepository = new AestheticRepository()
 
 // =====================================
 // BRAZILIAN HEALTHCARE COMPLIANCE HELPERS
@@ -66,12 +66,12 @@ async function validateLGPDCompliance(
   clientId: string,
   _ctx: any,
 ): Promise<{
-  compliant: boolean;
-  warnings: string[];
-  consentValid: boolean;
+  compliant: boolean
+  warnings: string[]
+  consentValid: boolean
 }> {
-  const warnings: string[] = [];
-  let consentValid = true;
+  const warnings: string[] = []
+  let consentValid = true
 
   // Check for valid consent
   const clientProfile = await ctx.prisma.aestheticClientProfile.findUnique({
@@ -82,38 +82,38 @@ async function validateLGPDCompliance(
       dataProcessingConsent: true,
       lastConsentUpdate: true,
     },
-  });
+  })
 
   if (!clientProfile) {
-    warnings.push('Client profile not found');
-    return { compliant: false, warnings, consentValid: false };
+    warnings.push('Client profile not found')
+    return { compliant: false, warnings, consentValid: false }
   }
 
   // Validate consent freshness (LGPD requirement)
-  const consentAge = Date.now() - new Date(clientProfile.lastConsentUpdate || 0).getTime();
-  const maxConsentAge = 365 * 24 * 60 * 60 * 1000; // 1 year
+  const consentAge = Date.now() - new Date(clientProfile.lastConsentUpdate || 0).getTime()
+  const maxConsentAge = 365 * 24 * 60 * 60 * 1000 // 1 year
 
   if (consentAge > maxConsentAge) {
-    warnings.push('Client consent requires renewal');
-    consentValid = false;
+    warnings.push('Client consent requires renewal')
+    consentValid = false
   }
 
   // Operation-specific validation
   if (operation === 'photo_assessment' && !clientProfile.photoConsent) {
-    warnings.push('Photo consent required for assessment');
-    consentValid = false;
+    warnings.push('Photo consent required for assessment')
+    consentValid = false
   }
 
   if (operation === 'marketing' && !clientProfile.marketingConsent) {
-    warnings.push('Marketing consent not provided');
-    consentValid = false;
+    warnings.push('Marketing consent not provided')
+    consentValid = false
   }
 
   return {
     compliant: consentValid && warnings.length === 0,
     warnings,
     consentValid,
-  };
+  }
 }
 
 /**
@@ -125,11 +125,11 @@ async function validateCFMCompliance(
   procedureType: string,
   _ctx: any,
 ): Promise<{
-  compliant: boolean;
-  certifications: string[];
-  warnings: string[];
+  compliant: boolean
+  certifications: string[]
+  warnings: string[]
 }> {
-  const warnings: string[] = [];
+  const warnings: string[] = []
 
   // Get professional certifications
   const professional = await ctx.prisma.professional.findUnique({
@@ -140,32 +140,32 @@ async function validateCFMCompliance(
       licenseNumber: true,
       licenseExpiry: true,
     },
-  });
+  })
 
   if (!professional) {
-    return { compliant: false, certifications: [], warnings: ['Professional not found'] };
+    return { compliant: false, certifications: [], warnings: ['Professional not found'] }
   }
 
   // Check license validity
   if (professional.licenseExpiry && new Date(professional.licenseExpiry) < new Date()) {
-    warnings.push('Professional license expired');
+    warnings.push('Professional license expired')
   }
 
   // Check procedure-specific certifications
-  const requiredCertifications = getRequiredCertifications(procedureType);
-  const hasRequiredCerts = requiredCertifications.every(cert =>
+  const requiredCertifications = getRequiredCertifications(procedureType)
+  const hasRequiredCerts = requiredCertifications.every((cert) =>
     professional.certifications.includes(cert)
-  );
+  )
 
   if (!hasRequiredCerts) {
-    warnings.push(`Missing required certifications for ${procedureType}`);
+    warnings.push(`Missing required certifications for ${procedureType}`)
   }
 
   return {
     compliant: hasRequiredCerts && warnings.length === 0,
     certifications: professional.certifications,
     warnings,
-  };
+  }
 }
 
 /**
@@ -179,9 +179,9 @@ function getRequiredCertifications(procedureType: string): string[] {
     facial: ['aesthetic_facial_treatments'],
     body: ['body_contouring', 'aesthetic_procedures'],
     combination: ['advanced_aesthetic'],
-  };
+  }
 
-  return certificationMap[procedureType] || [];
+  return certificationMap[procedureType] || []
 }
 
 // =====================================
@@ -205,13 +205,13 @@ export const aestheticClinicRouter = router({
           'profile_creation',
           input.patientId,
           ctx,
-        );
+        )
         if (!lgpdValidation.compliant) {
           throw new TRPCError({
             code: 'FORBIDDEN',
             message: 'LGPD compliance validation failed',
             cause: lgpdValidation.warnings,
-          });
+          })
         }
 
         // Create client profile using repository
@@ -232,7 +232,7 @@ export const aestheticClinicRouter = router({
           emergencyContact: input.emergencyContact,
           createdBy: ctx.userId,
           clinicId: ctx.clinicId,
-        });
+        })
 
         // Create comprehensive audit trail
         await ctx.prisma.auditTrail.create({
@@ -261,7 +261,7 @@ export const aestheticClinicRouter = router({
               dataMinimized: true,
             }),
           },
-        });
+        })
 
         return {
           success: true,
@@ -271,13 +271,13 @@ export const aestheticClinicRouter = router({
             consentValid: lgpdValidation.consentValid,
             warnings: lgpdValidation.warnings,
           },
-        };
+        }
       } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to create aesthetic client profile',
           cause: error,
-        });
+        })
       }
     }),
 
@@ -288,13 +288,13 @@ export const aestheticClinicRouter = router({
     .input(GetAestheticClientProfileSchema)
     .query(async ({ ctx, input }) => {
       try {
-        const clientProfile = await aestheticRepository.getAestheticClientById(input.id);
+        const clientProfile = await aestheticRepository.getAestheticClientById(input.id)
 
         if (!clientProfile) {
           throw new TRPCError({
             code: 'NOT_FOUND',
             message: 'Aesthetic client profile not found',
-          });
+          })
         }
 
         // Verify multi-tenant access
@@ -302,7 +302,7 @@ export const aestheticClinicRouter = router({
           throw new TRPCError({
             code: 'FORBIDDEN',
             message: 'Access denied to client profile',
-          });
+          })
         }
 
         // Log access
@@ -327,7 +327,7 @@ export const aestheticClinicRouter = router({
               lgpdCompliant: true,
             }),
           },
-        });
+        })
 
         return {
           data: clientProfile,
@@ -335,13 +335,13 @@ export const aestheticClinicRouter = router({
             lgpdCompliant: true,
             accessAuthorized: true,
           },
-        };
+        }
       } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to get aesthetic client profile',
           cause: error,
-        });
+        })
       }
     }),
 
@@ -353,12 +353,12 @@ export const aestheticClinicRouter = router({
     .mutation(async ({ ctx, input }) => {
       try {
         // Get existing profile
-        const existingProfile = await aestheticRepository.getAestheticClientById(input.id);
+        const existingProfile = await aestheticRepository.getAestheticClientById(input.id)
         if (!existingProfile) {
           throw new TRPCError({
             code: 'NOT_FOUND',
             message: 'Aesthetic client profile not found',
-          });
+          })
         }
 
         // Verify multi-tenant access
@@ -366,7 +366,7 @@ export const aestheticClinicRouter = router({
           throw new TRPCError({
             code: 'FORBIDDEN',
             message: 'Access denied to client profile',
-          });
+          })
         }
 
         // Validate LGPD compliance for updates
@@ -374,20 +374,20 @@ export const aestheticClinicRouter = router({
           'profile_update',
           existingProfile.patientId,
           ctx,
-        );
+        )
         if (!lgpdValidation.compliant) {
           throw new TRPCError({
             code: 'FORBIDDEN',
             message: 'LGPD compliance validation failed',
             cause: lgpdValidation.warnings,
-          });
+          })
         }
 
         // Update client profile using repository
         const updatedProfile = await aestheticRepository.updateAestheticClient(input.id, {
           ...input,
           updatedBy: ctx.userId,
-        });
+        })
 
         // Create audit trail
         await ctx.prisma.auditTrail.create({
@@ -412,7 +412,7 @@ export const aestheticClinicRouter = router({
               dataMinimized: true,
             }),
           },
-        });
+        })
 
         return {
           success: true,
@@ -422,13 +422,13 @@ export const aestheticClinicRouter = router({
             consentValid: lgpdValidation.consentValid,
             warnings: lgpdValidation.warnings,
           },
-        };
+        }
       } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to update aesthetic client profile',
           cause: error,
-        });
+        })
       }
     }),
 
@@ -449,9 +449,9 @@ export const aestheticClinicRouter = router({
           limit: input.limit || 20,
           offset: input.offset || 0,
           clinicId: ctx.clinicId,
-        };
+        }
 
-        const searchResult = await aestheticRepository.searchAestheticClients(searchCriteria);
+        const searchResult = await aestheticRepository.searchAestheticClients(searchCriteria)
 
         // Log search operation
         await ctx.prisma.auditTrail.create({
@@ -471,11 +471,11 @@ export const aestheticClinicRouter = router({
               searchCriteria,
               resultsCount: searchResult.clients.length,
               totalResults: searchResult.total,
-              filters: Object.keys(input).filter(key => input[key] !== undefined),
+              filters: Object.keys(input).filter((key) => input[key] !== undefined),
               lgpdCompliant: true,
             }),
           },
-        });
+        })
 
         return {
           ...searchResult,
@@ -483,13 +483,13 @@ export const aestheticClinicRouter = router({
             lgpdCompliant: true,
             searchAuthorized: true,
           },
-        };
+        }
       } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to search aesthetic client profiles',
           cause: error,
-        });
+        })
       }
     }),
 
@@ -505,20 +505,20 @@ export const aestheticClinicRouter = router({
     .mutation(async ({ ctx, input }) => {
       try {
         // Validate ANVISA compliance
-        const anvisaCompliance = await validateANVISACompliance(input, ctx);
+        const anvisaCompliance = await validateANVISACompliance(input, ctx)
         if (!anvisaCompliance.compliant) {
           throw new TRPCError({
             code: 'FORBIDDEN',
             message: 'ANVISA compliance validation failed',
             cause: anvisaCompliance.restrictions,
-          });
+          })
         }
 
         const treatment = await aestheticRepository.createAestheticTreatment({
           ...input,
           createdBy: ctx.userId,
           clinicId: ctx.clinicId,
-        });
+        })
 
         // Create audit trail
         await ctx.prisma.auditTrail.create({
@@ -546,7 +546,7 @@ export const aestheticClinicRouter = router({
               hasContraindications: (input.contraindications?.length || 0) > 0,
             }),
           },
-        });
+        })
 
         return {
           success: true,
@@ -556,13 +556,13 @@ export const aestheticClinicRouter = router({
             warnings: anvisaCompliance.warnings,
             restrictions: anvisaCompliance.restrictions,
           },
-        };
+        }
       } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to create aesthetic treatment',
           cause: error,
-        });
+        })
       }
     }),
 
@@ -573,13 +573,13 @@ export const aestheticClinicRouter = router({
     .input(GetAestheticTreatmentSchema)
     .query(async ({ ctx, input }) => {
       try {
-        const treatment = await aestheticRepository.getAestheticTreatmentById(input.id);
+        const treatment = await aestheticRepository.getAestheticTreatmentById(input.id)
 
         if (!treatment) {
           throw new TRPCError({
             code: 'NOT_FOUND',
             message: 'Aesthetic treatment not found',
-          });
+          })
         }
 
         // Log access
@@ -604,7 +604,7 @@ export const aestheticClinicRouter = router({
               anvisaCompliant: !!treatment.anvisaRegistration,
             }),
           },
-        });
+        })
 
         return {
           data: treatment,
@@ -612,13 +612,13 @@ export const aestheticClinicRouter = router({
             anvisaCompliant: !!treatment.anvisaRegistration,
             accessAuthorized: true,
           },
-        };
+        }
       } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to get aesthetic treatment',
           cause: error,
-        });
+        })
       }
     }),
 
@@ -629,12 +629,12 @@ export const aestheticClinicRouter = router({
     .input(UpdateAestheticTreatmentSchema)
     .mutation(async ({ ctx, input }) => {
       try {
-        const existingTreatment = await aestheticRepository.getAestheticTreatmentById(input.id);
+        const existingTreatment = await aestheticRepository.getAestheticTreatmentById(input.id)
         if (!existingTreatment) {
           throw new TRPCError({
             code: 'NOT_FOUND',
             message: 'Aesthetic treatment not found',
-          });
+          })
         }
 
         // Verify multi-tenant access
@@ -642,26 +642,26 @@ export const aestheticClinicRouter = router({
           throw new TRPCError({
             code: 'FORBIDDEN',
             message: 'Access denied to treatment',
-          });
+          })
         }
 
         // Validate ANVISA compliance
         const anvisaCompliance = await validateANVISACompliance(
           { ...existingTreatment, ...input },
           ctx,
-        );
+        )
         if (!anvisaCompliance.compliant) {
           throw new TRPCError({
             code: 'FORBIDDEN',
             message: 'ANVISA compliance validation failed',
             cause: anvisaCompliance.restrictions,
-          });
+          })
         }
 
         const updatedTreatment = await aestheticRepository.updateAestheticTreatment(input.id, {
           ...input,
           updatedBy: ctx.userId,
-        });
+        })
 
         // Create audit trail
         await ctx.prisma.auditTrail.create({
@@ -684,7 +684,7 @@ export const aestheticClinicRouter = router({
               anvisaCompliant: anvisaCompliance.compliant,
             }),
           },
-        });
+        })
 
         return {
           success: true,
@@ -694,13 +694,13 @@ export const aestheticClinicRouter = router({
             warnings: anvisaCompliance.warnings,
             restrictions: anvisaCompliance.restrictions,
           },
-        };
+        }
       } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to update aesthetic treatment',
           cause: error,
-        });
+        })
       }
     }),
 
@@ -721,7 +721,7 @@ export const aestheticClinicRouter = router({
           limit: input.limit || 20,
           offset: input.offset || 0,
           clinicId: ctx.clinicId,
-        });
+        })
 
         // Log catalog access
         await ctx.prisma.auditTrail.create({
@@ -751,7 +751,7 @@ export const aestheticClinicRouter = router({
               anvisaCompliant: true,
             }),
           },
-        });
+        })
 
         return {
           ...catalog,
@@ -759,13 +759,13 @@ export const aestheticClinicRouter = router({
             anvisaCompliant: true,
             accessAuthorized: true,
           },
-        };
+        }
       } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to get treatment catalog',
           cause: error,
-        });
+        })
       }
     }),
 
@@ -785,20 +785,20 @@ export const aestheticClinicRouter = router({
           input.professionalId,
           'aesthetic_procedure',
           ctx,
-        );
+        )
         if (!cfmValidation.compliant) {
           throw new TRPCError({
             code: 'FORBIDDEN',
             message: 'CFM compliance validation failed',
             cause: cfmValidation.warnings,
-          });
+          })
         }
 
         const session = await aestheticRepository.createAestheticSession({
           ...input,
           createdBy: ctx.userId,
           clinicId: ctx.clinicId,
-        });
+        })
 
         // Create audit trail
         await ctx.prisma.auditTrail.create({
@@ -827,7 +827,7 @@ export const aestheticClinicRouter = router({
               professionalCertifications: cfmValidation.certifications,
             }),
           },
-        });
+        })
 
         return {
           success: true,
@@ -837,13 +837,13 @@ export const aestheticClinicRouter = router({
             professionalCertifications: cfmValidation.certifications,
             warnings: cfmValidation.warnings,
           },
-        };
+        }
       } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to create aesthetic session',
           cause: error,
-        });
+        })
       }
     }),
 
@@ -854,13 +854,13 @@ export const aestheticClinicRouter = router({
     .input(GetAestheticSessionSchema)
     .query(async ({ ctx, input }) => {
       try {
-        const session = await aestheticRepository.getAestheticSessionById(input.id);
+        const session = await aestheticRepository.getAestheticSessionById(input.id)
 
         if (!session) {
           throw new TRPCError({
             code: 'NOT_FOUND',
             message: 'Aesthetic session not found',
-          });
+          })
         }
 
         // Verify multi-tenant access
@@ -868,7 +868,7 @@ export const aestheticClinicRouter = router({
           throw new TRPCError({
             code: 'FORBIDDEN',
             message: 'Access denied to session',
-          });
+          })
         }
 
         // Log access
@@ -894,20 +894,20 @@ export const aestheticClinicRouter = router({
               sessionStatus: session.status,
             }),
           },
-        });
+        })
 
         return {
           data: session,
           complianceStatus: {
             accessAuthorized: true,
           },
-        };
+        }
       } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to get aesthetic session',
           cause: error,
-        });
+        })
       }
     }),
 
@@ -918,12 +918,12 @@ export const aestheticClinicRouter = router({
     .input(UpdateAestheticSessionSchema)
     .mutation(async ({ ctx, input }) => {
       try {
-        const existingSession = await aestheticRepository.getAestheticSessionById(input.id);
+        const existingSession = await aestheticRepository.getAestheticSessionById(input.id)
         if (!existingSession) {
           throw new TRPCError({
             code: 'NOT_FOUND',
             message: 'Aesthetic session not found',
-          });
+          })
         }
 
         // Verify multi-tenant access
@@ -931,13 +931,13 @@ export const aestheticClinicRouter = router({
           throw new TRPCError({
             code: 'FORBIDDEN',
             message: 'Access denied to session',
-          });
+          })
         }
 
         const updatedSession = await aestheticRepository.updateAestheticSession(input.id, {
           ...input,
           updatedBy: ctx.userId,
-        });
+        })
 
         // Create audit trail
         await ctx.prisma.auditTrail.create({
@@ -962,18 +962,18 @@ export const aestheticClinicRouter = router({
               newStatus: updatedSession?.status,
             }),
           },
-        });
+        })
 
         return {
           success: true,
           data: updatedSession,
-        };
+        }
       } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to update aesthetic session',
           cause: error,
-        });
+        })
       }
     }),
 
@@ -994,7 +994,7 @@ export const aestheticClinicRouter = router({
           limit: input.limit || 20,
           offset: input.offset || 0,
           clinicId: ctx.clinicId,
-        });
+        })
 
         // Log list access
         await ctx.prisma.auditTrail.create({
@@ -1023,20 +1023,20 @@ export const aestheticClinicRouter = router({
               totalSessions: sessions.total,
             }),
           },
-        });
+        })
 
         return {
           ...sessions,
           complianceStatus: {
             accessAuthorized: true,
           },
-        };
+        }
       } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to list aesthetic sessions',
           cause: error,
-        });
+        })
       }
     }),
 
@@ -1056,20 +1056,20 @@ export const aestheticClinicRouter = router({
           'photo_assessment',
           input.clientProfileId,
           ctx,
-        );
+        )
         if (!lgpdValidation.compliant) {
           throw new TRPCError({
             code: 'FORBIDDEN',
             message: 'LGPD compliance validation failed for photo assessment',
             cause: lgpdValidation.warnings,
-          });
+          })
         }
 
         const photoAssessment = await aestheticRepository.createPhotoAssessment({
           ...input,
           createdBy: ctx.userId,
           clinicId: ctx.clinicId,
-        });
+        })
 
         // Create comprehensive audit trail
         await ctx.prisma.auditTrail.create({
@@ -1096,7 +1096,7 @@ export const aestheticClinicRouter = router({
               professionalId: input.professionalId,
             }),
           },
-        });
+        })
 
         return {
           success: true,
@@ -1106,13 +1106,13 @@ export const aestheticClinicRouter = router({
             photoConsentValid: lgpdValidation.consentValid,
             warnings: lgpdValidation.warnings,
           },
-        };
+        }
       } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to create photo assessment',
           cause: error,
-        });
+        })
       }
     }),
 
@@ -1123,13 +1123,13 @@ export const aestheticClinicRouter = router({
     .input(GetPhotoAssessmentSchema)
     .query(async ({ ctx, input }) => {
       try {
-        const assessment = await aestheticRepository.getPhotoAssessmentById(input.id);
+        const assessment = await aestheticRepository.getPhotoAssessmentById(input.id)
 
         if (!assessment) {
           throw new TRPCError({
             code: 'NOT_FOUND',
             message: 'Photo assessment not found',
-          });
+          })
         }
 
         // Verify multi-tenant access
@@ -1137,7 +1137,7 @@ export const aestheticClinicRouter = router({
           throw new TRPCError({
             code: 'FORBIDDEN',
             message: 'Access denied to photo assessment',
-          });
+          })
         }
 
         // Log access
@@ -1163,7 +1163,7 @@ export const aestheticClinicRouter = router({
               lgpdCompliant: true,
             }),
           },
-        });
+        })
 
         return {
           data: assessment,
@@ -1171,13 +1171,13 @@ export const aestheticClinicRouter = router({
             accessAuthorized: true,
             lgpdCompliant: true,
           },
-        };
+        }
       } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to get photo assessment',
           cause: error,
-        });
+        })
       }
     }),
 
@@ -1188,12 +1188,12 @@ export const aestheticClinicRouter = router({
     .input(UpdatePhotoAssessmentSchema)
     .mutation(async ({ ctx, input }) => {
       try {
-        const existingAssessment = await aestheticRepository.getPhotoAssessmentById(input.id);
+        const existingAssessment = await aestheticRepository.getPhotoAssessmentById(input.id)
         if (!existingAssessment) {
           throw new TRPCError({
             code: 'NOT_FOUND',
             message: 'Photo assessment not found',
-          });
+          })
         }
 
         // Verify multi-tenant access
@@ -1201,13 +1201,13 @@ export const aestheticClinicRouter = router({
           throw new TRPCError({
             code: 'FORBIDDEN',
             message: 'Access denied to photo assessment',
-          });
+          })
         }
 
         const updatedAssessment = await aestheticRepository.updatePhotoAssessment(input.id, {
           ...input,
           updatedBy: ctx.userId,
-        });
+        })
 
         // Create audit trail
         await ctx.prisma.auditTrail.create({
@@ -1232,18 +1232,18 @@ export const aestheticClinicRouter = router({
               lgpdCompliant: true,
             }),
           },
-        });
+        })
 
         return {
           success: true,
           data: updatedAssessment,
-        };
+        }
       } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to update photo assessment',
           cause: error,
-        });
+        })
       }
     }),
 
@@ -1263,7 +1263,7 @@ export const aestheticClinicRouter = router({
           limit: input.limit || 20,
           offset: input.offset || 0,
           clinicId: ctx.clinicId,
-        });
+        })
 
         // Log list access
         await ctx.prisma.auditTrail.create({
@@ -1292,7 +1292,7 @@ export const aestheticClinicRouter = router({
               lgpdCompliant: true,
             }),
           },
-        });
+        })
 
         return {
           ...assessments,
@@ -1300,13 +1300,13 @@ export const aestheticClinicRouter = router({
             accessAuthorized: true,
             lgpdCompliant: true,
           },
-        };
+        }
       } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to list photo assessments',
           cause: error,
-        });
+        })
       }
     }),
 
@@ -1326,20 +1326,20 @@ export const aestheticClinicRouter = router({
           input.professionalId,
           'treatment_planning',
           ctx,
-        );
+        )
         if (!cfmValidation.compliant) {
           throw new TRPCError({
             code: 'FORBIDDEN',
             message: 'CFM compliance validation failed for treatment plan',
             cause: cfmValidation.warnings,
-          });
+          })
         }
 
         const treatmentPlan = await aestheticRepository.createTreatmentPlan({
           ...input,
           createdBy: ctx.userId,
           clinicId: ctx.clinicId,
-        });
+        })
 
         // Create comprehensive audit trail
         await ctx.prisma.auditTrail.create({
@@ -1367,7 +1367,7 @@ export const aestheticClinicRouter = router({
               professionalCertifications: cfmValidation.certifications,
             }),
           },
-        });
+        })
 
         return {
           success: true,
@@ -1377,13 +1377,13 @@ export const aestheticClinicRouter = router({
             professionalCertifications: cfmValidation.certifications,
             warnings: cfmValidation.warnings,
           },
-        };
+        }
       } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to create treatment plan',
           cause: error,
-        });
+        })
       }
     }),
 
@@ -1394,13 +1394,13 @@ export const aestheticClinicRouter = router({
     .input(GetTreatmentPlanSchema)
     .query(async ({ ctx, input }) => {
       try {
-        const treatmentPlan = await aestheticRepository.getTreatmentPlanById(input.id);
+        const treatmentPlan = await aestheticRepository.getTreatmentPlanById(input.id)
 
         if (!treatmentPlan) {
           throw new TRPCError({
             code: 'NOT_FOUND',
             message: 'Treatment plan not found',
-          });
+          })
         }
 
         // Verify multi-tenant access
@@ -1408,7 +1408,7 @@ export const aestheticClinicRouter = router({
           throw new TRPCError({
             code: 'FORBIDDEN',
             message: 'Access denied to treatment plan',
-          });
+          })
         }
 
         // Log access
@@ -1434,20 +1434,20 @@ export const aestheticClinicRouter = router({
               status: treatmentPlan.status,
             }),
           },
-        });
+        })
 
         return {
           data: treatmentPlan,
           complianceStatus: {
             accessAuthorized: true,
           },
-        };
+        }
       } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to get treatment plan',
           cause: error,
-        });
+        })
       }
     }),
 
@@ -1458,12 +1458,12 @@ export const aestheticClinicRouter = router({
     .input(UpdateTreatmentPlanSchema)
     .mutation(async ({ ctx, input }) => {
       try {
-        const existingPlan = await aestheticRepository.getTreatmentPlanById(input.id);
+        const existingPlan = await aestheticRepository.getTreatmentPlanById(input.id)
         if (!existingPlan) {
           throw new TRPCError({
             code: 'NOT_FOUND',
             message: 'Treatment plan not found',
-          });
+          })
         }
 
         // Verify multi-tenant access
@@ -1471,13 +1471,13 @@ export const aestheticClinicRouter = router({
           throw new TRPCError({
             code: 'FORBIDDEN',
             message: 'Access denied to treatment plan',
-          });
+          })
         }
 
         const updatedPlan = await aestheticRepository.updateTreatmentPlan(input.id, {
           ...input,
           updatedBy: ctx.userId,
-        });
+        })
 
         // Create audit trail
         await ctx.prisma.auditTrail.create({
@@ -1502,18 +1502,18 @@ export const aestheticClinicRouter = router({
               newStatus: updatedPlan?.status,
             }),
           },
-        });
+        })
 
         return {
           success: true,
           data: updatedPlan,
-        };
+        }
       } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to update treatment plan',
           cause: error,
-        });
+        })
       }
     }),
 
@@ -1530,7 +1530,7 @@ export const aestheticClinicRouter = router({
           limit: input.limit || 20,
           offset: input.offset || 0,
           clinicId: ctx.clinicId,
-        });
+        })
 
         // Log access
         await ctx.prisma.auditTrail.create({
@@ -1553,20 +1553,20 @@ export const aestheticClinicRouter = router({
               totalPlans: plans.total,
             }),
           },
-        });
+        })
 
         return {
           ...plans,
           complianceStatus: {
             accessAuthorized: true,
           },
-        };
+        }
       } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to get treatment plans by client',
           cause: error,
-        });
+        })
       }
     }),
 
@@ -1585,7 +1585,7 @@ export const aestheticClinicRouter = router({
           ...input,
           createdBy: ctx.userId,
           clinicId: ctx.clinicId,
-        });
+        })
 
         // Create comprehensive audit trail
         await ctx.prisma.auditTrail.create({
@@ -1614,7 +1614,7 @@ export const aestheticClinicRouter = router({
               brazilianPaymentStandards: true,
             }),
           },
-        });
+        })
 
         return {
           success: true,
@@ -1624,13 +1624,13 @@ export const aestheticClinicRouter = router({
             brazilianPaymentStandards: true,
             auditTrailComplete: true,
           },
-        };
+        }
       } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to create financial transaction',
           cause: error,
-        });
+        })
       }
     }),
 
@@ -1641,13 +1641,13 @@ export const aestheticClinicRouter = router({
     .input(GetFinancialTransactionSchema)
     .query(async ({ ctx, input }) => {
       try {
-        const transaction = await aestheticRepository.getFinancialTransactionById(input.id);
+        const transaction = await aestheticRepository.getFinancialTransactionById(input.id)
 
         if (!transaction) {
           throw new TRPCError({
             code: 'NOT_FOUND',
             message: 'Financial transaction not found',
-          });
+          })
         }
 
         // Verify multi-tenant access
@@ -1655,7 +1655,7 @@ export const aestheticClinicRouter = router({
           throw new TRPCError({
             code: 'FORBIDDEN',
             message: 'Access denied to financial transaction',
-          });
+          })
         }
 
         // Log access
@@ -1682,7 +1682,7 @@ export const aestheticClinicRouter = router({
               hasSensitiveFinancialData: true,
             }),
           },
-        });
+        })
 
         return {
           data: transaction,
@@ -1690,13 +1690,13 @@ export const aestheticClinicRouter = router({
             accessAuthorized: true,
             financialCompliant: true,
           },
-        };
+        }
       } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to get financial transaction',
           cause: error,
-        });
+        })
       }
     }),
 
@@ -1707,12 +1707,12 @@ export const aestheticClinicRouter = router({
     .input(UpdateFinancialTransactionSchema)
     .mutation(async ({ ctx, input }) => {
       try {
-        const existingTransaction = await aestheticRepository.getFinancialTransactionById(input.id);
+        const existingTransaction = await aestheticRepository.getFinancialTransactionById(input.id)
         if (!existingTransaction) {
           throw new TRPCError({
             code: 'NOT_FOUND',
             message: 'Financial transaction not found',
-          });
+          })
         }
 
         // Verify multi-tenant access
@@ -1720,13 +1720,13 @@ export const aestheticClinicRouter = router({
           throw new TRPCError({
             code: 'FORBIDDEN',
             message: 'Access denied to financial transaction',
-          });
+          })
         }
 
         const updatedTransaction = await aestheticRepository.updateFinancialTransaction(input.id, {
           ...input,
           updatedBy: ctx.userId,
-        });
+        })
 
         // Create audit trail
         await ctx.prisma.auditTrail.create({
@@ -1753,18 +1753,18 @@ export const aestheticClinicRouter = router({
               financialCompliant: true,
             }),
           },
-        });
+        })
 
         return {
           success: true,
           data: updatedTransaction,
-        };
+        }
       } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to update financial transaction',
           cause: error,
-        });
+        })
       }
     }),
 
@@ -1785,7 +1785,7 @@ export const aestheticClinicRouter = router({
           limit: input.limit || 20,
           offset: input.offset || 0,
           clinicId: ctx.clinicId,
-        });
+        })
 
         // Log list access
         await ctx.prisma.auditTrail.create({
@@ -1815,7 +1815,7 @@ export const aestheticClinicRouter = router({
               financialCompliant: true,
             }),
           },
-        });
+        })
 
         return {
           ...transactions,
@@ -1823,13 +1823,13 @@ export const aestheticClinicRouter = router({
             accessAuthorized: true,
             financialCompliant: true,
           },
-        };
+        }
       } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to list financial transactions',
           cause: error,
-        });
+        })
       }
     }),
 
@@ -1850,7 +1850,7 @@ export const aestheticClinicRouter = router({
           groupBy: input.groupBy || 'month',
           segmentBy: input.segmentBy,
           clinicId: ctx.clinicId,
-        });
+        })
 
         // Log analytics access
         await ctx.prisma.auditTrail.create({
@@ -1877,7 +1877,7 @@ export const aestheticClinicRouter = router({
               brazilianHealthcareStandards: true,
             }),
           },
-        });
+        })
 
         return {
           ...metrics,
@@ -1885,13 +1885,13 @@ export const aestheticClinicRouter = router({
             analyticsAuthorized: true,
             dataPrivacyCompliant: true,
           },
-        };
+        }
       } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to get client retention metrics',
           cause: error,
-        });
+        })
       }
     }),
 
@@ -1909,7 +1909,7 @@ export const aestheticClinicRouter = router({
           category: input.category,
           professionalId: input.professionalId,
           clinicId: ctx.clinicId,
-        });
+        })
 
         // Log analytics access
         await ctx.prisma.auditTrail.create({
@@ -1937,7 +1937,7 @@ export const aestheticClinicRouter = router({
               financialCompliant: true,
             }),
           },
-        });
+        })
 
         return {
           ...analytics,
@@ -1945,13 +1945,13 @@ export const aestheticClinicRouter = router({
             analyticsAuthorized: true,
             financialCompliant: true,
           },
-        };
+        }
       } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to get revenue analytics',
           cause: error,
-        });
+        })
       }
     }),
 
@@ -1966,7 +1966,7 @@ export const aestheticClinicRouter = router({
           clientId: input.clientId,
           modelType: input.modelType || 'retention',
           clinicId: ctx.clinicId,
-        });
+        })
 
         // Log analytics access
         await ctx.prisma.auditTrail.create({
@@ -1990,7 +1990,7 @@ export const aestheticClinicRouter = router({
               dataPrivacyCompliant: true,
             }),
           },
-        });
+        })
 
         return {
           ...analytics,
@@ -1999,47 +1999,47 @@ export const aestheticClinicRouter = router({
             aiCompliant: true,
             dataPrivacyCompliant: true,
           },
-        };
+        }
       } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to get predictive analytics',
           cause: error,
-        });
+        })
       }
     }),
-});
+})
 
 // Helper function for ANVISA compliance validation
 async function validateANVISACompliance(
   treatment: any,
   _ctx: any,
 ): Promise<{
-  compliant: boolean;
-  warnings: string[];
-  restrictions: string[];
+  compliant: boolean
+  warnings: string[]
+  restrictions: string[]
 }> {
-  const warnings: string[] = [];
-  const restrictions: string[] = [];
-  let compliant = true;
+  const warnings: string[] = []
+  const restrictions: string[] = []
+  let compliant = true
 
   // Check for ANVISA registration requirements
   if (treatment.procedureType === 'surgical' || treatment.procedureType === 'laser') {
     if (!treatment.anvisaRegistration) {
-      restrictions.push('ANVISA registration required for surgical/laser procedures');
-      compliant = false;
+      restrictions.push('ANVISA registration required for surgical/laser procedures')
+      compliant = false
     }
   }
 
   // Check for required safety documentation
   if (!treatment.aftercareInstructions || treatment.aftercareInstructions.length === 0) {
-    warnings.push('Missing aftercare instructions - ANVISA compliance concern');
+    warnings.push('Missing aftercare instructions - ANVISA compliance concern')
   }
 
   // Check for contraindication documentation
   if (!treatment.contraindications || treatment.contraindications.length === 0) {
-    warnings.push('Missing contraindication documentation - ANVISA compliance concern');
+    warnings.push('Missing contraindication documentation - ANVISA compliance concern')
   }
 
-  return { compliant, warnings, restrictions };
+  return { compliant, warnings, restrictions }
 }

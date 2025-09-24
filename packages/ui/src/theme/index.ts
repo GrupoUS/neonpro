@@ -1,4 +1,4 @@
-export * from './ThemeContext';
+export * from './ThemeContext'
 
 // New York Theme from TweakCN - Enhanced for NeonPro Aesthetic Clinic
 const themeCss = `:root {
@@ -178,18 +178,18 @@ const themeCss = `:root {
   --shadow-xl: var(--shadow-xl);
   --shadow-2xl: var(--shadow-2xl);
 }
-`;
+`
 
 // Export the CSS and a small helper to inject it into the document head if desired.
-export { themeCss };
+export { themeCss }
 export function installThemeStyles(target?: Document) {
-  if (typeof document === 'undefined') {return;}
-  const head = (target ?? document).head;
-  if (!head) {return;}
+  if (typeof document === 'undefined') return
+  const head = (target ?? document).head
+  if (!head) return
   // avoid duplicate injection
-  if (head.querySelector('style[data-neonpro-theme]')) {return;}
-  const style = document.createElement('style');
-  style.setAttribute('data-neonpro-theme', 'true');
-  style.textContent = themeCss;
-  head.appendChild(style);
+  if (head.querySelector('style[data-neonpro-theme]')) return
+  const style = document.createElement('style')
+  style.setAttribute('data-neonpro-theme', 'true')
+  style.textContent = themeCss
+  head.appendChild(style)
 }

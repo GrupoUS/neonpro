@@ -422,22 +422,22 @@ TEST_DATA:
 ### Basic Event Creation (TypeScript)
 
 ```typescript
-import { google } from 'googleapis';
+import { google } from 'googleapis'
 
 export class GoogleCalendarService {
-  private calendar: google.calendar_v3.Calendar;
+  private calendar: google.calendar_v3.Calendar
 
   constructor(auth: any) {
-    this.calendar = google.calendar({ version: 'v3', auth });
+    this.calendar = google.calendar({ version: 'v3', auth })
   }
 
   async createEvent(eventData: {
-    summary: string;
-    start: Date;
-    end: Date;
-    description?: string;
-    attendees?: string[];
-    location?: string;
+    summary: string
+    start: Date
+    end: Date
+    description?: string
+    attendees?: string[]
+    location?: string
   }) {
     const event = {
       summary: eventData.summary,
@@ -451,18 +451,18 @@ export class GoogleCalendarService {
         dateTime: eventData.end.toISOString(),
         timeZone: 'America/Sao_Paulo',
       },
-      attendees: eventData.attendees?.map(email => ({ email })),
-    };
+      attendees: eventData.attendees?.map((email) => ({ email })),
+    }
 
     try {
       const response = await this.calendar.events.insert({
         calendarId: 'primary',
         requestBody: event,
-      });
-      return response.data;
+      })
+      return response.data
     } catch (error) {
-      console.error('Error creating event:', error);
-      throw error;
+      console.error('Error creating event:', error)
+      throw error
     }
   }
 }
@@ -472,8 +472,8 @@ export class GoogleCalendarService {
 
 ```typescript
 export class CalendarSyncService {
-  private syncToken: string | null = null;
-  private readonly calendar: google.calendar_v3.Calendar;
+  private syncToken: string | null = null
+  private readonly calendar: google.calendar_v3.Calendar
 
   async performIncrementalSync() {
     try {
@@ -482,51 +482,51 @@ export class CalendarSyncService {
         syncToken: this.syncToken || undefined,
         singleEvents: true,
         orderBy: 'startTime',
-      });
+      })
 
-      const response = await this.executeWithRetry(request);
+      const response = await this.executeWithRetry(request)
 
       // Process events
       for (const event of response.data.items || []) {
-        await this.processEvent(event);
+        await this.processEvent(event)
       }
 
       // Update sync token
-      this.syncToken = response.data.nextSyncToken;
-      await this.saveSyncToken(this.syncToken);
+      this.syncToken = response.data.nextSyncToken
+      await this.saveSyncToken(this.syncToken)
 
-      return response.data.items?.length || 0;
+      return response.data.items?.length || 0
     } catch (error: any) {
       if (error.code === 410) {
         // Sync token expired, perform full sync
-        return this.performFullSync();
+        return this.performFullSync()
       }
-      throw error;
+      throw error
     }
   }
 
   private async executeWithRetry(request: any, maxRetries = 3) {
-    let lastError: any;
+    let lastError: any
 
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
       try {
-        return await request;
+        return await request
       } catch (error: any) {
-        lastError = error;
+        lastError = error
 
         if (error.code === 429 || error.code === 403) {
           // Rate limited, implement exponential backoff
-          const delay = Math.pow(2, attempt) * 1000;
-          await new Promise(resolve => setTimeout(resolve, delay));
-          continue;
+          const delay = Math.pow(2, attempt) * 1000
+          await new Promise((resolve) => setTimeout(resolve, delay))
+          continue
         }
 
         // Non-retryable error
-        throw error;
+        throw error
       }
     }
 
-    throw lastError;
+    throw lastError
   }
 }
 ```

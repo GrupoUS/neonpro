@@ -3,15 +3,15 @@
  * Extends test setup with AI-specific logging configurations
  */
 
-import { vi } from 'vitest';
+import { vi } from 'vitest'
 
 // Mock console methods globally for all AI service tests
-const mockConsoleLog = vi.spyOn(console, 'log').mockImplementation(() => {});
+const mockConsoleLog = vi.spyOn(console, 'log').mockImplementation(() => {})
 const mockConsoleError = vi
   .spyOn(console, 'error')
-  .mockImplementation(() => {});
-const mockConsoleWarn = vi.spyOn(console, 'warn').mockImplementation(() => {});
-const mockConsoleInfo = vi.spyOn(console, 'info').mockImplementation(() => {});
+  .mockImplementation(() => {})
+const mockConsoleWarn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+const mockConsoleInfo = vi.spyOn(console, 'info').mockImplementation(() => {})
 
 // Store original console methods for restoration
 const originalConsole = {
@@ -19,19 +19,19 @@ const originalConsole = {
   error: console.error,
   warn: console.warn,
   info: console.info,
-};
+}
 
 // Test environment setup
 export const setupAIServiceLoggingTests = () => {
   // Clear all mock calls before each test
   beforeEach(() => {
-    vi.clearAllMocks();
-  });
+    vi.clearAllMocks()
+  })
 
   // Restore original console methods after all tests
   afterEach(() => {
-    vi.restoreAllMocks();
-  });
+    vi.restoreAllMocks()
+  })
 
   return {
     mockConsoleLog,
@@ -39,8 +39,8 @@ export const setupAIServiceLoggingTests = () => {
     mockConsoleWarn,
     mockConsoleInfo,
     originalConsole,
-  };
-};
+  }
+}
 
 // AI-specific test utilities
 export const aiTestUtils = {
@@ -58,13 +58,13 @@ export const aiTestUtils = {
       'anthropic',
       'openai',
       'google',
-    ];
+    ]
 
-    return output.some(log =>
-      apiKeyPatterns.some(pattern =>
+    return output.some((log) =>
+      apiKeyPatterns.some((pattern) =>
         JSON.stringify(log).toLowerCase().includes(pattern.toLowerCase())
       )
-    );
+    )
   },
 
   // Check for patient data in AI prompts/responses
@@ -96,13 +96,13 @@ export const aiTestUtils = {
       'heart rate',
       'temperature',
       'oxygen saturation',
-    ];
+    ]
 
-    return output.some(log =>
-      patientDataPatterns.some(pattern =>
+    return output.some((log) =>
+      patientDataPatterns.some((pattern) =>
         JSON.stringify(log).toLowerCase().includes(pattern.toLowerCase())
       )
-    );
+    )
   },
 
   // Check for AI model configuration exposure
@@ -119,13 +119,13 @@ export const aiTestUtils = {
       'top_p_test',
       'frequency_penalty_test',
       'presence_penalty_test',
-    ];
+    ]
 
-    return output.some(log =>
-      configPatterns.some(pattern =>
+    return output.some((log) =>
+      configPatterns.some((pattern) =>
         JSON.stringify(log).toLowerCase().includes(pattern.toLowerCase())
       )
-    );
+    )
   },
 
   // Check for AI billing/cost information
@@ -143,13 +143,13 @@ export const aiTestUtils = {
       'dollars',
       'usd',
       'credits',
-    ];
+    ]
 
-    return output.some(log =>
-      billingPatterns.some(pattern =>
+    return output.some((log) =>
+      billingPatterns.some((pattern) =>
         JSON.stringify(log).toLowerCase().includes(pattern.toLowerCase())
       )
-    );
+    )
   },
 
   // Check for AI performance metrics
@@ -166,13 +166,13 @@ export const aiTestUtils = {
       'classification',
       'model_version',
       'deploy_id',
-    ];
+    ]
 
-    return output.some(log =>
-      metricPatterns.some(pattern =>
+    return output.some((log) =>
+      metricPatterns.some((pattern) =>
         JSON.stringify(log).toLowerCase().includes(pattern.toLowerCase())
       )
-    );
+    )
   },
 
   // Check for structured AI logging
@@ -186,12 +186,12 @@ export const aiTestUtils = {
       'cost',
       'success',
       'metadata',
-    ];
+    ]
 
-    return output.some(call => {
-      const logStr = JSON.stringify(call);
-      return requiredFields.some(field => logStr.includes(field));
-    });
+    return output.some((call) => {
+      const logStr = JSON.stringify(call)
+      return requiredFields.some((field) => logStr.includes(field))
+    })
   },
 
   // Check for AI service integration details
@@ -207,13 +207,13 @@ export const aiTestUtils = {
       'adapter',
       'service_url',
       'api_endpoint',
-    ];
+    ]
 
-    return output.some(log =>
-      integrationPatterns.some(pattern =>
+    return output.some((log) =>
+      integrationPatterns.some((pattern) =>
         JSON.stringify(log).toLowerCase().includes(pattern.toLowerCase())
       )
-    );
+    )
   },
 
   getConsoleOutput: () => ({
@@ -224,9 +224,9 @@ export const aiTestUtils = {
   }),
 
   resetConsoleMocks: () => {
-    mockConsoleLog.mockReset();
-    mockConsoleError.mockReset();
-    mockConsoleWarn.mockReset();
-    mockConsoleInfo.mockReset();
+    mockConsoleLog.mockReset()
+    mockConsoleError.mockReset()
+    mockConsoleWarn.mockReset()
+    mockConsoleInfo.mockReset()
   },
-};
+}

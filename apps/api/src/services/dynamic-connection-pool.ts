@@ -13,7 +13,7 @@
  * @compliance LGPD, ANVISA, CFM, ISO 27001
  */
 
-import { PoolManager } from '../clients/prisma';
+import { PoolManager } from '../clients/prisma'
 
 // Configuration validation schemas
 const PoolConfigSchema = z.object({
@@ -36,43 +36,43 @@ const PoolConfigSchema = z.object({
   maxScalingEventsPerHour: z.number().min(1).max(20).default(10),
   minScalingStepSize: z.number().min(1).max(20).default(5),
   maxScalingStepSize: z.number().min(5).max(50).default(25),
-});
+})
 
-export type PoolConfig = z.infer<typeof PoolConfigSchema>;
+export type PoolConfig = z.infer<typeof PoolConfigSchema>
 
 // Pool performance metrics
 export interface PoolPerformanceMetrics {
-  timestamp: Date;
-  totalConnections: number;
-  activeConnections: number;
-  idleConnections: number;
-  waitingConnections: number;
-  utilizationRate: number;
-  averageWaitTime: number;
-  averageQueryTime: number;
-  throughput: number; // queries per second
-  errorRate: number;
-  healthScore: number; // 0-100
-  scalingEvents: number;
+  timestamp: Date
+  totalConnections: number
+  activeConnections: number
+  idleConnections: number
+  waitingConnections: number
+  utilizationRate: number
+  averageWaitTime: number
+  averageQueryTime: number
+  throughput: number // queries per second
+  errorRate: number
+  healthScore: number // 0-100
+  scalingEvents: number
   lastScalingEvent?: {
-    type: 'scale_up' | 'scale_down';
-    timestamp: Date;
-    oldSize: number;
-    newSize: number;
-    reason: string;
-  };
+    type: 'scale_up' | 'scale_down'
+    timestamp: Date
+    oldSize: number
+    newSize: number
+    reason: string
+  }
 }
 
 // Scaling thresholds and policies
 export interface ScalingPolicy {
-  scaleUpThreshold: number; // utilization percentage
-  scaleDownThreshold: number; // utilization percentage
-  criticalThreshold: number; // utilization percentage
-  scaleUpStepSize: number;
-  scaleDownStepSize: number;
-  cooldownPeriod: number; // milliseconds
-  maxEventsPerHour: number;
-  predictiveMode: boolean;
+  scaleUpThreshold: number // utilization percentage
+  scaleDownThreshold: number // utilization percentage
+  criticalThreshold: number // utilization percentage
+  scaleUpStepSize: number
+  scaleDownStepSize: number
+  cooldownPeriod: number // milliseconds
+  maxEventsPerHour: number
+  predictiveMode: boolean
 }
 
 // Healthcare workload patterns
@@ -112,83 +112,83 @@ export const HealthcareWorkloadPatterns = {
     description: 'Emergency surge capacity',
     scalingPriority: 'critical',
   },
-};
+}
 
 // Scaling event types
 export type ScalingEventType =
   | 'scale_up'
   | 'scale_down'
   | 'predictive_scale_up'
-  | 'emergency_scale_up';
+  | 'emergency_scale_up'
 
 export interface ScalingEvent {
-  id: string;
-  type: ScalingEventType;
-  timestamp: Date;
-  oldSize: number;
-  newSize: number;
-  reason: string;
-  healthcareContext: string;
-  metrics: PoolPerformanceMetrics;
-  success: boolean;
-  rollbackAvailable: boolean;
+  id: string
+  type: ScalingEventType
+  timestamp: Date
+  oldSize: number
+  newSize: number
+  reason: string
+  healthcareContext: string
+  metrics: PoolPerformanceMetrics
+  success: boolean
+  rollbackAvailable: boolean
 }
 
 // Alert types
 export interface PoolAlert {
-  id: string;
-  type: 'warning' | 'critical' | 'info';
-  category: 'performance' | 'scaling' | 'health' | 'security';
-  message: string;
-  timestamp: Date;
-  metrics: PoolPerformanceMetrics;
-  healthcareImpact: string;
-  actionRequired: boolean;
-  autoResolve: boolean;
+  id: string
+  type: 'warning' | 'critical' | 'info'
+  category: 'performance' | 'scaling' | 'health' | 'security'
+  message: string
+  timestamp: Date
+  metrics: PoolPerformanceMetrics
+  healthcareImpact: string
+  actionRequired: boolean
+  autoResolve: boolean
 }
 
 /**
  * Dynamic Connection Pool Service with Auto-scaling
  */
 export class DynamicConnectionPoolService {
-  private pool: PoolManager;
-  private config: PoolConfig;
-  private currentScalingConfig: { min: number; max: number };
-  private metrics: PoolPerformanceMetrics;
-  private scalingHistory: ScalingEvent[] = [];
-  private alerts: PoolAlert[] = [];
-  private scalingCooldown: Map<string, Date> = new Map();
-  private hourlyScalingEvents: number = 0;
-  private lastHourReset: Date = new Date();
-  private monitoringTimer?: NodeJS.Timeout;
-  private predictiveScalingTimer?: NodeJS.Timeout;
-  private healthCheckTimer?: NodeJS.Timeout;
-  private alertCallbacks: ((alert: PoolAlert) => void)[] = [];
-  private emergencyMode = false;
-  private gracefulDegradationActive = false;
+  private pool: PoolManager
+  private config: PoolConfig
+  private currentScalingConfig: { min: number; max: number }
+  private metrics: PoolPerformanceMetrics
+  private scalingHistory: ScalingEvent[] = []
+  private alerts: PoolAlert[] = []
+  private scalingCooldown: Map<string, Date> = new Map()
+  private hourlyScalingEvents: number = 0
+  private lastHourReset: Date = new Date()
+  private monitoringTimer?: NodeJS.Timeout
+  private predictiveScalingTimer?: NodeJS.Timeout
+  private healthCheckTimer?: NodeJS.Timeout
+  private alertCallbacks: ((alert: PoolAlert) => void)[] = []
+  private emergencyMode = false
+  private gracefulDegradationActive = false
 
   constructor(config: PoolConfig) {
     // Validate configuration
-    this.config = PoolConfigSchema.parse(config);
+    this.config = PoolConfigSchema.parse(config)
 
     // Initialize pool with initial config
     this.pool = new PoolManager({
       connectionLimit: this.config.max,
       poolTimeout: this.config.acquireTimeoutMillis,
       logStatements: process.env.NODE_ENV === 'development',
-    });
+    })
 
     this.currentScalingConfig = {
       min: this.config.min,
       max: this.config.max,
-    };
+    }
 
-    this.metrics = this.initializeMetrics();
+    this.metrics = this.initializeMetrics()
 
     // Start monitoring services
-    this.startMonitoring();
-    this.startPredictiveScaling();
-    this.startHealthChecks();
+    this.startMonitoring()
+    this.startPredictiveScaling()
+    this.startHealthChecks()
   }
 
   /**
@@ -197,7 +197,7 @@ export class DynamicConnectionPoolService {
   async getMetrics(): Promise<PoolPerformanceMetrics> {
     try {
       // Get actual metrics from pool
-      const poolStats = await this.getActualPoolMetrics();
+      const poolStats = await this.getActualPoolMetrics()
 
       // Update our metrics
       this.metrics = {
@@ -205,13 +205,13 @@ export class DynamicConnectionPoolService {
         ...poolStats,
         timestamp: new Date(),
         healthScore: this.calculateHealthScore(poolStats),
-      };
+      }
 
-      return { ...this.metrics };
+      return { ...this.metrics }
     } catch {
       // Error caught but not used - handled by surrounding logic
-      console.error('[Dynamic Pool] Error getting metrics:', error);
-      return this.metrics;
+      console.error('[Dynamic Pool] Error getting metrics:', error)
+      return this.metrics
     }
   }
 
@@ -222,61 +222,61 @@ export class DynamicConnectionPoolService {
     _query: string,
     params: any[] = [],
     options: {
-      priority?: 'high' | 'normal' | 'low';
-      timeout?: number;
-      retryCount?: number;
-      healthcareContext?: string;
+      priority?: 'high' | 'normal' | 'low'
+      timeout?: number
+      retryCount?: number
+      healthcareContext?: string
     } = {},
   ): Promise<{
-    data?: T;
-    success: boolean;
-    error?: string;
-    executionTime: number;
+    data?: T
+    success: boolean
+    error?: string
+    executionTime: number
   }> {
-    const startTime = Date.now();
+    const startTime = Date.now()
 
     try {
       // Check if we need to scale up
       if (this.config.enableAutoScaling && (await this.shouldScaleUp())) {
-        await this.scaleUp('High query load detected');
+        await this.scaleUp('High query load detected')
       }
 
       // Execute query with timeout
       const result = await this.withTimeout(
         this.pool.query(query, params),
         options.timeout || this.config.acquireTimeoutMillis,
-      );
+      )
 
-      const executionTime = Date.now() - startTime;
+      const executionTime = Date.now() - startTime
 
       // Update metrics
-      await this.updateQueryMetrics(executionTime, true);
+      await this.updateQueryMetrics(executionTime, true)
 
       return {
         data: result,
         success: true,
         executionTime,
-      };
+      }
     } catch {
       // Error caught but not used - handled by surrounding logic
-      const executionTime = Date.now() - startTime;
+      const executionTime = Date.now() - startTime
 
       // Update metrics
-      await this.updateQueryMetrics(executionTime, false);
+      await this.updateQueryMetrics(executionTime, false)
 
       // Handle errors based on configuration
       if (
         this.config.enableGracefulDegradation
         && (await this.shouldDegrade())
       ) {
-        return this.handleGracefulDegradation(query, params, executionTime);
+        return this.handleGracefulDegradation(query, params, executionTime)
       }
 
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
         executionTime,
-      };
+      }
     }
   }
 
@@ -284,15 +284,15 @@ export class DynamicConnectionPoolService {
    * Check if scaling is needed and perform auto-scaling
    */
   private async shouldScaleUp(): Promise<boolean> {
-    if (!this.config.enableAutoScaling) return false;
-    if (this.emergencyMode) return false;
-    if (this.isInCooldown('scale_up')) return false;
+    if (!this.config.enableAutoScaling) return false
+    if (this.emergencyMode) return false
+    if (this.isInCooldown('scale_up')) return false
     if (this.hourlyScalingEvents >= this.config.maxScalingEventsPerHour) {
-      return false;
+      return false
     }
 
-    const metrics = await this.getMetrics();
-    const policy = this.getCurrentScalingPolicy();
+    const metrics = await this.getMetrics()
+    const policy = this.getCurrentScalingPolicy()
 
     // Check various scaling conditions
     return (
@@ -300,26 +300,26 @@ export class DynamicConnectionPoolService {
       || metrics.averageWaitTime > 1000 // 1 second
       || metrics.waitingConnections > 3
       || metrics.healthScore < 60
-    );
+    )
   }
 
   /**
    * Check if scale down is needed
    */
   private async shouldScaleDown(): Promise<boolean> {
-    if (!this.config.enableAutoScaling) return false;
-    if (this.emergencyMode) return false;
-    if (this.isInCooldown('scale_down')) return false;
+    if (!this.config.enableAutoScaling) return false
+    if (this.emergencyMode) return false
+    if (this.isInCooldown('scale_down')) return false
 
-    const metrics = await this.getMetrics();
-    const policy = this.getCurrentScalingPolicy();
+    const metrics = await this.getMetrics()
+    const policy = this.getCurrentScalingPolicy()
 
     return (
       metrics.utilizationRate < policy.scaleDownThreshold
       && metrics.averageWaitTime < 100
       && metrics.waitingConnections === 0
       && this.currentScalingConfig.max > this.config.min * 2
-    );
+    )
   }
 
   /**
@@ -329,33 +329,33 @@ export class DynamicConnectionPoolService {
     reason: string,
     isEmergency: boolean = false,
   ): Promise<void> {
-    const metrics = await this.getMetrics();
-    const oldSize = this.currentScalingConfig.max;
+    const metrics = await this.getMetrics()
+    const oldSize = this.currentScalingConfig.max
 
     // Calculate new size
-    let newSize: number;
+    let newSize: number
     if (isEmergency || this.emergencyMode) {
       newSize = Math.min(
         oldSize + this.config.maxScalingStepSize,
         this.config.max * 1.5, // Emergency 50% headroom
-      );
+      )
     } else {
       newSize = Math.min(
         oldSize + this.config.minScalingStepSize,
         this.config.max,
-      );
+      )
     }
 
-    if (newSize <= oldSize) return;
+    if (newSize <= oldSize) return
 
     try {
       // Apply scaling
       await this.pool.setPoolOptions({
         connectionLimit: newSize,
         poolTimeout: this.config.acquireTimeoutMillis,
-      });
+      })
 
-      this.currentScalingConfig.max = newSize;
+      this.currentScalingConfig.max = newSize
 
       // Record scaling event
       const event: ScalingEvent = {
@@ -369,18 +369,18 @@ export class DynamicConnectionPoolService {
         metrics,
         success: true,
         rollbackAvailable: true,
-      };
+      }
 
-      this.scalingHistory.push(event);
+      this.scalingHistory.push(event)
       this.scalingCooldown.set(
         'scale_up',
         new Date(Date.now() + this.config.scalingCooldownPeriod),
-      );
-      this.hourlyScalingEvents++;
+      )
+      this.hourlyScalingEvents++
 
       console.log(
         `[Dynamic Pool] Scaled up: ${oldSize} -> ${newSize} (${reason})`,
-      );
+      )
 
       // Create alert
       this.createAlert({
@@ -390,10 +390,10 @@ export class DynamicConnectionPoolService {
         healthcareImpact: 'Improved database access performance',
         actionRequired: false,
         autoResolve: true,
-      });
+      })
     } catch {
       // Error caught but not used - handled by surrounding logic
-      console.error('[Dynamic Pool] Scale up failed:', error);
+      console.error('[Dynamic Pool] Scale up failed:', error)
 
       // Create error alert
       this.createAlert({
@@ -403,7 +403,7 @@ export class DynamicConnectionPoolService {
         healthcareImpact: 'Database performance may be degraded',
         actionRequired: true,
         autoResolve: false,
-      });
+      })
     }
   }
 
@@ -411,25 +411,25 @@ export class DynamicConnectionPoolService {
    * Scale down connection pool
    */
   private async scaleDown(reason: string): Promise<void> {
-    const metrics = await this.getMetrics();
-    const oldSize = this.currentScalingConfig.max;
+    const metrics = await this.getMetrics()
+    const oldSize = this.currentScalingConfig.max
 
     // Calculate new size
     const newSize = Math.max(
       oldSize - this.config.minScalingStepSize,
       Math.max(this.config.min, this.config.max * 0.5), // Don't go below 50% of max
-    );
+    )
 
-    if (newSize >= oldSize) return;
+    if (newSize >= oldSize) return
 
     try {
       // Apply scaling
       await this.pool.setPoolOptions({
         connectionLimit: newSize,
         poolTimeout: this.config.acquireTimeoutMillis,
-      });
+      })
 
-      this.currentScalingConfig.max = newSize;
+      this.currentScalingConfig.max = newSize
 
       // Record scaling event
       const event: ScalingEvent = {
@@ -443,20 +443,20 @@ export class DynamicConnectionPoolService {
         metrics,
         success: true,
         rollbackAvailable: true,
-      };
+      }
 
-      this.scalingHistory.push(event);
+      this.scalingHistory.push(event)
       this.scalingCooldown.set(
         'scale_down',
         new Date(Date.now() + this.config.scalingCooldownPeriod),
-      );
+      )
 
       console.log(
         `[Dynamic Pool] Scaled down: ${oldSize} -> ${newSize} (${reason})`,
-      );
+      )
     } catch {
       // Error caught but not used - handled by surrounding logic
-      console.error('[Dynamic Pool] Scale down failed:', error);
+      console.error('[Dynamic Pool] Scale down failed:', error)
     }
   }
 
@@ -464,41 +464,41 @@ export class DynamicConnectionPoolService {
    * Predictive scaling based on healthcare patterns
    */
   private async performPredictiveScaling(): Promise<void> {
-    if (!this.config.enablePredictiveScaling) return;
+    if (!this.config.enablePredictiveScaling) return
 
-    const _now = new Date();
-    void _now;
-    const currentPattern = this.getCurrentHealthcarePattern();
+    const _now = new Date()
+    void _now
+    const currentPattern = this.getCurrentHealthcarePattern()
 
     if (currentPattern.scalingPriority === 'high') {
       // Predict high load and scale proactively
       const recommendedSize = Math.ceil(
         this.config.max * currentPattern.multiplier,
-      );
+      )
 
       if (recommendedSize > this.currentScalingConfig.max) {
         await this.scaleUp(
           `Predictive scaling for ${currentPattern.description}`,
-        );
+        )
       }
     }
 
     // Schedule next predictive check
-    this.scheduleNextPredictiveCheck();
+    this.scheduleNextPredictiveCheck()
   }
 
   /**
    * Get current healthcare workload pattern
    */
   private getCurrentHealthcarePattern(): any {
-    const now = new Date();
-    const hour = now.getHours();
-    const day = now.getDay();
-    const isWeekend = day === 0 || day === 6;
+    const now = new Date()
+    const hour = now.getHours()
+    const day = now.getDay()
+    const isWeekend = day === 0 || day === 6
 
     // Check for emergency mode (could be triggered by external events)
     if (this.emergencyMode) {
-      return HealthcareWorkloadPatterns.emergencyPeriods;
+      return HealthcareWorkloadPatterns.emergencyPeriods
     }
 
     // Check time-based patterns
@@ -507,7 +507,7 @@ export class DynamicConnectionPoolService {
       && hour >= HealthcareWorkloadPatterns.peakClinicalHours.start
       && hour <= HealthcareWorkloadPatterns.peakClinicalHours.end
     ) {
-      return HealthcareWorkloadPatterns.peakClinicalHours;
+      return HealthcareWorkloadPatterns.peakClinicalHours
     }
 
     if (
@@ -515,18 +515,18 @@ export class DynamicConnectionPoolService {
       && hour >= HealthcareWorkloadPatterns.lunchLull.start
       && hour <= HealthcareWorkloadPatterns.lunchLull.end
     ) {
-      return HealthcareWorkloadPatterns.lunchLull;
+      return HealthcareWorkloadPatterns.lunchLull
     }
 
     if (isWeekend) {
-      return HealthcareWorkloadPatterns.weekends;
+      return HealthcareWorkloadPatterns.weekends
     }
 
     if (
       hour >= HealthcareWorkloadPatterns.afterHours.start
       || hour <= HealthcareWorkloadPatterns.afterHours.end
     ) {
-      return HealthcareWorkloadPatterns.afterHours;
+      return HealthcareWorkloadPatterns.afterHours
     }
 
     // Default normal operation
@@ -534,18 +534,18 @@ export class DynamicConnectionPoolService {
       multiplier: 1.0,
       description: 'Normal clinical operations',
       scalingPriority: 'normal',
-    };
+    }
   }
 
   /**
    * Emergency scaling for critical situations
    */
   async enableEmergencyMode(reason: string): Promise<void> {
-    this.emergencyMode = true;
-    console.log(`[Dynamic Pool] Emergency mode activated: ${reason}`);
+    this.emergencyMode = true
+    console.log(`[Dynamic Pool] Emergency mode activated: ${reason}`)
 
     // Scale to maximum capacity
-    await this.scaleUp('Emergency mode activation', true);
+    await this.scaleUp('Emergency mode activation', true)
 
     // Create critical alert
     this.createAlert({
@@ -555,17 +555,17 @@ export class DynamicConnectionPoolService {
       healthcareImpact: 'Maximum database capacity allocated',
       actionRequired: true,
       autoResolve: false,
-    });
+    })
   }
 
   async disableEmergencyMode(): Promise<void> {
-    this.emergencyMode = false;
-    console.log('[Dynamic Pool] Emergency mode deactivated');
+    this.emergencyMode = false
+    console.log('[Dynamic Pool] Emergency mode deactivated')
 
     // Gradually scale back to normal
     setTimeout(async () => {
-      await this.shouldScaleDown();
-    }, 300000); // Wait 5 minutes before scaling down
+      await this.shouldScaleDown()
+    }, 300000) // Wait 5 minutes before scaling down
   }
 
   /**
@@ -576,42 +576,42 @@ export class DynamicConnectionPoolService {
     params: any[],
     originalExecutionTime: number,
   ): Promise<{
-    data?: T;
-    success: boolean;
-    error?: string;
-    executionTime: number;
+    data?: T
+    success: boolean
+    error?: string
+    executionTime: number
   }> {
-    this.gracefulDegradationActive = true;
+    this.gracefulDegradationActive = true
 
     try {
       // Try again with lower priority
       const result = await this.withTimeout(
         this.pool.query(query, params),
         this.config.acquireTimeoutMillis * 2, // Double timeout for retry
-      );
+      )
 
-      const executionTime = Date.now() - originalExecutionTime;
+      const executionTime = Date.now() - originalExecutionTime
 
       return {
         data: result,
         success: true,
         executionTime,
-      };
+      }
     } catch {
       // Log and degrade gracefully
       logger?.warn?.('Dynamic connection pool - degraded path failed', {
         message: error instanceof Error ? error.message : String(error),
-      });
-      const executionTime = Date.now() - originalExecutionTime;
+      })
+      const executionTime = Date.now() - originalExecutionTime
 
       // Return cached result or error
       return {
         success: false,
         error: 'Service temporarily unavailable due to high load',
         executionTime,
-      };
+      }
     } finally {
-      this.gracefulDegradationActive = false;
+      this.gracefulDegradationActive = false
     }
   }
 
@@ -619,12 +619,12 @@ export class DynamicConnectionPoolService {
    * Check if graceful degradation should be activated
    */
   private async shouldDegrade(): Promise<boolean> {
-    const metrics = await this.getMetrics();
+    const metrics = await this.getMetrics()
     return (
       metrics.utilizationRate > 95
       || metrics.healthScore < 40
       || this.emergencyMode
-    );
+    )
   }
 
   /**
@@ -633,14 +633,14 @@ export class DynamicConnectionPoolService {
   private startMonitoring(): void {
     this.monitoringTimer = setInterval(async () => {
       try {
-        await this.checkScalingConditions();
-        await this.cleanupOldEvents();
-        await this.resetHourlyCounters();
+        await this.checkScalingConditions()
+        await this.cleanupOldEvents()
+        await this.resetHourlyCounters()
       } catch {
         // Error caught but not used - handled by surrounding logic
-        console.error('[Dynamic Pool] Monitoring error:', error);
+        console.error('[Dynamic Pool] Monitoring error:', error)
       }
-    }, this.config.healthCheckInterval);
+    }, this.config.healthCheckInterval)
   }
 
   /**
@@ -648,12 +648,12 @@ export class DynamicConnectionPoolService {
    */
   private startPredictiveScaling(): void {
     // Perform initial predictive scaling
-    setTimeout(() => this.performPredictiveScaling(), 5000);
+    setTimeout(() => this.performPredictiveScaling(), 5000)
 
     // Schedule regular predictive checks
     this.predictiveScalingTimer = setInterval(() => {
-      this.performPredictiveScaling();
-    }, 900000); // Every 15 minutes
+      this.performPredictiveScaling()
+    }, 900000) // Every 15 minutes
   }
 
   /**
@@ -662,12 +662,12 @@ export class DynamicConnectionPoolService {
   private startHealthChecks(): void {
     this.healthCheckTimer = setInterval(async () => {
       try {
-        await this.performHealthCheck();
+        await this.performHealthCheck()
       } catch {
         // Error caught but not used - handled by surrounding logic
-        console.error('[Dynamic Pool] Health check error:', error);
+        console.error('[Dynamic Pool] Health check error:', error)
       }
-    }, 60000); // Every minute
+    }, 60000) // Every minute
   }
 
   /**
@@ -675,9 +675,9 @@ export class DynamicConnectionPoolService {
    */
   private async checkScalingConditions(): Promise<void> {
     if (await this.shouldScaleUp()) {
-      await this.scaleUp('High utilization detected');
+      await this.scaleUp('High utilization detected')
     } else if (await this.shouldScaleDown()) {
-      await this.scaleDown('Low utilization detected');
+      await this.scaleDown('Low utilization detected')
     }
   }
 
@@ -685,11 +685,11 @@ export class DynamicConnectionPoolService {
    * Perform comprehensive health check
    */
   private async performHealthCheck(): Promise<void> {
-    const metrics = await this.getMetrics();
+    const metrics = await this.getMetrics()
 
     // Check for critical conditions
     if (metrics.healthScore < 30) {
-      await this.enableEmergencyMode('Critical health score detected');
+      await this.enableEmergencyMode('Critical health score detected')
     }
 
     // Check for performance degradation
@@ -702,7 +702,7 @@ export class DynamicConnectionPoolService {
         healthcareImpact: 'Database operations experiencing high failure rates',
         actionRequired: true,
         autoResolve: false,
-      });
+      })
     }
 
     // Monitor scaling frequency
@@ -714,7 +714,7 @@ export class DynamicConnectionPoolService {
         healthcareImpact: 'Pool stability may be compromised',
         actionRequired: true,
         autoResolve: false,
-      });
+      })
     }
   }
 
@@ -733,7 +733,7 @@ export class DynamicConnectionPoolService {
       errorRate: 0,
       healthScore: 100,
       scalingEvents: 0,
-    };
+    }
   }
 
   private async getActualPoolMetrics(): Promise<
@@ -752,30 +752,30 @@ export class DynamicConnectionPoolService {
       averageWaitTime: Math.random() * 200,
       averageQueryTime: Math.random() * 100 + 50,
       errorRate: Math.random() * 0.02,
-    };
+    }
   }
 
   private calculateHealthScore(
     metrics: Partial<PoolPerformanceMetrics>,
   ): number {
-    let score = 100;
+    let score = 100
 
     // Penalize high utilization
-    if (metrics.utilizationRate! > 90) score -= 30;
-    else if (metrics.utilizationRate! > 80) score -= 15;
+    if (metrics.utilizationRate! > 90) score -= 30
+    else if (metrics.utilizationRate! > 80) score -= 15
 
     // Penalize waiting connections
-    if (metrics.waitingConnections! > 3) score -= 20;
-    else if (metrics.waitingConnections! > 1) score -= 10;
+    if (metrics.waitingConnections! > 3) score -= 20
+    else if (metrics.waitingConnections! > 1) score -= 10
 
     // Penalize high wait times
-    if (metrics.averageWaitTime! > 1000) score -= 25;
-    else if (metrics.averageWaitTime! > 500) score -= 10;
+    if (metrics.averageWaitTime! > 1000) score -= 25
+    else if (metrics.averageWaitTime! > 500) score -= 10
 
     // Penalize high error rates
-    score -= metrics.errorRate! * 100;
+    score -= metrics.errorRate! * 100
 
-    return Math.max(0, score);
+    return Math.max(0, score)
   }
 
   private async updateQueryMetrics(
@@ -792,11 +792,11 @@ export class DynamicConnectionPoolService {
       new Promise<never>((_, reject) =>
         setTimeout(() => reject(new Error('Query timeout')), timeoutMs)
       ),
-    ]);
+    ])
   }
 
   private getCurrentScalingPolicy(): ScalingPolicy {
-    const pattern = this.getCurrentHealthcarePattern();
+    const pattern = this.getCurrentHealthcarePattern()
 
     return {
       scaleUpThreshold: pattern.scalingPriority === 'high' ? 70 : 80,
@@ -807,57 +807,57 @@ export class DynamicConnectionPoolService {
       cooldownPeriod: this.config.scalingCooldownPeriod,
       maxEventsPerHour: this.config.maxScalingEventsPerHour,
       predictiveMode: this.config.enablePredictiveScaling,
-    };
+    }
   }
 
   private isInCooldown(action: string): boolean {
-    const cooldown = this.scalingCooldown.get(action);
-    return cooldown ? cooldown > new Date() : false;
+    const cooldown = this.scalingCooldown.get(action)
+    return cooldown ? cooldown > new Date() : false
   }
 
   private generateEventId(): string {
-    return `scaling_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    return `scaling_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
   }
 
   private getHealthcareContext(): string {
-    const pattern = this.getCurrentHealthcarePattern();
-    return pattern.description;
+    const pattern = this.getCurrentHealthcarePattern()
+    return pattern.description
   }
 
   private async cleanupOldEvents(): Promise<void> {
-    const oneHourAgo = new Date(Date.now() - 3600000);
+    const oneHourAgo = new Date(Date.now() - 3600000)
     this.scalingHistory = this.scalingHistory.filter(
-      event => event.timestamp > oneHourAgo,
-    );
+      (event) => event.timestamp > oneHourAgo,
+    )
 
     // Cleanup old alerts
-    this.alerts = this.alerts.filter(alert => {
-      const age = Date.now() - alert.timestamp.getTime();
-      return alert.autoResolve ? age < 300000 : age < 3600000; // Keep unresolved alerts for 1 hour
-    });
+    this.alerts = this.alerts.filter((alert) => {
+      const age = Date.now() - alert.timestamp.getTime()
+      return alert.autoResolve ? age < 300000 : age < 3600000 // Keep unresolved alerts for 1 hour
+    })
   }
 
   private async resetHourlyCounters(): Promise<void> {
-    const now = new Date();
+    const now = new Date()
     if (now.getHours() !== this.lastHourReset.getHours()) {
-      this.hourlyScalingEvents = 0;
-      this.lastHourReset = now;
+      this.hourlyScalingEvents = 0
+      this.lastHourReset = now
     }
   }
 
   private scheduleNextPredictiveCheck(): void {
     // Clear existing timer
     if (this.predictiveScalingTimer) {
-      clearInterval(this.predictiveScalingTimer);
+      clearInterval(this.predictiveScalingTimer)
     }
 
     // Schedule next check based on current pattern
-    const pattern = this.getCurrentHealthcarePattern();
-    const interval = pattern.scalingPriority === 'high' ? 300000 : 900000; // 5 or 15 minutes
+    const pattern = this.getCurrentHealthcarePattern()
+    const interval = pattern.scalingPriority === 'high' ? 300000 : 900000 // 5 or 15 minutes
 
     this.predictiveScalingTimer = setInterval(() => {
-      this.performPredictiveScaling();
-    }, interval);
+      this.performPredictiveScaling()
+    }, interval)
   }
 
   private createAlert(
@@ -868,61 +868,61 @@ export class DynamicConnectionPoolService {
       timestamp: new Date(),
       metrics: this.metrics,
       ...alertOptions,
-    };
+    }
 
-    this.alerts.push(alert);
+    this.alerts.push(alert)
 
     // Notify callbacks
-    this.alertCallbacks.forEach(callback => callback(alert));
+    this.alertCallbacks.forEach((callback) => callback(alert))
 
     // Log alert
-    console.log(`[Dynamic Pool] Alert: ${alert.type} - ${alert.message}`);
+    console.log(`[Dynamic Pool] Alert: ${alert.type} - ${alert.message}`)
   }
 
   // Public API methods
   onAlert(callback: (alert: PoolAlert) => void): void {
-    this.alertCallbacks.push(callback);
+    this.alertCallbacks.push(callback)
   }
 
   async getCurrentConfig(): Promise<PoolConfig> {
-    return { ...this.config };
+    return { ...this.config }
   }
 
   async getScalingHistory(limit: number = 50): Promise<ScalingEvent[]> {
-    return this.scalingHistory.slice(-limit);
+    return this.scalingHistory.slice(-limit)
   }
 
   async getAlerts(limit: number = 100): Promise<PoolAlert[]> {
-    return this.alerts.slice(-limit);
+    return this.alerts.slice(-limit)
   }
 
   async getHealthcareStatus(): Promise<{
-    currentPattern: string;
-    scalingPriority: string;
-    emergencyMode: boolean;
-    gracefulDegradation: boolean;
-    recommendations: string[];
+    currentPattern: string
+    scalingPriority: string
+    emergencyMode: boolean
+    gracefulDegradation: boolean
+    recommendations: string[]
   }> {
-    const pattern = this.getCurrentHealthcarePattern();
-    const recommendations: string[] = [];
+    const pattern = this.getCurrentHealthcarePattern()
+    const recommendations: string[] = []
 
     // Generate recommendations based on current state
     if (pattern.scalingPriority === 'high' && !this.emergencyMode) {
       recommendations.push(
         'Consider enabling emergency mode for peak clinical hours',
-      );
+      )
     }
 
     if (this.hourlyScalingEvents > this.config.maxScalingEventsPerHour * 0.7) {
       recommendations.push(
         'High scaling frequency detected - consider adjusting pool configuration',
-      );
+      )
     }
 
     if (this.metrics.healthScore < 70) {
       recommendations.push(
         'Pool health degraded - investigate performance issues',
-      );
+      )
     }
 
     return {
@@ -931,7 +931,7 @@ export class DynamicConnectionPoolService {
       emergencyMode: this.emergencyMode,
       gracefulDegradation: this.gracefulDegradationActive,
       recommendations,
-    };
+    }
   }
 
   /**
@@ -939,16 +939,16 @@ export class DynamicConnectionPoolService {
    */
   async destroy(): Promise<void> {
     if (this.monitoringTimer) {
-      clearInterval(this.monitoringTimer);
+      clearInterval(this.monitoringTimer)
     }
     if (this.predictiveScalingTimer) {
-      clearInterval(this.predictiveScalingTimer);
+      clearInterval(this.predictiveScalingTimer)
     }
     if (this.healthCheckTimer) {
-      clearInterval(this.healthCheckTimer);
+      clearInterval(this.healthCheckTimer)
     }
 
-    await this.pool.$disconnect();
+    await this.pool.$disconnect()
   }
 }
 
@@ -984,9 +984,9 @@ export function createDynamicConnectionPool(): DynamicConnectionPoolService {
     ),
     minScalingStepSize: parseInt(process.env.DB_MIN_SCALING_STEP || '5'),
     maxScalingStepSize: parseInt(process.env.DB_MAX_SCALING_STEP || '25'),
-  };
+  }
 
-  return new DynamicConnectionPoolService(config);
+  return new DynamicConnectionPoolService(config)
 }
 
-export default DynamicConnectionPoolService;
+export default DynamicConnectionPoolService

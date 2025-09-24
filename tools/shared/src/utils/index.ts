@@ -5,10 +5,10 @@
  * to reduce duplication and maintain consistency.
  */
 
-import { exec, execSync } from 'child_process';
-import { existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from 'fs';
-import { dirname, extname, join, parse, relative, resolve } from 'path';
-import { promisify } from 'util';
+import { exec, execSync } from 'child_process'
+import { existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from 'fs'
+import { dirname, extname, join, parse, relative, resolve } from 'path'
+import { promisify } from 'util'
 import {
   FileOperationOptions,
   PackageInfo,
@@ -16,9 +16,9 @@ import {
   ToolError,
   ValidationError,
   ValidationResult,
-} from '../types';
+} from '../types'
 
-const execAsync = promisify(exec);
+const execAsync = promisify(exec)
 
 // ========================================
 // File System Utilities
@@ -32,18 +32,18 @@ export function readFileSafe(
   encoding: BufferEncoding = 'utf8',
 ): Result<string> {
   try {
-    const content = readFileSync(filePath, encoding);
+    const content = readFileSync(filePath, encoding)
     return {
       success: true,
       data: content,
       message: `Successfully read file: ${filePath}`,
-    };
+    }
   } catch (error) {
     return {
       success: false,
       error: error as Error,
       message: `Failed to read file: ${filePath}`,
-    };
+    }
   }
 }
 
@@ -56,27 +56,27 @@ export function writeFileSafe(
   options: FileOperationOptions = {},
 ): Result<void> {
   try {
-    const dir = dirname(filePath);
+    const dir = dirname(filePath)
     if (options.createDirectories && !existsSync(dir)) {
-      mkdirSync(dir, { recursive: true });
+      mkdirSync(dir, { recursive: true })
     }
 
     writeFileSync(filePath, content, {
       encoding: options.encoding || 'utf8',
       mode: options.mode,
       flag: options.flag,
-    });
+    })
 
     return {
       success: true,
       message: `Successfully wrote file: ${filePath}`,
-    };
+    }
   } catch (error) {
     return {
       success: false,
       error: error as Error,
       message: `Failed to write file: ${filePath}`,
-    };
+    }
   }
 }
 
@@ -87,7 +87,7 @@ export function getFileStat(
   filePath: string,
 ): Result<{ size: number; mtime: Date; isDirectory: boolean }> {
   try {
-    const stats = statSync(filePath);
+    const stats = statSync(filePath)
     return {
       success: true,
       data: {
@@ -96,13 +96,13 @@ export function getFileStat(
         isDirectory: stats.isDirectory(),
       },
       message: `Successfully got stats for: ${filePath}`,
-    };
+    }
   } catch (error) {
     return {
       success: false,
       error: error as Error,
       message: `Failed to get stats for: ${filePath}`,
-    };
+    }
   }
 }
 
@@ -115,38 +115,38 @@ export function findFiles(
   maxDepth: number = 10,
 ): Result<string[]> {
   try {
-    const files: string[] = [];
-    const patternRegex = typeof pattern === 'string' ? new RegExp(pattern) : pattern;
+    const files: string[] = []
+    const patternRegex = typeof pattern === 'string' ? new RegExp(pattern) : pattern
 
     function walkDirectory(dir: string, depth: number = 0): void {
-      if (depth > maxDepth) return;
+      if (depth > maxDepth) return
 
-      const entries = readdirSync(dir, { withFileTypes: true });
+      const entries = readdirSync(dir, { withFileTypes: true })
 
       for (const entry of entries) {
-        const fullPath = join(dir, entry.name);
+        const fullPath = join(dir, entry.name)
 
         if (entry.isDirectory()) {
-          walkDirectory(fullPath, depth + 1);
+          walkDirectory(fullPath, depth + 1)
         } else if (patternRegex.test(entry.name)) {
-          files.push(fullPath);
+          files.push(fullPath)
         }
       }
     }
 
-    walkDirectory(directory);
+    walkDirectory(directory)
 
     return {
       success: true,
       data: files,
       message: `Found ${files.length} files matching pattern`,
-    };
+    }
   } catch (error) {
     return {
       success: false,
       error: error as Error,
       message: `Failed to find files in: ${directory}`,
-    };
+    }
   }
 }
 
@@ -161,8 +161,8 @@ export function readPackageJson(
   filePath: string = 'package.json',
 ): Result<PackageInfo> {
   try {
-    const content = readFileSync(filePath, 'utf8');
-    const packageData = JSON.parse(content);
+    const content = readFileSync(filePath, 'utf8')
+    const packageData = JSON.parse(content)
 
     const packageInfo: PackageInfo = {
       name: packageData.name,
@@ -171,19 +171,19 @@ export function readPackageJson(
       dependencies: packageData.dependencies || {},
       devDependencies: packageData.devDependencies || {},
       peerDependencies: packageData.peerDependencies || {},
-    };
+    }
 
     return {
       success: true,
       data: packageInfo,
       message: `Successfully parsed package.json: ${filePath}`,
-    };
+    }
   } catch (error) {
     return {
       success: false,
       error: error as Error,
       message: `Failed to read package.json: ${filePath}`,
-    };
+    }
   }
 }
 
@@ -195,10 +195,10 @@ export function isPackageInstalled(
   directory: string = process.cwd(),
 ): boolean {
   try {
-    const packagePath = resolve(directory, 'node_modules', packageName);
-    return existsSync(packagePath);
+    const packagePath = resolve(directory, 'node_modules', packageName)
+    return existsSync(packagePath)
   } catch {
-    return false;
+    return false
   }
 }
 
@@ -215,28 +215,28 @@ export function getInstalledPackageVersion(
       'node_modules',
       packageName,
       'package.json',
-    );
-    const result = readPackageJson(packageJsonPath);
+    )
+    const result = readPackageJson(packageJsonPath)
 
     if (!result.success || !result.data) {
       return {
         success: false,
         error: new Error('Package not found'),
         message: `Package ${packageName} is not installed`,
-      };
+      }
     }
 
     return {
       success: true,
       data: result.data.version,
       message: `Found version ${result.data.version} for ${packageName}`,
-    };
+    }
   } catch (error) {
     return {
       success: false,
       error: error as Error,
       message: `Failed to get version for ${packageName}`,
-    };
+    }
   }
 }
 
@@ -250,9 +250,9 @@ export function getInstalledPackageVersion(
 export async function executeCommand(
   command: string,
   options: {
-    cwd?: string;
-    timeout?: number;
-    env?: Record<string, string>;
+    cwd?: string
+    timeout?: number
+    env?: Record<string, string>
   } = {},
 ): Promise<Result<{ stdout: string; stderr: string }>> {
   try {
@@ -260,19 +260,19 @@ export async function executeCommand(
       cwd: options.cwd || process.cwd(),
       timeout: options.timeout || 30000,
       env: { ...process.env, ...options.env },
-    });
+    })
 
     return {
       success: true,
       data: { stdout, stderr },
       message: `Command executed successfully: ${command}`,
-    };
+    }
   } catch (error) {
     return {
       success: false,
       error: error as Error,
       message: `Command failed: ${command}`,
-    };
+    }
   }
 }
 
@@ -282,27 +282,27 @@ export async function executeCommand(
 export function executeCommandSync(
   command: string,
   options: {
-    cwd?: string;
-    encoding?: BufferEncoding;
+    cwd?: string
+    encoding?: BufferEncoding
   } = {},
 ): Result<string> {
   try {
     const output = execSync(command, {
       cwd: options.cwd || process.cwd(),
       encoding: options.encoding || 'utf8',
-    });
+    })
 
     return {
       success: true,
       data: output,
       message: `Command executed successfully: ${command}`,
-    };
+    }
   } catch (error) {
     return {
       success: false,
       error: error as Error,
       message: `Command failed: ${command}`,
-    };
+    }
   }
 }
 
@@ -317,24 +317,24 @@ export async function validateTypeScript(
   files: string[],
   tsConfigPath?: string,
 ): Promise<ValidationResult> {
-  const errors: string[] = [];
-  const warnings: string[] = [];
+  const errors: string[] = []
+  const warnings: string[] = []
 
   try {
-    const tsConfigArg = tsConfigPath ? `--project ${tsConfigPath}` : '';
-    const command = `npx tsc --noEmit ${tsConfigArg} ${files.join(' ')}`;
+    const tsConfigArg = tsConfigPath ? `--project ${tsConfigPath}` : ''
+    const command = `npx tsc --noEmit ${tsConfigArg} ${files.join(' ')}`
 
-    const result = await executeCommand(command);
+    const result = await executeCommand(command)
 
     if (!result.success) {
-      const output = result.error?.message || '';
-      const lines = output.split('\n');
+      const output = result.error?.message || ''
+      const lines = output.split('\n')
 
       for (const line of lines) {
         if (line.includes('error TS')) {
-          errors.push(line.trim());
+          errors.push(line.trim())
         } else if (line.includes('warning') || line.includes('deprecated')) {
-          warnings.push(line.trim());
+          warnings.push(line.trim())
         }
       }
     }
@@ -344,14 +344,14 @@ export async function validateTypeScript(
       errors,
       warnings,
       score: errors.length === 0 ? (warnings.length === 0 ? 100 : 90) : 0,
-    };
+    }
   } catch (error) {
     return {
       valid: false,
       errors: [`TypeScript validation failed: ${(error as Error).message}`],
       warnings: [],
       score: 0,
-    };
+    }
   }
 }
 
@@ -363,8 +363,8 @@ export function validateConfig<T>(
   requiredFields: (keyof T)[],
   optionalFields: (keyof T)[] = [],
 ): ValidationResult {
-  const errors: string[] = [];
-  const warnings: string[] = [];
+  const errors: string[] = []
+  const warnings: string[] = []
 
   if (!config || typeof config !== 'object') {
     return {
@@ -372,7 +372,7 @@ export function validateConfig<T>(
       errors: ['Configuration must be an object'],
       warnings: [],
       score: 0,
-    };
+    }
   }
 
   // Check required fields
@@ -382,26 +382,26 @@ export function validateConfig<T>(
       || config[field] === undefined
       || config[field] === null
     ) {
-      errors.push(`Missing required field: ${String(field)}`);
+      errors.push(`Missing required field: ${String(field)}`)
     }
   }
 
   // Check for unknown fields
-  const allowedFields = [...requiredFields, ...optionalFields];
+  const allowedFields = [...requiredFields, ...optionalFields]
   for (const key in config) {
     if (!allowedFields.includes(key as keyof T)) {
-      warnings.push(`Unknown field: ${key}`);
+      warnings.push(`Unknown field: ${key}`)
     }
   }
 
-  const score = errors.length === 0 ? (warnings.length === 0 ? 100 : 85) : 0;
+  const score = errors.length === 0 ? (warnings.length === 0 ? 100 : 85) : 0
 
   return {
     valid: errors.length === 0,
     errors,
     warnings,
     score,
-  };
+  }
 }
 
 // ========================================
@@ -417,7 +417,7 @@ export function toCamelCase(str: string): string {
       /(?:^\w|[A-Z]|\b\w)/g,
       (word, index) => index === 0 ? word.toLowerCase() : word.toUpperCase(),
     )
-    .replace(/\s+/g, '');
+    .replace(/\s+/g, '')
 }
 
 /**
@@ -427,7 +427,7 @@ export function toKebabCase(str: string): string {
   return str
     .replace(/([a-z])([A-Z])/g, '$1-$2')
     .replace(/[\s_]+/g, '-')
-    .toLowerCase();
+    .toLowerCase()
 }
 
 /**
@@ -435,41 +435,41 @@ export function toKebabCase(str: string): string {
  */
 export function toPascalCase(str: string): string {
   return str
-    .replace(/(?:^\w|[A-Z]|\b\w)/g, word => word.toUpperCase())
-    .replace(/\s+/g, '');
+    .replace(/(?:^\w|[A-Z]|\b\w)/g, (word) => word.toUpperCase())
+    .replace(/\s+/g, '')
 }
 
 /**
  * Format bytes to human readable string
  */
 export function formatBytes(bytes: number, decimals: number = 2): string {
-  if (bytes === 0) return '0 Bytes';
+  if (bytes === 0) return '0 Bytes'
 
-  const k = 1024;
-  const dm = decimals < 0 ? 0 : decimals;
-  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+  const k = 1024
+  const dm = decimals < 0 ? 0 : decimals
+  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
 
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  const i = Math.floor(Math.log(bytes) / Math.log(k))
 
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i]
 }
 
 /**
  * Format duration in milliseconds to human readable string
  */
 export function formatDuration(ms: number): string {
-  const seconds = Math.floor(ms / 1000);
-  const minutes = Math.floor(seconds / 60);
-  const hours = Math.floor(minutes / 60);
+  const seconds = Math.floor(ms / 1000)
+  const minutes = Math.floor(seconds / 60)
+  const hours = Math.floor(minutes / 60)
 
   if (hours > 0) {
-    return `${hours}h ${minutes % 60}m ${seconds % 60}s`;
+    return `${hours}h ${minutes % 60}m ${seconds % 60}s`
   } else if (minutes > 0) {
-    return `${minutes}m ${seconds % 60}s`;
+    return `${minutes}m ${seconds % 60}s`
   } else if (seconds > 0) {
-    return `${seconds}s`;
+    return `${seconds}s`
   } else {
-    return `${ms}ms`;
+    return `${ms}ms`
   }
 }
 
@@ -481,8 +481,8 @@ export function truncate(
   maxLength: number,
   ellipsis: string = '...',
 ): string {
-  if (str.length <= maxLength) return str;
-  return str.slice(0, maxLength - ellipsis.length) + ellipsis;
+  if (str.length <= maxLength) return str
+  return str.slice(0, maxLength - ellipsis.length) + ellipsis
 }
 
 // ========================================
@@ -493,29 +493,29 @@ export function truncate(
  * Get relative path from one directory to another
  */
 export function getRelativePath(from: string, to: string): string {
-  return relative(from, to);
+  return relative(from, to)
 }
 
 /**
  * Normalize path separators to forward slashes
  */
 export function normalizePath(path: string): string {
-  return path.replace(/\\/g, '/');
+  return path.replace(/\\/g, '/')
 }
 
 /**
  * Get file extension without dot
  */
 export function getFileExtension(filePath: string): string {
-  return extname(filePath).slice(1);
+  return extname(filePath).slice(1)
 }
 
 /**
  * Get file name without extension
  */
 export function getFileNameWithoutExtension(filePath: string): string {
-  const parsed = parse(filePath);
-  return parsed.name;
+  const parsed = parse(filePath)
+  return parsed.name
 }
 
 // ========================================
@@ -523,13 +523,13 @@ export function getFileNameWithoutExtension(filePath: string): string {
 // ========================================
 
 const isPlainObject = (value: unknown): value is Record<string, unknown> =>
-  typeof value === 'object' && value !== null && !Array.isArray(value);
+  typeof value === 'object' && value !== null && !Array.isArray(value)
 
 /**
  * Remove duplicates from array
  */
 export function removeDuplicates<T>(array: T[]): T[] {
-  return [...new Set(array)];
+  return [...new Set(array)]
 }
 
 /**
@@ -541,15 +541,15 @@ export function groupBy<T, K extends string | number | symbol>(
 ): Record<K, T[]> {
   return array.reduce(
     (groups, item) => {
-      const key = keyFn(item);
+      const key = keyFn(item)
       if (!groups[key]) {
-        groups[key] = [];
+        groups[key] = []
       }
-      groups[key].push(item);
-      return groups;
+      groups[key].push(item)
+      return groups
     },
     {} as Record<K, T[]>,
-  );
+  )
 }
 
 /**
@@ -559,29 +559,29 @@ export function deepMerge<T extends Record<string, unknown>>(
   target: T,
   source: Partial<T>,
 ): T {
-  const result = { ...target } as Record<string, unknown>;
+  const result = { ...target } as Record<string, unknown>
 
-  const keys = Object.keys(source as Record<string, unknown>) as (keyof T)[];
+  const keys = Object.keys(source as Record<string, unknown>) as (keyof T)[]
 
   for (const key of keys) {
-    const sourceValue = source[key];
+    const sourceValue = source[key]
     if (sourceValue === undefined) {
-      continue;
+      continue
     }
 
-    const targetValue = result[key as string];
+    const targetValue = result[key as string]
 
     if (isPlainObject(targetValue) && isPlainObject(sourceValue)) {
       result[key as string] = deepMerge(
         targetValue as Record<string, unknown>,
         sourceValue as Record<string, unknown>,
-      );
+      )
     } else {
-      result[key as string] = sourceValue as unknown;
+      result[key as string] = sourceValue as unknown
     }
   }
 
-  return result as T;
+  return result as T
 }
 
 /**
@@ -591,13 +591,13 @@ export function pick<T extends Record<string, unknown>, K extends keyof T>(
   obj: T,
   keys: K[],
 ): Pick<T, K> {
-  const result = {} as Pick<T, K>;
+  const result = {} as Pick<T, K>
   for (const key of keys) {
     if (key in obj) {
-      result[key] = obj[key];
+      result[key] = obj[key]
     }
   }
-  return result;
+  return result
 }
 
 /**
@@ -607,11 +607,11 @@ export function omit<T extends Record<string, unknown>, K extends keyof T>(
   obj: T,
   keys: K[],
 ): Omit<T, K> {
-  const result = { ...obj } as Record<string, unknown>;
+  const result = { ...obj } as Record<string, unknown>
   for (const key of keys) {
-    delete result[key as string];
+    delete result[key as string]
   }
-  return result as Omit<T, K>;
+  return result as Omit<T, K>
 }
 
 // ========================================
@@ -622,7 +622,7 @@ export function omit<T extends Record<string, unknown>, K extends keyof T>(
  * Delay execution for specified milliseconds
  */
 export function delay(ms: number): Promise<void> {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
 /**
@@ -633,22 +633,22 @@ export async function retry<T>(
   maxAttempts: number = 3,
   baseDelay: number = 1000,
 ): Promise<Result<T>> {
-  let lastError: Error;
+  let lastError: Error
 
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
     try {
-      const result = await fn();
+      const result = await fn()
       return {
         success: true,
         data: result,
         message: `Operation succeeded on attempt ${attempt}`,
-      };
+      }
     } catch (error) {
-      lastError = error as Error;
+      lastError = error as Error
 
       if (attempt < maxAttempts) {
-        const delayMs = baseDelay * Math.pow(2, attempt - 1);
-        await delay(delayMs);
+        const delayMs = baseDelay * Math.pow(2, attempt - 1)
+        await delay(delayMs)
       }
     }
   }
@@ -657,7 +657,7 @@ export async function retry<T>(
     success: false,
     error: lastError!,
     message: `Operation failed after ${maxAttempts} attempts`,
-  };
+  }
 }
 
 /**
@@ -669,14 +669,14 @@ export function withTimeout<T>(
 ): Promise<T> {
   return new Promise((resolve, reject) => {
     const timer = setTimeout(() => {
-      reject(new Error(`Operation timed out after ${timeoutMs}ms`));
-    }, timeoutMs);
+      reject(new Error(`Operation timed out after ${timeoutMs}ms`))
+    }, timeoutMs)
 
     promise
       .then(resolve)
       .catch(reject)
-      .finally(() => clearTimeout(timer));
-  });
+      .finally(() => clearTimeout(timer))
+  })
 }
 
 // ========================================
@@ -688,7 +688,7 @@ export function withTimeout<T>(
  */
 export function assert(condition: any, message: string): asserts condition {
   if (!condition) {
-    throw new ValidationError(message);
+    throw new ValidationError(message)
   }
 }
 
@@ -700,14 +700,14 @@ export function createError(
   code: string,
   details?: Record<string, any>,
 ): ToolError {
-  return new ToolError(message, code, details);
+  return new ToolError(message, code, details)
 }
 
 /**
  * Check if value is defined and not null
  */
 export function isDefined<T>(value: T | null | undefined): value is T {
-  return value !== null && value !== undefined;
+  return value !== null && value !== undefined
 }
 
 /**
@@ -722,11 +722,11 @@ export function safeGet<T>(
     return (
       path.split('.').reduce((current, key) => current?.[key], obj)
         ?? defaultValue
-    );
+    )
   } catch {
-    return defaultValue;
+    return defaultValue
   }
 }
 
 // Export everything
-export * from '../types';
+export * from '../types'

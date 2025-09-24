@@ -10,20 +10,20 @@
  * - Portuguese healthcare financial workflows
  */
 
-import { useCoAgent, useCopilotAction, useCopilotReadable } from '@copilotkit/react-core';
-import React from 'react';
-import { useNeonProChat } from '../NeonProChatProvider';
+import { useCoAgent, useCopilotAction, useCopilotReadable } from '@copilotkit/react-core'
+import React from 'react'
+import { useNeonProChat } from '../NeonProChatProvider'
 // Removed unused NeonProMessage import
 // Removed unused Button import
-import { Alert, AlertDescription } from '../../ui/alert';
-import { Badge } from '../../ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '../../ui/card';
+import { Alert, AlertDescription } from '../../ui/alert'
+import { Badge } from '../../ui/badge'
+import { Card, CardContent, CardHeader, CardTitle } from '../../ui/card'
 // Removed unused Input import
 // Removed unused Label import
 // Removed unused Textarea import
 // Removed unused Select imports
-import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+import { format } from 'date-fns'
+import { ptBR } from 'date-fns/locale'
 import {
   BarChart3,
   Calculator,
@@ -34,63 +34,63 @@ import {
   Shield,
   Target,
   TrendingUp,
-} from 'lucide-react';
+} from 'lucide-react'
 
 // Types
 interface FinancialTransaction {
-  id: string;
-  type: 'revenue' | 'expense' | 'refund';
-  category: string;
-  amount: number;
-  currency: 'BRL';
-  description: string;
-  date: Date;
-  status: 'pending' | 'completed' | 'failed' | 'cancelled';
-  patientId?: string;
-  appointmentId?: string;
-  paymentMethod?: 'cash' | 'credit_card' | 'debit_card' | 'bank_transfer' | 'installment';
-  installments?: number;
-  processedBy: string;
-  invoiceId?: string;
+  id: string
+  type: 'revenue' | 'expense' | 'refund'
+  category: string
+  amount: number
+  currency: 'BRL'
+  description: string
+  date: Date
+  status: 'pending' | 'completed' | 'failed' | 'cancelled'
+  patientId?: string
+  appointmentId?: string
+  paymentMethod?: 'cash' | 'credit_card' | 'debit_card' | 'bank_transfer' | 'installment'
+  installments?: number
+  processedBy: string
+  invoiceId?: string
 }
 
 interface Invoice {
-  id: string;
-  patientId: string;
-  patientName: string;
+  id: string
+  patientId: string
+  patientName: string
   items: Array<{
-    service: string;
-    quantity: number;
-    unitPrice: number;
-    totalPrice: number;
-  }>;
-  subtotal: number;
-  discount: number;
-  tax: number;
-  total: number;
-  status: 'draft' | 'sent' | 'paid' | 'overdue' | 'cancelled';
-  issuedDate: Date;
-  dueDate: Date;
-  paidDate?: Date;
-  paymentMethod?: string;
-  notes?: string;
+    service: string
+    quantity: number
+    unitPrice: number
+    totalPrice: number
+  }>
+  subtotal: number
+  discount: number
+  tax: number
+  total: number
+  status: 'draft' | 'sent' | 'paid' | 'overdue' | 'cancelled'
+  issuedDate: Date
+  dueDate: Date
+  paidDate?: Date
+  paymentMethod?: string
+  notes?: string
 }
 
 interface FinancialMetrics {
-  totalRevenue: number;
-  totalExpenses: number;
-  netProfit: number;
-  profitMargin: number;
-  pendingPayments: number;
-  overdueInvoices: number;
-  averageTicket: number;
-  monthlyGrowth: number;
-  collectionRate: number;
+  totalRevenue: number
+  totalExpenses: number
+  netProfit: number
+  profitMargin: number
+  pendingPayments: number
+  overdueInvoices: number
+  averageTicket: number
+  monthlyGrowth: number
+  collectionRate: number
   topServices: Array<{
-    service: string;
-    revenue: number;
-    count: number;
-  }>;
+    service: string
+    revenue: number
+    count: number
+  }>
 }
 
 interface FinancialAgentState {
@@ -99,41 +99,41 @@ interface FinancialAgentState {
     | 'processing_payment'
     | 'generating_invoice'
     | 'analyzing'
-    | 'forecasting';
-  transactions: FinancialTransaction[];
-  invoices: Invoice[];
-  metrics: FinancialMetrics;
+    | 'forecasting'
+  transactions: FinancialTransaction[]
+  invoices: Invoice[]
+  metrics: FinancialMetrics
   forecast: {
-    nextMonth: number;
-    nextQuarter: number;
-    confidence: number;
-    factors: string[];
-  };
+    nextMonth: number
+    nextQuarter: number
+    confidence: number
+    factors: string[]
+  }
   analysis: {
-    trends: string[];
-    opportunities: string[];
-    risks: string[];
-    recommendations: string[];
-  };
+    trends: string[]
+    opportunities: string[]
+    risks: string[]
+    recommendations: string[]
+  }
   compliance: {
     auditTrail: Array<{
-      timestamp: Date;
-      userId: string;
-      action: string;
-      amount?: number;
-      patientId?: string;
-      compliance: boolean;
-    }>;
-    taxCompliance: boolean;
-    lgpdCompliant: boolean;
-  };
+      timestamp: Date
+      userId: string
+      action: string
+      amount?: number
+      patientId?: string
+      compliance: boolean
+    }>
+    taxCompliance: boolean
+    lgpdCompliant: boolean
+  }
 }
 
 interface FinancialAgentProps {
-  clinicId: string;
-  onTransactionComplete?: (transactionId: string) => void;
-  onInvoiceGenerated?: (invoiceId: string) => void;
-  onError?: (error: string) => void;
+  clinicId: string
+  onTransactionComplete?: (transactionId: string) => void
+  onInvoiceGenerated?: (invoiceId: string) => void
+  onError?: (error: string) => void
 }
 
 // Mock data
@@ -144,7 +144,7 @@ const mockServices = [
   { name: 'Laser CO2', price: 1800, category: 'laser' },
   { name: 'Limpeza de Pele', price: 300, category: 'skincare' },
   { name: 'Peeling Químico', price: 600, category: 'skincare' },
-];
+]
 
 const mockTransactions: FinancialTransaction[] = [
   {
@@ -173,7 +173,7 @@ const mockTransactions: FinancialTransaction[] = [
     paymentMethod: 'bank_transfer',
     processedBy: 'system',
   },
-];
+]
 
 export const NeonProFinancialAgent: React.FC<FinancialAgentProps> = ({
   clinicId: _clinicId,
@@ -181,7 +181,7 @@ export const NeonProFinancialAgent: React.FC<FinancialAgentProps> = ({
   onInvoiceGenerated,
   onError,
 }) => {
-  const { config } = useNeonProChat();
+  const { config } = useNeonProChat()
 
   // Initialize agent state
   const initialState: FinancialAgentState = {
@@ -206,12 +206,12 @@ export const NeonProFinancialAgent: React.FC<FinancialAgentProps> = ({
       taxCompliance: true,
       lgpdCompliant: true,
     },
-  };
+  }
 
   const { state, setState } = useCoAgent<FinancialAgentState>({
     name: 'financial-agent',
     initialState,
-  });
+  })
 
   // Provide context to CopilotKit
   useCopilotReadable({
@@ -220,10 +220,10 @@ export const NeonProFinancialAgent: React.FC<FinancialAgentProps> = ({
       currentOperation: state.currentOperation,
       metrics: state.metrics,
       forecast: state.forecast,
-      pendingTransactions: state.transactions.filter(t => t.status === 'pending').length,
+      pendingTransactions: state.transactions.filter((t) => t.status === 'pending').length,
       compliance: state.compliance,
     },
-  }, [state]);
+  }, [state])
 
   // Process payment action
   useCopilotAction({
@@ -266,28 +266,28 @@ export const NeonProFinancialAgent: React.FC<FinancialAgentProps> = ({
       discount?: number,
     ) => {
       try {
-        setState(prev => ({ ...prev, currentOperation: 'processing_payment' }));
+        setState((prev) => ({ ...prev, currentOperation: 'processing_payment' }))
 
         // Simulate processing delay
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        await new Promise((resolve) => setTimeout(resolve, 2000))
 
         // Calculate total amount
-        let subtotal = 0;
-        const items = services.map(serviceName => {
-          const service = mockServices.find(s => s.name === serviceName);
-          if (!service) throw new Error(`Service not found: ${serviceName}`);
-          subtotal += service.price;
+        let subtotal = 0
+        const items = services.map((serviceName) => {
+          const service = mockServices.find((s) => s.name === serviceName)
+          if (!service) throw new Error(`Service not found: ${serviceName}`)
+          subtotal += service.price
           return {
             service: serviceName,
             quantity: 1,
             unitPrice: service.price,
             totalPrice: service.price,
-          };
-        });
+          }
+        })
 
-        const discountAmount = discount || 0;
-        const tax = subtotal * 0.1; // 10% tax
-        const total = subtotal - discountAmount + tax;
+        const discountAmount = discount || 0
+        const tax = subtotal * 0.1 // 10% tax
+        const total = subtotal - discountAmount + tax
 
         // Create transaction
         const transaction: FinancialTransaction = {
@@ -303,7 +303,7 @@ export const NeonProFinancialAgent: React.FC<FinancialAgentProps> = ({
           paymentMethod: paymentMethod as any,
           installments,
           processedBy: config?.userId || 'system',
-        };
+        }
 
         // Create invoice
         const invoice: Invoice = {
@@ -321,9 +321,9 @@ export const NeonProFinancialAgent: React.FC<FinancialAgentProps> = ({
           paidDate: new Date(),
           paymentMethod,
           notes: installments ? `Pago em ${installments}x` : undefined,
-        };
+        }
 
-        setState(prev => ({
+        setState((prev) => ({
           ...prev,
           currentOperation: 'idle',
           transactions: [...prev.transactions, transaction],
@@ -343,22 +343,22 @@ export const NeonProFinancialAgent: React.FC<FinancialAgentProps> = ({
               },
             ],
           },
-        }));
+        }))
 
-        onTransactionComplete?.(transaction.id);
-        onInvoiceGenerated?.(invoice.id);
+        onTransactionComplete?.(transaction.id)
+        onInvoiceGenerated?.(invoice.id)
 
         return `Payment processed successfully. Total: R$ ${
           total.toFixed(2)
-        }. Invoice ID: ${invoice.id}`;
+        }. Invoice ID: ${invoice.id}`
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'Failed to process payment';
-        onError?.(errorMessage);
-        setState(prev => ({ ...prev, currentOperation: 'idle' }));
-        throw error;
+        const errorMessage = error instanceof Error ? error.message : 'Failed to process payment'
+        onError?.(errorMessage)
+        setState((prev) => ({ ...prev, currentOperation: 'idle' }))
+        throw error
       }
     },
-  });
+  })
 
   // Generate invoice action
   useCopilotAction({
@@ -384,27 +384,27 @@ export const NeonProFinancialAgent: React.FC<FinancialAgentProps> = ({
       notes?: string,
     ) => {
       try {
-        setState(prev => ({ ...prev, currentOperation: 'generating_invoice' }));
+        setState((prev) => ({ ...prev, currentOperation: 'generating_invoice' }))
 
         // Simulate generation delay
-        await new Promise(resolve => setTimeout(resolve, 1500));
+        await new Promise((resolve) => setTimeout(resolve, 1500))
 
         // Calculate invoice details
-        let subtotal = 0;
-        const items = services.map(serviceName => {
-          const service = mockServices.find(s => s.name === serviceName);
-          if (!service) throw new Error(`Service not found: ${serviceName}`);
-          subtotal += service.price;
+        let subtotal = 0
+        const items = services.map((serviceName) => {
+          const service = mockServices.find((s) => s.name === serviceName)
+          if (!service) throw new Error(`Service not found: ${serviceName}`)
+          subtotal += service.price
           return {
             service: serviceName,
             quantity: 1,
             unitPrice: service.price,
             totalPrice: service.price,
-          };
-        });
+          }
+        })
 
-        const tax = subtotal * 0.1;
-        const total = subtotal + tax;
+        const tax = subtotal * 0.1
+        const total = subtotal + tax
 
         const invoice: Invoice = {
           id: `inv-${Date.now()}`,
@@ -419,9 +419,9 @@ export const NeonProFinancialAgent: React.FC<FinancialAgentProps> = ({
           issuedDate: new Date(),
           dueDate: new Date(dueDate),
           notes,
-        };
+        }
 
-        setState(prev => ({
+        setState((prev) => ({
           ...prev,
           currentOperation: 'idle',
           invoices: [...prev.invoices, invoice],
@@ -439,20 +439,20 @@ export const NeonProFinancialAgent: React.FC<FinancialAgentProps> = ({
               },
             ],
           },
-        }));
+        }))
 
-        onInvoiceGenerated?.(invoice.id);
+        onInvoiceGenerated?.(invoice.id)
         return `Invoice generated successfully. Total: R$ ${total.toFixed(2)}. Due: ${
           format(new Date(dueDate), 'PPP', { locale: ptBR })
-        }`;
+        }`
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'Failed to generate invoice';
-        onError?.(errorMessage);
-        setState(prev => ({ ...prev, currentOperation: 'idle' }));
-        throw error;
+        const errorMessage = error instanceof Error ? error.message : 'Failed to generate invoice'
+        onError?.(errorMessage)
+        setState((prev) => ({ ...prev, currentOperation: 'idle' }))
+        throw error
       }
     },
-  });
+  })
 
   // Analyze financial performance action
   useCopilotAction({
@@ -474,65 +474,65 @@ export const NeonProFinancialAgent: React.FC<FinancialAgentProps> = ({
     ],
     handler: async (period: string = 'month', focus: string = 'revenue') => {
       try {
-        setState(prev => ({ ...prev, currentOperation: 'analyzing' }));
+        setState((prev) => ({ ...prev, currentOperation: 'analyzing' }))
 
         // Simulate analysis delay
-        await new Promise(resolve => setTimeout(resolve, 2500));
+        await new Promise((resolve) => setTimeout(resolve, 2500))
 
-        const analysis = generateFinancialAnalysis(state.transactions, period, focus);
-        const forecast = generateFinancialForecast(state.transactions);
+        const analysis = generateFinancialAnalysis(state.transactions, period, focus)
+        const forecast = generateFinancialForecast(state.transactions)
 
-        setState(prev => ({
+        setState((prev) => ({
           ...prev,
           currentOperation: 'idle',
           analysis,
           forecast,
-        }));
+        }))
 
-        return `Financial analysis completed for ${period}. Focus: ${focus}. Key insights provided.`;
+        return `Financial analysis completed for ${period}. Focus: ${focus}. Key insights provided.`
       } catch (error) {
         const errorMessage = error instanceof Error
           ? error.message
-          : 'Failed to analyze performance';
-        onError?.(errorMessage);
-        setState(prev => ({ ...prev, currentOperation: 'idle' }));
-        throw error;
+          : 'Failed to analyze performance'
+        onError?.(errorMessage)
+        setState((prev) => ({ ...prev, currentOperation: 'idle' }))
+        throw error
       }
     },
-  });
+  })
 
   // Calculate financial metrics
   const calculateFinancialMetrics = (transactions: FinancialTransaction[]): FinancialMetrics => {
     const revenue = transactions
-      .filter(t => t.type === 'revenue' && t.status === 'completed')
-      .reduce((sum, t) => sum + t.amount, 0);
+      .filter((t) => t.type === 'revenue' && t.status === 'completed')
+      .reduce((sum, t) => sum + t.amount, 0)
 
     const expenses = transactions
-      .filter(t => t.type === 'expense' && t.status === 'completed')
-      .reduce((sum, t) => sum + t.amount, 0);
+      .filter((t) => t.type === 'expense' && t.status === 'completed')
+      .reduce((sum, t) => sum + t.amount, 0)
 
-    const netProfit = revenue - expenses;
-    const profitMargin = revenue > 0 ? (netProfit / revenue) * 100 : 0;
+    const netProfit = revenue - expenses
+    const profitMargin = revenue > 0 ? (netProfit / revenue) * 100 : 0
 
     const pendingPayments = transactions
-      .filter(t => t.status === 'pending')
-      .reduce((sum, t) => sum + t.amount, 0);
+      .filter((t) => t.status === 'pending')
+      .reduce((sum, t) => sum + t.amount, 0)
 
-    const serviceRevenue = new Map<string, { revenue: number; count: number }>();
-    transactions.forEach(t => {
+    const serviceRevenue = new Map<string, { revenue: number; count: number }>()
+    transactions.forEach((t) => {
       if (t.type === 'revenue' && t.status === 'completed') {
-        const current = serviceRevenue.get(t.category) || { revenue: 0, count: 0 };
+        const current = serviceRevenue.get(t.category) || { revenue: 0, count: 0 }
         serviceRevenue.set(t.category, {
           revenue: current.revenue + t.amount,
           count: current.count + 1,
-        });
+        })
       }
-    });
+    })
 
     const topServices = Array.from(serviceRevenue.entries())
       .map(([service, data]) => ({ service, ...data }))
       .sort((a, b) => b.revenue - a.revenue)
-      .slice(0, 5);
+      .slice(0, 5)
 
     return {
       totalRevenue: revenue,
@@ -542,13 +542,13 @@ export const NeonProFinancialAgent: React.FC<FinancialAgentProps> = ({
       pendingPayments,
       overdueInvoices: 0, // Mock data
       averageTicket: revenue > 0
-        ? revenue / transactions.filter(t => t.type === 'revenue').length
+        ? revenue / transactions.filter((t) => t.type === 'revenue').length
         : 0,
       monthlyGrowth: 12.5, // Mock data
       collectionRate: 95.2, // Mock data
       topServices,
-    };
-  };
+    }
+  }
 
   // Generate financial analysis
   const generateFinancialAnalysis = (
@@ -561,40 +561,40 @@ export const NeonProFinancialAgent: React.FC<FinancialAgentProps> = ({
       'Procedimentos de preenchimento lideram o faturamento',
       'Pagamentos parcelados aumentaram 20% nos últimos 3 meses',
       'Taxa de coleta mantém-se acima de 95%',
-    ];
+    ]
 
     const opportunities = [
       'Expandir horários de pico para aumentar capacidade',
       'Implementar pacotes de tratamentos combinados',
       'Oferecer opções de financiamento para procedimentos de alto valor',
       'Desenvolver programas de fidelidade para pacientes recorrentes',
-    ];
+    ]
 
     const risks = [
       'Aumento da concorrência na região',
       'Possíveis mudanças na regulamentação de procedimentos estéticos',
       'Flutuações sazonais na demanda',
       'Dependência de alguns profissionais chave',
-    ];
+    ]
 
     const recommendations = [
       'Diversificar mix de serviços para reduzir riscos',
       'Implementar sistema de precamento dinâmico',
       'Investir em marketing para serviços de alta margem',
       'Otimizar agendamento para maximizar utilização de recursos',
-    ];
+    ]
 
-    return { trends, opportunities, risks, recommendations };
-  };
+    return { trends, opportunities, risks, recommendations }
+  }
 
   // Generate financial forecast
   const generateFinancialForecast = (transactions: FinancialTransaction[]) => {
     const currentRevenue = transactions
-      .filter(t => t.type === 'revenue' && t.status === 'completed')
-      .reduce((sum, t) => sum + t.amount, 0);
+      .filter((t) => t.type === 'revenue' && t.status === 'completed')
+      .reduce((sum, t) => sum + t.amount, 0)
 
-    const growthRate = 0.12; // 12% growth
-    const seasonalityFactor = 1.1; // Seasonal adjustment
+    const growthRate = 0.12 // 12% growth
+    const seasonalityFactor = 1.1 // Seasonal adjustment
 
     return {
       nextMonth: currentRevenue * (1 + growthRate / 12),
@@ -606,32 +606,32 @@ export const NeonProFinancialAgent: React.FC<FinancialAgentProps> = ({
         'Expansão de serviços planejada',
         'Campanhas de marketing agendadas',
       ],
-    };
-  };
+    }
+  }
 
   // Format currency
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
       currency: 'BRL',
-    }).format(amount);
-  };
+    }).format(amount)
+  }
 
   // Get status icon
   const getStatusIcon = () => {
     switch (state.currentOperation) {
       case 'processing_payment':
-        return <CreditCard className='h-4 w-4 text-blue-500' />;
+        return <CreditCard className='h-4 w-4 text-blue-500' />
       case 'generating_invoice':
-        return <Receipt className='h-4 w-4 text-yellow-500' />;
+        return <Receipt className='h-4 w-4 text-yellow-500' />
       case 'analyzing':
-        return <BarChart3 className='h-4 w-4 text-purple-500' />;
+        return <BarChart3 className='h-4 w-4 text-purple-500' />
       case 'forecasting':
-        return <Target className='h-4 w-4 text-green-500' />;
+        return <Target className='h-4 w-4 text-green-500' />
       default:
-        return <Calculator className='h-4 w-4 text-gray-500' />;
+        return <Calculator className='h-4 w-4 text-gray-500' />
     }
-  };
+  }
 
   return (
     <div className='space-y-6'>
@@ -852,7 +852,7 @@ export const NeonProFinancialAgent: React.FC<FinancialAgentProps> = ({
         </AlertDescription>
       </Alert>
     </div>
-  );
-};
+  )
+}
 
-export default NeonProFinancialAgent;
+export default NeonProFinancialAgent

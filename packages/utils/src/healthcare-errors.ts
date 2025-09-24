@@ -11,8 +11,8 @@
  */
 
 // Error severity levels
-import { TRPCError } from '@trpc/server';
-import type { TRPCError as TRPCErrorType } from '@trpc/server';
+import { TRPCError } from '@trpc/server'
+import type { TRPCError as TRPCErrorType } from '@trpc/server'
 
 export enum ErrorSeverity {
   LOW = 'low',
@@ -43,51 +43,51 @@ const PERSONAL_DATA_PATTERNS = [
   /\(\d{2}\)\s?\d{4,5}-?\d{4}/g, // Phone pattern
   /\b\d{15}\b/g, // SUS card pattern
   /\b[A-Z]{2}\d{6}\b/g, // CRM pattern (UF + number)
-];
+]
 
 /**
  * Base healthcare error class with compliance features
  */
 export class HealthcareError extends Error {
-  public readonly id: string;
-  public readonly category: ErrorCategory;
-  public readonly severity: ErrorSeverity;
-  public readonly code: string;
-  public readonly healthcareContext: boolean;
-  public readonly lgpdCompliant: boolean;
-  public readonly timestamp: Date;
-  public readonly metadata?: Record<string, unknown>;
-  public override readonly cause?: Error;
+  public readonly id: string
+  public readonly category: ErrorCategory
+  public readonly severity: ErrorSeverity
+  public readonly code: string
+  public readonly healthcareContext: boolean
+  public readonly lgpdCompliant: boolean
+  public readonly timestamp: Date
+  public readonly metadata?: Record<string, unknown>
+  public override readonly cause?: Error
 
   constructor(
     message: string,
     category: ErrorCategory = ErrorCategory.SYSTEM,
     severity: ErrorSeverity = ErrorSeverity.MEDIUM,
     options: {
-      code?: string;
-      metadata?: Record<string, unknown>;
-      cause?: Error;
+      code?: string
+      metadata?: Record<string, unknown>
+      cause?: Error
     } = {},
   ) {
-    super(message);
-    this.name = 'HealthcareError';
+    super(message)
+    this.name = 'HealthcareError'
 
-    this.id = crypto.randomUUID();
-    this.category = category;
-    this.severity = severity;
-    this.code = options.code || 'HEALTHCARE_ERROR';
-    this.healthcareContext = true;
-    this.lgpdCompliant = this.checkLGPDCompliance(message);
-    this.timestamp = new Date();
-    this.metadata = options.metadata;
-    this.cause = options.cause;
+    this.id = crypto.randomUUID()
+    this.category = category
+    this.severity = severity
+    this.code = options.code || 'HEALTHCARE_ERROR'
+    this.healthcareContext = true
+    this.lgpdCompliant = this.checkLGPDCompliance(message)
+    this.timestamp = new Date()
+    this.metadata = options.metadata
+    this.cause = options.cause
   }
 
   /**
    * Check if error message is LGPD compliant
    */
   private checkLGPDCompliance(message: string): boolean {
-    return !PERSONAL_DATA_PATTERNS.some(pattern => pattern.test(message));
+    return !PERSONAL_DATA_PATTERNS.some((pattern) => pattern.test(message))
   }
 
   /**
@@ -102,7 +102,7 @@ export class HealthcareError extends Error {
       lgpdCompliant: this.lgpdCompliant,
       timestamp: this.timestamp,
       code: this.code,
-    };
+    }
   }
 
   /**
@@ -121,7 +121,7 @@ export class HealthcareError extends Error {
       timestamp: this.timestamp.toISOString(),
       metadata: this.metadata,
       stack: this.stack,
-    };
+    }
   }
 }
 
@@ -130,24 +130,24 @@ export class HealthcareError extends Error {
  */
 export class HealthcareValidationError extends HealthcareError {
   public readonly validationDetails: Array<{
-    field: string;
-    message: string;
-    code: string;
-  }>;
+    field: string
+    message: string
+    code: string
+  }>
 
   constructor(
     message: string,
     validationDetails: Array<{
-      field: string;
-      message: string;
-      code: string;
+      field: string
+      message: string
+      code: string
     }> = [],
   ) {
     super(message, ErrorCategory.VALIDATION, ErrorSeverity.LOW, {
       code: 'VALIDATION_ERROR',
-    });
-    this.name = 'HealthcareValidationError';
-    this.validationDetails = validationDetails;
+    })
+    this.name = 'HealthcareValidationError'
+    this.validationDetails = validationDetails
   }
 }
 
@@ -159,8 +159,8 @@ export class HealthcareAuthenticationError extends HealthcareError {
     super(message, ErrorCategory.AUTHENTICATION, ErrorSeverity.HIGH, {
       code: 'AUTHENTICATION_FAILED',
       metadata,
-    });
-    this.name = 'HealthcareAuthenticationError';
+    })
+    this.name = 'HealthcareAuthenticationError'
   }
 }
 
@@ -172,8 +172,8 @@ export class HealthcareAuthorizationError extends HealthcareError {
     super(message, ErrorCategory.AUTHORIZATION, ErrorSeverity.HIGH, {
       code: 'INSUFFICIENT_PERMISSIONS_',
       metadata,
-    });
-    this.name = 'HealthcareAuthorizationError';
+    })
+    this.name = 'HealthcareAuthorizationError'
   }
 }
 
@@ -181,7 +181,7 @@ export class HealthcareAuthorizationError extends HealthcareError {
  * Healthcare compliance error for regulatory violations
  */
 export class HealthcareComplianceError extends HealthcareError {
-  public readonly complianceFramework: 'lgpd' | 'anvisa' | 'cfm';
+  public readonly complianceFramework: 'lgpd' | 'anvisa' | 'cfm'
 
   constructor(
     message: string,
@@ -191,14 +191,14 @@ export class HealthcareComplianceError extends HealthcareError {
     // Map compliance frameworks to specific error categories
     const category = complianceFramework === 'lgpd'
       ? ErrorCategory.LGPD_COMPLIANCE
-      : ErrorCategory.HEALTHCARE_COMPLIANCE;
+      : ErrorCategory.HEALTHCARE_COMPLIANCE
 
     super(message, category, ErrorSeverity.CRITICAL, {
       code: `${complianceFramework.toUpperCase()}_VIOLATION`,
       metadata,
-    });
-    this.name = 'HealthcareComplianceError';
-    this.complianceFramework = complianceFramework;
+    })
+    this.name = 'HealthcareComplianceError'
+    this.complianceFramework = complianceFramework
   }
 }
 
@@ -215,8 +215,8 @@ export class HealthcareSystemError extends HealthcareError {
       code: 'SYSTEM_ERROR_',
       cause,
       metadata,
-    });
-    this.name = 'HealthcareSystemError';
+    })
+    this.name = 'HealthcareSystemError'
   }
 }
 
@@ -228,12 +228,12 @@ export function createHealthcareError(
   category: ErrorCategory,
   severity: ErrorSeverity,
   options: {
-    code?: string;
-    metadata?: Record<string, unknown>;
-    cause?: Error;
+    code?: string
+    metadata?: Record<string, unknown>
+    cause?: Error
   } = {},
 ): HealthcareError {
-  return new HealthcareError(message, category, severity, options);
+  return new HealthcareError(message, category, severity, options)
 }
 
 /**
@@ -242,33 +242,33 @@ export function createHealthcareError(
 export function formatHealthcareError(
   error: HealthcareError,
   options: {
-    includeStack?: boolean;
-    sanitizePersonalData?: boolean;
+    includeStack?: boolean
+    sanitizePersonalData?: boolean
   } = {},
 ): {
-  id: string;
-  message: string;
-  code: string;
-  category: ErrorCategory;
-  severity: ErrorSeverity;
-  timestamp: string;
-  stack?: string;
+  id: string
+  message: string
+  code: string
+  category: ErrorCategory
+  severity: ErrorSeverity
+  timestamp: string
+  stack?: string
 } {
-  const { includeStack = false, sanitizePersonalData = true } = options;
+  const { includeStack = false, sanitizePersonalData = true } = options
 
-  let message = error.message;
+  let message = error.message
   if (sanitizePersonalData && !error.lgpdCompliant) {
-    message = sanitizeErrorMessage(message);
+    message = sanitizeErrorMessage(message)
   }
 
   const formatted: {
-    id: string;
-    message: string;
-    code: string;
-    category: ErrorCategory;
-    severity: ErrorSeverity;
-    timestamp: string;
-    stack?: string;
+    id: string
+    message: string
+    code: string
+    category: ErrorCategory
+    severity: ErrorSeverity
+    timestamp: string
+    stack?: string
   } = {
     id: error.id,
     message,
@@ -276,34 +276,34 @@ export function formatHealthcareError(
     category: error.category,
     severity: error.severity,
     timestamp: error.timestamp.toISOString(),
-  };
-
-  if (includeStack && error.stack) {
-    formatted.stack = error.stack;
   }
 
-  return formatted;
+  if (includeStack && error.stack) {
+    formatted.stack = error.stack
+  }
+
+  return formatted
 }
 
 /**
  * Check if an error is a healthcare error
  */
 export function isHealthcareError(error: unknown): error is HealthcareError {
-  return error instanceof HealthcareError;
+  return error instanceof HealthcareError
 }
 
 /**
  * Sanitize error message to remove personal data
  */
 export function sanitizeErrorMessage(message: string): string {
-  let sanitized = message;
+  let sanitized = message
 
   // Replace personal data patterns with placeholders
   PERSONAL_DATA_PATTERNS.forEach((pattern, index) => {
-    sanitized = sanitized.replace(pattern, `[REDACTED_${index}]`);
-  });
+    sanitized = sanitized.replace(pattern, `[REDACTED_${index}]`)
+  })
 
-  return sanitized;
+  return sanitized
 }
 
 /**
@@ -315,7 +315,7 @@ export function validateErrorCompliance(
 ): boolean {
   switch (framework) {
     case 'lgpd':
-      return error.lgpdCompliant;
+      return error.lgpdCompliant
 
     case 'anvisa':
       // ANVISA compliance: check if error relates to medication/procedure standards
@@ -324,7 +324,7 @@ export function validateErrorCompliance(
         || error.message.toLowerCase().includes('medication')
         || error.message.toLowerCase().includes('procedure')
         || error.message.toLowerCase().includes('protocol')
-      );
+      )
 
     case 'cfm':
       // CFM compliance: check if error relates to professional ethics
@@ -333,10 +333,10 @@ export function validateErrorCompliance(
         || error.message.toLowerCase().includes('professional')
         || error.message.toLowerCase().includes('ethics')
         || error.message.toLowerCase().includes('conduct')
-      );
+      )
 
     default:
-      throw new Error(`Unknown compliance framework: ${framework}`);
+      throw new Error(`Unknown compliance framework: ${framework}`)
   }
 }
 
@@ -394,17 +394,17 @@ export const _HealthcareErrors = {
       ethicalCode,
       violation,
     }),
-};
+}
 /**
  * Healthcare-specific tRPC error that combines TRPCError with healthcare compliance
  */
 export class HealthcareTRPCError extends TRPCError {
-  public readonly healthcareContext: boolean = true;
-  public readonly lgpdCompliant: boolean;
-  public readonly timestamp: Date;
-  public readonly id: string;
-  public readonly healthcareCode?: string;
-  public readonly metadata?: Record<string, unknown>;
+  public readonly healthcareContext: boolean = true
+  public readonly lgpdCompliant: boolean
+  public readonly timestamp: Date
+  public readonly id: string
+  public readonly healthcareCode?: string
+  public readonly metadata?: Record<string, unknown>
 
   constructor(
     code: TRPCErrorType['code'],
@@ -412,13 +412,13 @@ export class HealthcareTRPCError extends TRPCError {
     healthcareCode?: string,
     metadata?: Record<string, unknown>,
   ) {
-    super({ code, message });
+    super({ code, message })
 
-    this.id = crypto.randomUUID();
-    this.timestamp = new Date();
-    this.healthcareCode = healthcareCode;
-    this.metadata = metadata;
-    this.lgpdCompliant = this.checkLGPDCompliance(message);
+    this.id = crypto.randomUUID()
+    this.timestamp = new Date()
+    this.healthcareCode = healthcareCode
+    this.metadata = metadata
+    this.lgpdCompliant = this.checkLGPDCompliance(message)
   }
 
   /**
@@ -433,14 +433,14 @@ export class HealthcareTRPCError extends TRPCError {
       lgpdCompliant: this.lgpdCompliant,
       timestamp: this.timestamp,
       metadata: this.metadata,
-    };
+    }
   }
 
   /**
    * Check if error message is LGPD compliant
    */
   private checkLGPDCompliance(message: string): boolean {
-    return !PERSONAL_DATA_PATTERNS.some(pattern => pattern.test(message));
+    return !PERSONAL_DATA_PATTERNS.some((pattern) => pattern.test(message))
   }
 
   /**
@@ -458,6 +458,6 @@ export class HealthcareTRPCError extends TRPCError {
       timestamp: this.timestamp.toISOString(),
       metadata: this.metadata,
       stack: this.stack,
-    };
+    }
   }
 }

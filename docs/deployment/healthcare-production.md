@@ -192,7 +192,7 @@ export const config = {
   runtime: 'edge',
   regions: ['gru1'], // São Paulo only for patient data
   maxDuration: 5,
-};
+}
 
 export default async function handler(request: Request) {
   // Healthcare data processing within Brazilian territory
@@ -201,7 +201,7 @@ export default async function handler(request: Request) {
       'X-Region': 'gru1',
       'X-Compliance': 'LGPD',
     },
-  });
+  })
 }
 ```
 
@@ -215,10 +215,10 @@ export default async function handler(request: Request) {
 
 ```typescript
 // lib/supabase.ts
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from '@supabase/supabase-js'
 
-const supabaseUrl = process.env.SUPABASE_URL!;
-const supabaseKey = process.env.SUPABASE_ANON_KEY!;
+const supabaseUrl = process.env.SUPABASE_URL!
+const supabaseKey = process.env.SUPABASE_ANON_KEY!
 
 export const supabase = createClient(supabaseUrl, supabaseKey, {
   auth: {
@@ -239,7 +239,7 @@ export const supabase = createClient(supabaseUrl, supabaseKey, {
       eventsPerSecond: 10,
     },
   },
-});
+})
 ```
 
 #### Row-Level Security (RLS) Policies
@@ -294,13 +294,13 @@ export const subscribeToAppointments = (clinicId: string) => {
         table: 'appointments',
         filter: `clinic_id=eq.${clinicId}`,
       },
-      payload => {
+      (payload) => {
         // Handle real-time appointment updates
-        handleAppointmentUpdate(payload);
+        handleAppointmentUpdate(payload)
       },
     )
-    .subscribe();
-};
+    .subscribe()
+}
 
 export const subscribeToTelemedicine = (sessionId: string) => {
   return supabase
@@ -313,13 +313,13 @@ export const subscribeToTelemedicine = (sessionId: string) => {
         table: 'telemedicine_sessions',
         filter: `id=eq.${sessionId}`,
       },
-      payload => {
+      (payload) => {
         // Handle telemedicine session updates
-        handleTelemedicineUpdate(payload);
+        handleTelemedicineUpdate(payload)
       },
     )
-    .subscribe();
-};
+    .subscribe()
+}
 ```
 
 ---
@@ -359,14 +359,14 @@ export const HEALTHCARE_SLA_TARGETS = {
     jitter: 30, // ms
     packetLoss: 0.1, // %
   },
-};
+}
 ```
 
 #### Vercel Analytics Integration
 
 ```typescript
 // lib/monitoring/vercel-analytics.ts
-import { track } from '@vercel/analytics';
+import { track } from '@vercel/analytics'
 
 export const trackHealthcareOperation = (
   operation: string,
@@ -381,19 +381,19 @@ export const trackHealthcareOperation = (
     compliance: 'lgpd',
     region: 'gru1',
     ...metadata,
-  });
+  })
 
   // Check SLA compliance
-  const slaTarget = getSLATarget(operation);
+  const slaTarget = getSLATarget(operation)
   if (duration > slaTarget.responseTime) {
     track('sla_violation', {
       operation,
       target: slaTarget.responseTime,
       actual: duration,
       severity: duration > slaTarget.responseTime * 2 ? 'high' : 'medium',
-    });
+    })
   }
-};
+}
 ```
 
 ### 2. Health Checks
@@ -410,7 +410,7 @@ export default async function handler(req: Request) {
     checkWhatsAppAPI(),
     checkSupabaseRealtime(),
     checkLGPDCompliance(),
-  ]);
+  ])
 
   const results = healthChecks.map((check, index) => ({
     service: [
@@ -423,9 +423,9 @@ export default async function handler(req: Request) {
     ][index],
     status: check.status === 'fulfilled' ? 'healthy' : 'unhealthy',
     details: check.status === 'fulfilled' ? check.value : check.reason,
-  }));
+  }))
 
-  const overallHealth = results.every(r => r.status === 'healthy');
+  const overallHealth = results.every((r) => r.status === 'healthy')
 
   return new Response(
     JSON.stringify({
@@ -442,7 +442,7 @@ export default async function handler(req: Request) {
         'Cache-Control': 'no-cache',
       },
     },
-  );
+  )
 }
 ```
 
@@ -452,20 +452,20 @@ export default async function handler(req: Request) {
 
 ```typescript
 // lib/monitoring/uptime.ts
-import { Upstash } from '@upstash/redis';
+import { Upstash } from '@upstash/redis'
 
 const redis = new Upstash({
   url: process.env.UPSTASH_REDIS_REST_URL!,
   token: process.env.UPSTASH_REDIS_REST_TOKEN!,
-});
+})
 
 export const recordUptime = async (
   service: string,
   status: 'up' | 'down',
   responseTime?: number,
 ) => {
-  const timestamp = Date.now();
-  const key = `uptime:${service}:${new Date().toISOString().slice(0, 10)}`;
+  const timestamp = Date.now()
+  const key = `uptime:${service}:${new Date().toISOString().slice(0, 10)}`
 
   await redis.zadd(key, {
     score: timestamp,
@@ -475,11 +475,11 @@ export const recordUptime = async (
       timestamp,
       region: 'gru1',
     }),
-  });
+  })
 
   // Keep 30 days of data
-  await redis.expire(key, 30 * 24 * 60 * 60);
-};
+  await redis.expire(key, 30 * 24 * 60 * 60)
+}
 ```
 
 ---
@@ -596,7 +596,7 @@ export const setupGeographicBackups = async () => {
     'gru1', // São Paulo (Primary)
     'gru2', // São Paulo (Secondary)
     'bsb1', // Brasília (Compliance backup)
-  ];
+  ]
 
   for (const region of regions) {
     await scheduleBackup({
@@ -605,9 +605,9 @@ export const setupGeographicBackups = async () => {
       retention: '20y', // CFM requirement
       encryption: 'AES-256',
       compliance: ['LGPD', 'CFM', 'ANVISA'],
-    });
+    })
   }
-};
+}
 ```
 
 ---
@@ -620,10 +620,10 @@ export const setupGeographicBackups = async () => {
 
 ```typescript
 // middleware.ts
-import { NextResponse } from 'next/server';
+import { NextResponse } from 'next/server'
 
 export function middleware(request: NextRequest) {
-  const response = NextResponse.next();
+  const response = NextResponse.next()
 
   // Enforce HTTPS for healthcare data
   if (
@@ -632,34 +632,34 @@ export function middleware(request: NextRequest) {
   ) {
     return NextResponse.redirect(
       `https://${request.headers.get('host')}${request.nextUrl.pathname}`,
-    );
+    )
   }
 
   // Brazilian healthcare security headers
   response.headers.set(
     'Strict-Transport-Security',
     'max-age=31536000; includeSubDomains',
-  );
-  response.headers.set('X-Content-Type-Options', 'nosniff');
-  response.headers.set('X-Frame-Options', 'DENY');
-  response.headers.set('X-XSS-Protection', '1; mode=block');
-  response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
-  response.headers.set('X-Healthcare-Platform', 'neonpro');
-  response.headers.set('X-Compliance-Version', 'v1.0');
-  response.headers.set('X-Region', 'BR');
+  )
+  response.headers.set('X-Content-Type-Options', 'nosniff')
+  response.headers.set('X-Frame-Options', 'DENY')
+  response.headers.set('X-XSS-Protection', '1; mode=block')
+  response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin')
+  response.headers.set('X-Healthcare-Platform', 'neonpro')
+  response.headers.set('X-Compliance-Version', 'v1.0')
+  response.headers.set('X-Region', 'BR')
 
   // CSP for healthcare applications
   response.headers.set(
     'Content-Security-Policy',
-    'default-src \'self\'; script-src \'self\' \'unsafe-eval\'; style-src \'self\' \'unsafe-inline\'; img-src \'self\' data: https:; connect-src \'self\' https://*.supabase.co https://*.vercel.app;',
-  );
+    "default-src 'self'; script-src 'self' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https://*.supabase.co https://*.vercel.app;",
+  )
 
-  return response;
+  return response
 }
 
 export const config = {
   matcher: ['/((?!api/|_next/|_static/|_vercel|[\\w-]+\\.\\w+).*)'],
-};
+}
 ```
 
 ### 2. Authentication & Authorization
@@ -680,26 +680,26 @@ export const healthcareAuthConfig = {
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.clinicId = user.clinicId;
-        token.crmNumber = user.crmNumber;
-        token.cfmValidated = user.cfmValidated;
-        token.permissions = user.permissions;
+        token.clinicId = user.clinicId
+        token.crmNumber = user.crmNumber
+        token.cfmValidated = user.cfmValidated
+        token.permissions = user.permissions
       }
-      return token;
+      return token
     },
     async session({ session, token }) {
-      session.user.clinicId = token.clinicId;
-      session.user.crmNumber = token.crmNumber;
-      session.user.cfmValidated = token.cfmValidated;
-      session.user.permissions = token.permissions;
-      return session;
+      session.user.clinicId = token.clinicId
+      session.user.crmNumber = token.crmNumber
+      session.user.cfmValidated = token.cfmValidated
+      session.user.permissions = token.permissions
+      return session
     },
   },
   pages: {
     signIn: '/auth/signin',
     error: '/auth/error',
   },
-};
+}
 ```
 
 ---
@@ -726,7 +726,7 @@ module.exports = {
         fs: false,
         net: false,
         tls: false,
-      };
+      }
     }
 
     // Healthcare bundle optimization
@@ -739,11 +739,11 @@ module.exports = {
           chunks: 'all',
         },
       },
-    };
+    }
 
-    return config;
+    return config
   },
-};
+}
 ```
 
 ### 2. Database Performance
@@ -752,7 +752,7 @@ module.exports = {
 
 ```typescript
 // lib/prisma/optimized-client.ts
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '@prisma/client'
 
 const createPrismaClient = () => {
   return new PrismaClient({
@@ -769,9 +769,9 @@ const createPrismaClient = () => {
       // Log all patient data access for LGPD compliance
       patient: {
         async findMany({ model, operation, args, query }) {
-          const start = performance.now();
-          const result = await query(args);
-          const duration = performance.now() - start;
+          const start = performance.now()
+          const result = await query(args)
+          const duration = performance.now() - start
 
           // Log for compliance
           await logPatientDataAccess({
@@ -779,19 +779,19 @@ const createPrismaClient = () => {
             duration,
             recordCount: result.length,
             compliance: 'LGPD',
-          });
+          })
 
-          return result;
+          return result
         },
       },
     },
-  });
-};
+  })
+}
 
-export const prisma = globalThis.prisma || createPrismaClient();
+export const prisma = globalThis.prisma || createPrismaClient()
 
 if (process.env.NODE_ENV !== 'production') {
-  globalThis.prisma = prisma;
+  globalThis.prisma = prisma
 }
 ```
 

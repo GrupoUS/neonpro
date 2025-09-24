@@ -217,45 +217,45 @@ Defines Test-Driven Development workflow for TypeScript/Jest projects. Follow th
 ## Test Structure Template
 
 ```typescript
-import { functionToTest } from '@/path/to/module';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { functionToTest } from '@/path/to/module'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 // Mock dependencies with Vitest
 vi.mock('@/lib/external-service', () => ({
   method: vi.fn(),
-}));
+}))
 
 describe('ModuleName', () => {
   beforeEach(() => {
     // Reset mocks before each test
-    vi.clearAllMocks();
-  });
+    vi.clearAllMocks()
+  })
 
   describe('Success Cases', () => {
     it('should handle valid input', () => {
       // Arrange
-      const input = 'valid';
+      const input = 'valid'
 
       // Act
-      const result = functionToTest(input);
+      const result = functionToTest(input)
 
       // Assert
-      expect(result).toBe('expected');
-    });
-  });
+      expect(result).toBe('expected')
+    })
+  })
 
   describe('Error Cases', () => {
     it('should throw on invalid input', () => {
-      expect(() => functionToTest(null)).toThrow();
-    });
-  });
+      expect(() => functionToTest(null)).toThrow()
+    })
+  })
 
   describe('Edge Cases', () => {
     it('should handle boundary values', () => {
       // Test edge cases
-    });
-  });
-});
+    })
+  })
+})
 ```
 
 ## File Organization
@@ -285,13 +285,13 @@ tools/
 ### Vitest Unit Test Mocks
 
 ```typescript
-import { vi } from 'vitest';
+import { vi } from 'vitest'
 
 // External service mock
 vi.mock('@/lib/service', () => ({
   method: vi.fn(),
   asyncMethod: vi.fn().mockResolvedValue('success'),
-}));
+}))
 
 // Supabase mock
 const mockSupabase = {
@@ -302,21 +302,21 @@ const mockSupabase = {
     update: vi.fn().mockReturnThis(),
     delete: vi.fn().mockReturnThis(),
   }),
-};
+}
 
 vi.mock('@/lib/supabase', () => ({
   supabase: mockSupabase,
-}));
+}))
 
 // React hooks mock
 vi.mock('react', async () => {
-  const actual = await vi.importActual('react');
+  const actual = await vi.importActual('react')
   return {
     ...actual,
     useState: vi.fn(),
     useEffect: vi.fn(),
-  };
-});
+  }
+})
 
 // Next.js router mock
 vi.mock('next/navigation', () => ({
@@ -327,45 +327,45 @@ vi.mock('next/navigation', () => ({
   })),
   usePathname: vi.fn(() => '/'),
   useSearchParams: vi.fn(() => new URLSearchParams()),
-}));
+}))
 ```
 
 ### Playwright E2E Test Patterns
 
 ```typescript
-import { expect, Page, test } from '@playwright/test';
+import { expect, Page, test } from '@playwright/test'
 
 // Page Object Model
 class PatientPage {
   constructor(private page: Page) {}
 
   async navigateToPatients() {
-    await this.page.goto('/patients');
+    await this.page.goto('/patients')
   }
 
   async createPatient(data: PatientData) {
-    await this.page.fill('[data-testid="patient-name"]', data.name);
-    await this.page.fill('[data-testid="patient-cpf"]', data.cpf);
-    await this.page.click('[data-testid="save-patient"]');
+    await this.page.fill('[data-testid="patient-name"]', data.name)
+    await this.page.fill('[data-testid="patient-cpf"]', data.cpf)
+    await this.page.click('[data-testid="save-patient"]')
   }
 
   async expectPatientVisible(name: string) {
-    await expect(this.page.locator(`text=${name}`)).toBeVisible();
+    await expect(this.page.locator(`text=${name}`)).toBeVisible()
   }
 }
 
 // Usage in test
 test('should create new patient', async ({ page }) => {
-  const patientPage = new PatientPage(page);
+  const patientPage = new PatientPage(page)
 
-  await patientPage.navigateToPatients();
+  await patientPage.navigateToPatients()
   await patientPage.createPatient({
     name: 'João Silva',
     cpf: '123.456.789-00',
-  });
+  })
 
-  await patientPage.expectPatientVisible('João Silva');
-});
+  await patientPage.expectPatientVisible('João Silva')
+})
 ```
 
 ## Test Categories (Required)
@@ -408,7 +408,7 @@ export default defineConfig({
       },
     },
   },
-});
+})
 ```
 
 ## Scripts
@@ -513,7 +513,7 @@ export default defineConfig({
     // Fail fast on first test failure in CI
     bail: process.env.CI ? 1 : 0,
   },
-});
+})
 ```
 
 ```typescript
@@ -531,7 +531,7 @@ export default defineConfig({
       slowMo: process.env.CI ? 100 : 0,
     },
   },
-});
+})
 ```
 
 ## Common Issues & Solutions
@@ -540,8 +540,8 @@ export default defineConfig({
 
 ```typescript
 // vitest.config.ts
-import path from 'path';
-import { defineConfig } from 'vitest/config';
+import path from 'path'
+import { defineConfig } from 'vitest/config'
 
 export default defineConfig({
   test: {
@@ -560,53 +560,53 @@ export default defineConfig({
       '@/components': path.resolve(__dirname, './components'),
     },
   },
-});
+})
 ```
 
 ### Mock Issues & Solutions
 
 ```typescript
 // ❌ Wrong - Jest syntax
-jest.mock('module', () => ({}));
+jest.mock('module', () => ({}))
 
 // ✅ Correct - Vitest syntax
 vi.mock('module', () => ({
   default: vi.fn(),
   namedExport: vi.fn(),
-}));
+}))
 
 // ❌ Wrong - Missing async for dynamic imports
 vi.mock('react', () => ({
   useState: vi.fn(),
-}));
+}))
 
 // ✅ Correct - Proper async handling
 vi.mock('react', async () => {
-  const actual = await vi.importActual('react');
+  const actual = await vi.importActual('react')
   return {
     ...actual,
     useState: vi.fn(),
-  };
-});
+  }
+})
 ```
 
 ### Playwright Common Issues
 
 ```typescript
 // ❌ Wrong - Flaky selectors
-await page.click('button');
+await page.click('button')
 
 // ✅ Correct - Specific test IDs
-await page.click('[data-testid="submit-button"]');
+await page.click('[data-testid="submit-button"]')
 
 // ❌ Wrong - No wait for navigation
-await page.click('[data-testid="login"]');
-await page.fill('[data-testid="username"]', 'user');
+await page.click('[data-testid="login"]')
+await page.fill('[data-testid="username"]', 'user')
 
 // ✅ Correct - Wait for navigation
-await page.click('[data-testid="login"]');
-await page.waitForURL('/dashboard');
-await page.fill('[data-testid="username"]', 'user');
+await page.click('[data-testid="login"]')
+await page.waitForURL('/dashboard')
+await page.fill('[data-testid="username"]', 'user')
 ```
 
 ### OXC Oxlint Configuration Issues
@@ -674,7 +674,7 @@ export default defineConfig({
       skipFull: true,
     },
   },
-});
+})
 ```
 
 ### Playwright Performance
@@ -715,7 +715,7 @@ export default defineConfig({
       ]
       : []),
   ],
-});
+})
 ```
 
 ### Test Performance Best Practices
@@ -731,21 +731,21 @@ export default defineConfig({
 // Fast test example
 test('should calculate total quickly', () => {
   // Arrange - minimal setup
-  const items = [{ price: 10 }, { price: 20 }];
+  const items = [{ price: 10 }, { price: 20 }]
 
   // Act - direct function call
-  const total = calculateTotal(items);
+  const total = calculateTotal(items)
 
   // Assert - simple assertion
-  expect(total).toBe(30);
-});
+  expect(total).toBe(30)
+})
 
 // Slow test - avoid in unit tests
 test.skip('should handle large dataset', async () => {
-  const largeDataset = Array.from({ length: 10000 }, (_, i) => ({ id: i }));
-  const result = await processLargeDataset(largeDataset);
-  expect(result).toBeDefined();
-});
+  const largeDataset = Array.from({ length: 10000 }, (_, i) => ({ id: i }))
+  const result = await processLargeDataset(largeDataset)
+  expect(result).toBeDefined()
+})
 ```
 
 Follow this protocol to maintain high code quality through systematic testing.

@@ -3,7 +3,7 @@
 
 export class PIIRedactionService {
   redact(input: string): string {
-    const { compliance } = require('@neonpro/utils');
-    return compliance.lgpdCompliance(input);
+    const { compliance } = require('@neonpro/utils')
+    return compliance.lgpdCompliance(input)
   }
 }

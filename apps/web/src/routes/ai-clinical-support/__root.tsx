@@ -1,6 +1,6 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { createFileRoute, Outlet } from '@tanstack/react-router';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { createFileRoute, Outlet } from '@tanstack/react-router'
 import {
   Activity,
   AlertTriangle,
@@ -11,12 +11,12 @@ import {
   UserCheck,
   // Heart,
   // FileText
-} from 'lucide-react';
-import * as React from 'react';
+} from 'lucide-react'
+import * as React from 'react'
 
 export const Route = createFileRoute('/ai-clinical-support/')({
   component: AIClinicalSupportLayout,
-});
+})
 
 function AIClinicalSupportLayout() {
   return (
@@ -165,5 +165,5 @@ function AIClinicalSupportLayout() {
         </Tabs>
       </div>
     </div>
-  );
+  )
 }

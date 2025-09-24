@@ -1,12 +1,12 @@
 // T040: Connect ChatService to Supabase
-import type { AuditEvent, ChatMessage, ChatSession } from '@neonpro/types';
-import { createClient } from '@supabase/supabase-js';
+import type { AuditEvent, ChatMessage, ChatSession } from '@neonpro/types'
+import { createClient } from '@supabase/supabase-js'
 
 export class ChatRepository {
-  private supabase;
+  private supabase
 
   constructor(supabaseUrl: string, supabaseKey: string) {
-    this.supabase = createClient(supabaseUrl, supabaseKey);
+    this.supabase = createClient(supabaseUrl, supabaseKey)
   }
 
   async createSession(
@@ -23,13 +23,13 @@ export class ChatRepository {
         updated_at: new Date().toISOString(),
       })
       .select()
-      .single();
+      .single()
 
     if (error) {
-      throw new Error(`Failed to create chat session: ${error.message}`);
+      throw new Error(`Failed to create chat session: ${error.message}`)
     }
 
-    return data as ChatSession;
+    return data as ChatSession
   }
 
   async getSession(sessionId: string): Promise<ChatSession | null> {
@@ -37,17 +37,17 @@ export class ChatRepository {
       .from('chat_sessions')
       .select('*')
       .eq('id', sessionId)
-      .single();
+      .single()
 
     if (error) {
       if (error.code === 'PGRST116') {
         // Not found
-        return null;
+        return null
       }
-      throw new Error(`Failed to get chat session: ${error.message}`);
+      throw new Error(`Failed to get chat session: ${error.message}`)
     }
 
-    return data as ChatSession;
+    return data as ChatSession
   }
 
   async updateSession(
@@ -62,13 +62,13 @@ export class ChatRepository {
       })
       .eq('id', sessionId)
       .select()
-      .single();
+      .single()
 
     if (error) {
-      throw new Error(`Failed to update chat session: ${error.message}`);
+      throw new Error(`Failed to update chat session: ${error.message}`)
     }
 
-    return data as ChatSession;
+    return data as ChatSession
   }
 
   async addMessage(
@@ -81,13 +81,13 @@ export class ChatRepository {
         created_at: new Date().toISOString(),
       })
       .select()
-      .single();
+      .single()
 
     if (error) {
-      throw new Error(`Failed to add chat message: ${error.message}`);
+      throw new Error(`Failed to add chat message: ${error.message}`)
     }
 
-    return data as ChatMessage;
+    return data as ChatMessage
   }
 
   async getMessages(
@@ -100,13 +100,13 @@ export class ChatRepository {
       .select('*')
       .eq('session_id', sessionId)
       .order('created_at', { ascending: true })
-      .range(offset, offset + limit - 1);
+      .range(offset, offset + limit - 1)
 
     if (error) {
-      throw new Error(`Failed to get chat messages: ${error.message}`);
+      throw new Error(`Failed to get chat messages: ${error.message}`)
     }
 
-    return data as ChatMessage[];
+    return data as ChatMessage[]
   }
 
   async logAuditEvent(
@@ -119,13 +119,13 @@ export class ChatRepository {
         created_at: new Date().toISOString(),
       })
       .select()
-      .single();
+      .single()
 
     if (error) {
-      throw new Error(`Failed to log audit event: ${error.message}`);
+      throw new Error(`Failed to log audit event: ${error.message}`)
     }
 
-    return data as AuditEvent;
+    return data as AuditEvent
   }
 
   async getAuditEvents(
@@ -138,20 +138,20 @@ export class ChatRepository {
       .select('*')
       .eq('session_id', sessionId)
       .order('created_at', { ascending: false })
-      .range(offset, offset + limit - 1);
+      .range(offset, offset + limit - 1)
 
     if (error) {
-      throw new Error(`Failed to get audit events: ${error.message}`);
+      throw new Error(`Failed to get audit events: ${error.message}`)
     }
 
-    return data as AuditEvent[];
+    return data as AuditEvent[]
   }
 
   async closeSession(sessionId: string): Promise<ChatSession> {
     return this.updateSession(sessionId, {
       status: 'closed',
       endedAt: new Date().toISOString(),
-    });
+    })
   }
 
   async getActiveSessions(_userId: string): Promise<ChatSession[]> {
@@ -160,34 +160,34 @@ export class ChatRepository {
       .select('*')
       .eq('user_id', _userId)
       .eq('status', 'active')
-      .order('updated_at', { ascending: false });
+      .order('updated_at', { ascending: false })
 
     if (error) {
-      throw new Error(`Failed to get active sessions: ${error.message}`);
+      throw new Error(`Failed to get active sessions: ${error.message}`)
     }
 
-    return data as ChatSession[];
+    return data as ChatSession[]
   }
 }
 
 // Singleton instance for dependency injection
-let chatRepositoryInstance: ChatRepository | null = null;
+let chatRepositoryInstance: ChatRepository | null = null
 
 export function createChatRepository(
   supabaseUrl: string,
   supabaseKey: string,
 ): ChatRepository {
   if (!chatRepositoryInstance) {
-    chatRepositoryInstance = new ChatRepository(supabaseUrl, supabaseKey);
+    chatRepositoryInstance = new ChatRepository(supabaseUrl, supabaseKey)
   }
-  return chatRepositoryInstance;
+  return chatRepositoryInstance
 }
 
 export function getChatRepository(): ChatRepository {
   if (!chatRepositoryInstance) {
     throw new Error(
       'ChatRepository not initialized. Call createChatRepository first.',
-    );
+    )
   }
-  return chatRepositoryInstance;
+  return chatRepositoryInstance
 }

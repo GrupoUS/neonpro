@@ -111,35 +111,35 @@ Funcionalidades principais:
 interface ConsultationTypes {
   // Consulta inicial
   initialConsultation: {
-    duration: '60 minutos';
-    professional: 'Médico dermatologista';
-    focus: 'Avaliação completa';
-    price: 'R$ 250';
-  };
+    duration: '60 minutos'
+    professional: 'Médico dermatologista'
+    focus: 'Avaliação completa'
+    price: 'R$ 250'
+  }
 
   // Sessão de tratamento
   treatmentSession: {
-    duration: '30-90 minutos'; // varia
-    professional: 'Especialista';
-    focus: 'Procedimento específico';
-    price: 'Variável';
-  };
+    duration: '30-90 minutos' // varia
+    professional: 'Especialista'
+    focus: 'Procedimento específico'
+    price: 'Variável'
+  }
 
   // Acompanhamento
   followUp: {
-    duration: '30 minutos';
-    professional: 'Mesmo profissional';
-    focus: 'Avaliação de resultados';
-    price: 'R$ 150';
-  };
+    duration: '30 minutos'
+    professional: 'Mesmo profissional'
+    focus: 'Avaliação de resultados'
+    price: 'R$ 150'
+  }
 
   // Emergência
   emergency: {
-    duration: '15 minutos';
-    professional: 'Disponível';
-    focus: 'Urgência estética';
-    price: 'R$ 200';
-  };
+    duration: '15 minutos'
+    professional: 'Disponível'
+    focus: 'Urgência estética'
+    price: 'R$ 200'
+  }
 }
 ```
 
@@ -197,39 +197,39 @@ Evitar:
 interface FacialTreatments {
   // Botox
   botox: {
-    duration: '15-30 minutos';
-    recovery: 'Imediata';
-    results: '7-14 dias';
-    durationOfEffect: '4-6 meses';
-    price: 'A partir de R$ 800';
-  };
+    duration: '15-30 minutos'
+    recovery: 'Imediata'
+    results: '7-14 dias'
+    durationOfEffect: '4-6 meses'
+    price: 'A partir de R$ 800'
+  }
 
   // Preenchimento facial
   dermalFillers: {
-    duration: '30-45 minutos';
-    recovery: '24-48h';
-    results: 'Imediatos';
-    durationOfEffect: '12-18 meses';
-    price: 'A partir de R$ 1.200';
-  };
+    duration: '30-45 minutos'
+    recovery: '24-48h'
+    results: 'Imediatos'
+    durationOfEffect: '12-18 meses'
+    price: 'A partir de R$ 1.200'
+  }
 
   // Peeling químico
   chemicalPeeling: {
-    duration: '30-60 minutos';
-    recovery: '3-7 dias';
-    results: '1-2 semanas';
-    durationOfEffect: '3-6 meses';
-    price: 'A partir de R$ 300';
-  };
+    duration: '30-60 minutos'
+    recovery: '3-7 dias'
+    results: '1-2 semanas'
+    durationOfEffect: '3-6 meses'
+    price: 'A partir de R$ 300'
+  }
 
   // Laser facial
   laserTreatment: {
-    duration: '30-45 minutos';
-    recovery: '24-72h';
-    results: 'Progressivos';
-    durationOfEffect: '6-12 meses';
-    price: 'A partir de R$ 500';
-  };
+    duration: '30-45 minutos'
+    recovery: '24-72h'
+    results: 'Progressivos'
+    durationOfEffect: '6-12 meses'
+    price: 'A partir de R$ 500'
+  }
 }
 ```
 
@@ -239,30 +239,30 @@ interface FacialTreatments {
 interface BodyTreatments {
   // Lipoaspiração
   liposuction: {
-    duration: '1-3 horas';
-    recovery: '1-2 semanas';
-    results: '4-6 semanas';
-    durationOfEffect: 'Permanente';
-    price: 'A partir de R$ 8.000';
-  };
+    duration: '1-3 horas'
+    recovery: '1-2 semanas'
+    results: '4-6 semanas'
+    durationOfEffect: 'Permanente'
+    price: 'A partir de R$ 8.000'
+  }
 
   // Criolipólise
   cryolipolysis: {
-    duration: '60 minutos';
-    recovery: 'Imediata';
-    results: '4-8 semanas';
-    durationOfEffect: 'Permanente';
-    price: 'A partir de R$ 1.500';
-  };
+    duration: '60 minutos'
+    recovery: 'Imediata'
+    results: '4-8 semanas'
+    durationOfEffect: 'Permanente'
+    price: 'A partir de R$ 1.500'
+  }
 
   // Radiofrequência
   radiofrequency: {
-    duration: '45-60 minutos';
-    recovery: 'Imediata';
-    results: 'Progressivos';
-    durationOfEffect: '6-12 meses';
-    price: 'A partir de R$ 400';
-  };
+    duration: '45-60 minutos'
+    recovery: 'Imediata'
+    results: 'Progressivos'
+    durationOfEffect: '6-12 meses'
+    price: 'A partir de R$ 400'
+  }
 }
 ```
 
@@ -274,29 +274,29 @@ interface BodyTreatments {
 interface AIRecommendations {
   // Análise personalizada
   personalAnalysis: {
-    skinType: 'normal | dry | oily | combination | sensitive';
-    skinTone: 'light | medium | dark | deep';
-    concerns: string[];
-    medicalHistory: MedicalCondition[];
-    lifestyleFactors: LifestyleFactor[];
-  };
+    skinType: 'normal | dry | oily | combination | sensitive'
+    skinTone: 'light | medium | dark | deep'
+    concerns: string[]
+    medicalHistory: MedicalCondition[]
+    lifestyleFactors: LifestyleFactor[]
+  }
 
   // Recomendações baseadas em IA
   aiSuggestions: {
-    recommendedTreatments: TreatmentRecommendation[];
-    confidenceLevel: number;
-    expectedResults: string[];
-    riskFactors: string[];
-    timeline: TreatmentTimeline[];
-  };
+    recommendedTreatments: TreatmentRecommendation[]
+    confidenceLevel: number
+    expectedResults: string[]
+    riskFactors: string[]
+    timeline: TreatmentTimeline[]
+  }
 
   // Plano de tratamento
   treatmentPlan: {
-    phases: TreatmentPhase[];
-    schedule: TreatmentSchedule[];
-    totalDuration: number;
-    estimatedCost: number;
-  };
+    phases: TreatmentPhase[]
+    schedule: TreatmentSchedule[]
+    totalDuration: number
+    estimatedCost: number
+  }
 }
 ```
 
@@ -330,38 +330,38 @@ Benefícios:
 interface PaymentOptions {
   // Cartão de crédito
   creditCard: {
-    installments: 'Até 12x';
-    minimumInstallment: 'R$ 50';
-    interestFreeUpTo: '6x';
-    fees: '2.5% acima de 6x';
-  };
+    installments: 'Até 12x'
+    minimumInstallment: 'R$ 50'
+    interestFreeUpTo: '6x'
+    fees: '2.5% acima de 6x'
+  }
 
   // Cartão de débito
   debitCard: {
-    immediateDiscount: '5%';
-    instantConfirmation: true;
-  };
+    immediateDiscount: '5%'
+    instantConfirmation: true
+  }
 
   // PIX
   pix: {
-    immediateDiscount: '10%';
-    instantConfirmation: true;
-    noFees: true;
-  };
+    immediateDiscount: '10%'
+    instantConfirmation: true
+    noFees: true
+  }
 
   // Boleto
   boleto: {
-    installments: 'Até 3x';
-    clearingTime: '3 dias úteis';
-    fees: '2.0%';
-  };
+    installments: 'Até 3x'
+    clearingTime: '3 dias úteis'
+    fees: '2.0%'
+  }
 
   // Convênios
   insurance: {
-    acceptedInsurance: string[];
-    directBilling: boolean;
-    copayment: 'Varia por plano';
-  };
+    acceptedInsurance: string[]
+    directBilling: boolean
+    copayment: 'Varia por plano'
+  }
 }
 ```
 
@@ -371,21 +371,21 @@ interface PaymentOptions {
 interface TreatmentPackages {
   // Pacote facial completo
   facialPackage: {
-    treatments: 6;
-    duration: '6 meses';
-    originalPrice: 3000;
-    packagePrice: 2500;
-    savings: 500;
-  };
+    treatments: 6
+    duration: '6 meses'
+    originalPrice: 3000
+    packagePrice: 2500
+    savings: 500
+  }
 
   // Pacote corporal
   bodyPackage: {
-    treatments: 8;
-    duration: '8 meses';
-    originalPrice: 5000;
-    packagePrice: 4200;
-    savings: 800;
-  };
+    treatments: 8
+    duration: '8 meses'
+    originalPrice: 5000
+    packagePrice: 4200
+    savings: 800
+  }
 
   // Plano anual VIP
   vipPlan: {
@@ -395,11 +395,11 @@ interface TreatmentPackages {
       'Atendimento prioritário',
       'Eventos exclusivos',
       'Produtos gratuitos',
-    ];
-    monthlyFee: 299;
-    annualFee: 2990;
-    savings: 598;
-  };
+    ]
+    monthlyFee: 299
+    annualFee: 2990
+    savings: 598
+  }
 }
 ```
 
@@ -433,36 +433,36 @@ Pagamentos online:
 interface PatientPortal {
   // Agenda e agendamentos
   scheduling: {
-    viewAppointments: boolean;
-    bookNewAppointments: boolean;
-    rescheduleAppointments: boolean;
-    cancelAppointments: boolean;
-    calendarSync: boolean;
-  };
+    viewAppointments: boolean
+    bookNewAppointments: boolean
+    rescheduleAppointments: boolean
+    cancelAppointments: boolean
+    calendarSync: boolean
+  }
 
   // Histórico médico
   medicalHistory: {
-    viewTreatmentHistory: boolean;
-    downloadReports: boolean;
-    viewBeforeAfter: boolean;
-    trackProgress: boolean;
-  };
+    viewTreatmentHistory: boolean
+    downloadReports: boolean
+    viewBeforeAfter: boolean
+    trackProgress: boolean
+  }
 
   // Comunicação
   communication: {
-    messageProfessional: boolean;
-    receiveNotifications: boolean;
-    appointmentReminders: boolean;
-    educationalContent: boolean;
-  };
+    messageProfessional: boolean
+    receiveNotifications: boolean
+    appointmentReminders: boolean
+    educationalContent: boolean
+  }
 
   // Financeiro
   financial: {
-    viewInvoices: boolean;
-    makePayments: boolean;
-    paymentHistory: boolean;
-    insuranceClaims: boolean;
-  };
+    viewInvoices: boolean
+    makePayments: boolean
+    paymentHistory: boolean
+    insuranceClaims: boolean
+  }
 }
 ```
 
@@ -472,27 +472,27 @@ interface PatientPortal {
 interface PrivacySettings {
   // Controle de dados
   dataControl: {
-    profileVisibility: 'public' | 'private' | 'friends';
-    photoSharing: boolean;
-    treatmentSharing: boolean;
-    dataExport: boolean;
-  };
+    profileVisibility: 'public' | 'private' | 'friends'
+    photoSharing: boolean
+    treatmentSharing: boolean
+    dataExport: boolean
+  }
 
   // Notificações
   notifications: {
-    appointmentReminders: boolean;
-    treatmentUpdates: boolean;
-    promotionalOffers: boolean;
-    educationalContent: boolean;
-  };
+    appointmentReminders: boolean
+    treatmentUpdates: boolean
+    promotionalOffers: boolean
+    educationalContent: boolean
+  }
 
   // Consentimentos
   consents: {
-    dataProcessing: boolean;
-    marketingCommunication: boolean;
-    photoUsage: boolean;
-    researchParticipation: boolean;
-  };
+    dataProcessing: boolean
+    marketingCommunication: boolean
+    photoUsage: boolean
+    researchParticipation: boolean
+  }
 }
 ```
 
@@ -526,31 +526,31 @@ Atualizações automáticas:
 interface PatientRights {
   // Direitos LGPD
   lgpdRights: {
-    accessData: 'Acessar seus dados';
-    rectifyData: 'Corrigir informações incorretas';
-    deleteData: 'Solicitar exclusão de dados';
-    dataPortability: 'Receber seus dados em formato portável';
-    revokeConsent: 'Revogar consentimentos a qualquer momento';
-    knowUsage: 'Sabere como seus dados são usados';
-  };
+    accessData: 'Acessar seus dados'
+    rectifyData: 'Corrigir informações incorretas'
+    deleteData: 'Solicitar exclusão de dados'
+    dataPortability: 'Receber seus dados em formato portável'
+    revokeConsent: 'Revogar consentimentos a qualquer momento'
+    knowUsage: 'Sabere como seus dados são usados'
+  }
 
   // Direitos de saúde
   healthRights: {
-    informedConsent: 'Consentimento informado para tratamentos';
-    secondOpinion: 'Segunda opinião médica';
-    treatmentRefusal: 'Recusar tratamentos';
-    privacy: 'Confidencialidade médica';
-    accessRecords: 'Acesso a seu prontuário';
-  };
+    informedConsent: 'Consentimento informado para tratamentos'
+    secondOpinion: 'Segunda opinião médica'
+    treatmentRefusal: 'Recusar tratamentos'
+    privacy: 'Confidencialidade médica'
+    accessRecords: 'Acesso a seu prontuário'
+  }
 
   // Direitos do consumidor
   consumerRights: {
-    clearInformation: 'Informações claras sobre serviços';
-    fairPricing: 'Preços justos e transparentes';
-    qualityService: 'Serviços de qualidade';
-    complaintChannel: 'Canal para reclamações';
-    warranty: 'Garantia de serviços';
-  };
+    clearInformation: 'Informações claras sobre serviços'
+    fairPricing: 'Preços justos e transparentes'
+    qualityService: 'Serviços de qualidade'
+    complaintChannel: 'Canal para reclamações'
+    warranty: 'Garantia de serviços'
+  }
 }
 ```
 
@@ -587,35 +587,35 @@ Solicitações comuns:
 interface SafetyCommitments {
   // Profissionais qualificados
   professionalQualifications: {
-    certified: boolean;
-    licensed: boolean;
-    experienced: boolean;
-    continuouslyTrained: boolean;
-  };
+    certified: boolean
+    licensed: boolean
+    experienced: boolean
+    continuouslyTrained: boolean
+  }
 
   // Equipamentos e produtos
   equipmentAndProducts: {
-    anvisaApproved: boolean;
-    qualityGuaranteed: boolean;
-    properlyMaintained: boolean;
-    safeHandling: boolean;
-  };
+    anvisaApproved: boolean
+    qualityGuaranteed: boolean
+    properlyMaintained: boolean
+    safeHandling: boolean
+  }
 
   // Procedimentos seguros
   safeProcedures: {
-    sterilizationProtocols: boolean;
-    emergencyPreparedness: boolean;
-    infectionControl: boolean;
-    adverseReactionManagement: boolean;
-  };
+    sterilizationProtocols: boolean
+    emergencyPreparedness: boolean
+    infectionControl: boolean
+    adverseReactionManagement: boolean
+  }
 
   // Ambientes seguros
   safeEnvironment: {
-    cleanFacilities: boolean;
-    privateRooms: boolean;
-    accessibleDesign: boolean;
-    emergencyEquipment: boolean;
-  };
+    cleanFacilities: boolean
+    privateRooms: boolean
+    accessibleDesign: boolean
+    emergencyEquipment: boolean
+  }
 }
 ```
 
@@ -660,21 +660,21 @@ Contatos de emergência:
 interface CommonSideEffects {
   // Leves e temporários
   mildEffects: {
-    redness: '24-48 horas';
-    swelling: '48-72 horas';
-    bruising: '3-7 dias';
-    sensitivity: '1-2 dias';
-    mildDiscomfort: '24-48 horas';
-  };
+    redness: '24-48 horas'
+    swelling: '48-72 horas'
+    bruising: '3-7 dias'
+    sensitivity: '1-2 dias'
+    mildDiscomfort: '24-48 horas'
+  }
 
   // Que requerem atenção
   attentionRequired: {
-    severePain: 'Contatar clínica';
-    excessiveSwelling: 'Contatar clínica';
-    signsOfInfection: 'Contatar clínica';
-    allergicReaction: 'Procurar emergência';
-    unexpectedResults: 'Agendar avaliação';
-  };
+    severePain: 'Contatar clínica'
+    excessiveSwelling: 'Contatar clínica'
+    signsOfInfection: 'Contatar clínica'
+    allergicReaction: 'Procurar emergência'
+    unexpectedResults: 'Agendar avaliação'
+  }
 }
 ```
 
@@ -737,26 +737,26 @@ Cuidados gerais pós-tratamento:
 interface CareRoutine {
   // Diária
   daily: {
-    cleansing: 'Limpeza suave 2x ao dia';
-    moisturizing: 'Hidratação adequada ao tipo de pele';
-    sunProtection: 'FPS 30+ diariamente';
-    healthyDiet: 'Alimentação balanceada';
-    hydration: '2L de água por dia';
-  };
+    cleansing: 'Limpeza suave 2x ao dia'
+    moisturizing: 'Hidratação adequada ao tipo de pele'
+    sunProtection: 'FPS 30+ diariamente'
+    healthyDiet: 'Alimentação balanceada'
+    hydration: '2L de água por dia'
+  }
 
   // Semanal
   weekly: {
-    exfoliation: '1x por semana (suave)';
-    mask: 'Máscara hidratante 1x por semana';
-    treatment: 'Sessões conforme planejado';
-  };
+    exfoliation: '1x por semana (suave)'
+    mask: 'Máscara hidratante 1x por semana'
+    treatment: 'Sessões conforme planejado'
+  }
 
   // Mensal
   monthly: {
-    professionalTreatment: 'Conforme plano';
-    assessment: 'Avaliação de resultados';
-    adjustment: 'Ajustes no plano se necessário';
-  };
+    professionalTreatment: 'Conforme plano'
+    assessment: 'Avaliação de resultados'
+    adjustment: 'Ajustes no plano se necessário'
+  }
 }
 ```
 
@@ -812,21 +812,21 @@ Fatores que influenciam resultados:
 interface AppNavigation {
   // Tela inicial
   homeScreen: {
-    nextAppointment: 'Próximo agendamento';
-    quickActions: 'Ações rápidas';
-    notifications: 'Notificações recentes';
-    healthTips: 'Dicas de saúde';
-  };
+    nextAppointment: 'Próximo agendamento'
+    quickActions: 'Ações rápidas'
+    notifications: 'Notificações recentes'
+    healthTips: 'Dicas de saúde'
+  }
 
   // Menu principal
   mainMenu: {
-    appointments: 'Agendamentos';
-    treatments: 'Meus tratamentos';
-    messages: 'Mensagens';
-    payments: 'Pagamentos';
-    profile: 'Meu perfil';
-    more: 'Mais opções';
-  };
+    appointments: 'Agendamentos'
+    treatments: 'Meus tratamentos'
+    messages: 'Mensagens'
+    payments: 'Pagamentos'
+    profile: 'Meu perfil'
+    more: 'Mais opções'
+  }
 }
 ```
 
@@ -877,37 +877,37 @@ Como acumular pontos:
 interface LoyaltyProgram {
   // Bronze (0-500 pontos)
   bronze: {
-    birthdayDiscount: '10%';
-    referralBonus: 'R$ 25';
-    earlyAccess: false;
-  };
+    birthdayDiscount: '10%'
+    referralBonus: 'R$ 25'
+    earlyAccess: false
+  }
 
   // Prata (501-1500 pontos)
   silver: {
-    birthdayDiscount: '15%';
-    referralBonus: 'R$ 50';
-    earlyAccess: true;
-    freeProducts: '1/ano';
-  };
+    birthdayDiscount: '15%'
+    referralBonus: 'R$ 50'
+    earlyAccess: true
+    freeProducts: '1/ano'
+  }
 
   // Ouro (1501-3000 pontos)
   gold: {
-    birthdayDiscount: '20%';
-    referralBonus: 'R$ 75';
-    priorityBooking: true;
-    freeProducts: '3/ano';
-    exclusiveEvents: true;
-  };
+    birthdayDiscount: '20%'
+    referralBonus: 'R$ 75'
+    priorityBooking: true
+    freeProducts: '3/ano'
+    exclusiveEvents: true
+  }
 
   // Platina (3000+ pontos)
   platinum: {
-    birthdayDiscount: '25%';
-    referralBonus: 'R$ 100';
-    priorityBooking: true;
-    freeProducts: '6/ano';
-    exclusiveEvents: true;
-    personalAssistant: true;
-  };
+    birthdayDiscount: '25%'
+    referralBonus: 'R$ 100'
+    priorityBooking: true
+    freeProducts: '6/ano'
+    exclusiveEvents: true
+    personalAssistant: true
+  }
 }
 ```
 

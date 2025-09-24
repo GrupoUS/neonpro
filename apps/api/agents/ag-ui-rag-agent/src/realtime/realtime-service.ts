@@ -1,53 +1,53 @@
-import { RealtimeChannel, RealtimeClient } from '@supabase/supabase-js';
-import { SupabaseClient } from '@supabase/supabase-js';
-import { ConversationService } from '../conversation/conversation-service';
-import { HealthcareLogger } from '../logging/healthcare-logger';
-import { SessionManager } from '../session/session-manager';
+import { RealtimeChannel, RealtimeClient } from '@supabase/supabase-js'
+import { SupabaseClient } from '@supabase/supabase-js'
+import { ConversationService } from '../conversation/conversation-service'
+import { HealthcareLogger } from '../logging/healthcare-logger'
+import { SessionManager } from '../session/session-manager'
 
 export interface RealtimeSubscription {
-  id: string;
-  channel: RealtimeChannel;
-  type: 'conversations' | 'messages' | 'sessions' | 'system';
-  filters?: any;
-  callback: (_payload: any) => void;
+  id: string
+  channel: RealtimeChannel
+  type: 'conversations' | 'messages' | 'sessions' | 'system'
+  filters?: any
+  callback: (_payload: any) => void
 }
 
 export interface RealtimeEvent {
-  type: 'insert' | 'update' | 'delete';
-  table: string;
-  schema: string;
-  old_record?: any;
-  new_record?: any;
-  errors?: any[];
+  type: 'insert' | 'update' | 'delete'
+  table: string
+  schema: string
+  old_record?: any
+  new_record?: any
+  errors?: any[]
 }
 
 export interface RealtimeMessage {
-  conversationId?: string;
-  sessionId?: string;
-  _userId?: string;
-  clinicId?: string;
-  patientId?: string;
+  conversationId?: string
+  sessionId?: string
+  _userId?: string
+  clinicId?: string
+  patientId?: string
   type:
     | 'message'
     | 'conversation_update'
     | 'session_update'
-    | 'system_notification';
-  event: RealtimeEvent;
-  _payload: any;
-  timestamp: Date;
+    | 'system_notification'
+  event: RealtimeEvent
+  _payload: any
+  timestamp: Date
 }
 
 export class RealtimeService {
-  private supabase: SupabaseClient;
-  private logger: HealthcareLogger;
-  private sessionManager: SessionManager;
-  private conversationService: ConversationService;
-  private realtimeClient: RealtimeClient;
-  private subscriptions: Map<string, RealtimeSubscription> = new Map();
-  private messageHandlers: Map<string, (message: RealtimeMessage) => void> = new Map();
-  private reconnectAttempts = 0;
-  private maxReconnectAttempts = 5;
-  private reconnectDelay = 1000;
+  private supabase: SupabaseClient
+  private logger: HealthcareLogger
+  private sessionManager: SessionManager
+  private conversationService: ConversationService
+  private realtimeClient: RealtimeClient
+  private subscriptions: Map<string, RealtimeSubscription> = new Map()
+  private messageHandlers: Map<string, (message: RealtimeMessage) => void> = new Map()
+  private reconnectAttempts = 0
+  private maxReconnectAttempts = 5
+  private reconnectDelay = 1000
 
   constructor(
     supabase: SupabaseClient,
@@ -55,13 +55,13 @@ export class RealtimeService {
     sessionManager: SessionManager,
     conversationService: ConversationService,
   ) {
-    this.supabase = supabase;
-    this.logger = logger;
-    this.sessionManager = sessionManager;
-    this.conversationService = conversationService;
-    this.realtimeClient = supabase.realtime;
+    this.supabase = supabase
+    this.logger = logger
+    this.sessionManager = sessionManager
+    this.conversationService = conversationService
+    this.realtimeClient = supabase.realtime
 
-    this.setupRealtimeClient();
+    this.setupRealtimeClient()
   }
 
   private setupRealtimeClient(): void {
@@ -69,25 +69,25 @@ export class RealtimeService {
       this.logger.logSystemEvent('realtime_connected', {
         timestamp: new Date().toISOString(),
         reconnectAttempts: this.reconnectAttempts,
-      });
-      this.reconnectAttempts = 0;
-      this.resubscribeAll();
-    });
+      })
+      this.reconnectAttempts = 0
+      this.resubscribeAll()
+    })
 
     this.realtimeClient.onClose(() => {
       this.logger.logSystemEvent('realtime_disconnected', {
         timestamp: new Date().toISOString(),
-      });
-      this.handleReconnect();
-    });
+      })
+      this.handleReconnect()
+    })
 
-    this.realtimeClient.onError(error => {
+    this.realtimeClient.onError((error) => {
       this.logger.logError('realtime_error', {
         error: error?.message || 'Unknown realtime error',
         timestamp: new Date().toISOString(),
-      });
-      this.handleReconnect();
-    });
+      })
+      this.handleReconnect()
+    })
   }
 
   private async handleReconnect(): Promise<void> {
@@ -95,40 +95,40 @@ export class RealtimeService {
       this.logger.logError('realtime_reconnect_failed', {
         attempts: this.reconnectAttempts,
         timestamp: new Date().toISOString(),
-      });
-      return;
+      })
+      return
     }
 
-    this.reconnectAttempts++;
-    const delay = this.reconnectDelay * Math.pow(2, this.reconnectAttempts - 1);
+    this.reconnectAttempts++
+    const delay = this.reconnectDelay * Math.pow(2, this.reconnectAttempts - 1)
 
     this.logger.logSystemEvent('realtime_reconnect_attempt', {
       attempt: this.reconnectAttempts,
       delay,
       timestamp: new Date().toISOString(),
-    });
+    })
 
-    await new Promise(resolve => setTimeout(resolve, delay));
+    await new Promise((resolve) => setTimeout(resolve, delay))
 
     try {
-      await this.realtimeClient.connect();
+      await this.realtimeClient.connect()
     } catch (error) {
       this.logger.logError('realtime_reconnect_error', {
         error: error instanceof Error ? error.message : 'Unknown error',
         attempt: this.reconnectAttempts,
         timestamp: new Date().toISOString(),
-      });
+      })
     }
   }
 
   private resubscribeAll(): void {
-    this.subscriptions.forEach(subscription => {
+    this.subscriptions.forEach((subscription) => {
       this.subscribeToTable(
         subscription.type,
         subscription.filters,
         subscription.callback,
-      );
-    });
+      )
+    })
   }
 
   async subscribeToConversations(
@@ -136,7 +136,7 @@ export class RealtimeService {
     clinicId: string,
     callback: (message: RealtimeMessage) => void,
   ): Promise<string> {
-    const subscriptionId = `conv_${userId}_${clinicId}_${Date.now()}`;
+    const subscriptionId = `conv_${userId}_${clinicId}_${Date.now()}`
 
     const handler = (_payload: any) => {
       const message: RealtimeMessage = {
@@ -148,11 +148,11 @@ export class RealtimeService {
         event: payload,
         _payload: payload.new_record || payload.old_record,
         timestamp: new Date(),
-      };
-      callback(message);
-    };
+      }
+      callback(message)
+    }
 
-    this.messageHandlers.set(subscriptionId, handler);
+    this.messageHandlers.set(subscriptionId, handler)
 
     const channel = this.realtimeClient
       .channel(subscriptionId)
@@ -166,7 +166,7 @@ export class RealtimeService {
         },
         handler,
       )
-      .subscribe();
+      .subscribe()
 
     const subscription: RealtimeSubscription = {
       id: subscriptionId,
@@ -174,25 +174,25 @@ export class RealtimeService {
       type: 'conversations',
       filters: { userId, clinicId },
       callback: handler,
-    };
+    }
 
-    this.subscriptions.set(subscriptionId, subscription);
+    this.subscriptions.set(subscriptionId, subscription)
 
     await this.logger.logSystemEvent('conversation_subscription_created', {
       subscriptionId,
       userId,
       clinicId,
       timestamp: new Date().toISOString(),
-    });
+    })
 
-    return subscriptionId;
+    return subscriptionId
   }
 
   async subscribeToMessages(
     conversationId: string,
     callback: (message: RealtimeMessage) => void,
   ): Promise<string> {
-    const subscriptionId = `msg_${conversationId}_${Date.now()}`;
+    const subscriptionId = `msg_${conversationId}_${Date.now()}`
 
     const handler = (_payload: any) => {
       const message: RealtimeMessage = {
@@ -201,11 +201,11 @@ export class RealtimeService {
         event: payload,
         _payload: payload.new_record || payload.old_record,
         timestamp: new Date(),
-      };
-      callback(message);
-    };
+      }
+      callback(message)
+    }
 
-    this.messageHandlers.set(subscriptionId, handler);
+    this.messageHandlers.set(subscriptionId, handler)
 
     const channel = this.realtimeClient
       .channel(subscriptionId)
@@ -219,7 +219,7 @@ export class RealtimeService {
         },
         handler,
       )
-      .subscribe();
+      .subscribe()
 
     const subscription: RealtimeSubscription = {
       id: subscriptionId,
@@ -227,24 +227,24 @@ export class RealtimeService {
       type: 'messages',
       filters: { conversationId },
       callback: handler,
-    };
+    }
 
-    this.subscriptions.set(subscriptionId, subscription);
+    this.subscriptions.set(subscriptionId, subscription)
 
     await this.logger.logSystemEvent('message_subscription_created', {
       subscriptionId,
       conversationId,
       timestamp: new Date().toISOString(),
-    });
+    })
 
-    return subscriptionId;
+    return subscriptionId
   }
 
   async subscribeToSessions(
     _userId: string,
     callback: (message: RealtimeMessage) => void,
   ): Promise<string> {
-    const subscriptionId = `session_${userId}_${Date.now()}`;
+    const subscriptionId = `session_${userId}_${Date.now()}`
 
     const handler = (_payload: any) => {
       const message: RealtimeMessage = {
@@ -254,11 +254,11 @@ export class RealtimeService {
         event: payload,
         _payload: payload.new_record || payload.old_record,
         timestamp: new Date(),
-      };
-      callback(message);
-    };
+      }
+      callback(message)
+    }
 
-    this.messageHandlers.set(subscriptionId, handler);
+    this.messageHandlers.set(subscriptionId, handler)
 
     const channel = this.realtimeClient
       .channel(subscriptionId)
@@ -272,7 +272,7 @@ export class RealtimeService {
         },
         handler,
       )
-      .subscribe();
+      .subscribe()
 
     const subscription: RealtimeSubscription = {
       id: subscriptionId,
@@ -280,23 +280,23 @@ export class RealtimeService {
       type: 'sessions',
       filters: { userId },
       callback: handler,
-    };
+    }
 
-    this.subscriptions.set(subscriptionId, subscription);
+    this.subscriptions.set(subscriptionId, subscription)
 
     await this.logger.logSystemEvent('session_subscription_created', {
       subscriptionId,
       userId,
       timestamp: new Date().toISOString(),
-    });
+    })
 
-    return subscriptionId;
+    return subscriptionId
   }
 
   async subscribeToSystemNotifications(
     callback: (message: RealtimeMessage) => void,
   ): Promise<string> {
-    const subscriptionId = `system_${Date.now()}`;
+    const subscriptionId = `system_${Date.now()}`
 
     const handler = (_payload: any) => {
       const message: RealtimeMessage = {
@@ -304,11 +304,11 @@ export class RealtimeService {
         event: payload,
         _payload: payload.new_record || payload.old_record,
         timestamp: new Date(),
-      };
-      callback(message);
-    };
+      }
+      callback(message)
+    }
 
-    this.messageHandlers.set(subscriptionId, handler);
+    this.messageHandlers.set(subscriptionId, handler)
 
     // Subscribe to audit logs for system events
     const channel = this.realtimeClient
@@ -323,55 +323,55 @@ export class RealtimeService {
         },
         handler,
       )
-      .subscribe();
+      .subscribe()
 
     const subscription: RealtimeSubscription = {
       id: subscriptionId,
       channel,
       type: 'system',
       callback: handler,
-    };
+    }
 
-    this.subscriptions.set(subscriptionId, subscription);
+    this.subscriptions.set(subscriptionId, subscription)
 
     await this.logger.logSystemEvent('system_subscription_created', {
       subscriptionId,
       timestamp: new Date().toISOString(),
-    });
+    })
 
-    return subscriptionId;
+    return subscriptionId
   }
 
   async unsubscribe(subscriptionId: string): Promise<void> {
-    const subscription = this.subscriptions.get(subscriptionId);
+    const subscription = this.subscriptions.get(subscriptionId)
     if (!subscription) {
-      return;
+      return
     }
 
     try {
-      await this.realtimeClient.removeChannel(subscription.channel);
-      this.subscriptions.delete(subscriptionId);
-      this.messageHandlers.delete(subscriptionId);
+      await this.realtimeClient.removeChannel(subscription.channel)
+      this.subscriptions.delete(subscriptionId)
+      this.messageHandlers.delete(subscriptionId)
 
       await this.logger.logSystemEvent('realtime_unsubscribed', {
         subscriptionId,
         type: subscription.type,
         timestamp: new Date().toISOString(),
-      });
+      })
     } catch (error) {
       await this.logger.logError('realtime_unsubscribe_error', {
         error: error instanceof Error ? error.message : 'Unknown error',
         subscriptionId,
         timestamp: new Date().toISOString(),
-      });
+      })
     }
   }
 
   async unsubscribeAll(): Promise<void> {
     const unsubscribePromises = Array.from(this.subscriptions.keys()).map(
-      id => this.unsubscribe(id),
-    );
-    await Promise.all(unsubscribePromises);
+      (id) => this.unsubscribe(id),
+    )
+    await Promise.all(unsubscribePromises)
   }
 
   private subscribeToTable(
@@ -379,32 +379,32 @@ export class RealtimeService {
     filters: any,
     callback: (_payload: any) => void,
   ): RealtimeChannel {
-    const subscriptionId = `${type}_${Date.now()}`;
+    const subscriptionId = `${type}_${Date.now()}`
 
-    let tableName: string;
-    let filterString = '';
+    let tableName: string
+    let filterString = ''
 
     switch (type) {
       case 'conversations':
-        tableName = 'ai_conversation_contexts';
+        tableName = 'ai_conversation_contexts'
         if (filters.userId && filters.clinicId) {
-          filterString = `user_id=eq.${filters.userId} AND clinic_id=eq.${filters.clinicId}`;
+          filterString = `user_id=eq.${filters.userId} AND clinic_id=eq.${filters.clinicId}`
         }
-        break;
+        break
       case 'messages':
-        tableName = 'ai_conversation_messages';
+        tableName = 'ai_conversation_messages'
         if (filters.conversationId) {
-          filterString = `conversation_id=eq.${filters.conversationId}`;
+          filterString = `conversation_id=eq.${filters.conversationId}`
         }
-        break;
+        break
       case 'sessions':
-        tableName = 'ai_sessions';
+        tableName = 'ai_sessions'
         if (filters._userId) {
-          filterString = `user_id=eq.${filters.userId}`;
+          filterString = `user_id=eq.${filters.userId}`
         }
-        break;
+        break
       default:
-        throw new Error(`Unknown subscription type: ${type}`);
+        throw new Error(`Unknown subscription type: ${type}`)
     }
 
     const channel = this.realtimeClient
@@ -419,7 +419,7 @@ export class RealtimeService {
         },
         callback,
       )
-      .subscribe();
+      .subscribe()
 
     const subscription: RealtimeSubscription = {
       id: subscriptionId,
@@ -427,34 +427,34 @@ export class RealtimeService {
       type,
       filters,
       callback,
-    };
+    }
 
-    this.subscriptions.set(subscriptionId, subscription);
+    this.subscriptions.set(subscriptionId, subscription)
 
-    return channel;
+    return channel
   }
 
   async broadcastMessage(message: RealtimeMessage): Promise<void> {
     try {
       // Broadcast to relevant subscribers based on message type
-      this.subscriptions.forEach(subscription => {
-        const shouldReceive = this.shouldReceiveMessage(subscription, message);
+      this.subscriptions.forEach((subscription) => {
+        const shouldReceive = this.shouldReceiveMessage(subscription, message)
         if (shouldReceive) {
-          subscription.callback(message);
+          subscription.callback(message)
         }
-      });
+      })
 
       await this.logger.logSystemEvent('realtime_message_broadcast', {
         messageType: message.type,
         recipientCount: this.countPotentialRecipients(message),
         timestamp: new Date().toISOString(),
-      });
+      })
     } catch (error) {
       await this.logger.logError('realtime_broadcast_error', {
         error: error instanceof Error ? error.message : 'Unknown error',
         messageType: message.type,
         timestamp: new Date().toISOString(),
-      });
+      })
     }
   }
 
@@ -468,61 +468,61 @@ export class RealtimeService {
           message.type === 'conversation_update'
           && subscription.filters.userId === message.userId
           && subscription.filters.clinicId === message.clinicId
-        );
+        )
 
       case 'messages':
         return (
           message.type === 'message'
           && subscription.filters.conversationId === message.conversationId
-        );
+        )
 
       case 'sessions':
         return (
           message.type === 'session_update'
           && subscription.filters.userId === message.userId
-        );
+        )
 
       case 'system':
-        return message.type === 'system_notification';
+        return message.type === 'system_notification'
 
       default:
-        return false;
+        return false
     }
   }
 
   private countPotentialRecipients(message: RealtimeMessage): number {
-    let count = 0;
-    this.subscriptions.forEach(subscription => {
+    let count = 0
+    this.subscriptions.forEach((subscription) => {
       if (this.shouldReceiveMessage(subscription, message)) {
-        count++;
+        count++
       }
-    });
-    return count;
+    })
+    return count
   }
 
   getSubscriptionCount(): number {
-    return this.subscriptions.size;
+    return this.subscriptions.size
   }
 
   getSubscriptionsByType(): Record<string, number> {
-    const counts: Record<string, number> = {};
-    this.subscriptions.forEach(subscription => {
-      counts[subscription.type] = (counts[subscription.type] || 0) + 1;
-    });
-    return counts;
+    const counts: Record<string, number> = {}
+    this.subscriptions.forEach((subscription) => {
+      counts[subscription.type] = (counts[subscription.type] || 0) + 1
+    })
+    return counts
   }
 
   getConnectionStatus(): {
-    connected: boolean;
-    subscriptions: number;
-    reconnectAttempts: number;
-    lastEvent?: Date;
+    connected: boolean
+    subscriptions: number
+    reconnectAttempts: number
+    lastEvent?: Date
   } {
     return {
       connected: this.realtimeClient.isConnected(),
       subscriptions: this.subscriptions.size,
       reconnectAttempts: this.reconnectAttempts,
-    };
+    }
   }
 
   async sendSystemNotification(
@@ -552,13 +552,13 @@ export class RealtimeService {
         data,
       },
       timestamp: new Date(),
-    };
+    }
 
-    await this.broadcastMessage(notification);
+    await this.broadcastMessage(notification)
   }
 
   async dispose(): Promise<void> {
-    await this.unsubscribeAll();
-    this.realtimeClient.disconnect();
+    await this.unsubscribeAll()
+    this.realtimeClient.disconnect()
   }
 }

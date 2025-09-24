@@ -1,27 +1,27 @@
-import type { AgentCoordinationPattern } from './types';
+import type { AgentCoordinationPattern } from './types'
 
 type Agent = {
-  name: string;
-  type: string;
-  capabilities: string[];
-};
+  name: string
+  type: string
+  capabilities: string[]
+}
 
 type CoordinationGroup = {
-  agents: Agent[];
-  coordination: AgentCoordinationPattern;
-};
+  agents: Agent[]
+  coordination: AgentCoordinationPattern
+}
 
 type ExecutionPlan = {
   phases: Array<{
-    name: string;
-    agents: Agent[];
-    parallel: boolean;
-    coordination: AgentCoordinationPattern;
-  }>;
-  totalEstimatedTime: number;
-  parallelizationFactor: number;
-  conflictResolution: string;
-};
+    name: string
+    agents: Agent[]
+    parallel: boolean
+    coordination: AgentCoordinationPattern
+  }>
+  totalEstimatedTime: number
+  parallelizationFactor: number
+  conflictResolution: string
+}
 
 export class TDDAgentRegistry {
   private agents: Agent[] = [
@@ -45,34 +45,34 @@ export class TDDAgentRegistry {
       type: 'testing',
       capabilities: ['unit-testing', 'test-execution'],
     },
-  ];
+  ]
 
   getParallelOptimizedAgents(agentNames: string[]): Agent[] {
-    return agentNames.map(name => {
-      const agent = this.agents.find(a => a.name === name);
-      return agent || { name, type: 'unknown', capabilities: [] };
-    });
+    return agentNames.map((name) => {
+      const agent = this.agents.find((a) => a.name === name)
+      return agent || { name, type: 'unknown', capabilities: [] }
+    })
   }
 
   getAgentCoordinationGroups(
     agentNames: string[],
     coordination: AgentCoordinationPattern,
   ): CoordinationGroup[] {
-    const agents = this.getParallelOptimizedAgents(agentNames);
+    const agents = this.getParallelOptimizedAgents(agentNames)
 
     return [
       {
         agents,
         coordination,
       },
-    ];
+    ]
   }
 
   createParallelExecutionPlan(
     agentNames: string[],
     coordination: AgentCoordinationPattern,
   ): ExecutionPlan {
-    const agents = this.getParallelOptimizedAgents(agentNames);
+    const agents = this.getParallelOptimizedAgents(agentNames)
 
     return {
       phases: [
@@ -86,6 +86,6 @@ export class TDDAgentRegistry {
       totalEstimatedTime: 300,
       parallelizationFactor: 0.6,
       conflictResolution: 'priority-based',
-    };
+    }
   }
 }

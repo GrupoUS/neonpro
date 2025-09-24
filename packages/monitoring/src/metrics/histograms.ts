@@ -1,11 +1,11 @@
-import { Histogram, Registry } from 'prom-client';
-import type { MetricLabels } from '../types';
+import { Histogram, Registry } from 'prom-client'
+import type { MetricLabels } from '../types'
 
 // Chat-specific histograms
-let chatResponseTime: Histogram<string> | null = null;
-let aiProviderLatency: Histogram<string> | null = null;
-let databaseQueryDuration: Histogram<string> | null = null;
-let piiRedactionDuration: Histogram<string> | null = null;
+let chatResponseTime: Histogram<string> | null = null
+let aiProviderLatency: Histogram<string> | null = null
+let databaseQueryDuration: Histogram<string> | null = null
+let piiRedactionDuration: Histogram<string> | null = null
 
 export function initializeHistograms(registry: Registry): void {
   // Chat response time histogram
@@ -15,7 +15,7 @@ export function initializeHistograms(registry: Registry): void {
     labelNames: ['endpoint', 'method', 'status_code'],
     buckets: [0.1, 0.5, 1, 2, 5, 10], // Response time buckets
     registers: [registry],
-  });
+  })
 
   // AI provider latency histogram
   aiProviderLatency = new Histogram({
@@ -24,7 +24,7 @@ export function initializeHistograms(registry: Registry): void {
     labelNames: ['provider', 'model', 'request_type'],
     buckets: [0.5, 1, 2, 5, 10, 30], // AI provider buckets
     registers: [registry],
-  });
+  })
 
   // Database query duration histogram
   databaseQueryDuration = new Histogram({
@@ -33,7 +33,7 @@ export function initializeHistograms(registry: Registry): void {
     labelNames: ['table', 'operation'],
     buckets: [0.01, 0.05, 0.1, 0.5, 1, 2], // Database buckets
     registers: [registry],
-  });
+  })
 
   // PII redaction duration histogram
   piiRedactionDuration = new Histogram({
@@ -42,33 +42,33 @@ export function initializeHistograms(registry: Registry): void {
     labelNames: ['content_type', 'redaction_type'],
     buckets: [0.001, 0.005, 0.01, 0.05, 0.1], // Fast processing buckets
     registers: [registry],
-  });
+  })
 }
 
 export function observeChatResponseTime(
   duration: number,
   labels: MetricLabels = {},
 ): void {
-  chatResponseTime?.observe(labels, duration);
+  chatResponseTime?.observe(labels, duration)
 }
 
 export function observeAIProviderLatency(
   duration: number,
   labels: MetricLabels = {},
 ): void {
-  aiProviderLatency?.observe(labels, duration);
+  aiProviderLatency?.observe(labels, duration)
 }
 
 export function observeDatabaseQueryDuration(
   duration: number,
   labels: MetricLabels = {},
 ): void {
-  databaseQueryDuration?.observe(labels, duration);
+  databaseQueryDuration?.observe(labels, duration)
 }
 
 export function observePIIRedactionDuration(
   duration: number,
   labels: MetricLabels = {},
 ): void {
-  piiRedactionDuration?.observe(labels, duration);
+  piiRedactionDuration?.observe(labels, duration)
 }

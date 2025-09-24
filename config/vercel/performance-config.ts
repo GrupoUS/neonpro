@@ -35,9 +35,9 @@ export const performanceConfig = {
     threshold: 10240, // 10KB
     filter: (req, _res) => {
       if (req.headers['x-no-compression']) {
-        return false;
+        return false
       }
-      return true;
+      return true
     },
   },
 
@@ -240,6 +240,6 @@ export const performanceConfig = {
     cumulativeLayoutShift: true,
     interactionToNextPaint: true,
   },
-};
+}
 
-export default performanceConfig;
+export default performanceConfig

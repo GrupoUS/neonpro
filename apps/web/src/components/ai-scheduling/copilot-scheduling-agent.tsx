@@ -10,13 +10,13 @@
  * - Resource optimization visualization
  */
 
-import { useCoAgent, useCopilotAction, useCopilotReadable } from '@copilotkit/react-core';
-import { CopilotChat } from '@copilotkit/react-ui';
-import { addDays, addHours, format, isAfter, isBefore, parseISO } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
-import React, { useCallback, useEffect, useState } from 'react';
+import { useCoAgent, useCopilotAction, useCopilotReadable } from '@copilotkit/react-core'
+import { CopilotChat } from '@copilotkit/react-ui'
+import { addDays, addHours, format, isAfter, isBefore, parseISO } from 'date-fns'
+import { ptBR } from 'date-fns/locale'
+import React, { useCallback, useEffect, useState } from 'react'
 
-import { AIAppointmentSchedulingService } from '../../../api/src/services/ai-appointment-scheduling-service';
+import { AIAppointmentSchedulingService } from '../../../api/src/services/ai-appointment-scheduling-service'
 
 // Types
 interface SchedulingAgentState {
@@ -26,42 +26,42 @@ interface SchedulingAgentState {
     | 'finding_slots'
     | 'confirming'
     | 'scheduling'
-    | 'completed';
+    | 'completed'
   patientInfo: {
-    id?: string;
-    name: string;
-    contact: string;
-    preferences: string[];
-  };
+    id?: string
+    name: string
+    contact: string
+    preferences: string[]
+  }
   appointmentRequirements: {
-    serviceType: string;
-    duration: number;
-    urgency: 'low' | 'medium' | 'high' | 'urgent';
-    preferredDates: Date[];
-    preferredProfessionals: string[];
-    accessibility: string[];
-  };
+    serviceType: string
+    duration: number
+    urgency: 'low' | 'medium' | 'high' | 'urgent'
+    preferredDates: Date[]
+    preferredProfessionals: string[]
+    accessibility: string[]
+  }
   availableSlots: Array<{
-    id: string;
-    start: Date;
-    end: Date;
-    professional: string;
-    room: string;
-    confidence: number;
-    efficiency: number;
-  }>;
-  selectedSlot?: string;
+    id: string
+    start: Date
+    end: Date
+    professional: string
+    room: string
+    confidence: number
+    efficiency: number
+  }>
+  selectedSlot?: string
   optimization: {
-    suggestions: string[];
-    riskFactors: string[];
-    recommendations: string[];
-  };
+    suggestions: string[]
+    riskFactors: string[]
+    recommendations: string[]
+  }
 }
 
 interface SchedulingAgentProps {
-  clinicId: string;
-  onAppointmentScheduled?: (appointmentId: string) => void;
-  onError?: (error: string) => void;
+  clinicId: string
+  onAppointmentScheduled?: (appointmentId: string) => void
+  onError?: (error: string) => void
 }
 
 export const CopilotSchedulingAgent: React.FC<SchedulingAgentProps> = ({
@@ -90,21 +90,21 @@ export const CopilotSchedulingAgent: React.FC<SchedulingAgentProps> = ({
       riskFactors: [],
       recommendations: [],
     },
-  });
+  })
 
   // Initialize AI scheduling service
-  const [aiService] = useState(() => AIAppointmentSchedulingService.getInstance());
+  const [aiService] = useState(() => AIAppointmentSchedulingService.getInstance())
 
   // Use CopilotKit agent for state management
   const { state, setState } = useCoAgent<SchedulingAgentState>({
     name: 'scheduling-agent',
     initialState: localState,
-  });
+  })
 
   // Sync local state with agent state
   useEffect(() => {
-    setLocalState(state);
-  }, [state]);
+    setLocalState(state)
+  }, [state])
 
   // Provide context to the agent
   useCopilotReadable({
@@ -116,7 +116,7 @@ export const CopilotSchedulingAgent: React.FC<SchedulingAgentProps> = ({
       availableSlots: state.availableSlots,
       optimization: state.optimization,
     },
-  }, [state]);
+  }, [state])
 
   // Define scheduling actions
   useCopilotAction({
@@ -139,22 +139,22 @@ export const CopilotSchedulingAgent: React.FC<SchedulingAgentProps> = ({
     ],
     handler: async (name: string, contact: string, preferences: string[] = []) => {
       try {
-        setState(prev => ({
+        setState((prev) => ({
           ...prev,
           currentStep: 'gathering_info',
           patientInfo: { name, contact, preferences },
-        }));
+        }))
 
-        return 'Patient information collected successfully';
+        return 'Patient information collected successfully'
       } catch (error) {
         const errorMessage = error instanceof Error
           ? error.message
-          : 'Failed to collect patient info';
-        onError?.(errorMessage);
-        throw error;
+          : 'Failed to collect patient info'
+        onError?.(errorMessage)
+        throw error
       }
     },
-  });
+  })
 
   useCopilotAction({
     name: 'set_appointment_requirements',
@@ -196,9 +196,9 @@ export const CopilotSchedulingAgent: React.FC<SchedulingAgentProps> = ({
       accessibility: string[] = [],
     ) => {
       try {
-        const parsedDates = preferredDates.map(date => parseISO(date));
+        const parsedDates = preferredDates.map((date) => parseISO(date))
 
-        setState(prev => ({
+        setState((prev) => ({
           ...prev,
           currentStep: 'finding_slots',
           appointmentRequirements: {
@@ -209,19 +209,19 @@ export const CopilotSchedulingAgent: React.FC<SchedulingAgentProps> = ({
             preferredProfessionals,
             accessibility,
           },
-        }));
+        }))
 
         // Trigger slot finding
-        await findAvailableSlots(serviceType, parsedDates, duration, preferredProfessionals);
+        await findAvailableSlots(serviceType, parsedDates, duration, preferredProfessionals)
 
-        return 'Appointment requirements set and availability checked';
+        return 'Appointment requirements set and availability checked'
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'Failed to set requirements';
-        onError?.(errorMessage);
-        throw error;
+        const errorMessage = error instanceof Error ? error.message : 'Failed to set requirements'
+        onError?.(errorMessage)
+        throw error
       }
     },
-  });
+  })
 
   useCopilotAction({
     name: 'select_time_slot',
@@ -231,25 +231,25 @@ export const CopilotSchedulingAgent: React.FC<SchedulingAgentProps> = ({
     ],
     handler: async (slotId: string) => {
       try {
-        const selectedSlot = state.availableSlots.find(slot => slot.id === slotId);
+        const selectedSlot = state.availableSlots.find((slot) => slot.id === slotId)
         if (!selectedSlot) {
-          throw new Error('Selected slot not found');
+          throw new Error('Selected slot not found')
         }
 
-        setState(prev => ({
+        setState((prev) => ({
           ...prev,
           currentStep: 'confirming',
           selectedSlot: slotId,
-        }));
+        }))
 
-        return 'Time slot selected for confirmation';
+        return 'Time slot selected for confirmation'
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'Failed to select slot';
-        onError?.(errorMessage);
-        throw error;
+        const errorMessage = error instanceof Error ? error.message : 'Failed to select slot'
+        onError?.(errorMessage)
+        throw error
       }
     },
-  });
+  })
 
   useCopilotAction({
     name: 'confirm_appointment',
@@ -259,30 +259,30 @@ export const CopilotSchedulingAgent: React.FC<SchedulingAgentProps> = ({
     ],
     handler: async (patientId: string) => {
       try {
-        setState(prev => ({
+        setState((prev) => ({
           ...prev,
           currentStep: 'scheduling',
-        }));
+        }))
 
         // Schedule the appointment
-        const appointmentId = await scheduleAppointment(patientId);
+        const appointmentId = await scheduleAppointment(patientId)
 
-        setState(prev => ({
+        setState((prev) => ({
           ...prev,
           currentStep: 'completed',
-        }));
+        }))
 
-        onAppointmentScheduled?.(appointmentId);
-        return `Appointment scheduled successfully with ID: ${appointmentId}`;
+        onAppointmentScheduled?.(appointmentId)
+        return `Appointment scheduled successfully with ID: ${appointmentId}`
       } catch (error) {
         const errorMessage = error instanceof Error
           ? error.message
-          : 'Failed to schedule appointment';
-        onError?.(errorMessage);
-        throw error;
+          : 'Failed to schedule appointment'
+        onError?.(errorMessage)
+        throw error
       }
     },
-  });
+  })
 
   // Helper functions
   const findAvailableSlots = useCallback(async (
@@ -294,24 +294,24 @@ export const CopilotSchedulingAgent: React.FC<SchedulingAgentProps> = ({
     try {
       // Get date range for search
       const startDate = preferredDates.length > 0
-        ? new Date(Math.min(...preferredDates.map(d => d.getTime())))
-        : new Date();
+        ? new Date(Math.min(...preferredDates.map((d) => d.getTime())))
+        : new Date()
 
       const endDate = preferredDates.length > 0
-        ? new Date(Math.max(...preferredDates.map(d => d.getTime())))
-        : addDays(startDate, 7);
+        ? new Date(Math.max(...preferredDates.map((d) => d.getTime())))
+        : addDays(startDate, 7)
 
       // Get real-time availability
       const availability = await aiService.getRealTimeAvailability(clinicId, undefined, {
         start: startDate,
         end: endDate,
-      });
+      })
 
       // Filter and format slots based on requirements
       const suitableSlots = availability.availableSlots
-        .filter(slot => {
-          const slotDuration = (slot.end.getTime() - slot.start.getTime()) / (1000 * 60);
-          return slotDuration >= duration;
+        .filter((slot) => {
+          const slotDuration = (slot.end.getTime() - slot.start.getTime()) / (1000 * 60)
+          return slotDuration >= duration
         })
         .map((slot, index) => ({
           id: `slot-${index}`,
@@ -321,7 +321,7 @@ export const CopilotSchedulingAgent: React.FC<SchedulingAgentProps> = ({
           room: slot.confidence > 0.7 ? 'available' : 'limited',
           confidence: slot.confidence,
           efficiency: 0.9, // Placeholder efficiency calculation
-        }));
+        }))
 
       // Get optimization suggestions
       const optimization = {
@@ -329,33 +329,33 @@ export const CopilotSchedulingAgent: React.FC<SchedulingAgentProps> = ({
           'Morning slots have higher attendance rates',
           'Consider mid-week appointments for better availability',
         ],
-        riskFactors: availability.conflicts.map(conflict => conflict.description),
+        riskFactors: availability.conflicts.map((conflict) => conflict.description),
         recommendations: [
           'Book 2-3 days in advance for optimal availability',
           'Consider telemedicine options for urgent cases',
         ],
-      };
+      }
 
-      setState(prev => ({
+      setState((prev) => ({
         ...prev,
         availableSlots: suitableSlots,
         optimization,
-      }));
+      }))
     } catch (error) {
-      console.error('Error finding available slots:', error);
-      onError?.('Failed to find available slots');
+      console.error('Error finding available slots:', error)
+      onError?.('Failed to find available slots')
     }
-  }, [clinicId, aiService, onError]);
+  }, [clinicId, aiService, onError])
 
   const scheduleAppointment = useCallback(async (patientId: string) => {
     try {
       if (!state.selectedSlot) {
-        throw new Error('No time slot selected');
+        throw new Error('No time slot selected')
       }
 
-      const selectedSlot = state.availableSlots.find(slot => slot.id === state.selectedSlot);
+      const selectedSlot = state.availableSlots.find((slot) => slot.id === state.selectedSlot)
       if (!selectedSlot) {
-        throw new Error('Selected slot not found');
+        throw new Error('Selected slot not found')
       }
 
       // This would integrate with your appointment booking API
@@ -367,7 +367,7 @@ export const CopilotSchedulingAgent: React.FC<SchedulingAgentProps> = ({
         endTime: selectedSlot.end.toISOString(),
         serviceType: state.appointmentRequirements.serviceType,
         status: 'scheduled',
-      };
+      }
 
       // Make API call to create appointment
       const response = await fetch('/api/appointments', {
@@ -376,19 +376,19 @@ export const CopilotSchedulingAgent: React.FC<SchedulingAgentProps> = ({
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(appointmentData),
-      });
+      })
 
       if (!response.ok) {
-        throw new Error('Failed to create appointment');
+        throw new Error('Failed to create appointment')
       }
 
-      const appointment = await response.json();
-      return appointment.id;
+      const appointment = await response.json()
+      return appointment.id
     } catch (error) {
-      console.error('Error scheduling appointment:', error);
-      throw error;
+      console.error('Error scheduling appointment:', error)
+      throw error
     }
-  }, [state, clinicId]);
+  }, [state, clinicId])
 
   // Render component UI
   return (
@@ -435,7 +435,7 @@ export const CopilotSchedulingAgent: React.FC<SchedulingAgentProps> = ({
                       {index + 1}
                     </div>
                     <span className='ml-2 text-sm font-medium text-gray-900'>
-                      {step.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                      {step.replace('_', ' ').replace(/\b\w/g, (l) => l.toUpperCase())}
                     </span>
                   </div>
                 ))}
@@ -471,7 +471,7 @@ export const CopilotSchedulingAgent: React.FC<SchedulingAgentProps> = ({
               labels={{
                 title: 'Scheduling Assistant',
                 initial:
-                  'Hello! I\'m your AI scheduling assistant. How can I help you book an appointment today?',
+                  "Hello! I'm your AI scheduling assistant. How can I help you book an appointment today?",
               }}
               className='h-96'
             />
@@ -516,7 +516,7 @@ export const CopilotSchedulingAgent: React.FC<SchedulingAgentProps> = ({
                 Available Time Slots
               </h3>
               <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
-                {state.availableSlots.slice(0, 6).map(slot => (
+                {state.availableSlots.slice(0, 6).map((slot) => (
                   <div
                     key={slot.id}
                     className={`p-4 border rounded-lg cursor-pointer transition-colors ${
@@ -525,10 +525,10 @@ export const CopilotSchedulingAgent: React.FC<SchedulingAgentProps> = ({
                         : 'border-gray-300 hover:border-gray-400'
                     }`}
                     onClick={() => {
-                      setState(prev => ({
+                      setState((prev) => ({
                         ...prev,
                         selectedSlot: slot.id,
-                      }));
+                      }))
                     }}
                   >
                     <div className='flex justify-between items-start mb-2'>
@@ -580,7 +580,7 @@ export const CopilotSchedulingAgent: React.FC<SchedulingAgentProps> = ({
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default CopilotSchedulingAgent;
+export default CopilotSchedulingAgent

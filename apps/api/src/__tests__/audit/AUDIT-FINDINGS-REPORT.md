@@ -64,12 +64,12 @@ Cannot find module '@/types/api/contracts'
 const webrtcConfig = {
   iceServers: [],
   // No DTLS-SRTP enforcement
-};
+}
 
 // AI input sanitization not implemented
 function sanitizeForAI(data: any): string {
   // RED: Implementation missing
-  return JSON.stringify(data);
+  return JSON.stringify(data)
 }
 ```
 
@@ -93,9 +93,8 @@ function sanitizeForAI(data: any): string {
 ```typescript
 // Missing consent validation
 const hasValidConsent = patientData.consentRecords.some(
-  (consent) =>
-    consent.type === "DATA_PROCESSING" && consent.status === "ACTIVE", // Always returns false
-);
+  (consent) => consent.type === 'DATA_PROCESSING' && consent.status === 'ACTIVE', // Always returns false
+)
 ```
 
 #### Priority: **P0 - Blocker**
@@ -181,7 +180,7 @@ const QUALITY_GATES = {
     healthcareCriticalPaths: 100,
     integrationTests: 100,
   },
-};
+}
 ```
 
 ## Test Coverage Requirements

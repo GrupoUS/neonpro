@@ -35,10 +35,10 @@ This package provides comprehensive circuit breaker patterns designed specifical
 ### Basic Usage
 
 ```typescript
-import { CircuitBreakerService, HEALTHCARE_CIRCUIT_CONFIG } from './circuit-breaker-service';
+import { CircuitBreakerService, HEALTHCARE_CIRCUIT_CONFIG } from './circuit-breaker-service'
 
 // Create circuit breaker for healthcare service
-const circuitBreaker = new CircuitBreakerService(HEALTHCARE_CIRCUIT_CONFIG);
+const circuitBreaker = new CircuitBreakerService(HEALTHCARE_CIRCUIT_CONFIG)
 
 // Execute protected operation
 try {
@@ -52,17 +52,17 @@ try {
       service: 'patient-service',
       timestamp: new Date(),
     },
-  );
-  console.log('Operation successful:', result);
+  )
+  console.log('Operation successful:', result)
 } catch (error) {
-  console.error('Operation failed:', error.message);
+  console.error('Operation failed:', error.message)
 }
 ```
 
 ### Healthcare-Specific Configuration
 
 ```typescript
-import { CircuitBreakerConfig, CircuitBreakerService } from './circuit-breaker-service';
+import { CircuitBreakerConfig, CircuitBreakerService } from './circuit-breaker-service'
 
 const healthcareConfig: CircuitBreakerConfig = {
   failureThreshold: 3, // Lower threshold for critical services
@@ -81,11 +81,11 @@ const healthcareConfig: CircuitBreakerConfig = {
       error: 'SERVICE_UNAVAILABLE',
       message: 'Critical healthcare service temporarily unavailable',
       timestamp: new Date().toISOString(),
-    };
+    }
   },
-};
+}
 
-const circuitBreaker = new CircuitBreakerService(healthcareConfig);
+const circuitBreaker = new CircuitBreakerService(healthcareConfig)
 ```
 
 ### Health Monitoring
@@ -95,12 +95,12 @@ import {
   ExternalServiceHealthChecker,
   HEALTHCARE_HEALTH_CONFIG,
   ServiceDependency,
-} from './health-checker';
+} from './health-checker'
 
 // Create health checker
 const healthChecker = new ExternalServiceHealthChecker(
   HEALTHCARE_HEALTH_CONFIG,
-);
+)
 
 // Register services for monitoring
 healthChecker.registerService({
@@ -111,28 +111,28 @@ healthChecker.registerService({
   healthcareCritical: true,
   dataSensitivity: 'high',
   requiredFor: ['ai-assistant', 'patient-queries'],
-});
+})
 
 // Get comprehensive health status
-const healthStatus = healthChecker.getComprehensiveHealthStatus();
-console.log('Overall health:', healthStatus.overall);
-console.log('Services:', Object.keys(healthStatus.services));
+const healthStatus = healthChecker.getComprehensiveHealthStatus()
+console.log('Overall health:', healthStatus.overall)
+console.log('Services:', Object.keys(healthStatus.services))
 
 // Listen for health events
-healthChecker.onEvent(event => {
+healthChecker.onEvent((event) => {
   console.log('Health event:', {
     type: event.type,
     service: event.serviceName,
     status: event.currentStatus,
     timestamp: event.timestamp,
-  });
-});
+  })
+})
 ```
 
 ### Integration with Existing Services
 
 ```typescript
-import { setupHealthMonitoring, withCircuitBreakerProtection } from './integration-example';
+import { setupHealthMonitoring, withCircuitBreakerProtection } from './integration-example'
 
 // Protect existing API calls
 const result = await withCircuitBreakerProtection(
@@ -146,7 +146,7 @@ const result = await withCircuitBreakerProtection(
     service: 'patient-service',
     timestamp: new Date(),
   },
-);
+)
 
 // Set up health monitoring for multiple services
 const healthChecker = setupHealthMonitoring([
@@ -168,7 +168,7 @@ const healthChecker = setupHealthMonitoring([
     dataSensitivity: 'confidential',
     requiredFor: ['scheduling', 'calendar'],
   },
-]);
+])
 ```
 
 ## Configuration Options
@@ -178,26 +178,26 @@ const healthChecker = setupHealthMonitoring([
 ```typescript
 interface CircuitBreakerConfig {
   // Failure thresholds
-  failureThreshold: number; // Number of failures before opening circuit
-  resetTimeout: number; // Milliseconds to wait before attempting reset
-  monitoringPeriod: number; // Time window for failure counting
+  failureThreshold: number // Number of failures before opening circuit
+  resetTimeout: number // Milliseconds to wait before attempting reset
+  monitoringPeriod: number // Time window for failure counting
 
   // Retry configuration
-  maxRetries: number;
-  retryDelay: number; // Base delay for exponential backoff
-  retryBackoffMultiplier: number;
+  maxRetries: number
+  retryDelay: number // Base delay for exponential backoff
+  retryBackoffMultiplier: number
 
   // Timeout configuration
-  requestTimeout: number; // Individual request timeout
-  overallTimeout: number; // Overall operation timeout
+  requestTimeout: number // Individual request timeout
+  overallTimeout: number // Overall operation timeout
 
   // Healthcare-specific settings
-  healthcareCritical: boolean; // Whether this service is healthcare-critical
-  failSecureMode: boolean; // Deny access on failure if true
-  auditLogging: boolean; // Enable detailed audit logging
+  healthcareCritical: boolean // Whether this service is healthcare-critical
+  failSecureMode: boolean // Deny access on failure if true
+  auditLogging: boolean // Enable detailed audit logging
 
   // Custom fallback
-  customFallback?: (error: Error, context?: any) => Promise<any>;
+  customFallback?: (error: Error, context?: any) => Promise<any>
 }
 ```
 
@@ -217,7 +217,7 @@ HEALTHCARE_CIRCUIT_CONFIG = {
   healthcareCritical: true,
   failSecureMode: true,
   auditLogging: true,
-};
+}
 
 // For non-critical services
 STANDARD_CIRCUIT_CONFIG = {
@@ -232,7 +232,7 @@ STANDARD_CIRCUIT_CONFIG = {
   healthcareCritical: false,
   failSecureMode: false,
   auditLogging: false,
-};
+}
 ```
 
 ## Healthcare Compliance
@@ -254,13 +254,13 @@ The system automatically classifies requests based on content:
 // Automatic classification examples
 const classification = circuitBreaker.classifyData(
   'Patient diagnostic information',
-);
+)
 // Returns: 'restricted'
 
-const classification = circuitBreaker.classifyData('Schedule appointment');
+const classification = circuitBreaker.classifyData('Schedule appointment')
 // Returns: 'confidential'
 
-const classification = circuitBreaker.classifyData('General inquiry');
+const classification = circuitBreaker.classifyData('General inquiry')
 // Returns: 'public'
 ```
 
@@ -290,16 +290,16 @@ Comprehensive audit trails for compliance:
 
 ```typescript
 interface CircuitBreakerMetrics {
-  state: CircuitState; // Current circuit state
-  healthStatus: HealthStatus; // Overall health assessment
-  totalRequests: number; // Total requests processed
-  successfulRequests: number; // Successful requests
-  failedRequests: number; // Failed requests
-  consecutiveFailures: number; // Current consecutive failure count
-  averageResponseTime: number; // Average response time in ms
-  circuitOpenTime?: Date; // When circuit was opened
-  retryAttempts: number; // Total retry attempts
-  fallbackActivations: number; // Fallback usage count
+  state: CircuitState // Current circuit state
+  healthStatus: HealthStatus // Overall health assessment
+  totalRequests: number // Total requests processed
+  successfulRequests: number // Successful requests
+  failedRequests: number // Failed requests
+  consecutiveFailures: number // Current consecutive failure count
+  averageResponseTime: number // Average response time in ms
+  circuitOpenTime?: Date // When circuit was opened
+  retryAttempts: number // Total retry attempts
+  fallbackActivations: number // Fallback usage count
 }
 ```
 
@@ -307,13 +307,13 @@ interface CircuitBreakerMetrics {
 
 ```typescript
 interface ComprehensiveHealthStatus {
-  overall: HealthStatus; // System-wide health status
-  services: Record<string, ServiceHealth>; // Individual service health
-  timestamp: Date; // Status timestamp
-  uptime: number; // System uptime percentage
-  incidentCount: number; // Total incidents
-  healthcareCompliance: boolean; // Compliance status
-  criticalServicesHealthy: boolean; // Critical services status
+  overall: HealthStatus // System-wide health status
+  services: Record<string, ServiceHealth> // Individual service health
+  timestamp: Date // Status timestamp
+  uptime: number // System uptime percentage
+  incidentCount: number // Total incidents
+  healthcareCompliance: boolean // Compliance status
+  criticalServicesHealthy: boolean // Critical services status
 }
 ```
 
@@ -327,13 +327,13 @@ const patientServiceBreaker = new CircuitBreakerService({
   ...HEALTHCARE_CIRCUIT_CONFIG,
   failureThreshold: 3, // Lower threshold for critical services
   failSecureMode: true,
-});
+})
 
 // Non-critical services
 const notificationServiceBreaker = new CircuitBreakerService({
   ...STANDARD_CIRCUIT_CONFIG,
   failureThreshold: 15, // Higher tolerance for non-critical services
-});
+})
 ```
 
 ### 2. Fallback Strategies
@@ -346,15 +346,15 @@ const healthcareFallback = async (error, context) => {
       error: 'HEALTHCARE_SERVICE_UNAVAILABLE',
       message: 'Critical healthcare service temporarily unavailable. Please contact support.',
       timestamp: new Date().toISOString(),
-    };
+    }
   }
 
   return {
     error: 'SERVICE_UNAVAILABLE',
     message: 'Service temporarily unavailable. Please try again later.',
     timestamp: new Date().toISOString(),
-  };
-};
+  }
+}
 ```
 
 ### 3. Monitoring Setup
@@ -366,21 +366,21 @@ const criticalServices = [
   'appointment-service',
   'medical-records',
   'ai-agent',
-];
+]
 
-criticalServices.forEach(serviceName => {
+criticalServices.forEach((serviceName) => {
   const circuitBreaker = createCircuitBreaker(
     serviceName,
     HEALTHCARE_CIRCUIT_CONFIG,
-  );
+  )
 
-  circuitBreaker.onEvent(event => {
+  circuitBreaker.onEvent((event) => {
     if (event.type === 'STATE_CHANGE' && event.toState === 'OPEN') {
       // Alert operations team
-      sendAlert(`${serviceName} circuit breaker opened`);
+      sendAlert(`${serviceName} circuit breaker opened`)
     }
-  });
-});
+  })
+})
 ```
 
 ## Error Handling
@@ -389,24 +389,24 @@ criticalServices.forEach(serviceName => {
 
 ```typescript
 try {
-  const result = await circuitBreaker.execute(operation, context);
+  const result = await circuitBreaker.execute(operation, context)
 } catch (error) {
   switch (error.message) {
     case 'Service unavailable - healthcare critical operation blocked':
       // Handle healthcare service unavailability
-      return safeErrorResponse();
+      return safeErrorResponse()
 
     case 'Service temporarily unavailable due to high failure rate':
       // Handle circuit open state
-      return fallbackResponse();
+      return fallbackResponse()
 
     case 'Operation timeout':
       // Handle timeout scenarios
-      return timeoutResponse();
+      return timeoutResponse()
 
     default:
       // Handle other errors
-      throw error;
+      throw error
   }
 }
 ```
@@ -419,12 +419,12 @@ const recoveryConfig = {
   resetTimeout: 30000, // 30 seconds before retry
   halfOpenMaxRequests: 1, // One request to test recovery
   healthCheckInterval: 10000, // Health check every 10 seconds
-};
+}
 
 // Manual recovery
 if (circuitBreaker.getState() === 'OPEN') {
-  circuitBreaker.forceReset();
-  console.log('Circuit breaker manually reset');
+  circuitBreaker.forceReset()
+  console.log('Circuit breaker manually reset')
 }
 ```
 
@@ -438,19 +438,19 @@ test('should open circuit after failure threshold', async () => {
   const circuitBreaker = new CircuitBreakerService({
     failureThreshold: 3,
     resetTimeout: 1000,
-  });
+  })
 
   // Fail 3 times
   for (let i = 0; i < 3; i++) {
     try {
-      await circuitBreaker.execute(() => Promise.reject(new Error('Test error')));
+      await circuitBreaker.execute(() => Promise.reject(new Error('Test error')))
     } catch (e) {
       // Expected
     }
   }
 
-  expect(circuitBreaker.getState()).toBe('OPEN');
-});
+  expect(circuitBreaker.getState()).toBe('OPEN')
+})
 ```
 
 ### Integration Tests
@@ -460,7 +460,7 @@ test('should open circuit after failure threshold', async () => {
 test('should monitor service health', async () => {
   const healthChecker = new ExternalServiceHealthChecker(
     HEALTHCARE_HEALTH_CONFIG,
-  );
+  )
 
   healthChecker.registerService({
     name: 'test-service',
@@ -470,11 +470,11 @@ test('should monitor service health', async () => {
     healthcareCritical: false,
     dataSensitivity: 'low',
     requiredFor: ['testing'],
-  });
+  })
 
-  const healthStatus = healthChecker.getComprehensiveHealthStatus();
-  expect(healthStatus.services['test-service']).toBeDefined();
-});
+  const healthStatus = healthChecker.getComprehensiveHealthStatus()
+  expect(healthStatus.services['test-service']).toBeDefined()
+})
 ```
 
 ## Performance Considerations
@@ -519,24 +519,24 @@ test('should monitor service health', async () => {
 
 ```typescript
 // Enable detailed logging
-circuitBreaker.onEvent(event => {
+circuitBreaker.onEvent((event) => {
   console.log('Circuit Breaker Event:', {
     type: event.type,
     timestamp: event.timestamp,
     state: event.metrics.state,
     failures: event.metrics.consecutiveFailures,
-  });
-});
+  })
+})
 
 // Monitor health checks
-healthChecker.onEvent(event => {
+healthChecker.onEvent((event) => {
   console.log('Health Check Event:', {
     type: event.type,
     service: event.serviceName,
     status: event.currentStatus,
     responseTime: event.details.responseTime,
-  });
-});
+  })
+})
 ```
 
 ## Security Considerations

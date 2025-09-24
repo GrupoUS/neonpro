@@ -4,10 +4,10 @@
  * Inspired by MagicUI effects with multiple animation patterns
  */
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react'
 
-type ShinePattern = 'linear' | 'orbital' | 'pulse' | 'wave' | 'spiral';
-type ShineIntensity = 'subtle' | 'normal' | 'vibrant';
+type ShinePattern = 'linear' | 'orbital' | 'pulse' | 'wave' | 'spiral'
+type ShineIntensity = 'subtle' | 'normal' | 'vibrant'
 type ShineTheme =
   | 'gold'
   | 'silver'
@@ -15,11 +15,11 @@ type ShineTheme =
   | 'blue'
   | 'purple'
   | 'green'
-  | 'red';
-type ShineSpeed = 'slow' | 'normal' | 'fast';
+  | 'red'
+type ShineSpeed = 'slow' | 'normal' | 'fast'
 
 // Aceternity Hover Border Gradient types
-type HoverDirection = 'TOP' | 'LEFT' | 'BOTTOM' | 'RIGHT';
+type HoverDirection = 'TOP' | 'LEFT' | 'BOTTOM' | 'RIGHT'
 type HoverGradientTheme =
   | 'blue'
   | 'purple'
@@ -28,103 +28,103 @@ type HoverGradientTheme =
   | 'orange'
   | 'pink'
   | 'neonpro'
-  | 'aesthetic';
+  | 'aesthetic'
 
 interface ShineBorderAnimationConfig {
   /** Enable/disable the shine border effect */
-  enabled?: boolean;
+  enabled?: boolean
   /** Animation pattern type */
-  pattern?: ShinePattern;
+  pattern?: ShinePattern
   /** Animation intensity */
-  intensity?: ShineIntensity;
+  intensity?: ShineIntensity
   /** Color theme */
-  theme?: ShineTheme;
+  theme?: ShineTheme
   /** Animation speed */
-  speed?: ShineSpeed;
+  speed?: ShineSpeed
   /** Border width in pixels */
-  borderWidth?: number;
+  borderWidth?: number
   /** Custom shine color */
-  color?: string;
+  color?: string
   /** Animation duration in seconds */
-  duration?: number;
+  duration?: number
   /** Blur effect intensity */
-  blur?: number;
+  blur?: number
   /** Auto-start animation */
-  autoStart?: boolean;
+  autoStart?: boolean
   /** Loop animation */
-  loop?: boolean;
+  loop?: boolean
   /** Start animation on hover only */
-  hoverOnly?: boolean;
+  hoverOnly?: boolean
 
   // Aceternity Hover Border Gradient options
   /** Enable Aceternity-style hover border gradient */
-  enableHoverGradient?: boolean;
+  enableHoverGradient?: boolean
   /** Hover gradient theme */
-  hoverGradientTheme?: HoverGradientTheme;
+  hoverGradientTheme?: HoverGradientTheme
   /** Rotation direction for hover gradient */
-  hoverClockwise?: boolean;
+  hoverClockwise?: boolean
   /** Hover gradient animation duration */
-  hoverDuration?: number;
+  hoverDuration?: number
   /** Custom hover gradient colors */
   hoverGradientColors?: {
-    moving?: string;
-    highlight?: string;
-  };
+    moving?: string
+    highlight?: string
+  }
 }
 
 interface ShineBorderAnimationReturn {
   /** Ref to attach to the element */
-  elementRef: React.RefObject<HTMLElement | null>;
+  elementRef: React.RefObject<HTMLElement | null>
   /** Whether animation is currently playing */
-  isPlaying: boolean;
+  isPlaying: boolean
   /** Whether animation is currently animating (alias for compatibility) */
-  isAnimating: boolean;
+  isAnimating: boolean
   /** CSS class names to apply */
-  classNames: string;
+  classNames: string
   /** CSS classes (alias for compatibility) */
-  cssClasses: string;
+  cssClasses: string
   /** CSS custom properties object */
-  style: React.CSSProperties;
+  style: React.CSSProperties
   /** Animation control methods */
   controls: {
-    start: () => void;
-    stop: () => void;
-    pause: () => void;
-    resume: () => void;
-    restart: () => void;
-  };
+    start: () => void
+    stop: () => void
+    pause: () => void
+    resume: () => void
+    restart: () => void
+  }
   /** Individual control methods for compatibility */
-  start: () => void;
-  stop: () => void;
-  restart: () => void;
+  start: () => void
+  stop: () => void
+  restart: () => void
   /** Event handlers */
   handlers: {
-    onMouseEnter: () => void;
-    onMouseLeave: () => void;
-  };
+    onMouseEnter: () => void
+    onMouseLeave: () => void
+  }
 
   // Aceternity Hover Border Gradient returns
   /** Hover gradient state */
   hoverGradient: {
-    isHovered: boolean;
-    direction: HoverDirection;
-    backgroundStyle: string;
-    containerClassName: string;
-  };
+    isHovered: boolean
+    direction: HoverDirection
+    backgroundStyle: string
+    containerClassName: string
+  }
 }
 
 // Custom CSS properties type for shine border
 type CSSPropertiesWithShineVars = React.CSSProperties & {
-  '--shine-duration'?: string;
-  '--border-width'?: string;
-  '--shine-color'?: string;
-  '--shine-blur'?: string;
-  '--pulse-origin-x'?: string;
-  '--pulse-origin-y'?: string;
-  '--wave-direction'?: string;
-  '--spiral-start'?: string;
-  '--orbital-angle'?: string;
-};
+  '--shine-duration'?: string
+  '--border-width'?: string
+  '--shine-color'?: string
+  '--shine-blur'?: string
+  '--pulse-origin-x'?: string
+  '--pulse-origin-y'?: string
+  '--wave-direction'?: string
+  '--spiral-start'?: string
+  '--orbital-angle'?: string
+}
 
 export function useShineBorderAnimation(
   config: ShineBorderAnimationConfig = {},
@@ -147,30 +147,30 @@ export function useShineBorderAnimation(
     hoverClockwise = true,
     hoverDuration = 1,
     hoverGradientColors,
-  } = config;
+  } = config
 
-  const [isPlaying, setIsPlaying] = useState(autoStart && !hoverOnly);
-  const [isHovering, setIsHovering] = useState(false);
-  const [hoverDirection, setHoverDirection] = useState<HoverDirection>('TOP');
-  const [isHoverGradientActive, setIsHoverGradientActive] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(autoStart && !hoverOnly)
+  const [isHovering, setIsHovering] = useState(false)
+  const [hoverDirection, setHoverDirection] = useState<HoverDirection>('TOP')
+  const [isHoverGradientActive, setIsHoverGradientActive] = useState(false)
 
   const animationStateRef = useRef<'playing' | 'paused' | 'stopped'>(
     autoStart && !hoverOnly ? 'playing' : 'stopped',
-  );
-  const hoverIntervalRef = useRef<NodeJS.Timeout | undefined>(undefined);
+  )
+  const hoverIntervalRef = useRef<NodeJS.Timeout | undefined>(undefined)
 
   // Aceternity Hover Border Gradient: Direction rotation logic
   const rotateDirection = useCallback(
     (currentDirection: HoverDirection): HoverDirection => {
-      const directions: HoverDirection[] = ['TOP', 'LEFT', 'BOTTOM', 'RIGHT'];
-      const currentIndex = directions.indexOf(currentDirection);
+      const directions: HoverDirection[] = ['TOP', 'LEFT', 'BOTTOM', 'RIGHT']
+      const currentIndex = directions.indexOf(currentDirection)
       const nextIndex = hoverClockwise
         ? (currentIndex - 1 + directions.length) % directions.length
-        : (currentIndex + 1) % directions.length;
-      return directions[nextIndex] ?? 'TOP';
+        : (currentIndex + 1) % directions.length
+      return directions[nextIndex] ?? 'TOP'
     },
     [hoverClockwise],
-  );
+  )
 
   // Aceternity Hover Border Gradient: Gradient definitions
   const getHoverGradientMaps = useCallback(() => {
@@ -182,7 +182,7 @@ export function useShineBorderAnimation(
         'radial-gradient(20.7% 50% at 50% 100%, hsl(0, 0%, 100%) 0%, rgba(255, 255, 255, 0) 100%)',
       RIGHT:
         'radial-gradient(16.2% 41.199999999999996% at 100% 50%, hsl(0, 0%, 100%) 0%, rgba(255, 255, 255, 0) 100%)',
-    };
+    }
 
     // Theme-based highlight colors for NeonPro
     const themeHighlights: Record<HoverGradientTheme, string> = {
@@ -202,96 +202,101 @@ export function useShineBorderAnimation(
         'radial-gradient(75% 181.15942028985506% at 50% 50%, #AC9469 0%, rgba(255, 255, 255, 0) 100%)', // NeonPro gold
       aesthetic:
         'radial-gradient(75% 181.15942028985506% at 50% 50%, linear-gradient(45deg, #AC9469, #294359) 0%, rgba(255, 255, 255, 0) 100%)', // NeonPro aesthetic gradient
-    };
+    }
 
     return {
       moving: hoverGradientColors?.moving || movingMap[hoverDirection],
       highlight: hoverGradientColors?.highlight || themeHighlights[hoverGradientTheme],
-    };
-  }, [hoverDirection, hoverGradientTheme, hoverGradientColors]);
+    }
+  }, [hoverDirection, hoverGradientTheme, hoverGradientColors])
 
   // Duration mapping based on speed
   const getDuration = useCallback(() => {
-    if (duration) {return duration;}
+    if (duration) return duration
     switch (speed) {
       case 'slow':
-        return 5;
+        return 5
       case 'fast':
-        return 1.5;
+        return 1.5
       default:
-        return 3;
+        return 3
     }
-  }, [speed, duration]);
+  }, [speed, duration])
 
   // Animation control methods
   const start = useCallback(() => {
-    if (!enabled) {return;}
-    setIsPlaying(true);
-    animationStateRef.current = 'playing';
-  }, [enabled]);
+    if (!enabled) return
+    setIsPlaying(true)
+    animationStateRef.current = 'playing'
+  }, [enabled])
 
   const stop = useCallback(() => {
-    setIsPlaying(false);
-    animationStateRef.current = 'stopped';
-  }, []);
+    setIsPlaying(false)
+    animationStateRef.current = 'stopped'
+  }, [])
 
   const pause = useCallback(() => {
-    setIsPlaying(false);
-    animationStateRef.current = 'paused';
-  }, []);
+    setIsPlaying(false)
+    animationStateRef.current = 'paused'
+  }, [])
 
   const resume = useCallback(() => {
     if (animationStateRef.current === 'paused') {
-      setIsPlaying(true);
-      animationStateRef.current = 'playing';
+      setIsPlaying(true)
+      animationStateRef.current = 'playing'
     }
-  }, []);
+  }, [])
 
   const restart = useCallback(() => {
-    stop();
+    stop()
     // Use RAF to ensure the stop state is applied before starting
     requestAnimationFrame(() => {
-      start();
-    });
-  }, [start, stop]);
+      start()
+    })
+  }, [start, stop])
 
   // Event handlers
   const handleMouseEnter = useCallback(() => {
-    if (!enabled) {return;}
-    setIsHovering(true);
+    if (!enabled) return
+    setIsHovering(true)
 
     // Handle shine border
     if (hoverOnly) {
-      start();
+      start()
     }
 
     // Handle Aceternity hover gradient
     if (enableHoverGradient) {
-      setIsHoverGradientActive(true);
+      setIsHoverGradientActive(true)
       // Stop direction rotation when hovering
       if (hoverIntervalRef.current) {
-        clearInterval(hoverIntervalRef.current);
+        clearInterval(hoverIntervalRef.current)
       }
     }
-  }, [enabled, hoverOnly, start, enableHoverGradient]);
+  }, [enabled, hoverOnly, start, enableHoverGradient])
 
   const handleMouseLeave = useCallback(() => {
-    if (!enabled) {return;}
-    setIsHovering(false);
+    if (!enabled) return
+    setIsHovering(false)
 
     // Handle shine border
     if (hoverOnly) {
-      stop();
+      stop()
     }
 
     // Handle Aceternity hover gradient
     if (enableHoverGradient) {
-      setIsHoverGradientActive(false);
-      // Resume direction rotation
+      setIsHoverGradientActive(false)
+      // Resume direction rotation - clear existing first to prevent multiple intervals
+      if (hoverIntervalRef.current) {
+        clearInterval(hoverIntervalRef.current)
+        hoverIntervalRef.current = undefined
+      }
+
       if (!isHoverGradientActive) {
         hoverIntervalRef.current = setInterval(() => {
-          setHoverDirection(prevState => rotateDirection(prevState));
-        }, hoverDuration * 1000);
+          setHoverDirection((prevState) => rotateDirection(prevState))
+        }, hoverDuration * 1000)
       }
     }
   }, [
@@ -302,40 +307,49 @@ export function useShineBorderAnimation(
     isHoverGradientActive,
     rotateDirection,
     hoverDuration,
-  ]);
+  ])
 
   // Auto-start effect
   useEffect(() => {
     if (enabled && autoStart && !hoverOnly) {
-      start();
+      start()
     }
-  }, [enabled, autoStart, hoverOnly, start]);
+  }, [enabled, autoStart, hoverOnly, start])
 
   // Aceternity Hover Border Gradient: Direction rotation effect
   useEffect(() => {
     if (enableHoverGradient && !isHoverGradientActive) {
+      // Clear existing interval to prevent multiple intervals
+      if (hoverIntervalRef.current) {
+        clearInterval(hoverIntervalRef.current)
+        hoverIntervalRef.current = undefined
+      }
+
       hoverIntervalRef.current = setInterval(() => {
-        setHoverDirection(prevState => rotateDirection(prevState));
-      }, hoverDuration * 1000);
+        setHoverDirection((prevState) => rotateDirection(prevState))
+      }, hoverDuration * 1000)
 
       return () => {
         if (hoverIntervalRef.current) {
-          clearInterval(hoverIntervalRef.current);
+          clearInterval(hoverIntervalRef.current)
+          hoverIntervalRef.current = undefined
         }
-      };
-    }
-    return () => {
-      // Cleanup function for when effect conditions are not met
-      if (hoverIntervalRef.current) {
-        clearInterval(hoverIntervalRef.current);
       }
-    };
+    } else {
+      // Cleanup when effect conditions are not met
+      return () => {
+        if (hoverIntervalRef.current) {
+          clearInterval(hoverIntervalRef.current)
+          hoverIntervalRef.current = undefined
+        }
+      }
+    }
   }, [
     enableHoverGradient,
     isHoverGradientActive,
     rotateDirection,
     hoverDuration,
-  ]);
+  ])
 
   // Generate CSS class names
   const classNames = enabled
@@ -354,15 +368,15 @@ export function useShineBorderAnimation(
     ]
       .filter(Boolean)
       .join(' ')
-    : '';
+    : ''
 
   // Aceternity Hover Border Gradient: Generate background style
-  const hoverGradientMaps = getHoverGradientMaps();
+  const hoverGradientMaps = getHoverGradientMaps()
   const hoverBackgroundStyle = enableHoverGradient
     ? isHoverGradientActive
       ? `linear-gradient(${hoverGradientMaps.moving}, ${hoverGradientMaps.highlight})`
       : hoverGradientMaps.moving
-    : '';
+    : ''
 
   // Aceternity Hover Border Gradient: Container class names
   const hoverContainerClassName = enableHoverGradient
@@ -372,7 +386,7 @@ export function useShineBorderAnimation(
       'items-center flex-col flex-nowrap gap-10 h-min justify-center',
       'overflow-visible p-px decoration-clone w-fit',
     ].join(' ')
-    : '';
+    : ''
 
   // Generate CSS custom properties
   const style: CSSPropertiesWithShineVars = enabled
@@ -396,7 +410,7 @@ export function useShineBorderAnimation(
         '--orbital-angle': '0deg',
       }),
     }
-    : {};
+    : {}
 
   return {
     elementRef: useRef<HTMLElement | null>(null),
@@ -427,7 +441,7 @@ export function useShineBorderAnimation(
       backgroundStyle: hoverBackgroundStyle,
       containerClassName: hoverContainerClassName,
     },
-  };
+  }
 }
 
 // Export types for external use
@@ -440,4 +454,4 @@ export type {
   ShinePattern,
   ShineSpeed,
   ShineTheme,
-};
+}

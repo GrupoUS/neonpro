@@ -92,24 +92,24 @@ Features:
 ### Basic WebSocket Connection
 
 ```typescript
-import { useWebSocketAgent } from '@/services/websocket-agent-service';
+import { useWebSocketAgent } from '@/services/websocket-agent-service'
 
 function ChatComponent() {
-  const { isConnected, sendQuery } = useWebSocketAgent();
+  const { isConnected, sendQuery } = useWebSocketAgent()
 
   const handleSubmit = async (message: string) => {
     if (isConnected) {
-      const response = await sendQuery(message, { userId: user.id });
-      console.log(response);
+      const response = await sendQuery(message, { userId: user.id })
+      console.log(response)
     }
-  };
+  }
 
   return (
     <div>
       Connection: {isConnected ? 'Connected' : 'Disconnected'}
       {/* Chat UI */}
     </div>
-  );
+  )
 }
 ```
 
@@ -178,7 +178,7 @@ ALLOWED_ORIGINS=["http://localhost:3000", "https://your-domain.com"]
 WebSocket connections should include JWT tokens for authentication:
 
 ```typescript
-const ws = new WebSocket('ws://localhost:8001/ws/agent?token=YOUR_JWT_TOKEN');
+const ws = new WebSocket('ws://localhost:8001/ws/agent?token=YOUR_JWT_TOKEN')
 ```
 
 ## Monitoring

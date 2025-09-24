@@ -90,10 +90,10 @@ ORDER BY schema_name;
 
 ```typescript
 // packages/database/src/client.ts
-import { PrismaClient } from '@prisma/client';
-import { withAccelerate } from '@prisma/extension-accelerate';
+import { PrismaClient } from '@prisma/client'
+import { withAccelerate } from '@prisma/extension-accelerate'
 
-export const prisma = new PrismaClient().$extends(withAccelerate());
+export const prisma = new PrismaClient().$extends(withAccelerate())
 ```
 
 ### ✅ Row Level Security (RLS) Verification

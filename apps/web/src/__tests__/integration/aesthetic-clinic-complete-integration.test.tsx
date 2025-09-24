@@ -1,6 +1,6 @@
 /**
  * Comprehensive End-to-End Integration Tests for Aesthetic Clinic Features
- * 
+ *
  * This test suite validates the complete integration of aesthetic clinic components
  * from frontend user interfaces through backend services to database persistence,
  * ensuring healthcare compliance (LGPD, ANVISA, CFM), security, and performance.
@@ -9,10 +9,10 @@
 // Test imports removed as they are not currently used in this template file
 // import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 // import { render, screen, fireEvent, waitFor, act } from '@/test/utils';
-import { server } from '@/test/mocks/server';
-import { rest } from 'msw';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { TRPCProvider } from '@/components/providers/TRPCProvider';
+import { TRPCProvider } from '@/components/providers/TRPCProvider'
+import { server } from '@/test/mocks/server'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { rest } from 'msw'
 
 // Test Data Management
 const testData = {
@@ -31,8 +31,8 @@ const testData = {
         conditions: ['Hypertension controlled'],
         pregnancyStatus: 'not_pregnant',
         breastfeeding: false,
-        contraindications: []
-      }
+        contraindications: [],
+      },
     },
     pregnantPatient: {
       fullName: 'Maria Oliveira Santos',
@@ -44,8 +44,8 @@ const testData = {
         pregnancyStatus: 'pregnant',
         breastfeeding: false,
         trimester: 'second',
-        dueDate: '2024-09-15'
-      }
+        dueDate: '2024-09-15',
+      },
     },
     minorPatient: {
       fullName: 'Julia Costa',
@@ -57,9 +57,9 @@ const testData = {
       guardian: {
         name: 'Sra. Costa',
         relationship: 'mother',
-        phone: '+55 11 9555-4444'
-      }
-    }
+        phone: '+55 11 9555-4444',
+      },
+    },
   },
 
   professionals: {
@@ -70,7 +70,7 @@ const testData = {
       licenseNumber: 'CRM-SP-123456',
       certifications: ['Dermatology Board', 'Aesthetic Medicine'],
       experience: 8,
-      rating: 4.8
+      rating: 4.8,
     },
     plasticSurgeon: {
       id: 'prof-surg-001',
@@ -79,7 +79,7 @@ const testData = {
       licenseNumber: 'CRM-SP-789012',
       certifications: ['Plastic Surgery Board', 'Aesthetic Surgery'],
       experience: 12,
-      rating: 4.9
+      rating: 4.9,
     },
     aestheticNurse: {
       id: 'prof-nurse-001',
@@ -88,8 +88,8 @@ const testData = {
       licenseNumber: 'COREN-SP-345678',
       certifications: ['Aesthetic Procedures', 'Patient Care'],
       experience: 6,
-      rating: 4.7
-    }
+      rating: 4.7,
+    },
   },
 
   procedures: {
@@ -105,7 +105,7 @@ const testData = {
       requiredCertifications: ['Aesthetic Medicine'],
       anvisaRegistration: 'ANVISA-123456789',
       recoveryPeriod: 24,
-      sessionsRequired: 1
+      sessionsRequired: 1,
     },
     fillers: {
       id: 'proc-fillers-001',
@@ -119,7 +119,7 @@ const testData = {
       requiredCertifications: ['Aesthetic Medicine'],
       anvisaRegistration: 'ANVISA-987654321',
       recoveryPeriod: 48,
-      sessionsRequired: 1
+      sessionsRequired: 1,
     },
     laser: {
       id: 'proc-laser-001',
@@ -133,7 +133,7 @@ const testData = {
       requiredCertifications: ['Laser Therapy', 'Dermatology'],
       anvisaRegistration: 'ANVISA-456789123',
       recoveryPeriod: 168, // 7 days
-      sessionsRequired: 1
+      sessionsRequired: 1,
     },
     facial: {
       id: 'proc-facial-001',
@@ -147,8 +147,8 @@ const testData = {
       requiredCertifications: ['Aesthetic Medicine', 'Dermatology'],
       anvisaRegistration: 'ANVISA-789123456',
       recoveryPeriod: 72,
-      sessionsRequired: 3
-    }
+      sessionsRequired: 3,
+    },
   },
 
   packages: {
@@ -165,8 +165,8 @@ const testData = {
         { procedure: 'proc-botox-001', sessions: 2, price: 2400 },
         { procedure: 'proc-fillers-001', sessions: 2, price: 5000 },
         { procedure: 'proc-laser-001', sessions: 1, price: 3500 },
-        { procedure: 'proc-facial-001', sessions: 1, price: 5800 }
-      ]
+        { procedure: 'proc-facial-001', sessions: 1, price: 5800 },
+      ],
     },
     rejuvenation: {
       id: 'pkg-rejuvenation-001',
@@ -180,9 +180,9 @@ const testData = {
       procedures: [
         { procedure: 'proc-fillers-001', sessions: 2, price: 5000 },
         { procedure: 'proc-laser-001', sessions: 1, price: 3500 },
-        { procedure: 'proc-facial-001', sessions: 1, price: 5800 }
-      ]
-    }
+        { procedure: 'proc-facial-001', sessions: 1, price: 5800 },
+      ],
+    },
   },
 
   appointments: {
@@ -201,8 +201,8 @@ const testData = {
         sessionNumber: 1,
         totalSessions: 1,
         preProcedureInstructions: 'Avoid blood thinners for 48h',
-        postProcedureInstructions: 'No facial massage for 24h'
-      }
+        postProcedureInstructions: 'No facial massage for 24h',
+      },
     },
     completed: {
       id: 'apt-002',
@@ -218,9 +218,9 @@ const testData = {
         sessionNumber: 1,
         totalSessions: 1,
         treatmentOutcome: 'Excellent',
-        patientSatisfaction: 5
-      }
-    }
+        patientSatisfaction: 5,
+      },
+    },
   },
 
   consent: {
@@ -233,7 +233,7 @@ const testData = {
       thirdPartyShares: ['healthcare_professionals', 'laboratory_partners'],
       withdrawalAllowed: true,
       ipAddress: '127.0.0.1',
-      userAgent: 'NeonPro/1.0 Test'
+      userAgent: 'NeonPro/1.0 Test',
     },
     photos: {
       clientId: 'patient-001',
@@ -244,76 +244,83 @@ const testData = {
       thirdPartyShares: [],
       withdrawalAllowed: true,
       automaticExpiration: true,
-      expiresAt: new Date(Date.now() + 15 * 365 * 24 * 60 * 60 * 1000).toISOString()
-    }
-  }
-};
+      expiresAt: new Date(Date.now() + 15 * 365 * 24 * 60 * 60 * 1000).toISOString(),
+    },
+  },
+}
 
 // Mock API Responses
 const mockApiResponses = {
   auth: {
     login: {
       client: { success: true, user: { id: 'client-001', role: 'client' }, token: 'mock-token' },
-      professional: { success: true, user: { id: 'prof-001', role: 'professional' }, token: 'mock-token' },
-      admin: { success: true, user: { id: 'admin-001', role: 'admin' }, token: 'mock-token' }
-    }
+      professional: {
+        success: true,
+        user: { id: 'prof-001', role: 'professional' },
+        token: 'mock-token',
+      },
+      admin: { success: true, user: { id: 'admin-001', role: 'admin' }, token: 'mock-token' },
+    },
   },
 
   patients: {
     create: { success: true, patient: { id: 'patient-001', ...testData.patients.newPatient } },
-    update: { success: true, patient: { id: 'patient-001', ...testData.patients.newPatient, updatedAt: new Date() } },
-    get: { success: true, patient: { id: 'patient-001', ...testData.patients.newPatient } }
+    update: {
+      success: true,
+      patient: { id: 'patient-001', ...testData.patients.newPatient, updatedAt: new Date() },
+    },
+    get: { success: true, patient: { id: 'patient-001', ...testData.patients.newPatient } },
   },
 
   procedures: {
-    list: { 
-      success: true, 
+    list: {
+      success: true,
       procedures: Object.values(testData.procedures),
-      pagination: { total: 4, limit: 20, offset: 0, hasMore: false }
+      pagination: { total: 4, limit: 20, offset: 0, hasMore: false },
     },
-    get: { success: true, procedure: testData.procedures.botox }
+    get: { success: true, procedure: testData.procedures.botox },
   },
 
   packages: {
     list: {
       success: true,
       packages: Object.values(testData.packages),
-      pagination: { total: 2, limit: 20, offset: 0, hasMore: false }
+      pagination: { total: 2, limit: 20, offset: 0, hasMore: false },
     },
-    get: { success: true, package: testData.packages.antiAging }
+    get: { success: true, package: testData.packages.antiAging },
   },
 
   appointments: {
-    schedule: { 
-      success: true, 
-      appointment: testData.appointments.scheduled 
+    schedule: {
+      success: true,
+      appointment: testData.appointments.scheduled,
     },
-    update: { 
-      success: true, 
-      appointment: { ...testData.appointments.scheduled, status: 'confirmed' } 
+    update: {
+      success: true,
+      appointment: { ...testData.appointments.scheduled, status: 'confirmed' },
     },
-    cancel: { 
-      success: true, 
-      appointment: { ...testData.appointments.scheduled, status: 'cancelled' } 
-    }
+    cancel: {
+      success: true,
+      appointment: { ...testData.appointments.scheduled, status: 'cancelled' },
+    },
   },
 
   compliance: {
     lgpdValidate: { success: true, compliant: true, issues: [] },
     cfmValidate: { success: true, valid: true, certifications: ['Dermatology Board'] },
-    anvisaValidate: { success: true, compliant: true, warnings: [] }
+    anvisaValidate: { success: true, compliant: true, warnings: [] },
   },
 
   whatsapp: {
     send: { success: true, messageId: 'msg-001' },
     confirm: { success: true, messageId: 'msg-002' },
-    reminder: { success: true, messageId: 'msg-003' }
-  }
-};
+    reminder: { success: true, messageId: 'msg-003' },
+  },
+}
 
 // Test Utilities
 class TestDataManager {
-  private queryClient: QueryClient;
+  private queryClient: QueryClient
 
   constructor() {
     this.queryClient = new QueryClient({
@@ -321,24 +328,24 @@ class TestDataManager {
         queries: { retry: false },
         mutations: { retry: false },
       },
-    });
+    })
   }
 
   async setupDatabase() {
     // Setup mock database state
-    await this.queryClient.setQueryData(['patients'], []);
-    await this.queryClient.setQueryData(['procedures'], Object.values(testData.procedures));
-    await this.queryClient.setQueryData(['packages'], Object.values(testData.packages));
-    await this.queryClient.setQueryData(['appointments'], []);
+    await this.queryClient.setQueryData(['patients'], [])
+    await this.queryClient.setQueryData(['procedures'], Object.values(testData.procedures))
+    await this.queryClient.setQueryData(['packages'], Object.values(testData.packages))
+    await this.queryClient.setQueryData(['appointments'], [])
   }
 
   async cleanupDatabase() {
     // Clear all mock data
-    await this.queryClient.clear();
+    await this.queryClient.clear()
   }
 
   getQueryClient() {
-    return this.queryClient;
+    return this.queryClient
   }
 }
 
@@ -347,70 +354,63 @@ const setupMockServer = () => {
   server.use(
     // Authentication endpoints
     rest.post('/api/auth/login', async (req, res, ctx) => {
-      const { email, password } = await req.json();
+      const { email, password } = await req.json()
       if (email === 'ana.silva@example.com' && password === 'password123') {
-        return res(ctx.json(mockApiResponses.auth.login.client));
+        return res(ctx.json(mockApiResponses.auth.login.client))
       }
-      return res(ctx.status(401), ctx.json({ success: false, message: 'Invalid credentials' }));
+      return res(ctx.status(401), ctx.json({ success: false, message: 'Invalid credentials' }))
     }),
-
     // Patient endpoints
     rest.post('/api/patients', async (req, res, ctx) => {
-      const _patientData = await req.json();
-      return res(ctx.json(mockApiResponses.patients.create));
+      const _patientData = await req.json()
+      return res(ctx.json(mockApiResponses.patients.create))
     }),
-
     rest.get('/api/patients/:id', async (req, res, ctx) => {
-      const { id: _id } = req.params;
-      return res(ctx.json(mockApiResponses.patients.get));
+      const { id: _id } = req.params
+      return res(ctx.json(mockApiResponses.patients.get))
     }),
-
     // Procedure endpoints
     rest.get('/api/aesthetic-scheduling/procedures', async (req, res, ctx) => {
-      const url = new URL(req.url);
-      const search = url.searchParams.get('search');
-      const category = url.searchParams.get('category');
-      
-      let procedures = Object.values(testData.procedures);
+      const url = new URL(req.url)
+      const search = url.searchParams.get('search')
+      const category = url.searchParams.get('category')
+
+      let procedures = Object.values(testData.procedures)
       if (search) {
-        procedures = procedures.filter(p => 
-          p.name.toLowerCase().includes(search.toLowerCase()) ||
-          p.description.toLowerCase().includes(search.toLowerCase())
-        );
+        procedures = procedures.filter((p) =>
+          p.name.toLowerCase().includes(search.toLowerCase())
+          || p.description.toLowerCase().includes(search.toLowerCase())
+        )
       }
       if (category) {
-        procedures = procedures.filter(p => p.category === category);
+        procedures = procedures.filter((p) => p.category === category)
       }
-      
+
       return res(ctx.json({
         success: true,
         procedures,
-        pagination: { total: procedures.length, limit: 20, offset: 0, hasMore: false }
-      }));
+        pagination: { total: procedures.length, limit: 20, offset: 0, hasMore: false },
+      }))
     }),
-
     // Package endpoints
     rest.get('/api/aesthetic-scheduling/packages', async (req, res, ctx) => {
-      return res(ctx.json(mockApiResponses.packages.list));
+      return res(ctx.json(mockApiResponses.packages.list))
     }),
-
     // Appointment endpoints
     rest.post('/api/appointments', async (req, res, ctx) => {
-      const _appointmentData = await req.json();
-      return res(ctx.json(mockApiResponses.appointments.schedule));
+      const _appointmentData = await req.json()
+      return res(ctx.json(mockApiResponses.appointments.schedule))
     }),
-
     // Compliance endpoints
     rest.post('/api/compliance/lgpd/validate', async (req, res, ctx) => {
-      return res(ctx.json(mockApiResponses.compliance.lgpdValidate));
+      return res(ctx.json(mockApiResponses.compliance.lgpdValidate))
     }),
-
     // WhatsApp endpoints
     rest.post('/api/whatsapp/send', async (req, res, ctx) => {
-      return res(ctx.json(mockApiResponses.whatsapp.send));
-    })
-  );
-};
+      return res(ctx.json(mockApiResponses.whatsapp.send))
+    }),
+  )
+}
 
 // Test Component Wrappers
 const createTestWrapper = () => {
@@ -419,7 +419,7 @@ const createTestWrapper = () => {
       queries: { retry: false },
       mutations: { retry: false },
     },
-  });
+  })
 
   return ({ children }: { children: React.ReactNode }) => (
     <QueryClientProvider client={queryClient}>
@@ -427,7 +427,7 @@ const createTestWrapper = () => {
         {children}
       </TRPCProvider>
     </QueryClientProvider>
-  );
-};
+  )
+}
 
-export { testData, mockApiResponses, TestDataManager, setupMockServer, createTestWrapper };
+export { createTestWrapper, mockApiResponses, setupMockServer, testData, TestDataManager }

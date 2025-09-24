@@ -1,5 +1,5 @@
-import { http, HttpResponse } from 'msw';
-import { setupServer } from 'msw/node';
+import { http, HttpResponse } from 'msw'
+import { setupServer } from 'msw/node'
 
 // Mock data for aesthetic clinic
 export const mockPatients = [
@@ -27,7 +27,7 @@ export const mockPatients = [
     createdAt: '2024-01-14T15:30:00Z',
     updatedAt: '2024-01-14T15:30:00Z',
   },
-];
+]
 
 export const mockAppointments = [
   {
@@ -41,7 +41,7 @@ export const mockAppointments = [
     createdAt: '2024-01-15T10:00:00Z',
     updatedAt: '2024-01-15T10:00:00Z',
   },
-];
+]
 
 export const mockProfessionals = [
   {
@@ -53,7 +53,7 @@ export const mockProfessionals = [
     createdAt: '2024-01-01T00:00:00Z',
     updatedAt: '2024-01-01T00:00:00Z',
   },
-];
+]
 
 // API handlers
 export const handlers = [
@@ -67,22 +67,22 @@ export const handlers = [
         limit: 10,
         total: 2,
       },
-    });
+    })
   }),
 
   http.post('/api/patients', async ({ request }) => {
-    const patientData = await request.json();
+    const patientData = await request.json()
     const newPatient = {
       id: '3',
       ...patientData,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-    };
+    }
 
     return HttpResponse.json({
       success: true,
       data: newPatient,
-    });
+    })
   }),
 
   // Appointments API
@@ -90,22 +90,22 @@ export const handlers = [
     return HttpResponse.json({
       success: true,
       data: mockAppointments,
-    });
+    })
   }),
 
   http.post('/api/appointments', async ({ request }) => {
-    const appointmentData = await request.json();
+    const appointmentData = await request.json()
     const newAppointment = {
       id: '2',
       ...appointmentData,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-    };
+    }
 
     return HttpResponse.json({
       success: true,
       data: newAppointment,
-    });
+    })
   }),
 
   // Professionals API
@@ -113,12 +113,12 @@ export const handlers = [
     return HttpResponse.json({
       success: true,
       data: mockProfessionals,
-    });
+    })
   }),
 
   // Auth API
   http.post('/api/auth/login', async ({ request }) => {
-    const { email, password } = await request.json();
+    const { email, password } = await request.json()
 
     if (email === 'test@example.com' && password === 'password123') {
       return HttpResponse.json({
@@ -131,7 +131,7 @@ export const handlers = [
           },
           token: 'mock-jwt-token',
         },
-      });
+      })
     }
 
     return HttpResponse.json(
@@ -140,7 +140,7 @@ export const handlers = [
         error: 'Invalid credentials',
       },
       { status: 401 },
-    );
+    )
   }),
 
   // Health check
@@ -149,24 +149,24 @@ export const handlers = [
       status: 'healthy',
       timestamp: new Date().toISOString(),
       uptime: process.uptime(),
-    });
+    })
   }),
-];
+]
 
 // Setup MSW server for API mocking in Node.js environment
-export const server = setupServer(...handlers);
+export const server = setupServer(...handlers)
 
 // Server lifecycle functions for test setup
 export const startServer = () =>
   server.listen({
     onUnhandledRequest: 'warn', // Warn about unhandled requests during development
-  });
+  })
 
-export const stopServer = () => server.close();
+export const stopServer = () => server.close()
 
-export const resetServerHandlers = () => server.resetHandlers();
+export const resetServerHandlers = () => server.resetHandlers()
 
 // Utility to add custom handlers during tests
 export const addCustomHandlers = (newHandlers: any[]) => {
-  server.use(...newHandlers);
-};
+  server.use(...newHandlers)
+}

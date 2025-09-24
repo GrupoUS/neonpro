@@ -21,14 +21,14 @@ This comprehensive quick reference guide provides instant access to essential in
 
 ```typescript
 interface NavigationShortcuts {
-  dashboard: 'Ctrl + D | Alt + Home';
-  patients: 'Ctrl + P | Alt + P';
-  appointments: 'Ctrl + A | Alt + A';
-  treatments: 'Ctrl + T | Alt + T';
-  finance: 'Ctrl + F | Alt + F';
-  reports: 'Ctrl + R | Alt + R';
-  settings: 'Ctrl + S | Alt + S';
-  help: 'F1 | Ctrl + H';
+  dashboard: 'Ctrl + D | Alt + Home'
+  patients: 'Ctrl + P | Alt + P'
+  appointments: 'Ctrl + A | Alt + A'
+  treatments: 'Ctrl + T | Alt + T'
+  finance: 'Ctrl + F | Alt + F'
+  reports: 'Ctrl + R | Alt + R'
+  settings: 'Ctrl + S | Alt + S'
+  help: 'F1 | Ctrl + H'
 }
 ```
 
@@ -52,21 +52,21 @@ interface NavigationShortcuts {
 ```typescript
 interface PatientQuickActions {
   registration: [
-    '1. Click \'New Patient\' button',
+    "1. Click 'New Patient' button",
     '2. Fill in personal information',
     '3. Upload required documents',
     '4. Capture biometric data',
     '5. Complete consent forms',
-  ];
+  ]
 
   assessment: [
     '1. Select patient from list',
-    '2. Click \'New Assessment\'',
+    "2. Click 'New Assessment'",
     '3. Complete medical history',
     '4. Document aesthetic goals',
     '5. Upload clinical photos',
     '6. Generate assessment summary',
-  ];
+  ]
 
   treatmentPlanning: [
     '1. Review AI recommendations',
@@ -75,7 +75,7 @@ interface PatientQuickActions {
     '4. Calculate costs',
     '5. Present to patient',
     '6. Obtain consent',
-  ];
+  ]
 }
 ```
 
@@ -91,14 +91,14 @@ interface DocumentationTemplates {
       'Physical Examination',
       'Assessment',
       'Plan',
-    ];
-    required: ['Patient signature', 'Professional signature', 'Date/time stamp'];
-  };
+    ]
+    required: ['Patient signature', 'Professional signature', 'Date/time stamp']
+  }
 
   progressNote: {
-    sections: ['Subjective', 'Objective', 'Assessment', 'Plan'];
-    required: ['Treatment performed', 'Patient response', 'Follow-up plan'];
-  };
+    sections: ['Subjective', 'Objective', 'Assessment', 'Plan']
+    required: ['Treatment performed', 'Patient response', 'Follow-up plan']
+  }
 
   treatmentRecord: {
     sections: [
@@ -107,9 +107,9 @@ interface DocumentationTemplates {
       'Complications',
       'Patient Tolerance',
       'Next Session',
-    ];
-    required: ['Treatment protocol', 'Professional signature', 'Time documentation'];
-  };
+    ]
+    required: ['Treatment protocol', 'Professional signature', 'Time documentation']
+  }
 }
 ```
 
@@ -137,15 +137,15 @@ interface AppointmentQuickSteps {
     '4. Select date/time',
     '5. Confirm availability',
     '6. Set up reminders',
-  ];
+  ]
 
   rescheduling: [
     '1. Find existing appointment',
-    '2. Click \'Reschedule\'',
+    "2. Click 'Reschedule'",
     '3. Select new time slot',
     '4. Confirm with patient',
     '5. Update notifications',
-  ];
+  ]
 
   cancellation: [
     '1. Locate appointment',
@@ -153,7 +153,7 @@ interface AppointmentQuickSteps {
     '3. Process cancellation',
     '4. Notify professional',
     '5. Update schedule',
-  ];
+  ]
 }
 ```
 
@@ -169,7 +169,7 @@ interface PaymentProcessing {
     '5. Process transaction',
     '6. Generate receipt',
     '7. Update accounting',
-  ];
+  ]
 
   paymentMethods: [
     'Credit Card (Visa, Mastercard, Amex)',
@@ -178,7 +178,7 @@ interface PaymentProcessing {
     'Boleto Bancário',
     'Cash',
     'Installment Plans (2-12x)',
-  ];
+  ]
 }
 ```
 
@@ -201,29 +201,29 @@ interface PaymentProcessing {
 interface UserManagementSteps {
   createUser: [
     '1. Navigate to User Management',
-    '2. Click \'Add User\'',
+    "2. Click 'Add User'",
     '3. Enter user information',
     '4. Assign role and permissions',
     '5. Set up authentication',
     '6. Send welcome email',
-  ];
+  ]
 
   modifyPermissions: [
     '1. Select user account',
-    '2. Click \'Edit Permissions\'',
+    "2. Click 'Edit Permissions'",
     '3. Adjust role assignments',
     '4. Configure access levels',
     '5. Save changes',
     '6. Notify user of changes',
-  ];
+  ]
 
   deactivateUser: [
     '1. Locate user account',
-    '2. Click \'Deactivate\'',
+    "2. Click 'Deactivate'",
     '3. Confirm deactivation',
     '4. Reassign responsibilities',
     '5. Archive user data',
-  ];
+  ]
 }
 ```
 
@@ -236,12 +236,12 @@ interface UserManagementSteps {
 ```typescript
 interface LoginTroubleshooting {
   forgottenPassword: [
-    '1. Click \'Forgot Password\'',
+    "1. Click 'Forgot Password'",
     '2. Enter registered email',
     '3. Check email for reset link',
     '4. Create new password',
     '5. Login with new credentials',
-  ];
+  ]
 
   accountLocked: [
     '1. Wait 15 minutes for automatic unlock',
@@ -249,14 +249,14 @@ interface LoginTroubleshooting {
     '3. Verify identity',
     '4. Request manual unlock',
     '5. Update security questions',
-  ];
+  ]
 
   twoFactorIssues: [
     '1. Check backup codes',
     '2. Verify device time sync',
     '3. Try alternative authentication method',
     '4. Contact support if unresolved',
-  ];
+  ]
 }
 ```
 
@@ -270,7 +270,7 @@ interface PerformanceTroubleshooting {
     '3. Disable browser extensions',
     '4. Try different browser',
     '5. Contact IT if persists',
-  ];
+  ]
 
   systemErrors: [
     '1. Note error message',
@@ -278,7 +278,7 @@ interface PerformanceTroubleshooting {
     '3. Check system status page',
     '4. Try basic troubleshooting steps',
     '5. Submit support ticket',
-  ];
+  ]
 
   dataSyncIssues: [
     '1. Verify internet connection',
@@ -286,7 +286,7 @@ interface PerformanceTroubleshooting {
     '3. Manual sync attempt',
     '4. Restart application',
     '5. Contact technical support',
-  ];
+  ]
 }
 ```
 
@@ -300,7 +300,7 @@ interface EmergencyProcedures {
     '3. Contact technical support',
     '4. Implement backup procedures',
     '5. Document all manual activities',
-  ];
+  ]
 
   dataBreach: [
     '1. Immediately secure systems',
@@ -308,7 +308,7 @@ interface EmergencyProcedures {
     '3. Document breach details',
     '4. Contact legal counsel',
     '5. Begin incident response',
-  ];
+  ]
 
   medicalEmergency: [
     '1. Call emergency services (192)',
@@ -316,7 +316,7 @@ interface EmergencyProcedures {
     '3. Document incident',
     '4. Notify clinic management',
     '5. Follow up with patient care',
-  ];
+  ]
 }
 ```
 
@@ -327,26 +327,26 @@ interface EmergencyProcedures {
 ```typescript
 interface DashboardComponents {
   header: {
-    notifications: 'Bell icon shows alerts and reminders';
-    userProfile: 'Avatar icon with dropdown menu';
-    quickActions: 'Plus icon for common actions';
-    searchBar: 'Global search functionality';
-  };
+    notifications: 'Bell icon shows alerts and reminders'
+    userProfile: 'Avatar icon with dropdown menu'
+    quickActions: 'Plus icon for common actions'
+    searchBar: 'Global search functionality'
+  }
 
   mainWidgets: {
-    patientOverview: 'Today\'s patient statistics and queue';
-    appointmentSchedule: 'Calendar view with upcoming appointments';
-    treatmentQueue: 'Active treatment sessions and status';
-    financialSummary: 'Daily revenue and payment status';
-    complianceAlerts: 'Regulatory compliance notifications';
-    aiInsights: 'AI-powered recommendations and insights';
-  };
+    patientOverview: "Today's patient statistics and queue"
+    appointmentSchedule: 'Calendar view with upcoming appointments'
+    treatmentQueue: 'Active treatment sessions and status'
+    financialSummary: 'Daily revenue and payment status'
+    complianceAlerts: 'Regulatory compliance notifications'
+    aiInsights: 'AI-powered recommendations and insights'
+  }
 
   navigation: {
-    sidebarMenu: 'Main navigation with all system modules';
-    breadcrumbs: 'Current location navigation trail';
-    quickLinks: 'Frequently used features and functions';
-  };
+    sidebarMenu: 'Main navigation with all system modules'
+    breadcrumbs: 'Current location navigation trail'
+    quickLinks: 'Frequently used features and functions'
+  }
 }
 ```
 
@@ -355,15 +355,15 @@ interface DashboardComponents {
 ```typescript
 interface WidgetConfiguration {
   customizationOptions: {
-    layout: 'Drag and drop to rearrange widgets';
-    size: 'Resize widgets by dragging corners';
-    visibility: 'Show/hide widgets based on user role';
-    content: 'Configure data displayed in each widget';
-    refreshRate: 'Set automatic refresh intervals';
-  };
+    layout: 'Drag and drop to rearrange widgets'
+    size: 'Resize widgets by dragging corners'
+    visibility: 'Show/hide widgets based on user role'
+    content: 'Configure data displayed in each widget'
+    refreshRate: 'Set automatic refresh intervals'
+  }
 
   commonWidgets: [
-    'Today\'s Appointments',
+    "Today's Appointments",
     'Patient Waiting Queue',
     'Treatment Session Status',
     'Revenue Summary',
@@ -371,7 +371,7 @@ interface WidgetConfiguration {
     'AI Recommendations',
     'System Notifications',
     'Quick Actions',
-  ];
+  ]
 }
 ```
 
@@ -407,20 +407,20 @@ interface WidgetConfiguration {
 ```typescript
 interface MobileNavigation {
   bottomNavigation: {
-    home: 'Main dashboard and overview';
-    patients: 'Patient search and management';
-    appointments: 'Calendar and scheduling';
-    messages: 'Communication center';
-    profile: 'User settings and profile';
-  };
+    home: 'Main dashboard and overview'
+    patients: 'Patient search and management'
+    appointments: 'Calendar and scheduling'
+    messages: 'Communication center'
+    profile: 'User settings and profile'
+  }
 
   gestures: {
-    swipeLeft: 'Navigate to previous screen';
-    swipeRight: 'Navigate to next screen';
-    pinchToZoom: 'Zoom in/out on images and documents';
-    longPress: 'Context menu and additional options';
-    pullToRefresh: 'Refresh content and data';
-  };
+    swipeLeft: 'Navigate to previous screen'
+    swipeRight: 'Navigate to next screen'
+    pinchToZoom: 'Zoom in/out on images and documents'
+    longPress: 'Context menu and additional options'
+    pullToRefresh: 'Refresh content and data'
+  }
 }
 ```
 
@@ -434,15 +434,15 @@ interface MobileFeatures {
     'Voice notes for dictation',
     'Push notifications for appointments',
     'Offline mode for basic functions',
-  ];
+  ]
 
   mobileShortcuts: {
-    homeScreen: 'Swipe up from bottom';
-    notifications: 'Swipe down from top';
-    patientSearch: 'Tap search icon';
-    quickCapture: 'Double-tap camera button';
-    emergencyContact: 'Hold power button 3 seconds';
-  };
+    homeScreen: 'Swipe up from bottom'
+    notifications: 'Swipe down from top'
+    patientSearch: 'Tap search icon'
+    quickCapture: 'Double-tap camera button'
+    emergencyContact: 'Hold power button 3 seconds'
+  }
 }
 ```
 
@@ -453,27 +453,27 @@ interface MobileFeatures {
 ```typescript
 interface SearchOperators {
   textSearch: {
-    exactPhrase: '"exact phrase"';
-    excludeTerms: '-excluded';
-    orTerms: 'OR between terms';
-    wildcards: 'part* word';
-    proximity: 'word1 NEAR word2';
-  };
+    exactPhrase: '"exact phrase"'
+    excludeTerms: '-excluded'
+    orTerms: 'OR between terms'
+    wildcards: 'part* word'
+    proximity: 'word1 NEAR word2'
+  }
 
   dateSearch: {
-    specificDate: 'YYYY-MM-DD';
-    dateRange: 'YYYY-MM-DD..YYYY-MM-DD';
-    relativeDates: 'today, yesterday, this_week, last_month';
-    beforeAfter: 'before:YYYY-MM-DD, after:YYYY-MM-DD';
-  };
+    specificDate: 'YYYY-MM-DD'
+    dateRange: 'YYYY-MM-DD..YYYY-MM-DD'
+    relativeDates: 'today, yesterday, this_week, last_month'
+    beforeAfter: 'before:YYYY-MM-DD, after:YYYY-MM-DD'
+  }
 
   numericSearch: {
-    exactValue: '123';
-    range: '10..20';
-    greaterThan: '>10';
-    lessThan: '<20';
-    notEqual: '!=10';
-  };
+    exactValue: '123'
+    range: '10..20'
+    greaterThan: '>10'
+    lessThan: '<20'
+    notEqual: '!=10'
+  }
 }
 ```
 
@@ -487,7 +487,7 @@ interface FilterReference {
     'Appointment history',
     'Payment status',
     'Professional assigned',
-  ];
+  ]
 
   appointmentFilters: [
     'Date range',
@@ -495,7 +495,7 @@ interface FilterReference {
     'Treatment type',
     'Status (confirmed, pending, cancelled)',
     'Location/room',
-  ];
+  ]
 
   treatmentFilters: [
     'Treatment category',
@@ -503,7 +503,7 @@ interface FilterReference {
     'Date range',
     'Outcome status',
     'Complications',
-  ];
+  ]
 }
 ```
 
@@ -514,25 +514,25 @@ interface FilterReference {
 ```typescript
 interface ReportShortcuts {
   dailyReports: {
-    patientFlow: 'Ctrl + Alt + P';
-    revenueSummary: 'Ctrl + Alt + R';
-    appointmentStats: 'Ctrl + Alt + A';
-    treatmentOverview: 'Ctrl + Alt + T';
-  };
+    patientFlow: 'Ctrl + Alt + P'
+    revenueSummary: 'Ctrl + Alt + R'
+    appointmentStats: 'Ctrl + Alt + A'
+    treatmentOverview: 'Ctrl + Alt + T'
+  }
 
   weeklyReports: {
-    revenueTrends: 'Ctrl + Shift + W';
-    patientRetention: 'Ctrl + Shift + P';
-    treatmentEfficacy: 'Ctrl + Shift + T';
-    staffPerformance: 'Ctrl + Shift + S';
-  };
+    revenueTrends: 'Ctrl + Shift + W'
+    patientRetention: 'Ctrl + Shift + P'
+    treatmentEfficacy: 'Ctrl + Shift + T'
+    staffPerformance: 'Ctrl + Shift + S'
+  }
 
   monthlyReports: {
-    financialSummary: 'Ctrl + Alt + M';
-    complianceReport: 'Ctrl + Alt + C';
-    growthAnalytics: 'Ctrl + Alt + G';
-    inventoryStatus: 'Ctrl + Alt + I';
-  };
+    financialSummary: 'Ctrl + Alt + M'
+    complianceReport: 'Ctrl + Alt + C'
+    growthAnalytics: 'Ctrl + Alt + G'
+    inventoryStatus: 'Ctrl + Alt + I'
+  }
 }
 ```
 
@@ -546,7 +546,7 @@ interface ExportOptions {
     'CSV (Comma-separated values)',
     'JSON (Structured data)',
     'XML (eXtensible Markup Language)',
-  ];
+  ]
 
   deliveryMethods: [
     'Download directly',
@@ -554,7 +554,7 @@ interface ExportOptions {
     'Cloud storage (Google Drive, Dropbox)',
     'API integration',
     'Scheduled delivery',
-  ];
+  ]
 }
 ```
 
@@ -565,25 +565,25 @@ interface ExportOptions {
 ```typescript
 interface AlertReference {
   systemAlerts: {
-    critical: 'Immediate action required - System outage';
-    high: 'Urgent attention needed - Performance issues';
-    medium: 'Monitor closely - Resource warnings';
-    low: 'Informational - System notifications';
-  };
+    critical: 'Immediate action required - System outage'
+    high: 'Urgent attention needed - Performance issues'
+    medium: 'Monitor closely - Resource warnings'
+    low: 'Informational - System notifications'
+  }
 
   complianceAlerts: {
-    lgpdViolation: 'Data protection breach detected';
-    anvisaAlert: 'Treatment compliance issue';
-    cfmWarning: 'Professional standards concern';
-    auditNotification: 'Compliance audit scheduled';
-  };
+    lgpdViolation: 'Data protection breach detected'
+    anvisaAlert: 'Treatment compliance issue'
+    cfmWarning: 'Professional standards concern'
+    auditNotification: 'Compliance audit scheduled'
+  }
 
   medicalAlerts: {
-    emergency: 'Medical emergency - Immediate response';
-    urgent: 'Urgent medical attention required';
-    advisory: 'Medical advisory or precaution';
-    followUp: 'Patient follow-up required';
-  };
+    emergency: 'Medical emergency - Immediate response'
+    urgent: 'Urgent medical attention required'
+    advisory: 'Medical advisory or precaution'
+    followUp: 'Patient follow-up required'
+  }
 }
 ```
 

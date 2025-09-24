@@ -4,13 +4,13 @@
  */
 
 export interface HealthcareComponentProps {
-  readonly patientId?: string;
-  readonly userRole: 'admin' | 'professional' | 'coordinator';
-  readonly lgpdCompliant: boolean;
+  readonly patientId?: string
+  readonly userRole: 'admin' | 'professional' | 'coordinator'
+  readonly lgpdCompliant: boolean
   readonly onAuditLog?: (
     action: string,
     details?: Record<string, any>,
-  ) => void;
+  ) => void
 }
 
 /**
@@ -19,17 +19,17 @@ export interface HealthcareComponentProps {
  */
 export interface PatientRiskCardProps extends HealthcareComponentProps {
   patient: {
-    id: string;
-    name: string;
-    nextAppointment?: string;
-  };
+    id: string
+    name: string
+    nextAppointment?: string
+  }
   riskScore: {
-    score: number;
-    historicalNoShows: number;
-    factors: string[];
-  };
-  onScheduleIntervention: (interventionType: string) => void;
-  className?: string;
+    score: number
+    historicalNoShows: number
+    factors: string[]
+  }
+  onScheduleIntervention: (interventionType: string) => void
+  className?: string
 }
 
 export function PatientRiskCard({
@@ -41,10 +41,10 @@ export function PatientRiskCard({
   className = '',
 }: PatientRiskCardProps) {
   const getRiskColor = (score: number) => {
-    if (score >= 0.7) return 'bg-red-100 border-red-300 text-red-800';
-    if (score >= 0.4) return 'bg-yellow-100 border-yellow-300 text-yellow-800';
-    return 'bg-green-100 border-green-300 text-green-800';
-  };
+    if (score >= 0.7) return 'bg-red-100 border-red-300 text-red-800'
+    if (score >= 0.4) return 'bg-yellow-100 border-yellow-300 text-yellow-800'
+    return 'bg-green-100 border-green-300 text-green-800'
+  }
 
   const handleInterventionClick = (type: string) => {
     if (onAuditLog && lgpdCompliant) {
@@ -53,10 +53,10 @@ export function PatientRiskCard({
         interventionType: type,
         riskScore: riskScore.score,
         timestamp: new Date().toISOString(),
-      });
+      })
     }
-    onScheduleIntervention(type);
-  };
+    onScheduleIntervention(type)
+  }
 
   return (
     <div
@@ -87,7 +87,7 @@ export function PatientRiskCard({
         </button>
       )}
     </div>
-  );
+  )
 }
 
 /**
@@ -95,10 +95,10 @@ export function PatientRiskCard({
  * Shows data processing consent and privacy information
  */
 export interface LGPDComplianceBannerProps {
-  onAccept: () => void;
-  onDecline: () => void;
-  showDetails?: boolean;
-  className?: string;
+  onAccept: () => void
+  onDecline: () => void
+  showDetails?: boolean
+  className?: string
 }
 
 export function LGPDComplianceBanner({
@@ -165,5 +165,5 @@ export function LGPDComplianceBanner({
         </div>
       </div>
     </div>
-  );
+  )
 }

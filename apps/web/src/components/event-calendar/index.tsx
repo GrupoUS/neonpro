@@ -3,16 +3,16 @@
  * Main calendar component for healthcare scheduling
  */
 
-export { default as CalendarHeader } from './CalendarHeader';
-export { default as DayView } from './DayView';
-export { default as EventCalendar } from './EventCalendar';
-export { default as EventForm } from './EventForm';
-export { default as EventModal } from './EventModal';
-export { default as MonthView } from './MonthView';
-export { default as WeekView } from './WeekView';
+export { default as CalendarHeader } from './CalendarHeader'
+export { default as DayView } from './DayView'
+export { default as EventCalendar } from './EventCalendar'
+export { default as EventForm } from './EventForm'
+export { default as EventModal } from './EventModal'
+export { default as MonthView } from './MonthView'
+export { default as WeekView } from './WeekView'
 
 // Utility exports
-export * from './utils';
+export * from './utils'
 
 // Type exports
 export type {
@@ -42,4 +42,4 @@ export type {
   ResponsiveCalendarProps,
   SyncResult,
   WeekViewProps,
-} from '../../types/event-calendar';
+} from '../../types/event-calendar'

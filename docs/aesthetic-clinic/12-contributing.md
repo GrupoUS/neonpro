@@ -168,18 +168,18 @@ git rebase upstream/main
 ```typescript
 // Use explicit types
 interface ClientProfile {
-  id: string;
-  fullName: string;
-  email: string;
-  phone: string;
-  dateOfBirth: Date;
-  gender: 'male' | 'female' | 'other';
-  skinType: 'dry' | 'oily' | 'combination' | 'sensitive' | 'normal';
-  skinConcerns: string[];
-  lgpdConsent: boolean;
-  status: 'active' | 'inactive' | 'archived';
-  createdAt: Date;
-  updatedAt: Date;
+  id: string
+  fullName: string
+  email: string
+  phone: string
+  dateOfBirth: Date
+  gender: 'male' | 'female' | 'other'
+  skinType: 'dry' | 'oily' | 'combination' | 'sensitive' | 'normal'
+  skinConcerns: string[]
+  lgpdConsent: boolean
+  status: 'active' | 'inactive' | 'archived'
+  createdAt: Date
+  updatedAt: Date
 }
 
 // Use proper error handling
@@ -188,16 +188,16 @@ export class ClientService {
     try {
       // Validate input
       if (!data.email || !data.fullName) {
-        throw new Error('Email and full name are required');
+        throw new Error('Email and full name are required')
       }
 
       // Check for existing client
       const existingClient = await this.prisma.aestheticClientProfile.findUnique({
         where: { email: data.email },
-      });
+      })
 
       if (existingClient) {
-        throw new Error('Client with this email already exists');
+        throw new Error('Client with this email already exists')
       }
 
       // Create client
@@ -207,12 +207,12 @@ export class ClientService {
           cpf: await this.encryptionService.encrypt(data.cpf),
           phone: await this.encryptionService.encrypt(data.phone),
         },
-      });
+      })
 
-      return client;
+      return client
     } catch (error) {
-      this.logger.error('Failed to create client', { error, data });
-      throw error;
+      this.logger.error('Failed to create client', { error, data })
+      throw error
     }
   }
 }
@@ -222,7 +222,7 @@ export async function getClientHistory(
   clientId: string,
   options: GetClientHistoryOptions = {},
 ): Promise<ClientHistory> {
-  const { includeTreatments = true, includeSessions = true } = options;
+  const { includeTreatments = true, includeSessions = true } = options
 
   const [client, treatments, sessions] = await Promise.all([
     prisma.aestheticClientProfile.findUnique({
@@ -252,17 +252,17 @@ export async function getClientHistory(
         },
       })
       : Promise.resolve([]),
-  ]);
+  ])
 
   if (!client) {
-    throw new Error('Client not found');
+    throw new Error('Client not found')
   }
 
   return {
     client,
     treatments,
     sessions,
-  };
+  }
 }
 ```
 
@@ -271,11 +271,11 @@ export async function getClientHistory(
 ```typescript
 // Use functional components with proper typing
 interface ClientListProps {
-  clients: ClientProfile[];
-  onClientSelect: (clientId: string) => void;
-  loading?: boolean;
-  error?: string | null;
-  className?: string;
+  clients: ClientProfile[]
+  onClientSelect: (clientId: string) => void
+  loading?: boolean
+  error?: string | null
+  className?: string
 }
 
 export const ClientList: React.FC<ClientListProps> = ({
@@ -285,34 +285,34 @@ export const ClientList: React.FC<ClientListProps> = ({
   error = null,
   className = '',
 }) => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [sortBy, setSortBy] = useState<'name' | 'date'>('name');
+  const [searchTerm, setSearchTerm] = useState('')
+  const [sortBy, setSortBy] = useState<'name' | 'date'>('name')
 
   // Memoize expensive operations
   const filteredClients = useMemo(() => {
     return clients
-      .filter(client =>
+      .filter((client) =>
         client.fullName.toLowerCase().includes(searchTerm.toLowerCase())
         || client.email.toLowerCase().includes(searchTerm.toLowerCase())
       )
       .sort((a, b) => {
         if (sortBy === 'name') {
-          return a.fullName.localeCompare(b.fullName);
+          return a.fullName.localeCompare(b.fullName)
         }
-        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-      });
-  }, [clients, searchTerm, sortBy]);
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      })
+  }, [clients, searchTerm, sortBy])
 
   const handleClientSelect = useCallback((clientId: string) => {
-    onClientSelect(clientId);
-  }, [onClientSelect]);
+    onClientSelect(clientId)
+  }, [onClientSelect])
 
   if (loading) {
     return (
       <div className='flex justify-center items-center h-64'>
         <Loader className='h-8 w-8 animate-spin' />
       </div>
-    );
+    )
   }
 
   if (error) {
@@ -324,7 +324,7 @@ export const ClientList: React.FC<ClientListProps> = ({
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       </div>
-    );
+    )
   }
 
   return (
@@ -334,7 +334,7 @@ export const ClientList: React.FC<ClientListProps> = ({
         <div className='flex-1'>
           <SearchInput
             value={searchTerm}
-            onChange={value => setSearchTerm(value)}
+            onChange={(value) => setSearchTerm(value)}
             placeholder='Buscar clientes...'
             className='w-full'
           />
@@ -352,7 +352,7 @@ export const ClientList: React.FC<ClientListProps> = ({
 
       {/* Client list */}
       <div className='space-y-2'>
-        {filteredClients.map(client => (
+        {filteredClients.map((client) => (
           <ClientListItem
             key={client.id}
             client={client}
@@ -372,10 +372,10 @@ export const ClientList: React.FC<ClientListProps> = ({
         </div>
       )}
     </div>
-  );
-};
+  )
+}
 
-ClientList.displayName = 'ClientList';
+ClientList.displayName = 'ClientList'
 ```
 
 ### API Standards
@@ -392,7 +392,7 @@ export const aestheticClinicRouter = t.router({
       requiredPermissions: ['clients:create'],
     })
     .mutation(async ({ input, ctx }) => {
-      return await ctx.aestheticClinicService.createClient(input, ctx.user.id);
+      return await ctx.aestheticClinicService.createClient(input, ctx.user.id)
     }),
 
   getClient: t.procedure
@@ -403,7 +403,7 @@ export const aestheticClinicRouter = t.router({
       requiredPermissions: ['clients:read'],
     })
     .query(async ({ input, ctx }) => {
-      return await ctx.aestheticClinicService.getClient(input.id);
+      return await ctx.aestheticClinicService.getClient(input.id)
     }),
 
   listClients: t.procedure
@@ -414,7 +414,7 @@ export const aestheticClinicRouter = t.router({
       requiredPermissions: ['clients:read'],
     })
     .query(async ({ input, ctx }) => {
-      return await ctx.aestheticClinicService.listClients(input);
+      return await ctx.aestheticClinicService.listClients(input)
     }),
 
   updateClient: t.procedure
@@ -429,9 +429,9 @@ export const aestheticClinicRouter = t.router({
         input.id,
         input.data,
         ctx.user.id,
-      );
+      )
     }),
-});
+})
 
 // Use proper input validation
 export const CreateAestheticClientInputSchema = z.object({
@@ -450,7 +450,7 @@ export const CreateAestheticClientInputSchema = z.object({
   }).optional(),
   lgpdConsent: z.boolean().default(true),
   status: z.enum(['active', 'inactive', 'archived']).default('active'),
-});
+})
 ```
 
 ## 🧪 Testing Requirements
@@ -459,22 +459,22 @@ export const CreateAestheticClientInputSchema = z.object({
 
 ```typescript
 // apps/api/src/__tests__/services/aesthetic-clinic-service.test.ts
-import { cleanup, createTestClient, createTestProfessional } from '../__tests__/utils/test-utils';
-import { AestheticClinicService } from '../services/aesthetic-clinic-service';
+import { cleanup, createTestClient, createTestProfessional } from '../__tests__/utils/test-utils'
+import { AestheticClinicService } from '../services/aesthetic-clinic-service'
 
 describe('AestheticClinicService', () => {
-  let service: AestheticClinicService;
-  let professional: any;
+  let service: AestheticClinicService
+  let professional: any
 
   beforeEach(async () => {
-    await cleanup();
-    service = new AestheticClinicService(testPrisma);
-    professional = await createTestProfessional();
-  });
+    await cleanup()
+    service = new AestheticClinicService(testPrisma)
+    professional = await createTestProfessional()
+  })
 
   afterEach(async () => {
-    await cleanup();
-  });
+    await cleanup()
+  })
 
   describe('createClient', () => {
     it('should create a new client with valid data', async () => {
@@ -488,19 +488,19 @@ describe('AestheticClinicService', () => {
         skinType: 'combination' as const,
         skinConcerns: ['acne'],
         lgpdConsent: true,
-      };
+      }
 
-      const result = await service.createClient(clientData, professional.id);
+      const result = await service.createClient(clientData, professional.id)
 
       expect(result).toMatchObject({
         fullName: 'Maria Silva',
         email: 'maria.silva@example.com',
         status: 'active',
-      });
+      })
 
-      expect(result.id).toBeDefined();
-      expect(result.createdAt).toBeInstanceOf(Date);
-    });
+      expect(result.id).toBeDefined()
+      expect(result.createdAt).toBeInstanceOf(Date)
+    })
 
     it('should throw error for duplicate email', async () => {
       const clientData = {
@@ -512,15 +512,15 @@ describe('AestheticClinicService', () => {
         gender: 'female' as const,
         skinType: 'combination' as const,
         lgpdConsent: true,
-      };
+      }
 
       // Create first client
-      await service.createClient(clientData, professional.id);
+      await service.createClient(clientData, professional.id)
 
       // Try to create second client with same email
       await expect(service.createClient(clientData, professional.id))
-        .rejects.toThrow('Client with this email already exists');
-    });
+        .rejects.toThrow('Client with this email already exists')
+    })
 
     it('should enforce LGPD consent', async () => {
       const clientData = {
@@ -532,30 +532,30 @@ describe('AestheticClinicService', () => {
         gender: 'female' as const,
         skinType: 'combination' as const,
         lgpdConsent: false, // No consent
-      };
+      }
 
       await expect(service.createClient(clientData, professional.id))
-        .rejects.toThrow('LGPD consent is required');
-    });
-  });
-});
+        .rejects.toThrow('LGPD consent is required')
+    })
+  })
+})
 ```
 
 ### Integration Tests
 
 ```typescript
 // apps/api/src/__tests__/integration/client-workflow.test.ts
-import { TestClient } from '../__tests__/utils/test-client';
-import { createTestClient, createTestProfessional } from '../__tests__/utils/test-utils';
+import { TestClient } from '../__tests__/utils/test-client'
+import { createTestClient, createTestProfessional } from '../__tests__/utils/test-utils'
 
 describe('Client Management Workflow', () => {
-  let testClient: TestClient;
-  let professional: any;
+  let testClient: TestClient
+  let professional: any
 
   beforeAll(async () => {
-    testClient = new TestClient('http://localhost:3001');
-    professional = await createTestProfessional();
-  });
+    testClient = new TestClient('http://localhost:3001')
+    professional = await createTestProfessional()
+  })
 
   describe('Full Client Lifecycle', () => {
     it('should complete client lifecycle successfully', async () => {
@@ -563,9 +563,9 @@ describe('Client Management Workflow', () => {
       const loginResponse = await testClient.login({
         email: professional.email,
         password: 'password123',
-      });
+      })
 
-      expect(loginResponse.status).toBe(200);
+      expect(loginResponse.status).toBe(200)
 
       // Create client
       const createResponse = await testClient.createClient({
@@ -577,81 +577,81 @@ describe('Client Management Workflow', () => {
         gender: 'male',
         skinType: 'oily',
         lgpdConsent: true,
-      }, loginResponse.data.token);
+      }, loginResponse.data.token)
 
-      expect(createResponse.status).toBe(201);
-      const clientId = createResponse.data.client.id;
+      expect(createResponse.status).toBe(201)
+      const clientId = createResponse.data.client.id
 
       // Get client
-      const getResponse = await testClient.getClient(clientId, loginResponse.data.token);
-      expect(getResponse.status).toBe(200);
-      expect(getResponse.data.client.fullName).toBe('João Santos');
+      const getResponse = await testClient.getClient(clientId, loginResponse.data.token)
+      expect(getResponse.status).toBe(200)
+      expect(getResponse.data.client.fullName).toBe('João Santos')
 
       // Update client
       const updateResponse = await testClient.updateClient(clientId, {
         phone: '+5511977777777',
         skinConcerns: ['acne', 'scars'],
-      }, loginResponse.data.token);
+      }, loginResponse.data.token)
 
-      expect(updateResponse.status).toBe(200);
-      expect(updateResponse.data.client.phone).toBe('+5511977777777');
+      expect(updateResponse.status).toBe(200)
+      expect(updateResponse.data.client.phone).toBe('+5511977777777')
 
       // List clients
-      const listResponse = await testClient.listClients(loginResponse.data.token);
-      expect(listResponse.status).toBe(200);
-      expect(listResponse.data.clients).toHaveLength(1);
+      const listResponse = await testClient.listClients(loginResponse.data.token)
+      expect(listResponse.status).toBe(200)
+      expect(listResponse.data.clients).toHaveLength(1)
 
       // Delete client (soft delete)
-      const deleteResponse = await testClient.deleteClient(clientId, loginResponse.data.token);
-      expect(deleteResponse.status).toBe(200);
-      expect(deleteResponse.data.client.status).toBe('inactive');
-    });
-  });
-});
+      const deleteResponse = await testClient.deleteClient(clientId, loginResponse.data.token)
+      expect(deleteResponse.status).toBe(200)
+      expect(deleteResponse.data.client.status).toBe('inactive')
+    })
+  })
+})
 ```
 
 ### E2E Tests
 
 ```typescript
 // apps/web/e2e/client-management.spec.ts
-import { expect, test } from '@playwright/test';
+import { expect, test } from '@playwright/test'
 
 test.describe('Client Management', () => {
   test.beforeEach(async ({ page }) => {
     // Login
-    await page.goto('/login');
-    await page.fill('[data-testid="email"]', 'professional@example.com');
-    await page.fill('[data-testid="password"]', 'password123');
-    await page.click('[data-testid="login-button"]');
-    await page.waitForURL('/dashboard');
-  });
+    await page.goto('/login')
+    await page.fill('[data-testid="email"]', 'professional@example.com')
+    await page.fill('[data-testid="password"]', 'password123')
+    await page.click('[data-testid="login-button"]')
+    await page.waitForURL('/dashboard')
+  })
 
   test('should create new client', async ({ page }) => {
     // Navigate to clients
-    await page.click('[data-testid="clients-nav"]');
-    await page.waitForURL('/clients');
+    await page.click('[data-testid="clients-nav"]')
+    await page.waitForURL('/clients')
 
     // Click add client
-    await page.click('[data-testid="add-client-button"]');
+    await page.click('[data-testid="add-client-button"]')
 
     // Fill form
-    await page.fill('[data-testid="fullName"]', 'Ana Oliveira');
-    await page.fill('[data-testid="email"]', 'ana.oliveira@example.com');
-    await page.fill('[data-testid="phone"]', '+5511966666666');
-    await page.fill('[data-testid="cpf"]', '12345678900');
-    await page.fill('[data-testid="dateOfBirth"]', '1992-08-10');
-    await page.selectOption('[data-testid="gender"]', 'female');
-    await page.selectOption('[data-testid="skinType"]', 'normal');
-    await page.click('[data-testid="lgpd-consent"]');
+    await page.fill('[data-testid="fullName"]', 'Ana Oliveira')
+    await page.fill('[data-testid="email"]', 'ana.oliveira@example.com')
+    await page.fill('[data-testid="phone"]', '+5511966666666')
+    await page.fill('[data-testid="cpf"]', '12345678900')
+    await page.fill('[data-testid="dateOfBirth"]', '1992-08-10')
+    await page.selectOption('[data-testid="gender"]', 'female')
+    await page.selectOption('[data-testid="skinType"]', 'normal')
+    await page.click('[data-testid="lgpd-consent"]')
 
     // Submit
-    await page.click('[data-testid="submit-client"]');
+    await page.click('[data-testid="submit-client"]')
 
     // Verify success
-    await expect(page.locator('[data-testid="success-message"]')).toBeVisible();
-    await expect(page.locator('[data-testid="client-item"]')).toContainText('Ana Oliveira');
-  });
-});
+    await expect(page.locator('[data-testid="success-message"]')).toBeVisible()
+    await expect(page.locator('[data-testid="client-item"]')).toContainText('Ana Oliveira')
+  })
+})
 ```
 
 ### Test Coverage Requirements
@@ -687,10 +687,10 @@ open coverage/lcov-report/index.html
  * const client = await service.createClient(clientData, professionalId);
  */
 export class AestheticClinicService {
-  private prisma: PrismaClient;
-  private encryptionService: EncryptionService;
-  private auditService: AuditService;
-  private logger: Logger;
+  private prisma: PrismaClient
+  private encryptionService: EncryptionService
+  private auditService: AuditService
+  private logger: Logger
 
   /**
    * Creates an instance of AestheticClinicService
@@ -705,10 +705,10 @@ export class AestheticClinicService {
     auditService: AuditService,
     logger: Logger,
   ) {
-    this.prisma = prisma;
-    this.encryptionService = encryptionService;
-    this.auditService = auditService;
-    this.logger = logger;
+    this.prisma = prisma
+    this.encryptionService = encryptionService
+    this.auditService = auditService
+    this.logger = logger
   }
 
   /**
@@ -760,20 +760,20 @@ A React component for displaying and managing a list of aesthetic clinic clients
 ### Usage
 
 ```tsx
-import { ClientList } from '~/components/aesthetic/client-management/ClientList';
+import { ClientList } from '~/components/aesthetic/client-management/ClientList'
 
 const MyComponent = () => {
-  const [clients, setClients] = useState<ClientProfile[]>([]);
+  const [clients, setClients] = useState<ClientProfile[]>([])
 
   return (
     <ClientList
       clients={clients}
-      onClientSelect={clientId => console.log('Selected:', clientId)}
+      onClientSelect={(clientId) => console.log('Selected:', clientId)}
       loading={loading}
       error={error}
     />
-  );
-};
+  )
+}
 ```
 ````
 

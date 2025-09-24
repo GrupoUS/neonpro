@@ -28,77 +28,77 @@ import {
   Stethoscope,
   User,
   XCircle,
-} from 'lucide-react';
-import React, { useEffect, useRef, useState } from 'react';
-import { Alert, AlertDescription } from '../ui/alert';
-import { Badge } from '../ui/badge';
-import { Button } from '../ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
+} from 'lucide-react'
+import React, { useEffect, useRef, useState } from 'react'
+import { Alert, AlertDescription } from '../ui/alert'
+import { Badge } from '../ui/badge'
+import { Button } from '../ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card'
 
 // Types
 interface MessageComponentProps {
   message: {
-    id: string;
-    content: string;
-    role: 'user' | 'assistant';
-    timestamp: Date;
+    id: string
+    content: string
+    role: 'user' | 'assistant'
+    timestamp: Date
     metadata?: {
-      agentType?: string;
-      processingTime?: number;
-      sensitiveData?: boolean;
-      complianceLevel?: 'standard' | 'enhanced' | 'restricted';
-    };
-  };
-  isUser?: boolean;
-  showSensitiveData?: boolean;
-  onToggleSensitiveData?: () => void;
-  className?: string;
+      agentType?: string
+      processingTime?: number
+      sensitiveData?: boolean
+      complianceLevel?: 'standard' | 'enhanced' | 'restricted'
+    }
+  }
+  isUser?: boolean
+  showSensitiveData?: boolean
+  onToggleSensitiveData?: () => void
+  className?: string
 }
 
 interface AgentStatusProps {
   agent: {
-    id: string;
-    name: string;
-    type: string;
-    status: 'idle' | 'thinking' | 'responding' | 'error';
-    messageCount: number;
-    lastActivity?: Date;
-  };
-  isActive?: boolean;
-  onClick?: () => void;
+    id: string
+    name: string
+    type: string
+    status: 'idle' | 'thinking' | 'responding' | 'error'
+    messageCount: number
+    lastActivity?: Date
+  }
+  isActive?: boolean
+  onClick?: () => void
 }
 
 interface ComplianceControlProps {
-  onExportData?: () => void;
-  onClearData?: () => void;
-  onDataAccessRequest?: () => void;
-  showControls?: boolean;
+  onExportData?: () => void
+  onClearData?: () => void
+  onDataAccessRequest?: () => void
+  showControls?: boolean
 }
 
 interface PatientDataCardProps {
   patient: {
-    id: string;
-    name: string;
-    contact: string;
-    lastVisit?: Date;
-    treatments?: string[];
-    status: 'active' | 'inactive' | 'new';
-  };
-  showSensitiveData?: boolean;
-  onToggleSensitive?: () => void;
+    id: string
+    name: string
+    contact: string
+    lastVisit?: Date
+    treatments?: string[]
+    status: 'active' | 'inactive' | 'new'
+  }
+  showSensitiveData?: boolean
+  onToggleSensitive?: () => void
 }
 
 interface AppointmentCardProps {
   appointment: {
-    id: string;
-    patientName: string;
-    service: string;
-    dateTime: Date;
-    status: 'scheduled' | 'confirmed' | 'completed' | 'cancelled';
-    professional: string;
-    duration: number;
-  };
-  onAction?: (action: 'confirm' | 'cancel' | 'reschedule') => void;
+    id: string
+    patientName: string
+    service: string
+    dateTime: Date
+    status: 'scheduled' | 'confirmed' | 'completed' | 'cancelled'
+    professional: string
+    duration: number
+  }
+  onAction?: (action: 'confirm' | 'cancel' | 'reschedule') => void
 }
 
 // Message Component with LGPD compliance
@@ -109,8 +109,8 @@ export const NeonProMessage: React.FC<MessageComponentProps> = ({
   onToggleSensitiveData,
   className = '',
 }) => {
-  const [isExpanded, setIsExpanded] = useState(false);
-  const [showCopied, setShowCopied] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false)
+  const [showCopied, setShowCopied] = useState(false)
 
   const formatTime = (date: Date) => {
     return date.toLocaleString('pt-BR', {
@@ -119,37 +119,37 @@ export const NeonProMessage: React.FC<MessageComponentProps> = ({
       year: 'numeric',
       hour: '2-digit',
       minute: '2-digit',
-    });
-  };
+    })
+  }
 
   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText(message.content);
-      setShowCopied(true);
-      setTimeout(() => setShowCopied(false), 2000);
+      await navigator.clipboard.writeText(message.content)
+      setShowCopied(true)
+      setTimeout(() => setShowCopied(false), 2000)
     } catch (error) {
-      console.error('Failed to copy message:', error);
+      console.error('Failed to copy message:', error)
     }
-  };
+  }
 
   const hasSensitiveData = message.metadata?.sensitiveData
-    || message.metadata?.complianceLevel === 'restricted';
+    || message.metadata?.complianceLevel === 'restricted'
 
   const getComplianceIcon = () => {
     if (hasSensitiveData && !showSensitiveData) {
-      return <EyeOff className='h-4 w-4 text-yellow-600' />;
+      return <EyeOff className='h-4 w-4 text-yellow-600' />
     }
     if (hasSensitiveData) {
-      return <Eye className='h-4 w-4 text-green-600' />;
+      return <Eye className='h-4 w-4 text-green-600' />
     }
-    return <Shield className='h-4 w-4 text-blue-600' />;
-  };
+    return <Shield className='h-4 w-4 text-blue-600' />
+  }
 
   const displayContent = hasSensitiveData && !showSensitiveData
     ? '[Dados sensíveis ocultos por conformidade LGPD]'
-    : message.content;
+    : message.content
 
-  const isLongContent = message.content.length > 300;
+  const isLongContent = message.content.length > 300
 
   return (
     <div className={`flex ${isUser ? 'justify-end' : 'justify-start'} mb-4 ${className}`}>
@@ -264,8 +264,8 @@ export const NeonProMessage: React.FC<MessageComponentProps> = ({
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
 // Agent Status Component
 export const NeonProAgentStatus: React.FC<AgentStatusProps> = ({
@@ -276,54 +276,54 @@ export const NeonProAgentStatus: React.FC<AgentStatusProps> = ({
   const getStatusIcon = () => {
     switch (agent.status) {
       case 'thinking':
-        return <Clock className='h-4 w-4 text-yellow-500' />;
+        return <Clock className='h-4 w-4 text-yellow-500' />
       case 'responding':
-        return <Stethoscope className='h-4 w-4 text-blue-500' />;
+        return <Stethoscope className='h-4 w-4 text-blue-500' />
       case 'error':
-        return <XCircle className='h-4 w-4 text-red-500' />;
+        return <XCircle className='h-4 w-4 text-red-500' />
       default:
-        return <CheckCircle className='h-4 w-4 text-green-500' />;
+        return <CheckCircle className='h-4 w-4 text-green-500' />
     }
-  };
+  }
 
   const getStatusColor = () => {
     switch (agent.status) {
       case 'thinking':
-        return 'bg-yellow-100 border-yellow-300 text-yellow-800';
+        return 'bg-yellow-100 border-yellow-300 text-yellow-800'
       case 'responding':
-        return 'bg-blue-100 border-blue-300 text-blue-800';
+        return 'bg-blue-100 border-blue-300 text-blue-800'
       case 'error':
-        return 'bg-red-100 border-red-300 text-red-800';
+        return 'bg-red-100 border-red-300 text-red-800'
       default:
-        return 'bg-green-100 border-green-300 text-green-800';
+        return 'bg-green-100 border-green-300 text-green-800'
     }
-  };
+  }
 
   const getAgentIcon = (type: string) => {
     switch (type) {
       case 'client':
-        return <User className='h-5 w-5' />;
+        return <User className='h-5 w-5' />
       case 'financial':
-        return <CreditCard className='h-5 w-5' />;
+        return <CreditCard className='h-5 w-5' />
       case 'appointment':
-        return <Calendar className='h-5 w-5' />;
+        return <Calendar className='h-5 w-5' />
       default:
-        return <Stethoscope className='h-5 w-5' />;
+        return <Stethoscope className='h-5 w-5' />
     }
-  };
+  }
 
   const formatLastActivity = (date?: Date) => {
-    if (!date) return 'Nunca';
+    if (!date) return 'Nunca'
 
-    const now = new Date();
-    const diff = now.getTime() - date.getTime();
-    const minutes = Math.floor(diff / 60000);
+    const now = new Date()
+    const diff = now.getTime() - date.getTime()
+    const minutes = Math.floor(diff / 60000)
 
-    if (minutes < 1) return 'Agora';
-    if (minutes < 60) return `${minutes}min atrás`;
-    if (minutes < 1440) return `${Math.floor(minutes / 60)}h atrás`;
-    return `${Math.floor(minutes / 1440)}d atrás`;
-  };
+    if (minutes < 1) return 'Agora'
+    if (minutes < 60) return `${minutes}min atrás`
+    if (minutes < 1440) return `${Math.floor(minutes / 60)}h atrás`
+    return `${Math.floor(minutes / 1440)}d atrás`
+  }
 
   return (
     <Card
@@ -335,10 +335,10 @@ export const NeonProAgentStatus: React.FC<AgentStatusProps> = ({
       tabIndex={0}
       aria-label={`Selecionar assistente ${agent.name}`}
       aria-pressed={isActive}
-      onKeyDown={e => {
+      onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          onClick?.();
+          e.preventDefault()
+          onClick?.()
         }
       }}
     >
@@ -370,8 +370,8 @@ export const NeonProAgentStatus: React.FC<AgentStatusProps> = ({
         </div>
       </CardContent>
     </Card>
-  );
-};
+  )
+}
 
 // Compliance Controls Component
 export const NeonProComplianceControls: React.FC<ComplianceControlProps> = ({
@@ -380,7 +380,7 @@ export const NeonProComplianceControls: React.FC<ComplianceControlProps> = ({
   onDataAccessRequest,
   showControls = false,
 }) => {
-  const [isVisible, setIsVisible] = useState(showControls);
+  const [isVisible, setIsVisible] = useState(showControls)
 
   if (!isVisible) {
     return (
@@ -393,7 +393,7 @@ export const NeonProComplianceControls: React.FC<ComplianceControlProps> = ({
         <Shield className='h-3 w-3 mr-1' />
         Controles LGPD
       </Button>
-    );
+    )
   }
 
   return (
@@ -456,8 +456,8 @@ export const NeonProComplianceControls: React.FC<ComplianceControlProps> = ({
         </div>
       </CardContent>
     </Card>
-  );
-};
+  )
+}
 
 // Patient Data Card Component
 export const NeonProPatientDataCard: React.FC<PatientDataCardProps> = ({
@@ -466,47 +466,47 @@ export const NeonProPatientDataCard: React.FC<PatientDataCardProps> = ({
   onToggleSensitive,
 }) => {
   const formatContact = (contact: string) => {
-    if (showSensitiveData) return contact;
+    if (showSensitiveData) return contact
 
     // Mask phone number
     if (contact.match(/\d/)) {
-      return contact.replace(/\d(?=\d{4})/g, '*');
+      return contact.replace(/\d(?=\d{4})/g, '*')
     }
 
     // Mask email
     if (contact.includes('@')) {
-      const [username, domain] = contact.split('@');
-      return `${username.substring(0, 2)}***@${domain}`;
+      const [username, domain] = contact.split('@')
+      return `${username.substring(0, 2)}***@${domain}`
     }
 
-    return contact;
-  };
+    return contact
+  }
 
   const getStatusColor = () => {
     switch (patient.status) {
       case 'active':
-        return 'bg-green-100 text-green-800';
+        return 'bg-green-100 text-green-800'
       case 'inactive':
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-gray-100 text-gray-800'
       case 'new':
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-blue-100 text-blue-800'
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-gray-100 text-gray-800'
     }
-  };
+  }
 
   const getStatusLabel = () => {
     switch (patient.status) {
       case 'active':
-        return 'Ativo';
+        return 'Ativo'
       case 'inactive':
-        return 'Inativo';
+        return 'Inativo'
       case 'new':
-        return 'Novo';
+        return 'Novo'
       default:
-        return 'Desconhecido';
+        return 'Desconhecido'
     }
-  };
+  }
 
   return (
     <Card>
@@ -584,8 +584,8 @@ export const NeonProPatientDataCard: React.FC<PatientDataCardProps> = ({
         )}
       </CardContent>
     </Card>
-  );
-};
+  )
+}
 
 // Appointment Card Component
 export const NeonProAppointmentCard: React.FC<AppointmentCardProps> = ({
@@ -599,38 +599,38 @@ export const NeonProAppointmentCard: React.FC<AppointmentCardProps> = ({
       year: 'numeric',
       hour: '2-digit',
       minute: '2-digit',
-    });
-  };
+    })
+  }
 
   const getStatusColor = () => {
     switch (appointment.status) {
       case 'scheduled':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'bg-yellow-100 text-yellow-800'
       case 'confirmed':
-        return 'bg-green-100 text-green-800';
+        return 'bg-green-100 text-green-800'
       case 'completed':
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-blue-100 text-blue-800'
       case 'cancelled':
-        return 'bg-red-100 text-red-800';
+        return 'bg-red-100 text-red-800'
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-gray-100 text-gray-800'
     }
-  };
+  }
 
   const getStatusLabel = () => {
     switch (appointment.status) {
       case 'scheduled':
-        return 'Agendado';
+        return 'Agendado'
       case 'confirmed':
-        return 'Confirmado';
+        return 'Confirmado'
       case 'completed':
-        return 'Concluído';
+        return 'Concluído'
       case 'cancelled':
-        return 'Cancelado';
+        return 'Cancelado'
       default:
-        return 'Desconhecido';
+        return 'Desconhecido'
     }
-  };
+  }
 
   return (
     <Card>
@@ -702,7 +702,7 @@ export const NeonProAppointmentCard: React.FC<AppointmentCardProps> = ({
         )}
       </CardContent>
     </Card>
-  );
-};
+  )
+}
 
-export default NeonProMessage;
+export default NeonProMessage

@@ -26,25 +26,25 @@ This guide provides comprehensive performance optimization strategies for NeonPr
 ### 1. Virtual Scrolling for Large Datasets
 
 ```typescript
-import { useVirtualizer } from '@tanstack/react-virtual';
+import { useVirtualizer } from '@tanstack/react-virtual'
 
 interface VirtualizedCalendarProps {
-  events: CalendarEvent[];
-  height: number;
-  itemSize: number;
+  events: CalendarEvent[]
+  height: number
+  itemSize: number
 }
 
 function VirtualizedCalendar({ events, height, itemSize }: VirtualizedCalendarProps) {
-  const parentRef = useRef<HTMLDivElement>(null);
+  const parentRef = useRef<HTMLDivElement>(null)
 
   const virtualizer = useVirtualizer({
     count: events.length,
     getScrollElement: () => parentRef.current,
     estimateSize: () => itemSize,
     overscan: 5, // Render 5 extra items above/below viewport
-  });
+  })
 
-  const virtualEvents = virtualizer.getVirtualItems();
+  const virtualEvents = virtualizer.getVirtualItems()
 
   return (
     <div
@@ -59,7 +59,7 @@ function VirtualizedCalendar({ events, height, itemSize }: VirtualizedCalendarPr
           position: 'relative',
         }}
       >
-        {virtualEvents.map(virtualEvent => (
+        {virtualEvents.map((virtualEvent) => (
           <div
             key={virtualEvent.index}
             style={{
@@ -76,7 +76,7 @@ function VirtualizedCalendar({ events, height, itemSize }: VirtualizedCalendarPr
         ))}
       </div>
     </div>
-  );
+  )
 }
 ```
 
@@ -85,10 +85,10 @@ function VirtualizedCalendar({ events, height, itemSize }: VirtualizedCalendarPr
 ```typescript
 // Event store with optimized indexing
 interface EventStore {
-  events: Map<string, CalendarEvent>;
-  byDate: Map<string, string[]>; // date string -> event IDs
-  byResource: Map<string, string[]>; // resource ID -> event IDs
-  byType: Map<string, string[]>; // event type -> event IDs
+  events: Map<string, CalendarEvent>
+  byDate: Map<string, string[]> // date string -> event IDs
+  byResource: Map<string, string[]> // resource ID -> event IDs
+  byType: Map<string, string[]> // event type -> event IDs
 }
 
 class OptimizedEventStore {
@@ -97,53 +97,53 @@ class OptimizedEventStore {
     byDate: new Map(),
     byResource: new Map(),
     byType: new Map(),
-  };
+  }
 
   addEvent(event: CalendarEvent) {
     // Add to main store
-    this.store.events.set(event.id, event);
+    this.store.events.set(event.id, event)
 
     // Index by date
-    const dateKey = format(event.start, 'yyyy-MM-dd');
+    const dateKey = format(event.start, 'yyyy-MM-dd')
     if (!this.store.byDate.has(dateKey)) {
-      this.store.byDate.set(dateKey, []);
+      this.store.byDate.set(dateKey, [])
     }
-    this.store.byDate.get(dateKey)!.push(event.id);
+    this.store.byDate.get(dateKey)!.push(event.id)
 
     // Index by resource
     if (event.resourceId) {
       if (!this.store.byResource.has(event.resourceId)) {
-        this.store.byResource.set(event.resourceId, []);
+        this.store.byResource.set(event.resourceId, [])
       }
-      this.store.byResource.get(event.resourceId)!.push(event.id);
+      this.store.byResource.get(event.resourceId)!.push(event.id)
     }
 
     // Index by type
     if (event.type) {
       if (!this.store.byType.has(event.type)) {
-        this.store.byType.set(event.type, []);
+        this.store.byType.set(event.type, [])
       }
-      this.store.byType.get(event.type)!.push(event.id);
+      this.store.byType.get(event.type)!.push(event.id)
     }
   }
 
   getEventsByDateRange(start: Date, end: Date): CalendarEvent[] {
-    const eventIds = new Set<string>();
+    const eventIds = new Set<string>()
 
-    let currentDate = new Date(start);
+    let currentDate = new Date(start)
     while (currentDate <= end) {
-      const dateKey = format(currentDate, 'yyyy-MM-dd');
-      const ids = this.store.byDate.get(dateKey) || [];
-      ids.forEach(id => eventIds.add(id));
-      currentDate = addDays(currentDate, 1);
+      const dateKey = format(currentDate, 'yyyy-MM-dd')
+      const ids = this.store.byDate.get(dateKey) || []
+      ids.forEach((id) => eventIds.add(id))
+      currentDate = addDays(currentDate, 1)
     }
 
-    return Array.from(eventIds).map(id => this.store.events.get(id)!);
+    return Array.from(eventIds).map((id) => this.store.events.get(id)!)
   }
 
   getEventsByResource(resourceId: string): CalendarEvent[] {
-    const eventIds = this.store.byResource.get(resourceId) || [];
-    return eventIds.map(id => this.store.events.get(id)!);
+    const eventIds = this.store.byResource.get(resourceId) || []
+    return eventIds.map((id) => this.store.events.get(id)!)
   }
 }
 ```
@@ -156,12 +156,12 @@ const OptimizedEventList = React.memo(({
   events,
   onSelect,
 }: {
-  events: CalendarEvent[];
-  onSelect: (event: CalendarEvent) => void;
+  events: CalendarEvent[]
+  onSelect: (event: CalendarEvent) => void
 }) => {
   return (
     <div className='event-list'>
-      {events.map(event => (
+      {events.map((event) => (
         <MemoizedEventItem
           key={event.id}
           event={event}
@@ -169,20 +169,20 @@ const OptimizedEventList = React.memo(({
         />
       ))}
     </div>
-  );
-});
+  )
+})
 
 // Memoized individual event item
 const MemoizedEventItem = React.memo(({
   event,
   onSelect,
 }: {
-  event: CalendarEvent;
-  onSelect: (event: CalendarEvent) => void;
+  event: CalendarEvent
+  onSelect: (event: CalendarEvent) => void
 }) => {
   const handleClick = useCallback(() => {
-    onSelect(event);
-  }, [event, onSelect]);
+    onSelect(event)
+  }, [event, onSelect])
 
   return (
     <div
@@ -192,16 +192,16 @@ const MemoizedEventItem = React.memo(({
     >
       <EventContent event={event} />
     </div>
-  );
-});
+  )
+})
 
 // Optimized event content
 const EventContent = React.memo(({ event }: { event: CalendarEvent }) => {
   const timeRange = useMemo(() => {
-    const start = format(event.start, 'h:mm a');
-    const end = format(event.end, 'h:mm a');
-    return `${start} - ${end}`;
-  }, [event.start, event.end]);
+    const start = format(event.start, 'h:mm a')
+    const end = format(event.end, 'h:mm a')
+    return `${start} - ${end}`
+  }, [event.start, event.end])
 
   return (
     <div className='event-content'>
@@ -209,8 +209,8 @@ const EventContent = React.memo(({ event }: { event: CalendarEvent }) => {
       <div className='event-title'>{event.title}</div>
       {event.location && <div className='event-location'>{event.location}</div>}
     </div>
-  );
-});
+  )
+})
 ```
 
 ### 4. Efficient Date Operations
@@ -223,21 +223,21 @@ const dateUtils = {
   weekEndCache: new Map<string, Date>(),
 
   getWeekStart(date: Date): Date {
-    const key = format(date, 'yyyy-MM-dd');
+    const key = format(date, 'yyyy-MM-dd')
     if (!this.weekStartCache.has(key)) {
-      const start = startOfWeek(date, { weekStartsOn: 0 });
-      this.weekStartCache.set(key, start);
+      const start = startOfWeek(date, { weekStartsOn: 0 })
+      this.weekStartCache.set(key, start)
     }
-    return this.weekStartCache.get(key)!;
+    return this.weekStartCache.get(key)!
   },
 
   getWeekEnd(date: Date): Date {
-    const key = format(date, 'yyyy-MM-dd');
+    const key = format(date, 'yyyy-MM-dd')
     if (!this.weekEndCache.has(key)) {
-      const end = endOfWeek(date, { weekStartsOn: 0 });
-      this.weekEndCache.set(key, end);
+      const end = endOfWeek(date, { weekStartsOn: 0 })
+      this.weekEndCache.set(key, end)
     }
-    return this.weekEndCache.get(key)!;
+    return this.weekEndCache.get(key)!
   },
 
   // Efficient date range operations
@@ -246,23 +246,23 @@ const dateUtils = {
     start: Date,
     end: Date,
   ): CalendarEvent[] {
-    const startTime = start.getTime();
-    const endTime = end.getTime();
+    const startTime = start.getTime()
+    const endTime = end.getTime()
 
-    return events.filter(event => {
-      const eventStart = event.start.getTime();
-      const eventEnd = event.end.getTime();
+    return events.filter((event) => {
+      const eventStart = event.start.getTime()
+      const eventEnd = event.end.getTime()
 
       // Event overlaps with date range
-      return eventStart <= endTime && eventEnd >= startTime;
-    });
+      return eventStart <= endTime && eventEnd >= startTime
+    })
   },
 
   // Optimized date formatting
   formatDate: memoize((date: Date, formatString: string) => {
-    return format(date, formatString);
+    return format(date, formatString)
   }),
-};
+}
 ```
 
 ### 5. Smart Data Loading and Caching
@@ -273,11 +273,11 @@ class EventLoader {
   private cache = new Map<
     string,
     { events: CalendarEvent[]; timestamp: number }
-  >();
-  private pendingRequests = new Map<string, Promise<CalendarEvent[]>>();
+  >()
+  private pendingRequests = new Map<string, Promise<CalendarEvent[]>>()
 
   private generateCacheKey(start: Date, end: Date, filters: any): string {
-    return `${start.toISOString()}-${end.toISOString()}-${JSON.stringify(filters)}`;
+    return `${start.toISOString()}-${end.toISOString()}-${JSON.stringify(filters)}`
   }
 
   async loadEvents(
@@ -285,32 +285,32 @@ class EventLoader {
     end: Date,
     filters: any = {},
   ): Promise<CalendarEvent[]> {
-    const cacheKey = this.generateCacheKey(start, end, filters);
-    const now = Date.now();
+    const cacheKey = this.generateCacheKey(start, end, filters)
+    const now = Date.now()
 
     // Check cache first
-    const cached = this.cache.get(cacheKey);
+    const cached = this.cache.get(cacheKey)
     if (cached && now - cached.timestamp < 5 * 60 * 1000) {
       // 5 minute cache
-      return cached.events;
+      return cached.events
     }
 
     // Check for pending request
-    const pending = this.pendingRequests.get(cacheKey);
+    const pending = this.pendingRequests.get(cacheKey)
     if (pending) {
-      return pending;
+      return pending
     }
 
     // Make new request
-    const request = this.fetchEvents(start, end, filters);
-    this.pendingRequests.set(cacheKey, request);
+    const request = this.fetchEvents(start, end, filters)
+    this.pendingRequests.set(cacheKey, request)
 
     try {
-      const events = await request;
-      this.cache.set(cacheKey, { events, timestamp: now });
-      return events;
+      const events = await request
+      this.cache.set(cacheKey, { events, timestamp: now })
+      return events
     } finally {
-      this.pendingRequests.delete(cacheKey);
+      this.pendingRequests.delete(cacheKey)
     }
   }
 
@@ -323,29 +323,29 @@ class EventLoader {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ start, end, filters }),
-    });
+    })
 
     if (!response.ok) {
-      throw new Error('Failed to load events');
+      throw new Error('Failed to load events')
     }
 
-    return response.json();
+    return response.json()
   }
 
   // Prefetch upcoming events
   prefetchUpcomingEvents() {
-    const now = new Date();
-    const nextWeek = addWeeks(now, 1);
-    this.loadEvents(now, nextWeek);
+    const now = new Date()
+    const nextWeek = addWeeks(now, 1)
+    this.loadEvents(now, nextWeek)
   }
 
   // Clear old cache entries
   cleanup() {
-    const now = Date.now();
+    const now = Date.now()
     for (const [key, value] of this.cache.entries()) {
       if (now - value.timestamp > 10 * 60 * 1000) {
         // 10 minute TTL
-        this.cache.delete(key);
+        this.cache.delete(key)
       }
     }
   }
@@ -357,56 +357,56 @@ class EventLoader {
 ```typescript
 // Worker for heavy computations
 // calendar.worker.ts
-self.onmessage = e => {
-  const { type, data } = e.data;
+self.onmessage = (e) => {
+  const { type, data } = e.data
 
   switch (type) {
     case 'calculate-positions':
-      const positions = calculateEventPositions(data.events, data.containerSize);
-      self.postMessage({ type: 'positions', data: positions });
-      break;
+      const positions = calculateEventPositions(data.events, data.containerSize)
+      self.postMessage({ type: 'positions', data: positions })
+      break
 
     case 'filter-events':
-      const filtered = filterEvents(data.events, data.filters);
-      self.postMessage({ type: 'filtered', data: filtered });
-      break;
+      const filtered = filterEvents(data.events, data.filters)
+      self.postMessage({ type: 'filtered', data: filtered })
+      break
 
     case 'search-events':
-      const searchResults = searchEvents(data.events, data.query);
-      self.postMessage({ type: 'search-results', data: searchResults });
-      break;
+      const searchResults = searchEvents(data.events, data.query)
+      self.postMessage({ type: 'search-results', data: searchResults })
+      break
   }
-};
+}
 
 // Worker hook
 function useCalendarWorker() {
-  const [worker, setWorker] = useState<Worker | null>(null);
+  const [worker, setWorker] = useState<Worker | null>(null)
 
   useEffect(() => {
-    const worker = new Worker(new URL('./calendar.worker.ts', import.meta.url));
-    setWorker(worker);
+    const worker = new Worker(new URL('./calendar.worker.ts', import.meta.url))
+    setWorker(worker)
 
-    return () => worker.terminate();
-  }, []);
+    return () => worker.terminate()
+  }, [])
 
-  return worker;
+  return worker
 }
 
 // Optimized calendar with worker
 function OptimizedCalendar({ events }: { events: CalendarEvent[] }) {
-  const worker = useCalendarWorker();
-  const [positions, setPositions] = useState<any[]>([]);
+  const worker = useCalendarWorker()
+  const [positions, setPositions] = useState<any[]>([])
 
   useEffect(() => {
-    if (!worker) return;
+    if (!worker) return
 
     const handleMessage = (e: MessageEvent) => {
       if (e.data.type === 'positions') {
-        setPositions(e.data.data);
+        setPositions(e.data.data)
       }
-    };
+    }
 
-    worker.onmessage = handleMessage;
+    worker.onmessage = handleMessage
 
     // Calculate positions in worker
     worker.postMessage({
@@ -415,16 +415,16 @@ function OptimizedCalendar({ events }: { events: CalendarEvent[] }) {
         events,
         containerSize: { width: 800, height: 600 },
       },
-    });
+    })
 
     return () => {
-      worker.onmessage = null;
-    };
-  }, [worker, events]);
+      worker.onmessage = null
+    }
+  }, [worker, events])
 
   return (
     <div className='optimized-calendar'>
-      {positions.map(pos => (
+      {positions.map((pos) => (
         <EventComponent
           key={pos.event.id}
           event={pos.event}
@@ -438,7 +438,7 @@ function OptimizedCalendar({ events }: { events: CalendarEvent[] }) {
         />
       ))}
     </div>
-  );
+  )
 }
 ```
 
@@ -447,40 +447,40 @@ function OptimizedCalendar({ events }: { events: CalendarEvent[] }) {
 ```typescript
 // Optimized search with debouncing
 const useDebouncedSearch = (delay: number = 300) => {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [debouncedQuery, setDebouncedQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState('')
+  const [debouncedQuery, setDebouncedQuery] = useState('')
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      setDebouncedQuery(searchQuery);
-    }, delay);
+      setDebouncedQuery(searchQuery)
+    }, delay)
 
-    return () => clearTimeout(timer);
-  }, [searchQuery, delay]);
+    return () => clearTimeout(timer)
+  }, [searchQuery, delay])
 
-  return { searchQuery, setSearchQuery, debouncedQuery };
-};
+  return { searchQuery, setSearchQuery, debouncedQuery }
+}
 
 // Throttled resize handler
 const useThrottledResize = (callback: Function, delay: number = 100) => {
   useEffect(() => {
-    let lastCall = 0;
+    let lastCall = 0
 
     const handleResize = () => {
-      const now = Date.now();
+      const now = Date.now()
       if (now - lastCall >= delay) {
-        callback();
-        lastCall = now;
+        callback()
+        lastCall = now
       }
-    };
+    }
 
-    window.addEventListener('resize', handleResize);
+    window.addEventListener('resize', handleResize)
 
     return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, [callback, delay]);
-};
+      window.removeEventListener('resize', handleResize)
+    }
+  }, [callback, delay])
+}
 ```
 
 ### 8. Image and Asset Optimization
@@ -488,35 +488,35 @@ const useThrottledResize = (callback: Function, delay: number = 100) => {
 ```typescript
 // Lazy loading for event images
 const LazyEventImage = ({ src, alt, ...props }: any) => {
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [hasError, setHasError] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false)
+  const [hasError, setHasError] = useState(false)
 
-  const imgRef = useRef<HTMLImageElement>(null);
+  const imgRef = useRef<HTMLImageElement>(null)
 
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          const img = imgRef.current;
+          const img = imgRef.current
           if (img) {
-            img.src = src;
-            observer.unobserve(img);
+            img.src = src
+            observer.unobserve(img)
           }
         }
       },
       { threshold: 0.1 },
-    );
+    )
 
     if (imgRef.current) {
-      observer.observe(imgRef.current);
+      observer.observe(imgRef.current)
     }
 
     return () => {
       if (imgRef.current) {
-        observer.unobserve(imgRef.current);
+        observer.unobserve(imgRef.current)
       }
-    };
-  }, [src]);
+    }
+  }, [src])
 
   return (
     <div className='lazy-image-container'>
@@ -531,8 +531,8 @@ const LazyEventImage = ({ src, alt, ...props }: any) => {
       />
       {hasError && <div className='image-error'>Failed to load image</div>}
     </div>
-  );
-};
+  )
+}
 ```
 
 ## Performance Monitoring
@@ -547,45 +547,45 @@ const usePerformanceMonitor = () => {
     memory: 0,
     renderTime: 0,
     eventCount: 0,
-  });
+  })
 
   useEffect(() => {
-    let animationFrameId: number;
-    let lastTime = performance.now();
-    let frameCount = 0;
+    let animationFrameId: number
+    let lastTime = performance.now()
+    let frameCount = 0
 
     const measurePerformance = (currentTime: number) => {
-      frameCount++;
+      frameCount++
 
       if (currentTime - lastTime >= 1000) {
-        const fps = Math.round((frameCount * 1000) / (currentTime - lastTime));
+        const fps = Math.round((frameCount * 1000) / (currentTime - lastTime))
 
-        setMetrics(prev => ({
+        setMetrics((prev) => ({
           ...prev,
           fps,
           memory: (performance as any).memory?.usedJSHeapSize || 0,
-        }));
+        }))
 
-        frameCount = 0;
-        lastTime = currentTime;
+        frameCount = 0
+        lastTime = currentTime
       }
 
-      animationFrameId = requestAnimationFrame(measurePerformance);
-    };
+      animationFrameId = requestAnimationFrame(measurePerformance)
+    }
 
-    animationFrameId = requestAnimationFrame(measurePerformance);
+    animationFrameId = requestAnimationFrame(measurePerformance)
 
     return () => {
-      cancelAnimationFrame(animationFrameId);
-    };
-  }, []);
+      cancelAnimationFrame(animationFrameId)
+    }
+  }, [])
 
-  return metrics;
-};
+  return metrics
+}
 
 // Performance dashboard
 const PerformanceDashboard = () => {
-  const metrics = usePerformanceMonitor();
+  const metrics = usePerformanceMonitor()
 
   return (
     <div className='performance-dashboard'>
@@ -601,8 +601,8 @@ const PerformanceDashboard = () => {
         <span>{(metrics.memory / 1024 / 1024).toFixed(2)} MB</span>
       </div>
     </div>
-  );
-};
+  )
+}
 ```
 
 ### 2. Web Vitals Tracking
@@ -611,7 +611,7 @@ const PerformanceDashboard = () => {
 // Web vitals monitoring
 const reportWebVitals = (metric: any) => {
   if (metric.label === 'web-vital') {
-    console.log(metric);
+    console.log(metric)
 
     // Send to analytics service
     if (window.gtag) {
@@ -619,10 +619,10 @@ const reportWebVitals = (metric: any) => {
         value: Math.round(metric.value),
         metric_rating: metric.rating,
         metric_delta: metric.delta,
-      });
+      })
     }
   }
-};
+}
 
 // Integration with next/script or custom implementation
 function WebVitalsTracker() {
@@ -630,17 +630,17 @@ function WebVitalsTracker() {
     if (typeof window !== 'undefined') {
       import('web-vitals').then(
         ({ getCLS, getFID, getFCP, getLCP, getTTFB }) => {
-          getCLS(reportWebVitals);
-          getFID(reportWebVitals);
-          getFCP(reportWebVitals);
-          getLCP(reportWebVitals);
-          getTTFB(reportWebVitals);
+          getCLS(reportWebVitals)
+          getFID(reportWebVitals)
+          getFCP(reportWebVitals)
+          getLCP(reportWebVitals)
+          getTTFB(reportWebVitals)
         },
-      );
+      )
     }
-  }, []);
+  }, [])
 
-  return null;
+  return null
 }
 ```
 
@@ -650,41 +650,41 @@ function WebVitalsTracker() {
 
 ```typescript
 // performance.spec.ts
-import { expect, test } from '@playwright/test';
+import { expect, test } from '@playwright/test'
 
 test.describe('Calendar Performance', () => {
   test('should load within performance budgets', async ({ page }) => {
     // Start performance tracing
-    await page.goto('/calendar');
+    await page.goto('/calendar')
 
     // Wait for calendar to load
-    await page.waitForSelector('[data-testid="calendar"]');
+    await page.waitForSelector('[data-testid="calendar"]')
 
     // Get performance metrics
     const metrics = await page.evaluate(() => {
       const navigation = performance.getEntriesByType(
         'navigation',
-      )[0] as PerformanceNavigationTiming;
-      const paint = performance.getEntriesByType('paint');
+      )[0] as PerformanceNavigationTiming
+      const paint = performance.getEntriesByType('paint')
 
       return {
-        fcp: paint.find(p => p.name === 'first-contentful-paint')?.startTime,
-        lcp: paint.find(p => p.name === 'largest-contentful-paint')
+        fcp: paint.find((p) => p.name === 'first-contentful-paint')?.startTime,
+        lcp: paint.find((p) => p.name === 'largest-contentful-paint')
           ?.startTime,
         loadTime: navigation.loadEventEnd - navigation.loadEventStart,
         domInteractive: navigation.domInteractive - navigation.fetchStart,
-      };
-    });
+      }
+    })
 
     // Assert performance budgets
-    expect(metrics.fcp).toBeLessThan(1500);
-    expect(metrics.lcp).toBeLessThan(2500);
-    expect(metrics.loadTime).toBeLessThan(3000);
-    expect(metrics.domInteractive).toBeLessThan(1000);
-  });
+    expect(metrics.fcp).toBeLessThan(1500)
+    expect(metrics.lcp).toBeLessThan(2500)
+    expect(metrics.loadTime).toBeLessThan(3000)
+    expect(metrics.domInteractive).toBeLessThan(1000)
+  })
 
   test('should handle large datasets efficiently', async ({ page }) => {
-    await page.goto('/calendar');
+    await page.goto('/calendar')
 
     // Simulate large dataset
     await page.evaluate(() => {
@@ -693,38 +693,38 @@ test.describe('Calendar Performance', () => {
         title: `Event ${i}`,
         start: new Date(Date.now() + i * 60000),
         end: new Date(Date.now() + i * 60000 + 3600000),
-      }));
+      }))
 
       // @ts-ignore
-      window.testEvents = events;
-    });
+      window.testEvents = events
+    })
 
     // Load events
-    await page.click('[data-testid="load-test-events"]');
+    await page.click('[data-testid="load-test-events"]')
 
     // Measure rendering time
     const renderTime = await page.evaluate(() => {
-      const start = performance.now();
+      const start = performance.now()
 
       // Trigger render
-      return new Promise(resolve => {
+      return new Promise((resolve) => {
         requestAnimationFrame(() => {
-          resolve(performance.now() - start);
-        });
-      });
-    });
+          resolve(performance.now() - start)
+        })
+      })
+    })
 
-    expect(renderTime).toBeLessThan(100); // Should render in < 100ms
-  });
-});
+    expect(renderTime).toBeLessThan(100) // Should render in < 100ms
+  })
+})
 ```
 
 ### 2. Load Testing with k6
 
 ```javascript
 // load-test.js
-import { check, sleep } from 'k6';
-import http from 'k6/http';
+import { check, sleep } from 'k6'
+import http from 'k6/http'
 
 export const options = {
   stages: [
@@ -736,28 +736,28 @@ export const options = {
     http_req_duration: ['p(95)<500'], // 95% of requests < 500ms
     http_req_failed: ['rate<0.01'], // <1% error rate
   },
-};
+}
 
 export default function() {
   // Test calendar page load
-  const res = http.get('http://localhost:3000/calendar');
+  const res = http.get('http://localhost:3000/calendar')
 
   check(res, {
-    'status is 200': r => r.status === 200,
-    'response time < 500ms': r => r.timings.duration < 500,
-  });
+    'status is 200': (r) => r.status === 200,
+    'response time < 500ms': (r) => r.timings.duration < 500,
+  })
 
   // Test event loading
   const eventRes = http.get(
     'http://localhost:3000/api/events?start=2024-01-01&end=2024-01-31',
-  );
+  )
 
   check(eventRes, {
-    'events loaded successfully': r => r.status === 200,
-    'response has events': r => JSON.parse(r.body).length > 0,
-  });
+    'events loaded successfully': (r) => r.status === 200,
+    'response has events': (r) => JSON.parse(r.body).length > 0,
+  })
 
-  sleep(1);
+  sleep(1)
 }
 ```
 
@@ -767,9 +767,9 @@ export default function() {
 
 ```javascript
 // vite.config.ts
-import react from '@vitejs/plugin-react';
-import { defineConfig } from 'vite';
-import { splitVendorChunkPlugin } from 'vite';
+import react from '@vitejs/plugin-react'
+import { defineConfig } from 'vite'
+import { splitVendorChunkPlugin } from 'vite'
 
 export default defineConfig({
   plugins: [react(), splitVendorChunkPlugin()],
@@ -795,7 +795,7 @@ export default defineConfig({
   optimizeDeps: {
     include: ['date-fns', 'lucide-react', '@radix-ui/react-slot'],
   },
-});
+})
 ```
 
 ### 2. CDN and Caching Strategy
@@ -815,30 +815,30 @@ export const cacheHeaders = {
 
   // HTML - no cache for dynamic pages
   '/calendar': 'no-cache, no-store, must-revalidate',
-};
+}
 
 // Service worker for offline support
 // public/sw.js
-const CACHE_NAME = 'calendar-v1';
+const CACHE_NAME = 'calendar-v1'
 const urlsToCache = [
   '/calendar',
   '/build/assets/calendar.js',
   '/build/assets/styles.css',
-];
+]
 
-self.addEventListener('install', event => {
+self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache)),
-  );
-});
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(urlsToCache)),
+  )
+})
 
-self.addEventListener('fetch', event => {
+self.addEventListener('fetch', (event) => {
   event.respondWith(
-    caches.match(event.request).then(response => {
-      return response || fetch(event.request);
+    caches.match(event.request).then((response) => {
+      return response || fetch(event.request)
     }),
-  );
-});
+  )
+})
 ```
 
 ## Best Practices Summary

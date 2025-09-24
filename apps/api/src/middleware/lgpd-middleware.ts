@@ -1,7 +1,7 @@
-import { Context, Next } from 'hono';
-import { HTTPException } from 'hono/http-exception';
-import { createAdminClient } from '../clients/supabase';
-import { logger } from '../lib/logger';
+import { Context, Next } from 'hono'
+import { HTTPException } from 'hono/http-exception'
+import { createAdminClient } from '../clients/supabase'
+import { logger } from '../lib/logger'
 
 /**
  * LGPD (Lei Geral de Proteção de Dados) compliance middleware
@@ -11,7 +11,7 @@ import { logger } from '../lib/logger';
 /**
  * LGPD consent status
  */
-type ConsentStatus = 'pending' | 'granted' | 'denied' | 'withdrawn' | 'expired';
+type ConsentStatus = 'pending' | 'granted' | 'denied' | 'withdrawn' | 'expired'
 
 /**
  * Data processing purpose
@@ -23,106 +23,106 @@ type ProcessingPurpose =
   | 'legal_obligation'
   | 'legitimate_interest'
   | 'vital_interest'
-  | 'consent';
+  | 'consent'
 
 /**
  * LGPD consent record
  */
 interface LGPDConsent {
-  _userId: string;
-  purpose: ProcessingPurpose;
-  status: ConsentStatus;
-  grantedAt?: Date;
-  expiresAt?: Date;
-  withdrawnAt?: Date;
-  ipAddress: string;
-  userAgent: string;
-  version: string;
+  _userId: string
+  purpose: ProcessingPurpose
+  status: ConsentStatus
+  grantedAt?: Date
+  expiresAt?: Date
+  withdrawnAt?: Date
+  ipAddress: string
+  userAgent: string
+  version: string
 }
 
 /**
  * LGPD middleware configuration
  */
 interface LGPDConfig {
-  requiredPurposes?: ProcessingPurpose[];
-  strictMode?: boolean;
-  logAccess?: boolean;
-  checkExpiration?: boolean;
+  requiredPurposes?: ProcessingPurpose[]
+  strictMode?: boolean
+  logAccess?: boolean
+  checkExpiration?: boolean
 }
 
 /**
  * Mock consent store - replace with actual database implementation
  */
 class ConsentStore {
-  private consents = new Map<string, LGPDConsent[]>();
+  private consents = new Map<string, LGPDConsent[]>()
 
   async getConsents(
     _userId: string,
     purpose: ProcessingPurpose,
   ): Promise<LGPDConsent[]> {
-    const userConsents = this.consents.get(_userId) || [];
-    return userConsents.filter(consent => consent.purpose === purpose);
+    const userConsents = this.consents.get(_userId) || []
+    return userConsents.filter((consent) => consent.purpose === purpose)
   }
 
   async hasValidConsent(
     _userId: string,
     purpose: ProcessingPurpose,
   ): Promise<boolean> {
-    const consents = await this.getConsents(_userId, purpose);
-    const now = new Date();
+    const consents = await this.getConsents(_userId, purpose)
+    const now = new Date()
 
     return consents.some(
-      consent =>
+      (consent) =>
         consent.status === 'granted'
         && (!consent.expiresAt || consent.expiresAt > now),
-    );
+    )
   }
 
   async recordConsent(consent: LGPDConsent): Promise<void> {
-    const userConsents = this.consents.get(consent._userId) || [];
-    userConsents.push(consent);
-    this.consents.set(consent._userId, userConsents);
+    const userConsents = this.consents.get(consent._userId) || []
+    userConsents.push(consent)
+    this.consents.set(consent._userId, userConsents)
   }
 
   async withdrawConsent(
     _userId: string,
     purpose: ProcessingPurpose,
   ): Promise<void> {
-    const userConsents = this.consents.get(_userId) || [];
-    userConsents.forEach(consent => {
+    const userConsents = this.consents.get(_userId) || []
+    userConsents.forEach((consent) => {
       if (consent.purpose === purpose && consent.status === 'granted') {
-        consent.status = 'withdrawn';
-        consent.withdrawnAt = new Date();
+        consent.status = 'withdrawn'
+        consent.withdrawnAt = new Date()
       }
-    });
+    })
   }
 }
 
-const consentStore = new ConsentStore();
+const consentStore = new ConsentStore()
 
 /**
  * Determines the required processing purpose based on the request
  */
 function getProcessingPurpose(c: Context): ProcessingPurpose {
-  const path = c.req.path.toLowerCase();
+  const path = c.req.path.toLowerCase()
 
   // Medical care purposes
   if (path.includes('/patients') || path.includes('/medical-records')) {
-    return 'medical_care';
+    return 'medical_care'
   }
 
   // Appointment purposes
   if (path.includes('/appointments')) {
-    return 'appointment_scheduling';
+    return 'appointment_scheduling'
   }
 
   // Billing purposes
   if (path.includes('/billing') || path.includes('/payments')) {
-    return 'billing';
+    return 'billing'
   }
 
   // Default to consent for other operations
-  return 'consent';
+  return 'consent'
 }
 
 /**
@@ -133,37 +133,37 @@ function requiresExplicitConsent(purpose: ProcessingPurpose): boolean {
   const exemptPurposes: ProcessingPurpose[] = [
     'legal_obligation',
     'vital_interest',
-  ];
+  ]
 
-  return !exemptPurposes.includes(purpose);
+  return !exemptPurposes.includes(purpose)
 }
 
 /**
  * LGPD compliance middleware
  */
 export function lgpdMiddleware(config: LGPDConfig = {}) {
-  const { strictMode = true, logAccess = true } = config;
+  const { strictMode = true, logAccess = true } = config
 
   return async (c: Context, next: Next) => {
     try {
-      const user = c.get('user');
-      const userId = user?.id || c.get('userId');
+      const user = c.get('user')
+      const userId = user?.id || c.get('userId')
 
       // Skip LGPD checks for unauthenticated requests
       if (!userId) {
-        await next();
-        return;
+        await next()
+        return
       }
 
-      const purpose = getProcessingPurpose(c);
+      const purpose = getProcessingPurpose(c)
       const ip = c.req.header('x-forwarded-for')
         || c.req.header('x-real-ip')
-        || 'unknown';
-      const userAgent = c.req.header('user-agent') || 'unknown';
+        || 'unknown'
+      const userAgent = c.req.header('user-agent') || 'unknown'
 
       // Check if explicit consent is required
       if (requiresExplicitConsent(purpose)) {
-        const hasConsent = await consentStore.hasValidConsent(userId, purpose);
+        const hasConsent = await consentStore.hasValidConsent(userId, purpose)
 
         if (!hasConsent && strictMode) {
           logger.warn('LGPD: Access denied - missing consent', {
@@ -172,7 +172,7 @@ export function lgpdMiddleware(config: LGPDConfig = {}) {
             path: c.req.path,
             method: c.req.method,
             ip,
-          });
+          })
 
           throw new HTTPException(403, {
             message: 'Data processing consent required',
@@ -181,7 +181,7 @@ export function lgpdMiddleware(config: LGPDConfig = {}) {
               purpose,
               consentUrl: `/api/v1/consent?purpose=${purpose}`,
             },
-          });
+          })
         }
       }
 
@@ -196,30 +196,30 @@ export function lgpdMiddleware(config: LGPDConfig = {}) {
           userAgent,
           hasConsent: await consentStore.hasValidConsent(userId, purpose),
           timestamp: new Date().toISOString(),
-        });
+        })
       }
 
       // Set LGPD context for downstream handlers
-      c.set('lgpdPurpose', purpose);
-      c.set('lgpdCompliant', true);
+      c.set('lgpdPurpose', purpose)
+      c.set('lgpdCompliant', true)
 
-      await next();
+      await next()
     } catch (error) {
       if (error instanceof HTTPException) {
-        throw error;
+        throw error
       }
 
       logger.error('LGPD middleware error', {
         error: error instanceof Error ? error.message : String(error),
         path: c.req.path,
         method: c.req.method,
-      });
+      })
 
       throw new HTTPException(500, {
         message: 'LGPD compliance check failed',
-      });
+      })
     }
-  };
+  }
 }
 
 /**
@@ -231,7 +231,7 @@ export function healthcareLGPDMiddleware() {
     strictMode: true,
     logAccess: true,
     checkExpiration: true,
-  });
+  })
 }
 
 /**
@@ -241,26 +241,26 @@ export function consentMiddleware() {
   return async (c: Context, next: Next) => {
     if (c.req.method === 'POST' && c.req.path.includes('/consent')) {
       try {
-        const user = c.get('user');
-        const userId = user?.id || c.get('userId');
+        const user = c.get('user')
+        const userId = user?.id || c.get('userId')
 
         if (!_userId) {
-          throw new HTTPException(401, { message: 'Authentication required' });
+          throw new HTTPException(401, { message: 'Authentication required' })
         }
 
-        const body = await c.req.json();
-        const { purpose, action } = body;
+        const body = await c.req.json()
+        const { purpose, action } = body
 
         if (!purpose || !action) {
           throw new HTTPException(400, {
             message: 'Purpose and action are required',
-          });
+          })
         }
 
         const ip = c.req.header('x-forwarded-for')
           || c.req.header('x-real-ip')
-          || 'unknown';
-        const userAgent = c.req.header('user-agent') || 'unknown';
+          || 'unknown'
+        const userAgent = c.req.header('user-agent') || 'unknown'
 
         if (action === 'grant') {
           const consent: LGPDConsent = {
@@ -272,60 +272,60 @@ export function consentMiddleware() {
             ipAddress: ip,
             userAgent,
             version: '1.0',
-          };
+          }
 
-          await consentStore.recordConsent(consent);
+          await consentStore.recordConsent(consent)
 
           logger.info('LGPD: Consent granted', {
             userId,
             purpose,
             ip,
             userAgent,
-          });
+          })
 
           return c.json({
             message: 'Consent granted successfully',
             purpose,
             status: 'granted',
             expiresAt: consent.expiresAt,
-          });
+          })
         } else if (action === 'withdraw') {
-          await consentStore.withdrawConsent(userId, purpose);
+          await consentStore.withdrawConsent(userId, purpose)
 
           logger.info('LGPD: Consent withdrawn', {
             userId,
             purpose,
             ip,
             userAgent,
-          });
+          })
 
           return c.json({
             message: 'Consent withdrawn successfully',
             purpose,
             status: 'withdrawn',
-          });
+          })
         }
 
         throw new HTTPException(400, {
           message: 'Invalid action. Use "grant" or "withdraw"',
-        });
+        })
       } catch (error) {
         if (error instanceof HTTPException) {
-          throw error;
+          throw error
         }
 
         logger.error('Consent handling error', {
           error: error instanceof Error ? error.message : String(error),
-        });
+        })
 
         throw new HTTPException(500, {
           message: 'Failed to process consent request',
-        });
+        })
       }
     }
 
-    await next();
-  };
+    await next()
+  }
 }
 
 /**
@@ -335,36 +335,36 @@ export function dataPortabilityMiddleware() {
   return async (c: Context, next: Next) => {
     if (c.req.method === 'GET' && c.req.path.includes('/data-export')) {
       try {
-        const user = c.get('user');
-        const userId = user?.id || c.get('userId');
+        const user = c.get('user')
+        const userId = user?.id || c.get('userId')
 
         if (!_userId) {
-          throw new HTTPException(401, { message: 'Authentication required' });
+          throw new HTTPException(401, { message: 'Authentication required' })
         }
 
         // Implement actual data export collecting all user data from all systems
-        const supabase = createAdminClient();
-        const userData = await this.exportUserData(supabase, _userId);
+        const supabase = createAdminClient()
+        const userData = await this.exportUserData(supabase, _userId)
 
         logger.info('LGPD: Data export requested', {
           userId,
           ip: c.req.header('x-forwarded-for') || c.req.header('x-real-ip'),
-        });
+        })
 
-        return c.json(userData);
+        return c.json(userData)
       } catch {
         logger.error('Data portability error', {
           error: error instanceof Error ? error.message : String(error),
-        });
+        })
 
         throw new HTTPException(500, {
           message: 'Failed to export user data',
-        });
+        })
       }
     }
 
-    await next();
-  };
+    await next()
+  }
 }
 
 /**
@@ -374,40 +374,40 @@ export function dataErasureMiddleware() {
   return async (c: Context, next: Next) => {
     if (c.req.method === 'DELETE' && c.req.path.includes('/data-erasure')) {
       try {
-        const user = c.get('user');
-        const userId = user?.id || c.get('userId');
+        const user = c.get('user')
+        const userId = user?.id || c.get('userId')
 
         if (!_userId) {
-          throw new HTTPException(401, { message: 'Authentication required' });
+          throw new HTTPException(401, { message: 'Authentication required' })
         }
 
         // Implement actual data deletion/anonymization following LGPD requirements
-        const supabase = createAdminClient();
-        await this.deleteUserData(supabase, _userId);
+        const supabase = createAdminClient()
+        await this.deleteUserData(supabase, _userId)
 
         logger.info('LGPD: Data erasure requested', {
           userId,
           ip: c.req.header('x-forwarded-for') || c.req.header('x-real-ip'),
-        });
+        })
 
         return c.json({
           message: 'Data erasure request processed',
           userId,
           processedAt: new Date().toISOString(),
-        });
+        })
       } catch {
         logger.error('Data erasure error', {
           error: error instanceof Error ? error.message : String(error),
-        });
+        })
 
         throw new HTTPException(500, {
           message: 'Failed to process data erasure request',
-        });
+        })
       }
     }
 
-    await next();
-  };
+    await next()
+  }
 }
 
 /**
@@ -427,14 +427,14 @@ async function exportUserData(_supabase: any, _userId: string): Promise<any> {
         retentionPeriod: 'Immediate access for data subject',
       },
       data: {},
-    };
+    }
 
     // Export user profile data
     const { data: profile } = await _supabase
       .from('users')
       .select('*')
       .eq('id', _userId)
-      .single();
+      .single()
 
     if (profile) {
       exportedData.data.profile = {
@@ -445,17 +445,17 @@ async function exportUserData(_supabase: any, _userId: string): Promise<any> {
         clinic_id: profile.clinic_id,
         created_at: profile.created_at,
         updated_at: profile.updated_at,
-      };
+      }
     }
 
     // Export patient data if user is a patient
     const { data: patientData } = await _supabase
       .from('patients')
       .select('*')
-      .eq('user_id', _userId);
+      .eq('user_id', _userId)
 
     if (patientData && patientData.length > 0) {
-      exportedData.data.patientRecords = patientData.map(patient => ({
+      exportedData.data.patientRecords = patientData.map((patient) => ({
         id: patient.id,
         full_name: patient.full_name,
         date_of_birth: patient.date_of_birth,
@@ -476,7 +476,7 @@ async function exportUserData(_supabase: any, _userId: string): Promise<any> {
           : undefined,
         created_at: patient.created_at,
         updated_at: patient.updated_at,
-      }));
+      }))
     }
 
     // Export appointments
@@ -497,10 +497,10 @@ async function exportUserData(_supabase: any, _userId: string): Promise<any> {
         updated_at
       `,
       )
-      .or(`patient_id.eq.${userId},professional_id.eq.${userId}`);
+      .or(`patient_id.eq.${userId},professional_id.eq.${userId}`)
 
     if (appointments && appointments.length > 0) {
-      exportedData.data.appointments = appointments;
+      exportedData.data.appointments = appointments
     }
 
     // Export medical records (with sensitive data redacted)
@@ -519,20 +519,20 @@ async function exportUserData(_supabase: any, _userId: string): Promise<any> {
         updated_at
       `,
       )
-      .eq('patient_id', _userId);
+      .eq('patient_id', _userId)
 
     if (medicalRecords && medicalRecords.length > 0) {
-      exportedData.data.medicalRecords = medicalRecords;
+      exportedData.data.medicalRecords = medicalRecords
     }
 
     // Export consent records
     const { data: consents } = await _supabase
       .from('lgpd_consents')
       .select('*')
-      .eq('user_id', _userId);
+      .eq('user_id', _userId)
 
     if (consents && consents.length > 0) {
-      exportedData.data.consents = consents;
+      exportedData.data.consents = consents
     }
 
     // Export audit logs related to this user
@@ -541,10 +541,10 @@ async function exportUserData(_supabase: any, _userId: string): Promise<any> {
       .select('*')
       .eq('user_id', _userId)
       .order('created_at', { ascending: false })
-      .limit(1000); // Limit to last 1000 records
+      .limit(1000) // Limit to last 1000 records
 
     if (auditLogs && auditLogs.length > 0) {
-      exportedData.data.auditLogs = auditLogs;
+      exportedData.data.auditLogs = auditLogs
     }
 
     logger.info('LGPD: User data export completed', {
@@ -556,17 +556,17 @@ async function exportUserData(_supabase: any, _userId: string): Promise<any> {
           Array.isArray(value) ? value.length : 1,
         ]),
       ),
-    });
+    })
 
-    return exportedData;
+    return exportedData
   } catch {
     logger.error('LGPD: Data export failed', {
       userId,
       error: error instanceof Error ? error.message : String(error),
-    });
+    })
     throw new HTTPException(500, {
       message: 'Failed to export user data',
-    });
+    })
   }
 }
 
@@ -576,8 +576,8 @@ async function exportUserData(_supabase: any, _userId: string): Promise<any> {
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function deleteUserData(_supabase: any, _userId: string): Promise<void> {
   try {
-    const deletionTimestamp = new Date().toISOString();
-    let totalRecordsAffected = 0;
+    const deletionTimestamp = new Date().toISOString()
+    let totalRecordsAffected = 0
 
     // Step 1: Anonymize sensitive data instead of hard delete where required by law
     const anonymizationOperations = [
@@ -602,23 +602,23 @@ async function deleteUserData(_supabase: any, _userId: string): Promise<void> {
         },
         condition: { id: _userId },
       },
-    ];
+    ]
 
     for (const operation of anonymizationOperations) {
       const { data, error } = await _supabase
         .from(operation.table)
         .update(operation.updates)
         .match(operation.condition)
-        .select();
+        .select()
 
       if (error) {
         logger.error('LGPD: Data anonymization failed', {
           table: operation.table,
           userId,
           error: error.message,
-        });
+        })
       } else if (data) {
-        totalRecordsAffected += data.length;
+        totalRecordsAffected += data.length
       }
     }
 
@@ -626,22 +626,22 @@ async function deleteUserData(_supabase: any, _userId: string): Promise<void> {
     const deletionOperations = [
       { table: 'lgpd_consents', condition: { user_id: _userId } },
       { table: 'audit_events', condition: { user_id: _userId } },
-    ];
+    ]
 
     for (const operation of deletionOperations) {
       const { error } = await _supabase
         .from(operation.table)
         .delete()
-        .match(operation.condition);
+        .match(operation.condition)
 
       if (error) {
         logger.error('LGPD: Data deletion failed', {
           table: operation.table,
           userId,
           error: error.message,
-        });
+        })
       } else {
-        totalRecordsAffected += 1; // Estimate
+        totalRecordsAffected += 1 // Estimate
       }
     }
 
@@ -660,21 +660,21 @@ async function deleteUserData(_supabase: any, _userId: string): Promise<void> {
       },
       ip_address: 'system',
       user_agent: 'lgpd-middleware',
-    });
+    })
 
     logger.info('LGPD: User data deletion completed', {
       userId,
       totalRecordsAffected,
       deletionTimestamp,
-    });
+    })
   } catch {
     logger.error('LGPD: Data deletion failed', {
       userId,
       error: error instanceof Error ? error.message : String(error),
-    });
+    })
     throw new HTTPException(500, {
       message: 'Failed to process data erasure request',
-    });
+    })
   }
 }
 
@@ -682,4 +682,4 @@ async function deleteUserData(_supabase: any, _userId: string): Promise<void> {
  * Data protection middleware (alias for healthcare LGPD middleware)
  * @deprecated Use healthcareLGPDMiddleware instead
  */
-export const dataProtection = healthcareLGPDMiddleware;
+export const dataProtection = healthcareLGPDMiddleware

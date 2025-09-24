@@ -11,11 +11,11 @@
  * - CFM compliance for medical data operations
  */
 
-import { AuditAction, AuditStatus, ResourceType, RiskLevel } from '@prisma/client';
-import { TRPCError } from '@trpc/server';
-import * as v from 'valibot';
-import { logger } from '../../lib/logger';
-import { GlobalErrorHandler } from '../../middleware/error-handler';
+import { AuditAction, AuditStatus, ResourceType, RiskLevel } from '@prisma/client'
+import { TRPCError } from '@trpc/server'
+import * as v from 'valibot'
+import { logger } from '../../lib/logger'
+import { GlobalErrorHandler } from '../../middleware/error-handler'
 import {
   AppointmentSchema,
   getEntitySchema,
@@ -23,10 +23,10 @@ import {
   PatientSchema,
   PrescriptionSchema,
   ProfessionalSchema,
-} from '../../schemas/healthcare-validation-schemas';
-import { HealthcareValidationService } from '../../services/healthcare-validation-service';
-import { createOperationStateService } from '../../services/operation-state-service';
-import { healthcareProcedure, protectedProcedure, router } from '../trpc';
+} from '../../schemas/healthcare-validation-schemas'
+import { HealthcareValidationService } from '../../services/healthcare-validation-service'
+import { createOperationStateService } from '../../services/operation-state-service'
+import { healthcareProcedure, protectedProcedure, router } from '../trpc'
 
 // =====================================
 // TYPE DEFINITIONS & SCHEMAS
@@ -44,16 +44,16 @@ const SUPPORTED_ENTITIES = [
   'healthcare_professionals',
   'clinics',
   'consent_records',
-] as const;
+] as const
 
-type CrudEntity = (typeof SUPPORTED_ENTITIES)[number];
+type CrudEntity = (typeof SUPPORTED_ENTITIES)[number]
 
 /**
  * CRUD operation types
  */
-const CRUD_OPERATIONS = ['create', 'read', 'update', 'delete'] as const;
+const CRUD_OPERATIONS = ['create', 'read', 'update', 'delete'] as const
 
-type CrudOperation = (typeof CRUD_OPERATIONS)[number];
+type CrudOperation = (typeof CRUD_OPERATIONS)[number]
 
 /**
  * AI CRUD Request Schema - Intent Step
@@ -64,8 +64,8 @@ const crudIntentSchema = v.object({
   entity: v.string([v.picklist(SUPPORTED_ENTITIES)]),
   data: v.custom((data, _ctx) => {
     // Get the entity from the parent object
-    const entity = ctx?.object?.entity;
-    const operation = ctx?.object?.operation;
+    const entity = ctx?.object?.entity
+    const operation = ctx?.object?.operation
     // Map entity to schema
     const entitySchemas: Record<string, any> = {
       patients: PatientSchema,
@@ -73,14 +73,14 @@ const crudIntentSchema = v.object({
       healthcare_professionals: ProfessionalSchema,
       medical_records: MedicalRecordSchema,
       prescriptions: PrescriptionSchema,
-    };
+    }
     // For read/delete, only id is required
     if (operation === 'read' || operation === 'delete') {
-      const idSchema = v.object({ id: v.string() });
-      return idSchema._parse(data, ctx);
+      const idSchema = v.object({ id: v.string() })
+      return idSchema._parse(data, ctx)
     }
     // For create/update, use the entity schema
-    const schema = entitySchemas[entity];
+    const schema = entitySchemas[entity]
     if (!schema) {
       return {
         issues: [
@@ -90,9 +90,9 @@ const crudIntentSchema = v.object({
             message: `Unsupported entity: ${entity}`,
           },
         ],
-      };
+      }
     }
-    return schema._parse(data, ctx);
+    return schema._parse(data, ctx)
   }),
   options: v.optional(
     v.object({
@@ -110,7 +110,7 @@ const crudIntentSchema = v.object({
       sessionId: v.optional(v.string()),
     }),
   ),
-});
+})
 
 /**
  * AI CRUD Request Schema - Confirm Step
@@ -141,7 +141,7 @@ const crudConfirmSchema = v.object({
     ),
   ), // Optional modifications before execution
   reason: v.optional(v.string()),
-});
+})
 
 /**
  * AI CRUD Request Schema - Execute Step
@@ -171,7 +171,7 @@ const crudExecuteSchema = v.object({
       })
     ),
   ), // Final data with validated modifications
-});
+})
 
 /**
  * Combined CRUD Request Schema
@@ -180,7 +180,7 @@ const crudRequestSchema = v.union([
   crudIntentSchema,
   crudConfirmSchema,
   crudExecuteSchema,
-]);
+])
 
 /**
  * CRUD Intent Response Schema
@@ -239,7 +239,7 @@ const _crudIntentResponseSchema = v.object({
     auditRequired: v.boolean(),
     consentRequired: v.optional(v.boolean()),
   }),
-});
+})
 
 /**
  * CRUD Confirm Response Schema
@@ -278,7 +278,7 @@ const _crudConfirmResponseSchema = v.object({
       rollbackAvailable: v.boolean(),
     }),
   ),
-});
+})
 
 /**
  * CRUD Execute Response Schema
@@ -315,7 +315,7 @@ const _crudExecuteResponseSchema = v.object({
     compliancePassed: v.boolean(),
     warnings: v.optional(v.array(v.string())),
   }),
-});
+})
 
 // =====================================
 // AI VALIDATION & TRANSFORMATION UTILITIES
@@ -332,22 +332,22 @@ async function validateWithAI(
   data: any,
   ctx: any,
 ): Promise<{
-  isValid: boolean;
-  errors: string[];
-  warnings: string[];
-  aiScore: number;
-  transformedData?: any;
+  isValid: boolean
+  errors: string[]
+  warnings: string[]
+  aiScore: number
+  transformedData?: any
 }> {
   try {
     // Initialize real healthcare validation service
-    const healthcareValidator = new HealthcareValidationService();
+    const healthcareValidator = new HealthcareValidationService()
 
     // Validate context for professional authorization
     const validationContext = {
       professionalId: ctx.user?.id || data.professionalId,
       patientId: data.patientId,
       organizationId: ctx.user?.organizationId,
-    };
+    }
 
     // Perform comprehensive healthcare validation
     const validationResult = await healthcareValidator.validateHealthcareData(
@@ -355,7 +355,7 @@ async function validateWithAI(
       entity,
       data,
       validationContext,
-    );
+    )
 
     // Transform the result to match expected interface
     return {
@@ -364,9 +364,9 @@ async function validateWithAI(
       warnings: validationResult.warnings,
       aiScore: validationResult.aiScore,
       transformedData: validationResult.transformedData || data,
-    };
+    }
   } catch {
-    void _error;
+    void _error
     // Use global error handler for consistent sanitization
     const appError = GlobalErrorHandler.createError(
       'VALIDATION_ERROR',
@@ -377,14 +377,14 @@ async function validateWithAI(
       },
       ctx.user?.id,
       data.patientId,
-    );
+    )
 
     return {
       isValid: false,
       errors: [appError.message],
       warnings: ['Operação bloqueada por falha de validação de segurança'],
       aiScore: 0,
-    };
+    }
   }
 }
 
@@ -410,11 +410,11 @@ async function generatePreview(
         'CFM - Registro médico',
         'Validação de formato',
       ],
-    };
+    }
 
     if (operation === 'update' && data.id) {
       // Show current vs new values (with sensitive data sanitization)
-      const current = await getCurrentData(entity, data.id, ctx);
+      const current = await getCurrentData(entity, data.id, ctx)
       if (current) {
         preview.changes = Object.entries(data)
           .filter(([key, _value]) => key !== 'id' && current[key] !== value)
@@ -422,13 +422,13 @@ async function generatePreview(
             field: key,
             oldValue: this.sanitizePreviewValue(current[key], key),
             newValue: this.sanitizePreviewValue(value, key),
-          }));
+          }))
       }
     }
 
-    return preview;
+    return preview
   } catch {
-    void _error;
+    void _error
     // Use global error handler for consistent sanitization
     const appError = GlobalErrorHandler.createError(
       'INTERNAL_ERROR',
@@ -439,7 +439,7 @@ async function generatePreview(
       },
       ctx.user?.id,
       data.patientId,
-    );
+    )
 
     // Log sanitized error for debugging
     logger.warn('Preview generation failed', {
@@ -447,9 +447,9 @@ async function generatePreview(
       operation,
       entity,
       _userId: ctx.user?.id,
-    });
+    })
 
-    return null;
+    return null
   }
 }
 
@@ -466,16 +466,16 @@ async function getCurrentData(
       case 'patients':
         return await ctx.prisma.patient.findUnique({
           where: { id },
-        });
+        })
       case 'appointments':
         return await ctx.prisma.appointment.findUnique({
           where: { id },
-        });
+        })
       default:
-        return null;
+        return null
     }
   } catch {
-    void _error;
+    void _error
     // Use global error handler for consistent sanitization
     const appError = GlobalErrorHandler.createError(
       'INTERNAL_ERROR',
@@ -485,7 +485,7 @@ async function getCurrentData(
         currentDataFailed: true,
       },
       ctx.user?.id,
-    );
+    )
 
     // Log sanitized error for debugging
     logger.warn('Failed to get current data', {
@@ -493,9 +493,9 @@ async function getCurrentData(
       entity,
       id,
       _userId: ctx.user?.id,
-    });
+    })
 
-    return null;
+    return null
   }
 }
 
@@ -514,21 +514,21 @@ export const crudRouter = router({
       try {
         switch (input.step) {
           case 'intent':
-            return await handleIntentStep(ctx, input);
+            return await handleIntentStep(ctx, input)
           case 'confirm':
-            return await handleConfirmStep(ctx, input);
+            return await handleConfirmStep(ctx, input)
           case 'execute':
-            return await handleExecuteStep(ctx, input);
+            return await handleExecuteStep(ctx, input)
           default:
             throw new TRPCError({
               code: 'BAD_REQUEST',
               message: 'Invalid step specified',
-            });
+            })
         }
       } catch {
-        void _error;
-        void _error;
-        console.error('CRUD operation error:', error);
+        void _error
+        void _error
+        console.error('CRUD operation error:', error)
 
         // Create error audit trail
         await ctx.prisma.auditTrail.create({
@@ -550,17 +550,17 @@ export const crudRouter = router({
               error: error instanceof Error ? error.message : 'Unknown error',
             }),
           },
-        });
+        })
 
         if (error instanceof TRPCError) {
-          throw error;
+          throw error
         }
 
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to process CRUD operation',
           cause: error,
-        });
+        })
       }
     }),
 
@@ -577,14 +577,14 @@ export const crudRouter = router({
     .query(async ({ ctx, _input }) => {
       try {
         // Use proper operation state management instead of audit trail
-        const operationStateService = createOperationStateService(ctx.prisma);
-        const operationState = await operationStateService.getStateByOperationId(input.operationId);
+        const operationStateService = createOperationStateService(ctx.prisma)
+        const operationState = await operationStateService.getStateByOperationId(input.operationId)
 
         if (!operationState) {
           throw new TRPCError({
             code: 'NOT_FOUND',
             message: 'Operation not found',
-          });
+          })
         }
 
         return {
@@ -597,19 +597,19 @@ export const crudRouter = router({
           success: operationState.status === 'completed',
           error: operationState.errorMessage,
           metadata: operationState.metadata,
-        };
+        }
       } catch {
-        void _error;
-        void _error;
+        void _error
+        void _error
         if (error instanceof TRPCError) {
-          throw error;
+          throw error
         }
 
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to get operation status',
           cause: error,
-        });
+        })
       }
     }),
 
@@ -619,13 +619,13 @@ export const crudRouter = router({
    */
   getSupportedEntities: protectedProcedure.query(() => {
     return {
-      entities: SUPPORTED_ENTITIES.map(entity => ({
+      entities: SUPPORTED_ENTITIES.map((entity) => ({
         name: entity,
         operations: CRUD_OPERATIONS,
         description: getEntityDescription(entity),
         requiredFields: getRequiredFields(entity),
       })),
-      operations: CRUD_OPERATIONS.map(op => ({
+      operations: CRUD_OPERATIONS.map((op) => ({
         name: op,
         description: getOperationDescription(op),
       })),
@@ -634,9 +634,9 @@ export const crudRouter = router({
         auditRequired: true,
         consentRequired: ['patients', 'medical_records', 'prescriptions'],
       },
-    };
+    }
   }),
-});
+})
 
 // =====================================
 // STEP HANDLERS
@@ -650,19 +650,19 @@ async function handleIntentStep(
   ctx: any,
   input: v.InferOutput<typeof crudIntentSchema>,
 ) {
-  const _startTime = Date.now();
+  const _startTime = Date.now()
 
   // Generate unique intent ID
-  const intentId = `intent-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+  const intentId = `intent-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
 
   // Runtime validation with proper Zod schemas (replaces v.any() security vulnerability)
-  const schema = getEntitySchema(input.entity);
-  const schemaValidation = schema.safeParse(input.data);
+  const schema = getEntitySchema(input.entity)
+  const schemaValidation = schema.safeParse(input.data)
 
   if (!schemaValidation.success) {
     const errors = schemaValidation.error.errors.map(
-      err => `Campo ${err.path.join('.')}: ${err.message}`,
-    );
+      (err) => `Campo ${err.path.join('.')}: ${err.message}`,
+    )
 
     // Create sanitized error without exposing internal validation details
     const appError = GlobalErrorHandler.createError(
@@ -674,7 +674,7 @@ async function handleIntentStep(
       },
       ctx.userId,
       input.metadata?.patientId,
-    );
+    )
 
     throw new TRPCError({
       code: 'BAD_REQUEST',
@@ -682,11 +682,11 @@ async function handleIntentStep(
       cause: {
         sanitizedErrors: errors.length > 3 ? errors.slice(0, 3) : errors,
       },
-    });
+    })
   }
 
   // Use validated data
-  const validatedData = schemaValidation.data;
+  const validatedData = schemaValidation.data
 
   // AI-powered healthcare validation
   const validation = await validateWithAI(
@@ -694,7 +694,7 @@ async function handleIntentStep(
     input.entity,
     validatedData,
     ctx,
-  );
+  )
 
   // Generate preview
   const preview = await generatePreview(
@@ -702,18 +702,18 @@ async function handleIntentStep(
     input.entity,
     validatedData,
     ctx,
-  );
+  )
 
   // Check if confirmation is required
   const confirmationRequired = !input.options?.skipConfirmation
-    && ['create', 'update', 'delete'].includes(input.operation);
+    && ['create', 'update', 'delete'].includes(input.operation)
 
   // Determine if consent is required
   const consentRequired = [
     'patients',
     'medical_records',
     'prescriptions',
-  ].includes(input.entity);
+  ].includes(input.entity)
 
   // Create audit trail
   await ctx.prisma.auditTrail.create({
@@ -742,7 +742,7 @@ async function handleIntentStep(
         metadata: input.metadata,
       }),
     },
-  });
+  })
 
   return {
     intentId,
@@ -769,7 +769,7 @@ async function handleIntentStep(
       auditRequired: true,
       consentRequired,
     },
-  };
+  }
 }
 
 /**
@@ -780,25 +780,25 @@ async function handleConfirmStep(
   ctx: any,
   input: v.InferOutput<typeof crudConfirmSchema>,
 ) {
-  const _startTime = Date.now();
+  const _startTime = Date.now()
 
   // Generate unique confirmation ID
-  const confirmationId = `confirm-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+  const confirmationId = `confirm-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
 
   // Check if the intent exists and is valid using proper state management
-  const operationStateService = createOperationStateService(ctx.prisma);
+  const operationStateService = createOperationStateService(ctx.prisma)
   const intentState = await operationStateService.getStateByOperationId(
     input.intentId,
-  );
+  )
 
   if (!intentState) {
     throw new TRPCError({
       code: 'NOT_FOUND',
       message: 'Intent not found or expired',
-    });
+    })
   }
 
-  const intentData = intentState.data;
+  const intentData = intentState.data
 
   if (!input.confirmed) {
     // User rejected the operation
@@ -822,7 +822,7 @@ async function handleConfirmStep(
           reason: input.reason,
         }),
       },
-    });
+    })
 
     return {
       confirmationId,
@@ -830,7 +830,7 @@ async function handleConfirmStep(
       step: 'confirm' as const,
       status: 'rejected' as const,
       readyToExecute: false,
-    };
+    }
   }
 
   // Create execution plan
@@ -843,7 +843,7 @@ async function handleConfirmStep(
     ],
     estimatedTimeMs: 500,
     rollbackAvailable: ['create', 'update'].includes(intentData.operation),
-  };
+  }
 
   // Create audit trail
   await ctx.prisma.auditTrail.create({
@@ -868,7 +868,7 @@ async function handleConfirmStep(
         reason: input.reason,
       }),
     },
-  });
+  })
 
   return {
     confirmationId,
@@ -878,7 +878,7 @@ async function handleConfirmStep(
     readyToExecute: true,
     finalData: input.modifications,
     executionPlan,
-  };
+  }
 }
 
 /**
@@ -889,71 +889,71 @@ async function handleExecuteStep(
   ctx: any,
   input: v.InferOutput<typeof crudExecuteSchema>,
 ) {
-  const _startTime = Date.now();
+  const _startTime = Date.now()
 
   // Generate unique execution ID
-  const executionId = `exec-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+  const executionId = `exec-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
 
   // Verify intent and confirmation exist using proper state management
-  const operationStateService = createOperationStateService(ctx.prisma);
+  const operationStateService = createOperationStateService(ctx.prisma)
   const intentState = await operationStateService.getStateByOperationId(
     input.intentId,
-  );
+  )
   const confirmState = await operationStateService.getStateByOperationId(
     input.confirmationId,
-  );
+  )
 
   if (!intentState || !confirmState) {
     throw new TRPCError({
       code: 'NOT_FOUND',
       message: 'Intent or confirmation not found',
-    });
+    })
   }
 
-  const intentData = intentState.data;
-  const _confirmData = confirmState.data;
+  const intentData = intentState.data
+  const _confirmData = confirmState.data
 
   // Get the data to execute (require finalData explicitly)
-  const executionData = input.finalData;
+  const executionData = input.finalData
   if (!executionData) {
     throw new TRPCError({
       code: 'BAD_REQUEST',
       message: 'Missing required finalData for execution step',
-    });
+    })
   }
 
-  let result;
-  let recordsAffected = 0;
-  let error = null;
+  let result
+  let recordsAffected = 0
+  let error = null
 
   try {
     // Execute the CRUD operation
     switch (intentData.operation) {
       case 'create':
-        result = await executeCreate(intentData.entity, executionData, ctx);
-        recordsAffected = 1;
-        break;
+        result = await executeCreate(intentData.entity, executionData, ctx)
+        recordsAffected = 1
+        break
       case 'read':
-        result = await executeRead(intentData.entity, executionData, ctx);
+        result = await executeRead(intentData.entity, executionData, ctx)
         recordsAffected = Array.isArray(result)
           ? result.length
           : result
           ? 1
-          : 0;
-        break;
+          : 0
+        break
       case 'update':
-        result = await executeUpdate(intentData.entity, executionData, ctx);
-        recordsAffected = 1;
-        break;
+        result = await executeUpdate(intentData.entity, executionData, ctx)
+        recordsAffected = 1
+        break
       case 'delete':
-        result = await executeDelete(intentData.entity, executionData, ctx);
-        recordsAffected = 1;
-        break;
+        result = await executeDelete(intentData.entity, executionData, ctx)
+        recordsAffected = 1
+        break
       default:
         throw new TRPCError({
           code: 'BAD_REQUEST',
           message: 'Unsupported operation',
-        });
+        })
     }
 
     // Create audit trail for successful execution
@@ -982,7 +982,7 @@ async function handleExecuteStep(
           processingTimeMs: Date.now() - startTime,
         }),
       },
-    });
+    })
 
     return {
       executionId,
@@ -1001,7 +1001,7 @@ async function handleExecuteStep(
         compliancePassed: true,
         warnings: [],
       },
-    };
+    }
   } catch (executionError) {
     // Sanitize error message to prevent information disclosure
     const appError = executionError instanceof Error
@@ -1015,9 +1015,9 @@ async function handleExecuteStep(
         ctx.userId,
         intentData.patientId || input.finalData?.patientData?.id,
       )
-      : GlobalErrorHandler.createError('INTERNAL_ERROR');
+      : GlobalErrorHandler.createError('INTERNAL_ERROR')
 
-    error = appError.message;
+    error = appError.message
 
     // Create audit trail for failed execution
     await ctx.prisma.auditTrail.create({
@@ -1043,7 +1043,7 @@ async function handleExecuteStep(
           processingTimeMs: Date.now() - startTime,
         }),
       },
-    });
+    })
 
     return {
       executionId,
@@ -1062,7 +1062,7 @@ async function handleExecuteStep(
         compliancePassed: false,
         warnings: [error],
       },
-    };
+    }
   }
 }
 
@@ -1086,7 +1086,7 @@ async function executeCreate(
           clinicId: ctx.clinicId,
           createdBy: ctx.userId,
         },
-      });
+      })
     case 'appointments':
       return await ctx.prisma.appointment.create({
         data: {
@@ -1094,12 +1094,12 @@ async function executeCreate(
           clinicId: ctx.clinicId,
           createdBy: ctx.userId,
         },
-      });
+      })
     default:
       throw new TRPCError({
         code: 'NOT_IMPLEMENTED',
         message: `Create operation not implemented for entity: ${entity}`,
-      });
+      })
   }
 }
 
@@ -1118,19 +1118,19 @@ async function executeRead(
           clinicId: ctx.clinicId,
           ...data,
         },
-      });
+      })
     case 'appointments':
       return await ctx.prisma.appointment.findMany({
         where: {
           clinicId: ctx.clinicId,
           ...data,
         },
-      });
+      })
     default:
       throw new TRPCError({
         code: 'NOT_IMPLEMENTED',
         message: `Read operation not implemented for entity: ${entity}`,
-      });
+      })
   }
 }
 
@@ -1142,7 +1142,7 @@ async function executeUpdate(
   data: any,
   ctx: any,
 ): Promise<any> {
-  const { id, ...updateData } = data;
+  const { id, ...updateData } = data
 
   switch (entity) {
     case 'patients':
@@ -1153,7 +1153,7 @@ async function executeUpdate(
           updatedAt: new Date(),
           updatedBy: ctx.userId,
         },
-      });
+      })
     case 'appointments':
       return await ctx.prisma.appointment.update({
         where: { id },
@@ -1162,12 +1162,12 @@ async function executeUpdate(
           updatedAt: new Date(),
           updatedBy: ctx.userId,
         },
-      });
+      })
     default:
       throw new TRPCError({
         code: 'NOT_IMPLEMENTED',
         message: `Update operation not implemented for entity: ${entity}`,
-      });
+      })
   }
 }
 
@@ -1183,16 +1183,16 @@ async function executeDelete(
     case 'patients':
       return await ctx.prisma.patient.delete({
         where: { id: data.id },
-      });
+      })
     case 'appointments':
       return await ctx.prisma.appointment.delete({
         where: { id: data.id },
-      });
+      })
     default:
       throw new TRPCError({
         code: 'NOT_IMPLEMENTED',
         message: `Delete operation not implemented for entity: ${entity}`,
-      });
+      })
   }
 }
 
@@ -1206,15 +1206,15 @@ async function executeDelete(
 function mapOperationToAuditAction(operation: CrudOperation): AuditAction {
   switch (operation) {
     case 'create':
-      return AuditAction.CREATE;
+      return AuditAction.CREATE
     case 'read':
-      return AuditAction.READ;
+      return AuditAction.READ
     case 'update':
-      return AuditAction.UPDATE;
+      return AuditAction.UPDATE
     case 'delete':
-      return AuditAction.DELETE;
+      return AuditAction.DELETE
     default:
-      return AuditAction.READ;
+      return AuditAction.READ
   }
 }
 
@@ -1224,17 +1224,17 @@ function mapOperationToAuditAction(operation: CrudOperation): AuditAction {
 function mapEntityToResourceType(entity: CrudEntity): ResourceType {
   switch (entity) {
     case 'patients':
-      return ResourceType.PATIENT_DATA;
+      return ResourceType.PATIENT_DATA
     case 'appointments':
-      return ResourceType.APPOINTMENT;
+      return ResourceType.APPOINTMENT
     case 'medical_records':
-      return ResourceType.MEDICAL_RECORD;
+      return ResourceType.MEDICAL_RECORD
     case 'prescriptions':
-      return ResourceType.PRESCRIPTION;
+      return ResourceType.PRESCRIPTION
     case 'healthcare_professionals':
-      return ResourceType.PROFESSIONAL;
+      return ResourceType.PROFESSIONAL
     default:
-      return ResourceType.SYSTEM_CONFIG;
+      return ResourceType.SYSTEM_CONFIG
   }
 }
 
@@ -1251,8 +1251,8 @@ function getEntityDescription(entity: CrudEntity): string {
     healthcare_professionals: 'Profissionais de saúde cadastrados',
     clinics: 'Clínicas e estabelecimentos de saúde',
     consent_records: 'Registros de consentimento LGPD',
-  };
-  return descriptions[entity] || `Entidade: ${entity}`;
+  }
+  return descriptions[entity] || `Entidade: ${entity}`
 }
 
 /**
@@ -1268,8 +1268,8 @@ function getRequiredFields(entity: CrudEntity): string[] {
     healthcare_professionals: ['fullName', 'specialty'],
     clinics: ['name', 'address'],
     consent_records: ['patientId', 'consentType'],
-  };
-  return requiredFields[entity] || [];
+  }
+  return requiredFields[entity] || []
 }
 
 /**
@@ -1281,6 +1281,6 @@ function getOperationDescription(operation: CrudOperation): string {
     read: 'Consultar registros existentes',
     update: 'Atualizar registros existentes',
     delete: 'Excluir registros',
-  };
-  return descriptions[operation] || `Operação: ${operation}`;
+  }
+  return descriptions[operation] || `Operação: ${operation}`
 }

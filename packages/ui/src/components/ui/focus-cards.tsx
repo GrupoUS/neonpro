@@ -1,7 +1,7 @@
-'use client';
+'use client'
 
-import React, { useState } from 'react';
-import { cn } from '../../utils';
+import React, { useState } from 'react'
+import { cn } from '../../utils'
 
 export const Card = React.memo(
   ({
@@ -10,10 +10,10 @@ export const Card = React.memo(
     hovered,
     setHovered,
   }: {
-    card: Card;
-    index: number;
-    hovered: number | null;
-    setHovered: React.Dispatch<React.SetStateAction<number | null>>;
+    card: Card
+    index: number
+    hovered: number | null
+    setHovered: React.Dispatch<React.SetStateAction<number | null>>
   }) => (
     <div
       onMouseEnter={() => setHovered(index)}
@@ -40,17 +40,17 @@ export const Card = React.memo(
       </div>
     </div>
   ),
-);
+)
 
-Card.displayName = 'Card';
+Card.displayName = 'Card'
 
 type Card = {
-  title: string;
-  src: string;
-};
+  title: string
+  src: string
+}
 
 export function FocusCards({ cards }: { cards: Card[] }) {
-  const [hovered, setHovered] = useState<number | null>(null);
+  const [hovered, setHovered] = useState<number | null>(null)
 
   return (
     <div className='grid grid-cols-1 md:grid-cols-3 gap-10 max-w-5xl mx-auto md:px-8 w-full'>
@@ -64,5 +64,5 @@ export function FocusCards({ cards }: { cards: Card[] }) {
         />
       ))}
     </div>
-  );
+  )
 }

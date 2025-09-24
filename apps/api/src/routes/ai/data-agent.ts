@@ -1,13 +1,13 @@
-import { AgentQueryRequest, InteractiveAction, QueryIntent, UserRole } from '@neonpro/types';
-import { Hono } from 'hono';
-import { cors } from 'hono/cors';
-import { jwt } from 'hono/jwt';
-import { handle } from 'hono/vercel';
-import { AIDataService } from '../../services/ai-data-service';
-import { IntentParserService } from '../../services/intent-parser';
+import { AgentQueryRequest, InteractiveAction, QueryIntent, UserRole } from '@neonpro/types'
+import { Hono } from 'hono'
+import { cors } from 'hono/cors'
+import { jwt } from 'hono/jwt'
+import { handle } from 'hono/vercel'
+import { AIDataService } from '../../services/ai-data-service'
+import { IntentParserService } from '../../services/intent-parser'
 
 // Create Hono app for Vercel deployment
-const app = new Hono().basePath('/api');
+const app = new Hono().basePath('/api')
 
 // Enable CORS for frontend integration
 app.use(
@@ -18,26 +18,26 @@ app.use(
     allowHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
     maxAge: 86400, // 24 hours
   }),
-);
+)
 
 // JWT middleware for authentication
 app.use('*', async (c, next) => {
   const jwtMiddleware = jwt({
     secret: process.env.JWT_SECRET!,
-  });
-  return jwtMiddleware(c, next);
-});
+  })
+  return jwtMiddleware(c, next)
+})
 
 /**
  * POST /api/ai/data-agent
  * Process natural language queries and return structured responses
  */
-app.post('/ai/data-agent', async c => {
-  const startTime = Date.now();
+app.post('/ai/data-agent', async (c) => {
+  const startTime = Date.now()
 
   try {
     // Parse and validate request
-    const body = (await c.req.json()) as AgentQueryRequest;
+    const body = (await c.req.json()) as AgentQueryRequest
 
     if (!body.query || body.query.trim().length === 0) {
       return c.json(
@@ -66,7 +66,7 @@ app.post('/ai/data-agent', async c => {
           },
         },
         400,
-      );
+      )
     }
 
     if (!body.sessionId) {
@@ -95,14 +95,14 @@ app.post('/ai/data-agent', async c => {
           },
         },
         400,
-      );
+      )
     }
 
     // Get user information from JWT token
-    const payload = c.get('jwtPayload');
-    const userId = payload.sub as string;
-    const userRole = payload.role as UserRole;
-    const userDomain = payload.domain as string;
+    const payload = c.get('jwtPayload')
+    const userId = payload.sub as string
+    const userRole = payload.role as UserRole
+    const userDomain = payload.domain as string
 
     // Create permission context
     const permissionContext = {
@@ -113,20 +113,20 @@ app.post('/ai/data-agent', async c => {
       dataScope: payload.dataScope || 'own_clients',
       lastAccess: new Date(),
       sessionExpiry: new Date(Date.now() + 30 * 60 * 1000), // 30 minutes
-    };
+    }
 
     // Initialize services
-    const dataService = new AIDataService(permissionContext);
-    const intentParser = new IntentParserService();
+    const dataService = new AIDataService(permissionContext)
+    const intentParser = new IntentParserService()
 
     // Parse user query
     const { intent, parameters, confidence } = intentParser.parseQuery(
       body.query,
       userRole,
-    );
+    )
 
     // Validate parameters
-    const validation = intentParser.validateParameters(parameters, intent);
+    const validation = intentParser.validateParameters(parameters, intent)
     if (!validation.valid) {
       return c.json(
         {
@@ -153,12 +153,12 @@ app.post('/ai/data-agent', async c => {
           },
         },
         400,
-      );
+      )
     }
 
     // Low confidence handling
     if (confidence < 0.5) {
-      const suggestions = intentParser.getSuggestedQueries(userRole);
+      const suggestions = intentParser.getSuggestedQueries(userRole)
       return c.json(
         {
           success: true,
@@ -169,7 +169,7 @@ app.post('/ai/data-agent', async c => {
               title: 'Consulta Não Entendida',
               text: 'Não consegui entender sua consulta. Aqui estão algumas sugestões:',
             },
-            actions: suggestions.map(suggestion => ({
+            actions: suggestions.map((suggestion) => ({
               id: `suggest_${suggestion.replace(/\s+/g, '')}`,
               label: suggestion,
               type: 'button' as const,
@@ -186,7 +186,7 @@ app.post('/ai/data-agent', async c => {
           },
         },
         200,
-      );
+      )
     }
 
     // Try ottomator-agents integration first
@@ -198,7 +198,7 @@ app.post('/ai/data-agent', async c => {
           patientId: body.patientId,
           previousQueries: body.context?.previousQueries,
         },
-      );
+      )
 
       if (ottomatorResponse.success && ottomatorResponse.response) {
         // Use ottomator-agents response
@@ -217,26 +217,26 @@ app.post('/ai/data-agent', async c => {
               || Date.now() - startTime,
             confidence: ottomatorResponse.response.sources?.[0]?.confidence || 0.8,
             sources: ottomatorResponse.response.sources?.map(
-              s => s.title,
+              (s) => s.title,
             ) || ['NeonPro AI Agent'],
           },
           timestamp: new Date(),
           processingTime: ottomatorResponse.metadata?.processingTimeMs
             || Date.now() - startTime,
-        };
+        }
 
         // Add actions from ottomator response
-        let ottomatorActions: InteractiveAction[] = [];
+        let ottomatorActions: InteractiveAction[] = []
         if (ottomatorResponse.response.actions) {
           ottomatorActions = ottomatorResponse.response.actions.map(
-            action => ({
+            (action) => ({
               id: crypto.randomUUID(),
               type: action.type as 'button' | 'link' | 'form',
               label: action.label,
               action: action.action,
               parameters: action.data,
             }),
-          );
+          )
         }
 
         return c.json({
@@ -250,25 +250,25 @@ app.post('/ai/data-agent', async c => {
             processingTime: Date.now() - startTime,
             model: ottomatorResponse.metadata?.model || 'ottomator-agents',
           },
-        });
+        })
       }
     } catch (ottomatorError) {
       console.warn(
         'Ottomator-agents failed, falling back to direct processing:',
         ottomatorError,
-      );
+      )
     }
 
     // Fallback to original intent-based processing
-    let responseData: any;
-    let actions: InteractiveAction[] = [];
-    let sources: string[] = [];
+    let responseData: any
+    let actions: InteractiveAction[] = []
+    let sources: string[] = []
 
     try {
       switch (intent) {
         case 'client_data':
-          responseData = await dataService.getClientsByName(parameters);
-          sources = ['clients'];
+          responseData = await dataService.getClientsByName(parameters)
+          sources = ['clients']
 
           if (parameters.clientNames && parameters.clientNames.length > 0) {
             // If specific client names, provide drill-down actions
@@ -279,14 +279,14 @@ app.post('/ai/data-agent', async c => {
                 type: 'button',
                 action: 'view_client_details',
                 parameters: { clientId: client.id },
-              });
-            });
+              })
+            })
           }
-          break;
+          break
 
         case 'appointments':
-          responseData = await dataService.getAppointmentsByDate(parameters);
-          sources = ['appointments'];
+          responseData = await dataService.getAppointmentsByDate(parameters)
+          sources = ['appointments']
 
           // Add actions for appointments
           responseData.forEach((appointment: any) => {
@@ -296,13 +296,13 @@ app.post('/ai/data-agent', async c => {
               type: 'button',
               action: 'view_appointment_details',
               parameters: { appointmentId: appointment.id },
-            });
-          });
-          break;
+            })
+          })
+          break
 
         case 'financial':
-          responseData = await dataService.getFinancialSummary(parameters);
-          sources = ['financial_records'];
+          responseData = await dataService.getFinancialSummary(parameters)
+          sources = ['financial_records']
 
           // Add drill-down actions for financial data
           actions.push({
@@ -311,16 +311,16 @@ app.post('/ai/data-agent', async c => {
             type: 'button',
             action: 'view_financial_details',
             parameters: { type: parameters.financial?.type || 'all' },
-          });
-          break;
+          })
+          break
 
         default:
-          throw new Error(`Intent não suportado: ${intent}`);
+          throw new Error(`Intent não suportado: ${intent}`)
       }
 
       // Format response based on data type
-      const response = formatResponse(responseData, intent, actions);
-      const processingTime = Date.now() - startTime;
+      const response = formatResponse(responseData, intent, actions)
+      const processingTime = Date.now() - startTime
 
       return c.json(
         {
@@ -337,9 +337,9 @@ app.post('/ai/data-agent', async c => {
           },
         },
         200,
-      );
+      )
     } catch {
-      console.error('Error processing query:', error);
+      console.error('Error processing query:', error)
 
       return c.json(
         {
@@ -366,10 +366,10 @@ app.post('/ai/data-agent', async c => {
           },
         },
         500,
-      );
+      )
     }
   } catch {
-    console.error('Data-agent endpoint error:', error);
+    console.error('Data-agent endpoint error:', error)
 
     return c.json(
       {
@@ -396,9 +396,9 @@ app.post('/ai/data-agent', async c => {
         },
       },
       500,
-    );
+    )
   }
-});
+})
 
 /**
  * Format response data based on intent and data type
@@ -408,7 +408,7 @@ function formatResponse(
   intent: QueryIntent,
   actions: InteractiveAction[],
 ) {
-  const responseId = crypto.randomUUID();
+  const responseId = crypto.randomUUID()
 
   switch (intent) {
     case 'client_data':
@@ -418,7 +418,7 @@ function formatResponse(
           type: 'table' as const,
           content: {
             title: 'Clientes Encontrados',
-            data: data.map(client => ({
+            data: data.map((client) => ({
               id: client.id,
               nome: client.name,
               email: client.email,
@@ -439,7 +439,7 @@ function formatResponse(
             ],
           },
           actions,
-        };
+        }
       } else {
         return {
           id: responseId,
@@ -456,7 +456,7 @@ function formatResponse(
               action: 'view_all_clients',
             },
           ],
-        };
+        }
       }
 
     case 'appointments':
@@ -467,7 +467,7 @@ function formatResponse(
           content: {
             title: 'Agendamentos',
             text: `Encontrados ${data.length} agendamentos:`,
-            data: data.map(appt => ({
+            data: data.map((appt) => ({
               id: appt.id,
               cliente: appt.clients?.name || 'N/A',
               data_hora: new Date(appt.datetime).toLocaleString('pt-BR'),
@@ -477,7 +477,7 @@ function formatResponse(
             })),
           },
           actions,
-        };
+        }
       } else {
         return {
           id: responseId,
@@ -494,7 +494,7 @@ function formatResponse(
               action: 'view_today_appointments',
             },
           ],
-        };
+        }
       }
 
     case 'financial':
@@ -535,7 +535,7 @@ function formatResponse(
             ],
           },
           actions,
-        };
+        }
       } else {
         return {
           id: responseId,
@@ -544,7 +544,7 @@ function formatResponse(
             title: 'Dados Financeiros Indisponíveis',
             text: 'Não foi possível obter os dados financeiros no momento.',
           },
-        };
+        }
       }
 
     default:
@@ -555,9 +555,9 @@ function formatResponse(
           title: 'Resposta',
           text: 'Sua consulta foi processada com sucesso.',
         },
-      };
+      }
   }
 }
 
-export const GET = handle(app);
-export const POST = handle(app);
+export const GET = handle(app)
+export const POST = handle(app)

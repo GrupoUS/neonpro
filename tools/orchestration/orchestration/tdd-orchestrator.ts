@@ -1,5 +1,5 @@
-import type { TDDOrchestrator as TDDOrchestratorInterface } from '../types';
-import type { FeatureContext, OrchestrationContext, TDDCycleResult } from '../types';
+import type { TDDOrchestrator as TDDOrchestratorInterface } from '../types'
+import type { FeatureContext, OrchestrationContext, TDDCycleResult } from '../types'
 
 export class TDDOrchestrator implements TDDOrchestratorInterface {
   async executeTDDCycle(
@@ -12,7 +12,7 @@ export class TDDOrchestrator implements TDDOrchestratorInterface {
       agentResults: [],
       qualityScore: 0.8,
       complianceScore: 0.9,
-    };
+    }
   }
 
   async executeFullTDDCycle(
@@ -26,11 +26,11 @@ export class TDDOrchestrator implements TDDOrchestratorInterface {
       agentResults: [],
       qualityScore: 0.8,
       complianceScore: 0.9,
-    };
+    }
   }
 
   getPhaseStatus() {
-    return 'red' as const;
+    return 'red' as const
   }
 
   pauseExecution(): void {

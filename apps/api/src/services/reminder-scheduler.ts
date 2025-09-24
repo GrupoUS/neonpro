@@ -5,44 +5,44 @@
  * based on configurable time intervals with Brazilian healthcare compliance.
  */
 
-import { createClient } from '@supabase/supabase-js';
-import { type AppointmentReminder, whatsappReminderService } from './whatsapp-reminder-service';
+import { createClient } from '@supabase/supabase-js'
+import { type AppointmentReminder, whatsappReminderService } from './whatsapp-reminder-service'
 
 export interface ReminderSchedule {
-  id: string;
-  clinicId: string;
-  reminderType: 'confirmation' | 'reminder_24h' | 'reminder_2h' | 'follow_up';
-  hoursBeforeAppointment: number;
-  isActive: boolean;
-  channels: ('whatsapp' | 'sms' | 'email')[];
-  language: 'pt-BR' | 'en-US';
-  createdAt: string;
-  updatedAt: string;
+  id: string
+  clinicId: string
+  reminderType: 'confirmation' | 'reminder_24h' | 'reminder_2h' | 'follow_up'
+  hoursBeforeAppointment: number
+  isActive: boolean
+  channels: ('whatsapp' | 'sms' | 'email')[]
+  language: 'pt-BR' | 'en-US'
+  createdAt: string
+  updatedAt: string
 }
 
 export interface ScheduledReminder {
-  id: string;
-  appointmentId: string;
-  scheduleId: string;
-  reminderType: string;
-  scheduledFor: string;
-  status: 'pending' | 'sent' | 'failed' | 'cancelled';
-  attempts: number;
-  lastAttempt?: string;
-  nextAttempt?: string;
-  createdAt: string;
+  id: string
+  appointmentId: string
+  scheduleId: string
+  reminderType: string
+  scheduledFor: string
+  status: 'pending' | 'sent' | 'failed' | 'cancelled'
+  attempts: number
+  lastAttempt?: string
+  nextAttempt?: string
+  createdAt: string
 }
 
 export class ReminderScheduler {
-  private supabase: any;
-  private isRunning = false;
-  private schedulerInterval: NodeJS.Timeout | null = null;
+  private supabase: any
+  private isRunning = false
+  private schedulerInterval: NodeJS.Timeout | null = null
 
   constructor() {
     this.supabase = createClient(
       process.env.SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    );
+    )
   }
 
   /**
@@ -50,39 +50,39 @@ export class ReminderScheduler {
    */
   async startScheduler(intervalMinutes = 5): Promise<void> {
     if (this.isRunning) {
-      console.log('Reminder scheduler already running');
-      return;
+      console.log('Reminder scheduler already running')
+      return
     }
 
     console.log(
       `Starting automated reminder scheduler (${intervalMinutes}min intervals)`,
-    );
-    this.isRunning = true;
+    )
+    this.isRunning = true
 
     // Run initial check
-    await this.processScheduledReminders();
+    await this.processScheduledReminders()
 
     // Set up recurring interval
     this.schedulerInterval = setInterval(
       async () => {
         if (this.isRunning) {
-          await this.processScheduledReminders();
+          await this.processScheduledReminders()
         }
       },
       intervalMinutes * 60 * 1000,
-    );
+    )
   }
 
   /**
    * Stop the automated reminder scheduler
    */
   stopScheduler(): void {
-    console.log('Stopping automated reminder scheduler');
-    this.isRunning = false;
+    console.log('Stopping automated reminder scheduler')
+    this.isRunning = false
 
     if (this.schedulerInterval) {
-      clearInterval(this.schedulerInterval);
-      this.schedulerInterval = null;
+      clearInterval(this.schedulerInterval)
+      this.schedulerInterval = null
     }
   }
 
@@ -90,19 +90,19 @@ export class ReminderScheduler {
    * Process all pending scheduled reminders
    */
   async processScheduledReminders(): Promise<{
-    processed: number;
-    sent: number;
-    failed: number;
-    skipped: number;
+    processed: number
+    sent: number
+    failed: number
+    skipped: number
   }> {
-    const startTime = Date.now();
-    let processed = 0;
-    let sent = 0;
-    let failed = 0;
-    let skipped = 0;
+    const startTime = Date.now()
+    let processed = 0
+    let sent = 0
+    let failed = 0
+    let skipped = 0
 
     try {
-      console.log('Processing scheduled reminders...');
+      console.log('Processing scheduled reminders...')
 
       // Get pending reminders that are due
       const { data: scheduledReminders, error } = await this.supabase
@@ -143,20 +143,20 @@ export class ReminderScheduler {
         .eq('status', 'pending')
         .lte('scheduled_for', new Date().toISOString())
         .order('scheduled_for', { ascending: true })
-        .limit(100); // Process in batches
+        .limit(100) // Process in batches
 
       if (error) {
-        console.error('Error fetching scheduled reminders:', error);
-        return { processed: 0, sent: 0, failed: 0, skipped: 0 };
+        console.error('Error fetching scheduled reminders:', error)
+        return { processed: 0, sent: 0, failed: 0, skipped: 0 }
       }
 
       // Process each reminder
       for (const scheduledReminder of scheduledReminders || []) {
-        processed++;
+        processed++
 
         try {
           // Check if appointment is still valid for reminders
-          const appointment = scheduledReminder.appointments;
+          const appointment = scheduledReminder.appointments
 
           if (
             !appointment
@@ -167,9 +167,9 @@ export class ReminderScheduler {
             await this.updateScheduledReminder(scheduledReminder.id, {
               status: 'cancelled',
               updated_at: new Date().toISOString(),
-            });
-            skipped++;
-            continue;
+            })
+            skipped++
+            continue
           }
 
           // Check if reminder schedule is still active
@@ -177,9 +177,9 @@ export class ReminderScheduler {
             await this.updateScheduledReminder(scheduledReminder.id, {
               status: 'cancelled',
               updated_at: new Date().toISOString(),
-            });
-            skipped++;
-            continue;
+            })
+            skipped++
+            continue
           }
 
           // Build reminder object
@@ -198,10 +198,10 @@ export class ReminderScheduler {
             language: scheduledReminder.reminder_schedules.language,
             consentGiven: true,
             preferredChannel: appointment.patients.preferred_contact_method || 'whatsapp',
-          };
+          }
 
           // Send reminder
-          const result = await whatsappReminderService.sendAppointmentReminder(reminder);
+          const result = await whatsappReminderService.sendAppointmentReminder(reminder)
 
           if (result.success) {
             // Update scheduled reminder as sent
@@ -213,18 +213,18 @@ export class ReminderScheduler {
               channel_used: result.deliveryStatus.channel,
               fallback_used: result.fallbackUsed,
               updated_at: new Date().toISOString(),
-            });
-            sent++;
+            })
+            sent++
           } else {
             // Handle failure - retry logic
-            const newAttempts = scheduledReminder.attempts + 1;
-            const maxAttempts = 3;
+            const newAttempts = scheduledReminder.attempts + 1
+            const maxAttempts = 3
 
             if (newAttempts < maxAttempts) {
               // Schedule retry in 1 hour
               const nextAttempt = new Date(
                 Date.now() + 60 * 60 * 1000,
-              ).toISOString();
+              ).toISOString()
 
               await this.updateScheduledReminder(scheduledReminder.id, {
                 status: 'pending',
@@ -233,7 +233,7 @@ export class ReminderScheduler {
                 attempts: newAttempts,
                 error_message: result.deliveryStatus.errorMessage,
                 updated_at: new Date().toISOString(),
-              });
+              })
             } else {
               // Max attempts reached, mark as failed
               await this.updateScheduledReminder(scheduledReminder.id, {
@@ -242,15 +242,15 @@ export class ReminderScheduler {
                 attempts: newAttempts,
                 error_message: result.deliveryStatus.errorMessage,
                 updated_at: new Date().toISOString(),
-              });
-              failed++;
+              })
+              failed++
             }
           }
         } catch (reminderError) {
           console.error(
             `Error processing reminder ${scheduledReminder.id}:`,
             reminderError,
-          );
+          )
 
           // Update with error
           await this.updateScheduledReminder(scheduledReminder.id, {
@@ -261,23 +261,23 @@ export class ReminderScheduler {
               ? reminderError.message
               : 'Unknown error',
             updated_at: new Date().toISOString(),
-          });
-          failed++;
+          })
+          failed++
         }
 
         // Small delay between reminders to avoid rate limits
-        await new Promise(resolve => setTimeout(resolve, 200));
+        await new Promise((resolve) => setTimeout(resolve, 200))
       }
 
-      const processingTime = Date.now() - startTime;
+      const processingTime = Date.now() - startTime
       console.log(
         `Reminder processing completed: ${processed} processed, ${sent} sent, ${failed} failed, ${skipped} skipped (${processingTime}ms)`,
-      );
+      )
 
-      return { processed, sent, failed, skipped };
+      return { processed, sent, failed, skipped }
     } catch {
-      console.error('Error in processScheduledReminders:', error);
-      return { processed, sent, failed, skipped };
+      console.error('Error in processScheduledReminders:', error)
+      return { processed, sent, failed, skipped }
     }
   }
 
@@ -285,8 +285,8 @@ export class ReminderScheduler {
    * Schedule reminders for new appointment
    */
   async scheduleRemindersForAppointment(appointmentId: string): Promise<{
-    scheduled: number;
-    reminders: ScheduledReminder[];
+    scheduled: number
+    reminders: ScheduledReminder[]
   }> {
     try {
       // Get appointment details
@@ -302,10 +302,10 @@ export class ReminderScheduler {
         `,
         )
         .eq('id', appointmentId)
-        .single();
+        .single()
 
       if (appointmentError || !appointment) {
-        throw new Error(`Appointment not found: ${appointmentId}`);
+        throw new Error(`Appointment not found: ${appointmentId}`)
       }
 
       // Skip if appointment is not suitable for reminders
@@ -313,7 +313,7 @@ export class ReminderScheduler {
         appointment.status === 'cancelled'
         || appointment.status === 'completed'
       ) {
-        return { scheduled: 0, reminders: [] };
+        return { scheduled: 0, reminders: [] }
       }
 
       // Get active reminder schedules for the clinic
@@ -321,26 +321,26 @@ export class ReminderScheduler {
         .from('reminder_schedules')
         .select('*')
         .eq('clinic_id', appointment.clinic_id)
-        .eq('is_active', true);
+        .eq('is_active', true)
 
       if (schedulesError || !schedules || schedules.length === 0) {
         console.log(
           `No active reminder schedules found for clinic ${appointment.clinic_id}`,
-        );
-        return { scheduled: 0, reminders: [] };
+        )
+        return { scheduled: 0, reminders: [] }
       }
 
       const appointmentDateTime = new Date(
         `${appointment.appointment_date} ${appointment.appointment_time}`,
-      );
-      const scheduledReminders: ScheduledReminder[] = [];
+      )
+      const scheduledReminders: ScheduledReminder[] = []
 
       // Create scheduled reminders for each active schedule
       for (const schedule of schedules) {
         const reminderTime = new Date(
           appointmentDateTime.getTime()
             - schedule.hours_before_appointment * 60 * 60 * 1000,
-        );
+        )
 
         // Only schedule if reminder time is in the future
         if (reminderTime > new Date()) {
@@ -352,33 +352,33 @@ export class ReminderScheduler {
             status: 'pending',
             attempts: 0,
             created_at: new Date().toISOString(),
-          };
+          }
 
           const { data: inserted, error: insertError } = await this.supabase
             .from('scheduled_reminders')
             .insert(scheduledReminder)
             .select()
-            .single();
+            .single()
 
           if (insertError) {
-            console.error('Error inserting scheduled reminder:', insertError);
+            console.error('Error inserting scheduled reminder:', insertError)
           } else {
-            scheduledReminders.push(inserted);
+            scheduledReminders.push(inserted)
           }
         }
       }
 
       console.log(
         `Scheduled ${scheduledReminders.length} reminders for appointment ${appointmentId}`,
-      );
+      )
 
       return {
         scheduled: scheduledReminders.length,
         reminders: scheduledReminders,
-      };
+      }
     } catch {
-      console.error('Error scheduling reminders for appointment:', error);
-      throw error;
+      console.error('Error scheduling reminders for appointment:', error)
+      throw error
     }
   }
 
@@ -395,21 +395,21 @@ export class ReminderScheduler {
         })
         .eq('appointment_id', appointmentId)
         .eq('status', 'pending')
-        .select();
+        .select()
 
       if (error) {
-        throw error;
+        throw error
       }
 
-      const cancelledCount = data?.length || 0;
+      const cancelledCount = data?.length || 0
       console.log(
         `Cancelled ${cancelledCount} scheduled reminders for appointment ${appointmentId}`,
-      );
+      )
 
-      return cancelledCount;
+      return cancelledCount
     } catch {
-      console.error('Error cancelling scheduled reminders:', error);
-      throw error;
+      console.error('Error cancelling scheduled reminders:', error)
+      throw error
     }
   }
 
@@ -422,16 +422,16 @@ export class ReminderScheduler {
         .from('reminder_schedules')
         .select('*')
         .eq('clinic_id', clinicId)
-        .order('hours_before_appointment', { ascending: true });
+        .order('hours_before_appointment', { ascending: true })
 
       if (error) {
-        throw error;
+        throw error
       }
 
-      return data || [];
+      return data || []
     } catch {
-      console.error('Error getting reminder schedules:', error);
-      throw error;
+      console.error('Error getting reminder schedules:', error)
+      throw error
     }
   }
 
@@ -440,9 +440,9 @@ export class ReminderScheduler {
    */
   async upsertReminderSchedule(
     schedule: Partial<ReminderSchedule> & {
-      clinicId: string;
-      reminderType: string;
-      hoursBeforeAppointment: number;
+      clinicId: string
+      reminderType: string
+      hoursBeforeAppointment: number
     },
   ): Promise<ReminderSchedule> {
     try {
@@ -454,7 +454,7 @@ export class ReminderScheduler {
         channels: schedule.channels || ['whatsapp'],
         language: schedule.language || 'pt-BR',
         updated_at: new Date().toISOString(),
-      };
+      }
 
       const { data, error } = await this.supabase
         .from('reminder_schedules')
@@ -462,16 +462,16 @@ export class ReminderScheduler {
           onConflict: 'clinic_id,reminder_type',
         })
         .select()
-        .single();
+        .single()
 
       if (error) {
-        throw error;
+        throw error
       }
 
-      return data;
+      return data
     } catch {
-      console.error('Error upserting reminder schedule:', error);
-      throw error;
+      console.error('Error upserting reminder schedule:', error)
+      throw error
     }
   }
 
@@ -486,13 +486,13 @@ export class ReminderScheduler {
       const { error } = await this.supabase
         .from('scheduled_reminders')
         .update(updates)
-        .eq('id', id);
+        .eq('id', id)
 
       if (error) {
-        console.error('Error updating scheduled reminder:', error);
+        console.error('Error updating scheduled reminder:', error)
       }
     } catch {
-      console.error('Error updating scheduled reminder:', error);
+      console.error('Error updating scheduled reminder:', error)
     }
   }
 
@@ -503,43 +503,43 @@ export class ReminderScheduler {
     clinicId?: string,
     days = 7,
   ): Promise<{
-    totalScheduled: number;
-    sent: number;
-    failed: number;
-    pending: number;
-    cancelled: number;
-    successRate: number;
-    averageProcessingTime: number;
+    totalScheduled: number
+    sent: number
+    failed: number
+    pending: number
+    cancelled: number
+    successRate: number
+    averageProcessingTime: number
   }> {
     try {
       const since = new Date(
         Date.now() - days * 24 * 60 * 60 * 1000,
-      ).toISOString();
+      ).toISOString()
 
       let query = this.supabase
         .from('scheduled_reminders')
         .select('status, processing_time_ms')
-        .gte('created_at', since);
+        .gte('created_at', since)
 
       if (clinicId) {
-        query = query.eq('clinic_id', clinicId);
+        query = query.eq('clinic_id', clinicId)
       }
 
-      const { data, error } = await query;
+      const { data, error } = await query
 
       if (error) {
-        throw error;
+        throw error
       }
 
       const stats = data.reduce(
         (acc, _reminder) => {
-          acc.total++;
-          acc[reminder.status] = (acc[reminder.status] || 0) + 1;
+          acc.total++
+          acc[reminder.status] = (acc[reminder.status] || 0) + 1
           if (reminder.processing_time_ms) {
-            acc.totalProcessingTime += reminder.processing_time_ms;
-            acc.processedCount++;
+            acc.totalProcessingTime += reminder.processing_time_ms
+            acc.processedCount++
           }
-          return acc;
+          return acc
         },
         {
           total: 0,
@@ -550,12 +550,12 @@ export class ReminderScheduler {
           totalProcessingTime: 0,
           processedCount: 0,
         },
-      );
+      )
 
-      const successRate = stats.total > 0 ? (stats.sent / stats.total) * 100 : 0;
+      const successRate = stats.total > 0 ? (stats.sent / stats.total) * 100 : 0
       const averageProcessingTime = stats.processedCount > 0
         ? stats.totalProcessingTime / stats.processedCount
-        : 0;
+        : 0
 
       return {
         totalScheduled: stats.total,
@@ -565,21 +565,21 @@ export class ReminderScheduler {
         cancelled: stats.cancelled,
         successRate: Math.round(successRate * 100) / 100,
         averageProcessingTime: Math.round(averageProcessingTime),
-      };
+      }
     } catch {
-      console.error('Error getting scheduler statistics:', error);
-      throw error;
+      console.error('Error getting scheduler statistics:', error)
+      throw error
     }
   }
 }
 
 // Export singleton instance
-export const reminderScheduler = new ReminderScheduler();
+export const reminderScheduler = new ReminderScheduler()
 
 // Auto-start scheduler in production
 if (
   process.env.NODE_ENV === 'production'
   && process.env.AUTO_START_SCHEDULER === 'true'
 ) {
-  reminderScheduler.startScheduler(5); // Check every 5 minutes
+  reminderScheduler.startScheduler(5) // Check every 5 minutes
 }

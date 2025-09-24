@@ -3,113 +3,111 @@
  * Main entry point for all performance optimization features
  */
 
-export { AestheticClinicPerformanceOptimizer } from './aesthetic-clinic-performance-optimizer';
-export { SecurityComplianceValidator } from './security-compliance-validator';
-export { WebSocketOptimizer } from './websocket-optimizer';
+export { AestheticClinicPerformanceOptimizer } from './aesthetic-clinic-performance-optimizer'
+export { SecurityComplianceValidator } from './security-compliance-validator'
+export { WebSocketOptimizer } from './websocket-optimizer'
 
 export type {
   AestheticCacheConfig,
   AestheticPerformanceMetrics,
   ImageOptimizationConfig,
   QueryOptimizationConfig,
-} from './aesthetic-clinic-performance-optimizer';
+} from './aesthetic-clinic-performance-optimizer'
 
-export type { WebSocketConfig, WebSocketConnection, WebSocketMetrics } from './websocket-optimizer';
+export type { WebSocketConfig, WebSocketConnection, WebSocketMetrics } from './websocket-optimizer'
 
 export type {
   ComplianceFramework,
   SecurityRecommendation,
   SecurityValidationResult,
   SecurityViolation,
-} from './security-compliance-validator';
+} from './security-compliance-validator'
 
 // Factory functions
-export {
-  createAestheticClinicPerformanceOptimizer,
-} from './aesthetic-clinic-performance-optimizer';
+export { createAestheticClinicPerformanceOptimizer } from './aesthetic-clinic-performance-optimizer'
 
-export { createWebSocketOptimizer } from './websocket-optimizer';
+export { createWebSocketOptimizer } from './websocket-optimizer'
 
-export { createSecurityComplianceValidator } from './security-compliance-validator';
+export { createSecurityComplianceValidator } from './security-compliance-validator'
 
 // Performance monitoring middleware
-export { PerformanceMonitor } from '../../middleware/performance-middleware';
+export { PerformanceMonitor } from '../../middleware/performance-middleware'
 
 // Performance dashboard routes
-export { createPerformanceDashboardRoutes } from '../../routes/performance-dashboard';
+export { createPerformanceDashboardRoutes } from '../../routes/performance-dashboard'
 
 /**
  * Initialize complete performance optimization stack
  */
 export async function initializePerformanceOptimization(config: {
-  supabase: any;
+  supabase: any
   websocket?: {
-    server: any;
-    config?: Partial<any>;
-  };
+    server: any
+    config?: Partial<any>
+  }
   monitoring?: {
-    thresholds?: Partial<any>;
-    enableRealtimeMonitoring?: boolean;
-  };
+    thresholds?: Partial<any>
+    enableRealtimeMonitoring?: boolean
+  }
   security?: {
-    enableComplianceValidation?: boolean;
-    validationInterval?: number;
-  };
+    enableComplianceValidation?: boolean
+    validationInterval?: number
+  }
 }) {
-  const { supabase, websocket, monitoring, security } = config;
+  const { supabase, websocket, monitoring, security } = config
 
   // Initialize core performance optimizer
-  const optimizer = new AestheticClinicPerformanceOptimizer(supabase);
+  const optimizer = new AestheticClinicPerformanceOptimizer(supabase)
 
   // Initialize WebSocket optimizer if configured
-  let websocketOptimizer: WebSocketOptimizer | undefined;
+  let websocketOptimizer: WebSocketOptimizer | undefined
   if (websocket?.server) {
-    const { createWebSocketOptimizer } = await import('./websocket-optimizer');
-    websocketOptimizer = createWebSocketOptimizer(optimizer, websocket.config);
-    websocketOptimizer.initializeServer(websocket.server);
+    const { createWebSocketOptimizer } = await import('./websocket-optimizer')
+    websocketOptimizer = createWebSocketOptimizer(optimizer, websocket.config)
+    websocketOptimizer.initializeServer(websocket.server)
   }
 
   // Initialize performance monitoring if enabled
-  let performanceMonitor: any;
+  let performanceMonitor: any
   if (monitoring?.enableRealtimeMonitoring !== false) {
-    const { PerformanceMonitor } = await import('../../middleware/performance-middleware');
-    performanceMonitor = new PerformanceMonitor(optimizer, monitoring?.thresholds);
+    const { PerformanceMonitor } = await import('../../middleware/performance-middleware')
+    performanceMonitor = new PerformanceMonitor(optimizer, monitoring?.thresholds)
   }
 
   // Initialize security compliance validator if enabled
-  let securityValidator: SecurityComplianceValidator | undefined;
+  let securityValidator: SecurityComplianceValidator | undefined
   if (security?.enableComplianceValidation !== false) {
-    const { createSecurityComplianceValidator } = await import('./security-compliance-validator');
-    securityValidator = createSecurityComplianceValidator(optimizer, websocketOptimizer);
+    const { createSecurityComplianceValidator } = await import('./security-compliance-validator')
+    securityValidator = createSecurityComplianceValidator(optimizer, websocketOptimizer)
   }
 
   // Start periodic security validation if configured
   if (securityValidator && security?.validationInterval) {
     setInterval(async () => {
       try {
-        const validationResult = await securityValidator.validateOptimizations();
+        const validationResult = await securityValidator.validateOptimizations()
 
         // Log validation results
         if (validationResult.violations.length > 0) {
           console.warn(
             '[Security] Performance optimization validation found violations:',
-            validationResult.violations.map(v => `${v.type}: ${v.description}`),
-          );
+            validationResult.violations.map((v) => `${v.type}: ${v.description}`),
+          )
         }
 
         if (validationResult.complianceScore < 80) {
-          console.error(`[Security] Low compliance score: ${validationResult.complianceScore}%`);
+          console.error(`[Security] Low compliance score: ${validationResult.complianceScore}%`)
         }
       } catch {
-        console.error('[Security] Compliance validation failed:', error);
+        console.error('[Security] Compliance validation failed:', error)
       }
-    }, security.validationInterval);
+    }, security.validationInterval)
   }
 
   // Warm up cache on startup
-  await optimizer.warmUpCache();
+  await optimizer.warmUpCache()
 
-  console.log('[Performance] Optimization stack initialized successfully');
+  console.log('[Performance] Optimization stack initialized successfully')
 
   return {
     optimizer,
@@ -129,10 +127,10 @@ export async function initializePerformanceOptimization(config: {
 
     // Destroy method for cleanup
     destroy: () => {
-      websocketOptimizer?.destroy();
-      optimizer.clearCache();
+      websocketOptimizer?.destroy()
+      optimizer.clearCache()
     },
-  };
+  }
 }
 
 /**
@@ -282,7 +280,7 @@ export const PERFORMANCE_PRESETS = {
       validationInterval: 300000, // 5 minutes
     },
   },
-};
+}
 
 /**
  * Performance optimization utilities
@@ -317,7 +315,7 @@ export const PerformanceUtils = {
         averageLatency: `${metrics.websocketMetrics.averageLatency?.toFixed(2) || 0}ms`,
         messagesPerSecond: `${metrics.websocketMetrics.messagesPerSecond?.toFixed(1) || 0}/s`,
       },
-    };
+    }
   },
 
   /**
@@ -330,95 +328,95 @@ export const PerformanceUtils = {
       errorRate: 0.2,
       throughput: 0.15,
       memoryUsage: 0.15,
-    };
+    }
 
-    let score = 100;
+    let score = 100
 
     // Response time impact (lower is better)
-    const avgResponseTime = metrics.queryMetrics?.averageQueryTime || 0;
-    if (avgResponseTime > 1000) score -= 30;
-    else if (avgResponseTime > 500) score -= 15;
-    else if (avgResponseTime > 200) score -= 5;
+    const avgResponseTime = metrics.queryMetrics?.averageQueryTime || 0
+    if (avgResponseTime > 1000) score -= 30
+    else if (avgResponseTime > 500) score -= 15
+    else if (avgResponseTime > 200) score -= 5
 
     // Cache hit rate impact (higher is better)
-    const cacheHitRate = metrics.queryMetrics?.cacheHitRate || 0;
-    if (cacheHitRate < 0.5) score -= 20;
-    else if (cacheHitRate < 0.7) score -= 10;
-    else if (cacheHitRate < 0.9) score -= 5;
+    const cacheHitRate = metrics.queryMetrics?.cacheHitRate || 0
+    if (cacheHitRate < 0.5) score -= 20
+    else if (cacheHitRate < 0.7) score -= 10
+    else if (cacheHitRate < 0.9) score -= 5
 
     // Error rate impact (lower is better)
-    const errorRate = metrics.queryMetrics?.errorRate || 0;
-    if (errorRate > 5) score -= 25;
-    else if (errorRate > 2) score -= 15;
-    else if (errorRate > 1) score -= 5;
+    const errorRate = metrics.queryMetrics?.errorRate || 0
+    if (errorRate > 5) score -= 25
+    else if (errorRate > 2) score -= 15
+    else if (errorRate > 1) score -= 5
 
     // Memory usage impact (lower is better)
-    const memoryUsage = metrics.memoryUsage || 0;
-    if (memoryUsage > 1024 * 1024 * 1024) score -= 15; // 1GB
-    else if (memoryUsage > 512 * 1024 * 1024) score -= 10; // 512MB
-    else if (memoryUsage > 256 * 1024 * 1024) score -= 5; // 256MB
+    const memoryUsage = metrics.memoryUsage || 0
+    if (memoryUsage > 1024 * 1024 * 1024) score -= 15 // 1GB
+    else if (memoryUsage > 512 * 1024 * 1024) score -= 10 // 512MB
+    else if (memoryUsage > 256 * 1024 * 1024) score -= 5 // 256MB
 
-    return Math.max(0, Math.min(100, score));
+    return Math.max(0, Math.min(100, score))
   },
 
   /**
    * Generate performance recommendations
    */
   generateRecommendations(metrics: any): Array<{
-    type: 'warning' | 'critical';
-    category: string;
-    message: string;
-    action: string;
+    type: 'warning' | 'critical'
+    category: string
+    message: string
+    action: string
   }> {
-    const recommendations = [];
+    const recommendations = []
 
     // Response time recommendations
-    const avgResponseTime = metrics.queryMetrics?.averageQueryTime || 0;
+    const avgResponseTime = metrics.queryMetrics?.averageQueryTime || 0
     if (avgResponseTime > 1000) {
       recommendations.push({
         type: 'critical',
         category: 'response_time',
         message: `High average response time: ${avgResponseTime.toFixed(0)}ms`,
         action: 'Optimize database queries and implement caching strategies',
-      });
+      })
     }
 
     // Cache hit rate recommendations
-    const cacheHitRate = metrics.queryMetrics?.cacheHitRate || 0;
+    const cacheHitRate = metrics.queryMetrics?.cacheHitRate || 0
     if (cacheHitRate < 0.5) {
       recommendations.push({
         type: 'warning',
         category: 'caching',
         message: `Low cache hit rate: ${(cacheHitRate * 100).toFixed(1)}%`,
         action: 'Review caching strategy and increase cache TTL for frequently accessed data',
-      });
+      })
     }
 
     // Error rate recommendations
-    const errorRate = metrics.queryMetrics?.errorRate || 0;
+    const errorRate = metrics.queryMetrics?.errorRate || 0
     if (errorRate > 2) {
       recommendations.push({
         type: 'warning',
         category: 'reliability',
         message: `High error rate: ${errorRate.toFixed(1)}%`,
         action: 'Review error logs and implement better error handling',
-      });
+      })
     }
 
     // Memory usage recommendations
-    const memoryUsage = metrics.memoryUsage || 0;
+    const memoryUsage = metrics.memoryUsage || 0
     if (memoryUsage > 512 * 1024 * 1024) {
       recommendations.push({
         type: 'warning',
         category: 'memory',
         message: `High memory usage: ${(memoryUsage / 1024 / 1024).toFixed(0)}MB`,
         action: 'Implement memory optimization and garbage collection strategies',
-      });
+      })
     }
 
-    return recommendations;
+    return recommendations
   },
-};
+}
 
 /**
  * Performance monitoring utilities
@@ -428,27 +426,27 @@ export const MonitoringUtils = {
    * Create performance monitoring middleware chain
    */
   createMiddlewareChain(optimizer: any, monitor: any) {
-    const middlewares = [];
+    const middlewares = []
 
     // Add performance monitoring middleware
-    middlewares.push(monitor.middleware());
+    middlewares.push(monitor.middleware())
 
     // Add database query tracking
-    middlewares.push(monitor.databaseQueryMiddleware());
+    middlewares.push(monitor.databaseQueryMiddleware())
 
     // Add compression middleware
-    middlewares.push(monitor.compressionMiddleware());
+    middlewares.push(monitor.compressionMiddleware())
 
     // Add cache middleware
-    middlewares.push(monitor.cacheMiddleware());
+    middlewares.push(monitor.cacheMiddleware())
 
     // Add rate limiting
-    middlewares.push(monitor.rateLimitMiddleware());
+    middlewares.push(monitor.rateLimitMiddleware())
 
     // Add optimization headers
-    middlewares.push(monitor.optimizationHeadersMiddleware());
+    middlewares.push(monitor.optimizationHeadersMiddleware())
 
-    return middlewares;
+    return middlewares
   },
 
   /**
@@ -457,41 +455,41 @@ export const MonitoringUtils = {
   setupEventListeners(optimizer: any, monitor: any, websocketOptimizer?: any) {
     // Performance threshold alerts
     setInterval(() => {
-      const stats = monitor.getStatistics();
+      const stats = monitor.getStatistics()
 
       if (stats.averageResponseTime > 2000) {
         console.warn(
           `[Performance] High average response time: ${stats.averageResponseTime.toFixed(0)}ms`,
-        );
+        )
       }
 
       if (stats.errorRate > 5) {
-        console.warn(`[Performance] High error rate: ${stats.errorRate.toFixed(1)}%`);
+        console.warn(`[Performance] High error rate: ${stats.errorRate.toFixed(1)}%`)
       }
 
       if (stats.memoryUsage.peak > 512 * 1024 * 1024) {
         console.warn(
           `[Performance] High memory usage: ${(stats.memoryUsage.peak / 1024 / 1024).toFixed(0)}MB`,
-        );
+        )
       }
-    }, 60000); // Every minute
+    }, 60000) // Every minute
 
     // WebSocket performance monitoring
     if (websocketOptimizer) {
       setInterval(() => {
-        const wsMetrics = websocketOptimizer.getMetrics();
+        const wsMetrics = websocketOptimizer.getMetrics()
 
         if (wsMetrics.averageLatency > 1000) {
-          console.warn(`[WebSocket] High latency: ${wsMetrics.averageLatency.toFixed(0)}ms`);
+          console.warn(`[WebSocket] High latency: ${wsMetrics.averageLatency.toFixed(0)}ms`)
         }
 
         if (wsMetrics.errors.connectionErrors > 0) {
-          console.warn(`[WebSocket] Connection errors: ${wsMetrics.errors.connectionErrors}`);
+          console.warn(`[WebSocket] Connection errors: ${wsMetrics.errors.connectionErrors}`)
         }
-      }, 30000); // Every 30 seconds
+      }, 30000) // Every 30 seconds
     }
   },
-};
+}
 
 // Default export
 export default {
@@ -502,4 +500,4 @@ export default {
   PERFORMANCE_PRESETS,
   PerformanceUtils,
   MonitoringUtils,
-};
+}

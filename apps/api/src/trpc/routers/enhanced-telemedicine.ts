@@ -5,9 +5,9 @@
  * with CFM compliance and LGPD data protection
  */
 
-import { z } from 'zod';
-import { EnhancedTelemedicineService } from '../../services/enhanced-telemedicine-service';
-import { protectedProcedure, publicProcedure, router } from '../trpc';
+import { z } from 'zod'
+import { EnhancedTelemedicineService } from '../../services/enhanced-telemedicine-service'
+import { protectedProcedure, publicProcedure, router } from '../trpc'
 
 // Input schemas
 const CreateSessionInput = z.object({
@@ -19,11 +19,11 @@ const CreateSessionInput = z.object({
   reason: z.string().min(10),
   priority: z.enum(['ROUTINE', 'URGENT', 'EMERGENCY']).default('ROUTINE'),
   notes: z.string().optional(),
-});
+})
 
 const UpdateSessionInput = CreateSessionInput.partial().extend({
   sessionId: z.string().uuid(),
-});
+})
 
 const SessionQueryInput = z.object({
   patientId: z.string().uuid().optional(),
@@ -33,7 +33,7 @@ const SessionQueryInput = z.object({
   endDate: z.date().optional(),
   limit: z.number().min(1).max(100).default(20),
   offset: z.number().min(0).default(0),
-});
+})
 
 const SendMessageInput = z.object({
   sessionId: z.string().uuid(),
@@ -41,7 +41,7 @@ const SendMessageInput = z.object({
   messageType: z.enum(['TEXT', 'IMAGE', 'DOCUMENT', 'PRESCRIPTION']).default('TEXT'),
   attachmentUrl: z.string().url().optional(),
   attachmentName: z.string().optional(),
-});
+})
 
 const CreatePrescriptionInput = z.object({
   sessionId: z.string().uuid(),
@@ -58,7 +58,7 @@ const CreatePrescriptionInput = z.object({
   diagnosis: z.string(),
   notes: z.string().optional(),
   validUntil: z.date(),
-});
+})
 
 const SessionFeedbackInput = z.object({
   sessionId: z.string().uuid(),
@@ -69,60 +69,60 @@ const SessionFeedbackInput = z.object({
   audioQuality: z.number().min(1).max(5),
   videoQuality: z.number().min(1).max(5),
   wouldRecommend: z.boolean(),
-});
+})
 
 const UpdateSessionStatusInput = z.object({
   sessionId: z.string().uuid(),
   status: z.enum(['SCHEDULED', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED', 'NO_SHOW']),
   cancellationReason: z.string().optional(),
   notes: z.string().optional(),
-});
+})
 
 // Initialize service
-const telemedicineService = new EnhancedTelemedicineService();
+const telemedicineService = new EnhancedTelemedicineService()
 
 export const enhancedTelemedicineRouter = router({
   // Create new telemedicine session
   createSession: protectedProcedure
     .input(CreateSessionInput)
     .mutation(async ({ input }) => {
-      return await telemedicineService.createSession(input);
+      return await telemedicineService.createSession(input)
     }),
 
   // Get session by ID
   getSessionById: protectedProcedure
     .input(z.object({ sessionId: z.string().uuid() }))
     .query(async ({ input }) => {
-      return await telemedicineService.getSessionById(input.sessionId);
+      return await telemedicineService.getSessionById(input.sessionId)
     }),
 
   // Update session
   updateSession: protectedProcedure
     .input(UpdateSessionInput)
     .mutation(async ({ input }) => {
-      const { sessionId, ...data } = input;
-      return await telemedicineService.updateSession(sessionId, data);
+      const { sessionId, ...data } = input
+      return await telemedicineService.updateSession(sessionId, data)
     }),
 
   // List sessions with filtering
   listSessions: protectedProcedure
     .input(SessionQueryInput)
     .query(async ({ input }) => {
-      return await telemedicineService.listSessions(input);
+      return await telemedicineService.listSessions(input)
     }),
 
   // Update session status
   updateSessionStatus: protectedProcedure
     .input(UpdateSessionStatusInput)
     .mutation(async ({ input }) => {
-      return await telemedicineService.updateSessionStatus(input);
+      return await telemedicineService.updateSessionStatus(input)
     }),
 
   // Send message in session
   sendMessage: protectedProcedure
     .input(SendMessageInput)
     .mutation(async ({ input }) => {
-      return await telemedicineService.sendMessage(input);
+      return await telemedicineService.sendMessage(input)
     }),
 
   // Get session messages
@@ -137,28 +137,28 @@ export const enhancedTelemedicineRouter = router({
         input.sessionId,
         input.limit,
         input.offset,
-      );
+      )
     }),
 
   // Create prescription from session
   createPrescription: protectedProcedure
     .input(CreatePrescriptionInput)
     .mutation(async ({ input }) => {
-      return await telemedicineService.createPrescription(input);
+      return await telemedicineService.createPrescription(input)
     }),
 
   // Get session prescriptions
   getSessionPrescriptions: protectedProcedure
     .input(z.object({ sessionId: z.string().uuid() }))
     .query(async ({ input }) => {
-      return await telemedicineService.getSessionPrescriptions(input.sessionId);
+      return await telemedicineService.getSessionPrescriptions(input.sessionId)
     }),
 
   // Submit session feedback
   submitFeedback: protectedProcedure
     .input(SessionFeedbackInput)
     .mutation(async ({ input }) => {
-      return await telemedicineService.submitFeedback(input);
+      return await telemedicineService.submitFeedback(input)
     }),
 
   // Get patient's telemedicine history
@@ -168,14 +168,14 @@ export const enhancedTelemedicineRouter = router({
       limit: z.number().min(1).max(50).default(20),
     }))
     .query(async ({ input }) => {
-      return await telemedicineService.getPatientHistory(input.patientId, input.limit);
+      return await telemedicineService.getPatientHistory(input.patientId, input.limit)
     }),
 
   // Get professional's telemedicine statistics
   getProfessionalStats: protectedProcedure
     .input(z.object({ professionalId: z.string().uuid() }))
     .query(async ({ input }) => {
-      return await telemedicineService.getProfessionalStats(input.professionalId);
+      return await telemedicineService.getProfessionalStats(input.professionalId)
     }),
 
   // Get upcoming sessions for professional
@@ -185,7 +185,7 @@ export const enhancedTelemedicineRouter = router({
       daysAhead: z.number().min(1).max(30).default(7),
     }))
     .query(async ({ input }) => {
-      return await telemedicineService.getUpcomingSessions(input.professionalId, input.daysAhead);
+      return await telemedicineService.getUpcomingSessions(input.professionalId, input.daysAhead)
     }),
 
   // Check session eligibility (compliance checks)
@@ -196,14 +196,14 @@ export const enhancedTelemedicineRouter = router({
       sessionType: z.enum(['CONSULTATION', 'FOLLOW_UP', 'PROCEDURE_REVIEW', 'TREATMENT_PLANNING']),
     }))
     .query(async ({ input }) => {
-      return await telemedicineService.checkSessionEligibility(input);
+      return await telemedicineService.checkSessionEligibility(input)
     }),
 
   // Generate session report (compliance and clinical)
   generateSessionReport: protectedProcedure
     .input(z.object({ sessionId: z.string().uuid() }))
     .query(async ({ input }) => {
-      return await telemedicineService.generateSessionReport(input.sessionId);
+      return await telemedicineService.generateSessionReport(input.sessionId)
     }),
 
   // Cancel session with refund calculation
@@ -218,6 +218,6 @@ export const enhancedTelemedicineRouter = router({
         input.sessionId,
         input.reason,
         input.initiateRefund,
-      );
+      )
     }),
-});
+})

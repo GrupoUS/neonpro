@@ -1,44 +1,44 @@
-import * as opentelemetry from '@opentelemetry/api';
-import { JaegerExporter } from '@opentelemetry/exporter-jaeger';
-import { PrometheusExporter } from '@opentelemetry/exporter-prometheus';
-import { ExpressInstrumentation } from '@opentelemetry/instrumentation-express';
-import { HttpInstrumentation } from '@opentelemetry/instrumentation-http';
-import { Resource } from '@opentelemetry/resources';
-import { PeriodicExportingMetricReader } from '@opentelemetry/sdk-metrics';
-import { NodeSDK } from '@opentelemetry/sdk-node';
+import * as opentelemetry from '@opentelemetry/api'
+import { JaegerExporter } from '@opentelemetry/exporter-jaeger'
+import { PrometheusExporter } from '@opentelemetry/exporter-prometheus'
+import { ExpressInstrumentation } from '@opentelemetry/instrumentation-express'
+import { HttpInstrumentation } from '@opentelemetry/instrumentation-http'
+import { Resource } from '@opentelemetry/resources'
+import { PeriodicExportingMetricReader } from '@opentelemetry/sdk-metrics'
+import { NodeSDK } from '@opentelemetry/sdk-node'
 import {
   BatchSpanProcessor,
   ConsoleSpanExporter,
   SimpleSpanProcessor,
-} from '@opentelemetry/sdk-trace-base';
+} from '@opentelemetry/sdk-trace-base'
 import {
   AlwaysOffSampler,
   AlwaysOnSampler,
   ParentBasedSampler,
   TraceIdRatioBasedSampler,
-} from '@opentelemetry/sdk-trace-base';
-import { SemanticResourceAttributes } from '@opentelemetry/semantic-conventions';
-import { auditLogger } from '../logging/healthcare-logger';
-import { logHealthcareError } from '../logging/healthcare-logger';
+} from '@opentelemetry/sdk-trace-base'
+import { SemanticResourceAttributes } from '@opentelemetry/semantic-conventions'
+import { auditLogger } from '../logging/healthcare-logger'
+import { logHealthcareError } from '../logging/healthcare-logger'
 
-const telemetryLogger = auditLogger.child({ component: 'opentelemetry' });
+const telemetryLogger = auditLogger.child({ component: 'opentelemetry' })
 
 // Healthcare-specific telemetry configuration
 export interface HealthcareTelemetryConfig {
-  serviceName: string;
-  serviceVersion: string;
-  environment: string;
-  enableConsoleExporter?: boolean;
-  enableJaegerExporter?: boolean;
-  enablePrometheusExporter?: boolean;
-  jaegerEndpoint?: string;
-  prometheusPort?: number;
-  samplingRate?: number;
+  serviceName: string
+  serviceVersion: string
+  environment: string
+  enableConsoleExporter?: boolean
+  enableJaegerExporter?: boolean
+  enablePrometheusExporter?: boolean
+  jaegerEndpoint?: string
+  prometheusPort?: number
+  samplingRate?: number
   healthcareContext?: {
-    facilityId?: string;
-    region?: string;
-    complianceLevel?: 'lgpd' | 'hipaa' | 'gdpr';
-  };
+    facilityId?: string
+    region?: string
+    complianceLevel?: 'lgpd' | 'hipaa' | 'gdpr'
+  }
 }
 
 // Healthcare-specific span attributes
@@ -72,9 +72,9 @@ export enum HealthcareOperations {
 }
 
 export class HealthcareTelemetryManager {
-  private sdk: NodeSDK | null = null;
-  private initialized = false;
-  private config: HealthcareTelemetryConfig;
+  private sdk: NodeSDK | null = null
+  private initialized = false
+  private config: HealthcareTelemetryConfig
 
   constructor(config: HealthcareTelemetryConfig) {
     this.config = {
@@ -85,12 +85,12 @@ export class HealthcareTelemetryManager {
       samplingRate: config.samplingRate ?? 1.0,
       prometheusPort: config.prometheusPort ?? 9464,
       jaegerEndpoint: config.jaegerEndpoint ?? 'http://localhost:14268/api/traces',
-    };
+    }
   }
 
   async initialize(): Promise<void> {
     if (this.initialized) {
-      return;
+      return
     }
 
     const resourceAttributes: Record<string, string> = {
@@ -98,50 +98,50 @@ export class HealthcareTelemetryManager {
       [SemanticResourceAttributes.SERVICE_VERSION]: this.config.serviceVersion,
       [SemanticResourceAttributes.DEPLOYMENT_ENVIRONMENT]: this.config.environment,
       'healthcare.platform': 'neonpro',
-    };
+    }
 
     // Add healthcare-specific attributes
     if (this.config.healthcareContext) {
       if (this.config.healthcareContext.facilityId) {
-        resourceAttributes['healthcare.facility.id'] = this.config.healthcareContext.facilityId;
+        resourceAttributes['healthcare.facility.id'] = this.config.healthcareContext.facilityId
       }
       if (this.config.healthcareContext.region) {
-        resourceAttributes['healthcare.region'] = this.config.healthcareContext.region;
+        resourceAttributes['healthcare.region'] = this.config.healthcareContext.region
       }
       if (this.config.healthcareContext.complianceLevel) {
         resourceAttributes['healthcare.compliance.level'] =
-          this.config.healthcareContext.complianceLevel;
+          this.config.healthcareContext.complianceLevel
       }
     }
 
-    const resource = new Resource(resourceAttributes);
+    const resource = new Resource(resourceAttributes)
 
-    const spanProcessors: SimpleSpanProcessor[] = [];
+    const spanProcessors: SimpleSpanProcessor[] = []
 
     // Console exporter for development
     if (this.config.enableConsoleExporter) {
-      const consoleExporter = new ConsoleSpanExporter();
-      spanProcessors.push(new SimpleSpanProcessor(consoleExporter));
+      const consoleExporter = new ConsoleSpanExporter()
+      spanProcessors.push(new SimpleSpanProcessor(consoleExporter))
     }
 
     // Jaeger exporter for distributed tracing
     if (this.config.enableJaegerExporter) {
       const jaegerExporter = new JaegerExporter({
         endpoint: this.config.jaegerEndpoint,
-      });
-      spanProcessors.push(new SimpleSpanProcessor(jaegerExporter));
+      })
+      spanProcessors.push(new SimpleSpanProcessor(jaegerExporter))
     }
 
     // Prometheus exporter for metrics
-    let metricReader: PeriodicExportingMetricReader | undefined;
+    let metricReader: PeriodicExportingMetricReader | undefined
     if (this.config.enablePrometheusExporter) {
       const prometheusExporter = new PrometheusExporter({
         port: this.config.prometheusPort,
-      });
+      })
       metricReader = new PeriodicExportingMetricReader({
         exporter: prometheusExporter as any,
         exportIntervalMillis: 10000,
-      });
+      })
     }
 
     this.sdk = new NodeSDK({
@@ -160,17 +160,17 @@ export class HealthcareTelemetryManager {
         localParentSampled: new AlwaysOnSampler(),
         localParentNotSampled: new AlwaysOffSampler(),
       }),
-    });
+    })
 
     try {
-      await this.sdk.start();
-      this.initialized = true;
+      await this.sdk.start()
+      this.initialized = true
       telemetryLogger.info(`Healthcare telemetry initialized for ${this.config.serviceName}`, {
         component: 'opentelemetry',
         action: 'initialize',
         serviceName: this.config.serviceName,
         timestamp: new Date().toISOString(),
-      });
+      })
     } catch (error) {
       logHealthcareError(
         'opentelemetry',
@@ -181,25 +181,25 @@ export class HealthcareTelemetryManager {
           action: 'initialize_failure',
           serviceName: this.config.serviceName,
         },
-      );
-      throw error;
+      )
+      throw error
     }
   }
 
   async shutdown(): Promise<void> {
     if (this.sdk && this.initialized) {
-      await this.sdk.shutdown();
-      this.initialized = false;
+      await this.sdk.shutdown()
+      this.initialized = false
       telemetryLogger.info('Healthcare telemetry shutdown completed', {
         component: 'opentelemetry',
         action: 'shutdown',
         timestamp: new Date().toISOString(),
-      });
+      })
     }
   }
 
   isInitialized(): boolean {
-    return this.initialized;
+    return this.initialized
   }
 
   // Get tracer for creating spans
@@ -207,7 +207,7 @@ export class HealthcareTelemetryManager {
     return opentelemetry.trace.getTracer(
       this.config.serviceName,
       this.config.serviceVersion,
-    );
+    )
   }
 
   // Healthcare-specific span creation
@@ -216,22 +216,22 @@ export class HealthcareTelemetryManager {
     operation: HealthcareOperations,
     attributes: Record<string, string | number | boolean> = {},
   ): opentelemetry.Span {
-    const tracer = this.getTracer();
-    const span = tracer.startSpan(name);
+    const tracer = this.getTracer()
+    const span = tracer.startSpan(name)
 
     // Set healthcare-specific attributes
-    span.setAttribute('healthcare.operation', operation);
+    span.setAttribute('healthcare.operation', operation)
     span.setAttribute(
       HealthcareSpanAttributes.COMPLIANCE_LEVEL,
       this.config.healthcareContext?.complianceLevel || 'lgpd',
-    );
+    )
 
     // Add custom attributes
     Object.entries(attributes).forEach(([key, _value]) => {
-      span.setAttribute(key, _value);
-    });
+      span.setAttribute(key, _value)
+    })
 
-    return span;
+    return span
   }
 
   // Add healthcare-specific event to span
@@ -240,7 +240,7 @@ export class HealthcareTelemetryManager {
     eventName: string,
     attributes: Record<string, string | number | boolean> = {},
   ): void {
-    span.addEvent(eventName, attributes);
+    span.addEvent(eventName, attributes)
   }
 
   // Record healthcare-specific metrics
@@ -252,13 +252,13 @@ export class HealthcareTelemetryManager {
     const meter = opentelemetry.metrics.getMeter(
       this.config.serviceName,
       this.config.serviceVersion,
-    );
+    )
 
     const counter = meter.createCounter(name, {
       description: `Healthcare metric: ${name}`,
-    });
+    })
 
-    counter.add(value, attributes);
+    counter.add(value, attributes)
   }
 
   // Create a custom healthcare counter
@@ -270,8 +270,8 @@ export class HealthcareTelemetryManager {
     const meter = opentelemetry.metrics.getMeter(
       this.config.serviceName,
       this.config.serviceVersion,
-    );
-    return meter.createCounter(name, { description, unit });
+    )
+    return meter.createCounter(name, { description, unit })
   }
 
   // Create a custom healthcare histogram
@@ -283,8 +283,8 @@ export class HealthcareTelemetryManager {
     const meter = opentelemetry.metrics.getMeter(
       this.config.serviceName,
       this.config.serviceVersion,
-    );
-    return meter.createHistogram(name, { description, unit });
+    )
+    return meter.createHistogram(name, { description, unit })
   }
 }
 
@@ -292,7 +292,7 @@ export class HealthcareTelemetryManager {
 export function createHealthcareTelemetryManager(
   config: HealthcareTelemetryConfig,
 ): HealthcareTelemetryManager {
-  return new HealthcareTelemetryManager(config);
+  return new HealthcareTelemetryManager(config)
 }
 
 // Predefined configurations for different services
@@ -324,10 +324,10 @@ export const TELEMETRY_CONFIGS = {
     enablePrometheusExporter: true,
     samplingRate: 1.0,
   },
-} as const;
+} as const
 
 // Global telemetry manager instance
-let globalTelemetryManager: HealthcareTelemetryManager | null = null;
+let globalTelemetryManager: HealthcareTelemetryManager | null = null
 
 // Initialize global telemetry manager
 export async function initializeGlobalTelemetry(
@@ -335,29 +335,29 @@ export async function initializeGlobalTelemetry(
   customConfig?: Partial<HealthcareTelemetryConfig>,
 ): Promise<HealthcareTelemetryManager> {
   if (globalTelemetryManager) {
-    return globalTelemetryManager;
+    return globalTelemetryManager
   }
 
   const config = {
     ...TELEMETRY_CONFIGS[serviceType],
     ...customConfig,
-  };
+  }
 
-  globalTelemetryManager = createHealthcareTelemetryManager(config);
-  await globalTelemetryManager.initialize();
+  globalTelemetryManager = createHealthcareTelemetryManager(config)
+  await globalTelemetryManager.initialize()
 
-  return globalTelemetryManager;
+  return globalTelemetryManager
 }
 
 // Get global telemetry manager
 export function getGlobalTelemetryManager(): HealthcareTelemetryManager | null {
-  return globalTelemetryManager;
+  return globalTelemetryManager
 }
 
 // Shutdown global telemetry manager
 export async function shutdownGlobalTelemetry(): Promise<void> {
   if (globalTelemetryManager) {
-    await globalTelemetryManager.shutdown();
-    globalTelemetryManager = null;
+    await globalTelemetryManager.shutdown()
+    globalTelemetryManager = null
   }
 }

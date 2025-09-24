@@ -6,7 +6,7 @@
  * and audit logging.
  */
 
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from '@supabase/supabase-js'
 import {
   // AguiClientProfileUpdateMessage,
   AguiClientRegistrationMessage,
@@ -15,19 +15,19 @@ import {
   // ClientConsentData,
   // ConsentAuditEntry,
   // ValidationResult,
-} from './agui-protocol/types';
+} from './agui-protocol/types'
 
 export interface LGPDDataHandlerConfig {
-  supabaseUrl: string;
-  supabaseServiceKey: string;
-  encryptionKey?: string;
-  dataRetentionPeriod: number; // in days
-  auditLogEnabled: boolean;
-  piiDetectionEnabled: boolean;
+  supabaseUrl: string
+  supabaseServiceKey: string
+  encryptionKey?: string
+  dataRetentionPeriod: number // in days
+  auditLogEnabled: boolean
+  piiDetectionEnabled: boolean
 }
 
 export interface SensitiveField {
-  path: string;
+  path: string
   type:
     | 'cpf'
     | 'email'
@@ -35,43 +35,43 @@ export interface SensitiveField {
     | 'address'
     | 'medical'
     | 'financial'
-    | 'personal';
-  sensitivity: 'low' | 'medium' | 'high' | 'critical';
-  requiresConsent: boolean;
+    | 'personal'
+  sensitivity: 'low' | 'medium' | 'high' | 'critical'
+  requiresConsent: boolean
   retentionPolicy: {
-    duration: number; // in days
-    action: 'delete' | 'anonymize' | 'archive';
-  };
+    duration: number // in days
+    action: 'delete' | 'anonymize' | 'archive'
+  }
 }
 
 export interface DataProcessingRecord {
-  id: string;
-  userId: string;
-  clientId?: string;
-  action: 'read' | 'create' | 'update' | 'delete' | 'export';
-  resourceType: string;
-  resourceId: string;
-  purpose: string;
-  legalBasis: string;
-  dataCategories: string[];
-  processedAt: string;
-  ipAddress: string;
-  userAgent: string;
-  consentId?: string;
+  id: string
+  userId: string
+  clientId?: string
+  action: 'read' | 'create' | 'update' | 'delete' | 'export'
+  resourceType: string
+  resourceId: string
+  purpose: string
+  legalBasis: string
+  dataCategories: string[]
+  processedAt: string
+  ipAddress: string
+  userAgent: string
+  consentId?: string
 }
 
 export class LGPDCompliantDataHandler {
-  private supabase: any;
-  private config: LGPDDataHandlerConfig;
-  private sensitiveFields: Map<string, SensitiveField> = new Map();
-  private encryptionKey: string;
+  private supabase: any
+  private config: LGPDDataHandlerConfig
+  private sensitiveFields: Map<string, SensitiveField> = new Map()
+  private encryptionKey: string
 
   constructor(config: LGPDDataHandlerConfig) {
-    this.config = config;
-    this.supabase = createClient(config.supabaseUrl, config.supabaseServiceKey);
-    this.encryptionKey = config.encryptionKey || process.env.ENCRYPTION_KEY || 'default-key';
+    this.config = config
+    this.supabase = createClient(config.supabaseUrl, config.supabaseServiceKey)
+    this.encryptionKey = config.encryptionKey || process.env.ENCRYPTION_KEY || 'default-key'
 
-    this.initializeSensitiveFields();
+    this.initializeSensitiveFields()
   }
 
   private initializeSensitiveFields(): void {
@@ -132,11 +132,11 @@ export class LGPDCompliantDataHandler {
         requiresConsent: true,
         retentionPolicy: { duration: 2555, action: 'anonymize' },
       },
-    ];
+    ]
 
-    fields.forEach(field => {
-      this.sensitiveFields.set(field.path, field);
-    });
+    fields.forEach((field) => {
+      this.sensitiveFields.set(field.path, field)
+    })
   }
 
   // PII Detection and Redaction
@@ -144,152 +144,152 @@ export class LGPDCompliantDataHandler {
     data: any,
     context: string = 'unknown',
   ): Promise<{ redactedData: any; detectedPII: string[] }> {
-    const detectedPII: string[] = [];
-    const redactedData = JSON.parse(JSON.stringify(data)); // Deep clone
+    const detectedPII: string[] = []
+    const redactedData = JSON.parse(JSON.stringify(data)) // Deep clone
 
     const redactValue = (obj: any, path: string): void => {
-      const keys = path.split('.');
-      let current = obj;
+      const keys = path.split('.')
+      let current = obj
 
       for (let i = 0; i < keys.length - 1; i++) {
-        if (current[keys[i]] === undefined) return;
-        current = current[keys[i]];
+        if (current[keys[i]] === undefined) return
+        current = current[keys[i]]
       }
 
-      const finalKey = keys[keys.length - 1];
+      const finalKey = keys[keys.length - 1]
       if (current[finalKey] !== undefined) {
-        const field = this.sensitiveFields.get(keys[keys.length - 1]);
+        const field = this.sensitiveFields.get(keys[keys.length - 1])
         if (field) {
-          detectedPII.push(`${path}: ${current[finalKey]}`);
+          detectedPII.push(`${path}: ${current[finalKey]}`)
 
           // Redact based on sensitivity
           switch (field.sensitivity) {
             case 'critical':
-              current[finalKey] = '[REDACTED-CRITICAL]';
-              break;
+              current[finalKey] = '[REDACTED-CRITICAL]'
+              break
             case 'high':
-              current[finalKey] = this.maskValue(current[finalKey], field.type);
-              break;
+              current[finalKey] = this.maskValue(current[finalKey], field.type)
+              break
             case 'medium':
-              current[finalKey] = this.maskValue(current[finalKey], field.type);
-              break;
+              current[finalKey] = this.maskValue(current[finalKey], field.type)
+              break
             case 'low':
               // No redaction; keep original value
               // eslint-disable-next-line no-self-assign
-              current[finalKey] = current[finalKey];
-              break;
+              current[finalKey] = current[finalKey]
+              break
           }
         }
       }
-    };
+    }
 
     // Recursively scan and redact
     const scanObject = (obj: any, currentPath: string = ''): void => {
-      if (typeof obj !== 'object' || obj === null) return;
+      if (typeof obj !== 'object' || obj === null) return
 
-      Object.keys(obj).forEach(key => {
-        const newPath = currentPath ? `${currentPath}.${key}` : key;
+      Object.keys(obj).forEach((key) => {
+        const newPath = currentPath ? `${currentPath}.${key}` : key
 
         if (typeof obj[key] === 'object' && obj[key] !== null) {
-          scanObject(obj[key], newPath);
+          scanObject(obj[key], newPath)
         } else {
           // Check if this is a sensitive field
-          const sensitiveField = this.sensitiveFields.get(key);
+          const sensitiveField = this.sensitiveFields.get(key)
           if (sensitiveField) {
-            redactValue(obj, newPath);
+            redactValue(obj, newPath)
           }
 
           // Additional PII detection patterns
-          const value = String(obj[key]);
+          const value = String(obj[key])
           if (this.isCPF(value)) {
-            detectedPII.push(`${newPath}: CPF detected`);
+            detectedPII.push(`${newPath}: CPF detected`)
             if (!sensitiveField) {
-              obj[key] = this.maskCPF(value);
+              obj[key] = this.maskCPF(value)
             }
           }
           if (this.isEmail(value)) {
-            detectedPII.push(`${newPath}: Email detected`);
+            detectedPII.push(`${newPath}: Email detected`)
             if (!sensitiveField) {
-              obj[key] = this.maskEmail(value);
+              obj[key] = this.maskEmail(value)
             }
           }
           if (this.isPhone(value)) {
-            detectedPII.push(`${newPath}: Phone detected`);
+            detectedPII.push(`${newPath}: Phone detected`)
             if (!sensitiveField) {
-              obj[key] = this.maskPhone(value);
+              obj[key] = this.maskPhone(value)
             }
           }
         }
-      });
-    };
+      })
+    }
 
-    scanObject(redactedData);
+    scanObject(redactedData)
 
     // Log PII detection if enabled
     if (this.config.piiDetectionEnabled && detectedPII.length > 0) {
-      await this.logPIIDetection(detectedPII, context);
+      await this.logPIIDetection(detectedPII, context)
     }
 
-    return { redactedData, detectedPII };
+    return { redactedData, detectedPII }
   }
 
   // Masking functions
   private maskValue(value: any, type: string): string {
-    const str = String(value);
+    const str = String(value)
 
     switch (type) {
       case 'cpf':
-        return this.maskCPF(str);
+        return this.maskCPF(str)
       case 'email':
-        return this.maskEmail(str);
+        return this.maskEmail(str)
       case 'phone':
-        return this.maskPhone(str);
+        return this.maskPhone(str)
       case 'address':
-        return str.length > 10 ? str.substring(0, 5) + '***' : '***';
+        return str.length > 10 ? str.substring(0, 5) + '***' : '***'
       default:
-        return str.length > 4 ? str.substring(0, 2) + '***' : '***';
+        return str.length > 4 ? str.substring(0, 2) + '***' : '***'
     }
   }
 
   private maskCPF(cpf: string): string {
-    const clean = cpf.replace(/\D/g, '');
+    const clean = cpf.replace(/\D/g, '')
     if (clean.length === 11) {
-      return `${clean.substring(0, 3)}.***.${clean.substring(6, 9)}-**`;
+      return `${clean.substring(0, 3)}.***.${clean.substring(6, 9)}-**`
     }
-    return '***.***.***-**';
+    return '***.***.***-**'
   }
 
   private maskEmail(email: string): string {
-    const [local, domain] = email.split('@');
+    const [local, domain] = email.split('@')
     if (local && domain) {
-      const maskedLocal = local.length > 3 ? local.substring(0, 2) + '***' : '***';
-      return `${maskedLocal}@${domain}`;
+      const maskedLocal = local.length > 3 ? local.substring(0, 2) + '***' : '***'
+      return `${maskedLocal}@${domain}`
     }
-    return '***@***.***';
+    return '***@***.***'
   }
 
   private maskPhone(phone: string): string {
-    const clean = phone.replace(/\D/g, '');
+    const clean = phone.replace(/\D/g, '')
     if (clean.length === 11) {
-      return `(${clean.substring(0, 2)}) *****-${clean.substring(7, 11)}`;
+      return `(${clean.substring(0, 2)}) *****-${clean.substring(7, 11)}`
     }
-    return '(**) *****-****';
+    return '(**) *****-****'
   }
 
   // PII Detection patterns
   private isCPF(value: string): boolean {
-    const clean = value.replace(/\D/g, '');
-    return clean.length === 11 && /^\d+$/.test(clean);
+    const clean = value.replace(/\D/g, '')
+    return clean.length === 11 && /^\d+$/.test(clean)
   }
 
   private isEmail(value: string): boolean {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(value);
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    return emailRegex.test(value)
   }
 
   private isPhone(value: string): boolean {
-    const clean = value.replace(/\D/g, '');
-    return clean.length >= 10 && clean.length <= 11 && /^\d+$/.test(clean);
+    const clean = value.replace(/\D/g, '')
+    return clean.length >= 10 && clean.length <= 11 && /^\d+$/.test(clean)
   }
 
   // Consent Management
@@ -305,34 +305,34 @@ export class LGPDCompliantDataHandler {
         .select('*')
         .eq('patient_id', clientId)
         .eq('status', 'ACTIVE')
-        .gte('expires_at', new Date().toISOString());
+        .gte('expires_at', new Date().toISOString())
 
-      if (error) throw error;
+      if (error) throw error
 
-      const validConsents = consents || [];
-      const missingConsents: string[] = [];
+      const validConsents = consents || []
+      const missingConsents: string[] = []
 
       // Check if we have valid consent for each data category
-      dataCategories.forEach(category => {
-        const requiredConsent = this.getRequiredConsentType(category);
+      dataCategories.forEach((category) => {
+        const requiredConsent = this.getRequiredConsentType(category)
         const hasConsent = validConsents.some(
-          consent =>
+          (consent) =>
             consent.consent_type === requiredConsent
             && consent.purpose.toLowerCase().includes(purpose.toLowerCase()),
-        );
+        )
 
         if (!hasConsent) {
-          missingConsents.push(requiredConsent);
+          missingConsents.push(requiredConsent)
         }
-      });
+      })
 
       return {
         valid: missingConsents.length === 0,
         missingConsents,
-      };
+      }
     } catch {
-      console.error('Error validating consent:', error);
-      return { valid: false, missingConsents: ['all'] };
+      console.error('Error validating consent:', error)
+      return { valid: false, missingConsents: ['all'] }
     }
   }
 
@@ -345,16 +345,16 @@ export class LGPDCompliantDataHandler {
       marketing: 'MARKETING',
       emergency: 'EMERGENCY_CONTACT',
       research: 'RESEARCH',
-    };
+    }
 
-    return consentMap[dataCategory] || 'TREATMENT';
+    return consentMap[dataCategory] || 'TREATMENT'
   }
 
   // Data Processing Logging
   async logDataProcessing(
     record: Omit<DataProcessingRecord, 'id' | 'processedAt'>,
   ): Promise<void> {
-    if (!this.config.auditLogEnabled) return;
+    if (!this.config.auditLogEnabled) return
 
     try {
       const { error } = await this.supabase.from('audit_logs').insert([
@@ -373,11 +373,11 @@ export class LGPDCompliantDataHandler {
           user_agent: record.userAgent,
           timestamp: new Date().toISOString(),
         },
-      ]);
+      ])
 
-      if (error) throw error;
+      if (error) throw error
     } catch {
-      console.error('Error logging data processing:', error);
+      console.error('Error logging data processing:', error)
     }
   }
 
@@ -388,9 +388,9 @@ export class LGPDCompliantDataHandler {
       update: 'UPDATE',
       delete: 'DELETE',
       export: 'EXPORT',
-    };
+    }
 
-    return actionMap[action] || 'READ';
+    return actionMap[action] || 'READ'
   }
 
   private mapResourceType(resourceType: string): string {
@@ -401,9 +401,9 @@ export class LGPDCompliantDataHandler {
       medical_record: 'PATIENT_RECORD',
       consent: 'PATIENT_CONSENT',
       communication: 'COMMUNICATION',
-    };
+    }
 
-    return typeMap[resourceType] || 'PATIENT_DATA';
+    return typeMap[resourceType] || 'PATIENT_DATA'
   }
 
   // PII Detection Logging
@@ -411,7 +411,7 @@ export class LGPDCompliantDataHandler {
     detectedPII: string[],
     context: string,
   ): Promise<void> {
-    if (!this.config.auditLogEnabled) return;
+    if (!this.config.auditLogEnabled) return
 
     try {
       const { error } = await this.supabase.from('audit_logs').insert([
@@ -426,11 +426,11 @@ export class LGPDCompliantDataHandler {
           },
           timestamp: new Date().toISOString(),
         },
-      ]);
+      ])
 
-      if (error) throw error;
+      if (error) throw error
     } catch {
-      console.error('Error logging PII detection:', error);
+      console.error('Error logging PII detection:', error)
     }
   }
 
@@ -439,14 +439,14 @@ export class LGPDCompliantDataHandler {
     message: AguiClientRegistrationMessage,
     requestContext: { userId: string; ipAddress: string; userAgent: string },
   ): Promise<{ success: boolean; clientId?: string; errors: string[] }> {
-    const errors: string[] = [];
+    const errors: string[] = []
 
     try {
       // Step 1: Detect and redact PII
       const { redactedData, _detectedPII } = await this.detectAndRedactPII(
         message.clientData,
         'client_registration',
-      );
+      )
 
       // Step 2: Validate consent requirements
       const consentValidation = await this.validateConsentForProcessing(
@@ -454,17 +454,17 @@ export class LGPDCompliantDataHandler {
         ['personal', 'contact', 'medical'],
         'client_registration',
         undefined,
-      );
+      )
 
       if (!consentValidation.valid) {
         errors.push(
           `Consentimento faltante para: ${consentValidation.missingConsents.join(', ')}`,
-        );
+        )
       }
 
       // Step 3: Validate LGPD compliance
       if (!message.consent?.treatmentConsent) {
-        errors.push('Consentimento de tratamento é obrigatório');
+        errors.push('Consentimento de tratamento é obrigatório')
       }
 
       // Step 4: Create client with redacted data
@@ -488,9 +488,9 @@ export class LGPDCompliantDataHandler {
             },
           ])
           .select()
-          .single();
+          .single()
 
-        if (error) throw error;
+        if (error) throw error
 
         // Step 5: Log data processing
         await this.logDataProcessing({
@@ -505,16 +505,16 @@ export class LGPDCompliantDataHandler {
           ipAddress: requestContext.ipAddress,
           userAgent: requestContext.userAgent,
           consentId: client.id,
-        });
+        })
 
-        return { success: true, clientId: client.id, errors: [] };
+        return { success: true, clientId: client.id, errors: [] }
       }
 
-      return { success: false, errors };
+      return { success: false, errors }
     } catch {
-      console.error('Error in LGPD-compliant client registration:', error);
-      errors.push(`Erro no registro: ${error}`);
-      return { success: false, errors };
+      console.error('Error in LGPD-compliant client registration:', error)
+      errors.push(`Erro no registro: ${error}`)
+      return { success: false, errors }
     }
   }
 
@@ -523,7 +523,7 @@ export class LGPDCompliantDataHandler {
     message: AguiConsentManagementMessage,
     requestContext: { userId: string; ipAddress: string; userAgent: string },
   ): Promise<{ success: boolean; consentId?: string; errors: string[] }> {
-    const errors: string[] = [];
+    const errors: string[] = []
 
     try {
       // Check if client exists
@@ -531,15 +531,15 @@ export class LGPDCompliantDataHandler {
         .from('patients')
         .select('id')
         .eq('id', message.clientId)
-        .single();
+        .single()
 
       if (clientError || !client) {
-        errors.push('Cliente não encontrado');
-        return { success: false, errors };
+        errors.push('Cliente não encontrado')
+        return { success: false, errors }
       }
 
       // Create or update consent
-      let consentId: string;
+      let consentId: string
 
       if (
         message.consentAction === 'grant'
@@ -565,10 +565,10 @@ export class LGPDCompliantDataHandler {
             },
           ])
           .select()
-          .single();
+          .single()
 
-        if (error) throw error;
-        consentId = consent.id;
+        if (error) throw error
+        consentId = consent.id
 
         // Create consent audit record
         await this.supabase.from('consent_records').insert([
@@ -580,7 +580,7 @@ export class LGPDCompliantDataHandler {
             ip_address: requestContext.ipAddress,
             user_agent: requestContext.userAgent,
           },
-        ]);
+        ])
       } else if (message.consentAction === 'revoke') {
         const { data: consent, error } = await this.supabase
           .from('lgpd_consents')
@@ -588,10 +588,10 @@ export class LGPDCompliantDataHandler {
           .eq('patient_id', message.clientId)
           .eq('consent_type', message.consentType.toUpperCase())
           .select()
-          .single();
+          .single()
 
-        if (error) throw error;
-        consentId = consent.id;
+        if (error) throw error
+        consentId = consent.id
       }
 
       // Log the consent management action
@@ -606,13 +606,13 @@ export class LGPDCompliantDataHandler {
         dataCategories: ['consent'],
         ipAddress: requestContext.ipAddress,
         userAgent: requestContext.userAgent,
-      });
+      })
 
-      return { success: true, consentId, errors: [] };
+      return { success: true, consentId, errors: [] }
     } catch {
-      console.error('Error in consent management:', error);
-      errors.push(`Erro no gerenciamento de consentimento: ${error}`);
-      return { success: false, errors };
+      console.error('Error in consent management:', error)
+      errors.push(`Erro no gerenciamento de consentimento: ${error}`)
+      return { success: false, errors }
     }
   }
 
@@ -623,32 +623,32 @@ export class LGPDCompliantDataHandler {
       marketing: 'Envio de comunicações sobre serviços e promoções',
       emergency_contact: 'Utilização em casos de emergência',
       research: 'Uso em pesquisas científicas anônimas',
-    };
+    }
 
-    return purposes[consentType] || 'Processamento de dados pessoais';
+    return purposes[consentType] || 'Processamento de dados pessoais'
   }
 
   // Data Retention Management
   async processDataRetention(): Promise<{
-    processed: number;
-    errors: string[];
+    processed: number
+    errors: string[]
   }> {
-    const errors: string[] = [];
-    let processed = 0;
+    const errors: string[] = []
+    let processed = 0
 
     try {
-      const cutoffDate = new Date();
+      const cutoffDate = new Date()
       cutoffDate.setDate(
         cutoffDate.getDate() - this.config.dataRetentionPeriod,
-      );
+      )
 
       // Find expired data
       const { data: expiredData, error } = await this.supabase
         .from('patients')
         .select('id, cpf, email, phone')
-        .lt('data_retention_until', cutoffDate.toISOString());
+        .lt('data_retention_until', cutoffDate.toISOString())
 
-      if (error) throw error;
+      if (error) throw error
 
       for (const record of expiredData || []) {
         try {
@@ -662,19 +662,19 @@ export class LGPDCompliantDataHandler {
               lgpd_consent_given: false,
               lgpd_consent_date: null,
             })
-            .eq('id', record.id);
+            .eq('id', record.id)
 
-          processed++;
+          processed++
         } catch {
-          errors.push(`Erro ao anonimizar cliente ${record.id}: ${error}`);
+          errors.push(`Erro ao anonimizar cliente ${record.id}: ${error}`)
         }
       }
 
-      return { processed, errors };
+      return { processed, errors }
     } catch {
-      console.error('Error in data retention processing:', error);
-      errors.push(`Erro no processamento de retenção: ${error}`);
-      return { processed, errors };
+      console.error('Error in data retention processing:', error)
+      errors.push(`Erro no processamento de retenção: ${error}`)
+      return { processed, errors }
     }
   }
 
@@ -683,7 +683,7 @@ export class LGPDCompliantDataHandler {
     clientId: string,
     requestingUserId: string,
   ): Promise<{ success: boolean; data?: any; errors: string[] }> {
-    const errors: string[] = [];
+    const errors: string[] = []
 
     try {
       // Verify user has right to access this data
@@ -691,11 +691,11 @@ export class LGPDCompliantDataHandler {
         .from('patients')
         .select('*')
         .eq('id', clientId)
-        .single();
+        .single()
 
       if (error || !client) {
-        errors.push('Cliente não encontrado');
-        return { success: false, errors };
+        errors.push('Cliente não encontrado')
+        return { success: false, errors }
       }
 
       // Collect all client data
@@ -720,7 +720,7 @@ export class LGPDCompliantDataHandler {
         appointments: [],
         consents: [],
         auditLogs: [],
-      };
+      }
 
       // Log the export
       await this.logDataProcessing({
@@ -734,32 +734,32 @@ export class LGPDCompliantDataHandler {
         dataCategories: ['personal', 'contact', 'consent'],
         ipAddress: 'system',
         userAgent: 'data_export_service',
-      });
+      })
 
-      return { success: true, data: exportData, errors: [] };
+      return { success: true, data: exportData, errors: [] }
     } catch {
-      console.error('Error in client data export:', error);
-      errors.push(`Erro na exportação de dados: ${error}`);
-      return { success: false, errors };
+      console.error('Error in client data export:', error)
+      errors.push(`Erro na exportação de dados: ${error}`)
+      return { success: false, errors }
     }
   }
 
   // Health Check
   async healthCheck(): Promise<{
-    status: 'healthy' | 'degraded' | 'unhealthy';
-    details: any;
+    status: 'healthy' | 'degraded' | 'unhealthy'
+    details: any
   }> {
     try {
       const checks = await Promise.allSettled([
         this.checkDatabaseConnection(),
         this.checkEncryptionSetup(),
         this.checkConsentRecords(),
-      ]);
+      ])
 
       const passedChecks = checks.filter(
-        check => check.status === 'fulfilled' && check.value,
-      ).length;
-      const totalChecks = checks.length;
+        (check) => check.status === 'fulfilled' && check.value,
+      ).length
+      const totalChecks = checks.length
 
       return {
         status: passedChecks === totalChecks
@@ -775,12 +775,12 @@ export class LGPDCompliantDataHandler {
           auditLogEnabled: this.config.auditLogEnabled,
           dataRetentionPeriod: `${this.config.dataRetentionPeriod} days`,
         },
-      };
+      }
     } catch {
       return {
         status: 'unhealthy',
         details: { error: error.message },
-      };
+      }
     }
   }
 
@@ -789,16 +789,16 @@ export class LGPDCompliantDataHandler {
       const { data: _data, error } = await this.supabase
         .from('patients')
         .select('count')
-        .limit(1);
+        .limit(1)
 
-      return !error;
+      return !error
     } catch {
-      return false;
+      return false
     }
   }
 
   private async checkEncryptionSetup(): Promise<boolean> {
-    return !!this.encryptionKey && this.encryptionKey !== 'default-key';
+    return !!this.encryptionKey && this.encryptionKey !== 'default-key'
   }
 
   private async checkConsentRecords(): Promise<boolean> {
@@ -806,11 +806,11 @@ export class LGPDCompliantDataHandler {
       const { data: _data, error } = await this.supabase
         .from('lgpd_consents')
         .select('count')
-        .limit(1);
+        .limit(1)
 
-      return !error;
+      return !error
     } catch {
-      return false;
+      return false
     }
   }
 }

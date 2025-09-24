@@ -1,297 +1,297 @@
 // Define interfaces locally to avoid import issues
 interface KPIMetric {
-  id: string;
-  name: string;
-  description?: string;
-  category: string;
-  currentValue: number;
-  targetValue: number;
-  direction: 'higher_better' | 'lower_better' | 'target_exact';
-  unit?: string;
-  status: 'ACTIVE' | 'ARCHIVED' | 'PROVISIONAL';
-  threshold?: number;
-  createdAt: Date;
-  updatedAt: Date;
+  id: string
+  name: string
+  description?: string
+  category: string
+  currentValue: number
+  targetValue: number
+  direction: 'higher_better' | 'lower_better' | 'target_exact'
+  unit?: string
+  status: 'ACTIVE' | 'ARCHIVED' | 'PROVISIONAL'
+  threshold?: number
+  createdAt: Date
+  updatedAt: Date
 }
 
 interface CreateKPIMetric {
-  name: string;
-  description?: string;
-  category: string;
-  currentValue: number;
-  targetValue: number;
-  direction: 'higher_better' | 'lower_better' | 'target_exact';
-  unit?: string;
-  status?: 'ACTIVE' | 'ARCHIVED' | 'PROVISIONAL';
-  threshold?: number;
+  name: string
+  description?: string
+  category: string
+  currentValue: number
+  targetValue: number
+  direction: 'higher_better' | 'lower_better' | 'target_exact'
+  unit?: string
+  status?: 'ACTIVE' | 'ARCHIVED' | 'PROVISIONAL'
+  threshold?: number
 }
 
 interface UpdateKPIMetric {
-  id: string;
-  currentValue?: number;
-  targetValue?: number;
-  threshold?: number;
-  status?: 'ACTIVE' | 'ARCHIVED' | 'PROVISIONAL';
+  id: string
+  currentValue?: number
+  targetValue?: number
+  threshold?: number
+  status?: 'ACTIVE' | 'ARCHIVED' | 'PROVISIONAL'
 }
 
 interface RiskAssessment {
-  id: string;
-  clinicId: string;
-  category: string;
-  title: string;
-  description: string;
-  severity: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
-  likelihood: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
-  impact: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
-  status: 'Open' | 'Mitigated' | 'Accepted' | 'Transferred';
-  mitigation?: string;
-  owner?: string;
-  dueDate?: Date;
-  metadata?: Record<string, unknown>;
-  createdAt: Date;
-  updatedAt: Date;
+  id: string
+  clinicId: string
+  category: string
+  title: string
+  description: string
+  severity: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL'
+  likelihood: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL'
+  impact: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL'
+  status: 'Open' | 'Mitigated' | 'Accepted' | 'Transferred'
+  mitigation?: string
+  owner?: string
+  dueDate?: Date
+  metadata?: Record<string, unknown>
+  createdAt: Date
+  updatedAt: Date
 }
 
 interface CreateRiskAssessment {
-  clinicId: string;
-  category: string;
-  title: string;
-  description: string;
-  severity: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
-  likelihood: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
-  impact: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
-  status?: 'Open' | 'Mitigated' | 'Accepted' | 'Transferred';
-  mitigation?: string;
-  owner?: string;
-  dueDate?: Date;
-  metadata?: Record<string, unknown>;
+  clinicId: string
+  category: string
+  title: string
+  description: string
+  severity: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL'
+  likelihood: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL'
+  impact: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL'
+  status?: 'Open' | 'Mitigated' | 'Accepted' | 'Transferred'
+  mitigation?: string
+  owner?: string
+  dueDate?: Date
+  metadata?: Record<string, unknown>
 }
 
 interface AIGovernanceMetric {
-  id: string;
-  modelName: string;
-  modelVersion: string;
-  status: 'ACTIVE' | 'INACTIVE' | 'TRAINING' | 'DEPRECATED';
-  hallucinationRate: number;
-  accuracyScore: number;
-  biasScore?: number;
-  complianceScore: number;
-  requestsProcessed: number;
-  averageResponseTime?: number;
-  errorRate: number;
-  lastTrainingDate?: Date;
-  modelSize?: string;
-  metadata?: Record<string, unknown>;
-  createdAt: Date;
-  updatedAt: Date;
+  id: string
+  modelName: string
+  modelVersion: string
+  status: 'ACTIVE' | 'INACTIVE' | 'TRAINING' | 'DEPRECATED'
+  hallucinationRate: number
+  accuracyScore: number
+  biasScore?: number
+  complianceScore: number
+  requestsProcessed: number
+  averageResponseTime?: number
+  errorRate: number
+  lastTrainingDate?: Date
+  modelSize?: string
+  metadata?: Record<string, unknown>
+  createdAt: Date
+  updatedAt: Date
 }
 
 interface PolicyManagement {
-  id: string;
-  name: string;
-  description: string;
-  category: string;
-  framework: 'HIPAA' | 'LGPD' | 'GDPR' | 'SOC2';
-  status: 'ACTIVE' | 'DRAFT' | 'ARCHIVED' | 'UNDER_REVIEW';
-  version: string;
-  enforcementRate: number;
-  violationCount: number;
-  lastReview?: Date;
-  nextReview?: Date;
-  content: string;
-  metadata?: Record<string, unknown>;
-  createdAt: Date;
-  updatedAt: Date;
+  id: string
+  name: string
+  description: string
+  category: string
+  framework: 'HIPAA' | 'LGPD' | 'GDPR' | 'SOC2'
+  status: 'ACTIVE' | 'DRAFT' | 'ARCHIVED' | 'UNDER_REVIEW'
+  version: string
+  enforcementRate: number
+  violationCount: number
+  lastReview?: Date
+  nextReview?: Date
+  content: string
+  metadata?: Record<string, unknown>
+  createdAt: Date
+  updatedAt: Date
 }
 
 interface AuditTrailEntry {
-  id: string;
-  userId: string;
-  clinicId?: string;
-  patientId?: string;
-  action: 'VIEW' | 'CREATE' | 'UPDATE' | 'DELETE' | 'EXPORT' | 'LOGIN' | 'LOGOUT';
-  resource: string;
+  id: string
+  userId: string
+  clinicId?: string
+  patientId?: string
+  action: 'VIEW' | 'CREATE' | 'UPDATE' | 'DELETE' | 'EXPORT' | 'LOGIN' | 'LOGOUT'
+  resource: string
   resourceType:
     | 'PATIENT_RECORD'
     | 'REPORT'
     | 'SYSTEM_CONFIG'
     | 'USER_ACCOUNT'
-    | 'HEALTHCARE_METRIC';
-  resourceId?: string;
-  ipAddress: string;
-  userAgent: string;
-  sessionId?: string;
-  status: 'SUCCESS' | 'FAILED' | 'BLOCKED';
-  riskLevel: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
-  additionalInfo?: string;
-  createdAt: Date;
-  encryptedDetails?: Record<string, unknown>;
+    | 'HEALTHCARE_METRIC'
+  resourceId?: string
+  ipAddress: string
+  userAgent: string
+  sessionId?: string
+  status: 'SUCCESS' | 'FAILED' | 'BLOCKED'
+  riskLevel: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL'
+  additionalInfo?: string
+  createdAt: Date
+  encryptedDetails?: Record<string, unknown>
 }
 
 interface CreateAuditTrailEntry {
-  userId: string;
-  clinicId?: string;
-  patientId?: string;
-  action: 'VIEW' | 'CREATE' | 'UPDATE' | 'DELETE' | 'EXPORT' | 'LOGIN' | 'LOGOUT';
-  resource: string;
+  userId: string
+  clinicId?: string
+  patientId?: string
+  action: 'VIEW' | 'CREATE' | 'UPDATE' | 'DELETE' | 'EXPORT' | 'LOGIN' | 'LOGOUT'
+  resource: string
   resourceType:
     | 'PATIENT_RECORD'
     | 'REPORT'
     | 'SYSTEM_CONFIG'
     | 'USER_ACCOUNT'
-    | 'HEALTHCARE_METRIC';
-  resourceId?: string;
-  ipAddress: string;
-  userAgent: string;
-  sessionId?: string;
-  status: 'SUCCESS' | 'FAILED' | 'BLOCKED';
-  riskLevel?: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
-  additionalInfo?: string;
-  encryptedDetails?: Record<string, unknown>;
+    | 'HEALTHCARE_METRIC'
+  resourceId?: string
+  ipAddress: string
+  userAgent: string
+  sessionId?: string
+  status: 'SUCCESS' | 'FAILED' | 'BLOCKED'
+  riskLevel?: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL'
+  additionalInfo?: string
+  encryptedDetails?: Record<string, unknown>
 }
 
 interface ComplianceStatus {
-  id: string;
-  clinicId: string;
-  framework: 'HIPAA' | 'LGPD' | 'GDPR' | 'SOC2';
-  score: number;
-  status: 'COMPLIANT' | 'NON_COMPLIANT' | 'UNDER_REVIEW' | 'CRITICAL';
-  violations: number;
-  lastAudit?: Date;
-  nextAudit?: Date;
-  details?: Record<string, unknown>;
-  createdAt: Date;
-  updatedAt: Date;
+  id: string
+  clinicId: string
+  framework: 'HIPAA' | 'LGPD' | 'GDPR' | 'SOC2'
+  score: number
+  status: 'COMPLIANT' | 'NON_COMPLIANT' | 'UNDER_REVIEW' | 'CRITICAL'
+  violations: number
+  lastAudit?: Date
+  nextAudit?: Date
+  details?: Record<string, unknown>
+  createdAt: Date
+  updatedAt: Date
 }
 
 interface EscalationWorkflow {
-  id: string;
-  userId: string;
-  title: string;
-  description: string;
-  category: string;
-  source: string;
-  priority: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
-  status: 'OPEN' | 'IN_PROGRESS' | 'ESCALATED' | 'RESOLVED' | 'CLOSED';
-  assignedTo?: string;
-  deadline?: Date;
-  escalatedAt?: Date;
-  resolvedAt?: Date;
-  responseTime?: number;
-  resolutionTime?: number;
-  notes?: string;
-  metadata?: Record<string, unknown>;
-  createdAt: Date;
-  updatedAt: Date;
+  id: string
+  userId: string
+  title: string
+  description: string
+  category: string
+  source: string
+  priority: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL'
+  status: 'OPEN' | 'IN_PROGRESS' | 'ESCALATED' | 'RESOLVED' | 'CLOSED'
+  assignedTo?: string
+  deadline?: Date
+  escalatedAt?: Date
+  resolvedAt?: Date
+  responseTime?: number
+  resolutionTime?: number
+  notes?: string
+  metadata?: Record<string, unknown>
+  createdAt: Date
+  updatedAt: Date
 }
 
 interface CreateEscalationWorkflow {
-  userId: string;
-  title: string;
-  description: string;
-  category: string;
-  source: string;
-  priority: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
-  status?: 'OPEN' | 'IN_PROGRESS' | 'ESCALATED' | 'RESOLVED' | 'CLOSED';
-  assignedTo?: string;
-  deadline?: Date;
-  notes?: string;
-  metadata?: Record<string, unknown>;
+  userId: string
+  title: string
+  description: string
+  category: string
+  source: string
+  priority: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL'
+  status?: 'OPEN' | 'IN_PROGRESS' | 'ESCALATED' | 'RESOLVED' | 'CLOSED'
+  assignedTo?: string
+  deadline?: Date
+  notes?: string
+  metadata?: Record<string, unknown>
 }
 
 interface UpdateEscalationWorkflow {
-  id: string;
-  status?: 'OPEN' | 'IN_PROGRESS' | 'ESCALATED' | 'RESOLVED' | 'CLOSED';
-  assignedTo?: string;
-  deadline?: Date;
-  escalatedAt?: Date;
-  resolvedAt?: Date;
-  responseTime?: number;
-  resolutionTime?: number;
-  notes?: string;
-  metadata?: Record<string, unknown>;
+  id: string
+  status?: 'OPEN' | 'IN_PROGRESS' | 'ESCALATED' | 'RESOLVED' | 'CLOSED'
+  assignedTo?: string
+  deadline?: Date
+  escalatedAt?: Date
+  resolvedAt?: Date
+  responseTime?: number
+  resolutionTime?: number
+  notes?: string
+  metadata?: Record<string, unknown>
 }
 
 interface AuditTrailFilters {
-  userId?: string;
-  clinicId?: string;
-  action?: 'VIEW' | 'CREATE' | 'UPDATE' | 'DELETE' | 'EXPORT' | 'LOGIN' | 'LOGOUT';
-  status?: 'SUCCESS' | 'FAILED' | 'BLOCKED';
-  riskLevel?: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
-  dateFrom?: Date;
-  dateTo?: Date;
-  searchTerm?: string;
+  userId?: string
+  clinicId?: string
+  action?: 'VIEW' | 'CREATE' | 'UPDATE' | 'DELETE' | 'EXPORT' | 'LOGIN' | 'LOGOUT'
+  status?: 'SUCCESS' | 'FAILED' | 'BLOCKED'
+  riskLevel?: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL'
+  dateFrom?: Date
+  dateTo?: Date
+  searchTerm?: string
 }
 
 interface EscalationFilters {
-  status?: 'OPEN' | 'IN_PROGRESS' | 'ESCALATED' | 'RESOLVED' | 'CLOSED';
-  priority?: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
-  assignedTo?: string;
-  category?: string;
+  status?: 'OPEN' | 'IN_PROGRESS' | 'ESCALATED' | 'RESOLVED' | 'CLOSED'
+  priority?: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL'
+  assignedTo?: string
+  category?: string
 }
 
 interface KPIOverviewData {
-  totalKPIs: number;
-  normalizedKPIs: number;
-  normalizationRate: number;
-  dataQualityScore: number;
-  criticalKPIs: number;
+  totalKPIs: number
+  normalizedKPIs: number
+  normalizationRate: number
+  dataQualityScore: number
+  criticalKPIs: number
   trends: {
-    normalizationTrend: string;
-    qualityTrend: string;
-    criticalTrend: string;
-  };
+    normalizationTrend: string
+    qualityTrend: string
+    criticalTrend: string
+  }
 }
 
 interface ComplianceStatusData {
   hipaaCompliance: {
-    score: number;
-    status: string;
-    violations: number;
-    lastAudit: string;
-  };
+    score: number
+    status: string
+    violations: number
+    lastAudit: string
+  }
   lgpdCompliance: {
-    score: number;
-    status: string;
-    violations: number;
-    lastAudit: string;
-  };
-  overallScore: number;
-  criticalViolations: number;
-  upcomingDeadlines: number;
-  auditStatus: string;
+    score: number
+    status: string
+    violations: number
+    lastAudit: string
+  }
+  overallScore: number
+  criticalViolations: number
+  upcomingDeadlines: number
+  auditStatus: string
 }
 
 interface GovernanceService {
-  getKPIMetrics(): Promise<KPIMetric[]>;
-  createKPIMetric(metric: CreateKPIMetric): Promise<KPIMetric>;
-  updateKPIMetric(updates: UpdateKPIMetric): Promise<KPIMetric>;
-  getRiskAssessments(clinicId: string): Promise<RiskAssessment[]>;
-  createRiskAssessment(assessment: CreateRiskAssessment): Promise<RiskAssessment>;
-  getAIGovernanceMetrics(): Promise<AIGovernanceMetric[]>;
+  getKPIMetrics(): Promise<KPIMetric[]>
+  createKPIMetric(metric: CreateKPIMetric): Promise<KPIMetric>
+  updateKPIMetric(updates: UpdateKPIMetric): Promise<KPIMetric>
+  getRiskAssessments(clinicId: string): Promise<RiskAssessment[]>
+  createRiskAssessment(assessment: CreateRiskAssessment): Promise<RiskAssessment>
+  getAIGovernanceMetrics(): Promise<AIGovernanceMetric[]>
   updateAIGovernanceMetric(
     id: string,
     updates: Partial<AIGovernanceMetric>,
-  ): Promise<AIGovernanceMetric>;
-  getPolicies(): Promise<PolicyManagement[]>;
-  updatePolicy(id: string, updates: Partial<PolicyManagement>): Promise<PolicyManagement>;
+  ): Promise<AIGovernanceMetric>
+  getPolicies(): Promise<PolicyManagement[]>
+  updatePolicy(id: string, updates: Partial<PolicyManagement>): Promise<PolicyManagement>
   getAuditTrail(
     filters: AuditTrailFilters,
-  ): Promise<{ entries: AuditTrailEntry[]; totalCount: number; filteredCount: number }>;
-  createAuditEntry(entry: CreateAuditTrailEntry): Promise<AuditTrailEntry>;
-  getComplianceStatus(clinicId: string): Promise<ComplianceStatus[]>;
-  updateComplianceStatus(id: string, updates: Partial<ComplianceStatus>): Promise<ComplianceStatus>;
-  getEscalations(filters?: EscalationFilters): Promise<EscalationWorkflow[]>;
-  createEscalation(escalation: CreateEscalationWorkflow): Promise<EscalationWorkflow>;
-  updateEscalation(update: UpdateEscalationWorkflow): Promise<EscalationWorkflow>;
+  ): Promise<{ entries: AuditTrailEntry[]; totalCount: number; filteredCount: number }>
+  createAuditEntry(entry: CreateAuditTrailEntry): Promise<AuditTrailEntry>
+  getComplianceStatus(clinicId: string): Promise<ComplianceStatus[]>
+  updateComplianceStatus(id: string, updates: Partial<ComplianceStatus>): Promise<ComplianceStatus>
+  getEscalations(filters?: EscalationFilters): Promise<EscalationWorkflow[]>
+  createEscalation(escalation: CreateEscalationWorkflow): Promise<EscalationWorkflow>
+  updateEscalation(update: UpdateEscalationWorkflow): Promise<EscalationWorkflow>
 }
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { createClient, SupabaseClient } from '@supabase/supabase-js'
 
 export class SupabaseGovernanceService implements GovernanceService {
-  protected supabase: SupabaseClient;
+  protected supabase: SupabaseClient
 
   constructor(supabaseUrl: string, supabaseKey: string) {
-    this.supabase = createClient(supabaseUrl, supabaseKey);
+    this.supabase = createClient(supabaseUrl, supabaseKey)
   }
 
   // Audit Trail Methods
@@ -319,65 +319,65 @@ export class SupabaseGovernanceService implements GovernanceService {
         },
       ])
       .select()
-      .single();
+      .single()
 
     if (error) {
-      throw new Error(`Failed to create audit entry: ${error.message}`);
+      throw new Error(`Failed to create audit entry: ${error.message}`)
     }
 
-    return this.mapAuditTrailFromDb(data);
+    return this.mapAuditTrailFromDb(data)
   }
 
   async getAuditTrail(filters: AuditTrailFilters): Promise<{
-    entries: AuditTrailEntry[];
-    totalCount: number;
-    filteredCount: number;
+    entries: AuditTrailEntry[]
+    totalCount: number
+    filteredCount: number
   }> {
     let query = this.supabase
       .from('audit_trail')
       .select('*, users(email)', { count: 'exact' })
-      .order('created_at', { ascending: false });
+      .order('created_at', { ascending: false })
 
     // Apply filters
-    if (filters?.userId) query = query.eq('user_id', filters.userId);
-    if (filters?.clinicId) query = query.eq('clinic_id', filters.clinicId);
-    if (filters?.action) query = query.eq('action', filters.action);
-    if (filters?.status) query = query.eq('status', filters.status);
-    if (filters?.riskLevel) query = query.eq('risk_level', filters.riskLevel);
+    if (filters?.userId) query = query.eq('user_id', filters.userId)
+    if (filters?.clinicId) query = query.eq('clinic_id', filters.clinicId)
+    if (filters?.action) query = query.eq('action', filters.action)
+    if (filters?.status) query = query.eq('status', filters.status)
+    if (filters?.riskLevel) query = query.eq('risk_level', filters.riskLevel)
     if (filters?.dateFrom) {
-      query = query.gte('created_at', filters.dateFrom.toISOString());
+      query = query.gte('created_at', filters.dateFrom.toISOString())
     }
     if (filters?.dateTo) {
-      query = query.lte('created_at', filters.dateTo.toISOString());
+      query = query.lte('created_at', filters.dateTo.toISOString())
     }
     if (filters?.searchTerm) {
       query = query.or(
         `resource.ilike.%${filters.searchTerm}%,additional_info.ilike.%${filters.searchTerm}%`,
-      );
+      )
     }
 
-    const { data, error, count } = await query.limit(1000);
+    const { data, error, count } = await query.limit(1000)
 
-    if (error) throw new Error(`Failed to get audit trail: ${error.message}`);
+    if (error) throw new Error(`Failed to get audit trail: ${error.message}`)
 
-    const entries = data?.map(item => this.mapAuditTrailFromDb(item)) || [];
+    const entries = data?.map((item) => this.mapAuditTrailFromDb(item)) || []
 
     return {
       entries,
       totalCount: count || 0,
       filteredCount: entries.length,
-    };
+    }
   } // KPI Metrics Methods
   async getKPIMetrics(): Promise<KPIMetric[]> {
     const { data, error } = await this.supabase
       .from('kpi_metrics')
       .select('*')
       .eq('status', 'ACTIVE')
-      .order('category', { ascending: true });
+      .order('category', { ascending: true })
 
-    if (error) throw new Error(`Failed to get KPI metrics: ${error.message}`);
+    if (error) throw new Error(`Failed to get KPI metrics: ${error.message}`)
 
-    return data?.map(item => this.mapKPIMetricFromDb(item)) || [];
+    return data?.map((item) => this.mapKPIMetricFromDb(item)) || []
   }
 
   async createKPIMetric(metric: CreateKPIMetric): Promise<KPIMetric> {
@@ -397,34 +397,34 @@ export class SupabaseGovernanceService implements GovernanceService {
         },
       ])
       .select()
-      .single();
+      .single()
 
-    if (error) throw new Error(`Failed to create KPI metric: ${error.message}`);
+    if (error) throw new Error(`Failed to create KPI metric: ${error.message}`)
 
-    return this.mapKPIMetricFromDb(data);
+    return this.mapKPIMetricFromDb(data)
   }
 
   async updateKPIMetric(update: UpdateKPIMetric): Promise<KPIMetric> {
-    const updateData: Record<string, unknown> = {};
+    const updateData: Record<string, unknown> = {}
     if (update.currentValue !== undefined) {
-      updateData.current_value = update.currentValue;
+      updateData.current_value = update.currentValue
     }
     if (update.targetValue !== undefined) {
-      updateData.target_value = update.targetValue;
+      updateData.target_value = update.targetValue
     }
-    if (update.threshold !== undefined) updateData.threshold = update.threshold;
-    if (update.status !== undefined) updateData.status = update.status;
+    if (update.threshold !== undefined) updateData.threshold = update.threshold
+    if (update.status !== undefined) updateData.status = update.status
 
     const { data, error } = await this.supabase
       .from('kpi_metrics')
       .update(updateData)
       .eq('id', update.id)
       .select()
-      .single();
+      .single()
 
-    if (error) throw new Error(`Failed to update KPI metric: ${error.message}`);
+    if (error) throw new Error(`Failed to update KPI metric: ${error.message}`)
 
-    return this.mapKPIMetricFromDb(data);
+    return this.mapKPIMetricFromDb(data)
   }
 
   // Compliance Status Methods
@@ -433,58 +433,58 @@ export class SupabaseGovernanceService implements GovernanceService {
       .from('compliance_status')
       .select('*')
       .eq('clinic_id', clinicId)
-      .order('framework', { ascending: true });
+      .order('framework', { ascending: true })
 
     if (error) {
-      throw new Error(`Failed to get compliance status: ${error.message}`);
+      throw new Error(`Failed to get compliance status: ${error.message}`)
     }
 
-    return data?.map(item => this.mapComplianceStatusFromDb(item)) || [];
+    return data?.map((item) => this.mapComplianceStatusFromDb(item)) || []
   }
 
   async updateComplianceStatus(
     id: string,
     updates: Partial<ComplianceStatus>,
   ): Promise<ComplianceStatus> {
-    const updateData: Record<string, unknown> = {};
-    if (updates.score !== undefined) updateData.score = updates.score;
-    if (updates.status !== undefined) updateData.status = updates.status;
+    const updateData: Record<string, unknown> = {}
+    if (updates.score !== undefined) updateData.score = updates.score
+    if (updates.status !== undefined) updateData.status = updates.status
     if (updates.violations !== undefined) {
-      updateData.violations = updates.violations;
+      updateData.violations = updates.violations
     }
     if (updates.lastAudit !== undefined) {
-      updateData.last_audit = updates.lastAudit;
+      updateData.last_audit = updates.lastAudit
     }
     if (updates.nextAudit !== undefined) {
-      updateData.next_audit = updates.nextAudit;
+      updateData.next_audit = updates.nextAudit
     }
-    if (updates.details !== undefined) updateData.details = updates.details;
+    if (updates.details !== undefined) updateData.details = updates.details
 
     const { data, error } = await this.supabase
       .from('compliance_status')
       .update(updateData)
       .eq('id', id)
       .select()
-      .single();
+      .single()
 
     if (error) {
-      throw new Error(`Failed to update compliance status: ${error.message}`);
+      throw new Error(`Failed to update compliance status: ${error.message}`)
     }
 
-    return this.mapComplianceStatusFromDb(data);
+    return this.mapComplianceStatusFromDb(data)
   } // Risk Assessment Methods
   async getRiskAssessments(clinicId: string): Promise<RiskAssessment[]> {
     const { data, error } = await this.supabase
       .from('risk_assessments')
       .select('*')
       .eq('clinic_id', clinicId)
-      .order('severity', { ascending: false });
+      .order('severity', { ascending: false })
 
     if (error) {
-      throw new Error(`Failed to get risk assessments: ${error.message}`);
+      throw new Error(`Failed to get risk assessments: ${error.message}`)
     }
 
-    return data?.map(item => this.mapRiskAssessmentFromDb(item)) || [];
+    return data?.map((item) => this.mapRiskAssessmentFromDb(item)) || []
   }
 
   async createRiskAssessment(
@@ -509,13 +509,13 @@ export class SupabaseGovernanceService implements GovernanceService {
         },
       ])
       .select()
-      .single();
+      .single()
 
     if (error) {
-      throw new Error(`Failed to create risk assessment: ${error.message}`);
+      throw new Error(`Failed to create risk assessment: ${error.message}`)
     }
 
-    return this.mapRiskAssessmentFromDb(data);
+    return this.mapRiskAssessmentFromDb(data)
   }
 
   // AI Governance Methods
@@ -524,101 +524,101 @@ export class SupabaseGovernanceService implements GovernanceService {
       .from('ai_governance_metrics')
       .select('*')
       .eq('status', 'ACTIVE')
-      .order('model_name', { ascending: true });
+      .order('model_name', { ascending: true })
 
     if (error) {
-      throw new Error(`Failed to get AI governance metrics: ${error.message}`);
+      throw new Error(`Failed to get AI governance metrics: ${error.message}`)
     }
 
-    return data?.map(item => this.mapAIGovernanceFromDb(item)) || [];
+    return data?.map((item) => this.mapAIGovernanceFromDb(item)) || []
   }
 
   async updateAIGovernanceMetric(
     id: string,
     updates: Partial<AIGovernanceMetric>,
   ): Promise<AIGovernanceMetric> {
-    const updateData: Record<string, unknown> = {};
+    const updateData: Record<string, unknown> = {}
     if (updates.hallucinationRate !== undefined) {
-      updateData.hallucination_rate = updates.hallucinationRate;
+      updateData.hallucination_rate = updates.hallucinationRate
     }
     if (updates.accuracyScore !== undefined) {
-      updateData.accuracy_score = updates.accuracyScore;
+      updateData.accuracy_score = updates.accuracyScore
     }
     if (updates.biasScore !== undefined) {
-      updateData.bias_score = updates.biasScore;
+      updateData.bias_score = updates.biasScore
     }
     if (updates.complianceScore !== undefined) {
-      updateData.compliance_score = updates.complianceScore;
+      updateData.compliance_score = updates.complianceScore
     }
     if (updates.requestsProcessed !== undefined) {
-      updateData.requests_processed = updates.requestsProcessed;
+      updateData.requests_processed = updates.requestsProcessed
     }
     if (updates.averageResponseTime !== undefined) {
-      updateData.average_response_time = updates.averageResponseTime;
+      updateData.average_response_time = updates.averageResponseTime
     }
     if (updates.errorRate !== undefined) {
-      updateData.error_rate = updates.errorRate;
+      updateData.error_rate = updates.errorRate
     }
-    if (updates.status !== undefined) updateData.status = updates.status;
+    if (updates.status !== undefined) updateData.status = updates.status
 
     const { data, error } = await this.supabase
       .from('ai_governance_metrics')
       .update(updateData)
       .eq('id', id)
       .select()
-      .single();
+      .single()
 
     if (error) {
       throw new Error(
         `Failed to update AI governance metric: ${error.message}`,
-      );
+      )
     }
 
-    return this.mapAIGovernanceFromDb(data);
+    return this.mapAIGovernanceFromDb(data)
   } // Policy Management Methods
   async getPolicies(): Promise<PolicyManagement[]> {
     const { data, error } = await this.supabase
       .from('policy_management')
       .select('*')
       .in('status', ['ACTIVE', 'UNDER_REVIEW'])
-      .order('framework', { ascending: true });
+      .order('framework', { ascending: true })
 
-    if (error) throw new Error(`Failed to get policies: ${error.message}`);
+    if (error) throw new Error(`Failed to get policies: ${error.message}`)
 
-    return data?.map(item => this.mapPolicyFromDb(item)) || [];
+    return data?.map((item) => this.mapPolicyFromDb(item)) || []
   }
 
   async updatePolicy(
     id: string,
     updates: Partial<PolicyManagement>,
   ): Promise<PolicyManagement> {
-    const updateData: Record<string, unknown> = {};
-    if (updates.status !== undefined) updateData.status = updates.status;
+    const updateData: Record<string, unknown> = {}
+    if (updates.status !== undefined) updateData.status = updates.status
     if (updates.enforcementRate !== undefined) {
-      updateData.enforcement_rate = updates.enforcementRate;
+      updateData.enforcement_rate = updates.enforcementRate
     }
     if (updates.violationCount !== undefined) {
-      updateData.violation_count = updates.violationCount;
+      updateData.violation_count = updates.violationCount
     }
     if (updates.lastReview !== undefined) {
-      updateData.last_review = updates.lastReview;
+      updateData.last_review = updates.lastReview
     }
     if (updates.nextReview !== undefined) {
-      updateData.next_review = updates.nextReview;
+      updateData.next_review = updates.nextReview
     }
-    if (updates.content !== undefined) updateData.content = updates.content;
-    if (updates.metadata !== undefined) updateData.metadata = updates.metadata;
+    if (updates.content !== undefined) updateData.content = updates.content
+    if (updates.metadata !== undefined) updateData.metadata = updates.metadata
 
     const { data, error } = await this.supabase
       .from('policy_management')
       .update(updateData)
       .eq('id', id)
       .select()
-      .single();
+      .single()
 
-    if (error) throw new Error(`Failed to update policy: ${error.message}`);
+    if (error) throw new Error(`Failed to update policy: ${error.message}`)
 
-    return this.mapPolicyFromDb(data);
+    return this.mapPolicyFromDb(data)
   }
 
   // Escalation Workflow Methods
@@ -629,20 +629,20 @@ export class SupabaseGovernanceService implements GovernanceService {
       .from('escalation_workflows')
       .select('*')
       .order('priority', { ascending: false })
-      .order('created_at', { ascending: false });
+      .order('created_at', { ascending: false })
 
-    if (filters?.status) query = query.eq('status', filters.status);
-    if (filters?.priority) query = query.eq('priority', filters.priority);
+    if (filters?.status) query = query.eq('status', filters.status)
+    if (filters?.priority) query = query.eq('priority', filters.priority)
     if (filters?.assignedTo) {
-      query = query.eq('assigned_to', filters.assignedTo);
+      query = query.eq('assigned_to', filters.assignedTo)
     }
-    if (filters?.category) query = query.eq('category', filters.category);
+    if (filters?.category) query = query.eq('category', filters.category)
 
-    const { data, error } = await query.limit(500);
+    const { data, error } = await query.limit(500)
 
-    if (error) throw new Error(`Failed to get escalations: ${error.message}`);
+    if (error) throw new Error(`Failed to get escalations: ${error.message}`)
 
-    return data?.map(item => this.mapEscalationFromDb(item)) || [];
+    return data?.map((item) => this.mapEscalationFromDb(item)) || []
   }
   async createEscalation(
     escalation: CreateEscalationWorkflow,
@@ -665,47 +665,47 @@ export class SupabaseGovernanceService implements GovernanceService {
         },
       ])
       .select()
-      .single();
+      .single()
 
-    if (error) throw new Error(`Failed to create escalation: ${error.message}`);
+    if (error) throw new Error(`Failed to create escalation: ${error.message}`)
 
-    return this.mapEscalationFromDb(data);
+    return this.mapEscalationFromDb(data)
   }
 
   async updateEscalation(
     update: UpdateEscalationWorkflow,
   ): Promise<EscalationWorkflow> {
-    const updateData: Record<string, unknown> = {};
-    if (update.status !== undefined) updateData.status = update.status;
+    const updateData: Record<string, unknown> = {}
+    if (update.status !== undefined) updateData.status = update.status
     if (update.assignedTo !== undefined) {
-      updateData.assigned_to = update.assignedTo;
+      updateData.assigned_to = update.assignedTo
     }
-    if (update.deadline !== undefined) updateData.deadline = update.deadline;
+    if (update.deadline !== undefined) updateData.deadline = update.deadline
     if (update.escalatedAt !== undefined) {
-      updateData.escalated_at = update.escalatedAt;
+      updateData.escalated_at = update.escalatedAt
     }
     if (update.resolvedAt !== undefined) {
-      updateData.resolved_at = update.resolvedAt;
+      updateData.resolved_at = update.resolvedAt
     }
     if (update.responseTime !== undefined) {
-      updateData.response_time = update.responseTime;
+      updateData.response_time = update.responseTime
     }
     if (update.resolutionTime !== undefined) {
-      updateData.resolution_time = update.resolutionTime;
+      updateData.resolution_time = update.resolutionTime
     }
-    if (update.notes !== undefined) updateData.notes = update.notes;
-    if (update.metadata !== undefined) updateData.metadata = update.metadata;
+    if (update.notes !== undefined) updateData.notes = update.notes
+    if (update.metadata !== undefined) updateData.metadata = update.metadata
 
     const { data, error } = await this.supabase
       .from('escalation_workflows')
       .update(updateData)
       .eq('id', update.id)
       .select()
-      .single();
+      .single()
 
-    if (error) throw new Error(`Failed to update escalation: ${error.message}`);
+    if (error) throw new Error(`Failed to update escalation: ${error.message}`)
 
-    return this.mapEscalationFromDb(data);
+    return this.mapEscalationFromDb(data)
   }
 
   // Database mapping methods
@@ -727,7 +727,7 @@ export class SupabaseGovernanceService implements GovernanceService {
       additionalInfo: data.additional_info as any,
       createdAt: new Date(data.created_at),
       encryptedDetails: data.encrypted_details as any,
-    };
+    }
   }
   private mapKPIMetricFromDb(data: any): KPIMetric {
     return {
@@ -743,7 +743,7 @@ export class SupabaseGovernanceService implements GovernanceService {
       threshold: data.threshold ? parseFloat(data.threshold) : undefined,
       createdAt: new Date(data.created_at),
       updatedAt: new Date(data.updated_at),
-    };
+    }
   }
 
   private mapComplianceStatusFromDb(
@@ -761,7 +761,7 @@ export class SupabaseGovernanceService implements GovernanceService {
       details: data.details || undefined,
       createdAt: new Date(data.created_at),
       updatedAt: new Date(data.updated_at),
-    };
+    }
   }
 
   private mapRiskAssessmentFromDb(data: any): RiskAssessment {
@@ -781,7 +781,7 @@ export class SupabaseGovernanceService implements GovernanceService {
       metadata: data.metadata || undefined,
       createdAt: new Date(data.created_at),
       updatedAt: new Date(data.updated_at),
-    };
+    }
   }
 
   private mapAIGovernanceFromDb(
@@ -808,7 +808,7 @@ export class SupabaseGovernanceService implements GovernanceService {
       metadata: data.metadata || undefined,
       createdAt: new Date(data.created_at),
       updatedAt: new Date(data.updated_at),
-    };
+    }
   }
   private mapPolicyFromDb(data: any): PolicyManagement {
     return {
@@ -827,7 +827,7 @@ export class SupabaseGovernanceService implements GovernanceService {
       metadata: data.metadata || undefined,
       createdAt: new Date(data.created_at),
       updatedAt: new Date(data.updated_at),
-    };
+    }
   }
 
   private mapEscalationFromDb(
@@ -852,23 +852,23 @@ export class SupabaseGovernanceService implements GovernanceService {
       metadata: data.metadata || undefined,
       createdAt: new Date(data.created_at),
       updatedAt: new Date(data.updated_at),
-    };
+    }
   }
 
   // Dashboard aggregation methods
   async getKPIOverviewData(): Promise<KPIOverviewData> {
-    const metrics = await this.getKPIMetrics();
-    const totalKPIs = metrics.length;
-    const normalizedKPIs = metrics.filter(m => m.status === 'ACTIVE').length;
+    const metrics = await this.getKPIMetrics()
+    const totalKPIs = metrics.length
+    const normalizedKPIs = metrics.filter((m) => m.status === 'ACTIVE').length
     const criticalKPIs = metrics.filter(
-      m => m.threshold && m.currentValue < m.threshold,
-    ).length;
+      (m) => m.threshold && m.currentValue < m.threshold,
+    ).length
 
     // Calculate aggregated scores
-    const qualityMetric = metrics.find(m => m.name === 'Data Quality Score');
-    const dataQualityScore = qualityMetric?.currentValue || 0;
+    const qualityMetric = metrics.find((m) => m.name === 'Data Quality Score')
+    const dataQualityScore = qualityMetric?.currentValue || 0
 
-    const normalizationRate = totalKPIs > 0 ? (normalizedKPIs / totalKPIs) * 100 : 0;
+    const normalizationRate = totalKPIs > 0 ? (normalizedKPIs / totalKPIs) * 100 : 0
 
     return {
       totalKPIs,
@@ -881,25 +881,25 @@ export class SupabaseGovernanceService implements GovernanceService {
         qualityTrend: '+0.8%',
         criticalTrend: criticalKPIs > 0 ? `-${criticalKPIs}` : '0',
       },
-    };
+    }
   }
 
   async getComplianceStatusData(
     clinicId: string,
   ): Promise<ComplianceStatusData> {
-    const statuses = await this.getComplianceStatus(clinicId);
+    const statuses = await this.getComplianceStatus(clinicId)
 
-    const hipaaCompliance = statuses.find(s => s.framework === 'HIPAA');
-    const lgpdCompliance = statuses.find(s => s.framework === 'LGPD');
+    const hipaaCompliance = statuses.find((s) => s.framework === 'HIPAA')
+    const lgpdCompliance = statuses.find((s) => s.framework === 'LGPD')
 
     const overallScore = statuses.length > 0
       ? statuses.reduce((sum, s) => sum + s.score, 0) / statuses.length
-      : 0;
+      : 0
 
     const criticalViolations = statuses.reduce(
       (sum, s) => (s.status === 'CRITICAL' ? sum + s.violations : sum),
       0,
-    );
+    )
 
     return {
       hipaaCompliance: {
@@ -917,12 +917,12 @@ export class SupabaseGovernanceService implements GovernanceService {
       overallScore,
       criticalViolations,
       upcomingDeadlines: statuses.filter(
-        s =>
+        (s) =>
           s.nextAudit
           && s.nextAudit > new Date()
           && s.nextAudit < new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
       ).length,
       auditStatus: criticalViolations > 0 ? 'critical' : 'current',
-    };
+    }
   }
 }

@@ -1,6 +1,6 @@
-import { MultiProfessionalCoordinationService } from '@neonpro/core-services';
-import { z } from 'zod';
-import { protectedProcedure, router } from '../trpc';
+import { MultiProfessionalCoordinationService } from '@neonpro/core-services'
+import { z } from 'zod'
+import { protectedProcedure, router } from '../trpc'
 
 // Input schemas with validation
 const ProfessionalTeamInputSchema = z.object({
@@ -13,7 +13,7 @@ const ProfessionalTeamInputSchema = z.object({
   teamType: z.enum(['multidisciplinary', 'specialized', 'consultation', 'emergency'], {
     errorMap: () => ({ message: 'Tipo de equipe inválido' }),
   }),
-});
+})
 
 const TeamMemberInputSchema = z.object({
   teamId: z.string().uuid('ID da equipe inválido'),
@@ -23,7 +23,7 @@ const TeamMemberInputSchema = z.object({
   }),
   permissions: z.record(z.any()).optional(),
   scopeLimitations: z.array(z.string()).optional(),
-});
+})
 
 const ProfessionalReferralInputSchema = z.object({
   patientId: z.string().uuid('ID do paciente inválido'),
@@ -41,7 +41,7 @@ const ProfessionalReferralInputSchema = z.object({
     errorMap: () => ({ message: 'Nível de urgência inválido' }),
   }),
   responseDeadline: z.date().optional(),
-});
+})
 
 const CollaborativeSessionInputSchema = z.object({
   patientId: z.string().uuid('ID do paciente inválido'),
@@ -59,7 +59,7 @@ const CollaborativeSessionInputSchema = z.object({
   location: z.string().optional(),
   virtualMeetingUrl: z.string().url('URL da reunião virtual inválida').optional(),
   facilitatorId: z.string().uuid('ID do facilitador inválido'),
-});
+})
 
 const SessionParticipantInputSchema = z.object({
   sessionId: z.string().uuid('ID da sessão inválido'),
@@ -68,7 +68,7 @@ const SessionParticipantInputSchema = z.object({
     errorMap: () => ({ message: 'Função do participante inválida' }),
   }),
   responsibilities: z.array(z.string()).optional(),
-});
+})
 
 const CoordinationThreadInputSchema = z.object({
   patientId: z.string().uuid().optional(),
@@ -89,7 +89,7 @@ const CoordinationThreadInputSchema = z.object({
     errorMap: () => ({ message: 'Tipo de contexto inválido' }),
   }),
   priority: z.enum(['low', 'normal', 'high', 'urgent']).optional(),
-});
+})
 
 const CoordinationMessageInputSchema = z.object({
   threadId: z.string().uuid('ID do tópico inválido'),
@@ -107,7 +107,7 @@ const CoordinationMessageInputSchema = z.object({
   attachmentUrl: z.string().url('URL do anexo inválida').optional(),
   isSensitive: z.boolean().default(false),
   requiresAcknowledgment: z.boolean().default(false),
-});
+})
 
 const ProfessionalSupervisionInputSchema = z.object({
   supervisorId: z.string().uuid('ID do supervisor inválido'),
@@ -123,7 +123,7 @@ const ProfessionalSupervisionInputSchema = z.object({
   maxAutonomyLevel: z.number().int().min(1).max(5).optional(),
   startDate: z.date('Data de início inválida'),
   endDate: z.date().optional(),
-});
+})
 
 const ScopeValidationInputSchema = z.object({
   professionalId: z.string().uuid('ID do profissional inválido'),
@@ -136,7 +136,7 @@ const ScopeValidationInputSchema = z.object({
   validFrom: z.date('Data de validade inicial inválida'),
   validUntil: z.date().optional(),
   authorizedBy: z.string().uuid().optional(),
-});
+})
 
 const CoordinationProtocolInputSchema = z.object({
   clinicId: z.string().uuid('ID da clínica inválido'),
@@ -159,13 +159,13 @@ const CoordinationProtocolInputSchema = z.object({
   workflowSteps: z.record(z.any()).optional(),
   timelineRequirements: z.record(z.any()).optional(),
   documentationRequirements: z.array(z.string()).optional(),
-});
+})
 
 const ReferralResponseSchema = z.object({
   referralId: z.string().uuid(),
   response: z.enum(['accept', 'decline']),
   responseNotes: z.string().optional(),
-});
+})
 
 // Output schemas
 const ProfessionalTeamSchema = z.object({
@@ -177,7 +177,7 @@ const ProfessionalTeamSchema = z.object({
   isActive: z.boolean(),
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime(),
-});
+})
 
 const TeamMemberSchema = z.object({
   id: z.string().uuid(),
@@ -191,7 +191,7 @@ const TeamMemberSchema = z.object({
   isActive: z.boolean(),
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime(),
-});
+})
 
 const ProfessionalReferralSchema = z.object({
   id: z.string().uuid(),
@@ -207,7 +207,7 @@ const ProfessionalReferralSchema = z.object({
   responseDeadline: z.string().datetime().nullable(),
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime(),
-});
+})
 
 const CollaborativeSessionSchema = z.object({
   id: z.string().uuid(),
@@ -226,7 +226,7 @@ const CollaborativeSessionSchema = z.object({
   facilitatorId: z.string().uuid(),
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime(),
-});
+})
 
 const CoordinationThreadSchema = z.object({
   id: z.string().uuid(),
@@ -241,7 +241,7 @@ const CoordinationThreadSchema = z.object({
   createdBy: z.string().uuid(),
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime(),
-});
+})
 
 const CoordinationMessageSchema = z.object({
   id: z.string().uuid(),
@@ -256,7 +256,7 @@ const CoordinationMessageSchema = z.object({
   acknowledgedAt: z.string().datetime().nullable(),
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime(),
-});
+})
 
 const ProfessionalSupervisionSchema = z.object({
   id: z.string().uuid(),
@@ -272,7 +272,7 @@ const ProfessionalSupervisionSchema = z.object({
   isActive: z.boolean(),
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime(),
-});
+})
 
 const ScopeValidationSchema = z.object({
   id: z.string().uuid(),
@@ -288,7 +288,7 @@ const ScopeValidationSchema = z.object({
   authorizedBy: z.string().uuid().nullable(),
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime(),
-});
+})
 
 const CoordinationProtocolSchema = z.object({
   id: z.string().uuid(),
@@ -305,20 +305,20 @@ const CoordinationProtocolSchema = z.object({
   version: z.number().int(),
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime(),
-});
+})
 
 // Type exports
-export type ProfessionalTeamInput = z.infer<typeof ProfessionalTeamInputSchema>;
-export type TeamMemberInput = z.infer<typeof TeamMemberInputSchema>;
-export type ProfessionalReferralInput = z.infer<typeof ProfessionalReferralInputSchema>;
-export type CollaborativeSessionInput = z.infer<typeof CollaborativeSessionInputSchema>;
-export type SessionParticipantInput = z.infer<typeof SessionParticipantInputSchema>;
-export type CoordinationThreadInput = z.infer<typeof CoordinationThreadInputSchema>;
-export type CoordinationMessageInput = z.infer<typeof CoordinationMessageInputSchema>;
-export type ProfessionalSupervisionInput = z.infer<typeof ProfessionalSupervisionInputSchema>;
-export type ScopeValidationInput = z.infer<typeof ScopeValidationInputSchema>;
-export type CoordinationProtocolInput = z.infer<typeof CoordinationProtocolInputSchema>;
-export type ReferralResponse = z.infer<typeof ReferralResponseSchema>;
+export type ProfessionalTeamInput = z.infer<typeof ProfessionalTeamInputSchema>
+export type TeamMemberInput = z.infer<typeof TeamMemberInputSchema>
+export type ProfessionalReferralInput = z.infer<typeof ProfessionalReferralInputSchema>
+export type CollaborativeSessionInput = z.infer<typeof CollaborativeSessionInputSchema>
+export type SessionParticipantInput = z.infer<typeof SessionParticipantInputSchema>
+export type CoordinationThreadInput = z.infer<typeof CoordinationThreadInputSchema>
+export type CoordinationMessageInput = z.infer<typeof CoordinationMessageInputSchema>
+export type ProfessionalSupervisionInput = z.infer<typeof ProfessionalSupervisionInputSchema>
+export type ScopeValidationInput = z.infer<typeof ScopeValidationInputSchema>
+export type CoordinationProtocolInput = z.infer<typeof CoordinationProtocolInputSchema>
+export type ReferralResponse = z.infer<typeof ReferralResponseSchema>
 
 // Router definition with proper procedure builders
 export const multiProfessionalCoordinationRouter = router({
@@ -330,22 +330,22 @@ export const multiProfessionalCoordinationRouter = router({
         const coordinationService = new MultiProfessionalCoordinationService({
           supabaseUrl: process.env.SUPABASE_URL!,
           supabaseKey: process.env.SUPABASE_SERVICE_ROLE_KEY!,
-        });
+        })
 
-        const team = await coordinationService.createProfessionalTeam(input);
+        const team = await coordinationService.createProfessionalTeam(input)
 
         return {
           success: true,
           message: 'Equipe profissional criada com sucesso',
           data: team,
-        };
+        }
       } catch (error) {
-        console.error('Error creating professional team:', error);
+        console.error('Error creating professional team:', error)
         return {
           success: false,
           message: error instanceof Error ? error.message : 'Erro ao criar equipe profissional',
           data: null,
-        };
+        }
       }
     }),
 
@@ -358,22 +358,22 @@ export const multiProfessionalCoordinationRouter = router({
         const coordinationService = new MultiProfessionalCoordinationService({
           supabaseUrl: process.env.SUPABASE_URL!,
           supabaseKey: process.env.SUPABASE_SERVICE_ROLE_KEY!,
-        });
+        })
 
-        const teams = await coordinationService.getProfessionalTeams(input.clinicId);
+        const teams = await coordinationService.getProfessionalTeams(input.clinicId)
 
         return {
           success: true,
           message: 'Equipes profissionais obtidas com sucesso',
           data: teams,
-        };
+        }
       } catch (error) {
-        console.error('Error getting professional teams:', error);
+        console.error('Error getting professional teams:', error)
         return {
           success: false,
           message: error instanceof Error ? error.message : 'Erro ao obter equipes profissionais',
           data: [],
-        };
+        }
       }
     }),
 
@@ -384,22 +384,22 @@ export const multiProfessionalCoordinationRouter = router({
         const coordinationService = new MultiProfessionalCoordinationService({
           supabaseUrl: process.env.SUPABASE_URL!,
           supabaseKey: process.env.SUPABASE_SERVICE_ROLE_KEY!,
-        });
+        })
 
-        const member = await coordinationService.addTeamMember(input);
+        const member = await coordinationService.addTeamMember(input)
 
         return {
           success: true,
           message: 'Membro adicionado à equipe com sucesso',
           data: member,
-        };
+        }
       } catch (error) {
-        console.error('Error adding team member:', error);
+        console.error('Error adding team member:', error)
         return {
           success: false,
           message: error instanceof Error ? error.message : 'Erro ao adicionar membro à equipe',
           data: null,
-        };
+        }
       }
     }),
 
@@ -412,22 +412,22 @@ export const multiProfessionalCoordinationRouter = router({
         const coordinationService = new MultiProfessionalCoordinationService({
           supabaseUrl: process.env.SUPABASE_URL!,
           supabaseKey: process.env.SUPABASE_SERVICE_ROLE_KEY!,
-        });
+        })
 
-        await coordinationService.removeTeamMember(input.teamMemberId);
+        await coordinationService.removeTeamMember(input.teamMemberId)
 
         return {
           success: true,
           message: 'Membro removido da equipe com sucesso',
           data: true,
-        };
+        }
       } catch (error) {
-        console.error('Error removing team member:', error);
+        console.error('Error removing team member:', error)
         return {
           success: false,
           message: error instanceof Error ? error.message : 'Erro ao remover membro da equipe',
           data: false,
-        };
+        }
       }
     }),
 
@@ -439,24 +439,24 @@ export const multiProfessionalCoordinationRouter = router({
         const coordinationService = new MultiProfessionalCoordinationService({
           supabaseUrl: process.env.SUPABASE_URL!,
           supabaseKey: process.env.SUPABASE_SERVICE_ROLE_KEY!,
-        });
+        })
 
-        const referral = await coordinationService.createReferral(input);
+        const referral = await coordinationService.createReferral(input)
 
         return {
           success: true,
           message: 'Encaminhamento profissional criado com sucesso',
           data: referral,
-        };
+        }
       } catch (error) {
-        console.error('Error creating referral:', error);
+        console.error('Error creating referral:', error)
         return {
           success: false,
           message: error instanceof Error
             ? error.message
             : 'Erro ao criar encaminhamento profissional',
           data: null,
-        };
+        }
       }
     }),
 
@@ -470,22 +470,22 @@ export const multiProfessionalCoordinationRouter = router({
         const coordinationService = new MultiProfessionalCoordinationService({
           supabaseUrl: process.env.SUPABASE_URL!,
           supabaseKey: process.env.SUPABASE_SERVICE_ROLE_KEY!,
-        });
+        })
 
-        const referrals = await coordinationService.getReferrals(input.professionalId, input.type);
+        const referrals = await coordinationService.getReferrals(input.professionalId, input.type)
 
         return {
           success: true,
           message: 'Encaminhamentos obtidos com sucesso',
           data: referrals,
-        };
+        }
       } catch (error) {
-        console.error('Error getting referrals:', error);
+        console.error('Error getting referrals:', error)
         return {
           success: false,
           message: error instanceof Error ? error.message : 'Erro ao obter encaminhamentos',
           data: [],
-        };
+        }
       }
     }),
 
@@ -496,13 +496,13 @@ export const multiProfessionalCoordinationRouter = router({
         const coordinationService = new MultiProfessionalCoordinationService({
           supabaseUrl: process.env.SUPABASE_URL!,
           supabaseKey: process.env.SUPABASE_SERVICE_ROLE_KEY!,
-        });
+        })
 
         const referral = await coordinationService.respondToReferral(
           input.referralId,
           input.response,
           input.responseNotes,
-        );
+        )
 
         return {
           success: true,
@@ -510,14 +510,14 @@ export const multiProfessionalCoordinationRouter = router({
             input.response === 'accept' ? 'aceito' : 'recusado'
           } com sucesso`,
           data: referral,
-        };
+        }
       } catch (error) {
-        console.error('Error responding to referral:', error);
+        console.error('Error responding to referral:', error)
         return {
           success: false,
           message: error instanceof Error ? error.message : 'Erro ao responder ao encaminhamento',
           data: null,
-        };
+        }
       }
     }),
 
@@ -529,22 +529,22 @@ export const multiProfessionalCoordinationRouter = router({
         const coordinationService = new MultiProfessionalCoordinationService({
           supabaseUrl: process.env.SUPABASE_URL!,
           supabaseKey: process.env.SUPABASE_SERVICE_ROLE_KEY!,
-        });
+        })
 
-        const session = await coordinationService.createCollaborativeSession(input);
+        const session = await coordinationService.createCollaborativeSession(input)
 
         return {
           success: true,
           message: 'Sessão colaborativa criada com sucesso',
           data: session,
-        };
+        }
       } catch (error) {
-        console.error('Error creating collaborative session:', error);
+        console.error('Error creating collaborative session:', error)
         return {
           success: false,
           message: error instanceof Error ? error.message : 'Erro ao criar sessão colaborativa',
           data: null,
-        };
+        }
       }
     }),
 
@@ -558,25 +558,25 @@ export const multiProfessionalCoordinationRouter = router({
         const coordinationService = new MultiProfessionalCoordinationService({
           supabaseUrl: process.env.SUPABASE_URL!,
           supabaseKey: process.env.SUPABASE_SERVICE_ROLE_KEY!,
-        });
+        })
 
         const sessions = await coordinationService.getCollaborativeSessions(
           input.clinicId,
           input.professionalId,
-        );
+        )
 
         return {
           success: true,
           message: 'Sessões colaborativas obtidas com sucesso',
           data: sessions,
-        };
+        }
       } catch (error) {
-        console.error('Error getting collaborative sessions:', error);
+        console.error('Error getting collaborative sessions:', error)
         return {
           success: false,
           message: error instanceof Error ? error.message : 'Erro ao obter sessões colaborativas',
           data: [],
-        };
+        }
       }
     }),
 
@@ -587,24 +587,24 @@ export const multiProfessionalCoordinationRouter = router({
         const coordinationService = new MultiProfessionalCoordinationService({
           supabaseUrl: process.env.SUPABASE_URL!,
           supabaseKey: process.env.SUPABASE_SERVICE_ROLE_KEY!,
-        });
+        })
 
-        const participant = await coordinationService.addSessionParticipant(input);
+        const participant = await coordinationService.addSessionParticipant(input)
 
         return {
           success: true,
           message: 'Participante adicionado à sessão com sucesso',
           data: participant,
-        };
+        }
       } catch (error) {
-        console.error('Error adding session participant:', error);
+        console.error('Error adding session participant:', error)
         return {
           success: false,
           message: error instanceof Error
             ? error.message
             : 'Erro ao adicionar participante à sessão',
           data: null,
-        };
+        }
       }
     }),
 
@@ -616,22 +616,22 @@ export const multiProfessionalCoordinationRouter = router({
         const coordinationService = new MultiProfessionalCoordinationService({
           supabaseUrl: process.env.SUPABASE_URL!,
           supabaseKey: process.env.SUPABASE_SERVICE_ROLE_KEY!,
-        });
+        })
 
-        const thread = await coordinationService.createCoordinationThread(input);
+        const thread = await coordinationService.createCoordinationThread(input)
 
         return {
           success: true,
           message: 'Tópico de coordenação criado com sucesso',
           data: thread,
-        };
+        }
       } catch (error) {
-        console.error('Error creating coordination thread:', error);
+        console.error('Error creating coordination thread:', error)
         return {
           success: false,
           message: error instanceof Error ? error.message : 'Erro ao criar tópico de coordenação',
           data: null,
-        };
+        }
       }
     }),
 
@@ -645,25 +645,25 @@ export const multiProfessionalCoordinationRouter = router({
         const coordinationService = new MultiProfessionalCoordinationService({
           supabaseUrl: process.env.SUPABASE_URL!,
           supabaseKey: process.env.SUPABASE_SERVICE_ROLE_KEY!,
-        });
+        })
 
         const threads = await coordinationService.getCoordinationThreads(
           input.clinicId,
           input.patientId,
-        );
+        )
 
         return {
           success: true,
           message: 'Tópicos de coordenação obtidos com sucesso',
           data: threads,
-        };
+        }
       } catch (error) {
-        console.error('Error getting coordination threads:', error);
+        console.error('Error getting coordination threads:', error)
         return {
           success: false,
           message: error instanceof Error ? error.message : 'Erro ao obter tópicos de coordenação',
           data: [],
-        };
+        }
       }
     }),
 
@@ -674,24 +674,24 @@ export const multiProfessionalCoordinationRouter = router({
         const coordinationService = new MultiProfessionalCoordinationService({
           supabaseUrl: process.env.SUPABASE_URL!,
           supabaseKey: process.env.SUPABASE_SERVICE_ROLE_KEY!,
-        });
+        })
 
-        const message = await coordinationService.addCoordinationMessage(input);
+        const message = await coordinationService.addCoordinationMessage(input)
 
         return {
           success: true,
           message: 'Mensagem de coordenação adicionada com sucesso',
           data: message,
-        };
+        }
       } catch (error) {
-        console.error('Error adding coordination message:', error);
+        console.error('Error adding coordination message:', error)
         return {
           success: false,
           message: error instanceof Error
             ? error.message
             : 'Erro ao adicionar mensagem de coordenação',
           data: null,
-        };
+        }
       }
     }),
 
@@ -703,22 +703,22 @@ export const multiProfessionalCoordinationRouter = router({
         const coordinationService = new MultiProfessionalCoordinationService({
           supabaseUrl: process.env.SUPABASE_URL!,
           supabaseKey: process.env.SUPABASE_SERVICE_ROLE_KEY!,
-        });
+        })
 
-        const supervision = await coordinationService.createProfessionalSupervision(input);
+        const supervision = await coordinationService.createProfessionalSupervision(input)
 
         return {
           success: true,
           message: 'Supervisão profissional criada com sucesso',
           data: supervision,
-        };
+        }
       } catch (error) {
-        console.error('Error creating professional supervision:', error);
+        console.error('Error creating professional supervision:', error)
         return {
           success: false,
           message: error instanceof Error ? error.message : 'Erro ao criar supervisão profissional',
           data: null,
-        };
+        }
       }
     }),
 
@@ -732,27 +732,27 @@ export const multiProfessionalCoordinationRouter = router({
         const coordinationService = new MultiProfessionalCoordinationService({
           supabaseUrl: process.env.SUPABASE_URL!,
           supabaseKey: process.env.SUPABASE_SERVICE_ROLE_KEY!,
-        });
+        })
 
         const relationships = await coordinationService.getSupervisionRelationships(
           input.professionalId,
           input.type,
-        );
+        )
 
         return {
           success: true,
           message: 'Relacionamentos de supervisão obtidos com sucesso',
           data: relationships,
-        };
+        }
       } catch (error) {
-        console.error('Error getting supervision relationships:', error);
+        console.error('Error getting supervision relationships:', error)
         return {
           success: false,
           message: error instanceof Error
             ? error.message
             : 'Erro ao obter relacionamentos de supervisão',
           data: [],
-        };
+        }
       }
     }),
 
@@ -768,26 +768,26 @@ export const multiProfessionalCoordinationRouter = router({
         const coordinationService = new MultiProfessionalCoordinationService({
           supabaseUrl: process.env.SUPABASE_URL!,
           supabaseKey: process.env.SUPABASE_SERVICE_ROLE_KEY!,
-        });
+        })
 
         const validation = await coordinationService.validateProfessionalScope(
           input.professionalId,
           input.procedureId,
           input.medicationId,
-        );
+        )
 
         return {
           success: true,
           message: 'Validação de escopo profissional concluída',
           data: validation,
-        };
+        }
       } catch (error) {
-        console.error('Error validating professional scope:', error);
+        console.error('Error validating professional scope:', error)
         return {
           success: false,
           message: error instanceof Error ? error.message : 'Erro ao validar escopo profissional',
           data: { isAuthorized: false, authorizationLevel: 'prohibited', conditions: [] },
-        };
+        }
       }
     }),
 
@@ -798,22 +798,22 @@ export const multiProfessionalCoordinationRouter = router({
         const coordinationService = new MultiProfessionalCoordinationService({
           supabaseUrl: process.env.SUPABASE_URL!,
           supabaseKey: process.env.SUPABASE_SERVICE_ROLE_KEY!,
-        });
+        })
 
-        const validation = await coordinationService.createScopeValidation(input);
+        const validation = await coordinationService.createScopeValidation(input)
 
         return {
           success: true,
           message: 'Validação de escopo criada com sucesso',
           data: validation,
-        };
+        }
       } catch (error) {
-        console.error('Error creating scope validation:', error);
+        console.error('Error creating scope validation:', error)
         return {
           success: false,
           message: error instanceof Error ? error.message : 'Erro ao criar validação de escopo',
           data: null,
-        };
+        }
       }
     }),
 
@@ -825,24 +825,24 @@ export const multiProfessionalCoordinationRouter = router({
         const coordinationService = new MultiProfessionalCoordinationService({
           supabaseUrl: process.env.SUPABASE_URL!,
           supabaseKey: process.env.SUPABASE_SERVICE_ROLE_KEY!,
-        });
+        })
 
-        const protocol = await coordinationService.createCoordinationProtocol(input);
+        const protocol = await coordinationService.createCoordinationProtocol(input)
 
         return {
           success: true,
           message: 'Protocolo de coordenação criado com sucesso',
           data: protocol,
-        };
+        }
       } catch (error) {
-        console.error('Error creating coordination protocol:', error);
+        console.error('Error creating coordination protocol:', error)
         return {
           success: false,
           message: error instanceof Error
             ? error.message
             : 'Erro ao criar protocolo de coordenação',
           data: null,
-        };
+        }
       }
     }),
 
@@ -855,24 +855,24 @@ export const multiProfessionalCoordinationRouter = router({
         const coordinationService = new MultiProfessionalCoordinationService({
           supabaseUrl: process.env.SUPABASE_URL!,
           supabaseKey: process.env.SUPABASE_SERVICE_ROLE_KEY!,
-        });
+        })
 
-        const protocols = await coordinationService.getCoordinationProtocols(input.clinicId);
+        const protocols = await coordinationService.getCoordinationProtocols(input.clinicId)
 
         return {
           success: true,
           message: 'Protocolos de coordenação obtidos com sucesso',
           data: protocols,
-        };
+        }
       } catch (error) {
-        console.error('Error getting coordination protocols:', error);
+        console.error('Error getting coordination protocols:', error)
         return {
           success: false,
           message: error instanceof Error
             ? error.message
             : 'Erro ao obter protocolos de coordenação',
           data: [],
-        };
+        }
       }
     }),
 
@@ -888,27 +888,27 @@ export const multiProfessionalCoordinationRouter = router({
         const coordinationService = new MultiProfessionalCoordinationService({
           supabaseUrl: process.env.SUPABASE_URL!,
           supabaseKey: process.env.SUPABASE_SERVICE_ROLE_KEY!,
-        });
+        })
 
         const execution = await coordinationService.executeProtocol(
           input.protocolId,
           input.patientId,
           input.triggerEvent,
           input.triggeredBy,
-        );
+        )
 
         return {
           success: true,
           message: 'Protocolo executado com sucesso',
           data: execution,
-        };
+        }
       } catch (error) {
-        console.error('Error executing protocol:', error);
+        console.error('Error executing protocol:', error)
         return {
           success: false,
           message: error instanceof Error ? error.message : 'Erro ao executar protocolo',
           data: null,
-        };
+        }
       }
     }),
 
@@ -920,24 +920,24 @@ export const multiProfessionalCoordinationRouter = router({
         const coordinationService = new MultiProfessionalCoordinationService({
           supabaseUrl: process.env.SUPABASE_URL!,
           supabaseKey: process.env.SUPABASE_SERVICE_ROLE_KEY!,
-        });
+        })
 
-        const overdueReferrals = await coordinationService.checkOverdueReferrals();
+        const overdueReferrals = await coordinationService.checkOverdueReferrals()
 
         return {
           success: true,
           message: 'Verificação de encaminhamentos pendentes concluída',
           data: overdueReferrals,
-        };
+        }
       } catch (error) {
-        console.error('Error checking overdue referrals:', error);
+        console.error('Error checking overdue referrals:', error)
         return {
           success: false,
           message: error instanceof Error
             ? error.message
             : 'Erro ao verificar encaminhamentos pendentes',
           data: [],
-        };
+        }
       }
     }),
 
@@ -953,28 +953,28 @@ export const multiProfessionalCoordinationRouter = router({
         const coordinationService = new MultiProfessionalCoordinationService({
           supabaseUrl: process.env.SUPABASE_URL!,
           supabaseKey: process.env.SUPABASE_SERVICE_ROLE_KEY!,
-        });
+        })
 
         const session = await coordinationService.createCollaborativeSessionForTreatment(
           input.patientId,
           input.treatmentPlanId,
           input.sessionType,
-        );
+        )
 
         return {
           success: true,
           message: 'Sessão colaborativa criada para tratamento com sucesso',
           data: session,
-        };
+        }
       } catch (error) {
-        console.error('Error creating collaborative session for treatment:', error);
+        console.error('Error creating collaborative session for treatment:', error)
         return {
           success: false,
           message: error instanceof Error
             ? error.message
             : 'Erro ao criar sessão colaborativa para tratamento',
           data: null,
-        };
+        }
       }
     }),
 
@@ -992,25 +992,25 @@ export const multiProfessionalCoordinationRouter = router({
         const coordinationService = new MultiProfessionalCoordinationService({
           supabaseUrl: process.env.SUPABASE_URL!,
           supabaseKey: process.env.SUPABASE_SERVICE_ROLE_KEY!,
-        });
+        })
 
         const analytics = await coordinationService.getCoordinationAnalytics(
           input.clinicId,
           input.dateRange,
-        );
+        )
 
         return {
           success: true,
           message: 'Análises de coordenação obtidas com sucesso',
           data: analytics,
-        };
+        }
       } catch (error) {
-        console.error('Error getting coordination analytics:', error);
+        console.error('Error getting coordination analytics:', error)
         return {
           success: false,
           message: error instanceof Error ? error.message : 'Erro ao obter análises de coordenação',
           data: [],
-        };
+        }
       }
     }),
 
@@ -1027,27 +1027,27 @@ export const multiProfessionalCoordinationRouter = router({
         const coordinationService = new MultiProfessionalCoordinationService({
           supabaseUrl: process.env.SUPABASE_URL!,
           supabaseKey: process.env.SUPABASE_SERVICE_ROLE_KEY!,
-        });
+        })
 
         const metrics = await coordinationService.getProfessionalCollaborationMetrics(
           input.professionalId,
           input.dateRange,
-        );
+        )
 
         return {
           success: true,
           message: 'Métricas de colaboração profissional obtidas com sucesso',
           data: metrics,
-        };
+        }
       } catch (error) {
-        console.error('Error getting professional collaboration metrics:', error);
+        console.error('Error getting professional collaboration metrics:', error)
         return {
           success: false,
           message: error instanceof Error
             ? error.message
             : 'Erro ao obter métricas de colaboração profissional',
           data: [],
-        };
+        }
       }
     }),
-});
+})

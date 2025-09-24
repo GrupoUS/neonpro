@@ -1,21 +1,21 @@
-import { dirname, resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { dirname, resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
 
 export type OrchestrationStep = {
-  name: string;
-  command: string[];
-  cwd?: string;
-};
+  name: string
+  command: string[]
+  cwd?: string
+}
 
 export type ToolWorkflow = {
-  id: string;
-  displayName: string;
-  steps: OrchestrationStep[];
-};
+  id: string
+  displayName: string
+  steps: OrchestrationStep[]
+}
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-const REPO_ROOT = resolve(__dirname, '../../..');
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
+const REPO_ROOT = resolve(__dirname, '../../..')
 
 const makeStep = (
   label: string,
@@ -26,7 +26,7 @@ const makeStep = (
   name: label,
   command: ['pnpm', '--filter', pkg, script, ...extraArgs],
   cwd: REPO_ROOT,
-});
+})
 
 export const TOOL_WORKFLOWS: ToolWorkflow[] = [
   {
@@ -96,4 +96,4 @@ export const TOOL_WORKFLOWS: ToolWorkflow[] = [
       makeStep('Tests', '@neonpro/tools-orchestration', 'test'),
     ],
   },
-];
+]

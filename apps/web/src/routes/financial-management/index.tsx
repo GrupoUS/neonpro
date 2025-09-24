@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from '@tanstack/react-router';
+import { createFileRoute, Link } from '@tanstack/react-router'
 import {
   AlertTriangle,
   BarChart3,
@@ -16,16 +16,16 @@ import {
   Target,
   TrendingUp,
   Users,
-} from 'lucide-react';
-import * as React from 'react';
-import { useState } from 'react';
+} from 'lucide-react'
+import * as React from 'react'
+import { useState } from 'react'
 
 export const Route = createFileRoute('/financial-management/')({
   component: FinancialManagementDashboard,
-});
+})
 
 function FinancialManagementDashboard() {
-  const [activeTab, setActiveTab] = useState('overview');
+  const [activeTab, setActiveTab] = useState('overview')
 
   const stats = [
     {
@@ -56,7 +56,7 @@ function FinancialManagementDashboard() {
       icon: FileText,
       color: 'text-orange-600',
     },
-  ];
+  ]
 
   const quickActions = [
     {
@@ -87,7 +87,7 @@ function FinancialManagementDashboard() {
       href: '/financial-management/goals',
       color: 'bg-orange-100 text-orange-600',
     },
-  ];
+  ]
 
   const recentInvoices = [
     {
@@ -122,7 +122,7 @@ function FinancialManagementDashboard() {
       status: 'paid',
       date: '2024-01-17',
     },
-  ];
+  ]
 
   const topServices = [
     {
@@ -149,7 +149,7 @@ function FinancialManagementDashboard() {
       count: 12,
       growth: '+22%',
     },
-  ];
+  ]
 
   const financialGoals = [
     {
@@ -173,7 +173,7 @@ function FinancialManagementDashboard() {
       progress: 87,
       status: 'active',
     },
-  ];
+  ]
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -183,29 +183,29 @@ function FinancialManagementDashboard() {
             <CheckCircle className='w-3 h-3 mr-1' />
             Pago
           </span>
-        );
+        )
       case 'pending':
         return (
           <span className='inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800'>
             <Clock className='w-3 h-3 mr-1' />
             Pendente
           </span>
-        );
+        )
       case 'overdue':
         return (
           <span className='inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800'>
             <AlertTriangle className='w-3 h-3 mr-1' />
             Vencido
           </span>
-        );
+        )
       default:
         return (
           <span className='inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800'>
             {status}
           </span>
-        );
+        )
     }
-  };
+  }
 
   return (
     <div className='min-h-screen bg-gray-50'>
@@ -437,7 +437,7 @@ function FinancialManagementDashboard() {
                     </tr>
                   </thead>
                   <tbody className='bg-white divide-y divide-gray-200'>
-                    {recentInvoices.map(invoice => (
+                    {recentInvoices.map((invoice) => (
                       <tr key={invoice.id} className='hover:bg-gray-50'>
                         <td className='px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900'>
                           {invoice.number}
@@ -504,5 +504,5 @@ function FinancialManagementDashboard() {
         </div>
       </main>
     </div>
-  );
+  )
 }

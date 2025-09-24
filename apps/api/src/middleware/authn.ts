@@ -1,27 +1,27 @@
-import { Context, Next } from 'hono';
-import { HTTPException } from 'hono/http-exception';
-import { createAdminClient } from '../clients/supabase';
-import { logger } from '../lib/logger';
-import { jwtValidator } from '../security/jwt-validator';
+import { Context, Next } from 'hono'
+import { HTTPException } from 'hono/http-exception'
+import { createAdminClient } from '../clients/supabase'
+import { logger } from '../lib/logger'
+import { jwtValidator } from '../security/jwt-validator'
 
 // Interface for validated user token data
 interface ValidatedUser {
-  id: string;
-  email: string;
-  _role: string;
-  clinicId: string;
-  name: string;
+  id: string
+  email: string
+  _role: string
+  clinicId: string
+  name: string
 }
 
 // Interface for JWT token payload
 interface JWTPayload {
-  sub: string;
-  email: string;
-  role: string;
-  clinic_id: string;
-  name?: string;
-  iat?: number;
-  exp?: number;
+  sub: string
+  email: string
+  role: string
+  clinic_id: string
+  name?: string
+  iat?: number
+  exp?: number
 }
 
 /**
@@ -31,30 +31,30 @@ export function authenticationMiddleware() {
   return async (c: Context, next: Next) => {
     try {
       // Get authorization header
-      const authHeader = c.req.header('authorization');
+      const authHeader = c.req.header('authorization')
 
       if (!authHeader || !authHeader.startsWith('Bearer ')) {
         logger.warn('Missing or invalid authorization header', {
           path: c.req.path,
           method: c.req.method,
           ip: c.req.header('x-forwarded-for') || c.req.header('x-real-ip'),
-        });
+        })
 
         throw new HTTPException(401, {
           message: 'Authorization header required',
-        });
+        })
       }
 
-      const token = authHeader.replace('Bearer ', '');
+      const token = authHeader.replace('Bearer ', '')
 
       if (!token) {
         throw new HTTPException(401, {
           message: 'Bearer token required',
-        });
+        })
       }
 
       // Validate JWT token using comprehensive security validator
-      const validationResult = await jwtValidator.validateToken(token, c);
+      const validationResult = await jwtValidator.validateToken(token, c)
 
       if (!validationResult.isValid) {
         logger.warn('Token validation failed', {
@@ -64,51 +64,51 @@ export function authenticationMiddleware() {
           path: c.req.path,
           method: c.req.method,
           ip: c.req.header('x-forwarded-for') || c.req.header('x-real-ip'),
-        });
+        })
 
         throw new HTTPException(401, {
           message: validationResult.error || 'Invalid token',
-        });
+        })
       }
 
       // Extract user information from validated token
-      const user = await validateUserFromToken(validationResult.payload!);
+      const user = await validateUserFromToken(validationResult.payload!)
 
       if (!user) {
         throw new HTTPException(401, {
           message: 'Invalid or expired token',
-        });
+        })
       }
 
       // Set user context for downstream handlers
-      c.set('user', user);
-      c.set('userId', user.id);
-      c.set('clinicId', user.clinicId);
+      c.set('user', user)
+      c.set('userId', user.id)
+      c.set('clinicId', user.clinicId)
 
       logger.debug('User authenticated successfully', {
         _userId: user.id,
         clinicId: user.clinicId,
         path: c.req.path,
         method: c.req.method,
-      });
+      })
 
-      await next();
+      await next()
     } catch {
       if (error instanceof HTTPException) {
-        throw error;
+        throw error
       }
 
       logger.error('Authentication error', {
         error: error instanceof Error ? error.message : String(error),
         path: c.req.path,
         method: c.req.method,
-      });
+      })
 
       throw new HTTPException(401, {
         message: 'Authentication failed',
-      });
+      })
     }
-  };
+  }
 }
 
 /**
@@ -116,12 +116,12 @@ export function authenticationMiddleware() {
  */
 export function authorizationMiddleware(allowedRoles: string[] = []) {
   return async (c: Context, next: Next) => {
-    const user = c.get('user');
+    const user = c.get('user')
 
     if (!user) {
       throw new HTTPException(401, {
         message: 'User not authenticated',
-      });
+      })
     }
 
     if (allowedRoles.length > 0 && !allowedRoles.includes(user._role)) {
@@ -131,11 +131,11 @@ export function authorizationMiddleware(allowedRoles: string[] = []) {
         allowedRoles,
         path: c.req.path,
         method: c.req.method,
-      });
+      })
 
       throw new HTTPException(403, {
         message: 'Insufficient permissions',
-      });
+      })
     }
 
     logger.debug('User authorized successfully', {
@@ -143,10 +143,10 @@ export function authorizationMiddleware(allowedRoles: string[] = []) {
       userRole: user.role,
       path: c.req.path,
       method: c.req.method,
-    });
+    })
 
-    await next();
-  };
+    await next()
+  }
 }
 
 /**
@@ -154,13 +154,13 @@ export function authorizationMiddleware(allowedRoles: string[] = []) {
  */
 export function clinicAccessMiddleware() {
   return async (c: Context, next: Next) => {
-    const user = c.get('user');
-    const requestedClinicId = c.req.param('clinicId') || c.req.query('clinicId');
+    const user = c.get('user')
+    const requestedClinicId = c.req.param('clinicId') || c.req.query('clinicId')
 
     if (!user) {
       throw new HTTPException(401, {
         message: 'User not authenticated',
-      });
+      })
     }
 
     if (requestedClinicId && requestedClinicId !== user.clinicId) {
@@ -170,15 +170,15 @@ export function clinicAccessMiddleware() {
         requestedClinicId,
         path: c.req.path,
         method: c.req.method,
-      });
+      })
 
       throw new HTTPException(403, {
         message: 'Access denied to clinic data',
-      });
+      })
     }
 
-    await next();
-  };
+    await next()
+  }
 }
 
 /**
@@ -188,13 +188,13 @@ async function validateUserFromToken(
   payload: JWTPayload,
 ): Promise<ValidatedUser | null> {
   try {
-    const { sub: userId, email, role, clinic_id: clinicId, name } = payload;
+    const { sub: userId, email, role, clinic_id: clinicId, name } = payload
 
     if (!userId || !email) {
       logger.error('Invalid token payload: missing required fields', {
         payload,
-      });
-      return null;
+      })
+      return null
     }
 
     // For development/testing, allow test tokens
@@ -205,21 +205,21 @@ async function validateUserFromToken(
         _role: role || 'admin',
         clinicId: clinicId || 'test-clinic-id',
         name: name || 'Test User',
-      };
+      }
     }
 
     // In production, validate user against database
-    const supabase = createAdminClient();
+    const supabase = createAdminClient()
     const { data: user, error } = await supabase
       .from('users')
       .select('id, email, role, clinic_id, name')
       .eq('id', _userId)
       .eq('email', email)
-      .single();
+      .single()
 
     if (error || !user) {
-      logger.error('User not found in database', { userId, email, error });
-      return null;
+      logger.error('User not found in database', { userId, email, error })
+      return null
     }
 
     return {
@@ -228,12 +228,12 @@ async function validateUserFromToken(
       _role: user.role,
       clinicId: user.clinic_id,
       name: user.name,
-    };
+    }
   } catch {
     logger.error('User validation from token failed', {
       error: error instanceof Error ? error.message : String(error),
-    });
-    return null;
+    })
+    return null
   }
 }
 
@@ -243,16 +243,16 @@ async function validateUserFromToken(
 export function requireAuth(allowedRoles: string[] = []) {
   return async (c: Context, next: Next) => {
     // Apply authentication first
-    await authenticationMiddleware()(c, async () => {});
+    await authenticationMiddleware()(c, async () => {})
 
     // Then apply authorization if roles are specified
     if (allowedRoles.length > 0) {
-      await authorizationMiddleware(allowedRoles)(c, async () => {});
+      await authorizationMiddleware(allowedRoles)(c, async () => {})
     }
 
     // Finally continue to the actual handler
-    await next();
-  };
+    await next()
+  }
 }
 
 /**
@@ -261,35 +261,35 @@ export function requireAuth(allowedRoles: string[] = []) {
 export function optionalAuth() {
   return async (c: Context, next: Next) => {
     try {
-      const authHeader = c.req.header('authorization');
+      const authHeader = c.req.header('authorization')
 
       if (authHeader && authHeader.startsWith('Bearer ')) {
-        const token = authHeader.replace('Bearer ', '');
+        const token = authHeader.replace('Bearer ', '')
 
         // Validate token using comprehensive security validator
-        const validationResult = await jwtValidator.validateToken(token, c);
+        const validationResult = await jwtValidator.validateToken(token, c)
 
         if (validationResult.isValid && validationResult._payload) {
-          const user = await validateUserFromToken(validationResult._payload);
+          const user = await validateUserFromToken(validationResult._payload)
 
           if (user) {
-            c.set('user', user);
-            c.set('userId', user.id);
-            c.set('clinicId', user.clinicId);
+            c.set('user', user)
+            c.set('userId', user.id)
+            c.set('clinicId', user.clinicId)
 
             logger.debug('Optional authentication succeeded', {
               _userId: user.id,
               clinicId: user.clinicId,
               path: c.req.path,
               method: c.req.method,
-            });
+            })
           }
         } else {
           logger.debug('Optional authentication failed - invalid token', {
             error: validationResult.error,
             path: c.req.path,
             method: c.req.method,
-          });
+          })
         }
       }
     } catch {
@@ -298,9 +298,9 @@ export function optionalAuth() {
         error: error instanceof Error ? error.message : String(error),
         path: c.req.path,
         method: c.req.method,
-      });
+      })
     }
 
-    await next();
-  };
+    await next()
+  }
 }

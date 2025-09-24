@@ -21,33 +21,33 @@ Infrastructure: Load Balancing, Auto-scaling, CDN, Monitoring
 
 ```typescript
 // apps/web/src/router/index.tsx
-import { createRoute, createRouter } from '@tanstack/react-router';
-import { lazy } from 'react';
+import { createRoute, createRouter } from '@tanstack/react-router'
+import { lazy } from 'react'
 
 // Lazy loading route components
 const ClientManagement = lazy(() =>
-  import('~/components/aesthetic/client-management/ClientManagement').then(m => ({
+  import('~/components/aesthetic/client-management/ClientManagement').then((m) => ({
     default: m.ClientManagement,
   }))
-);
+)
 
 const TreatmentPlanner = lazy(() =>
-  import('~/components/aesthetic/treatment-planning/TreatmentPlanner').then(m => ({
+  import('~/components/aesthetic/treatment-planning/TreatmentPlanner').then((m) => ({
     default: m.TreatmentPlanner,
   }))
-);
+)
 
 const AICalendarScheduler = lazy(() =>
-  import('~/components/aesthetic/scheduling/AICalendarScheduler').then(m => ({
+  import('~/components/aesthetic/scheduling/AICalendarScheduler').then((m) => ({
     default: m.AICalendarScheduler,
   }))
-);
+)
 
 const ComplianceDashboard = lazy(() =>
-  import('~/components/aesthetic/compliance/ComplianceDashboard').then(m => ({
+  import('~/components/aesthetic/compliance/ComplianceDashboard').then((m) => ({
     default: m.ComplianceDashboard,
   }))
-);
+)
 
 // Route configuration with performance optimizations
 const routeTree = createRoute({
@@ -57,28 +57,28 @@ const routeTree = createRoute({
   createRoute({
     path: '/clients',
     component: ClientManagement,
-    loader: () => import('~/hooks/useClients').then(m => ({ default: m.useClients })),
+    loader: () => import('~/hooks/useClients').then((m) => ({ default: m.useClients })),
     shouldReload: () => false, // Prevent unnecessary reloads
   }),
   createRoute({
     path: '/treatments',
     component: TreatmentPlanner,
-    loader: () => import('~/hooks/useTreatments').then(m => ({ default: m.useTreatments })),
+    loader: () => import('~/hooks/useTreatments').then((m) => ({ default: m.useTreatments })),
     shouldReload: () => false,
   }),
   createRoute({
     path: '/scheduling',
     component: AICalendarScheduler,
-    loader: () => import('~/hooks/useScheduling').then(m => ({ default: m.useScheduling })),
+    loader: () => import('~/hooks/useScheduling').then((m) => ({ default: m.useScheduling })),
     shouldReload: () => false,
   }),
   createRoute({
     path: '/compliance',
     component: ComplianceDashboard,
-    loader: () => import('~/hooks/useCompliance').then(m => ({ default: m.useCompliance })),
+    loader: () => import('~/hooks/useCompliance').then((m) => ({ default: m.useCompliance })),
     shouldReload: () => false,
   }),
-]);
+])
 
 // Create router with performance optimizations
 export const router = createRouter({
@@ -98,59 +98,59 @@ export const router = createRouter({
       },
     }),
   },
-});
+})
 ```
 
 ### Component Optimization
 
 ```typescript
 // apps/web/src/components/shared/optimized-components.tsx
-import { useVirtualizer } from '@tanstack/react-virtual';
-import React, { memo, useCallback, useMemo, useState } from 'react';
+import { useVirtualizer } from '@tanstack/react-virtual'
+import React, { memo, useCallback, useMemo, useState } from 'react'
 
 // Optimized client list component
 export const OptimizedClientList: React.FC<ClientListProps> = memo(
   ({ clients, onClientSelect }) => {
-    const [searchTerm, setSearchTerm] = useState('');
-    const [sortBy, setSortBy] = useState<'name' | 'date' | 'treatments'>('name');
-    const [filterStatus, setFilterStatus] = useState<'all' | 'active' | 'inactive'>('all');
+    const [searchTerm, setSearchTerm] = useState('')
+    const [sortBy, setSortBy] = useState<'name' | 'date' | 'treatments'>('name')
+    const [filterStatus, setFilterStatus] = useState<'all' | 'active' | 'inactive'>('all')
 
     // Memoized filtered and sorted clients
     const filteredClients = useMemo(() => {
       return clients
-        .filter(client => {
+        .filter((client) => {
           const matchesSearch = client.fullName.toLowerCase().includes(searchTerm.toLowerCase())
-            || client.email.toLowerCase().includes(searchTerm.toLowerCase());
-          const matchesStatus = filterStatus === 'all' || client.status === filterStatus;
-          return matchesSearch && matchesStatus;
+            || client.email.toLowerCase().includes(searchTerm.toLowerCase())
+          const matchesStatus = filterStatus === 'all' || client.status === filterStatus
+          return matchesSearch && matchesStatus
         })
         .sort((a, b) => {
           switch (sortBy) {
             case 'name':
-              return a.fullName.localeCompare(b.fullName);
+              return a.fullName.localeCompare(b.fullName)
             case 'date':
-              return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+              return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
             case 'treatments':
-              return (b.treatmentCount || 0) - (a.treatmentCount || 0);
+              return (b.treatmentCount || 0) - (a.treatmentCount || 0)
             default:
-              return 0;
+              return 0
           }
-        });
-    }, [clients, searchTerm, sortBy, filterStatus]);
+        })
+    }, [clients, searchTerm, sortBy, filterStatus])
 
     // Virtual list implementation for large datasets
-    const parentRef = React.useRef<HTMLDivElement>(null);
+    const parentRef = React.useRef<HTMLDivElement>(null)
 
     const rowVirtualizer = useVirtualizer({
       count: filteredClients.length,
       getScrollElement: () => parentRef.current,
       estimateSize: () => 80, // Estimated row height
       overscan: 5, // Number of items to render outside viewport
-    });
+    })
 
     const handleClientSelect = useCallback((clientId: string) => {
-      onClientSelect(clientId);
-    }, [onClientSelect]);
+      onClientSelect(clientId)
+    }, [onClientSelect])
 
     return (
       <div className='space-y-4'>
@@ -201,8 +201,8 @@ export const OptimizedClientList: React.FC<ClientListProps> = memo(
               position: 'relative',
             }}
           >
-            {rowVirtualizer.getVirtualItems().map(virtualRow => {
-              const client = filteredClients[virtualRow.index];
+            {rowVirtualizer.getVirtualItems().map((virtualRow) => {
+              const client = filteredClients[virtualRow.index]
               return (
                 <div
                   key={virtualRow.index}
@@ -215,7 +215,7 @@ export const OptimizedClientList: React.FC<ClientListProps> = memo(
                 >
                   <ClientListItem client={client} />
                 </div>
-              );
+              )
             })}
           </div>
         </div>
@@ -225,28 +225,28 @@ export const OptimizedClientList: React.FC<ClientListProps> = memo(
           Mostrando {filteredClients.length} de {clients.length} clientes
         </div>
       </div>
-    );
+    )
   },
-);
+)
 
-OptimizedClientList.displayName = 'OptimizedClientList';
+OptimizedClientList.displayName = 'OptimizedClientList'
 
 // Optimized client list item component
 const ClientListItem: React.FC<{ client: AestheticClientProfile }> = memo(({ client }) => {
   const initials = useMemo(() => {
     return client.fullName
       .split(' ')
-      .map(word => word[0])
+      .map((word) => word[0])
       .join('')
       .substring(0, 2)
-      .toUpperCase();
-  }, [client.fullName]);
+      .toUpperCase()
+  }, [client.fullName])
 
   const lastVisitDate = useMemo(() => {
     return client.lastVisitDate
       ? format(new Date(client.lastVisitDate), 'dd/MM/yyyy')
-      : 'Nunca';
-  }, [client.lastVisitDate]);
+      : 'Nunca'
+  }, [client.lastVisitDate])
 
   return (
     <div className='flex items-center space-x-4'>
@@ -278,29 +278,29 @@ const ClientListItem: React.FC<{ client: AestheticClientProfile }> = memo(({ cli
         </div>
       </div>
     </div>
-  );
-});
+  )
+})
 
-ClientListItem.displayName = 'ClientListItem';
+ClientListItem.displayName = 'ClientListItem'
 ```
 
 ### Image Optimization
 
 ```typescript
 // apps/web/src/components/shared/optimized-image.tsx
-import React, { useEffect, useRef, useState } from 'react';
-import { cn } from '~/lib/utils';
+import React, { useEffect, useRef, useState } from 'react'
+import { cn } from '~/lib/utils'
 
 interface OptimizedImageProps {
-  src: string;
-  alt: string;
-  width?: number;
-  height?: number;
-  className?: string;
-  loading?: 'lazy' | 'eager';
-  placeholder?: 'blur' | 'empty';
-  quality?: number;
-  priority?: boolean;
+  src: string
+  alt: string
+  width?: number
+  height?: number
+  className?: string
+  loading?: 'lazy' | 'eager'
+  placeholder?: 'blur' | 'empty'
+  quality?: number
+  priority?: boolean
 }
 
 export const OptimizedImage: React.FC<OptimizedImageProps> = ({
@@ -314,37 +314,37 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
   quality = 80,
   priority = false,
 }) => {
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [hasError, setHasError] = useState(false);
-  const imgRef = useRef<HTMLImageElement>(null);
+  const [isLoaded, setIsLoaded] = useState(false)
+  const [hasError, setHasError] = useState(false)
+  const imgRef = useRef<HTMLImageElement>(null)
 
   useEffect(() => {
     if (priority && imgRef.current) {
       // Preload priority images
-      const img = new Image();
-      img.onload = () => setIsLoaded(true);
-      img.onerror = () => setHasError(true);
-      img.src = src;
+      const img = new Image()
+      img.onload = () => setIsLoaded(true)
+      img.onerror = () => setHasError(true)
+      img.src = src
     }
-  }, [src, priority]);
+  }, [src, priority])
 
   const optimizedSrc = useMemo(() => {
     // Generate optimized image URL with quality parameters
-    const url = new URL(src, window.location.origin);
-    url.searchParams.set('width', width.toString());
-    url.searchParams.set('height', height.toString());
-    url.searchParams.set('quality', quality.toString());
-    url.searchParams.set('format', 'webp');
-    return url.toString();
-  }, [src, width, height, quality]);
+    const url = new URL(src, window.location.origin)
+    url.searchParams.set('width', width.toString())
+    url.searchParams.set('height', height.toString())
+    url.searchParams.set('quality', quality.toString())
+    url.searchParams.set('format', 'webp')
+    return url.toString()
+  }, [src, width, height, quality])
 
   const handleLoad = () => {
-    setIsLoaded(true);
-  };
+    setIsLoaded(true)
+  }
 
   const handleError = () => {
-    setHasError(true);
-  };
+    setHasError(true)
+  }
 
   return (
     <div className={cn('relative overflow-hidden', className)} style={{ width, height }}>
@@ -381,8 +381,8 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
           />
         )}
     </div>
-  );
-};
+  )
+}
 ```
 
 ## 🚀 API Performance Optimization
@@ -391,12 +391,12 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
 
 ```typescript
 // apps/api/src/middleware/compression-middleware.ts
-import compression from 'compression';
-import { NextFunction, Request, Response } from 'express';
+import compression from 'compression'
+import { NextFunction, Request, Response } from 'express'
 
 export class CompressionMiddleware {
-  private compression: any;
-  private cacheService: CacheService;
+  private compression: any
+  private cacheService: CacheService
 
   constructor() {
     this.compression = compression({
@@ -405,13 +405,13 @@ export class CompressionMiddleware {
       filter: (req: Request, res: Response) => {
         // Don't compress images or already compressed content
         if (res.getHeader('Content-Type')?.includes('image')) {
-          return false;
+          return false
         }
-        return compression.filter(req, res);
+        return compression.filter(req, res)
       },
-    });
+    })
 
-    this.cacheService = new CacheService();
+    this.cacheService = new CacheService()
   }
 
   middleware = (req: Request, res: Response, next: NextFunction): void => {
@@ -419,95 +419,95 @@ export class CompressionMiddleware {
     this.compression(req, res, async () => {
       // Apply caching for GET requests
       if (req.method === 'GET' && this.isCacheable(req)) {
-        const cacheKey = this.generateCacheKey(req);
-        const cachedResponse = await this.cacheService.get(cacheKey);
+        const cacheKey = this.generateCacheKey(req)
+        const cachedResponse = await this.cacheService.get(cacheKey)
 
         if (cachedResponse) {
-          res.setHeader('X-Cache', 'HIT');
-          res.setHeader('Content-Type', cachedResponse.contentType);
-          return res.send(cachedResponse.data);
+          res.setHeader('X-Cache', 'HIT')
+          res.setHeader('Content-Type', cachedResponse.contentType)
+          return res.send(cachedResponse.data)
         }
 
         // Cache the response
-        const originalSend = res.send;
+        const originalSend = res.send
         res.send = (data: any) => {
           this.cacheService.set(cacheKey, {
             data,
             contentType: res.getHeader('Content-Type'),
             timestamp: Date.now(),
-          });
-          return originalSend.call(res, data);
-        };
+          })
+          return originalSend.call(res, data)
+        }
 
-        res.setHeader('X-Cache', 'MISS');
+        res.setHeader('X-Cache', 'MISS')
       }
 
-      next();
-    });
-  };
+      next()
+    })
+  }
 
   private isCacheable(req: Request): boolean {
     const nonCacheablePaths = [
       '/api/v1/auth',
       '/api/v1/compliance',
       '/api/v1/analytics/realtime',
-    ];
+    ]
 
-    return !nonCacheablePaths.some(path => req.path.startsWith(path));
+    return !nonCacheablePaths.some((path) => req.path.startsWith(path))
   }
 
   private generateCacheKey(req: Request): string {
-    const url = new URL(req.url, `${req.protocol}://${req.get('host')}`);
-    return `cache:${req.method}:${url.pathname}:${url.search}`;
+    const url = new URL(req.url, `${req.protocol}://${req.get('host')}`)
+    return `cache:${req.method}:${url.pathname}:${url.search}`
   }
 }
 
 // Response caching service
 export class CacheService {
-  private cache: Map<string, CacheEntry> = new Map();
-  private maxSize: number = 1000; // Maximum cache entries
-  private defaultTTL: number = 5 * 60 * 1000; // 5 minutes
+  private cache: Map<string, CacheEntry> = new Map()
+  private maxSize: number = 1000 // Maximum cache entries
+  private defaultTTL: number = 5 * 60 * 1000 // 5 minutes
 
   async get(key: string): Promise<CachedResponse | null> {
-    const entry = this.cache.get(key);
+    const entry = this.cache.get(key)
 
     if (!entry) {
-      return null;
+      return null
     }
 
     if (Date.now() - entry.timestamp > entry.ttl) {
-      this.cache.delete(key);
-      return null;
+      this.cache.delete(key)
+      return null
     }
 
-    return entry.data;
+    return entry.data
   }
 
   async set(key: string, data: any, ttl: number = this.defaultTTL): Promise<void> {
     // Evict oldest entries if cache is full
     if (this.cache.size >= this.maxSize) {
-      const oldestKey = this.cache.keys().next().value;
-      this.cache.delete(oldestKey);
+      const oldestKey = this.cache.keys().next().value
+      this.cache.delete(oldestKey)
     }
 
     this.cache.set(key, {
       data,
       timestamp: Date.now(),
       ttl,
-    });
+    })
   }
 
   async invalidate(pattern: string): Promise<void> {
-    const regex = new RegExp(pattern);
+    const regex = new RegExp(pattern)
     for (const key of this.cache.keys()) {
       if (regex.test(key)) {
-        this.cache.delete(key);
+        this.cache.delete(key)
       }
     }
   }
 
   async clear(): Promise<void> {
-    this.cache.clear();
+    this.cache.clear()
   }
 
   getStats(): CacheStats {
@@ -516,20 +516,20 @@ export class CacheService {
       maxSize: this.maxSize,
       hitRate: this.calculateHitRate(),
       memoryUsage: this.calculateMemoryUsage(),
-    };
+    }
   }
 
   private calculateHitRate(): number {
     // Implementation would track hits/misses
-    return 0.85; // Example hit rate
+    return 0.85 // Example hit rate
   }
 
   private calculateMemoryUsage(): number {
-    let totalSize = 0;
+    let totalSize = 0
     for (const entry of this.cache.values()) {
-      totalSize += JSON.stringify(entry).length;
+      totalSize += JSON.stringify(entry).length
     }
-    return totalSize;
+    return totalSize
   }
 }
 ```
@@ -539,39 +539,39 @@ export class CacheService {
 ```typescript
 // apps/api/src/services/database/query-optimizer-service.ts
 export class QueryOptimizerService {
-  private queryCache: Map<string, QueryCacheEntry> = new Map();
-  private slowQueryThreshold: number = 1000; // ms
+  private queryCache: Map<string, QueryCacheEntry> = new Map()
+  private slowQueryThreshold: number = 1000 // ms
 
   async optimizeQuery<T>(
     query: string,
     params: any[],
     options: QueryOptions = {},
   ): Promise<QueryResult<T>> {
-    const startTime = Date.now();
+    const startTime = Date.now()
 
     // Generate cache key
-    const cacheKey = this.generateCacheKey(query, params, options);
+    const cacheKey = this.generateCacheKey(query, params, options)
 
     // Check cache
     if (options.cache !== false) {
-      const cached = this.queryCache.get(cacheKey);
+      const cached = this.queryCache.get(cacheKey)
       if (cached && !this.isCacheExpired(cached)) {
-        return cached.result;
+        return cached.result
       }
     }
 
     // Analyze and optimize query
-    const optimizedQuery = await this.analyzeAndOptimizeQuery(query);
+    const optimizedQuery = await this.analyzeAndOptimizeQuery(query)
 
     // Execute query with retry logic
-    const result = await this.executeQueryWithRetry<T>(optimizedQuery, params, options);
+    const result = await this.executeQueryWithRetry<T>(optimizedQuery, params, options)
 
     // Calculate execution time
-    const executionTime = Date.now() - startTime;
+    const executionTime = Date.now() - startTime
 
     // Log slow queries
     if (executionTime > this.slowQueryThreshold) {
-      await this.logSlowQuery(query, executionTime, params);
+      await this.logSlowQuery(query, executionTime, params)
     }
 
     // Cache result
@@ -580,63 +580,63 @@ export class QueryOptimizerService {
         result,
         timestamp: Date.now(),
         ttl: options.cacheTTL || 5 * 60 * 1000, // 5 minutes
-      });
+      })
     }
 
     return {
       ...result,
       executionTime,
       cached: false,
-    };
+    }
   }
 
   private async analyzeAndOptimizeQuery(query: string): Promise<string> {
     // Remove unnecessary whitespace
-    let optimized = query.replace(/\s+/g, ' ').trim();
+    let optimized = query.replace(/\s+/g, ' ').trim()
 
     // Add query hints for PostgreSQL
     if (this.isSelectQuery(optimized)) {
-      optimized = this.addQueryHints(optimized);
+      optimized = this.addQueryHints(optimized)
     }
 
     // Optimize JOIN order if possible
-    optimized = this.optimizeJoinOrder(optimized);
+    optimized = this.optimizeJoinOrder(optimized)
 
     // Add appropriate indexes suggestion
-    await this.suggestIndexes(optimized);
+    await this.suggestIndexes(optimized)
 
-    return optimized;
+    return optimized
   }
 
   private addQueryHints(query: string): string {
     // Add parallel query hint for large datasets
     if (this.isLargeDatasetQuery(query)) {
-      return `/*+ Parallel(8) */ ${query}`;
+      return `/*+ Parallel(8) */ ${query}`
     }
 
     // Add index scan hint for filtered queries
     if (this.hasWhereClause(query)) {
-      return `/*+ IndexScan */ ${query}`;
+      return `/*+ IndexScan */ ${query}`
     }
 
-    return query;
+    return query
   }
 
   private optimizeJoinOrder(query: string): string {
     // Simple heuristic: put tables with smaller result sets first
     // This is a simplified version - real optimization would require statistics
-    return query;
+    return query
   }
 
   private async suggestIndexes(query: string): Promise<void> {
     // Analyze query for missing indexes
-    const tables = this.extractTablesFromQuery(query);
-    const columns = this.extractColumnsFromQuery(query);
+    const tables = this.extractTablesFromQuery(query)
+    const columns = this.extractColumnsFromQuery(query)
 
     for (const table of tables) {
       for (const column of columns[table] || []) {
         if (this.needsIndex(table, column)) {
-          await this.logIndexSuggestion(table, column);
+          await this.logIndexSuggestion(table, column)
         }
       }
     }
@@ -647,41 +647,41 @@ export class QueryOptimizerService {
     params: any[],
     options: QueryOptions,
   ): Promise<QueryResult<T>> {
-    const maxRetries = options.maxRetries || 3;
-    const baseDelay = options.baseDelay || 100;
+    const maxRetries = options.maxRetries || 3
+    const baseDelay = options.baseDelay || 100
 
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
       try {
-        const result = await this.executeQuery<T>(query, params);
-        return result;
+        const result = await this.executeQuery<T>(query, params)
+        return result
       } catch (error) {
         if (attempt === maxRetries || !this.isRetryableError(error)) {
-          throw error;
+          throw error
         }
 
-        const delay = baseDelay * Math.pow(2, attempt - 1);
-        await this.sleep(delay);
+        const delay = baseDelay * Math.pow(2, attempt - 1)
+        await this.sleep(delay)
       }
     }
 
-    throw new Error('Max retries exceeded');
+    throw new Error('Max retries exceeded')
   }
 
   private generateCacheKey(query: string, params: any[], options: QueryOptions): string {
-    const normalizedQuery = query.toLowerCase().replace(/\s+/g, ' ').trim();
-    const paramString = JSON.stringify(params);
-    const optionsString = JSON.stringify(options);
+    const normalizedQuery = query.toLowerCase().replace(/\s+/g, ' ').trim()
+    const paramString = JSON.stringify(params)
+    const optionsString = JSON.stringify(options)
 
-    return `query:${hashCode(normalizedQuery)}:${hashCode(paramString)}:${hashCode(optionsString)}`;
+    return `query:${hashCode(normalizedQuery)}:${hashCode(paramString)}:${hashCode(optionsString)}`
   }
 
   private isCacheExpired(entry: QueryCacheEntry): boolean {
-    return Date.now() - entry.timestamp > entry.ttl;
+    return Date.now() - entry.timestamp > entry.ttl
   }
 
   private shouldCacheResult(result: QueryResult<any>): boolean {
     // Don't cache large results
-    return JSON.stringify(result).length < 1024 * 1024; // 1MB
+    return JSON.stringify(result).length < 1024 * 1024 // 1MB
   }
 
   private async logSlowQuery(query: string, executionTime: number, params: any[]): Promise<void> {
@@ -689,14 +689,14 @@ export class QueryOptimizerService {
       query: query.substring(0, 200) + '...',
       params,
       timestamp: new Date().toISOString(),
-    });
+    })
 
     // Send to monitoring service
     await this.monitoringService.logMetric('slow_query', {
       executionTime,
       queryLength: query.length,
       paramsCount: params.length,
-    });
+    })
   }
 }
 ```
@@ -708,7 +708,7 @@ export class QueryOptimizerService {
 ```typescript
 // apps/api/src/services/connection-pool-manager.ts
 export class ConnectionPoolManager {
-  private pools: Map<string, ConnectionPool> = new Map();
+  private pools: Map<string, ConnectionPool> = new Map()
   private metrics: PoolMetrics = {
     totalConnections: 0,
     activeConnections: 0,
@@ -717,11 +717,11 @@ export class ConnectionPoolManager {
     totalQueries: 0,
     averageQueryTime: 0,
     connectionErrors: 0,
-  };
+  }
 
   constructor(private config: PoolConfig) {
-    this.initializePools();
-    this.startMetricsCollection();
+    this.initializePools()
+    this.startMetricsCollection()
   }
 
   private initializePools(): void {
@@ -736,7 +736,7 @@ export class ConnectionPoolManager {
         connectionTimeoutMillis: 2000,
         maxLifetime: 7 * 24 * 60 * 60 * 1000, // 7 days
       }),
-    );
+    )
 
     // Read replica pool for analytics queries
     this.pools.set(
@@ -749,7 +749,7 @@ export class ConnectionPoolManager {
         connectionTimeoutMillis: 5000,
         readonly: true,
       }),
-    );
+    )
 
     // Pool for compliance/audit queries
     this.pools.set(
@@ -762,32 +762,32 @@ export class ConnectionPoolManager {
         connectionTimeoutMillis: 10000,
         readonly: true,
       }),
-    );
+    )
   }
 
   async getConnection(poolType: PoolType = 'primary'): Promise<Connection> {
-    const pool = this.pools.get(poolType);
+    const pool = this.pools.get(poolType)
     if (!pool) {
-      throw new Error(`Connection pool '${poolType}' not found`);
+      throw new Error(`Connection pool '${poolType}' not found`)
     }
 
-    const startTime = Date.now();
+    const startTime = Date.now()
 
     try {
-      const connection = await pool.getConnection();
-      const waitTime = Date.now() - startTime;
+      const connection = await pool.getConnection()
+      const waitTime = Date.now() - startTime
 
       // Update metrics
-      this.metrics.waitingRequests = Math.max(0, this.metrics.waitingRequests - 1);
-      this.metrics.totalQueries++;
+      this.metrics.waitingRequests = Math.max(0, this.metrics.waitingRequests - 1)
+      this.metrics.totalQueries++
       this.metrics.averageQueryTime =
         (this.metrics.averageQueryTime * (this.metrics.totalQueries - 1) + waitTime)
-        / this.metrics.totalQueries;
+        / this.metrics.totalQueries
 
-      return connection;
+      return connection
     } catch (error) {
-      this.metrics.connectionErrors++;
-      throw error;
+      this.metrics.connectionErrors++
+      throw error
     }
   }
 
@@ -796,35 +796,35 @@ export class ConnectionPoolManager {
     params: any[] = [],
     options: QueryOptions = {},
   ): Promise<QueryResult<T>> {
-    const poolType = this.determinePoolType(query, options);
-    const connection = await this.getConnection(poolType);
+    const poolType = this.determinePoolType(query, options)
+    const connection = await this.getConnection(poolType)
 
     try {
-      const result = await connection.query(query, params);
+      const result = await connection.query(query, params)
       return {
         rows: result.rows,
         rowCount: result.rowCount,
         fields: result.fields,
-      };
+      }
     } finally {
-      connection.release();
+      connection.release()
     }
   }
 
   private determinePoolType(query: string, options: QueryOptions): PoolType {
     if (options.readonly) {
-      return 'read_replica';
+      return 'read_replica'
     }
 
     if (options.compliance) {
-      return 'audit';
+      return 'audit'
     }
 
     if (this.isAnalyticsQuery(query)) {
-      return 'read_replica';
+      return 'read_replica'
     }
 
-    return 'primary';
+    return 'primary'
   }
 
   private isAnalyticsQuery(query: string): boolean {
@@ -836,28 +836,28 @@ export class ConnectionPoolManager {
       'analytics',
       'report',
       'statistics',
-    ];
+    ]
 
-    const upperQuery = query.toUpperCase();
-    return analyticsKeywords.some(keyword => upperQuery.includes(keyword));
+    const upperQuery = query.toUpperCase()
+    return analyticsKeywords.some((keyword) => upperQuery.includes(keyword))
   }
 
   private startMetricsCollection(): void {
     setInterval(() => {
-      this.updatePoolMetrics();
-    }, 10000); // Update every 10 seconds
+      this.updatePoolMetrics()
+    }, 10000) // Update every 10 seconds
   }
 
   private updatePoolMetrics(): void {
-    let totalConnections = 0;
-    let activeConnections = 0;
-    let idleConnections = 0;
+    let totalConnections = 0
+    let activeConnections = 0
+    let idleConnections = 0
 
     for (const pool of this.pools.values()) {
-      const poolStats = pool.getStats();
-      totalConnections += poolStats.total;
-      activeConnections += poolStats.active;
-      idleConnections += poolStats.idle;
+      const poolStats = pool.getStats()
+      totalConnections += poolStats.total
+      activeConnections += poolStats.active
+      idleConnections += poolStats.idle
     }
 
     this.metrics = {
@@ -865,43 +865,43 @@ export class ConnectionPoolManager {
       totalConnections,
       activeConnections,
       idleConnections,
-    };
+    }
   }
 
   getMetrics(): PoolMetrics {
-    return { ...this.metrics };
+    return { ...this.metrics }
   }
 
   async healthCheck(): Promise<PoolHealth> {
     const healthStatus: PoolHealth = {
       overall: 'healthy',
       pools: {},
-    };
+    }
 
     for (const [poolType, pool] of this.pools) {
       try {
-        const connection = await pool.getConnection();
-        await connection.query('SELECT 1');
-        connection.release();
+        const connection = await pool.getConnection()
+        await connection.query('SELECT 1')
+        connection.release()
 
-        const stats = pool.getStats();
+        const stats = pool.getStats()
         healthStatus.pools[poolType] = {
           status: 'healthy',
           totalConnections: stats.total,
           activeConnections: stats.active,
           idleConnections: stats.idle,
           waitingRequests: stats.waiting,
-        };
+        }
       } catch (error) {
         healthStatus.pools[poolType] = {
           status: 'unhealthy',
           error: error.message,
-        };
-        healthStatus.overall = 'degraded';
+        }
+        healthStatus.overall = 'degraded'
       }
     }
 
-    return healthStatus;
+    return healthStatus
   }
 }
 ```
@@ -911,7 +911,7 @@ export class ConnectionPoolManager {
 ```typescript
 // apps/api/src/services/cache/enhanced-query-cache.ts
 export class EnhancedQueryCache {
-  private cache: Map<string, CacheEntry> = new Map();
+  private cache: Map<string, CacheEntry> = new Map()
   private stats: CacheStats = {
     hits: 0,
     misses: 0,
@@ -919,41 +919,41 @@ export class EnhancedQueryCache {
     size: 0,
     maxSize: 1000,
     hitRate: 0,
-  };
+  }
 
   constructor(private config: CacheConfig) {
-    this.startCleanupTask();
+    this.startCleanupTask()
   }
 
   async get<T>(key: string): Promise<T | null> {
-    const entry = this.cache.get(key);
+    const entry = this.cache.get(key)
 
     if (!entry) {
-      this.stats.misses++;
-      this.updateHitRate();
-      return null;
+      this.stats.misses++
+      this.updateHitRate()
+      return null
     }
 
     if (this.isExpired(entry)) {
-      this.cache.delete(key);
-      this.stats.evictions++;
-      this.stats.size--;
-      return null;
+      this.cache.delete(key)
+      this.stats.evictions++
+      this.stats.size--
+      return null
     }
 
-    this.stats.hits++;
-    this.updateHitRate();
+    this.stats.hits++
+    this.updateHitRate()
 
     // Update access time for LRU eviction
-    entry.lastAccessed = Date.now();
+    entry.lastAccessed = Date.now()
 
-    return entry.data;
+    return entry.data
   }
 
   async set<T>(key: string, data: T, options: CacheOptions = {}): Promise<void> {
     // Evict entries if cache is full
     if (this.cache.size >= this.stats.maxSize) {
-      this.evictEntries();
+      this.evictEntries()
     }
 
     const entry: CacheEntry<T> = {
@@ -963,81 +963,81 @@ export class EnhancedQueryCache {
       lastAccessed: Date.now(),
       accessCount: 1,
       priority: options.priority || 'normal',
-    };
+    }
 
-    this.cache.set(key, entry);
-    this.stats.size++;
+    this.cache.set(key, entry)
+    this.stats.size++
   }
 
   async invalidate(pattern: string): Promise<void> {
-    const regex = new RegExp(pattern);
-    const keysToDelete: string[] = [];
+    const regex = new RegExp(pattern)
+    const keysToDelete: string[] = []
 
     for (const key of this.cache.keys()) {
       if (regex.test(key)) {
-        keysToDelete.push(key);
+        keysToDelete.push(key)
       }
     }
 
     for (const key of keysToDelete) {
-      this.cache.delete(key);
-      this.stats.size--;
+      this.cache.delete(key)
+      this.stats.size--
     }
   }
 
   async clear(): Promise<void> {
-    this.cache.clear();
-    this.stats.size = 0;
+    this.cache.clear()
+    this.stats.size = 0
   }
 
   private isExpired(entry: CacheEntry): boolean {
-    return Date.now() - entry.created > entry.ttl;
+    return Date.now() - entry.created > entry.ttl
   }
 
   private evictEntries(): void {
     // LRU eviction strategy
     const entries = Array.from(this.cache.entries())
-      .sort((a, b) => a[1].lastAccessed - b[1].lastAccessed);
+      .sort((a, b) => a[1].lastAccessed - b[1].lastAccessed)
 
-    const evictionCount = Math.floor(this.stats.maxSize * 0.2); // Evict 20%
+    const evictionCount = Math.floor(this.stats.maxSize * 0.2) // Evict 20%
 
     for (let i = 0; i < evictionCount && i < entries.length; i++) {
-      this.cache.delete(entries[i][0]);
-      this.stats.size--;
-      this.stats.evictions++;
+      this.cache.delete(entries[i][0])
+      this.stats.size--
+      this.stats.evictions++
     }
   }
 
   private updateHitRate(): void {
-    const total = this.stats.hits + this.stats.misses;
-    this.stats.hitRate = total > 0 ? this.stats.hits / total : 0;
+    const total = this.stats.hits + this.stats.misses
+    this.stats.hitRate = total > 0 ? this.stats.hits / total : 0
   }
 
   private startCleanupTask(): void {
     setInterval(() => {
-      this.cleanupExpiredEntries();
-    }, this.config.cleanupInterval);
+      this.cleanupExpiredEntries()
+    }, this.config.cleanupInterval)
   }
 
   private cleanupExpiredEntries(): void {
-    const now = Date.now();
-    const expiredKeys: string[] = [];
+    const now = Date.now()
+    const expiredKeys: string[] = []
 
     for (const [key, entry] of this.cache) {
       if (now - entry.created > entry.ttl) {
-        expiredKeys.push(key);
+        expiredKeys.push(key)
       }
     }
 
     for (const key of expiredKeys) {
-      this.cache.delete(key);
-      this.stats.size--;
-      this.stats.evictions++;
+      this.cache.delete(key)
+      this.stats.size--
+      this.stats.evictions++
     }
   }
 
   getStats(): CacheStats {
-    return { ...this.stats };
+    return { ...this.stats }
   }
 }
 ```
@@ -1049,9 +1049,9 @@ export class EnhancedQueryCache {
 ```typescript
 // apps/api/src/services/monitoring-service.ts
 export class PerformanceMonitoringService {
-  private metrics: Map<string, Metric[]> = new Map();
-  private alerts: PerformanceAlert[] = [];
-  private thresholds: PerformanceThresholds;
+  private metrics: Map<string, Metric[]> = new Map()
+  private alerts: PerformanceAlert[] = []
+  private thresholds: PerformanceThresholds
 
   constructor() {
     this.thresholds = {
@@ -1060,9 +1060,9 @@ export class PerformanceMonitoringService {
       cpuUsage: { warning: 0.7, critical: 0.9 }, // 70%, 90%
       memoryUsage: { warning: 0.8, critical: 0.95 }, // 80%, 95%
       databaseConnections: { warning: 0.8, critical: 0.95 }, // 80%, 95%
-    };
+    }
 
-    this.startMonitoring();
+    this.startMonitoring()
   }
 
   async recordMetric(
@@ -1074,22 +1074,22 @@ export class PerformanceMonitoringService {
       timestamp: Date.now(),
       value,
       tags,
-    };
-
-    if (!this.metrics.has(name)) {
-      this.metrics.set(name, []);
     }
 
-    const metrics = this.metrics.get(name)!;
-    metrics.push(metric);
+    if (!this.metrics.has(name)) {
+      this.metrics.set(name, [])
+    }
+
+    const metrics = this.metrics.get(name)!
+    metrics.push(metric)
 
     // Keep only last 1000 data points
     if (metrics.length > 1000) {
-      metrics.shift();
+      metrics.shift()
     }
 
     // Check for alerts
-    await this.checkAlerts(name, value, tags);
+    await this.checkAlerts(name, value, tags)
   }
 
   private async checkAlerts(
@@ -1097,14 +1097,14 @@ export class PerformanceMonitoringService {
     value: number,
     tags: Record<string, string>,
   ): Promise<void> {
-    const threshold = this.thresholds[name as keyof PerformanceThresholds];
-    if (!threshold) return;
+    const threshold = this.thresholds[name as keyof PerformanceThresholds]
+    if (!threshold) return
 
     const alertType = value >= threshold.critical
       ? 'critical'
       : value >= threshold.warning
       ? 'warning'
-      : null;
+      : null
 
     if (alertType) {
       const alert: PerformanceAlert = {
@@ -1116,10 +1116,10 @@ export class PerformanceMonitoringService {
         timestamp: Date.now(),
         tags,
         resolved: false,
-      };
+      }
 
-      this.alerts.push(alert);
-      await this.notifyTeam(alert);
+      this.alerts.push(alert)
+      await this.notifyTeam(alert)
     }
   }
 
@@ -1131,53 +1131,53 @@ export class PerformanceMonitoringService {
       title: `Performance Alert: ${alert.metric}`,
       message: `${alert.metric} is ${alert.value} (threshold: ${alert.threshold})`,
       tags: alert.tags,
-    });
+    })
   }
 
   private startMonitoring(): void {
     // Monitor response times
     setInterval(async () => {
-      const responseTime = await this.measureResponseTime();
-      await this.recordMetric('responseTime', responseTime);
-    }, 60000); // Every minute
+      const responseTime = await this.measureResponseTime()
+      await this.recordMetric('responseTime', responseTime)
+    }, 60000) // Every minute
 
     // Monitor error rates
     setInterval(async () => {
-      const errorRate = await this.calculateErrorRate();
-      await this.recordMetric('errorRate', errorRate);
-    }, 300000); // Every 5 minutes
+      const errorRate = await this.calculateErrorRate()
+      await this.recordMetric('errorRate', errorRate)
+    }, 300000) // Every 5 minutes
 
     // Monitor system resources
     setInterval(async () => {
       const [cpuUsage, memoryUsage] = await Promise.all([
         this.getCPUUsage(),
         this.getMemoryUsage(),
-      ]);
+      ])
 
-      await this.recordMetric('cpuUsage', cpuUsage);
-      await this.recordMetric('memoryUsage', memoryUsage);
-    }, 30000); // Every 30 seconds
+      await this.recordMetric('cpuUsage', cpuUsage)
+      await this.recordMetric('memoryUsage', memoryUsage)
+    }, 30000) // Every 30 seconds
 
     // Monitor database connections
     setInterval(async () => {
-      const connectionUsage = await this.getDatabaseConnectionUsage();
-      await this.recordMetric('databaseConnections', connectionUsage);
-    }, 60000); // Every minute
+      const connectionUsage = await this.getDatabaseConnectionUsage()
+      await this.recordMetric('databaseConnections', connectionUsage)
+    }, 60000) // Every minute
   }
 
   async getDashboard(): Promise<PerformanceDashboard> {
-    const latestMetrics = new Map<string, Metric>();
+    const latestMetrics = new Map<string, Metric>()
 
     for (const [name, metrics] of this.metrics) {
       if (metrics.length > 0) {
-        latestMetrics.set(name, metrics[metrics.length - 1]);
+        latestMetrics.set(name, metrics[metrics.length - 1])
       }
     }
 
     return {
       timestamp: Date.now(),
       metrics: Object.fromEntries(latestMetrics),
-      alerts: this.alerts.filter(a => !a.resolved),
+      alerts: this.alerts.filter((a) => !a.resolved),
       summary: {
         overall: this.calculateOverallHealth(),
         responseTime: latestMetrics.get('responseTime')?.value || 0,
@@ -1186,35 +1186,35 @@ export class PerformanceMonitoringService {
         memoryUsage: latestMetrics.get('memoryUsage')?.value || 0,
         databaseConnections: latestMetrics.get('databaseConnections')?.value || 0,
       },
-    };
+    }
   }
 
   private calculateOverallHealth(): 'healthy' | 'warning' | 'critical' {
-    const latestMetrics = new Map<string, Metric>();
+    const latestMetrics = new Map<string, Metric>()
 
     for (const [name, metrics] of this.metrics) {
       if (metrics.length > 0) {
-        latestMetrics.set(name, metrics[metrics.length - 1]);
+        latestMetrics.set(name, metrics[metrics.length - 1])
       }
     }
 
-    let criticalCount = 0;
-    let warningCount = 0;
+    let criticalCount = 0
+    let warningCount = 0
 
     for (const [name, metric] of latestMetrics) {
-      const threshold = this.thresholds[name as keyof PerformanceThresholds];
-      if (!threshold) continue;
+      const threshold = this.thresholds[name as keyof PerformanceThresholds]
+      if (!threshold) continue
 
       if (metric.value >= threshold.critical) {
-        criticalCount++;
+        criticalCount++
       } else if (metric.value >= threshold.warning) {
-        warningCount++;
+        warningCount++
       }
     }
 
-    if (criticalCount > 0) return 'critical';
-    if (warningCount > 2) return 'warning';
-    return 'healthy';
+    if (criticalCount > 0) return 'critical'
+    if (warningCount > 2) return 'warning'
+    return 'healthy'
   }
 
   async generateReport(timeRange: { start: Date; end: Date }): Promise<PerformanceReport> {
@@ -1229,56 +1229,56 @@ export class PerformanceMonitoringService {
       },
       metrics: {},
       recommendations: [],
-    };
+    }
 
     // Calculate metrics for the time period
     for (const [name, metrics] of this.metrics) {
-      const periodMetrics = metrics.filter(m =>
+      const periodMetrics = metrics.filter((m) =>
         m.timestamp >= timeRange.start.getTime()
         && m.timestamp <= timeRange.end.getTime()
-      );
+      )
 
       if (periodMetrics.length > 0) {
         report.metrics[name] = {
           count: periodMetrics.length,
           average: periodMetrics.reduce((sum, m) => sum + m.value, 0) / periodMetrics.length,
-          min: Math.min(...periodMetrics.map(m => m.value)),
-          max: Math.max(...periodMetrics.map(m => m.value)),
-          percentile95: this.calculatePercentile(periodMetrics.map(m => m.value), 95),
-        };
+          min: Math.min(...periodMetrics.map((m) => m.value)),
+          max: Math.max(...periodMetrics.map((m) => m.value)),
+          percentile95: this.calculatePercentile(periodMetrics.map((m) => m.value), 95),
+        }
       }
     }
 
     // Generate recommendations
-    report.recommendations = this.generateRecommendations(report.metrics);
+    report.recommendations = this.generateRecommendations(report.metrics)
 
-    return report;
+    return report
   }
 
   private generateRecommendations(metrics: Record<string, MetricStats>): string[] {
-    const recommendations: string[] = [];
+    const recommendations: string[] = []
 
     if (metrics.responseTime?.average > 2000) {
-      recommendations.push('Consider implementing response caching for slow endpoints');
+      recommendations.push('Consider implementing response caching for slow endpoints')
     }
 
     if (metrics.errorRate?.average > 0.05) {
-      recommendations.push('High error rate detected - investigate root causes');
+      recommendations.push('High error rate detected - investigate root causes')
     }
 
     if (metrics.cpuUsage?.average > 0.8) {
-      recommendations.push('High CPU usage - consider scaling or optimizing queries');
+      recommendations.push('High CPU usage - consider scaling or optimizing queries')
     }
 
     if (metrics.memoryUsage?.average > 0.85) {
-      recommendations.push('High memory usage - check for memory leaks');
+      recommendations.push('High memory usage - check for memory leaks')
     }
 
     if (metrics.databaseConnections?.average > 0.9) {
-      recommendations.push('Database connection pool near capacity - increase pool size');
+      recommendations.push('Database connection pool near capacity - increase pool size')
     }
 
-    return recommendations;
+    return recommendations
   }
 }
 ```

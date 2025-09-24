@@ -1,4 +1,4 @@
-import { EnhancedShineBorder, HoverBorderGradient } from '../components/aceternity';
+import { EnhancedShineBorder, HoverBorderGradient } from '../components/aceternity'
 
 export function AceternityHoverBorderDemo() {
   return (
@@ -173,7 +173,7 @@ export function AceternityHoverBorderDemo() {
         </div>
       </div>
     </div>
-  );
+  )
 }
 
-export default AceternityHoverBorderDemo;
+export default AceternityHoverBorderDemo

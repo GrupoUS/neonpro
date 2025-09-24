@@ -39,7 +39,7 @@ export const BRAZILIAN_STATES = [
   'SP',
   'SE',
   'TO',
-];
+]
 
 // Healthcare specialties
 export const HEALTHCARE_SPECIALTIES = [
@@ -58,60 +58,60 @@ export const HEALTHCARE_SPECIALTIES = [
   'Anestesiologia',
   'Cirurgia Geral',
   'Medicina Estética',
-];
+]
 
 // Validation error interface
 export interface ValidationError {
-  field: string;
-  message: string;
-  code: string;
+  field: string
+  message: string
+  code: string
 }
 
 // Validation result interface
 export interface ValidationResult {
-  isValid: boolean;
-  errors: ValidationError[];
+  isValid: boolean
+  errors: ValidationError[]
 }
 
 // Patient data interface
 export interface PatientData {
-  name?: string;
-  cpf?: string;
-  phone?: string;
-  email?: string;
-  birthDate?: string;
-  gender?: string;
-  cep?: string;
-  crm_state?: string;
-  crmv_state?: string;
-  [key: string]: unknown;
+  name?: string
+  cpf?: string
+  phone?: string
+  email?: string
+  birthDate?: string
+  gender?: string
+  cep?: string
+  crm_state?: string
+  crmv_state?: string
+  [key: string]: unknown
 }
 
 // Brazilian address interface
 export interface BrazilianAddress {
-  street?: string;
-  number?: string;
-  complement?: string;
-  neighborhood?: string;
-  city?: string;
-  state?: string;
-  cep?: string;
-  [key: string]: unknown;
+  street?: string
+  number?: string
+  complement?: string
+  neighborhood?: string
+  city?: string
+  state?: string
+  cep?: string
+  [key: string]: unknown
 }
 
 // Clean document numbers (remove formatting)
 export function cleanDocument(document: string): string {
-  return document.replace(/[^\d]/g, '');
+  return document.replace(/[^\d]/g, '')
 }
 
 // CPF Validation
 export function validateCPF(cpf: string): boolean {
-  if (!cpf) return false;
+  if (!cpf) return false
 
-  const cleanCPF = cleanDocument(cpf);
+  const cleanCPF = cleanDocument(cpf)
 
   // Check length
-  if (cleanCPF.length !== 11) return false;
+  if (cleanCPF.length !== 11) return false
 
   // Check for known invalid CPFs
   const invalidCPFs = [
@@ -125,146 +125,146 @@ export function validateCPF(cpf: string): boolean {
     '77777777777',
     '88888888888',
     '99999999999',
-  ];
+  ]
 
-  if (invalidCPFs.includes(cleanCPF)) return false;
+  if (invalidCPFs.includes(cleanCPF)) return false
 
   // Validate check digits
-  let sum = 0;
+  let sum = 0
   for (let i = 0; i < 9; i++) {
-    sum += parseInt(cleanCPF.charAt(i)) * (10 - i);
+    sum += parseInt(cleanCPF.charAt(i)) * (10 - i)
   }
 
-  let remainder = (sum * 10) % 11;
-  if (remainder === 10 || remainder === 11) remainder = 0;
-  if (remainder !== parseInt(cleanCPF.charAt(9))) return false;
+  let remainder = (sum * 10) % 11
+  if (remainder === 10 || remainder === 11) remainder = 0
+  if (remainder !== parseInt(cleanCPF.charAt(9))) return false
 
-  sum = 0;
+  sum = 0
   for (let i = 0; i < 10; i++) {
-    sum += parseInt(cleanCPF.charAt(i)) * (11 - i);
+    sum += parseInt(cleanCPF.charAt(i)) * (11 - i)
   }
 
-  remainder = (sum * 10) % 11;
-  if (remainder === 10 || remainder === 11) remainder = 0;
-  if (remainder !== parseInt(cleanCPF.charAt(10))) return false;
+  remainder = (sum * 10) % 11
+  if (remainder === 10 || remainder === 11) remainder = 0
+  if (remainder !== parseInt(cleanCPF.charAt(10))) return false
 
-  return true;
+  return true
 }
 
 // Format CPF
 export function formatCPF(cpf: string): string {
-  const cleanCPF = cleanDocument(cpf);
-  if (cleanCPF.length !== 11) return cpf;
-  return cleanCPF.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+  const cleanCPF = cleanDocument(cpf)
+  if (cleanCPF.length !== 11) return cpf
+  return cleanCPF.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4')
 }
 
 // CNPJ Validation
 export function validateCNPJ(cnpj: string): boolean {
-  if (!cnpj) return false;
+  if (!cnpj) return false
 
-  const cleanCNPJ = cleanDocument(cnpj);
+  const cleanCNPJ = cleanDocument(cnpj)
 
   // Check length
-  if (cleanCNPJ.length !== 14) return false;
+  if (cleanCNPJ.length !== 14) return false
 
   // Check for known invalid CNPJs
-  if (cleanCNPJ === '00000000000000') return false;
-  if (/^(\d)\1+$/.test(cleanCNPJ)) return false; // All same digits
+  if (cleanCNPJ === '00000000000000') return false
+  if (/^(\d)\1+$/.test(cleanCNPJ)) return false // All same digits
 
   // Validate first check digit
-  let sum = 0;
-  const weights1 = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+  let sum = 0
+  const weights1 = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2]
 
   for (let i = 0; i < 12; i++) {
-    sum += parseInt(cleanCNPJ.charAt(i) || '0') * (weights1[i] || 0);
+    sum += parseInt(cleanCNPJ.charAt(i) || '0') * (weights1[i] || 0)
   }
 
-  let remainder = sum % 11;
-  const digit1 = remainder < 2 ? 0 : 11 - remainder;
+  let remainder = sum % 11
+  const digit1 = remainder < 2 ? 0 : 11 - remainder
 
-  if (digit1 !== parseInt(cleanCNPJ.charAt(12))) return false;
+  if (digit1 !== parseInt(cleanCNPJ.charAt(12))) return false
 
   // Validate second check digit
-  sum = 0;
-  const weights2 = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+  sum = 0
+  const weights2 = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2]
 
   for (let i = 0; i < 13; i++) {
-    sum += parseInt(cleanCNPJ.charAt(i) || '0') * (weights2[i] || 0);
+    sum += parseInt(cleanCNPJ.charAt(i) || '0') * (weights2[i] || 0)
   }
 
-  remainder = sum % 11;
-  const digit2 = remainder < 2 ? 0 : 11 - remainder;
+  remainder = sum % 11
+  const digit2 = remainder < 2 ? 0 : 11 - remainder
 
-  if (digit2 !== parseInt(cleanCNPJ.charAt(13))) return false;
+  if (digit2 !== parseInt(cleanCNPJ.charAt(13))) return false
 
-  return true;
+  return true
 }
 
 // Format CNPJ
 export function formatCNPJ(cnpj: string): string {
-  const cleanCNPJ = cleanDocument(cnpj);
-  if (cleanCNPJ.length !== 14) return cnpj;
+  const cleanCNPJ = cleanDocument(cnpj)
+  if (cleanCNPJ.length !== 14) return cnpj
   return cleanCNPJ.replace(
     /(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/,
     '$1.$2.$3/$4-$5',
-  );
+  )
 }
 
 // Brazilian phone validation
 export function validateBrazilianPhone(phone: string): boolean {
-  if (!phone) return false;
+  if (!phone) return false
 
-  const cleanPhone = cleanDocument(phone);
+  const cleanPhone = cleanDocument(phone)
 
   // Check length (10 or 11 digits)
-  if (cleanPhone.length !== 10 && cleanPhone.length !== 11) return false;
+  if (cleanPhone.length !== 10 && cleanPhone.length !== 11) return false
 
   // Check area code (11-99)
-  const areaCode = parseInt(cleanPhone.substring(0, 2));
-  if (areaCode < 11 || areaCode > 99) return false;
+  const areaCode = parseInt(cleanPhone.substring(0, 2))
+  if (areaCode < 11 || areaCode > 99) return false
 
   // Check mobile number format (9 digits starting with 9)
   if (cleanPhone.length === 11) {
-    const firstDigit = parseInt(cleanPhone.charAt(2));
-    if (firstDigit !== 9) return false;
+    const firstDigit = parseInt(cleanPhone.charAt(2))
+    if (firstDigit !== 9) return false
   }
 
-  return true;
+  return true
 }
 
 // Format Brazilian phone
 export function formatBrazilianPhone(phone: string): string {
-  const cleanPhone = cleanDocument(phone);
+  const cleanPhone = cleanDocument(phone)
 
   if (cleanPhone.length === 10) {
-    return cleanPhone.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3');
+    return cleanPhone.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3')
   } else if (cleanPhone.length === 11) {
-    return cleanPhone.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+    return cleanPhone.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3')
   }
 
-  return phone;
+  return phone
 }
 
 // CEP validation
 export function validateCEP(cep: string): boolean {
-  if (!cep) return false;
+  if (!cep) return false
 
-  const cleanCEP = cleanDocument(cep);
+  const cleanCEP = cleanDocument(cep)
 
   // Check length
-  if (cleanCEP.length !== 8) return false;
+  if (cleanCEP.length !== 8) return false
 
   // Check for valid pattern (not all zeros)
-  if (cleanCEP === '00000000') return false;
+  if (cleanCEP === '00000000') return false
 
-  return true;
+  return true
 }
 
 // Format CEP
 export function formatCEP(cep: string): string {
-  const cleanCEP = cleanDocument(cep);
-  if (cleanCEP.length !== 8) return cep;
-  return cleanCEP.replace(/(\d{5})(\d{3})/, '$1-$2');
+  const cleanCEP = cleanDocument(cep)
+  if (cleanCEP.length !== 8) return cep
+  return cleanCEP.replace(/(\d{5})(\d{3})/, '$1-$2')
 }
 
 // CRM validation is handled by the more comprehensive function later in the file
@@ -272,27 +272,27 @@ export function formatCEP(cep: string): string {
 
 // SUS card validation
 export function validateSUSCard(card: string): boolean {
-  if (!card) return false;
+  if (!card) return false
 
-  const cleanCard = cleanDocument(card);
+  const cleanCard = cleanDocument(card)
 
   // SUS card has 15 digits
-  if (cleanCard.length !== 15) return false;
+  if (cleanCard.length !== 15) return false
 
-  return true;
+  return true
 }
 
 // Brazilian state validation
 export function validateBrazilianState(state: string): boolean {
-  if (!state) return false;
-  return BRAZILIAN_STATES.includes(state.toUpperCase());
+  if (!state) return false
+  return BRAZILIAN_STATES.includes(state.toUpperCase())
 }
 
 // Email validation
 export function validateEmail(email: string): boolean {
-  if (!email) return false;
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email);
+  if (!email) return false
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  return emailRegex.test(email)
 }
 
 // Get validation message in Portuguese
@@ -356,14 +356,14 @@ export function getValidationMessage(field: string, errorType: string): string {
       invalid: 'Código do procedimento médico inválido',
       format: 'Formato do código de procedimento inválido',
     },
-  };
+  }
 
-  return messages[field]?.[errorType] || `Campo ${field} inválido`;
+  return messages[field]?.[errorType] || `Campo ${field} inválido`
 }
 
 // Validate patient data
 export function validatePatientData(data: PatientData): ValidationResult {
-  const errors: ValidationError[] = [];
+  const errors: ValidationError[] = []
 
   // Name validation
   if (!data.name || data.name.trim() === '') {
@@ -371,13 +371,13 @@ export function validatePatientData(data: PatientData): ValidationResult {
       field: 'name',
       message: getValidationMessage('name', 'required'),
       code: 'REQUIRED',
-    });
+    })
   } else if (data.name.trim().length < 2) {
     errors.push({
       field: 'name',
       message: getValidationMessage('name', 'min_length'),
       code: 'MIN_LENGTH',
-    });
+    })
   }
 
   // CPF validation
@@ -386,13 +386,13 @@ export function validatePatientData(data: PatientData): ValidationResult {
       field: 'cpf',
       message: getValidationMessage('cpf', 'required'),
       code: 'REQUIRED',
-    });
+    })
   } else if (!validateCPF(data.cpf)) {
     errors.push({
       field: 'cpf',
       message: getValidationMessage('cpf', 'invalid'),
       code: 'INVALID',
-    });
+    })
   }
 
   // Phone validation
@@ -401,13 +401,13 @@ export function validatePatientData(data: PatientData): ValidationResult {
       field: 'phone',
       message: getValidationMessage('phone', 'required'),
       code: 'REQUIRED',
-    });
+    })
   } else if (!validateBrazilianPhone(data.phone)) {
     errors.push({
       field: 'phone',
       message: getValidationMessage('phone', 'invalid'),
       code: 'INVALID',
-    });
+    })
   }
 
   // Email validation (optional)
@@ -416,7 +416,7 @@ export function validatePatientData(data: PatientData): ValidationResult {
       field: 'email',
       message: getValidationMessage('email', 'invalid'),
       code: 'INVALID',
-    });
+    })
   }
 
   // CEP validation (optional)
@@ -425,34 +425,34 @@ export function validatePatientData(data: PatientData): ValidationResult {
       field: 'cep',
       message: getValidationMessage('cep', 'invalid'),
       code: 'INVALID',
-    });
+    })
   }
 
   return {
     isValid: errors.length === 0,
     errors,
-  };
+  }
 }
 
 // Validate Brazilian address
 export function validateBrazilianAddress(
   address: BrazilianAddress,
 ): ValidationResult {
-  const errors: ValidationError[] = [];
+  const errors: ValidationError[] = []
 
   // Required fields
-  const requiredFields = ['street', 'neighborhood', 'city', 'state', 'cep'];
+  const requiredFields = ['street', 'neighborhood', 'city', 'state', 'cep']
 
-  requiredFields.forEach(field => {
-    const fieldValue = address[field as keyof BrazilianAddress];
+  requiredFields.forEach((field) => {
+    const fieldValue = address[field as keyof BrazilianAddress]
     if (!fieldValue || (typeof fieldValue === 'string' && fieldValue.trim() === '')) {
       errors.push({
         field,
         message: `${field} é obrigatório`,
         code: 'REQUIRED',
-      });
+      })
     }
-  });
+  })
 
   // State validation
   if (address.state && !validateBrazilianState(address.state)) {
@@ -460,7 +460,7 @@ export function validateBrazilianAddress(
       field: 'state',
       message: 'Estado inválido',
       code: 'INVALID',
-    });
+    })
   }
 
   // CEP validation
@@ -469,25 +469,25 @@ export function validateBrazilianAddress(
       field: 'cep',
       message: getValidationMessage('cep', 'invalid'),
       code: 'INVALID',
-    });
+    })
   }
 
   return {
     isValid: errors.length === 0,
     errors,
-  };
+  }
 }
 
 // Create validation schema
 export function createValidationSchema(fields: Record<string, any>): {
-  validate: (data: PatientData | BrazilianAddress) => ValidationResult;
+  validate: (data: PatientData | BrazilianAddress) => ValidationResult
 } {
   return {
     validate: (data: PatientData | BrazilianAddress): ValidationResult => {
-      const errors: ValidationError[] = [];
+      const errors: ValidationError[] = []
 
       Object.entries(fields).forEach(([fieldName, config]) => {
-        const value = data[fieldName as keyof (PatientData | BrazilianAddress)];
+        const value = data[fieldName as keyof (PatientData | BrazilianAddress)]
 
         // Required field validation
         if (
@@ -498,12 +498,12 @@ export function createValidationSchema(fields: Record<string, any>): {
             field: fieldName,
             message: getValidationMessage(fieldName, 'required'),
             code: 'REQUIRED',
-          });
-          return;
+          })
+          return
         }
 
         // Skip validation if field is empty and not required
-        if (!value) return;
+        if (!value) return
 
         // Field-specific validation
         switch (fieldName) {
@@ -513,96 +513,98 @@ export function createValidationSchema(fields: Record<string, any>): {
                 field: fieldName,
                 message: getValidationMessage(fieldName, 'invalid'),
                 code: 'INVALID',
-              });
+              })
             }
-            break;
+            break
           case 'cnpj':
             if (typeof value === 'string' && !validateCNPJ(value)) {
               errors.push({
                 field: fieldName,
                 message: getValidationMessage(fieldName, 'invalid'),
                 code: 'INVALID',
-              });
+              })
             }
-            break;
+            break
           case 'phone':
             if (typeof value === 'string' && !validateBrazilianPhone(value)) {
               errors.push({
                 field: fieldName,
                 message: getValidationMessage(fieldName, 'invalid'),
                 code: 'INVALID',
-              });
+              })
             }
-            break;
+            break
           case 'cep':
             if (typeof value === 'string' && !validateCEP(value)) {
               errors.push({
                 field: fieldName,
                 message: getValidationMessage(fieldName, 'invalid'),
                 code: 'INVALID',
-              });
+              })
             }
-            break;
+            break
           case 'email':
             if (typeof value === 'string' && !validateEmail(value)) {
               errors.push({
                 field: fieldName,
                 message: getValidationMessage(fieldName, 'invalid'),
                 code: 'INVALID',
-              });
+              })
             }
-            break;
+            break
           case 'crm':
             if (
-              typeof value === 'string' && typeof data.crm_state === 'string'
+              typeof value === 'string'
+              && typeof data.crm_state === 'string'
               && !validateCRM(value, data.crm_state)
             ) {
               errors.push({
                 field: fieldName,
                 message: getValidationMessage(fieldName, 'invalid'),
                 code: 'INVALID',
-              });
+              })
             }
-            break;
+            break
           case 'crmv':
             if (
-              typeof value === 'string' && typeof data.crmv_state === 'string'
+              typeof value === 'string'
+              && typeof data.crmv_state === 'string'
               && !validateCRMV(value, data.crmv_state)
             ) {
               errors.push({
                 field: fieldName,
                 message: getValidationMessage(fieldName, 'invalid'),
                 code: 'INVALID',
-              });
+              })
             }
-            break;
+            break
           case 'cns':
             if (typeof value === 'string' && !validateCNS(value)) {
               errors.push({
                 field: fieldName,
                 message: getValidationMessage(fieldName, 'invalid'),
                 code: 'INVALID',
-              });
+              })
             }
-            break;
+            break
           case 'anvisa_code':
             if (typeof value === 'string' && !validateANVISACode(value)) {
               errors.push({
                 field: fieldName,
                 message: getValidationMessage(fieldName, 'invalid'),
                 code: 'INVALID',
-              });
+              })
             }
-            break;
+            break
         }
-      });
+      })
 
       return {
         isValid: errors.length === 0,
         errors,
-      };
+      }
     },
-  };
+  }
 }
 
 // ============================================
@@ -614,27 +616,27 @@ export function createValidationSchema(fields: Record<string, any>): {
  * Format: 123456/UF
  */
 export function validateCRM(crm: string, state?: string): boolean {
-  if (!crm) return false;
+  if (!crm) return false
 
-  const cleanCRM = crm.replace(/[^\d/]/g, '');
-  const parts = cleanCRM.split('/');
+  const cleanCRM = crm.replace(/[^\d/]/g, '')
+  const parts = cleanCRM.split('/')
 
-  if (parts.length !== 2) return false;
+  if (parts.length !== 2) return false
 
-  const number = parts[0];
-  const uf = parts[1];
+  const number = parts[0]
+  const uf = parts[1]
 
   // Check number length (typically 4-6 digits)
-  if (!number || number.length < 4 || number.length > 6) return false;
-  if (!/^\d+$/.test(number)) return false;
+  if (!number || number.length < 4 || number.length > 6) return false
+  if (!/^\d+$/.test(number)) return false
 
   // Check UF
-  if (!uf || !BRAZILIAN_STATES.includes(uf)) return false;
+  if (!uf || !BRAZILIAN_STATES.includes(uf)) return false
 
   // If state provided, verify consistency
-  if (state && state !== uf) return false;
+  if (state && state !== uf) return false
 
-  return true;
+  return true
 }
 
 /**
@@ -642,27 +644,27 @@ export function validateCRM(crm: string, state?: string): boolean {
  * Format: 123456/UF
  */
 export function validateCRMV(crmv: string, state?: string): boolean {
-  if (!crmv) return false;
+  if (!crmv) return false
 
-  const cleanCRMV = crmv.replace(/[^\d/]/g, '');
-  const parts = cleanCRMV.split('/');
+  const cleanCRMV = crmv.replace(/[^\d/]/g, '')
+  const parts = cleanCRMV.split('/')
 
-  if (parts.length !== 2) return false;
+  if (parts.length !== 2) return false
 
-  const number = parts[0];
-  const uf = parts[1];
+  const number = parts[0]
+  const uf = parts[1]
 
   // Check number length (typically 4-6 digits)
-  if (!number || number.length < 4 || number.length > 6) return false;
-  if (!/^\d+$/.test(number)) return false;
+  if (!number || number.length < 4 || number.length > 6) return false
+  if (!/^\d+$/.test(number)) return false
 
   // Check UF
-  if (!uf || !BRAZILIAN_STATES.includes(uf)) return false;
+  if (!uf || !BRAZILIAN_STATES.includes(uf)) return false
 
   // If state provided, verify consistency
-  if (state && state !== uf) return false;
+  if (state && state !== uf) return false
 
-  return true;
+  return true
 }
 
 /**
@@ -670,16 +672,16 @@ export function validateCRMV(crmv: string, state?: string): boolean {
  * Brazilian National Health Card - 15 digits with specific algorithm
  */
 export function validateCNS(cns: string): boolean {
-  if (!cns) return false;
+  if (!cns) return false
 
-  const cleanCNS = cleanDocument(cns);
+  const cleanCNS = cleanDocument(cns)
 
   // Check length
-  if (cleanCNS.length !== 15) return false;
+  if (cleanCNS.length !== 15) return false
 
   // CNS numbers starting with 1 or 2
   if (cleanCNS.startsWith('1') || cleanCNS.startsWith('2')) {
-    return validateCNSType1(cleanCNS);
+    return validateCNSType1(cleanCNS)
   }
 
   // CNS numbers starting with 7, 8 or 9
@@ -688,35 +690,35 @@ export function validateCNS(cns: string): boolean {
     || cleanCNS.startsWith('8')
     || cleanCNS.startsWith('9')
   ) {
-    return validateCNSType2(cleanCNS);
+    return validateCNSType2(cleanCNS)
   }
 
-  return false;
+  return false
 }
 
 // Validate CNS type 1 (starts with 1 or 2)
 function validateCNSType1(cns: string): boolean {
-  const weights = [15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1];
-  let sum = 0;
+  const weights = [15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
+  let sum = 0
 
   for (let i = 0; i < 15; i++) {
-    sum += parseInt(cns[i] || '0') * (weights[i] || 0);
+    sum += parseInt(cns[i] || '0') * (weights[i] || 0)
   }
 
-  const remainder = sum % 11;
-  return remainder < 2;
+  const remainder = sum % 11
+  return remainder < 2
 }
 
 // Validate CNS type 2 (starts with 7, 8 or 9)
 function validateCNSType2(cns: string): boolean {
-  const weights = [15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1];
-  let sum = 0;
+  const weights = [15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
+  let sum = 0
 
   for (let i = 0; i < 15; i++) {
-    sum += parseInt(cns[i] || '0') * (weights[i] || 0);
+    sum += parseInt(cns[i] || '0') * (weights[i] || 0)
   }
 
-  return sum % 11 === 0;
+  return sum % 11 === 0
 }
 
 /**
@@ -724,27 +726,27 @@ function validateCNSType2(cns: string): boolean {
  * Format: 12345678901234567-X (17 digits + check digit)
  */
 export function validateANVISACode(code: string): boolean {
-  if (!code) return false;
+  if (!code) return false
 
-  const cleanCode = code.replace(/[^\d-]/g, '');
-  const parts = cleanCode.split('-');
+  const cleanCode = code.replace(/[^\d-]/g, '')
+  const parts = cleanCode.split('-')
 
-  if (parts.length !== 2) return false;
+  if (parts.length !== 2) return false
 
-  const number = parts[0];
-  const checkDigit = parts[1];
+  const number = parts[0]
+  const checkDigit = parts[1]
 
   // Ensure both parts exist
-  if (!number || !checkDigit) return false;
+  if (!number || !checkDigit) return false
 
   // Check number length (17 digits)
-  if (number.length !== 17) return false;
-  if (!/^\d+$/.test(number)) return false;
+  if (number.length !== 17) return false
+  if (!/^\d+$/.test(number)) return false
 
   // Check digit validation (simplified - real ANVISA uses specific algorithm)
-  if (checkDigit.length !== 1 || !/^\d$/.test(checkDigit)) return false;
+  if (checkDigit.length !== 1 || !/^\d$/.test(checkDigit)) return false
 
-  return true;
+  return true
 }
 
 /**
@@ -756,44 +758,44 @@ export function validateMedicalProcedureCode(
   code: string,
   type: 'TUSS' | 'CBHPM' = 'TUSS',
 ): boolean {
-  if (!code) return false;
+  if (!code) return false
 
   if (type === 'TUSS') {
-    const cleanCode = cleanDocument(code);
-    return cleanCode.length === 8 && /^\d{8}$/.test(cleanCode);
+    const cleanCode = cleanDocument(code)
+    return cleanCode.length === 8 && /^\d{8}$/.test(cleanCode)
   }
 
   if (type === 'CBHPM') {
-    const cleanCode = code.replace(/[^\d.-]/g, '');
-    return /^\d\.\d{2}\.\d{2}\.\d{2}-\d$/.test(cleanCode);
+    const cleanCode = code.replace(/[^\d.-]/g, '')
+    return /^\d\.\d{2}\.\d{2}\.\d{2}-\d$/.test(cleanCode)
   }
 
-  return false;
+  return false
 }
 
 /**
  * Format healthcare document numbers
  */
 export function formatCRM(crm: string, state: string): string {
-  const cleanNumber = cleanDocument(crm);
-  return `${cleanNumber}/${state}`;
+  const cleanNumber = cleanDocument(crm)
+  return `${cleanNumber}/${state}`
 }
 
 export function formatCRMV(crmv: string, state: string): string {
-  const cleanNumber = cleanDocument(crmv);
-  return `${cleanNumber}/${state}`;
+  const cleanNumber = cleanDocument(crmv)
+  return `${cleanNumber}/${state}`
 }
 
 export function formatCNS(cns: string): string {
-  const cleanCNS = cleanDocument(cns);
-  if (cleanCNS.length !== 15) return cns;
-  return cleanCNS.replace(/(\d{3})(\d{4})(\d{4})(\d{4})/, '$1 $2 $3 $4');
+  const cleanCNS = cleanDocument(cns)
+  if (cleanCNS.length !== 15) return cns
+  return cleanCNS.replace(/(\d{3})(\d{4})(\d{4})(\d{4})/, '$1 $2 $3 $4')
 }
 
 export function formatANVISACode(code: string): string {
-  const cleanCode = cleanDocument(code);
-  if (cleanCode.length !== 18) return code;
-  const number = cleanCode.slice(0, 17);
-  const check = cleanCode.slice(17);
-  return `${number}-${check}`;
+  const cleanCode = cleanDocument(code)
+  if (cleanCode.length !== 18) return code
+  const number = cleanCode.slice(0, 17)
+  const check = cleanCode.slice(17)
+  return `${number}-${check}`
 }

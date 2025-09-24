@@ -1,6 +1,6 @@
-import { getHealthcarePrismaClient, type HealthcarePrismaClient } from '../clients/prisma';
-import { type LGPDOperationResult } from '../types/lgpd.js';
-import { createHealthcareError } from './createHealthcareError.js';
+import { getHealthcarePrismaClient, type HealthcarePrismaClient } from '../clients/prisma'
+import { type LGPDOperationResult } from '../types/lgpd.js'
+import { createHealthcareError } from './createHealthcareError.js'
 
 // LGPD Consent Types
 export const ConsentPurpose = z.enum([
@@ -13,7 +13,7 @@ export const ConsentPurpose = z.enum([
   'TELEMEDICINE',
   'AI_ANALYSIS',
   'THIRD_PARTY_SHARING',
-]);
+])
 
 export const ConsentStatus = z.enum([
   'ACTIVE',
@@ -21,7 +21,7 @@ export const ConsentStatus = z.enum([
   'EXPIRED',
   'PENDING',
   'WITHDRAWN',
-]);
+])
 
 export const ConsentChannel = z.enum([
   'WEB_PORTAL',
@@ -30,50 +30,50 @@ export const ConsentChannel = z.enum([
   'PHONE',
   'EMAIL',
   'PAPER_FORM',
-]);
+])
 
 export interface LGPDConsentRecord {
-  id: string;
-  patientId: string;
-  purpose: z.infer<typeof ConsentPurpose>;
-  status: z.infer<typeof ConsentStatus>;
-  channel: z.infer<typeof ConsentChannel>;
-  consentText: string;
-  version: string;
-  validFrom: Date;
-  validUntil?: Date;
-  ipAddress?: string;
-  userAgent?: string;
-  deviceId?: string;
-  location?: string;
-  language: string;
-  withdrawalReason?: string;
-  withdrawalDate?: Date;
-  metadata?: Record<string, any>;
-  createdAt: Date;
-  updatedAt: Date;
+  id: string
+  patientId: string
+  purpose: z.infer<typeof ConsentPurpose>
+  status: z.infer<typeof ConsentStatus>
+  channel: z.infer<typeof ConsentChannel>
+  consentText: string
+  version: string
+  validFrom: Date
+  validUntil?: Date
+  ipAddress?: string
+  userAgent?: string
+  deviceId?: string
+  location?: string
+  language: string
+  withdrawalReason?: string
+  withdrawalDate?: Date
+  metadata?: Record<string, any>
+  createdAt: Date
+  updatedAt: Date
 }
 
 export interface ConsentRequest {
-  patientId: string;
-  purpose: z.infer<typeof ConsentPurpose>;
-  channel: z.infer<typeof ConsentChannel>;
-  language: string;
-  consentText?: string;
-  validUntil?: Date;
-  ipAddress?: string;
-  userAgent?: string;
-  deviceId?: string;
-  location?: string;
+  patientId: string
+  purpose: z.infer<typeof ConsentPurpose>
+  channel: z.infer<typeof ConsentChannel>
+  language: string
+  consentText?: string
+  validUntil?: Date
+  ipAddress?: string
+  userAgent?: string
+  deviceId?: string
+  location?: string
 }
 
 export interface ConsentWithdrawalRequest {
-  patientId: string;
-  consentId: string;
-  reason?: string;
-  channel: z.infer<typeof ConsentChannel>;
-  ipAddress?: string;
-  userAgent?: string;
+  patientId: string
+  consentId: string
+  reason?: string
+  channel: z.infer<typeof ConsentChannel>
+  ipAddress?: string
+  userAgent?: string
 }
 
 /**
@@ -81,10 +81,10 @@ export interface ConsentWithdrawalRequest {
  * Manages patient data consent records in compliance with LGPD Art. 7-9
  */
 export class LGPDConsentService {
-  private prisma: HealthcarePrismaClient;
+  private prisma: HealthcarePrismaClient
 
   constructor(prisma?: HealthcarePrismaClient) {
-    this.prisma = prisma || getHealthcarePrismaClient();
+    this.prisma = prisma || getHealthcarePrismaClient()
   }
 
   /**
@@ -98,31 +98,31 @@ export class LGPDConsentService {
       // Validate patient exists
       const patient = await this.prisma.patient.findUnique({
         where: { id: request.patientId },
-      });
+      })
 
       if (!patient) {
         throw createHealthcareError(
           'PATIENT_NOT_FOUND',
           `Patient not found: ${request.patientId}`,
           { patientId: request.patientId },
-        );
+        )
       }
 
       // Get or create consent template for the purpose
       const consentTemplate = await this.getOrCreateConsentTemplate(
         request.purpose,
         request.language,
-      );
+      )
 
       // Check for existing active consent
       const existingConsent = await this.findActiveConsent(
         request.patientId,
         request.purpose,
-      );
+      )
 
       if (existingConsent) {
         // Revoke existing consent before creating new one
-        await this.revokeConsent(existingConsent.id, 'CONSENT_RENEWED');
+        await this.revokeConsent(existingConsent.id, 'CONSENT_RENEWED')
       }
 
       // Create new consent record
@@ -147,7 +147,7 @@ export class LGPDConsentService {
             previousConsentId: existingConsent?.id,
           },
         },
-      });
+      })
 
       // Create audit trail entry
       await this.prisma.auditTrail.create({
@@ -163,7 +163,7 @@ export class LGPDConsentService {
             timestamp: new Date().toISOString(),
           },
         },
-      });
+      })
 
       return {
         success: true,
@@ -171,7 +171,7 @@ export class LGPDConsentService {
         operationId: `consent_${consentRecord.id}`,
         timestamp: new Date().toISOString(),
         consentId: consentRecord.id,
-      };
+      }
     } catch {
       return {
         success: false,
@@ -179,7 +179,7 @@ export class LGPDConsentService {
         operationId: `consent_error_${Date.now()}`,
         timestamp: new Date().toISOString(),
         errors: [error instanceof Error ? error.message : 'Unknown error'],
-      };
+      }
     }
   }
 
@@ -199,14 +199,14 @@ export class LGPDConsentService {
             equals: 'ACTIVE',
           },
         },
-      });
+      })
 
       if (!consent) {
         throw createHealthcareError(
           'CONSENT_NOT_FOUND',
           `Active consent not found: ${request.consentId}`,
           { consentId: request.consentId, patientId: request.patientId },
-        );
+        )
       }
 
       // Update consent status to WITHDRAWN
@@ -223,7 +223,7 @@ export class LGPDConsentService {
             withdrawalUserAgent: request.userAgent,
           },
         },
-      });
+      })
 
       // Create audit trail entry for withdrawal
       await this.prisma.auditTrail.create({
@@ -239,20 +239,20 @@ export class LGPDConsentService {
             timestamp: new Date().toISOString(),
           },
         },
-      });
+      })
 
       // Trigger data deletion/anonymization for affected data
       await this.handleConsentWithdrawal(
         request.patientId,
         consent.metadata?.purpose,
-      );
+      )
 
       return {
         success: true,
         recordsProcessed: 1,
         operationId: `withdrawal_${consent.id}`,
         timestamp: new Date().toISOString(),
-      };
+      }
     } catch {
       return {
         success: false,
@@ -260,7 +260,7 @@ export class LGPDConsentService {
         operationId: `withdrawal_error_${Date.now()}`,
         timestamp: new Date().toISOString(),
         errors: [error instanceof Error ? error.message : 'Unknown error'],
-      };
+      }
     }
   }
 
@@ -278,9 +278,9 @@ export class LGPDConsentService {
         },
       },
       orderBy: { createdAt: 'desc' },
-    });
+    })
 
-    return consents.map(consent => this.mapToConsentRecord(consent));
+    return consents.map((consent) => this.mapToConsentRecord(consent))
   }
 
   /**
@@ -290,8 +290,8 @@ export class LGPDConsentService {
     patientId: string,
     purpose: z.infer<typeof ConsentPurpose>,
   ): Promise<boolean> {
-    const consent = await this.findActiveConsent(patientId, purpose);
-    return !!consent;
+    const consent = await this.findActiveConsent(patientId, purpose)
+    return !!consent
   }
 
   /**
@@ -303,19 +303,19 @@ export class LGPDConsentService {
     purpose: z.infer<typeof ConsentPurpose>,
     operation: string,
   ): Promise<void> {
-    const hasConsent = await this.hasActiveConsent(patientId, purpose);
+    const hasConsent = await this.hasActiveConsent(patientId, purpose)
 
     if (!hasConsent) {
       throw createHealthcareError(
         'CONSENT_REQUIRED',
         `Patient consent required for ${operation}`,
         { patientId, purpose, operation },
-      );
+      )
     }
 
     // Additional validation for sensitive operations
     if (this.isSensitiveOperation(operation)) {
-      await this.validateSensitiveOperationConsent(patientId, purpose);
+      await this.validateSensitiveOperationConsent(patientId, purpose)
     }
   }
 
@@ -326,7 +326,7 @@ export class LGPDConsentService {
     patientId: string,
   ): Promise<LGPDOperationResult & { report?: any }> {
     try {
-      const consents = await this.getPatientConsents(patientId);
+      const consents = await this.getPatientConsents(patientId)
       const auditEntries = await this.prisma.auditTrail.findMany({
         where: {
           _userId: patientId,
@@ -335,23 +335,23 @@ export class LGPDConsentService {
           },
         },
         orderBy: { createdAt: 'desc' },
-      });
+      })
 
       const report = {
         patientId,
         generatedAt: new Date().toISOString(),
         activeConsents: consents,
-        consentHistory: auditEntries.map(entry => ({
+        consentHistory: auditEntries.map((entry) => ({
           action: entry.action,
           timestamp: entry.createdAt,
           metadata: entry.metadata,
         })),
         summary: {
           totalConsents: consents.length,
-          purposes: consents.map(c => c.purpose),
+          purposes: consents.map((c) => c.purpose),
           lastActivity: auditEntries[0]?.createdAt,
         },
-      };
+      }
 
       return {
         success: true,
@@ -359,7 +359,7 @@ export class LGPDConsentService {
         operationId: `consent_report_${Date.now()}`,
         timestamp: new Date().toISOString(),
         report,
-      };
+      }
     } catch {
       return {
         success: false,
@@ -367,7 +367,7 @@ export class LGPDConsentService {
         operationId: `consent_report_error_${Date.now()}`,
         timestamp: new Date().toISOString(),
         errors: [error instanceof Error ? error.message : 'Unknown error'],
-      };
+      }
     }
   }
 
@@ -386,7 +386,7 @@ export class LGPDConsentService {
         },
       },
       orderBy: { createdAt: 'desc' },
-    });
+    })
   }
 
   private async revokeConsent(
@@ -401,7 +401,7 @@ export class LGPDConsentService {
           equals: 'REVOKED',
         },
       },
-    });
+    })
   }
 
   private async getOrCreateConsentTemplate(
@@ -435,18 +435,18 @@ export class LGPDConsentService {
           `Autorizo o uso de meus dados para análise por IA auxiliar no diagnóstico e tratamento.`,
         version: '1.0',
       },
-    };
+    }
 
     return (
       templates[purpose] || {
         text: `Autorizo o processamento de meus dados para ${purpose}.`,
         version: '1.0',
       }
-    );
+    )
   }
 
   private mapToConsentRecord(audit: any): LGPDConsentRecord {
-    const metadata = audit.metadata || {};
+    const metadata = audit.metadata || {}
     return {
       id: audit.id,
       patientId: audit.userId,
@@ -471,11 +471,11 @@ export class LGPDConsentService {
       metadata: metadata,
       createdAt: audit.createdAt,
       updatedAt: audit.updatedAt,
-    };
+    }
   }
 
   private generateConsentId(): string {
-    return `consent_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    return `consent_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
   }
 
   private isSensitiveOperation(operation: string): boolean {
@@ -486,8 +486,8 @@ export class LGPDConsentService {
       'SEXUAL_HEALTH',
       'RELIGIOUS_DATA',
       'POLITICAL_OPINIONS',
-    ];
-    return sensitiveOperations.includes(operation);
+    ]
+    return sensitiveOperations.includes(operation)
   }
 
   private async validateSensitiveOperationConsent(
@@ -496,14 +496,14 @@ export class LGPDConsentService {
   ): Promise<void> {
     // Additional validation for sensitive data processing
     // This could include special consent requirements or additional checks
-    const specialConsent = await this.findActiveConsent(patientId, purpose);
+    const specialConsent = await this.findActiveConsent(patientId, purpose)
 
     if (!specialConsent?.metadata?.specialDataConsent) {
       throw createHealthcareError(
         'SPECIAL_CONSENT_REQUIRED',
         'Special consent required for sensitive data processing',
         { patientId, purpose },
-      );
+      )
     }
   }
 
@@ -515,7 +515,7 @@ export class LGPDConsentService {
     // This would trigger appropriate data handling based on the purpose
     console.log(
       `Handling consent withdrawal for patient ${patientId}, purpose: ${purpose}`,
-    );
+    )
 
     // In a real implementation, this would:
     // 1. Identify affected data
@@ -526,4 +526,4 @@ export class LGPDConsentService {
 }
 
 // Export singleton instance
-export const lgpdConsentService = new LGPDConsentService();
+export const lgpdConsentService = new LGPDConsentService()

@@ -102,12 +102,12 @@ Transport Layer (TCP)
 
 ```typescript
 interface AguiMessage {
-  id: string; // Unique message identifier
-  type: AguiMessageType; // Message type (query, response, etc.)
-  timestamp: string; // ISO timestamp
-  sessionId: string; // Chat session identifier
-  payload: Record<string, any>; // Message payload
-  metadata?: AguiMessageMetadata; // Security and routing metadata
+  id: string // Unique message identifier
+  type: AguiMessageType // Message type (query, response, etc.)
+  timestamp: string // ISO timestamp
+  sessionId: string // Chat session identifier
+  payload: Record<string, any> // Message payload
+  metadata?: AguiMessageMetadata // Security and routing metadata
 }
 
 type AguiMessageType =
@@ -118,20 +118,20 @@ type AguiMessageType =
   | 'status' // System status update
   | 'feedback' // User feedback on response
   | 'context_update' // Context update
-  | 'session_update'; // Session metadata update
+  | 'session_update' // Session metadata update
 ```
 
 #### Security Metadata
 
 ```typescript
 interface AguiMessageMetadata {
-  userId: string; // User identifier
-  clientId?: string; // Client context (if applicable)
-  requestId?: string; // Original request ID
-  version: string; // Protocol version
-  compression?: 'gzip' | 'none'; // Payload compression
-  encryption?: boolean; // End-to-end encryption flag
-  auditTrail?: string; // Audit trail identifier
+  userId: string // User identifier
+  clientId?: string // Client context (if applicable)
+  requestId?: string // Original request ID
+  version: string // Protocol version
+  compression?: 'gzip' | 'none' // Payload compression
+  encryption?: boolean // End-to-end encryption flag
+  auditTrail?: string // Audit trail identifier
 }
 ```
 
@@ -140,8 +140,8 @@ interface AguiMessageMetadata {
 ```typescript
 // apps/api/src/services/websocket/agent-protocol-service.ts
 export class AgentProtocolService {
-  private connections = new Map<string, AgentConnection>();
-  private sessions = new Map<string, AgentSession>();
+  private connections = new Map<string, AgentConnection>()
+  private sessions = new Map<string, AgentSession>()
 
   constructor(
     private securityService: SecurityService,
@@ -149,8 +149,8 @@ export class AgentProtocolService {
   ) {}
 
   async handleConnection(ws: WebSocket, request: Request) {
-    const userId = this.authenticate(request);
-    const connectionId = this.generateConnectionId();
+    const userId = this.authenticate(request)
+    const connectionId = this.generateConnectionId()
 
     // Create secure connection
     const connection: AgentConnection = {
@@ -160,51 +160,51 @@ export class AgentProtocolService {
       authenticated: true,
       createdAt: new Date(),
       lastActivity: new Date(),
-    };
+    }
 
-    this.connections.set(connectionId, connection);
+    this.connections.set(connectionId, connection)
 
     // Set up message handlers
-    ws.on('message', async data => {
-      await this.handleMessage(connectionId, data);
-    });
+    ws.on('message', async (data) => {
+      await this.handleMessage(connectionId, data)
+    })
 
     ws.on('close', () => {
-      this.handleDisconnection(connectionId);
-    });
+      this.handleDisconnection(connectionId)
+    })
   }
 
   private async handleMessage(connectionId: string, data: any) {
-    const connection = this.connections.get(connectionId);
-    if (!connection) return;
+    const connection = this.connections.get(connectionId)
+    if (!connection) return
 
     try {
-      const message: AguiMessage = JSON.parse(data.toString());
+      const message: AguiMessage = JSON.parse(data.toString())
 
       // Validate message structure
       if (!this.validateMessage(message)) {
-        throw new Error('Invalid message structure');
+        throw new Error('Invalid message structure')
       }
 
       // Security validation
-      await this.securityService.validateMessage(message, connection);
+      await this.securityService.validateMessage(message, connection)
 
       // Route to appropriate handler
       switch (message.type) {
         case 'query':
-          await this.handleQuery(connection, message);
-          break;
+          await this.handleQuery(connection, message)
+          break
         case 'feedback':
-          await this.handleFeedback(connection, message);
-          break;
+          await this.handleFeedback(connection, message)
+          break
         default:
-          throw new Error(`Unsupported message type: ${message.type}`);
+          throw new Error(`Unsupported message type: ${message.type}`)
       }
 
       // Update activity timestamp
-      connection.lastActivity = new Date();
+      connection.lastActivity = new Date()
     } catch (error) {
-      await this.sendError(connection, error);
+      await this.sendError(connection, error)
     }
   }
 }
@@ -249,43 +249,43 @@ export class QueryPipeline {
     query: UserQuery,
     context: SecurityContext,
   ): Promise<AgentResponse> {
-    const startTime = performance.now();
+    const startTime = performance.now()
 
     try {
       // Step 1: Parse intent
-      const intent = await this.intentParser.parse(query.query);
+      const intent = await this.intentParser.parse(query.query)
 
       // Step 2: Validate permissions
       const hasPermission = await this.permissionService.checkAccess(
         context.userId,
         intent.requiredPermissions,
         query.context,
-      );
+      )
 
       if (!hasPermission) {
-        throw new AuthorizationError('Insufficient permissions for this query');
+        throw new AuthorizationError('Insufficient permissions for this query')
       }
 
       // Step 3: Check cache
-      const cacheKey = this.generateCacheKey(query, context);
-      const cachedResult = await this.cacheService.get(cacheKey);
+      const cacheKey = this.generateCacheKey(query, context)
+      const cachedResult = await this.cacheService.get(cacheKey)
 
       if (cachedResult) {
-        return this.formatCachedResponse(cachedResult, query);
+        return this.formatCachedResponse(cachedResult, query)
       }
 
       // Step 4: Execute data access
-      const rawData = await this.dataService.execute(intent, query);
+      const rawData = await this.dataService.execute(intent, query)
 
       // Step 5: Process and filter results
-      const processedData = await this.processResults(rawData, context);
+      const processedData = await this.processResults(rawData, context)
 
       // Step 6: Generate AI response
       const response = await this.responseGenerator.generate(
         processedData,
         query,
         intent,
-      );
+      )
 
       // Step 7: Cache results
       await this.cacheService.set(cacheKey, {
@@ -293,9 +293,9 @@ export class QueryPipeline {
         response,
         timestamp: new Date(),
         ttl: this.calculateTTL(intent),
-      });
+      })
 
-      const processingTime = performance.now() - startTime;
+      const processingTime = performance.now() - startTime
 
       return {
         ...response,
@@ -303,9 +303,9 @@ export class QueryPipeline {
           ...response.usage,
           processingTimeMs: processingTime,
         },
-      };
+      }
     } catch (error) {
-      const processingTime = performance.now() - startTime;
+      const processingTime = performance.now() - startTime
 
       return {
         id: generateId(),
@@ -318,7 +318,7 @@ export class QueryPipeline {
           totalTokens: 0,
           processingTimeMs: processingTime,
         },
-      };
+      }
     }
   }
 }
@@ -357,23 +357,23 @@ export class IntentClassifier {
         dataSources: ['billing', 'appointments', 'services'],
       },
     ],
-  ]);
+  ])
 
   async classify(query: string): Promise<QueryIntent> {
-    const normalizedQuery = query.toLowerCase();
+    const normalizedQuery = query.toLowerCase()
 
     // Find matching patterns
-    const matches: IntentMatch[] = [];
+    const matches: IntentMatch[] = []
 
     for (const [intentType, pattern] of this.patterns) {
-      const score = this.calculateMatchScore(normalizedQuery, pattern);
+      const score = this.calculateMatchScore(normalizedQuery, pattern)
       if (score > 0.7) {
         // Confidence threshold
         matches.push({
           intentType,
           score,
           pattern,
-        });
+        })
       }
     }
 
@@ -381,14 +381,14 @@ export class IntentClassifier {
     const bestMatch = matches.reduce(
       (best, current) => (current.score > best.score ? current : best),
       matches[0],
-    );
+    )
 
     if (!bestMatch) {
-      throw new Error('Unable to classify query intent');
+      throw new Error('Unable to classify query intent')
     }
 
     // Extract entities
-    const entities = await this.extractEntities(query, bestMatch.pattern);
+    const entities = await this.extractEntities(query, bestMatch.pattern)
 
     return {
       type: bestMatch.intentType,
@@ -396,7 +396,7 @@ export class IntentClassifier {
       entities,
       requiredPermissions: bestMatch.pattern.requiredPermissions,
       dataSources: bestMatch.pattern.dataSources,
-    };
+    }
   }
 }
 ```
@@ -472,25 +472,25 @@ export class PermissionMatrix {
         'read:own_billing',
       ]),
     ],
-  ]);
+  ])
 
   checkPermission(
     role: string,
     permission: string,
     context?: AccessContext,
   ): boolean {
-    const rolePermissions = this.rolePermissions.get(role);
-    if (!rolePermissions) return false;
+    const rolePermissions = this.rolePermissions.get(role)
+    if (!rolePermissions) return false
 
     // Check base permission
-    if (!rolePermissions.has(permission)) return false;
+    if (!rolePermissions.has(permission)) return false
 
     // Check contextual constraints
     if (context) {
-      return this.checkContextualConstraints(role, permission, context);
+      return this.checkContextualConstraints(role, permission, context)
     }
 
-    return true;
+    return true
   }
 
   private checkContextualConstraints(
@@ -500,15 +500,15 @@ export class PermissionMatrix {
   ): boolean {
     // Client can only access own data
     if (role === 'client' && context.resourceOwnerId) {
-      return context.userId === context.resourceOwnerId;
+      return context.userId === context.resourceOwnerId
     }
 
     // Aesthetic professional needs client relationship
     if (role === 'aesthetic_professional' && context.clientId) {
-      return this.hasClientRelationship(context.userId, context.clientId);
+      return this.hasClientRelationship(context.userId, context.clientId)
     }
 
-    return true;
+    return true
   }
 }
 ```
@@ -518,28 +518,28 @@ export class PermissionMatrix {
 ```typescript
 // apps/api/src/services/security/encryption-service.ts
 export class EncryptionService {
-  private dataKey: string;
-  private algorithm = 'aes-256-gcm';
+  private dataKey: string
+  private algorithm = 'aes-256-gcm'
 
   constructor() {
-    this.dataKey = process.env.ENCRYPTION_KEY || this.generateKey();
+    this.dataKey = process.env.ENCRYPTION_KEY || this.generateKey()
   }
 
   async encryptSensitiveData(
     data: any,
     context: EncryptionContext,
   ): Promise<EncryptedData> {
-    const serialized = JSON.stringify(data);
-    const iv = crypto.randomBytes(12); // GCM recommended IV size
+    const serialized = JSON.stringify(data)
+    const iv = crypto.randomBytes(12) // GCM recommended IV size
 
-    const cipher = crypto.createCipheriv(this.algorithm, this.dataKey, iv);
+    const cipher = crypto.createCipheriv(this.algorithm, this.dataKey, iv)
 
     const encrypted = Buffer.concat([
       cipher.update(serialized, 'utf8'),
       cipher.final(),
-    ]);
+    ])
 
-    const authTag = cipher.getAuthTag();
+    const authTag = cipher.getAuthTag()
 
     return {
       data: encrypted.toString('base64'),
@@ -552,7 +552,7 @@ export class EncryptionService {
         userId: context.userId,
         timestamp: new Date().toISOString(),
       },
-    };
+    }
   }
 
   async decryptSensitiveData(encrypted: EncryptedData): Promise<any> {
@@ -560,16 +560,16 @@ export class EncryptionService {
       encrypted.algorithm,
       this.dataKey,
       Buffer.from(encrypted.iv, 'base64'),
-    );
+    )
 
-    decipher.setAuthTag(Buffer.from(encrypted.authTag, 'base64'));
+    decipher.setAuthTag(Buffer.from(encrypted.authTag, 'base64'))
 
     const decrypted = Buffer.concat([
       decipher.update(Buffer.from(encrypted.data, 'base64')),
       decipher.final(),
-    ]);
+    ])
 
-    return JSON.parse(decrypted.toString('utf8'));
+    return JSON.parse(decrypted.toString('utf8'))
   }
 }
 ```
@@ -603,23 +603,23 @@ export class MultiTierCache {
 
   async get(key: string): Promise<CacheEntry | null> {
     // Try local cache first (fastest)
-    const localEntry = await this.localCache.get(key);
+    const localEntry = await this.localCache.get(key)
     if (localEntry && !this.isExpired(localEntry)) {
-      this.metrics.recordHit('local');
-      return localEntry;
+      this.metrics.recordHit('local')
+      return localEntry
     }
 
     // Try Redis cache
-    const redisEntry = await this.redisCache.get(key);
+    const redisEntry = await this.redisCache.get(key)
     if (redisEntry) {
       // Populate local cache
-      await this.localCache.set(key, redisEntry);
-      this.metrics.recordHit('redis');
-      return redisEntry;
+      await this.localCache.set(key, redisEntry)
+      this.metrics.recordHit('redis')
+      return redisEntry
     }
 
-    this.metrics.recordMiss();
-    return null;
+    this.metrics.recordMiss()
+    return null
   }
 
   async set(key: string, entry: CacheEntry): Promise<void> {
@@ -627,9 +627,9 @@ export class MultiTierCache {
     await this.localCache.set(key, {
       ...entry,
       ttl: Math.min(entry.ttl || 300, 300), // Max 5 minutes local
-    });
+    })
 
-    await this.redisCache.set(key, entry);
+    await this.redisCache.set(key, entry)
   }
 }
 ```
@@ -656,12 +656,12 @@ export class QueryOptimizer {
         cacheStrategy: 'cache_by_date_range',
       },
     ],
-  ]);
+  ])
 
   optimizeQuery(intent: QueryIntent, context: QueryContext): OptimizedQuery {
-    const pattern = this.queryPatterns.get(intent.type);
+    const pattern = this.queryPatterns.get(intent.type)
     if (!pattern) {
-      throw new Error(`No optimization pattern for intent: ${intent.type}`);
+      throw new Error(`No optimization pattern for intent: ${intent.type}`)
     }
 
     return {
@@ -670,7 +670,7 @@ export class QueryOptimizer {
       cacheKey: this.generateCacheKey(intent, context),
       estimatedCost: this.estimateCost(intent, pattern),
       indexes: pattern.indexes,
-    };
+    }
   }
 
   private generateOptimizedSQL(
@@ -690,7 +690,7 @@ export class QueryOptimizer {
             AND p.clinic_id = $3
           ORDER BY p.name
           LIMIT $4
-        `;
+        `
 
       case 'appointment_aggregation':
         return `
@@ -705,10 +705,10 @@ export class QueryOptimizer {
             AND a.clinic_id = $4
           GROUP BY DATE_TRUNC('day', a.start_time)
           ORDER BY appointment_date
-        `;
+        `
 
       default:
-        throw new Error(`Unsupported query type: ${intent.type}`);
+        throw new Error(`Unsupported query type: ${intent.type}`)
     }
   }
 }
@@ -764,13 +764,13 @@ export class AuditLogger {
         sessionId: context.sessionId,
         requestPath: context.requestPath,
       },
-    };
+    }
 
     // Store in audit database
-    await this.storeAuditEntry(auditEntry);
+    await this.storeAuditEntry(auditEntry)
 
     // Check for suspicious patterns
-    await this.detectAnomalies(auditEntry);
+    await this.detectAnomalies(auditEntry)
   }
 
   private validateLGPDCompliance(
@@ -778,8 +778,8 @@ export class AuditLogger {
     resource: DataResource,
   ): boolean {
     // Validate that access follows LGPD principles
-    const requiredConsent = this.getRequiredConsentLevel(resource.type);
-    return action.consentLevel >= requiredConsent;
+    const requiredConsent = this.getRequiredConsentLevel(resource.type)
+    return action.consentLevel >= requiredConsent
   }
 }
 ```
@@ -796,16 +796,16 @@ export class RetentionPolicyService {
     ['billing_data', { duration: 365 * 7, unit: 'days' }], // 7 years
     ['audit_logs', { duration: 365 * 2, unit: 'days' }], // 2 years
     ['system_logs', { duration: 90, unit: 'days' }], // 90 days
-  ]);
+  ])
 
   async scheduleDataDeletion(): Promise<void> {
     for (const [dataType, rule] of this.retentionRules) {
-      const cutoffDate = this.calculateCutoffDate(rule);
+      const cutoffDate = this.calculateCutoffDate(rule)
 
-      await this.deleteExpiredData(dataType, cutoffDate);
+      await this.deleteExpiredData(dataType, cutoffDate)
 
       // Generate deletion report
-      await this.generateDeletionReport(dataType, cutoffDate);
+      await this.generateDeletionReport(dataType, cutoffDate)
     }
   }
 
@@ -814,16 +814,16 @@ export class RetentionPolicyService {
   ): Promise<DataSubjectResponse> {
     switch (request.type) {
       case 'access':
-        return this.provideDataAccess(request.userId, request.dataTypes);
+        return this.provideDataAccess(request.userId, request.dataTypes)
 
       case 'deletion':
-        return this.executeDataDeletion(request.userId, request.dataTypes);
+        return this.executeDataDeletion(request.userId, request.dataTypes)
 
       case 'portability':
-        return this.exportUserData(request.userId, request.dataTypes);
+        return this.exportUserData(request.userId, request.dataTypes)
 
       default:
-        throw new Error(`Unsupported request type: ${request.type}`);
+        throw new Error(`Unsupported request type: ${request.type}`)
     }
   }
 }
@@ -882,25 +882,25 @@ export class AgentMetricsCollector {
       help: 'Total errors by type',
       labels: ['type'],
     }),
-  };
+  }
 
   recordQuery(duration: number, type: string, success: boolean): void {
-    this.metrics.queryLatency.observe(duration);
-    this.metrics.queriesByType.labels(type).inc();
+    this.metrics.queryLatency.observe(duration)
+    this.metrics.queriesByType.labels(type).inc()
 
     if (!success) {
-      this.metrics.errorsByType.labels(type).inc();
+      this.metrics.errorsByType.labels(type).inc()
     }
   }
 
   recordSecurityEvent(event: SecurityEvent): void {
     switch (event.type) {
       case 'authentication_failure':
-        this.metrics.authenticationFailures.inc();
-        break;
+        this.metrics.authenticationFailures.inc()
+        break
       case 'authorization_failure':
-        this.metrics.authorizationFailures.inc();
-        break;
+        this.metrics.authorizationFailures.inc()
+        break
     }
   }
 }
@@ -918,58 +918,58 @@ export class AgentHealthCheck {
       this.checkAIService(),
       this.checkWebSocket(),
       this.checkSecurity(),
-    ]);
+    ])
 
     const results = checks.map((check, index) => {
       const name = ['database', 'redis', 'ai_service', 'websocket', 'security'][
         index
-      ];
+      ]
       return {
         name,
         status: check.status === 'fulfilled' ? 'healthy' : 'unhealthy',
         details: check.status === 'fulfilled' ? check.value : check.reason,
-      };
-    });
+      }
+    })
 
-    const overallStatus = results.every(r => r.status === 'healthy')
+    const overallStatus = results.every((r) => r.status === 'healthy')
       ? 'healthy'
-      : results.some(r => r.status === 'healthy')
+      : results.some((r) => r.status === 'healthy')
       ? 'degraded'
-      : 'unhealthy';
+      : 'unhealthy'
 
     return {
       status: overallStatus,
       checks: results,
       timestamp: new Date().toISOString(),
       version: process.env.npm_package_version || '1.0.0',
-    };
+    }
   }
 
   private async checkAIService(): Promise<HealthCheckResult> {
-    const startTime = Date.now();
+    const startTime = Date.now()
 
     try {
       // Test AI service connectivity
       const response = await fetch(`${process.env.AI_SERVICE_URL}/health`, {
         timeout: 5000,
-      });
+      })
 
       if (response.ok) {
-        const data = await response.json();
+        const data = await response.json()
         return {
           healthy: true,
           responseTime: Date.now() - startTime,
           details: data,
-        };
+        }
       } else {
-        throw new Error(`AI service returned ${response.status}`);
+        throw new Error(`AI service returned ${response.status}`)
       }
     } catch (error) {
       return {
         healthy: false,
         responseTime: Date.now() - startTime,
         error: error.message,
-      };
+      }
     }
   }
 }

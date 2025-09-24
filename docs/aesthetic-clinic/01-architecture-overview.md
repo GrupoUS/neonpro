@@ -129,12 +129,12 @@ FOREIGN KEY (treatment_id) REFERENCES AestheticTreatmentCatalog(id);
 ```typescript
 // Global state for aesthetic clinic
 interface AestheticClinicState {
-  clients: AestheticClientProfile[];
-  treatments: AestheticTreatmentCatalog[];
-  sessions: AestheticSession[];
-  appointments: AestheticAppointment[];
-  compliance: ComplianceStatus;
-  scheduling: SchedulingOptimization;
+  clients: AestheticClientProfile[]
+  treatments: AestheticTreatmentCatalog[]
+  sessions: AestheticSession[]
+  appointments: AestheticAppointment[]
+  compliance: ComplianceStatus
+  scheduling: SchedulingOptimization
 }
 ```
 
@@ -224,11 +224,11 @@ Compliance Reporting
 
 ```typescript
 // Aesthetic clinic specific configuration
-AESTHETIC_CLINIC_ENABLED = true;
-ANVISA_API_KEY = your_anvisa_api_key;
-CFM_VALIDATION_ENABLED = true;
-LGPD_COMPLIANCE_ENABLED = true;
-WHATSAPP_BUSINESS_API_KEY = your_whatsapp_key;
+AESTHETIC_CLINIC_ENABLED = true
+ANVISA_API_KEY = your_anvisa_api_key
+CFM_VALIDATION_ENABLED = true
+LGPD_COMPLIANCE_ENABLED = true
+WHATSAPP_BUSINESS_API_KEY = your_whatsapp_key
 ```
 
 ### 2. Feature Flags
@@ -241,7 +241,7 @@ const FEATURES = {
   TREATMENT_RECOMMENDATIONS: true,
   MULTI_PROFESSIONAL_COORDINATION: true,
   COMPLIANCE_AUTOMATION: true,
-};
+}
 ```
 
 ## 📈 Analytics & Reporting

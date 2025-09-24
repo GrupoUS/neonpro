@@ -1,190 +1,190 @@
-import fs from 'fs';
-import path from 'path';
+import fs from 'fs'
+import path from 'path'
 
 export interface AgentConfig {
   // Basic Configuration
-  name: string;
-  version: string;
-  description: string;
-  environment: 'development' | 'staging' | 'production';
+  name: string
+  version: string
+  description: string
+  environment: 'development' | 'staging' | 'production'
 
   // Server Configuration
-  host: string;
-  port: number;
-  protocol: 'ws' | 'wss';
-  path?: string;
+  host: string
+  port: number
+  protocol: 'ws' | 'wss'
+  path?: string
 
   // Database Configuration
   database: {
-    type: 'supabase' | 'postgresql' | 'mysql';
-    connectionString: string;
-    poolSize: number;
-    connectionTimeout: number;
-    queryTimeout: number;
-  };
+    type: 'supabase' | 'postgresql' | 'mysql'
+    connectionString: string
+    poolSize: number
+    connectionTimeout: number
+    queryTimeout: number
+  }
 
   // AI/LLM Configuration
   ai: {
-    provider: 'openai' | 'anthropic' | 'local';
-    model: string;
-    apiKey?: string;
-    baseUrl?: string;
-    maxTokens: number;
-    temperature: number;
-    topP: number;
-    frequencyPenalty: number;
-    presencePenalty: number;
-  };
+    provider: 'openai' | 'anthropic' | 'local'
+    model: string
+    apiKey?: string
+    baseUrl?: string
+    maxTokens: number
+    temperature: number
+    topP: number
+    frequencyPenalty: number
+    presencePenalty: number
+  }
 
   // RAG Configuration
   rag: {
-    enabled: boolean;
+    enabled: boolean
     vectorStore: {
-      type: 'supabase' | 'pinecone' | 'chroma' | 'local';
-      connectionString?: string;
-      tableName?: string;
-      dimension: number;
-    };
+      type: 'supabase' | 'pinecone' | 'chroma' | 'local'
+      connectionString?: string
+      tableName?: string
+      dimension: number
+    }
     documentStore: {
-      type: 'supabase' | 'local' | 's3';
-      connectionString?: string;
-      bucket?: string;
-      path: string;
-    };
-    chunkSize: number;
-    chunkOverlap: number;
-    topK: number;
-    scoreThreshold: number;
-  };
+      type: 'supabase' | 'local' | 's3'
+      connectionString?: string
+      bucket?: string
+      path: string
+    }
+    chunkSize: number
+    chunkOverlap: number
+    topK: number
+    scoreThreshold: number
+  }
 
   // AG-UI Protocol Configuration
   agui: {
-    version: string;
-    enabled: boolean;
-    compression: boolean;
-    heartbeatInterval: number;
-    connectionTimeout: number;
-    maxMessageSize: number;
-    maxConnections: number;
-  };
+    version: string
+    enabled: boolean
+    compression: boolean
+    heartbeatInterval: number
+    connectionTimeout: number
+    maxMessageSize: number
+    maxConnections: number
+  }
 
   // Healthcare Specific Configuration
   healthcare: {
-    enabled: boolean;
-    complianceStandards: ('lgpd' | 'hipaa' | 'gdpr')[];
+    enabled: boolean
+    complianceStandards: ('lgpd' | 'hipaa' | 'gdpr')[]
     dataRetention: {
-      conversationHistoryDays: number;
-      auditLogDays: number;
-      sessionDataDays: number;
-    };
+      conversationHistoryDays: number
+      auditLogDays: number
+      sessionDataDays: number
+    }
     piiDetection: {
-      enabled: boolean;
-      strictMode: boolean;
-      customPatterns: string[];
-    };
+      enabled: boolean
+      strictMode: boolean
+      customPatterns: string[]
+    }
     emergency: {
-      enabled: boolean;
-      escalationTimeout: number;
-      contactMethods: ('email' | 'sms' | 'webhook')[];
-    };
-  };
+      enabled: boolean
+      escalationTimeout: number
+      contactMethods: ('email' | 'sms' | 'webhook')[]
+    }
+  }
 
   // Security Configuration
   security: {
-    enableAuthentication: boolean;
-    enableAuthorization: boolean;
-    sessionTimeout: number;
-    maxLoginAttempts: number;
+    enableAuthentication: boolean
+    enableAuthorization: boolean
+    sessionTimeout: number
+    maxLoginAttempts: number
     rateLimiting: {
-      enabled: boolean;
-      maxRequests: number;
-      windowMs: number;
-    };
+      enabled: boolean
+      maxRequests: number
+      windowMs: number
+    }
     encryption: {
-      enabled: boolean;
-      algorithm: string;
-      keyRotationDays: number;
-    };
-  };
+      enabled: boolean
+      algorithm: string
+      keyRotationDays: number
+    }
+  }
 
   // Logging Configuration
   logging: {
-    level: 'debug' | 'info' | 'warn' | 'error';
-    format: 'json' | 'text';
-    enableConsole: boolean;
-    enableFile: boolean;
-    filePath?: string;
-    maxSize: string;
-    maxFiles: number;
-    enableAudit: boolean;
-  };
+    level: 'debug' | 'info' | 'warn' | 'error'
+    format: 'json' | 'text'
+    enableConsole: boolean
+    enableFile: boolean
+    filePath?: string
+    maxSize: string
+    maxFiles: number
+    enableAudit: boolean
+  }
 
   // Monitoring Configuration
   monitoring: {
-    enabled: boolean;
+    enabled: boolean
     metrics: {
-      enabled: boolean;
-      port: number;
-      path: string;
-    };
+      enabled: boolean
+      port: number
+      path: string
+    }
     health: {
-      enabled: boolean;
-      path: string;
-      interval: number;
-    };
+      enabled: boolean
+      path: string
+      interval: number
+    }
     tracing: {
-      enabled: boolean;
-      sampleRate: number;
-      exporter: string;
-    };
-  };
+      enabled: boolean
+      sampleRate: number
+      exporter: string
+    }
+  }
 
   // Development Configuration
   development: {
-    enableHotReload: boolean;
-    enableDebugTools: boolean;
-    mockAI: boolean;
-    mockDatabase: boolean;
-    testMode: boolean;
-  };
+    enableHotReload: boolean
+    enableDebugTools: boolean
+    mockAI: boolean
+    mockDatabase: boolean
+    testMode: boolean
+  }
 }
 
 export class AgentConfigManager {
-  private static instance: AgentConfigManager;
-  private config: AgentConfig | null = null;
-  private configPath: string;
+  private static instance: AgentConfigManager
+  private config: AgentConfig | null = null
+  private configPath: string
 
   private constructor(configPath?: string) {
-    this.configPath = configPath || path.join(process.cwd(), 'agent-config.json');
+    this.configPath = configPath || path.join(process.cwd(), 'agent-config.json')
   }
 
   public static getInstance(configPath?: string): AgentConfigManager {
     if (!AgentConfigManager.instance) {
-      AgentConfigManager.instance = new AgentConfigManager(configPath);
+      AgentConfigManager.instance = new AgentConfigManager(configPath)
     }
-    return AgentConfigManager.instance;
+    return AgentConfigManager.instance
   }
 
   public loadConfig(): AgentConfig {
     try {
       if (fs.existsSync(this.configPath)) {
-        const configData = fs.readFileSync(this.configPath, 'utf8');
-        this.config = JSON.parse(configData);
+        const configData = fs.readFileSync(this.configPath, 'utf8')
+        this.config = JSON.parse(configData)
       } else {
-        this.config = this.createDefaultConfig();
-        this.saveConfig();
+        this.config = this.createDefaultConfig()
+        this.saveConfig()
       }
 
-      this.validateConfig(this.config);
-      this.applyEnvironmentOverrides(this.config);
+      this.validateConfig(this.config)
+      this.applyEnvironmentOverrides(this.config)
 
-      return this.config;
+      return this.config
     } catch (error) {
       throw new Error(
         `Failed to load agent configuration: ${
           error instanceof Error ? error.message : 'Unknown error'
         }`,
-      );
+      )
     }
   }
 
@@ -344,100 +344,100 @@ export class AgentConfigManager {
         mockDatabase: process.env.MOCK_DATABASE === 'true',
         testMode: process.env.TEST_MODE === 'true',
       },
-    };
+    }
   }
 
   private validateConfig(config: AgentConfig): void {
-    const errors: string[] = [];
+    const errors: string[] = []
 
     // Validate required fields
-    if (!config.name) errors.push('Agent name is required');
-    if (!config.version) errors.push('Agent version is required');
-    if (!config.host) errors.push('Host is required');
-    if (!config.port || config.port <= 0) errors.push('Valid port is required');
+    if (!config.name) errors.push('Agent name is required')
+    if (!config.version) errors.push('Agent version is required')
+    if (!config.host) errors.push('Host is required')
+    if (!config.port || config.port <= 0) errors.push('Valid port is required')
     if (!config.database.connectionString) {
-      errors.push('Database connection string is required');
+      errors.push('Database connection string is required')
     }
-    if (!config.ai.model) errors.push('AI model is required');
+    if (!config.ai.model) errors.push('AI model is required')
     if (config.ai.provider === 'openai' && !config.ai.apiKey) {
-      errors.push('OpenAI API key is required');
+      errors.push('OpenAI API key is required')
     }
 
     // Validate ranges
-    if (config.ai.maxTokens <= 0) errors.push('AI max tokens must be positive');
+    if (config.ai.maxTokens <= 0) errors.push('AI max tokens must be positive')
     if (config.ai.temperature < 0 || config.ai.temperature > 2) {
-      errors.push('AI temperature must be between 0 and 2');
+      errors.push('AI temperature must be between 0 and 2')
     }
     if (config.rag.chunkSize <= 0) {
-      errors.push('RAG chunk size must be positive');
+      errors.push('RAG chunk size must be positive')
     }
     if (config.agui.heartbeatInterval <= 0) {
-      errors.push('AGUI heartbeat interval must be positive');
+      errors.push('AGUI heartbeat interval must be positive')
     }
     if (config.security.sessionTimeout <= 0) {
-      errors.push('Session timeout must be positive');
+      errors.push('Session timeout must be positive')
     }
 
     if (errors.length > 0) {
-      throw new Error(`Configuration validation failed: ${errors.join(', ')}`);
+      throw new Error(`Configuration validation failed: ${errors.join(', ')}`)
     }
   }
 
   private applyEnvironmentOverrides(config: AgentConfig): void {
     // Override specific config values with environment variables
-    if (process.env.AGENT_NAME) config.name = process.env.AGENT_NAME;
-    if (process.env.AGENT_VERSION) config.version = process.env.AGENT_VERSION;
+    if (process.env.AGENT_NAME) config.name = process.env.AGENT_NAME
+    if (process.env.AGENT_VERSION) config.version = process.env.AGENT_VERSION
     if (process.env.AGENT_DESCRIPTION) {
-      config.description = process.env.AGENT_DESCRIPTION;
+      config.description = process.env.AGENT_DESCRIPTION
     }
     if (process.env.AGENT_ENVIRONMENT) {
       config.environment = process.env.AGENT_ENVIRONMENT as
         | 'development'
         | 'staging'
-        | 'production';
+        | 'production'
     }
   }
 
   public saveConfig(): void {
     try {
       if (!this.config) {
-        throw new Error('No configuration to save');
+        throw new Error('No configuration to save')
       }
 
-      const configDir = path.dirname(this.configPath);
+      const configDir = path.dirname(this.configPath)
       if (!fs.existsSync(configDir)) {
-        fs.mkdirSync(configDir, { recursive: true });
+        fs.mkdirSync(configDir, { recursive: true })
       }
 
-      fs.writeFileSync(this.configPath, JSON.stringify(this.config, null, 2));
+      fs.writeFileSync(this.configPath, JSON.stringify(this.config, null, 2))
     } catch (error) {
       throw new Error(
         `Failed to save agent configuration: ${
           error instanceof Error ? error.message : 'Unknown error'
         }`,
-      );
+      )
     }
   }
 
   public getConfig(): AgentConfig {
     if (!this.config) {
-      return this.loadConfig();
+      return this.loadConfig()
     }
-    return this.config;
+    return this.config
   }
 
   public updateConfig(updates: Partial<AgentConfig>): void {
     if (!this.config) {
-      this.loadConfig();
+      this.loadConfig()
     }
 
-    this.config = { ...this.config, ...updates };
-    this.validateConfig(this.config);
-    this.saveConfig();
+    this.config = { ...this.config, ...updates }
+    this.validateConfig(this.config)
+    this.saveConfig()
   }
 
   public getDatabaseConfig() {
-    const config = this.getConfig();
+    const config = this.getConfig()
     return {
       type: config.database.type,
       connectionString: config.database.connectionString,
@@ -447,11 +447,11 @@ export class AgentConfigManager {
       },
       acquireConnectionTimeout: config.database.connectionTimeout,
       queryTimeout: config.database.queryTimeout,
-    };
+    }
   }
 
   public getAIConfig() {
-    const config = this.getConfig();
+    const config = this.getConfig()
     return {
       provider: config.ai.provider,
       model: config.ai.model,
@@ -462,11 +462,11 @@ export class AgentConfigManager {
       topP: config.ai.topP,
       frequencyPenalty: config.ai.frequencyPenalty,
       presencePenalty: config.ai.presencePenalty,
-    };
+    }
   }
 
   public getRAGConfig() {
-    const config = this.getConfig();
+    const config = this.getConfig()
     return {
       enabled: config.rag.enabled,
       vectorStore: config.rag.vectorStore,
@@ -475,11 +475,11 @@ export class AgentConfigManager {
       chunkOverlap: config.rag.chunkOverlap,
       topK: config.rag.topK,
       scoreThreshold: config.rag.scoreThreshold,
-    };
+    }
   }
 
   public getAGUIConfig() {
-    const config = this.getConfig();
+    const config = this.getConfig()
     return {
       version: config.agui.version,
       enabled: config.agui.enabled,
@@ -488,16 +488,16 @@ export class AgentConfigManager {
       connectionTimeout: config.agui.connectionTimeout,
       maxMessageSize: config.agui.maxMessageSize,
       maxConnections: config.agui.maxConnections,
-    };
+    }
   }
 
   public isDevelopment(): boolean {
-    const config = this.getConfig();
-    return config.environment === 'development' || config.development.testMode;
+    const config = this.getConfig()
+    return config.environment === 'development' || config.development.testMode
   }
 
   public isProduction(): boolean {
-    const config = this.getConfig();
-    return config.environment === 'production';
+    const config = this.getConfig()
+    return config.environment === 'production'
   }
 }

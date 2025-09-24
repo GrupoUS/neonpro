@@ -15,10 +15,10 @@
  * @compliance LGPD, ANVISA SaMD, Healthcare Standards
  */
 
-import type { Context, MiddlewareHandler, Next } from 'hono';
-import { nanoid } from 'nanoid';
-import { z } from 'zod';
-import { logHealthcareError, middlewareLogger } from '../logging/healthcare-logger';
+import type { Context, MiddlewareHandler, Next } from 'hono'
+import { nanoid } from 'nanoid'
+import { z } from 'zod'
+import { logHealthcareError, middlewareLogger } from '../logging/healthcare-logger'
 
 // ============================================================================
 // SCHEMAS & TYPES
@@ -218,11 +218,11 @@ export const HealthcareRequestContextSchema = z.object({
         .describe('Privacy settings'),
     })
     .describe('Compliance context'),
-});
+})
 
 export type HealthcareRequestContext = z.infer<
   typeof HealthcareRequestContextSchema
->;
+>
 
 /**
  * Middleware configuration schema
@@ -379,9 +379,9 @@ export const MiddlewareConfigSchema = z.object({
         .describe('Log retention period in days'),
     })
     .describe('Logging settings'),
-});
+})
 
-export type MiddlewareConfig = z.infer<typeof MiddlewareConfigSchema>;
+export type MiddlewareConfig = z.infer<typeof MiddlewareConfigSchema>
 
 /**
  * Request metrics schema
@@ -415,9 +415,9 @@ export const RequestMetricsSchema = z.object({
   errorCode: z.string().optional().describe('Error code'),
 
   timestamp: z.string().datetime().describe('Metrics timestamp'),
-});
+})
 
-export type RequestMetrics = z.infer<typeof RequestMetricsSchema>;
+export type RequestMetrics = z.infer<typeof RequestMetricsSchema>
 
 // ============================================================================
 // MIDDLEWARE IMPLEMENTATION
@@ -427,18 +427,18 @@ export type RequestMetrics = z.infer<typeof RequestMetricsSchema>;
  * Healthcare Request/Response Middleware Service
  */
 export class HealthcareMiddlewareService {
-  private config: MiddlewareConfig;
-  private requestMetrics: Map<string, RequestMetrics> = new Map();
-  private isInitialized = false;
+  private config: MiddlewareConfig
+  private requestMetrics: Map<string, RequestMetrics> = new Map()
+  private isInitialized = false
 
   constructor(config: Partial<MiddlewareConfig> = {}) {
     this.config = MiddlewareConfigSchema.parse({
       ...this.getDefaultConfig(),
       ...config,
-    });
+    })
 
     if (this.config.enabled) {
-      this.initialize();
+      this.initialize()
     }
   }
 
@@ -451,20 +451,20 @@ export class HealthcareMiddlewareService {
    */
   private initialize(): void {
     try {
-      this.setupMetricsCollection();
-      this.isInitialized = true;
+      this.setupMetricsCollection()
+      this.isInitialized = true
 
       middlewareLogger.info(
         'Healthcare middleware service initialized',
         { component: 'healthcare-middleware', timestamp: new Date().toISOString() },
-      );
+      )
     } catch (error) {
-      void error;
+      void error
       logHealthcareError(
         'healthcare-middleware',
         error instanceof Error ? error : new Error(String(error)),
         { method: 'initialize' },
-      );
+      )
     }
   }
 
@@ -474,8 +474,8 @@ export class HealthcareMiddlewareService {
   private setupMetricsCollection(): void {
     if (this.config.performanceMonitoring.enabled) {
       setInterval(() => {
-        this.collectAndReportMetrics();
-      }, this.config.performanceMonitoring.metricsInterval);
+        this.collectAndReportMetrics()
+      }, this.config.performanceMonitoring.metricsInterval)
     }
   }
 
@@ -532,7 +532,7 @@ export class HealthcareMiddlewareService {
         enablePiiRedaction: true,
         logRetentionDays: 90,
       },
-    };
+    }
   }
 
   // ============================================================================
@@ -545,52 +545,52 @@ export class HealthcareMiddlewareService {
   createMiddleware(): MiddlewareHandler {
     return async (c: Context, next: Next) => {
       if (!this.config.enabled) {
-        return next();
+        return next()
       }
 
-      const startTime = Date.now();
-      let requestContext: HealthcareRequestContext;
+      const startTime = Date.now()
+      let requestContext: HealthcareRequestContext
 
       try {
         // Phase 1: Initialize request context
-        requestContext = await this.initializeRequestContext(c);
+        requestContext = await this.initializeRequestContext(c)
 
         // Phase 2: Security and validation
-        await this.performSecurityValidation(c, requestContext);
+        await this.performSecurityValidation(c, requestContext)
 
         // Phase 3: LGPD compliance validation
         if (this.config.security.enableConsentValidation) {
-          await this.validateLGPDCompliance(c, requestContext);
+          await this.validateLGPDCompliance(c, requestContext)
         }
 
         // Phase 4: Rate limiting check
         if (this.config.rateLimiting.enabled) {
-          await this.performRateLimitingCheck(c, requestContext);
+          await this.performRateLimitingCheck(c, requestContext)
         }
 
         // Phase 5: Healthcare context injection
         if (this.config.healthcareSettings.enableWorkflowInjection) {
-          await this.injectHealthcareContext(c, requestContext);
+          await this.injectHealthcareContext(c, requestContext)
         }
 
         // Phase 6: Performance monitoring setup
         if (this.config.performanceMonitoring.enabled) {
-          this.startPerformanceMonitoring(requestContext);
+          this.startPerformanceMonitoring(requestContext)
         }
 
         // Phase 7: Request logging
         if (this.config.logging.enableRequestLogging) {
-          await this.logRequest(c, requestContext);
+          await this.logRequest(c, requestContext)
         }
 
         // Store context for use in other middleware/handlers
-        c.set('healthcareContext', requestContext);
+        c.set('healthcareContext', requestContext)
 
         // Execute next middleware/handler
-        await next();
+        await next()
 
         // Phase 8: Post-processing
-        await this.finalizeRequest(c, requestContext, startTime);
+        await this.finalizeRequest(c, requestContext, startTime)
       } catch (error) {
         // Error handling
         await this.handleMiddlewareError(
@@ -598,9 +598,9 @@ export class HealthcareMiddlewareService {
           error instanceof Error ? error : new Error(String(error)),
           requestContext!,
           startTime,
-        );
+        )
       }
-    };
+    }
   }
 
   /**
@@ -609,20 +609,20 @@ export class HealthcareMiddlewareService {
   private async initializeRequestContext(
     _c: Context,
   ): Promise<HealthcareRequestContext> {
-    const requestId = `req_${nanoid(12)}`;
-    const correlationId = _c.req.header('x-correlation-id') || `corr_${nanoid(8)}`;
+    const requestId = `req_${nanoid(12)}`
+    const correlationId = _c.req.header('x-correlation-id') || `corr_${nanoid(8)}`
 
     // Extract user context from headers/auth
-    const userContext = await this.extractUserContext(_c);
+    const userContext = await this.extractUserContext(_c)
 
     // Extract technical context
-    const technicalContext = this.extractTechnicalContext(_c);
+    const technicalContext = this.extractTechnicalContext(_c)
 
     // Determine compliance context
-    const complianceContext = this.determineComplianceContext(_c, userContext);
+    const complianceContext = this.determineComplianceContext(_c, userContext)
 
     // Detect healthcare workflow context
-    const workflowContext = await this.detectWorkflowContext(_c, userContext);
+    const workflowContext = await this.detectWorkflowContext(_c, userContext)
 
     const requestContext: HealthcareRequestContext = {
       requestId,
@@ -632,9 +632,9 @@ export class HealthcareMiddlewareService {
       userContext,
       technicalContext,
       complianceContext,
-    };
+    }
 
-    return HealthcareRequestContextSchema.parse(requestContext);
+    return HealthcareRequestContextSchema.parse(requestContext)
   }
 
   /**
@@ -644,14 +644,14 @@ export class HealthcareMiddlewareService {
     _c: Context,
   ): Promise<HealthcareRequestContext['userContext']> {
     // TODO: Integrate with authentication service
-    const authHeader = _c.req.header('authorization');
+    const authHeader = _c.req.header('authorization')
 
     // SECURITY FIX: Never trust user role from headers - must come from verified JWT
     // const decodedToken = await verifyAndDecodeJWT(authHeader);
     // const userRole = decodedToken?.role;
     // const facilityId = decodedToken?.facilityId;
-    const userRole = 'guest'; // Default to guest until proper auth is implemented
-    const facilityId = _c.req.header('x-facility-id');
+    const userRole = 'guest' // Default to guest until proper auth is implemented
+    const facilityId = _c.req.header('x-facility-id')
 
     return {
       anonymizedUserId: authHeader ? `user_${nanoid(8)}` : undefined,
@@ -665,7 +665,7 @@ export class HealthcareMiddlewareService {
         analytics: false,
         thirdParty: false,
       },
-    };
+    }
   }
 
   /**
@@ -674,7 +674,7 @@ export class HealthcareMiddlewareService {
   private extractTechnicalContext(
     _c: Context,
   ): HealthcareRequestContext['technicalContext'] {
-    const req = _c.req;
+    const req = _c.req
 
     return {
       clientIpAddress: this.anonymizeIP(
@@ -700,7 +700,7 @@ export class HealthcareMiddlewareService {
           ? parseInt(req.header('x-bandwidth')!)
           : undefined,
       },
-    };
+    }
   }
 
   /**
@@ -717,14 +717,14 @@ export class HealthcareMiddlewareService {
       | 'legal_obligation'
       | 'vital_interests'
       | 'public_interest'
-      | 'legitimate_interests' = 'legitimate_interests';
+      | 'legitimate_interests' = 'legitimate_interests'
 
     // Healthcare operations are typically legitimate interest
     if (
       _c.req.path.includes('/emergency')
       || _c.req.path.includes('/patient-safety')
     ) {
-      legalBasis = 'vital_interests';
+      legalBasis = 'vital_interests'
     }
 
     // Determine data classification
@@ -732,14 +732,14 @@ export class HealthcareMiddlewareService {
       | 'public'
       | 'internal'
       | 'confidential'
-      | 'restricted' = 'internal';
+      | 'restricted' = 'internal'
 
     if (_c.req.path.includes('/patient') || _c.req.path.includes('/medical')) {
-      dataClassification = 'confidential';
+      dataClassification = 'confidential'
     }
 
     if (_c.req.path.includes('/emergency') || _c.req.path.includes('/critical')) {
-      dataClassification = 'restricted';
+      dataClassification = 'restricted'
     }
 
     return {
@@ -754,7 +754,7 @@ export class HealthcareMiddlewareService {
         pseudonymization: true,
         encryption: true,
       },
-    };
+    }
   }
 
   /**
@@ -764,51 +764,51 @@ export class HealthcareMiddlewareService {
     _c: Context,
     _userContext: HealthcareRequestContext['userContext'],
   ): Promise<HealthcareRequestContext['workflowContext']> {
-    const path = _c.req.path.toLowerCase();
-    const method = _c.req.method;
+    const path = _c.req.path.toLowerCase()
+    const method = _c.req.method
 
     // Emergency detection
     const emergencyFlag = path.includes('/emergency')
       || _c.req.header('x-emergency') === 'true'
-      || path.includes('/urgent');
+      || path.includes('/urgent')
 
     // Patient safety detection
     const patientSafetyFlag = path.includes('/patient-safety')
       || path.includes('/medication')
       || path.includes('/allergy')
-      || _c.req.header('x-patient-safety') === 'true';
+      || _c.req.header('x-patient-safety') === 'true'
 
     // Critical system detection
     const criticalSystemFlag = path.includes('/monitoring')
       || path.includes('/alert')
-      || _userContext?.userRole === 'system_admin';
+      || _userContext?.userRole === 'system_admin'
 
     // Workflow type detection
     let workflowType: NonNullable<HealthcareRequestContext['workflowContext']>['workflowType'] =
-      'administrative_task';
+      'administrative_task'
 
     if (path.includes('/patient') && method === 'POST') {
-      workflowType = 'patient_registration';
+      workflowType = 'patient_registration'
     }
-    if (path.includes('/appointment')) workflowType = 'appointment_management';
-    if (path.includes('/consultation')) workflowType = 'medical_consultation';
-    if (path.includes('/diagnosis')) workflowType = 'diagnosis_procedure';
-    if (path.includes('/treatment')) workflowType = 'treatment_administration';
-    if (path.includes('/medication')) workflowType = 'medication_management';
-    if (path.includes('/lab')) workflowType = 'laboratory_testing';
-    if (path.includes('/imaging')) workflowType = 'diagnostic_imaging';
-    if (path.includes('/emergency')) workflowType = 'emergency_response';
-    if (path.includes('/discharge')) workflowType = 'patient_discharge';
-    if (path.includes('/backup')) workflowType = 'data_backup';
-    if (path.includes('/audit')) workflowType = 'compliance_audit';
+    if (path.includes('/appointment')) workflowType = 'appointment_management'
+    if (path.includes('/consultation')) workflowType = 'medical_consultation'
+    if (path.includes('/diagnosis')) workflowType = 'diagnosis_procedure'
+    if (path.includes('/treatment')) workflowType = 'treatment_administration'
+    if (path.includes('/medication')) workflowType = 'medication_management'
+    if (path.includes('/lab')) workflowType = 'laboratory_testing'
+    if (path.includes('/imaging')) workflowType = 'diagnostic_imaging'
+    if (path.includes('/emergency')) workflowType = 'emergency_response'
+    if (path.includes('/discharge')) workflowType = 'patient_discharge'
+    if (path.includes('/backup')) workflowType = 'data_backup'
+    if (path.includes('/audit')) workflowType = 'compliance_audit'
 
     // Urgency level determination
     let urgencyLevel: NonNullable<HealthcareRequestContext['workflowContext']>['urgencyLevel'] =
-      'routine';
+      'routine'
 
-    if (emergencyFlag) urgencyLevel = 'emergency';
-    else if (patientSafetyFlag) urgencyLevel = 'critical';
-    else if (criticalSystemFlag) urgencyLevel = 'urgent';
+    if (emergencyFlag) urgencyLevel = 'emergency'
+    else if (patientSafetyFlag) urgencyLevel = 'critical'
+    else if (criticalSystemFlag) urgencyLevel = 'urgent'
 
     const workflowContextResult: NonNullable<HealthcareRequestContext['workflowContext']> = {
       workflowType,
@@ -822,9 +822,9 @@ export class HealthcareMiddlewareService {
       patientSafetyFlag,
       criticalSystemFlag,
       complianceFlag: workflowType === 'compliance_audit',
-    };
+    }
 
-    return workflowContextResult;
+    return workflowContextResult
   }
 
   /**
@@ -834,16 +834,16 @@ export class HealthcareMiddlewareService {
     c: Context,
     _context: HealthcareRequestContext,
   ): Promise<void> {
-    if (!this.config.security.enableInputValidation) return;
+    if (!this.config.security.enableInputValidation) return
 
     // Basic security headers validation
     if (this.config.security.enableSecurityHeaders) {
-      this.validateSecurityHeaders(c);
+      this.validateSecurityHeaders(c)
     }
 
     // PII detection in request
     if (this.config.security.enablePiiDetection) {
-      await this.detectAndRedactPII(c, _context);
+      await this.detectAndRedactPII(c, _context)
     }
 
     // CSRF protection for state-changing operations
@@ -851,7 +851,7 @@ export class HealthcareMiddlewareService {
       this.config.security.enableCsrfProtection
       && ['POST', 'PUT', 'DELETE', 'PATCH'].includes(c.req.method)
     ) {
-      this.validateCSRFToken(c);
+      this.validateCSRFToken(c)
     }
   }
 
@@ -864,23 +864,23 @@ export class HealthcareMiddlewareService {
   ): Promise<void> {
     // Check if user has required consent for data processing
     if (_context.complianceContext.legalBasis === 'consent') {
-      const hasConsent = _context.userContext?.consentStatus?.dataProcessing;
+      const hasConsent = _context.userContext?.consentStatus?.dataProcessing
 
       if (!hasConsent) {
         throw new Error(
           'LGPD_CONSENT_REQUIRED: User consent required for data processing',
-        );
+        )
       }
     }
 
     // Validate data minimization
     if (this.config.security.enableDataMinimization) {
-      await this.validateDataMinimization(_c, _context);
+      await this.validateDataMinimization(_c, _context)
     }
 
     // Log compliance validation
     if (this.config.logging.enableAuditLogging) {
-      await this.logComplianceValidation(_context);
+      await this.logComplianceValidation(_context)
     }
   }
 
@@ -902,8 +902,8 @@ export class HealthcareMiddlewareService {
         requestId: _context.requestId,
         component: 'healthcare-middleware',
         timestamp: new Date().toISOString(),
-      });
-      return;
+      })
+      return
     }
 
     // Simulate rate limiting check
@@ -911,7 +911,7 @@ export class HealthcareMiddlewareService {
       requestId: _context.requestId,
       component: 'healthcare-middleware',
       timestamp: new Date().toISOString(),
-    });
+    })
   }
 
   /**
@@ -922,26 +922,26 @@ export class HealthcareMiddlewareService {
     _context: HealthcareRequestContext,
   ): Promise<void> {
     // Add healthcare context headers to response
-    _c.header('x-request-id', _context.requestId);
-    _c.header('x-correlation-id', _context.correlationId!);
+    _c.header('x-request-id', _context.requestId)
+    _c.header('x-correlation-id', _context.correlationId!)
     _c.header(
       'x-workflow-type',
       _context.workflowContext?.workflowType || 'unknown',
-    );
+    )
     _c.header(
       'x-urgency-level',
       _context.workflowContext?.urgencyLevel || 'routine',
-    );
+    )
 
     // Add compliance headers
     _c.header(
       'x-data-classification',
       _context.complianceContext.dataClassification,
-    );
+    )
     _c.header(
       'x-audit-required',
       _context.complianceContext.auditRequired.toString(),
-    );
+    )
   }
 
   /**
@@ -958,9 +958,9 @@ export class HealthcareMiddlewareService {
       userRole: _context.userContext?.userRole,
       errorOccurred: false,
       timestamp: new Date().toISOString(),
-    };
+    }
 
-    this.requestMetrics.set(_context.requestId, metrics);
+    this.requestMetrics.set(_context.requestId, metrics)
   }
 
   /**
@@ -984,13 +984,13 @@ export class HealthcareMiddlewareService {
       legalBasis: _context.complianceContext.legalBasis,
       auditRequired: _context.complianceContext.auditRequired,
       timestamp: new Date().toISOString(),
-    };
+    }
 
     // TODO: Integrate with structured logging service
     middlewareLogger.info('Request logged', {
       ...logData,
       component: 'healthcare-middleware',
-    });
+    })
   }
 
   /**
@@ -1001,8 +1001,8 @@ export class HealthcareMiddlewareService {
     _context: HealthcareRequestContext,
     startTime: number,
   ): Promise<void> {
-    const endTime = Date.now();
-    const duration = endTime - startTime;
+    const endTime = Date.now()
+    const duration = endTime - startTime
 
     // Update metrics
     if (this.config.performanceMonitoring.enabled) {
@@ -1011,12 +1011,12 @@ export class HealthcareMiddlewareService {
         duration,
         statusCode: _c.res.status,
         responseSize: this.estimateResponseSize(_c.res),
-      });
+      })
     }
 
     // Check for slow requests
     if (duration > this.config.performanceMonitoring.slowRequestThreshold) {
-      await this.handleSlowRequest(_context, duration);
+      await this.handleSlowRequest(_context, duration)
     }
 
     // Response logging if enabled
@@ -1024,7 +1024,7 @@ export class HealthcareMiddlewareService {
       this.config.logging.enableResponseLogging
       && this.config.logging.enableAuditLogging
     ) {
-      await this.logResponse(_c, _context, duration);
+      await this.logResponse(_c, _context, duration)
     }
   }
 
@@ -1037,8 +1037,8 @@ export class HealthcareMiddlewareService {
     _context: HealthcareRequestContext,
     startTime: number,
   ): Promise<void> {
-    const endTime = Date.now();
-    const duration = endTime - startTime;
+    const endTime = Date.now()
+    const duration = endTime - startTime
 
     // Update metrics with error
     if (this.config.performanceMonitoring.enabled && _context) {
@@ -1048,7 +1048,7 @@ export class HealthcareMiddlewareService {
         errorOccurred: true,
         errorType: error.name || 'UnknownError',
         errorCode: error.code || 'MIDDLEWARE_ERROR',
-      });
+      })
     }
 
     // Log error
@@ -1065,9 +1065,9 @@ export class HealthcareMiddlewareService {
       emergencyFlag: _context?.workflowContext?.emergencyFlag,
       patientSafetyFlag: _context?.workflowContext?.patientSafetyFlag,
       timestamp: new Date().toISOString(),
-    };
+    }
 
-    logHealthcareError('healthcare-middleware', error, { method: 'handleError', _context });
+    logHealthcareError('healthcare-middleware', error, { method: 'handleError', _context })
 
     // TODO: Integrate with error tracking service
     // TODO: Send patient safety alerts if applicable
@@ -1075,11 +1075,11 @@ export class HealthcareMiddlewareService {
     // Return appropriate error response
     if (!_c.res.ok) {
       // Only if response not already sent
-      const statusCode = this.determineErrorStatusCode(error);
-      const errorResponse = this.createErrorResponse(error, _context);
+      const statusCode = this.determineErrorStatusCode(error)
+      const errorResponse = this.createErrorResponse(error, _context)
 
-      _c.json(errorResponse, statusCode as any);
-      return;
+      _c.json(errorResponse, statusCode as any)
+      return
     }
   }
 
@@ -1091,21 +1091,21 @@ export class HealthcareMiddlewareService {
    * Anonymize IP address for LGPD compliance
    */
   private anonymizeIP(ip: string): string {
-    if (ip === 'unknown') return ip;
+    if (ip === 'unknown') return ip
 
     // IPv4 anonymization (remove last octet)
     if (ip.includes('.')) {
-      const parts = ip.split('.');
-      return `${parts[0]}.${parts[1]}.${parts[2]}.0`;
+      const parts = ip.split('.')
+      return `${parts[0]}.${parts[1]}.${parts[2]}.0`
     }
 
     // IPv6 anonymization (remove last 64 bits)
     if (ip.includes(':')) {
-      const parts = ip.split(':');
-      return parts.slice(0, 4).join(':') + '::';
+      const parts = ip.split(':')
+      return parts.slice(0, 4).join(':') + '::'
     }
 
-    return 'anonymized';
+    return 'anonymized'
   }
 
   /**
@@ -1114,9 +1114,9 @@ export class HealthcareMiddlewareService {
   private detectDeviceType(
     userAgent?: string,
   ): 'mobile' | 'tablet' | 'desktop' | 'iot' | 'medical_device' | undefined {
-    if (!userAgent) return undefined;
+    if (!userAgent) return undefined
 
-    const ua = userAgent.toLowerCase();
+    const ua = userAgent.toLowerCase()
 
     // Medical device detection
     if (
@@ -1124,12 +1124,12 @@ export class HealthcareMiddlewareService {
       || ua.includes('device')
       || ua.includes('monitor')
     ) {
-      return 'medical_device';
+      return 'medical_device'
     }
 
     // IoT device detection
     if (ua.includes('iot') || ua.includes('sensor')) {
-      return 'iot';
+      return 'iot'
     }
 
     // Mobile detection
@@ -1138,15 +1138,15 @@ export class HealthcareMiddlewareService {
       || ua.includes('android')
       || ua.includes('iphone')
     ) {
-      return 'mobile';
+      return 'mobile'
     }
 
     // Tablet detection
     if (ua.includes('tablet') || ua.includes('ipad')) {
-      return 'tablet';
+      return 'tablet'
     }
 
-    return 'desktop';
+    return 'desktop'
   }
 
   /**
@@ -1156,10 +1156,10 @@ export class HealthcareMiddlewareService {
     // Check for required security headers in sensitive requests
     const requiresSecureHeaders = c.req.path.includes('/patient')
       || c.req.path.includes('/medical')
-      || c.req.path.includes('/admin');
+      || c.req.path.includes('/admin')
 
     if (requiresSecureHeaders) {
-      const securityHeaders = ['x-requested-with', 'content-type'];
+      const securityHeaders = ['x-requested-with', 'content-type']
 
       for (const header of securityHeaders) {
         if (!c.req.header(header)) {
@@ -1167,7 +1167,7 @@ export class HealthcareMiddlewareService {
             header,
             component: 'healthcare-middleware',
             timestamp: new Date().toISOString(),
-          });
+          })
         }
       }
     }
@@ -1185,32 +1185,32 @@ export class HealthcareMiddlewareService {
       requestId: _context.requestId,
       component: 'healthcare-middleware',
       timestamp: new Date().toISOString(),
-    });
+    })
   }
 
   /**
    * Validate CSRF token
    */
   private validateCSRFToken(c: Context): void {
-    const csrfToken = c.req.header('x-csrf-token');
+    const csrfToken = c.req.header('x-csrf-token')
 
     if (!csrfToken) {
       throw new Error(
         'CSRF_TOKEN_MISSING: CSRF token required for state-changing operations',
-      );
+      )
     }
 
     // Get the expected token from session or cookie
-    const expectedToken = c.req.header('cookie') || c.get('session')?.csrfToken;
+    const expectedToken = c.req.header('cookie') || c.get('session')?.csrfToken
 
     if (!expectedToken || csrfToken !== expectedToken) {
-      throw new Error('CSRF_TOKEN_INVALID: Invalid CSRF token provided');
+      throw new Error('CSRF_TOKEN_INVALID: Invalid CSRF token provided')
     }
 
     middlewareLogger.info('CSRF token validated', {
       component: 'healthcare-middleware',
       timestamp: new Date().toISOString(),
-    });
+    })
   }
 
   /**
@@ -1222,7 +1222,7 @@ export class HealthcareMiddlewareService {
   ): Promise<void> {
     // Check if request is collecting more data than necessary
     // BUGFIX: Use pre-parsed body to avoid consuming request stream
-    const body = _c.get('parsedBody'); // Assume body is parsed earlier and stored in context
+    const body = _c.get('parsedBody') // Assume body is parsed earlier and stored in context
 
     if (body && typeof body === 'object') {
       const sensitiveFields = [
@@ -1231,21 +1231,21 @@ export class HealthcareMiddlewareService {
         'birthDate',
         'fullName',
         'address',
-      ];
-      const requestedFields = Object.keys(body);
+      ]
+      const requestedFields = Object.keys(body)
 
       const unnecessarySensitiveFields = sensitiveFields.filter(
-        field =>
+        (field) =>
           requestedFields.includes(field)
           && !this.isFieldNecessary(field, _context),
-      );
+      )
 
       if (unnecessarySensitiveFields.length > 0) {
         middlewareLogger.warn('Data minimization violation detected', {
           unnecessaryFields: unnecessarySensitiveFields,
           component: 'healthcare-middleware',
           timestamp: new Date().toISOString(),
-        });
+        })
       }
     }
   }
@@ -1257,7 +1257,7 @@ export class HealthcareMiddlewareService {
     field: string,
     _context: HealthcareRequestContext,
   ): boolean {
-    const workflowType = _context.workflowContext?.workflowType;
+    const workflowType = _context.workflowContext?.workflowType
 
     // Define necessary fields per workflow type
     const necessaryFields: Record<string, string[]> = {
@@ -1267,12 +1267,12 @@ export class HealthcareMiddlewareService {
       medication_management: ['cpf'],
       appointment_management: ['cpf'],
       administrative_task: [],
-    };
+    }
 
     return (
       necessaryFields[workflowType || 'administrative_task']?.includes(field)
       || false
-    );
+    )
   }
 
   /**
@@ -1289,12 +1289,12 @@ export class HealthcareMiddlewareService {
       auditRequired: _context.complianceContext.auditRequired,
       workflowType: _context.workflowContext?.workflowType,
       timestamp: new Date().toISOString(),
-    };
+    }
 
     middlewareLogger.info('Compliance validation performed', {
       ...complianceLog,
       component: 'healthcare-middleware',
-    });
+    })
   }
 
   /**
@@ -1304,9 +1304,9 @@ export class HealthcareMiddlewareService {
     requestId: string,
     updates: Partial<RequestMetrics>,
   ): void {
-    const metrics = this.requestMetrics.get(requestId);
+    const metrics = this.requestMetrics.get(requestId)
     if (metrics) {
-      Object.assign(metrics, updates);
+      Object.assign(metrics, updates)
     }
   }
 
@@ -1315,7 +1315,7 @@ export class HealthcareMiddlewareService {
    */
   private estimateResponseSize(_response: Response): number {
     // TODO: Implement actual response size calculation
-    return 0;
+    return 0
   }
 
   /**
@@ -1333,12 +1333,12 @@ export class HealthcareMiddlewareService {
       urgencyLevel: _context.workflowContext?.urgencyLevel,
       threshold: this.config.performanceMonitoring.slowRequestThreshold,
       timestamp: new Date().toISOString(),
-    };
+    }
 
     middlewareLogger.warn('Slow request detected', {
       ...slowRequestData,
       component: 'healthcare-middleware',
-    });
+    })
 
     // TODO: Send performance alerts
     // TODO: Integrate with performance monitoring service
@@ -1359,12 +1359,12 @@ export class HealthcareMiddlewareService {
       workflowType: _context.workflowContext?.workflowType,
       endpoint: _context.technicalContext.endpoint,
       timestamp: new Date().toISOString(),
-    };
+    }
 
     middlewareLogger.info('Response logged', {
       ...responseLog,
       component: 'healthcare-middleware',
-    });
+    })
   }
 
   /**
@@ -1372,15 +1372,15 @@ export class HealthcareMiddlewareService {
    */
   private async getRequestBody(c: Context): Promise<any> {
     try {
-      const contentType = c.req.header('content-type');
+      const contentType = c.req.header('content-type')
       if (contentType?.includes('application/json')) {
-        return await c.req.json();
+        return await c.req.json()
       }
     } catch (_error) {
-      void _error;
+      void _error
       // Ignore parsing errors
     }
-    return null;
+    return null
   }
 
   /**
@@ -1389,10 +1389,10 @@ export class HealthcareMiddlewareService {
   private determineErrorStatusCode(
     error: Error & { message?: string },
   ): number {
-    if (error.message?.includes('LGPD_CONSENT_REQUIRED')) return 403;
-    if (error.message?.includes('CSRF_TOKEN_MISSING')) return 403;
-    if (error.message?.includes('RATE_LIMIT_EXCEEDED')) return 429;
-    return 500;
+    if (error.message?.includes('LGPD_CONSENT_REQUIRED')) return 403
+    if (error.message?.includes('CSRF_TOKEN_MISSING')) return 403
+    if (error.message?.includes('RATE_LIMIT_EXCEEDED')) return 429
+    return 500
   }
 
   /**
@@ -1409,7 +1409,7 @@ export class HealthcareMiddlewareService {
         : 'An error occurred',
       requestId: _context?.requestId,
       timestamp: new Date().toISOString(),
-    };
+    }
 
     // Add healthcare-specific error context
     if (_context?.workflowContext?.emergencyFlag) {
@@ -1417,36 +1417,36 @@ export class HealthcareMiddlewareService {
         ...baseResponse,
         emergencyContext: true,
         escalationRequired: true,
-      };
+      }
     }
 
-    return baseResponse;
+    return baseResponse
   }
 
   /**
    * Collect and report metrics
    */
   private collectAndReportMetrics(): void {
-    const currentTime = Date.now();
-    const metricsToReport: RequestMetrics[] = [];
+    const currentTime = Date.now()
+    const metricsToReport: RequestMetrics[] = []
 
     // Collect completed requests (older than 1 minute)
     Array.from(this.requestMetrics.entries()).forEach(([requestId, metrics]) => {
       if (metrics.endTime && currentTime - metrics.endTime > 60000) {
-        metricsToReport.push(metrics);
-        this.requestMetrics.delete(requestId);
+        metricsToReport.push(metrics)
+        this.requestMetrics.delete(requestId)
       }
-    });
+    })
 
     if (metricsToReport.length > 0) {
       middlewareLogger.info('Metrics collected', {
         count: metricsToReport.length,
         averageDuration: metricsToReport.reduce((sum, _m) => sum + (_m.duration || 0), 0)
           / metricsToReport.length,
-        errorRate: metricsToReport.filter(m => m.errorOccurred).length / metricsToReport.length,
+        errorRate: metricsToReport.filter((m) => m.errorOccurred).length / metricsToReport.length,
         component: 'healthcare-middleware',
         timestamp: new Date().toISOString(),
-      });
+      })
 
       // TODO: Send metrics to observability platform
     }
@@ -1456,28 +1456,28 @@ export class HealthcareMiddlewareService {
    * Get service statistics
    */
   getStatistics(): {
-    isInitialized: boolean;
-    activeRequests: number;
-    config: MiddlewareConfig;
+    isInitialized: boolean
+    activeRequests: number
+    config: MiddlewareConfig
   } {
     return {
       isInitialized: this.isInitialized,
       activeRequests: this.requestMetrics.size,
       config: this.config,
-    };
+    }
   }
 
   /**
    * Destroy service and clean up resources
    */
   destroy(): void {
-    this.requestMetrics.clear();
-    this.isInitialized = false;
+    this.requestMetrics.clear()
+    this.isInitialized = false
 
     middlewareLogger.info('Healthcare middleware service destroyed', {
       component: 'healthcare-middleware',
       timestamp: new Date().toISOString(),
-    });
+    })
   }
 }
 
@@ -1537,7 +1537,7 @@ export const healthcareMiddlewareService = new HealthcareMiddlewareService({
     enablePiiRedaction: true,
     logRetentionDays: 90,
   },
-});
+})
 
 /**
  * Export types for external use

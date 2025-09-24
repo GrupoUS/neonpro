@@ -12,144 +12,144 @@
  * - LGPD-compliant data handling
  */
 
-import { prisma } from '../lib/prisma';
+import { prisma } from '../lib/prisma'
 
 export interface AIAppointmentQueryOptions {
-  clinicId: string;
-  dateRange?: { start: Date; end: Date };
-  professionalId?: string;
-  patientId?: string;
-  serviceTypeId?: string;
-  status?: string[];
-  includePredictions?: boolean;
-  includeAnalytics?: boolean;
-  includeNoShowData?: boolean;
-  limit?: number;
-  offset?: number;
+  clinicId: string
+  dateRange?: { start: Date; end: Date }
+  professionalId?: string
+  patientId?: string
+  serviceTypeId?: string
+  status?: string[]
+  includePredictions?: boolean
+  includeAnalytics?: boolean
+  includeNoShowData?: boolean
+  limit?: number
+  offset?: number
   orderBy?: {
-    field: 'startTime' | 'noShowRiskScore' | 'efficiency' | 'createdAt';
-    direction: 'asc' | 'desc';
-  };
+    field: 'startTime' | 'noShowRiskScore' | 'efficiency' | 'createdAt'
+    direction: 'asc' | 'desc'
+  }
 }
 
 export interface AIAppointmentAnalytics {
-  totalAppointments: number;
-  completedAppointments: number;
-  cancelledAppointments: number;
-  noShowRate: number;
-  averageNoShowRisk: number;
-  averageWaitTime: number;
+  totalAppointments: number
+  completedAppointments: number
+  cancelledAppointments: number
+  noShowRate: number
+  averageNoShowRisk: number
+  averageWaitTime: number
   resourceUtilization: {
-    professionals: number;
-    rooms: number;
-    equipment: number;
-  };
+    professionals: number
+    rooms: number
+    equipment: number
+  }
   peakHours: Array<{
-    hour: number;
-    appointmentCount: number;
-    utilization: number;
-  }>;
+    hour: number
+    appointmentCount: number
+    utilization: number
+  }>
   serviceTypePopularity: Array<{
-    serviceTypeId: string;
-    name: string;
-    count: number;
-    revenue: number;
-  }>;
+    serviceTypeId: string
+    name: string
+    count: number
+    revenue: number
+  }>
   professionalPerformance: Array<{
-    professionalId: string;
-    name: string;
-    totalAppointments: number;
-    completionRate: number;
-    averageRating: number;
-    efficiency: number;
-  }>;
+    professionalId: string
+    name: string
+    totalAppointments: number
+    completionRate: number
+    averageRating: number
+    efficiency: number
+  }>
   predictiveInsights: {
-    upcomingHighRisk: number;
-    recommendedOptimizations: string[];
+    upcomingHighRisk: number
+    recommendedOptimizations: string[]
     seasonalTrends: {
-      period: string;
-      expectedVolume: number;
-      confidence: number;
-    }[];
-  };
+      period: string
+      expectedVolume: number
+      confidence: number
+    }[]
+  }
 }
 
 export interface NoShowDataPoint {
-  appointmentId: string;
-  patientId: string;
-  professionalId: string;
-  scheduledDate: Date;
-  actualNoShow: boolean;
-  predictedRisk: number;
-  riskFactors: string[];
+  appointmentId: string
+  patientId: string
+  professionalId: string
+  scheduledDate: Date
+  actualNoShow: boolean
+  predictedRisk: number
+  riskFactors: string[]
   contextualFeatures: {
-    dayOfWeek: number;
-    timeOfDay: string;
-    season: string;
-    weather?: string;
-    patientAge?: number;
-    patientGender?: string;
-    appointmentType: string;
-    professionalSpecialty: string;
-    timeSinceLastAppointment: number;
-    totalPastAppointments: number;
-    totalPastNoShows: number;
-    distanceFromClinic?: number;
-    insuranceType?: string;
-  };
+    dayOfWeek: number
+    timeOfDay: string
+    season: string
+    weather?: string
+    patientAge?: number
+    patientGender?: string
+    appointmentType: string
+    professionalSpecialty: string
+    timeSinceLastAppointment: number
+    totalPastAppointments: number
+    totalPastNoShows: number
+    distanceFromClinic?: number
+    insuranceType?: string
+  }
 }
 
 export interface ResourceAllocation {
-  professionalId: string;
-  roomId: string;
-  timeSlot: { start: Date; end: Date };
-  efficiency: number;
-  utilization: number;
-  predictedDemand: number;
-  recommendedCapacity: number;
+  professionalId: string
+  roomId: string
+  timeSlot: { start: Date; end: Date }
+  efficiency: number
+  utilization: number
+  predictedDemand: number
+  recommendedCapacity: number
 }
 
 export interface AppointmentEfficiencyMetrics {
-  appointmentId: string;
-  scheduledDuration: number;
-  actualDuration?: number;
-  waitTime: number;
-  preparationTime: number;
-  documentationTime: number;
-  overallEfficiency: number;
-  resourceUtilization: number;
-  patientSatisfaction?: number;
-  costEffectiveness: number;
+  appointmentId: string
+  scheduledDuration: number
+  actualDuration?: number
+  waitTime: number
+  preparationTime: number
+  documentationTime: number
+  overallEfficiency: number
+  resourceUtilization: number
+  patientSatisfaction?: number
+  costEffectiveness: number
 }
 
 export class AIAppointmentRepository {
-  private static instance: AIAppointmentRepository;
-  private queryCache = new Map<string, { data: any; timestamp: Date; ttl: number }>();
-  private readonly CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+  private static instance: AIAppointmentRepository
+  private queryCache = new Map<string, { data: any; timestamp: Date; ttl: number }>()
+  private readonly CACHE_TTL = 5 * 60 * 1000 // 5 minutes
 
   private constructor() {}
 
   static getInstance(): AIAppointmentRepository {
     if (!AIAppointmentRepository.instance) {
-      AIAppointmentRepository.instance = new AIAppointmentRepository();
+      AIAppointmentRepository.instance = new AIAppointmentRepository()
     }
-    return AIAppointmentRepository.instance;
+    return AIAppointmentRepository.instance
   }
 
   /**
    * Get appointments with AI-enhanced queries
    */
   async getAppointments(options: AIAppointmentQueryOptions): Promise<{
-    appointments: any[];
-    totalCount: number;
-    analytics?: AIAppointmentAnalytics;
+    appointments: any[]
+    totalCount: number
+    analytics?: AIAppointmentAnalytics
   }> {
     try {
-      const cacheKey = this.generateCacheKey('appointments', options);
-      const cached = this.getFromCache(cacheKey);
+      const cacheKey = this.generateCacheKey('appointments', options)
+      const cached = this.getFromCache(cacheKey)
 
       if (cached) {
-        return cached;
+        return cached
       }
 
       const {
@@ -165,29 +165,29 @@ export class AIAppointmentRepository {
         limit = 50,
         offset = 0,
         orderBy,
-      } = options;
+      } = options
 
       // Build where clause
-      const where: any = { clinicId };
+      const where: any = { clinicId }
 
       if (dateRange) {
-        where.startTime = { gte: dateRange.start, lte: dateRange.end };
+        where.startTime = { gte: dateRange.start, lte: dateRange.end }
       }
 
       if (professionalId) {
-        where.professionalId = professionalId;
+        where.professionalId = professionalId
       }
 
       if (patientId) {
-        where.patientId = patientId;
+        where.patientId = patientId
       }
 
       if (serviceTypeId) {
-        where.serviceTypeId = serviceTypeId;
+        where.serviceTypeId = serviceTypeId
       }
 
       if (status && status.length > 0) {
-        where.status = { in: status };
+        where.status = { in: status }
       }
 
       // Get appointments with optimized includes
@@ -252,30 +252,30 @@ export class AIAppointmentRepository {
         orderBy: orderBy ? { [orderBy.field]: orderBy.direction } : { startTime: 'asc' },
         take: limit,
         skip: offset,
-      });
+      })
 
       // Get total count
-      const totalCount = await prisma.appointment.count({ where });
+      const totalCount = await prisma.appointment.count({ where })
 
-      let analytics: AIAppointmentAnalytics | undefined;
+      let analytics: AIAppointmentAnalytics | undefined
 
       if (includeAnalytics) {
-        analytics = await this.getAnalytics(clinicId, dateRange);
+        analytics = await this.getAnalytics(clinicId, dateRange)
       }
 
       const result = {
         appointments,
         totalCount,
         analytics,
-      };
+      }
 
       // Cache result
-      this.setToCache(cacheKey, result);
+      this.setToCache(cacheKey, result)
 
-      return result;
+      return result
     } catch {
-      console.error('Error getting appointments:', error);
-      throw new Error('Failed to get appointments');
+      console.error('Error getting appointments:', error)
+      throw new Error('Failed to get appointments')
     }
   }
 
@@ -285,22 +285,22 @@ export class AIAppointmentRepository {
   async getHighRiskAppointments(
     clinicId: string,
     options: {
-      dateRange?: { start: Date; end: Date };
-      riskThreshold?: number;
-      limit?: number;
+      dateRange?: { start: Date; end: Date }
+      riskThreshold?: number
+      limit?: number
     } = {},
   ): Promise<any[]> {
     try {
-      const { dateRange, riskThreshold = 70, limit = 20 } = options;
+      const { dateRange, riskThreshold = 70, limit = 20 } = options
 
       const where: any = {
         clinicId,
         noShowRiskScore: { gte: riskThreshold },
         status: { in: ['scheduled', 'confirmed'] },
-      };
+      }
 
       if (dateRange) {
-        where.startTime = { gte: dateRange.start, lte: dateRange.end };
+        where.startTime = { gte: dateRange.start, lte: dateRange.end }
       }
 
       return await prisma.appointment.findMany({
@@ -326,10 +326,10 @@ export class AIAppointmentRepository {
         },
         orderBy: { noShowRiskScore: 'desc' },
         take: limit,
-      });
+      })
     } catch {
-      console.error('Error getting high-risk appointments:', error);
-      throw new Error('Failed to get high-risk appointments');
+      console.error('Error getting high-risk appointments:', error)
+      throw new Error('Failed to get high-risk appointments')
     }
   }
 
@@ -341,10 +341,10 @@ export class AIAppointmentRepository {
     dateRange?: { start: Date; end: Date },
   ): Promise<NoShowDataPoint[]> {
     try {
-      const where: any = { clinicId };
+      const where: any = { clinicId }
 
       if (dateRange) {
-        where.startTime = { gte: dateRange.start, lte: dateRange.end };
+        where.startTime = { gte: dateRange.start, lte: dateRange.end }
       }
 
       const appointments = await prisma.appointment.findMany({
@@ -373,23 +373,23 @@ export class AIAppointmentRepository {
           },
         },
         orderBy: { startTime: 'desc' },
-      });
+      })
 
-      return appointments.map(apt => {
-        const appointmentDate = new Date(apt.startTime);
+      return appointments.map((apt) => {
+        const appointmentDate = new Date(apt.startTime)
         const patientAge = apt.patient.birthDate
           ? Math.floor(
             (appointmentDate.getTime() - new Date(apt.patient.birthDate).getTime())
               / (365.25 * 24 * 60 * 60 * 1000),
           )
-          : undefined;
+          : undefined
 
         const timeSinceLastAppointment = apt.patient.lastVisitDate
           ? Math.floor(
             (appointmentDate.getTime() - new Date(apt.patient.lastVisitDate).getTime())
               / (24 * 60 * 60 * 1000),
           )
-          : 0;
+          : 0
 
         return {
           appointmentId: apt.id,
@@ -415,11 +415,11 @@ export class AIAppointmentRepository {
             totalPastAppointments: apt.patient.totalAppointments || 0,
             totalPastNoShows: apt.patient.totalNoShows || 0,
           },
-        };
-      });
+        }
+      })
     } catch {
-      console.error('Error getting no-show prediction data:', error);
-      throw new Error('Failed to get no-show prediction data');
+      console.error('Error getting no-show prediction data:', error)
+      throw new Error('Failed to get no-show prediction data')
     }
   }
 
@@ -442,7 +442,7 @@ export class AIAppointmentRepository {
           professional: true,
           room: true,
         },
-      });
+      })
 
       // Get professionals and their availability
       const professionals = await prisma.professional.findMany({
@@ -452,37 +452,37 @@ export class AIAppointmentRepository {
             where: { date: { gte: dateRange.start, lte: dateRange.end } },
           },
         },
-      });
+      })
 
       // Get rooms
       const rooms = await prisma.room.findMany({
         where: { clinicId, isActive: true },
-      });
+      })
 
       // Generate allocation recommendations
-      const recommendations: ResourceAllocation[] = [];
+      const recommendations: ResourceAllocation[] = []
 
       for (const professional of professionals) {
         // Calculate current utilization
-        const professionalAppointments = appointments.filter(apt =>
+        const professionalAppointments = appointments.filter((apt) =>
           apt.professionalId === professional.id
-        );
+        )
         const totalHours = professionalAppointments.reduce((sum, apt) => {
-          return sum + (apt.endTime.getTime() - apt.startTime.getTime()) / (1000 * 60 * 60);
-        }, 0);
+          return sum + (apt.endTime.getTime() - apt.startTime.getTime()) / (1000 * 60 * 60)
+        }, 0)
 
         const availableHours = professional.availabilities.reduce((sum, avail) => {
-          const duration = (avail.endTime.getTime() - avail.startTime.getTime()) / (1000 * 60 * 60);
-          return sum + duration;
-        }, 0);
+          const duration = (avail.endTime.getTime() - avail.startTime.getTime()) / (1000 * 60 * 60)
+          return sum + duration
+        }, 0)
 
-        const utilization = availableHours > 0 ? totalHours / availableHours : 0;
+        const utilization = availableHours > 0 ? totalHours / availableHours : 0
 
         // Analyze time slots
-        const timeSlots = this.analyzeTimeSlots(professionalAppointments, dateRange);
+        const timeSlots = this.analyzeTimeSlots(professionalAppointments, dateRange)
 
         for (const slot of timeSlots) {
-          const availableRoom = this.findAvailableRoom(slot, appointments, rooms);
+          const availableRoom = this.findAvailableRoom(slot, appointments, rooms)
 
           if (availableRoom) {
             recommendations.push({
@@ -493,15 +493,15 @@ export class AIAppointmentRepository {
               utilization: utilization * 100,
               predictedDemand: this.predictDemand(slot, professionalAppointments),
               recommendedCapacity: this.calculateRecommendedCapacity(utilization),
-            });
+            })
           }
         }
       }
 
-      return recommendations.sort((a, b) => b.efficiency - a.efficiency);
+      return recommendations.sort((a, b) => b.efficiency - a.efficiency)
     } catch {
-      console.error('Error getting resource allocation recommendations:', error);
-      throw new Error('Failed to get resource allocation recommendations');
+      console.error('Error getting resource allocation recommendations:', error)
+      throw new Error('Failed to get resource allocation recommendations')
     }
   }
 
@@ -523,24 +523,24 @@ export class AIAppointmentRepository {
           serviceType: true,
           professional: true,
         },
-      });
+      })
 
-      return appointments.map(apt => {
-        const scheduledDuration = apt.duration || 30; // Default 30 minutes
+      return appointments.map((apt) => {
+        const scheduledDuration = apt.duration || 30 // Default 30 minutes
         const actualDuration = apt.actualStartTime && apt.actualEndTime
           ? (apt.actualEndTime.getTime() - apt.actualStartTime.getTime()) / (1000 * 60)
-          : undefined;
+          : undefined
 
         const waitTime = apt.checkInTime && apt.actualStartTime
           ? (apt.actualStartTime.getTime() - apt.checkInTime.getTime()) / (1000 * 60)
-          : 0;
+          : 0
 
         const efficiency = this.calculateAppointmentEfficiency({
           scheduledDuration,
           actualDuration,
           waitTime,
           noShowRiskScore: apt.noShowRiskScore || 0,
-        });
+        })
 
         return {
           appointmentId: apt.id,
@@ -553,11 +553,11 @@ export class AIAppointmentRepository {
           resourceUtilization: 0.8, // Placeholder
           patientSatisfaction: apt.patientSatisfactionScore,
           costEffectiveness: this.calculateCostEffectiveness(apt, efficiency),
-        };
-      });
+        }
+      })
     } catch {
-      console.error('Error getting appointment efficiency metrics:', error);
-      throw new Error('Failed to get appointment efficiency metrics');
+      console.error('Error getting appointment efficiency metrics:', error)
+      throw new Error('Failed to get appointment efficiency metrics')
     }
   }
 
@@ -567,10 +567,10 @@ export class AIAppointmentRepository {
   async updateNoShowPrediction(
     appointmentId: string,
     predictionData: {
-      riskScore: number;
-      confidence: number;
-      factors: string[];
-      modelVersion: string;
+      riskScore: number
+      confidence: number
+      factors: string[]
+      modelVersion: string
     },
   ): Promise<void> {
     try {
@@ -582,13 +582,13 @@ export class AIAppointmentRepository {
           noShowRiskFactors: predictionData.factors,
           noShowPredictedAt: new Date(),
         },
-      });
+      })
 
       // Log prediction update for model training
-      await this.logPredictionUpdate(appointmentId, predictionData);
+      await this.logPredictionUpdate(appointmentId, predictionData)
     } catch {
-      console.error('Error updating no-show prediction:', error);
-      throw new Error('Failed to update no-show prediction');
+      console.error('Error updating no-show prediction:', error)
+      throw new Error('Failed to update no-show prediction')
     }
   }
 
@@ -600,48 +600,48 @@ export class AIAppointmentRepository {
     dateRange: { start: Date; end: Date },
   ): Promise<{
     predictedVolume: Array<{
-      date: Date;
-      predictedAppointments: number;
-      confidence: number;
-      factors: string[];
-    }>;
+      date: Date
+      predictedAppointments: number
+      confidence: number
+      factors: string[]
+    }>
     recommendedStaffing: Array<{
-      date: Date;
-      recommendedProfessionals: number;
-      recommendedRooms: number;
-      reasoning: string;
-    }>;
+      date: Date
+      recommendedProfessionals: number
+      recommendedRooms: number
+      reasoning: string
+    }>
     riskAlerts: Array<{
-      type: string;
-      description: string;
-      severity: 'low' | 'medium' | 'high';
-      recommendation: string;
-    }>;
+      type: string
+      description: string
+      severity: 'low' | 'medium' | 'high'
+      recommendation: string
+    }>
   }> {
     try {
       // Get historical data for prediction
       const historicalData = await this.getHistoricalVolumeData(clinicId, {
         start: new Date(dateRange.start.getTime() - 90 * 24 * 60 * 60 * 1000), // 90 days back
         end: dateRange.start,
-      });
+      })
 
       // Generate volume predictions
-      const predictedVolume = this.generateVolumePredictions(dateRange, historicalData);
+      const predictedVolume = this.generateVolumePredictions(dateRange, historicalData)
 
       // Generate staffing recommendations
-      const recommendedStaffing = this.generateStaffingRecommendations(predictedVolume);
+      const recommendedStaffing = this.generateStaffingRecommendations(predictedVolume)
 
       // Identify risk alerts
-      const riskAlerts = await this.generateRiskAlerts(clinicId, dateRange);
+      const riskAlerts = await this.generateRiskAlerts(clinicId, dateRange)
 
       return {
         predictedVolume,
         recommendedStaffing,
         riskAlerts,
-      };
+      }
     } catch {
-      console.error('Error getting predictive scheduling insights:', error);
-      throw new Error('Failed to get predictive scheduling insights');
+      console.error('Error getting predictive scheduling insights:', error)
+      throw new Error('Failed to get predictive scheduling insights')
     }
   }
 
@@ -650,10 +650,10 @@ export class AIAppointmentRepository {
     clinicId: string,
     dateRange?: { start: Date; end: Date },
   ): Promise<AIAppointmentAnalytics> {
-    const where: any = { clinicId };
+    const where: any = { clinicId }
 
     if (dateRange) {
-      where.startTime = { gte: dateRange.start, lte: dateRange.end };
+      where.startTime = { gte: dateRange.start, lte: dateRange.end }
     }
 
     const [
@@ -677,20 +677,20 @@ export class AIAppointmentRepository {
       }),
       prisma.serviceType.findMany({ where: { clinicId } }),
       prisma.professional.findMany({ where: { clinicId, isActive: true } }),
-    ]);
+    ])
 
-    const noShows = appointments.filter(apt => apt.status === 'no_show');
-    const noShowRate = totalAppointments > 0 ? (noShows.length / totalAppointments) * 100 : 0;
+    const noShows = appointments.filter((apt) => apt.status === 'no_show')
+    const noShowRate = totalAppointments > 0 ? (noShows.length / totalAppointments) * 100 : 0
     const averageNoShowRisk = appointments.reduce((sum, apt) => sum + (apt.noShowRiskScore || 0), 0)
-      / appointments.length;
+      / appointments.length
 
     const averageWaitTime = appointments
-      .filter(apt => apt.checkInTime && apt.actualStartTime)
+      .filter((apt) => apt.checkInTime && apt.actualStartTime)
       .reduce((sum, apt) => {
         const waitTime = (apt.actualStartTime!.getTime() - apt.checkInTime!.getTime())
-          / (1000 * 60);
-        return sum + waitTime;
-      }, 0) / appointments.length;
+          / (1000 * 60)
+        return sum + waitTime
+      }, 0) / appointments.length
 
     return {
       totalAppointments,
@@ -704,34 +704,34 @@ export class AIAppointmentRepository {
       serviceTypePopularity: this.calculateServiceTypePopularity(appointments, serviceTypes),
       professionalPerformance: this.calculateProfessionalPerformance(appointments, professionals),
       predictiveInsights: this.generatePredictiveInsights(appointments, dateRange),
-    };
+    }
   }
 
   private calculateResourceUtilization(appointments: any[], professionals: any[]) {
     const professionalHours = appointments.reduce((sum, apt) => {
-      const duration = (apt.endTime.getTime() - apt.startTime.getTime()) / (1000 * 60 * 60);
-      return sum + duration;
-    }, 0);
+      const duration = (apt.endTime.getTime() - apt.startTime.getTime()) / (1000 * 60 * 60)
+      return sum + duration
+    }, 0)
 
-    const totalAvailableHours = professionals.length * 8; // Assuming 8-hour work days
+    const totalAvailableHours = professionals.length * 8 // Assuming 8-hour work days
     const professionalUtilization = totalAvailableHours > 0
       ? (professionalHours / totalAvailableHours) * 100
-      : 0;
+      : 0
 
     return {
       professionals: Math.round(professionalUtilization),
       rooms: 75, // Placeholder
       equipment: 60, // Placeholder
-    };
+    }
   }
 
   private calculatePeakHours(appointments: any[]) {
-    const hourCounts = new Map<number, number>();
+    const hourCounts = new Map<number, number>()
 
-    appointments.forEach(apt => {
-      const hour = new Date(apt.startTime).getHours();
-      hourCounts.set(hour, (hourCounts.get(hour) || 0) + 1);
-    });
+    appointments.forEach((apt) => {
+      const hour = new Date(apt.startTime).getHours()
+      hourCounts.set(hour, (hourCounts.get(hour) || 0) + 1)
+    })
 
     return Array.from(hourCounts.entries())
       .map(([hour, count]) => ({
@@ -740,50 +740,50 @@ export class AIAppointmentRepository {
         utilization: (count / appointments.length) * 100,
       }))
       .sort((a, b) => b.appointmentCount - a.appointmentCount)
-      .slice(0, 8); // Top 8 peak hours
+      .slice(0, 8) // Top 8 peak hours
   }
 
   private calculateServiceTypePopularity(appointments: any[], serviceTypes: any[]) {
-    const serviceCounts = new Map<string, { count: number; revenue: number }>();
+    const serviceCounts = new Map<string, { count: number; revenue: number }>()
 
-    appointments.forEach(apt => {
-      const current = serviceCounts.get(apt.serviceTypeId) || { count: 0, revenue: 0 };
+    appointments.forEach((apt) => {
+      const current = serviceCounts.get(apt.serviceTypeId) || { count: 0, revenue: 0 }
       serviceCounts.set(apt.serviceTypeId, {
         count: current.count + 1,
         revenue: current.revenue + (apt.actualCost?.toNumber() || 0),
-      });
-    });
+      })
+    })
 
     return Array.from(serviceCounts.entries())
       .map(([serviceTypeId, data]) => {
-        const serviceType = serviceTypes.find(st => st.id === serviceTypeId);
+        const serviceType = serviceTypes.find((st) => st.id === serviceTypeId)
         return {
           serviceTypeId,
           name: serviceType?.name || 'Unknown',
           count: data.count,
           revenue: data.revenue,
-        };
+        }
       })
-      .sort((a, b) => b.count - a.count);
+      .sort((a, b) => b.count - a.count)
   }
 
   private calculateProfessionalPerformance(appointments: any[], professionals: any[]) {
     const professionalStats = new Map<string, {
-      total: number;
-      completed: number;
-      totalRating: number;
-      ratingCount: number;
-      totalEfficiency: number;
-    }>();
+      total: number
+      completed: number
+      totalRating: number
+      ratingCount: number
+      totalEfficiency: number
+    }>()
 
-    appointments.forEach(apt => {
+    appointments.forEach((apt) => {
       const current = professionalStats.get(apt.professionalId) || {
         total: 0,
         completed: 0,
         totalRating: 0,
         ratingCount: 0,
         totalEfficiency: 0,
-      };
+      }
 
       professionalStats.set(apt.professionalId, {
         total: current.total + 1,
@@ -792,12 +792,12 @@ export class AIAppointmentRepository {
         ratingCount: current.ratingCount + (apt.patientSatisfactionScore ? 1 : 0),
         totalEfficiency: current.totalEfficiency
           + (apt.noShowRiskScore ? 100 - apt.noShowRiskScore : 50),
-      });
-    });
+      })
+    })
 
     return Array.from(professionalStats.entries())
       .map(([professionalId, stats]) => {
-        const professional = professionals.find(p => p.id === professionalId);
+        const professional = professionals.find((p) => p.id === professionalId)
         return {
           professionalId,
           name: professional?.fullName || 'Unknown',
@@ -805,13 +805,13 @@ export class AIAppointmentRepository {
           completionRate: stats.total > 0 ? (stats.completed / stats.total) * 100 : 0,
           averageRating: stats.ratingCount > 0 ? stats.totalRating / stats.ratingCount : 0,
           efficiency: stats.total > 0 ? stats.totalEfficiency / stats.total : 0,
-        };
+        }
       })
-      .sort((a, b) => b.efficiency - a.efficiency);
+      .sort((a, b) => b.efficiency - a.efficiency)
   }
 
   private generatePredictiveInsights(appointments: any[], _dateRange?: { start: Date; end: Date }) {
-    const highRiskAppointments = appointments.filter(apt => (apt.noShowRiskScore || 0) > 70);
+    const highRiskAppointments = appointments.filter((apt) => (apt.noShowRiskScore || 0) > 70)
 
     return {
       upcomingHighRisk: highRiskAppointments.length,
@@ -828,33 +828,33 @@ export class AIAppointmentRepository {
           confidence: 0.8,
         },
       ],
-    };
+    }
   }
 
   private getSeason(date: Date): string {
-    const month = date.getMonth();
-    if (month >= 2 && month <= 4) return 'spring';
-    if (month >= 5 && month <= 7) return 'summer';
-    if (month >= 8 && month <= 10) return 'autumn';
-    return 'winter';
+    const month = date.getMonth()
+    if (month >= 2 && month <= 4) return 'spring'
+    if (month >= 5 && month <= 7) return 'summer'
+    if (month >= 8 && month <= 10) return 'autumn'
+    return 'winter'
   }
 
   private analyzeTimeSlots(
     appointments: any[],
     dateRange: { start: Date; end: Date },
   ): Array<{ start: Date; end: Date }> {
-    const slots: Array<{ start: Date; end: Date }> = [];
-    const current = new Date(dateRange.start);
+    const slots: Array<{ start: Date; end: Date }> = []
+    const current = new Date(dateRange.start)
 
     while (current < dateRange.end) {
       slots.push({
         start: new Date(current),
         end: new Date(current.getTime() + 60 * 60 * 1000), // 1-hour slots
-      });
-      current.setHours(current.getHours() + 1);
+      })
+      current.setHours(current.getHours() + 1)
     }
 
-    return slots;
+    return slots
   }
 
   private findAvailableRoom(
@@ -862,83 +862,83 @@ export class AIAppointmentRepository {
     appointments: any[],
     rooms: any[],
   ): any | undefined {
-    return rooms.find(room =>
-      !appointments.some(apt =>
+    return rooms.find((room) =>
+      !appointments.some((apt) =>
         apt.roomId === room.id
         && apt.startTime < slot.end
         && apt.endTime > slot.start
       )
-    );
+    )
   }
 
   private calculateSlotEfficiency(slot: { start: Date; end: Date }, _appointments: any[]): number {
-    const hour = slot.start.getHours();
-    const dayOfWeek = slot.start.getDay();
+    const hour = slot.start.getHours()
+    const dayOfWeek = slot.start.getDay()
 
-    let efficiency = 0.8; // Base efficiency
+    let efficiency = 0.8 // Base efficiency
 
-    if (hour >= 9 && hour <= 11) efficiency += 0.1;
-    if (hour >= 14 && hour <= 16) efficiency += 0.1;
-    if (dayOfWeek === 2 || dayOfWeek === 3) efficiency += 0.05;
-    if (dayOfWeek === 1 || dayOfWeek === 5) efficiency -= 0.05;
+    if (hour >= 9 && hour <= 11) efficiency += 0.1
+    if (hour >= 14 && hour <= 16) efficiency += 0.1
+    if (dayOfWeek === 2 || dayOfWeek === 3) efficiency += 0.05
+    if (dayOfWeek === 1 || dayOfWeek === 5) efficiency -= 0.05
 
-    return Math.max(0.1, Math.min(1, efficiency));
+    return Math.max(0.1, Math.min(1, efficiency))
   }
 
   private predictDemand(slot: { start: Date; end: Date }, _appointments: any[]): number {
     // Simple demand prediction based on historical patterns
-    const hour = slot.start.getHours();
-    const dayOfWeek = slot.start.getDay();
+    const hour = slot.start.getHours()
+    const dayOfWeek = slot.start.getDay()
 
-    let baseDemand = 0.5; // 50% base demand
+    let baseDemand = 0.5 // 50% base demand
 
-    if (hour >= 9 && hour <= 11) baseDemand += 0.3;
-    if (hour >= 14 && hour <= 16) baseDemand += 0.3;
-    if (dayOfWeek === 2 || dayOfWeek === 3) baseDemand += 0.2;
-    if (dayOfWeek === 1 || dayOfWeek === 5) baseDemand -= 0.1;
+    if (hour >= 9 && hour <= 11) baseDemand += 0.3
+    if (hour >= 14 && hour <= 16) baseDemand += 0.3
+    if (dayOfWeek === 2 || dayOfWeek === 3) baseDemand += 0.2
+    if (dayOfWeek === 1 || dayOfWeek === 5) baseDemand -= 0.1
 
-    return Math.max(0, Math.min(1, baseDemand));
+    return Math.max(0, Math.min(1, baseDemand))
   }
 
   private calculateRecommendedCapacity(utilization: number): number {
-    if (utilization > 0.9) return 2; // Add capacity
-    if (utilization > 0.7) return 1; // Maintain capacity
-    return 0; // Reduce capacity
+    if (utilization > 0.9) return 2 // Add capacity
+    if (utilization > 0.7) return 1 // Maintain capacity
+    return 0 // Reduce capacity
   }
 
   private calculateAppointmentEfficiency(data: {
-    scheduledDuration: number;
-    actualDuration?: number;
-    waitTime: number;
-    noShowRiskScore: number;
+    scheduledDuration: number
+    actualDuration?: number
+    waitTime: number
+    noShowRiskScore: number
   }): number {
-    let efficiency = 1.0;
+    let efficiency = 1.0
 
     // Penalize long wait times
-    if (data.waitTime > 15) efficiency -= 0.2;
-    if (data.waitTime > 30) efficiency -= 0.3;
+    if (data.waitTime > 15) efficiency -= 0.2
+    if (data.waitTime > 30) efficiency -= 0.3
 
     // Reward accurate duration prediction
     if (data.actualDuration) {
       const durationAccuracy = 1
-        - Math.abs(data.scheduledDuration - data.actualDuration) / data.scheduledDuration;
-      efficiency += durationAccuracy * 0.3;
+        - Math.abs(data.scheduledDuration - data.actualDuration) / data.scheduledDuration
+      efficiency += durationAccuracy * 0.3
     }
 
     // Penalize high no-show risk
-    efficiency -= (data.noShowRiskScore / 100) * 0.2;
+    efficiency -= (data.noShowRiskScore / 100) * 0.2
 
-    return Math.max(0, Math.min(1, efficiency));
+    return Math.max(0, Math.min(1, efficiency))
   }
 
   private calculateCostEffectiveness(appointment: any, efficiency: number): number {
-    const estimatedCost = appointment.estimatedCost?.toNumber() || 0;
-    const actualCost = appointment.actualCost?.toNumber() || estimatedCost;
+    const estimatedCost = appointment.estimatedCost?.toNumber() || 0
+    const actualCost = appointment.actualCost?.toNumber() || estimatedCost
 
-    if (estimatedCost === 0) return 1;
+    if (estimatedCost === 0) return 1
 
-    const costRatio = actualCost / estimatedCost;
-    return efficiency / costRatio;
+    const costRatio = actualCost / estimatedCost
+    return efficiency / costRatio
   }
 
   private async getHistoricalVolumeData(clinicId: string, dateRange: { start: Date; end: Date }) {
@@ -951,84 +951,84 @@ export class AIAppointmentRepository {
         startTime: true,
         status: true,
       },
-    });
+    })
   }
 
   private generateVolumePredictions(dateRange: { start: Date; end: Date }, historicalData: any[]) {
     // Simple prediction based on historical patterns
-    const predictions = [];
-    const current = new Date(dateRange.start);
+    const predictions = []
+    const current = new Date(dateRange.start)
 
     while (current < dateRange.end) {
-      const dayOfWeek = current.getDay();
-      const weekDay = [1, 2, 3, 4].includes(dayOfWeek); // Monday-Thursday
+      const dayOfWeek = current.getDay()
+      const weekDay = [1, 2, 3, 4].includes(dayOfWeek) // Monday-Thursday
 
-      const historicalAvg = historicalData.filter(apt => {
-        const aptDate = new Date(apt.startTime);
-        return aptDate.getDay() === dayOfWeek;
-      }).length;
+      const historicalAvg = historicalData.filter((apt) => {
+        const aptDate = new Date(apt.startTime)
+        return aptDate.getDay() === dayOfWeek
+      }).length
 
       predictions.push({
         date: new Date(current),
         predictedAppointments: weekDay ? historicalAvg * 1.1 : historicalAvg * 0.8,
         confidence: 0.7,
         factors: ['day_of_week_pattern', 'seasonal_trend'],
-      });
+      })
 
-      current.setDate(current.getDate() + 1);
+      current.setDate(current.getDate() + 1)
     }
 
-    return predictions;
+    return predictions
   }
 
   private generateStaffingRecommendations(predictedVolume: any[]) {
-    return predictedVolume.map(volume => ({
+    return predictedVolume.map((volume) => ({
       date: volume.date,
       recommendedProfessionals: Math.ceil(volume.predictedAppointments / 8), // 8 appointments per professional per day
       recommendedRooms: Math.ceil(volume.predictedAppointments / 12), // 12 appointments per room per day
       reasoning: `Based on predicted volume of ${
         Math.round(volume.predictedAppointments)
       } appointments`,
-    }));
+    }))
   }
 
   private async generateRiskAlerts(clinicId: string, dateRange: { start: Date; end: Date }) {
-    const alerts = [];
+    const alerts = []
 
     // Check for overbooking risk
-    const highVolumeDays = await this.getHighVolumeDays(clinicId, dateRange);
+    const highVolumeDays = await this.getHighVolumeDays(clinicId, dateRange)
     if (highVolumeDays.length > 0) {
       alerts.push({
         type: 'overbooking_risk',
         description: `${highVolumeDays.length} days with predicted high volume`,
         severity: 'medium' as const,
         recommendation: 'Consider adding additional staff or extending hours',
-      });
+      })
     }
 
-    return alerts;
+    return alerts
   }
 
   private async getHighVolumeDays(_clinicId: string, _dateRange: { start: Date; end: Date }) {
     // Implementation for detecting high-volume days
-    return [];
+    return []
   }
 
   private async logPredictionUpdate(appointmentId: string, predictionData: any): Promise<void> {
     // Log prediction updates for model training and audit purposes
-    console.log('Prediction updated:', { appointmentId, predictionData });
+    console.log('Prediction updated:', { appointmentId, predictionData })
   }
 
   private generateCacheKey(prefix: string, options: any): string {
-    return `${prefix}_${JSON.stringify(options)}`;
+    return `${prefix}_${JSON.stringify(options)}`
   }
 
   private getFromCache(key: string): any | undefined {
-    const cached = this.queryCache.get(key);
+    const cached = this.queryCache.get(key)
     if (cached && Date.now() - cached.timestamp < cached.ttl) {
-      return cached.data;
+      return cached.data
     }
-    return undefined;
+    return undefined
   }
 
   private setToCache(key: string, data: any): void {
@@ -1036,9 +1036,9 @@ export class AIAppointmentRepository {
       data,
       timestamp: new Date(),
       ttl: this.CACHE_TTL,
-    });
+    })
   }
 }
 
 // Export singleton instance
-export const aiAppointmentRepository = AIAppointmentRepository.getInstance();
+export const aiAppointmentRepository = AIAppointmentRepository.getInstance()

@@ -11,30 +11,30 @@ import {
   AguiMessageMetadata,
   AguiMessageType,
   AguiServiceConfig,
-} from './types';
+} from './types'
 
 // Simple logger for now - replace with proper logger later
 const logger = {
   error: (message: string, context: any, error?: any) => {
-    console.error(`[${new Date().toISOString()}] ${message}`, context, error);
+    console.error(`[${new Date().toISOString()}] ${message}`, context, error)
   },
   info: (message: string, context: any) => {
-    console.info(`[${new Date().toISOString()}] ${message}`, context);
+    console.info(`[${new Date().toISOString()}] ${message}`, context)
   },
-};
+}
 
 export class AguiProtocol {
-  private ws: WebSocket | null = null;
-  private sessionId: string;
-  private config: AguiServiceConfig;
-  private reconnectAttempts = 0;
-  private maxReconnectAttempts = 5;
-  private messageQueue: AguiMessage[] = [];
-  private status: AguiConnectionStatus = { connected: false };
+  private ws: WebSocket | null = null
+  private sessionId: string
+  private config: AguiServiceConfig
+  private reconnectAttempts = 0
+  private maxReconnectAttempts = 5
+  private messageQueue: AguiMessage[] = []
+  private status: AguiConnectionStatus = { connected: false }
 
   constructor(config: AguiServiceConfig) {
-    this.config = config;
-    this.sessionId = this.generateSessionId();
+    this.config = config
+    this.sessionId = this.generateSessionId()
   }
 
   /**
@@ -42,17 +42,17 @@ export class AguiProtocol {
    */
   async connect(): Promise<void> {
     try {
-      this.ws = new WebSocket(this.config.baseUrl);
+      this.ws = new WebSocket(this.config.baseUrl)
 
-      this.ws.onopen = this.handleOpen.bind(this);
-      this.ws.onmessage = this.handleMessage.bind(this);
-      this.ws.onclose = this.handleClose.bind(this);
-      this.ws.onerror = this.handleError.bind(this);
+      this.ws.onopen = this.handleOpen.bind(this)
+      this.ws.onmessage = this.handleMessage.bind(this)
+      this.ws.onclose = this.handleClose.bind(this)
+      this.ws.onerror = this.handleError.bind(this)
 
       // Wait for connection
-      await this.waitForConnection();
+      await this.waitForConnection()
     } catch (error) {
-      throw new Error(`Failed to connect to AG-UI service: ${error}`);
+      throw new Error(`Failed to connect to AG-UI service: ${error}`)
     }
   }
 
@@ -61,10 +61,10 @@ export class AguiProtocol {
    */
   disconnect(): void {
     if (this.ws) {
-      this.ws.close();
-      this.ws = null;
+      this.ws.close()
+      this.ws = null
     }
-    this.status.connected = false;
+    this.status.connected = false
   }
 
   /**
@@ -84,13 +84,13 @@ export class AguiProtocol {
       metadata: metadata
         ? { ...metadata, version: '1.0.0', _userId: metadata._userId || 'system' }
         : undefined,
-    };
+    }
 
     if (this.status.connected && this.ws) {
-      this.ws.send(JSON.stringify(message));
+      this.ws.send(JSON.stringify(message))
     } else {
       // Queue message for later delivery
-      this.messageQueue.push(message);
+      this.messageQueue.push(message)
     }
   }
 
@@ -98,22 +98,22 @@ export class AguiProtocol {
    * Get current connection status
    */
   getStatus(): AguiConnectionStatus {
-    return { ...this.status };
+    return { ...this.status }
   }
 
   /**
    * Handle WebSocket open event
    */
   private handleOpen(): void {
-    this.status.connected = true;
-    this.status.sessionId = this.sessionId;
-    this.reconnectAttempts = 0;
+    this.status.connected = true
+    this.status.sessionId = this.sessionId
+    this.reconnectAttempts = 0
 
     // Send hello message
-    this.sendMessage('hello', { version: '1.0.0' });
+    this.sendMessage('hello', { version: '1.0.0' })
 
     // Send queued messages
-    this.flushMessageQueue();
+    this.flushMessageQueue()
   }
 
   /**
@@ -121,30 +121,30 @@ export class AguiProtocol {
    */
   private handleMessage(event: MessageEvent): void {
     try {
-      const message: AguiMessage = JSON.parse(event.data);
+      const message: AguiMessage = JSON.parse(event.data)
 
       switch (message.type) {
         case 'pong':
-          this.status.lastPing = new Date().toISOString();
-          break;
+          this.status.lastPing = new Date().toISOString()
+          break
         case 'error':
           logger.error('AG-UI Protocol Error', {
             component: 'agui-protocol',
             operation: 'handle_message',
             sessionId: this.sessionId,
             _payload: message._payload,
-          });
-          break;
+          })
+          break
         default:
           // Handle other message types through event listeners
-          this.emit('message', message);
+          this.emit('message', message)
       }
     } catch (error) {
       logger.error('Failed to parse AG-UI message', {
         component: 'agui-protocol',
         operation: 'parse_message',
         sessionId: this.sessionId,
-      }, error instanceof Error ? error : new Error(String(error)));
+      }, error instanceof Error ? error : new Error(String(error)))
     }
   }
 
@@ -152,12 +152,12 @@ export class AguiProtocol {
    * Handle WebSocket close event
    */
   private handleClose(): void {
-    this.status.connected = false;
+    this.status.connected = false
 
     // Attempt to reconnect
     if (this.reconnectAttempts < this.maxReconnectAttempts) {
-      this.reconnectAttempts++;
-      setTimeout(() => this.connect(), 1000 * Math.pow(2, this.reconnectAttempts));
+      this.reconnectAttempts++
+      setTimeout(() => this.connect(), 1000 * Math.pow(2, this.reconnectAttempts))
     }
   }
 
@@ -165,13 +165,13 @@ export class AguiProtocol {
    * Handle WebSocket error event
    */
   private handleError(event: Event): void {
-    this.status.error = `WebSocket error: ${event}`;
+    this.status.error = `WebSocket error: ${event}`
     logger.error('AG-UI WebSocket Error', {
       component: 'agui-protocol',
       operation: 'handle_error',
       sessionId: this.sessionId,
       error: event.toString(),
-    });
+    })
   }
 
   /**
@@ -181,15 +181,15 @@ export class AguiProtocol {
     return new Promise((resolve, reject) => {
       const checkConnection = () => {
         if (this.status.connected) {
-          resolve();
+          resolve()
         } else if (this.reconnectAttempts >= this.maxReconnectAttempts) {
-          reject(new Error('Max reconnection attempts reached'));
+          reject(new Error('Max reconnection attempts reached'))
         } else {
-          setTimeout(checkConnection, 100);
+          setTimeout(checkConnection, 100)
         }
-      };
-      checkConnection();
-    });
+      }
+      checkConnection()
+    })
   }
 
   /**
@@ -197,9 +197,9 @@ export class AguiProtocol {
    */
   private flushMessageQueue(): void {
     while (this.messageQueue.length > 0 && this.ws) {
-      const message = this.messageQueue.shift();
+      const message = this.messageQueue.shift()
       if (message) {
-        this.ws.send(JSON.stringify(message));
+        this.ws.send(JSON.stringify(message))
       }
     }
   }
@@ -208,14 +208,14 @@ export class AguiProtocol {
    * Generate unique session ID
    */
   private generateSessionId(): string {
-    return `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    return `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
   }
 
   /**
    * Generate unique message ID
    */
   private generateMessageId(): string {
-    return `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    return `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
   }
 
   /**
@@ -229,6 +229,6 @@ export class AguiProtocol {
       sessionId: this.sessionId,
       eventType: event,
       hasData: !!data,
-    });
+    })
   }
 }

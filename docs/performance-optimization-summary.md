@@ -253,7 +253,7 @@ Comprehensive performance optimization strategy for aesthetic clinic features, a
 ### 1. Basic Setup
 
 ```typescript
-import { initializePerformanceOptimization } from './services/performance';
+import { initializePerformanceOptimization } from './services/performance'
 
 const perfStack = await initializePerformanceOptimization({
   supabase: supabaseClient,
@@ -269,35 +269,35 @@ const perfStack = await initializePerformanceOptimization({
     enableComplianceValidation: true,
     validationInterval: 300000, // 5 minutes
   },
-});
+})
 ```
 
 ### 2. Integration with Existing Routes
 
 ```typescript
 // Add performance middleware to existing routes
-app.use(perfStack.performanceMonitor.middleware());
+app.use(perfStack.performanceMonitor.middleware())
 
 // Use optimized queries in existing endpoints
 router.get('/clients/:id', async (req, res) => {
   const client = await perfStack.optimizer.getOptimizedClientProfile(
     req.params.id,
     { includeTreatments: true, includePhotos: true },
-  );
-  res.json(client);
-});
+  )
+  res.json(client)
+})
 ```
 
 ### 3. WebSocket Integration
 
 ```typescript
 // WebSocket event handling
-websocketOptimizer.on('connection', connection => {
+websocketOptimizer.on('connection', (connection) => {
   // Handle real-time updates for aesthetic clinic data
-  connection.socket.on('message', async message => {
+  connection.socket.on('message', async (message) => {
     // Process real-time requests with performance optimization
-  });
-});
+  })
+})
 ```
 
 ## 🧪 Testing & Validation
@@ -333,34 +333,34 @@ npm run test:security-report
 
 ```typescript
 // Check cache metrics
-const cacheStats = perfStack.optimizer.getCacheStatistics();
-console.log('Cache hit rate:', cacheStats.hitRate);
+const cacheStats = perfStack.optimizer.getCacheStatistics()
+console.log('Cache hit rate:', cacheStats.hitRate)
 
 // Clear cache if needed
-perfStack.optimizer.clearCache();
+perfStack.optimizer.clearCache()
 ```
 
 #### Database Query Performance
 
 ```typescript
 // Check query performance
-const queryMetrics = perfStack.optimizer.getPerformanceMetrics();
-console.log('Average query time:', queryMetrics.queryMetrics.averageQueryTime);
+const queryMetrics = perfStack.optimizer.getPerformanceMetrics()
+console.log('Average query time:', queryMetrics.queryMetrics.averageQueryTime)
 
 // Optimize queries with hints
 await perfStack.optimizer.getOptimizedClientProfile(clientId, {
   forceRefresh: true,
   includeTreatments: true,
-});
+})
 ```
 
 #### WebSocket Performance
 
 ```typescript
 // Check WebSocket metrics
-const wsMetrics = perfStack.websocketOptimizer.getMetrics();
-console.log('Active connections:', wsMetrics.activeConnections);
-console.log('Average latency:', wsMetrics.averageLatency);
+const wsMetrics = perfStack.websocketOptimizer.getMetrics()
+console.log('Active connections:', wsMetrics.activeConnections)
+console.log('Average latency:', wsMetrics.averageLatency)
 ```
 
 ## 📚 Additional Resources

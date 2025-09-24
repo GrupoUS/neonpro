@@ -181,7 +181,7 @@ export const coveragePolicy = {
       statements: 75,
     },
   },
-};
+}
 ```
 
 ### 2. Enforcement & Reporting
@@ -190,19 +190,19 @@ export const coveragePolicy = {
 // Coverage enforcement script
 export class CoverageEnforcer {
   static async validateCoverage(): Promise<CoverageReport> {
-    const report = await this.generateCoverageReport();
-    const violations: CoverageViolation[] = [];
+    const report = await this.generateCoverageReport()
+    const violations: CoverageViolation[] = []
 
     // Check critical path coverage
     for (const [category, config] of Object.entries(coveragePolicy)) {
-      const categoryReport = this.filterReportByPaths(report, config.paths);
+      const categoryReport = this.filterReportByPaths(report, config.paths)
       const violations = this.checkThresholds(
         categoryReport,
         config.thresholds,
-      );
+      )
 
       if (violations.length > 0) {
-        violations.forEach(violation => {
+        violations.forEach((violation) => {
           violations.push({
             category,
             severity: category === 'critical' ? 'blocker' : 'major',
@@ -210,8 +210,8 @@ export class CoverageEnforcer {
             metric: violation.metric,
             actual: violation.actual,
             expected: violation.expected,
-          });
-        });
+          })
+        })
       }
     }
 
@@ -219,27 +219,27 @@ export class CoverageEnforcer {
       overall: report,
       violations,
       passed: violations.length === 0,
-    };
+    }
   }
 
   static async enforceCoverageGates(): Promise<void> {
-    const report = await this.validateCoverage();
+    const report = await this.validateCoverage()
 
     if (!report.passed) {
       const criticalViolations = report.violations.filter(
-        v => v.severity === 'blocker',
-      );
+        (v) => v.severity === 'blocker',
+      )
 
       if (criticalViolations.length > 0) {
         throw new Error(
           `Critical coverage violations found:\n${
             criticalViolations
               .map(
-                v => `- ${v.file}: ${v.metric} coverage ${v.actual}% < ${v.expected}%`,
+                (v) => `- ${v.file}: ${v.metric} coverage ${v.actual}% < ${v.expected}%`,
               )
               .join('\n')
           }`,
-        );
+        )
       }
     }
   }

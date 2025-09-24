@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from '@tanstack/react-router';
+import { createFileRoute, Link } from '@tanstack/react-router'
 import {
   Activity,
   Bell,
@@ -11,16 +11,16 @@ import {
   TrendingUp,
   Users,
   X,
-} from 'lucide-react';
-import * as React from 'react';
-import { useState } from 'react';
+} from 'lucide-react'
+import * as React from 'react'
+import { useState } from 'react'
 
 export const Route = createFileRoute('/dashboard/')({
   component: Dashboard,
-});
+})
 
 function Dashboard() {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false)
 
   const menuItems = [
     { icon: TrendingUp, label: 'Visão Geral', href: '/dashboard' },
@@ -30,7 +30,7 @@ function Dashboard() {
     { icon: Activity, label: 'Prontuários', href: '/records' },
     { icon: Calendar, label: 'Agendamento Estético', href: '/aesthetic-scheduling' },
     { icon: Activity, label: 'Suporte Clínico IA', href: '/ai-clinical-support' },
-  ];
+  ]
 
   const stats = [
     {
@@ -61,7 +61,7 @@ function Dashboard() {
       icon: Activity,
       color: 'text-orange-600',
     },
-  ];
+  ]
 
   const recentAppointments = [
     {
@@ -88,7 +88,7 @@ function Dashboard() {
       service: 'Ácido',
       status: 'Confirmado',
     },
-  ];
+  ]
 
   return (
     <div className='min-h-screen bg-gray-50'>
@@ -126,7 +126,7 @@ function Dashboard() {
 
         <nav className='mt-8 px-2'>
           <div className='space-y-1'>
-            {menuItems.map(item => (
+            {menuItems.map((item) => (
               <Link
                 key={item.label}
                 to={item.href}
@@ -296,5 +296,5 @@ function Dashboard() {
         </main>
       </div>
     </div>
-  );
+  )
 }

@@ -6,183 +6,183 @@
  */
 
 export interface AestheticNotificationConfig {
-  emailProvider: string;
-  smsProvider: string;
-  whatsappProvider: string;
-  defaultLanguage: 'pt-BR' | 'en-US';
-  enableScheduling: boolean;
-  enableTemplates: boolean;
-  enableTracking: boolean;
+  emailProvider: string
+  smsProvider: string
+  whatsappProvider: string
+  defaultLanguage: 'pt-BR' | 'en-US'
+  enableScheduling: boolean
+  enableTemplates: boolean
+  enableTracking: boolean
   rateLimits: {
-    email: number;
-    sms: number;
-    whatsapp: number;
-  };
+    email: number
+    sms: number
+    whatsapp: number
+  }
 }
 
 export interface NotificationTemplate {
-  id: string;
-  name: string;
-  type: 'email' | 'sms' | 'whatsapp' | 'in_app';
-  category: 'appointment' | 'treatment' | 'financial' | 'compliance' | 'marketing' | 'emergency';
-  language: string;
-  subject?: string;
-  content: string;
-  variables: string[];
-  isSystemTemplate: boolean;
-  isActive: boolean;
-  createdAt: string;
-  updatedAt: string;
+  id: string
+  name: string
+  type: 'email' | 'sms' | 'whatsapp' | 'in_app'
+  category: 'appointment' | 'treatment' | 'financial' | 'compliance' | 'marketing' | 'emergency'
+  language: string
+  subject?: string
+  content: string
+  variables: string[]
+  isSystemTemplate: boolean
+  isActive: boolean
+  createdAt: string
+  updatedAt: string
 }
 
 export interface NotificationMessage {
-  id: string;
-  type: 'email' | 'sms' | 'whatsapp' | 'in_app';
-  category: 'appointment' | 'treatment' | 'financial' | 'compliance' | 'marketing' | 'emergency';
+  id: string
+  type: 'email' | 'sms' | 'whatsapp' | 'in_app'
+  category: 'appointment' | 'treatment' | 'financial' | 'compliance' | 'marketing' | 'emergency'
   recipient: {
-    clientId: string;
+    clientId: string
     contactInfo: {
-      email?: string;
-      phone?: string;
-      whatsapp?: string;
-    };
-    preferredLanguage: string;
-  };
-  templateId?: string;
+      email?: string
+      phone?: string
+      whatsapp?: string
+    }
+    preferredLanguage: string
+  }
+  templateId?: string
   content: {
-    subject?: string;
-    message: string;
-    variables?: Record<string, any>;
-  };
-  priority: 'low' | 'medium' | 'high' | 'urgent';
-  scheduledFor?: string;
-  expiresAt?: string;
-  requireConfirmation: boolean;
+    subject?: string
+    message: string
+    variables?: Record<string, any>
+  }
+  priority: 'low' | 'medium' | 'high' | 'urgent'
+  scheduledFor?: string
+  expiresAt?: string
+  requireConfirmation: boolean
   metadata: {
-    appointmentId?: string;
-    treatmentId?: string;
-    invoiceId?: string;
-    complianceId?: string;
-    [key: string]: any;
-  };
+    appointmentId?: string
+    treatmentId?: string
+    invoiceId?: string
+    complianceId?: string
+    [key: string]: any
+  }
 }
 
 export interface NotificationResult {
-  id: string;
-  status: 'pending' | 'sent' | 'delivered' | 'read' | 'failed' | 'cancelled';
-  channel: string;
-  recipient: string;
-  sentAt?: string;
-  deliveredAt?: string;
-  readAt?: string;
-  failedAt?: string;
-  errorMessage?: string;
-  cost?: number;
-  trackingId?: string;
-  providerResponse?: any;
+  id: string
+  status: 'pending' | 'sent' | 'delivered' | 'read' | 'failed' | 'cancelled'
+  channel: string
+  recipient: string
+  sentAt?: string
+  deliveredAt?: string
+  readAt?: string
+  failedAt?: string
+  errorMessage?: string
+  cost?: number
+  trackingId?: string
+  providerResponse?: any
 }
 
 export interface AppointmentNotificationData {
-  appointmentId: string;
-  clientId: string;
-  professionalName: string;
-  treatmentName: string;
-  scheduledDate: string;
-  duration: number;
-  location: string;
-  specialInstructions?: string;
-  requiresPreparation: boolean;
-  preparationInstructions?: string;
-  rescheduleLink?: string;
-  cancelLink?: string;
+  appointmentId: string
+  clientId: string
+  professionalName: string
+  treatmentName: string
+  scheduledDate: string
+  duration: number
+  location: string
+  specialInstructions?: string
+  requiresPreparation: boolean
+  preparationInstructions?: string
+  rescheduleLink?: string
+  cancelLink?: string
 }
 
 export interface TreatmentNotificationData {
-  treatmentId: string;
-  clientId: string;
-  treatmentName: string;
-  category: string;
-  status: 'scheduled' | 'in_progress' | 'completed' | 'cancelled' | 'rescheduled';
-  scheduledDate: string;
-  professionalName: string;
-  progress?: number;
-  nextSession?: string;
-  aftercareInstructions?: string;
-  results?: any[];
+  treatmentId: string
+  clientId: string
+  treatmentName: string
+  category: string
+  status: 'scheduled' | 'in_progress' | 'completed' | 'cancelled' | 'rescheduled'
+  scheduledDate: string
+  professionalName: string
+  progress?: number
+  nextSession?: string
+  aftercareInstructions?: string
+  results?: any[]
 }
 
 export interface FinancialNotificationData {
-  invoiceId: string;
-  clientId: string;
-  amount: number;
-  currency: string;
-  dueDate: string;
-  paymentMethod?: string;
-  installments?: number;
-  installmentNumber?: number;
-  paymentLink?: string;
-  lateFee?: number;
-  description: string;
+  invoiceId: string
+  clientId: string
+  amount: number
+  currency: string
+  dueDate: string
+  paymentMethod?: string
+  installments?: number
+  installmentNumber?: number
+  paymentLink?: string
+  lateFee?: number
+  description: string
 }
 
 export interface ComplianceNotificationData {
-  complianceId: string;
-  clientId?: string;
-  type: 'consent_required' | 'consent_expiring' | 'documentation_needed' | 'regulatory_update';
-  title: string;
-  description: string;
-  actionRequired: boolean;
-  actionLink?: string;
-  deadline?: string;
-  severity: 'low' | 'medium' | 'high' | 'critical';
+  complianceId: string
+  clientId?: string
+  type: 'consent_required' | 'consent_expiring' | 'documentation_needed' | 'regulatory_update'
+  title: string
+  description: string
+  actionRequired: boolean
+  actionLink?: string
+  deadline?: string
+  severity: 'low' | 'medium' | 'high' | 'critical'
 }
 
 export interface EmergencyNotificationData {
-  emergencyId: string;
-  clientId?: string;
-  type: 'adverse_reaction' | 'medical_emergency' | 'facility_incident' | 'security_incident';
-  severity: 'low' | 'medium' | 'high' | 'critical';
-  description: string;
-  immediateActions: string[];
+  emergencyId: string
+  clientId?: string
+  type: 'adverse_reaction' | 'medical_emergency' | 'facility_incident' | 'security_incident'
+  severity: 'low' | 'medium' | 'high' | 'critical'
+  description: string
+  immediateActions: string[]
   contactPersons: Array<{
-    name: string;
-    role: string;
-    contact: string;
-  }>;
-  location?: string;
-  timestamp: string;
+    name: string
+    role: string
+    contact: string
+  }>
+  location?: string
+  timestamp: string
 }
 
 export interface MarketingNotificationData {
-  campaignId: string;
-  clientId: string;
-  campaignName: string;
+  campaignId: string
+  clientId: string
+  campaignName: string
   offer: {
-    title: string;
-    description: string;
-    discount?: number;
-    validUntil: string;
-    treatmentTypes?: string[];
-    termsAndConditions?: string;
-  };
+    title: string
+    description: string
+    discount?: number
+    validUntil: string
+    treatmentTypes?: string[]
+    termsAndConditions?: string
+  }
   personalization: {
-    clientName: string;
-    preferredTreatments?: string[];
-    lastVisit?: string;
-  };
+    clientName: string
+    preferredTreatments?: string[]
+    lastVisit?: string
+  }
 }
 
 export class AestheticNotificationService {
-  private config: AestheticNotificationConfig;
-  private templates: Map<string, NotificationTemplate> = new Map();
-  private notifications: Map<string, NotificationResult> = new Map();
-  private rateLimiters: Map<string, { count: number; resetTime: number }> = new Map();
-  private providers: Map<string, any> = new Map();
+  private config: AestheticNotificationConfig
+  private templates: Map<string, NotificationTemplate> = new Map()
+  private notifications: Map<string, NotificationResult> = new Map()
+  private rateLimiters: Map<string, { count: number; resetTime: number }> = new Map()
+  private providers: Map<string, any> = new Map()
 
   constructor(config: AestheticNotificationConfig) {
-    this.config = config;
-    this.initializeTemplates();
-    this.initializeProviders();
+    this.config = config
+    this.initializeTemplates()
+    this.initializeProviders()
   }
 
   private initializeTemplates(): void {
@@ -239,7 +239,7 @@ Atenciosamente,
       isActive: true,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-    });
+    })
 
     this.templates.set('appointment_reminder_pt-BR', {
       id: 'appointment_reminder_pt-BR',
@@ -261,7 +261,7 @@ Atenciosamente,
       isActive: true,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-    });
+    })
 
     // Treatment Templates
     this.templates.set('treatment_completed_pt-BR', {
@@ -301,7 +301,7 @@ Atenciosamente,
       isActive: true,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-    });
+    })
 
     // Financial Templates
     this.templates.set('payment_due_pt-BR', {
@@ -349,7 +349,7 @@ Equipe Financeira
       isActive: true,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-    });
+    })
 
     // Compliance Templates
     this.templates.set('consent_required_pt-BR', {
@@ -391,7 +391,7 @@ Equipe de Compliance
       isActive: true,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-    });
+    })
 
     // Emergency Templates
     this.templates.set('emergency_alert_pt-BR', {
@@ -407,7 +407,7 @@ Equipe de Compliance
       isActive: true,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-    });
+    })
 
     // Marketing Templates
     this.templates.set('promotional_offer_pt-BR', {
@@ -454,7 +454,7 @@ Equipe {{clinicName}}`,
       isActive: true,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-    });
+    })
   }
 
   private initializeProviders(): void {
@@ -462,17 +462,17 @@ Equipe {{clinicName}}`,
     this.providers.set('email', {
       send: this.sendEmail.bind(this),
       track: this.trackEmail.bind(this),
-    });
+    })
 
     this.providers.set('sms', {
       send: this.sendSMS.bind(this),
       track: this.trackSMS.bind(this),
-    });
+    })
 
     this.providers.set('whatsapp', {
       send: this.sendWhatsApp.bind(this),
       track: this.trackWhatsApp.bind(this),
-    });
+    })
   }
 
   // Appointment Notifications
@@ -481,15 +481,15 @@ Equipe {{clinicName}}`,
   ): Promise<NotificationResult> {
     const templateId = `appointment_confirmation_${
       data.recipient.preferredLanguage || this.config.defaultLanguage
-    }`;
-    const template = this.templates.get(templateId);
+    }`
+    const template = this.templates.get(templateId)
 
     if (!template) {
-      throw new Error(`Template not found: ${templateId}`);
+      throw new Error(`Template not found: ${templateId}`)
     }
 
-    const variables = this.prepareAppointmentVariables(data);
-    const content = this.renderTemplate(template, variables);
+    const variables = this.prepareAppointmentVariables(data)
+    const content = this.renderTemplate(template, variables)
 
     const message: NotificationMessage = {
       id: this.generateMessageId(),
@@ -508,23 +508,23 @@ Equipe {{clinicName}}`,
         appointmentId: data.appointmentId,
         treatmentId: data.treatmentId,
       },
-    };
+    }
 
-    return await this.sendNotification(message);
+    return await this.sendNotification(message)
   }
 
   async sendAppointmentReminder(data: AppointmentNotificationData): Promise<NotificationResult> {
     const templateId = `appointment_reminder_${
       data.recipient.preferredLanguage || this.config.defaultLanguage
-    }`;
-    const template = this.templates.get(templateId);
+    }`
+    const template = this.templates.get(templateId)
 
     if (!template) {
-      throw new Error(`Template not found: ${templateId}`);
+      throw new Error(`Template not found: ${templateId}`)
     }
 
-    const variables = this.prepareAppointmentVariables(data);
-    const content = this.renderTemplate(template, variables);
+    const variables = this.prepareAppointmentVariables(data)
+    const content = this.renderTemplate(template, variables)
 
     const message: NotificationMessage = {
       id: this.generateMessageId(),
@@ -542,24 +542,24 @@ Equipe {{clinicName}}`,
         appointmentId: data.appointmentId,
         treatmentId: data.treatmentId,
       },
-    };
+    }
 
-    return await this.sendNotification(message);
+    return await this.sendNotification(message)
   }
 
   // Treatment Notifications
   async sendTreatmentCompletion(data: TreatmentNotificationData): Promise<NotificationResult> {
     const templateId = `treatment_completed_${
       data.recipient.preferredLanguage || this.config.defaultLanguage
-    }`;
-    const template = this.templates.get(templateId);
+    }`
+    const template = this.templates.get(templateId)
 
     if (!template) {
-      throw new Error(`Template not found: ${templateId}`);
+      throw new Error(`Template not found: ${templateId}`)
     }
 
-    const variables = this.prepareTreatmentVariables(data);
-    const content = this.renderTemplate(template, variables);
+    const variables = this.prepareTreatmentVariables(data)
+    const content = this.renderTemplate(template, variables)
 
     const message: NotificationMessage = {
       id: this.generateMessageId(),
@@ -577,24 +577,24 @@ Equipe {{clinicName}}`,
         treatmentId: data.treatmentId,
         appointmentId: data.appointmentId,
       },
-    };
+    }
 
-    return await this.sendNotification(message);
+    return await this.sendNotification(message)
   }
 
   // Financial Notifications
   async sendPaymentDue(data: FinancialNotificationData): Promise<NotificationResult> {
     const templateId = `payment_due_${
       data.recipient.preferredLanguage || this.config.defaultLanguage
-    }`;
-    const template = this.templates.get(templateId);
+    }`
+    const template = this.templates.get(templateId)
 
     if (!template) {
-      throw new Error(`Template not found: ${templateId}`);
+      throw new Error(`Template not found: ${templateId}`)
     }
 
-    const variables = this.prepareFinancialVariables(data);
-    const content = this.renderTemplate(template, variables);
+    const variables = this.prepareFinancialVariables(data)
+    const content = this.renderTemplate(template, variables)
 
     const message: NotificationMessage = {
       id: this.generateMessageId(),
@@ -613,24 +613,24 @@ Equipe {{clinicName}}`,
         invoiceId: data.invoiceId,
         clientId: data.clientId,
       },
-    };
+    }
 
-    return await this.sendNotification(message);
+    return await this.sendNotification(message)
   }
 
   // Compliance Notifications
   async sendConsentRequired(data: ComplianceNotificationData): Promise<NotificationResult> {
     const templateId = `consent_required_${
       data.recipient.preferredLanguage || this.config.defaultLanguage
-    }`;
-    const template = this.templates.get(templateId);
+    }`
+    const template = this.templates.get(templateId)
 
     if (!template) {
-      throw new Error(`Template not found: ${templateId}`);
+      throw new Error(`Template not found: ${templateId}`)
     }
 
-    const variables = this.prepareComplianceVariables(data);
-    const content = this.renderTemplate(template, variables);
+    const variables = this.prepareComplianceVariables(data)
+    const content = this.renderTemplate(template, variables)
 
     const message: NotificationMessage = {
       id: this.generateMessageId(),
@@ -650,24 +650,24 @@ Equipe {{clinicName}}`,
         complianceId: data.complianceId,
         clientId: data.clientId,
       },
-    };
+    }
 
-    return await this.sendNotification(message);
+    return await this.sendNotification(message)
   }
 
   // Emergency Notifications
   async sendEmergencyAlert(data: EmergencyNotificationData): Promise<NotificationResult> {
     const templateId = `emergency_alert_${
       data.recipient.preferredLanguage || this.config.defaultLanguage
-    }`;
-    const template = this.templates.get(templateId);
+    }`
+    const template = this.templates.get(templateId)
 
     if (!template) {
-      throw new Error(`Template not found: ${templateId}`);
+      throw new Error(`Template not found: ${templateId}`)
     }
 
-    const variables = this.prepareEmergencyVariables(data);
-    const content = this.renderTemplate(template, variables);
+    const variables = this.prepareEmergencyVariables(data)
+    const content = this.renderTemplate(template, variables)
 
     const message: NotificationMessage = {
       id: this.generateMessageId(),
@@ -685,24 +685,24 @@ Equipe {{clinicName}}`,
         emergencyId: data.emergencyId,
         clientId: data.clientId,
       },
-    };
+    }
 
-    return await this.sendNotification(message);
+    return await this.sendNotification(message)
   }
 
   // Marketing Notifications
   async sendPromotionalOffer(data: MarketingNotificationData): Promise<NotificationResult> {
     const templateId = `promotional_offer_${
       data.recipient.preferredLanguage || this.config.defaultLanguage
-    }`;
-    const template = this.templates.get(templateId);
+    }`
+    const template = this.templates.get(templateId)
 
     if (!template) {
-      throw new Error(`Template not found: ${templateId}`);
+      throw new Error(`Template not found: ${templateId}`)
     }
 
-    const variables = this.prepareMarketingVariables(data);
-    const content = this.renderTemplate(template, variables);
+    const variables = this.prepareMarketingVariables(data)
+    const content = this.renderTemplate(template, variables)
 
     const message: NotificationMessage = {
       id: this.generateMessageId(),
@@ -721,21 +721,21 @@ Equipe {{clinicName}}`,
         campaignId: data.campaignId,
         clientId: data.clientId,
       },
-    };
+    }
 
-    return await this.sendNotification(message);
+    return await this.sendNotification(message)
   }
 
   // Generic Notification Method
   async sendNotification(message: NotificationMessage): Promise<NotificationResult> {
     // Check rate limits
     if (!await this.checkRateLimit(message.type, message.recipient.clientId)) {
-      throw new Error(`Rate limit exceeded for ${message.type} notifications`);
+      throw new Error(`Rate limit exceeded for ${message.type} notifications`)
     }
 
-    const provider = this.providers.get(message.type);
+    const provider = this.providers.get(message.type)
     if (!provider) {
-      throw new Error(`Provider not found for type: ${message.type}`);
+      throw new Error(`Provider not found for type: ${message.type}`)
     }
 
     const result: NotificationResult = {
@@ -744,34 +744,34 @@ Equipe {{clinicName}}`,
       channel: message.type,
       recipient: this.getRecipientContact(message),
       sentAt: new Date().toISOString(),
-    };
+    }
 
     try {
       // Send notification
-      const providerResponse = await provider.send(message);
+      const providerResponse = await provider.send(message)
 
       // Update result
-      result.status = 'sent';
-      result.trackingId = providerResponse.trackingId;
-      result.cost = providerResponse.cost;
-      result.providerResponse = providerResponse;
+      result.status = 'sent'
+      result.trackingId = providerResponse.trackingId
+      result.cost = providerResponse.cost
+      result.providerResponse = providerResponse
 
       // Store result
-      this.notifications.set(message.id, result);
+      this.notifications.set(message.id, result)
 
       // Start tracking if enabled
       if (this.config.enableTracking) {
-        this.startTracking(result);
+        this.startTracking(result)
       }
 
-      return result;
+      return result
     } catch {
-      result.status = 'failed';
-      result.failedAt = new Date().toISOString();
-      result.errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      result.status = 'failed'
+      result.failedAt = new Date().toISOString()
+      result.errorMessage = error instanceof Error ? error.message : 'Unknown error'
 
-      this.notifications.set(message.id, result);
-      throw error;
+      this.notifications.set(message.id, result)
+      throw error
     }
   }
 
@@ -782,7 +782,7 @@ Equipe {{clinicName}}`,
       trackingId: this.generateTrackingId(),
       cost: 0.05,
       provider: 'mock-email-provider',
-    };
+    }
   }
 
   private async sendSMS(_message: NotificationMessage): Promise<any> {
@@ -791,7 +791,7 @@ Equipe {{clinicName}}`,
       trackingId: this.generateTrackingId(),
       cost: 0.15,
       provider: 'mock-sms-provider',
-    };
+    }
   }
 
   private async sendWhatsApp(_message: NotificationMessage): Promise<any> {
@@ -800,68 +800,68 @@ Equipe {{clinicName}}`,
       trackingId: this.generateTrackingId(),
       cost: 0.25,
       provider: 'mock-whatsapp-provider',
-    };
+    }
   }
 
   // Tracking Methods
   private async trackEmail(result: NotificationResult): Promise<void> {
     // Mock email tracking
-    result.status = 'delivered';
-    result.deliveredAt = new Date().toISOString();
+    result.status = 'delivered'
+    result.deliveredAt = new Date().toISOString()
   }
 
   private async trackSMS(result: NotificationResult): Promise<void> {
     // Mock SMS tracking
-    result.status = 'delivered';
-    result.deliveredAt = new Date().toISOString();
+    result.status = 'delivered'
+    result.deliveredAt = new Date().toISOString()
   }
 
   private async trackWhatsApp(result: NotificationResult): Promise<void> {
     // Mock WhatsApp tracking
-    result.status = 'delivered';
-    result.deliveredAt = new Date().toISOString();
+    result.status = 'delivered'
+    result.deliveredAt = new Date().toISOString()
   }
 
   // Helper Methods
   private async checkRateLimit(type: string, clientId: string): Promise<boolean> {
-    const rateLimitKey = `${type}_${clientId}`;
-    const now = Date.now();
-    const _windowStart = now - 60000; // 1 minute window
+    const rateLimitKey = `${type}_${clientId}`
+    const now = Date.now()
+    const _windowStart = now - 60000 // 1 minute window
 
-    let limit = this.rateLimiters.get(rateLimitKey);
+    let limit = this.rateLimiters.get(rateLimitKey)
 
     if (!limit || limit.resetTime < now) {
-      limit = { count: 0, resetTime: now + 60000 };
-      this.rateLimiters.set(rateLimitKey, limit);
+      limit = { count: 0, resetTime: now + 60000 }
+      this.rateLimiters.set(rateLimitKey, limit)
     }
 
-    const maxRequests = this.config.rateLimits[type as keyof typeof this.config.rateLimits] || 10;
+    const maxRequests = this.config.rateLimits[type as keyof typeof this.config.rateLimits] || 10
 
     if (limit.count >= maxRequests) {
-      return false;
+      return false
     }
 
-    limit.count++;
-    return true;
+    limit.count++
+    return true
   }
 
   private getRecipientContact(message: NotificationMessage): string {
-    const contact = message.recipient.contactInfo;
+    const contact = message.recipient.contactInfo
 
     switch (message.type) {
       case 'email':
-        return contact.email || '';
+        return contact.email || ''
       case 'sms':
-        return contact.phone || '';
+        return contact.phone || ''
       case 'whatsapp':
-        return contact.whatsapp || contact.phone || '';
+        return contact.whatsapp || contact.phone || ''
       default:
-        return '';
+        return ''
     }
   }
 
   private prepareAppointmentVariables(data: AppointmentNotificationData): Record<string, any> {
-    const scheduledDate = new Date(data.scheduledDate);
+    const scheduledDate = new Date(data.scheduledDate)
 
     return {
       clientName: 'Cliente', // Would come from client data
@@ -876,7 +876,7 @@ Equipe {{clinicName}}`,
       rescheduleLink: 'https://clinic.com/reschedule',
       cancelLink: 'https://clinic.com/cancel',
       clinicName: 'Clinica Estetica',
-    };
+    }
   }
 
   private prepareTreatmentVariables(data: TreatmentNotificationData): Record<string, any> {
@@ -889,7 +889,7 @@ Equipe {{clinicName}}`,
       followUpDate: data.nextSession,
       emergencyContact: '+55 11 9999-9999',
       clinicName: 'Clinica Estetica',
-    };
+    }
   }
 
   private prepareFinancialVariables(data: FinancialNotificationData): Record<string, any> {
@@ -910,7 +910,7 @@ Equipe {{clinicName}}`,
         : null,
       paymentLink: data.paymentLink || 'https://clinic.com/pay',
       clinicName: 'Clinica Estetica',
-    };
+    }
   }
 
   private prepareComplianceVariables(data: ComplianceNotificationData): Record<string, any> {
@@ -921,7 +921,7 @@ Equipe {{clinicName}}`,
       deadline: data.deadline,
       consentLink: data.actionLink || 'https://clinic.com/consent',
       clinicName: 'Clinica Estetica',
-    };
+    }
   }
 
   private prepareEmergencyVariables(data: EmergencyNotificationData): Record<string, any> {
@@ -931,7 +931,7 @@ Equipe {{clinicName}}`,
       location: data.location || 'Facility',
       immediateActions: data.immediateActions.join(', '),
       emergencyContact: data.contactPersons[0]?.contact || 'Emergency Services',
-    };
+    }
   }
 
   private prepareMarketingVariables(data: MarketingNotificationData): Record<string, any> {
@@ -944,55 +944,55 @@ Equipe {{clinicName}}`,
       bookingLink: 'https://clinic.com/book',
       termsAndConditions: data.offer.termsAndConditions,
       clinicName: 'Clinica Estetica',
-    };
+    }
   }
 
   private renderTemplate(template: NotificationTemplate, variables: Record<string, any>): string {
-    let content = template.content;
+    let content = template.content
 
     // Simple template rendering
     for (const [key, value] of Object.entries(variables)) {
-      const regex = new RegExp(`{{${key}}}`, 'g');
-      content = content.replace(regex, String(value || ''));
+      const regex = new RegExp(`{{${key}}}`, 'g')
+      content = content.replace(regex, String(value || ''))
     }
 
     // Handle conditionals (simple implementation)
     content = content.replace(/{{#if (\w+)}}([\s\S]*?){{\/if}}/g, (match, condition, body) => {
-      return variables[condition] ? body : '';
-    });
+      return variables[condition] ? body : ''
+    })
 
-    return content.trim();
+    return content.trim()
   }
 
   private startTracking(result: NotificationResult): void {
     // Mock tracking implementation
     setTimeout(async () => {
-      const provider = this.providers.get(result.channel);
+      const provider = this.providers.get(result.channel)
       if (provider && provider.track) {
-        await provider.track(result);
+        await provider.track(result)
       }
-    }, 2000); // Simulate delivery time
+    }, 2000) // Simulate delivery time
   }
 
   private generateMessageId(): string {
-    return `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    return `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
   }
 
   private generateTrackingId(): string {
-    return `track_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    return `track_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
   }
 
   // Public Methods
   async getNotificationStatus(messageId: string): Promise<NotificationResult | null> {
-    return this.notifications.get(messageId) || null;
+    return this.notifications.get(messageId) || null
   }
 
   async getNotificationsByClient(clientId: string): Promise<NotificationResult[]> {
-    return Array.from(this.notifications.values()).filter(n => n.metadata?.clientId === clientId);
+    return Array.from(this.notifications.values()).filter((n) => n.metadata?.clientId === clientId)
   }
 
   async getNotificationsByCategory(category: string): Promise<NotificationResult[]> {
-    return Array.from(this.notifications.values()).filter(n => n.metadata?.category === category);
+    return Array.from(this.notifications.values()).filter((n) => n.metadata?.category === category)
   }
 
   async createCustomTemplate(
@@ -1003,50 +1003,50 @@ Equipe {{clinicName}}`,
       id: this.generateMessageId(),
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-    };
+    }
 
-    this.templates.set(newTemplate.id, newTemplate);
-    return newTemplate.id;
+    this.templates.set(newTemplate.id, newTemplate)
+    return newTemplate.id
   }
 
   async updateTemplate(
     templateId: string,
     updates: Partial<NotificationTemplate>,
   ): Promise<boolean> {
-    const template = this.templates.get(templateId);
+    const template = this.templates.get(templateId)
     if (!template) {
-      return false;
+      return false
     }
 
-    Object.assign(template, updates, { updatedAt: new Date().toISOString() });
-    this.templates.set(templateId, template);
-    return true;
+    Object.assign(template, updates, { updatedAt: new Date().toISOString() })
+    this.templates.set(templateId, template)
+    return true
   }
 
   async getTemplates(category?: string, language?: string): Promise<NotificationTemplate[]> {
-    const templates = Array.from(this.templates.values());
+    const templates = Array.from(this.templates.values())
 
-    return templates.filter(template => {
-      if (category && template.category !== category) return false;
-      if (language && template.language !== language) return false;
-      return template.isActive;
-    });
+    return templates.filter((template) => {
+      if (category && template.category !== category) return false
+      if (language && template.language !== language) return false
+      return template.isActive
+    })
   }
 
   // Health Check
   async healthCheck(): Promise<boolean> {
     try {
-      return this.templates.size > 0 && this.providers.size > 0;
+      return this.templates.size > 0 && this.providers.size > 0
     } catch {
-      return false;
+      return false
     }
   }
 
   // Cleanup
   async cleanup(): Promise<void> {
-    this.templates.clear();
-    this.notifications.clear();
-    this.rateLimiters.clear();
-    this.providers.clear();
+    this.templates.clear()
+    this.notifications.clear()
+    this.rateLimiters.clear()
+    this.providers.clear()
   }
 }

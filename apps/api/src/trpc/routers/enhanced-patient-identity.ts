@@ -5,9 +5,9 @@
  * for Brazilian aesthetic clinics
  */
 
-import { z } from 'zod';
-import { EnhancedPatientIdentityService } from '../../services/enhanced-patient-identity-service';
-import { protectedProcedure, publicProcedure, router } from '../trpc';
+import { z } from 'zod'
+import { EnhancedPatientIdentityService } from '../../services/enhanced-patient-identity-service'
+import { protectedProcedure, publicProcedure, router } from '../trpc'
 
 // Input schemas
 const PatientRegistrationInput = z.object({
@@ -43,17 +43,17 @@ const PatientRegistrationInput = z.object({
     consentDate: z.date(),
     version: z.string(),
   }),
-});
+})
 
 const UpdatePatientInput = PatientRegistrationInput.partial().extend({
   id: z.string().uuid(),
-});
+})
 
 const PatientVerificationInput = z.object({
   cpf: z.string().regex(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/),
   dateOfBirth: z.date(),
   email: z.string().email().optional(),
-});
+})
 
 const PatientQueryInput = z.object({
   search: z.string().optional(),
@@ -62,95 +62,95 @@ const PatientQueryInput = z.object({
   active: z.boolean().default(true),
   limit: z.number().min(1).max(100).default(20),
   offset: z.number().min(0).default(0),
-});
+})
 
 const LgpdDataAccessRequestInput = z.object({
   patientId: z.string().uuid(),
   requestType: z.enum(['FULL_ACCESS', 'LIMITED_ACCESS', 'DATA_PORTABILITY']),
   purpose: z.string(),
   contactEmail: z.string().email(),
-});
+})
 
 const LgpdDataDeletionRequestInput = z.object({
   patientId: z.string().uuid(),
   reason: z.string(),
   contactEmail: z.string().email(),
   legalBasis: z.enum(['WITHDRAWAL_OF_CONSENT', 'DATA_NO_LONGER_NEEDED', 'ILLEGAL_PROCESSING']),
-});
+})
 
 const LgpdConsentUpdateInput = z.object({
   patientId: z.string().uuid(),
   consentType: z.enum(['DATA_PROCESSING', 'COMMUNICATION', 'MARKETING']),
   granted: z.boolean(),
   version: z.string(),
-});
+})
 
 // Initialize service
-const patientIdentityService = new EnhancedPatientIdentityService();
+const patientIdentityService = new EnhancedPatientIdentityService()
 
 export const enhancedPatientIdentityRouter = router({
   // Register new patient
   register: publicProcedure
     .input(PatientRegistrationInput)
     .mutation(async ({ input }) => {
-      return await patientIdentityService.registerPatient(input);
+      return await patientIdentityService.registerPatient(input)
     }),
 
   // Get patient by ID
   getById: protectedProcedure
     .input(z.object({ id: z.string().uuid() }))
     .query(async ({ input }) => {
-      return await patientIdentityService.getPatientById(input.id);
+      return await patientIdentityService.getPatientById(input.id)
     }),
 
   // Update patient information
   update: protectedProcedure
     .input(UpdatePatientInput)
     .mutation(async ({ input }) => {
-      const { id, ...data } = input;
-      return await patientIdentityService.updatePatient(id, data);
+      const { id, ...data } = input
+      return await patientIdentityService.updatePatient(id, data)
     }),
 
   // List patients with filtering
   list: protectedProcedure
     .input(PatientQueryInput)
     .query(async ({ input }) => {
-      return await patientIdentityService.listPatients(input);
+      return await patientIdentityService.listPatients(input)
     }),
 
   // Verify patient identity
   verify: publicProcedure
     .input(PatientVerificationInput)
     .mutation(async ({ input }) => {
-      return await patientIdentityService.verifyPatientIdentity(input);
+      return await patientIdentityService.verifyPatientIdentity(input)
     }),
 
   // Handle LGPD data access request
   requestDataAccess: publicProcedure
     .input(LgpdDataAccessRequestInput)
     .mutation(async ({ input }) => {
-      return await patientIdentityService.handleDataAccessRequest(input);
+      return await patientIdentityService.handleDataAccessRequest(input)
     }),
 
   // Handle LGPD data deletion request
   requestDeletion: publicProcedure
     .input(LgpdDataDeletionRequestInput)
     .mutation(async ({ input }) => {
-      return await patientIdentityService.handleDataDeletionRequest(input);
+      return await patientIdentityService.handleDataDeletionRequest(input)
     }),
 
   // Update LGPD consent
   updateConsent: protectedProcedure
     .input(LgpdConsentUpdateInput)
     .mutation(async ({ input }) => {
-      return await patientIdentityService.updateLgpdConsent(input);
+      return await patientIdentityService.updateLgpdConsent(input)
     }),
 
   // Get patient by CPF
   getByCpf: protectedProcedure
     .input(z.object({ cpf: z.string().regex(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/) }))
     .query(async ({ input }) => {
-      return await patientIdentityService.getPatientByCpf(input.cpf);
+      return await patientIdentityService.getPatientByCpf(input.cpf)
     }),
 
   // Get patient treatment history
@@ -160,26 +160,26 @@ export const enhancedPatientIdentityRouter = router({
       limit: z.number().min(1).max(50).default(10),
     }))
     .query(async ({ input }) => {
-      return await patientIdentityService.getPatientTreatmentHistory(input.patientId, input.limit);
+      return await patientIdentityService.getPatientTreatmentHistory(input.patientId, input.limit)
     }),
 
   // Get patient statistics
   getStats: protectedProcedure
     .query(async () => {
-      return await patientIdentityService.getPatientStatistics();
+      return await patientIdentityService.getPatientStatistics()
     }),
 
   // Deactivate patient (soft delete)
   deactivate: protectedProcedure
     .input(z.object({ id: z.string().uuid() }))
     .mutation(async ({ input }) => {
-      return await patientIdentityService.deactivatePatient(input.id);
+      return await patientIdentityService.deactivatePatient(input.id)
     }),
 
   // Reactivate patient
   reactivate: protectedProcedure
     .input(z.object({ id: z.string().uuid() }))
     .mutation(async ({ input }) => {
-      return await patientIdentityService.reactivatePatient(input.id);
+      return await patientIdentityService.reactivatePatient(input.id)
     }),
-});
+})

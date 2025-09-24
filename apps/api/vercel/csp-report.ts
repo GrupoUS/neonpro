@@ -7,23 +7,23 @@ export default async function handler(req: Request): Promise<Response> {
     return new Response('Method Not Allowed', {
       status: 405,
       headers: { Allow: 'POST' },
-    });
+    })
   }
 
-  const contentType = req.headers.get('content-type') || '';
-  let body: unknown = null;
+  const contentType = req.headers.get('content-type') || ''
+  let body: unknown = null
 
   try {
     if (
       contentType.includes('application/reports+json')
       || contentType.includes('application/json')
     ) {
-      body = await req.json();
+      body = await req.json()
     } else if (contentType.includes('application/csp-report')) {
       // Old spec sends {"csp-report": {...}}
-      body = await req.json();
+      body = await req.json()
     } else if (contentType.includes('text/plain')) {
-      body = await req.text();
+      body = await req.text()
     }
   } catch {
     // Ignore parse errors but acknowledge
@@ -31,41 +31,41 @@ export default async function handler(req: Request): Promise<Response> {
 
   try {
     // Redact potentially sensitive fields and log minimal info (avoid PHI)
-    const now = new Date().toISOString();
-    const reportSummary = summarizeCspReport(body);
-    console.warn('[CSP-REPORT]', now, reportSummary);
+    const now = new Date().toISOString()
+    const reportSummary = summarizeCspReport(body)
+    console.warn('[CSP-REPORT]', now, reportSummary)
   } catch {
     // Swallow logging errors
   }
 
-  return new Response(null, { status: 204 });
+  return new Response(null, { status: 204 })
 }
 
 function summarizeCspReport(payload: unknown): Record<string, unknown> {
-  if (!payload || typeof payload !== 'object') return { type: 'unknown' };
+  if (!payload || typeof payload !== 'object') return { type: 'unknown' }
 
   // Support both Reporting API ("type":"csp-violation") and legacy {"csp-report": {...}}
   // Try common shapes conservatively
-  const p = payload as any;
+  const p = payload as any
 
   if (Array.isArray(p) && p.length > 0) {
-    const first = p[0];
-    return pickCommonFields(first);
+    const first = p[0]
+    return pickCommonFields(first)
   }
 
   if (p.type === 'csp-violation' && p.body) {
-    return pickCommonFields(p.body);
+    return pickCommonFields(p.body)
   }
 
   if (p['csp-report']) {
-    return pickCommonFields(p['csp-report']);
+    return pickCommonFields(p['csp-report'])
   }
 
-  return pickCommonFields(p);
+  return pickCommonFields(p)
 }
 
 function pickCommonFields(obj: any): Record<string, unknown> {
-  if (!obj || typeof obj !== 'object') return { type: 'unknown' };
+  if (!obj || typeof obj !== 'object') return { type: 'unknown' }
   const {
     'effective-directive': effectiveDirective,
     'violated-directive': violatedDirective,
@@ -77,7 +77,7 @@ function pickCommonFields(obj: any): Record<string, unknown> {
     referrer,
     'status-code': statusCode,
     _originalPolicy,
-  } = obj;
+  } = obj
 
   return {
     type: 'csp',
@@ -91,16 +91,16 @@ function pickCommonFields(obj: any): Record<string, unknown> {
     statusCode,
     // Do not log originalPolicy as it may contain hashes
     // Keep payload size minimal
-  };
+  }
 }
 
 function sanitizeUrl(url?: string) {
-  if (!url || typeof url !== 'string') return undefined;
+  if (!url || typeof url !== 'string') return undefined
   try {
-    const u = new URL(url);
+    const u = new URL(url)
     // Strip query and hash to avoid leaking PII
-    return `${u.protocol}//${u.host}${u.pathname}`;
+    return `${u.protocol}//${u.host}${u.pathname}`
   } catch {
-    return undefined;
+    return undefined
   }
 }

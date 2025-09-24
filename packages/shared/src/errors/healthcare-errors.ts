@@ -5,12 +5,12 @@
 
 // Base healthcare error class
 export abstract class HealthcareError extends Error {
-  public readonly errorCode: string;
-  public readonly complianceFramework: 'LGPD' | 'CFM' | 'ANVISA' | 'GENERAL';
-  public readonly severity: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
-  public readonly auditData: Record<string, any>;
-  public readonly timestamp: string;
-  public readonly operationContext?: string;
+  public readonly errorCode: string
+  public readonly complianceFramework: 'LGPD' | 'CFM' | 'ANVISA' | 'GENERAL'
+  public readonly severity: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL'
+  public readonly auditData: Record<string, any>
+  public readonly timestamp: string
+  public readonly operationContext?: string
 
   constructor(
     message: string,
@@ -20,19 +20,19 @@ export abstract class HealthcareError extends Error {
     auditData: Record<string, any> = {},
     operationContext?: string,
   ) {
-    super(message);
-    this.name = this.constructor.name;
-    this.errorCode = errorCode;
-    this.complianceFramework = complianceFramework;
-    this.severity = severity;
+    super(message)
+    this.name = this.constructor.name
+    this.errorCode = errorCode
+    this.complianceFramework = complianceFramework
+    this.severity = severity
     this.auditData = {
       ...auditData,
       _userId: auditData.userId || 'unknown',
       clinicId: auditData.clinicId || 'unknown',
       ipAddress: auditData.ipAddress || 'unknown',
-    };
-    this.timestamp = new Date().toISOString();
-    this.operationContext = operationContext;
+    }
+    this.timestamp = new Date().toISOString()
+    this.operationContext = operationContext
   }
 
   toAuditLog(): Record<string, any> {
@@ -46,7 +46,7 @@ export abstract class HealthcareError extends Error {
       operationContext: this.operationContext,
       auditData: this.auditData,
       stack: this.stack,
-    };
+    }
   }
 }
 
@@ -59,7 +59,7 @@ export class GeneralHealthcareError extends HealthcareError {
     auditData: Record<string, any> = {},
     operationContext?: string,
   ) {
-    super(message, errorCode, 'GENERAL', severity, auditData, operationContext);
+    super(message, errorCode, 'GENERAL', severity, auditData, operationContext)
   }
 }
 
@@ -71,7 +71,7 @@ export class LGPDComplianceError extends HealthcareError {
     auditData: Record<string, any> = {},
     operationContext?: string,
   ) {
-    super(message, errorCode, 'LGPD', 'HIGH', auditData, operationContext);
+    super(message, errorCode, 'LGPD', 'HIGH', auditData, operationContext)
   }
 }
 
@@ -82,7 +82,7 @@ export class HealthcareErrorHandler {
     _context: Record<string, any> = {},
   ): HealthcareError {
     if (error instanceof HealthcareError) {
-      return error;
+      return error
     }
 
     if (error instanceof Error) {
@@ -92,7 +92,7 @@ export class HealthcareErrorHandler {
         'MEDIUM',
         _context,
         'Unknown operation',
-      );
+      )
     }
 
     return new GeneralHealthcareError(
@@ -101,19 +101,19 @@ export class HealthcareErrorHandler {
       'LOW',
       _context,
       'Unknown operation',
-    );
+    )
   }
 
   static createErrorResponse(error: HealthcareError): {
-    success: false;
+    success: false
     error: {
-      code: string;
-      message: string;
-      complianceFramework: string;
-      severity: string;
-      timestamp: string;
-      operationContext?: string;
-    };
+      code: string
+      message: string
+      complianceFramework: string
+      severity: string
+      timestamp: string
+      operationContext?: string
+    }
   } {
     return {
       success: false,
@@ -125,6 +125,6 @@ export class HealthcareErrorHandler {
         timestamp: error.timestamp,
         operationContext: error.operationContext,
       },
-    };
+    }
   }
 }

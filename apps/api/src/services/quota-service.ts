@@ -4,24 +4,24 @@
  */
 
 export interface QuotaConfig {
-  daily?: number;
-  monthly?: number;
-  perMinute?: number;
-  perHour?: number;
+  daily?: number
+  monthly?: number
+  perMinute?: number
+  perHour?: number
 }
 
 export interface QuotaResult {
-  allowed: boolean;
-  remaining: number;
-  resetTime: Date;
-  quotaType: 'daily' | 'monthly' | 'perMinute' | 'perHour';
+  allowed: boolean
+  remaining: number
+  resetTime: Date
+  quotaType: 'daily' | 'monthly' | 'perMinute' | 'perHour'
 }
 
 export interface QuotaUsage {
-  current: number;
-  limit: number;
-  period: string;
-  resetTime: Date;
+  current: number
+  limit: number
+  period: string
+  resetTime: Date
 }
 
 /**
@@ -37,7 +37,7 @@ export async function checkQuota(
     remaining: 1000,
     resetTime: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours from now
     quotaType: 'daily',
-  };
+  }
 }
 
 /**
@@ -54,7 +54,7 @@ export async function applyQuota(
     remaining: 999,
     resetTime: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours from now
     quotaType: 'daily',
-  };
+  }
 }
 
 /**
@@ -70,14 +70,14 @@ export async function getQuotaUsage(
     monthly: 300000,
     perMinute: 100,
     perHour: 5000,
-  };
+  }
 
   return {
     current: 123,
     limit: limits[period],
     period,
     resetTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
-  };
+  }
 }
 
 /**
@@ -88,7 +88,7 @@ export async function resetQuota(
   period: 'daily' | 'monthly' | 'perMinute' | 'perHour' = 'daily',
 ): Promise<void> {
   // Mock implementation for contract testing
-  console.log(`Quota reset for ${identifier} (${period})`);
+  console.log(`Quota reset for ${identifier} (${period})`)
 }
 
 /**
@@ -103,7 +103,7 @@ export async function getQuotaConfig(
     monthly: 300000,
     perMinute: 100,
     perHour: 5000,
-  };
+  }
 }
 
 /**
@@ -114,5 +114,5 @@ export async function updateQuotaConfig(
   config: QuotaConfig,
 ): Promise<void> {
   // Mock implementation for contract testing
-  console.log(`Quota config updated for ${identifier}:`, config);
+  console.log(`Quota config updated for ${identifier}:`, config)
 }

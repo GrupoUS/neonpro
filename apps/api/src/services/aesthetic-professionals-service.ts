@@ -17,9 +17,9 @@
  * - Service type associations
  */
 
-import { z } from 'zod';
-import { createAdminClient } from '../clients/supabase';
-import { logger } from '../lib/logger';
+import { z } from 'zod'
+import { createAdminClient } from '../clients/supabase'
+import { logger } from '../lib/logger'
 
 // Brazilian Professional Council Types
 export const PROFESSIONAL_COUNCILS = {
@@ -29,9 +29,9 @@ export const PROFESSIONAL_COUNCILS = {
   CREFITO: 'crefito', // Conselho Regional de Fisioterapia e Terapia Ocupacional (Physiotherapists)
   CRBM: 'crbm', // Conselho Regional de Biomedicina (Biomedical)
   CNEP: 'cnep', // Conselho Nacional de Estética Profissional (Beauty Professionals)
-} as const;
+} as const
 
-export type ProfessionalCouncil = keyof typeof PROFESSIONAL_COUNCILS;
+export type ProfessionalCouncil = keyof typeof PROFESSIONAL_COUNCILS
 
 // Aesthetic Specialization Categories
 export const AESTHETIC_SPECIALIZATIONS = {
@@ -62,9 +62,9 @@ export const AESTHETIC_SPECIALIZATIONS = {
   MESOTHERAPY: 'mesotherapy',
   PRP_THERAPY: 'prp_therapy',
   SCAR_TREATMENT: 'scar_treatment',
-} as const;
+} as const
 
-export type AestheticSpecialization = keyof typeof AESTHETIC_SPECIALIZATIONS;
+export type AestheticSpecialization = keyof typeof AESTHETIC_SPECIALIZATIONS
 
 // License Validation Status
 export const LICENSE_STATUS = {
@@ -73,90 +73,90 @@ export const LICENSE_STATUS = {
   EXPIRED: 'expired',
   SUSPENDED: 'suspended',
   INVALID: 'invalid',
-} as const;
+} as const
 
-export type LicenseStatus = keyof typeof LICENSE_STATUS;
+export type LicenseStatus = keyof typeof LICENSE_STATUS
 
 // Service Interfaces
 export interface AestheticProfessional {
-  id: string;
-  clinicId: string;
-  userId?: string;
-  fullName: string;
-  email: string;
-  phone: string;
-  councilType: ProfessionalCouncil;
-  councilLicense: string;
-  councilState: string;
-  councilValidation: LicenseStatus;
-  licenseExpiryDate?: Date;
-  specializations: AestheticSpecialization[];
+  id: string
+  clinicId: string
+  userId?: string
+  fullName: string
+  email: string
+  phone: string
+  councilType: ProfessionalCouncil
+  councilLicense: string
+  councilState: string
+  councilValidation: LicenseStatus
+  licenseExpiryDate?: Date
+  specializations: AestheticSpecialization[]
   certificationLevels: Record<string, {
-    level: number;
-    obtainedAt: Date;
-    expiresAt?: Date;
-    certificateUrl?: string;
-  }>;
-  preferredProcedures: string[];
-  maxDailyAppointments: number;
-  appointmentBuffer: number;
+    level: number
+    obtainedAt: Date
+    expiresAt?: Date
+    certificateUrl?: string
+  }>
+  preferredProcedures: string[]
+  maxDailyAppointments: number
+  appointmentBuffer: number
   workingHours: Array<{
-    dayOfWeek: number;
-    startTime: string;
-    endTime: string;
-    breakStart?: string;
-    breakEnd?: string;
-  }>;
+    dayOfWeek: number
+    startTime: string
+    endTime: string
+    breakStart?: string
+    breakEnd?: string
+  }>
   availability: {
-    canWorkWeekends: boolean;
-    defaultStartTime: string;
-    defaultEndTime: string;
-    defaultBreakStart?: string;
-    defaultBreakEnd?: string;
-  };
-  isActive: boolean;
-  canPrescribe: boolean;
-  emergencyContact: boolean;
-  serviceTypeIds: string[];
-  color: string;
-  createdAt: Date;
-  updatedAt: Date;
+    canWorkWeekends: boolean
+    defaultStartTime: string
+    defaultEndTime: string
+    defaultBreakStart?: string
+    defaultBreakEnd?: string
+  }
+  isActive: boolean
+  canPrescribe: boolean
+  emergencyContact: boolean
+  serviceTypeIds: string[]
+  color: string
+  createdAt: Date
+  updatedAt: Date
 }
 
 export interface CreateProfessionalInput {
-  clinicId: string;
-  fullName: string;
-  email: string;
-  phone: string;
-  councilType: ProfessionalCouncil;
-  councilLicense: string;
-  councilState: string;
-  specializations: AestheticSpecialization[];
-  preferredProcedures?: string[];
-  maxDailyAppointments?: number;
-  appointmentBuffer?: number;
-  canPrescribe?: boolean;
-  emergencyContact?: boolean;
-  color?: string;
+  clinicId: string
+  fullName: string
+  email: string
+  phone: string
+  councilType: ProfessionalCouncil
+  councilLicense: string
+  councilState: string
+  specializations: AestheticSpecialization[]
+  preferredProcedures?: string[]
+  maxDailyAppointments?: number
+  appointmentBuffer?: number
+  canPrescribe?: boolean
+  emergencyContact?: boolean
+  color?: string
 }
 
 export interface UpdateProfessionalInput extends Partial<CreateProfessionalInput> {
-  id: string;
+  id: string
 }
 
 export interface LicenseValidationResult {
-  isValid: boolean;
-  status: LicenseStatus;
-  message: string;
-  expiryDate?: Date;
-  lastVerified: Date;
+  isValid: boolean
+  status: LicenseStatus
+  message: string
+  expiryDate?: Date
+  lastVerified: Date
 }
 
 export interface ServiceResponse<T = any> {
-  success: boolean;
-  data?: T;
-  error?: string;
-  message?: string;
+  success: boolean
+  data?: T
+  error?: string
+  message?: string
 }
 
 // Validation Schemas
@@ -178,10 +178,10 @@ const CreateProfessionalSchema = z.object({
   canPrescribe: z.boolean().optional(),
   emergencyContact: z.boolean().optional(),
   color: z.string().regex(/^#[0-9A-Fa-f]{6}$/, 'Invalid color format').optional(),
-});
+})
 
 class AestheticProfessionalsService {
-  private supabase = createAdminClient();
+  private supabase = createAdminClient()
 
   /**
    * Create a new aesthetic professional
@@ -191,7 +191,7 @@ class AestheticProfessionalsService {
   ): Promise<ServiceResponse<AestheticProfessional>> {
     try {
       // Validate input
-      const validated = CreateProfessionalSchema.parse(input);
+      const validated = CreateProfessionalSchema.parse(input)
 
       // Check for duplicate license
       const { data: existingProfessional } = await this.supabase
@@ -199,13 +199,13 @@ class AestheticProfessionalsService {
         .select('id')
         .eq('council_license', validated.councilLicense)
         .eq('council_type', validated.councilType)
-        .single();
+        .single()
 
       if (existingProfessional) {
         return {
           success: false,
           error: 'Professional with this council license already exists',
-        };
+        }
       }
 
       // Create professional record
@@ -232,14 +232,14 @@ class AestheticProfessionalsService {
           certification_levels: {},
         })
         .select()
-        .single();
+        .single()
 
       if (error) {
-        logger.error('Failed to create professional', { error });
+        logger.error('Failed to create professional', { error })
         return {
           success: false,
           error: error.message,
-        };
+        }
       }
 
       // Initiate license validation (async)
@@ -248,19 +248,19 @@ class AestheticProfessionalsService {
         validated.councilType,
         validated.councilLicense,
       )
-        .catch(err => logger.error('License validation failed', { error: err }));
+        .catch((err) => logger.error('License validation failed', { error: err }))
 
       return {
         success: true,
         data: this.mapProfessionalFromDb(professional),
         message: 'Professional created successfully',
-      };
+      }
     } catch (error) {
-      logger.error('Create professional error', { error });
+      logger.error('Create professional error', { error })
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
-      };
+      }
     }
   }
 
@@ -277,25 +277,25 @@ class AestheticProfessionalsService {
           service_types:service_types(id, name, category_id)
         `)
         .eq('id', id)
-        .single();
+        .single()
 
       if (error) {
         return {
           success: false,
           error: error.message,
-        };
+        }
       }
 
       return {
         success: true,
         data: this.mapProfessionalFromDb(professional),
-      };
+      }
     } catch (error) {
-      logger.error('Get professional error', { error, id });
+      logger.error('Get professional error', { error, id })
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
-      };
+      }
     }
   }
 
@@ -314,31 +314,31 @@ class AestheticProfessionalsService {
           clinic:clinics(name, cnpj),
           service_types:service_types(id, name, category_id)
         `)
-        .eq('clinic_id', clinicId);
+        .eq('clinic_id', clinicId)
 
       if (activeOnly) {
-        query = query.eq('is_active', true);
+        query = query.eq('is_active', true)
       }
 
-      const { data: professionals, error } = await query.order('full_name');
+      const { data: professionals, error } = await query.order('full_name')
 
       if (error) {
         return {
           success: false,
           error: error.message,
-        };
+        }
       }
 
       return {
         success: true,
-        data: professionals.map(p => this.mapProfessionalFromDb(p)),
-      };
+        data: professionals.map((p) => this.mapProfessionalFromDb(p)),
+      }
     } catch (error) {
-      logger.error('Get professionals by clinic error', { error, clinicId });
+      logger.error('Get professionals by clinic error', { error, clinicId })
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
-      };
+      }
     }
   }
 
@@ -349,7 +349,7 @@ class AestheticProfessionalsService {
     input: UpdateProfessionalInput,
   ): Promise<ServiceResponse<AestheticProfessional>> {
     try {
-      const { id, ...updateData } = input;
+      const { id, ...updateData } = input
 
       const { data: professional, error } = await this.supabase
         .from('professionals')
@@ -370,26 +370,26 @@ class AestheticProfessionalsService {
         })
         .eq('id', id)
         .select()
-        .single();
+        .single()
 
       if (error) {
         return {
           success: false,
           error: error.message,
-        };
+        }
       }
 
       return {
         success: true,
         data: this.mapProfessionalFromDb(professional),
         message: 'Professional updated successfully',
-      };
+      }
     } catch (error) {
-      logger.error('Update professional error', { error, id: input.id });
+      logger.error('Update professional error', { error, id: input.id })
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
-      };
+      }
     }
   }
 
@@ -403,10 +403,10 @@ class AestheticProfessionalsService {
   ): Promise<LicenseValidationResult> {
     try {
       // Mock validation - in production, integrate with council APIs
-      const isValid = await this.mockCouncilValidation(councilType, licenseNumber);
+      const isValid = await this.mockCouncilValidation(councilType, licenseNumber)
 
-      const status: LicenseStatus = isValid ? LICENSE_STATUS.VERIFIED : LICENSE_STATUS.INVALID;
-      const expiryDate = isValid ? this.calculateLicenseExpiry(councilType) : undefined;
+      const status: LicenseStatus = isValid ? LICENSE_STATUS.VERIFIED : LICENSE_STATUS.INVALID
+      const expiryDate = isValid ? this.calculateLicenseExpiry(councilType) : undefined
 
       // Update professional record
       await this.supabase
@@ -415,7 +415,7 @@ class AestheticProfessionalsService {
           council_validation: status,
           license_expiry_date: expiryDate?.toISOString(),
         })
-        .eq('id', professionalId);
+        .eq('id', professionalId)
 
       return {
         isValid,
@@ -423,15 +423,15 @@ class AestheticProfessionalsService {
         message: isValid ? 'License validated successfully' : 'License validation failed',
         expiryDate,
         lastVerified: new Date(),
-      };
+      }
     } catch (error) {
-      logger.error('License validation error', { error, professionalId, councilType });
+      logger.error('License validation error', { error, professionalId, councilType })
       return {
         isValid: false,
         status: LICENSE_STATUS.PENDING,
         message: 'Validation service unavailable',
         lastVerified: new Date(),
-      };
+      }
     }
   }
 
@@ -452,29 +452,29 @@ class AestheticProfessionalsService {
         .eq('clinic_id', clinicId)
         .eq('is_active', true)
         .contains('aesthetic_specializations', [specialization])
-        .order('full_name');
+        .order('full_name')
 
       if (error) {
         return {
           success: false,
           error: error.message,
-        };
+        }
       }
 
       return {
         success: true,
-        data: professionals.map(p => this.mapProfessionalFromDb(p)),
-      };
+        data: professionals.map((p) => this.mapProfessionalFromDb(p)),
+      }
     } catch (error) {
       logger.error('Get professionals by specialization error', {
         error,
         clinicId,
         specialization,
-      });
+      })
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
-      };
+      }
     }
   }
 
@@ -487,7 +487,7 @@ class AestheticProfessionalsService {
     duration: number,
   ): Promise<ServiceResponse<{ available: boolean; conflicts?: any[] }>> {
     try {
-      const endTime = new Date(startTime.getTime() + duration * 60000);
+      const endTime = new Date(startTime.getTime() + duration * 60000)
 
       // Check existing appointments
       const { data: appointments, error } = await this.supabase
@@ -496,16 +496,16 @@ class AestheticProfessionalsService {
         .eq('professional_id', professionalId)
         .eq('status', 'SCHEDULED')
         .gte('scheduled_date', startTime.toISOString())
-        .lt('scheduled_date', endTime.toISOString());
+        .lt('scheduled_date', endTime.toISOString())
 
       if (error) {
         return {
           success: false,
           error: error.message,
-        };
+        }
       }
 
-      const available = appointments.length === 0;
+      const available = appointments.length === 0
 
       return {
         success: true,
@@ -513,13 +513,13 @@ class AestheticProfessionalsService {
           available,
           conflicts: available ? undefined : appointments,
         },
-      };
+      }
     } catch (error) {
-      logger.error('Check availability error', { error, professionalId, startTime });
+      logger.error('Check availability error', { error, professionalId, startTime })
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
-      };
+      }
     }
   }
 
@@ -528,12 +528,12 @@ class AestheticProfessionalsService {
    */
   async getProfessionalStats(professionalId: string): Promise<
     ServiceResponse<{
-      totalAppointments: number;
-      completedAppointments: number;
-      noShowRate: number;
-      averageRating?: number;
-      revenueGenerated: number;
-      topProcedures: Array<{ name: string; count: number }>;
+      totalAppointments: number
+      completedAppointments: number
+      noShowRate: number
+      averageRating?: number
+      revenueGenerated: number
+      topProcedures: Array<{ name: string; count: number }>
     }>
   > {
     try {
@@ -541,34 +541,34 @@ class AestheticProfessionalsService {
       const { data: appointments, error } = await this.supabase
         .from('appointments')
         .select('status, treatment_type, price')
-        .eq('professional_id', professionalId);
+        .eq('professional_id', professionalId)
 
       if (error) {
         return {
           success: false,
           error: error.message,
-        };
+        }
       }
 
-      const totalAppointments = appointments.length;
-      const completedAppointments = appointments.filter(apt => apt.status === 'COMPLETED').length;
-      const noShows = appointments.filter(apt => apt.status === 'NO_SHOW').length;
-      const noShowRate = totalAppointments > 0 ? (noShows / totalAppointments) * 100 : 0;
+      const totalAppointments = appointments.length
+      const completedAppointments = appointments.filter((apt) => apt.status === 'COMPLETED').length
+      const noShows = appointments.filter((apt) => apt.status === 'NO_SHOW').length
+      const noShowRate = totalAppointments > 0 ? (noShows / totalAppointments) * 100 : 0
 
       const revenueGenerated = appointments
-        .filter(apt => apt.status === 'COMPLETED')
-        .reduce((sum, apt) => sum + (apt.price || 0), 0);
+        .filter((apt) => apt.status === 'COMPLETED')
+        .reduce((sum, apt) => sum + (apt.price || 0), 0)
 
       // Group procedures by type
       const procedureCounts = appointments.reduce((acc, apt) => {
-        acc[apt.treatment_type] = (acc[apt.treatment_type] || 0) + 1;
-        return acc;
-      }, {} as Record<string, number>);
+        acc[apt.treatment_type] = (acc[apt.treatment_type] || 0) + 1
+        return acc
+      }, {} as Record<string, number>)
 
       const topProcedures = Object.entries(procedureCounts)
         .sort(([, a], [, b]) => b - a)
         .slice(0, 5)
-        .map(([name, count]) => ({ name, count }));
+        .map(([name, count]) => ({ name, count }))
 
       return {
         success: true,
@@ -579,13 +579,13 @@ class AestheticProfessionalsService {
           revenueGenerated,
           topProcedures,
         },
-      };
+      }
     } catch (error) {
-      logger.error('Get professional stats error', { error, professionalId });
+      logger.error('Get professional stats error', { error, professionalId })
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
-      };
+      }
     }
   }
 
@@ -625,7 +625,7 @@ class AestheticProfessionalsService {
       color: dbProfessional.color || '#10B981',
       createdAt: new Date(dbProfessional.created_at),
       updatedAt: new Date(dbProfessional.updated_at),
-    };
+    }
   }
 
   private async mockCouncilValidation(
@@ -633,57 +633,57 @@ class AestheticProfessionalsService {
     licenseNumber: string,
   ): Promise<boolean> {
     // Mock validation - replace with actual council API integrations
-    await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API call
+    await new Promise((resolve) => setTimeout(resolve, 1000)) // Simulate API call
 
     // Basic format validation based on council type
     switch (councilType) {
       case 'CFM':
-        return /^\d{6,8}$/.test(licenseNumber);
+        return /^\d{6,8}$/.test(licenseNumber)
       case 'COREN':
-        return /^\d{8,10}$/.test(licenseNumber);
+        return /^\d{8,10}$/.test(licenseNumber)
       case 'CFF':
-        return /^\d{6,8}$/.test(licenseNumber);
+        return /^\d{6,8}$/.test(licenseNumber)
       case 'CREFITO':
-        return /^\d{6,8}$/.test(licenseNumber);
+        return /^\d{6,8}$/.test(licenseNumber)
       case 'CRBM':
-        return /^\d{6,8}$/.test(licenseNumber);
+        return /^\d{6,8}$/.test(licenseNumber)
       case 'CNEP':
-        return /^\d{4,6}$/.test(licenseNumber);
+        return /^\d{4,6}$/.test(licenseNumber)
       default:
-        return false;
+        return false
     }
   }
 
   private calculateLicenseExpiry(councilType: ProfessionalCouncil): Date {
-    const expiry = new Date();
+    const expiry = new Date()
 
     // Different expiry periods based on council type
     switch (councilType) {
       case 'CFM':
-        expiry.setFullYear(expiry.getFullYear() + 3); // 3 years
-        break;
+        expiry.setFullYear(expiry.getFullYear() + 3) // 3 years
+        break
       case 'COREN':
-        expiry.setFullYear(expiry.getFullYear() + 2); // 2 years
-        break;
+        expiry.setFullYear(expiry.getFullYear() + 2) // 2 years
+        break
       case 'CFF':
-        expiry.setFullYear(expiry.getFullYear() + 3); // 3 years
-        break;
+        expiry.setFullYear(expiry.getFullYear() + 3) // 3 years
+        break
       case 'CREFITO':
-        expiry.setFullYear(expiry.getFullYear() + 2); // 2 years
-        break;
+        expiry.setFullYear(expiry.getFullYear() + 2) // 2 years
+        break
       case 'CRBM':
-        expiry.setFullYear(expiry.getFullYear() + 3); // 3 years
-        break;
+        expiry.setFullYear(expiry.getFullYear() + 3) // 3 years
+        break
       case 'CNEP':
-        expiry.setFullYear(expiry.getFullYear() + 1); // 1 year
-        break;
+        expiry.setFullYear(expiry.getFullYear() + 1) // 1 year
+        break
       default:
-        expiry.setFullYear(expiry.getFullYear() + 2); // Default 2 years
+        expiry.setFullYear(expiry.getFullYear() + 2) // Default 2 years
     }
 
-    return expiry;
+    return expiry
   }
 }
 
 // Export singleton instance
-export const aestheticProfessionalsService = new AestheticProfessionalsService();
+export const aestheticProfessionalsService = new AestheticProfessionalsService()

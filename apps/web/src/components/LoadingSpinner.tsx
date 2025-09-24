@@ -1,9 +1,9 @@
-import { Loader2 } from 'lucide-react';
+import { Loader2 } from 'lucide-react'
 
 interface LoadingSpinnerProps {
-  size?: 'sm' | 'md' | 'lg';
-  text?: string;
-  className?: string;
+  size?: 'sm' | 'md' | 'lg'
+  text?: string
+  className?: string
 }
 
 export function LoadingSpinner({
@@ -15,18 +15,18 @@ export function LoadingSpinner({
     sm: 'h-4 w-4',
     md: 'h-8 w-8',
     lg: 'h-12 w-12',
-  };
+  }
 
   return (
     <div className={`flex items-center justify-center ${className}`}>
       <Loader2 className={`animate-spin ${sizeClasses[size]} text-blue-600`} />
       {text && <span className='ml-2 text-gray-600'>{text}</span>}
     </div>
-  );
+  )
 }
 
 interface LoadingPageProps {
-  text?: string;
+  text?: string
 }
 
 export function LoadingPage({ text = 'Carregando...' }: LoadingPageProps) {
@@ -36,12 +36,12 @@ export function LoadingPage({ text = 'Carregando...' }: LoadingPageProps) {
         <LoadingSpinner size='lg' text={text} />
       </div>
     </div>
-  );
+  )
 }
 
 interface LoadingCardProps {
-  text?: string;
-  className?: string;
+  text?: string
+  className?: string
 }
 
 export function LoadingCard({
@@ -52,5 +52,5 @@ export function LoadingCard({
     <div className={`bg-white rounded-lg shadow p-6 ${className}`}>
       <LoadingSpinner text={text} />
     </div>
-  );
+  )
 }

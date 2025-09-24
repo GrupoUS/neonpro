@@ -7,8 +7,8 @@
  * @compliance LGPD, ANVISA, CFM
  */
 
-import crypto from 'crypto';
-import { z } from 'zod';
+import crypto from 'crypto'
+import { z } from 'zod'
 
 // API Key Permissions Schema
 export const ApiKeyPermissionsSchema = z.object({
@@ -18,9 +18,9 @@ export const ApiKeyPermissionsSchema = z.object({
   admin: z.boolean().default(false),
   patient_data: z.boolean().default(false),
   financial_data: z.boolean().default(false),
-});
+})
 
-export type ApiKeyPermissions = z.infer<typeof ApiKeyPermissionsSchema>;
+export type ApiKeyPermissions = z.infer<typeof ApiKeyPermissionsSchema>
 
 // API Key Metadata Schema
 export const ApiKeyMetadataSchema = z.object({
@@ -39,9 +39,9 @@ export const ApiKeyMetadataSchema = z.object({
       requestsPerDay: z.number().default(10000),
     })
     .optional(),
-});
+})
 
-export type ApiKeyMetadata = z.infer<typeof ApiKeyMetadataSchema>;
+export type ApiKeyMetadata = z.infer<typeof ApiKeyMetadataSchema>
 
 // API Key Schema
 export const ApiKeySchema = z.object({
@@ -49,12 +49,12 @@ export const ApiKeySchema = z.object({
   key: z.string(),
   permissions: ApiKeyPermissionsSchema,
   metadata: ApiKeyMetadataSchema,
-});
+})
 
-export type ApiKey = z.infer<typeof ApiKeySchema>;
+export type ApiKey = z.infer<typeof ApiKeySchema>
 
 // In-memory storage for TDD (will be replaced with database)
-const apiKeys = new Map<string, ApiKey>();
+const apiKeys = new Map<string, ApiKey>()
 
 /**
  * Create a new API key
@@ -63,8 +63,8 @@ export async function createApiKey(
   permissions: ApiKeyPermissions,
   metadata: Omit<ApiKeyMetadata, 'createdAt' | 'isActive'>,
 ): Promise<ApiKey> {
-  const id = crypto.randomUUID();
-  const key = generateSecureApiKey();
+  const id = crypto.randomUUID()
+  const key = generateSecureApiKey()
 
   const apiKey: ApiKey = {
     id,
@@ -75,57 +75,57 @@ export async function createApiKey(
       createdAt: new Date(),
       isActive: true,
     },
-  };
+  }
 
-  apiKeys.set(key, apiKey);
+  apiKeys.set(key, apiKey)
 
-  return apiKey;
+  return apiKey
 }
 
 /**
  * Validate an API key
  */
 export async function validateApiKey(key: string): Promise<ApiKey | null> {
-  const apiKey = apiKeys.get(key);
+  const apiKey = apiKeys.get(key)
 
   if (!apiKey || !apiKey.metadata.isActive) {
-    return null;
+    return null
   }
 
   // Check expiration
   if (apiKey.metadata.expiresAt && apiKey.metadata.expiresAt < new Date()) {
-    return null;
+    return null
   }
 
   // Update last used timestamp
-  apiKey.metadata.lastUsedAt = new Date();
+  apiKey.metadata.lastUsedAt = new Date()
 
-  return apiKey;
+  return apiKey
 }
 
 /**
  * Revoke an API key
  */
 export async function revokeApiKey(key: string): Promise<boolean> {
-  const apiKey = apiKeys.get(key);
+  const apiKey = apiKeys.get(key)
 
   if (!apiKey) {
-    return false;
+    return false
   }
 
-  apiKey.metadata.isActive = false;
+  apiKey.metadata.isActive = false
 
-  return true;
+  return true
 }
 
 /**
  * Rotate an API key (create new, revoke old)
  */
 export async function rotateApiKey(oldKey: string): Promise<ApiKey | null> {
-  const oldApiKey = apiKeys.get(oldKey);
+  const oldApiKey = apiKeys.get(oldKey)
 
   if (!oldApiKey) {
-    return null;
+    return null
   }
 
   // Create new key with same permissions and metadata
@@ -136,42 +136,42 @@ export async function rotateApiKey(oldKey: string): Promise<ApiKey | null> {
     _userId: oldApiKey.metadata.userId,
     expiresAt: oldApiKey.metadata.expiresAt,
     rateLimit: oldApiKey.metadata.rateLimit,
-  });
+  })
 
   // Revoke old key
-  await revokeApiKey(oldKey);
+  await revokeApiKey(oldKey)
 
-  return newApiKey;
+  return newApiKey
 }
 
 /**
  * Generate a secure API key
  */
 function generateSecureApiKey(): string {
-  const prefix = 'neonpro';
-  const randomBytes = crypto.randomBytes(32);
-  const key = randomBytes.toString('base64url');
+  const prefix = 'neonpro'
+  const randomBytes = crypto.randomBytes(32)
+  const key = randomBytes.toString('base64url')
 
-  return `${prefix}${key}`;
+  return `${prefix}${key}`
 }
 
 /**
  * Rate limiting configuration
  */
 export interface RateLimitConfig {
-  requestsPerMinute?: number;
-  requestsPerHour?: number;
-  requestsPerDay?: number;
+  requestsPerMinute?: number
+  requestsPerHour?: number
+  requestsPerDay?: number
 }
 
 /**
  * Rate limiting result
  */
 export interface RateLimitResult {
-  allowed: boolean;
-  remaining: number;
-  resetTime: Date;
-  retryAfter?: number;
+  allowed: boolean
+  remaining: number
+  resetTime: Date
+  retryAfter?: number
 }
 
 /**
@@ -186,12 +186,12 @@ export async function applyRateLimit(
     allowed: true,
     remaining: 999,
     resetTime: new Date(Date.now() + 60000), // 1 minute from now
-  };
+  }
 }
 
 /**
  * Clear all API keys (for testing)
  */
 export function clearApiKeys(): void {
-  apiKeys.clear();
+  apiKeys.clear()
 }

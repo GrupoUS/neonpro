@@ -11,10 +11,10 @@
  * - CFM telemedicine compliance integration
  */
 
-import { createClient, RealtimeChannel, RealtimeClient } from '@supabase/supabase-js';
-import crypto from 'crypto';
-import { v4 as uuidv4 } from 'uuid';
-import * as z from 'zod';
+import { createClient, RealtimeChannel, RealtimeClient } from '@supabase/supabase-js'
+import crypto from 'crypto'
+import { v4 as uuidv4 } from 'uuid'
+import * as z from 'zod'
 // Enhanced telemedicine subscription schemas
 const TelemedicineMessageSchema = z.object({
   id: z.string().uuid(),
@@ -30,7 +30,7 @@ const TelemedicineMessageSchema = z.object({
   requiresAcknowledgment: z.boolean().default(false),
   acknowledgments: z.array(z.string().uuid()).default([]),
   lgpdCompliant: z.boolean().default(true),
-});
+})
 
 const PresenceStateSchema = z.object({
   _userId: z.string().uuid(),
@@ -61,7 +61,7 @@ const PresenceStateSchema = z.object({
       region: z.string().optional(),
     })
     .optional(),
-});
+})
 
 const SessionUpdateSchema = z.object({
   sessionId: z.string().uuid(),
@@ -79,11 +79,11 @@ const SessionUpdateSchema = z.object({
     lgpdAuditRequired: z.boolean().default(true),
     emergencyProtocol: z.boolean().default(false),
   }),
-});
+})
 
-export type TelemedicineMessage = z.infer<typeof TelemedicineMessageSchema>;
-export type PresenceState = z.infer<typeof PresenceStateSchema>;
-export type SessionUpdate = z.infer<typeof SessionUpdateSchema>;
+export type TelemedicineMessage = z.infer<typeof TelemedicineMessageSchema>
+export type PresenceState = z.infer<typeof PresenceStateSchema>
+export type SessionUpdate = z.infer<typeof SessionUpdateSchema>
 
 // Connection quality monitoring thresholds
 const QUALITY_THRESHOLDS = {
@@ -91,61 +91,61 @@ const QUALITY_THRESHOLDS = {
   good: { latency: 150, packetLoss: 3, jitter: 50 },
   fair: { latency: 300, packetLoss: 5, jitter: 100 },
   poor: { latency: 500, packetLoss: 10, jitter: 200 },
-} as const;
+} as const
 
 // Encryption utilities for LGPD compliance
 class EncryptionService {
-  private readonly algorithm = 'aes-256-gcm';
-  private readonly keyLength = 32;
+  private readonly algorithm = 'aes-256-gcm'
+  private readonly keyLength = 32
 
   generateKey(): Buffer {
-    return crypto.randomBytes(this.keyLength);
+    return crypto.randomBytes(this.keyLength)
   }
 
   encrypt(
     text: string,
     key: Buffer,
   ): { encrypted: string; iv: string; tag: string } {
-    const iv = crypto.randomBytes(16);
-    const cipher = crypto.createCipheriv(this.algorithm, key, iv);
-    cipher.setAAD(Buffer.from('telemedicine-lgpd-compliant', 'utf8'));
+    const iv = crypto.randomBytes(16)
+    const cipher = crypto.createCipheriv(this.algorithm, key, iv)
+    cipher.setAAD(Buffer.from('telemedicine-lgpd-compliant', 'utf8'))
 
-    let encrypted = cipher.update(text, 'utf8', 'hex');
-    encrypted += cipher.final('hex');
+    let encrypted = cipher.update(text, 'utf8', 'hex')
+    encrypted += cipher.final('hex')
 
-    const tag = cipher.getAuthTag();
+    const tag = cipher.getAuthTag()
 
     return {
       encrypted,
       iv: iv.toString('hex'),
       tag: tag.toString('hex'),
-    };
+    }
   }
 
   decrypt(
     encryptedData: { encrypted: string; iv: string; tag: string },
     key: Buffer,
   ): string {
-    const iv = Buffer.from(encryptedData.iv, 'hex');
-    const decipher = crypto.createDecipheriv(this.algorithm, key, iv);
-    decipher.setAAD(Buffer.from('telemedicine-lgpd-compliant', 'utf8'));
-    decipher.setAuthTag(Buffer.from(encryptedData.tag, 'hex'));
+    const iv = Buffer.from(encryptedData.iv, 'hex')
+    const decipher = crypto.createDecipheriv(this.algorithm, key, iv)
+    decipher.setAAD(Buffer.from('telemedicine-lgpd-compliant', 'utf8'))
+    decipher.setAuthTag(Buffer.from(encryptedData.tag, 'hex'))
 
-    let decrypted = decipher.update(encryptedData.encrypted, 'hex', 'utf8');
-    decrypted += decipher.final('utf8');
+    let decrypted = decipher.update(encryptedData.encrypted, 'hex', 'utf8')
+    decrypted += decipher.final('utf8')
 
-    return decrypted;
+    return decrypted
   }
 }
 
 // Enhanced Real-Time Telemedicine Service
 export class EnhancedTelemedicineRealtime {
-  private supabase: RealtimeClient;
-  private encryption: EncryptionService;
-  private channels: Map<string, RealtimeChannel> = new Map();
-  private presenceStates: Map<string, PresenceState> = new Map();
-  private connectionQualityMonitor: NodeJS.Timeout | null = null;
-  private encryptionKeys: Map<string, Buffer> = new Map();
+  private supabase: RealtimeClient
+  private encryption: EncryptionService
+  private channels: Map<string, RealtimeChannel> = new Map()
+  private presenceStates: Map<string, PresenceState> = new Map()
+  private connectionQualityMonitor: NodeJS.Timeout | null = null
+  private encryptionKeys: Map<string, Buffer> = new Map()
 
   constructor(supabaseUrl: string, supabaseKey: string) {
     this.supabase = createClient(supabaseUrl, supabaseKey, {
@@ -154,9 +154,9 @@ export class EnhancedTelemedicineRealtime {
           eventsPerSecond: 100, // High frequency for medical consultations
         },
       },
-    }).realtime;
+    }).realtime
 
-    this.encryption = new EncryptionService();
+    this.encryption = new EncryptionService()
   }
 
   /**
@@ -166,15 +166,15 @@ export class EnhancedTelemedicineRealtime {
     sessionId: string,
     participants: string[],
   ): Promise<{
-    channel: RealtimeChannel;
-    encryptionKey: string;
-    channelId: string;
+    channel: RealtimeChannel
+    encryptionKey: string
+    channelId: string
   }> {
-    const channelId = `telemedicine:${sessionId}`;
+    const channelId = `telemedicine:${sessionId}`
 
     // Generate session-specific encryption key
-    const encryptionKey = this.encryption.generateKey();
-    this.encryptionKeys.set(sessionId, encryptionKey);
+    const encryptionKey = this.encryption.generateKey()
+    this.encryptionKeys.set(sessionId, encryptionKey)
 
     // Create Supabase Realtime channel
     const channel = this.supabase.channel(channelId, {
@@ -187,33 +187,33 @@ export class EnhancedTelemedicineRealtime {
           ack: true,
         },
       },
-    });
+    })
 
     // Setup message handlers
-    this.setupMessageHandlers(channel, sessionId);
-    this.setupPresenceHandlers(channel, sessionId);
-    this.setupEmergencyHandlers(channel, sessionId);
+    this.setupMessageHandlers(channel, sessionId)
+    this.setupPresenceHandlers(channel, sessionId)
+    this.setupEmergencyHandlers(channel, sessionId)
 
     // Subscribe to channel
-    channel.subscribe(async status => {
+    channel.subscribe(async (status) => {
       if (status === 'SUBSCRIBED') {
-        console.log(`✅ Telemedicine session ${sessionId} channel active`);
+        console.log(`✅ Telemedicine session ${sessionId} channel active`)
 
         // Initialize presence for all participants
-        await this.initializePresence(channel, sessionId, participants);
+        await this.initializePresence(channel, sessionId, participants)
 
         // Start connection quality monitoring
-        this.startConnectionQualityMonitoring(sessionId);
+        this.startConnectionQualityMonitoring(sessionId)
       }
-    });
+    })
 
-    this.channels.set(sessionId, channel);
+    this.channels.set(sessionId, channel)
 
     return {
       channel,
       encryptionKey: encryptionKey.toString('hex'),
       channelId,
-    };
+    }
   }
 
   /**
@@ -223,37 +223,37 @@ export class EnhancedTelemedicineRealtime {
     sessionId: string,
     message: Omit<TelemedicineMessage, 'id' | 'timestamp' | 'encryptedContent'>,
   ): Promise<boolean> {
-    const channel = this.channels.get(sessionId);
-    const encryptionKey = this.encryptionKeys.get(sessionId);
+    const channel = this.channels.get(sessionId)
+    const encryptionKey = this.encryptionKeys.get(sessionId)
 
     if (!channel || !encryptionKey) {
       throw new Error(
         `Telemedicine session ${sessionId} not found or not encrypted`,
-      );
+      )
     }
 
     // Encrypt message content for LGPD compliance
     const encryptedData = this.encryption.encrypt(
       message.content,
       encryptionKey,
-    );
+    )
 
     const enhancedMessage: TelemedicineMessage = {
       ...message,
       id: uuidv4(),
       timestamp: new Date().toISOString(),
       encryptedContent: JSON.stringify(encryptedData),
-    };
+    }
 
     // Validate message schema
-    const validatedMessage = TelemedicineMessageSchema.parse(enhancedMessage);
+    const validatedMessage = TelemedicineMessageSchema.parse(enhancedMessage)
 
     // Broadcast encrypted message
     const response = await channel.send({
       type: 'broadcast',
       event: 'encrypted_message',
       _payload: validatedMessage,
-    });
+    })
 
     // Log for LGPD audit compliance
     console.log(`📨 Encrypted message sent in session ${sessionId}:`, {
@@ -263,9 +263,9 @@ export class EnhancedTelemedicineRealtime {
       priority: validatedMessage.priority,
       encrypted: true,
       lgpdCompliant: validatedMessage.lgpdCompliant,
-    });
+    })
 
-    return response === 'ok';
+    return response === 'ok'
   }
 
   /**
@@ -275,32 +275,32 @@ export class EnhancedTelemedicineRealtime {
     sessionId: string,
     presence: Partial<PresenceState>,
   ): Promise<boolean> {
-    const channel = this.channels.get(sessionId);
+    const channel = this.channels.get(sessionId)
     if (!channel) {
-      throw new Error(`Telemedicine session ${sessionId} not found`);
+      throw new Error(`Telemedicine session ${sessionId} not found`)
     }
 
     const fullPresence: PresenceState = {
       ...presence,
       lastSeen: new Date().toISOString(),
       sessionId,
-    } as PresenceState;
+    } as PresenceState
 
     // Validate presence data
-    const validatedPresence = PresenceStateSchema.parse(fullPresence);
+    const validatedPresence = PresenceStateSchema.parse(fullPresence)
 
     // Update presence state
-    const response = await channel.track(validatedPresence);
+    const response = await channel.track(validatedPresence)
 
     // Store locally for monitoring
-    this.presenceStates.set(fullPresence.userId!, validatedPresence);
+    this.presenceStates.set(fullPresence.userId!, validatedPresence)
 
     // Monitor connection quality
     if (fullPresence.connectionQuality) {
-      await this.assessConnectionQuality(sessionId, fullPresence);
+      await this.assessConnectionQuality(sessionId, fullPresence)
     }
 
-    return response === 'ok';
+    return response === 'ok'
   }
 
   /**
@@ -310,22 +310,22 @@ export class EnhancedTelemedicineRealtime {
     channel: RealtimeChannel,
     sessionId: string,
   ): void {
-    channel.on('broadcast', { event: 'encrypted_message' }, async payload => {
-      const message = payload.payload as TelemedicineMessage;
+    channel.on('broadcast', { event: 'encrypted_message' }, async (payload) => {
+      const message = payload.payload as TelemedicineMessage
 
       // Decrypt message if encrypted
       if (message.encryptedContent) {
-        const encryptionKey = this.encryptionKeys.get(sessionId);
+        const encryptionKey = this.encryptionKeys.get(sessionId)
         if (encryptionKey) {
           try {
-            const encryptedData = JSON.parse(message.encryptedContent);
+            const encryptedData = JSON.parse(message.encryptedContent)
             message.content = this.encryption.decrypt(
               encryptedData,
               encryptionKey,
-            );
+            )
           } catch {
-            console.error('❌ Failed to decrypt message:', error);
-            return;
+            console.error('❌ Failed to decrypt message:', error)
+            return
           }
         }
       }
@@ -335,14 +335,14 @@ export class EnhancedTelemedicineRealtime {
         senderRole: message.senderRole,
         messageType: message.messageType,
         priority: message.priority,
-      });
+      })
 
       // Handle emergency messages
       if (
         message.priority === 'critical'
         || message.messageType === 'emergency'
       ) {
-        await this.handleEmergencyMessage(sessionId, message);
+        await this.handleEmergencyMessage(sessionId, message)
       }
 
       // Send acknowledgment if required
@@ -351,24 +351,24 @@ export class EnhancedTelemedicineRealtime {
           sessionId,
           message.id,
           message.senderId,
-        );
+        )
       }
-    });
+    })
 
     // Handle session updates
-    channel.on('broadcast', { event: 'session_update' }, payload => {
-      const update = payload.payload as SessionUpdate;
+    channel.on('broadcast', { event: 'session_update' }, (payload) => {
+      const update = payload.payload as SessionUpdate
       console.log(
         `🔄 Session update in ${sessionId}:`,
         update.type,
         update.data,
-      );
+      )
 
       // Handle specific update types
       if (update.type === 'emergency') {
-        this.handleEmergencyUpdate(sessionId, update);
+        this.handleEmergencyUpdate(sessionId, update)
       }
-    });
+    })
   }
 
   /**
@@ -379,26 +379,26 @@ export class EnhancedTelemedicineRealtime {
     sessionId: string,
   ): void {
     channel.on('presence', { event: 'sync' }, () => {
-      const state = channel.presenceState();
+      const state = channel.presenceState()
       console.log(
         `👥 Presence sync for session ${sessionId}:`,
         Object.keys(state).length,
         'participants',
-      );
-    });
+      )
+    })
 
     channel.on('presence', { event: 'join' }, ({ key, newPresences }) => {
-      console.log(`👋 User joined session ${sessionId}:`, key, newPresences);
-    });
+      console.log(`👋 User joined session ${sessionId}:`, key, newPresences)
+    })
 
     channel.on('presence', { event: 'leave' }, ({ key, leftPresences }) => {
-      console.log(`👋 User left session ${sessionId}:`, key, leftPresences);
+      console.log(`👋 User left session ${sessionId}:`, key, leftPresences)
 
       // Clean up local presence state
       leftPresences.forEach((presence: any) => {
-        this.presenceStates.delete(presence._userId);
-      });
-    });
+        this.presenceStates.delete(presence._userId)
+      })
+    })
   }
 
   /**
@@ -408,13 +408,13 @@ export class EnhancedTelemedicineRealtime {
     channel: RealtimeChannel,
     sessionId: string,
   ): void {
-    channel.on('broadcast', { event: 'emergency_alert' }, async payload => {
-      const alert = payload.payload;
-      console.log(`🚨 EMERGENCY ALERT in session ${sessionId}:`, alert);
+    channel.on('broadcast', { event: 'emergency_alert' }, async (payload) => {
+      const alert = payload.payload
+      console.log(`🚨 EMERGENCY ALERT in session ${sessionId}:`, alert)
 
       // Trigger emergency escalation protocol
-      await this.triggerEmergencyEscalation(sessionId, alert);
-    });
+      await this.triggerEmergencyEscalation(sessionId, alert)
+    })
   }
 
   /**
@@ -447,9 +447,9 @@ export class EnhancedTelemedicineRealtime {
             screenshare: false,
           },
         },
-      };
+      }
 
-      await channel.track(initialPresence);
+      await channel.track(initialPresence)
     }
   }
 
@@ -458,36 +458,36 @@ export class EnhancedTelemedicineRealtime {
    */
   private startConnectionQualityMonitoring(sessionId: string): void {
     if (this.connectionQualityMonitor) {
-      clearInterval(this.connectionQualityMonitor);
+      clearInterval(this.connectionQualityMonitor)
     }
 
     this.connectionQualityMonitor = setInterval(async () => {
-      await this.monitorConnectionQuality(sessionId);
-    }, 5000); // Monitor every 5 seconds
+      await this.monitorConnectionQuality(sessionId)
+    }, 5000) // Monitor every 5 seconds
   }
 
   /**
    * Monitor connection quality for all participants
    */
   private async monitorConnectionQuality(sessionId: string): Promise<void> {
-    const channel = this.channels.get(sessionId);
-    if (!channel) return;
+    const channel = this.channels.get(sessionId)
+    if (!channel) return
 
-    const presenceState = channel.presenceState();
-    const qualityReports: any[] = [];
+    const presenceState = channel.presenceState()
+    const qualityReports: any[] = []
 
     for (const [userId, presences] of Object.entries(presenceState)) {
       for (const presence of presences as any[]) {
         if (presence.connectionQuality) {
           const quality = this.calculateConnectionQuality(
             presence.connectionQuality,
-          );
+          )
           qualityReports.push({
             userId,
             quality,
             latency: presence.connectionQuality.latency,
             timestamp: new Date().toISOString(),
-          });
+          })
 
           // Alert if quality is poor for medical consultation
           if (quality === 'poor' && presence.connectionQuality.latency > 300) {
@@ -495,7 +495,7 @@ export class EnhancedTelemedicineRealtime {
               sessionId,
               presence._userId,
               presence.connectionQuality,
-            );
+            )
           }
         }
       }
@@ -505,7 +505,7 @@ export class EnhancedTelemedicineRealtime {
     console.log(
       `📊 Connection quality report for session ${sessionId}:`,
       qualityReports,
-    );
+    )
   }
 
   /**
@@ -514,28 +514,28 @@ export class EnhancedTelemedicineRealtime {
   private calculateConnectionQuality(
     metrics: PresenceState['connectionQuality'],
   ): string {
-    const { latency, packetLoss, jitter } = metrics;
+    const { latency, packetLoss, jitter } = metrics
 
     if (
       latency <= QUALITY_THRESHOLDS.excellent.latency
       && packetLoss <= QUALITY_THRESHOLDS.excellent.packetLoss
       && jitter <= QUALITY_THRESHOLDS.excellent.jitter
     ) {
-      return 'excellent';
+      return 'excellent'
     } else if (
       latency <= QUALITY_THRESHOLDS.good.latency
       && packetLoss <= QUALITY_THRESHOLDS.good.packetLoss
       && jitter <= QUALITY_THRESHOLDS.good.jitter
     ) {
-      return 'good';
+      return 'good'
     } else if (
       latency <= QUALITY_THRESHOLDS.fair.latency
       && packetLoss <= QUALITY_THRESHOLDS.fair.packetLoss
       && jitter <= QUALITY_THRESHOLDS.fair.jitter
     ) {
-      return 'fair';
+      return 'fair'
     } else {
-      return 'poor';
+      return 'poor'
     }
   }
 
@@ -546,19 +546,19 @@ export class EnhancedTelemedicineRealtime {
     sessionId: string,
     presence: PresenceState,
   ): Promise<void> {
-    const quality = this.calculateConnectionQuality(presence.connectionQuality);
+    const quality = this.calculateConnectionQuality(presence.connectionQuality)
 
     if (quality === 'poor') {
       console.log(
         `⚠️ Poor connection quality detected for user ${presence.userId} in session ${sessionId}`,
-      );
+      )
 
       // Suggest quality improvements
       await this.sendQualityImprovementSuggestions(
         sessionId,
         presence.userId,
         presence.connectionQuality,
-      );
+      )
     }
   }
 
@@ -570,8 +570,8 @@ export class EnhancedTelemedicineRealtime {
     _userId: string,
     quality: PresenceState['connectionQuality'],
   ): Promise<void> {
-    const channel = this.channels.get(sessionId);
-    if (!channel) return;
+    const channel = this.channels.get(sessionId)
+    if (!channel) return
 
     await channel.send({
       type: 'broadcast',
@@ -588,7 +588,7 @@ export class EnhancedTelemedicineRealtime {
         ],
         timestamp: new Date().toISOString(),
       },
-    });
+    })
   }
 
   /**
@@ -599,25 +599,25 @@ export class EnhancedTelemedicineRealtime {
     _userId: string,
     quality: PresenceState['connectionQuality'],
   ): Promise<void> {
-    const channel = this.channels.get(sessionId);
-    if (!channel) return;
+    const channel = this.channels.get(sessionId)
+    if (!channel) return
 
-    const suggestions = [];
+    const suggestions = []
 
     if (quality.latency > 200) {
       suggestions.push(
         'High latency detected - check your internet connection',
-      );
+      )
     }
 
     if (quality.packetLoss > 5) {
-      suggestions.push('Packet loss detected - consider switching network');
+      suggestions.push('Packet loss detected - consider switching network')
     }
 
     if (quality.jitter > 100) {
       suggestions.push(
         'Network instability detected - close other applications',
-      );
+      )
     }
 
     await channel.send({
@@ -629,7 +629,7 @@ export class EnhancedTelemedicineRealtime {
         currentQuality: quality,
         timestamp: new Date().toISOString(),
       },
-    });
+    })
   }
 
   /**
@@ -639,10 +639,10 @@ export class EnhancedTelemedicineRealtime {
     sessionId: string,
     message: TelemedicineMessage,
   ): Promise<void> {
-    console.log(`🚨 EMERGENCY MESSAGE in session ${sessionId}:`, message);
+    console.log(`🚨 EMERGENCY MESSAGE in session ${sessionId}:`, message)
 
     // Broadcast emergency alert to all participants
-    const channel = this.channels.get(sessionId);
+    const channel = this.channels.get(sessionId)
     if (channel) {
       await channel.send({
         type: 'broadcast',
@@ -657,7 +657,7 @@ export class EnhancedTelemedicineRealtime {
             'Medical supervisor alerted',
           ],
         },
-      });
+      })
     }
   }
 
@@ -669,8 +669,8 @@ export class EnhancedTelemedicineRealtime {
     messageId: string,
     recipientId: string,
   ): Promise<void> {
-    const channel = this.channels.get(sessionId);
-    if (!channel) return;
+    const channel = this.channels.get(sessionId)
+    if (!channel) return
 
     await channel.send({
       type: 'broadcast',
@@ -680,7 +680,7 @@ export class EnhancedTelemedicineRealtime {
         acknowledgedBy: recipientId,
         timestamp: new Date().toISOString(),
       },
-    });
+    })
   }
 
   /**
@@ -690,11 +690,11 @@ export class EnhancedTelemedicineRealtime {
     sessionId: string,
     update: SessionUpdate,
   ): Promise<void> {
-    console.log(`🚨 Emergency update in session ${sessionId}:`, update);
+    console.log(`🚨 Emergency update in session ${sessionId}:`, update)
 
     // Trigger emergency escalation if configured
     if (update.metadata.emergencyProtocol) {
-      await this.triggerEmergencyEscalation(sessionId, update.data);
+      await this.triggerEmergencyEscalation(sessionId, update.data)
     }
   }
 
@@ -709,7 +709,7 @@ export class EnhancedTelemedicineRealtime {
     console.log(
       `🆘 Emergency escalation triggered for session ${sessionId}:`,
       alertData,
-    );
+    )
 
     // Example: Call emergency services, notify supervisors, etc.
     // Implementation would depend on healthcare facility protocols
@@ -719,32 +719,32 @@ export class EnhancedTelemedicineRealtime {
    * End telemedicine session and cleanup
    */
   async endTelemedicineSession(sessionId: string): Promise<void> {
-    const channel = this.channels.get(sessionId);
+    const channel = this.channels.get(sessionId)
 
     if (channel) {
       // Unsubscribe from channel
-      await channel.unsubscribe();
+      await channel.unsubscribe()
 
       // Remove from channels map
-      this.channels.delete(sessionId);
+      this.channels.delete(sessionId)
 
       // Clear encryption key
-      this.encryptionKeys.delete(sessionId);
+      this.encryptionKeys.delete(sessionId)
 
       // Clear presence states for this session
       for (const [userId, presence] of this.presenceStates.entries()) {
         if (presence.sessionId === sessionId) {
-          this.presenceStates.delete(userId);
+          this.presenceStates.delete(userId)
         }
       }
 
-      console.log(`✅ Telemedicine session ${sessionId} ended and cleaned up`);
+      console.log(`✅ Telemedicine session ${sessionId} ended and cleaned up`)
     }
 
     // Stop connection quality monitoring if no active sessions
     if (this.channels.size === 0 && this.connectionQualityMonitor) {
-      clearInterval(this.connectionQualityMonitor);
-      this.connectionQualityMonitor = null;
+      clearInterval(this.connectionQualityMonitor)
+      this.connectionQualityMonitor = null
     }
   }
 
@@ -752,41 +752,41 @@ export class EnhancedTelemedicineRealtime {
    * Get session statistics for monitoring
    */
   getSessionStatistics(sessionId: string): {
-    participantCount: number;
-    averageLatency: number;
-    connectionQuality: string;
-    messageCount: number;
-    emergencyAlerts: number;
+    participantCount: number
+    averageLatency: number
+    connectionQuality: string
+    messageCount: number
+    emergencyAlerts: number
   } {
-    const channel = this.channels.get(sessionId);
+    const channel = this.channels.get(sessionId)
     if (!channel) {
-      throw new Error(`Session ${sessionId} not found`);
+      throw new Error(`Session ${sessionId} not found`)
     }
 
-    const presenceState = channel.presenceState();
-    const participants = Object.keys(presenceState);
+    const presenceState = channel.presenceState()
+    const participants = Object.keys(presenceState)
 
     // Calculate average latency
-    let totalLatency = 0;
-    let latencyCount = 0;
+    let totalLatency = 0
+    let latencyCount = 0
 
     for (const presences of Object.values(presenceState)) {
       for (const presence of presences as any[]) {
         if (presence.connectionQuality?.latency) {
-          totalLatency += presence.connectionQuality.latency;
-          latencyCount++;
+          totalLatency += presence.connectionQuality.latency
+          latencyCount++
         }
       }
     }
 
-    const averageLatency = latencyCount > 0 ? totalLatency / latencyCount : 0;
+    const averageLatency = latencyCount > 0 ? totalLatency / latencyCount : 0
     const connectionQuality = this.calculateConnectionQuality({
       latency: averageLatency,
       bandwidth: 0,
       packetLoss: 0,
       jitter: 0,
       quality: 'good',
-    });
+    })
 
     return {
       participantCount: participants.length,
@@ -794,7 +794,7 @@ export class EnhancedTelemedicineRealtime {
       connectionQuality,
       messageCount: 0, // Would track from message store
       emergencyAlerts: 0, // Would track from alert store
-    };
+    }
   }
 
   /**
@@ -802,24 +802,24 @@ export class EnhancedTelemedicineRealtime {
    */
   async cleanup(): Promise<void> {
     // End all active sessions
-    const sessionIds = Array.from(this.channels.keys());
+    const sessionIds = Array.from(this.channels.keys())
     for (const sessionId of sessionIds) {
-      await this.endTelemedicineSession(sessionId);
+      await this.endTelemedicineSession(sessionId)
     }
 
     // Clear all data
-    this.channels.clear();
-    this.presenceStates.clear();
-    this.encryptionKeys.clear();
+    this.channels.clear()
+    this.presenceStates.clear()
+    this.encryptionKeys.clear()
 
     // Stop monitoring
     if (this.connectionQualityMonitor) {
-      clearInterval(this.connectionQualityMonitor);
-      this.connectionQualityMonitor = null;
+      clearInterval(this.connectionQualityMonitor)
+      this.connectionQualityMonitor = null
     }
 
-    console.log('✅ Enhanced Telemedicine Realtime service cleaned up');
+    console.log('✅ Enhanced Telemedicine Realtime service cleaned up')
   }
 }
 
-export default EnhancedTelemedicineRealtime;
+export default EnhancedTelemedicineRealtime

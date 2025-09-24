@@ -5,27 +5,27 @@
  * comparison tools, and Brazilian healthcare compliance information.
  */
 
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { zodResolver } from '@hookform/resolvers/zod';
-import React, { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
+} from '@/components/ui/select'
+import { zodResolver } from '@hookform/resolvers/zod'
+import React, { useEffect, useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
 // import { Textarea } from '@/components/ui/textarea';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 // import { Alert, AlertDescription } from '@/components/ui/alert';
 // import { Progress } from '@/components/ui/progress';
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils'
 import {
   AlertTriangle,
   // Users,
@@ -51,102 +51,102 @@ import {
   // Activity,
   Target,
   Zap,
-} from 'lucide-react';
+} from 'lucide-react'
 
 // =====================================
 // TYPES AND INTERFACES
 // =====================================
 
 interface TreatmentProcedure {
-  id: string;
-  name: string;
-  description: string;
-  category: 'facial' | 'body' | 'injectable' | 'laser' | 'surgical' | 'combination';
-  procedureType: 'minimally_invasive' | 'non_invasive' | 'surgical';
-  baseDuration: number; // in minutes
-  basePrice: number;
-  anvisaRegistration?: string;
-  requiresCertification: boolean;
-  popularity: number; // 1-5
-  effectiveness: number; // 1-5
-  safety: number; // 1-5
-  downtime: number; // in hours
-  resultsDuration: number; // in months
-  sessionsRequired: number;
-  contraindications: string[];
-  specialEquipment: string[];
-  recoveryTime: number; // in hours
-  maxSessions: number;
-  minSessions: number;
-  isActive: boolean;
-  tags: string[];
+  id: string
+  name: string
+  description: string
+  category: 'facial' | 'body' | 'injectable' | 'laser' | 'surgical' | 'combination'
+  procedureType: 'minimally_invasive' | 'non_invasive' | 'surgical'
+  baseDuration: number // in minutes
+  basePrice: number
+  anvisaRegistration?: string
+  requiresCertification: boolean
+  popularity: number // 1-5
+  effectiveness: number // 1-5
+  safety: number // 1-5
+  downtime: number // in hours
+  resultsDuration: number // in months
+  sessionsRequired: number
+  contraindications: string[]
+  specialEquipment: string[]
+  recoveryTime: number // in hours
+  maxSessions: number
+  minSessions: number
+  isActive: boolean
+  tags: string[]
   beforeAfterImages?: {
-    before: string;
-    after: string;
-    description: string;
-  }[];
-  professionals: string[];
+    before: string
+    after: string
+    description: string
+  }[]
+  professionals: string[]
   clinicalEvidence?: {
-    studies: number;
-    satisfactionRate: number;
-    complicationRate: number;
-  };
+    studies: number
+    satisfactionRate: number
+    complicationRate: number
+  }
   brazilianStandards: {
-    anvisaCompliant: boolean;
-    cfmApproved: boolean;
-    requiresMedicalSupervision: boolean;
-    emergencyProtocolRequired: boolean;
-  };
+    anvisaCompliant: boolean
+    cfmApproved: boolean
+    requiresMedicalSupervision: boolean
+    emergencyProtocolRequired: boolean
+  }
 }
 
 interface TreatmentPackage {
-  id: string;
-  name: string;
-  description: string;
-  category: string;
-  totalPrice: number;
-  packageDiscount: number; // percentage
-  totalSessions: number;
-  procedures: PackageProcedure[];
-  isActive: boolean;
-  validityPeriod: number; // in days
-  tags: string[];
-  popularity: number;
+  id: string
+  name: string
+  description: string
+  category: string
+  totalPrice: number
+  packageDiscount: number // percentage
+  totalSessions: number
+  procedures: PackageProcedure[]
+  isActive: boolean
+  validityPeriod: number // in days
+  tags: string[]
+  popularity: number
 }
 
 interface PackageProcedure {
-  id: string;
-  procedureId: string;
-  procedure: TreatmentProcedure;
-  sessions: number;
-  price: number;
+  id: string
+  procedureId: string
+  procedure: TreatmentProcedure
+  sessions: number
+  price: number
 }
 
 interface FilterOptions {
-  categories: string[];
-  priceRange: [number, number];
-  durationRange: [number, number];
-  downtimeRange: [number, number];
-  effectiveness: number;
-  safety: number;
-  anvisaApproved: boolean;
-  requiresCertification: boolean;
-  popularity: number;
+  categories: string[]
+  priceRange: [number, number]
+  durationRange: [number, number]
+  downtimeRange: [number, number]
+  effectiveness: number
+  safety: number
+  anvisaApproved: boolean
+  requiresCertification: boolean
+  popularity: number
 }
 
 interface SearchFilters {
-  query: string;
-  categories: string[];
-  priceRange: [number, number];
-  durationRange: [number, number];
-  downtimeRange: [number, number];
-  minEffectiveness: number;
-  minSafety: number;
-  anvisaApproved: boolean | 'all';
-  certificationRequired: boolean | 'all';
-  minPopularity: number;
-  sortBy: 'name' | 'price' | 'duration' | 'popularity' | 'effectiveness' | 'safety';
-  sortOrder: 'asc' | 'desc';
+  query: string
+  categories: string[]
+  priceRange: [number, number]
+  durationRange: [number, number]
+  downtimeRange: [number, number]
+  minEffectiveness: number
+  minSafety: number
+  anvisaApproved: boolean | 'all'
+  certificationRequired: boolean | 'all'
+  minPopularity: number
+  sortBy: 'name' | 'price' | 'duration' | 'popularity' | 'effectiveness' | 'safety'
+  sortOrder: 'asc' | 'desc'
 }
 
 const TreatmentSearchSchema = z.object({
@@ -163,24 +163,24 @@ const TreatmentSearchSchema = z.object({
   anvisaApproved: z.boolean().optional(),
   certificationRequired: z.boolean().optional(),
   minPopularity: z.number().min(1).max(5).optional(),
-});
+})
 
-type TreatmentSearchFormData = z.infer<typeof TreatmentSearchSchema>;
+type TreatmentSearchFormData = z.infer<typeof TreatmentSearchSchema>
 
 // =====================================
 // MAIN COMPONENT
 // =====================================
 
 export const TreatmentCatalogBrowser: React.FC = () => {
-  const [treatments, setTreatments] = useState<TreatmentProcedure[]>([]);
-  const [packages, setPackages] = useState<TreatmentPackage[]>([]);
-  const [filteredTreatments, setFilteredTreatments] = useState<TreatmentProcedure[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [selectedTreatment, setSelectedTreatment] = useState<TreatmentProcedure | null>(null);
-  const [showFilters, setShowFilters] = useState(false);
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-  const [activeTab, setActiveTab] = useState<'treatments' | 'packages' | 'compare'>('treatments');
-  const [compareList, setCompareList] = useState<string[]>([]);
+  const [treatments, setTreatments] = useState<TreatmentProcedure[]>([])
+  const [packages, setPackages] = useState<TreatmentPackage[]>([])
+  const [filteredTreatments, setFilteredTreatments] = useState<TreatmentProcedure[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [selectedTreatment, setSelectedTreatment] = useState<TreatmentProcedure | null>(null)
+  const [showFilters, setShowFilters] = useState(false)
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
+  const [activeTab, setActiveTab] = useState<'treatments' | 'packages' | 'compare'>('treatments')
+  const [compareList, setCompareList] = useState<string[]>([])
   const [searchFilters, setSearchFilters] = useState<SearchFilters>({
     query: '',
     categories: [],
@@ -194,7 +194,7 @@ export const TreatmentCatalogBrowser: React.FC = () => {
     minPopularity: 1,
     sortBy: 'name',
     sortOrder: 'asc',
-  });
+  })
 
   const filterForm = useForm<TreatmentSearchFormData>({
     resolver: zodResolver(TreatmentSearchSchema),
@@ -213,120 +213,120 @@ export const TreatmentCatalogBrowser: React.FC = () => {
       certificationRequired: false,
       minPopularity: 1,
     },
-  });
+  })
 
   // Load mock data
   useEffect(() => {
-    loadTreatmentData();
-  }, []);
+    loadTreatmentData()
+  }, [])
 
   // Filter treatments based on search criteria
   useEffect(() => {
     if (treatments.length > 0) {
-      const filtered = treatments.filter(treatment => {
+      const filtered = treatments.filter((treatment) => {
         // Text search
         if (searchFilters.query) {
-          const query = searchFilters.query.toLowerCase();
+          const query = searchFilters.query.toLowerCase()
           const matches = treatment.name.toLowerCase().includes(query)
             || treatment.description.toLowerCase().includes(query)
-            || treatment.tags.some(tag => tag.toLowerCase().includes(query));
-          if (!matches) return false;
+            || treatment.tags.some((tag) => tag.toLowerCase().includes(query))
+          if (!matches) return false
         }
 
         // Category filter
         if (searchFilters.categories.length > 0) {
-          if (!searchFilters.categories.includes(treatment.category)) return false;
+          if (!searchFilters.categories.includes(treatment.category)) return false
         }
 
         // Price filter
         if (
           treatment.basePrice < searchFilters.priceRange[0]
           || treatment.basePrice > searchFilters.priceRange[1]
-        ) return false;
+        ) return false
 
         // Duration filter
         if (
           treatment.baseDuration < searchFilters.durationRange[0]
           || treatment.baseDuration > searchFilters.durationRange[1]
-        ) return false;
+        ) return false
 
         // Downtime filter
         if (
           treatment.downtime < searchFilters.downtimeRange[0]
           || treatment.downtime > searchFilters.downtimeRange[1]
-        ) return false;
+        ) return false
 
         // Effectiveness filter
-        if (treatment.effectiveness < searchFilters.minEffectiveness) return false;
+        if (treatment.effectiveness < searchFilters.minEffectiveness) return false
 
         // Safety filter
-        if (treatment.safety < searchFilters.minSafety) return false;
+        if (treatment.safety < searchFilters.minSafety) return false
 
         // ANVISA filter
         if (
           searchFilters.anvisaApproved !== 'all'
           && treatment.brazilianStandards.anvisaCompliant !== searchFilters.anvisaApproved
-        ) return false;
+        ) return false
 
         // Certification filter
         if (
           searchFilters.certificationRequired !== 'all'
           && treatment.requiresCertification !== searchFilters.certificationRequired
-        ) return false;
+        ) return false
 
         // Popularity filter
-        if (treatment.popularity < searchFilters.minPopularity) return false;
+        if (treatment.popularity < searchFilters.minPopularity) return false
 
-        return true;
-      });
+        return true
+      })
 
       // Sort results
       const sorted = [...filtered].sort((a, b) => {
-        let aValue: any, bValue: any;
+        let aValue: any, bValue: any
 
         switch (searchFilters.sortBy) {
           case 'price':
-            aValue = a.basePrice;
-            bValue = b.basePrice;
-            break;
+            aValue = a.basePrice
+            bValue = b.basePrice
+            break
           case 'duration':
-            aValue = a.baseDuration;
-            bValue = b.baseDuration;
-            break;
+            aValue = a.baseDuration
+            bValue = b.baseDuration
+            break
           case 'popularity':
-            aValue = a.popularity;
-            bValue = b.popularity;
-            break;
+            aValue = a.popularity
+            bValue = b.popularity
+            break
           case 'effectiveness':
-            aValue = a.effectiveness;
-            bValue = b.effectiveness;
-            break;
+            aValue = a.effectiveness
+            bValue = b.effectiveness
+            break
           case 'safety':
-            aValue = a.safety;
-            bValue = b.safety;
-            break;
+            aValue = a.safety
+            bValue = b.safety
+            break
           default:
-            aValue = a.name;
-            bValue = b.name;
+            aValue = a.name
+            bValue = b.name
         }
 
         if (typeof aValue === 'string') {
           return searchFilters.sortOrder === 'asc'
             ? aValue.localeCompare(bValue)
-            : bValue.localeCompare(aValue);
+            : bValue.localeCompare(aValue)
         }
 
         return searchFilters.sortOrder === 'asc'
           ? aValue - bValue
-          : bValue - aValue;
-      });
+          : bValue - aValue
+      })
 
-      setFilteredTreatments(sorted);
+      setFilteredTreatments(sorted)
     }
-  }, [treatments, searchFilters]);
+  }, [treatments, searchFilters])
 
   const loadTreatmentData = async () => {
-    setIsLoading(true);
+    setIsLoading(true)
     try {
       // Mock treatment data
       const mockTreatments: TreatmentProcedure[] = [
@@ -516,7 +516,7 @@ export const TreatmentCatalogBrowser: React.FC = () => {
             emergencyProtocolRequired: true,
           },
         },
-      ];
+      ]
 
       const mockPackages: TreatmentPackage[] = [
         {
@@ -570,20 +570,20 @@ export const TreatmentCatalogBrowser: React.FC = () => {
             },
           ],
         },
-      ];
+      ]
 
-      setTreatments(mockTreatments);
-      setPackages(mockPackages);
-      setFilteredTreatments(mockTreatments);
+      setTreatments(mockTreatments)
+      setPackages(mockPackages)
+      setFilteredTreatments(mockTreatments)
     } catch (error) {
-      console.error('Error loading treatment data:', error);
+      console.error('Error loading treatment data:', error)
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
 
   const handleSearch = (data: TreatmentSearchFormData) => {
-    setSearchFilters(prev => ({
+    setSearchFilters((prev) => ({
       ...prev,
       query: data.query || '',
       categories: data.categories || [],
@@ -597,77 +597,77 @@ export const TreatmentCatalogBrowser: React.FC = () => {
         ? data.certificationRequired
         : 'all',
       minPopularity: data.minPopularity || 1,
-    }));
-  };
+    }))
+  }
 
   const handleFilterChange = (key: keyof SearchFilters, value: any) => {
-    setSearchFilters(prev => ({
+    setSearchFilters((prev) => ({
       ...prev,
       [key]: value,
-    }));
-  };
+    }))
+  }
 
   const toggleCompare = (treatmentId: string) => {
-    setCompareList(prev => {
+    setCompareList((prev) => {
       if (prev.includes(treatmentId)) {
-        return prev.filter(id => id !== treatmentId);
+        return prev.filter((id) => id !== treatmentId)
       } else if (prev.length < 3) {
-        return [...prev, treatmentId];
+        return [...prev, treatmentId]
       }
-      return prev;
-    });
-  };
+      return prev
+    })
+  }
 
   const getCategoryColor = (category: string) => {
     switch (category) {
       case 'facial':
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-blue-100 text-blue-800'
       case 'body':
-        return 'bg-green-100 text-green-800';
+        return 'bg-green-100 text-green-800'
       case 'injectable':
-        return 'bg-purple-100 text-purple-800';
+        return 'bg-purple-100 text-purple-800'
       case 'laser':
-        return 'bg-red-100 text-red-800';
+        return 'bg-red-100 text-red-800'
       case 'surgical':
-        return 'bg-orange-100 text-orange-800';
+        return 'bg-orange-100 text-orange-800'
       case 'combination':
-        return 'bg-indigo-100 text-indigo-800';
+        return 'bg-indigo-100 text-indigo-800'
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-gray-100 text-gray-800'
     }
-  };
+  }
 
   const getCategoryLabel = (category: string) => {
     switch (category) {
       case 'facial':
-        return 'Facial';
+        return 'Facial'
       case 'body':
-        return 'Corporal';
+        return 'Corporal'
       case 'injectable':
-        return 'Injetável';
+        return 'Injetável'
       case 'laser':
-        return 'Laser';
+        return 'Laser'
       case 'surgical':
-        return 'Cirúrgico';
+        return 'Cirúrgico'
       case 'combination':
-        return 'Combinado';
+        return 'Combinado'
       default:
-        return category;
+        return category
     }
-  };
+  }
 
   const getProcedureTypeLabel = (type: string) => {
     switch (type) {
       case 'minimally_invasive':
-        return 'Minimamente Invasivo';
+        return 'Minimamente Invasivo'
       case 'non_invasive':
-        return 'Não Invasivo';
+        return 'Não Invasivo'
       case 'surgical':
-        return 'Cirúrgico';
+        return 'Cirúrgico'
       default:
-        return type;
+        return type
     }
-  };
+  }
 
   const getRatingStars = (rating: number) => {
     return Array(5).fill(0).map((_, index) => (
@@ -678,35 +678,35 @@ export const TreatmentCatalogBrowser: React.FC = () => {
           index < rating ? 'text-yellow-500 fill-current' : 'text-gray-300',
         )}
       />
-    ));
-  };
+    ))
+  }
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
       currency: 'BRL',
-    }).format(value);
-  };
+    }).format(value)
+  }
 
   const formatDuration = (minutes: number) => {
     if (minutes < 60) {
-      return `${minutes} min`;
+      return `${minutes} min`
     }
-    const hours = Math.floor(minutes / 60);
-    const remainingMinutes = minutes % 60;
-    return remainingMinutes > 0 ? `${hours}h ${remainingMinutes}min` : `${hours}h`;
-  };
+    const hours = Math.floor(minutes / 60)
+    const remainingMinutes = minutes % 60
+    return remainingMinutes > 0 ? `${hours}h ${remainingMinutes}min` : `${hours}h`
+  }
 
   const formatDowntime = (hours: number) => {
-    if (hours === 0) return 'Sem downtime';
-    if (hours < 24) return `${hours} horas`;
-    const days = Math.floor(hours / 24);
-    return `${days} dia${days > 1 ? 's' : ''}`;
-  };
+    if (hours === 0) return 'Sem downtime'
+    if (hours < 24) return `${hours} horas`
+    const days = Math.floor(hours / 24)
+    return `${days} dia${days > 1 ? 's' : ''}`
+  }
 
   const getCompareTreatments = () => {
-    return treatments.filter(t => compareList.includes(t.id));
-  };
+    return treatments.filter((t) => compareList.includes(t.id))
+  }
 
   if (isLoading) {
     return (
@@ -717,7 +717,7 @@ export const TreatmentCatalogBrowser: React.FC = () => {
           <p>Carregando catálogo de tratamentos...</p>
         </div>
       </div>
-    );
+    )
   }
 
   return (
@@ -789,7 +789,7 @@ export const TreatmentCatalogBrowser: React.FC = () => {
                 placeholder='Buscar tratamentos, categorias ou tags...'
                 className='pl-10'
                 value={searchFilters.query}
-                onChange={e => handleFilterChange('query', e.target.value)}
+                onChange={(e) => handleFilterChange('query', e.target.value)}
               />
             </div>
             <Button onClick={filterForm.handleSubmit(handleSearch)}>
@@ -807,7 +807,7 @@ export const TreatmentCatalogBrowser: React.FC = () => {
                     type='number'
                     placeholder='Min'
                     value={searchFilters.priceRange[0]}
-                    onChange={e =>
+                    onChange={(e) =>
                       handleFilterChange('priceRange', [
                         Number(e.target.value),
                         searchFilters.priceRange[1],
@@ -818,7 +818,7 @@ export const TreatmentCatalogBrowser: React.FC = () => {
                     type='number'
                     placeholder='Max'
                     value={searchFilters.priceRange[1]}
-                    onChange={e =>
+                    onChange={(e) =>
                       handleFilterChange('priceRange', [
                         searchFilters.priceRange[0],
                         Number(e.target.value),
@@ -834,7 +834,7 @@ export const TreatmentCatalogBrowser: React.FC = () => {
                     type='number'
                     placeholder='Min'
                     value={searchFilters.durationRange[0]}
-                    onChange={e =>
+                    onChange={(e) =>
                       handleFilterChange('durationRange', [
                         Number(e.target.value),
                         searchFilters.durationRange[1],
@@ -845,7 +845,7 @@ export const TreatmentCatalogBrowser: React.FC = () => {
                     type='number'
                     placeholder='Max'
                     value={searchFilters.durationRange[1]}
-                    onChange={e =>
+                    onChange={(e) =>
                       handleFilterChange('durationRange', [
                         searchFilters.durationRange[0],
                         Number(e.target.value),
@@ -861,7 +861,7 @@ export const TreatmentCatalogBrowser: React.FC = () => {
                     type='number'
                     placeholder='Min'
                     value={searchFilters.downtimeRange[0]}
-                    onChange={e =>
+                    onChange={(e) =>
                       handleFilterChange('downtimeRange', [
                         Number(e.target.value),
                         searchFilters.downtimeRange[1],
@@ -872,7 +872,7 @@ export const TreatmentCatalogBrowser: React.FC = () => {
                     type='number'
                     placeholder='Max'
                     value={searchFilters.downtimeRange[1]}
-                    onChange={e =>
+                    onChange={(e) =>
                       handleFilterChange('downtimeRange', [
                         searchFilters.downtimeRange[0],
                         Number(e.target.value),
@@ -886,7 +886,7 @@ export const TreatmentCatalogBrowser: React.FC = () => {
                 <div className='flex space-x-2 mt-1'>
                   <Select
                     value={searchFilters.sortBy}
-                    onValueChange={value => handleFilterChange('sortBy', value)}
+                    onValueChange={(value) => handleFilterChange('sortBy', value)}
                   >
                     <SelectTrigger>
                       <SelectValue />
@@ -920,16 +920,16 @@ export const TreatmentCatalogBrowser: React.FC = () => {
 
           {/* Quick Filter Chips */}
           <div className='flex flex-wrap gap-2'>
-            {['facial', 'body', 'injectable', 'laser', 'surgical'].map(category => (
+            {['facial', 'body', 'injectable', 'laser', 'surgical'].map((category) => (
               <Button
                 key={category}
                 variant={searchFilters.categories.includes(category) ? 'default' : 'outline'}
                 size='sm'
                 onClick={() => {
                   const newCategories = searchFilters.categories.includes(category)
-                    ? searchFilters.categories.filter(c => c !== category)
-                    : [...searchFilters.categories, category];
-                  handleFilterChange('categories', newCategories);
+                    ? searchFilters.categories.filter((c) => c !== category)
+                    : [...searchFilters.categories, category]
+                  handleFilterChange('categories', newCategories)
                 }}
               >
                 {getCategoryLabel(category)}
@@ -984,7 +984,7 @@ export const TreatmentCatalogBrowser: React.FC = () => {
           {viewMode === 'grid'
             ? (
               <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
-                {filteredTreatments.map(treatment => (
+                {filteredTreatments.map((treatment) => (
                   <Card
                     key={treatment.id}
                     className='overflow-hidden hover:shadow-lg transition-shadow'
@@ -1100,7 +1100,7 @@ export const TreatmentCatalogBrowser: React.FC = () => {
             )
             : (
               <div className='space-y-4'>
-                {filteredTreatments.map(treatment => (
+                {filteredTreatments.map((treatment) => (
                   <Card key={treatment.id}>
                     <CardContent className='p-6'>
                       <div className='flex items-start justify-between'>
@@ -1185,7 +1185,7 @@ export const TreatmentCatalogBrowser: React.FC = () => {
 
         <TabsContent value='packages' className='space-y-4'>
           <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
-            {packages.map(pkg => (
+            {packages.map((pkg) => (
               <Card key={pkg.id} className='overflow-hidden'>
                 <CardHeader className='pb-3'>
                   <div className='flex items-start justify-between'>
@@ -1227,7 +1227,7 @@ export const TreatmentCatalogBrowser: React.FC = () => {
                   <div>
                     <span className='text-sm text-gray-600'>Procedimentos incluídos:</span>
                     <div className='mt-2 space-y-2'>
-                      {pkg.procedures.map(proc => (
+                      {pkg.procedures.map((proc) => (
                         <div
                           key={proc.id}
                           className='flex items-center justify-between p-2 bg-gray-50 rounded'
@@ -1267,7 +1267,7 @@ export const TreatmentCatalogBrowser: React.FC = () => {
               <thead>
                 <tr className='border-b'>
                   <th className='text-left p-3'>Característica</th>
-                  {getCompareTreatments().map(treatment => (
+                  {getCompareTreatments().map((treatment) => (
                     <th key={treatment.id} className='text-center p-3 min-w-[200px]'>
                       {treatment.name}
                     </th>
@@ -1277,7 +1277,7 @@ export const TreatmentCatalogBrowser: React.FC = () => {
               <tbody>
                 <tr className='border-b'>
                   <td className='p-3 font-medium'>Preço</td>
-                  {getCompareTreatments().map(treatment => (
+                  {getCompareTreatments().map((treatment) => (
                     <td key={treatment.id} className='text-center p-3'>
                       {formatCurrency(treatment.basePrice)}
                     </td>
@@ -1285,7 +1285,7 @@ export const TreatmentCatalogBrowser: React.FC = () => {
                 </tr>
                 <tr className='border-b'>
                   <td className='p-3 font-medium'>Duração</td>
-                  {getCompareTreatments().map(treatment => (
+                  {getCompareTreatments().map((treatment) => (
                     <td key={treatment.id} className='text-center p-3'>
                       {formatDuration(treatment.baseDuration)}
                     </td>
@@ -1293,7 +1293,7 @@ export const TreatmentCatalogBrowser: React.FC = () => {
                 </tr>
                 <tr className='border-b'>
                   <td className='p-3 font-medium'>Downtime</td>
-                  {getCompareTreatments().map(treatment => (
+                  {getCompareTreatments().map((treatment) => (
                     <td key={treatment.id} className='text-center p-3'>
                       {formatDowntime(treatment.downtime)}
                     </td>
@@ -1301,7 +1301,7 @@ export const TreatmentCatalogBrowser: React.FC = () => {
                 </tr>
                 <tr className='border-b'>
                   <td className='p-3 font-medium'>Efetividade</td>
-                  {getCompareTreatments().map(treatment => (
+                  {getCompareTreatments().map((treatment) => (
                     <td key={treatment.id} className='text-center p-3'>
                       <div className='flex justify-center'>
                         {getRatingStars(treatment.effectiveness)}
@@ -1311,7 +1311,7 @@ export const TreatmentCatalogBrowser: React.FC = () => {
                 </tr>
                 <tr className='border-b'>
                   <td className='p-3 font-medium'>Segurança</td>
-                  {getCompareTreatments().map(treatment => (
+                  {getCompareTreatments().map((treatment) => (
                     <td key={treatment.id} className='text-center p-3'>
                       <div className='flex justify-center'>{getRatingStars(treatment.safety)}</div>
                     </td>
@@ -1319,7 +1319,7 @@ export const TreatmentCatalogBrowser: React.FC = () => {
                 </tr>
                 <tr className='border-b'>
                   <td className='p-3 font-medium'>Sessões Necessárias</td>
-                  {getCompareTreatments().map(treatment => (
+                  {getCompareTreatments().map((treatment) => (
                     <td key={treatment.id} className='text-center p-3'>
                       {treatment.sessionsRequired}
                     </td>
@@ -1327,7 +1327,7 @@ export const TreatmentCatalogBrowser: React.FC = () => {
                 </tr>
                 <tr className='border-b'>
                   <td className='p-3 font-medium'>Conformidade ANVISA</td>
-                  {getCompareTreatments().map(treatment => (
+                  {getCompareTreatments().map((treatment) => (
                     <td key={treatment.id} className='text-center p-3'>
                       {treatment.brazilianStandards.anvisaCompliant
                         ? <CheckCircle className='h-5 w-5 text-green-500 mx-auto' />
@@ -1337,7 +1337,7 @@ export const TreatmentCatalogBrowser: React.FC = () => {
                 </tr>
                 <tr>
                   <td className='p-3 font-medium'>Ações</td>
-                  {getCompareTreatments().map(treatment => (
+                  {getCompareTreatments().map((treatment) => (
                     <td key={treatment.id} className='text-center p-3'>
                       <div className='flex justify-center space-x-2'>
                         <Button
@@ -1504,8 +1504,8 @@ export const TreatmentCatalogBrowser: React.FC = () => {
         </div>
       )}
     </div>
-  );
-};
+  )
+}
 
 // Export the component
-export default TreatmentCatalogBrowser;
+export default TreatmentCatalogBrowser

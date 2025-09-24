@@ -312,7 +312,7 @@ style O fill:#69f,stroke:#333
 To implement a patient registration form with proper validation and accessibility:
 
 ```jsx
-import { HealthcareForm, HealthcareSelect, HealthcareTextField } from '@neonpro/ui';
+import { HealthcareForm, HealthcareSelect, HealthcareTextField } from '@neonpro/ui'
 
 function PatientRegistrationForm() {
   return (
@@ -353,7 +353,7 @@ function PatientRegistrationForm() {
 
       <button type='submit'>Register Patient</button>
     </HealthcareForm>
-  );
+  )
 }
 ```
 
@@ -362,18 +362,18 @@ function PatientRegistrationForm() {
 To add LGPD-compliant consent management to your application:
 
 ```jsx
-import { LGPDConsentBanner, useLGPDConsent } from '@neonpro/ui';
-import { useEffect } from 'react';
+import { LGPDConsentBanner, useLGPDConsent } from '@neonpro/ui'
+import { useEffect } from 'react'
 
 function App() {
-  const { hasConsent } = useLGPDConsent();
+  const { hasConsent } = useLGPDConsent()
 
   useEffect(() => {
     if (hasConsent) {
       // Initialize analytics and other services
-      initializeAnalytics();
+      initializeAnalytics()
     }
-  }, [hasConsent]);
+  }, [hasConsent])
 
   return (
     <>
@@ -396,7 +396,7 @@ function App() {
         dataProcessingUrl='/data-processing'
       />
     </>
-  );
+  )
 }
 ```
 
@@ -405,7 +405,7 @@ function App() {
 To configure the healthcare theme with emergency mode support:
 
 ```jsx
-import { HealthcareThemeProvider } from '@neonpro/ui';
+import { HealthcareThemeProvider } from '@neonpro/ui'
 
 function RootLayout({ children }) {
   return (
@@ -419,18 +419,18 @@ function RootLayout({ children }) {
     >
       {children}
     </HealthcareThemeProvider>
-  );
+  )
 }
 
 // Elsewhere in the application
 function EmergencyButton() {
-  const { toggleEmergencyMode } = useHealthcareTheme();
+  const { toggleEmergencyMode } = useHealthcareTheme()
 
   return (
     <button onClick={toggleEmergencyMode}>
       Activate Emergency Mode
     </button>
-  );
+  )
 }
 ```
 
@@ -451,20 +451,21 @@ When integrating @neonpro/ui with existing applications, styling conflicts may o
 1. Ensure Tailwind's purge settings include the UI package paths in your `tailwind.config.ts`:
 
 ```ts
-content: [
+content: ;
+;[
   './src/**/*.{js,ts,jsx,tsx}',
   './node_modules/@neonpro/ui/src/**/*.{js,ts,jsx,tsx}',
-];
+]
 ```
 
 2. Use the `!important` modifier sparingly and prefer composition over override:
 
 ```jsx
 {/* Good: Compose classes */}
-<HealthcareTextField className='max-w-md' />;
+<HealthcareTextField className='max-w-md' />
 
 {/* Avoid: Overriding internal styles */}
-<HealthcareTextField className='!border-red-500 !text-lg' />;
+<HealthcareTextField className='!border-red-500 !text-lg' />
 ```
 
 3. Wrap the application with the theme provider at the root level to ensure consistent styling.
@@ -486,10 +487,10 @@ For optimal performance:
 
 ```ts
 // Good
-import { Button } from '@neonpro/ui';
+import { Button } from '@neonpro/ui'
 
 // Avoid
-import * as UI from '@neonpro/ui';
+import * as UI from '@neonpro/ui'
 ```
 
 2. Use React.memo for components that render frequently with the same props.
@@ -497,7 +498,7 @@ import * as UI from '@neonpro/ui';
 3. Implement lazy loading for less frequently used components:
 
 ```ts
-const HeavyComponent = React.lazy(() => import('@neonpro/ui/heavy-component'));
+const HeavyComponent = React.lazy(() => import('@neonpro/ui/heavy-component'))
 ```
 
 ### Maintaining Consistent UX

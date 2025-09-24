@@ -7,7 +7,7 @@
  * @fileoverview Healthcare form foundation with compliance and accessibility
  */
 
-'use client';
+'use client'
 
 import React, {
   createContext,
@@ -17,76 +17,76 @@ import React, {
   useEffect,
   useRef,
   useState,
-} from 'react';
-import { z } from 'zod';
-import { cn } from '../../lib/utils';
+} from 'react'
+import { z } from 'zod'
+import { cn } from '../../lib/utils'
 import {
   announceToScreenReader,
   generateAccessibleId,
   HealthcarePriority,
   useFocusTrap,
-} from '../../utils/accessibility';
-import { DataSensitivity, validateEmergencyData } from '../../utils/healthcare-validation';
-import { useHealthcareTheme } from '../healthcare/healthcare-theme-provider';
+} from '../../utils/accessibility'
+import { DataSensitivity, validateEmergencyData } from '../../utils/healthcare-validation'
+import { useHealthcareTheme } from '../healthcare/healthcare-theme-provider'
 
 // Healthcare form validation context
 export interface HealthcareFormContext {
   // Form state
-  isSubmitting: boolean;
-  hasErrors: boolean;
-  dataSensitivity: DataSensitivity;
+  isSubmitting: boolean
+  hasErrors: boolean
+  dataSensitivity: DataSensitivity
 
   // LGPD compliance
-  consentRequired: boolean;
-  consentGiven: boolean;
+  consentRequired: boolean
+  consentGiven: boolean
 
   // Healthcare-specific
-  emergencyForm: boolean;
-  patientDataForm: boolean;
+  emergencyForm: boolean
+  patientDataForm: boolean
 
   // Validation
-  errors: Record<string, string[]>;
-  setFieldError: (field: string, errors: string[]) => void;
-  clearFieldError: (field: string) => void;
+  errors: Record<string, string[]>
+  setFieldError: (field: string, errors: string[]) => void
+  clearFieldError: (field: string) => void
 
   // Accessibility
-  formId: string;
-  announceError: (message: string) => void;
+  formId: string
+  announceError: (message: string) => void
 }
 
-const HealthcareFormContext = createContext<HealthcareFormContext | null>(null);
+const HealthcareFormContext = createContext<HealthcareFormContext | null>(null)
 
 // Healthcare form props
 export interface HealthcareFormProps
   extends Omit<FormHTMLAttributes<HTMLFormElement>, 'onSubmit' | 'onError'>
 {
-  children: ReactNode;
+  children: ReactNode
 
   // Form configuration
-  dataSensitivity?: DataSensitivity;
-  emergencyForm?: boolean;
-  patientDataForm?: boolean;
+  dataSensitivity?: DataSensitivity
+  emergencyForm?: boolean
+  patientDataForm?: boolean
 
   // LGPD compliance
-  requireConsent?: boolean;
-  consentVersion?: string;
+  requireConsent?: boolean
+  consentVersion?: string
 
   // Validation
-  validationSchema?: z.ZodSchema;
-  validationErrors?: Record<string, string[]>;
+  validationSchema?: z.ZodSchema
+  validationErrors?: Record<string, string[]>
 
   // Form submission
   onSubmit?: (
     data: FormData,
     context: HealthcareFormContext,
-  ) => Promise<void> | void;
-  onError?: (errors: Record<string, string[]>) => void;
+  ) => Promise<void> | void
+  onError?: (errors: Record<string, string[]>) => void
 
   // Accessibility
-  ariaLabel?: string;
-  emergencyShortcuts?: boolean;
+  ariaLabel?: string
+  emergencyShortcuts?: boolean
 
-  className?: string;
+  className?: string
 }
 
 /**
@@ -112,129 +112,129 @@ export function HealthcareForm({
   ...props
 }: HealthcareFormProps) {
   // Theme and accessibility context
-  const { accessibility } = useHealthcareTheme();
+  const { accessibility } = useHealthcareTheme()
   // TODO: Implement theme usage
   // const { theme, accessibility } = useHealthcareTheme();
 
   // Form state
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [errors, setErrors] = useState<Record<string, string[]>>(validationErrors);
-  const [consentGiven, setConsentGiven] = useState(false);
-  const formRef = useRef<HTMLFormElement>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [errors, setErrors] = useState<Record<string, string[]>>(validationErrors)
+  const [consentGiven, setConsentGiven] = useState(false)
+  const formRef = useRef<HTMLFormElement>(null)
 
   // Generate unique form ID
-  const formId = generateAccessibleId('healthcare-form');
+  const formId = generateAccessibleId('healthcare-form')
 
   // Focus trap for emergency forms
   const focusTrapRef = useFocusTrap(
     emergencyForm && accessibility.isEmergencyMode,
-  );
+  )
 
   // Merge refs for emergency forms
   const mergedRef = emergencyForm
     ? (node: HTMLFormElement | null) => {
-      formRef.current = node as HTMLFormElement | null;
+      formRef.current = node as HTMLFormElement | null
       const ft = focusTrapRef as unknown as
         | ((n: HTMLElement) => void)
         | React.RefObject<HTMLElement>
-        | null;
+        | null
       if (typeof ft === 'function' && node) {
-        ft(node);
+        ft(node)
       } else if (ft && 'current' in ft && node) {
-        (ft as React.RefObject<HTMLElement | null>).current = node as unknown as HTMLElement | null;
+        ;(ft as React.RefObject<HTMLElement | null>).current = node as unknown as HTMLElement | null
       }
     }
-    : formRef;
+    : formRef
 
   // Error management functions
   const setFieldError = (field: string, fieldErrors: string[]) => {
-    setErrors(prev => ({
+    setErrors((prev) => ({
       ...prev,
       [field]: fieldErrors,
-    }));
-  };
+    }))
+  }
 
   const clearFieldError = (field: string) => {
-    setErrors(prev => {
-      const newErrors = { ...prev };
-      delete newErrors[field];
-      return newErrors;
-    });
-  };
+    setErrors((prev) => {
+      const newErrors = { ...prev }
+      delete newErrors[field]
+      return newErrors
+    })
+  }
 
   const announceError = (message: string) => {
     const priority = emergencyForm
       ? HealthcarePriority.EMERGENCY
-      : HealthcarePriority.HIGH;
-    announceToScreenReader(message, priority);
-  };
+      : HealthcarePriority.HIGH
+    announceToScreenReader(message, priority)
+  }
 
   // Form submission handler
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+    event.preventDefault()
 
-    if (isSubmitting) {return;}
+    if (isSubmitting) return
 
-    const form = event.currentTarget;
-    const formData = new FormData(form);
+    const form = event.currentTarget
+    const formData = new FormData(form)
 
-    setIsSubmitting(true);
+    setIsSubmitting(true)
 
     try {
       // Clear previous errors
-      setErrors({});
+      setErrors({})
 
       // LGPD consent validation
       if (requireConsent && !consentGiven) {
-        const consentError = ['Consentimento LGPD é obrigatório'];
-        setFieldError('consent', consentError);
+        const consentError = ['Consentimento LGPD é obrigatório']
+        setFieldError('consent', consentError)
         announceError(
           'Consentimento para processamento de dados é obrigatório',
-        );
-        return;
+        )
+        return
       }
 
       // Healthcare-specific validations
-      const formDataObject = Object.fromEntries(formData.entries());
+      const formDataObject = Object.fromEntries(formData.entries())
 
       // Emergency data validation for patient forms
       if (patientDataForm) {
-        const emergencyValidation = validateEmergencyData(formDataObject);
+        const emergencyValidation = validateEmergencyData(formDataObject)
         if (!emergencyValidation.isValid) {
-          emergencyValidation.errors.forEach(error => {
-            announceError(error);
-          });
-          setFieldError('emergency', emergencyValidation.errors);
-          return;
+          emergencyValidation.errors.forEach((error) => {
+            announceError(error)
+          })
+          setFieldError('emergency', emergencyValidation.errors)
+          return
         }
       }
 
       // Schema validation if provided
       if (validationSchema) {
         try {
-          await validationSchema.parseAsync(formDataObject);
+          await validationSchema.parseAsync(formDataObject)
         } catch (validationError) {
           if (validationError instanceof z.ZodError) {
-            const fieldErrors: Record<string, string[]> = {};
+            const fieldErrors: Record<string, string[]> = {}
 
             validationError.errors.forEach((error: z.ZodIssue) => {
-              const field = error.path.join('.');
+              const field = error.path.join('.')
               if (!fieldErrors[field]) {
-                fieldErrors[field] = [];
+                fieldErrors[field] = []
               }
-              fieldErrors[field].push(error.message);
-            });
+              fieldErrors[field].push(error.message)
+            })
 
-            setErrors(fieldErrors);
-            onError?.(fieldErrors);
+            setErrors(fieldErrors)
+            onError?.(fieldErrors)
 
             // Announce first error
-            const firstError = Object.values(fieldErrors)[0]?.[0];
+            const firstError = Object.values(fieldErrors)[0]?.[0]
             if (firstError) {
-              announceError(firstError);
+              announceError(firstError)
             }
 
-            return;
+            return
           }
         }
       }
@@ -253,10 +253,10 @@ export function HealthcareForm({
         clearFieldError,
         formId,
         announceError,
-      };
+      }
 
       // Call onSubmit handler
-      await onSubmit?.(formData, context);
+      await onSubmit?.(formData, context)
 
       // Success announcement
       announceToScreenReader(
@@ -264,50 +264,50 @@ export function HealthcareForm({
           ? 'Formulário de emergência enviado com sucesso'
           : 'Formulário enviado com sucesso',
         emergencyForm ? HealthcarePriority.EMERGENCY : HealthcarePriority.HIGH,
-      );
+      )
     } catch (error) {
-      console.error('Healthcare form submission error:', error);
+      console.error('Healthcare form submission error:', error)
 
       const errorMessage = error instanceof Error
         ? error.message
-        : 'Erro desconhecido ao enviar formulário';
+        : 'Erro desconhecido ao enviar formulário'
 
-      setFieldError('submit', [errorMessage]);
-      announceError(`Erro ao enviar formulário: ${errorMessage}`);
+      setFieldError('submit', [errorMessage])
+      announceError(`Erro ao enviar formulário: ${errorMessage}`)
     } finally {
-      setIsSubmitting(false);
+      setIsSubmitting(false)
     }
-  };
+  }
 
   // Keyboard shortcuts for emergency forms
   useEffect(() => {
-    if (!emergencyShortcuts || !emergencyForm) {return;}
+    if (!emergencyShortcuts || !emergencyForm) return
 
     const handleKeyDown = (event: KeyboardEvent) => {
       // Ctrl+Shift+S: Quick save for emergency
       if (event.ctrlKey && event.shiftKey && event.key === 'S') {
-        event.preventDefault();
-        formRef.current?.requestSubmit();
+        event.preventDefault()
+        formRef.current?.requestSubmit()
         announceToScreenReader(
           'Salvamento rápido de emergência ativado',
           HealthcarePriority.EMERGENCY,
-        );
+        )
       }
 
       // Alt+H: Help/assistance call
       if (event.altKey && event.key === 'h') {
-        event.preventDefault();
+        event.preventDefault()
         announceToScreenReader(
           'Chamando assistência médica',
           HealthcarePriority.EMERGENCY,
-        );
+        )
         // Could trigger help modal or notification
       }
-    };
+    }
 
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [emergencyShortcuts, emergencyForm]);
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [emergencyShortcuts, emergencyForm])
 
   // Context value
   const contextValue: HealthcareFormContext = {
@@ -323,7 +323,7 @@ export function HealthcareForm({
     clearFieldError,
     formId,
     announceError,
-  };
+  }
 
   // Form CSS classes
   const formClasses = cn(
@@ -336,7 +336,7 @@ export function HealthcareForm({
       'healthcare-form--has-errors': contextValue.hasErrors,
     },
     className,
-  );
+  )
 
   return (
     <HealthcareFormContext.Provider value={contextValue}>
@@ -415,7 +415,7 @@ export function HealthcareForm({
               <input
                 type='checkbox'
                 checked={consentGiven}
-                onChange={e => setConsentGiven(e.target.checked)}
+                onChange={(e) => setConsentGiven(e.target.checked)}
                 className='mt-0.5'
                 aria-describedby={`${formId}-consent-description`}
               />
@@ -450,18 +450,18 @@ export function HealthcareForm({
         {children}
       </form>
     </HealthcareFormContext.Provider>
-  );
+  )
 }
 
 /**
  * Hook to use healthcare form context
  */
 export function useHealthcareForm(): HealthcareFormContext {
-  const context = useContext(HealthcareFormContext);
+  const context = useContext(HealthcareFormContext)
 
   if (!context) {
-    throw new Error('useHealthcareForm must be used within a HealthcareForm');
+    throw new Error('useHealthcareForm must be used within a HealthcareForm')
   }
 
-  return context;
+  return context
 }

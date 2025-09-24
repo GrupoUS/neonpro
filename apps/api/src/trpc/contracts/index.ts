@@ -3,21 +3,21 @@
  * Healthcare-compliant API contracts for NeonPro Platform
  */
 
-export { agentRouter } from '../routers/agent';
-export { aiRouter } from './ai';
-export { appointmentRouter } from './appointment';
-export { clinicRouter } from './clinic';
-export { patientRouter } from './patient';
-export { professionalRouter } from './professional';
+export { agentRouter } from '../routers/agent'
+export { aiRouter } from './ai'
+export { appointmentRouter } from './appointment'
+export { clinicRouter } from './clinic'
+export { patientRouter } from './patient'
+export { professionalRouter } from './professional'
 
 // Main API router combining all contracts
-import { agentRouter } from '../routers/agent';
-import { router } from '../trpc';
-import { aiRouter } from './ai';
-import { appointmentRouter } from './appointment';
-import { clinicRouter } from './clinic';
-import { patientRouter } from './patient';
-import { professionalRouter } from './professional';
+import { agentRouter } from '../routers/agent'
+import { router } from '../trpc'
+import { aiRouter } from './ai'
+import { appointmentRouter } from './appointment'
+import { clinicRouter } from './clinic'
+import { patientRouter } from './patient'
+import { professionalRouter } from './professional'
 
 /**
  * Comprehensive API router for NeonPro Platform
@@ -30,10 +30,10 @@ export const apiRouter = router({
   clinic: clinicRouter,
   ai: aiRouter,
   agent: agentRouter,
-});
+})
 
 // Export type definition for the API router
-export type ApiRouter = typeof apiRouter;
+export type ApiRouter = typeof apiRouter
 
 /**
  * Healthcare API Contract Summary:

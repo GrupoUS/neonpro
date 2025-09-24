@@ -1,69 +1,69 @@
-import { Context, Next } from 'hono';
-import { logger } from '../lib/logger';
+import { Context, Next } from 'hono'
+import { logger } from '../lib/logger'
 
 /**
  * Simple in-memory rate limiting store
  */
 class RateLimitStore {
-  private store = new Map<string, { count: number; resetTime: number }>();
+  private store = new Map<string, { count: number; resetTime: number }>()
 
   get(key: string): { count: number; resetTime: number } | undefined {
-    const entry = this.store.get(key);
+    const entry = this.store.get(key)
 
     // Clean up expired entries
     if (entry && Date.now() > entry.resetTime) {
-      this.store.delete(key);
-      return undefined;
+      this.store.delete(key)
+      return undefined
     }
 
-    return entry;
+    return entry
   }
 
   set(key: string, count: number, windowMs: number): void {
     this.store.set(key, {
       count,
       resetTime: Date.now() + windowMs,
-    });
+    })
   }
 
   increment(key: string, windowMs: number): number {
-    const existing = this.get(key);
+    const existing = this.get(key)
 
     if (!existing) {
-      this.set(key, 1, windowMs);
-      return 1;
+      this.set(key, 1, windowMs)
+      return 1
     }
 
-    const newCount = existing.count + 1;
-    this.set(key, newCount, windowMs);
-    return newCount;
+    const newCount = existing.count + 1
+    this.set(key, newCount, windowMs)
+    return newCount
   }
 
   // Clean up expired entries periodically
   cleanup(): void {
-    const now = Date.now();
+    const now = Date.now()
     for (const [key, entry] of this.store.entries()) {
       if (now > entry.resetTime) {
-        this.store.delete(key);
+        this.store.delete(key)
       }
     }
   }
 }
 
-const store = new RateLimitStore();
+const store = new RateLimitStore()
 
 // Clean up expired entries every 5 minutes
-setInterval(() => store.cleanup(), 5 * 60 * 1000);
+setInterval(() => store.cleanup(), 5 * 60 * 1000)
 
 /**
  * Rate limiting configuration
  */
 interface RateLimitConfig {
-  windowMs: number;
-  maxRequests: number;
-  keyGenerator?: (c: Context) => string;
-  skipSuccessfulRequests?: boolean;
-  skipFailedRequests?: boolean;
+  windowMs: number
+  maxRequests: number
+  keyGenerator?: (c: Context) => string
+  skipSuccessfulRequests?: boolean
+  skipFailedRequests?: boolean
 }
 
 /**
@@ -73,9 +73,9 @@ function defaultKeyGenerator(c: Context): string {
   const ip = c.req.header('x-forwarded-for')
     || c.req.header('x-real-ip')
     || c.req.header('cf-connecting-ip')
-    || 'unknown';
+    || 'unknown'
 
-  return `rate_limit:${ip}`;
+  return `rate_limit:${ip}`
 }
 
 /**
@@ -88,19 +88,19 @@ function createRateLimit(config: RateLimitConfig) {
     keyGenerator = defaultKeyGenerator,
     skipSuccessfulRequests = false,
     skipFailedRequests = false,
-  } = config;
+  } = config
 
   return async (c: Context, next: Next) => {
-    const key = keyGenerator(c);
+    const key = keyGenerator(c)
 
     // Get current count
-    const current = store.get(key);
-    const count = current ? current.count : 0;
+    const current = store.get(key)
+    const count = current ? current.count : 0
 
     // Check if rate limit exceeded
     if (count >= maxRequests) {
-      const resetTime = current ? current.resetTime : Date.now() + windowMs;
-      const retryAfter = Math.ceil((resetTime - Date.now()) / 1000);
+      const resetTime = current ? current.resetTime : Date.now() + windowMs
+      const retryAfter = Math.ceil((resetTime - Date.now()) / 1000)
 
       logger.warn('Rate limit exceeded', {
         key,
@@ -110,13 +110,13 @@ function createRateLimit(config: RateLimitConfig) {
         path: c.req.path,
         method: c.req.method,
         ip: c.req.header('x-forwarded-for') || c.req.header('x-real-ip'),
-      });
+      })
 
       // Set rate limit headers
-      c.header('X-RateLimit-Limit', maxRequests.toString());
-      c.header('X-RateLimit-Remaining', '0');
-      c.header('X-RateLimit-Reset', Math.ceil(resetTime / 1000).toString());
-      c.header('Retry-After', retryAfter.toString());
+      c.header('X-RateLimit-Limit', maxRequests.toString())
+      c.header('X-RateLimit-Remaining', '0')
+      c.header('X-RateLimit-Reset', Math.ceil(resetTime / 1000).toString())
+      c.header('Retry-After', retryAfter.toString())
 
       return c.json(
         {
@@ -127,44 +127,44 @@ function createRateLimit(config: RateLimitConfig) {
           },
         },
         429,
-      );
+      )
     }
 
     // Process the request
-    let shouldCount = true;
+    let shouldCount = true
 
     try {
-      await next();
+      await next()
 
       // Check if we should skip counting successful requests
       if (skipSuccessfulRequests && c.res.status < 400) {
-        shouldCount = false;
+        shouldCount = false
       }
     } catch (error) {
       // Check if we should skip counting failed requests
       if (skipFailedRequests) {
-        shouldCount = false;
+        shouldCount = false
       }
 
       // Re-throw the caught error
-      throw error;
+      throw error
     } finally {
       // Increment counter if needed
       if (shouldCount) {
-        const newCount = store.increment(key, windowMs);
-        const remaining = Math.max(0, maxRequests - newCount);
-        const resetTime = current?.resetTime || Date.now() + windowMs;
+        const newCount = store.increment(key, windowMs)
+        const remaining = Math.max(0, maxRequests - newCount)
+        const resetTime = current?.resetTime || Date.now() + windowMs
 
         // Set rate limit headers
-        c.header('X-RateLimit-Limit', maxRequests.toString());
-        c.header('X-RateLimit-Remaining', remaining.toString());
-        c.header('X-RateLimit-Reset', Math.ceil(resetTime / 1000).toString());
+        c.header('X-RateLimit-Limit', maxRequests.toString())
+        c.header('X-RateLimit-Remaining', remaining.toString())
+        c.header('X-RateLimit-Reset', Math.ceil(resetTime / 1000).toString())
       }
     }
 
     // Return void for middleware compatibility
-    return;
-  };
+    return
+  }
 }
 
 /**
@@ -174,15 +174,15 @@ function createRateLimit(config: RateLimitConfig) {
 export function rateLimitMiddleware() {
   // Different limits for different endpoint types
   return async (c: Context, next: Next) => {
-    const path = c.req.path;
+    const path = c.req.path
 
     // Healthcare data endpoints - very restrictive
     if (path.includes('/patients') || path.includes('/medical-records')) {
       const healthcareLimit = createRateLimit({
         windowMs: 15 * 60 * 1000, // 15 minutes
         maxRequests: 50, // 50 requests per 15 minutes
-      });
-      return healthcareLimit(c, next);
+      })
+      return healthcareLimit(c, next)
     }
 
     // AI/Chat endpoints - moderate limits
@@ -190,8 +190,8 @@ export function rateLimitMiddleware() {
       const aiLimit = createRateLimit({
         windowMs: 60 * 1000, // 1 minute
         maxRequests: 20, // 20 requests per minute
-      });
-      return aiLimit(c, next);
+      })
+      return aiLimit(c, next)
     }
 
     // Authentication endpoints - strict limits
@@ -200,16 +200,16 @@ export function rateLimitMiddleware() {
         windowMs: 15 * 60 * 1000, // 15 minutes
         maxRequests: 10, // 10 attempts per 15 minutes
         skipSuccessfulRequests: true, // Only count failed attempts
-      });
-      return authLimit(c, next);
+      })
+      return authLimit(c, next)
     }
 
     // General API endpoints - default limits
     const generalLimit = createRateLimit({
       windowMs: 15 * 60 * 1000, // 15 minutes
       maxRequests: 100, // 100 requests per 15 minutes
-    });
+    })
 
-    return generalLimit(c, next);
-  };
+    return generalLimit(c, next)
+  }
 }

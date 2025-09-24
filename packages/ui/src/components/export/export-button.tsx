@@ -1,6 +1,6 @@
-import { useState } from 'react';
-import { Button } from '../ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
+import { useState } from 'react'
+import { Button } from '../ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card'
 
 import {
   CheckCircle,
@@ -10,48 +10,48 @@ import {
   FileText,
   Loader2,
   XCircle,
-} from 'lucide-react';
-import { toast } from 'sonner';
-import { Alert, AlertDescription } from '../ui/alert';
-import { Checkbox } from '../ui/checkbox';
-import { Label } from '../ui/label';
-import { Progress } from '../ui/progress';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
-import { Separator } from '../ui/separator';
+} from 'lucide-react'
+import { toast } from 'sonner'
+import { Alert, AlertDescription } from '../ui/alert'
+import { Checkbox } from '../ui/checkbox'
+import { Label } from '../ui/label'
+import { Progress } from '../ui/progress'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
+import { Separator } from '../ui/separator'
 
 interface ExportJob {
-  id: string;
-  status: 'pending' | 'processing' | 'completed' | 'failed' | 'cancelled';
+  id: string
+  status: 'pending' | 'processing' | 'completed' | 'failed' | 'cancelled'
   progress: {
-    processed: number;
-    total: number;
-    percentage: number;
-  };
+    processed: number
+    total: number
+    percentage: number
+  }
   result?: {
-    downloadUrl: string;
-    filename: string;
-    size: number;
-    recordCount: number;
-    expiresAt: string;
-  };
-  error?: string;
-  createdAt: string;
-  updatedAt: string;
-  completedAt?: string;
+    downloadUrl: string
+    filename: string
+    size: number
+    recordCount: number
+    expiresAt: string
+  }
+  error?: string
+  createdAt: string
+  updatedAt: string
+  completedAt?: string
 }
 
 interface ExportButtonProps {
-  patientIds?: string[];
+  patientIds?: string[]
   filters?: {
-    search?: string;
-    status?: string;
+    search?: string
+    status?: string
     dateRange?: {
-      start: Date;
-      end: Date;
-    };
-  };
-  onExportComplete?: (job: ExportJob) => void;
-  className?: string;
+      start: Date
+      end: Date
+    }
+  }
+  onExportComplete?: (job: ExportJob) => void
+  className?: string
 }
 
 const EXPORTFORMATS = [
@@ -67,7 +67,7 @@ const EXPORTFORMATS = [
     icon: FileSpreadsheet,
     description: 'Formato Excel nativo',
   },
-];
+]
 
 const LGPDOPTIONS = [
   { id: 'anonymize', label: 'Anonimizar dados sensíveis', default: true },
@@ -77,7 +77,7 @@ const LGPDOPTIONS = [
     label: 'Excluir campos restritos',
     default: false,
   },
-];
+]
 
 export function ExportButton({
   patientIds,
@@ -85,18 +85,18 @@ export function ExportButton({
   onExportComplete,
   className,
 }: ExportButtonProps) {
-  const [isOpen, setIsOpen] = useState(false);
-  const [selectedFormat, setSelectedFormat] = useState<'csv' | 'xlsx'>('csv');
+  const [isOpen, setIsOpen] = useState(false)
+  const [selectedFormat, setSelectedFormat] = useState<'csv' | 'xlsx'>('csv')
   const [lgpdOptions, setLgpdOptions] = useState({
     anonymize: true,
     consent: true,
     excludeRestricted: false,
-  });
-  const [currentJob, setCurrentJob] = useState<ExportJob | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  })
+  const [currentJob, setCurrentJob] = useState<ExportJob | null>(null)
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const handleExport = async () => {
-    setIsSubmitting(true);
+    setIsSubmitting(true)
 
     try {
       const response = await fetch('/api/patients/export', {
@@ -120,28 +120,28 @@ export function ExportButton({
             consentRequired: lgpdOptions.consent,
           },
         }),
-      });
+      })
 
-      const result = await response.json();
+      const result = await response.json()
 
       if (!result.success) {
-        throw new Error(result.error || 'Erro ao iniciar exportação');
+        throw new Error(result.error || 'Erro ao iniciar exportação')
       }
 
-      const job = result.data;
-      setCurrentJob(job);
-      toast.success('Exportação iniciada com sucesso');
+      const job = result.data
+      setCurrentJob(job)
+      toast.success('Exportação iniciada com sucesso')
 
-      pollJobStatus(job.id);
+      pollJobStatus(job.id)
     } catch (error) {
-      console.error('Erro ao iniciar exportação:', error);
+      console.error('Erro ao iniciar exportação:', error)
       toast.error(
         error instanceof Error ? error.message : 'Erro ao iniciar exportação',
-      );
+      )
     } finally {
-      setIsSubmitting(false);
+      setIsSubmitting(false)
     }
-  };
+  }
 
   const pollJobStatus = async (jobId: string) => {
     const pollInterval = setInterval(async () => {
@@ -150,80 +150,80 @@ export function ExportButton({
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
           },
-        });
+        })
 
-        const result = await response.json();
+        const result = await response.json()
 
         if (result.success) {
-          const job = result.data;
-          setCurrentJob(job);
+          const job = result.data
+          setCurrentJob(job)
 
           if (job.status === 'completed') {
-            clearInterval(pollInterval);
-            onExportComplete?.(job);
-            toast.success('Exportação concluída com sucesso!');
+            clearInterval(pollInterval)
+            onExportComplete?.(job)
+            toast.success('Exportação concluída com sucesso!')
           } else if (job.status === 'failed') {
-            clearInterval(pollInterval);
-            toast.error(`Exportação falhou: ${job.error}`);
+            clearInterval(pollInterval)
+            toast.error(`Exportação falhou: ${job.error}`)
           }
         }
       } catch (error) {
-        console.error('Erro ao verificar status da exportação:', error);
-        clearInterval(pollInterval);
+        console.error('Erro ao verificar status da exportação:', error)
+        clearInterval(pollInterval)
       }
-    }, 2000);
-  };
+    }, 2000)
+  }
 
   const downloadFile = async (job: ExportJob) => {
-    if (!job.result) {return;}
+    if (!job.result) return
 
     try {
       const response = await fetch(job.result.downloadUrl, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
-      });
+      })
 
       if (response.ok) {
-        const blob = await response.blob();
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = job.result.filename;
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(url);
-        document.body.removeChild(a);
-        toast.success('Download iniciado');
+        const blob = await response.blob()
+        const url = window.URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = url
+        a.download = job.result.filename
+        document.body.appendChild(a)
+        a.click()
+        window.URL.revokeObjectURL(url)
+        document.body.removeChild(a)
+        toast.success('Download iniciado')
       }
     } catch (error) {
-      console.error('Erro ao baixar arquivo:', error);
-      toast.error('Erro ao baixar arquivo');
+      console.error('Erro ao baixar arquivo:', error)
+      toast.error('Erro ao baixar arquivo')
     }
-  };
+  }
 
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'completed':
-        return <CheckCircle className='h-4 w-4 text-green-600' />;
+        return <CheckCircle className='h-4 w-4 text-green-600' />
       case 'failed':
-        return <XCircle className='h-4 w-4 text-red-600' />;
+        return <XCircle className='h-4 w-4 text-red-600' />
       case 'processing':
-        return <Loader2 className='h-4 w-4 text-blue-600 animate-spin' />;
+        return <Loader2 className='h-4 w-4 text-blue-600 animate-spin' />
       case 'cancelled':
-        return <XCircle className='h-4 w-4 text-gray-600' />;
+        return <XCircle className='h-4 w-4 text-gray-600' />
       default:
-        return <Clock className='h-4 w-4 text-gray-600' />;
+        return <Clock className='h-4 w-4 text-gray-600' />
     }
-  };
+  }
 
   const formatFileSize = (bytes: number) => {
-    if (bytes === 0) {return '0 Bytes';}
-    const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-  };
+    if (bytes === 0) return '0 Bytes'
+    const k = 1024
+    const sizes = ['Bytes', 'KB', 'MB', 'GB']
+    const i = Math.floor(Math.log(bytes) / Math.log(k))
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
+  }
 
   return (
     <div className={className}>
@@ -329,7 +329,7 @@ export function ExportButton({
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        {EXPORTFORMATS.map(format => (
+                        {EXPORTFORMATS.map((format) => (
                           <SelectItem key={format.value} value={format.value}>
                             <div className='flex items-center gap-2'>
                               <format.icon className='h-4 w-4' />
@@ -351,7 +351,7 @@ export function ExportButton({
                   <div>
                     <Label>Opções LGPD</Label>
                     <div className='space-y-2 mt-2'>
-                      {LGPDOPTIONS.map(option => (
+                      {LGPDOPTIONS.map((option) => (
                         <div
                           key={option.id}
                           className='flex items-center space-x-2'
@@ -360,7 +360,7 @@ export function ExportButton({
                             id={option.id}
                             checked={lgpdOptions[option.id as keyof typeof lgpdOptions]}
                             onCheckedChange={(checked: boolean) =>
-                              setLgpdOptions(prev => ({
+                              setLgpdOptions((prev) => ({
                                 ...prev,
                                 [option.id]: !!checked,
                               }))}
@@ -406,5 +406,5 @@ export function ExportButton({
         </Card>
       )}
     </div>
-  );
+  )
 }

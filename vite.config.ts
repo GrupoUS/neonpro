@@ -1,6 +1,6 @@
-import react from '@vitejs/plugin-react';
-import path from 'path';
-import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react'
+import path from 'path'
+import { defineConfig } from 'vite'
 
 export default defineConfig({
   plugins: [
@@ -121,4 +121,4 @@ export default defineConfig({
     jsx: 'automatic',
     jsxImportSource: 'react',
   },
-});
+})

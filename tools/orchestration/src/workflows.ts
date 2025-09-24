@@ -3,28 +3,28 @@ import type {
   AgentResult,
   OrchestrationContext,
   TDDPhase,
-} from '../types';
+} from '../types'
 
 /**
  * Base workflow interface
  */
 export interface Workflow {
-  name: string;
-  description: string;
+  name: string
+  description: string
   executeAgent(
     agent: string,
     phase: TDDPhase,
     context: OrchestrationContext,
     coordination: AgentCoordinationPattern,
-  ): Promise<AgentResult>;
+  ): Promise<AgentResult>
 }
 
 /**
  * Standard TDD Workflow
  */
 export class StandardTDDWorkflow implements Workflow {
-  name = 'standard-tdd';
-  description = 'Standard Test-Driven Development workflow';
+  name = 'standard-tdd'
+  description = 'Standard Test-Driven Development workflow'
 
   async executeAgent(
     agent: string,
@@ -42,7 +42,7 @@ export class StandardTDDWorkflow implements Workflow {
         score: 85,
         issues: [],
       },
-    };
+    }
   }
 }
 
@@ -50,8 +50,8 @@ export class StandardTDDWorkflow implements Workflow {
  * Security Critical Workflow
  */
 export class SecurityCriticalWorkflow implements Workflow {
-  name = 'security-critical';
-  description = 'Security-focused TDD workflow for critical features';
+  name = 'security-critical'
+  description = 'Security-focused TDD workflow for critical features'
 
   async executeAgent(
     agent: string,
@@ -60,7 +60,7 @@ export class SecurityCriticalWorkflow implements Workflow {
     coordination: AgentCoordinationPattern,
   ): Promise<AgentResult> {
     // Enhanced security validation
-    const securityScore = context.healthcareCompliance.required ? 95 : 90;
+    const securityScore = context.healthcareCompliance.required ? 95 : 90
 
     return {
       agentName: agent,
@@ -78,6 +78,6 @@ export class SecurityCriticalWorkflow implements Workflow {
         score: securityScore,
         issues: [],
       },
-    };
+    }
   }
 }

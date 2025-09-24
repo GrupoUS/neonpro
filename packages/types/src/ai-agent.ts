@@ -5,107 +5,107 @@
 
 // Healthcare-compliant constraint types for AI Agent
 export interface QueryEntities {
-  names?: string[];
-  dates?: string[];
-  locations?: string[];
-  medicalTerms?: string[];
-  [key: string]: unknown;
+  names?: string[]
+  dates?: string[]
+  locations?: string[]
+  medicalTerms?: string[]
+  [key: string]: unknown
 }
 
 export interface ResponseData {
-  id?: string;
-  name?: string;
-  value?: string | number;
-  date?: string;
-  status?: string;
-  [key: string]: unknown;
+  id?: string
+  name?: string
+  value?: string | number
+  date?: string
+  status?: string
+  [key: string]: unknown
 }
 
 export interface ChartMetadata {
-  color?: string;
-  label?: string;
-  category?: string;
-  timestamp?: string;
-  [key: string]: unknown;
+  color?: string
+  label?: string
+  category?: string
+  timestamp?: string
+  [key: string]: unknown
 }
 
 export interface ActionParameters {
-  id?: string;
-  type?: string;
-  filters?: Record<string, unknown>;
+  id?: string
+  type?: string
+  filters?: Record<string, unknown>
   pagination?: {
-    page: number;
-    limit: number;
-  };
-  [key: string]: unknown;
+    page: number
+    limit: number
+  }
+  [key: string]: unknown
 }
 
 export interface UserPreferences {
-  language?: string;
-  timezone?: string;
-  dateFormat?: string;
-  theme?: 'light' | 'dark' | 'auto';
+  language?: string
+  timezone?: string
+  dateFormat?: string
+  theme?: 'light' | 'dark' | 'auto'
   notifications?: {
-    email: boolean;
-    push: boolean;
-    sms: boolean;
-  };
-  [key: string]: unknown;
+    email: boolean
+    push: boolean
+    sms: boolean
+  }
+  [key: string]: unknown
 }
 
 export interface CachedData {
   patients?: Array<{
-    id: string;
-    name: string;
-    lastVisit?: string;
-  }>;
+    id: string
+    name: string
+    lastVisit?: string
+  }>
   appointments?: Array<{
-    id: string;
-    date: string;
-    status: string;
-  }>;
-  [key: string]: unknown;
+    id: string
+    date: string
+    status: string
+  }>
+  [key: string]: unknown
 }
 
 export interface MessageData {
-  type?: string;
-  entity?: string;
-  action?: string;
-  [key: string]: unknown;
+  type?: string
+  entity?: string
+  action?: string
+  [key: string]: unknown
 }
 
 export interface MessageMetadata {
-  source?: string;
-  priority?: 'low' | 'medium' | 'high';
-  category?: string;
-  [key: string]: unknown;
+  source?: string
+  priority?: 'low' | 'medium' | 'high'
+  category?: string
+  [key: string]: unknown
 }
 
 export interface ActionPayload {
-  targetId?: string;
-  actionType?: string;
-  parameters?: Record<string, unknown>;
-  timestamp?: string;
-  [key: string]: unknown;
+  targetId?: string
+  actionType?: string
+  parameters?: Record<string, unknown>
+  timestamp?: string
+  [key: string]: unknown
 }
 
 export interface UserQuery {
   /** Unique identifier (UUID) */
-  id: string;
+  id: string
   /** Session identifier for conversation context */
-  sessionId: string;
+  sessionId: string
   /** User who submitted the query */
-  userId: string;
+  userId: string
   /** Natural language text input */
-  query: string;
+  query: string
   /** Parsed intent classification */
-  intent: QueryIntent;
+  intent: QueryIntent
   /** Extracted parameters from the query */
-  parameters: QueryParameters;
+  parameters: QueryParameters
   /** When the query was submitted */
-  timestamp: Date;
+  timestamp: Date
   /** Query processing status */
-  status: QueryStatus;
+  status: QueryStatus
 }
 
 export type QueryIntent =
@@ -113,194 +113,194 @@ export type QueryIntent =
   | 'appointments'
   | 'financial'
   | 'general'
-  | 'unknown';
+  | 'unknown'
 
 export interface QueryParameters {
   /** Client names extracted from query */
-  clientNames?: string[];
+  clientNames?: string[]
   /** Date ranges extracted from query */
-  dateRanges?: DateRange[];
+  dateRanges?: DateRange[]
   /** Specific dates mentioned */
-  dates?: Date[];
+  dates?: Date[]
   /** Financial parameters */
   financial?: {
-    type?: 'revenue' | 'payments' | 'expenses' | 'all';
-    period?: 'today' | 'week' | 'month' | 'year' | 'custom';
-  };
+    type?: 'revenue' | 'payments' | 'expenses' | 'all'
+    period?: 'today' | 'week' | 'month' | 'year' | 'custom'
+  }
   /** Raw extracted entities for further processing */
-  rawEntities?: QueryEntities;
+  rawEntities?: QueryEntities
 }
 
 export interface DateRange {
-  start: Date;
-  end: Date;
+  start: Date
+  end: Date
 }
 
-export type QueryStatus = 'pending' | 'processing' | 'completed' | 'failed';
+export type QueryStatus = 'pending' | 'processing' | 'completed' | 'failed'
 
 export interface ResponseMetadata {
   /** Response confidence score */
-  confidence?: number;
+  confidence?: number
   /** Model used for generation */
-  model?: string;
+  model?: string
   /** Processing duration in ms */
-  processingTime?: number;
+  processingTime?: number
   /** Additional metadata */
-  [key: string]: unknown;
+  [key: string]: unknown
 }
 
 export interface AgentResponse {
   /** Unique identifier (UUID) */
-  id: string;
+  id: string
   /** Reference to the original query */
-  queryId: string;
+  queryId: string
   /** Response type for UI rendering */
-  type: ResponseType;
+  type: ResponseType
   /** Response content object */
-  content: ResponseContent;
+  content: ResponseContent
   /** Available interactive actions */
-  actions?: InteractiveAction[];
+  actions?: InteractiveAction[]
   /** Response metadata */
-  metadata: ResponseMetadata;
+  metadata: ResponseMetadata
   /** When the response was generated */
-  timestamp: Date;
+  timestamp: Date
   /** Time taken to generate response (ms) */
-  processingTime: number;
+  processingTime: number
 }
 
-export type ResponseType = 'text' | 'list' | 'table' | 'chart' | 'error';
+export type ResponseType = 'text' | 'list' | 'table' | 'chart' | 'error'
 
 export interface ResponseContent {
   /** Display title for the response */
-  title?: string;
+  title?: string
   /** Plain text description */
-  text?: string;
+  text?: string
   /** Structured data for tables/lists */
-  data?: ResponseData[];
+  data?: ResponseData[]
   /** Column definitions for tabular data */
-  columns?: TableColumn[];
+  columns?: TableColumn[]
   /** Chart configuration */
-  chart?: ChartConfig;
+  chart?: ChartConfig
   /** Error details if type is 'error' */
   error?: {
-    code: string;
-    message: string;
-    suggestion?: string;
-  };
+    code: string
+    message: string
+    suggestion?: string
+  }
 }
 
 export interface TableColumn {
   /** Unique column identifier */
-  key: string;
+  key: string
   /** Display label */
-  label: string;
+  label: string
   /** Data type */
-  type: 'string' | 'number' | 'date' | 'boolean' | 'currency';
+  type: 'string' | 'number' | 'date' | 'boolean' | 'currency'
   /** Whether column is sortable */
-  sortable?: boolean;
+  sortable?: boolean
   /** Column width (CSS) */
-  width?: string;
+  width?: string
   /** Format function for display */
-  format?: (value: unknown) => string;
+  format?: (value: unknown) => string
 }
 
 export interface ChartConfig {
   /** Chart type */
-  type: 'line' | 'bar' | 'pie' | 'area';
+  type: 'line' | 'bar' | 'pie' | 'area'
   /** Data points */
-  data: ChartDataPoint[];
+  data: ChartDataPoint[]
   /** X-axis configuration */
-  xAxis?: ChartAxis;
+  xAxis?: ChartAxis
   /** Y-axis configuration */
-  yAxis?: ChartAxis;
+  yAxis?: ChartAxis
   /** Chart title */
-  title?: string;
+  title?: string
   /** Chart colors */
-  colors?: string[];
+  colors?: string[]
 }
 
 export interface ChartDataPoint {
-  label: string;
-  value: number;
-  metadata?: ChartMetadata;
+  label: string
+  value: number
+  metadata?: ChartMetadata
 }
 
 export interface ChartAxis {
-  title?: string;
-  type?: 'category' | 'number' | 'time';
-  format?: (value: unknown) => string;
+  title?: string
+  type?: 'category' | 'number' | 'time'
+  format?: (value: unknown) => string
 }
 
 export interface InteractiveAction {
   /** Unique action identifier */
-  id: string;
+  id: string
   /** Display label for the action */
-  label: string;
+  label: string
   /** Action type */
-  type: 'button' | 'link' | 'form';
+  type: 'button' | 'link' | 'form'
   /** Action handler function name */
-  action: string;
+  action: string
   /** Action-specific parameters */
-  parameters?: ActionParameters;
+  parameters?: ActionParameters
   /** Whether action requires confirmation */
-  confirm?: boolean;
+  confirm?: boolean
   /** Confirmation message */
-  confirmMessage?: string;
+  confirmMessage?: string
   /** Icon for the action */
-  icon?: string;
+  icon?: string
   /** Styling variant */
-  variant?: 'primary' | 'secondary' | 'danger';
+  variant?: 'primary' | 'secondary' | 'danger'
 }
 
 export interface ChatSession {
   /** Session identifier (UUID) */
-  id: string;
+  id: string
   /** User identifier */
-  userId: string;
+  userId: string
   /** Session status */
-  status: SessionStatus;
+  status: SessionStatus
   /** When the session started */
-  createdAt: Date;
+  createdAt: Date
   /** Last interaction timestamp */
-  lastActivity: Date;
+  lastActivity: Date
   /** Conversation context object */
-  context: SessionContext;
+  context: SessionContext
   /** Number of messages in session */
-  messageCount: number;
+  messageCount: number
 }
 
-export type SessionStatus = 'active' | 'expired' | 'terminated';
+export type SessionStatus = 'active' | 'expired' | 'terminated'
 
 export interface SessionContext {
   /** User's current domain */
-  domain: string;
+  domain: string
   /** User role for permission checking */
-  role: UserRole;
+  role: UserRole
   /** Active filters or preferences */
-  preferences?: UserPreferences;
+  preferences?: UserPreferences
   /** Recent conversation history */
-  recentIntents?: QueryIntent[];
+  recentIntents?: QueryIntent[]
   /** Cached data for context */
-  cachedData?: CachedData;
+  cachedData?: CachedData
 }
 
-export type UserRole = 'admin' | 'doctor' | 'nurse' | 'receptionist';
+export type UserRole = 'admin' | 'doctor' | 'nurse' | 'receptionist'
 
 export interface PermissionContext {
   /** User identifier */
-  userId: string;
+  userId: string
   /** Organization/clinic domain */
-  domain: string;
+  domain: string
   /** User role */
-  role: UserRole;
+  role: UserRole
   /** Specific permissions array */
-  permissions: Permission[];
+  permissions: Permission[]
   /** Data access scope */
-  dataScope: DataScope;
+  dataScope: DataScope
   /** Last access timestamp */
-  lastAccess: Date;
+  lastAccess: Date
   /** When current session expires */
-  sessionExpiry: Date;
+  sessionExpiry: Date
 }
 
 export type Permission =
@@ -313,7 +313,7 @@ export type Permission =
   | 'read_medical'
   | 'write_medical'
   | 'manage_users'
-  | 'view_analytics';
+  | 'view_analytics'
 
 export type DataScope =
   | 'own_clients'
@@ -321,49 +321,49 @@ export type DataScope =
   | 'financial_read'
   | 'financial_write'
   | 'medical_read'
-  | 'medical_write';
+  | 'medical_write'
 
 export interface AgentQueryRequest {
   /** Natural language query from user */
-  query: string;
+  query: string
   /** Unique session identifier for conversation context */
-  sessionId: string;
+  sessionId: string
   /** Optional conversation context */
   context?: {
     /** User identifier */
-    userId?: string;
+    userId?: string
     /** Recent conversation history */
-    previousMessages?: ChatMessage[];
-  };
+    previousMessages?: ChatMessage[]
+  }
 }
 
 export interface ChatMessage {
   /** Unique identifier (UUID) */
-  id: string;
+  id: string
   /** Message role */
-  role: 'user' | 'assistant';
+  role: 'user' | 'assistant'
   /** Message content */
-  content: string;
+  content: string
   /** When the message was sent */
-  timestamp: Date;
+  timestamp: Date
   /** Optional structured data */
-  data?: MessageData;
+  data?: MessageData
   /** Optional interactive actions */
-  actions?: AgentAction[];
+  actions?: AgentAction[]
   /** Optional metadata */
-  metadata?: MessageMetadata;
+  metadata?: MessageMetadata
 }
 
 export interface AgentAction {
-  id: string;
-  label: string;
-  icon?: string;
-  primary?: boolean;
+  id: string
+  label: string
+  icon?: string
+  primary?: boolean
   type:
     | 'view_details'
     | 'create_appointment'
     | 'export_data'
     | 'navigate'
-    | 'refresh';
-  payload?: ActionPayload;
+    | 'refresh'
+  payload?: ActionPayload
 }

@@ -4,7 +4,7 @@
  * Exports all conversation-related services for AI agent integration
  */
 
-export { ConversationContextService } from './conversation-context-service';
+export { ConversationContextService } from './conversation-context-service'
 
 // Re-export types for convenience
 export type {
@@ -12,7 +12,7 @@ export type {
   ContextSearchOptions,
   ConversationContext,
   ConversationMessage,
-} from './conversation-context-service';
+} from './conversation-context-service'
 
 // Default export for easy importing
-export default ConversationContextService;
+export default ConversationContextService

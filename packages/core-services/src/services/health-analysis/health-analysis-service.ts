@@ -12,7 +12,7 @@
  * - Structured response parsing and storage
  */
 
-import { AIProvider } from '../ai-provider';
+import { AIProvider } from '../ai-provider'
 
 // Simple error class for health analysis
 class HealthAnalysisError extends Error {
@@ -22,94 +22,94 @@ class HealthAnalysisError extends Error {
     public category: string = 'system',
     public severity: string = 'medium',
   ) {
-    super(message);
-    this.name = 'HealthAnalysisError';
+    super(message)
+    this.name = 'HealthAnalysisError'
   }
 }
 
 // Interfaces for health analysis functions
 export interface PatientAnalysisData {
-  patientId: string;
-  clinicId: string;
-  hasMinimumData: boolean;
-  dataPointCount: number;
+  patientId: string
+  clinicId: string
+  hasMinimumData: boolean
+  dataPointCount: number
   demographics: {
-    age: number;
-    gender: string;
-    bloodType?: string;
-    chronicConditions: string[];
-    currentMedications: string[];
-    allergies: string[];
-  };
+    age: number
+    gender: string
+    bloodType?: string
+    chronicConditions: string[]
+    currentMedications: string[]
+    allergies: string[]
+  }
   appointments: Array<{
-    date: Date;
-    type: string;
-    status: string;
-    treatmentType?: string;
-    professional?: string;
-  }>;
+    date: Date
+    type: string
+    status: string
+    treatmentType?: string
+    professional?: string
+  }>
   behavioralPatterns: {
-    appointmentAdherence: number;
-    cancellationRate: number;
-    noShowRate: number;
-    preferredTimes: string[];
-    communicationPreferences: Record<string, any>;
-  };
+    appointmentAdherence: number
+    cancellationRate: number
+    noShowRate: number
+    preferredTimes: string[]
+    communicationPreferences: Record<string, any>
+  }
   patientProfile: {
-    totalNoShows: number;
-    totalAppointments: number;
-    preferredTimes: string[];
-    communicationPreferences: Record<string, any>;
-  };
+    totalNoShows: number
+    totalAppointments: number
+    preferredTimes: string[]
+    communicationPreferences: Record<string, any>
+  }
   healthMetrics: {
-    lastVisitDate?: Date;
-    nextAppointmentDate?: Date;
-  };
+    lastVisitDate?: Date
+    nextAppointmentDate?: Date
+  }
 }
 
 export interface HealthAnalysisPrompt {
-  analysisType: string;
-  patientData: PatientAnalysisData;
-  customPrompt?: string;
-  language?: 'pt-BR' | 'en-US';
+  analysisType: string
+  patientData: PatientAnalysisData
+  customPrompt?: string
+  language?: 'pt-BR' | 'en-US'
 }
 
 export interface AIResponse {
-  content: string;
+  content: string
   usage: {
-    prompt_tokens: number;
-    completion_tokens: number;
-    total_tokens: number;
-  };
-  model: string;
+    prompt_tokens: number
+    completion_tokens: number
+    total_tokens: number
+  }
+  model: string
 }
 
 export interface AnalysisStorage {
-  patientId: string;
-  clinicId: string;
-  analysisType: string;
-  results: any;
-  timestamp: Date;
+  patientId: string
+  clinicId: string
+  analysisType: string
+  results: any
+  timestamp: Date
 }
 
 export class HealthAnalysisService {
-  private aiProvider: AIProvider;
+  private aiProvider: AIProvider
 
   constructor(aiProvider: AIProvider) {
-    this.aiProvider = aiProvider;
+    this.aiProvider = aiProvider
   }
 
   /**
    * Gather patient analysis data from multiple sources
    */
   async gatherPatientAnalysisData(params: {
-    patientId: string;
-    clinicId: string;
-    _userId: string;
-    userRole: string;
+    patientId: string
+    clinicId: string
+    _userId: string
+    userRole: string
   }): Promise<PatientAnalysisData> {
     try {
-      const { patientId, clinicId } = params;
+      const { patientId, clinicId } = params
 
       // Mock patient data gathering - in real implementation would query database
       const patient = {
@@ -125,7 +125,7 @@ export class HealthAnalysisService {
         communicationPreferences: { email: true, sms: true },
         lastVisitDate: new Date('2024-01-15'),
         nextAppointmentDate: new Date('2024-02-15'),
-      };
+      }
 
       const appointments = [
         {
@@ -135,7 +135,7 @@ export class HealthAnalysisService {
           treatmentType: 'general',
           professional: 'Dr. Silva',
         },
-      ];
+      ]
 
       const behavioralPatterns = {
         appointmentAdherence: 0.87,
@@ -143,19 +143,19 @@ export class HealthAnalysisService {
         noShowRate: 0.13,
         preferredTimes: ['morning', 'afternoon'],
         communicationPreferences: { email: true, sms: true },
-      };
+      }
 
       const patientProfile = {
         totalNoShows: patient.totalNoShows || 0,
         totalAppointments: patient.totalAppointments || 0,
         preferredTimes: patient.preferredAppointmentTime || [],
         communicationPreferences: patient.communicationPreferences || {},
-      };
+      }
 
       const healthMetrics = {
         lastVisitDate: patient.lastVisitDate,
         nextAppointmentDate: patient.nextAppointmentDate,
-      };
+      }
 
       const analysisData: PatientAnalysisData = {
         patientId,
@@ -174,9 +174,9 @@ export class HealthAnalysisService {
         behavioralPatterns,
         patientProfile,
         healthMetrics,
-      };
+      }
 
-      return analysisData;
+      return analysisData
     } catch (error) {
       throw new HealthAnalysisError(
         'DATA_GATHERING_FAILED',
@@ -185,7 +185,7 @@ export class HealthAnalysisService {
         }`,
         'system',
         'high',
-      );
+      )
     }
   }
 
@@ -193,13 +193,13 @@ export class HealthAnalysisService {
    * Build structured prompt for health analysis
    */
   buildHealthAnalysisPrompt(config: HealthAnalysisPrompt): string {
-    const { patientData, customPrompt, language = 'pt-BR' } = config;
+    const { patientData, customPrompt, language = 'pt-BR' } = config
 
     const basePrompt = language === 'pt-BR'
       ? `Análise de saúde para paciente com histórico médico e padrões de comportamento.`
-      : `Health analysis for patient with medical history and behavioral patterns.`;
+      : `Health analysis for patient with medical history and behavioral patterns.`
 
-    const patientContext = this.formatPatientContext(patientData);
+    const patientContext = this.formatPatientContext(patientData)
 
     const prompt = `
 ${basePrompt}
@@ -226,9 +226,9 @@ FORMATO DE RESPOSTA ESPERADO:
 }
 
 IMPORTANTE: Sua resposta deve ser apenas o JSON válido, sem texto adicional.
-`;
+`
 
-    return prompt.trim();
+    return prompt.trim()
   }
 
   /**
@@ -259,17 +259,17 @@ PADRÕES DE COMPORTAMENTO:
 - Preferências de Comunicação: ${
       Object.keys(patientData.behavioralPatterns.communicationPreferences).join(', ')
     }
-    `.trim();
+    `.trim()
   }
 
   /**
    * Call AI service for health analysis
    */
   async callHealthAnalysisAI(params: {
-    prompt: string;
-    model?: string;
-    temperature?: number;
-    maxTokens?: number;
+    prompt: string
+    model?: string
+    temperature?: number
+    maxTokens?: number
   }): Promise<AIResponse> {
     try {
       const result = await this.aiProvider.generateAnswer({
@@ -278,7 +278,7 @@ PADRÕES DE COMPORTAMENTO:
           'Você é um especialista em saúde com conhecimento em medicina brasileira, LGPD e normas da ANVISA.',
         temperature: params.temperature || 0.3,
         maxTokens: params.maxTokens || 2000,
-      });
+      })
 
       return {
         content: result.content,
@@ -288,14 +288,14 @@ PADRÕES DE COMPORTAMENTO:
           total_tokens: 0,
         },
         model: params.model || 'gpt-4',
-      };
+      }
     } catch (error) {
       throw new HealthAnalysisError(
         'AI_SERVICE_ERROR',
         `Failed to call AI _service: ${error instanceof Error ? error.message : 'Unknown error'}`,
         'external_service',
         'high',
-      );
+      )
     }
   }
 
@@ -305,12 +305,12 @@ PADRÕES DE COMPORTAMENTO:
   parseHealthAnalysisResponse(response: string): any {
     try {
       // Extract JSON from response
-      const jsonMatch = response.match(/\{[\s\S]*\}/);
+      const jsonMatch = response.match(/\{[\s\S]*\}/)
       if (!jsonMatch) {
-        throw new Error('No JSON found in response');
+        throw new Error('No JSON found in response')
       }
 
-      const parsed = JSON.parse(jsonMatch[0]);
+      const parsed = JSON.parse(jsonMatch[0])
 
       // Validate required fields
       const requiredFields = [
@@ -319,10 +319,10 @@ PADRÕES DE COMPORTAMENTO:
         'riskFactors',
         'keyFindings',
         'confidence',
-      ];
+      ]
       for (const field of requiredFields) {
         if (!parsed[field]) {
-          throw new Error(`Missing required field: ${field}`);
+          throw new Error(`Missing required field: ${field}`)
         }
       }
 
@@ -355,14 +355,14 @@ PADRÕES DE COMPORTAMENTO:
           reliability: 0.85,
           processingTime: 0,
         },
-      };
+      }
     } catch (error) {
       throw new HealthAnalysisError(
         'RESPONSE_PARSING_ERROR',
         `Failed to parse AI response: ${error instanceof Error ? error.message : 'Unknown error'}`,
         'validation',
         'high',
-      );
+      )
     }
   }
 
@@ -371,12 +371,12 @@ PADRÕES DE COMPORTAMENTO:
    */
   async storeHealthAnalysis(storage: AnalysisStorage): Promise<string> {
     try {
-      const analysisId = `analysis_${storage.patientId}_${Date.now()}`;
+      const analysisId = `analysis_${storage.patientId}_${Date.now()}`
 
       // Health analysis stored successfully
       // Analysis ID: ${analysisId} for patient ${storage.patientId}
 
-      return analysisId;
+      return analysisId
     } catch (error) {
       throw new HealthAnalysisError(
         'STORAGE_FAILED',
@@ -385,7 +385,7 @@ PADRÕES DE COMPORTAMENTO:
         }`,
         'system',
         'high',
-      );
+      )
     }
   }
 }

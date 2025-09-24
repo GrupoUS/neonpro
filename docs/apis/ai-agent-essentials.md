@@ -47,38 +47,38 @@ const response = await fetch('/api/ai/chat', {
     message: 'Quais os próximos agendamentos?',
     sessionId: 'session_123',
   }),
-});
+})
 
-const data = await response.json();
+const data = await response.json()
 ```
 
 ### Response Format
 
 ```typescript
 interface AgentResponse {
-  id: string;
-  type: 'text' | 'table' | 'list';
+  id: string
+  type: 'text' | 'table' | 'list'
   content: {
-    title: string;
-    text?: string;
-    data?: any[];
-  };
+    title: string
+    text?: string
+    data?: any[]
+  }
   metadata: {
-    processingTime: number;
-    confidence: number;
-  };
+    processingTime: number
+    confidence: number
+  }
 }
 ```
 
 ## WebSocket Support
 
 ```typescript
-const ws = new WebSocket('wss://api.neonpro.com/ai/ws');
+const ws = new WebSocket('wss://api.neonpro.com/ai/ws')
 ws.send(JSON.stringify({
   type: 'chat',
   message: 'Hello',
   sessionId: 'session_123',
-}));
+}))
 ```
 
 ## Rate Limits

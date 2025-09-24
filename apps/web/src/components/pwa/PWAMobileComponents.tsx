@@ -1,10 +1,10 @@
-import { cn } from '@/lib/utils';
-import * as React from 'react';
+import { cn } from '@/lib/utils'
+import * as React from 'react'
 
 export interface PWATouchActionProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link';
-  size?: 'default' | 'sm' | 'lg' | 'icon';
-  haptic?: 'light' | 'medium' | 'heavy';
+  variant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link'
+  size?: 'default' | 'sm' | 'lg' | 'icon'
+  haptic?: 'light' | 'medium' | 'heavy'
 }
 
 export const PWATouchAction: React.FC<PWATouchActionProps> = ({
@@ -18,15 +18,15 @@ export const PWATouchAction: React.FC<PWATouchActionProps> = ({
 }) => {
   const handleTouchStart = React.useCallback(() => {
     if ('vibrate' in navigator && haptic) {
-      const intensity = haptic === 'light' ? 10 : haptic === 'medium' ? 20 : 30;
-      navigator.vibrate(intensity);
+      const intensity = haptic === 'light' ? 10 : haptic === 'medium' ? 20 : 30
+      navigator.vibrate(intensity)
     }
-  }, [haptic]);
+  }, [haptic])
 
   const handleClick = React.useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
-    handleTouchStart();
-    onClick?.(e);
-  }, [onClick, handleTouchStart]);
+    handleTouchStart()
+    onClick?.(e)
+  }, [onClick, handleTouchStart])
 
   const baseClasses = cn(
     'inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors',
@@ -50,7 +50,7 @@ export const PWATouchAction: React.FC<PWATouchActionProps> = ({
       'h-10 w-10': size === 'icon',
     },
     className,
-  );
+  )
 
   return (
     <button
@@ -61,18 +61,18 @@ export const PWATouchAction: React.FC<PWATouchActionProps> = ({
     >
       {children}
     </button>
-  );
-};
+  )
+}
 
 // Swipeable component for mobile gestures
 export interface PWASwipeableProps {
-  children: React.ReactNode;
-  onSwipeLeft?: () => void;
-  onSwipeRight?: () => void;
-  onSwipeUp?: () => void;
-  onSwipeDown?: () => void;
-  threshold?: number;
-  className?: string;
+  children: React.ReactNode
+  onSwipeLeft?: () => void
+  onSwipeRight?: () => void
+  onSwipeUp?: () => void
+  onSwipeDown?: () => void
+  threshold?: number
+  className?: string
 }
 
 export const PWASwipeable: React.FC<PWASwipeableProps> = ({
@@ -84,53 +84,53 @@ export const PWASwipeable: React.FC<PWASwipeableProps> = ({
   threshold = 50,
   className,
 }) => {
-  const [startX, setStartX] = React.useState(0);
-  const [startY, setStartY] = React.useState(0);
-  const [isDragging, setIsDragging] = React.useState(false);
+  const [startX, setStartX] = React.useState(0)
+  const [startY, setStartY] = React.useState(0)
+  const [isDragging, setIsDragging] = React.useState(false)
 
   const handleTouchStart = React.useCallback((e: React.TouchEvent) => {
     if (e.touches && e.touches[0]) {
-      setStartX(e.touches[0].clientX);
-      setStartY(e.touches[0].clientY);
-      setIsDragging(true);
+      setStartX(e.touches[0].clientX)
+      setStartY(e.touches[0].clientY)
+      setIsDragging(true)
     }
-  }, []);
+  }, [])
 
   const handleTouchMove = React.useCallback((e: React.TouchEvent) => {
-    if (!isDragging || !e.touches || !e.touches[0]) return;
+    if (!isDragging || !e.touches || !e.touches[0]) return
 
-    const currentX = e.touches[0].clientX;
-    const currentY = e.touches[0].clientY;
-    const diffX = startX - currentX;
-    const diffY = startY - currentY;
+    const currentX = e.touches[0].clientX
+    const currentY = e.touches[0].clientY
+    const diffX = startX - currentX
+    const diffY = startY - currentY
 
     // Determine the direction of the swipe
     if (Math.abs(diffX) > Math.abs(diffY)) {
       // Horizontal swipe
       if (Math.abs(diffX) > threshold) {
         if (diffX > 0) {
-          onSwipeLeft?.();
+          onSwipeLeft?.()
         } else {
-          onSwipeRight?.();
+          onSwipeRight?.()
         }
-        setIsDragging(false);
+        setIsDragging(false)
       }
     } else {
       // Vertical swipe
       if (Math.abs(diffY) > threshold) {
         if (diffY > 0) {
-          onSwipeUp?.();
+          onSwipeUp?.()
         } else {
-          onSwipeDown?.();
+          onSwipeDown?.()
         }
-        setIsDragging(false);
+        setIsDragging(false)
       }
     }
-  }, [isDragging, startX, startY, threshold, onSwipeLeft, onSwipeRight, onSwipeUp, onSwipeDown]);
+  }, [isDragging, startX, startY, threshold, onSwipeLeft, onSwipeRight, onSwipeUp, onSwipeDown])
 
   const handleTouchEnd = React.useCallback(() => {
-    setIsDragging(false);
-  }, []);
+    setIsDragging(false)
+  }, [])
 
   return (
     <div
@@ -141,16 +141,16 @@ export const PWASwipeable: React.FC<PWASwipeableProps> = ({
     >
       {children}
     </div>
-  );
-};
+  )
+}
 
 // Bottom sheet component for mobile UI
 export interface PWABottomSheetProps {
-  open: boolean;
-  onClose: () => void;
-  children: React.ReactNode;
-  title?: string;
-  className?: string;
+  open: boolean
+  onClose: () => void
+  children: React.ReactNode
+  title?: string
+  className?: string
 }
 
 export const PWABottomSheet: React.FC<PWABottomSheetProps> = ({
@@ -160,48 +160,48 @@ export const PWABottomSheet: React.FC<PWABottomSheetProps> = ({
   title,
   className,
 }) => {
-  const sheetRef = React.useRef<HTMLDivElement>(null);
-  const [isDragging, setIsDragging] = React.useState(false);
-  const [startY, setStartY] = React.useState(0);
-  const [currentY, setCurrentY] = React.useState(0);
+  const sheetRef = React.useRef<HTMLDivElement>(null)
+  const [isDragging, setIsDragging] = React.useState(false)
+  const [startY, setStartY] = React.useState(0)
+  const [currentY, setCurrentY] = React.useState(0)
 
   React.useEffect(() => {
     if (open) {
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = 'hidden'
     } else {
-      document.body.style.overflow = '';
+      document.body.style.overflow = ''
     }
 
     return () => {
-      document.body.style.overflow = '';
-    };
-  }, [open]);
+      document.body.style.overflow = ''
+    }
+  }, [open])
 
   const handleTouchStart = React.useCallback((e: React.TouchEvent) => {
-    setIsDragging(true);
+    setIsDragging(true)
     if (e.touches && e.touches[0]) {
-      setStartY(e.touches[0].clientY);
+      setStartY(e.touches[0].clientY)
     }
-  }, []);
+  }, [])
 
   const handleTouchMove = React.useCallback((e: React.TouchEvent) => {
-    if (!isDragging || !e.touches || !e.touches[0]) return;
+    if (!isDragging || !e.touches || !e.touches[0]) return
 
-    const y = e.touches[0].clientY;
-    setCurrentY(y);
+    const y = e.touches[0].clientY
+    setCurrentY(y)
 
     // Close if dragged down enough
     if (y - startY > 100) {
-      onClose();
+      onClose()
     }
-  }, [isDragging, startY, onClose]);
+  }, [isDragging, startY, onClose])
 
   const handleTouchEnd = React.useCallback(() => {
-    setIsDragging(false);
-    setCurrentY(0);
-  }, []);
+    setIsDragging(false)
+    setCurrentY(0)
+  }, [])
 
-  if (!open) return null;
+  if (!open) return null
 
   return (
     <div className='fixed inset-0 z-50 flex items-end justify-center'>
@@ -245,14 +245,14 @@ export const PWABottomSheet: React.FC<PWABottomSheetProps> = ({
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
 // Pull-to-refresh component
 export interface PWAPullToRefreshProps {
-  onRefresh: () => Promise<void>;
-  children: React.ReactNode;
-  className?: string;
+  onRefresh: () => Promise<void>
+  children: React.ReactNode
+  className?: string
 }
 
 export const PWAPullToRefresh: React.FC<PWAPullToRefreshProps> = ({
@@ -260,44 +260,44 @@ export const PWAPullToRefresh: React.FC<PWAPullToRefreshProps> = ({
   children,
   className,
 }) => {
-  const [isPulling, setIsPulling] = React.useState(false);
-  const [pullDistance, setPullDistance] = React.useState(0);
-  const [isRefreshing, setIsRefreshing] = React.useState(false);
-  const [startY, setStartY] = React.useState(0);
+  const [isPulling, setIsPulling] = React.useState(false)
+  const [pullDistance, setPullDistance] = React.useState(0)
+  const [isRefreshing, setIsRefreshing] = React.useState(false)
+  const [startY, setStartY] = React.useState(0)
 
   const handleTouchStart = React.useCallback((e: React.TouchEvent) => {
     if (window.scrollY === 0 && e.touches && e.touches[0]) {
-      setStartY(e.touches[0].clientY);
-      setIsPulling(true);
+      setStartY(e.touches[0].clientY)
+      setIsPulling(true)
     }
-  }, []);
+  }, [])
 
   const handleTouchMove = React.useCallback((e: React.TouchEvent) => {
-    if (!isPulling || isRefreshing || !e.touches || !e.touches[0]) return;
+    if (!isPulling || isRefreshing || !e.touches || !e.touches[0]) return
 
-    const currentY = e.touches[0].clientY;
-    const distance = Math.max(0, currentY - startY);
-    setPullDistance(Math.min(distance, 100)); // Max 100px pull
-  }, [isPulling, isRefreshing, startY]);
+    const currentY = e.touches[0].clientY
+    const distance = Math.max(0, currentY - startY)
+    setPullDistance(Math.min(distance, 100)) // Max 100px pull
+  }, [isPulling, isRefreshing, startY])
 
   const handleTouchEnd = React.useCallback(async () => {
-    if (!isPulling || isRefreshing) return;
+    if (!isPulling || isRefreshing) return
 
     if (pullDistance > 50) {
-      setIsRefreshing(true);
-      setPullDistance(0);
-      setIsPulling(false);
+      setIsRefreshing(true)
+      setPullDistance(0)
+      setIsPulling(false)
 
       try {
-        await onRefresh();
+        await onRefresh()
       } finally {
-        setIsRefreshing(false);
+        setIsRefreshing(false)
       }
     } else {
-      setPullDistance(0);
-      setIsPulling(false);
+      setPullDistance(0)
+      setIsPulling(false)
     }
-  }, [isPulling, isRefreshing, pullDistance, onRefresh]);
+  }, [isPulling, isRefreshing, pullDistance, onRefresh])
 
   return (
     <div
@@ -343,8 +343,8 @@ export const PWAPullToRefresh: React.FC<PWAPullToRefreshProps> = ({
         {children}
       </div>
     </div>
-  );
-};
+  )
+}
 
 // Safe area inset helpers for mobile devices
 export const useSafeAreaInsets = () => {
@@ -353,46 +353,46 @@ export const useSafeAreaInsets = () => {
     right: 0,
     bottom: 0,
     left: 0,
-  });
+  })
 
   React.useEffect(() => {
     const updateInsets = () => {
-      const style = getComputedStyle(document.documentElement);
+      const style = getComputedStyle(document.documentElement)
       setInsets({
         top: parseInt(style.getPropertyValue('--sat') || '0'),
         right: parseInt(style.getPropertyValue('--sar') || '0'),
         bottom: parseInt(style.getPropertyValue('--sab') || '0'),
         left: parseInt(style.getPropertyValue('--sal') || '0'),
-      });
-    };
+      })
+    }
 
-    updateInsets();
-    window.addEventListener('resize', updateInsets);
-    return () => window.removeEventListener('resize', updateInsets);
-  }, []);
+    updateInsets()
+    window.addEventListener('resize', updateInsets)
+    return () => window.removeEventListener('resize', updateInsets)
+  }, [])
 
-  return insets;
-};
+  return insets
+}
 
 export const SafeAreaView: React.FC<{
-  children: React.ReactNode;
-  edges?: ('top' | 'bottom' | 'left' | 'right')[];
-  className?: string;
+  children: React.ReactNode
+  edges?: ('top' | 'bottom' | 'left' | 'right')[]
+  className?: string
 }> = ({ children, edges = ['top', 'bottom'], className }) => {
-  const insets = useSafeAreaInsets();
+  const insets = useSafeAreaInsets()
 
   const style = React.useMemo(() => {
-    const padding: Record<string, number> = {};
-    if (edges.includes('top')) padding.paddingTop = insets.top;
-    if (edges.includes('bottom')) padding.paddingBottom = insets.bottom;
-    if (edges.includes('left')) padding.paddingLeft = insets.left;
-    if (edges.includes('right')) padding.paddingRight = insets.right;
-    return padding;
-  }, [insets, edges]);
+    const padding: Record<string, number> = {}
+    if (edges.includes('top')) padding.paddingTop = insets.top
+    if (edges.includes('bottom')) padding.paddingBottom = insets.bottom
+    if (edges.includes('left')) padding.paddingLeft = insets.left
+    if (edges.includes('right')) padding.paddingRight = insets.right
+    return padding
+  }, [insets, edges])
 
   return (
     <div className={className} style={style}>
       {children}
     </div>
-  );
-};
+  )
+}

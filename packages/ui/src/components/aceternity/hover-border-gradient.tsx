@@ -1,29 +1,29 @@
-'use client';
+'use client'
 
-import { type ClassValue, clsx } from 'clsx';
-import React from 'react';
-import { twMerge } from 'tailwind-merge';
+import { type ClassValue, clsx } from 'clsx'
+import React from 'react'
+import { twMerge } from 'tailwind-merge'
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
+  return twMerge(clsx(inputs))
 }
 import {
   type HoverGradientTheme,
   useShineBorderAnimation,
-} from '../../hooks/useShineBorderAnimation';
+} from '../../hooks/useShineBorderAnimation'
 
 interface HoverBorderGradientProps extends React.HTMLAttributes<HTMLElement> {
-  children: React.ReactNode;
-  containerClassName?: string;
-  className?: string;
-  as?: React.ElementType;
-  duration?: number;
-  clockwise?: boolean;
-  theme?: HoverGradientTheme;
+  children: React.ReactNode
+  containerClassName?: string
+  className?: string
+  as?: React.ElementType
+  duration?: number
+  clockwise?: boolean
+  theme?: HoverGradientTheme
   customColors?: {
-    moving?: string;
-    highlight?: string;
-  };
+    moving?: string
+    highlight?: string
+  }
 }
 
 export function HoverBorderGradient({
@@ -44,7 +44,7 @@ export function HoverBorderGradient({
     hoverClockwise: clockwise,
     hoverDuration: duration,
     hoverGradientColors: customColors,
-  });
+  })
 
   return (
     <Tag
@@ -78,7 +78,7 @@ export function HoverBorderGradient({
       {/* Inner background */}
       <div className='bg-black absolute z-1 flex-none inset-[2px] rounded-[100px]' />
     </Tag>
-  );
+  )
 }
 
-export type { HoverBorderGradientProps };
+export type { HoverBorderGradientProps }

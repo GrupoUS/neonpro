@@ -10,14 +10,14 @@
  * Compliance: LGPD, CFM Resolution 2,314/2022, ANVISA, NGS2
  */
 
-import { initTRPC, TRPCError } from '@trpc/server';
-import superjson from 'superjson';
-import { Context } from './context';
+import { initTRPC, TRPCError } from '@trpc/server'
+import superjson from 'superjson'
+import { Context } from './context'
 
 // Import enhanced middleware functions
-import { cfmValidationMiddleware } from './middleware/cfm-validation';
-import { lgpdAuditMiddleware } from './middleware/lgpd-audit';
-import { prismaRLSMiddleware } from './middleware/prisma-rls';
+import { cfmValidationMiddleware } from './middleware/cfm-validation'
+import { lgpdAuditMiddleware } from './middleware/lgpd-audit'
+import { prismaRLSMiddleware } from './middleware/prisma-rls'
 
 /**
  * Initialize tRPC with superjson transformer for enhanced type support
@@ -33,9 +33,9 @@ const t = initTRPC.context<Context>().create({
           ? error.cause.message
           : null,
       },
-    };
+    }
   },
-});
+})
 
 /**
  * Enhanced Authentication middleware
@@ -46,11 +46,11 @@ const authMiddleware = t.middleware(async ({ ctx, _next }) => {
     throw new TRPCError({
       code: 'UNAUTHORIZED',
       message: 'Authentication required',
-    });
+    })
   }
 
-  return next();
-});
+  return next()
+})
 
 /**
  * Enhanced LGPD Consent middleware
@@ -59,7 +59,7 @@ const authMiddleware = t.middleware(async ({ ctx, _next }) => {
 const consentMiddleware = t.middleware(async ({ ctx, next, _input }) => {
   // For patient data operations, verify LGPD consent
   if (input && typeof input === 'object' && 'patientId' in input) {
-    const patientId = input.patientId as string;
+    const patientId = input.patientId as string
 
     const consent = await ctx.prisma.consentRecord.findFirst({
       where: {
@@ -70,22 +70,22 @@ const consentMiddleware = t.middleware(async ({ ctx, next, _input }) => {
           gt: new Date(),
         },
       },
-    });
+    })
 
     if (!consent) {
       throw new TRPCError({
         code: 'FORBIDDEN',
         message: 'Valid LGPD consent required for patient data operations',
-      });
+      })
     }
 
     // Add consent info to context for audit middleware
-    ctx.consentValidated = true;
-    ctx.consentRecord = consent;
+    ctx.consentValidated = true
+    ctx.consentRecord = consent
   }
 
-  return next();
-}); /**
+  return next()
+}) /**
  * Enhanced procedure definitions with comprehensive middleware chain
  *
  * Middleware execution order (optimized for performance and compliance):
@@ -97,40 +97,40 @@ const consentMiddleware = t.middleware(async ({ ctx, next, _input }) => {
  */
 
 // Base router and middleware export
-export const router = t.router;
-export const middleware = t.middleware;
+export const router = t.router
+export const middleware = t.middleware
 
 // Public procedures (minimal middleware for performance)
 export const publicProcedure = t.procedure.use(
   t.middleware(lgpdAuditMiddleware),
-);
+)
 
 // Protected procedures (authenticated users)
 export const protectedProcedure = t.procedure
   .use(t.middleware(prismaRLSMiddleware))
   .use(authMiddleware)
-  .use(t.middleware(lgpdAuditMiddleware));
+  .use(t.middleware(lgpdAuditMiddleware))
 
 // Healthcare procedures (medical professionals with CFM validation)
 export const healthcareProcedure = t.procedure
   .use(t.middleware(prismaRLSMiddleware))
   .use(authMiddleware)
   .use(t.middleware(cfmValidationMiddleware))
-  .use(t.middleware(lgpdAuditMiddleware));
+  .use(t.middleware(lgpdAuditMiddleware))
 
 // Patient procedures (patient data operations with consent validation)
 export const patientProcedure = t.procedure
   .use(t.middleware(prismaRLSMiddleware))
   .use(authMiddleware)
   .use(t.middleware(lgpdAuditMiddleware))
-  .use(consentMiddleware);
+  .use(consentMiddleware)
 
 // Emergency procedures (emergency medical access with enhanced logging)
 export const emergencyProcedure = t.procedure
   .use(t.middleware(prismaRLSMiddleware))
   .use(authMiddleware)
   .use(t.middleware(cfmValidationMiddleware))
-  .use(t.middleware(lgpdAuditMiddleware));
+  .use(t.middleware(lgpdAuditMiddleware))
 
 // Telemedicine procedures (full compliance stack for remote healthcare)
 export const telemedicineProcedure = t.procedure
@@ -138,7 +138,7 @@ export const telemedicineProcedure = t.procedure
   .use(authMiddleware)
   .use(t.middleware(cfmValidationMiddleware))
   .use(t.middleware(lgpdAuditMiddleware))
-  .use(consentMiddleware);
+  .use(consentMiddleware)
 
 /**
  * Middleware Performance Monitoring

@@ -1,6 +1,6 @@
-import { Link } from '@tanstack/react-router';
-import { Home, Search } from 'lucide-react';
-import * as React from 'react';
+import { Link } from '@tanstack/react-router'
+import { Home, Search } from 'lucide-react'
+import * as React from 'react'
 
 export function NotFound() {
   return (
@@ -42,5 +42,5 @@ export function NotFound() {
         </div>
       </div>
     </div>
-  );
+  )
 }

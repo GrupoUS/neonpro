@@ -12,19 +12,19 @@
  * - Adaptive reminder scheduling based on patient behavior
  */
 
-import { AuditAction, AuditStatus, ResourceType, RiskLevel } from '@prisma/client';
-import { TRPCError } from '@trpc/server';
-import * as v from 'valibot';
+import { AuditAction, AuditStatus, ResourceType, RiskLevel } from '@prisma/client'
+import { TRPCError } from '@trpc/server'
+import * as v from 'valibot'
 // Removed unused AppointmentReminderValibot import per linter
 
-import { weatherService } from '../../services/weather-service';
+import { weatherService } from '../../services/weather-service'
 import {
   CreateAppointmentSchema,
   GetAppointmentSchema,
   ListAppointmentsSchema,
   UpdateAppointmentSchema,
-} from '../schemas';
-import { healthcareProcedure, protectedProcedure, router } from '../trpc';
+} from '../schemas'
+import { healthcareProcedure, protectedProcedure, router } from '../trpc'
 
 // =====================================
 // BRAZILIAN HEALTHCARE COMPLIANCE
@@ -48,19 +48,19 @@ async function validateCFMLicenseRealTime(
       licenseStatus: true,
       lastValidationDate: true,
     },
-  });
+  })
 
   if (!professional?.licenseNumber) {
     throw new TRPCError({
       code: 'BAD_REQUEST',
       message: 'Professional must have valid CFM license number',
-    });
+    })
   }
 
   // Check if license validation is recent (within 24 hours)
-  const lastValidation = professional.lastValidationDate;
+  const lastValidation = professional.lastValidationDate
   const needsRevalidation = !lastValidation
-    || Date.now() - lastValidation.getTime() > 24 * 60 * 60 * 1000;
+    || Date.now() - lastValidation.getTime() > 24 * 60 * 60 * 1000
 
   if (needsRevalidation) {
     // In production: Call CFM portal API
@@ -68,13 +68,13 @@ async function validateCFMLicenseRealTime(
     const cfmValidation = await mockCFMValidation(
       professional.licenseNumber,
       professional.licenseState,
-    );
+    )
 
     if (!cfmValidation.isValid) {
       throw new TRPCError({
         code: 'FORBIDDEN',
         message: `CFM license ${professional.licenseNumber} is not valid or active`,
-      });
+      })
     }
 
     // Update validation timestamp
@@ -84,7 +84,7 @@ async function validateCFMLicenseRealTime(
         lastValidationDate: new Date(),
         licenseStatus: cfmValidation.status,
       },
-    });
+    })
   }
 
   // Validate specialty matches requirement
@@ -93,7 +93,7 @@ async function validateCFMLicenseRealTime(
       code: 'BAD_REQUEST',
       message:
         `Professional specialty ${professional.specialization} does not match required ${specialtyRequired}`,
-    });
+    })
   }
 
   return {
@@ -102,21 +102,21 @@ async function validateCFMLicenseRealTime(
     specialization: professional.specialization,
     state: professional.licenseState,
     lastValidated: new Date(),
-  };
+  }
 } /**
  * Mock CFM Validation (replace with real API in production)
  */
 
 async function mockCFMValidation(_licenseNumber: string, _state: string) {
   // Simulate API call delay
-  await new Promise(resolve => setTimeout(resolve, 200));
+  await new Promise((resolve) => setTimeout(resolve, 200))
 
   return {
     isValid: true,
     status: 'active',
     validUntil: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
     restrictions: [],
-  };
+  }
 }
 
 /**
@@ -140,7 +140,7 @@ async function predictNoShowRiskAdvanced(
       behavioralPatterns: true,
       demographics: true,
     },
-  });
+  })
 
   if (!patient) {
     return {
@@ -148,46 +148,46 @@ async function predictNoShowRiskAdvanced(
       riskScore: 0.5,
       confidence: 0.3,
       factors: ['insufficient_data'],
-    };
+    }
   }
 
   // Initialize risk calculation
-  let riskScore = patient.noShowRiskScore || 0.3;
-  const riskFactors: string[] = [];
-  let confidence = 0.7;
+  let riskScore = patient.noShowRiskScore || 0.3
+  const riskFactors: string[] = []
+  let confidence = 0.7
 
   // Factor 1: Historical no-show rate (30% weight)
   const noShowRate = patient.totalAppointments
     ? patient.totalNoShows / patient.totalAppointments
-    : 0;
-  riskScore += noShowRate * 0.3;
-  if (noShowRate > 0.2) riskFactors.push('high_historical_noshows');
+    : 0
+  riskScore += noShowRate * 0.3
+  if (noShowRate > 0.2) riskFactors.push('high_historical_noshows')
 
   // Factor 2: Appointment timing (Brazilian patterns - 20% weight)
-  const hour = appointmentTime.getHours();
-  const dayOfWeek = appointmentTime.getDay();
+  const hour = appointmentTime.getHours()
+  const dayOfWeek = appointmentTime.getDay()
 
   // Early morning (before 8 AM) or late evening (after 6 PM) - higher risk
   if (hour < 8 || hour > 18) {
-    riskScore += 0.15;
-    riskFactors.push('off_peak_hours');
+    riskScore += 0.15
+    riskFactors.push('off_peak_hours')
   }
 
   // Monday mornings or Friday afternoons - higher risk in Brazil
   if ((dayOfWeek === 1 && hour < 10) || (dayOfWeek === 5 && hour > 15)) {
-    riskScore += 0.1;
-    riskFactors.push('brazilian_cultural_patterns');
+    riskScore += 0.1
+    riskFactors.push('brazilian_cultural_patterns')
   }
 
   // Factor 3: Weather impact (Brazilian climate sensitivity - 15% weight)
   if (weatherData) {
     if (weatherData.precipitation > 10) {
-      riskScore += 0.1;
-      riskFactors.push('heavy_rain');
+      riskScore += 0.1
+      riskFactors.push('heavy_rain')
     }
     if (weatherData.temperature > 35 || weatherData.temperature < 10) {
-      riskScore += 0.05;
-      riskFactors.push('extreme_temperature');
+      riskScore += 0.05
+      riskFactors.push('extreme_temperature')
     }
   }
 
@@ -195,38 +195,38 @@ async function predictNoShowRiskAdvanced(
   if (patient.lastNoShowDate) {
     const daysSinceLastNoShow = Math.floor(
       (Date.now() - patient.lastNoShowDate.getTime()) / (1000 * 60 * 60 * 24),
-    );
+    )
     if (daysSinceLastNoShow < 30) {
-      riskScore += 0.2;
-      riskFactors.push('recent_noshow');
+      riskScore += 0.2
+      riskFactors.push('recent_noshow')
     }
   }
 
   // Factor 5: Communication preferences (10% weight)
-  const commPrefs = patient.communicationPreferences || {};
+  const commPrefs = patient.communicationPreferences || {}
   if (!commPrefs.whatsapp && !commPrefs.sms && !commPrefs.phone) {
-    riskScore += 0.1;
-    riskFactors.push('limited_communication_channels');
+    riskScore += 0.1
+    riskFactors.push('limited_communication_channels')
   }
 
   // Factor 6: Appointment advance notice (5% weight)
-  const hoursNotice = (appointmentTime.getTime() - Date.now()) / (1000 * 60 * 60);
+  const hoursNotice = (appointmentTime.getTime() - Date.now()) / (1000 * 60 * 60)
   if (hoursNotice < 2) {
-    riskScore += 0.05;
-    riskFactors.push('short_notice');
+    riskScore += 0.05
+    riskFactors.push('short_notice')
   }
 
   // Normalize risk score to 0-1 range
-  riskScore = Math.min(Math.max(riskScore, 0), 1);
+  riskScore = Math.min(Math.max(riskScore, 0), 1)
 
   // Determine risk level
-  const riskLevel = riskScore > 0.7 ? 'high' : riskScore > 0.4 ? 'medium' : 'low';
+  const riskLevel = riskScore > 0.7 ? 'high' : riskScore > 0.4 ? 'medium' : 'low'
 
   // Calculate confidence based on data availability
   confidence = Math.min(
     confidence + (patient.totalAppointments || 0) * 0.01,
     0.95,
-  );
+  )
 
   return {
     riskLevel,
@@ -234,7 +234,7 @@ async function predictNoShowRiskAdvanced(
     confidence,
     factors: riskFactors,
     recommendations: generatePreventionRecommendations(riskLevel, riskFactors),
-  };
+  }
 } /**
  * Generate prevention recommendations based on risk factors
  */
@@ -243,48 +243,48 @@ function generatePreventionRecommendations(
   riskLevel: string,
   factors: string[],
 ) {
-  const recommendations: string[] = [];
+  const recommendations: string[] = []
 
   if (factors.includes('high_historical_noshows')) {
-    recommendations.push('schedule_confirmation_call');
-    recommendations.push('require_deposit_or_prepayment');
+    recommendations.push('schedule_confirmation_call')
+    recommendations.push('require_deposit_or_prepayment')
   }
 
   if (factors.includes('off_peak_hours')) {
-    recommendations.push('send_reminder_day_before');
-    recommendations.push('offer_preferred_time_alternatives');
+    recommendations.push('send_reminder_day_before')
+    recommendations.push('offer_preferred_time_alternatives')
   }
 
   if (
     factors.includes('heavy_rain')
     || factors.includes('extreme_temperature')
   ) {
-    recommendations.push('send_weather_alert_with_options');
-    recommendations.push('offer_telemedicine_alternative');
+    recommendations.push('send_weather_alert_with_options')
+    recommendations.push('offer_telemedicine_alternative')
   }
 
   if (factors.includes('recent_noshow')) {
-    recommendations.push('personal_follow_up_call');
-    recommendations.push('address_underlying_barriers');
+    recommendations.push('personal_follow_up_call')
+    recommendations.push('address_underlying_barriers')
   }
 
   if (factors.includes('limited_communication_channels')) {
-    recommendations.push('establish_preferred_contact_method');
-    recommendations.push('multiple_reminder_channels');
+    recommendations.push('establish_preferred_contact_method')
+    recommendations.push('multiple_reminder_channels')
   }
 
   if (factors.includes('short_notice')) {
-    recommendations.push('immediate_confirmation_required');
-    recommendations.push('priority_reminder_sequence');
+    recommendations.push('immediate_confirmation_required')
+    recommendations.push('priority_reminder_sequence')
   }
 
   // Default recommendations for high risk
   if (riskLevel === 'high') {
-    recommendations.push('adaptive_reminder_schedule');
-    recommendations.push('behavioral_intervention_protocol');
+    recommendations.push('adaptive_reminder_schedule')
+    recommendations.push('behavioral_intervention_protocol')
   }
 
-  return [...new Set(recommendations)]; // Remove duplicates
+  return [...new Set(recommendations)] // Remove duplicates
 }
 
 /**
@@ -318,18 +318,18 @@ async function checkRealTimeAvailability(
         },
       ],
     },
-  });
+  })
 
   if (conflictingAppointments.length > 0) {
     return {
       available: false,
       reason: 'professional_conflict',
-      conflictingAppointments: conflictingAppointments.map(apt => ({
+      conflictingAppointments: conflictingAppointments.map((apt) => ({
         id: apt.id,
         startTime: apt.startTime,
         endTime: apt.endTime,
       })),
-    };
+    }
   }
 
   // Check service type requirements
@@ -340,24 +340,24 @@ async function checkRealTimeAvailability(
       requiresSpecialty: true,
       maxConcurrentAppointments: true,
     },
-  });
+  })
 
   if (!serviceType) {
     return {
       available: false,
       reason: 'invalid_service_type',
-    };
+    }
   }
 
   // Validate appointment duration
-  const requestedDuration = (endTime.getTime() - startTime.getTime()) / (1000 * 60);
+  const requestedDuration = (endTime.getTime() - startTime.getTime()) / (1000 * 60)
   if (requestedDuration < serviceType.duration_minutes) {
     return {
       available: false,
       reason: 'insufficient_duration',
       requiredMinutes: serviceType.duration_minutes,
       requestedMinutes: requestedDuration,
-    };
+    }
   }
 
   // Check clinic capacity if applicable
@@ -369,7 +369,7 @@ async function checkRealTimeAvailability(
         status: { in: ['scheduled', 'confirmed', 'in_progress'] },
         serviceTypeId,
       },
-    });
+    })
 
     if (concurrentCount >= serviceType.maxConcurrentAppointments) {
       return {
@@ -377,7 +377,7 @@ async function checkRealTimeAvailability(
         reason: 'clinic_capacity_exceeded',
         maxCapacity: serviceType.maxConcurrentAppointments,
         currentBookings: concurrentCount,
-      };
+      }
     }
   }
 
@@ -387,7 +387,7 @@ async function checkRealTimeAvailability(
       name: serviceType.name,
       duration: serviceType.duration_minutes,
     },
-  };
+  }
 } /**
  * Multi-channel Reminder System
  * Sends reminders via WhatsApp, SMS, email, phone, push notifications
@@ -408,15 +408,15 @@ async function scheduleMultiChannelReminders(
       communicationPreferences: true,
       preferredContactMethod: true,
     },
-  });
+  })
 
-  if (!patient) return;
+  if (!patient) return
 
   const reminderSchedule = generateAdaptiveReminderSchedule(
     riskLevel,
     appointmentTime,
-  );
-  const reminders = [];
+  )
+  const reminders = []
 
   for (const reminder of reminderSchedule) {
     // WhatsApp Business API reminder
@@ -434,7 +434,7 @@ async function scheduleMultiChannelReminders(
         ),
         phoneNumber: patient.phonePrimary,
         status: 'scheduled',
-      });
+      })
     }
 
     // SMS reminder
@@ -448,7 +448,7 @@ async function scheduleMultiChannelReminders(
         message: generateReminderMessage('sms', reminder.type, appointmentTime),
         phoneNumber: patient.phonePrimary,
         status: 'scheduled',
-      });
+      })
     }
 
     // Email reminder
@@ -467,7 +467,7 @@ async function scheduleMultiChannelReminders(
         ),
         email: patient.email,
         status: 'scheduled',
-      });
+      })
     }
   }
 
@@ -475,10 +475,10 @@ async function scheduleMultiChannelReminders(
   if (reminders.length > 0) {
     await prisma.appointmentReminder.createMany({
       data: reminders,
-    });
+    })
   }
 
-  return reminders;
+  return reminders
 }
 
 /**
@@ -488,8 +488,8 @@ function generateAdaptiveReminderSchedule(
   riskLevel: string,
   appointmentTime: Date,
 ) {
-  const schedule = [];
-  const appointmentTimestamp = appointmentTime.getTime();
+  const schedule = []
+  const appointmentTimestamp = appointmentTime.getTime()
 
   switch (riskLevel) {
     case 'high':
@@ -524,8 +524,8 @@ function generateAdaptiveReminderSchedule(
           when: new Date(appointmentTimestamp - 2 * 60 * 60 * 1000),
           priority: 'critical',
         },
-      );
-      break;
+      )
+      break
 
     case 'medium':
       schedule.push(
@@ -544,8 +544,8 @@ function generateAdaptiveReminderSchedule(
           when: new Date(appointmentTimestamp - 2 * 60 * 60 * 1000),
           priority: 'high',
         },
-      );
-      break;
+      )
+      break
 
     case 'low':
     default:
@@ -560,12 +560,12 @@ function generateAdaptiveReminderSchedule(
           when: new Date(appointmentTimestamp - 2 * 60 * 60 * 1000),
           priority: 'medium',
         },
-      );
-      break;
+      )
+      break
   }
 
   // Filter out past dates
-  return schedule.filter(reminder => reminder.when.getTime() > Date.now());
+  return schedule.filter((reminder) => reminder.when.getTime() > Date.now())
 }
 
 /**
@@ -576,11 +576,11 @@ function generateReminderMessage(
   type: string,
   appointmentTime: Date,
 ): string {
-  const dateStr = appointmentTime.toLocaleDateString('pt-BR');
+  const dateStr = appointmentTime.toLocaleDateString('pt-BR')
   const timeStr = appointmentTime.toLocaleTimeString('pt-BR', {
     hour: '2-digit',
     minute: '2-digit',
-  });
+  })
 
   const messages = {
     whatsapp: {
@@ -608,27 +608,27 @@ function generateReminderMessage(
       day_before:
         `Lembrete importante: Sua consulta é amanhã (${dateStr}) às ${timeStr}. Por favor, confirme sua presença.`,
     },
-  };
+  }
 
   return (
     messages[channel]?.[type]
     || `Lembrete de consulta: ${dateStr} às ${timeStr}`
-  );
+  )
 }
 
 /**
  * Generate email subjects for reminders
  */
 function generateReminderSubject(type: string, appointmentTime: Date): string {
-  const dateStr = appointmentTime.toLocaleDateString('pt-BR');
+  const dateStr = appointmentTime.toLocaleDateString('pt-BR')
 
   const subjects = {
     week_before: `Consulta confirmada para ${dateStr} - Confirme sua presença`,
     day_before: `Lembrete: Consulta amanhã ${dateStr}`,
     morning_of: `Consulta hoje - Confirme sua presença`,
-  };
+  }
 
-  return subjects[type] || `Lembrete de consulta - ${dateStr}`;
+  return subjects[type] || `Lembrete de consulta - ${dateStr}`
 }
 
 // =====================================
@@ -648,13 +648,13 @@ export const appointmentsRouter = router({
         const serviceType = await ctx.prisma.serviceType.findUnique({
           where: { id: input.serviceTypeId },
           select: { requiresSpecialty: true, name: true },
-        });
+        })
 
         await validateCFMLicenseRealTime(
           input.professionalId,
           serviceType?.requiresSpecialty,
           ctx.prisma,
-        );
+        )
 
         // Step 2: Check real-time availability
         const availability = await checkRealTimeAvailability(
@@ -663,18 +663,18 @@ export const appointmentsRouter = router({
           input.endTime,
           input.serviceTypeId,
           ctx.prisma,
-        );
+        )
 
         if (!availability.available) {
           throw new TRPCError({
             code: 'CONFLICT',
             message: `Appointment slot not available: ${availability.reason}`,
             cause: availability,
-          });
+          })
         }
 
         // Step 3: Get weather data for appointment location
-        let weatherData = null;
+        let weatherData = null
         try {
           // Get clinic location for weather data
           const clinic = await ctx.prisma.clinic.findUnique({
@@ -685,17 +685,17 @@ export const appointmentsRouter = router({
               city: true,
               state: true,
             },
-          });
+          })
 
           if (clinic?.latitude && clinic?.longitude) {
             weatherData = await weatherService.getWeatherForecast(
               clinic.latitude,
               clinic.longitude,
               input.startTime,
-            );
+            )
           }
         } catch {
-          console.warn('Weather service integration failed:', error);
+          console.warn('Weather service integration failed:', error)
           // Continue without weather data - non-critical feature
         }
 
@@ -705,10 +705,10 @@ export const appointmentsRouter = router({
           input.startTime,
           weatherData,
           ctx.prisma,
-        );
+        )
 
         // Step 4: Create appointment with comprehensive data
-        const appointment = await ctx.prisma.$transaction(async prisma => {
+        const appointment = await ctx.prisma.$transaction(async (prisma) => {
           const newAppointment = await prisma.appointment.create({
             data: {
               ...input,
@@ -746,7 +746,7 @@ export const appointmentsRouter = router({
                 },
               },
             },
-          });
+          })
 
           // Step 5: Schedule adaptive reminders based on risk level
           await scheduleMultiChannelReminders(
@@ -755,10 +755,10 @@ export const appointmentsRouter = router({
             input.startTime,
             riskPrediction.riskLevel,
             prisma,
-          );
+          )
 
-          return newAppointment;
-        });
+          return newAppointment
+        })
 
         // Step 6: Create comprehensive audit trail
         await ctx.prisma.auditTrail.create({
@@ -789,7 +789,7 @@ export const appointmentsRouter = router({
               remindersScheduled: true,
             }),
           },
-        });
+        })
 
         return {
           ...appointment,
@@ -800,7 +800,7 @@ export const appointmentsRouter = router({
             lgpdCompliant: true,
             anvisaCompliant: serviceType?.requiresSpecialty ? true : false,
           },
-        };
+        }
       } catch {
         // Log failed appointment creation
         await ctx.prisma.auditTrail.create({
@@ -822,13 +822,13 @@ export const appointmentsRouter = router({
               input: JSON.stringify(input),
             }),
           },
-        });
+        })
 
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to create appointment with AI prediction',
           cause: error,
-        });
+        })
       }
     }), /**
    * Check Real-Time Availability
@@ -850,7 +850,7 @@ export const appointmentsRouter = router({
         input.endTime,
         input.serviceTypeId,
         ctx.prisma,
-      );
+      )
 
       // Log availability check for analytics
       await ctx.prisma.auditTrail.create({
@@ -872,9 +872,9 @@ export const appointmentsRouter = router({
             reason: availability.reason || 'available',
           }),
         },
-      });
+      })
 
-      return availability;
+      return availability
     }),
 
   /**
@@ -892,7 +892,7 @@ export const appointmentsRouter = router({
     .query(async ({ ctx, _input }) => {
       try {
         // Get weather data if requested
-        let weatherData = null;
+        let weatherData = null
         if (input.includeWeather) {
           try {
             // Get clinic location for weather data
@@ -904,17 +904,17 @@ export const appointmentsRouter = router({
                 city: true,
                 state: true,
               },
-            });
+            })
 
             if (clinic?.latitude && clinic?.longitude) {
               weatherData = await weatherService.getWeatherForecast(
                 clinic.latitude,
                 clinic.longitude,
                 input.appointmentTime,
-              );
+              )
             }
           } catch {
-            console.warn('Weather service integration failed:', error);
+            console.warn('Weather service integration failed:', error)
             // Continue without weather data - non-critical feature
           }
         }
@@ -924,7 +924,7 @@ export const appointmentsRouter = router({
           input.appointmentTime,
           weatherData,
           ctx.prisma,
-        );
+        )
 
         // Log risk prediction for analytics
         await ctx.prisma.auditTrail.create({
@@ -953,15 +953,15 @@ export const appointmentsRouter = router({
               factors: prediction.factors,
             }),
           },
-        });
+        })
 
-        return prediction;
+        return prediction
       } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to predict no-show risk',
           cause: error,
-        });
+        })
       }
     }),
 
@@ -996,13 +996,13 @@ export const appointmentsRouter = router({
             },
           },
         },
-      });
+      })
 
       if (!appointment) {
         throw new TRPCError({
           code: 'NOT_FOUND',
           message: 'Appointment not found',
-        });
+        })
       }
 
       // Create reminder record
@@ -1025,7 +1025,7 @@ export const appointmentsRouter = router({
           sentAt: new Date(),
           sentBy: ctx.userId,
         },
-      });
+      })
 
       // Log reminder action
       await ctx.prisma.auditTrail.create({
@@ -1049,13 +1049,13 @@ export const appointmentsRouter = router({
             urgent: input.urgent || false,
           }),
         },
-      });
+      })
 
       return {
         success: true,
         reminder,
         message: `${input.reminderType.toUpperCase()} reminder sent successfully`,
-      };
+      }
     }), /**
    * Get Appointment by ID
    * Includes risk prediction and compliance status
@@ -1098,13 +1098,13 @@ export const appointmentsRouter = router({
             take: 5,
           },
         },
-      });
+      })
 
       if (!appointment) {
         throw new TRPCError({
           code: 'NOT_FOUND',
           message: 'Appointment not found',
-        });
+        })
       }
 
       // Log appointment access
@@ -1127,7 +1127,7 @@ export const appointmentsRouter = router({
             appointmentId: appointment.id,
           }),
         },
-      });
+      })
 
       return {
         ...appointment,
@@ -1142,7 +1142,7 @@ export const appointmentsRouter = router({
           lgpdCompliant: true,
           auditTrail: true,
         },
-      };
+      }
     }),
 
   /**
@@ -1160,7 +1160,7 @@ export const appointmentsRouter = router({
         status,
         startDate,
         endDate,
-      } = input;
+      } = input
 
       const where = {
         clinicId: ctx.clinicId,
@@ -1168,13 +1168,14 @@ export const appointmentsRouter = router({
         ...(professionalId && { professionalId }),
         ...(status && { status }),
         ...(startDate
-          && endDate && {
-          startTime: {
-            gte: startDate,
-            lte: endDate,
-          },
-        }),
-      };
+          && endDate
+          && {
+            startTime: {
+              gte: startDate,
+              lte: endDate,
+            },
+          }),
+      }
 
       const [appointments, total, riskStats] = await Promise.all([
         ctx.prisma.appointment.findMany({
@@ -1214,7 +1215,7 @@ export const appointmentsRouter = router({
           where,
           _count: { noShowRiskLevel: true },
         }),
-      ]);
+      ])
 
       // Log list access
       await ctx.prisma.auditTrail.create({
@@ -1235,7 +1236,7 @@ export const appointmentsRouter = router({
             resultsCount: appointments.length,
           }),
         },
-      });
+      })
 
       return {
         appointments,
@@ -1247,8 +1248,8 @@ export const appointmentsRouter = router({
         },
         analytics: {
           riskDistribution: riskStats.reduce((acc, _stat) => {
-            acc[stat.noShowRiskLevel || 'unknown'] = stat._count.noShowRiskLevel;
-            return acc;
+            acc[stat.noShowRiskLevel || 'unknown'] = stat._count.noShowRiskLevel
+            return acc
           }, {}),
           totalAppointments: total,
         },
@@ -1257,7 +1258,7 @@ export const appointmentsRouter = router({
           auditLogged: true,
           dataMinimizationApplied: true,
         },
-      };
+      }
     }),
 
   /**
@@ -1266,22 +1267,22 @@ export const appointmentsRouter = router({
   updateStatus: protectedProcedure
     .input(UpdateAppointmentSchema)
     .mutation(async ({ ctx, _input }) => {
-      const { id, ...updateData } = input;
+      const { id, ...updateData } = input
 
       const appointment = await ctx.prisma.appointment.findFirst({
         where: { id, clinicId: ctx.clinicId },
         include: { patient: true },
-      });
+      })
 
       if (!appointment) {
         throw new TRPCError({
           code: 'NOT_FOUND',
           message: 'Appointment not found',
-        });
+        })
       }
 
       // Re-evaluate risk if appointment is being rescheduled
-      let riskUpdate = {};
+      let riskUpdate = {}
       if (
         updateData.startTime
         && updateData.startTime !== appointment.startTime
@@ -1291,14 +1292,14 @@ export const appointmentsRouter = router({
           updateData.startTime,
           null,
           ctx.prisma,
-        );
+        )
 
         riskUpdate = {
           noShowRiskScore: newRiskPrediction.riskScore,
           noShowRiskLevel: newRiskPrediction.riskLevel,
           noShowRiskFactors: newRiskPrediction.factors,
           preventionRecommendations: newRiskPrediction.recommendations,
-        };
+        }
       }
 
       const updatedAppointment = await ctx.prisma.appointment.update({
@@ -1308,7 +1309,7 @@ export const appointmentsRouter = router({
           ...riskUpdate,
           updatedBy: ctx.userId,
         },
-      });
+      })
 
       // Log appointment update
       await ctx.prisma.auditTrail.create({
@@ -1331,9 +1332,9 @@ export const appointmentsRouter = router({
             riskRevaluated: !!updateData.startTime,
           }),
         },
-      });
+      })
 
-      return updatedAppointment;
+      return updatedAppointment
     }),
 
   /**
@@ -1353,16 +1354,16 @@ export const appointmentsRouter = router({
           id: input.appointmentId,
           clinicId: ctx.clinicId,
         },
-      });
+      })
 
       if (!appointment) {
         throw new TRPCError({
           code: 'NOT_FOUND',
           message: 'Appointment not found',
-        });
+        })
       }
 
-      const result = await ctx.prisma.$transaction(async prisma => {
+      const result = await ctx.prisma.$transaction(async (prisma) => {
         // Cancel appointment
         const cancelled = await prisma.appointment.update({
           where: { id: input.appointmentId },
@@ -1372,7 +1373,7 @@ export const appointmentsRouter = router({
             cancelledBy: ctx.userId,
             cancellationReason: input.reason,
           },
-        });
+        })
 
         // Update patient no-show statistics if applicable
         if (input.isNoShow) {
@@ -1383,11 +1384,11 @@ export const appointmentsRouter = router({
               lastNoShowDate: new Date(),
               noShowRiskScore: { increment: 0.1 }, // Increase risk score
             },
-          });
+          })
         }
 
-        return cancelled;
-      });
+        return cancelled
+      })
 
       // Log cancellation
       await ctx.prisma.auditTrail.create({
@@ -1412,7 +1413,7 @@ export const appointmentsRouter = router({
             isNoShow: input.isNoShow || false,
           }),
         },
-      });
+      })
 
       return {
         success: true,
@@ -1420,7 +1421,7 @@ export const appointmentsRouter = router({
         message: input.isNoShow
           ? 'Appointment marked as no-show and patient risk score updated'
           : 'Appointment cancelled successfully',
-      };
+      }
     }),
 
   // T025 Required Procedure Aliases
@@ -1437,13 +1438,13 @@ export const appointmentsRouter = router({
         const serviceType = await ctx.prisma.serviceType.findUnique({
           where: { id: input.serviceTypeId },
           select: { requiresSpecialty: true, name: true },
-        });
+        })
 
         await validateCFMLicenseRealTime(
           input.professionalId,
           serviceType?.requiresSpecialty,
           ctx.prisma,
-        );
+        )
 
         // Step 2: Check real-time availability
         const availability = await checkRealTimeAvailability(
@@ -1452,14 +1453,14 @@ export const appointmentsRouter = router({
           input.endTime,
           input.serviceTypeId,
           ctx.prisma,
-        );
+        )
 
         if (!availability.available) {
           throw new TRPCError({
             code: 'CONFLICT',
             message: `Appointment slot not available: ${availability.reason}`,
             cause: availability,
-          });
+          })
         }
 
         // Step 3: Predict no-show risk with advanced AI
@@ -1468,7 +1469,7 @@ export const appointmentsRouter = router({
           input.startTime,
           null,
           ctx.prisma,
-        );
+        )
 
         // Step 4: Create appointment
         const appointment = await ctx.prisma.appointment.create({
@@ -1482,7 +1483,7 @@ export const appointmentsRouter = router({
             noShowRiskFactors: riskPrediction.factors,
             preventionRecommendations: riskPrediction.recommendations,
           },
-        });
+        })
 
         return {
           ...appointment,
@@ -1493,13 +1494,13 @@ export const appointmentsRouter = router({
             lgpdCompliant: true,
             anvisaCompliant: serviceType?.requiresSpecialty ? true : false,
           },
-        };
+        }
       } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to schedule appointment',
           cause: error,
-        });
+        })
       }
     }),
 
@@ -1524,8 +1525,8 @@ export const appointmentsRouter = router({
         input.endTime,
         input.serviceTypeId,
         ctx.prisma,
-      );
+      )
 
-      return availability;
+      return availability
     }),
-});
+})

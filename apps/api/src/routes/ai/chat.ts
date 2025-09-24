@@ -4,52 +4,52 @@
  * Integration with AIChatService, AuditService, LGPDService, and PatientService
  */
 
-import { zValidator } from '@hono/zod-validator';
-import { Context, Hono, Next } from 'hono';
-import { AIChatService } from '../../services/ai-chat-service';
-import { LGPDService } from '../../services/lgpd-service.js';
-import { PatientService } from '../../services/patient-service.js';
+import { zValidator } from '@hono/zod-validator'
+import { Context, Hono, Next } from 'hono'
+import { AIChatService } from '../../services/ai-chat-service'
+import { LGPDService } from '../../services/lgpd-service.js'
+import { PatientService } from '../../services/patient-service.js'
 
 // Type definitions
 interface ServiceInterface {
-  aiChatService: AIChatService;
-  patientService: PatientService;
-  auditService: AuditService;
-  lgpdService: LGPDService;
+  aiChatService: AIChatService
+  patientService: PatientService
+  auditService: AuditService
+  lgpdService: LGPDService
 }
 
 interface ChatMessage {
-  id: string;
-  _role: 'user' | 'assistant' | 'system';
-  content: string;
-  timestamp: Date;
-  metadata?: Record<string, any>;
+  id: string
+  _role: 'user' | 'assistant' | 'system'
+  content: string
+  timestamp: Date
+  metadata?: Record<string, any>
 }
 
 interface AIResponse {
-  response: string;
-  provider: string;
-  model: string;
-  responseTime: number;
-  tokensUsed?: number;
-  cost?: number;
-  confidence?: number;
+  response: string
+  provider: string
+  model: string
+  responseTime: number
+  tokensUsed?: number
+  cost?: number
+  confidence?: number
 }
 
 interface ChatResponse {
-  success: boolean;
+  success: boolean
   data: {
-    response: AIResponse;
-    conversationId: string;
-    messageId: string;
-    [key: string]: AIResponse | string | number | boolean | ChatMessage[];
-  };
-  message?: string;
+    response: AIResponse
+    conversationId: string
+    messageId: string
+    [key: string]: AIResponse | string | number | boolean | ChatMessage[]
+  }
+  message?: string
 }
 
 // Mock middleware for testing
 const mockAuthMiddleware = (c: Context, next: Next) => {
-  const authHeader = c.req.header('authorization');
+  const authHeader = c.req.header('authorization')
   if (!authHeader) {
     return c.json(
       {
@@ -57,15 +57,15 @@ const mockAuthMiddleware = (c: Context, next: Next) => {
         error: 'Não autorizado. Token de acesso necessário.',
       },
       401,
-    );
+    )
   }
-  c.set('user', { id: 'user-123', _role: 'healthcare_professional' });
-  return next();
-};
+  c.set('user', { id: 'user-123', _role: 'healthcare_professional' })
+  return next()
+}
 
-const mockLGPDMiddleware = (c: Context, next: Next) => next();
+const mockLGPDMiddleware = (c: Context, next: Next) => next()
 
-const app = new Hono();
+const app = new Hono()
 
 // Request validation schema
 const chatRequestSchema = z.object({
@@ -87,19 +87,19 @@ const chatRequestSchema = z.object({
     })
     .optional()
     .default({}),
-});
+})
 
 // Services - will be injected during testing or use real services in production
-let services: ServiceInterface | null = null;
+let services: ServiceInterface | null = null
 
 // Function to set services (used by tests)
 export const setServices = (injectedServices: ServiceInterface) => {
-  services = injectedServices;
-};
+  services = injectedServices
+}
 
 // Default services for production
 const getServices = () => {
-  if (services) return services;
+  if (services) return services
 
   // Use real service instances in production
   return {
@@ -107,33 +107,33 @@ const getServices = () => {
     auditService: new AuditService(),
     lgpdService: new LGPDService(),
     patientService: new PatientService(),
-  };
-};
+  }
+}
 
 app.post(
   '/',
   mockAuthMiddleware,
   mockLGPDMiddleware,
   zValidator('json', chatRequestSchema),
-  async c => {
-    const startTime = Date.now();
-    const _user = c.get('user');
-    const requestData = c.req.valid('json');
-    const ipAddress = c.req.header('X-Real-IP') || c.req.header('X-Forwarded-For') || 'unknown';
-    const userAgent = c.req.header('User-Agent') || 'unknown';
-    const healthcareProfessional = c.req.header('X-Healthcare-Professional');
-    const healthcareContext = c.req.header('X-Healthcare-Context');
+  async (c) => {
+    const startTime = Date.now()
+    const _user = c.get('user')
+    const requestData = c.req.valid('json')
+    const ipAddress = c.req.header('X-Real-IP') || c.req.header('X-Forwarded-For') || 'unknown'
+    const userAgent = c.req.header('User-Agent') || 'unknown'
+    const healthcareProfessional = c.req.header('X-Healthcare-Professional')
+    const healthcareContext = c.req.header('X-Healthcare-Context')
 
     try {
       // Validate LGPD data access for AI chat
-      const currentServices = getServices();
+      const currentServices = getServices()
       const lgpdValidation = await currentServices.lgpdService.validateDataAccess({
         _userId: user.id,
         dataType: 'ai_chat',
         purpose: 'healthcare_assistance',
         legalBasis: 'legitimate_interest',
         patientId: requestData.patientId,
-      });
+      })
 
       if (!lgpdValidation.success) {
         return c.json(
@@ -143,20 +143,20 @@ app.post(
             code: lgpdValidation.code || 'LGPD_AI_CHAT_DENIED',
           },
           403,
-        );
+        )
       }
 
       // Get patient context if requested
-      let patientContext = null;
+      let patientContext = null
       if (requestData.patientId && requestData.context?.includePatientHistory) {
         const patientData = await currentServices.patientService.getPatientContext({
           patientId: requestData.patientId,
           _userId: user.id,
           includeHistory: true,
-        });
+        })
 
         if (patientData.success) {
-          patientContext = patientData.data;
+          patientContext = patientData.data
         }
       }
 
@@ -173,10 +173,10 @@ app.post(
           healthcareProfessional,
           healthcareContext,
         },
-      };
+      }
 
       // Send message to AI service - choose method based on streaming flag
-      let aiResponse;
+      let aiResponse
       if (requestData.streaming) {
         // Use streamMessage for streaming requests
         aiResponse = await currentServices.aiChatService.streamMessage({
@@ -191,7 +191,7 @@ app.post(
             healthcareProfessional,
             healthcareContext,
           },
-        });
+        })
       } else {
         // Use generateResponse for regular requests
         aiResponse = await currentServices.aiChatService.generateResponse({
@@ -201,7 +201,7 @@ app.post(
           patientId: requestData.patientId,
           temperature: 0.7,
           maxTokens: 1000,
-        });
+        })
       }
 
       if (!aiResponse.success) {
@@ -211,17 +211,17 @@ app.post(
             error: aiResponse.error || 'Erro interno do serviço de IA',
           },
           500,
-        );
+        )
       }
 
       // Mask sensitive data based on access level
-      let responseData = aiResponse.data;
+      let responseData = aiResponse.data
       if (lgpdValidation.data?.accessLevel === 'limited') {
-        responseData = currentServices.lgpdService.maskSensitiveData(responseData);
+        responseData = currentServices.lgpdService.maskSensitiveData(responseData)
       }
 
       // Log activity for audit trail
-      const processingTime = Date.now() - startTime;
+      const processingTime = Date.now() - startTime
 
       // Handle different response structures for streaming vs regular
       const auditDetails = requestData.streaming
@@ -239,7 +239,7 @@ app.post(
           processingTime: responseData.responseTime,
           healthcareContext: requestData.context?.healthcareContext || true,
           streaming: false,
-        };
+        }
 
       await currentServices.auditService.logActivity({
         _userId: user.id,
@@ -255,7 +255,7 @@ app.post(
         userAgent,
         complianceContext: 'LGPD',
         sensitivityLevel: 'high',
-      });
+      })
 
       // Prepare response headers
       const responseHeaders: Record<string, string> = {
@@ -264,52 +264,52 @@ app.post(
         'X-AI-Healthcare-Context': 'true',
         'X-LGPD-Compliant': 'true',
         'X-Medical-AI-Logged': 'true',
-      };
+      }
 
       // Add AI-specific headers for non-streaming responses
       if (!requestData.streaming) {
-        responseHeaders['X-AI-Model'] = responseData.model;
-        responseHeaders['X-AI-Confidence'] = responseData.confidence.toString();
-        responseHeaders['X-AI-Tokens'] = responseData.tokensUsed.toString();
-        responseHeaders['X-AI-Processing-Time'] = `${responseData.responseTime}ms`;
-        responseHeaders['X-AI-Provider'] = responseData.provider;
+        responseHeaders['X-AI-Model'] = responseData.model
+        responseHeaders['X-AI-Confidence'] = responseData.confidence.toString()
+        responseHeaders['X-AI-Tokens'] = responseData.tokensUsed.toString()
+        responseHeaders['X-AI-Processing-Time'] = `${responseData.responseTime}ms`
+        responseHeaders['X-AI-Provider'] = responseData.provider
 
         // Add fallback headers if applicable
         if (responseData.metadata?.fallbackUsed) {
-          responseHeaders['X-AI-Fallback-Used'] = 'true';
+          responseHeaders['X-AI-Fallback-Used'] = 'true'
           if (responseData.metadata.originalModel) {
-            responseHeaders['X-AI-Original-Model'] = responseData.metadata.originalModel;
+            responseHeaders['X-AI-Original-Model'] = responseData.metadata.originalModel
           }
           if (responseData.metadata.fallbackReason) {
-            responseHeaders['X-AI-Fallback-Reason'] = responseData.metadata.fallbackReason;
+            responseHeaders['X-AI-Fallback-Reason'] = responseData.metadata.fallbackReason
           }
         }
       }
 
       // Add streaming headers if applicable
       if (requestData.streaming) {
-        responseHeaders['X-AI-Streaming'] = 'true';
+        responseHeaders['X-AI-Streaming'] = 'true'
       }
 
       // Add access level header if limited
       if (lgpdValidation.data?.accessLevel === 'limited') {
-        responseHeaders['X-Access-Level'] = 'limited';
+        responseHeaders['X-Access-Level'] = 'limited'
       }
 
       // Set all headers
       Object.entries(responseHeaders).forEach(([key, _value]) => {
-        c.header(key, value);
-      });
+        c.header(key, value)
+      })
 
       return c.json({
         success: true,
         data: responseData,
-      });
+      })
     } catch {
-      console.error('AI Chat endpoint error:', error);
+      console.error('AI Chat endpoint error:', error)
 
       // Log error for audit
-      const currentServices = getServices();
+      const currentServices = getServices()
       await currentServices.auditService.logActivity({
         _userId: user.id,
         action: 'ai_chat_error',
@@ -323,7 +323,7 @@ app.post(
         userAgent,
         complianceContext: 'LGPD',
         sensitivityLevel: 'high',
-      });
+      })
 
       // Handle specific error types
       if (error instanceof Error) {
@@ -335,7 +335,7 @@ app.post(
                 'Serviço de IA temporariamente indisponível. Tente novamente em alguns minutos.',
             },
             503,
-          );
+          )
         }
       }
 
@@ -345,10 +345,10 @@ app.post(
           error: 'Erro interno do servidor. Tente novamente mais tarde.',
         },
         500,
-      );
+      )
     }
   },
-);
+)
 
 // Session creation schema
 const sessionRequestSchema = z.object({
@@ -399,7 +399,7 @@ const sessionRequestSchema = z.object({
       enableStreaming: z.boolean().optional(),
     })
     .optional(),
-});
+})
 
 // Message request schema
 const messageRequestSchema = z.object({
@@ -434,7 +434,7 @@ const messageRequestSchema = z.object({
       urgency: z.string().optional(),
     })
     .optional(),
-});
+})
 
 // POST /sessions - Create AI session
 app.post(
@@ -442,9 +442,9 @@ app.post(
   mockAuthMiddleware,
   mockLGPDMiddleware,
   zValidator('json', sessionRequestSchema),
-  async c => {
-    const _user = c.get('user');
-    const requestData = c.req.valid('json');
+  async (c) => {
+    const _user = c.get('user')
+    const requestData = c.req.valid('json')
 
     try {
       // Validate model/provider combination
@@ -453,10 +453,10 @@ app.post(
         anthropic: ['claude-3-opus', 'claude-3-sonnet'],
         google: ['gemini-pro', 'gemini-pro-vision'],
         local: ['local-llama', 'local-mistral', 'local-phi'],
-      };
+      }
 
-      const provider = requestData.provider || 'openai';
-      const model = requestData.model || 'gpt-4o';
+      const provider = requestData.provider || 'openai'
+      const model = requestData.model || 'gpt-4o'
 
       if (
         !validCombinations[provider]
@@ -469,7 +469,7 @@ app.post(
             code: 'INVALID_MODEL_PROVIDER_COMBINATION',
           },
           400,
-        );
+        )
       }
 
       // Check LGPD consent (mock validation for testing)
@@ -477,7 +477,7 @@ app.post(
         || (requestData.lgpdConsent
           && typeof requestData.lgpdConsent === 'object'
           && requestData.lgpdConsent.dataProcessing === true)
-        || requestData.context?.lgpdConsent?.dataProcessing === true;
+        || requestData.context?.lgpdConsent?.dataProcessing === true
       if (!hasLGPDConsent) {
         return c.json(
           {
@@ -486,11 +486,11 @@ app.post(
             code: 'LGPD_CONSENT_REQUIRED',
           },
           403,
-        );
+        )
       }
 
       // Mock session creation
-      const sessionId = `session-${Math.random().toString(36).substr(2, 9)}`;
+      const sessionId = `session-${Math.random().toString(36).substr(2, 9)}`
 
       // Add Brazilian context if specified
       let responseData: ChatResponse['data'] = {
@@ -500,7 +500,7 @@ app.post(
         status: 'active',
         createdAt: new Date().toISOString(),
         healthcareContext: requestData.healthcareContext || 'general',
-      };
+      }
 
       // Add Brazilian context
       if (
@@ -513,11 +513,11 @@ app.post(
           region: 'brazil',
           regulations: ['ANVISA', 'CFM', 'LGPD'],
           healthcareSystem: 'SUS',
-        };
+        }
 
         // Include healthcare specialty if provided
         if (requestData.context?.healthcare?.specialty) {
-          responseData.context.specialty = requestData.context.healthcare.specialty;
+          responseData.context.specialty = requestData.context.healthcare.specialty
         }
       }
 
@@ -527,19 +527,19 @@ app.post(
           data: responseData,
         },
         201,
-      );
+      )
     } catch {
-      console.error('Chat request failed:', error);
+      console.error('Chat request failed:', error)
       return c.json(
         {
           success: false,
           error: 'Erro interno do servidor.',
         },
         500,
-      );
+      )
     }
   },
-);
+)
 
 // POST /sessions/{id}/messages - Send message to session
 app.post(
@@ -547,14 +547,14 @@ app.post(
   mockAuthMiddleware,
   mockLGPDMiddleware,
   zValidator('json', messageRequestSchema),
-  async c => {
-    const _user = c.get('user');
-    const sessionId = c.req.param('sessionId');
-    const requestData = c.req.valid('json');
+  async (c) => {
+    const _user = c.get('user')
+    const sessionId = c.req.param('sessionId')
+    const requestData = c.req.valid('json')
 
     try {
       // Validate session ID (basic UUID format check)
-      const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+      const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
       if (!uuidRegex.test(sessionId)) {
         return c.json(
           {
@@ -563,13 +563,13 @@ app.post(
             code: 'INVALID_SESSION_ID_FORMAT',
           },
           404,
-        );
+        )
       }
 
       // Check if session exists (mock validation)
-      const validTestSessions = ['550e8400-e29b-41d4-a716-446655440000'];
+      const validTestSessions = ['550e8400-e29b-41d4-a716-446655440000']
       const isValidSession = validTestSessions.includes(sessionId)
-        || sessionId.startsWith('session-');
+        || sessionId.startsWith('session-')
 
       if (!isValidSession) {
         return c.json(
@@ -579,7 +579,7 @@ app.post(
             code: 'SESSION_NOT_FOUND',
           },
           404,
-        );
+        )
       }
 
       // Check for empty content
@@ -591,18 +591,18 @@ app.post(
             code: 'EMPTY_MESSAGE_CONTENT',
           },
           400,
-        );
+        )
       }
 
       // Check attachment size limits (mock validation)
       if (requestData.attachments && requestData.attachments.length > 0) {
         for (const attachment of requestData.attachments) {
           // Check size limit - either from data length or metadata.size
-          let attachmentSize = 0;
+          let attachmentSize = 0
           if (attachment.data) {
-            attachmentSize = attachment.data.length;
+            attachmentSize = attachment.data.length
           } else if (attachment.metadata?.size) {
-            attachmentSize = attachment.metadata.size;
+            attachmentSize = attachment.metadata.size
           }
 
           if (attachmentSize > 1048576) {
@@ -614,7 +614,7 @@ app.post(
                 code: 'ATTACHMENT_TOO_LARGE',
               },
               413,
-            );
+            )
           }
 
           // Validate attachment type for multi-modal
@@ -624,15 +624,15 @@ app.post(
             'image/webp',
             'text/plain',
             'application/pdf',
-          ];
-          const supportedGenericTypes = ['image', 'text', 'document'];
+          ]
+          const supportedGenericTypes = ['image', 'text', 'document']
 
           // Prioritize specific MIME type over generic type
-          const attachmentType = attachment.metadata?.mimeType || attachment.type;
+          const attachmentType = attachment.metadata?.mimeType || attachment.type
 
           if (attachmentType) {
-            const isSpecificTypeSupported = supportedTypes.includes(attachmentType);
-            const isGenericTypeSupported = supportedGenericTypes.includes(attachmentType);
+            const isSpecificTypeSupported = supportedTypes.includes(attachmentType)
+            const isGenericTypeSupported = supportedGenericTypes.includes(attachmentType)
 
             if (!isSpecificTypeSupported && !isGenericTypeSupported) {
               return c.json(
@@ -642,30 +642,30 @@ app.post(
                   code: 'UNSUPPORTED_ATTACHMENT_TYPE',
                 },
                 400,
-              );
+              )
             }
           }
         }
       }
 
       // Check if streaming is requested
-      const isStreaming = requestData.settings?.stream === true;
+      const isStreaming = requestData.settings?.stream === true
 
       // Mock message response
-      const messageId = `msg-${Math.random().toString(36).substr(2, 9)}`;
+      const messageId = `msg-${Math.random().toString(36).substr(2, 9)}`
 
       // Generate response content with Brazilian context if needed
-      let responseContent = `Mock AI response to: ${requestData.content}`;
+      let responseContent = `Mock AI response to: ${requestData.content}`
       const containsPortuguese = /português|brasil|anvisa|cfm|lgpd|toxina|botulínica/i.test(
         requestData.content,
-      );
+      )
       const isEmergency = /emergência|urgente|grave|crítico|risco/i.test(
         requestData.content,
-      );
+      )
 
       if (containsPortuguese) {
         responseContent +=
-          ' [Contexto brasileiro: Regulamentações ANVISA e CFM aplicáveis. Resposta em pt-BR.]';
+          ' [Contexto brasileiro: Regulamentações ANVISA e CFM aplicáveis. Resposta em pt-BR.]'
       }
 
       const responseData = {
@@ -679,38 +679,38 @@ app.post(
           completionTokens: 100,
           totalTokens: 150,
         },
-      };
+      }
 
       // Set appropriate headers
       const headers: Record<string, string> = {
         'X-CFM-Compliant': 'true',
         'X-LGPD-Compliant': 'true',
         'X-Medical-AI-Logged': 'true',
-      };
+      }
 
       // Add emergency protocol headers if emergency content detected
       if (isEmergency) {
-        headers['X-Emergency-Protocol'] = 'activated';
-        headers['X-Priority-Level'] = 'high';
+        headers['X-Emergency-Protocol'] = 'activated'
+        headers['X-Priority-Level'] = 'high'
       }
 
       // Add Brazilian context headers
       if (containsPortuguese) {
-        headers['X-Brazilian-Context'] = 'true';
-        headers['X-ANVISA-Compliant'] = 'true';
+        headers['X-Brazilian-Context'] = 'true'
+        headers['X-ANVISA-Compliant'] = 'true'
       }
 
       // Handle streaming response
       if (isStreaming) {
         // Set streaming headers before creating response
-        c.header('Content-Type', 'text/event-stream');
-        c.header('Cache-Control', 'no-cache');
-        c.header('Connection', 'keep-alive');
+        c.header('Content-Type', 'text/event-stream')
+        c.header('Cache-Control', 'no-cache')
+        c.header('Connection', 'keep-alive')
 
         // Set other headers
         Object.entries(headers).forEach(([key, _value]) => {
-          c.header(key, value);
-        });
+          c.header(key, value)
+        })
 
         // Return streaming response (simplified for testing)
         return new Response(`data: ${JSON.stringify(responseData)}\n\n`, {
@@ -721,12 +721,12 @@ app.post(
             Connection: 'keep-alive',
             ...headers,
           },
-        });
+        })
       } else {
         // Set headers for regular response
         Object.entries(headers).forEach(([key, _value]) => {
-          c.header(key, value);
-        });
+          c.header(key, value)
+        })
 
         // Return regular JSON response
         return c.json(
@@ -735,19 +735,19 @@ app.post(
             data: responseData,
           },
           201,
-        );
+        )
       }
     } catch {
-      console.error('Chat request failed:', error);
+      console.error('Chat request failed:', error)
       return c.json(
         {
           success: false,
           error: 'Erro interno do servidor.',
         },
         500,
-      );
+      )
     }
   },
-);
+)
 
-export default app;
+export default app

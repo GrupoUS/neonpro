@@ -16,10 +16,10 @@ import { WeekView } from '@/components/event-calendar/week-view';
 
 ```typescript
 interface WeekViewProps {
-  currentDate: Date; // Current date to display
-  events: CalendarEvent[]; // Array of events to display
-  onEventSelect: (event: CalendarEvent) => void; // Callback when event is selected
-  onEventCreate: (startTime: Date) => void; // Callback when creating new event
+  currentDate: Date // Current date to display
+  events: CalendarEvent[] // Array of events to display
+  onEventSelect: (event: CalendarEvent) => void // Callback when event is selected
+  onEventCreate: (startTime: Date) => void // Callback when creating new event
 }
 ```
 
@@ -28,17 +28,17 @@ interface WeekViewProps {
 ### Basic Implementation
 
 ```typescript
-import { CalendarEvent } from '@/components/event-calendar/types';
-import { WeekView } from '@/components/event-calendar/week-view';
+import { CalendarEvent } from '@/components/event-calendar/types'
+import { WeekView } from '@/components/event-calendar/week-view'
 
 function WeeklySchedule() {
-  const [currentDate, setCurrentDate] = useState(new Date());
-  const [events, setEvents] = useState<CalendarEvent[]>([]);
+  const [currentDate, setCurrentDate] = useState(new Date())
+  const [events, setEvents] = useState<CalendarEvent[]>([])
 
   const handleEventSelect = (event: CalendarEvent) => {
-    console.log('Selected event:', event);
+    console.log('Selected event:', event)
     // Open event details dialog
-  };
+  }
 
   const handleEventCreate = (startTime: Date) => {
     // Create new appointment at selected time
@@ -49,9 +49,9 @@ function WeeklySchedule() {
       end: addHours(startTime, 1),
       allDay: false,
       color: 'primary',
-    };
-    setEvents(prev => [...prev, newEvent]);
-  };
+    }
+    setEvents((prev) => [...prev, newEvent])
+  }
 
   return (
     <div className='p-4'>
@@ -68,7 +68,7 @@ function WeeklySchedule() {
         onEventCreate={handleEventCreate}
       />
     </div>
-  );
+  )
 }
 ```
 
@@ -76,23 +76,23 @@ function WeeklySchedule() {
 
 ```typescript
 function WeeklyScheduleWithNavigation() {
-  const [currentDate, setCurrentDate] = useState(new Date());
+  const [currentDate, setCurrentDate] = useState(new Date())
 
   const goToPreviousWeek = () => {
-    const prevWeek = new Date(currentDate);
-    prevWeek.setDate(prevWeek.getDate() - 7);
-    setCurrentDate(prevWeek);
-  };
+    const prevWeek = new Date(currentDate)
+    prevWeek.setDate(prevWeek.getDate() - 7)
+    setCurrentDate(prevWeek)
+  }
 
   const goToNextWeek = () => {
-    const nextWeek = new Date(currentDate);
-    nextWeek.setDate(nextWeek.getDate() + 7);
-    setCurrentDate(nextWeek);
-  };
+    const nextWeek = new Date(currentDate)
+    nextWeek.setDate(nextWeek.getDate() + 7)
+    setCurrentDate(nextWeek)
+  }
 
   const goToToday = () => {
-    setCurrentDate(new Date());
-  };
+    setCurrentDate(new Date())
+  }
 
   return (
     <div className='bg-white rounded-lg shadow-lg p-6'>
@@ -120,7 +120,7 @@ function WeeklyScheduleWithNavigation() {
         onEventCreate={handleEventCreate}
       />
     </div>
-  );
+  )
 }
 ```
 
@@ -154,12 +154,12 @@ The WeekView uses intelligent positioning algorithm for overlapping events:
 
 ```typescript
 interface PositionedEvent {
-  event: CalendarEvent;
-  top: number; // Position from top of time grid
-  left: number; // Position from left of day column
-  width: number; // Width based on overlapping events
-  height: number; // Height based on event duration
-  zIndex: number; // Z-index for stacking order
+  event: CalendarEvent
+  top: number // Position from top of time grid
+  left: number // Position from left of day column
+  width: number // Width based on overlapping events
+  height: number // Height based on event duration
+  zIndex: number // Z-index for stacking order
 }
 ```
 
@@ -168,20 +168,20 @@ interface PositionedEvent {
 ```typescript
 // Calculate position for overlapping events
 const calculateEventPositions = (events: CalendarEvent[]) => {
-  const positionedEvents = events.map(event => {
-    const startMinutes = event.start.getHours() * 60 + event.start.getMinutes();
-    const endMinutes = event.end.getHours() * 60 + event.end.getMinutes();
-    const duration = endMinutes - startMinutes;
+  const positionedEvents = events.map((event) => {
+    const startMinutes = event.start.getHours() * 60 + event.start.getMinutes()
+    const endMinutes = event.end.getHours() * 60 + event.end.getMinutes()
+    const duration = endMinutes - startMinutes
 
     // Find overlapping events
     const overlapping = events.filter(
-      other =>
+      (other) =>
         other.id !== event.id
         && !(other.end <= event.start || other.start >= event.end),
-    );
+    )
 
     // Calculate width based on number of overlapping events
-    const width = 100 / (overlapping.length + 1);
+    const width = 100 / (overlapping.length + 1)
 
     return {
       event,
@@ -189,11 +189,11 @@ const calculateEventPositions = (events: CalendarEvent[]) => {
       height: (duration / 1440) * 100,
       width,
       zIndex: overlapping.length + 1,
-    };
-  });
+    }
+  })
 
-  return positionedEvents;
-};
+  return positionedEvents
+}
 ```
 
 ## Time Grid Structure
@@ -210,7 +210,7 @@ const weekDays = [
   { date: addDays(startOfWeek(currentDate), 4), label: 'Thu' },
   { date: addDays(startOfWeek(currentDate), 5), label: 'Fri' },
   { date: addDays(startOfWeek(currentDate), 6), label: 'Sat' },
-];
+]
 ```
 
 ### Time Slots
@@ -221,7 +221,7 @@ const timeSlots = Array.from({ length: 24 }, (_, hour) => ({
   hour,
   label: format(new Date().setHours(hour, 0, 0, 0), 'h a'),
   time: new Date().setHours(hour, 0, 0, 0),
-}));
+}))
 ```
 
 ## Accessibility
@@ -275,14 +275,14 @@ const timeSlots = Array.from({ length: 24 }, (_, hour) => ({
           aria-label={`${format(day.date, 'EEEE')} at ${slot.label}`}
           tabIndex={0}
           onClick={() => handleTimeSlotClick(day.date, slot.time)}
-          onKeyDown={e => handleKeydown(e, day.date, slot.time)}
+          onKeyDown={(e) => handleKeydown(e, day.date, slot.time)}
         >
           {/* Event content */}
         </div>
       ))}
     </React.Fragment>
   ))}
-</div>;
+</div>
 ```
 
 ## Styling
@@ -296,7 +296,7 @@ const timeSlots = Array.from({ length: 24 }, (_, hour) => ({
   onEventSelect={handleEventSelect}
   onEventCreate={handleEventCreate}
   className='custom-week-view'
-/>;
+/>
 ```
 
 ```css
@@ -375,14 +375,14 @@ const timeSlots = Array.from({ length: 24 }, (_, hour) => ({
 
 ```typescript
 // Memoize events to prevent unnecessary re-renders
-const memoizedEvents = useMemo(() => events, [events]);
+const memoizedEvents = useMemo(() => events, [events])
 
 // Virtual scrolling for performance
 const visibleTimeSlots = useMemo(() => {
-  const scrollPosition = getScrollPosition();
-  const viewportHeight = getViewportHeight();
-  return getTimeSlotsInView(scrollPosition, viewportHeight);
-}, [scrollPosition, viewportHeight]);
+  const scrollPosition = getScrollPosition()
+  const viewportHeight = getViewportHeight()
+  return getTimeSlotsInView(scrollPosition, viewportHeight)
+}, [scrollPosition, viewportHeight])
 ```
 
 ### Event Filtering
@@ -390,13 +390,13 @@ const visibleTimeSlots = useMemo(() => {
 ```typescript
 // Filter events for current week view
 const weekEvents = useMemo(() => {
-  const weekStart = startOfWeek(currentDate);
-  const weekEnd = endOfWeek(currentDate);
+  const weekStart = startOfWeek(currentDate)
+  const weekEnd = endOfWeek(currentDate)
 
   return events.filter(
-    event => event.start >= weekStart && event.end <= weekEnd,
-  );
-}, [events, currentDate]);
+    (event) => event.start >= weekStart && event.end <= weekEnd,
+  )
+}, [events, currentDate])
 ```
 
 ## Error Handling
@@ -408,26 +408,26 @@ const handleEventCreate = (startTime: Date) => {
   try {
     // Validate time slot
     if (isWeekend(startTime)) {
-      throw new Error('Cannot create appointments on weekends');
+      throw new Error('Cannot create appointments on weekends')
     }
 
     if (isOutsideBusinessHours(startTime)) {
-      throw new Error('Appointment must be during business hours');
+      throw new Error('Appointment must be during business hours')
     }
 
     // Check for conflicts
-    const conflictingEvents = checkForConflicts(startTime);
+    const conflictingEvents = checkForConflicts(startTime)
     if (conflictingEvents.length > 0) {
-      throw new Error('This time slot conflicts with existing appointments');
+      throw new Error('This time slot conflicts with existing appointments')
     }
 
     // Create event
-    onEventCreate(startTime);
+    onEventCreate(startTime)
   } catch (error) {
-    console.error('Failed to create event:', error);
-    showErrorToast(error.message);
+    console.error('Failed to create event:', error)
+    showErrorToast(error.message)
   }
-};
+}
 ```
 
 ## Integration with State Management
@@ -439,9 +439,9 @@ function WeekViewWithQuery() {
   const { data: events, isLoading } = useQuery({
     queryKey: ['events', 'week', currentDate],
     queryFn: () => fetchWeekEvents(currentDate),
-  });
+  })
 
-  if (isLoading) return <WeekViewLoading />;
+  if (isLoading) return <WeekViewLoading />
 
   return (
     <WeekView
@@ -450,7 +450,7 @@ function WeekViewWithQuery() {
       onEventSelect={handleEventSelect}
       onEventCreate={handleEventCreate}
     />
-  );
+  )
 }
 ```
 
@@ -458,27 +458,27 @@ function WeekViewWithQuery() {
 
 ```typescript
 function WeekViewWithRedux() {
-  const dispatch = useDispatch();
-  const events = useSelector(selectWeekEvents(currentDate));
-  const loading = useSelector(selectEventsLoading);
+  const dispatch = useDispatch()
+  const events = useSelector(selectWeekEvents(currentDate))
+  const loading = useSelector(selectEventsLoading)
 
   const handleEventCreate = (startTime: Date) => {
     dispatch(createEvent({
       start: startTime,
       end: addHours(startTime, 1),
       title: 'New Appointment',
-    }));
-  };
+    }))
+  }
 
   return (
     <WeekView
       currentDate={currentDate}
       events={events}
       loading={loading}
-      onEventSelect={event => dispatch(selectEvent(event))}
+      onEventSelect={(event) => dispatch(selectEvent(event))}
       onEventCreate={handleEventCreate}
     />
-  );
+  )
 }
 ```
 
@@ -487,8 +487,8 @@ function WeekViewWithRedux() {
 ### Unit Test Example
 
 ```typescript
-import { WeekView } from '@/components/event-calendar/week-view';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { WeekView } from '@/components/event-calendar/week-view'
+import { fireEvent, render, screen } from '@testing-library/react'
 
 describe('WeekView', () => {
   const mockEvents = [
@@ -499,7 +499,7 @@ describe('WeekView', () => {
       end: new Date('2024-01-15T11:00:00'),
       allDay: false,
     },
-  ];
+  ]
 
   test('renders week view with events', () => {
     render(
@@ -509,14 +509,14 @@ describe('WeekView', () => {
         onEventSelect={jest.fn()}
         onEventCreate={jest.fn()}
       />,
-    );
+    )
 
-    expect(screen.getByText('Test Event')).toBeInTheDocument();
-    expect(screen.getByText('10:00 AM')).toBeInTheDocument();
-  });
+    expect(screen.getByText('Test Event')).toBeInTheDocument()
+    expect(screen.getByText('10:00 AM')).toBeInTheDocument()
+  })
 
   test('calls onEventCreate when time slot is clicked', () => {
-    const mockOnCreate = jest.fn();
+    const mockOnCreate = jest.fn()
     render(
       <WeekView
         currentDate={new Date('2024-01-15')}
@@ -524,16 +524,16 @@ describe('WeekView', () => {
         onEventSelect={jest.fn()}
         onEventCreate={mockOnCreate}
       />,
-    );
+    )
 
-    const timeSlot = screen.getByLabelText('Monday at 10:00 AM');
-    fireEvent.click(timeSlot);
+    const timeSlot = screen.getByLabelText('Monday at 10:00 AM')
+    fireEvent.click(timeSlot)
 
     expect(mockOnCreate).toHaveBeenCalledWith(
       expect.any(Date),
-    );
-  });
-});
+    )
+  })
+})
 ```
 
 ## Browser Support

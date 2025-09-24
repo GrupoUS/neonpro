@@ -5,8 +5,8 @@
  * for automatic documentation generation and type-safe API contracts.
  */
 
-import { createRoute } from '@hono/zod-openapi';
-import { z } from '@hono/zod-openapi';
+import { createRoute } from '@hono/zod-openapi'
+import { z } from '@hono/zod-openapi'
 import {
   ApiInfoResponseSchema,
   AppointmentsListResponseSchema,
@@ -17,7 +17,7 @@ import {
   CommonResponses,
   DetailedHealthResponseSchema,
   HealthResponseSchema,
-} from '../schemas/openapi-schemas';
+} from '../schemas/openapi-schemas'
 
 // Parameter schemas
 export const PatientIdParamSchema = z
@@ -35,7 +35,7 @@ export const PatientIdParamSchema = z
         description: 'Must be a valid patient ID',
       }),
   })
-  .openapi('PatientIdParam');
+  .openapi('PatientIdParam')
 
 // Health and system routes
 export const healthRoute = createRoute({
@@ -55,7 +55,7 @@ export const healthRoute = createRoute({
     },
     ...CommonResponses,
   },
-});
+})
 
 export const detailedHealthRoute = createRoute({
   method: 'get',
@@ -74,7 +74,7 @@ export const detailedHealthRoute = createRoute({
     },
     ...CommonResponses,
   },
-});
+})
 
 export const apiInfoRoute = createRoute({
   method: 'get',
@@ -93,7 +93,7 @@ export const apiInfoRoute = createRoute({
     },
     ...CommonResponses,
   },
-});
+})
 
 // Authentication routes
 export const authStatusRoute = createRoute({
@@ -113,7 +113,7 @@ export const authStatusRoute = createRoute({
     },
     ...CommonResponses,
   },
-});
+})
 
 // Client management routes (LGPD compliant)
 export const listClientsRoute = createRoute({
@@ -139,7 +139,7 @@ export const listClientsRoute = createRoute({
     },
     ...CommonResponses,
   },
-});
+})
 
 export const getClientByIdRoute = createRoute({
   method: 'get',
@@ -167,7 +167,7 @@ export const getClientByIdRoute = createRoute({
     },
     ...CommonResponses,
   },
-});
+})
 
 // Appointment management routes
 export const listAppointmentsRoute = createRoute({
@@ -192,7 +192,7 @@ export const listAppointmentsRoute = createRoute({
     },
     ...CommonResponses,
   },
-});
+})
 
 export const getClientAppointmentsRoute = createRoute({
   method: 'get',
@@ -220,7 +220,7 @@ export const getClientAppointmentsRoute = createRoute({
     },
     ...CommonResponses,
   },
-});
+})
 
 // Patient management routes
 export const listPatientsRoute = createRoute({
@@ -271,7 +271,7 @@ export const listPatientsRoute = createRoute({
     },
     ...CommonResponses,
   },
-});
+})
 
 export const getPatientByIdRoute = createRoute({
   method: 'get',
@@ -337,7 +337,7 @@ export const getPatientByIdRoute = createRoute({
     },
     ...CommonResponses,
   },
-});
+})
 
 export const createPatientRoute = createRoute({
   method: 'post',
@@ -397,7 +397,7 @@ export const createPatientRoute = createRoute({
     },
     ...CommonResponses,
   },
-});
+})
 
 export const updatePatientRoute = createRoute({
   method: 'put',
@@ -459,4 +459,4 @@ export const updatePatientRoute = createRoute({
     },
     ...CommonResponses,
   },
-});
+})

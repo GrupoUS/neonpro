@@ -4,11 +4,11 @@
  */
 
 // Re-export shared utilities for convenience
-export * from '@neonpro/tools-shared';
+export * from '@neonpro/tools-shared'
 
 // Version information
-export const BACKEND_TESTING_VERSION = '1.0.0';
-export const BACKEND_TESTING_PACKAGE = '@neonpro/tools-backend-tests';
+export const BACKEND_TESTING_VERSION = '1.0.0'
+export const BACKEND_TESTING_PACKAGE = '@neonpro/tools-backend-tests'
 
 // Default configurations
 export const DEFAULT_BACKEND_CONFIG = {
@@ -24,4 +24,4 @@ export const DEFAULT_BACKEND_CONFIG = {
       statements: 85,
     },
   },
-};
+}

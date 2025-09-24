@@ -37,7 +37,7 @@ packages/core-services/src/analytics/
 ### Basic Metric Creation
 
 ```typescript
-import { createMockMetric, createPatientSafetyKPI } from '@neonpro/core-services';
+import { createMockMetric, createPatientSafetyKPI } from '@neonpro/core-services'
 
 // Create a basic metric
 const metric = createMockMetric({
@@ -45,7 +45,7 @@ const metric = createMockMetric({
   value: 4.5,
   dataType: 'number',
   complianceFrameworks: ['LGPD'],
-});
+})
 
 // Create a clinical KPI
 const safetyKPI = createPatientSafetyKPI({
@@ -55,7 +55,7 @@ const safetyKPI = createPatientSafetyKPI({
   safetyCategory: 'medication_safety',
   incidentCount: 5,
   totalEvents: 240,
-});
+})
 ```
 
 ### Financial Analytics
@@ -65,7 +65,7 @@ import {
   calculateFinancialHealthScore,
   createRevenueCycleKPI,
   validateBrazilianFinancialCompliance,
-} from '@neonpro/core-services';
+} from '@neonpro/core-services'
 
 // Create revenue cycle KPI
 const revenueKPI = createRevenueCycleKPI({
@@ -74,25 +74,25 @@ const revenueKPI = createRevenueCycleKPI({
   currency: 'BRL',
   clinicId: 'clinic_123',
   stage: 'collection',
-});
+})
 
 // Calculate financial health
-const healthScore = calculateFinancialHealthScore([revenueKPI]);
+const healthScore = calculateFinancialHealthScore([revenueKPI])
 console.log(
   `Financial Health: ${healthScore.score}/100 (${healthScore.level})`,
-);
+)
 
 // Validate compliance
-const compliance = validateBrazilianFinancialCompliance(revenueKPI);
+const compliance = validateBrazilianFinancialCompliance(revenueKPI)
 if (!compliance.compliant) {
-  console.log('Compliance issues:', compliance.requirements);
+  console.log('Compliance issues:', compliance.requirements)
 }
 ```
 
 ### Data Ingestion
 
 ```typescript
-import { DatabaseIngestionAdapter, IngestionConfig } from '@neonpro/core-services';
+import { DatabaseIngestionAdapter, IngestionConfig } from '@neonpro/core-services'
 
 // Configure ingestion
 const config: IngestionConfig = {
@@ -116,14 +116,14 @@ const config: IngestionConfig = {
     failureNotification: true,
     deadLetterQueue: true,
   },
-};
+}
 
 // Create and use adapter
-const adapter = new DatabaseIngestionAdapter('db_adapter', config);
-await adapter.connect();
+const adapter = new DatabaseIngestionAdapter('db_adapter', config)
+await adapter.connect()
 
-const result = await adapter.ingestBatch(patientData);
-console.log(`Processed ${result.summary.processedRecords} records`);
+const result = await adapter.ingestBatch(patientData)
+console.log(`Processed ${result.summary.processedRecords} records`)
 ```
 
 ## Compliance Features
@@ -136,15 +136,15 @@ console.log(`Processed ${result.summary.processedRecords} records`);
 - **Audit Trail**: Complete data processing audit logs
 
 ```typescript
-import { anonymizeMetric, validateMetricCompliance } from '@neonpro/core-services';
+import { anonymizeMetric, validateMetricCompliance } from '@neonpro/core-services'
 
 // Anonymize metric for analytics
-const anonymizedMetric = anonymizeMetric(originalMetric);
+const anonymizedMetric = anonymizeMetric(originalMetric)
 
 // Validate LGPD compliance
-const validation = validateMetricCompliance(metric);
+const validation = validateMetricCompliance(metric)
 if (validation.violations.length > 0) {
-  console.log('LGPD violations found:', validation.violations);
+  console.log('LGPD violations found:', validation.violations)
 }
 ```
 
@@ -171,7 +171,7 @@ if (validation.violations.length > 0) {
 ### Patient Safety
 
 ```typescript
-import { createPatientSafetyKPI } from '@neonpro/core-services';
+import { createPatientSafetyKPI } from '@neonpro/core-services'
 
 const fallRateKPI = createPatientSafetyKPI({
   name: 'patient_fall_rate',
@@ -180,13 +180,13 @@ const fallRateKPI = createPatientSafetyKPI({
   safetyCategory: 'patient_falls',
   incidentCount: 3,
   totalEvents: 250,
-});
+})
 ```
 
 ### Quality of Care
 
 ```typescript
-import { createQualityOfCareKPI } from '@neonpro/core-services';
+import { createQualityOfCareKPI } from '@neonpro/core-services'
 
 const careQualityKPI = createQualityOfCareKPI({
   name: 'care_coordination_score',
@@ -194,13 +194,13 @@ const careQualityKPI = createQualityOfCareKPI({
   clinicId: 'clinic_123',
   qualityDimension: 'care_coordination',
   measurementStandard: 'CFM',
-});
+})
 ```
 
 ### Patient Outcomes
 
 ```typescript
-import { createPatientOutcomeKPI } from '@neonpro/core-services';
+import { createPatientOutcomeKPI } from '@neonpro/core-services'
 
 const outcomeKPI = createPatientOutcomeKPI({
   name: 'recovery_rate',
@@ -213,20 +213,20 @@ const outcomeKPI = createPatientOutcomeKPI({
     current: 92.5,
     trend: 'improving',
   },
-});
+})
 ```
 
 ### Clinical Quality Score
 
 ```typescript
-import { calculateClinicalQualityScore } from '@neonpro/core-services';
+import { calculateClinicalQualityScore } from '@neonpro/core-services'
 
-const clinicalKPIs = [safetyKPI, qualityKPI, outcomeKPI];
-const qualityScore = calculateClinicalQualityScore(clinicalKPIs);
+const clinicalKPIs = [safetyKPI, qualityKPI, outcomeKPI]
+const qualityScore = calculateClinicalQualityScore(clinicalKPIs)
 
-console.log(`Clinical Quality: ${qualityScore.score}/100`);
-console.log(`Level: ${qualityScore.level}`);
-console.log(`Key areas:`, qualityScore.dimensions);
+console.log(`Clinical Quality: ${qualityScore.score}/100`)
+console.log(`Level: ${qualityScore.level}`)
+console.log(`Key areas:`, qualityScore.dimensions)
 ```
 
 ## Financial KPIs
@@ -234,7 +234,7 @@ console.log(`Key areas:`, qualityScore.dimensions);
 ### Revenue Cycle Management
 
 ```typescript
-import { createRevenueCycleKPI } from '@neonpro/core-services';
+import { createRevenueCycleKPI } from '@neonpro/core-services'
 
 const revenueKPI = createRevenueCycleKPI({
   name: 'net_patient_revenue',
@@ -242,13 +242,13 @@ const revenueKPI = createRevenueCycleKPI({
   currency: 'BRL',
   clinicId: 'clinic_123',
   stage: 'collection',
-});
+})
 ```
 
 ### Insurance Claims
 
 ```typescript
-import { createInsuranceClaimsKPI } from '@neonpro/core-services';
+import { createInsuranceClaimsKPI } from '@neonpro/core-services'
 
 const claimsKPI = createInsuranceClaimsKPI({
   name: 'claims_approval_rate',
@@ -256,25 +256,25 @@ const claimsKPI = createInsuranceClaimsKPI({
   clinicId: 'clinic_123',
   payerType: 'private_insurance',
   denialRate: 5.8,
-});
+})
 ```
 
 ### Brazilian Payer Mix Analysis
 
 ```typescript
-import { calculatePayerMixDiversity } from '@neonpro/core-services';
+import { calculatePayerMixDiversity } from '@neonpro/core-services'
 
 const payerMix = {
   sus: 45000, // SUS (public health system)
   private_insurance: 30000, // Private insurance
   out_of_pocket: 15000, // Direct payment
   employer_insurance: 10000, // Employer-sponsored insurance
-};
+}
 
-const diversity = calculatePayerMixDiversity(payerMix);
-console.log(`Payer diversity: ${diversity.diversityScore}/100`);
-console.log(`Dominant payer: ${diversity.dominantPayer}`);
-console.log(`Risk level: ${diversity.riskLevel}`);
+const diversity = calculatePayerMixDiversity(payerMix)
+console.log(`Payer diversity: ${diversity.diversityScore}/100`)
+console.log(`Dominant payer: ${diversity.dominantPayer}`)
+console.log(`Risk level: ${diversity.riskLevel}`)
 ```
 
 ## Data Ingestion
@@ -282,33 +282,33 @@ console.log(`Risk level: ${diversity.riskLevel}`);
 ### Database Adapter
 
 ```typescript
-import { DatabaseIngestionAdapter } from '@neonpro/core-services';
+import { DatabaseIngestionAdapter } from '@neonpro/core-services'
 
-const dbAdapter = new DatabaseIngestionAdapter('patient_db', config);
+const dbAdapter = new DatabaseIngestionAdapter('patient_db', config)
 
 // Event handling
-dbAdapter.addEventListener('data_received', event => {
-  console.log(`Received ${event.source.recordCount} records`);
-});
+dbAdapter.addEventListener('data_received', (event) => {
+  console.log(`Received ${event.source.recordCount} records`)
+})
 
-dbAdapter.addEventListener('validation_failed', event => {
-  console.log('Validation errors:', event.processing.errors);
-});
+dbAdapter.addEventListener('validation_failed', (event) => {
+  console.log('Validation errors:', event.processing.errors)
+})
 
 // Batch ingestion
-const result = await dbAdapter.ingestBatch(patientRecords);
+const result = await dbAdapter.ingestBatch(patientRecords)
 ```
 
 ### API Adapter
 
 ```typescript
-import { APIIngestionAdapter } from '@neonpro/core-services';
+import { APIIngestionAdapter } from '@neonpro/core-services'
 
-const apiAdapter = new APIIngestionAdapter('external_api', config);
+const apiAdapter = new APIIngestionAdapter('external_api', config)
 
 // Stream ingestion
-const stream = new ReadableStream(/* API stream */);
-const result = await apiAdapter.ingestStream(stream);
+const stream = new ReadableStream() /* API stream */
+const result = await apiAdapter.ingestStream(stream)
 ```
 
 ### Validation Rules
@@ -325,7 +325,7 @@ await adapter.addValidationRule({
   },
   onError: 'reject',
   complianceFramework: 'LGPD',
-});
+})
 
 // Add transformation rule
 await adapter.addTransformationRule({
@@ -335,7 +335,7 @@ await adapter.addTransformationRule({
   targetField: 'patientId',
   type: 'anonymize',
   logic: { method: 'hash' },
-});
+})
 ```
 
 ## Monitoring and Quality
@@ -343,24 +343,24 @@ await adapter.addTransformationRule({
 ### Data Quality Assessment
 
 ```typescript
-import { IngestionMonitoringMetrics } from '@neonpro/core-services';
+import { IngestionMonitoringMetrics } from '@neonpro/core-services'
 
-const metrics = await adapter.getMetrics();
+const metrics = await adapter.getMetrics()
 
-console.log('Throughput:', metrics.throughput.recordsPerSecond, 'records/sec');
-console.log('Quality Score:', metrics.quality.dataQualityScore, '/100');
-console.log('Compliance Score:', metrics.quality.complianceScore, '/100');
-console.log('Uptime:', metrics.performance.uptime, '%');
+console.log('Throughput:', metrics.throughput.recordsPerSecond, 'records/sec')
+console.log('Quality Score:', metrics.quality.dataQualityScore, '/100')
+console.log('Compliance Score:', metrics.quality.complianceScore, '/100')
+console.log('Uptime:', metrics.performance.uptime, '%')
 ```
 
 ### Health Monitoring
 
 ```typescript
-const health = await adapter.getHealthStatus();
+const health = await adapter.getHealthStatus()
 
 if (health.status !== 'healthy') {
-  console.log('Adapter issues:', health.errors);
-  console.log('Component status:', health.details);
+  console.log('Adapter issues:', health.errors)
+  console.log('Component status:', health.details)
 }
 ```
 
@@ -409,7 +409,7 @@ INGESTION_TIMEOUT_MS=30000
 ### Default Configuration
 
 ```typescript
-import { createAnalyticsConfig } from '@neonpro/core-services';
+import { createAnalyticsConfig } from '@neonpro/core-services'
 
 const config = createAnalyticsConfig({
   clinicId: 'my-clinic',
@@ -417,7 +417,7 @@ const config = createAnalyticsConfig({
   enableEncryption: true,
   enableAnonymization: true,
   retentionDays: 2555, // 7 years
-});
+})
 ```
 
 ## Best Practices
@@ -485,12 +485,12 @@ const config = createAnalyticsConfig({
 const adapter = new DatabaseIngestionAdapter('debug_adapter', {
   ...config,
   debug: true,
-});
+})
 
 // Listen to all events
-adapter.addEventListener('error_occurred', event => {
-  console.error('Ingestion error:', event);
-});
+adapter.addEventListener('error_occurred', (event) => {
+  console.error('Ingestion error:', event)
+})
 ```
 
 ## Support

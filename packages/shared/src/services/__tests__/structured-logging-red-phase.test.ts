@@ -2,7 +2,7 @@
  * @fileoverview RED PHASE Tests for Healthcare Structured Logging Service
  *
  * TDD RED Phase: Write failing tests for healthcare logging compliance
- * 
+ *
  * Tests designed to fail initially, identifying implementation gaps
  * and validating healthcare compliance requirements.
  *
@@ -16,9 +16,9 @@
  * });
  * ```
  */
-import { beforeEach, describe, expect, test, vi } from 'vitest';
-import { StructuredLogger } from '../structured-logging';
-import type { LogEntry, HealthcareLogContext } from '../structured-logging';
+import { beforeEach, describe, expect, test, vi } from 'vitest'
+import { StructuredLogger } from '../structured-logging'
+import type { HealthcareLogContext, LogEntry } from '../structured-logging'
 
 // Mock OpenTelemetry dependencies
 vi.mock('@opentelemetry/api', () => ({
@@ -30,14 +30,14 @@ vi.mock('@opentelemetry/api', () => ({
       }),
     }),
   },
-}));
+}))
 
 vi.mock('@opentelemetry/sdk-node', () => ({
   NodeSDK: vi.fn().mockImplementation(() => ({
     start: vi.fn(),
     shutdown: vi.fn(),
   })),
-}));
+}))
 
 vi.mock('winston', () => ({
   createLogger: vi.fn().mockReturnValue({
@@ -67,53 +67,53 @@ vi.mock('winston', () => ({
     File: vi.fn(),
     DailyRotateFile: vi.fn(),
   },
-}));
+}))
 
 vi.mock('winston-daily-rotate-file', () => ({
   default: vi.fn().mockImplementation(() => ({
     on: vi.fn(),
     close: vi.fn(),
   })),
-}));
+}))
 
 vi.mock('nanoid', () => ({
   nanoid: vi.fn().mockReturnValue('test-log-id'),
-}));
+}))
 
 describe('StructuredLogger - RED PHASE Tests', () => {
-  let logger: StructuredLogger;
-  let mockConsole: any;
-  let mockFile: any;
+  let logger: StructuredLogger
+  let mockConsole: any
+  let mockFile: any
 
   beforeEach(() => {
     // Reset all mocks
-    vi.clearAllMocks();
-    
+    vi.clearAllMocks()
+
     // Create mock transport instances
     mockConsole = {
       log: vi.fn(),
       error: vi.fn(),
       warn: vi.fn(),
-    };
-    
+    }
+
     mockFile = {
       write: vi.fn(),
       end: vi.fn(),
       on: vi.fn(),
-    };
-    
+    }
+
     // Attempt to create logger instance
     try {
       logger = new StructuredLogger({
         service: 'test-healthcare-service',
         version: '1.0.0',
         environment: 'test',
-      });
+      })
     } catch (error) {
       // Expected to fail in RED phase
-      console.log('Expected RED phase failure:', error);
+      console.log('Expected RED phase failure:', error)
     }
-  });
+  })
 
   describe('Constructor & Initialization', () => {
     test('should fail to create logger with invalid configuration', () => {
@@ -122,9 +122,9 @@ describe('StructuredLogger - RED PHASE Tests', () => {
           service: '', // Invalid empty service name
           version: '1.0.0',
           environment: 'test',
-        });
-      }).toThrow();
-    });
+        })
+      }).toThrow()
+    })
 
     test('should fail to create logger with invalid environment', () => {
       expect(() => {
@@ -132,9 +132,9 @@ describe('StructuredLogger - RED PHASE Tests', () => {
           service: 'test-service',
           version: '1.0.0',
           environment: 'invalid-env', // Should fail validation
-        });
-      }).toThrow();
-    });
+        })
+      }).toThrow()
+    })
 
     test('should fail to create logger without required OpenTelemetry dependencies', () => {
       // This test will fail due to missing or incorrect OpenTelemetry setup
@@ -144,9 +144,9 @@ describe('StructuredLogger - RED PHASE Tests', () => {
           version: '1.0.0',
           environment: 'test',
           enableOpenTelemetry: true,
-        });
-      }).toThrow('OpenTelemetry dependencies not properly configured');
-    });
+        })
+      }).toThrow('OpenTelemetry dependencies not properly configured')
+    })
 
     test('should fail to initialize with invalid LGPD configuration', () => {
       expect(() => {
@@ -159,24 +159,24 @@ describe('StructuredLogger - RED PHASE Tests', () => {
             piiFields: [], // Empty PII fields should fail
             maskingLevel: 'invalid-level',
           },
-        });
-      }).toThrow();
-    });
-  });
+        })
+      }).toThrow()
+    })
+  })
 
   describe('LGPD Compliance & PII Redaction', () => {
     test('should fail to redact PII from log messages', () => {
-      const testMessage = 'Patient João Silva with CPF 123.456.789-01 has email joao@test.com';
-      
+      const testMessage = 'Patient João Silva with CPF 123.456.789-01 has email joao@test.com'
+
       expect(() => {
         if (logger) {
           logger.info('Patient consultation', {
             message: testMessage,
             patientId: 'patient-123',
-          });
+          })
         }
-      }).toThrow();
-    });
+      }).toThrow()
+    })
 
     test('should fail to handle Brazilian ID formats', () => {
       const testCases = [
@@ -185,7 +185,7 @@ describe('StructuredLogger - RED PHASE Tests', () => {
         'RG: 12.345.678-9',
         'Phone: (11) 98765-4321',
         'Email: joao.silva@hospital.com.br',
-      ];
+      ]
 
       testCases.forEach((testCase) => {
         expect(() => {
@@ -193,11 +193,11 @@ describe('StructuredLogger - RED PHASE Tests', () => {
             logger.info('Test PII', {
               rawData: testCase,
               patientContext: 'consultation',
-            });
+            })
           }
-        }).toThrow();
-      });
-    });
+        }).toThrow()
+      })
+    })
 
     test('should fail to validate LGPD compliance levels', () => {
       expect(() => {
@@ -206,10 +206,10 @@ describe('StructuredLogger - RED PHASE Tests', () => {
             name: 'João Silva',
             cpf: '123.456.789-01',
             complianceLevel: 'invalid-level',
-          });
+          })
         }
-      }).toThrow('Invalid LGPD compliance level');
-    });
+      }).toThrow('Invalid LGPD compliance level')
+    })
 
     test('should fail to handle healthcare-specific PII', () => {
       const healthcareData = {
@@ -219,15 +219,15 @@ describe('StructuredLogger - RED PHASE Tests', () => {
         medication: 'Metformina 500mg',
         doctorName: 'Dr. João Pereira',
         hospital: 'Hospital São Lucas',
-      };
+      }
 
       expect(() => {
         if (logger) {
-          logger.info('Medical consultation', healthcareData);
+          logger.info('Medical consultation', healthcareData)
         }
-      }).toThrow();
-    });
-  });
+      }).toThrow()
+    })
+  })
 
   describe('Healthcare Workflow Context', () => {
     test('should fail to track healthcare workflow contexts', () => {
@@ -238,32 +238,32 @@ describe('StructuredLogger - RED PHASE Tests', () => {
         department: 'cardiology',
         userId: 'user-789',
         timestamp: new Date().toISOString(),
-      };
+      }
 
       expect(() => {
         if (logger) {
           logger.info('Starting consultation', {
             context: workflowContext,
-          });
+          })
         }
-      }).toThrow();
-    });
+      }).toThrow()
+    })
 
     test('should fail to validate required healthcare context fields', () => {
       const invalidContext = {
         patientId: '', // Invalid empty patient ID
         encounterId: 'encounter-456',
         workflowType: 'consultation',
-      };
+      }
 
       expect(() => {
         if (logger) {
           logger.info('Invalid context test', {
             context: invalidContext,
-          });
+          })
         }
-      }).toThrow('Invalid healthcare context');
-    });
+      }).toThrow('Invalid healthcare context')
+    })
 
     test('should fail to handle different healthcare workflow types', () => {
       const workflowTypes = [
@@ -274,7 +274,7 @@ describe('StructuredLogger - RED PHASE Tests', () => {
         'medication',
         'admission',
         'discharge',
-      ];
+      ]
 
       workflowTypes.forEach((workflowType) => {
         expect(() => {
@@ -285,12 +285,12 @@ describe('StructuredLogger - RED PHASE Tests', () => {
                 workflowType,
                 department: 'general',
               },
-            });
+            })
           }
-        }).toThrow();
-      });
-    });
-  });
+        }).toThrow()
+      })
+    })
+  })
 
   describe('Performance Batching & Optimization', () => {
     test('should fail to batch log entries efficiently', () => {
@@ -301,16 +301,16 @@ describe('StructuredLogger - RED PHASE Tests', () => {
         metadata: {
           batchId: `batch-${i}`,
         },
-      }));
+      }))
 
       expect(() => {
         if (logger) {
           logEntries.forEach((entry) => {
-            logger.info(entry.message, entry.metadata);
-          });
+            logger.info(entry.message, entry.metadata)
+          })
         }
-      }).toThrow();
-    });
+      }).toThrow()
+    })
 
     test('should fail to handle high-frequency logging scenarios', () => {
       expect(() => {
@@ -321,11 +321,11 @@ describe('StructuredLogger - RED PHASE Tests', () => {
               emergencyType: 'code-blue',
               patientId: `patient-${i}`,
               priority: 'critical',
-            });
+            })
           }
         }
-      }).toThrow('Performance threshold exceeded');
-    });
+      }).toThrow('Performance threshold exceeded')
+    })
 
     test('should fail to optimize memory usage during batching', () => {
       expect(() => {
@@ -334,13 +334,13 @@ describe('StructuredLogger - RED PHASE Tests', () => {
           const largeData = {
             patientData: 'x'.repeat(1024 * 1024), // 1MB of data
             medicalHistory: Array.from({ length: 10000 }, (_, i) => `entry-${i}`),
-          };
-          
-          logger.info('Large data test', largeData);
+          }
+
+          logger.info('Large data test', largeData)
         }
-      }).toThrow('Memory limit exceeded');
-    });
-  });
+      }).toThrow('Memory limit exceeded')
+    })
+  })
 
   describe('Emergency Protocols & Compliance', () => {
     test('should fail to handle emergency logging scenarios', () => {
@@ -363,16 +363,16 @@ describe('StructuredLogger - RED PHASE Tests', () => {
           priority: 'critical',
           timestamp: new Date().toISOString(),
         },
-      ];
+      ]
 
       emergencyScenarios.forEach((scenario) => {
         expect(() => {
           if (logger) {
-            logger.emergency('Emergency event', scenario);
+            logger.emergency('Emergency event', scenario)
           }
-        }).toThrow();
-      });
-    });
+        }).toThrow()
+      })
+    })
 
     test('should fail to validate emergency compliance requirements', () => {
       expect(() => {
@@ -381,10 +381,10 @@ describe('StructuredLogger - RED PHASE Tests', () => {
             type: 'invalid-emergency-type', // Should fail validation
             patientId: 'patient-123',
             priority: 'invalid-priority',
-          });
+          })
         }
-      }).toThrow('Invalid emergency protocol');
-    });
+      }).toThrow('Invalid emergency protocol')
+    })
 
     test('should fail to handle ANVISA compliance requirements', () => {
       const anvisaData = {
@@ -397,19 +397,19 @@ describe('StructuredLogger - RED PHASE Tests', () => {
           peep: 5,
           tidalVolume: 450,
         },
-      };
+      }
 
       expect(() => {
         if (logger) {
-          logger.info('Medical device usage', anvisaData);
+          logger.info('Medical device usage', anvisaData)
         }
-      }).toThrow('ANVISA compliance validation failed');
-    });
-  });
+      }).toThrow('ANVISA compliance validation failed')
+    })
+  })
 
   describe('Log Level Management & Filtering', () => {
     test('should fail to handle different log levels correctly', () => {
-      const logLevels = ['error', 'warn', 'info', 'debug', 'verbose'];
+      const logLevels = ['error', 'warn', 'info', 'debug', 'verbose']
 
       logLevels.forEach((level) => {
         expect(() => {
@@ -417,11 +417,11 @@ describe('StructuredLogger - RED PHASE Tests', () => {
             logger[level as keyof StructuredLogger](`Test ${level} message`, {
               level,
               timestamp: new Date().toISOString(),
-            });
+            })
           }
-        }).toThrow();
-      });
-    });
+        }).toThrow()
+      })
+    })
 
     test('should fail to filter logs based on healthcare context', () => {
       expect(() => {
@@ -432,23 +432,23 @@ describe('StructuredLogger - RED PHASE Tests', () => {
             patientId: 'patient-123',
             confidence: 'high',
             shouldFilter: true, // This should trigger filtering
-          });
+          })
         }
-      }).toThrow('Log filtering failed');
-    });
+      }).toThrow('Log filtering failed')
+    })
 
     test('should fail to validate log level transitions', () => {
       expect(() => {
         if (logger) {
-          logger.debug('Debug message');
-          logger.info('Info message');
-          logger.warn('Warning message');
-          logger.error('Error message');
-          logger.emergency('Emergency message');
+          logger.debug('Debug message')
+          logger.info('Info message')
+          logger.warn('Warning message')
+          logger.error('Error message')
+          logger.emergency('Emergency message')
         }
-      }).toThrow('Log level transition failed');
-    });
-  });
+      }).toThrow('Log level transition failed')
+    })
+  })
 
   describe('Integration with External Systems', () => {
     test('should fail to integrate with OpenTelemetry tracing', () => {
@@ -458,10 +458,10 @@ describe('StructuredLogger - RED PHASE Tests', () => {
             traceId: 'trace-123',
             spanId: 'span-456',
             operation: 'patient-lookup',
-          });
+          })
         }
-      }).toThrow('OpenTelemetry integration failed');
-    });
+      }).toThrow('OpenTelemetry integration failed')
+    })
 
     test('should fail to handle distributed tracing contexts', () => {
       expect(() => {
@@ -473,10 +473,10 @@ describe('StructuredLogger - RED PHASE Tests', () => {
               traceFlags: 1,
             },
             parentSpanId: 'parent-span-123',
-          });
+          })
         }
-      }).toThrow('Distributed tracing context invalid');
-    });
+      }).toThrow('Distributed tracing context invalid')
+    })
 
     test('should fail to export metrics to monitoring systems', () => {
       expect(() => {
@@ -487,11 +487,11 @@ describe('StructuredLogger - RED PHASE Tests', () => {
               errorRate: 0.05,
               responseTime: 250,
             },
-          });
+          })
         }
-      }).toThrow('Metrics export failed');
-    });
-  });
+      }).toThrow('Metrics export failed')
+    })
+  })
 
   describe('Error Handling & Validation', () => {
     test('should fail to handle invalid log entry structures', () => {
@@ -501,16 +501,16 @@ describe('StructuredLogger - RED PHASE Tests', () => {
         {},
         { message: 123 }, // Invalid message type
         { message: '', level: 'invalid' },
-      ];
+      ]
 
       invalidEntries.forEach((entry) => {
         expect(() => {
           if (logger) {
-            logger.info('Invalid entry test', entry);
+            logger.info('Invalid entry test', entry)
           }
-        }).toThrow();
-      });
-    });
+        }).toThrow()
+      })
+    })
 
     test('should fail to validate timestamp formats', () => {
       const invalidTimestamps = [
@@ -518,7 +518,7 @@ describe('StructuredLogger - RED PHASE Tests', () => {
         '2023-13-45', // Invalid date
         1234567890, // Unix timestamp - should be ISO string
         new Date().toString(), // Not ISO format
-      ];
+      ]
 
       invalidTimestamps.forEach((timestamp) => {
         expect(() => {
@@ -526,23 +526,23 @@ describe('StructuredLogger - RED PHASE Tests', () => {
             logger.info('Timestamp test', {
               timestamp,
               message: 'test',
-            });
+            })
           }
-        }).toThrow('Invalid timestamp format');
-      });
-    });
+        }).toThrow('Invalid timestamp format')
+      })
+    })
 
     test('should fail to handle circular references in log data', () => {
-      const circularData: any = { name: 'test' };
-      circularData.self = circularData;
+      const circularData: any = { name: 'test' }
+      circularData.self = circularData
 
       expect(() => {
         if (logger) {
-          logger.info('Circular reference test', circularData);
+          logger.info('Circular reference test', circularData)
         }
-      }).toThrow('Circular reference detected');
-    });
-  });
+      }).toThrow('Circular reference detected')
+    })
+  })
 
   describe('Security & Audit Requirements', () => {
     test('should fail to maintain audit trail for sensitive operations', () => {
@@ -551,7 +551,7 @@ describe('StructuredLogger - RED PHASE Tests', () => {
         'medical-record-update',
         'prescription-creation',
         'diagnosis-update',
-      ];
+      ]
 
       sensitiveOperations.forEach((operation) => {
         expect(() => {
@@ -561,11 +561,11 @@ describe('StructuredLogger - RED PHASE Tests', () => {
               userId: 'user-123',
               patientId: 'patient-456',
               requiresAudit: true,
-            });
+            })
           }
-        }).toThrow('Audit trail not maintained');
-      });
-    });
+        }).toThrow('Audit trail not maintained')
+      })
+    })
 
     test('should fail to validate user permissions for logging', () => {
       expect(() => {
@@ -575,10 +575,10 @@ describe('StructuredLogger - RED PHASE Tests', () => {
             userId: 'unauthorized-user',
             patientId: 'patient-123',
             userPermissions: ['basic'], // Insufficient permissions
-          });
+          })
         }
-      }).toThrow('Insufficient permissions for logging operation');
-    });
+      }).toThrow('Insufficient permissions for logging operation')
+    })
 
     test('should fail to handle data retention policies', () => {
       expect(() => {
@@ -587,35 +587,35 @@ describe('StructuredLogger - RED PHASE Tests', () => {
             dataType: 'sensitive-patient-data',
             retentionPeriod: '30-years',
             requiresAutomaticDeletion: true,
-          });
+          })
         }
-      }).toThrow('Data retention policy validation failed');
-    });
-  });
+      }).toThrow('Data retention policy validation failed')
+    })
+  })
 
   describe('Performance & Load Testing', () => {
     test('should fail under high load scenarios', () => {
       expect(() => {
         if (logger) {
-          const startTime = Date.now();
-          const concurrentLogs = 10000;
-          
+          const startTime = Date.now()
+          const concurrentLogs = 10000
+
           // Simulate high load
           for (let i = 0; i < concurrentLogs; i++) {
             logger.info(`Load test ${i}`, {
               loadTestId: 'concurrent-test',
               iteration: i,
               timestamp: new Date().toISOString(),
-            });
+            })
           }
-          
-          const duration = Date.now() - startTime;
+
+          const duration = Date.now() - startTime
           if (duration > 5000) { // Should complete in under 5 seconds
-            throw new Error(`Performance threshold exceeded: ${duration}ms`);
+            throw new Error(`Performance threshold exceeded: ${duration}ms`)
           }
         }
-      }).toThrow();
-    });
+      }).toThrow()
+    })
 
     test('should fail to handle memory pressure scenarios', () => {
       expect(() => {
@@ -626,37 +626,38 @@ describe('StructuredLogger - RED PHASE Tests', () => {
               data: 'x'.repeat(1024 * 100), // 100KB per entry
               iteration: i,
               timestamp: new Date().toISOString(),
-            });
+            })
           }
         }
-      }).toThrow('Memory pressure handling failed');
-    });
+      }).toThrow('Memory pressure handling failed')
+    })
 
     test('should fail to maintain performance during emergency scenarios', () => {
       expect(() => {
         if (logger) {
           // Simulate emergency scenario with high-frequency logging
-          const emergencyStartTime = Date.now();
+          const emergencyStartTime = Date.now()
           for (let i = 0; i < 5000; i++) {
             logger.emergency('Emergency scenario', {
               emergencyType: 'mass-casualty',
               patientCount: i + 1,
-              priority: 'critical',              timestamp: new Date().toISOString(),
-            });
+              priority: 'critical',
+              timestamp: new Date().toISOString(),
+            })
           }
-          
-          const emergencyDuration = Date.now() - emergencyStartTime;
+
+          const emergencyDuration = Date.now() - emergencyStartTime
           if (emergencyDuration > 2000) { // Should complete in under 2 seconds
-            throw new Error(`Emergency performance threshold exceeded: ${emergencyDuration}ms`);
+            throw new Error(`Emergency performance threshold exceeded: ${emergencyDuration}ms`)
           }
         }
-      }).toThrow();
-    });
-  });
+      }).toThrow()
+    })
+  })
 
   describe('Configuration & Environment Testing', () => {
     test('should fail to handle different environment configurations', () => {
-      const environments = ['development', 'staging', 'production'];
+      const environments = ['development', 'staging', 'production']
 
       environments.forEach((env) => {
         expect(() => {
@@ -664,15 +665,15 @@ describe('StructuredLogger - RED PHASE Tests', () => {
             service: 'test-service',
             version: '1.0.0',
             environment: env as any,
-          });
-          
+          })
+
           envLogger.info(`Environment test for ${env}`, {
             environment: env,
             configTest: true,
-          });
-        }).toThrow();
-      });
-    });
+          })
+        }).toThrow()
+      })
+    })
 
     test('should fail to validate configuration changes at runtime', () => {
       expect(() => {
@@ -686,10 +687,10 @@ describe('StructuredLogger - RED PHASE Tests', () => {
                 enabled: false,
               },
             },
-          });
+          })
         }
-      }).toThrow('Runtime configuration change failed');
-    });
+      }).toThrow('Runtime configuration change failed')
+    })
 
     test('should fail to handle configuration validation errors', () => {
       expect(() => {
@@ -701,10 +702,10 @@ describe('StructuredLogger - RED PHASE Tests', () => {
           batchSize: 0, // Invalid batch size
           maxLogSize: -1, // Invalid max size
           timeout: 'invalid-timeout', // Invalid timeout format
-        });
-      }).toThrow('Configuration validation failed');
-    });
-  });
+        })
+      }).toThrow('Configuration validation failed')
+    })
+  })
 
   describe('Healthcare-Specific Features', () => {
     test('should fail to handle medical terminology and codes', () => {
@@ -724,14 +725,14 @@ describe('StructuredLogger - RED PHASE Tests', () => {
           name: 'Metformin hydrochloride',
           dosage: '500mg',
         },
-      };
+      }
 
       expect(() => {
         if (logger) {
-          logger.info('Medical coding test', medicalData);
+          logger.info('Medical coding test', medicalData)
         }
-      }).toThrow('Medical terminology validation failed');
-    });
+      }).toThrow('Medical terminology validation failed')
+    })
 
     test('should fail to handle patient demographics correctly', () => {
       const patientDemographics = {
@@ -742,14 +743,14 @@ describe('StructuredLogger - RED PHASE Tests', () => {
         maritalStatus: 'Married',
         occupation: 'Engineer',
         socioeconomicStatus: 'Middle',
-      };
+      }
 
       expect(() => {
         if (logger) {
-          logger.info('Patient demographics', patientDemographics);
+          logger.info('Patient demographics', patientDemographics)
         }
-      }).toThrow('Patient demographics validation failed');
-    });
+      }).toThrow('Patient demographics validation failed')
+    })
 
     test('should fail to handle clinical measurements and vitals', () => {
       const vitals = {
@@ -774,15 +775,15 @@ describe('StructuredLogger - RED PHASE Tests', () => {
           value: 16,
           unit: 'breaths/min',
         },
-      };
+      }
 
       expect(() => {
         if (logger) {
-          logger.info('Vital signs', vitals);
+          logger.info('Vital signs', vitals)
         }
-      }).toThrow('Clinical measurements validation failed');
-    });
-  });
+      }).toThrow('Clinical measurements validation failed')
+    })
+  })
 
   describe('File Operations & Storage', () => {
     test('should fail to handle log file rotation', () => {
@@ -794,11 +795,11 @@ describe('StructuredLogger - RED PHASE Tests', () => {
               testType: 'file-rotation',
               iteration: i,
               dataSize: 'x'.repeat(1024), // 1KB per entry
-            });
+            })
           }
         }
-      }).toThrow('File rotation failed');
-    });
+      }).toThrow('File rotation failed')
+    })
 
     test('should fail to handle log file permissions', () => {
       expect(() => {
@@ -807,10 +808,10 @@ describe('StructuredLogger - RED PHASE Tests', () => {
             action: 'access-restricted-log',
             userRole: 'unauthorized',
             requiredPermission: 'log-admin',
-          });
+          })
         }
-      }).toThrow('Log file permission denied');
-    });
+      }).toThrow('Log file permission denied')
+    })
 
     test('should fail to handle log file backup and archival', () => {
       expect(() => {
@@ -820,11 +821,11 @@ describe('StructuredLogger - RED PHASE Tests', () => {
             backupType: 'automated',
             retention: '7-years',
             compression: 'gzip',
-          });
+          })
         }
-      }).toThrow('Log backup failed');
-    });
-  });
+      }).toThrow('Log backup failed')
+    })
+  })
 
   describe('Network & External Dependencies', () => {
     test('should fail to handle network timeouts', () => {
@@ -834,10 +835,10 @@ describe('StructuredLogger - RED PHASE Tests', () => {
             operation: 'external-api-call',
             timeout: 5000,
             endpoint: 'https://api.example.com/health',
-          });
+          })
         }
-      }).toThrow('Network timeout handling failed');
-    });
+      }).toThrow('Network timeout handling failed')
+    })
 
     test('should fail to handle external service unavailability', () => {
       expect(() => {
@@ -847,10 +848,10 @@ describe('StructuredLogger - RED PHASE Tests', () => {
             status: 'unavailable',
             retryAttempts: 3,
             fallbackEnabled: true,
-          });
+          })
         }
-      }).toThrow('External service unavailability handling failed');
-    });
+      }).toThrow('External service unavailability handling failed')
+    })
 
     test('should fail to handle rate limiting scenarios', () => {
       expect(() => {
@@ -861,12 +862,12 @@ describe('StructuredLogger - RED PHASE Tests', () => {
               operation: 'external-log-ingestion',
               requestNumber: i + 1,
               rateLimitPerMinute: 100,
-            });
+            })
           }
         }
-      }).toThrow('Rate limiting handling failed');
-    });
-  });
+      }).toThrow('Rate limiting handling failed')
+    })
+  })
 
   describe('Comprehensive Integration Testing', () => {
     test('should fail to handle complete healthcare workflow', () => {
@@ -894,16 +895,16 @@ describe('StructuredLogger - RED PHASE Tests', () => {
           disposition: 'home',
           followUp: '2-weeks',
         },
-      };
+      }
 
       expect(() => {
         if (logger) {
           Object.entries(completeWorkflow).forEach(([phase, data]) => {
-            logger.info(`Workflow phase: ${phase}`, data);
-          });
+            logger.info(`Workflow phase: ${phase}`, data)
+          })
         }
-      }).toThrow('Complete healthcare workflow failed');
-    });
+      }).toThrow('Complete healthcare workflow failed')
+    })
 
     test('should fail to handle compliance reporting requirements', () => {
       expect(() => {
@@ -918,10 +919,10 @@ describe('StructuredLogger - RED PHASE Tests', () => {
               auditEvents: 10000,
             },
             complianceScore: 0.95,
-          });
+          })
         }
-      }).toThrow('Compliance reporting failed');
-    });
+      }).toThrow('Compliance reporting failed')
+    })
 
     test('should fail to handle system monitoring and alerts', () => {
       expect(() => {
@@ -947,11 +948,11 @@ describe('StructuredLogger - RED PHASE Tests', () => {
                 severity: 'critical',
               },
             ],
-          });
+          })
         }
-      }).toThrow('System monitoring failed');
-    });
-  });
+      }).toThrow('System monitoring failed')
+    })
+  })
 
   describe('Final Validation Tests', () => {
     test('should fail to validate overall system integrity', () => {
@@ -973,10 +974,10 @@ describe('StructuredLogger - RED PHASE Tests', () => {
               'opentelemetry-integration',
             ],
             validationRequired: true,
-          });
+          })
         }
-      }).toThrow('System integrity validation failed');
-    });
+      }).toThrow('System integrity validation failed')
+    })
 
     test('should fail to handle cleanup and resource management', () => {
       expect(() => {
@@ -990,15 +991,15 @@ describe('StructuredLogger - RED PHASE Tests', () => {
               'timer-handles',
             ],
             forceCleanup: true,
-          });
-          
+          })
+
           // This should trigger resource cleanup
           if ('cleanup' in logger) {
-            (logger as any).cleanup();
+            ;(logger as any).cleanup()
           }
         }
-      }).toThrow('Resource cleanup failed');
-    });
+      }).toThrow('Resource cleanup failed')
+    })
 
     test('should fail to validate all healthcare compliance requirements', () => {
       expect(() => {
@@ -1018,9 +1019,9 @@ describe('StructuredLogger - RED PHASE Tests', () => {
               'Performance thresholds not met',
             ],
             overallCompliance: false,
-          });
+          })
         }
-      }).toThrow('Healthcare compliance validation failed');
-    });
-  });
-});
+      }).toThrow('Healthcare compliance validation failed')
+    })
+  })
+})

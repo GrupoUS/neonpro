@@ -157,13 +157,13 @@ The first model, defined in `telemetry/types.ts`, represents a basic compliance 
 
 ```typescript
 export interface ComplianceEvent {
-  eventType: 'data_access' | 'data_export' | 'data_deletion' | 'consent_update';
-  timestamp: string;
-  _userId: string;
-  clinicId: string;
-  dataClassification: string;
-  complianceNotes: string;
-  auditTrailId: string;
+  eventType: 'data_access' | 'data_export' | 'data_deletion' | 'consent_update'
+  timestamp: string
+  _userId: string
+  clinicId: string
+  dataClassification: string
+  complianceNotes: string
+  auditTrailId: string
 }
 ```
 
@@ -175,24 +175,24 @@ export interface ComplianceEvent extends Omit<TelemetryEvent, 'eventType'> {
     | TelemetryEventType.LGPD_CONSENT_UPDATE
     | TelemetryEventType.LGPD_DATA_EXPORT
     | TelemetryEventType.LGPD_DATA_DELETION
-    | TelemetryEventType.AUDIT_TRAIL_ENTRY;
+    | TelemetryEventType.AUDIT_TRAIL_ENTRY
 
   compliance: {
-    lgpdCompliant: true;
-    dataRetentionDays: number;
-    encryptionStatus: 'encrypted' | 'hashed';
-    auditRequired: true;
-    piiPresent: boolean;
-    anonymizationApplied: boolean;
-  };
+    lgpdCompliant: true
+    dataRetentionDays: number
+    encryptionStatus: 'encrypted' | 'hashed'
+    auditRequired: true
+    piiPresent: boolean
+    anonymizationApplied: boolean
+  }
 
   data: {
-    action: string;
-    resourceType: string;
-    affectedRecords: number;
-    legalBasis?: string;
-    justification?: string;
-  };
+    action: string
+    resourceType: string
+    affectedRecords: number
+    legalBasis?: string
+    justification?: string
+  }
 }
 ```
 

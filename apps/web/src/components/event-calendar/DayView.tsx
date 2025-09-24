@@ -2,9 +2,9 @@
  * Day View Component
  */
 
-import React from 'react';
-import type { CalendarEvent, DayViewProps } from '../../types/event-calendar';
-import { formatCalendarTime, generateTimeSlots, getEventColor, isTimeSlotAvailable } from './utils';
+import React from 'react'
+import type { CalendarEvent, DayViewProps } from '../../types/event-calendar'
+import { formatCalendarTime, generateTimeSlots, getEventColor, isTimeSlotAvailable } from './utils'
 
 export function DayView({
   date,
@@ -15,31 +15,31 @@ export function DayView({
   workingHours,
   intervalMinutes,
 }: DayViewProps) {
-  const timeSlots = generateTimeSlots(date, intervalMinutes, workingHours.start, workingHours.end);
+  const timeSlots = generateTimeSlots(date, intervalMinutes, workingHours.start, workingHours.end)
 
   const handleTimeSlotClick = (slot: any) => {
-    onTimeSlotClick(date, slot);
-  };
+    onTimeSlotClick(date, slot)
+  }
 
   const getEventsForTimeSlot = (slot: any) => {
-    return events.filter(event => {
-      const eventStart = new Date(event.start);
-      const eventEnd = new Date(event.end);
-      const slotStart = new Date(slot.start);
-      const slotEnd = new Date(slot.end);
+    return events.filter((event) => {
+      const eventStart = new Date(event.start)
+      const eventEnd = new Date(event.end)
+      const slotStart = new Date(slot.start)
+      const slotEnd = new Date(slot.end)
 
       return (
         eventStart <= slotEnd && eventEnd >= slotStart
-      );
-    });
-  };
+      )
+    })
+  }
 
   return (
     <div className='day-view flex-1 overflow-auto'>
       <div className='time-grid'>
         {timeSlots.map((slot, index) => {
-          const slotEvents = getEventsForTimeSlot(slot);
-          const isAvailable = isTimeSlotAvailable(slot, events);
+          const slotEvents = getEventsForTimeSlot(slot)
+          const isAvailable = isTimeSlotAvailable(slot, events)
 
           return (
             <div
@@ -65,9 +65,9 @@ export function DayView({
                       top: `${eventIndex * 24}px`,
                       height: '20px',
                     }}
-                    onClick={e => {
-                      e.stopPropagation();
-                      onEventClick(event);
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      onEventClick(event)
                     }}
                   >
                     <div className='event-title font-medium truncate'>
@@ -82,11 +82,11 @@ export function DayView({
                 ))}
               </div>
             </div>
-          );
+          )
         })}
       </div>
     </div>
-  );
+  )
 }
 
-export default DayView;
+export default DayView

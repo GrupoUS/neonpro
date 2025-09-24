@@ -1,10 +1,10 @@
 // T042: Enhanced logging and monitoring setup
 export interface LogLevel {
-  DEBUG: 0;
-  INFO: 1;
-  WARN: 2;
-  ERROR: 3;
-  FATAL: 4;
+  DEBUG: 0
+  INFO: 1
+  WARN: 2
+  ERROR: 3
+  FATAL: 4
 }
 
 export const LOG_LEVELS: LogLevel = {
@@ -13,67 +13,67 @@ export const LOG_LEVELS: LogLevel = {
   WARN: 2,
   ERROR: 3,
   FATAL: 4,
-} as const;
+} as const
 
-export type LogLevelName = keyof LogLevel;
+export type LogLevelName = keyof LogLevel
 
 export interface LogEntry {
-  timestamp: string;
-  level: LogLevelName;
-  message: string;
-  _context?: Record<string, any>;
-  sessionId?: string;
-  _userId?: string;
-  provider?: string;
-  model?: string;
-  requestId?: string;
-  error?: Error;
-  duration?: number;
+  timestamp: string
+  level: LogLevelName
+  message: string
+  _context?: Record<string, any>
+  sessionId?: string
+  _userId?: string
+  provider?: string
+  model?: string
+  requestId?: string
+  error?: Error
+  duration?: number
   tokens?: {
-    input: number;
-    output: number;
-    total: number;
-  };
+    input: number
+    output: number
+    total: number
+  }
 }
 
 export interface LoggerConfig {
-  level: LogLevelName;
-  enableConsole: boolean;
-  enableFile: boolean;
-  enableAudit: boolean;
-  filePath?: string;
-  maxFileSize?: number;
-  maxFiles?: number;
-  format: 'json' | 'text';
-  includeStack: boolean;
-  redactPII: boolean;
+  level: LogLevelName
+  enableConsole: boolean
+  enableFile: boolean
+  enableAudit: boolean
+  filePath?: string
+  maxFileSize?: number
+  maxFiles?: number
+  format: 'json' | 'text'
+  includeStack: boolean
+  redactPII: boolean
 }
 
 export class Logger {
-  private config: LoggerConfig;
-  private logBatch: LogEntry[] = [];
-  private batchTimeout: NodeJS.Timeout | null = null;
-  private isProcessing: boolean = false;
-  private lgpdUtils: any;
+  private config: LoggerConfig
+  private logBatch: LogEntry[] = []
+  private batchTimeout: NodeJS.Timeout | null = null
+  private isProcessing: boolean = false
+  private lgpdUtils: any
 
   constructor(config: LoggerConfig) {
-    this.config = config;
-    this.initializeLGPDUtils();
+    this.config = config
+    this.initializeLGPDUtils()
   }
 
   private async initializeLGPDUtils(): Promise<void> {
     try {
       // Import LGPD utilities dynamically to avoid circular dependencies
-      const lgpdModule = await import('@neonpro/utils/lgpd');
-      this.lgpdUtils = lgpdModule;
+      const lgpdModule = await import('@neonpro/utils')
+      this.lgpdUtils = lgpdModule
     } catch (error) {
       // Fallback to basic PII redaction if LGPD utils are not available
-      console.warn('LGPD utilities not available, using basic PII redaction');
+      console.warn('LGPD utilities not available, using basic PII redaction')
     }
   }
 
   private shouldLog(level: LogLevelName): boolean {
-    return LOG_LEVELS[level] >= LOG_LEVELS[this.config.level];
+    return LOG_LEVELS[level] >= LOG_LEVELS[this.config.level]
   }
 
   private formatLogEntry(entry: LogEntry): string {
@@ -87,90 +87,90 @@ export class Logger {
             stack: this.config.includeStack ? entry.error.stack : undefined,
           }
           : undefined,
-      });
+      })
     }
 
     // Text format optimized for performance
-    const parts = [entry.timestamp, `[${entry.level}]`, entry.message];
+    const parts = [entry.timestamp, `[${entry.level}]`, entry.message]
 
     if (entry._context && Object.keys(entry._context).length > 0) {
-      parts.push(`Context: ${JSON.stringify(entry._context)}`);
+      parts.push(`Context: ${JSON.stringify(entry._context)}`)
     }
 
     if (entry.error) {
-      parts.push(`Error: ${entry.error.message}`);
+      parts.push(`Error: ${entry.error.message}`)
       if (this.config.includeStack && entry.error.stack) {
-        parts.push(`Stack: ${entry.error.stack}`);
+        parts.push(`Stack: ${entry.error.stack}`)
       }
     }
 
-    return parts.join(' ');
+    return parts.join(' ')
   }
 
   private async writeToLog(entry: LogEntry): Promise<void> {
-    const formattedLog = this.formatLogEntry(entry);
+    const formattedLog = this.formatLogEntry(entry)
 
     if (this.config.enableConsole) {
-      console.log(formattedLog);
+      console.log(formattedLog)
     }
 
     // Enhanced file logging with error handling
     if (this.config.enableFile && this.config.filePath) {
       try {
-        const fs = await import('fs');
-        const path = await import('path');
+        const fs = await import('fs')
+        const path = await import('path')
 
         // Ensure log directory exists
-        const logDir = path.dirname(this.config.filePath);
+        const logDir = path.dirname(this.config.filePath)
         if (!fs.existsSync(logDir)) {
-          fs.mkdirSync(logDir, { recursive: true });
+          fs.mkdirSync(logDir, { recursive: true })
         }
 
-        await fs.promises.appendFile(this.config.filePath, formattedLog + '\n');
+        await fs.promises.appendFile(this.config.filePath, formattedLog + '\n')
       } catch (error) {
-        console.error('Failed to write to log file:', error);
+        console.error('Failed to write to log file:', error)
       }
     }
   }
 
   private async processBatch(): Promise<void> {
-    if (this.isProcessing || this.logBatch.length === 0) return;
+    if (this.isProcessing || this.logBatch.length === 0) return
 
-    this.isProcessing = true;
-    const batch = [...this.logBatch];
-    this.logBatch = [];
+    this.isProcessing = true
+    const batch = [...this.logBatch]
+    this.logBatch = []
 
     try {
-      await Promise.all(batch.map(entry => this.writeToLog(entry)));
+      await Promise.all(batch.map((entry) => this.writeToLog(entry)))
     } catch (error) {
-      console.error('Failed to process log batch:', error);
+      console.error('Failed to process log batch:', error)
       // Re-add failed entries to the batch for retry
-      this.logBatch.unshift(...batch);
+      this.logBatch.unshift(...batch)
     } finally {
-      this.isProcessing = false;
+      this.isProcessing = false
     }
   }
 
   private scheduleBatchProcessing(): void {
     if (this.batchTimeout) {
-      clearTimeout(this.batchTimeout);
+      clearTimeout(this.batchTimeout)
     }
 
     this.batchTimeout = setTimeout(() => {
-      this.processBatch();
-    }, 1000); // Process batch every second
+      this.processBatch()
+    }, 1000) // Process batch every second
   }
 
   private redactPII(data: any): any {
-    if (!this.config.redactPII) return data;
+    if (!this.config.redactPII) return data
 
     // Use LGPD utilities if available
     if (this.lgpdUtils && this.lgpdUtils.redactPII) {
-      return this.lgpdUtils.redactPII(data);
+      return this.lgpdUtils.redactPII(data)
     }
 
     // Fallback to basic PII redaction
-    return this.basicPIIRedaction(data);
+    return this.basicPIIRedaction(data)
   }
 
   private basicPIIRedaction(obj: any): any {
@@ -186,7 +186,7 @@ export class Logger {
       'token',
       'secret',
       'key',
-    ];
+    ]
 
     if (typeof obj === 'string') {
       // Enhanced Brazilian PII patterns
@@ -194,23 +194,23 @@ export class Logger {
         .replace(/\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g, '[EMAIL_REDACTED]')
         .replace(/\b\d{3}\.\d{3}\.\d{3}-\d{2}\b/g, '[CPF_REDACTED]')
         .replace(/\b\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}\b/g, '[CNPJ_REDACTED]')
-        .replace(/\b\(\d{2}\)\s*\d{4,5}-\d{4}\b/g, '[PHONE_REDACTED]');
+        .replace(/\b\(\d{2}\)\s*\d{4,5}-\d{4}\b/g, '[PHONE_REDACTED]')
     }
 
     if (typeof obj === 'object' && obj !== null) {
-      const redacted = Array.isArray(obj) ? [...obj] : { ...obj };
+      const redacted = Array.isArray(obj) ? [...obj] : { ...obj }
 
       for (const key of Object.keys(redacted)) {
         if (piiFields.some((field: string) => key.toLowerCase().includes(field))) {
-          redacted[key] = '[REDACTED]';
+          redacted[key] = '[REDACTED]'
         } else if (typeof redacted[key] === 'object') {
-          redacted[key] = this.basicPIIRedaction(redacted[key]);
+          redacted[key] = this.basicPIIRedaction(redacted[key])
         }
       }
-      return redacted;
+      return redacted
     }
 
-    return obj;
+    return obj
   }
 
   private createLogEntry(
@@ -232,83 +232,83 @@ export class Logger {
       error,
       duration: _context?.duration,
       tokens: _context?.tokens,
-    };
+    }
   }
 
   private async logEntry(entry: LogEntry): Promise<void> {
-    if (!this.shouldLog(entry.level)) return;
+    if (!this.shouldLog(entry.level)) return
 
     // Use batching for better performance
     if (this.config.enableFile) {
-      this.logBatch.push(entry);
-      this.scheduleBatchProcessing();
+      this.logBatch.push(entry)
+      this.scheduleBatchProcessing()
     } else {
       // Direct write for console-only logging
-      await this.writeToLog(entry);
+      await this.writeToLog(entry)
     }
   }
 
   // Standard logging methods with async support
   async debug(message: string, _context?: Record<string, any>): Promise<void> {
-    const entry = this.createLogEntry('DEBUG', message, _context);
-    await this.logEntry(entry);
+    const entry = this.createLogEntry('DEBUG', message, _context)
+    await this.logEntry(entry)
   }
 
   async info(message: string, context?: Record<string, any>): Promise<void> {
-    const entry = this.createLogEntry('INFO', message, context);
-    await this.logEntry(entry);
+    const entry = this.createLogEntry('INFO', message, context)
+    await this.logEntry(entry)
   }
 
   async warn(message: string, context?: Record<string, any>, error?: Error): Promise<void> {
-    const entry = this.createLogEntry('WARN', message, context, error);
-    await this.logEntry(entry);
+    const entry = this.createLogEntry('WARN', message, context, error)
+    await this.logEntry(entry)
   }
 
   async error(message: string, context?: Record<string, any>, error?: Error): Promise<void> {
-    const entry = this.createLogEntry('ERROR', message, context, error);
-    await this.logEntry(entry);
+    const entry = this.createLogEntry('ERROR', message, context, error)
+    await this.logEntry(entry)
   }
 
   async fatal(message: string, context?: Record<string, any>, error?: Error): Promise<void> {
-    const entry = this.createLogEntry('FATAL', message, context, error);
-    await this.logEntry(entry);
+    const entry = this.createLogEntry('FATAL', message, context, error)
+    await this.logEntry(entry)
   }
 
   // Legacy synchronous methods for backward compatibility (deprecated)
   debugSync(message: string, _context?: Record<string, any>): void {
-    this.debug(message, _context).catch(console.error);
+    this.debug(message, _context).catch(console.error)
   }
 
   infoSync(message: string, context?: Record<string, any>): void {
-    this.info(message, context).catch(console.error);
+    this.info(message, context).catch(console.error)
   }
 
   warnSync(message: string, context?: Record<string, any>, error?: Error): void {
-    this.warn(message, context, error).catch(console.error);
+    this.warn(message, context, error).catch(console.error)
   }
 
   errorSync(message: string, context?: Record<string, any>, error?: Error): void {
-    this.error(message, context, error).catch(console.error);
+    this.error(message, context, error).catch(console.error)
   }
 
   fatalSync(message: string, context?: Record<string, any>, error?: Error): void {
-    this.fatal(message, context, error).catch(console.error);
+    this.fatal(message, context, error).catch(console.error)
   }
 
   // Specialized healthcare logging methods
   async logHealthcareEvent(context: {
-    event: string;
-    patientId?: string;
-    professionalId?: string;
-    procedure?: string;
-    severity: 'low' | 'medium' | 'high' | 'critical';
-    details: Record<string, any>;
+    event: string
+    patientId?: string
+    professionalId?: string
+    procedure?: string
+    severity: 'low' | 'medium' | 'high' | 'critical'
+    details: Record<string, any>
   }): Promise<void> {
     const level = context.severity === 'critical'
       ? 'FATAL'
       : context.severity === 'high'
       ? 'ERROR'
-      : 'WARN';
+      : 'WARN'
 
     const entry = this.createLogEntry(level, `Healthcare event: ${context.event}`, {
       ...context.details,
@@ -317,18 +317,18 @@ export class Logger {
       procedure: context.procedure,
       eventType: context.event,
       severity: context.severity,
-    });
+    })
 
-    await this.logEntry(entry);
+    await this.logEntry(entry)
   }
 
   async logAuditTrail(context: {
-    action: string;
-    resource: string;
-    userId?: string;
-    resourceId?: string;
-    outcome: 'success' | 'failure' | 'denied';
-    metadata?: Record<string, any>;
+    action: string
+    resource: string
+    userId?: string
+    resourceId?: string
+    outcome: 'success' | 'failure' | 'denied'
+    metadata?: Record<string, any>
   }): Promise<void> {
     const entry = this.createLogEntry('INFO', `Audit: ${context.action}`, {
       auditAction: context.action,
@@ -337,19 +337,19 @@ export class Logger {
       resourceId: context.resourceId,
       auditOutcome: context.outcome,
       ...context.metadata,
-    });
+    })
 
-    await this.logEntry(entry);
+    await this.logEntry(entry)
   }
 
   async logPerformance(context: {
-    operation: string;
-    duration: number;
-    service: string;
-    success: boolean;
-    metadata?: Record<string, any>;
+    operation: string
+    duration: number
+    service: string
+    success: boolean
+    metadata?: Record<string, any>
   }): Promise<void> {
-    const level = context.success ? 'INFO' : 'WARN';
+    const level = context.success ? 'INFO' : 'WARN'
 
     const entry = this.createLogEntry(level, `Performance: ${context.operation}`, {
       operation: context.operation,
@@ -357,19 +357,19 @@ export class Logger {
       service: context.service,
       success: context.success,
       ...context.metadata,
-    });
+    })
 
-    await this.logEntry(entry);
+    await this.logEntry(entry)
   }
 
   // Enhanced AI operation logging
   async logAIRequest(context: {
-    sessionId: string;
-    _userId: string;
-    provider: string;
-    model: string;
-    requestId: string;
-    prompt?: string;
+    sessionId: string
+    _userId: string
+    provider: string
+    model: string
+    requestId: string
+    prompt?: string
   }): Promise<void> {
     const entry = this.createLogEntry('INFO', 'AI request initiated', {
       sessionId: context.sessionId,
@@ -378,24 +378,24 @@ export class Logger {
       model: context.model,
       requestId: context.requestId,
       promptLength: context.prompt?.length,
-    });
+    })
 
-    await this.logEntry(entry);
+    await this.logEntry(entry)
   }
 
   async logAIResponse(context: {
-    sessionId: string;
-    _userId: string;
-    provider: string;
-    model: string;
-    requestId: string;
-    duration: number;
-    tokens?: { input: number; output: number; total: number };
-    success: boolean;
-    error?: Error;
+    sessionId: string
+    _userId: string
+    provider: string
+    model: string
+    requestId: string
+    duration: number
+    tokens?: { input: number; output: number; total: number }
+    success: boolean
+    error?: Error
   }): Promise<void> {
-    const level = context.success ? 'INFO' : 'ERROR';
-    const message = context.success ? 'AI request completed' : 'AI request failed';
+    const level = context.success ? 'INFO' : 'ERROR'
+    const message = context.success ? 'AI request completed' : 'AI request failed'
 
     const entry: LogEntry = {
       timestamp: new Date().toISOString(),
@@ -412,33 +412,33 @@ export class Logger {
       duration: context.duration,
       tokens: context.tokens,
       error: context.error,
-    };
+    }
 
-    await this.logEntry(entry);
+    await this.logEntry(entry)
   }
 
   async logRateLimit(_context: {
-    provider: string;
-    limit: string;
-    current: number;
-    max: number;
+    provider: string
+    limit: string
+    current: number
+    max: number
   }): Promise<void> {
-    const entry = this.createLogEntry('WARN', 'Rate limit approached', _context);
-    await this.logEntry(entry);
+    const entry = this.createLogEntry('WARN', 'Rate limit approached', _context)
+    await this.logEntry(entry)
   }
 
   async logSecurityEvent(context: {
-    event: string;
-    sessionId?: string;
-    _userId?: string;
-    severity: 'low' | 'medium' | 'high' | 'critical';
-    details: Record<string, any>;
+    event: string
+    sessionId?: string
+    _userId?: string
+    severity: 'low' | 'medium' | 'high' | 'critical'
+    details: Record<string, any>
   }): Promise<void> {
     const level = context.severity === 'critical'
       ? 'FATAL'
       : context.severity === 'high'
       ? 'ERROR'
-      : 'WARN';
+      : 'WARN'
 
     const entry = this.createLogEntry(level, `Security event: ${context.event}`, {
       securityEvent: context.event,
@@ -446,19 +446,19 @@ export class Logger {
       _userId: context._userId,
       securitySeverity: context.severity,
       details: this.redactPII(context.details),
-    });
+    })
 
-    await this.logEntry(entry);
+    await this.logEntry(entry)
   }
 
   // Graceful shutdown
   async shutdown(): Promise<void> {
     if (this.batchTimeout) {
-      clearTimeout(this.batchTimeout);
+      clearTimeout(this.batchTimeout)
     }
 
     // Process remaining logs
-    await this.processBatch();
+    await this.processBatch()
   }
 }
 
@@ -475,21 +475,21 @@ export function createLoggerConfig(): LoggerConfig {
     format: (process.env.LOG_FORMAT as 'json' | 'text') || 'json',
     includeStack: process.env.LOG_INCLUDE_STACK !== 'false',
     redactPII: process.env.LOG_REDACT_PII !== 'false',
-  };
+  }
 }
 
 // Global logger instance
-let loggerInstance: Logger | null = null;
+let loggerInstance: Logger | null = null
 
 export function createLogger(config?: LoggerConfig): Logger {
-  const loggerConfig = config || createLoggerConfig();
-  loggerInstance = new Logger(loggerConfig);
-  return loggerInstance;
+  const loggerConfig = config || createLoggerConfig()
+  loggerInstance = new Logger(loggerConfig)
+  return loggerInstance
 }
 
 export function getLogger(): Logger {
   if (!loggerInstance) {
-    loggerInstance = createLogger();
+    loggerInstance = createLogger()
   }
-  return loggerInstance;
+  return loggerInstance
 }

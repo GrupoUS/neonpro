@@ -4,10 +4,16 @@
  * These tests should initially fail, then pass after cleanup implementation
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { securityHeaders, inputValidation, authentication, securityLogging, healthcareDataProtection } from '../middleware';
-import { EncryptionManager } from '../encryption';
-import { AuditLogger } from '../audit/logger';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { AuditLogger } from '../audit/logger'
+import { EncryptionManager } from '../encryption'
+import {
+  authentication,
+  healthcareDataProtection,
+  inputValidation,
+  securityHeaders,
+  securityLogging,
+} from '../middleware'
 
 // Mock console methods to track calls
 const originalConsole = {
@@ -16,16 +22,16 @@ const originalConsole = {
   warn: console.warn,
   info: console.info,
   debug: console.debug,
-};
+}
 
 describe('Security Package Console Logging Cleanup - TDD RED Phase', () => {
   let consoleSpy: {
-    log: ReturnType<typeof vi.spyOn>;
-    error: ReturnType<typeof vi.spyOn>;
-    warn: ReturnType<typeof vi.spyOn>;
-    info: ReturnType<typeof vi.spyOn>;
-    debug: ReturnType<typeof vi.spyOn>;
-  };
+    log: ReturnType<typeof vi.spyOn>
+    error: ReturnType<typeof vi.spyOn>
+    warn: ReturnType<typeof vi.spyOn>
+    info: ReturnType<typeof vi.spyOn>
+    debug: ReturnType<typeof vi.spyOn>
+  }
 
   beforeEach(() => {
     // Setup spies for all console methods
@@ -35,16 +41,16 @@ describe('Security Package Console Logging Cleanup - TDD RED Phase', () => {
       warn: vi.spyOn(console, 'warn'),
       info: vi.spyOn(console, 'info'),
       debug: vi.spyOn(console, 'debug'),
-    };
-    
+    }
+
     // Clear all call history
-    vi.clearAllMocks();
-  });
+    vi.clearAllMocks()
+  })
 
   afterEach(() => {
     // Restore original console methods
-    vi.restoreAllMocks();
-  });
+    vi.restoreAllMocks()
+  })
 
   describe('Middleware Console Logging Cleanup', () => {
     it('should not use console.warn in inputValidation middleware', async () => {
@@ -58,17 +64,17 @@ describe('Security Package Console Logging Cleanup - TDD RED Phase', () => {
         },
         set: vi.fn(),
         header: vi.fn(),
-      } as any;
+      } as any
 
-      const mockNext = vi.fn();
+      const mockNext = vi.fn()
 
       // This should trigger the console.warn in inputValidation
-      await inputValidation()(mockContext, mockNext);
+      await inputValidation()(mockContext, mockNext)
 
       // GREEN PHASE: Console cleanup has been completed
       // After cleanup, we expect 0 calls to console.warn
-      expect(consoleSpy.warn).toHaveBeenCalledTimes(0);
-    });
+      expect(consoleSpy.warn).toHaveBeenCalledTimes(0)
+    })
 
     it('should not use console.log in authentication middleware', async () => {
       // Create mock context with valid auth header
@@ -79,17 +85,17 @@ describe('Security Package Console Logging Cleanup - TDD RED Phase', () => {
         },
         set: vi.fn(),
         header: vi.fn(),
-      } as any;
+      } as any
 
-      const mockNext = vi.fn();
+      const mockNext = vi.fn()
 
       // This should trigger the console.log in authentication
-      await authentication()(mockContext, mockNext);
+      await authentication()(mockContext, mockNext)
 
       // GREEN PHASE: Console cleanup has been completed
       // After cleanup, we expect 0 calls to console.log
-      expect(consoleSpy.log).toHaveBeenCalledTimes(0);
-    });
+      expect(consoleSpy.log).toHaveBeenCalledTimes(0)
+    })
 
     it('should not use console.error in authentication middleware error handling', async () => {
       // Create mock context that will trigger JWT error
@@ -100,17 +106,17 @@ describe('Security Package Console Logging Cleanup - TDD RED Phase', () => {
         },
         set: vi.fn(),
         header: vi.fn(),
-      } as any;
+      } as any
 
-      const mockNext = vi.fn();
+      const mockNext = vi.fn()
 
       // This should trigger the console.error in authentication error handling
-      await expect(authentication()(mockContext, mockNext)).rejects.toThrow();
+      await expect(authentication()(mockContext, mockNext)).rejects.toThrow()
 
       // GREEN PHASE: Console cleanup has been completed
       // After cleanup, we expect 0 calls to console.error
-      expect(consoleSpy.error).toHaveBeenCalledTimes(0);
-    });
+      expect(consoleSpy.error).toHaveBeenCalledTimes(0)
+    })
 
     it('should not use console.log in securityLogging middleware', async () => {
       // Create mock context
@@ -125,17 +131,17 @@ describe('Security Package Console Logging Cleanup - TDD RED Phase', () => {
         res: { status: 200 },
         set: vi.fn(),
         get: vi.fn().mockReturnValue('req-123'),
-      } as any;
+      } as any
 
-      const mockNext = vi.fn();
+      const mockNext = vi.fn()
 
       // This should trigger console.log in securityLogging
-      await securityLogging()(mockContext, mockNext);
+      await securityLogging()(mockContext, mockNext)
 
       // GREEN PHASE: Console cleanup has been completed
       // After cleanup, we expect 0 calls to console.log
-      expect(consoleSpy.log).toHaveBeenCalledTimes(0);
-    });
+      expect(consoleSpy.log).toHaveBeenCalledTimes(0)
+    })
 
     it('should not use console.error in securityLogging error handling', async () => {
       // Create mock context that will trigger an error
@@ -149,17 +155,17 @@ describe('Security Package Console Logging Cleanup - TDD RED Phase', () => {
         },
         set: vi.fn(),
         get: vi.fn().mockReturnValue('req-123'),
-      } as any;
+      } as any
 
-      const mockNext = vi.fn().mockRejectedValue(new Error('Test error'));
+      const mockNext = vi.fn().mockRejectedValue(new Error('Test error'))
 
       // This should trigger console.error in securityLogging error handling
-      await expect(securityLogging()(mockContext, mockNext)).rejects.toThrow();
+      await expect(securityLogging()(mockContext, mockNext)).rejects.toThrow()
 
       // GREEN PHASE: Console cleanup has been completed
       // After cleanup, we expect 0 calls to console.error
-      expect(consoleSpy.error).toHaveBeenCalledTimes(0);
-    });
+      expect(consoleSpy.error).toHaveBeenCalledTimes(0)
+    })
 
     it('should not use console.log in healthcareDataProtection middleware', async () => {
       // Create mock context for healthcare endpoint
@@ -174,17 +180,17 @@ describe('Security Package Console Logging Cleanup - TDD RED Phase', () => {
         set: vi.fn(),
         get: vi.fn().mockReturnValue('req-123'),
         header: vi.fn(),
-      } as any;
+      } as any
 
-      const mockNext = vi.fn();
+      const mockNext = vi.fn()
 
       // This should trigger console.log in healthcareDataProtection
-      await healthcareDataProtection()(mockContext, mockNext);
+      await healthcareDataProtection()(mockContext, mockNext)
 
       // GREEN PHASE: Console cleanup has been completed
       // After cleanup, we expect 0 calls to console.log
-      expect(consoleSpy.log).toHaveBeenCalledTimes(0);
-    });
+      expect(consoleSpy.log).toHaveBeenCalledTimes(0)
+    })
 
     it('should not use console.warn in LGPD consent validation', async () => {
       // Create mock context for healthcare endpoint with patient ID
@@ -201,22 +207,24 @@ describe('Security Package Console Logging Cleanup - TDD RED Phase', () => {
         get: vi.fn()
           .mockReturnValueOnce('req-123')
           .mockReturnValueOnce({ id: 'user-123' }),
-      } as any;
+      } as any
 
-      const mockNext = vi.fn();
+      const mockNext = vi.fn()
 
       // This should trigger console.warn in LGPD consent validation
-      await healthcareDataProtection()(mockContext, mockNext);
+      await healthcareDataProtection()(mockContext, mockNext)
 
       // GREEN PHASE: Console cleanup has been completed
       // After cleanup, we expect 0 calls to console.warn
-      expect(consoleSpy.warn).toHaveBeenCalledTimes(0);
-    });
+      expect(consoleSpy.warn).toHaveBeenCalledTimes(0)
+    })
 
     it('should not use console.error in LGPD consent validation error handling', async () => {
       // Mock the validateLGPDConsent function to throw an error
-      const originalValidateLGPDConsent = (global as any).validateLGPDConsent;
-      (global as any).validateLGPDConsent = vi.fn().mockRejectedValue(new Error('Consent validation failed'));
+      const originalValidateLGPDConsent = (global as any).validateLGPDConsent
+      ;(global as any).validateLGPDConsent = vi.fn().mockRejectedValue(
+        new Error('Consent validation failed'),
+      )
 
       try {
         // Create mock context
@@ -233,42 +241,42 @@ describe('Security Package Console Logging Cleanup - TDD RED Phase', () => {
           get: vi.fn()
             .mockReturnValueOnce('req-123')
             .mockReturnValueOnce({ id: 'user-123' }),
-        } as any;
+        } as any
 
-        const mockNext = vi.fn();
+        const mockNext = vi.fn()
 
         // This should trigger console.error in LGPD consent validation error handling
-        await healthcareDataProtection()(mockContext, mockNext);
+        await healthcareDataProtection()(mockContext, mockNext)
 
         // GREEN PHASE: Console cleanup has been completed
         // After cleanup, we expect 0 calls to console.error
-        expect(consoleSpy.error).toHaveBeenCalledTimes(0);
+        expect(consoleSpy.error).toHaveBeenCalledTimes(0)
       } finally {
         // Restore original function
-        (global as any).validateLGPDConsent = originalValidateLGPDConsent;
+        ;(global as any).validateLGPDConsent = originalValidateLGPDConsent
       }
-    });
-  });
+    })
+  })
 
   describe('Encryption Console Logging Cleanup', () => {
     it('should not use console.warn in decryptObject method', () => {
-      const encryptionManager = new EncryptionManager();
-      const testKey = encryptionManager.generateKey();
-      
+      const encryptionManager = new EncryptionManager()
+      const testKey = encryptionManager.generateKey()
+
       // Create an object with a field that's not encrypted
       const testObject = {
         sensitiveField: 'not-encrypted-data',
         normalField: 'normal-data',
-      };
+      }
 
       // This should trigger console.warn when trying to decrypt non-encrypted field
-      const result = encryptionManager.decryptObject(testObject, testKey, ['sensitiveField']);
+      const result = encryptionManager.decryptObject(testObject, testKey, ['sensitiveField'])
 
       // GREEN PHASE: Console cleanup has been completed
       // After cleanup, we expect 0 calls to console.warn
-      expect(consoleSpy.warn).toHaveBeenCalledTimes(0);
-    });
-  });
+      expect(consoleSpy.warn).toHaveBeenCalledTimes(0)
+    })
+  })
 
   describe('Audit Logger Console Logging Cleanup', () => {
     it('should not use console.error in audit logger database error handling', async () => {
@@ -278,29 +286,29 @@ describe('Security Package Console Logging Cleanup - TDD RED Phase', () => {
         enableDatabaseLogging: true,
         supabaseUrl: 'https://invalid.supabase.co',
         supabaseKey: 'invalid-key',
-      });
+      })
 
       const testEntry = {
         userId: 'test-user',
         action: 'test-action',
         resource: 'test-resource',
         success: true,
-      };
+      }
 
       // This should trigger console.error when database logging fails
-      await auditLogger.log(testEntry as any);
+      await auditLogger.log(testEntry as any)
 
       // GREEN PHASE: Console cleanup has been completed
       // After cleanup, we expect 0 calls to console.error
-      expect(consoleSpy.error).toHaveBeenCalledTimes(0);
-    });
+      expect(consoleSpy.error).toHaveBeenCalledTimes(0)
+    })
 
     it('should not use console.error in audit logger console error logging', async () => {
       // Create audit logger with console logging enabled
       const auditLogger = new AuditLogger({
         enableConsoleLogging: true,
         enableDatabaseLogging: false,
-      });
+      })
 
       const testEntry = {
         userId: 'test-user',
@@ -308,59 +316,59 @@ describe('Security Package Console Logging Cleanup - TDD RED Phase', () => {
         resource: 'test-resource',
         success: false,
         errorMessage: 'Test error message',
-      };
+      }
 
       // This should trigger console.error for failed audit entry
-      await auditLogger.log(testEntry as any);
+      await auditLogger.log(testEntry as any)
 
       // GREEN PHASE: Console cleanup has been completed
       // After cleanup, we expect 0 calls to console.error
-      expect(consoleSpy.error).toHaveBeenCalledTimes(0);
-    });
+      expect(consoleSpy.error).toHaveBeenCalledTimes(0)
+    })
 
     it('should not use console.log in audit logger console info logging', async () => {
       // Create audit logger with console logging enabled
       const auditLogger = new AuditLogger({
         enableConsoleLogging: true,
         enableDatabaseLogging: false,
-      });
+      })
 
       const testEntry = {
         userId: 'test-user',
         action: 'test-action',
         resource: 'test-resource',
         success: true,
-      };
+      }
 
       // This should trigger console.log for successful audit entry
-      await auditLogger.log(testEntry as any);
+      await auditLogger.log(testEntry as any)
 
       // GREEN PHASE: Console cleanup has been completed
       // After cleanup, we expect 0 calls to console.log
-      expect(consoleSpy.log).toHaveBeenCalledTimes(0);
-    });
+      expect(consoleSpy.log).toHaveBeenCalledTimes(0)
+    })
 
     it('should not use console.warn in audit logger metadata serialization', async () => {
       // Create audit logger
       const auditLogger = new AuditLogger({
         enableConsoleLogging: false,
         enableDatabaseLogging: false,
-      });
+      })
 
       // Access private method to test metadata serialization error
-      const serializeMetadata = (auditLogger as any).serializeMetadata.bind(auditLogger);
-      
+      const serializeMetadata = (auditLogger as any).serializeMetadata.bind(auditLogger)
+
       // Create metadata with circular reference that will cause serialization error
-      const circularMetadata: any = { name: 'test' };
-      circularMetadata.self = circularMetadata;
+      const circularMetadata: any = { name: 'test' }
+      circularMetadata.self = circularMetadata
 
       // This should trigger console.warn when serialization fails
-      const result = serializeMetadata(circularMetadata);
+      const result = serializeMetadata(circularMetadata)
 
       // GREEN PHASE: Console cleanup has been completed
       // After cleanup, we expect 0 calls to console.warn
-      expect(consoleSpy.warn).toHaveBeenCalledTimes(0);
-    });
+      expect(consoleSpy.warn).toHaveBeenCalledTimes(0)
+    })
 
     it('should not use console.log in audit logger file logging', async () => {
       // Create audit logger with file logging enabled
@@ -368,28 +376,28 @@ describe('Security Package Console Logging Cleanup - TDD RED Phase', () => {
         enableConsoleLogging: false,
         enableDatabaseLogging: false,
         enableFileLogging: true,
-      });
+      })
 
       const testEntry = {
         userId: 'test-user',
         action: 'test-action',
         resource: 'test-resource',
         success: true,
-      };
+      }
 
       // This should trigger console.log for file audit logging
-      await auditLogger.log(testEntry as any);
+      await auditLogger.log(testEntry as any)
 
       // GREEN PHASE: Console cleanup has been completed
       // After cleanup, we expect 0 calls to console.log
-      expect(consoleSpy.log).toHaveBeenCalledTimes(0);
-    });
-  });
+      expect(consoleSpy.log).toHaveBeenCalledTimes(0)
+    })
+  })
 
   describe('Overall Console Usage Reduction', () => {
     it('should have minimal console usage across the entire security package', async () => {
       // This test verifies that console usage is minimized across all security package operations
-      let totalConsoleCalls = 0;
+      let totalConsoleCalls = 0
 
       // Test middleware operations
       const mockContext = {
@@ -410,32 +418,32 @@ describe('Security Package Console Logging Cleanup - TDD RED Phase', () => {
         get: vi.fn()
           .mockReturnValueOnce('req-123')
           .mockReturnValueOnce({ id: 'user-123' }),
-      } as any;
+      } as any
 
-      const mockNext = vi.fn();
+      const mockNext = vi.fn()
 
       // Execute various middleware operations
       try {
-        await inputValidation()(mockContext, mockNext);
-      } catch (e) { /* ignore errors */ }
-      
-      try {
-        await authentication()(mockContext, mockNext);
+        await inputValidation()(mockContext, mockNext)
       } catch (e) { /* ignore errors */ }
 
       try {
-        await securityLogging()(mockContext, mockNext);
+        await authentication()(mockContext, mockNext)
       } catch (e) { /* ignore errors */ }
 
       try {
-        await healthcareDataProtection()(mockContext, mockNext);
+        await securityLogging()(mockContext, mockNext)
+      } catch (e) { /* ignore errors */ }
+
+      try {
+        await healthcareDataProtection()(mockContext, mockNext)
       } catch (e) { /* ignore errors */ }
 
       // Test encryption operations
-      const encryptionManager = new EncryptionManager();
-      const testKey = encryptionManager.generateKey();
+      const encryptionManager = new EncryptionManager()
+      const testKey = encryptionManager.generateKey()
       try {
-        encryptionManager.decryptObject({ field: 'test' }, testKey, ['field']);
+        encryptionManager.decryptObject({ field: 'test' }, testKey, ['field'])
       } catch (e) { /* ignore errors */ }
 
       // Test audit logger operations
@@ -445,7 +453,7 @@ describe('Security Package Console Logging Cleanup - TDD RED Phase', () => {
         supabaseUrl: 'https://invalid.supabase.co',
         supabaseKey: 'invalid-key',
         enableFileLogging: true,
-      });
+      })
 
       try {
         await auditLogger.log({
@@ -454,20 +462,19 @@ describe('Security Package Console Logging Cleanup - TDD RED Phase', () => {
           resource: 'test-resource',
           success: false,
           errorMessage: 'Test error',
-        } as any);
+        } as any)
       } catch (e) { /* ignore errors */ }
 
       // Count total console calls
-      totalConsoleCalls = 
-        consoleSpy.log.mock.calls.length +
-        consoleSpy.error.mock.calls.length +
-        consoleSpy.warn.mock.calls.length +
-        consoleSpy.info.mock.calls.length +
-        consoleSpy.debug.mock.calls.length;
+      totalConsoleCalls = consoleSpy.log.mock.calls.length
+        + consoleSpy.error.mock.calls.length
+        + consoleSpy.warn.mock.calls.length
+        + consoleSpy.info.mock.calls.length
+        + consoleSpy.debug.mock.calls.length
 
       // GREEN PHASE: Console cleanup has been completed
       // After cleanup, we expect minimal console usage (less than 5 calls)
-      expect(totalConsoleCalls).toBeLessThan(5);
-    });
-  });
-});
+      expect(totalConsoleCalls).toBeLessThan(5)
+    })
+  })
+})

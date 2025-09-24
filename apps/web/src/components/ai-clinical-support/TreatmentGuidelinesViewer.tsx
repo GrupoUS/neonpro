@@ -1,23 +1,23 @@
-'use client';
+'use client'
 
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { api } from '@/lib/api';
-import { GuidelineSection, TreatmentGuideline } from '@/types/ai-clinical-support';
-import { useQuery } from '@tanstack/react-query';
-import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+} from '@/components/ui/select'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { api } from '@/lib/api'
+import { GuidelineSection, TreatmentGuideline } from '@/types/ai-clinical-support'
+import { useQuery } from '@tanstack/react-query'
+import { format } from 'date-fns'
+import { ptBR } from 'date-fns/locale'
 import {
   AlertTriangle,
   Bookmark,
@@ -32,14 +32,14 @@ import {
   Search,
   Star,
   Video,
-} from 'lucide-react';
-import React, { useState } from 'react';
+} from 'lucide-react'
+import React, { useState } from 'react'
 
 interface TreatmentGuidelinesViewerProps {
-  procedureId?: string;
-  category?: string;
-  searchQuery?: string;
-  onGuidelineSelect?: (guideline: TreatmentGuideline) => void;
+  procedureId?: string
+  category?: string
+  searchQuery?: string
+  onGuidelineSelect?: (guideline: TreatmentGuideline) => void
 }
 
 export function TreatmentGuidelinesViewer({
@@ -48,11 +48,11 @@ export function TreatmentGuidelinesViewer({
   searchQuery,
   onGuidelineSelect: _onGuidelineSelect,
 }: TreatmentGuidelinesViewerProps) {
-  const [selectedCategory, setSelectedCategory] = useState(category || 'all');
-  const [searchTerm, setSearchTerm] = useState(searchQuery || '');
-  const [selectedGuideline, setSelectedGuideline] = useState<TreatmentGuideline | null>(null);
-  const [activeTab, setActiveTab] = useState('browse');
-  const [bookmarks, setBookmarks] = useState<string[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState(category || 'all')
+  const [searchTerm, setSearchTerm] = useState(searchQuery || '')
+  const [selectedGuideline, setSelectedGuideline] = useState<TreatmentGuideline | null>(null)
+  const [activeTab, setActiveTab] = useState('browse')
+  const [bookmarks, setBookmarks] = useState<string[]>([])
 
   // Fetch treatment guidelines
   const { data: guidelines, isLoading, error } = useQuery({
@@ -64,91 +64,91 @@ export function TreatmentGuidelinesViewer({
         searchQuery: searchTerm,
         includeReferences: true,
         includeMultimedia: true,
-      });
+      })
     },
     enabled: true,
-  });
+  })
 
   const toggleBookmark = (guidelineId: string) => {
-    setBookmarks(prev =>
+    setBookmarks((prev) =>
       prev.includes(guidelineId)
-        ? prev.filter(id => id !== guidelineId)
+        ? prev.filter((id) => id !== guidelineId)
         : [...prev, guidelineId]
-    );
-  };
+    )
+  }
 
-  const filteredGuidelines = guidelines?.guidelines.filter(guideline => {
+  const filteredGuidelines = guidelines?.guidelines.filter((guideline) => {
     const matchesSearch = !searchTerm
       || guideline.title.toLowerCase().includes(searchTerm.toLowerCase())
       || guideline.description.toLowerCase().includes(searchTerm.toLowerCase())
-      || guideline.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));
+      || guideline.tags.some((tag) => tag.toLowerCase().includes(searchTerm.toLowerCase()))
 
-    const matchesCategory = selectedCategory === 'all' || guideline.category === selectedCategory;
+    const matchesCategory = selectedCategory === 'all' || guideline.category === selectedCategory
 
-    return matchesSearch && matchesCategory;
-  }) || [];
+    return matchesSearch && matchesCategory
+  }) || []
 
   const categories = [
     { id: 'all', label: 'Todos', count: guidelines?.guidelines.length || 0 },
     {
       id: 'botulinum_toxin',
       label: 'Toxina Botulínica',
-      count: guidelines?.guidelines.filter(g => g.category === 'botulinum_toxin').length || 0,
+      count: guidelines?.guidelines.filter((g) => g.category === 'botulinum_toxin').length || 0,
     },
     {
       id: 'fillers',
       label: 'Preenchimentos',
-      count: guidelines?.guidelines.filter(g => g.category === 'fillers').length || 0,
+      count: guidelines?.guidelines.filter((g) => g.category === 'fillers').length || 0,
     },
     {
       id: 'laser',
       label: 'Laser',
-      count: guidelines?.guidelines.filter(g => g.category === 'laser').length || 0,
+      count: guidelines?.guidelines.filter((g) => g.category === 'laser').length || 0,
     },
     {
       id: 'chemical_peels',
       label: 'Peelings Químicos',
-      count: guidelines?.guidelines.filter(g => g.category === 'chemical_peels').length || 0,
+      count: guidelines?.guidelines.filter((g) => g.category === 'chemical_peels').length || 0,
     },
     {
       id: 'thread_lift',
       label: 'Fios de Sustentação',
-      count: guidelines?.guidelines.filter(g => g.category === 'thread_lift').length || 0,
+      count: guidelines?.guidelines.filter((g) => g.category === 'thread_lift').length || 0,
     },
     {
       id: 'skin_care',
       label: 'Cuidados com a Pele',
-      count: guidelines?.guidelines.filter(g => g.category === 'skin_care').length || 0,
+      count: guidelines?.guidelines.filter((g) => g.category === 'skin_care').length || 0,
     },
-  ];
+  ]
 
   const getEvidenceColor = (level: string) => {
     switch (level) {
       case 'high':
-        return 'bg-green-100 text-green-800';
+        return 'bg-green-100 text-green-800'
       case 'moderate':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'bg-yellow-100 text-yellow-800'
       case 'low':
-        return 'bg-orange-100 text-orange-800';
+        return 'bg-orange-100 text-orange-800'
       case 'expert_opinion':
-        return 'bg-purple-100 text-purple-800';
+        return 'bg-purple-100 text-purple-800'
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-gray-100 text-gray-800'
     }
-  };
+  }
 
   const getComplexityColor = (level: string) => {
     switch (level) {
       case 'basic':
-        return 'bg-green-100 text-green-800';
+        return 'bg-green-100 text-green-800'
       case 'intermediate':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'bg-yellow-100 text-yellow-800'
       case 'advanced':
-        return 'bg-red-100 text-red-800';
+        return 'bg-red-100 text-red-800'
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-gray-100 text-gray-800'
     }
-  };
+  }
 
   if (isLoading) {
     return (
@@ -158,7 +158,7 @@ export function TreatmentGuidelinesViewer({
           <div className='h-32 bg-gray-200 rounded'></div>
         </div>
       </div>
-    );
+    )
   }
 
   if (error) {
@@ -170,7 +170,7 @@ export function TreatmentGuidelinesViewer({
           Não foi possível carregar as diretrizes de tratamento. Por favor, tente novamente.
         </AlertDescription>
       </Alert>
-    );
+    )
   }
 
   if (!guidelines) {
@@ -188,7 +188,7 @@ export function TreatmentGuidelinesViewer({
           </div>
         </CardContent>
       </Card>
-    );
+    )
   }
 
   return (
@@ -221,7 +221,7 @@ export function TreatmentGuidelinesViewer({
                 <Input
                   placeholder='Buscar diretrizes...'
                   value={searchTerm}
-                  onChange={e => setSearchTerm(e.target.value)}
+                  onChange={(e) => setSearchTerm(e.target.value)}
                   className='pl-10'
                 />
               </div>
@@ -232,7 +232,7 @@ export function TreatmentGuidelinesViewer({
                   <SelectValue placeholder='Categoria' />
                 </SelectTrigger>
                 <SelectContent>
-                  {categories.map(cat => (
+                  {categories.map((cat) => (
                     <SelectItem key={cat.id} value={cat.id}>
                       {cat.label} ({cat.count})
                     </SelectItem>
@@ -265,7 +265,7 @@ export function TreatmentGuidelinesViewer({
               <div>
                 <div className='text-sm text-gray-500'>Evidência Alta</div>
                 <div className='text-lg font-bold'>
-                  {guidelines.guidelines.filter(g => g.evidenceLevel === 'high').length}
+                  {guidelines.guidelines.filter((g) => g.evidenceLevel === 'high').length}
                 </div>
               </div>
             </div>
@@ -279,11 +279,11 @@ export function TreatmentGuidelinesViewer({
               <div>
                 <div className='text-sm text-gray-500'>Atualizadas</div>
                 <div className='text-lg font-bold'>
-                  {guidelines.guidelines.filter(g => {
-                    const lastUpdate = new Date(g.lastUpdated);
-                    const thirtyDaysAgo = new Date();
-                    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-                    return lastUpdate > thirtyDaysAgo;
+                  {guidelines.guidelines.filter((g) => {
+                    const lastUpdate = new Date(g.lastUpdated)
+                    const thirtyDaysAgo = new Date()
+                    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
+                    return lastUpdate > thirtyDaysAgo
                   }).length}
                 </div>
               </div>
@@ -319,7 +319,7 @@ export function TreatmentGuidelinesViewer({
             <div className='lg:col-span-1 space-y-4'>
               <h3 className='text-lg font-medium'>Diretrizes ({filteredGuidelines.length})</h3>
               <div className='space-y-3'>
-                {filteredGuidelines.map(guideline => (
+                {filteredGuidelines.map((guideline) => (
                   <GuidelineCard
                     key={guideline.id}
                     guideline={guideline}
@@ -376,8 +376,8 @@ export function TreatmentGuidelinesViewer({
             : (
               <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
                 {guidelines.guidelines
-                  .filter(g => bookmarks.includes(g.id))
-                  .map(guideline => (
+                  .filter((g) => bookmarks.includes(g.id))
+                  .map((guideline) => (
                     <GuidelineCard
                       key={guideline.id}
                       guideline={guideline}
@@ -431,17 +431,17 @@ export function TreatmentGuidelinesViewer({
         </TabsContent>
       </Tabs>
     </div>
-  );
+  )
 }
 
 interface GuidelineCardProps {
-  guideline: TreatmentGuideline;
-  isSelected: boolean;
-  onClick: () => void;
-  isBookmarked: boolean;
-  onBookmark: () => void;
-  getEvidenceColor: (level: string) => string;
-  getComplexityColor: (level: string) => string;
+  guideline: TreatmentGuideline
+  isSelected: boolean
+  onClick: () => void
+  isBookmarked: boolean
+  onBookmark: () => void
+  getEvidenceColor: (level: string) => string
+  getComplexityColor: (level: string) => string
 }
 
 function GuidelineCard({
@@ -473,9 +473,9 @@ function GuidelineCard({
           <Button
             variant='ghost'
             size='sm'
-            onClick={e => {
-              e.stopPropagation();
-              onBookmark();
+            onClick={(e) => {
+              e.stopPropagation()
+              onBookmark()
             }}
             className='ml-2 flex-shrink-0'
           >
@@ -512,7 +512,7 @@ function GuidelineCard({
           </span>
         </div>
         <div className='flex flex-wrap gap-1 mt-2'>
-          {guideline.tags.slice(0, 3).map(tag => (
+          {guideline.tags.slice(0, 3).map((tag) => (
             <span key={tag} className='text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded'>
               {tag}
             </span>
@@ -523,11 +523,11 @@ function GuidelineCard({
         </div>
       </CardContent>
     </Card>
-  );
+  )
 }
 
 interface GuidelineDetailProps {
-  guideline: TreatmentGuideline;
+  guideline: TreatmentGuideline
 }
 
 function GuidelineDetail({ guideline }: GuidelineDetailProps) {
@@ -624,11 +624,11 @@ function GuidelineDetail({ guideline }: GuidelineDetailProps) {
         </Card>
       )}
     </div>
-  );
+  )
 }
 
 interface SectionContentProps {
-  section: GuidelineSection;
+  section: GuidelineSection
 }
 
 function SectionContent({ section }: SectionContentProps) {
@@ -667,5 +667,5 @@ function SectionContent({ section }: SectionContentProps) {
         )}
       </CardContent>
     </Card>
-  );
+  )
 }

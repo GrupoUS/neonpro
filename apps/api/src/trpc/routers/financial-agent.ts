@@ -5,11 +5,11 @@
  * Extended AG-UI Protocol with Brazilian financial workflow support
  */
 
-import { TRPCError } from '@trpc/server';
-import { z } from 'zod';
-import { AnomalyDetectionService } from '../../services/financial-ai-agent/anomaly-detection';
-import { FinancialAIAgent } from '../../services/financial-ai-agent/financial-ai-agent';
-import { PredictiveAnalyticsService } from '../../services/financial-ai-agent/predictive-analytics';
+import { TRPCError } from '@trpc/server'
+import { z } from 'zod'
+import { AnomalyDetectionService } from '../../services/financial-ai-agent/anomaly-detection'
+import { FinancialAIAgent } from '../../services/financial-ai-agent/financial-ai-agent'
+import { PredictiveAnalyticsService } from '../../services/financial-ai-agent/predictive-analytics'
 import {
   AnalyticsQuerySchema,
   AuditTrailSchema,
@@ -29,8 +29,8 @@ import {
   LGPDComplianceResponseSchema,
   PaymentRequestSchema,
   PaymentResponseSchema,
-} from '../contracts/financial-agent';
-import { protectedProcedure, router } from '../trpc';
+} from '../contracts/financial-agent'
+import { protectedProcedure, router } from '../trpc'
 
 /**
  * Financial Agent Router
@@ -44,7 +44,7 @@ export const financialAgentRouter = router({
     .output(FinancialAgentSessionResponseSchema)
     .mutation(async ({ ctx, input }) => {
       try {
-        const financialAgent = new FinancialAIAgent(ctx.supabase, ctx.user.id);
+        const financialAgent = new FinancialAIAgent(ctx.supabase, ctx.user.id)
 
         const session = await financialAgent.createFinancialAgentSession({
           agentType: 'financial',
@@ -52,7 +52,7 @@ export const financialAgentRouter = router({
           clinicContext: input.clinic_context,
           capabilities: input.capabilities,
           initialContext: input.initial_context,
-        });
+        })
 
         return {
           id: session.id,
@@ -71,13 +71,13 @@ export const financialAgentRouter = router({
           },
           created_at: session.createdAt,
           updated_at: session.updatedAt,
-        };
+        }
       } catch {
-        console.error('Error creating financial agent session:', error);
+        console.error('Error creating financial agent session:', error)
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to create financial agent session',
-        });
+        })
       }
     }),
 
@@ -86,14 +86,14 @@ export const financialAgentRouter = router({
     .output(FinancialAgentSessionResponseSchema)
     .query(async ({ ctx, input }) => {
       try {
-        const financialAgent = new FinancialAIAgent(ctx.supabase, ctx.user.id);
-        const session = await financialAgent.getSession(input.session_id);
+        const financialAgent = new FinancialAIAgent(ctx.supabase, ctx.user.id)
+        const session = await financialAgent.getSession(input.session_id)
 
         if (!session) {
           throw new TRPCError({
             code: 'NOT_FOUND',
             message: 'Financial agent session not found',
-          });
+          })
         }
 
         return {
@@ -113,13 +113,13 @@ export const financialAgentRouter = router({
           },
           created_at: session.createdAt,
           updated_at: session.updatedAt,
-        };
+        }
       } catch {
-        console.error('Error getting financial agent session:', error);
+        console.error('Error getting financial agent session:', error)
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to get financial agent session',
-        });
+        })
       }
     }),
 
@@ -131,54 +131,54 @@ export const financialAgentRouter = router({
     .output(FinancialMessageResponseSchema)
     .mutation(async ({ ctx, input }) => {
       try {
-        const financialAgent = new FinancialAIAgent(ctx.supabase, ctx.user.id);
+        const financialAgent = new FinancialAIAgent(ctx.supabase, ctx.user.id)
 
         // Process financial message based on type
-        let responseContent = '';
-        let metadata = {};
-        let _attachments: any[] = [];
+        let responseContent = ''
+        let metadata = {}
+        let _attachments: any[] = []
 
         switch (input.message_type) {
           case 'billing_request':
             const billingResponse = await financialAgent.processBillingRequest(
               JSON.parse(input.content),
               input.financial_context,
-            );
-            responseContent = JSON.stringify(billingResponse);
-            metadata = { operation: 'billing_request', processed: true };
-            break;
+            )
+            responseContent = JSON.stringify(billingResponse)
+            metadata = { operation: 'billing_request', processed: true }
+            break
 
           case 'analytics_query':
             const analyticsResponse = await financialAgent.generateFinancialPredictions(
               input.financial_context,
-            );
-            responseContent = JSON.stringify(analyticsResponse);
-            metadata = { operation: 'analytics_query', processed: true };
-            break;
+            )
+            responseContent = JSON.stringify(analyticsResponse)
+            metadata = { operation: 'analytics_query', processed: true }
+            break
 
           case 'payment_process':
             const paymentResponse = await financialAgent.processPayment(
               JSON.parse(input.content),
               input.financial_context,
-            );
-            responseContent = JSON.stringify(paymentResponse);
-            metadata = { operation: 'payment_process', processed: true };
-            break;
+            )
+            responseContent = JSON.stringify(paymentResponse)
+            metadata = { operation: 'payment_process', processed: true }
+            break
 
           case 'compliance_check':
             const complianceResponse = await financialAgent.checkCompliance(
               input.financial_context,
-            );
-            responseContent = JSON.stringify(complianceResponse);
-            metadata = { operation: 'compliance_check', compliant: true };
-            break;
+            )
+            responseContent = JSON.stringify(complianceResponse)
+            metadata = { operation: 'compliance_check', compliant: true }
+            break
 
           default:
             responseContent = await financialAgent.processFinancialMessage(
               input.content,
               input.message_type,
-            );
-            metadata = { operation: input.message_type, processed: true };
+            )
+            metadata = { operation: input.message_type, processed: true }
         }
 
         const message = await financialAgent.createMessage({
@@ -188,7 +188,7 @@ export const financialAgentRouter = router({
           messageType: input.message_type,
           financialContext: input.financial_context,
           metadata: { ...metadata, ...input.metadata },
-        });
+        })
 
         return {
           id: message.id,
@@ -203,13 +203,13 @@ export const financialAgentRouter = router({
           confidence_score: message.metadata?.confidence_score,
           ai_insights: message.metadata?.ai_insights,
           created_at: message.createdAt,
-        };
+        }
       } catch {
-        console.error('Error processing financial message:', error);
+        console.error('Error processing financial message:', error)
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to process financial message',
-        });
+        })
       }
     }),
 
@@ -231,18 +231,18 @@ export const financialAgentRouter = router({
     .output(FinancialMessageListResponseSchema)
     .query(async ({ ctx, input }) => {
       try {
-        const financialAgent = new FinancialAIAgent(ctx.supabase, ctx.user.id);
+        const financialAgent = new FinancialAIAgent(ctx.supabase, ctx.user.id)
         const { messages, total, totalPages } = await financialAgent.getMessages(
           input.session_id,
           input.message_type,
           input.page,
           input.limit,
-        );
+        )
 
         return {
           success: true,
           data: {
-            messages: messages.map(msg => ({
+            messages: messages.map((msg) => ({
               id: msg.id,
               session_id: msg.sessionId,
               message_type: msg.messageType || 'billing_request',
@@ -264,13 +264,13 @@ export const financialAgentRouter = router({
             },
           },
           timestamp: new Date().toISOString(),
-        };
+        }
       } catch {
-        console.error('Error getting financial messages:', error);
+        console.error('Error getting financial messages:', error)
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to get financial messages',
-        });
+        })
       }
     }),
 
@@ -282,7 +282,7 @@ export const financialAgentRouter = router({
     .output(BillingResponseSchema)
     .mutation(async ({ ctx, input }) => {
       try {
-        const financialAgent = new FinancialAIAgent(ctx.supabase, ctx.user.id);
+        const financialAgent = new FinancialAIAgent(ctx.supabase, ctx.user.id)
 
         const billing = await financialAgent.processBillingOperation({
           operationType: input.operation_type,
@@ -295,7 +295,7 @@ export const financialAgentRouter = router({
           taxes: input.taxes,
           notes: input.notes,
           dueDate: input.due_date,
-        });
+        })
 
         return {
           billing_id: billing.id,
@@ -310,13 +310,13 @@ export const financialAgentRouter = router({
           payments: billing.payments,
           tax_breakdown: billing.taxBreakdown,
           discount_breakdown: billing.discountBreakdown,
-        };
+        }
       } catch {
-        console.error('Error processing billing operation:', error);
+        console.error('Error processing billing operation:', error)
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to process billing operation',
-        });
+        })
       }
     }),
 
@@ -328,8 +328,8 @@ export const financialAgentRouter = router({
     .output(PaymentResponseSchema)
     .mutation(async ({ ctx, input }) => {
       try {
-        const financialAgent = new FinancialAIAgent(ctx.supabase, ctx.user.id);
-        const anomalyDetection = new AnomalyDetectionService(ctx.supabase, ctx.user.id);
+        const financialAgent = new FinancialAIAgent(ctx.supabase, ctx.user.id)
+        const anomalyDetection = new AnomalyDetectionService(ctx.supabase, ctx.user.id)
 
         // Run fraud detection before processing
         const fraudCheck = await anomalyDetection.detectPaymentFraud({
@@ -338,13 +338,13 @@ export const financialAgentRouter = router({
           amount: input.amount,
           customerIp: input.customer_ip,
           deviceFingerprint: input.device_fingerprint,
-        });
+        })
 
         if (fraudCheck.isFraud) {
           throw new TRPCError({
             code: 'BAD_REQUEST',
             message: 'Payment flagged as potentially fraudulent',
-          });
+          })
         }
 
         const payment = await financialAgent.processPayment({
@@ -357,7 +357,7 @@ export const financialAgentRouter = router({
           customerIp: input.customer_ip,
           deviceFingerprint: input.device_fingerprint,
           metadata: input.metadata,
-        });
+        })
 
         return {
           payment_id: payment.id,
@@ -373,13 +373,13 @@ export const financialAgentRouter = router({
           installment_details: payment.installmentDetails,
           created_at: payment.createdAt,
           processed_at: payment.processedAt,
-        };
+        }
       } catch {
-        console.error('Error processing payment:', error);
+        console.error('Error processing payment:', error)
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to process payment',
-        });
+        })
       }
     }),
 
@@ -391,19 +391,19 @@ export const financialAgentRouter = router({
     .output(FinancialAnalyticsResponseSchema)
     .query(async ({ ctx, input }) => {
       try {
-        const analyticsService = new PredictiveAnalyticsService(ctx.supabase, ctx.user.id);
+        const analyticsService = new PredictiveAnalyticsService(ctx.supabase, ctx.user.id)
 
         const analytics = await analyticsService.generateComprehensiveAnalytics({
           timeRange: input.time_range,
           metrics: input.metrics,
           groupBy: input.group_by,
           filters: input.filters,
-        });
+        })
 
         const predictions = await analyticsService.generateFinancialPredictions({
           timeRange: input.time_range,
           metrics: input.metrics,
-        });
+        })
 
         return {
           success: true,
@@ -417,13 +417,13 @@ export const financialAgentRouter = router({
               confidence_level: analytics.confidenceLevel,
               generated_at: analytics.generatedAt,
             },
-            predictions: predictions.map(pred => ({
+            predictions: predictions.map((pred) => ({
               metric: pred.metric,
               predicted_value: pred.predictedValue,
               confidence_interval: pred.confidenceInterval,
               time_period: pred.timePeriod,
             })),
-            insights: analytics.insights.map(insight => ({
+            insights: analytics.insights.map((insight) => ({
               type: insight.type,
               description: insight.description,
               impact: insight.impact,
@@ -431,13 +431,13 @@ export const financialAgentRouter = router({
             })),
           },
           timestamp: new Date().toISOString(),
-        };
+        }
       } catch {
-        console.error('Error getting financial analytics:', error);
+        console.error('Error getting financial analytics:', error)
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to get financial analytics',
-        });
+        })
       }
     }),
 
@@ -458,15 +458,15 @@ export const financialAgentRouter = router({
     .output(z.array(FraudAlertSchema))
     .query(async ({ ctx, input }) => {
       try {
-        const anomalyDetection = new AnomalyDetectionService(ctx.supabase, ctx.user.id);
+        const anomalyDetection = new AnomalyDetectionService(ctx.supabase, ctx.user.id)
 
         const alerts = await anomalyDetection.detectAnomalies({
           transactionId: input.transaction_id,
           patientId: input.patient_id,
           timeRange: input.time_range,
-        });
+        })
 
-        return alerts.map(alert => ({
+        return alerts.map((alert) => ({
           alert_id: alert.id,
           alert_type: alert.alertType as any,
           severity: alert.severity as any,
@@ -476,13 +476,13 @@ export const financialAgentRouter = router({
           recommended_action: alert.recommendedAction as any,
           created_at: alert.createdAt,
           status: alert.status as any,
-        }));
+        }))
       } catch {
-        console.error('Error running fraud detection:', error);
+        console.error('Error running fraud detection:', error)
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to run fraud detection',
-        });
+        })
       }
     }),
 
@@ -494,7 +494,7 @@ export const financialAgentRouter = router({
     .output(LGPDComplianceResponseSchema)
     .mutation(async ({ ctx, input }) => {
       try {
-        const financialAgent = new FinancialAIAgent(ctx.supabase, ctx.user.id);
+        const financialAgent = new FinancialAIAgent(ctx.supabase, ctx.user.id)
 
         const compliance = await financialAgent.processLGPDRequest({
           operation: input.operation,
@@ -503,7 +503,7 @@ export const financialAgentRouter = router({
           legalBasis: input.legal_basis,
           retentionPeriod: input.retention_period,
           purpose: input.purpose,
-        });
+        })
 
         return {
           request_id: compliance.requestId,
@@ -513,13 +513,13 @@ export const financialAgentRouter = router({
           retention_scheduled: compliance.retentionScheduled,
           compliance_certificate: compliance.complianceCertificate,
           completed_at: compliance.completedAt,
-        };
+        }
       } catch {
-        console.error('Error processing LGPD request:', error);
+        console.error('Error processing LGPD request:', error)
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to process LGPD request',
-        });
+        })
       }
     }),
 
@@ -555,7 +555,7 @@ export const financialAgentRouter = router({
     }))
     .query(async ({ ctx, input }) => {
       try {
-        const financialAgent = new FinancialAIAgent(ctx.supabase, ctx.user.id);
+        const financialAgent = new FinancialAIAgent(ctx.supabase, ctx.user.id)
 
         const { auditEvents, total, totalPages } = await financialAgent.getAuditTrail({
           eventType: input.event_type,
@@ -563,10 +563,10 @@ export const financialAgentRouter = router({
           timeRange: input.time_range,
           page: input.page,
           limit: input.limit,
-        });
+        })
 
         return {
-          audit_events: auditEvents.map(event => ({
+          audit_events: auditEvents.map((event) => ({
             event_id: event.id,
             event_type: event.eventType as any,
             user_id: event.userId,
@@ -583,13 +583,13 @@ export const financialAgentRouter = router({
             total,
             total_pages: totalPages,
           },
-        };
+        }
       } catch {
-        console.error('Error getting audit trail:', error);
+        console.error('Error getting audit trail:', error)
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to get audit trail',
-        });
+        })
       }
     }),
 
@@ -601,7 +601,7 @@ export const financialAgentRouter = router({
     .output(FinancialOperationResponseSchema)
     .mutation(async ({ ctx, input }) => {
       try {
-        const financialAgent = new FinancialAIAgent(ctx.supabase, ctx.user.id);
+        const financialAgent = new FinancialAIAgent(ctx.supabase, ctx.user.id)
 
         // Check if approval is required
         if (input.requires_approval && input.approval_workflow) {
@@ -611,13 +611,13 @@ export const financialAgentRouter = router({
             payload: input.payload,
             context: input.context,
             approvalWorkflow: input.approval_workflow,
-          });
+          })
 
           if (approvalRequired) {
             throw new TRPCError({
               code: 'FORBIDDEN',
               message: 'Action requires approval',
-            });
+            })
           }
         }
 
@@ -626,7 +626,7 @@ export const financialAgentRouter = router({
           payload: input.payload,
           context: input.context,
           priority: input.priority,
-        });
+        })
 
         return {
           success: true,
@@ -639,13 +639,13 @@ export const financialAgentRouter = router({
             compliance_verified: result.complianceVerified,
           },
           timestamp: new Date().toISOString(),
-        };
+        }
       } catch {
-        console.error('Error executing financial action:', error);
+        console.error('Error executing financial action:', error)
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to execute financial action',
-        });
+        })
       }
     }),
 
@@ -657,7 +657,7 @@ export const financialAgentRouter = router({
     .output(z.object({ success: z.boolean(), event_id: z.string().uuid() }))
     .mutation(async ({ ctx, input }) => {
       try {
-        const financialAgent = new FinancialAIAgent(ctx.supabase, ctx.user.id);
+        const financialAgent = new FinancialAIAgent(ctx.supabase, ctx.user.id)
 
         const eventId = await financialAgent.emitFinancialEvent({
           event: input.event,
@@ -665,18 +665,18 @@ export const financialAgentRouter = router({
           sessionId: input.session_id,
           financialContext: input.financial_context,
           correlationId: input.correlation_id,
-        });
+        })
 
         return {
           success: true,
           event_id: eventId,
-        };
+        }
       } catch {
-        console.error('Error emitting financial event:', error);
+        console.error('Error emitting financial event:', error)
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to emit financial event',
-        });
+        })
       }
     }),
-});
+})

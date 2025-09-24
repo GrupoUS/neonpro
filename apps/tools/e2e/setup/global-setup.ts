@@ -1,30 +1,30 @@
-import { chromium, FullConfig } from '@playwright/test';
+import { chromium, FullConfig } from '@playwright/test'
 
 async function globalSetup(_config: FullConfig) {
-  console.log('🚀 Starting global E2E test setup');
+  console.log('🚀 Starting global E2E test setup')
 
   // Create a browser instance for setup
-  const browser = await chromium.launch();
-  const context = await browser.newContext();
+  const browser = await chromium.launch()
+  const context = await browser.newContext()
 
   try {
     // Setup test data
-    await setupTestData();
+    await setupTestData()
 
     // Setup environment variables
-    process.env['E2E_TESTING'] = 'true';
-    process.env['NODE_ENV'] = 'test';
+    process.env['E2E_TESTING'] = 'true'
+    process.env['NODE_ENV'] = 'test'
 
     // Clear any existing test data
-    await clearTestData();
+    await clearTestData()
 
-    console.log('✅ Global E2E test setup completed');
+    console.log('✅ Global E2E test setup completed')
   } catch (error) {
-    console.error('❌ Global E2E test setup failed:', error);
-    throw error;
+    console.error('❌ Global E2E test setup failed:', error)
+    throw error
   } finally {
-    await context.close();
-    await browser.close();
+    await context.close()
+    await browser.close()
   }
 }
 
@@ -49,19 +49,19 @@ async function setupTestData() {
       name: 'Professional User',
       role: 'professional',
     },
-  ];
+  ]
 
   // Store test users in environment for use in tests
-  process.env['TEST_USERS'] = JSON.stringify(testUsers);
+  process.env['TEST_USERS'] = JSON.stringify(testUsers)
 
-  console.log('📊 Test data setup completed');
+  console.log('📊 Test data setup completed')
 }
 
 async function clearTestData() {
   // Clear any existing test data from the database
   // This would typically make API calls to clean up test data
 
-  console.log('🧹 Test data cleanup completed');
+  console.log('🧹 Test data cleanup completed')
 }
 
-export default globalSetup;
+export default globalSetup

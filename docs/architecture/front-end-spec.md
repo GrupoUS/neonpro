@@ -33,10 +33,10 @@ This document defines **aesthetic clinic-specific frontend implementation patter
 
 ```typescript
 // PROVEN PATTERN - Use this exact hierarchy
-import { AestheticClinicSpecificComponent } from '@/components/aesthetic-clinic'; // ✅ Domain-specific last
-import { AppointmentForm, ClientCard } from '@/components/molecules'; // ✅ Molecules second
-import { DashboardLayout } from '@/components/organisms'; // ✅ Organisms third
-import { Alert, Badge, Button, Card } from '@neonpro/ui'; // ✅ Shared components first
+import { AestheticClinicSpecificComponent } from '@/components/aesthetic-clinic' // ✅ Domain-specific last
+import { AppointmentForm, ClientCard } from '@/components/molecules' // ✅ Molecules second
+import { DashboardLayout } from '@/components/organisms' // ✅ Organisms third
+import { Alert, Badge, Button, Card } from '@neonpro/ui' // ✅ Shared components first
 ```
 
 ### NeonPro Brand Standards (Production-Ready)
@@ -63,16 +63,16 @@ import { Alert, Badge, Button, Card } from '@neonpro/ui'; // ✅ Shared componen
 
 ```typescript
 // ✅ ATOMS - Basic UI elements (from @neonpro/ui)
-export { Button, NeumorphButton } from '@neonpro/ui';
-export { Badge, badgeVariants } from '@neonpro/ui';
-export { Alert, AlertDescription, AlertTitle } from '@neonpro/ui';
-export { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@neonpro/ui';
+export { Button, NeumorphButton } from '@neonpro/ui'
+export { Badge, badgeVariants } from '@neonpro/ui'
+export { Alert, AlertDescription, AlertTitle } from '@neonpro/ui'
+export { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@neonpro/ui'
 
 // ✅ MOLECULES - Simple combinations (app-specific)
-export { AppointmentForm, ClientCard, SearchBox } from '@/components/molecules';
+export { AppointmentForm, ClientCard, SearchBox } from '@/components/molecules'
 
 // ✅ ORGANISMS - Complex components (feature-specific)
-export { AppointmentScheduler, Dashboard, GovernanceDashboard } from '@/components/organisms';
+export { AppointmentScheduler, Dashboard, GovernanceDashboard } from '@/components/organisms'
 ```
 
 **Performance Metrics (Validated)**
@@ -86,10 +86,10 @@ export { AppointmentScheduler, Dashboard, GovernanceDashboard } from '@/componen
 
 ```typescript
 interface AestheticClinicComponentProps {
-  readonly clientId?: string;
-  readonly userRole: 'admin' | 'professional' | 'coordinator';
-  readonly lgpdCompliant: boolean;
-  readonly onAuditLog?: (action: string, details?: Record<string, any>) => void;
+  readonly clientId?: string
+  readonly userRole: 'admin' | 'professional' | 'coordinator'
+  readonly lgpdCompliant: boolean
+  readonly onAuditLog?: (action: string, details?: Record<string, any>) => void
 }
 ```
 
@@ -97,9 +97,9 @@ interface AestheticClinicComponentProps {
 
 ```typescript
 interface ClientRiskCardProps extends AestheticClinicComponentProps {
-  client: Client;
-  riskScore: NoShowRiskScore;
-  onScheduleIntervention: (interventionType: string) => void;
+  client: Client
+  riskScore: NoShowRiskScore
+  onScheduleIntervention: (interventionType: string) => void
 }
 
 export function ClientRiskCard({
@@ -108,10 +108,10 @@ export function ClientRiskCard({
   onScheduleIntervention,
 }: ClientRiskCardProps) {
   const getRiskColor = (score: number) => {
-    if (score >= 0.7) return 'bg-red-100 border-red-300 text-red-800';
-    if (score >= 0.4) return 'bg-yellow-100 border-yellow-300 text-yellow-800';
-    return 'bg-green-100 border-green-300 text-green-800';
-  };
+    if (score >= 0.7) return 'bg-red-100 border-red-300 text-red-800'
+    if (score >= 0.4) return 'bg-yellow-100 border-yellow-300 text-yellow-800'
+    return 'bg-green-100 border-green-300 text-green-800'
+  }
 
   return (
     <Card className={cn('transition-all', getRiskColor(riskScore.score))}>
@@ -140,7 +140,7 @@ export function ClientRiskCard({
         </CardFooter>
       )}
     </Card>
-  );
+  )
 }
 ```
 
@@ -148,8 +148,8 @@ export function ClientRiskCard({
 
 ```typescript
 interface AestheticAIChatProps extends AestheticClinicComponentProps {
-  context: 'scheduling' | 'procedures' | 'aftercare' | 'emergency';
-  onEmergencyDetected: (severity: 'low' | 'medium' | 'high') => void;
+  context: 'scheduling' | 'procedures' | 'aftercare' | 'emergency'
+  onEmergencyDetected: (severity: 'low' | 'medium' | 'high') => void
 }
 
 export function AestheticAIChat({
@@ -165,12 +165,12 @@ export function AestheticAIChat({
       clientId,
       specialization: 'aesthetic_procedures',
     },
-    onFinish: message => {
+    onFinish: (message) => {
       if (message.metadata?.emergencyDetected) {
-        onEmergencyDetected(message.metadata.severity);
+        onEmergencyDetected(message.metadata.severity)
       }
     },
-  });
+  })
 
   return (
     <Card className='h-[500px] flex flex-col'>
@@ -184,7 +184,7 @@ export function AestheticAIChat({
       </CardHeader>
 
       <ScrollArea className='flex-1 p-4'>
-        {messages.map(message => (
+        {messages.map((message) => (
           <div
             key={message.id}
             className={cn(
@@ -220,7 +220,7 @@ export function AestheticAIChat({
         </form>
       </CardFooter>
     </Card>
-  );
+  )
 }
 ```
 
@@ -228,9 +228,9 @@ export function AestheticAIChat({
 
 ```typescript
 interface AestheticSchedulerProps extends AestheticClinicComponentProps {
-  availableSlots: TimeSlot[];
-  procedures: AestheticProcedure[];
-  onScheduleAppointment: (appointment: AppointmentRequest) => Promise<void>;
+  availableSlots: TimeSlot[]
+  procedures: AestheticProcedure[]
+  onScheduleAppointment: (appointment: AppointmentRequest) => Promise<void>
 }
 
 export function AestheticScheduler({
@@ -239,15 +239,15 @@ export function AestheticScheduler({
   clientId,
   onScheduleAppointment,
 }: AestheticSchedulerProps) {
-  const [selectedProcedure, setSelectedProcedure] = useState<AestheticProcedure>();
-  const [selectedSlot, setSelectedSlot] = useState<TimeSlot>();
+  const [selectedProcedure, setSelectedProcedure] = useState<AestheticProcedure>()
+  const [selectedSlot, setSelectedSlot] = useState<TimeSlot>()
 
   const procedureDurations = {
     botox: 30,
     preenchimento: 45,
     peeling: 60,
     laser: 90,
-  };
+  }
 
   return (
     <Card>
@@ -258,16 +258,16 @@ export function AestheticScheduler({
         <div>
           <Label>Procedimento</Label>
           <Select
-            onValueChange={value => {
-              const procedure = procedures.find(p => p.id === value);
-              setSelectedProcedure(procedure);
+            onValueChange={(value) => {
+              const procedure = procedures.find((p) => p.id === value)
+              setSelectedProcedure(procedure)
             }}
           >
             <SelectTrigger>
               <SelectValue placeholder='Selecione o procedimento' />
             </SelectTrigger>
             <SelectContent>
-              {procedures.map(procedure => (
+              {procedures.map((procedure) => (
                 <SelectItem key={procedure.id} value={procedure.id}>
                   <div className='flex justify-between w-full'>
                     <span>{procedure.name}</span>
@@ -285,7 +285,7 @@ export function AestheticScheduler({
           <div>
             <Label>Horários Disponíveis</Label>
             <div className='grid grid-cols-2 md:grid-cols-3 gap-2 mt-2'>
-              {availableSlots.map(slot => (
+              {availableSlots.map((slot) => (
                 <Button
                   key={slot.id}
                   variant={selectedSlot?.id === slot.id ? 'default' : 'outline'}
@@ -308,7 +308,7 @@ export function AestheticScheduler({
                 procedureId: selectedProcedure.id,
                 slotId: selectedSlot.id,
                 duration: procedureDurations[selectedProcedure.type] || 60,
-              });
+              })
             }
           }}
           disabled={!selectedProcedure || !selectedSlot}
@@ -318,7 +318,7 @@ export function AestheticScheduler({
         </Button>
       </CardFooter>
     </Card>
-  );
+  )
 }
 ```
 
@@ -333,8 +333,8 @@ export const clientsAPI = {
   ): Promise<ClientWithHistory> => {
     const response = await api.get(
       `/clients/${clientId}?include=aesthetic_history`,
-    );
-    return response.data;
+    )
+    return response.data
   },
 
   updateAestheticPreferences: async (
@@ -348,15 +348,15 @@ export const clientsAPI = {
         updatedBy: getCurrentUser().id,
         lgpdConsent: true,
       },
-    );
-    return response.data;
+    )
+    return response.data
   },
 
   getNoShowRisk: async (clientId: string): Promise<NoShowRiskScore> => {
-    const response = await api.get(`/clients/${clientId}/no-show-risk`);
-    return response.data;
+    const response = await api.get(`/clients/${clientId}/no-show-risk`)
+    return response.data
   },
-};
+}
 ```
 
 ### AI Integration for Procedures
@@ -366,9 +366,9 @@ export const aestheticAI = {
   chatWithProcedureContext: async (
     messages: ChatMessage[],
     context: {
-      clientId?: string;
-      procedureType?: string;
-      clinicSpecialization: string[];
+      clientId?: string
+      procedureType?: string
+      clinicSpecialization: string[]
     },
   ): Promise<AIChatResponse> => {
     const response = await api.post('/ai/aesthetic-chat', {
@@ -378,8 +378,8 @@ export const aestheticAI = {
         language: 'pt-BR',
         domain: 'aesthetic_procedures',
       },
-    });
-    return response.data;
+    })
+    return response.data
   },
 
   getProcedureRecommendations: async (
@@ -388,10 +388,10 @@ export const aestheticAI = {
     const response = await api.post('/ai/procedure-recommendations', {
       clientProfile,
       clinicCapabilities: getCurrentClinic().capabilities,
-    });
-    return response.data;
+    })
+    return response.data
   },
-};
+}
 ```
 
 ## State Management for Clinics
@@ -400,16 +400,16 @@ export const aestheticAI = {
 
 ```typescript
 interface AestheticClientStore {
-  clients: ClientWithHistory[];
-  selectedClient: ClientWithHistory | null;
-  riskAssessments: Record<string, NoShowRiskScore>;
+  clients: ClientWithHistory[]
+  selectedClient: ClientWithHistory | null
+  riskAssessments: Record<string, NoShowRiskScore>
 
-  loadClientWithHistory: (clientId: string) => Promise<void>;
+  loadClientWithHistory: (clientId: string) => Promise<void>
   updateAestheticPreferences: (
     clientId: string,
     preferences: AestheticPreferences,
-  ) => Promise<void>;
-  calculateNoShowRisk: (clientId: string) => Promise<void>;
+  ) => Promise<void>
+  calculateNoShowRisk: (clientId: string) => Promise<void>
 }
 
 export const useAestheticClientStore = create<AestheticClientStore>(
@@ -420,18 +420,18 @@ export const useAestheticClientStore = create<AestheticClientStore>(
 
     loadClientWithHistory: async (clientId: string) => {
       try {
-        const client = await clientsAPI.getClientWithHistory(clientId);
-        const riskScore = await clientsAPI.getNoShowRisk(clientId);
+        const client = await clientsAPI.getClientWithHistory(clientId)
+        const riskScore = await clientsAPI.getNoShowRisk(clientId)
 
-        set(state => ({
+        set((state) => ({
           selectedClient: client,
           riskAssessments: {
             ...state.riskAssessments,
             [clientId]: riskScore,
           },
-        }));
+        }))
       } catch (error) {
-        console.error('Failed to load client:', error);
+        console.error('Failed to load client:', error)
       }
     },
 
@@ -440,36 +440,36 @@ export const useAestheticClientStore = create<AestheticClientStore>(
       preferences: AestheticPreferences,
     ) => {
       try {
-        await clientsAPI.updateAestheticPreferences(clientId, preferences);
+        await clientsAPI.updateAestheticPreferences(clientId, preferences)
 
-        set(state => ({
-          clients: state.clients.map(c =>
+        set((state) => ({
+          clients: state.clients.map((c) =>
             c.id === clientId
               ? { ...c, aestheticPreferences: preferences }
               : c
           ),
-        }));
+        }))
       } catch (error) {
-        console.error('Failed to update preferences:', error);
+        console.error('Failed to update preferences:', error)
       }
     },
 
     calculateNoShowRisk: async (clientId: string) => {
       try {
-        const riskScore = await clientsAPI.getNoShowRisk(clientId);
+        const riskScore = await clientsAPI.getNoShowRisk(clientId)
 
-        set(state => ({
+        set((state) => ({
           riskAssessments: {
             ...state.riskAssessments,
             [clientId]: riskScore,
           },
-        }));
+        }))
       } catch (error) {
-        console.error('Failed to calculate risk:', error);
+        console.error('Failed to calculate risk:', error)
       }
     },
   }),
-);
+)
 ```
 
 ## Mobile-First Patterns
@@ -481,12 +481,12 @@ export function MobileProcedureSelector({
   procedures,
   onSelect,
 }: {
-  procedures: AestheticProcedure[];
-  onSelect: (procedure: AestheticProcedure) => void;
+  procedures: AestheticProcedure[]
+  onSelect: (procedure: AestheticProcedure) => void
 }) {
   return (
     <div className='grid grid-cols-1 gap-3'>
-      {procedures.map(procedure => (
+      {procedures.map((procedure) => (
         <Button
           key={procedure.id}
           variant='outline'
@@ -512,7 +512,7 @@ export function MobileProcedureSelector({
         </Button>
       ))}
     </div>
-  );
+  )
 }
 ```
 
@@ -523,32 +523,32 @@ export function useSwipeGestures(
   onSwipeLeft?: () => void,
   onSwipeRight?: () => void,
 ) {
-  const [touchStart, setTouchStart] = useState<number | null>(null);
-  const [touchEnd, setTouchEnd] = useState<number | null>(null);
+  const [touchStart, setTouchStart] = useState<number | null>(null)
+  const [touchEnd, setTouchEnd] = useState<number | null>(null)
 
-  const minSwipeDistance = 50;
+  const minSwipeDistance = 50
 
   const onTouchStart = (e: TouchEvent) => {
-    setTouchEnd(null);
-    setTouchStart(e.targetTouches[0].clientX);
-  };
+    setTouchEnd(null)
+    setTouchStart(e.targetTouches[0].clientX)
+  }
 
   const onTouchMove = (e: TouchEvent) => {
-    setTouchEnd(e.targetTouches[0].clientX);
-  };
+    setTouchEnd(e.targetTouches[0].clientX)
+  }
 
   const onTouchEnd = () => {
-    if (!touchStart || !touchEnd) return;
+    if (!touchStart || !touchEnd) return
 
-    const distance = touchStart - touchEnd;
-    const isLeftSwipe = distance > minSwipeDistance;
-    const isRightSwipe = distance < -minSwipeDistance;
+    const distance = touchStart - touchEnd
+    const isLeftSwipe = distance > minSwipeDistance
+    const isRightSwipe = distance < -minSwipeDistance
 
-    if (isLeftSwipe && onSwipeLeft) onSwipeLeft();
-    if (isRightSwipe && onSwipeRight) onSwipeRight();
-  };
+    if (isLeftSwipe && onSwipeLeft) onSwipeLeft()
+    if (isRightSwipe && onSwipeRight) onSwipeRight()
+  }
 
-  return { onTouchStart, onTouchMove, onTouchEnd };
+  return { onTouchStart, onTouchMove, onTouchEnd }
 }
 ```
 
@@ -561,15 +561,15 @@ export function AestheticDataWithScreenReader({
   data,
   label,
 }: {
-  data: string | number;
-  label: string;
+  data: string | number
+  label: string
 }) {
   return (
     <div>
       <span className='sr-only'>{label}: {data}</span>
       <span aria-hidden='true'>{data}</span>
     </div>
-  );
+  )
 }
 ```
 
@@ -577,21 +577,21 @@ export function AestheticDataWithScreenReader({
 
 ```typescript
 export function useHighContrastMode() {
-  const [isHighContrast, setIsHighContrast] = useState(false);
+  const [isHighContrast, setIsHighContrast] = useState(false)
 
   useEffect(() => {
-    const mediaQuery = window.matchMedia('(prefers-contrast: high)');
-    setIsHighContrast(mediaQuery.matches);
+    const mediaQuery = window.matchMedia('(prefers-contrast: high)')
+    setIsHighContrast(mediaQuery.matches)
 
     const handleChange = (e: MediaQueryListEvent) => {
-      setIsHighContrast(e.matches);
-    };
+      setIsHighContrast(e.matches)
+    }
 
-    mediaQuery.addEventListener('change', handleChange);
-    return () => mediaQuery.removeEventListener('change', handleChange);
-  }, []);
+    mediaQuery.addEventListener('change', handleChange)
+    return () => mediaQuery.removeEventListener('change', handleChange)
+  }, [])
 
-  return { isHighContrast };
+  return { isHighContrast }
 }
 ```
 
@@ -616,14 +616,14 @@ export const createMockClient = (
     allergies: [],
   },
   ...overrides,
-});
+})
 
 export const createMockRiskScore = (score: number = 0.3): NoShowRiskScore => ({
   score,
   factors: ['historical_no_shows', 'appointment_frequency'],
   historicalNoShows: Math.floor(score * 10),
   lastCalculated: new Date().toISOString(),
-});
+})
 ```
 
 ### Component Testing Example
@@ -631,8 +631,8 @@ export const createMockRiskScore = (score: number = 0.3): NoShowRiskScore => ({
 ```typescript
 describe('ClientRiskCard', () => {
   it('displays high risk styling for high-risk clients', () => {
-    const mockClient = createMockClient();
-    const mockRiskScore = createMockRiskScore(0.8);
+    const mockClient = createMockClient()
+    const mockRiskScore = createMockRiskScore(0.8)
 
     render(
       <ClientRiskCard
@@ -642,12 +642,12 @@ describe('ClientRiskCard', () => {
         lgpdCompliant={true}
         onScheduleIntervention={jest.fn()}
       />,
-    );
+    )
 
-    expect(screen.getByText('80% risco')).toBeInTheDocument();
-    expect(screen.getByText('Agendar Lembrete')).toBeInTheDocument();
-  });
-});
+    expect(screen.getByText('80% risco')).toBeInTheDocument()
+    expect(screen.getByText('Agendar Lembrete')).toBeInTheDocument()
+  })
+})
 ```
 
 ## Performance Optimization
@@ -655,14 +655,14 @@ describe('ClientRiskCard', () => {
 ### Lazy Loading for Heavy Components
 
 ```typescript
-const AestheticScheduler = lazy(() => import('./components/AestheticScheduler'));
+const AestheticScheduler = lazy(() => import('./components/AestheticScheduler'))
 
 export function LazyAestheticScheduler(props: AestheticSchedulerProps) {
   return (
     <Suspense fallback={<SchedulerSkeleton />}>
       <AestheticScheduler {...props} />
     </Suspense>
-  );
+  )
 }
 ```
 
@@ -672,17 +672,17 @@ export function LazyAestheticScheduler(props: AestheticSchedulerProps) {
 export function useMobilePerformance() {
   useEffect(() => {
     if ('connection' in navigator) {
-      const connection = (navigator as any).connection;
+      const connection = (navigator as any).connection
 
       if (
         connection.effectiveType === 'slow-2g'
         || connection.effectiveType === '2g'
       ) {
-        console.warn('Slow connection detected');
+        console.warn('Slow connection detected')
         // Enable performance mode
       }
     }
-  }, []);
+  }, [])
 }
 ```
 
@@ -707,12 +707,12 @@ packages/
 
 ```typescript
 // ✅ OPTIMAL IMPORTS - Enables tree-shaking for 603.49 kB bundle
-import type { Client } from '@neonpro/database'; // ✅ Type-only imports
-import { Badge, Button, Card } from '@neonpro/ui'; // ✅ Named imports
+import type { Client } from '@neonpro/database' // ✅ Type-only imports
+import { Badge, Button, Card } from '@neonpro/ui' // ✅ Named imports
 
 // ❌ AVOID - Prevents tree-shaking
-import * as UI from '@neonpro/ui'; // ❌ Namespace imports
-import '@neonpro/ui'; // ❌ Side-effect imports
+import * as UI from '@neonpro/ui' // ❌ Namespace imports
+import '@neonpro/ui' // ❌ Side-effect imports
 ```
 
 ### LGPD Compliance Patterns (Aesthetic Clinic-Validated)
@@ -720,15 +720,15 @@ import '@neonpro/ui'; // ❌ Side-effect imports
 ```typescript
 // ✅ PROVEN PATTERN - 100% LGPD compliance maintained
 interface LGPDCompliantComponent {
-  readonly lgpdConsent: boolean;
-  readonly dataMinimization: boolean;
-  readonly auditLogging: (action: string, clientId?: string) => void;
-  readonly dataPortability: () => Promise<ClientDataExport>;
+  readonly lgpdConsent: boolean
+  readonly dataMinimization: boolean
+  readonly auditLogging: (action: string, clientId?: string) => void
+  readonly dataPortability: () => Promise<ClientDataExport>
 }
 
 // Progressive Disclosure Pattern (Validated)
 export function ClientDataWithPrivacy({ client, userRole }: ClientProps) {
-  const [showSensitiveData, setShowSensitiveData] = useState(false);
+  const [showSensitiveData, setShowSensitiveData] = useState(false)
 
   return (
     <Card className='neonpro-card'>
@@ -753,7 +753,7 @@ export function ClientDataWithPrivacy({ client, userRole }: ClientProps) {
         </CardContent>
       )}
     </Card>
-  );
+  )
 }
 ```
 
@@ -788,7 +788,7 @@ export function AccessibleAestheticClinicComponent() {
         className='w-8 h-8 bg-blue-500 rounded-full border-2 border-primary'
       />
     </div>
-  );
+  )
 }
 ```
 
@@ -799,7 +799,7 @@ export function AccessibleAestheticClinicComponent() {
 ```typescript
 // ✅ PROVEN PATTERNS - Achieved 603.49 kB bundle size
 // Lazy loading for heavy components
-const AestheticScheduler = lazy(() => import('./components/AestheticScheduler'));
+const AestheticScheduler = lazy(() => import('./components/AestheticScheduler'))
 
 // Code splitting with Suspense
 export function LazyAestheticScheduler(props: AestheticSchedulerProps) {
@@ -807,18 +807,18 @@ export function LazyAestheticScheduler(props: AestheticSchedulerProps) {
     <Suspense fallback={<SchedulerSkeleton />}>
       <AestheticScheduler {...props} />
     </Suspense>
-  );
+  )
 }
 
 // Dynamic imports for conditional features
-const loadGovernanceModule = () => import('@/components/organisms/governance');
+const loadGovernanceModule = () => import('@/components/organisms/governance')
 ```
 
 ### Import Consolidation (User-Enhanced)
 
 ```typescript
 // ✅ ENHANCED PATTERN - Improved by user feedback
-import { Alert, AlertDescription, Badge, Button, Card, UniversalButton } from '@neonpro/ui';
+import { Alert, AlertDescription, Badge, Button, Card, UniversalButton } from '@neonpro/ui'
 
 // Instead of multiple import statements
 // import { Badge } from '@neonpro/ui';

@@ -7,7 +7,7 @@
  * @fileoverview Healthcare select with React Aria integration and medical taxonomy support
  */
 
-'use client';
+'use client'
 
 import React, {
   forwardRef,
@@ -17,33 +17,33 @@ import React, {
   useMemo,
   useRef,
   useState,
-} from 'react';
-import { z } from 'zod';
-import { cn } from '../../lib/utils';
+} from 'react'
+import { z } from 'zod'
+import { cn } from '../../lib/utils'
 import {
   announceToScreenReader,
   generateAccessibleId,
   HealthcarePriority,
-} from '../../utils/accessibility';
+} from '../../utils/accessibility'
 import {
   classifyHealthcareData,
   DataSensitivity,
   healthcareValidationMessages,
   healthcareValidationSchemas,
-} from '../../utils/healthcare-validation';
-import { useHealthcareTheme } from '../healthcare/healthcare-theme-provider';
-import { useHealthcareForm } from './healthcare-form';
+} from '../../utils/healthcare-validation'
+import { useHealthcareTheme } from '../healthcare/healthcare-theme-provider'
+import { useHealthcareForm } from './healthcare-form'
 
 // Healthcare select option
 export interface HealthcareSelectOption {
-  value: string;
-  label: string;
-  description?: string;
-  disabled?: boolean;
-  group?: string;
-  medicalCode?: string; // CID-10, CBHPM, etc.
-  deprecated?: boolean;
-  emergencyOption?: boolean;
+  value: string
+  label: string
+  description?: string
+  disabled?: boolean
+  group?: string
+  medicalCode?: string // CID-10, CBHPM, etc.
+  deprecated?: boolean
+  emergencyOption?: boolean
 }
 
 // Healthcare field types for automatic options
@@ -56,7 +56,7 @@ export type HealthcareSelectType =
   | 'insurance-type'
   | 'urgency-level'
   | 'consultation-type'
-  | 'generic';
+  | 'generic'
 
 // Healthcare select props
 export interface HealthcareSelectProps extends
@@ -66,49 +66,49 @@ export interface HealthcareSelectProps extends
   >
 {
   // Basic field properties
-  name: string;
-  label: string;
+  name: string
+  label: string
 
   // Options
-  options: HealthcareSelectOption[];
-  placeholder?: string;
-  allowClear?: boolean;
+  options: HealthcareSelectOption[]
+  placeholder?: string
+  allowClear?: boolean
 
   // Healthcare-specific
-  selectType?: HealthcareSelectType;
-  dataSensitivity?: DataSensitivity;
-  emergencyField?: boolean;
+  selectType?: HealthcareSelectType
+  dataSensitivity?: DataSensitivity
+  emergencyField?: boolean
 
   // Validation
-  validationSchema?: z.ZodSchema;
-  customValidation?: (value: string) => string | null;
-  validateOnChange?: boolean;
-  validateOnBlur?: boolean;
+  validationSchema?: z.ZodSchema
+  customValidation?: (value: string) => string | null
+  validateOnChange?: boolean
+  validateOnBlur?: boolean
 
   // UI and UX
-  description?: string;
-  helperText?: string;
-  searchable?: boolean;
-  groupOptions?: boolean;
+  description?: string
+  helperText?: string
+  searchable?: boolean
+  groupOptions?: boolean
 
   // Event handlers
   onChange?: (
     value: string,
     option: HealthcareSelectOption | null,
     isValid: boolean,
-  ) => void;
-  onBlur?: (value: string, isValid: boolean) => void;
-  onValidationChange?: (errors: string[]) => void;
+  ) => void
+  onBlur?: (value: string, isValid: boolean) => void
+  onValidationChange?: (errors: string[]) => void
 
   // Accessibility
-  screenReaderDescription?: string;
-  autoFocusOnError?: boolean;
+  screenReaderDescription?: string
+  autoFocusOnError?: boolean
 
   // Styling
-  variant?: 'default' | 'emergency' | 'sensitive';
-  size?: 'sm' | 'default' | 'lg';
+  variant?: 'default' | 'emergency' | 'sensitive'
+  size?: 'sm' | 'default' | 'lg'
 
-  className?: string;
+  className?: string
 }
 
 // Predefined healthcare options
@@ -209,7 +209,7 @@ const healthcareSelectOptions: Record<
   ],
 
   generic: [],
-};
+}
 
 /**
  * Healthcare Select Component
@@ -256,44 +256,44 @@ export const HealthcareSelect = forwardRef<
     ref,
   ) => {
     // Context and theme
-    const formContext = useHealthcareForm();
-    useHealthcareTheme(); // Keep for future theme integration
+    const formContext = useHealthcareForm()
+    useHealthcareTheme() // Keep for future theme integration
 
     // Local state
     const [internalValue, setInternalValue] = useState<string>(
       (value ?? defaultValue ?? '') as string,
-    );
-    const [isFocused, setIsFocused] = useState(false);
-    const [hasBeenBlurred, setHasBeenBlurred] = useState(false);
-    const [validationErrors, setValidationErrors] = useState<string[]>([]);
-    const [searchTerm, setSearchTerm] = useState<string>('');
+    )
+    const [isFocused, setIsFocused] = useState(false)
+    const [hasBeenBlurred, setHasBeenBlurred] = useState(false)
+    const [validationErrors, setValidationErrors] = useState<string[]>([])
+    const [searchTerm, setSearchTerm] = useState<string>('')
 
     // Refs
-    const selectRef = useRef<HTMLSelectElement>(null);
+    const selectRef = useRef<HTMLSelectElement>(null)
 
     // Merge refs
     const mergedRef = (node: HTMLSelectElement) => {
-      selectRef.current = node;
+      selectRef.current = node
       if (typeof ref === 'function') {
-        ref(node);
+        ref(node)
       } else if (ref) {
-        ref.current = node;
+        ref.current = node
       }
-    };
+    }
 
     // Auto-determine data sensitivity if not provided
-    const effectiveDataSensitivity = dataSensitivity ?? classifyHealthcareData(selectType);
+    const effectiveDataSensitivity = dataSensitivity ?? classifyHealthcareData(selectType)
 
     // Get effective options (provided or predefined)
     const effectiveOptions = useMemo(() => {
       let options = providedOptions && providedOptions.length > 0
         ? providedOptions
-        : healthcareSelectOptions[selectType] || [];
+        : healthcareSelectOptions[selectType] || []
 
       // Filter by search term if searchable
       if (searchable && searchTerm) {
         options = options.filter(
-          option =>
+          (option) =>
             option.label.toLowerCase().includes(searchTerm.toLowerCase())
             || option.description
               ?.toLowerCase()
@@ -301,215 +301,215 @@ export const HealthcareSelect = forwardRef<
             || option.medicalCode
               ?.toLowerCase()
               .includes(searchTerm.toLowerCase()),
-        );
+        )
       }
 
-      return options;
-    }, [providedOptions, selectType, searchable, searchTerm]);
+      return options
+    }, [providedOptions, selectType, searchable, searchTerm])
 
     // Group options if requested
     const groupedOptions = useMemo(() => {
-      if (!groupOptions) {return null;}
+      if (!groupOptions) return null
 
-      const groups: Record<string, HealthcareSelectOption[]> = {};
-      const ungrouped: HealthcareSelectOption[] = [];
+      const groups: Record<string, HealthcareSelectOption[]> = {}
+      const ungrouped: HealthcareSelectOption[] = []
 
-      effectiveOptions.forEach(option => {
+      effectiveOptions.forEach((option) => {
         if (option.group) {
           if (!groups[option.group]) {
-            groups[option.group] = [];
+            groups[option.group] = []
           }
-          groups[option.group!]!.push(option);
+          groups[option.group!]!.push(option)
         } else {
-          ungrouped.push(option);
+          ungrouped.push(option)
         }
-      });
+      })
 
-      return { groups, ungrouped };
-    }, [effectiveOptions, groupOptions]);
+      return { groups, ungrouped }
+    }, [effectiveOptions, groupOptions])
 
     // Generate IDs
-    const fieldId = useId();
-    const accessibleId = generateAccessibleId('healthcare-select');
-    const descriptionId = description ? `${fieldId}-description` : undefined;
-    const errorId = validationErrors.length > 0 ? `${fieldId}-error` : undefined;
+    const fieldId = useId()
+    const accessibleId = generateAccessibleId('healthcare-select')
+    const descriptionId = description ? `${fieldId}-description` : undefined
+    const errorId = validationErrors.length > 0 ? `${fieldId}-error` : undefined
 
     // Get validation schema based on select type
     const getValidationSchema = (): z.ZodSchema | null => {
-      if (validationSchema) {return validationSchema;}
+      if (validationSchema) return validationSchema
 
-      const schemas = healthcareValidationSchemas;
+      const schemas = healthcareValidationSchemas
       switch (selectType) {
         case 'medical-specialty':
-          return schemas.medicalSpecialty;
+          return schemas.medicalSpecialty
         case 'gender':
           return z.enum([
             'masculino',
             'feminino',
             'nao-binario',
             'prefiro-nao-informar',
-          ]);
+          ])
         case 'blood-type':
-          return z.enum(['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']);
+          return z.enum(['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'])
         default:
-          return null;
+          return null
       }
-    };
+    }
 
     // Validate field value
     const validateField = (valueToValidate: string): string[] => {
-      const errors: string[] = [];
+      const errors: string[] = []
 
       // Required validation
       if (required && !valueToValidate.trim()) {
-        errors.push(healthcareValidationMessages.required);
+        errors.push(healthcareValidationMessages.required)
       }
 
       // Skip other validations if empty and not required
       if (!valueToValidate.trim() && !required) {
-        return errors;
+        return errors
       }
 
       // Check if value exists in options
       const validOption = effectiveOptions.find(
-        option => option.value === valueToValidate,
-      );
+        (option) => option.value === valueToValidate,
+      )
       if (valueToValidate && !validOption) {
-        errors.push('Opção inválida selecionada');
+        errors.push('Opção inválida selecionada')
       }
 
       // Check if option is disabled
       if (validOption && validOption.disabled) {
-        errors.push('Esta opção não está disponível');
+        errors.push('Esta opção não está disponível')
       }
 
       // Schema validation
-      const schema = getValidationSchema();
+      const schema = getValidationSchema()
       if (schema) {
         try {
-          schema.parse(valueToValidate);
+          schema.parse(valueToValidate)
         } catch (_validationError) {
           if (_validationError instanceof z.ZodError) {
             errors.push(
-              ..._validationError.errors.map(error => error.message),
-            );
+              ..._validationError.errors.map((error) => error.message),
+            )
           }
         }
       }
 
       // Custom validation
       if (customValidation) {
-        const customError = customValidation(valueToValidate);
+        const customError = customValidation(valueToValidate)
         if (customError) {
-          errors.push(customError);
+          errors.push(customError)
         }
       }
 
-      return errors;
-    };
+      return errors
+    }
 
     // Handle value change
     const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-      const newValue = event.target.value;
-      setInternalValue(newValue);
+      const newValue = event.target.value
+      setInternalValue(newValue)
 
       // Find selected option
-      const selectedOption = effectiveOptions.find(option => option.value === newValue) || null;
+      const selectedOption = effectiveOptions.find((option) => option.value === newValue) || null
 
       // Validate on change if enabled
       if (validateOnChange) {
-        const errors = validateField(newValue);
-        setValidationErrors(errors);
+        const errors = validateField(newValue)
+        setValidationErrors(errors)
 
         // Update form context
         if (errors.length > 0) {
-          formContext.setFieldError(name, errors);
+          formContext.setFieldError(name, errors)
         } else {
-          formContext.clearFieldError(name);
+          formContext.clearFieldError(name)
         }
 
-        onValidationChange?.(errors);
+        onValidationChange?.(errors)
       }
 
       // Notify parent
-      onChange?.(newValue, selectedOption, validationErrors.length === 0);
-    };
+      onChange?.(newValue, selectedOption, validationErrors.length === 0)
+    }
 
     // Handle blur
     const handleBlur = (event: React.FocusEvent<HTMLSelectElement>) => {
-      const currentValue = event.target.value;
-      setIsFocused(false);
-      setHasBeenBlurred(true);
+      const currentValue = event.target.value
+      setIsFocused(false)
+      setHasBeenBlurred(true)
 
       // Validate on blur if enabled
       if (validateOnBlur) {
-        const errors = validateField(currentValue);
-        setValidationErrors(errors);
+        const errors = validateField(currentValue)
+        setValidationErrors(errors)
 
         // Update form context
         if (errors.length > 0) {
-          formContext.setFieldError(name, errors);
+          formContext.setFieldError(name, errors)
         } else {
-          formContext.clearFieldError(name);
+          formContext.clearFieldError(name)
         }
 
-        onValidationChange?.(errors);
+        onValidationChange?.(errors)
 
         // Announce errors to screen readers
         if (errors.length > 0) {
           const priority = emergencyField
             ? HealthcarePriority.HIGH
-            : HealthcarePriority.MEDIUM;
+            : HealthcarePriority.MEDIUM
           announceToScreenReader(
             `Campo ${label}: ${errors.join('. ')}`,
             priority,
-          );
+          )
         }
       }
 
       // Notify parent
-      onBlur?.(currentValue, validationErrors.length === 0);
-    };
+      onBlur?.(currentValue, validationErrors.length === 0)
+    }
 
     // Handle focus
     const handleFocus = () => {
-      setIsFocused(true);
-    };
+      setIsFocused(true)
+    }
 
     // Focus on error if needed
     useEffect(() => {
       if (autoFocusOnError && validationErrors.length > 0 && hasBeenBlurred) {
-        selectRef.current?.focus();
+        selectRef.current?.focus()
       }
-    }, [validationErrors, autoFocusOnError, hasBeenBlurred]);
+    }, [validationErrors, autoFocusOnError, hasBeenBlurred])
 
     // Validate accessibility on mount (basic label/error checks)
     useEffect(() => {
-      const el = selectRef.current;
-      if (!el) {return;}
-      const violations: string[] = [];
+      const el = selectRef.current
+      if (!el) return
+      const violations: string[] = []
       const hasLabel = !!(
         el.getAttribute('aria-label') || el.getAttribute('aria-labelledby')
-      );
-      if (!hasLabel) {violations.push('Campo sem rótulo acessível');}
-      const isInvalid = el.getAttribute('aria-invalid') === 'true';
+      )
+      if (!hasLabel) violations.push('Campo sem rótulo acessível')
+      const isInvalid = el.getAttribute('aria-invalid') === 'true'
       if (isInvalid && !el.getAttribute('aria-describedby')) {
-        violations.push('Erro sem descrição acessível');
+        violations.push('Erro sem descrição acessível')
       }
       if (el.hasAttribute('required') && !el.getAttribute('aria-required')) {
-        violations.push('Campo obrigatório sem indicação acessível');
+        violations.push('Campo obrigatório sem indicação acessível')
       }
       if (violations.length) {
         console.warn(
           `Accessibility violations in field "${name}":`,
           violations,
-        );
+        )
       }
-    }, [name]);
+    }, [name])
 
     // Determine field styling
-    const hasError = validationErrors.length > 0;
-    const showError = hasError && (hasBeenBlurred || !validateOnBlur);
+    const hasError = validationErrors.length > 0
+    const showError = hasError && (hasBeenBlurred || !validateOnBlur)
 
     const selectClasses = cn(
       // Base classes
@@ -541,7 +541,7 @@ export const HealthcareSelect = forwardRef<
         'ring-2 ring-info ring-offset-2': isFocused && variant === 'sensitive',
       },
       className,
-    );
+    )
 
     return (
       <div
@@ -585,7 +585,7 @@ export const HealthcareSelect = forwardRef<
             type='text'
             placeholder='Search options...'
             value={searchTerm}
-            onChange={e => setSearchTerm(e.target.value)}
+            onChange={(e) => setSearchTerm(e.target.value)}
             className='w-full px-3 py-2 text-sm border border-input rounded-md mb-2'
           />
         )}
@@ -626,7 +626,7 @@ export const HealthcareSelect = forwardRef<
             ? (
               <>
                 {/* Ungrouped options */}
-                {groupedOptions.ungrouped.map(option => (
+                {groupedOptions.ungrouped.map((option) => (
                   <option
                     key={option.value}
                     value={option.value}
@@ -645,7 +645,7 @@ export const HealthcareSelect = forwardRef<
                 {Object.entries(groupedOptions.groups).map(
                   ([groupName, groupOptions]) => (
                     <optgroup key={groupName} label={groupName}>
-                      {groupOptions.map(option => (
+                      {groupOptions.map((option) => (
                         <option
                           key={option.value}
                           value={option.value}
@@ -666,7 +666,7 @@ export const HealthcareSelect = forwardRef<
             )
             : (
               // Flat options
-              effectiveOptions.map(option => (
+              effectiveOptions.map((option) => (
                 <option
                   key={option.value}
                   value={option.value}
@@ -716,8 +716,8 @@ export const HealthcareSelect = forwardRef<
           </p>
         )}
       </div>
-    );
+    )
   },
-);
+)
 
-HealthcareSelect.displayName = 'HealthcareSelect';
+HealthcareSelect.displayName = 'HealthcareSelect'

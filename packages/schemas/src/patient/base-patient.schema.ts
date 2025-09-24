@@ -2,7 +2,7 @@
  * Base patient schema (T084 - Code duplication removal)
  * Core patient fields used across all layers
  */
-import { z } from 'zod';
+import { z } from 'zod'
 
 export const BasePatientSchema = z.object({
   id: z.string().uuid().optional(),
@@ -10,7 +10,7 @@ export const BasePatientSchema = z.object({
     .string()
     .min(1, 'Nome é obrigatório')
     .max(100, 'Nome não pode ter mais de 100 caracteres')
-    .transform(val => val.trim()),
+    .transform((val) => val.trim()),
   email: z.string().email('Email inválido').optional().nullable(),
   phone: z.string().optional().nullable(),
   gender: z
@@ -30,7 +30,7 @@ export const BasePatientSchema = z.object({
     .default('active'),
   createdAt: z.string().datetime().optional(),
   updatedAt: z.string().datetime().optional(),
-});
+})
 
 /**
  * Patient address schema
@@ -54,7 +54,7 @@ export const PatientAddressSchema = z.object({
   cep: z
     .string()
     .regex(/^\d{5}-\d{3}$/, 'CEP inválido. Use o formato 00000-000'),
-});
+})
 
 /**
  * Patient health insurance schema
@@ -77,7 +77,7 @@ export const PatientHealthInsuranceSchema = z.object({
     .string()
     .regex(/^\d{2}\/\d{4}$/, 'Validade inválida. Use o formato MM/AAAA')
     .optional(),
-});
+})
 
 /**
  * Emergency contact schema
@@ -92,7 +92,7 @@ export const EmergencyContactSchema = z.object({
     .min(1, 'Grau de parentesco é obrigatório')
     .max(30, 'Grau de parentesco não pode ter mais de 30 caracteres'),
   phone: z.string().min(1, 'Telefone do contato é obrigatório'),
-});
+})
 
 /**
  * LGPD consent schema
@@ -107,7 +107,7 @@ export const LGPDConsentSchema = z.object({
   consentedAt: z.string().datetime().optional(),
   ipAddress: z.string().ip().optional(),
   userAgent: z.string().optional(),
-});
+})
 
 /**
  * Complete patient schema with all optional fields
@@ -123,14 +123,14 @@ export const CompletePatientSchema = BasePatientSchema.extend({
     .optional(),
   tags: z.array(z.string()).default([]),
   metadata: z.record(z.unknown()).optional(),
-});
+})
 
 // Export types
-export type BasePatient = z.infer<typeof BasePatientSchema>;
-export type PatientAddress = z.infer<typeof PatientAddressSchema>;
+export type BasePatient = z.infer<typeof BasePatientSchema>
+export type PatientAddress = z.infer<typeof PatientAddressSchema>
 export type PatientHealthInsurance = z.infer<
   typeof PatientHealthInsuranceSchema
->;
-export type EmergencyContact = z.infer<typeof EmergencyContactSchema>;
-export type LGPDConsent = z.infer<typeof LGPDConsentSchema>;
-export type CompletePatient = z.infer<typeof CompletePatientSchema>;
+>
+export type EmergencyContact = z.infer<typeof EmergencyContactSchema>
+export type LGPDConsent = z.infer<typeof LGPDConsentSchema>
+export type CompletePatient = z.infer<typeof CompletePatientSchema>
