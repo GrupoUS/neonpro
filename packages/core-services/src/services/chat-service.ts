@@ -38,7 +38,7 @@ export class ChatService {
       const message: ChatMessage = {
         id: crypto.randomUUID(),
         sessionId: session.id,
-        _role: 'assistant',
+        role: 'assistant',
         content: res.content,
         createdAt: new Date().toISOString(),
         redactionFlags: ['lgpd'],
@@ -46,7 +46,7 @@ export class ChatService {
 
       return message;
     } catch (error) {
-      logHealthcareError('chat', error, {
+      logHealthcareError('chat', error as Error, {
         method: 'askSync',
         component: 'ChatService',
         severity: 'high',
@@ -75,7 +75,7 @@ export class ChatService {
         const message: Partial<ChatMessage> = {
           id: crypto.randomUUID(),
           sessionId: session.id,
-          _role: 'assistant',
+          role: 'assistant',
           content: chunk.content,
           createdAt: new Date().toISOString(),
           redactionFlags: ['lgpd'],
@@ -84,7 +84,7 @@ export class ChatService {
         yield message;
       }
     } catch (error) {
-      logHealthcareError('chat', error, {
+      logHealthcareError('chat', error as Error, {
         method: 'askStream',
         component: 'ChatService',
         severity: 'high',
@@ -116,11 +116,11 @@ export class ChatService {
         createdAt: new Date().toISOString(),
       };
     } catch (error) {
-      logHealthcareError('chat', error, {
+      logHealthcareError('chat', error as Error, {
         method: 'explain',
         component: 'ChatService',
         severity: 'high',
-        sessionId: session.id,
+        sessionId: '', // No session context for explain method
       });
       throw new Error('Failed to generate explanation');
     }

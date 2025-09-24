@@ -1,6 +1,5 @@
 import { MultiProfessionalCoordinationService } from '@neonpro/core-services';
 import { z } from 'zod';
-import { SuccessResponseSchema } from '~/shared/schemas';
 import { protectedProcedure, router } from '../trpc';
 
 // Input schemas with validation

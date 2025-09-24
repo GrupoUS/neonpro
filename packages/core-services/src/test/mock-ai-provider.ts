@@ -64,6 +64,9 @@ export class MockAIProvider {
     }
 
     const lastMessage = messages[messages.length - 1];
+    if (!lastMessage) {
+      throw new Error('No messages provided');
+    }
     const response = this.generateResponse(lastMessage.content);
 
     if (options?.streaming) {
@@ -177,7 +180,7 @@ export class MockAIProvider {
     return {
       id: `mock_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
       content: mockResponse.response,
-      _role: 'assistant' as const,
+      role: 'assistant' as const,
       model: this.config.models?.default || 'mock-model',
       provider: 'mock' as AIProvider,
       usage: {
@@ -220,7 +223,7 @@ export class MockAIProvider {
             const streamChunk = {
               id: `mock_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
               content: chunk,
-              _role: 'assistant' as const,
+              role: 'assistant' as const,
               model: 'mock-model',
               provider: 'mock' as AIProvider,
               isComplete: false,
@@ -238,7 +241,7 @@ export class MockAIProvider {
           const completionChunk = {
             id: `mock_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
             content: '',
-            _role: 'assistant' as const,
+            role: 'assistant' as const,
             model: 'mock-model',
             provider: 'mock' as AIProvider,
             isComplete: true,

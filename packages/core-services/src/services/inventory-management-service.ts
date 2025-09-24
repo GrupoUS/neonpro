@@ -4,17 +4,10 @@
  */
 
 import { logHealthcareError } from '@neonpro/shared';
-import { logHealthcareError } from '@neonpro/shared';
 import type {
-  InventoryAlert,
+  Product,
   InventoryBatch,
   InventoryCategory,
-  InventoryStockLevel,
-  InventoryTransaction,
-  Product,
-  ProductUsageRecord,
-  PurchaseOrder,
-  PurchaseOrderItem,
 } from '@neonpro/types';
 import { createClient } from '@supabase/supabase-js';
 
@@ -80,7 +73,7 @@ export class InventoryManagementService {
         ...productData,
         clinic_id: this.config.clinicId,
         profit_margin:
-          ((productData.selling_price - productData.cost_price) / productData.cost_price) * 100,
+          ((productData.price - productData.price) / productData.price) * 100,
       }])
       .select()
       .single();
@@ -166,7 +159,7 @@ export class InventoryManagementService {
     if (error) throw new Error(`Failed to create inventory batch: ${error.message}`);
 
     // Update stock level
-    await this.updateStockLevel(batchData.product_id, batchData.current_quantity, 'purchase');
+    await this.updateStockLevel(batchData.productId, batchData.quantity, 'purchase');
 
     return data;
   }
@@ -206,11 +199,11 @@ export class InventoryManagementService {
     thirtyDaysFromNow.setDate(thirtyDaysFromNow.getDate() + 30);
 
     return {
-      valid: batches.filter(batch => !batch.expiry_date || batch.expiry_date > thirtyDaysFromNow),
+      valid: batches.filter(batch => !batch.expiryDate || batch.expiryDate > thirtyDaysFromNow),
       expiringSoon: batches.filter(batch =>
-        batch.expiry_date && batch.expiry_date <= thirtyDaysFromNow && batch.expiry_date > now
+        batch.expiryDate && batch.expiryDate <= thirtyDaysFromNow && batch.expiryDate > now
       ),
-      expired: batches.filter(batch => batch.expiry_date && batch.expiry_date <= now),
+      expired: batches.filter(batch => batch.expiryDate && batch.expiryDate <= now),
     };
   }
 
@@ -246,11 +239,11 @@ export class InventoryManagementService {
 
     // Record transaction
     await this.recordInventoryTransaction({
-      product_id: productId,
+      productId: productId,
       quantity: quantityChange,
-      transaction_type: transactionType,
-      reference_id: referenceId,
-      clinic_id: this.config.clinicId,
+      transactionType,
+      referenceId,
+      clinicId: this.config.clinicId,
     });
 
     // Update stock status
@@ -312,9 +305,9 @@ export class InventoryManagementService {
     // Create alert if stock is low or critical
     if (status === 'low' || status === 'critical') {
       await this.createInventoryAlert({
-        clinic_id: this.config.clinicId,
-        product_id: productId,
-        alert_type: 'low_stock',
+        clinicId: this.config.clinicId,
+        productId: productId,
+        alertType: 'low_stock',
         severity: status === 'critical' ? 'critical' : 'medium',
         message: `Product stock is ${status}: ${stockLevel.current_stock} units remaining`,
       });
@@ -322,30 +315,54 @@ export class InventoryManagementService {
   }
 
   async recordInventoryTransaction(
-    transaction: Omit<InventoryTransaction, 'id' | 'transaction_date' | 'created_at'>,
+    transaction: {
+      productId: string;
+      quantity: number;
+      transactionType: string;
+      referenceId?: string;
+      clinicId: string;
+    },
   ): Promise<void> {
     const { error } = await this.supabase
       .from('inventory_transactions')
-      .insert([transaction]);
+      .insert([{
+        product_id: transaction.productId,
+        quantity: transaction.quantity,
+        transaction_type: transaction.transactionType,
+        reference_id: transaction.referenceId,
+        clinic_id: transaction.clinicId,
+      }]);
 
     if (error) throw new Error(`Failed to record inventory transaction: ${error.message}`);
   }
 
   // === Product Usage Tracking ===
 
-  async recordProductUsage(usage: Omit<ProductUsageRecord, 'id' | 'created_at'>): Promise<void> {
+  async recordProductUsage(usage: {
+    productId: string;
+    quantityUsed: number;
+    appointmentId?: string;
+    usageDate: string;
+    clinicId: string;
+  }): Promise<void> {
     const { error } = await this.supabase
       .from('product_usage_records')
-      .insert([usage]);
+      .insert([{
+        product_id: usage.productId,
+        quantity_used: usage.quantityUsed,
+        appointment_id: usage.appointmentId,
+        usage_date: usage.usageDate,
+        clinic_id: usage.clinicId,
+      }]);
 
     if (error) throw new Error(`Failed to record product usage: ${error.message}`);
 
     // Update stock level
     await this.updateStockLevel(
-      usage.product_id,
-      -usage.quantity_used,
+      usage.productId,
+      -usage.quantityUsed,
       'sale',
-      usage.appointment_id,
+      usage.appointmentId,
     );
   }
 
@@ -391,11 +408,23 @@ export class InventoryManagementService {
   // === Alerts and Notifications ===
 
   async createInventoryAlert(
-    alert: Omit<InventoryAlert, 'id' | 'created_at' | 'updated_at'>,
+    alert: {
+      clinicId: string;
+      productId: string;
+      alertType: string;
+      severity: string;
+      message: string;
+    },
   ): Promise<void> {
     const { error } = await this.supabase
       .from('inventory_alerts')
-      .insert([alert]);
+      .insert([{
+        clinic_id: alert.clinicId,
+        product_id: alert.productId,
+        alert_type: alert.alertType,
+        severity: alert.severity,
+        message: alert.message,
+      }]);
 
     if (error && !error.message.includes('duplicate key')) {
       logHealthcareError('inventory', error, { method: 'createInventoryAlert', alert });
@@ -406,7 +435,7 @@ export class InventoryManagementService {
     alertType?: string;
     severity?: string;
     isResolved?: boolean;
-  }): Promise<InventoryAlert[]> {
+  }): Promise<any[]> {
     let query = this.supabase
       .from('inventory_alerts')
       .select('*')
@@ -492,8 +521,16 @@ export class InventoryManagementService {
   // === Purchase Order Management ===
 
   async createPurchaseOrder(
-    orderData: Omit<PurchaseOrder, 'id' | 'created_at' | 'updated_at'>,
-  ): Promise<PurchaseOrder> {
+    orderData: {
+      clinicId: string;
+      supplierId: string;
+      orderDate: string;
+      expectedDeliveryDate: string;
+      status: string;
+      totalAmount: number;
+      notes?: string;
+    },
+  ): Promise<any> {
     const { data, error } = await this.supabase
       .from('purchase_orders')
       .insert([orderData])
@@ -509,7 +546,7 @@ export class InventoryManagementService {
     supplierId?: string;
     dateFrom?: string;
     dateTo?: string;
-  }): Promise<PurchaseOrder[]> {
+  }): Promise<any[]> {
     let query = this.supabase
       .from('purchase_orders')
       .select(`
@@ -578,12 +615,12 @@ export class InventoryManagementService {
 
     const totalInventoryValue = products?.reduce((sum, product) => {
       const stock = stockLevels?.find(s => s.product_id === product.id);
-      return sum + (product.cost_price * (stock?.current_stock || 0));
+      return sum + (product.price * (stock?.current_stock || 0));
     }, 0) || 0;
 
     const monthlyUsageValue = usage?.reduce((sum, record) => {
       const product = products?.find(p => p.id === record.product_id);
-      return sum + (product?.cost_price || 0) * record.quantity_used;
+      return sum + (product?.price || 0) * record.quantity_used;
     }, 0) || 0;
 
     // Get top selling products
@@ -594,14 +631,14 @@ export class InventoryManagementService {
       if (!acc[record.product_id]) {
         acc[record.product_id] = {
           productId: record.product_id,
-          productName: product.name || 'Unknown',
+          productName: (product as any).name || 'Unknown',
           quantityUsed: 0,
           revenue: 0,
         };
       }
 
-      acc[record.product_id].quantityUsed += record.quantity_used;
-      acc[record.product_id].revenue += product.selling_price * record.quantity_used;
+      acc[record.product_id].quantityUsed += record.quantityUsed;
+      acc[record.product_id].revenue += (product as any).price * record.quantityUsed;
 
       return acc;
     }, {} as Record<string, any>);
@@ -636,7 +673,7 @@ export class InventoryManagementService {
       summary,
       products: products.map(p => ({
         ...p,
-        inventoryValue: (p as any).inventory_stock_levels?.[0]?.current_stock * p.cost_price || 0,
+        inventoryValue: (p as any).inventory_stock_levels?.[0]?.currentStock * (p as any).costPrice || 0,
       })),
       alerts,
       generatedAt: new Date().toISOString(),
@@ -651,9 +688,9 @@ export class InventoryManagementService {
       const lowStockAlerts = await this.checkLowStockAlerts();
       for (const alert of lowStockAlerts) {
         await this.createInventoryAlert({
-          clinic_id: this.config.clinicId,
-          product_id: alert.productId,
-          alert_type: 'low_stock',
+          clinicId: this.config.clinicId,
+          productId: alert.productId,
+          alertType: 'low_stock',
           severity: alert.severity,
           message:
             `Low stock alert: ${alert.productName} - ${alert.currentStock} units remaining (${alert.daysOfStock} days)`,
@@ -664,7 +701,7 @@ export class InventoryManagementService {
       const expiringBatches = await this.checkExpiryAlerts();
       for (const batch of expiringBatches) {
         const daysUntilExpiry = Math.ceil(
-          (batch.expiry_date!.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24),
+          (batch.expiryDate!.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24),
         );
         const severity = daysUntilExpiry < 7
           ? 'critical'
@@ -673,24 +710,24 @@ export class InventoryManagementService {
           : 'medium';
 
         await this.createInventoryAlert({
-          clinic_id: this.config.clinicId,
-          product_id: batch.product_id,
-          alert_type: 'expiring_soon',
+          clinicId: this.config.clinicId,
+          productId: batch.productId,
+          alertType: 'expiring_soon',
           severity,
-          message: `Batch expiring soon: ${batch.batch_number} - ${daysUntilExpiry} days remaining`,
+          message: `Batch expiring soon: ${batch.batchNumber} - ${daysUntilExpiry} days remaining`,
         });
       }
 
-      inventoryLogger.info(
+      console.info(
         `Processed ${lowStockAlerts.length} low stock alerts and ${expiringBatches.length} expiry alerts`,
         {
-          clinicId,
+          clinicId: this.config.clinicId,
           lowStockCount: lowStockAlerts.length,
           expiryCount: expiringBatches.length,
         },
       );
     } catch (error) {
-      logHealthcareError('inventory', error, { method: 'performDailyInventoryChecks', clinicId });
+      logHealthcareError('inventory', error as Error, { method: 'processDailyInventoryChecks', clinicId: this.config.clinicId });
     }
   }
 
@@ -715,16 +752,16 @@ export class InventoryManagementService {
       const monthlyUsage = usage?.reduce((sum, record) => sum + record.quantity_used, 0) || 0;
       const dailyUsage = monthlyUsage / 30;
 
-      if (stockLevel.current_stock <= product.reorder_point) {
-        const leadTimeDemand = dailyUsage * product.lead_time_days;
-        const safetyStock = product.min_stock_level;
+      if (stockLevel.currentStock <= (product as any).reorder_point) {
+        const leadTimeDemand = dailyUsage * (product as any).lead_time_days;
+        const safetyStock = (product as any).min_stock_level;
         const recommendedQuantity = leadTimeDemand + safetyStock - stockLevel.current_stock;
 
         recommendations.push({
           productId: product.id,
           recommendedQuantity: Math.max(0, recommendedQuantity),
           reason:
-            `Current stock ${stockLevel.current_stock} is below reorder point ${product.reorder_point}. Lead time demand: ${
+            `Current stock ${stockLevel.currentStock} is below reorder point ${(product as any).reorder_point}. Lead time demand: ${
               leadTimeDemand.toFixed(1)
             }`,
         });

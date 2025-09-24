@@ -14,6 +14,7 @@ export * from './healthcare-errors';
 export * from './br/identifiers';
 export * from './currency/brl';
 export * from './utils';
+export * from './lgpd';
 
 // Re-export specific functions for clarity
 export { formatBRL, maskBRLInput, parseBRL } from './currency/brl';

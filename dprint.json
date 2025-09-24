@@ -16,7 +16,10 @@
     "**/*.spec.ts",
     "**/*.spec.tsx",
     "apps/api/tests/**",
-    "apps/api/src/__tests__/**"
+    "apps/api/src/__tests__/**",
+    "lint-report.json",
+    "oxlint-report.json",
+    "oxlint-issues.json"
   ],
   "plugins": [
     "https://plugins.dprint.dev/typescript-0.91.1.wasm",
@@ -30,9 +33,7 @@
     "semiColons": "prefer",
     "quoteStyle": "alwaysSingle",
     "quoteProps": "asNeeded",
-    "trailingCommas": "onlyMultiLine",
-    "operatorPosition": "nextLine",
-    "arrowFunction.useParentheses": "preferNone"
+    "trailingCommas": "onlyMultiLine",\n    "associations": ["!**/*.test.ts", "!**/*.spec.ts"],\n    "operatorPosition": "nextLine",\n    "arrowFunction.useParentheses": "preferNone"
   },
   "json": {
     "indentWidth": 2

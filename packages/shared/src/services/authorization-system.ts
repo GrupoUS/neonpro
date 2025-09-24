@@ -943,7 +943,7 @@ export class HealthcareAuthorizationRules {
 
     // Right to erasure for patients
     if (context.subject._role === 'patient' && action.operation === 'delete') {
-      decision = 'permit';
+      decision = 'allow';
       reasons.push('Patient right to erasure under LGPD');
       advice.push({
         type: 'lgpd',

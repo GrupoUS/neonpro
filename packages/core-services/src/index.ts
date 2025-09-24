@@ -41,6 +41,4 @@ export * from './config/logger';
 
 export { MultiProfessionalCoordinationService } from './services/multi-professional-coordination-service';
 export { PatientEngagementService } from './services/patient-engagement-service';
-export { treatmentPlanningService } from "./services/treatment-planning-service";
-export type { AIMessage } from "./models/chat-message";
-export { CommunicationPreferencesSchema } from "./governance/zod-schemas";
+export { TreatmentPlanningService } from './services/treatment-planning-service';

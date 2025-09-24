@@ -54,7 +54,7 @@ export function maskSensitiveData(
   data: string,
   visibleChars: number = 4,
 ): string {
-  if (data.length <= visibleChars) return data;
+  if (data.length <= visibleChars) {return data;}
   const masked = '*'.repeat(data.length - visibleChars);
   return data.slice(0, visibleChars) + masked;
 }

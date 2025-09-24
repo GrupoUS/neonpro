@@ -99,7 +99,6 @@ export type {
   UserSubscription,
 } from './ai-enhanced';
 
-export type { TreatmentPlan as CreateTreatmentPlanInput } from "../core-services/services/ai-clinical-decision-support";
 
 // AI Provider types
 export * from './ai-provider';

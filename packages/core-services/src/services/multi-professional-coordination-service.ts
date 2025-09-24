@@ -94,7 +94,7 @@ export interface ProfessionalScopeValidationResult {
 }
 
 export class MultiProfessionalCoordinationService {
-  constructor(private supabase: SupabaseClient) {}
+  constructor(_supabase: SupabaseClient) {}
 
   async createProfessionalTeam(input: ProfessionalTeamInput): Promise<ProfessionalTeamResult> {
     // Basic implementation stub with proper typing

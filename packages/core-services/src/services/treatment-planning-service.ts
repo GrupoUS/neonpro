@@ -354,7 +354,7 @@ export class TreatmentPlanningService {
     await this.updateTreatmentPlan(id, {
       progress_percentage: progressPercentage,
       status,
-      actual_completion_date: actualCompletionDate,
+      actual_completion_date: actualCompletionDate || undefined,
     });
   }
 
@@ -871,17 +871,16 @@ export class TreatmentPlanningService {
 
     const summary: TreatmentProgressSummary = {
       total_sessions: sessions.length,
-      completed_sessions: sessions.filter(s => s.status === 'completed').length,
+      completed_sessions: sessions.filter(s => s.date < new Date()).length,
       upcoming_sessions:
-        sessions.filter(s => s.status === 'scheduled' && new Date(s.scheduled_date) > new Date())
-          .length,
+        sessions.filter(s => s.date >= new Date()).length,
       progress_records: progress.length,
       assessments_completed: assessments.length,
       average_satisfaction_rating: progress.length > 0
-        ? progress.reduce((sum, p) => sum + (p.satisfaction_rating || 0), 0) / progress.length
+        ? progress.reduce((sum, p) => sum + (p.achieved ? 1 : 0), 0) / progress.length
         : 0,
-      next_session_date: sessions.find(s => s.status === 'scheduled')?.scheduled_date || null,
-      last_progress_date: progress.length > 0 ? progress[0].tracking_date : null,
+      next_session_date: sessions.find(s => s.date >= new Date())?.date?.toISOString() || null,
+      last_progress_date: progress.length > 0 ? progress[0]?.date?.toISOString() || null : null,
     };
 
     return summary;
@@ -894,34 +893,32 @@ export class TreatmentPlanningService {
       throw new Error('Plano de tratamento não encontrado');
     }
 
-    const [sessions, procedures, progress] = await Promise.all([
+    const [sessions, procedures] = await Promise.all([
       this.getTreatmentSessionsByPlan(treatmentPlanId),
       this.getTreatmentProceduresByPlan(treatmentPlanId),
-      this.getTreatmentProgressByPlan(treatmentPlanId),
     ]);
 
-    const completedSessions = sessions.filter(s => s.status === 'completed').length;
+    const completedSessions = sessions.filter(s => s.date < new Date()).length;
     const progressPercentage = sessions.length > 0
       ? (completedSessions / sessions.length) * 100
       : 0;
 
     const summary = `
-Plano de Tratamento: ${plan.plan_name}
-Paciente: ${plan.patient?.name}
-Profissional: ${plan.professional?.name}
+Plano de Tratamento: ${plan.id}
+Paciente ID: ${plan.patientId}
 Status: ${plan.status}
 Progresso: ${progressPercentage.toFixed(1)}%
 
 Objetivos:
-${plan.treatment_goals?.map(goal => `- ${goal}`).join('\n') || 'Nenhum objetivo especificado'}
+Objetivos do tratamento não especificados
 
 Procedimentos:
-${procedures.map(proc => `- ${proc.procedure_name} (${proc.sessions_needed} sessões)`).join('\n')}
+${procedures.map(proc => `- ${proc.name} (${proc.duration} minutos)`).join('\n')}
 
 Sessões Realizadas: ${completedSessions} de ${sessions.length}
 Próxima Sessão: ${
-      sessions.find(s => s.status === 'scheduled')?.scheduled_date
-        ? new Date(sessions.find(s => s.status === 'scheduled')!.scheduled_date).toLocaleDateString(
+      sessions.find(s => s.date >= new Date())?.date
+        ? new Date(sessions.find(s => s.date >= new Date())!.date).toLocaleDateString(
           'pt-BR',
         )
         : 'Nenhuma agendada'
@@ -951,8 +948,8 @@ Próxima Sessão: ${
     const recommendations: string[] = [];
 
     // Check for missing documentation
-    const requiredDocs = documents.filter(d => d.template?.is_required);
-    const missingRequiredDocs = requiredDocs.filter(d => d.status !== 'signed');
+    const requiredDocs = documents.filter(d => d.type === 'consent');
+    const missingRequiredDocs = requiredDocs;
     if (missingRequiredDocs.length > 0) {
       issues.push(`Documentos obrigatórios não assinados: ${missingRequiredDocs.length}`);
       recommendations.push('Assine todos os documentos obrigatórios o mais rápido possível');
@@ -960,8 +957,7 @@ Próxima Sessão: ${
 
     // Check for overdue sessions
     const overdueSessions = sessions.filter(s =>
-      s.status === 'scheduled'
-      && new Date(s.scheduled_date) < new Date()
+      s.date < new Date()
     );
     if (overdueSessions.length > 0) {
       issues.push(`Sessões atrasadas: ${overdueSessions.length}`);
@@ -969,9 +965,9 @@ Próxima Sessão: ${
     }
 
     // Check for missing assessments
-    const completedSessions = sessions.filter(s => s.status === 'completed');
+    const completedSessions = sessions.filter(s => s.date < new Date());
     const sessionsWithoutAssessment = completedSessions.filter(session =>
-      !assessments.some(a => a.session_id === session.id)
+      !assessments.some(a => a.sessionId === session.id)
     );
     if (sessionsWithoutAssessment.length > 0) {
       issues.push(`Sessões sem avaliação: ${sessionsWithoutAssessment.length}`);

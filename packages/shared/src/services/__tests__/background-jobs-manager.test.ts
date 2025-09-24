@@ -129,9 +129,9 @@ describe("JobManager - Job Creation & Management", () => {
 
     mockHandler = {
       execute: vi.fn(),
-      validatePayload: vi.fn(),
-      getSupportedTypes: vi.fn(),
-      getEstimatedExecutionTime: vi.fn(),
+      validatePayload: vi.fn().mockResolvedValue(true),
+      getSupportedTypes: vi.fn().mockReturnValue([HealthcareJobType.PATIENT_DATA_SYNC]),
+      getEstimatedExecutionTime: vi.fn().mockResolvedValue(5000),
     };
 
     jobManager = new JobManager(mockJobQueue);
@@ -604,9 +604,9 @@ describe("Worker - Job Processing", () => {
 
     mockHandler = {
       execute: vi.fn(),
-      validatePayload: vi.fn(),
-      getSupportedTypes: vi.fn(),
-      getEstimatedExecutionTime: vi.fn(),
+      validatePayload: vi.fn().mockResolvedValue(true),
+      getSupportedTypes: vi.fn().mockReturnValue([HealthcareJobType.PATIENT_DATA_SYNC]),
+      getEstimatedExecutionTime: vi.fn().mockResolvedValue(5000),
     };
 
     const handlers = new Map([[HealthcareJobType.PATIENT_DATA_SYNC, mockHandler]]);

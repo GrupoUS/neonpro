@@ -259,7 +259,7 @@ export function checkComplianceRequirements(
     return {
       valid: false,
       data: null,
-      errors: [{ message: err?.message || 'Unknown error' }],
+      errors: [{ message: _err?.message || 'Unknown error' }],
     };
   }
 }

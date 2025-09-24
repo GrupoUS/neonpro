@@ -17,7 +17,7 @@
  * ```
  */
 import { beforeEach, describe, expect, test, vi } from 'vitest';
-import { HealthcareStructuredLogger } from '../structured-logging';
+import { StructuredLogger } from '../structured-logging';
 import type { LogEntry, HealthcareLogContext } from '../structured-logging';
 
 // Mock OpenTelemetry dependencies
@@ -80,8 +80,8 @@ vi.mock('nanoid', () => ({
   nanoid: vi.fn().mockReturnValue('test-log-id'),
 }));
 
-describe('HealthcareStructuredLogger - RED PHASE Tests', () => {
-  let logger: HealthcareStructuredLogger;
+describe('StructuredLogger - RED PHASE Tests', () => {
+  let logger: StructuredLogger;
   let mockConsole: any;
   let mockFile: any;
 
@@ -104,7 +104,7 @@ describe('HealthcareStructuredLogger - RED PHASE Tests', () => {
     
     // Attempt to create logger instance
     try {
-      logger = new HealthcareStructuredLogger({
+      logger = new StructuredLogger({
         service: 'test-healthcare-service',
         version: '1.0.0',
         environment: 'test',
@@ -118,7 +118,7 @@ describe('HealthcareStructuredLogger - RED PHASE Tests', () => {
   describe('Constructor & Initialization', () => {
     test('should fail to create logger with invalid configuration', () => {
       expect(() => {
-        new HealthcareStructuredLogger({
+        new StructuredLogger({
           service: '', // Invalid empty service name
           version: '1.0.0',
           environment: 'test',
@@ -128,7 +128,7 @@ describe('HealthcareStructuredLogger - RED PHASE Tests', () => {
 
     test('should fail to create logger with invalid environment', () => {
       expect(() => {
-        new HealthcareStructuredLogger({
+        new StructuredLogger({
           service: 'test-service',
           version: '1.0.0',
           environment: 'invalid-env', // Should fail validation
@@ -139,7 +139,7 @@ describe('HealthcareStructuredLogger - RED PHASE Tests', () => {
     test('should fail to create logger without required OpenTelemetry dependencies', () => {
       // This test will fail due to missing or incorrect OpenTelemetry setup
       expect(() => {
-        new HealthcareStructuredLogger({
+        new StructuredLogger({
           service: 'test-service',
           version: '1.0.0',
           environment: 'test',
@@ -150,7 +150,7 @@ describe('HealthcareStructuredLogger - RED PHASE Tests', () => {
 
     test('should fail to initialize with invalid LGPD configuration', () => {
       expect(() => {
-        new HealthcareStructuredLogger({
+        new StructuredLogger({
           service: 'test-service',
           version: '1.0.0',
           environment: 'test',
@@ -414,7 +414,7 @@ describe('HealthcareStructuredLogger - RED PHASE Tests', () => {
       logLevels.forEach((level) => {
         expect(() => {
           if (logger) {
-            logger[level as keyof HealthcareStructuredLogger](`Test ${level} message`, {
+            logger[level as keyof StructuredLogger](`Test ${level} message`, {
               level,
               timestamp: new Date().toISOString(),
             });
@@ -660,7 +660,7 @@ describe('HealthcareStructuredLogger - RED PHASE Tests', () => {
 
       environments.forEach((env) => {
         expect(() => {
-          const envLogger = new HealthcareStructuredLogger({
+          const envLogger = new StructuredLogger({
             service: 'test-service',
             version: '1.0.0',
             environment: env as any,
@@ -693,7 +693,7 @@ describe('HealthcareStructuredLogger - RED PHASE Tests', () => {
 
     test('should fail to handle configuration validation errors', () => {
       expect(() => {
-        new HealthcareStructuredLogger({
+        new StructuredLogger({
           service: 'test-service',
           version: '1.0.0',
           environment: 'test',

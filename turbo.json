@@ -1,47 +1,74 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "globalDependencies": ["**/.env.*local", "tsconfig.json", "tsconfig.*.json"],
+  "globalEnv": ["NODE_ENV", "VERCEL", "VERCEL_ENV", "EDGE_RUNTIME", "CI"],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": ["dist/**", ".next/**", "!.next/cache/**"]
+      "outputs": ["dist/**", ".next/**", "!.next/cache/**"],
+      "cache": true,
+      "persistent": false,
+      "env": ["NODE_ENV", "CI"]
     },
     "dev": {
       "cache": false,
-      "persistent": true
+      "persistent": true,
+      "env": ["NODE_ENV=development"]
     },
     "test": {
       "dependsOn": ["build"],
-      "outputs": ["coverage/**"]
+      "outputs": ["coverage/**"],
+      "cache": true,
+      "persistent": false
     },
     "lint": {
-      "outputs": []
+      "outputs": [],
+      "cache": true,
+      "persistent": false
     },
     "lint:oxlint": {
-      "outputs": []
+      "outputs": [],
+      "cache": true,
+      "persistent": false
     },
     "format": {
-      "outputs": []
+      "outputs": [],
+      "cache": true,
+      "persistent": false
     },
     "format:dprint": {
-      "outputs": []
+      "outputs": [],
+      "cache": true,
+      "persistent": false
     },
     "type-check": {
       "dependsOn": ["^build"],
-      "outputs": []
+      "outputs": [],
+      "cache": true,
+      "persistent": false
     },
     "clean": {
-      "cache": false
+      "cache": false,
+      "outputs": []
     },
     "build:analyze": {
       "dependsOn": ["^build"],
-      "outputs": ["*.stats.json", "*.stats.html", "bundle-analysis*.html"]
+      "outputs": ["*.stats.json", "*.stats.html", "bundle-analysis*.html"],
+      "cache": true,
+      "persistent": false
+    },
+    "build:production": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**", ".next/**", "!.next/cache/**", "*.stats.json", "*.stats.html"],
+      "cache": true,
+      "persistent": false,
+      "env": ["NODE_ENV=production", "CI=1"]
     },
     "build:copilot": {
       "dependsOn": ["^build"],
       "outputs": ["dist/**", ".next/**"],
-      "cache": true
+      "cache": true,
+      "persistent": false
     }
-  },
-  "globalEnv": ["NODE_ENV", "VERCEL", "VERCEL_ENV", "EDGE_RUNTIME"]
+  }
 }

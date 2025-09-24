@@ -173,20 +173,21 @@ describe('Audit Logger Security Tests', () => {
       });
       
       // Should not throw error
-      await expect(
-        auditLogger.logHealthcareAccess(
+      await expect(async () => {
+        await auditLogger.logHealthcareAccess(
           'user123',
-          '/api/patients/123',
+          'access',
+          'patient123',
+          'medical_record',
+          true,
           {
-            patientId: 'patient123',
             professionalId: 'prof456',
             procedureType: 'consultation',
             dataClassification: 'sensitive',
-            consentVerified: true,
             accessReason: 'treatment',
           }
-        )
-      ).resolves.not.toThrow();
+        );
+      }).not.toThrow();
     });
   });
 });

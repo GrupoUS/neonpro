@@ -275,23 +275,23 @@ export class Logger {
   }
 
   // Legacy synchronous methods for backward compatibility (deprecated)
-  debug(message: string, _context?: Record<string, any>): void {
+  debugSync(message: string, _context?: Record<string, any>): void {
     this.debug(message, _context).catch(console.error);
   }
 
-  info(message: string, context?: Record<string, any>): void {
+  infoSync(message: string, context?: Record<string, any>): void {
     this.info(message, context).catch(console.error);
   }
 
-  warn(message: string, context?: Record<string, any>, error?: Error): void {
+  warnSync(message: string, context?: Record<string, any>, error?: Error): void {
     this.warn(message, context, error).catch(console.error);
   }
 
-  error(message: string, context?: Record<string, any>, error?: Error): void {
+  errorSync(message: string, context?: Record<string, any>, error?: Error): void {
     this.error(message, context, error).catch(console.error);
   }
 
-  fatal(message: string, context?: Record<string, any>, error?: Error): void {
+  fatalSync(message: string, context?: Record<string, any>, error?: Error): void {
     this.fatal(message, context, error).catch(console.error);
   }
 

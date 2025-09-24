@@ -12,7 +12,6 @@
  * - Structured response parsing and storage
  */
 
-import { logHealthcareError } from '@neonpro/shared';
 import { AIProvider } from '../ai-provider';
 
 // Simple error class for health analysis

@@ -148,12 +148,14 @@ export class AIServiceManagement {
       const results = await Promise.allSettled(checks);
       const availabilities: ModelAvailability[] = [];
 
-      results.forEach((result, _index) => {
+      results.forEach((result, index) => {
         if (result.status === 'fulfilled') {
           availabilities.push(result.value);
         } else {
           // Create unavailable status for models that couldn't be checked
-          const { provider: p, model: m } = modelsToCheck[index];
+          const modelConfig = modelsToCheck[index];
+          if (modelConfig) {
+            const { provider: p, model: m } = modelConfig;
           availabilities.push({
             provider: p,
             model: m,
@@ -169,6 +171,7 @@ export class AIServiceManagement {
               }`,
             ],
           });
+          }
         }
       });
 
@@ -426,7 +429,7 @@ export class AIServiceManagement {
     for (let i = 0; i < Math.min(daysDiff, 30); i++) {
       const date = new Date(period.start.getTime() + i * 24 * 60 * 60 * 1000);
       dailyBreakdown.push({
-        date: date.toISOString().split('T')[0],
+        date: date.toISOString().split('T')[0] || '',
         requests: Math.floor(Math.random() * 100) + 10,
         tokens: Math.floor(Math.random() * 50000) + 5000,
         cost: Math.random() * 2 + 0.1,
@@ -434,16 +437,16 @@ export class AIServiceManagement {
     }
 
     const totalRequests = dailyBreakdown.reduce(
-      (sum, _day) => sum + day.requests,
+      (sum, day) => sum + day.requests,
       0,
     );
     const successfulRequests = Math.floor(totalRequests * 0.95);
     const failedRequests = totalRequests - successfulRequests;
     const totalTokensUsed = dailyBreakdown.reduce(
-      (sum, _day) => sum + day.tokens,
+      (sum, day) => sum + day.tokens,
       0,
     );
-    const totalCost = dailyBreakdown.reduce((sum, _day) => sum + day.cost, 0);
+    const totalCost = dailyBreakdown.reduce((sum, day) => sum + day.cost, 0);
 
     return {
       provider: providerName,

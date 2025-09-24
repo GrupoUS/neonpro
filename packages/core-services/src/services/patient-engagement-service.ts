@@ -784,7 +784,7 @@ export class PatientEngagementService {
 }
 
 export class BasePatientEngagementService {
-  constructor(private supabase: SupabaseClient) {}
+  constructor(_supabase: SupabaseClient) {}
 
   async createEngagement(input: any) {
     // Basic implementation stub
@@ -796,7 +796,7 @@ export class BasePatientEngagementService {
     };
   }
 
-  async getEngagementStats(input: any) {
+  async getEngagementStats(_input: any) {
     // Basic implementation stub
     return {
       totalEngagements: 0,

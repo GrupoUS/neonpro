@@ -29,7 +29,7 @@ describe('HealthcareAuthMiddleware - RED Phase Tests', () => {
 
   const testConfig: AuthConfig = {
     enabled: true,
-    environment: 'test',
+    environment: 'development',
     jwt: {
       issuer: 'test-issuer',
       audience: 'test-audience',
@@ -97,6 +97,7 @@ describe('HealthcareAuthMiddleware - RED Phase Tests', () => {
       set: vi.fn(),
       header: vi.fn(),
       json: vi.fn(),
+      get: vi.fn(),
     };
     vi.clearAllMocks();
   });

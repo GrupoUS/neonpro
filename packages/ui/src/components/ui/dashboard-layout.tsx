@@ -53,7 +53,7 @@ export function DashboardCard({
       drag
       dragMomentum={false}
       dragElastic={0.1}
-      dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 } as any}
+      dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
       animate={{
         x: position.x || 0,
         y: position.y || 0,

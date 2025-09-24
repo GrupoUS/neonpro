@@ -49,7 +49,7 @@ export function TiltedCard({
   );
 
   const handleMouseMove = (event: React.MouseEvent<HTMLDivElement>) => {
-    if (disableHoverEffect || !cardRef.current) return;
+    if (disableHoverEffect || !cardRef.current) {return;}
 
     const rect = cardRef.current.getBoundingClientRect();
     const centerX = rect.left + rect.width / 2;

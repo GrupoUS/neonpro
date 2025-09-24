@@ -10,7 +10,7 @@ import * as React from 'react';
 import { Table as UITable, TableBody, TableCell, TableHead, TableHeader, TableRow } from './table';
 
 // Note: keep props non-generic to avoid unused generic type errors in consumers
-export interface EnhancedTableProps<TData extends RowData = any> {
+export interface EnhancedTableProps<TData extends RowData = Record<string, unknown>> {
   table: Table<TData>;
   loading?: boolean;
   columnsCount?: number;
@@ -31,7 +31,7 @@ export interface EnhancedTableProps<TData extends RowData = any> {
  * - Works with TanStack Table instances passed via `table`
  * - Preserves keyboard/screen-reader semantics
  */
-export function EnhancedTable<TData extends RowData = any>(props: EnhancedTableProps<TData>) {
+export function EnhancedTable<TData extends RowData = Record<string, unknown>>(props: EnhancedTableProps<TData>) {
   const {
     table,
     loading = false,

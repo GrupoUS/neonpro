@@ -183,11 +183,11 @@ const themeCss = `:root {
 // Export the CSS and a small helper to inject it into the document head if desired.
 export { themeCss };
 export function installThemeStyles(target?: Document) {
-  if (typeof document === 'undefined') return;
+  if (typeof document === 'undefined') {return;}
   const head = (target ?? document).head;
-  if (!head) return;
+  if (!head) {return;}
   // avoid duplicate injection
-  if (head.querySelector('style[data-neonpro-theme]')) return;
+  if (head.querySelector('style[data-neonpro-theme]')) {return;}
   const style = document.createElement('style');
   style.setAttribute('data-neonpro-theme', 'true');
   style.textContent = themeCss;

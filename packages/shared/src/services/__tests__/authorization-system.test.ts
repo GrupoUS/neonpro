@@ -490,7 +490,7 @@ describe("HealthcareAuthorizationRules - LGPD Compliance", () => {
     // This should fail because right to erasure isn't implemented
     const decision = HealthcareAuthorizationRules.evaluateLGPDCompliance(context);
     
-    expect(decision.decision).toBe("permit");
+    expect(decision.decision).toBe("allow");
     expect(decision.reasons).toContain("Patient right to erasure under LGPD");
   });
 

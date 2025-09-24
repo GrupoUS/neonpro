@@ -1,0 +1,73 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "globalDependencies": ["**/.env.*local", "tsconfig.json", "tsconfig.*.json"],
+  "globalEnv": ["NODE_ENV", "VERCEL", "VERCEL_ENV", "EDGE_RUNTIME", "CI"],
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**", ".next/**", "!.next/cache/**"],
+      "cache": true,
+      "persistent": false,
+      "env": ["NODE_ENV", "VERCEL", "CI"],
+      "dotEnv": [".env.production", ".env"]
+    },
+    "build:production": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**", ".next/**", "!.next/cache/**", "*.stats.json", "*.stats.html"],
+      "cache": true,
+      "persistent": false,
+      "env": ["NODE_ENV=production", "VERCEL=1", "CI=1"],
+      "dotEnv": [".env.production"]
+    },
+    "build:analyze": {
+      "dependsOn": ["^build"],
+      "outputs": ["*.stats.json", "*.stats.html", "bundle-analysis*.html", "dist/**"],
+      "cache": true,
+      "persistent": false
+    },
+    "type-check": {
+      "dependsOn": ["^build"],
+      "outputs": [],
+      "cache": true,
+      "persistent": false
+    },
+    "type-check:production": {
+      "dependsOn": ["^build"],
+      "outputs": [],
+      "cache": true,
+      "persistent": false,
+      "env": ["NODE_ENV=production"]
+    },
+    "lint": {
+      "outputs": [],
+      "cache": true,
+      "persistent": false
+    },
+    "lint:oxlint": {
+      "outputs": [],
+      "cache": true,
+      "persistent": false
+    },
+    "test": {
+      "dependsOn": ["build"],
+      "outputs": ["coverage/**"],
+      "cache": true,
+      "persistent": false
+    },
+    "test:coverage": {
+      "dependsOn": ["build"],
+      "outputs": ["coverage/**", "coverage-report/**"],
+      "cache": true,
+      "persistent": false
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true,
+      "env": ["NODE_ENV=development"]
+    },
+    "clean": {
+      "cache": false,
+      "outputs": []
+    }
+  }
+}

@@ -63,6 +63,10 @@ export interface ParsedIntent {
   arguments: ParsedArguments;
   originalText: string;
   normalizedText: string;
+  // Backward compatibility properties
+  filters?: FilterArgument[];
+  sort?: SortArgument;
+  limit?: LimitArgument;
 }
 
 export interface CrudIntentParserConfig {
@@ -196,6 +200,9 @@ export class CrudIntentParser {
       arguments: args,
       originalText: input,
       normalizedText,
+      filters: args.filters,
+      sort: args.sort,
+      limit: args.limit,
     };
   }
 
@@ -207,6 +214,9 @@ export class CrudIntentParser {
       arguments: { filters: [] },
       originalText: input,
       normalizedText: '',
+      filters: [],
+      sort: undefined,
+      limit: undefined,
     };
   }
 
@@ -329,7 +339,7 @@ export class CrudIntentParser {
 
     // Extract entities using patterns (including custom entity types)
     for (const [entityType, pattern] of Object.entries(this.entityPatterns)) {
-      const matches = [...text.matchAll(pattern)];
+      const matches = Array.from(text.matchAll(pattern));
 
       for (const match of matches) {
         if (match.index !== undefined) {
@@ -356,7 +366,7 @@ export class CrudIntentParser {
     ];
 
     for (const pattern of valuePatterns) {
-      const matches = [...text.matchAll(pattern)];
+      const matches = Array.from(text.matchAll(pattern));
 
       for (const match of matches) {
         if (match.index !== undefined && match[1]) {
@@ -389,7 +399,7 @@ export class CrudIntentParser {
           `\\b(${customType.toLowerCase()}s?|${customType.toLowerCase()})\\b`,
           'gi',
         );
-        const matches = [...text.matchAll(customPattern)];
+        const matches = Array.from(text.matchAll(customPattern));
 
         for (const match of matches) {
           if (match.index !== undefined) {
@@ -408,7 +418,7 @@ export class CrudIntentParser {
     // Look for common table names after action words
     const tablePattern =
       /(?:show|find|get|list|select|from|update|delete|create|insert\s+into|ver|mostrar|buscar|listar)\s+(\w+)/gi;
-    const tableMatches = [...text.matchAll(tablePattern)];
+    const tableMatches = Array.from(text.matchAll(tablePattern));
 
     for (const match of tableMatches) {
       if (match.index !== undefined) {
@@ -441,7 +451,7 @@ export class CrudIntentParser {
 
     // Look for field names in conditions (field = value, field equals value, etc.)
     const fieldPattern = /(\w+)\s+(?:=|equals?|is|!=|<>|>|<|like|contains|contém|é|não\s+é)\s+/gi;
-    const fieldMatches = [...text.matchAll(fieldPattern)];
+    const fieldMatches = Array.from(text.matchAll(fieldPattern));
 
     for (const match of fieldMatches) {
       if (match.index !== undefined) {

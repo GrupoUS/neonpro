@@ -1,6 +1,6 @@
 /**
  * Oxlint Configuration for NeonPro Healthcare Platform
- * 
+ *
  * Ultra-fast linter with healthcare compliance rules
  * 50x faster than ESLint with zero-config defaults
  */
@@ -73,7 +73,7 @@ export default {
     'security/detect-non-literal-regexp': 'error',
     'security/detect-pseudoRandomBytes': 'error',
     'security/detect-unsafe-regex': 'error',
-    
+
     // Promise handling for async operations
     'promise/prefer-await-to-then': 'error',
     'promise/no-return-wrap': 'error',
@@ -96,7 +96,7 @@ export default {
       'require': {
         'FunctionExpression': true,
         'ClassDeclaration': true,
-      }
+      },
     }],
   },
 
@@ -159,4 +159,4 @@ export default {
       },
     },
   },
-};
+}

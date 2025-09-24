@@ -156,8 +156,6 @@ export * from './i18n/ai-chat';
 export * from './webrtc';
 
 // Telemetry and observability
+export type { CFMComplianceLevel as ComplianceLevel } from '@neonpro/types';
 export * from './services/cache-management';
 export * from './telemetry';
-export type { AIProvider } from "./types/ai-provider"; // Assuming file exists or adjust
-export type { CacheStats } from "./services/cache-management";
-export type { CFMComplianceLevel as ComplianceLevel } from "../types/ai-enhanced";

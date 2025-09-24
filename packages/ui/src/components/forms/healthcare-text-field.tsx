@@ -156,7 +156,7 @@ export const HealthcareTextField = forwardRef<
 
     // Get validation schema based on field type
     const getValidationSchema = (): z.ZodSchema | null => {
-      if (validationSchema) return validationSchema;
+      if (validationSchema) {return validationSchema;}
 
       const schemas = healthcareValidationSchemas;
       switch (fieldType) {
@@ -323,12 +323,12 @@ export const HealthcareTextField = forwardRef<
     // Validate accessibility on mount (basic label/error checks)
     useEffect(() => {
       const el = inputRef.current;
-      if (!el) return;
+      if (!el) {return;}
       const violations: string[] = [];
       const hasLabel = !!(
         el.getAttribute('aria-label') || el.getAttribute('aria-labelledby')
       );
-      if (!hasLabel) violations.push('Campo sem rótulo acessível');
+      if (!hasLabel) {violations.push('Campo sem rótulo acessível');}
       const isInvalid = el.getAttribute('aria-invalid') === 'true';
       if (isInvalid && !el.getAttribute('aria-describedby')) {
         violations.push('Erro sem descrição acessível');

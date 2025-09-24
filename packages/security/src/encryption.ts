@@ -57,11 +57,11 @@ export class EncryptionManager {
         iv,
       );
 
-      let encrypted = cipher.update(data, 'utf8', 'base64');
-      encrypted += cipher.final('base64');
+      let encrypted = cipher.update(data, 'utf8', 'binary');
+      encrypted += cipher.final('binary');
 
       // Combine IV + encrypted data and encode as base64
-      const combined = Buffer.concat([iv, Buffer.from(encrypted, 'base64')]);
+      const combined = Buffer.concat([iv, Buffer.from(encrypted, 'binary')]);
       return combined.toString('base64');
     } catch (error) {
       throw new Error(
@@ -78,7 +78,7 @@ export class EncryptionManager {
    */
   decryptData(encryptedData: string, key: string): string {
     if (!this.validateKey(key)) {
-      throw new Error('Invalid encryption key');
+      throw new Error('Invalid decryption key');
     }
 
     try {
@@ -94,7 +94,7 @@ export class EncryptionManager {
         iv,
       );
 
-      let decrypted = decipher.update(encrypted, undefined, 'utf8');
+      let decrypted = decipher.update(encrypted, 'binary', 'utf8');
       decrypted += decipher.final('utf8');
 
       return decrypted;
@@ -127,7 +127,7 @@ export class EncryptionManager {
         iv,
       );
 
-      let decrypted = decipher.update(encrypted, undefined, 'utf8');
+      let decrypted = decipher.update(encrypted, 'binary', 'utf8');
       decrypted += decipher.final('utf8');
 
       return decrypted;
@@ -294,7 +294,8 @@ export class KeyManager {
    */
   rotateKey(keyId: string, ttl: number = 3600): string {
     const oldKey = this.getKey(keyId);
-    const newKey = crypto.randomBytes(32).toString('base64');
+    const encryptionManager = new EncryptionManager();
+    const newKey = encryptionManager.generateKey();
 
     // Store new key
     this.storeKey(keyId, newKey);

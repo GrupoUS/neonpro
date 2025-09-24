@@ -631,7 +631,7 @@ export class UsageCounterRepository {
     return {
       clinicId: row.entity_id,
       userId: metadata._userId || '',
-      planCode: metadata.planCode || 'basic',
+      planCode: metadata.planCode || 'free',
       monthlyQueries: row.monthly_queries || 0,
       dailyQueries: row.daily_queries || 0,
       currentCostUsd: parseFloat(row.current_cost_usd?.toString() || '0'),

@@ -65,13 +65,9 @@ describe('Security Package Console Logging Cleanup - TDD RED Phase', () => {
       // This should trigger the console.warn in inputValidation
       await inputValidation()(mockContext, mockNext);
 
-      // RED PHASE: This test should fail because console.warn is being called
-      // After cleanup, this expect should be modified to expect 0 calls
-      expect(consoleSpy.warn).toHaveBeenCalledTimes(1);
-      expect(consoleSpy.warn).toHaveBeenCalledWith(
-        'Failed to parse request body for validation:',
-        expect.any(Error)
-      );
+      // GREEN PHASE: Console cleanup has been completed
+      // After cleanup, we expect 0 calls to console.warn
+      expect(consoleSpy.warn).toHaveBeenCalledTimes(0);
     });
 
     it('should not use console.log in authentication middleware', async () => {
@@ -90,12 +86,9 @@ describe('Security Package Console Logging Cleanup - TDD RED Phase', () => {
       // This should trigger the console.log in authentication
       await authentication()(mockContext, mockNext);
 
-      // RED PHASE: This test should fail because console.log is being called
-      expect(consoleSpy.log).toHaveBeenCalledTimes(1);
-      expect(consoleSpy.log).toHaveBeenCalledWith(
-        'Token received:',
-        'valid-token...'
-      );
+      // GREEN PHASE: Console cleanup has been completed
+      // After cleanup, we expect 0 calls to console.log
+      expect(consoleSpy.log).toHaveBeenCalledTimes(0);
     });
 
     it('should not use console.error in authentication middleware error handling', async () => {
@@ -114,12 +107,9 @@ describe('Security Package Console Logging Cleanup - TDD RED Phase', () => {
       // This should trigger the console.error in authentication error handling
       await expect(authentication()(mockContext, mockNext)).rejects.toThrow();
 
-      // RED PHASE: This test should fail because console.error is being called
-      expect(consoleSpy.error).toHaveBeenCalledTimes(1);
-      expect(consoleSpy.error).toHaveBeenCalledWith(
-        'JWT validation error:',
-        expect.any(String)
-      );
+      // GREEN PHASE: Console cleanup has been completed
+      // After cleanup, we expect 0 calls to console.error
+      expect(consoleSpy.error).toHaveBeenCalledTimes(0);
     });
 
     it('should not use console.log in securityLogging middleware', async () => {
@@ -142,16 +132,9 @@ describe('Security Package Console Logging Cleanup - TDD RED Phase', () => {
       // This should trigger console.log in securityLogging
       await securityLogging()(mockContext, mockNext);
 
-      // RED PHASE: This test should fail because console.log is being called
-      expect(consoleSpy.log).toHaveBeenCalledTimes(1);
-      expect(consoleSpy.log).toHaveBeenCalledWith(
-        '[Security]',
-        expect.objectContaining({
-          method: 'GET',
-          path: '/api/test',
-          status: 200,
-        })
-      );
+      // GREEN PHASE: Console cleanup has been completed
+      // After cleanup, we expect 0 calls to console.log
+      expect(consoleSpy.log).toHaveBeenCalledTimes(0);
     });
 
     it('should not use console.error in securityLogging error handling', async () => {
@@ -173,16 +156,9 @@ describe('Security Package Console Logging Cleanup - TDD RED Phase', () => {
       // This should trigger console.error in securityLogging error handling
       await expect(securityLogging()(mockContext, mockNext)).rejects.toThrow();
 
-      // RED PHASE: This test should fail because console.error is being called
-      expect(consoleSpy.error).toHaveBeenCalledTimes(1);
-      expect(consoleSpy.error).toHaveBeenCalledWith(
-        '[Security Error]',
-        expect.objectContaining({
-          method: 'GET',
-          path: '/api/test',
-          error: 'Test error',
-        })
-      );
+      // GREEN PHASE: Console cleanup has been completed
+      // After cleanup, we expect 0 calls to console.error
+      expect(consoleSpy.error).toHaveBeenCalledTimes(0);
     });
 
     it('should not use console.log in healthcareDataProtection middleware', async () => {
@@ -205,16 +181,9 @@ describe('Security Package Console Logging Cleanup - TDD RED Phase', () => {
       // This should trigger console.log in healthcareDataProtection
       await healthcareDataProtection()(mockContext, mockNext);
 
-      // RED PHASE: This test should fail because console.log is being called
-      expect(consoleSpy.log).toHaveBeenCalledTimes(1);
-      expect(consoleSpy.log).toHaveBeenCalledWith(
-        '[Healthcare Access]',
-        expect.objectContaining({
-          patientId: '[REDACTED]',
-          endpoint: '/api/patients/123',
-          method: 'GET',
-        })
-      );
+      // GREEN PHASE: Console cleanup has been completed
+      // After cleanup, we expect 0 calls to console.log
+      expect(consoleSpy.log).toHaveBeenCalledTimes(0);
     });
 
     it('should not use console.warn in LGPD consent validation', async () => {
@@ -228,6 +197,7 @@ describe('Security Package Console Logging Cleanup - TDD RED Phase', () => {
           query: vi.fn().mockReturnValue({}),
         },
         set: vi.fn(),
+        header: vi.fn(),
         get: vi.fn()
           .mockReturnValueOnce('req-123')
           .mockReturnValueOnce({ id: 'user-123' }),
@@ -238,11 +208,9 @@ describe('Security Package Console Logging Cleanup - TDD RED Phase', () => {
       // This should trigger console.warn in LGPD consent validation
       await healthcareDataProtection()(mockContext, mockNext);
 
-      // RED PHASE: This test should fail because console.warn is being called
-      expect(consoleSpy.warn).toHaveBeenCalledTimes(1);
-      expect(consoleSpy.warn).toHaveBeenCalledWith(
-        'LGPD consent validation not fully implemented - allowing access'
-      );
+      // GREEN PHASE: Console cleanup has been completed
+      // After cleanup, we expect 0 calls to console.warn
+      expect(consoleSpy.warn).toHaveBeenCalledTimes(0);
     });
 
     it('should not use console.error in LGPD consent validation error handling', async () => {
@@ -261,6 +229,7 @@ describe('Security Package Console Logging Cleanup - TDD RED Phase', () => {
             query: vi.fn().mockReturnValue({}),
           },
           set: vi.fn(),
+          header: vi.fn(),
           get: vi.fn()
             .mockReturnValueOnce('req-123')
             .mockReturnValueOnce({ id: 'user-123' }),
@@ -271,12 +240,9 @@ describe('Security Package Console Logging Cleanup - TDD RED Phase', () => {
         // This should trigger console.error in LGPD consent validation error handling
         await healthcareDataProtection()(mockContext, mockNext);
 
-        // RED PHASE: This test should fail because console.error is being called
-        expect(consoleSpy.error).toHaveBeenCalledTimes(1);
-        expect(consoleSpy.error).toHaveBeenCalledWith(
-          'LGPD consent validation failed:',
-          expect.any(Error)
-        );
+        // GREEN PHASE: Console cleanup has been completed
+        // After cleanup, we expect 0 calls to console.error
+        expect(consoleSpy.error).toHaveBeenCalledTimes(0);
       } finally {
         // Restore original function
         (global as any).validateLGPDConsent = originalValidateLGPDConsent;
@@ -298,12 +264,9 @@ describe('Security Package Console Logging Cleanup - TDD RED Phase', () => {
       // This should trigger console.warn when trying to decrypt non-encrypted field
       const result = encryptionManager.decryptObject(testObject, testKey, ['sensitiveField']);
 
-      // RED PHASE: This test should fail because console.warn is being called
-      expect(consoleSpy.warn).toHaveBeenCalledTimes(1);
-      expect(consoleSpy.warn).toHaveBeenCalledWith(
-        'Failed to decrypt field sensitiveField:',
-        expect.any(Error)
-      );
+      // GREEN PHASE: Console cleanup has been completed
+      // After cleanup, we expect 0 calls to console.warn
+      expect(consoleSpy.warn).toHaveBeenCalledTimes(0);
     });
   });
 
@@ -327,12 +290,9 @@ describe('Security Package Console Logging Cleanup - TDD RED Phase', () => {
       // This should trigger console.error when database logging fails
       await auditLogger.log(testEntry as any);
 
-      // RED PHASE: This test should fail because console.error is being called
-      expect(consoleSpy.error).toHaveBeenCalledTimes(1);
-      expect(consoleSpy.error).toHaveBeenCalledWith(
-        'Failed to log audit entry to database:',
-        expect.any(Error)
-      );
+      // GREEN PHASE: Console cleanup has been completed
+      // After cleanup, we expect 0 calls to console.error
+      expect(consoleSpy.error).toHaveBeenCalledTimes(0);
     });
 
     it('should not use console.error in audit logger console error logging', async () => {
@@ -353,19 +313,9 @@ describe('Security Package Console Logging Cleanup - TDD RED Phase', () => {
       // This should trigger console.error for failed audit entry
       await auditLogger.log(testEntry as any);
 
-      // RED PHASE: This test should fail because console.error is being called
-      expect(consoleSpy.error).toHaveBeenCalledTimes(1);
-      expect(consoleSpy.error).toHaveBeenCalledWith(
-        '[AUDIT] test-action on test-resource by test-user',
-        expect.objectContaining({
-          userId: 'test-user',
-          action: 'test-action',
-          resource: 'test-resource',
-          success: false,
-          errorMessage: 'Test error message',
-          error: 'Test error message',
-        })
-      );
+      // GREEN PHASE: Console cleanup has been completed
+      // After cleanup, we expect 0 calls to console.error
+      expect(consoleSpy.error).toHaveBeenCalledTimes(0);
     });
 
     it('should not use console.log in audit logger console info logging', async () => {
@@ -385,17 +335,9 @@ describe('Security Package Console Logging Cleanup - TDD RED Phase', () => {
       // This should trigger console.log for successful audit entry
       await auditLogger.log(testEntry as any);
 
-      // RED PHASE: This test should fail because console.log is being called
-      expect(consoleSpy.log).toHaveBeenCalledTimes(1);
-      expect(consoleSpy.log).toHaveBeenCalledWith(
-        '[AUDIT] test-action on test-resource by test-user',
-        expect.objectContaining({
-          userId: 'test-user',
-          action: 'test-action',
-          resource: 'test-resource',
-          success: true,
-        })
-      );
+      // GREEN PHASE: Console cleanup has been completed
+      // After cleanup, we expect 0 calls to console.log
+      expect(consoleSpy.log).toHaveBeenCalledTimes(0);
     });
 
     it('should not use console.warn in audit logger metadata serialization', async () => {
@@ -415,12 +357,9 @@ describe('Security Package Console Logging Cleanup - TDD RED Phase', () => {
       // This should trigger console.warn when serialization fails
       const result = serializeMetadata(circularMetadata);
 
-      // RED PHASE: This test should fail because console.warn is being called
-      expect(consoleSpy.warn).toHaveBeenCalledTimes(1);
-      expect(consoleSpy.warn).toHaveBeenCalledWith(
-        '[Audit Logger] Failed to serialize metadata:',
-        expect.any(Error)
-      );
+      // GREEN PHASE: Console cleanup has been completed
+      // After cleanup, we expect 0 calls to console.warn
+      expect(consoleSpy.warn).toHaveBeenCalledTimes(0);
     });
 
     it('should not use console.log in audit logger file logging', async () => {
@@ -441,12 +380,9 @@ describe('Security Package Console Logging Cleanup - TDD RED Phase', () => {
       // This should trigger console.log for file audit logging
       await auditLogger.log(testEntry as any);
 
-      // RED PHASE: This test should fail because console.log is being called
-      expect(consoleSpy.log).toHaveBeenCalledTimes(1);
-      expect(consoleSpy.log).toHaveBeenCalledWith(
-        '[FILE AUDIT]',
-        expect.stringContaining('"userId":"test-user"')
-      );
+      // GREEN PHASE: Console cleanup has been completed
+      // After cleanup, we expect 0 calls to console.log
+      expect(consoleSpy.log).toHaveBeenCalledTimes(0);
     });
   });
 
@@ -529,9 +465,9 @@ describe('Security Package Console Logging Cleanup - TDD RED Phase', () => {
         consoleSpy.info.mock.calls.length +
         consoleSpy.debug.mock.calls.length;
 
-      // RED PHASE: This test should fail because there are too many console calls
-      // Current implementation has console calls that should be removed
-      expect(totalConsoleCalls).toBeLessThan(10); // Adjust threshold as needed
+      // GREEN PHASE: Console cleanup has been completed
+      // After cleanup, we expect minimal console usage (less than 5 calls)
+      expect(totalConsoleCalls).toBeLessThan(5);
     });
   });
 });

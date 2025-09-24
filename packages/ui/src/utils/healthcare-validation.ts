@@ -21,10 +21,10 @@ export const healthcareValidationSchemas = {
     .refine((cpf: string) => {
       // CPF validation algorithm
       const cleanCpf = cpf.replace(/[^\d]/g, '');
-      if (cleanCpf.length !== 11) return false;
+      if (cleanCpf.length !== 11) {return false;}
 
       // Check for repeated digits
-      if (/^(\d)\1{10}$/.test(cleanCpf)) return false;
+      if (/^(\d)\1{10}$/.test(cleanCpf)) {return false;}
 
       // Validate check digits
       let sum = 0;
@@ -32,16 +32,16 @@ export const healthcareValidationSchemas = {
         sum += parseInt(cleanCpf[i] || '0') * (10 - i);
       }
       let remainder = (sum * 10) % 11;
-      if (remainder === 10 || remainder === 11) remainder = 0;
-      if (remainder !== parseInt(cleanCpf[9] || '0')) return false;
+      if (remainder === 10 || remainder === 11) {remainder = 0;}
+      if (remainder !== parseInt(cleanCpf[9] || '0')) {return false;}
 
       sum = 0;
       for (let i = 0; i < 10; i++) {
         sum += parseInt(cleanCpf[i] || '0') * (11 - i);
       }
       remainder = (sum * 10) % 11;
-      if (remainder === 10 || remainder === 11) remainder = 0;
-      if (remainder !== parseInt(cleanCpf[10] || '0')) return false;
+      if (remainder === 10 || remainder === 11) {remainder = 0;}
+      if (remainder !== parseInt(cleanCpf[10] || '0')) {return false;}
 
       return true;
     }, 'CPF inválido'),
@@ -65,7 +65,7 @@ export const healthcareValidationSchemas = {
     )
     .refine((crm: string) => {
       const match = crm.match(/^CRM\/([A-Z]{2})\s(\d{4,6})$/);
-      if (!match) return false;
+      if (!match) {return false;}
 
       const [, state, number] = match;
       const validStates = [
@@ -129,7 +129,7 @@ export const healthcareValidationSchemas = {
     .regex(/^\d{2}\/\d{2}\/\d{4}$/, 'Data deve estar no formato DD/MM/AAAA')
     .refine((dateStr: string) => {
       const [day, month, year] = dateStr.split('/').map(Number);
-      if (!day || !month || !year) return false;
+      if (!day || !month || !year) {return false;}
       const date = new Date(year, month - 1, day);
       const now = new Date();
 
@@ -143,7 +143,7 @@ export const healthcareValidationSchemas = {
       }
 
       // Check if date is not in the future
-      if (date > now) return false;
+      if (date > now) {return false;}
 
       // Check reasonable age limits (0-150 years)
       const age = now.getFullYear() - year;

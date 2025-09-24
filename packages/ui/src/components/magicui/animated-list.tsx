@@ -91,12 +91,12 @@ export function SharedAnimatedList<T = SharedAnimatedListItem>(
 
   // Keyboard navigation (SSR safe: only runs on client)
   React.useEffect(() => {
-    if (!keyboardNavigation) return;
+    if (!keyboardNavigation) {return;}
     const el = listRef.current;
-    if (!el) return;
+    if (!el) {return;}
 
     function onKeyDown(e: KeyboardEvent) {
-      if (!items || items.length === 0) return;
+      if (!items || items.length === 0) {return;}
       if (e.key === 'ArrowDown') {
         e.preventDefault();
         setFocusedIndex(idx => Math.min(idx + 1, items.length - 1));
@@ -117,9 +117,9 @@ export function SharedAnimatedList<T = SharedAnimatedListItem>(
   }, [items, keyboardNavigation]);
 
   React.useEffect(() => {
-    if (focusedIndex < 0) return;
+    if (focusedIndex < 0) {return;}
     const el = listRef.current;
-    if (!el) return;
+    if (!el) {return;}
     const item = el.querySelectorAll('[role="listitem"], [role="option"]')[
       focusedIndex
     ] as HTMLElement | undefined;

@@ -233,8 +233,8 @@ const CreatePredictiveModelInputSchema = z.object({
     'patient_retention',
     'treatment_outcome',
   ]),
-  modelConfig: z.record(z.any),
-  trainingDataConfig: z.record(z.any),
+  modelConfig: z.record(z.any()) as z.ZodType<Record<string, any>>,
+  trainingDataConfig: z.record(z.any()) as z.ZodType<Record<string, any>>,
   accuracyScore: z.number().optional(),
   isActive: z.boolean().optional(),
 });
@@ -299,8 +299,8 @@ const UpdateScheduledReportInputSchema = z.object({
 
 const UpdatePredictiveModelInputSchema = z.object({
   name: z.string().optional(),
-  modelConfig: z.record(z.any).optional(),
-  trainingDataConfig: z.record(z.any).optional(),
+  modelConfig: z.record(z.any()).optional() as z.ZodType<Record<string, any>> | undefined,
+  trainingDataConfig: z.record(z.any()).optional() as z.ZodType<Record<string, any>> | undefined,
   accuracyScore: z.number().optional(),
   isActive: z.boolean().optional(),
 });
@@ -324,6 +324,7 @@ const AnalyticsQueryInputSchema = z.object({
   dimensions: z.array(z.string()).optional(),
   aggregationType: z.enum(['sum', 'avg', 'count', 'min', 'max', 'rate']).optional(),
   granularity: z.enum(['hourly', 'daily', 'weekly', 'monthly']).optional(),
+  limit: z.number().optional(),
 });
 
 const DashboardQueryInputSchema = z.object({
@@ -371,7 +372,7 @@ const PerformanceMetricsQueryInputSchema = z.object({
 const DataExportInputSchema = z.object({
   clinicId: z.string(),
   requestType: z.enum(['analytics', 'raw_data', 'report', 'custom']),
-  filters: z.record(z.any).optional(),
+  filters: z.record(z.any()).optional() as z.ZodType<Record<string, any>> | undefined,
   format: z.enum(['csv', 'excel', 'json', 'parquet']).optional(),
 });
 
@@ -1338,7 +1339,7 @@ export class AnalyticsService implements AnalyticsService {
     });
   }
 
-  async predictWithModel(id: string, inputData: any): Promise<any> {
+  async predictWithModel(id: string, _inputData: any): Promise<any> {
     // This would integrate with a machine learning service
     // For now, we'll return mock predictions
     const { data: model, error } = await this.supabase
@@ -1796,24 +1797,32 @@ export class AnalyticsService implements AnalyticsService {
       const values = groups[key];
       let aggregatedValue: number;
 
-      switch (aggregationType) {
-        case 'sum':
-          aggregatedValue = values.reduce((a, b) => a + b, 0);
-          break;
-        case 'avg':
-          aggregatedValue = values.reduce((a, b) => a + b, 0) / values.length;
-          break;
-        case 'count':
-          aggregatedValue = values.length;
-          break;
-        case 'min':
-          aggregatedValue = Math.min(...values);
-          break;
-        case 'max':
-          aggregatedValue = Math.max(...values);
-          break;
-        default:
-          aggregatedValue = values.reduce((a, b) => a + b, 0);
+      // Filter out undefined values and ensure numeric values
+      const numericValues = values.filter(val => typeof val === 'number' && !isNaN(val));
+      
+      if (numericValues.length === 0) {
+        // No valid numeric values, return 0
+        aggregatedValue = 0;
+      } else {
+        switch (aggregationType) {
+          case 'sum':
+            aggregatedValue = numericValues.reduce((a, b) => a + b, 0);
+            break;
+          case 'avg':
+            aggregatedValue = numericValues.reduce((a, b) => a + b, 0) / numericValues.length;
+            break;
+          case 'count':
+            aggregatedValue = numericValues.length;
+            break;
+          case 'min':
+            aggregatedValue = Math.min(...numericValues);
+            break;
+          case 'max':
+            aggregatedValue = Math.max(...numericValues);
+            break;
+          default:
+            aggregatedValue = numericValues.reduce((a, b) => a + b, 0);
+        }
       }
 
       result[key] = aggregatedValue;

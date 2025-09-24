@@ -8,49 +8,46 @@
  * Note: Adapts orchestration events to the existing AI audit interface
  */
 
+import { AuditEventInput, writeAudit } from '../../../../../packages/core-services/src/audit/writer'
 import {
-  writeAudit,
-  AuditEventInput,
-} from "../../../../../packages/core-services/src/audit/writer";
-import {
-  OrchestrationState,
-  TDDPhase,
   AgentName,
   AgentResult,
+  OrchestrationState,
   OrchestratorEvent,
   QualityGateStatus,
-} from "../types";
+  TDDPhase,
+} from '../types'
 
 export interface OrchestrationAuditConfig {
-  enableOrchestrationEvents: boolean;
-  enableAgentEvents: boolean;
-  enableQualityGateEvents: boolean;
-  enablePhaseTransitions: boolean;
-  logLevel: "minimal" | "standard" | "detailed";
+  enableOrchestrationEvents: boolean
+  enableAgentEvents: boolean
+  enableQualityGateEvents: boolean
+  enablePhaseTransitions: boolean
+  logLevel: 'minimal' | 'standard' | 'detailed'
 }
 
 export class OrchestrationAudit {
-  private config: OrchestrationAuditConfig;
+  private config: OrchestrationAuditConfig
 
   constructor(config: OrchestrationAuditConfig) {
-    this.config = config;
+    this.config = config
   }
 
   /**
    * Log orchestration start event
    */
   async logOrchestrationStart(state: OrchestrationState): Promise<void> {
-    if (!this.config.enableOrchestrationEvents) return;
+    if (!this.config.enableOrchestrationEvents) return
 
     const auditEvent: AuditEventInput = {
-      action: "query",
-      _userId: "orchestrator",
-      outcome: "success",
+      action: 'query',
+      _userId: 'orchestrator',
+      outcome: 'success',
       queryType: `orchestration-start-${state.workflow}`,
       latencyMs: 0,
-    };
+    }
 
-    await writeAudit(auditEvent);
+    await writeAudit(auditEvent)
   }
 
   /**
@@ -61,17 +58,17 @@ export class OrchestrationAudit {
     success: boolean,
     duration: number,
   ): Promise<void> {
-    if (!this.config.enableOrchestrationEvents) return;
+    if (!this.config.enableOrchestrationEvents) return
 
     const auditEvent: AuditEventInput = {
-      action: "suggestions",
-      _userId: "orchestrator",
-      outcome: success ? "success" : "error",
+      action: 'suggestions',
+      _userId: 'orchestrator',
+      outcome: success ? 'success' : 'error',
       queryType: `orchestration-complete-${state.workflow}`,
       latencyMs: duration,
-    };
+    }
 
-    await writeAudit(auditEvent);
+    await writeAudit(auditEvent)
   }
 
   /**
@@ -83,17 +80,17 @@ export class OrchestrationAudit {
     toPhase: TDDPhase,
     _iteration: number,
   ): Promise<void> {
-    if (!this.config.enablePhaseTransitions) return;
+    if (!this.config.enablePhaseTransitions) return
 
     const auditEvent: AuditEventInput = {
-      action: "query",
-      _userId: "orchestrator",
-      outcome: "success",
+      action: 'query',
+      _userId: 'orchestrator',
+      outcome: 'success',
       queryType: `phase-transition-${toPhase}`,
       sessionId: orchestrationId,
-    };
+    }
 
-    await writeAudit(auditEvent);
+    await writeAudit(auditEvent)
   }
 
   /**
@@ -103,18 +100,18 @@ export class OrchestrationAudit {
     orchestrationId: string,
     agentResult: AgentResult,
   ): Promise<void> {
-    if (!this.config.enableAgentEvents) return;
+    if (!this.config.enableAgentEvents) return
 
     const auditEvent: AuditEventInput = {
-      action: "explanation",
-      _userId: "orchestrator",
-      outcome: agentResult.status === "success" ? "success" : "error",
+      action: 'explanation',
+      _userId: 'orchestrator',
+      outcome: agentResult.status === 'success' ? 'success' : 'error',
       queryType: `agent-${agentResult.agent}`,
       sessionId: orchestrationId,
       latencyMs: agentResult.duration,
-    };
+    }
 
-    await writeAudit(auditEvent);
+    await writeAudit(auditEvent)
   }
 
   /**
@@ -126,17 +123,17 @@ export class OrchestrationAudit {
     status: QualityGateStatus,
     _details?: Record<string, any>,
   ): Promise<void> {
-    if (!this.config.enableQualityGateEvents) return;
+    if (!this.config.enableQualityGateEvents) return
 
     const auditEvent: AuditEventInput = {
-      action: "suggestions",
-      _userId: "orchestrator",
-      outcome: status === "passed" ? "success" : "error",
+      action: 'suggestions',
+      _userId: 'orchestrator',
+      outcome: status === 'passed' ? 'success' : 'error',
       queryType: `quality-gate-${gateName}`,
       sessionId: orchestrationId,
-    };
+    }
 
-    await writeAudit(auditEvent);
+    await writeAudit(auditEvent)
   }
 
   /**
@@ -144,14 +141,14 @@ export class OrchestrationAudit {
    */
   async logOrchestratorEvent(event: OrchestratorEvent): Promise<void> {
     const auditEvent: AuditEventInput = {
-      action: "query",
-      _userId: "orchestrator",
-      outcome: "success",
+      action: 'query',
+      _userId: 'orchestrator',
+      outcome: 'success',
       queryType: `orchestrator-${event.type}`,
       sessionId: event.orchestrationId,
-    };
+    }
 
-    await writeAudit(auditEvent);
+    await writeAudit(auditEvent)
   }
 
   /**
@@ -161,20 +158,20 @@ export class OrchestrationAudit {
     orchestrationId: string,
     error: Error,
     context: {
-      agent?: AgentName;
-      phase?: TDDPhase;
-      operation?: string;
+      agent?: AgentName
+      phase?: TDDPhase
+      operation?: string
     },
   ): Promise<void> {
     const auditEvent: AuditEventInput = {
-      action: "query",
-      _userId: "orchestrator",
-      outcome: "error",
-      queryType: `error-${context.operation || "unknown"}`,
+      action: 'query',
+      _userId: 'orchestrator',
+      outcome: 'error',
+      queryType: `error-${context.operation || 'unknown'}`,
       sessionId: orchestrationId,
-    };
+    }
 
-    await writeAudit(auditEvent);
+    await writeAudit(auditEvent)
   }
 }
 
@@ -184,8 +181,8 @@ export const defaultAuditConfig: OrchestrationAuditConfig = {
   enableAgentEvents: true,
   enableQualityGateEvents: true,
   enablePhaseTransitions: true,
-  logLevel: "standard",
-};
+  logLevel: 'standard',
+}
 
 // Singleton instance
-export const orchestrationAudit = new OrchestrationAudit(defaultAuditConfig);
+export const orchestrationAudit = new OrchestrationAudit(defaultAuditConfig)

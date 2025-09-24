@@ -297,26 +297,36 @@ const UniversalButton = forwardRef<HTMLButtonElement, UniversalButtonProps>(
           'UniversalButton with asChild requires a single valid React element as child',
         );
       }
-      const child = arr[0] as React.ReactElement<Record<string, unknown>>;
+
+      interface ChildElementProps {
+        className?: string;
+        onMouseEnter?: (e: React.MouseEvent<HTMLElement>) => void;
+        onMouseLeave?: (e: React.MouseEvent<HTMLElement>) => void;
+        onMouseMove?: (e: React.MouseEvent<HTMLElement>) => void;
+        onClick?: (e: React.MouseEvent<HTMLElement>) => void;
+        [key: string]: unknown;
+      }
+
+      const child = arr[0] as React.ReactElement<ChildElementProps>;
       const mergedProps = {
-        className: cn((child.props as Record<string, unknown>).className as string, buttonClasses),
+        className: cn(child.props.className, buttonClasses),
         ref: combinedRef,
         disabled: disabled || loading,
         style: buttonStyle,
         onMouseEnter: (e: React.MouseEvent<HTMLElement>) => {
-          (child.props as any)?.onMouseEnter?.(e);
+          child.props.onMouseEnter?.(e);
           handleMouseEnterCombined(e as React.MouseEvent<HTMLButtonElement>);
         },
         onMouseLeave: (e: React.MouseEvent<HTMLElement>) => {
-          (child.props as any)?.onMouseLeave?.(e);
+          child.props.onMouseLeave?.(e);
           handleMouseLeaveCombined(e as React.MouseEvent<HTMLButtonElement>);
         },
         onMouseMove: (e: React.MouseEvent<HTMLElement>) => {
-          (child.props as any)?.onMouseMove?.(e);
+          child.props.onMouseMove?.(e);
           handleMouseMoveCombined(e as React.MouseEvent<HTMLButtonElement>);
         },
         onClick: (e: React.MouseEvent<HTMLElement>) => {
-          (child.props as any)?.onClick?.(e);
+          child.props.onClick?.(e);
           onClick?.(e as React.MouseEvent<HTMLButtonElement>);
         },
         ...props,

@@ -188,7 +188,7 @@ export function HealthcareThemeProvider({
 
   // Apply theme to document element
   useEffect(() => {
-    if (typeof document === 'undefined') return;
+    if (typeof document === 'undefined') {return;}
 
     const root = document.documentElement;
 
@@ -232,7 +232,7 @@ export function HealthcareThemeProvider({
 
   // Listen for system preference changes
   useEffect(() => {
-    if (typeof window === 'undefined') return;
+    if (typeof window === 'undefined') {return;}
 
     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
     const handleChange = (e: MediaQueryListEvent) => {
@@ -420,13 +420,13 @@ export const healthcareThemeStyles = `
  * Install healthcare theme styles in document head
  */
 export function installHealthcareThemeStyles(target?: Document) {
-  if (typeof document === 'undefined') return;
+  if (typeof document === 'undefined') {return;}
 
   const head = (target ?? document).head;
-  if (!head) return;
+  if (!head) {return;}
 
   // Avoid duplicate injection
-  if (head.querySelector('style[data-healthcare-theme]')) return;
+  if (head.querySelector('style[data-healthcare-theme]')) {return;}
 
   const style = document.createElement('style');
   style.setAttribute('data-healthcare-theme', 'true');

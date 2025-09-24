@@ -57,4 +57,4 @@ export type * from './types/aesthetic-types';
 // Utility functions
 export { checkDatabaseHealth, closeDatabaseConnections } from './client';
 
-export { sanitizeForAI } from "./utils/validation";
+export { sanitizeForAI } from './utils/validation';

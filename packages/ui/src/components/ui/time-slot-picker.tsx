@@ -17,8 +17,8 @@ export interface TimeSlotPickerProps {
 function labelFor(minutes: number) {
   const h = Math.floor(minutes / 60);
   const m = minutes % 60;
-  if (h > 0 && m > 0) return `${h}h ${m}min`;
-  if (h > 0) return `${h}h`;
+  if (h > 0 && m > 0) {return `${h}h ${m}min`;}
+  if (h > 0) {return `${h}h`;}
   return `${m}min`;
 }
 
@@ -34,7 +34,7 @@ export function TimeSlotPicker({
 }: TimeSlotPickerProps) {
   const options = React.useMemo(() => {
     const out: number[] = [];
-    for (let v = min; v <= max; v += step) out.push(v);
+    for (let v = min; v <= max; v += step) {out.push(v);}
     return out;
   }, [min, max, step]);
 
