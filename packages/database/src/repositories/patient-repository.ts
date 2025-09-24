@@ -215,9 +215,9 @@ export class PatientRepository implements IPatientRepository {
     }
   }
 
-  async create(patientData: CreatePatientRequest): Promise<Patient> {
+  async create(patient: Omit<Patient, 'id' | 'createdAt' | 'updatedAt'>): Promise<Patient> {
     try {
-      const dbPatient = this.mapCreateRequestToDatabase(patientData)
+      const dbPatient = this.mapCreateRequestToDatabase(patient)
 
       const { data, error } = await this.supabase
         .from('patients')
@@ -237,12 +237,9 @@ export class PatientRepository implements IPatientRepository {
     }
   }
 
-  async update(
-    id: string,
-    patientData: UpdatePatientRequest,
-  ): Promise<Patient> {
+  async update(id: string, updates: Partial<Patient>): Promise<Patient> {
     try {
-      const updateData = this.mapUpdateRequestToDatabase(patientData)
+      const updateData = this.mapUpdateRequestToDatabase(updates)
 
       const { data, error } = await this.supabase
         .from('patients')
@@ -378,6 +375,98 @@ export class PatientRepository implements IPatientRepository {
     } catch (error) {
       logHealthcareError('database', error, { method: 'count' })
       return 0
+    }
+  }
+
+  /**
+   * Find active patients
+   */
+  async findActive(
+    clinicId: string,
+    limit?: number,
+    offset?: number,
+  ): Promise<Patient[]> {
+    try {
+      let query = this.supabase
+        .from('patients')
+        .select('*')
+        .eq('clinic_id', clinicId)
+        .eq('is_active', true)
+
+      if (limit) {
+        query = query.limit(limit)
+      }
+
+      if (offset) {
+        query = query.range(offset, offset + (limit || 10) - 1)
+      }
+
+      const { data, error } = await query
+
+      if (error) {
+        logHealthcareError('database', error, { method: 'findActive', clinicId })
+        return []
+      }
+
+      return data ? data.map(this.mapDatabasePatientToDomain) : []
+    } catch (error) {
+      logHealthcareError('database', error, { method: 'findActive', clinicId })
+      return []
+    }
+  }
+
+  /**
+   * Count patients by clinic
+   */
+  async countByClinic(clinicId: string): Promise<number> {
+    try {
+      const { count, error } = await this.supabase
+        .from('patients')
+        .select('*', { count: 'exact', head: true })
+        .eq('clinic_id', clinicId)
+
+      if (error) {
+        logHealthcareError('database', error, { method: 'countByClinic', clinicId })
+        return 0
+      }
+
+      return count || 0
+    } catch (error) {
+      logHealthcareError('database', error, { method: 'countByClinic', clinicId })
+      return 0
+    }
+  }
+
+  /**
+   * Check if medical record number exists
+   */
+  async medicalRecordNumberExists(
+    medicalRecordNumber: string,
+    clinicId: string,
+    excludePatientId?: string,
+  ): Promise<boolean> {
+    try {
+      let query = this.supabase
+        .from('patients')
+        .select('*', { count: 'exact', head: true })
+        .eq('medical_record_number', medicalRecordNumber)
+        .eq('clinic_id', clinicId)
+
+      if (excludePatientId) {
+        query = query.neq('id', excludePatientId)
+      }
+
+      const { count, error } = await query
+
+      if (error) {
+        logHealthcareError('database', error, { method: 'medicalRecordNumberExists' })
+        return false
+      }
+
+      return (count || 0) > 0
+    } catch (error) {
+      logHealthcareError('database', error, { method: 'medicalRecordNumberExists' })
+      return false
     }
   }
 

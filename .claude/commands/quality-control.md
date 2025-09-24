@@ -7,7 +7,7 @@
 - **Frontend**: React 19 + Vite + TanStack Router + TypeScript strict
 - **Backend**: Hono + Node 20 + TypeScript strict + Security middleware
 - **Data**: Supabase + Prisma ORM + Row Level Security + Audit logging
-- **QA & Testing**: Vitest, Playwright, Oxlint, TypeScript strict, TDD orchestration
+- **QA & Testing**: Testes consolidados em /tools/tests-consolidated, Vitest, Playwright, Oxlint, TypeScript strict, TDD orchestration
 - **Quality Gates**: Multi-agent validation, automated testing, security scanning
 - **Agent Coordination**: TDD workflow orchestration, multi-agent collaboration
 - **Error Recovery**: Rollback strategies, emergency procedures, state restoration
@@ -194,14 +194,14 @@ RESOURCE_MANAGEMENT:
 #### **2.2 Progressive Test Validation with Continuous Integration**
 
 ```bash
-# Iterative test execution with systematic validation
-pnpm --filter @neonpro/api test:tdd-green     # GREEN phase API test suite
-pnpm --filter @neonpro/web test:tdd-green     # GREEN phase web test suite
-pnpm --filter @neonpro/api test:security:green # GREEN phase security validation
+# Iterative test execution with systematic validation using consolidated tests
+cd tools/tests-consolidated && bun run test:unit     # Testes unitários consolidados
+cd tools/tests-consolidated && bun run test:integration # Testes de integração consolidados
+cd tools/tests-consolidated && bun run test:coverage    # Cobertura consolidada
 
-# Continuous validation during implementation
+# Continuous validation during implementation using consolidated tests
 @tdd-orchestrator "monitor test success throughout GREEN phase implementation"
-@desktop-commander "execute automated test validation with real-time feedback"
+cd tools/tests-consolidated && bun run test:watch # Execução contínua com feedback
 ```
 
 #### **2.3 Quality Gate: Implementation Validation with TDD Compliance**
@@ -232,14 +232,14 @@ pnpm --filter @neonpro/api test:security:green # GREEN phase security validation
 #### **3.2 Code Quality Improvements with Test Preservation**
 
 ```bash
-# Code quality and maintainability improvements with TDD safety
+# Code quality and maintainability improvements with TDD safety using consolidated tests
 @tdd-orchestrator "orchestrate refactoring with continuous test validation"
 @code-reviewer "refactor for enhanced maintainability while preserving test success"
 @architect-review "improve architecture patterns with test-driven validation"
 
 # Continuous test validation during refactoring
-pnpm --filter @neonpro/api test:refactor:continuous  # Continuous refactoring validation
-pnpm --filter @neonpro/web test:refactor:continuous  # Web refactoring validation
+cd tools/tests-consolidated && pnpm test:unit     # Validação unitária contínua
+cd tools/tests-consolidated && pnpm test:integration # Validação de integração
 ```
 
 #### **3.3 Quality Gate: Code Excellence with TDD Integrity**
@@ -256,12 +256,12 @@ pnpm --filter @neonpro/web test:refactor:continuous  # Web refactoring validatio
 #### **4.1 Comprehensive Testing Suite with TDD Validation**
 
 ```bash
-# Full test suite execution with TDD orchestrator oversight
+# Full test suite execution with TDD orchestrator oversight using consolidated tests
 @tdd-orchestrator "coordinate comprehensive validation across all test categories"
-pnpm --filter @neonpro/api test:tdd:complete     # Complete TDD-validated API suite
-pnpm --filter @neonpro/web test:tdd:complete     # Complete TDD-validated web suite
-pnpm --filter @neonpro/api test:e2e:tdd         # TDD-integrated end-to-end scenarios
-pnpm audit --audit-level high --tdd-validated   # TDD-integrated security scan
+cd tools/tests-consolidated && pnpm test           # Suite completa consolidada
+cd tools/tests-consolidated && pnpm test:e2e       # Testes E2E com Playwright
+cd tools/tests-consolidated && pnpm test:coverage  # Cobertura integrada
+cd tools/tests-consolidated && pnpm lint           # Validação de código
 ```
 
 #### **4.2 Standards Compliance Validation with Multi-Agent Coordination**
@@ -730,16 +730,15 @@ pnpm --filter @neonpro/web test:refactor:tdd     # Web refactoring with TDD orch
 #### **Automated Quality Gates with TDD Orchestrator Coordination**
 
 ```bash
-# Comprehensive quality validation with TDD orchestrator leadership
+# Automated quality gates with TDD orchestrator coordination using consolidated tests
 @tdd-orchestrator "coordinate comprehensive quality gate execution with systematic validation"
-pnpm --filter @neonpro/api quality-gates:tdd:all    # TDD orchestrated API quality gates
-pnpm --filter @neonpro/web quality-gates:tdd:all    # TDD orchestrated web quality gates
+cd tools/tests-consolidated && pnpm validate      # Validação completa
+cd tools/tests-consolidated && pnpm ci            # Pipeline CI completa
 
 # Specific gate categories with TDD integration
 @tdd-orchestrator "coordinate specific quality gate categories with systematic validation"
-pnpm --filter @neonpro/api quality-gates:security:tdd    # TDD integrated security gates
-pnpm --filter @neonpro/api quality-gates:performance:tdd # TDD integrated performance gates
-pnpm --filter @neonpro/api quality-gates:coverage:tdd    # TDD integrated coverage gates
+cd tools/tests-consolidated && pnpm lint          # Gates de qualidade de código
+cd tools/tests-consolidated && pnpm test:coverage # Gates de cobertura
 ```
 
 #### **Multi-Agent Quality Review with TDD Orchestrator Leadership**

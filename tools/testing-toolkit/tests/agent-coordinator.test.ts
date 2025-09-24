@@ -83,7 +83,7 @@ describe('AgentCoordinator', () => {
     await expect(coordinator.execute()).rejects.toThrow(
       'No primary agent specified for hierarchical execution'
     );
-  }
+  });
 
   it('returns failure details when agent execution throws', async () => {
     const coordinator = new AgentCoordinator({
@@ -100,7 +100,7 @@ describe('AgentCoordinator', () => {
     expect(results[0]?.success).toBe(false);
     expect(results[0]?.issues[0]).toContain('Agent execution failed');
     expect(coordinator.getSummary().success).toBe(false);
-  }
+  });
 
   it('computes success using quality gate thresholds', () => {
     const coordinator = new AgentCoordinator({
@@ -128,7 +128,7 @@ describe('AgentCoordinator', () => {
         authentication: 70,
       }),
     ).toBe(false);
-  }
+  });
 
   it('returns deterministic metrics for quality gates based on agent type', async () => {
     const coordinator = new AgentCoordinator({
@@ -192,7 +192,7 @@ describe('AgentCoordinator', () => {
     expect(tddMetrics.structure).toBeCloseTo(85, 5);
 
     randomSpy.mockRestore();
-  }
+  });
 
   it('produces recommendations when specialties are below threshold', () => {
     const coordinator = new AgentCoordinator({
@@ -217,7 +217,7 @@ describe('AgentCoordinator', () => {
     expect(recommendations).toContain(
       'Improve performance metrics for code-reviewer'
     );
-  }
+  });
 
   it('executes hierarchical coordination with support agents', async () => {
     const coordinator = new AgentCoordinator({
@@ -246,7 +246,7 @@ describe('AgentCoordinator', () => {
     expect(
       summary.results['architect-review']?.metrics.patterns,
     ).toBeGreaterThanOrEqual(90);
-  }
+  });
 
   it('treats missing metrics as passing when thresholds are undefined', () => {
     const coordinator = new AgentCoordinator({
@@ -264,7 +264,7 @@ describe('AgentCoordinator', () => {
         compliance: 100,
       }),
     ).toBe(true);
-  }
+  });
 
   it('returns success when agent has no quality gate definition', () => {
     const coordinator = new AgentCoordinator({
@@ -280,4 +280,3 @@ describe('AgentCoordinator', () => {
     expect(evaluateSuccess('unknown-agent' as any, {})).toBe(true);
   });
 })
-}

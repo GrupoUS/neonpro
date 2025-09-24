@@ -229,7 +229,7 @@ class HealthcareBundleAnalyzer {
   /**
    * Analyze healthcare-specific modules
    */
-  async analyzeHealthcareModules(buildDir) {
+  async analyzeHealthcareModules(_buildDir) {
     Object.entries(HEALTHCARE_MODULES).forEach(([category, modules]) => {
       modules.forEach((moduleName) => {
         // Estimate module size based on healthcare complexity

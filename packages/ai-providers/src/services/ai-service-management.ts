@@ -208,7 +208,7 @@ export class AIServiceManagement {
 
       // Get usage for each provider
       for (const providerName of this.providers.keys()) {
-        if (provider && providerName !== provider) continue
+        if (provider && providerName !== provider) {continue}
 
         const usage = await this.getProviderUsageStats(providerName, period)
         stats.push(usage)
@@ -238,7 +238,7 @@ export class AIServiceManagement {
    */
   getCachedHealth(providerName: string): AIServiceHealth | null {
     const health = this.healthCache.get(providerName)
-    if (!health) return null
+    if (!health) {return null}
 
     // Check if cache is still valid (5 minutes)
     const cacheAge = Date.now() - health.lastCheck.getTime()
@@ -258,7 +258,7 @@ export class AIServiceManagement {
   ): ModelAvailability | null {
     const key = `${provider}:${model}`
     const availability = this.availabilityCache.get(key)
-    if (!availability) return null
+    if (!availability) {return null}
 
     // Check if cache is still valid (1 hour)
     const cacheAge = Date.now() - availability.lastUpdated.getTime()
@@ -278,7 +278,7 @@ export class AIServiceManagement {
   ): AIUsageStats | null {
     const key = `${provider}:${period.start.toISOString()}`
     const stats = this.usageCache.get(key)
-    if (!stats) return null
+    if (!stats) {return null}
 
     // Check if cache is still valid (1 hour for current period, longer for historical)
     const cacheAge = Date.now() - stats.period.end.getTime()

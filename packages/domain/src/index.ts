@@ -17,6 +17,8 @@ export * from './repositories/patient-repository'
 
 // Domain Services
 export * from './services/consent-service'
+export * from './services/audit-service'
+export * from './services/medical-license-service'
 
 // Domain Errors
 export * from './errors/domain-errors'

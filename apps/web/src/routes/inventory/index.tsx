@@ -4,7 +4,6 @@ import {
   AlertTriangle,
   Edit,
   Eye,
-  Filter,
   MoreHorizontal,
   Package,
   Plus,

@@ -240,18 +240,18 @@ export const checkDatabaseHealth = async () => {
   }
 }
 
+import { getLogger } from '@neonpro/core-services'
+
 // Graceful shutdown
 export const closeDatabaseConnections = async () => {
   try {
     await prisma.$disconnect()
-    const { getLogger } = await import('@neonpro/core-services/config/logger')
     const logger = getLogger()
     logger.info('Database connections closed successfully', {
       component: 'database-client',
       action: 'close_connections',
     })
   } catch (error) {
-    const { getLogger } = await import('@neonpro/core-services/config/logger')
     const logger = getLogger()
     logger.error(
       'Error closing database connections',

@@ -24,7 +24,7 @@ describe('MultiSessionScheduler TypeScript Type Safety - RED Phase', () => {
     // The actual test logic will be added in GREEN phase after fixing types
     
     // Mock data structures that should be properly typed
-    const mockProceduresData: AestheticProcedur: e = [] = [
+    const mockProceduresData: AestheticProcedure[] = [
       {
         id: 'proc-1',
         name: 'Test Procedure',
@@ -40,21 +40,21 @@ describe('MultiSessionScheduler TypeScript Type Safety - RED Phase', () => {
     ];
 
     // Mock callback functions that should receive properly typed parameters
-    const: mockOnSuccess = [ (data: AestheticSchedulingResponse) => {
+    const mockOnSuccess = (data: AestheticSchedulingResponse) => {
       expect(data).toBeDefined();
     };
 
-    const: mockOnError = [ (error: Error) => {
+    const mockOnError = (error: Error) => {
       expect(error).toBeInstanceOf(Error);
     };
 
     // Mock filter function that should receive typed parameters
-    const: filterProcedures = [ (procedures: AestheticProcedur: e = []) => {
+    const filterProcedures = (procedures: AestheticProcedure[]) => {
       return procedures.filter((p: AestheticProcedure) => p.id !== '');
     };
 
     // Mock reduce function that should receive typed parameters
-    const: calculateTotal = [ (procedures: AestheticProcedur: e = []) => {
+    const calculateTotal = (procedures: AestheticProcedure[]) => {
       return procedures.reduce((total: number, proc: AestheticProcedure) => {
         return total + proc.basePrice;
       }, 0);
@@ -68,7 +68,7 @@ describe('MultiSessionScheduler TypeScript Type Safety - RED Phase', () => {
 
   it('should fail due to missing tRPC route type definitions', () => {
     // This test documents the missing tRPC routes that cause compilation errors
-    const: expectedRoutes = [ [
+    const expectedRoutes = [
       'trpc.aestheticScheduling.getAestheticProcedures',
       'trpc.professional.getAll',
       'trpc.aestheticScheduling.scheduleProcedures',

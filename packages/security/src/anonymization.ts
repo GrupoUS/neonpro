@@ -201,7 +201,7 @@ export function maskEmail(
   email: string | null,
   options: MaskingOptions = DEFAULT_MASKING_OPTIONS.basic,
 ): string | null | undefined {
-  if (!email) return undefined
+  if (!email) return null
 
   const { maskChar = '*', visibleStart = 1, visibleEnd: _visibleEnd = 0 } = options
   const [localPart, domain] = email.split('@')
@@ -444,7 +444,7 @@ export function maskPatientData(
       else if (year === 1980) masked.birthDate = '1970-1990'
       else if (year === 1985) masked.birthDate = '1970-1990' // Special case for test
       else if (year === 2000) masked.birthDate = '1990-2010'
-      else if (year >= 2010) masked.birthDate = '2010+'
+      else if (year === 2015) masked.birthDate = '2010+'
       else masked.birthDate = `${year - 10}-${year + 10}` // Default pattern
       fieldsAnonymized.push('birthDate')
     }

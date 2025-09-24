@@ -4,9 +4,10 @@ import type {
   GenerateAnswerInput,
   GenerateAnswerResult,
   StreamChunk,
-} from '@neonpro/types'
-
-export type AIProviderType = AIProvider | 'mock'
+} from '../types'
+import { OpenAIProvider } from './openai-provider'
+import { AnthropicProvider } from './anthropic-provider'
+import { GoogleAIProvider } from './google-provider'
 
 class MockProvider implements AIProviderInterface {
   async generateAnswer(
@@ -38,28 +39,28 @@ class MockProvider implements AIProviderInterface {
         finished: i === words.length - 1,
         finishReason: i === words.length - 1 ? 'stop' : undefined,
         provider: 'mock' as AIProvider,
-      } as StreamChunk
+      }
       await new Promise((resolve) => setTimeout(resolve, 25))
     }
   }
 }
 
 export class AIProviderFactory {
-  private static providers: Map<AIProviderType, AIProviderInterface> = new Map()
-  private static fallbackOrder: AIProviderType[] = [
+  private static providers: Map<AIProvider, AIProviderInterface> = new Map()
+  private static fallbackOrder: AIProvider[] = [
     'openai',
     'anthropic',
     'google',
     'mock',
   ]
 
-  static getProvider(providerName?: AIProviderType): AIProviderInterface {
+  static getProvider(providerName?: AIProvider): AIProviderInterface {
     const selected = providerName || 'mock'
     return this.getCachedProvider(selected)
   }
 
   private static getCachedProvider(
-    providerName: AIProviderType,
+    providerName: AIProvider,
   ): AIProviderInterface {
     if (!this.providers.has(providerName)) {
       this.providers.set(providerName, this.createProvider(providerName))
@@ -68,14 +69,47 @@ export class AIProviderFactory {
   }
 
   private static createProvider(
-    providerName: AIProviderType,
+    providerName: AIProvider,
   ): AIProviderInterface {
     switch (providerName) {
       case 'mock':
         return new MockProvider()
       case 'openai':
+        const openAIKey = process.env.OPENAI_API_KEY
+        if (!openAIKey || openAIKey === 'invalid') {
+          console.warn('OPENAI_API_KEY not found or invalid. Falling back to mock provider.')
+          return new MockProvider()
+        }
+        try {
+          return new OpenAIProvider(openAIKey)
+        } catch (error) {
+          console.warn('Failed to create OpenAI provider. Falling back to mock provider.', error)
+          return new MockProvider()
+        }
       case 'anthropic':
+        const anthropicKey = process.env.ANTHROPIC_API_KEY
+        if (!anthropicKey || anthropicKey === 'invalid') {
+          console.warn('ANTHROPIC_API_KEY not found or invalid. Falling back to mock provider.')
+          return new MockProvider()
+        }
+        try {
+          return new AnthropicProvider(anthropicKey)
+        } catch (error) {
+          console.warn('Failed to create Anthropic provider. Falling back to mock provider.', error)
+          return new MockProvider()
+        }
       case 'google':
+        const googleKey = process.env.GOOGLE_AI_API_KEY
+        if (!googleKey || googleKey === 'invalid') {
+          console.warn('GOOGLE_AI_API_KEY not found or invalid. Falling back to mock provider.')
+          return new MockProvider()
+        }
+        try {
+          return new GoogleAIProvider(googleKey)
+        } catch (error) {
+          console.warn('Failed to create Google AI provider. Falling back to mock provider.', error)
+          return new MockProvider()
+        }
       default:
         console.warn(
           `Provider ${providerName} not implemented. Falling back to mock provider.`,
@@ -98,7 +132,7 @@ export class AIProviderFactory {
         return {
           ...result,
           provider: result.provider ?? providerName,
-        } as GenerateAnswerResult
+        }
       } catch (error) {
         lastError = error as Error
         console.warn(`Provider ${providerName} failed:`, error)
@@ -128,7 +162,7 @@ export class AIProviderFactory {
           yield {
             ...chunk,
             provider: chunk.provider ?? providerName,
-          } as StreamChunk
+          }
         }
         return
       } catch (error) {
@@ -140,9 +174,73 @@ export class AIProviderFactory {
     throw lastError ?? new Error('All streaming AI providers failed')
   }
 
-  static getAvailableProviders(): AIProviderType[] {
+  static getAvailableProviders(): AIProvider[] {
     return [...this.fallbackOrder]
   }
+
+  static clearCache(): void {
+    this.providers.clear()
+  }
+
+  static preloadProviders(): void {
+    // Preload all providers to ensure they're ready when needed
+    for (const providerName of this.fallbackOrder) {
+      try {
+        this.getProvider(providerName)
+      } catch (error) {
+        console.warn(`Failed to preload provider ${providerName}:`, error)
+      }
+    }
+  }
+
+  static isProviderAvailable(providerName: AIProvider): boolean {
+    try {
+      const provider = this.getProvider(providerName)
+      return provider !== null
+    } catch {
+      return false
+    }
+  }
+
+  static getProviderInfo(providerName: AIProvider): {
+    name: string
+    available: boolean
+    capabilities: string[]
+    maxTokens?: number
+    supportsStreaming: boolean
+  } {
+    try {
+      const provider = this.getProvider(providerName)
+      const info = {
+        name: providerName,
+        available: true,
+        capabilities: ['text-generation'] as string[],
+        supportsStreaming: false,
+      }
+
+      // Check if provider supports streaming
+      if (provider.generateStream) {
+        info.supportsStreaming = true
+        info.capabilities.push('streaming')
+      }
+
+      // Add provider-specific capabilities
+      if (providerName === 'openai') {
+        info.capabilities.push('function-calling')
+      }
+
+      return info
+    } catch {
+      return {
+        name: providerName,
+        available: false,
+        capabilities: [],
+        supportsStreaming: false,
+      }
+    }
+  }
 }
+
+export { MockProvider }
 
 export const aiProviderFactory = AIProviderFactory

@@ -57,13 +57,13 @@ export class EncryptionManager {
         iv,
       )
 
-      let encrypted = cipher.update(data, 'utf8', 'binary')
-      encrypted += cipher.final('binary')
+      let encrypted = cipher.update(data, 'utf8', 'utf8')
+      encrypted += cipher.final('utf8')
 
       // Combine IV + encrypted data and encode as base64
-      const combined = Buffer.concat([iv, Buffer.from(encrypted, 'binary')])
+      const combined = Buffer.concat([iv, Buffer.from(encrypted, 'utf8')])
       return combined.toString('base64')
-    } catch (_error) {
+    } catch (error) {
       throw new Error(
         `Encryption failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
       )
@@ -94,7 +94,7 @@ export class EncryptionManager {
         iv,
       )
 
-      let decrypted = decipher.update(encrypted, 'binary', 'utf8')
+      let decrypted = decipher.update(encrypted, 'utf8', 'utf8')
       decrypted += decipher.final('utf8')
 
       return decrypted
@@ -127,7 +127,7 @@ export class EncryptionManager {
         iv,
       )
 
-      let decrypted = decipher.update(encrypted, 'binary', 'utf8')
+      let decrypted = decipher.update(encrypted, 'utf8', 'utf8')
       decrypted += decipher.final('utf8')
 
       return decrypted
@@ -183,9 +183,8 @@ export class EncryptionManager {
             result[field] as string,
             key,
           )
-        } catch (_error) {
+        } catch {
           // Field might not be encrypted, leave as is
-          void error
           // Note: Decryption failures are expected for non-encrypted fields
         }
       }

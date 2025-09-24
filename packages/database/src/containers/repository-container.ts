@@ -1,10 +1,10 @@
 import {
-  AppointmentRepository as IAppointmentRepository,
+  AppointmentRepository,
   AuditDomainService,
   ConsentDomainService,
-  ConsentRepository as IConsentRepository,
+  ConsentRepository,
   MedicalLicenseDomainService,
-  PatientRepository as IPatientRepository,
+  PatientRepository,
 } from '@neonpro/domain'
 import { SupabaseClient } from '@supabase/supabase-js'
 import { AppointmentRepository } from '../repositories/appointment-repository.js'
@@ -22,9 +22,9 @@ export class RepositoryContainer {
   private supabase: SupabaseClient
 
   // Repository instances
-  private patientRepository: IPatientRepository | null = null
-  private consentRepository: IConsentRepository | null = null
-  private appointmentRepository: IAppointmentRepository | null = null
+  private patientRepository: PatientRepository | null = null
+  private consentRepository: ConsentRepository | null = null
+  private appointmentRepository: AppointmentRepository | null = null
 
   // Service instances
   private auditService: AuditDomainService | null = null
@@ -60,7 +60,7 @@ export class RepositoryContainer {
   /**
    * Get PatientRepository instance
    */
-  getPatientRepository(): IPatientRepository {
+  getPatientRepository(): PatientRepository {
     if (!this.patientRepository) {
       this.patientRepository = new PatientRepository(this.supabase)
     }
@@ -70,7 +70,7 @@ export class RepositoryContainer {
   /**
    * Get ConsentRepository instance
    */
-  getConsentRepository(): IConsentRepository {
+  getConsentRepository(): ConsentRepository {
     if (!this.consentRepository) {
       this.consentRepository = new ConsentRepository(this.supabase)
     }
@@ -80,7 +80,7 @@ export class RepositoryContainer {
   /**
    * Get AppointmentRepository instance
    */
-  getAppointmentRepository(): IAppointmentRepository {
+  getAppointmentRepository(): AppointmentRepository {
     if (!this.appointmentRepository) {
       this.appointmentRepository = new AppointmentRepository(this.supabase)
     }
