@@ -4,21 +4,21 @@
  */
 
 // Patient schemas
-export * from "./patient/base-patient.schema";
-export * from "./patient/brazilian-patient.schema";
+export * from './patient/base-patient.schema';
+export * from './patient/brazilian-patient.schema';
 export {
-  CPFSchema,
-  CNPJSchema,
-  BrazilianPhoneSchema,
   BrazilianCEPSchema,
   BrazilianPatientRegistrationSchema,
   BrazilianPatientUpdateSchema,
-  PatientSearchSchema,
+  BrazilianPhoneSchema,
+  CNPJSchema,
+  CPFSchema,
   PatientExportSchema,
-} from "./patient/brazilian-patient.schema";
+  PatientSearchSchema,
+} from './patient/brazilian-patient.schema';
 
 // Utility schemas
-import { z } from "zod";
+import { z } from 'zod';
 
 export const PaginationSchema = z.object({
   page: z.coerce.number().min(1).default(1),

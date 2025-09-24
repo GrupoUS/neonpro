@@ -13,10 +13,10 @@ export const computeRiskExposure = ({
 export interface KPIEvalInput {
   value: number;
   target: number;
-  direction: "lower-better" | "higher-better";
+  direction: 'lower-better' | 'higher-better';
 }
 export interface KPIEvalResult {
-  status: "within" | "breach";
+  status: 'within' | 'breach';
   delta: number;
 }
 export const evaluateKPIValue = ({
@@ -24,12 +24,12 @@ export const evaluateKPIValue = ({
   target,
   direction,
 }: KPIEvalInput): KPIEvalResult => {
-  if (direction === "lower-better") {
-    if (value <= target) return { status: "within", delta: target - value };
-    return { status: "breach", delta: value - target };
+  if (direction === 'lower-better') {
+    if (value <= target) return { status: 'within', delta: target - value };
+    return { status: 'breach', delta: value - target };
   }
-  if (value >= target) return { status: "within", delta: value - target };
-  return { status: "breach", delta: target - value };
+  if (value >= target) return { status: 'within', delta: value - target };
+  return { status: 'breach', delta: target - value };
 };
 
 export interface PriorityScoreFactors {
@@ -51,23 +51,23 @@ export const scorePriority = ({
 
 export interface PolicyRule {
   id: string;
-  type: "boolean";
+  type: 'boolean';
   evaluate: () => boolean;
 }
 export interface PolicyAggregationResult {
   total: number;
   passed: number;
-  status: "pass" | "fail" | "partial";
+  status: 'pass' | 'fail' | 'partial';
 }
 export const aggregatePolicyRules = (
   rules: PolicyRule[],
 ): PolicyAggregationResult => {
-  const results = rules.map((r) => r.evaluate());
+  const results = rules.map(r => r.evaluate());
   const passed = results.filter(Boolean).length;
   const total = results.length;
-  let status: PolicyAggregationResult["status"] = "fail";
-  if (passed === total) status = "pass";
-  else if (passed > 0) status = "partial";
+  let status: PolicyAggregationResult['status'] = 'fail';
+  if (passed === total) status = 'pass';
+  else if (passed > 0) status = 'partial';
   return { total, passed, status };
 };
 

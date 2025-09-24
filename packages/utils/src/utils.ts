@@ -1,5 +1,5 @@
-import { type ClassValue, clsx } from "clsx";
-import { twMerge } from "tailwind-merge";
+import { type ClassValue, clsx } from 'clsx';
+import { twMerge } from 'tailwind-merge';
 
 /**
  * Utility function to merge Tailwind CSS classes
@@ -13,34 +13,34 @@ export function cn(...inputs: ClassValue[]) {
  */
 export function formatDate(
   date: Date | string,
-  format: "short" | "long" = "short",
+  format: 'short' | 'long' = 'short',
 ): string {
-  const dateObj = typeof date === "string" ? new Date(date) : date;
+  const dateObj = typeof date === 'string' ? new Date(date) : date;
 
-  if (format === "long") {
-    return dateObj.toLocaleDateString("pt-BR", {
-      weekday: "long",
-      year: "numeric",
-      month: "long",
-      day: "numeric",
+  if (format === 'long') {
+    return dateObj.toLocaleDateString('pt-BR', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
     });
   }
 
-  return dateObj.toLocaleDateString("pt-BR");
+  return dateObj.toLocaleDateString('pt-BR');
 }
 
 /**
  * Format date and time for Brazilian locale
  */
 export function formatDateTime(date: Date | string): string {
-  const dateObj = typeof date === "string" ? new Date(date) : date;
+  const dateObj = typeof date === 'string' ? new Date(date) : date;
 
-  return dateObj.toLocaleString("pt-BR", {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
+  return dateObj.toLocaleString('pt-BR', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
   });
 }
 
@@ -80,7 +80,7 @@ export function throttle<T extends (...args: unknown[]) => unknown>(
 /**
  * Generate unique ID for accessibility
  */
-export function generateId(prefix: string = "element"): string {
+export function generateId(prefix: string = 'element'): string {
   return `${prefix}-${Math.random().toString(36).substr(2, 9)}`;
 }
 
@@ -95,5 +95,5 @@ export function capitalize(str: string): string {
  * Sleep utility for async operations
  */
 export function sleep(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
+  return new Promise(resolve => setTimeout(resolve, ms));
 }

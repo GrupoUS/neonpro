@@ -4,12 +4,12 @@
 // Date: 2025-09-15
 
 import type {
-  SubscriptionTier,
-  EnhancedAIModel,
   AIFeatureCode,
   CFMComplianceLevel,
+  EnhancedAIModel,
   MedicalSpecialty,
-} from "@neonpro/types";
+  SubscriptionTier,
+} from '@neonpro/types';
 
 // ================================================
 // FEATURE GATES CONFIGURATION
@@ -21,34 +21,34 @@ import type {
  */
 export const FEATURE_GATES: Record<AIFeatureCode, SubscriptionTier[]> = {
   // Basic AI Chat - Available to all plans including free
-  ai_chat_basic: ["free", "pro", "enterprise", "trial"],
+  ai_chat_basic: ['free', 'pro', 'enterprise', 'trial'],
 
   // Advanced AI Chat - Professional and enterprise features
-  ai_chat_advanced: ["pro", "enterprise", "trial"],
+  ai_chat_advanced: ['pro', 'enterprise', 'trial'],
 
   // Analytics - Business intelligence for practices
-  ai_analytics: ["pro", "enterprise", "trial"],
+  ai_analytics: ['pro', 'enterprise', 'trial'],
 
   // Advanced Insights - Predictive analytics
-  ai_insights: ["enterprise"],
+  ai_insights: ['enterprise'],
 
   // AI Predictions - Advanced forecasting and risk analysis
-  ai_predictions: ["enterprise"],
+  ai_predictions: ['enterprise'],
 
   // Custom Models - Enterprise-only personalized AI models
-  custom_models: ["enterprise"],
+  custom_models: ['enterprise'],
 
   // Beta Features - Early access to new capabilities
-  beta_features: ["pro", "enterprise"],
+  beta_features: ['pro', 'enterprise'],
 
   // Enhanced LGPD Features - Advanced compliance tools
-  lgpd_advanced: ["pro", "enterprise", "trial"],
+  lgpd_advanced: ['pro', 'enterprise', 'trial'],
 
   // API Access - Programmatic integration
-  api_access: ["pro", "enterprise"],
+  api_access: ['pro', 'enterprise'],
 
   // Priority Support - Enhanced customer support
-  priority_support: ["pro", "enterprise"],
+  priority_support: ['pro', 'enterprise'],
 } as const;
 
 // ================================================
@@ -67,67 +67,67 @@ export const MODEL_ACCESS_CONTROL: Record<
     healthcareOptimized: boolean;
     cfmApproved: boolean;
     anvisaCertified: boolean;
-    costTier: "low" | "medium" | "high" | "premium";
+    costTier: 'low' | 'medium' | 'high' | 'premium';
   }
 > = {
   // OpenAI GPT-4o Mini - Entry-level model for all plans
-  "gpt-4o-mini": {
-    minimumPlan: "free",
+  'gpt-4o-mini': {
+    minimumPlan: 'free',
     requiresApproval: false,
     healthcareOptimized: false,
     cfmApproved: false,
     anvisaCertified: false,
-    costTier: "low",
+    costTier: 'low',
   },
 
   // Google Gemini Pro - Balanced performance for all plans
-  "gemini-pro": {
-    minimumPlan: "free",
+  'gemini-pro': {
+    minimumPlan: 'free',
     requiresApproval: false,
     healthcareOptimized: false,
     cfmApproved: false,
     anvisaCertified: false,
-    costTier: "medium",
+    costTier: 'medium',
   },
 
   // OpenAI GPT-4o - Premium model for pro and enterprise
-  "gpt-4o": {
-    minimumPlan: "pro",
+  'gpt-4o': {
+    minimumPlan: 'pro',
     requiresApproval: false,
     healthcareOptimized: false,
     cfmApproved: false,
     anvisaCertified: false,
-    costTier: "high",
+    costTier: 'high',
   },
 
   // Anthropic Claude 3.5 Sonnet - Enterprise-only premium reasoning
-  "claude-3.5-sonnet": {
-    minimumPlan: "enterprise",
+  'claude-3.5-sonnet': {
+    minimumPlan: 'enterprise',
     requiresApproval: false,
     healthcareOptimized: false,
     cfmApproved: false,
     anvisaCertified: false,
-    costTier: "premium",
+    costTier: 'premium',
   },
 
   // Brazilian Healthcare Model - Pro+ with CFM approval
-  "healthcare-pt-br": {
-    minimumPlan: "pro",
+  'healthcare-pt-br': {
+    minimumPlan: 'pro',
     requiresApproval: true,
     healthcareOptimized: true,
     cfmApproved: true,
     anvisaCertified: true,
-    costTier: "high",
+    costTier: 'high',
   },
 
   // Experimental AI - Enterprise-only testing
-  "experimental-ai": {
-    minimumPlan: "enterprise",
+  'experimental-ai': {
+    minimumPlan: 'enterprise',
     requiresApproval: true,
     healthcareOptimized: true,
     cfmApproved: false,
     anvisaCertified: false,
-    costTier: "medium",
+    costTier: 'medium',
   },
 } as const;
 
@@ -183,9 +183,9 @@ export const PLAN_CONFIG: Record<
   }
 > = {
   free: {
-    displayName: "NeonPro AI Gratuito",
+    displayName: 'NeonPro AI Gratuito',
     description:
-      "Plano gratuito para consultórios iniciantes com IA básica em português brasileiro",
+      'Plano gratuito para consultórios iniciantes com IA básica em português brasileiro',
 
     // Conservative limits for free tier
     monthlyQueryLimit: 50,
@@ -202,15 +202,15 @@ export const PLAN_CONFIG: Record<
     },
 
     compliance: {
-      cfmLevel: "basic",
+      cfmLevel: 'basic',
       anvisaCertified: false,
       lgpdEnhanced: false,
       dataRetentionDays: 30,
       auditTrailEnhanced: false,
     },
 
-    availableModels: ["gpt-4o-mini", "gemini-pro"],
-    features: ["ai_chat_basic"],
+    availableModels: ['gpt-4o-mini', 'gemini-pro'],
+    features: ['ai_chat_basic'],
 
     support: {
       priority: false,
@@ -220,9 +220,8 @@ export const PLAN_CONFIG: Record<
   },
 
   pro: {
-    displayName: "NeonPro AI Profissional",
-    description:
-      "Plano profissional com IA avançada e análises para clínicas médias",
+    displayName: 'NeonPro AI Profissional',
+    description: 'Plano profissional com IA avançada e análises para clínicas médias',
 
     // Professional usage limits
     monthlyQueryLimit: 1000,
@@ -239,7 +238,7 @@ export const PLAN_CONFIG: Record<
     },
 
     compliance: {
-      cfmLevel: "advanced",
+      cfmLevel: 'advanced',
       anvisaCertified: true,
       lgpdEnhanced: true,
       dataRetentionDays: 90,
@@ -247,19 +246,19 @@ export const PLAN_CONFIG: Record<
     },
 
     availableModels: [
-      "gpt-4o-mini",
-      "gemini-pro",
-      "gpt-4o",
-      "healthcare-pt-br",
+      'gpt-4o-mini',
+      'gemini-pro',
+      'gpt-4o',
+      'healthcare-pt-br',
     ],
     features: [
-      "ai_chat_basic",
-      "ai_chat_advanced",
-      "ai_analytics",
-      "beta_features",
-      "lgpd_advanced",
-      "api_access",
-      "priority_support",
+      'ai_chat_basic',
+      'ai_chat_advanced',
+      'ai_analytics',
+      'beta_features',
+      'lgpd_advanced',
+      'api_access',
+      'priority_support',
     ],
 
     support: {
@@ -270,9 +269,8 @@ export const PLAN_CONFIG: Record<
   },
 
   enterprise: {
-    displayName: "NeonPro AI Empresarial",
-    description:
-      "Solução empresarial completa com todos os recursos de IA e conformidade total",
+    displayName: 'NeonPro AI Empresarial',
+    description: 'Solução empresarial completa com todos os recursos de IA e conformidade total',
 
     // Enterprise unlimited usage
     monthlyQueryLimit: -1, // Unlimited
@@ -289,7 +287,7 @@ export const PLAN_CONFIG: Record<
     },
 
     compliance: {
-      cfmLevel: "full",
+      cfmLevel: 'full',
       anvisaCertified: true,
       lgpdEnhanced: true,
       dataRetentionDays: 365,
@@ -297,24 +295,24 @@ export const PLAN_CONFIG: Record<
     },
 
     availableModels: [
-      "gpt-4o-mini",
-      "gemini-pro",
-      "gpt-4o",
-      "claude-3.5-sonnet",
-      "healthcare-pt-br",
-      "experimental-ai",
+      'gpt-4o-mini',
+      'gemini-pro',
+      'gpt-4o',
+      'claude-3.5-sonnet',
+      'healthcare-pt-br',
+      'experimental-ai',
     ],
     features: [
-      "ai_chat_basic",
-      "ai_chat_advanced",
-      "ai_analytics",
-      "ai_insights",
-      "ai_predictions",
-      "custom_models",
-      "beta_features",
-      "lgpd_advanced",
-      "api_access",
-      "priority_support",
+      'ai_chat_basic',
+      'ai_chat_advanced',
+      'ai_analytics',
+      'ai_insights',
+      'ai_predictions',
+      'custom_models',
+      'beta_features',
+      'lgpd_advanced',
+      'api_access',
+      'priority_support',
     ],
 
     support: {
@@ -325,9 +323,8 @@ export const PLAN_CONFIG: Record<
   },
 
   trial: {
-    displayName: "NeonPro AI Trial",
-    description:
-      "Teste gratuito de 30 dias com acesso aos recursos profissionais",
+    displayName: 'NeonPro AI Trial',
+    description: 'Teste gratuito de 30 dias com acesso aos recursos profissionais',
 
     // Trial with pro-level limits
     monthlyQueryLimit: 500,
@@ -344,7 +341,7 @@ export const PLAN_CONFIG: Record<
     },
 
     compliance: {
-      cfmLevel: "advanced",
+      cfmLevel: 'advanced',
       anvisaCertified: true,
       lgpdEnhanced: true,
       dataRetentionDays: 30, // Shorter retention for trial
@@ -352,17 +349,17 @@ export const PLAN_CONFIG: Record<
     },
 
     availableModels: [
-      "gpt-4o-mini",
-      "gemini-pro",
-      "gpt-4o",
-      "healthcare-pt-br",
+      'gpt-4o-mini',
+      'gemini-pro',
+      'gpt-4o',
+      'healthcare-pt-br',
     ],
     features: [
-      "ai_chat_basic",
-      "ai_chat_advanced",
-      "ai_analytics",
-      "lgpd_advanced",
-      "priority_support",
+      'ai_chat_basic',
+      'ai_chat_advanced',
+      'ai_analytics',
+      'lgpd_advanced',
+      'priority_support',
     ],
 
     support: {
@@ -390,45 +387,45 @@ export const MEDICAL_SPECIALTY_REQUIREMENTS: Record<
   }
 > = {
   dermatologia: {
-    requiredCfmLevel: "advanced",
+    requiredCfmLevel: 'advanced',
     anvisaOversight: true,
-    specialPermissions: ["dermatology_ai", "image_analysis"],
+    specialPermissions: ['dermatology_ai', 'image_analysis'],
     dataRetentionDays: 180,
   },
   estetica: {
-    requiredCfmLevel: "basic",
+    requiredCfmLevel: 'basic',
     anvisaOversight: false,
-    specialPermissions: ["aesthetic_consultation"],
+    specialPermissions: ['aesthetic_consultation'],
     dataRetentionDays: 90,
   },
   cosmiatria: {
-    requiredCfmLevel: "advanced",
+    requiredCfmLevel: 'advanced',
     anvisaOversight: true,
-    specialPermissions: ["cosmetic_procedures", "treatment_planning"],
+    specialPermissions: ['cosmetic_procedures', 'treatment_planning'],
     dataRetentionDays: 365,
   },
   cirurgia_plastica: {
-    requiredCfmLevel: "full",
+    requiredCfmLevel: 'full',
     anvisaOversight: true,
-    specialPermissions: ["surgical_planning", "risk_assessment"],
+    specialPermissions: ['surgical_planning', 'risk_assessment'],
     dataRetentionDays: 730, // 2 years for surgical procedures
   },
   medicina_geral: {
-    requiredCfmLevel: "basic",
+    requiredCfmLevel: 'basic',
     anvisaOversight: false,
-    specialPermissions: ["general_consultation"],
+    specialPermissions: ['general_consultation'],
     dataRetentionDays: 180,
   },
   nutricao: {
-    requiredCfmLevel: "basic",
+    requiredCfmLevel: 'basic',
     anvisaOversight: false,
-    specialPermissions: ["nutrition_planning"],
+    specialPermissions: ['nutrition_planning'],
     dataRetentionDays: 90,
   },
   fisioterapia: {
-    requiredCfmLevel: "basic",
+    requiredCfmLevel: 'basic',
     anvisaOversight: false,
-    specialPermissions: ["physiotherapy_planning"],
+    specialPermissions: ['physiotherapy_planning'],
     dataRetentionDays: 180,
   },
 } as const;
@@ -451,20 +448,20 @@ export const COST_OPTIMIZATION_CONFIG = {
   modelRouting: {
     // Route to cheaper models when appropriate
     free: {
-      preferredModel: "gpt-4o-mini" as EnhancedAIModel,
-      fallbackModel: "gemini-pro" as EnhancedAIModel,
+      preferredModel: 'gpt-4o-mini' as EnhancedAIModel,
+      fallbackModel: 'gemini-pro' as EnhancedAIModel,
     },
     pro: {
-      preferredModel: "gpt-4o" as EnhancedAIModel,
-      fallbackModel: "gpt-4o-mini" as EnhancedAIModel,
+      preferredModel: 'gpt-4o' as EnhancedAIModel,
+      fallbackModel: 'gpt-4o-mini' as EnhancedAIModel,
     },
     enterprise: {
-      preferredModel: "claude-3.5-sonnet" as EnhancedAIModel,
-      fallbackModel: "gpt-4o" as EnhancedAIModel,
+      preferredModel: 'claude-3.5-sonnet' as EnhancedAIModel,
+      fallbackModel: 'gpt-4o' as EnhancedAIModel,
     },
     trial: {
-      preferredModel: "gpt-4o" as EnhancedAIModel,
-      fallbackModel: "gpt-4o-mini" as EnhancedAIModel,
+      preferredModel: 'gpt-4o' as EnhancedAIModel,
+      fallbackModel: 'gpt-4o-mini' as EnhancedAIModel,
     },
   },
 
@@ -501,8 +498,8 @@ export function validateModelAccess(
   const planConfig = PLAN_CONFIG[userPlan];
 
   return (
-    planConfig.availableModels.includes(modelCode) &&
-    getPlanPriority(userPlan) >= getPlanPriority(modelConfig.minimumPlan)
+    planConfig.availableModels.includes(modelCode)
+    && getPlanPriority(userPlan) >= getPlanPriority(modelConfig.minimumPlan)
   );
 }
 
@@ -531,7 +528,7 @@ export function getRecommendedUpgrade(
 
   // Find the lowest tier plan that has access to the feature
   const availableUpgrades = allowedPlans
-    .map((plan) => ({ plan, priority: getPlanPriority(plan) }))
+    .map(plan => ({ plan, priority: getPlanPriority(plan) }))
     .filter(({ priority }) => priority > currentPriority)
     .sort((a, b) => a.priority - b.priority);
 
@@ -545,15 +542,15 @@ export function getRecommendedUpgrade(
  */
 export function getPreferredModel(
   plan: SubscriptionTier,
-  useCase: "chat" | "analysis" | "prediction" = "chat",
+  useCase: 'chat' | 'analysis' | 'prediction' = 'chat',
 ): EnhancedAIModel {
   const planConfig = PLAN_CONFIG[plan];
   const routingConfig = COST_OPTIMIZATION_CONFIG.modelRouting[plan];
 
   // For healthcare-specific use cases, prefer healthcare-optimized models
-  if (useCase === "analysis" || useCase === "prediction") {
+  if (useCase === 'analysis' || useCase === 'prediction') {
     const healthcareModel = planConfig.availableModels.find(
-      (model) => MODEL_ACCESS_CONTROL[model].healthcareOptimized,
+      model => MODEL_ACCESS_CONTROL[model].healthcareOptimized,
     );
     if (healthcareModel) return healthcareModel;
   }

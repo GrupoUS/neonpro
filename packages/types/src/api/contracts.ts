@@ -3,8 +3,8 @@
  * tRPC v11 API contracts with comprehensive type safety
  */
 
-import { z } from "zod";
-import { TRPCError } from "@trpc/server";
+import { TRPCError } from '@trpc/server';
+import { z } from 'zod';
 
 // Healthcare-compliant constraint types for API contracts
 export interface HealthcareErrorMetadata {
@@ -13,7 +13,7 @@ export interface HealthcareErrorMetadata {
   professionalId?: string;
   clinicId?: string;
   timestamp?: string;
-  severity?: "low" | "medium" | "high" | "critical";
+  severity?: 'low' | 'medium' | 'high' | 'critical';
   category?: string;
   [key: string]: unknown;
 }
@@ -125,7 +125,7 @@ export const CreateProfessionalRequestSchema = z.object({
   fullName: z.string().min(2).max(100),
   specialization: z.string().min(2).max(100),
   licenseNumber: z.string().min(5).max(20),
-  licenseType: z.enum(["CRM", "COREN", "CRF", "CFP", "COFITO", "CREF"]),
+  licenseType: z.enum(['CRM', 'COREN', 'CRF', 'CFP', 'COFITO', 'CREF']),
 
   // Professional Status
   isActive: z.boolean().default(true),
@@ -149,7 +149,7 @@ export const UpdateProfessionalRequestSchema = z.object({
   specialization: z.string().min(2).max(100).optional(),
   licenseNumber: z.string().min(5).max(20).optional(),
   licenseType: z
-    .enum(["CRM", "COREN", "CRF", "CFP", "COFITO", "CREF"])
+    .enum(['CRM', 'COREN', 'CRF', 'CFP', 'COFITO', 'CREF'])
     .optional(),
 
   // Professional Status
@@ -223,17 +223,17 @@ export const AppointmentContractSchema = z.object({
   scheduledDate: z.string().datetime(),
   duration: z.number().int().min(15).max(480), // 15 min to 8 hours
   status: z.enum([
-    "scheduled",
-    "confirmed",
-    "in_progress",
-    "completed",
-    "cancelled",
-    "no_show",
+    'scheduled',
+    'confirmed',
+    'in_progress',
+    'completed',
+    'cancelled',
+    'no_show',
   ]),
 
   // Healthcare Specific
   treatmentType: z.string().min(1).max(100),
-  priority: z.enum(["routine", "urgent", "emergency"]).default("routine"),
+  priority: z.enum(['routine', 'urgent', 'emergency']).default('routine'),
   notes: z.string().max(2000).optional(),
 
   // AI No-Show Prediction
@@ -255,7 +255,7 @@ export const ProfessionalContractSchema = z.object({
   fullName: z.string().min(2).max(100),
   specialization: z.string().min(2).max(100),
   licenseNumber: z.string().min(5).max(20),
-  licenseType: z.enum(["CRM", "COREN", "CRF", "CFP", "COFITO", "CREF"]),
+  licenseType: z.enum(['CRM', 'COREN', 'CRF', 'CFP', 'COFITO', 'CREF']),
 
   // Professional Status
   isActive: z.boolean().default(true),
@@ -299,7 +299,7 @@ export const AIChatContractSchema = z.object({
 
   // Message Content
   content: z.string().min(1).max(4000),
-  role: z.enum(["user", "assistant", "system"]),
+  role: z.enum(['user', 'assistant', 'system']),
 
   // Healthcare Context
   patientId: z.string().uuid().optional(),
@@ -333,7 +333,7 @@ export const AIRequestSchema = z.object({
     conversationHistory: z
       .array(
         z.object({
-          role: z.enum(["user", "assistant", "system"]),
+          role: z.enum(['user', 'assistant', 'system']),
           content: z.string(),
           timestamp: z.string().datetime(),
         }),
@@ -342,7 +342,7 @@ export const AIRequestSchema = z.object({
   }),
   preferences: z
     .object({
-      model: z.string().default("gpt-4"),
+      model: z.string().default('gpt-4'),
       maxTokens: z.number().int().min(1).max(4000).default(1000),
       temperature: z.number().min(0).max(2).default(0.7),
     })
@@ -374,12 +374,12 @@ export const AIChatResponseSchema = BaseResponseSchema.extend({
 
 export const AIHealthcheckResponseSchema = BaseResponseSchema.extend({
   data: z.object({
-    status: z.enum(["healthy", "degraded", "unhealthy"]),
+    status: z.enum(['healthy', 'degraded', 'unhealthy']),
     version: z.string(),
     models: z.array(
       z.object({
         name: z.string(),
-        status: z.enum(["available", "unavailable", "limited"]),
+        status: z.enum(['available', 'unavailable', 'limited']),
         responseTime: z.number().optional(),
       }),
     ),
@@ -409,10 +409,9 @@ export const CreatePatientRequestSchema = z.object({
   clinicId: z.string().uuid(),
 });
 
-export const UpdatePatientRequestSchema =
-  CreatePatientRequestSchema.partial().extend({
-    id: z.string().uuid(),
-  });
+export const UpdatePatientRequestSchema = CreatePatientRequestSchema.partial().extend({
+  id: z.string().uuid(),
+});
 
 export const GetPatientRequestSchema = z.object({
   id: z.string().uuid(),
@@ -423,9 +422,9 @@ export const GetPatientRequestSchema = z.object({
 export const ListPatientsRequestSchema = PaginationSchema.extend({
   clinicId: z.string().uuid(),
   search: z.string().optional(),
-  status: z.enum(["active", "inactive", "all"]).default("active"),
-  sortBy: z.enum(["name", "createdAt", "lastAppointment"]).default("name"),
-  sortOrder: z.enum(["asc", "desc"]).default("asc"),
+  status: z.enum(['active', 'inactive', 'all']).default('active'),
+  sortBy: z.enum(['name', 'createdAt', 'lastAppointment']).default('name'),
+  sortOrder: z.enum(['asc', 'desc']).default('asc'),
 });
 
 export const CreateAppointmentRequestSchema = z.object({
@@ -435,24 +434,23 @@ export const CreateAppointmentRequestSchema = z.object({
   scheduledDate: z.string().datetime(),
   duration: z.number().int().min(15).max(480),
   treatmentType: z.string().min(1).max(100),
-  priority: z.enum(["routine", "urgent", "emergency"]).default("routine"),
+  priority: z.enum(['routine', 'urgent', 'emergency']).default('routine'),
   notes: z.string().max(2000).optional(),
 });
 
-export const UpdateAppointmentRequestSchema =
-  CreateAppointmentRequestSchema.partial().extend({
-    id: z.string().uuid(),
-    status: z
-      .enum([
-        "scheduled",
-        "confirmed",
-        "in_progress",
-        "completed",
-        "cancelled",
-        "no_show",
-      ])
-      .optional(),
-  });
+export const UpdateAppointmentRequestSchema = CreateAppointmentRequestSchema.partial().extend({
+  id: z.string().uuid(),
+  status: z
+    .enum([
+      'scheduled',
+      'confirmed',
+      'in_progress',
+      'completed',
+      'cancelled',
+      'no_show',
+    ])
+    .optional(),
+});
 
 // =======================
 // Response Schemas
@@ -489,33 +487,33 @@ export const AppointmentsListResponseSchema = BaseResponseSchema.extend({
 // =======================
 
 export const HealthcareErrorCodes = z.enum([
-  "PATIENT_NOT_FOUND",
-  "APPOINTMENT_CONFLICT",
-  "LGPD_CONSENT_REQUIRED",
-  "INVALID_CPF",
-  "INVALID_HEALTHCARE_LICENSE",
-  "CLINIC_ACCESS_DENIED",
-  "PROFESSIONAL_UNAVAILABLE",
-  "INVALID_TREATMENT_TYPE",
-  "APPOINTMENT_PAST_DUE",
-  "NO_SHOW_RISK_HIGH",
-  "PHI_REDACTION_FAILED",
-  "AI_PROCESSING_ERROR",
-  "RATE_LIMIT_EXCEEDED",
-  "TOO_MANY_REQUESTS",
-  "SERVICE_UNAVAILABLE",
-  "CONTENT_FILTERED",
+  'PATIENT_NOT_FOUND',
+  'APPOINTMENT_CONFLICT',
+  'LGPD_CONSENT_REQUIRED',
+  'INVALID_CPF',
+  'INVALID_HEALTHCARE_LICENSE',
+  'CLINIC_ACCESS_DENIED',
+  'PROFESSIONAL_UNAVAILABLE',
+  'INVALID_TREATMENT_TYPE',
+  'APPOINTMENT_PAST_DUE',
+  'NO_SHOW_RISK_HIGH',
+  'PHI_REDACTION_FAILED',
+  'AI_PROCESSING_ERROR',
+  'RATE_LIMIT_EXCEEDED',
+  'TOO_MANY_REQUESTS',
+  'SERVICE_UNAVAILABLE',
+  'CONTENT_FILTERED',
 ]);
 
 export class HealthcareTRPCError extends TRPCError {
   constructor(
     code:
-      | "BAD_REQUEST"
-      | "UNAUTHORIZED"
-      | "FORBIDDEN"
-      | "NOT_FOUND"
-      | "INTERNAL_SERVER_ERROR"
-      | "TOO_MANY_REQUESTS",
+      | 'BAD_REQUEST'
+      | 'UNAUTHORIZED'
+      | 'FORBIDDEN'
+      | 'NOT_FOUND'
+      | 'INTERNAL_SERVER_ERROR'
+      | 'TOO_MANY_REQUESTS',
     message: string,
     healthcareCode: z.infer<typeof HealthcareErrorCodes>,
     metadata?: HealthcareErrorMetadata,
@@ -548,7 +546,7 @@ export class HealthcareError extends Error {
     meta?: HealthcareErrorMetadata,
   ) {
     super(message);
-    this.name = "HealthcareError";
+    this.name = 'HealthcareError';
     this.status = status;
     if (codeName !== undefined) this.codeName = codeName;
     if (meta !== undefined) this.meta = meta;

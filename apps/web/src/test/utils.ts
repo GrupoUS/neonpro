@@ -1,9 +1,9 @@
-import { render, RenderOptions } from '@testing-library/react';
-import { ReactElement, ReactNode, createElement as ReactCreateElement } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { createRouter } from '@tanstack/react-router';
-import { routeTree } from '../routeTree.gen';
+import { render, RenderOptions } from '@testing-library/react';
+import { createElement as ReactCreateElement, ReactElement, ReactNode } from 'react';
 import { vi } from 'vitest';
+import { routeTree } from '../routeTree.gen';
 import '@testing-library/jest-dom';
 
 // Note: DOM setup is now handled in individual test files
@@ -11,7 +11,7 @@ import '@testing-library/jest-dom';
 // Custom render function with providers
 export function renderWithProviders(
   ui: ReactElement,
-  options?: Omit<RenderOptions, 'wrapper'>
+  options?: Omit<RenderOptions, 'wrapper'>,
 ) {
   // Create QueryClient for each test to prevent cross-test contamination
   const queryClient = new QueryClient({
@@ -35,12 +35,12 @@ export function renderWithProviders(
   const router = createRouter({ routeTree });
 
   const Wrapper = ({ children }: { children: ReactNode }) => {
-  return ReactCreateElement(
-    QueryClientProvider,
-    { client: queryClient },
-    children
-  );
-};
+    return ReactCreateElement(
+      QueryClientProvider,
+      { client: queryClient },
+      children,
+    );
+  };
 
   return {
     ...render(ui, { wrapper: Wrapper, ...options }),
@@ -85,7 +85,7 @@ export const waitForAsync = () => new Promise(resolve => setTimeout(resolve, 0))
 // Mock localStorage
 export const createMockLocalStorage = () => {
   const store: Record<string, string> = {};
-  
+
   return {
     getItem: vi.fn((key: string) => store[key] || null),
     setItem: vi.fn((key: string, value: string) => {

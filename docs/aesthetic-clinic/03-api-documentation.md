@@ -146,7 +146,7 @@ interface AestheticClientProfile {
 const response = await fetch('/api/v1/aesthetic-clinic/clients', {
   method: 'POST',
   headers: {
-    'Authorization': 'Bearer ${JWT_TOKEN}',
+    Authorization: 'Bearer ${JWT_TOKEN}',
     'Content-Type': 'application/json',
   },
   body: JSON.stringify({
@@ -159,7 +159,7 @@ const response = await fetch('/api/v1/aesthetic-clinic/clients', {
     profession: 'Engenheira',
     emergencyContact: {
       name: 'João Silva',
-      phone: '11987654322'
+      phone: '11987654322',
     },
     skinType: 'normal',
     skinTone: 'claro',
@@ -169,7 +169,7 @@ const response = await fetch('/api/v1/aesthetic-clinic/clients', {
       appointmentReminders: true,
       promotionalMessages: false,
       treatmentUpdates: true,
-      followUpReminders: true
+      followUpReminders: true,
     },
     lgpdConsent: {
       dataProcessing: true,
@@ -177,9 +177,9 @@ const response = await fetch('/api/v1/aesthetic-clinic/clients', {
       communication: true,
       consentDate: new Date().toISOString(),
       ip: '192.168.1.1',
-      userAgent: 'Mozilla/5.0...'
-    }
-  })
+      userAgent: 'Mozilla/5.0...',
+    },
+  }),
 });
 ```
 
@@ -955,7 +955,11 @@ interface PerformanceTrends {
 
 ```typescript
 interface AppointmentWebhook {
-  event: 'appointment.created' | 'appointment.updated' | 'appointment.cancelled' | 'appointment.completed';
+  event:
+    | 'appointment.created'
+    | 'appointment.updated'
+    | 'appointment.cancelled'
+    | 'appointment.completed';
   data: AppointmentWebhookData;
   timestamp: Date;
 }
@@ -1013,7 +1017,7 @@ ERROR_CODES = {
   RESOURCE_NOT_FOUND: 'RESOURCE_NOT_FOUND',
   CONFLICT_ERROR: 'CONFLICT_ERROR',
   RATE_LIMIT_EXCEEDED: 'RATE_LIMIT_EXCEEDED',
-  INTERNAL_ERROR: 'INTERNAL_ERROR'
+  INTERNAL_ERROR: 'INTERNAL_ERROR',
 };
 ```
 

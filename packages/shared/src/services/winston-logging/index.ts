@@ -8,63 +8,60 @@
  * @compliance LGPD, ANVISA, Brazilian Healthcare Standards
  */
 
-import { EnhancedStructuredLogger } from "./enhanced-structured-logger";
-import { brazilianPIIRedactionService } from "./brazilian-pii-redaction";
+import { brazilianPIIRedactionService } from './brazilian-pii-redaction';
+import { EnhancedStructuredLogger } from './enhanced-structured-logger';
 
 // Import types from types file
 import {
-  EnhancedStructuredLoggingConfig,
   BrazilianHealthcareContext,
-  WinstonLogEntry,
   EnhancedLGPDCompliance,
+  EnhancedStructuredLoggingConfig,
   HealthcareSeverity,
-} from "./types";
+  WinstonLogEntry,
+} from './types';
 
 // Re-export types and services
-export {
-  EnhancedStructuredLogger,
-  brazilianPIIRedactionService,
-};
+export { brazilianPIIRedactionService, EnhancedStructuredLogger };
 
 export type {
-  EnhancedStructuredLoggingConfig,
   BrazilianHealthcareContext,
-  WinstonLogEntry,
   EnhancedLGPDCompliance,
+  EnhancedStructuredLoggingConfig,
   HealthcareSeverity,
+  WinstonLogEntry,
 };
 
 // Default configuration for healthcare applications
 const defaultConfig: EnhancedStructuredLoggingConfig = {
-  _service: "neonpro-healthcare",
-  environment: (process.env.NODE_ENV as any) || "development",
-  version: process.env.npm_package_version || "2.0.0",
+  _service: 'neonpro-healthcare',
+  environment: (process.env.NODE_ENV as any) || 'development',
+  version: process.env.npm_package_version || '2.0.0',
 
-  level: process.env.NODE_ENV === "production" ? "info" : "debug",
-  severityLevel: process.env.NODE_ENV === "production" ? "info" : "debug",
+  level: process.env.NODE_ENV === 'production' ? 'info' : 'debug',
+  severityLevel: process.env.NODE_ENV === 'production' ? 'info' : 'debug',
 
   transports: {
     console: {
       enabled: true,
-      level: "debug",
-      format: "json",
+      level: 'debug',
+      format: 'json',
     },
     file: {
-      enabled: process.env.NODE_ENV === "production",
-      level: "info",
-      filename: "logs/neonpro-healthcare.log",
-      maxSize: "20m",
+      enabled: process.env.NODE_ENV === 'production',
+      level: 'info',
+      filename: 'logs/neonpro-healthcare.log',
+      maxSize: '20m',
       maxFiles: 5,
-      format: "json",
+      format: 'json',
     },
     dailyRotate: {
-      enabled: process.env.NODE_ENV === "production",
-      level: "info",
-      filename: "logs/neonpro-healthcare-%DATE%.log",
-      datePattern: "YYYY-MM-DD",
+      enabled: process.env.NODE_ENV === 'production',
+      level: 'info',
+      filename: 'logs/neonpro-healthcare-%DATE%.log',
+      datePattern: 'YYYY-MM-DD',
       zippedArchive: true,
-      maxSize: "20m",
-      maxFiles: "14d",
+      maxSize: '20m',
+      maxFiles: '14d',
     },
   },
 
@@ -92,8 +89,8 @@ const defaultConfig: EnhancedStructuredLoggingConfig = {
   },
 
   format: {
-    colorize: process.env.NODE_ENV !== "production",
-    prettyPrint: process.env.NODE_ENV === "development",
+    colorize: process.env.NODE_ENV !== 'production',
+    prettyPrint: process.env.NODE_ENV === 'development',
     timestamp: true,
     showLevel: true,
   },
@@ -131,7 +128,7 @@ export const logger = {
   // Healthcare-specific methods
   logPatientSafetyEvent: (
     message: string,
-    severity: "low" | "medium" | "high" | "critical",
+    severity: 'low' | 'medium' | 'high' | 'critical',
     healthcareContext: BrazilianHealthcareContext,
     data?: any,
   ) =>
@@ -143,7 +140,7 @@ export const logger = {
     ),
 
   logClinicalWorkflow: (
-    workflowType: BrazilianHealthcareContext["workflowType"],
+    workflowType: BrazilianHealthcareContext['workflowType'],
     stage: string,
     message: string,
     data?: any,
@@ -158,13 +155,12 @@ export const logger = {
     ),
 
   logMedicationEvent: (
-    action: "prescribed" | "administered" | "verified" | "adverse_reaction",
+    action: 'prescribed' | 'administered' | 'verified' | 'adverse_reaction',
     message: string,
     severity: HealthcareSeverity,
     healthcareContext: BrazilianHealthcareContext,
     data?: any,
-  ) =>
-    enhancedLogger.logMedicationEvent(action, message, severity, healthcareContext, data),
+  ) => enhancedLogger.logMedicationEvent(action, message, severity, healthcareContext, data),
 
   logEmergencyResponse: (
     action: string,
@@ -187,8 +183,7 @@ export const logger = {
   generateCorrelationId: () => enhancedLogger.generateCorrelationId(),
   setCorrelationId: (id: string) => enhancedLogger.setCorrelationId(id),
   clearCorrelationId: () => enhancedLogger.clearCorrelationId(),
-  setRequestContext: (context: any) =>
-    enhancedLogger.setRequestContext(context),
+  setRequestContext: (context: any) => enhancedLogger.setRequestContext(context),
   getRequestContext: () => enhancedLogger.getRequestContext(),
   clearRequestContext: () => enhancedLogger.clearRequestContext(),
   getStatistics: () => enhancedLogger.getStatistics(),
@@ -214,10 +209,9 @@ export function createCorrelationMiddleware(
 ) {
   return (req: any, res: any, next: any) => {
     // Generate or extract correlation ID
-    const correlationId =
-      req.headers["x-correlation-id"] ||
-      req.headers["x-request-id"] ||
-      loggerInstance.generateCorrelationId();
+    const correlationId = req.headers['x-correlation-id']
+      || req.headers['x-request-id']
+      || loggerInstance.generateCorrelationId();
 
     // Set correlation ID in logger
     loggerInstance.setCorrelationId(correlationId);
@@ -226,25 +220,25 @@ export function createCorrelationMiddleware(
     loggerInstance.setRequestContext({
       requestId: correlationId,
       sessionId: req.session?.id,
-      traceId: req.headers["x-trace-id"],
-      spanId: req.headers["x-span-id"],
+      traceId: req.headers['x-trace-id'],
+      spanId: req.headers['x-span-id'],
       anonymizedUserId: req.user?.id
         ? `user_${req.user.id.slice(-8)}`
         : undefined,
-      deviceType: req.headers["user-agent"]?.includes("Mobile")
-        ? "mobile"
-        : "desktop",
+      deviceType: req.headers['user-agent']?.includes('Mobile')
+        ? 'mobile'
+        : 'desktop',
       ip: req.ip,
-      userAgent: req.headers["user-agent"],
+      userAgent: req.headers['user-agent'],
       method: req.method,
       url: req.url,
     });
 
     // Add correlation ID to response headers
-    res.setHeader("x-correlation-id", correlationId);
+    res.setHeader('x-correlation-id', correlationId);
 
     // Clear context when response finishes
-    res.on("finish", () => {
+    res.on('finish', () => {
       loggerInstance.clearCorrelationId();
       loggerInstance.clearRequestContext();
     });
@@ -257,24 +251,23 @@ export function createCorrelationMiddleware(
 export function setupGlobalErrorHandling(
   loggerInstance: EnhancedStructuredLogger = enhancedLogger,
 ) {
-  if (typeof process !== "undefined") {
-    process.on("uncaughtException", (error) => {
-      loggerInstance.emergency("Uncaught Exception", {
+  if (typeof process !== 'undefined') {
+    process.on('uncaughtException', error => {
+      loggerInstance.emergency('Uncaught Exception', {
         error: error.message,
         stack: error.stack,
       });
       process.exit(1);
     });
 
-    process.on("unhandledRejection", (reason, promise) => {
+    process.on('unhandledRejection', (reason, promise) => {
       const errorData = {
         reason: reason instanceof Error ? reason.message : reason,
         promise: promise.toString(),
       };
       // Pass error as error parameter and additional data as data parameter
-      const error =
-        reason instanceof Error ? reason : new Error(String(reason));
-      loggerInstance.error("Unhandled Rejection", error, errorData);
+      const error = reason instanceof Error ? reason : new Error(String(reason));
+      loggerInstance.error('Unhandled Rejection', error, errorData);
     });
   }
 }

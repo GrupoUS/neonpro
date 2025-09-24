@@ -14,10 +14,10 @@
  * - CFM-compliant medical decision support
  */
 
+import { AIClinicalDecisionSupport } from '@neonpro/core-services';
 import { AuditAction, AuditStatus, ResourceType, RiskLevel } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
 import * as z from 'zod';
-import { AIClinicalDecisionSupport } from '@neonpro/core-services';
 import { healthcareProcedure, protectedProcedure, router } from '../trpc';
 
 // Initialize the AI clinical decision support service
@@ -90,7 +90,10 @@ const CreateTreatmentPlanSchema = z.object({
  */
 const ContraindicationAnalysisSchema = z.object({
   patientId: z.string().uuid('Invalid patient ID'),
-  procedureIds: z.array(z.string().uuid('Invalid procedure ID')).min(1, 'Selecione ao menos um procedimento'),
+  procedureIds: z.array(z.string().uuid('Invalid procedure ID')).min(
+    1,
+    'Selecione ao menos um procedimento',
+  ),
 });
 
 /**
@@ -312,7 +315,7 @@ const _ProgressMonitoringOutputSchema = z.object({
  */
 async function validateCFMCompliance(
   recommendationData: any,
-  _ctx: any
+  _ctx: any,
 ): Promise<{
   compliant: boolean;
   warnings: string[];
@@ -349,7 +352,7 @@ async function validateCFMCompliance(
  */
 async function validateANVISACompliance(
   procedureData: any,
-  ctx: any
+  ctx: any,
 ): Promise<{
   compliant: boolean;
   warnings: string[];
@@ -361,7 +364,7 @@ async function validateANVISACompliance(
 
   // Check if procedure requires ANVISA registration
   const requiresAnvisaRegistration = ['laser', 'surgical', 'injectable'].includes(
-    procedureData.procedureType
+    procedureData.procedureType,
   );
 
   if (requiresAnvisaRegistration) {
@@ -443,7 +446,7 @@ export const aiClinicalSupportRouter = router({
 
         // Validate compliance for each recommendation
         const complianceResults = await Promise.all(
-          recommendations.map(async (rec) => {
+          recommendations.map(async rec => {
             const [cfmCompliance, anvisaCompliance] = await Promise.all([
               validateCFMCompliance(rec, ctx),
               validateANVISACompliance(rec, ctx),
@@ -458,7 +461,7 @@ export const aiClinicalSupportRouter = router({
                 restrictions: [...cfmCompliance.restrictions, ...anvisaCompliance.restrictions],
               },
             };
-          })
+          }),
         );
 
         // Create audit trail
@@ -557,7 +560,7 @@ export const aiClinicalSupportRouter = router({
         const treatmentPlan = await aiClinicalService.createTreatmentPlan(
           input.patientId,
           input.selectedRecommendations,
-          input.goals
+          input.goals,
         );
 
         // Validate overall compliance
@@ -656,14 +659,14 @@ export const aiClinicalSupportRouter = router({
         // Analyze contraindications
         const analyses = await aiClinicalService.analyzeContraindications(
           input.patientId,
-          input.procedureIds
+          input.procedureIds,
         );
 
         // Enhanced compliance validation
         const enhancedAnalyses = await Promise.all(
-          analyses.map(async (analysis) => {
+          analyses.map(async analysis => {
             const cfmCompliance = await validateCFMCompliance(analysis, ctx);
-            
+
             return {
               ...analysis,
               compliance: {
@@ -672,7 +675,7 @@ export const aiClinicalSupportRouter = router({
                 restrictions: cfmCompliance.restrictions,
               },
             };
-          })
+          }),
         );
 
         // Create audit trail
@@ -693,7 +696,9 @@ export const aiClinicalSupportRouter = router({
             additionalInfo: JSON.stringify({
               action: 'contraindications_analyzed',
               proceduresCount: input.procedureIds.length,
-              hasAbsoluteContraindications: enhancedAnalyses.some(a => a.absoluteContraindications.length > 0),
+              hasAbsoluteContraindications: enhancedAnalyses.some(a =>
+                a.absoluteContraindications.length > 0
+              ),
             }),
           },
         });
@@ -704,7 +709,9 @@ export const aiClinicalSupportRouter = router({
             totalProcedures: input.procedureIds.length,
             safeProcedures: enhancedAnalyses.filter(a => a.canProceed).length,
             contraindicatedProcedures: enhancedAnalyses.filter(a => !a.canProceed).length,
-            overallRisk: enhancedAnalyses.some(a => a.absoluteContraindications.length > 0) ? 'high' : 'medium',
+            overallRisk: enhancedAnalyses.some(a => a.absoluteContraindications.length > 0)
+              ? 'high'
+              : 'medium',
           },
           compliance: {
             lgpdCompliant: true,
@@ -732,7 +739,7 @@ export const aiClinicalSupportRouter = router({
         // Generate guidelines
         const guidelines = await aiClinicalService.generateTreatmentGuidelines(
           input.procedureId,
-          input.patientFactors
+          input.patientFactors,
         );
 
         // Verify procedure exists and is compliant
@@ -824,7 +831,7 @@ export const aiClinicalSupportRouter = router({
         const prediction = await aiClinicalService.predictTreatmentOutcomes(
           input.patientId,
           input.procedureId,
-          input.treatmentPlan
+          input.treatmentPlan,
         );
 
         // Create audit trail
@@ -903,7 +910,7 @@ export const aiClinicalSupportRouter = router({
           input.treatmentPlanId,
           input.currentSession,
           input.patientFeedback,
-          input.clinicalAssessment
+          input.clinicalAssessment,
         );
 
         // Store progress data using TreatmentPlanItem
@@ -995,7 +1002,7 @@ export const aiClinicalSupportRouter = router({
         patientId: z.string().uuid('Invalid patient ID'),
         includeCompleted: z.boolean().default(true),
         includeCancelled: z.boolean().default(false),
-      })
+      }),
     )
     .query(async ({ ctx, input }) => {
       try {

@@ -12,7 +12,7 @@ export interface TraceAttributes {
   [key: string]: string | number | boolean;
 }
 
-export type LogLevel = "error" | "warn" | "info" | "debug" | "trace";
+export type LogLevel = 'error' | 'warn' | 'info' | 'debug' | 'trace';
 
 export interface PerformanceMetrics {
   responseTime: number;
@@ -24,14 +24,14 @@ export interface PerformanceMetrics {
 }
 
 export interface HealthStatus {
-  status: "healthy" | "degraded" | "unhealthy";
+  status: 'healthy' | 'degraded' | 'unhealthy';
   checks: HealthCheck[];
   timestamp: Date;
 }
 
 export interface HealthCheck {
   name: string;
-  status: "pass" | "fail" | "warn";
+  status: 'pass' | 'fail' | 'warn';
   duration: number;
   message?: string;
   data?: unknown;
@@ -53,8 +53,8 @@ export interface MonitoringConfig {
   };
   logging: {
     level: LogLevel;
-    format: "json" | "pretty";
-    transports: ("console" | "file")[];
+    format: 'json' | 'pretty';
+    transports: ('console' | 'file')[];
   };
   health: {
     enabled: boolean;

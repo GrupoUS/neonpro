@@ -11,19 +11,19 @@
  * - Integration with no-show prediction AI
  */
 
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.38.4";
-import { corsHeaders } from "../_shared/cors.ts";
+import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.38.4';
+import { corsHeaders } from '../_shared/cors.ts';
 
 // Environment validation
-const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
-const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
-const WHATSAPP_TOKEN = Deno.env.get("WHATSAPP_BUSINESS_TOKEN");
-const SMS_API_KEY = Deno.env.get("SMS_API_KEY");
-const EMAIL_API_KEY = Deno.env.get("EMAIL_API_KEY");
+const SUPABASE_URL = Deno.env.get('SUPABASE_URL');
+const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+const WHATSAPP_TOKEN = Deno.env.get('WHATSAPP_BUSINESS_TOKEN');
+const SMS_API_KEY = Deno.env.get('SMS_API_KEY');
+const EMAIL_API_KEY = Deno.env.get('EMAIL_API_KEY');
 
 if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
-  throw new Error("Missing required Supabase environment variables");
+  throw new Error('Missing required Supabase environment variables');
 }
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
@@ -34,15 +34,15 @@ interface ReminderRequest {
   patientId: string;
   clinicId: string;
   reminderType:
-    | "confirmation"
-    | "reminder_24h"
-    | "reminder_2h"
-    | "no_show_prevention"
-    | "rescheduling";
-  preferredChannels: ("whatsapp" | "sms" | "email" | "push" | "phone")[];
+    | 'confirmation'
+    | 'reminder_24h'
+    | 'reminder_2h'
+    | 'no_show_prevention'
+    | 'rescheduling';
+  preferredChannels: ('whatsapp' | 'sms' | 'email' | 'push' | 'phone')[];
   scheduledFor?: string; // ISO datetime for scheduled sending
   customMessage?: string;
-  urgencyLevel: "low" | "normal" | "high" | "urgent";
+  urgencyLevel: 'low' | 'normal' | 'high' | 'urgent';
   metadata?: {
     noShowRiskScore?: number;
     weatherAlert?: boolean;
@@ -70,7 +70,7 @@ interface ReminderResponse {
 }
 
 interface DeliveryStatus {
-  status: "sent" | "delivered" | "failed" | "pending" | "scheduled";
+  status: 'sent' | 'delivered' | 'failed' | 'pending' | 'scheduled';
   messageId?: string;
   deliveredAt?: string;
   failureReason?: string;
@@ -82,7 +82,7 @@ interface DeliveryStatus {
 const REMINDER_TEMPLATES = {
   confirmation: {
     whatsapp: {
-      subject: "✅ Confirmação de Consulta - {clinicName}",
+      subject: '✅ Confirmação de Consulta - {clinicName}',
       message: `Olá {patientName}! 👋
 
 📅 Sua consulta está confirmada:
@@ -100,10 +100,10 @@ Para cancelar ou reagendar, responda esta mensagem ou ligue para {clinicPhone}.
     },
     sms: {
       message:
-        "CONFIRMAÇÃO: Consulta {appointmentDate} às {appointmentTime} na {clinicName}. Dr(a) {doctorName}. Cancelar/reagendar: {clinicPhone}",
+        'CONFIRMAÇÃO: Consulta {appointmentDate} às {appointmentTime} na {clinicName}. Dr(a) {doctorName}. Cancelar/reagendar: {clinicPhone}',
     },
     email: {
-      subject: "Confirmação de Consulta - {clinicName}",
+      subject: 'Confirmação de Consulta - {clinicName}',
       html: `<!DOCTYPE html>
 <html>
 <head>
@@ -139,7 +139,7 @@ Para cancelar ou reagendar, responda esta mensagem ou ligue para {clinicPhone}.
   },
   reminder_24h: {
     whatsapp: {
-      subject: "🔔 Lembrete: Consulta amanhã - {clinicName}",
+      subject: '🔔 Lembrete: Consulta amanhã - {clinicName}',
       message: `Oi {patientName}! 👋
 
 🔔 Lembrete da sua consulta AMANHÃ:
@@ -160,12 +160,12 @@ Confirme sua presença respondendo "SIM" ou "NÃO".
     },
     sms: {
       message:
-        "LEMBRETE: Consulta AMANHÃ {appointmentDate} às {appointmentTime} - {clinicName}. Dr(a) {doctorName}. Chegue 15min antes. Confirme: {clinicPhone}",
+        'LEMBRETE: Consulta AMANHÃ {appointmentDate} às {appointmentTime} - {clinicName}. Dr(a) {doctorName}. Chegue 15min antes. Confirme: {clinicPhone}',
     },
   },
   reminder_2h: {
     whatsapp: {
-      subject: "⏰ Consulta em 2 horas - {clinicName}",
+      subject: '⏰ Consulta em 2 horas - {clinicName}',
       message: `{patientName}, sua consulta é EM 2 HORAS! ⏰
 
 🕐 {appointmentTime} - Dr(a) {doctorName}
@@ -181,13 +181,14 @@ Se não conseguir comparecer, CANCELE AGORA para liberar a vaga.
     },
     sms: {
       message:
-        "URGENTE: Consulta EM 2H às {appointmentTime} - {clinicName}. Saia às {suggestedDepartureTime}. Cancelar: {clinicPhone}",
+        'URGENTE: Consulta EM 2H às {appointmentTime} - {clinicName}. Saia às {suggestedDepartureTime}. Cancelar: {clinicPhone}',
     },
   },
   no_show_prevention: {
     whatsapp: {
-      subject: "🎯 Consulta importante hoje - {clinicName}",
-      message: `{patientName}, detectamos que você pode ter dificuldades para comparecer à consulta hoje. 🎯
+      subject: '🎯 Consulta importante hoje - {clinicName}',
+      message:
+        `{patientName}, detectamos que você pode ter dificuldades para comparecer à consulta hoje. 🎯
 
 📅 HOJE às {appointmentTime}
 👨‍⚕️ {doctorName}
@@ -208,7 +209,7 @@ Responda agora! Estamos aqui para ajudar. 💙
   },
   rescheduling: {
     whatsapp: {
-      subject: "📅 Reagendamento disponível - {clinicName}",
+      subject: '📅 Reagendamento disponível - {clinicName}',
       message: `Olá {patientName}! 👋
 
 📅 Temos horários disponíveis para reagendamento:
@@ -241,7 +242,7 @@ async function getPatientPreferences(
   whatsappConsent: boolean;
 }> {
   const { data: patient, error } = await supabase
-    .from("patients")
+    .from('patients')
     .select(
       `
       lgpd_consent_given,
@@ -252,23 +253,22 @@ async function getPatientPreferences(
       data_sharing_consent
     `,
     )
-    .eq("id", patientId)
-    .eq("clinic_id", clinicId)
+    .eq('id', patientId)
+    .eq('clinic_id', clinicId)
     .single();
 
   if (error || !patient) {
-    throw new Error("Patient not found or access denied");
+    throw new Error('Patient not found or access denied');
   }
 
-  const consentValid =
-    patient.lgpd_consent_given && patient.data_consent_status === "given";
+  const consentValid = patient.lgpd_consent_given && patient.data_consent_status === 'given';
   const preferences = patient.communication_preferences || {};
   const sharingConsent = patient.data_sharing_consent || {};
 
   return {
     consentValid,
-    allowedChannels: preferences.allowedChannels || ["sms", "email"],
-    preferredLanguage: preferences.preferredLanguage || "pt-BR",
+    allowedChannels: preferences.allowedChannels || ['sms', 'email'],
+    preferredLanguage: preferences.preferredLanguage || 'pt-BR',
     communicationPreferences: preferences,
     phone: patient.phone_primary,
     email: patient.email,
@@ -281,7 +281,7 @@ async function getPatientPreferences(
  */
 async function getAppointmentDetails(appointmentId: string): Promise<any> {
   const { data: appointment, error } = await supabase
-    .from("appointments")
+    .from('appointments')
     .select(
       `
       *,
@@ -290,11 +290,11 @@ async function getAppointmentDetails(appointmentId: string): Promise<any> {
       clinic:clinics(name, address_line1, city, phone_primary)
     `,
     )
-    .eq("id", appointmentId)
+    .eq('id', appointmentId)
     .single();
 
   if (error || !appointment) {
-    throw new Error("Appointment not found");
+    throw new Error('Appointment not found');
   }
 
   return appointment;
@@ -306,12 +306,12 @@ async function getAppointmentDetails(appointmentId: string): Promise<any> {
 async function sendWhatsAppMessage(
   phone: string,
   message: string,
-  templateType: string = "text",
+  templateType: string = 'text',
 ): Promise<DeliveryStatus> {
   if (!WHATSAPP_TOKEN) {
     return {
-      status: "failed",
-      failureReason: "WhatsApp API not configured",
+      status: 'failed',
+      failureReason: 'WhatsApp API not configured',
       retryCount: 0,
     };
   }
@@ -320,15 +320,15 @@ async function sendWhatsAppMessage(
     const response = await fetch(
       `https://graph.facebook.com/v18.0/{phone-number-id}/messages`,
       {
-        method: "POST",
+        method: 'POST',
         headers: {
           Authorization: `Bearer ${WHATSAPP_TOKEN}`,
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          messaging_product: "whatsapp",
-          to: phone.replace(/[^\d]/g, ""),
-          type: "text",
+          messaging_product: 'whatsapp',
+          to: phone.replace(/[^\d]/g, ''),
+          type: 'text',
           text: {
             body: message,
           },
@@ -339,7 +339,7 @@ async function sendWhatsAppMessage(
     if (response.ok) {
       const result = await response.json();
       return {
-        status: "sent",
+        status: 'sent',
         messageId: result.messages[0].id,
         retryCount: 0,
         cost: 0.05, // Approximate cost in Brazilian Real
@@ -347,14 +347,14 @@ async function sendWhatsAppMessage(
     } else {
       const error = await response.text();
       return {
-        status: "failed",
+        status: 'failed',
         failureReason: `WhatsApp API error: ${error}`,
         retryCount: 0,
       };
     }
   } catch (error: any) {
     return {
-      status: "failed",
+      status: 'failed',
       failureReason: error.message,
       retryCount: 0,
     };
@@ -370,31 +370,31 @@ async function sendSMSMessage(
 ): Promise<DeliveryStatus> {
   if (!SMS_API_KEY) {
     return {
-      status: "failed",
-      failureReason: "SMS API not configured",
+      status: 'failed',
+      failureReason: 'SMS API not configured',
       retryCount: 0,
     };
   }
 
   try {
     // Using a generic SMS API endpoint - would be replaced with actual provider
-    const response = await fetch("https://api.sms-provider.com/send", {
-      method: "POST",
+    const response = await fetch('https://api.sms-provider.com/send', {
+      method: 'POST',
       headers: {
         Authorization: `Bearer ${SMS_API_KEY}`,
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        to: phone.replace(/[^\d]/g, ""),
+        to: phone.replace(/[^\d]/g, ''),
         message,
-        from: "NeonPro",
+        from: 'NeonPro',
       }),
     });
 
     if (response.ok) {
       const result = await response.json();
       return {
-        status: "sent",
+        status: 'sent',
         messageId: result.messageId,
         retryCount: 0,
         cost: 0.15, // Approximate cost in Brazilian Real
@@ -402,14 +402,14 @@ async function sendSMSMessage(
     } else {
       const error = await response.text();
       return {
-        status: "failed",
+        status: 'failed',
         failureReason: `SMS API error: ${error}`,
         retryCount: 0,
       };
     }
   } catch (error: any) {
     return {
-      status: "failed",
+      status: 'failed',
       failureReason: error.message,
       retryCount: 0,
     };
@@ -426,19 +426,19 @@ async function sendEmailMessage(
 ): Promise<DeliveryStatus> {
   if (!EMAIL_API_KEY) {
     return {
-      status: "failed",
-      failureReason: "Email API not configured",
+      status: 'failed',
+      failureReason: 'Email API not configured',
       retryCount: 0,
     };
   }
 
   try {
     // Using SendGrid or similar email provider
-    const response = await fetch("https://api.sendgrid.com/v3/mail/send", {
-      method: "POST",
+    const response = await fetch('https://api.sendgrid.com/v3/mail/send', {
+      method: 'POST',
       headers: {
         Authorization: `Bearer ${EMAIL_API_KEY}`,
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         personalizations: [
@@ -448,12 +448,12 @@ async function sendEmailMessage(
           },
         ],
         from: {
-          email: "naoresponda@neonpro.com.br",
-          name: "NeonPro Healthcare",
+          email: 'naoresponda@neonpro.com.br',
+          name: 'NeonPro Healthcare',
         },
         content: [
           {
-            type: "text/html",
+            type: 'text/html',
             value: htmlContent,
           },
         ],
@@ -462,22 +462,22 @@ async function sendEmailMessage(
 
     if (response.ok) {
       return {
-        status: "sent",
-        messageId: response.headers.get("X-Message-Id") || "unknown",
+        status: 'sent',
+        messageId: response.headers.get('X-Message-Id') || 'unknown',
         retryCount: 0,
         cost: 0.02, // Approximate cost in Brazilian Real
       };
     } else {
       const error = await response.text();
       return {
-        status: "failed",
+        status: 'failed',
         failureReason: `Email API error: ${error}`,
         retryCount: 0,
       };
     }
   } catch (error: any) {
     return {
-      status: "failed",
+      status: 'failed',
       failureReason: error.message,
       retryCount: 0,
     };
@@ -493,7 +493,7 @@ function replaceTemplateVariables(
 ): string {
   let result = template;
   for (const [key, value] of Object.entries(variables)) {
-    result = result.replace(new RegExp(`{${key}}`, "g"), value || "");
+    result = result.replace(new RegExp(`{${key}}`, 'g'), value || '');
   }
   return result;
 }
@@ -509,47 +509,47 @@ async function logReminderDelivery(
   deliveryStatus: any,
   metadata: any,
 ): Promise<void> {
-  const { error } = await supabase.from("audit_logs").insert({
+  const { error } = await supabase.from('audit_logs').insert({
     id: crypto.randomUUID(),
     clinic_id: clinicId,
     patient_id: patientId,
-    action: "appointment_reminder_sent",
-    resource_type: "appointment_reminder",
+    action: 'appointment_reminder_sent',
+    resource_type: 'appointment_reminder',
     resource_id: appointmentId,
     details: {
       reminder_job_id: reminderJobId,
       delivery_status: deliveryStatus,
       channels_attempted: Object.keys(deliveryStatus),
       successful_deliveries: Object.values(deliveryStatus).filter(
-        (s: any) => s.status === "sent",
+        (s: any) => s.status === 'sent',
       ).length,
       ...metadata,
     },
-    lgpd_basis: "legitimate_interests",
+    lgpd_basis: 'legitimate_interests',
     created_at: new Date().toISOString(),
   });
 
   if (error) {
-    console.error("Failed to log reminder delivery:", error);
+    console.error('Failed to log reminder delivery:', error);
   }
 }
 
 /**
  * Main appointment reminder handler
  */
-serve(async (req) => {
+serve(async req => {
   const startTime = Date.now();
 
   // Handle CORS preflight
-  if (req.method === "OPTIONS") {
+  if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    if (req.method !== "POST") {
-      return new Response(JSON.stringify({ error: "Method not allowed" }), {
+    if (req.method !== 'POST') {
+      return new Response(JSON.stringify({ error: 'Method not allowed' }), {
         status: 405,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
@@ -557,15 +557,15 @@ serve(async (req) => {
 
     // Validate required fields
     if (
-      !requestData.appointmentId ||
-      !requestData.patientId ||
-      !requestData.clinicId
+      !requestData.appointmentId
+      || !requestData.patientId
+      || !requestData.clinicId
     ) {
       return new Response(
-        JSON.stringify({ error: "Missing required fields" }),
+        JSON.stringify({ error: 'Missing required fields' }),
         {
           status: 400,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         },
       );
     }
@@ -582,12 +582,12 @@ serve(async (req) => {
     if (!patientPrefs.consentValid) {
       return new Response(
         JSON.stringify({
-          error: "Patient consent required for communication",
+          error: 'Patient consent required for communication',
           consentValid: false,
         }),
         {
           status: 403,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         },
       );
     }
@@ -601,45 +601,44 @@ serve(async (req) => {
       clinicName: appointment.clinic.name,
       doctorName: appointment.professional.name,
       appointmentDate: new Date(appointment.scheduled_for).toLocaleDateString(
-        "pt-BR",
+        'pt-BR',
       ),
       appointmentTime: new Date(appointment.scheduled_for).toLocaleTimeString(
-        "pt-BR",
+        'pt-BR',
         {
-          hour: "2-digit",
-          minute: "2-digit",
+          hour: '2-digit',
+          minute: '2-digit',
         },
       ),
       clinicAddress: `${appointment.clinic.address_line1}, ${appointment.clinic.city}`,
       clinicPhone: appointment.clinic.phone_primary,
-      estimatedTravelTime: "20-30 minutos", // Would be calculated based on location
+      estimatedTravelTime: '20-30 minutos', // Would be calculated based on location
       suggestedDepartureTime: new Date(
         new Date(appointment.scheduled_for).getTime() - 30 * 60000,
-      ).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }),
+      ).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
     };
 
     // Get template for reminder type
-    const template =
-      REMINDER_TEMPLATES[
-        requestData.reminderType as keyof typeof REMINDER_TEMPLATES
-      ];
+    const template = REMINDER_TEMPLATES[
+      requestData.reminderType as keyof typeof REMINDER_TEMPLATES
+    ];
     if (!template) {
       throw new Error(`Invalid reminder type: ${requestData.reminderType}`);
     }
 
     // Send reminders through preferred channels
-    const channels = requestData.preferredChannels.filter((channel) =>
-      patientPrefs.allowedChannels.includes(channel),
+    const channels = requestData.preferredChannels.filter(channel =>
+      patientPrefs.allowedChannels.includes(channel)
     );
 
     // WhatsApp delivery
     if (
-      channels.includes("whatsapp") &&
-      patientPrefs.whatsappConsent &&
-      patientPrefs.phone
+      channels.includes('whatsapp')
+      && patientPrefs.whatsappConsent
+      && patientPrefs.phone
     ) {
       const message = replaceTemplateVariables(
-        template.whatsapp?.message || "",
+        template.whatsapp?.message || '',
         templateVars,
       );
       deliveryStatus.whatsapp = await sendWhatsAppMessage(
@@ -649,22 +648,22 @@ serve(async (req) => {
     }
 
     // SMS delivery
-    if (channels.includes("sms") && patientPrefs.phone) {
+    if (channels.includes('sms') && patientPrefs.phone) {
       const message = replaceTemplateVariables(
-        template.sms?.message || "",
+        template.sms?.message || '',
         templateVars,
       );
       deliveryStatus.sms = await sendSMSMessage(patientPrefs.phone, message);
     }
 
     // Email delivery
-    if (channels.includes("email") && patientPrefs.email) {
+    if (channels.includes('email') && patientPrefs.email) {
       const subject = replaceTemplateVariables(
-        template.email?.subject || "",
+        template.email?.subject || '',
         templateVars,
       );
       const html = replaceTemplateVariables(
-        template.email?.html || "",
+        template.email?.html || '',
         templateVars,
       );
       deliveryStatus.email = await sendEmailMessage(
@@ -677,11 +676,11 @@ serve(async (req) => {
     // Determine fallback chain based on failures
     const fallbackChain: string[] = [];
     const successfulChannels = Object.entries(deliveryStatus)
-      .filter(([_, status]) => status.status === "sent")
+      .filter(([_, status]) => status.status === 'sent')
       .map(([channel, _]) => channel);
 
     if (successfulChannels.length === 0) {
-      fallbackChain.push("phone"); // Manual phone call as last resort
+      fallbackChain.push('phone'); // Manual phone call as last resort
     }
 
     const responseTime = Date.now() - startTime;
@@ -705,7 +704,7 @@ serve(async (req) => {
 
     const response: ReminderResponse = {
       success: Object.values(deliveryStatus).some(
-        (status) => status.status === "sent",
+        status => status.status === 'sent',
       ),
       reminderJobId,
       deliveryStatus,
@@ -721,21 +720,21 @@ serve(async (req) => {
       status: 200,
       headers: {
         ...corsHeaders,
-        "Content-Type": "application/json",
-        "X-Response-Time": `${responseTime}ms`,
-        "X-LGPD-Compliant": "true",
-        "X-Reminder-Job-ID": reminderJobId,
+        'Content-Type': 'application/json',
+        'X-Response-Time': `${responseTime}ms`,
+        'X-LGPD-Compliant': 'true',
+        'X-Reminder-Job-ID': reminderJobId,
       },
     });
   } catch (error: any) {
-    console.error("Appointment reminder error:", error);
+    console.error('Appointment reminder error:', error);
 
     const responseTime = Date.now() - startTime;
 
     return new Response(
       JSON.stringify({
         success: false,
-        error: error.message || "Internal server error",
+        error: error.message || 'Internal server error',
         responseTime,
         timestamp: new Date().toISOString(),
       }),
@@ -743,8 +742,8 @@ serve(async (req) => {
         status: 500,
         headers: {
           ...corsHeaders,
-          "Content-Type": "application/json",
-          "X-Response-Time": `${responseTime}ms`,
+          'Content-Type': 'application/json',
+          'X-Response-Time': `${responseTime}ms`,
         },
       },
     );

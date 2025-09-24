@@ -466,7 +466,8 @@ export class DynamicConnectionPoolService {
   private async performPredictiveScaling(): Promise<void> {
     if (!this.config.enablePredictiveScaling) return;
 
-    const _now = new Date(); void _now;
+    const _now = new Date();
+    void _now;
     const currentPattern = this.getCurrentHealthcarePattern();
 
     if (currentPattern.scalingPriority === 'high') {
@@ -598,7 +599,9 @@ export class DynamicConnectionPoolService {
       };
     } catch {
       // Log and degrade gracefully
-      logger?.warn?.('Dynamic connection pool - degraded path failed', { message: error instanceof Error ? error.message : String(error) });
+      logger?.warn?.('Dynamic connection pool - degraded path failed', {
+        message: error instanceof Error ? error.message : String(error),
+      });
       const executionTime = Date.now() - originalExecutionTime;
 
       // Return cached result or error

@@ -149,7 +149,7 @@ apps/web/src/components/
 ```typescript
 interface HealthcareComponentProps {
   readonly patientId?: string;
-  readonly userRole: "admin" | "professional" | "coordinator";
+  readonly userRole: 'admin' | 'professional' | 'coordinator';
   readonly lgpdCompliant: boolean;
   readonly onAuditLog?: (action: string, details?: Record<string, any>) => void;
 }
@@ -215,14 +215,14 @@ import { Label } from '@/components/atoms/label';
 **4. Specialized UI Components**
 
 ```typescript
-import { MagicCard } from "@/components/ui/magic-card";
-import { UniversalButton } from "@/components/ui/universal-button";
+import { MagicCard } from '@/components/ui/magic-card';
+import { UniversalButton } from '@/components/ui/universal-button';
 ```
 
 **5. Healthcare Components**
 
 ```typescript
-import { AestheticScheduler, PatientCard } from "@neonpro/shared";
+import { AestheticScheduler, PatientCard } from '@neonpro/shared';
 ```
 
 ### Barrel Exports Pattern
@@ -231,28 +231,28 @@ import { AestheticScheduler, PatientCard } from "@neonpro/shared";
 
 ```typescript
 // Core components
-export * from "./components/ui/button";
-export * from "./components/ui/card";
+export * from './components/ui/button';
+export * from './components/ui/card';
 
 // Types
-export type { ButtonProps, CardProps } from "./types";
+export type { ButtonProps, CardProps } from './types';
 
 // Theme
-export { ThemeProvider } from "./theme";
+export { ThemeProvider } from './theme';
 ```
 
 **App-level exports** (`apps/web/src/components/index.ts`):
 
 ```typescript
 // Atoms
-export { Badge } from "./atoms/badge";
-export { Input } from "./atoms/input";
-export { Label } from "./atoms/label";
+export { Badge } from './atoms/badge';
+export { Input } from './atoms/input';
+export { Label } from './atoms/label';
 
 // Molecules
-export { Alert, AlertDescription, AlertTitle } from "./molecules/alert";
-export { Card } from "./molecules/card";
-export { Table, TableBody, TableCell } from "./molecules/table";
+export { Alert, AlertDescription, AlertTitle } from './molecules/alert';
+export { Card } from './molecules/card';
+export { Table, TableBody, TableCell } from './molecules/table';
 
 // Note: Organisms not exported to prevent circular dependencies
 ```
@@ -263,12 +263,12 @@ export { Table, TableBody, TableCell } from "./molecules/table";
 
 ```typescript
 // ✅ Good - Tree-shakeable
-import { PatientCard } from "@neonpro/shared/components/patient-card";
-import { Button } from "@neonpro/ui";
+import { PatientCard } from '@neonpro/shared/components/patient-card';
+import { Button } from '@neonpro/ui';
 
 // ❌ Avoid - Imports entire package
-import * as Shared from "@neonpro/shared";
-import * as UI from "@neonpro/ui";
+import * as Shared from '@neonpro/shared';
+import * as UI from '@neonpro/ui';
 ```
 
 ---
@@ -580,11 +580,11 @@ pnpm install
 
 ```typescript
 // Use explicit imports to avoid conflicts
-import { Button as LocalButton } from "@/components/atoms/button";
-import { Button as UIButton } from "@neonpro/ui";
+import { Button as LocalButton } from '@/components/atoms/button';
+import { Button as UIButton } from '@neonpro/ui';
 
 // Or use the recommended hierarchy
-import { Button } from "@neonpro/ui"; // Preferred
+import { Button } from '@neonpro/ui'; // Preferred
 ```
 
 #### **Build Performance Issues**
@@ -595,10 +595,10 @@ import { Button } from "@neonpro/ui"; // Preferred
 
 ```typescript
 // ✅ Use specific imports
-import { Button } from "@neonpro/ui/button";
+import { Button } from '@neonpro/ui/button';
 
 // ❌ Avoid barrel imports in large packages
-import { Button } from "@neonpro/ui"; // May import entire package
+import { Button } from '@neonpro/ui'; // May import entire package
 ```
 
 #### **Healthcare Component Errors**
@@ -652,9 +652,9 @@ pnpm install -g @biomejs/biome # Alternative to ESLint
 // Performance monitoring for healthcare components
 export function useComponentPerformance(componentName: string) {
   useEffect(() => {
-    const observer = new PerformanceObserver((list) => {
+    const observer = new PerformanceObserver(list => {
       const entries = list.getEntries();
-      entries.forEach((entry) => {
+      entries.forEach(entry => {
         if (entry.name.includes(componentName)) {
           // Log performance metrics for healthcare-critical components
           console.log(`${componentName} render time:`, entry.duration);
@@ -662,7 +662,7 @@ export function useComponentPerformance(componentName: string) {
       });
     });
 
-    observer.observe({ entryTypes: ["measure"] });
+    observer.observe({ entryTypes: ['measure'] });
     return () => observer.disconnect();
   }, [componentName]);
 }
@@ -780,7 +780,7 @@ export function usePatientRisk(patientId: string) {
         const score = await calculateNoShowRisk(patientId);
         setRiskScore(score);
       } catch (error) {
-        console.error("Risk calculation failed:", error);
+        console.error('Risk calculation failed:', error);
       } finally {
         setLoading(false);
       }
@@ -959,14 +959,14 @@ grep -r "import.*@/components/ui/alert" apps/web/src/
 
 ```typescript
 // Before (Legacy)
-import { Alert } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Alert } from '@/components/ui/alert';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 
 // After (Current)
-import { Badge } from "@/components/atoms/badge";
-import { Alert, AlertDescription } from "@/components/molecules/alert";
-import { Button } from "@neonpro/ui";
+import { Badge } from '@/components/atoms/badge';
+import { Alert, AlertDescription } from '@/components/molecules/alert';
+import { Button } from '@neonpro/ui';
 ```
 
 3. **Update Component Usage**
@@ -992,9 +992,9 @@ import { Button } from "@neonpro/ui";
 // Component version compatibility check
 export function checkComponentVersion(component: string, version: string) {
   const compatibilityMatrix = {
-    Button: ["1.0.0", "1.1.0", "2.0.0"],
-    PatientCard: ["1.0.0", "1.2.0"],
-    Alert: ["1.0.0", "1.1.0"],
+    Button: ['1.0.0', '1.1.0', '2.0.0'],
+    PatientCard: ['1.0.0', '1.2.0'],
+    Alert: ['1.0.0', '1.1.0'],
   };
 
   return compatibilityMatrix[component]?.includes(version) ?? false;

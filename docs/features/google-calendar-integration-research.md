@@ -422,13 +422,13 @@ TEST_DATA:
 ### Basic Event Creation (TypeScript)
 
 ```typescript
-import { google } from "googleapis";
+import { google } from 'googleapis';
 
 export class GoogleCalendarService {
   private calendar: google.calendar_v3.Calendar;
 
   constructor(auth: any) {
-    this.calendar = google.calendar({ version: "v3", auth });
+    this.calendar = google.calendar({ version: 'v3', auth });
   }
 
   async createEvent(eventData: {
@@ -445,23 +445,23 @@ export class GoogleCalendarService {
       location: eventData.location,
       start: {
         dateTime: eventData.start.toISOString(),
-        timeZone: "America/Sao_Paulo",
+        timeZone: 'America/Sao_Paulo',
       },
       end: {
         dateTime: eventData.end.toISOString(),
-        timeZone: "America/Sao_Paulo",
+        timeZone: 'America/Sao_Paulo',
       },
-      attendees: eventData.attendees?.map((email) => ({ email })),
+      attendees: eventData.attendees?.map(email => ({ email })),
     };
 
     try {
       const response = await this.calendar.events.insert({
-        calendarId: "primary",
+        calendarId: 'primary',
         requestBody: event,
       });
       return response.data;
     } catch (error) {
-      console.error("Error creating event:", error);
+      console.error('Error creating event:', error);
       throw error;
     }
   }
@@ -478,10 +478,10 @@ export class CalendarSyncService {
   async performIncrementalSync() {
     try {
       const request = this.calendar.events.list({
-        calendarId: "primary",
+        calendarId: 'primary',
         syncToken: this.syncToken || undefined,
         singleEvents: true,
-        orderBy: "startTime",
+        orderBy: 'startTime',
       });
 
       const response = await this.executeWithRetry(request);
@@ -517,7 +517,7 @@ export class CalendarSyncService {
         if (error.code === 429 || error.code === 403) {
           // Rate limited, implement exponential backoff
           const delay = Math.pow(2, attempt) * 1000;
-          await new Promise((resolve) => setTimeout(resolve, delay));
+          await new Promise(resolve => setTimeout(resolve, delay));
           continue;
         }
 

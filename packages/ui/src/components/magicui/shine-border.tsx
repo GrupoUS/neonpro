@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import React from "react";
-import { cn } from "../../utils";
-import "./shine-border.css";
+import React from 'react';
+import { cn } from '../../utils';
+import './shine-border.css';
 
 interface ShineBorderProps extends React.HTMLAttributes<HTMLDivElement> {
   /**
@@ -35,34 +35,34 @@ interface ShineBorderProps extends React.HTMLAttributes<HTMLDivElement> {
    * Animation pattern
    * @default "linear"
    */
-  pattern?: "linear" | "wave" | "orbital";
+  pattern?: 'linear' | 'wave' | 'orbital';
   /**
    * Animation intensity
    * @default "normal"
    */
-  intensity?: "subtle" | "normal" | "vibrant";
+  intensity?: 'subtle' | 'normal' | 'vibrant';
   /**
    * Animation speed
    * @default "normal"
    */
-  speed?: "slow" | "normal" | "fast";
+  speed?: 'slow' | 'normal' | 'fast';
   /**
    * Color theme
    * @default "gold"
    */
   theme?:
-    | "gold"
-    | "silver"
-    | "copper"
-    | "blue"
-    | "purple"
-    | "green"
-    | "red"
-    | "neonpro-primary"
-    | "neonpro-secondary"
-    | "neonpro-accent"
-    | "aesthetic-gold"
-    | "beauty-rainbow";
+    | 'gold'
+    | 'silver'
+    | 'copper'
+    | 'blue'
+    | 'purple'
+    | 'green'
+    | 'red'
+    | 'neonpro-primary'
+    | 'neonpro-secondary'
+    | 'neonpro-accent'
+    | 'aesthetic-gold'
+    | 'beauty-rainbow';
   /**
    * Additional CSS class names
    */
@@ -83,11 +83,11 @@ export function ShineBorder({
   borderRadius = 8,
   duration = 14,
   shineColor,
-  background = "white",
-  pattern = "linear",
-  intensity = "normal",
-  speed = "normal",
-  theme = "gold",
+  background = 'white',
+  pattern = 'linear',
+  intensity = 'normal',
+  speed = 'normal',
+  theme = 'gold',
   className,
   children,
   disabled = false,
@@ -95,37 +95,35 @@ export function ShineBorder({
 }: ShineBorderProps) {
   // Generate class names for the shine effect
   const shineClasses = cn(
-    "shine-border",
+    'shine-border',
     !disabled && [
       `shine-border--${pattern}`,
       `shine-border--${intensity}`,
       `shine-border--${speed}`,
-      shineColor ? "" : `shine-border--${theme}`,
+      shineColor ? '' : `shine-border--${theme}`,
     ],
     className,
   );
 
   return (
     <div
-      className={cn("relative flex overflow-hidden", shineClasses)}
-      style={
-        {
-          "--border-width": `${borderWidth}px`,
-          "--shine-duration": `${duration}s`,
-          "--shine-color": shineColor
-            ? Array.isArray(shineColor)
-              ? shineColor.join(", ")
-              : shineColor
-            : undefined,
-          borderRadius: `${borderRadius}px`,
-          padding: `${borderWidth}px`,
-        } as React.CSSProperties
-      }
+      className={cn('relative flex overflow-hidden', shineClasses)}
+      style={{
+        '--border-width': `${borderWidth}px`,
+        '--shine-duration': `${duration}s`,
+        '--shine-color': shineColor
+          ? Array.isArray(shineColor)
+            ? shineColor.join(', ')
+            : shineColor
+          : undefined,
+        borderRadius: `${borderRadius}px`,
+        padding: `${borderWidth}px`,
+      } as React.CSSProperties}
       {...props}
     >
       {/* Content Container */}
       <div
-        className="relative z-[1] flex h-full w-full items-center justify-center overflow-hidden"
+        className='relative z-[1] flex h-full w-full items-center justify-center overflow-hidden'
         style={{
           backgroundColor: background,
           borderRadius: `${Math.max(0, borderRadius - borderWidth)}px`,
@@ -137,7 +135,7 @@ export function ShineBorder({
   );
 }
 
-ShineBorder.displayName = "ShineBorder";
+ShineBorder.displayName = 'ShineBorder';
 
 export type { ShineBorderProps };
 export default ShineBorder;

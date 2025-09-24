@@ -9,21 +9,21 @@
  */
 
 import {
-  ResilienceFramework,
-  ResilienceConfig,
-  ExecutionContext,
   DEFAULT_HEALTHCARE_RESILIENCE_CONFIG,
   EMERGENCY_RESILIENCE_CONFIG,
+  ExecutionContext,
+  ResilienceConfig,
+  ResilienceFramework,
   type ResilienceMetrics,
   type ServiceHealth,
-} from "./resilience-framework";
+} from './resilience-framework';
 
 import {
-  HealthcareDataClassification,
   DataCategory as LGPDDataCategory,
   HealthcareAIUseCase,
-} from "@neonpro/shared";
-import { resilienceLogger } from "@neonpro/shared";
+  HealthcareDataClassification,
+} from '@neonpro/shared';
+import { resilienceLogger } from '@neonpro/shared';
 
 // ============================================================================
 // Healthcare-Specific Types
@@ -144,16 +144,15 @@ export class HealthcareResilienceService {
     }
 
     if (
-      _context.dataClassification ===
-      HealthcareDataClassification.PATIENT_SENSITIVE
+      _context.dataClassification
+        === HealthcareDataClassification.PATIENT_SENSITIVE
     ) {
       // Stricter configuration for sensitive data
       return {
         ...DEFAULT_HEALTHCARE_RESILIENCE_CONFIG,
         timeout: {
           ...DEFAULT_HEALTHCARE_RESILIENCE_CONFIG.timeout,
-          overallMs:
-            DEFAULT_HEALTHCARE_RESILIENCE_CONFIG.timeout.overallMs * 1.5,
+          overallMs: DEFAULT_HEALTHCARE_RESILIENCE_CONFIG.timeout.overallMs * 1.5,
         },
       };
     }
@@ -191,8 +190,8 @@ export class HealthcareResilienceService {
     }
 
     if (
-      _context.dataClassification ===
-      HealthcareDataClassification.PATIENT_SENSITIVE
+      _context.dataClassification
+        === HealthcareDataClassification.PATIENT_SENSITIVE
     ) {
       // For sensitive data errors, initiate security review
       await this.initiateSecurityReview(error, _context);
@@ -215,13 +214,13 @@ export class HealthcareResilienceService {
     // 4. Log emergency event for compliance
 
     // Log emergency protocol for compliance
-    resilienceLogger.error("EMERGENCY PROTOCOL TRIGGERED", {
+    resilienceLogger.error('EMERGENCY PROTOCOL TRIGGERED', {
       error: error.message,
       operation: _context.operation,
       patientId: _context.patientId,
       timestamp: new Date().toISOString(),
-      severity: "critical",
-      category: "emergency",
+      severity: 'critical',
+      category: 'emergency',
     });
   }
 
@@ -231,13 +230,13 @@ export class HealthcareResilienceService {
   ): Promise<void> {
     // Security review for sensitive data handling errors
     // Log security review for compliance
-    resilienceLogger.warn("SECURITY REVIEW INITIATED", {
+    resilienceLogger.warn('SECURITY REVIEW INITIATED', {
       error: error.message,
       dataClassification: _context.dataClassification,
       lgpdCategories: _context.lgpdCategories,
       timestamp: new Date().toISOString(),
-      severity: "high",
-      category: "security",
+      severity: 'high',
+      category: 'security',
     });
   }
 
@@ -247,13 +246,13 @@ export class HealthcareResilienceService {
   ): Promise<void> {
     // LGPD compliance notification
     // Log data protection error for LGPD compliance
-    resilienceLogger.warn("DATA PROTECTION ERROR", {
+    resilienceLogger.warn('DATA PROTECTION ERROR', {
       error: error.message,
       lgpdCategories: _context.lgpdCategories,
       patientId: _context.patientId,
       timestamp: new Date().toISOString(),
-      severity: "high",
-      category: "data_protection",
+      severity: 'high',
+      category: 'data_protection',
     });
   }
 
@@ -273,7 +272,7 @@ export class HealthcareResilienceService {
     // Keep only last 30 days of audit logs
     const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
     this.auditLog = this.auditLog.filter(
-      (entry) => entry.timestamp >= thirtyDaysAgo,
+      entry => entry.timestamp >= thirtyDaysAgo,
     );
 
     // In a real implementation, this would persist to audit database
@@ -285,7 +284,7 @@ export class HealthcareResilienceService {
     isHealthy: boolean;
     responseTime: number;
     lastCheck: Date;
-    complianceStatus: "compliant" | "warning" | "non_compliant";
+    complianceStatus: 'compliant' | 'warning' | 'non_compliant';
     issues: string[];
   }> {
     const health = this.resilienceFramework.getServiceHealth(serviceName);
@@ -295,34 +294,33 @@ export class HealthcareResilienceService {
         isHealthy: false,
         responseTime: 0,
         lastCheck: new Date(),
-        complianceStatus: "non_compliant",
-        issues: ["Service not registered with resilience framework"],
+        complianceStatus: 'non_compliant',
+        issues: ['Service not registered with resilience framework'],
       };
     }
 
     // Healthcare-specific compliance checks
     const issues: string[] = [];
-    let complianceStatus: "compliant" | "warning" | "non_compliant" =
-      "compliant";
+    let complianceStatus: 'compliant' | 'warning' | 'non_compliant' = 'compliant';
 
     if (health.successRate < 0.95) {
-      issues.push("Service success rate below 95% threshold");
-      complianceStatus = "warning";
+      issues.push('Service success rate below 95% threshold');
+      complianceStatus = 'warning';
     }
 
     if (health.latency > 5000) {
-      issues.push("Service response time above 5s threshold");
-      complianceStatus = "warning";
+      issues.push('Service response time above 5s threshold');
+      complianceStatus = 'warning';
     }
 
     if (health.successRate < 0.8) {
-      issues.push("Service success rate critically low");
-      complianceStatus = "non_compliant";
+      issues.push('Service success rate critically low');
+      complianceStatus = 'non_compliant';
     }
 
     if (!health.isHealthy) {
-      issues.push("Service currently unhealthy");
-      complianceStatus = "non_compliant";
+      issues.push('Service currently unhealthy');
+      complianceStatus = 'non_compliant';
     }
 
     return {
@@ -348,11 +346,11 @@ export class HealthcareResilienceService {
     services: Array<{
       serviceName: string;
       health: ServiceHealth;
-      complianceStatus: "compliant" | "warning" | "non_compliant";
+      complianceStatus: 'compliant' | 'warning' | 'non_compliant';
     }>;
   } {
     const services = Array.from(
-      new Set(this.auditLog.map((entry) => entry._service)),
+      new Set(this.auditLog.map(entry => entry._service)),
     );
 
     return {
@@ -362,29 +360,28 @@ export class HealthcareResilienceService {
         successRate: this.calculateSuccessRate(),
         averageLatency: this.calculateAverageLatency(),
         emergencyOperations: this.auditLog.filter(
-          (entry) => entry._context.isEmergency || entry._context.isLifeCritical,
+          entry => entry._context.isEmergency || entry._context.isLifeCritical,
         ).length,
         lifeCriticalOperations: this.auditLog.filter(
-          (entry) => entry._context.isLifeCritical,
+          entry => entry._context.isLifeCritical,
         ).length,
         complianceViolations: this.auditLog.filter(
-          (entry) =>
-            !entry.success &&
-            entry._context.lgpdCategories.includes(
+          entry =>
+            !entry.success
+            && entry._context.lgpdCategories.includes(
               LGPDDataCategory.SENSITIVE_DATA,
             ),
         ).length,
       },
-      services: services.map((serviceName) => {
+      services: services.map(serviceName => {
         const health = this.resilienceFramework.getServiceHealth(serviceName);
         const recentFailures = this.auditLog.filter(
-          (entry) => entry._service === serviceName && !entry.success,
+          entry => entry._service === serviceName && !entry.success,
         ).length;
 
-        let complianceStatus: "compliant" | "warning" | "non_compliant" =
-          "compliant";
-        if (recentFailures > 5) complianceStatus = "non_compliant";
-        else if (recentFailures > 2) complianceStatus = "warning";
+        let complianceStatus: 'compliant' | 'warning' | 'non_compliant' = 'compliant';
+        if (recentFailures > 5) complianceStatus = 'non_compliant';
+        else if (recentFailures > 2) complianceStatus = 'warning';
 
         return {
           serviceName,
@@ -406,7 +403,7 @@ export class HealthcareResilienceService {
   private calculateSuccessRate(): number {
     if (this.auditLog.length === 0) return 1;
 
-    const successful = this.auditLog.filter((entry) => entry.success).length;
+    const successful = this.auditLog.filter(entry => entry.success).length;
     return successful / this.auditLog.length;
   }
 
@@ -439,7 +436,7 @@ export class HealthcareResilienceService {
         _service: string;
         timestamp: Date;
         duration: number;
-        impact: "low" | "medium" | "high" | "critical";
+        impact: 'low' | 'medium' | 'high' | 'critical';
       }>;
     };
     recommendations: string[];
@@ -448,26 +445,25 @@ export class HealthcareResilienceService {
     const start = new Date(Date.now() - 24 * 60 * 60 * 1000); // Last 24 hours
 
     const periodAuditLog = this.auditLog.filter(
-      (entry) => entry.timestamp >= start && entry.timestamp <= end,
+      entry => entry.timestamp >= start && entry.timestamp <= end,
     );
 
-    const sensitiveDataOperations = periodAuditLog.filter((entry) =>
-      entry._context.lgpdCategories.includes(LGPDDataCategory.SENSITIVE_DATA),
+    const sensitiveDataOperations = periodAuditLog.filter(entry =>
+      entry._context.lgpdCategories.includes(LGPDDataCategory.SENSITIVE_DATA)
     );
 
     const lgpdCompliance = {
       totalOperations: sensitiveDataOperations.length,
       compliantOperations: sensitiveDataOperations.filter(
-        (entry) => entry.success,
+        entry => entry.success,
       ).length,
       nonCompliantOperations: sensitiveDataOperations.filter(
-        (entry) => !entry.success,
+        entry => !entry.success,
       ).length,
-      complianceRate:
-        sensitiveDataOperations.length > 0
-          ? sensitiveDataOperations.filter((entry) => entry.success).length /
-            sensitiveDataOperations.length
-          : 1,
+      complianceRate: sensitiveDataOperations.length > 0
+        ? sensitiveDataOperations.filter(entry => entry.success).length
+          / sensitiveDataOperations.length
+        : 1,
     };
 
     // Generate recommendations based on analysis
@@ -475,18 +471,18 @@ export class HealthcareResilienceService {
 
     if (lgpdCompliance.complianceRate < 0.99) {
       recommendations.push(
-        "Review and improve LGPD compliance procedures for sensitive health data",
+        'Review and improve LGPD compliance procedures for sensitive health data',
       );
     }
 
     if (this.calculateSuccessRate() < 0.95) {
       recommendations.push(
-        "Implement additional redundancy for critical healthcare services",
+        'Implement additional redundancy for critical healthcare services',
       );
     }
 
     const criticalServices = this.getHealthcareMetrics().services.filter(
-      (s) => s.complianceStatus === "non_compliant",
+      s => s.complianceStatus === 'non_compliant',
     );
 
     if (criticalServices.length > 0) {
@@ -512,19 +508,18 @@ export class HealthcareResilienceService {
 // Default Healthcare Resilience Configuration
 // ============================================================================
 
-export const DEFAULT_HEALTHCARE_RESILIENCE_SERVICE_CONFIG: HealthcareResilienceConfig =
-  {
-    ...DEFAULT_HEALTHCARE_RESILIENCE_CONFIG,
-    healthcare: {
-      emergencyOverrideEnabled: true,
-      emergencyTimeoutMultiplier: 2,
-      piiProtectionEnabled: true,
-      dataEncryptionRequired: true,
-      lgpdAuditLogging: true,
-      auditRetentionDays: 365,
-      medicalDeviceIntegration: false,
-      deviceTimeoutMs: 10000,
-      telemedicinePriority: true,
-      minimumConnectionQuality: 0.7,
-    },
-  };
+export const DEFAULT_HEALTHCARE_RESILIENCE_SERVICE_CONFIG: HealthcareResilienceConfig = {
+  ...DEFAULT_HEALTHCARE_RESILIENCE_CONFIG,
+  healthcare: {
+    emergencyOverrideEnabled: true,
+    emergencyTimeoutMultiplier: 2,
+    piiProtectionEnabled: true,
+    dataEncryptionRequired: true,
+    lgpdAuditLogging: true,
+    auditRetentionDays: 365,
+    medicalDeviceIntegration: false,
+    deviceTimeoutMs: 10000,
+    telemedicinePriority: true,
+    minimumConnectionQuality: 0.7,
+  },
+};

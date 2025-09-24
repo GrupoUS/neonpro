@@ -7,55 +7,55 @@
  * @fileoverview LGPD-compliant consent banner for healthcare applications
  */
 
-"use client";
+'use client';
 
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 // import { z } from 'zod'; // TODO: Add Zod validation for consent data
-import { cn } from "../../lib/utils";
-import { useHealthcareTheme } from "../healthcare/healthcare-theme-provider";
+import { cn } from '../../lib/utils';
 import {
   lgpdConsentSchema,
   // TODO: Implement healthcareValidationMessages usage
   // healthcareValidationMessages
-} from "../../utils/healthcare-validation";
+} from '../../utils/healthcare-validation';
+import { useHealthcareTheme } from '../healthcare/healthcare-theme-provider';
 
 // Define LGPD enums locally since utils does not export them yet
 export enum ConsentType {
-  ESSENTIAL = "essential",
-  FUNCTIONAL = "functional",
-  ANALYTICS = "analytics",
-  MARKETING = "marketing",
-  RESEARCH = "research",
+  ESSENTIAL = 'essential',
+  FUNCTIONAL = 'functional',
+  ANALYTICS = 'analytics',
+  MARKETING = 'marketing',
+  RESEARCH = 'research',
 }
 
 export enum HealthcareDataType {
-  PERSONAL = "personal",
-  MEDICAL = "medical",
-  SENSITIVE = "sensitive",
-  BIOMETRIC = "biometric",
-  GENETIC = "genetic",
+  PERSONAL = 'personal',
+  MEDICAL = 'medical',
+  SENSITIVE = 'sensitive',
+  BIOMETRIC = 'biometric',
+  GENETIC = 'genetic',
 }
 
 export enum DataProcessingPurpose {
-  TREATMENT = "treatment",
-  PREVENTION = "prevention",
-  RESEARCH = "research",
-  ADMINISTRATION = "administration",
-  LEGAL = "legal",
-  EMERGENCY = "emergency",
+  TREATMENT = 'treatment',
+  PREVENTION = 'prevention',
+  RESEARCH = 'research',
+  ADMINISTRATION = 'administration',
+  LEGAL = 'legal',
+  EMERGENCY = 'emergency',
 }
 import {
   announceToScreenReader,
   HealthcarePriority,
   // TODO: Implement generateAccessibleId usage
   // generateAccessibleId
-} from "../../utils/accessibility";
+} from '../../utils/accessibility';
 
 // Consent banner props
 export interface LGPDConsentBannerProps {
   // Display settings
-  variant?: "banner" | "modal" | "inline";
-  position?: "top" | "bottom" | "center";
+  variant?: 'banner' | 'modal' | 'inline';
+  position?: 'top' | 'bottom' | 'center';
 
   // Consent configuration
   requiredConsents: ConsentType[];
@@ -104,53 +104,47 @@ const consentDescriptions: Record<
   { title: string; description: string; required?: boolean }
 > = {
   [ConsentType.ESSENTIAL]: {
-    title: "Cookies e Dados Essenciais",
+    title: 'Cookies e Dados Essenciais',
     description:
-      "Necessários para o funcionamento básico da plataforma de saúde e segurança dos dados.",
+      'Necessários para o funcionamento básico da plataforma de saúde e segurança dos dados.',
     required: true,
   },
   [ConsentType.FUNCTIONAL]: {
-    title: "Funcionalidades Melhoradas",
+    title: 'Funcionalidades Melhoradas',
     description:
-      "Permitem funcionalidades avançadas como salvamento de preferências e configurações médicas.",
+      'Permitem funcionalidades avançadas como salvamento de preferências e configurações médicas.',
   },
   [ConsentType.ANALYTICS]: {
-    title: "Análise e Melhoria",
-    description:
-      "Ajudam a melhorar nossos serviços de saúde através de análises anônimas de uso.",
+    title: 'Análise e Melhoria',
+    description: 'Ajudam a melhorar nossos serviços de saúde através de análises anônimas de uso.',
   },
   [ConsentType.MARKETING]: {
-    title: "Comunicação e Marketing",
-    description:
-      "Permitem envio de comunicações sobre serviços de saúde e promoções relevantes.",
+    title: 'Comunicação e Marketing',
+    description: 'Permitem envio de comunicações sobre serviços de saúde e promoções relevantes.',
   },
   [ConsentType.RESEARCH]: {
-    title: "Pesquisa Médica",
-    description:
-      "Dados anonimizados para pesquisas científicas e desenvolvimento de tratamentos.",
+    title: 'Pesquisa Médica',
+    description: 'Dados anonimizados para pesquisas científicas e desenvolvimento de tratamentos.',
   },
 };
 
 // Data type descriptions
 const dataTypeDescriptions: Record<HealthcareDataType, string> = {
-  [HealthcareDataType.PERSONAL]:
-    "Dados pessoais básicos (nome, e-mail, telefone)",
-  [HealthcareDataType.MEDICAL]: "Dados médicos e de saúde",
-  [HealthcareDataType.SENSITIVE]:
-    "Dados sensíveis de saúde (diagnósticos, exames)",
-  [HealthcareDataType.BIOMETRIC]: "Dados biométricos",
-  [HealthcareDataType.GENETIC]: "Dados genéticos",
+  [HealthcareDataType.PERSONAL]: 'Dados pessoais básicos (nome, e-mail, telefone)',
+  [HealthcareDataType.MEDICAL]: 'Dados médicos e de saúde',
+  [HealthcareDataType.SENSITIVE]: 'Dados sensíveis de saúde (diagnósticos, exames)',
+  [HealthcareDataType.BIOMETRIC]: 'Dados biométricos',
+  [HealthcareDataType.GENETIC]: 'Dados genéticos',
 };
 
 // Processing purpose descriptions
 const purposeDescriptions: Record<DataProcessingPurpose, string> = {
-  [DataProcessingPurpose.TREATMENT]: "Prestação de cuidados médicos",
-  [DataProcessingPurpose.PREVENTION]:
-    "Prevenção de doenças e promoção da saúde",
-  [DataProcessingPurpose.RESEARCH]: "Pesquisa científica e desenvolvimento",
-  [DataProcessingPurpose.ADMINISTRATION]: "Administração de serviços de saúde",
-  [DataProcessingPurpose.LEGAL]: "Cumprimento de obrigações legais",
-  [DataProcessingPurpose.EMERGENCY]: "Atendimento de emergências médicas",
+  [DataProcessingPurpose.TREATMENT]: 'Prestação de cuidados médicos',
+  [DataProcessingPurpose.PREVENTION]: 'Prevenção de doenças e promoção da saúde',
+  [DataProcessingPurpose.RESEARCH]: 'Pesquisa científica e desenvolvimento',
+  [DataProcessingPurpose.ADMINISTRATION]: 'Administração de serviços de saúde',
+  [DataProcessingPurpose.LEGAL]: 'Cumprimento de obrigações legais',
+  [DataProcessingPurpose.EMERGENCY]: 'Atendimento de emergências médicas',
 };
 
 /**
@@ -160,17 +154,18 @@ const purposeDescriptions: Record<DataProcessingPurpose, string> = {
  * consent types, granular control, and accessibility compliance.
  */
 export const LGPDConsentBanner: React.FC<LGPDConsentBannerProps> = ({
-  variant = "banner",
-  position = "bottom",
+  variant = 'banner',
+  position = 'bottom',
   requiredConsents,
   optionalConsents = [],
   dataTypes,
   processingPurposes,
-  title = "Consentimento para Dados de Saúde",
-  description = "Para oferecer os melhores cuidados de saúde, precisamos do seu consentimento para processar seus dados conforme a LGPD.",
+  title = 'Consentimento para Dados de Saúde',
+  description =
+    'Para oferecer os melhores cuidados de saúde, precisamos do seu consentimento para processar seus dados conforme a LGPD.',
   privacyPolicyUrl,
   dataProcessingUrl,
-  contactEmail = "privacidade@neonpro.health",
+  contactEmail = 'privacidade@neonpro.health',
   allowGranular = true,
   showOnce = true,
   autoShow = true,
@@ -194,12 +189,12 @@ export const LGPDConsentBanner: React.FC<LGPDConsentBannerProps> = ({
     const initialStatus: ConsentStatus = {} as ConsentStatus;
 
     // Set required consents to true by default
-    requiredConsents.forEach((consent) => {
+    requiredConsents.forEach(consent => {
       initialStatus[consent] = true;
     });
 
     // Set optional consents to false by default
-    optionalConsents.forEach((consent) => {
+    optionalConsents.forEach(consent => {
       initialStatus[consent] = false;
     });
 
@@ -214,10 +209,10 @@ export const LGPDConsentBanner: React.FC<LGPDConsentBannerProps> = ({
 
   // Check if consent was already given
   const checkExistingConsent = useCallback(() => {
-    if (!persistConsent) {return false;}
+    if (!persistConsent) return false;
 
     try {
-      const stored = localStorage.getItem("lgpd-healthcare-consent");
+      const stored = localStorage.getItem('lgpd-healthcare-consent');
       if (stored) {
         const parsed = JSON.parse(stored);
         const consentData = lgpdConsentSchema.parse(parsed);
@@ -230,7 +225,7 @@ export const LGPDConsentBanner: React.FC<LGPDConsentBannerProps> = ({
           analyticsConsent: ConsentType.ANALYTICS,
         };
 
-        const hasAllRequired = requiredConsents.every((consent) => {
+        const hasAllRequired = requiredConsents.every(consent => {
           // Find matching schema property for this consent type
           const schemaKey = Object.entries(schemaToConsent).find(
             ([, consentType]) => consentType === consent,
@@ -255,7 +250,7 @@ export const LGPDConsentBanner: React.FC<LGPDConsentBannerProps> = ({
         }
       }
     } catch (error) {
-      console.warn("Error reading stored consent:", error);
+      console.warn('Error reading stored consent:', error);
     }
 
     return false;
@@ -271,7 +266,7 @@ export const LGPDConsentBanner: React.FC<LGPDConsentBannerProps> = ({
 
         // Announce to screen readers
         announceToScreenReader(
-          "Banner de consentimento LGPD para dados de saúde exibido",
+          'Banner de consentimento LGPD para dados de saúde exibido',
           HealthcarePriority.MEDIUM,
         );
       }
@@ -283,13 +278,13 @@ export const LGPDConsentBanner: React.FC<LGPDConsentBannerProps> = ({
     // Required consents cannot be disabled
     if (requiredConsents.includes(consentType) && !granted) {
       announceToScreenReader(
-        "Este consentimento é obrigatório para o funcionamento da plataforma",
+        'Este consentimento é obrigatório para o funcionamento da plataforma',
         HealthcarePriority.HIGH,
       );
       return;
     }
 
-    setConsentStatus((prev) => ({
+    setConsentStatus(prev => ({
       ...prev,
       [consentType]: granted,
     }));
@@ -297,7 +292,7 @@ export const LGPDConsentBanner: React.FC<LGPDConsentBannerProps> = ({
     // Announce change
     const description = consentDescriptions[consentType]?.title || consentType;
     announceToScreenReader(
-      `Consentimento ${description} ${granted ? "concedido" : "retirado"}`,
+      `Consentimento ${description} ${granted ? 'concedido' : 'retirado'}`,
       HealthcarePriority.MEDIUM,
     );
   };
@@ -305,7 +300,7 @@ export const LGPDConsentBanner: React.FC<LGPDConsentBannerProps> = ({
   // Handle accept all
   const handleAcceptAll = () => {
     const allAccepted: ConsentStatus = {} as ConsentStatus;
-    allConsents.forEach((consent) => {
+    allConsents.forEach(consent => {
       allAccepted[consent] = true;
     });
 
@@ -318,12 +313,12 @@ export const LGPDConsentBanner: React.FC<LGPDConsentBannerProps> = ({
     const requiredOnly: ConsentStatus = {} as ConsentStatus;
 
     // Accept required
-    requiredConsents.forEach((consent) => {
+    requiredConsents.forEach(consent => {
       requiredOnly[consent] = true;
     });
 
     // Reject optional
-    optionalConsents.forEach((consent) => {
+    optionalConsents.forEach(consent => {
       requiredOnly[consent] = false;
     });
 
@@ -338,9 +333,9 @@ export const LGPDConsentBanner: React.FC<LGPDConsentBannerProps> = ({
       marketingConsent: !!consents[ConsentType.MARKETING],
       analyticsConsent: !!consents[ConsentType.ANALYTICS],
       consentTimestamp: new Date().toISOString(),
-      consentVersion: "1.0",
+      consentVersion: '1.0',
       userAgent: navigator.userAgent,
-      ipAddress: "", // Will be filled by backend
+      ipAddress: '', // Will be filled by backend
     };
 
     try {
@@ -350,7 +345,7 @@ export const LGPDConsentBanner: React.FC<LGPDConsentBannerProps> = ({
       // Store locally if enabled (persist original map plus validated data)
       if (persistConsent) {
         localStorage.setItem(
-          "lgpd-healthcare-consent",
+          'lgpd-healthcare-consent',
           JSON.stringify({ consents, ...consentData }),
         );
       }
@@ -363,13 +358,13 @@ export const LGPDConsentBanner: React.FC<LGPDConsentBannerProps> = ({
 
       // Announce success
       announceToScreenReader(
-        "Consentimentos salvos com sucesso",
+        'Consentimentos salvos com sucesso',
         HealthcarePriority.LOW,
       );
     } catch (error) {
-      console.error("Error saving consent:", error);
+      console.error('Error saving consent:', error);
       announceToScreenReader(
-        "Erro ao salvar consentimentos. Tente novamente.",
+        'Erro ao salvar consentimentos. Tente novamente.',
         HealthcarePriority.HIGH,
       );
     }
@@ -390,71 +385,70 @@ export const LGPDConsentBanner: React.FC<LGPDConsentBannerProps> = ({
   // };
 
   // Don't render if not visible
-  if (!isVisible) {return null;}
+  if (!isVisible) return null;
 
   const bannerClasses = cn(
-    "lgpd-consent-banner bg-background border shadow-lg",
+    'lgpd-consent-banner bg-background border shadow-lg',
     {
       // Variant styles
-      "fixed left-0 right-0 z-50 border-x-0": variant === "banner",
-      "fixed inset-0 z-50 bg-background/80 backdrop-blur-sm":
-        variant === "modal",
-      "relative border rounded-lg": variant === "inline",
+      'fixed left-0 right-0 z-50 border-x-0': variant === 'banner',
+      'fixed inset-0 z-50 bg-background/80 backdrop-blur-sm': variant === 'modal',
+      'relative border rounded-lg': variant === 'inline',
 
       // Position styles (for banner variant)
-      "top-0 border-b": variant === "banner" && position === "top",
-      "bottom-0 border-t": variant === "banner" && position === "bottom",
+      'top-0 border-b': variant === 'banner' && position === 'top',
+      'bottom-0 border-t': variant === 'banner' && position === 'bottom',
 
       // Emergency mode
-      "border-warning bg-warning/5": theme.emergencyMode,
+      'border-warning bg-warning/5': theme.emergencyMode,
     },
     className,
   );
 
-  const contentClasses = cn("p-4 max-w-4xl mx-auto", {
-    "p-6": variant === "modal",
-    "fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 max-w-2xl w-full max-h-[90vh] overflow-y-auto bg-background border rounded-lg shadow-xl":
-      variant === "modal",
+  const contentClasses = cn('p-4 max-w-4xl mx-auto', {
+    'p-6': variant === 'modal',
+    'fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 max-w-2xl w-full max-h-[90vh] overflow-y-auto bg-background border rounded-lg shadow-xl':
+      variant === 'modal',
   });
 
   return (
     <div
       className={bannerClasses}
-      role="banner"
-      aria-label="Consentimento LGPD"
+      role='banner'
+      aria-label='Consentimento LGPD'
     >
       <div className={contentClasses}>
         {/* Header */}
-        <div className="mb-4">
-          <h2 className="text-lg font-semibold mb-2 flex items-center gap-2">
-            <span role="img" aria-label="Privacidade">
+        <div className='mb-4'>
+          <h2 className='text-lg font-semibold mb-2 flex items-center gap-2'>
+            <span role='img' aria-label='Privacidade'>
               🔒
             </span>
             {title}
           </h2>
-          <p className="text-sm text-muted-foreground">{description}</p>
+          <p className='text-sm text-muted-foreground'>{description}</p>
         </div>
 
         {/* Data types and purposes info */}
-        <div className="mb-4 p-3 bg-muted rounded-md">
-          <h3 className="text-sm font-medium mb-2">
+        <div className='mb-4 p-3 bg-muted rounded-md'>
+          <h3 className='text-sm font-medium mb-2'>
             Tipos de Dados Processados:
           </h3>
-          <ul className="text-xs text-muted-foreground space-y-1">
-            {dataTypes.map((dataType) => (
-              <li key={dataType} className="flex items-start gap-2">
+          <ul className='text-xs text-muted-foreground space-y-1'>
+            {dataTypes.map(dataType => (
+              <li key={dataType} className='flex items-start gap-2'>
                 <span>•</span>
                 <span>{dataTypeDescriptions[dataType]}</span>
               </li>
             ))}
           </ul>
 
-          <h3 className="text-sm font-medium mt-3 mb-2">
+          <h3 className='text-sm font-medium mt-3 mb-2'>
             Finalidades do Tratamento:
           </h3>
-          <ul className="text-xs text-muted-foreground space-y-1">
-            {processingPurposes.map((purpose) => (
-              <li key={purpose} className="flex items-start gap-2">
+          <ul className='text-xs text-muted-foreground space-y-1'>
+            {processingPurposes.map(purpose => (
+              <li key={purpose} className='flex items-start gap-2'>
                 <span>•</span>
                 <span>{purposeDescriptions[purpose]}</span>
               </li>
@@ -464,53 +458,48 @@ export const LGPDConsentBanner: React.FC<LGPDConsentBannerProps> = ({
 
         {/* Granular consent options */}
         {allowGranular && (
-          <div className="mb-4">
+          <div className='mb-4'>
             <button
               onClick={() => setShowDetails(!showDetails)}
-              className="text-sm text-primary hover:underline mb-3 flex items-center gap-1"
+              className='text-sm text-primary hover:underline mb-3 flex items-center gap-1'
               aria-expanded={showDetails}
             >
-              {showDetails ? "▼" : "▶"} Configurações Detalhadas de
-              Consentimento
+              {showDetails ? '▼' : '▶'} Configurações Detalhadas de Consentimento
             </button>
 
             {showDetails && (
-              <div className="space-y-3 border rounded-md p-3">
-                {allConsents.map((consentType) => {
+              <div className='space-y-3 border rounded-md p-3'>
+                {allConsents.map(consentType => {
                   const info = consentDescriptions[consentType];
                   const isRequired = requiredConsents.includes(consentType);
 
                   return (
-                    <div key={consentType} className="flex items-start gap-3">
+                    <div key={consentType} className='flex items-start gap-3'>
                       <input
-                        type="checkbox"
+                        type='checkbox'
                         id={`consent-${consentType}`}
                         checked={consentStatus[consentType]}
                         disabled={isRequired}
-                        onChange={(e) =>
-                          handleConsentChange(consentType, e.target.checked)
-                        }
-                        className="mt-1"
+                        onChange={e => handleConsentChange(consentType, e.target.checked)}
+                        className='mt-1'
                         aria-describedby={`consent-${consentType}-desc`}
                       />
-                      <div className="flex-1">
+                      <div className='flex-1'>
                         <label
                           htmlFor={`consent-${consentType}`}
-                          className={cn("text-sm font-medium cursor-pointer", {
-                            "cursor-not-allowed opacity-70": isRequired,
+                          className={cn('text-sm font-medium cursor-pointer', {
+                            'cursor-not-allowed opacity-70': isRequired,
                           })}
                         >
                           {info?.title || consentType}
-                          {isRequired && (
-                            <span className="text-destructive ml-1">*</span>
-                          )}
+                          {isRequired && <span className='text-destructive ml-1'>*</span>}
                         </label>
                         <p
                           id={`consent-${consentType}-desc`}
-                          className="text-xs text-muted-foreground mt-1"
+                          className='text-xs text-muted-foreground mt-1'
                         >
-                          {info?.description ||
-                            "Consentimento para processamento de dados"}
+                          {info?.description
+                            || 'Consentimento para processamento de dados'}
                         </p>
                       </div>
                     </div>
@@ -522,17 +511,17 @@ export const LGPDConsentBanner: React.FC<LGPDConsentBannerProps> = ({
         )}
 
         {/* Action buttons */}
-        <div className="flex flex-col sm:flex-row gap-3 mb-4">
+        <div className='flex flex-col sm:flex-row gap-3 mb-4'>
           <button
             onClick={handleAcceptAll}
-            className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors font-medium"
+            className='px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors font-medium'
           >
             Aceitar Todos
           </button>
 
           <button
             onClick={handleAcceptRequired}
-            className="px-4 py-2 border border-input rounded-md hover:bg-accent transition-colors"
+            className='px-4 py-2 border border-input rounded-md hover:bg-accent transition-colors'
           >
             Apenas Necessários
           </button>
@@ -540,7 +529,7 @@ export const LGPDConsentBanner: React.FC<LGPDConsentBannerProps> = ({
           {allowGranular && (
             <button
               onClick={() => saveConsent(consentStatus)}
-              className="px-4 py-2 border border-input rounded-md hover:bg-accent transition-colors"
+              className='px-4 py-2 border border-input rounded-md hover:bg-accent transition-colors'
             >
               Salvar Preferências
             </button>
@@ -548,18 +537,18 @@ export const LGPDConsentBanner: React.FC<LGPDConsentBannerProps> = ({
         </div>
 
         {/* Footer links */}
-        <div className="text-xs text-muted-foreground space-y-1">
-          <div className="flex flex-wrap gap-4">
+        <div className='text-xs text-muted-foreground space-y-1'>
+          <div className='flex flex-wrap gap-4'>
             {privacyPolicyUrl && (
               <a
                 href={privacyPolicyUrl}
-                target="blank"
-                rel="noopener noreferrer"
-                onClick={(e) => {
+                target='blank'
+                rel='noopener noreferrer'
+                onClick={e => {
                   e.preventDefault();
                   onPrivacyPolicyView?.();
                 }}
-                className="hover:underline"
+                className='hover:underline'
               >
                 Política de Privacidade
               </a>
@@ -568,39 +557,38 @@ export const LGPDConsentBanner: React.FC<LGPDConsentBannerProps> = ({
             {dataProcessingUrl && (
               <a
                 href={dataProcessingUrl}
-                target="blank"
-                rel="noopener noreferrer"
-                onClick={(e) => {
+                target='blank'
+                rel='noopener noreferrer'
+                onClick={e => {
                   e.preventDefault();
                   onDataProcessingView?.();
                 }}
-                className="hover:underline"
+                className='hover:underline'
               >
                 Como Processamos seus Dados
               </a>
             )}
 
             <span>
-              Dúvidas? Entre em contato:{" "}
-              <a href={`mailto:${contactEmail}`} className="hover:underline">
+              Dúvidas? Entre em contato:{' '}
+              <a href={`mailto:${contactEmail}`} className='hover:underline'>
                 {contactEmail}
               </a>
             </span>
           </div>
 
-          <p className="mt-2">
-            Seus dados são protegidos conforme a Lei Geral de Proteção de Dados
-            (LGPD). Você pode alterar ou retirar seus consentimentos a qualquer
-            momento.
+          <p className='mt-2'>
+            Seus dados são protegidos conforme a Lei Geral de Proteção de Dados (LGPD). Você pode
+            alterar ou retirar seus consentimentos a qualquer momento.
           </p>
         </div>
 
         {/* Close button for modal */}
-        {variant === "modal" && (
+        {variant === 'modal' && (
           <button
             onClick={() => setIsVisible(false)}
-            className="absolute top-4 right-4 text-muted-foreground hover:text-foreground"
-            aria-label="Fechar"
+            className='absolute top-4 right-4 text-muted-foreground hover:text-foreground'
+            aria-label='Fechar'
           >
             ✕
           </button>
@@ -619,7 +607,7 @@ export const useLGPDConsent = () => {
 
   useEffect(() => {
     try {
-      const stored = localStorage.getItem("lgpd-healthcare-consent");
+      const stored = localStorage.getItem('lgpd-healthcare-consent');
       if (stored) {
         const parsed = JSON.parse(stored);
         // Support older shape (consents map) by extracting into ConsentStatus if present
@@ -628,7 +616,7 @@ export const useLGPDConsent = () => {
         setHasConsent(Boolean(status[ConsentType.ESSENTIAL]));
       }
     } catch (error) {
-      console.warn("Error reading stored consent:", error);
+      console.warn('Error reading stored consent:', error);
     }
   }, []);
 
@@ -646,7 +634,7 @@ export const useLGPDConsent = () => {
       };
 
       localStorage.setItem(
-        "lgpd-healthcare-consent",
+        'lgpd-healthcare-consent',
         JSON.stringify(updatedData),
       );
       setConsentData(updatedData);

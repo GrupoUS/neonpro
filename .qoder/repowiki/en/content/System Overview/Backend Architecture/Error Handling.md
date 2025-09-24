@@ -254,7 +254,7 @@ export const errorTrackingConfig = {
     tracesSampleRate: isProduction ? 0.01 : 0.1,
     metricsEnabled: true,
   },
-}
+};
 ```
 
 **Diagram sources **

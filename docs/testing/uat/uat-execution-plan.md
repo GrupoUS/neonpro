@@ -506,7 +506,7 @@ interface TestSession {
       'Welcome and introductions',
       'Review of daily objectives',
       'Technical environment check',
-      'Questions and answers'
+      'Questions and answers',
     ];
   };
   instruction: {
@@ -515,7 +515,7 @@ interface TestSession {
       'Role-specific test scripts',
       'Quick reference guides',
       'Issue reporting procedures',
-      'Support contact information'
+      'Support contact information',
     ];
   };
   execution: {
@@ -525,7 +525,7 @@ interface TestSession {
       'Test case execution with think-aloud protocol',
       'Screenshot and video recording as needed',
       'Real-time issue documentation',
-      'Periodic check-ins with facilitator'
+      'Periodic check-ins with facilitator',
     ];
   };
   debrief: {
@@ -534,7 +534,7 @@ interface TestSession {
       'Experience sharing and feedback',
       'Issue review and validation',
       'Suggestions for improvement',
-      'Final questions and next steps'
+      'Final questions and next steps',
     ];
   };
 }
@@ -551,20 +551,20 @@ interface UATFacilitator {
       'Master test scripts and system functionality',
       'Prepare technical environment',
       'Review participant background and needs',
-      'Set up recording and monitoring tools'
+      'Set up recording and monitoring tools',
     ];
     duringTesting: [
       'Provide clear instructions and guidance',
       'Observe user behavior and interactions',
       'Document issues and observations',
       'Provide technical support as needed',
-      'Ensure testing stays on schedule'
+      'Ensure testing stays on schedule',
     ];
     postSession: [
       'Collect and organize feedback',
       'Document issues in tracking system',
       'Analyze user behavior patterns',
-      'Prepare daily summary reports'
+      'Prepare daily summary reports',
     ];
   };
   skills: {
@@ -572,19 +572,19 @@ interface UATFacilitator {
       'Deep understanding of NeonPro platform',
       'Troubleshooting common technical issues',
       'Experience with testing tools and methodologies',
-      'Knowledge of healthcare compliance requirements'
+      'Knowledge of healthcare compliance requirements',
     ];
     interpersonal: [
       'Strong communication and listening skills',
       'Patience and empathy with users',
       'Ability to explain technical concepts clearly',
-      'Cultural sensitivity for Brazilian users'
+      'Cultural sensitivity for Brazilian users',
     ];
     analytical: [
       'Attention to detail and observation skills',
       'Ability to identify usability issues',
       'Critical thinking and problem-solving',
-      'Data analysis and pattern recognition'
+      'Data analysis and pattern recognition',
     ];
   };
 }
@@ -1184,13 +1184,13 @@ interface ParticipantContingency {
       'Multiple reminder notifications',
       'Calendar invitations with acceptance',
       'Incentive clarification',
-      'Personal contact from facilitator'
+      'Personal contact from facilitator',
     ];
     response: [
       'Immediate contact to reschedule',
       'Standby participant activation',
       'Session recording for later review',
-      'Extended testing hours if needed'
+      'Extended testing hours if needed',
     ];
   };
   dropoutPrevention: {
@@ -1198,13 +1198,13 @@ interface ParticipantContingency {
       'Regular progress updates',
       'Incentive milestones',
       'Recognition and appreciation',
-      'Flexible scheduling options'
+      'Flexible scheduling options',
     ];
     support: [
       'Dedicated support contact',
       'Technical assistance available',
       'Accommodation for special needs',
-      'Clear expectations and guidelines'
+      'Clear expectations and guidelines',
     ];
   };
   performanceIssues: {
@@ -1212,13 +1212,13 @@ interface ParticipantContingency {
       'Real-time performance monitoring',
       'Facilitator observation',
       'Peer feedback mechanisms',
-      'Self-assessment opportunities'
+      'Self-assessment opportunities',
     ];
     intervention: [
       'Additional training sessions',
       'One-on-one coaching',
       'Simplified task assignments',
-      'Extended time allowances'
+      'Extended time allowances',
     ];
   };
 }

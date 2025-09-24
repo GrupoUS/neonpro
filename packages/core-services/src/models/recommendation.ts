@@ -4,15 +4,15 @@
 // Date: 2025-09-19
 
 import type {
-  SubscriptionTier,
-  EnhancedAIModel,
   AIFeatureCode,
   BillingMetrics,
+  EnhancedAIModel,
   MedicalSpecialty,
-} from "@neonpro/types";
-import { Plan } from "./plan";
-import { UserPlan } from "./user-plan";
-import { UsageCounter } from "./usage-counter";
+  SubscriptionTier,
+} from '@neonpro/types';
+import { Plan } from './plan';
+import { UsageCounter } from './usage-counter';
+import { UserPlan } from './user-plan';
 
 // ================================================
 // RECOMMENDATION INTERFACES
@@ -24,22 +24,22 @@ import { UsageCounter } from "./usage-counter";
 export interface BaseRecommendation {
   readonly id: string;
   readonly type:
-    | "plan_upgrade"
-    | "cost_optimization"
-    | "feature_suggestion"
-    | "model_optimization"
-    | "compliance_improvement";
-  readonly priority: "low" | "medium" | "high" | "critical";
+    | 'plan_upgrade'
+    | 'cost_optimization'
+    | 'feature_suggestion'
+    | 'model_optimization'
+    | 'compliance_improvement';
+  readonly priority: 'low' | 'medium' | 'high' | 'critical';
   readonly title: string;
   readonly description: string;
   readonly estimatedImpact: string;
-  readonly implementationEffort: "baixo" | "médio" | "alto";
+  readonly implementationEffort: 'baixo' | 'médio' | 'alto';
   readonly category:
-    | "cost"
-    | "performance"
-    | "compliance"
-    | "features"
-    | "usage";
+    | 'cost'
+    | 'performance'
+    | 'compliance'
+    | 'features'
+    | 'usage';
   readonly createdAt: Date;
   readonly validUntil?: Date;
   readonly dismissed: boolean;
@@ -49,7 +49,7 @@ export interface BaseRecommendation {
  * Plan upgrade recommendation
  */
 export interface PlanUpgradeRecommendation extends BaseRecommendation {
-  readonly type: "plan_upgrade";
+  readonly type: 'plan_upgrade';
   readonly currentPlan: SubscriptionTier;
   readonly recommendedPlan: SubscriptionTier;
   readonly unlockingFeatures: AIFeatureCode[];
@@ -57,22 +57,22 @@ export interface PlanUpgradeRecommendation extends BaseRecommendation {
   readonly costDifferenceUsd: number;
   readonly projectedSavings?: number;
   readonly reason:
-    | "quota_exceeded"
-    | "feature_access"
-    | "cost_optimization"
-    | "compliance_requirement";
+    | 'quota_exceeded'
+    | 'feature_access'
+    | 'cost_optimization'
+    | 'compliance_requirement';
 }
 
 /**
  * Cost optimization recommendation
  */
 export interface CostOptimizationRecommendation extends BaseRecommendation {
-  readonly type: "cost_optimization";
+  readonly type: 'cost_optimization';
   readonly optimizationType:
-    | "model_selection"
-    | "caching_improvement"
-    | "usage_pattern"
-    | "plan_adjustment";
+    | 'model_selection'
+    | 'caching_improvement'
+    | 'usage_pattern'
+    | 'plan_adjustment';
   readonly currentCostUsd: number;
   readonly projectedSavingsUsd: number;
   readonly savingsPercentage: number;
@@ -88,7 +88,7 @@ export interface CostOptimizationRecommendation extends BaseRecommendation {
  * Feature suggestion recommendation
  */
 export interface FeatureSuggestionRecommendation extends BaseRecommendation {
-  readonly type: "feature_suggestion";
+  readonly type: 'feature_suggestion';
   readonly suggestedFeatures: AIFeatureCode[];
   readonly useCases: string[];
   readonly businessValue: string;
@@ -100,33 +100,32 @@ export interface FeatureSuggestionRecommendation extends BaseRecommendation {
  * Model optimization recommendation
  */
 export interface ModelOptimizationRecommendation extends BaseRecommendation {
-  readonly type: "model_optimization";
+  readonly type: 'model_optimization';
   readonly currentModel: EnhancedAIModel;
   readonly suggestedModel: EnhancedAIModel;
   readonly reason:
-    | "cost_efficiency"
-    | "performance"
-    | "healthcare_optimized"
-    | "language_preference";
+    | 'cost_efficiency'
+    | 'performance'
+    | 'healthcare_optimized'
+    | 'language_preference';
   readonly expectedImprovement: {
     costSavings?: number;
     performanceGain?: number;
     accuracyImprovement?: number;
   };
-  readonly migrationComplexity: "baixa" | "média" | "alta";
+  readonly migrationComplexity: 'baixa' | 'média' | 'alta';
 }
 
 /**
  * Compliance improvement recommendation
  */
-export interface ComplianceImprovementRecommendation
-  extends BaseRecommendation {
-  readonly type: "compliance_improvement";
-  readonly complianceArea: "cfm" | "anvisa" | "lgpd" | "audit_trail";
+export interface ComplianceImprovementRecommendation extends BaseRecommendation {
+  readonly type: 'compliance_improvement';
+  readonly complianceArea: 'cfm' | 'anvisa' | 'lgpd' | 'audit_trail';
   readonly currentLevel: string;
   readonly recommendedLevel: string;
   readonly requirements: string[];
-  readonly riskLevel: "baixo" | "médio" | "alto" | "crítico";
+  readonly riskLevel: 'baixo' | 'médio' | 'alto' | 'crítico';
   readonly regulatoryImpact: string;
 }
 
@@ -199,8 +198,7 @@ export class RecommendationModel {
 
     // Sort by priority and return
     return Array.from(this._recommendations.values()).sort(
-      (a, b) =>
-        this.getPriorityScore(b.priority) - this.getPriorityScore(a.priority),
+      (a, b) => this.getPriorityScore(b.priority) - this.getPriorityScore(a.priority),
     );
   }
 
@@ -230,8 +228,8 @@ export class RecommendationModel {
 
     // Check for cost optimization through plan changes
     if (
-      this._context.billingMetrics.cacheSavingsPercentage > 80 &&
-      userPlan.planCode === "pro"
+      this._context.billingMetrics.cacheSavingsPercentage > 80
+      && userPlan.planCode === 'pro'
     ) {
       const costUpgrade = this.generateCostOptimizationUpgradeRecommendation();
       if (costUpgrade) {
@@ -251,21 +249,23 @@ export class RecommendationModel {
     if (true) { // Temporary condition - TODO: Add actual cache optimization logic
       const cacheOptimization: CostOptimizationRecommendation = {
         id: `cost-cache-${Date.now()}`,
-        type: "cost_optimization",
-        priority: "high",
-        title: "Melhore a Taxa de Cache para Reduzir Custos",
+        type: 'cost_optimization',
+        priority: 'high',
+        title: 'Melhore a Taxa de Cache para Reduzir Custos',
         description: `Otimizar consultas similares pode reduzir custos em até 80%.`,
-        estimatedImpact: `Economia potencial: $${(billingMetrics.totalCostUsd * 0.4).toFixed(2)}/mês`,
-        implementationEffort: "baixo",
-        category: "cost",
-        optimizationType: "caching_improvement",
+        estimatedImpact: `Economia potencial: $${
+          (billingMetrics.totalCostUsd * 0.4).toFixed(2)
+        }/mês`,
+        implementationEffort: 'baixo',
+        category: 'cost',
+        optimizationType: 'caching_improvement',
         currentCostUsd: billingMetrics.totalCostUsd,
         projectedSavingsUsd: billingMetrics.totalCostUsd * 0.4,
         savingsPercentage: 40,
         actionItems: [
-          "Revise consultas frequentes para reduzir variações desnecessárias",
-          "Use templates padronizados para consultas comuns",
-          "Configure cache semântico para especialidades médicas específicas",
+          'Revise consultas frequentes para reduzir variações desnecessárias',
+          'Use templates padronizados para consultas comuns',
+          'Configure cache semântico para especialidades médicas específicas',
         ],
         createdAt: new Date(),
         dismissed: false,
@@ -291,27 +291,27 @@ export class RecommendationModel {
 
     // Advanced analytics for high-usage users
     if (
-      !userPlan.plan.hasFeature("ai_analytics") &&
-      this._context.recentActivity.requests > 100
+      !userPlan.plan.hasFeature('ai_analytics')
+      && this._context.recentActivity.requests > 100
     ) {
       const analyticsRecommendation: FeatureSuggestionRecommendation = {
         id: `feature-analytics-${Date.now()}`,
-        type: "feature_suggestion",
-        priority: "medium",
-        title: "Ative Analytics Avançado de IA",
+        type: 'feature_suggestion',
+        priority: 'medium',
+        title: 'Ative Analytics Avançado de IA',
         description:
-          "Com seu alto volume de uso, analytics avançado pode fornecer insights valiosos sobre padrões de consultas e otimizações.",
-        estimatedImpact: "Melhoria de 25-40% na eficiência das consultas",
-        implementationEffort: "baixo",
-        category: "features",
-        suggestedFeatures: ["ai_analytics"],
+          'Com seu alto volume de uso, analytics avançado pode fornecer insights valiosos sobre padrões de consultas e otimizações.',
+        estimatedImpact: 'Melhoria de 25-40% na eficiência das consultas',
+        implementationEffort: 'baixo',
+        category: 'features',
+        suggestedFeatures: ['ai_analytics'],
         useCases: [
-          "Análise de padrões de consultas por especialidade",
-          "Identificação de oportunidades de otimização",
-          "Métricas de performance por modelo de IA",
+          'Análise de padrões de consultas por especialidade',
+          'Identificação de oportunidades de otimização',
+          'Métricas de performance por modelo de IA',
         ],
-        businessValue: "Maior ROI no uso de IA através de insights acionáveis",
-        prerequisites: ["Upgrade para plano Pro ou superior"],
+        businessValue: 'Maior ROI no uso de IA através de insights acionáveis',
+        prerequisites: ['Upgrade para plano Pro ou superior'],
         relatedSpecialties: specialties,
         createdAt: new Date(),
         dismissed: false,
@@ -324,8 +324,8 @@ export class RecommendationModel {
 
     // API access for integration opportunities
     if (
-      !userPlan.plan.hasFeature("api_access") &&
-      this.detectIntegrationOpportunity()
+      !userPlan.plan.hasFeature('api_access')
+      && this.detectIntegrationOpportunity()
     ) {
       const apiRecommendation = this.generateApiAccessRecommendation();
       if (apiRecommendation) {
@@ -343,28 +343,28 @@ export class RecommendationModel {
 
     // Healthcare-optimized model recommendation
     if (
-      this._context.medicalSpecialties.length > 0 &&
-      !preferredModels.includes("healthcare-pt-br") &&
-      this._context.userPlan.plan.hasModelAccess("healthcare-pt-br")
+      this._context.medicalSpecialties.length > 0
+      && !preferredModels.includes('healthcare-pt-br')
+      && this._context.userPlan.plan.hasModelAccess('healthcare-pt-br')
     ) {
       const healthcareModelRec: ModelOptimizationRecommendation = {
         id: `model-healthcare-${Date.now()}`,
-        type: "model_optimization",
-        priority: "high",
-        title: "Use Modelo Otimizado para Saúde Brasileira",
+        type: 'model_optimization',
+        priority: 'high',
+        title: 'Use Modelo Otimizado para Saúde Brasileira',
         description:
-          "Detectamos uso em especialidades médicas. O modelo healthcare-pt-br oferece melhor precisão para contexto médico brasileiro.",
-        estimatedImpact: "Melhoria de 30% na precisão médica",
-        implementationEffort: "baixo",
-        category: "performance",
-        currentModel: preferredModels[0] || "gpt-4o",
-        suggestedModel: "healthcare-pt-br",
-        reason: "healthcare_optimized",
+          'Detectamos uso em especialidades médicas. O modelo healthcare-pt-br oferece melhor precisão para contexto médico brasileiro.',
+        estimatedImpact: 'Melhoria de 30% na precisão médica',
+        implementationEffort: 'baixo',
+        category: 'performance',
+        currentModel: preferredModels[0] || 'gpt-4o',
+        suggestedModel: 'healthcare-pt-br',
+        reason: 'healthcare_optimized',
         expectedImprovement: {
           accuracyImprovement: 30,
           performanceGain: 15,
         },
-        migrationComplexity: "baixa",
+        migrationComplexity: 'baixa',
         createdAt: new Date(),
         dismissed: false,
       };
@@ -389,30 +389,29 @@ export class RecommendationModel {
 
     // CFM compliance recommendation
     if (
-      complianceReqs.cfmRequired &&
-      userPlan.plan.cfmComplianceLevel === "basic"
+      complianceReqs.cfmRequired
+      && userPlan.plan.cfmComplianceLevel === 'basic'
     ) {
       const cfmRec: ComplianceImprovementRecommendation = {
         id: `compliance-cfm-${Date.now()}`,
-        type: "compliance_improvement",
-        priority: "critical",
-        title: "Melhore Compliance CFM para Avançado",
+        type: 'compliance_improvement',
+        priority: 'critical',
+        title: 'Melhore Compliance CFM para Avançado',
         description:
-          "Suas atividades médicas requerem compliance CFM avançado conforme Resolução 2314/2022.",
-        estimatedImpact: "Conformidade total com regulamentações CFM",
-        implementationEffort: "médio",
-        category: "compliance",
-        complianceArea: "cfm",
+          'Suas atividades médicas requerem compliance CFM avançado conforme Resolução 2314/2022.',
+        estimatedImpact: 'Conformidade total com regulamentações CFM',
+        implementationEffort: 'médio',
+        category: 'compliance',
+        complianceArea: 'cfm',
         currentLevel: userPlan.plan.cfmComplianceLevel,
-        recommendedLevel: "advanced",
+        recommendedLevel: 'advanced',
         requirements: [
-          "Upgrade para plano Pro ou superior",
-          "Configuração de auditoria médica avançada",
-          "Treinamento em uso ético de IA médica",
+          'Upgrade para plano Pro ou superior',
+          'Configuração de auditoria médica avançada',
+          'Treinamento em uso ético de IA médica',
         ],
-        riskLevel: "alto",
-        regulatoryImpact:
-          "Não conformidade pode resultar em penalidades do CFM",
+        riskLevel: 'alto',
+        regulatoryImpact: 'Não conformidade pode resultar em penalidades do CFM',
         createdAt: new Date(),
         dismissed: false,
       };
@@ -454,23 +453,32 @@ export class RecommendationModel {
 
     return {
       id: `upgrade-quota-${Date.now()}`,
-      type: "plan_upgrade",
-      priority: "high",
-      title: "Upgrade Recomendado - Limite de Uso Atingido",
-      description: `Você utilizou mais de 90% da sua cota mensal. O plano ${nextPlan.displayName} oferece ${nextPlan.isUnlimited ? "uso ilimitado" : `${nextPlan.monthlyQueryLimit} consultas/mês`}.`,
-      estimatedImpact: `${nextPlan.isUnlimited ? "Uso ilimitado" : `${nextPlan.monthlyQueryLimit - userPlan.plan.monthlyQueryLimit} consultas adicionais/mês`}`,
-      implementationEffort: "baixo",
-      category: "usage",
+      type: 'plan_upgrade',
+      priority: 'high',
+      title: 'Upgrade Recomendado - Limite de Uso Atingido',
+      description:
+        `Você utilizou mais de 90% da sua cota mensal. O plano ${nextPlan.displayName} oferece ${
+          nextPlan.isUnlimited ? 'uso ilimitado' : `${nextPlan.monthlyQueryLimit} consultas/mês`
+        }.`,
+      estimatedImpact: `${
+        nextPlan.isUnlimited
+          ? 'Uso ilimitado'
+          : `${
+            nextPlan.monthlyQueryLimit - userPlan.plan.monthlyQueryLimit
+          } consultas adicionais/mês`
+      }`,
+      implementationEffort: 'baixo',
+      category: 'usage',
       currentPlan: userPlan.planCode,
       recommendedPlan: nextTier,
       unlockingFeatures: nextPlan.availableFeatures.filter(
-        (f) => !userPlan.plan.hasFeature(f),
+        f => !userPlan.plan.hasFeature(f),
       ),
       additionalModels: nextPlan.availableModels.filter(
-        (m) => !userPlan.plan.hasModelAccess(m),
+        m => !userPlan.plan.hasModelAccess(m),
       ),
       costDifferenceUsd: costDifference,
-      reason: "quota_exceeded",
+      reason: 'quota_exceeded',
       createdAt: new Date(),
       dismissed: false,
     };
@@ -493,21 +501,23 @@ export class RecommendationModel {
 
     return {
       id: `upgrade-features-${Date.now()}`,
-      type: "plan_upgrade",
-      priority: "medium",
-      title: "Desbloqueie Recursos Avançados de IA",
-      description: `Baseado no seu uso, recursos como ${missingFeatures.slice(0, 2).join(", ")} podem aumentar sua produtividade.`,
-      estimatedImpact: "Aumento de 40-60% na eficiência operacional",
-      implementationEffort: "baixo",
-      category: "features",
+      type: 'plan_upgrade',
+      priority: 'medium',
+      title: 'Desbloqueie Recursos Avançados de IA',
+      description: `Baseado no seu uso, recursos como ${
+        missingFeatures.slice(0, 2).join(', ')
+      } podem aumentar sua produtividade.`,
+      estimatedImpact: 'Aumento de 40-60% na eficiência operacional',
+      implementationEffort: 'baixo',
+      category: 'features',
       currentPlan: userPlan.planCode,
       recommendedPlan: nextTier,
       unlockingFeatures: missingFeatures,
       additionalModels: nextPlan.availableModels.filter(
-        (m) => !userPlan.plan.hasModelAccess(m),
+        m => !userPlan.plan.hasModelAccess(m),
       ),
       costDifferenceUsd: costDifference,
-      reason: "feature_access",
+      reason: 'feature_access',
       createdAt: new Date(),
       dismissed: false,
     };
@@ -519,33 +529,33 @@ export class RecommendationModel {
 
     // If user has high cache savings, enterprise plan might be more cost-effective
     if (
-      userPlan.planCode === "pro" &&
-      billingMetrics.cacheSavingsPercentage > 80
+      userPlan.planCode === 'pro'
+      && billingMetrics.cacheSavingsPercentage > 80
     ) {
-      const enterprisePlan = new Plan("enterprise");
+      const enterprisePlan = new Plan('enterprise');
       const projectedSavings = billingMetrics.totalCostUsd * 0.2; // 20% additional savings on enterprise
 
       return {
         id: `upgrade-cost-${Date.now()}`,
-        type: "plan_upgrade",
-        priority: "medium",
-        title: "Economize Mais com Plano Empresarial",
+        type: 'plan_upgrade',
+        priority: 'medium',
+        title: 'Economize Mais com Plano Empresarial',
         description:
-          "Seu alto aproveitamento de cache indica que o plano Empresarial pode ser mais econômico a longo prazo.",
+          'Seu alto aproveitamento de cache indica que o plano Empresarial pode ser mais econômico a longo prazo.',
         estimatedImpact: `Economia adicional de $${projectedSavings.toFixed(2)}/mês`,
-        implementationEffort: "baixo",
-        category: "cost",
+        implementationEffort: 'baixo',
+        category: 'cost',
         currentPlan: userPlan.planCode,
-        recommendedPlan: "enterprise",
+        recommendedPlan: 'enterprise',
         unlockingFeatures: enterprisePlan.availableFeatures.filter(
-          (f) => !userPlan.plan.hasFeature(f),
+          f => !userPlan.plan.hasFeature(f),
         ),
         additionalModels: enterprisePlan.availableModels.filter(
-          (m) => !userPlan.plan.hasModelAccess(m),
+          m => !userPlan.plan.hasModelAccess(m),
         ),
-        costDifferenceUsd: this.estimatePlanCostDifference("pro", "enterprise"),
+        costDifferenceUsd: this.estimatePlanCostDifference('pro', 'enterprise'),
         projectedSavings,
-        reason: "cost_optimization",
+        reason: 'cost_optimization',
         createdAt: new Date(),
         dismissed: false,
       };
@@ -569,22 +579,22 @@ export class RecommendationModel {
 
     return {
       id: `cost-model-${Date.now()}`,
-      type: "cost_optimization",
-      priority: "medium",
-      title: "Otimize Seleção de Modelos para Reduzir Custos",
+      type: 'cost_optimization',
+      priority: 'medium',
+      title: 'Otimize Seleção de Modelos para Reduzir Custos',
       description:
-        "Análise sugere que modelos mais econômicos podem atender muitas de suas consultas mantendo qualidade.",
+        'Análise sugere que modelos mais econômicos podem atender muitas de suas consultas mantendo qualidade.',
       estimatedImpact: `Economia de até $${totalSavings.toFixed(2)}/mês`,
-      implementationEffort: "médio",
-      category: "cost",
-      optimizationType: "model_selection",
+      implementationEffort: 'médio',
+      category: 'cost',
+      optimizationType: 'model_selection',
       currentCostUsd: billingMetrics.totalCostUsd,
       projectedSavingsUsd: totalSavings,
       savingsPercentage: (totalSavings / billingMetrics.totalCostUsd) * 100,
       actionItems: [
-        "Configure roteamento inteligente de modelos",
-        "Use modelos econômicos para consultas simples",
-        "Reserve modelos premium para casos complexos",
+        'Configure roteamento inteligente de modelos',
+        'Use modelos econômicos para consultas simples',
+        'Reserve modelos premium para casos complexos',
       ],
       modelSuggestions,
       createdAt: new Date(),
@@ -595,24 +605,24 @@ export class RecommendationModel {
   private generateApiAccessRecommendation(): FeatureSuggestionRecommendation | null {
     return {
       id: `feature-api-${Date.now()}`,
-      type: "feature_suggestion",
-      priority: "medium",
-      title: "Acesso à API para Integração Personalizada",
+      type: 'feature_suggestion',
+      priority: 'medium',
+      title: 'Acesso à API para Integração Personalizada',
       description:
-        "Seu padrão de uso sugere benefícios de integração direta com sistemas clínicos existentes.",
-      estimatedImpact: "Automação de 60-80% das consultas rotineiras",
-      implementationEffort: "médio",
-      category: "features",
-      suggestedFeatures: ["api_access"],
+        'Seu padrão de uso sugere benefícios de integração direta com sistemas clínicos existentes.',
+      estimatedImpact: 'Automação de 60-80% das consultas rotineiras',
+      implementationEffort: 'médio',
+      category: 'features',
+      suggestedFeatures: ['api_access'],
       useCases: [
-        "Integração com sistema de prontuário eletrônico",
-        "Automatização de triagem inicial",
-        "Análise em lote de dados clínicos",
+        'Integração com sistema de prontuário eletrônico',
+        'Automatização de triagem inicial',
+        'Análise em lote de dados clínicos',
       ],
-      businessValue: "Redução significativa no tempo de processos manuais",
+      businessValue: 'Redução significativa no tempo de processos manuais',
       prerequisites: [
-        "Upgrade para plano Pro ou superior",
-        "Equipe técnica para implementação",
+        'Upgrade para plano Pro ou superior',
+        'Equipe técnica para implementação',
       ],
       createdAt: new Date(),
       dismissed: false,
@@ -625,34 +635,33 @@ export class RecommendationModel {
     if (!currentModel) return null;
 
     // Suggest downgrading to more cost-effective model
-    const suggestedModel: EnhancedAIModel =
-      currentModel === "gpt-4o"
-        ? "gpt-4o-mini"
-        : currentModel === "claude-3.5-sonnet"
-          ? "gpt-4o"
-          : "gemini-pro";
+    const suggestedModel: EnhancedAIModel = currentModel === 'gpt-4o'
+      ? 'gpt-4o-mini'
+      : currentModel === 'claude-3.5-sonnet'
+      ? 'gpt-4o'
+      : 'gemini-pro';
 
-    const costSavings =
-      this._context.billingMetrics.averageCostPerRequest *
-      0.4 *
-      this._context.recentActivity.requests;
+    const costSavings = this._context.billingMetrics.averageCostPerRequest
+      * 0.4
+      * this._context.recentActivity.requests;
 
     return {
       id: `model-cost-${Date.now()}`,
-      type: "model_optimization",
-      priority: "medium",
-      title: "Use Modelo Mais Econômico para Consultas Simples",
-      description: `O modelo ${suggestedModel} pode atender a maioria de suas consultas com 60% menos custo.`,
+      type: 'model_optimization',
+      priority: 'medium',
+      title: 'Use Modelo Mais Econômico para Consultas Simples',
+      description:
+        `O modelo ${suggestedModel} pode atender a maioria de suas consultas com 60% menos custo.`,
       estimatedImpact: `Economia de $${costSavings.toFixed(2)}/mês`,
-      implementationEffort: "baixo",
-      category: "cost",
+      implementationEffort: 'baixo',
+      category: 'cost',
       currentModel,
       suggestedModel,
-      reason: "cost_efficiency",
+      reason: 'cost_efficiency',
       expectedImprovement: {
         costSavings,
       },
-      migrationComplexity: "baixa",
+      migrationComplexity: 'baixa',
       createdAt: new Date(),
       dismissed: false,
     };
@@ -661,26 +670,25 @@ export class RecommendationModel {
   private generateAnvisaComplianceRecommendation(): ComplianceImprovementRecommendation | null {
     return {
       id: `compliance-anvisa-${Date.now()}`,
-      type: "compliance_improvement",
-      priority: "critical",
-      title: "Certificação ANVISA Requerida",
+      type: 'compliance_improvement',
+      priority: 'critical',
+      title: 'Certificação ANVISA Requerida',
       description:
-        "Especialidades médicas detectadas requerem certificação ANVISA para uso de IA como dispositivo médico.",
-      estimatedImpact: "Conformidade regulatória completa",
-      implementationEffort: "alto",
-      category: "compliance",
-      complianceArea: "anvisa",
-      currentLevel: "não certificado",
-      recommendedLevel: "certificado",
+        'Especialidades médicas detectadas requerem certificação ANVISA para uso de IA como dispositivo médico.',
+      estimatedImpact: 'Conformidade regulatória completa',
+      implementationEffort: 'alto',
+      category: 'compliance',
+      complianceArea: 'anvisa',
+      currentLevel: 'não certificado',
+      recommendedLevel: 'certificado',
       requirements: [
-        "Upgrade para plano certificado pela ANVISA",
-        "Implementação de sistema de qualidade",
-        "Documentação de processos clínicos",
-        "Auditoria de segurança médica",
+        'Upgrade para plano certificado pela ANVISA',
+        'Implementação de sistema de qualidade',
+        'Documentação de processos clínicos',
+        'Auditoria de segurança médica',
       ],
-      riskLevel: "crítico",
-      regulatoryImpact:
-        "Uso sem certificação pode violar regulamentações sanitárias",
+      riskLevel: 'crítico',
+      regulatoryImpact: 'Uso sem certificação pode violar regulamentações sanitárias',
       createdAt: new Date(),
       dismissed: false,
     };
@@ -689,25 +697,25 @@ export class RecommendationModel {
   private generateLgpdEnhancementRecommendation(): ComplianceImprovementRecommendation | null {
     return {
       id: `compliance-lgpd-${Date.now()}`,
-      type: "compliance_improvement",
-      priority: "high",
-      title: "Recursos LGPD Avançados Recomendados",
+      type: 'compliance_improvement',
+      priority: 'high',
+      title: 'Recursos LGPD Avançados Recomendados',
       description:
-        "Para conformidade total com LGPD, recursos avançados de proteção de dados são recomendados.",
-      estimatedImpact: "Proteção completa de dados pessoais",
-      implementationEffort: "médio",
-      category: "compliance",
-      complianceArea: "lgpd",
-      currentLevel: "básico",
-      recommendedLevel: "avançado",
+        'Para conformidade total com LGPD, recursos avançados de proteção de dados são recomendados.',
+      estimatedImpact: 'Proteção completa de dados pessoais',
+      implementationEffort: 'médio',
+      category: 'compliance',
+      complianceArea: 'lgpd',
+      currentLevel: 'básico',
+      recommendedLevel: 'avançado',
       requirements: [
-        "Upgrade para plano com LGPD avançado",
-        "Configuração de consentimento granular",
-        "Implementação de anonimização automática",
-        "Auditoria de fluxo de dados",
+        'Upgrade para plano com LGPD avançado',
+        'Configuração de consentimento granular',
+        'Implementação de anonimização automática',
+        'Auditoria de fluxo de dados',
       ],
-      riskLevel: "médio",
-      regulatoryImpact: "Melhor conformidade com LGPD reduz riscos legais",
+      riskLevel: 'médio',
+      regulatoryImpact: 'Melhor conformidade com LGPD reduz riscos legais',
       createdAt: new Date(),
       dismissed: false,
     };
@@ -717,13 +725,13 @@ export class RecommendationModel {
   // UTILITY METHODS
   // ================================================
 
-  private getPriorityScore(priority: BaseRecommendation["priority"]): number {
+  private getPriorityScore(priority: BaseRecommendation['priority']): number {
     const scores = { critical: 4, high: 3, medium: 2, low: 1 };
     return scores[priority];
   }
 
   private getNextTier(currentTier: SubscriptionTier): SubscriptionTier | null {
-    const tiers: SubscriptionTier[] = ["free", "trial", "pro", "enterprise"];
+    const tiers: SubscriptionTier[] = ['free', 'trial', 'pro', 'enterprise'];
     const currentIndex = tiers.indexOf(currentTier);
     const nextIndex = currentIndex + 1;
     if (nextIndex >= 0 && nextIndex < tiers.length) {
@@ -743,9 +751,9 @@ export class RecommendationModel {
 
   private shouldRecommendFeatureUpgrade(): boolean {
     return (
-      this._context.recentActivity.requests > 50 ||
-      this._context.medicalSpecialties.length > 2 ||
-      this._context.billingMetrics.totalRequests > 200
+      this._context.recentActivity.requests > 50
+      || this._context.medicalSpecialties.length > 2
+      || this._context.billingMetrics.totalRequests > 200
     );
   }
 
@@ -754,24 +762,24 @@ export class RecommendationModel {
     const beneficial: AIFeatureCode[] = [];
 
     if (
-      !userPlan.plan.hasFeature("ai_analytics") &&
-      this._context.recentActivity.requests > 100
+      !userPlan.plan.hasFeature('ai_analytics')
+      && this._context.recentActivity.requests > 100
     ) {
-      beneficial.push("ai_analytics");
+      beneficial.push('ai_analytics');
     }
 
     if (
-      !userPlan.plan.hasFeature("api_access") &&
-      this.detectIntegrationOpportunity()
+      !userPlan.plan.hasFeature('api_access')
+      && this.detectIntegrationOpportunity()
     ) {
-      beneficial.push("api_access");
+      beneficial.push('api_access');
     }
 
     if (
-      !userPlan.plan.hasFeature("lgpd_advanced") &&
-      this._context.medicalSpecialties.length > 0
+      !userPlan.plan.hasFeature('lgpd_advanced')
+      && this._context.medicalSpecialties.length > 0
     ) {
-      beneficial.push("lgpd_advanced");
+      beneficial.push('lgpd_advanced');
     }
 
     return beneficial;
@@ -779,9 +787,9 @@ export class RecommendationModel {
 
   private detectIntegrationOpportunity(): boolean {
     return (
-      this._context.recentActivity.requests > 200 ||
-      this._context.usageCounter.getUsageInsights().patterns.peakHours.length >
-        8
+      this._context.recentActivity.requests > 200
+      || this._context.usageCounter.getUsageInsights().patterns.peakHours.length
+        > 8
     );
   }
 
@@ -801,19 +809,18 @@ export class RecommendationModel {
       let suggested: EnhancedAIModel | null = null;
       let savingsMultiplier = 0;
 
-      if (model === "gpt-4o") {
-        suggested = "gpt-4o-mini";
+      if (model === 'gpt-4o') {
+        suggested = 'gpt-4o-mini';
         savingsMultiplier = 0.6;
-      } else if (model === "claude-3.5-sonnet") {
-        suggested = "gpt-4o";
+      } else if (model === 'claude-3.5-sonnet') {
+        suggested = 'gpt-4o';
         savingsMultiplier = 0.4;
       }
 
       if (suggested) {
         const monthlyCost = this._context.billingMetrics.totalCostUsd;
         const modelUsagePercentage = 0.4; // Estimate 40% usage for this model
-        const costSavings =
-          monthlyCost * modelUsagePercentage * savingsMultiplier;
+        const costSavings = monthlyCost * modelUsagePercentage * savingsMultiplier;
 
         suggestions.push({
           current: model,
@@ -833,7 +840,7 @@ export class RecommendationModel {
   /**
    * Gets recommendations by type
    */
-  getRecommendationsByType<T extends Recommendation["type"]>(
+  getRecommendationsByType<T extends Recommendation['type']>(
     type: T,
   ): Array<Extract<Recommendation, { type: T }>> {
     return Array.from(this._recommendations.values()).filter(
@@ -845,10 +852,10 @@ export class RecommendationModel {
    * Gets recommendations by priority
    */
   getRecommendationsByPriority(
-    priority: BaseRecommendation["priority"],
+    priority: BaseRecommendation['priority'],
   ): Recommendation[] {
     return Array.from(this._recommendations.values()).filter(
-      (rec) => rec.priority === priority,
+      rec => rec.priority === priority,
     );
   }
 
@@ -857,8 +864,7 @@ export class RecommendationModel {
    */
   getActiveRecommendations(): Recommendation[] {
     return Array.from(this._recommendations.values()).filter(
-      (rec) =>
-        !rec.dismissed && (!rec.validUntil || rec.validUntil > new Date()),
+      rec => !rec.dismissed && (!rec.validUntil || rec.validUntil > new Date()),
     );
   }
 
@@ -879,20 +885,20 @@ export class RecommendationModel {
    */
   getSummary(): {
     total: number;
-    byPriority: Record<BaseRecommendation["priority"], number>;
-    byCategory: Record<BaseRecommendation["category"], number>;
+    byPriority: Record<BaseRecommendation['priority'], number>;
+    byCategory: Record<BaseRecommendation['category'], number>;
     totalPotentialSavings: number;
   } {
     const recommendations = this.getActiveRecommendations();
 
-    const byPriority: Record<BaseRecommendation["priority"], number> = {
+    const byPriority: Record<BaseRecommendation['priority'], number> = {
       critical: 0,
       high: 0,
       medium: 0,
       low: 0,
     };
 
-    const byCategory: Record<BaseRecommendation["category"], number> = {
+    const byCategory: Record<BaseRecommendation['category'], number> = {
       cost: 0,
       performance: 0,
       compliance: 0,
@@ -907,9 +913,9 @@ export class RecommendationModel {
       byCategory[rec.category]++;
 
       // Calculate potential savings
-      if (rec.type === "cost_optimization") {
+      if (rec.type === 'cost_optimization') {
         totalPotentialSavings += rec.projectedSavingsUsd;
-      } else if (rec.type === "plan_upgrade" && rec.projectedSavings) {
+      } else if (rec.type === 'plan_upgrade' && rec.projectedSavings) {
         totalPotentialSavings += rec.projectedSavings;
       }
     }
@@ -928,7 +934,7 @@ export class RecommendationModel {
   toJSON(): {
     _context: RecommendationContext;
     recommendations: Recommendation[];
-    summary: ReturnType<RecommendationModel["getSummary"]>;
+    summary: ReturnType<RecommendationModel['getSummary']>;
   } {
     return {
       _context: this._context,

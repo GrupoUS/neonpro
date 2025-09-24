@@ -5,27 +5,27 @@
  * treatment management, appointment optimization, financial operations, and compliance.
  */
 
-import { AestheticAguiProtocol } from './aesthetic-protocol';
-import { AestheticRAGService } from './aesthetic-rag-service';
 import { AestheticCacheService } from './aesthetic-cache-service';
 import { AestheticComplianceService } from './aesthetic-compliance-service';
 import { AestheticNotificationService } from './aesthetic-notification-service';
-import { AguiSession, AguiMessage } from './types';
+import { AestheticAguiProtocol } from './aesthetic-protocol';
+import { AestheticRAGService } from './aesthetic-rag-service';
 import {
-  AestheticTreatment,
-  AestheticAppointment,
-  AestheticClientProfile,
-  AestheticFinancialTransaction,
-  AestheticAssessment,
-  AestheticComplianceReport,
   AestheticAnalytics,
-  AestheticInventory,
+  AestheticAppointment,
+  AestheticAssessment,
+  AestheticClientProfile,
+  AestheticComplianceAudit,
+  AestheticComplianceReport,
   AestheticEmergency,
+  AestheticFinancialTransaction,
+  AestheticInventory,
   AestheticPhotoConsent,
-  AestheticScheduleOptimization,
   AestheticRetentionAnalysis,
-  AestheticComplianceAudit
+  AestheticScheduleOptimization,
+  AestheticTreatment,
 } from './aesthetic-types';
+import { AguiMessage, AguiSession } from './types';
 
 export interface AestheticServiceConfig {
   databaseUrl: string;
@@ -95,7 +95,7 @@ export class AestheticAguiService {
       complianceScore: 100,
       patientSatisfaction: 0,
       inventoryTurnover: 0,
-      staffUtilization: 0
+      staffUtilization: 0,
     };
   }
 
@@ -106,25 +106,25 @@ export class AestheticAguiService {
       databaseUrl: this.config.databaseUrl,
       model: 'claude-3.5-sonnet-20241022',
       maxTokens: 4000,
-      temperature: 0.1
+      temperature: 0.1,
     });
 
     this.cacheService = new AestheticCacheService({
       redisUrl: this.config.cacheRedisUrl,
       defaultTtl: 300,
-      compressionEnabled: true
+      compressionEnabled: true,
     });
 
     this.complianceService = new AestheticComplianceService({
       anvisaApiKey: this.config.complianceConfig.anvisaApiKey,
       lgpdEncryptionKey: this.config.complianceConfig.lgpdEncryptionKey,
-      auditLogRetention: this.config.complianceConfig.auditLogRetention
+      auditLogRetention: this.config.complianceConfig.auditLogRetention,
     });
 
     this.notificationService = new AestheticNotificationService({
       emailProvider: this.config.notificationServiceConfig.emailProvider,
       smsProvider: this.config.notificationServiceConfig.smsProvider,
-      whatsappProvider: this.config.notificationServiceConfig.whatsappProvider
+      whatsappProvider: this.config.notificationServiceConfig.whatsappProvider,
     });
 
     this.protocol = new AestheticAguiProtocol({
@@ -139,7 +139,7 @@ export class AestheticAguiService {
       enableEncryption: true,
       supportedLanguages: ['pt-BR', 'en-US'],
       anvisaReportingEnabled: true,
-      lgpdComplianceLevel: 'strict'
+      lgpdComplianceLevel: 'strict',
     });
   }
 
@@ -154,13 +154,13 @@ export class AestheticAguiService {
         clientInfo,
         startTime: new Date().toISOString(),
         platform: 'web',
-        version: '1.0.0'
+        version: '1.0.0',
       },
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       isActive: true,
       messageCount: 0,
-      lastActivity: new Date().toISOString()
+      lastActivity: new Date().toISOString(),
     };
 
     this.activeSessions.set(sessionId, session);
@@ -209,8 +209,8 @@ export class AestheticAguiService {
         concerns: filters?.concerns,
         budget: filters?.budget,
         location: filters?.location,
-        filters
-      }
+        filters,
+      },
     };
 
     const response = await this.protocol.processMessage(message);
@@ -221,7 +221,7 @@ export class AestheticAguiService {
     treatmentId: string,
     startDate: string,
     endDate: string,
-    location?: string
+    location?: string,
   ): Promise<any> {
     const message: AguiMessage = {
       id: this.generateMessageId(),
@@ -232,8 +232,8 @@ export class AestheticAguiService {
         treatmentId,
         startDate,
         endDate,
-        location
-      }
+        location,
+      },
     };
 
     const response = await this.protocol.processMessage(message);
@@ -255,12 +255,12 @@ export class AestheticAguiService {
       type: 'treatment_scheduling_request',
       timestamp: new Date().toISOString(),
       sessionId: 'system',
-      _payload: appointmentData
+      _payload: appointmentData,
     };
 
     const response = await this.protocol.processMessage(message);
     const appointment = response._payload.content;
-    
+
     if (appointment) {
       this.metrics.activeTreatments++;
     }
@@ -269,7 +269,10 @@ export class AestheticAguiService {
   }
 
   // Appointment Optimization
-  async optimizeSchedule(professionalId: string, dateRange: { start: string; end: string }): Promise<AestheticScheduleOptimization> {
+  async optimizeSchedule(
+    professionalId: string,
+    dateRange: { start: string; end: string },
+  ): Promise<AestheticScheduleOptimization> {
     const message: AguiMessage = {
       id: this.generateMessageId(),
       type: 'schedule_optimization_request',
@@ -280,8 +283,8 @@ export class AestheticAguiService {
         dateRange,
         constraints: {},
         priorities: ['efficiency', 'patient_satisfaction', 'staff_preference'],
-        existingAppointments: []
-      }
+        existingAppointments: [],
+      },
     };
 
     const response = await this.protocol.processMessage(message);
@@ -303,7 +306,7 @@ export class AestheticAguiService {
       type: 'skin_type_assessment',
       timestamp: new Date().toISOString(),
       sessionId: 'system',
-      _payload: assessmentData
+      _payload: assessmentData,
     };
 
     const response = await this.protocol.processMessage(message);
@@ -325,7 +328,7 @@ export class AestheticAguiService {
       type: 'treatment_financing_request',
       timestamp: new Date().toISOString(),
       sessionId: 'system',
-      _payload: financingData
+      _payload: financingData,
     };
 
     const response = await this.protocol.processMessage(message);
@@ -345,12 +348,12 @@ export class AestheticAguiService {
       type: 'payment_processing',
       timestamp: new Date().toISOString(),
       sessionId: 'system',
-      _payload: paymentData
+      _payload: paymentData,
     };
 
     const response = await this.protocol.processMessage(message);
     const transaction = response._payload.content;
-    
+
     if (transaction && transaction.status === 'completed') {
       this.metrics.revenueGenerated += transaction.amount;
     }
@@ -374,8 +377,8 @@ export class AestheticAguiService {
       sessionId: 'system',
       _payload: {
         clientId,
-        ...enhancementData
-      }
+        ...enhancementData,
+      },
     };
 
     const response = await this.protocol.processMessage(message);
@@ -389,8 +392,8 @@ export class AestheticAguiService {
       timestamp: new Date().toISOString(),
       sessionId: 'system',
       _payload: {
-        clientId
-      }
+        clientId,
+      },
     };
 
     const response = await this.protocol.processMessage(message);
@@ -410,7 +413,7 @@ export class AestheticAguiService {
       type: 'anvisa_compliance_check',
       timestamp: new Date().toISOString(),
       sessionId: 'system',
-      _payload: complianceData
+      _payload: complianceData,
     };
 
     const response = await this.protocol.processMessage(message);
@@ -428,7 +431,7 @@ export class AestheticAguiService {
       type: 'compliance_audit_request',
       timestamp: new Date().toISOString(),
       sessionId: 'system',
-      _payload: auditData
+      _payload: auditData,
     };
 
     const response = await this.protocol.processMessage(message);
@@ -448,7 +451,7 @@ export class AestheticAguiService {
       type: 'aesthetic_analytics_request',
       timestamp: new Date().toISOString(),
       sessionId: 'system',
-      _payload: analyticsData
+      _payload: analyticsData,
     };
 
     const response = await this.protocol.processMessage(message);
@@ -467,7 +470,7 @@ export class AestheticAguiService {
       type: 'inventory_level_monitoring',
       timestamp: new Date().toISOString(),
       sessionId: 'system',
-      _payload: { filters }
+      _payload: { filters },
     };
 
     const response = await this.protocol.processMessage(message);
@@ -488,7 +491,7 @@ export class AestheticAguiService {
       type: 'emergency_protocol_activation',
       timestamp: new Date().toISOString(),
       sessionId: 'system',
-      _payload: emergencyData
+      _payload: emergencyData,
     };
 
     const response = await this.protocol.processMessage(message);
@@ -509,7 +512,7 @@ export class AestheticAguiService {
       type: 'photo_consent_management',
       timestamp: new Date().toISOString(),
       sessionId: 'system',
-      _payload: consentData
+      _payload: consentData,
     };
 
     const response = await this.protocol.processMessage(message);
@@ -538,15 +541,15 @@ export class AestheticAguiService {
       rag: await this.ragService.healthCheck(),
       cache: await this.cacheService.healthCheck(),
       compliance: await this.complianceService.healthCheck(),
-      notifications: await this.notificationService.healthCheck()
+      notifications: await this.notificationService.healthCheck(),
     };
 
     const allHealthy = Object.values(services).every(status => status);
-    
+
     return {
       status: allHealthy ? 'healthy' : 'degraded',
       services,
-      metrics: this.metrics
+      metrics: this.metrics,
     };
   }
 
@@ -563,7 +566,7 @@ export class AestheticAguiService {
     return {
       service: this.metrics,
       protocol: this.protocol.getMetrics(),
-      sessions: Array.from(this.activeSessions.values())
+      sessions: Array.from(this.activeSessions.values()),
     };
   }
 

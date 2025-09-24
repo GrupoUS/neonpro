@@ -6,7 +6,7 @@ export const ChatQuerySchema = z.object({
 
 export const ExplanationRequestSchema = z.object({
   text: z.string().min(1).max(8000),
-  locale: z.enum(["pt-BR", "en-US"]).default("pt-BR"),
+  locale: z.enum(['pt-BR', 'en-US']).default('pt-BR'),
 });
 
 export type ChatQuery = z.infer<typeof ChatQuerySchema>;

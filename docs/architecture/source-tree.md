@@ -325,26 +325,26 @@ The build system follows a **dependency-first approach** where packages build in
 
 ```typescript
 // Type-only imports (preferred for types)
-import type { Database } from "@neonpro/database";
-import type { Appointment, Client } from "@neonpro/types";
+import type { Database } from '@neonpro/database';
+import type { Appointment, Client } from '@neonpro/types';
 
 // Runtime imports
-import { ClientService } from "@neonpro/core-services";
-import { encryptPII } from "@neonpro/security";
-import { formatCurrency, formatDate } from "@neonpro/utils";
+import { ClientService } from '@neonpro/core-services';
+import { encryptPII } from '@neonpro/security';
+import { formatCurrency, formatDate } from '@neonpro/utils';
 ```
 
 **Local Imports** (Within same app/package):
 
 ```typescript
 // Relative imports for local files
-import { Header } from "../components/Header";
-import { useAuth } from "../hooks/useAuth";
+import { Header } from '../components/Header';
+import { useAuth } from '../hooks/useAuth';
 
 // Alias imports (configured in tsconfig.json)
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import type { AppRouter } from "@/types/router";
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+import type { AppRouter } from '@/types/router';
 ```
 
 **Import Order Convention**:

@@ -1,9 +1,9 @@
 /**
  * Patient Identity Service with LGPD Compliance
- * 
+ *
  * Comprehensive patient identity management for Brazilian aesthetic clinics
  * following Lei Geral de Proteção de Dados (LGPD) requirements.
- * 
+ *
  * Features:
  * - LGPD-compliant patient registration
  * - Identity verification and validation
@@ -43,12 +43,12 @@ export type ConsentStatus = keyof typeof CONSENT_STATUS;
 
 // Data Retention Policies (in days)
 export const RETENTION_POLICIES = {
-  MEDICAL_RECORDS: 365 * 20,     // 20 years
-  APPOINTMENTS: 365 * 10,         // 10 years
-  FINANCIAL_DATA: 365 * 5,         // 5 years
-  MARKETING_CONSENT: 365 * 2,      // 2 years
-  CONVERSATIONS: 365,              // 1 year
-  ANALYTICS: 90,                   // 90 days
+  MEDICAL_RECORDS: 365 * 20, // 20 years
+  APPOINTMENTS: 365 * 10, // 10 years
+  FINANCIAL_DATA: 365 * 5, // 5 years
+  MARKETING_CONSENT: 365 * 2, // 2 years
+  CONVERSATIONS: 365, // 1 year
+  ANALYTICS: 90, // 90 days
 } as const;
 
 // Service Interfaces
@@ -164,7 +164,7 @@ class PatientIdentityService {
     try {
       // Validate input
       const validated = CreatePatientSchema.parse(input);
-      
+
       // Check for existing patient
       const existingPatient = await this.findExistingPatient(validated.clinicId, validated);
       if (existingPatient) {
@@ -176,9 +176,9 @@ class PatientIdentityService {
 
       // Calculate data retention date
       const maxRetention = Math.max(
-        ...validated.consentTypes.map(type => 
+        ...validated.consentTypes.map(type =>
           RETENTION_POLICIES[type.toUpperCase() as keyof typeof RETENTION_POLICIES] || 365
-        )
+        ),
       );
       const dataRetentionUntil = new Date();
       dataRetentionUntil.setDate(dataRetentionUntil.getDate() + maxRetention);
@@ -310,12 +310,14 @@ class PatientIdentityService {
   /**
    * Search patients with LGPD-compliant filtering
    */
-  async searchPatients(options: PatientSearchOptions): Promise<ServiceResponse<{
-    patients: PatientIdentity[];
-    total: number;
-    page: number;
-    limit: number;
-  }>> {
+  async searchPatients(options: PatientSearchOptions): Promise<
+    ServiceResponse<{
+      patients: PatientIdentity[];
+      total: number;
+      page: number;
+      limit: number;
+    }>
+  > {
     try {
       let query = this.supabase
         .from('patients')
@@ -330,7 +332,7 @@ class PatientIdentityService {
       if (options.query) {
         // Search across multiple fields with LGPD compliance
         query = query.or(
-          `full_name.ilike.%${options.query}%,phone.ilike.%${options.query}%,email.ilike.%${options.query}%`
+          `full_name.ilike.%${options.query}%,phone.ilike.%${options.query}%,email.ilike.%${options.query}%`,
         );
       }
 
@@ -350,7 +352,7 @@ class PatientIdentityService {
 
       // Enrich patient data
       const enrichedPatients = await Promise.all(
-        (patients || []).map(async (patient) => {
+        (patients || []).map(async patient => {
           const riskProfile = await this.calculateRiskProfile(patient.id);
           const demographics = await this.getPatientDemographics(patient.id);
           const preferences = await this.getPatientPreferences(patient.id);
@@ -361,7 +363,7 @@ class PatientIdentityService {
             demographics,
             preferences,
           };
-        })
+        }),
       );
 
       return {
@@ -388,7 +390,7 @@ class PatientIdentityService {
   async updateConsent(
     patientId: string,
     consentType: LGPDConsentType,
-    action: 'grant' | 'revoke'
+    action: 'grant' | 'revoke',
   ): Promise<ServiceResponse<ConsentRecord>> {
     try {
       const status = action === 'grant' ? CONSENT_STATUS.ACTIVE : CONSENT_STATUS.REVOKED;
@@ -401,7 +403,8 @@ class PatientIdentityService {
           consent_type: consentType,
           status,
           purpose: this.getConsentPurpose(consentType),
-          retention_period: RETENTION_POLICIES[consentType.toUpperCase() as keyof typeof RETENTION_POLICIES],
+          retention_period:
+            RETENTION_POLICIES[consentType.toUpperCase() as keyof typeof RETENTION_POLICIES],
           expires_at: expiresAt?.toISOString(),
           version: '1.0',
         })
@@ -570,7 +573,7 @@ class PatientIdentityService {
         .eq('clinic_id', clinicId)
         .eq('cpf', input.cpf)
         .single();
-      
+
       if (patient) return patient;
     }
 
@@ -585,7 +588,10 @@ class PatientIdentityService {
     return phonePatient;
   }
 
-  private async createConsentRecords(patientId: string, consentTypes: LGPDConsentType[]): Promise<void> {
+  private async createConsentRecords(
+    patientId: string,
+    consentTypes: LGPDConsentType[],
+  ): Promise<void> {
     const consentRecords = consentTypes.map(type => ({
       patient_id: patientId,
       consent_type: type,
@@ -659,7 +665,7 @@ class PatientIdentityService {
       // No active consents - set retention to minimum
       const retentionDate = new Date();
       retentionDate.setDate(retentionDate.getDate() + RETENTION_POLICIES.ANALYTICS);
-      
+
       await this.supabase
         .from('patients')
         .update({ data_retention_until: retentionDate.toISOString() })
@@ -669,9 +675,9 @@ class PatientIdentityService {
 
     // Calculate max retention period from active consents
     const maxRetention = Math.max(
-      ...consents.map(c => 
+      ...consents.map(c =>
         RETENTION_POLICIES[c.consent_type.toUpperCase() as keyof typeof RETENTION_POLICIES]
-      )
+      ),
     );
 
     const retentionDate = new Date();

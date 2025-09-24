@@ -326,7 +326,7 @@ Implementing the analytics package in a healthcare application involves several 
 To begin using the analytics system, initialize the core components and configure them for your specific environment. The package exports a default event collector instance that can be used immediately for basic scenarios, or you can create custom instances with specific configurations:
 
 ```typescript
-import { defaultEventCollector, createAnalyticsConfig } from '@neonpro/analytics';
+import { createAnalyticsConfig, defaultEventCollector } from '@neonpro/analytics';
 
 // Configure analytics for your clinic
 const analyticsConfig = createAnalyticsConfig({
@@ -334,11 +334,11 @@ const analyticsConfig = createAnalyticsConfig({
   complianceFrameworks: ['LGPD', 'ANVISA'],
   enableEncryption: true,
   enableAnonymization: true,
-  retentionDays: 2555 // 7 years
+  retentionDays: 2555, // 7 years
 });
 
 // Use the default collector or create a custom one
-defaultEventCollector.config.onFlush = async (events) => {
+defaultEventCollector.config.onFlush = async events => {
   // Forward events to your aggregation service
   await sendToAggregationService(events);
 };
@@ -354,12 +354,12 @@ await defaultEventCollector.collectEvent({
   data: {
     procedure: 'consultation',
     duration: 30,
-    providerId: 'DR-123'
+    providerId: 'DR-123',
   },
   metadata: {
     patientId: 'PAT-456',
-    sessionId: 'SESS-789'
-  }
+    sessionId: 'SESS-789',
+  },
 });
 
 // Example: Track treatment outcome
@@ -370,23 +370,19 @@ await defaultEventCollector.collectEvent({
     diagnosis: 'hypertension',
     treatment: 'medication',
     outcome: 'improved',
-    satisfaction: 4
+    satisfaction: 4,
   },
   metadata: {
     patientId: 'PAT-456',
-    providerId: 'DR-123'
-  }
+    providerId: 'DR-123',
+  },
 });
 ```
 
 Create custom KPIs using the factory functions provided for clinical and financial metrics. These functions ensure proper formatting, compliance framework assignment, and risk level assessment:
 
 ```typescript
-import { 
-  createPatientSafetyKPI, 
-  createRevenueCycleKPI,
-  computeKPIs 
-} from '@neonpro/analytics';
+import { computeKPIs, createPatientSafetyKPI, createRevenueCycleKPI } from '@neonpro/analytics';
 
 // Create a patient safety KPI for medication errors
 const medicationErrorKPI = createPatientSafetyKPI({
@@ -394,7 +390,7 @@ const medicationErrorKPI = createPatientSafetyKPI({
   value: 1,
   clinicId: 'CLINIC-001',
   eventType: 'medication_error',
-  severity: 'moderate'
+  severity: 'moderate',
 });
 
 // Create a revenue cycle KPI for billing efficiency
@@ -403,19 +399,19 @@ const billingEfficiencyKPI = createRevenueCycleKPI({
   value: 98.5,
   currency: 'BRL',
   clinicId: 'CLINIC-001',
-  stage: 'charge_capture'
+  stage: 'charge_capture',
 });
 
 // Compute KPIs from collected events
 const kpis = computeKPIs(events, {
   timeRange: {
     start: new Date('2024-01-01'),
-    end: new Date('2024-01-31')
+    end: new Date('2024-01-31'),
   },
   categories: {
     includeClinicalQuality: true,
-    includeFinancial: true
-  }
+    includeFinancial: true,
+  },
 });
 ```
 
@@ -435,8 +431,8 @@ const insights = await aiOrchestrator.generateHealthcareInsights({
   patientData: {
     age: 65,
     gender: 'female',
-    medicalHistory: ['diabetes', 'hypertension']
-  }
+    medicalHistory: ['diabetes', 'hypertension'],
+  },
 });
 
 // Display insights to users
@@ -468,7 +464,7 @@ Performance bottlenecks often occur in the event collection and processing pipel
 const highVolumeCollector = createEventCollector({
   maxQueueSize: 5000,
   maxBatchSize: 500,
-  autoFlushInterval: 60000 // Flush every minute
+  autoFlushInterval: 60000, // Flush every minute
 });
 ```
 
@@ -481,7 +477,7 @@ const collector = createEventCollector({
       // Persist event to disk/database as backup
       backupEventToPersistentStorage(event);
     }
-  }
+  },
 });
 ```
 
@@ -502,10 +498,10 @@ const kpis = computeKPIs(validEvents);
 Network connectivity problems can disrupt the ingestion pipeline, particularly when forwarding events to remote aggregation services. Implement robust retry logic with exponential backoff and circuit breaker patterns to handle transient failures:
 
 ```typescript
-collector.config.onFlush = async (events) => {
+collector.config.onFlush = async events => {
   let attempts = 0;
   const maxAttempts = 3;
-  
+
   while (attempts < maxAttempts) {
     try {
       await sendToAggregationService(events);
@@ -513,7 +509,7 @@ collector.config.onFlush = async (events) => {
     } catch (error) {
       attempts++;
       if (attempts >= maxAttempts) throw error;
-      
+
       // Exponential backoff
       const delay = Math.pow(2, attempts) * 1000;
       await new Promise(resolve => setTimeout(resolve, delay));

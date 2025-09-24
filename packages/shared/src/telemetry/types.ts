@@ -33,7 +33,7 @@ export interface HealthcareTelemetryConfig {
   healthcare: {
     patientDataProtection: boolean;
     auditTrailRequired: boolean;
-    complianceLevel: "basic" | "enhanced" | "maximum";
+    complianceLevel: 'basic' | 'enhanced' | 'maximum';
     allowedDataClassifications: string[];
   };
 }
@@ -44,7 +44,7 @@ export interface TelemetryContext {
   sessionId?: string;
   requestId?: string;
   feature?: string;
-  complianceLevel?: "public" | "internal" | "sensitive";
+  complianceLevel?: 'public' | 'internal' | 'sensitive';
 }
 
 export interface HealthcareMetrics {
@@ -66,7 +66,7 @@ export interface HealthcareMetrics {
 }
 
 export interface ComplianceEvent {
-  eventType: "data_access" | "data_export" | "data_deletion" | "consent_update";
+  eventType: 'data_access' | 'data_export' | 'data_deletion' | 'consent_update';
   timestamp: string;
   _userId: string;
   clinicId: string;
@@ -77,12 +77,11 @@ export interface ComplianceEvent {
 
 // Default configuration for healthcare telemetry
 export const DEFAULT_HEALTHCARE_TELEMETRY_CONFIG: HealthcareTelemetryConfig = {
-  enabled:
-    process.env.NODE_ENV === "production" ||
-    process.env.ENABLE_TRACING === "true",
-  serviceName: "neonpro-healthcare-platform",
-  serviceVersion: process.env.APP_VERSION || "1.0.0",
-  environment: process.env.NODE_ENV || "development",
+  enabled: process.env.NODE_ENV === 'production'
+    || process.env.ENABLE_TRACING === 'true',
+  serviceName: 'neonpro-healthcare-platform',
+  serviceVersion: process.env.APP_VERSION || '1.0.0',
+  environment: process.env.NODE_ENV || 'development',
 
   lgpdCompliant: true,
   dataRetentionDays: 30, // LGPD requirement for healthcare data
@@ -90,17 +89,15 @@ export const DEFAULT_HEALTHCARE_TELEMETRY_CONFIG: HealthcareTelemetryConfig = {
 
   exporters: {
     traces: {
-      endpoint:
-        process.env.OTEL_EXPORTER_OTLP_TRACES_ENDPOINT ||
-        "http://localhost:4318/v1/traces",
+      endpoint: process.env.OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+        || 'http://localhost:4318/v1/traces',
       apiKey: process.env.OTEL_API_KEY,
       batchSize: 100,
       timeoutMs: 5000,
     },
     metrics: {
-      endpoint:
-        process.env.OTEL_EXPORTER_OTLP_METRICS_ENDPOINT ||
-        "http://localhost:4318/v1/metrics",
+      endpoint: process.env.OTEL_EXPORTER_OTLP_METRICS_ENDPOINT
+        || 'http://localhost:4318/v1/metrics',
       apiKey: process.env.OTEL_API_KEY,
       intervalMs: 30000,
     },
@@ -109,37 +106,37 @@ export const DEFAULT_HEALTHCARE_TELEMETRY_CONFIG: HealthcareTelemetryConfig = {
   healthcare: {
     patientDataProtection: true,
     auditTrailRequired: true,
-    complianceLevel: "maximum",
-    allowedDataClassifications: ["public", "internal"],
+    complianceLevel: 'maximum',
+    allowedDataClassifications: ['public', 'internal'],
   },
 };
 
 // Healthcare data classification levels
 export enum DataClassification {
-  PUBLIC = "public", // No sensitive data
-  INTERNAL = "internal", // Internal business data
-  PERSONAL = "personal", // Personal data (LGPD protected)
-  MEDICAL = "medical", // Medical data (highest protection)
-  FINANCIAL = "financial", // Financial data
+  PUBLIC = 'public', // No sensitive data
+  INTERNAL = 'internal', // Internal business data
+  PERSONAL = 'personal', // Personal data (LGPD protected)
+  MEDICAL = 'medical', // Medical data (highest protection)
+  FINANCIAL = 'financial', // Financial data
 }
 
 // Compliance levels for operations
 export enum ComplianceLevel {
-  PUBLIC = "public", // No compliance restrictions
-  INTERNAL = "internal", // Internal operations only
-  SENSITIVE = "sensitive", // High compliance requirements
+  PUBLIC = 'public', // No compliance restrictions
+  INTERNAL = 'internal', // Internal operations only
+  SENSITIVE = 'sensitive', // High compliance requirements
 }
 
 // Healthcare operation types
 export enum HealthcareOperationType {
-  READ = "read",
-  WRITE = "write",
-  UPDATE = "update",
-  DELETE = "delete",
-  EXPORT = "export",
-  IMPORT = "import",
-  SHARE = "share",
-  BACKUP = "backup",
+  READ = 'read',
+  WRITE = 'write',
+  UPDATE = 'update',
+  DELETE = 'delete',
+  EXPORT = 'export',
+  IMPORT = 'import',
+  SHARE = 'share',
+  BACKUP = 'backup',
 }
 
 // Sensitive data patterns for redaction
@@ -165,43 +162,43 @@ export const SENSITIVE_DATA_PATTERNS = [
 
 // Field names that contain sensitive data
 export const SENSITIVE_FIELD_NAMES = [
-  "cpf",
-  "rg",
-  "cnpj",
-  "email",
-  "phone",
-  "telefone",
-  "celular",
-  "endereco",
-  "address",
-  "cep",
-  "birthdate",
-  "nascimento",
-  "password",
-  "senha",
-  "token",
-  "secret",
-  "chave",
-  "medical_history",
-  "historico_medico",
-  "diagnosis",
-  "diagnostico",
-  "prescription",
-  "receita",
-  "treatment",
-  "tratamento",
-  "patient_name",
-  "nome_paciente",
-  "patient_data",
-  "dados_paciente",
-  "health_record",
-  "prontuario",
-  "sus_card",
-  "cartao_sus",
-  "crm",
-  "cro",
-  "professional_id",
-  "id_profissional",
+  'cpf',
+  'rg',
+  'cnpj',
+  'email',
+  'phone',
+  'telefone',
+  'celular',
+  'endereco',
+  'address',
+  'cep',
+  'birthdate',
+  'nascimento',
+  'password',
+  'senha',
+  'token',
+  'secret',
+  'chave',
+  'medical_history',
+  'historico_medico',
+  'diagnosis',
+  'diagnostico',
+  'prescription',
+  'receita',
+  'treatment',
+  'tratamento',
+  'patient_name',
+  'nome_paciente',
+  'patient_data',
+  'dados_paciente',
+  'health_record',
+  'prontuario',
+  'sus_card',
+  'cartao_sus',
+  'crm',
+  'cro',
+  'professional_id',
+  'id_profissional',
 ];
 
-export { initializeGlobalTelemetry, getGlobalTelemetryManager } from "./index";
+export { getGlobalTelemetryManager, initializeGlobalTelemetry } from './index';

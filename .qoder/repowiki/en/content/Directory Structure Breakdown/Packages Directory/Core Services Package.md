@@ -491,19 +491,19 @@ To generate treatment recommendations for a patient assessment:
 ```typescript
 // SPEC AISERVICE@generateTreatmentRecommendations(file://packages/core-services/src/services/ai-clinical-decision-support.ts#L150-L180)
 const assessment: PatientAssessment = {
-  patientId: "pat_123",
-  skinType: "III",
+  patientId: 'pat_123',
+  skinType: 'III',
   fitzpatrickScale: 3,
-  skinConditions: ["acne", "hyperpigmentation"],
+  skinConditions: ['acne', 'hyperpigmentation'],
   medicalHistory: {
-    allergies: ["penicillin"],
+    allergies: ['penicillin'],
     medications: [],
-    previousTreatments: ["chemical_peel"],
+    previousTreatments: ['chemical_peel'],
     chronicConditions: [],
-    pregnancyStatus: "none"
+    pregnancyStatus: 'none',
   },
-  aestheticGoals: ["reduce acne scars", "improve skin texture"],
-  budgetRange: { min: 1000, max: 3000, currency: "BRL" }
+  aestheticGoals: ['reduce acne scars', 'improve skin texture'],
+  budgetRange: { min: 1000, max: 3000, currency: 'BRL' },
 };
 
 const aiSupport = AIClinicalDecisionSupport.getInstance();
@@ -515,8 +515,8 @@ To analyze contraindications for specific procedures:
 ```typescript
 // SPEC AISERVICE@analyzeContraindications(file://packages/core-services/src/services/ai-clinical-decision-support.ts#L250-L280)
 const analyses = await aiSupport.analyzeContraindications(
-  "pat_123", 
-  ["botox", "hyaluronic_fillers"]
+  'pat_123',
+  ['botox', 'hyaluronic_fillers'],
 );
 ```
 
@@ -529,17 +529,17 @@ To schedule aesthetic procedures for a patient:
 const schedulingService = new EnhancedAestheticSchedulingService();
 
 const request: AestheticSchedulingRequest = {
-  patientId: "pat_123",
-  procedures: ["botox", "hyaluronic_fillers"],
-  preferredDates: [new Date("2024-03-15")],
+  patientId: 'pat_123',
+  procedures: ['botox', 'hyaluronic_fillers'],
+  preferredDates: [new Date('2024-03-15')],
   medicalHistory: {
-    allergies: ["penicillin"],
+    allergies: ['penicillin'],
     medications: [],
-    previousProcedures: ["chemical_peel"],
-    skinConditions: ["acne"],
-    contraindications: []
+    previousProcedures: ['chemical_peel'],
+    skinConditions: ['acne'],
+    contraindications: [],
   },
-  urgencyLevel: "medium"
+  urgencyLevel: 'medium',
 };
 
 const result = await schedulingService.scheduleAestheticProcedures(request);
@@ -550,8 +550,8 @@ To validate professional certifications for a procedure:
 ```typescript
 // SPEC ENHANCEDAESTHETICSCHEDULINGSERVICE@validateProfessionalCertifications(file://packages/core-services/src/services/enhanced-aesthetic-scheduling-service.ts#L250-L280)
 const validation = await schedulingService.validateProfessionalCertifications(
-  "prof_456", 
-  ["botox"]
+  'prof_456',
+  ['botox'],
 );
 ```
 
@@ -563,19 +563,19 @@ To create a new service price:
 // SPEC FINANCIALMANAGEMENTSERVICE@createServicePrice(file://packages/core-services/src/services/financial-management-service.ts#L300-L330)
 const financialService = new FinancialManagementService({
   supabaseUrl: process.env.SUPABASE_URL!,
-  supabaseKey: process.env.SUPABASE_KEY!
+  supabaseKey: process.env.SUPABASE_KEY!,
 });
 
 const priceInput: ServicePriceInput = {
-  clinicId: "clinic_789",
-  serviceId: "botox",
-  professionalCouncilType: "CFM",
+  clinicId: 'clinic_789',
+  serviceId: 'botox',
+  professionalCouncilType: 'CFM',
   basePrice: 800,
   durationMinutes: 30,
   costOfMaterials: 200,
   professionalCommissionRate: 40,
   clinicRevenueRate: 60,
-  effectiveDate: "2024-03-01"
+  effectiveDate: '2024-03-01',
 };
 
 const servicePrice = await financialService.createServicePrice(priceInput);
@@ -586,15 +586,15 @@ To process a payment transaction:
 ```typescript
 // SPEC FINANCIALMANAGEMENTSERVICE@createPaymentTransaction(file://packages/core-services/src/services/financial-management-service.ts#L700-L730)
 const paymentInput: PaymentTransactionInput = {
-  clinicId: "clinic_789",
-  invoiceId: "inv_123",
-  patientId: "pat_123",
-  transactionId: "txn_456",
-  paymentMethod: "pix",
-  paymentProvider: "mercadopago",
+  clinicId: 'clinic_789',
+  invoiceId: 'inv_123',
+  patientId: 'pat_123',
+  transactionId: 'txn_456',
+  paymentMethod: 'pix',
+  paymentProvider: 'mercadopago',
   amount: 800,
-  currency: "BRL",
-  installments: 1
+  currency: 'BRL',
+  installments: 1,
 };
 
 const transaction = await financialService.createPaymentTransaction(paymentInput);
@@ -608,16 +608,16 @@ To send a personalized communication:
 // SPEC PATIENTENGAGEMENTSERVICE@sendCommunication(file://packages/core-services/src/services/patient-engagement-service.ts#L200-L230)
 const engagementService = new PatientEngagementService({
   supabaseUrl: process.env.SUPABASE_URL!,
-  supabaseKey: process.env.SUPABASE_KEY!
+  supabaseKey: process.env.SUPABASE_KEY!,
 });
 
 const communication: CommunicationHistoryInput = {
-  patientId: "pat_123",
-  clinicId: "clinic_789",
-  communicationType: "appointment_reminder",
-  channel: "whatsapp",
-  messageContent: "Seu agendamento para tratamento estético está marcado para amanhã às 14h.",
-  status: "pending"
+  patientId: 'pat_123',
+  clinicId: 'clinic_789',
+  communicationType: 'appointment_reminder',
+  channel: 'whatsapp',
+  messageContent: 'Seu agendamento para tratamento estético está marcado para amanhã às 14h.',
+  status: 'pending',
 };
 
 const result = await engagementService.sendCommunication(communication);
@@ -628,14 +628,14 @@ To update a patient's journey stage:
 ```typescript
 // SPEC PATIENTENGAGEMENTSERVICE@updatePatientJourneyStage(file://packages/core-services/src/services/patient-engagement-service.ts#L350-L380)
 const journeyUpdate: PatientJourneyStageInput = {
-  patientId: "pat_123",
-  clinicId: "clinic_789",
-  currentStage: "treatment_in_progress",
+  patientId: 'pat_123',
+  clinicId: 'clinic_789',
+  currentStage: 'treatment_in_progress',
   engagementScore: 85,
   satisfactionScore: 4,
-  loyaltyTier: "gold",
+  loyaltyTier: 'gold',
   lastTreatmentDate: new Date(),
-  nextRecommendedTreatmentDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+  nextRecommendedTreatmentDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
 };
 
 await engagementService.updatePatientJourneyStage(journeyUpdate);

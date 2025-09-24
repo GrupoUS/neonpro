@@ -1,5 +1,5 @@
-import { Counter, Registry } from "prom-client";
-import type { MetricLabels } from "../types";
+import { Counter, Registry } from 'prom-client';
+import type { MetricLabels } from '../types';
 
 // Chat-specific counters
 let chatMessagesTotal: Counter<string> | null = null;
@@ -11,41 +11,41 @@ let piiRedactionTotal: Counter<string> | null = null;
 export function initializeCounters(registry: Registry): void {
   // Total chat messages sent
   chatMessagesTotal = new Counter({
-    name: "chat_messages_total",
-    help: "Total number of chat messages processed",
-    labelNames: ["user_type", "session_id"],
+    name: 'chat_messages_total',
+    help: 'Total number of chat messages processed',
+    labelNames: ['user_type', 'session_id'],
     registers: [registry],
   });
 
   // Total chat sessions created
   chatSessionsTotal = new Counter({
-    name: "chat_sessions_total",
-    help: "Total number of chat sessions created",
-    labelNames: ["user_type", "source"],
+    name: 'chat_sessions_total',
+    help: 'Total number of chat sessions created',
+    labelNames: ['user_type', 'source'],
     registers: [registry],
   });
 
   // Total chat errors
   chatErrorsTotal = new Counter({
-    name: "chat_errors_total",
-    help: "Total number of chat errors",
-    labelNames: ["error_type", "component"],
+    name: 'chat_errors_total',
+    help: 'Total number of chat errors',
+    labelNames: ['error_type', 'component'],
     registers: [registry],
   });
 
   // Total AI provider requests
   aiRequestsTotal = new Counter({
-    name: "ai_requests_total",
-    help: "Total number of AI provider requests",
-    labelNames: ["provider", "model", "status"],
+    name: 'ai_requests_total',
+    help: 'Total number of AI provider requests',
+    labelNames: ['provider', 'model', 'status'],
     registers: [registry],
   });
 
   // Total PII redactions
   piiRedactionTotal = new Counter({
-    name: "pii_redaction_total",
-    help: "Total number of PII redactions performed",
-    labelNames: ["pii_type", "context"],
+    name: 'pii_redaction_total',
+    help: 'Total number of PII redactions performed',
+    labelNames: ['pii_type', 'context'],
     registers: [registry],
   });
 }

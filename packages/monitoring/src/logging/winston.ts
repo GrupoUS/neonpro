@@ -1,43 +1,44 @@
-import winston from "winston";
-import type { LogLevel } from "../types";
+import winston from 'winston';
+import type { LogLevel } from '../types';
 
 interface LoggingConfig {
   level: LogLevel;
-  format: "json" | "pretty";
-  transports: ("console" | "file")[];
+  format: 'json' | 'pretty';
+  transports: ('console' | 'file')[];
 }
 
 export function createLogger(config: LoggingConfig): winston.Logger {
   const transports: winston.transport[] = [];
 
   // Console transport
-  if (config.transports.includes("console")) {
+  if (config.transports.includes('console')) {
     transports.push(
       new winston.transports.Console({
-        format:
-          config.format === "pretty"
-            ? winston.format.combine(
-                winston.format.colorize(),
-                winston.format.timestamp(),
-                winston.format.printf(
-                  ({ timestamp, level, _message, ...meta }) => {
-                    return `${timestamp} [${level}]: ${_message} ${Object.keys(meta).length ? JSON.stringify(meta, null, 2) : ""}`;
-                  },
-                ),
-              )
-            : winston.format.combine(
-                winston.format.timestamp(),
-                winston.format.json(),
-              ),
+        format: config.format === 'pretty'
+          ? winston.format.combine(
+            winston.format.colorize(),
+            winston.format.timestamp(),
+            winston.format.printf(
+              ({ timestamp, level, _message, ...meta }) => {
+                return `${timestamp} [${level}]: ${_message} ${
+                  Object.keys(meta).length ? JSON.stringify(meta, null, 2) : ''
+                }`;
+              },
+            ),
+          )
+          : winston.format.combine(
+            winston.format.timestamp(),
+            winston.format.json(),
+          ),
       }),
     );
   }
 
   // File transport
-  if (config.transports.includes("file")) {
+  if (config.transports.includes('file')) {
     transports.push(
       new winston.transports.File({
-        filename: "logs/application.log",
+        filename: 'logs/application.log',
         format: winston.format.combine(
           winston.format.timestamp(),
           winston.format.json(),
@@ -50,7 +51,7 @@ export function createLogger(config: LoggingConfig): winston.Logger {
     level: config.level,
     transports,
     defaultMeta: {
-      _service: "neonpro-monitoring",
+      _service: 'neonpro-monitoring',
     },
   });
 }

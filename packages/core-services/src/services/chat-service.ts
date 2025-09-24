@@ -1,9 +1,9 @@
 // ChatService orchestrator (Phase 2) - Enhanced with real AI providers and streaming
 
-import type { ChatMessage, ChatSession } from "@neonpro/types";
-import { PIIRedactionService } from "./pii-redaction.js";
-import { AIProviderFactory } from "./ai-provider-factory.js";
-import { logHealthcareError } from "@neonpro/shared";
+import { logHealthcareError } from '@neonpro/shared';
+import type { ChatMessage, ChatSession } from '@neonpro/types';
+import { AIProviderFactory } from './ai-provider-factory.js';
+import { PIIRedactionService } from './pii-redaction.js';
 
 export class ChatService {
   constructor(private pii = new PIIRedactionService()) {}
@@ -38,10 +38,10 @@ export class ChatService {
       const message: ChatMessage = {
         id: crypto.randomUUID(),
         sessionId: session.id,
-        _role: "assistant",
+        _role: 'assistant',
         content: res.content,
         createdAt: new Date().toISOString(),
-        redactionFlags: ["lgpd"],
+        redactionFlags: ['lgpd'],
       };
 
       return message;
@@ -50,9 +50,9 @@ export class ChatService {
         method: 'askSync',
         component: 'ChatService',
         severity: 'high',
-        sessionId: session.id
+        sessionId: session.id,
       });
-      throw new Error("Failed to generate response");
+      throw new Error('Failed to generate response');
     }
   }
 
@@ -62,21 +62,23 @@ export class ChatService {
     systemPrompt: string,
   ) {
     try {
-      for await (const chunk of AIProviderFactory.generateStreamWithFailover({
-        prompt: input,
-        system: systemPrompt,
-        locale: session.locale,
-        maxTokens: 1000,
-        temperature: 0.7,
-        stream: true,
-      })) {
+      for await (
+        const chunk of AIProviderFactory.generateStreamWithFailover({
+          prompt: input,
+          system: systemPrompt,
+          locale: session.locale,
+          maxTokens: 1000,
+          temperature: 0.7,
+          stream: true,
+        })
+      ) {
         const message: Partial<ChatMessage> = {
           id: crypto.randomUUID(),
           sessionId: session.id,
-          _role: "assistant",
+          _role: 'assistant',
           content: chunk.content,
           createdAt: new Date().toISOString(),
-          redactionFlags: ["lgpd"],
+          redactionFlags: ['lgpd'],
         };
 
         yield message;
@@ -86,21 +88,21 @@ export class ChatService {
         method: 'askStream',
         component: 'ChatService',
         severity: 'high',
-        sessionId: session.id
+        sessionId: session.id,
       });
-      throw new Error("Failed to generate streaming response");
+      throw new Error('Failed to generate streaming response');
     }
   }
 
-  async explain(messageId: string, locale: "pt-BR" | "en-US" = "pt-BR") {
-    const systemPrompt =
-      locale === "pt-BR"
-        ? "Você é um assistente que explica respostas médicas de forma clara e educativa, removendo informações pessoais sensíveis."
-        : "You are an assistant that explains medical responses clearly and educatively, removing sensitive personal information.";
+  async explain(messageId: string, locale: 'pt-BR' | 'en-US' = 'pt-BR') {
+    const systemPrompt = locale === 'pt-BR'
+      ? 'Você é um assistente que explica respostas médicas de forma clara e educativa, removendo informações pessoais sensíveis.'
+      : 'You are an assistant that explains medical responses clearly and educatively, removing sensitive personal information.';
 
     try {
       const res = await AIProviderFactory.generateWithFailover({
-        prompt: `Explique a resposta anterior de forma educativa, removendo qualquer informação pessoal identificável.`,
+        prompt:
+          `Explique a resposta anterior de forma educativa, removendo qualquer informação pessoal identificável.`,
         system: systemPrompt,
         locale,
         maxTokens: 500,
@@ -118,14 +120,14 @@ export class ChatService {
         method: 'explain',
         component: 'ChatService',
         severity: 'high',
-        sessionId: session.id
+        sessionId: session.id,
       });
-      throw new Error("Failed to generate explanation");
+      throw new Error('Failed to generate explanation');
     }
   }
 
-  private buildSystemPrompt(locale: "pt-BR" | "en-US" = "pt-BR"): string {
-    if (locale === "pt-BR") {
+  private buildSystemPrompt(locale: 'pt-BR' | 'en-US' = 'pt-BR'): string {
+    if (locale === 'pt-BR') {
       return `Você é um assistente especializado em clínicas estéticas brasileiras. 
 Forneça respostas precisas, concisas e profissionais sobre:
 - Tratamentos estéticos e procedimentos

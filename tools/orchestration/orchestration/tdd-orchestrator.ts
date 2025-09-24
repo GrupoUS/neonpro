@@ -1,9 +1,5 @@
-import type { TDDOrchestrator as TDDOrchestratorInterface } from "../types";
-import type {
-  FeatureContext,
-  TDDCycleResult,
-  OrchestrationContext,
-} from "../types";
+import type { TDDOrchestrator as TDDOrchestratorInterface } from '../types';
+import type { FeatureContext, OrchestrationContext, TDDCycleResult } from '../types';
 
 export class TDDOrchestrator implements TDDOrchestratorInterface {
   async executeTDDCycle(
@@ -11,7 +7,7 @@ export class TDDOrchestrator implements TDDOrchestratorInterface {
   ): Promise<TDDCycleResult> {
     return {
       success: true,
-      phases: ["red", "green", "refactor"],
+      phases: ['red', 'green', 'refactor'],
       duration: 1000,
       agentResults: [],
       qualityScore: 0.8,
@@ -25,7 +21,7 @@ export class TDDOrchestrator implements TDDOrchestratorInterface {
   ): Promise<TDDCycleResult> {
     return {
       success: true,
-      phases: ["red", "green", "refactor"],
+      phases: ['red', 'green', 'refactor'],
       duration: 1000,
       agentResults: [],
       qualityScore: 0.8,
@@ -34,7 +30,7 @@ export class TDDOrchestrator implements TDDOrchestratorInterface {
   }
 
   getPhaseStatus() {
-    return "red" as const;
+    return 'red' as const;
   }
 
   pauseExecution(): void {

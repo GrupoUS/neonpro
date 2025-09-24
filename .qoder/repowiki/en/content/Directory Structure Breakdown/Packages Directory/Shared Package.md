@@ -416,10 +416,10 @@ function PatientList() {
     {
       tableName: 'patients',
       realtimeOptions: {
-        onInsert: (patient) => console.log('New patient added:', patient),
-        onUpdate: (patient) => console.log('Patient updated:', patient),
+        onInsert: patient => console.log('New patient added:', patient),
+        onUpdate: patient => console.log('Patient updated:', patient),
       },
-    }
+    },
   );
 
   if (isLoading) return <div>Loading...</div>;
@@ -429,7 +429,7 @@ function PatientList() {
 // Example: Route protection
 function AdminDashboard() {
   return (
-    <ProtectedRoute requiredRole="admin">
+    <ProtectedRoute requiredRole='admin'>
       <h1>Admin Dashboard</h1>
       {/* Protected content */}
     </ProtectedRoute>
@@ -459,23 +459,23 @@ const logger = healthcareLogger.createLogger('billing-service');
 async function processInvoice(invoiceData: any) {
   try {
     if (!validateCNPJ(invoiceData.clinicCNPJ)) {
-      logger.warn('Invalid CNPJ in invoice', { 
+      logger.warn('Invalid CNPJ in invoice', {
         clinicId: invoiceData.clinicId,
-        cnpj: invoiceData.clinicCNPJ 
+        cnpj: invoiceData.clinicCNPJ,
       });
       throw new Error('Invalid clinic identifier');
     }
 
-    logger.info('Processing invoice', { 
+    logger.info('Processing invoice', {
       invoiceId: invoiceData.id,
-      amount: invoiceData.amount 
+      amount: invoiceData.amount,
     });
 
     // Process invoice...
   } catch (error) {
     logHealthcareError('billing-service', error, {
       context: 'invoice-processing',
-      invoiceId: invoiceData.id
+      invoiceId: invoiceData.id,
     });
     throw error;
   }

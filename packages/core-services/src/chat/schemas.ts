@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 // Phase 3.4 — T016/T017: Zod schemas for chat
 export const ChatQuerySchema = z.object({
@@ -8,7 +8,7 @@ export const ChatQuerySchema = z.object({
 
 export const ExplanationRequestSchema = z.object({
   text: z.string().min(1).max(8000),
-  locale: z.enum(["pt-BR", "en-US"]).default("pt-BR"),
+  locale: z.enum(['pt-BR', 'en-US']).default('pt-BR'),
 });
 
 export type ChatQuery = z.infer<typeof ChatQuerySchema>;

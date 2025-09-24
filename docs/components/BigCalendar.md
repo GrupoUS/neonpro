@@ -21,7 +21,7 @@ interface BigCalendarProps {
   onEventDelete?: (eventId: string) => void; // Callback when event is deleted
   onEventCreate?: (event: CalendarEvent) => void; // Callback when new event is created
   className?: string; // Additional CSS classes
-  initialView?: "day" | "week" | "month" | "agenda"; // Initial calendar view
+  initialView?: 'day' | 'week' | 'month' | 'agenda'; // Initial calendar view
 }
 ```
 
@@ -45,18 +45,18 @@ interface CalendarEvent {
 
 ```typescript
 type EventColor =
-  | "default"
-  | "primary"
-  | "secondary"
-  | "success"
-  | "warning"
-  | "error";
+  | 'default'
+  | 'primary'
+  | 'secondary'
+  | 'success'
+  | 'warning'
+  | 'error';
 ```
 
 ## CalendarView Type
 
 ```typescript
-type CalendarView = "month" | "week" | "day" | "agenda";
+type CalendarView = 'month' | 'week' | 'day' | 'agenda';
 ```
 
 ## Usage Examples
@@ -69,30 +69,30 @@ import { CalendarEvent } from '@/components/event-calendar/types';
 
 const sampleEvents: CalendarEvent[] = [
   {
-    id: "1",
-    title: "Patient Consultation",
-    description: "Initial consultation with new patient",
-    start: new Date("2024-01-15T10:00:00"),
-    end: new Date("2024-01-15T11:00:00"),
-    color: "primary",
-    location: "Consultation Room A"
+    id: '1',
+    title: 'Patient Consultation',
+    description: 'Initial consultation with new patient',
+    start: new Date('2024-01-15T10:00:00'),
+    end: new Date('2024-01-15T11:00:00'),
+    color: 'primary',
+    location: 'Consultation Room A',
   },
   {
-    id: "2",
-    title: "Team Meeting",
-    start: new Date("2024-01-15T14:00:00"),
-    end: new Date("2024-01-15T15:00:00"),
-    color: "secondary"
-  }
+    id: '2',
+    title: 'Team Meeting',
+    start: new Date('2024-01-15T14:00:00'),
+    end: new Date('2024-01-15T15:00:00'),
+    color: 'secondary',
+  },
 ];
 
 function AppointmentsPage() {
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-6">Appointments</h1>
+    <div className='p-6'>
+      <h1 className='text-2xl font-bold mb-6'>Appointments</h1>
       <BigCalendar
         events={sampleEvents}
-        initialView="week"
+        initialView='week'
         onEventCreate={handleEventCreate}
         onEventUpdate={handleEventUpdate}
         onEventDelete={handleEventDelete}
@@ -107,11 +107,11 @@ function AppointmentsPage() {
 ```typescript
 function AppointmentsPage() {
   return (
-    <div className="p-6">
+    <div className='p-6'>
       <BigCalendar
         events={events}
-        className="bg-white rounded-lg shadow-lg border border-gray-200"
-        initialView="month"
+        className='bg-white rounded-lg shadow-lg border border-gray-200'
+        initialView='month'
         onEventCreate={handleEventCreate}
       />
     </div>
@@ -124,11 +124,11 @@ function AppointmentsPage() {
 ```typescript
 function AgendaPage() {
   return (
-    <div className="p-6">
+    <div className='p-6'>
       <BigCalendar
         events={todayEvents}
-        initialView="agenda"
-        className="max-h-96 overflow-y-auto"
+        initialView='agenda'
+        className='max-h-96 overflow-y-auto'
       />
     </div>
   );
@@ -146,7 +146,7 @@ const handleEventCreate = (event: CalendarEvent) => {
   // Save event to database
   await saveEvent(event);
   // Update local state
-  setEvents((prev) => [...prev, event]);
+  setEvents(prev => [...prev, event]);
 };
 ```
 
@@ -159,9 +159,7 @@ const handleEventUpdate = (updatedEvent: CalendarEvent) => {
   // Update event in database
   await updateEvent(updatedEvent.id, updatedEvent);
   // Update local state
-  setEvents((prev) =>
-    prev.map((event) => (event.id === updatedEvent.id ? updatedEvent : event)),
-  );
+  setEvents(prev => prev.map(event => (event.id === updatedEvent.id ? updatedEvent : event)));
 };
 ```
 
@@ -174,7 +172,7 @@ const handleEventDelete = (eventId: string) => {
   // Remove event from database
   await deleteEvent(eventId);
   // Update local state
-  setEvents((prev) => prev.filter((event) => event.id !== eventId));
+  setEvents(prev => prev.filter(event => event.id !== eventId));
 };
 ```
 
@@ -202,7 +200,7 @@ const memoizedEvents = useMemo(() => events, [events]);
 const visibleEvents = useMemo(() => {
   const start = getCurrentViewStart();
   const end = getCurrentViewEnd();
-  return events.filter((event) => event.start >= start && event.end <= end);
+  return events.filter(event => event.start >= start && event.end <= end);
 }, [events, currentView]);
 ```
 
@@ -228,18 +226,18 @@ const handleEventCreate = (event: CalendarEvent) => {
   try {
     // Validate event data
     if (!event.title || !event.start || !event.end) {
-      throw new Error("Event must have title, start, and end times");
+      throw new Error('Event must have title, start, and end times');
     }
 
     if (event.start >= event.end) {
-      throw new Error("Event end time must be after start time");
+      throw new Error('Event end time must be after start time');
     }
 
     await saveEvent(event);
   } catch (error) {
-    console.error("Failed to create event:", error);
+    console.error('Failed to create event:', error);
     // Show user-friendly error message
-    showErrorToast("Failed to create event. Please check your input.");
+    showErrorToast('Failed to create event. Please check your input.');
   }
 };
 ```
@@ -258,10 +256,10 @@ class CalendarService {
     return response.json();
   }
 
-  async createEvent(event: Omit<CalendarEvent, "id">): Promise<CalendarEvent> {
-    const response = await fetch("/api/events", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+  async createEvent(event: Omit<CalendarEvent, 'id'>): Promise<CalendarEvent> {
+    const response = await fetch('/api/events', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(event),
     });
     return response.json();
@@ -272,15 +270,15 @@ class CalendarService {
     event: Partial<CalendarEvent>,
   ): Promise<CalendarEvent> {
     const response = await fetch(`/api/events/${id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(event),
     });
     return response.json();
   }
 
   async deleteEvent(id: string): Promise<void> {
-    await fetch(`/api/events/${id}`, { method: "DELETE" });
+    await fetch(`/api/events/${id}`, { method: 'DELETE' });
   }
 }
 ```

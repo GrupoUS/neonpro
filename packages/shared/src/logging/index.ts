@@ -3,14 +3,14 @@
  */
 
 export {
+  apiLogger,
+  auditLogger,
   createHealthcareLogger,
   databaseLogger,
-  apiLogger,
-  securityLogger,
-  auditLogger,
   logAuditEvent,
   logHealthcareError,
   logPerformanceMetric,
+  securityLogger,
 } from './healthcare-logger';
 
 // Convenience re-exports

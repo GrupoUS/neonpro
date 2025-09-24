@@ -1,6 +1,6 @@
 /**
  * NeonPro PWA Advanced Offline Manager
- * 
+ *
  * Sophisticated offline data management with intelligent synchronization,
  * conflict resolution, and queue management for aesthetic clinic workflows.
  */
@@ -71,7 +71,7 @@ export class PWAOfflineManager {
     conflictResolution: 'auto' as 'auto' | 'prompt',
     storageLimit: 100 * 1024 * 1024, // 100MB
     compressionEnabled: true,
-    encryptionEnabled: true
+    encryptionEnabled: true,
   };
 
   private constructor() {}
@@ -89,11 +89,11 @@ export class PWAOfflineManager {
       await this.loadQueues();
       this.setupEventListeners();
       this.setupDefaultConflictStrategies();
-      
+
       if (this.isOnline && this.settings.autoSync) {
         setTimeout(() => this.processAllQueues(), 1000);
       }
-      
+
       console.log('NeonPro Offline Manager initialized successfully');
     } catch (error) {
       console.error('Failed to initialize Offline Manager:', error);
@@ -111,7 +111,7 @@ export class PWAOfflineManager {
         resolve();
       };
 
-      request.onupgradeneeded = (event) => {
+      request.onupgradeneeded = event => {
         const db = (event.target as IDBOpenDBRequest).result;
 
         // Create object stores for different entity types
@@ -165,9 +165,9 @@ export class PWAOfflineManager {
   private setupEventListeners(): void {
     window.addEventListener('online', () => this.handleOnline());
     window.addEventListener('offline', () => this.handleOffline());
-    
+
     // Listen for service worker messages
-    navigator.serviceWorker?.addEventListener('message', (event) => {
+    navigator.serviceWorker?.addEventListener('message', event => {
       if (event.data.type === 'SYNC_REQUEST') {
         this.processAllQueues();
       }
@@ -179,32 +179,32 @@ export class PWAOfflineManager {
     this.conflictStrategies.set('appointments', {
       type: 'timestamp',
       priorityFields: ['status', 'dateTime', 'professionalId'],
-      mergeStrategy: 'auto'
+      mergeStrategy: 'auto',
     });
 
     this.conflictStrategies.set('patients', {
       type: 'field-level',
       priorityFields: ['name', 'phone', 'email'],
-      mergeStrategy: 'prompt'
+      mergeStrategy: 'prompt',
     });
 
     this.conflictStrategies.set('treatments', {
       type: 'version',
       priorityFields: ['status', 'notes'],
-      mergeStrategy: 'always-server'
+      mergeStrategy: 'always-server',
     });
 
     this.conflictStrategies.set('inventory', {
       type: 'field-level',
       priorityFields: ['quantity', 'location'],
-      mergeStrategy: 'always-server'
+      mergeStrategy: 'always-server',
     });
   }
 
   private handleOnline(): void {
     this.isOnline = true;
     console.log('Device online - starting sync process');
-    
+
     if (this.settings.autoSync) {
       this.processAllQueues();
     }
@@ -223,7 +223,7 @@ export class PWAOfflineManager {
     timeout?: number;
   } = {}): Promise<string> {
     const queueId = `queue-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-    
+
     const queue: OfflineQueue = {
       id: queueId,
       name,
@@ -233,8 +233,8 @@ export class PWAOfflineManager {
         priority: options.priority || 'medium',
         autoSync: options.autoSync ?? true,
         maxRetries: options.maxRetries || this.settings.maxRetries,
-        timeout: options.timeout || this.settings.queueTimeout
-      }
+        timeout: options.timeout || this.settings.queueTimeout,
+      },
     };
 
     this.queues.set(queueId, queue);
@@ -245,7 +245,7 @@ export class PWAOfflineManager {
 
   async addOperation(
     queueId: string,
-    operation: Omit<OfflineOperation, 'id' | 'timestamp' | 'syncAttempts' | 'status'>
+    operation: Omit<OfflineOperation, 'id' | 'timestamp' | 'syncAttempts' | 'status'>,
   ): Promise<string> {
     const queue = this.queues.get(queueId);
     if (!queue) {
@@ -257,7 +257,7 @@ export class PWAOfflineManager {
       id: `op-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       timestamp: new Date(),
       syncAttempts: [],
-      status: 'pending'
+      status: 'pending',
     };
 
     queue.operations.push(fullOperation);
@@ -284,7 +284,7 @@ export class PWAOfflineManager {
         errors: ['Sync already in progress'],
         conflicts: [],
         duration: 0,
-        bytesSynced: 0
+        bytesSynced: 0,
       };
     }
 
@@ -293,10 +293,10 @@ export class PWAOfflineManager {
 
     try {
       const result = await this.processOperations(queue);
-      
+
       // Log sync result
       await this.logSyncResult(queueId, result);
-      
+
       return result;
     } finally {
       this.syncInProgress = false;
@@ -310,7 +310,7 @@ export class PWAOfflineManager {
       errors: [],
       conflicts: [],
       duration: 0,
-      bytesSynced: 0
+      bytesSynced: 0,
     };
 
     const operationsToProcess = queue.operations
@@ -326,7 +326,7 @@ export class PWAOfflineManager {
     for (const operation of operationsToProcess) {
       try {
         const syncResult = await this.processSingleOperation(operation, queue);
-        
+
         if (syncResult.success) {
           operation.status = 'completed';
           result.operationsProcessed++;
@@ -346,7 +346,7 @@ export class PWAOfflineManager {
 
     // Remove completed operations
     queue.operations = queue.operations.filter(op => op.status !== 'completed');
-    
+
     // Update queue
     this.queues.set(queue.id, queue);
     await this.saveQueue(queue);
@@ -359,7 +359,7 @@ export class PWAOfflineManager {
 
   private async processSingleOperation(
     operation: OfflineOperation,
-    queue: OfflineQueue
+    queue: OfflineQueue,
   ): Promise<{ success: boolean; error?: string; bytesSynced?: number }> {
     // Check retry limit
     if (operation.retryCount >= operation.maxRetries) {
@@ -371,7 +371,7 @@ export class PWAOfflineManager {
       const incompleteDeps = operation.dependencies.filter(depId => {
         return queue.operations.some(op => op.id === depId && op.status !== 'completed');
       });
-      
+
       if (incompleteDeps.length > 0) {
         return { success: false, error: 'Dependencies not completed' };
       }
@@ -386,11 +386,11 @@ export class PWAOfflineManager {
     try {
       // Simulate API call - replace with actual implementation
       const apiResult = await this.executeApiOperation(operation);
-      
+
       if (apiResult.conflict) {
         // Handle conflict
         const resolution = await this.resolveConflict(operation, apiResult.serverData);
-        
+
         if (resolution.resolved) {
           // Retry with resolved data
           const resolvedOperation = { ...operation, data: resolution.mergedData };
@@ -416,13 +416,13 @@ export class PWAOfflineManager {
   }> {
     // This is a mock implementation - replace with actual API calls
     const dataSize = JSON.stringify(operation.data).length;
-    
+
     // Simulate network delay
     await new Promise(resolve => setTimeout(resolve, 100 + Math.random() * 200));
 
     // Simulate occasional conflicts (5% chance)
     const hasConflict = Math.random() < 0.05;
-    
+
     if (hasConflict) {
       return {
         success: false,
@@ -430,28 +430,28 @@ export class PWAOfflineManager {
         serverData: {
           version: Math.floor(Math.random() * 1000),
           timestamp: new Date(),
-          data: operation.data // Modified server data would go here
-        }
+          data: operation.data, // Modified server data would go here
+        },
       };
     }
 
     return {
       success: true,
-      bytesSynced: dataSize
+      bytesSynced: dataSize,
     };
   }
 
   private async resolveConflict(
     clientOperation: OfflineOperation,
-    serverData: any
+    serverData: any,
   ): Promise<{ resolved: boolean; mergedData?: any }> {
     const strategy = this.conflictStrategies.get(clientOperation.entity);
-    
+
     if (!strategy || strategy.mergeStrategy === 'auto') {
       // Auto-resolve based on timestamp
       const clientTimestamp = clientOperation.timestamp;
       const serverTimestamp = new Date(serverData.timestamp);
-      
+
       if (clientTimestamp > serverTimestamp) {
         return { resolved: true, mergedData: clientOperation.data };
       } else {
@@ -482,7 +482,7 @@ export class PWAOfflineManager {
 
   async processAllQueues(): Promise<SyncResult[]> {
     const results: SyncResult[] = [];
-    
+
     // Process queues by priority
     const sortedQueues = Array.from(this.queues.values()).sort((a, b) => {
       const priorityOrder = { critical: 4, high: 3, medium: 2, low: 1 };
@@ -501,7 +501,7 @@ export class PWAOfflineManager {
             errors: [error instanceof Error ? error.message : String(error)],
             conflicts: [],
             duration: 0,
-            bytesSynced: 0
+            bytesSynced: 0,
           });
         }
       }
@@ -518,7 +518,7 @@ export class PWAOfflineManager {
       id: `log-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       queueId,
       timestamp: new Date(),
-      result
+      result,
     };
 
     const transaction = this.db.transaction(['sync-log'], 'readwrite');
@@ -538,13 +538,16 @@ export class PWAOfflineManager {
     lastSync?: Date;
   }> {
     const pendingOperations = Array.from(this.queues.values())
-      .reduce((sum, queue) => sum + queue.operations.filter(op => op.status === 'pending').length, 0);
+      .reduce(
+        (sum, queue) => sum + queue.operations.filter(op => op.status === 'pending').length,
+        0,
+      );
 
     const queues = Array.from(this.queues.values()).map(queue => ({
       id: queue.id,
       name: queue.name,
       operations: queue.operations.length,
-      priority: queue.metadata.priority
+      priority: queue.metadata.priority,
     }));
 
     // Get last sync time from logs
@@ -555,7 +558,7 @@ export class PWAOfflineManager {
         const store = transaction.objectStore('sync-log');
         const index = store.index('timestamp');
         const request = index.openCursor(null, 'prev');
-        
+
         request.onsuccess = () => {
           const cursor = request.result;
           if (cursor) {
@@ -572,7 +575,7 @@ export class PWAOfflineManager {
       isOnline: this.isOnline,
       pendingOperations,
       queues,
-      lastSync
+      lastSync,
     };
   }
 
@@ -607,7 +610,7 @@ export class PWAOfflineManager {
     return {
       used: total,
       total: this.settings.storageLimit,
-      byQueue: usage
+      byQueue: usage,
     };
   }
 
@@ -629,7 +632,9 @@ export class PWAOfflineManager {
 
   // Background sync for service worker
   async registerBackgroundSync(): Promise<void> {
-    if ('serviceWorker' in navigator && 'SyncManager' in window.ServiceWorkerRegistration.prototype) {
+    if (
+      'serviceWorker' in navigator && 'SyncManager' in window.ServiceWorkerRegistration.prototype
+    ) {
       try {
         const registration = await navigator.serviceWorker.ready;
         // @ts-ignore - SyncManager may not be in all TypeScript definitions

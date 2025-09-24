@@ -2,24 +2,24 @@
 export const monitoringConfig = {
   // Sentry Error Tracking Configuration
   sentry: {
-    dsn: process.env.SENTRY_DSN || "",
-    environment: process.env.NODE_ENV || "production",
-    release: `neonpro@${process.env.npm_package_version || "1.0.0"}`,
+    dsn: process.env.SENTRY_DSN || '',
+    environment: process.env.NODE_ENV || 'production',
+    release: `neonpro@${process.env.npm_package_version || '1.0.0'}`,
 
     // Sample rates
     tracesSampleRate: parseFloat(
-      process.env.SENTRY_TRACES_SAMPLE_RATE || "0.1",
+      process.env.SENTRY_TRACES_SAMPLE_RATE || '0.1',
     ),
     replaysSessionSampleRate: parseFloat(
-      process.env.SENTRY_REPLAYS_SESSION_SAMPLE_RATE || "0.1",
+      process.env.SENTRY_REPLAYS_SESSION_SAMPLE_RATE || '0.1',
     ),
     replaysOnErrorSampleRate: parseFloat(
-      process.env.SENTRY_REPLAYS_ON_ERROR_SAMPLE_RATE || "1.0",
+      process.env.SENTRY_REPLAYS_ON_ERROR_SAMPLE_RATE || '1.0',
     ),
 
     // Performance monitoring
     profilesSampleRate: parseFloat(
-      process.env.SENTRY_PROFILES_SAMPLE_RATE || "0.1",
+      process.env.SENTRY_PROFILES_SAMPLE_RATE || '0.1',
     ),
 
     // Healthcare specific monitoring
@@ -63,17 +63,17 @@ export const monitoringConfig = {
     ],
 
     // Before send callback for sensitive data filtering
-    beforeSend: (event) => {
+    beforeSend: event => {
       if (event.request && event.request.headers) {
         // Filter sensitive headers
         const sensitiveHeaders = [
-          "authorization",
-          "cookie",
-          "set-cookie",
-          "proxy-authorization",
+          'authorization',
+          'cookie',
+          'set-cookie',
+          'proxy-authorization',
         ];
         event.request.headers = Object.keys(event.request.headers)
-          .filter((key) => !sensitiveHeaders.includes(key.toLowerCase()))
+          .filter(key => !sensitiveHeaders.includes(key.toLowerCase()))
           .reduce((obj, key) => {
             obj[key] = event.request.headers[key];
             return obj;
@@ -83,29 +83,26 @@ export const monitoringConfig = {
       // Filter sensitive data in request body
       if (event.request && event.request.data) {
         try {
-          const data =
-            typeof event.request.data === "string"
-              ? JSON.parse(event.request.data)
-              : event.request.data;
+          const data = typeof event.request.data === 'string'
+            ? JSON.parse(event.request.data)
+            : event.request.data;
 
           // Mask sensitive fields
           const sensitiveFields = [
-            "password",
-            "credit_card",
-            "cpf",
-            "rg",
-            "medical_record",
-            "patient_id",
+            'password',
+            'credit_card',
+            'cpf',
+            'rg',
+            'medical_record',
+            'patient_id',
           ];
           const maskData = (obj: any) => {
-            Object.keys(obj).forEach((key) => {
+            Object.keys(obj).forEach(key => {
               if (
-                sensitiveFields.some((field) =>
-                  key.toLowerCase().includes(field),
-                )
+                sensitiveFields.some(field => key.toLowerCase().includes(field))
               ) {
-                obj[key] = "***MASKED***";
-              } else if (typeof obj[key] === "object" && obj[key] !== null) {
+                obj[key] = '***MASKED***';
+              } else if (typeof obj[key] === 'object' && obj[key] !== null) {
                 maskData(obj[key]);
               }
             });
@@ -113,7 +110,8 @@ export const monitoringConfig = {
 
           maskData(data);
           event.request.data = JSON.stringify(data);
-        } catch (_e) { void _e;
+        } catch (_e) {
+          void _e;
           // If parsing fails, leave as is
         }
       }
@@ -124,34 +122,34 @@ export const monitoringConfig = {
 
   // Application Performance Monitoring
   apm: {
-    enabled: process.env.APM_ENABLED === "true",
-    serviceName: "neonpro-healthcare",
-    serviceVersion: process.env.npm_package_version || "1.0.0",
-    environment: process.env.NODE_ENV || "production",
+    enabled: process.env.APM_ENABLED === 'true',
+    serviceName: 'neonpro-healthcare',
+    serviceVersion: process.env.npm_package_version || '1.0.0',
+    environment: process.env.NODE_ENV || 'production',
 
     // Transaction sampling
-    transactionSampleRate: parseFloat(process.env.APM_SAMPLE_RATE || "1.0"),
+    transactionSampleRate: parseFloat(process.env.APM_SAMPLE_RATE || '1.0'),
 
     // Custom metrics
     customMetrics: {
       // Healthcare specific metrics
       healthcare: {
-        patientRegistrations: "counter",
-        appointmentBookings: "counter",
-        prescriptionRequests: "counter",
-        medicalRecordAccesses: "counter",
-        billingTransactions: "counter",
+        patientRegistrations: 'counter',
+        appointmentBookings: 'counter',
+        prescriptionRequests: 'counter',
+        medicalRecordAccesses: 'counter',
+        billingTransactions: 'counter',
 
         // Performance metrics
-        apiResponseTimes: "histogram",
-        databaseQueryTimes: "histogram",
-        authenticationLatency: "histogram",
+        apiResponseTimes: 'histogram',
+        databaseQueryTimes: 'histogram',
+        authenticationLatency: 'histogram',
 
         // Error metrics
-        validationErrors: "counter",
-        authenticationFailures: "counter",
-        authorizationFailures: "counter",
-        systemErrors: "counter",
+        validationErrors: 'counter',
+        authenticationFailures: 'counter',
+        authorizationFailures: 'counter',
+        systemErrors: 'counter',
       },
     },
 
@@ -164,8 +162,8 @@ export const monitoringConfig = {
 
   // Logging Configuration
   logging: {
-    level: process.env.LOG_LEVEL || "info",
-    format: process.env.LOG_FORMAT || "json",
+    level: process.env.LOG_LEVEL || 'info',
+    format: process.env.LOG_FORMAT || 'json',
 
     // Structured logging
     structured: true,
@@ -173,14 +171,14 @@ export const monitoringConfig = {
     // Log outputs
     outputs: [
       {
-        type: "console",
-        level: "debug",
+        type: 'console',
+        level: 'debug',
       },
       {
-        type: "file",
-        level: "info",
-        filename: process.env.LOG_FILE_PATH || "/var/log/neonpro/app.log",
-        maxSize: "20MB",
+        type: 'file',
+        level: 'info',
+        filename: process.env.LOG_FILE_PATH || '/var/log/neonpro/app.log',
+        maxSize: '20MB',
         maxFiles: 10,
       },
     ],
@@ -190,10 +188,10 @@ export const monitoringConfig = {
       // Audit logging for compliance
       audit: {
         enabled: true,
-        level: "info",
+        level: 'info',
         separateFile: true,
-        filename: "/var/log/neonpro/audit.log",
-        format: "json",
+        filename: '/var/log/neonpro/audit.log',
+        format: 'json',
         fields: {
           timestamp: true,
           userId: true,
@@ -209,32 +207,32 @@ export const monitoringConfig = {
       // Security event logging
       security: {
         enabled: true,
-        level: "warn",
+        level: 'warn',
         separateFile: true,
-        filename: "/var/log/neonpro/security.log",
+        filename: '/var/log/neonpro/security.log',
         events: [
-          "authentication_failure",
-          "authorization_failure",
-          "suspicious_activity",
-          "data_access_violation",
-          "brute_force_attempt",
-          "rate_limit_exceeded",
+          'authentication_failure',
+          'authorization_failure',
+          'suspicious_activity',
+          'data_access_violation',
+          'brute_force_attempt',
+          'rate_limit_exceeded',
         ],
       },
 
       // System event logging
       system: {
         enabled: true,
-        level: "info",
+        level: 'info',
         separateFile: true,
-        filename: "/var/log/neonpro/system.log",
+        filename: '/var/log/neonpro/system.log',
         events: [
-          "system_startup",
-          "system_shutdown",
-          "deployment",
-          "configuration_change",
-          "backup_operation",
-          "maintenance_event",
+          'system_startup',
+          'system_shutdown',
+          'deployment',
+          'configuration_change',
+          'backup_operation',
+          'maintenance_event',
         ],
       },
     },
@@ -243,19 +241,19 @@ export const monitoringConfig = {
     filters: {
       // Fields to mask in logs
       maskFields: [
-        "password",
-        "credit_card",
-        "cvv",
-        "expiry",
-        "ssn",
-        "cpf",
-        "rg",
-        "medical_record",
-        "patient_id",
-        "diagnosis",
-        "treatment",
-        "medication",
-        "insurance_number",
+        'password',
+        'credit_card',
+        'cvv',
+        'expiry',
+        'ssn',
+        'cpf',
+        'rg',
+        'medical_record',
+        'patient_id',
+        'diagnosis',
+        'treatment',
+        'medication',
+        'insurance_number',
       ],
 
       // Request bodies to filter
@@ -275,12 +273,12 @@ export const monitoringConfig = {
     webVitals: {
       enabled: true,
       metrics: [
-        "CLS", // Cumulative Layout Shift
-        "FID", // First Input Delay
-        "FCP", // First Contentful Paint
-        "LCP", // Largest Contentful Paint
-        "TTFB", // Time to First Byte
-        "INP", // Interaction to Next Paint
+        'CLS', // Cumulative Layout Shift
+        'FID', // First Input Delay
+        'FCP', // First Contentful Paint
+        'LCP', // Largest Contentful Paint
+        'TTFB', // Time to First Byte
+        'INP', // Interaction to Next Paint
       ],
     },
 
@@ -311,14 +309,14 @@ export const monitoringConfig = {
 
       // Healthcare specific events
       healthcareEvents: [
-        "patient_registration",
-        "appointment_booking",
-        "prescription_request",
-        "medical_record_access",
-        "billing_payment",
-        "telemedicine_session",
-        "lab_result_view",
-        "medication_reminder",
+        'patient_registration',
+        'appointment_booking',
+        'prescription_request',
+        'medical_record_access',
+        'billing_payment',
+        'telemedicine_session',
+        'lab_result_view',
+        'medication_reminder',
       ],
     },
   },
@@ -330,38 +328,38 @@ export const monitoringConfig = {
     // Healthcare critical flows
     criticalFlows: [
       {
-        name: "patient_registration",
-        frequency: "5m",
-        locations: ["sa-east-1", "us-east-1"],
+        name: 'patient_registration',
+        frequency: '5m',
+        locations: ['sa-east-1', 'us-east-1'],
         steps: [
-          { action: "navigate", url: "/register" },
-          { action: "fill_form", fields: ["name", "email", "phone"] },
-          { action: "submit_form" },
-          { action: "verify_success" },
+          { action: 'navigate', url: '/register' },
+          { action: 'fill_form', fields: ['name', 'email', 'phone'] },
+          { action: 'submit_form' },
+          { action: 'verify_success' },
         ],
       },
       {
-        name: "appointment_booking",
-        frequency: "5m",
-        locations: ["sa-east-1", "us-east-1"],
+        name: 'appointment_booking',
+        frequency: '5m',
+        locations: ['sa-east-1', 'us-east-1'],
         steps: [
-          { action: "navigate", url: "/appointments" },
-          { action: "select_service" },
-          { action: "select_datetime" },
-          { action: "confirm_booking" },
-          { action: "verify_success" },
+          { action: 'navigate', url: '/appointments' },
+          { action: 'select_service' },
+          { action: 'select_datetime' },
+          { action: 'confirm_booking' },
+          { action: 'verify_success' },
         ],
       },
       {
-        name: "patient_portal_access",
-        frequency: "10m",
-        locations: ["sa-east-1", "us-east-1"],
+        name: 'patient_portal_access',
+        frequency: '10m',
+        locations: ['sa-east-1', 'us-east-1'],
         steps: [
-          { action: "navigate", url: "/login" },
-          { action: "login", credentials: "test_patient" },
-          { action: "verify_dashboard" },
-          { action: "view_medical_records" },
-          { action: "logout" },
+          { action: 'navigate', url: '/login' },
+          { action: 'login', credentials: 'test_patient' },
+          { action: 'verify_dashboard' },
+          { action: 'view_medical_records' },
+          { action: 'logout' },
         ],
       },
     ],
@@ -390,62 +388,62 @@ export const monitoringConfig = {
     // Alert channels
     channels: [
       {
-        type: "email",
+        type: 'email',
         recipients: [
-          "devops@neonpro.healthcare",
-          "security@neonpro.healthcare",
+          'devops@neonpro.healthcare',
+          'security@neonpro.healthcare',
         ],
-        severity: ["critical", "warning"],
+        severity: ['critical', 'warning'],
       },
       {
-        type: "slack",
+        type: 'slack',
         webhook: process.env.SLACK_WEBHOOK_URL,
-        channel: "#alerts",
-        severity: ["critical"],
+        channel: '#alerts',
+        severity: ['critical'],
       },
       {
-        type: "pagerduty",
+        type: 'pagerduty',
         serviceKey: process.env.PAGERDUTY_SERVICE_KEY,
-        severity: ["critical"],
+        severity: ['critical'],
       },
     ],
 
     // Alert rules
     rules: [
       {
-        name: "High Error Rate",
-        condition: "error_rate > 5%",
-        duration: "5m",
-        severity: "critical",
-        channels: ["email", "slack", "pagerduty"],
+        name: 'High Error Rate',
+        condition: 'error_rate > 5%',
+        duration: '5m',
+        severity: 'critical',
+        channels: ['email', 'slack', 'pagerduty'],
       },
       {
-        name: "Slow Response Time",
-        condition: "response_time_p95 > 3s",
-        duration: "10m",
-        severity: "warning",
-        channels: ["email", "slack"],
+        name: 'Slow Response Time',
+        condition: 'response_time_p95 > 3s',
+        duration: '10m',
+        severity: 'warning',
+        channels: ['email', 'slack'],
       },
       {
-        name: "High Memory Usage",
-        condition: "memory_usage > 80%",
-        duration: "5m",
-        severity: "warning",
-        channels: ["email"],
+        name: 'High Memory Usage',
+        condition: 'memory_usage > 80%',
+        duration: '5m',
+        severity: 'warning',
+        channels: ['email'],
       },
       {
-        name: "Database Connection Issues",
-        condition: "db_connection_errors > 10",
-        duration: "1m",
-        severity: "critical",
-        channels: ["email", "slack", "pagerduty"],
+        name: 'Database Connection Issues',
+        condition: 'db_connection_errors > 10',
+        duration: '1m',
+        severity: 'critical',
+        channels: ['email', 'slack', 'pagerduty'],
       },
       {
-        name: "Security Event",
-        condition: "security_events > 0",
-        duration: "0m",
-        severity: "critical",
-        channels: ["email", "slack", "pagerduty"],
+        name: 'Security Event',
+        condition: 'security_events > 0',
+        duration: '0m',
+        severity: 'critical',
+        channels: ['email', 'slack', 'pagerduty'],
       },
     ],
   },

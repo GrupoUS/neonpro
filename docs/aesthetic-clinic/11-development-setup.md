@@ -418,9 +418,9 @@ export class ErrorTracker {
       message: error.message,
       stack: error.stack,
       context,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
-    
+
     // Send to error tracking service
     if (process.env.NODE_ENV === 'production') {
       // Send to Sentry or similar service
@@ -481,9 +481,9 @@ export const playgroundHandler = createTRPCPlayground({
   router: appRouter,
   request: {
     headers: {
-      Authorization: 'Bearer your-token-here'
-    }
-  }
+      Authorization: 'Bearer your-token-here',
+    },
+  },
 });
 
 // Add to Express app
@@ -496,25 +496,25 @@ app.use('/playground', playgroundHandler);
 
 ```typescript
 // apps/web/src/components/shared/dev-helpers.tsx
+import { ComponentMeta, ComponentStory } from '@storybook/react';
 import React, { useState } from 'react';
-import { ComponentStory, ComponentMeta } from '@storybook/react';
 
 // Development props panel
 export const DevPanel: React.FC<{ data: any }> = ({ data }) => {
   const [isVisible, setIsVisible] = useState(false);
 
   return (
-    <div className="fixed bottom-4 right-4 z-50">
+    <div className='fixed bottom-4 right-4 z-50'>
       <button
         onClick={() => setIsVisible(!isVisible)}
-        className="bg-blue-500 text-white px-4 py-2 rounded-lg shadow-lg"
+        className='bg-blue-500 text-white px-4 py-2 rounded-lg shadow-lg'
       >
         {isVisible ? 'Hide' : 'Show'} Dev Data
       </button>
-      
+
       {isVisible && (
-        <div className="absolute bottom-16 right-0 w-96 bg-white border rounded-lg shadow-xl p-4 max-h-96 overflow-auto">
-          <pre className="text-xs">
+        <div className='absolute bottom-16 right-0 w-96 bg-white border rounded-lg shadow-xl p-4 max-h-96 overflow-auto'>
+          <pre className='text-xs'>
             {JSON.stringify(data, null, 2)}
           </pre>
         </div>
@@ -526,7 +526,7 @@ export const DevPanel: React.FC<{ data: any }> = ({ data }) => {
 // Mock data provider
 export const withMockData = <P extends object>(
   Component: React.ComponentType<P>,
-  mockData: P
+  mockData: P,
 ) => {
   return (props: P) => <Component {...mockData} {...props} />;
 };
@@ -538,13 +538,13 @@ export const devUtils = {
       console.log(`🎨 ${componentName} rendered`);
     }
   },
-  
+
   logInteraction: (componentName: string, action: string) => {
     if (process.env.NODE_ENV === 'development') {
       console.log(`🖱️ ${componentName} ${action}`);
     }
   },
-  
+
   measurePerformance: (componentName: string, fn: () => void) => {
     if (process.env.NODE_ENV === 'development') {
       const start = performance.now();
@@ -554,7 +554,7 @@ export const devUtils = {
     } else {
       fn();
     }
-  }
+  },
 };
 ```
 
@@ -568,18 +568,18 @@ module.exports = {
     '@storybook/addon-essentials',
     '@storybook/addon-interactions',
     '@storybook/addon-a11y',
-    '@storybook/addon-coverage'
+    '@storybook/addon-coverage',
   ],
   framework: {
     name: '@storybook/react-webpack5',
-    options: {}
+    options: {},
   },
   docs: {
-    autodocs: 'tag'
+    autodocs: 'tag',
   },
   features: {
-    storyStoreV7: true
-  }
+    storyStoreV7: true,
+  },
 };
 ```
 
@@ -678,9 +678,10 @@ import { app } from '../src/app';
 export const testPrisma = new PrismaClient({
   datasources: {
     db: {
-      url: process.env.TEST_DATABASE_URL || 'postgresql://postgres:postgres@localhost:5432/neonpro_test'
-    }
-  }
+      url: process.env.TEST_DATABASE_URL
+        || 'postgresql://postgres:postgres@localhost:5432/neonpro_test',
+    },
+  },
 });
 
 // Test Redis client
@@ -712,11 +713,11 @@ export const factories = {
         skinConcerns: ['acne'],
         lgpdConsent: true,
         status: 'active',
-        ...overrides
-      }
+        ...overrides,
+      },
     });
   },
-  
+
   createTreatment: async (clientId: string, overrides = {}) => {
     return testPrisma.aestheticTreatment.create({
       data: {
@@ -729,11 +730,11 @@ export const factories = {
         price: 800.00,
         duration: 60,
         status: 'active',
-        ...overrides
-      }
+        ...overrides,
+      },
     });
   },
-  
+
   createSession: async (treatmentId: string, overrides = {}) => {
     return testPrisma.aestheticSession.create({
       data: {
@@ -742,24 +743,24 @@ export const factories = {
         date: new Date(),
         status: 'scheduled',
         notes: 'Test session',
-        ...overrides
-      }
+        ...overrides,
+      },
     });
-  }
+  },
 };
 
 // Test helpers
 export const auth = {
   generateToken: (userId: string) => {
     return jwt.sign({ userId }, process.env.JWT_SECRET || 'test-secret', {
-      expiresIn: '1h'
+      expiresIn: '1h',
     });
   },
-  
+
   generateHeaders: (token: string) => ({
     Authorization: `Bearer ${token}`,
-    'Content-Type': 'application/json'
-  })
+    'Content-Type': 'application/json',
+  }),
 };
 ```
 
@@ -813,7 +814,7 @@ const httpRequestDurationMicroseconds = new prometheus.Histogram({
   name: 'http_request_duration_ms',
   help: 'Duration of HTTP requests in ms',
   labelNames: ['method', 'route', 'code'],
-  buckets: [0.1, 5, 15, 50, 100, 500]
+  buckets: [0.1, 5, 15, 50, 100, 500],
 });
 
 register.registerMetric(httpRequestDurationMicroseconds);
@@ -844,7 +845,7 @@ app.get('/health', (req, res) => {
     timestamp: new Date().toISOString(),
     uptime: process.uptime(),
     memory: process.memoryUsage(),
-    version: process.env.npm_package_version || '1.0.0'
+    version: process.env.npm_package_version || '1.0.0',
   });
 });
 

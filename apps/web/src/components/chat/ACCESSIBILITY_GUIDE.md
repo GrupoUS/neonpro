@@ -52,8 +52,8 @@ Este guia documenta as características de acessibilidade implementadas nos comp
 <AccessibleChatMessage
   message={message}
   isUser={false}
-  onAction={(action) => console.log(action)}
-/>
+  onAction={action => console.log(action)}
+/>;
 ```
 
 **Características:**
@@ -67,7 +67,7 @@ Este guia documenta as características de acessibilidade implementadas nos comp
 ### AccessibilitySettingsPanel
 
 ```tsx
-<AccessibilitySettingsPanel />
+<AccessibilitySettingsPanel />;
 ```
 
 **Características:**
@@ -82,10 +82,10 @@ Este guia documenta as características de acessibilidade implementadas nos comp
 
 ```tsx
 <ScreenReaderAnnouncer
-  message="Nova mensagem recebida"
-  priority="polite"
+  message='Nova mensagem recebida'
+  priority='polite'
   timeout={5000}
-/>
+/>;
 ```
 
 **Características:**
@@ -245,7 +245,7 @@ const customTheme = {
   focus: '#AC9469',
   success: '#10b981',
   warning: '#f59e0b',
-  error: '#ef4444'
+  error: '#ef4444',
 };
 ```
 

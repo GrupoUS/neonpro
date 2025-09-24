@@ -9,7 +9,7 @@ export interface AIEnhancedMetadata {
   cacheHit?: boolean;
   modelVersion?: string;
   requestSource?: string;
-  complianceLevel?: "standard" | "enhanced" | "restricted";
+  complianceLevel?: 'standard' | 'enhanced' | 'restricted';
   [key: string]: unknown;
 }
 
@@ -18,38 +18,38 @@ export interface AIEnhancedMetadata {
 
 // Import common types from enhanced-ai.ts
 import type {
-  EnhancedAIModel,
-  MedicalSpecialty,
-  SubscriptionTier,
-  CFMComplianceLevel,
-  SubscriptionPlan,
-  PlanFeatures,
+  AIFeatureCode,
   AIUsageRecord,
-  QuotaStatus,
-  BillingMetrics,
   AuditTrail,
+  BillingMetrics,
+  CFMComplianceLevel,
+  EnhancedAIModel,
   EnhancedAIRequest,
   EnhancedAIResponse,
+  MedicalSpecialty,
+  PlanFeatures,
+  QuotaStatus,
+  SubscriptionPlan,
+  SubscriptionTier,
   UserSubscription,
-  AIFeatureCode,
-} from "./enhanced-ai";
+} from './enhanced-ai';
 
 // Re-export the imported types
 export type {
-  EnhancedAIModel,
-  MedicalSpecialty,
-  SubscriptionTier,
-  CFMComplianceLevel,
-  SubscriptionPlan,
-  PlanFeatures,
+  AIFeatureCode,
   AIUsageRecord,
-  QuotaStatus,
-  BillingMetrics,
   AuditTrail,
+  BillingMetrics,
+  CFMComplianceLevel,
+  EnhancedAIModel,
   EnhancedAIRequest,
   EnhancedAIResponse,
+  MedicalSpecialty,
+  PlanFeatures,
+  QuotaStatus,
+  SubscriptionPlan,
+  SubscriptionTier,
   UserSubscription,
-  AIFeatureCode,
 };
 
 // ================================================
@@ -186,7 +186,7 @@ export interface UsageCounterData {
  * Usage aggregation for analytics
  */
 export interface UsageAggregation {
-  readonly period: "hour" | "day" | "week" | "month";
+  readonly period: 'hour' | 'day' | 'week' | 'month';
   readonly timestamp: Date;
   readonly queries: number;
   readonly costUsd: number;
@@ -237,57 +237,57 @@ export interface Recommendation {
  * Recommendation types
  */
 export type RecommendationType =
-  | "plan_upgrade"
-  | "cost_optimization"
-  | "feature_suggestion"
-  | "compliance_improvement"
-  | "performance_enhancement"
-  | "model_optimization";
+  | 'plan_upgrade'
+  | 'cost_optimization'
+  | 'feature_suggestion'
+  | 'compliance_improvement'
+  | 'performance_enhancement'
+  | 'model_optimization';
 
 /**
  * Recommendation categories
  */
 export type RecommendationCategory =
-  | "plan_optimization"
-  | "compliance"
-  | "performance"
-  | "cost_efficiency"
-  | "user_experience"
-  | "security";
+  | 'plan_optimization'
+  | 'compliance'
+  | 'performance'
+  | 'cost_efficiency'
+  | 'user_experience'
+  | 'security';
 
 /**
  * Recommendation priority levels
  */
-export type RecommendationPriority = "low" | "medium" | "high" | "critical";
+export type RecommendationPriority = 'low' | 'medium' | 'high' | 'critical';
 
 /**
  * Recommendation status
  */
 export type RecommendationStatus =
-  | "active"
-  | "dismissed"
-  | "implemented"
-  | "expired";
+  | 'active'
+  | 'dismissed'
+  | 'implemented'
+  | 'expired';
 
 /**
  * Implementation effort levels
  */
-export type ImplementationEffort = "low" | "medium" | "high";
+export type ImplementationEffort = 'low' | 'medium' | 'high';
 
 /**
  * Risk levels
  */
-export type RiskLevel = "low" | "medium" | "high";
+export type RiskLevel = 'low' | 'medium' | 'high';
 
 /**
  * Compliance impact
  */
-export type ComplianceImpact = "positive" | "neutral" | "negative";
+export type ComplianceImpact = 'positive' | 'neutral' | 'negative';
 
 /**
  * Cost impact levels
  */
-export type CostImpact = "low" | "medium" | "high";
+export type CostImpact = 'low' | 'medium' | 'high';
 
 /**
  * Domain Descriptor entity matching the domain_descriptors table
@@ -326,7 +326,7 @@ export interface DomainDescriptor {
 /**
  * Data sensitivity levels for LGPD compliance
  */
-export type DataSensitivityLevel = "low" | "medium" | "high" | "critical";
+export type DataSensitivityLevel = 'low' | 'medium' | 'high' | 'critical';
 
 /**
  * Performance benchmarks for AI models in specific domains
@@ -367,7 +367,7 @@ export interface AIAnalyzeRequest {
 }
 
 export interface AICrudRequest {
-  readonly operation: "create" | "read" | "update" | "delete";
+  readonly operation: 'create' | 'read' | 'update' | 'delete';
   readonly intent: string;
   readonly entity?: string;
   readonly data?: Record<string, unknown>;
@@ -380,7 +380,7 @@ export interface AIUsageRequest {
   readonly clinicId?: string;
   readonly startDate?: Date;
   readonly endDate?: Date;
-  readonly aggregation?: "hour" | "day" | "week" | "month";
+  readonly aggregation?: 'hour' | 'day' | 'week' | 'month';
 }
 
 export interface AIRecommendationsRequest {
@@ -460,12 +460,12 @@ export interface AIEnhancedError {
 }
 
 export type AIEnhancedErrorCode =
-  | "QUOTA_EXCEEDED"
-  | "PLAN_LIMIT_REACHED"
-  | "MODEL_UNAVAILABLE"
-  | "COMPLIANCE_VIOLATION"
-  | "INVALID_REQUEST"
-  | "INTERNAL_ERROR"
-  | "RATE_LIMITED"
-  | "AUTHENTICATION_FAILED"
-  | "AUTHORIZATION_FAILED";
+  | 'QUOTA_EXCEEDED'
+  | 'PLAN_LIMIT_REACHED'
+  | 'MODEL_UNAVAILABLE'
+  | 'COMPLIANCE_VIOLATION'
+  | 'INVALID_REQUEST'
+  | 'INTERNAL_ERROR'
+  | 'RATE_LIMITED'
+  | 'AUTHENTICATION_FAILED'
+  | 'AUTHORIZATION_FAILED';

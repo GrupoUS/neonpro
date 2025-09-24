@@ -17,79 +17,79 @@
  * WebRTC connection states for healthcare sessions
  */
 export type RTCConnectionState =
-  | "new"
-  | "connecting"
-  | "connected"
-  | "disconnected"
-  | "failed"
-  | "closed";
+  | 'new'
+  | 'connecting'
+  | 'connected'
+  | 'disconnected'
+  | 'failed'
+  | 'closed';
 
 // Runtime values for TypeScript enum-like behavior
 export const RTCConnectionStates = {
-  NEW: "new",
-  CONNECTING: "connecting",
-  CONNECTED: "connected",
-  DISCONNECTED: "disconnected",
-  FAILED: "failed",
-  CLOSED: "closed",
+  NEW: 'new',
+  CONNECTING: 'connecting',
+  CONNECTED: 'connected',
+  DISCONNECTED: 'disconnected',
+  FAILED: 'failed',
+  CLOSED: 'closed',
 } as const;
 
 /**
  * Types of telemedicine calls with healthcare compliance
  */
 export type TelemedicineCallType =
-  | "emergency"
-  | "scheduled"
-  | "consultation"
-  | "follow-up"
-  | "urgent-care";
+  | 'emergency'
+  | 'scheduled'
+  | 'consultation'
+  | 'follow-up'
+  | 'urgent-care';
 
 // Runtime values for telemedicine call types
 export const TelemedicineCallTypes = {
-  EMERGENCY: "emergency",
-  SCHEDULED: "scheduled",
-  CONSULTATION: "consultation",
-  FOLLOW_UP: "follow-up",
-  URGENT_CARE: "urgent-care",
+  EMERGENCY: 'emergency',
+  SCHEDULED: 'scheduled',
+  CONSULTATION: 'consultation',
+  FOLLOW_UP: 'follow-up',
+  URGENT_CARE: 'urgent-care',
 } as const;
 
 /**
  * Classification levels for medical data according to LGPD
  */
 export type MedicalDataClassification =
-  | "sensitive"
-  | "confidential"
-  | "internal"
-  | "public";
+  | 'sensitive'
+  | 'confidential'
+  | 'internal'
+  | 'public';
 
 // Runtime values for medical data classification
 export const MedicalDataClassifications = {
-  SENSITIVE: "sensitive",
-  CONFIDENTIAL: "confidential",
-  INTERNAL: "internal",
-  PUBLIC: "public",
+  SENSITIVE: 'sensitive',
+  CONFIDENTIAL: 'confidential',
+  INTERNAL: 'internal',
+  PUBLIC: 'public',
 } as const;
 
 /**
  * Healthcare-specific call types - expanded for comprehensive telemedicine
  */
 export type TelemedicineCallTypeExpanded =
-  | "consultation" // Regular patient consultation
-  | "emergency" // Emergency medical consultation
-  | "follow-up" // Post-treatment follow-up
-  | "mental-health" // Mental health sessions
-  | "group-therapy" // Group therapy sessions
-  | "second-opinion"; // Medical second opinion
+  | 'consultation' // Regular patient consultation
+  | 'emergency' // Emergency medical consultation
+  | 'follow-up' // Post-treatment follow-up
+  | 'mental-health' // Mental health sessions
+  | 'group-therapy' // Group therapy sessions
+  | 'second-opinion'; // Medical second opinion
 
 /**
  * Medical data classification levels for LGPD compliance - expanded
  */
 export type MedicalDataClassificationExpanded =
-  | "public" // Non-sensitive medical information
-  | "internal" // Internal clinic data
-  | "personal" // Personal patient information
-  | "sensitive" // Sensitive medical data (PHI)
-  | "confidential"; // Highly confidential medical records
+  | 'public' // Non-sensitive medical information
+  | 'internal' // Internal clinic data
+  | 'personal' // Personal patient information
+  | 'sensitive' // Sensitive medical data (PHI)
+  | 'confidential'; // Highly confidential medical records
 
 // ============================================================================
 // Signaling Infrastructure
@@ -103,7 +103,7 @@ export interface RTCSignalingMessage {
   id: string;
 
   /** Message type for signaling protocol */
-  type: "offer" | "answer" | "ice-candidate" | "bye" | "error" | "heartbeat";
+  type: 'offer' | 'answer' | 'ice-candidate' | 'bye' | 'error' | 'heartbeat';
 
   /** Session identifier for call tracking */
   sessionId: string;
@@ -180,7 +180,7 @@ export interface CallParticipant {
   name: string;
 
   /** Participant role in healthcare context */
-  role: "doctor" | "patient" | "nurse" | "specialist" | "observer";
+  role: 'doctor' | 'patient' | 'nurse' | 'specialist' | 'observer';
 
   /** Professional registration (CRM, CRO, etc.) for healthcare providers */
   professionalId?: string;
@@ -263,7 +263,7 @@ export interface TelemedicineCallSession {
   metadata?: {
     appointmentId?: string;
     medicalRecordId?: string;
-    emergencyLevel?: "low" | "medium" | "high" | "critical";
+    emergencyLevel?: 'low' | 'medium' | 'high' | 'critical';
     specialtyArea?: string;
   };
 }
@@ -281,7 +281,7 @@ export interface RTCHealthcareConfiguration {
     urls: string | string[];
     username?: string;
     credential?: string;
-    credentialType?: "password";
+    credentialType?: 'password';
   }[];
 
   /** Certificate configuration for security */
@@ -291,7 +291,7 @@ export interface RTCHealthcareConfiguration {
   }[];
 
   /** Bundle policy for media optimization */
-  bundlePolicy?: "balanced" | "max-compat" | "max-bundle";
+  bundlePolicy?: 'balanced' | 'max-compat' | 'max-bundle';
 
   /** ICE candidate pool size */
   iceCandidatePoolSize?: number;
@@ -302,10 +302,10 @@ export interface RTCHealthcareConfiguration {
     encryptionEnabled: boolean;
 
     /** Audio quality settings for medical consultation */
-    audioQuality: "standard" | "high" | "medical-grade";
+    audioQuality: 'standard' | 'high' | 'medical-grade';
 
     /** Video quality settings */
-    videoQuality: "low" | "medium" | "high" | "hd";
+    videoQuality: 'low' | 'medium' | 'high' | 'hd';
 
     /** Enable automatic recording (with consent) */
     autoRecording: boolean;
@@ -330,13 +330,13 @@ export interface RTCCallManager {
 
   /** Create new telemedicine call session */
   createCall(
-    session: Omit<TelemedicineCallSession, "sessionId" | "startTime" | "state">,
+    session: Omit<TelemedicineCallSession, 'sessionId' | 'startTime' | 'state'>,
   ): Promise<TelemedicineCallSession>;
 
   /** Join existing call session */
   joinCall(
     sessionId: string,
-    participant: Omit<CallParticipant, "connectionState">,
+    participant: Omit<CallParticipant, 'connectionState'>,
   ): Promise<void>;
 
   /** Leave current call session */
@@ -413,14 +413,14 @@ export interface RTCCallQualityMetrics {
   connection: {
     state: RTCConnectionState;
     iceConnectionState:
-      | "new"
-      | "checking"
-      | "connected"
-      | "completed"
-      | "failed"
-      | "disconnected"
-      | "closed";
-    bundlePolicy: "balanced" | "max-compat" | "max-bundle";
+      | 'new'
+      | 'checking'
+      | 'connected'
+      | 'completed'
+      | 'failed'
+      | 'disconnected'
+      | 'closed';
+    bundlePolicy: 'balanced' | 'max-compat' | 'max-bundle';
     signalStrength: number; // 0-100
     bandwidth: {
       available: number; // kbps
@@ -448,7 +448,7 @@ export interface RTCError {
   message: string;
 
   /** Error severity level */
-  severity: "low" | "medium" | "high" | "critical";
+  severity: 'low' | 'medium' | 'high' | 'critical';
 
   /** Session ID where error occurred */
   sessionId?: string;
@@ -475,7 +475,7 @@ export interface RTCError {
     deviceInfo?: {
       browser: string;
       os: string;
-      deviceType: "desktop" | "mobile" | "tablet";
+      deviceType: 'desktop' | 'mobile' | 'tablet';
     };
   };
 
@@ -491,7 +491,7 @@ export interface RTCError {
     requiresImmediateAction: boolean;
 
     /** Impact on consultation quality */
-    consultationImpact: "none" | "minimal" | "moderate" | "severe";
+    consultationImpact: 'none' | 'minimal' | 'moderate' | 'severe';
   };
 }
 
@@ -511,16 +511,16 @@ export interface RTCAuditLogEntry {
 
   /** Audit event type */
   eventType:
-    | "session-start"
-    | "session-end"
-    | "participant-join"
-    | "participant-leave"
-    | "recording-start"
-    | "recording-stop"
-    | "data-access"
-    | "consent-given"
-    | "consent-revoked"
-    | "error-occurred";
+    | 'session-start'
+    | 'session-end'
+    | 'participant-join'
+    | 'participant-leave'
+    | 'recording-start'
+    | 'recording-stop'
+    | 'data-access'
+    | 'consent-given'
+    | 'consent-revoked'
+    | 'error-occurred';
 
   /** Timestamp of audited event */
   timestamp: string;
@@ -529,7 +529,7 @@ export interface RTCAuditLogEntry {
   userId: string;
 
   /** User role in healthcare context */
-  userRole: "doctor" | "patient" | "nurse" | "admin" | "system";
+  userRole: 'doctor' | 'patient' | 'nurse' | 'admin' | 'system';
 
   /** Data classification of accessed information */
   dataClassification: MedicalDataClassification;
@@ -553,7 +553,7 @@ export interface RTCAuditLogEntry {
   complianceCheck: {
     isCompliant: boolean;
     violations?: string[];
-    riskLevel: "low" | "medium" | "high";
+    riskLevel: 'low' | 'medium' | 'high';
   };
 }
 

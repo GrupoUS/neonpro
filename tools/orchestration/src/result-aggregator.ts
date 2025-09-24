@@ -3,7 +3,7 @@
  * Aggregates and analyzes results from multiple agents and tools
  */
 
-import type { AgentResult } from "../types";
+import type { AgentResult } from '../types';
 
 export interface AggregatedResult {
   results: AgentResult[];
@@ -35,7 +35,7 @@ export interface ResultAnalysis {
 }
 
 export interface TrendAnalysis {
-  direction: "up" | "down" | "stable" | "improving" | "declining";
+  direction: 'up' | 'down' | 'stable' | 'improving' | 'declining';
   slope: number;
   confidence: number;
   dataPoints: number;
@@ -62,12 +62,12 @@ export class ResultAggregator {
         timestamp: Date.now(),
         id: this.generateId(),
         warningCount: 0,
-        source: "agent",
+        source: 'agent',
       };
     }
 
-    const successCount = resultArray.filter((r) => r.success).length;
-    const errorCount = resultArray.filter((r) => !r.success).length;
+    const successCount = resultArray.filter(r => r.success).length;
+    const errorCount = resultArray.filter(r => !r.success).length;
     const warningCount = resultArray.reduce(
       (sum, r) => sum + ((r.warnings as any[])?.length || 0),
       0,
@@ -93,7 +93,7 @@ export class ResultAggregator {
       timestamp: Date.now(),
       id: this.generateId(),
       warningCount,
-      source: "agent",
+      source: 'agent',
     };
   }
 
@@ -111,8 +111,7 @@ export class ResultAggregator {
       trends: {
         improving: aggregated.qualityScore > 0.8,
         degrading: aggregated.qualityScore < 0.5,
-        stable:
-          aggregated.qualityScore >= 0.5 && aggregated.qualityScore <= 0.8,
+        stable: aggregated.qualityScore >= 0.5 && aggregated.qualityScore <= 0.8,
       },
       coverageScore,
       performanceScore,
@@ -126,7 +125,7 @@ export class ResultAggregator {
   ): Promise<TrendAnalysis> {
     if (historicalResults.length < 2) {
       return {
-        direction: "stable",
+        direction: 'stable',
         slope: 0,
         confidence: 0,
         dataPoints: historicalResults.length,
@@ -134,16 +133,16 @@ export class ResultAggregator {
       };
     }
 
-    const scores = historicalResults.map((r) => r.qualityScore);
+    const scores = historicalResults.map(r => r.qualityScore);
     const slope = this.calculateSlope(scores);
     const variance = this.calculateVariance(scores);
 
-    let direction: "up" | "down" | "stable" | "improving" | "declining";
-    if (slope > 0.01)
-      direction = "improving"; // More sensitive threshold
-    else if (slope < -0.01)
-      direction = "declining"; // More sensitive threshold
-    else direction = "stable";
+    let direction: 'up' | 'down' | 'stable' | 'improving' | 'declining';
+    if (slope > 0.01) {
+      direction = 'improving'; // More sensitive threshold
+    } else if (slope < -0.01) {
+      direction = 'declining'; // More sensitive threshold
+    } else direction = 'stable';
 
     return {
       direction,
@@ -156,17 +155,15 @@ export class ResultAggregator {
 
   async detectAnomaly(result: any, baseline: any[]): Promise<boolean> {
     if (!baseline || baseline.length === 0) return false;
-    const avgQuality =
-      baseline.reduce((sum, r) => sum + (r.qualityScore || 0), 0) /
-      baseline.length;
+    const avgQuality = baseline.reduce((sum, r) => sum + (r.qualityScore || 0), 0)
+      / baseline.length;
 
     // Check for quality anomalies (much lower quality)
     const qualityThreshold = avgQuality * 0.5; // 50% of average
     if ((result.qualityScore || 0) < qualityThreshold) return true;
 
     // Check for performance anomalies (much slower)
-    const avgDuration =
-      baseline.reduce((sum, r) => sum + (r.duration || 0), 0) / baseline.length;
+    const avgDuration = baseline.reduce((sum, r) => sum + (r.duration || 0), 0) / baseline.length;
     const durationThreshold = avgDuration * 3; // 3x slower than average
     if ((result.duration || 0) > durationThreshold) return true;
 
@@ -178,7 +175,7 @@ export class ResultAggregator {
   ): Promise<any> {
     let results: AgentResult[];
 
-    if ("results" in aggregatedOrResults) {
+    if ('results' in aggregatedOrResults) {
       results = aggregatedOrResults.results;
     } else if (Array.isArray(aggregatedOrResults)) {
       results = aggregatedOrResults;
@@ -192,35 +189,35 @@ export class ResultAggregator {
       };
     }
 
-    const success = results.filter((r) => r.success);
-    const failed = results.filter((r) => !r.success);
+    const success = results.filter(r => r.success);
+    const failed = results.filter(r => !r.success);
     const warnings = results.filter(
-      (r) => r.warnings && (r.warnings as any[]).length > 0,
+      r => r.warnings && (r.warnings as any[]).length > 0,
     );
 
     // Group by agent type - map agentName to expected test names
     const byType = {
-      test: results.filter((r) => r.agentName === "test"),
-      security: results.filter((r) => r.agentName === "security-auditor"),
-      codeReview: results.filter((r) => r.agentName === "code-reviewer"),
+      test: results.filter(r => r.agentName === 'test'),
+      security: results.filter(r => r.agentName === 'security-auditor'),
+      codeReview: results.filter(r => r.agentName === 'code-reviewer'),
       success,
       failed,
       warnings,
     };
 
     const byQuality = {
-      excellent: results.filter((r) => (r.metrics as any)?.quality > 0.9),
+      excellent: results.filter(r => (r.metrics as any)?.quality > 0.9),
       good: results.filter(
-        (r) =>
-          (r.metrics as any)?.quality > 0.7 &&
-          (r.metrics as any)?.quality <= 0.9,
+        r =>
+          (r.metrics as any)?.quality > 0.7
+          && (r.metrics as any)?.quality <= 0.9,
       ),
       fair: results.filter(
-        (r) =>
-          (r.metrics as any)?.quality > 0.5 &&
-          (r.metrics as any)?.quality <= 0.7,
+        r =>
+          (r.metrics as any)?.quality > 0.5
+          && (r.metrics as any)?.quality <= 0.7,
       ),
-      poor: results.filter((r) => (r.metrics as any)?.quality <= 0.5),
+      poor: results.filter(r => (r.metrics as any)?.quality <= 0.5),
     };
 
     return {
@@ -234,9 +231,9 @@ export class ResultAggregator {
 
   async analyzeCompliance(aggregated: AggregatedResult): Promise<any> {
     const violations = aggregated.results.filter(
-      (r) =>
-        (r.metrics as any)?.compliance === false ||
-        aggregated.complianceScore < 0.8,
+      r =>
+        (r.metrics as any)?.compliance === false
+        || aggregated.complianceScore < 0.8,
     );
 
     return {
@@ -245,10 +242,10 @@ export class ResultAggregator {
       cfmCompliant: aggregated.complianceScore > 0.8,
       overallComplianceScore: aggregated.complianceScore,
       score: aggregated.complianceScore,
-      violations: violations.map((r) => ({
-        agent: r.agentName || "unknown",
-        type: "compliance",
-        message: "Compliance score below threshold",
+      violations: violations.map(r => ({
+        agent: r.agentName || 'unknown',
+        type: 'compliance',
+        message: 'Compliance score below threshold',
       })),
     };
   }
@@ -256,34 +253,34 @@ export class ResultAggregator {
   async calculateResourceUtilization(
     aggregated: AggregatedResult,
   ): Promise<any> {
-    const avgMemory =
-      aggregated.results.reduce(
-        (sum, r) => sum + ((r.metrics as any)?.memoryUsage || 256),
-        0,
-      ) / aggregated.results.length;
-    const avgCpu =
-      aggregated.results.reduce(
-        (sum, r) => sum + ((r.metrics as any)?.cpuUsage || 50),
-        0,
-      ) / aggregated.results.length;
+    const avgMemory = aggregated.results.reduce(
+      (sum, r) => sum + ((r.metrics as any)?.memoryUsage || 256),
+      0,
+    ) / aggregated.results.length;
+    const avgCpu = aggregated.results.reduce(
+      (sum, r) => sum + ((r.metrics as any)?.cpuUsage || 50),
+      0,
+    ) / aggregated.results.length;
 
     return {
       averageMemoryUsage: avgMemory,
       averageCpuUsage: avgCpu,
       peakMemoryUsage: Math.max(
         ...aggregated.results.map(
-          (r) => (r.metrics as any)?.memoryUsage || 256,
+          r => (r.metrics as any)?.memoryUsage || 256,
         ),
       ),
       peakCpuUsage: Math.max(
-        ...aggregated.results.map((r) => (r.metrics as any)?.cpuUsage || 50),
+        ...aggregated.results.map(r => (r.metrics as any)?.cpuUsage || 50),
       ),
     };
   }
 
   async generateReport(aggregated: AggregatedResult): Promise<any> {
     return {
-      summary: `Processed ${aggregated.agentCount} agents with ${Math.round(aggregated.successRate * 100)}% success rate`,
+      summary: `Processed ${aggregated.agentCount} agents with ${
+        Math.round(aggregated.successRate * 100)
+      }% success rate`,
       analysis: {
         qualityScore: aggregated.qualityScore,
         performanceScore: aggregated.performanceScore,
@@ -304,37 +301,37 @@ export class ResultAggregator {
 
     if (aggregated.qualityScore <= 0.7) {
       insights.push({
-        type: "quality",
-        message: "Quality score below threshold",
+        type: 'quality',
+        message: 'Quality score below threshold',
         actionable: true,
-        priority: "high",
+        priority: 'high',
       });
     }
 
     if (aggregated.errorCount > 0) {
       insights.push({
-        type: "errors",
+        type: 'errors',
         message: `${aggregated.errorCount} errors detected`,
         actionable: true,
-        priority: "critical",
+        priority: 'critical',
       });
     }
 
     if (aggregated.performanceScore < 0.5) {
       insights.push({
-        type: "performance",
-        message: "Performance below expectations",
+        type: 'performance',
+        message: 'Performance below expectations',
         actionable: true,
-        priority: "medium",
+        priority: 'medium',
       });
     }
 
     if (aggregated.warningCount && aggregated.warningCount > 0) {
       insights.push({
-        type: "warnings",
+        type: 'warnings',
         message: `${aggregated.warningCount} warnings detected`,
         actionable: true,
-        priority: "medium",
+        priority: 'medium',
       });
     }
 
@@ -346,7 +343,7 @@ export class ResultAggregator {
   ): any {
     let results: AgentResult[];
 
-    if ("results" in aggregatedOrResults) {
+    if ('results' in aggregatedOrResults) {
       results = aggregatedOrResults.results;
     } else if (Array.isArray(aggregatedOrResults)) {
       results = aggregatedOrResults;
@@ -372,8 +369,7 @@ export class ResultAggregator {
       0,
     );
     const avgDuration = totalDuration / results.length;
-    const successRate =
-      results.filter((r) => r.success).length / results.length;
+    const successRate = results.filter(r => r.success).length / results.length;
     const throughput = results.length / (totalDuration / 1000); // requests per second
     const efficiency = successRate * (1 / avgDuration); // success per ms
 
@@ -393,8 +389,7 @@ export class ResultAggregator {
   private calculateQualityScore(results: AgentResult[]): number {
     if (results.length === 0) return 0;
     const qualitySum = results.reduce((sum, result) => {
-      const quality =
-        (result.metrics as any)?.quality || (result.success ? 0.8 : 0.2);
+      const quality = (result.metrics as any)?.quality || (result.success ? 0.8 : 0.2);
       return sum + quality;
     }, 0);
     return qualitySum / results.length;
@@ -403,9 +398,8 @@ export class ResultAggregator {
   private calculatePerformanceScore(results: AgentResult[]): number {
     if (results.length === 0) return 0;
     const performanceSum = results.reduce((sum, result) => {
-      const performance =
-        (result.metrics as any)?.performance ||
-        (result.duration ? Math.max(0, 1 - result.duration / 10000) : 0.5);
+      const performance = (result.metrics as any)?.performance
+        || (result.duration ? Math.max(0, 1 - result.duration / 10000) : 0.5);
       return sum + performance;
     }, 0);
     return performanceSum / results.length;
@@ -419,8 +413,7 @@ export class ResultAggregator {
       if (metricCompliance !== undefined) return sum + metricCompliance;
 
       // Fallback to success-based scoring
-      const compliance =
-        (result.metrics as any)?.compliance !== false ? 0.9 : 0.1;
+      const compliance = (result.metrics as any)?.compliance !== false ? 0.9 : 0.1;
       return sum + compliance;
     }, 0);
     return complianceSum / results.length;
@@ -440,9 +433,8 @@ export class ResultAggregator {
   private calculateVariance(scores: number[]): number {
     if (scores.length === 0) return 0;
     const mean = scores.reduce((a, b) => a + b, 0) / scores.length;
-    const variance =
-      scores.reduce((sum, score) => sum + Math.pow(score - mean, 2), 0) /
-      scores.length;
+    const variance = scores.reduce((sum, score) => sum + Math.pow(score - mean, 2), 0)
+      / scores.length;
     return variance;
   }
 
@@ -454,17 +446,17 @@ export class ResultAggregator {
     const issues: any[] = [];
     if (aggregated.errorCount > 0) {
       issues.push({
-        type: "error",
-        severity: "high",
+        type: 'error',
+        severity: 'high',
         message: `${aggregated.errorCount} failures detected`,
         count: aggregated.errorCount,
       });
     }
     if (aggregated.qualityScore < 0.7) {
       issues.push({
-        type: "quality",
-        severity: "medium",
-        message: "Quality score below threshold",
+        type: 'quality',
+        severity: 'medium',
+        message: 'Quality score below threshold',
         currentScore: aggregated.qualityScore,
       });
     }
@@ -485,28 +477,28 @@ export class ResultAggregator {
     const recommendations = [];
 
     if (aggregated.qualityScore <= 0.7) {
-      recommendations.push("Improve code quality metrics and testing coverage");
+      recommendations.push('Improve code quality metrics and testing coverage');
     }
 
     if (aggregated.errorCount > 0) {
-      recommendations.push("Address and resolve failing tests and errors");
+      recommendations.push('Address and resolve failing tests and errors');
     }
 
     if (aggregated.performanceScore < 0.5) {
       recommendations.push(
-        "Optimize performance bottlenecks and resource usage",
+        'Optimize performance bottlenecks and resource usage',
       );
     }
 
     if (aggregated.complianceScore < 0.8) {
       recommendations.push(
-        "Address compliance violations and regulatory requirements",
+        'Address compliance violations and regulatory requirements',
       );
     }
 
     // Also check for warnings
     if (aggregated.warningCount && aggregated.warningCount > 0) {
-      recommendations.push("Address warnings to improve overall code quality");
+      recommendations.push('Address warnings to improve overall code quality');
     }
 
     return recommendations;

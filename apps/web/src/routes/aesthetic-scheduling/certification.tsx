@@ -1,10 +1,10 @@
-import * as React from "react";
-import { createFileRoute } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
-import { api } from "@/lib/api";
-import { CertificationValidator } from "@/components/aesthetic-scheduling/CertificationValidator";
+import { CertificationValidator } from '@/components/aesthetic-scheduling/CertificationValidator';
+import { api } from '@/lib/api';
+import { useQuery } from '@tanstack/react-query';
+import { createFileRoute } from '@tanstack/react-router';
+import * as React from 'react';
 
-export const Route = createFileRoute("/aesthetic-scheduling/certification/")({
+export const Route = createFileRoute('/aesthetic-scheduling/certification/')({
   component: CertificationValidatorPage,
   loader: () => {
     // Pre-load data for better UX
@@ -17,12 +17,12 @@ export const Route = createFileRoute("/aesthetic-scheduling/certification/")({
 
 function CertificationValidatorPage() {
   const { data: professionals } = useQuery({
-    queryKey: ["professionals"],
+    queryKey: ['professionals'],
     queryFn: () => api.aestheticScheduling.getProfessionals(),
   });
 
   const { data: procedures } = useQuery({
-    queryKey: ["aesthetic-procedures"],
+    queryKey: ['aesthetic-procedures'],
     queryFn: () => api.aestheticScheduling.getAestheticProcedures(),
   });
 
@@ -30,12 +30,12 @@ function CertificationValidatorPage() {
     <CertificationValidator
       professionals={professionals || []}
       procedures={procedures || []}
-      onValidation={async (data) => {
+      onValidation={async data => {
         try {
           const result = await api.aestheticScheduling.validateProfessionalCertifications(data);
           return result;
         } catch (error) {
-          console.error("Error validating certifications:", error);
+          console.error('Error validating certifications:', error);
           throw error;
         }
       }}

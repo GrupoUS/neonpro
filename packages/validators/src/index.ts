@@ -10,7 +10,7 @@ export function validateCPF(cpf: string): boolean {
   if (!cpf) return false;
 
   // Remove non-numeric characters
-  const cleanCPF = cpf.replace(/[^\d]/g, "");
+  const cleanCPF = cpf.replace(/[^\d]/g, '');
 
   // Check basic format
   if (cleanCPF.length !== 11 || /^(\d)\1{10}$/.test(cleanCPF)) {
@@ -53,7 +53,7 @@ export function validateCNPJ(cnpj: string): boolean {
   if (!cnpj) return false;
 
   // Remove non-numeric characters
-  const cleanCNPJ = cnpj.replace(/[^\d]/g, "");
+  const cleanCNPJ = cnpj.replace(/[^\d]/g, '');
 
   // Check basic format
   if (cleanCNPJ.length !== 14 || /^(\d)\1{13}$/.test(cleanCNPJ)) {
@@ -99,7 +99,7 @@ export function validateCNPJ(cnpj: string): boolean {
 export function validatePhone(phone: string): boolean {
   if (!phone) return false;
 
-  const cleanPhone = phone.replace(/[^\d]/g, "");
+  const cleanPhone = phone.replace(/[^\d]/g, '');
 
   // Mobile: 11 digits (2 digit area code + 9 + 8 digits)
   // Landline: 10 digits (2 digit area code + 8 digits)
@@ -112,7 +112,7 @@ export function validatePhone(phone: string): boolean {
 export function validateCEP(cep: string): boolean {
   if (!cep) return false;
 
-  const cleanCEP = cep.replace(/[^\d]/g, "");
+  const cleanCEP = cep.replace(/[^\d]/g, '');
 
   // CEP should have exactly 8 digits
   return cleanCEP.length === 8;
@@ -134,7 +134,7 @@ export function validateCNS(cns: string): boolean {
   if (!cns) return false;
 
   // Remove non-numeric characters
-  const cleanCNS = cns.replace(/[^\d]/g, "");
+  const cleanCNS = cns.replace(/[^\d]/g, '');
 
   // CNS should have exactly 15 digits
   if (cleanCNS.length !== 15) {
@@ -143,7 +143,7 @@ export function validateCNS(cns: string): boolean {
 
   // Check if it's a "definitive" CNS (starts with 1 or 2) or "provisional" CNS (starts with 7, 8, or 9)
   const firstDigit = cleanCNS.charAt(0);
-  const isValidStart = ["1", "2", "7", "8", "9"].includes(firstDigit);
+  const isValidStart = ['1', '2', '7', '8', '9'].includes(firstDigit);
 
   if (!isValidStart) {
     return false;
@@ -166,10 +166,10 @@ export function validateCNS(cns: string): boolean {
  * This validation checks for common TUSS code patterns and formats
  */
 export function validateTUSS(tussCode: string): boolean {
-  if (!tussCode || tussCode === "null" || tussCode === "undefined") return false;
+  if (!tussCode || tussCode === 'null' || tussCode === 'undefined') return false;
 
   // Remove any formatting characters
-  const cleanTUSS = tussCode.replace(/[^\d]/g, "");
+  const cleanTUSS = tussCode.replace(/[^\d]/g, '');
 
   // TUSS codes can vary in length but typically follow these patterns:
   // - 5 digits (basic procedure codes)
@@ -188,7 +188,7 @@ export function validateTUSS(tussCode: string): boolean {
   }
 
   // TUSS codes should not start with 0
-  if (cleanTUSS.charAt(0) === "0") {
+  if (cleanTUSS.charAt(0) === '0') {
     return false;
   }
 
@@ -206,7 +206,7 @@ export function validateCRM(crm: string): boolean {
   if (!crm) return false;
 
   // Remove spaces and convert to uppercase
-  const cleanCRM = crm.toUpperCase().replace(/\s/g, "");
+  const cleanCRM = crm.toUpperCase().replace(/\s/g, '');
 
   // CRM should match pattern: CRM/UF followed by 4-10 digits
   const crmPattern = /^CRM\/[A-Z]{2}\d{4,10}$/;
@@ -223,33 +223,33 @@ export function validateCRM(crm: string): boolean {
 
   const stateCode = stateMatch[1];
   const validStates = [
-    "AC",
-    "AL",
-    "AP",
-    "AM",
-    "BA",
-    "CE",
-    "DF",
-    "ES",
-    "GO",
-    "MA",
-    "MT",
-    "MS",
-    "MG",
-    "PA",
-    "PB",
-    "PR",
-    "PE",
-    "PI",
-    "RJ",
-    "RN",
-    "RS",
-    "RO",
-    "RR",
-    "SC",
-    "SP",
-    "SE",
-    "TO",
+    'AC',
+    'AL',
+    'AP',
+    'AM',
+    'BA',
+    'CE',
+    'DF',
+    'ES',
+    'GO',
+    'MA',
+    'MT',
+    'MS',
+    'MG',
+    'PA',
+    'PB',
+    'PR',
+    'PE',
+    'PI',
+    'RJ',
+    'RN',
+    'RS',
+    'RO',
+    'RR',
+    'SC',
+    'SP',
+    'SE',
+    'TO',
   ];
 
   return validStates.includes(stateCode);
@@ -263,7 +263,7 @@ export function validateCOREN(coren: string): boolean {
   if (!coren) return false;
 
   // Remove spaces and convert to uppercase
-  const cleanCOREN = coren.toUpperCase().replace(/\s/g, "");
+  const cleanCOREN = coren.toUpperCase().replace(/\s/g, '');
 
   // COREN should match pattern: COREN/UF followed by 6-9 digits
   const corenPattern = /^COREN\/[A-Z]{2}\d{6,9}$/;
@@ -280,33 +280,33 @@ export function validateCOREN(coren: string): boolean {
 
   const stateCode = stateMatch[1];
   const validStates = [
-    "AC",
-    "AL",
-    "AP",
-    "AM",
-    "BA",
-    "CE",
-    "DF",
-    "ES",
-    "GO",
-    "MA",
-    "MT",
-    "MS",
-    "MG",
-    "PA",
-    "PB",
-    "PR",
-    "PE",
-    "PI",
-    "RJ",
-    "RN",
-    "RS",
-    "RO",
-    "RR",
-    "SC",
-    "SP",
-    "SE",
-    "TO",
+    'AC',
+    'AL',
+    'AP',
+    'AM',
+    'BA',
+    'CE',
+    'DF',
+    'ES',
+    'GO',
+    'MA',
+    'MT',
+    'MS',
+    'MG',
+    'PA',
+    'PB',
+    'PR',
+    'PE',
+    'PI',
+    'RJ',
+    'RN',
+    'RS',
+    'RO',
+    'RR',
+    'SC',
+    'SP',
+    'SE',
+    'TO',
   ];
 
   return validStates.includes(stateCode);
@@ -320,7 +320,7 @@ export function validateCFF(cff: string): boolean {
   if (!cff) return false;
 
   // Remove spaces and convert to uppercase
-  const cleanCFF = cff.toUpperCase().replace(/\s/g, "");
+  const cleanCFF = cff.toUpperCase().replace(/\s/g, '');
 
   // CFF should match pattern: CFF/UF followed by 6-8 digits
   const cffPattern = /^CFF\/[A-Z]{2}\d{6,8}$/;
@@ -337,33 +337,33 @@ export function validateCFF(cff: string): boolean {
 
   const stateCode = stateMatch[1];
   const validStates = [
-    "AC",
-    "AL",
-    "AP",
-    "AM",
-    "BA",
-    "CE",
-    "DF",
-    "ES",
-    "GO",
-    "MA",
-    "MT",
-    "MS",
-    "MG",
-    "PA",
-    "PB",
-    "PR",
-    "PE",
-    "PI",
-    "RJ",
-    "RN",
-    "RS",
-    "RO",
-    "RR",
-    "SC",
-    "SP",
-    "SE",
-    "TO",
+    'AC',
+    'AL',
+    'AP',
+    'AM',
+    'BA',
+    'CE',
+    'DF',
+    'ES',
+    'GO',
+    'MA',
+    'MT',
+    'MS',
+    'MG',
+    'PA',
+    'PB',
+    'PR',
+    'PE',
+    'PI',
+    'RJ',
+    'RN',
+    'RS',
+    'RO',
+    'RR',
+    'SC',
+    'SP',
+    'SE',
+    'TO',
   ];
 
   return validStates.includes(stateCode);
@@ -377,7 +377,7 @@ export function validateCNEP(cnep: string): boolean {
   if (!cnep) return false;
 
   // Remove spaces and convert to uppercase
-  const cleanCNEP = cnep.toUpperCase().replace(/\s/g, "");
+  const cleanCNEP = cnep.toUpperCase().replace(/\s/g, '');
 
   // CNEP should match pattern: CNEP/UF followed by 6-8 digits
   const cnepPattern = /^CNEP\/[A-Z]{2}\d{6,8}$/;
@@ -394,33 +394,33 @@ export function validateCNEP(cnep: string): boolean {
 
   const stateCode = stateMatch[1];
   const validStates = [
-    "AC",
-    "AL",
-    "AP",
-    "AM",
-    "BA",
-    "CE",
-    "DF",
-    "ES",
-    "GO",
-    "MA",
-    "MT",
-    "MS",
-    "MG",
-    "PA",
-    "PB",
-    "PR",
-    "PE",
-    "PI",
-    "RJ",
-    "RN",
-    "RS",
-    "RO",
-    "RR",
-    "SC",
-    "SP",
-    "SE",
-    "TO",
+    'AC',
+    'AL',
+    'AP',
+    'AM',
+    'BA',
+    'CE',
+    'DF',
+    'ES',
+    'GO',
+    'MA',
+    'MT',
+    'MS',
+    'MG',
+    'PA',
+    'PB',
+    'PR',
+    'PE',
+    'PI',
+    'RJ',
+    'RN',
+    'RS',
+    'RO',
+    'RR',
+    'SC',
+    'SP',
+    'SE',
+    'TO',
   ];
 
   return validStates.includes(stateCode);
@@ -431,10 +431,10 @@ export function validateCNEP(cnep: string): boolean {
  * Supports CFM (doctors), COREN (nurses), CFF (pharmacists), CNEP (aesthetic professionals)
  */
 export function validateProfessionalLicense(license: string | null | undefined): boolean {
-  if (!license || license === "null" || license === "undefined") return false;
+  if (!license || license === 'null' || license === 'undefined') return false;
 
   // Remove spaces and convert to uppercase
-  const cleanLicense = license.toUpperCase().replace(/\s/g, "");
+  const cleanLicense = license.toUpperCase().replace(/\s/g, '');
 
   // Try to match any of the supported council patterns
   const councilPatterns = [
@@ -456,7 +456,7 @@ export function validateProfessionalLicense(license: string | null | undefined):
 
 /**
  * Validates aesthetic clinic professional licenses with enhanced validation
- * Specifically designed for aesthetic medicine professionals including doctors, nurses, 
+ * Specifically designed for aesthetic medicine professionals including doctors, nurses,
  * pharmacists, and aesthetic specialists who perform advanced aesthetic procedures
  * @param license Professional license string to validate
  * @returns Enhanced validation result with professional category information
@@ -483,7 +483,7 @@ export function validateAestheticProfessionalLicense(
   let isValid = false;
 
   // Remove spaces and convert to uppercase
-  const normalized = license.toUpperCase().replace(/\s/g, "");
+  const normalized = license.toUpperCase().replace(/\s/g, '');
 
   // CRM - Medical Doctors (including aesthetic medicine specialists)
   if (/^CRM\/([A-Z]{2})(\d{4,10})$/.test(normalized)) {
@@ -495,8 +495,7 @@ export function validateAestheticProfessionalLicense(
       professionalCategory = 'Médico Esteta';
       isValid = validateCRM(license);
     }
-  }
-  // COREN - Nursing Professionals (aesthetic nurses and technicians)
+  } // COREN - Nursing Professionals (aesthetic nurses and technicians)
   else if (/^COREN\/([A-Z]{2})(\d{6,9})$/.test(normalized)) {
     councilType = 'COREN';
     const match = normalized.match(/^COREN\/([A-Z]{2})(\d{6,9})$/);
@@ -506,8 +505,7 @@ export function validateAestheticProfessionalLicense(
       professionalCategory = 'Enfermeiro Esteta';
       isValid = validateCOREN(license);
     }
-  }
-  // CFF - Pharmacy/Biochemistry Professionals (aesthetic pharmacists)
+  } // CFF - Pharmacy/Biochemistry Professionals (aesthetic pharmacists)
   else if (/^CFF\/([A-Z]{2})(\d{6,8})$/.test(normalized)) {
     councilType = 'CFF';
     const match = normalized.match(/^CFF\/([A-Z]{2})(\d{6,8})$/);
@@ -517,8 +515,7 @@ export function validateAestheticProfessionalLicense(
       professionalCategory = 'Farmacêutico Esteta';
       isValid = validateCFF(license);
     }
-  }
-  // CNEP - Aesthetic Professionals (specialized aesthetic technicians)
+  } // CNEP - Aesthetic Professionals (specialized aesthetic technicians)
   else if (/^CNEP\/([A-Z]{2})(\d{6,8})$/.test(normalized)) {
     councilType = 'CNEP';
     const match = normalized.match(/^CNEP\/([A-Z]{2})(\d{6,8})$/);
@@ -532,9 +529,33 @@ export function validateAestheticProfessionalLicense(
 
   // Validate Brazilian state codes
   const validStates = [
-    "AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA",
-    "MT", "MS", "MG", "PA", "PB", "PR", "PE", "PI", "RJ", "RN",
-    "RS", "RO", "RR", "SC", "SP", "SE", "TO",
+    'AC',
+    'AL',
+    'AP',
+    'AM',
+    'BA',
+    'CE',
+    'DF',
+    'ES',
+    'GO',
+    'MA',
+    'MT',
+    'MS',
+    'MG',
+    'PA',
+    'PB',
+    'PR',
+    'PE',
+    'PI',
+    'RJ',
+    'RN',
+    'RS',
+    'RO',
+    'RR',
+    'SC',
+    'SP',
+    'SE',
+    'TO',
   ];
 
   if (stateCode && !validStates.includes(stateCode)) {
@@ -568,14 +589,14 @@ export function validateAestheticProfessionalLicense(
  * @returns true if checksum is valid
  */
 function calculateCNSChecksum(cns: string): boolean {
-  const digits = cns.split("").map(Number);
-  
+  const digits = cns.split('').map(Number);
+
   // CNS validation algorithm
   // For definitive CNS (starting with 1 or 2): use modulo 11
   // For provisional CNS (starting with 7, 8, or 9): use sum validation
-  
+
   const firstDigit = digits[0];
-  
+
   if (firstDigit === 1 || firstDigit === 2) {
     // Definitive CNS - use modulo 11 with weights [15,14,13,12,11,10,9,8,7,6,5,4,3,2,1]
     const weights = [15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1];
@@ -596,7 +617,7 @@ function calculateCNSChecksum(cns: string): boolean {
     }
     return sum % 11 === 0;
   }
-  
+
   return false;
 }
 
@@ -621,17 +642,17 @@ export interface HealthcareValidationResult {
 export function validateHealthcareDocument(
   documentValue: string,
   documentType:
-    | "cpf"
-    | "cnpj"
-    | "cns"
-    | "tuss"
-    | "crm"
-    | "coren"
-    | "cff"
-    | "cnep"
-    | "professional"
-    | "cep"
-    | "phone",
+    | 'cpf'
+    | 'cnpj'
+    | 'cns'
+    | 'tuss'
+    | 'crm'
+    | 'coren'
+    | 'cff'
+    | 'cnep'
+    | 'professional'
+    | 'cep'
+    | 'phone',
 ): HealthcareValidationResult {
   const errors: string[] = [];
   let isValid = false;
@@ -639,80 +660,81 @@ export function validateHealthcareDocument(
 
   try {
     switch (documentType) {
-      case "cpf":
+      case 'cpf':
         isValid = validateCPF(documentValue);
-        if (!isValid) errors.push("Invalid CPF format or checksum");
-        normalized = documentValue.replace(/[^\d]/g, "");
+        if (!isValid) errors.push('Invalid CPF format or checksum');
+        normalized = documentValue.replace(/[^\d]/g, '');
         break;
 
-      case "cns":
+      case 'cns':
         isValid = validateCNS(documentValue);
-        if (!isValid) errors.push("Invalid CNS format or checksum");
-        normalized = documentValue.replace(/[^\d]/g, "");
+        if (!isValid) errors.push('Invalid CNS format or checksum');
+        normalized = documentValue.replace(/[^\d]/g, '');
         break;
 
-      case "tuss":
+      case 'tuss':
         isValid = validateTUSS(documentValue);
-        if (!isValid) errors.push("Invalid TUSS code format or range");
-        normalized = documentValue.replace(/[^\d]/g, "");
+        if (!isValid) errors.push('Invalid TUSS code format or range');
+        normalized = documentValue.replace(/[^\d]/g, '');
         break;
 
-      case "crm":
+      case 'crm':
         isValid = validateCRM(documentValue);
-        if (!isValid) errors.push("Invalid CRM format or state code");
-        normalized = documentValue.toUpperCase().replace(/\s/g, "");
+        if (!isValid) errors.push('Invalid CRM format or state code');
+        normalized = documentValue.toUpperCase().replace(/\s/g, '');
         break;
 
-      case "coren":
+      case 'coren':
         isValid = validateCOREN(documentValue);
-        if (!isValid) errors.push("Invalid COREN format or state code");
-        normalized = documentValue.toUpperCase().replace(/\s/g, "");
+        if (!isValid) errors.push('Invalid COREN format or state code');
+        normalized = documentValue.toUpperCase().replace(/\s/g, '');
         break;
 
-      case "cff":
+      case 'cff':
         isValid = validateCFF(documentValue);
-        if (!isValid) errors.push("Invalid CFF format or state code");
-        normalized = documentValue.toUpperCase().replace(/\s/g, "");
+        if (!isValid) errors.push('Invalid CFF format or state code');
+        normalized = documentValue.toUpperCase().replace(/\s/g, '');
         break;
 
-      case "cnep":
+      case 'cnep':
         isValid = validateCNEP(documentValue);
-        if (!isValid) errors.push("Invalid CNEP format or state code");
-        normalized = documentValue.toUpperCase().replace(/\s/g, "");
+        if (!isValid) errors.push('Invalid CNEP format or state code');
+        normalized = documentValue.toUpperCase().replace(/\s/g, '');
         break;
 
-      case "professional":
+      case 'professional':
         isValid = validateProfessionalLicense(documentValue);
-        if (!isValid)
-          errors.push("Invalid professional license format or council");
-        normalized = documentValue.toUpperCase().replace(/\s/g, "");
+        if (!isValid) {
+          errors.push('Invalid professional license format or council');
+        }
+        normalized = documentValue.toUpperCase().replace(/\s/g, '');
         break;
 
-      case "cnpj":
+      case 'cnpj':
         isValid = validateCNPJ(documentValue);
-        if (!isValid) errors.push("Invalid CNPJ format or checksum");
-        normalized = documentValue.replace(/[^\d]/g, "");
+        if (!isValid) errors.push('Invalid CNPJ format or checksum');
+        normalized = documentValue.replace(/[^\d]/g, '');
         break;
 
-      case "cep":
+      case 'cep':
         isValid = validateCEP(documentValue);
-        if (!isValid) errors.push("Invalid CEP format");
-        normalized = documentValue.replace(/[^\d]/g, "");
+        if (!isValid) errors.push('Invalid CEP format');
+        normalized = documentValue.replace(/[^\d]/g, '');
         break;
 
-      case "phone":
+      case 'phone':
         isValid = validatePhone(documentValue);
-        if (!isValid) errors.push("Invalid phone number format");
-        normalized = documentValue.replace(/[^\d]/g, "");
+        if (!isValid) errors.push('Invalid phone number format');
+        normalized = documentValue.replace(/[^\d]/g, '');
         break;
 
       default:
-        errors.push("Unsupported document type");
+        errors.push('Unsupported document type');
         break;
     }
   } catch (error) {
     errors.push(
-      `Validation error: ${error instanceof Error ? error.message : "Unknown error"}`,
+      `Validation error: ${error instanceof Error ? error.message : 'Unknown error'}`,
     );
     isValid = false;
   }
@@ -735,22 +757,20 @@ export function validateHealthcareDocuments(
   documents: Array<{
     value: string;
     type:
-      | "cpf"
-      | "cnpj"
-      | "cns"
-      | "tuss"
-      | "crm"
-      | "coren"
-      | "cff"
-      | "cnep"
-      | "professional"
-      | "cep"
-      | "phone";
+      | 'cpf'
+      | 'cnpj'
+      | 'cns'
+      | 'tuss'
+      | 'crm'
+      | 'coren'
+      | 'cff'
+      | 'cnep'
+      | 'professional'
+      | 'cep'
+      | 'phone';
   }>,
 ): HealthcareValidationResult[] {
-  return documents.map((doc) =>
-    validateHealthcareDocument(doc.value, doc.type),
-  );
+  return documents.map(doc => validateHealthcareDocument(doc.value, doc.type));
 }
 
 /**
@@ -759,28 +779,28 @@ export function validateHealthcareDocuments(
  */
 export function sanitizeHealthcareData(
   data: string,
-  dataType: "cpf" | "cns" | "phone" | "email",
+  dataType: 'cpf' | 'cns' | 'phone' | 'email',
 ): string {
-  if (!data) return "";
+  if (!data) return '';
 
   switch (dataType) {
-    case "cpf":
+    case 'cpf':
       // Show only first 3 and last 2 digits: XXX.XXX.XXX-XX → XXX.XXX.XX*-XX
-      return data.replace(/(\d{3})\.\d{3}\.(\d{3})-(\d{2})/, "$1.$2.*-$3");
+      return data.replace(/(\d{3})\.\d{3}\.(\d{3})-(\d{2})/, '$1.$2.*-$3');
 
-    case "cns":
+    case 'cns':
       // Show only first 3 and last 3 digits: XXX XXXXXXX XX → XXX XXXXX*-XX
-      return data.replace(/(\d{3})\s*(\d{5})\s*(\d{2})/, "$1 $2*-$3");
+      return data.replace(/(\d{3})\s*(\d{5})\s*(\d{2})/, '$1 $2*-$3');
 
-    case "phone":
+    case 'phone':
       // Show only area code and last 2 digits: (XX) XXXXX-XXXX → (XX) XXX*-XX
-      return data.replace(/\((\d{2})\)\s*(\d{5})-(\d{4})/, "($1) $2*-$3");
+      return data.replace(/\((\d{2})\)\s*(\d{5})-(\d{4})/, '($1) $2*-$3');
 
-    case "email":
+    case 'email':
       // Show only first 3 characters and domain: user@domain.com → use***@domain.com
-      return data.replace(/(\w{3})[\w.-]*@([\w.-]+)/, "$1***@$2");
+      return data.replace(/(\w{3})[\w.-]*@([\w.-]+)/, '$1***@$2');
 
     default:
-      return "[REDACTED]";
+      return '[REDACTED]';
   }
 }

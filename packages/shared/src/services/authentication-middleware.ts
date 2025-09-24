@@ -14,11 +14,11 @@
  * @compliance LGPD, ANVISA SaMD, Healthcare Standards
  */
 
-import { nanoid } from "nanoid";
-import type { Context, Next, MiddlewareHandler } from "hono";
-import { verify } from "hono/jwt";
-import { z } from "zod";
-import { logHealthcareError, auditLogger } from '../logging/healthcare-logger';
+import type { Context, MiddlewareHandler, Next } from 'hono';
+import { verify } from 'hono/jwt';
+import { nanoid } from 'nanoid';
+import { z } from 'zod';
+import { auditLogger, logHealthcareError } from '../logging/healthcare-logger';
 const authLogger = auditLogger;
 
 // ============================================================================
@@ -89,29 +89,29 @@ export interface AuthorizationRequirements {
   permission?: HealthcarePermission;
   accessLevel?: number;
   resource?: string;
-  operation?: "read" | "write" | "delete";
+  operation?: 'read' | 'write' | 'delete';
 }
 
 /**
  * JWT Algorithm type
  */
 export type JWTAlgorithm =
-  | "HS256"
-  | "HS384"
-  | "HS512"
-  | "RS256"
-  | "RS384"
-  | "RS512";
+  | 'HS256'
+  | 'HS384'
+  | 'HS512'
+  | 'RS256'
+  | 'RS384'
+  | 'RS512';
 
 /**
  * Environment type
  */
-export type Environment = "development" | "staging" | "production";
+export type Environment = 'development' | 'staging' | 'production';
 
 /**
  * Log level type
  */
-export type LogLevel = "debug" | "info" | "warn" | "error";
+export type LogLevel = 'debug' | 'info' | 'warn' | 'error';
 
 /**
  * Authentication error interface
@@ -126,22 +126,22 @@ export interface AuthenticationError {
  * Healthcare user roles with access levels
  */
 export const HealthcareRoleSchema = z.enum([
-  "patient", // Level 1: Basic access
-  "caregiver", // Level 1: Family/caregiver access
-  "guest", // Level 0: Public access
-  "receptionist", // Level 2: Administrative access
-  "nurse", // Level 3: Clinical access
-  "technician", // Level 3: Technical procedures
-  "pharmacist", // Level 4: Medication access
-  "lab_technician", // Level 4: Laboratory access
-  "radiologist", // Level 4: Imaging access
-  "doctor", // Level 5: Medical practitioner
-  "specialist", // Level 6: Specialized medical access
-  "department_head", // Level 7: Department management
-  "system_admin", // Level 8: System administration
-  "compliance_officer", // Level 8: Compliance oversight
-  "emergency_responder", // Level 9: Emergency access
-  "super_admin", // Level 10: Full system access
+  'patient', // Level 1: Basic access
+  'caregiver', // Level 1: Family/caregiver access
+  'guest', // Level 0: Public access
+  'receptionist', // Level 2: Administrative access
+  'nurse', // Level 3: Clinical access
+  'technician', // Level 3: Technical procedures
+  'pharmacist', // Level 4: Medication access
+  'lab_technician', // Level 4: Laboratory access
+  'radiologist', // Level 4: Imaging access
+  'doctor', // Level 5: Medical practitioner
+  'specialist', // Level 6: Specialized medical access
+  'department_head', // Level 7: Department management
+  'system_admin', // Level 8: System administration
+  'compliance_officer', // Level 8: Compliance oversight
+  'emergency_responder', // Level 9: Emergency access
+  'super_admin', // Level 10: Full system access
 ]);
 
 export type HealthcareRole = z.infer<typeof HealthcareRoleSchema>;
@@ -151,52 +151,52 @@ export type HealthcareRole = z.infer<typeof HealthcareRoleSchema>;
  */
 export const HealthcarePermissionSchema = z.enum([
   // Patient data permissions
-  "patient:read:basic", // Basic patient info
-  "patient:read:full", // Complete patient record
-  "patient:write:basic", // Update basic info
-  "patient:write:full", // Full patient record updates
-  "patient:delete", // Delete patient records
+  'patient:read:basic', // Basic patient info
+  'patient:read:full', // Complete patient record
+  'patient:write:basic', // Update basic info
+  'patient:write:full', // Full patient record updates
+  'patient:delete', // Delete patient records
 
   // Medical data permissions
-  "medical:read:diagnoses", // Read diagnoses
-  "medical:write:diagnoses", // Write diagnoses
-  "medical:read:treatments", // Read treatments
-  "medical:write:treatments", // Write treatments
-  "medical:read:medications", // Read medications
-  "medical:write:medications", // Prescribe medications
-  "medical:read:allergies", // Read allergies
-  "medical:write:allergies", // Update allergies
+  'medical:read:diagnoses', // Read diagnoses
+  'medical:write:diagnoses', // Write diagnoses
+  'medical:read:treatments', // Read treatments
+  'medical:write:treatments', // Write treatments
+  'medical:read:medications', // Read medications
+  'medical:write:medications', // Prescribe medications
+  'medical:read:allergies', // Read allergies
+  'medical:write:allergies', // Update allergies
 
   // Laboratory permissions
-  "lab:read:results", // Read lab results
-  "lab:write:results", // Enter lab results
-  "lab:read:orders", // Read lab orders
-  "lab:write:orders", // Create lab orders
+  'lab:read:results', // Read lab results
+  'lab:write:results', // Enter lab results
+  'lab:read:orders', // Read lab orders
+  'lab:write:orders', // Create lab orders
 
   // Imaging permissions
-  "imaging:read:studies", // Read imaging studies
-  "imaging:write:studies", // Create imaging studies
-  "imaging:read:reports", // Read imaging reports
-  "imaging:write:reports", // Write imaging reports
+  'imaging:read:studies', // Read imaging studies
+  'imaging:write:studies', // Create imaging studies
+  'imaging:read:reports', // Read imaging reports
+  'imaging:write:reports', // Write imaging reports
 
   // Administrative permissions
-  "admin:read:users", // Read user accounts
-  "admin:write:users", // Manage user accounts
-  "admin:read:audit", // Read audit logs
-  "admin:write:settings", // Modify system settings
-  "admin:emergency:override", // Emergency access override
+  'admin:read:users', // Read user accounts
+  'admin:write:users', // Manage user accounts
+  'admin:read:audit', // Read audit logs
+  'admin:write:settings', // Modify system settings
+  'admin:emergency:override', // Emergency access override
 
   // System permissions
-  "system:read:logs", // Read system logs
-  "system:write:config", // Modify system configuration
-  "system:read:metrics", // Read system metrics
-  "system:backup:create", // Create system backups
+  'system:read:logs', // Read system logs
+  'system:write:config', // Modify system configuration
+  'system:read:metrics', // Read system metrics
+  'system:backup:create', // Create system backups
 
   // Compliance permissions
-  "compliance:read:audit", // Read compliance audits
-  "compliance:write:policies", // Update compliance policies
-  "compliance:read:reports", // Generate compliance reports
-  "compliance:export:data", // Export data for compliance
+  'compliance:read:audit', // Read compliance audits
+  'compliance:write:policies', // Update compliance policies
+  'compliance:read:reports', // Generate compliance reports
+  'compliance:export:data', // Export data for compliance
 ]);
 
 export type HealthcarePermission = z.infer<typeof HealthcarePermissionSchema>;
@@ -206,94 +206,94 @@ export type HealthcarePermission = z.infer<typeof HealthcarePermissionSchema>;
  */
 export const AuthSessionSchema = z.object({
   // Session identification
-  sessionId: z.string().describe("Unique session identifier"),
-  _userId: z.string().describe("User identifier"),
-  correlationId: z.string().describe("Request correlation ID"),
+  sessionId: z.string().describe('Unique session identifier'),
+  _userId: z.string().describe('User identifier'),
+  correlationId: z.string().describe('Request correlation ID'),
 
   // User information
   userProfile: z
     .object({
-      anonymizedId: z.string().describe("LGPD-compliant anonymized ID"),
-      _role: HealthcareRoleSchema.describe("User healthcare role"),
+      anonymizedId: z.string().describe('LGPD-compliant anonymized ID'),
+      _role: HealthcareRoleSchema.describe('User healthcare role'),
       permissions: z
         .array(HealthcarePermissionSchema)
-        .describe("User permissions"),
-      facilityId: z.string().optional().describe("Healthcare facility ID"),
-      departmentId: z.string().optional().describe("Department ID"),
-      shiftId: z.string().optional().describe("Current shift ID"),
+        .describe('User permissions'),
+      facilityId: z.string().optional().describe('Healthcare facility ID'),
+      departmentId: z.string().optional().describe('Department ID'),
+      shiftId: z.string().optional().describe('Current shift ID'),
 
       // Professional information
       licenseNumber: z
         .string()
         .optional()
-        .describe("Professional license number"),
-      specialization: z.string().optional().describe("Medical specialization"),
-      accessLevel: z.number().min(0).max(10).describe("Numeric access level"),
+        .describe('Professional license number'),
+      specialization: z.string().optional().describe('Medical specialization'),
+      accessLevel: z.number().min(0).max(10).describe('Numeric access level'),
 
       // Contact and preferences
       preferredLanguage: z
         .string()
-        .default("pt-BR")
-        .describe("Preferred language"),
+        .default('pt-BR')
+        .describe('Preferred language'),
       timezone: z
         .string()
-        .default("America/Sao_Paulo")
-        .describe("User timezone"),
+        .default('America/Sao_Paulo')
+        .describe('User timezone'),
 
       // LGPD consent
       consentStatus: z
         .object({
-          dataProcessing: z.boolean().describe("Data processing consent"),
-          communication: z.boolean().describe("Communication consent"),
-          analytics: z.boolean().describe("Analytics consent"),
-          thirdParty: z.boolean().describe("Third-party sharing consent"),
-          consentDate: z.string().datetime().describe("Consent timestamp"),
-          consentVersion: z.string().describe("Consent version"),
+          dataProcessing: z.boolean().describe('Data processing consent'),
+          communication: z.boolean().describe('Communication consent'),
+          analytics: z.boolean().describe('Analytics consent'),
+          thirdParty: z.boolean().describe('Third-party sharing consent'),
+          consentDate: z.string().datetime().describe('Consent timestamp'),
+          consentVersion: z.string().describe('Consent version'),
         })
-        .describe("LGPD consent status"),
+        .describe('LGPD consent status'),
     })
-    .describe("User profile information"),
+    .describe('User profile information'),
 
   // Session metadata
   sessionMetadata: z
     .object({
-      createdAt: z.string().datetime().describe("Session creation time"),
-      lastActivity: z.string().datetime().describe("Last activity timestamp"),
-      expiresAt: z.string().datetime().describe("Session expiration time"),
-      ipAddress: z.string().describe("Client IP address (anonymized)"),
-      userAgent: z.string().describe("Client user agent"),
+      createdAt: z.string().datetime().describe('Session creation time'),
+      lastActivity: z.string().datetime().describe('Last activity timestamp'),
+      expiresAt: z.string().datetime().describe('Session expiration time'),
+      ipAddress: z.string().describe('Client IP address (anonymized)'),
+      userAgent: z.string().describe('Client user agent'),
       deviceType: z
-        .enum(["mobile", "tablet", "desktop", "medical_device"])
-        .describe("Device type"),
+        .enum(['mobile', 'tablet', 'desktop', 'medical_device'])
+        .describe('Device type'),
 
       // Security context
       authenticationMethod: z
-        .enum(["password", "mfa", "biometric", "smartcard", "emergency"])
-        .describe("Authentication method"),
-      mfaVerified: z.boolean().describe("MFA verification status"),
-      riskScore: z.number().min(0).max(10).describe("Session risk score"),
+        .enum(['password', 'mfa', 'biometric', 'smartcard', 'emergency'])
+        .describe('Authentication method'),
+      mfaVerified: z.boolean().describe('MFA verification status'),
+      riskScore: z.number().min(0).max(10).describe('Session risk score'),
 
       // Healthcare context
       workflowContext: z
         .object({
-          activeWorkflow: z.string().optional().describe("Current workflow"),
+          activeWorkflow: z.string().optional().describe('Current workflow'),
           patientContext: z
             .string()
             .optional()
-            .describe("Current patient context"),
+            .describe('Current patient context'),
           emergencyMode: z
             .boolean()
             .default(false)
-            .describe("Emergency mode active"),
+            .describe('Emergency mode active'),
           supervisorOverride: z
             .boolean()
             .default(false)
-            .describe("Supervisor override active"),
+            .describe('Supervisor override active'),
         })
         .optional()
-        .describe("Healthcare workflow context"),
+        .describe('Healthcare workflow context'),
     })
-    .describe("Session metadata"),
+    .describe('Session metadata'),
 
   // Compliance tracking
   complianceTracking: z
@@ -301,43 +301,43 @@ export const AuthSessionSchema = z.object({
       auditTrail: z
         .array(
           z.object({
-            action: z.string().describe("Action performed"),
-            timestamp: z.string().datetime().describe("Action timestamp"),
-            resource: z.string().describe("Resource accessed"),
+            action: z.string().describe('Action performed'),
+            timestamp: z.string().datetime().describe('Action timestamp'),
+            resource: z.string().describe('Resource accessed'),
             outcome: z
-              .enum(["success", "failure", "blocked"])
-              .describe("Action outcome"),
+              .enum(['success', 'failure', 'blocked'])
+              .describe('Action outcome'),
             riskLevel: z
-              .enum(["low", "medium", "high", "critical"])
-              .describe("Risk level"),
+              .enum(['low', 'medium', 'high', 'critical'])
+              .describe('Risk level'),
           }),
         )
-        .describe("Session audit trail"),
+        .describe('Session audit trail'),
 
       dataAccessed: z
         .array(
           z.object({
-            resourceType: z.string().describe("Type of data accessed"),
-            resourceId: z.string().describe("Resource identifier"),
+            resourceType: z.string().describe('Type of data accessed'),
+            resourceId: z.string().describe('Resource identifier'),
             accessType: z
-              .enum(["read", "write", "delete", "export"])
-              .describe("Access type"),
-            legalBasis: z.string().describe("LGPD legal basis"),
-            timestamp: z.string().datetime().describe("Access timestamp"),
+              .enum(['read', 'write', 'delete', 'export'])
+              .describe('Access type'),
+            legalBasis: z.string().describe('LGPD legal basis'),
+            timestamp: z.string().datetime().describe('Access timestamp'),
           }),
         )
-        .describe("Data access log"),
+        .describe('Data access log'),
 
       complianceFlags: z
         .object({
-          lgpdCompliant: z.boolean().describe("LGPD compliance status"),
-          anvisaCompliant: z.boolean().describe("ANVISA compliance status"),
-          auditRequired: z.boolean().describe("Audit logging required"),
-          retentionApplied: z.boolean().describe("Data retention applied"),
+          lgpdCompliant: z.boolean().describe('LGPD compliance status'),
+          anvisaCompliant: z.boolean().describe('ANVISA compliance status'),
+          auditRequired: z.boolean().describe('Audit logging required'),
+          retentionApplied: z.boolean().describe('Data retention applied'),
         })
-        .describe("Compliance flags"),
+        .describe('Compliance flags'),
     })
-    .describe("Compliance tracking"),
+    .describe('Compliance tracking'),
 });
 
 export type AuthSession = z.infer<typeof AuthSessionSchema>;
@@ -347,31 +347,31 @@ export type AuthSession = z.infer<typeof AuthSessionSchema>;
  */
 export const AuthConfigSchema = z.object({
   // Core settings
-  enabled: z.boolean().default(true).describe("Enable authentication"),
+  enabled: z.boolean().default(true).describe('Enable authentication'),
   environment: z
-    .enum(["development", "staging", "production"])
-    .describe("Environment"),
+    .enum(['development', 'staging', 'production'])
+    .describe('Environment'),
 
   // JWT settings
   jwt: z
     .object({
-      issuer: z.string().default("neonpro-healthcare").describe("JWT issuer"),
-      audience: z.string().default("neonpro-api").describe("JWT audience"),
-      algorithm: z.string().default("HS256").describe("JWT algorithm"),
+      issuer: z.string().default('neonpro-healthcare').describe('JWT issuer'),
+      audience: z.string().default('neonpro-api').describe('JWT audience'),
+      algorithm: z.string().default('HS256').describe('JWT algorithm'),
       accessTokenTtl: z
         .number()
         .default(3600)
-        .describe("Access token TTL in seconds"),
+        .describe('Access token TTL in seconds'),
       refreshTokenTtl: z
         .number()
         .default(604800)
-        .describe("Refresh token TTL in seconds"),
+        .describe('Refresh token TTL in seconds'),
       emergencyTokenTtl: z
         .number()
         .default(1800)
-        .describe("Emergency token TTL in seconds"),
+        .describe('Emergency token TTL in seconds'),
     })
-    .describe("JWT configuration"),
+    .describe('JWT configuration'),
 
   // Session management
   session: z
@@ -379,67 +379,67 @@ export const AuthConfigSchema = z.object({
       maxConcurrentSessions: z
         .number()
         .default(3)
-        .describe("Max concurrent sessions per user"),
-      idleTimeout: z.number().default(1800).describe("Idle timeout in seconds"),
+        .describe('Max concurrent sessions per user'),
+      idleTimeout: z.number().default(1800).describe('Idle timeout in seconds'),
       absoluteTimeout: z
         .number()
         .default(28800)
-        .describe("Absolute session timeout in seconds"),
+        .describe('Absolute session timeout in seconds'),
       emergencySessionTimeout: z
         .number()
         .default(3600)
-        .describe("Emergency session timeout"),
+        .describe('Emergency session timeout'),
       enableSessionRotation: z
         .boolean()
         .default(true)
-        .describe("Enable session rotation"),
+        .describe('Enable session rotation'),
       sessionRotationInterval: z
         .number()
         .default(1800)
-        .describe("Session rotation interval"),
+        .describe('Session rotation interval'),
     })
-    .describe("Session management settings"),
+    .describe('Session management settings'),
 
   // MFA settings
   mfa: z
     .object({
-      enabled: z.boolean().default(true).describe("Enable MFA"),
+      enabled: z.boolean().default(true).describe('Enable MFA'),
       requiredForRoles: z
         .array(HealthcareRoleSchema)
-        .describe("Roles requiring MFA"),
-      requiredForActions: z.array(z.string()).describe("Actions requiring MFA"),
+        .describe('Roles requiring MFA'),
+      requiredForActions: z.array(z.string()).describe('Actions requiring MFA'),
       gracePeriod: z
         .number()
         .default(300)
-        .describe("MFA grace period in seconds"),
+        .describe('MFA grace period in seconds'),
       emergencyBypass: z
         .boolean()
         .default(true)
-        .describe("Allow emergency MFA bypass"),
+        .describe('Allow emergency MFA bypass'),
     })
-    .describe("MFA configuration"),
+    .describe('MFA configuration'),
 
   // Emergency access
   emergencyAccess: z
     .object({
-      enabled: z.boolean().default(true).describe("Enable emergency access"),
+      enabled: z.boolean().default(true).describe('Enable emergency access'),
       approverRoles: z
         .array(HealthcareRoleSchema)
-        .describe("Roles that can approve emergency access"),
+        .describe('Roles that can approve emergency access'),
       maxEmergencyDuration: z
         .number()
         .default(3600)
-        .describe("Max emergency session duration"),
+        .describe('Max emergency session duration'),
       auditImmediately: z
         .boolean()
         .default(true)
-        .describe("Immediate audit for emergency access"),
+        .describe('Immediate audit for emergency access'),
       notifyCompliance: z
         .boolean()
         .default(true)
-        .describe("Notify compliance team"),
+        .describe('Notify compliance team'),
     })
-    .describe("Emergency access settings"),
+    .describe('Emergency access settings'),
 
   // Security settings
   security: z
@@ -447,29 +447,29 @@ export const AuthConfigSchema = z.object({
       enableRiskAssessment: z
         .boolean()
         .default(true)
-        .describe("Enable risk assessment"),
+        .describe('Enable risk assessment'),
       enableAnomalyDetection: z
         .boolean()
         .default(true)
-        .describe("Enable anomaly detection"),
+        .describe('Enable anomaly detection'),
       enableGeoBlocking: z
         .boolean()
         .default(false)
-        .describe("Enable geographic blocking"),
+        .describe('Enable geographic blocking'),
       maxFailedAttempts: z
         .number()
         .default(5)
-        .describe("Max failed authentication attempts"),
+        .describe('Max failed authentication attempts'),
       lockoutDuration: z
         .number()
         .default(900)
-        .describe("Account lockout duration"),
+        .describe('Account lockout duration'),
       enableDeviceFingerprinting: z
         .boolean()
         .default(true)
-        .describe("Enable device fingerprinting"),
+        .describe('Enable device fingerprinting'),
     })
-    .describe("Security settings"),
+    .describe('Security settings'),
 
   // LGPD compliance
   lgpdCompliance: z
@@ -477,29 +477,29 @@ export const AuthConfigSchema = z.object({
       enableConsentValidation: z
         .boolean()
         .default(true)
-        .describe("Enable consent validation"),
+        .describe('Enable consent validation'),
       enableDataMinimization: z
         .boolean()
         .default(true)
-        .describe("Enable data minimization"),
+        .describe('Enable data minimization'),
       enablePiiRedaction: z
         .boolean()
         .default(true)
-        .describe("Enable PII redaction"),
+        .describe('Enable PII redaction'),
       dataRetentionDays: z
         .number()
         .default(365)
-        .describe("Authentication data retention days"),
+        .describe('Authentication data retention days'),
       enableRightToErasure: z
         .boolean()
         .default(true)
-        .describe("Enable right to erasure"),
+        .describe('Enable right to erasure'),
       auditDataAccess: z
         .boolean()
         .default(true)
-        .describe("Audit all data access"),
+        .describe('Audit all data access'),
     })
-    .describe("LGPD compliance settings"),
+    .describe('LGPD compliance settings'),
 
   // Logging and monitoring
   logging: z
@@ -507,25 +507,25 @@ export const AuthConfigSchema = z.object({
       enableAuthAudit: z
         .boolean()
         .default(true)
-        .describe("Enable authentication audit"),
+        .describe('Enable authentication audit'),
       enableSessionTracking: z
         .boolean()
         .default(true)
-        .describe("Enable session tracking"),
+        .describe('Enable session tracking'),
       enableRiskLogging: z
         .boolean()
         .default(true)
-        .describe("Enable risk assessment logging"),
+        .describe('Enable risk assessment logging'),
       logLevel: z
-        .enum(["debug", "info", "warn", "error"])
-        .default("info")
-        .describe("Log level"),
+        .enum(['debug', 'info', 'warn', 'error'])
+        .default('info')
+        .describe('Log level'),
       auditRetentionDays: z
         .number()
         .default(2555)
-        .describe("Audit log retention days (7 years)"),
+        .describe('Audit log retention days (7 years)'),
     })
-    .describe("Logging settings"),
+    .describe('Logging settings'),
 });
 
 export type AuthConfig = z.infer<typeof AuthConfigSchema>;
@@ -534,24 +534,24 @@ export type AuthConfig = z.infer<typeof AuthConfigSchema>;
  * Authentication result schema
  */
 export const AuthResultSchema = z.object({
-  success: z.boolean().describe("Authentication success"),
-  session: AuthSessionSchema.optional().describe("Session information"),
-  errorCode: z.string().optional().describe("Error code"),
-  errorMessage: z.string().optional().describe("Error message"),
-  requiresMfa: z.boolean().default(false).describe("MFA required"),
+  success: z.boolean().describe('Authentication success'),
+  session: AuthSessionSchema.optional().describe('Session information'),
+  errorCode: z.string().optional().describe('Error code'),
+  errorMessage: z.string().optional().describe('Error message'),
+  requiresMfa: z.boolean().default(false).describe('MFA required'),
   requiresEmergencyApproval: z
     .boolean()
     .default(false)
-    .describe("Emergency approval required"),
-  riskScore: z.number().min(0).max(10).describe("Authentication risk score"),
+    .describe('Emergency approval required'),
+  riskScore: z.number().min(0).max(10).describe('Authentication risk score'),
   complianceStatus: z
     .object({
-      lgpdCompliant: z.boolean().describe("LGPD compliant"),
-      anvisaCompliant: z.boolean().describe("ANVISA compliant"),
-      auditRequired: z.boolean().describe("Audit required"),
+      lgpdCompliant: z.boolean().describe('LGPD compliant'),
+      anvisaCompliant: z.boolean().describe('ANVISA compliant'),
+      auditRequired: z.boolean().describe('Audit required'),
     })
-    .describe("Compliance status"),
-  timestamp: z.string().datetime().describe("Authentication timestamp"),
+    .describe('Compliance status'),
+  timestamp: z.string().datetime().describe('Authentication timestamp'),
 });
 
 export type AuthResult = z.infer<typeof AuthResultSchema>;
@@ -588,181 +588,181 @@ export class HealthcareRBAC {
     HealthcarePermission[]
   > = {
     guest: [],
-    patient: ["patient:read:basic"],
-    caregiver: ["patient:read:basic"],
+    patient: ['patient:read:basic'],
+    caregiver: ['patient:read:basic'],
     receptionist: [
-      "patient:read:basic",
-      "patient:write:basic",
-      "admin:read:users",
+      'patient:read:basic',
+      'patient:write:basic',
+      'admin:read:users',
     ],
     nurse: [
-      "patient:read:full",
-      "patient:write:basic",
-      "medical:read:diagnoses",
-      "medical:read:treatments",
-      "medical:read:medications",
-      "medical:read:allergies",
-      "medical:write:allergies",
-      "lab:read:results",
-      "lab:read:orders",
+      'patient:read:full',
+      'patient:write:basic',
+      'medical:read:diagnoses',
+      'medical:read:treatments',
+      'medical:read:medications',
+      'medical:read:allergies',
+      'medical:write:allergies',
+      'lab:read:results',
+      'lab:read:orders',
     ],
     technician: [
-      "patient:read:basic",
-      "lab:read:results",
-      "lab:write:results",
-      "lab:read:orders",
-      "imaging:read:studies",
-      "imaging:write:studies",
+      'patient:read:basic',
+      'lab:read:results',
+      'lab:write:results',
+      'lab:read:orders',
+      'imaging:read:studies',
+      'imaging:write:studies',
     ],
     pharmacist: [
-      "patient:read:basic",
-      "medical:read:medications",
-      "medical:write:medications",
-      "medical:read:allergies",
+      'patient:read:basic',
+      'medical:read:medications',
+      'medical:write:medications',
+      'medical:read:allergies',
     ],
     lab_technician: [
-      "patient:read:basic",
-      "lab:read:results",
-      "lab:write:results",
-      "lab:read:orders",
-      "lab:write:orders",
+      'patient:read:basic',
+      'lab:read:results',
+      'lab:write:results',
+      'lab:read:orders',
+      'lab:write:orders',
     ],
     radiologist: [
-      "patient:read:basic",
-      "imaging:read:studies",
-      "imaging:write:studies",
-      "imaging:read:reports",
-      "imaging:write:reports",
+      'patient:read:basic',
+      'imaging:read:studies',
+      'imaging:write:studies',
+      'imaging:read:reports',
+      'imaging:write:reports',
     ],
     doctor: [
-      "patient:read:full",
-      "patient:write:full",
-      "medical:read:diagnoses",
-      "medical:write:diagnoses",
-      "medical:read:treatments",
-      "medical:write:treatments",
-      "medical:read:medications",
-      "medical:write:medications",
-      "medical:read:allergies",
-      "medical:write:allergies",
-      "lab:read:results",
-      "lab:read:orders",
-      "lab:write:orders",
-      "imaging:read:studies",
-      "imaging:read:reports",
+      'patient:read:full',
+      'patient:write:full',
+      'medical:read:diagnoses',
+      'medical:write:diagnoses',
+      'medical:read:treatments',
+      'medical:write:treatments',
+      'medical:read:medications',
+      'medical:write:medications',
+      'medical:read:allergies',
+      'medical:write:allergies',
+      'lab:read:results',
+      'lab:read:orders',
+      'lab:write:orders',
+      'imaging:read:studies',
+      'imaging:read:reports',
     ],
     specialist: [
-      "patient:read:full",
-      "patient:write:full",
-      "medical:read:diagnoses",
-      "medical:write:diagnoses",
-      "medical:read:treatments",
-      "medical:write:treatments",
-      "medical:read:medications",
-      "medical:write:medications",
-      "medical:read:allergies",
-      "medical:write:allergies",
-      "lab:read:results",
-      "lab:read:orders",
-      "lab:write:orders",
-      "imaging:read:studies",
-      "imaging:write:studies",
-      "imaging:read:reports",
-      "imaging:write:reports",
+      'patient:read:full',
+      'patient:write:full',
+      'medical:read:diagnoses',
+      'medical:write:diagnoses',
+      'medical:read:treatments',
+      'medical:write:treatments',
+      'medical:read:medications',
+      'medical:write:medications',
+      'medical:read:allergies',
+      'medical:write:allergies',
+      'lab:read:results',
+      'lab:read:orders',
+      'lab:write:orders',
+      'imaging:read:studies',
+      'imaging:write:studies',
+      'imaging:read:reports',
+      'imaging:write:reports',
     ],
     department_head: [
-      "patient:read:full",
-      "patient:write:full",
-      "medical:read:diagnoses",
-      "medical:write:diagnoses",
-      "medical:read:treatments",
-      "medical:write:treatments",
-      "medical:read:medications",
-      "medical:write:medications",
-      "medical:read:allergies",
-      "medical:write:allergies",
-      "lab:read:results",
-      "lab:write:results",
-      "lab:read:orders",
-      "lab:write:orders",
-      "imaging:read:studies",
-      "imaging:write:studies",
-      "imaging:read:reports",
-      "imaging:write:reports",
-      "admin:read:users",
-      "admin:write:users",
-      "system:read:metrics",
+      'patient:read:full',
+      'patient:write:full',
+      'medical:read:diagnoses',
+      'medical:write:diagnoses',
+      'medical:read:treatments',
+      'medical:write:treatments',
+      'medical:read:medications',
+      'medical:write:medications',
+      'medical:read:allergies',
+      'medical:write:allergies',
+      'lab:read:results',
+      'lab:write:results',
+      'lab:read:orders',
+      'lab:write:orders',
+      'imaging:read:studies',
+      'imaging:write:studies',
+      'imaging:read:reports',
+      'imaging:write:reports',
+      'admin:read:users',
+      'admin:write:users',
+      'system:read:metrics',
     ],
     system_admin: [
-      "admin:read:users",
-      "admin:write:users",
-      "admin:read:audit",
-      "admin:write:settings",
-      "system:read:logs",
-      "system:write:config",
-      "system:read:metrics",
-      "system:backup:create",
+      'admin:read:users',
+      'admin:write:users',
+      'admin:read:audit',
+      'admin:write:settings',
+      'system:read:logs',
+      'system:write:config',
+      'system:read:metrics',
+      'system:backup:create',
     ],
     compliance_officer: [
-      "admin:read:users",
-      "admin:read:audit",
-      "compliance:read:audit",
-      "compliance:write:policies",
-      "compliance:read:reports",
-      "compliance:export:data",
-      "system:read:logs",
-      "system:read:metrics",
+      'admin:read:users',
+      'admin:read:audit',
+      'compliance:read:audit',
+      'compliance:write:policies',
+      'compliance:read:reports',
+      'compliance:export:data',
+      'system:read:logs',
+      'system:read:metrics',
     ],
     emergency_responder: [
-      "patient:read:full",
-      "patient:write:full",
-      "medical:read:diagnoses",
-      "medical:write:diagnoses",
-      "medical:read:treatments",
-      "medical:write:treatments",
-      "medical:read:medications",
-      "medical:write:medications",
-      "medical:read:allergies",
-      "medical:write:allergies",
-      "lab:read:results",
-      "lab:read:orders",
-      "imaging:read:studies",
-      "imaging:read:reports",
-      "admin:emergency:override",
+      'patient:read:full',
+      'patient:write:full',
+      'medical:read:diagnoses',
+      'medical:write:diagnoses',
+      'medical:read:treatments',
+      'medical:write:treatments',
+      'medical:read:medications',
+      'medical:write:medications',
+      'medical:read:allergies',
+      'medical:write:allergies',
+      'lab:read:results',
+      'lab:read:orders',
+      'imaging:read:studies',
+      'imaging:read:reports',
+      'admin:emergency:override',
     ],
     super_admin: [
-      "patient:read:full",
-      "patient:write:full",
-      "patient:delete",
-      "medical:read:diagnoses",
-      "medical:write:diagnoses",
-      "medical:read:treatments",
-      "medical:write:treatments",
-      "medical:read:medications",
-      "medical:write:medications",
-      "medical:read:allergies",
-      "medical:write:allergies",
-      "lab:read:results",
-      "lab:write:results",
-      "lab:read:orders",
-      "lab:write:orders",
-      "imaging:read:studies",
-      "imaging:write:studies",
-      "imaging:read:reports",
-      "imaging:write:reports",
-      "admin:read:users",
-      "admin:write:users",
-      "admin:read:audit",
-      "admin:write:settings",
-      "admin:emergency:override",
-      "system:read:logs",
-      "system:write:config",
-      "system:read:metrics",
-      "system:backup:create",
-      "compliance:read:audit",
-      "compliance:write:policies",
-      "compliance:read:reports",
-      "compliance:export:data",
+      'patient:read:full',
+      'patient:write:full',
+      'patient:delete',
+      'medical:read:diagnoses',
+      'medical:write:diagnoses',
+      'medical:read:treatments',
+      'medical:write:treatments',
+      'medical:read:medications',
+      'medical:write:medications',
+      'medical:read:allergies',
+      'medical:write:allergies',
+      'lab:read:results',
+      'lab:write:results',
+      'lab:read:orders',
+      'lab:write:orders',
+      'imaging:read:studies',
+      'imaging:write:studies',
+      'imaging:read:reports',
+      'imaging:write:reports',
+      'admin:read:users',
+      'admin:write:users',
+      'admin:read:audit',
+      'admin:write:settings',
+      'admin:emergency:override',
+      'system:read:logs',
+      'system:write:config',
+      'system:read:metrics',
+      'system:backup:create',
+      'compliance:read:audit',
+      'compliance:write:policies',
+      'compliance:read:reports',
+      'compliance:export:data',
     ],
   };
 
@@ -808,22 +808,20 @@ export class HealthcareRBAC {
   static canAccessResource(
     userRole: HealthcareRole,
     resourceType: string,
-    operation: "read" | "write" | "delete",
+    operation: 'read' | 'write' | 'delete',
   ): boolean {
     // Emergency responders have override access during emergencies
-    if (userRole === "emergency_responder") {
+    if (userRole === 'emergency_responder') {
       return true;
     }
 
     // Build permission string
-    const permission =
-      `${resourceType}:${operation}:basic` as HealthcarePermission;
-    const fullPermission =
-      `${resourceType}:${operation}:full` as HealthcarePermission;
+    const permission = `${resourceType}:${operation}:basic` as HealthcarePermission;
+    const fullPermission = `${resourceType}:${operation}:full` as HealthcarePermission;
 
     return (
-      this.hasPermission(userRole, permission) ||
-      this.hasPermission(userRole, fullPermission)
+      this.hasPermission(userRole, permission)
+      || this.hasPermission(userRole, fullPermission)
     );
   }
 
@@ -845,10 +843,10 @@ export class HealthcareRBAC {
 
     // High-privilege roles always require MFA
     const highPrivilegeRoles: HealthcareRole[] = [
-      "system_admin",
-      "compliance_officer",
-      "emergency_responder",
-      "super_admin",
+      'system_admin',
+      'compliance_officer',
+      'emergency_responder',
+      'super_admin',
     ];
 
     return highPrivilegeRoles.includes(userRole);
@@ -893,7 +891,7 @@ export class HealthcareAuthMiddleware {
       this.isInitialized = true;
 
       authLogger.info(
-        "Healthcare authentication middleware initialized",
+        'Healthcare authentication middleware initialized',
         { component: 'auth-middleware', timestamp: new Date().toISOString() },
       );
     } catch (error) {
@@ -935,12 +933,12 @@ export class HealthcareAuthMiddleware {
   private getDefaultConfig(): Partial<AuthConfig> {
     return {
       enabled: true,
-      environment: "development",
+      environment: 'development',
 
       jwt: {
-        issuer: "neonpro-healthcare",
-        audience: "neonpro-api",
-        algorithm: "HS256",
+        issuer: 'neonpro-healthcare',
+        audience: 'neonpro-api',
+        algorithm: 'HS256',
         accessTokenTtl: 3600, // 1 hour
         refreshTokenTtl: 604800, // 1 week
         emergencyTokenTtl: 1800, // 30 minutes
@@ -958,20 +956,20 @@ export class HealthcareAuthMiddleware {
       mfa: {
         enabled: true,
         requiredForRoles: [
-          "doctor",
-          "specialist",
-          "department_head",
-          "system_admin",
-          "compliance_officer",
-          "emergency_responder",
-          "super_admin",
+          'doctor',
+          'specialist',
+          'department_head',
+          'system_admin',
+          'compliance_officer',
+          'emergency_responder',
+          'super_admin',
         ],
         requiredForActions: [
-          "patient:delete",
-          "medical:write:diagnoses",
-          "admin:write:settings",
-          "system:write:config",
-          "compliance:export:data",
+          'patient:delete',
+          'medical:write:diagnoses',
+          'admin:write:settings',
+          'system:write:config',
+          'compliance:export:data',
         ],
         gracePeriod: 300, // 5 minutes
         emergencyBypass: true,
@@ -980,10 +978,10 @@ export class HealthcareAuthMiddleware {
       emergencyAccess: {
         enabled: true,
         approverRoles: [
-          "department_head",
-          "system_admin",
-          "compliance_officer",
-          "super_admin",
+          'department_head',
+          'system_admin',
+          'compliance_officer',
+          'super_admin',
         ],
         maxEmergencyDuration: 3600, // 1 hour
         auditImmediately: true,
@@ -1012,7 +1010,7 @@ export class HealthcareAuthMiddleware {
         enableAuthAudit: true,
         enableSessionTracking: true,
         enableRiskLogging: true,
-        logLevel: "info",
+        logLevel: 'info',
         auditRetentionDays: 2555, // 7 years for healthcare
       },
     };
@@ -1040,15 +1038,15 @@ export class HealthcareAuthMiddleware {
         }
 
         // Store session in context
-        c.set("authSession", authResult.session);
-        c.set("authResult", authResult);
+        c.set('authSession', authResult.session);
+        c.set('authResult', authResult);
 
         // Add authentication headers
         if (authResult.session) {
-          c.header("x-session-id", authResult.session.sessionId);
-          c.header("x-user-role", authResult.session.userProfile._role);
+          c.header('x-session-id', authResult.session.sessionId);
+          c.header('x-user-role', authResult.session.userProfile._role);
           c.header(
-            "x-access-level",
+            'x-access-level',
             authResult.session.userProfile.accessLevel.toString(),
           );
         }
@@ -1070,7 +1068,7 @@ export class HealthcareAuthMiddleware {
           method: 'authenticationMiddleware',
           component: 'HealthcareAuthMiddleware',
           severity: 'high',
-          path: c.req.path
+          path: c.req.path,
         });
         return this.handleAuthError(c, error);
       }
@@ -1084,16 +1082,16 @@ export class HealthcareAuthMiddleware {
     requiredPermission?: HealthcarePermission,
     requiredAccessLevel?: number,
     resourceType?: string,
-    operation?: "read" | "write" | "delete",
+    operation?: 'read' | 'write' | 'delete',
   ): MiddlewareHandler {
     return async (c: Context, next: Next): Promise<void> => {
-      const authSession = c.get("authSession") as AuthSession;
+      const authSession = c.get('authSession') as AuthSession;
 
       if (!authSession) {
         c.json(
           {
-            error: "UNAUTHORIZED",
-            message: "Authentication required",
+            error: 'UNAUTHORIZED',
+            message: 'Authentication required',
             timestamp: new Date().toISOString(),
           },
           401,
@@ -1116,8 +1114,8 @@ export class HealthcareAuthMiddleware {
           );
           c.json(
             {
-              error: "FORBIDDEN",
-              message: "Insufficient permissions",
+              error: 'FORBIDDEN',
+              message: 'Insufficient permissions',
               required: requiredPermission,
               timestamp: new Date().toISOString(),
             },
@@ -1142,8 +1140,8 @@ export class HealthcareAuthMiddleware {
           );
           c.json(
             {
-              error: "FORBIDDEN",
-              message: "Insufficient access level",
+              error: 'FORBIDDEN',
+              message: 'Insufficient access level',
               required: requiredAccessLevel,
               current: authSession.userProfile.accessLevel,
               timestamp: new Date().toISOString(),
@@ -1170,7 +1168,7 @@ export class HealthcareAuthMiddleware {
           );
           c.json(
             {
-              error: "FORBIDDEN",
+              error: 'FORBIDDEN',
               message: `Cannot ${operation} ${resourceType}`,
               timestamp: new Date().toISOString(),
             },
@@ -1190,8 +1188,8 @@ export class HealthcareAuthMiddleware {
       if (requiresMfa && !authSession.sessionMetadata.mfaVerified) {
         c.json(
           {
-            error: "MFA_REQUIRED",
-            message: "Multi-factor authentication required",
+            error: 'MFA_REQUIRED',
+            message: 'Multi-factor authentication required',
             timestamp: new Date().toISOString(),
           },
           403,
@@ -1227,8 +1225,8 @@ export class HealthcareAuthMiddleware {
         return this.createAuthResult(
           false,
           undefined,
-          "NO_TOKEN",
-          "Authentication token not provided",
+          'NO_TOKEN',
+          'Authentication token not provided',
         );
       }
 
@@ -1239,8 +1237,8 @@ export class HealthcareAuthMiddleware {
         return this.createAuthResult(
           false,
           undefined,
-          "INVALID_TOKEN",
-          "Invalid authentication token",
+          'INVALID_TOKEN',
+          'Invalid authentication token',
         );
       }
 
@@ -1251,8 +1249,8 @@ export class HealthcareAuthMiddleware {
         return this.createAuthResult(
           false,
           undefined,
-          "SESSION_ERROR",
-          "Failed to create or retrieve session",
+          'SESSION_ERROR',
+          'Failed to create or retrieve session',
         );
       }
 
@@ -1263,8 +1261,8 @@ export class HealthcareAuthMiddleware {
         return this.createAuthResult(
           false,
           undefined,
-          "SESSION_INVALID",
-          "Session is no longer valid",
+          'SESSION_INVALID',
+          'Session is no longer valid',
         );
       }
 
@@ -1291,13 +1289,13 @@ export class HealthcareAuthMiddleware {
         method: 'handleAuthentication',
         component: 'HealthcareAuthMiddleware',
         severity: 'high',
-        operation: 'authentication'
+        operation: 'authentication',
       });
       return this.createAuthResult(
         false,
         undefined,
-        "AUTH_ERROR",
-        "Authentication failed",
+        'AUTH_ERROR',
+        'Authentication failed',
       );
     }
   }
@@ -1307,24 +1305,24 @@ export class HealthcareAuthMiddleware {
    */
   private async extractAuthToken(c: Context): Promise<string | null> {
     // Check Authorization header
-    const authHeader = c.req.header("authorization");
-    if (authHeader?.startsWith("Bearer ")) {
+    const authHeader = c.req.header('authorization');
+    if (authHeader?.startsWith('Bearer ')) {
       return authHeader.substring(7);
     }
 
     // Check cookie (for web sessions)
     const cookieToken = c.req
-      .header("cookie")
-      ?.split(";")
-      .find((cookie) => cookie.trim().startsWith("auth_token="))
-      ?.split("=")[1];
+      .header('cookie')
+      ?.split(';')
+      .find(cookie => cookie.trim().startsWith('auth_token='))
+      ?.split('=')[1];
 
     if (cookieToken) {
       return cookieToken;
     }
 
     // Check query parameter (for limited use cases)
-    const queryToken = c.req.query("token");
+    const queryToken = c.req.query('token');
     if (queryToken) {
       return queryToken;
     }
@@ -1341,7 +1339,7 @@ export class HealthcareAuthMiddleware {
 
       if (!secret) {
         throw new Error(
-          "JWT_SECRET environment variable is required for token validation.",
+          'JWT_SECRET environment variable is required for token validation.',
         );
       }
 
@@ -1353,20 +1351,20 @@ export class HealthcareAuthMiddleware {
 
       // Validate token claims
       if (decoded.iss !== this.config.jwt.issuer) {
-        throw new Error("Invalid token issuer");
+        throw new Error('Invalid token issuer');
       }
 
       if (decoded.aud !== this.config.jwt.audience) {
-        throw new Error("Invalid token audience");
+        throw new Error('Invalid token audience');
       }
 
       if (decoded.exp && decoded.exp < Date.now() / 1000) {
-        throw new Error("Token expired");
+        throw new Error('Token expired');
       }
 
       // Cast to our JWTPayload interface
       const jwtPayload: JWTPayload = {
-        _userId: (decoded.sub || decoded.userId || "") as string,
+        _userId: (decoded.sub || decoded.userId || '') as string,
         sessionId: decoded.sessionId as string,
         iss: decoded.iss as string,
         aud: decoded.aud as string,
@@ -1384,7 +1382,7 @@ export class HealthcareAuthMiddleware {
         method: 'validateToken',
         component: 'HealthcareAuthMiddleware',
         severity: 'high',
-        operation: 'token_validation'
+        operation: 'token_validation',
       });
       return null;
     }
@@ -1399,7 +1397,9 @@ export class HealthcareAuthMiddleware {
   ): Promise<AuthSession | null> {
     try {
       // Check if session already exists
-      const existingSession = decoded.sessionId ? this.activeSessions.get(decoded.sessionId) : undefined;
+      const existingSession = decoded.sessionId
+        ? this.activeSessions.get(decoded.sessionId)
+        : undefined;
 
       if (existingSession) {
         return existingSession;
@@ -1418,7 +1418,7 @@ export class HealthcareAuthMiddleware {
         method: 'createSession',
         component: 'HealthcareAuthMiddleware',
         severity: 'high',
-        operation: 'session_creation'
+        operation: 'session_creation',
       });
       return null;
     }
@@ -1449,25 +1449,25 @@ export class HealthcareAuthMiddleware {
 
         userProfile: {
           anonymizedId: `user_${nanoid(8)}`,
-          _role: (userProfile as any)._role || "guest",
+          _role: (userProfile as any)._role || 'guest',
           permissions: HealthcareRBAC.getRolePermissions(
-            (userProfile as any)._role || "guest",
+            (userProfile as any)._role || 'guest',
           ),
           facilityId: userProfile.facilityId,
           departmentId: userProfile.departmentId,
           shiftId: userProfile.shiftId,
           licenseNumber: userProfile.licenseNumber,
           specialization: userProfile.specialization,
-          accessLevel: HealthcareRBAC.getRoleLevel((userProfile as any)._role || "guest"),
-          preferredLanguage: userProfile.preferredLanguage || "pt-BR",
-          timezone: userProfile.timezone || "America/Sao_Paulo",
+          accessLevel: HealthcareRBAC.getRoleLevel((userProfile as any)._role || 'guest'),
+          preferredLanguage: userProfile.preferredLanguage || 'pt-BR',
+          timezone: userProfile.timezone || 'America/Sao_Paulo',
           consentStatus: userProfile.consentStatus || {
             dataProcessing: false,
             communication: false,
             analytics: false,
             thirdParty: false,
             consentDate: now,
-            consentVersion: "1.0",
+            consentVersion: '1.0',
           },
         },
 
@@ -1478,19 +1478,18 @@ export class HealthcareAuthMiddleware {
             Date.now() + this.config.session.absoluteTimeout * 1000,
           ).toISOString(),
           ipAddress: this.anonymizeIP(
-            c.req.header("x-forwarded-for")?.split(",")[0]?.trim() ||
-              c.req.header("x-real-ip") ||
-              "unknown",
+            c.req.header('x-forwarded-for')?.split(',')[0]?.trim()
+              || c.req.header('x-real-ip')
+              || 'unknown',
           ),
-          userAgent: c.req.header("user-agent") || "unknown",
-          deviceType: this.detectDeviceType(c.req.header("user-agent")),
-          authenticationMethod:
-            (decoded.authMethod as
-              | "password"
-              | "mfa"
-              | "biometric"
-              | "smartcard"
-              | "emergency") || "password",
+          userAgent: c.req.header('user-agent') || 'unknown',
+          deviceType: this.detectDeviceType(c.req.header('user-agent')),
+          authenticationMethod: (decoded.authMethod as
+            | 'password'
+            | 'mfa'
+            | 'biometric'
+            | 'smartcard'
+            | 'emergency') || 'password',
           mfaVerified: decoded.mfaVerified || false,
           riskScore: 0, // Will be calculated
           workflowContext: {
@@ -1517,7 +1516,7 @@ export class HealthcareAuthMiddleware {
         method: 'createNewSession',
         component: 'HealthcareAuthMiddleware',
         severity: 'high',
-        operation: 'new_session_creation'
+        operation: 'new_session_creation',
       });
       return null;
     }
@@ -1530,20 +1529,20 @@ export class HealthcareAuthMiddleware {
     // TODO: Implement actual database lookup
     // This is a mock implementation
     return {
-      _role: "doctor" as HealthcareRole,
-      facilityId: "facility_001",
-      departmentId: "dept_cardiology",
-      licenseNumber: "CRM-SP-123456",
-      specialization: "Cardiology",
-      preferredLanguage: "pt-BR",
-      timezone: "America/Sao_Paulo",
+      _role: 'doctor' as HealthcareRole,
+      facilityId: 'facility_001',
+      departmentId: 'dept_cardiology',
+      licenseNumber: 'CRM-SP-123456',
+      specialization: 'Cardiology',
+      preferredLanguage: 'pt-BR',
+      timezone: 'America/Sao_Paulo',
       consentStatus: {
         dataProcessing: true,
         communication: true,
         analytics: false,
         thirdParty: false,
         consentDate: new Date().toISOString(),
-        consentVersion: "1.0",
+        consentVersion: '1.0',
       },
     };
   }
@@ -1559,7 +1558,7 @@ export class HealthcareAuthMiddleware {
 
     // Check absolute expiration
     if (new Date(session.sessionMetadata.expiresAt).getTime() < now) {
-      await this.expireSession(session.sessionId, "ABSOLUTE_TIMEOUT");
+      await this.expireSession(session.sessionId, 'ABSOLUTE_TIMEOUT');
       return false;
     }
 
@@ -1570,25 +1569,25 @@ export class HealthcareAuthMiddleware {
     const idleTime = now - lastActivity;
 
     if (idleTime > this.config.session.idleTimeout * 1000) {
-      await this.expireSession(session.sessionId, "IDLE_TIMEOUT");
+      await this.expireSession(session.sessionId, 'IDLE_TIMEOUT');
       return false;
     }
 
     // Check concurrent session limit
     const userSessions = Array.from(this.activeSessions.values()).filter(
-      (s) => s._userId === session._userId,
+      s => s._userId === session._userId,
     );
 
     if (userSessions.length > this.config.session.maxConcurrentSessions) {
       // Remove oldest session
       const oldestSession = userSessions.sort(
         (a, _b) =>
-          new Date(a.sessionMetadata.lastActivity).getTime() -
-          new Date(_b.sessionMetadata.lastActivity).getTime(),
+          new Date(a.sessionMetadata.lastActivity).getTime()
+          - new Date(_b.sessionMetadata.lastActivity).getTime(),
       )[0];
 
       if (oldestSession) {
-        await this.expireSession(oldestSession.sessionId, "CONCURRENT_LIMIT");
+        await this.expireSession(oldestSession.sessionId, 'CONCURRENT_LIMIT');
 
         // If the current session is the one being expired, return false
         if (oldestSession.sessionId === session.sessionId) {
@@ -1602,7 +1601,7 @@ export class HealthcareAuthMiddleware {
       const hasValidConsent = session.userProfile.consentStatus.dataProcessing;
 
       if (!hasValidConsent) {
-        await this.expireSession(session.sessionId, "CONSENT_REVOKED");
+        await this.expireSession(session.sessionId, 'CONSENT_REVOKED');
         return false;
       }
     }
@@ -1622,7 +1621,7 @@ export class HealthcareAuthMiddleware {
 
     // Geographic risk (if enabled)
     if (this.config.security.enableGeoBlocking) {
-      const country = _c.req.header("x-country-code");
+      const country = _c.req.header('x-country-code');
       if (country && !this.isAllowedCountry(country)) {
         riskScore += 3;
       }
@@ -1649,10 +1648,10 @@ export class HealthcareAuthMiddleware {
 
     // Role-based risk
     const highRiskRoles: HealthcareRole[] = [
-      "system_admin",
-      "compliance_officer",
-      "emergency_responder",
-      "super_admin",
+      'system_admin',
+      'compliance_officer',
+      'emergency_responder',
+      'super_admin',
     ];
 
     if (highRiskRoles.includes(session.userProfile._role)) {
@@ -1680,8 +1679,7 @@ export class HealthcareAuthMiddleware {
       const lastActivity = new Date(
         session.sessionMetadata.lastActivity,
       ).getTime();
-      const gracePeriodExpiry =
-        lastActivity + this.config.mfa.gracePeriod * 1000;
+      const gracePeriodExpiry = lastActivity + this.config.mfa.gracePeriod * 1000;
 
       if (Date.now() < gracePeriodExpiry) {
         return false;
@@ -1690,8 +1688,8 @@ export class HealthcareAuthMiddleware {
 
     // Emergency bypass
     if (
-      this.config.mfa.emergencyBypass &&
-      session.sessionMetadata.workflowContext?.emergencyMode
+      this.config.mfa.emergencyBypass
+      && session.sessionMetadata.workflowContext?.emergencyMode
     ) {
       return false;
     }
@@ -1722,19 +1720,17 @@ export class HealthcareAuthMiddleware {
       action: `${_c.req.method} ${_c.req.path}`,
       timestamp: now,
       resource: _c.req.path,
-      outcome: "success",
-      riskLevel:
-        session.sessionMetadata.riskScore > 5
-          ? "high"
-          : session.sessionMetadata.riskScore > 2
-            ? "medium"
-            : "low",
+      outcome: 'success',
+      riskLevel: session.sessionMetadata.riskScore > 5
+        ? 'high'
+        : session.sessionMetadata.riskScore > 2
+        ? 'medium'
+        : 'low',
     });
 
     // Limit audit trail size
     if (session.complianceTracking.auditTrail.length > 100) {
-      session.complianceTracking.auditTrail =
-        session.complianceTracking.auditTrail.slice(-50);
+      session.complianceTracking.auditTrail = session.complianceTracking.auditTrail.slice(-50);
     }
 
     // Update session in store
@@ -1767,12 +1763,9 @@ export class HealthcareAuthMiddleware {
       requiresEmergencyApproval,
       riskScore,
       complianceStatus: {
-        lgpdCompliant:
-          session?.complianceTracking.complianceFlags.lgpdCompliant || false,
-        anvisaCompliant:
-          session?.complianceTracking.complianceFlags.anvisaCompliant || false,
-        auditRequired:
-          session?.complianceTracking.complianceFlags.auditRequired || false,
+        lgpdCompliant: session?.complianceTracking.complianceFlags.lgpdCompliant || false,
+        anvisaCompliant: session?.complianceTracking.complianceFlags.anvisaCompliant || false,
+        auditRequired: session?.complianceTracking.complianceFlags.auditRequired || false,
       },
       timestamp: new Date().toISOString(),
     };
@@ -1788,14 +1781,14 @@ export class HealthcareAuthMiddleware {
     await this.logAuthFailure(c, authResult);
 
     const response = {
-      error: authResult.errorCode || "AUTHENTICATION_FAILED",
-      message: authResult.errorMessage || "Authentication failed",
+      error: authResult.errorCode || 'AUTHENTICATION_FAILED',
+      message: authResult.errorMessage || 'Authentication failed',
       requiresMfa: authResult.requiresMfa,
       requiresEmergencyApproval: authResult.requiresEmergencyApproval,
       timestamp: authResult.timestamp,
     };
 
-    const statusCode = authResult.errorCode === "NO_TOKEN" ? 401 : 403;
+    const statusCode = authResult.errorCode === 'NO_TOKEN' ? 401 : 403;
     return c.json(response, statusCode);
   }
 
@@ -1807,8 +1800,8 @@ export class HealthcareAuthMiddleware {
     error: AuthenticationError | unknown,
   ): Promise<Response> {
     const errorResponse = {
-      error: "AUTHENTICATION_ERROR",
-      message: "Internal authentication error",
+      error: 'AUTHENTICATION_ERROR',
+      message: 'Internal authentication error',
       timestamp: new Date().toISOString(),
     };
 
@@ -1843,9 +1836,9 @@ export class HealthcareAuthMiddleware {
       timestamp: new Date().toISOString(),
     };
 
-    authLogger.info("Session activity logged", {
+    authLogger.info('Session activity logged', {
       ...activityLog,
-      component: 'auth-middleware'
+      component: 'auth-middleware',
     });
   }
 
@@ -1864,13 +1857,13 @@ export class HealthcareAuthMiddleware {
       endpoint: _c.req.path,
       method: _c.req.method,
       requirement,
-      reason: "INSUFFICIENT_PERMISSIONS",
+      reason: 'INSUFFICIENT_PERMISSIONS',
       timestamp: new Date().toISOString(),
     };
 
-    authLogger.warn("Authorization failure", {
+    authLogger.warn('Authorization failure', {
       ...failureLog,
-      component: 'auth-middleware'
+      component: 'auth-middleware',
     });
   }
 
@@ -1891,13 +1884,13 @@ export class HealthcareAuthMiddleware {
       endpoint: _c.req.path,
       method: _c.req.method,
       requirements,
-      outcome: "AUTHORIZED",
+      outcome: 'AUTHORIZED',
       timestamp: new Date().toISOString(),
     };
 
-    authLogger.info("Authorization success", {
+    authLogger.info('Authorization success', {
       ...authLog,
-      component: 'auth-middleware'
+      component: 'auth-middleware',
     });
   }
 
@@ -1912,20 +1905,20 @@ export class HealthcareAuthMiddleware {
       endpoint: c.req.path,
       method: c.req.method,
       ipAddress: this.anonymizeIP(
-        c.req.header("x-forwarded-for")?.split(",")[0]?.trim() ||
-          c.req.header("x-real-ip") ||
-          "unknown",
+        c.req.header('x-forwarded-for')?.split(',')[0]?.trim()
+          || c.req.header('x-real-ip')
+          || 'unknown',
       ),
-      userAgent: c.req.header("user-agent"),
+      userAgent: c.req.header('user-agent'),
       errorCode: authResult.errorCode,
       errorMessage: authResult.errorMessage,
       riskScore: authResult.riskScore,
       timestamp: authResult.timestamp,
     };
 
-    authLogger.warn("Authentication failure", {
+    authLogger.warn('Authentication failure', {
       ...failureLog,
-      component: 'auth-middleware'
+      component: 'auth-middleware',
     });
   }
 
@@ -1939,11 +1932,11 @@ export class HealthcareAuthMiddleware {
     const session = this.activeSessions.get(sessionId);
 
     if (session) {
-      authLogger.info("Session expired", {
+      authLogger.info('Session expired', {
         sessionId,
         reason,
         component: 'auth-middleware',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
 
       // Log session expiration
@@ -1952,14 +1945,13 @@ export class HealthcareAuthMiddleware {
         _userId: session.userProfile.anonymizedId,
         _role: session.userProfile._role,
         reason,
-        duration:
-          Date.now() - new Date(session.sessionMetadata.createdAt).getTime(),
+        duration: Date.now() - new Date(session.sessionMetadata.createdAt).getTime(),
         timestamp: new Date().toISOString(),
       };
 
-      authLogger.info("Session expiration processed", {
+      authLogger.info('Session expiration processed', {
         ...expirationLog,
-        component: 'auth-middleware'
+        component: 'auth-middleware',
       });
     }
 
@@ -1984,22 +1976,22 @@ export class HealthcareAuthMiddleware {
       const idleTime = now - lastActivity;
 
       if (
-        expirationTime < now ||
-        idleTime > this.config.session.idleTimeout * 1000
+        expirationTime < now
+        || idleTime > this.config.session.idleTimeout * 1000
       ) {
         expiredSessions.push(sessionId);
       }
     }
 
     for (const sessionId of expiredSessions) {
-      this.expireSession(sessionId, "CLEANUP");
+      this.expireSession(sessionId, 'CLEANUP');
     }
 
     if (expiredSessions.length > 0) {
-      authLogger.info("Expired sessions cleanup completed", {
+      authLogger.info('Expired sessions cleanup completed', {
         cleanedSessions: expiredSessions.length,
         component: 'auth-middleware',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
     }
   }
@@ -2009,9 +2001,9 @@ export class HealthcareAuthMiddleware {
    */
   private rotateActiveSessions(): void {
     // TODO: Implement session rotation logic
-    authLogger.info("Session rotation check performed", {
+    authLogger.info('Session rotation check performed', {
       component: 'auth-middleware',
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 
@@ -2022,9 +2014,9 @@ export class HealthcareAuthMiddleware {
     if (!this.config.security.enableAnomalyDetection) return;
 
     // TODO: Implement anomaly detection logic
-    authLogger.info("Session anomaly detection performed", {
+    authLogger.info('Session anomaly detection performed', {
       component: 'auth-middleware',
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 
@@ -2032,33 +2024,33 @@ export class HealthcareAuthMiddleware {
    * Anonymize IP address for LGPD compliance
    */
   private anonymizeIP(ip: string): string {
-    if (!ip || ip === "unknown") return "unknown";
+    if (!ip || ip === 'unknown') return 'unknown';
 
     try {
       // IPv4 anonymization
-      if (ip.includes(".")) {
-        const parts = ip.split(".");
+      if (ip.includes('.')) {
+        const parts = ip.split('.');
         if (parts.length >= 3) {
           return `${parts[0]}.${parts[1]}.${parts[2]}.0`;
         }
       }
 
       // IPv6 anonymization
-      if (ip.includes(":")) {
-        const parts = ip.split(":");
+      if (ip.includes(':')) {
+        const parts = ip.split(':');
         if (parts.length >= 4) {
-          return parts.slice(0, 4).join(":") + "::";
+          return parts.slice(0, 4).join(':') + '::';
         }
       }
     } catch (error) {
-      authLogger.warn("IP anonymization failed", {
+      authLogger.warn('IP anonymization failed', {
         ip: ip,
         component: 'auth-middleware',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
     }
 
-    return "anonymized";
+    return 'anonymized';
   }
 
   /**
@@ -2066,22 +2058,24 @@ export class HealthcareAuthMiddleware {
    */
   private detectDeviceType(
     userAgent?: string,
-  ): "mobile" | "tablet" | "desktop" | "medical_device" {
-    if (!userAgent) return "desktop";
+  ): 'mobile' | 'tablet' | 'desktop' | 'medical_device' {
+    if (!userAgent) return 'desktop';
 
     const ua = userAgent.toLowerCase();
 
-    if (ua.includes("medical") || ua.includes("monitor"))
-      return "medical_device";
+    if (ua.includes('medical') || ua.includes('monitor')) {
+      return 'medical_device';
+    }
     if (
-      ua.includes("mobile") ||
-      ua.includes("android") ||
-      ua.includes("iphone")
-    )
-      return "mobile";
-    if (ua.includes("tablet") || ua.includes("ipad")) return "tablet";
+      ua.includes('mobile')
+      || ua.includes('android')
+      || ua.includes('iphone')
+    ) {
+      return 'mobile';
+    }
+    if (ua.includes('tablet') || ua.includes('ipad')) return 'tablet';
 
-    return "desktop";
+    return 'desktop';
   }
 
   /**
@@ -2089,7 +2083,7 @@ export class HealthcareAuthMiddleware {
    */
   private isAllowedCountry(country: string): boolean {
     // TODO: Implement country allowlist/blocklist
-    const allowedCountries = ["BR", "US", "CA", "EU"];
+    const allowedCountries = ['BR', 'US', 'CA', 'EU'];
     return allowedCountries.includes(country.toUpperCase());
   }
 
@@ -2097,15 +2091,15 @@ export class HealthcareAuthMiddleware {
    * Generate device fingerprint
    */
   private generateDeviceFingerprint(c: Context): string {
-    const userAgent = c.req.header("user-agent") || "";
-    const acceptLanguage = c.req.header("accept-language") || "";
-    const acceptEncoding = c.req.header("accept-encoding") || "";
+    const userAgent = c.req.header('user-agent') || '';
+    const acceptLanguage = c.req.header('accept-language') || '';
+    const acceptEncoding = c.req.header('accept-encoding') || '';
 
     // Simple fingerprint based on headers
     const fingerprint = `${userAgent}|${acceptLanguage}|${acceptEncoding}`;
 
     // TODO: Implement proper device fingerprinting
-    return Buffer.from(fingerprint).toString("base64").substring(0, 16);
+    return Buffer.from(fingerprint).toString('base64').substring(0, 16);
   }
 
   /**
@@ -2142,9 +2136,9 @@ export class HealthcareAuthMiddleware {
     this.sessionActivity.clear();
     this.isInitialized = false;
 
-    authLogger.info("Healthcare authentication middleware destroyed", {
+    authLogger.info('Healthcare authentication middleware destroyed', {
       component: 'auth-middleware',
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 }
@@ -2158,12 +2152,12 @@ export class HealthcareAuthMiddleware {
  */
 export const healthcareAuthMiddleware = new HealthcareAuthMiddleware({
   enabled: true,
-  environment: (process.env.NODE_ENV as Environment) || "development",
+  environment: (process.env.NODE_ENV as Environment) || 'development',
 
   jwt: {
-    issuer: "neonpro-healthcare",
-    audience: "neonpro-api",
-    algorithm: "HS256",
+    issuer: 'neonpro-healthcare',
+    audience: 'neonpro-api',
+    algorithm: 'HS256',
     accessTokenTtl: 3600,
     refreshTokenTtl: 604800,
     emergencyTokenTtl: 1800,
@@ -2181,20 +2175,20 @@ export const healthcareAuthMiddleware = new HealthcareAuthMiddleware({
   mfa: {
     enabled: true,
     requiredForRoles: [
-      "doctor",
-      "specialist",
-      "department_head",
-      "system_admin",
-      "compliance_officer",
-      "emergency_responder",
-      "super_admin",
+      'doctor',
+      'specialist',
+      'department_head',
+      'system_admin',
+      'compliance_officer',
+      'emergency_responder',
+      'super_admin',
     ],
     requiredForActions: [
-      "patient:delete",
-      "medical:write:diagnoses",
-      "admin:write:settings",
-      "system:write:config",
-      "compliance:export:data",
+      'patient:delete',
+      'medical:write:diagnoses',
+      'admin:write:settings',
+      'system:write:config',
+      'compliance:export:data',
     ],
     gracePeriod: 300,
     emergencyBypass: true,
@@ -2203,10 +2197,10 @@ export const healthcareAuthMiddleware = new HealthcareAuthMiddleware({
   emergencyAccess: {
     enabled: true,
     approverRoles: [
-      "department_head",
-      "system_admin",
-      "compliance_officer",
-      "super_admin",
+      'department_head',
+      'system_admin',
+      'compliance_officer',
+      'super_admin',
     ],
     maxEmergencyDuration: 3600,
     auditImmediately: true,
@@ -2235,7 +2229,7 @@ export const healthcareAuthMiddleware = new HealthcareAuthMiddleware({
     enableAuthAudit: true,
     enableSessionTracking: true,
     enableRiskLogging: true,
-    logLevel: (process.env.LOG_LEVEL as LogLevel) || "info",
+    logLevel: (process.env.LOG_LEVEL as LogLevel) || 'info',
     auditRetentionDays: 2555,
   },
 });

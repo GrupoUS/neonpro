@@ -13,33 +13,33 @@
 
 // Appointment status enum
 export enum AppointmentStatus {
-  SCHEDULED = "scheduled",
-  CONFIRMED = "confirmed",
-  IN_PROGRESS = "in_progress",
-  COMPLETED = "completed",
-  CANCELLED = "cancelled",
-  NO_SHOW = "no_show",
-  RESCHEDULED = "rescheduled",
+  SCHEDULED = 'scheduled',
+  CONFIRMED = 'confirmed',
+  IN_PROGRESS = 'in_progress',
+  COMPLETED = 'completed',
+  CANCELLED = 'cancelled',
+  NO_SHOW = 'no_show',
+  RESCHEDULED = 'rescheduled',
 }
 
 // Appointment type enum
 export enum AppointmentType {
-  CONSULTATION = "consultation",
-  FOLLOW_UP = "follow_up",
-  PROCEDURE = "procedure",
-  EMERGENCY = "emergency",
-  AESTHETIC = "aesthetic",
-  PREVENTIVE = "preventive",
-  TELEMEDICINE = "telemedicine",
+  CONSULTATION = 'consultation',
+  FOLLOW_UP = 'follow_up',
+  PROCEDURE = 'procedure',
+  EMERGENCY = 'emergency',
+  AESTHETIC = 'aesthetic',
+  PREVENTIVE = 'preventive',
+  TELEMEDICINE = 'telemedicine',
 }
 
 // Reminder method enum
 export enum ReminderMethod {
-  EMAIL = "email",
-  SMS = "sms",
-  WHATSAPP = "whatsapp",
-  PUSH = "push",
-  CALL = "call",
+  EMAIL = 'email',
+  SMS = 'sms',
+  WHATSAPP = 'whatsapp',
+  PUSH = 'push',
+  CALL = 'call',
 }
 
 // Reminder settings interface
@@ -48,13 +48,13 @@ export interface ReminderSettings {
   methods: (ReminderMethod | string)[];
   timeBefore: number[]; // hours before appointment
   customMessage?: string;
-  language?: "pt-BR" | "en-US";
+  language?: 'pt-BR' | 'en-US';
 }
 
 // Appointment recurrence interface
 export interface RecurrenceSettings {
   enabled: boolean;
-  frequency: "daily" | "weekly" | "monthly" | "yearly";
+  frequency: 'daily' | 'weekly' | 'monthly' | 'yearly';
   interval: number; // every N frequency units
   endDate?: Date;
   maxOccurrences?: number;
@@ -105,7 +105,7 @@ export interface Appointment {
   notes?: string;
   privateNotes?: string; // only visible to staff
   tags?: string[];
-  priority?: "low" | "normal" | "high" | "urgent";
+  priority?: 'low' | 'normal' | 'high' | 'urgent';
 
   // Metadata
   createdAt: Date;
@@ -145,12 +145,12 @@ export function checkAppointmentConflict(
 ): boolean {
   // Check if proposed appointment overlaps with existing one
   return (
-    (proposed.startTime >= existing.startTime &&
-      proposed.startTime < existing.endTime) ||
-    (proposed.endTime > existing.startTime &&
-      proposed.endTime <= existing.endTime) ||
-    (proposed.startTime <= existing.startTime &&
-      proposed.endTime >= existing.endTime)
+    (proposed.startTime >= existing.startTime
+      && proposed.startTime < existing.endTime)
+    || (proposed.endTime > existing.startTime
+      && proposed.endTime <= existing.endTime)
+    || (proposed.startTime <= existing.startTime
+      && proposed.endTime >= existing.endTime)
   );
 }
 
@@ -178,12 +178,12 @@ export function formatAppointmentForDisplay(
   }
 
   if (appointment.startTime) {
-    const timeStr = appointment.startTime.toLocaleString("pt-BR", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
+    const timeStr = appointment.startTime.toLocaleString('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
     });
     parts.push(`Data: ${timeStr}`);
   }
@@ -200,7 +200,7 @@ export function formatAppointmentForDisplay(
     parts.push(`Duração: ${appointment.duration} min`);
   }
 
-  return parts.join(" | ");
+  return parts.join(' | ');
 }
 
 // Check if appointment is within Brazilian business hours
@@ -232,7 +232,7 @@ export function cancelAppointment(
     status: AppointmentStatus.CANCELLED,
     cancellationReason: reason,
     cancelledAt: new Date(),
-    cancelledBy: cancelledBy || "system",
+    cancelledBy: cancelledBy || 'system',
     updatedAt: new Date(),
   };
 }
@@ -289,7 +289,7 @@ export function anonymizeAppointment(
   }
 
   if (anonymized.cancellationReason) {
-    anonymized.cancellationReason = "MOTIVO ANONIMIZADO";
+    anonymized.cancellationReason = 'MOTIVO ANONIMIZADO';
   }
 
   return anonymized;
@@ -297,7 +297,7 @@ export function anonymizeAppointment(
 
 // Create appointment with defaults
 export function createAppointment(
-  data: Omit<Appointment, "id" | "createdAt" | "updatedAt" | "status">,
+  data: Omit<Appointment, 'id' | 'createdAt' | 'updatedAt' | 'status'>,
 ): Appointment {
   const now = new Date();
 
@@ -307,9 +307,8 @@ export function createAppointment(
     status: AppointmentStatus.SCHEDULED,
     createdAt: now,
     updatedAt: now,
-    duration:
-      data.duration ||
-      calculateAppointmentDuration(data.startTime, data.endTime),
+    duration: data.duration
+      || calculateAppointmentDuration(data.startTime, data.endTime),
   };
 }
 
@@ -320,8 +319,7 @@ export function getAppointmentsInRange(
   endDate: Date,
 ): Appointment[] {
   return appointments.filter(
-    (appointment) =>
-      appointment.startTime >= startDate && appointment.startTime <= endDate,
+    appointment => appointment.startTime >= startDate && appointment.startTime <= endDate,
   );
 }
 
@@ -336,10 +334,10 @@ export function getUpcomingAppointments(
 
   return appointments
     .filter(
-      (appointment) =>
-        appointment.startTime >= now &&
-        appointment.startTime <= futureDate &&
-        appointment.status !== AppointmentStatus.CANCELLED,
+      appointment =>
+        appointment.startTime >= now
+        && appointment.startTime <= futureDate
+        && appointment.status !== AppointmentStatus.CANCELLED,
     )
     .sort((a, b) => a.startTime.getTime() - b.startTime.getTime());
 }
@@ -352,11 +350,10 @@ export function needsReminder(appointment: Appointment): boolean {
 
   const now = new Date();
   const appointmentTime = appointment.startTime;
-  const hoursUntilAppointment =
-    (appointmentTime.getTime() - now.getTime()) / (1000 * 60 * 60);
+  const hoursUntilAppointment = (appointmentTime.getTime() - now.getTime()) / (1000 * 60 * 60);
 
   return appointment.reminderSettings.timeBefore.some(
-    (hours) => Math.abs(hoursUntilAppointment - hours) < 0.5, // Within 30 minutes of reminder time
+    hours => Math.abs(hoursUntilAppointment - hours) < 0.5, // Within 30 minutes of reminder time
   );
 }
 
@@ -372,7 +369,7 @@ export function getAppointmentStatistics(appointments: Appointment[]): {
   let totalDuration = 0;
   let noShows = 0;
 
-  appointments.forEach((appointment) => {
+  appointments.forEach(appointment => {
     byStatus[appointment.status] = (byStatus[appointment.status] || 0) + 1;
 
     if (appointment.duration) {

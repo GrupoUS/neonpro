@@ -1,5 +1,5 @@
 // Phase 3.3 — T014: Rate counter LRU wrapper
-import { RateCounter } from "../services/rate-counter";
+import { RateCounter } from '../services/rate-counter';
 
 const counter = new RateCounter({
   windowMs: 60000,

@@ -19,7 +19,7 @@ export interface HealthcareDatabaseRecord extends DatabaseRecord {
   audit_trail?: Record<string, unknown>[];
 }
 
-export type { AuditTrailEntry } from "./governance.types";
+export type { AuditTrailEntry } from './governance.types';
 
 // Healthcare governance database record types
 // These map to the actual database schema structure used in Supabase queries

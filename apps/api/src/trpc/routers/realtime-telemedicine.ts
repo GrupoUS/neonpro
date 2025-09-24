@@ -485,7 +485,8 @@ export const realtimeTelemedicineRouter = router({
   healthCheck: protectedProcedure.query(async ({ _ctx }) => {
     try {
       // Check if service is initialized and working
-      const _service = await initializeRealtimeService(); void _service;
+      const _service = await initializeRealtimeService();
+      void _service;
 
       return {
         status: 'healthy',
@@ -510,7 +511,7 @@ export const realtimeTelemedicineRouter = router({
         },
       };
     } catch {
-        void _error;
+      void _error;
       console.error('❌ Realtime service health check failed:', error);
       return {
         status: 'unhealthy',

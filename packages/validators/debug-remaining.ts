@@ -1,12 +1,12 @@
 // Debug remaining issues
-import { validateCNS, validateProfessionalLicense, validateCPF } from './src/index';
+import { validateCNS, validateCPF, validateProfessionalLicense } from './src/index';
 
-console.log("=== CNS Debug ===");
-const testCNS = "170185783640008";
+console.log('=== CNS Debug ===');
+const testCNS = '170185783640008';
 console.log(`CNS: ${testCNS} -> Valid: ${validateCNS(testCNS)}`);
 
 // Manual calculation
-const digits = testCNS.split("").map(Number);
+const digits = testCNS.split('').map(Number);
 const firstDigit = digits[0];
 console.log(`First digit: ${firstDigit}`);
 
@@ -22,17 +22,17 @@ if (firstDigit === 1 || firstDigit === 2) {
   console.log(`Definitive CNS - Sum: ${sum}, Remainder: ${remainder}, Valid: ${remainder === 0}`);
 }
 
-console.log("\n=== Professional License Debug ===");
+console.log('\n=== Professional License Debug ===');
 console.log(`null -> Valid: ${validateProfessionalLicense(null)}`);
 console.log(`undefined -> Valid: ${validateProfessionalLicense(undefined)}`);
-console.log(`"null" -> Valid: ${validateProfessionalLicense("null")}`);
-console.log(`"undefined" -> Valid: ${validateProfessionalLicense("undefined")}`);
+console.log(`"null" -> Valid: ${validateProfessionalLicense('null')}`);
+console.log(`"undefined" -> Valid: ${validateProfessionalLicense('undefined')}`);
 
-console.log("\n=== CPF Debug ===");
-const testCPF = "123.456.789-01";
+console.log('\n=== CPF Debug ===');
+const testCPF = '123.456.789-01';
 console.log(`CPF: ${testCPF} -> Valid: ${validateCPF(testCPF)}`);
 
-const cleanCPF = testCPF.replace(/[^\d]/g, "");
+const cleanCPF = testCPF.replace(/[^\d]/g, '');
 console.log(`Clean CPF: ${cleanCPF}`);
 
 // Check first digit validation
@@ -46,4 +46,8 @@ for (let i = 0; i < 9; i++) {
 let remainder = (sum * 10) % 11;
 if (remainder === 10 || remainder === 11) remainder = 0;
 const ninthDigit = cleanCPF.charAt(9);
-console.log(`First check - Sum: ${sum}, Remainder: ${remainder}, Expected: ${ninthDigit}, Match: ${remainder.toString() === ninthDigit}`);
+console.log(
+  `First check - Sum: ${sum}, Remainder: ${remainder}, Expected: ${ninthDigit}, Match: ${
+    remainder.toString() === ninthDigit
+  }`,
+);

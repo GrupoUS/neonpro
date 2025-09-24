@@ -8,16 +8,16 @@
  * @compliance LGPD, ANVISA, Brazilian Healthcare Standards
  */
 
-import { BrazilianIdentifier, BrazilianIdentifierSchema } from "./types";
+import { BrazilianIdentifier, BrazilianIdentifierSchema } from './types';
 
 // Brazilian identifier patterns
 const BRAZILIAN_PATTERNS = {
   // CPF: 11 digits with optional formatting
   cpf: {
     pattern: /\b(\d{3})[.-]?(\d{3})[.-]?(\d{3})[.-]?(\d{2})\b/g,
-    mask: "***.***.***-**",
+    mask: '***.***.***-**',
     validate: (value: string): boolean => {
-      const digits = value.replace(/\D/g, "");
+      const digits = value.replace(/\D/g, '');
       if (digits.length !== 11) return false;
       if (/^(\d)\1{10}$/.test(digits)) return false;
 
@@ -44,9 +44,9 @@ const BRAZILIAN_PATTERNS = {
   // CNPJ: 14 digits with optional formatting
   cnpj: {
     pattern: /\b(\d{2})[.-]?(\d{3})[.-]?(\d{3})[/]?(\d{4})[.-]?(\d{2})\b/g,
-    mask: "**.***.***/****-**",
+    mask: '**.***.***/****-**',
     validate: (value: string): boolean => {
-      const digits = value.replace(/\D/g, "");
+      const digits = value.replace(/\D/g, '');
       if (digits.length !== 14) return false;
       if (/^(\d)\1{13}$/.test(digits)) return false;
 
@@ -75,9 +75,9 @@ const BRAZILIAN_PATTERNS = {
   // RG: Various formats by state
   rg: {
     pattern: /\b(\d{2})[.-]?(\d{3})[.-]?(\d{3})[.-]?(\d{1}|X|x)\b/g,
-    mask: "**.***.***-*",
+    mask: '**.***.***-*',
     validate: (value: string): boolean => {
-      const digits = value.replace(/\D/g, "");
+      const digits = value.replace(/\D/g, '');
       return digits.length >= 7 && digits.length <= 9;
     },
   },
@@ -85,13 +85,13 @@ const BRAZILIAN_PATTERNS = {
   // SUS card: 15 digits
   sus: {
     pattern: /\b(\d{3})[.-]?(\d{4})[.-]?(\d{4})[.-]?(\d{4})\b/g,
-    mask: "***.****.****.****",
+    mask: '***.****.****.****',
     validate: (value: string): boolean => {
-      const digits = value.replace(/\D/g, "");
+      const digits = value.replace(/\D/g, '');
       if (digits.length !== 15) return false;
 
       // SUS validation algorithm
-      const sum = digits.split("").reduce((acc, digit, index) => {
+      const sum = digits.split('').reduce((acc, digit, index) => {
         return acc + parseInt(digit) * (15 - index);
       }, 0);
 
@@ -102,36 +102,36 @@ const BRAZILIAN_PATTERNS = {
   // Medical council numbers
   crm: {
     pattern: /\b(CRM|crm)[-\s]?(\d{2})[.-]?(\d{3,6})[/-]?([A-Z]{2})?\b/g,
-    mask: "CRM/**/*.**",
+    mask: 'CRM/**/*.**',
     validate: (value: string): boolean => {
-      const digits = value.replace(/\D/g, "");
+      const digits = value.replace(/\D/g, '');
       return digits.length >= 5 && digits.length <= 8;
     },
   },
 
   coren: {
     pattern: /\b(COREN|coren)[-\s]?(\d{2})[.-]?(\d{3,6})[/-]?([A-Z]{2})?\b/g,
-    mask: "COREN/**/*.**",
+    mask: 'COREN/**/*.**',
     validate: (value: string): boolean => {
-      const digits = value.replace(/\D/g, "");
+      const digits = value.replace(/\D/g, '');
       return digits.length >= 5 && digits.length <= 8;
     },
   },
 
   cro: {
     pattern: /\b(CRO|cro)[-\s]?(\d{2})[.-]?(\d{3,6})[/-]?([A-Z]{2})?\b/g,
-    mask: "CRO/**/*.**",
+    mask: 'CRO/**/*.**',
     validate: (value: string): boolean => {
-      const digits = value.replace(/\D/g, "");
+      const digits = value.replace(/\D/g, '');
       return digits.length >= 5 && digits.length <= 8;
     },
   },
 
   cfo: {
     pattern: /\b(CFO|cfo)[-\s]?(\d{2})[.-]?(\d{3,6})[/-]?([A-Z]{2})?\b/g,
-    mask: "CFO/**/*.**",
+    mask: 'CFO/**/*.**',
     validate: (value: string): boolean => {
-      const digits = value.replace(/\D/g, "");
+      const digits = value.replace(/\D/g, '');
       return digits.length >= 5 && digits.length <= 8;
     },
   },
@@ -142,70 +142,69 @@ const HEALTHCARE_PATTERNS = {
   // Medical record numbers
   medicalRecord: {
     pattern: /\b(prontuário|record|mr)[\s\-:]*(\d{4,10})\b/gi,
-    mask: "PRONTUÁRIO-****",
+    mask: 'PRONTUÁRIO-****',
   },
 
   // Patient IDs
   patientId: {
     pattern: /\b(patient|paciente)[\s\-_:]*(id|ID)?[\s\-:]*(\d{4,10})\b/gi,
-    mask: "PATIENT-****",
+    mask: 'PATIENT-****',
   },
 
   // Phone numbers (Brazilian format)
   phone: {
     pattern: /\b(\+55\s?)?(\(?\d{2}\)?\s?)?(\d{4,5}[-.\s]?\d{4})\b/g,
-    mask: "+55 (**) *****-****",
+    mask: '+55 (**) *****-****',
   },
 
   // Email addresses
   email: {
     pattern: /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g,
-    mask: "***@***.***",
+    mask: '***@***.***',
   },
 
   // Birth dates
   birthDate: {
     pattern: /\b(\d{2}[/-]\d{2}[/-]\d{4})\b/g,
-    mask: "**/**/****",
+    mask: '**/**/****',
   },
 
   // Addresses
   address: {
     pattern:
       /\b(rua|av|avenida|travessa|alameda|estrada|rodovia)[\s.]+[A-Za-z\s]+,\s*\d+[\s\-A-Za-z]*/gi,
-    mask: "ENDEREÇO CONFIDENCIAL",
+    mask: 'ENDEREÇO CONFIDENCIAL',
   },
 
   // CEP (Brazilian postal code)
   cep: {
     pattern: /\b(\d{5})[.-]?(\d{3})\b/g,
-    mask: "*****-***",
+    mask: '*****-***',
   },
 
   // Passwords and tokens
   credentials: {
     pattern: /\b(password|senha|token|api_key|secret)[\s=:]*[^\s]+/gi,
-    mask: "***CREDENTIAL***",
+    mask: '***CREDENTIAL***',
   },
 
   // Database connection strings
   database: {
     pattern: /\b(postgres|mysql|mongodb|redis):\/\/[^\s]+\b/gi,
-    mask: "DATABASE-CONNECTION-REDACTED",
+    mask: 'DATABASE-CONNECTION-REDACTED',
   },
 
   // Medical terms that could be sensitive
   diagnosis: {
     pattern:
       /\b(câncer|cancer|aids|hiv|sifilis|gonorreia|herpes|hepatite|diabetes|hipertensão|depressão|ansiedade|esquizofrenia)\b/gi,
-    mask: "DIAGNÓSTICO CONFIDENCIAL",
+    mask: 'DIAGNÓSTICO CONFIDENCIAL',
   },
 
   // Medication names (basic pattern)
   medication: {
-    pattern:
-      /\b(viagra|cialis|prozac|zoloft|lexapro|wellbutrin|adderall|ritalin|xanax|valium)\b/gi,
-    mask: "MEDICAMENTO CONFIDENCIAL",
+    pattern: /\b(viagra|cialis|prozac|zoloft|lexapro|wellbutrin|adderall|ritalin|xanax|valium)\b/gi,
+    mask: 'MEDICAMENTO CONFIDENCIAL',
   },
 };
 
@@ -224,7 +223,7 @@ export class BrazilianPIIRedactionService {
    * Redact PII from text
    */
   redactText(text: string): string {
-    if (!text || typeof text !== "string") return text;
+    if (!text || typeof text !== 'string') return text;
 
     let redactedText = text;
 
@@ -265,15 +264,15 @@ export class BrazilianPIIRedactionService {
   redactObject(obj: any): any {
     if (obj === null || obj === undefined) return obj;
 
-    if (typeof obj === "string") {
+    if (typeof obj === 'string') {
       return this.redactText(obj);
     }
 
     if (Array.isArray(obj)) {
-      return obj.map((item) => this.redactObject(item));
+      return obj.map(item => this.redactObject(item));
     }
 
-    if (typeof obj === "object") {
+    if (typeof obj === 'object') {
       const redactedObj: any = {};
 
       for (const [key, value] of Object.entries(obj)) {
@@ -302,7 +301,7 @@ export class BrazilianPIIRedactionService {
       const matches = text.match(config.pattern);
 
       if (matches) {
-        matches.forEach((match) => {
+        matches.forEach(match => {
           const isValid = this.enableValidation ? config.validate(match) : true;
 
           identifiers.push(
@@ -347,44 +346,42 @@ export class BrazilianPIIRedactionService {
   private shouldSkipField(fieldName: string): boolean {
     const skipFields = [
       // Technical fields
-      "timestamp",
-      "level",
-      "service",
-      "environment",
-      "requestId",
-      "correlationId",
-      "sessionId",
-      "traceId",
-      "spanId",
-      "duration",
-      "memoryUsage",
-      "cpuUsage",
-      "deviceType",
-      "source",
-      "tags",
+      'timestamp',
+      'level',
+      'service',
+      'environment',
+      'requestId',
+      'correlationId',
+      'sessionId',
+      'traceId',
+      'spanId',
+      'duration',
+      'memoryUsage',
+      'cpuUsage',
+      'deviceType',
+      'source',
+      'tags',
 
       // Configuration fields
-      "enabled",
-      "maxSize",
-      "maxFiles",
-      "timeout",
-      "interval",
-      "retentionPeriod",
-      "batchSize",
-      "flushInterval",
+      'enabled',
+      'maxSize',
+      'maxFiles',
+      'timeout',
+      'interval',
+      'retentionPeriod',
+      'batchSize',
+      'flushInterval',
 
       // Status fields
-      "status",
-      "state",
-      "code",
-      "version",
-      "type",
-      "format",
+      'status',
+      'state',
+      'code',
+      'version',
+      'type',
+      'format',
     ];
 
-    return skipFields.some((field) =>
-      fieldName.toLowerCase().includes(field.toLowerCase()),
-    );
+    return skipFields.some(field => fieldName.toLowerCase().includes(field.toLowerCase()));
   }
 
   /**

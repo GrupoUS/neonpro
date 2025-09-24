@@ -1,4 +1,4 @@
-import { Registry, collectDefaultMetrics } from "prom-client";
+import { collectDefaultMetrics, Registry } from 'prom-client';
 
 let prometheusRegistry: Registry | null = null;
 
@@ -12,14 +12,14 @@ export function createPrometheusRegistry(serviceName: string): Registry {
   // Add default labels
   prometheusRegistry.setDefaultLabels({
     _service: serviceName,
-    environment: process.env.NODE_ENV || "development",
-    version: process.env.SERVICE_VERSION || "1.0.0",
+    environment: process.env.NODE_ENV || 'development',
+    version: process.env.SERVICE_VERSION || '1.0.0',
   });
 
   // Collect default metrics (CPU, memory, etc.)
   collectDefaultMetrics({
     register: prometheusRegistry,
-    prefix: `${serviceName.replace(/-/g, "_")}_`,
+    prefix: `${serviceName.replace(/-/g, '_')}_`,
   });
 
   return prometheusRegistry;
@@ -28,7 +28,7 @@ export function createPrometheusRegistry(serviceName: string): Registry {
 export function getPrometheusRegistry(): Registry {
   if (!prometheusRegistry) {
     throw new Error(
-      "Prometheus registry not initialized. Call createPrometheusRegistry first.",
+      'Prometheus registry not initialized. Call createPrometheusRegistry first.',
     );
   }
   return prometheusRegistry;

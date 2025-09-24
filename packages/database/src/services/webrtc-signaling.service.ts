@@ -4,20 +4,20 @@
  * with comprehensive compliance monitoring and audit trails
  */
 
-import http from "http";
-import { Server as SocketIOServer } from "socket.io";
-import type { Socket } from "socket.io";
+import http from 'http';
+import { Server as SocketIOServer } from 'socket.io';
+import type { Socket } from 'socket.io';
 
 // Import services
-import { WebRTCSessionService } from "./webrtc-session.service";
-import { CFMComplianceService } from "./cfm-compliance.service";
-import { winstonLogger, logHealthcareError } from "@neonpro/shared/services/structured-logging";
+import { logHealthcareError, winstonLogger } from '@neonpro/shared/services/structured-logging';
+import { CFMComplianceService } from './cfm-compliance.service';
+import { WebRTCSessionService } from './webrtc-session.service';
 
 interface SignalingParticipant {
   socketId: string;
   _userId: string;
   sessionId: string;
-  participantType: "physician" | "patient" | "observer";
+  participantType: 'physician' | 'patient' | 'observer';
   deviceInfo: {
     browser: string;
     os: string;
@@ -29,7 +29,7 @@ interface SignalingParticipant {
 }
 
 interface WebRTCSignal {
-  type: "offer" | "answer" | "ice-candidate" | "connection-state";
+  type: 'offer' | 'answer' | 'ice-candidate' | 'connection-state';
   data: any;
   from: string;
   to: string;
@@ -63,15 +63,15 @@ export class WebRTCSignalingServer {
     // Initialize Socket.IO with comprehensive configuration
     this.io = new SocketIOServer(this.server, {
       cors: {
-        origin: process.env.FRONTEND_URL || "http://localhost:3000",
-        methods: ["GET", "POST"],
+        origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+        methods: ['GET', 'POST'],
         credentials: true,
       },
       pingTimeout: 60000,
       pingInterval: 25000,
       maxHttpBufferSize: 1e6, // 1MB for WebRTC signals
       allowEIO3: true, // Allow Engine.IO v3 for compatibility
-      transports: ["websocket", "polling"], // Prefer WebSocket, fallback to polling
+      transports: ['websocket', 'polling'], // Prefer WebSocket, fallback to polling
     });
 
     this.setupSocketHandlers();
@@ -84,9 +84,9 @@ export class WebRTCSignalingServer {
         undefined,
         {
           healthcare: {
-            workflowType: "system_maintenance",
+            workflowType: 'system_maintenance',
             clinicalContext: {
-              facilityId: "signaling-server",
+              facilityId: 'signaling-server',
               requiresAudit: true,
             },
           },
@@ -99,16 +99,16 @@ export class WebRTCSignalingServer {
    * Sets up Socket.IO event handlers for WebRTC signaling
    */
   private setupSocketHandlers(): void {
-    this.io.on("connection", (socket: Socket) => {
+    this.io.on('connection', (socket: Socket) => {
       winstonLogger.debug(`Socket connected: ${socket.id}`);
 
       // Handle session join
       socket.on(
-        "join-session",
+        'join-session',
         async (data: {
           sessionId: string;
           _userId: string;
-          participantType: "physician" | "patient" | "observer";
+          participantType: 'physician' | 'patient' | 'observer';
           deviceInfo: any;
           authToken?: string;
         }) => {
@@ -116,13 +116,13 @@ export class WebRTCSignalingServer {
             await this.handleJoinSession(socket, data);
           } catch (error) {
             winstonLogger.error(
-              "Error joining session",
+              'Error joining session',
               error instanceof Error ? error : undefined,
             );
-            socket.emit("error", {
-              type: "join-session-failed",
-              message: "Failed to join session",
-              error: error instanceof Error ? error.message : "Unknown error",
+            socket.emit('error', {
+              type: 'join-session-failed',
+              message: 'Failed to join session',
+              error: error instanceof Error ? error.message : 'Unknown error',
             });
           }
         },
@@ -130,9 +130,9 @@ export class WebRTCSignalingServer {
 
       // Handle WebRTC signaling
       socket.on(
-        "webrtc-signal",
+        'webrtc-signal',
         async (signal: {
-          type: "offer" | "answer" | "ice-candidate";
+          type: 'offer' | 'answer' | 'ice-candidate';
           data: any;
           to: string;
           sessionId: string;
@@ -141,13 +141,13 @@ export class WebRTCSignalingServer {
             await this.handleWebRTCSignal(socket, signal);
           } catch (error) {
             winstonLogger.error(
-              "Error handling WebRTC signal",
+              'Error handling WebRTC signal',
               error instanceof Error ? error : undefined,
             );
-            socket.emit("error", {
-              type: "signal-failed",
-              message: "Failed to relay signal",
-              error: error instanceof Error ? error.message : "Unknown error",
+            socket.emit('error', {
+              type: 'signal-failed',
+              message: 'Failed to relay signal',
+              error: error instanceof Error ? error.message : 'Unknown error',
             });
           }
         },
@@ -155,7 +155,7 @@ export class WebRTCSignalingServer {
 
       // Handle connection state updates
       socket.on(
-        "connection-state",
+        'connection-state',
         async (state: {
           sessionId: string;
           connectionState: RTCPeerConnectionState;
@@ -170,31 +170,39 @@ export class WebRTCSignalingServer {
           try {
             await this.handleConnectionState(socket, state);
           } catch (error) {
-            logHealthcareError('database', error, { method: 'handleConnectionState', sessionId: state.sessionId, socketId: socket.id });
+            logHealthcareError('database', error, {
+              method: 'handleConnectionState',
+              sessionId: state.sessionId,
+              socketId: socket.id,
+            });
           }
         },
       );
 
       // Handle session leave
-      socket.on("leave-session", async (data: { sessionId: string }) => {
+      socket.on('leave-session', async (data: { sessionId: string }) => {
         try {
           await this.handleLeaveSession(socket, data.sessionId);
         } catch (error) {
-          logHealthcareError('database', error, { method: 'handleLeaveSession', sessionId, socketId: socket.id });
+          logHealthcareError('database', error, {
+            method: 'handleLeaveSession',
+            sessionId,
+            socketId: socket.id,
+          });
         }
       });
 
       // Handle heartbeat for connection monitoring
       socket.on(
-        "heartbeat",
+        'heartbeat',
         (data: { sessionId: string; timestamp: number }) => {
-          socket.emit("heartbeat-ack", { timestamp: Date.now() });
+          socket.emit('heartbeat-ack', { timestamp: Date.now() });
           this.updateParticipantActivity(socket.id, data.sessionId);
         },
       );
 
       // Handle disconnect
-      socket.on("disconnect", (reason: string) => {
+      socket.on('disconnect', (reason: string) => {
         winstonLogger.debug(
           `Socket disconnected: ${socket.id}, reason: ${reason}`,
         );
@@ -203,7 +211,7 @@ export class WebRTCSignalingServer {
 
       // Handle compliance events
       socket.on(
-        "compliance-event",
+        'compliance-event',
         async (event: {
           sessionId: string;
           eventType: string;
@@ -212,18 +220,22 @@ export class WebRTCSignalingServer {
           try {
             await this.handleComplianceEvent(socket, event);
           } catch (error) {
-            logHealthcareError('database', error, { method: 'handleComplianceEvent', sessionId: event.sessionId, eventType: event.eventType });
+            logHealthcareError('database', error, {
+              method: 'handleComplianceEvent',
+              sessionId: event.sessionId,
+              eventType: event.eventType,
+            });
           }
         },
       );
 
       // Send initial connection acknowledgment
-      socket.emit("connected", {
+      socket.emit('connected', {
         socketId: socket.id,
         timestamp: new Date().toISOString(),
         serverInfo: {
-          version: "1.0.0",
-          capabilities: ["webrtc", "recording", "compliance"],
+          version: '1.0.0',
+          capabilities: ['webrtc', 'recording', 'compliance'],
         },
       });
     });
@@ -237,7 +249,7 @@ export class WebRTCSignalingServer {
     data: {
       sessionId: string;
       _userId: string;
-      participantType: "physician" | "patient" | "observer";
+      participantType: 'physician' | 'patient' | 'observer';
       deviceInfo: any;
       authToken?: string;
     },
@@ -247,10 +259,10 @@ export class WebRTCSignalingServer {
     // Validate session exists and user is authorized
     const sessionStatus = await this.webrtcService.getSessionStatus(sessionId);
     if (
-      sessionStatus.connectionState !== "active" &&
-      sessionStatus.connectionState !== "waiting"
+      sessionStatus.connectionState !== 'active'
+      && sessionStatus.connectionState !== 'waiting'
     ) {
-      throw new Error("Session is not available for joining");
+      throw new Error('Session is not available for joining');
     }
 
     // Validate user authorization for this session
@@ -260,7 +272,7 @@ export class WebRTCSignalingServer {
       participantType,
     );
     if (!isAuthorized) {
-      throw new Error("User not authorized for this session");
+      throw new Error('User not authorized for this session');
     }
 
     // Create or get session room
@@ -296,8 +308,8 @@ export class WebRTCSignalingServer {
     // Log compliance event
     await this.cfmService.logComplianceEvent({
       sessionId,
-      eventType: "participant_joined",
-      description: "Participant joined session",
+      eventType: 'participant_joined',
+      description: 'Participant joined session',
       metadata: {
         socketId: socket.id,
         deviceInfo,
@@ -306,7 +318,7 @@ export class WebRTCSignalingServer {
     });
 
     // Notify other participants
-    (socket as any).to(sessionId).emit("participant-joined", {
+    (socket as any).to(sessionId).emit('participant-joined', {
       userId,
       participantType,
       socketId: socket.id,
@@ -316,8 +328,8 @@ export class WebRTCSignalingServer {
 
     // Send join confirmation with existing participants list
     const existingParticipants = Array.from(room.participants.values())
-      .filter((p) => p.socketId !== socket.id)
-      .map((p) => ({
+      .filter(p => p.socketId !== socket.id)
+      .map(p => ({
         _userId: p.userId,
         participantType: p.participantType,
         socketId: p.socketId,
@@ -325,7 +337,7 @@ export class WebRTCSignalingServer {
         joinedAt: p.joinedAt.toISOString(),
       }));
 
-    socket.emit("session-joined", {
+    socket.emit('session-joined', {
       sessionId,
       participants: existingParticipants,
       timestamp: new Date().toISOString(),
@@ -336,12 +348,12 @@ export class WebRTCSignalingServer {
       undefined,
       {
         healthcare: {
-          workflowType: "session_management",
+          workflowType: 'session_management',
           clinicalContext: {
             sessionId,
             userId,
             participantType,
-            facilityId: "signaling-server",
+            facilityId: 'signaling-server',
             requiresAudit: true,
           },
         },
@@ -355,7 +367,7 @@ export class WebRTCSignalingServer {
   private async handleWebRTCSignal(
     socket: Socket,
     signal: {
-      type: "offer" | "answer" | "ice-candidate";
+      type: 'offer' | 'answer' | 'ice-candidate';
       data: any;
       to: string;
       sessionId: string;
@@ -366,13 +378,13 @@ export class WebRTCSignalingServer {
     // Get session room
     const room = this.sessionRooms.get(sessionId);
     if (!room) {
-      throw new Error("Session room not found");
+      throw new Error('Session room not found');
     }
 
     // Get sender participant
     const sender = room.participants.get(socket.id);
     if (!sender) {
-      throw new Error("Sender not found in session");
+      throw new Error('Sender not found in session');
     }
 
     // Create signal record
@@ -395,15 +407,15 @@ export class WebRTCSignalingServer {
 
     // Find target participant's socket
     const targetParticipant = Array.from(room.participants.values()).find(
-      (p) => p.userId === to,
+      p => p.userId === to,
     );
 
     if (!targetParticipant) {
-      throw new Error("Target participant not found");
+      throw new Error('Target participant not found');
     }
 
     // Send signal to target participant
-    (socket as any).to(targetParticipant.socketId).emit("webrtc-signal", {
+    (socket as any).to(targetParticipant.socketId).emit('webrtc-signal', {
       type,
       data,
       from: sender.userId,
@@ -412,11 +424,10 @@ export class WebRTCSignalingServer {
     });
 
     // Log compliance event for sensitive signals
-    if (type === "offer" || type === "answer") {
+    if (type === 'offer' || type === 'answer') {
       await this.cfmService.logComplianceEvent({
         sessionId,
-        eventType:
-          `webrtc_${type}` as import("../types/events").ComplianceEventType,
+        eventType: `webrtc_${type}` as import('../types/events').ComplianceEventType,
         description: `WebRTC ${type} sent`,
         // _userId: sender.userId, // not part of type, move to metadata
         metadata: {
@@ -432,13 +443,13 @@ export class WebRTCSignalingServer {
       undefined,
       {
         healthcare: {
-          workflowType: "webrtc_signaling",
+          workflowType: 'webrtc_signaling',
           clinicalContext: {
             sessionId,
             signalType: type,
             fromUser: sender.userId,
             toUser: to,
-            facilityId: "signaling-server",
+            facilityId: 'signaling-server',
             requiresAudit: true,
           },
         },
@@ -480,11 +491,11 @@ export class WebRTCSignalingServer {
       packetLoss: quality?.packetsLost || 0,
       videoQuality: 5, // Default good quality
       audioQuality: 5, // Default good quality
-      connectionStability: connectionState === "connected" ? 5 : 2,
+      connectionStability: connectionState === 'connected' ? 5 : 2,
     });
 
     // Broadcast connection state to other participants (for UI updates)
-    (socket as any).to(sessionId).emit("participant-connection-state", {
+    (socket as any).to(sessionId).emit('participant-connection-state', {
       _userId: participant.userId,
       connectionState,
       iceConnectionState,
@@ -493,11 +504,11 @@ export class WebRTCSignalingServer {
     });
 
     // Log compliance event for connection issues
-    if (connectionState === "failed" || connectionState === "disconnected") {
+    if (connectionState === 'failed' || connectionState === 'disconnected') {
       await this.cfmService.logComplianceEvent({
         sessionId,
-        eventType: "connection_issue",
-        description: "Connection issue detected",
+        eventType: 'connection_issue',
+        description: 'Connection issue detected',
         metadata: {
           connectionState,
           iceConnectionState,
@@ -530,7 +541,7 @@ export class WebRTCSignalingServer {
     // Log compliance event
     await this.cfmService.logComplianceEvent({
       sessionId,
-      eventType: "participant_left",
+      eventType: 'participant_left',
       description: `Participant ${participant.userId} left session`,
       metadata: {
         _userId: participant.userId,
@@ -542,7 +553,7 @@ export class WebRTCSignalingServer {
     });
 
     // Notify other participants
-    (this.io as any).to(sessionId).emit("participant-left", {
+    (this.io as any).to(sessionId).emit('participant-left', {
       _userId: participant.userId,
       participantType: participant.participantType,
       timestamp: new Date().toISOString(),
@@ -562,12 +573,12 @@ export class WebRTCSignalingServer {
       undefined,
       {
         healthcare: {
-          workflowType: "session_management",
+          workflowType: 'session_management',
           clinicalContext: {
             sessionId,
             userId: participant.userId,
             participantType: participant.participantType,
-            facilityId: "signaling-server",
+            facilityId: 'signaling-server',
             requiresAudit: true,
           },
         },
@@ -584,8 +595,12 @@ export class WebRTCSignalingServer {
       const participant = room.participants.get(socket.id);
       if (participant) {
         // Handle graceful leave
-        this.handleLeaveSession(socket, sessionId).catch((error) => {
-          logHealthcareError('database', error, { method: 'handleDisconnect', sessionId, socketId: socket.id });
+        this.handleLeaveSession(socket, sessionId).catch(error => {
+          logHealthcareError('database', error, {
+            method: 'handleDisconnect',
+            sessionId,
+            socketId: socket.id,
+          });
         });
       }
     }
@@ -618,7 +633,7 @@ export class WebRTCSignalingServer {
         _userId: participant.userId,
         participantType: participant.participantType,
         ...event.metadata,
-        source: "client",
+        source: 'client',
         signaling: true,
       },
     });
@@ -630,40 +645,44 @@ export class WebRTCSignalingServer {
   private async validateUserAuthorization(
     sessionId: string,
     _userId: string,
-    participantType: "physician" | "patient" | "observer",
+    participantType: 'physician' | 'patient' | 'observer',
   ): Promise<boolean> {
     try {
       // This would integrate with your authentication system
       // For now, we'll use a basic check via the WebRTC service
-      const sessionDetails =
-        await this.webrtcService.getSessionDetails(sessionId);
+      const sessionDetails = await this.webrtcService.getSessionDetails(sessionId);
 
       if (!sessionDetails) return false;
 
       // Check if user is authorized for this session
       if (
-        participantType === "patient" &&
-        sessionDetails.session.patient_id === userId
+        participantType === 'patient'
+        && sessionDetails.session.patient_id === userId
       ) {
         return true;
       }
 
       if (
-        participantType === "physician" &&
-        sessionDetails.session.physician_id === userId
+        participantType === 'physician'
+        && sessionDetails.session.physician_id === userId
       ) {
         return true;
       }
 
       // For observers, check if they have appropriate permissions
-      if (participantType === "observer") {
+      if (participantType === 'observer') {
         // This would check observer permissions in your system
         return true; // Simplified for demo
       }
 
       return false;
     } catch (error) {
-      logHealthcareError('database', error, { method: 'validateUserAuthorization', sessionId, userId, participantType });
+      logHealthcareError('database', error, {
+        method: 'validateUserAuthorization',
+        sessionId,
+        userId,
+        participantType,
+      });
       return false;
     }
   }
@@ -707,13 +726,13 @@ export class WebRTCSignalingServer {
             undefined,
             {
               healthcare: {
-                workflowType: "session_cleanup",
+                workflowType: 'session_cleanup',
                 clinicalContext: {
                   sessionId,
                   userId: participant.userId,
                   participantType: participant.participantType,
                   inactiveTime,
-                  facilityId: "signaling-server",
+                  facilityId: 'signaling-server',
                   requiresAudit: true,
                 },
               },
@@ -725,15 +744,19 @@ export class WebRTCSignalingServer {
           this.cfmService
             .logComplianceEvent({
               sessionId,
-              eventType: "participant_timeout",
+              eventType: 'participant_timeout',
               description: `Participant ${participant.userId} timed out due to inactivity`,
               metadata: {
                 inactiveTime,
                 signaling: true,
               },
             })
-            .catch((error) => {
-              logHealthcareError('database', error, { method: 'cleanupInactiveSessions', sessionId, userId: participant.userId });
+            .catch(error => {
+              logHealthcareError('database', error, {
+                method: 'cleanupInactiveSessions',
+                sessionId,
+                userId: participant.userId,
+              });
             });
         } else {
           // Reset activity flag for next check
@@ -752,11 +775,11 @@ export class WebRTCSignalingServer {
           undefined,
           {
             healthcare: {
-              workflowType: "session_cleanup",
+              workflowType: 'session_cleanup',
               clinicalContext: {
                 sessionId,
-                reason: "empty_room",
-                facilityId: "signaling-server",
+                reason: 'empty_room',
+                facilityId: 'signaling-server',
                 requiresAudit: true,
               },
             },
@@ -769,12 +792,12 @@ export class WebRTCSignalingServer {
           undefined,
           {
             healthcare: {
-              workflowType: "session_cleanup",
+              workflowType: 'session_cleanup',
               clinicalContext: {
                 sessionId,
-                reason: "old_room",
+                reason: 'old_room',
                 roomAge,
-                facilityId: "signaling-server",
+                facilityId: 'signaling-server',
                 requiresAudit: true,
               },
             },
@@ -790,7 +813,7 @@ export class WebRTCSignalingServer {
    */
   public getActiveSessionsCount(): number {
     return Array.from(this.sessionRooms.values()).filter(
-      (room) => room.isActive && room.participants.size > 0,
+      room => room.isActive && room.participants.size > 0,
     ).length;
   }
 
@@ -809,13 +832,13 @@ export class WebRTCSignalingServer {
    */
   public async shutdown(): Promise<void> {
     winstonLogger.info(
-      "Shutting down WebRTC Signaling Server...",
+      'Shutting down WebRTC Signaling Server...',
       undefined,
       {
         healthcare: {
-          workflowType: "system_maintenance",
+          workflowType: 'system_maintenance',
           clinicalContext: {
-            facilityId: "signaling-server",
+            facilityId: 'signaling-server',
             requiresAudit: true,
           },
         },
@@ -823,32 +846,32 @@ export class WebRTCSignalingServer {
     );
 
     // Notify all connected clients
-    this.io.emit("server-shutdown", {
-      message: "Server is shutting down",
+    this.io.emit('server-shutdown', {
+      message: 'Server is shutting down',
       timestamp: new Date().toISOString(),
     });
 
     // Wait a moment for clients to receive the message
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    await new Promise(resolve => setTimeout(resolve, 1000));
 
     // Close all socket connections
     (this.io as any).close();
 
     // Close HTTP server
-    await new Promise<void>((resolve) => {
+    await new Promise<void>(resolve => {
       this.server.close(() => {
         resolve();
       });
     });
 
     winstonLogger.info(
-      "WebRTC Signaling Server shut down complete",
+      'WebRTC Signaling Server shut down complete',
       undefined,
       {
         healthcare: {
-          workflowType: "system_maintenance",
+          workflowType: 'system_maintenance',
           clinicalContext: {
-            facilityId: "signaling-server",
+            facilityId: 'signaling-server',
             requiresAudit: true,
           },
         },

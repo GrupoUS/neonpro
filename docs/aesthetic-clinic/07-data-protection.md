@@ -34,84 +34,84 @@ export interface DataClassification {
 
 export const DATA_CLASSIFICATIONS: Record<string, DataClassification> = {
   // Personal Identifiable Information
-  'cpf': {
+  cpf: {
     level: 'highly_restricted',
     category: 'personal',
     retentionPeriod: 3650, // 10 years
     encryptionRequired: true,
     accessLogging: true,
     consentRequired: true,
-    anonymizationMethod: 'pseudonymization'
+    anonymizationMethod: 'pseudonymization',
   },
-  'email': {
+  email: {
     level: 'restricted',
     category: 'personal',
     retentionPeriod: 1825, // 5 years
     encryptionRequired: true,
     accessLogging: true,
     consentRequired: true,
-    anonymizationMethod: 'masking'
+    anonymizationMethod: 'masking',
   },
-  'phone': {
+  phone: {
     level: 'restricted',
     category: 'personal',
     retentionPeriod: 1825,
     encryptionRequired: true,
     accessLogging: true,
     consentRequired: true,
-    anonymizationMethod: 'masking'
+    anonymizationMethod: 'masking',
   },
-  
+
   // Health Data
-  'medical_conditions': {
+  medical_conditions: {
     level: 'highly_restricted',
     category: 'health',
     retentionPeriod: 7300, // 20 years
     encryptionRequired: true,
     accessLogging: true,
     consentRequired: true,
-    anonymizationMethod: 'pseudonymization'
+    anonymizationMethod: 'pseudonymization',
   },
-  'treatment_history': {
+  treatment_history: {
     level: 'highly_restricted',
     category: 'health',
     retentionPeriod: 7300,
     encryptionRequired: true,
     accessLogging: true,
     consentRequired: true,
-    anonymizationMethod: 'pseudonymization'
+    anonymizationMethod: 'pseudonymization',
   },
-  'biometric_data': {
+  biometric_data: {
     level: 'highly_restricted',
     category: 'health',
     retentionPeriod: 3650,
     encryptionRequired: true,
     accessLogging: true,
     consentRequired: true,
-    anonymizationMethod: 'deletion'
+    anonymizationMethod: 'deletion',
   },
-  
+
   // Financial Data
-  'payment_information': {
+  payment_information: {
     level: 'restricted',
     category: 'financial',
     retentionPeriod: 1825,
     encryptionRequired: true,
     accessLogging: true,
     consentRequired: true,
-    anonymizationMethod: 'aggregation'
+    anonymizationMethod: 'aggregation',
   },
-  
+
   // Professional Data
-  'professional_license': {
+  professional_license: {
     level: 'restricted',
     category: 'professional',
     retentionPeriod: 3650,
     encryptionRequired: true,
     accessLogging: true,
     consentRequired: false,
-    anonymizationMethod: 'masking'
-  }
+    anonymizationMethod: 'masking',
+  },
 };
 
 export class DataClassificationService {
@@ -124,7 +124,7 @@ export class DataClassificationService {
       const classification = await this.classifyField(field, value, context);
       if (classification) {
         classifiedFields[field] = classification;
-        
+
         // Update highest classification level
         if (this.compareClassificationLevels(classification.level, highestLevel) > 0) {
           highestLevel = classification.level;
@@ -141,11 +141,15 @@ export class DataClassificationService {
       overallClassification,
       protectionRequirements: this.getProtectionRequirements(overallClassification),
       retentionPolicy: this.getRetentionPolicy(overallClassification),
-      consentRequirements: this.getConsentRequirements(classifiedFields)
+      consentRequirements: this.getConsentRequirements(classifiedFields),
     };
   }
 
-  private async classifyField(fieldName: string, value: any, context: ClassifyContext): Promise<DataClassification | null> {
+  private async classifyField(
+    fieldName: string,
+    value: any,
+    context: ClassifyContext,
+  ): Promise<DataClassification | null> {
     // Check predefined classifications
     if (DATA_CLASSIFICATIONS[fieldName]) {
       return DATA_CLASSIFICATIONS[fieldName];
@@ -161,7 +165,7 @@ export class DataClassificationService {
       accessControl: true,
       auditLogging: true,
       backup: true,
-      disasterRecovery: true
+      disasterRecovery: true,
     };
 
     switch (level) {
@@ -172,24 +176,24 @@ export class DataClassificationService {
             atRest: true,
             inTransit: true,
             algorithm: 'aes-256-gcm',
-            keyRotation: 90
+            keyRotation: 90,
           },
           accessControl: {
             mfaRequired: true,
             approvalRequired: true,
             sessionTimeout: 30,
-            ipRestriction: true
+            ipRestriction: true,
           },
           auditLogging: {
             detailed: true,
             realTime: true,
-            retention: 3650
+            retention: 3650,
           },
           monitoring: {
             realTime: true,
             alerting: true,
-            anomalyDetection: true
-          }
+            anomalyDetection: true,
+          },
         };
 
       case 'restricted':
@@ -199,24 +203,24 @@ export class DataClassificationService {
             atRest: true,
             inTransit: true,
             algorithm: 'aes-256-gcm',
-            keyRotation: 180
+            keyRotation: 180,
           },
           accessControl: {
             mfaRequired: true,
             approvalRequired: false,
             sessionTimeout: 60,
-            ipRestriction: false
+            ipRestriction: false,
           },
           auditLogging: {
             detailed: true,
             realTime: false,
-            retention: 1825
+            retention: 1825,
           },
           monitoring: {
             realTime: false,
             alerting: true,
-            anomalyDetection: false
-          }
+            anomalyDetection: false,
+          },
         };
 
       default:
@@ -253,18 +257,18 @@ export class EncryptionService {
   private async initializeEncryption(): Promise<void> {
     // Initialize master key from secure storage
     this.masterKey = await this.loadMasterKey();
-    
+
     // Initialize key manager
     this.keyManager = new KeyManager(this.config);
-    
+
     // Set up key rotation schedule
     this.scheduleKeyRotation();
   }
 
   async encryptData(
-    data: any, 
+    data: any,
     classification: DataClassification,
-    context: EncryptionContext
+    context: EncryptionContext,
   ): Promise<EncryptedData> {
     // Validate encryption requirements
     if (!classification.encryptionRequired) {
@@ -273,22 +277,22 @@ export class EncryptionService {
 
     // Get appropriate encryption key
     const key = await this.getEncryptionKey(classification, context);
-    
+
     // Serialize data
     const dataString = JSON.stringify(data);
     const dataBuffer = new TextEncoder().encode(dataString);
-    
+
     // Generate IV
     const iv = crypto.getRandomValues(new Uint8Array(12));
-    
+
     // Encrypt data
     const encrypted = await crypto.subtle.encrypt(
       {
         name: this.config.algorithm,
-        iv: iv
+        iv: iv,
       },
       key,
-      dataBuffer
+      dataBuffer,
     );
 
     const encryptedData: EncryptedData = {
@@ -301,8 +305,8 @@ export class EncryptionService {
         encryptedAt: new Date().toISOString(),
         encryptedBy: context.userId,
         encryptionVersion: '1.0',
-        context: context
-      }
+        context: context,
+      },
     };
 
     // Log encryption event
@@ -316,11 +320,11 @@ export class EncryptionService {
       eventData: {
         classification: classification.level,
         algorithm: this.config.algorithm,
-        keyId: encryptedData.keyId
+        keyId: encryptedData.keyId,
       },
       complianceRelevant: true,
       riskLevel: 'low',
-      requiresReview: false
+      requiresReview: false,
     });
 
     return encryptedData;
@@ -341,10 +345,10 @@ export class EncryptionService {
     const decrypted = await crypto.subtle.decrypt(
       {
         name: encryptedData.algorithm,
-        iv: iv
+        iv: iv,
       },
       key,
-      data
+      data,
     );
 
     // Parse decrypted data
@@ -362,11 +366,11 @@ export class EncryptionService {
       eventData: {
         classification: encryptedData.classification,
         algorithm: encryptedData.algorithm,
-        keyId: encryptedData.keyId
+        keyId: encryptedData.keyId,
       },
       complianceRelevant: true,
       riskLevel: 'medium',
-      requiresReview: true
+      requiresReview: true,
     });
 
     return dataObject;
@@ -374,17 +378,17 @@ export class EncryptionService {
 
   private async getEncryptionKey(
     classification: DataClassification,
-    context: EncryptionContext
+    context: EncryptionContext,
   ): Promise<CryptoKey> {
     // For highly restricted data, use unique keys per entity
     if (classification.level === 'highly_restricted' && context.entityId) {
       const cacheKey = `${classification.level}:${context.entityId}`;
-      
+
       if (!this.dataKeys.has(cacheKey)) {
         const key = await this.keyManager.generateDataKey(this.masterKey, classification);
         this.dataKeys.set(cacheKey, key);
       }
-      
+
       return this.dataKeys.get(cacheKey)!;
     }
 
@@ -400,22 +404,22 @@ export class EncryptionService {
 
   async rotateKeys(): Promise<void> {
     console.log('Starting key rotation process...');
-    
+
     // Generate new master key
     const newMasterKey = await this.keyManager.generateMasterKey();
-    
+
     // Re-encrypt all data keys with new master key
     for (const [cacheKey, oldKey] of this.dataKeys) {
       const newKey = await this.keyManager.reencryptDataKey(oldKey, this.masterKey, newMasterKey);
       this.dataKeys.set(cacheKey, newKey);
     }
-    
+
     // Replace master key
     this.masterKey = newMasterKey;
-    
+
     // Archive old master key
     await this.keyManager.archiveMasterKey();
-    
+
     // Log key rotation
     await this.auditService.logEvent({
       eventType: 'key_rotation',
@@ -426,13 +430,13 @@ export class EncryptionService {
       action: 'update',
       eventData: {
         rotationCompleted: new Date().toISOString(),
-        keysRotated: this.dataKeys.size
+        keysRotated: this.dataKeys.size,
       },
       complianceRelevant: true,
       riskLevel: 'medium',
-      requiresReview: true
+      requiresReview: true,
     });
-    
+
     console.log('Key rotation completed successfully');
   }
 }
@@ -578,35 +582,35 @@ export class AccessControlService {
     userId: string,
     resource: string,
     action: string,
-    context: AccessContext
+    context: AccessContext,
   ): Promise<AccessDecision> {
     // Get user attributes
     const userAttributes = await this.getUserAttributes(userId);
-    
+
     // Get applicable policies
     const applicablePolicies = this.getApplicablePolicies(resource, action);
-    
+
     // Evaluate policies
     const decisions = await this.evaluatePolicies(applicablePolicies, userAttributes, context);
-    
+
     // Determine final decision
     const finalDecision = this.makeDecision(decisions);
-    
+
     // Log access attempt
     await this.logAccessAttempt(userId, resource, action, finalDecision, context);
-    
+
     // Check compliance requirements
     if (finalDecision.allowed) {
       await this.checkComplianceRequirements(userId, resource, action, context);
     }
-    
+
     return finalDecision;
   }
 
   private async evaluatePolicies(
     policies: AccessPolicy[],
     userAttributes: UserAttributes,
-    context: AccessContext
+    context: AccessContext,
   ): Promise<PolicyEvaluation[]> {
     const evaluations: PolicyEvaluation[] = [];
 
@@ -614,7 +618,7 @@ export class AccessControlService {
       const conditionsMet = await this.evaluateConditions(
         policy.conditions,
         userAttributes,
-        context
+        context,
       );
 
       evaluations.push({
@@ -622,7 +626,7 @@ export class AccessControlService {
         policyName: policy.name,
         effect: policy.effect,
         conditionsMet,
-        priority: policy.priority
+        priority: policy.priority,
       });
     }
 
@@ -632,7 +636,7 @@ export class AccessControlService {
   private async evaluateConditions(
     conditions: AccessCondition[],
     userAttributes: UserAttributes,
-    context: AccessContext
+    context: AccessContext,
   ): Promise<boolean> {
     for (const condition of conditions) {
       const result = await this.evaluateCondition(condition, userAttributes, context);
@@ -646,7 +650,7 @@ export class AccessControlService {
   private async evaluateCondition(
     condition: AccessCondition,
     userAttributes: UserAttributes,
-    context: AccessContext
+    context: AccessContext,
   ): Promise<boolean> {
     let attributeValue: any;
 
@@ -661,7 +665,11 @@ export class AccessControlService {
         attributeValue = this.getTemporalValue(condition.attribute);
         break;
       case 'compliance':
-        attributeValue = await this.getComplianceValue(condition.attribute, userAttributes, context);
+        attributeValue = await this.getComplianceValue(
+          condition.attribute,
+          userAttributes,
+          context,
+        );
         break;
       default:
         return false;
@@ -673,7 +681,7 @@ export class AccessControlService {
   private getAttributeValue(userAttributes: UserAttributes, attribute: string): any {
     const path = attribute.split('.');
     let value = userAttributes;
-    
+
     for (const part of path) {
       if (value && typeof value === 'object') {
         value = value[part];
@@ -681,7 +689,7 @@ export class AccessControlService {
         return undefined;
       }
     }
-    
+
     return value;
   }
 
@@ -705,13 +713,16 @@ export class AccessControlService {
   private async getComplianceValue(
     attribute: string,
     userAttributes: UserAttributes,
-    context: AccessContext
+    context: AccessContext,
   ): Promise<any> {
     switch (attribute) {
       case 'lgpd_consent_given':
         return await this.checkLGPDConsent(userAttributes.userId, context.clientId);
       case 'professional_certified':
-        return await this.checkProfessionalCertification(userAttributes.userId, context.treatmentId);
+        return await this.checkProfessionalCertification(
+          userAttributes.userId,
+          context.treatmentId,
+        );
       case 'data_retention_valid':
         return await this.checkDataRetention(context.resourceId);
       case 'compliance_training_completed':
@@ -728,9 +739,13 @@ export class AccessControlService {
       case 'not_equals':
         return actual !== expected;
       case 'contains':
-        return Array.isArray(actual) ? actual.includes(expected) : String(actual).includes(String(expected));
+        return Array.isArray(actual)
+          ? actual.includes(expected)
+          : String(actual).includes(String(expected));
       case 'not_contains':
-        return Array.isArray(actual) ? !actual.includes(expected) : !String(actual).includes(String(expected));
+        return Array.isArray(actual)
+          ? !actual.includes(expected)
+          : !String(actual).includes(String(expected));
       case 'greater_than':
         return Number(actual) > Number(expected);
       case 'less_than':
@@ -744,12 +759,12 @@ export class AccessControlService {
     userId: string,
     resource: string,
     action: string,
-    context: AccessContext
+    context: AccessContext,
   ): Promise<void> {
     // Check if access requires compliance validation
     if (this.requiresComplianceValidation(resource, action)) {
       const complianceCheck = await this.validateComplianceAccess(userId, resource, context);
-      
+
       if (!complianceCheck.valid) {
         throw new ComplianceError(complianceCheck.reason);
       }
@@ -759,13 +774,13 @@ export class AccessControlService {
   private async validateComplianceAccess(
     userId: string,
     resource: string,
-    context: AccessContext
+    context: AccessContext,
   ): Promise<ComplianceValidation> {
     const checks = await Promise.all([
       this.checkDataProcessingConsent(userId, context.clientId),
       this.checkProfessionalAuthorization(userId, resource),
       this.checkAccessPurpose(userId, context.purpose),
-      this.checkDataRetention(resource)
+      this.checkDataRetention(resource),
     ]);
 
     const allValid = checks.every(check => check.valid);
@@ -773,7 +788,7 @@ export class AccessControlService {
 
     return {
       valid: allValid,
-      reasons: issues
+      reasons: issues,
     };
   }
 }
@@ -824,10 +839,10 @@ export class DataRetentionService {
       retentionAction: 'archive',
       conditions: [
         { field: 'data_type', operator: 'equals', value: 'personal' },
-        { field: 'data_type', operator: 'equals', value: 'health' }
+        { field: 'data_type', operator: 'equals', value: 'health' },
       ],
       legalHold: false,
-      complianceRequirements: ['LGPD', 'Healthcare Regulations']
+      complianceRequirements: ['LGPD', 'Healthcare Regulations'],
     });
 
     // Treatment data retention policy
@@ -840,10 +855,10 @@ export class DataRetentionService {
       retentionAction: 'archive',
       conditions: [
         { field: 'data_type', operator: 'equals', value: 'treatment' },
-        { field: 'data_type', operator: 'equals', value: 'medical' }
+        { field: 'data_type', operator: 'equals', value: 'medical' },
       ],
       legalHold: false,
-      complianceRequirements: ['LGPD', 'ANVISA', 'Medical Records']
+      complianceRequirements: ['LGPD', 'ANVISA', 'Medical Records'],
     });
 
     // Financial data retention policy
@@ -856,10 +871,10 @@ export class DataRetentionService {
       retentionAction: 'archive',
       conditions: [
         { field: 'data_type', operator: 'equals', value: 'financial' },
-        { field: 'data_type', operator: 'equals', value: 'billing' }
+        { field: 'data_type', operator: 'equals', value: 'billing' },
       ],
       legalHold: false,
-      complianceRequirements: ['LGPD', 'Financial Regulations']
+      complianceRequirements: ['LGPD', 'Financial Regulations'],
     });
 
     // Communication logs retention policy
@@ -872,16 +887,16 @@ export class DataRetentionService {
       retentionAction: 'delete',
       conditions: [
         { field: 'data_type', operator: 'equals', value: 'communication' },
-        { field: 'data_type', operator: 'equals', value: 'logs' }
+        { field: 'data_type', operator: 'equals', value: 'logs' },
       ],
       legalHold: false,
-      complianceRequirements: ['LGPD', 'Communication Privacy']
+      complianceRequirements: ['LGPD', 'Communication Privacy'],
     });
   }
 
   async processRetention(): Promise<void> {
     console.log('Starting data retention processing...');
-    
+
     const processedRecords = [];
     const failedRecords = [];
 
@@ -890,13 +905,13 @@ export class DataRetentionService {
         const result = await this.processRetentionPolicy(policy);
         processedRecords.push({
           policyId,
-          ...result
+          ...result,
         });
       } catch (error) {
         console.error(`Failed to process retention policy ${policyId}:`, error);
         failedRecords.push({
           policyId,
-          error: error.message
+          error: error.message,
         });
       }
     }
@@ -917,11 +932,11 @@ export class DataRetentionService {
         archivedCount: processedRecords.reduce((sum, r) => sum + r.archivedCount, 0),
         anonymizedCount: processedRecords.reduce((sum, r) => sum + r.anonymizedCount, 0),
         deletedCount: processedRecords.reduce((sum, r) => sum + r.deletedCount, 0),
-        failedCount: failedRecords.length
+        failedCount: failedRecords.length,
       },
       complianceRelevant: true,
       riskLevel: 'medium',
-      requiresReview: true
+      requiresReview: true,
     });
 
     console.log('Data retention processing completed');
@@ -936,7 +951,7 @@ export class DataRetentionService {
 
     // Get records subject to retention
     const records = await this.getRecordsForRetention(policy, cutoffDate);
-    
+
     for (const record of records) {
       // Check for legal holds
       if (this.legalHolds.has(record.id)) {
@@ -971,7 +986,7 @@ export class DataRetentionService {
       archivedCount,
       anonymizedCount,
       deletedCount,
-      cutoffDate
+      cutoffDate,
     };
   }
 
@@ -984,7 +999,7 @@ export class DataRetentionService {
       archivedAt: new Date(),
       retentionPolicy: policy.id,
       retentionPeriod: policy.retentionPeriod,
-      scheduledFor: subDays(new Date(), policy.retentionPeriod)
+      scheduledFor: subDays(new Date(), policy.retentionPeriod),
     };
 
     await this.archiveStorage.store(archiveData);
@@ -1015,7 +1030,7 @@ export class DataRetentionService {
       deletedAt: new Date(),
       deletionPolicy: policy.id,
       reason: 'retention_policy',
-      deletedBy: 'system'
+      deletedBy: 'system',
     });
 
     // Perform soft delete first
@@ -1027,10 +1042,10 @@ export class DataRetentionService {
 
   private getAnonymizationFields(dataType: string): string[] {
     const anonymizationFields = {
-      'client_data': ['fullName', 'email', 'phone', 'cpf', 'address'],
-      'treatment_data': ['clientName', 'professionalName', 'notes'],
-      'financial_data': ['cardNumber', 'bankAccount', 'transactionDetails'],
-      'communication_data': ['phoneNumber', 'emailAddress', 'messageContent']
+      client_data: ['fullName', 'email', 'phone', 'cpf', 'address'],
+      treatment_data: ['clientName', 'professionalName', 'notes'],
+      financial_data: ['cardNumber', 'bankAccount', 'transactionDetails'],
+      communication_data: ['phoneNumber', 'emailAddress', 'messageContent'],
     };
 
     return anonymizationFields[dataType] || [];
@@ -1064,7 +1079,7 @@ export class DataRetentionService {
       reason,
       expiry,
       createdAt: new Date(),
-      createdBy: 'system'
+      createdBy: 'system',
     });
 
     await this.auditService.logEvent({
@@ -1077,20 +1092,20 @@ export class DataRetentionService {
       eventData: {
         entityId,
         reason,
-        expiry
+        expiry,
       },
       complianceRelevant: true,
       riskLevel: 'medium',
-      requiresReview: true
+      requiresReview: true,
     });
   }
 
   async removeLegalHold(entityId: string, reason: string): Promise<void> {
     this.legalHolds.delete(entityId);
-    
+
     await this.legalHoldStorage.update(entityId, {
       removedAt: new Date(),
-      removalReason: reason
+      removalReason: reason,
     });
 
     await this.auditService.logEvent({
@@ -1101,23 +1116,23 @@ export class DataRetentionService {
       resourceId: entityId,
       action: 'delete',
       eventData: {
-        reason
+        reason,
       },
       complianceRelevant: true,
       riskLevel: 'medium',
-      requiresReview: true
+      requiresReview: true,
     });
   }
 
   async generateRetentionReport(
     processedRecords: RetentionResult[],
-    failedRecords: FailedRetention[]
+    failedRecords: FailedRetention[],
   ): Promise<RetentionReport> {
     return {
       generatedAt: new Date(),
       period: {
         start: subDays(new Date(), 1),
-        end: new Date()
+        end: new Date(),
       },
       summary: {
         totalProcessed: processedRecords.reduce((sum, r) => sum + r.processedCount, 0),
@@ -1125,11 +1140,11 @@ export class DataRetentionService {
         totalAnonymized: processedRecords.reduce((sum, r) => sum + r.anonymizedCount, 0),
         totalDeleted: processedRecords.reduce((sum, r) => sum + r.deletedCount, 0),
         totalFailed: failedRecords.length,
-        activeLegalHolds: this.legalHolds.size
+        activeLegalHolds: this.legalHolds.size,
       },
       policyResults: processedRecords,
       failures: failedRecords,
-      recommendations: this.generateRetentionRecommendations(processedRecords, failedRecords)
+      recommendations: this.generateRetentionRecommendations(processedRecords, failedRecords),
     };
   }
 }

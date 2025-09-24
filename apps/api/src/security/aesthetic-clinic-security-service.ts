@@ -1,6 +1,6 @@
 /**
  * Comprehensive Aesthetic Clinic Security Service
- * 
+ *
  * Advanced security measures specifically designed for aesthetic clinic operations including:
  * - Multi-factor authentication for healthcare professionals
  * - Enhanced medical image protection and watermarking
@@ -9,17 +9,17 @@
  * - Financial transaction security and fraud detection
  * - Real-time security monitoring and anomaly detection
  * - Brazilian healthcare compliance (ANVISA, CFM, LGPD)
- * 
+ *
  * @security_critical
  * @compliance LGPD, ANVISA, CFM, NGS2
  * @version 1.0.0
  */
 
-import crypto from 'crypto';
 import { SupabaseClient } from '@supabase/supabase-js';
-import { EnhancedSessionManager } from './enhanced-session-manager';
-import { AuditService } from '../services/audit-service';
+import crypto from 'crypto';
 import { logger } from '../lib/logger';
+import { AuditService } from '../services/audit-service';
+import { EnhancedSessionManager } from './enhanced-session-manager';
 
 // Security Configuration Types
 export interface AestheticClinicSecurityConfig {
@@ -95,7 +95,8 @@ export const AESTHETIC_CLINIC_ROLES = {
   COMPLIANCE_OFFICER: 'compliance_officer',
 } as const;
 
-export type AestheticClinicRole = (typeof AESTHETIC_CLINIC_ROLES)[keyof typeof AESTHETIC_CLINIC_ROLES];
+export type AestheticClinicRole =
+  (typeof AESTHETIC_CLINIC_ROLES)[keyof typeof AESTHETIC_CLINIC_ROLES];
 
 // Aesthetic Clinic Permissions
 export const AESTHETIC_CLINIC_PERMISSIONS = {
@@ -104,50 +105,53 @@ export const AESTHETIC_CLINIC_PERMISSIONS = {
   PATIENT_WRITE: 'patient:write',
   PATIENT_DELETE: 'patient:delete',
   PATIENT_MEDICAL_RECORDS: 'patient:medical_records',
-  
+
   // Aesthetic Procedures
   PROCEDURE_READ: 'procedure:read',
   PROCEDURE_PERFORM: 'procedure:perform',
   PROCEDURE_SCHEDULE: 'procedure:schedule',
   PROCEDURE_CANCEL: 'procedure:cancel',
-  
+
   // Medical Images
   IMAGE_UPLOAD: 'image:upload',
   IMAGE_VIEW: 'image:view',
   IMAGE_DOWNLOAD: 'image:download',
   IMAGE_DELETE: 'image:delete',
   IMAGE_WATERMARK: 'image:watermark',
-  
+
   // Financial Operations
   BILLING_READ: 'billing:read',
   BILLING_WRITE: 'billing:write',
   PAYMENT_PROCESS: 'payment:process',
   PAYMENT_REFUND: 'payment:refund',
   FINANCIAL_REPORTS: 'financial:reports',
-  
+
   // Clinic Management
   CLINIC_SETTINGS: 'clinic:settings',
   STAFF_MANAGEMENT: 'staff:management',
   APPOINTMENT_MANAGEMENT: 'appointment:management',
   INVENTORY_MANAGEMENT: 'inventory:management',
-  
+
   // Compliance & Security
   COMPLIANCE_MONITOR: 'compliance:monitor',
   AUDIT_LOGS: 'audit:logs',
   SECURITY_SETTINGS: 'security:settings',
   DATA_EXPORT: 'data:export',
-  
+
   // AI Features
   AI_ANALYSIS: 'ai:analysis',
   AI_RECOMMENDATIONS: 'ai:recommendations',
 } as const;
 
-export type AestheticClinicPermission = (typeof AESTHETIC_CLINIC_PERMISSIONS)[keyof typeof AESTHETIC_CLINIC_PERMISSIONS];
+export type AestheticClinicPermission =
+  (typeof AESTHETIC_CLINIC_PERMISSIONS)[keyof typeof AESTHETIC_CLINIC_PERMISSIONS];
 
 // Role-Permission Mapping
 export const ROLE_PERMISSIONS: Record<AestheticClinicRole, AestheticClinicPermission[]> = {
   [AESTHETIC_CLINIC_ROLES.CLINIC_OWNER]: Object.values(AESTHETIC_CLINIC_PERMISSIONS),
-  [AESTHETIC_CLINIC_ROLES.MEDICAL_DIRECTOR]: Object.values(AESTHETIC_CLINIC_PERMISSIONS).filter(p => !p.includes('security:')),
+  [AESTHETIC_CLINIC_ROLES.MEDICAL_DIRECTOR]: Object.values(AESTHETIC_CLINIC_PERMISSIONS).filter(p =>
+    !p.includes('security:')
+  ),
   [AESTHETIC_CLINIC_ROLES.AESTHETIC_DOCTOR]: [
     AESTHETIC_CLINIC_PERMISSIONS.PATIENT_READ,
     AESTHETIC_CLINIC_PERMISSIONS.PATIENT_WRITE,
@@ -242,7 +246,13 @@ export interface ImageAccessRequest {
 // Security Event Types
 export interface AestheticSecurityEvent {
   id: string;
-  eventType: 'mfa_verification' | 'image_access' | 'procedure_authorization' | 'financial_transaction' | 'compliance_violation' | 'anomaly_detected';
+  eventType:
+    | 'mfa_verification'
+    | 'image_access'
+    | 'procedure_authorization'
+    | 'financial_transaction'
+    | 'compliance_violation'
+    | 'anomaly_detected';
   severity: 'low' | 'medium' | 'high' | 'critical';
   userId: string;
   clinicId: string;
@@ -289,17 +299,20 @@ export class AestheticClinicSecurityService {
     supabase: SupabaseClient,
     sessionManager: EnhancedSessionManager,
     auditService: AuditService,
-    config: Partial<AestheticClinicSecurityConfig> = {}
+    config: Partial<AestheticClinicSecurityConfig> = {},
   ) {
     this.supabase = supabase;
     this.sessionManager = sessionManager;
     this.auditService = auditService;
-    
+
     // Default security configuration
     this.config = {
       mfa: {
         enabled: true,
-        requiredRoles: [AESTHETIC_CLINIC_ROLES.AESTHETIC_DOCTOR, AESTHETIC_CLINIC_ROLES.MEDICAL_DIRECTOR],
+        requiredRoles: [
+          AESTHETIC_CLINIC_ROLES.AESTHETIC_DOCTOR,
+          AESTHETIC_CLINIC_ROLES.MEDICAL_DIRECTOR,
+        ],
         totpWindow: 2,
         backupCodeCount: 10,
         maxAttempts: 3,
@@ -391,14 +404,16 @@ export class AestheticClinicSecurityService {
     try {
       // Generate TOTP secret
       const secret = crypto.randomBytes(20).toString('hex');
-      
+
       // Generate backup codes
-      const backupCodes = Array.from({ length: this.config.mfa.backupCodeCount }, () => 
-        crypto.randomBytes(4).toString('hex')
+      const backupCodes = Array.from(
+        { length: this.config.mfa.backupCodeCount },
+        () => crypto.randomBytes(4).toString('hex'),
       );
 
       // Generate QR code URL (mock implementation)
-      const qrCodeUrl = `otpauth://totp/NeonPro:${userId}?secret=${secret}&issuer=NeonPro+Aesthetic+Clinic`;
+      const qrCodeUrl =
+        `otpauth://totp/NeonPro:${userId}?secret=${secret}&issuer=NeonPro+Aesthetic+Clinic`;
 
       // Store MFA setup
       await this.supabase.from('user_mfa').upsert({
@@ -450,7 +465,8 @@ export class AestheticClinicSecurityService {
 
       // Check for lockout
       if (mfaRecord.failed_attempts >= this.config.mfa.maxAttempts) {
-        const lockoutTime = new Date(mfaRecord.last_failed_attempt).getTime() + this.config.mfa.lockoutDuration;
+        const lockoutTime = new Date(mfaRecord.last_failed_attempt).getTime()
+          + this.config.mfa.lockoutDuration;
         if (Date.now() < lockoutTime) {
           throw new Error('MFA_ACCOUNT_LOCKED');
         }
@@ -458,10 +474,10 @@ export class AestheticClinicSecurityService {
 
       // Verify TOTP token (mock implementation)
       const isTokenValid = this.verifyTOTPToken(mfaRecord.secret, verification.token);
-      
+
       // Verify backup code if provided
-      const isBackupCodeValid = verification.backupCode && 
-        mfaRecord.backup_codes.includes(verification.backupCode);
+      const isBackupCodeValid = verification.backupCode
+        && mfaRecord.backup_codes.includes(verification.backupCode);
 
       if (!isTokenValid && !isBackupCodeValid) {
         // Update failed attempts
@@ -478,7 +494,7 @@ export class AestheticClinicSecurityService {
           severity: 'high',
           userId: verification.userId,
           clinicId: await this.getUserClinicId(verification.userId),
-          details: { 
+          details: {
             action: 'mfa_verification_failed',
             attempts: mfaRecord.failed_attempts + 1,
           },
@@ -501,7 +517,9 @@ export class AestheticClinicSecurityService {
 
       // Remove used backup code
       if (isBackupCodeValid) {
-        const updatedBackupCodes = mfaRecord.backup_codes.filter(code => code !== verification.backupCode);
+        const updatedBackupCodes = mfaRecord.backup_codes.filter(code =>
+          code !== verification.backupCode
+        );
         await this.supabase
           .from('user_mfa')
           .update({ backup_codes: updatedBackupCodes })
@@ -518,7 +536,7 @@ export class AestheticClinicSecurityService {
         severity: 'low',
         userId: verification.userId,
         clinicId: await this.getUserClinicId(verification.userId),
-        details: { 
+        details: {
           action: 'mfa_verification_success',
           method: isBackupCodeValid ? 'backup_code' : 'totp',
           deviceTrusted: verification.trustDevice,
@@ -527,7 +545,10 @@ export class AestheticClinicSecurityService {
         resolved: true,
       });
 
-      logger.info('MFA verification successful', { userId, method: isBackupCodeValid ? 'backup_code' : 'totp' });
+      logger.info('MFA verification successful', {
+        userId,
+        method: isBackupCodeValid ? 'backup_code' : 'totp',
+      });
 
       return true;
     } catch {
@@ -579,7 +600,9 @@ export class AestheticClinicSecurityService {
       // Check role hierarchy if enabled
       if (this.config.rbac.enforceHierarchy) {
         for (const roleRecord of userRoles) {
-          const hierarchicalPermissions = this.getHierarchicalPermissions(roleRecord.role as AestheticClinicRole);
+          const hierarchicalPermissions = this.getHierarchicalPermissions(
+            roleRecord.role as AestheticClinicRole,
+          );
           hierarchicalPermissions.forEach(p => permissions.add(p));
         }
       }
@@ -605,8 +628,11 @@ export class AestheticClinicSecurityService {
    */
   async secureMedicalImageUpload(
     file: Buffer,
-    metadata: Omit<MedicalImageMetadata, 'id' | 'encryptedHash' | 'retentionUntil' | 'encryptionKeyId'>,
-    uploadedBy: string
+    metadata: Omit<
+      MedicalImageMetadata,
+      'id' | 'encryptedHash' | 'retentionUntil' | 'encryptionKeyId'
+    >,
+    uploadedBy: string,
   ): Promise<{ imageId: string; encryptedPath: string; watermarkSignature?: string }> {
     try {
       // Verify patient consent
@@ -654,14 +680,18 @@ export class AestheticClinicSecurityService {
         iv: iv.toString('hex'),
         algorithm: 'aes-256-gcm',
         created_at: new Date().toISOString(),
-        expires_at: new Date(Date.now() + this.config.medicalImages.retentionPeriod * 24 * 60 * 60 * 1000).toISOString(),
+        expires_at: new Date(
+          Date.now() + this.config.medicalImages.retentionPeriod * 24 * 60 * 60 * 1000,
+        ).toISOString(),
       });
 
       // Store metadata
       const imageMetadata: MedicalImageMetadata = {
         id: imageId,
         encryptedHash: imageHash,
-        retentionUntil: new Date(Date.now() + this.config.medicalImages.retentionPeriod * 24 * 60 * 60 * 1000),
+        retentionUntil: new Date(
+          Date.now() + this.config.medicalImages.retentionPeriod * 24 * 60 * 60 * 1000,
+        ),
         encryptionKeyId,
         ...metadata,
       };
@@ -724,7 +754,9 @@ export class AestheticClinicSecurityService {
   /**
    * Authorize financial transaction with fraud detection
    */
-  async authorizeFinancialTransaction(transaction: Omit<FinancialTransaction, 'id' | 'fraudScore' | 'riskLevel' | 'signature'>): Promise<string> {
+  async authorizeFinancialTransaction(
+    transaction: Omit<FinancialTransaction, 'id' | 'fraudScore' | 'riskLevel' | 'signature'>,
+  ): Promise<string> {
     try {
       // Calculate fraud score
       const fraudScore = await this.calculateFraudScore(transaction);
@@ -847,7 +879,9 @@ export class AestheticClinicSecurityService {
   /**
    * Log security event
    */
-  private async logSecurityEvent(event: Omit<AestheticSecurityEvent, 'id' | 'timestamp'>): Promise<void> {
+  private async logSecurityEvent(
+    event: Omit<AestheticSecurityEvent, 'id' | 'timestamp'>,
+  ): Promise<void> {
     const securityEvent: AestheticSecurityEvent = {
       ...event,
       id: crypto.randomUUID(),
@@ -909,9 +943,18 @@ export class AestheticClinicSecurityService {
     const hierarchy: Record<AestheticClinicRole, AestheticClinicRole[]> = {
       [AESTHETIC_CLINIC_ROLES.CLINIC_OWNER]: [],
       [AESTHETIC_CLINIC_ROLES.MEDICAL_DIRECTOR]: [AESTHETIC_CLINIC_ROLES.CLINIC_OWNER],
-      [AESTHETIC_CLINIC_ROLES.AESTHETIC_DOCTOR]: [AESTHETIC_CLINIC_ROLES.MEDICAL_DIRECTOR, AESTHETIC_CLINIC_ROLES.CLINIC_OWNER],
-      [AESTHETIC_CLINIC_ROLES.NURSE_PRACTITIONER]: [AESTHETIC_CLINIC_ROLES.AESTHETIC_DOCTOR, AESTHETIC_CLINIC_ROLES.MEDICAL_DIRECTOR],
-      [AESTHETIC_CLINIC_ROLES.MEDICAL_ASSISTANT]: [AESTHETIC_CLINIC_ROLES.NURSE_PRACTITIONER, AESTHETIC_CLINIC_ROLES.AESTHETIC_DOCTOR],
+      [AESTHETIC_CLINIC_ROLES.AESTHETIC_DOCTOR]: [
+        AESTHETIC_CLINIC_ROLES.MEDICAL_DIRECTOR,
+        AESTHETIC_CLINIC_ROLES.CLINIC_OWNER,
+      ],
+      [AESTHETIC_CLINIC_ROLES.NURSE_PRACTITIONER]: [
+        AESTHETIC_CLINIC_ROLES.AESTHETIC_DOCTOR,
+        AESTHETIC_CLINIC_ROLES.MEDICAL_DIRECTOR,
+      ],
+      [AESTHETIC_CLINIC_ROLES.MEDICAL_ASSISTANT]: [
+        AESTHETIC_CLINIC_ROLES.NURSE_PRACTITIONER,
+        AESTHETIC_CLINIC_ROLES.AESTHETIC_DOCTOR,
+      ],
       [AESTHETIC_CLINIC_ROLES.RECEPTIONIST]: [],
       [AESTHETIC_CLINIC_ROLES.BILLING_SPECIALIST]: [],
       [AESTHETIC_CLINIC_ROLES.MARKETING_COORDINATOR]: [],
@@ -926,7 +969,13 @@ export class AestheticClinicSecurityService {
     return inheritedPermissions;
   }
 
-  private generateWatermarkSignature(imageId: string, metadata: Omit<MedicalImageMetadata, 'id' | 'encryptedHash' | 'retentionUntil' | 'encryptionKeyId'>): string {
+  private generateWatermarkSignature(
+    imageId: string,
+    metadata: Omit<
+      MedicalImageMetadata,
+      'id' | 'encryptedHash' | 'retentionUntil' | 'encryptionKeyId'
+    >,
+  ): string {
     const watermarkData = {
       imageId,
       clinicId: metadata.clinicId,
@@ -959,7 +1008,9 @@ export class AestheticClinicSecurityService {
     return !!consent;
   }
 
-  private async calculateFraudScore(transaction: Omit<FinancialTransaction, 'id' | 'fraudScore' | 'riskLevel' | 'signature'>): Promise<number> {
+  private async calculateFraudScore(
+    transaction: Omit<FinancialTransaction, 'id' | 'fraudScore' | 'riskLevel' | 'signature'>,
+  ): Promise<number> {
     let fraudScore = 0;
 
     // Check transaction amount
@@ -982,7 +1033,8 @@ export class AestheticClinicSecurityService {
       .limit(10);
 
     if (userTransactions && userTransactions.length > 0) {
-      const avgAmount = userTransactions.reduce((sum, t) => sum + t.amount, 0) / userTransactions.length;
+      const avgAmount = userTransactions.reduce((sum, t) => sum + t.amount, 0)
+        / userTransactions.length;
       if (transaction.amount > avgAmount * 3) {
         fraudScore += 30;
       }
@@ -994,7 +1046,9 @@ export class AestheticClinicSecurityService {
     return Math.min(fraudScore, 100);
   }
 
-  private generateTransactionSignature(transaction: Omit<FinancialTransaction, 'id' | 'fraudScore' | 'riskLevel' | 'signature'>): string {
+  private generateTransactionSignature(
+    transaction: Omit<FinancialTransaction, 'id' | 'fraudScore' | 'riskLevel' | 'signature'>,
+  ): string {
     const signatureData = {
       patientId: transaction.patientId,
       clinicId: transaction.clinicId,
@@ -1060,7 +1114,7 @@ export class AestheticClinicSecurityService {
     financialTransactions: number;
     complianceScore: number;
   }> {
-    const events = clinicId 
+    const events = clinicId
       ? this.securityEvents.filter(e => e.clinicId === clinicId)
       : this.securityEvents;
 
@@ -1069,7 +1123,9 @@ export class AestheticClinicSecurityService {
       criticalEvents: events.filter(e => e.severity === 'critical').length,
       highRiskEvents: events.filter(e => e.severity === 'high').length,
       mfaVerifications: events.filter(e => e.eventType === 'mfa_verification').length,
-      imageUploads: events.filter(e => e.eventType === 'image_access' && e.details.action === 'image_upload').length,
+      imageUploads:
+        events.filter(e => e.eventType === 'image_access' && e.details.action === 'image_upload')
+          .length,
       financialTransactions: events.filter(e => e.eventType === 'financial_transaction').length,
       complianceScore: this.calculateComplianceScore(events),
     };
@@ -1091,7 +1147,10 @@ export class AestheticClinicSecurityService {
   /**
    * Generate compliance report for regulators
    */
-  async generateComplianceReport(clinicId: string, reportType: 'lgpd' | 'anvisa' | 'cfm' | 'all'): Promise<any> {
+  async generateComplianceReport(
+    clinicId: string,
+    reportType: 'lgpd' | 'anvisa' | 'cfm' | 'all',
+  ): Promise<any> {
     const { data: events } = await this.supabase
       .from('security_events')
       .select('*')

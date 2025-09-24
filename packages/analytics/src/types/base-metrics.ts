@@ -8,8 +8,8 @@
 // import type { RiskLevel, ComplianceFramework } from "../../audit/types";
 
 // Local type definitions to avoid circular dependencies
-type RiskLevel = "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
-type ComplianceFramework = "LGPD" | "ANVISA" | "CFM" | "HIPAA" | "GDPR";
+type RiskLevel = 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+type ComplianceFramework = 'LGPD' | 'ANVISA' | 'CFM' | 'HIPAA' | 'GDPR';
 
 /**
  * Analytics event interface for tracking user interactions and system events
@@ -41,13 +41,13 @@ export interface AnalyticsEvent {
  * Metric data types supported by the analytics system
  */
 export type MetricDataType =
-  | "number"
-  | "percentage"
-  | "currency"
-  | "duration"
-  | "count"
-  | "ratio"
-  | "boolean";
+  | 'number'
+  | 'percentage'
+  | 'currency'
+  | 'duration'
+  | 'count'
+  | 'ratio'
+  | 'boolean';
 
 // Export aliases for backward compatibility
 export type MetricType = MetricDataType;
@@ -55,19 +55,19 @@ export type MetricType = MetricDataType;
 /**
  * Currency types supported by the system
  */
-export type Currency = "BRL" | "USD" | "EUR" | "GBP";
+export type Currency = 'BRL' | 'USD' | 'EUR' | 'GBP';
 
 /**
  * Metric frequency for collection and reporting
  */
 export type MetricFrequency =
-  | "real-time"
-  | "hourly"
-  | "daily"
-  | "weekly"
-  | "monthly"
-  | "quarterly"
-  | "yearly";
+  | 'real-time'
+  | 'hourly'
+  | 'daily'
+  | 'weekly'
+  | 'monthly'
+  | 'quarterly'
+  | 'yearly';
 
 // Export alias for backward compatibility
 export type Frequency = MetricFrequency;
@@ -76,14 +76,14 @@ export type Frequency = MetricFrequency;
  * Metric aggregation methods
  */
 export type MetricAggregation =
-  | "sum"
-  | "average"
-  | "count"
-  | "min"
-  | "max"
-  | "median"
-  | "percentile"
-  | "last_value";
+  | 'sum'
+  | 'average'
+  | 'count'
+  | 'min'
+  | 'max'
+  | 'median'
+  | 'percentile'
+  | 'last_value';
 
 // Export alias for backward compatibility
 export type AggregationType = MetricAggregation;
@@ -92,14 +92,14 @@ export type AggregationType = MetricAggregation;
  * Metric status indicating data quality and reliability
  */
 export type MetricStatus =
-  | "active"
-  | "inactive"
-  | "deprecated"
-  | "error"
-  | "calculating";
+  | 'active'
+  | 'inactive'
+  | 'deprecated'
+  | 'error'
+  | 'calculating';
 
 // Re-export types from audit module to avoid conflicts
-export type { RiskLevel, ComplianceFramework } from "../../audit/types";
+export type { ComplianceFramework, RiskLevel } from '../../audit/types';
 
 /**
  * Base metric interface - foundation for all analytics metrics
@@ -209,7 +209,7 @@ export interface MetricDataPoint {
  */
 export interface MetricTrend {
   /** Direction of the trend */
-  direction: "improving" | "declining" | "stable" | "volatile";
+  direction: 'improving' | 'declining' | 'stable' | 'volatile';
 
   /** Percentage change over the analysis period */
   percentageChange: number;
@@ -253,7 +253,7 @@ export interface MetricValidation {
  * Removes all personally identifiable information while maintaining
  * analytical value for population-level insights.
  */
-export interface AnonymousMetric extends Omit<BaseMetric, "metadata"> {
+export interface AnonymousMetric extends Omit<BaseMetric, 'metadata'> {
   /** Anonymized/hashed identifier */
   anonymousId: string;
 
@@ -265,9 +265,9 @@ export interface AnonymousMetric extends Omit<BaseMetric, "metadata"> {
 
   /** Anonymized metadata (no PII) */
   metadata?: {
-    aggregationLevel: "individual" | "group" | "population";
-    anonymizationMethod: "hash" | "generalization" | "suppression";
-    privacyLevel: "low" | "medium" | "high";
+    aggregationLevel: 'individual' | 'group' | 'population';
+    anonymizationMethod: 'hash' | 'generalization' | 'suppression';
+    privacyLevel: 'low' | 'medium' | 'high';
   };
 }
 
@@ -283,12 +283,12 @@ export interface MetricAlert {
 
   /** Alert condition */
   condition: {
-    operator: "gt" | "lt" | "eq" | "gte" | "lte" | "range";
+    operator: 'gt' | 'lt' | 'eq' | 'gte' | 'lte' | 'range';
     value: number | [number, number];
   };
 
   /** Alert severity */
-  severity: "info" | "warning" | "critical";
+  severity: 'info' | 'warning' | 'critical';
 
   /** Alert message template */
   message: string;
@@ -309,13 +309,13 @@ export interface MetricAlert {
 export type MetricUpdate = Partial<
   Pick<
     BaseMetric,
-    | "value"
-    | "targetValue"
-    | "threshold"
-    | "status"
-    | "riskLevel"
-    | "lastUpdated"
-    | "metadata"
+    | 'value'
+    | 'targetValue'
+    | 'threshold'
+    | 'status'
+    | 'riskLevel'
+    | 'lastUpdated'
+    | 'metadata'
   >
 >;
 
@@ -323,8 +323,8 @@ export type MetricUpdate = Partial<
  * Type guard to check if a metric is a healthcare metric
  */
 export function isHealthcareMetric(metric: BaseMetric): boolean {
-  return metric.complianceFrameworks.some((framework) =>
-    ["LGPD", "ANVISA", "CFM", "HIPAA"].includes(framework),
+  return metric.complianceFrameworks.some(framework =>
+    ['LGPD', 'ANVISA', 'CFM', 'HIPAA'].includes(framework)
   );
 }
 
@@ -333,8 +333,8 @@ export function isHealthcareMetric(metric: BaseMetric): boolean {
  */
 export function requiresComplianceAudit(metric: BaseMetric): boolean {
   return (
-    isHealthcareMetric(metric) &&
-    ["HIGH", "CRITICAL"].includes(metric.riskLevel)
+    isHealthcareMetric(metric)
+    && ['HIGH', 'CRITICAL'].includes(metric.riskLevel)
   );
 }
 
@@ -356,9 +356,9 @@ export function anonymizeMetric(
     region: options?.includeRegion ? extractRegion(metadata) : undefined,
     cohort: options?.includeCohort ? extractCohort(metadata) : undefined,
     metadata: {
-      aggregationLevel: "individual",
-      anonymizationMethod: "hash",
-      privacyLevel: "high",
+      aggregationLevel: 'individual',
+      anonymizationMethod: 'hash',
+      privacyLevel: 'high',
     },
   };
 }
@@ -414,20 +414,20 @@ export function createMockMetric(overrides?: Partial<BaseMetric>): BaseMetric {
   const now = new Date();
 
   return {
-    id: "mock_metric_" + Math.random().toString(36).substr(2, 9),
-    name: "Mock Metric",
-    description: "A mock metric for testing",
-    dataType: "number",
+    id: 'mock_metric_' + Math.random().toString(36).substr(2, 9),
+    name: 'Mock Metric',
+    description: 'A mock metric for testing',
+    dataType: 'number',
     value: Math.random() * 100,
-    unit: "count",
+    unit: 'count',
     targetValue: 100,
     threshold: 80,
-    frequency: "daily",
-    aggregation: "average",
-    status: "active",
-    riskLevel: "LOW",
-    complianceFrameworks: ["LGPD"],
-    source: "mock_system",
+    frequency: 'daily',
+    aggregation: 'average',
+    status: 'active',
+    riskLevel: 'LOW',
+    complianceFrameworks: ['LGPD'],
+    source: 'mock_system',
     timestamp: now,
     lastUpdated: now,
     createdAt: now,
@@ -443,18 +443,18 @@ export function createMockAnalyticsEvent(
   overrides?: Partial<AnalyticsEvent>,
 ): AnalyticsEvent {
   return {
-    id: "mock_event_" + Math.random().toString(36).substr(2, 9),
-    type: "page_view",
+    id: 'mock_event_' + Math.random().toString(36).substr(2, 9),
+    type: 'page_view',
     timestamp: new Date(),
-    _userId: "mock_user_" + Math.random().toString(36).substr(2, 6),
-    sessionId: "mock_session_" + Math.random().toString(36).substr(2, 6),
+    _userId: 'mock_user_' + Math.random().toString(36).substr(2, 6),
+    sessionId: 'mock_session_' + Math.random().toString(36).substr(2, 6),
     properties: {
-      page: "/dashboard",
-      action: "view",
+      page: '/dashboard',
+      action: 'view',
     },
     _context: {
-      userAgent: "Mock Browser",
-      ip: "127.0.0.1",
+      userAgent: 'Mock Browser',
+      ip: '127.0.0.1',
     },
     ...overrides,
   };
@@ -470,36 +470,36 @@ export function validateMetricCompliance(metric: BaseMetric): MetricValidation {
 
   // Validate required fields
   if (!metric.id) {
-    errors.push("Metric ID is required");
+    errors.push('Metric ID is required');
     qualityScore -= 0.2;
   }
 
   if (!metric.name) {
-    errors.push("Metric name is required");
+    errors.push('Metric name is required');
     qualityScore -= 0.2;
   }
 
   if (metric.value === undefined || metric.value === null) {
-    errors.push("Metric value is required");
+    errors.push('Metric value is required');
     qualityScore -= 0.3;
   }
 
   // Validate healthcare compliance
   if (isHealthcareMetric(metric)) {
-    if (!metric.source.includes("healthcare")) {
-      warnings.push("Healthcare metrics should specify healthcare data source");
+    if (!metric.source.includes('healthcare')) {
+      warnings.push('Healthcare metrics should specify healthcare data source');
       qualityScore -= 0.1;
     }
 
     if (metric.complianceFrameworks.length === 0) {
-      errors.push("Healthcare metrics must specify compliance frameworks");
+      errors.push('Healthcare metrics must specify compliance frameworks');
       qualityScore -= 0.2;
     }
   }
 
   // Validate risk level alignment
-  if (metric.riskLevel === "CRITICAL" && metric.status !== "active") {
-    warnings.push("Critical risk metrics should typically be active");
+  if (metric.riskLevel === 'CRITICAL' && metric.status !== 'active') {
+    warnings.push('Critical risk metrics should typically be active');
     qualityScore -= 0.1;
   }
 
@@ -517,42 +517,42 @@ export function validateMetricCompliance(metric: BaseMetric): MetricValidation {
  */
 export function aggregateMetrics(
   metrics: BaseMetric[],
-  aggregation: MetricAggregation = "average",
+  aggregation: MetricAggregation = 'average',
 ): number {
   if (metrics.length === 0) return 0;
 
-  const values = metrics.map((m) => m.value);
+  const values = metrics.map(m => m.value);
 
   switch (aggregation) {
-    case "sum":
+    case 'sum':
       return values.reduce((sum, _val) => sum + _val, 0);
 
-    case "average":
+    case 'average':
       return values.reduce((sum, _val) => sum + _val, 0) / values.length;
 
-    case "count":
+    case 'count':
       return values.length;
 
-    case "min":
+    case 'min':
       return Math.min(...values);
 
-    case "max":
+    case 'max':
       return Math.max(...values);
 
-    case "median":
+    case 'median':
       const sorted = values.sort((a, _b) => a - _b);
       const mid = Math.floor(sorted.length / 2);
       return sorted.length % 2 === 0
         ? (sorted[mid - 1] + sorted[mid]) / 2
         : sorted[mid];
 
-    case "percentile":
+    case 'percentile':
       // Default to 95th percentile
       const sortedValues = values.sort((a, _b) => a - _b);
       const index = Math.ceil(0.95 * sortedValues.length) - 1;
       return sortedValues[index];
 
-    case "last_value":
+    case 'last_value':
       return values[values.length - 1];
 
     default:

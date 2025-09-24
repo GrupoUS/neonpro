@@ -121,7 +121,10 @@ export const DEFAULT_MASKING_OPTIONS = {
 /**
  * Mask a CPF according to LGPD guidelines
  */
-export function maskCPF(cpf: string | null, options: MaskingOptions = DEFAULT_MASKING_OPTIONS.basic): string {
+export function maskCPF(
+  cpf: string | null,
+  options: MaskingOptions = DEFAULT_MASKING_OPTIONS.basic,
+): string {
   if (!cpf) return '';
 
   const cleaned = cpf.replace(/\D/g, '');
@@ -156,7 +159,10 @@ export function maskCPF(cpf: string | null, options: MaskingOptions = DEFAULT_MA
 /**
  * Mask a CNPJ according to LGPD guidelines
  */
-export function maskCNPJ(cnpj: string, options: MaskingOptions = DEFAULT_MASKING_OPTIONS.basic): string {
+export function maskCNPJ(
+  cnpj: string,
+  options: MaskingOptions = DEFAULT_MASKING_OPTIONS.basic,
+): string {
   if (!cnpj) return '';
 
   const cleaned = cnpj.replace(/\D/g, '');
@@ -191,7 +197,10 @@ export function maskCNPJ(cnpj: string, options: MaskingOptions = DEFAULT_MASKING
 /**
  * Mask an email address
  */
-export function maskEmail(email: string | null, options: MaskingOptions = DEFAULT_MASKING_OPTIONS.basic): string | null | undefined {
+export function maskEmail(
+  email: string | null,
+  options: MaskingOptions = DEFAULT_MASKING_OPTIONS.basic,
+): string | null | undefined {
   if (!email) return undefined;
 
   const { maskChar = '*', visibleStart = 1, visibleEnd: _visibleEnd = 0 } = options;
@@ -218,7 +227,10 @@ export function maskEmail(email: string | null, options: MaskingOptions = DEFAUL
 /**
  * Mask a phone number
  */
-export function maskPhone(phone: string, options: MaskingOptions = DEFAULT_MASKING_OPTIONS.basic): string {
+export function maskPhone(
+  phone: string,
+  options: MaskingOptions = DEFAULT_MASKING_OPTIONS.basic,
+): string {
   if (!phone) return '';
 
   const { maskChar = '*', preserveFormat = true } = options;
@@ -264,13 +276,16 @@ export function maskPhone(phone: string, options: MaskingOptions = DEFAULT_MASKI
 /**
  * Mask a name (first and last name visible, middle names masked)
  */
-export function maskName(name: string, options: MaskingOptions = DEFAULT_MASKING_OPTIONS.basic): string {
+export function maskName(
+  name: string,
+  options: MaskingOptions = DEFAULT_MASKING_OPTIONS.basic,
+): string {
   if (!name) return '';
 
   const { maskChar = '*', visibleStart = 1 } = options;
   const names = name.split(' ');
 
-  return names.map((namepart) => {
+  return names.map(namepart => {
     // For visibleStart 0, mask everything
     if (visibleStart === 0) {
       return maskChar.repeat(namepart.length);
@@ -288,7 +303,10 @@ export function maskName(name: string, options: MaskingOptions = DEFAULT_MASKING
 /**
  * Mask an address (handles both string and object inputs)
  */
-export function maskAddress(address: string | any, options: MaskingOptions = DEFAULT_MASKING_OPTIONS.basic): string | any {
+export function maskAddress(
+  address: string | any,
+  options: MaskingOptions = DEFAULT_MASKING_OPTIONS.basic,
+): string | any {
   if (address === null) return null;
   if (address === undefined) return undefined;
 
@@ -321,11 +339,14 @@ export function maskAddress(address: string | any, options: MaskingOptions = DEF
 /**
  * Mask an address object for patient data
  */
-function maskAddressObject(address: AddressData | undefined, options: MaskingOptions = DEFAULT_MASKING_OPTIONS.basic): AddressData | undefined {
+function maskAddressObject(
+  address: AddressData | undefined,
+  options: MaskingOptions = DEFAULT_MASKING_OPTIONS.basic,
+): AddressData | undefined {
   if (!address) return undefined;
 
   const { maskChar = '*', visibleStart: _visibleStart = 1, visibleEnd: _visibleEnd = 0 } = options;
-  
+
   return {
     street: maskChar.repeat(10), // Fixed length for enhanced compliance
     number: maskChar.repeat(3),
@@ -345,7 +366,10 @@ function maskAddressObject(address: AddressData | undefined, options: MaskingOpt
 /**
  * Mask patient data according to LGPD guidelines
  */
-export function maskPatientData(patient: PatientData, complianceLevel: LGPDComplianceLevel | 'full' = 'basic'): { data: PatientData; metadata: AnonymizationMetadata } {
+export function maskPatientData(
+  patient: PatientData,
+  complianceLevel: LGPDComplianceLevel | 'full' = 'basic',
+): { data: PatientData; metadata: AnonymizationMetadata } {
   const masked: PatientData = { ...patient };
   const fieldsAnonymized: string[] = [];
 
@@ -421,7 +445,7 @@ export function maskPatientData(patient: PatientData, complianceLevel: LGPDCompl
       else if (year === 1985) masked.birthDate = '1970-1990'; // Special case for test
       else if (year === 2000) masked.birthDate = '1990-2010';
       else if (year >= 2010) masked.birthDate = '2010+';
-      else masked.birthDate = `${year-10}-${year+10}`; // Default pattern
+      else masked.birthDate = `${year - 10}-${year + 10}`; // Default pattern
       fieldsAnonymized.push('birthDate');
     }
   }
@@ -471,8 +495,13 @@ export function maskPatientData(patient: PatientData, complianceLevel: LGPDCompl
     const phoneMatch = emergencyContact.match(/(\d+)/);
     if (phoneMatch && phoneMatch[1]) {
       const phone = phoneMatch[1];
-      const maskedPhone = phone.length > 4 ? phone.slice(0, 2) + '*'.repeat(phone.length - 2) : '*'.repeat(phone.length);
-      masked.emergencyContact = emergencyContact.replace(new RegExp(phone.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'g'), maskedPhone);
+      const maskedPhone = phone.length > 4
+        ? phone.slice(0, 2) + '*'.repeat(phone.length - 2)
+        : '*'.repeat(phone.length);
+      masked.emergencyContact = emergencyContact.replace(
+        new RegExp(phone.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'g'),
+        maskedPhone,
+      );
     }
     fieldsAnonymized.push('emergencyContact');
   }
@@ -507,7 +536,7 @@ export function anonymizePersonalData(
   const processNestedField = (obj: Record<string, unknown>, fieldPath: string, value: unknown) => {
     const parts = fieldPath.split('.');
     let current = obj;
-    
+
     // Build nested structure
     for (let i = 0; i < parts.length - 1; i++) {
       const part = parts[i];
@@ -582,7 +611,7 @@ export function anonymizePersonalData(
     if (fieldPath.includes('.')) {
       const parts = fieldPath.split('.');
       let currentValue: unknown = data;
-      
+
       // Navigate to the nested value
       for (const part of parts) {
         if (currentValue && typeof currentValue === 'object' && part in currentValue) {
@@ -592,7 +621,7 @@ export function anonymizePersonalData(
           break;
         }
       }
-      
+
       if (currentValue !== undefined && currentValue !== null) {
         const finalKey = parts[parts.length - 1];
         let maskedValue: unknown;
@@ -613,7 +642,7 @@ export function anonymizePersonalData(
         } else {
           maskedValue = '********';
         }
-        
+
         processNestedField(anonymizedData, fieldPath, maskedValue);
       }
     }
@@ -651,7 +680,10 @@ export function isDataAnonymized(data: Record<string, unknown>): boolean {
 /**
  * Generate privacy report for anonymized data
  */
-export function generatePrivacyReport(originalData: Record<string, unknown>, anonymizedResult: any): any {
+export function generatePrivacyReport(
+  originalData: Record<string, unknown>,
+  anonymizedResult: any,
+): any {
   const metadata = anonymizedResult.metadata || {
     anonymizedAt: new Date().toISOString(),
     method: 'maskPatientData',
@@ -673,9 +705,11 @@ export function generatePrivacyReport(originalData: Record<string, unknown>, ano
       const originalValue = originalData[key] as string;
 
       // If value looks similar to original, it's a risk
-      if (originalValue && value.length > 3 &&
-          originalValue.length > 3 &&
-          value.toLowerCase().includes(originalValue.toLowerCase().substring(0, 3))) {
+      if (
+        originalValue && value.length > 3
+        && originalValue.length > 3
+        && value.toLowerCase().includes(originalValue.toLowerCase().substring(0, 3))
+      ) {
         complianceScore -= 15;
         risks.push(`Insufficient masking in field: ${key}`);
       }
@@ -696,12 +730,12 @@ export function generatePrivacyReport(originalData: Record<string, unknown>, ano
         complianceScore -= 30;
         risks.push('Name not masked at all');
       }
-      
+
       // Check for insufficient name masking - if more than 3 consecutive characters match
       if (key === 'name' && originalValue && value !== originalValue) {
         const originalLower = originalValue.toLowerCase();
         const anonymizedLower = value.toLowerCase();
-        
+
         // Check for 4+ consecutive character matches
         for (let i = 0; i <= originalLower.length - 4; i++) {
           const substring = originalLower.substring(i, i + 4);
@@ -718,7 +752,7 @@ export function generatePrivacyReport(originalData: Record<string, unknown>, ano
   // Check if sensitive fields that should be anonymized are missing from fieldsAnonymized
   const sensitiveFields = ['name', 'cpf', 'email', 'phone'];
   const anonymizedFields = metadata.fieldsAnonymized || [];
-  
+
   sensitiveFields.forEach(field => {
     if (originalData[field] && !anonymizedFields.includes(field)) {
       complianceScore -= 10;

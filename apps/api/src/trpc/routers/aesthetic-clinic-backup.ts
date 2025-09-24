@@ -21,32 +21,32 @@ import { TRPCError } from '@trpc/server';
 import { AestheticRepository } from '@neonpro/database';
 import {
   CreateAestheticClientProfileSchema,
-  UpdateAestheticClientProfileSchema,
-  GetAestheticClientProfileSchema,
-  SearchAestheticClientsSchema,
-  CreateAestheticTreatmentSchema,
-  UpdateAestheticTreatmentSchema,
-  GetAestheticTreatmentSchema,
-  GetTreatmentCatalogSchema,
   CreateAestheticSessionSchema,
-  UpdateAestheticSessionSchema,
-  GetAestheticSessionSchema,
-  ListAestheticSessionsSchema,
-  CreatePhotoAssessmentSchema,
-  UpdatePhotoAssessmentSchema,
-  GetPhotoAssessmentSchema,
-  ListPhotoAssessmentsSchema,
-  CreateTreatmentPlanSchema,
-  UpdateTreatmentPlanSchema,
-  GetTreatmentPlanSchema,
-  GetTreatmentPlansByClientSchema,
+  CreateAestheticTreatmentSchema,
   CreateFinancialTransactionSchema,
-  UpdateFinancialTransactionSchema,
-  GetFinancialTransactionSchema,
-  ListFinancialTransactionsSchema,
+  CreatePhotoAssessmentSchema,
+  CreateTreatmentPlanSchema,
+  GetAestheticClientProfileSchema,
+  GetAestheticSessionSchema,
+  GetAestheticTreatmentSchema,
   GetClientRetentionMetricsSchema,
-  GetRevenueAnalyticsSchema,
+  GetFinancialTransactionSchema,
+  GetPhotoAssessmentSchema,
   GetPredictiveAnalyticsSchema,
+  GetRevenueAnalyticsSchema,
+  GetTreatmentCatalogSchema,
+  GetTreatmentPlansByClientSchema,
+  GetTreatmentPlanSchema,
+  ListAestheticSessionsSchema,
+  ListFinancialTransactionsSchema,
+  ListPhotoAssessmentsSchema,
+  SearchAestheticClientsSchema,
+  UpdateAestheticClientProfileSchema,
+  UpdateAestheticSessionSchema,
+  UpdateAestheticTreatmentSchema,
+  UpdateFinancialTransactionSchema,
+  UpdatePhotoAssessmentSchema,
+  UpdateTreatmentPlanSchema,
 } from '../schemas';
 import { healthcareProcedure, protectedProcedure, router } from '../trpc';
 
@@ -64,7 +64,7 @@ const aestheticRepository = new AestheticRepository();
 async function validateLGPDCompliance(
   operation: string,
   clientId: string,
-  _ctx: any
+  _ctx: any,
 ): Promise<{
   compliant: boolean;
   warnings: string[];
@@ -123,7 +123,7 @@ async function validateLGPDCompliance(
 async function validateCFMCompliance(
   professionalId: string,
   procedureType: string,
-  _ctx: any
+  _ctx: any,
 ): Promise<{
   compliant: boolean;
   certifications: string[];
@@ -153,7 +153,7 @@ async function validateCFMCompliance(
 
   // Check procedure-specific certifications
   const requiredCertifications = getRequiredCertifications(procedureType);
-  const hasRequiredCerts = requiredCertifications.every(cert => 
+  const hasRequiredCerts = requiredCertifications.every(cert =>
     professional.certifications.includes(cert)
   );
 
@@ -173,12 +173,12 @@ async function validateCFMCompliance(
  */
 function getRequiredCertifications(procedureType: string): string[] {
   const certificationMap: Record<string, string[]> = {
-    'injectable': ['botox', 'filler', 'dermal_fillers'],
-    'laser': ['laser_safety', 'aesthetic_laser'],
-    'surgical': ['aesthetic_surgery', 'anesthesia_safety'],
-    'facial': ['aesthetic_facial_treatments'],
-    'body': ['body_contouring', 'aesthetic_procedures'],
-    'combination': ['advanced_aesthetic'],
+    injectable: ['botox', 'filler', 'dermal_fillers'],
+    laser: ['laser_safety', 'aesthetic_laser'],
+    surgical: ['aesthetic_surgery', 'anesthesia_safety'],
+    facial: ['aesthetic_facial_treatments'],
+    body: ['body_contouring', 'aesthetic_procedures'],
+    combination: ['advanced_aesthetic'],
   };
 
   return certificationMap[procedureType] || [];
@@ -201,7 +201,11 @@ export const aestheticClinicRouter = router({
     .mutation(async ({ ctx, input }) => {
       try {
         // Validate LGPD compliance
-        const lgpdValidation = await validateLGPDCompliance('profile_creation', input.patientId, ctx);
+        const lgpdValidation = await validateLGPDCompliance(
+          'profile_creation',
+          input.patientId,
+          ctx,
+        );
         if (!lgpdValidation.compliant) {
           throw new TRPCError({
             code: 'FORBIDDEN',
@@ -268,7 +272,6 @@ export const aestheticClinicRouter = router({
             warnings: lgpdValidation.warnings,
           },
         };
-
       } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
@@ -333,7 +336,6 @@ export const aestheticClinicRouter = router({
             accessAuthorized: true,
           },
         };
-
       } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
@@ -368,7 +370,11 @@ export const aestheticClinicRouter = router({
         }
 
         // Validate LGPD compliance for updates
-        const lgpdValidation = await validateLGPDCompliance('profile_update', existingProfile.patientId, ctx);
+        const lgpdValidation = await validateLGPDCompliance(
+          'profile_update',
+          existingProfile.patientId,
+          ctx,
+        );
         if (!lgpdValidation.compliant) {
           throw new TRPCError({
             code: 'FORBIDDEN',
@@ -417,7 +423,6 @@ export const aestheticClinicRouter = router({
             warnings: lgpdValidation.warnings,
           },
         };
-
       } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
@@ -479,7 +484,6 @@ export const aestheticClinicRouter = router({
             searchAuthorized: true,
           },
         };
-
       } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
@@ -553,7 +557,6 @@ export const aestheticClinicRouter = router({
             restrictions: anvisaCompliance.restrictions,
           },
         };
-
       } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
@@ -610,7 +613,6 @@ export const aestheticClinicRouter = router({
             accessAuthorized: true,
           },
         };
-
       } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
@@ -644,7 +646,10 @@ export const aestheticClinicRouter = router({
         }
 
         // Validate ANVISA compliance
-        const anvisaCompliance = await validateANVISACompliance({ ...existingTreatment, ...input }, ctx);
+        const anvisaCompliance = await validateANVISACompliance(
+          { ...existingTreatment, ...input },
+          ctx,
+        );
         if (!anvisaCompliance.compliant) {
           throw new TRPCError({
             code: 'FORBIDDEN',
@@ -690,7 +695,6 @@ export const aestheticClinicRouter = router({
             restrictions: anvisaCompliance.restrictions,
           },
         };
-
       } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
@@ -756,7 +760,6 @@ export const aestheticClinicRouter = router({
             accessAuthorized: true,
           },
         };
-
       } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
@@ -781,7 +784,7 @@ export const aestheticClinicRouter = router({
         const cfmValidation = await validateCFMCompliance(
           input.professionalId,
           'aesthetic_procedure',
-          ctx
+          ctx,
         );
         if (!cfmValidation.compliant) {
           throw new TRPCError({
@@ -835,7 +838,6 @@ export const aestheticClinicRouter = router({
             warnings: cfmValidation.warnings,
           },
         };
-
       } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
@@ -900,7 +902,6 @@ export const aestheticClinicRouter = router({
             accessAuthorized: true,
           },
         };
-
       } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
@@ -967,7 +968,6 @@ export const aestheticClinicRouter = router({
           success: true,
           data: updatedSession,
         };
-
       } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
@@ -1031,7 +1031,6 @@ export const aestheticClinicRouter = router({
             accessAuthorized: true,
           },
         };
-
       } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
@@ -1053,7 +1052,11 @@ export const aestheticClinicRouter = router({
     .mutation(async ({ ctx, input }) => {
       try {
         // Validate LGPD compliance for photo processing
-        const lgpdValidation = await validateLGPDCompliance('photo_assessment', input.clientProfileId, ctx);
+        const lgpdValidation = await validateLGPDCompliance(
+          'photo_assessment',
+          input.clientProfileId,
+          ctx,
+        );
         if (!lgpdValidation.compliant) {
           throw new TRPCError({
             code: 'FORBIDDEN',
@@ -1104,7 +1107,6 @@ export const aestheticClinicRouter = router({
             warnings: lgpdValidation.warnings,
           },
         };
-
       } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
@@ -1170,7 +1172,6 @@ export const aestheticClinicRouter = router({
             lgpdCompliant: true,
           },
         };
-
       } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
@@ -1237,7 +1238,6 @@ export const aestheticClinicRouter = router({
           success: true,
           data: updatedAssessment,
         };
-
       } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
@@ -1301,7 +1301,6 @@ export const aestheticClinicRouter = router({
             lgpdCompliant: true,
           },
         };
-
       } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
@@ -1323,7 +1322,11 @@ export const aestheticClinicRouter = router({
     .mutation(async ({ ctx, input }) => {
       try {
         // Validate CFM compliance for treatment planning
-        const cfmValidation = await validateCFMCompliance(input.professionalId, 'treatment_planning', ctx);
+        const cfmValidation = await validateCFMCompliance(
+          input.professionalId,
+          'treatment_planning',
+          ctx,
+        );
         if (!cfmValidation.compliant) {
           throw new TRPCError({
             code: 'FORBIDDEN',
@@ -1375,7 +1378,6 @@ export const aestheticClinicRouter = router({
             warnings: cfmValidation.warnings,
           },
         };
-
       } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
@@ -1440,7 +1442,6 @@ export const aestheticClinicRouter = router({
             accessAuthorized: true,
           },
         };
-
       } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
@@ -1507,7 +1508,6 @@ export const aestheticClinicRouter = router({
           success: true,
           data: updatedPlan,
         };
-
       } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
@@ -1561,7 +1561,6 @@ export const aestheticClinicRouter = router({
             accessAuthorized: true,
           },
         };
-
       } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
@@ -1626,7 +1625,6 @@ export const aestheticClinicRouter = router({
             auditTrailComplete: true,
           },
         };
-
       } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
@@ -1693,7 +1691,6 @@ export const aestheticClinicRouter = router({
             financialCompliant: true,
           },
         };
-
       } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
@@ -1762,7 +1759,6 @@ export const aestheticClinicRouter = router({
           success: true,
           data: updatedTransaction,
         };
-
       } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
@@ -1828,7 +1824,6 @@ export const aestheticClinicRouter = router({
             financialCompliant: true,
           },
         };
-
       } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
@@ -1891,7 +1886,6 @@ export const aestheticClinicRouter = router({
             dataPrivacyCompliant: true,
           },
         };
-
       } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
@@ -1952,7 +1946,6 @@ export const aestheticClinicRouter = router({
             financialCompliant: true,
           },
         };
-
       } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
@@ -2007,7 +2000,6 @@ export const aestheticClinicRouter = router({
             dataPrivacyCompliant: true,
           },
         };
-
       } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
@@ -2021,7 +2013,7 @@ export const aestheticClinicRouter = router({
 // Helper function for ANVISA compliance validation
 async function validateANVISACompliance(
   treatment: any,
-  _ctx: any
+  _ctx: any,
 ): Promise<{
   compliant: boolean;
   warnings: string[];

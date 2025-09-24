@@ -6,7 +6,7 @@
  * with Brazilian General Data Protection Law (Lei Geral de Proteção de Dados).
  */
 
-import { createHash, randomBytes, createCipheriv, createDecipheriv } from 'crypto';
+import { createCipheriv, createDecipheriv, createHash, randomBytes } from 'crypto';
 // import { AestheticComplianceService } from './aesthetic-compliance-service';
 
 export interface AestheticDataHandlingConfig {
@@ -143,7 +143,7 @@ export class AestheticDataHandlingService {
       retentionPeriod: 3650, // 10 years
       accessRoles: ['admin', 'compliance', 'billing'],
       purposeLimitation: ['identification', 'billing', 'regulatory'],
-      legalBasis: 'consent'
+      legalBasis: 'consent',
     });
 
     this.sensitiveFields.set('fullName', {
@@ -155,7 +155,7 @@ export class AestheticDataHandlingService {
       retentionPeriod: 3650,
       accessRoles: ['admin', 'professional', 'staff', 'compliance'],
       purposeLimitation: ['treatment', 'communication', 'billing'],
-      legalBasis: 'consent'
+      legalBasis: 'consent',
     });
 
     this.sensitiveFields.set('dateOfBirth', {
@@ -167,7 +167,7 @@ export class AestheticDataHandlingService {
       retentionPeriod: 3650,
       accessRoles: ['admin', 'professional', 'compliance'],
       purposeLimitation: ['treatment_planning', 'age_verification'],
-      legalBasis: 'consent'
+      legalBasis: 'consent',
     });
 
     this.sensitiveFields.set('email', {
@@ -179,7 +179,7 @@ export class AestheticDataHandlingService {
       retentionPeriod: 1825, // 5 years
       accessRoles: ['admin', 'staff', 'marketing', 'compliance'],
       purposeLimitation: ['communication', 'marketing', 'billing'],
-      legalBasis: 'consent'
+      legalBasis: 'consent',
     });
 
     this.sensitiveFields.set('phone', {
@@ -191,7 +191,7 @@ export class AestheticDataHandlingService {
       retentionPeriod: 1825,
       accessRoles: ['admin', 'staff', 'compliance'],
       purposeLimitation: ['communication', 'appointments'],
-      legalBasis: 'consent'
+      legalBasis: 'consent',
     });
 
     // Health Data Fields
@@ -204,7 +204,7 @@ export class AestheticDataHandlingService {
       retentionPeriod: 7300, // 20 years
       accessRoles: ['admin', 'professional', 'compliance'],
       purposeLimitation: ['treatment_planning', 'safety', 'regulatory'],
-      legalBasis: 'vital_interest'
+      legalBasis: 'vital_interest',
     });
 
     this.sensitiveFields.set('allergies', {
@@ -216,7 +216,7 @@ export class AestheticDataHandlingService {
       retentionPeriod: 7300,
       accessRoles: ['admin', 'professional', 'compliance'],
       purposeLimitation: ['safety', 'treatment_planning'],
-      legalBasis: 'vital_interest'
+      legalBasis: 'vital_interest',
     });
 
     this.sensitiveFields.set('medications', {
@@ -228,7 +228,7 @@ export class AestheticDataHandlingService {
       retentionPeriod: 7300,
       accessRoles: ['admin', 'professional', 'compliance'],
       purposeLimitation: ['safety', 'treatment_planning'],
-      legalBasis: 'vital_interest'
+      legalBasis: 'vital_interest',
     });
 
     this.sensitiveFields.set('skinType', {
@@ -240,7 +240,7 @@ export class AestheticDataHandlingService {
       retentionPeriod: 3650,
       accessRoles: ['admin', 'professional', 'compliance'],
       purposeLimitation: ['treatment_planning', 'product_recommendation'],
-      legalBasis: 'consent'
+      legalBasis: 'consent',
     });
 
     // Financial Data Fields
@@ -253,7 +253,7 @@ export class AestheticDataHandlingService {
       retentionPeriod: 1825,
       accessRoles: ['admin', 'billing', 'compliance'],
       purposeLimitation: ['payment_processing'],
-      legalBasis: 'consent'
+      legalBasis: 'consent',
     });
 
     this.sensitiveFields.set('bankAccount', {
@@ -265,7 +265,7 @@ export class AestheticDataHandlingService {
       retentionPeriod: 1825,
       accessRoles: ['admin', 'billing', 'compliance'],
       purposeLimitation: ['payment_processing', 'refunds'],
-      legalBasis: 'consent'
+      legalBasis: 'consent',
     });
 
     // Biometric Data Fields
@@ -278,7 +278,7 @@ export class AestheticDataHandlingService {
       retentionPeriod: 3650,
       accessRoles: ['admin', 'compliance'],
       purposeLimitation: ['identification', 'security'],
-      legalBasis: 'consent'
+      legalBasis: 'consent',
     });
 
     this.sensitiveFields.set('fingerprints', {
@@ -290,7 +290,7 @@ export class AestheticDataHandlingService {
       retentionPeriod: 3650,
       accessRoles: ['admin', 'security', 'compliance'],
       purposeLimitation: ['identification', 'access_control'],
-      legalBasis: 'consent'
+      legalBasis: 'consent',
     });
   }
 
@@ -304,7 +304,7 @@ export class AestheticDataHandlingService {
       legalHold: true,
       automatedDisposal: true,
       disposalConfirmationRequired: true,
-      complianceRequirements: ['LGPD_Art_15', 'LGPD_Art_16']
+      complianceRequirements: ['LGPD_Art_15', 'LGPD_Art_16'],
     });
 
     // Health data retention
@@ -316,7 +316,7 @@ export class AestheticDataHandlingService {
       legalHold: true,
       automatedDisposal: true,
       disposalConfirmationRequired: true,
-      complianceRequirements: ['LGPD_Art_11', 'LGPD_Art_15', 'ANVISA_RDC_15']
+      complianceRequirements: ['LGPD_Art_11', 'LGPD_Art_15', 'ANVISA_RDC_15'],
     });
 
     // Financial data retention
@@ -328,7 +328,7 @@ export class AestheticDataHandlingService {
       legalHold: true,
       automatedDisposal: true,
       disposalConfirmationRequired: true,
-      complianceRequirements: ['LGPD_Art_15', 'Brazilian_Tax_Code']
+      complianceRequirements: ['LGPD_Art_15', 'Brazilian_Tax_Code'],
     });
 
     // Biometric data retention
@@ -339,7 +339,7 @@ export class AestheticDataHandlingService {
       legalHold: true,
       automatedDisposal: true,
       disposalConfirmationRequired: true,
-      complianceRequirements: ['LGPD_Art_11', 'LGPD_Art_15']
+      complianceRequirements: ['LGPD_Art_11', 'LGPD_Art_15'],
     });
 
     // Contact data retention
@@ -350,7 +350,7 @@ export class AestheticDataHandlingService {
       legalHold: false,
       automatedDisposal: true,
       disposalConfirmationRequired: false,
-      complianceRequirements: ['LGPD_Art_15']
+      complianceRequirements: ['LGPD_Art_15'],
     });
   }
 
@@ -378,9 +378,9 @@ export class AestheticDataHandlingService {
       personalData: await this.encryptSensitiveData(subjectData.personalData),
       healthData: await this.encryptSensitiveData(subjectData.healthData),
       financialData: await this.encryptSensitiveData(subjectData.financialData),
-      biometricData: subjectData.biometricData ? 
-        await this.encryptSensitiveData(subjectData.biometricData) : 
-        undefined,
+      biometricData: subjectData.biometricData
+        ? await this.encryptSensitiveData(subjectData.biometricData)
+        : undefined,
       contactData: await this.encryptSensitiveData(subjectData.contactData),
       consents: [],
       dataRights: {
@@ -389,10 +389,10 @@ export class AestheticDataHandlingService {
         erasure: true,
         portability: true,
         objection: true,
-        automatedDecisionMaking: false
+        automatedDecisionMaking: false,
       },
       createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toISOString(),
     };
 
     this.dataSubjects.set(subjectData.id, dataSubject);
@@ -413,7 +413,7 @@ export class AestheticDataHandlingService {
       consentVerified: false,
       encryptionApplied: true,
       maskingApplied: false,
-      riskLevel: 'low'
+      riskLevel: 'low',
     });
 
     return dataSubject;
@@ -433,7 +433,7 @@ export class AestheticDataHandlingService {
     const accessDecision = await this.checkAccessControl(
       requestingUser,
       subjectId,
-      'read'
+      'read',
     );
 
     if (!accessDecision.granted) {
@@ -456,7 +456,7 @@ export class AestheticDataHandlingService {
       consentVerified: accessDecision.conditions?.consentVerified || false,
       encryptionApplied: true,
       maskingApplied: true,
-      riskLevel: 'medium'
+      riskLevel: 'medium',
     });
 
     // Return masked/decrypted data based on access level
@@ -470,7 +470,7 @@ export class AestheticDataHandlingService {
       id: string;
       role: string;
       purpose: string;
-    }
+    },
   ): Promise<boolean> {
     const dataSubject = this.dataSubjects.get(subjectId);
     if (!dataSubject) {
@@ -481,7 +481,7 @@ export class AestheticDataHandlingService {
     const accessDecision = await this.checkAccessControl(
       requestingUser,
       subjectId,
-      'update'
+      'update',
     );
 
     if (!accessDecision.granted) {
@@ -512,7 +512,7 @@ export class AestheticDataHandlingService {
       encryptionApplied: true,
       maskingApplied: false,
       riskLevel: 'medium',
-      additionalInfo: { updatedFields: Object.keys(updates) }
+      additionalInfo: { updatedFields: Object.keys(updates) },
     });
 
     return true;
@@ -524,7 +524,7 @@ export class AestheticDataHandlingService {
       id: string;
       role: string;
       purpose: string;
-    }
+    },
   ): Promise<boolean> {
     const dataSubject = this.dataSubjects.get(subjectId);
     if (!dataSubject) {
@@ -535,7 +535,7 @@ export class AestheticDataHandlingService {
     const accessDecision = await this.checkAccessControl(
       requestingUser,
       subjectId,
-      'delete'
+      'delete',
     );
 
     if (!accessDecision.granted) {
@@ -567,7 +567,7 @@ export class AestheticDataHandlingService {
       consentVerified: accessDecision.conditions?.consentVerified || false,
       encryptionApplied: true,
       maskingApplied: false,
-      riskLevel: 'high'
+      riskLevel: 'high',
     });
 
     return true;
@@ -583,7 +583,7 @@ export class AestheticDataHandlingService {
       purpose: string;
       legalBasis: string;
       consentId?: string;
-    }
+    },
   ): Promise<Record<string, any>> {
     // Validate legal basis and consent
     const isCompliant = await this.validateDataProcessingCompliance(data, operation, context);
@@ -593,7 +593,7 @@ export class AestheticDataHandlingService {
 
     // Process data based on operation
     let processedData: Record<string, any>;
-    
+
     switch (operation) {
       case 'collect':
         processedData = await this.encryptSensitiveData(data);
@@ -628,7 +628,7 @@ export class AestheticDataHandlingService {
       encryptionApplied: ['collect', 'store'].includes(operation),
       maskingApplied: ['share', 'export'].includes(operation),
       riskLevel: 'medium',
-      additionalInfo: { operation, dataFields: Object.keys(data) }
+      additionalInfo: { operation, dataFields: Object.keys(data) },
     });
 
     return processedData;
@@ -638,13 +638,13 @@ export class AestheticDataHandlingService {
   private async checkAccessControl(
     requestingUser: { id: string; role: string; purpose: string },
     dataSubjectId: string,
-    action: 'create' | 'read' | 'update' | 'delete' | 'export' | 'share'
+    action: 'create' | 'read' | 'update' | 'delete' | 'export' | 'share',
   ): Promise<AccessControlDecision> {
     const dataSubject = this.dataSubjects.get(dataSubjectId);
     if (!dataSubject) {
       return {
         granted: false,
-        reason: 'Data subject not found'
+        reason: 'Data subject not found',
       };
     }
 
@@ -653,7 +653,7 @@ export class AestheticDataHandlingService {
     if (!rolePermissions.allowedActions.includes(action)) {
       return {
         granted: false,
-        reason: 'Insufficient permissions for requested action'
+        reason: 'Insufficient permissions for requested action',
       };
     }
 
@@ -661,7 +661,7 @@ export class AestheticDataHandlingService {
     if (!rolePermissions.allowedPurposes.includes(requestingUser.purpose)) {
       return {
         granted: false,
-        reason: 'Purpose not permitted for this role'
+        reason: 'Purpose not permitted for this role',
       };
     }
 
@@ -669,14 +669,14 @@ export class AestheticDataHandlingService {
     const consentVerified = await this.verifyDataSubjectConsent(
       dataSubjectId,
       requestingUser.purpose,
-      action
+      action,
     );
 
     if (!consentVerified && !rolePermissions.bypassConsent) {
       return {
         granted: false,
         reason: 'Valid consent required for this access',
-        additionalConsentRequired: true
+        additionalConsentRequired: true,
       };
     }
 
@@ -686,9 +686,9 @@ export class AestheticDataHandlingService {
       conditions: {
         legalBasis: 'consent',
         consentVerified: true,
-        dataUsageLimitations: rolePermissions.usageLimitations
+        dataUsageLimitations: rolePermissions.usageLimitations,
       },
-      expiry: this.calculateAccessExpiry(action)
+      expiry: this.calculateAccessExpiry(action),
     };
   }
 
@@ -698,45 +698,45 @@ export class AestheticDataHandlingService {
         allowedActions: ['create', 'read', 'update', 'delete', 'export', 'share'],
         allowedPurposes: ['treatment', 'billing', 'compliance', 'admin', 'research'],
         bypassConsent: false,
-        usageLimitations: []
+        usageLimitations: [],
       },
       professional: {
         allowedActions: ['create', 'read', 'update'],
         allowedPurposes: ['treatment', 'safety'],
         bypassConsent: false,
-        usageLimitations: ['treatment_purpose_only']
+        usageLimitations: ['treatment_purpose_only'],
       },
       staff: {
         allowedActions: ['read', 'update'],
         allowedPurposes: ['appointment_scheduling', 'communication'],
         bypassConsent: false,
-        usageLimitations: ['minimal_necessary']
+        usageLimitations: ['minimal_necessary'],
       },
       billing: {
         allowedActions: ['create', 'read', 'update'],
         allowedPurposes: ['billing', 'payment_processing'],
         bypassConsent: false,
-        usageLimitations: ['financial_data_only']
+        usageLimitations: ['financial_data_only'],
       },
       compliance: {
         allowedActions: ['read', 'export'],
         allowedPurposes: ['compliance', 'audit', 'regulatory'],
         bypassConsent: true,
-        usageLimitations: []
+        usageLimitations: [],
       },
       marketing: {
         allowedActions: ['read', 'export'],
         allowedPurposes: ['marketing', 'communication'],
         bypassConsent: false,
-        usageLimitations: ['consented_contacts_only']
-      }
+        usageLimitations: ['consented_contacts_only'],
+      },
     };
 
     return permissions[role] || {
       allowedActions: [],
       allowedPurposes: [],
       bypassConsent: false,
-      usageLimitations: []
+      usageLimitations: [],
     };
   }
 
@@ -746,7 +746,7 @@ export class AestheticDataHandlingService {
 
     for (const [field, value] of Object.entries(data)) {
       const fieldInfo = this.sensitiveFields.get(field);
-      
+
       if (fieldInfo && fieldInfo.encryptionRequired && value !== undefined) {
         const encryptionKey = this.encryptionKeys.get(fieldInfo.sensitivityLevel);
         if (encryptionKey) {
@@ -767,56 +767,63 @@ export class AestheticDataHandlingService {
       const algorithm = 'aes-256-gcm';
       const iv = randomBytes(16);
       const cipher = createCipheriv(algorithm, key, iv);
-      
+
       let encrypted = cipher.update(JSON.stringify(data), 'utf8', 'hex');
       encrypted += cipher.final('hex');
-      
+
       const _authTag = cipher.getAuthTag();
-      
+
       const result: EncryptionResult = {
         encryptedData: encrypted,
         algorithm,
         keyId: field,
         iv: iv.toString('hex'),
         timestamp: new Date().toISOString(),
-        checksum: createHash('sha256').update(encrypted).digest('hex')
+        checksum: createHash('sha256').update(encrypted).digest('hex'),
       };
-      
+
       return JSON.stringify(result);
     } catch {
       console.error(`Encryption failed for field ${field}:`, error);
-      throw new Error(`Encryption failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Encryption failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      );
     }
   }
 
   private async decryptData(encryptedData: string, key: string): Promise<any> {
     try {
       const encryptionResult: EncryptionResult = JSON.parse(encryptedData);
-      
+
       const decipher = createDecipheriv(
         encryptionResult.algorithm,
         key,
-        Buffer.from(encryptionResult.iv, 'hex')
+        Buffer.from(encryptionResult.iv, 'hex'),
       );
-      
+
       decipher.setAuthTag(Buffer.from(encryptionResult.checksum, 'hex'));
-      
+
       let decrypted = decipher.update(encryptionResult.encryptedData, 'hex', 'utf8');
       decrypted += decipher.final('utf8');
-      
+
       return JSON.parse(decrypted);
     } catch {
       console.error('Decryption failed:', error);
-      throw new Error(`Decryption failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Decryption failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      );
     }
   }
 
-  private async maskSensitiveData(data: Record<string, any>, userRole: string): Promise<Record<string, any>> {
+  private async maskSensitiveData(
+    data: Record<string, any>,
+    userRole: string,
+  ): Promise<Record<string, any>> {
     const maskedData: Record<string, any> = {};
 
     for (const [field, value] of Object.entries(data)) {
       const fieldInfo = this.sensitiveFields.get(field);
-      
+
       if (fieldInfo && fieldInfo.maskingRequired) {
         if (fieldInfo.accessRoles.includes(userRole)) {
           maskedData[field] = value; // No masking for authorized roles
@@ -837,17 +844,20 @@ export class AestheticDataHandlingService {
       email: (email: string) => email.replace(/(.{2}).*@/, '$1***@'),
       phone: (phone: string) => phone.replace(/(\d{2})\d{8}(\d{2})/, '$1********$2'),
       creditCard: (card: string) => card.replace(/(\d{4})\d{8}(\d{4})/, '$1********$2'),
-      bankAccount: (account: string) => account.replace(/(\d{2})\d{6}(\d{2})/, '$1******$2')
+      bankAccount: (account: string) => account.replace(/(\d{2})\d{6}(\d{2})/, '$1******$2'),
     };
 
     const maskFn = maskingPatterns[field];
     return maskFn ? maskFn(String(value)) : '***MASKED***';
   }
 
-  private async prepareDataForExport(data: Record<string, any>, context: { userId: string; userRole: string }): Promise<Record<string, any>> {
+  private async prepareDataForExport(
+    data: Record<string, any>,
+    context: { userId: string; userRole: string },
+  ): Promise<Record<string, any>> {
     // Apply data minimization principle
     const minimizedData = await this.applyDataMinimization(data, context.userRole);
-    
+
     // Ensure data portability format
     return {
       exportId: this.generateExportId(),
@@ -855,21 +865,24 @@ export class AestheticDataHandlingService {
       exportedBy: context.userId,
       data: minimizedData,
       format: 'json',
-      version: '1.0'
+      version: '1.0',
     };
   }
 
-  private async applyDataMinimization(data: Record<string, any>, userRole: string): Promise<Record<string, any>> {
+  private async applyDataMinimization(
+    data: Record<string, any>,
+    userRole: string,
+  ): Promise<Record<string, any>> {
     const minimizedData: Record<string, any> = {};
-    
+
     for (const [field, value] of Object.entries(data)) {
       const fieldInfo = this.sensitiveFields.get(field);
-      
+
       if (!fieldInfo || fieldInfo.accessRoles.includes(userRole)) {
         minimizedData[field] = value;
       }
     }
-    
+
     return minimizedData;
   }
 
@@ -882,7 +895,7 @@ export class AestheticDataHandlingService {
     const accessLog: DataAccessLog = {
       id: this.generateLogId(),
       timestamp: new Date().toISOString(),
-      ...logData
+      ...logData,
     };
 
     this.accessLogs.push(accessLog);
@@ -910,8 +923,9 @@ export class AestheticDataHandlingService {
       await this.triggerSuspiciousActivityAlert({
         type: 'excessive_access',
         userId: accessLog.userId,
-        description: `User ${accessLog.userId} accessed data ${userAccessCount} times in the last hour`,
-        severity: 'medium'
+        description:
+          `User ${accessLog.userId} accessed data ${userAccessCount} times in the last hour`,
+        severity: 'medium',
       });
     }
 
@@ -923,7 +937,7 @@ export class AestheticDataHandlingService {
           type: 'after_hours_access',
           userId: accessLog.userId,
           description: `High-risk data access outside business hours`,
-          severity: 'high'
+          severity: 'high',
         });
       }
     }
@@ -933,7 +947,7 @@ export class AestheticDataHandlingService {
   private async verifyDataSubjectConsent(
     dataSubjectId: string,
     purpose: string,
-    _action: string
+    _action: string,
   ): Promise<boolean> {
     const dataSubject = this.dataSubjects.get(dataSubjectId);
     if (!dataSubject) {
@@ -945,7 +959,7 @@ export class AestheticDataHandlingService {
       const now = new Date();
       const isExpired = consent.expiresAt ? new Date(consent.expiresAt) < now : false;
       const isWithdrawn = consent.withdrawnAt ? new Date(consent.withdrawnAt) < now : false;
-      
+
       return !isExpired && !isWithdrawn && consent.purpose === purpose;
     });
 
@@ -959,7 +973,7 @@ export class AestheticDataHandlingService {
       purpose: string;
       expiresAt?: string;
       version: string;
-    }
+    },
   ): Promise<string> {
     const dataSubject = this.dataSubjects.get(dataSubjectId);
     if (!dataSubject) {
@@ -970,7 +984,7 @@ export class AestheticDataHandlingService {
       id: this.generateConsentId(),
       ...consentData,
       grantedAt: new Date().toISOString(),
-      withdrawnAt: undefined
+      withdrawnAt: undefined,
     };
 
     dataSubject.consents.push(consent);
@@ -993,7 +1007,7 @@ export class AestheticDataHandlingService {
       consentVerified: false,
       encryptionApplied: true,
       maskingApplied: false,
-      riskLevel: 'low'
+      riskLevel: 'low',
     });
 
     return consent.id;
@@ -1030,7 +1044,7 @@ export class AestheticDataHandlingService {
       consentVerified: false,
       encryptionApplied: true,
       maskingApplied: false,
-      riskLevel: 'medium'
+      riskLevel: 'medium',
     });
 
     return true;
@@ -1045,11 +1059,13 @@ export class AestheticDataHandlingService {
 
     // Check legal hold
     // This would integrate with legal hold systems
-    
+
     // Check retention policies
     const creationDate = new Date(dataSubject.createdAt);
     const now = new Date();
-    const daysSinceCreation = Math.floor((now.getTime() - creationDate.getTime()) / (1000 * 60 * 60 * 24));
+    const daysSinceCreation = Math.floor(
+      (now.getTime() - creationDate.getTime()) / (1000 * 60 * 60 * 24),
+    );
 
     // Check if data has exceeded retention period
     const retentionPolicy = this.retentionPolicies.get('personal_data');
@@ -1060,7 +1076,10 @@ export class AestheticDataHandlingService {
     return true;
   }
 
-  private async processDataForAccess(dataSubject: DataSubject, requestingUser: { id: string; role: string }): Promise<DataSubject> {
+  private async processDataForAccess(
+    dataSubject: DataSubject,
+    requestingUser: { id: string; role: string },
+  ): Promise<DataSubject> {
     // Clone the data subject
     const processedDataSubject = { ...dataSubject };
 
@@ -1069,30 +1088,39 @@ export class AestheticDataHandlingService {
       personalData: await this.decryptDataForRole(dataSubject.personalData, requestingUser.role),
       healthData: await this.decryptDataForRole(dataSubject.healthData, requestingUser.role),
       financialData: await this.decryptDataForRole(dataSubject.financialData, requestingUser.role),
-      biometricData: dataSubject.biometricData ? 
-        await this.decryptDataForRole(dataSubject.biometricData, requestingUser.role) : 
-        undefined,
-      contactData: await this.decryptDataForRole(dataSubject.contactData, requestingUser.role)
+      biometricData: dataSubject.biometricData
+        ? await this.decryptDataForRole(dataSubject.biometricData, requestingUser.role)
+        : undefined,
+      contactData: await this.decryptDataForRole(dataSubject.contactData, requestingUser.role),
     };
 
     // Apply masking if needed
     if (this.config.enableDataMasking) {
-      decryptedData.personalData = await this.maskSensitiveData(decryptedData.personalData, requestingUser.role);
-      decryptedData.contactData = await this.maskSensitiveData(decryptedData.contactData, requestingUser.role);
+      decryptedData.personalData = await this.maskSensitiveData(
+        decryptedData.personalData,
+        requestingUser.role,
+      );
+      decryptedData.contactData = await this.maskSensitiveData(
+        decryptedData.contactData,
+        requestingUser.role,
+      );
     }
 
     return {
       ...processedDataSubject,
-      ...decryptedData
+      ...decryptedData,
     };
   }
 
-  private async decryptDataForRole(encryptedData: Record<string, any>, userRole: string): Promise<Record<string, any>> {
+  private async decryptDataForRole(
+    encryptedData: Record<string, any>,
+    userRole: string,
+  ): Promise<Record<string, any>> {
     const decryptedData: Record<string, any> = {};
 
     for (const [field, value] of Object.entries(encryptedData)) {
       const fieldInfo = this.sensitiveFields.get(field);
-      
+
       if (fieldInfo && fieldInfo.encryptionRequired && value !== undefined) {
         // Check if user has access to this field
         if (fieldInfo.accessRoles.includes(userRole)) {
@@ -1118,11 +1146,17 @@ export class AestheticDataHandlingService {
     return decryptedData;
   }
 
-  private async processDataUpdates(updates: Partial<DataSubject>, _requestingUser: { id: string; role: string }): Promise<Partial<DataSubject>> {
+  private async processDataUpdates(
+    updates: Partial<DataSubject>,
+    _requestingUser: { id: string; role: string },
+  ): Promise<Partial<DataSubject>> {
     const processedUpdates: Partial<DataSubject> = {};
 
     for (const [key, value] of Object.entries(updates)) {
-      if (key === 'personalData' || key === 'healthData' || key === 'financialData' || key === 'biometricData' || key === 'contactData') {
+      if (
+        key === 'personalData' || key === 'healthData' || key === 'financialData'
+        || key === 'biometricData' || key === 'contactData'
+      ) {
         processedUpdates[key] = await this.encryptSensitiveData(value);
       } else {
         processedUpdates[key] = value;
@@ -1150,7 +1184,7 @@ export class AestheticDataHandlingService {
 
     // Check for unusual access patterns
     const unusualPatterns = this.detectUnusualAccessPatterns(recentLogs);
-    
+
     if (unusualPatterns.length > 0) {
       for (const pattern of unusualPatterns) {
         await this.triggerDataBreachAlert(pattern);
@@ -1162,13 +1196,15 @@ export class AestheticDataHandlingService {
     const patterns: any[] = [];
 
     // Check for multiple failed access attempts
-    const failedAttempts = logs.filter(log => log.action === 'delete' && log.riskLevel === 'critical');
+    const failedAttempts = logs.filter(log =>
+      log.action === 'delete' && log.riskLevel === 'critical'
+    );
     if (failedAttempts.length > 10) {
       patterns.push({
         type: 'multiple_failed_attempts',
         severity: 'high',
         description: 'Multiple high-risk access attempts detected',
-        count: failedAttempts.length
+        count: failedAttempts.length,
       });
     }
 
@@ -1179,7 +1215,7 @@ export class AestheticDataHandlingService {
         type: 'bulk_data_access',
         severity: 'medium',
         description: 'Unusual bulk data access detected',
-        count: bulkAccess
+        count: bulkAccess,
       });
     }
 
@@ -1188,14 +1224,16 @@ export class AestheticDataHandlingService {
 
   private async triggerDataBreachAlert(pattern: any): Promise<void> {
     console.error('Data breach alert triggered:', pattern);
-    
+
     // Implement breach response protocol
     // This would integrate with security monitoring systems
   }
 
-  private async triggerSuspiciousActivityAlert(alert: { type: string; userId: string; description: string; severity: string }): Promise<void> {
+  private async triggerSuspiciousActivityAlert(
+    alert: { type: string; userId: string; description: string; severity: string },
+  ): Promise<void> {
     console.warn('Suspicious activity alert:', alert);
-    
+
     // Implement suspicious activity response
     // This would integrate with security monitoring systems
   }
@@ -1210,10 +1248,12 @@ export class AestheticDataHandlingService {
 
   private async enforceDataRetentionPolicies(): Promise<void> {
     const now = new Date();
-    
+
     for (const [subjectId, dataSubject] of this.dataSubjects.entries()) {
       const creationDate = new Date(dataSubject.createdAt);
-      const daysSinceCreation = Math.floor((now.getTime() - creationDate.getTime()) / (1000 * 60 * 60 * 24));
+      const daysSinceCreation = Math.floor(
+        (now.getTime() - creationDate.getTime()) / (1000 * 60 * 60 * 24),
+      );
 
       // Check each data type against its retention policy
       for (const [dataType, policy] of this.retentionPolicies.entries()) {
@@ -1224,7 +1264,11 @@ export class AestheticDataHandlingService {
     }
   }
 
-  private async disposeData(subjectId: string, dataType: string, policy: DataRetentionPolicy): Promise<void> {
+  private async disposeData(
+    subjectId: string,
+    dataType: string,
+    policy: DataRetentionPolicy,
+  ): Promise<void> {
     const dataSubject = this.dataSubjects.get(subjectId);
     if (!dataSubject) {
       return;
@@ -1259,7 +1303,7 @@ export class AestheticDataHandlingService {
       encryptionApplied: false,
       maskingApplied: false,
       riskLevel: 'low',
-      additionalInfo: { disposalMethod: policy.disposalMethod }
+      additionalInfo: { disposalMethod: policy.disposalMethod },
     });
   }
 
@@ -1307,7 +1351,7 @@ export class AestheticDataHandlingService {
         anonymizedData.anonymizedAt = new Date().toISOString();
         dataSubject.personalData = anonymizedData;
         break;
-      // Add more anonymization logic for other data types
+        // Add more anonymization logic for other data types
     }
 
     dataSubject.updatedAt = new Date().toISOString();
@@ -1324,10 +1368,21 @@ export class AestheticDataHandlingService {
   private async validateDataProcessingCompliance(
     data: Record<string, any>,
     operation: string,
-    context: { userId: string; userRole: string; purpose: string; legalBasis: string; consentId?: string }
+    context: {
+      userId: string;
+      userRole: string;
+      purpose: string;
+      legalBasis: string;
+      consentId?: string;
+    },
   ): Promise<boolean> {
     // Validate legal basis
-    const validLegalBases = ['consent', 'legitimate_interest', 'vital_interest', 'legal_obligation'];
+    const validLegalBases = [
+      'consent',
+      'legitimate_interest',
+      'vital_interest',
+      'legal_obligation',
+    ];
     if (!validLegalBases.includes(context.legalBasis)) {
       return false;
     }
@@ -1354,7 +1409,7 @@ export class AestheticDataHandlingService {
     // Check if only necessary data is being processed for the purpose
     const requiredFields = this.getRequiredFieldsForPurpose(purpose);
     const dataFields = Object.keys(data);
-    
+
     return dataFields.every(field => requiredFields.includes(field));
   }
 
@@ -1370,7 +1425,7 @@ export class AestheticDataHandlingService {
       appointment_scheduling: ['fullName', 'email', 'phone'],
       compliance: ['id', 'createdAt', 'consents'],
       marketing: ['email', 'phone'],
-      safety: ['medicalHistory', 'allergies', 'medications']
+      safety: ['medicalHistory', 'allergies', 'medications'],
     };
 
     return purposeFields[purpose] || [];
@@ -1399,7 +1454,7 @@ export class AestheticDataHandlingService {
 
   private calculateAccessExpiry(action: string): string {
     const expiry = new Date();
-    
+
     switch (action) {
       case 'read':
         expiry.setHours(expiry.getHours() + 1);
@@ -1438,10 +1493,14 @@ export class AestheticDataHandlingService {
         filteredLogs = filteredLogs.filter(log => log.action === filters.action);
       }
       if (filters.startDate) {
-        filteredLogs = filteredLogs.filter(log => new Date(log.timestamp) >= new Date(filters.startDate));
+        filteredLogs = filteredLogs.filter(log =>
+          new Date(log.timestamp) >= new Date(filters.startDate)
+        );
       }
       if (filters.endDate) {
-        filteredLogs = filteredLogs.filter(log => new Date(log.timestamp) <= new Date(filters.endDate));
+        filteredLogs = filteredLogs.filter(log =>
+          new Date(log.timestamp) <= new Date(filters.endDate)
+        );
       }
     }
 
@@ -1453,7 +1512,10 @@ export class AestheticDataHandlingService {
     return dataSubject ? dataSubject.dataRights : null;
   }
 
-  async exportDataSubjectData(subjectId: string, requestingUser: { id: string; role: string }): Promise<any> {
+  async exportDataSubjectData(
+    subjectId: string,
+    requestingUser: { id: string; role: string },
+  ): Promise<any> {
     const dataSubject = await this.getDataSubject(subjectId, requestingUser);
     if (!dataSubject) {
       throw new Error('Data subject not found');
@@ -1464,7 +1526,7 @@ export class AestheticDataHandlingService {
       healthData: dataSubject.healthData,
       financialData: dataSubject.financialData,
       biometricData: dataSubject.biometricData,
-      contactData: dataSubject.contactData
+      contactData: dataSubject.contactData,
     }, requestingUser);
   }
 
@@ -1477,7 +1539,7 @@ export class AestheticDataHandlingService {
     return {
       period: {
         start: last30Days.toISOString(),
-        end: now.toISOString()
+        end: now.toISOString(),
       },
       dataSubjectsCount: this.dataSubjects.size,
       totalAccessRequests: recentLogs.length,
@@ -1485,12 +1547,13 @@ export class AestheticDataHandlingService {
       accessByRole: this.groupByRole(recentLogs),
       accessByRiskLevel: this.groupByRiskLevel(recentLogs),
       consentGranted: this.dataSubjects.size,
-      consentWithdrawn: Array.from(this.dataSubjects.values()).reduce((sum, subject) => 
-        sum + subject.consents.filter(c => c.withdrawnAt).length, 0
+      consentWithdrawn: Array.from(this.dataSubjects.values()).reduce(
+        (sum, subject) => sum + subject.consents.filter(c => c.withdrawnAt).length,
+        0,
       ),
       dataRetentionPolicies: Array.from(this.retentionPolicies.values()),
       sensitiveFields: Array.from(this.sensitiveFields.values()),
-      complianceScore: this.calculateComplianceScore(recentLogs)
+      complianceScore: this.calculateComplianceScore(recentLogs),
     };
   }
 
@@ -1520,9 +1583,8 @@ export class AestheticDataHandlingService {
       return 100;
     }
 
-    const compliantActions = logs.filter(log => 
-      log.consentVerified && log.encryptionApplied
-    ).length;
+    const compliantActions =
+      logs.filter(log => log.consentVerified && log.encryptionApplied).length;
 
     return Math.round((compliantActions / logs.length) * 100);
   }
@@ -1530,9 +1592,9 @@ export class AestheticDataHandlingService {
   // Health Check
   async healthCheck(): Promise<boolean> {
     try {
-      return this.sensitiveFields.size > 0 && 
-             this.retentionPolicies.size > 0 && 
-             this.encryptionKeys.size > 0;
+      return this.sensitiveFields.size > 0
+        && this.retentionPolicies.size > 0
+        && this.encryptionKeys.size > 0;
     } catch {
       return false;
     }

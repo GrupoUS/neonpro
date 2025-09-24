@@ -1,8 +1,8 @@
 /**
  * Hook for managing procedure selection in MultiSessionScheduler
  */
-import { useState } from 'react';
 import { type AestheticProcedure } from '@/types/aesthetic-scheduling';
+import { useState } from 'react';
 
 interface UseProcedureSelectionReturn {
   selectedProcedures: string[];
@@ -29,12 +29,18 @@ export function useProcedureSelection(): UseProcedureSelectionReturn {
 
   const getTotalEstimatedDuration = (procedures: AestheticProcedure[]) => {
     const selectedProceduresData = getSelectedProceduresData(procedures);
-    return selectedProceduresData.reduce((total: number, proc: AestheticProcedure) => total + proc.baseDuration, 0);
+    return selectedProceduresData.reduce(
+      (total: number, proc: AestheticProcedure) => total + proc.baseDuration,
+      0,
+    );
   };
 
   const getTotalEstimatedCost = (procedures: AestheticProcedure[]) => {
     const selectedProceduresData = getSelectedProceduresData(procedures);
-    return selectedProceduresData.reduce((total: number, proc: AestheticProcedure) => total + proc.basePrice, 0);
+    return selectedProceduresData.reduce(
+      (total: number, proc: AestheticProcedure) => total + proc.basePrice,
+      0,
+    );
   };
 
   return {

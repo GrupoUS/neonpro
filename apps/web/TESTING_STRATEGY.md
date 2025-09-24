@@ -101,14 +101,14 @@ src/
 ```typescript
 describe('ComponentName', () => {
   it('should render with required props', () => {
-    render(<ComponentName prop="value" />);
+    render(<ComponentName prop='value' />);
     expect(screen.getByText('value')).toBeInTheDocument();
   });
 
   it('should handle user interactions', async () => {
     const user = userEvent.setup();
     render(<ComponentName />);
-    
+
     await user.click(screen.getByRole('button'));
     expect(screen.getByText('Expected Result')).toBeInTheDocument();
   });
@@ -121,10 +121,10 @@ describe('ComponentName', () => {
 describe('Feature Integration', () => {
   it('should complete user flow', async () => {
     render(<FeatureComponent />);
-    
+
     await userEvent.type(screen.getByLabelText('Email'), 'test@example.com');
     await userEvent.click(screen.getByRole('button', { name: 'Submit' }));
-    
+
     await waitFor(() => {
       expect(screen.getByText('Success')).toBeInTheDocument();
     });
@@ -140,10 +140,10 @@ test.describe('User Journey', () => {
     await page.goto('/');
     await page.fill('[data-testid="email"]', 'test@example.com');
     await page.click('[data-testid="login-button"]');
-    
+
     await expect(page).toHaveURL('/dashboard');
     await page.click('[data-testid="new-appointment"]');
-    
+
     // Complete appointment flow
   });
 });
@@ -263,7 +263,7 @@ export const renderWithProviders = (ui: ReactElement) => {
   return render(
     <QueryClientProvider client={queryClient}>
       {ui}
-    </QueryClientProvider>
+    </QueryClientProvider>,
   );
 };
 ```

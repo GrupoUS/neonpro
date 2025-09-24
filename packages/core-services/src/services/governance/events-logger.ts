@@ -1,7 +1,7 @@
 // Event logger utility for governance services observability
 // Console JSON logging for development; replace with structured logging in production
 
-import { logHealthcareError, governanceLogger } from "@neonpro/shared";
+import { governanceLogger, logHealthcareError } from '@neonpro/shared';
 
 export interface GovernanceEvent {
   timestamp: Date;
@@ -9,11 +9,11 @@ export interface GovernanceEvent {
   action: string;
   resourceId?: string;
   metadata?: Record<string, any>;
-  severity?: "info" | "warn" | "error";
+  severity?: 'info' | 'warn' | 'error';
 }
 
 export interface EventLogger {
-  log(event: Omit<GovernanceEvent, "timestamp">): void;
+  log(event: Omit<GovernanceEvent, 'timestamp'>): void;
   logKPIEvaluated(
     kpiId: string,
     value?: number,
@@ -41,18 +41,18 @@ export interface EventLogger {
 }
 
 export class ConsoleEventLogger implements EventLogger {
-  log(event: Omit<GovernanceEvent, "timestamp">): void {
+  log(event: Omit<GovernanceEvent, 'timestamp'>): void {
     const fullEvent: GovernanceEvent = {
       ...event,
       timestamp: new Date(),
     };
     // Log governance event with structured logging
-    governanceLogger.info("governance_event", {
+    governanceLogger.info('governance_event', {
       event: fullEvent,
       service: fullEvent.service,
       action: fullEvent.action,
-      severity: fullEvent.severity || "info",
-      timestamp: fullEvent.timestamp
+      severity: fullEvent.severity || 'info',
+      timestamp: fullEvent.timestamp,
     });
   }
 
@@ -63,11 +63,11 @@ export class ConsoleEventLogger implements EventLogger {
     metadata?: Record<string, any>,
   ): void {
     this.log({
-      _service: "KPIService",
-      action: "kpi.evaluated",
+      _service: 'KPIService',
+      action: 'kpi.evaluated',
       resourceId: kpiId,
       metadata: { value, status, ...metadata },
-      severity: status === "breach" ? "warn" : "info",
+      severity: status === 'breach' ? 'warn' : 'info',
     });
   }
 
@@ -78,11 +78,11 @@ export class ConsoleEventLogger implements EventLogger {
     reason: string,
   ): void {
     this.log({
-      _service: "EscalationService",
-      action: "escalation.triggered",
+      _service: 'EscalationService',
+      action: 'escalation.triggered',
       resourceId: escalationId,
       metadata: { pathId, kpiId, reason },
-      severity: "warn",
+      severity: 'warn',
     });
   }
 
@@ -93,11 +93,11 @@ export class ConsoleEventLogger implements EventLogger {
     factors: Record<string, number>,
   ): void {
     this.log({
-      _service: "PrioritizationService",
-      action: "priority.scored",
+      _service: 'PrioritizationService',
+      action: 'priority.scored',
       resourceId: featureId,
       metadata: { score, priority, factors },
-      severity: "info",
+      severity: 'info',
     });
   }
 
@@ -108,11 +108,11 @@ export class ConsoleEventLogger implements EventLogger {
     total: number,
   ): void {
     this.log({
-      _service: "PolicyService",
-      action: "policy.evaluated",
+      _service: 'PolicyService',
+      action: 'policy.evaluated',
       resourceId: policyId,
       metadata: { status, passed, total },
-      severity: status === "fail" ? "warn" : "info",
+      severity: status === 'fail' ? 'warn' : 'info',
     });
   }
 }

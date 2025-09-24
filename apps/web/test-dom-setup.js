@@ -16,37 +16,37 @@ global.window = dom.window;
 Object.defineProperty(global, 'navigator', {
   value: dom.window.navigator,
   writable: false,
-  configurable: true
+  configurable: true,
 });
 
 Object.defineProperty(global, 'localStorage', {
   value: dom.window.localStorage,
   writable: false,
-  configurable: true
+  configurable: true,
 });
 
 Object.defineProperty(global, 'sessionStorage', {
   value: dom.window.sessionStorage,
   writable: false,
-  configurable: true
+  configurable: true,
 });
 
 Object.defineProperty(global, 'location', {
   value: dom.window.location,
   writable: false,
-  configurable: true
+  configurable: true,
 });
 
 Object.defineProperty(global, 'history', {
   value: dom.window.history,
   writable: false,
-  configurable: true
+  configurable: true,
 });
 
 Object.defineProperty(global, 'URL', {
   value: dom.window.URL,
   writable: false,
-  configurable: true
+  configurable: true,
 });
 
 console.log('✅ DOM setup successful');
@@ -68,19 +68,18 @@ console.log('Test div content:', document.querySelector('[data-testid="test-div"
 try {
   // Create a simple screen object similar to testing-library
   const screen = {
-    getByTestId: (testId) => {
+    getByTestId: testId => {
       const element = document.querySelector(`[data-testid="${testId}"]`);
       if (!element) {
         throw new Error(`Unable to find an element with the testid: ${testId}`);
       }
       return element;
-    }
+    },
   };
-  
+
   const foundElement = screen.getByTestId('test-div');
   console.log('✅ Testing-library style queries successful');
   console.log('Found element:', foundElement.textContent);
-  
 } catch (error) {
   console.error('❌ Testing-library style queries failed:', error.message);
 }

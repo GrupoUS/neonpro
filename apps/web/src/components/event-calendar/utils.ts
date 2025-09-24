@@ -3,7 +3,7 @@
  * Utility functions for calendar operations in healthcare settings
  */
 
-import { format, addDays, subDays, isSameDay, isWithinInterval, parseISO } from 'date-fns';
+import { addDays, format, isSameDay, isWithinInterval, parseISO, subDays } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
 export interface CalendarEvent {
@@ -56,25 +56,25 @@ export function generateTimeSlots(
   const slots: TimeSlot[] = [];
   const startTime = new Date(date);
   startTime.setHours(startHour, 0, 0, 0);
-  
+
   const endTime = new Date(date);
   endTime.setHours(endHour, 0, 0, 0);
 
   const currentSlot = new Date(startTime);
-  
+
   while (currentSlot < endTime) {
     const slotEnd = new Date(currentSlot);
     slotEnd.setMinutes(currentSlot.getMinutes() + intervalMinutes);
-    
+
     slots.push({
       start: new Date(currentSlot),
       end: slotEnd,
       available: true,
     });
-    
+
     currentSlot.setTime(slotEnd.getTime());
   }
-  
+
   return slots;
 }
 
@@ -90,11 +90,11 @@ export function isTimeSlotAvailable(
     if (professionalId && event.professionalId !== professionalId) {
       return false;
     }
-    
+
     return (
-      isWithinInterval(slot.start, { start: event.start, end: event.end }) ||
-      isWithinInterval(slot.end, { start: event.start, end: event.end }) ||
-      isWithinInterval(event.start, { start: slot.start, end: slot.end })
+      isWithinInterval(slot.start, { start: event.start, end: event.end })
+      || isWithinInterval(slot.end, { start: event.start, end: event.end })
+      || isWithinInterval(event.start, { start: slot.start, end: slot.end })
     );
   });
 }
@@ -110,7 +110,7 @@ export function filterCalendarEvents(
   return events.filter(event => {
     // Date range filter based on view
     let inDateRange = false;
-    
+
     switch (view.type) {
       case 'day':
         inDateRange = isSameDay(event.start, view.date);
@@ -121,33 +121,33 @@ export function filterCalendarEvents(
         inDateRange = isWithinInterval(event.start, { start: weekStart, end: weekEnd });
         break;
       case 'month':
-        inDateRange = 
-          event.start.getMonth() === view.date.getMonth() &&
-          event.start.getFullYear() === view.date.getFullYear();
+        inDateRange = event.start.getMonth() === view.date.getMonth()
+          && event.start.getFullYear() === view.date.getFullYear();
         break;
     }
-    
+
     if (!inDateRange) return false;
-    
+
     // Type filter
     if (filters.type && !filters.type.includes(event.type)) return false;
-    
+
     // Status filter
     if (filters.status && !filters.status.includes(event.status)) return false;
-    
+
     // Professional filter
     if (filters.professionalId && event.professionalId !== filters.professionalId) return false;
-    
+
     // Patient filter
     if (filters.patientId && event.patientId !== filters.patientId) return false;
-    
+
     // Search query filter
     if (filters.searchQuery) {
       const query = filters.searchQuery.toLowerCase();
-      const searchText = `${event.title} ${event.patientName || ''} ${event.notes || ''}`.toLowerCase();
+      const searchText = `${event.title} ${event.patientName || ''} ${event.notes || ''}`
+        .toLowerCase();
       if (!searchText.includes(query)) return false;
     }
-    
+
     return true;
   });
 }
@@ -163,7 +163,7 @@ export function getEventColor(event: CalendarEvent): string {
     follow_up: '#8B5CF6', // purple
     blocker: '#EF4444', // red
   };
-  
+
   const statusModifiers = {
     scheduled: '',
     confirmed: '',
@@ -172,9 +172,9 @@ export function getEventColor(event: CalendarEvent): string {
     cancelled: 'line-through',
     no_show: 'bg-gray-300',
   };
-  
+
   const baseColor = typeColors[event.type] || '#6B7280';
-  
+
   // Return base color (CSS classes would handle modifiers in actual component)
   return baseColor;
 }
@@ -209,28 +209,30 @@ export function getEventDuration(event: CalendarEvent): number {
 export function findOverlappingEvents(events: CalendarEvent[]): CalendarEvent[][] {
   const sortedEvents = [...events].sort((a, b) => a.start.getTime() - b.start.getTime());
   const overlappingGroups: CalendarEvent[][] = [];
-  
+
   for (const event of sortedEvents) {
     let added = false;
-    
+
     // Check if this event overlaps with any existing group
     for (const group of overlappingGroups) {
-      if (group.some(groupEvent => 
-        isWithinInterval(event.start, { start: groupEvent.start, end: groupEvent.end }) ||
-        isWithinInterval(event.end, { start: groupEvent.start, end: groupEvent.end }) ||
-        isWithinInterval(groupEvent.start, { start: event.start, end: event.end })
-      )) {
+      if (
+        group.some(groupEvent =>
+          isWithinInterval(event.start, { start: groupEvent.start, end: groupEvent.end })
+          || isWithinInterval(event.end, { start: groupEvent.start, end: groupEvent.end })
+          || isWithinInterval(groupEvent.start, { start: event.start, end: event.end })
+        )
+      ) {
         group.push(event);
         added = true;
         break;
       }
     }
-    
+
     if (!added) {
       overlappingGroups.push([event]);
     }
   }
-  
+
   return overlappingGroups;
 }
 
@@ -244,7 +246,7 @@ export function getAvailableTimeSlots(
   intervalMinutes: number = 15,
 ): TimeSlot[] {
   const allSlots = generateTimeSlots(date, intervalMinutes);
-  
+
   return allSlots.map(slot => ({
     ...slot,
     professionalId,
@@ -261,28 +263,31 @@ export function validateEventTime(
   workingHours = { start: 8, end: 18 },
 ): { isValid: boolean; errors: string[] } {
   const errors: string[] = [];
-  
+
   if (start >= end) {
     errors.push('O horário de início deve ser anterior ao horário de término');
   }
-  
+
   if (start.getHours() < workingHours.start || start.getHours() >= workingHours.end) {
     errors.push('O horário de início está fora do horário de funcionamento');
   }
-  
-  if (end.getHours() > workingHours.end || (end.getHours() === workingHours.end && end.getMinutes() > 0)) {
+
+  if (
+    end.getHours() > workingHours.end
+    || (end.getHours() === workingHours.end && end.getMinutes() > 0)
+  ) {
     errors.push('O horário de término está fora do horário de funcionamento');
   }
-  
+
   const duration = (end.getTime() - start.getTime()) / (1000 * 60);
   if (duration < 15) {
     errors.push('O evento deve ter duração mínima de 15 minutos');
   }
-  
+
   if (duration > 240) {
     errors.push('O evento não pode ter duração superior a 4 horas');
   }
-  
+
   return {
     isValid: errors.length === 0,
     errors,
@@ -322,7 +327,7 @@ function eventsToCSV(events: CalendarEvent[]): string {
     'Paciente',
     'Profissional',
   ];
-  
+
   const rows = events.map(event => [
     event.id,
     event.title,
@@ -333,7 +338,7 @@ function eventsToCSV(events: CalendarEvent[]): string {
     event.patientName || '',
     event.professionalName || '',
   ]);
-  
+
   return [headers, ...rows]
     .map(row => row.map(cell => `"${cell}"`).join(','))
     .join('\n');
@@ -347,13 +352,13 @@ function eventsToICal(events: CalendarEvent[]): string {
 VERSION:2.0
 PRODID:-//NeonPro//Calendar//EN
 CALSCALE:GREGORIAN`;
-  
+
   const footer = `END:VCALENDAR`;
-  
+
   const eventStrings = events.map(event => {
-    const startDate = format(event.start, "yyyyMMdd'T'HHmmss");
-    const endDate = format(event.end, "yyyyMMdd'T'HHmmss");
-    
+    const startDate = format(event.start, 'yyyyMMdd\'T\'HHmmss');
+    const endDate = format(event.end, 'yyyyMMdd\'T\'HHmmss');
+
     return `BEGIN:VEVENT
 UID:${event.id}
 DTSTART:${startDate}
@@ -363,7 +368,7 @@ DESCRIPTION:${event.notes || ''}
 STATUS:${event.status}
 END:VEVENT`;
   });
-  
+
   return [header, ...eventStrings, footer].join('\n');
 }
 
@@ -374,13 +379,13 @@ export function parseDate(dateInput: string | Date): Date {
   if (dateInput instanceof Date) {
     return dateInput;
   }
-  
+
   // Try parsing as ISO string first
   const isoDate = parseISO(dateInput);
   if (!isNaN(isoDate.getTime())) {
     return isoDate;
   }
-  
+
   // Try parsing common Brazilian formats
   const formats = [
     'dd/MM/yyyy HH:mm',
@@ -388,7 +393,7 @@ export function parseDate(dateInput: string | Date): Date {
     'yyyy-MM-dd HH:mm',
     'yyyy-MM-dd',
   ];
-  
+
   for (const formatString of formats) {
     try {
       // Note: In a real implementation, you'd use a library that supports custom date parsing
@@ -401,6 +406,6 @@ export function parseDate(dateInput: string | Date): Date {
       // Continue to next format
     }
   }
-  
+
   throw new Error(`Unable to parse date: ${dateInput}`);
 }

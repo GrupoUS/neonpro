@@ -15,23 +15,23 @@
 // ============================================================================
 
 export type RealtimeEventType =
-  | "join"
-  | "leave"
-  | "status_change"
-  | "presence_sync";
+  | 'join'
+  | 'leave'
+  | 'status_change'
+  | 'presence_sync';
 
 export interface RealtimeParticipant {
   /** Unique participant ID */
   id: string;
 
   /** Participant role in healthcare context */
-  _role: "doctor" | "patient" | "nurse" | "admin";
+  _role: 'doctor' | 'patient' | 'nurse' | 'admin';
 
   /** Participant display name */
   name: string;
 
   /** Current connection status */
-  status: "connecting" | "connected" | "disconnected" | "reconnecting";
+  status: 'connecting' | 'connected' | 'disconnected' | 'reconnecting';
 
   /** Optional avatar URL */
   avatar?: string;
@@ -48,8 +48,8 @@ export interface RealtimeParticipant {
   metadata: {
     clinicId: string;
     sessionId: string;
-    deviceType: "desktop" | "mobile" | "tablet";
-    connectionQuality: "poor" | "fair" | "good" | "excellent";
+    deviceType: 'desktop' | 'mobile' | 'tablet';
+    connectionQuality: 'poor' | 'fair' | 'good' | 'excellent';
     joinedAt: string;
     lastActivity: string;
   };
@@ -74,7 +74,7 @@ export interface RealtimeEvent<T = any> {
   /** Event metadata */
   metadata: {
     /** Source of the event */
-    source: "local" | "remote";
+    source: 'local' | 'remote';
 
     /** Event ID for deduplication */
     eventId: string;
@@ -101,7 +101,7 @@ export interface RealtimeChannelState {
     lastActivity: string;
     totalParticipants: number;
     maxParticipants: number;
-    channelType: "consultation" | "conference" | "emergency" | "support";
+    channelType: 'consultation' | 'conference' | 'emergency' | 'support';
   };
 }
 
@@ -117,8 +117,8 @@ export interface RealtimeEventHandlers {
   onJoin?: RealtimeEventHandler<{ welcomeMessage?: string }>;
   onLeave?: RealtimeEventHandler<{ reason?: string; duration?: number }>;
   onStatusChange?: RealtimeEventHandler<{
-    previousStatus: RealtimeParticipant["status"];
-    newStatus: RealtimeParticipant["status"];
+    previousStatus: RealtimeParticipant['status'];
+    newStatus: RealtimeParticipant['status'];
   }>;
   onPresenceSync?: RealtimeEventHandler<{
     participants: RealtimeParticipant[];
@@ -129,7 +129,7 @@ export interface RealtimeEventHandlers {
 export interface RealtimeAdapterError {
   code: string;
   message: string;
-  severity: "low" | "medium" | "high" | "critical";
+  severity: 'low' | 'medium' | 'high' | 'critical';
   channelId?: string;
   participantId?: string;
   timestamp: string;
@@ -150,7 +150,7 @@ export interface RealtimeEventAdapter {
   /** Join a channel */
   joinChannel(
     channelId: string,
-    participant: Omit<RealtimeParticipant, "metadata">,
+    participant: Omit<RealtimeParticipant, 'metadata'>,
     initialState?: Record<string, any>,
   ): Promise<void>;
 
@@ -165,7 +165,7 @@ export interface RealtimeEventAdapter {
   updateParticipantStatus(
     channelId: string,
     participantId: string,
-    status: RealtimeParticipant["status"],
+    status: RealtimeParticipant['status'],
   ): Promise<void>;
 
   /** Get current channel state */
@@ -185,7 +185,7 @@ export interface RealtimeEventAdapter {
 
   /** Check adapter health */
   getHealth(): Promise<{
-    status: "healthy" | "degraded" | "unhealthy";
+    status: 'healthy' | 'degraded' | 'unhealthy';
     latency: number;
     activeChannels: number;
     totalParticipants: number;
@@ -199,7 +199,7 @@ export interface RealtimeEventAdapter {
 
 export interface RealtimeAdapterConfig {
   /** Provider type */
-  provider: "supabase" | "mock" | "websocket";
+  provider: 'supabase' | 'mock' | 'websocket';
 
   /** Connection settings */
   connection: {
@@ -245,11 +245,11 @@ export function createRealtimeEvent<T = any>(
     participant,
     data,
     metadata: {
-      source: "local",
+      source: 'local',
       eventId: `event-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       compliance: {
         lgpdLogged: false,
-        auditRequired: type === "join" || type === "leave",
+        auditRequired: type === 'join' || type === 'leave',
         sensitiveData: false,
       },
     },
@@ -258,19 +258,19 @@ export function createRealtimeEvent<T = any>(
 
 export function validateParticipant(participant: RealtimeParticipant): boolean {
   return !!(
-    participant.id &&
-    participant._role &&
-    participant.name &&
-    participant.status &&
-    participant.metadata?.clinicId &&
-    participant.metadata?.sessionId
+    participant.id
+    && participant._role
+    && participant.name
+    && participant.status
+    && participant.metadata?.clinicId
+    && participant.metadata?.sessionId
   );
 }
 
 export function isHealthcareCompliant(event: RealtimeEvent): boolean {
   return (
-    event.metadata.compliance.lgpdLogged &&
-    !event.metadata.compliance.sensitiveData
+    event.metadata.compliance.lgpdLogged
+    && !event.metadata.compliance.sensitiveData
   );
 }
 
@@ -282,15 +282,15 @@ export function createRealtimeAdapter(
   config: RealtimeAdapterConfig,
 ): RealtimeEventAdapter {
   switch (config.provider) {
-    case "supabase":
+    case 'supabase':
       // Will be implemented in supabase-adapter.ts
       throw new Error(
-        "SupabaseRealtimeAdapter not yet implemented - use mock adapter for testing",
+        'SupabaseRealtimeAdapter not yet implemented - use mock adapter for testing',
       );
-    case "mock":
+    case 'mock':
       // Will be implemented in mock-adapter.ts
       throw new Error(
-        "MockRealtimeAdapter not yet implemented - import from index.ts",
+        'MockRealtimeAdapter not yet implemented - import from index.ts',
       );
     default:
       throw new Error(`Unsupported provider: ${config.provider}`);

@@ -46,15 +46,15 @@ const SECURITY_CONFIG: SecurityConfig = {
     requireUppercase: true,
     requireNumbers: true,
     requireSpecialChars: true,
-    expirationDays: 90
-  }
+    expirationDays: 90,
+  },
 };
 
 export class EnhancedSessionManager {
   async authenticateWithMFA(credentials: Credentials): Promise<AuthResult> {
     // Primary authentication
     const primaryAuth = await this.authenticatePrimary(credentials);
-    
+
     if (!primaryAuth.success) {
       await this.trackFailedAttempt(credentials.identifier);
       return primaryAuth;
@@ -69,7 +69,7 @@ export class EnhancedSessionManager {
           success: false,
           requiresMFA: true,
           mfaMethods: await this.getAvailableMFAMethods(user.id),
-          sessionId: primaryAuth.sessionId
+          sessionId: primaryAuth.sessionId,
         };
       }
     }
@@ -77,7 +77,11 @@ export class EnhancedSessionManager {
     return primaryAuth;
   }
 
-  async verifyMFA(sessionId: string, mfaToken: string, method: 'sms' | 'email' | 'app'): Promise<AuthResult> {
+  async verifyMFA(
+    sessionId: string,
+    mfaToken: string,
+    method: 'sms' | 'email' | 'app',
+  ): Promise<AuthResult> {
     const session = await this.getSession(sessionId);
     if (!session || session.mfaVerified) {
       throw new SecurityError('Invalid session or MFA already verified');
@@ -117,8 +121,8 @@ const ROLES: Role[] = [
     name: 'admin',
     description: 'Full system access',
     permissions: [
-      { resource: '*', action: '*' }
-    ]
+      { resource: '*', action: '*' },
+    ],
   },
   {
     name: 'healthcare_professional',
@@ -130,9 +134,13 @@ const ROLES: Role[] = [
       { resource: 'treatments', action: 'read' },
       { resource: 'treatments', action: 'execute', conditions: ['certified_for_treatment'] },
       { resource: 'sessions', action: 'create', conditions: ['assigned_professional'] },
-      { resource: 'sessions', action: 'read', conditions: ['assigned_professional', 'owns_client_data'] },
-      { resource: 'compliance', action: 'read' }
-    ]
+      {
+        resource: 'sessions',
+        action: 'read',
+        conditions: ['assigned_professional', 'owns_client_data'],
+      },
+      { resource: 'compliance', action: 'read' },
+    ],
   },
   {
     name: 'receptionist',
@@ -142,8 +150,8 @@ const ROLES: Role[] = [
       { resource: 'clients', action: 'create' },
       { resource: 'appointments', action: 'create' },
       { resource: 'appointments', action: 'read' },
-      { resource: 'appointments', action: 'update', conditions: ['basic_info_only'] }
-    ]
+      { resource: 'appointments', action: 'update', conditions: ['basic_info_only'] },
+    ],
   },
   {
     name: 'compliance_officer',
@@ -152,26 +160,32 @@ const ROLES: Role[] = [
       { resource: '*', action: 'read' },
       { resource: 'compliance', action: '*' },
       { resource: 'audit', action: 'read' },
-      { resource: 'clients', action: 'update', conditions: ['compliance_related_only'] }
-    ]
-  }
+      { resource: 'clients', action: 'update', conditions: ['compliance_related_only'] },
+    ],
+  },
 ];
 
 export class PermissionManager {
-  async checkPermission(userId: string, resource: string, action: string, context?: any): Promise<boolean> {
+  async checkPermission(
+    userId: string,
+    resource: string,
+    action: string,
+    context?: any,
+  ): Promise<boolean> {
     const userRoles = await this.getUserRoles(userId);
     const userPermissions = await this.getRolePermissions(userRoles);
 
     for (const permission of userPermissions) {
-      if (this.matchesResource(permission.resource, resource) && 
-          this.matchesAction(permission.action, action)) {
-        
+      if (
+        this.matchesResource(permission.resource, resource)
+        && this.matchesAction(permission.action, action)
+      ) {
         // Check conditions
         if (permission.conditions) {
           const conditionsMet = await this.evaluateConditions(
-            permission.conditions, 
-            userId, 
-            context
+            permission.conditions,
+            userId,
+            context,
           );
           if (!conditionsMet) continue;
         }
@@ -183,7 +197,11 @@ export class PermissionManager {
     return false;
   }
 
-  private async evaluateConditions(conditions: string[], userId: string, context?: any): Promise<boolean> {
+  private async evaluateConditions(
+    conditions: string[],
+    userId: string,
+    context?: any,
+  ): Promise<boolean> {
     for (const condition of conditions) {
       const result = await this.evaluateCondition(condition, userId, context);
       if (!result) return false;
@@ -191,24 +209,28 @@ export class PermissionManager {
     return true;
   }
 
-  private async evaluateCondition(condition: string, userId: string, context?: any): Promise<boolean> {
+  private async evaluateCondition(
+    condition: string,
+    userId: string,
+    context?: any,
+  ): Promise<boolean> {
     switch (condition) {
       case 'owns_client_data':
         return context?.clientId && await this.ownsClientData(userId, context.clientId);
-      
+
       case 'assigned_professional':
         return context?.professionalId === userId;
-      
+
       case 'certified_for_treatment':
-        return context?.treatmentId && 
-               await this.isCertifiedForTreatment(userId, context.treatmentId);
-      
+        return context?.treatmentId
+          && await this.isCertifiedForTreatment(userId, context.treatmentId);
+
       case 'basic_info_only':
         return this.isBasicInfoUpdate(context?.updateFields);
-      
+
       case 'compliance_related_only':
         return this.isComplianceRelatedUpdate(context?.updateFields);
-      
+
       default:
         return false;
     }
@@ -236,34 +258,46 @@ const ENCRYPTION_CONFIG: EncryptionConfig = {
   keyRotationDays: 90,
   dataClassification: {
     sensitive: [
-      'cpf', 'rg', 'phone', 'email', 'address',
-      'medicalConditions', 'allergies', 'medications'
+      'cpf',
+      'rg',
+      'phone',
+      'email',
+      'address',
+      'medicalConditions',
+      'allergies',
+      'medications',
     ],
     highlySensitive: [
-      'healthData', 'treatmentHistory', 'photos',
-      'biometricData', 'geneticInformation'
-    ]
-  }
+      'healthData',
+      'treatmentHistory',
+      'photos',
+      'biometricData',
+      'geneticInformation',
+    ],
+  },
 };
 
 export class DataProtectionService {
   private encryptionKeys: Map<string, CryptoKey> = new Map();
   private keyManager: KeyManager;
 
-  async encryptData(data: any, classification: 'sensitive' | 'highly_sensitive'): Promise<EncryptedData> {
+  async encryptData(
+    data: any,
+    classification: 'sensitive' | 'highly_sensitive',
+  ): Promise<EncryptedData> {
     const key = await this.getCurrentEncryptionKey();
     const iv = crypto.getRandomValues(new Uint8Array(12));
-    
+
     const dataString = JSON.stringify(data);
     const dataBuffer = new TextEncoder().encode(dataString);
-    
+
     const encrypted = await crypto.subtle.encrypt(
       {
         name: 'AES-GCM',
-        iv: iv
+        iv: iv,
       },
       key,
-      dataBuffer
+      dataBuffer,
     );
 
     return {
@@ -272,7 +306,7 @@ export class DataProtectionService {
       keyId: await this.getCurrentKeyId(),
       algorithm: 'aes-256-gcm',
       classification,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   }
 
@@ -284,10 +318,10 @@ export class DataProtectionService {
     const decrypted = await crypto.subtle.decrypt(
       {
         name: 'AES-GCM',
-        iv: iv
+        iv: iv,
       },
       key,
-      data
+      data,
     );
 
     const decryptedString = new TextDecoder().decode(decrypted);
@@ -296,7 +330,7 @@ export class DataProtectionService {
 
   async maskData(data: any, fields: string[]): Promise<any> {
     const masked = { ...data };
-    
+
     for (const field of fields) {
       if (masked[field]) {
         masked[field] = this.maskValue(masked[field], field);
@@ -407,7 +441,7 @@ export class SQLSanitizer {
     /(\s|^)(EXEC|EXECUTE|SP_|XP_)/i,
     /(\s|^)(--|\/\*|\*\/|;)/i,
     /(\s|^)(WAITFOR|DELAY|SLEEP)/i,
-    /(\s|^)(CONVERT|CAST)\s*\(/i
+    /(\s|^)(CONVERT|CAST)\s*\(/i,
   ];
 
   static sanitize(input: string): string {
@@ -421,7 +455,7 @@ export class SQLSanitizer {
 
     // Escape special characters
     sanitized = sanitized
-      .replace(/'/g, "''")
+      .replace(/'/g, '\'\'')
       .replace(/\\/g, '\\\\')
       .replace(/"/g, '\\"');
 
@@ -485,7 +519,7 @@ export class XSSProtection {
     /expression\s*\(/gi,
     /url\s*\(\s*javascript:/gi,
     /-\s*moz-binding\s*:/gi,
-    /-\s*ms-binding\s*:/gi
+    /-\s*ms-binding\s*:/gi,
   ];
 
   static sanitize(input: string): string {
@@ -563,21 +597,21 @@ export class AuditService {
     const auditEvent: AuditEvent = {
       ...event,
       id: generateUUID(),
-      timestamp: new Date()
+      timestamp: new Date(),
     };
 
     // Determine if event is compliance relevant
     auditEvent.complianceRelevant = this.isComplianceRelevant(event);
-    
+
     // Calculate risk level
     auditEvent.riskLevel = this.calculateRiskLevel(event);
-    
+
     // Determine if review is required
     auditEvent.requiresReview = this.requiresReview(event);
 
     // Store in database
     await this.storeAuditEvent(auditEvent);
-    
+
     // Send to real-time monitoring if high risk
     if (auditEvent.riskLevel === 'high' || auditEvent.riskLevel === 'critical') {
       await this.alertSecurityTeam(auditEvent);
@@ -600,48 +634,50 @@ export class AuditService {
       'data_deletion',
       'professional_certification',
       'anvisa_validation',
-      'lgpd_request'
+      'lgpd_request',
     ];
 
-    return complianceEvents.includes(event.eventType) ||
-           event.resourceType.startsWith('compliance_') ||
-           event.action.includes('compliance');
+    return complianceEvents.includes(event.eventType)
+      || event.resourceType.startsWith('compliance_')
+      || event.action.includes('compliance');
   }
 
-  private calculateRiskLevel(event: Omit<AuditEvent, 'id' | 'timestamp'>): 'low' | 'medium' | 'high' | 'critical' {
+  private calculateRiskLevel(
+    event: Omit<AuditEvent, 'id' | 'timestamp'>,
+  ): 'low' | 'medium' | 'high' | 'critical' {
     let riskScore = 0;
 
     // Base risk by action type
     const actionRisk = {
-      'create': 1,
-      'read': 1,
-      'update': 2,
-      'delete': 3,
-      'execute': 2,
-      'export': 3,
-      'admin': 4
+      create: 1,
+      read: 1,
+      update: 2,
+      delete: 3,
+      execute: 2,
+      export: 3,
+      admin: 4,
     };
     riskScore += actionRisk[event.action] || 1;
 
     // Resource type risk
     const resourceRisk = {
-      'client_profile': 3,
-      'treatment_data': 3,
-      'medical_history': 4,
-      'consent_forms': 3,
-      'compliance_records': 2,
-      'user_management': 3,
-      'system_config': 4
+      client_profile: 3,
+      treatment_data: 3,
+      medical_history: 4,
+      consent_forms: 3,
+      compliance_records: 2,
+      user_management: 3,
+      system_config: 4,
     };
     riskScore += resourceRisk[event.resourceType] || 1;
 
     // User role risk
     const roleRisk = {
-      'admin': 1,
-      'healthcare_professional': 2,
-      'receptionist': 1,
-      'compliance_officer': 1,
-      'external': 4
+      admin: 1,
+      healthcare_professional: 2,
+      receptionist: 1,
+      compliance_officer: 1,
+      external: 4,
     };
     riskScore += roleRisk[event.userRole] || 2;
 
@@ -659,11 +695,11 @@ export class AuditService {
   }
 
   private requiresReview(event: Omit<AuditEvent, 'id' | 'timestamp'>): boolean {
-    return event.riskLevel === 'high' || 
-           event.riskLevel === 'critical' ||
-           event.complianceRelevant ||
-           event.action === 'delete' ||
-           event.action === 'export';
+    return event.riskLevel === 'high'
+      || event.riskLevel === 'critical'
+      || event.complianceRelevant
+      || event.action === 'delete'
+      || event.action === 'export';
   }
 
   async getAuditEvents(filters: AuditFilters): Promise<AuditEvent[]> {
@@ -675,7 +711,7 @@ export class AuditService {
     const events = await this.getAuditEvents({
       startDate,
       endDate,
-      complianceRelevant: true
+      complianceRelevant: true,
     });
 
     return {
@@ -685,7 +721,7 @@ export class AuditService {
       eventsByRisk: this.groupEventsByRisk(events),
       pendingReviews: events.filter(e => e.requiresReview && e.reviewStatus === 'pending'),
       complianceScore: this.calculateComplianceScore(events),
-      recommendations: this.generateRecommendations(events)
+      recommendations: this.generateRecommendations(events),
     };
   }
 }
@@ -729,7 +765,8 @@ export class SecurityMiddleware {
 
   private setSecurityHeaders(res: Response): void {
     const headers = {
-      'Content-Security-Policy': "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https:; frame-ancestors 'none';",
+      'Content-Security-Policy':
+        'default-src \'self\'; script-src \'self\' \'unsafe-inline\' \'unsafe-eval\'; style-src \'self\' \'unsafe-inline\'; img-src \'self\' data: https:; font-src \'self\' data:; connect-src \'self\' https:; frame-ancestors \'none\';',
       'X-Content-Type-Options': 'nosniff',
       'X-Frame-Options': 'DENY',
       'X-XSS-Protection': '1; mode=block',
@@ -737,8 +774,8 @@ export class SecurityMiddleware {
       'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
       'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
       'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
-      'Pragma': 'no-cache',
-      'Expires': '0'
+      Pragma: 'no-cache',
+      Expires: '0',
     };
 
     Object.entries(headers).forEach(([key, value]) => {
@@ -749,7 +786,7 @@ export class SecurityMiddleware {
   private async checkRateLimit(req: Request): Promise<void> {
     const clientId = this.getClientIdentifier(req);
     const key = `rate_limit:${clientId}`;
-    
+
     const current = await this.redis.incr(key);
     if (current === 1) {
       await this.redis.expire(key, 60); // 1 minute window
@@ -765,7 +802,7 @@ export class SecurityMiddleware {
     if (req.body) {
       // Sanitize input data
       req.body = SQLSanitizer.sanitizeObject(req.body);
-      
+
       // Validate against XSS
       if (typeof req.body === 'object') {
         this.validateObjectForXSS(req.body);
@@ -809,7 +846,7 @@ export class SecurityMiddleware {
       user.id,
       resource,
       action,
-      { path, method, body: req.body }
+      { path, method, body: req.body },
     );
 
     if (!hasPermission) {
@@ -827,7 +864,7 @@ export class SecurityMiddleware {
         user.id,
         path,
         req.method,
-        req.body
+        req.body,
       );
 
       if (!complianceCheck.valid) {
@@ -851,11 +888,11 @@ export class SecurityMiddleware {
         path: req.path,
         method: req.method,
         userAgent: req.headers['user-agent'],
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       },
       riskLevel: 'low',
       requiresReview: false,
-      reviewStatus: 'none'
+      reviewStatus: 'none',
     });
   }
 }
@@ -875,19 +912,19 @@ export class SecurityMonitoringService {
     failedAuthorizations: 0,
     complianceViolations: 0,
     potentialThreats: 0,
-    activeSessions: 0
+    activeSessions: 0,
   };
 
   async monitorSecurityEvents(): Promise<void> {
     // Subscribe to audit events
     this.auditService.subscribe(this.handleAuditEvent.bind(this));
-    
+
     // Monitor failed authentication attempts
     this.authService.onFailedAuth(this.handleFailedAuth.bind(this));
-    
+
     // Monitor rate limiting violations
     this.rateLimiter.onLimitExceeded(this.handleRateLimitExceeded.bind(this));
-    
+
     // Monitor compliance violations
     this.complianceService.onViolation(this.handleComplianceViolation.bind(this));
   }
@@ -901,7 +938,7 @@ export class SecurityMonitoringService {
         title: 'Atividade Suspeita Detectada',
         description: `Atividade suspeita detectada: ${event.eventType}`,
         eventData: event,
-        requiresImmediateAction: event.riskLevel === 'critical'
+        requiresImmediateAction: event.riskLevel === 'critical',
       });
     }
 
@@ -911,15 +948,16 @@ export class SecurityMonitoringService {
 
   private async handleFailedAuth(event: FailedAuthEvent): Promise<void> {
     const userFailedAttempts = await this.getFailedAttempts(event.userId);
-    
+
     if (userFailedAttempts >= 5) {
       await this.createSecurityAlert({
         type: 'brute_force',
         severity: 'high',
         title: 'Tentativa de Brute Force Detectada',
-        description: `Múltiplas tentativas de autenticação falharam para o usuário: ${event.userId}`,
+        description:
+          `Múltiplas tentativas de autenticação falharam para o usuário: ${event.userId}`,
         eventData: event,
-        requiresImmediateAction: true
+        requiresImmediateAction: true,
       });
 
       // Lock account
@@ -934,7 +972,7 @@ export class SecurityMonitoringService {
       title: 'Violação de Conformidade',
       description: `Violação de conformidade detectada: ${violation.type}`,
       eventData: violation,
-      requiresImmediateAction: true
+      requiresImmediateAction: true,
     });
   }
 
@@ -942,7 +980,7 @@ export class SecurityMonitoringService {
     const securityAlert: SecurityAlert = {
       ...alert,
       id: generateUUID(),
-      timestamp: new Date()
+      timestamp: new Date(),
     };
 
     this.alerts.set(securityAlert.id, securityAlert);
@@ -967,7 +1005,7 @@ export class SecurityMonitoringService {
       eventData: securityAlert,
       riskLevel: alert.severity,
       requiresReview: true,
-      reviewStatus: 'pending'
+      reviewStatus: 'pending',
     });
   }
 
@@ -980,7 +1018,7 @@ export class SecurityMonitoringService {
       alerts: activeAlerts,
       recentEvents: await this.getRecentSecurityEvents(),
       complianceStatus: await this.getComplianceStatus(),
-      recommendations: await this.generateSecurityRecommendations()
+      recommendations: await this.generateSecurityRecommendations(),
     };
   }
 
@@ -988,7 +1026,7 @@ export class SecurityMonitoringService {
     const events = await this.auditService.getAuditEvents({
       startDate: timeRange.start,
       endDate: timeRange.end,
-      types: ['security_alert', 'failed_authentication', 'compliance_violation']
+      types: ['security_alert', 'failed_authentication', 'compliance_violation'],
     });
 
     return {
@@ -999,7 +1037,7 @@ export class SecurityMonitoringService {
       resolvedAlerts: events.filter(e => e.reviewStatus === 'approved').length,
       pendingAlerts: events.filter(e => e.reviewStatus === 'pending').length,
       securityScore: this.calculateSecurityScore(events),
-      recommendations: this.generateSecurityRecommendations(events)
+      recommendations: this.generateSecurityRecommendations(events),
     };
   }
 }

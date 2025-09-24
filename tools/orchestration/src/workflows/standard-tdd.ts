@@ -1,16 +1,16 @@
 import type {
+  AgentCoordinationPattern,
+  AgentResult,
   OrchestrationContext,
   TDDPhase,
-  AgentResult,
-  AgentCoordinationPattern,
-} from "../types";
+} from '../types';
 
 /**
  * Standard TDD Workflow implementation
  */
 export class StandardTDDWorkflow {
-  name = "standard-tdd";
-  description = "Standard Test-Driven Development workflow";
+  name = 'standard-tdd';
+  description = 'Standard Test-Driven Development workflow';
 
   async executeAgent(
     agent: string,

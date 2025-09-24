@@ -1,4 +1,4 @@
-declare module "@neonpro/tools-shared" {
+declare module '@neonpro/tools-shared' {
   // Export all the utilities from tools-shared
   export const FRONTEND_TESTING_VERSION: string;
   export const FRONTEND_TESTING_PACKAGE: string;
@@ -17,9 +17,9 @@ declare module "@neonpro/tools-shared" {
 
   // Logger utilities
   export interface LoggerConfig {
-    level?: "debug" | "info" | "warn" | "error";
-    format?: "json" | "pretty";
-    output?: "console" | "file";
+    level?: 'debug' | 'info' | 'warn' | 'error';
+    format?: 'json' | 'pretty';
+    output?: 'console' | 'file';
   }
 
   export function createLogger(config?: LoggerConfig): any;

@@ -3,9 +3,9 @@
  * Real-time communication optimization and connection pooling
  */
 
-import { Server as WebSocketServer } from "ws";
-import { EventEmitter } from "events";
-import { AestheticClinicPerformanceOptimizer } from "./aesthetic-clinic-performance-optimizer";
+import { EventEmitter } from 'events';
+import { Server as WebSocketServer } from 'ws';
+import { AestheticClinicPerformanceOptimizer } from './aesthetic-clinic-performance-optimizer';
 // import { ErrorMapper } from "@neonpro/shared/errors";
 
 export interface WebSocketConnection {
@@ -72,12 +72,12 @@ export class WebSocketOptimizer extends EventEmitter {
 
   constructor(
     optimizer: AestheticClinicPerformanceOptimizer,
-    config: Partial<WebSocketConfig> = {}
+    config: Partial<WebSocketConfig> = {},
   ) {
     super();
-    
+
     this.optimizer = optimizer;
-    
+
     this.config = {
       maxConnections: 1000,
       maxMessageSize: 1024 * 1024, // 1MB
@@ -93,7 +93,7 @@ export class WebSocketOptimizer extends EventEmitter {
     };
 
     this.metrics = this.initializeMetrics();
-    
+
     this.startMaintenanceTasks();
   }
 
@@ -101,18 +101,18 @@ export class WebSocketOptimizer extends EventEmitter {
    * Initialize WebSocket server with optimization
    */
   initializeServer(server: any): WebSocketServer {
-    const wss = new WebSocketServer({ 
+    const wss = new WebSocketServer({
       server,
       maxPayload: this.config.maxMessageSize,
     });
 
-    wss.on("connection", (socket, request) => {
+    wss.on('connection', (socket, request) => {
       this.handleConnection(socket, request);
     });
 
-    wss.on("error", (error) => {
+    wss.on('error', error => {
       this.metrics.errors.connectionErrors++;
-      this.emit("error", error);
+      this.emit('error', error);
     });
 
     return wss;
@@ -142,7 +142,7 @@ export class WebSocketOptimizer extends EventEmitter {
 
     // Add to connections
     this.connections.set(connectionId, connection);
-    
+
     // Add to connection pool if enabled
     if (this.config.enableConnectionPooling) {
       this.addToConnectionPool(connection);
@@ -156,12 +156,12 @@ export class WebSocketOptimizer extends EventEmitter {
 
     // Send welcome message
     this.sendToConnection(connection, {
-      type: "connection_established",
+      type: 'connection_established',
       connectionId,
       timestamp: new Date().toISOString(),
     });
 
-    this.emit("connection", connection);
+    this.emit('connection', connection);
 
     console.log(`[WebSocket] Connection established: ${connectionId} for user ${userId}`);
   }
@@ -172,25 +172,25 @@ export class WebSocketOptimizer extends EventEmitter {
   private setupSocketHandlers(connection: WebSocketConnection): void {
     const { socket } = connection;
 
-    socket.on("message", async (data: any) => {
+    socket.on('message', async (data: any) => {
       try {
         await this.handleMessage(connection, data);
       } catch {
         this.metrics.errors.messageErrors++;
-        this.emit("messageError", { connection, error });
+        this.emit('messageError', { connection, error });
       }
     });
 
-    socket.on("close", () => {
+    socket.on('close', () => {
       this.handleDisconnection(connection);
     });
 
-    socket.on("error", (error: Error) => {
+    socket.on('error', (error: Error) => {
       this.metrics.errors.messageErrors++;
-      this.emit("connectionError", { connection, error });
+      this.emit('connectionError', { connection, error });
     });
 
-    socket.on("pong", () => {
+    socket.on('pong', () => {
       connection.lastActivity = new Date();
     });
   }
@@ -200,68 +200,67 @@ export class WebSocketOptimizer extends EventEmitter {
    */
   private async handleMessage(connection: WebSocketConnection, data: any): Promise<void> {
     const startTime = performance.now();
-    
+
     connection.lastActivity = new Date();
     connection.messageCount++;
-    connection.bytesReceived += Buffer.byteLength(data, "utf8");
+    connection.bytesReceived += Buffer.byteLength(data, 'utf8');
 
     try {
       const message = JSON.parse(data.toString());
-      
+
       // Validate message
       if (!this.validateMessage(message)) {
-        throw new Error("Invalid message format");
+        throw new Error('Invalid message format');
       }
 
       // Process message based on type
       switch (message.type) {
-        case "subscribe":
+        case 'subscribe':
           await this.handleSubscription(connection, message);
           break;
-          
-        case "unsubscribe":
+
+        case 'unsubscribe':
           await this.handleUnsubscription(connection, message);
           break;
-          
-        case "client_update":
+
+        case 'client_update':
           await this.handleClientUpdate(connection, message);
           break;
-          
-        case "treatment_update":
+
+        case 'treatment_update':
           await this.handleTreatmentUpdate(connection, message);
           break;
-          
-        case "photo_update":
+
+        case 'photo_update':
           await this.handlePhotoUpdate(connection, message);
           break;
-          
-        case "analytics_request":
+
+        case 'analytics_request':
           await this.handleAnalyticsRequest(connection, message);
           break;
-          
-        case "ping":
+
+        case 'ping':
           this.sendToConnection(connection, {
-            type: "pong",
+            type: 'pong',
             timestamp: new Date().toISOString(),
           });
           break;
-          
+
         default:
           console.warn(`[WebSocket] Unknown message type: ${message.type}`);
       }
 
       const duration = performance.now() - startTime;
       this.updateLatencyMetrics(duration);
-      
     } catch {
       this.metrics.errors.messageErrors++;
-      
+
       this.sendToConnection(connection, {
-        type: "error",
-        message: "Invalid message format",
+        type: 'error',
+        message: 'Invalid message format',
         timestamp: new Date().toISOString(),
       });
-      
+
       throw error;
     }
   }
@@ -271,20 +270,20 @@ export class WebSocketOptimizer extends EventEmitter {
    */
   private async handleSubscription(connection: WebSocketConnection, message: any): Promise<void> {
     const { channels } = message;
-    
+
     if (!Array.isArray(channels)) {
-      throw new Error("Channels must be an array");
+      throw new Error('Channels must be an array');
     }
 
     for (const channel of channels) {
       if (this.validateChannel(channel, connection)) {
         connection.subscriptions.add(channel);
-        this.emit("subscribe", { connection, channel });
+        this.emit('subscribe', { connection, channel });
       }
     }
 
     this.sendToConnection(connection, {
-      type: "subscription_confirmed",
+      type: 'subscription_confirmed',
       channels,
       timestamp: new Date().toISOString(),
     });
@@ -295,18 +294,18 @@ export class WebSocketOptimizer extends EventEmitter {
    */
   private handleUnsubscription(connection: WebSocketConnection, message: any): void {
     const { channels } = message;
-    
+
     if (!Array.isArray(channels)) {
-      throw new Error("Channels must be an array");
+      throw new Error('Channels must be an array');
     }
 
     for (const channel of channels) {
       connection.subscriptions.delete(channel);
-      this.emit("unsubscribe", { connection, channel });
+      this.emit('unsubscribe', { connection, channel });
     }
 
     this.sendToConnection(connection, {
-      type: "unsubscription_confirmed",
+      type: 'unsubscription_confirmed',
       channels,
       timestamp: new Date().toISOString(),
     });
@@ -317,14 +316,14 @@ export class WebSocketOptimizer extends EventEmitter {
    */
   private async handleClientUpdate(connection: WebSocketConnection, message: any): Promise<void> {
     const { clientId } = message;
-    
+
     if (!clientId || !connection.clientId) {
-      throw new Error("Invalid client ID");
+      throw new Error('Invalid client ID');
     }
 
     // Check permission
     if (connection.clientId !== clientId) {
-      throw new Error("Permission denied");
+      throw new Error('Permission denied');
     }
 
     // Get optimized client data
@@ -334,7 +333,7 @@ export class WebSocketOptimizer extends EventEmitter {
     });
 
     this.sendToConnection(connection, {
-      type: "client_data",
+      type: 'client_data',
       data: clientData,
       timestamp: new Date().toISOString(),
     });
@@ -343,16 +342,19 @@ export class WebSocketOptimizer extends EventEmitter {
   /**
    * Handle treatment update request
    */
-  private async handleTreatmentUpdate(connection: WebSocketConnection, message: any): Promise<void> {
+  private async handleTreatmentUpdate(
+    connection: WebSocketConnection,
+    message: any,
+  ): Promise<void> {
     const { treatmentId, clientId } = message;
-    
+
     if (!treatmentId || !clientId) {
-      throw new Error("Invalid treatment ID or client ID");
+      throw new Error('Invalid treatment ID or client ID');
     }
 
     // Check permission
     if (connection.clientId !== clientId) {
-      throw new Error("Permission denied");
+      throw new Error('Permission denied');
     }
 
     // Get updated treatment data
@@ -361,7 +363,7 @@ export class WebSocketOptimizer extends EventEmitter {
     });
 
     this.sendToConnection(connection, {
-      type: "treatment_data",
+      type: 'treatment_data',
       data: treatmentData,
       timestamp: new Date().toISOString(),
     });
@@ -372,14 +374,14 @@ export class WebSocketOptimizer extends EventEmitter {
    */
   private async handlePhotoUpdate(connection: WebSocketConnection, message: any): Promise<void> {
     const { clientId, treatmentType } = message;
-    
+
     if (!clientId) {
-      throw new Error("Invalid client ID");
+      throw new Error('Invalid client ID');
     }
 
     // Check permission
     if (connection.clientId !== clientId) {
-      throw new Error("Permission denied");
+      throw new Error('Permission denied');
     }
 
     // Get optimized photo data
@@ -389,7 +391,7 @@ export class WebSocketOptimizer extends EventEmitter {
     });
 
     this.sendToConnection(connection, {
-      type: "photo_data",
+      type: 'photo_data',
       data: photos,
       timestamp: new Date().toISOString(),
     });
@@ -398,9 +400,12 @@ export class WebSocketOptimizer extends EventEmitter {
   /**
    * Handle analytics request
    */
-  private async handleAnalyticsRequest(connection: WebSocketConnection, message: any): Promise<void> {
+  private async handleAnalyticsRequest(
+    connection: WebSocketConnection,
+    message: any,
+  ): Promise<void> {
     const { dateRange } = message;
-    
+
     // Get analytics data
     const analytics = await this.optimizer.getOptimizedClinicAnalytics({
       dateRange,
@@ -408,7 +413,7 @@ export class WebSocketOptimizer extends EventEmitter {
     });
 
     this.sendToConnection(connection, {
-      type: "analytics_data",
+      type: 'analytics_data',
       data: analytics,
       timestamp: new Date().toISOString(),
     });
@@ -419,7 +424,7 @@ export class WebSocketOptimizer extends EventEmitter {
    */
   private handleDisconnection(connection: WebSocketConnection): void {
     const duration = Date.now() - connection.connectedAt.getTime();
-    
+
     connection.isActive = false;
     this.connections.delete(connection.id);
     this.metrics.activeConnections--;
@@ -434,7 +439,7 @@ export class WebSocketOptimizer extends EventEmitter {
     // Update connection duration metrics
     this.updateConnectionDurationMetrics(duration);
 
-    this.emit("disconnection", connection);
+    this.emit('disconnection', connection);
 
     console.log(`[WebSocket] Connection closed: ${connection.id}`);
   }
@@ -449,15 +454,15 @@ export class WebSocketOptimizer extends EventEmitter {
 
     try {
       const messageStr = JSON.stringify(message);
-      const messageSize = Buffer.byteLength(messageStr, "utf8");
+      const messageSize = Buffer.byteLength(messageStr, 'utf8');
 
       // Check message size
       if (messageSize > this.config.maxMessageSize) {
-        throw new Error("Message too large");
+        throw new Error('Message too large');
       }
 
       // Apply compression if enabled
-      const finalMessage = this.config.enableCompression 
+      const finalMessage = this.config.enableCompression
         ? this.compressMessage(messageStr)
         : messageStr;
 
@@ -481,10 +486,10 @@ export class WebSocketOptimizer extends EventEmitter {
    */
   broadcast(message: any, filter?: (connection: WebSocketConnection) => boolean): number {
     let sentCount = 0;
-    
+
     for (const connection of this.connections.values()) {
       if (!connection.isActive) continue;
-      
+
       if (!filter || filter(connection)) {
         if (this.sendToConnection(connection, message)) {
           sentCount++;
@@ -499,9 +504,7 @@ export class WebSocketOptimizer extends EventEmitter {
    * Send message to specific channel subscribers
    */
   sendToChannel(channel: string, message: any): number {
-    return this.broadcast(message, (connection) => 
-      connection.subscriptions.has(channel)
-    );
+    return this.broadcast(message, connection => connection.subscriptions.has(channel));
   }
 
   /**
@@ -511,7 +514,7 @@ export class WebSocketOptimizer extends EventEmitter {
     if (!this.config.enableMessageQueueing) return;
 
     const queue = this.messageQueue.get(connectionId) || [];
-    
+
     if (queue.length >= this.config.maxQueueSize) {
       // Remove oldest message
       queue.shift();
@@ -585,7 +588,7 @@ export class WebSocketOptimizer extends EventEmitter {
    */
   private sendHeartbeat(): void {
     const _now = Date.now();
-    
+
     for (const connection of this.connections.values()) {
       if (!connection.isActive) continue;
 
@@ -606,7 +609,7 @@ export class WebSocketOptimizer extends EventEmitter {
   private cleanupInactiveConnections(): void {
     const _now = Date.now();
     const timeout = this.config.connectionTimeout;
-    
+
     for (const connection of this.connections.values()) {
       if (!connection.isActive) continue;
 
@@ -625,20 +628,20 @@ export class WebSocketOptimizer extends EventEmitter {
 
   private extractUserId(request: any): string {
     // Extract user ID from request (implementation depends on auth system)
-    return request.user?.id || "anonymous";
+    return request.user?.id || 'anonymous';
   }
 
   private extractClientId(request: any): string | undefined {
     // Extract client ID from request
-    return request.query?.clientId || request.headers?.["x-client-id"];
+    return request.query?.clientId || request.headers?.['x-client-id'];
   }
 
   private validateMessage(message: any): boolean {
     return (
-      message &&
-      typeof message === "object" &&
-      message.type &&
-      typeof message.type === "string"
+      message
+      && typeof message === 'object'
+      && message.type
+      && typeof message.type === 'string'
     );
   }
 
@@ -647,8 +650,8 @@ export class WebSocketOptimizer extends EventEmitter {
     const allowedChannels = [
       `client_${connection.clientId}`,
       `user_${connection.userId}`,
-      "clinic_updates",
-      "system_notifications",
+      'clinic_updates',
+      'system_notifications',
     ];
 
     return allowedChannels.includes(channel);
@@ -701,15 +704,15 @@ export class WebSocketOptimizer extends EventEmitter {
 
   private updateConnectionDurationMetrics(duration: number): void {
     const { connectionDuration } = this.metrics;
-    
+
     if (connectionDuration.min === 0 || duration < connectionDuration.min) {
       connectionDuration.min = duration;
     }
-    
+
     if (duration > connectionDuration.max) {
       connectionDuration.max = duration;
     }
-    
+
     // Update rolling average
     connectionDuration.average = (connectionDuration.average + duration) / 2;
   }
@@ -718,7 +721,7 @@ export class WebSocketOptimizer extends EventEmitter {
     // Reset per-second metrics
     this.metrics.throughput.messagesPerSecond = 0;
     this.metrics.throughput.bytesPerSecond = 0;
-    
+
     // Calculate message rate
     const _now = Date.now();
     this.metrics.messageRate = this.metrics.totalMessages / (now / 1000);
@@ -741,13 +744,13 @@ export class WebSocketOptimizer extends EventEmitter {
     topChannels: Array<{ channel: string; subscribers: number }>;
   } {
     const activeConnections = Array.from(this.connections.values()).filter(c => c.isActive);
-    
+
     const channelCounts = new Map<string, number>();
     let totalSubscriptions = 0;
-    
+
     for (const connection of activeConnections) {
       totalSubscriptions += connection.subscriptions.size;
-      
+
       for (const channel of connection.subscriptions) {
         channelCounts.set(channel, (channelCounts.get(channel) || 0) + 1);
       }
@@ -761,8 +764,8 @@ export class WebSocketOptimizer extends EventEmitter {
     return {
       totalConnections: this.connections.size,
       activeConnections: activeConnections.length,
-      averageSubscriptions: activeConnections.length > 0 
-        ? totalSubscriptions / activeConnections.length 
+      averageSubscriptions: activeConnections.length > 0
+        ? totalSubscriptions / activeConnections.length
         : 0,
       topChannels,
     };
@@ -775,7 +778,7 @@ export class WebSocketOptimizer extends EventEmitter {
     if (this.heartbeatInterval) {
       clearInterval(this.heartbeatInterval);
     }
-    
+
     if (this.cleanupInterval) {
       clearInterval(this.cleanupInterval);
     }

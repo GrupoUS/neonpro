@@ -29,20 +29,17 @@ This module provides comprehensive utilities for data anonymization and masking 
 ## Quick Start
 
 ```typescript
-import {
-  maskPatientData,
-  anonymizePersonalData,
-} from "@neonpro/security/anonymization";
+import { anonymizePersonalData, maskPatientData } from '@neonpro/security/anonymization';
 
 // Basic patient data masking
 const patient = {
-  name: "João Silva Santos",
-  cpf: "12345678901",
-  email: "joao@hospital.com",
-  phone: "11987654321",
+  name: 'João Silva Santos',
+  cpf: '12345678901',
+  email: 'joao@hospital.com',
+  phone: '11987654321',
 };
 
-const { data, metadata } = maskPatientData(patient, "enhanced");
+const { data, metadata } = maskPatientData(patient, 'enhanced');
 console.log(data.name); // "**** ***** ******"
 console.log(data.cpf); // "***.***.***.** "
 ```
@@ -52,30 +49,30 @@ console.log(data.cpf); // "***.***.***.** "
 ### Document Masking
 
 ```typescript
-import { maskCPF, maskCNPJ } from "@neonpro/security/anonymization";
+import { maskCNPJ, maskCPF } from '@neonpro/security/anonymization';
 
-maskCPF("123.456.789-01"); // "***.***.***.** "
-maskCNPJ("12.345.678/0001-95"); // "**.***.***/****-**"
+maskCPF('123.456.789-01'); // "***.***.***.** "
+maskCNPJ('12.345.678/0001-95'); // "**.***.***/****-**"
 ```
 
 ### Contact Information
 
 ```typescript
-import { maskEmail, maskPhone } from "@neonpro/security/anonymization";
+import { maskEmail, maskPhone } from '@neonpro/security/anonymization';
 
-maskEmail("joao@hospital.com"); // "j***@hospital.com"
-maskPhone("11987654321"); // "(11) 9****-****"
+maskEmail('joao@hospital.com'); // "j***@hospital.com"
+maskPhone('11987654321'); // "(11) 9****-****"
 ```
 
 ### Personal Information
 
 ```typescript
-import { maskName, maskAddress } from "@neonpro/security/anonymization";
+import { maskAddress, maskName } from '@neonpro/security/anonymization';
 
-maskName("João Silva Santos"); // "J*** S**** S******"
+maskName('João Silva Santos'); // "J*** S**** S******"
 maskAddress({
-  street: "Rua das Flores, 123",
-  city: "São Paulo",
+  street: 'Rua das Flores, 123',
+  city: 'São Paulo',
 }); // { street: '**********', city: 'São Paulo' }
 ```
 
@@ -84,7 +81,7 @@ maskAddress({
 ### Basic Compliance
 
 ```typescript
-const result = maskPatientData(patient, "basic");
+const result = maskPatientData(patient, 'basic');
 // - Masks direct identifiers (CPF, email, phone)
 // - Partially masks name (first letter visible)
 // - Preserves birth date and address for operational use
@@ -93,7 +90,7 @@ const result = maskPatientData(patient, "basic");
 ### Enhanced Compliance
 
 ```typescript
-const result = maskPatientData(patient, "enhanced");
+const result = maskPatientData(patient, 'enhanced');
 // - Fully masks names and addresses
 // - Converts birth date to year only
 // - Suitable for internal analytics
@@ -102,7 +99,7 @@ const result = maskPatientData(patient, "enhanced");
 ### Full Anonymization
 
 ```typescript
-const result = maskPatientData(patient, "full_anonymization");
+const result = maskPatientData(patient, 'full_anonymization');
 // - Replaces names with "ANONIMIZADO"
 // - Converts dates to age groups (e.g., "1970-1990")
 // - Removes all direct identifiers
@@ -112,9 +109,9 @@ const result = maskPatientData(patient, "full_anonymization");
 ## Privacy Compliance Reporting
 
 ```typescript
-import { generatePrivacyReport } from "@neonpro/security/anonymization";
+import { generatePrivacyReport } from '@neonpro/security/anonymization';
 
-const original = { name: "João Silva", cpf: "12345678901" };
+const original = { name: 'João Silva', cpf: '12345678901' };
 const anonymized = maskPatientData(original);
 
 const report = generatePrivacyReport(original, anonymized);
@@ -141,7 +138,7 @@ interface MaskingOptions {
 ### Default Configurations
 
 ```typescript
-import { DEFAULT_MASKING_OPTIONS } from "@neonpro/security/anonymization";
+import { DEFAULT_MASKING_OPTIONS } from '@neonpro/security/anonymization';
 
 // Pre-configured options for each compliance level
 DEFAULT_MASKING_OPTIONS.basic; // Conservative masking
@@ -178,12 +175,12 @@ DEFAULT_MASKING_OPTIONS.full_anonymization; // Complete anonymization
 ### Express.js Middleware
 
 ```typescript
-import express from "express";
-import { maskPatientData } from "@neonpro/security/anonymization";
+import { maskPatientData } from '@neonpro/security/anonymization';
+import express from 'express';
 
-app.use("/api/patients", (req, res, next) => {
-  if (req.user.role !== "admin") {
-    const { data } = maskPatientData(req.body, "basic");
+app.use('/api/patients', (req, res, next) => {
+  if (req.user.role !== 'admin') {
+    const { data } = maskPatientData(req.body, 'basic');
     req.body = data;
   }
   next();
@@ -193,11 +190,11 @@ app.use("/api/patients", (req, res, next) => {
 ### Database Query Anonymization
 
 ```typescript
-import { anonymizePersonalData } from "@neonpro/security/anonymization";
+import { anonymizePersonalData } from '@neonpro/security/anonymization';
 
 const patients = await db.patients.findMany();
-const anonymizedPatients = patients.map((patient) =>
-  anonymizePersonalData(patient, ["name", "cpf", "email"]),
+const anonymizedPatients = patients.map(patient =>
+  anonymizePersonalData(patient, ['name', 'cpf', 'email'])
 );
 ```
 

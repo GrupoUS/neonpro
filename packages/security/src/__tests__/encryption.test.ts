@@ -1,8 +1,31 @@
 /**
  * Tests for encryption utilities
  */
-import { beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi, afterEach } from 'vitest';
 import { EncryptionManager, KeyManager } from '../encryption';
+
+// Mock crypto for encryption tests only
+vi.mock('crypto', () => ({
+  randomBytes: vi.fn((size: number) => {
+    // Return unique random bytes each time
+    const array = new Uint8Array(size);
+    for (let i = 0; i < size; i++) {
+      array[i] = Math.floor(Math.random() * 256);
+    }
+    return Buffer.from(array);
+  }),
+  createHash: vi.fn(() => ({
+    update: vi.fn((input: string) => ({
+      digest: vi.fn((algorithm: string) => {
+        // Generate unique hash based on the input data
+        return require('crypto').createHash('sha256').update(input).digest('hex');
+      })
+    }))
+  })),
+  createCipheriv: vi.fn(),
+  createDecipheriv: vi.fn(),
+  timingSafeEqual: vi.fn((a, b) => a.equals(b))
+});
 
 describe('EncryptionManager', () => {
   let encryptionManager: EncryptionManager;

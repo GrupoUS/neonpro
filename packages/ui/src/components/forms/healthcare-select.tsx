@@ -7,32 +7,32 @@
  * @fileoverview Healthcare select with React Aria integration and medical taxonomy support
  */
 
-"use client";
+'use client';
 
 import React, {
-  SelectHTMLAttributes,
   forwardRef,
-  useId,
-  useState,
+  SelectHTMLAttributes,
   useEffect,
-  useRef,
+  useId,
   useMemo,
-} from "react";
-import { z } from "zod";
-import { cn } from "../../lib/utils";
-import { useHealthcareForm } from "./healthcare-form";
-import { useHealthcareTheme } from "../healthcare/healthcare-theme-provider";
-import {
-  healthcareValidationSchemas,
-  DataSensitivity,
-  classifyHealthcareData,
-  healthcareValidationMessages,
-} from "../../utils/healthcare-validation";
+  useRef,
+  useState,
+} from 'react';
+import { z } from 'zod';
+import { cn } from '../../lib/utils';
 import {
   announceToScreenReader,
-  HealthcarePriority,
   generateAccessibleId,
-} from "../../utils/accessibility";
+  HealthcarePriority,
+} from '../../utils/accessibility';
+import {
+  classifyHealthcareData,
+  DataSensitivity,
+  healthcareValidationMessages,
+  healthcareValidationSchemas,
+} from '../../utils/healthcare-validation';
+import { useHealthcareTheme } from '../healthcare/healthcare-theme-provider';
+import { useHealthcareForm } from './healthcare-form';
 
 // Healthcare select option
 export interface HealthcareSelectOption {
@@ -48,22 +48,23 @@ export interface HealthcareSelectOption {
 
 // Healthcare field types for automatic options
 export type HealthcareSelectType =
-  | "medical-specialty"
-  | "gender"
-  | "blood-type"
-  | "marital-status"
-  | "education-level"
-  | "insurance-type"
-  | "urgency-level"
-  | "consultation-type"
-  | "generic";
+  | 'medical-specialty'
+  | 'gender'
+  | 'blood-type'
+  | 'marital-status'
+  | 'education-level'
+  | 'insurance-type'
+  | 'urgency-level'
+  | 'consultation-type'
+  | 'generic';
 
 // Healthcare select props
-export interface HealthcareSelectProps
-  extends Omit<
+export interface HealthcareSelectProps extends
+  Omit<
     SelectHTMLAttributes<HTMLSelectElement>,
-    "onChange" | "onBlur" | "size"
-  > {
+    'onChange' | 'onBlur' | 'size'
+  >
+{
   // Basic field properties
   name: string;
   label: string;
@@ -104,8 +105,8 @@ export interface HealthcareSelectProps
   autoFocusOnError?: boolean;
 
   // Styling
-  variant?: "default" | "emergency" | "sensitive";
-  size?: "sm" | "default" | "lg";
+  variant?: 'default' | 'emergency' | 'sensitive';
+  size?: 'sm' | 'default' | 'lg';
 
   className?: string;
 }
@@ -115,96 +116,96 @@ const healthcareSelectOptions: Record<
   HealthcareSelectType,
   HealthcareSelectOption[]
 > = {
-  "medical-specialty": [
-    { value: "cardiologia", label: "Cardiologia", medicalCode: "CRM-01" },
-    { value: "pediatria", label: "Pediatria", medicalCode: "CRM-02" },
-    { value: "ginecologia", label: "Ginecologia", medicalCode: "CRM-03" },
-    { value: "neurologia", label: "Neurologia", medicalCode: "CRM-04" },
-    { value: "ortopedia", label: "Ortopedia", medicalCode: "CRM-05" },
-    { value: "psiquiatria", label: "Psiquiatria", medicalCode: "CRM-06" },
-    { value: "dermatologia", label: "Dermatologia", medicalCode: "CRM-07" },
-    { value: "oftalmologia", label: "Oftalmologia", medicalCode: "CRM-08" },
-    { value: "medicina-geral", label: "Medicina Geral", medicalCode: "CRM-00" },
+  'medical-specialty': [
+    { value: 'cardiologia', label: 'Cardiologia', medicalCode: 'CRM-01' },
+    { value: 'pediatria', label: 'Pediatria', medicalCode: 'CRM-02' },
+    { value: 'ginecologia', label: 'Ginecologia', medicalCode: 'CRM-03' },
+    { value: 'neurologia', label: 'Neurologia', medicalCode: 'CRM-04' },
+    { value: 'ortopedia', label: 'Ortopedia', medicalCode: 'CRM-05' },
+    { value: 'psiquiatria', label: 'Psiquiatria', medicalCode: 'CRM-06' },
+    { value: 'dermatologia', label: 'Dermatologia', medicalCode: 'CRM-07' },
+    { value: 'oftalmologia', label: 'Oftalmologia', medicalCode: 'CRM-08' },
+    { value: 'medicina-geral', label: 'Medicina Geral', medicalCode: 'CRM-00' },
   ],
 
   gender: [
-    { value: "masculino", label: "Masculino" },
-    { value: "feminino", label: "Feminino" },
-    { value: "nao-binario", label: "Não-binário" },
-    { value: "prefiro-nao-informar", label: "Prefiro não informar" },
+    { value: 'masculino', label: 'Masculino' },
+    { value: 'feminino', label: 'Feminino' },
+    { value: 'nao-binario', label: 'Não-binário' },
+    { value: 'prefiro-nao-informar', label: 'Prefiro não informar' },
   ],
 
-  "blood-type": [
-    { value: "A+", label: "A+", group: "A" },
-    { value: "A-", label: "A-", group: "A" },
-    { value: "B+", label: "B+", group: "B" },
-    { value: "B-", label: "B-", group: "B" },
-    { value: "AB+", label: "AB+", group: "AB" },
-    { value: "AB-", label: "AB-", group: "AB" },
-    { value: "O+", label: "O+", group: "O" },
-    { value: "O-", label: "O-", group: "O" },
+  'blood-type': [
+    { value: 'A+', label: 'A+', group: 'A' },
+    { value: 'A-', label: 'A-', group: 'A' },
+    { value: 'B+', label: 'B+', group: 'B' },
+    { value: 'B-', label: 'B-', group: 'B' },
+    { value: 'AB+', label: 'AB+', group: 'AB' },
+    { value: 'AB-', label: 'AB-', group: 'AB' },
+    { value: 'O+', label: 'O+', group: 'O' },
+    { value: 'O-', label: 'O-', group: 'O' },
   ],
 
-  "marital-status": [
-    { value: "solteiro", label: "Solteiro(a)" },
-    { value: "casado", label: "Casado(a)" },
-    { value: "divorciado", label: "Divorciado(a)" },
-    { value: "viuvo", label: "Viúvo(a)" },
-    { value: "uniao-estavel", label: "União Estável" },
-    { value: "separado", label: "Separado(a)" },
+  'marital-status': [
+    { value: 'solteiro', label: 'Solteiro(a)' },
+    { value: 'casado', label: 'Casado(a)' },
+    { value: 'divorciado', label: 'Divorciado(a)' },
+    { value: 'viuvo', label: 'Viúvo(a)' },
+    { value: 'uniao-estavel', label: 'União Estável' },
+    { value: 'separado', label: 'Separado(a)' },
   ],
 
-  "education-level": [
-    { value: "fundamental-incompleto", label: "Ensino Fundamental Incompleto" },
-    { value: "fundamental-completo", label: "Ensino Fundamental Completo" },
-    { value: "medio-incompleto", label: "Ensino Médio Incompleto" },
-    { value: "medio-completo", label: "Ensino Médio Completo" },
-    { value: "superior-incompleto", label: "Ensino Superior Incompleto" },
-    { value: "superior-completo", label: "Ensino Superior Completo" },
-    { value: "pos-graduacao", label: "Pós-graduação" },
-    { value: "mestrado", label: "Mestrado" },
-    { value: "doutorado", label: "Doutorado" },
+  'education-level': [
+    { value: 'fundamental-incompleto', label: 'Ensino Fundamental Incompleto' },
+    { value: 'fundamental-completo', label: 'Ensino Fundamental Completo' },
+    { value: 'medio-incompleto', label: 'Ensino Médio Incompleto' },
+    { value: 'medio-completo', label: 'Ensino Médio Completo' },
+    { value: 'superior-incompleto', label: 'Ensino Superior Incompleto' },
+    { value: 'superior-completo', label: 'Ensino Superior Completo' },
+    { value: 'pos-graduacao', label: 'Pós-graduação' },
+    { value: 'mestrado', label: 'Mestrado' },
+    { value: 'doutorado', label: 'Doutorado' },
   ],
 
-  "insurance-type": [
-    { value: "sus", label: "SUS (Sistema Único de Saúde)" },
-    { value: "plano-saude", label: "Plano de Saúde" },
-    { value: "particular", label: "Particular" },
-    { value: "convenio", label: "Convênio" },
+  'insurance-type': [
+    { value: 'sus', label: 'SUS (Sistema Único de Saúde)' },
+    { value: 'plano-saude', label: 'Plano de Saúde' },
+    { value: 'particular', label: 'Particular' },
+    { value: 'convenio', label: 'Convênio' },
   ],
 
-  "urgency-level": [
+  'urgency-level': [
     {
-      value: "emergencia",
-      label: "Emergência",
+      value: 'emergencia',
+      label: 'Emergência',
       emergencyOption: true,
-      description: "Risco de vida imediato",
+      description: 'Risco de vida imediato',
     },
     {
-      value: "urgencia",
-      label: "Urgência",
-      description: "Necessita atendimento rápido",
+      value: 'urgencia',
+      label: 'Urgência',
+      description: 'Necessita atendimento rápido',
     },
     {
-      value: "prioridade",
-      label: "Prioridade",
-      description: "Atendimento prioritário",
+      value: 'prioridade',
+      label: 'Prioridade',
+      description: 'Atendimento prioritário',
     },
-    { value: "normal", label: "Normal", description: "Atendimento de rotina" },
-    { value: "baixa", label: "Baixa", description: "Pode aguardar" },
+    { value: 'normal', label: 'Normal', description: 'Atendimento de rotina' },
+    { value: 'baixa', label: 'Baixa', description: 'Pode aguardar' },
   ],
 
-  "consultation-type": [
-    { value: "primeira-consulta", label: "Primeira Consulta" },
-    { value: "retorno", label: "Retorno" },
+  'consultation-type': [
+    { value: 'primeira-consulta', label: 'Primeira Consulta' },
+    { value: 'retorno', label: 'Retorno' },
     {
-      value: "consulta-urgencia",
-      label: "Consulta de Urgência",
+      value: 'consulta-urgencia',
+      label: 'Consulta de Urgência',
       emergencyOption: true,
     },
-    { value: "teleconsulta", label: "Teleconsulta" },
-    { value: "consulta-especializada", label: "Consulta Especializada" },
-    { value: "segunda-opiniao", label: "Segunda Opinião" },
+    { value: 'teleconsulta', label: 'Teleconsulta' },
+    { value: 'consulta-especializada', label: 'Consulta Especializada' },
+    { value: 'segunda-opiniao', label: 'Segunda Opinião' },
   ],
 
   generic: [],
@@ -225,9 +226,9 @@ export const HealthcareSelect = forwardRef<
       name,
       label,
       options: providedOptions,
-      placeholder = "Selecione uma opção...",
+      placeholder = 'Selecione uma opção...',
       allowClear = false,
-      selectType = "generic",
+      selectType = 'generic',
       dataSensitivity,
       emergencyField = false,
       validationSchema,
@@ -243,8 +244,8 @@ export const HealthcareSelect = forwardRef<
       onValidationChange,
       screenReaderDescription,
       autoFocusOnError = true,
-      variant = "default",
-      size = "default",
+      variant = 'default',
+      size = 'default',
       className,
       required = false,
       disabled = false,
@@ -260,12 +261,12 @@ export const HealthcareSelect = forwardRef<
 
     // Local state
     const [internalValue, setInternalValue] = useState<string>(
-      (value ?? defaultValue ?? "") as string,
+      (value ?? defaultValue ?? '') as string,
     );
     const [isFocused, setIsFocused] = useState(false);
     const [hasBeenBlurred, setHasBeenBlurred] = useState(false);
     const [validationErrors, setValidationErrors] = useState<string[]>([]);
-    const [searchTerm, setSearchTerm] = useState<string>("");
+    const [searchTerm, setSearchTerm] = useState<string>('');
 
     // Refs
     const selectRef = useRef<HTMLSelectElement>(null);
@@ -273,7 +274,7 @@ export const HealthcareSelect = forwardRef<
     // Merge refs
     const mergedRef = (node: HTMLSelectElement) => {
       selectRef.current = node;
-      if (typeof ref === "function") {
+      if (typeof ref === 'function') {
         ref(node);
       } else if (ref) {
         ref.current = node;
@@ -281,25 +282,23 @@ export const HealthcareSelect = forwardRef<
     };
 
     // Auto-determine data sensitivity if not provided
-    const effectiveDataSensitivity =
-      dataSensitivity ?? classifyHealthcareData(selectType);
+    const effectiveDataSensitivity = dataSensitivity ?? classifyHealthcareData(selectType);
 
     // Get effective options (provided or predefined)
     const effectiveOptions = useMemo(() => {
-      let options =
-        providedOptions && providedOptions.length > 0
-          ? providedOptions
-          : healthcareSelectOptions[selectType] || [];
+      let options = providedOptions && providedOptions.length > 0
+        ? providedOptions
+        : healthcareSelectOptions[selectType] || [];
 
       // Filter by search term if searchable
       if (searchable && searchTerm) {
         options = options.filter(
-          (option) =>
-            option.label.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            option.description
+          option =>
+            option.label.toLowerCase().includes(searchTerm.toLowerCase())
+            || option.description
               ?.toLowerCase()
-              .includes(searchTerm.toLowerCase()) ||
-            option.medicalCode
+              .includes(searchTerm.toLowerCase())
+            || option.medicalCode
               ?.toLowerCase()
               .includes(searchTerm.toLowerCase()),
         );
@@ -310,12 +309,12 @@ export const HealthcareSelect = forwardRef<
 
     // Group options if requested
     const groupedOptions = useMemo(() => {
-      if (!groupOptions) {return null;}
+      if (!groupOptions) return null;
 
       const groups: Record<string, HealthcareSelectOption[]> = {};
       const ungrouped: HealthcareSelectOption[] = [];
 
-      effectiveOptions.forEach((option) => {
+      effectiveOptions.forEach(option => {
         if (option.group) {
           if (!groups[option.group]) {
             groups[option.group] = [];
@@ -331,28 +330,27 @@ export const HealthcareSelect = forwardRef<
 
     // Generate IDs
     const fieldId = useId();
-    const accessibleId = generateAccessibleId("healthcare-select");
+    const accessibleId = generateAccessibleId('healthcare-select');
     const descriptionId = description ? `${fieldId}-description` : undefined;
-    const errorId =
-      validationErrors.length > 0 ? `${fieldId}-error` : undefined;
+    const errorId = validationErrors.length > 0 ? `${fieldId}-error` : undefined;
 
     // Get validation schema based on select type
     const getValidationSchema = (): z.ZodSchema | null => {
-      if (validationSchema) {return validationSchema;}
+      if (validationSchema) return validationSchema;
 
       const schemas = healthcareValidationSchemas;
       switch (selectType) {
-        case "medical-specialty":
+        case 'medical-specialty':
           return schemas.medicalSpecialty;
-        case "gender":
+        case 'gender':
           return z.enum([
-            "masculino",
-            "feminino",
-            "nao-binario",
-            "prefiro-nao-informar",
+            'masculino',
+            'feminino',
+            'nao-binario',
+            'prefiro-nao-informar',
           ]);
-        case "blood-type":
-          return z.enum(["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"]);
+        case 'blood-type':
+          return z.enum(['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']);
         default:
           return null;
       }
@@ -374,15 +372,15 @@ export const HealthcareSelect = forwardRef<
 
       // Check if value exists in options
       const validOption = effectiveOptions.find(
-        (option) => option.value === valueToValidate,
+        option => option.value === valueToValidate,
       );
       if (valueToValidate && !validOption) {
-        errors.push("Opção inválida selecionada");
+        errors.push('Opção inválida selecionada');
       }
 
       // Check if option is disabled
       if (validOption && validOption.disabled) {
-        errors.push("Esta opção não está disponível");
+        errors.push('Esta opção não está disponível');
       }
 
       // Schema validation
@@ -393,7 +391,7 @@ export const HealthcareSelect = forwardRef<
         } catch (_validationError) {
           if (_validationError instanceof z.ZodError) {
             errors.push(
-              ..._validationError.errors.map((error) => error.message),
+              ..._validationError.errors.map(error => error.message),
             );
           }
         }
@@ -416,8 +414,7 @@ export const HealthcareSelect = forwardRef<
       setInternalValue(newValue);
 
       // Find selected option
-      const selectedOption =
-        effectiveOptions.find((option) => option.value === newValue) || null;
+      const selectedOption = effectiveOptions.find(option => option.value === newValue) || null;
 
       // Validate on change if enabled
       if (validateOnChange) {
@@ -464,7 +461,7 @@ export const HealthcareSelect = forwardRef<
             ? HealthcarePriority.HIGH
             : HealthcarePriority.MEDIUM;
           announceToScreenReader(
-            `Campo ${label}: ${errors.join(". ")}`,
+            `Campo ${label}: ${errors.join('. ')}`,
             priority,
           );
         }
@@ -489,18 +486,18 @@ export const HealthcareSelect = forwardRef<
     // Validate accessibility on mount (basic label/error checks)
     useEffect(() => {
       const el = selectRef.current;
-      if (!el) {return;}
+      if (!el) return;
       const violations: string[] = [];
       const hasLabel = !!(
-        el.getAttribute("aria-label") || el.getAttribute("aria-labelledby")
+        el.getAttribute('aria-label') || el.getAttribute('aria-labelledby')
       );
-      if (!hasLabel) {violations.push("Campo sem rótulo acessível");}
-      const isInvalid = el.getAttribute("aria-invalid") === "true";
-      if (isInvalid && !el.getAttribute("aria-describedby")) {
-        violations.push("Erro sem descrição acessível");
+      if (!hasLabel) violations.push('Campo sem rótulo acessível');
+      const isInvalid = el.getAttribute('aria-invalid') === 'true';
+      if (isInvalid && !el.getAttribute('aria-describedby')) {
+        violations.push('Erro sem descrição acessível');
       }
-      if (el.hasAttribute("required") && !el.getAttribute("aria-required")) {
-        violations.push("Campo obrigatório sem indicação acessível");
+      if (el.hasAttribute('required') && !el.getAttribute('aria-required')) {
+        violations.push('Campo obrigatório sem indicação acessível');
       }
       if (violations.length) {
         console.warn(
@@ -516,67 +513,60 @@ export const HealthcareSelect = forwardRef<
 
     const selectClasses = cn(
       // Base classes
-      "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm",
-      "ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
-      "disabled:cursor-not-allowed disabled:opacity-50",
-
+      'flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm',
+      'ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2',
+      'disabled:cursor-not-allowed disabled:opacity-50',
       // Size variants
       {
-        "h-8 px-2 py-1 text-xs": size === "sm",
-        "h-10 px-3 py-2 text-sm": size === "default",
-        "h-12 px-4 py-3 text-base": size === "lg",
+        'h-8 px-2 py-1 text-xs': size === 'sm',
+        'h-10 px-3 py-2 text-sm': size === 'default',
+        'h-12 px-4 py-3 text-base': size === 'lg',
       },
-
       // Visual state
       {
-        "border-destructive focus:ring-destructive": showError,
-        "border-warning":
-          effectiveDataSensitivity === DataSensitivity.CONFIDENTIAL &&
-          !showError,
-        "border-destructive bg-destructive/5":
+        'border-destructive focus:ring-destructive': showError,
+        'border-warning': effectiveDataSensitivity === DataSensitivity.CONFIDENTIAL
+          && !showError,
+        'border-destructive bg-destructive/5':
           effectiveDataSensitivity === DataSensitivity.RESTRICTED && !showError,
       },
-
       // Variant styles
       {
-        "border-warning bg-warning/5": variant === "emergency" && !showError,
-        "border-info bg-info/5": variant === "sensitive" && !showError,
+        'border-warning bg-warning/5': variant === 'emergency' && !showError,
+        'border-info bg-info/5': variant === 'sensitive' && !showError,
       },
-
       // Focus states
       {
-        "ring-2 ring-warning ring-offset-2":
-          isFocused && variant === "emergency",
-        "ring-2 ring-info ring-offset-2": isFocused && variant === "sensitive",
+        'ring-2 ring-warning ring-offset-2': isFocused && variant === 'emergency',
+        'ring-2 ring-info ring-offset-2': isFocused && variant === 'sensitive',
       },
-
       className,
     );
 
     return (
       <div
-        className="healthcare-select space-y-2"
+        className='healthcare-select space-y-2'
         data-sensitivity={effectiveDataSensitivity}
       >
         {/* Label */}
         <label
           htmlFor={fieldId}
           className={cn(
-            "text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
+            'text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70',
             {
-              "text-destructive": showError,
-              "text-warning": variant === "emergency",
+              'text-destructive': showError,
+              'text-warning': variant === 'emergency',
             },
           )}
         >
           {label}
           {required && (
-            <span className="text-destructive ml-1" aria-label="obrigatório">
+            <span className='text-destructive ml-1' aria-label='obrigatório'>
               *
             </span>
           )}
           {emergencyField && (
-            <span className="ml-2 text-xs text-warning font-semibold">
+            <span className='ml-2 text-xs text-warning font-semibold'>
               URGENTE
             </span>
           )}
@@ -584,7 +574,7 @@ export const HealthcareSelect = forwardRef<
 
         {/* Description */}
         {description && (
-          <p id={descriptionId} className="text-sm text-muted-foreground">
+          <p id={descriptionId} className='text-sm text-muted-foreground'>
             {description}
           </p>
         )}
@@ -592,11 +582,11 @@ export const HealthcareSelect = forwardRef<
         {/* Search input for searchable mode */}
         {searchable && (
           <input
-            type="text"
-            placeholder="Search options..."
+            type='text'
+            placeholder='Search options...'
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full px-3 py-2 text-sm border border-input rounded-md mb-2"
+            onChange={e => setSearchTerm(e.target.value)}
+            className='w-full px-3 py-2 text-sm border border-input rounded-md mb-2'
           />
         )}
 
@@ -624,107 +614,102 @@ export const HealthcareSelect = forwardRef<
           {...props}
         >
           {/* Placeholder option */}
-          <option value="" disabled hidden>
+          <option value='' disabled hidden>
             {placeholder}
           </option>
 
           {/* Clear option if allowed */}
-          {allowClear && internalValue && (
-            <option value="">Limpar seleção</option>
-          )}
+          {allowClear && internalValue && <option value=''>Limpar seleção</option>}
 
           {/* Render grouped or flat options */}
-          {groupedOptions ? (
-            <>
-              {/* Ungrouped options */}
-              {groupedOptions.ungrouped.map((option) => (
+          {groupedOptions
+            ? (
+              <>
+                {/* Ungrouped options */}
+                {groupedOptions.ungrouped.map(option => (
+                  <option
+                    key={option.value}
+                    value={option.value}
+                    disabled={option.disabled}
+                    className={cn({
+                      'font-semibold text-warning': option.emergencyOption,
+                      'text-muted-foreground line-through': option.deprecated,
+                    })}
+                  >
+                    {option.label}
+                    {option.medicalCode && ` (${option.medicalCode})`}
+                  </option>
+                ))}
+
+                {/* Grouped options */}
+                {Object.entries(groupedOptions.groups).map(
+                  ([groupName, groupOptions]) => (
+                    <optgroup key={groupName} label={groupName}>
+                      {groupOptions.map(option => (
+                        <option
+                          key={option.value}
+                          value={option.value}
+                          disabled={option.disabled}
+                          className={cn({
+                            'font-semibold text-warning': option.emergencyOption,
+                            'text-muted-foreground line-through': option.deprecated,
+                          })}
+                        >
+                          {option.label}
+                          {option.medicalCode && ` (${option.medicalCode})`}
+                        </option>
+                      ))}
+                    </optgroup>
+                  ),
+                )}
+              </>
+            )
+            : (
+              // Flat options
+              effectiveOptions.map(option => (
                 <option
                   key={option.value}
                   value={option.value}
                   disabled={option.disabled}
                   className={cn({
-                    "font-semibold text-warning": option.emergencyOption,
-                    "text-muted-foreground line-through": option.deprecated,
+                    'font-semibold text-warning': option.emergencyOption,
+                    'text-muted-foreground line-through': option.deprecated,
                   })}
                 >
                   {option.label}
                   {option.medicalCode && ` (${option.medicalCode})`}
                 </option>
-              ))}
-
-              {/* Grouped options */}
-              {Object.entries(groupedOptions.groups).map(
-                ([groupName, groupOptions]) => (
-                  <optgroup key={groupName} label={groupName}>
-                    {groupOptions.map((option) => (
-                      <option
-                        key={option.value}
-                        value={option.value}
-                        disabled={option.disabled}
-                        className={cn({
-                          "font-semibold text-warning": option.emergencyOption,
-                          "text-muted-foreground line-through":
-                            option.deprecated,
-                        })}
-                      >
-                        {option.label}
-                        {option.medicalCode && ` (${option.medicalCode})`}
-                      </option>
-                    ))}
-                  </optgroup>
-                ),
-              )}
-            </>
-          ) : (
-            // Flat options
-            effectiveOptions.map((option) => (
-              <option
-                key={option.value}
-                value={option.value}
-                disabled={option.disabled}
-                className={cn({
-                  "font-semibold text-warning": option.emergencyOption,
-                  "text-muted-foreground line-through": option.deprecated,
-                })}
-              >
-                {option.label}
-                {option.medicalCode && ` (${option.medicalCode})`}
-              </option>
-            ))
-          )}
+              ))
+            )}
         </select>
 
         {/* Screen reader description */}
         {screenReaderDescription && (
-          <p id={`${fieldId}-sr-description`} className="sr-only">
+          <p id={`${fieldId}-sr-description`} className='sr-only'>
             {screenReaderDescription}
           </p>
         )}
 
         {/* Helper text */}
-        {helperText && !showError && (
-          <p className="text-sm text-muted-foreground">{helperText}</p>
-        )}
+        {helperText && !showError && <p className='text-sm text-muted-foreground'>{helperText}</p>}
 
         {/* Error messages */}
         {showError && (
           <div
             id={errorId}
-            className="text-sm text-destructive"
-            role="alert"
-            aria-live="polite"
+            className='text-sm text-destructive'
+            role='alert'
+            aria-live='polite'
           >
-            {validationErrors.map((error, index) => (
-              <p key={index}>{error}</p>
-            ))}
+            {validationErrors.map((error, index) => <p key={index}>{error}</p>)}
           </div>
         )}
 
         {/* Data sensitivity indicator */}
-        {(effectiveDataSensitivity === DataSensitivity.RESTRICTED ||
-          effectiveDataSensitivity === DataSensitivity.CONFIDENTIAL) && (
-          <p className="text-xs text-muted-foreground flex items-center gap-1">
-            <span role="img" aria-label="Dados protegidos">
+        {(effectiveDataSensitivity === DataSensitivity.RESTRICTED
+          || effectiveDataSensitivity === DataSensitivity.CONFIDENTIAL) && (
+          <p className='text-xs text-muted-foreground flex items-center gap-1'>
+            <span role='img' aria-label='Dados protegidos'>
               🔒
             </span>
             Dados protegidos pela LGPD
@@ -735,4 +720,4 @@ export const HealthcareSelect = forwardRef<
   },
 );
 
-HealthcareSelect.displayName = "HealthcareSelect";
+HealthcareSelect.displayName = 'HealthcareSelect';

@@ -1,7 +1,7 @@
 // Governance & Compliance domain types derived from unified PRD spec (001-unified-prd-index)
 // NOTE: Keep purely structural; no runtime logic.
 
-export type KPIStatus = "Active" | "Provisional" | "Archived";
+export type KPIStatus = 'Active' | 'Provisional' | 'Archived';
 export interface KPI {
   id: string;
   name: string;
@@ -38,13 +38,13 @@ export interface RiskItem {
   mitigation: string;
   owner: string;
   reviewCadence: string;
-  status: "Open" | "Mitigating" | "Accepted" | "Transferred" | "Closed";
+  status: 'Open' | 'Mitigating' | 'Accepted' | 'Transferred' | 'Closed';
   exposure?: number; // probability * impact (can be computed externally)
 }
 
 export interface GovernancePolicy {
   id: string;
-  policyType: "AI" | "Compliance" | "Data";
+  policyType: 'AI' | 'Compliance' | 'Data';
   thresholds: Record<string, string | number>;
   escalationPathId?: string;
   updatedAt: string; // ISO date
@@ -58,15 +58,15 @@ export interface PriorityScore {
   riskReduction: number;
   strategicFit: number;
   totalScore: number;
-  priorityLevel: "P0" | "P1" | "P2" | "P3";
+  priorityLevel: 'P0' | 'P1' | 'P2' | 'P3';
   tieBreakerNotes?: string;
 }
 
 export interface PHIEntity {
   id: string;
   entityType: string; // e.g. 'patient_record_
-  encryptionAtRest: "AES-256";
-  encryptionInTransit: "TLS>=1.2";
+  encryptionAtRest: 'AES-256';
+  encryptionInTransit: 'TLS>=1.2';
   rlsPolicy: string; // reference to RLS predicate name
   validationSchema: string; // e.g. zod schema identifier
   auditLogStream: string; // reference to logging destination

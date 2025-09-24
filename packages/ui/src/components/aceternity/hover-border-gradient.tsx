@@ -1,16 +1,16 @@
-"use client";
+'use client';
 
-import React from "react";
-import { clsx, type ClassValue } from "clsx";
-import { twMerge } from "tailwind-merge";
+import { type ClassValue, clsx } from 'clsx';
+import React from 'react';
+import { twMerge } from 'tailwind-merge';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 import {
-  useShineBorderAnimation,
   type HoverGradientTheme,
-} from "../../hooks/useShineBorderAnimation";
+  useShineBorderAnimation,
+} from '../../hooks/useShineBorderAnimation';
 
 interface HoverBorderGradientProps extends React.HTMLAttributes<HTMLElement> {
   children: React.ReactNode;
@@ -30,10 +30,10 @@ export function HoverBorderGradient({
   children,
   containerClassName,
   className,
-  as: Tag = "button",
+  as: Tag = 'button',
   duration = 1,
   clockwise = true,
-  theme = "blue",
+  theme = 'blue',
   customColors,
   ...props
 }: HoverBorderGradientProps) {
@@ -55,7 +55,7 @@ export function HoverBorderGradient({
     >
       <div
         className={cn(
-          "w-auto text-white z-10 bg-black px-4 py-2 rounded-[inherit]",
+          'w-auto text-white z-10 bg-black px-4 py-2 rounded-[inherit]',
           className,
         )}
       >
@@ -64,19 +64,19 @@ export function HoverBorderGradient({
 
       {/* Animated gradient background */}
       <div
-        className="flex-none inset-0 overflow-hidden absolute z-0 rounded-[inherit]"
+        className='flex-none inset-0 overflow-hidden absolute z-0 rounded-[inherit]'
         style={{
-          filter: "blur(2px)",
-          position: "absolute",
-          width: "100%",
-          height: "100%",
+          filter: 'blur(2px)',
+          position: 'absolute',
+          width: '100%',
+          height: '100%',
           background: hoverGradient.backgroundStyle,
           transition: `background ${duration}s linear`,
         }}
       />
 
       {/* Inner background */}
-      <div className="bg-black absolute z-1 flex-none inset-[2px] rounded-[100px]" />
+      <div className='bg-black absolute z-1 flex-none inset-[2px] rounded-[100px]' />
     </Tag>
   );
 }

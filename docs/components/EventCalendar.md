@@ -46,19 +46,19 @@ interface CalendarEvent {
 ### CalendarView
 
 ```typescript
-type CalendarView = "month" | "week" | "day" | "agenda";
+type CalendarView = 'month' | 'week' | 'day' | 'agenda';
 ```
 
 ### EventColor
 
 ```typescript
 type EventColor =
-  | "default"
-  | "primary"
-  | "secondary"
-  | "success"
-  | "warning"
-  | "error";
+  | 'default'
+  | 'primary'
+  | 'secondary'
+  | 'success'
+  | 'warning'
+  | 'error';
 ```
 
 ## Features
@@ -95,21 +95,21 @@ import { CalendarEvent } from '@/components/event-calendar/types';
 
 const sampleEvents: CalendarEvent[] = [
   {
-    id: "1",
-    title: "Dr. Smith - Patient Consultation",
-    description: "Initial consultation for new patient",
-    start: new Date("2024-01-15T10:00:00"),
-    end: new Date("2024-01-15T11:00:00"),
-    color: "primary",
-    location: "Consultation Room A"
+    id: '1',
+    title: 'Dr. Smith - Patient Consultation',
+    description: 'Initial consultation for new patient',
+    start: new Date('2024-01-15T10:00:00'),
+    end: new Date('2024-01-15T11:00:00'),
+    color: 'primary',
+    location: 'Consultation Room A',
   },
   {
-    id: "2",
-    title: "Team Meeting",
-    start: new Date("2024-01-15T14:00:00"),
-    end: new Date("2024-01-15T15:00:00"),
-    color: "secondary"
-  }
+    id: '2',
+    title: 'Team Meeting',
+    start: new Date('2024-01-15T14:00:00'),
+    end: new Date('2024-01-15T15:00:00'),
+    color: 'secondary',
+  },
 ];
 
 function AppointmentsPage() {
@@ -128,14 +128,14 @@ function AppointmentsPage() {
   };
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-6">Appointments</h1>
+    <div className='p-6'>
+      <h1 className='text-2xl font-bold mb-6'>Appointments</h1>
       <EventCalendar
         events={sampleEvents}
         onEventAdd={handleEventAdd}
         onEventUpdate={handleEventUpdate}
         onEventDelete={handleEventDelete}
-        initialView="week"
+        initialView='week'
       />
     </div>
   );
@@ -147,11 +147,11 @@ function AppointmentsPage() {
 ```typescript
 function ClinicCalendar() {
   return (
-    <div className="bg-white rounded-lg shadow-lg p-6">
+    <div className='bg-white rounded-lg shadow-lg p-6'>
       <EventCalendar
         events={clinicEvents}
-        className="border border-gray-200 rounded-lg"
-        initialView="week"
+        className='border border-gray-200 rounded-lg'
+        initialView='week'
         onEventAdd={handleAppointmentCreate}
       />
     </div>
@@ -164,11 +164,11 @@ function ClinicCalendar() {
 ```typescript
 function DailySchedule() {
   return (
-    <div className="max-h-96 overflow-y-auto">
+    <div className='max-h-96 overflow-y-auto'>
       <EventCalendar
         events={todayAppointments}
-        initialView="agenda"
-        className="bg-gray-50"
+        initialView='agenda'
+        className='bg-gray-50'
       />
     </div>
   );
@@ -200,12 +200,12 @@ Events can be created by clicking on time slots or through the dedicated create 
 const handleEventCreate = async (startTime: Date) => {
   // Time is automatically snapped to 15-minute intervals
   const newEvent: CalendarEvent = {
-    id: "",
-    title: "New Appointment",
+    id: '',
+    title: 'New Appointment',
     start: startTime,
     end: addHours(startTime, 1),
     allDay: false,
-    color: "primary",
+    color: 'primary',
   };
 
   // The calendar automatically opens the event dialog
@@ -227,7 +227,7 @@ const handleEventUpdate = async (updatedEvent: CalendarEvent) => {
   await updateEvent(updatedEvent.id, updatedEvent);
 
   // Calendar automatically updates the display
-  showSuccessToast("Appointment updated successfully");
+  showSuccessToast('Appointment updated successfully');
 };
 ```
 
@@ -235,9 +235,9 @@ const handleEventUpdate = async (updatedEvent: CalendarEvent) => {
 
 ```typescript
 const handleEventDelete = async (eventId: string) => {
-  if (confirm("Are you sure you want to delete this appointment?")) {
+  if (confirm('Are you sure you want to delete this appointment?')) {
     await deleteEvent(eventId);
-    showSuccessToast("Appointment deleted");
+    showSuccessToast('Appointment deleted');
   }
 };
 ```
@@ -290,8 +290,8 @@ if (remainder !== 0) {
 ```typescript
 // Events include clinic context
 const clinicEvent: CalendarEvent = {
-  id: "clinic-123",
-  title: "Patient Consultation",
+  id: 'clinic-123',
+  title: 'Patient Consultation',
   start: new Date(),
   end: addHours(new Date(), 1),
   clinicId: currentClinic.id, // From clinic context
@@ -327,7 +327,7 @@ const loadEventsForDateRange = async (start: Date, end: Date) => {
     const events = await calendarService.getEvents(start, end);
     setEvents(events);
   } catch (error) {
-    console.error("Failed to load events:", error);
+    console.error('Failed to load events:', error);
   } finally {
     setLoading(false);
   }
@@ -343,17 +343,17 @@ const handleEventSave = async (event: CalendarEvent) => {
   try {
     // Validate event data
     if (!event.title || !event.start || !event.end) {
-      throw new Error("Event must have title, start, and end times");
+      throw new Error('Event must have title, start, and end times');
     }
 
     if (event.start >= event.end) {
-      throw new Error("Event end time must be after start time");
+      throw new Error('Event end time must be after start time');
     }
 
     // Check for overlapping appointments
     const overlapping = checkForOverlappingEvents(event);
     if (overlapping.length > 0) {
-      throw new Error("This time slot conflicts with existing appointments");
+      throw new Error('This time slot conflicts with existing appointments');
     }
 
     // Save event
@@ -366,7 +366,7 @@ const handleEventSave = async (event: CalendarEvent) => {
     setIsEventDialogOpen(false);
     setSelectedEvent(null);
   } catch (error) {
-    console.error("Failed to save event:", error);
+    console.error('Failed to save event:', error);
     // Error is automatically handled by context with user-friendly toast
   }
 };
@@ -387,15 +387,15 @@ const handleEventSave = async (event: CalendarEvent) => {
 ```typescript
 // Example ARIA attributes
 <div
-  role="grid"
-  aria-label="Calendar"
+  role='grid'
+  aria-label='Calendar'
   aria-rowcount={7}
   aria-colcount={7}
 >
   {days.map((day, index) => (
     <div
       key={day.toString()}
-      role="gridcell"
+      role='gridcell'
       aria-label={format(day, 'MMMM d, yyyy')}
       aria-selected={isSameDay(day, selectedDate)}
       tabIndex={0}
@@ -403,7 +403,7 @@ const handleEventSave = async (event: CalendarEvent) => {
       {/* Day content */}
     </div>
   ))}
-</div>
+</div>;
 ```
 
 ## Integration Examples
@@ -414,10 +414,11 @@ const handleEventSave = async (event: CalendarEvent) => {
 function CalendarWithQuery() {
   const { data: events, isLoading, error } = useQuery({
     queryKey: ['events', currentDate, currentView],
-    queryFn: () => calendarService.getEvents(
-      getViewStart(currentView, currentDate),
-      getViewEnd(currentView, currentDate)
-    )
+    queryFn: () =>
+      calendarService.getEvents(
+        getViewStart(currentView, currentDate),
+        getViewEnd(currentView, currentDate),
+      ),
   });
 
   if (isLoading) return <CalendarLoading />;
@@ -451,8 +452,8 @@ function CalendarWithRedux() {
       events={events}
       loading={loading}
       onEventAdd={handleEventAdd}
-      onEventUpdate={(event) => dispatch(updateEvent(event))}
-      onEventDelete={(id) => dispatch(deleteEvent(id))}
+      onEventUpdate={event => dispatch(updateEvent(event))}
+      onEventDelete={id => dispatch(deleteEvent(id))}
     />
   );
 }

@@ -3,9 +3,40 @@
  * Comprehensive analytics endpoints for aesthetic clinic business intelligence
  */
 
-import { CreateAnalyticsConfigurationInput, UpdateAnalyticsConfigurationInput, CreateKPIDefinitionInput, UpdateKPIDefinitionInput, CreateBIDashboardInput, UpdateBIDashboardInput, CreateDashboardWidgetInput, UpdateDashboardWidgetInput, CreateScheduledReportInput, UpdateScheduledReportInput, CreatePredictiveModelInput, UpdatePredictiveModelInput, CreateAnalyticsAlertInput, UpdateAnalyticsAlertInput, AnalyticsQueryInput, DashboardQueryInput, ReportQueryInput, PredictiveQueryInput, AlertQueryInput, PerformanceMetricsQueryInput, DataExportInput, AnalyticsConfigurationSchema, KPIDefinitionSchema, BIDashboardSchema, DashboardWidgetSchema, ScheduledReportSchema, PredictiveModelSchema, AnalyticsAlertSchema, PerformanceMetricsSchema, DataExportSchema } from '@neonpro/core-services';
-import { SuccessResponseSchema } from '../utils/response-schemas';
+import {
+  AlertQueryInput,
+  AnalyticsAlertSchema,
+  AnalyticsConfigurationSchema,
+  AnalyticsQueryInput,
+  BIDashboardSchema,
+  CreateAnalyticsAlertInput,
+  CreateAnalyticsConfigurationInput,
+  CreateBIDashboardInput,
+  CreateDashboardWidgetInput,
+  CreateKPIDefinitionInput,
+  CreatePredictiveModelInput,
+  CreateScheduledReportInput,
+  DashboardQueryInput,
+  DashboardWidgetSchema,
+  DataExportInput,
+  DataExportSchema,
+  KPIDefinitionSchema,
+  PerformanceMetricsQueryInput,
+  PerformanceMetricsSchema,
+  PredictiveModelSchema,
+  PredictiveQueryInput,
+  ReportQueryInput,
+  ScheduledReportSchema,
+  UpdateAnalyticsAlertInput,
+  UpdateAnalyticsConfigurationInput,
+  UpdateBIDashboardInput,
+  UpdateDashboardWidgetInput,
+  UpdateKPIDefinitionInput,
+  UpdatePredictiveModelInput,
+  UpdateScheduledReportInput,
+} from '@neonpro/core-services';
 import { router } from '../trpc';
+import { SuccessResponseSchema } from '../utils/response-schemas';
 
 // Create the analytics router
 export const analyticsRouter = router({
@@ -20,7 +51,9 @@ export const analyticsRouter = router({
           supabaseKey: process.env.SUPABASE_SERVICE_ROLE_KEY!,
         });
 
-        const configuration = await analyticsService.createAnalyticsConfiguration(input as CreateAnalyticsConfigurationInput);
+        const configuration = await analyticsService.createAnalyticsConfiguration(
+          input as CreateAnalyticsConfigurationInput,
+        );
 
         return {
           success: true,
@@ -31,7 +64,9 @@ export const analyticsRouter = router({
         console.error('Error creating analytics configuration:', error);
         return {
           success: false,
-          message: error instanceof Error ? error.message : 'Erro ao criar configuração de analytics',
+          message: error instanceof Error
+            ? error.message
+            : 'Erro ao criar configuração de analytics',
           data: null,
         };
       }
@@ -50,7 +85,7 @@ export const analyticsRouter = router({
 
         const configuration = await analyticsService.updateAnalyticsConfiguration(
           input.id,
-          input.configuration as UpdateAnalyticsConfigurationInput
+          input.configuration as UpdateAnalyticsConfigurationInput,
         );
 
         return {
@@ -62,7 +97,9 @@ export const analyticsRouter = router({
         console.error('Error updating analytics configuration:', error);
         return {
           success: false,
-          message: error instanceof Error ? error.message : 'Erro ao atualizar configuração de analytics',
+          message: error instanceof Error
+            ? error.message
+            : 'Erro ao atualizar configuração de analytics',
           data: null,
         };
       }

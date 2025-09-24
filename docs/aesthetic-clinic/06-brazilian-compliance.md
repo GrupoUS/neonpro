@@ -40,10 +40,10 @@ interface ComplianceStatus {
 export class LGPDService {
   async handleDataSubjectRequest(request: LGPDRequest): Promise<LGPDResponse> {
     const { clientId, requestType, requestData, justification } = request;
-    
+
     // Validate request
     await this.validateRequest(request);
-    
+
     // Process based on request type
     switch (requestType) {
       case 'access':
@@ -62,16 +62,16 @@ export class LGPDService {
   private async handleAccessRequest(clientId: string, requestData?: any): Promise<LGPDResponse> {
     // Retrieve all client data
     const clientData = await this.getAllClientData(clientId);
-    
+
     // Apply data masking
     const maskedData = await this.dataProtectionService.maskData(
       clientData,
-      this.getSensitiveFields()
+      this.getSensitiveFields(),
     );
-    
+
     // Generate access report
     const accessReport = await this.generateAccessReport(clientId, maskedData);
-    
+
     // Log access request
     await this.auditService.logEvent({
       eventType: 'lgpd_access_request',
@@ -83,11 +83,11 @@ export class LGPDService {
       eventData: {
         requestType: 'access',
         fieldsAccessed: Object.keys(maskedData),
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       },
       complianceRelevant: true,
       riskLevel: 'medium',
-      requiresReview: true
+      requiresReview: true,
     });
 
     return {
@@ -96,27 +96,30 @@ export class LGPDService {
         data: maskedData,
         format: requestData?.format || 'json',
         generatedAt: new Date(),
-        retentionPeriod: 30 // days
+        retentionPeriod: 30, // days
       },
-      accessReport
+      accessReport,
     };
   }
 
-  private async handleDeletionRequest(clientId: string, justification: string): Promise<LGPDResponse> {
+  private async handleDeletionRequest(
+    clientId: string,
+    justification: string,
+  ): Promise<LGPDResponse> {
     // Check legal basis for retention
     const canDelete = await this.checkLegalBasisForDeletion(clientId);
-    
+
     if (!canDelete.canDelete) {
       return {
         success: false,
         error: 'Data cannot be deleted due to legal retention requirements',
-        legalBasis: canDelete.legalBasis
+        legalBasis: canDelete.legalBasis,
       };
     }
 
     // Anonymize client data instead of hard delete
     await this.anonymizeClientData(clientId);
-    
+
     // Log deletion request
     await this.auditService.logEvent({
       eventType: 'lgpd_deletion_request',
@@ -127,17 +130,17 @@ export class LGPDService {
       action: 'delete',
       eventData: {
         justification,
-        anonymizationDate: new Date().toISOString()
+        anonymizationDate: new Date().toISOString(),
       },
       complianceRelevant: true,
       riskLevel: 'high',
-      requiresReview: true
+      requiresReview: true,
     });
 
     return {
       success: true,
       message: 'Client data has been anonymized in compliance with LGPD',
-      anonymizationDate: new Date()
+      anonymizationDate: new Date(),
     };
   }
 
@@ -181,12 +184,13 @@ export class LGPDConsentManager {
       location: await this.getLocationFromIP(consent.ipAddress),
       deviceInfo: await this.getDeviceInfo(consent.userAgent),
       legalBasis: consent.legalBasis || 'consent',
-      retentionPeriod: consent.retentionPeriod || this.getDefaultRetentionPeriod(consent.consentType),
+      retentionPeriod: consent.retentionPeriod
+        || this.getDefaultRetentionPeriod(consent.consentType),
       withdrawalMechanism: this.getWithdrawalMechanism(consent.consentType),
       version: '1.0',
       status: 'active',
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     };
 
     // Validate consent compliance
@@ -211,11 +215,11 @@ export class LGPDConsentManager {
         dataProcessing: consent.dataProcessing,
         marketing: consent.marketing,
         communication: consent.communication,
-        ipAddress: consent.ipAddress
+        ipAddress: consent.ipAddress,
       },
       complianceRelevant: true,
       riskLevel: 'medium',
-      requiresReview: false
+      requiresReview: false,
     });
 
     return consentRecord;
@@ -252,15 +256,18 @@ export class LGPDConsentManager {
       action: 'update',
       eventData: {
         withdrawalReason,
-        withdrawalDate: consent.withdrawalDate
+        withdrawalDate: consent.withdrawalDate,
       },
       complianceRelevant: true,
       riskLevel: 'medium',
-      requiresReview: true
+      requiresReview: true,
     });
   }
 
-  private async processConsentWithdrawal(consent: LGPDConsentRecord, reason: string): Promise<void> {
+  private async processConsentWithdrawal(
+    consent: LGPDConsentRecord,
+    reason: string,
+  ): Promise<void> {
     // Data processing withdrawal
     if (consent.dataProcessing) {
       await this.stopDataProcessing(consent.clientId);
@@ -298,15 +305,15 @@ export class LGPDConsentManager {
         marketing: consent.marketing,
         communication: consent.communication,
         legalBasis: consent.legalBasis,
-        retentionPeriod: consent.retentionPeriod
+        retentionPeriod: consent.retentionPeriod,
       })),
       complianceStatus: {
         overallCompliant: this.calculateOverallCompliance(consents),
         activeConsents: consents.filter(c => c.status === 'active').length,
         expiredConsents: consents.filter(c => c.status === 'expired').length,
         withdrawnConsents: consents.filter(c => c.status === 'withdrawn').length,
-        nextReviewDate: this.calculateNextReviewDate(consents)
-      }
+        nextReviewDate: this.calculateNextReviewDate(consents),
+      },
     };
   }
 }
@@ -322,22 +329,22 @@ export class ANVISAComplianceService {
   async validateMedicalDevice(device: ANVISADevice): Promise<ANVISAValidationResult> {
     // Validate ANVISA registration
     const registrationValid = await this.validateRegistration(device.registrationNumber);
-    
+
     // Check expiration dates
     const expirationValid = await this.validateExpirationDates(device);
-    
+
     // Verify manufacturer authorization
     const manufacturerValid = await this.validateManufacturer(device.manufacturerId);
-    
+
     // Check lot tracking requirements
     const lotTrackingValid = await this.validateLotTracking(device);
-    
+
     // Calculate overall compliance score
     const complianceScore = this.calculateComplianceScore({
       registration: registrationValid,
       expiration: expirationValid,
       manufacturer: manufacturerValid,
-      lotTracking: lotTrackingValid
+      lotTracking: lotTrackingValid,
     });
 
     return {
@@ -349,9 +356,9 @@ export class ANVISAComplianceService {
         registration: registrationValid,
         expiration: expirationValid,
         manufacturer: manufacturerValid,
-        lotTracking: lotTrackingValid
+        lotTracking: lotTrackingValid,
       }),
-      recommendations: this.generateRecommendations(device, complianceScore)
+      recommendations: this.generateRecommendations(device, complianceScore),
     };
   }
 
@@ -370,7 +377,7 @@ export class ANVISAComplianceService {
       usedAt: new Date(),
       usedBy: await this.getCurrentUser(),
       quantity: lotInfo.quantityPerUse || 1,
-      remainingQuantity: lotInfo.remainingQuantity - (lotInfo.quantityPerUse || 1)
+      remainingQuantity: lotInfo.remainingQuantity - (lotInfo.quantityPerUse || 1),
     });
 
     // Check for recall notices
@@ -391,11 +398,11 @@ export class ANVISAComplianceService {
         deviceId,
         sessionId,
         quantityUsed: lotInfo.quantityPerUse || 1,
-        remainingQuantity: lotInfo.remainingQuantity - (lotInfo.quantityPerUse || 1)
+        remainingQuantity: lotInfo.remainingQuantity - (lotInfo.quantityPerUse || 1),
       },
       complianceRelevant: true,
       riskLevel: 'medium',
-      requiresReview: false
+      requiresReview: false,
     });
   }
 
@@ -429,11 +436,11 @@ export class ANVISAComplianceService {
       eventData: {
         recallNumber: recall.recallNumber,
         affectedItems: affectedItems.length,
-        quarantineDate: new Date().toISOString()
+        quarantineDate: new Date().toISOString(),
       },
       complianceRelevant: true,
       riskLevel: 'high',
-      requiresReview: true
+      requiresReview: true,
     });
   }
 
@@ -451,7 +458,7 @@ export class ANVISAComplianceService {
         compliantDevices: devices.filter(d => d.complianceScore >= 0.8).length,
         treatmentsUsingMedicalDevices: treatments.length,
         lotUsages: lotUsages.length,
-        activeRecalls: recalls.filter(r => r.status === 'active').length
+        activeRecalls: recalls.filter(r => r.status === 'active').length,
       },
       devices: devices.map(device => ({
         id: device.id,
@@ -460,19 +467,19 @@ export class ANVISAComplianceService {
         complianceScore: device.complianceScore,
         lastValidationDate: device.lastValidationDate,
         nextValidationDate: device.nextValidationDate,
-        issues: device.issues
+        issues: device.issues,
       })),
       lotTracking: {
         totalLots: lotUsages.length,
         expiredLots: lotUsages.filter(l => l.expirationDate < dateRange.start).length,
         lowStockLots: lotUsages.filter(l => l.remainingQuantity < l.reorderPoint).length,
-        lotsExpiringSoon: lotUsages.filter(l => 
-          l.expirationDate >= dateRange.start && 
-          l.expirationDate <= addDays(dateRange.end, 30)
-        ).length
+        lotsExpiringSoon: lotUsages.filter(l =>
+          l.expirationDate >= dateRange.start
+          && l.expirationDate <= addDays(dateRange.end, 30)
+        ).length,
       },
       complianceIssues: this.identifyComplianceIssues(devices, lotUsages),
-      recommendations: this.generateANVISARecommendations(devices, treatments, lotUsages)
+      recommendations: this.generateANVISARecommendations(devices, treatments, lotUsages),
     };
   }
 }
@@ -482,16 +489,19 @@ export class ANVISAComplianceService {
 
 ```typescript
 export class ANVISATreatmentValidator {
-  async validateTreatmentCompliance(treatment: AestheticTreatment): Promise<TreatmentValidationResult> {
+  async validateTreatmentCompliance(
+    treatment: AestheticTreatment,
+  ): Promise<TreatmentValidationResult> {
     const validations = await Promise.all([
       this.validateMedicalDevices(treatment),
       this.validateProfessionalCertification(treatment),
       this.validateFacilityRequirements(treatment),
       this.validateDocumentationRequirements(treatment),
-      this.validateSafetyProtocols(treatment)
+      this.validateSafetyProtocols(treatment),
     ]);
 
-    const overallScore = validations.reduce((sum, validation) => sum + validation.score, 0) / validations.length;
+    const overallScore = validations.reduce((sum, validation) => sum + validation.score, 0)
+      / validations.length;
 
     return {
       valid: overallScore >= 0.8,
@@ -499,7 +509,7 @@ export class ANVISATreatmentValidator {
       validations,
       issues: validations.flatMap(v => v.issues),
       recommendations: validations.flatMap(v => v.recommendations),
-      nextReviewDate: this.calculateNextReviewDate(treatment, validations)
+      nextReviewDate: this.calculateNextReviewDate(treatment, validations),
     };
   }
 
@@ -509,7 +519,7 @@ export class ANVISATreatmentValidator {
     }
 
     const deviceValidations = await Promise.all(
-      treatment.requiredDevices.map(device => this.anvisaService.validateMedicalDevice(device))
+      treatment.requiredDevices.map(device => this.anvisaService.validateMedicalDevice(device)),
     );
 
     const validDevices = deviceValidations.filter(v => v.valid).length;
@@ -522,23 +532,27 @@ export class ANVISATreatmentValidator {
         severity: 'high',
         description: `Device ${v.deviceId} failed ANVISA validation`,
         device: v.deviceId,
-        issues: v.issues
+        issues: v.issues,
       }));
 
     return {
       score,
       issues,
-      recommendations: score < 1.0 ? [
-        'Replace non-compliant medical devices',
-        'Update device registrations',
-        'Review device expiration dates'
-      ] : []
+      recommendations: score < 1.0
+        ? [
+          'Replace non-compliant medical devices',
+          'Update device registrations',
+          'Review device expiration dates',
+        ]
+        : [],
     };
   }
 
-  private async validateProfessionalCertification(treatment: AestheticTreatment): Promise<ValidationResult> {
+  private async validateProfessionalCertification(
+    treatment: AestheticTreatment,
+  ): Promise<ValidationResult> {
     const professionals = await this.getProfessionalsQualifiedForTreatment(treatment.id);
-    
+
     if (professionals.length === 0) {
       return {
         score: 0.0,
@@ -546,13 +560,13 @@ export class ANVISATreatmentValidator {
           type: 'professional_certification',
           severity: 'critical',
           description: 'No professionals certified for this treatment',
-          treatment: treatment.id
+          treatment: treatment.id,
         }],
         recommendations: [
           'Train and certify professionals for this treatment',
           'Update professional certifications',
-          'Hire certified professionals'
-        ]
+          'Hire certified professionals',
+        ],
       };
     }
 
@@ -563,7 +577,7 @@ export class ANVISATreatmentValidator {
       type: 'professional_certification',
       severity: 'high',
       description: 'Some professionals have expired certifications',
-      treatment: treatment.id
+      treatment: treatment.id,
     }];
 
     return {
@@ -572,8 +586,8 @@ export class ANVISATreatmentValidator {
       recommendations: certificationsValid ? [] : [
         'Update professional certifications',
         'Schedule certification renewals',
-        'Verify professional credentials'
-      ]
+        'Verify professional credentials',
+      ],
     };
   }
 }
@@ -592,10 +606,11 @@ export class CFMComplianceService {
       this.validateSpecialization(professional),
       this.validateLicenseStatus(professional),
       this.validateProfessionalConduct(professional),
-      this.validateContinuingEducation(professional)
+      this.validateContinuingEducation(professional),
     ]);
 
-    const overallScore = validations.reduce((sum, validation) => sum + validation.score, 0) / validations.length;
+    const overallScore = validations.reduce((sum, validation) => sum + validation.score, 0)
+      / validations.length;
 
     return {
       valid: overallScore >= 0.8,
@@ -603,38 +618,44 @@ export class CFMComplianceService {
       validations,
       issues: validations.flatMap(v => v.issues),
       recommendations: validations.flatMap(v => v.recommendations),
-      nextValidationDate: this.calculateNextValidationDate(professional, validations)
+      nextValidationDate: this.calculateNextValidationDate(professional, validations),
     };
   }
 
-  private async validateCRMRegistration(professional: AestheticProfessional): Promise<ValidationResult> {
+  private async validateCRMRegistration(
+    professional: AestheticProfessional,
+  ): Promise<ValidationResult> {
     // Check CRM format and validity
     const crmValid = this.validateCRMFormat(professional.cfmCrmNumber, professional.cfmCrmState);
-    
+
     // Verify with CFM database
     const cfmVerification = await this.verifyWithCFMDatabase(
-      professional.cfmCrmNumber, 
-      professional.cfmCrmState
+      professional.cfmCrmNumber,
+      professional.cfmCrmState,
     );
 
     const score = crmValid && cfmVerification.valid ? 1.0 : 0.0;
 
-    const issues = score === 0.0 ? [{
-      type: 'crm_registration',
-      severity: 'critical',
-      description: cfmVerification.error || 'Invalid CRM registration',
-      crm: professional.cfmCrmNumber,
-      state: professional.cfmCrmState
-    }] : [];
+    const issues = score === 0.0
+      ? [{
+        type: 'crm_registration',
+        severity: 'critical',
+        description: cfmVerification.error || 'Invalid CRM registration',
+        crm: professional.cfmCrmNumber,
+        state: professional.cfmCrmState,
+      }]
+      : [];
 
     return {
       score,
       issues,
-      recommendations: score === 0.0 ? [
-        'Verify CRM registration with CFM',
-        'Update CRM information',
-        'Contact CFM for registration verification'
-      ] : []
+      recommendations: score === 0.0
+        ? [
+          'Verify CRM registration with CFM',
+          'Update CRM information',
+          'Contact CFM for registration verification',
+        ]
+        : [],
     };
   }
 
@@ -642,7 +663,7 @@ export class CFMComplianceService {
     try {
       // In a real implementation, this would query the CFM API
       const response = await this.cfmAPI.verifyCRM(crm, state);
-      
+
       return {
         valid: response.valid,
         active: response.active,
@@ -651,23 +672,29 @@ export class CFMComplianceService {
         registrationDate: response.registrationDate,
         lastUpdate: response.lastUpdate,
         restrictions: response.restrictions || [],
-        error: response.error
+        error: response.error,
       };
     } catch (error) {
       return {
         valid: false,
-        error: `Failed to verify CRM: ${error.message}`
+        error: `Failed to verify CRM: ${error.message}`,
       };
     }
   }
 
-  async superviseProfessional(juniorProfessional: AestheticProfessional, supervisor: AestheticProfessional): Promise<SupervisionValidation> {
+  async superviseProfessional(
+    juniorProfessional: AestheticProfessional,
+    supervisor: AestheticProfessional,
+  ): Promise<SupervisionValidation> {
     // Validate supervisor qualifications
     const supervisorValid = await this.validateSupervisorQualifications(supervisor);
-    
+
     // Validate supervision relationship
-    const relationshipValid = await this.validateSupervisionRelationship(juniorProfessional, supervisor);
-    
+    const relationshipValid = await this.validateSupervisionRelationship(
+      juniorProfessional,
+      supervisor,
+    );
+
     // Check supervision limits
     const withinLimits = await this.checkSupervisionLimits(supervisor);
 
@@ -681,11 +708,13 @@ export class CFMComplianceService {
       validUntil: this.calculateSupervisionExpiry(),
       conditions: this.getSupervisionConditions(juniorProfessional, supervisor),
       requirements: this.getSupervisionRequirements(juniorProfessional, supervisor),
-      limitations: this.getSupervisionLimitations(supervisor)
+      limitations: this.getSupervisionLimitations(supervisor),
     };
   }
 
-  async generateProfessionalComplianceReport(professionalId: string): Promise<ProfessionalComplianceReport> {
+  async generateProfessionalComplianceReport(
+    professionalId: string,
+  ): Promise<ProfessionalComplianceReport> {
     const professional = await this.getProfessionalById(professionalId);
     const validations = await this.validateProfessional(professional);
     const supervisedProfessionals = await this.getSupervisedProfessionals(professionalId);
@@ -701,35 +730,42 @@ export class CFMComplianceService {
         valid: validations.valid,
         nextReviewDate: validations.nextValidationDate,
         issuesCount: validations.issues.length,
-        criticalIssues: validations.issues.filter(i => i.severity === 'critical').length
+        criticalIssues: validations.issues.filter(i => i.severity === 'critical').length,
       },
       certifications: {
         crmValid: validations.validations.find(v => v.type === 'crm_registration')?.score === 1.0,
-        specializationsValid: validations.validations.find(v => v.type === 'specialization')?.score === 1.0,
-        licenseActive: validations.validations.find(v => v.type === 'license_status')?.score === 1.0,
-        continuingEducationValid: validations.validations.find(v => v.type === 'continuing_education')?.score === 1.0
+        specializationsValid:
+          validations.validations.find(v => v.type === 'specialization')?.score === 1.0,
+        licenseActive:
+          validations.validations.find(v => v.type === 'license_status')?.score === 1.0,
+        continuingEducationValid:
+          validations.validations.find(v => v.type === 'continuing_education')?.score === 1.0,
       },
       supervision: {
         isSupervisor: supervisedProfessionals.length > 0,
         supervisedCount: supervisedProfessionals.length,
         hasSupervisor: professional.requiresSupervision,
-        supervisorValid: professional.supervisorId ? 
-          await this.validateSupervisionRelationship(professional, await this.getProfessionalById(professional.supervisorId)) : false
+        supervisorValid: professional.supervisorId
+          ? await this.validateSupervisionRelationship(
+            professional,
+            await this.getProfessionalById(professional.supervisorId),
+          )
+          : false,
       },
       activity: {
         treatmentsPerformed: recentTreatments.length,
         averageTreatmentTime: this.calculateAverageTreatmentTime(recentTreatments),
         patientSatisfaction: this.calculatePatientSatisfaction(recentTreatments),
-        complicationRate: this.calculateComplicationRate(recentTreatments)
+        complicationRate: this.calculateComplicationRate(recentTreatments),
       },
       education: {
         totalCredits: continuingEducation.totalCredits,
         requiredCredits: continuingEducation.requiredCredits,
         creditsValid: continuingEducation.totalCredits >= continuingEducation.requiredCredits,
-        lastEducationDate: continuingEducation.lastUpdate
+        lastEducationDate: continuingEducation.lastUpdate,
       },
       recommendations: validations.recommendations,
-      issues: validations.issues
+      issues: validations.issues,
     };
   }
 }
@@ -745,16 +781,16 @@ export class ComplianceMonitoringService {
   async monitorCompliance(): Promise<void> {
     // Monitor LGPD compliance
     await this.monitorLGPDCompliance();
-    
+
     // Monitor ANVISA compliance
     await this.monitorANVISACompliance();
-    
+
     // Monitor CFM compliance
     await this.monitorCFMCompliance();
-    
+
     // Generate compliance alerts
     await this.generateComplianceAlerts();
-    
+
     // Update compliance dashboard
     await this.updateComplianceDashboard();
   }
@@ -771,7 +807,7 @@ export class ComplianceMonitoringService {
         entityId: consent.id,
         entityType: 'consent',
         dueDate: new Date(),
-        assignee: 'compliance_officer'
+        assignee: 'compliance_officer',
       });
     }
 
@@ -786,7 +822,7 @@ export class ComplianceMonitoringService {
         entityId: data.id,
         entityType: 'client_data',
         dueDate: addDays(new Date(), 7),
-        assignee: 'compliance_officer'
+        assignee: 'compliance_officer',
       });
     }
 
@@ -801,7 +837,7 @@ export class ComplianceMonitoringService {
         entityId: request.id,
         entityType: 'lgpd_request',
         dueDate: new Date(),
-        assignee: 'compliance_officer'
+        assignee: 'compliance_officer',
       });
     }
   }
@@ -818,7 +854,7 @@ export class ComplianceMonitoringService {
         entityId: device.id,
         entityType: 'medical_device',
         dueDate: addDays(new Date(), 3),
-        assignee: 'compliance_officer'
+        assignee: 'compliance_officer',
       });
     }
 
@@ -833,7 +869,7 @@ export class ComplianceMonitoringService {
         entityId: lot.id,
         entityType: 'medical_device_lot',
         dueDate: lot.expirationDate,
-        assignee: 'inventory_manager'
+        assignee: 'inventory_manager',
       });
     }
 
@@ -850,7 +886,7 @@ export class ComplianceMonitoringService {
           entityId: recall.id,
           entityType: 'recall_notice',
           dueDate: new Date(),
-          assignee: 'safety_officer'
+          assignee: 'safety_officer',
         });
       }
     }
@@ -868,7 +904,7 @@ export class ComplianceMonitoringService {
         entityId: professional.id,
         entityType: 'professional',
         dueDate: new Date(),
-        assignee: 'hr_manager'
+        assignee: 'hr_manager',
       });
     }
 
@@ -883,7 +919,7 @@ export class ComplianceMonitoringService {
         entityId: professional.id,
         entityType: 'professional',
         dueDate: addDays(new Date(), 1),
-        assignee: 'clinic_manager'
+        assignee: 'clinic_manager',
       });
     }
 
@@ -898,34 +934,35 @@ export class ComplianceMonitoringService {
         entityId: professional.id,
         entityType: 'professional',
         dueDate: professional.nextEducationDeadline,
-        assignee: 'hr_manager'
+        assignee: 'hr_manager',
       });
     }
   }
 
   async generateComplianceDashboard(): Promise<ComplianceDashboard> {
-    const [lgpdStatus, anvisaStatus, cfmStatus, activeAlerts, upcomingDeadlines] = await Promise.all([
-      this.getLGPDStatus(),
-      this.getANVISAStatus(),
-      this.getCFMStatus(),
-      this.getActiveComplianceAlerts(),
-      this.getUpcomingComplianceDeadlines()
-    ]);
+    const [lgpdStatus, anvisaStatus, cfmStatus, activeAlerts, upcomingDeadlines] = await Promise
+      .all([
+        this.getLGPDStatus(),
+        this.getANVISAStatus(),
+        this.getCFMStatus(),
+        this.getActiveComplianceAlerts(),
+        this.getUpcomingComplianceDeadlines(),
+      ]);
 
     return {
       overview: {
         overallScore: (lgpdStatus.score + anvisaStatus.score + cfmStatus.score) / 3,
         lastAudit: await this.getLastAuditDate(),
-        nextAudit: await this.getNextAuditDate()
+        nextAudit: await this.getNextAuditDate(),
       },
       frameworks: {
         lgpd: lgpdStatus,
         anvisa: anvisaStatus,
-        cfm: cfmStatus
+        cfm: cfmStatus,
       },
       alerts: activeAlerts,
       deadlines: upcomingDeadlines,
-      metrics: await this.getComplianceMetrics()
+      metrics: await this.getComplianceMetrics(),
     };
   }
 
@@ -933,7 +970,7 @@ export class ComplianceMonitoringService {
     const [lgpdReport, anvisaReport, cfmReport] = await Promise.all([
       this.generateLGPDReport(timeRange),
       this.generateANVISAReport(timeRange),
-      this.generateCFMReport(timeRange)
+      this.generateCFMReport(timeRange),
     ]);
 
     return {
@@ -943,20 +980,25 @@ export class ComplianceMonitoringService {
         overallComplianceScore: (lgpdReport.score + anvisaReport.score + cfmReport.score) / 3,
         frameworksAssessed: ['LGPD', 'ANVISA', 'CFM'],
         totalAudits: lgpdReport.audits + anvisaReport.audits + cfmReport.audits,
-        criticalIssues: lgpdReport.criticalIssues + anvisaReport.criticalIssues + cfmReport.criticalIssues,
+        criticalIssues: lgpdReport.criticalIssues + anvisaReport.criticalIssues
+          + cfmReport.criticalIssues,
         improvementAreas: [
           ...lgpdReport.improvementAreas,
           ...anvisaReport.improvementAreas,
-          ...cfmReport.improvementAreas
-        ]
+          ...cfmReport.improvementAreas,
+        ],
       },
       frameworks: {
         lgpd: lgpdReport,
         anvisa: anvisaReport,
-        cfm: cfmReport
+        cfm: cfmReport,
       },
-      recommendations: this.generateConsolidatedRecommendations([lgpdReport, anvisaReport, cfmReport]),
-      actionPlan: this.generateActionPlan([lgpdReport, anvisaReport, cfmReport])
+      recommendations: this.generateConsolidatedRecommendations([
+        lgpdReport,
+        anvisaReport,
+        cfmReport,
+      ]),
+      actionPlan: this.generateActionPlan([lgpdReport, anvisaReport, cfmReport]),
     };
   }
 }

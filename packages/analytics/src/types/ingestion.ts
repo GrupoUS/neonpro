@@ -1,6 +1,6 @@
-import { AnalyticsEvent, BaseMetric } from "./base-metrics";
-import { ClinicalKPI } from "./clinical-kpis";
-import { FinancialKPI } from "./financial-kpis";
+import { AnalyticsEvent, BaseMetric } from './base-metrics';
+import { ClinicalKPI } from './clinical-kpis';
+import { FinancialKPI } from './financial-kpis';
 
 /**
  * Ingestion Pipeline Configuration
@@ -10,12 +10,12 @@ export interface IngestionConfig {
   sourceId: string;
 
   /** Source type and connection details */
-  sourceType: "database" | "api" | "file" | "stream" | "webhook";
+  sourceType: 'database' | 'api' | 'file' | 'stream' | 'webhook';
 
   /** Data processing options */
   processing: {
     batchSize: number;
-    frequency: "realtime" | "hourly" | "daily" | "weekly";
+    frequency: 'realtime' | 'hourly' | 'daily' | 'weekly';
     validation: boolean;
     transformation: boolean;
     deduplication: boolean;
@@ -51,13 +51,13 @@ export interface ValidationRule {
   field: string;
 
   /** Validation type */
-  type: "required" | "format" | "range" | "custom" | "compliance";
+  type: 'required' | 'format' | 'range' | 'custom' | 'compliance';
 
   /** Validation parameters */
   parameters: Record<string, any>;
 
   /** Error handling */
-  onError: "reject" | "warn" | "transform" | "skip";
+  onError: 'reject' | 'warn' | 'transform' | 'skip';
 
   /** Compliance framework */
   complianceFramework?: string;
@@ -80,7 +80,7 @@ export interface TransformationRule {
   targetField: string;
 
   /** Transformation type */
-  type: "map" | "aggregate" | "filter" | "anonymize" | "calculate";
+  type: 'map' | 'aggregate' | 'filter' | 'anonymize' | 'calculate';
 
   /** Transformation logic */
   logic: Record<string, any>;
@@ -93,18 +93,18 @@ export interface TransformationRule {
  * Ingestion Event Types
  */
 export type IngestionEventType =
-  | "data_received"
-  | "validation_started"
-  | "validation_completed"
-  | "validation_failed"
-  | "transformation_started"
-  | "transformation_completed"
-  | "transformation_failed"
-  | "storage_started"
-  | "storage_completed"
-  | "storage_failed"
-  | "processing_completed"
-  | "error_occurred";
+  | 'data_received'
+  | 'validation_started'
+  | 'validation_completed'
+  | 'validation_failed'
+  | 'transformation_started'
+  | 'transformation_completed'
+  | 'transformation_failed'
+  | 'storage_started'
+  | 'storage_completed'
+  | 'storage_failed'
+  | 'processing_completed'
+  | 'error_occurred';
 
 /**
  * Ingestion Event
@@ -125,7 +125,7 @@ export interface IngestionEvent extends AnalyticsEvent {
     startTime: Date;
     endTime?: Date;
     duration?: number;
-    status: "pending" | "processing" | "completed" | "failed";
+    status: 'pending' | 'processing' | 'completed' | 'failed';
     errors?: string[];
   };
 
@@ -146,7 +146,7 @@ export interface IngestionResult {
   operationId: string;
 
   /** Pipeline status */
-  status: "success" | "partial_success" | "failure";
+  status: 'success' | 'partial_success' | 'failure';
 
   /** Processing summary */
   summary: {
@@ -182,14 +182,14 @@ export interface StreamConfig {
 
   /** Stream source */
   source: {
-    type: "kafka" | "rabbitmq" | "websocket" | "webhook";
+    type: 'kafka' | 'rabbitmq' | 'websocket' | 'webhook';
     endpoint: string;
     authentication?: Record<string, any>;
   };
 
   /** Message processing */
   processing: {
-    messageFormat: "json" | "xml" | "csv" | "binary";
+    messageFormat: 'json' | 'xml' | 'csv' | 'binary';
     batchProcessing: boolean;
     batchSize?: number;
     bufferTime?: number;
@@ -200,7 +200,7 @@ export interface StreamConfig {
     acknowledgments: boolean;
     retryPolicy: {
       maxRetries: number;
-      backoffStrategy: "linear" | "exponential";
+      backoffStrategy: 'linear' | 'exponential';
       baseDelay: number;
     };
     deadLetterHandling: boolean;
@@ -217,10 +217,10 @@ export interface WebhookConfig {
   /** Webhook URL and security */
   endpoint: {
     url: string;
-    method: "POST" | "PUT" | "PATCH";
+    method: 'POST' | 'PUT' | 'PATCH';
     headers: Record<string, string>;
     authentication?: {
-      type: "bearer" | "basic" | "api_key" | "hmac";
+      type: 'bearer' | 'basic' | 'api_key' | 'hmac';
       credentials: Record<string, string>;
     };
   };
@@ -268,7 +268,7 @@ export interface DataQualityAssessment {
   issues: Array<{
     type: string;
     description: string;
-    severity: "low" | "medium" | "high" | "critical";
+    severity: 'low' | 'medium' | 'high' | 'critical';
     field?: string;
     count: number;
   }>;
@@ -288,7 +288,7 @@ export interface ComplianceValidationResult {
   framework: string;
 
   /** Validation status */
-  status: "compliant" | "non_compliant" | "warning";
+  status: 'compliant' | 'non_compliant' | 'warning';
 
   /** Validation details */
   details: {
@@ -302,7 +302,7 @@ export interface ComplianceValidationResult {
   violations: Array<{
     rule: string;
     description: string;
-    severity: "low" | "medium" | "high" | "critical";
+    severity: 'low' | 'medium' | 'high' | 'critical';
     field?: string;
     remediation: string;
   }>;
@@ -315,15 +315,15 @@ export interface ComplianceValidationResult {
  * Error Types for Ingestion Pipeline
  */
 export type IngestionErrorType =
-  | "connection_error"
-  | "authentication_error"
-  | "validation_error"
-  | "transformation_error"
-  | "storage_error"
-  | "compliance_error"
-  | "timeout_error"
-  | "resource_error"
-  | "unknown_error";
+  | 'connection_error'
+  | 'authentication_error'
+  | 'validation_error'
+  | 'transformation_error'
+  | 'storage_error'
+  | 'compliance_error'
+  | 'timeout_error'
+  | 'resource_error'
+  | 'unknown_error';
 
 /**
  * Ingestion Error
@@ -417,15 +417,15 @@ export interface IngestionMonitoringMetrics {
  */
 export function isIngestionEvent(obj: any): obj is IngestionEvent {
   return (
-    obj &&
-    typeof obj === "object" &&
-    typeof obj.eventType === "string" &&
-    obj.source &&
-    typeof obj.source.sourceId === "string" &&
-    obj.processing &&
-    typeof obj.processing.status === "string" &&
-    obj.quality &&
-    typeof obj.quality.validRecords === "number"
+    obj
+    && typeof obj === 'object'
+    && typeof obj.eventType === 'string'
+    && obj.source
+    && typeof obj.source.sourceId === 'string'
+    && obj.processing
+    && typeof obj.processing.status === 'string'
+    && obj.quality
+    && typeof obj.quality.validRecords === 'number'
   );
 }
 
@@ -434,14 +434,14 @@ export function isIngestionEvent(obj: any): obj is IngestionEvent {
  */
 export function isIngestionConfig(obj: any): obj is IngestionConfig {
   return (
-    obj &&
-    typeof obj === "object" &&
-    typeof obj.sourceId === "string" &&
-    typeof obj.sourceType === "string" &&
-    obj.processing &&
-    typeof obj.processing.batchSize === "number" &&
-    obj.security &&
-    typeof obj.security.encryption === "boolean"
+    obj
+    && typeof obj === 'object'
+    && typeof obj.sourceId === 'string'
+    && typeof obj.sourceType === 'string'
+    && obj.processing
+    && typeof obj.processing.batchSize === 'number'
+    && obj.security
+    && typeof obj.security.encryption === 'boolean'
   );
 }
 
@@ -450,11 +450,11 @@ export function isIngestionConfig(obj: any): obj is IngestionConfig {
  */
 export function isValidationRule(obj: any): obj is ValidationRule {
   return (
-    obj &&
-    typeof obj === "object" &&
-    typeof obj.ruleId === "string" &&
-    typeof obj.field === "string" &&
-    typeof obj.type === "string" &&
-    typeof obj.onError === "string"
+    obj
+    && typeof obj === 'object'
+    && typeof obj.ruleId === 'string'
+    && typeof obj.field === 'string'
+    && typeof obj.type === 'string'
+    && typeof obj.onError === 'string'
   );
 }

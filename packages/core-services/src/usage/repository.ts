@@ -10,8 +10,8 @@
  * - Healthcare regulatory compliance (CFM/ANVISA)
  */
 
-import { createClient } from "@supabase/supabase-js";
-import type { UsageCounterData, SubscriptionTier } from "@neonpro/types";
+import type { SubscriptionTier, UsageCounterData } from '@neonpro/types';
+import { createClient } from '@supabase/supabase-js';
 
 /**
  * Extended metadata interface for healthcare usage tracking
@@ -147,7 +147,7 @@ export class UsageCounterRepository {
     const now = new Date();
 
     const insertData = {
-      entity_type: "clinic",
+      entity_type: 'clinic',
       entity_id: data.clinicId,
       monthly_queries: data.monthlyQueries || 0,
       daily_queries: data.dailyQueries || 0,
@@ -172,7 +172,7 @@ export class UsageCounterRepository {
     };
 
     const { data: result, error } = await this.supabase
-      .from("usage_counters")
+      .from('usage_counters')
       .insert(insertData)
       .select()
       .single();
@@ -214,8 +214,7 @@ export class UsageCounterRepository {
         const inc = params.increment;
 
         if (inc.monthlyQueries) {
-          updateData.monthly_queries =
-            (existing.monthlyQueries || 0) + inc.monthlyQueries;
+          updateData.monthly_queries = (existing.monthlyQueries || 0) + inc.monthlyQueries;
         }
         if (inc.dailyQueries) {
           // Reset daily queries if it's a new day
@@ -227,40 +226,32 @@ export class UsageCounterRepository {
             : (existing.dailyQueries || 0) + inc.dailyQueries;
         }
         if (inc.costUsd) {
-          updateData.current_cost_usd =
-            (existing.currentCostUsd || 0) + inc.costUsd;
-          const existingMetadata =
-            (existing.metadata as UsageMetadata) || ({} as UsageMetadata);
+          updateData.current_cost_usd = (existing.currentCostUsd || 0) + inc.costUsd;
+          const existingMetadata = (existing.metadata as UsageMetadata) || ({} as UsageMetadata);
           updateData.metadata = {
             ...(updateData.metadata || existingMetadata),
             total_cost_usd: (existingMetadata.totalCostUsd || 0) + inc.costUsd,
           };
         }
         if (inc.totalRequests) {
-          const existingMetadata =
-            (existing.metadata as UsageMetadata) || ({} as UsageMetadata);
+          const existingMetadata = (existing.metadata as UsageMetadata) || ({} as UsageMetadata);
           updateData.metadata = {
             ...(updateData.metadata || existingMetadata),
-            total_requests:
-              (existingMetadata.totalRequests || 0) + inc.totalRequests,
+            total_requests: (existingMetadata.totalRequests || 0) + inc.totalRequests,
           };
         }
         if (inc.tokensUsed) {
-          const existingMetadata =
-            (existing.metadata as UsageMetadata) || ({} as UsageMetadata);
+          const existingMetadata = (existing.metadata as UsageMetadata) || ({} as UsageMetadata);
           updateData.metadata = {
             ...(updateData.metadata || existingMetadata),
-            total_tokens_used:
-              (existingMetadata.totalTokensUsed || 0) + inc.tokensUsed,
+            total_tokens_used: (existingMetadata.totalTokensUsed || 0) + inc.tokensUsed,
           };
         }
         if (inc.cacheSavingsUsd) {
-          const existingMetadata =
-            (existing.metadata as UsageMetadata) || ({} as UsageMetadata);
+          const existingMetadata = (existing.metadata as UsageMetadata) || ({} as UsageMetadata);
           updateData.metadata = {
             ...(updateData.metadata || existingMetadata),
-            cache_savings_usd:
-              (existingMetadata.cacheSavingsUsd || 0) + inc.cacheSavingsUsd,
+            cache_savings_usd: (existingMetadata.cacheSavingsUsd || 0) + inc.cacheSavingsUsd,
           };
         }
       }
@@ -279,8 +270,7 @@ export class UsageCounterRepository {
           updateData.error_rate = metrics.errorRate;
         }
         if (metrics.concurrentRequests !== undefined) {
-          const existingMetadata =
-            (existing.metadata as UsageMetadata) || ({} as UsageMetadata);
+          const existingMetadata = (existing.metadata as UsageMetadata) || ({} as UsageMetadata);
           updateData.metadata = {
             ...(updateData.metadata || existingMetadata),
             concurrent_requests: metrics.concurrentRequests,
@@ -289,10 +279,10 @@ export class UsageCounterRepository {
       }
 
       const { data: result, error } = await this.supabase
-        .from("usage_counters")
+        .from('usage_counters')
         .update(updateData)
-        .eq("entity_type", "clinic")
-        .eq("entity_id", params.clinicId)
+        .eq('entity_type', 'clinic')
+        .eq('entity_id', params.clinicId)
         .select()
         .single();
 
@@ -331,14 +321,14 @@ export class UsageCounterRepository {
     _userId: string,
   ): Promise<ExtendedUsageCounterData | null> {
     const { data, error } = await this.supabase
-      .from("usage_counters")
+      .from('usage_counters')
       .select()
-      .eq("entity_type", "clinic")
-      .eq("entity_id", clinicId)
+      .eq('entity_type', 'clinic')
+      .eq('entity_id', clinicId)
       .single();
 
     if (error) {
-      if (error.code === "PGRST116") {
+      if (error.code === 'PGRST116') {
         return null; // Not found
       }
       throw new Error(`Failed to find usage counter: ${error.message}`);
@@ -352,13 +342,13 @@ export class UsageCounterRepository {
    */
   async findById(id: string): Promise<ExtendedUsageCounterData | null> {
     const { data, error } = await this.supabase
-      .from("usage_counters")
+      .from('usage_counters')
       .select()
-      .eq("id", id)
+      .eq('id', id)
       .single();
 
     if (error) {
-      if (error.code === "PGRST116") {
+      if (error.code === 'PGRST116') {
         return null; // Not found
       }
       throw new Error(`Failed to find usage counter: ${error.message}`);
@@ -379,40 +369,40 @@ export class UsageCounterRepository {
     total: number;
   }> {
     let query = this.supabase
-      .from("usage_counters")
-      .select("*", { count: "exact" });
+      .from('usage_counters')
+      .select('*', { count: 'exact' });
 
     // Apply filters
     if (filters.clinicId) {
       query = query
-        .eq("entity_type", "clinic")
-        .eq("entity_id", filters.clinicId);
+        .eq('entity_type', 'clinic')
+        .eq('entity_id', filters.clinicId);
     }
     if (filters._userId) {
-      query = query.eq("metadata->>user_id", filters._userId);
+      query = query.eq('metadata->>user_id', filters._userId);
     }
     if (filters.planCode) {
-      query = query.eq("plan_code", filters.planCode);
+      query = query.eq('plan_code', filters.planCode);
     }
     if (filters.periodStart) {
-      query = query.gte("period_start", filters.periodStart.toISOString());
+      query = query.gte('period_start', filters.periodStart.toISOString());
     }
     if (filters.lastActivityAfter) {
       query = query.gte(
-        "last_activity",
+        'last_activity',
         filters.lastActivityAfter.toISOString(),
       );
     }
     if (filters.lastActivityBefore) {
       query = query.lte(
-        "last_activity",
+        'last_activity',
         filters.lastActivityBefore.toISOString(),
       );
     }
 
     // Apply pagination and ordering
     query = query
-      .order("last_activity", { ascending: false })
+      .order('last_activity', { ascending: false })
       .range(offset, offset + limit - 1);
 
     const { data, error, count } = await query;
@@ -439,24 +429,30 @@ export class UsageCounterRepository {
     };
 
     // Map model fields to database fields
-    if (data.monthlyQueries !== undefined)
+    if (data.monthlyQueries !== undefined) {
       updateData.monthly_queries = data.monthlyQueries;
-    if (data.dailyQueries !== undefined)
+    }
+    if (data.dailyQueries !== undefined) {
       updateData.daily_queries = data.dailyQueries;
-    if (data.currentCostUsd !== undefined)
+    }
+    if (data.currentCostUsd !== undefined) {
       updateData.current_cost_usd = data.currentCostUsd;
-    if (data.averageLatencyMs !== undefined)
+    }
+    if (data.averageLatencyMs !== undefined) {
       updateData.average_latency_ms = data.averageLatencyMs;
-    if (data.cacheHitRate !== undefined)
+    }
+    if (data.cacheHitRate !== undefined) {
       updateData.cache_hit_rate = data.cacheHitRate;
+    }
     if (data.errorRate !== undefined) updateData.error_rate = data.errorRate;
-    if (data.lastActivity !== undefined)
+    if (data.lastActivity !== undefined) {
       updateData.last_activity = data.lastActivity.toISOString();
+    }
 
     const { data: result, error } = await this.supabase
-      .from("usage_counters")
+      .from('usage_counters')
       .update(updateData)
-      .eq("id", id)
+      .eq('id', id)
       .select()
       .single();
 
@@ -477,7 +473,7 @@ export class UsageCounterRepository {
     const now = new Date();
 
     const { data: result, error } = await this.supabase
-      .from("usage_counters")
+      .from('usage_counters')
       .update({
         daily_queries: 0,
         metadata: {
@@ -486,8 +482,8 @@ export class UsageCounterRepository {
         },
         updated_at: now.toISOString(),
       })
-      .eq("entity_type", "clinic")
-      .eq("entity_id", clinicId)
+      .eq('entity_type', 'clinic')
+      .eq('entity_id', clinicId)
       .select()
       .single();
 
@@ -509,7 +505,7 @@ export class UsageCounterRepository {
     const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
 
     const { data: result, error } = await this.supabase
-      .from("usage_counters")
+      .from('usage_counters')
       .update({
         monthly_queries: 0,
         daily_queries: 0,
@@ -521,8 +517,8 @@ export class UsageCounterRepository {
         },
         updated_at: now.toISOString(),
       })
-      .eq("entity_type", "clinic")
-      .eq("entity_id", clinicId)
+      .eq('entity_type', 'clinic')
+      .eq('entity_id', clinicId)
       .select()
       .single();
 
@@ -546,10 +542,10 @@ export class UsageCounterRepository {
     overallErrorRate: number;
   }> {
     const { data, error } = await this.supabase
-      .from("usage_counters")
-      .select("*")
-      .eq("entity_type", "clinic")
-      .eq("entity_id", clinicId);
+      .from('usage_counters')
+      .select('*')
+      .eq('entity_type', 'clinic')
+      .eq('entity_id', clinicId);
 
     if (error) {
       throw new Error(`Failed to get clinic aggregate usage: ${error.message}`);
@@ -569,44 +565,35 @@ export class UsageCounterRepository {
 
     const totalUsers = data.length;
     const totalMonthlyQueries = data.reduce(
-      (sum: number, item: UsageCounterDatabaseRow) =>
-        sum + (item.monthly_queries || 0),
+      (sum: number, item: UsageCounterDatabaseRow) => sum + (item.monthly_queries || 0),
       0,
     );
     const totalDailyQueries = data.reduce(
-      (sum: number, item: UsageCounterDatabaseRow) =>
-        sum + (item.daily_queries || 0),
+      (sum: number, item: UsageCounterDatabaseRow) => sum + (item.daily_queries || 0),
       0,
     );
     const totalCostUsd = data.reduce(
-      (sum: number, item: UsageCounterDatabaseRow) =>
-        sum + (item.current_cost_usd || 0),
+      (sum: number, item: UsageCounterDatabaseRow) => sum + (item.current_cost_usd || 0),
       0,
     );
-    const averageLatencyMs =
-      totalUsers > 0
-        ? data.reduce(
-            (sum: number, item: UsageCounterDatabaseRow) =>
-              sum + (item.average_latency_ms || 0),
-            0,
-          ) / totalUsers
-        : 0;
-    const overallCacheHitRate =
-      totalUsers > 0
-        ? data.reduce(
-            (sum: number, item: UsageCounterDatabaseRow) =>
-              sum + (item.cache_hit_rate || 0),
-            0,
-          ) / totalUsers
-        : 0;
-    const overallErrorRate =
-      totalUsers > 0
-        ? data.reduce(
-            (sum: number, item: UsageCounterDatabaseRow) =>
-              sum + (item.error_rate || 0),
-            0,
-          ) / totalUsers
-        : 0;
+    const averageLatencyMs = totalUsers > 0
+      ? data.reduce(
+        (sum: number, item: UsageCounterDatabaseRow) => sum + (item.average_latency_ms || 0),
+        0,
+      ) / totalUsers
+      : 0;
+    const overallCacheHitRate = totalUsers > 0
+      ? data.reduce(
+        (sum: number, item: UsageCounterDatabaseRow) => sum + (item.cache_hit_rate || 0),
+        0,
+      ) / totalUsers
+      : 0;
+    const overallErrorRate = totalUsers > 0
+      ? data.reduce(
+        (sum: number, item: UsageCounterDatabaseRow) => sum + (item.error_rate || 0),
+        0,
+      ) / totalUsers
+      : 0;
 
     return {
       totalUsers,
@@ -624,9 +611,9 @@ export class UsageCounterRepository {
    */
   async delete(id: string): Promise<void> {
     const { error } = await this.supabase
-      .from("usage_counters")
+      .from('usage_counters')
       .delete()
-      .eq("id", id);
+      .eq('id', id);
 
     if (error) {
       throw new Error(`Failed to delete usage counter: ${error.message}`);
@@ -639,24 +626,23 @@ export class UsageCounterRepository {
   private mapDatabaseToModel(
     row: UsageCounterDatabaseRow,
   ): ExtendedUsageCounterData {
-    const metadata =
-      (row.metadata as unknown as UsageMetadata) || ({} as UsageMetadata);
+    const metadata = (row.metadata as unknown as UsageMetadata) || ({} as UsageMetadata);
 
     return {
       clinicId: row.entity_id,
-      userId: metadata._userId || "",
-      planCode: metadata.planCode || "basic",
+      userId: metadata._userId || '',
+      planCode: metadata.planCode || 'basic',
       monthlyQueries: row.monthly_queries || 0,
       dailyQueries: row.daily_queries || 0,
-      currentCostUsd: parseFloat(row.current_cost_usd?.toString() || "0"),
+      currentCostUsd: parseFloat(row.current_cost_usd?.toString() || '0'),
       concurrentRequests: metadata.concurrentRequests || 0,
       totalRequests: metadata.totalRequests || 0,
-      totalCostUsd: parseFloat(metadata.totalCostUsd?.toString() || "0"),
+      totalCostUsd: parseFloat(metadata.totalCostUsd?.toString() || '0'),
       totalTokensUsed: metadata.totalTokensUsed || 0,
-      cacheSavingsUsd: parseFloat(metadata.cacheSavingsUsd?.toString() || "0"),
-      averageLatencyMs: parseFloat(row.average_latency_ms?.toString() || "0"),
-      cacheHitRate: parseFloat(row.cache_hit_rate?.toString() || "0"),
-      errorRate: parseFloat(row.error_rate?.toString() || "0"),
+      cacheSavingsUsd: parseFloat(metadata.cacheSavingsUsd?.toString() || '0'),
+      averageLatencyMs: parseFloat(row.average_latency_ms?.toString() || '0'),
+      cacheHitRate: parseFloat(row.cache_hit_rate?.toString() || '0'),
+      errorRate: parseFloat(row.error_rate?.toString() || '0'),
       periodStart: new Date(metadata.periodStart || Date.now()),
       lastActivity: new Date(metadata.lastActivity || Date.now()),
       lastReset: new Date(metadata.lastReset || Date.now()),
@@ -669,10 +655,10 @@ export class UsageCounterRepository {
   ): Promise<Partial<UsageMetadata>> {
     try {
       const { data } = await this.supabase
-        .from("usage_counters")
-        .select("metadata")
-        .eq("entity_type", "clinic")
-        .eq("entity_id", clinicId)
+        .from('usage_counters')
+        .select('metadata')
+        .eq('entity_type', 'clinic')
+        .eq('entity_id', clinicId)
         .single();
 
       return (data?.metadata as unknown as UsageMetadata) || {};

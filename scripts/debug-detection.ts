@@ -4,25 +4,25 @@
  */
 
 import {
-  PIIDetectionEngine,
   BrazilianPIIPatterns,
+  PIIDetectionEngine,
   SecurityUtilities,
-} from "../apps/api/src/lib/pii-redaction";
+} from '../apps/api/src/lib/pii-redaction';
 
 async function debugDetection() {
-  console.log("🔍 Debugging PII Detection Issues");
-  console.log("==================================\n");
+  console.log('🔍 Debugging PII Detection Issues');
+  console.log('==================================\n');
 
   const engine = new PIIDetectionEngine();
 
   // Test 1: Basic CPF pattern
-  console.log("TEST 1: Basic CPF Detection");
-  const cpfText = "123.456.789-00";
+  console.log('TEST 1: Basic CPF Detection');
+  const cpfText = '123.456.789-00';
   console.log(`Input: "${cpfText}"`);
   console.log(`CPF Pattern: ${BrazilianPIIPatterns.CPF_PATTERN}`);
 
   const cpfMatch = cpfText.match(BrazilianPIIPatterns.CPF_PATTERN);
-  console.log(`Direct pattern match: ${cpfMatch ? "FOUND" : "NOT FOUND"}`);
+  console.log(`Direct pattern match: ${cpfMatch ? 'FOUND' : 'NOT FOUND'}`);
 
   const cpfResults = engine.detectPII(cpfText);
   console.log(`Engine detection: ${cpfResults.length} items found`);
@@ -33,8 +33,8 @@ async function debugDetection() {
   });
 
   // Test 2: CPF in context
-  console.log("\nTEST 2: CPF in Context");
-  const contextText = "Patient João Silva (CPF: 123.456.789-00)";
+  console.log('\nTEST 2: CPF in Context');
+  const contextText = 'Patient João Silva (CPF: 123.456.789-00)';
   console.log(`Input: "${contextText}"`);
 
   const contextResults = engine.detectPII(contextText);
@@ -46,7 +46,7 @@ async function debugDetection() {
   });
 
   // Test 3: CPF context pattern
-  console.log("\nTEST 3: Direct Context Pattern Test");
+  console.log('\nTEST 3: Direct Context Pattern Test');
   console.log(
     `CPF Context Pattern: ${BrazilianPIIPatterns.CPF_CONTEXT_PATTERN}`,
   );
@@ -54,7 +54,7 @@ async function debugDetection() {
     BrazilianPIIPatterns.CPF_CONTEXT_PATTERN,
   );
   console.log(
-    `Direct context pattern match: ${contextMatch ? "FOUND" : "NOT FOUND"}`,
+    `Direct context pattern match: ${contextMatch ? 'FOUND' : 'NOT FOUND'}`,
   );
   if (contextMatch) {
     console.log(`  Full match: "${contextMatch[0]}"`);
@@ -62,8 +62,8 @@ async function debugDetection() {
   }
 
   // Test 4: Unicode normalization
-  console.log("\nTEST 4: Unicode Normalization");
-  const unicodeText = "１２３．４５６．７８９－００"; // Fullwidth CPF
+  console.log('\nTEST 4: Unicode Normalization');
+  const unicodeText = '１２３．４５６．７８９－００'; // Fullwidth CPF
   console.log(`Input: "${unicodeText}"`);
 
   const normalizedText = SecurityUtilities.normalizeText(unicodeText);
@@ -81,8 +81,8 @@ async function debugDetection() {
   );
 
   // Test 5: Base64 detection
-  console.log("\nTEST 5: Base64 Detection");
-  const base64Text = "Q1BGOiAxMjMuNDU2Ljc4OS0wMA=="; // "CPF: 123.456.789-00" in base64
+  console.log('\nTEST 5: Base64 Detection');
+  const base64Text = 'Q1BGOiAxMjMuNDU2Ljc4OS0wMA=='; // "CPF: 123.456.789-00" in base64
   console.log(`Input: "${base64Text}"`);
 
   const decodedStrings = SecurityUtilities.decodeBase64Safely(base64Text);
@@ -102,8 +102,8 @@ async function debugDetection() {
   });
 
   // Test 6: Case sensitivity
-  console.log("\nTEST 6: Case Sensitivity");
-  const caseText = "cpf: 123.456.789-00";
+  console.log('\nTEST 6: Case Sensitivity');
+  const caseText = 'cpf: 123.456.789-00';
   console.log(`Input: "${caseText}"`);
 
   const caseResults = engine.detectPII(caseText);

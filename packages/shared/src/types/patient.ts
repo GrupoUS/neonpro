@@ -13,28 +13,28 @@
 
 // Gender enum following Brazilian healthcare standards
 export enum Gender {
-  MALE = "M",
-  FEMALE = "F",
-  OTHER = "O",
-  NOT_INFORMED = "N",
+  MALE = 'M',
+  FEMALE = 'F',
+  OTHER = 'O',
+  NOT_INFORMED = 'N',
 }
 
 // Patient status enum
 export enum PatientStatus {
-  ACTIVE = "active",
-  INACTIVE = "inactive",
-  SUSPENDED = "suspended",
-  DECEASED = "deceased",
+  ACTIVE = 'active',
+  INACTIVE = 'inactive',
+  SUSPENDED = 'suspended',
+  DECEASED = 'deceased',
 }
 
 // LGPD legal basis enum
 export enum LegalBasis {
-  CONSENT = "consent",
-  CONTRACT = "contract",
-  LEGAL_OBLIGATION = "legal_obligation",
-  VITAL_INTERESTS = "vital_interests",
-  PUBLIC_TASK = "public_task",
-  LEGITIMATE_INTERESTS = "legitimate_interests",
+  CONSENT = 'consent',
+  CONTRACT = 'contract',
+  LEGAL_OBLIGATION = 'legal_obligation',
+  VITAL_INTERESTS = 'vital_interests',
+  PUBLIC_TASK = 'public_task',
+  LEGITIMATE_INTERESTS = 'legitimate_interests',
 }
 
 // Address interface with Brazilian CEP validation
@@ -91,7 +91,7 @@ export interface LGPDConsent {
 // Audit log entry for LGPD compliance
 export interface AuditLogEntry {
   _userId: string;
-  action: "create" | "read" | "update" | "delete" | "export" | "anonymize";
+  action: 'create' | 'read' | 'update' | 'delete' | 'export' | 'anonymize';
   timestamp: Date;
   ipAddress: string;
   userAgent: string;
@@ -145,23 +145,23 @@ export interface Patient {
 // Brazilian CPF validation
 export function validateCPF(cpf: string): boolean {
   // Remove formatting
-  const cleanCPF = cpf.replace(/[^\d]/g, "");
+  const cleanCPF = cpf.replace(/[^\d]/g, '');
 
   // Check length
   if (cleanCPF.length !== 11) return false;
 
   // Check for known invalid CPFs
   const invalidCPFs = [
-    "00000000000",
-    "11111111111",
-    "22222222222",
-    "33333333333",
-    "44444444444",
-    "55555555555",
-    "66666666666",
-    "77777777777",
-    "88888888888",
-    "99999999999",
+    '00000000000',
+    '11111111111',
+    '22222222222',
+    '33333333333',
+    '44444444444',
+    '55555555555',
+    '66666666666',
+    '77777777777',
+    '88888888888',
+    '99999999999',
   ];
 
   if (invalidCPFs.includes(cleanCPF)) return false;
@@ -191,7 +191,7 @@ export function validateCPF(cpf: string): boolean {
 // Brazilian phone validation
 export function validateBrazilianPhone(phone: string): boolean {
   // Remove formatting
-  const cleanPhone = phone.replace(/[^\d]/g, "");
+  const cleanPhone = phone.replace(/[^\d]/g, '');
 
   // Check length (10 or 11 digits)
   if (cleanPhone.length !== 10 && cleanPhone.length !== 11) return false;
@@ -212,13 +212,13 @@ export function validateBrazilianPhone(phone: string): boolean {
 // Brazilian CEP validation
 export function validateCEP(cep: string): boolean {
   // Remove formatting
-  const cleanCEP = cep.replace(/[^\d]/g, "");
+  const cleanCEP = cep.replace(/[^\d]/g, '');
 
   // Check length
   if (cleanCEP.length !== 8) return false;
 
   // Check for valid pattern (not all zeros)
-  if (cleanCEP === "00000000") return false;
+  if (cleanCEP === '00000000') return false;
 
   return true;
 }
@@ -234,7 +234,7 @@ export function anonymizePatientData(
   }
 
   if (anonymized.cpf) {
-    anonymized.cpf = "***.***.***-**";
+    anonymized.cpf = '***.***.***-**';
   }
 
   if (anonymized.email) {
@@ -242,14 +242,14 @@ export function anonymizePatientData(
   }
 
   if (anonymized.phone) {
-    anonymized.phone = "(**) *****-****";
+    anonymized.phone = '(**) *****-****';
   }
 
   if (anonymized.address) {
     anonymized.address = {
       ...anonymized.address,
-      street: "ENDEREÇO ANONIMIZADO",
-      number: "***",
+      street: 'ENDEREÇO ANONIMIZADO',
+      number: '***',
       complement: undefined,
     };
   }
@@ -257,8 +257,8 @@ export function anonymizePatientData(
   if (anonymized.emergencyContact) {
     anonymized.emergencyContact = {
       ...anonymized.emergencyContact,
-      name: "CONTATO ANONIMIZADO",
-      phone: "(**) *****-****",
+      name: 'CONTATO ANONIMIZADO',
+      phone: '(**) *****-****',
       email: `anon_contact_${Date.now()}@anonymized.com`,
     };
   }
@@ -268,18 +268,18 @@ export function anonymizePatientData(
 
 // Format CPF for display
 export function formatCPF(cpf: string): string {
-  const cleanCPF = cpf.replace(/[^\d]/g, "");
-  return cleanCPF.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
+  const cleanCPF = cpf.replace(/[^\d]/g, '');
+  return cleanCPF.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
 }
 
 // Format Brazilian phone for display
 export function formatBrazilianPhone(phone: string): string {
-  const cleanPhone = phone.replace(/[^\d]/g, "");
+  const cleanPhone = phone.replace(/[^\d]/g, '');
 
   if (cleanPhone.length === 10) {
-    return cleanPhone.replace(/(\d{2})(\d{4})(\d{4})/, "($1) $2-$3");
+    return cleanPhone.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3');
   } else if (cleanPhone.length === 11) {
-    return cleanPhone.replace(/(\d{2})(\d{5})(\d{4})/, "($1) $2-$3");
+    return cleanPhone.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
   }
 
   return phone;
@@ -287,15 +287,15 @@ export function formatBrazilianPhone(phone: string): string {
 
 // Format CEP for display
 export function formatCEP(cep: string): string {
-  const cleanCEP = cep.replace(/[^\d]/g, "");
-  return cleanCEP.replace(/(\d{5})(\d{3})/, "$1-$2");
+  const cleanCEP = cep.replace(/[^\d]/g, '');
+  return cleanCEP.replace(/(\d{5})(\d{3})/, '$1-$2');
 }
 
 // Create patient with default LGPD compliance
 export function createPatientWithDefaults(
   patientData: Omit<
     Patient,
-    "id" | "createdAt" | "updatedAt" | "lgpdConsent" | "auditTrail" | "status"
+    'id' | 'createdAt' | 'updatedAt' | 'lgpdConsent' | 'auditTrail' | 'status'
   >,
 ): Patient {
   const now = new Date();
@@ -311,21 +311,21 @@ export function createPatientWithDefaults(
       marketing: false,
       analytics: false,
       consentDate: now,
-      ipAddress: "0.0.0.0",
-      userAgent: "Unknown",
+      ipAddress: '0.0.0.0',
+      userAgent: 'Unknown',
       legalBasis: LegalBasis.CONSENT,
-      processingPurposes: ["healthcare_treatment", "appointment_management"],
+      processingPurposes: ['healthcare_treatment', 'appointment_management'],
     },
     auditTrail: {
-      createdBy: "system",
-      updatedBy: "system",
+      createdBy: 'system',
+      updatedBy: 'system',
       accessLog: [
         {
-          _userId: "system",
-          action: "create",
+          _userId: 'system',
+          action: 'create',
           timestamp: now,
-          ipAddress: "0.0.0.0",
-          userAgent: "Unknown",
+          ipAddress: '0.0.0.0',
+          userAgent: 'Unknown',
         },
       ],
     },

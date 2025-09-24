@@ -149,7 +149,7 @@ interface NeonProHealthcareComponentProps {
 // Enhanced Component Factory
 function createHealthcareComponent<T extends React.ComponentType>(
   ShadcnComponent: T,
-  componentName: string
+  componentName: string,
 ) {
   return function NeonProEnhancedComponent(props: NeonProHealthcareComponentProps) {
     const { userRole, lgpdCompliant, variant = 'primary', onAuditLog } = props;
@@ -158,7 +158,7 @@ function createHealthcareComponent<T extends React.ComponentType>(
       onAuditLog?.(`${componentName}_${action}`, {
         userRole,
         timestamp: new Date().toISOString(),
-        ...details
+        ...details,
       });
     }, [onAuditLog, userRole]);
 

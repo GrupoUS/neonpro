@@ -10,16 +10,16 @@
  * - Deterministic behavior for tests
  */
 
+import { logHealthcareError, realtimeLogger } from '@neonpro/shared';
 import type {
-  RealtimeEventAdapter,
-  RealtimeEvent,
-  RealtimeParticipant,
-  RealtimeChannelState,
-  RealtimeEventHandlers,
   RealtimeAdapterConfig,
-} from "./event-adapter.js";
-import { createRealtimeEvent, validateParticipant } from "./event-adapter.js";
-import { logHealthcareError, realtimeLogger } from "@neonpro/shared";
+  RealtimeChannelState,
+  RealtimeEvent,
+  RealtimeEventAdapter,
+  RealtimeEventHandlers,
+  RealtimeParticipant,
+} from './event-adapter.js';
+import { createRealtimeEvent, validateParticipant } from './event-adapter.js';
 
 export class MockRealtimeAdapter implements RealtimeEventAdapter {
   private channelStates = new Map<string, RealtimeChannelState>();
@@ -41,9 +41,9 @@ export class MockRealtimeAdapter implements RealtimeEventAdapter {
     await this.delay(this.simulatedLatency);
 
     this.isInitialized = true;
-    realtimeLogger.info("MockRealtimeAdapter initialized", {
+    realtimeLogger.info('MockRealtimeAdapter initialized', {
       timestamp: new Date().toISOString(),
-      component: 'mock-adapter'
+      component: 'mock-adapter',
     });
   }
 
@@ -53,39 +53,39 @@ export class MockRealtimeAdapter implements RealtimeEventAdapter {
     this.eventLog = [];
     this.isInitialized = false;
 
-    realtimeLogger.info("MockRealtimeAdapter cleaned up", {
+    realtimeLogger.info('MockRealtimeAdapter cleaned up', {
       timestamp: new Date().toISOString(),
-      component: 'mock-adapter'
+      component: 'mock-adapter',
     });
   }
 
   async joinChannel(
     channelId: string,
-    participant: Omit<RealtimeParticipant, "metadata">,
+    participant: Omit<RealtimeParticipant, 'metadata'>,
     initialState?: Record<string, any>,
   ): Promise<void> {
     if (!this.isInitialized) {
-      throw new Error("Adapter not initialized");
+      throw new Error('Adapter not initialized');
     }
 
     await this.delay(this.simulatedLatency);
-    this.throwRandomError("JOIN_CHANNEL_FAILED");
+    this.throwRandomError('JOIN_CHANNEL_FAILED');
 
     // Create full participant with metadata
     const fullParticipant: RealtimeParticipant = {
       ...participant,
       metadata: {
-        clinicId: initialState?.clinicId || "mock-clinic-123",
+        clinicId: initialState?.clinicId || 'mock-clinic-123',
         sessionId: initialState?.sessionId || `mock-session-${Date.now()}`,
-        deviceType: initialState?.deviceType || "desktop",
-        connectionQuality: "excellent",
+        deviceType: initialState?.deviceType || 'desktop',
+        connectionQuality: 'excellent',
         joinedAt: new Date().toISOString(),
         lastActivity: new Date().toISOString(),
       },
     };
 
     if (!validateParticipant(fullParticipant)) {
-      throw new Error("Invalid participant data");
+      throw new Error('Invalid participant data');
     }
 
     // Initialize channel state if not exists
@@ -98,7 +98,7 @@ export class MockRealtimeAdapter implements RealtimeEventAdapter {
           lastActivity: new Date().toISOString(),
           totalParticipants: 0,
           maxParticipants: this.config.performance.maxParticipantsPerChannel,
-          channelType: "consultation",
+          channelType: 'consultation',
         },
       });
     }
@@ -111,7 +111,7 @@ export class MockRealtimeAdapter implements RealtimeEventAdapter {
 
     // Create and emit join event
     const joinEvent = this.createRealtimeEvent(
-      "join",
+      'join',
       channelId,
       fullParticipant,
       {
@@ -126,7 +126,7 @@ export class MockRealtimeAdapter implements RealtimeEventAdapter {
       participantId: fullParticipant.id,
       channelId,
       timestamp: new Date().toISOString(),
-      component: 'mock-adapter'
+      component: 'mock-adapter',
     });
   }
 
@@ -136,14 +136,14 @@ export class MockRealtimeAdapter implements RealtimeEventAdapter {
     reason?: string,
   ): Promise<void> {
     await this.delay(this.simulatedLatency);
-    this.throwRandomError("LEAVE_CHANNEL_FAILED");
+    this.throwRandomError('LEAVE_CHANNEL_FAILED');
 
     const channelState = this.channelStates.get(channelId);
     if (!channelState) {
       realtimeLogger.warn(`Channel not found`, {
         channelId,
         timestamp: new Date().toISOString(),
-        component: 'mock-adapter'
+        component: 'mock-adapter',
       });
       return;
     }
@@ -154,7 +154,7 @@ export class MockRealtimeAdapter implements RealtimeEventAdapter {
         participantId,
         channelId,
         timestamp: new Date().toISOString(),
-        component: 'mock-adapter'
+        component: 'mock-adapter',
       });
       return;
     }
@@ -170,11 +170,11 @@ export class MockRealtimeAdapter implements RealtimeEventAdapter {
 
     // Create and emit leave event
     const leaveEvent = this.createRealtimeEvent(
-      "leave",
+      'leave',
       channelId,
       participant,
       {
-        reason: reason || "Mock user left",
+        reason: reason || 'Mock user left',
         duration,
       },
     );
@@ -191,14 +191,14 @@ export class MockRealtimeAdapter implements RealtimeEventAdapter {
       participantId,
       channelId,
       timestamp: new Date().toISOString(),
-      component: 'mock-adapter'
+      component: 'mock-adapter',
     });
   }
 
   async updateParticipantStatus(
     channelId: string,
     participantId: string,
-    status: RealtimeParticipant["status"],
+    status: RealtimeParticipant['status'],
   ): Promise<void> {
     await this.delay(this.simulatedLatency / 2);
 
@@ -214,7 +214,7 @@ export class MockRealtimeAdapter implements RealtimeEventAdapter {
 
     // Create and emit status change event
     const statusEvent = this.createRealtimeEvent(
-      "status_change",
+      'status_change',
       channelId,
       participant,
       {
@@ -230,7 +230,7 @@ export class MockRealtimeAdapter implements RealtimeEventAdapter {
       participantId,
       status,
       timestamp: new Date().toISOString(),
-      component: 'mock-adapter'
+      component: 'mock-adapter',
     });
   }
 
@@ -251,7 +251,7 @@ export class MockRealtimeAdapter implements RealtimeEventAdapter {
     realtimeLogger.info(`Subscribed to channel`, {
       channelId,
       timestamp: new Date().toISOString(),
-      component: 'mock-adapter'
+      component: 'mock-adapter',
     });
 
     // Simulate presence sync after subscription
@@ -265,7 +265,7 @@ export class MockRealtimeAdapter implements RealtimeEventAdapter {
     realtimeLogger.info(`Unsubscribed from channel`, {
       channelId,
       timestamp: new Date().toISOString(),
-      component: 'mock-adapter'
+      component: 'mock-adapter',
     });
   }
 
@@ -273,7 +273,7 @@ export class MockRealtimeAdapter implements RealtimeEventAdapter {
     await this.delay(10); // Quick health check
 
     return {
-      status: "healthy" as const,
+      status: 'healthy' as const,
       latency: this.simulatedLatency,
       activeChannels: this.channelStates.size,
       totalParticipants: Array.from(this.channelStates.values()).reduce(
@@ -316,12 +316,12 @@ export class MockRealtimeAdapter implements RealtimeEventAdapter {
     await this.updateParticipantStatus(
       channelId,
       participantId,
-      "disconnected",
+      'disconnected',
     );
 
     // Simulate automatic leave after disconnection
     setTimeout(() => {
-      this.leaveChannel(channelId, participantId, "Connection lost");
+      this.leaveChannel(channelId, participantId, 'Connection lost');
     }, 5000);
   }
 
@@ -333,11 +333,11 @@ export class MockRealtimeAdapter implements RealtimeEventAdapter {
     await this.updateParticipantStatus(
       channelId,
       participantId,
-      "reconnecting",
+      'reconnecting',
     );
 
     setTimeout(async () => {
-      await this.updateParticipantStatus(channelId, participantId, "connected");
+      await this.updateParticipantStatus(channelId, participantId, 'connected');
     }, 2000);
   }
 
@@ -349,9 +349,9 @@ export class MockRealtimeAdapter implements RealtimeEventAdapter {
 
     return {
       id,
-      _role: "patient",
+      _role: 'patient',
       name: `Mock User ${id.slice(-4)}`,
-      status: "connected",
+      status: 'connected',
       capabilities: {
         audio: true,
         video: true,
@@ -359,10 +359,10 @@ export class MockRealtimeAdapter implements RealtimeEventAdapter {
         chat: true,
       },
       metadata: {
-        clinicId: "mock-clinic-123",
+        clinicId: 'mock-clinic-123',
         sessionId: `mock-session-${Date.now()}`,
-        deviceType: "desktop",
-        connectionQuality: "excellent",
+        deviceType: 'desktop',
+        connectionQuality: 'excellent',
         joinedAt: new Date().toISOString(),
         lastActivity: new Date().toISOString(),
       },
@@ -387,11 +387,11 @@ export class MockRealtimeAdapter implements RealtimeEventAdapter {
       participant: _participant,
       data,
       metadata: {
-        source: "local",
+        source: 'local',
         eventId: `mock-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
         compliance: {
           lgpdLogged: this.config.healthcare.lgpdCompliance,
-          auditRequired: _type === "join" || _type === "leave",
+          auditRequired: _type === 'join' || _type === 'leave',
           sensitiveData: false,
         },
       },
@@ -401,21 +401,24 @@ export class MockRealtimeAdapter implements RealtimeEventAdapter {
   private async emitEvent(event: RealtimeEvent): Promise<void> {
     try {
       switch (event.type) {
-        case "join":
+        case 'join':
           await this.eventHandlers.onJoin?.(event);
           break;
-        case "leave":
+        case 'leave':
           await this.eventHandlers.onLeave?.(event);
           break;
-        case "status_change":
+        case 'status_change':
           await this.eventHandlers.onStatusChange?.(event);
           break;
-        case "presence_sync":
+        case 'presence_sync':
           await this.eventHandlers.onPresenceSync?.(event);
           break;
       }
     } catch (error) {
-      logHealthcareError('mock-adapter', error as Error, { method: 'emitEvent', eventType: event.type });
+      logHealthcareError('mock-adapter', error as Error, {
+        method: 'emitEvent',
+        eventType: event.type,
+      });
     }
   }
 
@@ -429,7 +432,7 @@ export class MockRealtimeAdapter implements RealtimeEventAdapter {
   }
 
   private async delay(ms: number): Promise<void> {
-    return new Promise((resolve) => setTimeout(resolve, ms));
+    return new Promise(resolve => setTimeout(resolve, ms));
   }
 
   private throwRandomError(code: string): void {
@@ -446,7 +449,7 @@ export class MockRealtimeAdapter implements RealtimeEventAdapter {
     if (participants.length === 0) return;
 
     const syncEvent = this.createRealtimeEvent(
-      "presence_sync",
+      'presence_sync',
       channelId,
       participants[0]!,
       {

@@ -1,8 +1,4 @@
-import {
-  type ConsentRecord,
-  ConsentStatus,
-  type ComplianceViolation,
-} from "../entities/consent";
+import { type ComplianceViolation, type ConsentRecord, ConsentStatus } from '../entities/consent';
 
 /**
  * Consent Repository Interface
@@ -76,7 +72,7 @@ export interface ConsentRepository {
    * @returns Created consent record
    */
   create(
-    consent: Omit<ConsentRecord, "id" | "auditTrail">,
+    consent: Omit<ConsentRecord, 'id' | 'auditTrail'>,
   ): Promise<ConsentRecord>;
 
   /**
@@ -198,7 +194,7 @@ export interface ConsentFilters {
   limit?: number;
   offset?: number;
   sortBy?: keyof ConsentRecord;
-  sortOrder?: "asc" | "desc";
+  sortOrder?: 'asc' | 'desc';
 }
 
 /**

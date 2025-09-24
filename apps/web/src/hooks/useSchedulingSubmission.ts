@@ -1,10 +1,13 @@
 /**
  * Hook for managing form submission in MultiSessionScheduler
  */
-import { useQueryClient } from '@tanstack/react-query';
 import { trpc } from '@/lib/trpc';
-import { type MultiSessionSchedulingRequest, type AestheticSchedulingResponse } from '@/types/aesthetic-scheduling';
+import {
+  type AestheticSchedulingResponse,
+  type MultiSessionSchedulingRequest,
+} from '@/types/aesthetic-scheduling';
 import { MultiSessionSchedulingSchema } from '@/types/aesthetic-scheduling';
+import { useQueryClient } from '@tanstack/react-query';
 
 interface UseSchedulingSubmissionReturn {
   scheduleMutation: any;
@@ -16,7 +19,7 @@ interface UseSchedulingSubmissionReturn {
 export function useSchedulingSubmission(
   patientId: string,
   onSuccess?: (response: AestheticSchedulingResponse) => void,
-  onError?: (error: Error) => void
+  onError?: (error: Error) => void,
 ): UseSchedulingSubmissionReturn {
   const queryClient = useQueryClient();
 

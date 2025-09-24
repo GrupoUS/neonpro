@@ -5,7 +5,7 @@
  * timeout support, and standardized JSON output format.
  */
 
-import { exitOk, exitError, setupGlobalErrorHandling } from "./exitHelper.js";
+import { exitError, exitOk, setupGlobalErrorHandling } from './exitHelper.js';
 
 export interface CLICommand {
   /** Command name for identification */
@@ -22,7 +22,7 @@ export interface CLIOptionDefinition {
   /** Option description */
   description: string;
   /** Option type */
-  type: "string" | "number" | "boolean";
+  type: 'string' | 'number' | 'boolean';
   /** Default value */
   default?: unknown;
   /** Whether the option is required */
@@ -54,8 +54,8 @@ export class CLIWrapper {
 
   constructor(config: CLIWrapperConfig) {
     this.config = {
-      version: "1.0.0",
-      description: "",
+      version: '1.0.0',
+      description: '',
       timeout: 30000,
       setupErrorHandling: true,
       ...config,
@@ -97,40 +97,38 @@ export class CLIWrapper {
       const arg = args[i];
 
       // Handle long options (--option=value or --option value)
-      if (arg?.startsWith("--")) {
+      if (arg?.startsWith('--')) {
         if (currentOption) {
           result.options[currentOption] = true; // Previous option was a flag
         }
 
-        const [option, value] = arg.slice(2).split("=");
+        const [option, value] = arg.slice(2).split('=');
         if (value !== undefined && option) {
           result.options[option] = value;
           currentOption = null;
         } else if (option) {
           currentOption = option;
         }
-      }
-      // Handle short options (-o value or -o=value)
-      else if (arg?.startsWith("-") && arg.length > 1) {
+      } // Handle short options (-o value or -o=value)
+      else if (arg?.startsWith('-') && arg.length > 1) {
         if (currentOption) {
           result.options[currentOption] = true; // Previous option was a flag
         }
 
         const option = arg.slice(1);
-        if (option.includes("=")) {
-          const [opt, value] = option.split("=");
+        if (option.includes('=')) {
+          const [opt, value] = option.split('=');
           if (opt) {
-            result.options[opt] = value ?? "";
+            result.options[opt] = value ?? '';
           }
           currentOption = null;
         } else {
           currentOption = option;
         }
-      }
-      // Handle option values or positional arguments
+      } // Handle option values or positional arguments
       else {
         if (currentOption) {
-          result.options[currentOption] = arg ?? "";
+          result.options[currentOption] = arg ?? '';
           currentOption = null;
         } else {
           if (!result.command && arg && this.commands.has(arg)) {
@@ -201,7 +199,7 @@ export class CLIWrapper {
 
       // Validate command
       if (!parsed.command) {
-        exitError("No command provided", 1, {
+        exitError('No command provided', 1, {
           details: { availableCommands: Array.from(this.commands.keys()) },
         });
         return;
@@ -234,16 +232,15 @@ export class CLIWrapper {
         throw error;
       }
     } catch (error) {
-      const errorDetails =
-        error instanceof Error
-          ? {
-              name: error.name,
-              message: error.message,
-              stack: error.stack,
-            }
-          : { error: String(error) };
+      const errorDetails = error instanceof Error
+        ? {
+          name: error.name,
+          message: error.message,
+          stack: error.stack,
+        }
+        : { error: String(error) };
 
-      exitError("Command execution failed", 1, {
+      exitError('Command execution failed', 1, {
         details: errorDetails,
       });
     }

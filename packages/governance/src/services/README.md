@@ -78,17 +78,17 @@ All logic is intentionally minimal—focused on passing contract, scenario, unit
 ## Usage
 
 ```ts
-import { InMemoryKPIService } from "@neonpro/core-services";
+import { InMemoryKPIService } from '@neonpro/core-services';
 
 const kpis = new InMemoryKPIService();
 await kpis.register({
-  id: "KPI-LAT",
-  name: "Latency",
+  id: 'KPI-LAT',
+  name: 'Latency',
   target: 200,
-  direction: "lower-better",
-  unit: "ms",
+  direction: 'lower-better',
+  unit: 'ms',
 });
-const result = await kpis.evaluate("KPI-LAT", { value: 250 });
+const result = await kpis.evaluate('KPI-LAT', { value: 250 });
 ```
 
 ## Quality Gates (Met)

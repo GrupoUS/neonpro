@@ -13,33 +13,33 @@
 
 // AI insight types
 export enum AIInsightType {
-  HEALTH_ANALYSIS = "health_analysis",
-  RISK_ASSESSMENT = "risk_assessment",
-  TREATMENT_RECOMMENDATION = "treatment_recommendation",
-  APPOINTMENT_OPTIMIZATION = "appointment_optimization",
-  MEDICATION_REVIEW = "medication_review",
-  DIAGNOSTIC_SUPPORT = "diagnostic_support",
-  PREVENTIVE_CARE = "preventive_care",
-  LIFESTYLE_RECOMMENDATION = "lifestyle_recommendation",
+  HEALTH_ANALYSIS = 'health_analysis',
+  RISK_ASSESSMENT = 'risk_assessment',
+  TREATMENT_RECOMMENDATION = 'treatment_recommendation',
+  APPOINTMENT_OPTIMIZATION = 'appointment_optimization',
+  MEDICATION_REVIEW = 'medication_review',
+  DIAGNOSTIC_SUPPORT = 'diagnostic_support',
+  PREVENTIVE_CARE = 'preventive_care',
+  LIFESTYLE_RECOMMENDATION = 'lifestyle_recommendation',
 }
 
 // AI providers
 export enum AIProvider {
-  OPENAI = "openai",
-  ANTHROPIC = "anthropic",
-  GOOGLE = "google",
-  AZURE = "azure",
-  LOCAL = "local",
-  HUGGINGFACE = "huggingface",
+  OPENAI = 'openai',
+  ANTHROPIC = 'anthropic',
+  GOOGLE = 'google',
+  AZURE = 'azure',
+  LOCAL = 'local',
+  HUGGINGFACE = 'huggingface',
 }
 
 // Insight status
 export enum InsightStatus {
-  GENERATED = "generated",
-  VALIDATED = "validated",
-  REJECTED = "rejected",
-  ARCHIVED = "archived",
-  PENDING_REVIEW = "pending_review",
+  GENERATED = 'generated',
+  VALIDATED = 'validated',
+  REJECTED = 'rejected',
+  ARCHIVED = 'archived',
+  PENDING_REVIEW = 'pending_review',
 }
 
 // AI model configuration
@@ -49,7 +49,7 @@ export interface AIModelConfig {
   temperature?: number;
   maxTokens?: number;
   systemPrompt?: string;
-  language: "pt-BR" | "en-US";
+  language: 'pt-BR' | 'en-US';
   healthcareContext: boolean;
   complianceMode?: boolean;
 }
@@ -97,7 +97,7 @@ export interface InsightTemplate {
   type: AIInsightType | string;
   prompt: string;
   outputFormat: Record<string, string>;
-  language: "pt-BR" | "en-US";
+  language: 'pt-BR' | 'en-US';
   healthcareSpecific: boolean;
   requiredData?: string[];
   validationCriteria?: string[];
@@ -183,16 +183,16 @@ export function generatePatientAnalysis(
     id: `insight_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
     patientId: patientData.id,
     type: AIInsightType.HEALTH_ANALYSIS,
-    title: "Análise de Saúde Gerada por IA",
-    description: "Análise automática dos dados de saúde do paciente",
+    title: 'Análise de Saúde Gerada por IA',
+    description: 'Análise automática dos dados de saúde do paciente',
     content: {
-      summary: "Análise em processamento...",
+      summary: 'Análise em processamento...',
       recommendations: [],
       riskFactors: [],
       keyFindings: [],
     },
     confidence: 0.8, // Default confidence
-    model: config.model || "gpt-4",
+    model: config.model || 'gpt-4',
     provider: config.provider || AIProvider.OPENAI,
     generatedAt: now,
     status: InsightStatus.GENERATED,
@@ -203,7 +203,7 @@ export function generatePatientAnalysis(
 
 // Validate AI insight
 export function validateAIInsight(insight: Partial<AIInsight>): boolean {
-  if (!insight.patientId || insight.patientId.trim() === "") {
+  if (!insight.patientId || insight.patientId.trim() === '') {
     return false;
   }
 
@@ -211,13 +211,13 @@ export function validateAIInsight(insight: Partial<AIInsight>): boolean {
     return false;
   }
 
-  if (!insight.title || insight.title.trim() === "") {
+  if (!insight.title || insight.title.trim() === '') {
     return false;
   }
 
   if (
-    insight.confidence !== undefined &&
-    !validateConfidenceScore(insight.confidence)
+    insight.confidence !== undefined
+    && !validateConfidenceScore(insight.confidence)
   ) {
     return false;
   }
@@ -279,9 +279,9 @@ export function anonymizeAIInsight(
     anonymized.content = {
       ...anonymized.content,
       summary: `RESUMO ANONIMIZADO - ${Date.now()}`,
-      recommendations: ["RECOMENDAÇÃO ANONIMIZADA"],
-      riskFactors: ["FATOR DE RISCO ANONIMIZADO"],
-      keyFindings: ["ACHADO ANONIMIZADO"],
+      recommendations: ['RECOMENDAÇÃO ANONIMIZADA'],
+      riskFactors: ['FATOR DE RISCO ANONIMIZADO'],
+      keyFindings: ['ACHADO ANONIMIZADO'],
     };
   }
 
@@ -327,21 +327,21 @@ export function calculateReliabilityScore(insight: Partial<AIInsight>): number {
 // Helper function to get model reliability
 function getModelReliability(model?: string, _provider?: string): number {
   const reliabilityMap: Record<string, number> = {
-    "gpt-4": 0.9,
-    "gpt-3.5-turbo": 0.8,
-    "claude-3": 0.9,
-    "gemini-pro": 0.85,
+    'gpt-4': 0.9,
+    'gpt-3.5-turbo': 0.8,
+    'claude-3': 0.9,
+    'gemini-pro': 0.85,
     local: 0.7,
   };
 
-  return reliabilityMap[model || ""] || 0.7;
+  return reliabilityMap[model || ''] || 0.7;
 }
 
 // Create AI insight with defaults
 export function createAIInsight(
   data: Omit<
     AIInsight,
-    "id" | "createdAt" | "updatedAt" | "generatedAt" | "status"
+    'id' | 'createdAt' | 'updatedAt' | 'generatedAt' | 'status'
   >,
 ): AIInsight {
   const now = new Date();
@@ -362,7 +362,7 @@ export function getInsightsByPatientId(
   patientId: string,
 ): AIInsight[] {
   return insights
-    .filter((insight) => insight.patientId === patientId)
+    .filter(insight => insight.patientId === patientId)
     .sort((a, b) => b.generatedAt.getTime() - a.generatedAt.getTime());
 }
 
@@ -371,13 +371,13 @@ export function getInsightsByType(
   insights: AIInsight[],
   type: AIInsightType,
 ): AIInsight[] {
-  return insights.filter((insight) => insight.type === type);
+  return insights.filter(insight => insight.type === type);
 }
 
 // Get validated insights
 export function getValidatedInsights(insights: AIInsight[]): AIInsight[] {
   return insights.filter(
-    (insight) => insight.status === InsightStatus.VALIDATED,
+    insight => insight.status === InsightStatus.VALIDATED,
   );
 }
 
@@ -386,9 +386,9 @@ export function getInsightsRequiringValidation(
   insights: AIInsight[],
 ): AIInsight[] {
   return insights.filter(
-    (insight) =>
-      insight.status === InsightStatus.GENERATED ||
-      insight.status === InsightStatus.PENDING_REVIEW,
+    insight =>
+      insight.status === InsightStatus.GENERATED
+      || insight.status === InsightStatus.PENDING_REVIEW,
   );
 }
 
@@ -411,7 +411,7 @@ export function calculateInsightsStatistics(insights: AIInsight[]): {
   let totalConfidence = 0;
   let totalReliability = 0;
 
-  insights.forEach((insight) => {
+  insights.forEach(insight => {
     // Count by status
     stats.byStatus[insight.status] = (stats.byStatus[insight.status] || 0) + 1;
 

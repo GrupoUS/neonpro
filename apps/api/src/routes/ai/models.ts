@@ -106,7 +106,8 @@ const getServices = async (): Promise<ServiceInterface> => {
         },
       };
     }
-  } catch { void _e;
+  } catch {
+    void _e;
     // fallback stub if import fails
     auditService = {
       logActivity: async () => {

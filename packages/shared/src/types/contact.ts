@@ -11,45 +11,45 @@
  * - Contact verification and completeness
  */
 
-import { Address } from "./patient";
+import { Address } from './patient';
 
 // Contact type enum
 export enum ContactType {
-  PRIMARY = "primary",
-  EMERGENCY = "emergency",
-  FAMILY = "family",
-  WORK = "work",
-  HEALTHCARE = "healthcare",
-  INSURANCE = "insurance",
-  OTHER = "other",
+  PRIMARY = 'primary',
+  EMERGENCY = 'emergency',
+  FAMILY = 'family',
+  WORK = 'work',
+  HEALTHCARE = 'healthcare',
+  INSURANCE = 'insurance',
+  OTHER = 'other',
 }
 
 // Relationship type enum
 export enum RelationshipType {
-  SELF = "self",
-  SPOUSE = "spouse",
-  PARTNER = "partner",
-  PARENT = "parent",
-  CHILD = "child",
-  SIBLING = "sibling",
-  GRANDPARENT = "grandparent",
-  GRANDCHILD = "grandchild",
-  FRIEND = "friend",
-  COLLEAGUE = "colleague",
-  CAREGIVER = "caregiver",
-  GUARDIAN = "guardian",
-  OTHER = "other",
+  SELF = 'self',
+  SPOUSE = 'spouse',
+  PARTNER = 'partner',
+  PARENT = 'parent',
+  CHILD = 'child',
+  SIBLING = 'sibling',
+  GRANDPARENT = 'grandparent',
+  GRANDCHILD = 'grandchild',
+  FRIEND = 'friend',
+  COLLEAGUE = 'colleague',
+  CAREGIVER = 'caregiver',
+  GUARDIAN = 'guardian',
+  OTHER = 'other',
 }
 
 // Communication method enum
 export enum CommunicationMethod {
-  PHONE = "phone",
-  SMS = "sms",
-  EMAIL = "email",
-  WHATSAPP = "whatsapp",
-  TELEGRAM = "telegram",
-  PUSH = "push",
-  MAIL = "mail",
+  PHONE = 'phone',
+  SMS = 'sms',
+  EMAIL = 'email',
+  WHATSAPP = 'whatsapp',
+  TELEGRAM = 'telegram',
+  PUSH = 'push',
+  MAIL = 'mail',
 }
 
 // Contact preferences interface
@@ -62,7 +62,7 @@ export interface ContactPreferences {
   allowTelegram?: boolean;
   bestTimeToContact?: string; // e.g., "09:00-17:00"
   timezone?: string; // e.g., "America/Sao_Paulo"
-  language?: "pt-BR" | "en-US";
+  language?: 'pt-BR' | 'en-US';
   doNotDisturb?: {
     enabled: boolean;
     startTime?: string; // e.g., "22:00"
@@ -130,7 +130,7 @@ export function validateBrazilianPhone(phone: string): boolean {
   if (!phone) return false;
 
   // Remove formatting
-  const cleanPhone = phone.replace(/[^\d]/g, "");
+  const cleanPhone = phone.replace(/[^\d]/g, '');
 
   // Check length (10 or 11 digits)
   if (cleanPhone.length !== 10 && cleanPhone.length !== 11) return false;
@@ -161,13 +161,13 @@ export function validateCEP(cep: string): boolean {
   if (!cep) return false;
 
   // Remove formatting
-  const cleanCEP = cep.replace(/[^\d]/g, "");
+  const cleanCEP = cep.replace(/[^\d]/g, '');
 
   // Check length
   if (cleanCEP.length !== 8) return false;
 
   // Check for valid pattern (not all zeros)
-  if (cleanCEP === "00000000") return false;
+  if (cleanCEP === '00000000') return false;
 
   return true;
 }
@@ -180,7 +180,7 @@ export function formatContactForDisplay(contact: Partial<Contact>): string {
     parts.push(contact.name);
   }
 
-  if (contact.relationship && contact.relationship !== "self") {
+  if (contact.relationship && contact.relationship !== 'self') {
     parts.push(`(${contact.relationship})`);
   }
 
@@ -192,11 +192,11 @@ export function formatContactForDisplay(contact: Partial<Contact>): string {
     parts.push(contact.email);
   }
 
-  if (contact.type && contact.type !== "primary") {
+  if (contact.type && contact.type !== 'primary') {
     parts.push(`[${contact.type}]`);
   }
 
-  return parts.join(" | ");
+  return parts.join(' | ');
 }
 
 // Set emergency contact priority
@@ -221,11 +221,11 @@ export function anonymizeContact(contact: Partial<Contact>): Partial<Contact> {
   }
 
   if (anonymized.phone) {
-    anonymized.phone = "(**) *****-****";
+    anonymized.phone = '(**) *****-****';
   }
 
   if (anonymized.alternativePhone) {
-    anonymized.alternativePhone = "(**) *****-****";
+    anonymized.alternativePhone = '(**) *****-****';
   }
 
   if (anonymized.email) {
@@ -239,8 +239,8 @@ export function anonymizeContact(contact: Partial<Contact>): Partial<Contact> {
   if (anonymized.address) {
     anonymized.address = {
       ...anonymized.address,
-      street: "ENDEREÇO ANONIMIZADO",
-      number: "***",
+      street: 'ENDEREÇO ANONIMIZADO',
+      number: '***',
       complement: undefined,
     };
   }
@@ -250,11 +250,11 @@ export function anonymizeContact(contact: Partial<Contact>): Partial<Contact> {
   }
 
   if (anonymized.occupation) {
-    anonymized.occupation = "PROFISSÃO ANONIMIZADA";
+    anonymized.occupation = 'PROFISSÃO ANONIMIZADA';
   }
 
   if (anonymized.company) {
-    anonymized.company = "EMPRESA ANONIMIZADA";
+    anonymized.company = 'EMPRESA ANONIMIZADA';
   }
 
   return anonymized;
@@ -264,7 +264,7 @@ export function anonymizeContact(contact: Partial<Contact>): Partial<Contact> {
 export function validateContactCompleteness(
   contact: Partial<Contact>,
 ): boolean {
-  if (!contact.name || contact.name.trim() === "") {
+  if (!contact.name || contact.name.trim() === '') {
     return false;
   }
 
@@ -292,7 +292,7 @@ export function validateContactCompleteness(
 
 // Create contact with defaults
 export function createContact(
-  data: Omit<Contact, "id" | "createdAt" | "updatedAt">,
+  data: Omit<Contact, 'id' | 'createdAt' | 'updatedAt'>,
 ): Contact {
   const now = new Date();
 
@@ -306,13 +306,13 @@ export function createContact(
 
 // Get primary contact
 export function getPrimaryContact(contacts: Contact[]): Contact | undefined {
-  return contacts.find((contact) => contact.isPrimary);
+  return contacts.find(contact => contact.isPrimary);
 }
 
 // Get emergency contacts sorted by priority
 export function getEmergencyContacts(contacts: Contact[]): Contact[] {
   return contacts
-    .filter((contact) => contact.isEmergency)
+    .filter(contact => contact.isEmergency)
     .sort(
       (a, b) => (a.emergencyPriority || 999) - (b.emergencyPriority || 999),
     );
@@ -320,14 +320,14 @@ export function getEmergencyContacts(contacts: Contact[]): Contact[] {
 
 // Format Brazilian phone for display
 export function formatBrazilianPhone(phone: string): string {
-  if (!phone) return "";
+  if (!phone) return '';
 
-  const cleanPhone = phone.replace(/[^\d]/g, "");
+  const cleanPhone = phone.replace(/[^\d]/g, '');
 
   if (cleanPhone.length === 10) {
-    return cleanPhone.replace(/(\d{2})(\d{4})(\d{4})/, "($1) $2-$3");
+    return cleanPhone.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3');
   } else if (cleanPhone.length === 11) {
-    return cleanPhone.replace(/(\d{2})(\d{5})(\d{4})/, "($1) $2-$3");
+    return cleanPhone.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
   }
 
   return phone;
@@ -361,20 +361,20 @@ export function getContactsByType(
   contacts: Contact[],
   type: ContactType,
 ): Contact[] {
-  return contacts.filter((contact) => contact.type === type);
+  return contacts.filter(contact => contact.type === type);
 }
 
 // Update contact verification status
 export function updateContactVerification(
   contact: Contact,
-  field: "phone" | "email",
+  field: 'phone' | 'email',
   verified: boolean,
 ): Contact {
   const updated = { ...contact };
 
-  if (field === "phone") {
+  if (field === 'phone') {
     updated.phoneVerified = verified;
-  } else if (field === "email") {
+  } else if (field === 'email') {
     updated.emailVerified = verified;
   }
 
@@ -396,7 +396,7 @@ export function getContactStatistics(contacts: Contact[]): {
     emergency: 0,
   };
 
-  contacts.forEach((contact) => {
+  contacts.forEach(contact => {
     // Count by type
     stats.byType[contact.type] = (stats.byType[contact.type] || 0) + 1;
 

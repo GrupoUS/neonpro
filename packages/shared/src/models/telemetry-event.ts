@@ -2,69 +2,69 @@
 
 export enum TelemetryEventType {
   // System events
-  SYSTEM_STARTUP = "system.startup",
-  SYSTEM_SHUTDOWN = "system.shutdown",
-  SYSTEM_HEALTH_CHECK = "system.health_check",
+  SYSTEM_STARTUP = 'system.startup',
+  SYSTEM_SHUTDOWN = 'system.shutdown',
+  SYSTEM_HEALTH_CHECK = 'system.health_check',
 
   // Performance events
-  PERFORMANCE_METRIC = "performance.metric",
-  WEB_VITAL = "performance.web_vital",
-  API_PERFORMANCE = "performance.api",
-  DATABASE_QUERY = "performance.database",
+  PERFORMANCE_METRIC = 'performance.metric',
+  WEB_VITAL = 'performance.web_vital',
+  API_PERFORMANCE = 'performance.api',
+  DATABASE_QUERY = 'performance.database',
 
   // Healthcare-specific events
-  PATIENT_ACCESS = "healthcare.patient_access",
-  MEDICAL_RECORD_ACCESS = "healthcare.medical_record_access",
-  APPOINTMENT_SCHEDULING = "healthcare.appointment_scheduling",
-  PRESCRIPTION_ACCESS = "healthcare.prescription_access",
-  EMERGENCY_ACCESS = "healthcare.emergency_access",
+  PATIENT_ACCESS = 'healthcare.patient_access',
+  MEDICAL_RECORD_ACCESS = 'healthcare.medical_record_access',
+  APPOINTMENT_SCHEDULING = 'healthcare.appointment_scheduling',
+  PRESCRIPTION_ACCESS = 'healthcare.prescription_access',
+  EMERGENCY_ACCESS = 'healthcare.emergency_access',
 
   // Security events
-  AUTHENTICATION_SUCCESS = "security.auth_success",
-  AUTHENTICATION_FAILURE = "security.auth_failure",
-  AUTHORIZATION_CHECK = "security.authorization",
-  RATE_LIMIT_VIOLATION = "security.rate_limit",
-  SRI_VIOLATION = "security.sri_violation",
+  AUTHENTICATION_SUCCESS = 'security.auth_success',
+  AUTHENTICATION_FAILURE = 'security.auth_failure',
+  AUTHORIZATION_CHECK = 'security.authorization',
+  RATE_LIMIT_VIOLATION = 'security.rate_limit',
+  SRI_VIOLATION = 'security.sri_violation',
 
   // Error events
-  APPLICATION_ERROR = "error.application",
-  API_ERROR = "error.api",
-  DATABASE_ERROR = "error.database",
-  NETWORK_ERROR = "error.network",
+  APPLICATION_ERROR = 'error.application',
+  API_ERROR = 'error.api',
+  DATABASE_ERROR = 'error.database',
+  NETWORK_ERROR = 'error.network',
 
   // User events (anonymized per LGPD)
-  USER_ACTION = "user.action",
-  USER_NAVIGATION = "user.navigation",
-  USER_INTERACTION = "user.interaction",
+  USER_ACTION = 'user.action',
+  USER_NAVIGATION = 'user.navigation',
+  USER_INTERACTION = 'user.interaction',
 
   // AI/ML events
-  AI_REQUEST = "ai.request",
-  AI_RESPONSE = "ai.response",
-  AI_CACHE_HIT = "ai.cache_hit",
-  AI_CACHE_MISS = "ai.cache_miss",
-  AI_COST_TRACKING = "ai.cost_tracking",
+  AI_REQUEST = 'ai.request',
+  AI_RESPONSE = 'ai.response',
+  AI_CACHE_HIT = 'ai.cache_hit',
+  AI_CACHE_MISS = 'ai.cache_miss',
+  AI_COST_TRACKING = 'ai.cost_tracking',
 
   // Compliance events
-  LGPD_CONSENT_UPDATE = "compliance.lgpd.consent_update",
-  LGPD_DATA_EXPORT = "compliance.lgpd.data_export",
-  LGPD_DATA_DELETION = "compliance.lgpd.data_deletion",
-  AUDIT_TRAIL_ENTRY = "compliance.audit_entry",
+  LGPD_CONSENT_UPDATE = 'compliance.lgpd.consent_update',
+  LGPD_DATA_EXPORT = 'compliance.lgpd.data_export',
+  LGPD_DATA_DELETION = 'compliance.lgpd.data_deletion',
+  AUDIT_TRAIL_ENTRY = 'compliance.audit_entry',
 }
 
 export enum TelemetrySeverity {
-  DEBUG = "debug",
-  INFO = "info",
-  WARNING = "warning",
-  ERROR = "error",
-  CRITICAL = "critical",
+  DEBUG = 'debug',
+  INFO = 'info',
+  WARNING = 'warning',
+  ERROR = 'error',
+  CRITICAL = 'critical',
 }
 
 export enum HealthcareDataSensitivity {
-  NONE = "none",
-  LOW = "low", // Non-sensitive operational data
-  MEDIUM = "medium", // Healthcare professional data
-  HIGH = "high", // Patient-identifiable data
-  CRITICAL = "critical", // Emergency/sensitive patient data
+  NONE = 'none',
+  LOW = 'low', // Non-sensitive operational data
+  MEDIUM = 'medium', // Healthcare professional data
+  HIGH = 'high', // Patient-identifiable data
+  CRITICAL = 'critical', // Emergency/sensitive patient data
 }
 
 // Healthcare-specific telemetry event interface
@@ -78,13 +78,13 @@ export interface TelemetryEvent {
   // Source information
   _service: string;
   version: string;
-  environment: "development" | "staging" | "production";
+  environment: 'development' | 'staging' | 'production';
   hostname?: string;
 
   // User context (LGPD-compliant)
   _userId?: string; // Hashed/anonymized ID
   sessionId?: string;
-  userRole?: "patient" | "professional" | "admin" | "system";
+  userRole?: 'patient' | 'professional' | 'admin' | 'system';
   department?: string;
 
   // Healthcare context
@@ -93,7 +93,7 @@ export interface TelemetryEvent {
     appointmentId?: string; // Non-identifiable appointment reference
     medicalRecordType?: string; // Type of record accessed (not content)
     isEmergencyAccess?: boolean;
-    consentStatus?: "granted" | "denied" | "revoked";
+    consentStatus?: 'granted' | 'denied' | 'revoked';
     dataSensitivity: HealthcareDataSensitivity;
     complianceFlags: string[];
   };
@@ -142,7 +142,7 @@ export interface TelemetryEvent {
   // Security context
   security?: {
     authenticationMethod?: string;
-    authorizationResult?: "success" | "failure";
+    authorizationResult?: 'success' | 'failure';
     securityFlags: string[];
     complianceChecks: string[];
   };
@@ -151,7 +151,7 @@ export interface TelemetryEvent {
   compliance?: {
     lgpdCompliant: boolean;
     dataRetentionDays?: number;
-    encryptionStatus: "encrypted" | "hashed" | "plaintext";
+    encryptionStatus: 'encrypted' | 'hashed' | 'plaintext';
     auditRequired: boolean;
     piiPresent: boolean;
     anonymizationApplied: boolean;
@@ -163,10 +163,10 @@ export interface TelemetryEvent {
 }
 
 // Web Vitals specific telemetry event
-export interface WebVitalsEvent extends Omit<TelemetryEvent, "eventType"> {
+export interface WebVitalsEvent extends Omit<TelemetryEvent, 'eventType'> {
   eventType: TelemetryEventType.WEB_VITAL;
   data: {
-    vitalType: "CLS" | "FID" | "FCP" | "LCP" | "TTFB" | "INP";
+    vitalType: 'CLS' | 'FID' | 'FCP' | 'LCP' | 'TTFB' | 'INP';
     value: number;
     id: string;
     name: string;
@@ -175,8 +175,7 @@ export interface WebVitalsEvent extends Omit<TelemetryEvent, "eventType"> {
 }
 
 // Healthcare-specific access event
-export interface HealthcareAccessEvent
-  extends Omit<TelemetryEvent, "eventType"> {
+export interface HealthcareAccessEvent extends Omit<TelemetryEvent, 'eventType'> {
   eventType:
     | TelemetryEventType.PATIENT_ACCESS
     | TelemetryEventType.MEDICAL_RECORD_ACCESS
@@ -185,7 +184,7 @@ export interface HealthcareAccessEvent
 
   healthcareContext: {
     patientIdHash: string;
-    accessType: "read" | "write" | "delete" | "export";
+    accessType: 'read' | 'write' | 'delete' | 'export';
     resourceType: string;
     consentVerified: boolean;
     isEmergencyAccess: boolean;
@@ -193,12 +192,12 @@ export interface HealthcareAccessEvent
       | HealthcareDataSensitivity.MEDIUM
       | HealthcareDataSensitivity.HIGH
       | HealthcareDataSensitivity.CRITICAL;
-    complianceFlags: ["HIPAA", "LGPD", "ANVISA"];
+    complianceFlags: ['HIPAA', 'LGPD', 'ANVISA'];
   };
 }
 
 // AI cost tracking event
-export interface AICostEvent extends Omit<TelemetryEvent, "eventType"> {
+export interface AICostEvent extends Omit<TelemetryEvent, 'eventType'> {
   eventType: TelemetryEventType.AI_COST_TRACKING;
   aiContext: {
     provider: string;
@@ -207,7 +206,7 @@ export interface AICostEvent extends Omit<TelemetryEvent, "eventType"> {
     completionTokens: number;
     totalTokens: number;
     cost: number;
-    currency: "USD" | "BRL";
+    currency: 'USD' | 'BRL';
     cacheHit: boolean;
     processingTime: number;
     success: boolean;
@@ -215,7 +214,7 @@ export interface AICostEvent extends Omit<TelemetryEvent, "eventType"> {
 }
 
 // Compliance event
-export interface ComplianceEvent extends Omit<TelemetryEvent, "eventType"> {
+export interface ComplianceEvent extends Omit<TelemetryEvent, 'eventType'> {
   eventType:
     | TelemetryEventType.LGPD_CONSENT_UPDATE
     | TelemetryEventType.LGPD_DATA_EXPORT
@@ -225,7 +224,7 @@ export interface ComplianceEvent extends Omit<TelemetryEvent, "eventType"> {
   compliance: {
     lgpdCompliant: true;
     dataRetentionDays: number;
-    encryptionStatus: "encrypted" | "hashed";
+    encryptionStatus: 'encrypted' | 'hashed';
     auditRequired: true;
     piiPresent: boolean;
     anonymizationApplied: boolean;
@@ -243,9 +242,9 @@ export interface ComplianceEvent extends Omit<TelemetryEvent, "eventType"> {
 // Event validation and utilities
 export class TelemetryEventValidator {
   static validate(event: Partial<TelemetryEvent>): boolean {
-    const required = ["id", "eventType", "timestamp", "severity", "_service"];
+    const required = ['id', 'eventType', 'timestamp', 'severity', '_service'];
     return required.every(
-      (field) => event[field as keyof TelemetryEvent] !== undefined,
+      field => event[field as keyof TelemetryEvent] !== undefined,
     );
   }
 
@@ -274,7 +273,7 @@ export class TelemetryEventValidator {
 
   static hashPII(data: string): string {
     // Simple hash for PII data - in production, use a secure hashing function
-    return `hashed_${Buffer.from(data).toString("base64").substring(0, 16)}`;
+    return `hashed_${Buffer.from(data).toString('base64').substring(0, 16)}`;
   }
 }
 
@@ -289,15 +288,15 @@ export class TelemetryEventBuilder {
       timestamp: new Date(),
       severity: TelemetrySeverity.INFO,
       _service,
-      version: "1.0.0",
-      environment: (process.env.NODE_ENV as any) || "development",
+      version: '1.0.0',
+      environment: (process.env.NODE_ENV as any) || 'development',
       healthcareContext: {
         dataSensitivity: HealthcareDataSensitivity.NONE,
         complianceFlags: [],
       },
       compliance: {
         lgpdCompliant: true,
-        encryptionStatus: "plaintext",
+        encryptionStatus: 'plaintext',
         auditRequired: false,
         piiPresent: false,
         anonymizationApplied: false,
@@ -312,7 +311,7 @@ export class TelemetryEventBuilder {
 
   withUser(
     userId: string,
-    role?: "patient" | "professional" | "admin" | "system",
+    role?: 'patient' | 'professional' | 'admin' | 'system',
   ): this {
     this.event._userId = TelemetryEventValidator.hashPII(userId);
     if (role) this.event.userRole = role;
@@ -320,27 +319,24 @@ export class TelemetryEventBuilder {
   }
 
   withHealthcareContext(
-    context: Partial<TelemetryEvent["healthcareContext"]>,
+    context: Partial<TelemetryEvent['healthcareContext']>,
   ): this {
     this.event.healthcareContext = {
       ...this.event.healthcareContext,
       ...context,
       // Ensure required fields have defaults
-      dataSensitivity:
-        context?.dataSensitivity ??
-        this.event.healthcareContext?.dataSensitivity ??
-        HealthcareDataSensitivity.NONE,
-      complianceFlags:
-        context?.complianceFlags ??
-        this.event.healthcareContext?.complianceFlags ??
-        [],
+      dataSensitivity: context?.dataSensitivity
+        ?? this.event.healthcareContext?.dataSensitivity
+        ?? HealthcareDataSensitivity.NONE,
+      complianceFlags: context?.complianceFlags
+        ?? this.event.healthcareContext?.complianceFlags
+        ?? [],
     };
 
     // Safely access compliance property
     if (this.event.compliance) {
-      this.event.compliance.piiPresent =
-        this.event.healthcareContext.dataSensitivity !==
-        HealthcareDataSensitivity.NONE;
+      this.event.compliance.piiPresent = this.event.healthcareContext.dataSensitivity
+        !== HealthcareDataSensitivity.NONE;
     }
     return this;
   }
@@ -350,12 +346,12 @@ export class TelemetryEventBuilder {
     return this;
   }
 
-  withPerformance(metrics: TelemetryEvent["performance"]): this {
+  withPerformance(metrics: TelemetryEvent['performance']): this {
     this.event.performance = metrics;
     return this;
   }
 
-  withError(error: TelemetryEvent["error"]): this {
+  withError(error: TelemetryEvent['error']): this {
     this.event.severity = TelemetrySeverity.ERROR;
     this.event.error = error;
     return this;
@@ -369,17 +365,17 @@ export class TelemetryEventBuilder {
   build(): TelemetryEvent {
     const event = this.event as TelemetryEvent;
     if (!TelemetryEventValidator.validate(event)) {
-      throw new Error("Invalid telemetry event: missing required fields");
+      throw new Error('Invalid telemetry event: missing required fields');
     }
     // Ensure required fields exist before casting
     if (
-      !event.id ||
-      !event.eventType ||
-      !event.timestamp ||
-      !event.severity ||
-      !event._service
+      !event.id
+      || !event.eventType
+      || !event.timestamp
+      || !event.severity
+      || !event._service
     ) {
-      throw new Error("TelemetryEvent missing required fields after build");
+      throw new Error('TelemetryEvent missing required fields after build');
     }
 
     return TelemetryEventValidator.sanitizeForLGPD(event) as TelemetryEvent;

@@ -1,14 +1,14 @@
 /**
  * Vitest Configuration for Integration Tests
- * 
+ *
  * Configuration for running comprehensive integration tests
  * for aesthetic clinic features with proper mocking and
  * database setup
  */
 
-import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
 import path from 'path';
+import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   plugins: [react()],
@@ -17,16 +17,16 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: [
       './src/__tests__/setup/test-setup.ts',
-      './src/__tests__/setup/msw-setup.ts'
+      './src/__tests__/setup/msw-setup.ts',
     ],
     include: [
-      'src/**/*.{test,spec}.{js,jsx,ts,tsx}'
+      'src/**/*.{test,spec}.{js,jsx,ts,tsx}',
     ],
     exclude: [
       'node_modules/',
       'dist/',
       'src/__tests__/setup/',
-      'src/**/*.unit.{test,spec}.{js,jsx,ts,tsx}'
+      'src/**/*.unit.{test,spec}.{js,jsx,ts,tsx}',
     ],
     coverage: {
       provider: 'v8',
@@ -36,33 +36,33 @@ export default defineConfig({
         'dist/',
         'src/**/*.stories.{js,jsx,ts,tsx}',
         'src/**/*.config.{js,ts}',
-        'src/__tests__/**/*'
+        'src/__tests__/**/*',
       ],
       thresholds: {
         global: {
           branches: 80,
           functions: 80,
           lines: 80,
-          statements: 80
+          statements: 80,
         },
         // Higher thresholds for critical components
         './src/components/aesthetic-scheduling/': {
           branches: 90,
           functions: 90,
           lines: 90,
-          statements: 90
+          statements: 90,
         },
         './src/components/aesthetic-clinic/': {
           branches: 90,
           functions: 90,
           lines: 90,
-          statements: 90
-        }
-      }
+          statements: 90,
+        },
+      },
     },
     reporters: ['verbose', 'junit'],
     outputFile: {
-      junit: 'junit-integration.xml'
+      junit: 'junit-integration.xml',
     },
     // Test timeout for integration tests
     testTimeout: 10000,
@@ -70,7 +70,7 @@ export default defineConfig({
     // Retry failed tests
     retry: 2,
     // Slow test threshold
-    slowTestThreshold: 3000
+    slowTestThreshold: 3000,
   },
   resolve: {
     alias: {
@@ -80,8 +80,8 @@ export default defineConfig({
       '@/utils': path.resolve(__dirname, './src/utils'),
       '@/types': path.resolve(__dirname, './src/types'),
       '@/services': path.resolve(__dirname, './src/services'),
-      '@/__tests__': path.resolve(__dirname, './src/__tests__')
-    }
+      '@/__tests__': path.resolve(__dirname, './src/__tests__'),
+    },
   },
   server: {
     port: 3000,
@@ -91,16 +91,16 @@ export default defineConfig({
       '/api': {
         target: 'http://localhost:3001',
         changeOrigin: true,
-        secure: false
-      }
-    }
+        secure: false,
+      },
+    },
   },
   define: {
     global: 'globalThis',
     'process.env': {
       NODE_ENV: '"test"',
       DATABASE_URL: '"postgresql://postgres:postgres@localhost:5432/neonpro_test"',
-      VITE_API_URL: '"http://localhost:3001"'
-    }
-  }
+      VITE_API_URL: '"http://localhost:3001"',
+    },
+  },
 });

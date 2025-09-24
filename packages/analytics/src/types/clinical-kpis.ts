@@ -5,47 +5,42 @@
  * patient safety metrics, and quality outcome tracking.
  */
 
-import {
-  BaseMetric,
-  HealthcareContext,
-  MetricFrequency,
-  RiskLevel,
-} from "./base-metrics.js";
+import { BaseMetric, HealthcareContext, MetricFrequency, RiskLevel } from './base-metrics.js';
 
 /**
  * Clinical metric categories aligned with healthcare standards
  */
 export type ClinicalCategory =
-  | "patient_safety"
-  | "clinical_quality"
-  | "patient_outcomes"
-  | "care_coordination"
-  | "medication_safety"
-  | "infection_control"
-  | "diagnostic_accuracy"
-  | "treatment_effectiveness"
-  | "patient_satisfaction"
-  | "readmission_rates"
-  | "mortality_rates"
-  | "adverse_events";
+  | 'patient_safety'
+  | 'clinical_quality'
+  | 'patient_outcomes'
+  | 'care_coordination'
+  | 'medication_safety'
+  | 'infection_control'
+  | 'diagnostic_accuracy'
+  | 'treatment_effectiveness'
+  | 'patient_satisfaction'
+  | 'readmission_rates'
+  | 'mortality_rates'
+  | 'adverse_events';
 
 /**
  * Clinical specialties for context-specific metrics
  */
 export type ClinicalSpecialty =
-  | "cardiology"
-  | "oncology"
-  | "emergency"
-  | "surgery"
-  | "pediatrics"
-  | "psychiatry"
-  | "obstetrics"
-  | "geriatrics"
-  | "primary_care"
-  | "intensive_care"
-  | "radiology"
-  | "pathology"
-  | "general";
+  | 'cardiology'
+  | 'oncology'
+  | 'emergency'
+  | 'surgery'
+  | 'pediatrics'
+  | 'psychiatry'
+  | 'obstetrics'
+  | 'geriatrics'
+  | 'primary_care'
+  | 'intensive_care'
+  | 'radiology'
+  | 'pathology'
+  | 'general';
 
 /**
  * Base clinical KPI interface extending BaseMetric with healthcare-specific properties
@@ -63,16 +58,16 @@ export interface ClinicalKPI extends BaseMetric {
   /** Patient population demographics */
   populationContext?: {
     ageRange?: string;
-    gender?: "M" | "F" | "other" | "all";
+    gender?: 'M' | 'F' | 'other' | 'all';
     conditions?: string[];
     riskFactors?: string[];
   };
 
   /** Clinical outcome type */
-  outcomeType: "process" | "outcome" | "structure" | "experience";
+  outcomeType: 'process' | 'outcome' | 'structure' | 'experience';
 
   /** Evidence level supporting this metric */
-  evidenceLevel: "A" | "B" | "C" | "expert_opinion";
+  evidenceLevel: 'A' | 'B' | 'C' | 'expert_opinion';
 
   /** Benchmark comparison data */
   benchmark?: {
@@ -84,20 +79,21 @@ export interface ClinicalKPI extends BaseMetric {
 } /**
  * Patient Safety KPIs - Critical safety indicators
  */
+
 export interface PatientSafetyKPI extends ClinicalKPI {
-  category: "patient_safety";
+  category: 'patient_safety';
 
   /** Safety event details */
   safetyContext: {
     eventType:
-      | "fall"
-      | "medication_error"
-      | "surgical_complication"
-      | "infection"
-      | "other";
-    severity: "minor" | "moderate" | "severe" | "life_threatening";
+      | 'fall'
+      | 'medication_error'
+      | 'surgical_complication'
+      | 'infection'
+      | 'other';
+    severity: 'minor' | 'moderate' | 'severe' | 'life_threatening';
     preventable: boolean;
-    reportingSource: "staff" | "patient" | "family" | "automated";
+    reportingSource: 'staff' | 'patient' | 'family' | 'automated';
   };
 
   /** Intervention tracking */
@@ -112,11 +108,11 @@ export interface PatientSafetyKPI extends ClinicalKPI {
  * Clinical Quality KPIs - Care quality and adherence metrics
  */
 export interface ClinicalQualityKPI extends ClinicalKPI {
-  category: "clinical_quality";
+  category: 'clinical_quality';
 
   /** Quality measure details */
   qualityMeasure: {
-    measureType: "process" | "outcome" | "structure";
+    measureType: 'process' | 'outcome' | 'structure';
     guideline: string; // Reference to clinical guideline
     complianceRequired: boolean;
     auditFrequency: MetricFrequency;
@@ -134,12 +130,12 @@ export interface ClinicalQualityKPI extends ClinicalKPI {
  * Patient Outcome KPIs - Treatment effectiveness and results
  */
 export interface PatientOutcomeKPI extends ClinicalKPI {
-  category: "patient_outcomes";
+  category: 'patient_outcomes';
 
   /** Outcome measurement details */
   outcomeDetails: {
     measurementTool: string;
-    timeframe: "immediate" | "short_term" | "medium_term" | "long_term";
+    timeframe: 'immediate' | 'short_term' | 'medium_term' | 'long_term';
     clinicalSignificance: number; // Minimal clinically important difference
     patientReported: boolean;
   };
@@ -156,20 +152,20 @@ export interface PatientOutcomeKPI extends ClinicalKPI {
  * Medication Safety KPIs - Drug safety and adverse events
  */
 export interface MedicationSafetyKPI extends ClinicalKPI {
-  category: "medication_safety";
+  category: 'medication_safety';
 
   /** Medication context */
   medicationContext: {
     drugClass?: string;
-    route: "oral" | "iv" | "topical" | "injection" | "other";
-    riskCategory: "low" | "medium" | "high" | "black_box";
+    route: 'oral' | 'iv' | 'topical' | 'injection' | 'other';
+    riskCategory: 'low' | 'medium' | 'high' | 'black_box';
     interactions: boolean;
   };
 
   /** ANVISA reporting requirements */
   anvisaReporting?: {
     required: boolean;
-    reportingCategory: "serious" | "unexpected" | "expected";
+    reportingCategory: 'serious' | 'unexpected' | 'expected';
     timeframe: number; // Days to report
   };
 }
@@ -178,14 +174,14 @@ export interface MedicationSafetyKPI extends ClinicalKPI {
  * Quality of Care KPIs - Overall quality assessment
  */
 export interface QualityOfCareKPI extends ClinicalKPI {
-  category: "clinical_quality";
+  category: 'clinical_quality';
 
   /** Quality measurement details */
   qualityDetails: {
     measurementTool: string;
     guidelines: string[];
-    assessmentPeriod: "daily" | "weekly" | "monthly" | "quarterly";
-    clinicalEvidence: "A" | "B" | "C" | "D";
+    assessmentPeriod: 'daily' | 'weekly' | 'monthly' | 'quarterly';
+    clinicalEvidence: 'A' | 'B' | 'C' | 'D';
   };
 
   /** Performance indicators */
@@ -201,14 +197,14 @@ export interface QualityOfCareKPI extends ClinicalKPI {
  * Infection Control KPIs - Healthcare-associated infections
  */
 export interface InfectionControlKPI extends ClinicalKPI {
-  category: "infection_control";
+  category: 'infection_control';
 
   /** Infection details */
   infectionContext: {
-    type: "hai" | "ssi" | "uti" | "bloodstream" | "pneumonia" | "other";
+    type: 'hai' | 'ssi' | 'uti' | 'bloodstream' | 'pneumonia' | 'other';
     organism?: string;
-    resistance: "sensitive" | "resistant" | "mdr" | "xdr";
-    acquisition: "community" | "healthcare" | "unknown";
+    resistance: 'sensitive' | 'resistant' | 'mdr' | 'xdr';
+    acquisition: 'community' | 'healthcare' | 'unknown';
   };
 
   /** Prevention measures */
@@ -227,9 +223,9 @@ export interface InfectionControlKPI extends ClinicalKPI {
  * Hospital-Acquired Infection Rate
  */
 export interface HAIRateKPI extends InfectionControlKPI {
-  name: "hospital_acquired_infection_rate";
-  unit: "per_1000_patient_days";
-  complianceFrameworks: ["ANVISA", "CFM"];
+  name: 'hospital_acquired_infection_rate';
+  unit: 'per_1000_patient_days';
+  complianceFrameworks: ['ANVISA', 'CFM'];
   riskLevel: RiskLevel;
 
   /** ANVISA-specific requirements */
@@ -244,15 +240,15 @@ export interface HAIRateKPI extends InfectionControlKPI {
  * Medication Error Rate
  */
 export interface MedicationErrorRateKPI extends MedicationSafetyKPI {
-  name: "medication_error_rate";
-  unit: "per_1000_doses";
-  complianceFrameworks: ["ANVISA", "CFM"];
+  name: 'medication_error_rate';
+  unit: 'per_1000_doses';
+  complianceFrameworks: ['ANVISA', 'CFM'];
 
   /** Error classification */
   errorClassification: {
-    category: "prescribing" | "dispensing" | "administration" | "monitoring";
-    severity: "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I"; // NCC MERP scale
-    causation: "human" | "system" | "communication" | "other";
+    category: 'prescribing' | 'dispensing' | 'administration' | 'monitoring';
+    severity: 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H' | 'I'; // NCC MERP scale
+    causation: 'human' | 'system' | 'communication' | 'other';
   };
 }
 
@@ -260,16 +256,16 @@ export interface MedicationErrorRateKPI extends MedicationSafetyKPI {
  * Patient Fall Rate
  */
 export interface PatientFallRateKPI extends PatientSafetyKPI {
-  name: "patient_fall_rate";
-  unit: "per_1000_patient_days";
-  complianceFrameworks: ["CFM"];
+  name: 'patient_fall_rate';
+  unit: 'per_1000_patient_days';
+  complianceFrameworks: ['CFM'];
 
   /** Fall assessment */
   fallAssessment: {
     riskScore: number; // Morse Fall Scale or similar
     preventionProtocol: boolean;
     injuryOccurred: boolean;
-    injurySeverity?: "none" | "minor" | "moderate" | "major";
+    injurySeverity?: 'none' | 'minor' | 'moderate' | 'major';
   };
 }
 
@@ -277,9 +273,9 @@ export interface PatientFallRateKPI extends PatientSafetyKPI {
  * Readmission Rate (30-day)
  */
 export interface ReadmissionRateKPI extends PatientOutcomeKPI {
-  name: "readmission_rate_30day";
-  unit: "percentage";
-  complianceFrameworks: ["CFM"];
+  name: 'readmission_rate_30day';
+  unit: 'percentage';
+  complianceFrameworks: ['CFM'];
 
   /** Readmission details */
   readmissionContext: {
@@ -294,9 +290,9 @@ export interface ReadmissionRateKPI extends PatientOutcomeKPI {
  * Surgical Site Infection Rate
  */
 export interface SSIRateKPI extends InfectionControlKPI {
-  name: "surgical_site_infection_rate";
-  unit: "percentage";
-  complianceFrameworks: ["ANVISA", "CFM"];
+  name: 'surgical_site_infection_rate';
+  unit: 'percentage';
+  complianceFrameworks: ['ANVISA', 'CFM'];
 
   /** Surgical context */
   surgicalContext: {
@@ -311,14 +307,14 @@ export interface SSIRateKPI extends InfectionControlKPI {
  * Patient Satisfaction Score
  */
 export interface PatientSatisfactionKPI extends ClinicalKPI {
-  category: "patient_satisfaction";
-  name: "patient_satisfaction_score";
-  unit: "scale_1_10";
-  complianceFrameworks: ["CFM"];
+  category: 'patient_satisfaction';
+  name: 'patient_satisfaction_score';
+  unit: 'scale_1_10';
+  complianceFrameworks: ['CFM'];
 
   /** Satisfaction survey details */
   surveyDetails: {
-    tool: "hcahps" | "cahps" | "custom";
+    tool: 'hcahps' | 'cahps' | 'custom';
     responseRate: number;
     dimensions: string[];
     benchmarkPercentile: number;
@@ -329,17 +325,17 @@ export interface PatientSatisfactionKPI extends ClinicalKPI {
  * Mortality Rate (Risk-Adjusted)
  */
 export interface MortalityRateKPI extends ClinicalKPI {
-  category: "mortality_rates";
-  name: "risk_adjusted_mortality_rate";
-  unit: "percentage";
-  complianceFrameworks: ["CFM"];
+  category: 'mortality_rates';
+  name: 'risk_adjusted_mortality_rate';
+  unit: 'percentage';
+  complianceFrameworks: ['CFM'];
 
   /** Mortality analysis */
   mortalityAnalysis: {
     expected: number;
     observed: number;
     ratio: number; // Observed/Expected
-    caseComplexity: "low" | "medium" | "high";
+    caseComplexity: 'low' | 'medium' | 'high';
     comorbidities: string[];
   };
 }
@@ -348,14 +344,14 @@ export interface MortalityRateKPI extends ClinicalKPI {
  * Diagnostic Accuracy KPI
  */
 export interface DiagnosticAccuracyKPI extends ClinicalKPI {
-  category: "diagnostic_accuracy";
-  name: "diagnostic_accuracy_rate";
-  unit: "percentage";
-  complianceFrameworks: ["CFM"];
+  category: 'diagnostic_accuracy';
+  name: 'diagnostic_accuracy_rate';
+  unit: 'percentage';
+  complianceFrameworks: ['CFM'];
 
   /** Diagnostic context */
   diagnosticContext: {
-    modality: "imaging" | "laboratory" | "clinical" | "pathology";
+    modality: 'imaging' | 'laboratory' | 'clinical' | 'pathology';
     goldStandard: string;
     sensitivity: number;
     specificity: number;
@@ -374,47 +370,46 @@ export function createPatientSafetyKPI(params: {
   name: string;
   value: number;
   clinicId: string;
-  eventType: PatientSafetyKPI["safetyContext"]["eventType"];
-  severity: PatientSafetyKPI["safetyContext"]["severity"];
+  eventType: PatientSafetyKPI['safetyContext']['eventType'];
+  severity: PatientSafetyKPI['safetyContext']['severity'];
 }): PatientSafetyKPI {
   return {
     id: `safety_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
     name: params.name,
     description: `Patient safety metric: ${params.name}`,
-    dataType: "number",
+    dataType: 'number',
     value: params.value,
-    unit: "count",
-    frequency: "daily",
-    aggregation: "sum",
-    status: "active",
-    riskLevel:
-      params.severity === "life_threatening"
-        ? "CRITICAL"
-        : params.severity === "severe"
-          ? "HIGH"
-          : "MEDIUM",
-    complianceFrameworks: ["CFM", "ANVISA"],
-    source: "clinical_system",
+    unit: 'count',
+    frequency: 'daily',
+    aggregation: 'sum',
+    status: 'active',
+    riskLevel: params.severity === 'life_threatening'
+      ? 'CRITICAL'
+      : params.severity === 'severe'
+      ? 'HIGH'
+      : 'MEDIUM',
+    complianceFrameworks: ['CFM', 'ANVISA'],
+    source: 'clinical_system',
     timestamp: new Date(),
     lastUpdated: new Date(),
     createdAt: new Date(),
-    category: "patient_safety",
-    specialty: "general",
+    category: 'patient_safety',
+    specialty: 'general',
     healthcareContext: {
       clinicId: params.clinicId,
       regulatoryContext: {
-        framework: "CFM",
-        requirements: ["incident_reporting", "root_cause_analysis"],
+        framework: 'CFM',
+        requirements: ['incident_reporting', 'root_cause_analysis'],
         auditRequired: true,
       },
     },
-    outcomeType: "process",
-    evidenceLevel: "A",
+    outcomeType: 'process',
+    evidenceLevel: 'A',
     safetyContext: {
       eventType: params.eventType,
       severity: params.severity,
       preventable: true,
-      reportingSource: "staff",
+      reportingSource: 'staff',
     },
   };
 }
@@ -433,31 +428,31 @@ export function createClinicalQualityKPI(params: {
     id: `quality_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
     name: params.name,
     description: `Clinical quality metric: ${params.name}`,
-    dataType: "percentage",
+    dataType: 'percentage',
     value: params.value,
-    unit: "%",
+    unit: '%',
     targetValue: params.target,
-    frequency: "monthly",
-    aggregation: "average",
-    status: "active",
-    riskLevel: params.value < params.target * 0.8 ? "HIGH" : "LOW",
-    complianceFrameworks: ["CFM"],
-    source: "quality_system",
+    frequency: 'monthly',
+    aggregation: 'average',
+    status: 'active',
+    riskLevel: params.value < params.target * 0.8 ? 'HIGH' : 'LOW',
+    complianceFrameworks: ['CFM'],
+    source: 'quality_system',
     timestamp: new Date(),
     lastUpdated: new Date(),
     createdAt: new Date(),
-    category: "clinical_quality",
-    specialty: "general",
+    category: 'clinical_quality',
+    specialty: 'general',
     healthcareContext: {
       clinicId: params.clinicId,
     },
-    outcomeType: "process",
-    evidenceLevel: "A",
+    outcomeType: 'process',
+    evidenceLevel: 'A',
     qualityMeasure: {
-      measureType: "process",
+      measureType: 'process',
       guideline: params.guideline,
       complianceRequired: true,
-      auditFrequency: "monthly",
+      auditFrequency: 'monthly',
     },
     targets: {
       minimum: params.target * 0.8,
@@ -483,24 +478,24 @@ export function validateClinicalCompliance(kpi: ClinicalKPI): {
   const recommendations: string[] = [];
 
   // Check CFM requirements
-  if (kpi.complianceFrameworks.includes("CFM")) {
+  if (kpi.complianceFrameworks.includes('CFM')) {
     if (!kpi.healthcareContext.clinicId) {
-      issues.push("CFM requires clinic identification");
+      issues.push('CFM requires clinic identification');
     }
-    if (kpi.category === "patient_safety" && kpi.riskLevel === "CRITICAL") {
+    if (kpi.category === 'patient_safety' && kpi.riskLevel === 'CRITICAL') {
       recommendations.push(
-        "CFM notification required for critical safety events",
+        'CFM notification required for critical safety events',
       );
     }
   }
 
   // Check ANVISA requirements
-  if (kpi.complianceFrameworks.includes("ANVISA")) {
-    if (kpi.category === "medication_safety") {
-      recommendations.push("ANVISA adverse event reporting may be required");
+  if (kpi.complianceFrameworks.includes('ANVISA')) {
+    if (kpi.category === 'medication_safety') {
+      recommendations.push('ANVISA adverse event reporting may be required');
     }
-    if (kpi.category === "infection_control") {
-      recommendations.push("ANVISA surveillance reporting required");
+    if (kpi.category === 'infection_control') {
+      recommendations.push('ANVISA surveillance reporting required');
     }
   }
 
@@ -520,31 +515,31 @@ export function createQualityOfCareKPI(
   const now = new Date();
 
   return {
-    id: options.id || "qoc_" + Math.random().toString(36).substr(2, 9),
-    name: options.name || "Quality of Care Score",
-    description: "Comprehensive quality of care assessment",
-    dataType: "percentage",
+    id: options.id || 'qoc_' + Math.random().toString(36).substr(2, 9),
+    name: options.name || 'Quality of Care Score',
+    description: 'Comprehensive quality of care assessment',
+    dataType: 'percentage',
     value: options.value || 0,
-    unit: "%",
-    frequency: "monthly",
-    aggregation: "average",
-    status: "active",
-    riskLevel: "MEDIUM",
-    complianceFrameworks: ["CFM", "ANVISA"],
-    source: "clinical_system",
+    unit: '%',
+    frequency: 'monthly',
+    aggregation: 'average',
+    status: 'active',
+    riskLevel: 'MEDIUM',
+    complianceFrameworks: ['CFM', 'ANVISA'],
+    source: 'clinical_system',
     timestamp: now,
     lastUpdated: now,
     createdAt: now,
-    category: "clinical_quality",
-    specialty: "general",
+    category: 'clinical_quality',
+    specialty: 'general',
     healthcareContext: options.healthcareContext || {},
-    outcomeType: "process",
-    evidenceLevel: "B",
+    outcomeType: 'process',
+    evidenceLevel: 'B',
     qualityDetails: {
-      measurementTool: "CFM Standard Assessment",
-      guidelines: ["CFM Guidelines 2024"],
-      assessmentPeriod: "monthly",
-      clinicalEvidence: "B",
+      measurementTool: 'CFM Standard Assessment',
+      guidelines: ['CFM Guidelines 2024'],
+      assessmentPeriod: 'monthly',
+      clinicalEvidence: 'B',
     },
     ...options,
   };
@@ -559,29 +554,29 @@ export function createPatientOutcomeKPI(
   const now = new Date();
 
   return {
-    id: options.id || "outcome_" + Math.random().toString(36).substr(2, 9),
-    name: options.name || "Patient Outcome Score",
-    description: "Patient treatment outcome assessment",
-    dataType: "percentage",
+    id: options.id || 'outcome_' + Math.random().toString(36).substr(2, 9),
+    name: options.name || 'Patient Outcome Score',
+    description: 'Patient treatment outcome assessment',
+    dataType: 'percentage',
     value: options.value || 0,
-    unit: "%",
-    frequency: "monthly",
-    aggregation: "average",
-    status: "active",
-    riskLevel: "MEDIUM",
-    complianceFrameworks: ["CFM"],
-    source: "clinical_system",
+    unit: '%',
+    frequency: 'monthly',
+    aggregation: 'average',
+    status: 'active',
+    riskLevel: 'MEDIUM',
+    complianceFrameworks: ['CFM'],
+    source: 'clinical_system',
     timestamp: now,
     lastUpdated: now,
     createdAt: now,
-    category: "patient_outcomes",
-    specialty: "general",
+    category: 'patient_outcomes',
+    specialty: 'general',
     healthcareContext: options.healthcareContext || {},
-    outcomeType: "outcome",
-    evidenceLevel: "B",
+    outcomeType: 'outcome',
+    evidenceLevel: 'B',
     outcomeDetails: {
-      measurementTool: "Clinical Outcome Assessment",
-      timeframe: "medium_term",
+      measurementTool: 'Clinical Outcome Assessment',
+      timeframe: 'medium_term',
       clinicalSignificance: 0.5,
       patientReported: true,
     },
@@ -600,10 +595,10 @@ export function calculateClinicalRiskScore(kpis: ClinicalKPI[]): {
 } {
   if (kpis.length === 0) {
     return {
-      overallRisk: "LOW",
+      overallRisk: 'LOW',
       riskScore: 0,
       criticalAreas: [],
-      recommendations: ["No KPIs available for assessment"],
+      recommendations: ['No KPIs available for assessment'],
     };
   }
 
@@ -611,22 +606,22 @@ export function calculateClinicalRiskScore(kpis: ClinicalKPI[]): {
   const criticalAreas: string[] = [];
   const recommendations: string[] = [];
 
-  kpis.forEach((kpi) => {
+  kpis.forEach(kpi => {
     let kpiScore = 0;
 
     // Calculate score based on risk level
     switch (kpi.riskLevel) {
-      case "CRITICAL":
+      case 'CRITICAL':
         kpiScore = 100;
         criticalAreas.push(kpi.name);
         break;
-      case "HIGH":
+      case 'HIGH':
         kpiScore = 75;
         break;
-      case "MEDIUM":
+      case 'MEDIUM':
         kpiScore = 50;
         break;
-      case "LOW":
+      case 'LOW':
         kpiScore = 25;
         break;
     }
@@ -646,17 +641,17 @@ export function calculateClinicalRiskScore(kpis: ClinicalKPI[]): {
 
   const averageScore = totalScore / kpis.length;
 
-  let overallRisk: RiskLevel = "LOW";
+  let overallRisk: RiskLevel = 'LOW';
   if (averageScore >= 80) {
-    overallRisk = "CRITICAL";
-    recommendations.push("Immediate intervention required");
+    overallRisk = 'CRITICAL';
+    recommendations.push('Immediate intervention required');
   } else if (averageScore >= 60) {
-    overallRisk = "HIGH";
-    recommendations.push("Enhanced monitoring and corrective actions needed");
+    overallRisk = 'HIGH';
+    recommendations.push('Enhanced monitoring and corrective actions needed');
   } else if (averageScore >= 40) {
-    overallRisk = "MEDIUM";
+    overallRisk = 'MEDIUM';
     recommendations.push(
-      "Regular monitoring and preventive measures recommended",
+      'Regular monitoring and preventive measures recommended',
     );
   }
 

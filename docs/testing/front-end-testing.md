@@ -37,7 +37,7 @@ Comprehensive frontend testing strategy for React 19 applications with TanStack 
 
 ```typescript
 // apps/web/src/components/Button/Button.test.tsx
-import { render, screen, fireEvent } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { Button } from './Button';
 
@@ -163,20 +163,20 @@ describe('Patient Detail Route', () => {
 
 ```typescript
 // Test route loaders and search parameters
-import { Route } from "./patients/index";
+import { Route } from './patients/index';
 
-describe("Patients List Route", () => {
-  it("validates search params schema", () => {
-    const validParams = { search: "João", page: "1" };
+describe('Patients List Route', () => {
+  it('validates search params schema', () => {
+    const validParams = { search: 'João', page: '1' };
     const result = Route.validateSearch(validParams);
 
-    expect(result.search).toBe("João");
+    expect(result.search).toBe('João');
     expect(result.page).toBe(1);
   });
 
-  it("handles loader with mock data", async () => {
+  it('handles loader with mock data', async () => {
     const mockLoader = vi.fn().mockResolvedValue({
-      patients: [{ id: "1", name: "João Silva" }],
+      patients: [{ id: '1', name: 'João Silva' }],
       total: 1,
     });
 
@@ -193,8 +193,8 @@ describe("Patients List Route", () => {
 
 ```typescript
 // Test navigation and link behavior
-import { render, screen, fireEvent } from '@testing-library/react';
 import { Link } from '@tanstack/react-router';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { PatientsList } from './PatientsList';
 
 describe('Navigation Tests', () => {
@@ -204,7 +204,7 @@ describe('Navigation Tests', () => {
       <PatientsList
         patients={mockPatients}
         onNavigate={mockNavigate}
-      />
+      />,
     );
 
     const patientCard = screen.getByTestId('patient-card-1');
@@ -216,12 +216,12 @@ describe('Navigation Tests', () => {
   it('preserves search params during navigation', () => {
     render(
       <Link
-        to="/patients/$patientId"
+        to='/patients/$patientId'
         params={{ patientId: '1' }}
         search={{ from: 'dashboard' }}
       >
         View Patient
-      </Link>
+      </Link>,
     );
 
     const link = screen.getByRole('link');
@@ -236,40 +236,40 @@ describe('Navigation Tests', () => {
 
 ```typescript
 // playwright.config.ts - Healthcare optimized
-import { defineConfig } from "@playwright/test";
+import { defineConfig } from '@playwright/test';
 
 export default defineConfig({
-  testDir: "./tests/e2e",
+  testDir: './tests/e2e',
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
-  reporter: "html",
+  reporter: 'html',
 
   // Healthcare-specific settings
   use: {
-    baseURL: "http://localhost:3000",
-    trace: "on-first-retry",
-    screenshot: "only-on-failure",
+    baseURL: 'http://localhost:3000',
+    trace: 'on-first-retry',
+    screenshot: 'only-on-failure',
     // LGPD compliance - no sensitive data in screenshots
-    video: "retain-on-failure",
+    video: 'retain-on-failure',
     actionTimeout: 15000, // Healthcare apps can be slower
   },
 
   projects: [
     {
-      name: "healthcare-chrome",
+      name: 'healthcare-chrome',
       use: {
-        ...devices["Desktop Chrome"],
+        ...devices['Desktop Chrome'],
         // Simulate healthcare professional environment
         viewport: { width: 1440, height: 900 },
         deviceScaleFactor: 1,
       },
     },
     {
-      name: "healthcare-mobile",
+      name: 'healthcare-mobile',
       use: {
-        ...devices["iPhone 13"],
+        ...devices['iPhone 13'],
         // Mobile healthcare scenarios
       },
     },
@@ -434,10 +434,10 @@ describe('Screen Reader Support', () => {
 
 ```typescript
 // apps/web/src/test/utils/render.tsx
-import { ReactElement } from 'react';
-import { render, RenderOptions } from '@testing-library/react';
-import { RouterProvider, createMemoryRouter } from '@tanstack/react-router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { createMemoryRouter, RouterProvider } from '@tanstack/react-router';
+import { render, RenderOptions } from '@testing-library/react';
+import { ReactElement } from 'react';
 import { routeTree } from '../routeTree.gen';
 
 interface CustomRenderOptions extends RenderOptions {
@@ -447,7 +447,7 @@ interface CustomRenderOptions extends RenderOptions {
 
 const customRender = (
   ui: ReactElement,
-  options: CustomRenderOptions = {}
+  options: CustomRenderOptions = {},
 ) => {
   const {
     initialEntries = ['/'],
@@ -484,37 +484,37 @@ export { customRender as render };
 
 ```typescript
 // apps/web/src/test/fixtures/patient.ts
-import type { Patient } from "@/types/patient";
+import type { Patient } from '@/types/patient';
 
 export const createMockPatient = (
   overrides: Partial<Patient> = {},
 ): Patient => ({
-  id: "1",
-  name: "João Silva",
-  cpf: "***.***.***-12", // LGPD compliant masking
-  email: "joao.silva@email.com",
-  phone: "+55 11 99999-9999",
-  birthDate: "1985-03-15",
-  gender: "M",
+  id: '1',
+  name: 'João Silva',
+  cpf: '***.***.***-12', // LGPD compliant masking
+  email: 'joao.silva@email.com',
+  phone: '+55 11 99999-9999',
+  birthDate: '1985-03-15',
+  gender: 'M',
   address: {
-    street: "Rua das Flores, 123",
-    city: "São Paulo",
-    state: "SP",
-    zipCode: "01234-567",
+    street: 'Rua das Flores, 123',
+    city: 'São Paulo',
+    state: 'SP',
+    zipCode: '01234-567',
   },
   medicalInfo: {
-    conditions: ["Diabetes Tipo 2"],
-    allergies: ["Penicilina"],
-    medications: ["Metformina 500mg"],
+    conditions: ['Diabetes Tipo 2'],
+    allergies: ['Penicilina'],
+    medications: ['Metformina 500mg'],
     emergencyContact: {
-      name: "Maria Silva",
-      phone: "+55 11 88888-8888",
-      relationship: "Esposa",
+      name: 'Maria Silva',
+      phone: '+55 11 88888-8888',
+      relationship: 'Esposa',
     },
   },
-  clinicId: "clinic-123",
-  createdAt: "2024-01-15T10:30:00Z",
-  updatedAt: "2024-01-15T10:30:00Z",
+  clinicId: 'clinic-123',
+  createdAt: '2024-01-15T10:30:00Z',
+  updatedAt: '2024-01-15T10:30:00Z',
   ...overrides,
 });
 
@@ -523,9 +523,8 @@ export const createMockPatients = (count: number = 5): Patient[] => {
     createMockPatient({
       id: `patient-${index + 1}`,
       name: `Paciente ${index + 1}`,
-      cpf: `***.***.***-${String(index + 10).padStart(2, "0")}`,
-    }),
-  );
+      cpf: `***.***.***-${String(index + 10).padStart(2, '0')}`,
+    }));
 };
 ```
 
@@ -533,19 +532,17 @@ export const createMockPatients = (count: number = 5): Patient[] => {
 
 ```typescript
 // apps/web/src/test/mocks/api.ts
-import { rest } from "msw";
-import { createMockPatients } from "../fixtures/patient";
+import { rest } from 'msw';
+import { createMockPatients } from '../fixtures/patient';
 
 export const patientHandlers = [
   // Get patients list
-  rest.get("/api/patients", (req, res, ctx) => {
-    const search = req.url.searchParams.get("search");
+  rest.get('/api/patients', (req, res, ctx) => {
+    const search = req.url.searchParams.get('search');
     const patients = createMockPatients(10);
 
     const filtered = search
-      ? patients.filter((p) =>
-          p.name.toLowerCase().includes(search.toLowerCase()),
-        )
+      ? patients.filter(p => p.name.toLowerCase().includes(search.toLowerCase()))
       : patients;
 
     return res(
@@ -560,7 +557,7 @@ export const patientHandlers = [
   }),
 
   // Get single patient
-  rest.get("/api/patients/:id", (req, res, ctx) => {
+  rest.get('/api/patients/:id', (req, res, ctx) => {
     const { id } = req.params;
     const patient = createMockPatient({ id: id as string });
 
@@ -568,12 +565,12 @@ export const patientHandlers = [
   }),
 
   // Create patient
-  rest.post("/api/patients", (req, res, ctx) => {
+  rest.post('/api/patients', (req, res, ctx) => {
     return res(
       ctx.status(201),
       ctx.json({
-        data: createMockPatient({ id: "new-patient-id" }),
-        message: "Paciente criado com sucesso",
+        data: createMockPatient({ id: 'new-patient-id' }),
+        message: 'Paciente criado com sucesso',
       }),
     );
   }),
@@ -600,20 +597,20 @@ export const patientHandlers = [
 
 ```typescript
 // Optimize test performance
-describe.concurrent("Patient Components", () => {
-  test("renders patient card", async () => {
+describe.concurrent('Patient Components', () => {
+  test('renders patient card', async () => {
     // Run tests in parallel when possible
   });
 });
 
 // Use test.each for similar test cases
 test.each([
-  ["João Silva", "valid"],
-  ["", "invalid"],
-  ["Maria Santos", "valid"],
-])("validates patient name: %s (%s)", (name, expected) => {
+  ['João Silva', 'valid'],
+  ['', 'invalid'],
+  ['Maria Santos', 'valid'],
+])('validates patient name: %s (%s)', (name, expected) => {
   const result = validatePatientName(name);
-  expect(result.isValid).toBe(expected === "valid");
+  expect(result.isValid).toBe(expected === 'valid');
 });
 ```
 
@@ -623,10 +620,10 @@ test.each([
 
 ```typescript
 // Complete example combining all patterns
-import { render, screen, fireEvent, waitFor } from '@/test/utils';
-import { PatientCard } from './PatientCard';
 import { createMockPatient } from '@/test/fixtures/patient';
+import { fireEvent, render, screen, waitFor } from '@/test/utils';
 import { axe } from 'jest-axe';
+import { PatientCard } from './PatientCard';
 
 describe('PatientCard Integration', () => {
   const mockPatient = createMockPatient();
@@ -640,7 +637,7 @@ describe('PatientCard Integration', () => {
         patient={mockPatient}
         onEdit={onEdit}
         onDelete={onDelete}
-      />
+      />,
     );
 
     // Accessibility check

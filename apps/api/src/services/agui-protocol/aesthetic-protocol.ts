@@ -6,27 +6,27 @@
  */
 
 import { EventEmitter } from 'events';
-import { 
-  AguiMessage, 
-  AguiMessageType, 
-  AguiSession, 
-  AguiErrorCode,
-  AguiRateLimitInfo 
-} from './types';
-import { 
-  AestheticAguiMessageType,
-  AestheticTreatmentMessage,
-  AestheticTreatmentResponse,
-  AestheticAppointmentMessage,
-  AestheticFinancialMessage,
-  AestheticAssessmentMessage,
-  AestheticComplianceMessage,
-  AestheticClientEnhancementMessage
-} from './aesthetic-types';
-import { AestheticRAGService } from './aesthetic-rag-service';
 import { AestheticCacheService } from './aesthetic-cache-service';
 import { AestheticComplianceService } from './aesthetic-compliance-service';
 import { AestheticNotificationService } from './aesthetic-notification-service';
+import { AestheticRAGService } from './aesthetic-rag-service';
+import {
+  AestheticAguiMessageType,
+  AestheticAppointmentMessage,
+  AestheticAssessmentMessage,
+  AestheticClientEnhancementMessage,
+  AestheticComplianceMessage,
+  AestheticFinancialMessage,
+  AestheticTreatmentMessage,
+  AestheticTreatmentResponse,
+} from './aesthetic-types';
+import {
+  AguiErrorCode,
+  AguiMessage,
+  AguiMessageType,
+  AguiRateLimitInfo,
+  AguiSession,
+} from './types';
 
 export interface AestheticProtocolConfig {
   ragService: AestheticRAGService;
@@ -81,98 +81,260 @@ export class AestheticAguiProtocol extends EventEmitter {
       complianceChecks: 0,
       anvisaReportsGenerated: 0,
       retentionAnalyses: 0,
-      scheduleOptimizations: 0
+      scheduleOptimizations: 0,
     };
   }
 
   private setupMessageHandlers(): void {
     // Treatment Management Handlers
-    this.messageHandlers.set('treatment_catalog_query', this.handleTreatmentCatalogQuery.bind(this));
-    this.messageHandlers.set('treatment_availability_check', this.handleTreatmentAvailabilityCheck.bind(this));
-    this.messageHandlers.set('treatment_scheduling_request', this.handleTreatmentSchedulingRequest.bind(this));
-    this.messageHandlers.set('treatment_consent_management', this.handleTreatmentConsentManagement.bind(this));
-    this.messageHandlers.set('treatment_progress_tracking', this.handleTreatmentProgressTracking.bind(this));
-    this.messageHandlers.set('treatment_recommendation_request', this.handleTreatmentRecommendationRequest.bind(this));
-    this.messageHandlers.set('treatment_price_inquiry', this.handleTreatmentPriceInquiry.bind(this));
-    this.messageHandlers.set('treatment_bundle_creation', this.handleTreatmentBundleCreation.bind(this));
+    this.messageHandlers.set(
+      'treatment_catalog_query',
+      this.handleTreatmentCatalogQuery.bind(this),
+    );
+    this.messageHandlers.set(
+      'treatment_availability_check',
+      this.handleTreatmentAvailabilityCheck.bind(this),
+    );
+    this.messageHandlers.set(
+      'treatment_scheduling_request',
+      this.handleTreatmentSchedulingRequest.bind(this),
+    );
+    this.messageHandlers.set(
+      'treatment_consent_management',
+      this.handleTreatmentConsentManagement.bind(this),
+    );
+    this.messageHandlers.set(
+      'treatment_progress_tracking',
+      this.handleTreatmentProgressTracking.bind(this),
+    );
+    this.messageHandlers.set(
+      'treatment_recommendation_request',
+      this.handleTreatmentRecommendationRequest.bind(this),
+    );
+    this.messageHandlers.set(
+      'treatment_price_inquiry',
+      this.handleTreatmentPriceInquiry.bind(this),
+    );
+    this.messageHandlers.set(
+      'treatment_bundle_creation',
+      this.handleTreatmentBundleCreation.bind(this),
+    );
 
     // Enhanced Appointment Management
-    this.messageHandlers.set('appointment_optimization_request', this.handleAppointmentOptimizationRequest.bind(this));
-    this.messageHandlers.set('appointment_conflict_resolution', this.handleAppointmentConflictResolution.bind(this));
-    this.messageHandlers.set('appointment_resource_allocation', this.handleAppointmentResourceAllocation.bind(this));
-    this.messageHandlers.set('appointment_waitlist_management', this.handleAppointmentWaitlistManagement.bind(this));
+    this.messageHandlers.set(
+      'appointment_optimization_request',
+      this.handleAppointmentOptimizationRequest.bind(this),
+    );
+    this.messageHandlers.set(
+      'appointment_conflict_resolution',
+      this.handleAppointmentConflictResolution.bind(this),
+    );
+    this.messageHandlers.set(
+      'appointment_resource_allocation',
+      this.handleAppointmentResourceAllocation.bind(this),
+    );
+    this.messageHandlers.set(
+      'appointment_waitlist_management',
+      this.handleAppointmentWaitlistManagement.bind(this),
+    );
 
     // Financial Operations
-    this.messageHandlers.set('treatment_financing_request', this.handleTreatmentFinancingRequest.bind(this));
-    this.messageHandlers.set('installment_plan_calculation', this.handleInstallmentPlanCalculation.bind(this));
-    this.messageHandlers.set('insurance_coverage_verification', this.handleInsuranceCoverageVerification.bind(this));
+    this.messageHandlers.set(
+      'treatment_financing_request',
+      this.handleTreatmentFinancingRequest.bind(this),
+    );
+    this.messageHandlers.set(
+      'installment_plan_calculation',
+      this.handleInstallmentPlanCalculation.bind(this),
+    );
+    this.messageHandlers.set(
+      'insurance_coverage_verification',
+      this.handleInsuranceCoverageVerification.bind(this),
+    );
     this.messageHandlers.set('payment_processing', this.handlePaymentProcessing.bind(this));
-    this.messageHandlers.set('financial_reconciliation', this.handleFinancialReconciliation.bind(this));
+    this.messageHandlers.set(
+      'financial_reconciliation',
+      this.handleFinancialReconciliation.bind(this),
+    );
 
     // Assessment & Analysis
     this.messageHandlers.set('skin_type_assessment', this.handleSkinTypeAssessment.bind(this));
-    this.messageHandlers.set('aesthetic_analysis_request', this.handleAestheticAnalysisRequest.bind(this));
-    this.messageHandlers.set('treatment_simulation_request', this.handleTreatmentSimulationRequest.bind(this));
-    this.messageHandlers.set('progress_tracking_analysis', this.handleProgressTrackingAnalysis.bind(this));
+    this.messageHandlers.set(
+      'aesthetic_analysis_request',
+      this.handleAestheticAnalysisRequest.bind(this),
+    );
+    this.messageHandlers.set(
+      'treatment_simulation_request',
+      this.handleTreatmentSimulationRequest.bind(this),
+    );
+    this.messageHandlers.set(
+      'progress_tracking_analysis',
+      this.handleProgressTrackingAnalysis.bind(this),
+    );
 
     // Compliance & Legal
-    this.messageHandlers.set('anvisa_compliance_check', this.handleAnvisaComplianceCheck.bind(this));
-    this.messageHandlers.set('lgpd_consent_verification', this.handleLgpdConsentVerification.bind(this));
-    this.messageHandlers.set('treatment_safety_validation', this.handleTreatmentSafetyValidation.bind(this));
-    this.messageHandlers.set('professional_license_verification', this.handleProfessionalLicenseVerification.bind(this));
+    this.messageHandlers.set(
+      'anvisa_compliance_check',
+      this.handleAnvisaComplianceCheck.bind(this),
+    );
+    this.messageHandlers.set(
+      'lgpd_consent_verification',
+      this.handleLgpdConsentVerification.bind(this),
+    );
+    this.messageHandlers.set(
+      'treatment_safety_validation',
+      this.handleTreatmentSafetyValidation.bind(this),
+    );
+    this.messageHandlers.set(
+      'professional_license_verification',
+      this.handleProfessionalLicenseVerification.bind(this),
+    );
 
     // Enhanced Client Management
-    this.messageHandlers.set('client_profile_enhancement', this.handleClientProfileEnhancement.bind(this));
-    this.messageHandlers.set('retention_risk_assessment', this.handleRetentionRiskAssessment.bind(this));
-    this.messageHandlers.set('personalized_recommendation_request', this.handlePersonalizedRecommendationRequest.bind(this));
-    this.messageHandlers.set('client_satisfaction_analysis', this.handleClientSatisfactionAnalysis.bind(this));
+    this.messageHandlers.set(
+      'client_profile_enhancement',
+      this.handleClientProfileEnhancement.bind(this),
+    );
+    this.messageHandlers.set(
+      'retention_risk_assessment',
+      this.handleRetentionRiskAssessment.bind(this),
+    );
+    this.messageHandlers.set(
+      'personalized_recommendation_request',
+      this.handlePersonalizedRecommendationRequest.bind(this),
+    );
+    this.messageHandlers.set(
+      'client_satisfaction_analysis',
+      this.handleClientSatisfactionAnalysis.bind(this),
+    );
 
     // Inventory Management
-    this.messageHandlers.set('inventory_level_monitoring', this.handleInventoryLevelMonitoring.bind(this));
-    this.messageHandlers.set('product_expiry_tracking', this.handleProductExpiryTracking.bind(this));
-    this.messageHandlers.set('supply_chain_optimization', this.handleSupplyChainOptimization.bind(this));
-    this.messageHandlers.set('batch_traceability_request', this.handleBatchTraceabilityRequest.bind(this));
+    this.messageHandlers.set(
+      'inventory_level_monitoring',
+      this.handleInventoryLevelMonitoring.bind(this),
+    );
+    this.messageHandlers.set(
+      'product_expiry_tracking',
+      this.handleProductExpiryTracking.bind(this),
+    );
+    this.messageHandlers.set(
+      'supply_chain_optimization',
+      this.handleSupplyChainOptimization.bind(this),
+    );
+    this.messageHandlers.set(
+      'batch_traceability_request',
+      this.handleBatchTraceabilityRequest.bind(this),
+    );
 
     // Emergency Protocols
-    this.messageHandlers.set('emergency_protocol_activation', this.handleEmergencyProtocolActivation.bind(this));
-    this.messageHandlers.set('adverse_event_reporting', this.handleAdverseEventReporting.bind(this));
-    this.messageHandlers.set('emergency_response_coordination', this.handleEmergencyResponseCoordination.bind(this));
+    this.messageHandlers.set(
+      'emergency_protocol_activation',
+      this.handleEmergencyProtocolActivation.bind(this),
+    );
+    this.messageHandlers.set(
+      'adverse_event_reporting',
+      this.handleAdverseEventReporting.bind(this),
+    );
+    this.messageHandlers.set(
+      'emergency_response_coordination',
+      this.handleEmergencyResponseCoordination.bind(this),
+    );
 
     // Analytics & Business Intelligence
-    this.messageHandlers.set('aesthetic_analytics_request', this.handleAestheticAnalyticsRequest.bind(this));
-    this.messageHandlers.set('treatment_effectiveness_analysis', this.handleTreatmentEffectivenessAnalysis.bind(this));
-    this.messageHandlers.set('revenue_optimization_analysis', this.handleRevenueOptimizationAnalysis.bind(this));
+    this.messageHandlers.set(
+      'aesthetic_analytics_request',
+      this.handleAestheticAnalyticsRequest.bind(this),
+    );
+    this.messageHandlers.set(
+      'treatment_effectiveness_analysis',
+      this.handleTreatmentEffectivenessAnalysis.bind(this),
+    );
+    this.messageHandlers.set(
+      'revenue_optimization_analysis',
+      this.handleRevenueOptimizationAnalysis.bind(this),
+    );
     this.messageHandlers.set('market_trend_analysis', this.handleMarketTrendAnalysis.bind(this));
 
     // Training & Education
-    this.messageHandlers.set('training_material_request', this.handleTrainingMaterialRequest.bind(this));
+    this.messageHandlers.set(
+      'training_material_request',
+      this.handleTrainingMaterialRequest.bind(this),
+    );
     this.messageHandlers.set('certification_tracking', this.handleCertificationTracking.bind(this));
-    this.messageHandlers.set('professional_development_planning', this.handleProfessionalDevelopmentPlanning.bind(this));
+    this.messageHandlers.set(
+      'professional_development_planning',
+      this.handleProfessionalDevelopmentPlanning.bind(this),
+    );
 
     // Photo & Media Management
-    this.messageHandlers.set('photo_consent_management', this.handlePhotoConsentManagement.bind(this));
-    this.messageHandlers.set('treatment_documentation_request', this.handleTreatmentDocumentationRequest.bind(this));
-    this.messageHandlers.set('before_after_analysis_request', this.handleBeforeAfterAnalysisRequest.bind(this));
+    this.messageHandlers.set(
+      'photo_consent_management',
+      this.handlePhotoConsentManagement.bind(this),
+    );
+    this.messageHandlers.set(
+      'treatment_documentation_request',
+      this.handleTreatmentDocumentationRequest.bind(this),
+    );
+    this.messageHandlers.set(
+      'before_after_analysis_request',
+      this.handleBeforeAfterAnalysisRequest.bind(this),
+    );
 
     // Catalog & Pricing
-    this.messageHandlers.set('treatment_catalog_management', this.handleTreatmentCatalogManagement.bind(this));
-    this.messageHandlers.set('pricing_strategy_optimization', this.handlePricingStrategyOptimization.bind(this));
-    this.messageHandlers.set('competitor_analysis_request', this.handleCompetitorAnalysisRequest.bind(this));
+    this.messageHandlers.set(
+      'treatment_catalog_management',
+      this.handleTreatmentCatalogManagement.bind(this),
+    );
+    this.messageHandlers.set(
+      'pricing_strategy_optimization',
+      this.handlePricingStrategyOptimization.bind(this),
+    );
+    this.messageHandlers.set(
+      'competitor_analysis_request',
+      this.handleCompetitorAnalysisRequest.bind(this),
+    );
 
     // Schedule Optimization
-    this.messageHandlers.set('schedule_optimization_request', this.handleScheduleOptimizationRequest.bind(this));
-    this.messageHandlers.set('resource_utilization_analysis', this.handleResourceUtilizationAnalysis.bind(this));
-    this.messageHandlers.set('demand_forecasting_request', this.handleDemandForecastingRequest.bind(this));
+    this.messageHandlers.set(
+      'schedule_optimization_request',
+      this.handleScheduleOptimizationRequest.bind(this),
+    );
+    this.messageHandlers.set(
+      'resource_utilization_analysis',
+      this.handleResourceUtilizationAnalysis.bind(this),
+    );
+    this.messageHandlers.set(
+      'demand_forecasting_request',
+      this.handleDemandForecastingRequest.bind(this),
+    );
 
     // Retention & Loyalty
-    this.messageHandlers.set('retention_analysis_request', this.handleRetentionAnalysisRequest.bind(this));
-    this.messageHandlers.set('loyalty_program_management', this.handleLoyaltyProgramManagement.bind(this));
-    this.messageHandlers.set('client_lifetime_value_analysis', this.handleClientLifetimeValueAnalysis.bind(this));
+    this.messageHandlers.set(
+      'retention_analysis_request',
+      this.handleRetentionAnalysisRequest.bind(this),
+    );
+    this.messageHandlers.set(
+      'loyalty_program_management',
+      this.handleLoyaltyProgramManagement.bind(this),
+    );
+    this.messageHandlers.set(
+      'client_lifetime_value_analysis',
+      this.handleClientLifetimeValueAnalysis.bind(this),
+    );
 
     // Compliance Auditing
-    this.messageHandlers.set('compliance_audit_request', this.handleComplianceAuditRequest.bind(this));
-    this.messageHandlers.set('documentation_compliance_check', this.handleDocumentationComplianceCheck.bind(this));
-    this.messageHandlers.set('regulatory_update_notification', this.handleRegulatoryUpdateNotification.bind(this));
+    this.messageHandlers.set(
+      'compliance_audit_request',
+      this.handleComplianceAuditRequest.bind(this),
+    );
+    this.messageHandlers.set(
+      'documentation_compliance_check',
+      this.handleDocumentationComplianceCheck.bind(this),
+    );
+    this.messageHandlers.set(
+      'regulatory_update_notification',
+      this.handleRegulatoryUpdateNotification.bind(this),
+    );
   }
 
   async processMessage(message: AguiMessage): Promise<AguiMessage> {
@@ -209,7 +371,11 @@ export class AestheticAguiProtocol extends EventEmitter {
       // Process message
       const handler = this.messageHandlers.get(message.type);
       if (!handler) {
-        return this.createErrorResponse(message, 'INVALID_MESSAGE', `Unsupported message type: ${message.type}`);
+        return this.createErrorResponse(
+          message,
+          'INVALID_MESSAGE',
+          `Unsupported message type: ${message.type}`,
+        );
       }
 
       const response = await handler(message);
@@ -219,15 +385,14 @@ export class AestheticAguiProtocol extends EventEmitter {
       this.updateMetrics(processingTime, true);
 
       return response;
-
     } catch {
       const processingTime = Date.now() - startTime;
       this.updateMetrics(processingTime, false);
-      
+
       return this.createErrorResponse(
-        message, 
-        'INTERNAL_ERROR', 
-        error instanceof Error ? error.message : 'Unknown error'
+        message,
+        'INTERNAL_ERROR',
+        error instanceof Error ? error.message : 'Unknown error',
       );
     }
   }
@@ -235,11 +400,13 @@ export class AestheticAguiProtocol extends EventEmitter {
   // Treatment Management Handlers
   private async handleTreatmentCatalogQuery(message: AguiMessage): Promise<AguiMessage> {
     const payload = message._payload as AestheticTreatmentMessage;
-    
+
     // Check cache first
-    const cacheKey = `treatment_catalog_${payload.category}_${payload.skinType}_${JSON.stringify(payload.filters)}`;
+    const cacheKey = `treatment_catalog_${payload.category}_${payload.skinType}_${
+      JSON.stringify(payload.filters)
+    }`;
     const cached = await this.config.cacheService.get(cacheKey);
-    
+
     if (cached) {
       return this.createSuccessResponse(message, cached);
     }
@@ -251,7 +418,7 @@ export class AestheticAguiProtocol extends EventEmitter {
       concerns: payload.concerns,
       budget: payload.budget,
       location: payload.location,
-      filters: payload.filters
+      filters: payload.filters,
     });
 
     // Cache results
@@ -264,7 +431,7 @@ export class AestheticAguiProtocol extends EventEmitter {
       relevanceScores: treatments.map(t => ({ treatmentId: t.id, score: t.relevanceScore })),
       recommendations: await this.generateTreatmentRecommendations(treatments, payload),
       availability: await this.checkTreatmentsAvailability(treatments),
-      processingTime: Date.now() - Date.now()
+      processingTime: Date.now() - Date.now(),
     };
 
     return this.createSuccessResponse(message, response);
@@ -272,14 +439,14 @@ export class AestheticAguiProtocol extends EventEmitter {
 
   private async handleTreatmentAvailabilityCheck(message: AguiMessage): Promise<AguiMessage> {
     const payload = message._payload as AestheticTreatmentMessage;
-    
+
     const availability = await this.config.ragService.checkTreatmentAvailability({
       treatmentId: payload.treatmentId,
       startDate: payload.startDate,
       endDate: payload.endDate,
       location: payload.location,
       professionalId: payload.professionalId,
-      specialRequirements: payload.specialRequirements
+      specialRequirements: payload.specialRequirements,
     });
 
     return this.createSuccessResponse(message, availability);
@@ -287,7 +454,7 @@ export class AestheticAguiProtocol extends EventEmitter {
 
   private async handleTreatmentSchedulingRequest(message: AguiMessage): Promise<AguiMessage> {
     const payload = message._payload as AestheticTreatmentMessage;
-    
+
     const appointment = await this.config.ragService.scheduleTreatment({
       treatmentId: payload.treatmentId,
       clientId: payload.clientId,
@@ -296,7 +463,7 @@ export class AestheticAguiProtocol extends EventEmitter {
       duration: payload.duration,
       location: payload.location,
       specialInstructions: payload.specialInstructions,
-      requiresConsultation: payload.requiresConsultation
+      requiresConsultation: payload.requiresConsultation,
     });
 
     // Send notifications
@@ -310,13 +477,13 @@ export class AestheticAguiProtocol extends EventEmitter {
 
   private async handleAppointmentOptimizationRequest(message: AguiMessage): Promise<AguiMessage> {
     const payload = message._payload as AestheticAppointmentMessage;
-    
+
     const optimization = await this.config.ragService.optimizeSchedule({
       professionalId: payload.professionalId,
       dateRange: payload.dateRange,
       constraints: payload.constraints,
       priorities: payload.priorities,
-      existingAppointments: payload.existingAppointments
+      existingAppointments: payload.existingAppointments,
     });
 
     this.metrics.scheduleOptimizations++;
@@ -326,14 +493,14 @@ export class AestheticAguiProtocol extends EventEmitter {
 
   private async handleSkinTypeAssessment(message: AguiMessage): Promise<AguiMessage> {
     const payload = message._payload as AestheticAssessmentMessage;
-    
+
     const assessment = await this.config.ragService.assessSkinType({
       clientPhoto: payload.clientPhoto,
       answers: payload.answers,
       concerns: payload.concerns,
       currentProducts: payload.currentProducts,
       lifestyleFactors: payload.lifestyleFactors,
-      environmentalFactors: payload.environmentalFactors
+      environmentalFactors: payload.environmentalFactors,
     });
 
     // Update client profile with assessment results
@@ -341,7 +508,7 @@ export class AestheticAguiProtocol extends EventEmitter {
       await this.config.ragService.updateClientProfile(payload.clientId, {
         skinType: assessment.skinType,
         skinConcerns: assessment.concerns,
-        recommendedProducts: assessment.recommendedProducts
+        recommendedProducts: assessment.recommendedProducts,
       });
     }
 
@@ -350,7 +517,7 @@ export class AestheticAguiProtocol extends EventEmitter {
 
   private async handleTreatmentFinancingRequest(message: AguiMessage): Promise<AguiMessage> {
     const payload = message._payload as AestheticFinancialMessage;
-    
+
     const financing = await this.config.ragService.calculateFinancingOptions({
       treatmentId: payload.treatmentId,
       totalAmount: payload.totalAmount,
@@ -358,7 +525,7 @@ export class AestheticAguiProtocol extends EventEmitter {
       creditScore: payload.creditScore,
       preferredInstallments: payload.preferredInstallments,
       incomeLevel: payload.incomeLevel,
-      bankPartners: payload.bankPartners
+      bankPartners: payload.bankPartners,
     });
 
     return this.createSuccessResponse(message, financing);
@@ -366,13 +533,13 @@ export class AestheticAguiProtocol extends EventEmitter {
 
   private async handleAnvisaComplianceCheck(message: AguiMessage): Promise<AguiMessage> {
     const payload = message._payload as AestheticComplianceMessage;
-    
+
     const compliance = await this.config.complianceService.checkAnvisaCompliance({
       treatmentId: payload.treatmentId,
       products: payload.products,
       procedures: payload.procedures,
       facilityInfo: payload.facilityInfo,
-      professionalLicenses: payload.professionalLicenses
+      professionalLicenses: payload.professionalLicenses,
     });
 
     if (this.config.anvisaReportingEnabled && compliance.requiresReporting) {
@@ -385,7 +552,7 @@ export class AestheticAguiProtocol extends EventEmitter {
 
   private async handleClientProfileEnhancement(message: AguiMessage): Promise<AguiMessage> {
     const payload = message._payload as AestheticClientEnhancementMessage;
-    
+
     const enhancement = await this.config.ragService.enhanceClientProfile({
       clientId: payload.clientId,
       treatmentHistory: payload.treatmentHistory,
@@ -393,7 +560,7 @@ export class AestheticAguiProtocol extends EventEmitter {
       preferences: payload.preferences,
       behavioralData: payload.behavioralData,
       feedbackHistory: payload.feedbackHistory,
-      retentionIndicators: payload.retentionIndicators
+      retentionIndicators: payload.retentionIndicators,
     });
 
     return this.createSuccessResponse(message, enhancement);
@@ -401,14 +568,14 @@ export class AestheticAguiProtocol extends EventEmitter {
 
   private async handleRetentionRiskAssessment(message: AguiMessage): Promise<AguiMessage> {
     const payload = message._payload as AestheticClientEnhancementMessage;
-    
+
     const assessment = await this.config.ragService.assessRetentionRisk({
       clientId: payload.clientId,
       appointmentHistory: payload.appointmentHistory,
       paymentHistory: payload.paymentHistory,
       communicationHistory: payload.communicationHistory,
       satisfactionScores: payload.satisfactionScores,
-      demographicFactors: payload.demographicFactors
+      demographicFactors: payload.demographicFactors,
     });
 
     this.metrics.retentionAnalyses++;
@@ -423,7 +590,7 @@ export class AestheticAguiProtocol extends EventEmitter {
     const _windowStart = now - 60000; // 1 minute window
 
     let userRateLimit = this.rateLimitMap.get(userId);
-    
+
     if (!userRateLimit || userRateLimit.resetTime < now) {
       userRateLimit = { count: 0, resetTime: now + 60000 };
       this.rateLimitMap.set(userId, userRateLimit);
@@ -437,7 +604,9 @@ export class AestheticAguiProtocol extends EventEmitter {
     return true;
   }
 
-  private async validateMessage(message: AguiMessage): Promise<{ isValid: boolean; error?: string }> {
+  private async validateMessage(
+    message: AguiMessage,
+  ): Promise<{ isValid: boolean; error?: string }> {
     if (!message.id || !message.type || !message.sessionId) {
       return { isValid: false, error: 'Missing required fields' };
     }
@@ -508,7 +677,7 @@ export class AestheticAguiProtocol extends EventEmitter {
       'client_lifetime_value_analysis',
       'compliance_audit_request',
       'documentation_compliance_check',
-      'regulatory_update_notification'
+      'regulatory_update_notification',
     ];
 
     return validTypes.includes(type as AestheticAguiMessageType);
@@ -523,7 +692,7 @@ export class AestheticAguiProtocol extends EventEmitter {
       'photo_consent_management',
       'client_profile_enhancement',
       'treatment_documentation_request',
-      'compliance_audit_request'
+      'compliance_audit_request',
     ];
 
     return complianceRequiredTypes.includes(type);
@@ -539,16 +708,20 @@ export class AestheticAguiProtocol extends EventEmitter {
         content: payload,
         type: 'text',
         success: true,
-        originalMessageId: message.id
+        originalMessageId: message.id,
       },
       metadata: {
         ...message.metadata,
-        processingTime: Date.now() - Date.now()
-      }
+        processingTime: Date.now() - Date.now(),
+      },
     };
   }
 
-  private createErrorResponse(message: AguiMessage, code: AguiErrorCode, errorMessage: string): AguiMessage {
+  private createErrorResponse(
+    message: AguiMessage,
+    code: AguiErrorCode,
+    errorMessage: string,
+  ): AguiMessage {
     return {
       id: this.generateMessageId(),
       type: 'error' as AguiMessageType,
@@ -557,9 +730,9 @@ export class AestheticAguiProtocol extends EventEmitter {
       _payload: {
         code,
         message: errorMessage,
-        retryable: this.isRetryableError(code)
+        retryable: this.isRetryableError(code),
       },
-      metadata: message.metadata
+      metadata: message.metadata,
     };
   }
 
@@ -574,26 +747,24 @@ export class AestheticAguiProtocol extends EventEmitter {
 
   private updateMetrics(processingTime: number, success: boolean): void {
     // Update average response time
-    this.metrics.averageResponseTime = (
-      (this.metrics.averageResponseTime * (this.metrics.totalRequests - 1) + processingTime) / 
-      this.metrics.totalRequests
-    );
+    this.metrics.averageResponseTime =
+      (this.metrics.averageResponseTime * (this.metrics.totalRequests - 1) + processingTime)
+      / this.metrics.totalRequests;
 
     // Update success/error rates
     if (success) {
-      this.metrics.successRate = (
-        (this.metrics.successRate * (this.metrics.totalRequests - 1) + 100) / 
-        this.metrics.totalRequests
-      );
+      this.metrics.successRate = (this.metrics.successRate * (this.metrics.totalRequests - 1) + 100)
+        / this.metrics.totalRequests;
     } else {
-      this.metrics.errorRate = (
-        (this.metrics.errorRate * (this.metrics.totalRequests - 1) + 100) / 
-        this.metrics.totalRequests
-      );
+      this.metrics.errorRate = (this.metrics.errorRate * (this.metrics.totalRequests - 1) + 100)
+        / this.metrics.totalRequests;
     }
   }
 
-  private async generateTreatmentRecommendations(_treatments: any[], _payload: AestheticTreatmentMessage): Promise<any[]> {
+  private async generateTreatmentRecommendations(
+    _treatments: any[],
+    _payload: AestheticTreatmentMessage,
+  ): Promise<any[]> {
     // Implementation for generating personalized treatment recommendations
     return [];
   }
@@ -625,12 +796,12 @@ export class AestheticAguiProtocol extends EventEmitter {
       requestsPerHour: this.config.rateLimitRequests * 60,
       currentUsage: {
         minute: limit?.count || 0,
-        hour: 0 // Would need hourly tracking
+        hour: 0, // Would need hourly tracking
       },
       resetTimes: {
         minute: limit?.resetTime ? new Date(limit.resetTime).toISOString() : '',
-        hour: '' // Would need hourly tracking
-      }
+        hour: '', // Would need hourly tracking
+      },
     };
   }
 }

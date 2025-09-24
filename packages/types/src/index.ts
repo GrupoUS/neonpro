@@ -7,33 +7,99 @@ import { ChatMessage } from './ai-chat';
 // Core AI types
 // AI Agent types (avoiding conflicts with ai-chat)
 export type {
-  QueryEntities, ResponseData, ChartMetadata, ActionParameters, UserPreferences,
-  CachedData, MessageData, MessageMetadata, ActionPayload, UserQuery, QueryIntent,
-  QueryParameters, DateRange, QueryStatus, ResponseMetadata, AgentResponse, ResponseType,
-  ResponseContent, TableColumn, ChartConfig, ChartDataPoint, ChartAxis, InteractiveAction,
-  ChatSession as AgentChatSession, ChatMessage as AgentChatMessage, SessionStatus,
-  SessionContext, UserRole, PermissionContext, Permission, DataScope, AgentQueryRequest,
-  AgentAction
+  ActionParameters,
+  ActionPayload,
+  AgentAction,
+  AgentQueryRequest,
+  AgentResponse,
+  CachedData,
+  ChartAxis,
+  ChartConfig,
+  ChartDataPoint,
+  ChartMetadata,
+  ChatMessage as AgentChatMessage,
+  ChatSession as AgentChatSession,
+  DataScope,
+  DateRange,
+  InteractiveAction,
+  MessageData,
+  MessageMetadata,
+  Permission,
+  PermissionContext,
+  QueryEntities,
+  QueryIntent,
+  QueryParameters,
+  QueryStatus,
+  ResponseContent,
+  ResponseData,
+  ResponseMetadata,
+  ResponseType,
+  SessionContext,
+  SessionStatus,
+  TableColumn,
+  UserPreferences,
+  UserQuery,
+  UserRole,
 } from './ai-agent';
 
 // AI Chat types (avoiding conflicts with ai-agent)
 export type {
-  ChatSessionMetadata, ChatRole, ChatSessionStatus, ChatSession, ChatMessage,
-  AuditOutcome, ConsentStatus, AuditEvent
+  AuditEvent,
+  AuditOutcome,
+  ChatMessage,
+  ChatRole,
+  ChatSession,
+  ChatSessionMetadata,
+  ChatSessionStatus,
+  ConsentStatus,
 } from './ai-chat';
 
 // AI Enhanced types (conflicting types handled selectively)
 export type {
-  AIEnhancedMetadata, EnhancedAIModel, MedicalSpecialty, SubscriptionTier,
-  CFMComplianceLevel, SubscriptionPlan, PlanFeatures, AIUsageRecord, QuotaStatus,
-  BillingMetrics, AuditTrail, EnhancedAIRequest, EnhancedAIResponse, UserSubscription,
-  Plan, PlanData, UsageCounter, UsageCounterData, UsageAggregation, Recommendation,
-  RecommendationType, RecommendationCategory, RecommendationPriority, RecommendationStatus,
-  ImplementationEffort, ComplianceImpact, CostImpact, DomainDescriptor, DataSensitivityLevel,
-  PerformanceBenchmarks, AIAnalyzeRequest, AICrudRequest, AIUsageRequest, AIRecommendationsRequest,
-  AIAnalyzeResponse, AICrudResponse, AIUsageResponse, AIRecommendationsResponse, AIModelsResponse,
-  AIEnhancedError, AIEnhancedErrorCode
+  AIAnalyzeRequest,
+  AIAnalyzeResponse,
+  AICrudRequest,
+  AICrudResponse,
+  AIEnhancedError,
+  AIEnhancedErrorCode,
+  AIEnhancedMetadata,
+  AIModelsResponse,
+  AIRecommendationsRequest,
+  AIRecommendationsResponse,
+  AIUsageRecord,
+  AIUsageRequest,
+  AIUsageResponse,
+  AuditTrail,
+  BillingMetrics,
+  CFMComplianceLevel,
+  ComplianceImpact,
+  CostImpact,
+  DataSensitivityLevel,
+  DomainDescriptor,
+  EnhancedAIModel,
+  EnhancedAIRequest,
+  EnhancedAIResponse,
+  ImplementationEffort,
+  MedicalSpecialty,
+  PerformanceBenchmarks,
+  Plan,
+  PlanData,
+  PlanFeatures,
+  QuotaStatus,
+  Recommendation,
+  RecommendationCategory,
+  RecommendationPriority,
+  RecommendationStatus,
+  RecommendationType,
+  SubscriptionPlan,
+  SubscriptionTier,
+  UsageAggregation,
+  UsageCounter,
+  UsageCounterData,
+  UserSubscription,
 } from './ai-enhanced';
+
+export type { TreatmentPlan as CreateTreatmentPlanInput } from "../core-services/services/ai-clinical-decision-support";
 
 // AI Provider types
 export * from './ai-provider';
@@ -41,8 +107,8 @@ export * from './ai-provider';
 // Database and governance types
 export * from './database-records';
 export * from './governance.types';
-export * from './healthcare-governance.types';
 export * from './healthcare';
+export * from './healthcare-governance.types';
 
 // Healthcare validation schemas
 export * from './appointment.valibot';

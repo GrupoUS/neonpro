@@ -1,10 +1,10 @@
-import * as React from "react";
-import { createFileRoute } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
-import { api } from "@/lib/api";
-import { TreatmentPackageScheduler } from "@/components/aesthetic-scheduling/TreatmentPackageScheduler";
+import { TreatmentPackageScheduler } from '@/components/aesthetic-scheduling/TreatmentPackageScheduler';
+import { api } from '@/lib/api';
+import { useQuery } from '@tanstack/react-query';
+import { createFileRoute } from '@tanstack/react-router';
+import * as React from 'react';
 
-export const Route = createFileRoute("/aesthetic-scheduling/packages/")({
+export const Route = createFileRoute('/aesthetic-scheduling/packages/')({
   component: TreatmentPackageSchedulerPage,
   loader: () => {
     // Pre-load data for better UX
@@ -17,12 +17,12 @@ export const Route = createFileRoute("/aesthetic-scheduling/packages/")({
 
 function TreatmentPackageSchedulerPage() {
   const { data: packages } = useQuery({
-    queryKey: ["treatment-packages"],
+    queryKey: ['treatment-packages'],
     queryFn: () => api.aestheticScheduling.getTreatmentPackages(),
   });
 
   const { data: procedures } = useQuery({
-    queryKey: ["aesthetic-procedures"],
+    queryKey: ['aesthetic-procedures'],
     queryFn: () => api.aestheticScheduling.getAestheticProcedures(),
   });
 
@@ -30,12 +30,12 @@ function TreatmentPackageSchedulerPage() {
     <TreatmentPackageScheduler
       packages={packages || []}
       procedures={procedures || []}
-      onSchedulePackage={async (data) => {
+      onSchedulePackage={async data => {
         try {
           const result = await api.aestheticScheduling.scheduleTreatmentPackage(data);
           return result;
         } catch (error) {
-          console.error("Error scheduling treatment package:", error);
+          console.error('Error scheduling treatment package:', error);
           throw error;
         }
       }}

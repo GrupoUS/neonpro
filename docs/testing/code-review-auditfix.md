@@ -134,13 +134,13 @@ export const coveragePolicy = {
   // 🔥 Critical (≥ 95% coverage)
   critical: {
     paths: [
-      "src/services/patient/**",
-      "src/services/billing/**",
-      "src/services/medication/**",
-      "src/services/ai-agents/**",
-      "src/auth/**",
-      "src/api/patients/**",
-      "src/api/appointments/**",
+      'src/services/patient/**',
+      'src/services/billing/**',
+      'src/services/medication/**',
+      'src/services/ai-agents/**',
+      'src/auth/**',
+      'src/api/patients/**',
+      'src/api/appointments/**',
     ],
     thresholds: {
       branches: 95,
@@ -153,11 +153,11 @@ export const coveragePolicy = {
   // ⚡ Important (≥ 85% coverage)
   important: {
     paths: [
-      "src/hooks/patient/**",
-      "src/components/forms/**",
-      "src/utils/validation/**",
-      "src/services/notifications/**",
-      "src/middleware/**",
+      'src/hooks/patient/**',
+      'src/components/forms/**',
+      'src/utils/validation/**',
+      'src/services/notifications/**',
+      'src/middleware/**',
     ],
     thresholds: {
       branches: 85,
@@ -170,9 +170,9 @@ export const coveragePolicy = {
   // ✅ Useful (≥ 75% coverage)
   useful: {
     paths: [
-      "src/components/ui/**",
-      "src/utils/formatting/**",
-      "src/utils/helpers/**",
+      'src/components/ui/**',
+      'src/utils/formatting/**',
+      'src/utils/helpers/**',
     ],
     thresholds: {
       branches: 75,
@@ -202,10 +202,10 @@ export class CoverageEnforcer {
       );
 
       if (violations.length > 0) {
-        violations.forEach((violation) => {
+        violations.forEach(violation => {
           violations.push({
             category,
-            severity: category === "critical" ? "blocker" : "major",
+            severity: category === 'critical' ? 'blocker' : 'major',
             file: violation.file,
             metric: violation.metric,
             actual: violation.actual,
@@ -227,17 +227,18 @@ export class CoverageEnforcer {
 
     if (!report.passed) {
       const criticalViolations = report.violations.filter(
-        (v) => v.severity === "blocker",
+        v => v.severity === 'blocker',
       );
 
       if (criticalViolations.length > 0) {
         throw new Error(
-          `Critical coverage violations found:\n${criticalViolations
-            .map(
-              (v) =>
-                `- ${v.file}: ${v.metric} coverage ${v.actual}% < ${v.expected}%`,
-            )
-            .join("\n")}`,
+          `Critical coverage violations found:\n${
+            criticalViolations
+              .map(
+                v => `- ${v.file}: ${v.metric} coverage ${v.actual}% < ${v.expected}%`,
+              )
+              .join('\n')
+          }`,
         );
       }
     }

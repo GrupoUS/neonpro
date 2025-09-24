@@ -291,14 +291,14 @@ const result = await runTDDCycle('patient-authentication', {
     'architect-review',
     'code-reviewer',
     'security-auditor',
-    'tdd-orchestrator'
+    'tdd-orchestrator',
   ],
   qualityGates: [
     'test-coverage',
     'code-quality-score',
     'security-vulnerabilities',
-    'healthcare-compliance'
-  ]
+    'healthcare-compliance',
+  ],
 });
 ```
 
@@ -496,33 +496,33 @@ The framework supports easy extension through the addition of new agents. Develo
 ```typescript
 // Example: Registering a custom healthcare compliance agent
 const healthcareAuditAgent: AgentCapability = {
-  type: "healthcare-audit",
-  name: "Healthcare Audit Agent",
-  description: "Specialized agent for healthcare regulation auditing",
+  type: 'healthcare-audit',
+  name: 'Healthcare Audit Agent',
+  description: 'Specialized agent for healthcare regulation auditing',
   capabilities: [
-    "lgpd-audit",
-    "anvisa-compliance-check",
-    "cfm-guideline-validation",
-    "medical-data-protection"
+    'lgpd-audit',
+    'anvisa-compliance-check',
+    'cfm-guideline-validation',
+    'medical-data-protection',
   ],
   specializations: [
-    "healthcare-regulations",
-    "patient-data-security",
-    "medical-software-compliance"
+    'healthcare-regulations',
+    'patient-data-security',
+    'medical-software-compliance',
   ],
-  priority: "secondary",
-  phases: ["red", "green", "refactor"],
-  triggers: ["healthcare", "compliance", "audit", "lgpd", "anvisa", "cfm"],
+  priority: 'secondary',
+  phases: ['red', 'green', 'refactor'],
+  triggers: ['healthcare', 'compliance', 'audit', 'lgpd', 'anvisa', 'cfm'],
   configuration: {
-    auditFrequency: "daily",
+    auditFrequency: 'daily',
     complianceThreshold: 95,
-    reportingFormat: "detailed"
+    reportingFormat: 'detailed',
   },
   healthcareCompliance: {
     lgpd: true,
     anvisa: true,
-    cfm: true
-  }
+    cfm: true,
+  },
 };
 
 // Register the agent with the registry
@@ -538,26 +538,26 @@ Quality gates can be customized to meet specific project requirements. The frame
 ```typescript
 // Example: Custom quality gate configuration for a healthcare project
 const healthcareQualityConfig = {
-  "test-coverage": {
+  'test-coverage': {
     threshold: 95,
-    requirement: "All patient data handling must be thoroughly tested"
+    requirement: 'All patient data handling must be thoroughly tested',
   },
-  "accessibility-compliance": {
+  'accessibility-compliance': {
     threshold: 100,
-    requirement: "WCAG 2.1 AA+ compliance required for all interfaces"
+    requirement: 'WCAG 2.1 AA+ compliance required for all interfaces',
   },
-  "security-vulnerabilities": {
+  'security-vulnerabilities': {
     threshold: 0,
-    requirement: "Zero high/critical vulnerabilities allowed"
+    requirement: 'Zero high/critical vulnerabilities allowed',
   },
-  "lgpd-compliance": {
+  'lgpd-compliance': {
     threshold: 100,
-    requirement: "Full LGPD compliance required for all patient data operations"
+    requirement: 'Full LGPD compliance required for all patient data operations',
   },
-  "performance-threshold": {
+  'performance-threshold': {
     threshold: 90,
-    requirement: "Lighthouse performance score must exceed 90"
-  }
+    requirement: 'Lighthouse performance score must exceed 90',
+  },
 };
 ```
 

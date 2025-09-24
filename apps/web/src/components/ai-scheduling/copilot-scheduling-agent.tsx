@@ -1,6 +1,6 @@
 /**
  * CopilotKit Scheduling Agent Component
- * 
+ *
  * React component that integrates CopilotKit with AI-powered appointment scheduling
  * Features:
  * - Intelligent scheduling workflows
@@ -10,17 +10,23 @@
  * - Resource optimization visualization
  */
 
-import React, { useState, useCallback, useEffect } from 'react';
 import { useCoAgent, useCopilotAction, useCopilotReadable } from '@copilotkit/react-core';
 import { CopilotChat } from '@copilotkit/react-ui';
-import { format, addDays, addHours, isAfter, isBefore, parseISO } from 'date-fns';
+import { addDays, addHours, format, isAfter, isBefore, parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import { AIAppointmentSchedulingService } from '../../../api/src/services/ai-appointment-scheduling-service';
 
 // Types
 interface SchedulingAgentState {
-  currentStep: 'idle' | 'gathering_info' | 'finding_slots' | 'confirming' | 'scheduling' | 'completed';
+  currentStep:
+    | 'idle'
+    | 'gathering_info'
+    | 'finding_slots'
+    | 'confirming'
+    | 'scheduling'
+    | 'completed';
   patientInfo: {
     id?: string;
     name: string;
@@ -61,14 +67,14 @@ interface SchedulingAgentProps {
 export const CopilotSchedulingAgent: React.FC<SchedulingAgentProps> = ({
   clinicId,
   onAppointmentScheduled,
-  onError
+  onError,
 }) => {
   const [localState, setLocalState] = useState<SchedulingAgentState>({
     currentStep: 'idle',
     patientInfo: {
       name: '',
       contact: '',
-      preferences: []
+      preferences: [],
     },
     appointmentRequirements: {
       serviceType: '',
@@ -76,14 +82,14 @@ export const CopilotSchedulingAgent: React.FC<SchedulingAgentProps> = ({
       urgency: 'medium',
       preferredDates: [],
       preferredProfessionals: [],
-      accessibility: []
+      accessibility: [],
     },
     availableSlots: [],
     optimization: {
       suggestions: [],
       riskFactors: [],
-      recommendations: []
-    }
+      recommendations: [],
+    },
   });
 
   // Initialize AI scheduling service
@@ -92,7 +98,7 @@ export const CopilotSchedulingAgent: React.FC<SchedulingAgentProps> = ({
   // Use CopilotKit agent for state management
   const { state, setState } = useCoAgent<SchedulingAgentState>({
     name: 'scheduling-agent',
-    initialState: localState
+    initialState: localState,
   });
 
   // Sync local state with agent state
@@ -108,8 +114,8 @@ export const CopilotSchedulingAgent: React.FC<SchedulingAgentProps> = ({
       patientInfo: state.patientInfo,
       appointmentRequirements: state.appointmentRequirements,
       availableSlots: state.availableSlots,
-      optimization: state.optimization
-    }
+      optimization: state.optimization,
+    },
   }, [state]);
 
   // Define scheduling actions
@@ -118,36 +124,68 @@ export const CopilotSchedulingAgent: React.FC<SchedulingAgentProps> = ({
     description: 'Collect patient information for appointment scheduling',
     parameters: [
       { name: 'name', type: 'string', description: 'Patient full name', required: true },
-      { name: 'contact', type: 'string', description: 'Patient contact information', required: true },
-      { name: 'preferences', type: 'string[]', description: 'Patient preferences', required: false },
+      {
+        name: 'contact',
+        type: 'string',
+        description: 'Patient contact information',
+        required: true,
+      },
+      {
+        name: 'preferences',
+        type: 'string[]',
+        description: 'Patient preferences',
+        required: false,
+      },
     ],
     handler: async (name: string, contact: string, preferences: string[] = []) => {
       try {
         setState(prev => ({
           ...prev,
           currentStep: 'gathering_info',
-          patientInfo: { name, contact, preferences }
+          patientInfo: { name, contact, preferences },
         }));
-        
+
         return 'Patient information collected successfully';
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'Failed to collect patient info';
+        const errorMessage = error instanceof Error
+          ? error.message
+          : 'Failed to collect patient info';
         onError?.(errorMessage);
         throw error;
       }
-    }
+    },
   });
 
   useCopilotAction({
     name: 'set_appointment_requirements',
     description: 'Set appointment requirements and preferences',
     parameters: [
-      { name: 'serviceType', type: 'string', description: 'Type of service needed', required: true },
+      {
+        name: 'serviceType',
+        type: 'string',
+        description: 'Type of service needed',
+        required: true,
+      },
       { name: 'duration', type: 'number', description: 'Duration in minutes', required: true },
       { name: 'urgency', type: 'string', description: 'Priority level', required: true },
-      { name: 'preferredDates', type: 'string[]', description: 'Preferred date ranges', required: false },
-      { name: 'preferredProfessionals', type: 'string[]', description: 'Preferred professionals', required: false },
-      { name: 'accessibility', type: 'string[]', description: 'Accessibility requirements', required: false },
+      {
+        name: 'preferredDates',
+        type: 'string[]',
+        description: 'Preferred date ranges',
+        required: false,
+      },
+      {
+        name: 'preferredProfessionals',
+        type: 'string[]',
+        description: 'Preferred professionals',
+        required: false,
+      },
+      {
+        name: 'accessibility',
+        type: 'string[]',
+        description: 'Accessibility requirements',
+        required: false,
+      },
     ],
     handler: async (
       serviceType: string,
@@ -155,11 +193,11 @@ export const CopilotSchedulingAgent: React.FC<SchedulingAgentProps> = ({
       urgency: string,
       preferredDates: string[] = [],
       preferredProfessionals: string[] = [],
-      accessibility: string[] = []
+      accessibility: string[] = [],
     ) => {
       try {
         const parsedDates = preferredDates.map(date => parseISO(date));
-        
+
         setState(prev => ({
           ...prev,
           currentStep: 'finding_slots',
@@ -169,20 +207,20 @@ export const CopilotSchedulingAgent: React.FC<SchedulingAgentProps> = ({
             urgency: urgency as 'low' | 'medium' | 'high' | 'urgent',
             preferredDates: parsedDates,
             preferredProfessionals,
-            accessibility
-          }
+            accessibility,
+          },
         }));
 
         // Trigger slot finding
         await findAvailableSlots(serviceType, parsedDates, duration, preferredProfessionals);
-        
+
         return 'Appointment requirements set and availability checked';
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'Failed to set requirements';
         onError?.(errorMessage);
         throw error;
       }
-    }
+    },
   });
 
   useCopilotAction({
@@ -201,7 +239,7 @@ export const CopilotSchedulingAgent: React.FC<SchedulingAgentProps> = ({
         setState(prev => ({
           ...prev,
           currentStep: 'confirming',
-          selectedSlot: slotId
+          selectedSlot: slotId,
         }));
 
         return 'Time slot selected for confirmation';
@@ -210,7 +248,7 @@ export const CopilotSchedulingAgent: React.FC<SchedulingAgentProps> = ({
         onError?.(errorMessage);
         throw error;
       }
-    }
+    },
   });
 
   useCopilotAction({
@@ -223,25 +261,27 @@ export const CopilotSchedulingAgent: React.FC<SchedulingAgentProps> = ({
       try {
         setState(prev => ({
           ...prev,
-          currentStep: 'scheduling'
+          currentStep: 'scheduling',
         }));
 
         // Schedule the appointment
         const appointmentId = await scheduleAppointment(patientId);
-        
+
         setState(prev => ({
           ...prev,
-          currentStep: 'completed'
+          currentStep: 'completed',
         }));
 
         onAppointmentScheduled?.(appointmentId);
         return `Appointment scheduled successfully with ID: ${appointmentId}`;
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'Failed to schedule appointment';
+        const errorMessage = error instanceof Error
+          ? error.message
+          : 'Failed to schedule appointment';
         onError?.(errorMessage);
         throw error;
       }
-    }
+    },
   });
 
   // Helper functions
@@ -249,22 +289,22 @@ export const CopilotSchedulingAgent: React.FC<SchedulingAgentProps> = ({
     serviceType: string,
     preferredDates: Date[],
     duration: number,
-    preferredProfessionals: string[]
+    preferredProfessionals: string[],
   ) => {
     try {
       // Get date range for search
-      const startDate = preferredDates.length > 0 ? 
-        new Date(Math.min(...preferredDates.map(d => d.getTime()))) : 
-        new Date();
-      
-      const endDate = preferredDates.length > 0 ?
-        new Date(Math.max(...preferredDates.map(d => d.getTime()))) :
-        addDays(startDate, 7);
+      const startDate = preferredDates.length > 0
+        ? new Date(Math.min(...preferredDates.map(d => d.getTime())))
+        : new Date();
+
+      const endDate = preferredDates.length > 0
+        ? new Date(Math.max(...preferredDates.map(d => d.getTime())))
+        : addDays(startDate, 7);
 
       // Get real-time availability
       const availability = await aiService.getRealTimeAvailability(clinicId, undefined, {
         start: startDate,
-        end: endDate
+        end: endDate,
       });
 
       // Filter and format slots based on requirements
@@ -280,28 +320,27 @@ export const CopilotSchedulingAgent: React.FC<SchedulingAgentProps> = ({
           professional: slot.professionalId,
           room: slot.confidence > 0.7 ? 'available' : 'limited',
           confidence: slot.confidence,
-          efficiency: 0.9 // Placeholder efficiency calculation
+          efficiency: 0.9, // Placeholder efficiency calculation
         }));
 
       // Get optimization suggestions
       const optimization = {
         suggestions: [
           'Morning slots have higher attendance rates',
-          'Consider mid-week appointments for better availability'
+          'Consider mid-week appointments for better availability',
         ],
         riskFactors: availability.conflicts.map(conflict => conflict.description),
         recommendations: [
           'Book 2-3 days in advance for optimal availability',
-          'Consider telemedicine options for urgent cases'
-        ]
+          'Consider telemedicine options for urgent cases',
+        ],
       };
 
       setState(prev => ({
         ...prev,
         availableSlots: suitableSlots,
-        optimization
+        optimization,
       }));
-
     } catch (error) {
       console.error('Error finding available slots:', error);
       onError?.('Failed to find available slots');
@@ -327,7 +366,7 @@ export const CopilotSchedulingAgent: React.FC<SchedulingAgentProps> = ({
         startTime: selectedSlot.start.toISOString(),
         endTime: selectedSlot.end.toISOString(),
         serviceType: state.appointmentRequirements.serviceType,
-        status: 'scheduled'
+        status: 'scheduled',
       };
 
       // Make API call to create appointment
@@ -336,7 +375,7 @@ export const CopilotSchedulingAgent: React.FC<SchedulingAgentProps> = ({
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(appointmentData)
+        body: JSON.stringify(appointmentData),
       });
 
       if (!response.ok) {
@@ -345,7 +384,6 @@ export const CopilotSchedulingAgent: React.FC<SchedulingAgentProps> = ({
 
       const appointment = await response.json();
       return appointment.id;
-
     } catch (error) {
       console.error('Error scheduling appointment:', error);
       throw error;
@@ -354,46 +392,61 @@ export const CopilotSchedulingAgent: React.FC<SchedulingAgentProps> = ({
 
   // Render component UI
   return (
-    <div className="copilot-scheduling-agent max-w-4xl mx-auto p-6">
-      <div className="bg-white rounded-lg shadow-lg">
-        <div className="p-6 border-b">
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">
+    <div className='copilot-scheduling-agent max-w-4xl mx-auto p-6'>
+      <div className='bg-white rounded-lg shadow-lg'>
+        <div className='p-6 border-b'>
+          <h2 className='text-2xl font-bold text-gray-900 mb-2'>
             AI Appointment Scheduling Assistant
           </h2>
-          <p className="text-gray-600">
+          <p className='text-gray-600'>
             Intelligent scheduling powered by AI with real-time availability and optimization
           </p>
         </div>
 
         {/* Progress indicator */}
-        <div className="px-6 py-4 bg-gray-50">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex space-x-4">
-              {['idle', 'gathering_info', 'finding_slots', 'confirming', 'scheduling', 'completed'].map((step, index) => (
-                <div key={step} className="flex items-center">
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
-                    state.currentStep === step || 
-                    (state.currentStep !== 'idle' && 
-                     ['gathering_info', 'finding_slots', 'confirming', 'scheduling', 'completed'].includes(state.currentStep) &&
-                     ['gathering_info', 'finding_slots', 'confirming', 'scheduling', 'completed'].indexOf(state.currentStep) >= index)
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-gray-300 text-gray-600'
-                  }`}>
-                    {index + 1}
+        <div className='px-6 py-4 bg-gray-50'>
+          <div className='flex items-center justify-between mb-4'>
+            <div className='flex space-x-4'>
+              {['idle', 'gathering_info', 'finding_slots', 'confirming', 'scheduling', 'completed']
+                .map((step, index) => (
+                  <div key={step} className='flex items-center'>
+                    <div
+                      className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
+                        state.currentStep === step
+                          || (state.currentStep !== 'idle'
+                            && [
+                              'gathering_info',
+                              'finding_slots',
+                              'confirming',
+                              'scheduling',
+                              'completed',
+                            ].includes(state.currentStep)
+                            && [
+                                'gathering_info',
+                                'finding_slots',
+                                'confirming',
+                                'scheduling',
+                                'completed',
+                              ].indexOf(state.currentStep) >= index)
+                          ? 'bg-blue-600 text-white'
+                          : 'bg-gray-300 text-gray-600'
+                      }`}
+                    >
+                      {index + 1}
+                    </div>
+                    <span className='ml-2 text-sm font-medium text-gray-900'>
+                      {step.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                    </span>
                   </div>
-                  <span className="ml-2 text-sm font-medium text-gray-900">
-                    {step.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
-                  </span>
-                </div>
-              ))}
+                ))}
             </div>
           </div>
         </div>
 
         {/* Main content area */}
-        <div className="p-6">
+        <div className='p-6'>
           {/* Chat interface */}
-          <div className="mb-6">
+          <div className='mb-6'>
             <CopilotChat
               instructions={`
                 You are an AI appointment scheduling assistant for a healthcare clinic.
@@ -417,21 +470,22 @@ export const CopilotSchedulingAgent: React.FC<SchedulingAgentProps> = ({
               `}
               labels={{
                 title: 'Scheduling Assistant',
-                initial: 'Hello! I\'m your AI scheduling assistant. How can I help you book an appointment today?'
+                initial:
+                  'Hello! I\'m your AI scheduling assistant. How can I help you book an appointment today?',
               }}
-              className="h-96"
+              className='h-96'
             />
           </div>
 
           {/* Optimization insights */}
           {state.optimization.suggestions.length > 0 && (
-            <div className="mb-6 p-4 bg-blue-50 rounded-lg">
-              <h3 className="text-lg font-semibold text-blue-900 mb-2">
+            <div className='mb-6 p-4 bg-blue-50 rounded-lg'>
+              <h3 className='text-lg font-semibold text-blue-900 mb-2'>
                 AI Optimization Insights
               </h3>
-              <ul className="space-y-1">
+              <ul className='space-y-1'>
                 {state.optimization.suggestions.map((suggestion, index) => (
-                  <li key={index} className="text-blue-800 text-sm">
+                  <li key={index} className='text-blue-800 text-sm'>
                     • {suggestion}
                   </li>
                 ))}
@@ -441,13 +495,13 @@ export const CopilotSchedulingAgent: React.FC<SchedulingAgentProps> = ({
 
           {/* Risk factors */}
           {state.optimization.riskFactors.length > 0 && (
-            <div className="mb-6 p-4 bg-yellow-50 rounded-lg">
-              <h3 className="text-lg font-semibold text-yellow-900 mb-2">
+            <div className='mb-6 p-4 bg-yellow-50 rounded-lg'>
+              <h3 className='text-lg font-semibold text-yellow-900 mb-2'>
                 Scheduling Considerations
               </h3>
-              <ul className="space-y-1">
+              <ul className='space-y-1'>
                 {state.optimization.riskFactors.map((factor, index) => (
-                  <li key={index} className="text-yellow-800 text-sm">
+                  <li key={index} className='text-yellow-800 text-sm'>
                     ⚠️ {factor}
                   </li>
                 ))}
@@ -457,12 +511,12 @@ export const CopilotSchedulingAgent: React.FC<SchedulingAgentProps> = ({
 
           {/* Available slots display */}
           {state.availableSlots.length > 0 && (
-            <div className="mb-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+            <div className='mb-6'>
+              <h3 className='text-lg font-semibold text-gray-900 mb-4'>
                 Available Time Slots
               </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {state.availableSlots.slice(0, 6).map((slot) => (
+              <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
+                {state.availableSlots.slice(0, 6).map(slot => (
                   <div
                     key={slot.id}
                     className={`p-4 border rounded-lg cursor-pointer transition-colors ${
@@ -473,28 +527,30 @@ export const CopilotSchedulingAgent: React.FC<SchedulingAgentProps> = ({
                     onClick={() => {
                       setState(prev => ({
                         ...prev,
-                        selectedSlot: slot.id
+                        selectedSlot: slot.id,
                       }));
                     }}
                   >
-                    <div className="flex justify-between items-start mb-2">
-                      <span className="text-lg font-medium text-gray-900">
+                    <div className='flex justify-between items-start mb-2'>
+                      <span className='text-lg font-medium text-gray-900'>
                         {format(slot.start, 'HH:mm')}
                       </span>
-                      <span className={`px-2 py-1 text-xs rounded-full ${
-                        slot.confidence > 0.8
-                          ? 'bg-green-100 text-green-800'
-                          : slot.confidence > 0.6
-                          ? 'bg-yellow-100 text-yellow-800'
-                          : 'bg-red-100 text-red-800'
-                      }`}>
+                      <span
+                        className={`px-2 py-1 text-xs rounded-full ${
+                          slot.confidence > 0.8
+                            ? 'bg-green-100 text-green-800'
+                            : slot.confidence > 0.6
+                            ? 'bg-yellow-100 text-yellow-800'
+                            : 'bg-red-100 text-red-800'
+                        }`}
+                      >
                         {Math.round(slot.confidence * 100)}% match
                       </span>
                     </div>
-                    <div className="text-sm text-gray-600 mb-2">
+                    <div className='text-sm text-gray-600 mb-2'>
                       {format(slot.start, 'EEE, MMM d', { locale: ptBR })}
                     </div>
-                    <div className="text-xs text-gray-500">
+                    <div className='text-xs text-gray-500'>
                       Professional: {slot.professional}
                     </div>
                   </div>
@@ -504,14 +560,19 @@ export const CopilotSchedulingAgent: React.FC<SchedulingAgentProps> = ({
           )}
 
           {/* Status messages */}
-          <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-            <div className="flex items-center">
-              <div className={`w-3 h-3 rounded-full mr-2 ${
-                state.currentStep === 'idle' ? 'bg-gray-400' :
-                state.currentStep === 'completed' ? 'bg-green-400' :
-                'bg-blue-400'
-              }`}></div>
-              <span className="text-sm text-gray-700">
+          <div className='mt-6 p-4 bg-gray-50 rounded-lg'>
+            <div className='flex items-center'>
+              <div
+                className={`w-3 h-3 rounded-full mr-2 ${
+                  state.currentStep === 'idle'
+                    ? 'bg-gray-400'
+                    : state.currentStep === 'completed'
+                    ? 'bg-green-400'
+                    : 'bg-blue-400'
+                }`}
+              >
+              </div>
+              <span className='text-sm text-gray-700'>
                 Current status: {state.currentStep.replace('_', ' ')}
               </span>
             </div>

@@ -1,18 +1,18 @@
 /**
  * Enhanced AI Appointment Scheduling Service
- * 
+ *
  * Core service for intelligent appointment scheduling with:
  * - No-show prediction using machine learning
  * - Resource optimization and staff allocation
  * - Intelligent scheduling algorithms
  * - Real-time availability management
  * - Automated reminder systems
- * 
+ *
  * Following Task 9 architecture design and LGPD compliance
  */
 
 import { prisma } from '../lib/prisma';
-import { } from '@prisma/client';
+import {} from '@prisma/client';
 
 export interface NoShowPredictionFeatures {
   patientId: string;
@@ -108,7 +108,7 @@ export class AIAppointmentSchedulingService {
    * Predict no-show risk for an appointment
    */
   async predictNoShow(
-    appointmentData: NoShowPredictionFeatures
+    appointmentData: NoShowPredictionFeatures,
   ): Promise<NoShowPredictionResult> {
     try {
       // Get patient historical data
@@ -121,7 +121,7 @@ export class AIAppointmentSchedulingService {
           behavioralPatterns: true,
           preferredContactMethod: true,
           communicationPreferences: true,
-        }
+        },
       });
 
       if (!patient) {
@@ -130,7 +130,7 @@ export class AIAppointmentSchedulingService {
 
       // Extract behavioral patterns
       const behavioralPatterns = patient.behavioralPatterns as any || {};
-      
+
       // Calculate base risk factors
       const riskFactors: string[] = [];
       let riskScore = 0;
@@ -177,7 +177,10 @@ export class AIAppointmentSchedulingService {
       }
 
       // Contact method preference
-      if (patient.preferredContactMethod === 'email' && !patient.communicationPreferences?.['email_enabled']) {
+      if (
+        patient.preferredContactMethod === 'email'
+        && !patient.communicationPreferences?.['email_enabled']
+      ) {
         riskScore += 8;
         riskFactors.push('Limited communication options');
       }
@@ -196,9 +199,9 @@ export class AIAppointmentSchedulingService {
 
       // Generate prevention recommendations
       const preventionRecommendations = this.generatePreventionRecommendations(
-        riskScore, 
-        riskFactors, 
-        patient
+        riskScore,
+        riskFactors,
+        patient,
       );
 
       return {
@@ -206,9 +209,8 @@ export class AIAppointmentSchedulingService {
         confidence,
         riskFactors,
         preventionRecommendations,
-        modelVersion: this.modelVersion
+        modelVersion: this.modelVersion,
       };
-
     } catch {
       console.error('Error predicting no-show:', error);
       throw new Error('Failed to predict no-show risk');
@@ -220,28 +222,28 @@ export class AIAppointmentSchedulingService {
    */
   async optimizeResourceAllocation(
     context: AppointmentSchedulingContext,
-    dateRange: { start: Date; end: Date }
+    dateRange: { start: Date; end: Date },
   ): Promise<SchedulingOptimization> {
     try {
       // Get available professionals
       const professionals = await prisma.professional.findMany({
-        where: { 
+        where: {
           clinicId: context.clinicId,
           isActive: true,
           serviceTypes: {
-            some: { id: context.serviceTypeId }
-          }
+            some: { id: context.serviceTypeId },
+          },
         },
         include: {
           availabilities: {
             where: {
               date: {
                 gte: dateRange.start,
-                lte: dateRange.end
-              }
-            }
-          }
-        }
+                lte: dateRange.end,
+              },
+            },
+          },
+        },
       });
 
       // Get existing appointments
@@ -250,24 +252,24 @@ export class AIAppointmentSchedulingService {
           clinicId: context.clinicId,
           startTime: {
             gte: dateRange.start,
-            lte: dateRange.end
+            lte: dateRange.end,
           },
           status: {
-            in: ['scheduled', 'confirmed']
-          }
+            in: ['scheduled', 'confirmed'],
+          },
         },
         include: {
           professional: true,
-          room: true
-        }
+          room: true,
+        },
       });
 
       // Get available rooms
       const rooms = await prisma.room.findMany({
-        where: { 
+        where: {
           clinicId: context.clinicId,
-          isActive: true
-        }
+          isActive: true,
+        },
       });
 
       // Generate optimal time slots
@@ -276,7 +278,7 @@ export class AIAppointmentSchedulingService {
         professionals,
         existingAppointments,
         rooms,
-        dateRange
+        dateRange,
       );
 
       // Calculate resource utilization
@@ -284,30 +286,29 @@ export class AIAppointmentSchedulingService {
         professionals,
         rooms,
         existingAppointments,
-        dateRange
+        dateRange,
       );
 
       // Identify bottlenecks
       const bottlenecks = this.identifyBottlenecks(
         professionals,
         rooms,
-        existingAppointments
+        existingAppointments,
       );
 
       // Generate recommendations
       const recommendations = this.generateSchedulingRecommendations(
         suggestedSlots,
         resourceUtilization,
-        bottlenecks
+        bottlenecks,
       );
 
       return {
         suggestedSlots,
         resourceUtilization,
         bottlenecks,
-        recommendations
+        recommendations,
       };
-
     } catch {
       console.error('Error optimizing resource allocation:', error);
       throw new Error('Failed to optimize resource allocation');
@@ -320,7 +321,7 @@ export class AIAppointmentSchedulingService {
   async getRealTimeAvailability(
     clinicId: string,
     _dateRange: { start: Date; end: Date },
-    professionalId?: string
+    professionalId?: string,
   ): Promise<{
     availableSlots: Array<{
       start: Date;
@@ -341,7 +342,7 @@ export class AIAppointmentSchedulingService {
         clinicId: clinicId,
         startTime: { gte: dateRange.start },
         endTime: { lte: dateRange.end },
-        status: { in: ['scheduled', 'confirmed'] }
+        status: { in: ['scheduled', 'confirmed'] },
       };
 
       if (professionalId) {
@@ -353,33 +354,33 @@ export class AIAppointmentSchedulingService {
         where: whereClause,
         include: {
           professional: true,
-          room: true
+          room: true,
         },
-        orderBy: { startTime: 'asc' }
+        orderBy: { startTime: 'asc' },
       });
 
       // Get professional availability
       const professionals = await prisma.professional.findMany({
-        where: { 
+        where: {
           clinicId,
           isActive: true,
-          ...(professionalId ? { id: professionalId } : {})
+          ...(professionalId ? { id: professionalId } : {}),
         },
         include: {
           availabilities: {
             where: {
               date: {
                 gte: dateRange.start,
-                lte: dateRange.end
-              }
-            }
-          }
-        }
+                lte: dateRange.end,
+              },
+            },
+          },
+        },
       });
 
       // Get rooms
       const rooms = await prisma.room.findMany({
-        where: { clinicId, isActive: true }
+        where: { clinicId, isActive: true },
       });
 
       // Generate available slots
@@ -387,7 +388,7 @@ export class AIAppointmentSchedulingService {
         professionals,
         rooms,
         existingAppointments,
-        dateRange
+        dateRange,
       );
 
       // Detect conflicts
@@ -395,9 +396,8 @@ export class AIAppointmentSchedulingService {
 
       return {
         availableSlots,
-        conflicts
+        conflicts,
       };
-
     } catch {
       console.error('Error getting real-time availability:', error);
       throw new Error('Failed to get real-time availability');
@@ -408,21 +408,23 @@ export class AIAppointmentSchedulingService {
    * Generate automated reminder schedule
    */
   async generateReminderSchedule(
-    appointmentId: string
-  ): Promise<Array<{
-    type: 'email' | 'sms' | 'whatsapp';
-    timing: Date;
-    message: string;
-    priority: 'low' | 'medium' | 'high';
-  }>> {
+    appointmentId: string,
+  ): Promise<
+    Array<{
+      type: 'email' | 'sms' | 'whatsapp';
+      timing: Date;
+      message: string;
+      priority: 'low' | 'medium' | 'high';
+    }>
+  > {
     try {
       const appointment = await prisma.appointment.findUnique({
         where: { id: appointmentId },
         include: {
           patient: true,
           professional: true,
-          clinic: true
-        }
+          clinic: true,
+        },
       });
 
       if (!appointment) {
@@ -451,7 +453,7 @@ export class AIAppointmentSchedulingService {
             type: 'email',
             timing: reminderTime,
             message: this.generateReminderMessage(appointment, 'week_before'),
-            priority: 'medium'
+            priority: 'medium',
           });
         }
       }
@@ -463,7 +465,7 @@ export class AIAppointmentSchedulingService {
           type: 'email',
           timing: reminderTime3Days,
           message: this.generateReminderMessage(appointment, 'three_days_before'),
-          priority: 'medium'
+          priority: 'medium',
         });
       }
 
@@ -474,7 +476,7 @@ export class AIAppointmentSchedulingService {
           type: appointment.patient.preferredContactMethod === 'email' ? 'email' : 'sms',
           timing: reminderTime1Day,
           message: this.generateReminderMessage(appointment, 'day_before'),
-          priority: 'high'
+          priority: 'high',
         });
       }
 
@@ -485,12 +487,11 @@ export class AIAppointmentSchedulingService {
           type: 'sms',
           timing: reminderTime2Hours,
           message: this.generateReminderMessage(appointment, 'two_hours_before'),
-          priority: 'high'
+          priority: 'high',
         });
       }
 
       return reminders;
-
     } catch {
       console.error('Error generating reminder schedule:', error);
       throw new Error('Failed to generate reminder schedule');
@@ -500,7 +501,7 @@ export class AIAppointmentSchedulingService {
   // Helper methods
   private calculateConfidence(
     features: NoShowPredictionFeatures,
-    patient: Patient
+    patient: Patient,
   ): number {
     let confidence = 0.5; // Base confidence
 
@@ -519,7 +520,7 @@ export class AIAppointmentSchedulingService {
   private generatePreventionRecommendations(
     riskScore: number,
     riskFactors: string[],
-    patient: Patient
+    patient: Patient,
   ): string[] {
     const recommendations: string[] = [];
 
@@ -551,22 +552,29 @@ export class AIAppointmentSchedulingService {
     professionals: any[],
     existingAppointments: any[],
     rooms: any[],
-    _dateRange: { start: Date; end: Date }
+    _dateRange: { start: Date; end: Date },
   ): Promise<any[]> {
     const slots: any[] = [];
 
     // Simple slot generation algorithm
     for (const professional of professionals) {
-      if (context.preferredProfessionals.length > 0 && 
-          !context.preferredProfessionals.includes(professional.id)) {
+      if (
+        context.preferredProfessionals.length > 0
+        && !context.preferredProfessionals.includes(professional.id)
+      ) {
         continue;
       }
 
       // Generate slots based on professional availability
       for (const availability of professional.availabilities) {
         const dayStart = new Date(availability.date);
-        dayStart.setHours(availability.startTime.getHours(), availability.startTime.getMinutes(), 0, 0);
-        
+        dayStart.setHours(
+          availability.startTime.getHours(),
+          availability.startTime.getMinutes(),
+          0,
+          0,
+        );
+
         const dayEnd = new Date(availability.date);
         dayEnd.setHours(availability.endTime.getHours(), availability.endTime.getMinutes(), 0, 0);
 
@@ -578,19 +586,19 @@ export class AIAppointmentSchedulingService {
           const slotEnd = new Date(currentSlot.getTime() + slotDuration * 60000);
 
           // Check for conflicts
-          const hasConflict = existingAppointments.some(apt => 
-            apt.professionalId === professional.id &&
-            apt.startTime < slotEnd && 
-            apt.endTime > currentSlot
+          const hasConflict = existingAppointments.some(apt =>
+            apt.professionalId === professional.id
+            && apt.startTime < slotEnd
+            && apt.endTime > currentSlot
           );
 
           if (!hasConflict) {
             // Find available room
-            const availableRoom = rooms.find(room => 
-              !existingAppointments.some(apt => 
-                apt.roomId === room.id &&
-                apt.startTime < slotEnd && 
-                apt.endTime > currentSlot
+            const availableRoom = rooms.find(room =>
+              !existingAppointments.some(apt =>
+                apt.roomId === room.id
+                && apt.startTime < slotEnd
+                && apt.endTime > currentSlot
               )
             );
 
@@ -602,7 +610,7 @@ export class AIAppointmentSchedulingService {
                 roomId: availableRoom.id,
                 confidence: 0.8, // Base confidence
                 efficiency: 0.9,
-                reason: 'Optimal slot with available resources'
+                reason: 'Optimal slot with available resources',
               });
             }
           }
@@ -620,10 +628,10 @@ export class AIAppointmentSchedulingService {
     professionals: any[],
     rooms: any[],
     appointments: any[],
-    dateRange: { start: Date; end: Date }
+    dateRange: { start: Date; end: Date },
   ) {
     const totalHours = (dateRange.end.getTime() - dateRange.start.getTime()) / (1000 * 60 * 60);
-    
+
     const professionalHours = appointments.reduce((sum, apt) => {
       const duration = (apt.endTime.getTime() - apt.startTime.getTime()) / (1000 * 60 * 60);
       return sum + duration;
@@ -635,14 +643,14 @@ export class AIAppointmentSchedulingService {
     return {
       professionals: Math.round(professionalUtilization * 100),
       rooms: Math.round(roomUtilization * 100),
-      equipment: 75 // Placeholder
+      equipment: 75, // Placeholder
     };
   }
 
   private identifyBottlenecks(
     professionals: any[],
     rooms: any[],
-    appointments: any[]
+    appointments: any[],
   ): string[] {
     const bottlenecks: string[] = [];
 
@@ -680,7 +688,7 @@ export class AIAppointmentSchedulingService {
   private generateSchedulingRecommendations(
     slots: any[],
     utilization: any,
-    bottlenecks: string[]
+    bottlenecks: string[],
   ): string[] {
     const recommendations: string[] = [];
 
@@ -707,7 +715,7 @@ export class AIAppointmentSchedulingService {
     _professionals: any[],
     _rooms: any[],
     _appointments: any[],
-    _dateRange: { start: Date; end: Date }
+    _dateRange: { start: Date; end: Date },
   ): any[] {
     // Implementation for generating available slots
     return [];
@@ -722,14 +730,15 @@ export class AIAppointmentSchedulingService {
         const apt1 = appointments[i];
         const apt2 = appointments[j];
 
-        if (apt1.professionalId === apt2.professionalId &&
-            apt1.startTime < apt2.endTime && 
-            apt1.endTime > apt2.startTime) {
-          
+        if (
+          apt1.professionalId === apt2.professionalId
+          && apt1.startTime < apt2.endTime
+          && apt1.endTime > apt2.startTime
+        ) {
           conflicts.push({
             type: 'overlap',
             severity: 'high',
-            description: `Professional ${apt1.professionalId} has overlapping appointments`
+            description: `Professional ${apt1.professionalId} has overlapping appointments`,
           });
         }
       }
@@ -740,20 +749,24 @@ export class AIAppointmentSchedulingService {
 
   private generateReminderMessage(
     appointment: any,
-    type: 'week_before' | 'three_days_before' | 'day_before' | 'two_hours_before'
+    type: 'week_before' | 'three_days_before' | 'day_before' | 'two_hours_before',
   ): string {
     const { patient, professional, clinic, startTime } = appointment;
     const formattedDate = startTime.toLocaleDateString('pt-BR');
-    const formattedTime = startTime.toLocaleTimeString('pt-BR', { 
-      hour: '2-digit', 
-      minute: '2-digit' 
+    const formattedTime = startTime.toLocaleTimeString('pt-BR', {
+      hour: '2-digit',
+      minute: '2-digit',
     });
 
     const messages = {
-      week_before: `Olá ${patient.fullName}, seu agendamento com ${professional.fullName} está confirmado para ${formattedDate} às ${formattedTime}. Por favor, confirme sua presença.`,
-      three_days_before: `Lembrete: Seu agendamento é em 3 dias - ${formattedDate} às ${formattedTime} com ${professional.fullName}.`,
-      day_before: `Atenção: Seu agendamento é amanhã às ${formattedTime} com ${professional.fullName} na ${clinic.name}.`,
-      two_hours_before: `Seu agendamento é em 2 horas às ${formattedTime} com ${professional.fullName}. Por favor, chegue com 15 minutos de antecedência.`
+      week_before:
+        `Olá ${patient.fullName}, seu agendamento com ${professional.fullName} está confirmado para ${formattedDate} às ${formattedTime}. Por favor, confirme sua presença.`,
+      three_days_before:
+        `Lembrete: Seu agendamento é em 3 dias - ${formattedDate} às ${formattedTime} com ${professional.fullName}.`,
+      day_before:
+        `Atenção: Seu agendamento é amanhã às ${formattedTime} com ${professional.fullName} na ${clinic.name}.`,
+      two_hours_before:
+        `Seu agendamento é em 2 horas às ${formattedTime} com ${professional.fullName}. Por favor, chegue com 15 minutos de antecedência.`,
     };
 
     return messages[type];

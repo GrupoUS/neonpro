@@ -10,7 +10,7 @@ export type GeneratedDatabase = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<GeneratedDatabase, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "12.2.12 (cd3cf9e)";
+    PostgrestVersion: '12.2.12 (cd3cf9e)';
   };
   public: {
     Tables: {
@@ -71,46 +71,46 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "ab_test_results_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'ab_test_results_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "ab_test_results_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'ab_test_results_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "ab_test_results_model_id_fkey";
-            columns: ["model_id"];
+            foreignKeyName: 'ab_test_results_model_id_fkey';
+            columns: ['model_id'];
             isOneToOne: false;
-            referencedRelation: "ai_models";
-            referencedColumns: ["id"];
+            referencedRelation: 'ai_models';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "ab_test_results_model_id_fkey";
-            columns: ["model_id"];
+            foreignKeyName: 'ab_test_results_model_id_fkey';
+            columns: ['model_id'];
             isOneToOne: false;
-            referencedRelation: "ml_model_performance";
-            referencedColumns: ["id"];
+            referencedRelation: 'ml_model_performance';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "ab_test_results_test_id_fkey";
-            columns: ["test_id"];
+            foreignKeyName: 'ab_test_results_test_id_fkey';
+            columns: ['test_id'];
             isOneToOne: false;
-            referencedRelation: "ab_test_summary";
-            referencedColumns: ["id"];
+            referencedRelation: 'ab_test_summary';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "ab_test_results_test_id_fkey";
-            columns: ["test_id"];
+            foreignKeyName: 'ab_test_results_test_id_fkey';
+            columns: ['test_id'];
             isOneToOne: false;
-            referencedRelation: "ab_tests";
-            referencedColumns: ["id"];
+            referencedRelation: 'ab_tests';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -162,53 +162,53 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "ab_tests_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'ab_tests_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "ab_tests_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'ab_tests_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "ab_tests_model_a_id_fkey";
-            columns: ["model_a_id"];
+            foreignKeyName: 'ab_tests_model_a_id_fkey';
+            columns: ['model_a_id'];
             isOneToOne: false;
-            referencedRelation: "ai_models";
-            referencedColumns: ["id"];
+            referencedRelation: 'ai_models';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "ab_tests_model_a_id_fkey";
-            columns: ["model_a_id"];
+            foreignKeyName: 'ab_tests_model_a_id_fkey';
+            columns: ['model_a_id'];
             isOneToOne: false;
-            referencedRelation: "ml_model_performance";
-            referencedColumns: ["id"];
+            referencedRelation: 'ml_model_performance';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "ab_tests_model_b_id_fkey";
-            columns: ["model_b_id"];
+            foreignKeyName: 'ab_tests_model_b_id_fkey';
+            columns: ['model_b_id'];
             isOneToOne: false;
-            referencedRelation: "ai_models";
-            referencedColumns: ["id"];
+            referencedRelation: 'ai_models';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "ab_tests_model_b_id_fkey";
-            columns: ["model_b_id"];
+            foreignKeyName: 'ab_tests_model_b_id_fkey';
+            columns: ['model_b_id'];
             isOneToOne: false;
-            referencedRelation: "ml_model_performance";
-            referencedColumns: ["id"];
+            referencedRelation: 'ml_model_performance';
+            referencedColumns: ['id'];
           },
         ];
       };
       access_audit_log: {
         Row: {
           access_granted: boolean;
-          action_attempted: GeneratedDatabase["public"]["Enums"]["permission_action"];
+          action_attempted: GeneratedDatabase['public']['Enums']['permission_action'];
           affected_profile_id: string | null;
           created_at: string;
           data_exported: boolean | null;
@@ -220,7 +220,7 @@ export type GeneratedDatabase = {
           request_method: string | null;
           request_path: string | null;
           resource_id: string | null;
-          resource_type: GeneratedDatabase["public"]["Enums"]["resource_type"];
+          resource_type: GeneratedDatabase['public']['Enums']['resource_type'];
           sensitive_data_accessed: string[] | null;
           session_id: string | null;
           user_agent: string | null;
@@ -230,7 +230,7 @@ export type GeneratedDatabase = {
         };
         Insert: {
           access_granted: boolean;
-          action_attempted: GeneratedDatabase["public"]["Enums"]["permission_action"];
+          action_attempted: GeneratedDatabase['public']['Enums']['permission_action'];
           affected_profile_id?: string | null;
           created_at?: string;
           data_exported?: boolean | null;
@@ -242,7 +242,7 @@ export type GeneratedDatabase = {
           request_method?: string | null;
           request_path?: string | null;
           resource_id?: string | null;
-          resource_type: GeneratedDatabase["public"]["Enums"]["resource_type"];
+          resource_type: GeneratedDatabase['public']['Enums']['resource_type'];
           sensitive_data_accessed?: string[] | null;
           session_id?: string | null;
           user_agent?: string | null;
@@ -252,7 +252,7 @@ export type GeneratedDatabase = {
         };
         Update: {
           access_granted?: boolean;
-          action_attempted?: GeneratedDatabase["public"]["Enums"]["permission_action"];
+          action_attempted?: GeneratedDatabase['public']['Enums']['permission_action'];
           affected_profile_id?: string | null;
           created_at?: string;
           data_exported?: boolean | null;
@@ -264,7 +264,7 @@ export type GeneratedDatabase = {
           request_method?: string | null;
           request_path?: string | null;
           resource_id?: string | null;
-          resource_type?: GeneratedDatabase["public"]["Enums"]["resource_type"];
+          resource_type?: GeneratedDatabase['public']['Enums']['resource_type'];
           sensitive_data_accessed?: string[] | null;
           session_id?: string | null;
           user_agent?: string | null;
@@ -277,7 +277,7 @@ export type GeneratedDatabase = {
       access_violations: {
         Row: {
           action_attempted:
-            | GeneratedDatabase["public"]["Enums"]["permission_action"]
+            | GeneratedDatabase['public']['Enums']['permission_action']
             | null;
           admin_notified: boolean | null;
           auto_blocked: boolean | null;
@@ -293,7 +293,7 @@ export type GeneratedDatabase = {
           request_method: string | null;
           request_path: string | null;
           resource_type:
-            | GeneratedDatabase["public"]["Enums"]["resource_type"]
+            | GeneratedDatabase['public']['Enums']['resource_type']
             | null;
           severity: string | null;
           user_agent: string | null;
@@ -303,7 +303,7 @@ export type GeneratedDatabase = {
         };
         Insert: {
           action_attempted?:
-            | GeneratedDatabase["public"]["Enums"]["permission_action"]
+            | GeneratedDatabase['public']['Enums']['permission_action']
             | null;
           admin_notified?: boolean | null;
           auto_blocked?: boolean | null;
@@ -319,7 +319,7 @@ export type GeneratedDatabase = {
           request_method?: string | null;
           request_path?: string | null;
           resource_type?:
-            | GeneratedDatabase["public"]["Enums"]["resource_type"]
+            | GeneratedDatabase['public']['Enums']['resource_type']
             | null;
           severity?: string | null;
           user_agent?: string | null;
@@ -329,7 +329,7 @@ export type GeneratedDatabase = {
         };
         Update: {
           action_attempted?:
-            | GeneratedDatabase["public"]["Enums"]["permission_action"]
+            | GeneratedDatabase['public']['Enums']['permission_action']
             | null;
           admin_notified?: boolean | null;
           auto_blocked?: boolean | null;
@@ -345,7 +345,7 @@ export type GeneratedDatabase = {
           request_method?: string | null;
           request_path?: string | null;
           resource_type?:
-            | GeneratedDatabase["public"]["Enums"]["resource_type"]
+            | GeneratedDatabase['public']['Enums']['resource_type']
             | null;
           severity?: string | null;
           user_agent?: string | null;
@@ -355,25 +355,25 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "access_violations_investigated_by_fkey";
-            columns: ["investigated_by"];
+            foreignKeyName: 'access_violations_investigated_by_fkey';
+            columns: ['investigated_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "access_violations_investigated_by_fkey";
-            columns: ["investigated_by"];
+            foreignKeyName: 'access_violations_investigated_by_fkey';
+            columns: ['investigated_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "access_violations_investigated_by_fkey";
-            columns: ["investigated_by"];
+            foreignKeyName: 'access_violations_investigated_by_fkey';
+            columns: ['investigated_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -434,18 +434,18 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "accounts_payable_expense_category_id_fkey";
-            columns: ["expense_category_id"];
+            foreignKeyName: 'accounts_payable_expense_category_id_fkey';
+            columns: ['expense_category_id'];
             isOneToOne: false;
-            referencedRelation: "expense_categories";
-            referencedColumns: ["id"];
+            referencedRelation: 'expense_categories';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "accounts_payable_vendor_id_fkey";
-            columns: ["vendor_id"];
+            foreignKeyName: 'accounts_payable_vendor_id_fkey';
+            columns: ['vendor_id'];
             isOneToOne: false;
-            referencedRelation: "vendors";
-            referencedColumns: ["id"];
+            referencedRelation: 'vendors';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -518,25 +518,25 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "active_user_sessions_terminated_by_fkey";
-            columns: ["terminated_by"];
+            foreignKeyName: 'active_user_sessions_terminated_by_fkey';
+            columns: ['terminated_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "active_user_sessions_terminated_by_fkey";
-            columns: ["terminated_by"];
+            foreignKeyName: 'active_user_sessions_terminated_by_fkey';
+            columns: ['terminated_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "active_user_sessions_terminated_by_fkey";
-            columns: ["terminated_by"];
+            foreignKeyName: 'active_user_sessions_terminated_by_fkey';
+            columns: ['terminated_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -606,39 +606,39 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "activity_logs_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'activity_logs_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "activity_logs_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'activity_logs_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "activity_logs_profile_id_fkey";
-            columns: ["profile_id"];
+            foreignKeyName: 'activity_logs_profile_id_fkey';
+            columns: ['profile_id'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "activity_logs_profile_id_fkey";
-            columns: ["profile_id"];
+            foreignKeyName: 'activity_logs_profile_id_fkey';
+            columns: ['profile_id'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "activity_logs_profile_id_fkey";
-            columns: ["profile_id"];
+            foreignKeyName: 'activity_logs_profile_id_fkey';
+            columns: ['profile_id'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -753,11 +753,11 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "ai_chat_messages_session_id_fkey";
-            columns: ["session_id"];
+            foreignKeyName: 'ai_chat_messages_session_id_fkey';
+            columns: ['session_id'];
             isOneToOne: false;
-            referencedRelation: "ai_chat_sessions";
-            referencedColumns: ["id"];
+            referencedRelation: 'ai_chat_sessions';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -803,18 +803,18 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "ai_chat_sessions_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'ai_chat_sessions_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "ai_chat_sessions_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'ai_chat_sessions_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
         ];
       };
@@ -869,18 +869,18 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "ai_compliance_logs_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'ai_compliance_logs_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "ai_compliance_logs_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'ai_compliance_logs_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
         ];
       };
@@ -914,18 +914,18 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "ai_feature_flag_evaluations_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'ai_feature_flag_evaluations_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "ai_feature_flag_evaluations_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'ai_feature_flag_evaluations_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
         ];
       };
@@ -1067,18 +1067,18 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "ai_models_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'ai_models_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "ai_models_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'ai_models_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
         ];
       };
@@ -1130,18 +1130,18 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "ai_no_show_predictions_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'ai_no_show_predictions_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "ai_no_show_predictions_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'ai_no_show_predictions_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
         ];
       };
@@ -1202,11 +1202,11 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "ai_prediction_features_prediction_id_fkey";
-            columns: ["prediction_id"];
+            foreignKeyName: 'ai_prediction_features_prediction_id_fkey';
+            columns: ['prediction_id'];
             isOneToOne: false;
-            referencedRelation: "ai_no_show_predictions";
-            referencedColumns: ["id"];
+            referencedRelation: 'ai_no_show_predictions';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -1291,18 +1291,18 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "ai_service_usage_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'ai_service_usage_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "ai_service_usage_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'ai_service_usage_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
         ];
       };
@@ -1459,74 +1459,74 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "allergies_intolerances_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'allergies_intolerances_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "allergies_intolerances_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'allergies_intolerances_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "allergies_intolerances_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'allergies_intolerances_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "allergies_intolerances_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'allergies_intolerances_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "allergies_intolerances_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'allergies_intolerances_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "allergies_intolerances_patient_id_fkey";
-            columns: ["patient_id"];
+            foreignKeyName: 'allergies_intolerances_patient_id_fkey';
+            columns: ['patient_id'];
             isOneToOne: false;
-            referencedRelation: "analytics_patients";
-            referencedColumns: ["id"];
+            referencedRelation: 'analytics_patients';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "allergies_intolerances_patient_id_fkey";
-            columns: ["patient_id"];
+            foreignKeyName: 'allergies_intolerances_patient_id_fkey';
+            columns: ['patient_id'];
             isOneToOne: false;
-            referencedRelation: "patients";
-            referencedColumns: ["id"];
+            referencedRelation: 'patients';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "allergies_intolerances_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'allergies_intolerances_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "allergies_intolerances_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'allergies_intolerances_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "allergies_intolerances_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'allergies_intolerances_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -1587,18 +1587,18 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "analytics_dashboards_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'analytics_dashboards_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "analytics_dashboards_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'analytics_dashboards_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
         ];
       };
@@ -1653,18 +1653,18 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "ap_payments_accounts_payable_id_fkey";
-            columns: ["accounts_payable_id"];
+            foreignKeyName: 'ap_payments_accounts_payable_id_fkey';
+            columns: ['accounts_payable_id'];
             isOneToOne: false;
-            referencedRelation: "accounts_payable";
-            referencedColumns: ["id"];
+            referencedRelation: 'accounts_payable';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "ap_payments_vendor_id_fkey";
-            columns: ["vendor_id"];
+            foreignKeyName: 'ap_payments_vendor_id_fkey';
+            columns: ['vendor_id'];
             isOneToOne: false;
-            referencedRelation: "vendors";
-            referencedColumns: ["id"];
+            referencedRelation: 'vendors';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -1710,32 +1710,32 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "fk_conflicts_appointment";
-            columns: ["appointment_id"];
+            foreignKeyName: 'fk_conflicts_appointment';
+            columns: ['appointment_id'];
             isOneToOne: false;
-            referencedRelation: "analytics_appointments";
-            referencedColumns: ["id"];
+            referencedRelation: 'analytics_appointments';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "fk_conflicts_appointment";
-            columns: ["appointment_id"];
+            foreignKeyName: 'fk_conflicts_appointment';
+            columns: ['appointment_id'];
             isOneToOne: false;
-            referencedRelation: "appointments";
-            referencedColumns: ["id"];
+            referencedRelation: 'appointments';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "fk_conflicts_conflicting_appointment";
-            columns: ["conflicting_appointment_id"];
+            foreignKeyName: 'fk_conflicts_conflicting_appointment';
+            columns: ['conflicting_appointment_id'];
             isOneToOne: false;
-            referencedRelation: "analytics_appointments";
-            referencedColumns: ["id"];
+            referencedRelation: 'analytics_appointments';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "fk_conflicts_conflicting_appointment";
-            columns: ["conflicting_appointment_id"];
+            foreignKeyName: 'fk_conflicts_conflicting_appointment';
+            columns: ['conflicting_appointment_id'];
             isOneToOne: false;
-            referencedRelation: "appointments";
-            referencedColumns: ["id"];
+            referencedRelation: 'appointments';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -1778,18 +1778,18 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "fk_reminders_appointment";
-            columns: ["appointment_id"];
+            foreignKeyName: 'fk_reminders_appointment';
+            columns: ['appointment_id'];
             isOneToOne: false;
-            referencedRelation: "analytics_appointments";
-            referencedColumns: ["id"];
+            referencedRelation: 'analytics_appointments';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "fk_reminders_appointment";
-            columns: ["appointment_id"];
+            foreignKeyName: 'fk_reminders_appointment';
+            columns: ['appointment_id'];
             isOneToOne: false;
-            referencedRelation: "appointments";
-            referencedColumns: ["id"];
+            referencedRelation: 'appointments';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -1871,32 +1871,32 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "fk_appointments_patient";
-            columns: ["patient_id"];
+            foreignKeyName: 'fk_appointments_patient';
+            columns: ['patient_id'];
             isOneToOne: false;
-            referencedRelation: "analytics_patients";
-            referencedColumns: ["id"];
+            referencedRelation: 'analytics_patients';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "fk_appointments_patient";
-            columns: ["patient_id"];
+            foreignKeyName: 'fk_appointments_patient';
+            columns: ['patient_id'];
             isOneToOne: false;
-            referencedRelation: "patients";
-            referencedColumns: ["id"];
+            referencedRelation: 'patients';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "fk_appointments_professional";
-            columns: ["professional_id"];
+            foreignKeyName: 'fk_appointments_professional';
+            columns: ['professional_id'];
             isOneToOne: false;
-            referencedRelation: "professionals";
-            referencedColumns: ["id"];
+            referencedRelation: 'professionals';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "fk_appointments_service_type";
-            columns: ["service_type_id"];
+            foreignKeyName: 'fk_appointments_service_type';
+            columns: ['service_type_id'];
             isOneToOne: false;
-            referencedRelation: "service_types";
-            referencedColumns: ["id"];
+            referencedRelation: 'service_types';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -1951,46 +1951,46 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "ar_simulations_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'ar_simulations_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "ar_simulations_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'ar_simulations_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "ar_simulations_patient_id_fkey";
-            columns: ["patient_id"];
+            foreignKeyName: 'ar_simulations_patient_id_fkey';
+            columns: ['patient_id'];
             isOneToOne: false;
-            referencedRelation: "analytics_patients";
-            referencedColumns: ["id"];
+            referencedRelation: 'analytics_patients';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "ar_simulations_patient_id_fkey";
-            columns: ["patient_id"];
+            foreignKeyName: 'ar_simulations_patient_id_fkey';
+            columns: ['patient_id'];
             isOneToOne: false;
-            referencedRelation: "patients";
-            referencedColumns: ["id"];
+            referencedRelation: 'patients';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "ar_simulations_procedure_id_fkey";
-            columns: ["procedure_id"];
+            foreignKeyName: 'ar_simulations_procedure_id_fkey';
+            columns: ['procedure_id'];
             isOneToOne: false;
-            referencedRelation: "analytics_procedures";
-            referencedColumns: ["id"];
+            referencedRelation: 'analytics_procedures';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "ar_simulations_procedure_id_fkey";
-            columns: ["procedure_id"];
+            foreignKeyName: 'ar_simulations_procedure_id_fkey';
+            columns: ['procedure_id'];
             isOneToOne: false;
-            referencedRelation: "procedures";
-            referencedColumns: ["id"];
+            referencedRelation: 'procedures';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -2072,11 +2072,11 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "assistant_logs_conversation_id_fkey";
-            columns: ["conversation_id"];
+            foreignKeyName: 'assistant_logs_conversation_id_fkey';
+            columns: ['conversation_id'];
             isOneToOne: false;
-            referencedRelation: "assistant_conversations";
-            referencedColumns: ["id"];
+            referencedRelation: 'assistant_conversations';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -2116,11 +2116,11 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "assistant_messages_conversation_id_fkey";
-            columns: ["conversation_id"];
+            foreignKeyName: 'assistant_messages_conversation_id_fkey';
+            columns: ['conversation_id'];
             isOneToOne: false;
-            referencedRelation: "assistant_conversations";
-            referencedColumns: ["id"];
+            referencedRelation: 'assistant_conversations';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -2298,67 +2298,67 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "audit_events_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'audit_events_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "audit_events_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'audit_events_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "audit_events_parent_event_id_fkey";
-            columns: ["parent_event_id"];
+            foreignKeyName: 'audit_events_parent_event_id_fkey';
+            columns: ['parent_event_id'];
             isOneToOne: false;
-            referencedRelation: "audit_events";
-            referencedColumns: ["id"];
+            referencedRelation: 'audit_events';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "audit_events_reviewed_by_fkey";
-            columns: ["reviewed_by"];
+            foreignKeyName: 'audit_events_reviewed_by_fkey';
+            columns: ['reviewed_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "audit_events_reviewed_by_fkey";
-            columns: ["reviewed_by"];
+            foreignKeyName: 'audit_events_reviewed_by_fkey';
+            columns: ['reviewed_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "audit_events_reviewed_by_fkey";
-            columns: ["reviewed_by"];
+            foreignKeyName: 'audit_events_reviewed_by_fkey';
+            columns: ['reviewed_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "audit_events_user_id_fkey";
-            columns: ["user_id"];
+            foreignKeyName: 'audit_events_user_id_fkey';
+            columns: ['user_id'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "audit_events_user_id_fkey";
-            columns: ["user_id"];
+            foreignKeyName: 'audit_events_user_id_fkey';
+            columns: ['user_id'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "audit_events_user_id_fkey";
-            columns: ["user_id"];
+            foreignKeyName: 'audit_events_user_id_fkey';
+            columns: ['user_id'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -2407,18 +2407,18 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "fk_audit_logs_clinic_id";
-            columns: ["clinic_id"];
+            foreignKeyName: 'fk_audit_logs_clinic_id';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "fk_audit_logs_clinic_id";
-            columns: ["clinic_id"];
+            foreignKeyName: 'fk_audit_logs_clinic_id';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
         ];
       };
@@ -2497,39 +2497,39 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "audit_trail_snapshots_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'audit_trail_snapshots_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "audit_trail_snapshots_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'audit_trail_snapshots_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "audit_trail_snapshots_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'audit_trail_snapshots_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "audit_trail_snapshots_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'audit_trail_snapshots_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "audit_trail_snapshots_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'audit_trail_snapshots_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -2593,32 +2593,32 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "automation_executions_rule_id_fkey";
-            columns: ["rule_id"];
+            foreignKeyName: 'automation_executions_rule_id_fkey';
+            columns: ['rule_id'];
             isOneToOne: false;
-            referencedRelation: "automation_rules";
-            referencedColumns: ["id"];
+            referencedRelation: 'automation_rules';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "automation_executions_triggered_by_fkey";
-            columns: ["triggered_by"];
+            foreignKeyName: 'automation_executions_triggered_by_fkey';
+            columns: ['triggered_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "automation_executions_triggered_by_fkey";
-            columns: ["triggered_by"];
+            foreignKeyName: 'automation_executions_triggered_by_fkey';
+            columns: ['triggered_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "automation_executions_triggered_by_fkey";
-            columns: ["triggered_by"];
+            foreignKeyName: 'automation_executions_triggered_by_fkey';
+            columns: ['triggered_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -2640,10 +2640,10 @@ export type GeneratedDatabase = {
           priority: number | null;
           retry_delay_minutes: number | null;
           rule_name: string;
-          rule_type: GeneratedDatabase["public"]["Enums"]["automation_trigger_type"];
+          rule_type: GeneratedDatabase['public']['Enums']['automation_trigger_type'];
           schedule_expression: string | null;
           status:
-            | GeneratedDatabase["public"]["Enums"]["automation_status"]
+            | GeneratedDatabase['public']['Enums']['automation_status']
             | null;
           success_executions: number | null;
           target_departments: string[] | null;
@@ -2671,10 +2671,10 @@ export type GeneratedDatabase = {
           priority?: number | null;
           retry_delay_minutes?: number | null;
           rule_name: string;
-          rule_type: GeneratedDatabase["public"]["Enums"]["automation_trigger_type"];
+          rule_type: GeneratedDatabase['public']['Enums']['automation_trigger_type'];
           schedule_expression?: string | null;
           status?:
-            | GeneratedDatabase["public"]["Enums"]["automation_status"]
+            | GeneratedDatabase['public']['Enums']['automation_status']
             | null;
           success_executions?: number | null;
           target_departments?: string[] | null;
@@ -2702,10 +2702,10 @@ export type GeneratedDatabase = {
           priority?: number | null;
           retry_delay_minutes?: number | null;
           rule_name?: string;
-          rule_type?: GeneratedDatabase["public"]["Enums"]["automation_trigger_type"];
+          rule_type?: GeneratedDatabase['public']['Enums']['automation_trigger_type'];
           schedule_expression?: string | null;
           status?:
-            | GeneratedDatabase["public"]["Enums"]["automation_status"]
+            | GeneratedDatabase['public']['Enums']['automation_status']
             | null;
           success_executions?: number | null;
           target_departments?: string[] | null;
@@ -2718,46 +2718,46 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "automation_rules_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'automation_rules_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "automation_rules_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'automation_rules_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "automation_rules_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'automation_rules_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "automation_rules_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'automation_rules_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "automation_rules_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'automation_rules_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "automation_rules_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'automation_rules_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -2821,25 +2821,25 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "booking_waitlist_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'booking_waitlist_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "booking_waitlist_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'booking_waitlist_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "booking_waitlist_professional_id_fkey";
-            columns: ["professional_id"];
+            foreignKeyName: 'booking_waitlist_professional_id_fkey';
+            columns: ['professional_id'];
             isOneToOne: false;
-            referencedRelation: "professionals";
-            referencedColumns: ["id"];
+            referencedRelation: 'professionals';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -2915,25 +2915,25 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "calendar_connections_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'calendar_connections_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "calendar_connections_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'calendar_connections_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "calendar_connections_provider_id_fkey";
-            columns: ["provider_id"];
+            foreignKeyName: 'calendar_connections_provider_id_fkey';
+            columns: ['provider_id'];
             isOneToOne: false;
-            referencedRelation: "calendar_providers";
-            referencedColumns: ["id"];
+            referencedRelation: 'calendar_providers';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -3018,11 +3018,11 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "calendar_sync_configs_connection_id_fkey";
-            columns: ["connection_id"];
+            foreignKeyName: 'calendar_sync_configs_connection_id_fkey';
+            columns: ['connection_id'];
             isOneToOne: false;
-            referencedRelation: "calendar_connections";
-            referencedColumns: ["id"];
+            referencedRelation: 'calendar_connections';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -3146,11 +3146,11 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "campaign_executions_campaign_id_fkey";
-            columns: ["campaign_id"];
+            foreignKeyName: 'campaign_executions_campaign_id_fkey';
+            columns: ['campaign_id'];
             isOneToOne: false;
-            referencedRelation: "marketing_campaigns";
-            referencedColumns: ["id"];
+            referencedRelation: 'marketing_campaigns';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -3247,11 +3247,11 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "campaign_metrics_campaign_id_fkey";
-            columns: ["campaign_id"];
+            foreignKeyName: 'campaign_metrics_campaign_id_fkey';
+            columns: ['campaign_id'];
             isOneToOne: true;
-            referencedRelation: "marketing_campaigns";
-            referencedColumns: ["id"];
+            referencedRelation: 'marketing_campaigns';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -3336,11 +3336,11 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "campaign_recipients_execution_id_fkey";
-            columns: ["execution_id"];
+            foreignKeyName: 'campaign_recipients_execution_id_fkey';
+            columns: ['execution_id'];
             isOneToOne: false;
-            referencedRelation: "campaign_executions";
-            referencedColumns: ["id"];
+            referencedRelation: 'campaign_executions';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -3455,11 +3455,11 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "campaign_triggers_campaign_id_fkey";
-            columns: ["campaign_id"];
+            foreignKeyName: 'campaign_triggers_campaign_id_fkey';
+            columns: ['campaign_id'];
             isOneToOne: false;
-            referencedRelation: "marketing_campaigns";
-            referencedColumns: ["id"];
+            referencedRelation: 'marketing_campaigns';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -3520,46 +3520,46 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "cash_reconciliations_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'cash_reconciliations_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "cash_reconciliations_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'cash_reconciliations_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "cash_reconciliations_reconciled_by_fkey";
-            columns: ["reconciled_by"];
+            foreignKeyName: 'cash_reconciliations_reconciled_by_fkey';
+            columns: ['reconciled_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "cash_reconciliations_reconciled_by_fkey";
-            columns: ["reconciled_by"];
+            foreignKeyName: 'cash_reconciliations_reconciled_by_fkey';
+            columns: ['reconciled_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "cash_reconciliations_reconciled_by_fkey";
-            columns: ["reconciled_by"];
+            foreignKeyName: 'cash_reconciliations_reconciled_by_fkey';
+            columns: ['reconciled_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "cash_reconciliations_register_id_fkey";
-            columns: ["register_id"];
+            foreignKeyName: 'cash_reconciliations_register_id_fkey';
+            columns: ['register_id'];
             isOneToOne: false;
-            referencedRelation: "cash_registers";
-            referencedColumns: ["id"];
+            referencedRelation: 'cash_registers';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -3614,39 +3614,39 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "cash_registers_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'cash_registers_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "cash_registers_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'cash_registers_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "cash_registers_operator_id_fkey";
-            columns: ["operator_id"];
+            foreignKeyName: 'cash_registers_operator_id_fkey';
+            columns: ['operator_id'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "cash_registers_operator_id_fkey";
-            columns: ["operator_id"];
+            foreignKeyName: 'cash_registers_operator_id_fkey';
+            columns: ['operator_id'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "cash_registers_operator_id_fkey";
-            columns: ["operator_id"];
+            foreignKeyName: 'cash_registers_operator_id_fkey';
+            columns: ['operator_id'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -3680,18 +3680,18 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "cash_transaction_categories_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'cash_transaction_categories_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "cash_transaction_categories_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'cash_transaction_categories_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
         ];
       };
@@ -3743,46 +3743,46 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "cash_transactions_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'cash_transactions_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "cash_transactions_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'cash_transactions_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "cash_transactions_register_id_fkey";
-            columns: ["register_id"];
+            foreignKeyName: 'cash_transactions_register_id_fkey';
+            columns: ['register_id'];
             isOneToOne: false;
-            referencedRelation: "cash_registers";
-            referencedColumns: ["id"];
+            referencedRelation: 'cash_registers';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "cash_transactions_user_id_fkey";
-            columns: ["user_id"];
+            foreignKeyName: 'cash_transactions_user_id_fkey';
+            columns: ['user_id'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "cash_transactions_user_id_fkey";
-            columns: ["user_id"];
+            foreignKeyName: 'cash_transactions_user_id_fkey';
+            columns: ['user_id'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "cash_transactions_user_id_fkey";
-            columns: ["user_id"];
+            foreignKeyName: 'cash_transactions_user_id_fkey';
+            columns: ['user_id'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -3801,7 +3801,7 @@ export type GeneratedDatabase = {
           priority_score: number;
           recommended_actions: GeneratedJson;
           risk_factors: GeneratedJson;
-          risk_level: GeneratedDatabase["public"]["Enums"]["churn_risk_level"];
+          risk_level: GeneratedDatabase['public']['Enums']['churn_risk_level'];
           updated_at: string;
         };
         Insert: {
@@ -3818,7 +3818,7 @@ export type GeneratedDatabase = {
           priority_score?: number;
           recommended_actions?: GeneratedJson;
           risk_factors?: GeneratedJson;
-          risk_level: GeneratedDatabase["public"]["Enums"]["churn_risk_level"];
+          risk_level: GeneratedDatabase['public']['Enums']['churn_risk_level'];
           updated_at?: string;
         };
         Update: {
@@ -3835,37 +3835,37 @@ export type GeneratedDatabase = {
           priority_score?: number;
           recommended_actions?: GeneratedJson;
           risk_factors?: GeneratedJson;
-          risk_level?: GeneratedDatabase["public"]["Enums"]["churn_risk_level"];
+          risk_level?: GeneratedDatabase['public']['Enums']['churn_risk_level'];
           updated_at?: string;
         };
         Relationships: [
           {
-            foreignKeyName: "churn_predictions_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'churn_predictions_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "churn_predictions_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'churn_predictions_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "churn_predictions_patient_id_fkey";
-            columns: ["patient_id"];
+            foreignKeyName: 'churn_predictions_patient_id_fkey';
+            columns: ['patient_id'];
             isOneToOne: false;
-            referencedRelation: "analytics_patients";
-            referencedColumns: ["id"];
+            referencedRelation: 'analytics_patients';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "churn_predictions_patient_id_fkey";
-            columns: ["patient_id"];
+            foreignKeyName: 'churn_predictions_patient_id_fkey';
+            columns: ['patient_id'];
             isOneToOne: false;
-            referencedRelation: "patients";
-            referencedColumns: ["id"];
+            referencedRelation: 'patients';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -3974,116 +3974,116 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "clinical_notes_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'clinical_notes_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "clinical_notes_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'clinical_notes_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "clinical_notes_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'clinical_notes_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "clinical_notes_patient_id_fkey";
-            columns: ["patient_id"];
+            foreignKeyName: 'clinical_notes_patient_id_fkey';
+            columns: ['patient_id'];
             isOneToOne: false;
-            referencedRelation: "analytics_patients";
-            referencedColumns: ["id"];
+            referencedRelation: 'analytics_patients';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "clinical_notes_patient_id_fkey";
-            columns: ["patient_id"];
+            foreignKeyName: 'clinical_notes_patient_id_fkey';
+            columns: ['patient_id'];
             isOneToOne: false;
-            referencedRelation: "patients";
-            referencedColumns: ["id"];
+            referencedRelation: 'patients';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "clinical_notes_procedure_id_fkey";
-            columns: ["procedure_id"];
+            foreignKeyName: 'clinical_notes_procedure_id_fkey';
+            columns: ['procedure_id'];
             isOneToOne: false;
-            referencedRelation: "analytics_procedures";
-            referencedColumns: ["id"];
+            referencedRelation: 'analytics_procedures';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "clinical_notes_procedure_id_fkey";
-            columns: ["procedure_id"];
+            foreignKeyName: 'clinical_notes_procedure_id_fkey';
+            columns: ['procedure_id'];
             isOneToOne: false;
-            referencedRelation: "procedures";
-            referencedColumns: ["id"];
+            referencedRelation: 'procedures';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "clinical_notes_provider_id_fkey";
-            columns: ["provider_id"];
+            foreignKeyName: 'clinical_notes_provider_id_fkey';
+            columns: ['provider_id'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "clinical_notes_provider_id_fkey";
-            columns: ["provider_id"];
+            foreignKeyName: 'clinical_notes_provider_id_fkey';
+            columns: ['provider_id'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "clinical_notes_provider_id_fkey";
-            columns: ["provider_id"];
+            foreignKeyName: 'clinical_notes_provider_id_fkey';
+            columns: ['provider_id'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "clinical_notes_replaces_fkey";
-            columns: ["replaces"];
+            foreignKeyName: 'clinical_notes_replaces_fkey';
+            columns: ['replaces'];
             isOneToOne: false;
-            referencedRelation: "clinical_notes";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinical_notes';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "clinical_notes_treatment_plan_id_fkey";
-            columns: ["treatment_plan_id"];
+            foreignKeyName: 'clinical_notes_treatment_plan_id_fkey';
+            columns: ['treatment_plan_id'];
             isOneToOne: false;
-            referencedRelation: "analytics_treatment_plans";
-            referencedColumns: ["id"];
+            referencedRelation: 'analytics_treatment_plans';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "clinical_notes_treatment_plan_id_fkey";
-            columns: ["treatment_plan_id"];
+            foreignKeyName: 'clinical_notes_treatment_plan_id_fkey';
+            columns: ['treatment_plan_id'];
             isOneToOne: false;
-            referencedRelation: "treatment_plans";
-            referencedColumns: ["id"];
+            referencedRelation: 'treatment_plans';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "clinical_notes_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'clinical_notes_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "clinical_notes_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'clinical_notes_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "clinical_notes_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'clinical_notes_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -4246,46 +4246,46 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "clinics_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'clinics_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "clinics_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'clinics_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "clinics_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'clinics_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "clinics_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'clinics_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "clinics_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'clinics_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "clinics_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'clinics_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -4331,32 +4331,32 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "communication_audit_log_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'communication_audit_log_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "communication_audit_log_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'communication_audit_log_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "communication_audit_log_patient_id_fkey";
-            columns: ["patient_id"];
+            foreignKeyName: 'communication_audit_log_patient_id_fkey';
+            columns: ['patient_id'];
             isOneToOne: false;
-            referencedRelation: "analytics_patients";
-            referencedColumns: ["id"];
+            referencedRelation: 'analytics_patients';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "communication_audit_log_patient_id_fkey";
-            columns: ["patient_id"];
+            foreignKeyName: 'communication_audit_log_patient_id_fkey';
+            columns: ['patient_id'];
             isOneToOne: false;
-            referencedRelation: "patients";
-            referencedColumns: ["id"];
+            referencedRelation: 'patients';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -4408,32 +4408,32 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "communication_consents_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'communication_consents_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "communication_consents_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'communication_consents_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "communication_consents_patient_id_fkey";
-            columns: ["patient_id"];
+            foreignKeyName: 'communication_consents_patient_id_fkey';
+            columns: ['patient_id'];
             isOneToOne: false;
-            referencedRelation: "analytics_patients";
-            referencedColumns: ["id"];
+            referencedRelation: 'analytics_patients';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "communication_consents_patient_id_fkey";
-            columns: ["patient_id"];
+            foreignKeyName: 'communication_consents_patient_id_fkey';
+            columns: ['patient_id'];
             isOneToOne: false;
-            referencedRelation: "patients";
-            referencedColumns: ["id"];
+            referencedRelation: 'patients';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -4479,32 +4479,32 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "communication_conversations_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'communication_conversations_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "communication_conversations_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'communication_conversations_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "communication_conversations_patient_id_fkey";
-            columns: ["patient_id"];
+            foreignKeyName: 'communication_conversations_patient_id_fkey';
+            columns: ['patient_id'];
             isOneToOne: false;
-            referencedRelation: "analytics_patients";
-            referencedColumns: ["id"];
+            referencedRelation: 'analytics_patients';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "communication_conversations_patient_id_fkey";
-            columns: ["patient_id"];
+            foreignKeyName: 'communication_conversations_patient_id_fkey';
+            columns: ['patient_id'];
             isOneToOne: false;
-            referencedRelation: "patients";
-            referencedColumns: ["id"];
+            referencedRelation: 'patients';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -4568,11 +4568,11 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "communication_messages_conversation_id_fkey";
-            columns: ["conversation_id"];
+            foreignKeyName: 'communication_messages_conversation_id_fkey';
+            columns: ['conversation_id'];
             isOneToOne: false;
-            referencedRelation: "communication_conversations";
-            referencedColumns: ["id"];
+            referencedRelation: 'communication_conversations';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -4651,39 +4651,39 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "communication_notifications_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'communication_notifications_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "communication_notifications_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'communication_notifications_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "communication_notifications_patient_id_fkey";
-            columns: ["patient_id"];
+            foreignKeyName: 'communication_notifications_patient_id_fkey';
+            columns: ['patient_id'];
             isOneToOne: false;
-            referencedRelation: "analytics_patients";
-            referencedColumns: ["id"];
+            referencedRelation: 'analytics_patients';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "communication_notifications_patient_id_fkey";
-            columns: ["patient_id"];
+            foreignKeyName: 'communication_notifications_patient_id_fkey';
+            columns: ['patient_id'];
             isOneToOne: false;
-            referencedRelation: "patients";
-            referencedColumns: ["id"];
+            referencedRelation: 'patients';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "communication_notifications_template_id_fkey";
-            columns: ["template_id"];
+            foreignKeyName: 'communication_notifications_template_id_fkey';
+            columns: ['template_id'];
             isOneToOne: false;
-            referencedRelation: "communication_templates";
-            referencedColumns: ["id"];
+            referencedRelation: 'communication_templates';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -4741,18 +4741,18 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "communication_templates_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'communication_templates_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "communication_templates_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'communication_templates_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
         ];
       };
@@ -4807,18 +4807,18 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "competitive_analysis_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'competitive_analysis_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "competitive_analysis_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'competitive_analysis_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
         ];
       };
@@ -4945,46 +4945,46 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "compliance_alert_rules_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'compliance_alert_rules_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_alert_rules_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'compliance_alert_rules_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_alert_rules_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'compliance_alert_rules_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "compliance_alert_rules_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'compliance_alert_rules_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_alert_rules_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'compliance_alert_rules_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_alert_rules_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'compliance_alert_rules_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -5072,18 +5072,18 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "compliance_alerts_category_id_fkey";
-            columns: ["category_id"];
+            foreignKeyName: 'compliance_alerts_category_id_fkey';
+            columns: ['category_id'];
             isOneToOne: false;
-            referencedRelation: "regulation_categories";
-            referencedColumns: ["id"];
+            referencedRelation: 'regulation_categories';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_alerts_document_id_fkey";
-            columns: ["document_id"];
+            foreignKeyName: 'compliance_alerts_document_id_fkey';
+            columns: ['document_id'];
             isOneToOne: false;
-            referencedRelation: "regulatory_documents";
-            referencedColumns: ["id"];
+            referencedRelation: 'regulatory_documents';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -5201,151 +5201,151 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "compliance_alerts_v2_acknowledged_by_fkey";
-            columns: ["acknowledged_by"];
+            foreignKeyName: 'compliance_alerts_v2_acknowledged_by_fkey';
+            columns: ['acknowledged_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_alerts_v2_acknowledged_by_fkey";
-            columns: ["acknowledged_by"];
+            foreignKeyName: 'compliance_alerts_v2_acknowledged_by_fkey';
+            columns: ['acknowledged_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_alerts_v2_acknowledged_by_fkey";
-            columns: ["acknowledged_by"];
+            foreignKeyName: 'compliance_alerts_v2_acknowledged_by_fkey';
+            columns: ['acknowledged_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "compliance_alerts_v2_alert_rule_id_fkey";
-            columns: ["alert_rule_id"];
+            foreignKeyName: 'compliance_alerts_v2_alert_rule_id_fkey';
+            columns: ['alert_rule_id'];
             isOneToOne: false;
-            referencedRelation: "compliance_alert_rules";
-            referencedColumns: ["id"];
+            referencedRelation: 'compliance_alert_rules';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_alerts_v2_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'compliance_alerts_v2_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_alerts_v2_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'compliance_alerts_v2_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "compliance_alerts_v2_dismissed_by_fkey";
-            columns: ["dismissed_by"];
+            foreignKeyName: 'compliance_alerts_v2_dismissed_by_fkey';
+            columns: ['dismissed_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_alerts_v2_dismissed_by_fkey";
-            columns: ["dismissed_by"];
+            foreignKeyName: 'compliance_alerts_v2_dismissed_by_fkey';
+            columns: ['dismissed_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_alerts_v2_dismissed_by_fkey";
-            columns: ["dismissed_by"];
+            foreignKeyName: 'compliance_alerts_v2_dismissed_by_fkey';
+            columns: ['dismissed_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "compliance_alerts_v2_escalated_to_fkey";
-            columns: ["escalated_to"];
+            foreignKeyName: 'compliance_alerts_v2_escalated_to_fkey';
+            columns: ['escalated_to'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_alerts_v2_escalated_to_fkey";
-            columns: ["escalated_to"];
+            foreignKeyName: 'compliance_alerts_v2_escalated_to_fkey';
+            columns: ['escalated_to'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_alerts_v2_escalated_to_fkey";
-            columns: ["escalated_to"];
+            foreignKeyName: 'compliance_alerts_v2_escalated_to_fkey';
+            columns: ['escalated_to'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "compliance_alerts_v2_related_requirement_id_fkey";
-            columns: ["related_requirement_id"];
+            foreignKeyName: 'compliance_alerts_v2_related_requirement_id_fkey';
+            columns: ['related_requirement_id'];
             isOneToOne: false;
-            referencedRelation: "regulatory_requirements";
-            referencedColumns: ["id"];
+            referencedRelation: 'regulatory_requirements';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_alerts_v2_related_tracking_id_fkey";
-            columns: ["related_tracking_id"];
+            foreignKeyName: 'compliance_alerts_v2_related_tracking_id_fkey';
+            columns: ['related_tracking_id'];
             isOneToOne: false;
-            referencedRelation: "compliance_tracking";
-            referencedColumns: ["id"];
+            referencedRelation: 'compliance_tracking';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_alerts_v2_related_violation_id_fkey";
-            columns: ["related_violation_id"];
+            foreignKeyName: 'compliance_alerts_v2_related_violation_id_fkey';
+            columns: ['related_violation_id'];
             isOneToOne: false;
-            referencedRelation: "compliance_violations";
-            referencedColumns: ["id"];
+            referencedRelation: 'compliance_violations';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_alerts_v2_resolved_by_fkey";
-            columns: ["resolved_by"];
+            foreignKeyName: 'compliance_alerts_v2_resolved_by_fkey';
+            columns: ['resolved_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_alerts_v2_resolved_by_fkey";
-            columns: ["resolved_by"];
+            foreignKeyName: 'compliance_alerts_v2_resolved_by_fkey';
+            columns: ['resolved_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_alerts_v2_resolved_by_fkey";
-            columns: ["resolved_by"];
+            foreignKeyName: 'compliance_alerts_v2_resolved_by_fkey';
+            columns: ['resolved_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "compliance_alerts_v2_triggered_by_user_id_fkey";
-            columns: ["triggered_by_user_id"];
+            foreignKeyName: 'compliance_alerts_v2_triggered_by_user_id_fkey';
+            columns: ['triggered_by_user_id'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_alerts_v2_triggered_by_user_id_fkey";
-            columns: ["triggered_by_user_id"];
+            foreignKeyName: 'compliance_alerts_v2_triggered_by_user_id_fkey';
+            columns: ['triggered_by_user_id'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_alerts_v2_triggered_by_user_id_fkey";
-            columns: ["triggered_by_user_id"];
+            foreignKeyName: 'compliance_alerts_v2_triggered_by_user_id_fkey';
+            columns: ['triggered_by_user_id'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -5421,18 +5421,18 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "compliance_checks_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'compliance_checks_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_checks_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'compliance_checks_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
         ];
       };
@@ -5523,46 +5523,46 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "compliance_dashboard_configs_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'compliance_dashboard_configs_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_dashboard_configs_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'compliance_dashboard_configs_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_dashboard_configs_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'compliance_dashboard_configs_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "compliance_dashboard_configs_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'compliance_dashboard_configs_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_dashboard_configs_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'compliance_dashboard_configs_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_dashboard_configs_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'compliance_dashboard_configs_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -5641,18 +5641,18 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "compliance_dashboard_snapshots_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'compliance_dashboard_snapshots_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_dashboard_snapshots_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'compliance_dashboard_snapshots_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
         ];
       };
@@ -5764,46 +5764,46 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "compliance_dashboard_widgets_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'compliance_dashboard_widgets_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_dashboard_widgets_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'compliance_dashboard_widgets_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_dashboard_widgets_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'compliance_dashboard_widgets_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "compliance_dashboard_widgets_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'compliance_dashboard_widgets_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_dashboard_widgets_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'compliance_dashboard_widgets_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_dashboard_widgets_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'compliance_dashboard_widgets_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -5867,39 +5867,39 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "compliance_export_access_log_export_job_id_fkey";
-            columns: ["export_job_id"];
+            foreignKeyName: 'compliance_export_access_log_export_job_id_fkey';
+            columns: ['export_job_id'];
             isOneToOne: false;
-            referencedRelation: "compliance_export_jobs";
-            referencedColumns: ["id"];
+            referencedRelation: 'compliance_export_jobs';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_export_access_log_shared_report_id_fkey";
-            columns: ["shared_report_id"];
+            foreignKeyName: 'compliance_export_access_log_shared_report_id_fkey';
+            columns: ['shared_report_id'];
             isOneToOne: false;
-            referencedRelation: "compliance_shared_reports";
-            referencedColumns: ["id"];
+            referencedRelation: 'compliance_shared_reports';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_export_access_log_user_id_fkey";
-            columns: ["user_id"];
+            foreignKeyName: 'compliance_export_access_log_user_id_fkey';
+            columns: ['user_id'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_export_access_log_user_id_fkey";
-            columns: ["user_id"];
+            foreignKeyName: 'compliance_export_access_log_user_id_fkey';
+            columns: ['user_id'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_export_access_log_user_id_fkey";
-            columns: ["user_id"];
+            foreignKeyName: 'compliance_export_access_log_user_id_fkey';
+            columns: ['user_id'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -6026,67 +6026,67 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "compliance_export_jobs_approved_by_fkey";
-            columns: ["approved_by"];
+            foreignKeyName: 'compliance_export_jobs_approved_by_fkey';
+            columns: ['approved_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_export_jobs_approved_by_fkey";
-            columns: ["approved_by"];
+            foreignKeyName: 'compliance_export_jobs_approved_by_fkey';
+            columns: ['approved_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_export_jobs_approved_by_fkey";
-            columns: ["approved_by"];
+            foreignKeyName: 'compliance_export_jobs_approved_by_fkey';
+            columns: ['approved_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "compliance_export_jobs_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'compliance_export_jobs_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_export_jobs_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'compliance_export_jobs_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "compliance_export_jobs_requested_by_fkey";
-            columns: ["requested_by"];
+            foreignKeyName: 'compliance_export_jobs_requested_by_fkey';
+            columns: ['requested_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_export_jobs_requested_by_fkey";
-            columns: ["requested_by"];
+            foreignKeyName: 'compliance_export_jobs_requested_by_fkey';
+            columns: ['requested_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_export_jobs_requested_by_fkey";
-            columns: ["requested_by"];
+            foreignKeyName: 'compliance_export_jobs_requested_by_fkey';
+            columns: ['requested_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "compliance_export_jobs_template_id_fkey";
-            columns: ["template_id"];
+            foreignKeyName: 'compliance_export_jobs_template_id_fkey';
+            columns: ['template_id'];
             isOneToOne: false;
-            referencedRelation: "compliance_export_templates";
-            referencedColumns: ["id"];
+            referencedRelation: 'compliance_export_templates';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -6204,46 +6204,46 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "compliance_export_templates_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'compliance_export_templates_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_export_templates_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'compliance_export_templates_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_export_templates_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'compliance_export_templates_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "compliance_export_templates_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'compliance_export_templates_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_export_templates_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'compliance_export_templates_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_export_templates_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'compliance_export_templates_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -6313,39 +6313,39 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "compliance_metrics_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'compliance_metrics_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_metrics_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'compliance_metrics_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "compliance_metrics_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'compliance_metrics_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_metrics_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'compliance_metrics_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_metrics_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'compliance_metrics_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -6436,46 +6436,46 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "compliance_report_templates_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'compliance_report_templates_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_report_templates_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'compliance_report_templates_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_report_templates_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'compliance_report_templates_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "compliance_report_templates_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'compliance_report_templates_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_report_templates_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'compliance_report_templates_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_report_templates_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'compliance_report_templates_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -6593,109 +6593,109 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "compliance_reports_approved_by_fkey";
-            columns: ["approved_by"];
+            foreignKeyName: 'compliance_reports_approved_by_fkey';
+            columns: ['approved_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_reports_approved_by_fkey";
-            columns: ["approved_by"];
+            foreignKeyName: 'compliance_reports_approved_by_fkey';
+            columns: ['approved_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_reports_approved_by_fkey";
-            columns: ["approved_by"];
+            foreignKeyName: 'compliance_reports_approved_by_fkey';
+            columns: ['approved_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "compliance_reports_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'compliance_reports_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_reports_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'compliance_reports_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "compliance_reports_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'compliance_reports_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_reports_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'compliance_reports_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_reports_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'compliance_reports_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "compliance_reports_reviewed_by_fkey";
-            columns: ["reviewed_by"];
+            foreignKeyName: 'compliance_reports_reviewed_by_fkey';
+            columns: ['reviewed_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_reports_reviewed_by_fkey";
-            columns: ["reviewed_by"];
+            foreignKeyName: 'compliance_reports_reviewed_by_fkey';
+            columns: ['reviewed_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_reports_reviewed_by_fkey";
-            columns: ["reviewed_by"];
+            foreignKeyName: 'compliance_reports_reviewed_by_fkey';
+            columns: ['reviewed_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "compliance_reports_template_id_fkey";
-            columns: ["template_id"];
+            foreignKeyName: 'compliance_reports_template_id_fkey';
+            columns: ['template_id'];
             isOneToOne: false;
-            referencedRelation: "compliance_report_templates";
-            referencedColumns: ["id"];
+            referencedRelation: 'compliance_report_templates';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_reports_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'compliance_reports_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_reports_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'compliance_reports_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_reports_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'compliance_reports_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -6747,18 +6747,18 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "compliance_score_history_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'compliance_score_history_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_score_history_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'compliance_score_history_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
         ];
       };
@@ -6906,81 +6906,81 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "compliance_scores_approved_by_fkey";
-            columns: ["approved_by"];
+            foreignKeyName: 'compliance_scores_approved_by_fkey';
+            columns: ['approved_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_scores_approved_by_fkey";
-            columns: ["approved_by"];
+            foreignKeyName: 'compliance_scores_approved_by_fkey';
+            columns: ['approved_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_scores_approved_by_fkey";
-            columns: ["approved_by"];
+            foreignKeyName: 'compliance_scores_approved_by_fkey';
+            columns: ['approved_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "compliance_scores_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'compliance_scores_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_scores_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'compliance_scores_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "compliance_scores_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'compliance_scores_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_scores_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'compliance_scores_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_scores_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'compliance_scores_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "compliance_scores_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'compliance_scores_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_scores_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'compliance_scores_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_scores_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'compliance_scores_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -7086,46 +7086,46 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "compliance_scoring_rules_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'compliance_scoring_rules_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_scoring_rules_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'compliance_scoring_rules_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_scoring_rules_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'compliance_scoring_rules_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "compliance_scoring_rules_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'compliance_scoring_rules_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_scoring_rules_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'compliance_scoring_rules_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_scoring_rules_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'compliance_scoring_rules_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -7207,74 +7207,74 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "compliance_shared_reports_export_job_id_fkey";
-            columns: ["export_job_id"];
+            foreignKeyName: 'compliance_shared_reports_export_job_id_fkey';
+            columns: ['export_job_id'];
             isOneToOne: false;
-            referencedRelation: "compliance_export_jobs";
-            referencedColumns: ["id"];
+            referencedRelation: 'compliance_export_jobs';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_shared_reports_revoked_by_fkey";
-            columns: ["revoked_by"];
+            foreignKeyName: 'compliance_shared_reports_revoked_by_fkey';
+            columns: ['revoked_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_shared_reports_revoked_by_fkey";
-            columns: ["revoked_by"];
+            foreignKeyName: 'compliance_shared_reports_revoked_by_fkey';
+            columns: ['revoked_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_shared_reports_revoked_by_fkey";
-            columns: ["revoked_by"];
+            foreignKeyName: 'compliance_shared_reports_revoked_by_fkey';
+            columns: ['revoked_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "compliance_shared_reports_shared_by_fkey";
-            columns: ["shared_by"];
+            foreignKeyName: 'compliance_shared_reports_shared_by_fkey';
+            columns: ['shared_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_shared_reports_shared_by_fkey";
-            columns: ["shared_by"];
+            foreignKeyName: 'compliance_shared_reports_shared_by_fkey';
+            columns: ['shared_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_shared_reports_shared_by_fkey";
-            columns: ["shared_by"];
+            foreignKeyName: 'compliance_shared_reports_shared_by_fkey';
+            columns: ['shared_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "compliance_shared_reports_shared_with_user_id_fkey";
-            columns: ["shared_with_user_id"];
+            foreignKeyName: 'compliance_shared_reports_shared_with_user_id_fkey';
+            columns: ['shared_with_user_id'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_shared_reports_shared_with_user_id_fkey";
-            columns: ["shared_with_user_id"];
+            foreignKeyName: 'compliance_shared_reports_shared_with_user_id_fkey';
+            columns: ['shared_with_user_id'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_shared_reports_shared_with_user_id_fkey";
-            columns: ["shared_with_user_id"];
+            foreignKeyName: 'compliance_shared_reports_shared_with_user_id_fkey';
+            columns: ['shared_with_user_id'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -7383,109 +7383,109 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "compliance_tracking_assessed_by_fkey";
-            columns: ["assessed_by"];
+            foreignKeyName: 'compliance_tracking_assessed_by_fkey';
+            columns: ['assessed_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_tracking_assessed_by_fkey";
-            columns: ["assessed_by"];
+            foreignKeyName: 'compliance_tracking_assessed_by_fkey';
+            columns: ['assessed_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_tracking_assessed_by_fkey";
-            columns: ["assessed_by"];
+            foreignKeyName: 'compliance_tracking_assessed_by_fkey';
+            columns: ['assessed_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "compliance_tracking_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'compliance_tracking_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_tracking_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'compliance_tracking_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "compliance_tracking_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'compliance_tracking_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_tracking_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'compliance_tracking_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_tracking_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'compliance_tracking_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "compliance_tracking_requirement_id_fkey";
-            columns: ["requirement_id"];
+            foreignKeyName: 'compliance_tracking_requirement_id_fkey';
+            columns: ['requirement_id'];
             isOneToOne: false;
-            referencedRelation: "regulatory_requirements";
-            referencedColumns: ["id"];
+            referencedRelation: 'regulatory_requirements';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_tracking_responsible_person_fkey";
-            columns: ["responsible_person"];
+            foreignKeyName: 'compliance_tracking_responsible_person_fkey';
+            columns: ['responsible_person'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_tracking_responsible_person_fkey";
-            columns: ["responsible_person"];
+            foreignKeyName: 'compliance_tracking_responsible_person_fkey';
+            columns: ['responsible_person'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_tracking_responsible_person_fkey";
-            columns: ["responsible_person"];
+            foreignKeyName: 'compliance_tracking_responsible_person_fkey';
+            columns: ['responsible_person'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "compliance_tracking_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'compliance_tracking_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_tracking_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'compliance_tracking_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_tracking_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'compliance_tracking_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -7573,60 +7573,60 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "compliance_training_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'compliance_training_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_training_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'compliance_training_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "compliance_training_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'compliance_training_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_training_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'compliance_training_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_training_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'compliance_training_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "compliance_training_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'compliance_training_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_training_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'compliance_training_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_training_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'compliance_training_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -7765,137 +7765,137 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "compliance_violations_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'compliance_violations_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_violations_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'compliance_violations_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "compliance_violations_compliance_tracking_id_fkey";
-            columns: ["compliance_tracking_id"];
+            foreignKeyName: 'compliance_violations_compliance_tracking_id_fkey';
+            columns: ['compliance_tracking_id'];
             isOneToOne: false;
-            referencedRelation: "compliance_tracking";
-            referencedColumns: ["id"];
+            referencedRelation: 'compliance_tracking';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_violations_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'compliance_violations_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_violations_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'compliance_violations_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_violations_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'compliance_violations_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "compliance_violations_discovered_by_fkey";
-            columns: ["discovered_by"];
+            foreignKeyName: 'compliance_violations_discovered_by_fkey';
+            columns: ['discovered_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_violations_discovered_by_fkey";
-            columns: ["discovered_by"];
+            foreignKeyName: 'compliance_violations_discovered_by_fkey';
+            columns: ['discovered_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_violations_discovered_by_fkey";
-            columns: ["discovered_by"];
+            foreignKeyName: 'compliance_violations_discovered_by_fkey';
+            columns: ['discovered_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "compliance_violations_requirement_id_fkey";
-            columns: ["requirement_id"];
+            foreignKeyName: 'compliance_violations_requirement_id_fkey';
+            columns: ['requirement_id'];
             isOneToOne: false;
-            referencedRelation: "regulatory_requirements";
-            referencedColumns: ["id"];
+            referencedRelation: 'regulatory_requirements';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_violations_responsible_for_remediation_fkey";
-            columns: ["responsible_for_remediation"];
+            foreignKeyName: 'compliance_violations_responsible_for_remediation_fkey';
+            columns: ['responsible_for_remediation'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_violations_responsible_for_remediation_fkey";
-            columns: ["responsible_for_remediation"];
+            foreignKeyName: 'compliance_violations_responsible_for_remediation_fkey';
+            columns: ['responsible_for_remediation'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_violations_responsible_for_remediation_fkey";
-            columns: ["responsible_for_remediation"];
+            foreignKeyName: 'compliance_violations_responsible_for_remediation_fkey';
+            columns: ['responsible_for_remediation'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "compliance_violations_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'compliance_violations_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_violations_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'compliance_violations_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_violations_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'compliance_violations_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "compliance_violations_verified_by_fkey";
-            columns: ["verified_by"];
+            foreignKeyName: 'compliance_violations_verified_by_fkey';
+            columns: ['verified_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_violations_verified_by_fkey";
-            columns: ["verified_by"];
+            foreignKeyName: 'compliance_violations_verified_by_fkey';
+            columns: ['verified_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "compliance_violations_verified_by_fkey";
-            columns: ["verified_by"];
+            foreignKeyName: 'compliance_violations_verified_by_fkey';
+            columns: ['verified_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -7950,11 +7950,11 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "conflict_ai_analysis_conflict_id_fkey";
-            columns: ["conflict_id"];
+            foreignKeyName: 'conflict_ai_analysis_conflict_id_fkey';
+            columns: ['conflict_id'];
             isOneToOne: false;
-            referencedRelation: "sync_conflicts";
-            referencedColumns: ["id"];
+            referencedRelation: 'sync_conflicts';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -8006,11 +8006,11 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "conflict_resolution_actions_conflict_id_fkey";
-            columns: ["conflict_id"];
+            foreignKeyName: 'conflict_resolution_actions_conflict_id_fkey';
+            columns: ['conflict_id'];
             isOneToOne: false;
-            referencedRelation: "sync_conflicts";
-            referencedColumns: ["id"];
+            referencedRelation: 'sync_conflicts';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -8089,18 +8089,18 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "conflict_resolution_rules_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'conflict_resolution_rules_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "conflict_resolution_rules_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'conflict_resolution_rules_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
         ];
       };
@@ -8167,18 +8167,18 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "conflict_resolution_templates_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'conflict_resolution_templates_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "conflict_resolution_templates_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'conflict_resolution_templates_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
         ];
       };
@@ -8245,60 +8245,60 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "consent_forms_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'consent_forms_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "consent_forms_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'consent_forms_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "consent_forms_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'consent_forms_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "consent_forms_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'consent_forms_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "consent_forms_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'consent_forms_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "consent_forms_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'consent_forms_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "consent_forms_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'consent_forms_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "consent_forms_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'consent_forms_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -8389,74 +8389,74 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "consent_records_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'consent_records_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "consent_records_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'consent_records_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "consent_records_collected_by_fkey";
-            columns: ["collected_by"];
+            foreignKeyName: 'consent_records_collected_by_fkey';
+            columns: ['collected_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "consent_records_collected_by_fkey";
-            columns: ["collected_by"];
+            foreignKeyName: 'consent_records_collected_by_fkey';
+            columns: ['collected_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "consent_records_collected_by_fkey";
-            columns: ["collected_by"];
+            foreignKeyName: 'consent_records_collected_by_fkey';
+            columns: ['collected_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "consent_records_patient_id_fkey";
-            columns: ["patient_id"];
+            foreignKeyName: 'consent_records_patient_id_fkey';
+            columns: ['patient_id'];
             isOneToOne: false;
-            referencedRelation: "analytics_patients";
-            referencedColumns: ["id"];
+            referencedRelation: 'analytics_patients';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "consent_records_patient_id_fkey";
-            columns: ["patient_id"];
+            foreignKeyName: 'consent_records_patient_id_fkey';
+            columns: ['patient_id'];
             isOneToOne: false;
-            referencedRelation: "patients";
-            referencedColumns: ["id"];
+            referencedRelation: 'patients';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "consent_records_witnessed_by_fkey";
-            columns: ["witnessed_by"];
+            foreignKeyName: 'consent_records_witnessed_by_fkey';
+            columns: ['witnessed_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "consent_records_witnessed_by_fkey";
-            columns: ["witnessed_by"];
+            foreignKeyName: 'consent_records_witnessed_by_fkey';
+            columns: ['witnessed_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "consent_records_witnessed_by_fkey";
-            columns: ["witnessed_by"];
+            foreignKeyName: 'consent_records_witnessed_by_fkey';
+            columns: ['witnessed_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -8511,32 +8511,32 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "customer_lifetime_value_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'customer_lifetime_value_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "customer_lifetime_value_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'customer_lifetime_value_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "customer_lifetime_value_patient_id_fkey";
-            columns: ["patient_id"];
+            foreignKeyName: 'customer_lifetime_value_patient_id_fkey';
+            columns: ['patient_id'];
             isOneToOne: false;
-            referencedRelation: "analytics_patients";
-            referencedColumns: ["id"];
+            referencedRelation: 'analytics_patients';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "customer_lifetime_value_patient_id_fkey";
-            columns: ["patient_id"];
+            foreignKeyName: 'customer_lifetime_value_patient_id_fkey';
+            columns: ['patient_id'];
             isOneToOne: false;
-            referencedRelation: "patients";
-            referencedColumns: ["id"];
+            referencedRelation: 'patients';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -8567,18 +8567,18 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "customer_segment_memberships_customer_id_fkey";
-            columns: ["customer_id"];
+            foreignKeyName: 'customer_segment_memberships_customer_id_fkey';
+            columns: ['customer_id'];
             isOneToOne: false;
-            referencedRelation: "customers";
-            referencedColumns: ["id"];
+            referencedRelation: 'customers';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "customer_segment_memberships_segment_id_fkey";
-            columns: ["segment_id"];
+            foreignKeyName: 'customer_segment_memberships_segment_id_fkey';
+            columns: ['segment_id'];
             isOneToOne: false;
-            referencedRelation: "customer_segments";
-            referencedColumns: ["id"];
+            referencedRelation: 'customer_segments';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -8753,53 +8753,53 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "data_access_logs_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'data_access_logs_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "data_access_logs_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'data_access_logs_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "data_access_logs_patient_id_fkey";
-            columns: ["patient_id"];
+            foreignKeyName: 'data_access_logs_patient_id_fkey';
+            columns: ['patient_id'];
             isOneToOne: false;
-            referencedRelation: "analytics_patients";
-            referencedColumns: ["id"];
+            referencedRelation: 'analytics_patients';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "data_access_logs_patient_id_fkey";
-            columns: ["patient_id"];
+            foreignKeyName: 'data_access_logs_patient_id_fkey';
+            columns: ['patient_id'];
             isOneToOne: false;
-            referencedRelation: "patients";
-            referencedColumns: ["id"];
+            referencedRelation: 'patients';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "data_access_logs_profile_id_fkey";
-            columns: ["profile_id"];
+            foreignKeyName: 'data_access_logs_profile_id_fkey';
+            columns: ['profile_id'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "data_access_logs_profile_id_fkey";
-            columns: ["profile_id"];
+            foreignKeyName: 'data_access_logs_profile_id_fkey';
+            columns: ['profile_id'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "data_access_logs_profile_id_fkey";
-            columns: ["profile_id"];
+            foreignKeyName: 'data_access_logs_profile_id_fkey';
+            columns: ['profile_id'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -8872,39 +8872,39 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "data_retention_policies_approved_by_fkey";
-            columns: ["approved_by"];
+            foreignKeyName: 'data_retention_policies_approved_by_fkey';
+            columns: ['approved_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "data_retention_policies_approved_by_fkey";
-            columns: ["approved_by"];
+            foreignKeyName: 'data_retention_policies_approved_by_fkey';
+            columns: ['approved_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "data_retention_policies_approved_by_fkey";
-            columns: ["approved_by"];
+            foreignKeyName: 'data_retention_policies_approved_by_fkey';
+            columns: ['approved_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "data_retention_policies_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'data_retention_policies_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "data_retention_policies_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'data_retention_policies_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
         ];
       };
@@ -9004,95 +9004,95 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "data_subject_requests_assigned_to_fkey";
-            columns: ["assigned_to"];
+            foreignKeyName: 'data_subject_requests_assigned_to_fkey';
+            columns: ['assigned_to'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "data_subject_requests_assigned_to_fkey";
-            columns: ["assigned_to"];
+            foreignKeyName: 'data_subject_requests_assigned_to_fkey';
+            columns: ['assigned_to'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "data_subject_requests_assigned_to_fkey";
-            columns: ["assigned_to"];
+            foreignKeyName: 'data_subject_requests_assigned_to_fkey';
+            columns: ['assigned_to'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "data_subject_requests_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'data_subject_requests_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "data_subject_requests_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'data_subject_requests_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "data_subject_requests_patient_id_fkey";
-            columns: ["patient_id"];
+            foreignKeyName: 'data_subject_requests_patient_id_fkey';
+            columns: ['patient_id'];
             isOneToOne: false;
-            referencedRelation: "analytics_patients";
-            referencedColumns: ["id"];
+            referencedRelation: 'analytics_patients';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "data_subject_requests_patient_id_fkey";
-            columns: ["patient_id"];
+            foreignKeyName: 'data_subject_requests_patient_id_fkey';
+            columns: ['patient_id'];
             isOneToOne: false;
-            referencedRelation: "patients";
-            referencedColumns: ["id"];
+            referencedRelation: 'patients';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "data_subject_requests_processed_by_fkey";
-            columns: ["processed_by"];
+            foreignKeyName: 'data_subject_requests_processed_by_fkey';
+            columns: ['processed_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "data_subject_requests_processed_by_fkey";
-            columns: ["processed_by"];
+            foreignKeyName: 'data_subject_requests_processed_by_fkey';
+            columns: ['processed_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "data_subject_requests_processed_by_fkey";
-            columns: ["processed_by"];
+            foreignKeyName: 'data_subject_requests_processed_by_fkey';
+            columns: ['processed_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "data_subject_requests_verified_by_fkey";
-            columns: ["verified_by"];
+            foreignKeyName: 'data_subject_requests_verified_by_fkey';
+            columns: ['verified_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "data_subject_requests_verified_by_fkey";
-            columns: ["verified_by"];
+            foreignKeyName: 'data_subject_requests_verified_by_fkey';
+            columns: ['verified_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "data_subject_requests_verified_by_fkey";
-            columns: ["verified_by"];
+            foreignKeyName: 'data_subject_requests_verified_by_fkey';
+            columns: ['verified_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -9192,67 +9192,67 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "demand_forecasting_models_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'demand_forecasting_models_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "demand_forecasting_models_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'demand_forecasting_models_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "demand_forecasting_models_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'demand_forecasting_models_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "demand_forecasting_models_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'demand_forecasting_models_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "demand_forecasting_models_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'demand_forecasting_models_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "demand_forecasting_models_service_type_id_fkey";
-            columns: ["service_type_id"];
+            foreignKeyName: 'demand_forecasting_models_service_type_id_fkey';
+            columns: ['service_type_id'];
             isOneToOne: false;
-            referencedRelation: "service_types";
-            referencedColumns: ["id"];
+            referencedRelation: 'service_types';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "demand_forecasting_models_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'demand_forecasting_models_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "demand_forecasting_models_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'demand_forecasting_models_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "demand_forecasting_models_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'demand_forecasting_models_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -9364,60 +9364,60 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "demand_forecasts_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'demand_forecasts_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "demand_forecasts_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'demand_forecasts_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "demand_forecasts_model_id_fkey";
-            columns: ["model_id"];
+            foreignKeyName: 'demand_forecasts_model_id_fkey';
+            columns: ['model_id'];
             isOneToOne: false;
-            referencedRelation: "demand_forecasting_models";
-            referencedColumns: ["id"];
+            referencedRelation: 'demand_forecasting_models';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "demand_forecasts_professional_id_fkey";
-            columns: ["professional_id"];
+            foreignKeyName: 'demand_forecasts_professional_id_fkey';
+            columns: ['professional_id'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "demand_forecasts_professional_id_fkey";
-            columns: ["professional_id"];
+            foreignKeyName: 'demand_forecasts_professional_id_fkey';
+            columns: ['professional_id'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "demand_forecasts_professional_id_fkey";
-            columns: ["professional_id"];
+            foreignKeyName: 'demand_forecasts_professional_id_fkey';
+            columns: ['professional_id'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "demand_forecasts_room_id_fkey";
-            columns: ["room_id"];
+            foreignKeyName: 'demand_forecasts_room_id_fkey';
+            columns: ['room_id'];
             isOneToOne: false;
-            referencedRelation: "rooms";
-            referencedColumns: ["id"];
+            referencedRelation: 'rooms';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "demand_forecasts_service_type_id_fkey";
-            columns: ["service_type_id"];
+            foreignKeyName: 'demand_forecasts_service_type_id_fkey';
+            columns: ['service_type_id'];
             isOneToOne: false;
-            referencedRelation: "service_types";
-            referencedColumns: ["id"];
+            referencedRelation: 'service_types';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -9505,67 +9505,67 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "demand_patterns_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'demand_patterns_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "demand_patterns_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'demand_patterns_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "demand_patterns_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'demand_patterns_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "demand_patterns_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'demand_patterns_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "demand_patterns_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'demand_patterns_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "demand_patterns_service_type_id_fkey";
-            columns: ["service_type_id"];
+            foreignKeyName: 'demand_patterns_service_type_id_fkey';
+            columns: ['service_type_id'];
             isOneToOne: false;
-            referencedRelation: "service_types";
-            referencedColumns: ["id"];
+            referencedRelation: 'service_types';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "demand_patterns_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'demand_patterns_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "demand_patterns_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'demand_patterns_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "demand_patterns_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'demand_patterns_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -9629,11 +9629,11 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "document_versions_document_id_fkey";
-            columns: ["document_id"];
+            foreignKeyName: 'document_versions_document_id_fkey';
+            columns: ['document_id'];
             isOneToOne: false;
-            referencedRelation: "regulatory_documents";
-            referencedColumns: ["id"];
+            referencedRelation: 'regulatory_documents';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -9694,32 +9694,32 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "drift_detections_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'drift_detections_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "drift_detections_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'drift_detections_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "drift_detections_model_id_fkey";
-            columns: ["model_id"];
+            foreignKeyName: 'drift_detections_model_id_fkey';
+            columns: ['model_id'];
             isOneToOne: false;
-            referencedRelation: "ai_models";
-            referencedColumns: ["id"];
+            referencedRelation: 'ai_models';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "drift_detections_model_id_fkey";
-            columns: ["model_id"];
+            foreignKeyName: 'drift_detections_model_id_fkey';
+            columns: ['model_id'];
             isOneToOne: false;
-            referencedRelation: "ml_model_performance";
-            referencedColumns: ["id"];
+            referencedRelation: 'ml_model_performance';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -9795,39 +9795,39 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "escrow_transactions_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'escrow_transactions_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "escrow_transactions_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'escrow_transactions_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "escrow_transactions_customer_id_fkey";
-            columns: ["customer_id"];
+            foreignKeyName: 'escrow_transactions_customer_id_fkey';
+            columns: ['customer_id'];
             isOneToOne: false;
-            referencedRelation: "customers";
-            referencedColumns: ["id"];
+            referencedRelation: 'customers';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "escrow_transactions_transaction_id_fkey";
-            columns: ["transaction_id"];
+            foreignKeyName: 'escrow_transactions_transaction_id_fkey';
+            columns: ['transaction_id'];
             isOneToOne: false;
-            referencedRelation: "analytics_financial";
-            referencedColumns: ["id"];
+            referencedRelation: 'analytics_financial';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "escrow_transactions_transaction_id_fkey";
-            columns: ["transaction_id"];
+            foreignKeyName: 'escrow_transactions_transaction_id_fkey';
+            columns: ['transaction_id'];
             isOneToOne: false;
-            referencedRelation: "payment_transactions";
-            referencedColumns: ["id"];
+            referencedRelation: 'payment_transactions';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -9879,11 +9879,11 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "evaluation_questions_evaluation_id_fkey";
-            columns: ["evaluation_id"];
+            foreignKeyName: 'evaluation_questions_evaluation_id_fkey';
+            columns: ['evaluation_id'];
             isOneToOne: false;
-            referencedRelation: "patient_evaluations";
-            referencedColumns: ["id"];
+            referencedRelation: 'patient_evaluations';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -9929,18 +9929,18 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "evaluation_responses_evaluation_id_fkey";
-            columns: ["evaluation_id"];
+            foreignKeyName: 'evaluation_responses_evaluation_id_fkey';
+            columns: ['evaluation_id'];
             isOneToOne: false;
-            referencedRelation: "patient_evaluations";
-            referencedColumns: ["id"];
+            referencedRelation: 'patient_evaluations';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "evaluation_responses_question_id_fkey";
-            columns: ["question_id"];
+            foreignKeyName: 'evaluation_responses_question_id_fkey';
+            columns: ['question_id'];
             isOneToOne: false;
-            referencedRelation: "evaluation_questions";
-            referencedColumns: ["id"];
+            referencedRelation: 'evaluation_questions';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -10046,60 +10046,60 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "fk_executive_alert_acknowledged_by";
-            columns: ["acknowledged_by"];
+            foreignKeyName: 'fk_executive_alert_acknowledged_by';
+            columns: ['acknowledged_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "fk_executive_alert_acknowledged_by";
-            columns: ["acknowledged_by"];
+            foreignKeyName: 'fk_executive_alert_acknowledged_by';
+            columns: ['acknowledged_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "fk_executive_alert_acknowledged_by";
-            columns: ["acknowledged_by"];
+            foreignKeyName: 'fk_executive_alert_acknowledged_by';
+            columns: ['acknowledged_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "fk_executive_alert_clinic";
-            columns: ["clinic_id"];
+            foreignKeyName: 'fk_executive_alert_clinic';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "fk_executive_alert_clinic";
-            columns: ["clinic_id"];
+            foreignKeyName: 'fk_executive_alert_clinic';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "fk_executive_alert_resolved_by";
-            columns: ["resolved_by"];
+            foreignKeyName: 'fk_executive_alert_resolved_by';
+            columns: ['resolved_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "fk_executive_alert_resolved_by";
-            columns: ["resolved_by"];
+            foreignKeyName: 'fk_executive_alert_resolved_by';
+            columns: ['resolved_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "fk_executive_alert_resolved_by";
-            columns: ["resolved_by"];
+            foreignKeyName: 'fk_executive_alert_resolved_by';
+            columns: ['resolved_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -10163,39 +10163,39 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "fk_executive_report_clinic";
-            columns: ["clinic_id"];
+            foreignKeyName: 'fk_executive_report_clinic';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "fk_executive_report_clinic";
-            columns: ["clinic_id"];
+            foreignKeyName: 'fk_executive_report_clinic';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "fk_executive_report_user";
-            columns: ["requested_by"];
+            foreignKeyName: 'fk_executive_report_user';
+            columns: ['requested_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "fk_executive_report_user";
-            columns: ["requested_by"];
+            foreignKeyName: 'fk_executive_report_user';
+            columns: ['requested_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "fk_executive_report_user";
-            columns: ["requested_by"];
+            foreignKeyName: 'fk_executive_report_user';
+            columns: ['requested_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -10244,39 +10244,39 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "fk_executive_widget_clinic";
-            columns: ["clinic_id"];
+            foreignKeyName: 'fk_executive_widget_clinic';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "fk_executive_widget_clinic";
-            columns: ["clinic_id"];
+            foreignKeyName: 'fk_executive_widget_clinic';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "fk_executive_widget_user";
-            columns: ["user_id"];
+            foreignKeyName: 'fk_executive_widget_user';
+            columns: ['user_id'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "fk_executive_widget_user";
-            columns: ["user_id"];
+            foreignKeyName: 'fk_executive_widget_user';
+            columns: ['user_id'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "fk_executive_widget_user";
-            columns: ["user_id"];
+            foreignKeyName: 'fk_executive_widget_user';
+            columns: ['user_id'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -10331,60 +10331,60 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "fk_executive_kpi_clinic";
-            columns: ["clinic_id"];
+            foreignKeyName: 'fk_executive_kpi_clinic';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "fk_executive_kpi_clinic";
-            columns: ["clinic_id"];
+            foreignKeyName: 'fk_executive_kpi_clinic';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "fk_executive_kpi_created_by";
-            columns: ["created_by"];
+            foreignKeyName: 'fk_executive_kpi_created_by';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "fk_executive_kpi_created_by";
-            columns: ["created_by"];
+            foreignKeyName: 'fk_executive_kpi_created_by';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "fk_executive_kpi_created_by";
-            columns: ["created_by"];
+            foreignKeyName: 'fk_executive_kpi_created_by';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "fk_executive_kpi_updated_by";
-            columns: ["updated_by"];
+            foreignKeyName: 'fk_executive_kpi_updated_by';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "fk_executive_kpi_updated_by";
-            columns: ["updated_by"];
+            foreignKeyName: 'fk_executive_kpi_updated_by';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "fk_executive_kpi_updated_by";
-            columns: ["updated_by"];
+            foreignKeyName: 'fk_executive_kpi_updated_by';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -10424,11 +10424,11 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "expense_categories_parent_category_id_fkey";
-            columns: ["parent_category_id"];
+            foreignKeyName: 'expense_categories_parent_category_id_fkey';
+            columns: ['parent_category_id'];
             isOneToOne: false;
-            referencedRelation: "expense_categories";
-            referencedColumns: ["id"];
+            referencedRelation: 'expense_categories';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -10438,7 +10438,7 @@ export type GeneratedDatabase = {
           api_config_id: string;
           cache_key: string;
           cached_response: GeneratedJson;
-          call_status: GeneratedDatabase["public"]["Enums"]["api_verification_status"];
+          call_status: GeneratedDatabase['public']['Enums']['api_verification_status'];
           created_at: string;
           expires_at: string;
           id: string;
@@ -10455,7 +10455,7 @@ export type GeneratedDatabase = {
           api_config_id: string;
           cache_key: string;
           cached_response: GeneratedJson;
-          call_status: GeneratedDatabase["public"]["Enums"]["api_verification_status"];
+          call_status: GeneratedDatabase['public']['Enums']['api_verification_status'];
           created_at?: string;
           expires_at: string;
           id?: string;
@@ -10472,7 +10472,7 @@ export type GeneratedDatabase = {
           api_config_id?: string;
           cache_key?: string;
           cached_response?: GeneratedJson;
-          call_status?: GeneratedDatabase["public"]["Enums"]["api_verification_status"];
+          call_status?: GeneratedDatabase['public']['Enums']['api_verification_status'];
           created_at?: string;
           expires_at?: string;
           id?: string;
@@ -10486,11 +10486,11 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "external_api_cache_api_config_id_fkey";
-            columns: ["api_config_id"];
+            foreignKeyName: 'external_api_cache_api_config_id_fkey';
+            columns: ['api_config_id'];
             isOneToOne: false;
-            referencedRelation: "external_api_configurations";
-            referencedColumns: ["id"];
+            referencedRelation: 'external_api_configurations';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -10499,7 +10499,7 @@ export type GeneratedDatabase = {
           api_config_id: string;
           automated_actions: GeneratedJson | null;
           call_purpose: string | null;
-          call_status: GeneratedDatabase["public"]["Enums"]["api_verification_status"];
+          call_status: GeneratedDatabase['public']['Enums']['api_verification_status'];
           caller_ip: unknown | null;
           certification_id: string | null;
           correlation_id: string | null;
@@ -10529,7 +10529,7 @@ export type GeneratedDatabase = {
           api_config_id: string;
           automated_actions?: GeneratedJson | null;
           call_purpose?: string | null;
-          call_status: GeneratedDatabase["public"]["Enums"]["api_verification_status"];
+          call_status: GeneratedDatabase['public']['Enums']['api_verification_status'];
           caller_ip?: unknown | null;
           certification_id?: string | null;
           correlation_id?: string | null;
@@ -10559,7 +10559,7 @@ export type GeneratedDatabase = {
           api_config_id?: string;
           automated_actions?: GeneratedJson | null;
           call_purpose?: string | null;
-          call_status?: GeneratedDatabase["public"]["Enums"]["api_verification_status"];
+          call_status?: GeneratedDatabase['public']['Enums']['api_verification_status'];
           caller_ip?: unknown | null;
           certification_id?: string | null;
           correlation_id?: string | null;
@@ -10587,46 +10587,46 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "external_api_calls_api_config_id_fkey";
-            columns: ["api_config_id"];
+            foreignKeyName: 'external_api_calls_api_config_id_fkey';
+            columns: ['api_config_id'];
             isOneToOne: false;
-            referencedRelation: "external_api_configurations";
-            referencedColumns: ["id"];
+            referencedRelation: 'external_api_configurations';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "external_api_calls_certification_id_fkey";
-            columns: ["certification_id"];
+            foreignKeyName: 'external_api_calls_certification_id_fkey';
+            columns: ['certification_id'];
             isOneToOne: false;
-            referencedRelation: "professional_certifications";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_certifications';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "external_api_calls_profile_id_fkey";
-            columns: ["profile_id"];
+            foreignKeyName: 'external_api_calls_profile_id_fkey';
+            columns: ['profile_id'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "external_api_calls_profile_id_fkey";
-            columns: ["profile_id"];
+            foreignKeyName: 'external_api_calls_profile_id_fkey';
+            columns: ['profile_id'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "external_api_calls_profile_id_fkey";
-            columns: ["profile_id"];
+            foreignKeyName: 'external_api_calls_profile_id_fkey';
+            columns: ['profile_id'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "external_api_calls_registration_id_fkey";
-            columns: ["registration_id"];
+            foreignKeyName: 'external_api_calls_registration_id_fkey';
+            columns: ['registration_id'];
             isOneToOne: false;
-            referencedRelation: "professional_registrations";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_registrations';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -10653,7 +10653,7 @@ export type GeneratedDatabase = {
           last_successful_call: string | null;
           max_batch_size: number | null;
           provider_name: string;
-          provider_type: GeneratedDatabase["public"]["Enums"]["api_provider_type"];
+          provider_type: GeneratedDatabase['public']['Enums']['api_provider_type'];
           rate_limit_per_minute: number | null;
           response_parsing_rules: GeneratedJson | null;
           retry_attempts: number | null;
@@ -10687,7 +10687,7 @@ export type GeneratedDatabase = {
           last_successful_call?: string | null;
           max_batch_size?: number | null;
           provider_name: string;
-          provider_type: GeneratedDatabase["public"]["Enums"]["api_provider_type"];
+          provider_type: GeneratedDatabase['public']['Enums']['api_provider_type'];
           rate_limit_per_minute?: number | null;
           response_parsing_rules?: GeneratedJson | null;
           retry_attempts?: number | null;
@@ -10721,7 +10721,7 @@ export type GeneratedDatabase = {
           last_successful_call?: string | null;
           max_batch_size?: number | null;
           provider_name?: string;
-          provider_type?: GeneratedDatabase["public"]["Enums"]["api_provider_type"];
+          provider_type?: GeneratedDatabase['public']['Enums']['api_provider_type'];
           rate_limit_per_minute?: number | null;
           response_parsing_rules?: GeneratedJson | null;
           retry_attempts?: number | null;
@@ -10735,46 +10735,46 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "external_api_configurations_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'external_api_configurations_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "external_api_configurations_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'external_api_configurations_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "external_api_configurations_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'external_api_configurations_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "external_api_configurations_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'external_api_configurations_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "external_api_configurations_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'external_api_configurations_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "external_api_configurations_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'external_api_configurations_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -10841,11 +10841,11 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "external_api_monitoring_api_config_id_fkey";
-            columns: ["api_config_id"];
+            foreignKeyName: 'external_api_monitoring_api_config_id_fkey';
+            columns: ['api_config_id'];
             isOneToOne: false;
-            referencedRelation: "external_api_configurations";
-            referencedColumns: ["id"];
+            referencedRelation: 'external_api_configurations';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -10918,32 +10918,32 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "financial_transactions_appointment_id_fkey";
-            columns: ["appointment_id"];
+            foreignKeyName: 'financial_transactions_appointment_id_fkey';
+            columns: ['appointment_id'];
             isOneToOne: false;
-            referencedRelation: "analytics_appointments";
-            referencedColumns: ["id"];
+            referencedRelation: 'analytics_appointments';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "financial_transactions_appointment_id_fkey";
-            columns: ["appointment_id"];
+            foreignKeyName: 'financial_transactions_appointment_id_fkey';
+            columns: ['appointment_id'];
             isOneToOne: false;
-            referencedRelation: "appointments";
-            referencedColumns: ["id"];
+            referencedRelation: 'appointments';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "financial_transactions_patient_id_fkey";
-            columns: ["patient_id"];
+            foreignKeyName: 'financial_transactions_patient_id_fkey';
+            columns: ['patient_id'];
             isOneToOne: false;
-            referencedRelation: "analytics_patients";
-            referencedColumns: ["id"];
+            referencedRelation: 'analytics_patients';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "financial_transactions_patient_id_fkey";
-            columns: ["patient_id"];
+            foreignKeyName: 'financial_transactions_patient_id_fkey';
+            columns: ['patient_id'];
             isOneToOne: false;
-            referencedRelation: "patients";
-            referencedColumns: ["id"];
+            referencedRelation: 'patients';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -10986,39 +10986,39 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "followup_attachments_followup_id_fkey";
-            columns: ["followup_id"];
+            foreignKeyName: 'followup_attachments_followup_id_fkey';
+            columns: ['followup_id'];
             isOneToOne: false;
-            referencedRelation: "treatment_followups";
-            referencedColumns: ["id"];
+            referencedRelation: 'treatment_followups';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "followup_attachments_response_id_fkey";
-            columns: ["response_id"];
+            foreignKeyName: 'followup_attachments_response_id_fkey';
+            columns: ['response_id'];
             isOneToOne: false;
-            referencedRelation: "followup_responses";
-            referencedColumns: ["id"];
+            referencedRelation: 'followup_responses';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "followup_attachments_uploaded_by_fkey";
-            columns: ["uploaded_by"];
+            foreignKeyName: 'followup_attachments_uploaded_by_fkey';
+            columns: ['uploaded_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "followup_attachments_uploaded_by_fkey";
-            columns: ["uploaded_by"];
+            foreignKeyName: 'followup_attachments_uploaded_by_fkey';
+            columns: ['uploaded_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "followup_attachments_uploaded_by_fkey";
-            columns: ["uploaded_by"];
+            foreignKeyName: 'followup_attachments_uploaded_by_fkey';
+            columns: ['uploaded_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -11058,11 +11058,11 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "followup_responses_followup_id_fkey";
-            columns: ["followup_id"];
+            foreignKeyName: 'followup_responses_followup_id_fkey';
+            columns: ['followup_id'];
             isOneToOne: false;
-            referencedRelation: "treatment_followups";
-            referencedColumns: ["id"];
+            referencedRelation: 'treatment_followups';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -11123,39 +11123,39 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "followup_templates_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'followup_templates_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "followup_templates_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'followup_templates_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "followup_templates_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'followup_templates_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "followup_templates_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'followup_templates_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "followup_templates_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'followup_templates_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -11234,67 +11234,67 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "forecast_alerts_acknowledged_by_fkey";
-            columns: ["acknowledged_by"];
+            foreignKeyName: 'forecast_alerts_acknowledged_by_fkey';
+            columns: ['acknowledged_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "forecast_alerts_acknowledged_by_fkey";
-            columns: ["acknowledged_by"];
+            foreignKeyName: 'forecast_alerts_acknowledged_by_fkey';
+            columns: ['acknowledged_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "forecast_alerts_acknowledged_by_fkey";
-            columns: ["acknowledged_by"];
+            foreignKeyName: 'forecast_alerts_acknowledged_by_fkey';
+            columns: ['acknowledged_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "forecast_alerts_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'forecast_alerts_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "forecast_alerts_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'forecast_alerts_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "forecast_alerts_forecast_id_fkey";
-            columns: ["forecast_id"];
+            foreignKeyName: 'forecast_alerts_forecast_id_fkey';
+            columns: ['forecast_id'];
             isOneToOne: false;
-            referencedRelation: "demand_forecasts";
-            referencedColumns: ["id"];
+            referencedRelation: 'demand_forecasts';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "forecast_alerts_resolved_by_fkey";
-            columns: ["resolved_by"];
+            foreignKeyName: 'forecast_alerts_resolved_by_fkey';
+            columns: ['resolved_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "forecast_alerts_resolved_by_fkey";
-            columns: ["resolved_by"];
+            foreignKeyName: 'forecast_alerts_resolved_by_fkey';
+            columns: ['resolved_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "forecast_alerts_resolved_by_fkey";
-            columns: ["resolved_by"];
+            foreignKeyName: 'forecast_alerts_resolved_by_fkey';
+            columns: ['resolved_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -11379,25 +11379,25 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "forecast_performance_metrics_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'forecast_performance_metrics_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "forecast_performance_metrics_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'forecast_performance_metrics_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "forecast_performance_metrics_model_id_fkey";
-            columns: ["model_id"];
+            foreignKeyName: 'forecast_performance_metrics_model_id_fkey';
+            columns: ['model_id'];
             isOneToOne: false;
-            referencedRelation: "demand_forecasting_models";
-            referencedColumns: ["id"];
+            referencedRelation: 'demand_forecasting_models';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -11431,18 +11431,18 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "gateway_payment_methods_gateway_id_fkey";
-            columns: ["gateway_id"];
+            foreignKeyName: 'gateway_payment_methods_gateway_id_fkey';
+            columns: ['gateway_id'];
             isOneToOne: false;
-            referencedRelation: "payment_gateways";
-            referencedColumns: ["id"];
+            referencedRelation: 'payment_gateways';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "gateway_payment_methods_method_id_fkey";
-            columns: ["method_id"];
+            foreignKeyName: 'gateway_payment_methods_method_id_fkey';
+            columns: ['method_id'];
             isOneToOne: false;
-            referencedRelation: "payment_methods";
-            referencedColumns: ["id"];
+            referencedRelation: 'payment_methods';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -11515,25 +11515,25 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "gateway_performance_metrics_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'gateway_performance_metrics_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "gateway_performance_metrics_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'gateway_performance_metrics_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "gateway_performance_metrics_gateway_id_fkey";
-            columns: ["gateway_id"];
+            foreignKeyName: 'gateway_performance_metrics_gateway_id_fkey';
+            columns: ['gateway_id'];
             isOneToOne: false;
-            referencedRelation: "payment_gateways";
-            referencedColumns: ["id"];
+            referencedRelation: 'payment_gateways';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -11615,25 +11615,25 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "gateway_settlement_reports_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'gateway_settlement_reports_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "gateway_settlement_reports_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'gateway_settlement_reports_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "gateway_settlement_reports_gateway_id_fkey";
-            columns: ["gateway_id"];
+            foreignKeyName: 'gateway_settlement_reports_gateway_id_fkey';
+            columns: ['gateway_id'];
             isOneToOne: false;
-            referencedRelation: "payment_gateways";
-            referencedColumns: ["id"];
+            referencedRelation: 'payment_gateways';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -11676,18 +11676,18 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "healthcare_audit_logs_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'healthcare_audit_logs_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "healthcare_audit_logs_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'healthcare_audit_logs_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
         ];
       };
@@ -11829,18 +11829,18 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "healthcare_professionals_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'healthcare_professionals_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "healthcare_professionals_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'healthcare_professionals_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
         ];
       };
@@ -11886,11 +11886,11 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "intervention_strategies_prediction_id_fkey";
-            columns: ["prediction_id"];
+            foreignKeyName: 'intervention_strategies_prediction_id_fkey';
+            columns: ['prediction_id'];
             isOneToOne: false;
-            referencedRelation: "no_show_predictions";
-            referencedColumns: ["id"];
+            referencedRelation: 'no_show_predictions';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -11981,18 +11981,18 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "fk_inventory_items_clinic";
-            columns: ["clinic_id"];
+            foreignKeyName: 'fk_inventory_items_clinic';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "fk_inventory_items_clinic";
-            columns: ["clinic_id"];
+            foreignKeyName: 'fk_inventory_items_clinic';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
         ];
       };
@@ -12047,32 +12047,32 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "fk_inventory_stock_clinic";
-            columns: ["clinic_id"];
+            foreignKeyName: 'fk_inventory_stock_clinic';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "fk_inventory_stock_clinic";
-            columns: ["clinic_id"];
+            foreignKeyName: 'fk_inventory_stock_clinic';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "fk_inventory_stock_item";
-            columns: ["inventory_item_id"];
+            foreignKeyName: 'fk_inventory_stock_item';
+            columns: ['inventory_item_id'];
             isOneToOne: false;
-            referencedRelation: "inventory_items";
-            referencedColumns: ["id"];
+            referencedRelation: 'inventory_items';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "fk_inventory_stock_room";
-            columns: ["room_id"];
+            foreignKeyName: 'fk_inventory_stock_room';
+            columns: ['room_id'];
             isOneToOne: false;
-            referencedRelation: "rooms";
-            referencedColumns: ["id"];
+            referencedRelation: 'rooms';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -12130,32 +12130,32 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "legacy_data_transformations_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'legacy_data_transformations_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "legacy_data_transformations_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'legacy_data_transformations_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "legacy_data_transformations_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'legacy_data_transformations_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "legacy_data_transformations_legacy_system_id_fkey";
-            columns: ["legacy_system_id"];
+            foreignKeyName: 'legacy_data_transformations_legacy_system_id_fkey';
+            columns: ['legacy_system_id'];
             isOneToOne: false;
-            referencedRelation: "legacy_systems";
-            referencedColumns: ["id"];
+            referencedRelation: 'legacy_systems';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -12207,11 +12207,11 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "legacy_entity_mappings_legacy_system_id_fkey";
-            columns: ["legacy_system_id"];
+            foreignKeyName: 'legacy_entity_mappings_legacy_system_id_fkey';
+            columns: ['legacy_system_id'];
             isOneToOne: false;
-            referencedRelation: "legacy_systems";
-            referencedColumns: ["id"];
+            referencedRelation: 'legacy_systems';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -12240,7 +12240,7 @@ export type GeneratedDatabase = {
           started_at: string;
           status: string | null;
           success_rate: number | null;
-          sync_direction: GeneratedDatabase["public"]["Enums"]["sync_direction"];
+          sync_direction: GeneratedDatabase['public']['Enums']['sync_direction'];
           warnings_generated: GeneratedJson | null;
         };
         Insert: {
@@ -12267,7 +12267,7 @@ export type GeneratedDatabase = {
           started_at?: string;
           status?: string | null;
           success_rate?: number | null;
-          sync_direction: GeneratedDatabase["public"]["Enums"]["sync_direction"];
+          sync_direction: GeneratedDatabase['public']['Enums']['sync_direction'];
           warnings_generated?: GeneratedJson | null;
         };
         Update: {
@@ -12294,23 +12294,23 @@ export type GeneratedDatabase = {
           started_at?: string;
           status?: string | null;
           success_rate?: number | null;
-          sync_direction?: GeneratedDatabase["public"]["Enums"]["sync_direction"];
+          sync_direction?: GeneratedDatabase['public']['Enums']['sync_direction'];
           warnings_generated?: GeneratedJson | null;
         };
         Relationships: [
           {
-            foreignKeyName: "legacy_sync_logs_automation_execution_id_fkey";
-            columns: ["automation_execution_id"];
+            foreignKeyName: 'legacy_sync_logs_automation_execution_id_fkey';
+            columns: ['automation_execution_id'];
             isOneToOne: false;
-            referencedRelation: "automation_executions";
-            referencedColumns: ["id"];
+            referencedRelation: 'automation_executions';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "legacy_sync_logs_legacy_system_id_fkey";
-            columns: ["legacy_system_id"];
+            foreignKeyName: 'legacy_sync_logs_legacy_system_id_fkey';
+            columns: ['legacy_system_id'];
             isOneToOne: false;
-            referencedRelation: "legacy_systems";
-            referencedColumns: ["id"];
+            referencedRelation: 'legacy_systems';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -12334,7 +12334,7 @@ export type GeneratedDatabase = {
           scheduled_at: string | null;
           started_at: string | null;
           status: string | null;
-          sync_direction: GeneratedDatabase["public"]["Enums"]["sync_direction"];
+          sync_direction: GeneratedDatabase['public']['Enums']['sync_direction'];
           updated_at: string | null;
         };
         Insert: {
@@ -12356,7 +12356,7 @@ export type GeneratedDatabase = {
           scheduled_at?: string | null;
           started_at?: string | null;
           status?: string | null;
-          sync_direction: GeneratedDatabase["public"]["Enums"]["sync_direction"];
+          sync_direction: GeneratedDatabase['public']['Enums']['sync_direction'];
           updated_at?: string | null;
         };
         Update: {
@@ -12378,37 +12378,37 @@ export type GeneratedDatabase = {
           scheduled_at?: string | null;
           started_at?: string | null;
           status?: string | null;
-          sync_direction?: GeneratedDatabase["public"]["Enums"]["sync_direction"];
+          sync_direction?: GeneratedDatabase['public']['Enums']['sync_direction'];
           updated_at?: string | null;
         };
         Relationships: [
           {
-            foreignKeyName: "legacy_sync_queue_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'legacy_sync_queue_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "legacy_sync_queue_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'legacy_sync_queue_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "legacy_sync_queue_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'legacy_sync_queue_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "legacy_sync_queue_legacy_system_id_fkey";
-            columns: ["legacy_system_id"];
+            foreignKeyName: 'legacy_sync_queue_legacy_system_id_fkey';
+            columns: ['legacy_system_id'];
             isOneToOne: false;
-            referencedRelation: "legacy_systems";
-            referencedColumns: ["id"];
+            referencedRelation: 'legacy_systems';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -12429,7 +12429,7 @@ export type GeneratedDatabase = {
           failed_sync_operations: number | null;
           field_mappings: GeneratedJson | null;
           id: string;
-          integration_method: GeneratedDatabase["public"]["Enums"]["integration_method"];
+          integration_method: GeneratedDatabase['public']['Enums']['integration_method'];
           is_enabled: boolean | null;
           last_error: string | null;
           last_error_message: string | null;
@@ -12439,16 +12439,16 @@ export type GeneratedDatabase = {
           retry_attempts: number | null;
           retry_delay_seconds: number | null;
           status:
-            | GeneratedDatabase["public"]["Enums"]["integration_status"]
+            | GeneratedDatabase['public']['Enums']['integration_status']
             | null;
           successful_sync_operations: number | null;
           sync_direction:
-            | GeneratedDatabase["public"]["Enums"]["sync_direction"]
+            | GeneratedDatabase['public']['Enums']['sync_direction']
             | null;
           sync_frequency_minutes: number | null;
           system_code: string;
           system_name: string;
-          system_type: GeneratedDatabase["public"]["Enums"]["legacy_system_type"];
+          system_type: GeneratedDatabase['public']['Enums']['legacy_system_type'];
           timeout_seconds: number | null;
           total_sync_operations: number | null;
           updated_at: string | null;
@@ -12473,7 +12473,7 @@ export type GeneratedDatabase = {
           failed_sync_operations?: number | null;
           field_mappings?: GeneratedJson | null;
           id?: string;
-          integration_method: GeneratedDatabase["public"]["Enums"]["integration_method"];
+          integration_method: GeneratedDatabase['public']['Enums']['integration_method'];
           is_enabled?: boolean | null;
           last_error?: string | null;
           last_error_message?: string | null;
@@ -12483,16 +12483,16 @@ export type GeneratedDatabase = {
           retry_attempts?: number | null;
           retry_delay_seconds?: number | null;
           status?:
-            | GeneratedDatabase["public"]["Enums"]["integration_status"]
+            | GeneratedDatabase['public']['Enums']['integration_status']
             | null;
           successful_sync_operations?: number | null;
           sync_direction?:
-            | GeneratedDatabase["public"]["Enums"]["sync_direction"]
+            | GeneratedDatabase['public']['Enums']['sync_direction']
             | null;
           sync_frequency_minutes?: number | null;
           system_code: string;
           system_name: string;
-          system_type: GeneratedDatabase["public"]["Enums"]["legacy_system_type"];
+          system_type: GeneratedDatabase['public']['Enums']['legacy_system_type'];
           timeout_seconds?: number | null;
           total_sync_operations?: number | null;
           updated_at?: string | null;
@@ -12517,7 +12517,7 @@ export type GeneratedDatabase = {
           failed_sync_operations?: number | null;
           field_mappings?: GeneratedJson | null;
           id?: string;
-          integration_method?: GeneratedDatabase["public"]["Enums"]["integration_method"];
+          integration_method?: GeneratedDatabase['public']['Enums']['integration_method'];
           is_enabled?: boolean | null;
           last_error?: string | null;
           last_error_message?: string | null;
@@ -12527,16 +12527,16 @@ export type GeneratedDatabase = {
           retry_attempts?: number | null;
           retry_delay_seconds?: number | null;
           status?:
-            | GeneratedDatabase["public"]["Enums"]["integration_status"]
+            | GeneratedDatabase['public']['Enums']['integration_status']
             | null;
           successful_sync_operations?: number | null;
           sync_direction?:
-            | GeneratedDatabase["public"]["Enums"]["sync_direction"]
+            | GeneratedDatabase['public']['Enums']['sync_direction']
             | null;
           sync_frequency_minutes?: number | null;
           system_code?: string;
           system_name?: string;
-          system_type?: GeneratedDatabase["public"]["Enums"]["legacy_system_type"];
+          system_type?: GeneratedDatabase['public']['Enums']['legacy_system_type'];
           timeout_seconds?: number | null;
           total_sync_operations?: number | null;
           updated_at?: string | null;
@@ -12547,46 +12547,46 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "legacy_systems_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'legacy_systems_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "legacy_systems_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'legacy_systems_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "legacy_systems_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'legacy_systems_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "legacy_systems_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'legacy_systems_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "legacy_systems_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'legacy_systems_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "legacy_systems_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'legacy_systems_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -12671,81 +12671,81 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "legal_documents_approved_by_fkey";
-            columns: ["approved_by"];
+            foreignKeyName: 'legal_documents_approved_by_fkey';
+            columns: ['approved_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "legal_documents_approved_by_fkey";
-            columns: ["approved_by"];
+            foreignKeyName: 'legal_documents_approved_by_fkey';
+            columns: ['approved_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "legal_documents_approved_by_fkey";
-            columns: ["approved_by"];
+            foreignKeyName: 'legal_documents_approved_by_fkey';
+            columns: ['approved_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "legal_documents_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'legal_documents_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "legal_documents_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'legal_documents_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "legal_documents_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'legal_documents_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "legal_documents_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'legal_documents_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "legal_documents_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'legal_documents_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "legal_documents_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'legal_documents_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "legal_documents_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'legal_documents_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "legal_documents_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'legal_documents_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -12926,60 +12926,60 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "marketing_attribution_models_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'marketing_attribution_models_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "marketing_attribution_models_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'marketing_attribution_models_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "marketing_attribution_models_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'marketing_attribution_models_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "marketing_attribution_models_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'marketing_attribution_models_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "marketing_attribution_models_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'marketing_attribution_models_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "marketing_attribution_models_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'marketing_attribution_models_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "marketing_attribution_models_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'marketing_attribution_models_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "marketing_attribution_models_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'marketing_attribution_models_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -13160,25 +13160,25 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "marketing_platform_connections_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'marketing_platform_connections_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "marketing_platform_connections_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'marketing_platform_connections_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "marketing_platform_connections_platform_id_fkey";
-            columns: ["platform_id"];
+            foreignKeyName: 'marketing_platform_connections_platform_id_fkey';
+            columns: ['platform_id'];
             isOneToOne: false;
-            referencedRelation: "marketing_platforms";
-            referencedColumns: ["id"];
+            referencedRelation: 'marketing_platforms';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -13296,67 +13296,67 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "marketing_roi_alerts_acknowledged_by_fkey";
-            columns: ["acknowledged_by"];
+            foreignKeyName: 'marketing_roi_alerts_acknowledged_by_fkey';
+            columns: ['acknowledged_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "marketing_roi_alerts_acknowledged_by_fkey";
-            columns: ["acknowledged_by"];
+            foreignKeyName: 'marketing_roi_alerts_acknowledged_by_fkey';
+            columns: ['acknowledged_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "marketing_roi_alerts_acknowledged_by_fkey";
-            columns: ["acknowledged_by"];
+            foreignKeyName: 'marketing_roi_alerts_acknowledged_by_fkey';
+            columns: ['acknowledged_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "marketing_roi_alerts_campaign_id_fkey";
-            columns: ["campaign_id"];
+            foreignKeyName: 'marketing_roi_alerts_campaign_id_fkey';
+            columns: ['campaign_id'];
             isOneToOne: false;
-            referencedRelation: "marketing_campaigns";
-            referencedColumns: ["id"];
+            referencedRelation: 'marketing_campaigns';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "marketing_roi_alerts_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'marketing_roi_alerts_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "marketing_roi_alerts_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'marketing_roi_alerts_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "marketing_roi_alerts_resolved_by_fkey";
-            columns: ["resolved_by"];
+            foreignKeyName: 'marketing_roi_alerts_resolved_by_fkey';
+            columns: ['resolved_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "marketing_roi_alerts_resolved_by_fkey";
-            columns: ["resolved_by"];
+            foreignKeyName: 'marketing_roi_alerts_resolved_by_fkey';
+            columns: ['resolved_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "marketing_roi_alerts_resolved_by_fkey";
-            columns: ["resolved_by"];
+            foreignKeyName: 'marketing_roi_alerts_resolved_by_fkey';
+            columns: ['resolved_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -13450,32 +13450,32 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "marketing_roi_calculations_attribution_model_id_fkey";
-            columns: ["attribution_model_id"];
+            foreignKeyName: 'marketing_roi_calculations_attribution_model_id_fkey';
+            columns: ['attribution_model_id'];
             isOneToOne: false;
-            referencedRelation: "marketing_attribution_models";
-            referencedColumns: ["id"];
+            referencedRelation: 'marketing_attribution_models';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "marketing_roi_calculations_campaign_id_fkey";
-            columns: ["campaign_id"];
+            foreignKeyName: 'marketing_roi_calculations_campaign_id_fkey';
+            columns: ['campaign_id'];
             isOneToOne: false;
-            referencedRelation: "marketing_campaigns";
-            referencedColumns: ["id"];
+            referencedRelation: 'marketing_campaigns';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "marketing_roi_calculations_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'marketing_roi_calculations_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "marketing_roi_calculations_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'marketing_roi_calculations_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
         ];
       };
@@ -13536,46 +13536,46 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "marketing_roi_forecasting_campaign_id_fkey";
-            columns: ["campaign_id"];
+            foreignKeyName: 'marketing_roi_forecasting_campaign_id_fkey';
+            columns: ['campaign_id'];
             isOneToOne: false;
-            referencedRelation: "marketing_campaigns";
-            referencedColumns: ["id"];
+            referencedRelation: 'marketing_campaigns';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "marketing_roi_forecasting_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'marketing_roi_forecasting_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "marketing_roi_forecasting_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'marketing_roi_forecasting_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "marketing_roi_forecasting_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'marketing_roi_forecasting_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "marketing_roi_forecasting_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'marketing_roi_forecasting_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "marketing_roi_forecasting_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'marketing_roi_forecasting_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -13654,39 +13654,39 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "marketing_touchpoints_campaign_id_fkey";
-            columns: ["campaign_id"];
+            foreignKeyName: 'marketing_touchpoints_campaign_id_fkey';
+            columns: ['campaign_id'];
             isOneToOne: false;
-            referencedRelation: "marketing_campaigns";
-            referencedColumns: ["id"];
+            referencedRelation: 'marketing_campaigns';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "marketing_touchpoints_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'marketing_touchpoints_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "marketing_touchpoints_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'marketing_touchpoints_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "marketing_touchpoints_patient_id_fkey";
-            columns: ["patient_id"];
+            foreignKeyName: 'marketing_touchpoints_patient_id_fkey';
+            columns: ['patient_id'];
             isOneToOne: false;
-            referencedRelation: "analytics_patients";
-            referencedColumns: ["id"];
+            referencedRelation: 'analytics_patients';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "marketing_touchpoints_patient_id_fkey";
-            columns: ["patient_id"];
+            foreignKeyName: 'marketing_touchpoints_patient_id_fkey';
+            columns: ['patient_id'];
             isOneToOne: false;
-            referencedRelation: "patients";
-            referencedColumns: ["id"];
+            referencedRelation: 'patients';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -13756,60 +13756,60 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "marketing_workflows_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'marketing_workflows_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "marketing_workflows_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'marketing_workflows_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "marketing_workflows_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'marketing_workflows_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "marketing_workflows_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'marketing_workflows_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "marketing_workflows_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'marketing_workflows_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "marketing_workflows_last_modified_by_fkey";
-            columns: ["last_modified_by"];
+            foreignKeyName: 'marketing_workflows_last_modified_by_fkey';
+            columns: ['last_modified_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "marketing_workflows_last_modified_by_fkey";
-            columns: ["last_modified_by"];
+            foreignKeyName: 'marketing_workflows_last_modified_by_fkey';
+            columns: ['last_modified_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "marketing_workflows_last_modified_by_fkey";
-            columns: ["last_modified_by"];
+            foreignKeyName: 'marketing_workflows_last_modified_by_fkey';
+            columns: ['last_modified_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -13870,18 +13870,18 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "marketplace_configurations_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'marketplace_configurations_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "marketplace_configurations_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'marketplace_configurations_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
         ];
       };
@@ -13969,18 +13969,18 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "material_usage_step_id_fkey";
-            columns: ["step_id"];
+            foreignKeyName: 'material_usage_step_id_fkey';
+            columns: ['step_id'];
             isOneToOne: false;
-            referencedRelation: "procedure_steps";
-            referencedColumns: ["id"];
+            referencedRelation: 'procedure_steps';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "material_usage_tracking_id_fkey";
-            columns: ["tracking_id"];
+            foreignKeyName: 'material_usage_tracking_id_fkey';
+            columns: ['tracking_id'];
             isOneToOne: false;
-            referencedRelation: "procedure_tracking";
-            referencedColumns: ["id"];
+            referencedRelation: 'procedure_tracking';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -14044,74 +14044,74 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "medical_conditions_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'medical_conditions_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "medical_conditions_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'medical_conditions_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "medical_conditions_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'medical_conditions_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "medical_conditions_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'medical_conditions_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "medical_conditions_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'medical_conditions_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "medical_conditions_patient_id_fkey";
-            columns: ["patient_id"];
+            foreignKeyName: 'medical_conditions_patient_id_fkey';
+            columns: ['patient_id'];
             isOneToOne: false;
-            referencedRelation: "analytics_patients";
-            referencedColumns: ["id"];
+            referencedRelation: 'analytics_patients';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "medical_conditions_patient_id_fkey";
-            columns: ["patient_id"];
+            foreignKeyName: 'medical_conditions_patient_id_fkey';
+            columns: ['patient_id'];
             isOneToOne: false;
-            referencedRelation: "patients";
-            referencedColumns: ["id"];
+            referencedRelation: 'patients';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "medical_conditions_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'medical_conditions_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "medical_conditions_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'medical_conditions_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "medical_conditions_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'medical_conditions_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -14169,67 +14169,67 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "medical_records_appointment_id_fkey";
-            columns: ["appointment_id"];
+            foreignKeyName: 'medical_records_appointment_id_fkey';
+            columns: ['appointment_id'];
             isOneToOne: false;
-            referencedRelation: "analytics_appointments";
-            referencedColumns: ["id"];
+            referencedRelation: 'analytics_appointments';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "medical_records_appointment_id_fkey";
-            columns: ["appointment_id"];
+            foreignKeyName: 'medical_records_appointment_id_fkey';
+            columns: ['appointment_id'];
             isOneToOne: false;
-            referencedRelation: "appointments";
-            referencedColumns: ["id"];
+            referencedRelation: 'appointments';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "medical_records_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'medical_records_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "medical_records_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'medical_records_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "medical_records_patient_id_fkey";
-            columns: ["patient_id"];
+            foreignKeyName: 'medical_records_patient_id_fkey';
+            columns: ['patient_id'];
             isOneToOne: false;
-            referencedRelation: "analytics_patients";
-            referencedColumns: ["id"];
+            referencedRelation: 'analytics_patients';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "medical_records_patient_id_fkey";
-            columns: ["patient_id"];
+            foreignKeyName: 'medical_records_patient_id_fkey';
+            columns: ['patient_id'];
             isOneToOne: false;
-            referencedRelation: "patients";
-            referencedColumns: ["id"];
+            referencedRelation: 'patients';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "medical_records_provider_id_fkey";
-            columns: ["provider_id"];
+            foreignKeyName: 'medical_records_provider_id_fkey';
+            columns: ['provider_id'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "medical_records_provider_id_fkey";
-            columns: ["provider_id"];
+            foreignKeyName: 'medical_records_provider_id_fkey';
+            columns: ['provider_id'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "medical_records_provider_id_fkey";
-            columns: ["provider_id"];
+            foreignKeyName: 'medical_records_provider_id_fkey';
+            columns: ['provider_id'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -14317,18 +14317,18 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "ml_pipeline_configs_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'ml_pipeline_configs_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: true;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "ml_pipeline_configs_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'ml_pipeline_configs_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: true;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
         ];
       };
@@ -14383,32 +14383,32 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "model_ab_tests_model_a_id_fkey";
-            columns: ["model_a_id"];
+            foreignKeyName: 'model_ab_tests_model_a_id_fkey';
+            columns: ['model_a_id'];
             isOneToOne: false;
-            referencedRelation: "ai_models";
-            referencedColumns: ["id"];
+            referencedRelation: 'ai_models';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "model_ab_tests_model_a_id_fkey";
-            columns: ["model_a_id"];
+            foreignKeyName: 'model_ab_tests_model_a_id_fkey';
+            columns: ['model_a_id'];
             isOneToOne: false;
-            referencedRelation: "ml_model_performance";
-            referencedColumns: ["id"];
+            referencedRelation: 'ml_model_performance';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "model_ab_tests_model_b_id_fkey";
-            columns: ["model_b_id"];
+            foreignKeyName: 'model_ab_tests_model_b_id_fkey';
+            columns: ['model_b_id'];
             isOneToOne: false;
-            referencedRelation: "ai_models";
-            referencedColumns: ["id"];
+            referencedRelation: 'ai_models';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "model_ab_tests_model_b_id_fkey";
-            columns: ["model_b_id"];
+            foreignKeyName: 'model_ab_tests_model_b_id_fkey';
+            columns: ['model_b_id'];
             isOneToOne: false;
-            referencedRelation: "ml_model_performance";
-            referencedColumns: ["id"];
+            referencedRelation: 'ml_model_performance';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -14457,18 +14457,18 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "model_drift_monitoring_model_id_fkey";
-            columns: ["model_id"];
+            foreignKeyName: 'model_drift_monitoring_model_id_fkey';
+            columns: ['model_id'];
             isOneToOne: false;
-            referencedRelation: "ai_models";
-            referencedColumns: ["id"];
+            referencedRelation: 'ai_models';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "model_drift_monitoring_model_id_fkey";
-            columns: ["model_id"];
+            foreignKeyName: 'model_drift_monitoring_model_id_fkey';
+            columns: ['model_id'];
             isOneToOne: false;
-            referencedRelation: "ml_model_performance";
-            referencedColumns: ["id"];
+            referencedRelation: 'ml_model_performance';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -14517,18 +14517,18 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "no_show_analytics_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'no_show_analytics_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "no_show_analytics_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'no_show_analytics_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
         ];
       };
@@ -14580,39 +14580,39 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "no_show_predictions_appointment_id_fkey";
-            columns: ["appointment_id"];
+            foreignKeyName: 'no_show_predictions_appointment_id_fkey';
+            columns: ['appointment_id'];
             isOneToOne: false;
-            referencedRelation: "analytics_appointments";
-            referencedColumns: ["id"];
+            referencedRelation: 'analytics_appointments';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "no_show_predictions_appointment_id_fkey";
-            columns: ["appointment_id"];
+            foreignKeyName: 'no_show_predictions_appointment_id_fkey';
+            columns: ['appointment_id'];
             isOneToOne: false;
-            referencedRelation: "appointments";
-            referencedColumns: ["id"];
+            referencedRelation: 'appointments';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "no_show_predictions_patient_id_fkey";
-            columns: ["patient_id"];
+            foreignKeyName: 'no_show_predictions_patient_id_fkey';
+            columns: ['patient_id'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "no_show_predictions_patient_id_fkey";
-            columns: ["patient_id"];
+            foreignKeyName: 'no_show_predictions_patient_id_fkey';
+            columns: ['patient_id'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "no_show_predictions_patient_id_fkey";
-            columns: ["patient_id"];
+            foreignKeyName: 'no_show_predictions_patient_id_fkey';
+            columns: ['patient_id'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -14673,39 +14673,39 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "notification_delivery_log_alert_id_fkey";
-            columns: ["alert_id"];
+            foreignKeyName: 'notification_delivery_log_alert_id_fkey';
+            columns: ['alert_id'];
             isOneToOne: false;
-            referencedRelation: "compliance_alerts_v2";
-            referencedColumns: ["id"];
+            referencedRelation: 'compliance_alerts_v2';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "notification_delivery_log_recipient_user_id_fkey";
-            columns: ["recipient_user_id"];
+            foreignKeyName: 'notification_delivery_log_recipient_user_id_fkey';
+            columns: ['recipient_user_id'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "notification_delivery_log_recipient_user_id_fkey";
-            columns: ["recipient_user_id"];
+            foreignKeyName: 'notification_delivery_log_recipient_user_id_fkey';
+            columns: ['recipient_user_id'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "notification_delivery_log_recipient_user_id_fkey";
-            columns: ["recipient_user_id"];
+            foreignKeyName: 'notification_delivery_log_recipient_user_id_fkey';
+            columns: ['recipient_user_id'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
       notification_log: {
         Row: {
           automation_execution_id: string | null;
-          channel: GeneratedDatabase["public"]["Enums"]["notification_channel"];
+          channel: GeneratedDatabase['public']['Enums']['notification_channel'];
           created_at: string | null;
           delivered_at: string | null;
           delivery_attempts: number | null;
@@ -14728,7 +14728,7 @@ export type GeneratedDatabase = {
         };
         Insert: {
           automation_execution_id?: string | null;
-          channel: GeneratedDatabase["public"]["Enums"]["notification_channel"];
+          channel: GeneratedDatabase['public']['Enums']['notification_channel'];
           created_at?: string | null;
           delivered_at?: string | null;
           delivery_attempts?: number | null;
@@ -14751,7 +14751,7 @@ export type GeneratedDatabase = {
         };
         Update: {
           automation_execution_id?: string | null;
-          channel?: GeneratedDatabase["public"]["Enums"]["notification_channel"];
+          channel?: GeneratedDatabase['public']['Enums']['notification_channel'];
           created_at?: string | null;
           delivered_at?: string | null;
           delivery_attempts?: number | null;
@@ -14774,39 +14774,39 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "notification_log_automation_execution_id_fkey";
-            columns: ["automation_execution_id"];
+            foreignKeyName: 'notification_log_automation_execution_id_fkey';
+            columns: ['automation_execution_id'];
             isOneToOne: false;
-            referencedRelation: "automation_executions";
-            referencedColumns: ["id"];
+            referencedRelation: 'automation_executions';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "notification_log_profile_id_fkey";
-            columns: ["profile_id"];
+            foreignKeyName: 'notification_log_profile_id_fkey';
+            columns: ['profile_id'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "notification_log_profile_id_fkey";
-            columns: ["profile_id"];
+            foreignKeyName: 'notification_log_profile_id_fkey';
+            columns: ['profile_id'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "notification_log_profile_id_fkey";
-            columns: ["profile_id"];
+            foreignKeyName: 'notification_log_profile_id_fkey';
+            columns: ['profile_id'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "notification_log_template_id_fkey";
-            columns: ["template_id"];
+            foreignKeyName: 'notification_log_template_id_fkey';
+            columns: ['template_id'];
             isOneToOne: false;
-            referencedRelation: "notification_templates";
-            referencedColumns: ["id"];
+            referencedRelation: 'notification_templates';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -14879,32 +14879,32 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "notification_settings_profile_id_fkey";
-            columns: ["profile_id"];
+            foreignKeyName: 'notification_settings_profile_id_fkey';
+            columns: ['profile_id'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "notification_settings_profile_id_fkey";
-            columns: ["profile_id"];
+            foreignKeyName: 'notification_settings_profile_id_fkey';
+            columns: ['profile_id'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "notification_settings_profile_id_fkey";
-            columns: ["profile_id"];
+            foreignKeyName: 'notification_settings_profile_id_fkey';
+            columns: ['profile_id'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
       notification_templates: {
         Row: {
           body_template: string;
-          channel: GeneratedDatabase["public"]["Enums"]["notification_channel"];
+          channel: GeneratedDatabase['public']['Enums']['notification_channel'];
           channel_config: GeneratedJson | null;
           created_at: string | null;
           created_by: string | null;
@@ -14920,7 +14920,7 @@ export type GeneratedDatabase = {
         };
         Insert: {
           body_template: string;
-          channel: GeneratedDatabase["public"]["Enums"]["notification_channel"];
+          channel: GeneratedDatabase['public']['Enums']['notification_channel'];
           channel_config?: GeneratedJson | null;
           created_at?: string | null;
           created_by?: string | null;
@@ -14936,7 +14936,7 @@ export type GeneratedDatabase = {
         };
         Update: {
           body_template?: string;
-          channel?: GeneratedDatabase["public"]["Enums"]["notification_channel"];
+          channel?: GeneratedDatabase['public']['Enums']['notification_channel'];
           channel_config?: GeneratedJson | null;
           created_at?: string | null;
           created_by?: string | null;
@@ -14952,25 +14952,25 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "notification_templates_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'notification_templates_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "notification_templates_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'notification_templates_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "notification_templates_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'notification_templates_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -15037,11 +15037,11 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "oauth_app_configs_provider_id_fkey";
-            columns: ["provider_id"];
+            foreignKeyName: 'oauth_app_configs_provider_id_fkey';
+            columns: ['provider_id'];
             isOneToOne: false;
-            referencedRelation: "calendar_providers";
-            referencedColumns: ["id"];
+            referencedRelation: 'calendar_providers';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -15081,11 +15081,11 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "oauth_authorization_codes_session_id_fkey";
-            columns: ["session_id"];
+            foreignKeyName: 'oauth_authorization_codes_session_id_fkey';
+            columns: ['session_id'];
             isOneToOne: false;
-            referencedRelation: "oauth_sessions";
-            referencedColumns: ["id"];
+            referencedRelation: 'oauth_sessions';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -15152,25 +15152,25 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "oauth_sessions_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'oauth_sessions_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "oauth_sessions_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'oauth_sessions_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "oauth_sessions_provider_id_fkey";
-            columns: ["provider_id"];
+            foreignKeyName: 'oauth_sessions_provider_id_fkey';
+            columns: ['provider_id'];
             isOneToOne: false;
-            referencedRelation: "calendar_providers";
-            referencedColumns: ["id"];
+            referencedRelation: 'calendar_providers';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -15219,11 +15219,11 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "oauth_token_refresh_history_token_id_fkey";
-            columns: ["token_id"];
+            foreignKeyName: 'oauth_token_refresh_history_token_id_fkey';
+            columns: ['token_id'];
             isOneToOne: false;
-            referencedRelation: "oauth_tokens";
-            referencedColumns: ["id"];
+            referencedRelation: 'oauth_tokens';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -15290,18 +15290,18 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "oauth_tokens_connection_id_fkey";
-            columns: ["connection_id"];
+            foreignKeyName: 'oauth_tokens_connection_id_fkey';
+            columns: ['connection_id'];
             isOneToOne: false;
-            referencedRelation: "calendar_connections";
-            referencedColumns: ["id"];
+            referencedRelation: 'calendar_connections';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "oauth_tokens_session_id_fkey";
-            columns: ["session_id"];
+            foreignKeyName: 'oauth_tokens_session_id_fkey';
+            columns: ['session_id'];
             isOneToOne: false;
-            referencedRelation: "oauth_sessions";
-            referencedColumns: ["id"];
+            referencedRelation: 'oauth_sessions';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -15368,60 +15368,60 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "online_booking_settings_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'online_booking_settings_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: true;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "online_booking_settings_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'online_booking_settings_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: true;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "online_booking_settings_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'online_booking_settings_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "online_booking_settings_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'online_booking_settings_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "online_booking_settings_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'online_booking_settings_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "online_booking_settings_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'online_booking_settings_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "online_booking_settings_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'online_booking_settings_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "online_booking_settings_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'online_booking_settings_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -15509,46 +15509,46 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "online_bookings_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'online_bookings_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "online_bookings_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'online_bookings_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "online_bookings_confirmed_by_fkey";
-            columns: ["confirmed_by"];
+            foreignKeyName: 'online_bookings_confirmed_by_fkey';
+            columns: ['confirmed_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "online_bookings_confirmed_by_fkey";
-            columns: ["confirmed_by"];
+            foreignKeyName: 'online_bookings_confirmed_by_fkey';
+            columns: ['confirmed_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "online_bookings_confirmed_by_fkey";
-            columns: ["confirmed_by"];
+            foreignKeyName: 'online_bookings_confirmed_by_fkey';
+            columns: ['confirmed_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "online_bookings_professional_id_fkey";
-            columns: ["professional_id"];
+            foreignKeyName: 'online_bookings_professional_id_fkey';
+            columns: ['professional_id'];
             isOneToOne: false;
-            referencedRelation: "professionals";
-            referencedColumns: ["id"];
+            referencedRelation: 'professionals';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -15645,32 +15645,32 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "patient_analytics_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'patient_analytics_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "patient_analytics_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'patient_analytics_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "patient_analytics_patient_id_fkey";
-            columns: ["patient_id"];
+            foreignKeyName: 'patient_analytics_patient_id_fkey';
+            columns: ['patient_id'];
             isOneToOne: false;
-            referencedRelation: "analytics_patients";
-            referencedColumns: ["id"];
+            referencedRelation: 'analytics_patients';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "patient_analytics_patient_id_fkey";
-            columns: ["patient_id"];
+            foreignKeyName: 'patient_analytics_patient_id_fkey';
+            columns: ['patient_id'];
             isOneToOne: false;
-            referencedRelation: "patients";
-            referencedColumns: ["id"];
+            referencedRelation: 'patients';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -15737,53 +15737,53 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "patient_consents_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'patient_consents_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "patient_consents_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'patient_consents_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "patient_consents_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'patient_consents_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "patient_consents_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'patient_consents_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "patient_consents_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'patient_consents_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "patient_consents_patient_id_fkey";
-            columns: ["patient_id"];
+            foreignKeyName: 'patient_consents_patient_id_fkey';
+            columns: ['patient_id'];
             isOneToOne: false;
-            referencedRelation: "analytics_patients";
-            referencedColumns: ["id"];
+            referencedRelation: 'analytics_patients';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "patient_consents_patient_id_fkey";
-            columns: ["patient_id"];
+            foreignKeyName: 'patient_consents_patient_id_fkey';
+            columns: ['patient_id'];
             isOneToOne: false;
-            referencedRelation: "patients";
-            referencedColumns: ["id"];
+            referencedRelation: 'patients';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -15871,32 +15871,32 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "patient_documents_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'patient_documents_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "patient_documents_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'patient_documents_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "patient_documents_consent_id_fkey";
-            columns: ["consent_id"];
+            foreignKeyName: 'patient_documents_consent_id_fkey';
+            columns: ['consent_id'];
             isOneToOne: false;
-            referencedRelation: "consent_records";
-            referencedColumns: ["id"];
+            referencedRelation: 'consent_records';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "patient_documents_upload_id_fkey";
-            columns: ["upload_id"];
+            foreignKeyName: 'patient_documents_upload_id_fkey';
+            columns: ['upload_id'];
             isOneToOne: false;
-            referencedRelation: "patient_uploads";
-            referencedColumns: ["id"];
+            referencedRelation: 'patient_uploads';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -15909,7 +15909,7 @@ export type GeneratedDatabase = {
           engagement_score: number;
           event_data: GeneratedJson;
           event_timestamp: string;
-          event_type: GeneratedDatabase["public"]["Enums"]["engagement_event_type"];
+          event_type: GeneratedDatabase['public']['Enums']['engagement_event_type'];
           id: string;
           interaction_duration: number | null;
           patient_id: string;
@@ -15925,7 +15925,7 @@ export type GeneratedDatabase = {
           engagement_score?: number;
           event_data?: GeneratedJson;
           event_timestamp?: string;
-          event_type: GeneratedDatabase["public"]["Enums"]["engagement_event_type"];
+          event_type: GeneratedDatabase['public']['Enums']['engagement_event_type'];
           id?: string;
           interaction_duration?: number | null;
           patient_id: string;
@@ -15941,7 +15941,7 @@ export type GeneratedDatabase = {
           engagement_score?: number;
           event_data?: GeneratedJson;
           event_timestamp?: string;
-          event_type?: GeneratedDatabase["public"]["Enums"]["engagement_event_type"];
+          event_type?: GeneratedDatabase['public']['Enums']['engagement_event_type'];
           id?: string;
           interaction_duration?: number | null;
           patient_id?: string;
@@ -15951,39 +15951,39 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "patient_engagement_logs_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'patient_engagement_logs_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "patient_engagement_logs_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'patient_engagement_logs_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "patient_engagement_logs_patient_id_fkey";
-            columns: ["patient_id"];
+            foreignKeyName: 'patient_engagement_logs_patient_id_fkey';
+            columns: ['patient_id'];
             isOneToOne: false;
-            referencedRelation: "analytics_patients";
-            referencedColumns: ["id"];
+            referencedRelation: 'analytics_patients';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "patient_engagement_logs_patient_id_fkey";
-            columns: ["patient_id"];
+            foreignKeyName: 'patient_engagement_logs_patient_id_fkey';
+            columns: ['patient_id'];
             isOneToOne: false;
-            referencedRelation: "patients";
-            referencedColumns: ["id"];
+            referencedRelation: 'patients';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "patient_engagement_logs_strategy_execution_id_fkey";
-            columns: ["strategy_execution_id"];
+            foreignKeyName: 'patient_engagement_logs_strategy_execution_id_fkey';
+            columns: ['strategy_execution_id'];
             isOneToOne: false;
-            referencedRelation: "strategy_executions";
-            referencedColumns: ["id"];
+            referencedRelation: 'strategy_executions';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -16047,60 +16047,60 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "patient_evaluations_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'patient_evaluations_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "patient_evaluations_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'patient_evaluations_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "patient_evaluations_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'patient_evaluations_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "patient_evaluations_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'patient_evaluations_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "patient_evaluations_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'patient_evaluations_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "patient_evaluations_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'patient_evaluations_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "patient_evaluations_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'patient_evaluations_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "patient_evaluations_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'patient_evaluations_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -16140,53 +16140,53 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "patient_file_permissions_granted_by_fkey";
-            columns: ["granted_by"];
+            foreignKeyName: 'patient_file_permissions_granted_by_fkey';
+            columns: ['granted_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "patient_file_permissions_granted_by_fkey";
-            columns: ["granted_by"];
+            foreignKeyName: 'patient_file_permissions_granted_by_fkey';
+            columns: ['granted_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "patient_file_permissions_granted_by_fkey";
-            columns: ["granted_by"];
+            foreignKeyName: 'patient_file_permissions_granted_by_fkey';
+            columns: ['granted_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "patient_file_permissions_granted_to_fkey";
-            columns: ["granted_to"];
+            foreignKeyName: 'patient_file_permissions_granted_to_fkey';
+            columns: ['granted_to'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "patient_file_permissions_granted_to_fkey";
-            columns: ["granted_to"];
+            foreignKeyName: 'patient_file_permissions_granted_to_fkey';
+            columns: ['granted_to'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "patient_file_permissions_granted_to_fkey";
-            columns: ["granted_to"];
+            foreignKeyName: 'patient_file_permissions_granted_to_fkey';
+            columns: ['granted_to'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "patient_file_permissions_upload_id_fkey";
-            columns: ["upload_id"];
+            foreignKeyName: 'patient_file_permissions_upload_id_fkey';
+            columns: ['upload_id'];
             isOneToOne: false;
-            referencedRelation: "patient_uploads";
-            referencedColumns: ["id"];
+            referencedRelation: 'patient_uploads';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -16226,39 +16226,39 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "patient_portal_sessions_access_granted_by_fkey";
-            columns: ["access_granted_by"];
+            foreignKeyName: 'patient_portal_sessions_access_granted_by_fkey';
+            columns: ['access_granted_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "patient_portal_sessions_access_granted_by_fkey";
-            columns: ["access_granted_by"];
+            foreignKeyName: 'patient_portal_sessions_access_granted_by_fkey';
+            columns: ['access_granted_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "patient_portal_sessions_access_granted_by_fkey";
-            columns: ["access_granted_by"];
+            foreignKeyName: 'patient_portal_sessions_access_granted_by_fkey';
+            columns: ['access_granted_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "patient_portal_sessions_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'patient_portal_sessions_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "patient_portal_sessions_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'patient_portal_sessions_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
         ];
       };
@@ -16322,60 +16322,60 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "patient_portal_settings_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'patient_portal_settings_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: true;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "patient_portal_settings_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'patient_portal_settings_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: true;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "patient_portal_settings_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'patient_portal_settings_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "patient_portal_settings_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'patient_portal_settings_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "patient_portal_settings_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'patient_portal_settings_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "patient_portal_settings_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'patient_portal_settings_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "patient_portal_settings_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'patient_portal_settings_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "patient_portal_settings_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'patient_portal_settings_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -16445,18 +16445,18 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "patient_segments_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'patient_segments_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "patient_segments_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'patient_segments_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
         ];
       };
@@ -16520,39 +16520,39 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "patient_uploads_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'patient_uploads_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "patient_uploads_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'patient_uploads_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "patient_uploads_processed_by_fkey";
-            columns: ["processed_by"];
+            foreignKeyName: 'patient_uploads_processed_by_fkey';
+            columns: ['processed_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "patient_uploads_processed_by_fkey";
-            columns: ["processed_by"];
+            foreignKeyName: 'patient_uploads_processed_by_fkey';
+            columns: ['processed_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "patient_uploads_processed_by_fkey";
-            columns: ["processed_by"];
+            foreignKeyName: 'patient_uploads_processed_by_fkey';
+            columns: ['processed_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -16757,60 +16757,60 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "patients_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'patients_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "patients_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'patients_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "patients_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'patients_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "patients_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'patients_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "patients_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'patients_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "patients_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'patients_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "patients_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'patients_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "patients_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'patients_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -16859,18 +16859,18 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "payment_analytics_cache_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'payment_analytics_cache_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "payment_analytics_cache_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'payment_analytics_cache_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
         ];
       };
@@ -16955,18 +16955,18 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "payment_analytics_snapshots_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'payment_analytics_snapshots_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "payment_analytics_snapshots_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'payment_analytics_snapshots_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
         ];
       };
@@ -17048,18 +17048,18 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "payment_business_insights_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'payment_business_insights_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "payment_business_insights_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'payment_business_insights_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
         ];
       };
@@ -17129,32 +17129,32 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "payment_failures_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'payment_failures_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "payment_failures_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'payment_failures_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "payment_failures_transaction_id_fkey";
-            columns: ["transaction_id"];
+            foreignKeyName: 'payment_failures_transaction_id_fkey';
+            columns: ['transaction_id'];
             isOneToOne: false;
-            referencedRelation: "analytics_financial";
-            referencedColumns: ["id"];
+            referencedRelation: 'analytics_financial';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "payment_failures_transaction_id_fkey";
-            columns: ["transaction_id"];
+            foreignKeyName: 'payment_failures_transaction_id_fkey';
+            columns: ['transaction_id'];
             isOneToOne: false;
-            referencedRelation: "payment_transactions";
-            referencedColumns: ["id"];
+            referencedRelation: 'payment_transactions';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -17212,18 +17212,18 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "payment_gateways_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'payment_gateways_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "payment_gateways_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'payment_gateways_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
         ];
       };
@@ -17284,25 +17284,25 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "payment_kpi_values_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'payment_kpi_values_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "payment_kpi_values_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'payment_kpi_values_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "payment_kpi_values_kpi_id_fkey";
-            columns: ["kpi_id"];
+            foreignKeyName: 'payment_kpi_values_kpi_id_fkey';
+            columns: ['kpi_id'];
             isOneToOne: false;
-            referencedRelation: "payment_kpis";
-            referencedColumns: ["id"];
+            referencedRelation: 'payment_kpis';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -17375,18 +17375,18 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "payment_kpis_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'payment_kpis_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "payment_kpis_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'payment_kpis_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
         ];
       };
@@ -17438,18 +17438,18 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "payment_methods_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'payment_methods_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "payment_methods_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'payment_methods_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
         ];
       };
@@ -17507,18 +17507,18 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "payment_monitoring_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'payment_monitoring_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "payment_monitoring_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'payment_monitoring_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
         ];
       };
@@ -17576,32 +17576,32 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "payment_receipts_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'payment_receipts_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "payment_receipts_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'payment_receipts_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "payment_receipts_transaction_id_fkey";
-            columns: ["transaction_id"];
+            foreignKeyName: 'payment_receipts_transaction_id_fkey';
+            columns: ['transaction_id'];
             isOneToOne: false;
-            referencedRelation: "analytics_financial";
-            referencedColumns: ["id"];
+            referencedRelation: 'analytics_financial';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "payment_receipts_transaction_id_fkey";
-            columns: ["transaction_id"];
+            foreignKeyName: 'payment_receipts_transaction_id_fkey';
+            columns: ['transaction_id'];
             isOneToOne: false;
-            referencedRelation: "payment_transactions";
-            referencedColumns: ["id"];
+            referencedRelation: 'payment_transactions';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -17713,46 +17713,46 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "payment_reconciliations_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'payment_reconciliations_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "payment_reconciliations_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'payment_reconciliations_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "payment_reconciliations_gateway_id_fkey";
-            columns: ["gateway_id"];
+            foreignKeyName: 'payment_reconciliations_gateway_id_fkey';
+            columns: ['gateway_id'];
             isOneToOne: false;
-            referencedRelation: "payment_gateways";
-            referencedColumns: ["id"];
+            referencedRelation: 'payment_gateways';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "payment_reconciliations_processed_by_fkey";
-            columns: ["processed_by"];
+            foreignKeyName: 'payment_reconciliations_processed_by_fkey';
+            columns: ['processed_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "payment_reconciliations_processed_by_fkey";
-            columns: ["processed_by"];
+            foreignKeyName: 'payment_reconciliations_processed_by_fkey';
+            columns: ['processed_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "payment_reconciliations_processed_by_fkey";
-            columns: ["processed_by"];
+            foreignKeyName: 'payment_reconciliations_processed_by_fkey';
+            columns: ['processed_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -17831,18 +17831,18 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "payment_reports_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'payment_reports_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "payment_reports_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'payment_reports_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
         ];
       };
@@ -17909,18 +17909,18 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "payment_routing_rules_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'payment_routing_rules_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "payment_routing_rules_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'payment_routing_rules_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
         ];
       };
@@ -17993,32 +17993,32 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "payment_splits_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'payment_splits_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "payment_splits_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'payment_splits_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "payment_splits_transaction_id_fkey";
-            columns: ["transaction_id"];
+            foreignKeyName: 'payment_splits_transaction_id_fkey';
+            columns: ['transaction_id'];
             isOneToOne: false;
-            referencedRelation: "analytics_financial";
-            referencedColumns: ["id"];
+            referencedRelation: 'analytics_financial';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "payment_splits_transaction_id_fkey";
-            columns: ["transaction_id"];
+            foreignKeyName: 'payment_splits_transaction_id_fkey';
+            columns: ['transaction_id'];
             isOneToOne: false;
-            referencedRelation: "payment_transactions";
-            referencedColumns: ["id"];
+            referencedRelation: 'payment_transactions';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -18073,32 +18073,32 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "payment_tax_calculations_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'payment_tax_calculations_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "payment_tax_calculations_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'payment_tax_calculations_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "payment_tax_calculations_transaction_id_fkey";
-            columns: ["transaction_id"];
+            foreignKeyName: 'payment_tax_calculations_transaction_id_fkey';
+            columns: ['transaction_id'];
             isOneToOne: false;
-            referencedRelation: "analytics_financial";
-            referencedColumns: ["id"];
+            referencedRelation: 'analytics_financial';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "payment_tax_calculations_transaction_id_fkey";
-            columns: ["transaction_id"];
+            foreignKeyName: 'payment_tax_calculations_transaction_id_fkey';
+            columns: ['transaction_id'];
             isOneToOne: false;
-            referencedRelation: "payment_transactions";
-            referencedColumns: ["id"];
+            referencedRelation: 'payment_transactions';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -18141,18 +18141,18 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "payment_transaction_events_transaction_id_fkey";
-            columns: ["transaction_id"];
+            foreignKeyName: 'payment_transaction_events_transaction_id_fkey';
+            columns: ['transaction_id'];
             isOneToOne: false;
-            referencedRelation: "analytics_financial";
-            referencedColumns: ["id"];
+            referencedRelation: 'analytics_financial';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "payment_transaction_events_transaction_id_fkey";
-            columns: ["transaction_id"];
+            foreignKeyName: 'payment_transaction_events_transaction_id_fkey';
+            columns: ['transaction_id'];
             isOneToOne: false;
-            referencedRelation: "payment_transactions";
-            referencedColumns: ["id"];
+            referencedRelation: 'payment_transactions';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -18264,39 +18264,39 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "payment_transactions_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'payment_transactions_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "payment_transactions_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'payment_transactions_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "payment_transactions_gateway_id_fkey";
-            columns: ["gateway_id"];
+            foreignKeyName: 'payment_transactions_gateway_id_fkey';
+            columns: ['gateway_id'];
             isOneToOne: false;
-            referencedRelation: "payment_gateways";
-            referencedColumns: ["id"];
+            referencedRelation: 'payment_gateways';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "payment_transactions_patient_id_fkey";
-            columns: ["patient_id"];
+            foreignKeyName: 'payment_transactions_patient_id_fkey';
+            columns: ['patient_id'];
             isOneToOne: false;
-            referencedRelation: "customers";
-            referencedColumns: ["id"];
+            referencedRelation: 'customers';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "payment_transactions_payment_method_id_fkey";
-            columns: ["payment_method_id"];
+            foreignKeyName: 'payment_transactions_payment_method_id_fkey';
+            columns: ['payment_method_id'];
             isOneToOne: false;
-            referencedRelation: "payment_methods";
-            referencedColumns: ["id"];
+            referencedRelation: 'payment_methods';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -18432,60 +18432,60 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "prescriptions_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'prescriptions_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "prescriptions_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'prescriptions_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "prescriptions_medical_record_id_fkey";
-            columns: ["medical_record_id"];
+            foreignKeyName: 'prescriptions_medical_record_id_fkey';
+            columns: ['medical_record_id'];
             isOneToOne: false;
-            referencedRelation: "medical_records";
-            referencedColumns: ["id"];
+            referencedRelation: 'medical_records';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "prescriptions_patient_id_fkey";
-            columns: ["patient_id"];
+            foreignKeyName: 'prescriptions_patient_id_fkey';
+            columns: ['patient_id'];
             isOneToOne: false;
-            referencedRelation: "analytics_patients";
-            referencedColumns: ["id"];
+            referencedRelation: 'analytics_patients';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "prescriptions_patient_id_fkey";
-            columns: ["patient_id"];
+            foreignKeyName: 'prescriptions_patient_id_fkey';
+            columns: ['patient_id'];
             isOneToOne: false;
-            referencedRelation: "patients";
-            referencedColumns: ["id"];
+            referencedRelation: 'patients';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "prescriptions_provider_id_fkey";
-            columns: ["provider_id"];
+            foreignKeyName: 'prescriptions_provider_id_fkey';
+            columns: ['provider_id'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "prescriptions_provider_id_fkey";
-            columns: ["provider_id"];
+            foreignKeyName: 'prescriptions_provider_id_fkey';
+            columns: ['provider_id'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "prescriptions_provider_id_fkey";
-            columns: ["provider_id"];
+            foreignKeyName: 'prescriptions_provider_id_fkey';
+            columns: ['provider_id'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -18561,18 +18561,18 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "pricing_rules_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'pricing_rules_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "pricing_rules_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'pricing_rules_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
         ];
       };
@@ -18630,25 +18630,25 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "pricing_strategies_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'pricing_strategies_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "pricing_strategies_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'pricing_strategies_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "pricing_strategies_service_id_fkey";
-            columns: ["service_id"];
+            foreignKeyName: 'pricing_strategies_service_id_fkey';
+            columns: ['service_id'];
             isOneToOne: false;
-            referencedRelation: "service_types";
-            referencedColumns: ["id"];
+            referencedRelation: 'service_types';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -18781,18 +18781,18 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "procedure_incidents_step_id_fkey";
-            columns: ["step_id"];
+            foreignKeyName: 'procedure_incidents_step_id_fkey';
+            columns: ['step_id'];
             isOneToOne: false;
-            referencedRelation: "procedure_steps";
-            referencedColumns: ["id"];
+            referencedRelation: 'procedure_steps';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "procedure_incidents_tracking_id_fkey";
-            columns: ["tracking_id"];
+            foreignKeyName: 'procedure_incidents_tracking_id_fkey';
+            columns: ['tracking_id'];
             isOneToOne: false;
-            referencedRelation: "procedure_tracking";
-            referencedColumns: ["id"];
+            referencedRelation: 'procedure_tracking';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -18868,11 +18868,11 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "procedure_steps_tracking_id_fkey";
-            columns: ["tracking_id"];
+            foreignKeyName: 'procedure_steps_tracking_id_fkey';
+            columns: ['tracking_id'];
             isOneToOne: false;
-            referencedRelation: "procedure_tracking";
-            referencedColumns: ["id"];
+            referencedRelation: 'procedure_tracking';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -19092,95 +19092,95 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "procedures_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'procedures_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "procedures_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'procedures_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "procedures_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'procedures_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "procedures_patient_id_fkey";
-            columns: ["patient_id"];
+            foreignKeyName: 'procedures_patient_id_fkey';
+            columns: ['patient_id'];
             isOneToOne: false;
-            referencedRelation: "analytics_patients";
-            referencedColumns: ["id"];
+            referencedRelation: 'analytics_patients';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "procedures_patient_id_fkey";
-            columns: ["patient_id"];
+            foreignKeyName: 'procedures_patient_id_fkey';
+            columns: ['patient_id'];
             isOneToOne: false;
-            referencedRelation: "patients";
-            referencedColumns: ["id"];
+            referencedRelation: 'patients';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "procedures_provider_id_fkey";
-            columns: ["provider_id"];
+            foreignKeyName: 'procedures_provider_id_fkey';
+            columns: ['provider_id'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "procedures_provider_id_fkey";
-            columns: ["provider_id"];
+            foreignKeyName: 'procedures_provider_id_fkey';
+            columns: ['provider_id'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "procedures_provider_id_fkey";
-            columns: ["provider_id"];
+            foreignKeyName: 'procedures_provider_id_fkey';
+            columns: ['provider_id'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "procedures_treatment_plan_id_fkey";
-            columns: ["treatment_plan_id"];
+            foreignKeyName: 'procedures_treatment_plan_id_fkey';
+            columns: ['treatment_plan_id'];
             isOneToOne: false;
-            referencedRelation: "analytics_treatment_plans";
-            referencedColumns: ["id"];
+            referencedRelation: 'analytics_treatment_plans';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "procedures_treatment_plan_id_fkey";
-            columns: ["treatment_plan_id"];
+            foreignKeyName: 'procedures_treatment_plan_id_fkey';
+            columns: ['treatment_plan_id'];
             isOneToOne: false;
-            referencedRelation: "treatment_plans";
-            referencedColumns: ["id"];
+            referencedRelation: 'treatment_plans';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "procedures_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'procedures_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "procedures_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'procedures_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "procedures_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'procedures_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -19232,11 +19232,11 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "products_tenant_id_fkey";
-            columns: ["tenant_id"];
+            foreignKeyName: 'products_tenant_id_fkey';
+            columns: ['tenant_id'];
             isOneToOne: false;
-            referencedRelation: "tenants";
-            referencedColumns: ["id"];
+            referencedRelation: 'tenants';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -19245,7 +19245,7 @@ export type GeneratedDatabase = {
           action_performed: string;
           assessment_id: string | null;
           audit_date: string;
-          audit_type: GeneratedDatabase["public"]["Enums"]["audit_type"];
+          audit_type: GeneratedDatabase['public']['Enums']['audit_type'];
           auditor_id: string;
           certification_id: string | null;
           changes_summary: string | null;
@@ -19270,7 +19270,7 @@ export type GeneratedDatabase = {
           action_performed: string;
           assessment_id?: string | null;
           audit_date?: string;
-          audit_type: GeneratedDatabase["public"]["Enums"]["audit_type"];
+          audit_type: GeneratedDatabase['public']['Enums']['audit_type'];
           auditor_id: string;
           certification_id?: string | null;
           changes_summary?: string | null;
@@ -19295,7 +19295,7 @@ export type GeneratedDatabase = {
           action_performed?: string;
           assessment_id?: string | null;
           audit_date?: string;
-          audit_type?: GeneratedDatabase["public"]["Enums"]["audit_type"];
+          audit_type?: GeneratedDatabase['public']['Enums']['audit_type'];
           auditor_id?: string;
           certification_id?: string | null;
           changes_summary?: string | null;
@@ -19318,67 +19318,67 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "professional_audit_log_assessment_id_fkey";
-            columns: ["assessment_id"];
+            foreignKeyName: 'professional_audit_log_assessment_id_fkey';
+            columns: ['assessment_id'];
             isOneToOne: false;
-            referencedRelation: "professional_compliance_assessments";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_compliance_assessments';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "professional_audit_log_auditor_id_fkey";
-            columns: ["auditor_id"];
+            foreignKeyName: 'professional_audit_log_auditor_id_fkey';
+            columns: ['auditor_id'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "professional_audit_log_auditor_id_fkey";
-            columns: ["auditor_id"];
+            foreignKeyName: 'professional_audit_log_auditor_id_fkey';
+            columns: ['auditor_id'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "professional_audit_log_auditor_id_fkey";
-            columns: ["auditor_id"];
+            foreignKeyName: 'professional_audit_log_auditor_id_fkey';
+            columns: ['auditor_id'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "professional_audit_log_certification_id_fkey";
-            columns: ["certification_id"];
+            foreignKeyName: 'professional_audit_log_certification_id_fkey';
+            columns: ['certification_id'];
             isOneToOne: false;
-            referencedRelation: "professional_certifications";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_certifications';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "professional_audit_log_profile_id_fkey";
-            columns: ["profile_id"];
+            foreignKeyName: 'professional_audit_log_profile_id_fkey';
+            columns: ['profile_id'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "professional_audit_log_profile_id_fkey";
-            columns: ["profile_id"];
+            foreignKeyName: 'professional_audit_log_profile_id_fkey';
+            columns: ['profile_id'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "professional_audit_log_profile_id_fkey";
-            columns: ["profile_id"];
+            foreignKeyName: 'professional_audit_log_profile_id_fkey';
+            columns: ['profile_id'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "professional_audit_log_registration_id_fkey";
-            columns: ["registration_id"];
+            foreignKeyName: 'professional_audit_log_registration_id_fkey';
+            columns: ['registration_id'];
             isOneToOne: false;
-            referencedRelation: "professional_registrations";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_registrations';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -19427,11 +19427,11 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "fk_professional_availability_professional";
-            columns: ["professional_id"];
+            foreignKeyName: 'fk_professional_availability_professional';
+            columns: ['professional_id'];
             isOneToOne: false;
-            referencedRelation: "professionals";
-            referencedColumns: ["id"];
+            referencedRelation: 'professionals';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -19440,7 +19440,8 @@ export type GeneratedDatabase = {
           certificate_url: string | null;
           certification_name: string;
           certification_number: string | null;
-          certification_type: GeneratedDatabase["public"]["Enums"]["professional_certification_type"];
+          certification_type:
+            GeneratedDatabase['public']['Enums']['professional_certification_type'];
           continuing_education: boolean | null;
           created_at: string | null;
           created_by: string;
@@ -19462,7 +19463,8 @@ export type GeneratedDatabase = {
           certificate_url?: string | null;
           certification_name: string;
           certification_number?: string | null;
-          certification_type: GeneratedDatabase["public"]["Enums"]["professional_certification_type"];
+          certification_type:
+            GeneratedDatabase['public']['Enums']['professional_certification_type'];
           continuing_education?: boolean | null;
           created_at?: string | null;
           created_by: string;
@@ -19484,7 +19486,8 @@ export type GeneratedDatabase = {
           certificate_url?: string | null;
           certification_name?: string;
           certification_number?: string | null;
-          certification_type?: GeneratedDatabase["public"]["Enums"]["professional_certification_type"];
+          certification_type?:
+            GeneratedDatabase['public']['Enums']['professional_certification_type'];
           continuing_education?: boolean | null;
           created_at?: string | null;
           created_by?: string;
@@ -19504,67 +19507,67 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "professional_certifications_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'professional_certifications_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "professional_certifications_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'professional_certifications_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "professional_certifications_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'professional_certifications_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "professional_certifications_profile_id_fkey";
-            columns: ["profile_id"];
+            foreignKeyName: 'professional_certifications_profile_id_fkey';
+            columns: ['profile_id'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "professional_certifications_profile_id_fkey";
-            columns: ["profile_id"];
+            foreignKeyName: 'professional_certifications_profile_id_fkey';
+            columns: ['profile_id'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "professional_certifications_profile_id_fkey";
-            columns: ["profile_id"];
+            foreignKeyName: 'professional_certifications_profile_id_fkey';
+            columns: ['profile_id'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "professional_certifications_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'professional_certifications_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "professional_certifications_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'professional_certifications_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "professional_certifications_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'professional_certifications_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -19637,88 +19640,88 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "professional_compliance_alerts_assessment_id_fkey";
-            columns: ["assessment_id"];
+            foreignKeyName: 'professional_compliance_alerts_assessment_id_fkey';
+            columns: ['assessment_id'];
             isOneToOne: false;
-            referencedRelation: "professional_compliance_assessments";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_compliance_assessments';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "professional_compliance_alerts_certification_id_fkey";
-            columns: ["certification_id"];
+            foreignKeyName: 'professional_compliance_alerts_certification_id_fkey';
+            columns: ['certification_id'];
             isOneToOne: false;
-            referencedRelation: "professional_certifications";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_certifications';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "professional_compliance_alerts_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'professional_compliance_alerts_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "professional_compliance_alerts_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'professional_compliance_alerts_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "professional_compliance_alerts_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'professional_compliance_alerts_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "professional_compliance_alerts_profile_id_fkey";
-            columns: ["profile_id"];
+            foreignKeyName: 'professional_compliance_alerts_profile_id_fkey';
+            columns: ['profile_id'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "professional_compliance_alerts_profile_id_fkey";
-            columns: ["profile_id"];
+            foreignKeyName: 'professional_compliance_alerts_profile_id_fkey';
+            columns: ['profile_id'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "professional_compliance_alerts_profile_id_fkey";
-            columns: ["profile_id"];
+            foreignKeyName: 'professional_compliance_alerts_profile_id_fkey';
+            columns: ['profile_id'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "professional_compliance_alerts_registration_id_fkey";
-            columns: ["registration_id"];
+            foreignKeyName: 'professional_compliance_alerts_registration_id_fkey';
+            columns: ['registration_id'];
             isOneToOne: false;
-            referencedRelation: "professional_registrations";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_registrations';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "professional_compliance_alerts_resolved_by_fkey";
-            columns: ["resolved_by"];
+            foreignKeyName: 'professional_compliance_alerts_resolved_by_fkey';
+            columns: ['resolved_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "professional_compliance_alerts_resolved_by_fkey";
-            columns: ["resolved_by"];
+            foreignKeyName: 'professional_compliance_alerts_resolved_by_fkey';
+            columns: ['resolved_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "professional_compliance_alerts_resolved_by_fkey";
-            columns: ["resolved_by"];
+            foreignKeyName: 'professional_compliance_alerts_resolved_by_fkey';
+            columns: ['resolved_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -19729,27 +19732,27 @@ export type GeneratedDatabase = {
           assessment_type: string;
           assessor_id: string;
           certifications_status:
-            | GeneratedDatabase["public"]["Enums"]["compliance_status"]
+            | GeneratedDatabase['public']['Enums']['compliance_status']
             | null;
           compliance_score: number | null;
           corrective_actions_required: string[] | null;
           created_at: string | null;
           created_by: string;
           credentials_status:
-            | GeneratedDatabase["public"]["Enums"]["compliance_status"]
+            | GeneratedDatabase['public']['Enums']['compliance_status']
             | null;
           documentation_status:
-            | GeneratedDatabase["public"]["Enums"]["compliance_status"]
+            | GeneratedDatabase['public']['Enums']['compliance_status']
             | null;
           follow_up_required: boolean | null;
           id: string;
           next_review_date: string | null;
           non_compliance_issues: GeneratedJson | null;
-          overall_status: GeneratedDatabase["public"]["Enums"]["compliance_status"];
+          overall_status: GeneratedDatabase['public']['Enums']['compliance_status'];
           profile_id: string;
           recommendations: string[] | null;
           regulatory_status:
-            | GeneratedDatabase["public"]["Enums"]["compliance_status"]
+            | GeneratedDatabase['public']['Enums']['compliance_status']
             | null;
           resolution_deadline: string | null;
           supporting_documents: string[] | null;
@@ -19761,27 +19764,27 @@ export type GeneratedDatabase = {
           assessment_type: string;
           assessor_id: string;
           certifications_status?:
-            | GeneratedDatabase["public"]["Enums"]["compliance_status"]
+            | GeneratedDatabase['public']['Enums']['compliance_status']
             | null;
           compliance_score?: number | null;
           corrective_actions_required?: string[] | null;
           created_at?: string | null;
           created_by: string;
           credentials_status?:
-            | GeneratedDatabase["public"]["Enums"]["compliance_status"]
+            | GeneratedDatabase['public']['Enums']['compliance_status']
             | null;
           documentation_status?:
-            | GeneratedDatabase["public"]["Enums"]["compliance_status"]
+            | GeneratedDatabase['public']['Enums']['compliance_status']
             | null;
           follow_up_required?: boolean | null;
           id?: string;
           next_review_date?: string | null;
           non_compliance_issues?: GeneratedJson | null;
-          overall_status?: GeneratedDatabase["public"]["Enums"]["compliance_status"];
+          overall_status?: GeneratedDatabase['public']['Enums']['compliance_status'];
           profile_id: string;
           recommendations?: string[] | null;
           regulatory_status?:
-            | GeneratedDatabase["public"]["Enums"]["compliance_status"]
+            | GeneratedDatabase['public']['Enums']['compliance_status']
             | null;
           resolution_deadline?: string | null;
           supporting_documents?: string[] | null;
@@ -19793,27 +19796,27 @@ export type GeneratedDatabase = {
           assessment_type?: string;
           assessor_id?: string;
           certifications_status?:
-            | GeneratedDatabase["public"]["Enums"]["compliance_status"]
+            | GeneratedDatabase['public']['Enums']['compliance_status']
             | null;
           compliance_score?: number | null;
           corrective_actions_required?: string[] | null;
           created_at?: string | null;
           created_by?: string;
           credentials_status?:
-            | GeneratedDatabase["public"]["Enums"]["compliance_status"]
+            | GeneratedDatabase['public']['Enums']['compliance_status']
             | null;
           documentation_status?:
-            | GeneratedDatabase["public"]["Enums"]["compliance_status"]
+            | GeneratedDatabase['public']['Enums']['compliance_status']
             | null;
           follow_up_required?: boolean | null;
           id?: string;
           next_review_date?: string | null;
           non_compliance_issues?: GeneratedJson | null;
-          overall_status?: GeneratedDatabase["public"]["Enums"]["compliance_status"];
+          overall_status?: GeneratedDatabase['public']['Enums']['compliance_status'];
           profile_id?: string;
           recommendations?: string[] | null;
           regulatory_status?:
-            | GeneratedDatabase["public"]["Enums"]["compliance_status"]
+            | GeneratedDatabase['public']['Enums']['compliance_status']
             | null;
           resolution_deadline?: string | null;
           supporting_documents?: string[] | null;
@@ -19821,67 +19824,67 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "professional_compliance_assessments_assessor_id_fkey";
-            columns: ["assessor_id"];
+            foreignKeyName: 'professional_compliance_assessments_assessor_id_fkey';
+            columns: ['assessor_id'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "professional_compliance_assessments_assessor_id_fkey";
-            columns: ["assessor_id"];
+            foreignKeyName: 'professional_compliance_assessments_assessor_id_fkey';
+            columns: ['assessor_id'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "professional_compliance_assessments_assessor_id_fkey";
-            columns: ["assessor_id"];
+            foreignKeyName: 'professional_compliance_assessments_assessor_id_fkey';
+            columns: ['assessor_id'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "professional_compliance_assessments_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'professional_compliance_assessments_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "professional_compliance_assessments_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'professional_compliance_assessments_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "professional_compliance_assessments_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'professional_compliance_assessments_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "professional_compliance_assessments_profile_id_fkey";
-            columns: ["profile_id"];
+            foreignKeyName: 'professional_compliance_assessments_profile_id_fkey';
+            columns: ['profile_id'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "professional_compliance_assessments_profile_id_fkey";
-            columns: ["profile_id"];
+            foreignKeyName: 'professional_compliance_assessments_profile_id_fkey';
+            columns: ['profile_id'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "professional_compliance_assessments_profile_id_fkey";
-            columns: ["profile_id"];
+            foreignKeyName: 'professional_compliance_assessments_profile_id_fkey';
+            columns: ['profile_id'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -19902,7 +19905,7 @@ export type GeneratedDatabase = {
           notes: string | null;
           profile_id: string;
           registration_number: string;
-          registration_type: GeneratedDatabase["public"]["Enums"]["professional_registration_type"];
+          registration_type: GeneratedDatabase['public']['Enums']['professional_registration_type'];
           renewal_date: string | null;
           specialty: string | null;
           state_code: string | null;
@@ -19931,7 +19934,7 @@ export type GeneratedDatabase = {
           notes?: string | null;
           profile_id: string;
           registration_number: string;
-          registration_type: GeneratedDatabase["public"]["Enums"]["professional_registration_type"];
+          registration_type: GeneratedDatabase['public']['Enums']['professional_registration_type'];
           renewal_date?: string | null;
           specialty?: string | null;
           state_code?: string | null;
@@ -19960,7 +19963,8 @@ export type GeneratedDatabase = {
           notes?: string | null;
           profile_id?: string;
           registration_number?: string;
-          registration_type?: GeneratedDatabase["public"]["Enums"]["professional_registration_type"];
+          registration_type?:
+            GeneratedDatabase['public']['Enums']['professional_registration_type'];
           renewal_date?: string | null;
           specialty?: string | null;
           state_code?: string | null;
@@ -19975,88 +19979,88 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "professional_registrations_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'professional_registrations_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "professional_registrations_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'professional_registrations_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "professional_registrations_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'professional_registrations_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "professional_registrations_profile_id_fkey";
-            columns: ["profile_id"];
+            foreignKeyName: 'professional_registrations_profile_id_fkey';
+            columns: ['profile_id'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "professional_registrations_profile_id_fkey";
-            columns: ["profile_id"];
+            foreignKeyName: 'professional_registrations_profile_id_fkey';
+            columns: ['profile_id'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "professional_registrations_profile_id_fkey";
-            columns: ["profile_id"];
+            foreignKeyName: 'professional_registrations_profile_id_fkey';
+            columns: ['profile_id'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "professional_registrations_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'professional_registrations_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "professional_registrations_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'professional_registrations_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "professional_registrations_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'professional_registrations_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "professional_registrations_verified_by_fkey";
-            columns: ["verified_by"];
+            foreignKeyName: 'professional_registrations_verified_by_fkey';
+            columns: ['verified_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "professional_registrations_verified_by_fkey";
-            columns: ["verified_by"];
+            foreignKeyName: 'professional_registrations_verified_by_fkey';
+            columns: ['verified_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "professional_registrations_verified_by_fkey";
-            columns: ["verified_by"];
+            foreignKeyName: 'professional_registrations_verified_by_fkey';
+            columns: ['verified_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -20099,32 +20103,32 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "professional_services_professional_id_fkey";
-            columns: ["professional_id"];
+            foreignKeyName: 'professional_services_professional_id_fkey';
+            columns: ['professional_id'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "professional_services_professional_id_fkey";
-            columns: ["professional_id"];
+            foreignKeyName: 'professional_services_professional_id_fkey';
+            columns: ['professional_id'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "professional_services_professional_id_fkey";
-            columns: ["professional_id"];
+            foreignKeyName: 'professional_services_professional_id_fkey';
+            columns: ['professional_id'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "professional_services_service_id_fkey";
-            columns: ["service_id"];
+            foreignKeyName: 'professional_services_service_id_fkey';
+            columns: ['service_id'];
             isOneToOne: false;
-            referencedRelation: "service_types";
-            referencedColumns: ["id"];
+            referencedRelation: 'service_types';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -20353,25 +20357,25 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "profiles_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'profiles_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "profiles_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'profiles_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "profiles_tenant_id_fkey";
-            columns: ["tenant_id"];
+            foreignKeyName: 'profiles_tenant_id_fkey';
+            columns: ['tenant_id'];
             isOneToOne: false;
-            referencedRelation: "tenants";
-            referencedColumns: ["id"];
+            referencedRelation: 'tenants';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -20441,18 +20445,18 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "reconciliation_analytics_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'reconciliation_analytics_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "reconciliation_analytics_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'reconciliation_analytics_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
         ];
       };
@@ -20531,46 +20535,46 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "reconciliation_discrepancies_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'reconciliation_discrepancies_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "reconciliation_discrepancies_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'reconciliation_discrepancies_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "reconciliation_discrepancies_reconciliation_id_fkey";
-            columns: ["reconciliation_id"];
+            foreignKeyName: 'reconciliation_discrepancies_reconciliation_id_fkey';
+            columns: ['reconciliation_id'];
             isOneToOne: false;
-            referencedRelation: "payment_reconciliations";
-            referencedColumns: ["id"];
+            referencedRelation: 'payment_reconciliations';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "reconciliation_discrepancies_resolved_by_fkey";
-            columns: ["resolved_by"];
+            foreignKeyName: 'reconciliation_discrepancies_resolved_by_fkey';
+            columns: ['resolved_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "reconciliation_discrepancies_resolved_by_fkey";
-            columns: ["resolved_by"];
+            foreignKeyName: 'reconciliation_discrepancies_resolved_by_fkey';
+            columns: ['resolved_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "reconciliation_discrepancies_resolved_by_fkey";
-            columns: ["resolved_by"];
+            foreignKeyName: 'reconciliation_discrepancies_resolved_by_fkey';
+            columns: ['resolved_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -20703,11 +20707,11 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "regulatory_documents_category_id_fkey";
-            columns: ["category_id"];
+            foreignKeyName: 'regulatory_documents_category_id_fkey';
+            columns: ['category_id'];
             isOneToOne: false;
-            referencedRelation: "regulation_categories";
-            referencedColumns: ["id"];
+            referencedRelation: 'regulation_categories';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -20819,46 +20823,46 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "regulatory_requirements_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'regulatory_requirements_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "regulatory_requirements_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'regulatory_requirements_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "regulatory_requirements_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'regulatory_requirements_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "regulatory_requirements_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'regulatory_requirements_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "regulatory_requirements_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'regulatory_requirements_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "regulatory_requirements_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'regulatory_requirements_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -20922,25 +20926,25 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "report_executions_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'report_executions_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "report_executions_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'report_executions_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "report_executions_report_id_fkey";
-            columns: ["report_id"];
+            foreignKeyName: 'report_executions_report_id_fkey';
+            columns: ['report_id'];
             isOneToOne: false;
-            referencedRelation: "payment_reports";
-            referencedColumns: ["id"];
+            referencedRelation: 'payment_reports';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -20950,7 +20954,7 @@ export type GeneratedDatabase = {
           calculated_at: string;
           cancelled_appointments: number;
           churn_probability: number;
-          churn_risk_level: GeneratedDatabase["public"]["Enums"]["churn_risk_level"];
+          churn_risk_level: GeneratedDatabase['public']['Enums']['churn_risk_level'];
           clinic_id: string;
           completed_appointments: number;
           created_at: string;
@@ -20972,7 +20976,7 @@ export type GeneratedDatabase = {
           calculated_at?: string;
           cancelled_appointments?: number;
           churn_probability: number;
-          churn_risk_level: GeneratedDatabase["public"]["Enums"]["churn_risk_level"];
+          churn_risk_level: GeneratedDatabase['public']['Enums']['churn_risk_level'];
           clinic_id: string;
           completed_appointments?: number;
           created_at?: string;
@@ -20994,7 +20998,7 @@ export type GeneratedDatabase = {
           calculated_at?: string;
           cancelled_appointments?: number;
           churn_probability?: number;
-          churn_risk_level?: GeneratedDatabase["public"]["Enums"]["churn_risk_level"];
+          churn_risk_level?: GeneratedDatabase['public']['Enums']['churn_risk_level'];
           clinic_id?: string;
           completed_appointments?: number;
           created_at?: string;
@@ -21013,32 +21017,32 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "retention_metrics_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'retention_metrics_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "retention_metrics_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'retention_metrics_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "retention_metrics_patient_id_fkey";
-            columns: ["patient_id"];
+            foreignKeyName: 'retention_metrics_patient_id_fkey';
+            columns: ['patient_id'];
             isOneToOne: false;
-            referencedRelation: "analytics_patients";
-            referencedColumns: ["id"];
+            referencedRelation: 'analytics_patients';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "retention_metrics_patient_id_fkey";
-            columns: ["patient_id"];
+            foreignKeyName: 'retention_metrics_patient_id_fkey';
+            columns: ['patient_id'];
             isOneToOne: false;
-            referencedRelation: "patients";
-            referencedColumns: ["id"];
+            referencedRelation: 'patients';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -21056,10 +21060,10 @@ export type GeneratedDatabase = {
           is_active: boolean;
           last_executed_at: string | null;
           name: string;
-          risk_levels: GeneratedDatabase["public"]["Enums"]["churn_risk_level"][];
+          risk_levels: GeneratedDatabase['public']['Enums']['churn_risk_level'][];
           schedule_config: GeneratedJson;
           settings: GeneratedJson;
-          strategy_type: GeneratedDatabase["public"]["Enums"]["retention_strategy_type"];
+          strategy_type: GeneratedDatabase['public']['Enums']['retention_strategy_type'];
           success_count: number;
           success_rate: number | null;
           target_criteria: GeneratedJson;
@@ -21079,10 +21083,10 @@ export type GeneratedDatabase = {
           is_active?: boolean;
           last_executed_at?: string | null;
           name: string;
-          risk_levels?: GeneratedDatabase["public"]["Enums"]["churn_risk_level"][];
+          risk_levels?: GeneratedDatabase['public']['Enums']['churn_risk_level'][];
           schedule_config?: GeneratedJson;
           settings?: GeneratedJson;
-          strategy_type: GeneratedDatabase["public"]["Enums"]["retention_strategy_type"];
+          strategy_type: GeneratedDatabase['public']['Enums']['retention_strategy_type'];
           success_count?: number;
           success_rate?: number | null;
           target_criteria?: GeneratedJson;
@@ -21102,10 +21106,10 @@ export type GeneratedDatabase = {
           is_active?: boolean;
           last_executed_at?: string | null;
           name?: string;
-          risk_levels?: GeneratedDatabase["public"]["Enums"]["churn_risk_level"][];
+          risk_levels?: GeneratedDatabase['public']['Enums']['churn_risk_level'][];
           schedule_config?: GeneratedJson;
           settings?: GeneratedJson;
-          strategy_type?: GeneratedDatabase["public"]["Enums"]["retention_strategy_type"];
+          strategy_type?: GeneratedDatabase['public']['Enums']['retention_strategy_type'];
           success_count?: number;
           success_rate?: number | null;
           target_criteria?: GeneratedJson;
@@ -21114,39 +21118,39 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "retention_strategies_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'retention_strategies_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "retention_strategies_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'retention_strategies_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "retention_strategies_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'retention_strategies_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "retention_strategies_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'retention_strategies_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "retention_strategies_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'retention_strategies_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -21210,18 +21214,18 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "revenue_analytics_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'revenue_analytics_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "revenue_analytics_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'revenue_analytics_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
         ];
       };
@@ -21273,18 +21277,18 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "revenue_optimizations_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'revenue_optimizations_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "revenue_optimizations_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'revenue_optimizations_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
         ];
       };
@@ -21321,83 +21325,83 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "risk_factors_patient_id_fkey";
-            columns: ["patient_id"];
+            foreignKeyName: 'risk_factors_patient_id_fkey';
+            columns: ['patient_id'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "risk_factors_patient_id_fkey";
-            columns: ["patient_id"];
+            foreignKeyName: 'risk_factors_patient_id_fkey';
+            columns: ['patient_id'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "risk_factors_patient_id_fkey";
-            columns: ["patient_id"];
+            foreignKeyName: 'risk_factors_patient_id_fkey';
+            columns: ['patient_id'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
       role_permissions: {
         Row: {
-          action: GeneratedDatabase["public"]["Enums"]["permission_action"];
+          action: GeneratedDatabase['public']['Enums']['permission_action'];
           conditions: GeneratedJson | null;
           created_at: string | null;
           created_by: string | null;
           description: string | null;
           id: string;
           is_granted: boolean | null;
-          resource_type: GeneratedDatabase["public"]["Enums"]["resource_type"];
+          resource_type: GeneratedDatabase['public']['Enums']['resource_type'];
           _role: string;
         };
         Insert: {
-          action: GeneratedDatabase["public"]["Enums"]["permission_action"];
+          action: GeneratedDatabase['public']['Enums']['permission_action'];
           conditions?: GeneratedJson | null;
           created_at?: string | null;
           created_by?: string | null;
           description?: string | null;
           id?: string;
           is_granted?: boolean | null;
-          resource_type: GeneratedDatabase["public"]["Enums"]["resource_type"];
+          resource_type: GeneratedDatabase['public']['Enums']['resource_type'];
           _role: string;
         };
         Update: {
-          action?: GeneratedDatabase["public"]["Enums"]["permission_action"];
+          action?: GeneratedDatabase['public']['Enums']['permission_action'];
           conditions?: GeneratedJson | null;
           created_at?: string | null;
           created_by?: string | null;
           description?: string | null;
           id?: string;
           is_granted?: boolean | null;
-          resource_type?: GeneratedDatabase["public"]["Enums"]["resource_type"];
+          resource_type?: GeneratedDatabase['public']['Enums']['resource_type'];
           _role?: string;
         };
         Relationships: [
           {
-            foreignKeyName: "role_permissions_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'role_permissions_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "role_permissions_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'role_permissions_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "role_permissions_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'role_permissions_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -21497,39 +21501,39 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "sales_opportunities_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'sales_opportunities_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "sales_opportunities_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'sales_opportunities_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "sales_opportunities_patient_id_fkey";
-            columns: ["patient_id"];
+            foreignKeyName: 'sales_opportunities_patient_id_fkey';
+            columns: ['patient_id'];
             isOneToOne: false;
-            referencedRelation: "analytics_patients";
-            referencedColumns: ["id"];
+            referencedRelation: 'analytics_patients';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "sales_opportunities_patient_id_fkey";
-            columns: ["patient_id"];
+            foreignKeyName: 'sales_opportunities_patient_id_fkey';
+            columns: ['patient_id'];
             isOneToOne: false;
-            referencedRelation: "patients";
-            referencedColumns: ["id"];
+            referencedRelation: 'patients';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "sales_opportunities_primary_service_id_fkey";
-            columns: ["primary_service_id"];
+            foreignKeyName: 'sales_opportunities_primary_service_id_fkey';
+            columns: ['primary_service_id'];
             isOneToOne: false;
-            referencedRelation: "service_types";
-            referencedColumns: ["id"];
+            referencedRelation: 'service_types';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -21593,60 +21597,60 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "security_events_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'security_events_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "security_events_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'security_events_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "security_events_profile_id_fkey";
-            columns: ["profile_id"];
+            foreignKeyName: 'security_events_profile_id_fkey';
+            columns: ['profile_id'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "security_events_profile_id_fkey";
-            columns: ["profile_id"];
+            foreignKeyName: 'security_events_profile_id_fkey';
+            columns: ['profile_id'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "security_events_profile_id_fkey";
-            columns: ["profile_id"];
+            foreignKeyName: 'security_events_profile_id_fkey';
+            columns: ['profile_id'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "security_events_resolved_by_fkey";
-            columns: ["resolved_by"];
+            foreignKeyName: 'security_events_resolved_by_fkey';
+            columns: ['resolved_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "security_events_resolved_by_fkey";
-            columns: ["resolved_by"];
+            foreignKeyName: 'security_events_resolved_by_fkey';
+            columns: ['resolved_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "security_events_resolved_by_fkey";
-            columns: ["resolved_by"];
+            foreignKeyName: 'security_events_resolved_by_fkey';
+            columns: ['resolved_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -21716,25 +21720,25 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "segment_memberships_patient_id_fkey";
-            columns: ["patient_id"];
+            foreignKeyName: 'segment_memberships_patient_id_fkey';
+            columns: ['patient_id'];
             isOneToOne: false;
-            referencedRelation: "analytics_patients";
-            referencedColumns: ["id"];
+            referencedRelation: 'analytics_patients';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "segment_memberships_patient_id_fkey";
-            columns: ["patient_id"];
+            foreignKeyName: 'segment_memberships_patient_id_fkey';
+            columns: ['patient_id'];
             isOneToOne: false;
-            referencedRelation: "patients";
-            referencedColumns: ["id"];
+            referencedRelation: 'patients';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "segment_memberships_segment_id_fkey";
-            columns: ["segment_id"];
+            foreignKeyName: 'segment_memberships_segment_id_fkey';
+            columns: ['segment_id'];
             isOneToOne: false;
-            referencedRelation: "patient_segments";
-            referencedColumns: ["id"];
+            referencedRelation: 'patient_segments';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -21849,11 +21853,11 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "segment_performance_segment_id_fkey";
-            columns: ["segment_id"];
+            foreignKeyName: 'segment_performance_segment_id_fkey';
+            columns: ['segment_id'];
             isOneToOne: false;
-            referencedRelation: "patient_segments";
-            referencedColumns: ["id"];
+            referencedRelation: 'patient_segments';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -21923,18 +21927,18 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "segmentation_rules_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'segmentation_rules_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "segmentation_rules_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'segmentation_rules_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
         ];
       };
@@ -21977,18 +21981,18 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "service_categories_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'service_categories_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "service_categories_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'service_categories_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
         ];
       };
@@ -22028,18 +22032,18 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "service_template_items_service_id_fkey";
-            columns: ["service_id"];
+            foreignKeyName: 'service_template_items_service_id_fkey';
+            columns: ['service_id'];
             isOneToOne: false;
-            referencedRelation: "service_types";
-            referencedColumns: ["id"];
+            referencedRelation: 'service_types';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "service_template_items_template_id_fkey";
-            columns: ["template_id"];
+            foreignKeyName: 'service_template_items_template_id_fkey';
+            columns: ['template_id'];
             isOneToOne: false;
-            referencedRelation: "service_templates";
-            referencedColumns: ["id"];
+            referencedRelation: 'service_templates';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -22100,25 +22104,25 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "service_templates_category_id_fkey";
-            columns: ["category_id"];
+            foreignKeyName: 'service_templates_category_id_fkey';
+            columns: ['category_id'];
             isOneToOne: false;
-            referencedRelation: "service_categories";
-            referencedColumns: ["id"];
+            referencedRelation: 'service_categories';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "service_templates_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'service_templates_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "service_templates_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'service_templates_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
         ];
       };
@@ -22182,11 +22186,11 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "service_types_category_id_fkey";
-            columns: ["category_id"];
+            foreignKeyName: 'service_types_category_id_fkey';
+            columns: ['category_id'];
             isOneToOne: false;
-            referencedRelation: "service_categories";
-            referencedColumns: ["id"];
+            referencedRelation: 'service_categories';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -22286,39 +22290,39 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "social_media_accounts_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'social_media_accounts_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "social_media_accounts_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'social_media_accounts_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "social_media_accounts_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'social_media_accounts_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "social_media_accounts_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'social_media_accounts_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "social_media_accounts_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'social_media_accounts_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -22370,32 +22374,32 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "social_media_analytics_account_id_fkey";
-            columns: ["account_id"];
+            foreignKeyName: 'social_media_analytics_account_id_fkey';
+            columns: ['account_id'];
             isOneToOne: false;
-            referencedRelation: "social_media_accounts";
-            referencedColumns: ["id"];
+            referencedRelation: 'social_media_accounts';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "social_media_analytics_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'social_media_analytics_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "social_media_analytics_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'social_media_analytics_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "social_media_analytics_post_id_fkey";
-            columns: ["post_id"];
+            foreignKeyName: 'social_media_analytics_post_id_fkey';
+            columns: ['post_id'];
             isOneToOne: false;
-            referencedRelation: "social_media_posts";
-            referencedColumns: ["id"];
+            referencedRelation: 'social_media_posts';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -22516,67 +22520,67 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "social_media_posts_account_id_fkey";
-            columns: ["account_id"];
+            foreignKeyName: 'social_media_posts_account_id_fkey';
+            columns: ['account_id'];
             isOneToOne: false;
-            referencedRelation: "social_media_accounts";
-            referencedColumns: ["id"];
+            referencedRelation: 'social_media_accounts';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "social_media_posts_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'social_media_posts_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "social_media_posts_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'social_media_posts_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "social_media_posts_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'social_media_posts_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "social_media_posts_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'social_media_posts_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "social_media_posts_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'social_media_posts_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "social_media_posts_published_by_fkey";
-            columns: ["published_by"];
+            foreignKeyName: 'social_media_posts_published_by_fkey';
+            columns: ['published_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "social_media_posts_published_by_fkey";
-            columns: ["published_by"];
+            foreignKeyName: 'social_media_posts_published_by_fkey';
+            columns: ['published_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "social_media_posts_published_by_fkey";
-            columns: ["published_by"];
+            foreignKeyName: 'social_media_posts_published_by_fkey';
+            columns: ['published_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -22622,25 +22626,25 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "social_post_engagement_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'social_post_engagement_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "social_post_engagement_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'social_post_engagement_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "social_post_engagement_post_id_fkey";
-            columns: ["post_id"];
+            foreignKeyName: 'social_post_engagement_post_id_fkey';
+            columns: ['post_id'];
             isOneToOne: false;
-            referencedRelation: "social_media_posts";
-            referencedColumns: ["id"];
+            referencedRelation: 'social_media_posts';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -22773,60 +22777,60 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "stock_alert_configs_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'stock_alert_configs_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "stock_alert_configs_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'stock_alert_configs_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "stock_alert_configs_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'stock_alert_configs_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "stock_alert_configs_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'stock_alert_configs_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "stock_alert_configs_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'stock_alert_configs_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "stock_alert_configs_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'stock_alert_configs_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "stock_alert_configs_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'stock_alert_configs_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "stock_alert_configs_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'stock_alert_configs_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -22977,88 +22981,88 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "stock_alerts_acknowledged_by_fkey";
-            columns: ["acknowledged_by"];
+            foreignKeyName: 'stock_alerts_acknowledged_by_fkey';
+            columns: ['acknowledged_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "stock_alerts_acknowledged_by_fkey";
-            columns: ["acknowledged_by"];
+            foreignKeyName: 'stock_alerts_acknowledged_by_fkey';
+            columns: ['acknowledged_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "stock_alerts_acknowledged_by_fkey";
-            columns: ["acknowledged_by"];
+            foreignKeyName: 'stock_alerts_acknowledged_by_fkey';
+            columns: ['acknowledged_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "stock_alerts_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'stock_alerts_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "stock_alerts_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'stock_alerts_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "stock_alerts_config_id_fkey";
-            columns: ["config_id"];
+            foreignKeyName: 'stock_alerts_config_id_fkey';
+            columns: ['config_id'];
             isOneToOne: false;
-            referencedRelation: "stock_alert_configs";
-            referencedColumns: ["id"];
+            referencedRelation: 'stock_alert_configs';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "stock_alerts_escalated_to_fkey";
-            columns: ["escalated_to"];
+            foreignKeyName: 'stock_alerts_escalated_to_fkey';
+            columns: ['escalated_to'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "stock_alerts_escalated_to_fkey";
-            columns: ["escalated_to"];
+            foreignKeyName: 'stock_alerts_escalated_to_fkey';
+            columns: ['escalated_to'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "stock_alerts_escalated_to_fkey";
-            columns: ["escalated_to"];
+            foreignKeyName: 'stock_alerts_escalated_to_fkey';
+            columns: ['escalated_to'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "stock_alerts_resolved_by_fkey";
-            columns: ["resolved_by"];
+            foreignKeyName: 'stock_alerts_resolved_by_fkey';
+            columns: ['resolved_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "stock_alerts_resolved_by_fkey";
-            columns: ["resolved_by"];
+            foreignKeyName: 'stock_alerts_resolved_by_fkey';
+            columns: ['resolved_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "stock_alerts_resolved_by_fkey";
-            columns: ["resolved_by"];
+            foreignKeyName: 'stock_alerts_resolved_by_fkey';
+            columns: ['resolved_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -23170,18 +23174,18 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "stock_metrics_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'stock_metrics_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "stock_metrics_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'stock_metrics_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
         ];
       };
@@ -23308,60 +23312,60 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "stock_report_configs_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'stock_report_configs_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "stock_report_configs_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'stock_report_configs_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "stock_report_configs_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'stock_report_configs_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "stock_report_configs_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'stock_report_configs_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "stock_report_configs_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'stock_report_configs_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "stock_report_configs_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'stock_report_configs_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "stock_report_configs_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'stock_report_configs_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "stock_report_configs_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'stock_report_configs_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -23482,46 +23486,46 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "stock_reports_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'stock_reports_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "stock_reports_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'stock_reports_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "stock_reports_config_id_fkey";
-            columns: ["config_id"];
+            foreignKeyName: 'stock_reports_config_id_fkey';
+            columns: ['config_id'];
             isOneToOne: false;
-            referencedRelation: "stock_report_configs";
-            referencedColumns: ["id"];
+            referencedRelation: 'stock_report_configs';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "stock_reports_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'stock_reports_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "stock_reports_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'stock_reports_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "stock_reports_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'stock_reports_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -23585,32 +23589,32 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "fk_stock_transactions_clinic";
-            columns: ["clinic_id"];
+            foreignKeyName: 'fk_stock_transactions_clinic';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "fk_stock_transactions_clinic";
-            columns: ["clinic_id"];
+            foreignKeyName: 'fk_stock_transactions_clinic';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "fk_stock_transactions_item";
-            columns: ["inventory_item_id"];
+            foreignKeyName: 'fk_stock_transactions_item';
+            columns: ['inventory_item_id'];
             isOneToOne: false;
-            referencedRelation: "inventory_items";
-            referencedColumns: ["id"];
+            referencedRelation: 'inventory_items';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "fk_stock_transactions_room";
-            columns: ["room_id"];
+            foreignKeyName: 'fk_stock_transactions_room';
+            columns: ['room_id'];
             isOneToOne: false;
-            referencedRelation: "rooms";
-            referencedColumns: ["id"];
+            referencedRelation: 'rooms';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -23692,53 +23696,53 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "fk_stock_transfers_from_clinic";
-            columns: ["from_clinic_id"];
+            foreignKeyName: 'fk_stock_transfers_from_clinic';
+            columns: ['from_clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "fk_stock_transfers_from_clinic";
-            columns: ["from_clinic_id"];
+            foreignKeyName: 'fk_stock_transfers_from_clinic';
+            columns: ['from_clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "fk_stock_transfers_from_room";
-            columns: ["from_room_id"];
+            foreignKeyName: 'fk_stock_transfers_from_room';
+            columns: ['from_room_id'];
             isOneToOne: false;
-            referencedRelation: "rooms";
-            referencedColumns: ["id"];
+            referencedRelation: 'rooms';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "fk_stock_transfers_item";
-            columns: ["inventory_item_id"];
+            foreignKeyName: 'fk_stock_transfers_item';
+            columns: ['inventory_item_id'];
             isOneToOne: false;
-            referencedRelation: "inventory_items";
-            referencedColumns: ["id"];
+            referencedRelation: 'inventory_items';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "fk_stock_transfers_to_clinic";
-            columns: ["to_clinic_id"];
+            foreignKeyName: 'fk_stock_transfers_to_clinic';
+            columns: ['to_clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "fk_stock_transfers_to_clinic";
-            columns: ["to_clinic_id"];
+            foreignKeyName: 'fk_stock_transfers_to_clinic';
+            columns: ['to_clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "fk_stock_transfers_to_room";
-            columns: ["to_room_id"];
+            foreignKeyName: 'fk_stock_transfers_to_room';
+            columns: ['to_room_id'];
             isOneToOne: false;
-            referencedRelation: "rooms";
-            referencedColumns: ["id"];
+            referencedRelation: 'rooms';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -23752,7 +23756,7 @@ export type GeneratedDatabase = {
           engagement_score: number | null;
           error_message: string | null;
           executed_by: string | null;
-          execution_status: GeneratedDatabase["public"]["Enums"]["execution_status"];
+          execution_status: GeneratedDatabase['public']['Enums']['execution_status'];
           follow_up_completed: boolean;
           follow_up_date: string | null;
           follow_up_required: boolean;
@@ -23774,7 +23778,7 @@ export type GeneratedDatabase = {
           engagement_score?: number | null;
           error_message?: string | null;
           executed_by?: string | null;
-          execution_status?: GeneratedDatabase["public"]["Enums"]["execution_status"];
+          execution_status?: GeneratedDatabase['public']['Enums']['execution_status'];
           follow_up_completed?: boolean;
           follow_up_date?: string | null;
           follow_up_required?: boolean;
@@ -23796,7 +23800,7 @@ export type GeneratedDatabase = {
           engagement_score?: number | null;
           error_message?: string | null;
           executed_by?: string | null;
-          execution_status?: GeneratedDatabase["public"]["Enums"]["execution_status"];
+          execution_status?: GeneratedDatabase['public']['Enums']['execution_status'];
           follow_up_completed?: boolean;
           follow_up_date?: string | null;
           follow_up_required?: boolean;
@@ -23811,67 +23815,67 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "strategy_executions_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'strategy_executions_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "strategy_executions_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'strategy_executions_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "strategy_executions_executed_by_fkey";
-            columns: ["executed_by"];
+            foreignKeyName: 'strategy_executions_executed_by_fkey';
+            columns: ['executed_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "strategy_executions_executed_by_fkey";
-            columns: ["executed_by"];
+            foreignKeyName: 'strategy_executions_executed_by_fkey';
+            columns: ['executed_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "strategy_executions_executed_by_fkey";
-            columns: ["executed_by"];
+            foreignKeyName: 'strategy_executions_executed_by_fkey';
+            columns: ['executed_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "strategy_executions_patient_id_fkey";
-            columns: ["patient_id"];
+            foreignKeyName: 'strategy_executions_patient_id_fkey';
+            columns: ['patient_id'];
             isOneToOne: false;
-            referencedRelation: "analytics_patients";
-            referencedColumns: ["id"];
+            referencedRelation: 'analytics_patients';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "strategy_executions_patient_id_fkey";
-            columns: ["patient_id"];
+            foreignKeyName: 'strategy_executions_patient_id_fkey';
+            columns: ['patient_id'];
             isOneToOne: false;
-            referencedRelation: "patients";
-            referencedColumns: ["id"];
+            referencedRelation: 'patients';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "strategy_executions_strategy_id_fkey";
-            columns: ["strategy_id"];
+            foreignKeyName: 'strategy_executions_strategy_id_fkey';
+            columns: ['strategy_id'];
             isOneToOne: false;
-            referencedRelation: "retention_strategies";
-            referencedColumns: ["id"];
+            referencedRelation: 'retention_strategies';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "strategy_executions_strategy_id_fkey";
-            columns: ["strategy_id"];
+            foreignKeyName: 'strategy_executions_strategy_id_fkey';
+            columns: ['strategy_id'];
             isOneToOne: false;
-            referencedRelation: "strategy_performance_summary";
-            referencedColumns: ["id"];
+            referencedRelation: 'strategy_performance_summary';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -23941,18 +23945,18 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "subscription_plans_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'subscription_plans_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "subscription_plans_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'subscription_plans_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
         ];
       };
@@ -24028,39 +24032,39 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "subscriptions_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'subscriptions_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "subscriptions_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'subscriptions_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "subscriptions_customer_id_fkey";
-            columns: ["customer_id"];
+            foreignKeyName: 'subscriptions_customer_id_fkey';
+            columns: ['customer_id'];
             isOneToOne: false;
-            referencedRelation: "customers";
-            referencedColumns: ["id"];
+            referencedRelation: 'customers';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "subscriptions_default_payment_method_id_fkey";
-            columns: ["default_payment_method_id"];
+            foreignKeyName: 'subscriptions_default_payment_method_id_fkey';
+            columns: ['default_payment_method_id'];
             isOneToOne: false;
-            referencedRelation: "payment_methods";
-            referencedColumns: ["id"];
+            referencedRelation: 'payment_methods';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "subscriptions_plan_id_fkey";
-            columns: ["plan_id"];
+            foreignKeyName: 'subscriptions_plan_id_fkey';
+            columns: ['plan_id'];
             isOneToOne: false;
-            referencedRelation: "subscription_plans";
-            referencedColumns: ["id"];
+            referencedRelation: 'subscription_plans';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -24115,46 +24119,46 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "supplier_audit_log_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'supplier_audit_log_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "supplier_audit_log_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'supplier_audit_log_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "supplier_audit_log_supplier_id_fkey";
-            columns: ["supplier_id"];
+            foreignKeyName: 'supplier_audit_log_supplier_id_fkey';
+            columns: ['supplier_id'];
             isOneToOne: false;
-            referencedRelation: "suppliers";
-            referencedColumns: ["id"];
+            referencedRelation: 'suppliers';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "supplier_audit_log_user_id_fkey";
-            columns: ["user_id"];
+            foreignKeyName: 'supplier_audit_log_user_id_fkey';
+            columns: ['user_id'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "supplier_audit_log_user_id_fkey";
-            columns: ["user_id"];
+            foreignKeyName: 'supplier_audit_log_user_id_fkey';
+            columns: ['user_id'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "supplier_audit_log_user_id_fkey";
-            columns: ["user_id"];
+            foreignKeyName: 'supplier_audit_log_user_id_fkey';
+            columns: ['user_id'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -24233,74 +24237,74 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "supplier_communications_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'supplier_communications_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "supplier_communications_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'supplier_communications_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "supplier_communications_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'supplier_communications_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "supplier_communications_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'supplier_communications_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "supplier_communications_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'supplier_communications_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "supplier_communications_related_contract_id_fkey";
-            columns: ["related_contract_id"];
+            foreignKeyName: 'supplier_communications_related_contract_id_fkey';
+            columns: ['related_contract_id'];
             isOneToOne: false;
-            referencedRelation: "supplier_contracts";
-            referencedColumns: ["id"];
+            referencedRelation: 'supplier_contracts';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "supplier_communications_supplier_id_fkey";
-            columns: ["supplier_id"];
+            foreignKeyName: 'supplier_communications_supplier_id_fkey';
+            columns: ['supplier_id'];
             isOneToOne: false;
-            referencedRelation: "suppliers";
-            referencedColumns: ["id"];
+            referencedRelation: 'suppliers';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "supplier_communications_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'supplier_communications_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "supplier_communications_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'supplier_communications_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "supplier_communications_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'supplier_communications_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -24367,67 +24371,67 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "supplier_contacts_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'supplier_contacts_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "supplier_contacts_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'supplier_contacts_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "supplier_contacts_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'supplier_contacts_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "supplier_contacts_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'supplier_contacts_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "supplier_contacts_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'supplier_contacts_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "supplier_contacts_supplier_id_fkey";
-            columns: ["supplier_id"];
+            foreignKeyName: 'supplier_contacts_supplier_id_fkey';
+            columns: ['supplier_id'];
             isOneToOne: false;
-            referencedRelation: "suppliers";
-            referencedColumns: ["id"];
+            referencedRelation: 'suppliers';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "supplier_contacts_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'supplier_contacts_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "supplier_contacts_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'supplier_contacts_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "supplier_contacts_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'supplier_contacts_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -24512,67 +24516,67 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "supplier_contracts_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'supplier_contracts_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "supplier_contracts_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'supplier_contracts_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "supplier_contracts_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'supplier_contracts_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "supplier_contracts_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'supplier_contracts_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "supplier_contracts_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'supplier_contracts_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "supplier_contracts_supplier_id_fkey";
-            columns: ["supplier_id"];
+            foreignKeyName: 'supplier_contracts_supplier_id_fkey';
+            columns: ['supplier_id'];
             isOneToOne: false;
-            referencedRelation: "suppliers";
-            referencedColumns: ["id"];
+            referencedRelation: 'suppliers';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "supplier_contracts_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'supplier_contracts_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "supplier_contracts_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'supplier_contracts_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "supplier_contracts_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'supplier_contracts_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -24669,67 +24673,67 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "supplier_performance_metrics_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'supplier_performance_metrics_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "supplier_performance_metrics_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'supplier_performance_metrics_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "supplier_performance_metrics_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'supplier_performance_metrics_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "supplier_performance_metrics_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'supplier_performance_metrics_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "supplier_performance_metrics_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'supplier_performance_metrics_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "supplier_performance_metrics_supplier_id_fkey";
-            columns: ["supplier_id"];
+            foreignKeyName: 'supplier_performance_metrics_supplier_id_fkey';
+            columns: ['supplier_id'];
             isOneToOne: false;
-            referencedRelation: "suppliers";
-            referencedColumns: ["id"];
+            referencedRelation: 'suppliers';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "supplier_performance_metrics_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'supplier_performance_metrics_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "supplier_performance_metrics_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'supplier_performance_metrics_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "supplier_performance_metrics_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'supplier_performance_metrics_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -24805,67 +24809,67 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "supplier_products_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'supplier_products_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "supplier_products_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'supplier_products_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "supplier_products_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'supplier_products_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "supplier_products_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'supplier_products_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "supplier_products_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'supplier_products_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "supplier_products_supplier_id_fkey";
-            columns: ["supplier_id"];
+            foreignKeyName: 'supplier_products_supplier_id_fkey';
+            columns: ['supplier_id'];
             isOneToOne: false;
-            referencedRelation: "suppliers";
-            referencedColumns: ["id"];
+            referencedRelation: 'suppliers';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "supplier_products_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'supplier_products_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "supplier_products_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'supplier_products_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "supplier_products_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'supplier_products_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -24995,60 +24999,60 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "suppliers_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'suppliers_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "suppliers_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'suppliers_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "suppliers_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'suppliers_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "suppliers_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'suppliers_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "suppliers_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'suppliers_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "suppliers_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'suppliers_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "suppliers_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'suppliers_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "suppliers_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'suppliers_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -25175,25 +25179,25 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "sync_analytics_summary_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'sync_analytics_summary_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "sync_analytics_summary_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'sync_analytics_summary_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "sync_analytics_summary_connection_id_fkey";
-            columns: ["connection_id"];
+            foreignKeyName: 'sync_analytics_summary_connection_id_fkey';
+            columns: ['connection_id'];
             isOneToOne: false;
-            referencedRelation: "calendar_connections";
-            referencedColumns: ["id"];
+            referencedRelation: 'calendar_connections';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -25317,39 +25321,39 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "sync_conflicts_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'sync_conflicts_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "sync_conflicts_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'sync_conflicts_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "sync_conflicts_connection_id_fkey";
-            columns: ["connection_id"];
+            foreignKeyName: 'sync_conflicts_connection_id_fkey';
+            columns: ['connection_id'];
             isOneToOne: false;
-            referencedRelation: "calendar_connections";
-            referencedColumns: ["id"];
+            referencedRelation: 'calendar_connections';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "sync_conflicts_resolution_rule_id_fkey";
-            columns: ["resolution_rule_id"];
+            foreignKeyName: 'sync_conflicts_resolution_rule_id_fkey';
+            columns: ['resolution_rule_id'];
             isOneToOne: false;
-            referencedRelation: "conflict_resolution_rules";
-            referencedColumns: ["id"];
+            referencedRelation: 'conflict_resolution_rules';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "sync_conflicts_session_id_fkey";
-            columns: ["session_id"];
+            foreignKeyName: 'sync_conflicts_session_id_fkey';
+            columns: ['session_id'];
             isOneToOne: false;
-            referencedRelation: "sync_sessions";
-            referencedColumns: ["id"];
+            referencedRelation: 'sync_sessions';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -25410,18 +25414,18 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "sync_dashboard_configs_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'sync_dashboard_configs_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "sync_dashboard_configs_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'sync_dashboard_configs_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
         ];
       };
@@ -25509,18 +25513,18 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "sync_events_connection_id_fkey";
-            columns: ["connection_id"];
+            foreignKeyName: 'sync_events_connection_id_fkey';
+            columns: ['connection_id'];
             isOneToOne: false;
-            referencedRelation: "calendar_connections";
-            referencedColumns: ["id"];
+            referencedRelation: 'calendar_connections';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "sync_events_session_id_fkey";
-            columns: ["session_id"];
+            foreignKeyName: 'sync_events_session_id_fkey';
+            columns: ['session_id'];
             isOneToOne: false;
-            referencedRelation: "sync_sessions";
-            referencedColumns: ["id"];
+            referencedRelation: 'sync_sessions';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -25596,25 +25600,25 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "sync_health_scores_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'sync_health_scores_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "sync_health_scores_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'sync_health_scores_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "sync_health_scores_connection_id_fkey";
-            columns: ["connection_id"];
+            foreignKeyName: 'sync_health_scores_connection_id_fkey';
+            columns: ['connection_id'];
             isOneToOne: false;
-            referencedRelation: "calendar_connections";
-            referencedColumns: ["id"];
+            referencedRelation: 'calendar_connections';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -25699,25 +25703,25 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "sync_monitoring_alerts_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'sync_monitoring_alerts_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "sync_monitoring_alerts_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'sync_monitoring_alerts_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "sync_monitoring_alerts_connection_id_fkey";
-            columns: ["connection_id"];
+            foreignKeyName: 'sync_monitoring_alerts_connection_id_fkey';
+            columns: ['connection_id'];
             isOneToOne: false;
-            referencedRelation: "calendar_connections";
-            referencedColumns: ["id"];
+            referencedRelation: 'calendar_connections';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -25781,18 +25785,18 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "sync_performance_benchmarks_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'sync_performance_benchmarks_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "sync_performance_benchmarks_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'sync_performance_benchmarks_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
         ];
       };
@@ -25862,18 +25866,18 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "sync_performance_metrics_connection_id_fkey";
-            columns: ["connection_id"];
+            foreignKeyName: 'sync_performance_metrics_connection_id_fkey';
+            columns: ['connection_id'];
             isOneToOne: false;
-            referencedRelation: "calendar_connections";
-            referencedColumns: ["id"];
+            referencedRelation: 'calendar_connections';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "sync_performance_metrics_session_id_fkey";
-            columns: ["session_id"];
+            foreignKeyName: 'sync_performance_metrics_session_id_fkey';
+            columns: ['session_id'];
             isOneToOne: false;
-            referencedRelation: "sync_sessions";
-            referencedColumns: ["id"];
+            referencedRelation: 'sync_sessions';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -25949,18 +25953,18 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "sync_queue_connection_id_fkey";
-            columns: ["connection_id"];
+            foreignKeyName: 'sync_queue_connection_id_fkey';
+            columns: ['connection_id'];
             isOneToOne: false;
-            referencedRelation: "calendar_connections";
-            referencedColumns: ["id"];
+            referencedRelation: 'calendar_connections';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "sync_queue_session_id_fkey";
-            columns: ["session_id"];
+            foreignKeyName: 'sync_queue_session_id_fkey';
+            columns: ['session_id'];
             isOneToOne: false;
-            referencedRelation: "sync_sessions";
-            referencedColumns: ["id"];
+            referencedRelation: 'sync_sessions';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -26051,11 +26055,11 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "sync_sessions_connection_id_fkey";
-            columns: ["connection_id"];
+            foreignKeyName: 'sync_sessions_connection_id_fkey';
+            columns: ['connection_id'];
             isOneToOne: false;
-            referencedRelation: "calendar_connections";
-            referencedColumns: ["id"];
+            referencedRelation: 'calendar_connections';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -26116,39 +26120,39 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "sync_user_feedback_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'sync_user_feedback_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "sync_user_feedback_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'sync_user_feedback_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "sync_user_feedback_conflict_id_fkey";
-            columns: ["conflict_id"];
+            foreignKeyName: 'sync_user_feedback_conflict_id_fkey';
+            columns: ['conflict_id'];
             isOneToOne: false;
-            referencedRelation: "sync_conflicts";
-            referencedColumns: ["id"];
+            referencedRelation: 'sync_conflicts';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "sync_user_feedback_connection_id_fkey";
-            columns: ["connection_id"];
+            foreignKeyName: 'sync_user_feedback_connection_id_fkey';
+            columns: ['connection_id'];
             isOneToOne: false;
-            referencedRelation: "calendar_connections";
-            referencedColumns: ["id"];
+            referencedRelation: 'calendar_connections';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "sync_user_feedback_session_id_fkey";
-            columns: ["session_id"];
+            foreignKeyName: 'sync_user_feedback_session_id_fkey';
+            columns: ['session_id'];
             isOneToOne: false;
-            referencedRelation: "sync_sessions";
-            referencedColumns: ["id"];
+            referencedRelation: 'sync_sessions';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -26254,39 +26258,39 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "system_access_log_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'system_access_log_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "system_access_log_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'system_access_log_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "system_access_log_user_id_fkey";
-            columns: ["user_id"];
+            foreignKeyName: 'system_access_log_user_id_fkey';
+            columns: ['user_id'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "system_access_log_user_id_fkey";
-            columns: ["user_id"];
+            foreignKeyName: 'system_access_log_user_id_fkey';
+            columns: ['user_id'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "system_access_log_user_id_fkey";
-            columns: ["user_id"];
+            foreignKeyName: 'system_access_log_user_id_fkey';
+            columns: ['user_id'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -26479,46 +26483,46 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "training_completions_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'training_completions_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "training_completions_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'training_completions_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "training_completions_profile_id_fkey";
-            columns: ["profile_id"];
+            foreignKeyName: 'training_completions_profile_id_fkey';
+            columns: ['profile_id'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "training_completions_profile_id_fkey";
-            columns: ["profile_id"];
+            foreignKeyName: 'training_completions_profile_id_fkey';
+            columns: ['profile_id'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "training_completions_profile_id_fkey";
-            columns: ["profile_id"];
+            foreignKeyName: 'training_completions_profile_id_fkey';
+            columns: ['profile_id'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "training_completions_training_id_fkey";
-            columns: ["training_id"];
+            foreignKeyName: 'training_completions_training_id_fkey';
+            columns: ['training_id'];
             isOneToOne: false;
-            referencedRelation: "compliance_training";
-            referencedColumns: ["id"];
+            referencedRelation: 'compliance_training';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -26582,60 +26586,60 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "treatment_followups_assigned_to_fkey";
-            columns: ["assigned_to"];
+            foreignKeyName: 'treatment_followups_assigned_to_fkey';
+            columns: ['assigned_to'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "treatment_followups_assigned_to_fkey";
-            columns: ["assigned_to"];
+            foreignKeyName: 'treatment_followups_assigned_to_fkey';
+            columns: ['assigned_to'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "treatment_followups_assigned_to_fkey";
-            columns: ["assigned_to"];
+            foreignKeyName: 'treatment_followups_assigned_to_fkey';
+            columns: ['assigned_to'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "treatment_followups_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'treatment_followups_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "treatment_followups_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'treatment_followups_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "treatment_followups_patient_id_fkey";
-            columns: ["patient_id"];
+            foreignKeyName: 'treatment_followups_patient_id_fkey';
+            columns: ['patient_id'];
             isOneToOne: false;
-            referencedRelation: "analytics_patients";
-            referencedColumns: ["id"];
+            referencedRelation: 'analytics_patients';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "treatment_followups_patient_id_fkey";
-            columns: ["patient_id"];
+            foreignKeyName: 'treatment_followups_patient_id_fkey';
+            columns: ['patient_id'];
             isOneToOne: false;
-            referencedRelation: "patients";
-            referencedColumns: ["id"];
+            referencedRelation: 'patients';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "treatment_followups_template_id_fkey";
-            columns: ["template_id"];
+            foreignKeyName: 'treatment_followups_template_id_fkey';
+            columns: ['template_id'];
             isOneToOne: false;
-            referencedRelation: "followup_templates";
-            referencedColumns: ["id"];
+            referencedRelation: 'followup_templates';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -26735,95 +26739,95 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "treatment_plans_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'treatment_plans_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "treatment_plans_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'treatment_plans_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "treatment_plans_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'treatment_plans_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "treatment_plans_patient_id_fkey";
-            columns: ["patient_id"];
+            foreignKeyName: 'treatment_plans_patient_id_fkey';
+            columns: ['patient_id'];
             isOneToOne: false;
-            referencedRelation: "analytics_patients";
-            referencedColumns: ["id"];
+            referencedRelation: 'analytics_patients';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "treatment_plans_patient_id_fkey";
-            columns: ["patient_id"];
+            foreignKeyName: 'treatment_plans_patient_id_fkey';
+            columns: ['patient_id'];
             isOneToOne: false;
-            referencedRelation: "patients";
-            referencedColumns: ["id"];
+            referencedRelation: 'patients';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "treatment_plans_provider_id_fkey";
-            columns: ["provider_id"];
+            foreignKeyName: 'treatment_plans_provider_id_fkey';
+            columns: ['provider_id'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "treatment_plans_provider_id_fkey";
-            columns: ["provider_id"];
+            foreignKeyName: 'treatment_plans_provider_id_fkey';
+            columns: ['provider_id'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "treatment_plans_provider_id_fkey";
-            columns: ["provider_id"];
+            foreignKeyName: 'treatment_plans_provider_id_fkey';
+            columns: ['provider_id'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "treatment_plans_replaces_fkey";
-            columns: ["replaces"];
+            foreignKeyName: 'treatment_plans_replaces_fkey';
+            columns: ['replaces'];
             isOneToOne: false;
-            referencedRelation: "analytics_treatment_plans";
-            referencedColumns: ["id"];
+            referencedRelation: 'analytics_treatment_plans';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "treatment_plans_replaces_fkey";
-            columns: ["replaces"];
+            foreignKeyName: 'treatment_plans_replaces_fkey';
+            columns: ['replaces'];
             isOneToOne: false;
-            referencedRelation: "treatment_plans";
-            referencedColumns: ["id"];
+            referencedRelation: 'treatment_plans';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "treatment_plans_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'treatment_plans_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "treatment_plans_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'treatment_plans_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "treatment_plans_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'treatment_plans_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -26908,60 +26912,60 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "treatment_progress_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'treatment_progress_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "treatment_progress_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'treatment_progress_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "treatment_progress_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'treatment_progress_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "treatment_progress_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'treatment_progress_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "treatment_progress_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'treatment_progress_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "treatment_progress_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'treatment_progress_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "treatment_progress_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'treatment_progress_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "treatment_progress_updated_by_fkey";
-            columns: ["updated_by"];
+            foreignKeyName: 'treatment_progress_updated_by_fkey';
+            columns: ['updated_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -27016,39 +27020,39 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "treatment_protocols_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'treatment_protocols_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "treatment_protocols_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'treatment_protocols_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "treatment_protocols_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'treatment_protocols_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "treatment_protocols_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'treatment_protocols_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "treatment_protocols_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'treatment_protocols_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -27136,18 +27140,18 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "treatment_roi_analysis_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'treatment_roi_analysis_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "treatment_roi_analysis_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'treatment_roi_analysis_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
         ];
       };
@@ -27256,46 +27260,46 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "user_dashboard_preferences_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'user_dashboard_preferences_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "user_dashboard_preferences_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'user_dashboard_preferences_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "user_dashboard_preferences_config_id_fkey";
-            columns: ["config_id"];
+            foreignKeyName: 'user_dashboard_preferences_config_id_fkey';
+            columns: ['config_id'];
             isOneToOne: false;
-            referencedRelation: "compliance_dashboard_configs";
-            referencedColumns: ["id"];
+            referencedRelation: 'compliance_dashboard_configs';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "user_dashboard_preferences_user_id_fkey";
-            columns: ["user_id"];
+            foreignKeyName: 'user_dashboard_preferences_user_id_fkey';
+            columns: ['user_id'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "user_dashboard_preferences_user_id_fkey";
-            columns: ["user_id"];
+            foreignKeyName: 'user_dashboard_preferences_user_id_fkey';
+            columns: ['user_id'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "user_dashboard_preferences_user_id_fkey";
-            columns: ["user_id"];
+            foreignKeyName: 'user_dashboard_preferences_user_id_fkey';
+            columns: ['user_id'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -27389,39 +27393,39 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "user_notification_preferences_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'user_notification_preferences_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "user_notification_preferences_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'user_notification_preferences_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "user_notification_preferences_user_id_fkey";
-            columns: ["user_id"];
+            foreignKeyName: 'user_notification_preferences_user_id_fkey';
+            columns: ['user_id'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "user_notification_preferences_user_id_fkey";
-            columns: ["user_id"];
+            foreignKeyName: 'user_notification_preferences_user_id_fkey';
+            columns: ['user_id'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "user_notification_preferences_user_id_fkey";
-            columns: ["user_id"];
+            foreignKeyName: 'user_notification_preferences_user_id_fkey';
+            columns: ['user_id'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -27587,18 +27591,18 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "voice_commands_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'voice_commands_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "voice_commands_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'voice_commands_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
         ];
       };
@@ -27638,18 +27642,18 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "voice_configurations_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'voice_configurations_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "voice_configurations_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'voice_configurations_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
         ];
       };
@@ -27716,46 +27720,46 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "fk_waiting_list_offered_appointment";
-            columns: ["offered_appointment_id"];
+            foreignKeyName: 'fk_waiting_list_offered_appointment';
+            columns: ['offered_appointment_id'];
             isOneToOne: false;
-            referencedRelation: "analytics_appointments";
-            referencedColumns: ["id"];
+            referencedRelation: 'analytics_appointments';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "fk_waiting_list_offered_appointment";
-            columns: ["offered_appointment_id"];
+            foreignKeyName: 'fk_waiting_list_offered_appointment';
+            columns: ['offered_appointment_id'];
             isOneToOne: false;
-            referencedRelation: "appointments";
-            referencedColumns: ["id"];
+            referencedRelation: 'appointments';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "fk_waiting_list_patient";
-            columns: ["patient_id"];
+            foreignKeyName: 'fk_waiting_list_patient';
+            columns: ['patient_id'];
             isOneToOne: false;
-            referencedRelation: "analytics_patients";
-            referencedColumns: ["id"];
+            referencedRelation: 'analytics_patients';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "fk_waiting_list_patient";
-            columns: ["patient_id"];
+            foreignKeyName: 'fk_waiting_list_patient';
+            columns: ['patient_id'];
             isOneToOne: false;
-            referencedRelation: "patients";
-            referencedColumns: ["id"];
+            referencedRelation: 'patients';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "fk_waiting_list_professional";
-            columns: ["professional_id"];
+            foreignKeyName: 'fk_waiting_list_professional';
+            columns: ['professional_id'];
             isOneToOne: false;
-            referencedRelation: "professionals";
-            referencedColumns: ["id"];
+            referencedRelation: 'professionals';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "fk_waiting_list_service_type";
-            columns: ["service_type_id"];
+            foreignKeyName: 'fk_waiting_list_service_type';
+            columns: ['service_type_id'];
             isOneToOne: false;
-            referencedRelation: "service_types";
-            referencedColumns: ["id"];
+            referencedRelation: 'service_types';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -27813,11 +27817,11 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "webhook_endpoints_connection_id_fkey";
-            columns: ["connection_id"];
+            foreignKeyName: 'webhook_endpoints_connection_id_fkey';
+            columns: ['connection_id'];
             isOneToOne: false;
-            referencedRelation: "calendar_connections";
-            referencedColumns: ["id"];
+            referencedRelation: 'calendar_connections';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -27893,25 +27897,25 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "webhook_events_connection_id_fkey";
-            columns: ["connection_id"];
+            foreignKeyName: 'webhook_events_connection_id_fkey';
+            columns: ['connection_id'];
             isOneToOne: false;
-            referencedRelation: "calendar_connections";
-            referencedColumns: ["id"];
+            referencedRelation: 'calendar_connections';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "webhook_events_endpoint_id_fkey";
-            columns: ["endpoint_id"];
+            foreignKeyName: 'webhook_events_endpoint_id_fkey';
+            columns: ['endpoint_id'];
             isOneToOne: false;
-            referencedRelation: "webhook_endpoints";
-            referencedColumns: ["id"];
+            referencedRelation: 'webhook_endpoints';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "webhook_events_sync_session_id_fkey";
-            columns: ["sync_session_id"];
+            foreignKeyName: 'webhook_events_sync_session_id_fkey';
+            columns: ['sync_session_id'];
             isOneToOne: false;
-            referencedRelation: "sync_sessions";
-            referencedColumns: ["id"];
+            referencedRelation: 'sync_sessions';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -27975,25 +27979,25 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "workflow_executions_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'workflow_executions_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "workflow_executions_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'workflow_executions_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "workflow_executions_workflow_id_fkey";
-            columns: ["workflow_id"];
+            foreignKeyName: 'workflow_executions_workflow_id_fkey';
+            columns: ['workflow_id'];
             isOneToOne: false;
-            referencedRelation: "marketing_workflows";
-            referencedColumns: ["id"];
+            referencedRelation: 'marketing_workflows';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -28019,18 +28023,18 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "ab_tests_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'ab_tests_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "ab_tests_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'ab_tests_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
         ];
       };
@@ -28050,7 +28054,7 @@ export type GeneratedDatabase = {
           recommended_actions: GeneratedJson | null;
           risk_factors: GeneratedJson | null;
           risk_level:
-            | GeneratedDatabase["public"]["Enums"]["churn_risk_level"]
+            | GeneratedDatabase['public']['Enums']['churn_risk_level']
             | null;
           updated_at: string | null;
         };
@@ -28069,7 +28073,7 @@ export type GeneratedDatabase = {
           recommended_actions?: GeneratedJson | null;
           risk_factors?: GeneratedJson | null;
           risk_level?:
-            | GeneratedDatabase["public"]["Enums"]["churn_risk_level"]
+            | GeneratedDatabase['public']['Enums']['churn_risk_level']
             | null;
           updated_at?: string | null;
         };
@@ -28088,38 +28092,38 @@ export type GeneratedDatabase = {
           recommended_actions?: GeneratedJson | null;
           risk_factors?: GeneratedJson | null;
           risk_level?:
-            | GeneratedDatabase["public"]["Enums"]["churn_risk_level"]
+            | GeneratedDatabase['public']['Enums']['churn_risk_level']
             | null;
           updated_at?: string | null;
         };
         Relationships: [
           {
-            foreignKeyName: "churn_predictions_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'churn_predictions_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "churn_predictions_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'churn_predictions_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "churn_predictions_patient_id_fkey";
-            columns: ["patient_id"];
+            foreignKeyName: 'churn_predictions_patient_id_fkey';
+            columns: ['patient_id'];
             isOneToOne: false;
-            referencedRelation: "analytics_patients";
-            referencedColumns: ["id"];
+            referencedRelation: 'analytics_patients';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "churn_predictions_patient_id_fkey";
-            columns: ["patient_id"];
+            foreignKeyName: 'churn_predictions_patient_id_fkey';
+            columns: ['patient_id'];
             isOneToOne: false;
-            referencedRelation: "patients";
-            referencedColumns: ["id"];
+            referencedRelation: 'patients';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -28198,32 +28202,32 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "fk_appointments_patient";
-            columns: ["patient_id"];
+            foreignKeyName: 'fk_appointments_patient';
+            columns: ['patient_id'];
             isOneToOne: false;
-            referencedRelation: "analytics_patients";
-            referencedColumns: ["id"];
+            referencedRelation: 'analytics_patients';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "fk_appointments_patient";
-            columns: ["patient_id"];
+            foreignKeyName: 'fk_appointments_patient';
+            columns: ['patient_id'];
             isOneToOne: false;
-            referencedRelation: "patients";
-            referencedColumns: ["id"];
+            referencedRelation: 'patients';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "fk_appointments_professional";
-            columns: ["professional_id"];
+            foreignKeyName: 'fk_appointments_professional';
+            columns: ['professional_id'];
             isOneToOne: false;
-            referencedRelation: "professionals";
-            referencedColumns: ["id"];
+            referencedRelation: 'professionals';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "fk_appointments_service_type";
-            columns: ["service_type_id"];
+            foreignKeyName: 'fk_appointments_service_type';
+            columns: ['service_type_id'];
             isOneToOne: false;
-            referencedRelation: "service_types";
-            referencedColumns: ["id"];
+            referencedRelation: 'service_types';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -28320,25 +28324,25 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "payment_transactions_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'payment_transactions_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "payment_transactions_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'payment_transactions_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "payment_transactions_patient_id_fkey";
-            columns: ["patient_id"];
+            foreignKeyName: 'payment_transactions_patient_id_fkey';
+            columns: ['patient_id'];
             isOneToOne: false;
-            referencedRelation: "customers";
-            referencedColumns: ["id"];
+            referencedRelation: 'customers';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -28390,18 +28394,18 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "patients_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'patients_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "patients_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'patients_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
         ];
       };
@@ -28468,53 +28472,53 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "procedures_patient_id_fkey";
-            columns: ["patient_id"];
+            foreignKeyName: 'procedures_patient_id_fkey';
+            columns: ['patient_id'];
             isOneToOne: false;
-            referencedRelation: "analytics_patients";
-            referencedColumns: ["id"];
+            referencedRelation: 'analytics_patients';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "procedures_patient_id_fkey";
-            columns: ["patient_id"];
+            foreignKeyName: 'procedures_patient_id_fkey';
+            columns: ['patient_id'];
             isOneToOne: false;
-            referencedRelation: "patients";
-            referencedColumns: ["id"];
+            referencedRelation: 'patients';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "procedures_provider_id_fkey";
-            columns: ["provider_id"];
+            foreignKeyName: 'procedures_provider_id_fkey';
+            columns: ['provider_id'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "procedures_provider_id_fkey";
-            columns: ["provider_id"];
+            foreignKeyName: 'procedures_provider_id_fkey';
+            columns: ['provider_id'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "procedures_provider_id_fkey";
-            columns: ["provider_id"];
+            foreignKeyName: 'procedures_provider_id_fkey';
+            columns: ['provider_id'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
           {
-            foreignKeyName: "procedures_treatment_plan_id_fkey";
-            columns: ["treatment_plan_id"];
+            foreignKeyName: 'procedures_treatment_plan_id_fkey';
+            columns: ['treatment_plan_id'];
             isOneToOne: false;
-            referencedRelation: "analytics_treatment_plans";
-            referencedColumns: ["id"];
+            referencedRelation: 'analytics_treatment_plans';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "procedures_treatment_plan_id_fkey";
-            columns: ["treatment_plan_id"];
+            foreignKeyName: 'procedures_treatment_plan_id_fkey';
+            columns: ['treatment_plan_id'];
             isOneToOne: false;
-            referencedRelation: "treatment_plans";
-            referencedColumns: ["id"];
+            referencedRelation: 'treatment_plans';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -28581,39 +28585,39 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "treatment_plans_patient_id_fkey";
-            columns: ["patient_id"];
+            foreignKeyName: 'treatment_plans_patient_id_fkey';
+            columns: ['patient_id'];
             isOneToOne: false;
-            referencedRelation: "analytics_patients";
-            referencedColumns: ["id"];
+            referencedRelation: 'analytics_patients';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "treatment_plans_patient_id_fkey";
-            columns: ["patient_id"];
+            foreignKeyName: 'treatment_plans_patient_id_fkey';
+            columns: ['patient_id'];
             isOneToOne: false;
-            referencedRelation: "patients";
-            referencedColumns: ["id"];
+            referencedRelation: 'patients';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "treatment_plans_provider_id_fkey";
-            columns: ["provider_id"];
+            foreignKeyName: 'treatment_plans_provider_id_fkey';
+            columns: ['provider_id'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "treatment_plans_provider_id_fkey";
-            columns: ["provider_id"];
+            foreignKeyName: 'treatment_plans_provider_id_fkey';
+            columns: ['provider_id'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "treatment_plans_provider_id_fkey";
-            columns: ["provider_id"];
+            foreignKeyName: 'treatment_plans_provider_id_fkey';
+            columns: ['provider_id'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -28627,7 +28631,7 @@ export type GeneratedDatabase = {
           last_successful_call: string | null;
           provider_name: string | null;
           provider_type:
-            | GeneratedDatabase["public"]["Enums"]["api_provider_type"]
+            | GeneratedDatabase['public']['Enums']['api_provider_type']
             | null;
           success_rate_24h: number | null;
           success_rate_week: number | null;
@@ -28649,18 +28653,18 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "online_bookings_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'online_bookings_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "online_bookings_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'online_bookings_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
         ];
       };
@@ -28721,25 +28725,25 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "professional_compliance_alerts_profile_id_fkey";
-            columns: ["profile_id"];
+            foreignKeyName: 'professional_compliance_alerts_profile_id_fkey';
+            columns: ['profile_id'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "professional_compliance_alerts_profile_id_fkey";
-            columns: ["profile_id"];
+            foreignKeyName: 'professional_compliance_alerts_profile_id_fkey';
+            columns: ['profile_id'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "professional_compliance_alerts_profile_id_fkey";
-            columns: ["profile_id"];
+            foreignKeyName: 'professional_compliance_alerts_profile_id_fkey';
+            columns: ['profile_id'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -28759,32 +28763,32 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "drift_detections_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'drift_detections_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "drift_detections_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'drift_detections_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "drift_detections_model_id_fkey";
-            columns: ["model_id"];
+            foreignKeyName: 'drift_detections_model_id_fkey';
+            columns: ['model_id'];
             isOneToOne: false;
-            referencedRelation: "ai_models";
-            referencedColumns: ["id"];
+            referencedRelation: 'ai_models';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "drift_detections_model_id_fkey";
-            columns: ["model_id"];
+            foreignKeyName: 'drift_detections_model_id_fkey';
+            columns: ['model_id'];
             isOneToOne: false;
-            referencedRelation: "ml_model_performance";
-            referencedColumns: ["id"];
+            referencedRelation: 'ml_model_performance';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -28812,7 +28816,7 @@ export type GeneratedDatabase = {
           cancelled_appointments: number | null;
           churn_probability: number | null;
           churn_risk_level:
-            | GeneratedDatabase["public"]["Enums"]["churn_risk_level"]
+            | GeneratedDatabase['public']['Enums']['churn_risk_level']
             | null;
           clinic_id: string | null;
           completed_appointments: number | null;
@@ -28832,32 +28836,32 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "retention_metrics_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'retention_metrics_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "retention_metrics_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'retention_metrics_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "retention_metrics_patient_id_fkey";
-            columns: ["patient_id"];
+            foreignKeyName: 'retention_metrics_patient_id_fkey';
+            columns: ['patient_id'];
             isOneToOne: false;
-            referencedRelation: "analytics_patients";
-            referencedColumns: ["id"];
+            referencedRelation: 'analytics_patients';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "retention_metrics_patient_id_fkey";
-            columns: ["patient_id"];
+            foreignKeyName: 'retention_metrics_patient_id_fkey';
+            columns: ['patient_id'];
             isOneToOne: false;
-            referencedRelation: "patients";
-            referencedColumns: ["id"];
+            referencedRelation: 'patients';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -28903,18 +28907,18 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "ai_models_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'ai_models_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "ai_models_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'ai_models_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
         ];
       };
@@ -28938,18 +28942,18 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "patient_portal_sessions_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'patient_portal_sessions_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "patient_portal_sessions_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'patient_portal_sessions_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
         ];
       };
@@ -28961,7 +28965,7 @@ export type GeneratedDatabase = {
           certifications_expiring_soon: number | null;
           compliance_score: number | null;
           compliance_status:
-            | GeneratedDatabase["public"]["Enums"]["compliance_status"]
+            | GeneratedDatabase['public']['Enums']['compliance_status']
             | null;
           created_at: string | null;
           critical_alerts: number | null;
@@ -29000,12 +29004,12 @@ export type GeneratedDatabase = {
           last_execution: string | null;
           name: string | null;
           risk_levels:
-            | GeneratedDatabase["public"]["Enums"]["churn_risk_level"][]
+            | GeneratedDatabase['public']['Enums']['churn_risk_level'][]
             | null;
           schedule_config: GeneratedJson | null;
           settings: GeneratedJson | null;
           strategy_type:
-            | GeneratedDatabase["public"]["Enums"]["retention_strategy_type"]
+            | GeneratedDatabase['public']['Enums']['retention_strategy_type']
             | null;
           success_count: number | null;
           success_rate: number | null;
@@ -29018,39 +29022,39 @@ export type GeneratedDatabase = {
         };
         Relationships: [
           {
-            foreignKeyName: "retention_strategies_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'retention_strategies_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "clinics";
-            referencedColumns: ["id"];
+            referencedRelation: 'clinics';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "retention_strategies_clinic_id_fkey";
-            columns: ["clinic_id"];
+            foreignKeyName: 'retention_strategies_clinic_id_fkey';
+            columns: ['clinic_id'];
             isOneToOne: false;
-            referencedRelation: "communication_stats_by_clinic";
-            referencedColumns: ["clinic_id"];
+            referencedRelation: 'communication_stats_by_clinic';
+            referencedColumns: ['clinic_id'];
           },
           {
-            foreignKeyName: "retention_strategies_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'retention_strategies_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "professional_overview";
-            referencedColumns: ["id"];
+            referencedRelation: 'professional_overview';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "retention_strategies_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'retention_strategies_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "retention_strategies_created_by_fkey";
-            columns: ["created_by"];
+            foreignKeyName: 'retention_strategies_created_by_fkey';
+            columns: ['created_by'];
             isOneToOne: false;
-            referencedRelation: "unread_messages_by_user";
-            referencedColumns: ["user_id"];
+            referencedRelation: 'unread_messages_by_user';
+            referencedColumns: ['user_id'];
           },
         ];
       };
@@ -29149,9 +29153,9 @@ export type GeneratedDatabase = {
       };
       check_user_permission: {
         Args: {
-          p_action: GeneratedDatabase["public"]["Enums"]["permission_action"];
+          p_action: GeneratedDatabase['public']['Enums']['permission_action'];
           p_resource_id?: string;
-          p_resource_type: GeneratedDatabase["public"]["Enums"]["resource_type"];
+          p_resource_type: GeneratedDatabase['public']['Enums']['resource_type'];
           p_user_id: string;
         };
         Returns: boolean;
@@ -29430,12 +29434,12 @@ export type GeneratedDatabase = {
       log_access_attempt: {
         Args: {
           p_access_granted?: boolean;
-          p_action: GeneratedDatabase["public"]["Enums"]["permission_action"];
+          p_action: GeneratedDatabase['public']['Enums']['permission_action'];
           p_affected_profile_id?: string;
           p_denial_reason?: string;
           p_ip_address?: unknown;
           p_resource_id?: string;
-          p_resource_type: GeneratedDatabase["public"]["Enums"]["resource_type"];
+          p_resource_type: GeneratedDatabase['public']['Enums']['resource_type'];
           p_user_agent?: string;
           p_user_id: string;
         };
@@ -29548,157 +29552,157 @@ export type GeneratedDatabase = {
     };
     Enums: {
       api_provider_type:
-        | "cfm"
-        | "crm_state"
-        | "coren"
-        | "cro"
-        | "crf"
-        | "crefito"
-        | "crn"
-        | "crp"
-        | "anvisa"
-        | "custom_api";
+        | 'cfm'
+        | 'crm_state'
+        | 'coren'
+        | 'cro'
+        | 'crf'
+        | 'crefito'
+        | 'crn'
+        | 'crp'
+        | 'anvisa'
+        | 'custom_api';
       api_verification_status:
-        | "pending"
-        | "in_progress"
-        | "success"
-        | "failed"
-        | "error"
-        | "timeout"
-        | "rate_limited"
-        | "unauthorized"
-        | "not_found";
+        | 'pending'
+        | 'in_progress'
+        | 'success'
+        | 'failed'
+        | 'error'
+        | 'timeout'
+        | 'rate_limited'
+        | 'unauthorized'
+        | 'not_found';
       audit_type:
-        | "credential_verification"
-        | "compliance_check"
-        | "document_review"
-        | "external_verification"
-        | "periodic_audit"
-        | "incident_investigation"
-        | "regulatory_inspection";
+        | 'credential_verification'
+        | 'compliance_check'
+        | 'document_review'
+        | 'external_verification'
+        | 'periodic_audit'
+        | 'incident_investigation'
+        | 'regulatory_inspection';
       automation_status:
-        | "active"
-        | "inactive"
-        | "paused"
-        | "error"
-        | "maintenance";
+        | 'active'
+        | 'inactive'
+        | 'paused'
+        | 'error'
+        | 'maintenance';
       automation_trigger_type:
-        | "schedule"
-        | "expiry_check"
-        | "compliance_check"
-        | "api_sync"
-        | "event_triggered"
-        | "manual";
-      churn_risk_level: "low" | "medium" | "high" | "critical";
+        | 'schedule'
+        | 'expiry_check'
+        | 'compliance_check'
+        | 'api_sync'
+        | 'event_triggered'
+        | 'manual';
+      churn_risk_level: 'low' | 'medium' | 'high' | 'critical';
       compliance_status:
-        | "compliant"
-        | "non_compliant"
-        | "pending_review"
-        | "under_investigation"
-        | "remediation_required"
-        | "exempted";
+        | 'compliant'
+        | 'non_compliant'
+        | 'pending_review'
+        | 'under_investigation'
+        | 'remediation_required'
+        | 'exempted';
       engagement_event_type:
-        | "appointment_scheduled"
-        | "appointment_completed"
-        | "appointment_cancelled"
-        | "email_opened"
-        | "email_clicked"
-        | "sms_received"
-        | "app_login"
-        | "profile_updated"
-        | "payment_completed"
-        | "review_submitted"
-        | "referral_made";
+        | 'appointment_scheduled'
+        | 'appointment_completed'
+        | 'appointment_cancelled'
+        | 'email_opened'
+        | 'email_clicked'
+        | 'sms_received'
+        | 'app_login'
+        | 'profile_updated'
+        | 'payment_completed'
+        | 'review_submitted'
+        | 'referral_made';
       execution_status:
-        | "pending"
-        | "running"
-        | "completed"
-        | "failed"
-        | "cancelled";
+        | 'pending'
+        | 'running'
+        | 'completed'
+        | 'failed'
+        | 'cancelled';
       integration_method:
-        | "api_rest"
-        | "api_soap"
-        | "database_direct"
-        | "file_transfer"
-        | "hl7_fhir"
-        | "hl7_v2"
-        | "webhook"
-        | "message_queue"
-        | "custom_protocol";
+        | 'api_rest'
+        | 'api_soap'
+        | 'database_direct'
+        | 'file_transfer'
+        | 'hl7_fhir'
+        | 'hl7_v2'
+        | 'webhook'
+        | 'message_queue'
+        | 'custom_protocol';
       integration_status:
-        | "active"
-        | "inactive"
-        | "error"
-        | "testing"
-        | "maintenance"
-        | "deprecated";
+        | 'active'
+        | 'inactive'
+        | 'error'
+        | 'testing'
+        | 'maintenance'
+        | 'deprecated';
       legacy_system_type:
-        | "ehr"
-        | "his"
-        | "pacs"
-        | "lis"
-        | "crm"
-        | "erp"
-        | "billing"
-        | "scheduling"
-        | "hr"
-        | "inventory"
-        | "custom";
+        | 'ehr'
+        | 'his'
+        | 'pacs'
+        | 'lis'
+        | 'crm'
+        | 'erp'
+        | 'billing'
+        | 'scheduling'
+        | 'hr'
+        | 'inventory'
+        | 'custom';
       notification_channel:
-        | "email"
-        | "sms"
-        | "whatsapp"
-        | "push_notification"
-        | "in_app"
-        | "webhook";
+        | 'email'
+        | 'sms'
+        | 'whatsapp'
+        | 'push_notification'
+        | 'in_app'
+        | 'webhook';
       permission_action:
-        | "view"
-        | "create"
-        | "update"
-        | "delete"
-        | "verify"
-        | "approve"
-        | "audit"
-        | "export"
-        | "manage_access";
+        | 'view'
+        | 'create'
+        | 'update'
+        | 'delete'
+        | 'verify'
+        | 'approve'
+        | 'audit'
+        | 'export'
+        | 'manage_access';
       professional_certification_type:
-        | "specialty_certification"
-        | "continuing_education"
-        | "training_certificate"
-        | "competency_certification"
-        | "external_credential"
-        | "international_certification";
+        | 'specialty_certification'
+        | 'continuing_education'
+        | 'training_certificate'
+        | 'competency_certification'
+        | 'external_credential'
+        | 'international_certification';
       professional_registration_type:
-        | "medical_license"
-        | "nursing_license"
-        | "dentist_license"
-        | "pharmacist_license"
-        | "physiotherapy_license"
-        | "nutrition_license"
-        | "psychology_license"
-        | "biomedicine_license"
-        | "other";
+        | 'medical_license'
+        | 'nursing_license'
+        | 'dentist_license'
+        | 'pharmacist_license'
+        | 'physiotherapy_license'
+        | 'nutrition_license'
+        | 'psychology_license'
+        | 'biomedicine_license'
+        | 'other';
       resource_type:
-        | "professional_registrations"
-        | "professional_certifications"
-        | "compliance_assessments"
-        | "audit_logs"
-        | "api_configurations"
-        | "compliance_alerts"
-        | "reports"
-        | "system_settings";
+        | 'professional_registrations'
+        | 'professional_certifications'
+        | 'compliance_assessments'
+        | 'audit_logs'
+        | 'api_configurations'
+        | 'compliance_alerts'
+        | 'reports'
+        | 'system_settings';
       retention_strategy_type:
-        | "email_campaign"
-        | "sms_reminder"
-        | "discount_offer"
-        | "personalized_content"
-        | "loyalty_program"
-        | "referral_incentive"
-        | "appointment_reminder"
-        | "birthday_campaign"
-        | "reactivation_campaign"
-        | "feedback_request";
-      sync_direction: "bidirectional" | "inbound" | "outbound";
+        | 'email_campaign'
+        | 'sms_reminder'
+        | 'discount_offer'
+        | 'personalized_content'
+        | 'loyalty_program'
+        | 'referral_incentive'
+        | 'appointment_reminder'
+        | 'birthday_campaign'
+        | 'reactivation_campaign'
+        | 'feedback_request';
+      sync_direction: 'bidirectional' | 'inbound' | 'outbound';
     };
     CompositeTypes: {
       [_ in never]: never;
@@ -29706,298 +29710,297 @@ export type GeneratedDatabase = {
   };
 };
 
-type DatabaseWithoutInternals = Omit<GeneratedDatabase, "__InternalSupabase">;
+type DatabaseWithoutInternals = Omit<GeneratedDatabase, '__InternalSupabase'>;
 
-type DefaultSchema = DatabaseWithoutInternals[Extract<
-  keyof GeneratedDatabase,
-  "public"
->];
+type DefaultSchema = DatabaseWithoutInternals[
+  Extract<
+    keyof GeneratedDatabase,
+    'public'
+  >
+];
 
 export type Tables<
   DefaultSchemaTableNameOrOptions extends
-    | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
+    | keyof (DefaultSchema['Tables'] & DefaultSchema['Views'])
     | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals;
-  }
-    ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
-        DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
+  } ? keyof (
+      & DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables']
+      & DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Views']
+    )
     : never = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals;
-}
-  ? (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
-      DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
+} ? (
+    & DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables']
+    & DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Views']
+  )[TableName] extends {
+    Row: infer R;
+  } ? R
+  : never
+  : DefaultSchemaTableNameOrOptions extends keyof (
+    & DefaultSchema['Tables']
+    & DefaultSchema['Views']
+  ) ? (
+      & DefaultSchema['Tables']
+      & DefaultSchema['Views']
+    )[DefaultSchemaTableNameOrOptions] extends {
       Row: infer R;
-    }
-    ? R
+    } ? R
     : never
-  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] &
-        DefaultSchema["Views"])
-    ? (DefaultSchema["Tables"] &
-        DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
-        Row: infer R;
-      }
-      ? R
-      : never
-    : never;
+  : never;
 
 export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
-    | keyof DefaultSchema["Tables"]
+    | keyof DefaultSchema['Tables']
     | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals;
-  }
-    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+  } ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables']
     : never = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals;
 }
-  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables'][TableName] extends
+    {
       Insert: infer I;
-    }
-    ? I
+    } ? I
+  : never
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema['Tables']
+    ? DefaultSchema['Tables'][DefaultSchemaTableNameOrOptions] extends {
+      Insert: infer I;
+    } ? I
     : never
-  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
-    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
-        Insert: infer I;
-      }
-      ? I
-      : never
-    : never;
+  : never;
 
 export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
-    | keyof DefaultSchema["Tables"]
+    | keyof DefaultSchema['Tables']
     | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals;
-  }
-    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+  } ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables']
     : never = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals;
 }
-  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables'][TableName] extends
+    {
       Update: infer U;
-    }
-    ? U
+    } ? U
+  : never
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema['Tables']
+    ? DefaultSchema['Tables'][DefaultSchemaTableNameOrOptions] extends {
+      Update: infer U;
+    } ? U
     : never
-  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
-    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
-        Update: infer U;
-      }
-      ? U
-      : never
-    : never;
+  : never;
 
 export type Enums<
   DefaultSchemaEnumNameOrOptions extends
-    | keyof DefaultSchema["Enums"]
+    | keyof DefaultSchema['Enums']
     | { schema: keyof DatabaseWithoutInternals },
   EnumName extends DefaultSchemaEnumNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals;
-  }
-    ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
+  } ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions['schema']]['Enums']
     : never = never,
 > = DefaultSchemaEnumNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals;
-}
-  ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
-  : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
-    ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
-    : never;
+} ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions['schema']]['Enums'][EnumName]
+  : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema['Enums']
+    ? DefaultSchema['Enums'][DefaultSchemaEnumNameOrOptions]
+  : never;
 
 export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
-    | keyof DefaultSchema["CompositeTypes"]
+    | keyof DefaultSchema['CompositeTypes']
     | { schema: keyof DatabaseWithoutInternals },
   CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals;
-  }
-    ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
+  } ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions['schema']]['CompositeTypes']
     : never = never,
 > = PublicCompositeTypeNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals;
-}
-  ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
-  : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
-    ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
-    : never;
+} ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions['schema']]['CompositeTypes'][
+    CompositeTypeName
+  ]
+  : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema['CompositeTypes']
+    ? DefaultSchema['CompositeTypes'][PublicCompositeTypeNameOrOptions]
+  : never;
 
 export const Constants = {
   public: {
     Enums: {
       api_provider_type: [
-        "cfm",
-        "crm_state",
-        "coren",
-        "cro",
-        "crf",
-        "crefito",
-        "crn",
-        "crp",
-        "anvisa",
-        "custom_api",
+        'cfm',
+        'crm_state',
+        'coren',
+        'cro',
+        'crf',
+        'crefito',
+        'crn',
+        'crp',
+        'anvisa',
+        'custom_api',
       ],
       api_verification_status: [
-        "pending",
-        "in_progress",
-        "success",
-        "failed",
-        "error",
-        "timeout",
-        "rate_limited",
-        "unauthorized",
-        "not_found",
+        'pending',
+        'in_progress',
+        'success',
+        'failed',
+        'error',
+        'timeout',
+        'rate_limited',
+        'unauthorized',
+        'not_found',
       ],
       audit_type: [
-        "credential_verification",
-        "compliance_check",
-        "document_review",
-        "external_verification",
-        "periodic_audit",
-        "incident_investigation",
-        "regulatory_inspection",
+        'credential_verification',
+        'compliance_check',
+        'document_review',
+        'external_verification',
+        'periodic_audit',
+        'incident_investigation',
+        'regulatory_inspection',
       ],
       automation_status: [
-        "active",
-        "inactive",
-        "paused",
-        "error",
-        "maintenance",
+        'active',
+        'inactive',
+        'paused',
+        'error',
+        'maintenance',
       ],
       automation_trigger_type: [
-        "schedule",
-        "expiry_check",
-        "compliance_check",
-        "api_sync",
-        "event_triggered",
-        "manual",
+        'schedule',
+        'expiry_check',
+        'compliance_check',
+        'api_sync',
+        'event_triggered',
+        'manual',
       ],
-      churn_risk_level: ["low", "medium", "high", "critical"],
+      churn_risk_level: ['low', 'medium', 'high', 'critical'],
       compliance_status: [
-        "compliant",
-        "non_compliant",
-        "pending_review",
-        "under_investigation",
-        "remediation_required",
-        "exempted",
+        'compliant',
+        'non_compliant',
+        'pending_review',
+        'under_investigation',
+        'remediation_required',
+        'exempted',
       ],
       engagement_event_type: [
-        "appointment_scheduled",
-        "appointment_completed",
-        "appointment_cancelled",
-        "email_opened",
-        "email_clicked",
-        "sms_received",
-        "app_login",
-        "profile_updated",
-        "payment_completed",
-        "review_submitted",
-        "referral_made",
+        'appointment_scheduled',
+        'appointment_completed',
+        'appointment_cancelled',
+        'email_opened',
+        'email_clicked',
+        'sms_received',
+        'app_login',
+        'profile_updated',
+        'payment_completed',
+        'review_submitted',
+        'referral_made',
       ],
       execution_status: [
-        "pending",
-        "running",
-        "completed",
-        "failed",
-        "cancelled",
+        'pending',
+        'running',
+        'completed',
+        'failed',
+        'cancelled',
       ],
       integration_method: [
-        "api_rest",
-        "api_soap",
-        "database_direct",
-        "file_transfer",
-        "hl7_fhir",
-        "hl7_v2",
-        "webhook",
-        "message_queue",
-        "custom_protocol",
+        'api_rest',
+        'api_soap',
+        'database_direct',
+        'file_transfer',
+        'hl7_fhir',
+        'hl7_v2',
+        'webhook',
+        'message_queue',
+        'custom_protocol',
       ],
       integration_status: [
-        "active",
-        "inactive",
-        "error",
-        "testing",
-        "maintenance",
-        "deprecated",
+        'active',
+        'inactive',
+        'error',
+        'testing',
+        'maintenance',
+        'deprecated',
       ],
       legacy_system_type: [
-        "ehr",
-        "his",
-        "pacs",
-        "lis",
-        "crm",
-        "erp",
-        "billing",
-        "scheduling",
-        "hr",
-        "inventory",
-        "custom",
+        'ehr',
+        'his',
+        'pacs',
+        'lis',
+        'crm',
+        'erp',
+        'billing',
+        'scheduling',
+        'hr',
+        'inventory',
+        'custom',
       ],
       notification_channel: [
-        "email",
-        "sms",
-        "whatsapp",
-        "push_notification",
-        "in_app",
-        "webhook",
+        'email',
+        'sms',
+        'whatsapp',
+        'push_notification',
+        'in_app',
+        'webhook',
       ],
       permission_action: [
-        "view",
-        "create",
-        "update",
-        "delete",
-        "verify",
-        "approve",
-        "audit",
-        "export",
-        "manage_access",
+        'view',
+        'create',
+        'update',
+        'delete',
+        'verify',
+        'approve',
+        'audit',
+        'export',
+        'manage_access',
       ],
       professional_certification_type: [
-        "specialty_certification",
-        "continuing_education",
-        "training_certificate",
-        "competency_certification",
-        "external_credential",
-        "international_certification",
+        'specialty_certification',
+        'continuing_education',
+        'training_certificate',
+        'competency_certification',
+        'external_credential',
+        'international_certification',
       ],
       professional_registration_type: [
-        "medical_license",
-        "nursing_license",
-        "dentist_license",
-        "pharmacist_license",
-        "physiotherapy_license",
-        "nutrition_license",
-        "psychology_license",
-        "biomedicine_license",
-        "other",
+        'medical_license',
+        'nursing_license',
+        'dentist_license',
+        'pharmacist_license',
+        'physiotherapy_license',
+        'nutrition_license',
+        'psychology_license',
+        'biomedicine_license',
+        'other',
       ],
       resource_type: [
-        "professional_registrations",
-        "professional_certifications",
-        "compliance_assessments",
-        "audit_logs",
-        "api_configurations",
-        "compliance_alerts",
-        "reports",
-        "system_settings",
+        'professional_registrations',
+        'professional_certifications',
+        'compliance_assessments',
+        'audit_logs',
+        'api_configurations',
+        'compliance_alerts',
+        'reports',
+        'system_settings',
       ],
       retention_strategy_type: [
-        "email_campaign",
-        "sms_reminder",
-        "discount_offer",
-        "personalized_content",
-        "loyalty_program",
-        "referral_incentive",
-        "appointment_reminder",
-        "birthday_campaign",
-        "reactivation_campaign",
-        "feedback_request",
+        'email_campaign',
+        'sms_reminder',
+        'discount_offer',
+        'personalized_content',
+        'loyalty_program',
+        'referral_incentive',
+        'appointment_reminder',
+        'birthday_campaign',
+        'reactivation_campaign',
+        'feedback_request',
       ],
-      sync_direction: ["bidirectional", "inbound", "outbound"],
+      sync_direction: ['bidirectional', 'inbound', 'outbound'],
     },
   },
 } as const;

@@ -3,48 +3,40 @@
  * Main entry point for all performance optimization features
  */
 
-export { AestheticClinicPerformanceOptimizer } from "./aesthetic-clinic-performance-optimizer";
-export { WebSocketOptimizer } from "./websocket-optimizer";
-export { SecurityComplianceValidator } from "./security-compliance-validator";
+export { AestheticClinicPerformanceOptimizer } from './aesthetic-clinic-performance-optimizer';
+export { SecurityComplianceValidator } from './security-compliance-validator';
+export { WebSocketOptimizer } from './websocket-optimizer';
 
 export type {
-  AestheticPerformanceMetrics,
   AestheticCacheConfig,
+  AestheticPerformanceMetrics,
   ImageOptimizationConfig,
   QueryOptimizationConfig,
-} from "./aesthetic-clinic-performance-optimizer";
+} from './aesthetic-clinic-performance-optimizer';
+
+export type { WebSocketConfig, WebSocketConnection, WebSocketMetrics } from './websocket-optimizer';
 
 export type {
-  WebSocketConnection,
-  WebSocketMetrics,
-  WebSocketConfig,
-} from "./websocket-optimizer";
-
-export type {
+  ComplianceFramework,
+  SecurityRecommendation,
   SecurityValidationResult,
   SecurityViolation,
-  SecurityRecommendation,
-  ComplianceFramework,
-} from "./security-compliance-validator";
+} from './security-compliance-validator';
 
 // Factory functions
 export {
   createAestheticClinicPerformanceOptimizer,
-} from "./aesthetic-clinic-performance-optimizer";
+} from './aesthetic-clinic-performance-optimizer';
 
-export {
-  createWebSocketOptimizer,
-} from "./websocket-optimizer";
+export { createWebSocketOptimizer } from './websocket-optimizer';
 
-export {
-  createSecurityComplianceValidator,
-} from "./security-compliance-validator";
+export { createSecurityComplianceValidator } from './security-compliance-validator';
 
 // Performance monitoring middleware
-export { PerformanceMonitor } from "../../middleware/performance-middleware";
+export { PerformanceMonitor } from '../../middleware/performance-middleware';
 
 // Performance dashboard routes
-export { createPerformanceDashboardRoutes } from "../../routes/performance-dashboard";
+export { createPerformanceDashboardRoutes } from '../../routes/performance-dashboard';
 
 /**
  * Initialize complete performance optimization stack
@@ -72,7 +64,7 @@ export async function initializePerformanceOptimization(config: {
   // Initialize WebSocket optimizer if configured
   let websocketOptimizer: WebSocketOptimizer | undefined;
   if (websocket?.server) {
-    const { createWebSocketOptimizer } = await import("./websocket-optimizer");
+    const { createWebSocketOptimizer } = await import('./websocket-optimizer');
     websocketOptimizer = createWebSocketOptimizer(optimizer, websocket.config);
     websocketOptimizer.initializeServer(websocket.server);
   }
@@ -80,14 +72,14 @@ export async function initializePerformanceOptimization(config: {
   // Initialize performance monitoring if enabled
   let performanceMonitor: any;
   if (monitoring?.enableRealtimeMonitoring !== false) {
-    const { PerformanceMonitor } = await import("../../middleware/performance-middleware");
+    const { PerformanceMonitor } = await import('../../middleware/performance-middleware');
     performanceMonitor = new PerformanceMonitor(optimizer, monitoring?.thresholds);
   }
 
   // Initialize security compliance validator if enabled
   let securityValidator: SecurityComplianceValidator | undefined;
   if (security?.enableComplianceValidation !== false) {
-    const { createSecurityComplianceValidator } = await import("./security-compliance-validator");
+    const { createSecurityComplianceValidator } = await import('./security-compliance-validator');
     securityValidator = createSecurityComplianceValidator(optimizer, websocketOptimizer);
   }
 
@@ -96,19 +88,20 @@ export async function initializePerformanceOptimization(config: {
     setInterval(async () => {
       try {
         const validationResult = await securityValidator.validateOptimizations();
-        
+
         // Log validation results
         if (validationResult.violations.length > 0) {
-          console.warn("[Security] Performance optimization validation found violations:", 
-            validationResult.violations.map(v => `${v.type}: ${v.description}`)
+          console.warn(
+            '[Security] Performance optimization validation found violations:',
+            validationResult.violations.map(v => `${v.type}: ${v.description}`),
           );
         }
-        
+
         if (validationResult.complianceScore < 80) {
           console.error(`[Security] Low compliance score: ${validationResult.complianceScore}%`);
         }
       } catch {
-        console.error("[Security] Compliance validation failed:", error);
+        console.error('[Security] Compliance validation failed:', error);
       }
     }, security.validationInterval);
   }
@@ -116,24 +109,24 @@ export async function initializePerformanceOptimization(config: {
   // Warm up cache on startup
   await optimizer.warmUpCache();
 
-  console.log("[Performance] Optimization stack initialized successfully");
+  console.log('[Performance] Optimization stack initialized successfully');
 
   return {
     optimizer,
     websocketOptimizer,
     performanceMonitor,
     securityValidator,
-    
+
     // Convenience methods
     getMetrics: () => optimizer.getPerformanceMetrics(),
     getWebSocketMetrics: () => websocketOptimizer?.getMetrics(),
     getSecurityStatus: () => securityValidator?.validateOptimizations(),
-    
+
     // Utility methods
     clearCache: (pattern?: string) => optimizer.clearCache(pattern),
     warmUpCache: () => optimizer.warmUpCache(),
     validateCompliance: () => securityValidator?.validateOptimizations(),
-    
+
     // Destroy method for cleanup
     destroy: () => {
       websocketOptimizer?.destroy();
@@ -149,15 +142,15 @@ export const PERFORMANCE_PRESETS = {
   // Optimized for high-traffic production environments
   production: {
     cache: {
-      clientProfiles: { ttl: 600000, maxSize: 2000, strategy: "lru" },
-      treatmentCatalog: { ttl: 3600000, maxSize: 1000, strategy: "lru" },
+      clientProfiles: { ttl: 600000, maxSize: 2000, strategy: 'lru' },
+      treatmentCatalog: { ttl: 3600000, maxSize: 1000, strategy: 'lru' },
       beforeAfterPhotos: { ttl: 1800000, maxSize: 5000, compressionEnabled: true },
       analytics: { ttl: 120000, maxSize: 500, realtimeEnabled: true },
     },
     images: {
       maxWidth: 1200,
       quality: 85,
-      formats: ["webp", "avif", "jpeg"],
+      formats: ['webp', 'avif', 'jpeg'],
       lazyLoading: true,
       placeholderEnabled: true,
       cdnEnabled: true,
@@ -168,7 +161,7 @@ export const PERFORMANCE_PRESETS = {
       enableConnectionPooling: true,
       poolSize: 20,
       enableReadReplicas: true,
-      indexHints: ["idx_aesthetic_clients_email", "idx_treatment_sessions_date"],
+      indexHints: ['idx_aesthetic_clients_email', 'idx_treatment_sessions_date'],
     },
     websocket: {
       maxConnections: 5000,
@@ -197,15 +190,15 @@ export const PERFORMANCE_PRESETS = {
   // Optimized for development and testing
   development: {
     cache: {
-      clientProfiles: { ttl: 30000, maxSize: 100, strategy: "lru" },
-      treatmentCatalog: { ttl: 60000, maxSize: 50, strategy: "lru" },
+      clientProfiles: { ttl: 30000, maxSize: 100, strategy: 'lru' },
+      treatmentCatalog: { ttl: 60000, maxSize: 50, strategy: 'lru' },
       beforeAfterPhotos: { ttl: 45000, maxSize: 200, compressionEnabled: false },
       analytics: { ttl: 15000, maxSize: 20, realtimeEnabled: false },
     },
     images: {
       maxWidth: 800,
       quality: 70,
-      formats: ["jpeg"],
+      formats: ['jpeg'],
       lazyLoading: false,
       placeholderEnabled: false,
       cdnEnabled: false,
@@ -245,15 +238,15 @@ export const PERFORMANCE_PRESETS = {
   // Optimized for staging and pre-production
   staging: {
     cache: {
-      clientProfiles: { ttl: 300000, maxSize: 1000, strategy: "lru" },
-      treatmentCatalog: { ttl: 1800000, maxSize: 500, strategy: "lru" },
+      clientProfiles: { ttl: 300000, maxSize: 1000, strategy: 'lru' },
+      treatmentCatalog: { ttl: 1800000, maxSize: 500, strategy: 'lru' },
       beforeAfterPhotos: { ttl: 900000, maxSize: 1000, compressionEnabled: true },
       analytics: { ttl: 60000, maxSize: 100, realtimeEnabled: true },
     },
     images: {
       maxWidth: 1000,
       quality: 80,
-      formats: ["webp", "jpeg"],
+      formats: ['webp', 'jpeg'],
       lazyLoading: true,
       placeholderEnabled: true,
       cdnEnabled: false,
@@ -264,7 +257,7 @@ export const PERFORMANCE_PRESETS = {
       enableConnectionPooling: true,
       poolSize: 10,
       enableReadReplicas: false,
-      indexHints: ["idx_aesthetic_clients_email", "idx_treatment_sessions_date"],
+      indexHints: ['idx_aesthetic_clients_email', 'idx_treatment_sessions_date'],
     },
     websocket: {
       maxConnections: 1000,
@@ -310,7 +303,9 @@ export const PerformanceUtils = {
       imageMetrics: {
         ...metrics.imageMetrics,
         averageLoadTime: `${metrics.imageMetrics.averageLoadTime?.toFixed(2) || 0}ms`,
-        totalBandwidthSaved: `${((metrics.imageMetrics.totalBandwidthSaved || 0) / 1024 / 1024).toFixed(2)}MB`,
+        totalBandwidthSaved: `${
+          ((metrics.imageMetrics.totalBandwidthSaved || 0) / 1024 / 1024).toFixed(2)
+        }MB`,
       },
       apiMetrics: {
         ...metrics.apiMetrics,
@@ -370,7 +365,7 @@ export const PerformanceUtils = {
    * Generate performance recommendations
    */
   generateRecommendations(metrics: any): Array<{
-    type: "warning" | "critical";
+    type: 'warning' | 'critical';
     category: string;
     message: string;
     action: string;
@@ -381,10 +376,10 @@ export const PerformanceUtils = {
     const avgResponseTime = metrics.queryMetrics?.averageQueryTime || 0;
     if (avgResponseTime > 1000) {
       recommendations.push({
-        type: "critical",
-        category: "response_time",
+        type: 'critical',
+        category: 'response_time',
         message: `High average response time: ${avgResponseTime.toFixed(0)}ms`,
-        action: "Optimize database queries and implement caching strategies",
+        action: 'Optimize database queries and implement caching strategies',
       });
     }
 
@@ -392,10 +387,10 @@ export const PerformanceUtils = {
     const cacheHitRate = metrics.queryMetrics?.cacheHitRate || 0;
     if (cacheHitRate < 0.5) {
       recommendations.push({
-        type: "warning",
-        category: "caching",
+        type: 'warning',
+        category: 'caching',
         message: `Low cache hit rate: ${(cacheHitRate * 100).toFixed(1)}%`,
-        action: "Review caching strategy and increase cache TTL for frequently accessed data",
+        action: 'Review caching strategy and increase cache TTL for frequently accessed data',
       });
     }
 
@@ -403,10 +398,10 @@ export const PerformanceUtils = {
     const errorRate = metrics.queryMetrics?.errorRate || 0;
     if (errorRate > 2) {
       recommendations.push({
-        type: "warning",
-        category: "reliability",
+        type: 'warning',
+        category: 'reliability',
         message: `High error rate: ${errorRate.toFixed(1)}%`,
-        action: "Review error logs and implement better error handling",
+        action: 'Review error logs and implement better error handling',
       });
     }
 
@@ -414,10 +409,10 @@ export const PerformanceUtils = {
     const memoryUsage = metrics.memoryUsage || 0;
     if (memoryUsage > 512 * 1024 * 1024) {
       recommendations.push({
-        type: "warning",
-        category: "memory",
+        type: 'warning',
+        category: 'memory',
         message: `High memory usage: ${(memoryUsage / 1024 / 1024).toFixed(0)}MB`,
-        action: "Implement memory optimization and garbage collection strategies",
+        action: 'Implement memory optimization and garbage collection strategies',
       });
     }
 
@@ -463,17 +458,21 @@ export const MonitoringUtils = {
     // Performance threshold alerts
     setInterval(() => {
       const stats = monitor.getStatistics();
-      
+
       if (stats.averageResponseTime > 2000) {
-        console.warn(`[Performance] High average response time: ${stats.averageResponseTime.toFixed(0)}ms`);
+        console.warn(
+          `[Performance] High average response time: ${stats.averageResponseTime.toFixed(0)}ms`,
+        );
       }
-      
+
       if (stats.errorRate > 5) {
         console.warn(`[Performance] High error rate: ${stats.errorRate.toFixed(1)}%`);
       }
-      
+
       if (stats.memoryUsage.peak > 512 * 1024 * 1024) {
-        console.warn(`[Performance] High memory usage: ${(stats.memoryUsage.peak / 1024 / 1024).toFixed(0)}MB`);
+        console.warn(
+          `[Performance] High memory usage: ${(stats.memoryUsage.peak / 1024 / 1024).toFixed(0)}MB`,
+        );
       }
     }, 60000); // Every minute
 
@@ -481,11 +480,11 @@ export const MonitoringUtils = {
     if (websocketOptimizer) {
       setInterval(() => {
         const wsMetrics = websocketOptimizer.getMetrics();
-        
+
         if (wsMetrics.averageLatency > 1000) {
           console.warn(`[WebSocket] High latency: ${wsMetrics.averageLatency.toFixed(0)}ms`);
         }
-        
+
         if (wsMetrics.errors.connectionErrors > 0) {
           console.warn(`[WebSocket] Connection errors: ${wsMetrics.errors.connectionErrors}`);
         }

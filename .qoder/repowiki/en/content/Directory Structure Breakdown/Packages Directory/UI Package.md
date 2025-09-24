@@ -312,46 +312,46 @@ style O fill:#69f,stroke:#333
 To implement a patient registration form with proper validation and accessibility:
 
 ```jsx
-import { HealthcareForm, HealthcareTextField, HealthcareSelect } from "@neonpro/ui";
+import { HealthcareForm, HealthcareSelect, HealthcareTextField } from '@neonpro/ui';
 
 function PatientRegistrationForm() {
   return (
-    <HealthcareForm 
-      dataSensitivity="confidential"
+    <HealthcareForm
+      dataSensitivity='confidential'
       patientDataForm={true}
       requireConsent={true}
       onSubmit={handleSubmit}
     >
       <HealthcareTextField
-        name="name"
-        label="Full Name"
-        fieldType="patient-name"
+        name='name'
+        label='Full Name'
+        fieldType='patient-name'
         required={true}
       />
-      
+
       <HealthcareTextField
-        name="cpf"
-        label="CPF"
-        fieldType="cpf"
+        name='cpf'
+        label='CPF'
+        fieldType='cpf'
         required={true}
-        mask="000.000.000-00"
+        mask='000.000.000-00'
       />
-      
+
       <HealthcareTextField
-        name="phone"
-        label="Phone Number"
-        fieldType="phone"
-        mask="(00) 00000-0000"
+        name='phone'
+        label='Phone Number'
+        fieldType='phone'
+        mask='(00) 00000-0000'
       />
-      
+
       <HealthcareSelect
-        name="specialty"
-        label="Medical Specialty"
-        selectType="medical-specialty"
+        name='specialty'
+        label='Medical Specialty'
+        selectType='medical-specialty'
         options={customSpecialties}
       />
-      
-      <button type="submit">Register Patient</button>
+
+      <button type='submit'>Register Patient</button>
     </HealthcareForm>
   );
 }
@@ -362,8 +362,8 @@ function PatientRegistrationForm() {
 To add LGPD-compliant consent management to your application:
 
 ```jsx
-import { LGPDConsentBanner, useLGPDConsent } from "@neonpro/ui";
-import { useEffect } from "react";
+import { LGPDConsentBanner, useLGPDConsent } from '@neonpro/ui';
+import { useEffect } from 'react';
 
 function App() {
   const { hasConsent } = useLGPDConsent();
@@ -381,19 +381,19 @@ function App() {
       <LGPDConsentBanner
         requiredConsents={[ConsentType.ESSENTIAL]}
         optionalConsents={[
-          ConsentType.ANALYTICS, 
-          ConsentType.MARKETING
+          ConsentType.ANALYTICS,
+          ConsentType.MARKETING,
         ]}
         dataTypes={[
           HealthcareDataType.PERSONAL,
-          HealthcareDataType.MEDICAL
+          HealthcareDataType.MEDICAL,
         ]}
         processingPurposes={[
           DataProcessingPurpose.TREATMENT,
-          DataProcessingPurpose.RESEARCH
+          DataProcessingPurpose.RESEARCH,
         ]}
-        privacyPolicyUrl="/privacy"
-        dataProcessingUrl="/data-processing"
+        privacyPolicyUrl='/privacy'
+        dataProcessingUrl='/data-processing'
       />
     </>
   );
@@ -405,15 +405,15 @@ function App() {
 To configure the healthcare theme with emergency mode support:
 
 ```jsx
-import { HealthcareThemeProvider } from "@neonpro/ui";
+import { HealthcareThemeProvider } from '@neonpro/ui';
 
 function RootLayout({ children }) {
   return (
-    <HealthcareThemeProvider 
-      initialTheme={{ 
-        colorMode: "light",
-        fontSize: "medium",
-        emergencyMode: false
+    <HealthcareThemeProvider
+      initialTheme={{
+        colorMode: 'light',
+        fontSize: 'medium',
+        emergencyMode: false,
       }}
       persistTheme={true}
     >
@@ -425,7 +425,7 @@ function RootLayout({ children }) {
 // Elsewhere in the application
 function EmergencyButton() {
   const { toggleEmergencyMode } = useHealthcareTheme();
-  
+
   return (
     <button onClick={toggleEmergencyMode}>
       Activate Emergency Mode
@@ -452,19 +452,19 @@ When integrating @neonpro/ui with existing applications, styling conflicts may o
 
 ```ts
 content: [
-  "./src/**/*.{js,ts,jsx,tsx}",
-  "./node_modules/@neonpro/ui/src/**/*.{js,ts,jsx,tsx}"
-]
+  './src/**/*.{js,ts,jsx,tsx}',
+  './node_modules/@neonpro/ui/src/**/*.{js,ts,jsx,tsx}',
+];
 ```
 
 2. Use the `!important` modifier sparingly and prefer composition over override:
 
 ```jsx
 {/* Good: Compose classes */}
-<HealthcareTextField className="max-w-md" />
+<HealthcareTextField className='max-w-md' />;
 
 {/* Avoid: Overriding internal styles */}
-<HealthcareTextField className="!border-red-500 !text-lg" />
+<HealthcareTextField className='!border-red-500 !text-lg' />;
 ```
 
 3. Wrap the application with the theme provider at the root level to ensure consistent styling.
@@ -486,10 +486,10 @@ For optimal performance:
 
 ```ts
 // Good
-import { Button } from "@neonpro/ui";
+import { Button } from '@neonpro/ui';
 
 // Avoid
-import * as UI from "@neonpro/ui";
+import * as UI from '@neonpro/ui';
 ```
 
 2. Use React.memo for components that render frequently with the same props.
@@ -497,7 +497,7 @@ import * as UI from "@neonpro/ui";
 3. Implement lazy loading for less frequently used components:
 
 ```ts
-const HeavyComponent = React.lazy(() => import("@neonpro/ui/heavy-component"));
+const HeavyComponent = React.lazy(() => import('@neonpro/ui/heavy-component'));
 ```
 
 ### Maintaining Consistent UX

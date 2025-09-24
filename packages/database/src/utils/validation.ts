@@ -1,5 +1,5 @@
-import { PrismaClient } from "@prisma/client";
-import type { SupabaseClient } from "@supabase/supabase-js";
+import { PrismaClient } from '@prisma/client';
+import type { SupabaseClient } from '@supabase/supabase-js';
 
 /**
  * Validate database schema compatibility
@@ -15,24 +15,24 @@ export async function validateSchema(): Promise<boolean> {
 
     // Check if all required tables exist with proper structure
     const requiredTables = [
-      { name: "clinics", requiredColumns: ["id", "name", "created_at"] },
+      { name: 'clinics', requiredColumns: ['id', 'name', 'created_at'] },
       {
-        name: "patients",
-        requiredColumns: ["id", "clinic_id", "name", "cpf", "created_at"],
+        name: 'patients',
+        requiredColumns: ['id', 'clinic_id', 'name', 'cpf', 'created_at'],
       },
       {
-        name: "appointments",
+        name: 'appointments',
         requiredColumns: [
-          "id",
-          "patient_id",
-          "professional_id",
-          "start_time",
-          "end_time",
+          'id',
+          'patient_id',
+          'professional_id',
+          'start_time',
+          'end_time',
         ],
       },
       {
-        name: "professionals",
-        requiredColumns: ["id", "clinic_id", "name", "crm", "specialty"],
+        name: 'professionals',
+        requiredColumns: ['id', 'clinic_id', 'name', 'crm', 'specialty'],
       },
     ];
 
@@ -48,9 +48,13 @@ export async function validateSchema(): Promise<boolean> {
         `) as any[];
 
         if (!existsResult[0]?.exists) {
-          const { getLogger } = await import("@neonpro/core-services/config/logger");
+          const { getLogger } = await import('@neonpro/core-services/config/logger');
           const logger = getLogger();
-          logger.error(`Required table ${tableSpec.name} does not exist`, { component: "database-validation", table: tableSpec.name, action: "check_table_exists" });
+          logger.error(`Required table ${tableSpec.name} does not exist`, {
+            component: 'database-validation',
+            table: tableSpec.name,
+            action: 'check_table_exists',
+          });
           return false;
         }
 
@@ -62,24 +66,33 @@ export async function validateSchema(): Promise<boolean> {
           AND table_name = ${tableSpec.name}
         `) as { column_name: string }[];
 
-        const existingColumns = columnsResult.map((col) => col.column_name);
+        const existingColumns = columnsResult.map(col => col.column_name);
         const missingColumns = tableSpec.requiredColumns.filter(
-          (col) => !existingColumns.includes(col),
+          col => !existingColumns.includes(col),
         );
 
         if (missingColumns.length > 0) {
-          const { getLogger } = await import("@neonpro/core-services/config/logger");
+          const { getLogger } = await import('@neonpro/core-services/config/logger');
           const logger = getLogger();
           logger.error(
-            `Required columns missing from table ${tableSpec.name}: ${missingColumns.join(", ")}`,
-            { component: "database-validation", table: tableSpec.name, missingColumns, action: "check_columns" }
+            `Required columns missing from table ${tableSpec.name}: ${missingColumns.join(', ')}`,
+            {
+              component: 'database-validation',
+              table: tableSpec.name,
+              missingColumns,
+              action: 'check_columns',
+            },
           );
           return false;
         }
       } catch (error) {
-        const { getLogger } = await import("@neonpro/core-services/config/logger");
+        const { getLogger } = await import('@neonpro/core-services/config/logger');
         const logger = getLogger();
-        logger.error(`Error checking table ${tableSpec.name}`, { component: "database-validation", table: tableSpec.name, action: "check_table_error" }, error);
+        logger.error(`Error checking table ${tableSpec.name}`, {
+          component: 'database-validation',
+          table: tableSpec.name,
+          action: 'check_table_error',
+        }, error);
         return false;
       }
     }
@@ -87,9 +100,12 @@ export async function validateSchema(): Promise<boolean> {
     await prisma.$disconnect();
     return true;
   } catch (error) {
-    const { getLogger } = await import("@neonpro/core-services/config/logger");
+    const { getLogger } = await import('@neonpro/core-services/config/logger');
     const logger = getLogger();
-    logger.error("Schema validation error", { component: "database-validation", action: "validate_schema_error" }, error);
+    logger.error('Schema validation error', {
+      component: 'database-validation',
+      action: 'validate_schema_error',
+    }, error);
     return false;
   }
 }
@@ -101,24 +117,24 @@ export async function checkTablesExist(
   client: SupabaseClient,
 ): Promise<boolean> {
   const requiredTables = [
-    { name: "clinics", requiredColumns: ["id", "name", "created_at"] },
+    { name: 'clinics', requiredColumns: ['id', 'name', 'created_at'] },
     {
-      name: "patients",
-      requiredColumns: ["id", "clinic_id", "name", "cpf", "created_at"],
+      name: 'patients',
+      requiredColumns: ['id', 'clinic_id', 'name', 'cpf', 'created_at'],
     },
     {
-      name: "appointments",
+      name: 'appointments',
       requiredColumns: [
-        "id",
-        "patient_id",
-        "professional_id",
-        "start_time",
-        "end_time",
+        'id',
+        'patient_id',
+        'professional_id',
+        'start_time',
+        'end_time',
       ],
     },
     {
-      name: "professionals",
-      requiredColumns: ["id", "clinic_id", "name", "crm", "specialty"],
+      name: 'professionals',
+      requiredColumns: ['id', 'clinic_id', 'name', 'crm', 'specialty'],
     },
   ];
 
@@ -126,12 +142,16 @@ export async function checkTablesExist(
     for (const tableSpec of requiredTables) {
       const { data, error } = await client
         .from(tableSpec.name)
-        .select(tableSpec.requiredColumns.join(","))
+        .select(tableSpec.requiredColumns.join(','))
         .limit(1);
       if (error) {
-        const { getLogger } = await import("@neonpro/core-services/config/logger");
+        const { getLogger } = await import('@neonpro/core-services/config/logger');
         const logger = getLogger();
-        logger.error(`Table ${tableSpec.name} validation failed`, { component: "database-validation", table: tableSpec.name, action: "table_validation_failed" }, error);
+        logger.error(`Table ${tableSpec.name} validation failed`, {
+          component: 'database-validation',
+          table: tableSpec.name,
+          action: 'table_validation_failed',
+        }, error);
         return false;
       }
 
@@ -139,14 +159,19 @@ export async function checkTablesExist(
       if (data && data.length > 0) {
         const row = data[0];
         const missingColumns = tableSpec.requiredColumns.filter(
-          (col) => !(col in row),
+          col => !(col in row),
         );
         if (missingColumns.length > 0) {
-          const { getLogger } = await import("@neonpro/core-services/config/logger");
+          const { getLogger } = await import('@neonpro/core-services/config/logger');
           const logger = getLogger();
           logger.error(
-            `Required columns missing from table ${tableSpec.name}: ${missingColumns.join(", ")}`,
-            { component: "database-validation", table: tableSpec.name, missingColumns, action: "check_response_columns" }
+            `Required columns missing from table ${tableSpec.name}: ${missingColumns.join(', ')}`,
+            {
+              component: 'database-validation',
+              table: tableSpec.name,
+              missingColumns,
+              action: 'check_response_columns',
+            },
           );
           return false;
         }
@@ -154,9 +179,12 @@ export async function checkTablesExist(
     }
     return true;
   } catch (error) {
-    const { getLogger } = await import("@neonpro/core-services/config/logger");
+    const { getLogger } = await import('@neonpro/core-services/config/logger');
     const logger = getLogger();
-    logger.error("Schema validation error", { component: "database-validation", action: "check_tables_error" }, error);
+    logger.error('Schema validation error', {
+      component: 'database-validation',
+      action: 'check_tables_error',
+    }, error);
     return false;
   }
 }

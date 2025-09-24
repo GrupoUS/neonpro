@@ -1,6 +1,6 @@
 /**
  * Aesthetic Clinic tRPC Router
- * 
+ *
  * Comprehensive API endpoints for aesthetic clinic operations with Brazilian healthcare compliance.
  * Simplified version using Prisma directly for better compatibility.
  */
@@ -8,17 +8,17 @@
 import { AuditAction, AuditStatus, ResourceType, RiskLevel } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
 import * as v from 'valibot';
-import { router, protectedProcedure, healthcareProcedure } from '../trpc';
+import { healthcareProcedure, protectedProcedure, router } from '../trpc';
 
 // Import schemas (assuming they're defined in the schemas file)
 // These would typically be imported from '../schemas'
 
 /**
  * Aesthetic Clinic Router
- * 
+ *
  * Provides comprehensive endpoints for aesthetic clinic management with full Brazilian healthcare compliance:
  * - Client profile management with LGPD compliance
- * - Treatment catalog management with ANVISA compliance  
+ * - Treatment catalog management with ANVISA compliance
  * - Session management with professional validation
  * - Photo assessment with secure storage
  * - Treatment planning and progress tracking
@@ -113,7 +113,7 @@ export const aestheticClinicRouter = router({
           const existingClient = await ctx.prisma.aestheticClientProfile.findFirst({
             where: { cpf: input.cpf, clinicId: input.clinicId },
           });
-          
+
           if (existingClient) {
             throw new TRPCError({
               code: 'CONFLICT',
@@ -189,7 +189,7 @@ export const aestheticClinicRouter = router({
         if (error instanceof TRPCError) {
           throw error;
         }
-        
+
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to create aesthetic client profile',
@@ -242,7 +242,7 @@ export const aestheticClinicRouter = router({
         if (error instanceof TRPCError) {
           throw error;
         }
-        
+
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to retrieve aesthetic client profile',
@@ -281,7 +281,7 @@ export const aestheticClinicRouter = router({
       try {
         // Check if client exists and belongs to clinic
         const existingClient = await ctx.prisma.aestheticClientProfile.findFirst({
-          where: { 
+          where: {
             id: input.id,
             clinicId: ctx.clinicId,
           },
@@ -311,10 +311,13 @@ export const aestheticClinicRouter = router({
             ...(input.concerns !== undefined && { concerns: input.concerns }),
             ...(input.expectations !== undefined && { expectations: input.expectations }),
             ...(input.budgetRange !== undefined && { budgetRange: input.budgetRange }),
-            ...(input.preferredContactMethod !== undefined && { preferredContactMethod: input.preferredContactMethod }),
-            ...(input.marketingConsent !== undefined && { marketingConsent: input.marketingConsent }),
+            ...(input.preferredContactMethod !== undefined
+              && { preferredContactMethod: input.preferredContactMethod }),
+            ...(input.marketingConsent !== undefined
+              && { marketingConsent: input.marketingConsent }),
             ...(input.photoConsent !== undefined && { photoConsent: input.photoConsent }),
-            ...(input.emergencyContact !== undefined && { emergencyContact: input.emergencyContact }),
+            ...(input.emergencyContact !== undefined
+              && { emergencyContact: input.emergencyContact }),
             ...(input.notes !== undefined && { notes: input.notes }),
             updatedBy: ctx._userId,
             updatedAt: new Date(),
@@ -350,7 +353,7 @@ export const aestheticClinicRouter = router({
         if (error instanceof TRPCError) {
           throw error;
         }
-        
+
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to update aesthetic client profile',
@@ -546,7 +549,7 @@ export const aestheticClinicRouter = router({
         if (error instanceof TRPCError) {
           throw error;
         }
-        
+
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to create aesthetic treatment',
@@ -612,7 +615,9 @@ export const aestheticClinicRouter = router({
       scheduledTime: v.string(),
       duration: v.number(),
       room: v.string(),
-      status: v.enum(['scheduled', 'in_progress', 'completed', 'cancelled', 'no_show']).default('scheduled'),
+      status: v.enum(['scheduled', 'in_progress', 'completed', 'cancelled', 'no_show']).default(
+        'scheduled',
+      ),
       notes: v.optional(v.string()),
       specialInstructions: v.optional(v.string()),
       price: v.number(),
@@ -736,7 +741,7 @@ export const aestheticClinicRouter = router({
         if (error instanceof TRPCError) {
           throw error;
         }
-        
+
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to create aesthetic session',
@@ -772,11 +777,11 @@ export const aestheticClinicRouter = router({
           ...(professionalId && { professionalId }),
           ...(status && { status }),
           ...(dateFrom && { scheduledDate: { gte: new Date(dateFrom) } }),
-          ...(dateTo && { 
-            scheduledDate: { 
+          ...(dateTo && {
+            scheduledDate: {
               ...where.scheduledDate,
-              lte: new Date(dateTo) 
-            } 
+              lte: new Date(dateTo),
+            },
           }),
         };
 
@@ -852,7 +857,7 @@ export const aestheticClinicRouter = router({
       try {
         const endDate = new Date();
         const startDate = new Date();
-        
+
         // Calculate start date based on period
         switch (input.period) {
           case '30d':
@@ -885,12 +890,12 @@ export const aestheticClinicRouter = router({
         ] = await Promise.all([
           // Total clients
           ctx.prisma.aestheticClientProfile.count({
-            where: { 
+            where: {
               clinicId: input.clinicId,
               status: 'active',
             },
           }),
-          
+
           // Active clients (visited in period)
           ctx.prisma.aestheticClientProfile.count({
             where: {
@@ -899,7 +904,7 @@ export const aestheticClinicRouter = router({
               lastVisitDate: { gte: startDate },
             },
           }),
-          
+
           // New clients (created in period)
           ctx.prisma.aestheticClientProfile.count({
             where: {
@@ -907,7 +912,7 @@ export const aestheticClinicRouter = router({
               createdAt: { gte: startDate },
             },
           }),
-          
+
           // Returning clients (visited in period but created before period)
           ctx.prisma.aestheticClientProfile.count({
             where: {
@@ -916,7 +921,7 @@ export const aestheticClinicRouter = router({
               lastVisitDate: { gte: startDate },
             },
           }),
-          
+
           // Total sessions in period
           ctx.prisma.aestheticTreatmentSession.count({
             where: {
@@ -924,7 +929,7 @@ export const aestheticClinicRouter = router({
               scheduledDate: { gte: startDate, lte: endDate },
             },
           }),
-          
+
           // Completed sessions in period
           ctx.prisma.aestheticTreatmentSession.count({
             where: {
@@ -933,7 +938,7 @@ export const aestheticClinicRouter = router({
               status: 'completed',
             },
           }),
-          
+
           // Cancelled sessions in period
           ctx.prisma.aestheticTreatmentSession.count({
             where: {
@@ -942,7 +947,7 @@ export const aestheticClinicRouter = router({
               status: 'cancelled',
             },
           }),
-          
+
           // Total revenue in period
           ctx.prisma.aestheticFinancialTransaction.aggregate({
             where: {
@@ -956,7 +961,7 @@ export const aestheticClinicRouter = router({
         ]);
 
         const revenue = totalRevenue._sum.amount || 0;
-        
+
         // Calculate metrics
         const retentionRate = totalClients > 0 ? (activeClients / totalClients) * 100 : 0;
         const completionRate = totalSessions > 0 ? (completedSessions / totalSessions) * 100 : 0;

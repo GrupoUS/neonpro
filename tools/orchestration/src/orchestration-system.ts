@@ -1,15 +1,15 @@
+import { TDDAgentRegistry } from './agent-registry';
+import { QualityControlBridge } from './quality-control-bridge';
+import { TDDOrchestrator } from './tdd-orchestrator';
 import type {
-  TDDOrchestrationSystem,
   AgentResult,
+  CommandExample,
   HealthcareCompliance,
   OrchestrationMetrics,
   SystemStatus,
-  CommandExample,
-} from "./types";
-import { TDDOrchestrator } from "./tdd-orchestrator";
-import { QualityControlBridge } from "./quality-control-bridge";
-import { WorkflowEngine } from "./workflow-engine";
-import { TDDAgentRegistry } from "./agent-registry";
+  TDDOrchestrationSystem,
+} from './types';
+import { WorkflowEngine } from './workflow-engine';
 
 type OrchestrationSystemOptions = {
   enableCommunication?: boolean;
@@ -40,12 +40,12 @@ export function createTDDOrchestrationSystem(
   const system: TDDOrchestrationSystem = {
     async initialize() {
       // Initialize all components
-      console.log("TDD Orchestration System initialized");
+      console.log('TDD Orchestration System initialized');
     },
 
     async shutdown() {
       // Clean up resources
-      console.log("TDD Orchestration System shutdown");
+      console.log('TDD Orchestration System shutdown');
     },
 
     orchestrator,
@@ -65,14 +65,14 @@ export function createTDDOrchestrationSystem(
           agent: {
             totalAgentExecutions: 25,
             agentPerformance: {
-              "code-reviewer": 95,
-              "architect-review": 90,
-              "test-auditor": 88,
+              'code-reviewer': 95,
+              'architect-review': 90,
+              'test-auditor': 88,
             },
           },
           quality: {
             overallQualityScore: 9.2,
-            qualityTrends: ["improving", "stable"],
+            qualityTrends: ['improving', 'stable'],
           },
           performance: {
             averageExecutionTime: 145,
@@ -89,14 +89,14 @@ export function createTDDOrchestrationSystem(
 
     getStatus(): SystemStatus {
       return {
-        system: "TDD Orchestration Framework",
-        version: "1.0.0",
-        status: "ready",
+        system: 'TDD Orchestration Framework',
+        version: '1.0.0',
+        status: 'ready',
         components: {
-          orchestrator: "active",
-          agentRegistry: "4 agents registered",
-          workflowEngine: "3 workflows available",
-          qualityControlBridge: "active",
+          orchestrator: 'active',
+          agentRegistry: '4 agents registered',
+          workflowEngine: '3 workflows available',
+          qualityControlBridge: 'active',
         },
         capabilities: {
           multiAgentCoordination: true,
@@ -113,32 +113,32 @@ export function createTDDOrchestrationSystem(
     getCommandExamples(): CommandExample {
       return {
         availableCommands: [
-          "analyze --type security --depth L5 --parallel",
-          "test --type unit --parallel --agents test,code-reviewer",
-          "review --depth L6 --parallel --agents architect-review,test-auditor",
-          "validate --type compliance --healthcare --parallel",
+          'analyze --type security --depth L5 --parallel',
+          'test --type unit --parallel --agents test,code-reviewer',
+          'review --depth L6 --parallel --agents architect-review,test-auditor',
+          'validate --type compliance --healthcare --parallel',
         ],
         examples: [
-          "analyze --type security --depth L8 --parallel --healthcare",
-          "test --type unit --parallel --agents test,code-reviewer",
-          "review --depth L6 --parallel --agents architect-review,test-auditor --healthcare",
+          'analyze --type security --depth L8 --parallel --healthcare',
+          'test --type unit --parallel --agents test,code-reviewer',
+          'review --depth L6 --parallel --agents architect-review,test-auditor --healthcare',
         ],
-        workflows: ["parallel", "sequential", "hierarchical", "event-driven"],
+        workflows: ['parallel', 'sequential', 'hierarchical', 'event-driven'],
         agents: [
           {
-            name: "code-reviewer",
-            type: "quality",
-            capabilities: ["code-review", "static-analysis", "linting"],
+            name: 'code-reviewer',
+            type: 'quality',
+            capabilities: ['code-review', 'static-analysis', 'linting'],
           },
           {
-            name: "architect-review",
-            type: "quality",
-            capabilities: ["architecture-review", "design-patterns"],
+            name: 'architect-review',
+            type: 'quality',
+            capabilities: ['architecture-review', 'design-patterns'],
           },
           {
-            name: "test-auditor",
-            type: "testing",
-            capabilities: ["unit-testing", "integration-testing"],
+            name: 'test-auditor',
+            type: 'testing',
+            capabilities: ['unit-testing', 'integration-testing'],
           },
         ],
       };

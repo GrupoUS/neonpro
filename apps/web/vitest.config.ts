@@ -1,6 +1,6 @@
-import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
 import path from 'path';
+import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   plugins: [react()],
@@ -101,9 +101,8 @@ export default defineConfig({
       VITE_SUPABASE_ANON_KEY: 'test-anon-key',
       VITE_API_URL: 'http://localhost:3001',
     },
-
   },
-  
+
   // Path aliases optimized for clinic app structure
   resolve: {
     alias: {
@@ -124,7 +123,7 @@ export default defineConfig({
       '@/constants': path.resolve(__dirname, './src/constants'),
     },
   },
-  
+
   // Environment variables for tests
   define: {
     'process.env.NODE_ENV': JSON.stringify('test'),

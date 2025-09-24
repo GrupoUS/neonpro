@@ -1,6 +1,6 @@
 /**
  * NeonPro Financial Operations Agent Component
- * 
+ *
  * Specialized AI agent for financial management and billing operations
  * Features:
  * - Invoice generation and management
@@ -10,31 +10,31 @@
  * - Portuguese healthcare financial workflows
  */
 
+import { useCoAgent, useCopilotAction, useCopilotReadable } from '@copilotkit/react-core';
 import React from 'react';
-import { useCopilotAction, useCopilotReadable, useCoAgent } from '@copilotkit/react-core';
 import { useNeonProChat } from '../NeonProChatProvider';
 // Removed unused NeonProMessage import
 // Removed unused Button import
-import { Card, CardContent, CardHeader, CardTitle } from '../../ui/card';
-import { Badge } from '../../ui/badge';
 import { Alert, AlertDescription } from '../../ui/alert';
+import { Badge } from '../../ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '../../ui/card';
 // Removed unused Input import
 // Removed unused Label import
 // Removed unused Textarea import
 // Removed unused Select imports
-import { 
-  DollarSign, 
-  CreditCard, 
-  Receipt, 
-  TrendingUp, 
-  PieChart, 
-  Calculator,
-  Shield,
-  BarChart3,
-  Target
-} from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import {
+  BarChart3,
+  Calculator,
+  CreditCard,
+  DollarSign,
+  PieChart,
+  Receipt,
+  Shield,
+  Target,
+  TrendingUp,
+} from 'lucide-react';
 
 // Types
 interface FinancialTransaction {
@@ -94,7 +94,12 @@ interface FinancialMetrics {
 }
 
 interface FinancialAgentState {
-  currentOperation: 'idle' | 'processing_payment' | 'generating_invoice' | 'analyzing' | 'forecasting';
+  currentOperation:
+    | 'idle'
+    | 'processing_payment'
+    | 'generating_invoice'
+    | 'analyzing'
+    | 'forecasting';
   transactions: FinancialTransaction[];
   invoices: Invoice[];
   metrics: FinancialMetrics;
@@ -138,7 +143,7 @@ const mockServices = [
   { name: 'Fio de Sustentação', price: 2500, category: 'lifting' },
   { name: 'Laser CO2', price: 1800, category: 'laser' },
   { name: 'Limpeza de Pele', price: 300, category: 'skincare' },
-  { name: 'Peeling Químico', price: 600, category: 'skincare' }
+  { name: 'Peeling Químico', price: 600, category: 'skincare' },
 ];
 
 const mockTransactions: FinancialTransaction[] = [
@@ -153,7 +158,7 @@ const mockTransactions: FinancialTransaction[] = [
     status: 'completed',
     patientId: '1',
     paymentMethod: 'credit_card',
-    processedBy: 'system'
+    processedBy: 'system',
   },
   {
     id: 'tx-2',
@@ -166,15 +171,15 @@ const mockTransactions: FinancialTransaction[] = [
     status: 'completed',
     patientId: '2',
     paymentMethod: 'bank_transfer',
-    processedBy: 'system'
-  }
+    processedBy: 'system',
+  },
 ];
 
 export const NeonProFinancialAgent: React.FC<FinancialAgentProps> = ({
   clinicId: _clinicId,
   onTransactionComplete,
   onInvoiceGenerated,
-  onError
+  onError,
 }) => {
   const { config } = useNeonProChat();
 
@@ -188,24 +193,24 @@ export const NeonProFinancialAgent: React.FC<FinancialAgentProps> = ({
       nextMonth: 0,
       nextQuarter: 0,
       confidence: 0,
-      factors: []
+      factors: [],
     },
     analysis: {
       trends: [],
       opportunities: [],
       risks: [],
-      recommendations: []
+      recommendations: [],
     },
     compliance: {
       auditTrail: [],
       taxCompliance: true,
-      lgpdCompliant: true
-    }
+      lgpdCompliant: true,
+    },
   };
 
   const { state, setState } = useCoAgent<FinancialAgentState>({
     name: 'financial-agent',
-    initialState
+    initialState,
   });
 
   // Provide context to CopilotKit
@@ -216,8 +221,8 @@ export const NeonProFinancialAgent: React.FC<FinancialAgentProps> = ({
       metrics: state.metrics,
       forecast: state.forecast,
       pendingTransactions: state.transactions.filter(t => t.status === 'pending').length,
-      compliance: state.compliance
-    }
+      compliance: state.compliance,
+    },
   }, [state]);
 
   // Process payment action
@@ -227,10 +232,30 @@ export const NeonProFinancialAgent: React.FC<FinancialAgentProps> = ({
     parameters: [
       { name: 'patientId', type: 'string', description: 'Patient ID', required: true },
       { name: 'patientName', type: 'string', description: 'Patient name', required: true },
-      { name: 'services', type: 'array', description: 'Array of services purchased', required: true },
-      { name: 'paymentMethod', type: 'string', description: 'Payment method (cash, credit_card, debit_card, bank_transfer, installment)', required: true },
-      { name: 'installments', type: 'number', description: 'Number of installments (if applicable)', required: false },
-      { name: 'discount', type: 'number', description: 'Discount amount (optional)', required: false },
+      {
+        name: 'services',
+        type: 'array',
+        description: 'Array of services purchased',
+        required: true,
+      },
+      {
+        name: 'paymentMethod',
+        type: 'string',
+        description: 'Payment method (cash, credit_card, debit_card, bank_transfer, installment)',
+        required: true,
+      },
+      {
+        name: 'installments',
+        type: 'number',
+        description: 'Number of installments (if applicable)',
+        required: false,
+      },
+      {
+        name: 'discount',
+        type: 'number',
+        description: 'Discount amount (optional)',
+        required: false,
+      },
     ],
     handler: async (
       patientId: string,
@@ -238,7 +263,7 @@ export const NeonProFinancialAgent: React.FC<FinancialAgentProps> = ({
       services: string[],
       paymentMethod: string,
       installments?: number,
-      discount?: number
+      discount?: number,
     ) => {
       try {
         setState(prev => ({ ...prev, currentOperation: 'processing_payment' }));
@@ -256,7 +281,7 @@ export const NeonProFinancialAgent: React.FC<FinancialAgentProps> = ({
             service: serviceName,
             quantity: 1,
             unitPrice: service.price,
-            totalPrice: service.price
+            totalPrice: service.price,
           };
         });
 
@@ -277,7 +302,7 @@ export const NeonProFinancialAgent: React.FC<FinancialAgentProps> = ({
           patientId,
           paymentMethod: paymentMethod as any,
           installments,
-          processedBy: config?.userId || 'system'
+          processedBy: config?.userId || 'system',
         };
 
         // Create invoice
@@ -295,7 +320,7 @@ export const NeonProFinancialAgent: React.FC<FinancialAgentProps> = ({
           dueDate: new Date(),
           paidDate: new Date(),
           paymentMethod,
-          notes: installments ? `Pago em ${installments}x` : undefined
+          notes: installments ? `Pago em ${installments}x` : undefined,
         };
 
         setState(prev => ({
@@ -314,23 +339,25 @@ export const NeonProFinancialAgent: React.FC<FinancialAgentProps> = ({
                 action: 'process_payment',
                 amount: total,
                 patientId,
-                compliance: true
-              }
-            ]
-          }
+                compliance: true,
+              },
+            ],
+          },
         }));
 
         onTransactionComplete?.(transaction.id);
         onInvoiceGenerated?.(invoice.id);
-        
-        return `Payment processed successfully. Total: R$ ${total.toFixed(2)}. Invoice ID: ${invoice.id}`;
+
+        return `Payment processed successfully. Total: R$ ${
+          total.toFixed(2)
+        }. Invoice ID: ${invoice.id}`;
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'Failed to process payment';
         onError?.(errorMessage);
         setState(prev => ({ ...prev, currentOperation: 'idle' }));
         throw error;
       }
-    }
+    },
   });
 
   // Generate invoice action
@@ -340,7 +367,12 @@ export const NeonProFinancialAgent: React.FC<FinancialAgentProps> = ({
     parameters: [
       { name: 'patientId', type: 'string', description: 'Patient ID', required: true },
       { name: 'patientName', type: 'string', description: 'Patient name', required: true },
-      { name: 'services', type: 'array', description: 'Array of services to invoice', required: true },
+      {
+        name: 'services',
+        type: 'array',
+        description: 'Array of services to invoice',
+        required: true,
+      },
       { name: 'dueDate', type: 'string', description: 'Due date (YYYY-MM-DD)', required: true },
       { name: 'notes', type: 'string', description: 'Additional notes', required: false },
     ],
@@ -349,7 +381,7 @@ export const NeonProFinancialAgent: React.FC<FinancialAgentProps> = ({
       patientName: string,
       services: string[],
       dueDate: string,
-      notes?: string
+      notes?: string,
     ) => {
       try {
         setState(prev => ({ ...prev, currentOperation: 'generating_invoice' }));
@@ -367,7 +399,7 @@ export const NeonProFinancialAgent: React.FC<FinancialAgentProps> = ({
             service: serviceName,
             quantity: 1,
             unitPrice: service.price,
-            totalPrice: service.price
+            totalPrice: service.price,
           };
         });
 
@@ -386,7 +418,7 @@ export const NeonProFinancialAgent: React.FC<FinancialAgentProps> = ({
           status: 'sent',
           issuedDate: new Date(),
           dueDate: new Date(dueDate),
-          notes
+          notes,
         };
 
         setState(prev => ({
@@ -403,21 +435,23 @@ export const NeonProFinancialAgent: React.FC<FinancialAgentProps> = ({
                 action: 'generate_invoice',
                 amount: total,
                 patientId,
-                compliance: true
-              }
-            ]
-          }
+                compliance: true,
+              },
+            ],
+          },
         }));
 
         onInvoiceGenerated?.(invoice.id);
-        return `Invoice generated successfully. Total: R$ ${total.toFixed(2)}. Due: ${format(new Date(dueDate), 'PPP', { locale: ptBR })}`;
+        return `Invoice generated successfully. Total: R$ ${total.toFixed(2)}. Due: ${
+          format(new Date(dueDate), 'PPP', { locale: ptBR })
+        }`;
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'Failed to generate invoice';
         onError?.(errorMessage);
         setState(prev => ({ ...prev, currentOperation: 'idle' }));
         throw error;
       }
-    }
+    },
   });
 
   // Analyze financial performance action
@@ -425,8 +459,18 @@ export const NeonProFinancialAgent: React.FC<FinancialAgentProps> = ({
     name: 'analyze_financial_performance',
     description: 'Analyze financial performance and provide insights',
     parameters: [
-      { name: 'period', type: 'string', description: 'Analysis period (week, month, quarter, year)', required: false },
-      { name: 'focus', type: 'string', description: 'Analysis focus (revenue, expenses, profit, efficiency)', required: false },
+      {
+        name: 'period',
+        type: 'string',
+        description: 'Analysis period (week, month, quarter, year)',
+        required: false,
+      },
+      {
+        name: 'focus',
+        type: 'string',
+        description: 'Analysis focus (revenue, expenses, profit, efficiency)',
+        required: false,
+      },
     ],
     handler: async (period: string = 'month', focus: string = 'revenue') => {
       try {
@@ -442,17 +486,19 @@ export const NeonProFinancialAgent: React.FC<FinancialAgentProps> = ({
           ...prev,
           currentOperation: 'idle',
           analysis,
-          forecast
+          forecast,
         }));
 
         return `Financial analysis completed for ${period}. Focus: ${focus}. Key insights provided.`;
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'Failed to analyze performance';
+        const errorMessage = error instanceof Error
+          ? error.message
+          : 'Failed to analyze performance';
         onError?.(errorMessage);
         setState(prev => ({ ...prev, currentOperation: 'idle' }));
         throw error;
       }
-    }
+    },
   });
 
   // Calculate financial metrics
@@ -460,14 +506,14 @@ export const NeonProFinancialAgent: React.FC<FinancialAgentProps> = ({
     const revenue = transactions
       .filter(t => t.type === 'revenue' && t.status === 'completed')
       .reduce((sum, t) => sum + t.amount, 0);
-    
+
     const expenses = transactions
       .filter(t => t.type === 'expense' && t.status === 'completed')
       .reduce((sum, t) => sum + t.amount, 0);
 
     const netProfit = revenue - expenses;
     const profitMargin = revenue > 0 ? (netProfit / revenue) * 100 : 0;
-    
+
     const pendingPayments = transactions
       .filter(t => t.status === 'pending')
       .reduce((sum, t) => sum + t.amount, 0);
@@ -478,7 +524,7 @@ export const NeonProFinancialAgent: React.FC<FinancialAgentProps> = ({
         const current = serviceRevenue.get(t.category) || { revenue: 0, count: 0 };
         serviceRevenue.set(t.category, {
           revenue: current.revenue + t.amount,
-          count: current.count + 1
+          count: current.count + 1,
         });
       }
     });
@@ -495,45 +541,47 @@ export const NeonProFinancialAgent: React.FC<FinancialAgentProps> = ({
       profitMargin,
       pendingPayments,
       overdueInvoices: 0, // Mock data
-      averageTicket: revenue > 0 ? revenue / transactions.filter(t => t.type === 'revenue').length : 0,
+      averageTicket: revenue > 0
+        ? revenue / transactions.filter(t => t.type === 'revenue').length
+        : 0,
       monthlyGrowth: 12.5, // Mock data
       collectionRate: 95.2, // Mock data
-      topServices
+      topServices,
     };
   };
 
   // Generate financial analysis
   const generateFinancialAnalysis = (
-    _transactions: FinancialTransaction[], 
-    _period: string, 
-    _focus: string
+    _transactions: FinancialTransaction[],
+    _period: string,
+    _focus: string,
   ) => {
     const trends = [
       'Recreveita cresceu 15% em relação ao mês anterior',
       'Procedimentos de preenchimento lideram o faturamento',
       'Pagamentos parcelados aumentaram 20% nos últimos 3 meses',
-      'Taxa de coleta mantém-se acima de 95%'
+      'Taxa de coleta mantém-se acima de 95%',
     ];
 
     const opportunities = [
       'Expandir horários de pico para aumentar capacidade',
       'Implementar pacotes de tratamentos combinados',
       'Oferecer opções de financiamento para procedimentos de alto valor',
-      'Desenvolver programas de fidelidade para pacientes recorrentes'
+      'Desenvolver programas de fidelidade para pacientes recorrentes',
     ];
 
     const risks = [
       'Aumento da concorrência na região',
       'Possíveis mudanças na regulamentação de procedimentos estéticos',
       'Flutuações sazonais na demanda',
-      'Dependência de alguns profissionais chave'
+      'Dependência de alguns profissionais chave',
     ];
 
     const recommendations = [
       'Diversificar mix de serviços para reduzir riscos',
       'Implementar sistema de precamento dinâmico',
       'Investir em marketing para serviços de alta margem',
-      'Otimizar agendamento para maximizar utilização de recursos'
+      'Otimizar agendamento para maximizar utilização de recursos',
     ];
 
     return { trends, opportunities, risks, recommendations };
@@ -556,8 +604,8 @@ export const NeonProFinancialAgent: React.FC<FinancialAgentProps> = ({
         'Tendência histórica de crescimento',
         'Sazonalidade positiva no próximo trimestre',
         'Expansão de serviços planejada',
-        'Campanhas de marketing agendadas'
-      ]
+        'Campanhas de marketing agendadas',
+      ],
     };
   };
 
@@ -565,31 +613,36 @@ export const NeonProFinancialAgent: React.FC<FinancialAgentProps> = ({
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
-      currency: 'BRL'
+      currency: 'BRL',
     }).format(amount);
   };
 
   // Get status icon
   const getStatusIcon = () => {
     switch (state.currentOperation) {
-      case 'processing_payment': return <CreditCard className="h-4 w-4 text-blue-500" />;
-      case 'generating_invoice': return <Receipt className="h-4 w-4 text-yellow-500" />;
-      case 'analyzing': return <BarChart3 className="h-4 w-4 text-purple-500" />;
-      case 'forecasting': return <Target className="h-4 w-4 text-green-500" />;
-      default: return <Calculator className="h-4 w-4 text-gray-500" />;
+      case 'processing_payment':
+        return <CreditCard className='h-4 w-4 text-blue-500' />;
+      case 'generating_invoice':
+        return <Receipt className='h-4 w-4 text-yellow-500' />;
+      case 'analyzing':
+        return <BarChart3 className='h-4 w-4 text-purple-500' />;
+      case 'forecasting':
+        return <Target className='h-4 w-4 text-green-500' />;
+      default:
+        return <Calculator className='h-4 w-4 text-gray-500' />;
     }
   };
 
   return (
-    <div className="space-y-6">
+    <div className='space-y-6'>
       {/* Header */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <DollarSign className="h-5 w-5" />
+          <CardTitle className='flex items-center gap-2'>
+            <DollarSign className='h-5 w-5' />
             Assistente Financeiro
           </CardTitle>
-          <div className="flex items-center gap-2 text-sm text-gray-600">
+          <div className='flex items-center gap-2 text-sm text-gray-600'>
             {getStatusIcon()}
             <span>
               {state.currentOperation === 'idle' && 'Pronto para operações financeiras'}
@@ -605,40 +658,40 @@ export const NeonProFinancialAgent: React.FC<FinancialAgentProps> = ({
       {/* Financial Metrics Overview */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg flex items-center gap-2">
-            <TrendingUp className="h-4 w-4" />
+          <CardTitle className='text-lg flex items-center gap-2'>
+            <TrendingUp className='h-4 w-4' />
             Visão Financeira
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="text-center">
-              <div className="text-2xl font-bold text-green-600">
+          <div className='grid grid-cols-2 md:grid-cols-4 gap-4'>
+            <div className='text-center'>
+              <div className='text-2xl font-bold text-green-600'>
                 {formatCurrency(state.metrics.totalRevenue)}
               </div>
-              <div className="text-sm text-gray-600">Receita Total</div>
-              <div className="text-xs text-green-600">+{state.metrics.monthlyGrowth}%</div>
+              <div className='text-sm text-gray-600'>Receita Total</div>
+              <div className='text-xs text-green-600'>+{state.metrics.monthlyGrowth}%</div>
             </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-blue-600">
+            <div className='text-center'>
+              <div className='text-2xl font-bold text-blue-600'>
                 {formatCurrency(state.metrics.netProfit)}
               </div>
-              <div className="text-sm text-gray-600">Lucro Líquido</div>
-              <div className="text-xs text-blue-600">
+              <div className='text-sm text-gray-600'>Lucro Líquido</div>
+              <div className='text-xs text-blue-600'>
                 {state.metrics.profitMargin.toFixed(1)}% margem
               </div>
             </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-yellow-600">
+            <div className='text-center'>
+              <div className='text-2xl font-bold text-yellow-600'>
                 {formatCurrency(state.metrics.pendingPayments)}
               </div>
-              <div className="text-sm text-gray-600">Pagamentos Pendentes</div>
+              <div className='text-sm text-gray-600'>Pagamentos Pendentes</div>
             </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-purple-600">
+            <div className='text-center'>
+              <div className='text-2xl font-bold text-purple-600'>
                 {state.metrics.collectionRate.toFixed(1)}%
               </div>
-              <div className="text-sm text-gray-600">Taxa de Coleta</div>
+              <div className='text-sm text-gray-600'>Taxa de Coleta</div>
             </div>
           </div>
         </CardContent>
@@ -647,33 +700,42 @@ export const NeonProFinancialAgent: React.FC<FinancialAgentProps> = ({
       {/* Top Services */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg flex items-center gap-2">
-            <PieChart className="h-4 w-4" />
+          <CardTitle className='text-lg flex items-center gap-2'>
+            <PieChart className='h-4 w-4' />
             Serviços Mais Rentáveis
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="space-y-3">
+          <div className='space-y-3'>
             {state.metrics.topServices.map((service, index) => (
-              <div key={service.service} className="flex items-center justify-between p-3 border rounded-lg">
-                <div className="flex items-center gap-3">
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-medium ${
-                    index === 0 ? 'bg-yellow-500' :
-                    index === 1 ? 'bg-gray-400' :
-                    index === 2 ? 'bg-orange-600' : 'bg-gray-300'
-                  }`}>
+              <div
+                key={service.service}
+                className='flex items-center justify-between p-3 border rounded-lg'
+              >
+                <div className='flex items-center gap-3'>
+                  <div
+                    className={`w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-medium ${
+                      index === 0
+                        ? 'bg-yellow-500'
+                        : index === 1
+                        ? 'bg-gray-400'
+                        : index === 2
+                        ? 'bg-orange-600'
+                        : 'bg-gray-300'
+                    }`}
+                  >
                     {index + 1}
                   </div>
                   <div>
-                    <p className="font-medium">{service.service}</p>
-                    <p className="text-sm text-gray-600">{service.count} procedimentos</p>
+                    <p className='font-medium'>{service.service}</p>
+                    <p className='text-sm text-gray-600'>{service.count} procedimentos</p>
                   </div>
                 </div>
-                <div className="text-right">
-                  <p className="font-bold text-green-600">
+                <div className='text-right'>
+                  <p className='font-bold text-green-600'>
                     {formatCurrency(service.revenue)}
                   </p>
-                  <p className="text-sm text-gray-600">
+                  <p className='text-sm text-gray-600'>
                     {formatCurrency(service.revenue / service.count)} cada
                   </p>
                 </div>
@@ -687,44 +749,44 @@ export const NeonProFinancialAgent: React.FC<FinancialAgentProps> = ({
       {state.analysis.trends.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
-              <BarChart3 className="h-4 w-4" />
+            <CardTitle className='text-lg flex items-center gap-2'>
+              <BarChart3 className='h-4 w-4' />
               Análise Financeira
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className='space-y-4'>
             <div>
-              <h4 className="font-medium text-green-700 mb-2">Tendências</h4>
-              <ul className="space-y-1">
+              <h4 className='font-medium text-green-700 mb-2'>Tendências</h4>
+              <ul className='space-y-1'>
                 {state.analysis.trends.map((trend, index) => (
-                  <li key={index} className="text-sm text-green-600">• {trend}</li>
+                  <li key={index} className='text-sm text-green-600'>• {trend}</li>
                 ))}
               </ul>
             </div>
 
             <div>
-              <h4 className="font-medium text-blue-700 mb-2">Oportunidades</h4>
-              <ul className="space-y-1">
+              <h4 className='font-medium text-blue-700 mb-2'>Oportunidades</h4>
+              <ul className='space-y-1'>
                 {state.analysis.opportunities.map((opportunity, index) => (
-                  <li key={index} className="text-sm text-blue-600">• {opportunity}</li>
+                  <li key={index} className='text-sm text-blue-600'>• {opportunity}</li>
                 ))}
               </ul>
             </div>
 
             <div>
-              <h4 className="font-medium text-yellow-700 mb-2">Riscos</h4>
-              <ul className="space-y-1">
+              <h4 className='font-medium text-yellow-700 mb-2'>Riscos</h4>
+              <ul className='space-y-1'>
                 {state.analysis.risks.map((risk, index) => (
-                  <li key={index} className="text-sm text-yellow-600">⚠️ {risk}</li>
+                  <li key={index} className='text-sm text-yellow-600'>⚠️ {risk}</li>
                 ))}
               </ul>
             </div>
 
             <div>
-              <h4 className="font-medium text-purple-700 mb-2">Recomendações</h4>
-              <ul className="space-y-1">
+              <h4 className='font-medium text-purple-700 mb-2'>Recomendações</h4>
+              <ul className='space-y-1'>
                 {state.analysis.recommendations.map((rec, index) => (
-                  <li key={index} className="text-sm text-purple-600">• {rec}</li>
+                  <li key={index} className='text-sm text-purple-600'>• {rec}</li>
                 ))}
               </ul>
             </div>
@@ -735,44 +797,44 @@ export const NeonProFinancialAgent: React.FC<FinancialAgentProps> = ({
       {/* Forecast */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg flex items-center gap-2">
-            <Target className="h-4 w-4" />
+          <CardTitle className='text-lg flex items-center gap-2'>
+            <Target className='h-4 w-4' />
             Previsão Financeira
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-4">
-              <div className="bg-green-50 p-4 rounded-lg">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium text-green-700">Próximo Mês</span>
-                  <Badge className="bg-green-100 text-green-800">
+          <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+            <div className='space-y-4'>
+              <div className='bg-green-50 p-4 rounded-lg'>
+                <div className='flex items-center justify-between mb-2'>
+                  <span className='text-sm font-medium text-green-700'>Próximo Mês</span>
+                  <Badge className='bg-green-100 text-green-800'>
                     {Math.round(state.forecast.confidence * 100)}% confiança
                   </Badge>
                 </div>
-                <div className="text-2xl font-bold text-green-700">
+                <div className='text-2xl font-bold text-green-700'>
                   {formatCurrency(state.forecast.nextMonth)}
                 </div>
               </div>
-              
-              <div className="bg-blue-50 p-4 rounded-lg">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium text-blue-700">Próximo Trimestre</span>
-                  <Badge className="bg-blue-100 text-blue-800">
+
+              <div className='bg-blue-50 p-4 rounded-lg'>
+                <div className='flex items-center justify-between mb-2'>
+                  <span className='text-sm font-medium text-blue-700'>Próximo Trimestre</span>
+                  <Badge className='bg-blue-100 text-blue-800'>
                     {Math.round(state.forecast.confidence * 100)}% confiança
                   </Badge>
                 </div>
-                <div className="text-2xl font-bold text-blue-700">
+                <div className='text-2xl font-bold text-blue-700'>
                   {formatCurrency(state.forecast.nextQuarter)}
                 </div>
               </div>
             </div>
-            
+
             <div>
-              <h4 className="font-medium text-gray-700 mb-2">Fatores de Influência</h4>
-              <ul className="space-y-1">
+              <h4 className='font-medium text-gray-700 mb-2'>Fatores de Influência</h4>
+              <ul className='space-y-1'>
                 {state.forecast.factors.map((factor, index) => (
-                  <li key={index} className="text-sm text-gray-600">• {factor}</li>
+                  <li key={index} className='text-sm text-gray-600'>• {factor}</li>
                 ))}
               </ul>
             </div>
@@ -782,10 +844,11 @@ export const NeonProFinancialAgent: React.FC<FinancialAgentProps> = ({
 
       {/* Compliance Information */}
       <Alert>
-        <Shield className="h-4 w-4" />
+        <Shield className='h-4 w-4' />
         <AlertDescription>
-          <strong>Compliance Financeiro:</strong> Todas as operações são registradas para auditoria 
-          conforme LGPD e normas fiscais brasileiras. Sistema mantém conformidade com RFC 2141.
+          <strong>Compliance Financeiro:</strong>{' '}
+          Todas as operações são registradas para auditoria conforme LGPD e normas fiscais
+          brasileiras. Sistema mantém conformidade com RFC 2141.
         </AlertDescription>
       </Alert>
     </div>

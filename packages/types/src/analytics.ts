@@ -138,7 +138,7 @@ export interface ServicePopularity {
   bookings: number;
   revenue: number;
   popularityScore: number;
-  trend: "up" | "down" | "stable";
+  trend: 'up' | 'down' | 'stable';
 }
 
 export interface ClientData {
@@ -195,19 +195,19 @@ export interface Report {
 }
 
 export enum ReportType {
-  FINANCIAL = "financial",
-  APPOINTMENTS = "appointments",
-  CLIENTS = "clients",
-  PROFESSIONALS = "professionals",
-  SERVICES = "services",
-  COMPLIANCE = "compliance",
+  FINANCIAL = 'financial',
+  APPOINTMENTS = 'appointments',
+  CLIENTS = 'clients',
+  PROFESSIONALS = 'professionals',
+  SERVICES = 'services',
+  COMPLIANCE = 'compliance',
 }
 
 export enum ReportFormat {
-  PDF = "pdf",
-  EXCEL = "excel",
-  CSV = "csv",
-  JSON = "json",
+  PDF = 'pdf',
+  EXCEL = 'excel',
+  CSV = 'csv',
+  JSON = 'json',
 }
 
 export interface ReportParameters {
@@ -229,16 +229,16 @@ export interface KPI {
 }
 
 export interface TrendData {
-  direction: "up" | "down" | "stable";
+  direction: 'up' | 'down' | 'stable';
   percentage: number;
   period: string;
 }
 
 export enum KPICategory {
-  FINANCIAL = "financial",
-  OPERATIONAL = "operational",
-  CUSTOMER = "customer",
-  GROWTH = "growth",
+  FINANCIAL = 'financial',
+  OPERATIONAL = 'operational',
+  CUSTOMER = 'customer',
+  GROWTH = 'growth',
 }
 
 // Alert types
@@ -256,15 +256,15 @@ export interface Alert {
 }
 
 export enum AlertType {
-  LOW_REVENUE = "low_revenue",
-  HIGH_CANCELLATION = "high_cancellation",
-  CAPACITY_WARNING = "capacity_warning",
-  COMPLIANCE_ISSUE = "compliance_issue",
+  LOW_REVENUE = 'low_revenue',
+  HIGH_CANCELLATION = 'high_cancellation',
+  CAPACITY_WARNING = 'capacity_warning',
+  COMPLIANCE_ISSUE = 'compliance_issue',
 }
 
 export enum AlertSeverity {
-  INFO = "info",
-  WARNING = "warning",
-  ERROR = "error",
-  CRITICAL = "critical",
+  INFO = 'info',
+  WARNING = 'warning',
+  ERROR = 'error',
+  CRITICAL = 'critical',
 }

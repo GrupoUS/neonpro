@@ -8,9 +8,9 @@ console.log('🧪 Running Test Validation...\n');
 // Test 1: Check if test files exist and have proper structure
 const testFiles = [
   'src/__tests__/basic.test.tsx',
-  'src/__tests__/simple.test.tsx', 
+  'src/__tests__/simple.test.tsx',
   'src/__tests__/manual-dom.test.ts',
-  'src/__tests__/integration/ClientRegistrationAgent.test.tsx'
+  'src/__tests__/integration/ClientRegistrationAgent.test.tsx',
 ];
 
 console.log('📁 Checking test files...');
@@ -18,22 +18,21 @@ testFiles.forEach(file => {
   const filePath = path.join(process.cwd(), file);
   if (fs.existsSync(filePath)) {
     console.log(`✅ ${file} exists`);
-    
+
     const content = fs.readFileSync(filePath, 'utf8');
-    
+
     // Check for common issues
     if (content.includes('import { JSDOM } from \'jsdom\'')) {
       console.log(`⚠️  ${file} still has manual JSDOM import (should be removed)`);
     }
-    
+
     if (content.includes('global.document = ')) {
       console.log(`⚠️  ${file} still has manual DOM setup (should be removed)`);
     }
-    
+
     if (content.includes('describe(') && content.includes('it(')) {
       console.log(`✅ ${file} has proper test structure`);
     }
-    
   } else {
     console.log(`❌ ${file} not found`);
   }
@@ -44,7 +43,7 @@ console.log('\n⚙️  Checking configuration files...');
 const configFiles = [
   'vitest.config.ts',
   'src/test-setup.ts',
-  'src/test/global-setup.ts'
+  'src/test/global-setup.ts',
 ];
 
 configFiles.forEach(file => {
@@ -62,7 +61,7 @@ const utilsPath = path.join(process.cwd(), '../packages/utils/src/lgpd.ts');
 if (fs.existsSync(utilsPath)) {
   const content = fs.readFileSync(utilsPath, 'utf8');
   const redactPIICount = (content.match(/export function redactPII/g) || []).length;
-  
+
   if (redactPIICount === 1) {
     console.log('✅ utils package: redactPII function duplication fixed');
   } else {
@@ -75,13 +74,13 @@ console.log('\n🛠️  Checking test utilities...');
 const testUtilsPath = path.join(process.cwd(), 'src/test/utils.ts');
 if (fs.existsSync(testUtilsPath)) {
   const content = fs.readFileSync(testUtilsPath, 'utf8');
-  
+
   if (content.includes('React.createElement')) {
     console.log('✅ test utils: Using React.createElement instead of JSX');
   } else {
     console.log('❌ test utils: Should use React.createElement instead of JSX');
   }
-  
+
   if (content.includes('import { vi } from \'vitest\'')) {
     console.log('✅ test utils: vi import present');
   } else {

@@ -307,7 +307,7 @@ export function useOfflineData<T>(
     try {
       // Try to get cached data first (unless forcing fresh data)
       if (!forceFresh) {
-        const cached = await getCachedData(key);
+        const cached = await getCachedData(key) as T | null;
         if (cached) {
           setData(cached);
           setLoading(false);

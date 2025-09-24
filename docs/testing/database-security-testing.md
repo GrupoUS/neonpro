@@ -43,14 +43,14 @@ export const createTestSupabaseClient = (options?: {
   auditTrail?: boolean;
 }) => {
   const config = {
-    url: process.env.SUPABASE_TEST_URL || "",
-    anonKey: process.env.SUPABASE_TEST_ANON_KEY || "",
-    serviceKey: process.env.SUPABASE_TEST_SERVICE_KEY || "",
+    url: process.env.SUPABASE_TEST_URL || '',
+    anonKey: process.env.SUPABASE_TEST_ANON_KEY || '',
+    serviceKey: process.env.SUPABASE_TEST_SERVICE_KEY || '',
     ...options,
   };
 
   if (!config.url || !config.anonKey) {
-    throw new Error("Missing Supabase test configuration - security violation");
+    throw new Error('Missing Supabase test configuration - security violation');
   }
 
   return createClient<Database>(config.url, config.anonKey, {
@@ -59,12 +59,12 @@ export const createTestSupabaseClient = (options?: {
       autoRefreshToken: false,
       detectSessionInUrl: false,
     },
-    db: { schema: process.env.NODE_ENV === "test" ? "test_schema" : "public" },
+    db: { schema: process.env.NODE_ENV === 'test' ? 'test_schema' : 'public' },
     global: {
       headers: {
-        "x-test-environment": "true",
-        "x-lgpd-compliant": options?.lgpdCompliant ? "true" : "false",
-        "x-audit-enabled": options?.auditTrail ? "true" : "false",
+        'x-test-environment': 'true',
+        'x-lgpd-compliant': options?.lgpdCompliant ? 'true' : 'false',
+        'x-audit-enabled': options?.auditTrail ? 'true' : 'false',
       },
     },
   });
@@ -383,21 +383,21 @@ describe('Authentication Security Validation', () => {
 ### 1. Data Protection Compliance
 
 ```typescript
-describe("LGPD Data Protection Compliance", () => {
-  describe("Personal data anonymization", () => {
-    it("anonymizes patient data in test environment", async () => {
+describe('LGPD Data Protection Compliance', () => {
+  describe('Personal data anonymization', () => {
+    it('anonymizes patient data in test environment', async () => {
       const testClient = createTestSupabaseClient({
         lgpdCompliant: true,
         anonymizeData: true,
       });
 
       const { data: patients } = await testClient
-        .from("patients")
-        .select("name, cpf, email, phone")
+        .from('patients')
+        .select('name, cpf, email, phone')
         .limit(5);
 
       if (patients && patients.length > 0) {
-        patients.forEach((patient) => {
+        patients.forEach(patient => {
           // security-auditor: Verify data anonymization patterns
           expect(patient.name).toMatch(/^ANON_\d+$|^Test\s+Patient\s+\d+$/);
           expect(patient.cpf).toMatch(
@@ -413,26 +413,26 @@ describe("LGPD Data Protection Compliance", () => {
       }
     });
 
-    it("validates data minimization principles", async () => {
+    it('validates data minimization principles', async () => {
       const testClient = createTestSupabaseClient();
 
       // Query should only return necessary fields for the operation
       const { data: minimalPatients } = await testClient
-        .from("patients")
-        .select("id, name, clinic_id") // Only essential fields
+        .from('patients')
+        .select('id, name, clinic_id') // Only essential fields
         .limit(10);
 
       expect(minimalPatients).toBeDefined();
 
       // Verify sensitive fields are not included unless explicitly requested
       if (minimalPatients && minimalPatients.length > 0) {
-        expect(minimalPatients[0]).not.toHaveProperty("cpf");
-        expect(minimalPatients[0]).not.toHaveProperty("medical_history");
-        expect(minimalPatients[0]).not.toHaveProperty("emergency_contact");
+        expect(minimalPatients[0]).not.toHaveProperty('cpf');
+        expect(minimalPatients[0]).not.toHaveProperty('medical_history');
+        expect(minimalPatients[0]).not.toHaveProperty('emergency_contact');
       }
     });
 
-    it("enforces data retention policies", async () => {
+    it('enforces data retention policies', async () => {
       const testClient = createTestSupabaseClient();
 
       // Query for old test data (older than retention period)
@@ -440,20 +440,20 @@ describe("LGPD Data Protection Compliance", () => {
       cutoffDate.setDate(cutoffDate.getDate() - 30); // 30 days retention for test data
 
       const { data: oldData } = await testClient
-        .from("test_data_audit")
-        .select("*")
-        .lt("created_at", cutoffDate.toISOString());
+        .from('test_data_audit')
+        .select('*')
+        .lt('created_at', cutoffDate.toISOString());
 
       // security-auditor: Verify old data is cleaned up per LGPD requirements
       expect(oldData).toHaveLength(0);
     });
 
-    it("validates consent tracking", async () => {
+    it('validates consent tracking', async () => {
       const testClient = createTestSupabaseClient();
 
       // Check that all patients have proper consent records
       const { data: patients } = await testClient
-        .from("patients")
+        .from('patients')
         .select(
           `
           id,
@@ -469,21 +469,21 @@ describe("LGPD Data Protection Compliance", () => {
         .limit(5);
 
       if (patients && patients.length > 0) {
-        patients.forEach((patient) => {
+        patients.forEach(patient => {
           expect(patient.consent_records).toBeDefined();
           expect(patient.consent_records.length).toBeGreaterThan(0);
 
           // Verify required consent types are present
           const consentTypes = patient.consent_records.map(
-            (c) => c.consent_type,
+            c => c.consent_type,
           );
-          expect(consentTypes).toContain("data_processing");
-          expect(consentTypes).toContain("medical_treatment");
+          expect(consentTypes).toContain('data_processing');
+          expect(consentTypes).toContain('medical_treatment');
 
           // Verify consent is still valid
           const now = new Date();
           const validConsents = patient.consent_records.filter(
-            (c) => new Date(c.expires_at) > now,
+            c => new Date(c.expires_at) > now,
           );
           expect(validConsents.length).toBeGreaterThan(0);
         });
@@ -491,40 +491,40 @@ describe("LGPD Data Protection Compliance", () => {
     });
   });
 
-  describe("Data subject rights validation", () => {
-    it("supports data portability (right to data portability)", async () => {
+  describe('Data subject rights validation', () => {
+    it('supports data portability (right to data portability)', async () => {
       const testClient = createTestSupabaseClient();
 
       // Test patient data export functionality
-      const patientId = "test-patient-123";
-      const { data: exportData } = await testClient.rpc("export_patient_data", {
+      const patientId = 'test-patient-123';
+      const { data: exportData } = await testClient.rpc('export_patient_data', {
         patient_id: patientId,
       });
 
       expect(exportData).toBeDefined();
-      expect(exportData).toHaveProperty("personal_data");
-      expect(exportData).toHaveProperty("medical_records");
-      expect(exportData).toHaveProperty("appointments");
-      expect(exportData).toHaveProperty("consent_history");
+      expect(exportData).toHaveProperty('personal_data');
+      expect(exportData).toHaveProperty('medical_records');
+      expect(exportData).toHaveProperty('appointments');
+      expect(exportData).toHaveProperty('consent_history');
 
       // Verify data is in machine-readable format (JSON)
-      expect(typeof exportData.personal_data).toBe("object");
+      expect(typeof exportData.personal_data).toBe('object');
     });
 
-    it("supports data rectification (right to rectification)", async () => {
+    it('supports data rectification (right to rectification)', async () => {
       const testClient = createTestSupabaseClient();
 
       // Test that patients can update their own data
       const updateData = {
-        name: "João Silva Santos",
-        email: "joao.updated@email.com",
-        phone: "+55 11 99999-8888",
+        name: 'João Silva Santos',
+        email: 'joao.updated@email.com',
+        phone: '+55 11 99999-8888',
       };
 
       const { data: updatedPatient, error } = await testClient
-        .from("patients")
+        .from('patients')
         .update(updateData)
-        .eq("id", "test-patient-123")
+        .eq('id', 'test-patient-123')
         .select()
         .single();
 
@@ -533,26 +533,26 @@ describe("LGPD Data Protection Compliance", () => {
 
       // Verify audit log is created
       const { data: auditLog } = await testClient
-        .from("audit_logs")
-        .select("*")
-        .eq("table_name", "patients")
-        .eq("record_id", "test-patient-123")
-        .eq("operation", "UPDATE")
-        .order("created_at", { ascending: false })
+        .from('audit_logs')
+        .select('*')
+        .eq('table_name', 'patients')
+        .eq('record_id', 'test-patient-123')
+        .eq('operation', 'UPDATE')
+        .order('created_at', { ascending: false })
         .limit(1);
 
       expect(auditLog).toHaveLength(1);
-      expect(auditLog[0].operation_type).toBe("data_rectification");
+      expect(auditLog[0].operation_type).toBe('data_rectification');
     });
 
-    it("supports data erasure (right to be forgotten)", async () => {
+    it('supports data erasure (right to be forgotten)', async () => {
       const serviceClient = createServiceRoleClient();
 
       // Test soft deletion with anonymization
       const { data: deletedPatient, error } = await serviceClient.rpc(
-        "anonymize_patient",
+        'anonymize_patient',
         {
-          patient_id: "test-patient-delete",
+          patient_id: 'test-patient-delete',
         },
       );
 
@@ -561,14 +561,14 @@ describe("LGPD Data Protection Compliance", () => {
 
       // Verify patient data is anonymized but structure preserved
       const { data: anonymizedPatient } = await serviceClient
-        .from("patients")
-        .select("*")
-        .eq("id", "test-patient-delete")
+        .from('patients')
+        .select('*')
+        .eq('id', 'test-patient-delete')
         .single();
 
       expect(anonymizedPatient.name).toMatch(/^DELETED_\d+$/);
-      expect(anonymizedPatient.cpf).toBe("***.***.***-**");
-      expect(anonymizedPatient.email).toBe("deleted@example.com");
+      expect(anonymizedPatient.cpf).toBe('***.***.***-**');
+      expect(anonymizedPatient.email).toBe('deleted@example.com');
       expect(anonymizedPatient.deleted_at).toBeDefined();
     });
   });
@@ -789,23 +789,23 @@ describe('Audit Trail Compliance', () => {
 ### 2. Real-time Security Monitoring
 
 ```typescript
-describe("Real-time Security Monitoring", () => {
-  it("detects suspicious access patterns", async () => {
+describe('Real-time Security Monitoring', () => {
+  it('detects suspicious access patterns', async () => {
     const testClient = createTestSupabaseClient();
 
     // Simulate rapid access attempts (potential bot behavior)
     const rapidRequests = Array(20)
       .fill(null)
-      .map(() => testClient.from("patients").select("*").limit(1));
+      .map(() => testClient.from('patients').select('*').limit(1));
 
     await Promise.all(rapidRequests);
 
     // Check for security alerts
     const { data: securityAlerts } = await testClient
-      .from("security_alerts")
-      .select("*")
-      .eq("alert_type", "suspicious_access_pattern")
-      .gte("created_at", new Date(Date.now() - 60000).toISOString()) // Last minute
+      .from('security_alerts')
+      .select('*')
+      .eq('alert_type', 'suspicious_access_pattern')
+      .gte('created_at', new Date(Date.now() - 60000).toISOString()) // Last minute
       .limit(1);
 
     expect(securityAlerts).toBeDefined();
@@ -817,28 +817,28 @@ describe("Real-time Security Monitoring", () => {
     }
   });
 
-  it("monitors for privilege escalation attempts", async () => {
+  it('monitors for privilege escalation attempts', async () => {
     const testClient = createTestSupabaseClient();
 
     // Attempt to access admin-only data
     const { error } = await testClient
-      .from("system_configuration")
-      .select("*")
+      .from('system_configuration')
+      .select('*')
       .limit(1);
 
     expect(error).toBeDefined();
 
     // Verify security incident was logged
     const { data: incidents } = await testClient
-      .from("security_incidents")
-      .select("*")
-      .eq("incident_type", "unauthorized_access_attempt")
-      .gte("created_at", new Date(Date.now() - 30000).toISOString())
+      .from('security_incidents')
+      .select('*')
+      .eq('incident_type', 'unauthorized_access_attempt')
+      .gte('created_at', new Date(Date.now() - 30000).toISOString())
       .limit(1);
 
     expect(incidents).toBeDefined();
     if (incidents && incidents.length > 0) {
-      expect(incidents[0].target_resource).toBe("system_configuration");
+      expect(incidents[0].target_resource).toBe('system_configuration');
       expect(incidents[0].action_taken).toMatch(/blocked|denied/i);
     }
   });
@@ -850,7 +850,7 @@ describe("Real-time Security Monitoring", () => {
 ### 1. Singleton Pattern Implementation
 
 ```typescript
-describe("GoTrueClient Multi-Instance Management", () => {
+describe('GoTrueClient Multi-Instance Management', () => {
   let originalConsoleWarn: typeof console.warn;
 
   beforeAll(() => {
@@ -863,14 +863,14 @@ describe("GoTrueClient Multi-Instance Management", () => {
     console.warn = originalConsoleWarn;
   });
 
-  it("prevents multiple GoTrueClient instances", async () => {
+  it('prevents multiple GoTrueClient instances', async () => {
     // Create multiple Supabase clients rapidly
     const clients = Array(5)
       .fill(null)
       .map(() => createTestSupabaseClient());
 
     // Perform auth operations with all clients
-    const authPromises = clients.map((client) => client.auth.getSession());
+    const authPromises = clients.map(client => client.auth.getSession());
 
     await Promise.all(authPromises);
 
@@ -880,7 +880,7 @@ describe("GoTrueClient Multi-Instance Management", () => {
     );
   });
 
-  it("handles concurrent auth operations safely", async () => {
+  it('handles concurrent auth operations safely', async () => {
     const client = createTestSupabaseClient();
 
     // Perform concurrent auth operations
@@ -888,16 +888,16 @@ describe("GoTrueClient Multi-Instance Management", () => {
       client.auth.getSession(),
       client.auth.getUser(),
       client.auth.signInWithPassword({
-        email: "test@clinic.com",
-        password: "password123",
+        email: 'test@clinic.com',
+        password: 'password123',
       }),
     ];
 
     const results = await Promise.allSettled(operations);
 
     // At least session and user calls should succeed
-    expect(results[0].status).toBe("fulfilled");
-    expect(results[1].status).toBe("fulfilled");
+    expect(results[0].status).toBe('fulfilled');
+    expect(results[1].status).toBe('fulfilled');
   });
 });
 ```
@@ -905,15 +905,15 @@ describe("GoTrueClient Multi-Instance Management", () => {
 ### 2. Database Performance & Security
 
 ```typescript
-describe("Database Performance Security", () => {
-  it("validates query performance within security SLAs", async () => {
+describe('Database Performance Security', () => {
+  it('validates query performance within security SLAs', async () => {
     const testClient = createTestSupabaseClient();
 
     const startTime = Date.now();
 
     // Complex query with security implications
     const { data, error } = await testClient
-      .from("patients")
+      .from('patients')
       .select(
         `
         id,
@@ -933,7 +933,7 @@ describe("Database Performance Security", () => {
         )
       `,
       )
-      .eq("clinic_id", "test-clinic")
+      .eq('clinic_id', 'test-clinic')
       .limit(10);
 
     const queryTime = Date.now() - startTime;
@@ -945,16 +945,16 @@ describe("Database Performance Security", () => {
     expect(queryTime).toBeLessThan(1000); // 1 second max
   });
 
-  it("prevents SQL injection in dynamic queries", async () => {
+  it('prevents SQL injection in dynamic queries', async () => {
     const testClient = createTestSupabaseClient();
 
     // Test with malicious input
-    const maliciousInput = "'; DROP TABLE patients; --";
+    const maliciousInput = '\'; DROP TABLE patients; --';
 
     const { data, error } = await testClient
-      .from("patients")
-      .select("*")
-      .ilike("name", `%${maliciousInput}%`)
+      .from('patients')
+      .select('*')
+      .ilike('name', `%${maliciousInput}%`)
       .limit(1);
 
     // Query should be safe and return no results
@@ -963,8 +963,8 @@ describe("Database Performance Security", () => {
 
     // Verify table still exists
     const { data: tableCheck } = await testClient
-      .from("patients")
-      .select("count")
+      .from('patients')
+      .select('count')
       .limit(1);
 
     expect(tableCheck).toBeDefined();
@@ -1005,11 +1005,13 @@ export class SecureTestDataFactory {
       name: `Test Patient ${Math.floor(Math.random() * 1000)}`,
       cpf: this.generateAnonymizedCPF(),
       email: `test+${Date.now()}@example.com`,
-      phone: `+55 11 9****-${Math.floor(Math.random() * 9999)
-        .toString()
-        .padStart(4, "0")}`,
-      birthDate: "1985-01-01", // Fixed date for consistency
-      clinic_id: "test-clinic",
+      phone: `+55 11 9****-${
+        Math.floor(Math.random() * 9999)
+          .toString()
+          .padStart(4, '0')
+      }`,
+      birthDate: '1985-01-01', // Fixed date for consistency
+      clinic_id: 'test-clinic',
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
       ...overrides,
@@ -1019,14 +1021,14 @@ export class SecureTestDataFactory {
   private static generateAnonymizedCPF(): string {
     const digits = Math.floor(Math.random() * 100)
       .toString()
-      .padStart(2, "0");
+      .padStart(2, '0');
     return `***.***.**-${digits}`;
   }
 
   static async cleanupTestData(supabase: SupabaseClient) {
     // Clean up test data while preserving audit logs
-    await supabase.from("patients").delete().like("id", "test-%");
-    await supabase.from("appointments").delete().like("patient_id", "test-%");
+    await supabase.from('patients').delete().like('id', 'test-%');
+    await supabase.from('appointments').delete().like('patient_id', 'test-%');
     // Note: Never delete audit_logs for compliance
   }
 }
@@ -1037,7 +1039,7 @@ export class SecureTestDataFactory {
 ### Complete Security Test Suite
 
 ```typescript
-describe("Healthcare Database Security Suite", () => {
+describe('Healthcare Database Security Suite', () => {
   let testClient: ReturnType<typeof createTestSupabaseClient>;
   let serviceClient: ReturnType<typeof createServiceRoleClient>;
 
@@ -1056,39 +1058,39 @@ describe("Healthcare Database Security Suite", () => {
     await SecureTestDataFactory.cleanupTestData(serviceClient);
   });
 
-  it("validates complete security workflow", async () => {
+  it('validates complete security workflow', async () => {
     // 1. Secure authentication
     const { data: authData } = await testClient.auth.signInWithPassword({
-      email: "doctor@clinic.com",
-      password: "SecurePassword123!",
+      email: 'doctor@clinic.com',
+      password: 'SecurePassword123!',
     });
     expect(authData.user).toBeDefined();
 
     // 2. RLS validation
     const { data: patients } = await testClient
-      .from("patients")
-      .select("*")
+      .from('patients')
+      .select('*')
       .limit(5);
-    expect(patients?.every((p) => p.clinic_id === "authorized-clinic")).toBe(
+    expect(patients?.every(p => p.clinic_id === 'authorized-clinic')).toBe(
       true,
     );
 
     // 3. LGPD compliance
-    expect(patients?.every((p) => p.cpf.includes("***"))).toBe(true);
+    expect(patients?.every(p => p.cpf.includes('***'))).toBe(true);
 
     // 4. Audit trail verification
     const { data: auditLogs } = await testClient
-      .from("audit_logs")
-      .select("*")
-      .eq("table_name", "patients")
-      .eq("user_id", authData.user?.id)
+      .from('audit_logs')
+      .select('*')
+      .eq('table_name', 'patients')
+      .eq('user_id', authData.user?.id)
       .limit(1);
     expect(auditLogs).toHaveLength(1);
 
     // 5. Data access controls
     const { error: unauthorizedError } = await testClient
-      .from("admin_settings")
-      .select("*");
+      .from('admin_settings')
+      .select('*');
     expect(unauthorizedError).toBeDefined();
 
     await testClient.auth.signOut();

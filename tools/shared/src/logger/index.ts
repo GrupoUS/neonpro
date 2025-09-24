@@ -10,26 +10,19 @@
  * - Healthcare audit trail support
  */
 
+import { EventEmitter } from 'events';
 import {
   appendFileSync,
   existsSync,
   mkdirSync,
-  statSync,
-  renameSync,
   readdirSync,
+  renameSync,
+  statSync,
   unlinkSync,
-} from "fs";
-import { join } from "path";
-import { performance } from "perf_hooks";
-import { EventEmitter } from "events";
-import {
-  LogLevel,
-  LogContext,
-  LogEntry,
-  ConstitutionalContext,
-  ErrorInfo,
-  Result,
-} from "../types";
+} from 'fs';
+import { join } from 'path';
+import { performance } from 'perf_hooks';
+import { ConstitutionalContext, ErrorInfo, LogContext, LogEntry, LogLevel, Result } from '../types';
 
 export interface LoggerConfig {
   level: LogLevel;
@@ -41,7 +34,7 @@ export interface LoggerConfig {
   logDirectory: string;
   maxFileSize: number; // in bytes
   maxFiles: number;
-  format: "json" | "text" | "pretty";
+  format: 'json' | 'text' | 'pretty';
   includeStackTrace: boolean;
   rotateDaily: boolean;
   outputs: {
@@ -64,15 +57,15 @@ export class UnifiedLogger extends EventEmitter {
 
     this.config = {
       level: LogLevel.INFO,
-      name: config.name || "Tool",
+      name: config.name || 'Tool',
       enableConsole: true,
       enableFile: true,
       enablePerformance: true,
       enableConstitutional: true,
-      logDirectory: "./logs",
+      logDirectory: './logs',
       maxFileSize: 10 * 1024 * 1024, // 10MB
       maxFiles: 5,
-      format: "pretty",
+      format: 'pretty',
       includeStackTrace: true,
       rotateDaily: true,
       outputs: {
@@ -107,7 +100,7 @@ export class UnifiedLogger extends EventEmitter {
   createChild(context: LogContext): UnifiedLogger {
     const childConfig = {
       ...this.config,
-      name: `${this.config.name}:${context.component || "Child"}`,
+      name: `${this.config.name}:${context.component || 'Child'}`,
     };
     const child = new UnifiedLogger(childConfig);
     child.pushContext(context);
@@ -178,11 +171,11 @@ export class UnifiedLogger extends EventEmitter {
 
   private formatLogEntry(entry: LogEntry): string {
     switch (this.config.format) {
-      case "json":
+      case 'json':
         return JSON.stringify(entry);
-      case "text":
+      case 'text':
         return this.formatTextEntry(entry);
-      case "pretty":
+      case 'pretty':
         return this.formatPrettyEntry(entry);
       default:
         return JSON.stringify(entry);
@@ -192,12 +185,14 @@ export class UnifiedLogger extends EventEmitter {
   private formatTextEntry(entry: LogEntry): string {
     const timestamp = entry.timestamp;
     const level = LogLevel[entry.level];
-    const component = entry.context.component || "UNKNOWN";
-    const operation = entry.context.operation || "";
+    const component = entry.context.component || 'UNKNOWN';
+    const operation = entry.context.operation || '';
     const prefix = operation ? `[${component}:${operation}]` : `[${component}]`;
     const constitutional = entry.constitutional
-      ? ` [${entry.constitutional.compliance ? "✅" : "❌"} ${entry.constitutional.standard || "CONST"}]`
-      : "";
+      ? ` [${entry.constitutional.compliance ? '✅' : '❌'} ${
+        entry.constitutional.standard || 'CONST'
+      }]`
+      : '';
 
     return `${timestamp} ${level.padEnd(8)} ${prefix} ${entry.message}${constitutional}`;
   }
@@ -205,39 +200,40 @@ export class UnifiedLogger extends EventEmitter {
   private formatPrettyEntry(entry: LogEntry): string {
     // Color codes and emoji prefixes
     const colors = {
-      [LogLevel.TRACE]: "\x1b[37m", // White
-      [LogLevel.DEBUG]: "\x1b[35m", // Magenta
-      [LogLevel.INFO]: "\x1b[36m", // Cyan
-      [LogLevel.WARN]: "\x1b[33m", // Yellow
-      [LogLevel.ERROR]: "\x1b[31m", // Red
-      [LogLevel.CRITICAL]: "\x1b[41m", // Red background
+      [LogLevel.TRACE]: '\x1b[37m', // White
+      [LogLevel.DEBUG]: '\x1b[35m', // Magenta
+      [LogLevel.INFO]: '\x1b[36m', // Cyan
+      [LogLevel.WARN]: '\x1b[33m', // Yellow
+      [LogLevel.ERROR]: '\x1b[31m', // Red
+      [LogLevel.CRITICAL]: '\x1b[41m', // Red background
     };
 
     const emojis = {
-      [LogLevel.TRACE]: "🔍",
-      [LogLevel.DEBUG]: "🐛",
-      [LogLevel.INFO]: "ℹ️",
-      [LogLevel.WARN]: "⚠️",
-      [LogLevel.ERROR]: "❌",
-      [LogLevel.CRITICAL]: "🚨",
+      [LogLevel.TRACE]: '🔍',
+      [LogLevel.DEBUG]: '🐛',
+      [LogLevel.INFO]: 'ℹ️',
+      [LogLevel.WARN]: '⚠️',
+      [LogLevel.ERROR]: '❌',
+      [LogLevel.CRITICAL]: '🚨',
     };
 
-    const resetColor = "\x1b[0m";
+    const resetColor = '\x1b[0m';
     const color = colors[entry.level] || resetColor;
-    const emoji = emojis[entry.level] || "ℹ️";
+    const emoji = emojis[entry.level] || 'ℹ️';
     const levelName = LogLevel[entry.level].padEnd(8);
 
     const timestamp = new Date(entry.timestamp).toLocaleTimeString();
-    const component = entry.context.component || "UNKNOWN";
-    const operation = entry.context.operation || "";
+    const component = entry.context.component || 'UNKNOWN';
+    const operation = entry.context.operation || '';
     const prefix = operation ? `${component}:${operation}` : component;
 
-    let result = `${color}${timestamp} ${emoji} ${levelName}${resetColor} [${prefix}] ${entry.message}`;
+    let result =
+      `${color}${timestamp} ${emoji} ${levelName}${resetColor} [${prefix}] ${entry.message}`;
 
     // Constitutional compliance indicator
     if (entry.constitutional) {
-      const complianceIcon = entry.constitutional.compliance ? "✅" : "❌";
-      const standard = entry.constitutional.standard || "CONST";
+      const complianceIcon = entry.constitutional.compliance ? '✅' : '❌';
+      const standard = entry.constitutional.standard || 'CONST';
       result += ` ${complianceIcon} ${standard}`;
     }
 
@@ -245,8 +241,8 @@ export class UnifiedLogger extends EventEmitter {
     if (entry.error) {
       result += `\n  ${color}Error:${resetColor} ${entry.error.name}: ${entry.error.message}`;
       if (entry.error.stack && this.config.includeStackTrace) {
-        const stackLines = entry.error.stack.split("\n").slice(1, 4);
-        stackLines.forEach((line) => {
+        const stackLines = entry.error.stack.split('\n').slice(1, 4);
+        stackLines.forEach(line => {
           result += `\n    ${line.trim()}`;
         });
       }
@@ -254,8 +250,8 @@ export class UnifiedLogger extends EventEmitter {
 
     // Metadata
     if (
-      entry.context.metadata &&
-      Object.keys(entry.context.metadata).length > 0
+      entry.context.metadata
+      && Object.keys(entry.context.metadata).length > 0
     ) {
       result += `\n  📋 Metadata: ${JSON.stringify(entry.context.metadata, null, 2)}`;
     }
@@ -301,17 +297,17 @@ export class UnifiedLogger extends EventEmitter {
     if (!this.config.outputs.file) return;
 
     const logFileName = this.config.rotateDaily
-      ? `${this.config.name}-${new Date().toISOString().split("T")[0]}.log`
+      ? `${this.config.name}-${new Date().toISOString().split('T')[0]}.log`
       : `${this.config.name}.log`;
 
     const logFilePath = join(this.config.logDirectory, logFileName);
-    const formattedEntry = this.formatLogEntry(entry) + "\n";
+    const formattedEntry = this.formatLogEntry(entry) + '\n';
 
     try {
-      appendFileSync(logFilePath, formattedEntry, "utf8");
+      appendFileSync(logFilePath, formattedEntry, 'utf8');
       this.rotateLogsIfNeeded(logFilePath);
     } catch (error) {
-      console.error("Failed to write to log file:", error);
+      console.error('Failed to write to log file:', error);
     }
 
     // Write to specialized log files
@@ -323,14 +319,14 @@ export class UnifiedLogger extends EventEmitter {
 
     // Error log
     if (
-      error &&
-      (entry.level === LogLevel.ERROR || entry.level === LogLevel.CRITICAL)
+      error
+      && (entry.level === LogLevel.ERROR || entry.level === LogLevel.CRITICAL)
     ) {
       const errorPath = join(this.config.logDirectory, error);
       try {
-        appendFileSync(errorPath, this.formatLogEntry(entry) + "\n", "utf8");
+        appendFileSync(errorPath, this.formatLogEntry(entry) + '\n', 'utf8');
       } catch (err) {
-        console.error("Failed to write to error log:", err);
+        console.error('Failed to write to error log:', err);
       }
     }
 
@@ -338,9 +334,9 @@ export class UnifiedLogger extends EventEmitter {
     if (performance && entry.performance) {
       const perfPath = join(this.config.logDirectory, performance);
       try {
-        appendFileSync(perfPath, this.formatLogEntry(entry) + "\n", "utf8");
+        appendFileSync(perfPath, this.formatLogEntry(entry) + '\n', 'utf8');
       } catch (err) {
-        console.error("Failed to write to performance log:", err);
+        console.error('Failed to write to performance log:', err);
       }
     }
 
@@ -348,9 +344,9 @@ export class UnifiedLogger extends EventEmitter {
     if (audit && entry.constitutional) {
       const auditPath = join(this.config.logDirectory, audit);
       try {
-        appendFileSync(auditPath, this.formatLogEntry(entry) + "\n", "utf8");
+        appendFileSync(auditPath, this.formatLogEntry(entry) + '\n', 'utf8');
       } catch (err) {
-        console.error("Failed to write to audit log:", err);
+        console.error('Failed to write to audit log:', err);
       }
     }
   }
@@ -359,13 +355,13 @@ export class UnifiedLogger extends EventEmitter {
     try {
       const stats = statSync(logFilePath);
       if (stats.size > this.config.maxFileSize) {
-        const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
-        const rotatedPath = logFilePath.replace(".log", `-${timestamp}.log`);
+        const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+        const rotatedPath = logFilePath.replace('.log', `-${timestamp}.log`);
         renameSync(logFilePath, rotatedPath);
         this.cleanupOldLogs();
       }
     } catch (error) {
-      console.error("Failed to rotate logs:", error);
+      console.error('Failed to rotate logs:', error);
     }
   }
 
@@ -373,9 +369,9 @@ export class UnifiedLogger extends EventEmitter {
     try {
       const files = readdirSync(this.config.logDirectory)
         .filter(
-          (file) => file.endsWith(".log") && file.startsWith(this.config.name),
+          file => file.endsWith('.log') && file.startsWith(this.config.name),
         )
-        .map((file) => ({
+        .map(file => ({
           name: file,
           path: join(this.config.logDirectory, file),
           stats: statSync(join(this.config.logDirectory, file)),
@@ -384,12 +380,12 @@ export class UnifiedLogger extends EventEmitter {
 
       if (files.length > this.config.maxFiles) {
         const filesToDelete = files.slice(this.config.maxFiles);
-        filesToDelete.forEach((file) => {
+        filesToDelete.forEach(file => {
           unlinkSync(file.path);
         });
       }
     } catch (error) {
-      console.error("Failed to cleanup old logs:", error);
+      console.error('Failed to cleanup old logs:', error);
     }
   }
 
@@ -412,7 +408,7 @@ export class UnifiedLogger extends EventEmitter {
 
     this.writeToConsole(entry);
     this.writeToFile(entry);
-    this.emit("log", entry);
+    this.emit('log', entry);
   }
 
   // Public logging methods
@@ -547,7 +543,7 @@ export class UnifiedLogger extends EventEmitter {
     this.config.level = level;
   }
 
-  setFormat(format: "json" | "text" | "pretty"): void {
+  setFormat(format: 'json' | 'text' | 'pretty'): void {
     this.config.format = format;
   }
 
@@ -570,12 +566,11 @@ export const createLogger = (
 };
 
 // Convenience logger for quick use
-export const logger = createLogger("DefaultTool", {
-  format: "pretty",
-  level:
-    process.env.NODE_ENV === "development" ? LogLevel.DEBUG : LogLevel.INFO,
+export const logger = createLogger('DefaultTool', {
+  format: 'pretty',
+  level: process.env.NODE_ENV === 'development' ? LogLevel.DEBUG : LogLevel.INFO,
 });
 
 // Export everything
-export * from "../types";
+export * from '../types';
 export default UnifiedLogger;

@@ -1,13 +1,13 @@
 /**
  * Enhanced Session Management Integration
- * 
+ *
  * Main integration point for all enhanced session management components including
  * CopilotKit integration, aesthetic clinic features, and compliance frameworks.
  */
 
-export { EnhancedAgentSessionService } from './enhanced-agent-session-service';
-export { CopilotKitSessionIntegration } from './copilotkit-session-integration';
 export { AestheticSessionHandler } from './aesthetic-session-handler';
+export { CopilotKitSessionIntegration } from './copilotkit-session-integration';
+export { EnhancedAgentSessionService } from './enhanced-agent-session-service';
 
 // Re-export types for convenience
 export type {
@@ -18,23 +18,23 @@ export type {
 } from './enhanced-agent-session-service';
 
 export type {
-  CopilotKitSessionConfig,
-  CopilotKitMessage,
   CopilotKitAction,
+  CopilotKitMessage,
+  CopilotKitSessionConfig,
   CopilotKitSessionState,
 } from './copilotkit-session-integration';
 
 export type {
-  AestheticSessionConfig,
-  TreatmentWorkflowStep,
-  PhotoAnalysisConfig,
-  ClientAssessmentConfig,
-  AestheticTreatmentSession,
-  TreatmentWorkflow,
-  PhotoRecord,
-  AssessmentResult,
-  ComplianceStatus,
   AestheticSessionAnalytics,
+  AestheticSessionConfig,
+  AestheticTreatmentSession,
+  AssessmentResult,
+  ClientAssessmentConfig,
+  ComplianceStatus,
+  PhotoAnalysisConfig,
+  PhotoRecord,
+  TreatmentWorkflow,
+  TreatmentWorkflowStep,
 } from './aesthetic-session-handler';
 
 // Import base session service for backward compatibility
@@ -53,7 +53,7 @@ export async function createEnhancedSessionManagement(
   } = {},
 ) {
   const { AgentSessionService } = await import('./agent-session-service');
-  
+
   // Initialize base session service
   const baseSessionService = new AgentSessionService(
     supabaseUrl,
@@ -77,17 +77,23 @@ export async function createEnhancedSessionManagement(
   );
 
   // Initialize aesthetic services if enabled
-  let aestheticSessionHandler: import('./aesthetic-session-handler').AestheticSessionHandler | undefined;
-  
+  let aestheticSessionHandler:
+    | import('./aesthetic-session-handler').AestheticSessionHandler
+    | undefined;
+
   if (config.aestheticConfig?.enableAestheticFeatures !== false) {
     const { AestheticAguiService } = await import('../agui-protocol/aesthetic-service');
-    const { AestheticDataHandlingService } = await import('../agui-protocol/aesthetic-data-handling');
-    const { AestheticComplianceService } = await import('../agui-protocol/aesthetic-compliance-service');
-    
+    const { AestheticDataHandlingService } = await import(
+      '../agui-protocol/aesthetic-data-handling'
+    );
+    const { AestheticComplianceService } = await import(
+      '../agui-protocol/aesthetic-compliance-service'
+    );
+
     const aestheticService = new AestheticAguiService(supabaseUrl, supabaseServiceKey);
     const dataHandlingService = new AestheticDataHandlingService(supabaseUrl, supabaseServiceKey);
     const complianceService = new AestheticComplianceService(supabaseUrl, supabaseServiceKey);
-    
+
     const { AestheticSessionHandler } = await import('./aesthetic-session-handler');
     aestheticSessionHandler = new AestheticSessionHandler(
       enhancedSessionService,
@@ -104,7 +110,7 @@ export async function createEnhancedSessionManagement(
     enhancedSessionService,
     copilotKitIntegration,
     aestheticSessionHandler,
-    
+
     /**
      * Create a complete enhanced session with all features
      */
@@ -121,7 +127,9 @@ export async function createEnhancedSessionManagement(
         {
           title: options.title || 'Complete Enhanced Session',
           enableCopilotKit: true,
-          aestheticData: options.clientProfile ? { clientProfile: options.clientProfile } : undefined,
+          aestheticData: options.clientProfile
+            ? { clientProfile: options.clientProfile }
+            : undefined,
           securityContext: {
             authenticationLevel: options.securityLevel || 'enhanced',
             dataAccessLevel: 'sensitive',
@@ -164,7 +172,7 @@ export async function createEnhancedSessionManagement(
 
       const copilotKitState = await copilotKitIntegration.getCopilotKitSessionState(sessionId);
       const analytics = await enhancedSessionService.getSessionAnalytics(sessionId);
-      
+
       let aestheticStatus = null;
       if (aestheticSessionHandler) {
         aestheticStatus = await aestheticSessionHandler.getAestheticSessionStatus(sessionId);
@@ -183,7 +191,7 @@ export async function createEnhancedSessionManagement(
      */
     async shutdown() {
       await enhancedSessionService.shutdown();
-      
+
       if (aestheticSessionHandler) {
         // Additional cleanup for aesthetic session handler if needed
       }
@@ -192,7 +200,9 @@ export async function createEnhancedSessionManagement(
 }
 
 // Default configurations
-export const DEFAULT_ENHANCED_SESSION_CONFIG: Partial<import('./enhanced-agent-session-service').EnhancedSessionConfig> = {
+export const DEFAULT_ENHANCED_SESSION_CONFIG: Partial<
+  import('./enhanced-agent-session-service').EnhancedSessionConfig
+> = {
   defaultExpirationMs: 24 * 60 * 60 * 1000, // 24 hours
   maxSessionLengthMs: 7 * 24 * 60 * 60 * 1000, // 7 days
   cleanupIntervalMs: 15 * 60 * 1000, // 15 minutes
@@ -204,7 +214,9 @@ export const DEFAULT_ENHANCED_SESSION_CONFIG: Partial<import('./enhanced-agent-s
   enableRealtimeCollaboration: false,
 };
 
-export const DEFAULT_COPILOTKIT_CONFIG: Partial<import('./copilotkit-session-integration').CopilotKitSessionConfig> = {
+export const DEFAULT_COPILOTKIT_CONFIG: Partial<
+  import('./copilotkit-session-integration').CopilotKitSessionConfig
+> = {
   endpoint: '/api/copilotkit',
   enableRealtimeSync: true,
   enableAestheticFeatures: true,
@@ -214,7 +226,9 @@ export const DEFAULT_COPILOTKIT_CONFIG: Partial<import('./copilotkit-session-int
   enableDataEncryption: true,
 };
 
-export const DEFAULT_AESTHETIC_CONFIG: Partial<import('./aesthetic-session-handler').AestheticSessionConfig> = {
+export const DEFAULT_AESTHETIC_CONFIG: Partial<
+  import('./aesthetic-session-handler').AestheticSessionConfig
+> = {
   enableTreatmentWorkflow: true,
   enablePhotoAnalysis: true,
   enableClientManagement: true,
@@ -239,11 +253,17 @@ export const SessionManagementUtils = {
       errors.push('Supabase service key is required');
     }
 
-    if (config.enhancedConfig?.maxConcurrentSessions && config.enhancedConfig.maxConcurrentSessions < 1) {
+    if (
+      config.enhancedConfig?.maxConcurrentSessions
+      && config.enhancedConfig.maxConcurrentSessions < 1
+    ) {
       errors.push('Max concurrent sessions must be at least 1');
     }
 
-    if (config.enhancedConfig?.defaultExpirationMs && config.enhancedConfig.defaultExpirationMs < 60000) {
+    if (
+      config.enhancedConfig?.defaultExpirationMs
+      && config.enhancedConfig.defaultExpirationMs < 60000
+    ) {
       errors.push('Default expiration must be at least 60 seconds');
     }
 

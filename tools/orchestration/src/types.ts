@@ -1,35 +1,35 @@
 export type AgentCoordinationPattern =
-  | "parallel"
-  | "sequential"
-  | "hierarchical"
-  | "event-driven"
-  | "consensus";
+  | 'parallel'
+  | 'sequential'
+  | 'hierarchical'
+  | 'event-driven'
+  | 'consensus';
 
 // Agent and workflow type definitions
 export type AgentName =
-  | "test"
-  | "code-reviewer"
-  | "security-auditor"
-  | "architect-review"
-  | "tdd-orchestrator"
-  | "test-auditor"
-  | "custom-agent"
-  | "tertiary-agent"
-  | "non-existent-agent";
+  | 'test'
+  | 'code-reviewer'
+  | 'security-auditor'
+  | 'architect-review'
+  | 'tdd-orchestrator'
+  | 'test-auditor'
+  | 'custom-agent'
+  | 'tertiary-agent'
+  | 'non-existent-agent';
 export type WorkflowType =
-  | "parallel"
-  | "sequential"
-  | "hierarchical"
-  | "event-driven";
+  | 'parallel'
+  | 'sequential'
+  | 'hierarchical'
+  | 'event-driven';
 
 // Re-export types from agent-registry
 export type {
   AgentCapability,
-  OrchestrationContext,
-  AgentType,
-  TDDPhase,
   AgentStats,
-} from "./agent-registry";
+  AgentType,
+  OrchestrationContext,
+  TDDPhase,
+} from './agent-registry';
 
 export type OrchestrationOptions = {
   workflow: string;
@@ -44,7 +44,7 @@ export type FeatureContext = {
   name: string;
   description: string;
   domain: string[];
-  complexity: "low" | "medium" | "high";
+  complexity: 'low' | 'medium' | 'high';
   requirements: string[];
   acceptance?: string[];
   healthcareCompliance?: boolean;
@@ -57,7 +57,7 @@ export interface ToolExecutionRequest {
   parameters: Record<string, any>;
   context: FeatureContext;
   timeout: number;
-  priority: "low" | "medium" | "high";
+  priority: 'low' | 'medium' | 'high';
   retries: number;
   dependencies?: string[];
   resources?: {
@@ -168,7 +168,7 @@ export type OrchestrationMetrics = {
 export type SystemStatus = {
   system: string;
   version: string;
-  status: "ready" | "busy" | "error";
+  status: 'ready' | 'busy' | 'error';
   components: {
     orchestrator: string;
     agentRegistry: string;

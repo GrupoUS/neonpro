@@ -1,10 +1,10 @@
 import {
   type Appointment,
+  type AppointmentCalendarView,
+  AppointmentPriority,
   AppointmentStatus,
   AppointmentType,
-  AppointmentPriority,
-  type AppointmentCalendarView,
-} from "../entities/appointment";
+} from '../entities/appointment';
 
 /**
  * Appointment Repository Interface
@@ -128,7 +128,7 @@ export interface AppointmentRepository {
    * @returns Created appointment
    */
   create(
-    appointment: Omit<Appointment, "id" | "createdAt" | "updatedAt">,
+    appointment: Omit<Appointment, 'id' | 'createdAt' | 'updatedAt'>,
   ): Promise<Appointment>;
 
   /**
@@ -267,7 +267,7 @@ export interface AppointmentFilters {
   limit?: number;
   offset?: number;
   sortBy?: keyof Appointment;
-  sortOrder?: "asc" | "desc";
+  sortOrder?: 'asc' | 'desc';
 }
 
 /**

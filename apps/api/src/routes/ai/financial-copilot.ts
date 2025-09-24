@@ -9,11 +9,11 @@ import { Hono } from 'hono';
 import type { Context, Next } from 'hono';
 import { cors } from 'hono/cors';
 import { streamText } from 'hono/streaming';
+import { z } from 'zod';
 import { logger } from '../../lib/logger';
+import { AnomalyDetectionService } from '../../services/financial-ai-agent/anomaly-detection';
 import { FinancialAIAgent } from '../../services/financial-ai-agent/financial-ai-agent';
 import { PredictiveAnalyticsService } from '../../services/financial-ai-agent/predictive-analytics';
-import { AnomalyDetectionService } from '../../services/financial-ai-agent/anomaly-detection';
-import { z } from 'zod';
 
 // Create dedicated router for Financial CopilotKit
 const financialCopilot = new Hono();
@@ -52,7 +52,7 @@ financialCopilot.use('*', async (c: Context, next: Next) => {
   c.header('X-Content-Type-Options', 'nosniff');
   c.header('X-Frame-Options', 'DENY');
   c.header('X-XSS-Protection', '1; mode=block');
-  
+
   await next();
 });
 
@@ -218,7 +218,7 @@ financialCopilot.post('/chat/completions', async c => {
  */
 financialCopilot.post('/actions', async c => {
   const requestId = crypto.randomUUID();
-  
+
   try {
     const body = await c.req.json();
     const { action_type, payload, context } = body;
@@ -303,14 +303,14 @@ financialCopilot.post('/actions', async c => {
  */
 financialCopilot.post('/analytics', async c => {
   const requestId = crypto.randomUUID();
-  
+
   try {
     const body = await c.req.json();
-    const { 
-      time_range, 
-      metrics, 
+    const {
+      time_range,
+      metrics,
       group_by = 'month',
-      filters 
+      filters,
     } = body;
 
     const userId = c.req.header('X-User-ID');
@@ -454,43 +454,53 @@ function analyzeFinancialIntent(query: string) {
   const normalizedQuery = query.toLowerCase();
 
   // Billing-related queries
-  if (normalizedQuery.includes('fatura') || 
-      normalizedQuery.includes('cobrança') ||
-      normalizedQuery.includes('pagamento') ||
-      normalizedQuery.includes('faturamento')) {
+  if (
+    normalizedQuery.includes('fatura')
+    || normalizedQuery.includes('cobrança')
+    || normalizedQuery.includes('pagamento')
+    || normalizedQuery.includes('faturamento')
+  ) {
     return { type: 'billing', confidence: 0.9 };
   }
 
   // Analytics-related queries
-  if (normalizedQuery.includes('análise') ||
-      normalizedQuery.includes('relatório') ||
-      normalizedQuery.includes('métricas') ||
-      normalizedQuery.includes('previsão') ||
-      normalizedQuery.includes('forecast')) {
+  if (
+    normalizedQuery.includes('análise')
+    || normalizedQuery.includes('relatório')
+    || normalizedQuery.includes('métricas')
+    || normalizedQuery.includes('previsão')
+    || normalizedQuery.includes('forecast')
+  ) {
     return { type: 'analytics', confidence: 0.9 };
   }
 
   // Payment-related queries
-  if (normalizedQuery.includes('pix') ||
-      normalizedQuery.includes('cartão') ||
-      normalizedQuery.includes('transação') ||
-      normalizedQuery.includes('parcelamento')) {
+  if (
+    normalizedQuery.includes('pix')
+    || normalizedQuery.includes('cartão')
+    || normalizedQuery.includes('transação')
+    || normalizedQuery.includes('parcelamento')
+  ) {
     return { type: 'payment', confidence: 0.9 };
   }
 
   // Fraud detection queries
-  if (normalizedQuery.includes('fraude') ||
-      normalizedQuery.includes('suspeita') ||
-      normalizedQuery.includes('anomalia') ||
-      normalizedQuery.includes('segurança')) {
+  if (
+    normalizedQuery.includes('fraude')
+    || normalizedQuery.includes('suspeita')
+    || normalizedQuery.includes('anomalia')
+    || normalizedQuery.includes('segurança')
+  ) {
     return { type: 'fraud_detection', confidence: 0.9 };
   }
 
   // Compliance queries
-  if (normalizedQuery.includes('lgpd') ||
-      normalizedQuery.includes('compliance') ||
-      normalizedQuery.includes('auditoria') ||
-      normalizedQuery.includes('lei')) {
+  if (
+    normalizedQuery.includes('lgpd')
+    || normalizedQuery.includes('compliance')
+    || normalizedQuery.includes('auditoria')
+    || normalizedQuery.includes('lei')
+  ) {
     return { type: 'compliance', confidence: 0.9 };
   }
 
@@ -550,7 +560,7 @@ function formatFinancialCopilotResponse(
   startTime: number,
 ) {
   const processingTime = Date.now() - startTime;
-  
+
   let content = agentResponse.content || 'Análise financeira processada com sucesso.';
 
   // Add structured financial data formatting
@@ -568,9 +578,11 @@ function formatFinancialCopilotResponse(
       content += `\n🏥 Procedimentos: ${data.proceduresCount}`;
       content += `\n💵 Valor Total: ${formatCurrency(data.totalAmount)}`;
       content += `\n📝 Faturas Pendentes: ${data.pendingInvoices}`;
-      content += `\n💳 Métodos de Pagamento: ${Object.entries(data.paymentMethods)
-        .map(([method, count]) => `${method}: ${count}`)
-        .join(', ')}`;
+      content += `\n💳 Métodos de Pagamento: ${
+        Object.entries(data.paymentMethods)
+          .map(([method, count]) => `${method}: ${count}`)
+          .join(', ')
+      }`;
     } else if (data.type === 'fraud_alert') {
       content += `\n\n🚨 **Alerta de Segurança**`;
       content += `\n⚠️ Risco: ${data.riskLevel}`;
@@ -635,12 +647,17 @@ function formatCurrency(value: number): string {
  */
 function getFinancialFallbackResponse(intentType: string): string {
   const fallbacks = {
-    billing: 'Desculpe, não consegui processar sua solicitação de faturamento. Por favor, tente novamente ou contacte o suporte.',
-    analytics: 'Não foi possível gerar a análise financeira solicitada. Verifique os parâmetros e tente novamente.',
+    billing:
+      'Desculpe, não consegui processar sua solicitação de faturamento. Por favor, tente novamente ou contacte o suporte.',
+    analytics:
+      'Não foi possível gerar a análise financeira solicitada. Verifique os parâmetros e tente novamente.',
     payment: 'Erro no processamento de pagamento. Por favor, verifique os dados e tente novamente.',
-    fraud_detection: 'Não foi possível concluir a análise de segurança. Por favor, contacte o administrador do sistema.',
-    compliance: 'Falha na verificação de compliance. Por favor, contacte o departamento de compliance.',
-    general: 'Desculpe, estou temporariamente indisponível para operações financeiras. Tente novamente em alguns momentos.',
+    fraud_detection:
+      'Não foi possível concluir a análise de segurança. Por favor, contacte o administrador do sistema.',
+    compliance:
+      'Falha na verificação de compliance. Por favor, contacte o departamento de compliance.',
+    general:
+      'Desculpe, estou temporariamente indisponível para operações financeiras. Tente novamente em alguns momentos.',
   };
 
   return fallbacks[intentType as keyof typeof fallbacks] || fallbacks.general;

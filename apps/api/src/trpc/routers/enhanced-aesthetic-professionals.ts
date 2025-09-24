@@ -1,13 +1,13 @@
 /**
  * Enhanced Aesthetic Professionals Router
- * 
+ *
  * Provides comprehensive professional management with multi-council validation
  * for Brazilian aesthetic clinics (CFM, COREN, CFF, CNEP)
  */
 
 import { z } from 'zod';
-import { router, publicProcedure, protectedProcedure } from '../trpc';
 import { EnhancedAestheticProfessionalsService } from '../../services/enhanced-aesthetic-professionals-service';
+import { protectedProcedure, publicProcedure, router } from '../trpc';
 
 // Input schemas
 const CreateProfessionalInput = z.object({
@@ -108,7 +108,7 @@ export const enhancedAestheticProfessionalsRouter = router({
       return await professionalsService.getProfessionalByCouncilNumber(
         input.councilType,
         input.councilNumber,
-        input.councilState
+        input.councilState,
       );
     }),
 

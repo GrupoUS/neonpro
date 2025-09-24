@@ -1,7 +1,7 @@
 // Note: vitest imports removed to prevent context issues
 // Test globals will be available through vitest global setup
-import "@testing-library/jest-dom";
-import { JSDOM } from "jsdom";
+import '@testing-library/jest-dom';
+import { JSDOM } from 'jsdom';
 
 // Setup JSDOM environment before all tests - only if not already set by vitest
 if (typeof global.document === 'undefined') {
@@ -21,7 +21,7 @@ if (typeof global.document === 'undefined') {
   Object.defineProperty(global, 'navigator', {
     value: dom.window.navigator,
     writable: false,
-    configurable: true
+    configurable: true,
   });
 }
 
@@ -30,72 +30,72 @@ if (typeof dom !== 'undefined') {
   Object.defineProperty(global, 'localStorage', {
     value: dom.window.localStorage,
     writable: false,
-    configurable: true
+    configurable: true,
   });
 
   Object.defineProperty(global, 'sessionStorage', {
     value: dom.window.sessionStorage,
     writable: false,
-    configurable: true
+    configurable: true,
   });
 
   Object.defineProperty(globalThis, 'navigator', {
     value: dom.window.navigator,
     writable: false,
-    configurable: true
+    configurable: true,
   });
 
   Object.defineProperty(globalThis, 'localStorage', {
     value: dom.window.localStorage,
     writable: false,
-    configurable: true
+    configurable: true,
   });
 
   Object.defineProperty(globalThis, 'sessionStorage', {
     value: dom.window.sessionStorage,
     writable: false,
-    configurable: true
+    configurable: true,
   });
 
   Object.defineProperty(global, 'location', {
     value: dom.window.location,
     writable: false,
-    configurable: true
+    configurable: true,
   });
 
   Object.defineProperty(global, 'history', {
     value: dom.window.history,
     writable: false,
-    configurable: true
+    configurable: true,
   });
 
   Object.defineProperty(global, 'URL', {
     value: dom.window.URL,
     writable: false,
-    configurable: true
+    configurable: true,
   });
 
   Object.defineProperty(globalThis, 'location', {
     value: dom.window.location,
     writable: false,
-    configurable: true
+    configurable: true,
   });
 
   Object.defineProperty(globalThis, 'history', {
     value: dom.window.history,
     writable: false,
-    configurable: true
+    configurable: true,
   });
 
   Object.defineProperty(globalThis, 'URL', {
     value: dom.window.URL,
     writable: false,
-    configurable: true
+    configurable: true,
   });
 }
 
 // Mock global APIs that might be used in components
-Object.defineProperty(window, "matchMedia", {
+Object.defineProperty(window, 'matchMedia', {
   writable: true,
   value: () => ({
     matches: false,
@@ -124,27 +124,28 @@ global.IntersectionObserver = class IntersectionObserver {
 };
 
 // Mock Web APIs
-Object.defineProperty(window, "scrollTo", {
+Object.defineProperty(window, 'scrollTo', {
   value: () => {},
   writable: true,
 });
 
 // Mock crypto.randomUUID if not available
 if (!window.crypto?.randomUUID) {
-  Object.defineProperty(window.crypto, "randomUUID", {
-    value: () => "test-uuid-" + Math.random().toString(36).substr(2, 9),
+  Object.defineProperty(window.crypto, 'randomUUID', {
+    value: () => 'test-uuid-' + Math.random().toString(36).substr(2, 9),
   });
 }
 
 // Mock fetch API for consistent testing
-global.fetch = () => Promise.resolve({
-  ok: true,
-  json: () => Promise.resolve({}),
-  text: () => Promise.resolve(''),
-});
+global.fetch = () =>
+  Promise.resolve({
+    ok: true,
+    json: () => Promise.resolve({}),
+    text: () => Promise.resolve(''),
+  });
 
 // Mock URL.createObjectURL
-global.URL.createObjectURL = () => "mock-url";
+global.URL.createObjectURL = () => 'mock-url';
 global.URL.revokeObjectURL = () => {};
 
 // Mock performance API
@@ -194,17 +195,17 @@ if (typeof dom !== 'undefined') {
 const originalConsole = { ...console };
 beforeAll(() => {
   console.log = (...args) => {
-    if (process.env.DEBUG === "true") {
+    if (process.env.DEBUG === 'true') {
       originalConsole.log(...args);
     }
   };
   console.warn = (...args) => {
-    if (process.env.DEBUG === "true") {
+    if (process.env.DEBUG === 'true') {
       originalConsole.warn(...args);
     }
   };
   console.error = (...args) => {
-    if (process.env.DEBUG === "true") {
+    if (process.env.DEBUG === 'true') {
       originalConsole.error(...args);
     }
   };

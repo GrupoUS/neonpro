@@ -146,7 +146,7 @@ The React components are located in `/components/google-calendar/`:
 ### Add to Settings Page
 
 ```tsx
-import { IntegrationPanel } from "@/components/google-calendar/integration-panel";
+import { IntegrationPanel } from '@/components/google-calendar/integration-panel';
 
 export default function Settings() {
   return (

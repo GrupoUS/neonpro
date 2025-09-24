@@ -739,11 +739,11 @@ The `CFMValidator` provides static methods for validating different aspects of c
 
 ```typescript
 class CFMValidator {
-  static validateProfessionalLicensing(data: CFMTestData): boolean
-  static validateTelemedicineCompliance(data: CFMTestData): boolean  
-  static validateDigitalPrescription(data: CFMTestData): boolean
-  static validatePatientConfidentiality(data: CFMTestData): boolean
-  static validateCompliance(data: CFMTestData): ValidationResult
+  static validateProfessionalLicensing(data: CFMTestData): boolean;
+  static validateTelemedicineCompliance(data: CFMTestData): boolean;
+  static validateDigitalPrescription(data: CFMTestData): boolean;
+  static validatePatientConfidentiality(data: CFMTestData): boolean;
+  static validateCompliance(data: CFMTestData): ValidationResult;
 }
 ```
 
@@ -754,7 +754,7 @@ Each validation method returns a boolean indicating compliance status, while the
 The framework provides a utility function `createCFMTestSuite` that generates standardized test suites for different compliance scenarios:
 
 ```typescript
-function createCFMTestSuite(testName: string, testData: CFMTestData)
+function createCFMTestSuite(testName: string, testData: CFMTestData);
 ```
 
 This function creates a Vitest suite with predefined test cases for:
@@ -770,7 +770,7 @@ This function creates a Vitest suite with predefined test cases for:
 The `createMockCFMData` function generates realistic test data with proper defaults:
 
 ```typescript
-function createMockCFMData(overrides: Partial<CFMTestData> = {})
+function createMockCFMData(overrides: Partial<CFMTestData> = {});
 ```
 
 The mock data includes valid CRM numbers, active licenses, proper consent flags, and compliant security settings, with the ability to override any field for testing edge cases.

@@ -4,10 +4,10 @@
  */
 
 export {
-  TDDAgentRegistry,
   type AgentCapability,
-  type OrchestrationContext,
-  type AgentType,
-  type TDDPhase,
   type AgentStats,
-} from "./src/agent-registry";
+  type AgentType,
+  type OrchestrationContext,
+  TDDAgentRegistry,
+  type TDDPhase,
+} from './src/agent-registry';

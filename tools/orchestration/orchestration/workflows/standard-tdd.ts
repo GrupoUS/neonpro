@@ -1,10 +1,10 @@
-import type { OrchestrationContext, TDDCycleResult } from "../../types";
+import type { OrchestrationContext, TDDCycleResult } from '../../types';
 
 export class StandardTDDWorkflow {
   async execute(_context: OrchestrationContext): Promise<TDDCycleResult> {
     return {
       success: true,
-      phases: ["red", "green", "refactor"],
+      phases: ['red', 'green', 'refactor'],
       duration: 1000,
       agentResults: [],
       qualityScore: 0.8,

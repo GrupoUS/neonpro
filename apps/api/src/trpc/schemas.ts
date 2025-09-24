@@ -252,7 +252,9 @@ export const CalculateVariableDurationSchema = v.object({
  */
 export const GetAestheticProceduresSchema = v.object({
   category: v.optional(v.string()),
-  procedureType: v.optional(v.picklist(['injectable', 'laser', 'facial', 'body', 'surgical', 'combination'])),
+  procedureType: v.optional(
+    v.picklist(['injectable', 'laser', 'facial', 'body', 'surgical', 'combination']),
+  ),
   search: v.optional(v.string()),
   limit: v.optional(v.number([v.integer(), v.minValue(1), v.maxValue(100)])),
   offset: v.optional(v.number([v.integer(), v.minValue(0)])),
@@ -310,7 +312,9 @@ export const TreatmentPackageDetailsSchema = v.object({
 // Type exports for use in routers
 export type ScheduleAestheticProceduresInput = v.Input<typeof ScheduleAestheticProceduresSchema>;
 export type ScheduleTreatmentPackageInput = v.Input<typeof ScheduleTreatmentPackageSchema>;
-export type ValidateProfessionalCertificationsInput = v.Input<typeof ValidateProfessionalCertificationsSchema>;
+export type ValidateProfessionalCertificationsInput = v.Input<
+  typeof ValidateProfessionalCertificationsSchema
+>;
 export type OptimizeRoomAllocationInput = v.Input<typeof OptimizeRoomAllocationSchema>;
 export type CheckContraindicationsInput = v.Input<typeof CheckContraindicationsSchema>;
 export type CalculateVariableDurationInput = v.Input<typeof CalculateVariableDurationSchema>;
@@ -450,7 +454,9 @@ export const GetAestheticTreatmentSchema = v.object({
  */
 export const GetTreatmentCatalogSchema = v.object({
   category: v.optional(v.string()),
-  procedureType: v.optional(v.picklist(['injectable', 'laser', 'facial', 'body', 'surgical', 'combination'])),
+  procedureType: v.optional(
+    v.picklist(['injectable', 'laser', 'facial', 'body', 'surgical', 'combination']),
+  ),
   isActive: v.optional(v.boolean()),
   minPrice: v.optional(v.number([v.minValue(0)])),
   maxPrice: v.optional(v.number([v.minValue(0)])),
@@ -520,12 +526,15 @@ export const ListAestheticSessionsSchema = v.object({
 export const CreatePhotoAssessmentSchema = v.object({
   clientProfileId: v.string([v.uuid('Invalid client profile ID')]),
   sessionId: v.optional(v.string([v.uuid('Invalid session ID')])),
-  photos: v.array(v.object({
-    url: v.string([v.minLength(1, 'Photo URL is required')]),
-    type: v.picklist(['front', 'side', 'oblique', 'closeup', 'treatment_area', 'progress']),
-    description: v.optional(v.string()),
-    captureDate: v.date(),
-  }), [v.minLength(1, 'At least one photo is required')]),
+  photos: v.array(
+    v.object({
+      url: v.string([v.minLength(1, 'Photo URL is required')]),
+      type: v.picklist(['front', 'side', 'oblique', 'closeup', 'treatment_area', 'progress']),
+      description: v.optional(v.string()),
+      captureDate: v.date(),
+    }),
+    [v.minLength(1, 'At least one photo is required')],
+  ),
   assessmentNotes: v.string([v.minLength(1, 'Assessment notes are required')]),
   skinAnalysis: v.optional(v.object({
     wrinkles: v.number([v.minValue(0), v.maxValue(10)]),
@@ -576,12 +585,15 @@ export const CreateTreatmentPlanSchema = v.object({
   clientProfileId: v.string([v.uuid('Invalid client profile ID')]),
   name: v.string([v.minLength(1, 'Treatment plan name is required')]),
   description: v.string([v.minLength(1, 'Description is required')]),
-  treatments: v.array(v.object({
-    treatmentId: v.string([v.uuid('Invalid treatment ID')]),
-    sessionCount: v.number([v.minValue(1, 'Session count must be positive')]),
-    intervalDays: v.number([v.minValue(0, 'Interval must be non-negative')]),
-    notes: v.optional(v.string()),
-  }), [v.minLength(1, 'At least one treatment is required')]),
+  treatments: v.array(
+    v.object({
+      treatmentId: v.string([v.uuid('Invalid treatment ID')]),
+      sessionCount: v.number([v.minValue(1, 'Session count must be positive')]),
+      intervalDays: v.number([v.minValue(0, 'Interval must be non-negative')]),
+      notes: v.optional(v.string()),
+    }),
+    [v.minLength(1, 'At least one treatment is required')],
+  ),
   estimatedDuration: v.number([v.minValue(1, 'Duration must be positive')]),
   totalCost: v.number([v.minValue(0, 'Cost must be non-negative')]),
   startDate: v.optional(v.date()),
@@ -628,7 +640,14 @@ export const CreateFinancialTransactionSchema = v.object({
   type: v.picklist(['payment', 'refund', 'credit', 'debit', 'adjustment']),
   amount: v.number([v.minValue(0, 'Amount must be non-negative')]),
   currency: v.optional(v.string([v.value('BRL')])),
-  paymentMethod: v.picklist(['cash', 'credit_card', 'debit_card', 'bank_transfer', 'pix', 'installment']),
+  paymentMethod: v.picklist([
+    'cash',
+    'credit_card',
+    'debit_card',
+    'bank_transfer',
+    'pix',
+    'installment',
+  ]),
   description: v.string([v.minLength(1, 'Description is required')]),
   transactionDate: v.date(),
   dueDate: v.optional(v.date()),
@@ -695,7 +714,9 @@ export const GetRevenueAnalyticsSchema = v.object({
  */
 export const GetPredictiveAnalyticsSchema = v.object({
   clientId: v.string([v.uuid('Invalid client ID')]),
-  modelType: v.optional(v.picklist(['retention', 'spending', 'treatment_completion', 'satisfaction'])),
+  modelType: v.optional(
+    v.picklist(['retention', 'spending', 'treatment_completion', 'satisfaction']),
+  ),
 });
 
 // Type exports for use in routers

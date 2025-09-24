@@ -11,7 +11,7 @@ export interface TreatmentPlan {
   procedures: TreatmentProcedure[];
   createdAt: Date;
   updatedAt: Date;
- deletedAt?: Date | null;
+  deletedAt?: Date | null;
 }
 
 export interface TreatmentSession {
@@ -75,8 +75,8 @@ export interface TreatmentDocument {
   url: string;
   uploadedAt: Date;
   createdAt: Date;
- updatedAt: Date;
- deletedAt?: Date | null;
+  updatedAt: Date;
+  deletedAt?: Date | null;
 }
 
 export interface TreatmentOutcome {
@@ -114,7 +114,7 @@ export interface ComplianceRequirement {
   id: string;
   categoryId: string;
   description: string;
- status: 'met' | 'pending' | 'failed';
+  status: 'met' | 'pending' | 'failed';
   createdAt: Date;
   updatedAt: Date;
   deletedAt?: Date | null;
@@ -139,8 +139,8 @@ export interface DataConsentRecord {
   scope: string[];
   grantedAt: Date;
   createdAt: Date;
- updatedAt: Date;
- deletedAt?: Date | null;
+  updatedAt: Date;
+  deletedAt?: Date | null;
 }
 
 export interface DataSubjectRequest {
@@ -150,8 +150,8 @@ export interface DataSubjectRequest {
   status: 'pending' | 'processed';
   requestedAt: Date;
   createdAt: Date;
- updatedAt: Date;
- deletedAt?: Date | null;
+  updatedAt: Date;
+  deletedAt?: Date | null;
 }
 
 // Inventory-related types
@@ -159,9 +159,9 @@ export interface InventoryCategory {
   id: string;
   name: string;
   description: string;
- createdAt: Date;
- updatedAt: Date;
- deletedAt?: Date | null;
+  createdAt: Date;
+  updatedAt: Date;
+  deletedAt?: Date | null;
 }
 
 export interface Product {

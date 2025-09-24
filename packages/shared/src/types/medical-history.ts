@@ -13,31 +13,31 @@
 
 // Medical history entry types
 export enum MedicalHistoryType {
-  CONSULTATION = "consultation",
-  EXAM = "exam",
-  SURGERY = "surgery",
-  HOSPITALIZATION = "hospitalization",
-  VACCINATION = "vaccination",
-  EMERGENCY = "emergency",
-  FOLLOW_UP = "follow_up",
-  PROCEDURE = "procedure",
+  CONSULTATION = 'consultation',
+  EXAM = 'exam',
+  SURGERY = 'surgery',
+  HOSPITALIZATION = 'hospitalization',
+  VACCINATION = 'vaccination',
+  EMERGENCY = 'emergency',
+  FOLLOW_UP = 'follow_up',
+  PROCEDURE = 'procedure',
 }
 
 // Prescription status
 export enum PrescriptionStatus {
-  ACTIVE = "active",
-  COMPLETED = "completed",
-  CANCELLED = "cancelled",
-  SUSPENDED = "suspended",
+  ACTIVE = 'active',
+  COMPLETED = 'completed',
+  CANCELLED = 'cancelled',
+  SUSPENDED = 'suspended',
 }
 
 // Medical procedure status
 export enum ProcedureStatus {
-  SCHEDULED = "scheduled",
-  IN_PROGRESS = "in_progress",
-  COMPLETED = "completed",
-  CANCELLED = "cancelled",
-  POSTPONED = "postponed",
+  SCHEDULED = 'scheduled',
+  IN_PROGRESS = 'in_progress',
+  COMPLETED = 'completed',
+  CANCELLED = 'cancelled',
+  POSTPONED = 'postponed',
 }
 
 // Vital signs interface
@@ -64,7 +64,7 @@ export interface MedicalAttachment {
   uploadedBy: string;
   uploadedAt: Date;
   description?: string;
-  category?: "exam" | "prescription" | "report" | "image" | "other";
+  category?: 'exam' | 'prescription' | 'report' | 'image' | 'other';
 }
 
 // Prescription interface
@@ -166,13 +166,13 @@ export function calculateBMI(weight: number, height: number): number {
 export function validateMedicalHistoryEntry(
   entry: Partial<MedicalHistory>,
 ): boolean {
-  if (!entry.patientId || entry.patientId.trim() === "") {
+  if (!entry.patientId || entry.patientId.trim() === '') {
     return false;
   }
 
   if (
-    !entry.type ||
-    !Object.values(MedicalHistoryType).includes(
+    !entry.type
+    || !Object.values(MedicalHistoryType).includes(
       entry.type as MedicalHistoryType,
     )
   ) {
@@ -183,11 +183,11 @@ export function validateMedicalHistoryEntry(
     return false;
   }
 
-  if (!entry.title || entry.title.trim() === "") {
+  if (!entry.title || entry.title.trim() === '') {
     return false;
   }
 
-  if (!entry.createdBy || entry.createdBy.trim() === "") {
+  if (!entry.createdBy || entry.createdBy.trim() === '') {
     return false;
   }
 
@@ -205,7 +205,7 @@ export function formatMedicalHistoryForDisplay(
   }
 
   if (history.date) {
-    const dateStr = history.date.toLocaleDateString("pt-BR");
+    const dateStr = history.date.toLocaleDateString('pt-BR');
     parts.push(`Data: ${dateStr}`);
   }
 
@@ -221,7 +221,7 @@ export function formatMedicalHistoryForDisplay(
     parts.push(`Tratamento: ${history.treatment}`);
   }
 
-  return parts.join(" | ");
+  return parts.join(' | ');
 }
 
 // Anonymize medical history for LGPD compliance
@@ -243,7 +243,7 @@ export function anonymizeMedicalHistory(
   }
 
   if (anonymized.medications) {
-    anonymized.medications = ["MEDICAÇÃO ANONIMIZADA"];
+    anonymized.medications = ['MEDICAÇÃO ANONIMIZADA'];
   }
 
   if (anonymized.createdBy) {
@@ -251,10 +251,10 @@ export function anonymizeMedicalHistory(
   }
 
   if (anonymized.prescriptions) {
-    anonymized.prescriptions = anonymized.prescriptions.map((prescription) => ({
+    anonymized.prescriptions = anonymized.prescriptions.map(prescription => ({
       ...prescription,
-      medication: "MEDICAÇÃO ANONIMIZADA",
-      instructions: "INSTRUÇÕES ANONIMIZADAS",
+      medication: 'MEDICAÇÃO ANONIMIZADA',
+      instructions: 'INSTRUÇÕES ANONIMIZADAS',
       prescribedBy: `PRESCRITOR_ANON_${Date.now()}`,
     }));
   }
@@ -264,7 +264,7 @@ export function anonymizeMedicalHistory(
 
 // Create medical history entry with defaults
 export function createMedicalHistoryEntry(
-  data: Omit<MedicalHistory, "id" | "createdAt" | "updatedAt">,
+  data: Omit<MedicalHistory, 'id' | 'createdAt' | 'updatedAt'>,
 ): MedicalHistory {
   const now = new Date();
 
@@ -304,7 +304,7 @@ export function getVitalSignsSummary(vitalSigns: VitalSigns): string {
     parts.push(`IMC: ${vitalSigns.bmi}`);
   }
 
-  return parts.join(" | ");
+  return parts.join(' | ');
 }
 
 // Check if prescription is active
@@ -325,7 +325,7 @@ export function filterMedicalHistoryByType(
   histories: MedicalHistory[],
   type: MedicalHistoryType,
 ): MedicalHistory[] {
-  return histories.filter((history) => history.type === type);
+  return histories.filter(history => history.type === type);
 }
 
 // Get recent medical history
@@ -337,6 +337,6 @@ export function getRecentMedicalHistory(
   cutoffDate.setDate(cutoffDate.getDate() - days);
 
   return histories
-    .filter((history) => history.date >= cutoffDate)
+    .filter(history => history.date >= cutoffDate)
     .sort((a, b) => b.date.getTime() - a.date.getTime());
 }

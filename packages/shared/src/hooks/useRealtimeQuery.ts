@@ -3,22 +3,17 @@
  * Optimized for healthcare applications with intelligent caching
  */
 
-import { RealtimeManager,
-  RealtimeSubscriptionOptions,
-} from "../realtime/realtime-manager";
-import {
-  useQuery,
-  useQueryClient,
-  UseQueryOptions,
-} from "@tanstack/react-query";
-import { useCallback, useEffect, useRef } from "react";
-import { logHealthcareError, auditLogger } from '../logging/healthcare-logger';
+import { useQuery, useQueryClient, UseQueryOptions } from '@tanstack/react-query';
+import { useCallback, useEffect, useRef } from 'react';
+import { auditLogger, logHealthcareError } from '../logging/healthcare-logger';
+import { RealtimeManager, RealtimeSubscriptionOptions } from '../realtime/realtime-manager';
 
 // Create realtime logger from audit logger
 const realtimeLogger = auditLogger.child({ component: 'realtime-query' });
 
 export interface UseRealtimeQueryOptions<T>
-  extends Omit<UseQueryOptions<T[]>, "queryKey" | "queryFn"> {
+  extends Omit<UseQueryOptions<T[]>, 'queryKey' | 'queryFn'>
+{
   tableName: string;
   filter?: string;
   realtimeOptions?: RealtimeSubscriptionOptions<T>;
@@ -48,7 +43,7 @@ export function useRealtimeQuery<T extends { id: string } = { id: string }>(
     refetchOnWindowFocus: options.refetchOnWindowFocus ?? false,
     refetchOnReconnect: true,
     retry: 3,
-    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
+    retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000),
     enabled: options.enabled ?? true,
     ...options,
   });
@@ -70,7 +65,7 @@ export function useRealtimeQuery<T extends { id: string } = { id: string }>(
             action: 'insert',
             tableName: options.tableName,
             recordId: payload.id,
-            timestamp: new Date().toISOString()
+            timestamp: new Date().toISOString(),
           });
           options.realtimeOptions?.onInsert?.(payload);
         },
@@ -80,7 +75,7 @@ export function useRealtimeQuery<T extends { id: string } = { id: string }>(
             action: 'update',
             tableName: options.tableName,
             recordId: payload.id,
-            timestamp: new Date().toISOString()
+            timestamp: new Date().toISOString(),
           });
           options.realtimeOptions?.onUpdate?.(payload);
         },
@@ -90,7 +85,7 @@ export function useRealtimeQuery<T extends { id: string } = { id: string }>(
             action: 'delete',
             tableName: options.tableName,
             recordId: payload.old.id,
-            timestamp: new Date().toISOString()
+            timestamp: new Date().toISOString(),
           });
           options.realtimeOptions?.onDelete?.(payload);
         },
@@ -114,7 +109,7 @@ export function useRealtimeQuery<T extends { id: string } = { id: string }>(
 
     return () => {
       if (subscription && realtimeManager.current) {
-        const channelName = `${options.tableName}-${options.filter || "all"}`;
+        const channelName = `${options.tableName}-${options.filter || 'all'}`;
         realtimeManager.current.unsubscribe(channelName);
       }
     };
@@ -155,11 +150,9 @@ export function useRealtimeMutation<T extends { id: string }>(
       const previousData = queryClient.getQueryData<T[]>(queryKey);
 
       // Optimistically update
-      queryClient.setQueryData<T[]>(queryKey, (old) => {
+      queryClient.setQueryData<T[]>(queryKey, old => {
         return (
-          old?.map((item) =>
-            item.id === updatedItem.id ? updatedItem : item,
-          ) ?? []
+          old?.map(item => item.id === updatedItem.id ? updatedItem : item) ?? []
         );
       });
 

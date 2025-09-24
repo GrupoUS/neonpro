@@ -1,4 +1,4 @@
-import type { AgentCoordinationPattern } from "./types";
+import type { AgentCoordinationPattern } from './types';
 
 type Agent = {
   name: string;
@@ -26,31 +26,31 @@ type ExecutionPlan = {
 export class TDDAgentRegistry {
   private agents: Agent[] = [
     {
-      name: "code-reviewer",
-      type: "quality",
-      capabilities: ["code-review", "static-analysis", "linting"],
+      name: 'code-reviewer',
+      type: 'quality',
+      capabilities: ['code-review', 'static-analysis', 'linting'],
     },
     {
-      name: "architect-review",
-      type: "quality",
-      capabilities: ["architecture-review", "design-patterns", "scalability"],
+      name: 'architect-review',
+      type: 'quality',
+      capabilities: ['architecture-review', 'design-patterns', 'scalability'],
     },
     {
-      name: "test-auditor",
-      type: "testing",
-      capabilities: ["unit-testing", "integration-testing", "test-coverage"],
+      name: 'test-auditor',
+      type: 'testing',
+      capabilities: ['unit-testing', 'integration-testing', 'test-coverage'],
     },
     {
-      name: "test",
-      type: "testing",
-      capabilities: ["unit-testing", "test-execution"],
+      name: 'test',
+      type: 'testing',
+      capabilities: ['unit-testing', 'test-execution'],
     },
   ];
 
   getParallelOptimizedAgents(agentNames: string[]): Agent[] {
-    return agentNames.map((name) => {
-      const agent = this.agents.find((a) => a.name === name);
-      return agent || { name, type: "unknown", capabilities: [] };
+    return agentNames.map(name => {
+      const agent = this.agents.find(a => a.name === name);
+      return agent || { name, type: 'unknown', capabilities: [] };
     });
   }
 
@@ -77,7 +77,7 @@ export class TDDAgentRegistry {
     return {
       phases: [
         {
-          name: "execution",
+          name: 'execution',
           agents,
           parallel: true,
           coordination,
@@ -85,7 +85,7 @@ export class TDDAgentRegistry {
       ],
       totalEstimatedTime: 300,
       parallelizationFactor: 0.6,
-      conflictResolution: "priority-based",
+      conflictResolution: 'priority-based',
     };
   }
 }

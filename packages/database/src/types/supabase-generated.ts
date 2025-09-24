@@ -11,65 +11,65 @@ export type SupabaseGeneratedJson =
 
 // Core healthcare enums
 export type AuditAction =
-  | "VIEW"
-  | "CREATE"
-  | "READ"
-  | "UPDATE"
-  | "DELETE"
-  | "EXPORT"
-  | "LOGIN"
-  | "LOGOUT"
-  | "AI_CHAT"
-  | "AI_PREDICTION"
-  | "AI_ANALYSIS"
-  | "AI_RECOMMENDATION";
+  | 'VIEW'
+  | 'CREATE'
+  | 'READ'
+  | 'UPDATE'
+  | 'DELETE'
+  | 'EXPORT'
+  | 'LOGIN'
+  | 'LOGOUT'
+  | 'AI_CHAT'
+  | 'AI_PREDICTION'
+  | 'AI_ANALYSIS'
+  | 'AI_RECOMMENDATION';
 export type ResourceType =
-  | "PATIENT_RECORD"
-  | "PATIENT_DATA"
-  | "PATIENT_CONSENT"
-  | "APPOINTMENT"
-  | "COMMUNICATION"
-  | "AI_PREDICTION"
-  | "AI_MODEL_PERFORMANCE"
-  | "TELEMEDICINE_SESSION"
-  | "PRESCRIPTION"
-  | "COMPLIANCE_REPORT"
-  | "REPORT"
-  | "SYSTEM_CONFIG"
-  | "USER_ACCOUNT";
+  | 'PATIENT_RECORD'
+  | 'PATIENT_DATA'
+  | 'PATIENT_CONSENT'
+  | 'APPOINTMENT'
+  | 'COMMUNICATION'
+  | 'AI_PREDICTION'
+  | 'AI_MODEL_PERFORMANCE'
+  | 'TELEMEDICINE_SESSION'
+  | 'PRESCRIPTION'
+  | 'COMPLIANCE_REPORT'
+  | 'REPORT'
+  | 'SYSTEM_CONFIG'
+  | 'USER_ACCOUNT';
 export type AuditStatus =
-  | "SUCCESS"
-  | "FAILED"
-  | "FAILURE"
-  | "PARTIAL_SUCCESS"
-  | "BLOCKED";
-export type RiskLevel = "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
-export type ComplianceFramework = "HIPAA" | "LGPD" | "GDPR" | "SOC2";
+  | 'SUCCESS'
+  | 'FAILED'
+  | 'FAILURE'
+  | 'PARTIAL_SUCCESS'
+  | 'BLOCKED';
+export type RiskLevel = 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+export type ComplianceFramework = 'HIPAA' | 'LGPD' | 'GDPR' | 'SOC2';
 export type ComplianceStatusEnum =
-  | "COMPLIANT"
-  | "NON_COMPLIANT"
-  | "UNDER_REVIEW"
-  | "CRITICAL";
-export type EscalationPriority = "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
+  | 'COMPLIANT'
+  | 'NON_COMPLIANT'
+  | 'UNDER_REVIEW'
+  | 'CRITICAL';
+export type EscalationPriority = 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
 export type EscalationStatus =
-  | "OPEN"
-  | "IN_PROGRESS"
-  | "ESCALATED"
-  | "RESOLVED"
-  | "CLOSED";
+  | 'OPEN'
+  | 'IN_PROGRESS'
+  | 'ESCALATED'
+  | 'RESOLVED'
+  | 'CLOSED';
 export type GoogleCalendarSyncStatus =
-  | "SYNCED"
-  | "PENDING"
-  | "FAILED"
-  | "CONFLICT"
-  | "IGNORED";
+  | 'SYNCED'
+  | 'PENDING'
+  | 'FAILED'
+  | 'CONFLICT'
+  | 'IGNORED';
 export type GoogleCalendarOperation =
-  | "CREATE"
-  | "UPDATE"
-  | "DELETE"
-  | "SYNC"
-  | "REFRESH_TOKEN";
-export type SyncDirection = "TO_GOOGLE" | "FROM_GOOGLE" | "BIDIRECTIONAL";
+  | 'CREATE'
+  | 'UPDATE'
+  | 'DELETE'
+  | 'SYNC'
+  | 'REFRESH_TOKEN';
+export type SyncDirection = 'TO_GOOGLE' | 'FROM_GOOGLE' | 'BIDIRECTIONAL';
 
 // Core table types based on Prisma schema
 export interface Database {
@@ -627,7 +627,6 @@ export interface Database {
           version?: number;
         };
       };
-
       // Additional core tables would be defined here...
       // This is a truncated example for brevity
     };
@@ -676,11 +675,10 @@ export interface Database {
 }
 
 // Export for use with Supabase client
-export type Tables<T extends keyof Database["public"]["Tables"]> =
-  Database["public"]["Tables"][T]["Row"];
-export type TablesInsert<T extends keyof Database["public"]["Tables"]> =
-  Database["public"]["Tables"][T]["Insert"];
-export type TablesUpdate<T extends keyof Database["public"]["Tables"]> =
-  Database["public"]["Tables"][T]["Update"];
-export type Enums<T extends keyof Database["public"]["Enums"]> =
-  Database["public"]["Enums"][T];
+export type Tables<T extends keyof Database['public']['Tables']> =
+  Database['public']['Tables'][T]['Row'];
+export type TablesInsert<T extends keyof Database['public']['Tables']> =
+  Database['public']['Tables'][T]['Insert'];
+export type TablesUpdate<T extends keyof Database['public']['Tables']> =
+  Database['public']['Tables'][T]['Update'];
+export type Enums<T extends keyof Database['public']['Enums']> = Database['public']['Enums'][T];

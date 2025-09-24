@@ -221,11 +221,24 @@ Chegue com 15 minutos de antecedência.
 
 Atenciosamente,
 {{clinicName}}`,
-      variables: ['clientName', 'formattedDate', 'formattedTime', 'professionalName', 'treatmentName', 'location', 'preparationInstructions', 'specialInstructions', 'confirmationLink', 'rescheduleLink', 'cancelLink', 'clinicName'],
+      variables: [
+        'clientName',
+        'formattedDate',
+        'formattedTime',
+        'professionalName',
+        'treatmentName',
+        'location',
+        'preparationInstructions',
+        'specialInstructions',
+        'confirmationLink',
+        'rescheduleLink',
+        'cancelLink',
+        'clinicName',
+      ],
       isSystemTemplate: true,
       isActive: true,
       createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toISOString(),
     });
 
     this.templates.set('appointment_reminder_pt-BR', {
@@ -234,12 +247,20 @@ Atenciosamente,
       type: 'sms',
       category: 'appointment',
       language: 'pt-BR',
-      content: `Lembrete: Seu agendamento na {{clinicName}} é amanhã às {{formattedTime}}. Tratamento: {{treatmentName}} com {{professionalName}}. Local: {{location}}. Confirme: {{confirmationLink}}`,
-      variables: ['clinicName', 'formattedTime', 'treatmentName', 'professionalName', 'location', 'confirmationLink'],
+      content:
+        `Lembrete: Seu agendamento na {{clinicName}} é amanhã às {{formattedTime}}. Tratamento: {{treatmentName}} com {{professionalName}}. Local: {{location}}. Confirme: {{confirmationLink}}`,
+      variables: [
+        'clinicName',
+        'formattedTime',
+        'treatmentName',
+        'professionalName',
+        'location',
+        'confirmationLink',
+      ],
       isSystemTemplate: true,
       isActive: true,
       createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toISOString(),
     });
 
     // Treatment Templates
@@ -266,11 +287,20 @@ Em caso de dúvidas ou reações adversas, entre em contato imediatamente: {{eme
 
 Atenciosamente,
 {{clinicName}}`,
-      variables: ['clientName', 'treatmentName', 'resultsSummary', 'nextSession', 'aftercareInstructions', 'followUpDate', 'emergencyContact', 'clinicName'],
+      variables: [
+        'clientName',
+        'treatmentName',
+        'resultsSummary',
+        'nextSession',
+        'aftercareInstructions',
+        'followUpDate',
+        'emergencyContact',
+        'clinicName',
+      ],
       isSystemTemplate: true,
       isActive: true,
       createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toISOString(),
     });
 
     // Financial Templates
@@ -303,11 +333,22 @@ Em caso de dúvidas, entre em contato com nosso departamento financeiro.
 Atenciosamente,
 Equipe Financeira
 {{clinicName}}`,
-      variables: ['clientName', 'amount', 'dueDate', 'description', 'installments', 'installmentNumber', 'totalInstallments', 'lateFee', 'paymentLink', 'clinicName'],
+      variables: [
+        'clientName',
+        'amount',
+        'dueDate',
+        'description',
+        'installments',
+        'installmentNumber',
+        'totalInstallments',
+        'lateFee',
+        'paymentLink',
+        'clinicName',
+      ],
       isSystemTemplate: true,
       isActive: true,
       createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toISOString(),
     });
 
     // Compliance Templates
@@ -338,11 +379,18 @@ Em caso de dúvidas, entre em contato com nosso departamento de compliance.
 Atenciosamente,
 Equipe de Compliance
 {{clinicName}}`,
-      variables: ['clientName', 'consentPurpose', 'dataUsage', 'deadline', 'consentLink', 'clinicName'],
+      variables: [
+        'clientName',
+        'consentPurpose',
+        'dataUsage',
+        'deadline',
+        'consentLink',
+        'clinicName',
+      ],
       isSystemTemplate: true,
       isActive: true,
       createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toISOString(),
     });
 
     // Emergency Templates
@@ -352,12 +400,13 @@ Equipe de Compliance
       type: 'sms',
       category: 'emergency',
       language: 'pt-BR',
-      content: `ALERTA DE EMERGÊNCIA: {{emergencyType}}. Severidade: {{severity}}. Local: {{location}}. Ações imediatas: {{immediateActions}}. Contato: {{emergencyContact}}.`,
+      content:
+        `ALERTA DE EMERGÊNCIA: {{emergencyType}}. Severidade: {{severity}}. Local: {{location}}. Ações imediatas: {{immediateActions}}. Contato: {{emergencyContact}}.`,
       variables: ['emergencyType', 'severity', 'location', 'immediateActions', 'emergencyContact'],
       isSystemTemplate: true,
       isActive: true,
       createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toISOString(),
     });
 
     // Marketing Templates
@@ -391,11 +440,20 @@ Esperamos por você!
 
 Atenciosamente,
 Equipe {{clinicName}}`,
-      variables: ['clientName', 'offerTitle', 'offerDescription', 'discount', 'validUntil', 'bookingLink', 'termsAndConditions', 'clinicName'],
+      variables: [
+        'clientName',
+        'offerTitle',
+        'offerDescription',
+        'discount',
+        'validUntil',
+        'bookingLink',
+        'termsAndConditions',
+        'clinicName',
+      ],
       isSystemTemplate: true,
       isActive: true,
       createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toISOString(),
     });
   }
 
@@ -403,23 +461,27 @@ Equipe {{clinicName}}`,
     // Mock provider initialization
     this.providers.set('email', {
       send: this.sendEmail.bind(this),
-      track: this.trackEmail.bind(this)
+      track: this.trackEmail.bind(this),
     });
 
     this.providers.set('sms', {
       send: this.sendSMS.bind(this),
-      track: this.trackSMS.bind(this)
+      track: this.trackSMS.bind(this),
     });
 
     this.providers.set('whatsapp', {
       send: this.sendWhatsApp.bind(this),
-      track: this.trackWhatsApp.bind(this)
+      track: this.trackWhatsApp.bind(this),
     });
   }
 
   // Appointment Notifications
-  async sendAppointmentConfirmation(data: AppointmentNotificationData): Promise<NotificationResult> {
-    const templateId = `appointment_confirmation_${data.recipient.preferredLanguage || this.config.defaultLanguage}`;
+  async sendAppointmentConfirmation(
+    data: AppointmentNotificationData,
+  ): Promise<NotificationResult> {
+    const templateId = `appointment_confirmation_${
+      data.recipient.preferredLanguage || this.config.defaultLanguage
+    }`;
     const template = this.templates.get(templateId);
 
     if (!template) {
@@ -438,21 +500,23 @@ Equipe {{clinicName}}`,
       content: {
         subject: template.subject,
         message: content,
-        variables
+        variables,
       },
       priority: 'high',
       requireConfirmation: true,
       metadata: {
         appointmentId: data.appointmentId,
-        treatmentId: data.treatmentId
-      }
+        treatmentId: data.treatmentId,
+      },
     };
 
     return await this.sendNotification(message);
   }
 
   async sendAppointmentReminder(data: AppointmentNotificationData): Promise<NotificationResult> {
-    const templateId = `appointment_reminder_${data.recipient.preferredLanguage || this.config.defaultLanguage}`;
+    const templateId = `appointment_reminder_${
+      data.recipient.preferredLanguage || this.config.defaultLanguage
+    }`;
     const template = this.templates.get(templateId);
 
     if (!template) {
@@ -470,14 +534,14 @@ Equipe {{clinicName}}`,
       templateId: template.id,
       content: {
         message: content,
-        variables
+        variables,
       },
       priority: 'medium',
       requireConfirmation: true,
       metadata: {
         appointmentId: data.appointmentId,
-        treatmentId: data.treatmentId
-      }
+        treatmentId: data.treatmentId,
+      },
     };
 
     return await this.sendNotification(message);
@@ -485,7 +549,9 @@ Equipe {{clinicName}}`,
 
   // Treatment Notifications
   async sendTreatmentCompletion(data: TreatmentNotificationData): Promise<NotificationResult> {
-    const templateId = `treatment_completed_${data.recipient.preferredLanguage || this.config.defaultLanguage}`;
+    const templateId = `treatment_completed_${
+      data.recipient.preferredLanguage || this.config.defaultLanguage
+    }`;
     const template = this.templates.get(templateId);
 
     if (!template) {
@@ -503,14 +569,14 @@ Equipe {{clinicName}}`,
       templateId: template.id,
       content: {
         message: content,
-        variables
+        variables,
       },
       priority: 'medium',
       requireConfirmation: false,
       metadata: {
         treatmentId: data.treatmentId,
-        appointmentId: data.appointmentId
-      }
+        appointmentId: data.appointmentId,
+      },
     };
 
     return await this.sendNotification(message);
@@ -518,7 +584,9 @@ Equipe {{clinicName}}`,
 
   // Financial Notifications
   async sendPaymentDue(data: FinancialNotificationData): Promise<NotificationResult> {
-    const templateId = `payment_due_${data.recipient.preferredLanguage || this.config.defaultLanguage}`;
+    const templateId = `payment_due_${
+      data.recipient.preferredLanguage || this.config.defaultLanguage
+    }`;
     const template = this.templates.get(templateId);
 
     if (!template) {
@@ -537,14 +605,14 @@ Equipe {{clinicName}}`,
       content: {
         subject: template.subject,
         message: content,
-        variables
+        variables,
       },
       priority: 'high',
       requireConfirmation: false,
       metadata: {
         invoiceId: data.invoiceId,
-        clientId: data.clientId
-      }
+        clientId: data.clientId,
+      },
     };
 
     return await this.sendNotification(message);
@@ -552,7 +620,9 @@ Equipe {{clinicName}}`,
 
   // Compliance Notifications
   async sendConsentRequired(data: ComplianceNotificationData): Promise<NotificationResult> {
-    const templateId = `consent_required_${data.recipient.preferredLanguage || this.config.defaultLanguage}`;
+    const templateId = `consent_required_${
+      data.recipient.preferredLanguage || this.config.defaultLanguage
+    }`;
     const template = this.templates.get(templateId);
 
     if (!template) {
@@ -571,15 +641,15 @@ Equipe {{clinicName}}`,
       content: {
         subject: template.subject,
         message: content,
-        variables
+        variables,
       },
       priority: data.severity === 'critical' ? 'urgent' : 'high',
       requireConfirmation: data.actionRequired,
       scheduledFor: data.deadline,
       metadata: {
         complianceId: data.complianceId,
-        clientId: data.clientId
-      }
+        clientId: data.clientId,
+      },
     };
 
     return await this.sendNotification(message);
@@ -587,7 +657,9 @@ Equipe {{clinicName}}`,
 
   // Emergency Notifications
   async sendEmergencyAlert(data: EmergencyNotificationData): Promise<NotificationResult> {
-    const templateId = `emergency_alert_${data.recipient.preferredLanguage || this.config.defaultLanguage}`;
+    const templateId = `emergency_alert_${
+      data.recipient.preferredLanguage || this.config.defaultLanguage
+    }`;
     const template = this.templates.get(templateId);
 
     if (!template) {
@@ -605,14 +677,14 @@ Equipe {{clinicName}}`,
       templateId: template.id,
       content: {
         message: content,
-        variables
+        variables,
       },
       priority: 'urgent',
       requireConfirmation: true,
       metadata: {
         emergencyId: data.emergencyId,
-        clientId: data.clientId
-      }
+        clientId: data.clientId,
+      },
     };
 
     return await this.sendNotification(message);
@@ -620,7 +692,9 @@ Equipe {{clinicName}}`,
 
   // Marketing Notifications
   async sendPromotionalOffer(data: MarketingNotificationData): Promise<NotificationResult> {
-    const templateId = `promotional_offer_${data.recipient.preferredLanguage || this.config.defaultLanguage}`;
+    const templateId = `promotional_offer_${
+      data.recipient.preferredLanguage || this.config.defaultLanguage
+    }`;
     const template = this.templates.get(templateId);
 
     if (!template) {
@@ -639,14 +713,14 @@ Equipe {{clinicName}}`,
       content: {
         subject: template.subject,
         message: content,
-        variables
+        variables,
       },
       priority: 'low',
       requireConfirmation: false,
       metadata: {
         campaignId: data.campaignId,
-        clientId: data.clientId
-      }
+        clientId: data.clientId,
+      },
     };
 
     return await this.sendNotification(message);
@@ -669,13 +743,13 @@ Equipe {{clinicName}}`,
       status: 'pending',
       channel: message.type,
       recipient: this.getRecipientContact(message),
-      sentAt: new Date().toISOString()
+      sentAt: new Date().toISOString(),
     };
 
     try {
       // Send notification
       const providerResponse = await provider.send(message);
-      
+
       // Update result
       result.status = 'sent';
       result.trackingId = providerResponse.trackingId;
@@ -691,7 +765,6 @@ Equipe {{clinicName}}`,
       }
 
       return result;
-
     } catch {
       result.status = 'failed';
       result.failedAt = new Date().toISOString();
@@ -708,7 +781,7 @@ Equipe {{clinicName}}`,
     return {
       trackingId: this.generateTrackingId(),
       cost: 0.05,
-      provider: 'mock-email-provider'
+      provider: 'mock-email-provider',
     };
   }
 
@@ -717,7 +790,7 @@ Equipe {{clinicName}}`,
     return {
       trackingId: this.generateTrackingId(),
       cost: 0.15,
-      provider: 'mock-sms-provider'
+      provider: 'mock-sms-provider',
     };
   }
 
@@ -726,7 +799,7 @@ Equipe {{clinicName}}`,
     return {
       trackingId: this.generateTrackingId(),
       cost: 0.25,
-      provider: 'mock-whatsapp-provider'
+      provider: 'mock-whatsapp-provider',
     };
   }
 
@@ -756,14 +829,14 @@ Equipe {{clinicName}}`,
     const _windowStart = now - 60000; // 1 minute window
 
     let limit = this.rateLimiters.get(rateLimitKey);
-    
+
     if (!limit || limit.resetTime < now) {
       limit = { count: 0, resetTime: now + 60000 };
       this.rateLimiters.set(rateLimitKey, limit);
     }
 
     const maxRequests = this.config.rateLimits[type as keyof typeof this.config.rateLimits] || 10;
-    
+
     if (limit.count >= maxRequests) {
       return false;
     }
@@ -774,7 +847,7 @@ Equipe {{clinicName}}`,
 
   private getRecipientContact(message: NotificationMessage): string {
     const contact = message.recipient.contactInfo;
-    
+
     switch (message.type) {
       case 'email':
         return contact.email || '';
@@ -789,7 +862,7 @@ Equipe {{clinicName}}`,
 
   private prepareAppointmentVariables(data: AppointmentNotificationData): Record<string, any> {
     const scheduledDate = new Date(data.scheduledDate);
-    
+
     return {
       clientName: 'Cliente', // Would come from client data
       formattedDate: scheduledDate.toLocaleDateString('pt-BR'),
@@ -802,7 +875,7 @@ Equipe {{clinicName}}`,
       confirmationLink: 'https://clinic.com/confirm',
       rescheduleLink: 'https://clinic.com/reschedule',
       cancelLink: 'https://clinic.com/cancel',
-      clinicName: 'Clinica Estetica'
+      clinicName: 'Clinica Estetica',
     };
   }
 
@@ -815,22 +888,28 @@ Equipe {{clinicName}}`,
       aftercareInstructions: data.aftercareInstructions || 'Follow provided care instructions',
       followUpDate: data.nextSession,
       emergencyContact: '+55 11 9999-9999',
-      clinicName: 'Clinica Estetica'
+      clinicName: 'Clinica Estetica',
     };
   }
 
   private prepareFinancialVariables(data: FinancialNotificationData): Record<string, any> {
     return {
       clientName: 'Cliente',
-      amount: new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(data.amount),
+      amount: new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(
+        data.amount,
+      ),
       dueDate: new Date(data.dueDate).toLocaleDateString('pt-BR'),
       description: data.description,
       installments: data.installments,
       installmentNumber: data.installmentNumber,
       totalInstallments: data.installments,
-      lateFee: data.lateFee ? new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(data.lateFee) : null,
+      lateFee: data.lateFee
+        ? new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(
+          data.lateFee,
+        )
+        : null,
       paymentLink: data.paymentLink || 'https://clinic.com/pay',
-      clinicName: 'Clinica Estetica'
+      clinicName: 'Clinica Estetica',
     };
   }
 
@@ -841,7 +920,7 @@ Equipe {{clinicName}}`,
       dataUsage: 'Treatment planning and progress tracking',
       deadline: data.deadline,
       consentLink: data.actionLink || 'https://clinic.com/consent',
-      clinicName: 'Clinica Estetica'
+      clinicName: 'Clinica Estetica',
     };
   }
 
@@ -851,7 +930,7 @@ Equipe {{clinicName}}`,
       severity: data.severity,
       location: data.location || 'Facility',
       immediateActions: data.immediateActions.join(', '),
-      emergencyContact: data.contactPersons[0]?.contact || 'Emergency Services'
+      emergencyContact: data.contactPersons[0]?.contact || 'Emergency Services',
     };
   }
 
@@ -864,7 +943,7 @@ Equipe {{clinicName}}`,
       validUntil: new Date(data.offer.validUntil).toLocaleDateString('pt-BR'),
       bookingLink: 'https://clinic.com/book',
       termsAndConditions: data.offer.termsAndConditions,
-      clinicName: 'Clinica Estetica'
+      clinicName: 'Clinica Estetica',
     };
   }
 
@@ -909,30 +988,31 @@ Equipe {{clinicName}}`,
   }
 
   async getNotificationsByClient(clientId: string): Promise<NotificationResult[]> {
-    return Array.from(this.notifications.values()).filter(n => 
-      n.metadata?.clientId === clientId
-    );
+    return Array.from(this.notifications.values()).filter(n => n.metadata?.clientId === clientId);
   }
 
   async getNotificationsByCategory(category: string): Promise<NotificationResult[]> {
-    return Array.from(this.notifications.values()).filter(n => 
-      n.metadata?.category === category
-    );
+    return Array.from(this.notifications.values()).filter(n => n.metadata?.category === category);
   }
 
-  async createCustomTemplate(template: Omit<NotificationTemplate, 'id' | 'createdAt' | 'updatedAt'>): Promise<string> {
+  async createCustomTemplate(
+    template: Omit<NotificationTemplate, 'id' | 'createdAt' | 'updatedAt'>,
+  ): Promise<string> {
     const newTemplate: NotificationTemplate = {
       ...template,
       id: this.generateMessageId(),
       createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toISOString(),
     };
 
     this.templates.set(newTemplate.id, newTemplate);
     return newTemplate.id;
   }
 
-  async updateTemplate(templateId: string, updates: Partial<NotificationTemplate>): Promise<boolean> {
+  async updateTemplate(
+    templateId: string,
+    updates: Partial<NotificationTemplate>,
+  ): Promise<boolean> {
     const template = this.templates.get(templateId);
     if (!template) {
       return false;
@@ -945,7 +1025,7 @@ Equipe {{clinicName}}`,
 
   async getTemplates(category?: string, language?: string): Promise<NotificationTemplate[]> {
     const templates = Array.from(this.templates.values());
-    
+
     return templates.filter(template => {
       if (category && template.category !== category) return false;
       if (language && template.language !== language) return false;

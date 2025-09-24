@@ -87,11 +87,11 @@ export const authenticateUser = async (credentials: UserCredentials) => {
   const { userType, identifier, password } = credentials;
 
   switch (userType) {
-    case "client":
+    case 'client':
       return await authenticateClient(identifier, password);
-    case "professional":
+    case 'professional':
       return await authenticateProfessional(identifier, password);
-    case "admin":
+    case 'admin':
       return await authenticateAdmin(identifier, password);
   }
 };
@@ -152,7 +152,7 @@ export const registerClient = async (clientData: ClientRegistrationData) => {
   const consentValid = await validateLGPDConsent(clientData.consents);
 
   if (!consentValid) {
-    throw new Error("LGPD consent required");
+    throw new Error('LGPD consent required');
   }
 
   // Create client profile
@@ -217,12 +217,11 @@ flowchart LR
 ```typescript
 // professional-dashboard.ts
 export const getProfessionalDashboard = async (professionalId: string) => {
-  const [todayAppointments, monthlyRevenue, clientSatisfaction] =
-    await Promise.all([
-      getAppointmentsForToday(professionalId),
-      getMonthlyRevenue(professionalId),
-      getClientSatisfactionScore(professionalId),
-    ]);
+  const [todayAppointments, monthlyRevenue, clientSatisfaction] = await Promise.all([
+    getAppointmentsForToday(professionalId),
+    getMonthlyRevenue(professionalId),
+    getClientSatisfactionScore(professionalId),
+  ]);
 
   return {
     todayAppointments,
@@ -293,7 +292,7 @@ export const scheduleAppointment = async (data: AppointmentRequest) => {
       procedureType,
       scheduledTime: availableSlots[0],
       noShowRisk,
-      status: "confirmed",
+      status: 'confirmed',
     },
   });
 

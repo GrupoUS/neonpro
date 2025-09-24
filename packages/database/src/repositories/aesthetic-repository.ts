@@ -3,28 +3,28 @@
  * Specialized for aesthetic clinic data models and Brazilian healthcare compliance
  */
 
-import { supabase, prisma } from '../client';
 import { databaseLogger, logHealthcareError } from '../../../shared/src/logging/healthcare-logger';
+import { prisma, supabase } from '../client';
 import {
+  AestheticAnalyticsQuery,
+  AestheticClientEngagementMetrics,
   AestheticClientProfile,
+  AestheticClientRetentionMetrics,
+  AestheticClientSearchCriteria,
+  AestheticComplianceValidation,
   AestheticTreatment,
   AestheticTreatmentCatalog,
-  AestheticClientRetentionMetrics,
-  CreateAestheticClientProfileRequest,
-  UpdateAestheticClientProfileRequest,
-  CreateAestheticTreatmentRequest,
-  UpdateAestheticTreatmentRequest,
-  CreateAestheticTreatmentPlanRequest,
-  CreateAestheticTreatmentSessionRequest,
-  AestheticClientSearchCriteria,
-  AestheticTreatmentSearchCriteria,
-  AestheticAnalyticsQuery,
   AestheticTreatmentRecommendation,
-  AestheticClientEngagementMetrics,
-  AestheticComplianceValidation,
-  LGPDDataHandlingConfig,
+  AestheticTreatmentSearchCriteria,
   ANVISAComplianceData,
-  CFMComplianceData
+  CFMComplianceData,
+  CreateAestheticClientProfileRequest,
+  CreateAestheticTreatmentPlanRequest,
+  CreateAestheticTreatmentRequest,
+  CreateAestheticTreatmentSessionRequest,
+  LGPDDataHandlingConfig,
+  UpdateAestheticClientProfileRequest,
+  UpdateAestheticTreatmentRequest,
 } from '../types/aesthetic-types';
 
 // Database result interfaces
@@ -98,26 +98,26 @@ export class AestheticRepository {
     this.cache.set(key, {
       data,
       timestamp: Date.now(),
-      ttl
+      ttl,
     });
   }
 
   private getCache(key: string): any {
     const cached = this.cache.get(key);
     if (!cached) return null;
-    
+
     if (Date.now() - cached.timestamp > cached.ttl) {
       this.cache.delete(key);
       return null;
     }
-    
+
     return cached.data;
   }
 
   // Client Management
   async createAestheticClient(
     data: CreateAestheticClientProfileRequest,
-    clinicId: string
+    clinicId: string,
   ): Promise<AestheticClientProfile> {
     try {
       // LGPD compliance validation
@@ -139,7 +139,7 @@ export class AestheticRepository {
           lgpdConsentVersion: '1.0',
           dataConsentStatus: 'given',
           dataConsentDate: new Date(),
-        }
+        },
       });
 
       // Create aesthetic client profile
@@ -157,7 +157,7 @@ export class AestheticRepository {
           financial_data: data.financialData,
           privacy_settings: data.privacySettings,
           retention_metrics: this.calculateInitialRetentionMetrics(data),
-          created_at: new Date().toISOString()
+          created_at: new Date().toISOString(),
         }])
         .select()
         .single();
@@ -171,7 +171,7 @@ export class AestheticRepository {
         resourceType: 'AESTHETIC_CLIENT',
         resourceId: aestheticProfile.id,
         riskLevel: 'LOW',
-        additionalInfo: { clientProfile: data }
+        additionalInfo: { clientProfile: data },
       });
 
       return aestheticProfile;
@@ -183,7 +183,7 @@ export class AestheticRepository {
 
   async getAestheticClientById(
     clientId: string,
-    clinicId: string
+    clinicId: string,
   ): Promise<AestheticClientProfile | null> {
     try {
       const cacheKey = this.getCacheKey('aesthetic_client', { clientId, clinicId });
@@ -206,7 +206,11 @@ export class AestheticRepository {
       this.setCache(cacheKey, data, 300000); // 5 minutes cache
       return data;
     } catch (error) {
-      logHealthcareError('database', error, { method: 'getAestheticClientById', clientId, clinicId });
+      logHealthcareError('database', error, {
+        method: 'getAestheticClientById',
+        clientId,
+        clinicId,
+      });
       throw this.handleError(error, 'getAestheticClientById');
     }
   }
@@ -214,10 +218,14 @@ export class AestheticRepository {
   async searchAestheticClients(
     criteria: AestheticClientSearchCriteria,
     clinicId: string,
-    pagination: { page: number; limit: number } = { page: 1, limit: 20 }
+    pagination: { page: number; limit: number } = { page: 1, limit: 20 },
   ): Promise<AestheticClientSearchResult> {
     try {
-      const cacheKey = this.getCacheKey('aesthetic_client_search', { criteria, clinicId, pagination });
+      const cacheKey = this.getCacheKey('aesthetic_client_search', {
+        criteria,
+        clinicId,
+        pagination,
+      });
       const cached = this.getCache(cacheKey);
       if (cached) return cached;
 
@@ -229,9 +237,9 @@ export class AestheticRepository {
       // Apply search filters
       if (criteria.query) {
         query = query.or(
-          `personal_info->fullName.ilike.%${criteria.query}%,` +
-          `personal_info->email.ilike.%${criteria.query}%,` +
-          `personal_info->phone.ilike.%${criteria.query}%`
+          `personal_info->fullName.ilike.%${criteria.query}%,`
+            + `personal_info->email.ilike.%${criteria.query}%,`
+            + `personal_info->phone.ilike.%${criteria.query}%`,
         );
       }
 
@@ -240,7 +248,9 @@ export class AestheticRepository {
       }
 
       if (criteria.treatmentType) {
-        query = query.contains('treatment_preferences->preferredTreatments', [criteria.treatmentType]);
+        query = query.contains('treatment_preferences->preferredTreatments', [
+          criteria.treatmentType,
+        ]);
       }
 
       if (criteria.retentionRisk) {
@@ -269,14 +279,18 @@ export class AestheticRepository {
         filters: {
           skinType: criteria.skinType,
           treatmentType: criteria.treatmentType,
-          retentionRisk: criteria.retentionRisk
-        }
+          retentionRisk: criteria.retentionRisk,
+        },
       };
 
       this.setCache(cacheKey, result, 120000); // 2 minutes cache
       return result;
     } catch (error) {
-      logHealthcareError('database', error, { method: 'searchAestheticClients', criteria, clinicId });
+      logHealthcareError('database', error, {
+        method: 'searchAestheticClients',
+        criteria,
+        clinicId,
+      });
       throw this.handleError(error, 'searchAestheticClients');
     }
   }
@@ -284,7 +298,7 @@ export class AestheticRepository {
   async updateAestheticClient(
     clientId: string,
     clinicId: string,
-    updates: UpdateAestheticClientProfileRequest
+    updates: UpdateAestheticClientProfileRequest,
   ): Promise<AestheticClientProfile> {
     try {
       // LGPD compliance validation
@@ -297,7 +311,7 @@ export class AestheticRepository {
         .from('aesthetic_client_profiles')
         .update({
           ...updates,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .eq('id', clientId)
         .eq('clinic_id', clinicId)
@@ -318,12 +332,16 @@ export class AestheticRepository {
         resourceType: 'AESTHETIC_CLIENT',
         resourceId: clientId,
         riskLevel: 'LOW',
-        additionalInfo: { updates }
+        additionalInfo: { updates },
       });
 
       return data;
     } catch (error) {
-      logHealthcareError('database', error, { method: 'updateAestheticClient', clientId, clinicId });
+      logHealthcareError('database', error, {
+        method: 'updateAestheticClient',
+        clientId,
+        clinicId,
+      });
       throw this.handleError(error, 'updateAestheticClient');
     }
   }
@@ -331,7 +349,7 @@ export class AestheticRepository {
   // Treatment Management
   async createAestheticTreatment(
     data: CreateAestheticTreatmentRequest,
-    clinicId: string
+    clinicId: string,
   ): Promise<AestheticTreatment> {
     try {
       const { data: treatment, error } = await this.supabase
@@ -352,7 +370,7 @@ export class AestheticRepository {
           payment_status: data.paymentStatus || 'pending',
           anvisa_protocol: data.anvisaProtocol,
           compliance_data: this.validateTreatmentCompliance(data),
-          created_at: new Date().toISOString()
+          created_at: new Date().toISOString(),
         }])
         .select()
         .single();
@@ -371,7 +389,7 @@ export class AestheticRepository {
         resourceType: 'AESTHETIC_TREATMENT',
         resourceId: treatment.id,
         riskLevel: 'MEDIUM',
-        additionalInfo: { treatmentData: data }
+        additionalInfo: { treatmentData: data },
       });
 
       return treatment;
@@ -383,7 +401,7 @@ export class AestheticRepository {
 
   async getAestheticTreatmentById(
     treatmentId: string,
-    clinicId: string
+    clinicId: string,
   ): Promise<AestheticTreatment | null> {
     try {
       const { data, error } = await this.supabase
@@ -400,7 +418,11 @@ export class AestheticRepository {
       if (error) throw error;
       return data;
     } catch (error) {
-      logHealthcareError('database', error, { method: 'getAestheticTreatmentById', treatmentId, clinicId });
+      logHealthcareError('database', error, {
+        method: 'getAestheticTreatmentById',
+        treatmentId,
+        clinicId,
+      });
       throw this.handleError(error, 'getAestheticTreatmentById');
     }
   }
@@ -412,7 +434,7 @@ export class AestheticRepository {
       status?: string;
       limit?: number;
       offset?: number;
-    } = {}
+    } = {},
   ): Promise<AestheticTreatment[]> {
     try {
       let query = this.supabase
@@ -442,7 +464,11 @@ export class AestheticRepository {
       if (error) throw error;
       return data || [];
     } catch (error) {
-      logHealthcareError('database', error, { method: 'getAestheticClientTreatments', clientId, clinicId });
+      logHealthcareError('database', error, {
+        method: 'getAestheticClientTreatments',
+        clientId,
+        clinicId,
+      });
       throw this.handleError(error, 'getAestheticClientTreatments');
     }
   }
@@ -450,7 +476,7 @@ export class AestheticRepository {
   // Treatment Catalog Management
   async getAestheticTreatmentCatalog(
     clinicId: string,
-    category?: string
+    category?: string,
   ): Promise<AestheticTreatmentCatalog[]> {
     try {
       const cacheKey = this.getCacheKey('aesthetic_catalog', { clinicId, category });
@@ -474,7 +500,11 @@ export class AestheticRepository {
       this.setCache(cacheKey, data, 600000); // 10 minutes cache
       return data || [];
     } catch (error) {
-      logHealthcareError('database', error, { method: 'getAestheticTreatmentCatalog', clinicId, category });
+      logHealthcareError('database', error, {
+        method: 'getAestheticTreatmentCatalog',
+        clinicId,
+        category,
+      });
       throw this.handleError(error, 'getAestheticTreatmentCatalog');
     }
   }
@@ -482,7 +512,7 @@ export class AestheticRepository {
   // Analytics and Reporting
   async getAestheticClinicAnalytics(
     clinicId: string,
-    query: AestheticAnalyticsQuery
+    query: AestheticAnalyticsQuery,
   ): Promise<AestheticAnalyticsResult> {
     try {
       const cacheKey = this.getCacheKey('aesthetic_analytics', { clinicId, query });
@@ -507,7 +537,7 @@ export class AestheticRepository {
           .eq('clinic_id', clinicId)
           .eq('status', 'completed')
           .gte('created_at', query.dateRange.start.toISOString())
-          .lte('created_at', query.dateRange.end.toISOString())
+          .lte('created_at', query.dateRange.end.toISOString()),
       ]);
 
       const totalRevenue = revenueData.data?.reduce((sum, t) => sum + Number(t.amount), 0) || 0;
@@ -533,11 +563,11 @@ export class AestheticRepository {
           popularTreatments: (popularTreatments || []).map(t => ({
             treatment: t.treatment_type,
             count: t.count,
-            revenue: t.count * 500 // TODO: Get actual revenue per treatment
-          }))
+            revenue: t.count * 500, // TODO: Get actual revenue per treatment
+          })),
         },
         trends: [], // TODO: Implement trend calculation
-        compliance
+        compliance,
       };
 
       this.setCache(cacheKey, result, 300000); // 5 minutes cache
@@ -550,7 +580,7 @@ export class AestheticRepository {
 
   // Compliance and Validation
   async validateClientDataForLGPD(
-    data: CreateAestheticClientProfileRequest | UpdateAestheticClientProfileRequest
+    data: CreateAestheticClientProfileRequest | UpdateAestheticClientProfileRequest,
   ): Promise<AestheticComplianceValidation> {
     const errors: string[] = [];
     const warnings: string[] = [];
@@ -574,12 +604,12 @@ export class AestheticRepository {
       isValid: errors.length === 0,
       errors,
       warnings,
-      complianceScore: errors.length === 0 ? 100 : Math.max(0, 100 - (errors.length * 25))
+      complianceScore: errors.length === 0 ? 100 : Math.max(0, 100 - (errors.length * 25)),
     };
   }
 
   async validateTreatmentCompliance(
-    data: CreateAestheticTreatmentRequest
+    data: CreateAestheticTreatmentRequest,
   ): Promise<ANVISAComplianceData> {
     return {
       anvisaRegistered: true, // TODO: Validate against ANVISA database
@@ -588,7 +618,7 @@ export class AestheticRepository {
       documentationComplete: !!data.treatmentPlan,
       providerQualified: true, // TODO: Validate provider qualifications
       lastValidated: new Date().toISOString(),
-      validationScore: 95 // TODO: Calculate actual score
+      validationScore: 95, // TODO: Calculate actual score
     };
   }
 
@@ -604,9 +634,9 @@ export class AestheticRepository {
         .select('privacy_settings')
         .eq('clinic_id', clinicId);
 
-      const lgpdCompliant = lgpdData?.filter(client => 
-        client.privacy_settings?.consentGiven && 
-        client.privacy_settings?.dataProcessingAccepted
+      const lgpdCompliant = lgpdData?.filter(client =>
+        client.privacy_settings?.consentGiven
+        && client.privacy_settings?.dataProcessingAccepted
       ).length || 0;
 
       const lgpdScore = lgpdData?.length ? (lgpdCompliant / lgpdData.length) * 100 : 100;
@@ -617,8 +647,10 @@ export class AestheticRepository {
         .select('compliance_data')
         .eq('clinic_id', clinicId);
 
-      const anvisaScore = anvisaData?.length ? 
-        anvisaData.reduce((sum, t) => sum + (t.compliance_data?.validationScore || 0), 0) / anvisaData.length : 100;
+      const anvisaScore = anvisaData?.length
+        ? anvisaData.reduce((sum, t) => sum + (t.compliance_data?.validationScore || 0), 0)
+          / anvisaData.length
+        : 100;
 
       // Calculate CFM compliance score
       const { data: cfmData } = await this.supabase
@@ -631,21 +663,21 @@ export class AestheticRepository {
       return {
         lgpdScore: Math.round(lgdpScore),
         anvisaScore: Math.round(anvisaScore),
-        cfmScore
+        cfmScore,
       };
     } catch (error) {
       logHealthcareError('database', error, { method: 'getComplianceScores', clinicId });
       return {
         lgpdScore: 85,
         anvisaScore: 85,
-        cfmScore: 85
+        cfmScore: 85,
       };
     }
   }
 
   // Utility Methods
   private calculateInitialRetentionMetrics(
-    data: CreateAestheticClientProfileRequest
+    data: CreateAestheticClientProfileRequest,
   ): AestheticClientRetentionMetrics {
     return {
       riskLevel: 'medium' as const,
@@ -654,11 +686,11 @@ export class AestheticRepository {
         demographics: this.getDemographicRiskScore(data),
         behavior: this.getBehavioralRiskScore(data),
         treatment: 0, // No treatment history yet
-        financial: this.getFinancialRiskScore(data)
+        financial: this.getFinancialRiskScore(data),
       },
       nextAssessmentDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
       interventions: [],
-      engagementScore: 70
+      engagementScore: 70,
     };
   }
 
@@ -706,7 +738,7 @@ export class AestheticRepository {
           resource_id: auditData.resourceId,
           risk_level: auditData.riskLevel,
           additional_info: auditData.additionalInfo,
-          created_at: new Date().toISOString()
+          created_at: new Date().toISOString(),
         }]);
     } catch (error) {
       logHealthcareError('database', error, { method: 'logAuditTrail', auditData });
@@ -753,7 +785,7 @@ export class AestheticRepository {
         database,
         cache,
         compliance,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     } catch (error) {
       return {
@@ -761,7 +793,7 @@ export class AestheticRepository {
         database: false,
         cache: false,
         compliance: false,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     }
   }

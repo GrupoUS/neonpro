@@ -5,32 +5,32 @@
  * Extended AG-UI Protocol with Brazilian financial workflow support
  */
 
-import { z } from 'zod';
-import { protectedProcedure, router } from '../trpc';
 import { TRPCError } from '@trpc/server';
-import {
-  CreateFinancialAgentSessionSchema,
-  CreateFinancialMessageSchema,
-  FinancialAgentSessionResponseSchema,
-  FinancialMessageResponseSchema,
-  BillingOperationSchema,
-  BillingResponseSchema,
-  PaymentRequestSchema,
-  PaymentResponseSchema,
-  AnalyticsQuerySchema,
-  FraudAlertSchema,
-  AuditTrailSchema,
-  LGPDComplianceRequestSchema,
-  LGPDComplianceResponseSchema,
-  FinancialActionSchema,
-  FinancialEventSchema,
-  FinancialOperationResponseSchema,
-  FinancialAnalyticsResponseSchema,
-  FinancialMessageListResponseSchema,
-} from '../contracts/financial-agent';
+import { z } from 'zod';
+import { AnomalyDetectionService } from '../../services/financial-ai-agent/anomaly-detection';
 import { FinancialAIAgent } from '../../services/financial-ai-agent/financial-ai-agent';
 import { PredictiveAnalyticsService } from '../../services/financial-ai-agent/predictive-analytics';
-import { AnomalyDetectionService } from '../../services/financial-ai-agent/anomaly-detection';
+import {
+  AnalyticsQuerySchema,
+  AuditTrailSchema,
+  BillingOperationSchema,
+  BillingResponseSchema,
+  CreateFinancialAgentSessionSchema,
+  CreateFinancialMessageSchema,
+  FinancialActionSchema,
+  FinancialAgentSessionResponseSchema,
+  FinancialAnalyticsResponseSchema,
+  FinancialEventSchema,
+  FinancialMessageListResponseSchema,
+  FinancialMessageResponseSchema,
+  FinancialOperationResponseSchema,
+  FraudAlertSchema,
+  LGPDComplianceRequestSchema,
+  LGPDComplianceResponseSchema,
+  PaymentRequestSchema,
+  PaymentResponseSchema,
+} from '../contracts/financial-agent';
+import { protectedProcedure, router } from '../trpc';
 
 /**
  * Financial Agent Router
@@ -45,7 +45,7 @@ export const financialAgentRouter = router({
     .mutation(async ({ ctx, input }) => {
       try {
         const financialAgent = new FinancialAIAgent(ctx.supabase, ctx.user.id);
-        
+
         const session = await financialAgent.createFinancialAgentSession({
           agentType: 'financial',
           specialization: input.specialization,
@@ -132,7 +132,7 @@ export const financialAgentRouter = router({
     .mutation(async ({ ctx, input }) => {
       try {
         const financialAgent = new FinancialAIAgent(ctx.supabase, ctx.user.id);
-        
+
         // Process financial message based on type
         let responseContent = '';
         let metadata = {};
@@ -142,7 +142,7 @@ export const financialAgentRouter = router({
           case 'billing_request':
             const billingResponse = await financialAgent.processBillingRequest(
               JSON.parse(input.content),
-              input.financial_context
+              input.financial_context,
             );
             responseContent = JSON.stringify(billingResponse);
             metadata = { operation: 'billing_request', processed: true };
@@ -150,7 +150,7 @@ export const financialAgentRouter = router({
 
           case 'analytics_query':
             const analyticsResponse = await financialAgent.generateFinancialPredictions(
-              input.financial_context
+              input.financial_context,
             );
             responseContent = JSON.stringify(analyticsResponse);
             metadata = { operation: 'analytics_query', processed: true };
@@ -159,7 +159,7 @@ export const financialAgentRouter = router({
           case 'payment_process':
             const paymentResponse = await financialAgent.processPayment(
               JSON.parse(input.content),
-              input.financial_context
+              input.financial_context,
             );
             responseContent = JSON.stringify(paymentResponse);
             metadata = { operation: 'payment_process', processed: true };
@@ -167,7 +167,7 @@ export const financialAgentRouter = router({
 
           case 'compliance_check':
             const complianceResponse = await financialAgent.checkCompliance(
-              input.financial_context
+              input.financial_context,
             );
             responseContent = JSON.stringify(complianceResponse);
             metadata = { operation: 'compliance_check', compliant: true };
@@ -176,7 +176,7 @@ export const financialAgentRouter = router({
           default:
             responseContent = await financialAgent.processFinancialMessage(
               input.content,
-              input.message_type
+              input.message_type,
             );
             metadata = { operation: input.message_type, processed: true };
         }
@@ -217,10 +217,16 @@ export const financialAgentRouter = router({
     .input(
       z.object({
         session_id: z.string().uuid(),
-        message_type: z.enum(['billing_request', 'payment_process', 'analytics_query', 'compliance_check', 'audit_trigger']).optional(),
+        message_type: z.enum([
+          'billing_request',
+          'payment_process',
+          'analytics_query',
+          'compliance_check',
+          'audit_trigger',
+        ]).optional(),
         page: z.number().int().min(1).default(1),
         limit: z.number().int().min(1).max(100).default(50),
-      })
+      }),
     )
     .output(FinancialMessageListResponseSchema)
     .query(async ({ ctx, input }) => {
@@ -230,7 +236,7 @@ export const financialAgentRouter = router({
           input.session_id,
           input.message_type,
           input.page,
-          input.limit
+          input.limit,
         );
 
         return {
@@ -277,7 +283,7 @@ export const financialAgentRouter = router({
     .mutation(async ({ ctx, input }) => {
       try {
         const financialAgent = new FinancialAIAgent(ctx.supabase, ctx.user.id);
-        
+
         const billing = await financialAgent.processBillingOperation({
           operationType: input.operation_type,
           patientId: input.patient_id,
@@ -324,7 +330,7 @@ export const financialAgentRouter = router({
       try {
         const financialAgent = new FinancialAIAgent(ctx.supabase, ctx.user.id);
         const anomalyDetection = new AnomalyDetectionService(ctx.supabase, ctx.user.id);
-        
+
         // Run fraud detection before processing
         const fraudCheck = await anomalyDetection.detectPaymentFraud({
           billingId: input.billing_id,
@@ -386,7 +392,7 @@ export const financialAgentRouter = router({
     .query(async ({ ctx, input }) => {
       try {
         const analyticsService = new PredictiveAnalyticsService(ctx.supabase, ctx.user.id);
-        
+
         const analytics = await analyticsService.generateComprehensiveAnalytics({
           timeRange: input.time_range,
           metrics: input.metrics,
@@ -447,13 +453,13 @@ export const financialAgentRouter = router({
           start: z.date(),
           end: z.date(),
         }).optional(),
-      })
+      }),
     )
     .output(z.array(FraudAlertSchema))
     .query(async ({ ctx, input }) => {
       try {
         const anomalyDetection = new AnomalyDetectionService(ctx.supabase, ctx.user.id);
-        
+
         const alerts = await anomalyDetection.detectAnomalies({
           transactionId: input.transaction_id,
           patientId: input.patient_id,
@@ -489,7 +495,7 @@ export const financialAgentRouter = router({
     .mutation(async ({ ctx, input }) => {
       try {
         const financialAgent = new FinancialAIAgent(ctx.supabase, ctx.user.id);
-        
+
         const compliance = await financialAgent.processLGPDRequest({
           operation: input.operation,
           dataSubjectId: input.data_subject_id,
@@ -523,7 +529,12 @@ export const financialAgentRouter = router({
   getAuditTrail: protectedProcedure
     .input(
       z.object({
-        event_type: z.enum(['billing_created', 'payment_processed', 'fraud_alert', 'compliance_check']).optional(),
+        event_type: z.enum([
+          'billing_created',
+          'payment_processed',
+          'fraud_alert',
+          'compliance_check',
+        ]).optional(),
         user_id: z.string().uuid().optional(),
         time_range: z.object({
           start: z.date(),
@@ -531,7 +542,7 @@ export const financialAgentRouter = router({
         }).optional(),
         page: z.number().int().min(1).default(1),
         limit: z.number().int().min(1).max(100).default(50),
-      })
+      }),
     )
     .output(z.object({
       audit_events: z.array(AuditTrailSchema),
@@ -545,7 +556,7 @@ export const financialAgentRouter = router({
     .query(async ({ ctx, input }) => {
       try {
         const financialAgent = new FinancialAIAgent(ctx.supabase, ctx.user.id);
-        
+
         const { auditEvents, total, totalPages } = await financialAgent.getAuditTrail({
           eventType: input.event_type,
           userId: input.user_id,
@@ -591,7 +602,7 @@ export const financialAgentRouter = router({
     .mutation(async ({ ctx, input }) => {
       try {
         const financialAgent = new FinancialAIAgent(ctx.supabase, ctx.user.id);
-        
+
         // Check if approval is required
         if (input.requires_approval && input.approval_workflow) {
           // Implement approval workflow logic
@@ -647,7 +658,7 @@ export const financialAgentRouter = router({
     .mutation(async ({ ctx, input }) => {
       try {
         const financialAgent = new FinancialAIAgent(ctx.supabase, ctx.user.id);
-        
+
         const eventId = await financialAgent.emitFinancialEvent({
           event: input.event,
           data: input.data,

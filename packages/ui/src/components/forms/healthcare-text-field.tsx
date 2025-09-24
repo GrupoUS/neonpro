@@ -7,50 +7,41 @@
  * @fileoverview Healthcare text field with React Aria integration
  */
 
-"use client";
+'use client';
 
-import React, {
-  InputHTMLAttributes,
-  forwardRef,
-  useId,
-  useState,
-  useEffect,
-  useRef,
-} from "react";
-import { z } from "zod";
-import { cn } from "../../lib/utils";
-import { useHealthcareForm } from "./healthcare-form";
+import React, { forwardRef, InputHTMLAttributes, useEffect, useId, useRef, useState } from 'react';
+import { z } from 'zod';
+import { cn } from '../../lib/utils';
+import { useHealthcareForm } from './healthcare-form';
 // TODO: Implement theme usage
 // import { useHealthcareTheme } from '../healthcare/healthcare-theme-provider';
+import { announceToScreenReader, HealthcarePriority } from '../../utils/accessibility';
 import {
-  healthcareValidationSchemas,
-  DataSensitivity,
   classifyHealthcareData,
+  DataSensitivity,
   healthcareValidationMessages,
-} from "../../utils/healthcare-validation";
-import {
-  announceToScreenReader,
-  HealthcarePriority,
-} from "../../utils/accessibility";
+  healthcareValidationSchemas,
+} from '../../utils/healthcare-validation';
 
 // Healthcare field types for automatic validation
 export type HealthcareFieldType =
-  | "cpf"
-  | "crm"
-  | "phone"
-  | "medical-record"
-  | "date-of-birth"
-  | "medical-specialty"
-  | "patient-name"
-  | "email"
-  | "generic";
+  | 'cpf'
+  | 'crm'
+  | 'phone'
+  | 'medical-record'
+  | 'date-of-birth'
+  | 'medical-specialty'
+  | 'patient-name'
+  | 'email'
+  | 'generic';
 
 // Healthcare text field props
-export interface HealthcareTextFieldProps
-  extends Omit<
+export interface HealthcareTextFieldProps extends
+  Omit<
     InputHTMLAttributes<HTMLInputElement>,
-    "onChange" | "onBlur" | "size"
-  > {
+    'onChange' | 'onBlur' | 'size'
+  >
+{
   // Basic field properties
   name: string;
   label: string;
@@ -82,8 +73,8 @@ export interface HealthcareTextFieldProps
   autoFocusOnError?: boolean;
 
   // Styling
-  variant?: "default" | "emergency" | "sensitive";
-  size?: "sm" | "default" | "lg";
+  variant?: 'default' | 'emergency' | 'sensitive';
+  size?: 'sm' | 'default' | 'lg';
 
   className?: string;
 }
@@ -102,7 +93,7 @@ export const HealthcareTextField = forwardRef<
     {
       name,
       label,
-      fieldType = "generic",
+      fieldType = 'generic',
       dataSensitivity,
       emergencyField = false,
       validationSchema,
@@ -118,8 +109,8 @@ export const HealthcareTextField = forwardRef<
       onValidationChange,
       screenReaderDescription,
       autoFocusOnError = true,
-      variant = "default",
-      size = "default",
+      variant = 'default',
+      size = 'default',
       className,
       required = false,
       disabled = false,
@@ -135,7 +126,7 @@ export const HealthcareTextField = forwardRef<
 
     // Local state
     const [internalValue, setInternalValue] = useState<string>(
-      (value ?? defaultValue ?? "") as string,
+      (value ?? defaultValue ?? '') as string,
     );
     const [isFocused, setIsFocused] = useState(false);
     const [hasBeenBlurred, setHasBeenBlurred] = useState(false);
@@ -148,7 +139,7 @@ export const HealthcareTextField = forwardRef<
     // Merge refs
     const mergedRef = (node: HTMLInputElement) => {
       inputRef.current = node;
-      if (typeof ref === "function") {
+      if (typeof ref === 'function') {
         ref(node);
       } else if (ref) {
         ref.current = node;
@@ -156,32 +147,30 @@ export const HealthcareTextField = forwardRef<
     };
 
     // Auto-determine data sensitivity if not provided
-    const effectiveDataSensitivity =
-      dataSensitivity ?? classifyHealthcareData(fieldType);
+    const effectiveDataSensitivity = dataSensitivity ?? classifyHealthcareData(fieldType);
 
     // Generate IDs
     const fieldId = useId();
     const descriptionId = description ? `${fieldId}-description` : undefined;
-    const errorId =
-      validationErrors.length > 0 ? `${fieldId}-error` : undefined;
+    const errorId = validationErrors.length > 0 ? `${fieldId}-error` : undefined;
 
     // Get validation schema based on field type
     const getValidationSchema = (): z.ZodSchema | null => {
-      if (validationSchema) {return validationSchema;}
+      if (validationSchema) return validationSchema;
 
       const schemas = healthcareValidationSchemas;
       switch (fieldType) {
-        case "cpf":
+        case 'cpf':
           return schemas.cpf;
-        case "crm":
+        case 'crm':
           return schemas.crm;
-        case "phone":
+        case 'phone':
           return schemas.phoneNumber;
-        case "medical-record":
+        case 'medical-record':
           return schemas.medicalRecordNumber;
-        case "date-of-birth":
+        case 'date-of-birth':
           return schemas.dateOfBirth;
-        case "medical-specialty":
+        case 'medical-specialty':
           return schemas.medicalSpecialty;
         default:
           return null;
@@ -287,7 +276,7 @@ export const HealthcareTextField = forwardRef<
             ? HealthcarePriority.HIGH
             : HealthcarePriority.MEDIUM;
           announceToScreenReader(
-            `Campo ${label}: ${errors.join(". ")}`,
+            `Campo ${label}: ${errors.join('. ')}`,
             priority,
           );
         }
@@ -304,8 +293,8 @@ export const HealthcareTextField = forwardRef<
 
     // Apply input mask
     const applyMask = (value: string, maskPattern: string): string => {
-      const cleanValue = value.replace(/\D/g, "");
-      let masked = "";
+      const cleanValue = value.replace(/\D/g, '');
+      let masked = '';
       let valueIndex = 0;
 
       for (
@@ -313,7 +302,7 @@ export const HealthcareTextField = forwardRef<
         i < maskPattern.length && valueIndex < cleanValue.length;
         i++
       ) {
-        if (maskPattern[i] === "0") {
+        if (maskPattern[i] === '0') {
           masked += cleanValue[valueIndex];
           valueIndex++;
         } else {
@@ -334,18 +323,18 @@ export const HealthcareTextField = forwardRef<
     // Validate accessibility on mount (basic label/error checks)
     useEffect(() => {
       const el = inputRef.current;
-      if (!el) {return;}
+      if (!el) return;
       const violations: string[] = [];
       const hasLabel = !!(
-        el.getAttribute("aria-label") || el.getAttribute("aria-labelledby")
+        el.getAttribute('aria-label') || el.getAttribute('aria-labelledby')
       );
-      if (!hasLabel) {violations.push("Campo sem rótulo acessível");}
-      const isInvalid = el.getAttribute("aria-invalid") === "true";
-      if (isInvalid && !el.getAttribute("aria-describedby")) {
-        violations.push("Erro sem descrição acessível");
+      if (!hasLabel) violations.push('Campo sem rótulo acessível');
+      const isInvalid = el.getAttribute('aria-invalid') === 'true';
+      if (isInvalid && !el.getAttribute('aria-describedby')) {
+        violations.push('Erro sem descrição acessível');
       }
-      if (el.hasAttribute("required") && !el.getAttribute("aria-required")) {
-        violations.push("Campo obrigatório sem indicação acessível");
+      if (el.hasAttribute('required') && !el.getAttribute('aria-required')) {
+        violations.push('Campo obrigatório sem indicação acessível');
       }
       if (violations.length) {
         console.warn(
@@ -361,69 +350,62 @@ export const HealthcareTextField = forwardRef<
 
     const inputClasses = cn(
       // Base classes
-      "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm",
-      "ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium",
-      "placeholder:text-muted-foreground",
-      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-      "disabled:cursor-not-allowed disabled:opacity-50",
-
+      'flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm',
+      'ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium',
+      'placeholder:text-muted-foreground',
+      'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
+      'disabled:cursor-not-allowed disabled:opacity-50',
       // Size variants
       {
-        "h-8 px-2 py-1 text-xs": size === "sm",
-        "h-10 px-3 py-2 text-sm": size === "default",
-        "h-12 px-4 py-3 text-base": size === "lg",
+        'h-8 px-2 py-1 text-xs': size === 'sm',
+        'h-10 px-3 py-2 text-sm': size === 'default',
+        'h-12 px-4 py-3 text-base': size === 'lg',
       },
-
       // Visual state
       {
-        "border-destructive focus-visible:ring-destructive": showError,
-        "border-warning":
-          effectiveDataSensitivity === DataSensitivity.CONFIDENTIAL &&
-          !showError,
-        "border-destructive bg-destructive/5":
+        'border-destructive focus-visible:ring-destructive': showError,
+        'border-warning': effectiveDataSensitivity === DataSensitivity.CONFIDENTIAL
+          && !showError,
+        'border-destructive bg-destructive/5':
           effectiveDataSensitivity === DataSensitivity.RESTRICTED && !showError,
       },
-
       // Variant styles
       {
-        "border-warning bg-warning/5": variant === "emergency" && !showError,
-        "border-info bg-info/5": variant === "sensitive" && !showError,
+        'border-warning bg-warning/5': variant === 'emergency' && !showError,
+        'border-info bg-info/5': variant === 'sensitive' && !showError,
       },
-
       // Focus states
       {
-        "ring-2 ring-warning ring-offset-2":
-          isFocused && variant === "emergency",
-        "ring-2 ring-info ring-offset-2": isFocused && variant === "sensitive",
+        'ring-2 ring-warning ring-offset-2': isFocused && variant === 'emergency',
+        'ring-2 ring-info ring-offset-2': isFocused && variant === 'sensitive',
       },
-
       className,
     );
 
     return (
       <div
-        className="healthcare-text-field space-y-2"
+        className='healthcare-text-field space-y-2'
         data-sensitivity={effectiveDataSensitivity}
       >
         {/* Label */}
         <label
           htmlFor={fieldId}
           className={cn(
-            "text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
+            'text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70',
             {
-              "text-destructive": showError,
-              "text-warning": variant === "emergency",
+              'text-destructive': showError,
+              'text-warning': variant === 'emergency',
             },
           )}
         >
           {label}
           {required && (
-            <span className="text-destructive ml-1" aria-label="obrigatório">
+            <span className='text-destructive ml-1' aria-label='obrigatório'>
               *
             </span>
           )}
           {emergencyField && (
-            <span className="ml-2 text-xs text-warning font-semibold">
+            <span className='ml-2 text-xs text-warning font-semibold'>
               URGENTE
             </span>
           )}
@@ -431,7 +413,7 @@ export const HealthcareTextField = forwardRef<
 
         {/* Description */}
         {description && (
-          <p id={descriptionId} className="text-sm text-muted-foreground">
+          <p id={descriptionId} className='text-sm text-muted-foreground'>
             {description}
           </p>
         )}
@@ -463,36 +445,32 @@ export const HealthcareTextField = forwardRef<
 
         {/* Screen reader description */}
         {screenReaderDescription && (
-          <p id={`${fieldId}-sr-description`} className="sr-only">
+          <p id={`${fieldId}-sr-description`} className='sr-only'>
             {screenReaderDescription}
           </p>
         )}
 
         {/* Helper text */}
-        {helperText && !showError && (
-          <p className="text-sm text-muted-foreground">{helperText}</p>
-        )}
+        {helperText && !showError && <p className='text-sm text-muted-foreground'>{helperText}</p>}
 
         {/* Error messages */}
         {showError && (
           <div
             ref={errorRef}
             id={errorId}
-            className="text-sm text-destructive"
-            role="alert"
-            aria-live="polite"
+            className='text-sm text-destructive'
+            role='alert'
+            aria-live='polite'
           >
-            {validationErrors.map((error, index) => (
-              <p key={index}>{error}</p>
-            ))}
+            {validationErrors.map((error, index) => <p key={index}>{error}</p>)}
           </div>
         )}
 
         {/* Data sensitivity indicator */}
-        {(effectiveDataSensitivity === DataSensitivity.RESTRICTED ||
-          effectiveDataSensitivity === DataSensitivity.CONFIDENTIAL) && (
-          <p className="text-xs text-muted-foreground flex items-center gap-1">
-            <span role="img" aria-label="Dados protegidos">
+        {(effectiveDataSensitivity === DataSensitivity.RESTRICTED
+          || effectiveDataSensitivity === DataSensitivity.CONFIDENTIAL) && (
+          <p className='text-xs text-muted-foreground flex items-center gap-1'>
+            <span role='img' aria-label='Dados protegidos'>
               🔒
             </span>
             Dados protegidos pela LGPD
@@ -503,4 +481,4 @@ export const HealthcareTextField = forwardRef<
   },
 );
 
-HealthcareTextField.displayName = "HealthcareTextField";
+HealthcareTextField.displayName = 'HealthcareTextField';

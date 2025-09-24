@@ -3,15 +3,15 @@
  * Type definitions for the event calendar component
  */
 
-import { CalendarEvent, CalendarView, CalendarFilters, TimeSlot } from '../components/event-calendar/utils';
+import {
+  CalendarEvent,
+  CalendarFilters,
+  CalendarView,
+  TimeSlot,
+} from '../components/event-calendar/utils';
 
 // Re-export utility types for convenience
-export type {
-  CalendarEvent,
-  CalendarView,
-  CalendarFilters,
-  TimeSlot,
-};
+export type { CalendarEvent, CalendarFilters, CalendarView, TimeSlot };
 
 // Component-specific types
 export interface CalendarComponentProps {

@@ -14,9 +14,9 @@
  * @compliance LGPD, ANVISA SaMD, Healthcare Standards
  */
 
-import { z } from "zod";
+import { z } from 'zod';
 // import { nanoid } from "nanoid";
-import { logHealthcareError, auditLogger } from '../logging/healthcare-logger';
+import { auditLogger, logHealthcareError } from '../logging/healthcare-logger';
 
 // Create rate limit logger from audit logger
 const rateLimitLogger = auditLogger.child({ component: 'rate-limiting' });
@@ -29,10 +29,10 @@ const rateLimitLogger = auditLogger.child({ component: 'rate-limiting' });
  * Rate limiting algorithm types
  */
 export const RateLimitAlgorithmSchema = z.enum([
-  "sliding_window", // Sliding window counter
-  "token_bucket", // Token bucket algorithm
-  "fixed_window", // Fixed window counter
-  "leaky_bucket", // Leaky bucket algorithm
+  'sliding_window', // Sliding window counter
+  'token_bucket', // Token bucket algorithm
+  'fixed_window', // Fixed window counter
+  'leaky_bucket', // Leaky bucket algorithm
 ]);
 
 export type RateLimitAlgorithm = z.infer<typeof RateLimitAlgorithmSchema>;
@@ -41,13 +41,13 @@ export type RateLimitAlgorithm = z.infer<typeof RateLimitAlgorithmSchema>;
  * Healthcare request priority levels
  */
 export const RequestPrioritySchema = z.enum([
-  "emergency", // Life-critical emergency requests
-  "critical", // Patient safety critical requests
-  "urgent", // Time-sensitive medical requests
-  "high", // Important clinical requests
-  "normal", // Standard healthcare requests
-  "low", // Administrative/reporting requests
-  "background", // Background tasks, analytics
+  'emergency', // Life-critical emergency requests
+  'critical', // Patient safety critical requests
+  'urgent', // Time-sensitive medical requests
+  'high', // Important clinical requests
+  'normal', // Standard healthcare requests
+  'low', // Administrative/reporting requests
+  'background', // Background tasks, analytics
 ]);
 
 export type RequestPriority = z.infer<typeof RequestPrioritySchema>;
@@ -57,41 +57,41 @@ export type RequestPriority = z.infer<typeof RequestPrioritySchema>;
  */
 export const HealthcareRequestCategorySchema = z.enum([
   // Emergency and critical care
-  "emergency_response",
-  "patient_monitoring",
-  "critical_alerts",
-  "medication_alerts",
+  'emergency_response',
+  'patient_monitoring',
+  'critical_alerts',
+  'medication_alerts',
 
   // Clinical operations
-  "patient_data_access",
-  "clinical_documentation",
-  "diagnostic_results",
-  "treatment_orders",
-  "medication_management",
+  'patient_data_access',
+  'clinical_documentation',
+  'diagnostic_results',
+  'treatment_orders',
+  'medication_management',
 
   // Administrative
-  "appointment_scheduling",
-  "patient_registration",
-  "insurance_verification",
-  "billing_operations",
+  'appointment_scheduling',
+  'patient_registration',
+  'insurance_verification',
+  'billing_operations',
 
   // System operations
-  "authentication",
-  "user_management",
-  "audit_logging",
-  "backup_operations",
+  'authentication',
+  'user_management',
+  'audit_logging',
+  'backup_operations',
 
   // Analytics and reporting
-  "reporting",
-  "analytics",
-  "data_export",
-  "compliance_reporting",
+  'reporting',
+  'analytics',
+  'data_export',
+  'compliance_reporting',
 
   // External integrations
-  "third_party_api",
-  "lab_integration",
-  "imaging_integration",
-  "pharmacy_integration",
+  'third_party_api',
+  'lab_integration',
+  'imaging_integration',
+  'pharmacy_integration',
 ]);
 
 export type HealthcareRequestCategory = z.infer<
@@ -103,31 +103,31 @@ export type HealthcareRequestCategory = z.infer<
  */
 export const RateLimitTierSchema = z.object({
   // Tier identification
-  name: z.string().describe("Tier name"),
-  priority: RequestPrioritySchema.describe("Request priority level"),
+  name: z.string().describe('Tier name'),
+  priority: RequestPrioritySchema.describe('Request priority level'),
 
   // Rate limit configuration
-  requestsPerMinute: z.number().min(1).describe("Requests per minute limit"),
-  requestsPerHour: z.number().min(1).describe("Requests per hour limit"),
-  requestsPerDay: z.number().min(1).describe("Requests per day limit"),
+  requestsPerMinute: z.number().min(1).describe('Requests per minute limit'),
+  requestsPerHour: z.number().min(1).describe('Requests per hour limit'),
+  requestsPerDay: z.number().min(1).describe('Requests per day limit'),
 
   // Burst handling
-  burstSize: z.number().min(1).describe("Maximum burst size"),
-  burstWindowSeconds: z.number().min(1).describe("Burst window in seconds"),
+  burstSize: z.number().min(1).describe('Maximum burst size'),
+  burstWindowSeconds: z.number().min(1).describe('Burst window in seconds'),
 
   // Healthcare-specific settings
-  emergencyBypass: z.boolean().describe("Allow emergency bypass"),
-  patientSafetyBypass: z.boolean().describe("Allow patient safety bypass"),
+  emergencyBypass: z.boolean().describe('Allow emergency bypass'),
+  patientSafetyBypass: z.boolean().describe('Allow patient safety bypass'),
 
   // Recovery settings
   cooldownMinutes: z
     .number()
     .min(0)
-    .describe("Cooldown period after limit reached"),
+    .describe('Cooldown period after limit reached'),
   gracePeriodSeconds: z
     .number()
     .min(0)
-    .describe("Grace period before enforcement"),
+    .describe('Grace period before enforcement'),
 });
 
 export type RateLimitTier = z.infer<typeof RateLimitTierSchema>;
@@ -137,66 +137,66 @@ export type RateLimitTier = z.infer<typeof RateLimitTierSchema>;
  */
 export const RateLimitContextSchema = z.object({
   // Request identification
-  requestId: z.string().describe("Unique request identifier"),
+  requestId: z.string().describe('Unique request identifier'),
   correlationId: z
     .string()
     .optional()
-    .describe("Correlation ID for related requests"),
+    .describe('Correlation ID for related requests'),
 
   // Request classification
   category: HealthcareRequestCategorySchema.describe(
-    "Healthcare request category",
+    'Healthcare request category',
   ),
-  priority: RequestPrioritySchema.describe("Request priority level"),
+  priority: RequestPrioritySchema.describe('Request priority level'),
 
   // Client identification (LGPD-compliant)
-  clientId: z.string().describe("Client identifier"),
-  _userId: z.string().optional().describe("User identifier (anonymized)"),
-  sessionId: z.string().optional().describe("Session identifier"),
+  clientId: z.string().describe('Client identifier'),
+  _userId: z.string().optional().describe('User identifier (anonymized)'),
+  sessionId: z.string().optional().describe('Session identifier'),
 
   // Request metadata
-  endpoint: z.string().describe("API endpoint being accessed"),
-  httpMethod: z.string().describe("HTTP method"),
-  userAgent: z.string().optional().describe("Client user agent"),
-  ipAddress: z.string().describe("Client IP address (anonymized)"),
+  endpoint: z.string().describe('API endpoint being accessed'),
+  httpMethod: z.string().describe('HTTP method'),
+  userAgent: z.string().optional().describe('Client user agent'),
+  ipAddress: z.string().describe('Client IP address (anonymized)'),
 
   // Healthcare context
   healthcareContext: z
     .object({
-      facilityId: z.string().optional().describe("Healthcare facility ID"),
-      departmentId: z.string().optional().describe("Department ID"),
-      workflowType: z.string().optional().describe("Healthcare workflow type"),
-      emergencyFlag: z.boolean().optional().describe("Emergency request flag"),
-      patientSafetyFlag: z.boolean().optional().describe("Patient safety flag"),
+      facilityId: z.string().optional().describe('Healthcare facility ID'),
+      departmentId: z.string().optional().describe('Department ID'),
+      workflowType: z.string().optional().describe('Healthcare workflow type'),
+      emergencyFlag: z.boolean().optional().describe('Emergency request flag'),
+      patientSafetyFlag: z.boolean().optional().describe('Patient safety flag'),
       criticalSystemFlag: z
         .boolean()
         .optional()
-        .describe("Critical system flag"),
+        .describe('Critical system flag'),
     })
     .optional()
-    .describe("Healthcare-specific context"),
+    .describe('Healthcare-specific context'),
 
   // Geographic and temporal context
   geographicContext: z
     .object({
-      region: z.string().optional().describe("Geographic region"),
-      timezone: z.string().optional().describe("Client timezone"),
-      country: z.string().optional().describe("Country code"),
+      region: z.string().optional().describe('Geographic region'),
+      timezone: z.string().optional().describe('Client timezone'),
+      country: z.string().optional().describe('Country code'),
     })
     .optional()
-    .describe("Geographic context"),
+    .describe('Geographic context'),
 
   // Compliance context
   complianceContext: z
     .object({
-      auditRequired: z.boolean().describe("Whether audit logging is required"),
-      retentionPeriod: z.number().describe("Data retention period in days"),
-      legalBasis: z.string().describe("LGPD legal basis for processing"),
+      auditRequired: z.boolean().describe('Whether audit logging is required'),
+      retentionPeriod: z.number().describe('Data retention period in days'),
+      legalBasis: z.string().describe('LGPD legal basis for processing'),
       consentLevel: z
-        .enum(["explicit", "implicit", "legitimate_interest"])
-        .describe("Consent level"),
+        .enum(['explicit', 'implicit', 'legitimate_interest'])
+        .describe('Consent level'),
     })
-    .describe("Compliance requirements"),
+    .describe('Compliance requirements'),
 });
 
 export type RateLimitContext = z.infer<typeof RateLimitContextSchema>;
@@ -206,31 +206,31 @@ export type RateLimitContext = z.infer<typeof RateLimitContextSchema>;
  */
 export const RateLimitResultSchema = z.object({
   // Decision
-  allowed: z.boolean().describe("Whether request is allowed"),
-  reason: z.string().describe("Reason for decision"),
+  allowed: z.boolean().describe('Whether request is allowed'),
+  reason: z.string().describe('Reason for decision'),
 
   // Rate limit status
-  tier: z.string().describe("Rate limit tier applied"),
-  algorithm: RateLimitAlgorithmSchema.describe("Algorithm used"),
+  tier: z.string().describe('Rate limit tier applied'),
+  algorithm: RateLimitAlgorithmSchema.describe('Algorithm used'),
 
   // Current status
-  currentUsage: z.number().describe("Current usage count"),
-  limitValue: z.number().describe("Rate limit value"),
-  remainingRequests: z.number().describe("Remaining requests in window"),
+  currentUsage: z.number().describe('Current usage count'),
+  limitValue: z.number().describe('Rate limit value'),
+  remainingRequests: z.number().describe('Remaining requests in window'),
 
   // Timing information
-  windowStart: z.string().datetime().describe("Rate limit window start time"),
-  windowEnd: z.string().datetime().describe("Rate limit window end time"),
-  resetTime: z.string().datetime().describe("When rate limit resets"),
-  retryAfter: z.number().optional().describe("Seconds to wait before retry"),
+  windowStart: z.string().datetime().describe('Rate limit window start time'),
+  windowEnd: z.string().datetime().describe('Rate limit window end time'),
+  resetTime: z.string().datetime().describe('When rate limit resets'),
+  retryAfter: z.number().optional().describe('Seconds to wait before retry'),
 
   // Bypass information
-  bypassApplied: z.boolean().describe("Whether bypass was applied"),
-  bypassReason: z.string().optional().describe("Reason for bypass"),
+  bypassApplied: z.boolean().describe('Whether bypass was applied'),
+  bypassReason: z.string().optional().describe('Reason for bypass'),
 
   // Metadata
-  metadata: z.record(z.unknown()).optional().describe("Additional metadata"),
-  timestamp: z.string().datetime().describe("Decision timestamp"),
+  metadata: z.record(z.unknown()).optional().describe('Additional metadata'),
+  timestamp: z.string().datetime().describe('Decision timestamp'),
 });
 
 export type RateLimitResult = z.infer<typeof RateLimitResultSchema>;
@@ -240,15 +240,15 @@ export type RateLimitResult = z.infer<typeof RateLimitResultSchema>;
  */
 export const RateLimitConfigSchema = z.object({
   // Service configuration
-  enabled: z.boolean().default(true).describe("Enable rate limiting"),
-  defaultAlgorithm: RateLimitAlgorithmSchema.default("sliding_window").describe(
-    "Default rate limiting algorithm",
+  enabled: z.boolean().default(true).describe('Enable rate limiting'),
+  defaultAlgorithm: RateLimitAlgorithmSchema.default('sliding_window').describe(
+    'Default rate limiting algorithm',
   ),
 
   // Tier definitions
   tiers: z
     .array(RateLimitTierSchema)
-    .describe("Rate limit tier configurations"),
+    .describe('Rate limit tier configurations'),
 
   // Global settings
   globalLimits: z
@@ -256,17 +256,17 @@ export const RateLimitConfigSchema = z.object({
       requestsPerSecond: z
         .number()
         .default(1000)
-        .describe("Global requests per second"),
+        .describe('Global requests per second'),
       requestsPerMinute: z
         .number()
         .default(50000)
-        .describe("Global requests per minute"),
+        .describe('Global requests per minute'),
       maxConcurrentRequests: z
         .number()
         .default(500)
-        .describe("Maximum concurrent requests"),
+        .describe('Maximum concurrent requests'),
     })
-    .describe("Global rate limiting"),
+    .describe('Global rate limiting'),
 
   // Emergency settings
   emergencySettings: z
@@ -274,20 +274,20 @@ export const RateLimitConfigSchema = z.object({
       enableBypass: z
         .boolean()
         .default(true)
-        .describe("Enable emergency bypass"),
+        .describe('Enable emergency bypass'),
       bypassTokens: z
         .array(z.string())
         .optional()
-        .describe("Emergency bypass tokens"),
+        .describe('Emergency bypass tokens'),
       maxEmergencyRequests: z
         .number()
         .default(1000)
-        .describe("Maximum emergency requests per hour"),
+        .describe('Maximum emergency requests per hour'),
       bypassCategories: z
         .array(HealthcareRequestCategorySchema)
-        .describe("Categories that can bypass"),
+        .describe('Categories that can bypass'),
     })
-    .describe("Emergency bypass settings"),
+    .describe('Emergency bypass settings'),
 
   // Healthcare-specific configuration
   healthcareConfig: z
@@ -295,40 +295,40 @@ export const RateLimitConfigSchema = z.object({
       patientSafetyBypass: z
         .boolean()
         .default(true)
-        .describe("Enable patient safety bypass"),
+        .describe('Enable patient safety bypass'),
       criticalSystemBypass: z
         .boolean()
         .default(true)
-        .describe("Enable critical system bypass"),
+        .describe('Enable critical system bypass'),
       facilityBasedLimits: z
         .boolean()
         .default(true)
-        .describe("Apply facility-based limits"),
+        .describe('Apply facility-based limits'),
       workflowAwareLimits: z
         .boolean()
         .default(true)
-        .describe("Apply workflow-aware limits"),
+        .describe('Apply workflow-aware limits'),
     })
-    .describe("Healthcare-specific configuration"),
+    .describe('Healthcare-specific configuration'),
 
   // Storage and persistence
   storage: z
     .object({
       type: z
-        .enum(["memory", "redis", "database"])
-        .default("memory")
-        .describe("Storage backend type"),
+        .enum(['memory', 'redis', 'database'])
+        .default('memory')
+        .describe('Storage backend type'),
       connectionString: z
         .string()
         .optional()
-        .describe("Storage connection string"),
+        .describe('Storage connection string'),
       keyPrefix: z
         .string()
-        .default("neonpro:ratelimit:")
-        .describe("Storage key prefix"),
-      ttlSeconds: z.number().default(3600).describe("Storage TTL in seconds"),
+        .default('neonpro:ratelimit:')
+        .describe('Storage key prefix'),
+      ttlSeconds: z.number().default(3600).describe('Storage TTL in seconds'),
     })
-    .describe("Storage configuration"),
+    .describe('Storage configuration'),
 
   // Monitoring and alerting
   monitoring: z
@@ -336,21 +336,21 @@ export const RateLimitConfigSchema = z.object({
       enableMetrics: z
         .boolean()
         .default(true)
-        .describe("Enable rate limiting metrics"),
+        .describe('Enable rate limiting metrics'),
       enableAlerting: z
         .boolean()
         .default(true)
-        .describe("Enable rate limit alerts"),
+        .describe('Enable rate limit alerts'),
       alertThreshold: z
         .number()
         .default(0.8)
-        .describe("Alert threshold (0.8 = 80% of limit)"),
+        .describe('Alert threshold (0.8 = 80% of limit)'),
       metricsInterval: z
         .number()
         .default(60000)
-        .describe("Metrics collection interval in ms"),
+        .describe('Metrics collection interval in ms'),
     })
-    .describe("Monitoring configuration"),
+    .describe('Monitoring configuration'),
 
   // Logging and audit
   audit: z
@@ -358,18 +358,18 @@ export const RateLimitConfigSchema = z.object({
       logAllRequests: z
         .boolean()
         .default(false)
-        .describe("Log all requests (GDPR impact)"),
+        .describe('Log all requests (GDPR impact)'),
       logViolations: z
         .boolean()
         .default(true)
-        .describe("Log rate limit violations"),
-      logBypasses: z.boolean().default(true).describe("Log emergency bypasses"),
+        .describe('Log rate limit violations'),
+      logBypasses: z.boolean().default(true).describe('Log emergency bypasses'),
       retentionDays: z
         .number()
         .default(90)
-        .describe("Audit log retention days"),
+        .describe('Audit log retention days'),
     })
-    .describe("Audit configuration"),
+    .describe('Audit configuration'),
 });
 
 export type RateLimitConfig = z.infer<typeof RateLimitConfigSchema>;
@@ -436,9 +436,9 @@ class SlidingWindowAlgorithm extends RateLimitAlgorithmBase {
 
     return {
       allowed,
-      reason: allowed ? "Within rate limit" : "Rate limit exceeded",
+      reason: allowed ? 'Within rate limit' : 'Rate limit exceeded',
       tier: this.config.name,
-      algorithm: "sliding_window",
+      algorithm: 'sliding_window',
       currentUsage,
       limitValue: limit,
       remainingRequests: Math.max(0, limit - currentUsage),
@@ -503,9 +503,9 @@ class TokenBucketAlgorithm extends RateLimitAlgorithmBase {
 
     return {
       allowed,
-      reason: allowed ? "Token available" : "No tokens available",
+      reason: allowed ? 'Token available' : 'No tokens available',
       tier: this.config.name,
-      algorithm: "token_bucket",
+      algorithm: 'token_bucket',
       currentUsage: capacity - bucket.tokens,
       limitValue: capacity,
       remainingRequests: bucket.tokens,
@@ -566,11 +566,15 @@ export class APIRateLimitingService {
       this.isInitialized = true;
 
       rateLimitLogger.info(
-        "Healthcare API rate limiting service initialized",
+        'Healthcare API rate limiting service initialized',
         { component: 'api-rate-limiting', timestamp: new Date().toISOString() },
       );
     } catch (error) {
-      logHealthcareError('api-rate-limiting', error instanceof Error ? error : new Error(String(error)), { method: 'initialize' });
+      logHealthcareError(
+        'api-rate-limiting',
+        error instanceof Error ? error : new Error(String(error)),
+        { method: 'initialize' },
+      );
     }
   }
 
@@ -583,10 +587,10 @@ export class APIRateLimitingService {
 
       let algorithm: RateLimitAlgorithmBase;
       switch (algorithmType) {
-        case "sliding_window":
+        case 'sliding_window':
           algorithm = new SlidingWindowAlgorithm(tier);
           break;
-        case "token_bucket":
+        case 'token_bucket':
           algorithm = new TokenBucketAlgorithm(tier);
           break;
         default:
@@ -614,11 +618,11 @@ export class APIRateLimitingService {
   private getDefaultConfig(): Partial<RateLimitConfig> {
     return {
       enabled: true,
-      defaultAlgorithm: "sliding_window",
+      defaultAlgorithm: 'sliding_window',
       tiers: [
         {
-          name: "emergency",
-          priority: "emergency",
+          name: 'emergency',
+          priority: 'emergency',
           requestsPerMinute: 10000,
           requestsPerHour: 100000,
           requestsPerDay: 1000000,
@@ -630,8 +634,8 @@ export class APIRateLimitingService {
           gracePeriodSeconds: 5,
         },
         {
-          name: "critical",
-          priority: "critical",
+          name: 'critical',
+          priority: 'critical',
           requestsPerMinute: 5000,
           requestsPerHour: 50000,
           requestsPerDay: 500000,
@@ -643,8 +647,8 @@ export class APIRateLimitingService {
           gracePeriodSeconds: 3,
         },
         {
-          name: "urgent",
-          priority: "urgent",
+          name: 'urgent',
+          priority: 'urgent',
           requestsPerMinute: 2000,
           requestsPerHour: 20000,
           requestsPerDay: 200000,
@@ -656,8 +660,8 @@ export class APIRateLimitingService {
           gracePeriodSeconds: 2,
         },
         {
-          name: "high",
-          priority: "high",
+          name: 'high',
+          priority: 'high',
           requestsPerMinute: 1000,
           requestsPerHour: 10000,
           requestsPerDay: 100000,
@@ -669,8 +673,8 @@ export class APIRateLimitingService {
           gracePeriodSeconds: 1,
         },
         {
-          name: "normal",
-          priority: "normal",
+          name: 'normal',
+          priority: 'normal',
           requestsPerMinute: 500,
           requestsPerHour: 5000,
           requestsPerDay: 50000,
@@ -682,8 +686,8 @@ export class APIRateLimitingService {
           gracePeriodSeconds: 0,
         },
         {
-          name: "low",
-          priority: "low",
+          name: 'low',
+          priority: 'low',
           requestsPerMinute: 100,
           requestsPerHour: 1000,
           requestsPerDay: 10000,
@@ -695,8 +699,8 @@ export class APIRateLimitingService {
           gracePeriodSeconds: 0,
         },
         {
-          name: "background",
-          priority: "background",
+          name: 'background',
+          priority: 'background',
           requestsPerMinute: 50,
           requestsPerHour: 500,
           requestsPerDay: 5000,
@@ -753,14 +757,18 @@ export class APIRateLimitingService {
 
       return result;
     } catch (error) {
-      logHealthcareError('api-rate-limiting', error instanceof Error ? error : new Error(String(error)), { method: 'checkRateLimit' });
+      logHealthcareError(
+        'api-rate-limiting',
+        error instanceof Error ? error : new Error(String(error)),
+        { method: 'checkRateLimit' },
+      );
 
       // Default to allow in case of service failure (fail-open for healthcare)
       return {
         allowed: true,
-        reason: "Rate limiting service error - defaulting to allow",
-        tier: "error",
-        algorithm: "sliding_window",
+        reason: 'Rate limiting service error - defaulting to allow',
+        tier: 'error',
+        algorithm: 'sliding_window',
         currentUsage: 0,
         limitValue: 0,
         remainingRequests: 0,
@@ -768,7 +776,7 @@ export class APIRateLimitingService {
         windowEnd: new Date().toISOString(),
         resetTime: new Date().toISOString(),
         bypassApplied: true,
-        bypassReason: "Service error bypass",
+        bypassReason: 'Service error bypass',
         timestamp: new Date().toISOString(),
       };
     }
@@ -780,15 +788,15 @@ export class APIRateLimitingService {
   private determineRateLimitTier(_context: RateLimitContext): RateLimitTier {
     // Emergency and patient safety requests get highest priority
     if (_context.healthcareContext?.emergencyFlag) {
-      return this.config.tiers.find((t) => t.name === "emergency")!;
+      return this.config.tiers.find(t => t.name === 'emergency')!;
     }
 
     if (_context.healthcareContext?.patientSafetyFlag) {
-      return this.config.tiers.find((t) => t.name === "critical")!;
+      return this.config.tiers.find(t => t.name === 'critical')!;
     }
 
     if (_context.healthcareContext?.criticalSystemFlag) {
-      return this.config.tiers.find((t) => t.name === "critical")!;
+      return this.config.tiers.find(t => t.name === 'critical')!;
     }
 
     // Map request category to priority
@@ -796,39 +804,38 @@ export class APIRateLimitingService {
       HealthcareRequestCategory,
       RequestPriority
     > = {
-      emergency_response: "emergency",
-      patient_monitoring: "critical",
-      critical_alerts: "critical",
-      medication_alerts: "critical",
-      patient_data_access: "urgent",
-      clinical_documentation: "high",
-      diagnostic_results: "urgent",
-      treatment_orders: "urgent",
-      medication_management: "high",
-      appointment_scheduling: "normal",
-      patient_registration: "normal",
-      insurance_verification: "normal",
-      billing_operations: "low",
-      authentication: "high",
-      user_management: "normal",
-      audit_logging: "low",
-      backup_operations: "background",
-      reporting: "low",
-      analytics: "background",
-      data_export: "low",
-      compliance_reporting: "normal",
-      third_party_api: "normal",
-      lab_integration: "urgent",
-      imaging_integration: "urgent",
-      pharmacy_integration: "urgent",
+      emergency_response: 'emergency',
+      patient_monitoring: 'critical',
+      critical_alerts: 'critical',
+      medication_alerts: 'critical',
+      patient_data_access: 'urgent',
+      clinical_documentation: 'high',
+      diagnostic_results: 'urgent',
+      treatment_orders: 'urgent',
+      medication_management: 'high',
+      appointment_scheduling: 'normal',
+      patient_registration: 'normal',
+      insurance_verification: 'normal',
+      billing_operations: 'low',
+      authentication: 'high',
+      user_management: 'normal',
+      audit_logging: 'low',
+      backup_operations: 'background',
+      reporting: 'low',
+      analytics: 'background',
+      data_export: 'low',
+      compliance_reporting: 'normal',
+      third_party_api: 'normal',
+      lab_integration: 'urgent',
+      imaging_integration: 'urgent',
+      pharmacy_integration: 'urgent',
     };
 
-    const priority =
-      _context.priority || categoryPriorityMap[_context.category] || "normal";
+    const priority = _context.priority || categoryPriorityMap[_context.category] || 'normal';
 
     // Find tier matching priority
-    const tier = this.config.tiers.find((t) => t.priority === priority);
-    return tier || this.config.tiers.find((t) => t.name === "normal")!;
+    const tier = this.config.tiers.find(t => t.priority === priority);
+    return tier || this.config.tiers.find(t => t.name === 'normal')!;
   }
 
   /**
@@ -847,8 +854,8 @@ export class APIRateLimitingService {
 
     // Add facility ID for facility-based limits
     if (
-      this.config.healthcareConfig.facilityBasedLimits &&
-      _context.healthcareContext?.facilityId
+      this.config.healthcareConfig.facilityBasedLimits
+      && _context.healthcareContext?.facilityId
     ) {
       parts.push(_context.healthcareContext?.facilityId);
     }
@@ -856,7 +863,7 @@ export class APIRateLimitingService {
     // Add endpoint for endpoint-specific limits
     parts.push(_context.endpoint);
 
-    return parts.join(":");
+    return parts.join(':');
   }
 
   /**
@@ -867,30 +874,26 @@ export class APIRateLimitingService {
     tier: RateLimitTier,
   ): RateLimitResult {
     let bypassApplied = false;
-    let bypassReason = "";
+    let bypassReason = '';
 
     // Emergency request bypass
     if (tier.emergencyBypass && _context.healthcareContext?.emergencyFlag) {
       bypassApplied = true;
-      bypassReason = "Emergency request bypass";
-    }
-
-    // Patient safety bypass
+      bypassReason = 'Emergency request bypass';
+    } // Patient safety bypass
     else if (
-      tier.patientSafetyBypass &&
-      _context.healthcareContext?.patientSafetyFlag
+      tier.patientSafetyBypass
+      && _context.healthcareContext?.patientSafetyFlag
     ) {
       bypassApplied = true;
-      bypassReason = "Patient safety bypass";
-    }
-
-    // Critical system bypass
+      bypassReason = 'Patient safety bypass';
+    } // Critical system bypass
     else if (
-      this.config.healthcareConfig.criticalSystemBypass &&
-      _context.healthcareContext?.criticalSystemFlag
+      this.config.healthcareConfig.criticalSystemBypass
+      && _context.healthcareContext?.criticalSystemFlag
     ) {
       bypassApplied = true;
-      bypassReason = "Critical system bypass";
+      bypassReason = 'Critical system bypass';
     }
 
     if (bypassApplied) {
@@ -922,10 +925,9 @@ export class APIRateLimitingService {
     result: RateLimitResult,
   ): Promise<void> {
     // Only log violations and bypasses unless configured otherwise
-    const shouldLog =
-      !result.allowed ||
-      result.bypassApplied ||
-      this.config.audit.logAllRequests;
+    const shouldLog = !result.allowed
+      || result.bypassApplied
+      || this.config.audit.logAllRequests;
 
     if (!shouldLog) return;
 
@@ -950,9 +952,9 @@ export class APIRateLimitingService {
     };
 
     // TODO: Integrate with structured logging service
-    rateLimitLogger.info("Rate limit decision made", {
+    rateLimitLogger.info('Rate limit decision made', {
       ...logData,
-      component: 'api-rate-limiting'
+      component: 'api-rate-limiting',
     });
   }
 
@@ -1014,7 +1016,7 @@ export class APIRateLimitingService {
     usageRatio: number,
   ): Promise<void> {
     const alertData = {
-      type: "rate_limit_threshold_exceeded",
+      type: 'rate_limit_threshold_exceeded',
       tier: result.tier,
       category: _context.category,
       usageRatio: usageRatio,
@@ -1025,9 +1027,9 @@ export class APIRateLimitingService {
       timestamp: new Date().toISOString(),
     };
 
-    rateLimitLogger.warn("Rate limit alert triggered", {
+    rateLimitLogger.warn('Rate limit alert triggered', {
       ...alertData,
-      component: 'api-rate-limiting'
+      component: 'api-rate-limiting',
     });
     // TODO: Integrate with notification service
   }
@@ -1040,11 +1042,14 @@ export class APIRateLimitingService {
     void _now;
     const metricsSnapshot = new Map(this.metrics);
 
-    rateLimitLogger.info("Metrics collected", {
+    rateLimitLogger.info('Metrics collected', {
       timestamp: new Date().toISOString(),
       metricsCount: metricsSnapshot.size,
-      totalMetrics: Array.from(metricsSnapshot.values()).reduce((sum, m) => sum + (m.totalRequests || 0), 0),
-      component: 'api-rate-limiting'
+      totalMetrics: Array.from(metricsSnapshot.values()).reduce(
+        (sum, m) => sum + (m.totalRequests || 0),
+        0,
+      ),
+      component: 'api-rate-limiting',
     });
 
     // TODO: Send metrics to observability platform
@@ -1058,7 +1063,7 @@ export class APIRateLimitingService {
    * Reset rate limit for specific key
    */
   async resetRateLimit(clientId: string, tier?: string): Promise<void> {
-    const tiersToReset = tier ? [tier] : this.config.tiers.map((t) => t.name);
+    const tiersToReset = tier ? [tier] : this.config.tiers.map(t => t.name);
 
     for (const tierName of tiersToReset) {
       const algorithm = this.algorithms.get(tierName);
@@ -1068,11 +1073,11 @@ export class APIRateLimitingService {
       }
     }
 
-    rateLimitLogger.info("Rate limit reset for client", {
+    rateLimitLogger.info('Rate limit reset for client', {
       clientId,
       tiersReset: tiersToReset,
       component: 'api-rate-limiting',
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 
@@ -1116,9 +1121,9 @@ export class APIRateLimitingService {
     this.metrics.clear();
     this.isInitialized = false;
 
-    rateLimitLogger.info("API rate limiting service destroyed", {
+    rateLimitLogger.info('API rate limiting service destroyed', {
       component: 'api-rate-limiting',
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 }
@@ -1132,7 +1137,7 @@ export class APIRateLimitingService {
  */
 export const apiRateLimitingService = new APIRateLimitingService({
   enabled: true,
-  defaultAlgorithm: "sliding_window",
+  defaultAlgorithm: 'sliding_window',
 
   globalLimits: {
     requestsPerSecond: 2000, // Higher for healthcare
@@ -1144,10 +1149,10 @@ export const apiRateLimitingService = new APIRateLimitingService({
     enableBypass: true,
     maxEmergencyRequests: 10000, // High limit for emergencies
     bypassCategories: [
-      "emergency_response",
-      "patient_monitoring",
-      "critical_alerts",
-      "medication_alerts",
+      'emergency_response',
+      'patient_monitoring',
+      'critical_alerts',
+      'medication_alerts',
     ],
   },
 

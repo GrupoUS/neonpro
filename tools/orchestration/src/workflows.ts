@@ -1,9 +1,9 @@
 import type {
+  AgentCoordinationPattern,
+  AgentResult,
   OrchestrationContext,
   TDDPhase,
-  AgentResult,
-  AgentCoordinationPattern,
-} from "../types";
+} from '../types';
 
 /**
  * Base workflow interface
@@ -23,8 +23,8 @@ export interface Workflow {
  * Standard TDD Workflow
  */
 export class StandardTDDWorkflow implements Workflow {
-  name = "standard-tdd";
-  description = "Standard Test-Driven Development workflow";
+  name = 'standard-tdd';
+  description = 'Standard Test-Driven Development workflow';
 
   async executeAgent(
     agent: string,
@@ -50,8 +50,8 @@ export class StandardTDDWorkflow implements Workflow {
  * Security Critical Workflow
  */
 export class SecurityCriticalWorkflow implements Workflow {
-  name = "security-critical";
-  description = "Security-focused TDD workflow for critical features";
+  name = 'security-critical';
+  description = 'Security-focused TDD workflow for critical features';
 
   async executeAgent(
     agent: string,

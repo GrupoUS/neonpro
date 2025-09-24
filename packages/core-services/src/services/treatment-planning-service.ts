@@ -1,14 +1,14 @@
 import { SupabaseClient } from '@neonpro/database';
-import { 
-  TreatmentPlan, 
-  TreatmentSession, 
-  TreatmentProcedure, 
-  TreatmentAssessment, 
-  TreatmentProgressTracking,
-  TreatmentRecommendation,
+import {
+  TreatmentAssessment,
+  TreatmentAssessmentTemplate,
   TreatmentDocument,
   TreatmentOutcome,
-  TreatmentAssessmentTemplate
+  TreatmentPlan,
+  TreatmentProcedure,
+  TreatmentProgressTracking,
+  TreatmentRecommendation,
+  TreatmentSession,
   // Comentando imports que não existem
   // TreatmentDocumentationTemplate,
   // CreateTreatmentPlanInput,
@@ -251,7 +251,7 @@ export class TreatmentPlanningService {
         precautions: input.precautions || [],
         patient_preferences: input.patient_preferences || {},
         professional_notes: input.professional_notes,
-        metadata: input.metadata || {}
+        metadata: input.metadata || {},
       })
       .select()
       .single();
@@ -330,7 +330,7 @@ export class TreatmentPlanningService {
       .from('treatment_plans')
       .update({
         ...input,
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       })
       .eq('id', id)
       .select()
@@ -344,14 +344,17 @@ export class TreatmentPlanningService {
   }
 
   async updateTreatmentPlanProgress(id: string, progressPercentage: number): Promise<void> {
-    const status = progressPercentage >= 100 ? 'completed' : 
-                  progressPercentage > 0 ? 'active' : 'draft';
+    const status = progressPercentage >= 100
+      ? 'completed'
+      : progressPercentage > 0
+      ? 'active'
+      : 'draft';
     const actualCompletionDate = progressPercentage >= 100 ? new Date().toISOString() : null;
 
     await this.updateTreatmentPlan(id, {
       progress_percentage: progressPercentage,
       status,
-      actual_completion_date: actualCompletionDate
+      actual_completion_date: actualCompletionDate,
     });
   }
 
@@ -375,7 +378,7 @@ export class TreatmentPlanningService {
         measurements_before: input.measurements_before || {},
         measurements_after: input.measurements_after || {},
         follow_up_required: input.follow_up_required || false,
-        follow_up_date: input.follow_up_date
+        follow_up_date: input.follow_up_date,
       })
       .select()
       .single();
@@ -408,12 +411,15 @@ export class TreatmentPlanningService {
     return data || [];
   }
 
-  async updateTreatmentSession(id: string, input: UpdateTreatmentSessionInput): Promise<TreatmentSession> {
+  async updateTreatmentSession(
+    id: string,
+    input: UpdateTreatmentSessionInput,
+  ): Promise<TreatmentSession> {
     const { data, error } = await this.supabase
       .from('treatment_sessions')
       .update({
         ...input,
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       })
       .eq('id', id)
       .select()
@@ -445,7 +451,9 @@ export class TreatmentPlanningService {
   }
 
   // Treatment Procedure Management
-  async createTreatmentProcedure(input: CreateTreatmentProcedureInput): Promise<TreatmentProcedure> {
+  async createTreatmentProcedure(
+    input: CreateTreatmentProcedureInput,
+  ): Promise<TreatmentProcedure> {
     const { data, error } = await this.supabase
       .from('treatment_procedures')
       .insert({
@@ -460,7 +468,7 @@ export class TreatmentPlanningService {
         interval_between_sessions: input.interval_between_sessions || '4 weeks',
         cost_per_session: input.cost_per_session,
         total_cost: input.total_cost,
-        order_in_plan: input.order_in_plan || 0
+        order_in_plan: input.order_in_plan || 0,
       })
       .select()
       .single();
@@ -487,7 +495,9 @@ export class TreatmentPlanningService {
   }
 
   // Assessment Management
-  async createTreatmentAssessment(input: CreateTreatmentAssessmentInput): Promise<TreatmentAssessment> {
+  async createTreatmentAssessment(
+    input: CreateTreatmentAssessmentInput,
+  ): Promise<TreatmentAssessment> {
     const { data, error } = await this.supabase
       .from('treatment_assessments')
       .insert({
@@ -497,7 +507,7 @@ export class TreatmentPlanningService {
         assessor_id: input.assessor_id,
         assessment_data: input.assessment_data,
         notes: input.notes,
-        recommendations: input.recommendations || []
+        recommendations: input.recommendations || [],
       })
       .select()
       .single();
@@ -528,7 +538,9 @@ export class TreatmentPlanningService {
   }
 
   // Progress Tracking
-  async createTreatmentProgress(input: CreateTreatmentProgressInput): Promise<TreatmentProgressTracking> {
+  async createTreatmentProgress(
+    input: CreateTreatmentProgressInput,
+  ): Promise<TreatmentProgressTracking> {
     const { data, error } = await this.supabase
       .from('treatment_progress_tracking')
       .insert({
@@ -541,7 +553,7 @@ export class TreatmentPlanningService {
         measurements: input.measurements || {},
         patient_reported_outcomes: input.patient_reported_outcomes || {},
         professional_observations: input.professional_observations,
-        satisfaction_rating: input.satisfaction_rating
+        satisfaction_rating: input.satisfaction_rating,
       })
       .select()
       .single();
@@ -571,7 +583,9 @@ export class TreatmentPlanningService {
   }
 
   // AI Recommendations
-  async createTreatmentRecommendation(input: CreateTreatmentRecommendationInput): Promise<TreatmentRecommendation> {
+  async createTreatmentRecommendation(
+    input: CreateTreatmentRecommendationInput,
+  ): Promise<TreatmentRecommendation> {
     const { data, error } = await this.supabase
       .from('treatment_recommendations')
       .insert({
@@ -582,7 +596,7 @@ export class TreatmentPlanningService {
         description: input.description,
         recommendation_data: input.recommendation_data || {},
         confidence_score: input.confidence_score,
-        source_type: input.source_type || 'ai'
+        source_type: input.source_type || 'ai',
       })
       .select()
       .single();
@@ -594,7 +608,9 @@ export class TreatmentPlanningService {
     return data;
   }
 
-  async getTreatmentRecommendationsByPlan(treatmentPlanId: string): Promise<TreatmentRecommendation[]> {
+  async getTreatmentRecommendationsByPlan(
+    treatmentPlanId: string,
+  ): Promise<TreatmentRecommendation[]> {
     const { data, error } = await this.supabase
       .from('treatment_recommendations')
       .select('*')
@@ -614,7 +630,7 @@ export class TreatmentPlanningService {
       .update({
         is_accepted: true,
         accepted_by: acceptedBy,
-        accepted_at: new Date().toISOString()
+        accepted_at: new Date().toISOString(),
       })
       .eq('id', id);
 
@@ -628,7 +644,7 @@ export class TreatmentPlanningService {
       .from('treatment_recommendations')
       .update({
         is_accepted: false,
-        rejection_reason: reason
+        rejection_reason: reason,
       })
       .eq('id', id);
 
@@ -649,7 +665,7 @@ export class TreatmentPlanningService {
         document_data: input.document_data,
         patient_signature_required: input.patient_signature_required || false,
         version: input.version || '1.0',
-        created_by: input.created_by
+        created_by: input.created_by,
       })
       .select()
       .single();
@@ -696,7 +712,7 @@ export class TreatmentPlanningService {
         patient_testimonials: input.patient_testimonials,
         professional_evaluation: input.professional_evaluation,
         follow_up_recommendations: input.follow_up_recommendations || [],
-        created_by: input.created_by
+        created_by: input.created_by,
       })
       .select()
       .single();
@@ -709,7 +725,9 @@ export class TreatmentPlanningService {
   }
 
   // Assessment Templates
-  async getAssessmentTemplates(filters?: { procedureType?: string; isActive?: boolean }): Promise<TreatmentAssessmentTemplate[]> {
+  async getAssessmentTemplates(
+    filters?: { procedureType?: string; isActive?: boolean },
+  ): Promise<TreatmentAssessmentTemplate[]> {
     let query = this.supabase
       .from('treatment_assessment_templates')
       .select('*');
@@ -731,7 +749,9 @@ export class TreatmentPlanningService {
   }
 
   // Documentation Templates
-  async getDocumentationTemplates(filters?: { procedureType?: string; templateType?: string; isRequired?: boolean }): Promise<TreatmentDocumentationTemplate[]> {
+  async getDocumentationTemplates(
+    filters?: { procedureType?: string; templateType?: string; isRequired?: boolean },
+  ): Promise<TreatmentDocumentationTemplate[]> {
     let query = this.supabase
       .from('treatment_documentation_templates')
       .select('*');
@@ -756,7 +776,10 @@ export class TreatmentPlanningService {
   }
 
   // Statistics and Analytics
-  async getTreatmentPlanStats(clinicId: string, dateRange?: { start: Date; end: Date }): Promise<TreatmentPlanStats> {
+  async getTreatmentPlanStats(
+    clinicId: string,
+    dateRange?: { start: Date; end: Date },
+  ): Promise<TreatmentPlanStats> {
     let query = this.supabase
       .from('treatment_plans')
       .select('status, count', { count: 'exact' })
@@ -780,7 +803,7 @@ export class TreatmentPlanningService {
       active: 0,
       completed: 0,
       paused: 0,
-      cancelled: 0
+      cancelled: 0,
     };
 
     data?.forEach(item => {
@@ -795,7 +818,10 @@ export class TreatmentPlanningService {
     return stats;
   }
 
-  async getTreatmentSessionStats(clinicId: string, dateRange?: { start: Date; end: Date }): Promise<TreatmentSessionStats> {
+  async getTreatmentSessionStats(
+    clinicId: string,
+    dateRange?: { start: Date; end: Date },
+  ): Promise<TreatmentSessionStats> {
     let query = this.supabase
       .from('treatment_sessions')
       .select('status, count', { count: 'exact' })
@@ -820,7 +846,7 @@ export class TreatmentPlanningService {
       completed: 0,
       cancelled: 0,
       no_show: 0,
-      rescheduled: 0
+      rescheduled: 0,
     };
 
     data?.forEach(item => {
@@ -840,20 +866,22 @@ export class TreatmentPlanningService {
     const [sessions, progress, assessments] = await Promise.all([
       this.getTreatmentSessionsByPlan(treatmentPlanId),
       this.getTreatmentProgressByPlan(treatmentPlanId),
-      this.getTreatmentAssessmentsByPlan(treatmentPlanId)
+      this.getTreatmentAssessmentsByPlan(treatmentPlanId),
     ]);
 
     const summary: TreatmentProgressSummary = {
       total_sessions: sessions.length,
       completed_sessions: sessions.filter(s => s.status === 'completed').length,
-      upcoming_sessions: sessions.filter(s => s.status === 'scheduled' && new Date(s.scheduled_date) > new Date()).length,
+      upcoming_sessions:
+        sessions.filter(s => s.status === 'scheduled' && new Date(s.scheduled_date) > new Date())
+          .length,
       progress_records: progress.length,
       assessments_completed: assessments.length,
-      average_satisfaction_rating: progress.length > 0 
-        ? progress.reduce((sum, p) => sum + (p.satisfaction_rating || 0), 0) / progress.length 
+      average_satisfaction_rating: progress.length > 0
+        ? progress.reduce((sum, p) => sum + (p.satisfaction_rating || 0), 0) / progress.length
         : 0,
       next_session_date: sessions.find(s => s.status === 'scheduled')?.scheduled_date || null,
-      last_progress_date: progress.length > 0 ? progress[0].tracking_date : null
+      last_progress_date: progress.length > 0 ? progress[0].tracking_date : null,
     };
 
     return summary;
@@ -869,11 +897,13 @@ export class TreatmentPlanningService {
     const [sessions, procedures, progress] = await Promise.all([
       this.getTreatmentSessionsByPlan(treatmentPlanId),
       this.getTreatmentProceduresByPlan(treatmentPlanId),
-      this.getTreatmentProgressByPlan(treatmentPlanId)
+      this.getTreatmentProgressByPlan(treatmentPlanId),
     ]);
 
     const completedSessions = sessions.filter(s => s.status === 'completed').length;
-    const progressPercentage = sessions.length > 0 ? (completedSessions / sessions.length) * 100 : 0;
+    const progressPercentage = sessions.length > 0
+      ? (completedSessions / sessions.length) * 100
+      : 0;
 
     const summary = `
 Plano de Tratamento: ${plan.plan_name}
@@ -889,7 +919,13 @@ Procedimentos:
 ${procedures.map(proc => `- ${proc.procedure_name} (${proc.sessions_needed} sessões)`).join('\n')}
 
 Sessões Realizadas: ${completedSessions} de ${sessions.length}
-Próxima Sessão: ${sessions.find(s => s.status === 'scheduled')?.scheduled_date ? new Date(sessions.find(s => s.status === 'scheduled')!.scheduled_date).toLocaleDateString('pt-BR') : 'Nenhuma agendada'}
+Próxima Sessão: ${
+      sessions.find(s => s.status === 'scheduled')?.scheduled_date
+        ? new Date(sessions.find(s => s.status === 'scheduled')!.scheduled_date).toLocaleDateString(
+          'pt-BR',
+        )
+        : 'Nenhuma agendada'
+    }
     `.trim();
 
     return summary;
@@ -908,7 +944,7 @@ Próxima Sessão: ${sessions.find(s => s.status === 'scheduled')?.scheduled_date
     const [sessions, documents, assessments] = await Promise.all([
       this.getTreatmentSessionsByPlan(treatmentPlanId),
       this.getTreatmentDocumentsByPlan(treatmentPlanId),
-      this.getTreatmentAssessmentsByPlan(treatmentPlanId)
+      this.getTreatmentAssessmentsByPlan(treatmentPlanId),
     ]);
 
     const issues: string[] = [];
@@ -923,9 +959,9 @@ Próxima Sessão: ${sessions.find(s => s.status === 'scheduled')?.scheduled_date
     }
 
     // Check for overdue sessions
-    const overdueSessions = sessions.filter(s => 
-      s.status === 'scheduled' && 
-      new Date(s.scheduled_date) < new Date()
+    const overdueSessions = sessions.filter(s =>
+      s.status === 'scheduled'
+      && new Date(s.scheduled_date) < new Date()
     );
     if (overdueSessions.length > 0) {
       issues.push(`Sessões atrasadas: ${overdueSessions.length}`);
@@ -934,7 +970,7 @@ Próxima Sessão: ${sessions.find(s => s.status === 'scheduled')?.scheduled_date
 
     // Check for missing assessments
     const completedSessions = sessions.filter(s => s.status === 'completed');
-    const sessionsWithoutAssessment = completedSessions.filter(session => 
+    const sessionsWithoutAssessment = completedSessions.filter(session =>
       !assessments.some(a => a.session_id === session.id)
     );
     if (sessionsWithoutAssessment.length > 0) {
@@ -945,7 +981,7 @@ Próxima Sessão: ${sessions.find(s => s.status === 'scheduled')?.scheduled_date
     return {
       compliant: issues.length === 0,
       issues,
-      recommendations
+      recommendations,
     };
   }
 }

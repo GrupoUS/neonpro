@@ -224,11 +224,11 @@ Compliance Reporting
 
 ```typescript
 // Aesthetic clinic specific configuration
-AESTHETIC_CLINIC_ENABLED=true
-ANVISA_API_KEY=your_anvisa_api_key
-CFM_VALIDATION_ENABLED=true
-LGPD_COMPLIANCE_ENABLED=true
-WHATSAPP_BUSINESS_API_KEY=your_whatsapp_key
+AESTHETIC_CLINIC_ENABLED = true;
+ANVISA_API_KEY = your_anvisa_api_key;
+CFM_VALIDATION_ENABLED = true;
+LGPD_COMPLIANCE_ENABLED = true;
+WHATSAPP_BUSINESS_API_KEY = your_whatsapp_key;
 ```
 
 ### 2. Feature Flags
@@ -240,7 +240,7 @@ const FEATURES = {
   NO_SHOW_PREDICTION: true,
   TREATMENT_RECOMMENDATIONS: true,
   MULTI_PROFESSIONAL_COORDINATION: true,
-  COMPLIANCE_AUTOMATION: true
+  COMPLIANCE_AUTOMATION: true,
 };
 ```
 

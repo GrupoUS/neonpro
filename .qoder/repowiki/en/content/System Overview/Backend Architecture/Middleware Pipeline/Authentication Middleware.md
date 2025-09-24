@@ -296,7 +296,7 @@ The authentication middleware provides several ways to implement protected route
 For routes requiring simple authentication, use the `authenticationMiddleware()` function:
 
 ```typescript
-app.get('/protected', authenticationMiddleware(), async (c) => {
+app.get('/protected', authenticationMiddleware(), async c => {
   const user = c.get('user');
   return c.json({ message: `Hello ${user.name}` });
 });
@@ -307,12 +307,12 @@ app.get('/protected', authenticationMiddleware(), async (c) => {
 For routes requiring specific roles, use the `requireAuth()` function with role parameters:
 
 ```typescript
-app.get('/admin', requireAuth(['admin']), async (c) => {
+app.get('/admin', requireAuth(['admin']), async c => {
   // Only accessible to admin users
   return c.json({ data: 'Admin data' });
 });
 
-app.get('/clinical', requireAuth(['healthcare_professional', 'staff']), async (c) => {
+app.get('/clinical', requireAuth(['healthcare_professional', 'staff']), async c => {
   // Accessible to healthcare professionals and staff
   return c.json({ data: 'Clinical data' });
 });
@@ -323,7 +323,7 @@ app.get('/clinical', requireAuth(['healthcare_professional', 'staff']), async (c
 For fine-grained access control based on permissions:
 
 ```typescript
-app.post('/ai/generate', requirePermission('ai_access'), async (c) => {
+app.post('/ai/generate', requirePermission('ai_access'), async c => {
   // Only users with ai_access permission can use AI features
   return c.json({ result: 'AI generated content' });
 });
@@ -334,7 +334,7 @@ app.post('/ai/generate', requirePermission('ai_access'), async (c) => {
 For routes that work with or without authentication:
 
 ```typescript
-app.get('/profile', optionalAuth(), async (c) => {
+app.get('/profile', optionalAuth(), async c => {
   const user = c.get('user');
   if (user) {
     return c.json({ profile: user, authenticated: true });

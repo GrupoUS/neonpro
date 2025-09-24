@@ -1,9 +1,9 @@
 /**
  * AG-UI Protocol Extensions for Appointment Operations
- * 
+ *
  * Extends the AG-UI Protocol with appointment-specific message types and operations
  * for intelligent scheduling, real-time availability, and automated workflows.
- * 
+ *
  * Features:
  * - Appointment-specific message types
  * - Real-time availability updates
@@ -30,7 +30,7 @@ export interface AGUIAppointmentMessage {
   };
 }
 
-export type AGUIAppointmentMessageType = 
+export type AGUIAppointmentMessageType =
   // Scheduling Operations
   | 'appointment.requested'
   | 'appointment.scheduled'
@@ -39,35 +39,30 @@ export type AGUIAppointmentMessageType =
   | 'appointment.cancelled'
   | 'appointment.completed'
   | 'appointment.no_show'
-  
   // Availability Management
   | 'availability.updated'
   | 'availability.query'
   | 'availability.conflict_detected'
   | 'slot.optimized'
   | 'resource.allocated'
-  
   // AI Predictions and Analysis
   | 'no_show.predicted'
   | 'no_show.risk_updated'
   | 'optimization.suggested'
   | 'efficiency.analyzed'
   | 'bottleneck.detected'
-  
   // Reminder and Communication
   | 'reminder.scheduled'
   | 'reminder.sent'
   | 'reminder.failed'
   | 'communication.delivered'
   | 'feedback.collected'
-  
   // Real-time Updates
   | 'status.changed'
   | 'location.updated'
   | 'professional.assigned'
   | 'room.assigned'
   | 'equipment.assigned'
-  
   // System Events
   | 'system.sync_completed'
   | 'system.error'
@@ -189,7 +184,7 @@ export class AGUIAppointmentProtocol {
 
       // Dispatch to event bus
       const event = new CustomEvent(message.type, {
-        detail: message
+        detail: message,
       });
       this.eventBus.dispatchEvent(event);
 
@@ -205,7 +200,6 @@ export class AGUIAppointmentProtocol {
 
       // Log for compliance and debugging
       await this.logMessage(message);
-
     } catch {
       console.error('Error sending AG-UI message:', error);
       throw error;
@@ -239,7 +233,7 @@ export class AGUIAppointmentProtocol {
   async sendAppointmentRequest(
     clinicId: string,
     data: AppointmentRequestedData,
-    metadata?: Partial<AGUIAppointmentMessage['metadata']>
+    metadata?: Partial<AGUIAppointmentMessage['metadata']>,
   ): Promise<void> {
     const message: AGUIAppointmentMessage = {
       id: this.generateMessageId(),
@@ -252,8 +246,8 @@ export class AGUIAppointmentProtocol {
         priority: data.urgency,
         requiresConfirmation: true,
         patientId: data.patientId,
-        ...metadata
-      }
+        ...metadata,
+      },
     };
 
     await this.sendMessage(message);
@@ -265,7 +259,7 @@ export class AGUIAppointmentProtocol {
   async sendAppointmentScheduled(
     clinicId: string,
     data: AppointmentScheduledData,
-    metadata?: Partial<AGUIAppointmentMessage['metadata']>
+    metadata?: Partial<AGUIAppointmentMessage['metadata']>,
   ): Promise<void> {
     const message: AGUIAppointmentMessage = {
       id: this.generateMessageId(),
@@ -280,8 +274,8 @@ export class AGUIAppointmentProtocol {
         relatedAppointmentId: data.appointmentId,
         patientId: data.patientId,
         professionalId: data.professionalId,
-        ...metadata
-      }
+        ...metadata,
+      },
     };
 
     await this.sendMessage(message);
@@ -293,7 +287,7 @@ export class AGUIAppointmentProtocol {
   async sendAvailabilityUpdate(
     clinicId: string,
     data: AvailabilityUpdatedData,
-    metadata?: Partial<AGUIAppointmentMessage['metadata']>
+    metadata?: Partial<AGUIAppointmentMessage['metadata']>,
   ): Promise<void> {
     const message: AGUIAppointmentMessage = {
       id: this.generateMessageId(),
@@ -306,8 +300,8 @@ export class AGUIAppointmentProtocol {
         priority: 'medium',
         requiresConfirmation: false,
         professionalId: data.professionalId,
-        ...metadata
-      }
+        ...metadata,
+      },
     };
 
     await this.sendMessage(message);
@@ -319,7 +313,7 @@ export class AGUIAppointmentProtocol {
   async sendNoShowPrediction(
     clinicId: string,
     data: NoShowPredictedData,
-    metadata?: Partial<AGUIAppointmentMessage['metadata']>
+    metadata?: Partial<AGUIAppointmentMessage['metadata']>,
   ): Promise<void> {
     const message: AGUIAppointmentMessage = {
       id: this.generateMessageId(),
@@ -332,8 +326,8 @@ export class AGUIAppointmentProtocol {
         priority: data.riskScore > 70 ? 'high' : data.riskScore > 40 ? 'medium' : 'low',
         requiresConfirmation: false,
         relatedAppointmentId: data.appointmentId,
-        ...metadata
-      }
+        ...metadata,
+      },
     };
 
     await this.sendMessage(message);
@@ -345,7 +339,7 @@ export class AGUIAppointmentProtocol {
   async sendSlotOptimized(
     clinicId: string,
     data: SlotOptimizedData,
-    metadata?: Partial<AGUIAppointmentMessage['metadata']>
+    metadata?: Partial<AGUIAppointmentMessage['metadata']>,
   ): Promise<void> {
     const message: AGUIAppointmentMessage = {
       id: this.generateMessageId(),
@@ -357,8 +351,8 @@ export class AGUIAppointmentProtocol {
       metadata: {
         priority: 'medium',
         requiresConfirmation: false,
-        ...metadata
-      }
+        ...metadata,
+      },
     };
 
     await this.sendMessage(message);
@@ -370,7 +364,7 @@ export class AGUIAppointmentProtocol {
   async sendReminderScheduled(
     clinicId: string,
     data: ReminderScheduledData,
-    metadata?: Partial<AGUIAppointmentMessage['metadata']>
+    metadata?: Partial<AGUIAppointmentMessage['metadata']>,
   ): Promise<void> {
     const message: AGUIAppointmentMessage = {
       id: this.generateMessageId(),
@@ -383,8 +377,8 @@ export class AGUIAppointmentProtocol {
         priority: data.priority,
         requiresConfirmation: false,
         relatedAppointmentId: data.appointmentId,
-        ...metadata
-      }
+        ...metadata,
+      },
     };
 
     await this.sendMessage(message);
@@ -396,7 +390,7 @@ export class AGUIAppointmentProtocol {
   async sendAvailabilityConflict(
     clinicId: string,
     data: AvailabilityConflictData,
-    metadata?: Partial<AGUIAppointmentMessage['metadata']>
+    metadata?: Partial<AGUIAppointmentMessage['metadata']>,
   ): Promise<void> {
     const message: AGUIAppointmentMessage = {
       id: this.generateMessageId(),
@@ -408,8 +402,8 @@ export class AGUIAppointmentProtocol {
       metadata: {
         priority: data.severity,
         requiresConfirmation: data.severity === 'high',
-        ...metadata
-      }
+        ...metadata,
+      },
     };
 
     await this.sendMessage(message);
@@ -421,7 +415,7 @@ export class AGUIAppointmentProtocol {
   async queryAvailability(
     clinicId: string,
     professionalId: string,
-    dateRange: DateRange
+    dateRange: DateRange,
   ): Promise<AvailabilityUpdatedData> {
     return new Promise((resolve, reject) => {
       const message: AGUIAppointmentMessage = {
@@ -433,13 +427,13 @@ export class AGUIAppointmentProtocol {
         data: {
           professionalId,
           dateRange,
-          queryType: 'professional_availability'
+          queryType: 'professional_availability',
         },
         metadata: {
           priority: 'medium',
           requiresConfirmation: false,
-          professionalId
-        }
+          professionalId,
+        },
       };
 
       // Set up response handler
@@ -472,7 +466,7 @@ export class AGUIAppointmentProtocol {
       serviceType?: string;
       preferredProfessionals?: string[];
       duration?: number;
-    }
+    },
   ): Promise<SlotOptimizedData> {
     return new Promise((resolve, reject) => {
       const message: AGUIAppointmentMessage = {
@@ -484,13 +478,13 @@ export class AGUIAppointmentProtocol {
         data: {
           originalSlot: slot,
           constraints,
-          requestType: 'slot_optimization'
+          requestType: 'slot_optimization',
         },
         metadata: {
           priority: 'medium',
           requiresConfirmation: false,
-          patientId: constraints.patientId
-        }
+          patientId: constraints.patientId,
+        },
       };
 
       // Set up response handler
@@ -539,7 +533,7 @@ export class AGUIAppointmentProtocol {
       clinicId: message.clinicId,
       timestamp: message.timestamp,
       source: message.source,
-      metadata: message.metadata
+      metadata: message.metadata,
     });
 
     // Here you would typically log to a database or external service
@@ -550,7 +544,7 @@ export class AGUIAppointmentProtocol {
     // Handler for system errors
     this.on('system.error', async (message: AGUIAppointmentMessage) => {
       console.error('System error:', message.data);
-      
+
       // Send alert to administrators
       // This would integrate with your notification system
     });
@@ -558,7 +552,7 @@ export class AGUIAppointmentProtocol {
     // Handler for compliance checks
     this.on('compliance.checked', async (message: AGUIAppointmentMessage) => {
       console.log('Compliance check completed:', message.data);
-      
+
       // Log compliance status for audit purposes
       // This is critical for LGPD compliance
     });
@@ -566,7 +560,7 @@ export class AGUIAppointmentProtocol {
     // Handler for real-time updates
     this.on('status.changed', async (message: AGUIAppointmentMessage) => {
       console.log('Status changed:', message.data);
-      
+
       // Update real-time displays and notifications
       // This would integrate with your WebSocket system
     });
@@ -584,7 +578,7 @@ export class AGUIAppointmentProtocol {
       registeredHandlers: Array.from(this.messageHandlers.values())
         .reduce((sum, handlers) => sum + handlers.length, 0),
       messageTypes: Array.from(this.messageHandlers.keys()),
-      uptime: process.uptime() // This would be replaced with actual uptime tracking
+      uptime: process.uptime(), // This would be replaced with actual uptime tracking
     };
   }
 

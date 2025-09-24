@@ -226,11 +226,10 @@ export class QualityScoreCalculator {
       maintainability: this.calculateMaintainabilityScore(metrics.maintainability),
     };
 
-    const weightedScore =
-      scores.coverage * weights.coverage +
-      scores.performance * weights.performance +
-      scores.security * weights.security +
-      scores.maintainability * weights.maintainability;
+    const weightedScore = scores.coverage * weights.coverage
+      + scores.performance * weights.performance
+      + scores.security * weights.security
+      + scores.maintainability * weights.maintainability;
 
     return {
       score: Math.round(weightedScore),
@@ -250,30 +249,42 @@ export class QualityScoreCalculator {
   }
 
   private static calculatePerformanceScore(performance: QualityMetrics['performance']): number {
-    const executionScore = performance.executionTime <= 120 ? 100 : Math.max(0, 100 - (performance.executionTime - 120) / 2);
-    const memoryScore = performance.memoryUsage <= 500 ? 100 : Math.max(0, 100 - (performance.memoryUsage - 500) / 5);
+    const executionScore = performance.executionTime <= 120
+      ? 100
+      : Math.max(0, 100 - (performance.executionTime - 120) / 2);
+    const memoryScore = performance.memoryUsage <= 500
+      ? 100
+      : Math.max(0, 100 - (performance.memoryUsage - 500) / 5);
     const flakinessScore = Math.max(0, 100 - performance.flakinessRate * 100);
 
     return (executionScore + memoryScore + flakinessScore) / 3;
   }
 
   private static calculateSecurityScore(security: QualityMetrics['security']): number {
-    const vulnerabilityScore = security.vulnerabilities === 0 ? 100 : Math.max(0, 100 - security.vulnerabilities * 20);
+    const vulnerabilityScore = security.vulnerabilities === 0
+      ? 100
+      : Math.max(0, 100 - security.vulnerabilities * 20);
     const complianceScore = security.complianceScore;
     const dataProtectionScore = security.dataProtectionScore;
 
     return (vulnerabilityScore + complianceScore + dataProtectionScore) / 3;
   }
 
-  private static calculateMaintainabilityScore(maintainability: QualityMetrics['maintainability']): number {
+  private static calculateMaintainabilityScore(
+    maintainability: QualityMetrics['maintainability'],
+  ): number {
     const documentationScore = maintainability.documentation;
     const codeQualityScore = maintainability.codeQuality;
-    const complexityScore = maintainability.complexity <= 10 ? 100 : Math.max(0, 100 - (maintainability.complexity - 10) * 5);
+    const complexityScore = maintainability.complexity <= 10
+      ? 100
+      : Math.max(0, 100 - (maintainability.complexity - 10) * 5);
 
     return (documentationScore + codeQualityScore + complexityScore) / 3;
   }
 
-  private static getRating(score: number): 'excellent' | 'very-good' | 'good' | 'needs-improvement' | 'failing' {
+  private static getRating(
+    score: number,
+  ): 'excellent' | 'very-good' | 'good' | 'needs-improvement' | 'failing' {
     if (score >= 95) return 'excellent';
     if (score >= 85) return 'very-good';
     if (score >= 70) return 'good';
@@ -281,7 +292,10 @@ export class QualityScoreCalculator {
     return 'failing';
   }
 
-  private static generateRecommendations(metrics: QualityMetrics, scores: Record<string, number>): string[] {
+  private static generateRecommendations(
+    metrics: QualityMetrics,
+    scores: Record<string, number>,
+  ): string[] {
     const recommendations: string[] = [];
 
     if (scores.coverage < 85) {
@@ -369,14 +383,20 @@ export class QualityDashboardService {
         coverage: this.formatCategoryMetrics('coverage', scores.coverage, coverage),
         performance: this.formatCategoryMetrics('performance', scores.performance, performance),
         security: this.formatCategoryMetrics('security', scores.security, security),
-        maintainability: this.formatCategoryMetrics('maintainability', scores.maintainability, maintainability),
+        maintainability: this.formatCategoryMetrics(
+          'maintainability',
+          scores.maintainability,
+          maintainability,
+        ),
       },
       trends: await this.getTrendData(),
       alerts: this.generateAlerts(result),
     };
   }
 
-  private async getTrendData(): Promise<{ daily: TrendData[]; weekly: TrendData[]; monthly: TrendData[] }> {
+  private async getTrendData(): Promise<
+    { daily: TrendData[]; weekly: TrendData[]; monthly: TrendData[] }
+  > {
     // Fetch historical data for trend analysis
     return {
       daily: await this.getDailyTrends(),
@@ -458,14 +478,20 @@ export class WeeklyQualityReport {
   async generate(): Promise<string> {
     const weekData = await this.getWeekData();
     const previousWeekData = await this.getPreviousWeekData();
-    
+
     const analysis = {
       overallTrend: this.calculateTrend(weekData.overallScore, previousWeekData.overallScore),
       categoryTrends: {
         coverage: this.calculateTrend(weekData.coverage.score, previousWeekData.coverage.score),
-        performance: this.calculateTrend(weekData.performance.score, previousWeekData.performance.score),
+        performance: this.calculateTrend(
+          weekData.performance.score,
+          previousWeekData.performance.score,
+        ),
         security: this.calculateTrend(weekData.security.score, previousWeekData.security.score),
-        maintainability: this.calculateTrend(weekData.maintainability.score, previousWeekData.maintainability.score),
+        maintainability: this.calculateTrend(
+          weekData.maintainability.score,
+          previousWeekData.maintainability.score,
+        ),
       },
       achievements: this.identifyAchievements(weekData),
       concerns: this.identifyConcerns(weekData, previousWeekData),
@@ -589,7 +615,7 @@ export class AlertSystem {
         AlertLevel.CRITICAL,
         'coverage',
         'Test coverage below minimum threshold',
-        `Overall coverage is ${metrics.coverage.overall}%, below the 80% minimum requirement`
+        `Overall coverage is ${metrics.coverage.overall}%, below the 80% minimum requirement`,
       ));
     }
 
@@ -599,7 +625,7 @@ export class AlertSystem {
         AlertLevel.HIGH,
         'security',
         'Security vulnerabilities detected',
-        `${metrics.security.vulnerabilities} security vulnerabilities require immediate attention`
+        `${metrics.security.vulnerabilities} security vulnerabilities require immediate attention`,
       ));
     }
 
@@ -609,14 +635,19 @@ export class AlertSystem {
         AlertLevel.MEDIUM,
         'performance',
         'High test flakiness detected',
-        `Flakiness rate is ${metrics.performance.flakinessRate}%, above the 5% threshold`
+        `Flakiness rate is ${metrics.performance.flakinessRate}%, above the 5% threshold`,
       ));
     }
 
     return alerts;
   }
 
-  private createAlert(level: AlertLevel, type: QualityAlert['type'], message: string, description: string): QualityAlert {
+  private createAlert(
+    level: AlertLevel,
+    type: QualityAlert['type'],
+    message: string,
+    description: string,
+  ): QualityAlert {
     const alert: QualityAlert = {
       id: generateId(),
       level,
@@ -629,7 +660,7 @@ export class AlertSystem {
 
     this.alerts.set(alert.id, alert);
     this.notify(alert);
-    
+
     return alert;
   }
 

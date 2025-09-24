@@ -80,7 +80,7 @@ export class HTTPSMonitoringMiddleware {
             });
         }
       } catch {
-      void _error;
+        void _error;
         logger.error(
           'https_monitoring_middleware',
           'Error in handshake monitoring',

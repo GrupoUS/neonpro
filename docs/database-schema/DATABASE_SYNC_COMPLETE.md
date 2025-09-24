@@ -228,11 +228,11 @@ supabase migration up       # Apply migrations
 
 ```typescript
 // Prisma Client (ORM operations)
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from '@prisma/client';
 
 // Supabase Client (real-time, auth, storage)
-import { createClient } from "@supabase/supabase-js";
-import type { Database } from "./types/supabase-generated";
+import { createClient } from '@supabase/supabase-js';
+import type { Database } from './types/supabase-generated';
 
 const supabase = createClient<Database>(url, key);
 ```

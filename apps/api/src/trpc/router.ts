@@ -3,21 +3,21 @@
  * Combines all domain routers with healthcare compliance
  */
 
+import { aestheticClinicRouter } from './routers/aesthetic-clinic';
+import { aestheticSchedulingRouter } from './routers/aesthetic-scheduling';
 import { agentRouter } from './routers/agent';
 import { aiRouter } from './routers/ai';
 import { aiClinicalSupportRouter } from './routers/ai-clinical-support';
 import { appointmentsRouter } from './routers/appointments';
-import { aestheticSchedulingRouter } from './routers/aesthetic-scheduling';
-import { aestheticClinicRouter } from './routers/aesthetic-clinic';
 import { crudRouter } from './routers/crud';
+import { enhancedAestheticProfessionalsRouter } from './routers/enhanced-aesthetic-professionals';
+import { enhancedPatientIdentityRouter } from './routers/enhanced-patient-identity';
+import { enhancedTelemedicineRouter } from './routers/enhanced-telemedicine';
 import { financialAgentRouter } from './routers/financial-agent';
 import { healthcareServicesRouter } from './routers/healthcare-services';
 import { patientsRouter } from './routers/patients';
 import { realtimeTelemedicineRouter } from './routers/realtime-telemedicine';
 import { telemedicineRouter } from './routers/telemedicine';
-import { enhancedAestheticProfessionalsRouter } from './routers/enhanced-aesthetic-professionals';
-import { enhancedPatientIdentityRouter } from './routers/enhanced-patient-identity';
-import { enhancedTelemedicineRouter } from './routers/enhanced-telemedicine';
 import { router } from './trpc';
 
 // Import comprehensive API contracts from T016
@@ -90,7 +90,7 @@ export const appRouter = router({
   healthcareServices: healthcareServicesRouter,
   realtimeTelemedicine: realtimeTelemedicineRouter,
   telemedicine: telemedicineRouter,
-  
+
   // Enhanced aesthetic scheduling router with Brazilian healthcare compliance
   aestheticScheduling: aestheticSchedulingRouter,
 

@@ -9,7 +9,7 @@ export interface Database {
           id: string;
           email: string;
           name: string;
-          role: "admin" | "doctor" | "receptionist" | "patient";
+          role: 'admin' | 'doctor' | 'receptionist' | 'patient';
           created_at: string;
           updated_at: string;
         };
@@ -17,7 +17,7 @@ export interface Database {
           id?: string;
           email: string;
           name: string;
-          role: "admin" | "doctor" | "receptionist" | "patient";
+          role: 'admin' | 'doctor' | 'receptionist' | 'patient';
           created_at?: string;
           updated_at?: string;
         };
@@ -25,7 +25,7 @@ export interface Database {
           id?: string;
           email?: string;
           name?: string;
-          role?: "admin" | "doctor" | "receptionist" | "patient";
+          role?: 'admin' | 'doctor' | 'receptionist' | 'patient';
           created_at?: string;
           updated_at?: string;
         };
@@ -37,7 +37,7 @@ export interface Database {
           full_name: string;
           phone: string;
           date_of_birth: string;
-          gender: "male" | "female" | "other";
+          gender: 'male' | 'female' | 'other';
           created_at: string;
           updated_at: string;
         };
@@ -47,7 +47,7 @@ export interface Database {
           full_name: string;
           phone: string;
           date_of_birth: string;
-          gender: "male" | "female" | "other";
+          gender: 'male' | 'female' | 'other';
           created_at?: string;
           updated_at?: string;
         };
@@ -57,7 +57,7 @@ export interface Database {
           full_name?: string;
           phone?: string;
           date_of_birth?: string;
-          gender?: "male" | "female" | "other";
+          gender?: 'male' | 'female' | 'other';
           created_at?: string;
           updated_at?: string;
         };
@@ -70,12 +70,12 @@ export interface Database {
           service_id: string;
           scheduled_at: string;
           status:
-            | "scheduled"
-            | "confirmed"
-            | "in_progress"
-            | "completed"
-            | "cancelled"
-            | "no_show";
+            | 'scheduled'
+            | 'confirmed'
+            | 'in_progress'
+            | 'completed'
+            | 'cancelled'
+            | 'no_show';
           notes?: string;
           created_at: string;
           updated_at: string;
@@ -87,12 +87,12 @@ export interface Database {
           service_id: string;
           scheduled_at: string;
           status:
-            | "scheduled"
-            | "confirmed"
-            | "in_progress"
-            | "completed"
-            | "cancelled"
-            | "no_show";
+            | 'scheduled'
+            | 'confirmed'
+            | 'in_progress'
+            | 'completed'
+            | 'cancelled'
+            | 'no_show';
           notes?: string;
           created_at?: string;
           updated_at?: string;
@@ -104,12 +104,12 @@ export interface Database {
           service_id?: string;
           scheduled_at?: string;
           status?:
-            | "scheduled"
-            | "confirmed"
-            | "in_progress"
-            | "completed"
-            | "cancelled"
-            | "no_show";
+            | 'scheduled'
+            | 'confirmed'
+            | 'in_progress'
+            | 'completed'
+            | 'cancelled'
+            | 'no_show';
           notes?: string;
           created_at?: string;
           updated_at?: string;

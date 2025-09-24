@@ -1,6 +1,6 @@
 /**
  * NeonPro Chat Provider Component
- * 
+ *
  * Main context provider for CopilotKit integration with healthcare-specific configuration
  * Features:
  * - Multi-agent coordination (Client, Financial, Appointment)
@@ -10,9 +10,9 @@
  * - WCAG 2.1 AA+ accessibility
  */
 
-import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
 import { CopilotKit } from '@copilotkit/react-core';
 import { useCoAgent } from '@copilotkit/react-core';
+import React, { createContext, ReactNode, useCallback, useContext, useState } from 'react';
 
 // Types
 export interface ChatAgentState {
@@ -65,7 +65,7 @@ interface NeonProChatProviderProps {
 
 export const NeonProChatProvider: React.FC<NeonProChatProviderProps> = ({
   children,
-  config: userConfig
+  config: userConfig,
 }) => {
   const [config, setConfig] = useState<ChatConfig | null>(null);
   const [agents, setAgents] = useState<ChatAgentState[]>([]);
@@ -81,8 +81,8 @@ export const NeonProChatProvider: React.FC<NeonProChatProviderProps> = ({
       compliance: {
         lgpdEnabled: true,
         auditLogging: true,
-        dataRetention: 90
-      }
+        dataRetention: 90,
+      },
     };
 
     const mergedConfig = { ...defaultConfig, ...userConfig };
@@ -96,9 +96,9 @@ export const NeonProChatProvider: React.FC<NeonProChatProviderProps> = ({
         name: 'Assistente de Pacientes',
         status: 'idle',
         context: {
-          clinicId: mergedConfig.clinicId
+          clinicId: mergedConfig.clinicId,
         },
-        messages: []
+        messages: [],
       },
       {
         id: 'financial-agent',
@@ -106,9 +106,9 @@ export const NeonProChatProvider: React.FC<NeonProChatProviderProps> = ({
         name: 'Assistente Financeiro',
         status: 'idle',
         context: {
-          clinicId: mergedConfig.clinicId
+          clinicId: mergedConfig.clinicId,
         },
-        messages: []
+        messages: [],
       },
       {
         id: 'appointment-agent',
@@ -116,10 +116,10 @@ export const NeonProChatProvider: React.FC<NeonProChatProviderProps> = ({
         name: 'Assistente de Agendamento',
         status: 'idle',
         context: {
-          clinicId: mergedConfig.clinicId
+          clinicId: mergedConfig.clinicId,
         },
-        messages: []
-      }
+        messages: [],
+      },
     ];
 
     setAgents(initialAgents);
@@ -137,7 +137,7 @@ export const NeonProChatProvider: React.FC<NeonProChatProviderProps> = ({
   // Send message to agent
   const sendMessage = useCallback(async (
     content: string,
-    agentType: ChatAgentState['type']
+    agentType: ChatAgentState['type'],
   ) => {
     if (!config) return;
 
@@ -152,8 +152,8 @@ export const NeonProChatProvider: React.FC<NeonProChatProviderProps> = ({
       timestamp: new Date(),
       metadata: {
         userId: config.userId,
-        userRole: config.userRole
-      }
+        userRole: config.userRole,
+      },
     };
 
     // Update agent state
@@ -161,7 +161,7 @@ export const NeonProChatProvider: React.FC<NeonProChatProviderProps> = ({
     updatedAgents[agentIndex] = {
       ...agent,
       status: 'thinking',
-      messages: [...agent.messages, userMessage]
+      messages: [...agent.messages, userMessage],
     };
     setAgents(updatedAgents);
 
@@ -172,7 +172,7 @@ export const NeonProChatProvider: React.FC<NeonProChatProviderProps> = ({
           messageId: userMessage.id,
           userId: config.userId,
           timestamp: userMessage.timestamp,
-          contentLength: content.length
+          contentLength: content.length,
         });
       }
 
@@ -185,27 +185,26 @@ export const NeonProChatProvider: React.FC<NeonProChatProviderProps> = ({
           timestamp: new Date(),
           metadata: {
             agentType,
-            processingTime: 1000 + Math.random() * 2000
-          }
+            processingTime: 1000 + Math.random() * 2000,
+          },
         };
 
         const finalAgents = [...updatedAgents];
         finalAgents[agentIndex] = {
           ...agent,
           status: 'idle',
-          messages: [...agent.messages, userMessage, agentResponse]
+          messages: [...agent.messages, userMessage, agentResponse],
         };
         setAgents(finalAgents);
       }, 1000 + Math.random() * 2000);
-
     } catch (error) {
       console.error(`Error sending message to ${agentType} agent:`, error);
-      
+
       // Update agent state to error
       const errorAgents = [...updatedAgents];
       errorAgents[agentIndex] = {
         ...agent,
-        status: 'error'
+        status: 'error',
       };
       setAgents(errorAgents);
     }
@@ -214,17 +213,21 @@ export const NeonProChatProvider: React.FC<NeonProChatProviderProps> = ({
   // Clear chat history
   const clearChat = useCallback((agentType?: ChatAgentState['type']) => {
     if (agentType) {
-      setAgents(prev => prev.map(agent => 
-        agent.type === agentType 
-          ? { ...agent, messages: [], status: 'idle' }
-          : agent
-      ));
+      setAgents(prev =>
+        prev.map(agent =>
+          agent.type === agentType
+            ? { ...agent, messages: [], status: 'idle' }
+            : agent
+        )
+      );
     } else {
-      setAgents(prev => prev.map(agent => ({
-        ...agent,
-        messages: [],
-        status: 'idle'
-      })));
+      setAgents(prev =>
+        prev.map(agent => ({
+          ...agent,
+          messages: [],
+          status: 'idle',
+        }))
+      );
     }
   }, []);
 
@@ -246,12 +249,14 @@ export const NeonProChatProvider: React.FC<NeonProChatProviderProps> = ({
         content: msg.content,
         timestamp: msg.timestamp.toISOString(),
         // Remove sensitive metadata for export
-        metadata: msg.metadata ? {
-          ...msg.metadata,
-          userId: 'REDACTED',
-          patientId: msg.metadata?.patientId ? 'REDACTED' : undefined
-        } : undefined
-      }))
+        metadata: msg.metadata
+          ? {
+            ...msg.metadata,
+            userId: 'REDACTED',
+            patientId: msg.metadata?.patientId ? 'REDACTED' : undefined,
+          }
+          : undefined,
+      })),
     };
 
     return JSON.stringify(exportData, null, 2);
@@ -267,12 +272,12 @@ export const NeonProChatProvider: React.FC<NeonProChatProviderProps> = ({
     setActiveAgent,
     sendMessage,
     clearChat,
-    exportChat
+    exportChat,
   };
 
   return (
     <ChatContext.Provider value={value}>
-      <CopilotKit runtimeUrl="/api/copilotkit">
+      <CopilotKit runtimeUrl='/api/copilotkit'>
         {children}
       </CopilotKit>
     </ChatContext.Provider>
@@ -283,20 +288,20 @@ export const NeonProChatProvider: React.FC<NeonProChatProviderProps> = ({
 const generateAgentResponse = (userMessage: string, agentType: ChatAgentState['type']): string => {
   const responses = {
     client: [
-      "Entendi! Posso ajudar você a gerenciar informações do paciente. O que você gostaria de fazer?",
-      "Vou verificar os dados do paciente no sistema. Um momento, por favor.",
-      "Para acessar informações do paciente, preciso confirmar sua identidade e permissões."
+      'Entendi! Posso ajudar você a gerenciar informações do paciente. O que você gostaria de fazer?',
+      'Vou verificar os dados do paciente no sistema. Um momento, por favor.',
+      'Para acessar informações do paciente, preciso confirmar sua identidade e permissões.',
     ],
     financial: [
-      "Vou analisar a situação financeira do paciente. Deixe-me verificar os registros.",
-      "Posso ajudar com faturamento, pagamentos e informações financeiras. Qual é sua dúvida?",
-      "Verificando o histórico financeiro e status de pagamentos..."
+      'Vou analisar a situação financeira do paciente. Deixe-me verificar os registros.',
+      'Posso ajudar com faturamento, pagamentos e informações financeiras. Qual é sua dúvida?',
+      'Verificando o histórico financeiro e status de pagamentos...',
     ],
     appointment: [
-      "Vou verificar a disponibilidade para agendamento. Qual tipo de procedimento você precisa?",
-      "Posso ajudar a encontrar o melhor horário considerando a agenda e preferências do paciente.",
-      "Analisando a agenda e encontrando slots disponíveis..."
-    ]
+      'Vou verificar a disponibilidade para agendamento. Qual tipo de procedimento você precisa?',
+      'Posso ajudar a encontrar o melhor horário considerando a agenda e preferências do paciente.',
+      'Analisando a agenda e encontrando slots disponíveis...',
+    ],
   };
 
   const agentResponses = responses[agentType];

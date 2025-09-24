@@ -7,30 +7,27 @@
  * @fileoverview Healthcare form foundation with compliance and accessibility
  */
 
-"use client";
+'use client';
 
 import React, {
+  createContext,
   FormHTMLAttributes,
   ReactNode,
-  createContext,
   useContext,
-  useState,
   useEffect,
   useRef,
-} from "react";
-import { z } from "zod";
-import { cn } from "../../lib/utils";
-import { useHealthcareTheme } from "../healthcare/healthcare-theme-provider";
-import {
-  DataSensitivity,
-  validateEmergencyData,
-} from "../../utils/healthcare-validation";
+  useState,
+} from 'react';
+import { z } from 'zod';
+import { cn } from '../../lib/utils';
 import {
   announceToScreenReader,
+  generateAccessibleId,
   HealthcarePriority,
   useFocusTrap,
-  generateAccessibleId,
-} from "../../utils/accessibility";
+} from '../../utils/accessibility';
+import { DataSensitivity, validateEmergencyData } from '../../utils/healthcare-validation';
+import { useHealthcareTheme } from '../healthcare/healthcare-theme-provider';
 
 // Healthcare form validation context
 export interface HealthcareFormContext {
@@ -61,7 +58,8 @@ const HealthcareFormContext = createContext<HealthcareFormContext | null>(null);
 
 // Healthcare form props
 export interface HealthcareFormProps
-  extends Omit<FormHTMLAttributes<HTMLFormElement>, "onSubmit" | "onError"> {
+  extends Omit<FormHTMLAttributes<HTMLFormElement>, 'onSubmit' | 'onError'>
+{
   children: ReactNode;
 
   // Form configuration
@@ -103,7 +101,7 @@ export function HealthcareForm({
   emergencyForm = false,
   patientDataForm = false,
   requireConsent = true,
-  consentVersion = "1.0",
+  consentVersion = '1.0',
   validationSchema,
   validationErrors = {},
   onSubmit,
@@ -120,13 +118,12 @@ export function HealthcareForm({
 
   // Form state
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [errors, setErrors] =
-    useState<Record<string, string[]>>(validationErrors);
+  const [errors, setErrors] = useState<Record<string, string[]>>(validationErrors);
   const [consentGiven, setConsentGiven] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
 
   // Generate unique form ID
-  const formId = generateAccessibleId("healthcare-form");
+  const formId = generateAccessibleId('healthcare-form');
 
   // Focus trap for emergency forms
   const focusTrapRef = useFocusTrap(
@@ -136,30 +133,29 @@ export function HealthcareForm({
   // Merge refs for emergency forms
   const mergedRef = emergencyForm
     ? (node: HTMLFormElement | null) => {
-        formRef.current = node as HTMLFormElement | null;
-        const ft = focusTrapRef as unknown as
-          | ((n: HTMLElement) => void)
-          | React.RefObject<HTMLElement>
-          | null;
-        if (typeof ft === "function" && node) {
-          ft(node);
-        } else if (ft && "current" in ft && node) {
-          (ft as React.RefObject<HTMLElement | null>).current =
-            node as unknown as HTMLElement | null;
-        }
+      formRef.current = node as HTMLFormElement | null;
+      const ft = focusTrapRef as unknown as
+        | ((n: HTMLElement) => void)
+        | React.RefObject<HTMLElement>
+        | null;
+      if (typeof ft === 'function' && node) {
+        ft(node);
+      } else if (ft && 'current' in ft && node) {
+        (ft as React.RefObject<HTMLElement | null>).current = node as unknown as HTMLElement | null;
       }
+    }
     : formRef;
 
   // Error management functions
   const setFieldError = (field: string, fieldErrors: string[]) => {
-    setErrors((prev) => ({
+    setErrors(prev => ({
       ...prev,
       [field]: fieldErrors,
     }));
   };
 
   const clearFieldError = (field: string) => {
-    setErrors((prev) => {
+    setErrors(prev => {
       const newErrors = { ...prev };
       delete newErrors[field];
       return newErrors;
@@ -177,7 +173,7 @@ export function HealthcareForm({
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    if (isSubmitting) {return;}
+    if (isSubmitting) return;
 
     const form = event.currentTarget;
     const formData = new FormData(form);
@@ -190,10 +186,10 @@ export function HealthcareForm({
 
       // LGPD consent validation
       if (requireConsent && !consentGiven) {
-        const consentError = ["Consentimento LGPD é obrigatório"];
-        setFieldError("consent", consentError);
+        const consentError = ['Consentimento LGPD é obrigatório'];
+        setFieldError('consent', consentError);
         announceError(
-          "Consentimento para processamento de dados é obrigatório",
+          'Consentimento para processamento de dados é obrigatório',
         );
         return;
       }
@@ -205,10 +201,10 @@ export function HealthcareForm({
       if (patientDataForm) {
         const emergencyValidation = validateEmergencyData(formDataObject);
         if (!emergencyValidation.isValid) {
-          emergencyValidation.errors.forEach((error) => {
+          emergencyValidation.errors.forEach(error => {
             announceError(error);
           });
-          setFieldError("emergency", emergencyValidation.errors);
+          setFieldError('emergency', emergencyValidation.errors);
           return;
         }
       }
@@ -222,7 +218,7 @@ export function HealthcareForm({
             const fieldErrors: Record<string, string[]> = {};
 
             validationError.errors.forEach((error: z.ZodIssue) => {
-              const field = error.path.join(".");
+              const field = error.path.join('.');
               if (!fieldErrors[field]) {
                 fieldErrors[field] = [];
               }
@@ -265,19 +261,18 @@ export function HealthcareForm({
       // Success announcement
       announceToScreenReader(
         emergencyForm
-          ? "Formulário de emergência enviado com sucesso"
-          : "Formulário enviado com sucesso",
+          ? 'Formulário de emergência enviado com sucesso'
+          : 'Formulário enviado com sucesso',
         emergencyForm ? HealthcarePriority.EMERGENCY : HealthcarePriority.HIGH,
       );
     } catch (error) {
-      console.error("Healthcare form submission error:", error);
+      console.error('Healthcare form submission error:', error);
 
-      const errorMessage =
-        error instanceof Error
-          ? error.message
-          : "Erro desconhecido ao enviar formulário";
+      const errorMessage = error instanceof Error
+        ? error.message
+        : 'Erro desconhecido ao enviar formulário';
 
-      setFieldError("submit", [errorMessage]);
+      setFieldError('submit', [errorMessage]);
       announceError(`Erro ao enviar formulário: ${errorMessage}`);
     } finally {
       setIsSubmitting(false);
@@ -286,32 +281,32 @@ export function HealthcareForm({
 
   // Keyboard shortcuts for emergency forms
   useEffect(() => {
-    if (!emergencyShortcuts || !emergencyForm) {return;}
+    if (!emergencyShortcuts || !emergencyForm) return;
 
     const handleKeyDown = (event: KeyboardEvent) => {
       // Ctrl+Shift+S: Quick save for emergency
-      if (event.ctrlKey && event.shiftKey && event.key === "S") {
+      if (event.ctrlKey && event.shiftKey && event.key === 'S') {
         event.preventDefault();
         formRef.current?.requestSubmit();
         announceToScreenReader(
-          "Salvamento rápido de emergência ativado",
+          'Salvamento rápido de emergência ativado',
           HealthcarePriority.EMERGENCY,
         );
       }
 
       // Alt+H: Help/assistance call
-      if (event.altKey && event.key === "h") {
+      if (event.altKey && event.key === 'h') {
         event.preventDefault();
         announceToScreenReader(
-          "Chamando assistência médica",
+          'Chamando assistência médica',
           HealthcarePriority.EMERGENCY,
         );
         // Could trigger help modal or notification
       }
     };
 
-    document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
   }, [emergencyShortcuts, emergencyForm]);
 
   // Context value
@@ -332,13 +327,13 @@ export function HealthcareForm({
 
   // Form CSS classes
   const formClasses = cn(
-    "healthcare-form",
-    "space-y-4",
+    'healthcare-form',
+    'space-y-4',
     {
-      "healthcare-form--emergency": emergencyForm,
-      "healthcare-form--patient-data": patientDataForm,
-      "healthcare-form--submitting": isSubmitting,
-      "healthcare-form--has-errors": contextValue.hasErrors,
+      'healthcare-form--emergency': emergencyForm,
+      'healthcare-form--patient-data': patientDataForm,
+      'healthcare-form--submitting': isSubmitting,
+      'healthcare-form--has-errors': contextValue.hasErrors,
     },
     className,
   );
@@ -350,12 +345,10 @@ export function HealthcareForm({
         onSubmit={handleSubmit}
         className={formClasses}
         id={formId}
-        aria-label={
-          ariaLabel ||
-          (emergencyForm
-            ? "Formulário de emergência médica"
-            : "Formulário de dados de saúde")
-        }
+        aria-label={ariaLabel
+          || (emergencyForm
+            ? 'Formulário de emergência médica'
+            : 'Formulário de dados de saúde')}
         aria-describedby={`${formId}-description`}
         data-sensitivity={dataSensitivity}
         data-emergency={emergencyForm}
@@ -364,46 +357,45 @@ export function HealthcareForm({
         {...props}
       >
         {/* Form description for screen readers */}
-        <div id={`${formId}-description`} className="sr-only">
-          {emergencyForm && "Formulário para situações de emergência médica. "}
-          {patientDataForm &&
-            "Formulário contendo dados sensíveis do paciente. "}
-          {requireConsent &&
-            "Consentimento LGPD necessário para processamento. "}
-          Navegue com Tab entre os campos. Use Ctrl+Shift+S para salvamento
-          rápido.
+        <div id={`${formId}-description`} className='sr-only'>
+          {emergencyForm && 'Formulário para situações de emergência médica. '}
+          {patientDataForm
+            && 'Formulário contendo dados sensíveis do paciente. '}
+          {requireConsent
+            && 'Consentimento LGPD necessário para processamento. '}
+          Navegue com Tab entre os campos. Use Ctrl+Shift+S para salvamento rápido.
         </div>
 
         {/* Emergency mode indicator */}
         {emergencyForm && accessibility.isEmergencyMode && (
-          <div className="healthcare-emergency-indicator bg-destructive text-destructive-foreground p-3 rounded-md">
-            <div className="flex items-center gap-2">
-              <span className="text-lg" role="img" aria-label="Emergência">
+          <div className='healthcare-emergency-indicator bg-destructive text-destructive-foreground p-3 rounded-md'>
+            <div className='flex items-center gap-2'>
+              <span className='text-lg' role='img' aria-label='Emergência'>
                 🚨
               </span>
-              <span className="font-semibold">MODO DE EMERGÊNCIA ATIVO</span>
+              <span className='font-semibold'>MODO DE EMERGÊNCIA ATIVO</span>
             </div>
-            <p className="text-sm mt-1">
+            <p className='text-sm mt-1'>
               Formulário otimizado para entrada rápida de dados críticos
             </p>
           </div>
         )}
 
         {/* Data sensitivity indicator */}
-        {(dataSensitivity === DataSensitivity.RESTRICTED ||
-          dataSensitivity === DataSensitivity.CONFIDENTIAL) && (
-          <div className="healthcare-sensitivity-indicator border-l-4 border-warning bg-warning/10 p-3">
-            <div className="flex items-center gap-2">
-              <span role="img" aria-label="Dados sensíveis">
+        {(dataSensitivity === DataSensitivity.RESTRICTED
+          || dataSensitivity === DataSensitivity.CONFIDENTIAL) && (
+          <div className='healthcare-sensitivity-indicator border-l-4 border-warning bg-warning/10 p-3'>
+            <div className='flex items-center gap-2'>
+              <span role='img' aria-label='Dados sensíveis'>
                 🔒
               </span>
-              <span className="font-semibold text-sm">
+              <span className='font-semibold text-sm'>
                 {dataSensitivity === DataSensitivity.RESTRICTED
-                  ? "DADOS ALTAMENTE SENSÍVEIS"
-                  : "DADOS CONFIDENCIAIS"}
+                  ? 'DADOS ALTAMENTE SENSÍVEIS'
+                  : 'DADOS CONFIDENCIAIS'}
               </span>
             </div>
-            <p className="text-xs mt-1 text-muted-foreground">
+            <p className='text-xs mt-1 text-muted-foreground'>
               Informações protegidas pela LGPD. Acesso controlado e auditado.
             </p>
           </div>
@@ -411,53 +403,46 @@ export function HealthcareForm({
 
         {/* LGPD consent notice */}
         {requireConsent && !consentGiven && (
-          <div className="healthcare-consent-notice bg-info/10 border border-info/20 p-4 rounded-md">
-            <h3 className="font-semibold text-sm mb-2">
+          <div className='healthcare-consent-notice bg-info/10 border border-info/20 p-4 rounded-md'>
+            <h3 className='font-semibold text-sm mb-2'>
               Consentimento LGPD Necessário
             </h3>
-            <p className="text-sm text-muted-foreground mb-3">
-              Para processar os dados deste formulário, precisamos do seu
-              consentimento conforme a Lei Geral de Proteção de Dados (LGPD).
+            <p className='text-sm text-muted-foreground mb-3'>
+              Para processar os dados deste formulário, precisamos do seu consentimento conforme a
+              Lei Geral de Proteção de Dados (LGPD).
             </p>
-            <label className="flex items-start gap-2 text-sm">
+            <label className='flex items-start gap-2 text-sm'>
               <input
-                type="checkbox"
+                type='checkbox'
                 checked={consentGiven}
-                onChange={(e) => setConsentGiven(e.target.checked)}
-                className="mt-0.5"
+                onChange={e => setConsentGiven(e.target.checked)}
+                className='mt-0.5'
                 aria-describedby={`${formId}-consent-description`}
               />
               <span>
-                Autorizo o processamento dos meus dados para os fins descritos
-                neste formulário.
+                Autorizo o processamento dos meus dados para os fins descritos neste formulário.
               </span>
             </label>
             <p
               id={`${formId}-consent-description`}
-              className="text-xs text-muted-foreground mt-2"
+              className='text-xs text-muted-foreground mt-2'
             >
-              Versão do consentimento: {consentVersion}. Você pode revogar este
-              consentimento a qualquer momento.
+              Versão do consentimento:{' '}
+              {consentVersion}. Você pode revogar este consentimento a qualquer momento.
             </p>
           </div>
         )}
 
         {/* Global form errors */}
         {(errors.submit || errors.consent || errors.emergency) && (
-          <div className="healthcare-form-errors bg-destructive/10 border border-destructive/20 p-4 rounded-md">
-            <h3 className="font-semibold text-sm text-destructive mb-2">
+          <div className='healthcare-form-errors bg-destructive/10 border border-destructive/20 p-4 rounded-md'>
+            <h3 className='font-semibold text-sm text-destructive mb-2'>
               Erros no formulário:
             </h3>
-            <ul className="list-disc list-inside space-y-1 text-sm text-destructive">
-              {errors.submit?.map((error, index) => (
-                <li key={`submit-${index}`}>{error}</li>
-              ))}
-              {errors.consent?.map((error, index) => (
-                <li key={`consent-${index}`}>{error}</li>
-              ))}
-              {errors.emergency?.map((error, index) => (
-                <li key={`emergency-${index}`}>{error}</li>
-              ))}
+            <ul className='list-disc list-inside space-y-1 text-sm text-destructive'>
+              {errors.submit?.map((error, index) => <li key={`submit-${index}`}>{error}</li>)}
+              {errors.consent?.map((error, index) => <li key={`consent-${index}`}>{error}</li>)}
+              {errors.emergency?.map((error, index) => <li key={`emergency-${index}`}>{error}</li>)}
             </ul>
           </div>
         )}
@@ -475,7 +460,7 @@ export function useHealthcareForm(): HealthcareFormContext {
   const context = useContext(HealthcareFormContext);
 
   if (!context) {
-    throw new Error("useHealthcareForm must be used within a HealthcareForm");
+    throw new Error('useHealthcareForm must be used within a HealthcareForm');
   }
 
   return context;

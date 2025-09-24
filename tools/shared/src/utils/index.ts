@@ -5,25 +5,18 @@
  * to reduce duplication and maintain consistency.
  */
 
+import { exec, execSync } from 'child_process';
+import { existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from 'fs';
+import { dirname, extname, join, parse, relative, resolve } from 'path';
+import { promisify } from 'util';
 import {
-  readFileSync,
-  writeFileSync,
-  existsSync,
-  mkdirSync,
-  statSync,
-  readdirSync,
-} from "fs";
-import { join, dirname, resolve, relative, parse, extname } from "path";
-import { exec, execSync } from "child_process";
-import { promisify } from "util";
-import {
-  Result,
   FileOperationOptions,
-  ValidationResult,
   PackageInfo,
+  Result,
   ToolError,
   ValidationError,
-} from "../types";
+  ValidationResult,
+} from '../types';
 
 const execAsync = promisify(exec);
 
@@ -36,7 +29,7 @@ const execAsync = promisify(exec);
  */
 export function readFileSafe(
   filePath: string,
-  encoding: BufferEncoding = "utf8",
+  encoding: BufferEncoding = 'utf8',
 ): Result<string> {
   try {
     const content = readFileSync(filePath, encoding);
@@ -69,7 +62,7 @@ export function writeFileSafe(
     }
 
     writeFileSync(filePath, content, {
-      encoding: options.encoding || "utf8",
+      encoding: options.encoding || 'utf8',
       mode: options.mode,
       flag: options.flag,
     });
@@ -123,8 +116,7 @@ export function findFiles(
 ): Result<string[]> {
   try {
     const files: string[] = [];
-    const patternRegex =
-      typeof pattern === "string" ? new RegExp(pattern) : pattern;
+    const patternRegex = typeof pattern === 'string' ? new RegExp(pattern) : pattern;
 
     function walkDirectory(dir: string, depth: number = 0): void {
       if (depth > maxDepth) return;
@@ -166,10 +158,10 @@ export function findFiles(
  * Read and parse package.json safely
  */
 export function readPackageJson(
-  filePath: string = "package.json",
+  filePath: string = 'package.json',
 ): Result<PackageInfo> {
   try {
-    const content = readFileSync(filePath, "utf8");
+    const content = readFileSync(filePath, 'utf8');
     const packageData = JSON.parse(content);
 
     const packageInfo: PackageInfo = {
@@ -203,7 +195,7 @@ export function isPackageInstalled(
   directory: string = process.cwd(),
 ): boolean {
   try {
-    const packagePath = resolve(directory, "node_modules", packageName);
+    const packagePath = resolve(directory, 'node_modules', packageName);
     return existsSync(packagePath);
   } catch {
     return false;
@@ -220,16 +212,16 @@ export function getInstalledPackageVersion(
   try {
     const packageJsonPath = resolve(
       directory,
-      "node_modules",
+      'node_modules',
       packageName,
-      "package.json",
+      'package.json',
     );
     const result = readPackageJson(packageJsonPath);
 
     if (!result.success || !result.data) {
       return {
         success: false,
-        error: new Error("Package not found"),
+        error: new Error('Package not found'),
         message: `Package ${packageName} is not installed`,
       };
     }
@@ -297,7 +289,7 @@ export function executeCommandSync(
   try {
     const output = execSync(command, {
       cwd: options.cwd || process.cwd(),
-      encoding: options.encoding || "utf8",
+      encoding: options.encoding || 'utf8',
     });
 
     return {
@@ -329,19 +321,19 @@ export async function validateTypeScript(
   const warnings: string[] = [];
 
   try {
-    const tsConfigArg = tsConfigPath ? `--project ${tsConfigPath}` : "";
-    const command = `npx tsc --noEmit ${tsConfigArg} ${files.join(" ")}`;
+    const tsConfigArg = tsConfigPath ? `--project ${tsConfigPath}` : '';
+    const command = `npx tsc --noEmit ${tsConfigArg} ${files.join(' ')}`;
 
     const result = await executeCommand(command);
 
     if (!result.success) {
-      const output = result.error?.message || "";
-      const lines = output.split("\n");
+      const output = result.error?.message || '';
+      const lines = output.split('\n');
 
       for (const line of lines) {
-        if (line.includes("error TS")) {
+        if (line.includes('error TS')) {
           errors.push(line.trim());
-        } else if (line.includes("warning") || line.includes("deprecated")) {
+        } else if (line.includes('warning') || line.includes('deprecated')) {
           warnings.push(line.trim());
         }
       }
@@ -374,10 +366,10 @@ export function validateConfig<T>(
   const errors: string[] = [];
   const warnings: string[] = [];
 
-  if (!config || typeof config !== "object") {
+  if (!config || typeof config !== 'object') {
     return {
       valid: false,
-      errors: ["Configuration must be an object"],
+      errors: ['Configuration must be an object'],
       warnings: [],
       score: 0,
     };
@@ -386,9 +378,9 @@ export function validateConfig<T>(
   // Check required fields
   for (const field of requiredFields) {
     if (
-      !(field in config) ||
-      config[field] === undefined ||
-      config[field] === null
+      !(field in config)
+      || config[field] === undefined
+      || config[field] === null
     ) {
       errors.push(`Missing required field: ${String(field)}`);
     }
@@ -421,10 +413,11 @@ export function validateConfig<T>(
  */
 export function toCamelCase(str: string): string {
   return str
-    .replace(/(?:^\w|[A-Z]|\b\w)/g, (word, index) =>
-      index === 0 ? word.toLowerCase() : word.toUpperCase(),
+    .replace(
+      /(?:^\w|[A-Z]|\b\w)/g,
+      (word, index) => index === 0 ? word.toLowerCase() : word.toUpperCase(),
     )
-    .replace(/\s+/g, "");
+    .replace(/\s+/g, '');
 }
 
 /**
@@ -432,8 +425,8 @@ export function toCamelCase(str: string): string {
  */
 export function toKebabCase(str: string): string {
   return str
-    .replace(/([a-z])([A-Z])/g, "$1-$2")
-    .replace(/[\s_]+/g, "-")
+    .replace(/([a-z])([A-Z])/g, '$1-$2')
+    .replace(/[\s_]+/g, '-')
     .toLowerCase();
 }
 
@@ -442,23 +435,23 @@ export function toKebabCase(str: string): string {
  */
 export function toPascalCase(str: string): string {
   return str
-    .replace(/(?:^\w|[A-Z]|\b\w)/g, (word) => word.toUpperCase())
-    .replace(/\s+/g, "");
+    .replace(/(?:^\w|[A-Z]|\b\w)/g, word => word.toUpperCase())
+    .replace(/\s+/g, '');
 }
 
 /**
  * Format bytes to human readable string
  */
 export function formatBytes(bytes: number, decimals: number = 2): string {
-  if (bytes === 0) return "0 Bytes";
+  if (bytes === 0) return '0 Bytes';
 
   const k = 1024;
   const dm = decimals < 0 ? 0 : decimals;
-  const sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
+  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
 
   const i = Math.floor(Math.log(bytes) / Math.log(k));
 
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i];
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
 }
 
 /**
@@ -486,7 +479,7 @@ export function formatDuration(ms: number): string {
 export function truncate(
   str: string,
   maxLength: number,
-  ellipsis: string = "...",
+  ellipsis: string = '...',
 ): string {
   if (str.length <= maxLength) return str;
   return str.slice(0, maxLength - ellipsis.length) + ellipsis;
@@ -507,7 +500,7 @@ export function getRelativePath(from: string, to: string): string {
  * Normalize path separators to forward slashes
  */
 export function normalizePath(path: string): string {
-  return path.replace(/\\/g, "/");
+  return path.replace(/\\/g, '/');
 }
 
 /**
@@ -530,7 +523,7 @@ export function getFileNameWithoutExtension(filePath: string): string {
 // ========================================
 
 const isPlainObject = (value: unknown): value is Record<string, unknown> =>
-  typeof value === "object" && value !== null && !Array.isArray(value);
+  typeof value === 'object' && value !== null && !Array.isArray(value);
 
 /**
  * Remove duplicates from array
@@ -629,7 +622,7 @@ export function omit<T extends Record<string, unknown>, K extends keyof T>(
  * Delay execution for specified milliseconds
  */
 export function delay(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
+  return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 /**
@@ -727,8 +720,8 @@ export function safeGet<T>(
 ): T | undefined {
   try {
     return (
-      path.split(".").reduce((current, key) => current?.[key], obj) ??
-      defaultValue
+      path.split('.').reduce((current, key) => current?.[key], obj)
+        ?? defaultValue
     );
   } catch {
     return defaultValue;
@@ -736,4 +729,4 @@ export function safeGet<T>(
 }
 
 // Export everything
-export * from "../types";
+export * from '../types';

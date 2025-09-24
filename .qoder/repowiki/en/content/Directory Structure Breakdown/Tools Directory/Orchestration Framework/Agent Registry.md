@@ -374,9 +374,9 @@ This section addresses frequent challenges encountered when working with the Age
 const compliantAgents = registry.getAgentsForPhase(phase, context);
 if (compliantAgents.length === 0 && context.healthcareCompliance.required) {
   // Fall back to default compliant agents
-  return DEFAULT_AGENTS.filter(a => 
-    a.phases.includes(phase) && 
-    a.healthcareCompliance?.lgpd
+  return DEFAULT_AGENTS.filter(a =>
+    a.phases.includes(phase)
+    && a.healthcareCompliance?.lgpd
   );
 }
 ```

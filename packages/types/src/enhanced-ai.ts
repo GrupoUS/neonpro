@@ -5,10 +5,10 @@
 
 // Healthcare-compliant metadata types for Enhanced AI
 export interface EnhancedAIMetadata {
-  complianceLevel?: "standard" | "enhanced" | "restricted";
-  dataSensitivity?: "public" | "internal" | "confidential" | "restricted";
+  complianceLevel?: 'standard' | 'enhanced' | 'restricted';
+  dataSensitivity?: 'public' | 'internal' | 'confidential' | 'restricted';
   auditTrail?: boolean;
-  encryptionLevel?: "none" | "basic" | "advanced" | "military";
+  encryptionLevel?: 'none' | 'basic' | 'advanced' | 'military';
   retentionPeriod?: number;
   [key: string]: unknown;
 }
@@ -18,7 +18,7 @@ import type {
   AIProviderConfig,
   GenerateAnswerInput,
   GenerateAnswerResult,
-} from "./ai-provider";
+} from './ai-provider';
 
 // ================================================
 // ENHANCED AI MODEL TYPES
@@ -28,24 +28,24 @@ import type {
  * Enhanced AI model identifiers including healthcare-specialized models
  */
 export type EnhancedAIModel =
-  | "gpt-4o"
-  | "gpt-4o-mini"
-  | "claude-3.5-sonnet"
-  | "gemini-pro"
-  | "healthcare-pt-br"
-  | "experimental-ai";
+  | 'gpt-4o'
+  | 'gpt-4o-mini'
+  | 'claude-3.5-sonnet'
+  | 'gemini-pro'
+  | 'healthcare-pt-br'
+  | 'experimental-ai';
 
 /**
  * Medical specialties supported by AI models
  */
 export type MedicalSpecialty =
-  | "dermatologia"
-  | "estetica"
-  | "cosmiatria"
-  | "cirurgia_plastica"
-  | "medicina_geral"
-  | "nutricao"
-  | "fisioterapia";
+  | 'dermatologia'
+  | 'estetica'
+  | 'cosmiatria'
+  | 'cirurgia_plastica'
+  | 'medicina_geral'
+  | 'nutricao'
+  | 'fisioterapia';
 
 /**
  * Enhanced AI model configuration with healthcare compliance
@@ -53,7 +53,7 @@ export type MedicalSpecialty =
 export interface EnhancedAIModelConfig extends AIProviderConfig {
   readonly modelCode: EnhancedAIModel;
   readonly modelName: string;
-  readonly provider: AIProvider | "healthcare-br";
+  readonly provider: AIProvider | 'healthcare-br';
   readonly modelVersion: string;
 
   // Context and Performance
@@ -85,7 +85,7 @@ export interface EnhancedAIModelConfig extends AIProviderConfig {
   readonly encryptionAtRest: boolean;
 
   // Model Status
-  readonly status: "active" | "deprecated" | "maintenance" | "experimental";
+  readonly status: 'active' | 'deprecated' | 'maintenance' | 'experimental';
   readonly deploymentDate?: Date;
   readonly deprecationDate?: Date;
 }
@@ -97,12 +97,12 @@ export interface EnhancedAIModelConfig extends AIProviderConfig {
 /**
  * Subscription tier levels
  */
-export type SubscriptionTier = "free" | "pro" | "enterprise" | "trial";
+export type SubscriptionTier = 'free' | 'pro' | 'enterprise' | 'trial';
 
 /**
  * CFM compliance levels for Brazilian medical practice
  */
-export type CFMComplianceLevel = "basic" | "advanced" | "full";
+export type CFMComplianceLevel = 'basic' | 'advanced' | 'full';
 
 /**
  * Subscription plan configuration with Brazilian healthcare features
@@ -182,8 +182,8 @@ export interface AIUsageRecord {
 
   // Model and Request Details
   readonly modelCode: EnhancedAIModel;
-  readonly provider: AIProvider | "healthcare-br";
-  readonly requestType: "chat" | "completion" | "analysis" | "prediction";
+  readonly provider: AIProvider | 'healthcare-br';
+  readonly requestType: 'chat' | 'completion' | 'analysis' | 'prediction';
 
   // Token Usage
   readonly inputTokens: number;
@@ -265,13 +265,13 @@ export interface AuditTrail {
   readonly userRole?: string;
   readonly ipAddress?: string;
   readonly userAgent?: string;
-  readonly consentStatus: "valid" | "missing" | "invalid" | "withdrawn";
+  readonly consentStatus: 'valid' | 'missing' | 'invalid' | 'withdrawn';
   readonly dataProcessingPurpose:
-    | "analytics"
-    | "diagnosis"
-    | "training"
-    | "audit";
-  readonly anonymizationLevel: "none" | "pseudonymized" | "anonymized";
+    | 'analytics'
+    | 'diagnosis'
+    | 'training'
+    | 'audit';
+  readonly anonymizationLevel: 'none' | 'pseudonymized' | 'anonymized';
   readonly metadata?: EnhancedAIMetadata;
 }
 
@@ -283,16 +283,16 @@ export interface AuditTrail {
  * AI feature identifiers
  */
 export type AIFeatureCode =
-  | "ai_chat_basic"
-  | "ai_chat_advanced"
-  | "ai_analytics"
-  | "ai_insights"
-  | "ai_predictions"
-  | "custom_models"
-  | "beta_features"
-  | "lgpd_advanced"
-  | "api_access"
-  | "priority_support";
+  | 'ai_chat_basic'
+  | 'ai_chat_advanced'
+  | 'ai_analytics'
+  | 'ai_insights'
+  | 'ai_predictions'
+  | 'custom_models'
+  | 'beta_features'
+  | 'lgpd_advanced'
+  | 'api_access'
+  | 'priority_support';
 
 /**
  * Feature gate configuration for plan-based access control
@@ -335,7 +335,7 @@ export interface FeatureGate {
 /**
  * User subscription status
  */
-export type SubscriptionStatus = "active" | "suspended" | "cancelled" | "trial";
+export type SubscriptionStatus = 'active' | 'suspended' | 'cancelled' | 'trial';
 
 /**
  * User subscription assignment with Brazilian billing support
@@ -395,10 +395,10 @@ export interface EnhancedAIRequest extends GenerateAnswerInput {
   // LGPD Compliance
   readonly consentId?: string;
   readonly dataProcessingPurpose:
-    | "analytics"
-    | "diagnosis"
-    | "training"
-    | "audit";
+    | 'analytics'
+    | 'diagnosis'
+    | 'training'
+    | 'audit';
   readonly anonymizationRequired?: boolean;
 
   // Feature Access
@@ -432,16 +432,16 @@ export interface EnhancedAIResponse extends GenerateAnswerResult {
  * Enhanced AI error types with healthcare compliance context
  */
 export type EnhancedAIErrorCode =
-  | "QUOTA_EXCEEDED"
-  | "PLAN_UPGRADE_REQUIRED"
-  | "MODEL_UNAVAILABLE"
-  | "CFM_VALIDATION_REQUIRED"
-  | "MEDICAL_LICENSE_REQUIRED"
-  | "CONSENT_REQUIRED"
-  | "PATIENT_SAFETY_BLOCK"
-  | "GEOGRAPHIC_RESTRICTION"
-  | "ANVISA_OVERSIGHT_REQUIRED"
-  | "LGPD_COMPLIANCE_ERROR";
+  | 'QUOTA_EXCEEDED'
+  | 'PLAN_UPGRADE_REQUIRED'
+  | 'MODEL_UNAVAILABLE'
+  | 'CFM_VALIDATION_REQUIRED'
+  | 'MEDICAL_LICENSE_REQUIRED'
+  | 'CONSENT_REQUIRED'
+  | 'PATIENT_SAFETY_BLOCK'
+  | 'GEOGRAPHIC_RESTRICTION'
+  | 'ANVISA_OVERSIGHT_REQUIRED'
+  | 'LGPD_COMPLIANCE_ERROR';
 
 /**
  * Enhanced AI error with compliance information

@@ -248,7 +248,7 @@ const createOptimizedSupabaseClient = (): SupabaseClient => {
     process.env.SUPABASE_SERVICE_ROLE_KEY,
     {
       db: {
-        schema: "public",
+        schema: 'public',
       },
       auth: {
         persistSession: false,
@@ -261,8 +261,8 @@ const createOptimizedSupabaseClient = (): SupabaseClient => {
       },
       global: {
         headers: {
-          "x-application-name": "neonpro-healthcare",
-          "x-client-info": "neonpro-database-client",
+          'x-application-name': 'neonpro-healthcare',
+          'x-client-info': 'neonpro-database-client',
         },
       },
     },

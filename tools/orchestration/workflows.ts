@@ -3,8 +3,4 @@
  * Re-exports from the src directory for backward compatibility
  */
 
-export {
-  StandardTDDWorkflow,
-  SecurityCriticalWorkflow,
-  type Workflow,
-} from "./src/workflows";
+export { SecurityCriticalWorkflow, StandardTDDWorkflow, type Workflow } from './src/workflows';

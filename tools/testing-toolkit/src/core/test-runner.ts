@@ -5,7 +5,7 @@
  * and collecting results.
  */
 
-import type { TestConfig, TestResult, TestSuite } from "./types";
+import type { TestConfig, TestResult, TestSuite } from './types';
 
 export class TestRunner {
   private config: TestConfig;
@@ -42,10 +42,10 @@ export class TestRunner {
 
       let errorMessage: string;
       if (error === undefined) {
-        errorMessage = "undefined";
+        errorMessage = 'undefined';
       } else if (error === null) {
-        errorMessage = "null";
-      } else if (typeof error === "string") {
+        errorMessage = 'null';
+      } else if (typeof error === 'string') {
         errorMessage = error;
       } else if (error instanceof Error) {
         errorMessage = error.message;
@@ -74,23 +74,21 @@ export class TestRunner {
       (sum, result) => sum + result.duration,
       0,
     );
-    const passedTests = this.results.filter((result) => result.passed);
-    const passRate =
-      this.results.length > 0
-        ? (passedTests.length / this.results.length) * 100
-        : 0;
+    const passedTests = this.results.filter(result => result.passed);
+    const passRate = this.results.length > 0
+      ? (passedTests.length / this.results.length) * 100
+      : 0;
 
     // Calculate average coverage (if available)
     const testsWithCoverage = this.results.filter(
-      (result) => result.coverage !== undefined,
+      result => result.coverage !== undefined,
     );
-    const coverageRate =
-      testsWithCoverage.length > 0
-        ? testsWithCoverage.reduce(
-            (sum, result) => sum + (result.coverage || 0),
-            0,
-          ) / testsWithCoverage.length
-        : 0;
+    const coverageRate = testsWithCoverage.length > 0
+      ? testsWithCoverage.reduce(
+        (sum, result) => sum + (result.coverage || 0),
+        0,
+      ) / testsWithCoverage.length
+      : 0;
 
     return {
       name: suiteName,

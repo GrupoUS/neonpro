@@ -1,4 +1,4 @@
-import type { Patient } from "../entities/patient";
+import type { Patient } from '../entities/patient';
 
 /**
  * Patient Repository Interface
@@ -62,7 +62,7 @@ export interface PatientRepository {
    * @returns Created patient with generated ID
    */
   create(
-    patient: Omit<Patient, "id" | "createdAt" | "updatedAt">,
+    patient: Omit<Patient, 'id' | 'createdAt' | 'updatedAt'>,
   ): Promise<Patient>;
 
   /**
@@ -147,7 +147,7 @@ export interface PatientFilters {
   limit?: number;
   offset?: number;
   sortBy?: keyof Patient;
-  sortOrder?: "asc" | "desc";
+  sortOrder?: 'asc' | 'desc';
 }
 
 /**

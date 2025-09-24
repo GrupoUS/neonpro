@@ -5,6 +5,6 @@
  * using WebSocket-based real-time messaging.
  */
 
-export * from './types';
 export * from './protocol';
 export * from './service';
+export * from './types';

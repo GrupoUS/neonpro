@@ -1,13 +1,13 @@
 /**
  * CopilotKit Session Integration Module
- * 
+ *
  * Provides seamless integration between CopilotKit and the enhanced AG-UI protocol
  * for aesthetic clinic sessions with advanced features and security.
  */
 
-import { EnhancedAgentSessionService, EnhancedSessionData } from './enhanced-agent-session-service';
-import { AestheticAguiService } from '../agui-protocol/aesthetic-service';
 import { AestheticDataHandlingService } from '../agui-protocol/aesthetic-data-handling';
+import { AestheticAguiService } from '../agui-protocol/aesthetic-service';
+import { EnhancedAgentSessionService, EnhancedSessionData } from './enhanced-agent-session-service';
 
 export interface CopilotKitSessionConfig {
   endpoint: string;
@@ -37,7 +37,12 @@ export interface CopilotKitMessage {
 
 export interface CopilotKitAction {
   id: string;
-  type: 'schedule_appointment' | 'view_patient' | 'analyze_photo' | 'generate_report' | 'send_message';
+  type:
+    | 'schedule_appointment'
+    | 'view_patient'
+    | 'analyze_photo'
+    | 'generate_report'
+    | 'send_message';
   parameters: Record<string, any>;
   timestamp: Date;
   sessionId: string;
@@ -75,12 +80,12 @@ export class CopilotKitSessionIntegration {
   private aestheticService?: AestheticAguiService;
   private dataHandlingService?: AestheticDataHandlingService;
   private config: CopilotKitSessionConfig;
-  
+
   // Session state management
   private sessionStates: Map<string, CopilotKitSessionState> = new Map();
   private activeConnections: Map<string, WebSocket> = new Map();
   private messageQueue: Map<string, CopilotKitMessage[]> = new Map();
-  
+
   // Rate limiting and security
   private requestCounters: Map<string, { count: number; resetTime: Date }> = new Map();
   private securityValidators: Map<string, (data: any) => boolean> = new Map();
@@ -124,7 +129,7 @@ export class CopilotKitSessionIntegration {
         if (!options.userId) {
           throw new Error('User ID required for session creation');
         }
-        
+
         session = await this.enhancedSessionService.createEnhancedSession(
           options.userId,
           {
@@ -160,7 +165,8 @@ export class CopilotKitSessionIntegration {
           codeExecution: true,
           webSearch: true,
           fileAnalysis: true,
-          aestheticConsultation: options.enableAestheticFeatures ?? this.config.enableAestheticFeatures,
+          aestheticConsultation: options.enableAestheticFeatures
+            ?? this.config.enableAestheticFeatures,
           photoAnalysis: options.enableAestheticFeatures ?? this.config.enableAestheticFeatures,
           treatmentPlanning: options.enableAestheticFeatures ?? this.config.enableAestheticFeatures,
         },
@@ -198,7 +204,7 @@ export class CopilotKitSessionIntegration {
       return sessionState;
     } catch {
       console.error('Error initializing CopilotKit session:', error);
-      
+
       // Update session state to error
       const sessionState = this.sessionStates.get(sessionId);
       if (sessionState) {
@@ -208,7 +214,9 @@ export class CopilotKitSessionIntegration {
       }
 
       throw new Error(
-        `Failed to initialize CopilotKit session: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        `Failed to initialize CopilotKit session: ${
+          error instanceof Error ? error.message : 'Unknown error'
+        }`,
       );
     }
   }
@@ -226,7 +234,7 @@ export class CopilotKitSessionIntegration {
     processingTime: number;
   }> {
     const startTime = Date.now();
-    
+
     try {
       // Validate session state
       const sessionState = this.sessionStates.get(sessionId);
@@ -338,12 +346,20 @@ export class CopilotKitSessionIntegration {
 
     // Analyze message content for aesthetic clinic keywords
     const aestheticKeywords = [
-      'tratamento', 'pele', 'botox', 'preenchimento', 'laser', 
-      'consulta', 'avaliação', 'foto', 'cliente', 'paciente'
+      'tratamento',
+      'pele',
+      'botox',
+      'preenchimento',
+      'laser',
+      'consulta',
+      'avaliação',
+      'foto',
+      'cliente',
+      'paciente',
     ];
 
     const hasAestheticContent = aestheticKeywords.some(keyword =>
-      message.content.toLowerCase().includes(keyword),
+      message.content.toLowerCase().includes(keyword)
     );
 
     if (hasAestheticContent) {
@@ -448,7 +464,7 @@ export class CopilotKitSessionIntegration {
 
     try {
       action.status = 'executing';
-      
+
       const result = await this.aestheticService.sendAestheticMessage({
         id: action.id,
         type: 'photo_analysis',
@@ -495,7 +511,7 @@ export class CopilotKitSessionIntegration {
         console.log(`CopilotKit WebSocket connected for session ${sessionId}`);
       };
 
-      ws.onmessage = async (event) => {
+      ws.onmessage = async event => {
         try {
           const message = JSON.parse(event.data);
           await this.handleRealtimeMessage(sessionId, message);
@@ -509,7 +525,7 @@ export class CopilotKitSessionIntegration {
         console.log(`CopilotKit WebSocket disconnected for session ${sessionId}`);
       };
 
-      ws.onerror = (error) => {
+      ws.onerror = error => {
         console.error('CopilotKit WebSocket error:', error);
         this.activeConnections.delete(sessionId);
       };
@@ -570,13 +586,15 @@ export class CopilotKitSessionIntegration {
    */
   async getCopilotKitSessionAnalytics(
     sessionId: string,
-  ): Promise<{
-    sessionState: CopilotKitSessionState;
-    messageHistory: CopilotKitMessage[];
-    actionHistory: CopilotKitAction[];
-    performanceMetrics: any;
-    securityMetrics: any;
-  } | null> {
+  ): Promise<
+    {
+      sessionState: CopilotKitSessionState;
+      messageHistory: CopilotKitMessage[];
+      actionHistory: CopilotKitAction[];
+      performanceMetrics: any;
+      securityMetrics: any;
+    } | null
+  > {
     const sessionState = this.sessionStates.get(sessionId);
     if (!sessionState) {
       return null;
@@ -663,7 +681,7 @@ export class CopilotKitSessionIntegration {
   private async validateRateLimit(sessionId: string): Promise<void> {
     const counter = this.requestCounters.get(sessionId);
     const now = new Date();
-    
+
     if (!counter || now > counter.resetTime) {
       this.requestCounters.set(sessionId, {
         count: 1,
@@ -727,7 +745,7 @@ export class CopilotKitSessionIntegration {
 
     sessionState.messageCount += 1;
     sessionState.lastActivity = new Date();
-    
+
     if (!success) {
       sessionState.errorCount += 1;
     }
@@ -735,11 +753,12 @@ export class CopilotKitSessionIntegration {
     // Update performance metrics
     const totalTime = sessionState.performanceMetrics.totalProcessingTime + processingTime;
     const avgTime = totalTime / sessionState.messageCount;
-    
+
     sessionState.performanceMetrics = {
       averageResponseTime: avgTime,
       totalProcessingTime: totalTime,
-      requestsPerSecond: sessionState.messageCount / ((Date.now() - sessionState.connectedAt.getTime()) / 1000),
+      requestsPerSecond: sessionState.messageCount
+        / ((Date.now() - sessionState.connectedAt.getTime()) / 1000),
     };
 
     this.sessionStates.set(sessionId, sessionState);
@@ -758,7 +777,10 @@ export class CopilotKitSessionIntegration {
     return `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   }
 
-  private async processStandardMessage(sessionId: string, message: CopilotKitMessage): Promise<any> {
+  private async processStandardMessage(
+    sessionId: string,
+    message: CopilotKitMessage,
+  ): Promise<any> {
     // TODO: Implement standard message processing logic
     return {
       type: 'response',
@@ -767,7 +789,10 @@ export class CopilotKitSessionIntegration {
     };
   }
 
-  private async processSystemMessage(_sessionId: string, _message: CopilotKitMessage): Promise<any> {
+  private async processSystemMessage(
+    _sessionId: string,
+    _message: CopilotKitMessage,
+  ): Promise<any> {
     // TODO: Implement system message processing logic
     return {
       type: 'system_response',
@@ -791,7 +816,10 @@ export class CopilotKitSessionIntegration {
     console.log('Action result received:', message);
   }
 
-  private async executeScheduleAppointment(_sessionId: string, _action: CopilotKitAction): Promise<any> {
+  private async executeScheduleAppointment(
+    _sessionId: string,
+    _action: CopilotKitAction,
+  ): Promise<any> {
     // TODO: Implement appointment scheduling logic
     return { success: true, appointmentId: 'generated_id' };
   }
@@ -820,7 +848,7 @@ export class CopilotKitSessionIntegration {
 
   private async performCleanup(): Promise<void> {
     const now = new Date();
-    
+
     // Clean up expired rate limit counters
     for (const [sessionId, counter] of this.requestCounters.entries()) {
       if (now > counter.resetTime) {

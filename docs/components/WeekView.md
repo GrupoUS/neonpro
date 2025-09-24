@@ -28,8 +28,8 @@ interface WeekViewProps {
 ### Basic Implementation
 
 ```typescript
-import { WeekView } from '@/components/event-calendar/week-view';
 import { CalendarEvent } from '@/components/event-calendar/types';
+import { WeekView } from '@/components/event-calendar/week-view';
 
 function WeeklySchedule() {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -43,20 +43,20 @@ function WeeklySchedule() {
   const handleEventCreate = (startTime: Date) => {
     // Create new appointment at selected time
     const newEvent: CalendarEvent = {
-      id: "",
-      title: "New Appointment",
+      id: '',
+      title: 'New Appointment',
       start: startTime,
       end: addHours(startTime, 1),
       allDay: false,
-      color: "primary"
+      color: 'primary',
     };
     setEvents(prev => [...prev, newEvent]);
   };
 
   return (
-    <div className="p-4">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-semibold">Weekly Schedule</h2>
+    <div className='p-4'>
+      <div className='flex justify-between items-center mb-4'>
+        <h2 className='text-xl font-semibold'>Weekly Schedule</h2>
         <button onClick={() => setCurrentDate(new Date())}>
           Today
         </button>
@@ -95,19 +95,19 @@ function WeeklyScheduleWithNavigation() {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-lg p-6">
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold">
+    <div className='bg-white rounded-lg shadow-lg p-6'>
+      <div className='flex items-center justify-between mb-6'>
+        <h2 className='text-2xl font-bold'>
           {format(currentDate, 'MMMM yyyy')}
         </h2>
-        <div className="flex gap-2">
-          <button onClick={goToPreviousWeek} className="px-3 py-1 border rounded">
+        <div className='flex gap-2'>
+          <button onClick={goToPreviousWeek} className='px-3 py-1 border rounded'>
             ← Previous
           </button>
-          <button onClick={goToToday} className="px-3 py-1 bg-blue-500 text-white rounded">
+          <button onClick={goToToday} className='px-3 py-1 bg-blue-500 text-white rounded'>
             Today
           </button>
-          <button onClick={goToNextWeek} className="px-3 py-1 border rounded">
+          <button onClick={goToNextWeek} className='px-3 py-1 border rounded'>
             Next →
           </button>
         </div>
@@ -168,16 +168,16 @@ interface PositionedEvent {
 ```typescript
 // Calculate position for overlapping events
 const calculateEventPositions = (events: CalendarEvent[]) => {
-  const positionedEvents = events.map((event) => {
+  const positionedEvents = events.map(event => {
     const startMinutes = event.start.getHours() * 60 + event.start.getMinutes();
     const endMinutes = event.end.getHours() * 60 + event.end.getMinutes();
     const duration = endMinutes - startMinutes;
 
     // Find overlapping events
     const overlapping = events.filter(
-      (other) =>
-        other.id !== event.id &&
-        !(other.end <= event.start || other.start >= event.end),
+      other =>
+        other.id !== event.id
+        && !(other.end <= event.start || other.start >= event.end),
     );
 
     // Calculate width based on number of overlapping events
@@ -203,13 +203,13 @@ const calculateEventPositions = (events: CalendarEvent[]) => {
 ```typescript
 // Week starts on Sunday (0) by default
 const weekDays = [
-  { date: startOfWeek(currentDate), label: "Sun" },
-  { date: addDays(startOfWeek(currentDate), 1), label: "Mon" },
-  { date: addDays(startOfWeek(currentDate), 2), label: "Tue" },
-  { date: addDays(startOfWeek(currentDate), 3), label: "Wed" },
-  { date: addDays(startOfWeek(currentDate), 4), label: "Thu" },
-  { date: addDays(startOfWeek(currentDate), 5), label: "Fri" },
-  { date: addDays(startOfWeek(currentDate), 6), label: "Sat" },
+  { date: startOfWeek(currentDate), label: 'Sun' },
+  { date: addDays(startOfWeek(currentDate), 1), label: 'Mon' },
+  { date: addDays(startOfWeek(currentDate), 2), label: 'Tue' },
+  { date: addDays(startOfWeek(currentDate), 3), label: 'Wed' },
+  { date: addDays(startOfWeek(currentDate), 4), label: 'Thu' },
+  { date: addDays(startOfWeek(currentDate), 5), label: 'Fri' },
+  { date: addDays(startOfWeek(currentDate), 6), label: 'Sat' },
 ];
 ```
 
@@ -219,7 +219,7 @@ const weekDays = [
 // Generate 24-hour time slots
 const timeSlots = Array.from({ length: 24 }, (_, hour) => ({
   hour,
-  label: format(new Date().setHours(hour, 0, 0, 0), "h a"),
+  label: format(new Date().setHours(hour, 0, 0, 0), 'h a'),
   time: new Date().setHours(hour, 0, 0, 0),
 }));
 ```
@@ -240,19 +240,19 @@ const timeSlots = Array.from({ length: 24 }, (_, hour) => ({
 
 ```typescript
 <div
-  role="grid"
-  aria-label="Weekly calendar view"
+  role='grid'
+  aria-label='Weekly calendar view'
   aria-rowcount={25} // 24 hours + header row
-  aria-colcount={7}  // 7 days
+  aria-colcount={7} // 7 days
 >
   {/* Time column header */}
-  <div role="columnheader" aria-label="Time">Time</div>
+  <div role='columnheader' aria-label='Time'>Time</div>
 
   {/* Day headers */}
   {weekDays.map((day, index) => (
     <div
       key={day.date.toString()}
-      role="columnheader"
+      role='columnheader'
       aria-label={`${format(day.date, 'EEEE, MMMM d')}`}
     >
       {format(day.date, 'EEE MM/d')}
@@ -263,7 +263,7 @@ const timeSlots = Array.from({ length: 24 }, (_, hour) => ({
   {timeSlots.map((slot, hourIndex) => (
     <React.Fragment key={hourIndex}>
       {/* Time label */}
-      <div role="rowheader" aria-label={`${slot.label}`}>
+      <div role='rowheader' aria-label={`${slot.label}`}>
         {slot.label}
       </div>
 
@@ -271,18 +271,18 @@ const timeSlots = Array.from({ length: 24 }, (_, hour) => ({
       {weekDays.map((day, dayIndex) => (
         <div
           key={`${hourIndex}-${dayIndex}`}
-          role="gridcell"
+          role='gridcell'
           aria-label={`${format(day.date, 'EEEE')} at ${slot.label}`}
           tabIndex={0}
           onClick={() => handleTimeSlotClick(day.date, slot.time)}
-          onKeyDown={(e) => handleKeydown(e, day.date, slot.time)}
+          onKeyDown={e => handleKeydown(e, day.date, slot.time)}
         >
           {/* Event content */}
         </div>
       ))}
     </React.Fragment>
   ))}
-</div>
+</div>;
 ```
 
 ## Styling
@@ -295,8 +295,8 @@ const timeSlots = Array.from({ length: 24 }, (_, hour) => ({
   events={events}
   onEventSelect={handleEventSelect}
   onEventCreate={handleEventCreate}
-  className="custom-week-view"
-/>
+  className='custom-week-view'
+/>;
 ```
 
 ```css
@@ -394,7 +394,7 @@ const weekEvents = useMemo(() => {
   const weekEnd = endOfWeek(currentDate);
 
   return events.filter(
-    (event) => event.start >= weekStart && event.end <= weekEnd,
+    event => event.start >= weekStart && event.end <= weekEnd,
   );
 }, [events, currentDate]);
 ```
@@ -408,23 +408,23 @@ const handleEventCreate = (startTime: Date) => {
   try {
     // Validate time slot
     if (isWeekend(startTime)) {
-      throw new Error("Cannot create appointments on weekends");
+      throw new Error('Cannot create appointments on weekends');
     }
 
     if (isOutsideBusinessHours(startTime)) {
-      throw new Error("Appointment must be during business hours");
+      throw new Error('Appointment must be during business hours');
     }
 
     // Check for conflicts
     const conflictingEvents = checkForConflicts(startTime);
     if (conflictingEvents.length > 0) {
-      throw new Error("This time slot conflicts with existing appointments");
+      throw new Error('This time slot conflicts with existing appointments');
     }
 
     // Create event
     onEventCreate(startTime);
   } catch (error) {
-    console.error("Failed to create event:", error);
+    console.error('Failed to create event:', error);
     showErrorToast(error.message);
   }
 };
@@ -438,7 +438,7 @@ const handleEventCreate = (startTime: Date) => {
 function WeekViewWithQuery() {
   const { data: events, isLoading } = useQuery({
     queryKey: ['events', 'week', currentDate],
-    queryFn: () => fetchWeekEvents(currentDate)
+    queryFn: () => fetchWeekEvents(currentDate),
   });
 
   if (isLoading) return <WeekViewLoading />;
@@ -466,7 +466,7 @@ function WeekViewWithRedux() {
     dispatch(createEvent({
       start: startTime,
       end: addHours(startTime, 1),
-      title: 'New Appointment'
+      title: 'New Appointment',
     }));
   };
 
@@ -475,7 +475,7 @@ function WeekViewWithRedux() {
       currentDate={currentDate}
       events={events}
       loading={loading}
-      onEventSelect={(event) => dispatch(selectEvent(event))}
+      onEventSelect={event => dispatch(selectEvent(event))}
       onEventCreate={handleEventCreate}
     />
   );
@@ -487,8 +487,8 @@ function WeekViewWithRedux() {
 ### Unit Test Example
 
 ```typescript
-import { render, screen, fireEvent } from '@testing-library/react';
 import { WeekView } from '@/components/event-calendar/week-view';
+import { fireEvent, render, screen } from '@testing-library/react';
 
 describe('WeekView', () => {
   const mockEvents = [
@@ -497,8 +497,8 @@ describe('WeekView', () => {
       title: 'Test Event',
       start: new Date('2024-01-15T10:00:00'),
       end: new Date('2024-01-15T11:00:00'),
-      allDay: false
-    }
+      allDay: false,
+    },
   ];
 
   test('renders week view with events', () => {
@@ -508,7 +508,7 @@ describe('WeekView', () => {
         events={mockEvents}
         onEventSelect={jest.fn()}
         onEventCreate={jest.fn()}
-      />
+      />,
     );
 
     expect(screen.getByText('Test Event')).toBeInTheDocument();
@@ -523,14 +523,14 @@ describe('WeekView', () => {
         events={[]}
         onEventSelect={jest.fn()}
         onEventCreate={mockOnCreate}
-      />
+      />,
     );
 
     const timeSlot = screen.getByLabelText('Monday at 10:00 AM');
     fireEvent.click(timeSlot);
 
     expect(mockOnCreate).toHaveBeenCalledWith(
-      expect.any(Date)
+      expect.any(Date),
     );
   });
 });

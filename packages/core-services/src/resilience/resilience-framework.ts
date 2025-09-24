@@ -13,23 +13,23 @@
  * - LGPD-compliant error handling
  */
 
-import { z } from "zod";
+import { z } from 'zod';
 
 // ============================================================================
 // Types and Interfaces
 // ============================================================================
 
 export enum CircuitState {
-  CLOSED = "closed",
-  OPEN = "open",
-  HALF_OPEN = "half-open",
+  CLOSED = 'closed',
+  OPEN = 'open',
+  HALF_OPEN = 'half-open',
 }
 
 export enum RetryStrategy {
-  EXPONENTIAL_BACKOFF = "exponential_backoff",
-  LINEAR_BACKOFF = "linear_backoff",
-  FIXED_DELAY = "fixed_delay",
-  IMMEDIATE = "immediate",
+  EXPONENTIAL_BACKOFF = 'exponential_backoff',
+  LINEAR_BACKOFF = 'linear_backoff',
+  FIXED_DELAY = 'fixed_delay',
+  IMMEDIATE = 'immediate',
 }
 
 export interface ResilienceConfig {
@@ -67,7 +67,7 @@ export interface ResilienceConfig {
   // Graceful degradation
   degradation: {
     enabled: boolean;
-    fallbackMode: "cache" | "offline" | "reduced";
+    fallbackMode: 'cache' | 'offline' | 'reduced';
     cacheTtlMs: number;
   };
 }
@@ -119,7 +119,7 @@ export class EnhancedCircuitBreaker {
 
   constructor(
     private readonly serviceName: string,
-    private readonly config: ResilienceConfig["circuitBreaker"],
+    private readonly config: ResilienceConfig['circuitBreaker'],
   ) {}
 
   async execute<T>(
@@ -135,7 +135,7 @@ export class EnhancedCircuitBreaker {
       } else {
         throw new ResilienceError(
           `Circuit breaker OPEN for _service: ${this.serviceName}`,
-          "CIRCUIT_BREAKER_OPEN",
+          'CIRCUIT_BREAKER_OPEN',
           _context,
         );
       }
@@ -173,9 +173,9 @@ export class EnhancedCircuitBreaker {
     this.lastFailureTime = Date.now();
 
     if (
-      this.state === CircuitState.HALF_OPEN ||
-      (this.state === CircuitState.CLOSED &&
-        this.failures >= this.config.failureThreshold)
+      this.state === CircuitState.HALF_OPEN
+      || (this.state === CircuitState.CLOSED
+        && this.failures >= this.config.failureThreshold)
     ) {
       this.state = CircuitState.OPEN;
       this.trips++;
@@ -193,10 +193,9 @@ export class EnhancedCircuitBreaker {
       totalRequests: this.totalRequests,
       successfulRequests: this.successfulRequests,
       trips: this.trips,
-      successRate:
-        this.totalRequests > 0
-          ? this.successfulRequests / this.totalRequests
-          : 0,
+      successRate: this.totalRequests > 0
+        ? this.successfulRequests / this.totalRequests
+        : 0,
     };
   }
 
@@ -219,7 +218,7 @@ export class EnhancedCircuitBreaker {
 export class RetryPolicy {
   private attempts = 0;
 
-  constructor(private readonly config: ResilienceConfig["retry"]) {}
+  constructor(private readonly config: ResilienceConfig['retry']) {}
 
   async shouldRetry(
     error: Error,
@@ -283,16 +282,14 @@ export class RetryPolicy {
   private isNonRetryableError(error: Error): boolean {
     // Don't retry on authentication errors, validation errors, etc.
     const nonRetryableMessages = [
-      "unauthorized",
-      "invalid",
-      "not found",
-      "permission denied",
-      "authentication failed",
+      'unauthorized',
+      'invalid',
+      'not found',
+      'permission denied',
+      'authentication failed',
     ];
 
-    return nonRetryableMessages.some((msg) =>
-      error.message.toLowerCase().includes(msg),
-    );
+    return nonRetryableMessages.some(msg => error.message.toLowerCase().includes(msg));
   }
 
   getAttempts(): number {
@@ -309,7 +306,7 @@ export class RetryPolicy {
 // ============================================================================
 
 export class TimeoutManager {
-  constructor(private readonly config: ResilienceConfig["timeout"]) {}
+  constructor(private readonly config: ResilienceConfig['timeout']) {}
 
   async executeWithTimeout<T>(
     operation: () => Promise<T>,
@@ -320,18 +317,18 @@ export class TimeoutManager {
         _reject(
           new ResilienceError(
             `Operation timeout for ${_context.operation}`,
-            "TIMEOUT",
+            'TIMEOUT',
             _context,
           ),
         );
       }, this.config.overallMs);
 
       operation()
-        .then((result) => {
+        .then(result => {
           clearTimeout(timeoutId);
           resolve(result);
         })
-        .catch((error) => {
+        .catch(error => {
           clearTimeout(timeoutId);
           _reject(error);
         });
@@ -353,7 +350,7 @@ export class HealthMonitor {
     }
   > = new Map();
 
-  constructor(private readonly config: ResilienceConfig["healthCheck"]) {}
+  constructor(private readonly config: ResilienceConfig['healthCheck']) {}
 
   registerService(
     serviceName: string,
@@ -391,9 +388,9 @@ export class HealthMonitor {
         healthCheck(),
         new Promise<boolean>((_resolve, reject) =>
           setTimeout(
-            () => reject(new Error("Health check timeout")),
+            () => reject(new Error('Health check timeout')),
             this.config.timeoutMs,
-          ),
+          )
         ),
       ]);
 
@@ -413,9 +410,8 @@ export class HealthMonitor {
       }
 
       // Calculate success rate (simple moving average)
-      health.successRate =
-        health.consecutiveSuccesses /
-        (health.consecutiveSuccesses + health.consecutiveFailures);
+      health.successRate = health.consecutiveSuccesses
+        / (health.consecutiveSuccesses + health.consecutiveFailures);
     } catch (error) {
       health.isHealthy = false;
       health.errorMessage = (error as Error).message;
@@ -430,7 +426,7 @@ export class HealthMonitor {
   }
 
   getAllHealthStatus(): ServiceHealth[] {
-    return Array.from(this.healthChecks.values()).map((h) => h.health);
+    return Array.from(this.healthChecks.values()).map(h => h.health);
   }
 
   unregisterService(serviceName: string): void {
@@ -513,7 +509,7 @@ export class ResilienceFramework {
             const delay = await retryPolicy.getDelay();
 
             if (delay > 0) {
-              await new Promise((resolve) => setTimeout(resolve, delay));
+              await new Promise(resolve => setTimeout(resolve, delay));
             }
           }
         }
@@ -528,9 +524,9 @@ export class ResilienceFramework {
       this.metrics.failedRequests++;
 
       if (error instanceof ResilienceError) {
-        if (error.type === "TIMEOUT") {
+        if (error.type === 'TIMEOUT') {
           this.metrics.timeoutCount++;
-        } else if (error.type === "CIRCUIT_BREAKER_OPEN") {
+        } else if (error.type === 'CIRCUIT_BREAKER_OPEN') {
           this.metrics.circuitBreakerTrips++;
         }
       }
@@ -543,8 +539,7 @@ export class ResilienceFramework {
     if (this.metrics.averageLatency === 0) {
       this.metrics.averageLatency = newLatency;
     } else {
-      this.metrics.averageLatency =
-        this.metrics.averageLatency * 0.9 + newLatency * 0.1;
+      this.metrics.averageLatency = this.metrics.averageLatency * 0.9 + newLatency * 0.1;
     }
   }
 
@@ -606,7 +601,7 @@ export class ResilienceError extends Error {
     public readonly _context: ExecutionContext,
   ) {
     super(message);
-    this.name = "ResilienceError";
+    this.name = 'ResilienceError';
   }
 }
 
@@ -640,7 +635,7 @@ export const DEFAULT_HEALTHCARE_RESILIENCE_CONFIG: ResilienceConfig = {
   },
   degradation: {
     enabled: true,
-    fallbackMode: "cache",
+    fallbackMode: 'cache',
     cacheTtlMs: 300000, // 5 minutes
   },
 };
@@ -696,7 +691,7 @@ export const ResilienceConfigSchema = z.object({
   }),
   degradation: z.object({
     enabled: z.boolean(),
-    fallbackMode: z.enum(["cache", "offline", "reduced"]),
+    fallbackMode: z.enum(['cache', 'offline', 'reduced']),
     cacheTtlMs: z.number().min(0).max(86400000),
   }),
 });

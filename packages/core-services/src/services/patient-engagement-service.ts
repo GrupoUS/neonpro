@@ -35,14 +35,22 @@ const CommunicationHistorySchema = z.object({
   clinicId: z.string().uuid(),
   professionalId: z.string().uuid().optional(),
   communicationType: z.enum([
-    'appointment_reminder', 'follow_up_care', 'educational_content', 
-    'promotional', 'survey_request', 'birthday_greeting', 'reengagement',
-    'treatment_reminder', 'result_follow_up', 'satisfaction_check'
+    'appointment_reminder',
+    'follow_up_care',
+    'educational_content',
+    'promotional',
+    'survey_request',
+    'birthday_greeting',
+    'reengagement',
+    'treatment_reminder',
+    'result_follow_up',
+    'satisfaction_check',
   ]),
   channel: z.enum(['email', 'sms', 'whatsapp', 'push_notification', 'phone_call']),
   messageContent: z.string(),
   messageTemplateId: z.string().uuid().optional(),
-  status: z.enum(['pending', 'sent', 'delivered', 'opened', 'clicked', 'failed', 'bounced']).default('pending'),
+  status: z.enum(['pending', 'sent', 'delivered', 'opened', 'clicked', 'failed', 'bounced'])
+    .default('pending'),
   metadata: z.record(z.any()).default({}),
 });
 
@@ -50,8 +58,14 @@ const CommunicationTemplateSchema = z.object({
   clinicId: z.string().uuid(),
   name: z.string(),
   category: z.enum([
-    'appointment_reminder', 'follow_up_care', 'educational', 'promotional',
-    'survey', 'birthday', 'reengagement', 'treatment_reminder'
+    'appointment_reminder',
+    'follow_up_care',
+    'educational',
+    'promotional',
+    'survey',
+    'birthday',
+    'reengagement',
+    'treatment_reminder',
   ]),
   channel: z.enum(['email', 'sms', 'whatsapp', 'push_notification']),
   subject: z.string().optional(),
@@ -65,9 +79,17 @@ const PatientJourneyStageSchema = z.object({
   patientId: z.string().uuid(),
   clinicId: z.string().uuid(),
   currentStage: z.enum([
-    'new_lead', 'consultation_scheduled', 'first_visit', 'active_patient',
-    'treatment_in_progress', 'post_treatment_care', 'maintenance',
-    'loyal_patient', 'at_risk', 'inactive', 'reactivated'
+    'new_lead',
+    'consultation_scheduled',
+    'first_visit',
+    'active_patient',
+    'treatment_in_progress',
+    'post_treatment_care',
+    'maintenance',
+    'loyal_patient',
+    'at_risk',
+    'inactive',
+    'reactivated',
   ]),
   engagementScore: z.number().min(0).max(100).default(0),
   satisfactionScore: z.number().min(1).max(5).optional(),
@@ -81,9 +103,16 @@ const EngagementActionSchema = z.object({
   patientId: z.string().uuid(),
   clinicId: z.string().uuid(),
   actionType: z.enum([
-    'appointment_booked', 'appointment_completed', 'treatment_started',
-    'treatment_completed', 'review_left', 'referral_made', 'survey_completed',
-    'educational_content_viewed', 'promotion_redeemed', 'reengagement_response'
+    'appointment_booked',
+    'appointment_completed',
+    'treatment_started',
+    'treatment_completed',
+    'review_left',
+    'referral_made',
+    'survey_completed',
+    'educational_content_viewed',
+    'promotion_redeemed',
+    'reengagement_response',
   ]),
   actionValue: z.string().optional(),
   pointsEarned: z.number().default(0),
@@ -128,8 +157,12 @@ const EngagementCampaignSchema = z.object({
   clinicId: z.string().uuid(),
   name: z.string(),
   campaignType: z.enum([
-    'reengagement', 'birthday_campaign', 'seasonal_promotion',
-    'treatment_reminder', 'educational_series', 'loyalty_program'
+    'reengagement',
+    'birthday_campaign',
+    'seasonal_promotion',
+    'treatment_reminder',
+    'educational_series',
+    'loyalty_program',
   ]),
   targetAudience: z.record(z.any()),
   triggerConditions: z.record(z.any()),
@@ -143,8 +176,12 @@ const ReengagementTriggerSchema = z.object({
   patientId: z.string().uuid(),
   clinicId: z.string().uuid(),
   triggerType: z.enum([
-    'no_recent_appointment', 'missed_follow_up', 'declining_engagement',
-    'treatment_due', 'birthday_approaching', 'loyalty_status_change'
+    'no_recent_appointment',
+    'missed_follow_up',
+    'declining_engagement',
+    'treatment_due',
+    'birthday_approaching',
+    'loyalty_status_change',
   ]),
   actionTaken: z.string().optional(),
   outcome: z.record(z.any()).default({}),
@@ -312,7 +349,8 @@ export class PatientEngagementService {
         satisfaction_score: validatedJourney.satisfactionScore,
         loyalty_tier: validatedJourney.loyaltyTier,
         last_treatment_date: validatedJourney.lastTreatmentDate?.toISOString(),
-        next_recommended_treatment_date: validatedJourney.nextRecommendedTreatmentDate?.toISOString(),
+        next_recommended_treatment_date: validatedJourney.nextRecommendedTreatmentDate
+          ?.toISOString(),
         risk_factors: validatedJourney.riskFactors,
         updated_at: new Date().toISOString(),
       })
@@ -619,7 +657,12 @@ export class PatientEngagementService {
     return data;
   }
 
-  async updateReengagementTrigger(triggerId: string, status: string, actionTaken: string, outcome: any) {
+  async updateReengagementTrigger(
+    triggerId: string,
+    status: string,
+    actionTaken: string,
+    outcome: any,
+  ) {
     const { data, error } = await (this.supabase as SupabaseJSClient)
       .from('reengagement_triggers')
       .update({

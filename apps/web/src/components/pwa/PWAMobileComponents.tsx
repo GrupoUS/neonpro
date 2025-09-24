@@ -1,5 +1,5 @@
-import * as React from "react";
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils';
+import * as React from 'react';
 
 export interface PWATouchActionProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link';
@@ -29,14 +29,16 @@ export const PWATouchAction: React.FC<PWATouchActionProps> = ({
   }, [onClick, handleTouchStart]);
 
   const baseClasses = cn(
-    "inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors",
-    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-    "disabled:pointer-events-none disabled:opacity-50",
-    "active:scale-95 transition-transform",
+    'inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors',
+    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
+    'disabled:pointer-events-none disabled:opacity-50',
+    'active:scale-95 transition-transform',
     {
       'bg-primary text-primary-foreground hover:bg-primary/90': variant === 'default',
-      'bg-destructive text-destructive-foreground hover:bg-destructive/90': variant === 'destructive',
-      'border border-input bg-background hover:bg-accent hover:text-accent-foreground': variant === 'outline',
+      'bg-destructive text-destructive-foreground hover:bg-destructive/90':
+        variant === 'destructive',
+      'border border-input bg-background hover:bg-accent hover:text-accent-foreground':
+        variant === 'outline',
       'bg-secondary text-secondary-foreground hover:bg-secondary/80': variant === 'secondary',
       'hover:bg-accent hover:text-accent-foreground': variant === 'ghost',
       'text-primary underline-offset-4 hover:underline': variant === 'link',
@@ -47,7 +49,7 @@ export const PWATouchAction: React.FC<PWATouchActionProps> = ({
       'h-11 rounded-md px-8': size === 'lg',
       'h-10 w-10': size === 'icon',
     },
-    className
+    className,
   );
 
   return (
@@ -80,7 +82,7 @@ export const PWASwipeable: React.FC<PWASwipeableProps> = ({
   onSwipeUp,
   onSwipeDown,
   threshold = 50,
-  className
+  className,
 }) => {
   const [startX, setStartX] = React.useState(0);
   const [startY, setStartY] = React.useState(0);
@@ -132,7 +134,7 @@ export const PWASwipeable: React.FC<PWASwipeableProps> = ({
 
   return (
     <div
-      className={cn("touch-none", className)}
+      className={cn('touch-none', className)}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
@@ -156,7 +158,7 @@ export const PWABottomSheet: React.FC<PWABottomSheetProps> = ({
   onClose,
   children,
   title,
-  className
+  className,
 }) => {
   const sheetRef = React.useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = React.useState(false);
@@ -202,21 +204,21 @@ export const PWABottomSheet: React.FC<PWABottomSheetProps> = ({
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center">
+    <div className='fixed inset-0 z-50 flex items-end justify-center'>
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-black/50"
+        className='absolute inset-0 bg-black/50'
         onClick={onClose}
       />
-      
+
       {/* Sheet */}
       <div
         ref={sheetRef}
         className={cn(
-          "relative bg-white rounded-t-2xl shadow-lg max-h-[80vh] overflow-hidden",
-          "transition-transform duration-300 ease-out",
-          open ? "translate-y-0" : "translate-y-full",
-          className
+          'relative bg-white rounded-t-2xl shadow-lg max-h-[80vh] overflow-hidden',
+          'transition-transform duration-300 ease-out',
+          open ? 'translate-y-0' : 'translate-y-full',
+          className,
         )}
         style={{
           transform: `translateY(${currentY - startY}px)`,
@@ -226,19 +228,19 @@ export const PWABottomSheet: React.FC<PWABottomSheetProps> = ({
         onTouchEnd={handleTouchEnd}
       >
         {/* Drag handle */}
-        <div className="flex justify-center pt-3 pb-2">
-          <div className="w-12 h-1 bg-gray-300 rounded-full" />
+        <div className='flex justify-center pt-3 pb-2'>
+          <div className='w-12 h-1 bg-gray-300 rounded-full' />
         </div>
-        
+
         {/* Header */}
         {title && (
-          <div className="px-6 py-4 border-b">
-            <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
+          <div className='px-6 py-4 border-b'>
+            <h3 className='text-lg font-semibold text-gray-900'>{title}</h3>
           </div>
         )}
-        
+
         {/* Content */}
-        <div className="overflow-y-auto">
+        <div className='overflow-y-auto'>
           {children}
         </div>
       </div>
@@ -256,7 +258,7 @@ export interface PWAPullToRefreshProps {
 export const PWAPullToRefresh: React.FC<PWAPullToRefreshProps> = ({
   onRefresh,
   children,
-  className
+  className,
 }) => {
   const [isPulling, setIsPulling] = React.useState(false);
   const [pullDistance, setPullDistance] = React.useState(0);
@@ -299,33 +301,35 @@ export const PWAPullToRefresh: React.FC<PWAPullToRefreshProps> = ({
 
   return (
     <div
-      className={cn("relative min-h-screen", className)}
+      className={cn('relative min-h-screen', className)}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
     >
       {/* Pull indicator */}
       <div
-        className="absolute top-0 left-0 right-0 flex justify-center items-center transition-transform duration-200"
+        className='absolute top-0 left-0 right-0 flex justify-center items-center transition-transform duration-200'
         style={{
           transform: `translateY(${pullDistance - 60}px)`,
           opacity: isPulling ? 1 : 0,
         }}
       >
-        <div className="flex items-center space-x-2 text-gray-600">
-          {isRefreshing ? (
-            <>
-              <div className="animate-spin rounded-full h-5 w-5 border-2 border-blue-600 border-t-transparent" />
-              <span className="text-sm">Atualizando...</span>
-            </>
-          ) : (
-            <>
-              <div className="h-5 w-5" />
-              <span className="text-sm">
-                {pullDistance > 50 ? 'Solte para atualizar' : 'Puxe para atualizar'}
-              </span>
-            </>
-          )}
+        <div className='flex items-center space-x-2 text-gray-600'>
+          {isRefreshing
+            ? (
+              <>
+                <div className='animate-spin rounded-full h-5 w-5 border-2 border-blue-600 border-t-transparent' />
+                <span className='text-sm'>Atualizando...</span>
+              </>
+            )
+            : (
+              <>
+                <div className='h-5 w-5' />
+                <span className='text-sm'>
+                  {pullDistance > 50 ? 'Solte para atualizar' : 'Puxe para atualizar'}
+                </span>
+              </>
+            )}
         </div>
       </div>
 

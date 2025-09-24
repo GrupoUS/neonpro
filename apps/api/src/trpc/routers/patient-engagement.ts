@@ -1,18 +1,18 @@
+import { PatientEngagementService } from '@neonpro/core-services';
+import {
+  CommunicationHistorySchema,
+  CommunicationPreferencesSchema,
+  CommunicationTemplateSchema,
+  EngagementActionSchema,
+  EngagementCampaignSchema,
+  LoyaltyProgramSchema,
+  PatientJourneyStageSchema,
+  PatientSurveySchema,
+  ReengagementTriggerSchema,
+  SurveyResponseSchema,
+} from '@neonpro/core-services';
 import { createTRPCRouter } from '@trpc/server';
 import { z } from 'zod';
-import { PatientEngagementService } from '@neonpro/core-services';
-import { 
-  CommunicationPreferencesSchema,
-  CommunicationHistorySchema,
-  CommunicationTemplateSchema,
-  PatientJourneyStageSchema,
-  EngagementActionSchema,
-  LoyaltyProgramSchema,
-  PatientSurveySchema,
-  SurveyResponseSchema,
-  EngagementCampaignSchema,
-  ReengagementTriggerSchema,
-} from '@neonpro/core-services';
 
 // Success response schema
 const SuccessResponseSchema = <T>(dataSchema: z.ZodSchema<T>) =>
@@ -24,33 +24,44 @@ const SuccessResponseSchema = <T>(dataSchema: z.ZodSchema<T>) =>
   });
 
 // Communication Preferences Schemas
-const CommunicationPreferencesInputSchema = CommunicationPreferencesSchema.omit({ patientId: true, clinicId: true }).extend({
+const CommunicationPreferencesInputSchema = CommunicationPreferencesSchema.omit({
+  patientId: true,
+  clinicId: true,
+}).extend({
   patientId: z.string().uuid(),
   clinicId: z.string().uuid(),
 });
 
 // Communication History Schemas
-const CommunicationHistoryInputSchema = CommunicationHistorySchema.omit({ patientId: true, clinicId: true }).extend({
+const CommunicationHistoryInputSchema = CommunicationHistorySchema.omit({
+  patientId: true,
+  clinicId: true,
+}).extend({
   patientId: z.string().uuid(),
   clinicId: z.string().uuid(),
 });
 
 // Template Schemas
-const CommunicationTemplateInputSchema = CommunicationTemplateSchema.omit({ clinicId: true }).extend({
-  clinicId: z.string().uuid(),
-});
+const CommunicationTemplateInputSchema = CommunicationTemplateSchema.omit({ clinicId: true })
+  .extend({
+    clinicId: z.string().uuid(),
+  });
 
 // Patient Journey Schemas
-const PatientJourneyStageInputSchema = PatientJourneyStageSchema.omit({ patientId: true, clinicId: true }).extend({
+const PatientJourneyStageInputSchema = PatientJourneyStageSchema.omit({
+  patientId: true,
+  clinicId: true,
+}).extend({
   patientId: z.string().uuid(),
   clinicId: z.string().uuid(),
 });
 
 // Engagement Action Schemas
-const EngagementActionInputSchema = EngagementActionSchema.omit({ patientId: true, clinicId: true }).extend({
-  patientId: z.string().uuid(),
-  clinicId: z.string().uuid(),
-});
+const EngagementActionInputSchema = EngagementActionSchema.omit({ patientId: true, clinicId: true })
+  .extend({
+    patientId: z.string().uuid(),
+    clinicId: z.string().uuid(),
+  });
 
 // Loyalty Program Schemas
 const LoyaltyProgramInputSchema = LoyaltyProgramSchema.omit({ clinicId: true }).extend({
@@ -72,7 +83,10 @@ const EngagementCampaignInputSchema = EngagementCampaignSchema.omit({ clinicId: 
 });
 
 // Reengagement Trigger Schemas
-const ReengagementTriggerInputSchema = ReengagementTriggerSchema.omit({ patientId: true, clinicId: true }).extend({
+const ReengagementTriggerInputSchema = ReengagementTriggerSchema.omit({
+  patientId: true,
+  clinicId: true,
+}).extend({
   patientId: z.string().uuid(),
   clinicId: z.string().uuid(),
 });
@@ -94,7 +108,7 @@ export const patientEngagementRouter = createTRPCRouter({
 
         const preferences = await patientEngagementService.getCommunicationPreferences(
           input.patientId,
-          input.clinicId
+          input.clinicId,
         );
 
         return {
@@ -106,7 +120,9 @@ export const patientEngagementRouter = createTRPCRouter({
         console.error('Error getting communication preferences:', error);
         return {
           success: false,
-          message: error instanceof Error ? error.message : 'Erro ao obter preferências de comunicação',
+          message: error instanceof Error
+            ? error.message
+            : 'Erro ao obter preferências de comunicação',
           data: null,
         };
       }
@@ -134,7 +150,9 @@ export const patientEngagementRouter = createTRPCRouter({
         console.error('Error updating communication preferences:', error);
         return {
           success: false,
-          message: error instanceof Error ? error.message : 'Erro ao atualizar preferências de comunicação',
+          message: error instanceof Error
+            ? error.message
+            : 'Erro ao atualizar preferências de comunicação',
           data: null,
         };
       }
@@ -187,7 +205,7 @@ export const patientEngagementRouter = createTRPCRouter({
         const history = await patientEngagementService.getCommunicationHistory(
           input.patientId,
           input.clinicId,
-          input.limit
+          input.limit,
         );
 
         return {
@@ -199,7 +217,9 @@ export const patientEngagementRouter = createTRPCRouter({
         console.error('Error getting communication history:', error);
         return {
           success: false,
-          message: error instanceof Error ? error.message : 'Erro ao obter histórico de comunicação',
+          message: error instanceof Error
+            ? error.message
+            : 'Erro ao obter histórico de comunicação',
           data: [],
         };
       }
@@ -239,8 +259,14 @@ export const patientEngagementRouter = createTRPCRouter({
     input: z.object({
       clinicId: z.string().uuid(),
       category: z.enum([
-        'appointment_reminder', 'follow_up_care', 'educational', 'promotional',
-        'survey', 'birthday', 'reengagement', 'treatment_reminder'
+        'appointment_reminder',
+        'follow_up_care',
+        'educational',
+        'promotional',
+        'survey',
+        'birthday',
+        'reengagement',
+        'treatment_reminder',
       ]),
     }),
     output: SuccessResponseSchema(z.array(z.any())),
@@ -253,7 +279,7 @@ export const patientEngagementRouter = createTRPCRouter({
 
         const templates = await patientEngagementService.getTemplatesByCategory(
           input.clinicId,
-          input.category
+          input.category,
         );
 
         return {
@@ -294,7 +320,9 @@ export const patientEngagementRouter = createTRPCRouter({
         console.error('Error updating patient journey stage:', error);
         return {
           success: false,
-          message: error instanceof Error ? error.message : 'Erro ao atualizar estágio da jornada do paciente',
+          message: error instanceof Error
+            ? error.message
+            : 'Erro ao atualizar estágio da jornada do paciente',
           data: null,
         };
       }
@@ -316,7 +344,7 @@ export const patientEngagementRouter = createTRPCRouter({
 
         const journey = await patientEngagementService.getPatientJourney(
           input.patientId,
-          input.clinicId
+          input.clinicId,
         );
 
         return {
@@ -381,7 +409,7 @@ export const patientEngagementRouter = createTRPCRouter({
         const actions = await patientEngagementService.getPatientEngagementActions(
           input.patientId,
           input.clinicId,
-          input.limit
+          input.limit,
         );
 
         return {
@@ -474,7 +502,7 @@ export const patientEngagementRouter = createTRPCRouter({
 
         const balance = await patientEngagementService.getPatientPointsBalance(
           input.patientId,
-          input.clinicId
+          input.clinicId,
         );
 
         return {
@@ -510,7 +538,7 @@ export const patientEngagementRouter = createTRPCRouter({
         const updatedBalance = await patientEngagementService.updatePatientPoints(
           input.patientId,
           input.clinicId,
-          input.pointsToAdd
+          input.pointsToAdd,
         );
 
         return {
@@ -697,7 +725,9 @@ export const patientEngagementRouter = createTRPCRouter({
         console.error('Error creating reengagement trigger:', error);
         return {
           success: false,
-          message: error instanceof Error ? error.message : 'Erro ao criar gatilho de reengajamento',
+          message: error instanceof Error
+            ? error.message
+            : 'Erro ao criar gatilho de reengajamento',
           data: null,
         };
       }
@@ -719,7 +749,7 @@ export const patientEngagementRouter = createTRPCRouter({
 
         const triggers = await patientEngagementService.getReengagementTriggers(
           input.clinicId,
-          input.status
+          input.status,
         );
 
         return {
@@ -731,7 +761,9 @@ export const patientEngagementRouter = createTRPCRouter({
         console.error('Error getting reengagement triggers:', error);
         return {
           success: false,
-          message: error instanceof Error ? error.message : 'Erro ao obter gatilhos de reengajamento',
+          message: error instanceof Error
+            ? error.message
+            : 'Erro ao obter gatilhos de reengajamento',
           data: [],
         };
       }
@@ -757,7 +789,7 @@ export const patientEngagementRouter = createTRPCRouter({
           input.triggerId,
           input.status,
           input.actionTaken,
-          input.outcome
+          input.outcome,
         );
 
         return {
@@ -769,7 +801,9 @@ export const patientEngagementRouter = createTRPCRouter({
         console.error('Error updating reengagement trigger:', error);
         return {
           success: false,
-          message: error instanceof Error ? error.message : 'Erro ao atualizar gatilho de reengajamento',
+          message: error instanceof Error
+            ? error.message
+            : 'Erro ao atualizar gatilho de reengajamento',
           data: null,
         };
       }
@@ -795,7 +829,7 @@ export const patientEngagementRouter = createTRPCRouter({
 
         const analytics = await patientEngagementService.getEngagementAnalytics(
           input.clinicId,
-          input.dateRange
+          input.dateRange,
         );
 
         return {
@@ -829,7 +863,7 @@ export const patientEngagementRouter = createTRPCRouter({
 
         const report = await patientEngagementService.getPatientEngagementReport(
           input.patientId,
-          input.clinicId
+          input.clinicId,
         );
 
         return {
@@ -841,7 +875,9 @@ export const patientEngagementRouter = createTRPCRouter({
         console.error('Error getting patient engagement report:', error);
         return {
           success: false,
-          message: error instanceof Error ? error.message : 'Erro ao obter relatório de engajamento do paciente',
+          message: error instanceof Error
+            ? error.message
+            : 'Erro ao obter relatório de engajamento do paciente',
           data: null,
         };
       }
@@ -872,7 +908,9 @@ export const patientEngagementRouter = createTRPCRouter({
         console.error('Error processing appointment reminders:', error);
         return {
           success: false,
-          message: error instanceof Error ? error.message : 'Erro ao processar lembretes de agendamento',
+          message: error instanceof Error
+            ? error.message
+            : 'Erro ao processar lembretes de agendamento',
           data: null,
         };
       }
@@ -902,7 +940,9 @@ export const patientEngagementRouter = createTRPCRouter({
         console.error('Error processing follow up communications:', error);
         return {
           success: false,
-          message: error instanceof Error ? error.message : 'Erro ao processar comunicações de follow-up',
+          message: error instanceof Error
+            ? error.message
+            : 'Erro ao processar comunicações de follow-up',
           data: null,
         };
       }
@@ -932,7 +972,9 @@ export const patientEngagementRouter = createTRPCRouter({
         console.error('Error processing birthday greetings:', error);
         return {
           success: false,
-          message: error instanceof Error ? error.message : 'Erro ao processar saudações de aniversário',
+          message: error instanceof Error
+            ? error.message
+            : 'Erro ao processar saudações de aniversário',
           data: null,
         };
       }
@@ -958,7 +1000,7 @@ export const patientEngagementRouter = createTRPCRouter({
 
         const processed = await patientEngagementService.processTemplate(
           input.templateId,
-          input.variables
+          input.variables,
         );
 
         return {

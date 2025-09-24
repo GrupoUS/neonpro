@@ -78,7 +78,7 @@ export const handlers = [
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
-    
+
     return HttpResponse.json({
       success: true,
       data: newPatient,
@@ -101,7 +101,7 @@ export const handlers = [
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
-    
+
     return HttpResponse.json({
       success: true,
       data: newAppointment,
@@ -119,7 +119,7 @@ export const handlers = [
   // Auth API
   http.post('/api/auth/login', async ({ request }) => {
     const { email, password } = await request.json();
-    
+
     if (email === 'test@example.com' && password === 'password123') {
       return HttpResponse.json({
         success: true,
@@ -133,13 +133,13 @@ export const handlers = [
         },
       });
     }
-    
+
     return HttpResponse.json(
       {
         success: false,
         error: 'Invalid credentials',
       },
-      { status: 401 }
+      { status: 401 },
     );
   }),
 
@@ -157,9 +157,10 @@ export const handlers = [
 export const server = setupServer(...handlers);
 
 // Server lifecycle functions for test setup
-export const startServer = () => server.listen({
-  onUnhandledRequest: 'warn', // Warn about unhandled requests during development
-});
+export const startServer = () =>
+  server.listen({
+    onUnhandledRequest: 'warn', // Warn about unhandled requests during development
+  });
 
 export const stopServer = () => server.close();
 

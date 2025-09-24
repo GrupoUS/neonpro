@@ -1,63 +1,60 @@
+import { type DomainEvent, type DomainEventBus } from '../events/domain-events';
 import {
-  type DomainEvent,
-  type DomainEventBus,
-} from "../events/domain-events";
-import {
-  type PatientCreatedEvent,
-  type PatientUpdatedEvent,
-  type PatientDeletedEvent,
-  type AppointmentCreatedEvent,
   type AppointmentCancelledEvent,
   type AppointmentCompletedEvent,
-  type ConsentCreatedEvent,
-  type ConsentRevokedEvent,
+  type AppointmentCreatedEvent,
   type ComplianceCheckedEvent,
   type ComplianceViolationEvent,
-} from "../events/domain-events";
+  type ConsentCreatedEvent,
+  type ConsentRevokedEvent,
+  type PatientCreatedEvent,
+  type PatientDeletedEvent,
+  type PatientUpdatedEvent,
+} from '../events/domain-events';
 
 /**
  * Audit event types
  */
 export enum AuditEventType {
-  PATIENT_CREATED = "PATIENT_CREATED",
-  PATIENT_UPDATED = "PATIENT_UPDATED",
-  PATIENT_DELETED = "PATIENT_DELETED",
-  PATIENT_ACCESSED = "PATIENT_ACCESSED",
-  APPOINTMENT_CREATED = "APPOINTMENT_CREATED",
-  APPOINTMENT_UPDATED = "APPOINTMENT_UPDATED",
-  APPOINTMENT_CANCELLED = "APPOINTMENT_CANCELLED",
-  APPOINTMENT_COMPLETED = "APPOINTMENT_COMPLETED",
-  APPOINTMENT_NO_SHOW = "APPOINTMENT_NO_SHOW",
-  CONSENT_CREATED = "CONSENT_CREATED",
-  CONSENT_GRANTED = "CONSENT_GRANTED",
-  CONSENT_REVOKED = "CONSENT_REVOKED",
-  CONSENT_ACCESSED = "CONSENT_ACCESSED",
-  CONSENT_EXPIRED = "CONSENT_EXPIRED",
-  SECURITY_EVENT = "SECURITY_EVENT",
-  COMPLIANCE_CHECK = "COMPLIANCE_CHECK",
-  DATA_EXPORT = "DATA_EXPORT",
-  DATA_ANONYMIZATION = "DATA_ANONYMIZATION",
-  SYSTEM_CONFIG = "SYSTEM_CONFIG",
+  PATIENT_CREATED = 'PATIENT_CREATED',
+  PATIENT_UPDATED = 'PATIENT_UPDATED',
+  PATIENT_DELETED = 'PATIENT_DELETED',
+  PATIENT_ACCESSED = 'PATIENT_ACCESSED',
+  APPOINTMENT_CREATED = 'APPOINTMENT_CREATED',
+  APPOINTMENT_UPDATED = 'APPOINTMENT_UPDATED',
+  APPOINTMENT_CANCELLED = 'APPOINTMENT_CANCELLED',
+  APPOINTMENT_COMPLETED = 'APPOINTMENT_COMPLETED',
+  APPOINTMENT_NO_SHOW = 'APPOINTMENT_NO_SHOW',
+  CONSENT_CREATED = 'CONSENT_CREATED',
+  CONSENT_GRANTED = 'CONSENT_GRANTED',
+  CONSENT_REVOKED = 'CONSENT_REVOKED',
+  CONSENT_ACCESSED = 'CONSENT_ACCESSED',
+  CONSENT_EXPIRED = 'CONSENT_EXPIRED',
+  SECURITY_EVENT = 'SECURITY_EVENT',
+  COMPLIANCE_CHECK = 'COMPLIANCE_CHECK',
+  DATA_EXPORT = 'DATA_EXPORT',
+  DATA_ANONYMIZATION = 'DATA_ANONYMIZATION',
+  SYSTEM_CONFIG = 'SYSTEM_CONFIG',
 }
 
 /**
  * Audit severity levels
  */
 export enum AuditSeverity {
-  LOW = "LOW",
-  MEDIUM = "MEDIUM",
-  HIGH = "HIGH",
-  CRITICAL = "CRITICAL",
+  LOW = 'LOW',
+  MEDIUM = 'MEDIUM',
+  HIGH = 'HIGH',
+  CRITICAL = 'CRITICAL',
 }
 
 /**
  * Medical data classification
  */
 export enum MedicalDataClassification {
-  GENERAL = "general",
-  SENSITIVE = "sensitive",
-  RESTRICTED = "restricted",
-  CRITICAL = "critical",
+  GENERAL = 'general',
+  SENSITIVE = 'sensitive',
+  RESTRICTED = 'restricted',
+  CRITICAL = 'critical',
 }
 
 /**
@@ -79,7 +76,7 @@ export interface AuditLogEntry {
   dataClassification?: MedicalDataClassification;
   severity?: AuditSeverity;
   metadata?: Record<string, unknown>;
-  complianceStatus?: "COMPLIANT" | "NON_COMPLIANT";
+  complianceStatus?: 'COMPLIANT' | 'NON_COMPLIANT';
 }
 
 /**
@@ -163,15 +160,14 @@ export class AuditDomainService {
       eventType: AuditEventType.PATIENT_ACCESSED,
       _userId,
       userRole,
-      resourceType: "PATIENT",
+      resourceType: 'PATIENT',
       resourceId: patientId,
-      action: "READ",
+      action: 'READ',
       description: `${userRole} accessed patient data: ${reason}`,
-      ipAddress: metadata?.ipAddress || "",
-      userAgent: metadata?.userAgent || "",
-      clinicId: metadata?.clinicId || "",
-      dataClassification:
-        metadata?.dataClassification || MedicalDataClassification.SENSITIVE,
+      ipAddress: metadata?.ipAddress || '',
+      userAgent: metadata?.userAgent || '',
+      clinicId: metadata?.clinicId || '',
+      dataClassification: metadata?.dataClassification || MedicalDataClassification.SENSITIVE,
       severity: AuditSeverity.LOW,
       metadata: {
         reason,
@@ -188,23 +184,23 @@ export class AuditDomainService {
       metadata?.legalBasis,
     );
     auditEvent.complianceStatus = complianceStatus
-      ? "COMPLIANT"
-      : "NON_COMPLIANT";
+      ? 'COMPLIANT'
+      : 'NON_COMPLIANT';
 
     // Publish domain event
     await this.eventBus.publish({
       id: auditEvent.id,
       timestamp: auditEvent.timestamp,
-      eventType: "PatientAccessed",
+      eventType: 'PatientAccessed',
       aggregateId: patientId,
-      aggregateType: "Patient",
+      aggregateType: 'Patient',
       version: 1,
       metadata: {
         ...auditEvent.metadata,
         userId: _userId,
         userRole,
         reason,
-        accessType: "read",
+        accessType: 'read',
         timestamp: auditEvent.timestamp,
         isCompliant: complianceStatus,
       },
@@ -239,14 +235,14 @@ export class AuditDomainService {
       id: `audit_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
       timestamp: new Date().toISOString(),
       eventType: AuditEventType.SECURITY_EVENT,
-      _userId: _userId || "system",
-      userRole: "system",
-      resourceType: "SYSTEM",
+      _userId: _userId || 'system',
+      userRole: 'system',
+      resourceType: 'SYSTEM',
       action: eventType,
       description,
-      ipAddress: metadata?.ipAddress || "",
-      userAgent: metadata?.userAgent || "",
-      clinicId: metadata?.clinicId || "",
+      ipAddress: metadata?.ipAddress || '',
+      userAgent: metadata?.userAgent || '',
+      clinicId: metadata?.clinicId || '',
       dataClassification: MedicalDataClassification.RESTRICTED,
       severity,
       metadata: {
@@ -259,9 +255,9 @@ export class AuditDomainService {
     await this.eventBus.publish({
       id: auditEvent.id,
       timestamp: auditEvent.timestamp,
-      eventType: "SecurityEventOccurred",
-      aggregateId: "system",
-      aggregateType: "System",
+      eventType: 'SecurityEventOccurred',
+      aggregateId: 'system',
+      aggregateType: 'System',
       version: 1,
       metadata: {
         ...auditEvent.metadata,
@@ -278,8 +274,8 @@ export class AuditDomainService {
 
     // If high or critical severity, trigger immediate alerts
     if (
-      severity === AuditSeverity.HIGH ||
-      severity === AuditSeverity.CRITICAL
+      severity === AuditSeverity.HIGH
+      || severity === AuditSeverity.CRITICAL
     ) {
       await this.handleSecurityAlert(auditEvent);
     }
@@ -314,12 +310,12 @@ export class AuditDomainService {
       eventType: AuditEventType.DATA_EXPORT,
       _userId,
       userRole,
-      resourceType: "DATA_EXPORT",
-      action: "EXPORT",
+      resourceType: 'DATA_EXPORT',
+      action: 'EXPORT',
       description: `${userRole} exported ${recordCount} ${dataType} records in ${format} format`,
-      ipAddress: metadata?.ipAddress || "",
-      userAgent: metadata?.userAgent || "",
-      clinicId: metadata?.clinicId || "",
+      ipAddress: metadata?.ipAddress || '',
+      userAgent: metadata?.userAgent || '',
+      clinicId: metadata?.clinicId || '',
       dataClassification: MedicalDataClassification.SENSITIVE,
       severity: AuditSeverity.MEDIUM,
       metadata: {
@@ -339,16 +335,16 @@ export class AuditDomainService {
       metadata?.legalBasis,
     );
     auditEvent.complianceStatus = complianceStatus
-      ? "COMPLIANT"
-      : "NON_COMPLIANT";
+      ? 'COMPLIANT'
+      : 'NON_COMPLIANT';
 
     // Publish domain event
     await this.eventBus.publish({
       id: auditEvent.id,
       timestamp: auditEvent.timestamp,
-      eventType: "DataExported",
-      aggregateId: "system",
-      aggregateType: "System",
+      eventType: 'DataExported',
+      aggregateId: 'system',
+      aggregateType: 'System',
       version: 1,
       metadata: {
         ...auditEvent.metadata,
@@ -376,7 +372,7 @@ export class AuditDomainService {
   async logDataAnonymization(
     _userId: string,
     patientId: string,
-    reason: "gdpr_request" | "data_retention" | "other",
+    reason: 'gdpr_request' | 'data_retention' | 'other',
     metadata?: {
       ipAddress?: string;
       userAgent?: string;
@@ -389,14 +385,14 @@ export class AuditDomainService {
       timestamp: new Date().toISOString(),
       eventType: AuditEventType.DATA_ANONYMIZATION,
       _userId,
-      userRole: "system",
-      resourceType: "PATIENT",
+      userRole: 'system',
+      resourceType: 'PATIENT',
       resourceId: patientId,
-      action: "ANONYMIZE",
+      action: 'ANONYMIZE',
       description: `Patient data anonymized: ${reason}`,
-      ipAddress: metadata?.ipAddress || "",
-      userAgent: metadata?.userAgent || "",
-      clinicId: metadata?.clinicId || "",
+      ipAddress: metadata?.ipAddress || '',
+      userAgent: metadata?.userAgent || '',
+      clinicId: metadata?.clinicId || '',
       dataClassification: MedicalDataClassification.RESTRICTED,
       severity: AuditSeverity.HIGH,
       metadata: {
@@ -410,9 +406,9 @@ export class AuditDomainService {
     await this.eventBus.publish({
       id: auditEvent.id,
       timestamp: auditEvent.timestamp,
-      eventType: "PatientAnonymized",
+      eventType: 'PatientAnonymized',
       aggregateId: patientId,
-      aggregateType: "Patient",
+      aggregateType: 'Patient',
       version: 1,
       metadata: {
         ...auditEvent.metadata,
@@ -457,7 +453,7 @@ export class AuditDomainService {
     const report: ComplianceReport = {
       id: `compliance-report-${Date.now()}`,
       generatedAt: new Date().toISOString(),
-      reportType: "GENERAL",
+      reportType: 'GENERAL',
       periodStart: startDate.toISOString(),
       periodEnd: endDate.toISOString(),
       summary: {
@@ -477,10 +473,10 @@ export class AuditDomainService {
       },
       violations: {},
       recommendations: [
-        "Regular audit log review",
-        "Security monitoring",
-        "Compliance training",
-        "Access control reviews",
+        'Regular audit log review',
+        'Security monitoring',
+        'Compliance training',
+        'Access control reviews',
       ],
     };
 
@@ -551,38 +547,38 @@ export class AuditDomainService {
    */
   async handleDomainEvent(event: DomainEvent): Promise<void> {
     switch (event.eventType) {
-      case "PatientCreated":
+      case 'PatientCreated':
         await this.handlePatientCreated(event as PatientCreatedEvent);
         break;
-      case "PatientUpdated":
+      case 'PatientUpdated':
         await this.handlePatientUpdated(event as PatientUpdatedEvent);
         break;
-      case "PatientDeleted":
+      case 'PatientDeleted':
         await this.handlePatientDeleted(event as PatientDeletedEvent);
         break;
-      case "AppointmentCreated":
+      case 'AppointmentCreated':
         await this.handleAppointmentCreated(event as AppointmentCreatedEvent);
         break;
-      case "AppointmentCancelled":
+      case 'AppointmentCancelled':
         await this.handleAppointmentCancelled(
           event as AppointmentCancelledEvent,
         );
         break;
-      case "AppointmentCompleted":
+      case 'AppointmentCompleted':
         await this.handleAppointmentCompleted(
           event as AppointmentCompletedEvent,
         );
         break;
-      case "ConsentCreated":
+      case 'ConsentCreated':
         await this.handleConsentCreated(event as ConsentCreatedEvent);
         break;
-      case "ConsentRevoked":
+      case 'ConsentRevoked':
         await this.handleConsentRevoked(event as ConsentRevokedEvent);
         break;
-      case "ComplianceChecked":
+      case 'ComplianceChecked':
         await this.handleComplianceChecked(event as ComplianceCheckedEvent);
         break;
-      case "ComplianceViolation":
+      case 'ComplianceViolation':
         await this.handleComplianceViolation(event as ComplianceViolationEvent);
         break;
     }

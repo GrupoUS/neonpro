@@ -1,9 +1,9 @@
 /**
  * Anti-No-Show Engine for Aesthetic Clinics
- * 
+ *
  * AI-powered prediction and intervention system to reduce appointment no-shows
  * Specifically designed for Brazilian aesthetic medicine clinics
- * 
+ *
  * Features:
  * - Behavioral risk scoring (0.00-1.00)
  * - Multi-channel intervention automation
@@ -30,11 +30,11 @@ export type RiskLevel = 'low' | 'medium' | 'high';
 /**
  * Aesthetic procedure categories with different no-show patterns
  */
-export type AestheticProcedureCategory = 
-  | 'botox' 
-  | 'fillers' 
-  | 'laser_treatment' 
-  | 'chemical_peel' 
+export type AestheticProcedureCategory =
+  | 'botox'
+  | 'fillers'
+  | 'laser_treatment'
+  | 'chemical_peel'
   | 'facial_harmonization'
   | 'body_contouring'
   | 'skin_rejuvenation'
@@ -127,10 +127,10 @@ export interface NoShowRiskResult {
 /**
  * Intervention strategies for no-show prevention
  */
-export type InterventionStrategy = 
-  | 'whatsapp_reminder' 
-  | 'phone_call' 
-  | 'sms_confirmation' 
+export type InterventionStrategy =
+  | 'whatsapp_reminder'
+  | 'phone_call'
+  | 'sms_confirmation'
   | 'email_reminder'
   | 'reschedule_suggestion'
   | 'incentive_offer';
@@ -182,10 +182,10 @@ export class AntiNoShowEngine {
   constructor(
     modelProvider: ModelProvider,
     whatsappService: any,
-    analyticsService: any
+    analyticsService: any,
   ) {
     if (!modelProvider) {
-      throw new Error("ML provider is required");
+      throw new Error('ML provider is required');
     }
     this.modelProvider = modelProvider;
     this.whatsappService = whatsappService;
@@ -198,17 +198,17 @@ export class AntiNoShowEngine {
    */
   async predictNoShowRisk(input: NoShowPredictionInput): Promise<NoShowRiskResult> {
     if (!input.patientId || input.patientId.trim() === '') {
-      throw new Error("Patient ID is required");
+      throw new Error('Patient ID is required');
     }
 
     if (input.scheduledDateTime <= new Date()) {
-      throw new Error("Appointment must be in the future");
+      throw new Error('Appointment must be in the future');
     }
 
     try {
       // Prepare features for ML model
       const features = this.prepareFeatures(input);
-      
+
       // Get prediction from ML model
       const predictionInput = {
         type: 'no_show_risk' as const,
@@ -217,14 +217,15 @@ export class AntiNoShowEngine {
         metadata: {
           procedure_category: input.procedureCategory,
           cost_brl: input.appointmentDetails.cost,
-        }
+        },
       };
 
       const prediction = await this.modelProvider.predict(predictionInput);
-      
+
       // Convert ML prediction to no-show risk result
       return this.convertToRiskResult(prediction, input);
-    } catch (_error) { void _error;
+    } catch (_error) {
+      void _error;
       // Fallback to default risk if ML service fails
       return {
         patientId: input.patientId,
@@ -236,11 +237,11 @@ export class AntiNoShowEngine {
           {
             factor: 'ml_service_error',
             impact: 1.0,
-            description: 'ML service unavailable, using default risk assessment'
-          }
+            description: 'ML service unavailable, using default risk assessment',
+          },
         ],
         recommendations: ['Usar estratégia padrão devido a erro na previsão'],
-        timestamp: new Date()
+        timestamp: new Date(),
       };
     }
   }
@@ -250,16 +251,16 @@ export class AntiNoShowEngine {
    */
   async executeInterventions(
     riskResult: NoShowRiskResult,
-    patientContact: { phone: string; email?: string; whatsapp?: string }
+    patientContact: { phone: string; email?: string; whatsapp?: string },
   ): Promise<InterventionResult[]> {
     const results: InterventionResult[] = [];
-    
+
     // Get intervention configuration for this risk level
     const config = this.getInterventionConfig(riskResult.riskLevel);
-    
+
     // Use instance config's enabled channels if it was modified
     const enabledChannels = this.config.enabledChannels;
-    
+
     // Execute interventions based on enabled channels
     for (const intervention of config.interventions) {
       if (enabledChannels.includes(intervention.channel)) {
@@ -268,12 +269,12 @@ export class AntiNoShowEngine {
         if (!hasRequiredContact) {
           continue; // Skip intervention if required contact info is missing
         }
-        
+
         const result = await this.executeIntervention(
           intervention.type,
           intervention.channel,
           patientContact,
-          riskResult
+          riskResult,
         );
         results.push(result);
       }
@@ -286,7 +287,7 @@ export class AntiNoShowEngine {
           eventType: 'intervention_executed',
           interventionType: result.type,
           riskLevel: riskResult.riskLevel,
-          successCount: 1
+          successCount: 1,
         });
       }
     });
@@ -300,7 +301,7 @@ export class AntiNoShowEngine {
   async analyzeEffectiveness(
     interventions: InterventionResult[],
     outcome: { patientShowed: boolean; onTime: boolean; satisfaction: number },
-    appointmentValue: number
+    appointmentValue: number,
   ): Promise<{
     totalCost: number;
     successRate: number;
@@ -309,8 +310,10 @@ export class AntiNoShowEngine {
   }> {
     const totalCost = interventions.reduce((sum, i) => sum + i.cost, 0);
     const successfulInterventions = interventions.filter(i => i.status === 'success').length;
-    const successRate = interventions.length > 0 ? successfulInterventions / interventions.length : 0;
-    
+    const successRate = interventions.length > 0
+      ? successfulInterventions / interventions.length
+      : 0;
+
     let roi = 0;
     if (outcome.patientShowed && totalCost > 0) {
       roi = (appointmentValue - totalCost) / totalCost;
@@ -331,7 +334,7 @@ export class AntiNoShowEngine {
       totalCost,
       successRate,
       roi,
-      recommendations
+      recommendations,
     };
   }
 
@@ -350,27 +353,29 @@ export class AntiNoShowEngine {
       const mlHealth = await this.modelProvider.healthCheck();
       const whatsappHealth = await this.whatsappService?.healthCheck?.() || { status: 'healthy' };
 
-      const overallStatus = 
-        mlHealth.status === 'unhealthy' || whatsappHealth.status === 'unhealthy' ? 'unhealthy' :
-        mlHealth.status === 'degraded' || whatsappHealth.status === 'degraded' ? 'degraded' :
-        'healthy';
+      const overallStatus = mlHealth.status === 'unhealthy' || whatsappHealth.status === 'unhealthy'
+        ? 'unhealthy'
+        : mlHealth.status === 'degraded' || whatsappHealth.status === 'degraded'
+        ? 'degraded'
+        : 'healthy';
 
       return {
         status: overallStatus,
         services: {
           ml: mlHealth.status,
-          whatsapp: whatsappHealth.status
+          whatsapp: whatsappHealth.status,
         },
-        timestamp: new Date()
+        timestamp: new Date(),
       };
-    } catch (_error) { void _error;
+    } catch (_error) {
+      void _error;
       return {
         status: 'unhealthy',
         services: {
           ml: 'unhealthy',
-          whatsapp: 'unhealthy'
+          whatsapp: 'unhealthy',
         },
-        timestamp: new Date()
+        timestamp: new Date(),
       };
     }
   }
@@ -381,12 +386,14 @@ export class AntiNoShowEngine {
 
   private prepareFeatures(input: NoShowPredictionInput): Record<string, unknown> {
     const now = new Date();
-    const hoursUntilAppointment = (input.scheduledDateTime.getTime() - now.getTime()) / (1000 * 60 * 60);
-    const daysSinceLastVisit = (now.getTime() - input.patientHistory.lastVisit.getTime()) / (1000 * 60 * 60 * 24);
-    
+    const hoursUntilAppointment = (input.scheduledDateTime.getTime() - now.getTime())
+      / (1000 * 60 * 60);
+    const daysSinceLastVisit = (now.getTime() - input.patientHistory.lastVisit.getTime())
+      / (1000 * 60 * 60 * 24);
+
     // Calculate historical no-show rate
-    const historicalNoShowRate = input.patientHistory.totalAppointments > 0 
-      ? input.patientHistory.noShows / input.patientHistory.totalAppointments 
+    const historicalNoShowRate = input.patientHistory.totalAppointments > 0
+      ? input.patientHistory.noShows / input.patientHistory.totalAppointments
       : 0;
 
     return {
@@ -398,7 +405,7 @@ export class AntiNoShowEngine {
         historical_no_show_rate: historicalNoShowRate,
         days_since_last_visit: daysSinceLastVisit,
       },
-      
+
       // Appointment features
       procedure_category: input.procedureCategory,
       time_until_appointment: hoursUntilAppointment,
@@ -406,7 +413,7 @@ export class AntiNoShowEngine {
       cost_brl: input.appointmentDetails.cost,
       is_first_visit: input.appointmentDetails.isFirstVisit,
       requires_preparation: input.appointmentDetails.requiresPreparation,
-      
+
       // Temporal features
       day_of_week: input.scheduledDateTime.getDay(),
       hour_of_day: input.scheduledDateTime.getHours(),
@@ -414,17 +421,20 @@ export class AntiNoShowEngine {
   }
 
   private convertToRiskResult(
-    prediction: any, 
-    input: NoShowPredictionInput
+    prediction: any,
+    input: NoShowPredictionInput,
   ): NoShowRiskResult {
-    const riskScore = typeof prediction.prediction === 'number' 
-      ? prediction.prediction 
+    const riskScore = typeof prediction.prediction === 'number'
+      ? prediction.prediction
       : 0.5; // Default to medium risk if not numeric
 
     const riskLevel = this.classifyRiskLevel(riskScore);
     const contributingFactors = this.identifyRiskFactors(input, riskScore);
     const recommendations = this.generateRecommendations(riskLevel, input);
-    const optimalInterventionTime = this.getOptimalInterventionTime(riskLevel, input.scheduledDateTime);
+    const optimalInterventionTime = this.getOptimalInterventionTime(
+      riskLevel,
+      input.scheduledDateTime,
+    );
 
     return {
       patientId: input.patientId,
@@ -435,7 +445,7 @@ export class AntiNoShowEngine {
       contributingFactors,
       recommendations,
       optimalInterventionTime,
-      timestamp: new Date()
+      timestamp: new Date(),
     };
   }
 
@@ -445,7 +455,10 @@ export class AntiNoShowEngine {
     return 'low';
   }
 
-  private identifyRiskFactors(input: NoShowPredictionInput, _riskScore: number): ContributingFactor[] {
+  private identifyRiskFactors(
+    input: NoShowPredictionInput,
+    _riskScore: number,
+  ): ContributingFactor[] {
     const factors: ContributingFactor[] = [];
     const historicalNoShowRate = input.patientHistory.totalAppointments > 0
       ? input.patientHistory.noShows / input.patientHistory.totalAppointments
@@ -456,17 +469,20 @@ export class AntiNoShowEngine {
       factors.push({
         factor: 'appointment_history',
         impact: Math.min(historicalNoShowRate * 2, 1.0), // Scale impact for test
-        description: `Patient has missed ${Math.round(historicalNoShowRate * 100)}% of appointments`
+        description: `Patient has missed ${
+          Math.round(historicalNoShowRate * 100)
+        }% of appointments`,
       });
     }
 
     const now = new Date();
-    const hoursUntilAppointment = (input.scheduledDateTime.getTime() - now.getTime()) / (1000 * 60 * 60);
+    const hoursUntilAppointment = (input.scheduledDateTime.getTime() - now.getTime())
+      / (1000 * 60 * 60);
     if (hoursUntilAppointment < 48) { // Lower threshold for more factors
       factors.push({
         factor: 'time_until_appointment',
         impact: Math.max(0, 1 - hoursUntilAppointment / 48), // Higher impact for closer appointments
-        description: 'Time until scheduled appointment'
+        description: 'Time until scheduled appointment',
       });
     }
 
@@ -474,7 +490,7 @@ export class AntiNoShowEngine {
       factors.push({
         factor: 'high_cost_procedure',
         impact: Math.min(input.appointmentDetails.cost / 5000, 0.5),
-        description: 'Expensive procedure may increase no-show risk'
+        description: 'Expensive procedure may increase no-show risk',
       });
     }
 
@@ -482,7 +498,7 @@ export class AntiNoShowEngine {
       factors.push({
         factor: 'first_visit',
         impact: 0.15,
-        description: 'First-time appointments have higher no-show rates'
+        description: 'First-time appointments have higher no-show rates',
       });
     }
 
@@ -496,17 +512,17 @@ export class AntiNoShowEngine {
           'enviar lembrete via WhatsApp 24 horas antes do atendimento',
           'Ligação telefônica pessoal recomendada',
           'Enviar confirmação imediata',
-          'Considerar oferecer reembolso parcial em caso de cancelamento'
+          'Considerar oferecer reembolso parcial em caso de cancelamento',
         ];
       case 'medium':
         return [
           'enviar lembrete via WhatsApp 24 horas antes do atendimento',
           'Envio de SMS adicional 2 horas antes',
-          'Verificar disponibilidade para horários alternativos'
+          'Verificar disponibilidade para horários alternativos',
         ];
       case 'low':
         return [
-          'Lembrete padrão via WhatsApp'
+          'Lembrete padrão via WhatsApp',
         ];
       default:
         return ['Lembrete padrão via WhatsApp'];
@@ -515,9 +531,9 @@ export class AntiNoShowEngine {
 
   private getOptimalInterventionTime(riskLevel: RiskLevel, appointmentTime: Date): Date {
     const hoursBefore = {
-      'high': 72,    // 3 days before for high risk
-      'medium': 24,  // 1 day before for medium risk
-      'low': 24      // 24 hours before for low risk
+      high: 72, // 3 days before for high risk
+      medium: 24, // 1 day before for medium risk
+      low: 24, // 24 hours before for low risk
     }[riskLevel];
 
     return new Date(appointmentTime.getTime() - hoursBefore * 60 * 60 * 1000);
@@ -529,16 +545,16 @@ export class AntiNoShowEngine {
       enabledChannels: ['whatsapp', 'sms'] as ('whatsapp' | 'sms')[],
       timing: {
         initialReminder: 24,
-        followUp: 6
+        followUp: 6,
       },
       interventions: [
         {
           type: 'whatsapp_reminder' as const,
           channel: 'whatsapp' as const,
           cost: 0.50,
-          messageTemplate: 'Lembrete de agendamento estético'
-        }
-      ]
+          messageTemplate: 'Lembrete de agendamento estético',
+        },
+      ],
     };
 
     switch (riskLevel) {
@@ -552,27 +568,27 @@ export class AntiNoShowEngine {
               type: 'phone_call' as const,
               channel: 'phone' as const,
               cost: 5.00,
-              messageTemplate: 'Chamada de confirmação pessoal'
+              messageTemplate: 'Chamada de confirmação pessoal',
             },
             {
               type: 'email_reminder' as const,
               channel: 'email' as const,
               cost: 0.10,
-              messageTemplate: 'Email de confirmação detalhado'
+              messageTemplate: 'Email de confirmação detalhado',
             },
             {
               type: 'sms_confirmation' as const,
               channel: 'sms' as const,
               cost: 0.20,
-              messageTemplate: 'SMS de confirmação adicional'
+              messageTemplate: 'SMS de confirmação adicional',
             },
             {
               type: 'reschedule_suggestion' as const,
               channel: 'whatsapp' as const,
               cost: 0.30,
-              messageTemplate: 'Sugestão de reagendamento'
-            }
-          ]
+              messageTemplate: 'Sugestão de reagendamento',
+            },
+          ],
         };
       case 'medium':
         return {
@@ -584,21 +600,21 @@ export class AntiNoShowEngine {
               type: 'email_reminder' as const,
               channel: 'email' as const,
               cost: 0.10,
-              messageTemplate: 'Email de confirmação detalhado'
+              messageTemplate: 'Email de confirmação detalhado',
             },
             {
               type: 'sms_confirmation' as const,
               channel: 'sms' as const,
               cost: 0.20,
-              messageTemplate: 'SMS de confirmação adicional'
+              messageTemplate: 'SMS de confirmação adicional',
             },
             {
               type: 'reschedule_suggestion' as const,
               channel: 'whatsapp' as const,
               cost: 0.30,
-              messageTemplate: 'Sugestão de reagendamento'
-            }
-          ]
+              messageTemplate: 'Sugestão de reagendamento',
+            },
+          ],
         };
       case 'low':
         return baseConfig;
@@ -611,7 +627,7 @@ export class AntiNoShowEngine {
     type: InterventionStrategy,
     _channel: 'whatsapp' | 'sms' | 'email' | 'phone',
     patientContact: { phone: string; email?: string; whatsapp?: string },
-    riskResult: NoShowRiskResult
+    riskResult: NoShowRiskResult,
   ): Promise<InterventionResult> {
     const timestamp = new Date();
     let status: 'success' | 'failed' = 'failed';
@@ -627,7 +643,7 @@ export class AntiNoShowEngine {
               appointmentId: riskResult.appointmentId,
               procedureCategory: riskResult.contributingFactors[0]?.factor || 'general',
               riskLevel: riskResult.riskLevel,
-              scheduledTime: riskResult.optimalInterventionTime || new Date()
+              scheduledTime: riskResult.optimalInterventionTime || new Date(),
             });
             status = 'success';
             cost = this.calculateCost('whatsapp', 'success');
@@ -680,11 +696,14 @@ export class AntiNoShowEngine {
       timestamp,
       status,
       cost,
-      error
+      error,
     };
   }
 
-  private hasRequiredContact(channel: 'whatsapp' | 'sms' | 'email' | 'phone', patientContact: { phone: string; email?: string; whatsapp?: string }): boolean {
+  private hasRequiredContact(
+    channel: 'whatsapp' | 'sms' | 'email' | 'phone',
+    patientContact: { phone: string; email?: string; whatsapp?: string },
+  ): boolean {
     switch (channel) {
       case 'whatsapp':
         return !!patientContact.whatsapp && patientContact.whatsapp.trim() !== '';
@@ -698,14 +717,17 @@ export class AntiNoShowEngine {
     }
   }
 
-  private calculateCost(channel: 'whatsapp' | 'sms' | 'email' | 'phone_call', status: 'success' | 'failed'): number {
+  private calculateCost(
+    channel: 'whatsapp' | 'sms' | 'email' | 'phone_call',
+    status: 'success' | 'failed',
+  ): number {
     if (status === 'failed') return 0;
 
     const costs = {
       whatsapp: 0.50,
       sms: 0.20,
       email: 0.10,
-      phone_call: 5.00
+      phone_call: 5.00,
     };
 
     return costs[channel] || 0;

@@ -1,10 +1,10 @@
-import * as React from "react";
-import { createFileRoute } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
-import { api } from "@/lib/api";
-import { MultiSessionScheduler } from "@/components/aesthetic-scheduling/MultiSessionScheduler";
+import { MultiSessionScheduler } from '@/components/aesthetic-scheduling/MultiSessionScheduler';
+import { api } from '@/lib/api';
+import { useQuery } from '@tanstack/react-query';
+import { createFileRoute } from '@tanstack/react-router';
+import * as React from 'react';
 
-export const Route = createFileRoute("/aesthetic-scheduling/multi-session/")({
+export const Route = createFileRoute('/aesthetic-scheduling/multi-session/')({
   component: MultiSessionSchedulerPage,
   loader: () => {
     // Pre-load data for better UX
@@ -17,12 +17,12 @@ export const Route = createFileRoute("/aesthetic-scheduling/multi-session/")({
 
 function MultiSessionSchedulerPage() {
   const { data: procedures } = useQuery({
-    queryKey: ["aesthetic-procedures"],
+    queryKey: ['aesthetic-procedures'],
     queryFn: () => api.aestheticScheduling.getAestheticProcedures(),
   });
 
   const { data: professionals } = useQuery({
-    queryKey: ["professionals"],
+    queryKey: ['professionals'],
     queryFn: () => api.aestheticScheduling.getProfessionals(),
   });
 
@@ -30,12 +30,12 @@ function MultiSessionSchedulerPage() {
     <MultiSessionScheduler
       procedures={procedures || []}
       professionals={professionals || []}
-      onSchedule={async (data) => {
+      onSchedule={async data => {
         try {
           const result = await api.aestheticScheduling.scheduleProcedures(data);
           return result;
         } catch (error) {
-          console.error("Error scheduling procedures:", error);
+          console.error('Error scheduling procedures:', error);
           throw error;
         }
       }}

@@ -488,29 +488,29 @@ class AguiClient {
   private sessionId: string;
   private reconnectAttempts = 0;
   private maxReconnectAttempts = 5;
-  
+
   constructor(private userId: string, private baseUrl: string) {
     this.sessionId = this.generateSessionId();
   }
-  
+
   async connect(): Promise<void> {
     const url = `${this.baseUrl}/ws/agui/${this.userId}`;
     this.socket = new WebSocket(url);
-    
+
     this.socket.onopen = this.handleOpen.bind(this);
     this.socket.onmessage = this.handleMessage.bind(this);
     this.socket.onclose = this.handleClose.bind(this);
     this.socket.onerror = this.handleError.bind(this);
   }
-  
+
   private handleOpen(): void {
     console.log('Connected to AG-UI protocol');
     // Start heartbeat if needed
   }
-  
+
   private handleMessage(event: MessageEvent): void {
     const message: AguiEvent = JSON.parse(event.data);
-    
+
     switch (message.type) {
       case 'connection':
         this.handleConnection(message);
@@ -528,7 +528,7 @@ class AguiClient {
         this.handleCustomEvent(message);
     }
   }
-  
+
   send(message: Partial<AguiEvent>): void {
     if (this.socket && this.socket.readyState === WebSocket.OPEN) {
       const fullMessage: AguiEvent = {
@@ -536,20 +536,20 @@ class AguiClient {
         type: 'message',
         timestamp: Date.now(),
         sessionId: this.sessionId,
-        ...message
+        ...message,
       };
-      
+
       this.socket.send(JSON.stringify(fullMessage));
     }
   }
-  
+
   disconnect(): void {
     if (this.socket) {
       this.socket.close();
       this.socket = null;
     }
   }
-  
+
   private handleClose(): void {
     // Attempt reconnection if within limits
     if (this.reconnectAttempts < this.maxReconnectAttempts) {

@@ -1,7 +1,7 @@
 // RateCounter service (Phase 1)
 // Memory-only counters for fairness limits: 10/5m and 30/1h per user.
 
-import { LRUCache } from "lru-cache";
+import { LRUCache } from 'lru-cache';
 
 export interface RateCounterConfig {
   windowMs: number;
@@ -46,7 +46,7 @@ export class RateCounter {
   increment(key: string): void {
     const n = this.now();
     const prev = this.store.get(key) ?? { c5: 0, c60: 0, t5: n, t60: n };
-    
+
     // decay 5m window
     if (n - prev.t5 > 5 * 60 * 1000) {
       prev.c5 = 0;
@@ -78,29 +78,29 @@ export class RateCounter {
     const remaining = Math.max(0, this.config.maxRequests - fiveMin);
     const blocked = fiveMin >= this.config.maxRequests;
     const resetTime = new Date(this.now() + this.config.windowMs);
-    
+
     return {
       count: fiveMin,
       remaining,
       resetTime,
-      blocked
+      blocked,
     };
   }
 
   getGlobalStats(): { activeKeys: number; totalRequests: number } {
     const keys = Array.from(this.store.keys());
     let totalRequests = 0;
-    
+
     for (const key of keys) {
       const counters = this.store.get(key);
       if (counters) {
         totalRequests += counters.c5; // Only count 5-minute window for stats
       }
     }
-    
+
     return {
       activeKeys: keys.length,
-      totalRequests
+      totalRequests,
     };
   }
 
@@ -156,9 +156,9 @@ export function createRateCounter(config?: RateCounterConfig): RateCounter {
   const defaultConfig: RateCounterConfig = {
     windowMs: 60000,
     maxRequests: 10,
-    keyGenerator: (req) => req.userId || "anonymous",
+    keyGenerator: req => req.userId || 'anonymous',
   };
-  
+
   return new RateCounter(config || defaultConfig);
 }
 
@@ -166,6 +166,6 @@ export function getDefaultRateConfig(): RateCounterConfig {
   return {
     windowMs: 60000,
     maxRequests: 10,
-    keyGenerator: (req) => req.userId || "anonymous",
+    keyGenerator: req => req.userId || 'anonymous',
   };
 }

@@ -17,7 +17,11 @@
 import type { Context } from 'hono';
 import { nanoid } from 'nanoid';
 import { z } from 'zod';
-import { auditLogger, logHealthcareError, createHealthcareLogger } from '../logging/healthcare-logger';
+import {
+  auditLogger,
+  createHealthcareLogger,
+  logHealthcareError,
+} from '../logging/healthcare-logger';
 import type {
   AuthSession,
   HealthcarePermission,
@@ -868,91 +872,94 @@ export class HealthcareAuthorizationRules {
   static evaluateLGPDCompliance(
     context: AuthorizationContext,
   ): ComplianceDecision {
-  const { action, compliance, resource } = context;
+    const { action, compliance, resource } = context;
 
-  let decision: ComplianceDecision['decision'] = 'allow';
-  const reasons: string[] = [];
-  const advice: ComplianceAdvice[] = [];
+    let decision: ComplianceDecision['decision'] = 'allow';
+    const reasons: string[] = [];
+    const advice: ComplianceAdvice[] = [];
 
-  // Consent validation for processing (highest priority)
-  if (compliance.consentStatus.dataProcessing === false && action.operation !== 'read') {
-    decision = 'deny';
-    reasons.push('LGPD consent required for data processing');
-    advice.push({
-      type: 'lgpd',
-      description: 'Obtain explicit consent before processing personal data',
-      severity: 'error' as const,
-    });
+    // Consent validation for processing (highest priority)
+    if (compliance.consentStatus.dataProcessing === false && action.operation !== 'read') {
+      decision = 'deny';
+      reasons.push('LGPD consent required for data processing');
+      advice.push({
+        type: 'lgpd',
+        description: 'Obtain explicit consent before processing personal data',
+        severity: 'error' as const,
+      });
+    }
+
+    // Data minimization
+    if (compliance.dataMinimization && action.scope === 'full') {
+      decision = 'deny';
+      reasons.push('Data minimization principle violation');
+      advice.push({
+        type: 'lgpd',
+        description: 'Consider using basic scope to comply with data minimization',
+        severity: 'warning' as const,
+      });
+    }
+
+    // Purpose limitation
+    if (compliance.purposeLimitation && (!action.purpose || action.purpose === 'unspecified')) {
+      decision = 'deny';
+      reasons.push('Purpose limitation requires explicit purpose specification');
+      advice.push({
+        type: 'lgpd',
+        description: 'Specify a clear purpose for data processing',
+        severity: 'warning' as const,
+      });
+    }
+
+    // Storage limitation check
+    const now = new Date();
+    const retentionDays = resource.metadata.retentionPeriod || 0;
+    const createdAt = new Date(resource.metadata.createdAt);
+    const daysStored = Math.floor((now.getTime() - createdAt.getTime()) / (1000 * 60 * 60 * 24));
+
+    if (retentionDays > 0 && daysStored > retentionDays) {
+      decision = 'deny';
+      reasons.push('Retention period exceeded');
+      advice.push({
+        type: 'retention',
+        description: 'Data retention period exceeded - consider anonymization or deletion',
+        severity: 'error' as const,
+      });
+    }
+
+    // Third-party sharing validation (only if not already denied for consent)
+    if (
+      decision === 'allow' && compliance.lgpdBasis === 'consent'
+      && !compliance.consentStatus.thirdPartySharing && !resource.attributes.allowSharing
+    ) {
+      decision = 'deny';
+      reasons.push('Third-party sharing not authorized');
+      advice.push({
+        type: 'lgpd',
+        description: 'Ensure data sharing agreements are in place',
+        severity: 'warning' as const,
+      });
+    }
+
+    // Right to erasure for patients
+    if (context.subject._role === 'patient' && action.operation === 'delete') {
+      decision = 'permit';
+      reasons.push('Patient right to erasure under LGPD');
+      advice.push({
+        type: 'lgpd',
+        description: 'Patient has right to request deletion of their personal data',
+        severity: 'info' as const,
+      });
+    }
+
+    return {
+      decision,
+      reasons,
+      advice,
+      complianceScore: decision === 'allow' ? 100 : 50,
+      lastEvaluated: new Date().toISOString(),
+    };
   }
-
-  // Data minimization
-  if (compliance.dataMinimization && action.scope === 'full') {
-    decision = 'deny';
-    reasons.push('Data minimization principle violation');
-    advice.push({
-      type: 'lgpd',
-      description: 'Consider using basic scope to comply with data minimization',
-      severity: 'warning' as const,
-    });
-  }
-
-  // Purpose limitation
-  if (compliance.purposeLimitation && (!action.purpose || action.purpose === 'unspecified')) {
-    decision = 'deny';
-    reasons.push('Purpose limitation requires explicit purpose specification');
-    advice.push({
-      type: 'lgpd',
-      description: 'Specify a clear purpose for data processing',
-      severity: 'warning' as const,
-    });
-  }
-
-  // Storage limitation check
-  const now = new Date();
-  const retentionDays = resource.metadata.retentionPeriod || 0;
-  const createdAt = new Date(resource.metadata.createdAt);
-  const daysStored = Math.floor((now.getTime() - createdAt.getTime()) / (1000 * 60 * 60 * 24));
-
-  if (retentionDays > 0 && daysStored > retentionDays) {
-    decision = 'deny';
-    reasons.push('Retention period exceeded');
-    advice.push({
-      type: 'retention',
-      description: 'Data retention period exceeded - consider anonymization or deletion',
-      severity: 'error' as const,
-    });
-  }
-
-  // Third-party sharing validation (only if not already denied for consent)
-  if (decision === 'allow' && compliance.lgpdBasis === 'consent' && !compliance.consentStatus.thirdPartySharing && !resource.attributes.allowSharing) {
-    decision = 'deny';
-    reasons.push('Third-party sharing not authorized');
-    advice.push({
-      type: 'lgpd',
-      description: 'Ensure data sharing agreements are in place',
-      severity: 'warning' as const,
-    });
-  }
-
-  // Right to erasure for patients
-  if (context.subject._role === 'patient' && action.operation === 'delete') {
-    decision = 'allow';
-    reasons.push('Patient right to erasure under LGPD');
-    advice.push({
-      type: 'lgpd',
-      description: 'Patient has right to request deletion of their personal data',
-      severity: 'info' as const,
-    });
-  }
-
-  return {
-    decision,
-    reasons,
-    advice,
-    complianceScore: decision === 'allow' ? 100 : 50,
-    lastEvaluated: new Date().toISOString(),
-  };
-}
 }
 
 // ============================================================================
@@ -1250,13 +1257,14 @@ export class HealthcareAuthorizationEngine {
         finalDecision = 'deny';
         allReasons.push(...lgpdDecision.reasons);
         // Map advice to compatible schema types (filter out 'error' severity)
-        allAdvice.push(...lgpdDecision.advice
-          .filter(advice => advice.severity !== 'error')
-          .map(advice => ({
-            type: advice.type,
-            description: advice.description,
-            severity: advice.severity as 'info' | 'warning' | 'critical'
-          }))
+        allAdvice.push(
+          ...lgpdDecision.advice
+            .filter(advice => advice.severity !== 'error')
+            .map(advice => ({
+              type: advice.type,
+              description: advice.description,
+              severity: advice.severity as 'info' | 'warning' | 'critical',
+            })),
         );
       }
     }
@@ -1440,7 +1448,7 @@ export class HealthcareAuthorizationEngine {
   } {
     // Clean up expired cache entries before returning statistics
     this.cleanupExpiredCacheEntries();
-    
+
     this.stats.cacheSize = this.decisionCache.size;
     this.stats.policiesLoaded = this.policies.size;
     this.stats.isInitialized = this.isInitialized;
@@ -1840,8 +1848,7 @@ export class HealthcareAuthorizationEngine {
       monitoring.auditRequired = true;
       monitoring.alertRequired = true;
       monitoring.complianceTracking = true;
-    }
-    // Basic monitoring logic based on decision and risk
+    } // Basic monitoring logic based on decision and risk
     else if (decision === 'permit') {
       monitoring.auditRequired = riskScore > 5;
       monitoring.alertRequired = riskScore > 7;
@@ -1899,7 +1906,8 @@ export class HealthcareAuthorizationEngine {
       conditions.push({
         type: 'license_validation',
         description: 'Valid medical license required',
-        satisfied: _context.subject.attributes?.license?.valid && new Date(_context.subject.attributes?.license?.expiry) > new Date(),
+        satisfied: _context.subject.attributes?.license?.valid
+          && new Date(_context.subject.attributes?.license?.expiry) > new Date(),
       });
     }
 
@@ -1927,8 +1935,9 @@ export class HealthcareAuthorizationEngine {
 
     this.statistics.totalEvaluations++;
     this.statistics.averageEvaluationTime =
-      (this.statistics.averageEvaluationTime * (this.statistics.totalEvaluations - 1) + evaluationTime) /
-      this.statistics.totalEvaluations;
+      (this.statistics.averageEvaluationTime * (this.statistics.totalEvaluations - 1)
+        + evaluationTime)
+      / this.statistics.totalEvaluations;
 
     switch (decision) {
       case 'permit':
@@ -1939,7 +1948,6 @@ export class HealthcareAuthorizationEngine {
         break;
     }
   }
-
 
   /**
    * Initialize statistics

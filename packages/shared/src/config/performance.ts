@@ -1,9 +1,9 @@
 /**
  * Performance Configuration Constants
- * 
+ *
  * Centralized performance thresholds and configuration for the NeonPro platform.
  * Extracted from performance-utils.ts for better organization and maintainability.
- * 
+ *
  * @version 1.0.0
  */
 
@@ -14,33 +14,33 @@
 export const PERFORMANCE_THRESHOLDS = {
   /** Render time thresholds in milliseconds */
   RENDER_TIME: {
-    FAST: 100,    // < 100ms
-    ACCEPTABLE: 200,  // < 200ms
-    SLOW: 500    // < 500ms
+    FAST: 100, // < 100ms
+    ACCEPTABLE: 200, // < 200ms
+    SLOW: 500, // < 500ms
   },
   /** Memory usage thresholds in megabytes */
   MEMORY_USAGE: {
-    LOW: 50,     // < 50MB
-    MEDIUM: 100,   // < 100MB
-    HIGH: 200    // < 200MB
+    LOW: 50, // < 50MB
+    MEDIUM: 100, // < 100MB
+    HIGH: 200, // < 200MB
   },
   /** Response time thresholds in milliseconds */
   RESPONSE_TIME: {
-    FAST: 200,   // < 200ms
-    ACCEPTABLE: 500,  // < 500ms
-    SLOW: 1000   // < 1s
+    FAST: 200, // < 200ms
+    ACCEPTABLE: 500, // < 500ms
+    SLOW: 1000, // < 1s
   },
   /** WebSocket latency thresholds in milliseconds */
   WEBSOCKET_LATENCY: {
-    EXCELLENT: 50,  // < 50ms
-    GOOD: 100,    // < 100ms
-    ACCEPTABLE: 200 // < 200ms
+    EXCELLENT: 50, // < 50ms
+    GOOD: 100, // < 100ms
+    ACCEPTABLE: 200, // < 200ms
   },
   /** Concurrent user performance thresholds */
   CONCURRENT_USERS: {
-    SUCCESS_RATE: 0.95,  // > 95%
-    ERROR_RATE: 0.05     // < 5%
-  }
+    SUCCESS_RATE: 0.95, // > 95%
+    ERROR_RATE: 0.05, // < 5%
+  },
 };
 
 /**
@@ -54,7 +54,7 @@ export const PERFORMANCE_MONITORING = {
   /** Long task detection threshold in milliseconds */
   LONG_TASK_THRESHOLD: 100,
   /** Performance observer entry types to monitor */
-  OBSERVED_ENTRY_TYPES: ['longtask'] as const
+  OBSERVED_ENTRY_TYPES: ['longtask'] as const,
 };
 
 /**
@@ -64,12 +64,12 @@ export const MOBILE_PERFORMANCE = {
   /** Default mobile viewport dimensions */
   DEFAULT_VIEWPORT: {
     width: 375,
-    height: 667
+    height: 667,
   },
   /** Mobile-specific render time adjustments */
   RENDER_TIME_MULTIPLIER: 1.2,
   /** Mobile memory usage adjustments */
-  MEMORY_MULTIPLIER: 1.1
+  MEMORY_MULTIPLIER: 1.1,
 };
 
 /**
@@ -85,8 +85,8 @@ export const LOAD_TESTING = {
   /** Weight distribution for action types */
   DEFAULT_ACTION_WEIGHTS: {
     render: 0.6,
-    api: 0.4
-  }
+    api: 0.4,
+  },
 };
 
 /**
@@ -98,7 +98,7 @@ export const WEBSOCKET_CONFIG = {
   /** Message processing timeout in milliseconds */
   PROCESSING_TIMEOUT: 50,
   /** Message delivery confirmation delay in milliseconds */
-  DELIVERY_DELAY: 1000
+  DELIVERY_DELAY: 1000,
 };
 
 /**
@@ -108,17 +108,17 @@ export const PERFORMANCE_REPORTING = {
   /** Percentile thresholds for performance metrics */
   PERCENTILES: {
     P95: 0.95,
-    P99: 0.99
+    P99: 0.99,
   },
   /** Performance grade thresholds */
   GRADES: {
     EXCELLENT: 0.9,
     GOOD: 0.75,
     ACCEPTABLE: 0.6,
-    POOR: 0.4
+    POOR: 0.4,
   },
   /** Performance trend analysis window */
-  TREND_WINDOW: 7 // days
+  TREND_WINDOW: 7, // days
 };
 
 /**
@@ -134,7 +134,7 @@ export const PERFORMANCE_OPTIMIZATION = {
   /** Enable automated performance testing */
   ENABLE_AUTOMATED_TESTING: true,
   /** Enable mobile performance testing */
-  ENABLE_MOBILE_TESTING: true
+  ENABLE_MOBILE_TESTING: true,
 };
 
 /**
@@ -145,7 +145,7 @@ export const PERFORMANCE_ERROR_CODES = {
   LONG_TASK_DETECTED: 'PERF_TASK_001',
   THRESHOLD_EXCEEDED: 'PERF_THRESH_001',
   MONITORING_DISABLED: 'PERF_MON_001',
-  CONFIGURATION_ERROR: 'PERF_CONFIG_001'
+  CONFIGURATION_ERROR: 'PERF_CONFIG_001',
 } as const;
 
 /**
@@ -156,7 +156,7 @@ export const PERFORMANCE_EVENTS = {
   LONG_TASK_DETECTED: 'performance:longtask:detected',
   THRESHOLD_EXCEEDED: 'performance:threshold:exceeded',
   TEST_COMPLETED: 'performance:test:completed',
-  REPORT_GENERATED: 'performance:report:generated'
+  REPORT_GENERATED: 'performance:report:generated',
 } as const;
 
 /**
@@ -172,5 +172,5 @@ export const PERFORMANCE_CONFIG = {
   REPORTING: PERFORMANCE_REPORTING,
   OPTIMIZATION: PERFORMANCE_OPTIMIZATION,
   ERROR_CODES: PERFORMANCE_ERROR_CODES,
-  EVENTS: PERFORMANCE_EVENTS
+  EVENTS: PERFORMANCE_EVENTS,
 } as const;

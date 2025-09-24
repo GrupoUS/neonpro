@@ -11,14 +11,14 @@ export interface MappedError {
   message: string;
   userMessage: string;
   statusCode: number;
-  logLevel: "error" | "warn" | "info";
+  logLevel: 'error' | 'warn' | 'info';
   shouldLog: boolean;
   metadata?: Record<string, any>;
 }
 
 export class ErrorMapper {
   private static readonly DEFAULT_USER_MESSAGE =
-    "Um erro inesperado ocorreu. Nossa equipe foi notificada.";
+    'Um erro inesperado ocorreu. Nossa equipe foi notificada.';
 
   /**
    * Maps internal errors to user-safe responses
@@ -47,32 +47,30 @@ export class ErrorMapper {
     const errorMessage = error.message.toLowerCase();
 
     // Rate limiting errors
-    if (errorName.includes("rate") || errorMessage.includes("rate limit")) {
+    if (errorName.includes('rate') || errorMessage.includes('rate limit')) {
       return {
-        code: "RATE_LIMIT_EXCEEDED",
+        code: 'RATE_LIMIT_EXCEEDED',
         message: error.message,
-        userMessage:
-          "Você excedeu o limite de consultas. Tente novamente em alguns minutos.",
+        userMessage: 'Você excedeu o limite de consultas. Tente novamente em alguns minutos.',
         statusCode: 429,
-        logLevel: "warn",
+        logLevel: 'warn',
         shouldLog: true,
         metadata: {
           _userId: _context?._userId,
           timestamp,
-          originalError: "Rate limit exceeded",
+          originalError: 'Rate limit exceeded',
         },
       };
     }
 
     // Validation errors
-    if (errorName.includes("validation") || errorMessage.includes("invalid")) {
+    if (errorName.includes('validation') || errorMessage.includes('invalid')) {
       return {
-        code: "VALIDATION_ERROR",
+        code: 'VALIDATION_ERROR',
         message: this.sanitizeValidationMessage(error.message),
-        userMessage:
-          "Os dados fornecidos são inválidos. Verifique e tente novamente.",
+        userMessage: 'Os dados fornecidos são inválidos. Verifique e tente novamente.',
         statusCode: 400,
-        logLevel: "info",
+        logLevel: 'info',
         shouldLog: false,
         metadata: {
           _userId: _context?._userId,
@@ -83,17 +81,17 @@ export class ErrorMapper {
 
     // Permission/Authorization errors
     if (
-      errorName.includes("permission") ||
-      errorName.includes("auth") ||
-      errorMessage.includes("unauthorized") ||
-      errorMessage.includes("forbidden")
+      errorName.includes('permission')
+      || errorName.includes('auth')
+      || errorMessage.includes('unauthorized')
+      || errorMessage.includes('forbidden')
     ) {
       return {
-        code: "PERMISSION_DENIED",
-        message: "Access denied",
-        userMessage: "Você não tem permissão para realizar esta ação.",
+        code: 'PERMISSION_DENIED',
+        message: 'Access denied',
+        userMessage: 'Você não tem permissão para realizar esta ação.',
         statusCode: 403,
-        logLevel: "warn",
+        logLevel: 'warn',
         shouldLog: true,
         metadata: {
           _userId: _context?._userId,
@@ -105,14 +103,14 @@ export class ErrorMapper {
     }
 
     // LGPD/Consent errors
-    if (errorMessage.includes("consent") || errorMessage.includes("lgpd")) {
+    if (errorMessage.includes('consent') || errorMessage.includes('lgpd')) {
       return {
-        code: "CONSENT_REQUIRED",
-        message: "Consent required",
+        code: 'CONSENT_REQUIRED',
+        message: 'Consent required',
         userMessage:
-          "É necessário seu consentimento para continuar. Verifique as configurações de privacidade.",
+          'É necessário seu consentimento para continuar. Verifique as configurações de privacidade.',
         statusCode: 400,
-        logLevel: "info",
+        logLevel: 'info',
         shouldLog: true,
         metadata: {
           _userId: _context?._userId,
@@ -125,65 +123,64 @@ export class ErrorMapper {
 
     // AI/LLM service errors
     if (
-      errorMessage.includes("openai") ||
-      errorMessage.includes("ai service") ||
-      errorMessage.includes("model") ||
-      errorMessage.includes("llm")
+      errorMessage.includes('openai')
+      || errorMessage.includes('ai service')
+      || errorMessage.includes('model')
+      || errorMessage.includes('llm')
     ) {
       return {
-        code: "AI_SERVICE_ERROR",
-        message: "AI service temporarily unavailable",
+        code: 'AI_SERVICE_ERROR',
+        message: 'AI service temporarily unavailable',
         userMessage:
-          "O assistente IA está temporariamente indisponível. Tente novamente em alguns minutos.",
+          'O assistente IA está temporariamente indisponível. Tente novamente em alguns minutos.',
         statusCode: 503,
-        logLevel: "error",
+        logLevel: 'error',
         shouldLog: true,
         metadata: {
           _userId: _context?._userId,
           sessionId: _context?.sessionId,
           timestamp,
-          serviceType: "ai",
+          serviceType: 'ai',
         },
       };
     }
 
     // Database/Network errors
     if (
-      errorMessage.includes("database") ||
-      errorMessage.includes("connection") ||
-      errorMessage.includes("network") ||
-      errorMessage.includes("timeout")
+      errorMessage.includes('database')
+      || errorMessage.includes('connection')
+      || errorMessage.includes('network')
+      || errorMessage.includes('timeout')
     ) {
       return {
-        code: "SERVICE_UNAVAILABLE",
-        message: "Service temporarily unavailable",
-        userMessage:
-          "Serviço temporariamente indisponível. Tente novamente em alguns minutos.",
+        code: 'SERVICE_UNAVAILABLE',
+        message: 'Service temporarily unavailable',
+        userMessage: 'Serviço temporariamente indisponível. Tente novamente em alguns minutos.',
         statusCode: 503,
-        logLevel: "error",
+        logLevel: 'error',
         shouldLog: true,
         metadata: {
           _userId: _context?._userId,
           clinicId: _context?.clinicId,
           timestamp,
-          serviceType: "database",
+          serviceType: 'database',
         },
       };
     }
 
     // PII/Data protection errors
     if (
-      errorMessage.includes("pii") ||
-      errorMessage.includes("redaction") ||
-      errorMessage.includes("sensitive")
+      errorMessage.includes('pii')
+      || errorMessage.includes('redaction')
+      || errorMessage.includes('sensitive')
     ) {
       return {
-        code: "DATA_PROTECTION_ERROR",
-        message: "Data protection violation detected",
+        code: 'DATA_PROTECTION_ERROR',
+        message: 'Data protection violation detected',
         userMessage:
-          "Dados sensíveis detectados. Sua mensagem foi processada de acordo com as normas de proteção de dados.",
+          'Dados sensíveis detectados. Sua mensagem foi processada de acordo com as normas de proteção de dados.',
         statusCode: 400,
-        logLevel: "warn",
+        logLevel: 'warn',
         shouldLog: true,
         metadata: {
           _userId: _context?._userId,
@@ -205,11 +202,11 @@ export class ErrorMapper {
     timestamp?: string,
   ): MappedError {
     return {
-      code: "INTERNAL_ERROR",
-      message: "Internal server error",
+      code: 'INTERNAL_ERROR',
+      message: 'Internal server error',
       userMessage: this.DEFAULT_USER_MESSAGE,
       statusCode: 500,
-      logLevel: "error",
+      logLevel: 'error',
       shouldLog: true,
       metadata: {
         _userId: _context?._userId,
@@ -228,14 +225,14 @@ export class ErrorMapper {
   private static sanitizeValidationMessage(message: string): string {
     // Remove potential PII patterns from validation messages
     return message
-      .replace(/\b\d{3}\.\d{3}\.\d{3}-\d{2}\b/g, "[CPF]") // CPF numbers
-      .replace(/\b\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}\b/g, "[CNPJ]") // CNPJ numbers
+      .replace(/\b\d{3}\.\d{3}\.\d{3}-\d{2}\b/g, '[CPF]') // CPF numbers
+      .replace(/\b\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}\b/g, '[CNPJ]') // CNPJ numbers
       .replace(
         /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g,
-        "[EMAIL]",
+        '[EMAIL]',
       ) // Email addresses
-      .replace(/\b\(\d{2}\)\s*\d{4,5}-?\d{4}\b/g, "[PHONE]") // Phone numbers
-      .replace(/\b\d{5}-?\d{3}\b/g, "[CEP]"); // CEP codes
+      .replace(/\b\(\d{2}\)\s*\d{4,5}-?\d{4}\b/g, '[PHONE]') // Phone numbers
+      .replace(/\b\d{5}-?\d{3}\b/g, '[CEP]'); // CEP codes
   }
 
   /**
@@ -280,45 +277,45 @@ export class ErrorMapper {
       },
       metadata: mapped.metadata,
       // Include stack trace only for server errors
-      ...(mapped.statusCode >= 500 &&
-        error instanceof Error && { stack: error.stack }),
+      ...(mapped.statusCode >= 500
+        && error instanceof Error && { stack: error.stack }),
     };
   }
 }
 
 // Predefined error creators for common scenarios
 export const createRateLimitError = (_userId?: string) => {
-  const error = new Error("Rate limit exceeded for user");
-  error.name = "RateLimitError";
-  return ErrorMapper.mapError(error, { _userId, action: "rate_limit_check" });
+  const error = new Error('Rate limit exceeded for user');
+  error.name = 'RateLimitError';
+  return ErrorMapper.mapError(error, { _userId, action: 'rate_limit_check' });
 };
 
 export const createConsentError = (_userId?: string, clinicId?: string) => {
-  const error = new Error("LGPD consent required for data processing");
-  error.name = "ConsentError";
+  const error = new Error('LGPD consent required for data processing');
+  error.name = 'ConsentError';
   return ErrorMapper.mapError(error, {
     _userId,
     clinicId,
-    action: "consent_validation",
+    action: 'consent_validation',
   });
 };
 
 export const createAIServiceError = (sessionId?: string) => {
-  const error = new Error("AI service temporarily unavailable");
-  error.name = "AIServiceError";
-  return ErrorMapper.mapError(error, { sessionId, action: "ai_query" });
+  const error = new Error('AI service temporarily unavailable');
+  error.name = 'AIServiceError';
+  return ErrorMapper.mapError(error, { sessionId, action: 'ai_query' });
 };
 
 export const createDataProtectionError = (
   _userId?: string,
   sessionId?: string,
 ) => {
-  const error = new Error("PII detected in user input");
-  error.name = "DataProtectionError";
+  const error = new Error('PII detected in user input');
+  error.name = 'DataProtectionError';
   return ErrorMapper.mapError(error, {
     _userId,
     sessionId,
-    action: "pii_detection",
+    action: 'pii_detection',
   });
 };
 

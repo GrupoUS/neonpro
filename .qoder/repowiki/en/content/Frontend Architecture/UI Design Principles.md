@@ -174,7 +174,7 @@ The `NeonProChatProvider` demonstrates a provider pattern that manages chat stat
 ```tsx
 export const NeonProChatProvider: React.FC<NeonProChatProviderProps> = ({
   children,
-  config: userConfig
+  config: userConfig,
 }) => {
   // State management and context value definition
   return (
@@ -232,13 +232,13 @@ Theme installation is handled by a utility function that injects CSS into the do
 
 ```typescript
 export function installThemeStyles(target?: Document) {
-  if (typeof document === "undefined") return;
+  if (typeof document === 'undefined') return;
   const head = (target ?? document).head;
   if (!head) return;
   // avoid duplicate injection
-  if (head.querySelector("style[data-neonpro-theme]")) return;
-  const style = document.createElement("style");
-  style.setAttribute("data-neonpro-theme", "true");
+  if (head.querySelector('style[data-neonpro-theme]')) return;
+  const style = document.createElement('style');
+  style.setAttribute('data-neonpro-theme', 'true');
   style.textContent = themeCss;
   head.appendChild(style);
 }

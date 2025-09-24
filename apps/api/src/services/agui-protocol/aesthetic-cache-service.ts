@@ -74,7 +74,7 @@ export class AestheticCacheService {
       compressionRatio: 0,
       evictionCount: 0,
       prefetchCount: 0,
-      topAccessed: []
+      topAccessed: [],
     };
   }
 
@@ -84,11 +84,11 @@ export class AestheticCacheService {
       pattern: 'treatment_catalog_*',
       ttl: 300, // 5 minutes
       priority: 'high',
-      condition: (data) => data.category && data.skinType,
-      prefetchFn: async (_key) => {
+      condition: data => data.category && data.skinType,
+      prefetchFn: async _key => {
         // Mock prefetch logic
         return { prefetched: true, timestamp: Date.now() };
-      }
+      },
     });
 
     // Client profile prefetch rule
@@ -96,11 +96,11 @@ export class AestheticCacheService {
       pattern: 'client_profile_*',
       ttl: 600, // 10 minutes
       priority: 'medium',
-      condition: (data) => data.clientId && data.lastActivity,
-      prefetchFn: async (_key) => {
+      condition: data => data.clientId && data.lastActivity,
+      prefetchFn: async _key => {
         // Mock prefetch logic
         return { prefetched: true, timestamp: Date.now() };
-      }
+      },
     });
 
     // Appointment availability prefetch rule
@@ -108,11 +108,11 @@ export class AestheticCacheService {
       pattern: 'availability_*',
       ttl: 60, // 1 minute
       priority: 'high',
-      condition: (data) => data.location && data.date,
-      prefetchFn: async (_key) => {
+      condition: data => data.location && data.date,
+      prefetchFn: async _key => {
         // Mock prefetch logic
         return { prefetched: true, timestamp: Date.now() };
-      }
+      },
     });
 
     // Treatment pricing prefetch rule
@@ -120,17 +120,17 @@ export class AestheticCacheService {
       pattern: 'pricing_*',
       ttl: 1800, // 30 minutes
       priority: 'low',
-      condition: (data) => data.treatmentId,
-      prefetchFn: async (_key) => {
+      condition: data => data.treatmentId,
+      prefetchFn: async _key => {
         // Mock prefetch logic
         return { prefetched: true, timestamp: Date.now() };
-      }
+      },
     });
   }
 
   async get<T = any>(key: string): Promise<T | null> {
     const startTime = Date.now();
-    
+
     // Check if entry exists and is not expired
     const entry = this.cache.get(key);
     if (!entry) {
@@ -158,7 +158,7 @@ export class AestheticCacheService {
     }
 
     this.recordHit(startTime);
-    
+
     // Trigger prefetch if applicable
     if (this.config.enablePrefetch) {
       this.triggerPrefetch(key, value);
@@ -168,10 +168,10 @@ export class AestheticCacheService {
   }
 
   async set<T = any>(
-    key: string, 
-    value: T, 
+    key: string,
+    value: T,
     ttl: number = this.config.defaultTtl,
-    metadata?: Record<string, any>
+    metadata?: Record<string, any>,
   ): Promise<void> {
     // Check cache size limit
     if (this.cache.size >= this.config.maxCacheSize) {
@@ -181,7 +181,7 @@ export class AestheticCacheService {
     // Compress if enabled
     let compressedValue = value;
     let compressionRatio = 0;
-    
+
     if (this.config.compressionEnabled) {
       const compressionResult = await this.compress(value);
       compressedValue = compressionResult.value;
@@ -196,7 +196,7 @@ export class AestheticCacheService {
       accessCount: 0,
       lastAccessed: new Date().toISOString(),
       compressionRatio,
-      metadata
+      metadata,
     };
 
     this.cache.set(key, entry);
@@ -241,7 +241,7 @@ export class AestheticCacheService {
 
     const expiresAt = new Date(entry.expiresAt);
     const now = new Date();
-    
+
     if (expiresAt <= now) {
       return -2; // Expired
     }
@@ -262,7 +262,7 @@ export class AestheticCacheService {
 
   async keys(pattern?: string): Promise<string[]> {
     let keys = Array.from(this.cache.keys());
-    
+
     if (pattern) {
       const regex = new RegExp(pattern.replace(/\*/g, '.*'));
       keys = keys.filter(key => regex.test(key));
@@ -281,7 +281,7 @@ export class AestheticCacheService {
   // Batch operations
   async mget<T = any>(keys: string[]): Promise<Map<string, T | null>> {
     const results = new Map<string, T | null>();
-    
+
     for (const key of keys) {
       results.set(key, await this.get<T>(key));
     }
@@ -289,7 +289,9 @@ export class AestheticCacheService {
     return results;
   }
 
-  async mset(entries: Array<{ key: string; value: any; ttl?: number; metadata?: Record<string, any> }>): Promise<void> {
+  async mset(
+    entries: Array<{ key: string; value: any; ttl?: number; metadata?: Record<string, any> }>,
+  ): Promise<void> {
     for (const entry of entries) {
       await this.set(entry.key, entry.value, entry.ttl, entry.metadata);
     }
@@ -297,7 +299,7 @@ export class AestheticCacheService {
 
   async mdelete(keys: string[]): Promise<number> {
     let deletedCount = 0;
-    
+
     for (const key of keys) {
       if (await this.delete(key)) {
         deletedCount++;
@@ -309,10 +311,10 @@ export class AestheticCacheService {
 
   // Intelligent caching methods
   async getOrSet<T = any>(
-    key: string, 
-    fetchFn: () => Promise<T>, 
+    key: string,
+    fetchFn: () => Promise<T>,
     ttl: number = this.config.defaultTtl,
-    metadata?: Record<string, any>
+    metadata?: Record<string, any>,
   ): Promise<T> {
     // Try to get from cache first
     const cached = await this.get<T>(key);
@@ -323,15 +325,15 @@ export class AestheticCacheService {
     // Fetch and cache the value
     const value = await fetchFn();
     await this.set(key, value, ttl, metadata);
-    
+
     return value;
   }
 
   async remember<T = any>(
-    key: string, 
-    fetchFn: () => Promise<T>, 
+    key: string,
+    fetchFn: () => Promise<T>,
     ttl: number = this.config.defaultTtl,
-    metadata?: Record<string, any>
+    metadata?: Record<string, any>,
   ): Promise<T> {
     return await this.getOrSet(key, fetchFn, ttl, metadata);
   }
@@ -354,7 +356,7 @@ export class AestheticCacheService {
 
   async prefetchRelated(key: string): Promise<void> {
     const patterns = this.generateRelatedPatterns(key);
-    
+
     for (const pattern of patterns) {
       const relatedKeys = await this.keys(pattern);
       await this.warmCache(relatedKeys);
@@ -373,14 +375,14 @@ export class AestheticCacheService {
 
   async getAnalytics(type: string, timeframe?: { start: string; end: string }): Promise<any[]> {
     const analytics = this.analytics.get(type) || [];
-    
+
     if (!timeframe) {
       return analytics;
     }
 
     const start = new Date(timeframe.start);
     const end = new Date(timeframe.end);
-    
+
     return analytics.filter(entry => {
       const timestamp = new Date(entry.timestamp);
       return timestamp >= start && timestamp <= end;
@@ -400,7 +402,7 @@ export class AestheticCacheService {
 
   private updateHitRate(isHit: boolean, responseTime: number): void {
     const totalRequests = this.stats.hitRate + this.stats.missRate;
-    
+
     if (isHit) {
       this.stats.hitRate = ((this.stats.hitRate * totalRequests) + 1) / (totalRequests + 1);
       this.stats.missRate = (this.stats.missRate * totalRequests) / (totalRequests + 1);
@@ -422,7 +424,7 @@ export class AestheticCacheService {
 
     for (const entry of this.cache.values()) {
       totalSize += this.calculateEntrySize(entry);
-      
+
       if (entry.compressionRatio) {
         totalCompressionRatio += entry.compressionRatio;
         compressionCount++;
@@ -430,8 +432,9 @@ export class AestheticCacheService {
     }
 
     this.stats.totalSize = totalSize;
-    this.stats.compressionRatio = compressionCount > 0 ? 
-      totalCompressionRatio / compressionCount : 0;
+    this.stats.compressionRatio = compressionCount > 0
+      ? totalCompressionRatio / compressionCount
+      : 0;
   }
 
   private calculateEntrySize(entry: CacheEntry): number {
@@ -442,7 +445,7 @@ export class AestheticCacheService {
 
   private evictEntries(): void {
     const entriesToEvict = Math.ceil(this.config.maxCacheSize * 0.1); // Evict 10%
-    
+
     switch (this.config.evictionPolicy) {
       case 'lru':
         this.evictLRU(entriesToEvict);
@@ -462,7 +465,9 @@ export class AestheticCacheService {
 
   private evictLRU(count: number): void {
     const entries = Array.from(this.cache.entries())
-      .sort((a, b) => new Date(a[1].lastAccessed).getTime() - new Date(b[1].lastAccessed).getTime());
+      .sort((a, b) =>
+        new Date(a[1].lastAccessed).getTime() - new Date(b[1].lastAccessed).getTime()
+      );
 
     for (let i = 0; i < Math.min(count, entries.length); i++) {
       this.cache.delete(entries[i][0]);
@@ -492,7 +497,7 @@ export class AestheticCacheService {
       .map(([key, entry]) => ({
         key,
         accessCount: entry.accessCount,
-        lastAccessed: entry.lastAccessed
+        lastAccessed: entry.lastAccessed,
       }))
       .sort((a, b) => b.accessCount - a.accessCount)
       .slice(0, 10);
@@ -527,7 +532,7 @@ export class AestheticCacheService {
 
   private generateRelatedPatterns(key: string): string[] {
     const patterns: string[] = [];
-    
+
     if (key.includes('client_profile')) {
       patterns.push('treatment_history_*', 'appointment_history_*', 'payment_history_*');
     } else if (key.includes('treatment_catalog')) {
@@ -541,18 +546,18 @@ export class AestheticCacheService {
 
   private async generateRelatedKeys(key: string, value: any): Promise<string[]> {
     const keys: string[] = [];
-    
+
     if (key.includes('client_profile') && value.clientId) {
       keys.push(
         `treatment_history_${value.clientId}`,
         `appointment_history_${value.clientId}`,
-        `payment_history_${value.clientId}`
+        `payment_history_${value.clientId}`,
       );
     } else if (key.includes('treatment_catalog') && value.category) {
       keys.push(
         `pricing_${value.category}`,
         `availability_${value.category}`,
-        `professionals_${value.category}`
+        `professionals_${value.category}`,
       );
     }
 
@@ -563,10 +568,11 @@ export class AestheticCacheService {
     try {
       const jsonString = JSON.stringify(value);
       const compressed = jsonString; // Mock compression
-      
-      const ratio = jsonString.length > 0 ? 
-        (jsonString.length - compressed.length) / jsonString.length : 0;
-      
+
+      const ratio = jsonString.length > 0
+        ? (jsonString.length - compressed.length) / jsonString.length
+        : 0;
+
       return { value: compressed, ratio };
     } catch {
       return { value, ratio: 0 };
@@ -590,7 +596,7 @@ export class AestheticCacheService {
     const analytics = this.analytics.get(type) || [];
     analytics.push({
       timestamp: new Date().toISOString(),
-      ...data
+      ...data,
     });
 
     this.analytics.set(type, analytics);

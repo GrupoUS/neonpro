@@ -11,12 +11,12 @@
  * - Compliance with healthcare image handling standards
  */
 
+import crypto from 'crypto';
+import { createCipheriv, createDecipheriv, createHash } from 'crypto';
+import { ExifTool } from 'exiftool-vendored';
+import sharp from 'sharp';
 import { createAdminClient } from '../clients/supabase';
 import { logger } from '../lib/logger';
-import crypto from 'crypto';
-import sharp from 'sharp';
-import { ExifTool } from 'exiftool-vendored';
-import { createHash, createCipheriv, createDecipheriv } from 'crypto';
 
 // Image Security Configuration
 const IMAGE_SECURITY_CONFIG = {
@@ -58,7 +58,8 @@ export const IMAGE_PROCESSING_STATUS = {
   QUARANTINED: 'quarantined',
 } as const;
 
-export type ImageProcessingStatus = (typeof IMAGE_PROCESSING_STATUS)[keyof typeof IMAGE_PROCESSING_STATUS];
+export type ImageProcessingStatus =
+  (typeof IMAGE_PROCESSING_STATUS)[keyof typeof IMAGE_PROCESSING_STATUS];
 
 // Image Security Level
 export const IMAGE_SECURITY_LEVEL = {
@@ -177,7 +178,7 @@ export class MedicalImageProtectionService {
     try {
       // Load existing encryption keys from database
       await this.loadEncryptionKeys();
-      
+
       // Load image metadata cache
       await this.loadImageMetadata();
 
@@ -193,7 +194,18 @@ export class MedicalImageProtectionService {
    */
   async uploadAndProtectImage(
     imageBuffer: Buffer,
-    metadata: Omit<ImageMetadata, 'id' | 'hash' | 'encryptionKey' | 'iv' | 'tag' | 'watermarkHash' | 'processingStatus' | 'uploadedAt' | 'auditTrail'>,
+    metadata: Omit<
+      ImageMetadata,
+      | 'id'
+      | 'hash'
+      | 'encryptionKey'
+      | 'iv'
+      | 'tag'
+      | 'watermarkHash'
+      | 'processingStatus'
+      | 'uploadedAt'
+      | 'auditTrail'
+    >,
     userId: string,
     userIP: string,
     userAgent: string,
@@ -375,7 +387,11 @@ export class MedicalImageProtectionService {
       // Encrypt thumbnail
       const thumbnailEncryptionKey = crypto.randomBytes(IMAGE_SECURITY_CONFIG.encryption.keySize);
       const iv = crypto.randomBytes(IMAGE_SECURITY_CONFIG.encryption.ivSize);
-      const encryptedThumbnail = await this.encryptBuffer(thumbnailBuffer, thumbnailEncryptionKey, iv);
+      const encryptedThumbnail = await this.encryptBuffer(
+        thumbnailBuffer,
+        thumbnailEncryptionKey,
+        iv,
+      );
 
       return encryptedThumbnail;
     } catch {
@@ -481,7 +497,12 @@ export class MedicalImageProtectionService {
   /**
    * Delete protected image
    */
-  async deleteProtectedImage(imageId: string, userId: string, userIP: string, userAgent: string): Promise<boolean> {
+  async deleteProtectedImage(
+    imageId: string,
+    userId: string,
+    userIP: string,
+    userAgent: string,
+  ): Promise<boolean> {
     try {
       const metadata = this.imageMetadata.get(imageId);
       if (!metadata) {
@@ -592,7 +613,7 @@ export class MedicalImageProtectionService {
     try {
       // Check if image is valid
       const imageInfo = await sharp(imageBuffer).metadata();
-      
+
       if (!imageInfo.width || !imageInfo.height) {
         throw new Error('Invalid image dimensions');
       }
@@ -612,7 +633,7 @@ export class MedicalImageProtectionService {
   private async scanForMaliciousContent(imageBuffer: Buffer): Promise<void> {
     // Basic scan for potential embedded malicious content
     const text = imageBuffer.toString('utf-8', 0, Math.min(1024, imageBuffer.length));
-    
+
     // Check for suspicious patterns
     const suspiciousPatterns = [
       /<script/i,
@@ -629,9 +650,11 @@ export class MedicalImageProtectionService {
     }
   }
 
-  private async extractImageInfo(imageBuffer: Buffer): Promise<{ dimensions: { width: number; height: number }; format: string }> {
+  private async extractImageInfo(
+    imageBuffer: Buffer,
+  ): Promise<{ dimensions: { width: number; height: number }; format: string }> {
     const metadata = await sharp(imageBuffer).metadata();
-    
+
     return {
       dimensions: {
         width: metadata.width || 0,
@@ -713,7 +736,7 @@ export class MedicalImageProtectionService {
 
   private async applyWatermark(imageBuffer: Buffer, metadata: ImageMetadata): Promise<Buffer> {
     const watermarkText = `${IMAGE_SECURITY_CONFIG.watermark.text} - ${metadata.watermarkHash}`;
-    
+
     return await sharp(imageBuffer)
       .composite([{
         input: Buffer.from(`<svg width="100%" height="100%">
@@ -759,9 +782,9 @@ export class MedicalImageProtectionService {
     ]);
 
     const tag = cipher.getAuthTag();
-    
+
     // Store tag in metadata
-    const imageId = Array.from(this.imageMetadata.entries()).find(([_, meta]) => 
+    const imageId = Array.from(this.imageMetadata.entries()).find(([_, meta]) =>
       meta.encryptionKey === key.toString('hex')
     )?.[0];
 
@@ -865,7 +888,10 @@ export class MedicalImageProtectionService {
     return Math.min(score, 1.0);
   }
 
-  private generateWarnings(result: ImageProcessingResult, securityLevel: ImageSecurityLevel): string[] {
+  private generateWarnings(
+    result: ImageProcessingResult,
+    securityLevel: ImageSecurityLevel,
+  ): string[] {
     const warnings: string[] = [];
 
     if (securityLevel === IMAGE_SECURITY_LEVEL.MAXIMUM && !result.metadata.watermarkHash) {

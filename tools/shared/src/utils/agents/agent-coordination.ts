@@ -3,23 +3,23 @@
  * Helper functions for coordinating agents across test categories
  */
 
-import { createLogger } from "../../logger";
-import { LogLevel } from "../../types";
+import { createLogger } from '../../logger';
+import { LogLevel } from '../../types';
 
-const logger = createLogger("AgentCoordination", {
+const logger = createLogger('AgentCoordination', {
   level: LogLevel.INFO,
-  format: "pretty",
+  format: 'pretty',
   enableConstitutional: true,
 });
 
 export type AgentName =
-  | "tdd-orchestrator"
-  | "code-reviewer"
-  | "architect-review"
-  | "test-auditor"
-  | "test";
+  | 'tdd-orchestrator'
+  | 'code-reviewer'
+  | 'architect-review'
+  | 'test-auditor'
+  | 'test';
 
-export type TDDPhase = "red" | "green" | "refactor";
+export type TDDPhase = 'red' | 'green' | 'refactor';
 
 export interface AgentCapability {
   name: string;
@@ -29,36 +29,35 @@ export interface AgentCapability {
 }
 
 export const AGENT_CAPABILITIES: Record<AgentName, AgentCapability> = {
-  "tdd-orchestrator": {
-    name: "TDD Orchestrator",
-    description: "Central coordinator for TDD cycles and agent coordination",
-    categories: ["frontend", "backend", "database", "quality"],
-    phases: ["red", "green", "refactor"],
+  'tdd-orchestrator': {
+    name: 'TDD Orchestrator',
+    description: 'Central coordinator for TDD cycles and agent coordination',
+    categories: ['frontend', 'backend', 'database', 'quality'],
+    phases: ['red', 'green', 'refactor'],
   },
-  "code-reviewer": {
-    name: "Code Reviewer",
-    description:
-      "Quality analysis, maintainability, and performance validation",
-    categories: ["frontend", "backend", "quality"],
-    phases: ["green", "refactor"],
+  'code-reviewer': {
+    name: 'Code Reviewer',
+    description: 'Quality analysis, maintainability, and performance validation',
+    categories: ['frontend', 'backend', 'quality'],
+    phases: ['green', 'refactor'],
   },
-  "architect-review": {
-    name: "Architecture Review",
-    description: "Pattern compliance, design validation, and scalability",
-    categories: ["backend", "database", "quality"],
-    phases: ["red", "green", "refactor"],
+  'architect-review': {
+    name: 'Architecture Review',
+    description: 'Pattern compliance, design validation, and scalability',
+    categories: ['backend', 'database', 'quality'],
+    phases: ['red', 'green', 'refactor'],
   },
-  "test-auditor": {
-    name: "Security Auditor",
-    description: "Security validation, compliance, and vulnerability scanning",
-    categories: ["database", "backend", "quality"],
-    phases: ["red", "green", "refactor"],
+  'test-auditor': {
+    name: 'Security Auditor',
+    description: 'Security validation, compliance, and vulnerability scanning',
+    categories: ['database', 'backend', 'quality'],
+    phases: ['red', 'green', 'refactor'],
   },
   test: {
-    name: "Test Agent",
-    description: "Test pattern enforcement and coverage validation",
-    categories: ["frontend", "backend", "database", "quality"],
-    phases: ["red"],
+    name: 'Test Agent',
+    description: 'Test pattern enforcement and coverage validation',
+    categories: ['frontend', 'backend', 'database', 'quality'],
+    phases: ['red'],
   },
 };
 
@@ -94,9 +93,7 @@ export class AgentCoordinator {
   ): AgentCoordinationPlan {
     const availableAgents = this.getAgentsForCategory(category);
     const phaseAgents = this.getAgentsForPhase(phase);
-    const eligibleAgents = availableAgents.filter((agent) =>
-      phaseAgents.includes(agent),
-    );
+    const eligibleAgents = availableAgents.filter(agent => phaseAgents.includes(agent));
 
     let primaryAgent: AgentName;
     let supportAgents: AgentName[];
@@ -104,52 +101,52 @@ export class AgentCoordinator {
     let qualityGates: string[];
 
     switch (phase) {
-      case "red":
-        primaryAgent = "test";
+      case 'red':
+        primaryAgent = 'test';
         supportAgents = eligibleAgents.filter(
-          (agent) =>
-            agent !== "test" &&
-            ["architect-review", "test-auditor"].includes(agent),
+          agent =>
+            agent !== 'test'
+            && ['architect-review', 'test-auditor'].includes(agent),
         );
-        workflow = "sequential";
+        workflow = 'sequential';
         qualityGates = [
-          "Test patterns compliance ≥95%",
-          "Architecture alignment ≥90%",
+          'Test patterns compliance ≥95%',
+          'Architecture alignment ≥90%',
           options.healthcareCompliance
-            ? "Security coverage ≥100%"
-            : "Security coverage ≥85%",
+            ? 'Security coverage ≥100%'
+            : 'Security coverage ≥85%',
         ];
         break;
 
-      case "green":
-        primaryAgent = "code-reviewer";
+      case 'green':
+        primaryAgent = 'code-reviewer';
         supportAgents = eligibleAgents.filter(
-          (agent) => agent !== "code-reviewer",
+          agent => agent !== 'code-reviewer',
         );
-        workflow = "sequential";
+        workflow = 'sequential';
         qualityGates = [
-          "All tests passing ≥100%",
-          "Code quality metrics ≥85%",
+          'All tests passing ≥100%',
+          'Code quality metrics ≥85%',
           options.healthcareCompliance
-            ? "Security validation ≥100%"
-            : "Security validation ≥90%",
-          "Pattern compliance ≥90%",
+            ? 'Security validation ≥100%'
+            : 'Security validation ≥90%',
+          'Pattern compliance ≥90%',
         ];
         break;
 
-      case "refactor":
-        primaryAgent = "tdd-orchestrator";
+      case 'refactor':
+        primaryAgent = 'tdd-orchestrator';
         supportAgents = eligibleAgents.filter(
-          (agent) => agent !== "tdd-orchestrator",
+          agent => agent !== 'tdd-orchestrator',
         );
-        workflow = options.parallel ? "parallel" : "hierarchical";
+        workflow = options.parallel ? 'parallel' : 'hierarchical';
         qualityGates = [
-          "Quality metrics improved ≥10%",
-          "Architecture score maintained ≥90%",
+          'Quality metrics improved ≥10%',
+          'Architecture score maintained ≥90%',
           options.healthcareCompliance
-            ? "Security posture improved ≥100%"
-            : "Security posture maintained ≥90%",
-          "Test performance improved ≥5%",
+            ? 'Security posture improved ≥100%'
+            : 'Security posture maintained ≥90%',
+          'Test performance improved ≥5%',
         ];
         break;
 
@@ -171,11 +168,11 @@ export class AgentCoordinator {
       `Agent coordination plan created for ${category}:${phase}`,
       {
         compliance: Boolean(options.healthcareCompliance),
-        requirement: "Agent Coordination Planning",
+        requirement: 'Agent Coordination Planning',
       },
       {
-        component: "AgentCoordinator",
-        operation: "createCoordinationPlan",
+        component: 'AgentCoordinator',
+        operation: 'createCoordinationPlan',
         metadata: { category, phase },
       },
     );
@@ -204,11 +201,9 @@ export class AgentCoordinator {
       );
 
       // Execute support agents based on workflow
-      if (plan.workflow === "parallel") {
+      if (plan.workflow === 'parallel') {
         const supportResults = await Promise.all(
-          plan.supportAgents.map((agent) =>
-            this.executeAgent(agent, plan.category, plan.phase),
-          ),
+          plan.supportAgents.map(agent => this.executeAgent(agent, plan.category, plan.phase)),
         );
 
         plan.supportAgents.forEach((agent, index) => {
@@ -231,19 +226,21 @@ export class AgentCoordinator {
       }
 
       const allGatesPassed = Object.values(qualityGateResults).every(
-        (passed) => passed,
+        passed => passed,
       );
 
       logger.constitutional(
         allGatesPassed ? LogLevel.INFO : LogLevel.WARN,
-        `Coordination plan execution completed. Quality gates: ${allGatesPassed ? "PASSED" : "FAILED"}`,
+        `Coordination plan execution completed. Quality gates: ${
+          allGatesPassed ? 'PASSED' : 'FAILED'
+        }`,
         {
           compliance: allGatesPassed,
-          requirement: "Quality Gate Validation",
+          requirement: 'Quality Gate Validation',
         },
         {
-          component: "AgentCoordinator",
-          operation: "executeCoordinationPlan",
+          component: 'AgentCoordinator',
+          operation: 'executeCoordinationPlan',
           metadata: {
             category: plan.category,
             phase: plan.phase,
@@ -259,10 +256,10 @@ export class AgentCoordinator {
       };
     } catch (error) {
       logger.error(
-        "Agent coordination plan execution failed",
+        'Agent coordination plan execution failed',
         {
-          component: "AgentCoordinator",
-          operation: "executeCoordinationPlan",
+          component: 'AgentCoordinator',
+          operation: 'executeCoordinationPlan',
           metadata: { category: plan.category, phase: plan.phase },
         },
         error instanceof Error ? error : new Error(String(error)),
@@ -286,7 +283,7 @@ export class AgentCoordinator {
     logger.info(`Executing ${agent} for ${category}:${phase}`);
 
     // Simulate processing time
-    await new Promise((resolve) => setTimeout(resolve, 100));
+    await new Promise(resolve => setTimeout(resolve, 100));
 
     return {
       agent,
@@ -304,8 +301,8 @@ export class AgentCoordinator {
   private static async validateQualityGate(gate: string): Promise<boolean> {
     // Simulated quality gate validation
     logger.debug(`Validating quality gate: ${gate}`, {
-      component: "AgentCoordinator",
-      operation: "validateQualityGate",
+      component: 'AgentCoordinator',
+      operation: 'validateQualityGate',
       metadata: { gate },
     });
 

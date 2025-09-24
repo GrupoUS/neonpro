@@ -47,11 +47,11 @@ src/
   ```typescript
   // ✅ DO: Select specific columns
   const { data, error } = await supabase
-    .from("events")
-    .select("id, name, start_date");
+    .from('events')
+    .select('id, name, start_date');
 
   // ❌ DON'T: Select everything if not needed
-  const { data, error } = await supabase.from("events").select("*");
+  const { data, error } = await supabase.from('events').select('*');
   ```
 
 - **Pagination:** Implement pagination using `.range(from, to)` for large datasets.
@@ -60,7 +60,7 @@ src/
   const PAGE_SIZE = 20;
   // page comes from query params; ensure it's >= 1
   const pageParam = Number(
-    new URLSearchParams(location.search).get("page") ?? 1,
+    new URLSearchParams(location.search).get('page') ?? 1,
   );
   const page = Number.isFinite(pageParam) && pageParam >= 1 ? pageParam : 1;
 
@@ -68,8 +68,8 @@ src/
   const to = page * PAGE_SIZE - 1;
 
   const { data, error, count } = await supabase
-    .from("attendees")
-    .select("id, name, email", { count: "exact" }) // Get total count
+    .from('attendees')
+    .select('id, name, email', { count: 'exact' }) // Get total count
     .range(from, to);
   ```
 
@@ -84,36 +84,37 @@ src/
 
 ```typescript
 // Recommended error handling pattern in a service
-import { PostgrestError } from "@supabase/supabase-js";
+import { PostgrestError } from '@supabase/supabase-js';
 
 async function createEvent(eventData: any) {
   const supabase = await createServerSupabaseClient(); // Or appropriate client
-  if (!supabase)
-    throw new Error("Unauthorized or Supabase client unavailable.");
+  if (!supabase) {
+    throw new Error('Unauthorized or Supabase client unavailable.');
+  }
 
   try {
     const { data, error } = await supabase
-      .from("events")
+      .from('events')
       .insert(eventData)
       .select()
       .single(); // Use single() if expecting one row
 
     if (error) {
       console.error(
-        "Supabase Error Code:",
+        'Supabase Error Code:',
         error.code,
-        "Message:",
+        'Message:',
         error.message,
       );
       // Handle specific errors, e.g., unique violation
-      if (error.code === "23505") {
-        throw new Error("An event with this name already exists.");
+      if (error.code === '23505') {
+        throw new Error('An event with this name already exists.');
       }
-      throw new Error("Failed to create event."); // Generic error
+      throw new Error('Failed to create event.'); // Generic error
     }
     return data;
   } catch (err) {
-    console.error("Error creating event:", err);
+    console.error('Error creating event:', err);
     // Rethrow or handle as appropriate for the calling context
     throw err;
   }

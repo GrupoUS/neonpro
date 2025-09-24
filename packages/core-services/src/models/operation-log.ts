@@ -4,13 +4,13 @@
 // Date: 2025-09-19
 
 import type {
+  AIFeatureCode,
   AuditTrail,
   EnhancedAIModel,
-  SubscriptionTier,
   MedicalSpecialty,
-  AIFeatureCode,
-} from "@neonpro/types";
-import { getLogger } from "../config/logger";
+  SubscriptionTier,
+} from '@neonpro/types';
+import { getLogger } from '../config/logger';
 
 // ================================================
 // OPERATION LOG INTERFACES
@@ -20,39 +20,39 @@ import { getLogger } from "../config/logger";
  * Operation categories for classification and filtering
  */
 export type OperationCategory =
-  | "ai_request"
-  | "plan_change"
-  | "user_action"
-  | "system_event"
-  | "compliance_check"
-  | "security_event"
-  | "billing_event"
-  | "data_processing"
-  | "admin_action";
+  | 'ai_request'
+  | 'plan_change'
+  | 'user_action'
+  | 'system_event'
+  | 'compliance_check'
+  | 'security_event'
+  | 'billing_event'
+  | 'data_processing'
+  | 'admin_action';
 
 /**
  * Operation severity levels for alerting and monitoring
  */
-export type OperationSeverity = "info" | "warning" | "error" | "critical";
+export type OperationSeverity = 'info' | 'warning' | 'error' | 'critical';
 
 /**
  * Compliance frameworks for regulatory tracking
  */
 export type ComplianceFramework =
-  | "LGPD"
-  | "CFM"
-  | "ANVISA"
-  | "ISO27001"
-  | "HIPAA";
+  | 'LGPD'
+  | 'CFM'
+  | 'ANVISA'
+  | 'ISO27001'
+  | 'HIPAA';
 
 /**
  * Data processing purposes for LGPD compliance
  */
 export type DataProcessingPurpose =
-  | "analytics"
-  | "diagnosis"
-  | "training"
-  | "audit";
+  | 'analytics'
+  | 'diagnosis'
+  | 'training'
+  | 'audit';
 
 /**
  * Comprehensive operation log entry
@@ -100,10 +100,10 @@ export interface OperationLogEntry {
   readonly complianceFrameworks: ComplianceFramework[];
   readonly dataProcessingPurpose?: DataProcessingPurpose;
   readonly personalDataInvolved: boolean;
-  readonly sensitiveDataLevel: "none" | "low" | "medium" | "high" | "critical";
+  readonly sensitiveDataLevel: 'none' | 'low' | 'medium' | 'high' | 'critical';
   readonly anonymizationApplied: boolean;
   readonly consentId?: string;
-  readonly consentStatus: "valid" | "missing" | "invalid" | "withdrawn";
+  readonly consentStatus: 'valid' | 'missing' | 'invalid' | 'withdrawn';
 
   // Audit Trail
   readonly auditTrail: AuditTrail;
@@ -117,7 +117,7 @@ export interface OperationLogEntry {
 
   // System Context
   readonly systemVersion?: string;
-  readonly environmentType: "development" | "staging" | "production";
+  readonly environmentType: 'development' | 'staging' | 'production';
   readonly correlationId?: string;
   readonly parentOperationId?: string;
 
@@ -150,7 +150,7 @@ export interface LogQueryFilters {
  * Log aggregation results for analytics
  */
 export interface LogAggregation {
-  readonly period: "hour" | "day" | "week" | "month";
+  readonly period: 'hour' | 'day' | 'week' | 'month';
   readonly timestamp: Date;
   readonly counts: {
     readonly total: number;
@@ -192,7 +192,7 @@ export class OperationLog {
    * Records a new operation log entry
    */
   logOperation(
-    entry: Omit<OperationLogEntry, "id" | "timestamp" | "auditTrail">,
+    entry: Omit<OperationLogEntry, 'id' | 'timestamp' | 'auditTrail'>,
   ): OperationLogEntry {
     const now = new Date();
     const id = this.generateLogId();
@@ -204,18 +204,17 @@ export class OperationLog {
       auditTrail: {
         action: entry.operation,
         timestamp: now,
-        userId: entry._userId || "system",
+        userId: entry._userId || 'system',
         userRole: entry.userRole,
         ipAddress: entry.ipAddress,
         userAgent: entry.userAgent,
         consentStatus: entry.consentStatus,
-        dataProcessingPurpose:
-          (entry.dataProcessingPurpose as
-            | "analytics"
-            | "diagnosis"
-            | "training"
-            | "audit") || "audit",
-        anonymizationLevel: entry.anonymizationApplied ? "anonymized" : "none",
+        dataProcessingPurpose: (entry.dataProcessingPurpose as
+          | 'analytics'
+          | 'diagnosis'
+          | 'training'
+          | 'audit') || 'audit',
+        anonymizationLevel: entry.anonymizationApplied ? 'anonymized' : 'none',
         metadata: {
           category: entry.category,
           severity: entry.severity,
@@ -229,7 +228,7 @@ export class OperationLog {
     this.updateAggregations(fullEntry);
 
     // Trigger alerts for critical operations
-    if (fullEntry.severity === "critical") {
+    if (fullEntry.severity === 'critical') {
       this.triggerCriticalAlert(fullEntry);
     }
 
@@ -260,10 +259,10 @@ export class OperationLog {
     userAgent?: string;
   }): OperationLogEntry {
     return this.logOperation({
-      category: "ai_request",
-      operation: "ai_chat_request",
+      category: 'ai_request',
+      operation: 'ai_chat_request',
       description: `AI request using ${params.modelCode} model`,
-      severity: "info",
+      severity: 'info',
       clinicId: params.clinicId,
       _userId: params._userId,
       sessionId: params.sessionId,
@@ -279,16 +278,16 @@ export class OperationLog {
       tokensUsed: params.tokensUsed,
       cacheHit: params.cacheHit,
       complianceFrameworks: params.medicalSpecialty
-        ? ["LGPD", "CFM"]
-        : ["LGPD"],
+        ? ['LGPD', 'CFM']
+        : ['LGPD'],
       dataProcessingPurpose: params.diagnosisAssistance
-        ? "diagnosis"
-        : "analytics",
+        ? 'diagnosis'
+        : 'analytics',
       personalDataInvolved: params.personalDataInvolved,
-      sensitiveDataLevel: params.medicalSpecialty ? "high" : "low",
+      sensitiveDataLevel: params.medicalSpecialty ? 'high' : 'low',
       anonymizationApplied: true,
       consentId: params.consentId,
-      consentStatus: params.consentId ? "valid" : "missing",
+      consentStatus: params.consentId ? 'valid' : 'missing',
       patientInvolved: params.patientInvolved,
       diagnosisAssistance: params.diagnosisAssistance,
       prescriptionInvolved: false,
@@ -297,15 +296,15 @@ export class OperationLog {
         params.medicalSpecialty,
         params.diagnosisAssistance,
       ),
-      environmentType: "production",
+      environmentType: 'production',
       tags: [
-        "ai_request",
+        'ai_request',
         params.modelCode,
         ...(params.medicalSpecialty ? [params.medicalSpecialty] : []),
       ],
       metadata: {
-        cacheEfficiency: params.cacheHit ? "high" : "none",
-        costOptimization: params.cacheHit ? "applied" : "opportunity",
+        cacheEfficiency: params.cacheHit ? 'high' : 'none',
+        costOptimization: params.cacheHit ? 'applied' : 'opportunity',
       },
     });
   }
@@ -323,24 +322,24 @@ export class OperationLog {
     userAgent?: string;
   }): OperationLogEntry {
     return this.logOperation({
-      category: "plan_change",
-      operation: "subscription_updated",
+      category: 'plan_change',
+      operation: 'subscription_updated',
       description: `Plan changed from ${params.fromPlan} to ${params.toPlan}`,
-      severity: "info",
+      severity: 'info',
       clinicId: params.clinicId,
       _userId: params._userId,
       ipAddress: params.ipAddress,
       userAgent: params.userAgent,
       planCode: params.toPlan,
-      complianceFrameworks: ["LGPD"],
-      dataProcessingPurpose: "analytics",
+      complianceFrameworks: ['LGPD'],
+      dataProcessingPurpose: 'analytics',
       personalDataInvolved: true,
-      sensitiveDataLevel: "medium",
+      sensitiveDataLevel: 'medium',
       anonymizationApplied: false,
-      consentStatus: "valid",
-      environmentType: "production",
-      regulatoryFlags: ["LGPD", "BILLING"],
-      tags: ["plan_change", params.fromPlan, params.toPlan],
+      consentStatus: 'valid',
+      environmentType: 'production',
+      regulatoryFlags: ['LGPD', 'BILLING'],
+      tags: ['plan_change', params.fromPlan, params.toPlan],
       metadata: {
         changeReason: params.reason,
         fromPlan: params.fromPlan,
@@ -357,31 +356,30 @@ export class OperationLog {
     _userId?: string;
     framework: ComplianceFramework;
     checkType: string;
-    result: "pass" | "fail" | "warning";
+    result: 'pass' | 'fail' | 'warning';
     details: Record<string, any>;
     violations?: string[];
   }): OperationLogEntry {
     return this.logOperation({
-      category: "compliance_check",
-      operation: "compliance_audit",
+      category: 'compliance_check',
+      operation: 'compliance_audit',
       description: `${params.framework} compliance check: ${params.checkType}`,
-      severity:
-        params.result === "fail"
-          ? "critical"
-          : params.result === "warning"
-            ? "warning"
-            : "info",
+      severity: params.result === 'fail'
+        ? 'critical'
+        : params.result === 'warning'
+        ? 'warning'
+        : 'info',
       clinicId: params.clinicId,
       _userId: params._userId,
       complianceFrameworks: [params.framework],
-      dataProcessingPurpose: "audit",
-      personalDataInvolved: params.framework === "LGPD",
-      sensitiveDataLevel: "medium",
+      dataProcessingPurpose: 'audit',
+      personalDataInvolved: params.framework === 'LGPD',
+      sensitiveDataLevel: 'medium',
       anonymizationApplied: true,
-      consentStatus: "valid",
-      environmentType: "production",
+      consentStatus: 'valid',
+      environmentType: 'production',
       regulatoryFlags: params.violations || [],
-      tags: ["compliance", params.framework.toLowerCase(), params.result],
+      tags: ['compliance', params.framework.toLowerCase(), params.result],
       metadata: {
         checkType: params.checkType,
         result: params.result,
@@ -402,11 +400,11 @@ export class OperationLog {
     description: string;
     ipAddress?: string;
     userAgent?: string;
-    threatLevel?: "low" | "medium" | "high" | "critical";
+    threatLevel?: 'low' | 'medium' | 'high' | 'critical';
     blocked?: boolean;
   }): OperationLogEntry {
     return this.logOperation({
-      category: "security_event",
+      category: 'security_event',
       operation: params.eventType,
       description: params.description,
       severity: params.severity,
@@ -414,19 +412,18 @@ export class OperationLog {
       _userId: params._userId,
       ipAddress: params.ipAddress,
       userAgent: params.userAgent,
-      complianceFrameworks: ["LGPD"],
-      dataProcessingPurpose: "audit",
+      complianceFrameworks: ['LGPD'],
+      dataProcessingPurpose: 'audit',
       personalDataInvolved: Boolean(params._userId),
-      sensitiveDataLevel:
-        params.threatLevel === "critical" ? "critical" : "medium",
+      sensitiveDataLevel: params.threatLevel === 'critical' ? 'critical' : 'medium',
       anonymizationApplied: true,
-      consentStatus: "valid",
-      environmentType: "production",
+      consentStatus: 'valid',
+      environmentType: 'production',
       regulatoryFlags: params.blocked
-        ? ["SECURITY_BLOCKED"]
-        : ["SECURITY_MONITORED"],
+        ? ['SECURITY_BLOCKED']
+        : ['SECURITY_MONITORED'],
       tags: [
-        "security",
+        'security',
         params.eventType,
         ...(params.threatLevel ? [params.threatLevel] : []),
       ],
@@ -450,81 +447,74 @@ export class OperationLog {
 
     // Apply date filters
     if (filters.startDate) {
-      entries = entries.filter((e) => e.timestamp >= filters.startDate!);
+      entries = entries.filter(e => e.timestamp >= filters.startDate!);
     }
     if (filters.endDate) {
-      entries = entries.filter((e) => e.timestamp <= filters.endDate!);
+      entries = entries.filter(e => e.timestamp <= filters.endDate!);
     }
 
     // Apply category filters
     if (filters.categories && filters.categories.length > 0) {
-      entries = entries.filter((e) => filters.categories!.includes(e.category));
+      entries = entries.filter(e => filters.categories!.includes(e.category));
     }
 
     // Apply severity filters
     if (filters.severities && filters.severities.length > 0) {
-      entries = entries.filter((e) => filters.severities!.includes(e.severity));
+      entries = entries.filter(e => filters.severities!.includes(e.severity));
     }
 
     // Apply clinic filters
     if (filters.clinicIds && filters.clinicIds.length > 0) {
-      entries = entries.filter((e) => filters.clinicIds!.includes(e.clinicId));
+      entries = entries.filter(e => filters.clinicIds!.includes(e.clinicId));
     }
 
     // Apply user filters
     if (filters.userIds && filters.userIds.length > 0) {
       entries = entries.filter(
-        (e) => e._userId && filters.userIds!.includes(e._userId),
+        e => e._userId && filters.userIds!.includes(e._userId),
       );
     }
 
     // Apply operation filters
     if (filters.operations && filters.operations.length > 0) {
-      entries = entries.filter((e) =>
-        filters.operations!.includes(e.operation),
-      );
+      entries = entries.filter(e => filters.operations!.includes(e.operation));
     }
 
     // Apply compliance filters
     if (
-      filters.complianceFrameworks &&
-      filters.complianceFrameworks.length > 0
+      filters.complianceFrameworks
+      && filters.complianceFrameworks.length > 0
     ) {
-      entries = entries.filter((e) =>
-        e.complianceFrameworks.some((f) =>
-          filters.complianceFrameworks!.includes(f),
-        ),
+      entries = entries.filter(e =>
+        e.complianceFrameworks.some(f => filters.complianceFrameworks!.includes(f))
       );
     }
 
     // Apply personal data filter
     if (filters.personalDataOnly) {
-      entries = entries.filter((e) => e.personalDataInvolved);
+      entries = entries.filter(e => e.personalDataInvolved);
     }
 
     // Apply error filter
     if (filters.errorOnly) {
       entries = entries.filter(
-        (e) =>
-          e.severity === "error" || e.severity === "critical" || e.errorDetails,
+        e => e.severity === 'error' || e.severity === 'critical' || e.errorDetails,
       );
     }
 
     // Apply tag filters
     if (filters.tags && filters.tags.length > 0) {
-      entries = entries.filter((e) =>
-        filters.tags!.some((tag) => e.tags.includes(tag)),
-      );
+      entries = entries.filter(e => filters.tags!.some(tag => e.tags.includes(tag)));
     }
 
     // Apply text search
     if (filters.searchQuery) {
       const query = filters.searchQuery.toLowerCase();
       entries = entries.filter(
-        (e) =>
-          e.operation.toLowerCase().includes(query) ||
-          e.description.toLowerCase().includes(query) ||
-          e.tags.some((tag) => tag.toLowerCase().includes(query)),
+        e =>
+          e.operation.toLowerCase().includes(query)
+          || e.description.toLowerCase().includes(query)
+          || e.tags.some(tag => tag.toLowerCase().includes(query)),
       );
     }
 
@@ -585,7 +575,7 @@ export class OperationLog {
     limit?: number,
   ): OperationLogEntry[] {
     return this.queryLogs({
-      categories: ["security_event"],
+      categories: ['security_event'],
       severities: severity ? [severity] : undefined,
       limit,
     });
@@ -599,14 +589,14 @@ export class OperationLog {
    * Gets log aggregations by period
    */
   getAggregations(
-    period: "hour" | "day" | "week" | "month",
+    period: 'hour' | 'day' | 'week' | 'month',
     startDate?: Date,
     endDate?: Date,
   ): LogAggregation[] {
     return Array.from(this._aggregations.values())
-      .filter((agg) => agg.period === period)
-      .filter((agg) => !startDate || agg.timestamp >= startDate)
-      .filter((agg) => !endDate || agg.timestamp <= endDate)
+      .filter(agg => agg.period === period)
+      .filter(agg => !startDate || agg.timestamp >= startDate)
+      .filter(agg => !endDate || agg.timestamp <= endDate)
       .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
   }
 
@@ -627,7 +617,7 @@ export class OperationLog {
     const complianceLogs = this.queryLogs({
       startDate,
       endDate,
-    }).filter((log) => log.complianceFrameworks.length > 0);
+    }).filter(log => log.complianceFrameworks.length > 0);
 
     const byFramework: Record<ComplianceFramework, number> = {
       LGPD: 0,
@@ -650,7 +640,7 @@ export class OperationLog {
         personalDataEvents++;
       }
 
-      if (log.consentStatus !== "valid") {
+      if (log.consentStatus !== 'valid') {
         consentIssues++;
       }
 
@@ -659,10 +649,9 @@ export class OperationLog {
       }
     }
 
-    const complianceScore =
-      complianceLogs.length > 0
-        ? Math.max(0, 100 - (consentIssues / complianceLogs.length) * 100)
-        : 100;
+    const complianceScore = complianceLogs.length > 0
+      ? Math.max(0, 100 - (consentIssues / complianceLogs.length) * 100)
+      : 100;
 
     return {
       totalEvents: complianceLogs.length,
@@ -700,7 +689,7 @@ export class OperationLog {
     let cacheRequests = 0;
 
     for (const entry of entries) {
-      if (entry.category === "ai_request") {
+      if (entry.category === 'ai_request') {
         requestCount++;
 
         if (entry.duration !== undefined) {
@@ -724,7 +713,7 @@ export class OperationLog {
         }
       }
 
-      if (entry.severity === "error" || entry.severity === "critical") {
+      if (entry.severity === 'error' || entry.severity === 'critical') {
         errorCount++;
       }
     }
@@ -754,31 +743,31 @@ export class OperationLog {
     const flags: string[] = [];
 
     if (specialty) {
-      flags.push("CFM_OVERSIGHT");
+      flags.push('CFM_OVERSIGHT');
 
       if (
-        ["dermatologia", "cirurgia_plastica", "cosmiatria"].includes(specialty)
+        ['dermatologia', 'cirurgia_plastica', 'cosmiatria'].includes(specialty)
       ) {
-        flags.push("ANVISA_OVERSIGHT");
+        flags.push('ANVISA_OVERSIGHT');
       }
     }
 
     if (diagnosisAssistance) {
-      flags.push("MEDICAL_ADVICE");
+      flags.push('MEDICAL_ADVICE');
     }
 
     return flags;
   }
 
   private updateAggregations(entry: OperationLogEntry): void {
-    const periods: Array<"hour" | "day" | "week" | "month"> = [
-      "hour",
-      "day",
-      "week",
-      "month",
+    const periods: Array<'hour' | 'day' | 'week' | 'month'> = [
+      'hour',
+      'day',
+      'week',
+      'month',
     ];
 
-    periods.forEach((period) => {
+    periods.forEach(period => {
       const key = this.getAggregationKey(entry.timestamp, period);
       const existing = this._aggregations.get(key);
 
@@ -788,46 +777,38 @@ export class OperationLog {
           total: existing.counts.total + 1,
           byCategory: {
             ...existing.counts.byCategory,
-            [entry.category]:
-              (existing.counts.byCategory[entry.category] || 0) + 1,
+            [entry.category]: (existing.counts.byCategory[entry.category] || 0) + 1,
           },
           bySeverity: {
             ...existing.counts.bySeverity,
-            [entry.severity]:
-              (existing.counts.bySeverity[entry.severity] || 0) + 1,
+            [entry.severity]: (existing.counts.bySeverity[entry.severity] || 0) + 1,
           },
-          errors:
-            existing.counts.errors +
-            (entry.severity === "error" || entry.severity === "critical"
+          errors: existing.counts.errors
+            + (entry.severity === 'error' || entry.severity === 'critical'
               ? 1
               : 0),
-          complianceEvents:
-            existing.counts.complianceEvents +
-            (entry.complianceFrameworks.length > 0 ? 1 : 0),
+          complianceEvents: existing.counts.complianceEvents
+            + (entry.complianceFrameworks.length > 0 ? 1 : 0),
         };
 
         const updatedPerformance = {
-          averageDuration:
-            entry.duration !== undefined
-              ? (existing.performance.averageDuration + entry.duration) / 2
-              : existing.performance.averageDuration,
+          averageDuration: entry.duration !== undefined
+            ? (existing.performance.averageDuration + entry.duration) / 2
+            : existing.performance.averageDuration,
           totalCost: existing.performance.totalCost + (entry.costUsd || 0),
-          totalTokens:
-            existing.performance.totalTokens + (entry.tokensUsed || 0),
+          totalTokens: existing.performance.totalTokens + (entry.tokensUsed || 0),
         };
 
         const updatedCompliance = {
-          personalDataEvents:
-            existing.compliance.personalDataEvents +
-            (entry.personalDataInvolved ? 1 : 0),
-          consentIssues:
-            existing.compliance.consentIssues +
-            (entry.consentStatus !== "valid" ? 1 : 0),
+          personalDataEvents: existing.compliance.personalDataEvents
+            + (entry.personalDataInvolved ? 1 : 0),
+          consentIssues: existing.compliance.consentIssues
+            + (entry.consentStatus !== 'valid' ? 1 : 0),
           regulatoryFlags: Array.from(
             new Set([
               ...existing.compliance.regulatoryFlags,
               ...entry.regulatoryFlags,
-            ])
+            ]),
           ),
         };
 
@@ -865,10 +846,9 @@ export class OperationLog {
               critical: 0,
               [entry.severity]: 1,
             },
-            errors:
-              entry.severity === "error" || entry.severity === "critical"
-                ? 1
-                : 0,
+            errors: entry.severity === 'error' || entry.severity === 'critical'
+              ? 1
+              : 0,
             complianceEvents: entry.complianceFrameworks.length > 0 ? 1 : 0,
           },
           performance: {
@@ -878,7 +858,7 @@ export class OperationLog {
           },
           compliance: {
             personalDataEvents: entry.personalDataInvolved ? 1 : 0,
-            consentIssues: entry.consentStatus !== "valid" ? 1 : 0,
+            consentIssues: entry.consentStatus !== 'valid' ? 1 : 0,
             regulatoryFlags: [...entry.regulatoryFlags],
           },
         };
@@ -890,41 +870,41 @@ export class OperationLog {
 
   private getAggregationKey(
     date: Date,
-    period: "hour" | "day" | "week" | "month",
+    period: 'hour' | 'day' | 'week' | 'month',
   ): string {
     const d = new Date(date);
 
     switch (period) {
-      case "hour":
+      case 'hour':
         return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}-${d.getHours()}`;
-      case "day":
+      case 'day':
         return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
-      case "week":
+      case 'week':
         const weekStart = new Date(d);
         weekStart.setDate(d.getDate() - d.getDay());
         return `${weekStart.getFullYear()}-W${Math.ceil(weekStart.getDate() / 7)}`;
-      case "month":
+      case 'month':
         return `${d.getFullYear()}-${d.getMonth()}`;
     }
   }
 
   private getPeriodStart(
     date: Date,
-    period: "hour" | "day" | "week" | "month",
+    period: 'hour' | 'day' | 'week' | 'month',
   ): Date {
     const d = new Date(date);
 
     switch (period) {
-      case "hour":
+      case 'hour':
         return new Date(
           d.getFullYear(),
           d.getMonth(),
           d.getDate(),
           d.getHours(),
         );
-      case "day":
+      case 'day':
         return new Date(d.getFullYear(), d.getMonth(), d.getDate());
-      case "week":
+      case 'week':
         const weekStart = new Date(d);
         weekStart.setDate(d.getDate() - d.getDay());
         return new Date(
@@ -932,7 +912,7 @@ export class OperationLog {
           weekStart.getMonth(),
           weekStart.getDate(),
         );
-      case "month":
+      case 'month':
         return new Date(d.getFullYear(), d.getMonth(), 1);
     }
   }
@@ -945,7 +925,7 @@ export class OperationLog {
       operation: entry.operation,
       clinicId: entry.clinicId,
       timestamp: entry.timestamp,
-      severity: 'critical'
+      severity: 'critical',
     });
   }
 
@@ -965,7 +945,7 @@ export class OperationLog {
     period: { start: Date; end: Date };
     totalEntries: number;
     entries: OperationLogEntry[];
-    summary: ReturnType<OperationLog["getComplianceSummary"]>;
+    summary: ReturnType<OperationLog['getComplianceSummary']>;
   } {
     const entries = this.getComplianceLogs(framework, startDate, endDate);
 
@@ -984,8 +964,8 @@ export class OperationLog {
   toJSON(): {
     totalEntries: number;
     recentActivity: OperationLogEntry[];
-    complianceSummary: ReturnType<OperationLog["getComplianceSummary"]>;
-    performanceAnalytics: ReturnType<OperationLog["getPerformanceAnalytics"]>;
+    complianceSummary: ReturnType<OperationLog['getComplianceSummary']>;
+    performanceAnalytics: ReturnType<OperationLog['getPerformanceAnalytics']>;
   } {
     return {
       totalEntries: this._entries.size,

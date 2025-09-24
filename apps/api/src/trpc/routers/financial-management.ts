@@ -4,18 +4,18 @@
  * Brazilian tax compliance and payment processing
  */
 
-import { createTRPCRouter } from '../../trpc';
-import { z } from 'zod';
 import { FinancialManagementService } from '@neonpro/core-services';
-import { 
+import {
   FinancialAccountInputSchema,
-  ServicePriceInputSchema,
-  TreatmentPackageInputSchema,
+  FinancialGoalInputSchema,
   InvoiceInputSchema,
   PaymentTransactionInputSchema,
   ProfessionalCommissionInputSchema,
-  FinancialGoalInputSchema,
+  ServicePriceInputSchema,
+  TreatmentPackageInputSchema,
 } from '@neonpro/core-services';
+import { z } from 'zod';
+import { createTRPCRouter } from '../../trpc';
 
 // Response schemas
 const SuccessResponseSchema = <T extends z.ZodSchemaAny>(dataSchema: T) =>
@@ -130,9 +130,26 @@ const PaymentTransactionSchema = z.object({
   invoice_id: z.string().uuid().optional(),
   patient_id: z.string().uuid(),
   transaction_id: z.string(),
-  payment_method: z.enum(['credit_card', 'debit_card', 'bank_transfer', 'pix', 'boleto', 'cash', 'check', 'installment']),
+  payment_method: z.enum([
+    'credit_card',
+    'debit_card',
+    'bank_transfer',
+    'pix',
+    'boleto',
+    'cash',
+    'check',
+    'installment',
+  ]),
   payment_provider: z.enum(['stripe', 'mercadopago', 'pagseguro', 'manual']),
-  status: z.enum(['pending', 'processing', 'succeeded', 'failed', 'cancelled', 'refunded', 'chargeback']),
+  status: z.enum([
+    'pending',
+    'processing',
+    'succeeded',
+    'failed',
+    'cancelled',
+    'refunded',
+    'chargeback',
+  ]),
   amount: z.number(),
   currency: z.enum(['BRL', 'USD', 'EUR']),
   installments: z.number(),
@@ -241,7 +258,7 @@ const BoletoResponseSchema = z.object({
 
 // Input schemas with Brazilian Portuguese validation messages
 const CreateFinancialAccountInputSchema = FinancialAccountInputSchema.refine(
-  (data) => {
+  data => {
     if (data.isDefault && data.accountType === 'credit') {
       return false;
     }
@@ -250,11 +267,11 @@ const CreateFinancialAccountInputSchema = FinancialAccountInputSchema.refine(
   {
     message: 'Contas de crédito não podem ser definidas como padrão',
     path: ['isDefault'],
-  }
+  },
 );
 
 const CreateInvoiceInputSchema = InvoiceInputSchema.refine(
-  (data) => {
+  data => {
     if (new Date(data.dueDate) < new Date(data.issueDate)) {
       return false;
     }
@@ -263,11 +280,11 @@ const CreateInvoiceInputSchema = InvoiceInputSchema.refine(
   {
     message: 'A data de vencimento não pode ser anterior à data de emissão',
     path: ['dueDate'],
-  }
+  },
 );
 
 const CreatePaymentInputSchema = PaymentTransactionInputSchema.refine(
-  (data) => {
+  data => {
     if (data.installmentNumber > data.totalInstallments) {
       return false;
     }
@@ -276,7 +293,7 @@ const CreatePaymentInputSchema = PaymentTransactionInputSchema.refine(
   {
     message: 'O número da parcela não pode ser maior que o total de parcelas',
     path: ['installmentNumber'],
-  }
+  },
 );
 
 export const financialManagementRouter = createTRPCRouter({
@@ -324,7 +341,7 @@ export const financialManagementRouter = createTRPCRouter({
 
         const account = await financialManagementService.updateFinancialAccount(
           input.id,
-          input.updates
+          input.updates,
         );
 
         return {
@@ -376,7 +393,7 @@ export const financialManagementRouter = createTRPCRouter({
   // Service Pricing Management
   createServicePrice: {
     input: ServicePriceInputSchema.refine(
-      (data) => {
+      data => {
         if (data.professionalCommissionRate + data.clinicRevenueRate > 100) {
           return false;
         }
@@ -385,7 +402,7 @@ export const financialManagementRouter = createTRPCRouter({
       {
         message: 'A soma das taxas de comissão e receita não pode exceder 100%',
         path: ['professionalCommissionRate'],
-      }
+      },
     ),
     output: SuccessResponseSchema(ServicePriceSchema),
     resolve: async ({ input, ctx: _ctx }) => {
@@ -428,7 +445,7 @@ export const financialManagementRouter = createTRPCRouter({
 
         const prices = await financialManagementService.getServicePrices(
           input.clinicId,
-          input.serviceId
+          input.serviceId,
         );
 
         return {
@@ -450,7 +467,7 @@ export const financialManagementRouter = createTRPCRouter({
   // Treatment Package Management
   createTreatmentPackage: {
     input: TreatmentPackageInputSchema.refine(
-      (data) => {
+      data => {
         if (data.packagePrice > data.originalPrice) {
           return false;
         }
@@ -459,7 +476,7 @@ export const financialManagementRouter = createTRPCRouter({
       {
         message: 'O preço do pacote não pode ser maior que o preço original',
         path: ['packagePrice'],
-      }
+      },
     ),
     output: SuccessResponseSchema(TreatmentPackageSchema),
     resolve: async ({ input, ctx: _ctx }) => {
@@ -579,7 +596,8 @@ export const financialManagementRouter = createTRPCRouter({
   getInvoices: {
     input: z.object({
       clinicId: z.string().uuid(),
-      status: z.enum(['draft', 'pending', 'paid', 'partial', 'overdue', 'cancelled', 'refunded']).optional(),
+      status: z.enum(['draft', 'pending', 'paid', 'partial', 'overdue', 'cancelled', 'refunded'])
+        .optional(),
       patientId: z.string().uuid().optional(),
       startDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
       endDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
@@ -647,7 +665,15 @@ export const financialManagementRouter = createTRPCRouter({
   getPaymentTransactions: {
     input: z.object({
       clinicId: z.string().uuid(),
-      status: z.enum(['pending', 'processing', 'succeeded', 'failed', 'cancelled', 'refunded', 'chargeback']).optional(),
+      status: z.enum([
+        'pending',
+        'processing',
+        'succeeded',
+        'failed',
+        'cancelled',
+        'refunded',
+        'chargeback',
+      ]).optional(),
       patientId: z.string().uuid().optional(),
       startDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
       endDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
@@ -667,7 +693,7 @@ export const financialManagementRouter = createTRPCRouter({
             patientId: input.patientId,
             startDate: input.startDate,
             endDate: input.endDate,
-          }
+          },
         );
 
         return {
@@ -679,7 +705,9 @@ export const financialManagementRouter = createTRPCRouter({
         console.error('Error fetching payment transactions:', error);
         return {
           success: false,
-          message: error instanceof Error ? error.message : 'Erro ao buscar transações de pagamento',
+          message: error instanceof Error
+            ? error.message
+            : 'Erro ao buscar transações de pagamento',
           data: null,
         };
       }
@@ -730,7 +758,7 @@ export const financialManagementRouter = createTRPCRouter({
 
         const commissions = await financialManagementService.getProfessionalCommissions(
           input.clinicId,
-          input.professionalId
+          input.professionalId,
         );
 
         return {
@@ -742,7 +770,9 @@ export const financialManagementRouter = createTRPCRouter({
         console.error('Error fetching professional commissions:', error);
         return {
           success: false,
-          message: error instanceof Error ? error.message : 'Erro ao buscar comissões profissionais',
+          message: error instanceof Error
+            ? error.message
+            : 'Erro ao buscar comissões profissionais',
           data: null,
         };
       }
@@ -752,7 +782,7 @@ export const financialManagementRouter = createTRPCRouter({
   // Financial Goals Management
   createFinancialGoal: {
     input: FinancialGoalInputSchema.refine(
-      (data) => {
+      data => {
         if (new Date(data.endDate) < new Date(data.startDate)) {
           return false;
         }
@@ -761,7 +791,7 @@ export const financialManagementRouter = createTRPCRouter({
       {
         message: 'A data final não pode ser anterior à data inicial',
         path: ['endDate'],
-      }
+      },
     ),
     output: SuccessResponseSchema(FinancialGoalSchema),
     resolve: async ({ input, ctx: _ctx }) => {
@@ -804,7 +834,7 @@ export const financialManagementRouter = createTRPCRouter({
 
         const goal = await financialManagementService.updateFinancialGoalProgress(
           input.goalId,
-          input.currentValue
+          input.currentValue,
         );
 
         return {
@@ -816,7 +846,9 @@ export const financialManagementRouter = createTRPCRouter({
         console.error('Error updating financial goal progress:', error);
         return {
           success: false,
-          message: error instanceof Error ? error.message : 'Erro ao atualizar progresso da meta financeira',
+          message: error instanceof Error
+            ? error.message
+            : 'Erro ao atualizar progresso da meta financeira',
           data: null,
         };
       }
@@ -869,7 +901,7 @@ export const financialManagementRouter = createTRPCRouter({
 
         const report = await financialManagementService.generateFinancialReport(
           input.clinicId,
-          input.reportDate
+          input.reportDate,
         );
 
         return {
@@ -931,7 +963,9 @@ export const financialManagementRouter = createTRPCRouter({
           supabaseKey: process.env.SUPABASE_SERVICE_ROLE_KEY!,
         });
 
-        const configurations = await financialManagementService.getTaxConfigurations(input.clinicId);
+        const configurations = await financialManagementService.getTaxConfigurations(
+          input.clinicId,
+        );
 
         return {
           success: true,
@@ -1028,7 +1062,7 @@ export const financialManagementRouter = createTRPCRouter({
 
         const boleto = await financialManagementService.calculateBoleto(
           input.invoiceId,
-          input.dueDays
+          input.dueDays,
         );
 
         return {

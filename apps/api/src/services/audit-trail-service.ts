@@ -11,9 +11,9 @@
  * - Brazilian healthcare regulation compliance
  */
 
+import crypto from 'crypto';
 import { createAdminClient } from '../clients/supabase';
 import { logger } from '../lib/logger';
-import crypto from 'crypto';
 
 // Audit Event Types
 export const AUDIT_EVENT_TYPES = {
@@ -24,14 +24,14 @@ export const AUDIT_EVENT_TYPES = {
   MFA_SETUP: 'mfa_setup',
   PERMISSION_CHANGE: 'permission_change',
   ROLE_CHANGE: 'role_change',
-  
+
   // Patient Data Operations
   PATIENT_DATA_ACCESS: 'patient_data_access',
   PATIENT_DATA_CREATE: 'patient_data_create',
   PATIENT_DATA_UPDATE: 'patient_data_update',
   PATIENT_DATA_DELETE: 'patient_data_delete',
   PATIENT_DATA_EXPORT: 'patient_data_export',
-  
+
   // Medical Images
   IMAGE_UPLOAD: 'image_upload',
   IMAGE_VIEW: 'image_view',
@@ -39,32 +39,32 @@ export const AUDIT_EVENT_TYPES = {
   IMAGE_DELETE: 'image_delete',
   IMAGE_ENCRYPT: 'image_encrypt',
   IMAGE_WATERMARK: 'image_watermark',
-  
+
   // Treatments & Procedures
   TREATMENT_CREATE: 'treatment_create',
   TREATMENT_UPDATE: 'treatment_update',
   TREATMENT_COMPLETE: 'treatment_complete',
   TREATMENT_CANCEL: 'treatment_cancel',
-  
+
   // Financial Operations
   PAYMENT_PROCESS: 'payment_process',
   PAYMENT_REFUND: 'payment_refund',
   PAYMENT_VOID: 'payment_void',
   INVOICE_GENERATE: 'invoice_generate',
-  
+
   // System Operations
   SYSTEM_CONFIG_CHANGE: 'system_config_change',
   SECURITY_EVENT: 'security_event',
   BACKUP_CREATE: 'backup_create',
   BACKUP_RESTORE: 'backup_restore',
-  
+
   // Compliance Operations
   LGPD_CONSENT_GRANTED: 'lgpd_consent_granted',
   LGPD_CONSENT_WITHDRAWN: 'lgpd_consent_withdrawn',
   LGPD_DATA_EXPORT: 'lgpd_data_export',
   LGPD_DATA_DELETE: 'lgpd_data_delete',
   ANVISA_COMPLIANCE_CHECK: 'anvisa_compliance_check',
-  
+
   // Aesthetic Clinic Specific
   AESTHETIC_PROCEDURE_START: 'aesthetic_procedure_start',
   AESTHETIC_PROCEDURE_COMPLETE: 'aesthetic_procedure_complete',
@@ -262,7 +262,7 @@ export class AuditTrailService {
     try {
       // Load recent audit events from database
       await this.loadRecentAuditEvents();
-      
+
       // Load ongoing investigations
       await this.loadInvestigations();
 
@@ -276,7 +276,9 @@ export class AuditTrailService {
   /**
    * Log audit event
    */
-  async logEvent(eventData: Omit<AuditEvent, 'id' | 'timestamp' | 'retentionPolicy' | 'metadata'>): Promise<string> {
+  async logEvent(
+    eventData: Omit<AuditEvent, 'id' | 'timestamp' | 'retentionPolicy' | 'metadata'>,
+  ): Promise<string> {
     try {
       const eventId = crypto.randomUUID();
       const timestamp = new Date();
@@ -360,55 +362,69 @@ export class AuditTrailService {
       }
 
       if (filters.eventTypes?.length) {
-        filteredEvents = filteredEvents.filter(event => filters.eventTypes!.includes(event.eventType));
+        filteredEvents = filteredEvents.filter(event =>
+          filters.eventTypes!.includes(event.eventType)
+        );
       }
 
       if (filters.categories?.length) {
-        filteredEvents = filteredEvents.filter(event => filters.categories!.includes(event.category));
+        filteredEvents = filteredEvents.filter(event =>
+          filters.categories!.includes(event.category)
+        );
       }
 
       if (filters.severities?.length) {
-        filteredEvents = filteredEvents.filter(event => filters.severities!.includes(event.severity));
+        filteredEvents = filteredEvents.filter(event =>
+          filters.severities!.includes(event.severity)
+        );
       }
 
       if (filters.resourceTypes?.length) {
-        filteredEvents = filteredEvents.filter(event => filters.resourceTypes!.includes(event.resourceType));
+        filteredEvents = filteredEvents.filter(event =>
+          filters.resourceTypes!.includes(event.resourceType)
+        );
       }
 
       if (filters.patientIds?.length) {
-        filteredEvents = filteredEvents.filter(event => 
+        filteredEvents = filteredEvents.filter(event =>
           event.patientId && filters.patientIds!.includes(event.patientId)
         );
       }
 
       if (filters.clinicIds?.length) {
-        filteredEvents = filteredEvents.filter(event => filters.clinicIds!.includes(event.clinicId));
+        filteredEvents = filteredEvents.filter(event =>
+          filters.clinicIds!.includes(event.clinicId)
+        );
       }
 
       if (filters.complianceFrameworks?.length) {
-        filteredEvents = filteredEvents.filter(event => 
-          event.complianceFrameworks.some(framework => 
+        filteredEvents = filteredEvents.filter(event =>
+          event.complianceFrameworks.some(framework =>
             filters.complianceFrameworks!.includes(framework)
           )
         );
       }
 
       if (filters.dataSensitivities?.length) {
-        filteredEvents = filteredEvents.filter(event => 
+        filteredEvents = filteredEvents.filter(event =>
           filters.dataSensitivities!.includes(event.dataSensitivity)
         );
       }
 
       if (filters.riskScores?.min !== undefined) {
-        filteredEvents = filteredEvents.filter(event => event.riskScore >= filters.riskScores!.min!);
+        filteredEvents = filteredEvents.filter(event =>
+          event.riskScore >= filters.riskScores!.min!
+        );
       }
 
       if (filters.riskScores?.max !== undefined) {
-        filteredEvents = filteredEvents.filter(event => event.riskScore <= filters.riskScores!.max!);
+        filteredEvents = filteredEvents.filter(event =>
+          event.riskScore <= filters.riskScores!.max!
+        );
       }
 
       if (filters.tags?.length) {
-        filteredEvents = filteredEvents.filter(event => 
+        filteredEvents = filteredEvents.filter(event =>
           filters.tags!.some(tag => event.metadata.tags.includes(tag))
         );
       }
@@ -419,7 +435,7 @@ export class AuditTrailService {
 
       filteredEvents.sort((a, b) => {
         let comparison = 0;
-        
+
         switch (orderBy) {
           case 'timestamp':
             comparison = a.timestamp.getTime() - b.timestamp.getTime();
@@ -671,16 +687,14 @@ export class AuditTrailService {
   async cleanupExpiredEvents(): Promise<number> {
     try {
       const now = new Date();
-      const expiredEvents = this.auditEvents.filter(event => 
+      const expiredEvents = this.auditEvents.filter(event =>
         event.retentionPolicy.autoDelete && event.retentionPolicy.retainUntil <= now
       );
 
       const count = expiredEvents.length;
-      
+
       // Remove from memory
-      this.auditEvents = this.auditEvents.filter(event => 
-        !expiredEvents.includes(event)
-      );
+      this.auditEvents = this.auditEvents.filter(event => !expiredEvents.includes(event));
 
       // Delete from database
       await this.deleteExpiredEventsFromDB(expiredEvents.map(e => e.id));
@@ -773,16 +787,20 @@ export class AuditTrailService {
     };
   }
 
-  private requiresInvestigation(event: Omit<AuditEvent, 'id' | 'timestamp' | 'retentionPolicy' | 'metadata'>): boolean {
+  private requiresInvestigation(
+    event: Omit<AuditEvent, 'id' | 'timestamp' | 'retentionPolicy' | 'metadata'>,
+  ): boolean {
     return (
-      event.severity === AUDIT_SEVERITY.CRITICAL ||
-      event.riskScore >= 0.8 ||
-      event.status === AUDIT_STATUS.FAILURE ||
-      event.category === AUDIT_CATEGORY.SECURITY
+      event.severity === AUDIT_SEVERITY.CRITICAL
+      || event.riskScore >= 0.8
+      || event.status === AUDIT_STATUS.FAILURE
+      || event.category === AUDIT_CATEGORY.SECURITY
     );
   }
 
-  private generateEventTags(event: Omit<AuditEvent, 'id' | 'timestamp' | 'retentionPolicy' | 'metadata'>): string[] {
+  private generateEventTags(
+    event: Omit<AuditEvent, 'id' | 'timestamp' | 'retentionPolicy' | 'metadata'>,
+  ): string[] {
     const tags: string[] = [];
 
     tags.push(event.category);
@@ -913,9 +931,9 @@ export class AuditTrailService {
   private calculateComplianceScore(events: AuditEvent[]): number {
     if (events.length === 0) return 1.0;
 
-    const compliantEvents = events.filter(event => 
-      event.status === AUDIT_STATUS.SUCCESS && 
-      event.complianceFrameworks.length > 0
+    const compliantEvents = events.filter(event =>
+      event.status === AUDIT_STATUS.SUCCESS
+      && event.complianceFrameworks.length > 0
     ).length;
 
     return compliantEvents / events.length;

@@ -3,33 +3,33 @@
  * Brazilian Aesthetic Clinic Operations
  */
 
-import * as v from "valibot";
-import { BrazilianPhoneSchema } from "./patient.valibot";
+import * as v from 'valibot';
+import { BrazilianPhoneSchema } from './patient.valibot';
 
 // Appointment Status Types
 export const AppointmentStatus = v.picklist([
-  "scheduled",
-  "confirmed",
-  "checked_in",
-  "in_progress",
-  "completed",
-  "cancelled",
-  "no_show",
-  "rescheduled",
+  'scheduled',
+  'confirmed',
+  'checked_in',
+  'in_progress',
+  'completed',
+  'cancelled',
+  'no_show',
+  'rescheduled',
 ]);
 
 export type AppointmentStatus = v.InferOutput<typeof AppointmentStatus>;
 
 // Aesthetic Procedure Types
 export const AestheticProcedureType = v.picklist([
-  "botox",
-  "preenchimento",
-  "peeling",
-  "laser",
-  "limpeza_pele",
-  "harmonização_facial",
-  "microagulhamento",
-  "fotorejuvenescimento",
+  'botox',
+  'preenchimento',
+  'peeling',
+  'laser',
+  'limpeza_pele',
+  'harmonização_facial',
+  'microagulhamento',
+  'fotorejuvenescimento',
 ]);
 
 export type AestheticProcedureType = v.InferOutput<
@@ -38,10 +38,10 @@ export type AestheticProcedureType = v.InferOutput<
 
 // Appointment Priority
 export const AppointmentPriority = v.picklist([
-  "low",
-  "normal",
-  "high",
-  "urgent",
+  'low',
+  'normal',
+  'high',
+  'urgent',
 ]);
 
 export type AppointmentPriority = v.InferOutput<typeof AppointmentPriority>;
@@ -49,7 +49,7 @@ export type AppointmentPriority = v.InferOutput<typeof AppointmentPriority>;
 // Brazilian CPF Schema
 export const BrazilianCPFSchema = v.pipe(
   v.string(),
-  v.regex(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/, "Invalid CPF format"),
+  v.regex(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/, 'Invalid CPF format'),
 );
 
 // Patient Schema
@@ -60,7 +60,7 @@ export const PatientSchema = v.object({
   phone: BrazilianPhoneSchema,
   cpf: BrazilianCPFSchema,
   date_of_birth: v.pipe(v.string(), v.isoDate()),
-  gender: v.picklist(["M", "F", "O"]),
+  gender: v.picklist(['M', 'F', 'O']),
   address: v.optional(v.string()),
   emergency_contact: v.optional(v.string()),
   allergies: v.optional(v.array(v.string())),
@@ -111,7 +111,7 @@ export const AppointmentSchema = v.object({
   pre_procedure_instructions: v.optional(v.string()),
   post_procedure_instructions: v.optional(v.string()),
   consent_forms_signed: v.boolean(),
-  payment_status: v.picklist(["pending", "partial", "paid", "refunded"]),
+  payment_status: v.picklist(['pending', 'partial', 'paid', 'refunded']),
   reminder_preferences: v.object({
     whatsapp: v.boolean(),
     sms: v.boolean(),
@@ -172,7 +172,7 @@ export const UpdateAppointmentSchema = v.object({
   notes: v.optional(v.string()),
   cancellation_reason: v.optional(v.string()),
   payment_status: v.optional(
-    v.picklist(["pending", "partial", "paid", "refunded"]),
+    v.picklist(['pending', 'partial', 'paid', 'refunded']),
   ),
   consent_forms_signed: v.optional(v.boolean()),
 });
@@ -190,7 +190,7 @@ export const AppointmentFiltersSchema = v.object({
   date_to: v.optional(v.pipe(v.string(), v.isoDate())),
   high_risk_no_show: v.optional(v.boolean()),
   payment_status: v.optional(
-    v.picklist(["pending", "partial", "paid", "refunded"]),
+    v.picklist(['pending', 'partial', 'paid', 'refunded']),
   ),
 });
 
@@ -199,14 +199,14 @@ export type AppointmentFilters = v.InferOutput<typeof AppointmentFiltersSchema>;
 // Reminder Configuration
 export const ReminderConfigSchema = v.object({
   appointment_id: v.pipe(v.string(), v.uuid()),
-  reminder_type: v.picklist(["24h", "12h", "6h", "2h", "confirmacao"]),
-  channel: v.picklist(["whatsapp", "sms", "email"]),
+  reminder_type: v.picklist(['24h', '12h', '6h', '2h', 'confirmacao']),
+  channel: v.picklist(['whatsapp', 'sms', 'email']),
   scheduled_time: v.pipe(v.string(), v.isoDateTime()),
   sent: v.boolean(),
   sent_at: v.optional(v.pipe(v.string(), v.isoDateTime())),
   response_received: v.optional(v.boolean()),
   response_type: v.optional(
-    v.picklist(["confirmed", "cancelled", "rescheduled"]),
+    v.picklist(['confirmed', 'cancelled', 'rescheduled']),
   ),
 });
 
@@ -216,7 +216,7 @@ export type ReminderConfig = v.InferOutput<typeof ReminderConfigSchema>;
 export const NoShowPredictionSchema = v.object({
   appointment_id: v.pipe(v.string(), v.uuid()),
   risk_score: v.pipe(v.number(), v.minValue(0), v.maxValue(1)),
-  risk_level: v.picklist(["low", "medium", "high"]),
+  risk_level: v.picklist(['low', 'medium', 'high']),
   factors: v.object({
     weather_risk: v.pipe(v.number(), v.minValue(0), v.maxValue(1)),
     historical_pattern: v.pipe(v.number(), v.minValue(0), v.maxValue(1)),

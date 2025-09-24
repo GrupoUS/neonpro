@@ -1,6 +1,6 @@
 // T040: Connect ChatService to Supabase
-import { createClient } from "@supabase/supabase-js";
-import type { ChatSession, ChatMessage, AuditEvent } from "@neonpro/types";
+import type { AuditEvent, ChatMessage, ChatSession } from '@neonpro/types';
+import { createClient } from '@supabase/supabase-js';
 
 export class ChatRepository {
   private supabase;
@@ -14,10 +14,10 @@ export class ChatRepository {
     metadata?: Record<string, any>,
   ): Promise<ChatSession> {
     const { data, error } = await this.supabase
-      .from("chat_sessions")
+      .from('chat_sessions')
       .insert({
         user_id: userId,
-        status: "active",
+        status: 'active',
         metadata: metadata || {},
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
@@ -34,13 +34,13 @@ export class ChatRepository {
 
   async getSession(sessionId: string): Promise<ChatSession | null> {
     const { data, error } = await this.supabase
-      .from("chat_sessions")
-      .select("*")
-      .eq("id", sessionId)
+      .from('chat_sessions')
+      .select('*')
+      .eq('id', sessionId)
       .single();
 
     if (error) {
-      if (error.code === "PGRST116") {
+      if (error.code === 'PGRST116') {
         // Not found
         return null;
       }
@@ -55,12 +55,12 @@ export class ChatRepository {
     updates: Partial<ChatSession>,
   ): Promise<ChatSession> {
     const { data, error } = await this.supabase
-      .from("chat_sessions")
+      .from('chat_sessions')
       .update({
         ...updates,
         updated_at: new Date().toISOString(),
       })
-      .eq("id", sessionId)
+      .eq('id', sessionId)
       .select()
       .single();
 
@@ -72,10 +72,10 @@ export class ChatRepository {
   }
 
   async addMessage(
-    message: Omit<ChatMessage, "id" | "created_at">,
+    message: Omit<ChatMessage, 'id' | 'created_at'>,
   ): Promise<ChatMessage> {
     const { data, error } = await this.supabase
-      .from("chat_messages")
+      .from('chat_messages')
       .insert({
         ...message,
         created_at: new Date().toISOString(),
@@ -96,10 +96,10 @@ export class ChatRepository {
     offset = 0,
   ): Promise<ChatMessage[]> {
     const { data, error } = await this.supabase
-      .from("chat_messages")
-      .select("*")
-      .eq("session_id", sessionId)
-      .order("created_at", { ascending: true })
+      .from('chat_messages')
+      .select('*')
+      .eq('session_id', sessionId)
+      .order('created_at', { ascending: true })
       .range(offset, offset + limit - 1);
 
     if (error) {
@@ -110,10 +110,10 @@ export class ChatRepository {
   }
 
   async logAuditEvent(
-    event: Omit<AuditEvent, "id" | "created_at">,
+    event: Omit<AuditEvent, 'id' | 'created_at'>,
   ): Promise<AuditEvent> {
     const { data, error } = await this.supabase
-      .from("audit_events")
+      .from('audit_events')
       .insert({
         ...event,
         created_at: new Date().toISOString(),
@@ -134,10 +134,10 @@ export class ChatRepository {
     offset = 0,
   ): Promise<AuditEvent[]> {
     const { data, error } = await this.supabase
-      .from("audit_events")
-      .select("*")
-      .eq("session_id", sessionId)
-      .order("created_at", { ascending: false })
+      .from('audit_events')
+      .select('*')
+      .eq('session_id', sessionId)
+      .order('created_at', { ascending: false })
       .range(offset, offset + limit - 1);
 
     if (error) {
@@ -149,18 +149,18 @@ export class ChatRepository {
 
   async closeSession(sessionId: string): Promise<ChatSession> {
     return this.updateSession(sessionId, {
-      status: "closed",
+      status: 'closed',
       endedAt: new Date().toISOString(),
     });
   }
 
   async getActiveSessions(_userId: string): Promise<ChatSession[]> {
     const { data, error } = await this.supabase
-      .from("chat_sessions")
-      .select("*")
-      .eq("user_id", _userId)
-      .eq("status", "active")
-      .order("updated_at", { ascending: false });
+      .from('chat_sessions')
+      .select('*')
+      .eq('user_id', _userId)
+      .eq('status', 'active')
+      .order('updated_at', { ascending: false });
 
     if (error) {
       throw new Error(`Failed to get active sessions: ${error.message}`);
@@ -186,7 +186,7 @@ export function createChatRepository(
 export function getChatRepository(): ChatRepository {
   if (!chatRepositoryInstance) {
     throw new Error(
-      "ChatRepository not initialized. Call createChatRepository first.",
+      'ChatRepository not initialized. Call createChatRepository first.',
     );
   }
   return chatRepositoryInstance;

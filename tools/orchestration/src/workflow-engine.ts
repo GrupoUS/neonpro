@@ -1,4 +1,4 @@
-import type { AgentCoordinationPattern, AgentResult } from "./types";
+import type { AgentCoordinationPattern, AgentResult } from './types';
 
 type ExecutionPlan = {
   phases: Array<{
@@ -15,8 +15,8 @@ type ExecutionPlan = {
 type ExecutionContext = {
   featureName: string;
   featureType: string;
-  complexity: "low" | "medium" | "high";
-  criticalityLevel: "low" | "medium" | "high";
+  complexity: 'low' | 'medium' | 'high';
+  criticalityLevel: 'low' | 'medium' | 'high';
   requirements: string[];
   healthcareCompliance: {
     required: boolean;
@@ -42,13 +42,13 @@ export class WorkflowEngine {
     executionPlan: ExecutionPlan,
     context: ExecutionContext,
   ): Promise<ExecutionResult> {
-    const phaseResults: ExecutionResult["phaseResults"] = [];
+    const phaseResults: ExecutionResult['phaseResults'] = [];
     const allAgentResults: AgentResult[] = [];
 
     for (const phase of executionPlan.phases) {
       const phaseStartTime = Date.now();
 
-      const agentResults: AgentResult[] = phase.agents.map((agent) => ({
+      const agentResults: AgentResult[] = phase.agents.map(agent => ({
         agentName: agent,
         success: true,
         result: {

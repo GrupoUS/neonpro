@@ -13,19 +13,19 @@
  * Supported prediction types for healthcare analytics
  */
 export type PredictionType =
-  | "patient_outcome"
-  | "readmission_risk"
-  | "treatment_effectiveness"
-  | "cost_prediction"
-  | "no_show_risk"
-  | "resource_utilization"
-  | "clinical_deterioration"
-  | "medication_adherence";
+  | 'patient_outcome'
+  | 'readmission_risk'
+  | 'treatment_effectiveness'
+  | 'cost_prediction'
+  | 'no_show_risk'
+  | 'resource_utilization'
+  | 'clinical_deterioration'
+  | 'medication_adherence';
 
 /**
  * Model confidence levels
  */
-export type ConfidenceLevel = "low" | "medium" | "high";
+export type ConfidenceLevel = 'low' | 'medium' | 'high';
 
 /**
  * Feature importance for model interpretability
@@ -190,7 +190,7 @@ export interface ModelProvider {
    * @returns Promise with health check result
    */
   healthCheck(): Promise<{
-    status: "healthy" | "degraded" | "unhealthy";
+    status: 'healthy' | 'degraded' | 'unhealthy';
     details?: Record<string, unknown>;
   }>;
 
@@ -257,7 +257,7 @@ export interface ModelManager {
     Record<
       string,
       {
-        status: "healthy" | "degraded" | "unhealthy";
+        status: 'healthy' | 'degraded' | 'unhealthy';
         details?: Record<string, unknown>;
       }
     >
@@ -278,7 +278,7 @@ export class MLError extends Error {
     public readonly details?: Record<string, unknown>,
   ) {
     super(message);
-    this.name = "MLError";
+    this.name = 'MLError';
   }
 }
 
@@ -287,8 +287,8 @@ export class MLError extends Error {
  */
 export class InvalidInputError extends MLError {
   constructor(message: string, details?: Record<string, unknown>) {
-    super(message, "INVALID_INPUT", details);
-    this.name = "InvalidInputError";
+    super(message, 'INVALID_INPUT', details);
+    this.name = 'InvalidInputError';
   }
 }
 
@@ -297,8 +297,8 @@ export class InvalidInputError extends MLError {
  */
 export class ModelInitializationError extends MLError {
   constructor(message: string, details?: Record<string, unknown>) {
-    super(message, "MODEL_INITIALIZATION_FAILED", details);
-    this.name = "ModelInitializationError";
+    super(message, 'MODEL_INITIALIZATION_FAILED', details);
+    this.name = 'ModelInitializationError';
   }
 }
 
@@ -307,7 +307,7 @@ export class ModelInitializationError extends MLError {
  */
 export class PredictionError extends MLError {
   constructor(message: string, details?: Record<string, unknown>) {
-    super(message, "PREDICTION_FAILED", details);
-    this.name = "PredictionError";
+    super(message, 'PREDICTION_FAILED', details);
+    this.name = 'PredictionError';
   }
 }

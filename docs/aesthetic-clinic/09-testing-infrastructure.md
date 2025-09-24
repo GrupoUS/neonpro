@@ -23,7 +23,7 @@ Compliance Tests - Regulatory requirement validation
 
 ```typescript
 // apps/api/src/__tests__/setup.ts
-import { beforeEach, afterEach } from '@jest/globals';
+import { afterEach, beforeEach } from '@jest/globals';
 import { PrismaClient } from '@prisma/client';
 import { TestEnvironment } from './test-environment';
 
@@ -31,23 +31,23 @@ import { TestEnvironment } from './test-environment';
 export const testPrisma = new PrismaClient({
   datasources: {
     db: {
-      url: process.env.TEST_DATABASE_URL || 'postgresql://test:test@localhost:5432/neonpro_test'
-    }
-  }
+      url: process.env.TEST_DATABASE_URL || 'postgresql://test:test@localhost:5432/neonpro_test',
+    },
+  },
 });
 
 // Test environment configuration
 export const testEnvironment = new TestEnvironment({
   database: testPrisma,
   redis: {
-    url: process.env.TEST_REDIS_URL || 'redis://localhost:6379/1'
+    url: process.env.TEST_REDIS_URL || 'redis://localhost:6379/1',
   },
   jwt: {
-    secret: process.env.TEST_JWT_SECRET || 'test-secret-key'
+    secret: process.env.TEST_JWT_SECRET || 'test-secret-key',
   },
   encryption: {
-    key: process.env.TEST_ENCRYPTION_KEY || 'test-encryption-key-32-bytes'
-  }
+    key: process.env.TEST_ENCRYPTION_KEY || 'test-encryption-key-32-bytes',
+  },
 });
 
 // Global test setup
@@ -66,27 +66,27 @@ export const testUtils = {
       email: 'test@example.com',
       name: 'Test User',
       role: 'professional',
-      ...overrides
+      ...overrides,
     });
   },
-  
+
   createTestClient: async (overrides = {}) => {
     return testEnvironment.createClient({
       fullName: 'Test Client',
       email: 'client@example.com',
       phone: '+5511999999999',
-      ...overrides
+      ...overrides,
     });
   },
-  
+
   createTestTreatment: async (clientId: string, overrides = {}) => {
     return testEnvironment.createTreatment({
       clientId,
       name: 'Test Treatment',
       description: 'Test treatment description',
-      ...overrides
+      ...overrides,
     });
-  }
+  },
 };
 ```
 
@@ -94,8 +94,8 @@ export const testUtils = {
 
 ```typescript
 // apps/api/src/__tests__/services/aesthetic-clinic-service.test.ts
-import { AestheticClinicService } from '../services/aesthetic-clinic-service';
 import { testPrisma, testUtils } from '../__tests__/setup';
+import { AestheticClinicService } from '../services/aesthetic-clinic-service';
 
 describe('AestheticClinicService', () => {
   let aestheticClinicService: AestheticClinicService;
@@ -118,8 +118,8 @@ describe('AestheticClinicService', () => {
         medicalHistory: {
           allergies: ['penicillin'],
           medications: ['ibuprofen'],
-          conditions: ['hypertension']
-        }
+          conditions: ['hypertension'],
+        },
       };
 
       const result = await aestheticClinicService.createClient(clientData);
@@ -127,7 +127,7 @@ describe('AestheticClinicService', () => {
       expect(result).toMatchObject({
         fullName: 'Maria Silva',
         email: 'maria.silva@example.com',
-        status: 'active'
+        status: 'active',
       });
 
       expect(result.id).toBeDefined();
@@ -142,7 +142,7 @@ describe('AestheticClinicService', () => {
         phone: '+5511999999999',
         cpf: 'invalid-cpf', // Invalid CPF
         dateOfBirth: new Date('1990-01-01'),
-        gender: 'female' as const
+        gender: 'female' as const,
       };
 
       await expect(aestheticClinicService.createClient(invalidClientData))
@@ -157,7 +157,7 @@ describe('AestheticClinicService', () => {
         cpf: '12345678900',
         dateOfBirth: new Date('1990-01-01'),
         gender: 'female' as const,
-        lgpdConsent: false // No consent
+        lgpdConsent: false, // No consent
       };
 
       await expect(aestheticClinicService.createClient(clientData))
@@ -171,7 +171,7 @@ describe('AestheticClinicService', () => {
         phone: '+5511999999999',
         cpf: '12345678900',
         dateOfBirth: new Date('1990-01-01'),
-        gender: 'female' as const
+        gender: 'female' as const,
       };
 
       const result = await aestheticClinicService.createClient(clientData);
@@ -187,7 +187,7 @@ describe('AestheticClinicService', () => {
       const client = await testUtils.createTestClient();
       const updateData = {
         fullName: 'Maria Silva Santos',
-        phone: '+5511988888888'
+        phone: '+5511988888888',
       };
 
       const result = await aestheticClinicService.updateClient(client.id, updateData);
@@ -195,7 +195,7 @@ describe('AestheticClinicService', () => {
       expect(result).toMatchObject({
         id: client.id,
         fullName: 'Maria Silva Santos',
-        phone: '+5511988888888'
+        phone: '+5511988888888',
       });
     });
 
@@ -204,9 +204,9 @@ describe('AestheticClinicService', () => {
       const professional = await testUtils.createTestUser();
 
       const result = await aestheticClinicService.updateClient(
-        client.id, 
+        client.id,
         { fullName: 'Updated Name' },
-        professional.id
+        professional.id,
       );
 
       expect(result.auditTrail).toHaveLength(1);
@@ -217,9 +217,9 @@ describe('AestheticClinicService', () => {
           expect.objectContaining({
             field: 'fullName',
             oldValue: 'Test Client',
-            newValue: 'Updated Name'
-          })
-        ])
+            newValue: 'Updated Name',
+          }),
+        ]),
       });
     });
   });
@@ -233,7 +233,7 @@ describe('AestheticClinicService', () => {
         treatmentId: treatment.id,
         professionalId: (await testUtils.createTestUser()).id,
         date: new Date(),
-        status: 'completed'
+        status: 'completed',
       });
 
       const history = await aestheticClinicService.getClientHistory(client.id);
@@ -241,24 +241,24 @@ describe('AestheticClinicService', () => {
       expect(history).toMatchObject({
         client: expect.objectContaining({
           id: client.id,
-          fullName: 'Test Client'
+          fullName: 'Test Client',
         }),
         treatments: expect.arrayContaining([
           expect.objectContaining({
             id: treatment.id,
-            name: 'Test Treatment'
-          })
+            name: 'Test Treatment',
+          }),
         ]),
         sessions: expect.arrayContaining([
           expect.objectContaining({
             id: session.id,
-            status: 'completed'
-          })
+            status: 'completed',
+          }),
         ]),
         compliance: expect.objectContaining({
           lgpdConsent: true,
-          dataRetentionCompliance: true
-        })
+          dataRetentionCompliance: true,
+        }),
       });
     });
   });
@@ -269,27 +269,27 @@ describe('AestheticClinicService', () => {
 
 ```typescript
 // apps/web/src/components/__tests__/client-profile/ClientsList.test.tsx
-import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ClientsList } from '../client-profile/ClientsList';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import React from 'react';
 import { createTestClient } from '../../../__tests__/utils/test-utils';
+import { ClientsList } from '../client-profile/ClientsList';
 
 // Mock TanStack Query
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       retry: false,
-      cacheTime: 0
-    }
-  }
+      cacheTime: 0,
+    },
+  },
 });
 
 const renderWithProviders = (component: React.ReactElement) => {
   return render(
     <QueryClientProvider client={queryClient}>
       {component}
-    </QueryClientProvider>
+    </QueryClientProvider>,
   );
 };
 
@@ -297,7 +297,7 @@ describe('ClientsList', () => {
   const mockClients = [
     createTestClient({ id: '1', fullName: 'Maria Silva', email: 'maria@example.com' }),
     createTestClient({ id: '2', fullName: 'João Santos', email: 'joao@example.com' }),
-    createTestClient({ id: '3', fullName: 'Ana Oliveira', email: 'ana@example.com' })
+    createTestClient({ id: '3', fullName: 'Ana Oliveira', email: 'ana@example.com' }),
   ];
 
   beforeEach(() => {
@@ -305,7 +305,7 @@ describe('ClientsList', () => {
     jest.spyOn(require('~/hooks/useClients'), 'useClients').mockReturnValue({
       data: mockClients,
       isLoading: false,
-      error: null
+      error: null,
     });
   });
 
@@ -364,7 +364,7 @@ describe('ClientsList', () => {
     jest.spyOn(require('~/hooks/useClients'), 'useClients').mockReturnValue({
       data: null,
       isLoading: true,
-      error: null
+      error: null,
     });
 
     renderWithProviders(<ClientsList />);
@@ -376,7 +376,7 @@ describe('ClientsList', () => {
     jest.spyOn(require('~/hooks/useClients'), 'useClients').mockReturnValue({
       data: null,
       isLoading: false,
-      error: new Error('Failed to load clients')
+      error: new Error('Failed to load clients'),
     });
 
     renderWithProviders(<ClientsList />);
@@ -389,7 +389,7 @@ describe('ClientsList', () => {
     jest.spyOn(require('~/hooks/useClients'), 'useClients').mockReturnValue({
       data: [],
       isLoading: false,
-      error: null
+      error: null,
     });
 
     renderWithProviders(<ClientsList />);
@@ -419,9 +419,9 @@ describe('ClientsList', () => {
 
 ```typescript
 // apps/api/src/__tests__/integration/aesthetic-clinic-integration.test.ts
-import { setupTestServer, closeTestServer } from '../__tests__/test-server';
-import { TestClient } from '../__tests__/test-client';
 import { testUtils } from '../__tests__/setup';
+import { TestClient } from '../__tests__/test-client';
+import { closeTestServer, setupTestServer } from '../__tests__/test-server';
 
 describe('Aesthetic Clinic API Integration', () => {
   let testClient: TestClient;
@@ -441,13 +441,13 @@ describe('Aesthetic Clinic API Integration', () => {
       // 1. Create professional user
       const professional = await testUtils.createTestUser({
         email: 'professional@example.com',
-        role: 'professional'
+        role: 'professional',
       });
 
       // 2. Login as professional
       const loginResponse = await testClient.login({
         email: 'professional@example.com',
-        password: 'password123'
+        password: 'password123',
       });
 
       expect(loginResponse.status).toBe(200);
@@ -466,16 +466,19 @@ describe('Aesthetic Clinic API Integration', () => {
         medicalHistory: {
           allergies: [],
           medications: [],
-          conditions: []
+          conditions: [],
         },
-        lgpdConsent: true
+        lgpdConsent: true,
       };
 
-      const createClientResponse = await testClient.createClient(clientData, loginResponse.data.token);
+      const createClientResponse = await testClient.createClient(
+        clientData,
+        loginResponse.data.token,
+      );
       expect(createClientResponse.status).toBe(201);
       expect(createClientResponse.data.client).toMatchObject({
         fullName: 'Carla Mendes',
-        email: 'carla.mendes@example.com'
+        email: 'carla.mendes@example.com',
       });
 
       const clientId = createClientResponse.data.client.id;
@@ -483,13 +486,13 @@ describe('Aesthetic Clinic API Integration', () => {
       // 4. Update client
       const updateData = {
         phone: '+5511966666666',
-        skinConcerns: ['acne', 'scars', 'pigmentation']
+        skinConcerns: ['acne', 'scars', 'pigmentation'],
       };
 
       const updateResponse = await testClient.updateClient(
-        clientId, 
-        updateData, 
-        loginResponse.data.token
+        clientId,
+        updateData,
+        loginResponse.data.token,
       );
 
       expect(updateResponse.status)._be(200);
@@ -501,7 +504,7 @@ describe('Aesthetic Clinic API Integration', () => {
       expect(getClientResponse.data.client).toMatchObject({
         id: clientId,
         fullName: 'Carla Mendes',
-        phone: '+5511966666666'
+        phone: '+5511966666666',
       });
 
       // 6. List clients
@@ -510,7 +513,7 @@ describe('Aesthetic Clinic API Integration', () => {
       expect(listClientsResponse.data.clients).toHaveLength(1);
       expect(listClientsResponse.data.clients[0]).toMatchObject({
         id: clientId,
-        fullName: 'Carla Mendes'
+        fullName: 'Carla Mendes',
       });
 
       // 7. Delete client (soft delete)
@@ -519,7 +522,10 @@ describe('Aesthetic Clinic API Integration', () => {
       expect(deleteResponse.data.client.status).toBe('inactive');
 
       // 8. Verify client is inactive
-      const getDeletedClientResponse = await testClient.getClient(clientId, loginResponse.data.token);
+      const getDeletedClientResponse = await testClient.getClient(
+        clientId,
+        loginResponse.data.token,
+      );
       expect(getDeletedClientResponse.status).toBe(200);
       expect(getDeletedClientResponse.data.client.status).toBe('inactive');
     });
@@ -530,20 +536,20 @@ describe('Aesthetic Clinic API Integration', () => {
 
       const loginResponse = await testClient.login({
         email: professional.email,
-        password: 'password123'
+        password: 'password123',
       });
 
       // Simulate concurrent updates
       const update1 = testClient.updateClient(
         client.id,
         { fullName: 'Updated Name 1' },
-        loginResponse.data.token
+        loginResponse.data.token,
       );
 
       const update2 = testClient.updateClient(
         client.id,
         { phone: '+5511999999999' },
-        loginResponse.data.token
+        loginResponse.data.token,
       );
 
       const [result1, result2] = await Promise.all([update1, update2]);
@@ -561,7 +567,7 @@ describe('Aesthetic Clinic API Integration', () => {
       const professional = await testUtils.createTestUser();
       const loginResponse = await testClient.login({
         email: professional.email,
-        password: 'password123'
+        password: 'password123',
       });
 
       // Try to create client with duplicate email
@@ -572,7 +578,7 @@ describe('Aesthetic Clinic API Integration', () => {
         cpf: '12345678900',
         dateOfBirth: '1990-01-01',
         gender: 'female',
-        lgpdConsent: true
+        lgpdConsent: true,
       };
 
       const response = await testClient.createClient(clientData, loginResponse.data.token);
@@ -587,7 +593,7 @@ describe('Aesthetic Clinic API Integration', () => {
       const client = await testUtils.createTestClient();
       const loginResponse = await testClient.login({
         email: professional.email,
-        password: 'password123'
+        password: 'password123',
       });
 
       // Create treatment
@@ -600,12 +606,12 @@ describe('Aesthetic Clinic API Integration', () => {
         sessionCount: 4,
         intervalDays: 14,
         price: 800.00,
-        duration: 60
+        duration: 60,
       };
 
       const createTreatmentResponse = await testClient.createTreatment(
-        treatmentData, 
-        loginResponse.data.token
+        treatmentData,
+        loginResponse.data.token,
       );
 
       expect(createTreatmentResponse.status).toBe(201);
@@ -617,12 +623,12 @@ describe('Aesthetic Clinic API Integration', () => {
           treatmentId,
           professionalId: professional.id,
           date: new Date(Date.now() + i * treatmentData.intervalDays * 24 * 60 * 60 * 1000),
-          status: 'scheduled'
+          status: 'scheduled',
         };
 
         const sessionResponse = await testClient.createSession(
-          sessionData, 
-          loginResponse.data.token
+          sessionData,
+          loginResponse.data.token,
         );
 
         expect(sessionResponse.status).toBe(201);
@@ -630,8 +636,8 @@ describe('Aesthetic Clinic API Integration', () => {
 
       // Get treatment with sessions
       const getTreatmentResponse = await testClient.getTreatment(
-        treatmentId, 
-        loginResponse.data.token
+        treatmentId,
+        loginResponse.data.token,
       );
 
       expect(getTreatmentResponse.status).toBe(200);
@@ -670,20 +676,20 @@ describe('Database Integration', () => {
         cpf: '12345678900',
         dateOfBirth: new Date('1990-01-01'),
         gender: 'female',
-        lgpdConsent: true
+        lgpdConsent: true,
       };
 
       const client = await prisma.aestheticClientProfile.create({
         data: {
           ...clientData,
           cpf: await encryptionService.encrypt(clientData.cpf),
-          phone: await encryptionService.encrypt(clientData.phone)
-        }
+          phone: await encryptionService.encrypt(clientData.phone),
+        },
       });
 
       // Verify data is encrypted in database
       const dbClient = await prisma.aestheticClientProfile.findUnique({
-        where: { id: client.id }
+        where: { id: client.id },
       });
 
       expect(dbClient.cpf).not.toBe('12345678900');
@@ -699,7 +705,7 @@ describe('Database Integration', () => {
         allergies: ['penicillin', 'sulfa'],
         medications: ['aspirin', 'lisinopril'],
         conditions: ['hypertension', 'diabetes'],
-        notes: 'Patient has history of allergic reactions'
+        notes: 'Patient has history of allergic reactions',
       };
 
       const encryptedData = await encryptionService.encrypt(JSON.stringify(medicalData));
@@ -708,12 +714,12 @@ describe('Database Integration', () => {
         data: {
           clientId: (await testUtils.createTestClient()).id,
           name: 'Test Treatment',
-          medicalData: encryptedData
-        }
+          medicalData: encryptedData,
+        },
       });
 
       const dbTreatment = await prisma.aestheticTreatment.findUnique({
-        where: { id: treatment.id }
+        where: { id: treatment.id },
       });
 
       expect(dbTreatment.medicalData).toBe(encryptedData);
@@ -733,8 +739,8 @@ describe('Database Integration', () => {
       // Test RLS with different professional contexts
       const clientsForProf1 = await prisma.aestheticClientProfile.findMany({
         where: {
-          professionalId: professional1.id
-        }
+          professionalId: professional1.id,
+        },
       });
 
       expect(clientsForProf1).toHaveLength(1);
@@ -742,8 +748,8 @@ describe('Database Integration', () => {
 
       const clientsForProf2 = await prisma.aestheticClientProfile.findMany({
         where: {
-          professionalId: professional2.id
-        }
+          professionalId: professional2.id,
+        },
       });
 
       expect(clientsForProf2).toHaveLength(1);
@@ -764,27 +770,27 @@ describe('Database Integration', () => {
           entityId: client.id,
           changes: {
             old: { fullName: 'Old Name' },
-            new: { fullName: 'New Name' }
+            new: { fullName: 'New Name' },
           },
           ipAddress: '127.0.0.1',
-          userAgent: 'test-agent'
-        }
+          userAgent: 'test-agent',
+        },
       });
 
       const retrievedLog = await prisma.auditLog.findUnique({
-        where: { id: auditLog.id }
+        where: { id: auditLog.id },
       });
 
       expect(retrievedLog).toMatchObject({
         userId: professional.id,
         action: 'update_client',
         entityType: 'AestheticClientProfile',
-        entityId: client.id
+        entityId: client.id,
       });
 
       expect(retrievedLog.changes).toEqual({
         old: { fullName: 'Old Name' },
-        new: { fullName: 'New Name' }
+        new: { fullName: 'New Name' },
       });
     });
   });
@@ -797,17 +803,17 @@ describe('Database Integration', () => {
         prisma.aestheticTreatment.create({
           data: {
             clientId: 'non-existent-client-id',
-            name: 'Test Treatment'
-          }
-        })
+            name: 'Test Treatment',
+          },
+        }),
       ).rejects.toThrow();
 
       // Valid foreign key should work
       const treatment = await prisma.aestheticTreatment.create({
         data: {
           clientId: client.id,
-          name: 'Test Treatment'
-        }
+          name: 'Test Treatment',
+        },
       });
 
       expect(treatment.id).toBeDefined();
@@ -821,13 +827,13 @@ describe('Database Integration', () => {
         cpf: '12345678900',
         dateOfBirth: new Date('1990-01-01'),
         gender: 'female',
-        lgpdConsent: true
+        lgpdConsent: true,
       };
 
       await prisma.aestheticClientProfile.create({ data: clientData });
 
       await expect(
-        prisma.aestheticClientProfile.create({ data: clientData })
+        prisma.aestheticClientProfile.create({ data: clientData }),
       ).rejects.toThrow();
     });
   });
@@ -849,42 +855,42 @@ export default defineConfig({
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
   reporter: 'html',
-  
+
   use: {
     baseURL: 'http://localhost:3000',
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
-    video: 'retain-on-failure'
+    video: 'retain-on-failure',
   },
 
   projects: [
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] }
+      use: { ...devices['Desktop Chrome'] },
     },
     {
       name: 'firefox',
-      use: { ...devices['Desktop Firefox'] }
+      use: { ...devices['Desktop Firefox'] },
     },
     {
       name: 'webkit',
-      use: { ...devices['Desktop Safari'] }
+      use: { ...devices['Desktop Safari'] },
     },
     {
       name: 'Mobile Chrome',
-      use: { ...devices['Pixel 5'] }
+      use: { ...devices['Pixel 5'] },
     },
     {
       name: 'Mobile Safari',
-      use: { ...devices['iPhone 12'] }
-    }
+      use: { ...devices['iPhone 12'] },
+    },
   ],
 
   webServer: {
     command: 'npm run dev',
     url: 'http://localhost:3000',
-    reuseExistingServer: !process.env.CI
-  }
+    reuseExistingServer: !process.env.CI,
+  },
 });
 ```
 
@@ -892,7 +898,7 @@ export default defineConfig({
 
 ```typescript
 // apps/web/e2e/client-management.spec.ts
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 
 test.describe('Client Management', () => {
   test.beforeEach(async ({ page }) => {
@@ -901,7 +907,7 @@ test.describe('Client Management', () => {
     await page.fill('[data-testid="email"]', 'professional@example.com');
     await page.fill('[data-testid="password"]', 'password123');
     await page.click('[data-testid="login-button"]');
-    
+
     // Wait for dashboard
     await page.waitForURL('/dashboard');
   });
@@ -913,7 +919,7 @@ test.describe('Client Management', () => {
 
     // Click add client button
     await page.click('[data-testid="add-client-button"]');
-    
+
     // Fill client form
     await page.fill('[data-testid="fullName"]', 'Maria Silva');
     await page.fill('[data-testid="email"]', 'maria.silva@example.com');
@@ -922,21 +928,23 @@ test.describe('Client Management', () => {
     await page.fill('[data-testid="dateOfBirth"]', '1990-01-01');
     await page.selectOption('[data-testid="gender"]', 'female');
     await page.selectOption('[data-testid="skinType"]', 'mixed');
-    
+
     // Set skin concerns
     await page.click('[data-testid="skinConcerns-acne"]');
     await page.click('[data-testid="skinConcerns-aging"]');
-    
+
     // Accept LGPD consent
     await page.click('[data-testid="lgpd-consent"]');
-    
+
     // Submit form
     await page.click('[data-testid="submit-client"]');
-    
+
     // Verify success
     await expect(page.locator('[data-testid="success-message"]')).toBeVisible();
-    await expect(page.locator('[data-testid="success-message"]')).toHaveText('Cliente criado com sucesso');
-    
+    await expect(page.locator('[data-testid="success-message"]')).toHaveText(
+      'Cliente criado com sucesso',
+    );
+
     // Verify client appears in list
     await page.waitForSelector('[data-testid="client-list"]');
     await expect(page.locator('[data-testid="client-item"]')).toContainText('Maria Silva');
@@ -950,11 +958,11 @@ test.describe('Client Management', () => {
     // Search for specific client
     await page.fill('[data-testid="search-input"]', 'Maria');
     await page.press('[data-testid="search-input"]', 'Enter');
-    
+
     // Wait for search results
     await page.waitForSelector('[data-testid="client-item"]');
     const clientItems = await page.locator('[data-testid="client-item"]').all();
-    
+
     // Verify search results
     expect(clientItems.length).toBeGreaterThan(0);
     for (const item of clientItems) {
@@ -963,11 +971,11 @@ test.describe('Client Management', () => {
 
     // Clear search
     await page.click('[data-testid="clear-search"]');
-    
+
     // Filter by status
     await page.selectOption('[data-testid="status-filter"]', 'active');
     await page.waitForSelector('[data-testid="client-item"]');
-    
+
     // Verify all shown clients are active
     const activeClients = await page.locator('[data-testid="client-item"]').all();
     for (const item of activeClients) {
@@ -982,20 +990,20 @@ test.describe('Client Management', () => {
 
     // Click on first client
     await page.click('[data-testid="client-item"]:first-child');
-    
+
     // Wait for client details page
     await page.waitForURL('/clients/**');
     await expect(page.locator('[data-testid="client-details"]')).toBeVisible();
-    
+
     // Verify client information
     await expect(page.locator('[data-testid="client-name"]')).toBeVisible();
     await expect(page.locator('[data-testid="client-email"]')).toBeVisible();
     await expect(page.locator('[data-testid="client-phone"]')).toBeVisible();
-    
+
     // Verify treatments tab
     await page.click('[data-testid="treatments-tab"]');
     await expect(page.locator('[data-testid="treatments-list"]')).toBeVisible();
-    
+
     // Verify history tab
     await page.click('[data-testid="history-tab"]');
     await expect(page.locator('[data-testid="audit-trail"]')).toBeVisible();
@@ -1009,20 +1017,20 @@ test.describe('Client Management', () => {
     // Click on first client
     await page.click('[data-testid="client-item"]:first-child');
     await page.waitForURL('/clients/**');
-    
+
     // Click edit button
     await page.click('[data-testid="edit-client-button"]');
-    
+
     // Update client information
     await page.fill('[data-testid="phone"]', '+5511988888888');
     await page.selectOption('[data-testid="skinType"]', 'oily');
-    
+
     // Save changes
     await page.click('[data-testid="save-client-button"]');
-    
+
     // Verify success message
     await expect(page.locator('[data-testid="success-message"]')).toBeVisible();
-    
+
     // Verify updated information
     await expect(page.locator('[data-testid="client-phone"]')).toHaveText('+5511988888888');
   });
@@ -1034,15 +1042,15 @@ test.describe('Client Management', () => {
 
     // Click add client button
     await page.click('[data-testid="add-client-button"]');
-    
+
     // Try to submit empty form
     await page.click('[data-testid="submit-client"]');
-    
+
     // Verify validation errors
     await expect(page.locator('[data-testid="error-fullName"]')).toBeVisible();
     await expect(page.locator('[data-testid="error-email"]')).toBeVisible();
     await expect(page.locator('[data-testid="error-cpf"]')).toBeVisible();
-    
+
     // Fill invalid CPF
     await page.fill('[data-testid="cpf"]', 'invalid-cpf');
     await expect(page.locator('[data-testid="error-cpf"]')).toHaveText('CPF inválido');
@@ -1055,23 +1063,25 @@ test.describe('Client Management', () => {
 
     // Click add client button
     await page.click('[data-testid="add-client-button"]');
-    
+
     // Fill form without LGPD consent
     await page.fill('[data-testid="fullName"]', 'Test Client');
     await page.fill('[data-testid="email"]', 'test@example.com');
     await page.fill('[data-testid="cpf"]', '12345678900');
-    
+
     // Try to submit without consent
     await page.click('[data-testid="submit-client"]');
-    
+
     // Verify LGPD consent error
     await expect(page.locator('[data-testid="error-lgpd"]')).toBeVisible();
-    await expect(page.locator('[data-testid="error-lgpd"]')).toHaveText('Consentimento LGPD obrigatório');
-    
+    await expect(page.locator('[data-testid="error-lgpd"]')).toHaveText(
+      'Consentimento LGPD obrigatório',
+    );
+
     // Accept consent and submit
     await page.click('[data-testid="lgpd-consent"]');
     await page.click('[data-testid="submit-client"]');
-    
+
     // Verify success
     await expect(page.locator('[data-testid="success-message"]')).toBeVisible();
   });
@@ -1082,7 +1092,7 @@ test.describe('Client Management', () => {
 
 ```typescript
 // apps/web/e2e/performance.spec.ts
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 
 test.describe('Performance Tests', () => {
   test('should load client list within acceptable time', async ({ page }) => {
@@ -1091,14 +1101,14 @@ test.describe('Performance Tests', () => {
     await page.fill('[data-testid="email"]', 'professional@example.com');
     await page.fill('[data-testid="password"]', 'password123');
     await page.click('[data-testid="login-button"]');
-    
+
     // Navigate to clients and measure load time
     const startTime = Date.now();
     await page.click('[data-testid="clients-nav"]');
     await page.waitForURL('/clients');
     await page.waitForSelector('[data-testid="client-list"]');
     const loadTime = Date.now() - startTime;
-    
+
     // Should load within 3 seconds
     expect(loadTime).toBeLessThan(3000);
     console.log(`Client list loaded in ${loadTime}ms`);
@@ -1110,22 +1120,22 @@ test.describe('Performance Tests', () => {
     await page.fill('[data-testid="email"]', 'professional@example.com');
     await page.fill('[data-testid="password"]', 'password123');
     await page.click('[data-testid="login-button"]');
-    
+
     // Navigate to clients
     await page.click('[data-testid="clients-nav"]');
     await page.waitForURL('/clients');
-    
+
     // Wait for client list to load
     await page.waitForSelector('[data-testid="client-list"]');
-    
+
     // Check for virtual scrolling (should not render all items at once)
     const clientItems = await page.locator('[data-testid="client-item"]').all();
     const totalClientsText = await page.locator('[data-testid="total-clients"]').textContent();
     const totalClients = parseInt(totalClientsText?.match(/\d+/)?.[0] || '0');
-    
+
     // Virtual list should render fewer items than total
     expect(clientItems.length).toBeLessThan(totalClients);
-    
+
     // Test scrolling performance
     const scrollStartTime = Date.now();
     await page.evaluate(() => {
@@ -1134,10 +1144,10 @@ test.describe('Performance Tests', () => {
         container.scrollTop = container.scrollHeight;
       }
     });
-    
+
     await page.waitForTimeout(500); // Wait for scroll to complete
     const scrollTime = Date.now() - scrollStartTime;
-    
+
     // Scrolling should be smooth
     expect(scrollTime).toBeLessThan(1000);
     console.log(`Scroll completed in ${scrollTime}ms`);
@@ -1152,24 +1162,24 @@ test.describe('Performance Tests', () => {
     await page.click('[data-testid="clients-nav"]');
     await page.waitForURL('/clients');
     await page.waitForSelector('[data-testid="client-list"]');
-    
+
     // Test search performance
     const searchStartTime = Date.now();
     await page.fill('[data-testid="search-input"]', 'Maria');
     await page.waitForSelector('[data-testid="client-item"]:first-child');
     const searchTime = Date.now() - searchStartTime;
-    
+
     // Search should complete within 1 second
     expect(searchTime).toBeLessThan(1000);
     console.log(`Search completed in ${searchTime}ms`);
-    
+
     // Test search with more results
     const searchStartTime2 = Date.now();
     await page.fill('[data-testid="search-input"]', 'a');
     await page.waitForTimeout(500); // Wait for debounced search
     await page.waitForSelector('[data-testid="client-item"]:first-child');
     const searchTime2 = Date.now() - searchStartTime2;
-    
+
     // Even broad search should be reasonable
     expect(searchTime2).toBeLessThan(2000);
     console.log(`Broad search completed in ${searchTime2}ms`);
@@ -1204,7 +1214,7 @@ describe('Security Validation', () => {
       for (let i = 0; i < maxAttempts; i++) {
         const response = await testClient.login({
           email: 'test@example.com',
-          password: 'wrong-password'
+          password: 'wrong-password',
         });
 
         if (i < maxAttempts - 1) {
@@ -1217,7 +1227,7 @@ describe('Security Validation', () => {
       // Verify account lockout
       const lockedResponse = await testClient.login({
         email: 'test@example.com',
-        password: 'correct-password'
+        password: 'correct-password',
       });
 
       expect(lockedResponse.status).toBe(429);
@@ -1244,14 +1254,14 @@ describe('Security Validation', () => {
       const user = await securityTestSuite.createTestUser();
       const loginResponse = await testClient.login({
         email: user.email,
-        password: 'password123'
+        password: 'password123',
       });
 
       // Simulate session timeout
       await new Promise(resolve => setTimeout(resolve, 1000));
 
       const protectedResponse = await testClient.getClients(loginResponse.data.token);
-      
+
       // Should still work within timeout
       expect(protectedResponse.status).toBe(200);
     });
@@ -1260,15 +1270,15 @@ describe('Security Validation', () => {
   describe('Input Validation', () => {
     it('should prevent SQL injection', async () => {
       const maliciousInput = {
-        fullName: "Robert'); DROP TABLE users; --",
-        email: "test@example.com",
-        cpf: "12345678900"
+        fullName: 'Robert\'); DROP TABLE users; --',
+        email: 'test@example.com',
+        cpf: '12345678900',
       };
 
       const user = await securityTestSuite.createTestUser();
       const loginResponse = await testClient.login({
         email: user.email,
-        password: 'password123'
+        password: 'password123',
       });
 
       const response = await testClient.createClient(maliciousInput, loginResponse.data.token);
@@ -1282,13 +1292,13 @@ describe('Security Validation', () => {
       const xssPayload = {
         fullName: '<script>alert("XSS")</script>',
         email: 'test@example.com',
-        cpf: '12345678900'
+        cpf: '12345678900',
       };
 
       const user = await securityTestSuite.createTestUser();
       const loginResponse = await testClient.login({
         email: user.email,
-        password: 'password123'
+        password: 'password123',
       });
 
       const response = await testClient.createClient(xssPayload, loginResponse.data.token);
@@ -1301,7 +1311,7 @@ describe('Security Validation', () => {
       const user = await securityTestSuite.createTestUser();
       const loginResponse = await testClient.login({
         email: user.email,
-        password: 'password123'
+        password: 'password123',
       });
 
       // Test malicious file upload
@@ -1310,7 +1320,7 @@ describe('Security Validation', () => {
         'test.exe',
         maliciousFile,
         'application/x-executable',
-        loginResponse.data.token
+        loginResponse.data.token,
       );
 
       expect(response.status).toBe(400);
@@ -1326,13 +1336,13 @@ describe('Security Validation', () => {
       // Professional login
       const profLogin = await testClient.login({
         email: professional.email,
-        password: 'password123'
+        password: 'password123',
       });
 
       // Receptionist login
       const recepLogin = await testClient.login({
         email: receptionist.email,
-        password: 'password123'
+        password: 'password123',
       });
 
       // Test professional can access all client data
@@ -1346,7 +1356,7 @@ describe('Security Validation', () => {
       // Test accessing other professional's data
       const otherProfData = await testClient.getProfessionalData(
         'other-prof-id',
-        recepLogin.data.token
+        recepLogin.data.token,
       );
       expect(otherProfData.status).toBe(403);
     });
@@ -1354,14 +1364,18 @@ describe('Security Validation', () => {
     it('should validate data ownership', async () => {
       const professional1 = await securityTestSuite.createTestUser();
       const professional2 = await securityTestSuite.createTestUser();
-      
-      const client1 = await securityTestSuite.createTestClient({ professionalId: professional1.id });
-      const client2 = await securityTestSuite.createTestClient({ professionalId: professional2.id });
+
+      const client1 = await securityTestSuite.createTestClient({
+        professionalId: professional1.id,
+      });
+      const client2 = await securityTestSuite.createTestClient({
+        professionalId: professional2.id,
+      });
 
       // Professional 1 login
       const login1 = await testClient.login({
         email: professional1.email,
-        password: 'password123'
+        password: 'password123',
       });
 
       // Can access own client
@@ -1379,14 +1393,14 @@ describe('Security Validation', () => {
       const user = await securityTestSuite.createTestUser();
       const loginResponse = await testClient.login({
         email: user.email,
-        password: 'password123'
+        password: 'password123',
       });
 
       const clientData = {
         fullName: 'Test Client',
         email: 'test@example.com',
         phone: '+5511999999999',
-        cpf: '12345678900'
+        cpf: '12345678900',
       };
 
       await testClient.createClient(clientData, loginResponse.data.token);
@@ -1401,7 +1415,7 @@ describe('Security Validation', () => {
       const user = await securityTestSuite.createTestUser();
       const loginResponse = await testClient.login({
         email: user.email,
-        password: 'password123'
+        password: 'password123',
       });
 
       const client = await securityTestSuite.createTestClient();
@@ -1410,7 +1424,7 @@ describe('Security Validation', () => {
       await testClient.updateClient(
         client.id,
         { fullName: 'Updated Name' },
-        loginResponse.data.token
+        loginResponse.data.token,
       );
 
       // Verify audit log
@@ -1419,7 +1433,7 @@ describe('Security Validation', () => {
       expect(auditLog[0]).toMatchObject({
         action: 'update',
         userId: user.id,
-        entityType: 'AestheticClientProfile'
+        entityType: 'AestheticClientProfile',
       });
     });
   });
@@ -1454,7 +1468,7 @@ describe('Load Testing', () => {
         method: 'GET',
         concurrentUsers,
         duration,
-        rampUpTime: 5000
+        rampUpTime: 5000,
       });
 
       expect(results.totalRequests).toBeGreaterThan(0);
@@ -1475,13 +1489,13 @@ describe('Load Testing', () => {
       await loadTestSuite.createTestData({
         clientsCount: 1000,
         treatmentsPerClient: 3,
-        sessionsPerTreatment: 4
+        sessionsPerTreatment: 4,
       });
 
       const response = await loadTestSuite.makeRequest({
         endpoint: '/api/v1/clients',
         method: 'GET',
-        query: { limit: 100, offset: 0 }
+        query: { limit: 100, offset: 0 },
       });
 
       expect(response.status).toBe(200);
@@ -1494,7 +1508,7 @@ describe('Load Testing', () => {
         await loadTestSuite.makeRequest({
           endpoint: '/api/v1/clients',
           method: 'GET',
-          query: { limit: 100, offset: page * 100 }
+          query: { limit: 100, offset: page * 100 },
         });
       }
       const paginationTime = Date.now() - paginationStart;
@@ -1508,7 +1522,7 @@ describe('Load Testing', () => {
         endpoint: '/api/v1/clients',
         method: 'GET',
         requestsPerSecond: 10,
-        duration: 120000 // 2 minutes
+        duration: 120000, // 2 minutes
       };
 
       const metrics = await performanceMonitor.monitorLoad(sustainedLoad);
@@ -1533,7 +1547,7 @@ describe('Load Testing', () => {
       const results = await loadTestSuite.runConcurrentSearches({
         endpoint: '/api/v1/clients/search',
         searchTerms,
-        concurrentUsers: concurrentSearches
+        concurrentUsers: concurrentSearches,
       });
 
       expect(results.averageResponseTime).toBeLessThan(500); // < 500ms
@@ -1549,13 +1563,13 @@ describe('Load Testing', () => {
       const complexFilters = [
         { status: 'active', skinType: 'oily', concern: 'acne' },
         { status: 'inactive', gender: 'female', treatmentCount: { gt: 5 } },
-        { status: 'active', dateRange: { start: '2023-01-01', end: '2023-12-31' } }
+        { status: 'active', dateRange: { start: '2023-01-01', end: '2023-12-31' } },
       ];
 
       const results = await loadTestSuite.testComplexFilters({
         endpoint: '/api/v1/clients',
         filters: complexFilters,
-        iterations: 10
+        iterations: 10,
       });
 
       expect(results.averageResponseTime).toBeLessThan(1000);
@@ -1569,7 +1583,7 @@ describe('Load Testing', () => {
         { type: 'create', count: 100 },
         { type: 'read', count: 500 },
         { type: 'update', count: 200 },
-        { type: 'delete', count: 50 }
+        { type: 'delete', count: 50 },
       ];
 
       const results = await performanceMonitor.testDatabaseOperations(dbOperations);
@@ -1589,7 +1603,7 @@ describe('Load Testing', () => {
       const rollbackTest = {
         transactionSize: 10, // operations per transaction
         failureRate: 0.1, // 10% failure rate
-        iterations: 100
+        iterations: 100,
       };
 
       const results = await performanceMonitor.testTransactionRollbacks(rollbackTest);

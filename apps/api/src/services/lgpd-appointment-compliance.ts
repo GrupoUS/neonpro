@@ -1,9 +1,9 @@
 /**
  * LGPD Compliance Service for Appointment Data and Communications
- * 
+ *
  * Ensures comprehensive compliance with Brazilian General Data Protection Law (LGPD)
  * for appointment scheduling, patient communications, and data handling.
- * 
+ *
  * Features:
  * - Patient consent management
  * - Data retention and anonymization
@@ -18,7 +18,11 @@ import { prisma } from '../lib/prisma';
 export interface LGPDConsentRecord {
   id: string;
   patientId: string;
-  consentType: 'appointment_data' | 'reminder_communications' | 'no_show_prediction' | 'analytics_processing';
+  consentType:
+    | 'appointment_data'
+    | 'reminder_communications'
+    | 'no_show_prediction'
+    | 'analytics_processing';
   given: boolean;
   givenAt?: Date;
   withdrawnAt?: Date;
@@ -154,14 +158,18 @@ export class LGPDAppointmentComplianceService {
   async recordConsent(
     patientId: string,
     consentData: {
-      consentType: 'appointment_data' | 'reminder_communications' | 'no_show_prediction' | 'analytics_processing';
+      consentType:
+        | 'appointment_data'
+        | 'reminder_communications'
+        | 'no_show_prediction'
+        | 'analytics_processing';
       given: boolean;
       version: string;
       ipAddress?: string;
       userAgent?: string;
       retentionPeriod?: number;
       metadata?: Partial<LGPDConsentRecord['metadata']>;
-    }
+    },
   ): Promise<LGPDConsentRecord> {
     try {
       const {
@@ -171,7 +179,7 @@ export class LGPDAppointmentComplianceService {
         ipAddress,
         userAgent,
         retentionPeriod = 365, // Default 1 year
-        metadata = {}
+        metadata = {},
       } = consentData;
 
       // Generate document hash for audit trail
@@ -180,7 +188,7 @@ export class LGPDAppointmentComplianceService {
         consentType,
         given,
         version,
-        timestamp: new Date()
+        timestamp: new Date(),
       });
 
       // Create consent record
@@ -201,8 +209,8 @@ export class LGPDAppointmentComplianceService {
         metadata: {
           purpose: this.getConsentPurpose(consentType),
           dataCategories: this.getDataCategories(consentType),
-          ...metadata
-        }
+          ...metadata,
+        },
       };
 
       // Save to database
@@ -221,8 +229,8 @@ export class LGPDAppointmentComplianceService {
           legalBasis: consentRecord.legalBasis,
           retentionPeriod: consentRecord.retentionPeriod,
           expiresAt: consentRecord.expiresAt,
-          metadata: consentRecord.metadata as any
-        }
+          metadata: consentRecord.metadata as any,
+        },
       });
 
       // Log consent action
@@ -233,15 +241,14 @@ export class LGPDAppointmentComplianceService {
           consentType,
           given,
           version,
-          documentHash
-        }
+          documentHash,
+        },
       });
 
       // Update patient consent status
       await this.updatePatientConsentStatus(patientId, consentType, given);
 
       return consentRecord;
-
     } catch {
       console.error('Error recording consent:', error);
       throw new Error('Failed to record consent');
@@ -253,8 +260,12 @@ export class LGPDAppointmentComplianceService {
    */
   async verifyConsent(
     patientId: string,
-    consentType: 'appointment_data' | 'reminder_communications' | 'no_show_prediction' | 'analytics_processing',
-    ipAddress?: string
+    consentType:
+      | 'appointment_data'
+      | 'reminder_communications'
+      | 'no_show_prediction'
+      | 'analytics_processing',
+    ipAddress?: string,
   ): Promise<{ valid: boolean; consentRecord?: LGPDConsentRecord; reason?: string }> {
     try {
       // Get current consent record
@@ -265,10 +276,10 @@ export class LGPDAppointmentComplianceService {
           given: true,
           OR: [
             { expiresAt: null },
-            { expiresAt: { gt: new Date() } }
-          ]
+            { expiresAt: { gt: new Date() } },
+          ],
         },
-        orderBy: { givenAt: 'desc' }
+        orderBy: { givenAt: 'desc' },
       });
 
       if (!consentRecord) {
@@ -291,7 +302,7 @@ export class LGPDAppointmentComplianceService {
         consentType,
         given: consentRecord.given,
         version: consentRecord.version,
-        timestamp: consentRecord.givenAt
+        timestamp: consentRecord.givenAt,
       });
 
       if (currentHash !== consentRecord.documentHash) {
@@ -306,12 +317,11 @@ export class LGPDAppointmentComplianceService {
         ipAddress,
         details: {
           consentType,
-          consentId: consentRecord.id
-        }
+          consentId: consentRecord.id,
+        },
       });
 
       return { valid: true, consentRecord };
-
     } catch {
       console.error('Error verifying consent:', error);
       throw new Error('Failed to verify consent');
@@ -324,7 +334,7 @@ export class LGPDAppointmentComplianceService {
   async processDataAccessRequest(
     patientId: string,
     requestType: 'access' | 'deletion' | 'rectification' | 'portability',
-    requestData?: any
+    requestData?: any,
   ): Promise<LGPDDataAccessRequest> {
     try {
       // Verify patient identity before processing request
@@ -336,7 +346,7 @@ export class LGPDAppointmentComplianceService {
         patientId,
         requestType,
         status: 'pending',
-        requestedAt: new Date()
+        requestedAt: new Date(),
       };
 
       await prisma.lgpdDataAccessRequest.create({
@@ -345,15 +355,14 @@ export class LGPDAppointmentComplianceService {
           patientId: request.patientId,
           requestType: request.requestType,
           status: request.status,
-          requestedAt: request.requestedAt
-        }
+          requestedAt: request.requestedAt,
+        },
       });
 
       // Process request based on type
       await this.processDataRequest(request, requestData);
 
       return request;
-
     } catch {
       console.error('Error processing data access request:', error);
       throw new Error('Failed to process data access request');
@@ -367,16 +376,18 @@ export class LGPDAppointmentComplianceService {
     appointmentId: string,
     messageType: 'reminder' | 'confirmation' | 'cancellation' | 'rescheduling',
     channel: 'email' | 'sms' | 'whatsapp',
-    messageContent: string
-  ): Promise<{ compliant: boolean; complianceRecord?: LGPDCommunicationCompliance; issues?: string[] }> {
+    messageContent: string,
+  ): Promise<
+    { compliant: boolean; complianceRecord?: LGPDCommunicationCompliance; issues?: string[] }
+  > {
     try {
       // Get appointment details
       const appointment = await prisma.appointment.findUnique({
         where: { id: appointmentId },
         include: {
           patient: true,
-          clinic: true
-        }
+          clinic: true,
+        },
       });
 
       if (!appointment) {
@@ -386,7 +397,7 @@ export class LGPDAppointmentComplianceService {
       // Verify communication consent
       const consentCheck = await this.verifyConsent(
         appointment.patientId,
-        'reminder_communications'
+        'reminder_communications',
       );
 
       if (!consentCheck.valid) {
@@ -399,7 +410,7 @@ export class LGPDAppointmentComplianceService {
         spamCompliance: this.checkSpamCompliance(messageContent),
         privacyPolicy: this.checkPrivacyPolicy(messageContent),
         unsubscribeOption: this.checkUnsubscribeOption(messageContent, channel),
-        dataMinimization: this.checkDataMinimization(messageContent, appointment)
+        dataMinimization: this.checkDataMinimization(messageContent, appointment),
       };
 
       Object.entries(complianceCheck).forEach(([check, passed]) => {
@@ -423,7 +434,7 @@ export class LGPDAppointmentComplianceService {
         consentVersion: consentCheck.consentRecord?.version || 'unknown',
         contentHash: this.generateHash(messageContent),
         sentAt: new Date(),
-        complianceCheck
+        complianceCheck,
       };
 
       await prisma.lgpdCommunicationCompliance.create({
@@ -437,12 +448,11 @@ export class LGPDAppointmentComplianceService {
           consentVersion: complianceRecord.consentVersion,
           contentHash: complianceRecord.contentHash,
           sentAt: complianceRecord.sentAt,
-          complianceCheck: complianceRecord.complianceCheck
-        }
+          complianceCheck: complianceRecord.complianceCheck,
+        },
       });
 
       return { compliant: true, complianceRecord };
-
     } catch {
       console.error('Error ensuring communication compliance:', error);
       throw new Error('Failed to ensure communication compliance');
@@ -456,7 +466,7 @@ export class LGPDAppointmentComplianceService {
     try {
       const appointment = await prisma.appointment.findUnique({
         where: { id: appointmentId },
-        include: { patient: true }
+        include: { patient: true },
       });
 
       if (!appointment) {
@@ -495,10 +505,9 @@ export class LGPDAppointmentComplianceService {
         details: {
           appointmentId,
           method: retentionPolicy.anonymizationMethod,
-          policy: retentionPolicy.dataCategory
-        }
+          policy: retentionPolicy.dataCategory,
+        },
       });
-
     } catch {
       console.error('Error anonymizing appointment data:', error);
       throw new Error('Failed to anonymize appointment data');
@@ -510,7 +519,7 @@ export class LGPDAppointmentComplianceService {
    */
   async generateComplianceReport(
     clinicId: string,
-    period: { start: Date; end: Date }
+    period: { start: Date; end: Date },
   ): Promise<LGPDComplianceReport> {
     try {
       const reportId = this.generateReportId();
@@ -518,16 +527,16 @@ export class LGPDAppointmentComplianceService {
 
       // Get summary statistics
       const summary = await this.getComplianceSummary(clinicId, period);
-      
+
       // Get consent breakdown
       const consentBreakdown = await this.getConsentBreakdown(clinicId, period);
-      
+
       // Get data processing metrics
       const dataProcessing = await this.getDataProcessingMetrics(clinicId, period);
-      
+
       // Calculate compliance metrics
       const complianceMetrics = await this.calculateComplianceMetrics(clinicId, period);
-      
+
       // Generate recommendations
       const recommendations = await this.generateRecommendations(clinicId, period);
 
@@ -540,7 +549,7 @@ export class LGPDAppointmentComplianceService {
         consentBreakdown,
         dataProcessing,
         complianceMetrics,
-        recommendations
+        recommendations,
       };
 
       // Save report to database
@@ -551,12 +560,11 @@ export class LGPDAppointmentComplianceService {
           generatedAt,
           periodStart: period.start,
           periodEnd: period.end,
-          reportData: report as any
-        }
+          reportData: report as any,
+        },
       });
 
       return report;
-
     } catch {
       console.error('Error generating compliance report:', error);
       throw new Error('Failed to generate compliance report');
@@ -574,7 +582,7 @@ export class LGPDAppointmentComplianceService {
       affectedData: string[];
       affectedPatients: string[];
       mitigationActions: string[];
-    }
+    },
   ): Promise<LGPDPrivacyIncident> {
     try {
       const incident: LGPDPrivacyIncident = {
@@ -591,9 +599,9 @@ export class LGPDAppointmentComplianceService {
           operational: true,
           financial: incidentData.severity === 'high' || incidentData.severity === 'critical',
           reputational: incidentData.severity === 'high' || incidentData.severity === 'critical',
-          personal: true
+          personal: true,
         },
-        reportedToANPD: incidentData.severity === 'high' || incidentData.severity === 'critical'
+        reportedToANPD: incidentData.severity === 'high' || incidentData.severity === 'critical',
       };
 
       // Save incident to database
@@ -609,8 +617,8 @@ export class LGPDAppointmentComplianceService {
           reportedAt: incident.reportedAt,
           mitigationActions: incident.mitigationActions,
           impactAssessment: incident.impactAssessment as any,
-          reportedToANPD: incident.reportedToANPD
-        }
+          reportedToANPD: incident.reportedToANPD,
+        },
       });
 
       // Notify affected patients if required
@@ -625,12 +633,11 @@ export class LGPDAppointmentComplianceService {
           incidentId: incident.id,
           type: incident.type,
           severity: incident.severity,
-          affectedPatients: incident.affectedPatients.length
-        }
+          affectedPatients: incident.affectedPatients.length,
+        },
       });
 
       return incident;
-
     } catch {
       console.error('Error reporting privacy incident:', error);
       throw new Error('Failed to report privacy incident');
@@ -644,7 +651,7 @@ export class LGPDAppointmentComplianceService {
       retentionPeriod: 365 * 5, // 5 years
       anonymizationMethod: 'pseudonymization',
       legalBasis: 'legal_obligation',
-      exceptions: ['litigation_hold', 'regulatory_requirement']
+      exceptions: ['litigation_hold', 'regulatory_requirement'],
     });
 
     this.retentionPolicies.set('patient_communication', {
@@ -652,7 +659,7 @@ export class LGPDAppointmentComplianceService {
       retentionPeriod: 180, // 6 months
       anonymizationMethod: 'deletion',
       legalBasis: 'consent',
-      exceptions: ['legal_proceedings']
+      exceptions: ['legal_proceedings'],
     });
 
     this.retentionPolicies.set('no_show_prediction_data', {
@@ -660,7 +667,7 @@ export class LGPDAppointmentComplianceService {
       retentionPeriod: 365 * 2, // 2 years
       anonymizationMethod: 'aggregation',
       legalBasis: 'legitimate_interest',
-      exceptions: ['model_training']
+      exceptions: ['model_training'],
     });
   }
 
@@ -671,13 +678,13 @@ export class LGPDAppointmentComplianceService {
 
   private async processDataRequest(
     request: LGPDDataAccessRequest,
-    requestData?: any
+    requestData?: any,
   ): Promise<void> {
     try {
       // Update status to processing
       await prisma.lgpdDataAccessRequest.update({
         where: { id: request.id },
-        data: { status: 'processing' }
+        data: { status: 'processing' },
       });
 
       let responseData: any;
@@ -705,10 +712,9 @@ export class LGPDAppointmentComplianceService {
         data: {
           status: 'completed',
           processedAt: new Date(),
-          responseData
-        }
+          responseData,
+        },
       });
-
     } catch {
       // Update request with error
       await prisma.lgpdDataAccessRequest.update({
@@ -716,8 +722,8 @@ export class LGPDAppointmentComplianceService {
         data: {
           status: 'rejected',
           processedAt: new Date(),
-          rejectionReason: error instanceof Error ? error.message : 'Unknown error'
-        }
+          rejectionReason: error instanceof Error ? error.message : 'Unknown error',
+        },
       });
       throw error;
     }
@@ -735,18 +741,18 @@ export class LGPDAppointmentComplianceService {
             endTime: true,
             status: true,
             serviceType: true,
-            noShowRiskScore: true
-          }
+            noShowRiskScore: true,
+          },
         },
         consentRecords: {
           select: {
             consentType: true,
             given: true,
             givenAt: true,
-            version: true
-          }
-        }
-      }
+            version: true,
+          },
+        },
+      },
     });
 
     return patient;
@@ -767,8 +773,8 @@ export class LGPDAppointmentComplianceService {
         addressLine2: null,
         city: null,
         state: null,
-        postalCode: null
-      }
+        postalCode: null,
+      },
     });
   }
 
@@ -776,7 +782,7 @@ export class LGPDAppointmentComplianceService {
     // Implement data rectification process
     await prisma.patient.update({
       where: { id: patientId },
-      data: correctionData
+      data: correctionData,
     });
   }
 
@@ -787,7 +793,7 @@ export class LGPDAppointmentComplianceService {
       exportedAt: new Date(),
       format: 'json',
       version: '1.0',
-      data: patient
+      data: patient,
     };
   }
 
@@ -799,15 +805,15 @@ export class LGPDAppointmentComplianceService {
         // Replace patient reference with pseudonym
         patientId: `PSEUD_${appointmentId.substring(0, 8)}`,
         // Pseudonymize other sensitive fields
-        notes: 'ANONYMIZED'
-      }
+        notes: 'ANONYMIZED',
+      },
     });
   }
 
   private async deleteAppointment(appointmentId: string): Promise<void> {
     // Securely delete appointment data
     await prisma.appointment.delete({
-      where: { id: appointmentId }
+      where: { id: appointmentId },
     });
   }
 
@@ -818,16 +824,16 @@ export class LGPDAppointmentComplianceService {
 
   private checkPrivacyPolicy(content: string): boolean {
     // Check for privacy policy reference
-    return content.toLowerCase().includes('privacy') || 
-           content.toLowerCase().includes('lgpd') ||
-           content.toLowerCase().includes('privacidade');
+    return content.toLowerCase().includes('privacy')
+      || content.toLowerCase().includes('lgpd')
+      || content.toLowerCase().includes('privacidade');
   }
 
   private checkUnsubscribeOption(content: string, channel: string): boolean {
     // Check for unsubscribe/opt-out option
     if (channel === 'email') {
-      return content.toLowerCase().includes('unsubscribe') ||
-             content.toLowerCase().includes('cancelar');
+      return content.toLowerCase().includes('unsubscribe')
+        || content.toLowerCase().includes('cancelar');
     }
     return true; // SMS/WhatsApp may have different requirements
   }
@@ -835,20 +841,24 @@ export class LGPDAppointmentComplianceService {
   private checkDataMinimization(content: string, appointment: any): boolean {
     // Check that only necessary data is included
     const sensitiveFields = ['cpf', 'rg', 'cns'];
-    return !sensitiveFields.some(field => 
+    return !sensitiveFields.some(field =>
       content.toLowerCase().includes(appointment.patient[field]?.toLowerCase())
     );
   }
 
-  private async updatePatientConsentStatus(patientId: string, consentType: string, given: boolean): Promise<void> {
+  private async updatePatientConsentStatus(
+    patientId: string,
+    consentType: string,
+    given: boolean,
+  ): Promise<void> {
     // Update patient's overall consent status
     await prisma.patient.update({
       where: { id: patientId },
       data: {
         lgpdConsentGiven: given,
         lgpdConsentVersion: given ? '1.0' : undefined,
-        updatedAt: new Date()
-      }
+        updatedAt: new Date(),
+      },
     });
   }
 
@@ -865,8 +875,8 @@ export class LGPDAppointmentComplianceService {
         patientId: actionData.patientId,
         ipAddress: actionData.ipAddress,
         details: actionData.details,
-        timestamp: new Date()
-      }
+        timestamp: new Date(),
+      },
     });
   }
 
@@ -878,7 +888,11 @@ export class LGPDAppointmentComplianceService {
       description: 'Document integrity compromise detected in consent record',
       affectedData: ['consent_records'],
       affectedPatients: [],
-      mitigationActions: ['Investigate breach source', 'Re-secure consent records', 'Notify affected parties']
+      mitigationActions: [
+        'Investigate breach source',
+        'Re-secure consent records',
+        'Notify affected parties',
+      ],
     });
   }
 
@@ -892,20 +906,20 @@ export class LGPDAppointmentComplianceService {
 
   private getConsentPurpose(consentType: string): string {
     const purposes = {
-      'appointment_data': 'Manage and process appointment scheduling data',
-      'reminder_communications': 'Send appointment reminders and communications',
-      'no_show_prediction': 'Process data for no-show prediction algorithms',
-      'analytics_processing': 'Analyze appointment data for service improvement'
+      appointment_data: 'Manage and process appointment scheduling data',
+      reminder_communications: 'Send appointment reminders and communications',
+      no_show_prediction: 'Process data for no-show prediction algorithms',
+      analytics_processing: 'Analyze appointment data for service improvement',
     };
     return purposes[consentType as keyof typeof purposes] || 'Unknown purpose';
   }
 
   private getDataCategories(consentType: string): string[] {
     const categories = {
-      'appointment_data': ['personal_data', 'health_data', 'appointment_details'],
-      'reminder_communications': ['contact_data', 'communication_preferences'],
-      'no_show_prediction': ['behavioral_data', 'historical_data'],
-      'analytics_processing': ['anonymized_data', 'aggregated_data']
+      appointment_data: ['personal_data', 'health_data', 'appointment_details'],
+      reminder_communications: ['contact_data', 'communication_preferences'],
+      no_show_prediction: ['behavioral_data', 'historical_data'],
+      analytics_processing: ['anonymized_data', 'aggregated_data'],
     };
     return categories[consentType as keyof typeof categories] || [];
   }
@@ -942,20 +956,35 @@ export class LGPDAppointmentComplianceService {
   }
 
   private async getComplianceSummary(clinicId: string, period: { start: Date; end: Date }) {
-    const [totalPatients, activeConsents, dataRequests, incidents, communicationsSent] = await Promise.all([
-      prisma.patient.count({ where: { clinicId, createdAt: { gte: period.start, lte: period.end } } }),
-      prisma.lgpdConsent.count({ where: { patient: { clinicId }, given: true, givenAt: { gte: period.start, lte: period.end } } }),
-      prisma.lgpdDataAccessRequest.count({ where: { patient: { clinicId }, requestedAt: { gte: period.start, lte: period.end } } }),
-      prisma.lgpdPrivacyIncident.count({ where: { patient: { clinicId }, detectedAt: { gte: period.start, lte: period.end } } }),
-      prisma.lgpdCommunicationCompliance.count({ where: { appointment: { clinicId }, sentAt: { gte: period.start, lte: period.end } } })
-    ]);
+    const [totalPatients, activeConsents, dataRequests, incidents, communicationsSent] =
+      await Promise.all([
+        prisma.patient.count({
+          where: { clinicId, createdAt: { gte: period.start, lte: period.end } },
+        }),
+        prisma.lgpdConsent.count({
+          where: {
+            patient: { clinicId },
+            given: true,
+            givenAt: { gte: period.start, lte: period.end },
+          },
+        }),
+        prisma.lgpdDataAccessRequest.count({
+          where: { patient: { clinicId }, requestedAt: { gte: period.start, lte: period.end } },
+        }),
+        prisma.lgpdPrivacyIncident.count({
+          where: { patient: { clinicId }, detectedAt: { gte: period.start, lte: period.end } },
+        }),
+        prisma.lgpdCommunicationCompliance.count({
+          where: { appointment: { clinicId }, sentAt: { gte: period.start, lte: period.end } },
+        }),
+      ]);
 
     return { totalPatients, activeConsents, dataRequests, incidents, communicationsSent };
   }
 
   private async getConsentBreakdown(clinicId: string, period: { start: Date; end: Date }) {
     const consents = await prisma.lgpdConsent.findMany({
-      where: { patient: { clinicId }, givenAt: { gte: period.start, lte: period.end } }
+      where: { patient: { clinicId }, givenAt: { gte: period.start, lte: period.end } },
     });
 
     const byType = consents.reduce((acc, consent) => {
@@ -974,23 +1003,29 @@ export class LGPDAppointmentComplianceService {
 
   private async getDataProcessingMetrics(clinicId: string, period: { start: Date; end: Date }) {
     const [appointments, predictions, communications, retentionActions] = await Promise.all([
-      prisma.appointment.count({ where: { clinicId, createdAt: { gte: period.start, lte: period.end } } }),
-      prisma.appointment.count({ where: { clinicId, noShowPredictedAt: { gte: period.start, lte: period.end } } }),
-      prisma.lgpdCommunicationCompliance.count({ where: { appointment: { clinicId }, sentAt: { gte: period.start, lte: period.end } } }),
-      prisma.lgpdAuditLog.count({ 
-        where: { 
-          patient: { clinicId }, 
+      prisma.appointment.count({
+        where: { clinicId, createdAt: { gte: period.start, lte: period.end } },
+      }),
+      prisma.appointment.count({
+        where: { clinicId, noShowPredictedAt: { gte: period.start, lte: period.end } },
+      }),
+      prisma.lgpdCommunicationCompliance.count({
+        where: { appointment: { clinicId }, sentAt: { gte: period.start, lte: period.end } },
+      }),
+      prisma.lgpdAuditLog.count({
+        where: {
+          patient: { clinicId },
           action: 'data_anonymized',
-          timestamp: { gte: period.start, lte: period.end }
-        }
-      })
+          timestamp: { gte: period.start, lte: period.end },
+        },
+      }),
     ]);
 
     return {
       appointmentsProcessed: appointments,
       predictionsMade: predictions,
       communicationsSent: communications,
-      dataRetentionActions: retentionActions
+      dataRetentionActions: retentionActions,
     };
   }
 
@@ -1000,11 +1035,14 @@ export class LGPDAppointmentComplianceService {
       consentRate: 0.85, // Placeholder
       responseTime: 2.5, // days
       incidentResolutionTime: 5.2, // days
-      policyAdherence: 0.92
+      policyAdherence: 0.92,
     };
   }
 
-  private async generateRecommendations(clinicId: string, period: { start: Date; end: Date }): Promise<string[]> {
+  private async generateRecommendations(
+    clinicId: string,
+    period: { start: Date; end: Date },
+  ): Promise<string[]> {
     const recommendations: string[] = [];
 
     // Analyze compliance gaps and generate recommendations
@@ -1024,7 +1062,10 @@ export class LGPDAppointmentComplianceService {
     return recommendations;
   }
 
-  private async identifyLowConsentAreas(_clinicId: string, _period: { start: Date; end: Date }): Promise<string[]> {
+  private async identifyLowConsentAreas(
+    _clinicId: string,
+    _period: { start: Date; end: Date },
+  ): Promise<string[]> {
     // Identify areas with low consent rates
     return [];
   }
@@ -1032,10 +1073,10 @@ export class LGPDAppointmentComplianceService {
   private async getProcessingBacklog(clinicId: string): Promise<number> {
     // Get current backlog of data access requests
     return await prisma.lgpdDataAccessRequest.count({
-      where: { 
+      where: {
         patient: { clinicId },
-        status: { in: ['pending', 'processing'] }
-      }
+        status: { in: ['pending', 'processing'] },
+      },
     });
   }
 
@@ -1058,9 +1099,9 @@ export class LGPDAppointmentComplianceService {
         where: {
           dataAnonymizedAt: null,
           createdAt: {
-            lt: new Date(Date.now() - 365 * 5 * 24 * 60 * 60 * 1000) // 5 years ago
-          }
-        }
+            lt: new Date(Date.now() - 365 * 5 * 24 * 60 * 60 * 1000), // 5 years ago
+          },
+        },
       });
 
       for (const appointment of appointmentsToAnonymize) {

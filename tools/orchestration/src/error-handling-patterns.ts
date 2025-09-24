@@ -1,6 +1,6 @@
 /**
  * Comprehensive Error Handling Patterns for NeonPro Quality Control System
- * 
+ *
  * Implements standardized error handling, logging, and recovery mechanisms
  * across the healthcare platform with LGPD compliance.
  */
@@ -12,7 +12,7 @@ export enum ErrorSeverity {
   LOW = 'low',
   MEDIUM = 'medium',
   HIGH = 'high',
-  CRITICAL = 'critical'
+  CRITICAL = 'critical',
 }
 
 export enum ErrorCategory {
@@ -25,7 +25,7 @@ export enum ErrorCategory {
   AUTHENTICATION = 'authentication',
   AUTHORIZATION = 'authorization',
   BUSINESS_LOGIC = 'business_logic',
-  SYSTEM = 'system'
+  SYSTEM = 'system',
 }
 
 export interface ErrorContext {
@@ -78,7 +78,7 @@ export class HealthcareErrorHandler extends EventEmitter {
 
   constructor(config: Partial<ErrorHandlerConfig> = {}) {
     super();
-    
+
     this.config = {
       enableLogging: true,
       enableNotifications: true,
@@ -88,13 +88,13 @@ export class HealthcareErrorHandler extends EventEmitter {
       healthcareMode: true,
       lgpdCompliance: true,
       logLevel: 'error',
-      ...config
+      ...config,
     };
 
     this.recoveryStrategies = new Map();
     this.errorCounts = new Map();
     this.lastErrorTimes = new Map();
-    
+
     this.setupDefaultRecoveryStrategies();
   }
 
@@ -103,34 +103,33 @@ export class HealthcareErrorHandler extends EventEmitter {
    */
   async handleError(error: Error | StandardError, context: Partial<ErrorContext>): Promise<void> {
     const standardError = this.normalizeError(error, context);
-    
+
     try {
       // Log error with appropriate detail level
       await this.logError(standardError);
-      
+
       // Healthcare compliance checks
       if (this.config.healthcareMode && standardError.healthcareRelated) {
         await this.handleHealthcareError(standardError);
       }
-      
+
       // LGPD compliance for data-related errors
       if (this.config.lgpdCompliance && standardError.lgpdRelevant) {
         await this.handleLGPDError(standardError);
       }
-      
+
       // Attempt error recovery
       if (this.config.enableRecovery && standardError.recoverable) {
         await this.attemptRecovery(standardError);
       }
-      
+
       // Emit error event for external handlers
       this.emit('error', standardError);
-      
+
       // Critical error notifications
       if (standardError.severity === ErrorSeverity.CRITICAL) {
         await this.sendCriticalAlert(standardError);
       }
-      
     } catch (handlingError) {
       // Fallback error handling to prevent cascading failures
       console.error('Error in error handler:', handlingError);
@@ -141,14 +140,17 @@ export class HealthcareErrorHandler extends EventEmitter {
   /**
    * Normalize various error types to StandardError format
    */
-  private normalizeError(error: Error | StandardError, context: Partial<ErrorContext>): StandardError {
+  private normalizeError(
+    error: Error | StandardError,
+    context: Partial<ErrorContext>,
+  ): StandardError {
     if (this.isStandardError(error)) {
       return error;
     }
 
     const errorId = this.generateErrorId();
     const errorCode = this.generateErrorCode(error, context);
-    
+
     return {
       id: errorId,
       code: errorCode,
@@ -161,7 +163,7 @@ export class HealthcareErrorHandler extends EventEmitter {
       recoverable: this.isRecoverable(error, context),
       retryable: this.isRetryable(error, context),
       healthcareRelated: this.isHealthcareRelated(error, context),
-      lgpdRelevant: this.isLGPDRelevant(error, context)
+      lgpdRelevant: this.isLGPDRelevant(error, context),
     };
   }
 
@@ -173,12 +175,12 @@ export class HealthcareErrorHandler extends EventEmitter {
     if (error.context.patientId) {
       await this.auditPatientDataAccess(error);
     }
-    
+
     // Medical device integration errors
     if (error.category === ErrorCategory.HEALTHCARE_COMPLIANCE) {
       await this.notifyHealthcareCompliance(error);
     }
-    
+
     // Clinical workflow interruptions
     if (error.severity === ErrorSeverity.CRITICAL && error.healthcareRelated) {
       await this.triggerClinicalWorkflowAlert(error);
@@ -193,12 +195,12 @@ export class HealthcareErrorHandler extends EventEmitter {
     if (error.message.includes('consent') || error.message.includes('lgpd')) {
       await this.handleConsentViolation(error);
     }
-    
+
     // Data anonymization failures
     if (error.category === ErrorCategory.SECURITY && error.lgpdRelevant) {
       await this.handleAnonymizationFailure(error);
     }
-    
+
     // Cross-border data transfer issues
     if (error.message.includes('transfer') || error.message.includes('export')) {
       await this.handleDataTransferViolation(error);
@@ -209,27 +211,26 @@ export class HealthcareErrorHandler extends EventEmitter {
    * Attempt automated error recovery
    */
   private async attemptRecovery(error: StandardError): Promise<void> {
-    const recoveryStrategy = this.recoveryStrategies.get(error.code) || 
-                           this.recoveryStrategies.get(error.category) ||
-                           this.recoveryStrategies.get('default');
-    
+    const recoveryStrategy = this.recoveryStrategies.get(error.code)
+      || this.recoveryStrategies.get(error.category)
+      || this.recoveryStrategies.get('default');
+
     if (recoveryStrategy) {
       const attemptKey = `${error.code}_${error.context.sessionId}`;
       const attempts = this.errorCounts.get(attemptKey) || 0;
-      
+
       if (attempts < this.config.maxRetryAttempts) {
         this.errorCounts.set(attemptKey, attempts + 1);
-        
+
         try {
           await this.delay(this.config.retryDelayMs * Math.pow(2, attempts));
           await recoveryStrategy(error);
-          
+
           // Reset counter on successful recovery
           this.errorCounts.delete(attemptKey);
-          
         } catch (recoveryError) {
           console.error(`Recovery attempt ${attempts + 1} failed:`, recoveryError);
-          
+
           if (attempts + 1 >= this.config.maxRetryAttempts) {
             await this.escalateError(error);
           }
@@ -287,7 +288,7 @@ export class HealthcareErrorHandler extends EventEmitter {
       healthcareRelated: error.healthcareRelated,
       lgpdRelevant: error.lgpdRelevant,
       // Sanitize sensitive data for logging
-      metadata: this.sanitizeMetadata(error.context.metadata)
+      metadata: this.sanitizeMetadata(error.context.metadata),
     };
 
     // Different log levels based on severity
@@ -350,8 +351,10 @@ export class HealthcareErrorHandler extends EventEmitter {
 
   private categorizeError(error: Error, context: Partial<ErrorContext>): ErrorCategory {
     const message = error.message.toLowerCase();
-    
-    if (message.includes('patient') || message.includes('medical') || message.includes('clinical')) {
+
+    if (
+      message.includes('patient') || message.includes('medical') || message.includes('clinical')
+    ) {
       return ErrorCategory.HEALTHCARE_COMPLIANCE;
     }
     if (message.includes('lgpd') || message.includes('consent') || message.includes('privacy')) {
@@ -363,19 +366,23 @@ export class HealthcareErrorHandler extends EventEmitter {
     if (message.includes('permission') || message.includes('unauthorized')) {
       return ErrorCategory.AUTHORIZATION;
     }
-    if (message.includes('network') || message.includes('connection') || message.includes('timeout')) {
+    if (
+      message.includes('network') || message.includes('connection') || message.includes('timeout')
+    ) {
       return ErrorCategory.NETWORK;
     }
     if (message.includes('database') || message.includes('sql') || message.includes('query')) {
       return ErrorCategory.DATABASE;
     }
-    if (message.includes('validation') || message.includes('invalid') || message.includes('format')) {
+    if (
+      message.includes('validation') || message.includes('invalid') || message.includes('format')
+    ) {
       return ErrorCategory.VALIDATION;
     }
     if (message.includes('performance') || message.includes('slow') || message.includes('memory')) {
       return ErrorCategory.PERFORMANCE;
     }
-    
+
     return ErrorCategory.BUSINESS_LOGIC;
   }
 
@@ -391,50 +398,50 @@ export class HealthcareErrorHandler extends EventEmitter {
       ipAddress: context.ipAddress,
       feature: context.feature || 'unknown',
       action: context.action || 'unknown',
-      metadata: context.metadata || {}
+      metadata: context.metadata || {},
     };
   }
 
   private isRecoverable(error: Error, context: Partial<ErrorContext>): boolean {
     const message = error.message.toLowerCase();
-    return message.includes('network') || 
-           message.includes('timeout') || 
-           message.includes('connection') ||
-           message.includes('retry');
+    return message.includes('network')
+      || message.includes('timeout')
+      || message.includes('connection')
+      || message.includes('retry');
   }
 
   private isRetryable(error: Error, context: Partial<ErrorContext>): boolean {
     const message = error.message.toLowerCase();
-    return message.includes('network') || 
-           message.includes('timeout') || 
-           message.includes('temporary') ||
-           message.includes('busy');
+    return message.includes('network')
+      || message.includes('timeout')
+      || message.includes('temporary')
+      || message.includes('busy');
   }
 
   private isHealthcareRelated(error: Error, context: Partial<ErrorContext>): boolean {
     const message = error.message.toLowerCase();
-    return message.includes('patient') || 
-           message.includes('medical') || 
-           message.includes('clinical') ||
-           message.includes('healthcare') ||
-           !!context.patientId ||
-           !!context.facilityId;
+    return message.includes('patient')
+      || message.includes('medical')
+      || message.includes('clinical')
+      || message.includes('healthcare')
+      || !!context.patientId
+      || !!context.facilityId;
   }
 
   private isLGPDRelevant(error: Error, context: Partial<ErrorContext>): boolean {
     const message = error.message.toLowerCase();
-    return message.includes('lgpd') || 
-           message.includes('consent') || 
-           message.includes('privacy') ||
-           message.includes('personal') ||
-           message.includes('data protection');
+    return message.includes('lgpd')
+      || message.includes('consent')
+      || message.includes('privacy')
+      || message.includes('personal')
+      || message.includes('data protection');
   }
 
   private sanitizeMetadata(metadata?: Record<string, unknown>): Record<string, unknown> {
     if (!metadata) return {};
-    
+
     const sanitized = { ...metadata };
-    
+
     // Remove sensitive fields
     const sensitiveFields = ['password', 'token', 'secret', 'key', 'cpf', 'cnpj', 'email'];
     sensitiveFields.forEach(field => {
@@ -442,7 +449,7 @@ export class HealthcareErrorHandler extends EventEmitter {
         sanitized[field] = '[REDACTED]';
       }
     });
-    
+
     return sanitized;
   }
 
@@ -508,7 +515,7 @@ export class HealthcareErrorHandler extends EventEmitter {
   getErrorStatistics(): { errorCounts: Map<string, number>; lastErrorTimes: Map<string, Date> } {
     return {
       errorCounts: new Map(this.errorCounts),
-      lastErrorTimes: new Map(this.lastErrorTimes)
+      lastErrorTimes: new Map(this.lastErrorTimes),
     };
   }
 }
@@ -518,7 +525,7 @@ export const healthcareErrorHandler = new HealthcareErrorHandler({
   healthcareMode: true,
   lgpdCompliance: true,
   enableRecovery: true,
-  maxRetryAttempts: 3
+  maxRetryAttempts: 3,
 });
 
 // Error boundary for React components
@@ -532,7 +539,7 @@ export class ErrorBoundary extends Error {
 // Async error wrapper
 export async function withErrorHandling<T>(
   operation: () => Promise<T>,
-  context: Partial<ErrorContext>
+  context: Partial<ErrorContext>,
 ): Promise<T> {
   try {
     return await operation();

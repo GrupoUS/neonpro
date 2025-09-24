@@ -1,7 +1,7 @@
-import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react";
-import path from "path";
-import { TanStackRouterVite } from "@tanstack/router-plugin/vite";
+import { TanStackRouterVite } from '@tanstack/router-plugin/vite';
+import react from '@vitejs/plugin-react';
+import path from 'path';
+import { defineConfig } from 'vite';
 
 export default defineConfig({
   plugins: [
@@ -10,15 +10,15 @@ export default defineConfig({
     // @ts-ignore - Ignore react plugin type mismatch due to monorepo version differences
     react(),
   ],
-  root: ".",
-  publicDir: "public",
+  root: '.',
+  publicDir: 'public',
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "./src"),
+      '@': path.resolve(__dirname, './src'),
     },
   },
   define: {
-    global: "globalThis",
+    global: 'globalThis',
   },
   server: {
     host: true,
@@ -26,28 +26,28 @@ export default defineConfig({
     open: false,
   },
   build: {
-    outDir: "dist",
+    outDir: 'dist',
     sourcemap: true,
-    target: "esnext",
+    target: 'esnext',
   },
   optimizeDeps: {
     include: [
-      "react",
-      "react-dom",
-      "@tanstack/react-router",
-      "@tanstack/react-query",
-      "react-hook-form",
-      "zod",
-      "valibot",
-      "clsx",
-      "tailwind-merge",
-      "lucide-react",
-      "date-fns",
-      "sonner",
-      "@radix-ui/react-slot",
-      "class-variance-authority",
-      "@copilotkit/react-core",
-      "@copilotkit/react-ui",
+      'react',
+      'react-dom',
+      '@tanstack/react-router',
+      '@tanstack/react-query',
+      'react-hook-form',
+      'zod',
+      'valibot',
+      'clsx',
+      'tailwind-merge',
+      'lucide-react',
+      'date-fns',
+      'sonner',
+      '@radix-ui/react-slot',
+      'class-variance-authority',
+      '@copilotkit/react-core',
+      '@copilotkit/react-ui',
     ],
   },
 });

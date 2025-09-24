@@ -199,7 +199,7 @@ export class JWTSecurityValidator {
         securityLevel: 'high',
       };
     } catch {
-    void _error;
+      void _error;
       return {
         isValid: false,
         error: 'Token validation failed',
@@ -231,7 +231,7 @@ export class JWTSecurityValidator {
         Buffer.from(part, 'base64');
       }
     } catch {
-    void _error;
+      void _error;
       return {
         isValid: false,
         error: 'Invalid base64 encoding',
@@ -252,7 +252,7 @@ export class JWTSecurityValidator {
       const header = JSON.parse(Buffer.from(headerPart, 'base64').toString());
       return header;
     } catch {
-    void _error;
+      void _error;
       return null;
     }
   }
@@ -379,7 +379,7 @@ export class JWTSecurityValidator {
         securityLevel: 'high',
       };
     } catch {
-    void _error;
+      void _error;
       if (error instanceof jwt.JsonWebTokenError) {
         return {
           isValid: false,

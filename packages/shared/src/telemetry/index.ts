@@ -1,46 +1,46 @@
 export {
-  HealthcareTelemetryManager,
-  HealthcareSpanAttributes,
-  HealthcareOperations,
   createHealthcareTelemetryManager,
-  initializeGlobalTelemetry,
   getGlobalTelemetryManager,
+  HealthcareOperations,
+  HealthcareSpanAttributes,
+  HealthcareTelemetryManager,
+  initializeGlobalTelemetry,
   shutdownGlobalTelemetry,
   TELEMETRY_CONFIGS,
-} from "./opentelemetry-config";
+} from './opentelemetry-config';
 
-export type { HealthcareTelemetryConfig } from "./opentelemetry-config";
+export type { HealthcareTelemetryConfig } from './opentelemetry-config';
 
 // Re-export specific OpenTelemetry utilities for convenience
 export type {
+  DiagLogger,
+  Sampler,
+  SamplingDecision,
+  SamplingResult,
   Span,
   SpanContext,
   SpanStatusCode,
   TraceFlags,
   Tracer,
   TracerProvider,
-  Sampler,
-  SamplingDecision,
-  SamplingResult,
-  DiagLogger,
-} from "@opentelemetry/api";
+} from '@opentelemetry/api';
 
 export type {
-  Meter,
-  MeterProvider,
   Counter,
   Histogram,
-  UpDownCounter,
+  Meter,
+  MeterProvider,
   ObservableCounter,
   ObservableGauge,
   ObservableUpDownCounter,
-} from "@opentelemetry/api";
+  UpDownCounter,
+} from '@opentelemetry/api';
 
 export type {
   BasicTracerProvider,
   BatchSpanProcessor,
   ConsoleSpanExporter,
   SimpleSpanProcessor,
-} from "@opentelemetry/sdk-trace-base";
+} from '@opentelemetry/sdk-trace-base';
 
-export { trace, context, diag } from "@opentelemetry/api";
+export { context, diag, trace } from '@opentelemetry/api';

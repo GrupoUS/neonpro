@@ -242,13 +242,14 @@ Dynamic ARIA states are updated in response to user interactions and system even
 When displaying sensitive patient information, the system uses ARIA attributes to control disclosure:
 
 ```tsx
-<div 
-  role="region" 
-  aria-label="Patient Information" 
-  aria-describedby="pii-warning"
-  data-sensitivity="high">
+<div
+  role='region'
+  aria-label='Patient Information'
+  aria-describedby='pii-warning'
+  data-sensitivity='high'
+>
   {/* Patient data content */}
-</div>
+</div>;
 ```
 
 #### Clinical Workflow Indicators
@@ -344,32 +345,32 @@ export class ErrorBoundary extends React.Component<
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    console.error("Error caught by boundary:", error, errorInfo);
+    console.error('Error caught by boundary:', error, errorInfo);
   }
 
   render() {
     if (this.state.hasError) {
       return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50">
-          <div className="max-w-md w-full bg-white shadow-lg rounded-lg p-6 text-center">
-            <div className="mx-auto h-12 w-12 bg-red-100 rounded-full flex items-center justify-center mb-4">
-              <AlertTriangle className="h-6 w-6 text-red-600" />
+        <div className='min-h-screen flex items-center justify-center bg-gray-50'>
+          <div className='max-w-md w-full bg-white shadow-lg rounded-lg p-6 text-center'>
+            <div className='mx-auto h-12 w-12 bg-red-100 rounded-full flex items-center justify-center mb-4'>
+              <AlertTriangle className='h-6 w-6 text-red-600' />
             </div>
-            <h2 className="text-xl font-bold text-gray-900 mb-2">
+            <h2 className='text-xl font-bold text-gray-900 mb-2'>
               Oops! Something went wrong
             </h2>
-            <p className="text-gray-600 mb-6">
-              {this.state.error?.message ||
-                "An unexpected error occurred. Please try again."}
+            <p className='text-gray-600 mb-6'>
+              {this.state.error?.message
+                || 'An unexpected error occurred. Please try again.'}
             </p>
             <button
               onClick={() => {
                 this.setState({ hasError: false, error: undefined });
                 window.location.reload();
               }}
-              className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              className='inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2'
             >
-              <RefreshCw className="h-4 w-4 mr-2" />
+              <RefreshCw className='h-4 w-4 mr-2' />
               Try again
             </button>
           </div>
@@ -432,10 +433,10 @@ When new chat messages arrive, the system uses ARIA live regions to announce the
 
 ```tsx
 <ScreenReaderAnnouncer
-  message="New message received from patient"
-  priority="polite"
+  message='New message received from patient'
+  priority='polite'
   timeout={5000}
-/>
+/>;
 ```
 
 The implementation includes several key features:
@@ -530,7 +531,7 @@ export function useFocusTrap(isActive: boolean) {
     ] as HTMLElement;
 
     function handleTabKey(event: KeyboardEvent) {
-      if (event.key !== "Tab") return;
+      if (event.key !== 'Tab') return;
 
       if (event.shiftKey) {
         if (document.activeElement === firstElement) {
@@ -596,8 +597,7 @@ The system adapts animation performance based on device capabilities and user pr
 const generatePerformanceSettings = (
   capabilities: DeviceCapabilities,
 ): PerformanceSettings => {
-  const { isLowEnd, prefersReducedMotion, isMobile, hasGPU, cpuPower } =
-    capabilities;
+  const { isLowEnd, prefersReducedMotion, isMobile, hasGPU, cpuPower } = capabilities;
 
   // Disable animations if user prefers reduced motion
   if (prefersReducedMotion) {
@@ -689,10 +689,8 @@ if (!professionalAccessibility) {
     requirement: ANVISA_REQUIREMENTS.ACCESSIBILITY,
     severity: 'high',
     title: 'Missing professional accessibility features',
-    description:
-      'System does not meet accessibility requirements for healthcare professionals',
-    recommendation:
-      'Implement accessibility features specific to healthcare professionals',
+    description: 'System does not meet accessibility requirements for healthcare professionals',
+    recommendation: 'Implement accessibility features specific to healthcare professionals',
     affectedComponents: ['user_interface', 'navigation', 'forms'],
     anvisaReference: 'RDC 185/2001 - Accessibility',
     remediation: {

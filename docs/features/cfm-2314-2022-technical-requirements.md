@@ -62,28 +62,28 @@ multimedia_requirements:
 ```typescript
 interface DataPreservationRequirements {
   confidentiality: {
-    encryption: "AES-256-GCM";
-    accessControl: "role-based-rbac";
-    auditTrail: "immutable-logging";
+    encryption: 'AES-256-GCM';
+    accessControl: 'role-based-rbac';
+    auditTrail: 'immutable-logging';
   };
 
   availability: {
-    uptime: "99.9%";
-    backupFrequency: "real-time";
-    disasterRecovery: "geographic-redundancy";
+    uptime: '99.9%';
+    backupFrequency: 'real-time';
+    disasterRecovery: 'geographic-redundancy';
   };
 
   integrity: {
-    digitalSignature: "required";
-    checksumValidation: "mandatory";
-    versionControl: "complete-history";
+    digitalSignature: 'required';
+    checksumValidation: 'mandatory';
+    versionControl: 'complete-history';
   };
 
   retention: {
-    aestheticRecords: "20-years";
-    consultationRecordings: "20-years";
-    auditLogs: "10-years";
-    accessLogs: "5-years";
+    aestheticRecords: '20-years';
+    consultationRecordings: '20-years';
+    auditLogs: '10-years';
+    accessLogs: '5-years';
   };
 }
 ```
@@ -98,7 +98,7 @@ interface DataPreservationRequirements {
 interface ProfessionalLicenseValidation {
   validateProfessionalLicense(
     licenseNumber: string,
-    councilType: "CNEP" | "COREN" | "CFF" | "OTHER",
+    councilType: 'CNEP' | 'COREN' | 'CFF' | 'OTHER',
     state: string,
   ): Promise<LicenseStatus>;
   checkLicenseExpiry(professionalId: string): Promise<boolean>;
@@ -159,7 +159,7 @@ interface ClientIdentification {
 interface VirtualConsultationConsent {
   consentId: string;
   clientId: string;
-  consentType: "virtual_consultation" | "recording" | "data_processing" | "aesthetic_procedure";
+  consentType: 'virtual_consultation' | 'recording' | 'data_processing' | 'aesthetic_procedure';
 
   consentDetails: {
     purpose: string;
@@ -168,17 +168,17 @@ interface VirtualConsultationConsent {
     sharingScope: string[];
   };
 
-  consentStatus: "pending" | "granted" | "revoked";
+  consentStatus: 'pending' | 'granted' | 'revoked';
   grantedAt?: Date;
   revokedAt?: Date;
 
   // Legal basis under LGPD
-  legalBasis: "consent" | "legitimate_interest" | "contractual_necessity";
+  legalBasis: 'consent' | 'legitimate_interest' | 'contractual_necessity';
 
   // Consent evidence
   ipAddress: string;
   userAgent: string;
-  consentMethod: "digital_signature" | "checkbox" | "verbal_recorded";
+  consentMethod: 'digital_signature' | 'checkbox' | 'verbal_recorded';
 
   // Withdrawal rights
   withdrawalMethod: string;
@@ -267,9 +267,9 @@ technological_infrastructure:
 interface AestheticRecordIntegration {
   // Standard compliance
   standards: {
-    terminology: "Aesthetic Procedures" | "Cosmetic Products" | "Treatment Codes";
-    representation: "HL7-FHIR";
-    interoperability: "openEHR";
+    terminology: 'Aesthetic Procedures' | 'Cosmetic Products' | 'Treatment Codes';
+    representation: 'HL7-FHIR';
+    interoperability: 'openEHR';
   };
 
   // Record structure
@@ -278,7 +278,7 @@ interface AestheticRecordIntegration {
     professional_id: string;
     client_id: string;
     consultation_date: Date;
-    consultation_type: "virtual_consultation";
+    consultation_type: 'virtual_consultation';
 
     // Aesthetic consultation data
     client_concerns: string;
@@ -356,13 +356,13 @@ class ProfessionalCouncilAuthenticationService {
     );
 
     if (!licenseStatus.isActive) {
-      throw new Error("Invalid or inactive professional license");
+      throw new Error('Invalid or inactive professional license');
     }
 
     // Create authenticated session
     return {
       userId: credentials.professionalId,
-      role: "aesthetic_professional",
+      role: 'aesthetic_professional',
       licenseNumber: credentials.licenseNumber,
       councilType: credentials.councilType,
       specializations: licenseStatus.specializations,
@@ -376,7 +376,7 @@ class ProfessionalCouncilAuthenticationService {
   ): Promise<IdentityResult> {
     // Validate CPF format and check digit
     if (!this.validateCPF(identity.cpf)) {
-      throw new Error("Invalid CPF format");
+      throw new Error('Invalid CPF format');
     }
 
     // Optional: Integrate with Receita Federal for CPF validation
@@ -385,7 +385,7 @@ class ProfessionalCouncilAuthenticationService {
       verified: true,
       cpf: identity.cpf,
       fullName: identity.fullName,
-      verificationMethod: "document_check",
+      verificationMethod: 'document_check',
       verifiedAt: new Date(),
     };
   }
@@ -407,7 +407,7 @@ class VirtualConsultationSessionService {
         professional_id: params.professionalId,
         client_id: params.clientId,
         session_type: params.type,
-        status: "scheduled",
+        status: 'scheduled',
         webrtc_room_id: this.generateRoomId(),
         license_verified: true,
         lgpd_consent_obtained: params.consentObtained,
@@ -418,11 +418,11 @@ class VirtualConsultationSessionService {
 
     // Initialize audit logging
     await this.auditService.logEvent({
-      event_type: "session_created",
+      event_type: 'session_created',
       session_id: session.id,
       professional_id: params.professionalId,
       client_id: params.clientId,
-      compliance_status: "council_verified",
+      compliance_status: 'council_verified',
     });
 
     return session;
@@ -432,22 +432,22 @@ class VirtualConsultationSessionService {
     // Verify recording consent
     const session = await this.getSession(sessionId);
     if (!session.client_consent_recording) {
-      throw new Error("Client consent for recording not obtained");
+      throw new Error('Client consent for recording not obtained');
     }
 
     // Start encrypted recording
     const recordingConfig = {
-      encryption: "AES-256-GCM",
-      storage: "brazilian-servers-only",
-      retention: "20-years",
-      format: "consultation-grade-quality",
+      encryption: 'AES-256-GCM',
+      storage: 'brazilian-servers-only',
+      retention: '20-years',
+      format: 'consultation-grade-quality',
     };
 
     await this.recordingService.startRecording(sessionId, recordingConfig);
 
     // Log recording start
     await this.auditService.logEvent({
-      event_type: "recording_started",
+      event_type: 'recording_started',
       session_id: sessionId,
       consent_verified: true,
       encryption_enabled: true,
@@ -467,7 +467,7 @@ class DataPreservationService {
     // Encrypt sensitive data
     const encryptedData = await this.encryptionService.encrypt(
       consultationData,
-      "AES-256-GCM",
+      'AES-256-GCM',
     );
 
     // Create digital signature for integrity
@@ -480,10 +480,10 @@ class DataPreservationService {
         encrypted_data: encryptedData,
         digital_signature: digitalSignature,
         preservation_metadata: {
-          encryption_algorithm: "AES-256-GCM",
-          signing_algorithm: "RSA-PSS",
-          geographic_location: "brazil",
-          retention_period: "20-years",
+          encryption_algorithm: 'AES-256-GCM',
+          signing_algorithm: 'RSA-PSS',
+          geographic_location: 'brazil',
+          retention_period: '20-years',
           council_compliant: true,
         },
         created_at: new Date(),
@@ -492,11 +492,11 @@ class DataPreservationService {
 
     // Create audit trail
     await this.auditService.logEvent({
-      event_type: "data_preserved",
+      event_type: 'data_preserved',
       session_id: sessionId,
       encryption_verified: true,
       signature_verified: true,
-      geographic_compliance: "brazil-only",
+      geographic_compliance: 'brazil-only',
     });
   }
 
@@ -562,8 +562,8 @@ interface ProfessionalCouncilComplianceStatus {
 
   // Regulatory alerts
   compliance_alerts: Array<{
-    type: "license_expiry" | "consent_missing" | "technical_issue";
-    severity: "low" | "medium" | "high" | "critical";
+    type: 'license_expiry' | 'consent_missing' | 'technical_issue';
+    severity: 'low' | 'medium' | 'high' | 'critical';
     message: string;
     action_required: string;
   }>;

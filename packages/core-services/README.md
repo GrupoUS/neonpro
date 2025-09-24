@@ -10,15 +10,15 @@ This package provides core business and governance services for NeonPro.
 ## Usage
 
 ```ts
-import { AIService, validatePatient } from "@neonpro/core-services";
+import { AIService, validatePatient } from '@neonpro/core-services';
 
 const ai = new AIService();
 const result = await ai.makePrediction({
-  type: "appointment_noshow",
+  type: 'appointment_noshow',
   data: {
     daysSinceScheduled: 1,
     previousNoShows: 2,
-    appointmentType: "consultation",
+    appointmentType: 'consultation',
   },
 });
 
@@ -28,9 +28,9 @@ console.log(result);
 ## Validation
 
 ```ts
-import { validatePatient } from "@neonpro/core-services";
+import { validatePatient } from '@neonpro/core-services';
 
-const patient = validatePatient({ name: "Maria", age: 34 });
+const patient = validatePatient({ name: 'Maria', age: 34 });
 ```
 
 ## Notes

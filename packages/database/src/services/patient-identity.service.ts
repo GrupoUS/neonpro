@@ -6,17 +6,17 @@
 
 import { databaseLogger, logHealthcareError } from '../../../shared/src/logging/healthcare-logger';
 
-import { createClient } from "../client";
-import type { Patient } from "@neonpro/types";
+import type { Patient } from '@neonpro/types';
+import { createClient } from '../client';
 
 export interface PatientIdentityDocument {
-  type: "cpf" | "rg" | "cns" | "passport" | "driver_license";
+  type: 'cpf' | 'rg' | 'cns' | 'passport' | 'driver_license';
   number: string;
   issuingAuthority?: string;
   issueDate?: Date;
   expiryDate?: Date;
   verified: boolean;
-  verificationMethod: "manual" | "api" | "document_scan" | "biometric";
+  verificationMethod: 'manual' | 'api' | 'document_scan' | 'biometric';
   verificationTimestamp: Date;
 }
 
@@ -32,7 +32,7 @@ export interface BiometricVerification {
 
 export interface IdentityVerificationResult {
   patientId: string;
-  verificationLevel: "basic" | "enhanced" | "biometric";
+  verificationLevel: 'basic' | 'enhanced' | 'biometric';
   documentsVerified: PatientIdentityDocument[];
   biometricVerification?: BiometricVerification;
   riskScore: number; // 0-100 (0 = no risk, 100 = high risk)
@@ -56,10 +56,10 @@ export interface AddressVerification {
   complement?: string;
   verified: boolean;
   verificationMethod:
-    | "postal_service"
-    | "utility_bill"
-    | "bank_statement"
-    | "manual";
+    | 'postal_service'
+    | 'utility_bill'
+    | 'bank_statement'
+    | 'manual';
   verificationDate: Date;
 }
 
@@ -80,13 +80,13 @@ export class PatientIdentityService {
 
       // Get patient data
       const { data: patient, error: patientError } = await this.supabase
-        .from("patients")
-        .select("*")
-        .eq("id", patientId)
+        .from('patients')
+        .select('*')
+        .eq('id', patientId)
         .single();
 
       if (patientError || !patient) {
-        throw new Error("Patient not found");
+        throw new Error('Patient not found');
       }
 
       // Verify each document
@@ -109,13 +109,12 @@ export class PatientIdentityService {
       // Biometric verification if enabled
       let biometricVerification: BiometricVerification | undefined;
       if (enableBiometric) {
-        biometricVerification =
-          await this.performBiometricVerification(patientId);
+        biometricVerification = await this.performBiometricVerification(patientId);
         if (
-          !biometricVerification.faceMatch ||
-          !biometricVerification.livenessDetected
+          !biometricVerification.faceMatch
+          || !biometricVerification.livenessDetected
         ) {
-          fraudIndicators.push("Biometric verification failed");
+          fraudIndicators.push('Biometric verification failed');
           riskScore += 30;
         }
       }
@@ -173,7 +172,7 @@ export class PatientIdentityService {
     } catch (error) {
       logHealthcareError('database', error, { method: 'verifyPatientIdentity', patientId });
       throw new Error(
-        `Identity verification failed: ${error instanceof Error ? error.message : "Unknown error"}`,
+        `Identity verification failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
       );
     }
   }
@@ -194,7 +193,7 @@ export class PatientIdentityService {
       let reason: string | undefined;
 
       switch (document.type) {
-        case "cpf":
+        case 'cpf':
           const cpfValidation = this.validateCPF(document.number);
           valid = cpfValidation.valid;
           reason = cpfValidation.reason;
@@ -202,23 +201,23 @@ export class PatientIdentityService {
           // Cross-check with patient's stored CPF
           if (valid && patient.cpf && patient.cpf !== document.number) {
             valid = false;
-            reason = "CPF does not match patient record";
+            reason = 'CPF does not match patient record';
           }
           break;
 
-        case "rg":
+        case 'rg':
           valid = this.validateRG(document.number);
-          if (!valid) reason = "Invalid RG format";
+          if (!valid) reason = 'Invalid RG format';
           break;
 
-        case "cns":
+        case 'cns':
           valid = this.validateCNS(document.number);
-          if (!valid) reason = "Invalid CNS format";
+          if (!valid) reason = 'Invalid CNS format';
           break;
 
-        case "passport":
+        case 'passport':
           valid = this.validatePassport(document.number);
-          if (!valid) reason = "Invalid passport format";
+          if (!valid) reason = 'Invalid passport format';
           break;
 
         default:
@@ -228,7 +227,7 @@ export class PatientIdentityService {
       // Check expiry date
       if (valid && document.expiryDate && document.expiryDate < new Date()) {
         valid = false;
-        reason = "Document has expired";
+        reason = 'Document has expired';
       }
 
       const verifiedDocument: PatientIdentityDocument = {
@@ -239,7 +238,10 @@ export class PatientIdentityService {
 
       return { valid, document: verifiedDocument, reason };
     } catch (error) {
-      logHealthcareError('database', error, { method: 'verifyDocument', documentType: document.type });
+      logHealthcareError('database', error, {
+        method: 'verifyDocument',
+        documentType: document.type,
+      });
       return {
         valid: false,
         document: {
@@ -247,7 +249,7 @@ export class PatientIdentityService {
           verified: false,
           verificationTimestamp: new Date(),
         },
-        reason: "Verification process failed",
+        reason: 'Verification process failed',
       };
     }
   }
@@ -274,8 +276,8 @@ export class PatientIdentityService {
         faceMatchScore: 95,
         livenessDetected: true,
         documentPhotoMatch: true,
-        biometricHash: crypto.randomUUID().replace(/-/g, ""), // Simulated hash
-        verificationProvider: "neonpro-biometric-service",
+        biometricHash: crypto.randomUUID().replace(/-/g, ''), // Simulated hash
+        verificationProvider: 'neonpro-biometric-service',
         timestamp: new Date(),
       };
 
@@ -291,8 +293,8 @@ export class PatientIdentityService {
         faceMatchScore: 0,
         livenessDetected: false,
         documentPhotoMatch: false,
-        biometricHash: "",
-        verificationProvider: "error",
+        biometricHash: '',
+        verificationProvider: 'error',
         timestamp: new Date(),
       };
     }
@@ -304,21 +306,21 @@ export class PatientIdentityService {
   private determineVerificationLevel(
     documents: PatientIdentityDocument[],
     biometric?: BiometricVerification,
-  ): "basic" | "enhanced" | "biometric" {
-    const verifiedDocs = documents.filter((doc) => doc.verified);
+  ): 'basic' | 'enhanced' | 'biometric' {
+    const verifiedDocs = documents.filter(doc => doc.verified);
 
     if (biometric && biometric.faceMatch && biometric.livenessDetected) {
-      return "biometric";
+      return 'biometric';
     }
 
     if (
-      verifiedDocs.length >= 2 &&
-      verifiedDocs.some((doc) => doc.type === "cpf")
+      verifiedDocs.length >= 2
+      && verifiedDocs.some(doc => doc.type === 'cpf')
     ) {
-      return "enhanced";
+      return 'enhanced';
     }
 
-    return "basic";
+    return 'basic';
   }
 
   /**
@@ -331,15 +333,15 @@ export class PatientIdentityService {
     const inconsistencies: string[] = [];
 
     // Check CPF consistency
-    const cpfDoc = documents.find((doc) => doc.type === "cpf" && doc.verified);
+    const cpfDoc = documents.find(doc => doc.type === 'cpf' && doc.verified);
     if (cpfDoc && patient.cpf && patient.cpf !== cpfDoc.number) {
-      inconsistencies.push("CPF mismatch between document and patient record");
+      inconsistencies.push('CPF mismatch between document and patient record');
     }
 
     // Check RG consistency
-    const rgDoc = documents.find((doc) => doc.type === "rg" && doc.verified);
+    const rgDoc = documents.find(doc => doc.type === 'rg' && doc.verified);
     if (rgDoc && patient.rg && patient.rg !== rgDoc.number) {
-      inconsistencies.push("RG mismatch between document and patient record");
+      inconsistencies.push('RG mismatch between document and patient record');
     }
 
     // Note: CNS property not available in Patient interface - would need extension
@@ -355,11 +357,11 @@ export class PatientIdentityService {
    */
   private checkCFMCompliance(documents: PatientIdentityDocument[]): boolean {
     // CFM Resolution 2314/2022 Article 6 requires secure and reliable identification
-    const verifiedDocs = documents.filter((doc) => doc.verified);
+    const verifiedDocs = documents.filter(doc => doc.verified);
 
     // Must have at least one verified primary document (CPF or RG)
     const hasPrimaryDoc = verifiedDocs.some(
-      (doc) => doc.type === "cpf" || doc.type === "rg",
+      doc => doc.type === 'cpf' || doc.type === 'rg',
     );
 
     // Must have adequate verification level
@@ -377,7 +379,7 @@ export class PatientIdentityService {
   ): boolean {
     // LGPD requires explicit consent for processing sensitive personal data
     return (
-      patient.lgpdConsentGiven && patient.dataConsentStatus === "given"
+      patient.lgpdConsentGiven && patient.dataConsentStatus === 'given'
     );
   }
 
@@ -397,7 +399,7 @@ export class PatientIdentityService {
   ): Promise<void> {
     try {
       const { error } = await this.supabase
-        .from("patient_identity_verifications")
+        .from('patient_identity_verifications')
         .insert({
           patient_id: result.patientId,
           verification_session: result.verificationSession,
@@ -413,7 +415,11 @@ export class PatientIdentityService {
         });
 
       if (error) {
-        logHealthcareError('database', error, { method: 'storeVerificationRecord', patientId: result.patientId, verificationSession: result.verificationSession });
+        logHealthcareError('database', error, {
+          method: 'storeVerificationRecord',
+          patientId: result.patientId,
+          verificationSession: result.verificationSession,
+        });
       }
     } catch (error) {
       logHealthcareError('database', error, { method: 'storeVerificationRecord' });
@@ -430,7 +436,7 @@ export class PatientIdentityService {
     try {
       // Note: Only store the hash, never raw biometric data (LGPD compliance)
       const { error } = await this.supabase
-        .from("patient_biometric_verifications")
+        .from('patient_biometric_verifications')
         .insert({
           patient_id: patientId,
           biometric_hash: biometric.biometricHash,
@@ -441,7 +447,11 @@ export class PatientIdentityService {
         });
 
       if (error) {
-        logHealthcareError('database', error, { method: 'storeBiometricRecord', patientId, verificationProvider: biometric.verificationProvider });
+        logHealthcareError('database', error, {
+          method: 'storeBiometricRecord',
+          patientId,
+          verificationProvider: biometric.verificationProvider,
+        });
       }
     } catch (error) {
       logHealthcareError('database', error, { method: 'storeBiometricRecord', patientId });
@@ -457,20 +467,27 @@ export class PatientIdentityService {
   ): Promise<void> {
     try {
       const { error } = await this.supabase
-        .from("patients")
+        .from('patients')
         .update({
           identity_verification_level: result.verificationLevel,
           identity_verification_date: result.timestamp.toISOString(),
           identity_risk_score: result.riskScore,
           cfm_identity_compliant: result.complianceStatus.cfmCompliant,
         })
-        .eq("id", patientId);
+        .eq('id', patientId);
 
       if (error) {
-        logHealthcareError('database', error, { method: 'updatePatientVerificationStatus', patientId, verificationLevel: result.verificationLevel });
+        logHealthcareError('database', error, {
+          method: 'updatePatientVerificationStatus',
+          patientId,
+          verificationLevel: result.verificationLevel,
+        });
       }
     } catch (error) {
-      logHealthcareError('database', error, { method: 'updatePatientVerificationStatus', patientId });
+      logHealthcareError('database', error, {
+        method: 'updatePatientVerificationStatus',
+        patientId,
+      });
     }
   }
 
@@ -479,16 +496,16 @@ export class PatientIdentityService {
    */
   private validateCPF(cpf: string): { valid: boolean; reason?: string } {
     // Remove non-numeric characters
-    cpf = cpf.replace(/[^\d]/g, "");
+    cpf = cpf.replace(/[^\d]/g, '');
 
     // Check if has 11 digits
     if (cpf.length !== 11) {
-      return { valid: false, reason: "CPF must have 11 digits" };
+      return { valid: false, reason: 'CPF must have 11 digits' };
     }
 
     // Check if all digits are the same
     if (/^(\d)\1{10}$/.test(cpf)) {
-      return { valid: false, reason: "CPF cannot have all identical digits" };
+      return { valid: false, reason: 'CPF cannot have all identical digits' };
     }
 
     // Validate check digits
@@ -499,7 +516,7 @@ export class PatientIdentityService {
     let remainder = (sum * 10) % 11;
     if (remainder === 10 || remainder === 11) remainder = 0;
     if (remainder !== parseInt(cpf.charAt(9))) {
-      return { valid: false, reason: "Invalid CPF check digit" };
+      return { valid: false, reason: 'Invalid CPF check digit' };
     }
 
     sum = 0;
@@ -509,7 +526,7 @@ export class PatientIdentityService {
     remainder = (sum * 10) % 11;
     if (remainder === 10 || remainder === 11) remainder = 0;
     if (remainder !== parseInt(cpf.charAt(10))) {
-      return { valid: false, reason: "Invalid CPF check digit" };
+      return { valid: false, reason: 'Invalid CPF check digit' };
     }
 
     return { valid: true };
@@ -523,7 +540,7 @@ export class PatientIdentityService {
 
   private validateCNS(cns: string): boolean {
     // CNS (Cartão Nacional de Saúde) validation
-    cns = cns.replace(/[^\d]/g, "");
+    cns = cns.replace(/[^\d]/g, '');
 
     if (cns.length !== 15) return false;
 
@@ -565,7 +582,7 @@ export class PatientIdentityService {
       // For demonstration, we'll perform basic validation
 
       let confidence = 0;
-      let method = "basic_validation";
+      let method = 'basic_validation';
 
       // Basic format validation
       if (address.zipCode && /^\d{5}-?\d{3}$/.test(address.zipCode)) {
@@ -588,7 +605,7 @@ export class PatientIdentityService {
 
       // Store address verification record
       if (verified) {
-        await this.supabase.from("patient_address_verifications").insert({
+        await this.supabase.from('patient_address_verifications').insert({
           patient_id: patientId,
           zip_code: address.zipCode,
           state: address.state,
@@ -603,8 +620,12 @@ export class PatientIdentityService {
 
       return { verified, confidence, method };
     } catch (error) {
-      logHealthcareError('database', error, { method: 'verifyPatientAddress', patientId, address: { zipCode: address.zipCode, state: address.state } });
-      return { verified: false, confidence: 0, method: "error" };
+      logHealthcareError('database', error, {
+        method: 'verifyPatientAddress',
+        patientId,
+        address: { zipCode: address.zipCode, state: address.state },
+      });
+      return { verified: false, confidence: 0, method: 'error' };
     }
   }
 
@@ -617,24 +638,24 @@ export class PatientIdentityService {
     crmState: string,
   ): Promise<{
     isValid: boolean;
-    verificationLevel: "basic" | "enhanced" | "biometric";
+    verificationLevel: 'basic' | 'enhanced' | 'biometric';
     documentsVerified: string[];
     errors: string[];
   }> {
     try {
       // Get physician data
       const { data: physician, error } = await this.supabase
-        .from("physicians")
-        .select("cpf, rg, full_name, crm_number, crm_state")
-        .eq("id", physicianId)
+        .from('physicians')
+        .select('cpf, rg, full_name, crm_number, crm_state')
+        .eq('id', physicianId)
         .single();
 
       if (error || !physician) {
         return {
           isValid: false,
-          verificationLevel: "basic",
+          verificationLevel: 'basic',
           documentsVerified: [],
-          errors: ["Physician not found"],
+          errors: ['Physician not found'],
         };
       }
 
@@ -643,35 +664,34 @@ export class PatientIdentityService {
 
       // Validate CRM matches
       if (
-        physician.crm_number !== crmNumber ||
-        physician.crm_state !== crmState
+        physician.crm_number !== crmNumber
+        || physician.crm_state !== crmState
       ) {
-        errors.push("CRM number or state mismatch");
+        errors.push('CRM number or state mismatch');
       } else {
-        documentsVerified.push("CRM");
+        documentsVerified.push('CRM');
       }
 
       // Validate CPF
       if (physician.cpf) {
         if (this.validateCPF(physician.cpf)) {
-          documentsVerified.push("CPF");
+          documentsVerified.push('CPF');
         } else {
-          errors.push("Invalid CPF format");
+          errors.push('Invalid CPF format');
         }
       } else {
-        errors.push("CPF is required");
+        errors.push('CPF is required');
       }
 
       // Validate RG
       if (physician.rg) {
-        documentsVerified.push("RG");
+        documentsVerified.push('RG');
       } else {
-        errors.push("RG is required");
+        errors.push('RG is required');
       }
 
       const isValid = errors.length === 0 && documentsVerified.length >= 2;
-      const verificationLevel =
-        documentsVerified.length >= 3 ? "enhanced" : "basic";
+      const verificationLevel = documentsVerified.length >= 3 ? 'enhanced' : 'basic';
 
       return {
         isValid,
@@ -680,13 +700,18 @@ export class PatientIdentityService {
         errors,
       };
     } catch (error) {
-      logHealthcareError('database', error, { method: 'verifyPhysicianIdentity', physicianId, crmNumber, crmState });
+      logHealthcareError('database', error, {
+        method: 'verifyPhysicianIdentity',
+        physicianId,
+        crmNumber,
+        crmState,
+      });
       return {
         isValid: false,
-        verificationLevel: "basic",
+        verificationLevel: 'basic',
         documentsVerified: [],
         errors: [
-          error instanceof Error ? error.message : "Verification failed",
+          error instanceof Error ? error.message : 'Verification failed',
         ],
       };
     }

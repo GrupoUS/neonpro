@@ -1,17 +1,17 @@
-import { SupabaseClient } from "@supabase/supabase-js";
-import { PatientRepository } from "../repositories/patient-repository.js";
-import { ConsentRepository } from "../repositories/consent-repository.js";
-import { AppointmentRepository } from "../repositories/appointment-repository.js";
-import { AuditService } from "../services/audit-service.js";
-import { ConsentService } from "../services/consent-service.js";
 import {
-  PatientRepository as IPatientRepository,
-  ConsentRepository as IConsentRepository,
   AppointmentRepository as IAppointmentRepository,
-  ConsentDomainService,
   AuditDomainService,
+  ConsentDomainService,
+  ConsentRepository as IConsentRepository,
   MedicalLicenseDomainService,
-} from "@neonpro/domain";
+  PatientRepository as IPatientRepository,
+} from '@neonpro/domain';
+import { SupabaseClient } from '@supabase/supabase-js';
+import { AppointmentRepository } from '../repositories/appointment-repository.js';
+import { ConsentRepository } from '../repositories/consent-repository.js';
+import { PatientRepository } from '../repositories/patient-repository.js';
+import { AuditService } from '../services/audit-service.js';
+import { ConsentService } from '../services/consent-service.js';
 
 /**
  * Dependency injection container for repositories and services
@@ -51,7 +51,7 @@ export class RepositoryContainer {
   static getInstance(): RepositoryContainer {
     if (!RepositoryContainer.instance) {
       throw new Error(
-        "RepositoryContainer not initialized. Call initialize() first.",
+        'RepositoryContainer not initialized. Call initialize() first.',
       );
     }
     return RepositoryContainer.instance;
@@ -93,8 +93,7 @@ export class RepositoryContainer {
   getAuditService(): AuditDomainService {
     if (!this.auditService) {
       const auditInfrastructureService = new AuditService(this.supabase);
-      this.auditService =
-        auditInfrastructureService as unknown as AuditDomainService;
+      this.auditService = auditInfrastructureService as unknown as AuditDomainService;
     }
     return this.auditService;
   }
@@ -105,8 +104,7 @@ export class RepositoryContainer {
   getConsentService(): ConsentDomainService {
     if (!this.consentService) {
       const consentInfrastructureService = new ConsentService();
-      this.consentService =
-        consentInfrastructureService as unknown as ConsentDomainService;
+      this.consentService = consentInfrastructureService as unknown as ConsentDomainService;
     }
     return this.consentService;
   }
@@ -118,7 +116,7 @@ export class RepositoryContainer {
     if (!this.medicalLicenseService) {
       // This would need to be implemented in the database layer
       throw new Error(
-        "MedicalLicenseService not implemented in database layer",
+        'MedicalLicenseService not implemented in database layer',
       );
     }
     return this.medicalLicenseService;

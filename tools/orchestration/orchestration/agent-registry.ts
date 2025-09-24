@@ -1,4 +1,4 @@
-import type { AgentType, AgentStats, AgentCapability } from "./types";
+import type { AgentCapability, AgentStats, AgentType } from './types';
 
 export class TDDAgentRegistry {
   private agents: Map<AgentType, AgentCapability> = new Map();
@@ -11,58 +11,58 @@ export class TDDAgentRegistry {
   initializeDefaultAgents(): void {
     const defaultAgents: AgentCapability[] = [
       {
-        type: "tdd-orchestrator",
-        name: "TDD Orchestrator",
-        description: "Main orchestration agent",
-        capabilities: ["orchestration", "coordination"],
-        specializations: ["tdd", "workflow"],
-        priority: "primary",
-        phases: ["red", "green", "refactor"],
-        triggers: ["orchestrate", "coordinate"],
+        type: 'tdd-orchestrator',
+        name: 'TDD Orchestrator',
+        description: 'Main orchestration agent',
+        capabilities: ['orchestration', 'coordination'],
+        specializations: ['tdd', 'workflow'],
+        priority: 'primary',
+        phases: ['red', 'green', 'refactor'],
+        triggers: ['orchestrate', 'coordinate'],
         configuration: {},
       },
       {
-        type: "test",
-        name: "Test Agent",
-        description: "Testing specialist",
-        capabilities: ["testing", "validation"],
-        specializations: ["unit", "integration", "e2e"],
-        priority: "primary",
-        phases: ["red", "green"],
-        triggers: ["test", "validate"],
+        type: 'test',
+        name: 'Test Agent',
+        description: 'Testing specialist',
+        capabilities: ['testing', 'validation'],
+        specializations: ['unit', 'integration', 'e2e'],
+        priority: 'primary',
+        phases: ['red', 'green'],
+        triggers: ['test', 'validate'],
         configuration: {},
       },
       {
-        type: "architect-review",
-        name: "Architect Review",
-        description: "Architecture review specialist",
-        capabilities: ["architecture", "review"],
-        specializations: ["design", "patterns"],
-        priority: "secondary",
-        phases: ["red"],
-        triggers: ["architecture", "design"],
+        type: 'architect-review',
+        name: 'Architect Review',
+        description: 'Architecture review specialist',
+        capabilities: ['architecture', 'review'],
+        specializations: ['design', 'patterns'],
+        priority: 'secondary',
+        phases: ['red'],
+        triggers: ['architecture', 'design'],
         configuration: {},
       },
       {
-        type: "security-auditor",
-        name: "Security Auditor",
-        description: "Security audit specialist",
-        capabilities: ["security", "audit"],
-        specializations: ["security", "compliance"],
-        priority: "secondary",
-        phases: ["red", "green"],
-        triggers: ["security", "audit"],
+        type: 'security-auditor',
+        name: 'Security Auditor',
+        description: 'Security audit specialist',
+        capabilities: ['security', 'audit'],
+        specializations: ['security', 'compliance'],
+        priority: 'secondary',
+        phases: ['red', 'green'],
+        triggers: ['security', 'audit'],
         configuration: {},
       },
       {
-        type: "code-reviewer",
-        name: "Code Reviewer",
-        description: "Code review specialist",
-        capabilities: ["review", "quality"],
-        specializations: ["code", "quality"],
-        priority: "primary",
-        phases: ["green"],
-        triggers: ["review", "quality"],
+        type: 'code-reviewer',
+        name: 'Code Reviewer',
+        description: 'Code review specialist',
+        capabilities: ['review', 'quality'],
+        specializations: ['code', 'quality'],
+        priority: 'primary',
+        phases: ['green'],
+        triggers: ['review', 'quality'],
         configuration: {},
       },
     ];
@@ -92,15 +92,11 @@ export class TDDAgentRegistry {
 
   // Method names expected by tests
   getAgentsForPhase(phase: string, _context?: any): AgentCapability[] {
-    return this.getAllAgents().filter((agent) =>
-      agent.phases.includes(phase as any),
-    );
+    return this.getAllAgents().filter(agent => agent.phases.includes(phase as any));
   }
 
   getAgentsForCapability(capability: string): AgentCapability[] {
-    return this.getAllAgents().filter((agent) =>
-      agent.capabilities.includes(capability),
-    );
+    return this.getAllAgents().filter(agent => agent.capabilities.includes(capability));
   }
 
   selectOptimalAgents(_context: any, _requirements?: any): AgentCapability[] {
@@ -115,12 +111,12 @@ export class TDDAgentRegistry {
     agentOrName: AgentCapability | string,
     capability?: string,
   ): boolean {
-    if (typeof agentOrName === "string" && capability) {
+    if (typeof agentOrName === 'string' && capability) {
       const agent = Array.from(this.agents.values()).find(
-        (a) => a.name === agentOrName,
+        a => a.name === agentOrName,
       );
       return agent?.capabilities?.includes(capability) || false;
-    } else if (typeof agentOrName === "object") {
+    } else if (typeof agentOrName === 'object') {
       // Validate if agent has all required capabilities based on context
       return true; // Simplified validation for tests
     }
@@ -128,12 +124,12 @@ export class TDDAgentRegistry {
   }
 
   getRecommendedWorkflow(_context: any): string {
-    return "standard-workflow";
+    return 'standard-workflow';
   }
 
   updateAgentConfiguration(agentName: string, config: any): boolean {
     const agent = Array.from(this.agents.values()).find(
-      (a) => a.name === agentName,
+      a => a.name === agentName,
     );
     if (agent) {
       Object.assign(agent.configuration, config);
@@ -161,14 +157,13 @@ export class TDDAgentRegistry {
       stats.executionCount++;
       stats.lastExecution = new Date();
       stats.averageExecutionTime =
-        (stats.averageExecutionTime * (stats.executionCount - 1) + duration) /
-        stats.executionCount;
+        (stats.averageExecutionTime * (stats.executionCount - 1) + duration)
+        / stats.executionCount;
 
       const successCount = Math.floor(
         stats.successRate * (stats.executionCount - 1),
       );
-      stats.successRate =
-        (successCount + (success ? 1 : 0)) / stats.executionCount;
+      stats.successRate = (successCount + (success ? 1 : 0)) / stats.executionCount;
     }
   }
 

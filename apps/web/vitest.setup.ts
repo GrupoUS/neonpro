@@ -1,4 +1,4 @@
-import { beforeAll, afterEach, afterAll } from 'vitest';
+import { afterAll, afterEach, beforeAll } from 'vitest';
 import { server } from './src/test/mocks/handlers';
 
 // Setup MSW server

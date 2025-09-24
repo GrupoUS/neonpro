@@ -10,12 +10,12 @@
  * - Compliance with Brazilian healthcare security standards
  */
 
-import { createAdminClient } from '../clients/supabase';
-import { EnhancedSessionManager } from './enhanced-session-manager';
-import { logger } from '../lib/logger';
-import { speakeasy } from 'speakeasy';
-import { qrcode } from 'qrcode';
 import crypto from 'crypto';
+import { qrcode } from 'qrcode';
+import { speakeasy } from 'speakeasy';
+import { createAdminClient } from '../clients/supabase';
+import { logger } from '../lib/logger';
+import { EnhancedSessionManager } from './enhanced-session-manager';
 
 // TOTP Configuration
 const TOTP_CONFIG = {
@@ -130,7 +130,11 @@ export class AestheticMFAService {
   /**
    * Initialize MFA setup for a user
    */
-  async initializeMFASetup(userId: string, userIP: string, userAgent: string): Promise<MFASetupData> {
+  async initializeMFASetup(
+    userId: string,
+    userIP: string,
+    userAgent: string,
+  ): Promise<MFASetupData> {
     try {
       // Check if MFA is already set up
       const existingMFA = await this.getUserMFAStatus(userId);
@@ -509,7 +513,11 @@ export class AestheticMFAService {
   /**
    * Generate new backup codes
    */
-  async generateNewBackupCodes(userId: string, userIP: string, userAgent: string): Promise<string[]> {
+  async generateNewBackupCodes(
+    userId: string,
+    userIP: string,
+    userAgent: string,
+  ): Promise<string[]> {
     try {
       // Verify user is already MFA verified
       if (!this.isMFAVerified(userId)) {
@@ -561,11 +569,16 @@ export class AestheticMFAService {
   /**
    * Disable MFA for user (emergency only)
    */
-  async disableMFA(userId: string, reason: string, userIP: string, userAgent: string): Promise<boolean> {
+  async disableMFA(
+    userId: string,
+    reason: string,
+    userIP: string,
+    userAgent: string,
+  ): Promise<boolean> {
     try {
       // Remove MFA configuration
       await this.removeMFAConfiguration(userId);
-      
+
       // Update user MFA status
       await this.updateUserMFAStatus(userId, MFA_STATUS.NOT_SETUP);
 

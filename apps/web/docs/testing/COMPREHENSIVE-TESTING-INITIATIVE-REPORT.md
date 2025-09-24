@@ -213,7 +213,7 @@ describe('Patient Registration Flow', () => {
   it('should register patient with LGPD consent', async () => {
     // Complete patient registration with compliance validation
   });
-  
+
   it('should handle AI risk assessment for appointments', async () => {
     // Anti-No-Show Engine integration testing
   });

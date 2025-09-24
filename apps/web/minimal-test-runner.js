@@ -18,44 +18,44 @@ global.window = dom.window;
 Object.defineProperty(global, 'navigator', {
   value: dom.window.navigator,
   writable: false,
-  configurable: true
+  configurable: true,
 });
 
 Object.defineProperty(global, 'localStorage', {
   value: dom.window.localStorage,
   writable: false,
-  configurable: true
+  configurable: true,
 });
 
 Object.defineProperty(global, 'sessionStorage', {
   value: dom.window.sessionStorage,
   writable: false,
-  configurable: true
+  configurable: true,
 });
 
 Object.defineProperty(global, 'location', {
   value: dom.window.location,
   writable: false,
-  configurable: true
+  configurable: true,
 });
 
 Object.defineProperty(global, 'history', {
   value: dom.window.history,
   writable: false,
-  configurable: true
+  configurable: true,
 });
 
 Object.defineProperty(global, 'URL', {
   value: dom.window.URL,
   writable: false,
-  configurable: true
+  configurable: true,
 });
 
 console.log('✅ DOM environment setup complete');
 
 // Mock React and testing library for basic component testing
 const React = {
-  useState: (initial) => [initial, () => {}],
+  useState: initial => [initial, () => {}],
   useEffect: () => {},
   createElement: (type, props, ...children) => {
     const element = document.createElement(type === 'div' ? 'div' : 'span');
@@ -69,57 +69,57 @@ const React = {
       element.textContent = children.join(' ');
     }
     return element;
-  }
+  },
 };
 
 global.React = React;
 
 // Simple testing library mock
 const _testingLibrary = {
-  render: (component) => {
+  render: component => {
     const container = document.createElement('div');
     container.id = 'root';
-    
+
     // Simple component renderer - just append the component directly
     if (component && typeof component === 'object') {
       container.appendChild(component);
     }
-    
+
     document.body.appendChild(container);
-    
+
     const screen = {
-      getByTestId: (testId) => {
+      getByTestId: testId => {
         const element = document.querySelector(`[data-testid="${testId}"]`);
         if (!element) {
           throw new Error(`Unable to find an element with the testid: ${testId}`);
         }
         return element;
       },
-      queryByTestId: (testId) => {
+      queryByTestId: testId => {
         return document.querySelector(`[data-testid="${testId}"]`);
-      }
+      },
     };
-    
+
     return { container, screen };
   },
   fireEvent: {
-    click: (element) => {
+    click: element => {
       element.click();
     },
     change: (element, value) => {
       element.value = value;
       element.dispatchEvent(new Event('change', { bubbles: true }));
-    }
+    },
   },
-  waitFor: async (callback) => {
+  waitFor: async callback => {
     await new Promise(resolve => setTimeout(resolve, 0));
     return callback();
-  }
+  },
 };
 
 // Mock vi functions
 const vi = {
-  fn: (impl) => {
+  fn: impl => {
     const mockFn = impl || (() => {});
     mockFn.mock = {
       calls: [],
@@ -127,7 +127,7 @@ const vi = {
       clear: () => {
         mockFn.mock.calls = [];
         mockFn.mock.instances = [];
-      }
+      },
     };
     mockFn.mockClear = () => {
       mockFn.mock.calls = [];
@@ -136,8 +136,8 @@ const vi = {
     return mockFn;
   },
   clearAllMocks: () => {},
-  beforeEach: (callback) => callback(),
-  afterEach: (callback) => callback(),
+  beforeEach: callback => callback(),
+  afterEach: callback => callback(),
   describe: (name, callback) => {
     console.log(`\n📋 ${name}`);
     callback();
@@ -151,8 +151,8 @@ const vi = {
       throw error;
     }
   },
-  expect: (actual) => ({
-    toBe: (expected) => {
+  expect: actual => ({
+    toBe: expected => {
       if (actual !== expected) {
         throw new Error(`Expected ${expected} but got ${actual}`);
       }
@@ -166,8 +166,8 @@ const vi = {
       if (!actual.mock || actual.mock.calls.length === 0) {
         throw new Error('Function was not called');
       }
-    }
-  })
+    },
+  }),
 };
 
 global.vi = vi;
@@ -183,38 +183,37 @@ try {
       testDiv.setAttribute('data-testid', 'test-div');
       testDiv.textContent = 'Test Content';
       document.body.appendChild(testDiv);
-      
+
       const element = document.querySelector('[data-testid="test-div"]');
       vi.expect(element).toBeInTheDocument();
       vi.expect(element.textContent).toBe('Test Content');
     });
-    
+
     vi.it('should handle basic form interactions', () => {
       const form = document.createElement('form');
       form.setAttribute('data-testid', 'test-form');
-      
+
       const nameInput = document.createElement('input');
       nameInput.setAttribute('data-testid', 'name-input');
       nameInput.type = 'text';
       form.appendChild(nameInput);
-      
+
       const submitButton = document.createElement('button');
       submitButton.setAttribute('data-testid', 'submit-button');
       submitButton.type = 'submit';
       submitButton.textContent = 'Submit';
       form.appendChild(submitButton);
-      
+
       document.body.appendChild(form);
-      
+
       // Verify form elements exist
       vi.expect(document.querySelector('[data-testid="test-form"]')).toBeInTheDocument();
       vi.expect(document.querySelector('[data-testid="name-input"]')).toBeInTheDocument();
       vi.expect(document.querySelector('[data-testid="submit-button"]')).toBeInTheDocument();
     });
   });
-  
+
   console.log('\n🎉 All tests passed! DOM setup is working correctly.');
-  
 } catch (error) {
   console.error('❌ Test failed:', error.message);
   process.exit(1);

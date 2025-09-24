@@ -1,10 +1,10 @@
+import { createTDDOrchestrationSystem } from './orchestration-system';
 import type {
   FeatureContext,
   OrchestrationOptions,
   OrchestrationResult,
   QualityControlResult,
-} from "./types";
-import { createTDDOrchestrationSystem } from "./orchestration-system";
+} from './types';
 
 export async function executeQualityControl(
   command: string,
@@ -16,7 +16,7 @@ export async function executeQualityControl(
     enableCommunication: true,
     enableMetrics: true,
     enableCompliance: true,
-    healthcareMode: command.includes("--healthcare"),
+    healthcareMode: command.includes('--healthcare'),
   });
 
   await system.initialize();
@@ -78,28 +78,28 @@ export async function runTDDCycle(
 }
 
 function parseQualityControlCommand(command: string): any {
-  const parts = command.split(" ");
+  const parts = command.split(' ');
   const context: any = {
-    action: "analyze",
-    type: "general",
+    action: 'analyze',
+    type: 'general',
     parallel: false,
     agents: [],
-    coordination: "sequential",
+    coordination: 'sequential',
     healthcare: false,
   };
 
   for (const part of parts) {
-    if (part === "--parallel") {
+    if (part === '--parallel') {
       context.parallel = true;
-      context.coordination = "parallel";
-    } else if (part === "--healthcare") {
+      context.coordination = 'parallel';
+    } else if (part === '--healthcare') {
       context.healthcare = true;
-    } else if (part.startsWith("--type=")) {
-      context.type = part.split("=")[1];
-    } else if (part.startsWith("--agents=")) {
-      context.agents = part.split("=")[1].split(",");
-    } else if (part.startsWith("--depth=")) {
-      context.depth = part.split("=")[1];
+    } else if (part.startsWith('--type=')) {
+      context.type = part.split('=')[1];
+    } else if (part.startsWith('--agents=')) {
+      context.agents = part.split('=')[1].split(',');
+    } else if (part.startsWith('--depth=')) {
+      context.depth = part.split('=')[1];
     }
   }
 

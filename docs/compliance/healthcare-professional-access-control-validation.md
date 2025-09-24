@@ -39,13 +39,13 @@ This document establishes streamlined validation procedures for aesthetic profes
 interface ProfessionalLicenseValidation {
   license_number: string;
   professional_name: string;
-  council_type: "CFM" | "COREN" | "CFF" | "CNEP";
+  council_type: 'CFM' | 'COREN' | 'CFF' | 'CNEP';
   specialty:
-    | "dermatologia"
-    | "cirurgia_plastica"
-    | "enfermagem_estetica"
-    | "estetica";
-  license_status: "active" | "suspended" | "cancelled" | "expired";
+    | 'dermatologia'
+    | 'cirurgia_plastica'
+    | 'enfermagem_estetica'
+    | 'estetica';
+  license_status: 'active' | 'suspended' | 'cancelled' | 'expired';
   expiration_date: string;
   restrictions: string[];
   authorized_procedures: AestheticProcedure[];
@@ -159,8 +159,8 @@ Required Validations:
 interface AccessTimeRestrictions {
   user_role: ProfessionalRole;
   allowed_hours: {
-    monday_friday: { start: "07:00"; end: "19:00" };
-    saturday: { start: "08:00"; end: "14:00" };
+    monday_friday: { start: '07:00'; end: '19:00' };
+    saturday: { start: '08:00'; end: '14:00' };
     sunday: { start: null; end: null }; // No access
   };
   emergency_override: boolean;
@@ -181,8 +181,8 @@ interface LocationAccessControl {
     desktop: boolean;
   };
   geographic_restrictions: {
-    country: "BR"; // Brazil only
-    states: ["SP", "RJ", "MG"]; // Authorized states
+    country: 'BR'; // Brazil only
+    states: ['SP', 'RJ', 'MG']; // Authorized states
   };
 }
 ```
@@ -224,11 +224,11 @@ echo "Daily validation completed - $(date)"
 ```typescript
 interface ValidationAlert {
   alert_type:
-    | "license_expiring"
-    | "unauthorized_access"
-    | "suspicious_activity";
+    | 'license_expiring'
+    | 'unauthorized_access'
+    | 'suspicious_activity';
   professional_id: string;
-  severity: "low" | "medium" | "high" | "critical";
+  severity: 'low' | 'medium' | 'high' | 'critical';
   message: string;
   recommended_action: string;
   auto_remediation: boolean;
@@ -237,19 +237,19 @@ interface ValidationAlert {
 // Examples of automated alerts
 const alerts: ValidationAlert[] = [
   {
-    alert_type: "license_expiring",
-    professional_id: "CFM123456",
-    severity: "high",
-    message: "Professional license expires in 30 days",
-    recommended_action: "Contact professional for license renewal",
+    alert_type: 'license_expiring',
+    professional_id: 'CFM123456',
+    severity: 'high',
+    message: 'Professional license expires in 30 days',
+    recommended_action: 'Contact professional for license renewal',
     auto_remediation: false,
   },
   {
-    alert_type: "unauthorized_access",
-    professional_id: "COREN789012",
-    severity: "critical",
-    message: "Access attempt outside authorized hours",
-    recommended_action: "Immediately disable account and investigate",
+    alert_type: 'unauthorized_access',
+    professional_id: 'COREN789012',
+    severity: 'critical',
+    message: 'Access attempt outside authorized hours',
+    recommended_action: 'Immediately disable account and investigate',
     auto_remediation: true,
   },
 ];
@@ -303,7 +303,7 @@ interface WeeklyAuditReport {
 
 ```typescript
 interface EmergencyAccess {
-  emergency_type: "client_safety" | "system_failure" | "data_recovery";
+  emergency_type: 'client_safety' | 'system_failure' | 'data_recovery';
   requesting_professional: string;
   professional_license: string;
   council_type: string;
@@ -528,8 +528,8 @@ General Aesthetics:
 
 ```typescript
 interface ProfessionalMFA {
-  primary_factor: "cfm_smartcard" | "biometric" | "password";
-  secondary_factor: "sms_code" | "app_token" | "hardware_key";
+  primary_factor: 'cfm_smartcard' | 'biometric' | 'password';
+  secondary_factor: 'sms_code' | 'app_token' | 'hardware_key';
   backup_methods: string[];
   session_timeout_minutes: number;
   device_registration_required: boolean;
@@ -565,14 +565,14 @@ interface ProfessionalAuditLog {
   professional_id: string;
   cfm_license: string;
   action_type:
-    | "login"
-    | "logout"
-    | "data_access"
-    | "data_modification"
-    | "procedure_record";
+    | 'login'
+    | 'logout'
+    | 'data_access'
+    | 'data_modification'
+    | 'procedure_record';
   resource_accessed: string;
   patient_id?: string;
-  result: "success" | "failure" | "unauthorized";
+  result: 'success' | 'failure' | 'unauthorized';
   ip_address: string;
   user_agent: string;
   session_id: string;
@@ -587,22 +587,22 @@ interface ProfessionalAuditLog {
 interface AnomalyDetection {
   professional_id: string;
   anomaly_type:
-    | "unusual_hours"
-    | "suspicious_location"
-    | "bulk_data_access"
-    | "unauthorized_procedure";
+    | 'unusual_hours'
+    | 'suspicious_location'
+    | 'bulk_data_access'
+    | 'unauthorized_procedure';
   risk_score: number;
   detected_at: string;
   details: {
     expected_pattern: string;
     actual_pattern: string;
-    deviation_severity: "low" | "medium" | "high" | "critical";
+    deviation_severity: 'low' | 'medium' | 'high' | 'critical';
   };
   automated_response:
-    | "log_only"
-    | "alert_supervisor"
-    | "suspend_access"
-    | "immediate_logout";
+    | 'log_only'
+    | 'alert_supervisor'
+    | 'suspend_access'
+    | 'immediate_logout';
 }
 ```
 
@@ -616,14 +616,14 @@ interface AnomalyDetection {
 
 ```typescript
 interface CFMAPIIntegration {
-  endpoint: "https://api.portal.cfm.org.br/v2/license-verification";
-  authentication: "oauth2" | "api_key";
+  endpoint: 'https://api.portal.cfm.org.br/v2/license-verification';
+  authentication: 'oauth2' | 'api_key';
   rate_limits: {
     requests_per_minute: 60;
     daily_quota: 10000;
   };
   response_format: {
-    license_status: "active" | "suspended" | "expired" | "cancelled";
+    license_status: 'active' | 'suspended' | 'expired' | 'cancelled';
     professional_name: string;
     specialties: string[];
     expiration_date: string;
@@ -638,15 +638,15 @@ interface CFMAPIIntegration {
 
 ```typescript
 interface CRMIntegration {
-  supported_states: ["SP", "RJ", "MG", "RS", "PR", "SC"];
+  supported_states: ['SP', 'RJ', 'MG', 'RS', 'PR', 'SC'];
   verification_endpoints: {
-    SP: "https://api.cremesp.org.br/";
-    RJ: "https://api.cremerj.org.br/";
-    MG: "https://api.cremg.org.br/";
+    SP: 'https://api.cremesp.org.br/';
+    RJ: 'https://api.cremerj.org.br/';
+    MG: 'https://api.cremg.org.br/';
     // ... other states
   };
-  synchronization_frequency: "daily";
-  backup_verification: "manual_process";
+  synchronization_frequency: 'daily';
+  backup_verification: 'manual_process';
 }
 ```
 

@@ -1,15 +1,18 @@
-import { z } from 'zod';
 import { MultiProfessionalCoordinationService } from '@neonpro/core-services';
+import { z } from 'zod';
 import { SuccessResponseSchema } from '~/shared/schemas';
 import { protectedProcedure, router } from '../trpc';
 
 // Input schemas with validation
 const ProfessionalTeamInputSchema = z.object({
   clinicId: z.string().uuid('ID da clínica inválido'),
-  name: z.string().min(1, 'Nome da equipe é obrigatório').max(100, 'Nome não pode exceder 100 caracteres'),
+  name: z.string().min(1, 'Nome da equipe é obrigatório').max(
+    100,
+    'Nome não pode exceder 100 caracteres',
+  ),
   description: z.string().optional(),
   teamType: z.enum(['multidisciplinary', 'specialized', 'consultation', 'emergency'], {
-    errorMap: () => ({ message: 'Tipo de equipe inválido' })
+    errorMap: () => ({ message: 'Tipo de equipe inválido' }),
   }),
 });
 
@@ -17,7 +20,7 @@ const TeamMemberInputSchema = z.object({
   teamId: z.string().uuid('ID da equipe inválido'),
   professionalId: z.string().uuid('ID do profissional inválido'),
   role: z.enum(['leader', 'coordinator', 'member', 'consultant', 'supervisor'], {
-    errorMap: () => ({ message: 'Função inválida' })
+    errorMap: () => ({ message: 'Função inválida' }),
   }),
   permissions: z.record(z.any()).optional(),
   scopeLimitations: z.array(z.string()).optional(),
@@ -27,13 +30,16 @@ const ProfessionalReferralInputSchema = z.object({
   patientId: z.string().uuid('ID do paciente inválido'),
   referringProfessionalId: z.string().uuid('ID do profissional referenciador inválido'),
   referredProfessionalId: z.string().uuid('ID do profissional referenciado inválido'),
-  referralType: z.enum(['consultation', 'treatment', 'assessment', 'supervision', 'second_opinion'], {
-    errorMap: () => ({ message: 'Tipo de encaminhamento inválido' })
-  }),
+  referralType: z.enum(
+    ['consultation', 'treatment', 'assessment', 'supervision', 'second_opinion'],
+    {
+      errorMap: () => ({ message: 'Tipo de encaminhamento inválido' }),
+    },
+  ),
   reason: z.string().min(1, 'Motivo do encaminhamento é obrigatório'),
   clinicalNotes: z.string().optional(),
   urgencyLevel: z.enum(['low', 'medium', 'high', 'emergency'], {
-    errorMap: () => ({ message: 'Nível de urgência inválido' })
+    errorMap: () => ({ message: 'Nível de urgência inválido' }),
   }),
   responseDeadline: z.date().optional(),
 });
@@ -42,9 +48,12 @@ const CollaborativeSessionInputSchema = z.object({
   patientId: z.string().uuid('ID do paciente inválido'),
   teamId: z.string().uuid('ID da equipe inválido'),
   sessionType: z.enum(['planning', 'treatment', 'assessment', 'follow_up', 'emergency'], {
-    errorMap: () => ({ message: 'Tipo de sessão inválido' })
+    errorMap: () => ({ message: 'Tipo de sessão inválido' }),
   }),
-  title: z.string().min(1, 'Título da sessão é obrigatório').max(200, 'Título não pode exceder 200 caracteres'),
+  title: z.string().min(1, 'Título da sessão é obrigatório').max(
+    200,
+    'Título não pode exceder 200 caracteres',
+  ),
   description: z.string().optional(),
   scheduledStart: z.date('Data de início inválida'),
   scheduledEnd: z.date('Data de término inválida'),
@@ -57,7 +66,7 @@ const SessionParticipantInputSchema = z.object({
   sessionId: z.string().uuid('ID da sessão inválido'),
   professionalId: z.string().uuid('ID do profissional inválido'),
   role: z.enum(['primary', 'secondary', 'observer', 'consultant', 'supervisor'], {
-    errorMap: () => ({ message: 'Função do participante inválida' })
+    errorMap: () => ({ message: 'Função do participante inválida' }),
   }),
   responsibilities: z.array(z.string()).optional(),
 });
@@ -67,17 +76,33 @@ const CoordinationThreadInputSchema = z.object({
   teamId: z.string().uuid().optional(),
   sessionId: z.string().uuid().optional(),
   referralId: z.string().uuid().optional(),
-  subject: z.string().min(1, 'Assunto é obrigatório').max(200, 'Assunto não pode exceder 200 caracteres'),
-  contextType: z.enum(['patient_care', 'treatment_planning', 'consultation', 'urgent', 'administrative'], {
-    errorMap: () => ({ message: 'Tipo de contexto inválido' })
+  subject: z.string().min(1, 'Assunto é obrigatório').max(
+    200,
+    'Assunto não pode exceder 200 caracteres',
+  ),
+  contextType: z.enum([
+    'patient_care',
+    'treatment_planning',
+    'consultation',
+    'urgent',
+    'administrative',
+  ], {
+    errorMap: () => ({ message: 'Tipo de contexto inválido' }),
   }),
   priority: z.enum(['low', 'normal', 'high', 'urgent']).optional(),
 });
 
 const CoordinationMessageInputSchema = z.object({
   threadId: z.string().uuid('ID do tópico inválido'),
-  messageType: z.enum(['text', 'clinical_note', 'image', 'document', 'referral_request', 'treatment_update'], {
-    errorMap: () => ({ message: 'Tipo de mensagem inválido' })
+  messageType: z.enum([
+    'text',
+    'clinical_note',
+    'image',
+    'document',
+    'referral_request',
+    'treatment_update',
+  ], {
+    errorMap: () => ({ message: 'Tipo de mensagem inválido' }),
   }),
   content: z.string().optional(),
   attachmentUrl: z.string().url('URL do anexo inválida').optional(),
@@ -89,12 +114,12 @@ const ProfessionalSupervisionInputSchema = z.object({
   supervisorId: z.string().uuid('ID do supervisor inválido'),
   superviseeId: z.string().uuid('ID do supervisionado inválido'),
   supervisionType: z.enum(['clinical', 'administrative', 'mentorship', 'training'], {
-    errorMap: () => ({ message: 'Tipo de supervisão inválido' })
+    errorMap: () => ({ message: 'Tipo de supervisão inválido' }),
   }),
   scope: z.string().min(1, 'Escopo da supervisão é obrigatório'),
   requirements: z.array(z.string()).optional(),
   frequency: z.enum(['daily', 'weekly', 'monthly', 'quarterly', 'as_needed'], {
-    errorMap: () => ({ message: 'Frequência inválida' })
+    errorMap: () => ({ message: 'Frequência inválida' }),
   }),
   maxAutonomyLevel: z.number().int().min(1).max(5).optional(),
   startDate: z.date('Data de início inválida'),
@@ -116,10 +141,19 @@ const ScopeValidationInputSchema = z.object({
 
 const CoordinationProtocolInputSchema = z.object({
   clinicId: z.string().uuid('ID da clínica inválido'),
-  name: z.string().min(1, 'Nome do protocolo é obrigatório').max(100, 'Nome não pode exceder 100 caracteres'),
+  name: z.string().min(1, 'Nome do protocolo é obrigatório').max(
+    100,
+    'Nome não pode exceder 100 caracteres',
+  ),
   description: z.string().optional(),
-  protocolType: z.enum(['emergency', 'consultation', 'referral', 'treatment_coordination', 'supervision'], {
-    errorMap: () => ({ message: 'Tipo de protocolo inválido' })
+  protocolType: z.enum([
+    'emergency',
+    'consultation',
+    'referral',
+    'treatment_coordination',
+    'supervision',
+  ], {
+    errorMap: () => ({ message: 'Tipo de protocolo inválido' }),
   }),
   triggerConditions: z.array(z.string()).optional(),
   requiredProfessions: z.array(z.string()).optional(),
@@ -300,7 +334,7 @@ export const multiProfessionalCoordinationRouter = router({
         });
 
         const team = await coordinationService.createProfessionalTeam(input);
-        
+
         return {
           success: true,
           message: 'Equipe profissional criada com sucesso',
@@ -328,7 +362,7 @@ export const multiProfessionalCoordinationRouter = router({
         });
 
         const teams = await coordinationService.getProfessionalTeams(input.clinicId);
-        
+
         return {
           success: true,
           message: 'Equipes profissionais obtidas com sucesso',
@@ -354,7 +388,7 @@ export const multiProfessionalCoordinationRouter = router({
         });
 
         const member = await coordinationService.addTeamMember(input);
-        
+
         return {
           success: true,
           message: 'Membro adicionado à equipe com sucesso',
@@ -382,7 +416,7 @@ export const multiProfessionalCoordinationRouter = router({
         });
 
         await coordinationService.removeTeamMember(input.teamMemberId);
-        
+
         return {
           success: true,
           message: 'Membro removido da equipe com sucesso',
@@ -409,7 +443,7 @@ export const multiProfessionalCoordinationRouter = router({
         });
 
         const referral = await coordinationService.createReferral(input);
-        
+
         return {
           success: true,
           message: 'Encaminhamento profissional criado com sucesso',
@@ -419,7 +453,9 @@ export const multiProfessionalCoordinationRouter = router({
         console.error('Error creating referral:', error);
         return {
           success: false,
-          message: error instanceof Error ? error.message : 'Erro ao criar encaminhamento profissional',
+          message: error instanceof Error
+            ? error.message
+            : 'Erro ao criar encaminhamento profissional',
           data: null,
         };
       }
@@ -438,7 +474,7 @@ export const multiProfessionalCoordinationRouter = router({
         });
 
         const referrals = await coordinationService.getReferrals(input.professionalId, input.type);
-        
+
         return {
           success: true,
           message: 'Encaminhamentos obtidos com sucesso',
@@ -466,12 +502,14 @@ export const multiProfessionalCoordinationRouter = router({
         const referral = await coordinationService.respondToReferral(
           input.referralId,
           input.response,
-          input.responseNotes
+          input.responseNotes,
         );
-        
+
         return {
           success: true,
-          message: `Encaminhamento ${input.response === 'accept' ? 'aceito' : 'recusado'} com sucesso`,
+          message: `Encaminhamento ${
+            input.response === 'accept' ? 'aceito' : 'recusado'
+          } com sucesso`,
           data: referral,
         };
       } catch (error) {
@@ -495,7 +533,7 @@ export const multiProfessionalCoordinationRouter = router({
         });
 
         const session = await coordinationService.createCollaborativeSession(input);
-        
+
         return {
           success: true,
           message: 'Sessão colaborativa criada com sucesso',
@@ -523,8 +561,11 @@ export const multiProfessionalCoordinationRouter = router({
           supabaseKey: process.env.SUPABASE_SERVICE_ROLE_KEY!,
         });
 
-        const sessions = await coordinationService.getCollaborativeSessions(input.clinicId, input.professionalId);
-        
+        const sessions = await coordinationService.getCollaborativeSessions(
+          input.clinicId,
+          input.professionalId,
+        );
+
         return {
           success: true,
           message: 'Sessões colaborativas obtidas com sucesso',
@@ -550,7 +591,7 @@ export const multiProfessionalCoordinationRouter = router({
         });
 
         const participant = await coordinationService.addSessionParticipant(input);
-        
+
         return {
           success: true,
           message: 'Participante adicionado à sessão com sucesso',
@@ -560,7 +601,9 @@ export const multiProfessionalCoordinationRouter = router({
         console.error('Error adding session participant:', error);
         return {
           success: false,
-          message: error instanceof Error ? error.message : 'Erro ao adicionar participante à sessão',
+          message: error instanceof Error
+            ? error.message
+            : 'Erro ao adicionar participante à sessão',
           data: null,
         };
       }
@@ -577,7 +620,7 @@ export const multiProfessionalCoordinationRouter = router({
         });
 
         const thread = await coordinationService.createCoordinationThread(input);
-        
+
         return {
           success: true,
           message: 'Tópico de coordenação criado com sucesso',
@@ -605,8 +648,11 @@ export const multiProfessionalCoordinationRouter = router({
           supabaseKey: process.env.SUPABASE_SERVICE_ROLE_KEY!,
         });
 
-        const threads = await coordinationService.getCoordinationThreads(input.clinicId, input.patientId);
-        
+        const threads = await coordinationService.getCoordinationThreads(
+          input.clinicId,
+          input.patientId,
+        );
+
         return {
           success: true,
           message: 'Tópicos de coordenação obtidos com sucesso',
@@ -632,7 +678,7 @@ export const multiProfessionalCoordinationRouter = router({
         });
 
         const message = await coordinationService.addCoordinationMessage(input);
-        
+
         return {
           success: true,
           message: 'Mensagem de coordenação adicionada com sucesso',
@@ -642,7 +688,9 @@ export const multiProfessionalCoordinationRouter = router({
         console.error('Error adding coordination message:', error);
         return {
           success: false,
-          message: error instanceof Error ? error.message : 'Erro ao adicionar mensagem de coordenação',
+          message: error instanceof Error
+            ? error.message
+            : 'Erro ao adicionar mensagem de coordenação',
           data: null,
         };
       }
@@ -659,7 +707,7 @@ export const multiProfessionalCoordinationRouter = router({
         });
 
         const supervision = await coordinationService.createProfessionalSupervision(input);
-        
+
         return {
           success: true,
           message: 'Supervisão profissional criada com sucesso',
@@ -687,8 +735,11 @@ export const multiProfessionalCoordinationRouter = router({
           supabaseKey: process.env.SUPABASE_SERVICE_ROLE_KEY!,
         });
 
-        const relationships = await coordinationService.getSupervisionRelationships(input.professionalId, input.type);
-        
+        const relationships = await coordinationService.getSupervisionRelationships(
+          input.professionalId,
+          input.type,
+        );
+
         return {
           success: true,
           message: 'Relacionamentos de supervisão obtidos com sucesso',
@@ -698,7 +749,9 @@ export const multiProfessionalCoordinationRouter = router({
         console.error('Error getting supervision relationships:', error);
         return {
           success: false,
-          message: error instanceof Error ? error.message : 'Erro ao obter relacionamentos de supervisão',
+          message: error instanceof Error
+            ? error.message
+            : 'Erro ao obter relacionamentos de supervisão',
           data: [],
         };
       }
@@ -721,9 +774,9 @@ export const multiProfessionalCoordinationRouter = router({
         const validation = await coordinationService.validateProfessionalScope(
           input.professionalId,
           input.procedureId,
-          input.medicationId
+          input.medicationId,
         );
-        
+
         return {
           success: true,
           message: 'Validação de escopo profissional concluída',
@@ -749,7 +802,7 @@ export const multiProfessionalCoordinationRouter = router({
         });
 
         const validation = await coordinationService.createScopeValidation(input);
-        
+
         return {
           success: true,
           message: 'Validação de escopo criada com sucesso',
@@ -776,7 +829,7 @@ export const multiProfessionalCoordinationRouter = router({
         });
 
         const protocol = await coordinationService.createCoordinationProtocol(input);
-        
+
         return {
           success: true,
           message: 'Protocolo de coordenação criado com sucesso',
@@ -786,7 +839,9 @@ export const multiProfessionalCoordinationRouter = router({
         console.error('Error creating coordination protocol:', error);
         return {
           success: false,
-          message: error instanceof Error ? error.message : 'Erro ao criar protocolo de coordenação',
+          message: error instanceof Error
+            ? error.message
+            : 'Erro ao criar protocolo de coordenação',
           data: null,
         };
       }
@@ -804,7 +859,7 @@ export const multiProfessionalCoordinationRouter = router({
         });
 
         const protocols = await coordinationService.getCoordinationProtocols(input.clinicId);
-        
+
         return {
           success: true,
           message: 'Protocolos de coordenação obtidos com sucesso',
@@ -814,7 +869,9 @@ export const multiProfessionalCoordinationRouter = router({
         console.error('Error getting coordination protocols:', error);
         return {
           success: false,
-          message: error instanceof Error ? error.message : 'Erro ao obter protocolos de coordenação',
+          message: error instanceof Error
+            ? error.message
+            : 'Erro ao obter protocolos de coordenação',
           data: [],
         };
       }
@@ -838,9 +895,9 @@ export const multiProfessionalCoordinationRouter = router({
           input.protocolId,
           input.patientId,
           input.triggerEvent,
-          input.triggeredBy
+          input.triggeredBy,
         );
-        
+
         return {
           success: true,
           message: 'Protocolo executado com sucesso',
@@ -867,7 +924,7 @@ export const multiProfessionalCoordinationRouter = router({
         });
 
         const overdueReferrals = await coordinationService.checkOverdueReferrals();
-        
+
         return {
           success: true,
           message: 'Verificação de encaminhamentos pendentes concluída',
@@ -877,7 +934,9 @@ export const multiProfessionalCoordinationRouter = router({
         console.error('Error checking overdue referrals:', error);
         return {
           success: false,
-          message: error instanceof Error ? error.message : 'Erro ao verificar encaminhamentos pendentes',
+          message: error instanceof Error
+            ? error.message
+            : 'Erro ao verificar encaminhamentos pendentes',
           data: [],
         };
       }
@@ -887,7 +946,8 @@ export const multiProfessionalCoordinationRouter = router({
     .input(z.object({
       patientId: z.string().uuid('ID do paciente inválido'),
       treatmentPlanId: z.string().uuid('ID do plano de tratamento inválido'),
-      sessionType: z.enum(['planning', 'treatment', 'assessment', 'follow_up', 'emergency']).default('planning'),
+      sessionType: z.enum(['planning', 'treatment', 'assessment', 'follow_up', 'emergency'])
+        .default('planning'),
     }))
     .query(async ({ input }) => {
       try {
@@ -899,9 +959,9 @@ export const multiProfessionalCoordinationRouter = router({
         const session = await coordinationService.createCollaborativeSessionForTreatment(
           input.patientId,
           input.treatmentPlanId,
-          input.sessionType
+          input.sessionType,
         );
-        
+
         return {
           success: true,
           message: 'Sessão colaborativa criada para tratamento com sucesso',
@@ -911,7 +971,9 @@ export const multiProfessionalCoordinationRouter = router({
         console.error('Error creating collaborative session for treatment:', error);
         return {
           success: false,
-          message: error instanceof Error ? error.message : 'Erro ao criar sessão colaborativa para tratamento',
+          message: error instanceof Error
+            ? error.message
+            : 'Erro ao criar sessão colaborativa para tratamento',
           data: null,
         };
       }
@@ -933,8 +995,11 @@ export const multiProfessionalCoordinationRouter = router({
           supabaseKey: process.env.SUPABASE_SERVICE_ROLE_KEY!,
         });
 
-        const analytics = await coordinationService.getCoordinationAnalytics(input.clinicId, input.dateRange);
-        
+        const analytics = await coordinationService.getCoordinationAnalytics(
+          input.clinicId,
+          input.dateRange,
+        );
+
         return {
           success: true,
           message: 'Análises de coordenação obtidas com sucesso',
@@ -967,9 +1032,9 @@ export const multiProfessionalCoordinationRouter = router({
 
         const metrics = await coordinationService.getProfessionalCollaborationMetrics(
           input.professionalId,
-          input.dateRange
+          input.dateRange,
         );
-        
+
         return {
           success: true,
           message: 'Métricas de colaboração profissional obtidas com sucesso',
@@ -979,7 +1044,9 @@ export const multiProfessionalCoordinationRouter = router({
         console.error('Error getting professional collaboration metrics:', error);
         return {
           success: false,
-          message: error instanceof Error ? error.message : 'Erro ao obter métricas de colaboração profissional',
+          message: error instanceof Error
+            ? error.message
+            : 'Erro ao obter métricas de colaboração profissional',
           data: [],
         };
       }

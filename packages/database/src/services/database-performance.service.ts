@@ -3,9 +3,9 @@
  * Provides query optimization, caching, and performance monitoring for healthcare workloads
  */
 
-import { SupabaseClient } from "@supabase/supabase-js";
-import { ErrorMapper } from "@neonpro/shared/errors";
-import { databaseLogger } from "../../../shared/src/logging/healthcare-logger";
+import { ErrorMapper } from '@neonpro/shared/errors';
+import { SupabaseClient } from '@supabase/supabase-js';
+import { databaseLogger } from '../../../shared/src/logging/healthcare-logger';
 
 export interface QueryPerformanceMetrics {
   _query: string;
@@ -14,7 +14,7 @@ export interface QueryPerformanceMetrics {
   success: boolean;
   error?: string;
   table: string;
-  operation: "select" | "insert" | "update" | "delete";
+  operation: 'select' | 'insert' | 'update' | 'delete';
 }
 
 export interface CacheEntry<T> {
@@ -60,7 +60,7 @@ export class DatabasePerformanceService {
    */
   async optimizedQuery<T>(
     table: string,
-    operation: "select" | "insert" | "update" | "delete",
+    operation: 'select' | 'insert' | 'update' | 'delete',
     queryBuilder: (client: SupabaseClient) => Promise<any>,
     options: {
       cacheKey?: string;
@@ -75,10 +75,10 @@ export class DatabasePerformanceService {
 
     // Check cache first for SELECT operations
     if (
-      operation === "select" &&
-      cacheKey &&
-      this.config.enableQueryCaching &&
-      !options.forceRefresh
+      operation === 'select'
+      && cacheKey
+      && this.config.enableQueryCaching
+      && !options.forceRefresh
     ) {
       const cached = this.getFromCache<T>(cacheKey);
       if (cached) {
@@ -97,7 +97,7 @@ export class DatabasePerformanceService {
     try {
       // Execute query with specific column selection for better performance
       let result;
-      if (options.columns && operation === "select") {
+      if (options.columns && operation === 'select') {
         // Modify query to use specific columns
         result = await this.executeQueryWithColumns(
           table,
@@ -112,9 +112,9 @@ export class DatabasePerformanceService {
 
       // Cache SELECT results
       if (
-        operation === "select" &&
-        cacheKey &&
-        this.config.enableQueryCaching
+        operation === 'select'
+        && cacheKey
+        && this.config.enableQueryCaching
       ) {
         this.setToCache(cacheKey, result.data || result, this.config.cacheTTL);
       }
@@ -149,7 +149,7 @@ export class DatabasePerformanceService {
         duration,
         timestamp: new Date().toISOString(),
         success: false,
-        error: error instanceof Error ? error.message : "Unknown error",
+        error: error instanceof Error ? error.message : 'Unknown error',
         table,
         operation,
       });
@@ -202,7 +202,7 @@ export class DatabasePerformanceService {
       } catch (error) {
         results.errors.push({
           batch: i / batchSize,
-          error: error instanceof Error ? error.message : "Unknown error",
+          error: error instanceof Error ? error.message : 'Unknown error',
         });
       }
     }
@@ -215,10 +215,10 @@ export class DatabasePerformanceService {
    */
   async optimizeExpirationCheck(
     table: string,
-    dateColumn: string = "expires_at",
-    statusColumn: string = "status",
-    activeStatus: string = "ACTIVE",
-    expiredStatus: string = "EXPIRED",
+    dateColumn: string = 'expires_at',
+    statusColumn: string = 'status',
+    activeStatus: string = 'ACTIVE',
+    expiredStatus: string = 'EXPIRED',
   ): Promise<{ updatedCount: number; expiredIds: string[] }> {
     const startTime = performance.now();
 
@@ -231,7 +231,7 @@ export class DatabasePerformanceService {
         .update({ [statusColumn]: expiredStatus })
         .lte(dateColumn, now)
         .eq(statusColumn, activeStatus)
-        .select("id");
+        .select('id');
 
       const duration = performance.now() - startTime;
 
@@ -242,12 +242,12 @@ export class DatabasePerformanceService {
       }
 
       this.logPerformance({
-        query: "optimize_expiration_check",
+        query: 'optimize_expiration_check',
         duration,
         timestamp: new Date().toISOString(),
         success: true,
         table,
-        operation: "update",
+        operation: 'update',
       });
 
       return {
@@ -258,13 +258,13 @@ export class DatabasePerformanceService {
       const duration = performance.now() - startTime;
 
       this.logPerformance({
-        query: "optimize_expiration_check",
+        query: 'optimize_expiration_check',
         duration,
         timestamp: new Date().toISOString(),
         success: false,
-        error: error instanceof Error ? error.message : "Unknown error",
+        error: error instanceof Error ? error.message : 'Unknown error',
         table,
-        operation: "update",
+        operation: 'update',
       });
 
       throw error;
@@ -285,7 +285,7 @@ export class DatabasePerformanceService {
     const start = new Date(timeRange.start).getTime();
     const end = new Date(timeRange.end).getTime();
 
-    return this.metrics.filter((metric) => {
+    return this.metrics.filter(metric => {
       const metricTime = new Date(metric.timestamp).getTime();
       return metricTime >= start && metricTime <= end;
     });
@@ -312,9 +312,9 @@ export class DatabasePerformanceService {
       0,
     );
     const slowQueries = relevantMetrics.filter(
-      (metric) => metric.duration > this.config.slowQueryThreshold,
+      metric => metric.duration > this.config.slowQueryThreshold,
     );
-    const errors = relevantMetrics.filter((metric) => !metric.success);
+    const errors = relevantMetrics.filter(metric => !metric.success);
 
     return {
       totalQueries: relevantMetrics.length,
@@ -357,7 +357,7 @@ export class DatabasePerformanceService {
     // Keep only recent metrics (last 24 hours)
     const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
     this.metrics = this.metrics.filter(
-      (metric) => metric.timestamp > oneDayAgo,
+      metric => metric.timestamp > oneDayAgo,
     );
   }
 
@@ -434,7 +434,9 @@ export class DatabasePerformanceService {
     operation: string;
   }): void {
     databaseLogger.warn(
-      `Slow query detected: ${queryInfo.table}:${queryInfo.operation} took ${queryInfo.duration.toFixed(2)}ms`,
+      `Slow query detected: ${queryInfo.table}:${queryInfo.operation} took ${
+        queryInfo.duration.toFixed(2)
+      }ms`,
       {
         table: queryInfo.table,
         operation: queryInfo.operation,

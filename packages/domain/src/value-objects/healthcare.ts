@@ -9,7 +9,7 @@ export interface HealthcareInfo {
   allergies: string[];
   medications: string[];
   medicalConditions: string[];
-  bloodType?: import("./gender").BloodType;
+  bloodType?: import('./gender').BloodType;
   organDonor: boolean;
   medicalNotes?: string;
 }
@@ -19,23 +19,23 @@ export interface HealthcareInfo {
  */
 export function validateCPF(cpf: string): boolean {
   // Remove formatting
-  const cleanCPF = cpf.replace(/[^\d]/g, "");
+  const cleanCPF = cpf.replace(/[^\d]/g, '');
 
   // Check length
   if (cleanCPF.length !== 11) return false;
 
   // Check for known invalid CPFs
   const invalidCPFs = [
-    "00000000000",
-    "11111111111",
-    "22222222222",
-    "33333333333",
-    "44444444444",
-    "55555555555",
-    "66666666666",
-    "77777777777",
-    "88888888888",
-    "99999999999",
+    '00000000000',
+    '11111111111',
+    '22222222222',
+    '33333333333',
+    '44444444444',
+    '55555555555',
+    '66666666666',
+    '77777777777',
+    '88888888888',
+    '99999999999',
   ];
 
   if (invalidCPFs.includes(cleanCPF)) return false;
@@ -66,6 +66,6 @@ export function validateCPF(cpf: string): boolean {
  * Format CPF for display
  */
 export function formatCPF(cpf: string): string {
-  const cleanCPF = cpf.replace(/[^\d]/g, "");
-  return cleanCPF.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
+  const cleanCPF = cpf.replace(/[^\d]/g, '');
+  return cleanCPF.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
 }

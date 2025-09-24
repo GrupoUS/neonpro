@@ -1,14 +1,14 @@
 import {
-  PatientRepository as IPatientRepository,
-  Patient,
   CreatePatientRequest,
-  UpdatePatientRequest,
-  PatientFilter,
-  PatientSearchResult,
-  PatientQueryOptions,
-  PatientError,
+  Patient,
   PatientEntityValidationError,
-} from "@neonpro/domain";
+  PatientError,
+  PatientFilter,
+  PatientQueryOptions,
+  PatientRepository as IPatientRepository,
+  PatientSearchResult,
+  UpdatePatientRequest,
+} from '@neonpro/domain';
 
 /**
  * Application service for patient management
@@ -32,13 +32,13 @@ export class PatientService {
       );
       if (existingPatients.length > 0) {
         throw new PatientEntityValidationError([
-          "Patient with this CPF already exists",
+          'Patient with this CPF already exists',
         ]);
       }
 
       // Validate CPF (required field)
       if (!this.validateCPF(_request.cpf)) {
-        throw new PatientValidationError(["Invalid CPF format"]);
+        throw new PatientValidationError(['Invalid CPF format']);
       }
 
       // Create patient (need to adapt API request to domain format)
@@ -51,8 +51,8 @@ export class PatientService {
         throw error;
       }
       throw new PatientError(
-        `Failed to create patient: ${error instanceof Error ? error.message : "Unknown error"}`,
-        "PATIENT_CREATE_ERROR",
+        `Failed to create patient: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        'PATIENT_CREATE_ERROR',
         500,
       );
     }
@@ -69,12 +69,12 @@ export class PatientService {
       // Check if patient exists
       const existingPatient = await this.patientRepository.findById(id);
       if (!existingPatient) {
-        throw new PatientEntityValidationError(["Patient not found"]);
+        throw new PatientEntityValidationError(['Patient not found']);
       }
 
       // Validate CPF if provided
       if (_request.cpf && !this.validateCPF(_request.cpf)) {
-        throw new PatientValidationError(["Invalid CPF format"]);
+        throw new PatientValidationError(['Invalid CPF format']);
       }
 
       // Update patient
@@ -86,8 +86,8 @@ export class PatientService {
         throw error;
       }
       throw new PatientError(
-        `Failed to update patient: ${error instanceof Error ? error.message : "Unknown error"}`,
-        "PATIENT_UPDATE_ERROR",
+        `Failed to update patient: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        'PATIENT_UPDATE_ERROR',
         500,
       );
     }
@@ -101,8 +101,8 @@ export class PatientService {
       return await this.patientRepository.findById(id);
     } catch (error) {
       throw new PatientError(
-        `Failed to get patient: ${error instanceof Error ? error.message : "Unknown error"}`,
-        "PATIENT_GET_ERROR",
+        `Failed to get patient: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        'PATIENT_GET_ERROR',
         500,
       );
     }
@@ -124,10 +124,10 @@ export class PatientService {
       if (options?.search) {
         const searchLower = options.search.toLowerCase();
         filteredPatients = filteredPatients.filter(
-          (p) =>
-            p.fullName.toLowerCase().includes(searchLower) ||
-            p.email?.toLowerCase().includes(searchLower) ||
-            p.cpf?.includes(searchLower),
+          p =>
+            p.fullName.toLowerCase().includes(searchLower)
+            || p.email?.toLowerCase().includes(searchLower)
+            || p.cpf?.includes(searchLower),
         );
       }
 
@@ -144,8 +144,8 @@ export class PatientService {
       };
     } catch (error) {
       throw new PatientError(
-        `Failed to get patients: ${error instanceof Error ? error.message : "Unknown error"}`,
-        "PATIENT_LIST_ERROR",
+        `Failed to get patients: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        'PATIENT_LIST_ERROR',
         500,
       );
     }
@@ -173,11 +173,11 @@ export class PatientService {
       // Apply search filtering
       const searchLower = _query.toLowerCase();
       const filteredPatients = patients.filter(
-        (p) =>
-          p.fullName.toLowerCase().includes(searchLower) ||
-          p.email?.toLowerCase().includes(searchLower) ||
-          p.cpf?.includes(searchLower) ||
-          p.medicalRecordNumber.toLowerCase().includes(searchLower),
+        p =>
+          p.fullName.toLowerCase().includes(searchLower)
+          || p.email?.toLowerCase().includes(searchLower)
+          || p.cpf?.includes(searchLower)
+          || p.medicalRecordNumber.toLowerCase().includes(searchLower),
       );
 
       // Apply pagination
@@ -193,8 +193,8 @@ export class PatientService {
       };
     } catch (error) {
       throw new PatientError(
-        `Failed to search patients: ${error instanceof Error ? error.message : "Unknown error"}`,
-        "PATIENT_SEARCH_ERROR",
+        `Failed to search patients: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        'PATIENT_SEARCH_ERROR',
         500,
       );
     }
@@ -208,7 +208,7 @@ export class PatientService {
       // Check if patient exists
       const existingPatient = await this.patientRepository.findById(id);
       if (!existingPatient) {
-        throw new PatientEntityValidationError(["Patient not found"]);
+        throw new PatientEntityValidationError(['Patient not found']);
       }
 
       return await this.patientRepository.delete(id);
@@ -217,8 +217,8 @@ export class PatientService {
         throw error;
       }
       throw new PatientError(
-        `Failed to delete patient: ${error instanceof Error ? error.message : "Unknown error"}`,
-        "PATIENT_DELETE_ERROR",
+        `Failed to delete patient: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        'PATIENT_DELETE_ERROR',
         500,
       );
     }
@@ -242,18 +242,18 @@ export class PatientService {
 
       if (filter.isActive !== undefined) {
         filteredPatients = filteredPatients.filter(
-          (p) => p.isActive === filter.isActive,
+          p => p.isActive === filter.isActive,
         );
       }
 
       if (filter.gender) {
         filteredPatients = filteredPatients.filter(
-          (p) => p.gender === filter.gender,
+          p => p.gender === filter.gender,
         );
       }
 
       if (filter.birthDateFrom && filter.birthDateTo) {
-        filteredPatients = filteredPatients.filter((p) => {
+        filteredPatients = filteredPatients.filter(p => {
           if (!p.birthDate) return false;
           const birthDate = new Date(p.birthDate);
           const fromDate = new Date(filter.birthDateFrom);
@@ -265,8 +265,8 @@ export class PatientService {
       return filteredPatients.length;
     } catch (error) {
       throw new PatientError(
-        `Failed to count patients: ${error instanceof Error ? error.message : "Unknown error"}`,
-        "PATIENT_COUNT_ERROR",
+        `Failed to count patients: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        'PATIENT_COUNT_ERROR',
         500,
       );
     }
@@ -277,23 +277,23 @@ export class PatientService {
    */
   private validateCreateRequest(_request: CreatePatientRequest): void {
     if (!_request.clinicId) {
-      throw new PatientEntityValidationError(["Clinic ID is required"]);
+      throw new PatientEntityValidationError(['Clinic ID is required']);
     }
 
     if (!_request.fullName) {
-      throw new PatientEntityValidationError(["Full name is required"]);
+      throw new PatientEntityValidationError(['Full name is required']);
     }
 
     if (!_request.cpf) {
-      throw new PatientEntityValidationError(["CPF is required"]);
+      throw new PatientEntityValidationError(['CPF is required']);
     }
 
     if (!_request.dateOfBirth) {
-      throw new PatientEntityValidationError(["Date of birth is required"]);
+      throw new PatientEntityValidationError(['Date of birth is required']);
     }
 
     if (!_request.lgpdConsent) {
-      throw new PatientEntityValidationError(["LGPD consent is required"]);
+      throw new PatientEntityValidationError(['LGPD consent is required']);
     }
 
     // Validate birth date
@@ -301,12 +301,12 @@ export class PatientService {
     const now = new Date();
 
     if (isNaN(birthDate.getTime())) {
-      throw new PatientEntityValidationError(["Invalid birth date format"]);
+      throw new PatientEntityValidationError(['Invalid birth date format']);
     }
 
     if (birthDate > now) {
       throw new PatientEntityValidationError([
-        "Birth date cannot be in the future",
+        'Birth date cannot be in the future',
       ]);
     }
 
@@ -319,18 +319,18 @@ export class PatientService {
     );
     if (birthDate < minDate) {
       throw new PatientEntityValidationError([
-        "Birth date is too far in the past",
+        'Birth date is too far in the past',
       ]);
     }
 
     // Validate phone number if provided
     if (_request.phone && !this.validateBrazilianPhone(_request.phone)) {
-      throw new PatientEntityValidationError(["Invalid phone number format"]);
+      throw new PatientEntityValidationError(['Invalid phone number format']);
     }
 
     // Validate email if provided
     if (_request.email && !this.validateEmail(_request.email)) {
-      throw new PatientEntityValidationError(["Invalid email format"]);
+      throw new PatientEntityValidationError(['Invalid email format']);
     }
   }
 
@@ -339,23 +339,23 @@ export class PatientService {
    */
   private validateCPF(cpf: string): boolean {
     // Remove formatting
-    const cleanCPF = cpf.replace(/[^\d]/g, "");
+    const cleanCPF = cpf.replace(/[^\d]/g, '');
 
     // Check length
     if (cleanCPF.length !== 11) return false;
 
     // Check for known invalid CPFs
     const invalidCPFs = [
-      "00000000000",
-      "11111111111",
-      "22222222222",
-      "33333333333",
-      "44444444444",
-      "55555555555",
-      "66666666666",
-      "77777777777",
-      "88888888888",
-      "99999999999",
+      '00000000000',
+      '11111111111',
+      '22222222222',
+      '33333333333',
+      '44444444444',
+      '55555555555',
+      '66666666666',
+      '77777777777',
+      '88888888888',
+      '99999999999',
     ];
 
     if (invalidCPFs.includes(cleanCPF)) return false;
@@ -387,7 +387,7 @@ export class PatientService {
    */
   private validateBrazilianPhone(phone: string): boolean {
     // Remove formatting
-    const cleanPhone = phone.replace(/[^\d]/g, "");
+    const cleanPhone = phone.replace(/[^\d]/g, '');
 
     // Check length (10 or 11 digits)
     if (cleanPhone.length !== 10 && cleanPhone.length !== 11) return false;
@@ -418,19 +418,18 @@ export class PatientService {
    */
   private adaptApiRequestToDomain(
     request: CreatePatientRequest,
-  ): Omit<Patient, "id" | "createdAt" | "updatedAt"> {
-    const names = request.fullName.split(" ");
+  ): Omit<Patient, 'id' | 'createdAt' | 'updatedAt'> {
+    const names = request.fullName.split(' ');
     const givenNames = names.slice(0, -1);
     const familyName = names[names.length - 1];
 
     return {
       clinicId: request.clinicId,
       medicalRecordNumber: `MRN-${Date.now()}`, // Generate one since API doesn't provide it
-      givenNames:
-        givenNames.length > 0
-          ? givenNames
-          : [givenNames.join(" ") || "Unknown"],
-      familyName: familyName || "Unknown",
+      givenNames: givenNames.length > 0
+        ? givenNames
+        : [givenNames.join(' ') || 'Unknown'],
+      familyName: familyName || 'Unknown',
       fullName: request.fullName,
       cpf: request.cpf,
       birthDate: request.dateOfBirth,

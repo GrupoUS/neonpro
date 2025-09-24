@@ -5,23 +5,23 @@
  * for AI services in the healthcare platform.
  */
 
-import { AIProvider } from "../providers/ai-provider";
+import { AIProvider } from '../providers/ai-provider';
 
 // Simple error class for AI service management
 class AIServiceError extends Error {
   constructor(
     public code: string,
     message: string,
-    public category: string = "system" as string,
-    public severity: string = "medium" as string,
+    public category: string = 'system' as string,
+    public severity: string = 'medium' as string,
   ) {
     super(message);
-    this.name = "AIServiceError";
+    this.name = 'AIServiceError';
   }
 }
 
 export interface AIServiceHealth {
-  status: "healthy" | "degraded" | "unavailable";
+  status: 'healthy' | 'degraded' | 'unavailable';
   provider: string;
   model: string;
   responseTime: number;
@@ -35,7 +35,7 @@ export interface ModelAvailability {
   provider: string;
   model: string;
   available: boolean;
-  status: "available" | "limited" | "unavailable";
+  status: 'available' | 'limited' | 'unavailable';
   maxTokens: number;
   costPerToken: number;
   region: string;
@@ -91,36 +91,40 @@ export class AIServiceManagement {
       const healthStatuses: AIServiceHealth[] = [];
 
       results.forEach((result, _index) => {
-        if (result.status === "fulfilled") {
+        if (result.status === 'fulfilled') {
           healthStatuses.push(result.value);
         } else {
           // Create a failed health status for providers that couldn't be checked
           const providerName = Array.from(this.providers.keys())[_index];
           healthStatuses.push({
-            status: "unavailable",
-            provider: providerName || "unknown",
-            model: "unknown",
+            status: 'unavailable',
+            provider: providerName || 'unknown',
+            model: 'unknown',
             responseTime: 0,
             lastCheck: new Date(),
             errorRate: 100,
             uptime: 0,
-            message: `Health check failed: ${result.reason instanceof Error ? result.reason.message : String(result.reason)}`,
+            message: `Health check failed: ${
+              result.reason instanceof Error ? result.reason.message : String(result.reason)
+            }`,
           });
         }
       });
 
       // Update cache
-      healthStatuses.forEach((health) => {
+      healthStatuses.forEach(health => {
         this.healthCache.set(health.provider, health);
       });
 
       return healthStatuses;
     } catch (error) {
       throw new AIServiceError(
-        "AI_HEALTH_CHECK_ERROR",
-        `Failed to check AI service health: ${error instanceof Error ? error.message : String(error)}`,
-        "system",
-        "high",
+        'AI_HEALTH_CHECK_ERROR',
+        `Failed to check AI service health: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
+        'system',
+        'high',
       );
     }
   }
@@ -145,31 +149,33 @@ export class AIServiceManagement {
       const availabilities: ModelAvailability[] = [];
 
       results.forEach((result, _index) => {
-        if (result.status === "fulfilled") {
+        if (result.status === 'fulfilled') {
           availabilities.push(result.value);
         } else {
           // Create unavailable status for models that couldn't be checked
           const modelInfo = modelsToCheck[_index];
-          const p = modelInfo?.provider || "unknown";
-          const m = modelInfo?.model || "unknown";
+          const p = modelInfo?.provider || 'unknown';
+          const m = modelInfo?.model || 'unknown';
           availabilities.push({
             provider: p,
             model: m,
             available: false,
-            status: "unavailable",
+            status: 'unavailable',
             maxTokens: 0,
             costPerToken: 0,
-            region: "unknown",
+            region: 'unknown',
             lastUpdated: new Date(),
             limitations: [
-              `Availability check failed: ${result.reason instanceof Error ? result.reason.message : String(result.reason)}`,
+              `Availability check failed: ${
+                result.reason instanceof Error ? result.reason.message : String(result.reason)
+              }`,
             ],
           });
         }
       });
 
       // Update cache
-      availabilities.forEach((availability) => {
+      availabilities.forEach(availability => {
         const key = `${availability.provider}:${availability.model}`;
         this.availabilityCache.set(key, availability);
       });
@@ -177,10 +183,12 @@ export class AIServiceManagement {
       return availabilities;
     } catch (error) {
       throw new AIServiceError(
-        "MODEL_AVAILABILITY_CHECK_ERROR",
-        `Failed to check model availability: ${error instanceof Error ? error.message : String(error)}`,
-        "system",
-        "medium",
+        'MODEL_AVAILABILITY_CHECK_ERROR',
+        `Failed to check model availability: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
+        'system',
+        'medium',
       );
     }
   }
@@ -207,7 +215,7 @@ export class AIServiceManagement {
       }
 
       // Update cache
-      stats.forEach((stat) => {
+      stats.forEach(stat => {
         const key = `${stat.provider}:${stat.period.start.toISOString()}`;
         this.usageCache.set(key, stat);
       });
@@ -215,10 +223,12 @@ export class AIServiceManagement {
       return stats;
     } catch (error) {
       throw new AIServiceError(
-        "USAGE_STATS_ERROR",
-        `Failed to get AI usage statistics: ${error instanceof Error ? error.message : String(error)}`,
-        "system",
-        "medium",
+        'USAGE_STATS_ERROR',
+        `Failed to get AI usage statistics: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
+        'system',
+        'medium',
       );
     }
   }
@@ -272,8 +282,7 @@ export class AIServiceManagement {
 
     // Check if cache is still valid (1 hour for current period, longer for historical)
     const cacheAge = Date.now() - stats.period.end.getTime();
-    const isCurrentPeriod =
-      period.end > new Date(Date.now() - 24 * 60 * 60 * 1000);
+    const isCurrentPeriod = period.end > new Date(Date.now() - 24 * 60 * 60 * 1000);
     const maxCacheAge = isCurrentPeriod ? 60 * 60 * 1000 : 24 * 60 * 60 * 1000;
 
     if (cacheAge > maxCacheAge) {
@@ -287,15 +296,15 @@ export class AIServiceManagement {
   private initializeProviders(): void {
     // In a real implementation, this would initialize actual AI providers
     // For now, we'll create placeholder entries
-    this.providers.set("openai", {
+    this.providers.set('openai', {
       generateAnswer: async () => {
-        throw new Error("OpenAI provider not implemented");
+        throw new Error('OpenAI provider not implemented');
       },
     });
 
-    this.providers.set("anthropic", {
+    this.providers.set('anthropic', {
       generateAnswer: async () => {
-        throw new Error("Anthropic provider not implemented");
+        throw new Error('Anthropic provider not implemented');
       },
     });
   }
@@ -309,29 +318,29 @@ export class AIServiceManagement {
     try {
       // Simple health check - try to generate a minimal response
       await aiProvider.generateAnswer({
-        prompt: "Hello",
+        prompt: 'Hello',
         maxTokens: 1,
       });
 
       const responseTime = Date.now() - startTime;
 
       return {
-        status: "healthy",
+        status: 'healthy',
         provider: providerName,
-        model: "unknown",
+        model: 'unknown',
         responseTime,
         lastCheck: new Date(),
         errorRate: 0,
         uptime: 100,
-        message: "Service is responding normally",
+        message: 'Service is responding normally',
       };
     } catch (error) {
       const responseTime = Date.now() - startTime;
 
       return {
-        status: "unavailable",
+        status: 'unavailable',
         provider: providerName,
-        model: "unknown",
+        model: 'unknown',
         responseTime,
         lastCheck: new Date(),
         errorRate: 100,
@@ -346,17 +355,17 @@ export class AIServiceManagement {
     model?: string,
   ): Array<{ provider: string; model: string }> {
     const availableModels = [
-      { provider: "openai", model: "gpt-4" },
-      { provider: "openai", model: "gpt-3.5-turbo" },
-      { provider: "anthropic", model: "claude-3" },
-      { provider: "anthropic", model: "claude-2" },
+      { provider: 'openai', model: 'gpt-4' },
+      { provider: 'openai', model: 'gpt-3.5-turbo' },
+      { provider: 'anthropic', model: 'claude-3' },
+      { provider: 'anthropic', model: 'claude-2' },
     ];
 
     if (provider || model) {
       return availableModels.filter(
-        (m) =>
-          (!provider || m.provider === provider) &&
-          (!model || m.model === model),
+        m =>
+          (!provider || m.provider === provider)
+          && (!model || m.model === model),
       );
     }
 
@@ -375,7 +384,7 @@ export class AIServiceManagement {
 
       // Try to use the model
       await aiProvider.generateAnswer({
-        prompt: "Test",
+        prompt: 'Test',
         maxTokens: 1,
       });
 
@@ -383,10 +392,10 @@ export class AIServiceManagement {
         provider: providerName,
         model: modelName,
         available: true,
-        status: "available",
+        status: 'available',
         maxTokens: this.getMaxTokensForModel(providerName, modelName),
         costPerToken: this.getCostPerToken(providerName, modelName),
-        region: "us-east-1",
+        region: 'us-east-1',
         lastUpdated: new Date(),
       };
     } catch (error) {
@@ -394,10 +403,10 @@ export class AIServiceManagement {
         provider: providerName,
         model: modelName,
         available: false,
-        status: "unavailable",
+        status: 'unavailable',
         maxTokens: 0,
         costPerToken: 0,
-        region: "unknown",
+        region: 'unknown',
         lastUpdated: new Date(),
         limitations: [error instanceof Error ? error.message : String(error)],
       };
@@ -419,7 +428,7 @@ export class AIServiceManagement {
     for (let i = 0; i < Math.min(daysDiff, 30); i++) {
       const date = new Date(period.start.getTime() + i * 24 * 60 * 60 * 1000);
       dailyBreakdown.push({
-        date: date.toISOString().split("T")[0] as string,
+        date: date.toISOString().split('T')[0] as string,
         requests: Math.floor(Math.random() * 100) + 10,
         tokens: Math.floor(Math.random() * 50000) + 5000,
         cost: Math.random() * 2 + 0.1,
@@ -440,7 +449,7 @@ export class AIServiceManagement {
 
     return {
       provider: providerName,
-      model: "various",
+      model: 'various',
       period,
       totalRequests,
       successfulRequests,
@@ -461,10 +470,10 @@ export class AIServiceManagement {
 
   private getMaxTokensForModel(_provider: string, model: string): number {
     const tokenLimits: Record<string, number> = {
-      "gpt-4": 8192,
-      "gpt-3.5-turbo": 4096,
-      "claude-3": 100000,
-      "claude-2": 100000,
+      'gpt-4': 8192,
+      'gpt-3.5-turbo': 4096,
+      'claude-3': 100000,
+      'claude-2': 100000,
     };
 
     return tokenLimits[model] || 4096;
@@ -472,10 +481,10 @@ export class AIServiceManagement {
 
   private getCostPerToken(_provider: string, model: string): number {
     const costs: Record<string, number> = {
-      "gpt-4": 0.00003,
-      "gpt-3.5-turbo": 0.0000015,
-      "claude-3": 0.000015,
-      "claude-2": 0.00001,
+      'gpt-4': 0.00003,
+      'gpt-3.5-turbo': 0.0000015,
+      'claude-3': 0.000015,
+      'claude-2': 0.00001,
     };
 
     return costs[model] || 0.00001;

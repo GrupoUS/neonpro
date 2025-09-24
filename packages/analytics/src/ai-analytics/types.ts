@@ -13,10 +13,10 @@ export interface AIAnalyticsConfig {
 }
 
 export interface HealthcareInsights {
-  category: "clinical" | "operational" | "financial" | "regulatory";
+  category: 'clinical' | 'operational' | 'financial' | 'regulatory';
   insights: any[];
   metrics: any;
-  complianceStatus: "compliant" | "warning" | "violation";
+  complianceStatus: 'compliant' | 'warning' | 'violation';
   generatedAt: Date;
 }
 

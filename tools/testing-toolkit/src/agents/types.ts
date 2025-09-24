@@ -5,14 +5,14 @@
  */
 
 export type AgentType =
-  | "architect-review"
-  | "code-reviewer"
-  | "security-auditor"
-  | "tdd-orchestrator"
-  | "test-agent"
-  | "test-auditor";
+  | 'architect-review'
+  | 'code-reviewer'
+  | 'security-auditor'
+  | 'tdd-orchestrator'
+  | 'test-agent'
+  | 'test-auditor';
 
-export type CoordinationPattern = "sequential" | "parallel" | "hierarchical";
+export type CoordinationPattern = 'sequential' | 'parallel' | 'hierarchical';
 
 export interface AgentCapability {
   name: string;

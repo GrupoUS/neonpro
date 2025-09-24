@@ -33,10 +33,10 @@ This document defines **aesthetic clinic-specific frontend implementation patter
 
 ```typescript
 // PROVEN PATTERN - Use this exact hierarchy
-import { AestheticClinicSpecificComponent } from "@/components/aesthetic-clinic"; // ✅ Domain-specific last
-import { AppointmentForm, ClientCard } from "@/components/molecules"; // ✅ Molecules second
-import { DashboardLayout } from "@/components/organisms"; // ✅ Organisms third
-import { Alert, Badge, Button, Card } from "@neonpro/ui"; // ✅ Shared components first
+import { AestheticClinicSpecificComponent } from '@/components/aesthetic-clinic'; // ✅ Domain-specific last
+import { AppointmentForm, ClientCard } from '@/components/molecules'; // ✅ Molecules second
+import { DashboardLayout } from '@/components/organisms'; // ✅ Organisms third
+import { Alert, Badge, Button, Card } from '@neonpro/ui'; // ✅ Shared components first
 ```
 
 ### NeonPro Brand Standards (Production-Ready)
@@ -63,30 +63,16 @@ import { Alert, Badge, Button, Card } from "@neonpro/ui"; // ✅ Shared componen
 
 ```typescript
 // ✅ ATOMS - Basic UI elements (from @neonpro/ui)
-export { Button, NeumorphButton } from "@neonpro/ui";
-export { Badge, badgeVariants } from "@neonpro/ui";
-export { Alert, AlertDescription, AlertTitle } from "@neonpro/ui";
-export {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@neonpro/ui";
+export { Button, NeumorphButton } from '@neonpro/ui';
+export { Badge, badgeVariants } from '@neonpro/ui';
+export { Alert, AlertDescription, AlertTitle } from '@neonpro/ui';
+export { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@neonpro/ui';
 
 // ✅ MOLECULES - Simple combinations (app-specific)
-export {
-  AppointmentForm,
-  ClientCard,
-  SearchBox,
-} from "@/components/molecules";
+export { AppointmentForm, ClientCard, SearchBox } from '@/components/molecules';
 
 // ✅ ORGANISMS - Complex components (feature-specific)
-export {
-  AppointmentScheduler,
-  Dashboard,
-  GovernanceDashboard,
-} from "@/components/organisms";
+export { AppointmentScheduler, Dashboard, GovernanceDashboard } from '@/components/organisms';
 ```
 
 **Performance Metrics (Validated)**
@@ -101,7 +87,7 @@ export {
 ```typescript
 interface AestheticClinicComponentProps {
   readonly clientId?: string;
-  readonly userRole: "admin" | "professional" | "coordinator";
+  readonly userRole: 'admin' | 'professional' | 'coordinator';
   readonly lgpdCompliant: boolean;
   readonly onAuditLog?: (action: string, details?: Record<string, any>) => void;
 }
@@ -385,12 +371,12 @@ export const aestheticAI = {
       clinicSpecialization: string[];
     },
   ): Promise<AIChatResponse> => {
-    const response = await api.post("/ai/aesthetic-chat", {
+    const response = await api.post('/ai/aesthetic-chat', {
       messages,
       context: {
         ...context,
-        language: "pt-BR",
-        domain: "aesthetic_procedures",
+        language: 'pt-BR',
+        domain: 'aesthetic_procedures',
       },
     });
     return response.data;
@@ -399,7 +385,7 @@ export const aestheticAI = {
   getProcedureRecommendations: async (
     clientProfile: ClientProfile,
   ): Promise<ProcedureRecommendation[]> => {
-    const response = await api.post("/ai/procedure-recommendations", {
+    const response = await api.post('/ai/procedure-recommendations', {
       clientProfile,
       clinicCapabilities: getCurrentClinic().capabilities,
     });
@@ -437,7 +423,7 @@ export const useAestheticClientStore = create<AestheticClientStore>(
         const client = await clientsAPI.getClientWithHistory(clientId);
         const riskScore = await clientsAPI.getNoShowRisk(clientId);
 
-        set((state) => ({
+        set(state => ({
           selectedClient: client,
           riskAssessments: {
             ...state.riskAssessments,
@@ -445,7 +431,7 @@ export const useAestheticClientStore = create<AestheticClientStore>(
           },
         }));
       } catch (error) {
-        console.error("Failed to load client:", error);
+        console.error('Failed to load client:', error);
       }
     },
 
@@ -456,15 +442,15 @@ export const useAestheticClientStore = create<AestheticClientStore>(
       try {
         await clientsAPI.updateAestheticPreferences(clientId, preferences);
 
-        set((state) => ({
-          clients: state.clients.map((c) =>
+        set(state => ({
+          clients: state.clients.map(c =>
             c.id === clientId
               ? { ...c, aestheticPreferences: preferences }
-              : c,
+              : c
           ),
         }));
       } catch (error) {
-        console.error("Failed to update preferences:", error);
+        console.error('Failed to update preferences:', error);
       }
     },
 
@@ -472,14 +458,14 @@ export const useAestheticClientStore = create<AestheticClientStore>(
       try {
         const riskScore = await clientsAPI.getNoShowRisk(clientId);
 
-        set((state) => ({
+        set(state => ({
           riskAssessments: {
             ...state.riskAssessments,
             [clientId]: riskScore,
           },
         }));
       } catch (error) {
-        console.error("Failed to calculate risk:", error);
+        console.error('Failed to calculate risk:', error);
       }
     },
   }),
@@ -594,15 +580,15 @@ export function useHighContrastMode() {
   const [isHighContrast, setIsHighContrast] = useState(false);
 
   useEffect(() => {
-    const mediaQuery = window.matchMedia("(prefers-contrast: high)");
+    const mediaQuery = window.matchMedia('(prefers-contrast: high)');
     setIsHighContrast(mediaQuery.matches);
 
     const handleChange = (e: MediaQueryListEvent) => {
       setIsHighContrast(e.matches);
     };
 
-    mediaQuery.addEventListener("change", handleChange);
-    return () => mediaQuery.removeEventListener("change", handleChange);
+    mediaQuery.addEventListener('change', handleChange);
+    return () => mediaQuery.removeEventListener('change', handleChange);
   }, []);
 
   return { isHighContrast };
@@ -617,16 +603,16 @@ export function useHighContrastMode() {
 export const createMockClient = (
   overrides: Partial<Client> = {},
 ): Client => ({
-  id: "client-123",
-  name: "João Silva",
-  cpf: "123.456.789-01",
+  id: 'client-123',
+  name: 'João Silva',
+  cpf: '123.456.789-01',
   lgpdCompliant: true,
-  noShowRisk: "low",
-  lastProcedure: "Botox",
-  nextAppointment: "2025-09-15T14:00:00Z",
+  noShowRisk: 'low',
+  lastProcedure: 'Botox',
+  nextAppointment: '2025-09-15T14:00:00Z',
   aestheticPreferences: {
-    preferredProcedures: ["botox", "preenchimento"],
-    skinType: "oleosa",
+    preferredProcedures: ['botox', 'preenchimento'],
+    skinType: 'oleosa',
     allergies: [],
   },
   ...overrides,
@@ -634,7 +620,7 @@ export const createMockClient = (
 
 export const createMockRiskScore = (score: number = 0.3): NoShowRiskScore => ({
   score,
-  factors: ["historical_no_shows", "appointment_frequency"],
+  factors: ['historical_no_shows', 'appointment_frequency'],
   historicalNoShows: Math.floor(score * 10),
   lastCalculated: new Date().toISOString(),
 });
@@ -685,14 +671,14 @@ export function LazyAestheticScheduler(props: AestheticSchedulerProps) {
 ```typescript
 export function useMobilePerformance() {
   useEffect(() => {
-    if ("connection" in navigator) {
+    if ('connection' in navigator) {
       const connection = (navigator as any).connection;
 
       if (
-        connection.effectiveType === "slow-2g" ||
-        connection.effectiveType === "2g"
+        connection.effectiveType === 'slow-2g'
+        || connection.effectiveType === '2g'
       ) {
-        console.warn("Slow connection detected");
+        console.warn('Slow connection detected');
         // Enable performance mode
       }
     }
@@ -721,12 +707,12 @@ packages/
 
 ```typescript
 // ✅ OPTIMAL IMPORTS - Enables tree-shaking for 603.49 kB bundle
-import type { Client } from "@neonpro/database"; // ✅ Type-only imports
-import { Badge, Button, Card } from "@neonpro/ui"; // ✅ Named imports
+import type { Client } from '@neonpro/database'; // ✅ Type-only imports
+import { Badge, Button, Card } from '@neonpro/ui'; // ✅ Named imports
 
 // ❌ AVOID - Prevents tree-shaking
-import * as UI from "@neonpro/ui"; // ❌ Namespace imports
-import "@neonpro/ui"; // ❌ Side-effect imports
+import * as UI from '@neonpro/ui'; // ❌ Namespace imports
+import '@neonpro/ui'; // ❌ Side-effect imports
 ```
 
 ### LGPD Compliance Patterns (Aesthetic Clinic-Validated)
@@ -832,14 +818,7 @@ const loadGovernanceModule = () => import('@/components/organisms/governance');
 
 ```typescript
 // ✅ ENHANCED PATTERN - Improved by user feedback
-import {
-  Alert,
-  AlertDescription,
-  Badge,
-  Button,
-  Card,
-  UniversalButton,
-} from "@neonpro/ui";
+import { Alert, AlertDescription, Badge, Button, Card, UniversalButton } from '@neonpro/ui';
 
 // Instead of multiple import statements
 // import { Badge } from '@neonpro/ui';

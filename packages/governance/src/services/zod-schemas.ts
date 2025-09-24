@@ -1,14 +1,14 @@
 // Realistic zod schemas for compliance integration tests (Phase 1)
 // --- Compliance Validation Schemas (Phase 1 minimal) ---
 
-import * as z from "zod";
+import * as z from 'zod';
 
 // Basic patient schema focusing on fields used in prediction & compliance flows
 export const patientSchema = z.object({
   id: z.string().uuid().optional(),
   name: z.string().min(1),
   age: z.number().int().min(0).max(120),
-  gender: z.enum(["male", "female", "other"]).optional(),
+  gender: z.enum(['male', 'female', 'other']).optional(),
   email: z.string().email().optional(),
   phone: z.string().optional(),
   createdAt: z.string().datetime().optional(),
@@ -20,10 +20,10 @@ export const appointmentSchema = z.object({
   id: z.string().uuid().optional(),
   patientId: z.string().uuid(),
   scheduledAt: z.string().datetime(),
-  type: z.enum(["consultation", "exam", "followup"]).default("consultation"),
+  type: z.enum(['consultation', 'exam', 'followup']).default('consultation'),
   status: z
-    .enum(["scheduled", "completed", "cancelled", "noshow"])
-    .default("scheduled"),
+    .enum(['scheduled', 'completed', 'cancelled', 'noshow'])
+    .default('scheduled'),
   daysSinceScheduled: z.number().int().min(0).optional(),
   previousNoShows: z.number().int().min(0).optional(),
 });
@@ -65,12 +65,12 @@ const phiPatientSchema = z.object({
   id: z.string().uuid().optional(),
   firstName: z.string().min(1),
   lastName: z.string().min(1),
-  dateOfBirth: z.date().refine((d) => d.getTime() <= Date.now(), {
-    message: "Birth date cannot be in future",
+  dateOfBirth: z.date().refine(d => d.getTime() <= Date.now(), {
+    message: 'Birth date cannot be in future',
   }),
   cpf: z
     .string()
-    .regex(/^\d{11}$/, { message: "CPF must be 11 digits" })
+    .regex(/^\d{11}$/, { message: 'CPF must be 11 digits' })
     .optional(),
   medicalRecordNumber: z.string().min(1),
   insuranceId: z.string().optional(),
@@ -79,7 +79,7 @@ const phiPatientSchema = z.object({
       name: z.string().min(1),
       phone: z.string().optional(),
       relationship: z
-        .enum(["spouse", "parent", "child", "sibling", "other"])
+        .enum(['spouse', 'parent', 'child', 'sibling', 'other'])
         .optional(),
     })
     .optional(),
@@ -88,27 +88,27 @@ const phiPatientSchema = z.object({
 const consentRecordSchema = z.object({
   patientId: z.string().uuid(),
   consentId: z.string().uuid(),
-  consentType: z.enum(["data_processing", "marketing", "research"]),
+  consentType: z.enum(['data_processing', 'marketing', 'research']),
   lawfulBasis: z.enum([
-    "consent",
-    "contract",
-    "legal_obligation",
-    "vital_interest",
-    "public_task",
-    "legitimate_interest",
+    'consent',
+    'contract',
+    'legal_obligation',
+    'vital_interest',
+    'public_task',
+    'legitimate_interest',
   ]),
   granted: z.boolean(),
   grantedAt: z.date(),
   revokedAt: z.date().optional(),
   version: z.string(),
   dataCategories: z
-    .array(z.enum(["personal", "health", "behavioral", "device"]))
+    .array(z.enum(['personal', 'health', 'behavioral', 'device']))
     .min(1),
   processingPurpose: z.string().min(5),
   retentionPeriod: z.number().int().min(0).max(2555),
   auditTrail: z.array(
     z.object({
-      action: z.enum(["granted", "revoked"]),
+      action: z.enum(['granted', 'revoked']),
       timestamp: z.date(),
       ipAddress: z.string().optional(),
       userAgent: z.string().optional(),
@@ -118,13 +118,13 @@ const consentRecordSchema = z.object({
 
 const kpiSchema = z.object({
   kpiId: z.string().regex(/^KPI-[A-Z0-9_]+$/, {
-    message: "KPI ID must match pattern KPI-UPPER_SNAKE",
+    message: 'KPI ID must match pattern KPI-UPPER_SNAKE',
   }),
   value: z.number(),
-  unit: z.enum(["percentage", "count", "ms", "kb"]).optional(),
+  unit: z.enum(['percentage', 'count', 'ms', 'kb']).optional(),
   timestamp: z.date(),
   source: z
-    .enum(["ehr_system", "manual_entry", "automated_calculation"])
+    .enum(['ehr_system', 'manual_entry', 'automated_calculation'])
     .optional(),
   confidence: z.number().min(0).max(1).optional(),
   patientCohort: z
@@ -132,8 +132,8 @@ const kpiSchema = z.object({
       totalPatients: z.number().int().min(1),
       ageRange: z
         .object({ min: z.number().int().min(0), max: z.number().int().min(0) })
-        .refine((r) => r.min <= r.max, {
-          message: "ageRange.min must be <= max",
+        .refine(r => r.min <= r.max, {
+          message: 'ageRange.min must be <= max',
         }),
       conditions: z.array(z.string()).optional(),
       excludePHI: z.boolean().optional(),
@@ -147,7 +147,7 @@ const aiGovernanceSchema = z.object({
   evaluationId: z.string().uuid(),
   hallucinationRate: z.number().min(0).max(1),
   accuracy: z.number().min(0).max(1),
-  evaluationMethod: z.enum(["hybrid", "automated_similarity", "manual_review"]),
+  evaluationMethod: z.enum(['hybrid', 'automated_similarity', 'manual_review']),
   sampleSize: z.number().int().min(1),
   evaluatedAt: z.date(),
   thresholds: z.object({
@@ -158,9 +158,9 @@ const aiGovernanceSchema = z.object({
   complianceFlags: z
     .array(
       z.enum([
-        "hallucination_spike",
-        "performance_degradation",
-        "bias_concern",
+        'hallucination_spike',
+        'performance_degradation',
+        'bias_concern',
       ]),
     )
     .default([]),
@@ -169,30 +169,30 @@ const aiGovernanceSchema = z.object({
 const riskAssessmentSchema = z.object({
   riskId: z.string().regex(/^RISK-[A-Z0-9_-]+$/),
   category: z.enum([
-    "data_privacy",
-    "security",
-    "system_performance",
-    "clinical",
-    "operational",
-    "security",
-    "system_performance",
-    "data_privacy",
+    'data_privacy',
+    'security',
+    'system_performance',
+    'clinical',
+    'operational',
+    'security',
+    'system_performance',
+    'data_privacy',
   ]),
   probability: z.number().int().min(1).max(5),
   impact: z.number().int().min(1).max(5),
   exposure: z.number().int().min(0),
   mitigationStrategy: z.string().min(5),
   owner: z.string().min(1),
-  reviewCadence: z.enum(["monthly", "quarterly"]).optional(),
-  status: z.enum(["mitigating", "accepted", "transferred"]).optional(),
+  reviewCadence: z.enum(['monthly', 'quarterly']).optional(),
+  status: z.enum(['mitigating', 'accepted', 'transferred']).optional(),
   complianceMapping: z.array(z.string()).optional(),
 });
 
 const performanceBudgetSchema = z.object({
-  metric: z.enum(["lcp", "cls", "fid", "api_latency", "bundle_size"]),
+  metric: z.enum(['lcp', 'cls', 'fid', 'api_latency', 'bundle_size']),
   budget: z.number().int().min(0),
-  unit: z.enum(["ms", "kb", "percentage"]),
-  environment: z.enum(["production", "staging"]).optional(),
+  unit: z.enum(['ms', 'kb', 'percentage']),
+  environment: z.enum(['production', 'staging']).optional(),
   monitoringEnabled: z.boolean().optional(),
   alertThreshold: z.number().min(0).max(1).optional(),
   escalationPath: z.string().optional(),
@@ -201,13 +201,13 @@ const performanceBudgetSchema = z.object({
 const auditTrailSchema = z.object({
   id: z.string().uuid(),
   _userId: z.string().uuid(),
-  action: z.enum(["read", "write", "update", "delete"]),
+  action: z.enum(['read', 'write', 'update', 'delete']),
   resource: z.string().min(1),
-  resourceType: z.enum(["patient", "appointment", "kpi", "policy", "risk"]),
+  resourceType: z.enum(['patient', 'appointment', 'kpi', 'policy', 'risk']),
   timestamp: z.date(),
   ipAddress: z.string().optional(),
   userAgent: z.string().optional(),
-  outcome: z.enum(["success", "failure"]),
+  outcome: z.enum(['success', 'failure']),
   details: z
     .object({
       fieldsAccessed: z.array(z.string()).optional(),
@@ -249,7 +249,11 @@ export function validateAIGovernance(data: unknown) {
     return {
       valid: false,
       data: null,
-      errors: [{ message: (_err && typeof _err === 'object' && 'message' in _err) ? (_err as { message: string }).message : "Unknown error" }],
+      errors: [{
+        message: (_err && typeof _err === 'object' && 'message' in _err)
+          ? (_err as { message: string }).message
+          : 'Unknown error',
+      }],
     };
   }
 }
@@ -272,7 +276,11 @@ export function checkComplianceRequirements(
     return {
       valid: false,
       data: null,
-      errors: [{ message: (_err && typeof _err === 'object' && 'message' in _err) ? (_err as { message: string }).message : "Unknown error" }],
+      errors: [{
+        message: (_err && typeof _err === 'object' && 'message' in _err)
+          ? (_err as { message: string }).message
+          : 'Unknown error',
+      }],
     };
   }
 }

@@ -1,6 +1,6 @@
 /**
  * Accessibility Configuration
- * 
+ *
  * Configuration constants for accessibility features
  */
 
@@ -25,12 +25,12 @@ export const highContrastTheme: HighContrastTheme = {
   focus: '#0000ff',
   success: '#008000',
   warning: '#ff8c00',
-  error: '#ff0000'
+  error: '#ff0000',
 };
 
 export const fontSizeMap = {
   small: '14px',
   medium: '16px',
   large: '18px',
-  'x-large': '20px'
+  'x-large': '20px',
 };

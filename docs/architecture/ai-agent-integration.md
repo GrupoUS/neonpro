@@ -111,14 +111,14 @@ interface AguiMessage {
 }
 
 type AguiMessageType =
-  | "query" // User query to AI agent
-  | "response" // AI agent response
-  | "streaming_chunk" // Streaming response chunk
-  | "error" // Error response
-  | "status" // System status update
-  | "feedback" // User feedback on response
-  | "context_update" // Context update
-  | "session_update"; // Session metadata update
+  | 'query' // User query to AI agent
+  | 'response' // AI agent response
+  | 'streaming_chunk' // Streaming response chunk
+  | 'error' // Error response
+  | 'status' // System status update
+  | 'feedback' // User feedback on response
+  | 'context_update' // Context update
+  | 'session_update'; // Session metadata update
 ```
 
 #### Security Metadata
@@ -129,7 +129,7 @@ interface AguiMessageMetadata {
   clientId?: string; // Client context (if applicable)
   requestId?: string; // Original request ID
   version: string; // Protocol version
-  compression?: "gzip" | "none"; // Payload compression
+  compression?: 'gzip' | 'none'; // Payload compression
   encryption?: boolean; // End-to-end encryption flag
   auditTrail?: string; // Audit trail identifier
 }
@@ -165,11 +165,11 @@ export class AgentProtocolService {
     this.connections.set(connectionId, connection);
 
     // Set up message handlers
-    ws.on("message", async (data) => {
+    ws.on('message', async data => {
       await this.handleMessage(connectionId, data);
     });
 
-    ws.on("close", () => {
+    ws.on('close', () => {
       this.handleDisconnection(connectionId);
     });
   }
@@ -183,7 +183,7 @@ export class AgentProtocolService {
 
       // Validate message structure
       if (!this.validateMessage(message)) {
-        throw new Error("Invalid message structure");
+        throw new Error('Invalid message structure');
       }
 
       // Security validation
@@ -191,10 +191,10 @@ export class AgentProtocolService {
 
       // Route to appropriate handler
       switch (message.type) {
-        case "query":
+        case 'query':
           await this.handleQuery(connection, message);
           break;
-        case "feedback":
+        case 'feedback':
           await this.handleFeedback(connection, message);
           break;
         default:
@@ -263,7 +263,7 @@ export class QueryPipeline {
       );
 
       if (!hasPermission) {
-        throw new AuthorizationError("Insufficient permissions for this query");
+        throw new AuthorizationError('Insufficient permissions for this query');
       }
 
       // Step 3: Check cache
@@ -309,7 +309,7 @@ export class QueryPipeline {
 
       return {
         id: generateId(),
-        type: "error",
+        type: 'error',
         content: error.message,
         confidence: 0,
         usage: {
@@ -331,30 +331,30 @@ export class QueryPipeline {
 export class IntentClassifier {
   private patterns = new Map<string, IntentPattern>([
     [
-      "appointment_query",
+      'appointment_query',
       {
-        keywords: ["appointment", "schedule", "booking", "consultation"],
-        entities: ["date", "time", "client", "provider"],
-        requiredPermissions: ["read:appointments"],
-        dataSources: ["appointments", "clients", "providers"],
+        keywords: ['appointment', 'schedule', 'booking', 'consultation'],
+        entities: ['date', 'time', 'client', 'provider'],
+        requiredPermissions: ['read:appointments'],
+        dataSources: ['appointments', 'clients', 'providers'],
       },
     ],
     [
-      "client_query",
+      'client_query',
       {
-        keywords: ["client", "client", "record", "history"],
-        entities: ["client", "treatment concern", "cosmetic product"],
-        requiredPermissions: ["read:clients"],
-        dataSources: ["clients", "aesthetic_records", "cosmetic products"],
+        keywords: ['client', 'client', 'record', 'history'],
+        entities: ['client', 'treatment concern', 'cosmetic product'],
+        requiredPermissions: ['read:clients'],
+        dataSources: ['clients', 'aesthetic_records', 'cosmetic products'],
       },
     ],
     [
-      "financial_query",
+      'financial_query',
       {
-        keywords: ["billing", "payment", "invoice", "financial"],
-        entities: ["amount", "date", "service"],
-        requiredPermissions: ["read:billing"],
-        dataSources: ["billing", "appointments", "services"],
+        keywords: ['billing', 'payment', 'invoice', 'financial'],
+        entities: ['amount', 'date', 'service'],
+        requiredPermissions: ['read:billing'],
+        dataSources: ['billing', 'appointments', 'services'],
       },
     ],
   ]);
@@ -384,7 +384,7 @@ export class IntentClassifier {
     );
 
     if (!bestMatch) {
-      throw new Error("Unable to classify query intent");
+      throw new Error('Unable to classify query intent');
     }
 
     // Extract entities
@@ -432,44 +432,44 @@ Audit Logging (Compliance)
 export class PermissionMatrix {
   private rolePermissions = new Map<string, Set<string>>([
     [
-      "admin",
+      'admin',
       new Set([
-        "read:clients",
-        "write:clients",
-        "delete:clients",
-        "read:appointments",
-        "write:appointments",
-        "delete:appointments",
-        "read:billing",
-        "write:billing",
-        "delete:billing",
-        "read:aesthetic_records",
-        "write:aesthetic_records",
-        "admin:users",
-        "admin:system",
-        "admin:security",
+        'read:clients',
+        'write:clients',
+        'delete:clients',
+        'read:appointments',
+        'write:appointments',
+        'delete:appointments',
+        'read:billing',
+        'write:billing',
+        'delete:billing',
+        'read:aesthetic_records',
+        'write:aesthetic_records',
+        'admin:users',
+        'admin:system',
+        'admin:security',
       ]),
     ],
     [
-      "aesthetic_professional",
+      'aesthetic_professional',
       new Set([
-        "read:clients",
-        "write:clients",
-        "read:appointments",
-        "write:appointments",
-        "read:billing",
-        "read:aesthetic_records",
-        "write:aesthetic_records",
+        'read:clients',
+        'write:clients',
+        'read:appointments',
+        'write:appointments',
+        'read:billing',
+        'read:aesthetic_records',
+        'write:aesthetic_records',
       ]),
     ],
     [
-      "client",
+      'client',
       new Set([
-        "read:own_clients",
-        "write:own_clients",
-        "read:own_appointments",
-        "write:own_appointments",
-        "read:own_billing",
+        'read:own_clients',
+        'write:own_clients',
+        'read:own_appointments',
+        'write:own_appointments',
+        'read:own_billing',
       ]),
     ],
   ]);
@@ -499,12 +499,12 @@ export class PermissionMatrix {
     context: AccessContext,
   ): boolean {
     // Client can only access own data
-    if (role === "client" && context.resourceOwnerId) {
+    if (role === 'client' && context.resourceOwnerId) {
       return context.userId === context.resourceOwnerId;
     }
 
     // Aesthetic professional needs client relationship
-    if (role === "aesthetic_professional" && context.clientId) {
+    if (role === 'aesthetic_professional' && context.clientId) {
       return this.hasClientRelationship(context.userId, context.clientId);
     }
 
@@ -519,7 +519,7 @@ export class PermissionMatrix {
 // apps/api/src/services/security/encryption-service.ts
 export class EncryptionService {
   private dataKey: string;
-  private algorithm = "aes-256-gcm";
+  private algorithm = 'aes-256-gcm';
 
   constructor() {
     this.dataKey = process.env.ENCRYPTION_KEY || this.generateKey();
@@ -535,16 +535,16 @@ export class EncryptionService {
     const cipher = crypto.createCipheriv(this.algorithm, this.dataKey, iv);
 
     const encrypted = Buffer.concat([
-      cipher.update(serialized, "utf8"),
+      cipher.update(serialized, 'utf8'),
       cipher.final(),
     ]);
 
     const authTag = cipher.getAuthTag();
 
     return {
-      data: encrypted.toString("base64"),
-      iv: iv.toString("base64"),
-      authTag: authTag.toString("base64"),
+      data: encrypted.toString('base64'),
+      iv: iv.toString('base64'),
+      authTag: authTag.toString('base64'),
       algorithm: this.algorithm,
       keyId: this.dataKey.substring(0, 8), // Key identifier
       context: {
@@ -559,17 +559,17 @@ export class EncryptionService {
     const decipher = crypto.createDecipheriv(
       encrypted.algorithm,
       this.dataKey,
-      Buffer.from(encrypted.iv, "base64"),
+      Buffer.from(encrypted.iv, 'base64'),
     );
 
-    decipher.setAuthTag(Buffer.from(encrypted.authTag, "base64"));
+    decipher.setAuthTag(Buffer.from(encrypted.authTag, 'base64'));
 
     const decrypted = Buffer.concat([
-      decipher.update(Buffer.from(encrypted.data, "base64")),
+      decipher.update(Buffer.from(encrypted.data, 'base64')),
       decipher.final(),
     ]);
 
-    return JSON.parse(decrypted.toString("utf8"));
+    return JSON.parse(decrypted.toString('utf8'));
   }
 }
 ```
@@ -605,7 +605,7 @@ export class MultiTierCache {
     // Try local cache first (fastest)
     const localEntry = await this.localCache.get(key);
     if (localEntry && !this.isExpired(localEntry)) {
-      this.metrics.recordHit("local");
+      this.metrics.recordHit('local');
       return localEntry;
     }
 
@@ -614,7 +614,7 @@ export class MultiTierCache {
     if (redisEntry) {
       // Populate local cache
       await this.localCache.set(key, redisEntry);
-      this.metrics.recordHit("redis");
+      this.metrics.recordHit('redis');
       return redisEntry;
     }
 
@@ -641,19 +641,19 @@ export class MultiTierCache {
 export class QueryOptimizer {
   private queryPatterns = new Map([
     [
-      "client_search",
+      'client_search',
       {
-        indexes: ["clients_full_text_search", "clients_active_status"],
-        joinStrategies: ["use_nested_loops_for_small_sets"],
-        cacheStrategy: "cache_by_client_id",
+        indexes: ['clients_full_text_search', 'clients_active_status'],
+        joinStrategies: ['use_nested_loops_for_small_sets'],
+        cacheStrategy: 'cache_by_client_id',
       },
     ],
     [
-      "appointment_aggregation",
+      'appointment_aggregation',
       {
-        indexes: ["appointments_date_range", "appointments_provider_index"],
-        joinStrategies: ["use_hash_aggregation"],
-        cacheStrategy: "cache_by_date_range",
+        indexes: ['appointments_date_range', 'appointments_provider_index'],
+        joinStrategies: ['use_hash_aggregation'],
+        cacheStrategy: 'cache_by_date_range',
       },
     ],
   ]);
@@ -678,7 +678,7 @@ export class QueryOptimizer {
     pattern: QueryPattern,
   ): string {
     switch (intent.type) {
-      case "client_search":
+      case 'client_search':
         return `
           SELECT p.id, p.name, p.email, p.phone, p.status
           FROM clients p
@@ -692,7 +692,7 @@ export class QueryOptimizer {
           LIMIT $4
         `;
 
-      case "appointment_aggregation":
+      case 'appointment_aggregation':
         return `
           SELECT 
             DATE_TRUNC('day', a.start_time) as appointment_date,
@@ -790,12 +790,12 @@ export class AuditLogger {
 // apps/api/src/services/compliance/retention-policy.ts
 export class RetentionPolicyService {
   private retentionRules = new Map([
-    ["client_data", { duration: 365 * 10, unit: "days" }], // 10 years
-    ["aesthetic_records", { duration: 365 * 25, unit: "days" }], // 25 years
-    ["appointment_data", { duration: 365 * 5, unit: "days" }], // 5 years
-    ["billing_data", { duration: 365 * 7, unit: "days" }], // 7 years
-    ["audit_logs", { duration: 365 * 2, unit: "days" }], // 2 years
-    ["system_logs", { duration: 90, unit: "days" }], // 90 days
+    ['client_data', { duration: 365 * 10, unit: 'days' }], // 10 years
+    ['aesthetic_records', { duration: 365 * 25, unit: 'days' }], // 25 years
+    ['appointment_data', { duration: 365 * 5, unit: 'days' }], // 5 years
+    ['billing_data', { duration: 365 * 7, unit: 'days' }], // 7 years
+    ['audit_logs', { duration: 365 * 2, unit: 'days' }], // 2 years
+    ['system_logs', { duration: 90, unit: 'days' }], // 90 days
   ]);
 
   async scheduleDataDeletion(): Promise<void> {
@@ -813,13 +813,13 @@ export class RetentionPolicyService {
     request: DataSubjectRequest,
   ): Promise<DataSubjectResponse> {
     switch (request.type) {
-      case "access":
+      case 'access':
         return this.provideDataAccess(request.userId, request.dataTypes);
 
-      case "deletion":
+      case 'deletion':
         return this.executeDataDeletion(request.userId, request.dataTypes);
 
-      case "portability":
+      case 'portability':
         return this.exportUserData(request.userId, request.dataTypes);
 
       default:
@@ -853,34 +853,34 @@ export class AgentMetricsCollector {
   private metrics = {
     // Performance metrics
     queryLatency: new Histogram({
-      name: "agent_query_latency_seconds",
-      help: "AI agent query processing time",
+      name: 'agent_query_latency_seconds',
+      help: 'AI agent query processing time',
       buckets: [0.1, 0.5, 1, 2, 5, 10],
     }),
 
     // Security metrics
     authenticationFailures: new Counter({
-      name: "agent_authentication_failures_total",
-      help: "Total authentication failures",
+      name: 'agent_authentication_failures_total',
+      help: 'Total authentication failures',
     }),
 
     authorizationFailures: new Counter({
-      name: "agent_authorization_failures_total",
-      help: "Total authorization failures",
+      name: 'agent_authorization_failures_total',
+      help: 'Total authorization failures',
     }),
 
     // Business metrics
     queriesByType: new Counter({
-      name: "agent_queries_by_type_total",
-      help: "Total queries by type",
-      labels: ["type"],
+      name: 'agent_queries_by_type_total',
+      help: 'Total queries by type',
+      labels: ['type'],
     }),
 
     // Error metrics
     errorsByType: new Counter({
-      name: "agent_errors_by_type_total",
-      help: "Total errors by type",
-      labels: ["type"],
+      name: 'agent_errors_by_type_total',
+      help: 'Total errors by type',
+      labels: ['type'],
     }),
   };
 
@@ -895,10 +895,10 @@ export class AgentMetricsCollector {
 
   recordSecurityEvent(event: SecurityEvent): void {
     switch (event.type) {
-      case "authentication_failure":
+      case 'authentication_failure':
         this.metrics.authenticationFailures.inc();
         break;
-      case "authorization_failure":
+      case 'authorization_failure':
         this.metrics.authorizationFailures.inc();
         break;
     }
@@ -921,27 +921,27 @@ export class AgentHealthCheck {
     ]);
 
     const results = checks.map((check, index) => {
-      const name = ["database", "redis", "ai_service", "websocket", "security"][
+      const name = ['database', 'redis', 'ai_service', 'websocket', 'security'][
         index
       ];
       return {
         name,
-        status: check.status === "fulfilled" ? "healthy" : "unhealthy",
-        details: check.status === "fulfilled" ? check.value : check.reason,
+        status: check.status === 'fulfilled' ? 'healthy' : 'unhealthy',
+        details: check.status === 'fulfilled' ? check.value : check.reason,
       };
     });
 
-    const overallStatus = results.every((r) => r.status === "healthy")
-      ? "healthy"
-      : results.some((r) => r.status === "healthy")
-        ? "degraded"
-        : "unhealthy";
+    const overallStatus = results.every(r => r.status === 'healthy')
+      ? 'healthy'
+      : results.some(r => r.status === 'healthy')
+      ? 'degraded'
+      : 'unhealthy';
 
     return {
       status: overallStatus,
       checks: results,
       timestamp: new Date().toISOString(),
-      version: process.env.npm_package_version || "1.0.0",
+      version: process.env.npm_package_version || '1.0.0',
     };
   }
 

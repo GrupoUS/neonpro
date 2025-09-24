@@ -80,7 +80,7 @@ The implementation uses explicit typing for all repository interfaces, ensuring 
 export interface PatientRepository {
   findById(id: string): Promise<Patient | null>;
   findByClinicId(clinicId: string): Promise<Patient[]>;
-  create(patient: Omit<Patient, "id" | "createdAt" | "updatedAt">): Promise<Patient>;
+  create(patient: Omit<Patient, 'id' | 'createdAt' | 'updatedAt'>): Promise<Patient>;
   update(id: string, updates: Partial<Patient>): Promise<Patient>;
 }
 ```
@@ -128,7 +128,7 @@ await this.$transaction(async tx => {
   if (cascadeDelete) {
     await tx.appointment.deleteMany({ where: { patientId } });
     await tx.consentRecord.deleteMany({ where: { patientId } });
-    
+
     if (!retainAuditTrail) {
       await tx.auditTrail.deleteMany({ where: { patientId } });
     }
@@ -185,11 +185,11 @@ export class RepositoryContainer {
   private patientRepository: IPatientRepository | null = null;
   private appointmentRepository: IAppointmentRepository | null = null;
 
-  static initialize(supabase: SupabaseClient): RepositoryContainer { /* ... */ }
-  static getInstance(): RepositoryContainer { /* ... */ }
-  
-  getPatientRepository(): IPatientRepository { /* ... */ }
-  getAppointmentRepository(): IAppointmentRepository { /* ... */ }
+  static initialize(supabase: SupabaseClient): RepositoryContainer {/* ... */}
+  static getInstance(): RepositoryContainer {/* ... */}
+
+  getPatientRepository(): IPatientRepository {/* ... */}
+  getAppointmentRepository(): IAppointmentRepository {/* ... */}
 }
 ```
 
@@ -309,12 +309,12 @@ class PatientService {
   constructor(
     private patientRepository: IPatientRepository,
     private appointmentRepository: IAppointmentRepository,
-    private consentRepository: IConsentRepository
+    private consentRepository: IConsentRepository,
   ) {}
 
   async transferPatient(
-    patientId: string, 
-    newClinicId: string
+    patientId: string,
+    newClinicId: string,
   ): Promise<void> {
     // Coordinate transfer across multiple repositories
     // Manage transaction boundary
@@ -338,7 +338,7 @@ Domain-level error classes extend base error types with healthcare-specific cont
 ```typescript
 export class RepositoryError extends DomainError {
   constructor(message: string, originalError?: Error) {
-    super(`Repository error: ${message}`, "REPOSITORY_ERROR", 500);
+    super(`Repository error: ${message}`, 'REPOSITORY_ERROR', 500);
     this.cause = originalError;
   }
 }

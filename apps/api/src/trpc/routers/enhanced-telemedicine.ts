@@ -1,13 +1,13 @@
 /**
  * Enhanced Telemedicine Router
- * 
+ *
  * Provides comprehensive telemedicine services for Brazilian aesthetic clinics
  * with CFM compliance and LGPD data protection
  */
 
 import { z } from 'zod';
-import { router, publicProcedure, protectedProcedure } from '../trpc';
 import { EnhancedTelemedicineService } from '../../services/enhanced-telemedicine-service';
+import { protectedProcedure, publicProcedure, router } from '../trpc';
 
 // Input schemas
 const CreateSessionInput = z.object({
@@ -127,13 +127,17 @@ export const enhancedTelemedicineRouter = router({
 
   // Get session messages
   getSessionMessages: protectedProcedure
-    .input(z.object({ 
+    .input(z.object({
       sessionId: z.string().uuid(),
       limit: z.number().min(1).max(100).default(50),
-      offset: z.number().min(0).default(0)
+      offset: z.number().min(0).default(0),
     }))
     .query(async ({ input }) => {
-      return await telemedicineService.getSessionMessages(input.sessionId, input.limit, input.offset);
+      return await telemedicineService.getSessionMessages(
+        input.sessionId,
+        input.limit,
+        input.offset,
+      );
     }),
 
   // Create prescription from session
@@ -159,9 +163,9 @@ export const enhancedTelemedicineRouter = router({
 
   // Get patient's telemedicine history
   getPatientHistory: protectedProcedure
-    .input(z.object({ 
+    .input(z.object({
       patientId: z.string().uuid(),
-      limit: z.number().min(1).max(50).default(20)
+      limit: z.number().min(1).max(50).default(20),
     }))
     .query(async ({ input }) => {
       return await telemedicineService.getPatientHistory(input.patientId, input.limit);
@@ -176,9 +180,9 @@ export const enhancedTelemedicineRouter = router({
 
   // Get upcoming sessions for professional
   getUpcomingSessions: protectedProcedure
-    .input(z.object({ 
+    .input(z.object({
       professionalId: z.string().uuid(),
-      daysAhead: z.number().min(1).max(30).default(7)
+      daysAhead: z.number().min(1).max(30).default(7),
     }))
     .query(async ({ input }) => {
       return await telemedicineService.getUpcomingSessions(input.professionalId, input.daysAhead);
@@ -204,12 +208,16 @@ export const enhancedTelemedicineRouter = router({
 
   // Cancel session with refund calculation
   cancelSession: protectedProcedure
-    .input(z.object({ 
+    .input(z.object({
       sessionId: z.string().uuid(),
       reason: z.string().min(10),
-      initiateRefund: z.boolean().default(true)
+      initiateRefund: z.boolean().default(true),
     }))
     .mutation(async ({ input }) => {
-      return await telemedicineService.cancelSession(input.sessionId, input.reason, input.initiateRefund);
+      return await telemedicineService.cancelSession(
+        input.sessionId,
+        input.reason,
+        input.initiateRefund,
+      );
     }),
 });

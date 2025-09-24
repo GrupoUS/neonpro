@@ -1,8 +1,5 @@
-import type { PerformanceMetrics } from "../types";
-import {
-  observeChatResponseTime,
-  observeAIProviderLatency,
-} from "../metrics/histograms";
+import { observeAIProviderLatency, observeChatResponseTime } from '../metrics/histograms';
+import type { PerformanceMetrics } from '../types';
 
 export class PerformanceTracker {
   private startTimes: Map<string, number> = new Map();
@@ -22,9 +19,9 @@ export class PerformanceTracker {
     this.startTimes.delete(operation);
 
     // Record metrics based on operation type
-    if (operation.startsWith("chat-")) {
+    if (operation.startsWith('chat-')) {
       observeChatResponseTime(duration, labels);
-    } else if (operation.startsWith("ai-")) {
+    } else if (operation.startsWith('ai-')) {
       observeAIProviderLatency(duration, labels);
     }
 

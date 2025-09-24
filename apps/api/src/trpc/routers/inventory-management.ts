@@ -3,27 +3,30 @@
  * Complete inventory management for aesthetic clinics with Brazilian regulatory compliance
  */
 
-import { z } from "zod";
-import { InventoryManagementService } from "@neonpro/core-services";
+import { InventoryManagementService } from '@neonpro/core-services';
+import { z } from 'zod';
 import { router } from '../trpc';
 
 // Input schemas
 const ProductInput = z.object({
-  name: z.string().min(1, "Product name is required"),
+  name: z.string().min(1, 'Product name is required'),
   description: z.string().optional(),
   sku: z.string().optional(),
   barcode: z.string().optional(),
-  categoryId: z.string().uuid("Invalid category ID"),
-  unitOfMeasure: z.enum(["un", "ml", "g", "mg", "kit", "cx", "frasco"]),
+  categoryId: z.string().uuid('Invalid category ID'),
+  unitOfMeasure: z.enum(['un', 'ml', 'g', 'mg', 'kit', 'cx', 'frasco']),
   requiresRefrigeration: z.boolean().default(false),
   isControlledSubstance: z.boolean().default(false),
-  minStockLevel: z.number().min(0, "Minimum stock level must be non-negative"),
-  maxStockLevel: z.number().min(0, "Maximum stock level must be positive"),
-  reorderPoint: z.number().min(0, "Reorder point must be non-negative"),
-  leadTimeDays: z.number().min(0, "Lead time must be non-negative").max(365, "Lead time cannot exceed 365 days"),
+  minStockLevel: z.number().min(0, 'Minimum stock level must be non-negative'),
+  maxStockLevel: z.number().min(0, 'Maximum stock level must be positive'),
+  reorderPoint: z.number().min(0, 'Reorder point must be non-negative'),
+  leadTimeDays: z.number().min(0, 'Lead time must be non-negative').max(
+    365,
+    'Lead time cannot exceed 365 days',
+  ),
   supplierId: z.string().uuid().optional(),
-  costPrice: z.number().min(0, "Cost price must be non-negative"),
-  sellingPrice: z.number().min(0, "Selling price must be non-negative"),
+  costPrice: z.number().min(0, 'Cost price must be non-negative'),
+  sellingPrice: z.number().min(0, 'Selling price must be non-negative'),
   anvisaRegistration: z.string().optional(),
   expiryRequired: z.boolean().default(true),
   batchTrackingRequired: z.boolean().default(true),
@@ -33,12 +36,12 @@ const ProductInput = z.object({
 });
 
 const BatchInput = z.object({
-  productId: z.string().uuid("Invalid product ID"),
-  batchNumber: z.string().min(1, "Batch number is required"),
+  productId: z.string().uuid('Invalid product ID'),
+  batchNumber: z.string().min(1, 'Batch number is required'),
   expiryDate: z.date().optional(),
   manufacturingDate: z.date().optional(),
-  initialQuantity: z.number().positive("Initial quantity must be positive"),
-  unitCost: z.number().min(0, "Unit cost must be non-negative"),
+  initialQuantity: z.number().positive('Initial quantity must be positive'),
+  unitCost: z.number().min(0, 'Unit cost must be non-negative'),
   supplierId: z.string().uuid().optional(),
   anvisaBatchNumber: z.string().optional(),
   qualityCheckDate: z.date().optional(),
@@ -47,52 +50,52 @@ const BatchInput = z.object({
 });
 
 const _InventoryTransactionInput = z.object({
-  productId: z.string().uuid("Invalid product ID"),
+  productId: z.string().uuid('Invalid product ID'),
   batchId: z.string().uuid().optional(),
-  quantity: z.number().nonzero("Quantity cannot be zero"),
-  unitCost: z.number().min(0, "Unit cost must be non-negative").optional(),
+  quantity: z.number().nonzero('Quantity cannot be zero'),
+  unitCost: z.number().min(0, 'Unit cost must be non-negative').optional(),
   referenceId: z.string().uuid().optional(),
   referenceType: z.string().optional(),
   notes: z.string().optional(),
 });
 
 const ProductUsageInput = z.object({
-  appointmentId: z.string().uuid("Invalid appointment ID"),
-  productId: z.string().uuid("Invalid product ID"),
+  appointmentId: z.string().uuid('Invalid appointment ID'),
+  productId: z.string().uuid('Invalid product ID'),
   batchId: z.string().uuid().optional(),
-  quantityUsed: z.number().positive("Quantity used must be positive"),
-  professionalId: z.string().uuid("Invalid professional ID").optional(),
+  quantityUsed: z.number().positive('Quantity used must be positive'),
+  professionalId: z.string().uuid('Invalid professional ID').optional(),
   notes: z.string().optional(),
 });
 
 const PurchaseOrderInput = z.object({
-  supplierId: z.string().uuid("Invalid supplier ID"),
+  supplierId: z.string().uuid('Invalid supplier ID'),
   orderNumber: z.string().optional(),
   expectedDeliveryDate: z.date().optional(),
   notes: z.string().optional(),
 });
 
 const _PurchaseOrderItemInput = z.object({
-  productId: z.string().uuid("Invalid product ID"),
-  quantityOrdered: z.number().positive("Quantity ordered must be positive"),
-  unitCost: z.number().min(0, "Unit cost must be non-negative"),
+  productId: z.string().uuid('Invalid product ID'),
+  quantityOrdered: z.number().positive('Quantity ordered must be positive'),
+  unitCost: z.number().min(0, 'Unit cost must be non-negative'),
   notes: z.string().optional(),
 });
 
 // Update schemas
 const UpdateProductInput = ProductInput.partial().extend({
-  id: z.string().uuid("Invalid product ID"),
+  id: z.string().uuid('Invalid product ID'),
 });
 
 const _UpdateBatchInput = z.object({
-  id: z.string().uuid("Invalid batch ID"),
-  currentQuantity: z.number().min(0, "Current quantity must be non-negative"),
+  id: z.string().uuid('Invalid batch ID'),
+  currentQuantity: z.number().min(0, 'Current quantity must be non-negative'),
   notes: z.string().optional(),
 });
 
 export const inventoryManagementRouter = router({
   // === Product Management ===
-  
+
   createProduct: {
     input: ProductInput,
     output: z.object({
@@ -116,15 +119,15 @@ export const inventoryManagementRouter = router({
 
         return {
           success: true,
-          message: "Produto criado com sucesso",
+          message: 'Produto criado com sucesso',
           data: product,
         };
       } catch (error) {
-        console.error("Error creating product:", error);
+        console.error('Error creating product:', error);
         return {
           success: false,
-          message: "Erro ao criar produto",
-          error: error instanceof Error ? error.message : "Unknown error",
+          message: 'Erro ao criar produto',
+          error: error instanceof Error ? error.message : 'Unknown error',
         };
       }
     },
@@ -151,15 +154,15 @@ export const inventoryManagementRouter = router({
 
         return {
           success: true,
-          message: "Produto atualizado com sucesso",
+          message: 'Produto atualizado com sucesso',
           data: product,
         };
       } catch {
-        console.error("Error updating product:", error);
+        console.error('Error updating product:', error);
         return {
           success: false,
-          message: "Erro ao atualizar produto",
-          error: error instanceof Error ? error.message : "Unknown error",
+          message: 'Erro ao atualizar produto',
+          error: error instanceof Error ? error.message : 'Unknown error',
         };
       }
     },
@@ -191,15 +194,15 @@ export const inventoryManagementRouter = router({
 
         return {
           success: true,
-          message: "Produtos recuperados com sucesso",
+          message: 'Produtos recuperados com sucesso',
           data: products,
         };
       } catch {
-        console.error("Error getting products:", error);
+        console.error('Error getting products:', error);
         return {
           success: false,
-          message: "Erro ao recuperar produtos",
-          error: error instanceof Error ? error.message : "Unknown error",
+          message: 'Erro ao recuperar produtos',
+          error: error instanceof Error ? error.message : 'Unknown error',
         };
       }
     },
@@ -231,15 +234,15 @@ export const inventoryManagementRouter = router({
 
         return {
           success: true,
-          message: "Lote de inventário criado com sucesso",
+          message: 'Lote de inventário criado com sucesso',
           data: batch,
         };
       } catch {
-        console.error("Error creating inventory batch:", error);
+        console.error('Error creating inventory batch:', error);
         return {
           success: false,
-          message: "Erro ao criar lote de inventário",
-          error: error instanceof Error ? error.message : "Unknown error",
+          message: 'Erro ao criar lote de inventário',
+          error: error instanceof Error ? error.message : 'Unknown error',
         };
       }
     },
@@ -264,19 +267,22 @@ export const inventoryManagementRouter = router({
           supabaseKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
         });
 
-        const batches = await inventoryService.getInventoryBatches(input.productId, input.expiringSoon);
+        const batches = await inventoryService.getInventoryBatches(
+          input.productId,
+          input.expiringSoon,
+        );
 
         return {
           success: true,
-          message: "Lotes de inventário recuperados com sucesso",
+          message: 'Lotes de inventário recuperados com sucesso',
           data: batches,
         };
       } catch {
-        console.error("Error getting inventory batches:", error);
+        console.error('Error getting inventory batches:', error);
         return {
           success: false,
-          message: "Erro ao recuperar lotes de inventário",
-          error: error instanceof Error ? error.message : "Unknown error",
+          message: 'Erro ao recuperar lotes de inventário',
+          error: error instanceof Error ? error.message : 'Unknown error',
         };
       }
     },
@@ -284,7 +290,7 @@ export const inventoryManagementRouter = router({
 
   checkBatchExpiry: {
     input: z.object({
-      productId: z.string().uuid("Invalid product ID"),
+      productId: z.string().uuid('Invalid product ID'),
     }),
     output: z.object({
       success: z.boolean(),
@@ -308,15 +314,15 @@ export const inventoryManagementRouter = router({
 
         return {
           success: true,
-          message: "Verificação de validade do lote concluída",
+          message: 'Verificação de validade do lote concluída',
           data: expiryInfo,
         };
       } catch {
-        console.error("Error checking batch expiry:", error);
+        console.error('Error checking batch expiry:', error);
         return {
           success: false,
-          message: "Erro ao verificar validade do lote",
-          error: error instanceof Error ? error.message : "Unknown error",
+          message: 'Erro ao verificar validade do lote',
+          error: error instanceof Error ? error.message : 'Unknown error',
         };
       }
     },
@@ -326,9 +332,9 @@ export const inventoryManagementRouter = router({
 
   updateStockLevel: {
     input: z.object({
-      productId: z.string().uuid("Invalid product ID"),
-      quantityChange: z.number().nonzero("Quantity change cannot be zero"),
-      transactionType: z.enum(["purchase", "sale", "adjustment", "waste"]),
+      productId: z.string().uuid('Invalid product ID'),
+      quantityChange: z.number().nonzero('Quantity change cannot be zero'),
+      transactionType: z.enum(['purchase', 'sale', 'adjustment', 'waste']),
       referenceId: z.string().uuid().optional(),
     }),
     output: z.object({
@@ -348,19 +354,19 @@ export const inventoryManagementRouter = router({
           input.productId,
           input.quantityChange,
           input.transactionType,
-          input.referenceId
+          input.referenceId,
         );
 
         return {
           success: true,
-          message: "Nível de estoque atualizado com sucesso",
+          message: 'Nível de estoque atualizado com sucesso',
         };
       } catch {
-        console.error("Error updating stock level:", error);
+        console.error('Error updating stock level:', error);
         return {
           success: false,
-          message: "Erro ao atualizar nível de estoque",
-          error: error instanceof Error ? error.message : "Unknown error",
+          message: 'Erro ao atualizar nível de estoque',
+          error: error instanceof Error ? error.message : 'Unknown error',
         };
       }
     },
@@ -390,14 +396,14 @@ export const inventoryManagementRouter = router({
 
         return {
           success: true,
-          message: "Uso de produto registrado com sucesso",
+          message: 'Uso de produto registrado com sucesso',
         };
       } catch {
-        console.error("Error recording product usage:", error);
+        console.error('Error recording product usage:', error);
         return {
           success: false,
-          message: "Erro ao registrar uso de produto",
-          error: error instanceof Error ? error.message : "Unknown error",
+          message: 'Erro ao registrar uso de produto',
+          error: error instanceof Error ? error.message : 'Unknown error',
         };
       }
     },
@@ -405,7 +411,7 @@ export const inventoryManagementRouter = router({
 
   getProductUsageStats: {
     input: z.object({
-      productId: z.string().uuid("Invalid product ID"),
+      productId: z.string().uuid('Invalid product ID'),
       days: z.number().min(1).max(365).default(90),
     }),
     output: z.object({
@@ -426,15 +432,15 @@ export const inventoryManagementRouter = router({
 
         return {
           success: true,
-          message: "Estatísticas de uso recuperadas com sucesso",
+          message: 'Estatísticas de uso recuperadas com sucesso',
           data: stats,
         };
       } catch {
-        console.error("Error getting product usage stats:", error);
+        console.error('Error getting product usage stats:', error);
         return {
           success: false,
-          message: "Erro ao recuperar estatísticas de uso",
-          error: error instanceof Error ? error.message : "Unknown error",
+          message: 'Erro ao recuperar estatísticas de uso',
+          error: error instanceof Error ? error.message : 'Unknown error',
         };
       }
     },
@@ -466,15 +472,15 @@ export const inventoryManagementRouter = router({
 
         return {
           success: true,
-          message: "Alertas de inventário recuperados com sucesso",
+          message: 'Alertas de inventário recuperados com sucesso',
           data: alerts,
         };
       } catch {
-        console.error("Error getting inventory alerts:", error);
+        console.error('Error getting inventory alerts:', error);
         return {
           success: false,
-          message: "Erro ao recuperar alertas de inventário",
-          error: error instanceof Error ? error.message : "Unknown error",
+          message: 'Erro ao recuperar alertas de inventário',
+          error: error instanceof Error ? error.message : 'Unknown error',
         };
       }
     },
@@ -499,15 +505,15 @@ export const inventoryManagementRouter = router({
 
         return {
           success: true,
-          message: "Alertas de baixo estoque verificados com sucesso",
+          message: 'Alertas de baixo estoque verificados com sucesso',
           data: alerts,
         };
       } catch {
-        console.error("Error checking low stock alerts:", error);
+        console.error('Error checking low stock alerts:', error);
         return {
           success: false,
-          message: "Erro ao verificar alertas de baixo estoque",
-          error: error instanceof Error ? error.message : "Unknown error",
+          message: 'Erro ao verificar alertas de baixo estoque',
+          error: error instanceof Error ? error.message : 'Unknown error',
         };
       }
     },
@@ -532,15 +538,15 @@ export const inventoryManagementRouter = router({
 
         return {
           success: true,
-          message: "Alertas de validade verificados com sucesso",
+          message: 'Alertas de validade verificados com sucesso',
           data: alerts,
         };
       } catch {
-        console.error("Error checking expiry alerts:", error);
+        console.error('Error checking expiry alerts:', error);
         return {
           success: false,
-          message: "Erro ao verificar alertas de validade",
-          error: error instanceof Error ? error.message : "Unknown error",
+          message: 'Erro ao verificar alertas de validade',
+          error: error instanceof Error ? error.message : 'Unknown error',
         };
       }
     },
@@ -567,21 +573,21 @@ export const inventoryManagementRouter = router({
         const order = await inventoryService.createPurchaseOrder({
           ...input,
           clinic_id: ctx.clinicId,
-          status: "draft",
+          status: 'draft',
           total_amount: 0,
         });
 
         return {
           success: true,
-          message: "Ordem de compra criada com sucesso",
+          message: 'Ordem de compra criada com sucesso',
           data: order,
         };
       } catch {
-        console.error("Error creating purchase order:", error);
+        console.error('Error creating purchase order:', error);
         return {
           success: false,
-          message: "Erro ao criar ordem de compra",
-          error: error instanceof Error ? error.message : "Unknown error",
+          message: 'Erro ao criar ordem de compra',
+          error: error instanceof Error ? error.message : 'Unknown error',
         };
       }
     },
@@ -612,15 +618,15 @@ export const inventoryManagementRouter = router({
 
         return {
           success: true,
-          message: "Ordens de compra recuperadas com sucesso",
+          message: 'Ordens de compra recuperadas com sucesso',
           data: orders,
         };
       } catch {
-        console.error("Error getting purchase orders:", error);
+        console.error('Error getting purchase orders:', error);
         return {
           success: false,
-          message: "Erro ao recuperar ordens de compra",
-          error: error instanceof Error ? error.message : "Unknown error",
+          message: 'Erro ao recuperar ordens de compra',
+          error: error instanceof Error ? error.message : 'Unknown error',
         };
       }
     },
@@ -651,15 +657,15 @@ export const inventoryManagementRouter = router({
 
         return {
           success: true,
-          message: "Resumo de inventário recuperado com sucesso",
+          message: 'Resumo de inventário recuperado com sucesso',
           data: summary,
         };
       } catch {
-        console.error("Error getting inventory summary:", error);
+        console.error('Error getting inventory summary:', error);
         return {
           success: false,
-          message: "Erro ao recuperar resumo de inventário",
-          error: error instanceof Error ? error.message : "Unknown error",
+          message: 'Erro ao recuperar resumo de inventário',
+          error: error instanceof Error ? error.message : 'Unknown error',
         };
       }
     },
@@ -690,15 +696,15 @@ export const inventoryManagementRouter = router({
 
         return {
           success: true,
-          message: "Relatório de inventário gerado com sucesso",
+          message: 'Relatório de inventário gerado com sucesso',
           data: report,
         };
       } catch {
-        console.error("Error generating inventory report:", error);
+        console.error('Error generating inventory report:', error);
         return {
           success: false,
-          message: "Erro ao gerar relatório de inventário",
-          error: error instanceof Error ? error.message : "Unknown error",
+          message: 'Erro ao gerar relatório de inventário',
+          error: error instanceof Error ? error.message : 'Unknown error',
         };
       }
     },
@@ -724,14 +730,14 @@ export const inventoryManagementRouter = router({
 
         return {
           success: true,
-          message: "Verificações diárias de inventário processadas com sucesso",
+          message: 'Verificações diárias de inventário processadas com sucesso',
         };
       } catch {
-        console.error("Error processing daily inventory checks:", error);
+        console.error('Error processing daily inventory checks:', error);
         return {
           success: false,
-          message: "Erro ao processar verificações diárias de inventário",
-          error: error instanceof Error ? error.message : "Unknown error",
+          message: 'Erro ao processar verificações diárias de inventário',
+          error: error instanceof Error ? error.message : 'Unknown error',
         };
       }
     },
@@ -756,15 +762,15 @@ export const inventoryManagementRouter = router({
 
         return {
           success: true,
-          message: "Quantidades de reposição calculadas com sucesso",
+          message: 'Quantidades de reposição calculadas com sucesso',
           data: recommendations,
         };
       } catch {
-        console.error("Error calculating reorder quantities:", error);
+        console.error('Error calculating reorder quantities:', error);
         return {
           success: false,
-          message: "Erro ao calcular quantidades de reposição",
-          error: error instanceof Error ? error.message : "Unknown error",
+          message: 'Erro ao calcular quantidades de reposição',
+          error: error instanceof Error ? error.message : 'Unknown error',
         };
       }
     },

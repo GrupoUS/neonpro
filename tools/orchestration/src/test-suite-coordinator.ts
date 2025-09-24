@@ -50,13 +50,13 @@ export class TestSuiteCoordinator {
       const testStartTime = Date.now();
 
       try {
-        const success = !testType.includes("failing");
+        const success = !testType.includes('failing');
 
         results.push({
           type: testType,
           success,
           duration: Date.now() - testStartTime,
-          output: success ? { passed: true } : { error: "Test failed" },
+          output: success ? { passed: true } : { error: 'Test failed' },
           coverage: success ? 0.85 : 0.3,
           errors: success ? [] : [`${testType} test failed`],
           warnings: success ? [] : [`Warning in ${testType}`],
@@ -75,16 +75,16 @@ export class TestSuiteCoordinator {
 
     const complianceResults = request.healthcareMode
       ? {
-          lgpdCompliant: true,
-          anvisaCompliant: true,
-          cfmCompliant: true,
-          overallCompliant: true,
-        }
+        lgpdCompliant: true,
+        anvisaCompliant: true,
+        cfmCompliant: true,
+        overallCompliant: true,
+      }
       : undefined;
 
     return {
       results,
-      overallSuccess: results.every((r) => r.success),
+      overallSuccess: results.every(r => r.success),
       parallelExecution: request.parallel,
       totalDuration: Date.now() - startTime,
       complianceResults,

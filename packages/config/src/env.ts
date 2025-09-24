@@ -1,8 +1,8 @@
 // Centralized AI Chat environment config (Phase 1)
 // Exposes environment-derived configuration for AI features
 
-import { aiConfig, AI_PROVIDER, OPENAI_API_KEY } from "./ai";
-export { aiConfig, AI_PROVIDER, OPENAI_API_KEY } from "./ai";
+import { AI_PROVIDER, aiConfig, OPENAI_API_KEY } from './ai';
+export { AI_PROVIDER, aiConfig, OPENAI_API_KEY } from './ai';
 
 export type AiEnv = {
   AI_CHAT_MOCK_MODE: boolean;

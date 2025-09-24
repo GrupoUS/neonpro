@@ -1,5 +1,7 @@
 import { zValidator } from '@hono/zod-validator';
 import { Hono } from 'hono';
+import { z } from 'zod';
+
 const app = new Hono();
 
 const ExplanationRequest = z
@@ -28,7 +30,7 @@ type ExplanationResponse = {
 };
 
 app.post('/summary', zValidator('json', ExplanationRequest), async c => {
-  const body = c.req.valid('json');
+  const body: ExplanationRequest = c.req.valid('json');
 
   // Minimal GREEN: echo-style summary with safe trimming and trace id
   const base = body.text ?? body.messages?.map(m => m.content).join(' ') ?? '';

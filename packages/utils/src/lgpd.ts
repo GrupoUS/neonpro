@@ -139,7 +139,10 @@ export function redactBankAccount(text: string): string {
 export function redactAddress(text: string): string {
   return text
     // Brazilian address patterns
-    .replace(/\b(?:Rua|Avenida|Av\.|Travessa|Alameda|Rua|Praça|Largo|Viela|Estrada|Rodovia)\s+[A-ZÀ-Ú][a-zà-ú]+[^\n,]*/gi, '**** *****')
+    .replace(
+      /\b(?:Rua|Avenida|Av\.|Travessa|Alameda|Rua|Praça|Largo|Viela|Estrada|Rodovia)\s+[A-ZÀ-Ú][a-zà-ú]+[^\n,]*/gi,
+      '**** *****',
+    )
     .replace(/\b\d+[a-z]?\s*(?:apto|apt|sala|sl|andar|º|°|bloco|bl|casa|cs)\s*\d*[a-z]?\b/gi, '***')
     .replace(/\b(?:CEP:?\s*)\d{5}-?\d{3}\b/gi, 'CEP: *****-***')
     .replace(/\b[Ss][aã]o\s+[Pp]aulo\b/g, '***')
@@ -148,7 +151,10 @@ export function redactAddress(text: string): string {
     .replace(/\b[Bb]ras[íi]lia\b/g, '***')
     .replace(/\b[Ss]alvador\b/g, '***')
     .replace(/\b[Ff]ortaleza\b/g, '***')
-    .replace(/\b(?:MG|SP|RJ|BA|CE|DF|ES|GO|MS|MT|PA|PB|PE|PI|PR|RN|RO|RR|RS|SC|SE|TO|AC|AL|AP|AM|MA|PA|PB|PE|PI|PR|RJ|RN|RO|RR|RS|SC|SE|TO)\b/g, '**');
+    .replace(
+      /\b(?:MG|SP|RJ|BA|CE|DF|ES|GO|MS|MT|PA|PB|PE|PI|PR|RN|RO|RR|RS|SC|SE|TO|AC|AL|AP|AM|MA|PA|PB|PE|PI|PR|RJ|RN|RO|RR|RS|SC|SE|TO)\b/g,
+      '**',
+    );
 }
 
 export function redactFullName(text: string, options: RedactionOptions = {}): string {

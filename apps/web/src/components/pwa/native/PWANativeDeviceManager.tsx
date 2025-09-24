@@ -1,5 +1,17 @@
-import * as React from "react";
-import { Camera, Contact, Calendar, Image, Video, Mic, MapPin, Phone, MessageSquare, AlertTriangle, Check } from "lucide-react";
+import {
+  AlertTriangle,
+  Calendar,
+  Camera,
+  Check,
+  Contact,
+  Image,
+  MapPin,
+  MessageSquare,
+  Mic,
+  Phone,
+  Video,
+} from 'lucide-react';
+import * as React from 'react';
 
 interface NativeDeviceCapability {
   id: string;
@@ -18,7 +30,7 @@ interface PWANativeDeviceManagerProps {
 
 export const PWANativeDeviceManager: React.FC<PWANativeDeviceManagerProps> = ({
   className,
-  onCapabilityChange
+  onCapabilityChange,
 }) => {
   const [capabilities, setCapabilities] = React.useState<NativeDeviceCapability[]>([
     {
@@ -28,7 +40,7 @@ export const PWANativeDeviceManager: React.FC<PWANativeDeviceManagerProps> = ({
       available: false,
       permission: 'prompt',
       description: 'Acesso à câmera do dispositivo',
-      aestheticUse: 'Registrar procedimentos, tirar fotos antes/depois'
+      aestheticUse: 'Registrar procedimentos, tirar fotos antes/depois',
     },
     {
       id: 'contacts',
@@ -37,7 +49,7 @@ export const PWANativeDeviceManager: React.FC<PWANativeDeviceManagerProps> = ({
       available: false,
       permission: 'prompt',
       description: 'Acesso à lista de contatos',
-      aestheticUse: 'Importar contatos de pacientes e profissionais'
+      aestheticUse: 'Importar contatos de pacientes e profissionais',
     },
     {
       id: 'calendar',
@@ -46,7 +58,7 @@ export const PWANativeDeviceManager: React.FC<PWANativeDeviceManagerProps> = ({
       available: false,
       permission: 'prompt',
       description: 'Sincronização com calendário do dispositivo',
-      aestheticUse: 'Integrar agendamentos com calendário pessoal'
+      aestheticUse: 'Integrar agendamentos com calendário pessoal',
     },
     {
       id: 'microphone',
@@ -55,7 +67,7 @@ export const PWANativeDeviceManager: React.FC<PWANativeDeviceManagerProps> = ({
       available: false,
       permission: 'prompt',
       description: 'Gravação de áudio',
-      aestheticUse: 'Notas de voz, transcrição de consultas'
+      aestheticUse: 'Notas de voz, transcrição de consultas',
     },
     {
       id: 'location',
@@ -64,7 +76,7 @@ export const PWANativeDeviceManager: React.FC<PWANativeDeviceManagerProps> = ({
       available: false,
       permission: 'prompt',
       description: 'Acesso à localização do dispositivo',
-      aestheticUse: 'Check-in de pacientes, rotas para clínica'
+      aestheticUse: 'Check-in de pacientes, rotas para clínica',
     },
     {
       id: 'phone',
@@ -73,7 +85,7 @@ export const PWANativeDeviceManager: React.FC<PWANativeDeviceManagerProps> = ({
       available: false,
       permission: 'prompt',
       description: 'Acesso a funcionalidades de telefone',
-      aestheticUse: 'Chamadas diretas para pacientes e profissionais'
+      aestheticUse: 'Chamadas diretas para pacientes e profissionais',
     },
     {
       id: 'notifications',
@@ -82,8 +94,8 @@ export const PWANativeDeviceManager: React.FC<PWANativeDeviceManagerProps> = ({
       available: false,
       permission: 'prompt',
       description: 'Notificações push do sistema',
-      aestheticUse: 'Lembretes de agendamentos, confirmações'
-    }
+      aestheticUse: 'Lembretes de agendamentos, confirmações',
+    },
   ]);
 
   const [selectedCapability, setSelectedCapability] = React.useState<string | null>(null);
@@ -95,7 +107,7 @@ export const PWANativeDeviceManager: React.FC<PWANativeDeviceManagerProps> = ({
 
   const checkDeviceCapabilities = async () => {
     const updatedCapabilities = await Promise.all(
-      capabilities.map(async (capability) => {
+      capabilities.map(async capability => {
         let available = false;
         let permission: 'granted' | 'denied' | 'prompt' | 'unsupported' = 'unsupported';
 
@@ -104,7 +116,9 @@ export const PWANativeDeviceManager: React.FC<PWANativeDeviceManagerProps> = ({
             available = 'mediaDevices' in navigator && 'getUserMedia' in navigator.mediaDevices;
             if (available) {
               try {
-                const result = await navigator.permissions.query({ name: 'camera' as PermissionName });
+                const result = await navigator.permissions.query({
+                  name: 'camera' as PermissionName,
+                });
                 permission = result.state as 'granted' | 'denied' | 'prompt';
               } catch {
                 permission = 'prompt';
@@ -116,7 +130,9 @@ export const PWANativeDeviceManager: React.FC<PWANativeDeviceManagerProps> = ({
             available = 'contacts' in navigator;
             if (available) {
               try {
-                const result = await navigator.permissions.query({ name: 'contacts' as PermissionName });
+                const result = await navigator.permissions.query({
+                  name: 'contacts' as PermissionName,
+                });
                 permission = result.state as 'granted' | 'denied' | 'prompt';
               } catch {
                 permission = 'prompt';
@@ -128,7 +144,9 @@ export const PWANativeDeviceManager: React.FC<PWANativeDeviceManagerProps> = ({
             available = 'calendar' in navigator;
             if (available) {
               try {
-                const result = await navigator.permissions.query({ name: 'calendar' as PermissionName });
+                const result = await navigator.permissions.query({
+                  name: 'calendar' as PermissionName,
+                });
                 permission = result.state as 'granted' | 'denied' | 'prompt';
               } catch {
                 permission = 'prompt';
@@ -140,7 +158,9 @@ export const PWANativeDeviceManager: React.FC<PWANativeDeviceManagerProps> = ({
             available = 'mediaDevices' in navigator && 'getUserMedia' in navigator.mediaDevices;
             if (available) {
               try {
-                const result = await navigator.permissions.query({ name: 'microphone' as PermissionName });
+                const result = await navigator.permissions.query({
+                  name: 'microphone' as PermissionName,
+                });
                 permission = result.state as 'granted' | 'denied' | 'prompt';
               } catch {
                 permission = 'prompt';
@@ -152,7 +172,9 @@ export const PWANativeDeviceManager: React.FC<PWANativeDeviceManagerProps> = ({
             available = 'geolocation' in navigator;
             if (available) {
               try {
-                const result = await navigator.permissions.query({ name: 'geolocation' as PermissionName });
+                const result = await navigator.permissions.query({
+                  name: 'geolocation' as PermissionName,
+                });
                 permission = result.state as 'granted' | 'denied' | 'prompt';
               } catch {
                 permission = 'prompt';
@@ -171,7 +193,7 @@ export const PWANativeDeviceManager: React.FC<PWANativeDeviceManagerProps> = ({
         }
 
         return { ...capability, available, permission };
-      })
+      }),
     );
 
     setCapabilities(updatedCapabilities);
@@ -211,7 +233,9 @@ export const PWANativeDeviceManager: React.FC<PWANativeDeviceManagerProps> = ({
         case 'contacts':
           try {
             // @ts-ignore - Contacts API is experimental
-            const contacts = await navigator.contacts.select(['name', 'email', 'tel'], { multiple: false });
+            const contacts = await navigator.contacts.select(['name', 'email', 'tel'], {
+              multiple: false,
+            });
             granted = contacts.length > 0;
           } catch {
             granted = false;
@@ -246,11 +270,13 @@ export const PWANativeDeviceManager: React.FC<PWANativeDeviceManagerProps> = ({
       }
 
       // Update capability status
-      setCapabilities(prev => prev.map(cap => 
-        cap.id === capabilityId 
-          ? { ...cap, permission: granted ? 'granted' : 'denied' }
-          : cap
-      ));
+      setCapabilities(prev =>
+        prev.map(cap =>
+          cap.id === capabilityId
+            ? { ...cap, permission: granted ? 'granted' : 'denied' }
+            : cap
+        )
+      );
 
       onCapabilityChange?.(capabilityId, granted);
     } catch (error) {
@@ -263,44 +289,54 @@ export const PWANativeDeviceManager: React.FC<PWANativeDeviceManagerProps> = ({
 
   const getPermissionColor = (permission: string) => {
     switch (permission) {
-      case 'granted': return 'text-green-600 bg-green-100';
-      case 'denied': return 'text-red-600 bg-red-100';
-      case 'prompt': return 'text-yellow-600 bg-yellow-100';
-      case 'unsupported': return 'text-gray-600 bg-gray-100';
-      default: return 'text-gray-600 bg-gray-100';
+      case 'granted':
+        return 'text-green-600 bg-green-100';
+      case 'denied':
+        return 'text-red-600 bg-red-100';
+      case 'prompt':
+        return 'text-yellow-600 bg-yellow-100';
+      case 'unsupported':
+        return 'text-gray-600 bg-gray-100';
+      default:
+        return 'text-gray-600 bg-gray-100';
     }
   };
 
   const getPermissionText = (permission: string) => {
     switch (permission) {
-      case 'granted': return 'Concedido';
-      case 'denied': return 'Negado';
-      case 'prompt': return 'Solicitar';
-      case 'unsupported': return 'Não suportado';
-      default: return 'Desconhecido';
+      case 'granted':
+        return 'Concedido';
+      case 'denied':
+        return 'Negado';
+      case 'prompt':
+        return 'Solicitar';
+      case 'unsupported':
+        return 'Não suportado';
+      default:
+        return 'Desconhecido';
     }
   };
 
   return (
     <div className={`bg-white rounded-lg shadow-lg p-6 ${className}`}>
-      <div className="flex items-center mb-6">
-        <div className="flex-shrink-0">
-          <div className="h-8 w-8 bg-blue-600 rounded-lg flex items-center justify-center">
-            <AlertTriangle className="h-5 w-5 text-white" />
+      <div className='flex items-center mb-6'>
+        <div className='flex-shrink-0'>
+          <div className='h-8 w-8 bg-blue-600 rounded-lg flex items-center justify-center'>
+            <AlertTriangle className='h-5 w-5 text-white' />
           </div>
         </div>
-        <div className="ml-3">
-          <h3 className="text-lg font-medium text-gray-900">
+        <div className='ml-3'>
+          <h3 className='text-lg font-medium text-gray-900'>
             Recursos do Dispositivo
           </h3>
-          <p className="text-sm text-gray-500">
+          <p className='text-sm text-gray-500'>
             Gerencie permissões para funcionalidades avançadas da clínica
           </p>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {capabilities.map((capability) => {
+      <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+        {capabilities.map(capability => {
           const Icon = capability.icon;
           return (
             <div
@@ -310,32 +346,40 @@ export const PWANativeDeviceManager: React.FC<PWANativeDeviceManagerProps> = ({
                   ? 'border-gray-200 hover:border-blue-300 hover:shadow-md cursor-pointer'
                   : 'border-gray-100 bg-gray-50 opacity-50'
               }`}
-              onClick={() => capability.available && capability.permission === 'prompt' && !isProcessing && requestPermission(capability.id)}
+              onClick={() =>
+                capability.available && capability.permission === 'prompt' && !isProcessing
+                && requestPermission(capability.id)}
             >
-              <div className="flex items-start justify-between">
-                <div className="flex items-start space-x-3">
-                  <div className={`flex-shrink-0 ${
-                    capability.available ? 'text-blue-600' : 'text-gray-400'
-                  }`}>
-                    <Icon className="h-5 w-5" />
+              <div className='flex items-start justify-between'>
+                <div className='flex items-start space-x-3'>
+                  <div
+                    className={`flex-shrink-0 ${
+                      capability.available ? 'text-blue-600' : 'text-gray-400'
+                    }`}
+                  >
+                    <Icon className='h-5 w-5' />
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <h4 className="text-sm font-medium text-gray-900 truncate">
+                  <div className='flex-1 min-w-0'>
+                    <h4 className='text-sm font-medium text-gray-900 truncate'>
                       {capability.name}
                     </h4>
-                    <p className="text-xs text-gray-500 mt-1">
+                    <p className='text-xs text-gray-500 mt-1'>
                       {capability.description}
                     </p>
-                    <p className="text-xs text-blue-600 mt-1">
+                    <p className='text-xs text-blue-600 mt-1'>
                       {capability.aestheticUse}
                     </p>
                   </div>
                 </div>
-                <div className="flex items-center space-x-2">
+                <div className='flex items-center space-x-2'>
                   {capability.permission === 'granted' && (
-                    <Check className="h-4 w-4 text-green-600" />
+                    <Check className='h-4 w-4 text-green-600' />
                   )}
-                  <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getPermissionColor(capability.permission)}`}>
+                  <span
+                    className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                      getPermissionColor(capability.permission)
+                    }`}
+                  >
                     {getPermissionText(capability.permission)}
                   </span>
                 </div>
@@ -346,21 +390,24 @@ export const PWANativeDeviceManager: React.FC<PWANativeDeviceManagerProps> = ({
       </div>
 
       {isProcessing && selectedCapability && (
-        <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
-          <div className="flex items-center">
-            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 mr-2"></div>
-            <span className="text-sm text-blue-800">
-              Solicitando permissão para {capabilities.find(c => c.id === selectedCapability)?.name}...
+        <div className='mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200'>
+          <div className='flex items-center'>
+            <div className='animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 mr-2'>
+            </div>
+            <span className='text-sm text-blue-800'>
+              Solicitando permissão para {capabilities.find(c =>
+                c.id === selectedCapability
+              )?.name}...
             </span>
           </div>
         </div>
       )}
 
-      <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-        <h4 className="text-sm font-medium text-gray-900 mb-2">
+      <div className='mt-6 p-4 bg-gray-50 rounded-lg'>
+        <h4 className='text-sm font-medium text-gray-900 mb-2'>
           Privacidade e Segurança
         </h4>
-        <ul className="text-xs text-gray-600 space-y-1">
+        <ul className='text-xs text-gray-600 space-y-1'>
           <li>• Todas as permissões são opcionais e podem ser revogadas a qualquer momento</li>
           <li>• Dados sensíveis são criptografados e armazenados conforme LGPD</li>
           <li>• Recursos são usados apenas para melhorar a experiência clínica</li>

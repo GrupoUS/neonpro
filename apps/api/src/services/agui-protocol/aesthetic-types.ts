@@ -6,77 +6,72 @@
  */
 
 import {
-  AguiMessage,
-  AguiMessageType,
-  AguiMessageMetadata,
-  AguiSource,
   AguiAction,
   AguiErrorCode,
+  AguiMessage,
+  AguiMessageMetadata,
+  AguiMessageType,
+  AguiSource,
+  AISuggestion,
   ValidationResult,
-  AISuggestion
 } from './types';
 
 // =====================================
 // AESTHETIC CLINIC-SPECIFIC MESSAGE TYPES
 // =====================================
 
-export type AestheticAguiMessageType = AguiMessageType | 
-  // Treatment Management
-  'treatment_catalog_query' |
-  'treatment_availability_check' |
-  'treatment_scheduling_request' |
-  'treatment_consent_management' |
-  'treatment_plan_creation' |
-  'treatment_progress_update' |
-  'treatment_outcome_assessment' |
-  'treatment_inventory_management' |
-  
-  // Appointment & Scheduling
-  'appointment_optimization_request' |
-  'appointment_conflict_detection' |
-  'appointment_reminder_customization' |
-  'appointment_no_show_prediction' |
-  'appointment_rescheduling_logic' |
-  'appointment_capacity_analysis' |
-  
-  // Financial Operations
-  'financial_treatment_pricing' |
-  'financial_package_creation' |
-  'financial_installment_planning' |
-  'financial_promotion_application' |
-  'financial_revenue_forecasting' |
-  'financial_fraud_detection' |
-  'financial_compliance_validation' |
-  
-  // Aesthetic-Specific Analytics
-  'analytics_treatment_popularity' |
-  'analytics_client_retention_aesthetic' |
-  'analytics_revenue_per_treatment' |
-  'analytics_seasonal_trends' |
-  'analytics_professional_performance' |
-  'analytics_equipment_utilization' |
-  
-  // Compliance & Security
-  'compliance_anvisa_validation' |
-  'compliance_cfm_verification' |
-  'compliance_lgpd_audit' |
-  'compliance_document_verification' |
-  'compliance_emergency_protocols' |
-  
-  // Enhanced Client Features
-  'client_aesthetic_profile' |
-  'client_treatment_history_detailed' |
-  'client_skin_assessment' |
-  'client_allergy_tracking' |
-  'client_photo_consent_management' |
-  'client_satisfaction_tracking' |
-  
-  // Real-time Operations
-  'realtime_inventory_update' |
-  'realtime_equipment_status' |
-  'realtime_room_availability' |
-  'realtime_staff_scheduling' |
-  'realtime_emergency_alert';
+export type AestheticAguiMessageType =
+  | AguiMessageType
+  | // Treatment Management
+  'treatment_catalog_query'
+  | 'treatment_availability_check'
+  | 'treatment_scheduling_request'
+  | 'treatment_consent_management'
+  | 'treatment_plan_creation'
+  | 'treatment_progress_update'
+  | 'treatment_outcome_assessment'
+  | 'treatment_inventory_management'
+  | // Appointment & Scheduling
+  'appointment_optimization_request'
+  | 'appointment_conflict_detection'
+  | 'appointment_reminder_customization'
+  | 'appointment_no_show_prediction'
+  | 'appointment_rescheduling_logic'
+  | 'appointment_capacity_analysis'
+  | // Financial Operations
+  'financial_treatment_pricing'
+  | 'financial_package_creation'
+  | 'financial_installment_planning'
+  | 'financial_promotion_application'
+  | 'financial_revenue_forecasting'
+  | 'financial_fraud_detection'
+  | 'financial_compliance_validation'
+  | // Aesthetic-Specific Analytics
+  'analytics_treatment_popularity'
+  | 'analytics_client_retention_aesthetic'
+  | 'analytics_revenue_per_treatment'
+  | 'analytics_seasonal_trends'
+  | 'analytics_professional_performance'
+  | 'analytics_equipment_utilization'
+  | // Compliance & Security
+  'compliance_anvisa_validation'
+  | 'compliance_cfm_verification'
+  | 'compliance_lgpd_audit'
+  | 'compliance_document_verification'
+  | 'compliance_emergency_protocols'
+  | // Enhanced Client Features
+  'client_aesthetic_profile'
+  | 'client_treatment_history_detailed'
+  | 'client_skin_assessment'
+  | 'client_allergy_tracking'
+  | 'client_photo_consent_management'
+  | 'client_satisfaction_tracking'
+  | // Real-time Operations
+  'realtime_inventory_update'
+  | 'realtime_equipment_status'
+  | 'realtime_room_availability'
+  | 'realtime_staff_scheduling'
+  | 'realtime_emergency_alert';
 
 // =====================================
 // AESTHETIC TREATMENT DATA MODELS
@@ -107,32 +102,32 @@ export interface AestheticTreatment {
   updatedAt: string;
 }
 
-export type TreatmentCategory = 
-  | 'injectables'           // Botox, fillers
-  | 'laser_treatments'      // Hair removal, skin rejuvenation
-  | 'chemical_peels'        // Various acid treatments
-  | 'skincare'              // Facials, cleansing
-  | 'body_treatments'       // Massage, lymphatic drainage
-  | 'hair_treatments'       // Hair restoration, treatments
-  | 'nail_care'            // Manicure, pedicure
-  | 'permanent_makeup'      // Microblading, micropigmentation
-  | 'non_surgical_face'     // Radiofrequency, ultrasound
-  | 'wellness'             // Relaxation, stress reduction;
+export type TreatmentCategory =
+  | 'injectables' // Botox, fillers
+  | 'laser_treatments' // Hair removal, skin rejuvenation
+  | 'chemical_peels' // Various acid treatments
+  | 'skincare' // Facials, cleansing
+  | 'body_treatments' // Massage, lymphatic drainage
+  | 'hair_treatments' // Hair restoration, treatments
+  | 'nail_care' // Manicure, pedicure
+  | 'permanent_makeup' // Microblading, micropigmentation
+  | 'non_surgical_face' // Radiofrequency, ultrasound
+  | 'wellness'; // Relaxation, stress reduction;
 
-export type SkinType = 
-  | 'I'   // Very fair, always burns, never tans
-  | 'II'  // Fair, burns easily, tans minimally
+export type SkinType =
+  | 'I' // Very fair, always burns, never tans
+  | 'II' // Fair, burns easily, tans minimally
   | 'III' // Light, sometimes burns, tans gradually
-  | 'IV'  // Olive, burns minimally, tans easily
-  | 'V'   // Brown, rarely burns, tans darkly
+  | 'IV' // Olive, burns minimally, tans easily
+  | 'V' // Brown, rarely burns, tans darkly
   | 'VI'; // Dark, never burns, always tans darkly
 
-export type AgeGroup = 
-  | 'adolescent'  // 13-17
+export type AgeGroup =
+  | 'adolescent' // 13-17
   | 'young_adult' // 18-25
-  | 'adult'       // 26-40
-  | 'middle_age'  // 41-60
-  | 'senior';     // 61+
+  | 'adult' // 26-40
+  | 'middle_age' // 41-60
+  | 'senior'; // 61+
 
 export type Season = 'summer' | 'winter' | 'spring' | 'fall';
 
@@ -191,9 +186,15 @@ export interface AestheticAppointment {
   updatedAt: string;
 }
 
-export type AppointmentStatus = 
-  | 'scheduled' | 'confirmed' | 'in_progress' | 'completed' 
-  | 'cancelled' | 'no_show' | 'rescheduled' | 'waiting_list';
+export type AppointmentStatus =
+  | 'scheduled'
+  | 'confirmed'
+  | 'in_progress'
+  | 'completed'
+  | 'cancelled'
+  | 'no_show'
+  | 'rescheduled'
+  | 'waiting_list';
 
 export type AppointmentPriority = 'low' | 'normal' | 'high' | 'urgent';
 export type PaymentStatus = 'pending' | 'partial' | 'paid' | 'refunded' | 'overdue';
@@ -276,10 +277,21 @@ export interface SkinCondition {
   isActive: boolean;
 }
 
-export type SkinConcern = 
-  | 'acne' | 'aging' | 'pigmentation' | 'dryness' | 'oiliness' 
-  | 'sensitivity' | 'wrinkles' | 'scars' | 'redness' | 'uneven_texture'
-  | 'pores' | 'dark_circles' | 'loss_of_elasticity' | 'stretch_marks';
+export type SkinConcern =
+  | 'acne'
+  | 'aging'
+  | 'pigmentation'
+  | 'dryness'
+  | 'oiliness'
+  | 'sensitivity'
+  | 'wrinkles'
+  | 'scars'
+  | 'redness'
+  | 'uneven_texture'
+  | 'pores'
+  | 'dark_circles'
+  | 'loss_of_elasticity'
+  | 'stretch_marks';
 
 export interface SkinAssessmentPhoto {
   id: string;
@@ -401,10 +413,16 @@ export interface AestheticFinancialOperation {
   processedAt?: string;
 }
 
-export type FinancialOperationType = 
-  | 'treatment_payment' | 'package_purchase' | 'deposit' 
-  | 'installment_payment' | 'refund' | 'cancellation_fee' 
-  | 'no_show_fee' | 'product_purchase' | 'membership_fee';
+export type FinancialOperationType =
+  | 'treatment_payment'
+  | 'package_purchase'
+  | 'deposit'
+  | 'installment_payment'
+  | 'refund'
+  | 'cancellation_fee'
+  | 'no_show_fee'
+  | 'product_purchase'
+  | 'membership_fee';
 
 export type PaymentMethod = 'credit_card' | 'debit_card' | 'pix' | 'cash' | 'bank_transfer';
 
@@ -467,9 +485,13 @@ export interface AestheticComplianceCheck {
   documentation?: string;
 }
 
-export type ComplianceCheckType = 
-  | 'anvisa_registration' | 'professional_license' | 'treatment_safety' 
-  | 'equipment_certification' | 'documentation_completeness' | 'emergency_procedures';
+export type ComplianceCheckType =
+  | 'anvisa_registration'
+  | 'professional_license'
+  | 'treatment_safety'
+  | 'equipment_certification'
+  | 'documentation_completeness'
+  | 'emergency_procedures';
 
 export interface ComplianceFinding {
   severity: 'low' | 'medium' | 'high' | 'critical';
@@ -590,31 +612,30 @@ export interface PaymentHistory {
 
 // Export all types for easy importing
 export type {
-  // Re-export base types
-  AguiMessage,
-  AguiMessageType,
-  AguiMessageMetadata,
-  AguiSource,
-  AguiAction,
-  AguiErrorCode,
-  ValidationResult,
-  AISuggestion,
-  
+  AestheticAppointment,
+  AestheticClientProfile,
   // Export new aesthetic types
   AestheticTreatment,
-  TreatmentCategory,
-  SkinType,
   AgeGroup,
-  Season,
-  AestheticAppointment,
-  AppointmentStatus,
+  AguiAction,
+  AguiErrorCode,
+  // Re-export base types
+  AguiMessage,
+  AguiMessageMetadata,
+  AguiMessageType,
+  AguiSource,
+  AISuggestion,
   AppointmentPriority,
-  PaymentStatus,
-  AestheticClientProfile,
-  SkinConcern,
+  AppointmentStatus,
+  ClientSegment,
+  ComplianceCheckType,
   FinancialOperationType,
   PaymentMethod,
-  ComplianceCheckType,
-  ClientSegment,
-  PricingStrategy
+  PaymentStatus,
+  PricingStrategy,
+  Season,
+  SkinConcern,
+  SkinType,
+  TreatmentCategory,
+  ValidationResult,
 };

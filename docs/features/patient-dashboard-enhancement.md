@@ -222,7 +222,7 @@ interface ClientDataTableProps {
   // Customization
   columns?: ColumnDef<Client>[];
   actions?: TableAction[];
-  density?: "comfortable" | "compact";
+  density?: 'comfortable' | 'compact';
 }
 ```
 
@@ -320,12 +320,12 @@ interface Client {
 const ClientRegistrationSchema = z.object({
   // Personal information
   full_name: z.string().min(2).max(100),
-  cpf: z.string().refine(validateCPF, "CPF inválido"),
-  birth_date: z.date().max(new Date(), "Data não pode ser futura"),
+  cpf: z.string().refine(validateCPF, 'CPF inválido'),
+  birth_date: z.date().max(new Date(), 'Data não pode ser futura'),
 
   // Contact information
-  email: z.string().email("Email inválido"),
-  phone: z.string().refine(validateBrazilianPhone, "Telefone inválido"),
+  email: z.string().email('Email inválido'),
+  phone: z.string().refine(validateBrazilianPhone, 'Telefone inválido'),
 
   // Address (Brazilian specific)
   address: BrazilianAddressSchema,
@@ -369,33 +369,33 @@ const ClientRegistrationSchema = z.object({
 
 ```typescript
 // apps/web/src/components/patient/__tests__/PatientDataTable.test.tsx
-describe("ClientDataTable", () => {
-  describe("Rendering", () => {
-    it("displays client data correctly");
-    it("shows loading state appropriately");
-    it("handles empty state gracefully");
-    it("renders accessibility attributes");
+describe('ClientDataTable', () => {
+  describe('Rendering', () => {
+    it('displays client data correctly');
+    it('shows loading state appropriately');
+    it('handles empty state gracefully');
+    it('renders accessibility attributes');
   });
 
-  describe("Filtering & Sorting", () => {
-    it("filters clients by name, CPF, email");
-    it("sorts by all sortable columns");
-    it("persists filter state in URL");
-    it("combines multiple filters correctly");
+  describe('Filtering & Sorting', () => {
+    it('filters clients by name, CPF, email');
+    it('sorts by all sortable columns');
+    it('persists filter state in URL');
+    it('combines multiple filters correctly');
   });
 
-  describe("Selection & Actions", () => {
-    it("selects individual clients");
-    it("handles bulk selection");
-    it("executes bulk actions safely");
-    it("shows confirmation for destructive actions");
+  describe('Selection & Actions', () => {
+    it('selects individual clients');
+    it('handles bulk selection');
+    it('executes bulk actions safely');
+    it('shows confirmation for destructive actions');
   });
 
-  describe("Accessibility", () => {
-    it("supports keyboard navigation");
-    it("works with screen readers");
-    it("maintains focus management");
-    it("provides ARIA labels and descriptions");
+  describe('Accessibility', () => {
+    it('supports keyboard navigation');
+    it('works with screen readers');
+    it('maintains focus management');
+    it('provides ARIA labels and descriptions');
   });
 });
 ```
@@ -404,26 +404,26 @@ describe("ClientDataTable", () => {
 
 ```typescript
 // Client registration form tests
-describe("ClientRegistrationForm", () => {
-  describe("Brazilian Compliance", () => {
-    it("validates CPF format and checksum");
-    it("validates Brazilian phone numbers");
-    it("supports CEP address lookup");
-    it("enforces LGPD consent requirements");
+describe('ClientRegistrationForm', () => {
+  describe('Brazilian Compliance', () => {
+    it('validates CPF format and checksum');
+    it('validates Brazilian phone numbers');
+    it('supports CEP address lookup');
+    it('enforces LGPD consent requirements');
   });
 
-  describe("Multi-step Workflow", () => {
-    it("navigates between form steps");
-    it("validates each step before proceeding");
-    it("saves progress automatically");
-    it("recovers from browser refresh");
+  describe('Multi-step Workflow', () => {
+    it('navigates between form steps');
+    it('validates each step before proceeding');
+    it('saves progress automatically');
+    it('recovers from browser refresh');
   });
 
-  describe("File Upload", () => {
-    it("accepts valid aesthetic document formats");
-    it("rejects invalid file types");
-    it("handles file size limitations");
-    it("shows upload progress feedback");
+  describe('File Upload', () => {
+    it('accepts valid aesthetic document formats');
+    it('rejects invalid file types');
+    it('handles file size limitations');
+    it('shows upload progress feedback');
   });
 });
 ```
@@ -477,7 +477,7 @@ interface LGPDConsent {
 // Audit trail implementation
 interface ClientAuditLog {
   client_id: string;
-  action: "create" | "read" | "update" | "delete" | "export";
+  action: 'create' | 'read' | 'update' | 'delete' | 'export';
   user_id: string;
   timestamp: Date;
   ip_address: string;
@@ -529,26 +529,26 @@ const AccessibilityChecklist = {
 
 ```typescript
 // Example accessible PatientDataTable
-<Table role="grid" aria-label="Lista de pacientes">
+<Table role='grid' aria-label='Lista de pacientes'>
   <TableHeader>
-    <TableRow role="row">
-      <TableHead role="columnheader" aria-sort="ascending">
+    <TableRow role='row'>
+      <TableHead role='columnheader' aria-sort='ascending'>
         Nome do Paciente
       </TableHead>
-      <TableHead role="columnheader">CPF</TableHead>
-      <TableHead role="columnheader">Telefone</TableHead>
+      <TableHead role='columnheader'>CPF</TableHead>
+      <TableHead role='columnheader'>Telefone</TableHead>
     </TableRow>
   </TableHeader>
   <TableBody>
-    {clients.map((client) => (
-      <TableRow key={client.id} role="row" aria-rowindex={index + 1}>
-        <TableCell role="gridcell">{client.full_name}</TableCell>
-        <TableCell role="gridcell">{formatCPF(client.cpf)}</TableCell>
-        <TableCell role="gridcell">{formatPhone(client.phone)}</TableCell>
+    {clients.map(client => (
+      <TableRow key={client.id} role='row' aria-rowindex={index + 1}>
+        <TableCell role='gridcell'>{client.full_name}</TableCell>
+        <TableCell role='gridcell'>{formatCPF(client.cpf)}</TableCell>
+        <TableCell role='gridcell'>{formatPhone(client.phone)}</TableCell>
       </TableRow>
     ))}
   </TableBody>
-</Table>
+</Table>;
 ```
 
 ## 🔗 Dependencies & Integration Points
@@ -596,16 +596,16 @@ const AccessibilityChecklist = {
 // Real-time client updates
 const usePatientSubscription = (patientId: string) => {
   return useSupabaseSubscription(
-    "patients",
+    'patients',
     {
-      event: "*",
-      schema: "public",
-      table: "patients",
+      event: '*',
+      schema: 'public',
+      table: 'patients',
       filter: `id=eq.${patientId}`,
     },
-    (payload) => {
+    payload => {
       // Invalidate queries and update UI
-      queryClient.invalidateQueries(["patients", patientId]);
+      queryClient.invalidateQueries(['patients', patientId]);
     },
   );
 };
@@ -620,9 +620,9 @@ const usePatientAccess = (patientId: string) => {
 
   return useMemo(
     () => ({
-      canView: permissions.includes("patients:read"),
-      canEdit: permissions.includes("patients:write"),
-      canDelete: permissions.includes("patients:delete"),
+      canView: permissions.includes('patients:read'),
+      canEdit: permissions.includes('patients:write'),
+      canDelete: permissions.includes('patients:delete'),
       isOwner: user?.id === patient?.created_by,
     }),
     [user, permissions, patient],

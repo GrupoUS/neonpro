@@ -1,46 +1,46 @@
 // Generic Audit Types for Compliance & Healthcare (Phase 4)
 // Complements existing AuditService patterns with generic action/actor model
 
-export type ComplianceFramework = "LGPD" | "ANVISA" | "CFM" | "HIPAA" | "GDPR";
+export type ComplianceFramework = 'LGPD' | 'ANVISA' | 'CFM' | 'HIPAA' | 'GDPR';
 
 export type AuditAction =
   // Data operations
-  | "CREATE"
-  | "READ"
-  | "UPDATE"
-  | "DELETE"
+  | 'CREATE'
+  | 'READ'
+  | 'UPDATE'
+  | 'DELETE'
   // User actions
-  | "LOGIN"
-  | "LOGOUT"
-  | "ACCESS"
-  | "MODIFY"
+  | 'LOGIN'
+  | 'LOGOUT'
+  | 'ACCESS'
+  | 'MODIFY'
   // Healthcare specific
-  | "PRESCRIBE"
-  | "DIAGNOSE"
-  | "CONSENT_GRANT"
-  | "CONSENT_REVOKE"
+  | 'PRESCRIBE'
+  | 'DIAGNOSE'
+  | 'CONSENT_GRANT'
+  | 'CONSENT_REVOKE'
   // System actions
-  | "BACKUP"
-  | "RESTORE"
-  | "MIGRATE"
-  | "AUDIT";
+  | 'BACKUP'
+  | 'RESTORE'
+  | 'MIGRATE'
+  | 'AUDIT';
 
 export type ActorType =
-  | "PATIENT"
-  | "DOCTOR"
-  | "NURSE"
-  | "ADMIN"
-  | "SYSTEM"
-  | "EXTERNAL_API"
-  | "ANONYMOUS";
+  | 'PATIENT'
+  | 'DOCTOR'
+  | 'NURSE'
+  | 'ADMIN'
+  | 'SYSTEM'
+  | 'EXTERNAL_API'
+  | 'ANONYMOUS';
 
-export type RiskLevel = "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
+export type RiskLevel = 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
 
 export type ComplianceStatus =
-  | "COMPLIANT"
-  | "NON_COMPLIANT"
-  | "PENDING_REVIEW"
-  | "UNKNOWN";
+  | 'COMPLIANT'
+  | 'NON_COMPLIANT'
+  | 'PENDING_REVIEW'
+  | 'UNKNOWN';
 
 export interface ConsentReference {
   /** Unique consent ID */
@@ -52,7 +52,7 @@ export interface ConsentReference {
   /** When consent expires (optional) */
   expiresAt?: string;
   /** Consent status */
-  status: "ACTIVE" | "EXPIRED" | "REVOKED" | "PENDING";
+  status: 'ACTIVE' | 'EXPIRED' | 'REVOKED' | 'PENDING';
   /** Framework this consent applies to */
   framework: ComplianceFramework;
 }

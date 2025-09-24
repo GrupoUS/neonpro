@@ -28,33 +28,33 @@
 // Core Interfaces
 // ============================================================================
 
-import type { PredictionType, PredictionInput } from "./interfaces";
+import type { PredictionInput, PredictionType } from './interfaces';
 
-import { StubModelProvider } from "./stub-provider";
+import { StubModelProvider } from './stub-provider';
 
 export type {
-  PredictionType,
-  ConfidenceLevel,
-  FeatureImportance,
-  ModelMetadata,
-  PredictionInput,
-  PredictionResult,
   BatchPredictionInput,
   BatchPredictionResult,
-  ModelProvider,
+  ConfidenceLevel,
+  FeatureImportance,
   ModelManager,
-} from "./interfaces";
+  ModelMetadata,
+  ModelProvider,
+  PredictionInput,
+  PredictionResult,
+  PredictionType,
+} from './interfaces';
 
 // ============================================================================
 // Error Classes
 // ============================================================================
 
 export {
-  MLError,
   InvalidInputError,
+  MLError,
   ModelInitializationError,
   PredictionError,
-} from "./interfaces";
+} from './interfaces';
 
 // ============================================================================
 // Stub Implementation
@@ -93,18 +93,18 @@ export function createStubModelProvider(overrides?: {
 export function validatePredictionInputStructure(
   input: unknown,
 ): input is PredictionInput {
-  if (!input || typeof input !== "object") {
-    throw new Error("Prediction input must be an object");
+  if (!input || typeof input !== 'object') {
+    throw new Error('Prediction input must be an object');
   }
 
   const obj = input as Record<string, unknown>;
 
-  if (!obj.type || typeof obj.type !== "string") {
-    throw new Error("Prediction input must have a valid type");
+  if (!obj.type || typeof obj.type !== 'string') {
+    throw new Error('Prediction input must have a valid type');
   }
 
-  if (!obj.features || typeof obj.features !== "object") {
-    throw new Error("Prediction input must have features object");
+  if (!obj.features || typeof obj.features !== 'object') {
+    throw new Error('Prediction input must have features object');
   }
 
   return true;
@@ -123,11 +123,11 @@ export function createMockPredictionInput(
 ): PredictionInput {
   const baseFeatures = {
     age: 45,
-    gender: "female",
-    medical_history: ["hypertension"],
-    current_symptoms: ["headache"],
+    gender: 'female',
+    medical_history: ['hypertension'],
+    current_symptoms: ['headache'],
     vital_signs: {
-      blood_pressure: "120/80",
+      blood_pressure: '120/80',
       heart_rate: 72,
       temperature: 36.5,
     },
@@ -136,11 +136,11 @@ export function createMockPredictionInput(
   return {
     type,
     features: { ...baseFeatures, ...customFeatures },
-    patientId: "patient-123",
-    clinicId: "clinic-456",
+    patientId: 'patient-123',
+    clinicId: 'clinic-456',
     metadata: {
       timestamp: new Date().toISOString(),
-      source: "test",
+      source: 'test',
     },
   };
 }
@@ -153,14 +153,14 @@ export function createMockPredictionInput(
  * Supported prediction types for healthcare analytics
  */
 export const PREDICTION_TYPES: readonly PredictionType[] = [
-  "patient_outcome",
-  "readmission_risk",
-  "treatment_effectiveness",
-  "cost_prediction",
-  "no_show_risk",
-  "resource_utilization",
-  "clinical_deterioration",
-  "medication_adherence",
+  'patient_outcome',
+  'readmission_risk',
+  'treatment_effectiveness',
+  'cost_prediction',
+  'no_show_risk',
+  'resource_utilization',
+  'clinical_deterioration',
+  'medication_adherence',
 ] as const;
 
 /**

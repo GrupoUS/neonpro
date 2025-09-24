@@ -7,99 +7,99 @@
  */
 
 // Core Types and Interfaces
-export * from "./types/base-metrics";
-export * from "./types/clinical-kpis";
-export * from "./types/financial-kpis";
-export * from "./types/ingestion";
+export * from './types/base-metrics';
+export * from './types/clinical-kpis';
+export * from './types/financial-kpis';
+export * from './types/ingestion';
 
 // Ingestion System
-export * from "./ingestion";
-export * from "./adapters/ingestion-adapter";
+export * from './adapters/ingestion-adapter';
+export * from './ingestion';
 
 // Aggregation System
-export * from "./aggregation";
+export * from './aggregation';
 
 // Machine Learning Pipeline
-export * from "./ml";
+export * from './ml';
 
 // Advanced AI Analytics (T103)
-export * from "./ai-analytics";
+export * from './ai-analytics';
 
 // Re-export commonly used types for convenience
 export type {
-  BaseMetric,
+  AggregationType,
   AnalyticsEvent,
-  MetricType,
-  RiskLevel,
+  BaseMetric,
   ComplianceFramework,
   Currency,
   Frequency,
-  AggregationType,
-} from "./types/base-metrics";
+  MetricType,
+  RiskLevel,
+} from './types/base-metrics';
 
 export type {
-  ClinicalKPI,
-  PatientSafetyKPI,
-  PatientOutcomeKPI,
-  InfectionControlKPI,
   ClinicalCategory,
-} from "./types/clinical-kpis";
+  ClinicalKPI,
+  InfectionControlKPI,
+  PatientOutcomeKPI,
+  PatientSafetyKPI,
+} from './types/clinical-kpis';
 
 export type {
-  FinancialKPI,
-  RevenueCycleKPI,
-  InsuranceClaimsKPI,
   CostManagementKPI,
-  ProfitabilityKPI,
   FinancialCategory,
+  FinancialKPI,
+  InsuranceClaimsKPI,
   PaymentSource,
-} from "./types/financial-kpis";
+  ProfitabilityKPI,
+  RevenueCycleKPI,
+} from './types/financial-kpis';
 
-export type { IngestionAdapter } from "./adapters/ingestion-adapter";
+export type { IngestionAdapter } from './adapters/ingestion-adapter';
 
 export type {
   IngestionConfig,
-  IngestionResult,
   IngestionEvent,
-  ValidationRule,
+  IngestionResult,
   TransformationRule,
-} from "./types/ingestion";
+  ValidationRule,
+} from './types/ingestion';
 
-export type { ComputedKPIs, KPIComputationOptions } from "./aggregation";
+export type { ComputedKPIs, KPIComputationOptions } from './aggregation';
 
 // Main factory functions for easy metric creation
 export {
-  createMockMetric,
-  createMockAnalyticsEvent,
-  anonymizeMetric,
-  validateMetricCompliance,
   aggregateMetrics,
-} from "./types/base-metrics";
+  anonymizeMetric,
+  createMockAnalyticsEvent,
+  createMockMetric,
+  validateMetricCompliance,
+} from './types/base-metrics';
 
 export {
-  createPatientSafetyKPI,
-  createPatientOutcomeKPI,
   calculateClinicalRiskScore,
+  createPatientOutcomeKPI,
+  createPatientSafetyKPI,
   validateClinicalCompliance,
-} from "./types/clinical-kpis";
+} from './types/clinical-kpis';
 
 export {
-  createRevenueCycleKPI,
-  createInsuranceClaimsKPI,
   calculateFinancialHealthScore,
-  validateBrazilianFinancialCompliance,
   calculatePayerMixDiversity,
-} from "./types/financial-kpis";
+  createInsuranceClaimsKPI,
+  createRevenueCycleKPI,
+  validateBrazilianFinancialCompliance,
+} from './types/financial-kpis';
 
 // Adapter implementations
 export {
+  APIIngestionAdapter,
   BaseIngestionAdapter,
   DatabaseIngestionAdapter,
-  APIIngestionAdapter,
-} from "./adapters/ingestion-adapter";
+} from './adapters/ingestion-adapter';
 
 // KPI computation functions
-export { computeKPIs, createMockEvents } from "./aggregation";
+export { computeKPIs, createMockEvents } from './aggregation';
 
 /**
  * Analytics Module Constants
@@ -107,21 +107,21 @@ export { computeKPIs, createMockEvents } from "./aggregation";
 export const ANALYTICS_CONSTANTS = {
   // Brazilian compliance frameworks
   COMPLIANCE_FRAMEWORKS: {
-    LGPD: "Lei Geral de Proteção de Dados",
-    ANVISA: "Agência Nacional de Vigilância Sanitária",
-    CFM: "Conselho Federal de Medicina",
-    ANS: "Agência Nacional de Saúde Suplementar",
-    MINISTRY_OF_HEALTH: "Ministério da Saúde",
+    LGPD: 'Lei Geral de Proteção de Dados',
+    ANVISA: 'Agência Nacional de Vigilância Sanitária',
+    CFM: 'Conselho Federal de Medicina',
+    ANS: 'Agência Nacional de Saúde Suplementar',
+    MINISTRY_OF_HEALTH: 'Ministério da Saúde',
   },
 
   // Default metric configurations
   DEFAULT_METRIC_CONFIG: {
-    frequency: "monthly" as const,
-    aggregation: "average" as const,
-    currency: "BRL" as const,
-    complianceFrameworks: ["LGPD"] as const,
-    riskLevel: "LOW" as const,
-    status: "active" as const,
+    frequency: 'monthly' as const,
+    aggregation: 'average' as const,
+    currency: 'BRL' as const,
+    complianceFrameworks: ['LGPD'] as const,
+    riskLevel: 'LOW' as const,
+    status: 'active' as const,
   },
 
   // Data quality thresholds
@@ -176,7 +176,7 @@ export function createAnalyticsConfig(options: {
   return {
     clinicId: options.clinicId,
     compliance: {
-      frameworks: options.complianceFrameworks || ["LGPD"],
+      frameworks: options.complianceFrameworks || ['LGPD'],
       encryption: options.enableEncryption ?? true,
       anonymization: options.enableAnonymization ?? true,
       retentionDays: options.retentionDays ?? 2555, // 7 years default
@@ -197,19 +197,18 @@ export function createAnalyticsConfig(options: {
 /**
  * Version information
  */
-export const ANALYTICS_VERSION = "1.0.0";
+export const ANALYTICS_VERSION = '1.0.0';
 export const ANALYTICS_MODULE_INFO = {
-  name: "@neonpro/analytics",
+  name: '@neonpro/analytics',
   version: ANALYTICS_VERSION,
-  description:
-    "Healthcare analytics and metrics system for Brazilian compliance",
-  compliance: ["LGPD", "ANVISA", "CFM", "ANS"],
+  description: 'Healthcare analytics and metrics system for Brazilian compliance',
+  compliance: ['LGPD', 'ANVISA', 'CFM', 'ANS'],
   features: [
-    "Clinical KPI tracking",
-    "Financial metrics analysis",
-    "Real-time data ingestion",
-    "Compliance validation",
-    "Data quality assessment",
-    "Brazilian healthcare standards",
+    'Clinical KPI tracking',
+    'Financial metrics analysis',
+    'Real-time data ingestion',
+    'Compliance validation',
+    'Data quality assessment',
+    'Brazilian healthcare standards',
   ],
 } as const;

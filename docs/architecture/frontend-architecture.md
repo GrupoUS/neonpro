@@ -148,10 +148,10 @@ packages/
 
 ```typescript
 // ✅ VALIDATED PATTERN - Use this exact order
-import { HealthcareSpecific } from "@/components/healthcare"; // Domain-specific last
-import { AppointmentForm, PatientCard } from "@/components/molecules"; // Molecules second
-import { Dashboard, GovernanceDashboard } from "@/components/organisms"; // Organisms third
-import { Alert, Badge, Button, Card } from "@neonpro/ui"; // Shared components first
+import { HealthcareSpecific } from '@/components/healthcare'; // Domain-specific last
+import { AppointmentForm, PatientCard } from '@/components/molecules'; // Molecules second
+import { Dashboard, GovernanceDashboard } from '@/components/organisms'; // Organisms third
+import { Alert, Badge, Button, Card } from '@neonpro/ui'; // Shared components first
 ```
 
 **Aesthetic Clinic Component Pattern (LGPD-Compliant)**
@@ -159,7 +159,7 @@ import { Alert, Badge, Button, Card } from "@neonpro/ui"; // Shared components f
 ```typescript
 interface AestheticClinicComponentProps {
   readonly clientId?: string;
-  readonly userRole: "admin" | "professional" | "coordinator";
+  readonly userRole: 'admin' | 'professional' | 'coordinator';
   readonly lgpdCompliant: boolean;
   readonly onAuditLog?: (action: string) => void;
 }

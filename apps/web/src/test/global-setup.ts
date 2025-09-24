@@ -1,7 +1,7 @@
-import { beforeAll, vi } from 'vitest';
-import { setupServer } from 'msw/node';
-import { handlers } from './mocks/handlers';
 import { JSDOM } from 'jsdom';
+import { setupServer } from 'msw/node';
+import { beforeAll, vi } from 'vitest';
+import { handlers } from './mocks/handlers';
 
 // Setup JSDOM environment for global setup
 const dom = new JSDOM('<!DOCTYPE html><html><body></body></html>', {
@@ -16,37 +16,37 @@ global.window = dom.window;
 Object.defineProperty(global, 'navigator', {
   value: dom.window.navigator,
   writable: false,
-  configurable: true
+  configurable: true,
 });
 
 Object.defineProperty(global, 'localStorage', {
   value: dom.window.localStorage,
   writable: false,
-  configurable: true
+  configurable: true,
 });
 
 Object.defineProperty(global, 'sessionStorage', {
   value: dom.window.sessionStorage,
   writable: false,
-  configurable: true
+  configurable: true,
 });
 
 Object.defineProperty(global, 'location', {
   value: dom.window.location,
   writable: false,
-  configurable: true
+  configurable: true,
 });
 
 Object.defineProperty(global, 'history', {
   value: dom.window.history,
   writable: false,
-  configurable: true
+  configurable: true,
 });
 
 Object.defineProperty(global, 'URL', {
   value: dom.window.URL,
   writable: false,
-  configurable: true
+  configurable: true,
 });
 
 // Setup MSW server for API mocking
@@ -62,7 +62,7 @@ beforeAll(() => {
   // Mock global APIs for consistent testing
   Object.defineProperty(global.window, 'matchMedia', {
     writable: true,
-    value: vi.fn().mockImplementation((query) => ({
+    value: vi.fn().mockImplementation(query => ({
       matches: false,
       media: query,
       onchange: null,
@@ -111,7 +111,9 @@ if (typeof vi === 'undefined') {
           return Object.assign(mockFn, async () => value);
         },
         mockRejectedValue: (value: any) => {
-          return Object.assign(mockFn, async () => { throw value; });
+          return Object.assign(mockFn, async () => {
+            throw value;
+          });
         },
       };
       return mockFn;

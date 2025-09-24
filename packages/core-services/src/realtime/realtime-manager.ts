@@ -3,13 +3,13 @@
  * Optimized for healthcare applications with intelligent caching
  */
 
+import { logHealthcareError, realtimeLogger } from '@neonpro/shared';
 import {
   createClient,
   RealtimeChannel,
   RealtimePostgresChangesPayload,
-} from "@supabase/supabase-js";
-import { QueryClient } from "@tanstack/react-query";
-import { logHealthcareError, realtimeLogger } from "@neonpro/shared";
+} from '@supabase/supabase-js';
+import { QueryClient } from '@tanstack/react-query';
 
 export interface RealtimeSubscriptionOptions<T = any> {
   onInsert?: (_payload: T) => void;
@@ -48,7 +48,7 @@ export class RealtimeManager {
     filter?: string,
     options: RealtimeSubscriptionOptions<T> = {},
   ): RealtimeChannel {
-    const channelName = `${tableName}-${filter || "all"}`;
+    const channelName = `${tableName}-${filter || 'all'}`;
 
     if (this.channels.has(channelName)) {
       return this.channels.get(channelName)!;
@@ -57,10 +57,10 @@ export class RealtimeManager {
     const channel = this.supabase
       .channel(channelName)
       .on(
-        "postgres_changes",
+        'postgres_changes',
         {
-          event: "*",
-          schema: "public",
+          event: '*',
+          schema: 'public',
           table: tableName,
           filter,
         },
@@ -75,24 +75,24 @@ export class RealtimeManager {
           await this.handleRealtimeEvent(payload, tableName, options);
         },
       )
-      .subscribe((status) => {
+      .subscribe(status => {
         realtimeLogger.info(`Realtime subscription status update`, {
           channelName,
           status,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         });
 
-        if (status === "SUBSCRIBED") {
+        if (status === 'SUBSCRIBED') {
           realtimeLogger.info(`Successfully subscribed to realtime changes`, {
             tableName,
             channelName,
-            timestamp: new Date().toISOString()
+            timestamp: new Date().toISOString(),
           });
-        } else if (status === "CHANNEL_ERROR") {
+        } else if (status === 'CHANNEL_ERROR') {
           realtimeLogger.error(`Error subscribing to realtime changes`, {
             tableName,
             channelName,
-            timestamp: new Date().toISOString()
+            timestamp: new Date().toISOString(),
           });
           // Implement retry logic
           setTimeout(() => {
@@ -124,19 +124,19 @@ export class RealtimeManager {
   ) {
     try {
       switch (_payload.eventType) {
-        case "INSERT":
+        case 'INSERT':
           options.onInsert?.(_payload.new as T);
           if (options.optimisticUpdates !== false) {
             await this.optimisticInsert(tableName, _payload.new as T);
           }
           break;
-        case "UPDATE":
+        case 'UPDATE':
           options.onUpdate?.(_payload.new as T);
           if (options.optimisticUpdates !== false) {
             await this.optimisticUpdate(tableName, _payload.new as T);
           }
           break;
-        case "DELETE":
+        case 'DELETE':
           options.onDelete?.({ old: _payload.old as T });
           if (options.optimisticUpdates !== false) {
             await this.optimisticDelete(tableName, _payload.old as T);
@@ -147,9 +147,7 @@ export class RealtimeManager {
       // Invalidate related queries for data consistency
       if (options.queryKeys) {
         await Promise.all(
-          options.queryKeys.map((queryKey) =>
-            this.queryClient.invalidateQueries({ queryKey }),
-          ),
+          options.queryKeys.map(queryKey => this.queryClient.invalidateQueries({ queryKey })),
         );
       }
     } catch (error) {
@@ -181,9 +179,7 @@ export class RealtimeManager {
     // Update list cache
     this.queryClient.setQueryData([tableName], (old: T[] | undefined) => {
       return (
-        old?.map((item) =>
-          item.id === updatedRecord.id ? updatedRecord : item,
-        ) || []
+        old?.map(item => item.id === updatedRecord.id ? updatedRecord : item) || []
       );
     });
 
@@ -199,7 +195,7 @@ export class RealtimeManager {
 
     // Remove from list cache
     this.queryClient.setQueryData([tableName], (old: T[] | undefined) => {
-      return old?.filter((item) => item.id !== deletedRecord.id) || [];
+      return old?.filter(item => item.id !== deletedRecord.id) || [];
     });
 
     // Remove specific record cache
@@ -219,7 +215,7 @@ export class RealtimeManager {
         tableName,
         retryCount,
         maxRetries: 3,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
       return;
     }
@@ -227,11 +223,11 @@ export class RealtimeManager {
     realtimeLogger.info(`Retrying subscription`, {
       tableName,
       retryCount: retryCount + 1,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
 
     // Remove failed channel
-    const channelName = `${tableName}-${filter || "all"}`;
+    const channelName = `${tableName}-${filter || 'all'}`;
     const existingChannel = this.channels.get(channelName);
     if (existingChannel) {
       this.supabase.removeChannel(existingChannel);
@@ -239,9 +235,7 @@ export class RealtimeManager {
     }
 
     // Wait before retry with exponential backoff
-    await new Promise((resolve) =>
-      setTimeout(resolve, Math.pow(2, retryCount) * 1000),
-    );
+    await new Promise(resolve => setTimeout(resolve, Math.pow(2, retryCount) * 1000));
 
     // Retry subscription
     this.subscribeToTable(tableName, filter, options);
@@ -260,32 +254,32 @@ export class RealtimeManager {
 
     const channel = this.supabase
       .channel(channelName)
-      .on("presence", { event: "sync" }, () => {
+      .on('presence', { event: 'sync' }, () => {
         const state = channel.presenceState();
         realtimeLogger.info(`Presence sync`, {
           state,
           channelName,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         });
       })
-      .on("presence", { event: "join" }, ({ key, newPresences }) => {
+      .on('presence', { event: 'join' }, ({ key, newPresences }) => {
         realtimeLogger.info(`User joined presence channel`, {
           key,
           newPresences,
           channelName,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         });
       })
-      .on("presence", { event: "leave" }, ({ key, leftPresences }) => {
+      .on('presence', { event: 'leave' }, ({ key, leftPresences }) => {
         realtimeLogger.info(`User left presence channel`, {
           key,
           leftPresences,
           channelName,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         });
       })
-      .subscribe(async (status) => {
-        if (status === "SUBSCRIBED") {
+      .subscribe(async status => {
+        if (status === 'SUBSCRIBED') {
           await channel.track(initialState);
         }
       });
@@ -305,7 +299,7 @@ export class RealtimeManager {
       this.rateLimitMap.delete(channelName);
       realtimeLogger.info(`Unsubscribed from realtime channel`, {
         channelName,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
     }
   }
@@ -318,7 +312,7 @@ export class RealtimeManager {
       this.supabase.removeChannel(channel);
       realtimeLogger.info(`Unsubscribed from all realtime channels`, {
         channelName: name,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
     });
     this.channels.clear();
@@ -330,7 +324,7 @@ export class RealtimeManager {
    */
   getConnectionStatus(): string {
     // Note: connection property may not be available in all versions
-    return "connected"; // Simplified for now
+    return 'connected'; // Simplified for now
   }
 
   /**

@@ -8,7 +8,7 @@ export interface EmergencyContact {
   relationship: string;
   phone: string;
   email?: string;
-  address?: import("./address").Address;
+  address?: import('./address').Address;
 }
 
 /**
@@ -16,7 +16,7 @@ export interface EmergencyContact {
  */
 export function validateBrazilianPhone(phone: string): boolean {
   // Remove formatting
-  const cleanPhone = phone.replace(/[^\d]/g, "");
+  const cleanPhone = phone.replace(/[^\d]/g, '');
 
   // Check length (10 or 11 digits)
   if (cleanPhone.length !== 10 && cleanPhone.length !== 11) return false;
@@ -38,12 +38,12 @@ export function validateBrazilianPhone(phone: string): boolean {
  * Format Brazilian phone for display
  */
 export function formatBrazilianPhone(phone: string): string {
-  const cleanPhone = phone.replace(/[^\d]/g, "");
+  const cleanPhone = phone.replace(/[^\d]/g, '');
 
   if (cleanPhone.length === 10) {
-    return cleanPhone.replace(/(\d{2})(\d{4})(\d{4})/, "($1) $2-$3");
+    return cleanPhone.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3');
   } else if (cleanPhone.length === 11) {
-    return cleanPhone.replace(/(\d{2})(\d{5})(\d{4})/, "($1) $2-$3");
+    return cleanPhone.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
   }
 
   return phone;

@@ -64,7 +64,9 @@ export class EncryptionManager {
       const combined = Buffer.concat([iv, Buffer.from(encrypted, 'base64')]);
       return combined.toString('base64');
     } catch (error) {
-      throw new Error(`Encryption failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Encryption failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      );
     }
   }
 

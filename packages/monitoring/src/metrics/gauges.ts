@@ -1,5 +1,5 @@
-import { Gauge, Registry } from "prom-client";
-import type { MetricLabels } from "../types";
+import { Gauge, Registry } from 'prom-client';
+import type { MetricLabels } from '../types';
 
 // Chat-specific gauges
 let activeChatSessions: Gauge<string> | null = null;
@@ -11,41 +11,41 @@ let systemHealth: Gauge<string> | null = null;
 export function initializeGauges(registry: Registry): void {
   // Active chat sessions gauge
   activeChatSessions = new Gauge({
-    name: "chat_active_sessions",
-    help: "Number of currently active chat sessions",
-    labelNames: ["user_type"],
+    name: 'chat_active_sessions',
+    help: 'Number of currently active chat sessions',
+    labelNames: ['user_type'],
     registers: [registry],
   });
 
   // Rate limit usage gauge
   rateLimitUsage = new Gauge({
-    name: "rate_limit_usage_ratio",
-    help: "Current rate limit usage ratio (0-1)",
-    labelNames: ["user_id", "limit_type"],
+    name: 'rate_limit_usage_ratio',
+    help: 'Current rate limit usage ratio (0-1)',
+    labelNames: ['user_id', 'limit_type'],
     registers: [registry],
   });
 
   // AI provider health gauge
   aiProviderHealth = new Gauge({
-    name: "ai_provider_health_status",
-    help: "AI provider health status (1=healthy, 0=unhealthy)",
-    labelNames: ["provider", "endpoint"],
+    name: 'ai_provider_health_status',
+    help: 'AI provider health status (1=healthy, 0=unhealthy)',
+    labelNames: ['provider', 'endpoint'],
     registers: [registry],
   });
 
   // Database connections gauge
   databaseConnections = new Gauge({
-    name: "database_connections_active",
-    help: "Number of active database connections",
-    labelNames: ["pool", "database"],
+    name: 'database_connections_active',
+    help: 'Number of active database connections',
+    labelNames: ['pool', 'database'],
     registers: [registry],
   });
 
   // System health gauge
   systemHealth = new Gauge({
-    name: "system_health_status",
-    help: "Overall system health status (1=healthy, 0.5=degraded, 0=unhealthy)",
-    labelNames: ["component"],
+    name: 'system_health_status',
+    help: 'Overall system health status (1=healthy, 0.5=degraded, 0=unhealthy)',
+    labelNames: ['component'],
     registers: [registry],
   });
 }

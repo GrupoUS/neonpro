@@ -7,7 +7,7 @@
  * Format Brazilian phone number
  */
 export function formatBRPhone(phone: string): string {
-  const cleaned = phone.replace(/\D/g, "");
+  const cleaned = phone.replace(/\D/g, '');
 
   if (cleaned.length === 11) {
     // Mobile: +55 (XX) 9XXXX-XXXX
@@ -26,10 +26,12 @@ export function formatBRPhone(phone: string): string {
  * Format CPF with dots and dash
  */
 export function formatCPF(cpf: string): string {
-  const cleaned = cpf.replace(/\D/g, "");
+  const cleaned = cpf.replace(/\D/g, '');
 
   if (cleaned.length === 11) {
-    return `${cleaned.slice(0, 3)}.${cleaned.slice(3, 6)}.${cleaned.slice(6, 9)}-${cleaned.slice(9)}`;
+    return `${cleaned.slice(0, 3)}.${cleaned.slice(3, 6)}.${cleaned.slice(6, 9)}-${
+      cleaned.slice(9)
+    }`;
   }
 
   return cpf;
@@ -39,7 +41,7 @@ export function formatCPF(cpf: string): string {
  * Validate CPF using official algorithm
  */
 export function validateCPF(cpf: string): boolean {
-  const cleaned = cpf.replace(/\D/g, "");
+  const cleaned = cpf.replace(/\D/g, '');
 
   if (cleaned.length !== 11) return false;
 
@@ -72,7 +74,7 @@ export function validateCPF(cpf: string): boolean {
  * Validate Brazilian phone number
  */
 export function validateBrazilianPhone(phone: string): boolean {
-  const cleaned = phone.replace(/\D/g, "");
+  const cleaned = phone.replace(/\D/g, '');
 
   // Must have 10 (landline) or 11 (mobile) digits
   if (cleaned.length !== 10 && cleaned.length !== 11) return false;
@@ -82,7 +84,7 @@ export function validateBrazilianPhone(phone: string): boolean {
   if (areaCode < 11 || areaCode > 99) return false;
 
   // Mobile numbers must start with 9
-  if (cleaned.length === 11 && cleaned.charAt(2) !== "9") return false;
+  if (cleaned.length === 11 && cleaned.charAt(2) !== '9') return false;
 
   return true;
 }
@@ -91,12 +93,13 @@ export function validateBrazilianPhone(phone: string): boolean {
  * CPF input mask for forms
  */
 export function validateCPFMask(value: string): string {
-  const cleaned = value.replace(/\D/g, "").slice(0, 11);
+  const cleaned = value.replace(/\D/g, '').slice(0, 11);
 
   if (cleaned.length <= 3) return cleaned;
   if (cleaned.length <= 6) return `${cleaned.slice(0, 3)}.${cleaned.slice(3)}`;
-  if (cleaned.length <= 9)
+  if (cleaned.length <= 9) {
     return `${cleaned.slice(0, 3)}.${cleaned.slice(3, 6)}.${cleaned.slice(6)}`;
+  }
 
   return `${cleaned.slice(0, 3)}.${cleaned.slice(3, 6)}.${cleaned.slice(6, 9)}-${cleaned.slice(9)}`;
 }
@@ -105,11 +108,12 @@ export function validateCPFMask(value: string): string {
  * Brazilian phone input mask
  */
 export function validateBRPhoneMask(value: string): string {
-  const cleaned = value.replace(/\D/g, "").slice(0, 11);
+  const cleaned = value.replace(/\D/g, '').slice(0, 11);
 
   if (cleaned.length <= 2) return cleaned;
-  if (cleaned.length <= 7)
+  if (cleaned.length <= 7) {
     return `(${cleaned.slice(0, 2)}) ${cleaned.slice(2)}`;
+  }
 
   if (cleaned.length <= 11) {
     const areaCode = cleaned.slice(0, 2);
@@ -125,5 +129,5 @@ export function validateBRPhoneMask(value: string): string {
  * Clean document removing all non-numeric characters
  */
 export function cleanDocument(document: string): string {
-  return document.replace(/\D/g, "");
+  return document.replace(/\D/g, '');
 }

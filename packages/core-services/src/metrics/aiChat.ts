@@ -29,12 +29,12 @@ export interface MetricEvent {
   clinicId?: string;
   sessionId?: string;
   eventType:
-    | "query"
-    | "explanation"
-    | "rate_limit"
-    | "refusal"
-    | "error"
-    | "success";
+    | 'query'
+    | 'explanation'
+    | 'rate_limit'
+    | 'refusal'
+    | 'error'
+    | 'success';
   metrics: Partial<AIMetrics>;
   metadata?: Record<string, any>;
 }
@@ -47,7 +47,7 @@ export class AIChatMetrics {
   /**
    * Record a new AI chat interaction
    */
-  recordInteraction(event: Omit<MetricEvent, "timestamp">): void {
+  recordInteraction(event: Omit<MetricEvent, 'timestamp'>): void {
     const timestamp = new Date().toISOString();
     const fullEvent: MetricEvent = {
       ...event,
@@ -63,7 +63,7 @@ export class AIChatMetrics {
     }
 
     // Update aggregated metrics by clinic
-    const clinicKey = event.clinicId || "unknown";
+    const clinicKey = event.clinicId || 'unknown';
     this.updateAggregatedMetrics(clinicKey, event.metrics);
   }
 
@@ -83,7 +83,7 @@ export class AIChatMetrics {
       _userId: params._userId,
       clinicId: params.clinicId,
       sessionId: params.sessionId,
-      eventType: "success",
+      eventType: 'success',
       metrics: {
         responseTime: params.responseTime,
         firstTokenTime: params.firstTokenTime,
@@ -110,7 +110,7 @@ export class AIChatMetrics {
       _userId: params._userId,
       clinicId: params.clinicId,
       sessionId: params.sessionId,
-      eventType: "refusal",
+      eventType: 'refusal',
       metrics: {
         responseTime: params.responseTime,
         refusalCount: 1,
@@ -128,13 +128,13 @@ export class AIChatMetrics {
   recordRateLimit(params: {
     _userId?: string;
     clinicId?: string;
-    limitType: "perMinute" | "perHour" | "perDay";
+    limitType: 'perMinute' | 'perHour' | 'perDay';
     remaining: number;
   }): void {
     this.recordInteraction({
       _userId: params._userId,
       clinicId: params.clinicId,
-      eventType: "rate_limit",
+      eventType: 'rate_limit',
       metrics: {
         rateLimitHits: 1,
         rateLimitRemaining: params.remaining,
@@ -161,7 +161,7 @@ export class AIChatMetrics {
       _userId: params._userId,
       clinicId: params.clinicId,
       sessionId: params.sessionId,
-      eventType: "error",
+      eventType: 'error',
       metrics: {
         responseTime: params.responseTime || 0,
         errorCount: 1,
@@ -193,10 +193,9 @@ export class AIChatMetrics {
 
     return allMetrics.reduce((acc, current) => ({
       responseTime: (acc.responseTime + current.responseTime) / 2, // Average
-      firstTokenTime:
-        acc.firstTokenTime && current.firstTokenTime
-          ? (acc.firstTokenTime + current.firstTokenTime) / 2
-          : acc.firstTokenTime || current.firstTokenTime,
+      firstTokenTime: acc.firstTokenTime && current.firstTokenTime
+        ? (acc.firstTokenTime + current.firstTokenTime) / 2
+        : acc.firstTokenTime || current.firstTokenTime,
       totalTokens: (acc.totalTokens || 0) + (current.totalTokens || 0),
       refusalCount: acc.refusalCount + current.refusalCount,
       successCount: acc.successCount + current.successCount,
@@ -230,12 +229,12 @@ export class AIChatMetrics {
     count: number;
   } {
     const events = clinicId
-      ? this.events.filter((e) => e.clinicId === clinicId)
+      ? this.events.filter(e => e.clinicId === clinicId)
       : this.events;
 
     const responseTimes = events
-      .filter((e) => e.metrics.responseTime)
-      .map((e) => e.metrics.responseTime!)
+      .filter(e => e.metrics.responseTime)
+      .map(e => e.metrics.responseTime!)
       .sort((a, b) => a - b);
 
     if (responseTimes.length === 0) {
@@ -266,7 +265,7 @@ export class AIChatMetrics {
     totalInteractions: number;
   } {
     const events = clinicId
-      ? this.events.filter((e) => e.clinicId === clinicId)
+      ? this.events.filter(e => e.clinicId === clinicId)
       : this.events;
 
     const totalInteractions = events.length;
@@ -284,14 +283,11 @@ export class AIChatMetrics {
     );
 
     return {
-      piiDetectionRate:
-        totalInteractions > 0 ? (piiDetections / totalInteractions) * 100 : 0,
-      consentValidationRate:
-        totalInteractions > 0
-          ? (consentValidations / totalInteractions) * 100
-          : 0,
-      auditCoverage:
-        totalInteractions > 0 ? (auditEvents / totalInteractions) * 100 : 0,
+      piiDetectionRate: totalInteractions > 0 ? (piiDetections / totalInteractions) * 100 : 0,
+      consentValidationRate: totalInteractions > 0
+        ? (consentValidations / totalInteractions) * 100
+        : 0,
+      auditCoverage: totalInteractions > 0 ? (auditEvents / totalInteractions) * 100 : 0,
       totalInteractions,
     };
   }
@@ -306,10 +302,10 @@ export class AIChatMetrics {
     lastHit?: string;
   } {
     const events = clinicId
-      ? this.events.filter((e) => e.clinicId === clinicId)
+      ? this.events.filter(e => e.clinicId === clinicId)
       : this.events;
 
-    const rateLimitEvents = events.filter((e) => e.eventType === "rate_limit");
+    const rateLimitEvents = events.filter(e => e.eventType === 'rate_limit');
     const totalInteractions = events.length;
     const totalHits = rateLimitEvents.reduce(
       (sum, e) => sum + (e.metrics.rateLimitHits || 0),
@@ -317,22 +313,19 @@ export class AIChatMetrics {
     );
 
     const remainingValues = events
-      .filter((e) => e.metrics.rateLimitRemaining !== undefined)
-      .map((e) => e.metrics.rateLimitRemaining!);
+      .filter(e => e.metrics.rateLimitRemaining !== undefined)
+      .map(e => e.metrics.rateLimitRemaining!);
 
-    const averageRemaining =
-      remainingValues.length > 0
-        ? remainingValues.reduce((a, b) => a + b, 0) / remainingValues.length
-        : 0;
+    const averageRemaining = remainingValues.length > 0
+      ? remainingValues.reduce((a, b) => a + b, 0) / remainingValues.length
+      : 0;
 
     const lastHitEvent = rateLimitEvents.sort(
-      (a, b) =>
-        new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
+      (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
     )[0];
 
     return {
-      hitRate:
-        totalInteractions > 0 ? (totalHits / totalInteractions) * 100 : 0,
+      hitRate: totalInteractions > 0 ? (totalHits / totalInteractions) * 100 : 0,
       averageRemaining,
       totalHits,
       lastHit: lastHitEvent?.timestamp,
@@ -395,11 +388,9 @@ export class AIChatMetrics {
       successCount: existing.successCount + (newMetrics.successCount || 0),
       errorCount: existing.errorCount + (newMetrics.errorCount || 0),
       rateLimitHits: existing.rateLimitHits + (newMetrics.rateLimitHits || 0),
-      rateLimitRemaining:
-        newMetrics.rateLimitRemaining ?? existing.rateLimitRemaining,
+      rateLimitRemaining: newMetrics.rateLimitRemaining ?? existing.rateLimitRemaining,
       piiDetections: existing.piiDetections + (newMetrics.piiDetections || 0),
-      consentValidations:
-        existing.consentValidations + (newMetrics.consentValidations || 0),
+      consentValidations: existing.consentValidations + (newMetrics.consentValidations || 0),
       auditEvents: existing.auditEvents + (newMetrics.auditEvents || 0),
     };
 
@@ -434,25 +425,25 @@ export const aiChatMetrics = new AIChatMetrics();
 
 // Convenience functions for common use cases
 export const recordAISuccess = (
-  params: Parameters<AIChatMetrics["recordSuccess"]>[0],
+  params: Parameters<AIChatMetrics['recordSuccess']>[0],
 ) => {
   aiChatMetrics.recordSuccess(params);
 };
 
 export const recordAIRefusal = (
-  params: Parameters<AIChatMetrics["recordRefusal"]>[0],
+  params: Parameters<AIChatMetrics['recordRefusal']>[0],
 ) => {
   aiChatMetrics.recordRefusal(params);
 };
 
 export const recordAIError = (
-  params: Parameters<AIChatMetrics["recordError"]>[0],
+  params: Parameters<AIChatMetrics['recordError']>[0],
 ) => {
   aiChatMetrics.recordError(params);
 };
 
 export const recordRateLimit = (
-  params: Parameters<AIChatMetrics["recordRateLimit"]>[0],
+  params: Parameters<AIChatMetrics['recordRateLimit']>[0],
 ) => {
   aiChatMetrics.recordRateLimit(params);
 };

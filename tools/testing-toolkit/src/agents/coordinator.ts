@@ -5,20 +5,20 @@
  * following the patterns defined in the code review documentation.
  */
 
-import { AGENT_REGISTRY, QUALITY_GATES } from "./index";
-import type { AgentType } from "./types";
+import { AGENT_REGISTRY, QUALITY_GATES } from './index';
+import type { AgentType } from './types';
 
 const QUALITY_GATE_KEY_MAP: Record<AgentType, keyof typeof QUALITY_GATES> = {
-  "architect-review": "ARCHITECTURE",
-  "code-reviewer": "CODE_QUALITY",
-  "security-auditor": "SECURITY",
-  "tdd-orchestrator": "TDD",
-  "test-agent": "TDD",
-  "test-auditor": "TDD",
+  'architect-review': 'ARCHITECTURE',
+  'code-reviewer': 'CODE_QUALITY',
+  'security-auditor': 'SECURITY',
+  'tdd-orchestrator': 'TDD',
+  'test-agent': 'TDD',
+  'test-auditor': 'TDD',
 };
 
 export interface CoordinationConfig {
-  pattern: "sequential" | "parallel" | "hierarchical";
+  pattern: 'sequential' | 'parallel' | 'hierarchical';
   agents: AgentType[];
   qualityGates: string[];
   timeout?: number;
@@ -50,14 +50,14 @@ export class AgentCoordinator {
    */
   async execute(): Promise<AgentResult[]> {
     console.log(`🤖 Agent Coordination: ${this.config.pattern}`);
-    console.log(`Agents: ${this.config.agents.join(", ")}`);
+    console.log(`Agents: ${this.config.agents.join(', ')}`);
 
     switch (this.config.pattern) {
-      case "sequential":
+      case 'sequential':
         return await this.executeSequential();
-      case "parallel":
+      case 'parallel':
         return await this.executeParallel();
-      case "hierarchical":
+      case 'hierarchical':
         return await this.executeHierarchical();
       default:
         throw new Error(`Unknown coordination pattern: ${this.config.pattern}`);
@@ -77,7 +77,7 @@ export class AgentCoordinator {
       this.results.set(agent, result);
 
       // Stop on failure if configured
-      if (!result.success && this.config.qualityGates.includes("fail-fast")) {
+      if (!result.success && this.config.qualityGates.includes('fail-fast')) {
         console.log(`❌ Agent ${agent} failed, stopping sequential execution`);
         break;
       }
@@ -90,11 +90,9 @@ export class AgentCoordinator {
    * Parallel execution - agents run simultaneously
    */
   private async executeParallel(): Promise<AgentResult[]> {
-    console.log("🚀 Executing agents in parallel");
+    console.log('🚀 Executing agents in parallel');
 
-    const promises = this.config.agents.map((agent) =>
-      this.executeAgent(agent),
-    );
+    const promises = this.config.agents.map(agent => this.executeAgent(agent));
     const results = await Promise.all(promises);
 
     results.forEach((result, index) => {
@@ -114,20 +112,18 @@ export class AgentCoordinator {
     const [primaryAgent, ...supportAgents] = this.config.agents;
 
     if (!primaryAgent) {
-      throw new Error("No primary agent specified for hierarchical execution");
+      throw new Error('No primary agent specified for hierarchical execution');
     }
 
     console.log(`👑 Primary agent: ${primaryAgent}`);
-    console.log(`🤝 Support agents: ${supportAgents.join(", ")}`);
+    console.log(`🤝 Support agents: ${supportAgents.join(', ')}`);
 
     // Execute primary agent first
     const primaryResult = await this.executeAgent(primaryAgent);
     this.results.set(primaryAgent, primaryResult);
 
     // Execute support agents based on primary result
-    const supportPromises = supportAgents.map((agent) =>
-      this.executeAgent(agent),
-    );
+    const supportPromises = supportAgents.map(agent => this.executeAgent(agent));
     const supportResults = await Promise.all(supportPromises);
 
     supportResults.forEach((result, index) => {
@@ -161,7 +157,7 @@ export class AgentCoordinator {
 
       const duration = Date.now() - startTime;
       console.log(
-        `${success ? "✅" : "❌"} Agent ${agent} completed in ${duration}ms`,
+        `${success ? '✅' : '❌'} Agent ${agent} completed in ${duration}ms`,
       );
 
       return result;
@@ -186,22 +182,22 @@ export class AgentCoordinator {
     const metrics: Record<string, number> = {};
 
     switch (agent) {
-      case "architect-review":
+      case 'architect-review':
         metrics.patterns = Math.random() * 100;
         metrics.boundaries = Math.random() * 100;
         metrics.scalability = Math.random() * 100;
         break;
-      case "code-reviewer":
+      case 'code-reviewer':
         metrics.quality = Math.random() * 100;
         metrics.performance = Math.random() * 100;
         metrics.maintainability = Math.random() * 100;
         break;
-      case "security-auditor":
+      case 'security-auditor':
         metrics.compliance = Math.random() * 100;
         metrics.vulnerabilities = Math.floor(Math.random() * 5);
         metrics.authentication = Math.random() * 100;
         break;
-      case "tdd-orchestrator":
+      case 'tdd-orchestrator':
         metrics.patterns = Math.random() * 100;
         metrics.coverage = Math.random() * 100;
         metrics.structure = Math.random() * 100;
@@ -218,9 +214,8 @@ export class AgentCoordinator {
     agent: AgentType,
     metrics: Record<string, number>,
   ): boolean {
-    const mappedKey =
-      QUALITY_GATE_KEY_MAP[agent] ??
-      (agent.toUpperCase().replace("-", "_") as keyof typeof QUALITY_GATES);
+    const mappedKey = QUALITY_GATE_KEY_MAP[agent]
+      ?? (agent.toUpperCase().replace('-', '_') as keyof typeof QUALITY_GATES);
     const gates = QUALITY_GATES[mappedKey];
     if (!gates) return true;
 
@@ -229,7 +224,7 @@ export class AgentCoordinator {
       if (value === undefined) return true;
 
       // Special handling for vulnerabilities (lower is better)
-      if (key === "vulnerabilities") {
+      if (key === 'vulnerabilities') {
         return value <= threshold;
       }
 
@@ -261,7 +256,7 @@ export class AgentCoordinator {
    */
   getSummary() {
     const results = Array.from(this.results.values());
-    const successCount = results.filter((r) => r.success).length;
+    const successCount = results.filter(r => r.success).length;
     const totalCount = results.length;
 
     return {

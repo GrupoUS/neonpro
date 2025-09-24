@@ -15,9 +15,9 @@ export interface AuditEvent {
  * Compliance check result for LGPD/healthcare regulations
  */
 export interface ComplianceCheck {
-  status: "COMPLIANT" | "NON_COMPLIANT" | "PENDING";
-  riskLevel: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
-  risk_level: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL"; // Legacy support
+  status: 'COMPLIANT' | 'NON_COMPLIANT' | 'PENDING';
+  riskLevel: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  risk_level: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL'; // Legacy support
   violations: string[];
   isCompliant: boolean;
   lastChecked?: string;
@@ -32,7 +32,7 @@ export interface DataAccessAudit {
   _userId: string;
   patientId: string;
   dataType: string;
-  action: "read" | "write" | "delete" | "export";
+  action: 'read' | 'write' | 'delete' | 'export';
   timestamp: string;
   source: string;
   metadata?: Record<string, unknown>;
@@ -42,7 +42,7 @@ export interface DataAccessAudit {
  * Privacy-safe logging utility
  */
 export interface PrivateLogEntry {
-  level: "info" | "warn" | "error" | "debug";
+  level: 'info' | 'warn' | 'error' | 'debug';
   message: string;
   timestamp: string;
   redactedFields: string[];
@@ -57,7 +57,7 @@ export interface AuditLogRequest {
   _userId: string;
   action: string;
   eventType?: string; // Legacy support
-  userRole?: "doctor" | "patient" | "nurse" | "admin" | "system";
+  userRole?: 'doctor' | 'patient' | 'nurse' | 'admin' | 'system';
   dataClassification?: MedicalDataClassification;
   description?: string;
   resourceType?: ResourceType; // Make optional for backward compatibility
@@ -76,7 +76,7 @@ export interface AuditLogRequest {
 export interface ComplianceReport {
   id: string;
   generatedAt: string;
-  reportType: "LGPD" | "ANVISA" | "CFM" | "GENERAL";
+  reportType: 'LGPD' | 'ANVISA' | 'CFM' | 'GENERAL';
   periodStart: string;
   periodEnd: string;
   reportPeriod?: {
@@ -87,20 +87,20 @@ export interface ComplianceReport {
     totalEvents: number;
     complianceScore: number;
     violationsCount: number;
-    riskLevel: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
+    riskLevel: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
     compliantEvents?: number;
     nonCompliantEvents?: number;
     complianceRate?: number;
   };
   violations:
     | Array<{
-        id: string;
-        type: string;
-        severity: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
-        description: string;
-        timestamp: string;
-        resolved: boolean;
-      }>
+      id: string;
+      type: string;
+      severity: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+      description: string;
+      timestamp: string;
+      resolved: boolean;
+    }>
     | Record<string, number>; // Support both formats
   riskLevels?: {
     low: number;
@@ -125,58 +125,58 @@ export interface AuditSearchCriteria {
   eventTypes?: string[]; // Multiple event types
   resourceType?: ResourceType;
   resourceId?: string;
-  userRole?: "doctor" | "patient" | "nurse" | "admin" | "system";
+  userRole?: 'doctor' | 'patient' | 'nurse' | 'admin' | 'system';
   dataClassification?: MedicalDataClassification;
   dataClassifications?: MedicalDataClassification[]; // Multiple classifications
   ipAddress?: string;
   clinicId?: string;
-  complianceStatus?: "compliant" | "non_compliant" | "pending";
+  complianceStatus?: 'compliant' | 'non_compliant' | 'pending';
   limit?: number;
   offset?: number;
-  sortBy?: "timestamp" | "action" | "userId";
-  sortOrder?: "asc" | "desc";
+  sortBy?: 'timestamp' | 'action' | 'userId';
+  sortOrder?: 'asc' | 'desc';
 }
 
 /**
  * Medical data classification levels
  */
 export type MedicalDataClassification =
-  | "public"
-  | "internal"
-  | "confidential"
-  | "restricted"
-  | "pii"
-  | "phi"
-  | "sensitive"
-  | "general"; // Legacy support
+  | 'public'
+  | 'internal'
+  | 'confidential'
+  | 'restricted'
+  | 'pii'
+  | 'phi'
+  | 'sensitive'
+  | 'general'; // Legacy support
 
 /**
  * Resource types for audit tracking
  */
 export type ResourceType =
-  | "patient"
-  | "appointment"
-  | "medical_record"
-  | "prescription"
-  | "payment"
-  | "user"
-  | "clinic"
-  | "report"
-  | "system"
-  | "auth"
-  | "api"
-  | "file"
-  | "configuration";
+  | 'patient'
+  | 'appointment'
+  | 'medical_record'
+  | 'prescription'
+  | 'payment'
+  | 'user'
+  | 'clinic'
+  | 'report'
+  | 'system'
+  | 'auth'
+  | 'api'
+  | 'file'
+  | 'configuration';
 
 /**
  * Audit status types
  */
 export type AuditStatusType =
-  | "pending"
-  | "processed"
-  | "archived"
-  | "deleted"
-  | "error";
+  | 'pending'
+  | 'processed'
+  | 'archived'
+  | 'deleted'
+  | 'error';
 
 /**
  * Real-time compliance audit log entry
@@ -188,7 +188,7 @@ export interface RTCAuditLogEntry {
   sessionId?: string;
   _userId: string;
   action: string;
-  userRole?: "doctor" | "patient" | "nurse" | "admin" | "system";
+  userRole?: 'doctor' | 'patient' | 'nurse' | 'admin' | 'system';
   resourceType?: ResourceType; // Make optional
   resourceId?: string;
   resource?: string; // Add legacy support
@@ -202,11 +202,11 @@ export interface RTCAuditLogEntry {
   complianceCheck?: {
     isCompliant: boolean;
     violations: string[];
-    riskLevel: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
+    riskLevel: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
   };
   // Add missing properties from service usage
-  severity?: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
-  complianceStatus?: "COMPLIANT" | "NON_COMPLIANT" | "PENDING_REVIEW";
+  severity?: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  complianceStatus?: 'COMPLIANT' | 'NON_COMPLIANT' | 'PENDING_REVIEW';
   violations?:
     | Array<{ rule: string; description: string; severity: string }>
     | Record<string, unknown>;

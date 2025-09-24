@@ -1,13 +1,13 @@
 /**
  * Enhanced Patient Identity Router
- * 
+ *
  * Provides comprehensive patient identity management with LGPD compliance
  * for Brazilian aesthetic clinics
  */
 
 import { z } from 'zod';
-import { router, publicProcedure, protectedProcedure } from '../trpc';
 import { EnhancedPatientIdentityService } from '../../services/enhanced-patient-identity-service';
+import { protectedProcedure, publicProcedure, router } from '../trpc';
 
 // Input schemas
 const PatientRegistrationInput = z.object({
@@ -155,9 +155,9 @@ export const enhancedPatientIdentityRouter = router({
 
   // Get patient treatment history
   getTreatmentHistory: protectedProcedure
-    .input(z.object({ 
+    .input(z.object({
       patientId: z.string().uuid(),
-      limit: z.number().min(1).max(50).default(10)
+      limit: z.number().min(1).max(50).default(10),
     }))
     .query(async ({ input }) => {
       return await patientIdentityService.getPatientTreatmentHistory(input.patientId, input.limit);

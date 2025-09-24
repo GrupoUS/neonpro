@@ -5,150 +5,150 @@
  */
 
 // Re-export LGPD types from existing consent module
-export { DataCategory as LGPDDataCategory } from "../types/lgpd-consent";
+export { DataCategory as LGPDDataCategory } from '../types/lgpd-consent';
 
 // Healthcare Data Classification according to Brazilian healthcare regulations
 export enum HealthcareDataClassification {
   // Public data - no restrictions
-  PUBLIC = "public",
+  PUBLIC = 'public',
 
   // Internal data - clinic/hospital internal use
-  INTERNAL = "internal",
+  INTERNAL = 'internal',
 
   // Patient identifying data - requires consent
-  PATIENT_IDENTIFYING = "patient_identifying",
+  PATIENT_IDENTIFYING = 'patient_identifying',
 
   // Patient sensitive data - requires explicit consent and special handling
-  PATIENT_SENSITIVE = "patient_sensitive",
+  PATIENT_SENSITIVE = 'patient_sensitive',
 
   // Medical records - highest protection level
-  MEDICAL_RECORDS = "medical_records",
+  MEDICAL_RECORDS = 'medical_records',
 
   // Emergency data - special access rules
-  EMERGENCY_ACCESS = "emergency_access",
+  EMERGENCY_ACCESS = 'emergency_access',
 }
 
 // Data Retention Classes according to LGPD and healthcare regulations
 export enum DataRetentionClass {
   // Immediate deletion after use (1-7 days)
-  IMMEDIATE = "immediate",
+  IMMEDIATE = 'immediate',
 
   // Short-term retention (1-30 days)
-  SHORT_TERM = "short_term",
+  SHORT_TERM = 'short_term',
 
   // Medium-term retention (1-12 months)
-  MEDIUM_TERM = "medium_term",
+  MEDIUM_TERM = 'medium_term',
 
   // Long-term retention (1-10 years)
-  LONG_TERM = "long_term",
+  LONG_TERM = 'long_term',
 
   // Permanent retention (medical records - 20+ years)
-  PERMANENT = "permanent",
+  PERMANENT = 'permanent',
 
   // Legal hold - indefinite retention due to legal proceedings
-  LEGAL_HOLD = "legal_hold",
+  LEGAL_HOLD = 'legal_hold',
 }
 
 // Healthcare Privacy Levels
 export enum HealthcarePrivacyLevel {
   // No privacy concerns
-  NONE = "none",
+  NONE = 'none',
 
   // Basic privacy - standard healthcare protocols
-  BASIC = "basic",
+  BASIC = 'basic',
 
   // Enhanced privacy - sensitive conditions
-  ENHANCED = "enhanced",
+  ENHANCED = 'enhanced',
 
   // Maximum privacy - mental health, reproductive health, etc.
-  MAXIMUM = "maximum",
+  MAXIMUM = 'maximum',
 }
 
 // Healthcare Compliance Standards
 export enum ComplianceStandard {
   // LGPD - Brazilian General Data Protection Law
-  LGPD = "lgpd",
+  LGPD = 'lgpd',
 
   // ANVISA - Brazilian Health Surveillance Agency
-  ANVISA = "anvisa",
+  ANVISA = 'anvisa',
 
   // CFM - Federal Council of Medicine
-  CFM = "cfm",
+  CFM = 'cfm',
 
   // ISO 27001 - Information Security Management
-  ISO_27001 = "iso_27001",
+  ISO_27001 = 'iso_27001',
 
   // HIPAA - US Health Insurance Portability and Accountability Act (for reference)
-  HIPAA = "hipaa",
+  HIPAA = 'hipaa',
 }
 
 // Healthcare Data Processing Purpose
 export enum HealthcareProcessingPurpose {
   // Direct patient care
-  PATIENT_CARE = "patient_care",
+  PATIENT_CARE = 'patient_care',
 
   // Administrative purposes
-  ADMINISTRATION = "administration",
+  ADMINISTRATION = 'administration',
 
   // Quality assurance
-  QUALITY_ASSURANCE = "quality_assurance",
+  QUALITY_ASSURANCE = 'quality_assurance',
 
   // Medical research (anonymized)
-  RESEARCH = "research",
+  RESEARCH = 'research',
 
   // Public health reporting
-  PUBLIC_HEALTH = "public_health",
+  PUBLIC_HEALTH = 'public_health',
 
   // Legal compliance
-  LEGAL_COMPLIANCE = "legal_compliance",
+  LEGAL_COMPLIANCE = 'legal_compliance',
 
   // Insurance and billing
-  BILLING = "billing",
+  BILLING = 'billing',
 
   // Emergency care
-  EMERGENCY_CARE = "emergency_care",
+  EMERGENCY_CARE = 'emergency_care',
 }
 
 // Healthcare Data Access Level
 export enum HealthcareAccessLevel {
   // Patient self-access
-  PATIENT = "patient",
+  PATIENT = 'patient',
 
   // Healthcare professional (treating)
-  HEALTHCARE_PROFESSIONAL = "healthcare_professional",
+  HEALTHCARE_PROFESSIONAL = 'healthcare_professional',
 
   // Healthcare professional (consulting)
-  HEALTHCARE_CONSULTANT = "healthcare_consultant",
+  HEALTHCARE_CONSULTANT = 'healthcare_consultant',
 
   // Administrative staff
-  ADMINISTRATIVE = "administrative",
+  ADMINISTRATIVE = 'administrative',
 
   // Emergency personnel
-  EMERGENCY = "emergency",
+  EMERGENCY = 'emergency',
 
   // System administrator
-  SYSTEM_ADMIN = "system_admin",
+  SYSTEM_ADMIN = 'system_admin',
 
   // Audit/compliance officer
-  AUDIT = "audit",
+  AUDIT = 'audit',
 }
 
 // Healthcare Data Subject Type
 export enum HealthcareDataSubjectType {
   // Individual patient
-  PATIENT = "patient",
+  PATIENT = 'patient',
 
   // Healthcare professional
-  HEALTHCARE_PROFESSIONAL = "healthcare_professional",
+  HEALTHCARE_PROFESSIONAL = 'healthcare_professional',
 
   // Legal guardian/representative
-  LEGAL_GUARDIAN = "legal_guardian",
+  LEGAL_GUARDIAN = 'legal_guardian',
 
   // Emergency contact
-  EMERGENCY_CONTACT = "emergency_contact",
+  EMERGENCY_CONTACT = 'emergency_contact',
 
   // Insurance provider
-  INSURANCE_PROVIDER = "insurance_provider",
+  INSURANCE_PROVIDER = 'insurance_provider',
 }
 
 // Utility type for healthcare data classification mapping
@@ -401,25 +401,25 @@ export class HealthcareDataClassificationUtils {
 
     // Check compliance standards
     const missingStandards = mapping.requiredStandards.filter(
-      (std) => !requiredStandards.includes(std),
+      std => !requiredStandards.includes(std),
     );
     if (missingStandards.length > 0) {
       violations.push(
-        `Missing required compliance standards: ${missingStandards.join(", ")}`,
+        `Missing required compliance standards: ${missingStandards.join(', ')}`,
       );
     }
 
     // Recommendations based on classification
     if (
-      classification === HealthcareDataClassification.PATIENT_SENSITIVE ||
-      classification === HealthcareDataClassification.MEDICAL_RECORDS
+      classification === HealthcareDataClassification.PATIENT_SENSITIVE
+      || classification === HealthcareDataClassification.MEDICAL_RECORDS
     ) {
       recommendations.push(
-        "Consider implementing additional encryption for sensitive data",
+        'Consider implementing additional encryption for sensitive data',
       );
-      recommendations.push("Ensure regular audit logs are maintained");
+      recommendations.push('Ensure regular audit logs are maintained');
       recommendations.push(
-        "Implement data masking for non-production environments",
+        'Implement data masking for non-production environments',
       );
     }
 

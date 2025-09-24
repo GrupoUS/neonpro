@@ -1,28 +1,28 @@
-import { LegalBasis } from "../value-objects/gender";
+import { LegalBasis } from '../value-objects/gender';
 
 /**
  * Consent status enum
  */
 export enum ConsentStatus {
-  ACTIVE = "ACTIVE",
-  EXPIRED = "EXPIRED",
-  REVOKED = "REVOKED",
-  PENDING = "PENDING",
-  SUSPENDED = "SUSPENDED",
+  ACTIVE = 'ACTIVE',
+  EXPIRED = 'EXPIRED',
+  REVOKED = 'REVOKED',
+  PENDING = 'PENDING',
+  SUSPENDED = 'SUSPENDED',
 }
 
 /**
  * Consent type enum
  */
 export enum ConsentType {
-  DATA_PROCESSING = "data_processing",
-  MARKETING = "marketing",
-  ANALYTICS = "analytics",
-  RESEARCH = "research",
-  TELEHEALTH = "telehealth",
-  EMERGENCY_CONTACT = "emergency_contact",
-  INSURANCE_SHARING = "insurance_sharing",
-  TREATMENT = "treatment",
+  DATA_PROCESSING = 'data_processing',
+  MARKETING = 'marketing',
+  ANALYTICS = 'analytics',
+  RESEARCH = 'research',
+  TELEHEALTH = 'telehealth',
+  EMERGENCY_CONTACT = 'emergency_contact',
+  INSURANCE_SHARING = 'insurance_sharing',
+  TREATMENT = 'treatment',
 }
 
 /**
@@ -77,13 +77,13 @@ export interface ConsentAuditEvent {
  * Consent action types
  */
 export enum ConsentAction {
-  CREATED = "CONSENT_CREATED",
-  GRANTED = "CONSENT_GRANTED",
-  REVOKED = "CONSENT_REVOKED",
-  EXPIRED = "CONSENT_EXPIRED",
-  ACCESSED = "CONSENT_ACCESSED",
-  UPDATED = "CONSENT_UPDATED",
-  VERIFIED = "CONSENT_VERIFIED",
+  CREATED = 'CONSENT_CREATED',
+  GRANTED = 'CONSENT_GRANTED',
+  REVOKED = 'CONSENT_REVOKED',
+  EXPIRED = 'CONSENT_EXPIRED',
+  ACCESSED = 'CONSENT_ACCESSED',
+  UPDATED = 'CONSENT_UPDATED',
+  VERIFIED = 'CONSENT_VERIFIED',
 }
 
 /**
@@ -91,9 +91,9 @@ export enum ConsentAction {
  */
 export interface ComplianceCheck {
   patientId: string;
-  status: "COMPLIANT" | "NON_COMPLIANT" | "PARTIALLY_COMPLIANT";
-  riskLevel: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
-  risk_level?: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL"; // legacy support
+  status: 'COMPLIANT' | 'NON_COMPLIANT' | 'PARTIALLY_COMPLIANT';
+  riskLevel: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  risk_level?: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL'; // legacy support
   violations: ComplianceViolation[];
   isCompliant: boolean;
   lastChecked: string;
@@ -106,7 +106,7 @@ export interface ComplianceCheck {
 export interface ComplianceViolation {
   id: string;
   type: string;
-  severity: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
+  severity: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
   description: string;
   affectedConsentId?: string;
   recommendation: string;
@@ -126,18 +126,18 @@ export class ConsentValidator {
   static validateRequest(_request: ConsentRequest): string[] {
     const errors: string[] = [];
 
-    if (!_request.patientId) errors.push("Patient ID is required");
-    if (!_request.consentType) errors.push("Consent type is required");
-    if (!_request.purpose) errors.push("Purpose is required");
+    if (!_request.patientId) errors.push('Patient ID is required');
+    if (!_request.consentType) errors.push('Consent type is required');
+    if (!_request.purpose) errors.push('Purpose is required');
     if (!_request.dataTypes || _request.dataTypes.length === 0) {
-      errors.push("At least one data type must be specified");
+      errors.push('At least one data type must be specified');
     }
 
     // Validate expiration date is in the future
     if (_request.expiration) {
       const expirationDate = new Date(_request.expiration);
       if (expirationDate <= new Date()) {
-        errors.push("Expiration date must be in the future");
+        errors.push('Expiration date must be in the future');
       }
     }
 
@@ -175,7 +175,7 @@ export class ConsentValidator {
     consent: ConsentRecord,
     requiredDataTypes: string[],
   ): boolean {
-    return requiredDataTypes.every((type) => consent.dataTypes.includes(type));
+    return requiredDataTypes.every(type => consent.dataTypes.includes(type));
   }
 
   /**
@@ -216,7 +216,7 @@ export class ConsentFactory {
       grantedAt: now,
       expiresAt: _request.expiration,
       legalBasis: LegalBasis.CONSENT,
-      consentVersion: "1.0.0",
+      consentVersion: '1.0.0',
       metadata: _request.metadata,
       auditTrail: [
         {

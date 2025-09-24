@@ -626,7 +626,7 @@ export class ExternalServiceHealthChecker {
       try {
         callback(event);
       } catch {
-      void error;
+        void error;
         // Error caught but not used - handled by surrounding logic
         console.error('Error in health check event callback:', error);
       }

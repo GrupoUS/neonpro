@@ -1,7 +1,7 @@
 // ChatMessage model (Phase 1)
 // Mirrors packages/types/src/ai-chat.ts; add small helpers.
 
-import type { ChatMessage as ChatMessageType } from "@neonpro/types";
+import type { ChatMessage as ChatMessageType } from '@neonpro/types';
 
 export type ChatMessage = ChatMessageType;
 

@@ -1,13 +1,13 @@
-import * as React from "react";
-import { flexRender, type Table, type RowData, type HeaderGroup, type Row, type Cell } from "@tanstack/react-table";
 import {
-  Table as UITable,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "./table";
+  type Cell,
+  flexRender,
+  type HeaderGroup,
+  type Row,
+  type RowData,
+  type Table,
+} from '@tanstack/react-table';
+import * as React from 'react';
+import { Table as UITable, TableBody, TableCell, TableHead, TableHeader, TableRow } from './table';
 
 // Note: keep props non-generic to avoid unused generic type errors in consumers
 export interface EnhancedTableProps<TData extends RowData = any> {
@@ -37,7 +37,7 @@ export function EnhancedTable<TData extends RowData = any>(props: EnhancedTableP
     loading = false,
     columnsCount,
     ariaLabel,
-    emptyMessage = "Nenhum registro encontrado.",
+    emptyMessage = 'Nenhum registro encontrado.',
     className,
     renderToolbar,
     renderPagination,
@@ -49,21 +49,23 @@ export function EnhancedTable<TData extends RowData = any>(props: EnhancedTableP
 
   return (
     <div
-      className={["overflow-hidden rounded-md border", className]
+      className={['overflow-hidden rounded-md border', className]
         .filter(Boolean)
-        .join(" ")}
+        .join(' ')}
     >
-      {renderToolbar ? (
-        <div className="flex items-center justify-between px-3 pt-3">
-          {renderToolbar}
-        </div>
-      ) : null}
+      {renderToolbar
+        ? (
+          <div className='flex items-center justify-between px-3 pt-3'>
+            {renderToolbar}
+          </div>
+        )
+        : null}
 
       <UITable aria-label={ariaLabel}>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup: HeaderGroup<TData>) => (
             <TableRow key={headerGroup.id}>
-              {headerGroup.headers.map((header) => (
+              {headerGroup.headers.map(header => (
                 <TableHead
                   key={header.id}
                   style={{
@@ -75,63 +77,67 @@ export function EnhancedTable<TData extends RowData = any>(props: EnhancedTableP
                   {header.isPlaceholder
                     ? null
                     : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext(),
-                      )}
+                      header.column.columnDef.header,
+                      header.getContext(),
+                    )}
                 </TableHead>
               ))}
             </TableRow>
           ))}
         </TableHeader>
         <TableBody>
-          {loading ? (
-            <TableRow>
-              <TableCell colSpan={colSpan} className="h-24 text-center">
-                Carregando...
-              </TableCell>
-            </TableRow>
-          ) : table.getRowModel().rows.length ? (
-            table.getRowModel().rows.map((row: Row<TData>) => (
-              <TableRow
-                key={row.id}
-                data-state={
-                  row.getIsSelected && row.getIsSelected() && "selected"
-                }
-                className={onRowClick ? "cursor-pointer" : undefined}
-                onClick={onRowClick ? () => onRowClick(row) : undefined}
-              >
-                {row.getVisibleCells().map((cell: Cell<TData, unknown>) => (
-                  <TableCell
-                    key={cell.id}
-                    onClick={(e) => {
-                      if (
-                        stopRowClickPredicate &&
-                        stopRowClickPredicate(cell)
-                      ) {
-                        e.stopPropagation();
-                      }
-                    }}
-                  >
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </TableCell>
-                ))}
+          {loading
+            ? (
+              <TableRow>
+                <TableCell colSpan={colSpan} className='h-24 text-center'>
+                  Carregando...
+                </TableCell>
               </TableRow>
-            ))
-          ) : (
-            <TableRow>
-              <TableCell colSpan={colSpan} className="h-24 text-center">
-                {emptyMessage}
-              </TableCell>
-            </TableRow>
-          )}
+            )
+            : table.getRowModel().rows.length
+            ? (
+              table.getRowModel().rows.map((row: Row<TData>) => (
+                <TableRow
+                  key={row.id}
+                  data-state={row.getIsSelected && row.getIsSelected() && 'selected'}
+                  className={onRowClick ? 'cursor-pointer' : undefined}
+                  onClick={onRowClick ? () => onRowClick(row) : undefined}
+                >
+                  {row.getVisibleCells().map((cell: Cell<TData, unknown>) => (
+                    <TableCell
+                      key={cell.id}
+                      onClick={e => {
+                        if (
+                          stopRowClickPredicate
+                          && stopRowClickPredicate(cell)
+                        ) {
+                          e.stopPropagation();
+                        }
+                      }}
+                    >
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))
+            )
+            : (
+              <TableRow>
+                <TableCell colSpan={colSpan} className='h-24 text-center'>
+                  {emptyMessage}
+                </TableCell>
+              </TableRow>
+            )}
         </TableBody>
       </UITable>
 
-      {renderPagination ? (
-        <div className="flex items-center justify-between px-3 pb-3">
-          {renderPagination}
-        </div>
-      ) : null}
+      {renderPagination
+        ? (
+          <div className='flex items-center justify-between px-3 pb-3'>
+            {renderPagination}
+          </div>
+        )
+        : null}
     </div>
   );
 }

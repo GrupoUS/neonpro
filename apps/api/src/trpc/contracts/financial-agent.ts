@@ -16,11 +16,11 @@ import {
  * Financial-Specific Agent Types
  */
 export const FinancialAgentTypeSchema = z.enum([
-  'billing',           // Billing and invoicing operations
-  'payment',           // Payment processing and reconciliation
-  'analytics',         // Financial analytics and reporting
-  'compliance',        // LGPD and regulatory compliance
-  'audit',            // Financial audit and fraud detection
+  'billing', // Billing and invoicing operations
+  'payment', // Payment processing and reconciliation
+  'analytics', // Financial analytics and reporting
+  'compliance', // LGPD and regulatory compliance
+  'audit', // Financial audit and fraud detection
 ]);
 export type FinancialAgentType = z.infer<typeof FinancialAgentTypeSchema>;
 
@@ -29,30 +29,30 @@ export type FinancialAgentType = z.infer<typeof FinancialAgentTypeSchema>;
  */
 export const FinancialMessageTypeSchema = z.enum([
   // Core Operations
-  'billing_request',           // Request billing operations
-  'payment_process',           // Process payment transactions
-  'analytics_query',           // Financial analytics queries
-  'compliance_check',          // LGPD compliance validation
-  'audit_trigger',            // Fraud detection triggers
-  
+  'billing_request', // Request billing operations
+  'payment_process', // Process payment transactions
+  'analytics_query', // Financial analytics queries
+  'compliance_check', // LGPD compliance validation
+  'audit_trigger', // Fraud detection triggers
+
   // Response Types
-  'billing_response',          // Billing operation results
-  'payment_confirmation',      // Payment processing confirmation
-  'analytics_report',          // Financial analytics reports
-  'compliance_result',        // Compliance validation results
-  'audit_alert',              // Fraud detection alerts
-  
+  'billing_response', // Billing operation results
+  'payment_confirmation', // Payment processing confirmation
+  'analytics_report', // Financial analytics reports
+  'compliance_result', // Compliance validation results
+  'audit_alert', // Fraud detection alerts
+
   // Interactive Operations
-  'financial_advice',         // AI-powered financial recommendations
-  'cost_optimization',        // Cost optimization suggestions
-  'revenue_forecast',         // Revenue forecasting
-  'cash_flow_analysis',       // Cash flow analysis and projections
-  
+  'financial_advice', // AI-powered financial recommendations
+  'cost_optimization', // Cost optimization suggestions
+  'revenue_forecast', // Revenue forecasting
+  'cash_flow_analysis', // Cash flow analysis and projections
+
   // Workflow Operations
-  'approval_request',         // Request financial approvals
-  'reconciliation_status',   // Payment reconciliation status
-  'dispute_resolution',       // Payment dispute handling
-  'refund_processing',        // Refund processing and tracking
+  'approval_request', // Request financial approvals
+  'reconciliation_status', // Payment reconciliation status
+  'dispute_resolution', // Payment dispute handling
+  'refund_processing', // Refund processing and tracking
 ]);
 export type FinancialMessageType = z.infer<typeof FinancialMessageTypeSchema>;
 
@@ -263,7 +263,8 @@ export const AnalyticsQuerySchema = z.object({
     .object({
       professionals: z.array(z.string().uuid()).optional(),
       procedures: z.array(z.string()).optional(),
-      payment_methods: z.array(z.enum(['pix', 'credit_card', 'debit_card', 'cash', 'installment'])).optional(),
+      payment_methods: z.array(z.enum(['pix', 'credit_card', 'debit_card', 'cash', 'installment']))
+        .optional(),
       patients: z.array(z.string().uuid()).optional(),
     })
     .optional(),

@@ -5,47 +5,53 @@
  * comparison tools, and Brazilian healthcare compliance information.
  */
 
-import React, { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { zodResolver } from '@hookform/resolvers/zod';
+import React, { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 // import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 // import { Alert, AlertDescription } from '@/components/ui/alert';
 // import { Progress } from '@/components/ui/progress';
+import { cn } from '@/lib/utils';
 import {
-  Search,
-  Filter,
-  // Heart,
-  Star,
-  Clock,
-  DollarSign,
-  Shield,
-  // Activity,
-  Target,
+  AlertTriangle,
   // Users,
   Calendar,
   CheckCircle,
-  AlertTriangle,
+  Clock,
+  DollarSign,
+  Eye,
+  Filter,
+  Grid,
+  List,
   // Info,
   // Camera,
   Package,
-  Zap,
-  Eye,
+  Search,
+  Shield,
   // EyeOff,
   // RefreshCw,
   SortAsc,
   SortDesc,
-  Grid,
-  List,
+  // Heart,
+  Star,
+  // Activity,
+  Target,
+  Zap,
 } from 'lucide-react';
-import { cn } from '@/lib/utils';
 
 // =====================================
 // TYPES AND INTERFACES
@@ -217,14 +223,13 @@ export const TreatmentCatalogBrowser: React.FC = () => {
   // Filter treatments based on search criteria
   useEffect(() => {
     if (treatments.length > 0) {
-      const filtered = treatments.filter((treatment) => {
+      const filtered = treatments.filter(treatment => {
         // Text search
         if (searchFilters.query) {
           const query = searchFilters.query.toLowerCase();
-          const matches = 
-            treatment.name.toLowerCase().includes(query) ||
-            treatment.description.toLowerCase().includes(query) ||
-            treatment.tags.some(tag => tag.toLowerCase().includes(query));
+          const matches = treatment.name.toLowerCase().includes(query)
+            || treatment.description.toLowerCase().includes(query)
+            || treatment.tags.some(tag => tag.toLowerCase().includes(query));
           if (!matches) return false;
         }
 
@@ -234,16 +239,22 @@ export const TreatmentCatalogBrowser: React.FC = () => {
         }
 
         // Price filter
-        if (treatment.basePrice < searchFilters.priceRange[0] || 
-            treatment.basePrice > searchFilters.priceRange[1]) return false;
+        if (
+          treatment.basePrice < searchFilters.priceRange[0]
+          || treatment.basePrice > searchFilters.priceRange[1]
+        ) return false;
 
         // Duration filter
-        if (treatment.baseDuration < searchFilters.durationRange[0] || 
-            treatment.baseDuration > searchFilters.durationRange[1]) return false;
+        if (
+          treatment.baseDuration < searchFilters.durationRange[0]
+          || treatment.baseDuration > searchFilters.durationRange[1]
+        ) return false;
 
         // Downtime filter
-        if (treatment.downtime < searchFilters.downtimeRange[0] || 
-            treatment.downtime > searchFilters.downtimeRange[1]) return false;
+        if (
+          treatment.downtime < searchFilters.downtimeRange[0]
+          || treatment.downtime > searchFilters.downtimeRange[1]
+        ) return false;
 
         // Effectiveness filter
         if (treatment.effectiveness < searchFilters.minEffectiveness) return false;
@@ -252,12 +263,16 @@ export const TreatmentCatalogBrowser: React.FC = () => {
         if (treatment.safety < searchFilters.minSafety) return false;
 
         // ANVISA filter
-        if (searchFilters.anvisaApproved !== 'all' && 
-            treatment.brazilianStandards.anvisaCompliant !== searchFilters.anvisaApproved) return false;
+        if (
+          searchFilters.anvisaApproved !== 'all'
+          && treatment.brazilianStandards.anvisaCompliant !== searchFilters.anvisaApproved
+        ) return false;
 
         // Certification filter
-        if (searchFilters.certificationRequired !== 'all' && 
-            treatment.requiresCertification !== searchFilters.certificationRequired) return false;
+        if (
+          searchFilters.certificationRequired !== 'all'
+          && treatment.requiresCertification !== searchFilters.certificationRequired
+        ) return false;
 
         // Popularity filter
         if (treatment.popularity < searchFilters.minPopularity) return false;
@@ -268,7 +283,7 @@ export const TreatmentCatalogBrowser: React.FC = () => {
       // Sort results
       const sorted = [...filtered].sort((a, b) => {
         let aValue: any, bValue: any;
-        
+
         switch (searchFilters.sortBy) {
           case 'price':
             aValue = a.basePrice;
@@ -296,12 +311,12 @@ export const TreatmentCatalogBrowser: React.FC = () => {
         }
 
         if (typeof aValue === 'string') {
-          return searchFilters.sortOrder === 'asc' 
+          return searchFilters.sortOrder === 'asc'
             ? aValue.localeCompare(bValue)
             : bValue.localeCompare(aValue);
         }
 
-        return searchFilters.sortOrder === 'asc' 
+        return searchFilters.sortOrder === 'asc'
           ? aValue - bValue
           : bValue - aValue;
       });
@@ -318,7 +333,8 @@ export const TreatmentCatalogBrowser: React.FC = () => {
         {
           id: 'proc-001',
           name: 'Botox Forehead',
-          description: 'Tratamento com toxina botulínica para suavizar linhas de expressão na testa',
+          description:
+            'Tratamento com toxina botulínica para suavizar linhas de expressão na testa',
           category: 'injectable',
           procedureType: 'minimally_invasive',
           baseDuration: 30,
@@ -354,7 +370,8 @@ export const TreatmentCatalogBrowser: React.FC = () => {
         {
           id: 'proc-002',
           name: 'Ácido Hialurônico Lábios',
-          description: 'Preenchimento labial com ácido hialurônico para aumento de volume e definição',
+          description:
+            'Preenchimento labial com ácido hialurônico para aumento de volume e definição',
           category: 'injectable',
           procedureType: 'minimally_invasive',
           baseDuration: 45,
@@ -390,7 +407,8 @@ export const TreatmentCatalogBrowser: React.FC = () => {
         {
           id: 'proc-003',
           name: 'Peeling Químico',
-          description: 'Tratamento de superfície da pele com agentes químicos para rejuvenescimento',
+          description:
+            'Tratamento de superfície da pele com agentes químicos para rejuvenescimento',
           category: 'facial',
           procedureType: 'non_invasive',
           baseDuration: 60,
@@ -474,7 +492,11 @@ export const TreatmentCatalogBrowser: React.FC = () => {
           downtime: 336,
           resultsDuration: 60,
           sessionsRequired: 1,
-          contraindications: ['Obesidade mórbida', 'Problemas cardíacos', 'Distúrbios de coagulação'],
+          contraindications: [
+            'Obesidade mórbida',
+            'Problemas cardíacos',
+            'Distúrbios de coagulação',
+          ],
           specialEquipment: ['Cânula', 'Aspirador', 'Sistema de infusão'],
           recoveryTime: 336,
           maxSessions: 1,
@@ -571,7 +593,9 @@ export const TreatmentCatalogBrowser: React.FC = () => {
       minEffectiveness: data.minEffectiveness || 1,
       minSafety: data.minSafety || 1,
       anvisaApproved: data.anvisaApproved !== undefined ? data.anvisaApproved : 'all',
-      certificationRequired: data.certificationRequired !== undefined ? data.certificationRequired : 'all',
+      certificationRequired: data.certificationRequired !== undefined
+        ? data.certificationRequired
+        : 'all',
       minPopularity: data.minPopularity || 1,
     }));
   };
@@ -615,22 +639,33 @@ export const TreatmentCatalogBrowser: React.FC = () => {
 
   const getCategoryLabel = (category: string) => {
     switch (category) {
-      case 'facial': return 'Facial';
-      case 'body': return 'Corporal';
-      case 'injectable': return 'Injetável';
-      case 'laser': return 'Laser';
-      case 'surgical': return 'Cirúrgico';
-      case 'combination': return 'Combinado';
-      default: return category;
+      case 'facial':
+        return 'Facial';
+      case 'body':
+        return 'Corporal';
+      case 'injectable':
+        return 'Injetável';
+      case 'laser':
+        return 'Laser';
+      case 'surgical':
+        return 'Cirúrgico';
+      case 'combination':
+        return 'Combinado';
+      default:
+        return category;
     }
   };
 
   const getProcedureTypeLabel = (type: string) => {
     switch (type) {
-      case 'minimally_invasive': return 'Minimamente Invasivo';
-      case 'non_invasive': return 'Não Invasivo';
-      case 'surgical': return 'Cirúrgico';
-      default: return type;
+      case 'minimally_invasive':
+        return 'Minimamente Invasivo';
+      case 'non_invasive':
+        return 'Não Invasivo';
+      case 'surgical':
+        return 'Cirúrgico';
+      default:
+        return type;
     }
   };
 
@@ -640,7 +675,7 @@ export const TreatmentCatalogBrowser: React.FC = () => {
         key={index}
         className={cn(
           'h-4 w-4',
-          index < rating ? 'text-yellow-500 fill-current' : 'text-gray-300'
+          index < rating ? 'text-yellow-500 fill-current' : 'text-gray-300',
         )}
       />
     ));
@@ -675,9 +710,10 @@ export const TreatmentCatalogBrowser: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-96">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+      <div className='flex items-center justify-center h-96'>
+        <div className='text-center'>
+          <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4'>
+          </div>
           <p>Carregando catálogo de tratamentos...</p>
         </div>
       </div>
@@ -685,40 +721,40 @@ export const TreatmentCatalogBrowser: React.FC = () => {
   }
 
   return (
-    <div className="p-6 space-y-6">
+    <div className='p-6 space-y-6'>
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className='flex items-center justify-between'>
         <div>
-          <h1 className="text-3xl font-bold flex items-center">
-            <Package className="h-8 w-8 mr-3" />
+          <h1 className='text-3xl font-bold flex items-center'>
+            <Package className='h-8 w-8 mr-3' />
             Catálogo de Tratamentos
           </h1>
-          <p className="text-gray-600 mt-1">
+          <p className='text-gray-600 mt-1'>
             Explore tratamentos estéticos com informações completas e conformidade ANVISA
           </p>
         </div>
-        
-        <div className="flex items-center space-x-4">
-          <div className="flex items-center space-x-2">
+
+        <div className='flex items-center space-x-4'>
+          <div className='flex items-center space-x-2'>
             <Button
               variant={viewMode === 'grid' ? 'default' : 'outline'}
-              size="sm"
+              size='sm'
               onClick={() => setViewMode('grid')}
             >
-              <Grid className="h-4 w-4" />
+              <Grid className='h-4 w-4' />
             </Button>
             <Button
               variant={viewMode === 'list' ? 'default' : 'outline'}
-              size="sm"
+              size='sm'
               onClick={() => setViewMode('list')}
             >
-              <List className="h-4 w-4" />
+              <List className='h-4 w-4' />
             </Button>
           </div>
-          
+
           {compareList.length > 0 && (
             <Button
-              variant="outline"
+              variant='outline'
               onClick={() => setActiveTab('compare')}
             >
               Comparar ({compareList.length})
@@ -730,30 +766,30 @@ export const TreatmentCatalogBrowser: React.FC = () => {
       {/* Search and Filters */}
       <Card>
         <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-lg flex items-center">
-              <Search className="h-5 w-5 mr-2" />
+          <div className='flex items-center justify-between'>
+            <CardTitle className='text-lg flex items-center'>
+              <Search className='h-5 w-5 mr-2' />
               Buscar e Filtrar
             </CardTitle>
             <Button
-              variant="outline"
+              variant='outline'
               onClick={() => setShowFilters(!showFilters)}
             >
-              <Filter className="h-4 w-4 mr-2" />
+              <Filter className='h-4 w-4 mr-2' />
               {showFilters ? 'Ocultar Filtros' : 'Mostrar Filtros'}
             </Button>
           </div>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className='space-y-4'>
           {/* Quick Search */}
-          <div className="flex space-x-4">
-            <div className="flex-1 relative">
-              <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+          <div className='flex space-x-4'>
+            <div className='flex-1 relative'>
+              <Search className='absolute left-3 top-3 h-4 w-4 text-gray-400' />
               <Input
-                placeholder="Buscar tratamentos, categorias ou tags..."
-                className="pl-10"
+                placeholder='Buscar tratamentos, categorias ou tags...'
+                className='pl-10'
                 value={searchFilters.query}
-                onChange={(e) => handleFilterChange('query', e.target.value)}
+                onChange={e => handleFilterChange('query', e.target.value)}
               />
             </div>
             <Button onClick={filterForm.handleSubmit(handleSearch)}>
@@ -763,89 +799,119 @@ export const TreatmentCatalogBrowser: React.FC = () => {
 
           {/* Advanced Filters */}
           {showFilters && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4'>
               <div>
-                <Label className="text-sm text-gray-600">Faixa de Preço</Label>
-                <div className="flex items-center space-x-2 mt-1">
+                <Label className='text-sm text-gray-600'>Faixa de Preço</Label>
+                <div className='flex items-center space-x-2 mt-1'>
                   <Input
-                    type="number"
-                    placeholder="Min"
+                    type='number'
+                    placeholder='Min'
                     value={searchFilters.priceRange[0]}
-                    onChange={(e) => handleFilterChange('priceRange', [Number(e.target.value), searchFilters.priceRange[1]])}
+                    onChange={e =>
+                      handleFilterChange('priceRange', [
+                        Number(e.target.value),
+                        searchFilters.priceRange[1],
+                      ])}
                   />
-                  <span> até </span>
+                  <span>até</span>
                   <Input
-                    type="number"
-                    placeholder="Max"
+                    type='number'
+                    placeholder='Max'
                     value={searchFilters.priceRange[1]}
-                    onChange={(e) => handleFilterChange('priceRange', [searchFilters.priceRange[0], Number(e.target.value)])}
+                    onChange={e =>
+                      handleFilterChange('priceRange', [
+                        searchFilters.priceRange[0],
+                        Number(e.target.value),
+                      ])}
                   />
                 </div>
               </div>
 
               <div>
-                <Label className="text-sm text-gray-600">Duração</Label>
-                <div className="flex items-center space-x-2 mt-1">
+                <Label className='text-sm text-gray-600'>Duração</Label>
+                <div className='flex items-center space-x-2 mt-1'>
                   <Input
-                    type="number"
-                    placeholder="Min"
+                    type='number'
+                    placeholder='Min'
                     value={searchFilters.durationRange[0]}
-                    onChange={(e) => handleFilterChange('durationRange', [Number(e.target.value), searchFilters.durationRange[1]])}
+                    onChange={e =>
+                      handleFilterChange('durationRange', [
+                        Number(e.target.value),
+                        searchFilters.durationRange[1],
+                      ])}
                   />
-                  <span> até </span>
+                  <span>até</span>
                   <Input
-                    type="number"
-                    placeholder="Max"
+                    type='number'
+                    placeholder='Max'
                     value={searchFilters.durationRange[1]}
-                    onChange={(e) => handleFilterChange('durationRange', [searchFilters.durationRange[0], Number(e.target.value)])}
+                    onChange={e =>
+                      handleFilterChange('durationRange', [
+                        searchFilters.durationRange[0],
+                        Number(e.target.value),
+                      ])}
                   />
                 </div>
               </div>
 
               <div>
-                <Label className="text-sm text-gray-600">Downtime</Label>
-                <div className="flex items-center space-x-2 mt-1">
+                <Label className='text-sm text-gray-600'>Downtime</Label>
+                <div className='flex items-center space-x-2 mt-1'>
                   <Input
-                    type="number"
-                    placeholder="Min"
+                    type='number'
+                    placeholder='Min'
                     value={searchFilters.downtimeRange[0]}
-                    onChange={(e) => handleFilterChange('downtimeRange', [Number(e.target.value), searchFilters.downtimeRange[1]])}
+                    onChange={e =>
+                      handleFilterChange('downtimeRange', [
+                        Number(e.target.value),
+                        searchFilters.downtimeRange[1],
+                      ])}
                   />
-                  <span> até </span>
+                  <span>até</span>
                   <Input
-                    type="number"
-                    placeholder="Max"
+                    type='number'
+                    placeholder='Max'
                     value={searchFilters.downtimeRange[1]}
-                    onChange={(e) => handleFilterChange('downtimeRange', [searchFilters.downtimeRange[0], Number(e.target.value)])}
+                    onChange={e =>
+                      handleFilterChange('downtimeRange', [
+                        searchFilters.downtimeRange[0],
+                        Number(e.target.value),
+                      ])}
                   />
                 </div>
               </div>
 
               <div>
-                <Label className="text-sm text-gray-600">Ordenar por</Label>
-                <div className="flex space-x-2 mt-1">
+                <Label className='text-sm text-gray-600'>Ordenar por</Label>
+                <div className='flex space-x-2 mt-1'>
                   <Select
                     value={searchFilters.sortBy}
-                    onValueChange={(value) => handleFilterChange('sortBy', value)}
+                    onValueChange={value => handleFilterChange('sortBy', value)}
                   >
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="name">Nome</SelectItem>
-                      <SelectItem value="price">Preço</SelectItem>
-                      <SelectItem value="duration">Duração</SelectItem>
-                      <SelectItem value="popularity">Popularidade</SelectItem>
-                      <SelectItem value="effectiveness">Efetividade</SelectItem>
-                      <SelectItem value="safety">Segurança</SelectItem>
+                      <SelectItem value='name'>Nome</SelectItem>
+                      <SelectItem value='price'>Preço</SelectItem>
+                      <SelectItem value='duration'>Duração</SelectItem>
+                      <SelectItem value='popularity'>Popularidade</SelectItem>
+                      <SelectItem value='effectiveness'>Efetividade</SelectItem>
+                      <SelectItem value='safety'>Segurança</SelectItem>
                     </SelectContent>
                   </Select>
                   <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleFilterChange('sortOrder', searchFilters.sortOrder === 'asc' ? 'desc' : 'asc')}
+                    variant='outline'
+                    size='sm'
+                    onClick={() =>
+                      handleFilterChange(
+                        'sortOrder',
+                        searchFilters.sortOrder === 'asc' ? 'desc' : 'asc',
+                      )}
                   >
-                    {searchFilters.sortOrder === 'asc' ? <SortAsc className="h-4 w-4" /> : <SortDesc className="h-4 w-4" />}
+                    {searchFilters.sortOrder === 'asc'
+                      ? <SortAsc className='h-4 w-4' />
+                      : <SortDesc className='h-4 w-4' />}
                   </Button>
                 </div>
               </div>
@@ -853,12 +919,12 @@ export const TreatmentCatalogBrowser: React.FC = () => {
           )}
 
           {/* Quick Filter Chips */}
-          <div className="flex flex-wrap gap-2">
-            {['facial', 'body', 'injectable', 'laser', 'surgical'].map((category) => (
+          <div className='flex flex-wrap gap-2'>
+            {['facial', 'body', 'injectable', 'laser', 'surgical'].map(category => (
               <Button
                 key={category}
                 variant={searchFilters.categories.includes(category) ? 'default' : 'outline'}
-                size="sm"
+                size='sm'
                 onClick={() => {
                   const newCategories = searchFilters.categories.includes(category)
                     ? searchFilters.categories.filter(c => c !== category)
@@ -871,23 +937,29 @@ export const TreatmentCatalogBrowser: React.FC = () => {
             ))}
             <Button
               variant={searchFilters.anvisaApproved === true ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => handleFilterChange('anvisaApproved', searchFilters.anvisaApproved === true ? 'all' : true)}
+              size='sm'
+              onClick={() =>
+                handleFilterChange(
+                  'anvisaApproved',
+                  searchFilters.anvisaApproved === true ? 'all' : true,
+                )}
             >
-              <Shield className="h-4 w-4 mr-1" />
+              <Shield className='h-4 w-4 mr-1' />
               ANVISA
             </Button>
           </div>
 
           {/* Results Summary */}
-          <div className="flex items-center justify-between text-sm text-gray-600">
+          <div className='flex items-center justify-between text-sm text-gray-600'>
             <span>{filteredTreatments.length} tratamentos encontrados</span>
-            <div className="flex items-center space-x-4">
+            <div className='flex items-center space-x-4'>
               <span>
-                Preço: {formatCurrency(searchFilters.priceRange[0])} - {formatCurrency(searchFilters.priceRange[1])}
+                Preço: {formatCurrency(searchFilters.priceRange[0])} -{' '}
+                {formatCurrency(searchFilters.priceRange[1])}
               </span>
               <span>
-                Duração: {formatDuration(searchFilters.durationRange[0])} - {formatDuration(searchFilters.durationRange[1])}
+                Duração: {formatDuration(searchFilters.durationRange[0])} -{' '}
+                {formatDuration(searchFilters.durationRange[1])}
               </span>
             </div>
           </div>
@@ -895,262 +967,278 @@ export const TreatmentCatalogBrowser: React.FC = () => {
       </Card>
 
       {/* Main Content Tabs */}
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="treatments">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className='w-full'>
+        <TabsList className='grid w-full grid-cols-3'>
+          <TabsTrigger value='treatments'>
             Tratamentos ({filteredTreatments.length})
           </TabsTrigger>
-          <TabsTrigger value="packages">
+          <TabsTrigger value='packages'>
             Pacotes ({packages.length})
           </TabsTrigger>
-          <TabsTrigger value="compare" disabled={compareList.length === 0}>
+          <TabsTrigger value='compare' disabled={compareList.length === 0}>
             Comparar ({compareList.length})
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="treatments" className="space-y-4">
-          {viewMode === 'grid' ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredTreatments.map((treatment) => (
-                <Card key={treatment.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-                  <CardHeader className="pb-3">
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <CardTitle className="text-lg mb-1">{treatment.name}</CardTitle>
-                        <div className="flex items-center space-x-2 mb-2">
-                          <Badge className={getCategoryColor(treatment.category)}>
-                            {getCategoryLabel(treatment.category)}
-                          </Badge>
-                          {treatment.brazilianStandards.anvisaCompliant && (
-                            <Badge variant="outline" className="text-green-600 border-green-600">
-                              <Shield className="h-3 w-3 mr-1" />
-                              ANVISA
+        <TabsContent value='treatments' className='space-y-4'>
+          {viewMode === 'grid'
+            ? (
+              <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
+                {filteredTreatments.map(treatment => (
+                  <Card
+                    key={treatment.id}
+                    className='overflow-hidden hover:shadow-lg transition-shadow'
+                  >
+                    <CardHeader className='pb-3'>
+                      <div className='flex items-start justify-between'>
+                        <div className='flex-1'>
+                          <CardTitle className='text-lg mb-1'>{treatment.name}</CardTitle>
+                          <div className='flex items-center space-x-2 mb-2'>
+                            <Badge className={getCategoryColor(treatment.category)}>
+                              {getCategoryLabel(treatment.category)}
                             </Badge>
-                          )}
-                        </div>
-                      </div>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => toggleCompare(treatment.id)}
-                        className={compareList.includes(treatment.id) ? 'text-blue-600' : 'text-gray-400'}
-                      >
-                        <Target className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <p className="text-sm text-gray-600 line-clamp-3">
-                      {treatment.description}
-                    </p>
-
-                    {/* Key Metrics */}
-                    <div className="grid grid-cols-2 gap-3 text-sm">
-                      <div className="flex items-center space-x-1">
-                        <DollarSign className="h-3 w-3 text-gray-500" />
-                        <span className="font-medium">{formatCurrency(treatment.basePrice)}</span>
-                      </div>
-                      <div className="flex items-center space-x-1">
-                        <Clock className="h-3 w-3 text-gray-500" />
-                        <span>{formatDuration(treatment.baseDuration)}</span>
-                      </div>
-                      <div className="flex items-center space-x-1">
-                        <Zap className="h-3 w-3 text-gray-500" />
-                        <span>{formatDowntime(treatment.downtime)}</span>
-                      </div>
-                      <div className="flex items-center space-x-1">
-                        <Calendar className="h-3 w-3 text-gray-500" />
-                        <span>{treatment.resultsDuration} meses</span>
-                      </div>
-                    </div>
-
-                    {/* Ratings */}
-                    <div className="grid grid-cols-3 gap-2 text-xs">
-                      <div className="text-center">
-                        <div className="flex justify-center mb-1">
-                          {getRatingStars(treatment.effectiveness)}
-                        </div>
-                        <span className="text-gray-600">Efetividade</span>
-                      </div>
-                      <div className="text-center">
-                        <div className="flex justify-center mb-1">
-                          {getRatingStars(treatment.safety)}
-                        </div>
-                        <span className="text-gray-600">Segurança</span>
-                      </div>
-                      <div className="text-center">
-                        <div className="flex justify-center mb-1">
-                          {getRatingStars(treatment.popularity)}
-                        </div>
-                        <span className="text-gray-600">Popularidade</span>
-                      </div>
-                    </div>
-
-                    {/* Tags */}
-                    <div className="flex flex-wrap gap-1">
-                      {treatment.tags.slice(0, 3).map((tag, index) => (
-                        <Badge key={index} variant="secondary" className="text-xs">
-                          {tag}
-                        </Badge>
-                      ))}
-                      {treatment.tags.length > 3 && (
-                        <Badge variant="secondary" className="text-xs">
-                          +{treatment.tags.length - 3}
-                        </Badge>
-                      )}
-                    </div>
-
-                    {/* Action Buttons */}
-                    <div className="flex space-x-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="flex-1"
-                        onClick={() => setSelectedTreatment(treatment)}
-                      >
-                        <Eye className="h-4 w-4 mr-1" />
-                        Ver Detalhes
-                      </Button>
-                      <Button size="sm" className="flex-1">
-                        Agendar
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {filteredTreatments.map((treatment) => (
-                <Card key={treatment.id}>
-                  <CardContent className="p-6">
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <div className="flex items-center space-x-3 mb-2">
-                          <h3 className="text-lg font-semibold">{treatment.name}</h3>
-                          <Badge className={getCategoryColor(treatment.category)}>
-                            {getCategoryLabel(treatment.category)}
-                          </Badge>
-                          {treatment.brazilianStandards.anvisaCompliant && (
-                            <Badge variant="outline" className="text-green-600 border-green-600">
-                              <Shield className="h-3 w-3 mr-1" />
-                              ANVISA
-                            </Badge>
-                          )}
-                        </div>
-                        <p className="text-gray-600 mb-4">{treatment.description}</p>
-                        
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-                          <div>
-                            <span className="text-sm text-gray-600">Preço</span>
-                            <p className="font-medium">{formatCurrency(treatment.basePrice)}</p>
-                          </div>
-                          <div>
-                            <span className="text-sm text-gray-600">Duração</span>
-                            <p className="font-medium">{formatDuration(treatment.baseDuration)}</p>
-                          </div>
-                          <div>
-                            <span className="text-sm text-gray-600">Downtime</span>
-                            <p className="font-medium">{formatDowntime(treatment.downtime)}</p>
-                          </div>
-                          <div>
-                            <span className="text-sm text-gray-600">Sessões</span>
-                            <p className="font-medium">{treatment.sessionsRequired}</p>
+                            {treatment.brazilianStandards.anvisaCompliant && (
+                              <Badge variant='outline' className='text-green-600 border-green-600'>
+                                <Shield className='h-3 w-3 mr-1' />
+                                ANVISA
+                              </Badge>
+                            )}
                           </div>
                         </div>
-
-                        <div className="flex items-center space-x-4">
-                          <div className="flex items-center space-x-2">
-                            <span className="text-sm text-gray-600">Efetividade:</span>
-                            <div className="flex">{getRatingStars(treatment.effectiveness)}</div>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <span className="text-sm text-gray-600">Segurança:</span>
-                            <div className="flex">{getRatingStars(treatment.safety)}</div>
-                          </div>
-                        </div>
-                      </div>
-                      
-                      <div className="flex flex-col space-y-2 ml-4">
                         <Button
-                          variant="ghost"
-                          size="sm"
+                          variant='ghost'
+                          size='sm'
                           onClick={() => toggleCompare(treatment.id)}
-                          className={compareList.includes(treatment.id) ? 'text-blue-600' : 'text-gray-400'}
+                          className={compareList.includes(treatment.id)
+                            ? 'text-blue-600'
+                            : 'text-gray-400'}
                         >
-                          <Target className="h-4 w-4" />
+                          <Target className='h-4 w-4' />
                         </Button>
+                      </div>
+                    </CardHeader>
+                    <CardContent className='space-y-4'>
+                      <p className='text-sm text-gray-600 line-clamp-3'>
+                        {treatment.description}
+                      </p>
+
+                      {/* Key Metrics */}
+                      <div className='grid grid-cols-2 gap-3 text-sm'>
+                        <div className='flex items-center space-x-1'>
+                          <DollarSign className='h-3 w-3 text-gray-500' />
+                          <span className='font-medium'>{formatCurrency(treatment.basePrice)}</span>
+                        </div>
+                        <div className='flex items-center space-x-1'>
+                          <Clock className='h-3 w-3 text-gray-500' />
+                          <span>{formatDuration(treatment.baseDuration)}</span>
+                        </div>
+                        <div className='flex items-center space-x-1'>
+                          <Zap className='h-3 w-3 text-gray-500' />
+                          <span>{formatDowntime(treatment.downtime)}</span>
+                        </div>
+                        <div className='flex items-center space-x-1'>
+                          <Calendar className='h-3 w-3 text-gray-500' />
+                          <span>{treatment.resultsDuration} meses</span>
+                        </div>
+                      </div>
+
+                      {/* Ratings */}
+                      <div className='grid grid-cols-3 gap-2 text-xs'>
+                        <div className='text-center'>
+                          <div className='flex justify-center mb-1'>
+                            {getRatingStars(treatment.effectiveness)}
+                          </div>
+                          <span className='text-gray-600'>Efetividade</span>
+                        </div>
+                        <div className='text-center'>
+                          <div className='flex justify-center mb-1'>
+                            {getRatingStars(treatment.safety)}
+                          </div>
+                          <span className='text-gray-600'>Segurança</span>
+                        </div>
+                        <div className='text-center'>
+                          <div className='flex justify-center mb-1'>
+                            {getRatingStars(treatment.popularity)}
+                          </div>
+                          <span className='text-gray-600'>Popularidade</span>
+                        </div>
+                      </div>
+
+                      {/* Tags */}
+                      <div className='flex flex-wrap gap-1'>
+                        {treatment.tags.slice(0, 3).map((tag, index) => (
+                          <Badge key={index} variant='secondary' className='text-xs'>
+                            {tag}
+                          </Badge>
+                        ))}
+                        {treatment.tags.length > 3 && (
+                          <Badge variant='secondary' className='text-xs'>
+                            +{treatment.tags.length - 3}
+                          </Badge>
+                        )}
+                      </div>
+
+                      {/* Action Buttons */}
+                      <div className='flex space-x-2'>
                         <Button
-                          variant="outline"
-                          size="sm"
+                          variant='outline'
+                          size='sm'
+                          className='flex-1'
                           onClick={() => setSelectedTreatment(treatment)}
                         >
-                          <Eye className="h-4 w-4 mr-1" />
-                          Detalhes
+                          <Eye className='h-4 w-4 mr-1' />
+                          Ver Detalhes
                         </Button>
-                        <Button size="sm">
+                        <Button size='sm' className='flex-1'>
                           Agendar
                         </Button>
                       </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          )}
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )
+            : (
+              <div className='space-y-4'>
+                {filteredTreatments.map(treatment => (
+                  <Card key={treatment.id}>
+                    <CardContent className='p-6'>
+                      <div className='flex items-start justify-between'>
+                        <div className='flex-1'>
+                          <div className='flex items-center space-x-3 mb-2'>
+                            <h3 className='text-lg font-semibold'>{treatment.name}</h3>
+                            <Badge className={getCategoryColor(treatment.category)}>
+                              {getCategoryLabel(treatment.category)}
+                            </Badge>
+                            {treatment.brazilianStandards.anvisaCompliant && (
+                              <Badge variant='outline' className='text-green-600 border-green-600'>
+                                <Shield className='h-3 w-3 mr-1' />
+                                ANVISA
+                              </Badge>
+                            )}
+                          </div>
+                          <p className='text-gray-600 mb-4'>{treatment.description}</p>
+
+                          <div className='grid grid-cols-2 md:grid-cols-4 gap-4 mb-4'>
+                            <div>
+                              <span className='text-sm text-gray-600'>Preço</span>
+                              <p className='font-medium'>{formatCurrency(treatment.basePrice)}</p>
+                            </div>
+                            <div>
+                              <span className='text-sm text-gray-600'>Duração</span>
+                              <p className='font-medium'>
+                                {formatDuration(treatment.baseDuration)}
+                              </p>
+                            </div>
+                            <div>
+                              <span className='text-sm text-gray-600'>Downtime</span>
+                              <p className='font-medium'>{formatDowntime(treatment.downtime)}</p>
+                            </div>
+                            <div>
+                              <span className='text-sm text-gray-600'>Sessões</span>
+                              <p className='font-medium'>{treatment.sessionsRequired}</p>
+                            </div>
+                          </div>
+
+                          <div className='flex items-center space-x-4'>
+                            <div className='flex items-center space-x-2'>
+                              <span className='text-sm text-gray-600'>Efetividade:</span>
+                              <div className='flex'>{getRatingStars(treatment.effectiveness)}</div>
+                            </div>
+                            <div className='flex items-center space-x-2'>
+                              <span className='text-sm text-gray-600'>Segurança:</span>
+                              <div className='flex'>{getRatingStars(treatment.safety)}</div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className='flex flex-col space-y-2 ml-4'>
+                          <Button
+                            variant='ghost'
+                            size='sm'
+                            onClick={() => toggleCompare(treatment.id)}
+                            className={compareList.includes(treatment.id)
+                              ? 'text-blue-600'
+                              : 'text-gray-400'}
+                          >
+                            <Target className='h-4 w-4' />
+                          </Button>
+                          <Button
+                            variant='outline'
+                            size='sm'
+                            onClick={() => setSelectedTreatment(treatment)}
+                          >
+                            <Eye className='h-4 w-4 mr-1' />
+                            Detalhes
+                          </Button>
+                          <Button size='sm'>
+                            Agendar
+                          </Button>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
         </TabsContent>
 
-        <TabsContent value="packages" className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {packages.map((pkg) => (
-              <Card key={pkg.id} className="overflow-hidden">
-                <CardHeader className="pb-3">
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <CardTitle className="text-lg mb-1">{pkg.name}</CardTitle>
-                      <div className="flex items-center space-x-2 mb-2">
+        <TabsContent value='packages' className='space-y-4'>
+          <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+            {packages.map(pkg => (
+              <Card key={pkg.id} className='overflow-hidden'>
+                <CardHeader className='pb-3'>
+                  <div className='flex items-start justify-between'>
+                    <div className='flex-1'>
+                      <CardTitle className='text-lg mb-1'>{pkg.name}</CardTitle>
+                      <div className='flex items-center space-x-2 mb-2'>
                         <Badge className={getCategoryColor(pkg.category)}>
                           {getCategoryLabel(pkg.category)}
                         </Badge>
-                        <Badge variant="destructive">
+                        <Badge variant='destructive'>
                           {pkg.packageDiscount}% OFF
                         </Badge>
                       </div>
                     </div>
-                    <div className="text-right">
-                      <div className="text-2xl font-bold text-green-600">
+                    <div className='text-right'>
+                      <div className='text-2xl font-bold text-green-600'>
                         {formatCurrency(pkg.totalPrice)}
                       </div>
-                      <div className="text-sm text-gray-500 line-through">
+                      <div className='text-sm text-gray-500 line-through'>
                         {formatCurrency(pkg.totalPrice / (1 - pkg.packageDiscount / 100))}
                       </div>
                     </div>
                   </div>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <p className="text-sm text-gray-600">{pkg.description}</p>
-                  
-                  <div className="grid grid-cols-2 gap-4 text-sm">
+                <CardContent className='space-y-4'>
+                  <p className='text-sm text-gray-600'>{pkg.description}</p>
+
+                  <div className='grid grid-cols-2 gap-4 text-sm'>
                     <div>
-                      <span className="text-gray-600">Total de sessões:</span>
-                      <span className="ml-2 font-medium">{pkg.totalSessions}</span>
+                      <span className='text-gray-600'>Total de sessões:</span>
+                      <span className='ml-2 font-medium'>{pkg.totalSessions}</span>
                     </div>
                     <div>
-                      <span className="text-gray-600">Validade:</span>
-                      <span className="ml-2 font-medium">{pkg.validityPeriod} dias</span>
+                      <span className='text-gray-600'>Validade:</span>
+                      <span className='ml-2 font-medium'>{pkg.validityPeriod} dias</span>
                     </div>
                   </div>
 
                   <div>
-                    <span className="text-sm text-gray-600">Procedimentos incluídos:</span>
-                    <div className="mt-2 space-y-2">
-                      {pkg.procedures.map((proc) => (
-                        <div key={proc.id} className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                    <span className='text-sm text-gray-600'>Procedimentos incluídos:</span>
+                    <div className='mt-2 space-y-2'>
+                      {pkg.procedures.map(proc => (
+                        <div
+                          key={proc.id}
+                          className='flex items-center justify-between p-2 bg-gray-50 rounded'
+                        >
                           <div>
-                            <span className="font-medium">{proc.procedure.name}</span>
-                            <span className="text-xs text-gray-600 ml-2">({proc.sessions} sessões)</span>
+                            <span className='font-medium'>{proc.procedure.name}</span>
+                            <span className='text-xs text-gray-600 ml-2'>
+                              ({proc.sessions} sessões)
+                            </span>
                           </div>
-                          <span className="text-sm font-medium">
+                          <span className='text-sm font-medium'>
                             {formatCurrency(proc.price)}
                           </span>
                         </div>
@@ -1158,12 +1246,12 @@ export const TreatmentCatalogBrowser: React.FC = () => {
                     </div>
                   </div>
 
-                  <div className="flex space-x-2">
-                    <Button variant="outline" size="sm" className="flex-1">
-                      <Eye className="h-4 w-4 mr-1" />
+                  <div className='flex space-x-2'>
+                    <Button variant='outline' size='sm' className='flex-1'>
+                      <Eye className='h-4 w-4 mr-1' />
                       Ver Detalhes
                     </Button>
-                    <Button size="sm" className="flex-1">
+                    <Button size='sm' className='flex-1'>
                       Comprar Pacote
                     </Button>
                   </div>
@@ -1173,89 +1261,93 @@ export const TreatmentCatalogBrowser: React.FC = () => {
           </div>
         </TabsContent>
 
-        <TabsContent value="compare" className="space-y-4">
-          <div className="overflow-x-auto">
-            <table className="w-full border-collapse">
+        <TabsContent value='compare' className='space-y-4'>
+          <div className='overflow-x-auto'>
+            <table className='w-full border-collapse'>
               <thead>
-                <tr className="border-b">
-                  <th className="text-left p-3">Característica</th>
-                  {getCompareTreatments().map((treatment) => (
-                    <th key={treatment.id} className="text-center p-3 min-w-[200px]">
+                <tr className='border-b'>
+                  <th className='text-left p-3'>Característica</th>
+                  {getCompareTreatments().map(treatment => (
+                    <th key={treatment.id} className='text-center p-3 min-w-[200px]'>
                       {treatment.name}
                     </th>
                   ))}
                 </tr>
               </thead>
               <tbody>
-                <tr className="border-b">
-                  <td className="p-3 font-medium">Preço</td>
-                  {getCompareTreatments().map((treatment) => (
-                    <td key={treatment.id} className="text-center p-3">
+                <tr className='border-b'>
+                  <td className='p-3 font-medium'>Preço</td>
+                  {getCompareTreatments().map(treatment => (
+                    <td key={treatment.id} className='text-center p-3'>
                       {formatCurrency(treatment.basePrice)}
                     </td>
                   ))}
                 </tr>
-                <tr className="border-b">
-                  <td className="p-3 font-medium">Duração</td>
-                  {getCompareTreatments().map((treatment) => (
-                    <td key={treatment.id} className="text-center p-3">
+                <tr className='border-b'>
+                  <td className='p-3 font-medium'>Duração</td>
+                  {getCompareTreatments().map(treatment => (
+                    <td key={treatment.id} className='text-center p-3'>
                       {formatDuration(treatment.baseDuration)}
                     </td>
                   ))}
                 </tr>
-                <tr className="border-b">
-                  <td className="p-3 font-medium">Downtime</td>
-                  {getCompareTreatments().map((treatment) => (
-                    <td key={treatment.id} className="text-center p-3">
+                <tr className='border-b'>
+                  <td className='p-3 font-medium'>Downtime</td>
+                  {getCompareTreatments().map(treatment => (
+                    <td key={treatment.id} className='text-center p-3'>
                       {formatDowntime(treatment.downtime)}
                     </td>
                   ))}
                 </tr>
-                <tr className="border-b">
-                  <td className="p-3 font-medium">Efetividade</td>
-                  {getCompareTreatments().map((treatment) => (
-                    <td key={treatment.id} className="text-center p-3">
-                      <div className="flex justify-center">{getRatingStars(treatment.effectiveness)}</div>
+                <tr className='border-b'>
+                  <td className='p-3 font-medium'>Efetividade</td>
+                  {getCompareTreatments().map(treatment => (
+                    <td key={treatment.id} className='text-center p-3'>
+                      <div className='flex justify-center'>
+                        {getRatingStars(treatment.effectiveness)}
+                      </div>
                     </td>
                   ))}
                 </tr>
-                <tr className="border-b">
-                  <td className="p-3 font-medium">Segurança</td>
-                  {getCompareTreatments().map((treatment) => (
-                    <td key={treatment.id} className="text-center p-3">
-                      <div className="flex justify-center">{getRatingStars(treatment.safety)}</div>
+                <tr className='border-b'>
+                  <td className='p-3 font-medium'>Segurança</td>
+                  {getCompareTreatments().map(treatment => (
+                    <td key={treatment.id} className='text-center p-3'>
+                      <div className='flex justify-center'>{getRatingStars(treatment.safety)}</div>
                     </td>
                   ))}
                 </tr>
-                <tr className="border-b">
-                  <td className="p-3 font-medium">Sessões Necessárias</td>
-                  {getCompareTreatments().map((treatment) => (
-                    <td key={treatment.id} className="text-center p-3">
+                <tr className='border-b'>
+                  <td className='p-3 font-medium'>Sessões Necessárias</td>
+                  {getCompareTreatments().map(treatment => (
+                    <td key={treatment.id} className='text-center p-3'>
                       {treatment.sessionsRequired}
                     </td>
                   ))}
                 </tr>
-                <tr className="border-b">
-                  <td className="p-3 font-medium">Conformidade ANVISA</td>
-                  {getCompareTreatments().map((treatment) => (
-                    <td key={treatment.id} className="text-center p-3">
-                      {treatment.brazilianStandards.anvisaCompliant ? (
-                        <CheckCircle className="h-5 w-5 text-green-500 mx-auto" />
-                      ) : (
-                        <AlertTriangle className="h-5 w-5 text-yellow-500 mx-auto" />
-                      )}
+                <tr className='border-b'>
+                  <td className='p-3 font-medium'>Conformidade ANVISA</td>
+                  {getCompareTreatments().map(treatment => (
+                    <td key={treatment.id} className='text-center p-3'>
+                      {treatment.brazilianStandards.anvisaCompliant
+                        ? <CheckCircle className='h-5 w-5 text-green-500 mx-auto' />
+                        : <AlertTriangle className='h-5 w-5 text-yellow-500 mx-auto' />}
                     </td>
                   ))}
                 </tr>
                 <tr>
-                  <td className="p-3 font-medium">Ações</td>
-                  {getCompareTreatments().map((treatment) => (
-                    <td key={treatment.id} className="text-center p-3">
-                      <div className="flex justify-center space-x-2">
-                        <Button size="sm" onClick={() => setSelectedTreatment(treatment)}>
+                  <td className='p-3 font-medium'>Ações</td>
+                  {getCompareTreatments().map(treatment => (
+                    <td key={treatment.id} className='text-center p-3'>
+                      <div className='flex justify-center space-x-2'>
+                        <Button
+                          size='sm'
+                          onClick={() =>
+                            setSelectedTreatment(treatment)}
+                        >
                           Detalhes
                         </Button>
-                        <Button size="sm" variant="outline">
+                        <Button size='sm' variant='outline'>
                           Agendar
                         </Button>
                       </div>
@@ -1270,35 +1362,35 @@ export const TreatmentCatalogBrowser: React.FC = () => {
 
       {/* Treatment Detail Modal */}
       {selectedTreatment && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-6">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold">{selectedTreatment.name}</h2>
-                <Button variant="ghost" onClick={() => setSelectedTreatment(null)}>
-                  <X className="h-6 w-6" />
+        <div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50'>
+          <div className='bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto'>
+            <div className='p-6'>
+              <div className='flex items-center justify-between mb-6'>
+                <h2 className='text-2xl font-bold'>{selectedTreatment.name}</h2>
+                <Button variant='ghost' onClick={() => setSelectedTreatment(null)}>
+                  <X className='h-6 w-6' />
                 </Button>
               </div>
 
-              <div className="space-y-6">
+              <div className='space-y-6'>
                 {/* Basic Info */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
                   <div>
-                    <h3 className="font-semibold mb-2">Descrição</h3>
-                    <p className="text-gray-600">{selectedTreatment.description}</p>
+                    <h3 className='font-semibold mb-2'>Descrição</h3>
+                    <p className='text-gray-600'>{selectedTreatment.description}</p>
                   </div>
                   <div>
-                    <h3 className="font-semibold mb-2">Informações Técnicas</h3>
-                    <div className="space-y-2">
-                      <div className="flex justify-between">
+                    <h3 className='font-semibold mb-2'>Informações Técnicas</h3>
+                    <div className='space-y-2'>
+                      <div className='flex justify-between'>
                         <span>Tipo:</span>
                         <span>{getProcedureTypeLabel(selectedTreatment.procedureType)}</span>
                       </div>
-                      <div className="flex justify-between">
+                      <div className='flex justify-between'>
                         <span>Registro ANVISA:</span>
                         <span>{selectedTreatment.anvisaRegistration || 'Não aplicável'}</span>
                       </div>
-                      <div className="flex justify-between">
+                      <div className='flex justify-between'>
                         <span>Exige certificação:</span>
                         <span>{selectedTreatment.requiresCertification ? 'Sim' : 'Não'}</span>
                       </div>
@@ -1307,64 +1399,64 @@ export const TreatmentCatalogBrowser: React.FC = () => {
                 </div>
 
                 {/* Metrics */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <div className="text-center p-4 bg-gray-50 rounded">
-                    <div className="text-2xl font-bold">{formatCurrency(selectedTreatment.basePrice)}</div>
-                    <div className="text-sm text-gray-600">Preço</div>
+                <div className='grid grid-cols-2 md:grid-cols-4 gap-4'>
+                  <div className='text-center p-4 bg-gray-50 rounded'>
+                    <div className='text-2xl font-bold'>
+                      {formatCurrency(selectedTreatment.basePrice)}
+                    </div>
+                    <div className='text-sm text-gray-600'>Preço</div>
                   </div>
-                  <div className="text-center p-4 bg-gray-50 rounded">
-                    <div className="text-2xl font-bold">{formatDuration(selectedTreatment.baseDuration)}</div>
-                    <div className="text-sm text-gray-600">Duração</div>
+                  <div className='text-center p-4 bg-gray-50 rounded'>
+                    <div className='text-2xl font-bold'>
+                      {formatDuration(selectedTreatment.baseDuration)}
+                    </div>
+                    <div className='text-sm text-gray-600'>Duração</div>
                   </div>
-                  <div className="text-center p-4 bg-gray-50 rounded">
-                    <div className="text-2xl font-bold">{formatDowntime(selectedTreatment.downtime)}</div>
-                    <div className="text-sm text-gray-600">Downtime</div>
+                  <div className='text-center p-4 bg-gray-50 rounded'>
+                    <div className='text-2xl font-bold'>
+                      {formatDowntime(selectedTreatment.downtime)}
+                    </div>
+                    <div className='text-sm text-gray-600'>Downtime</div>
                   </div>
-                  <div className="text-center p-4 bg-gray-50 rounded">
-                    <div className="text-2xl font-bold">{selectedTreatment.resultsDuration}</div>
-                    <div className="text-sm text-gray-600">Meses de efeito</div>
+                  <div className='text-center p-4 bg-gray-50 rounded'>
+                    <div className='text-2xl font-bold'>{selectedTreatment.resultsDuration}</div>
+                    <div className='text-sm text-gray-600'>Meses de efeito</div>
                   </div>
                 </div>
 
                 {/* Safety and Compliance */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
                   <div>
-                    <h3 className="font-semibold mb-3">Contraindicações</h3>
-                    <div className="space-y-2">
+                    <h3 className='font-semibold mb-3'>Contraindicações</h3>
+                    <div className='space-y-2'>
                       {selectedTreatment.contraindications.map((contraindication, index) => (
-                        <div key={index} className="flex items-center space-x-2">
-                          <AlertTriangle className="h-4 w-4 text-red-500" />
-                          <span className="text-sm">{contraindication}</span>
+                        <div key={index} className='flex items-center space-x-2'>
+                          <AlertTriangle className='h-4 w-4 text-red-500' />
+                          <span className='text-sm'>{contraindication}</span>
                         </div>
                       ))}
                     </div>
                   </div>
                   <div>
-                    <h3 className="font-semibold mb-3">Conformidade Brasileira</h3>
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between">
+                    <h3 className='font-semibold mb-3'>Conformidade Brasileira</h3>
+                    <div className='space-y-2'>
+                      <div className='flex items-center justify-between'>
                         <span>ANVISA Compliant:</span>
-                        {selectedTreatment.brazilianStandards.anvisaCompliant ? (
-                          <CheckCircle className="h-5 w-5 text-green-500" />
-                        ) : (
-                          <AlertTriangle className="h-5 w-5 text-yellow-500" />
-                        )}
+                        {selectedTreatment.brazilianStandards.anvisaCompliant
+                          ? <CheckCircle className='h-5 w-5 text-green-500' />
+                          : <AlertTriangle className='h-5 w-5 text-yellow-500' />}
                       </div>
-                      <div className="flex items-center justify-between">
+                      <div className='flex items-center justify-between'>
                         <span>CFM Aprovado:</span>
-                        {selectedTreatment.brazilianStandards.cfmApproved ? (
-                          <CheckCircle className="h-5 w-5 text-green-500" />
-                        ) : (
-                          <AlertTriangle className="h-5 w-5 text-yellow-500" />
-                        )}
+                        {selectedTreatment.brazilianStandards.cfmApproved
+                          ? <CheckCircle className='h-5 w-5 text-green-500' />
+                          : <AlertTriangle className='h-5 w-5 text-yellow-500' />}
                       </div>
-                      <div className="flex items-center justify-between">
+                      <div className='flex items-center justify-between'>
                         <span>Supervisão Médica:</span>
-                        {selectedTreatment.brazilianStandards.requiresMedicalSupervision ? (
-                          <CheckCircle className="h-5 w-5 text-green-500" />
-                        ) : (
-                          <X className="h-5 w-5 text-gray-500" />
-                        )}
+                        {selectedTreatment.brazilianStandards.requiresMedicalSupervision
+                          ? <CheckCircle className='h-5 w-5 text-green-500' />
+                          : <X className='h-5 w-5 text-gray-500' />}
                       </div>
                     </div>
                   </div>
@@ -1373,30 +1465,36 @@ export const TreatmentCatalogBrowser: React.FC = () => {
                 {/* Clinical Evidence */}
                 {selectedTreatment.clinicalEvidence && (
                   <div>
-                    <h3 className="font-semibold mb-3">Evidências Clínicas</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <div className="text-center p-4 bg-blue-50 rounded">
-                        <div className="text-2xl font-bold">{selectedTreatment.clinicalEvidence.studies}</div>
-                        <div className="text-sm text-gray-600">Estudos</div>
+                    <h3 className='font-semibold mb-3'>Evidências Clínicas</h3>
+                    <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
+                      <div className='text-center p-4 bg-blue-50 rounded'>
+                        <div className='text-2xl font-bold'>
+                          {selectedTreatment.clinicalEvidence.studies}
+                        </div>
+                        <div className='text-sm text-gray-600'>Estudos</div>
                       </div>
-                      <div className="text-center p-4 bg-green-50 rounded">
-                        <div className="text-2xl font-bold">{selectedTreatment.clinicalEvidence.satisfactionRate}%</div>
-                        <div className="text-sm text-gray-600">Satisfação</div>
+                      <div className='text-center p-4 bg-green-50 rounded'>
+                        <div className='text-2xl font-bold'>
+                          {selectedTreatment.clinicalEvidence.satisfactionRate}%
+                        </div>
+                        <div className='text-sm text-gray-600'>Satisfação</div>
                       </div>
-                      <div className="text-center p-4 bg-yellow-50 rounded">
-                        <div className="text-2xl font-bold">{selectedTreatment.clinicalEvidence.complicationRate}%</div>
-                        <div className="text-sm text-gray-600">Complicações</div>
+                      <div className='text-center p-4 bg-yellow-50 rounded'>
+                        <div className='text-2xl font-bold'>
+                          {selectedTreatment.clinicalEvidence.complicationRate}%
+                        </div>
+                        <div className='text-sm text-gray-600'>Complicações</div>
                       </div>
                     </div>
                   </div>
                 )}
 
                 {/* Action Buttons */}
-                <div className="flex space-x-4 pt-4 border-t">
-                  <Button variant="outline" className="flex-1">
+                <div className='flex space-x-4 pt-4 border-t'>
+                  <Button variant='outline' className='flex-1'>
                     Agendar Consulta
                   </Button>
-                  <Button className="flex-1">
+                  <Button className='flex-1'>
                     Agendar Tratamento
                   </Button>
                 </div>

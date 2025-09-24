@@ -116,7 +116,7 @@ interface ConsultationTypes {
     focus: 'Avaliação completa';
     price: 'R$ 250';
   };
-  
+
   // Sessão de tratamento
   treatmentSession: {
     duration: '30-90 minutos'; // varia
@@ -124,7 +124,7 @@ interface ConsultationTypes {
     focus: 'Procedimento específico';
     price: 'Variável';
   };
-  
+
   // Acompanhamento
   followUp: {
     duration: '30 minutos';
@@ -132,7 +132,7 @@ interface ConsultationTypes {
     focus: 'Avaliação de resultados';
     price: 'R$ 150';
   };
-  
+
   // Emergência
   emergency: {
     duration: '15 minutos';
@@ -203,7 +203,7 @@ interface FacialTreatments {
     durationOfEffect: '4-6 meses';
     price: 'A partir de R$ 800';
   };
-  
+
   // Preenchimento facial
   dermalFillers: {
     duration: '30-45 minutos';
@@ -212,7 +212,7 @@ interface FacialTreatments {
     durationOfEffect: '12-18 meses';
     price: 'A partir de R$ 1.200';
   };
-  
+
   // Peeling químico
   chemicalPeeling: {
     duration: '30-60 minutos';
@@ -221,7 +221,7 @@ interface FacialTreatments {
     durationOfEffect: '3-6 meses';
     price: 'A partir de R$ 300';
   };
-  
+
   // Laser facial
   laserTreatment: {
     duration: '30-45 minutos';
@@ -245,7 +245,7 @@ interface BodyTreatments {
     durationOfEffect: 'Permanente';
     price: 'A partir de R$ 8.000';
   };
-  
+
   // Criolipólise
   cryolipolysis: {
     duration: '60 minutos';
@@ -254,7 +254,7 @@ interface BodyTreatments {
     durationOfEffect: 'Permanente';
     price: 'A partir de R$ 1.500';
   };
-  
+
   // Radiofrequência
   radiofrequency: {
     duration: '45-60 minutos';
@@ -280,7 +280,7 @@ interface AIRecommendations {
     medicalHistory: MedicalCondition[];
     lifestyleFactors: LifestyleFactor[];
   };
-  
+
   // Recomendações baseadas em IA
   aiSuggestions: {
     recommendedTreatments: TreatmentRecommendation[];
@@ -289,7 +289,7 @@ interface AIRecommendations {
     riskFactors: string[];
     timeline: TreatmentTimeline[];
   };
-  
+
   // Plano de tratamento
   treatmentPlan: {
     phases: TreatmentPhase[];
@@ -335,27 +335,27 @@ interface PaymentOptions {
     interestFreeUpTo: '6x';
     fees: '2.5% acima de 6x';
   };
-  
+
   // Cartão de débito
   debitCard: {
     immediateDiscount: '5%';
     instantConfirmation: true;
   };
-  
+
   // PIX
   pix: {
     immediateDiscount: '10%';
     instantConfirmation: true;
     noFees: true;
   };
-  
+
   // Boleto
   boleto: {
     installments: 'Até 3x';
     clearingTime: '3 dias úteis';
     fees: '2.0%';
   };
-  
+
   // Convênios
   insurance: {
     acceptedInsurance: string[];
@@ -377,7 +377,7 @@ interface TreatmentPackages {
     packagePrice: 2500;
     savings: 500;
   };
-  
+
   // Pacote corporal
   bodyPackage: {
     treatments: 8;
@@ -386,7 +386,7 @@ interface TreatmentPackages {
     packagePrice: 4200;
     savings: 800;
   };
-  
+
   // Plano anual VIP
   vipPlan: {
     benefits: [
@@ -394,7 +394,7 @@ interface TreatmentPackages {
       'Descontos especiais',
       'Atendimento prioritário',
       'Eventos exclusivos',
-      'Produtos gratuitos'
+      'Produtos gratuitos',
     ];
     monthlyFee: 299;
     annualFee: 2990;
@@ -439,7 +439,7 @@ interface PatientPortal {
     cancelAppointments: boolean;
     calendarSync: boolean;
   };
-  
+
   // Histórico médico
   medicalHistory: {
     viewTreatmentHistory: boolean;
@@ -447,7 +447,7 @@ interface PatientPortal {
     viewBeforeAfter: boolean;
     trackProgress: boolean;
   };
-  
+
   // Comunicação
   communication: {
     messageProfessional: boolean;
@@ -455,7 +455,7 @@ interface PatientPortal {
     appointmentReminders: boolean;
     educationalContent: boolean;
   };
-  
+
   // Financeiro
   financial: {
     viewInvoices: boolean;
@@ -477,7 +477,7 @@ interface PrivacySettings {
     treatmentSharing: boolean;
     dataExport: boolean;
   };
-  
+
   // Notificações
   notifications: {
     appointmentReminders: boolean;
@@ -485,7 +485,7 @@ interface PrivacySettings {
     promotionalOffers: boolean;
     educationalContent: boolean;
   };
-  
+
   // Consentimentos
   consents: {
     dataProcessing: boolean;
@@ -533,7 +533,7 @@ interface PatientRights {
     revokeConsent: 'Revogar consentimentos a qualquer momento';
     knowUsage: 'Sabere como seus dados são usados';
   };
-  
+
   // Direitos de saúde
   healthRights: {
     informedConsent: 'Consentimento informado para tratamentos';
@@ -542,7 +542,7 @@ interface PatientRights {
     privacy: 'Confidencialidade médica';
     accessRecords: 'Acesso a seu prontuário';
   };
-  
+
   // Direitos do consumidor
   consumerRights: {
     clearInformation: 'Informações claras sobre serviços';
@@ -592,7 +592,7 @@ interface SafetyCommitments {
     experienced: boolean;
     continuouslyTrained: boolean;
   };
-  
+
   // Equipamentos e produtos
   equipmentAndProducts: {
     anvisaApproved: boolean;
@@ -600,7 +600,7 @@ interface SafetyCommitments {
     properlyMaintained: boolean;
     safeHandling: boolean;
   };
-  
+
   // Procedimentos seguros
   safeProcedures: {
     sterilizationProtocols: boolean;
@@ -608,7 +608,7 @@ interface SafetyCommitments {
     infectionControl: boolean;
     adverseReactionManagement: boolean;
   };
-  
+
   // Ambientes seguros
   safeEnvironment: {
     cleanFacilities: boolean;
@@ -666,7 +666,7 @@ interface CommonSideEffects {
     sensitivity: '1-2 dias';
     mildDiscomfort: '24-48 horas';
   };
-  
+
   // Que requerem atenção
   attentionRequired: {
     severePain: 'Contatar clínica';
@@ -743,14 +743,14 @@ interface CareRoutine {
     healthyDiet: 'Alimentação balanceada';
     hydration: '2L de água por dia';
   };
-  
+
   // Semanal
   weekly: {
     exfoliation: '1x por semana (suave)';
     mask: 'Máscara hidratante 1x por semana';
     treatment: 'Sessões conforme planejado';
   };
-  
+
   // Mensal
   monthly: {
     professionalTreatment: 'Conforme plano';
@@ -817,7 +817,7 @@ interface AppNavigation {
     notifications: 'Notificações recentes';
     healthTips: 'Dicas de saúde';
   };
-  
+
   // Menu principal
   mainMenu: {
     appointments: 'Agendamentos';
@@ -881,7 +881,7 @@ interface LoyaltyProgram {
     referralBonus: 'R$ 25';
     earlyAccess: false;
   };
-  
+
   // Prata (501-1500 pontos)
   silver: {
     birthdayDiscount: '15%';
@@ -889,7 +889,7 @@ interface LoyaltyProgram {
     earlyAccess: true;
     freeProducts: '1/ano';
   };
-  
+
   // Ouro (1501-3000 pontos)
   gold: {
     birthdayDiscount: '20%';
@@ -898,7 +898,7 @@ interface LoyaltyProgram {
     freeProducts: '3/ano';
     exclusiveEvents: true;
   };
-  
+
   // Platina (3000+ pontos)
   platinum: {
     birthdayDiscount: '25%';

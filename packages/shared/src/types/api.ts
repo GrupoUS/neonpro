@@ -17,7 +17,7 @@ export interface PaginationParams {
   limit: number;
   search?: string;
   sortBy?: string;
-  sortOrder?: "asc" | "desc";
+  sortOrder?: 'asc' | 'desc';
 }
 
 export interface PaginationResponse {
@@ -48,7 +48,7 @@ export interface PatientUpdateRequest extends Partial<PatientCreateRequest> {
 
 export interface PatientQueryParams extends PaginationParams {
   clinicId: string;
-  status?: "active" | "inactive" | "all";
+  status?: 'active' | 'inactive' | 'all';
 }
 
 // Appointment API types
@@ -62,16 +62,15 @@ export interface AppointmentCreateRequest {
   duration?: number;
 }
 
-export interface AppointmentUpdateRequest
-  extends Partial<AppointmentCreateRequest> {
+export interface AppointmentUpdateRequest extends Partial<AppointmentCreateRequest> {
   id: string;
   status?:
-    | "scheduled"
-    | "confirmed"
-    | "in_progress"
-    | "completed"
-    | "cancelled"
-    | "no_show";
+    | 'scheduled'
+    | 'confirmed'
+    | 'in_progress'
+    | 'completed'
+    | 'cancelled'
+    | 'no_show';
 }
 
 export interface AppointmentQueryParams extends PaginationParams {
@@ -95,14 +94,13 @@ export interface ProfessionalCreateRequest {
   isActive: boolean;
 }
 
-export interface ProfessionalUpdateRequest
-  extends Partial<ProfessionalCreateRequest> {
+export interface ProfessionalUpdateRequest extends Partial<ProfessionalCreateRequest> {
   id: string;
 }
 
 // Real-time event types
 export interface RealtimeEvent<T = any> {
-  eventType: "INSERT" | "UPDATE" | "DELETE";
+  eventType: 'INSERT' | 'UPDATE' | 'DELETE';
   table: string;
   new?: T;
   old?: T;
@@ -113,10 +111,10 @@ export interface RealtimeEvent<T = any> {
 export interface ConsentRequest {
   patientId: string;
   purpose:
-    | "medical_treatment"
-    | "ai_assistance"
-    | "communication"
-    | "marketing";
+    | 'medical_treatment'
+    | 'ai_assistance'
+    | 'communication'
+    | 'marketing';
   expiresAt?: string;
 }
 
@@ -151,7 +149,7 @@ export interface ValidationError extends ApiError {
 
 // Health check types
 export interface HealthCheckResponse {
-  status: "healthy" | "unhealthy" | "degraded";
+  status: 'healthy' | 'unhealthy' | 'degraded';
   timestamp: string;
   _service: string;
   version: string;
@@ -172,7 +170,7 @@ export interface AuthUser {
   id: string;
   email: string;
   fullName: string;
-  _role: "admin" | "professional" | "receptionist";
+  _role: 'admin' | 'professional' | 'receptionist';
   clinicAccess: string[];
   permissions: string[];
 }
@@ -192,7 +190,7 @@ export interface LoginResponse extends ApiResponse {
 // File upload types
 export interface FileUploadRequest {
   file: File;
-  category: "patient_photo" | "document" | "treatment_photo";
+  category: 'patient_photo' | 'document' | 'treatment_photo';
   patientId?: string;
   appointmentId?: string;
 }

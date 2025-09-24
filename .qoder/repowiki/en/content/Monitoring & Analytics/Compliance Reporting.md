@@ -157,7 +157,7 @@ The first model, defined in `telemetry/types.ts`, represents a basic compliance 
 
 ```typescript
 export interface ComplianceEvent {
-  eventType: "data_access" | "data_export" | "data_deletion" | "consent_update";
+  eventType: 'data_access' | 'data_export' | 'data_deletion' | 'consent_update';
   timestamp: string;
   _userId: string;
   clinicId: string;
@@ -170,7 +170,7 @@ export interface ComplianceEvent {
 The second, more comprehensive model in `telemetry-event.ts` extends a base telemetry event with detailed compliance metadata:
 
 ```typescript
-export interface ComplianceEvent extends Omit<TelemetryEvent, "eventType"> {
+export interface ComplianceEvent extends Omit<TelemetryEvent, 'eventType'> {
   eventType:
     | TelemetryEventType.LGPD_CONSENT_UPDATE
     | TelemetryEventType.LGPD_DATA_EXPORT
@@ -180,7 +180,7 @@ export interface ComplianceEvent extends Omit<TelemetryEvent, "eventType"> {
   compliance: {
     lgpdCompliant: true;
     dataRetentionDays: number;
-    encryptionStatus: "encrypted" | "hashed";
+    encryptionStatus: 'encrypted' | 'hashed';
     auditRequired: true;
     piiPresent: boolean;
     anonymizationApplied: boolean;

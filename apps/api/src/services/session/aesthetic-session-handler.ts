@@ -1,15 +1,19 @@
 /**
  * Aesthetic Clinic Session Handler
- * 
+ *
  * Specialized session management for aesthetic clinics with CopilotKit integration,
  * treatment workflow management, and Brazilian healthcare compliance.
  */
 
-import { EnhancedAgentSessionService } from './enhanced-agent-session-service';
-import { CopilotKitSessionIntegration } from './copilotkit-session-integration';
-import { AestheticAguiService, AestheticTreatmentData, AestheticClientProfile } from '../agui-protocol/aesthetic-service';
-import { AestheticDataHandlingService } from '../agui-protocol/aesthetic-data-handling';
 import { AestheticComplianceService } from '../agui-protocol/aesthetic-compliance-service';
+import { AestheticDataHandlingService } from '../agui-protocol/aesthetic-data-handling';
+import {
+  AestheticAguiService,
+  AestheticClientProfile,
+  AestheticTreatmentData,
+} from '../agui-protocol/aesthetic-service';
+import { CopilotKitSessionIntegration } from './copilotkit-session-integration';
+import { EnhancedAgentSessionService } from './enhanced-agent-session-service';
 
 export interface AestheticSessionConfig {
   enableTreatmentWorkflow: boolean;
@@ -274,10 +278,10 @@ export class AestheticSessionHandler {
 
   // Active aesthetic sessions
   private aestheticSessions: Map<string, AestheticTreatmentSession> = new Map();
-  
+
   // Treatment workflows
   private treatmentWorkflows: Map<string, TreatmentWorkflow> = new Map();
-  
+
   // Session analytics
   private sessionAnalytics: Map<string, AestheticSessionAnalytics> = new Map();
 
@@ -329,7 +333,7 @@ export class AestheticSessionHandler {
         if (!options.userId) {
           throw new Error('User ID required for session creation');
         }
-        
+
         enhancedSession = await this.enhancedSessionService.createEnhancedSession(
           options.userId,
           {
@@ -337,11 +341,13 @@ export class AestheticSessionHandler {
             enableCopilotKit: true,
             aestheticData: {
               clientProfile,
-              currentTreatment: options.treatmentType ? {
-                type: options.treatmentType,
-                status: 'planned',
-                plannedDate: new Date(),
-              } as AestheticTreatmentData : undefined,
+              currentTreatment: options.treatmentType
+                ? {
+                  type: options.treatmentType,
+                  status: 'planned',
+                  plannedDate: new Date(),
+                } as AestheticTreatmentData
+                : undefined,
             },
             securityContext: {
               authenticationLevel: 'enhanced',
@@ -385,7 +391,10 @@ export class AestheticSessionHandler {
       };
 
       // Initialize treatment workflow if enabled
-      if (this.config.enableTreatmentWorkflow && options.enableWorkflow !== false && options.treatmentType) {
+      if (
+        this.config.enableTreatmentWorkflow && options.enableWorkflow !== false
+        && options.treatmentType
+      ) {
         aestheticSession.currentWorkflow = await this.initializeTreatmentWorkflow(
           sessionId,
           options.treatmentType,
@@ -414,7 +423,9 @@ export class AestheticSessionHandler {
     } catch {
       console.error('Error initializing aesthetic session:', error);
       throw new Error(
-        `Failed to initialize aesthetic session: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        `Failed to initialize aesthetic session: ${
+          error instanceof Error ? error.message : 'Unknown error'
+        }`,
       );
     }
   }
@@ -445,7 +456,7 @@ export class AestheticSessionHandler {
 
       const workflow = aestheticSession.currentWorkflow;
       const stepProgress = workflow.steps.find(s => s.stepId === stepId);
-      
+
       if (!stepProgress) {
         throw new Error(`Workflow step ${stepId} not found`);
       }
@@ -469,7 +480,7 @@ export class AestheticSessionHandler {
       // Process step based on type
       let stepResult: any;
       const stepConfig = this.config.treatmentWorkflowSteps.find(s => s.id === stepId);
-      
+
       if (stepConfig) {
         stepResult = await this.executeWorkflowStep(sessionId, stepConfig, data);
       }
@@ -504,7 +515,8 @@ export class AestheticSessionHandler {
       }
 
       // Update workflow
-      workflow.currentStep = workflow.steps.findIndex(s => s.stepId === nextStep) ?? workflow.steps.length;
+      workflow.currentStep = workflow.steps.findIndex(s => s.stepId === nextStep)
+        ?? workflow.steps.length;
       this.treatmentWorkflows.set(sessionId, workflow);
 
       // Update aesthetic session
@@ -648,7 +660,7 @@ export class AestheticSessionHandler {
       const formConfig = this.config.clientAssessmentConfig.assessmentForms.find(
         f => f.id === formId,
       );
-      
+
       if (!formConfig) {
         return {
           success: false,
@@ -670,7 +682,7 @@ export class AestheticSessionHandler {
       // Calculate score if scoring logic is defined
       let score: number | undefined;
       let result: string;
-      
+
       if (formConfig.scoringLogic) {
         score = this.calculateAssessmentScore(formConfig.scoringLogic, responses);
         result = this.determineAssessmentResult(formConfig.scoringLogic, score);
@@ -696,7 +708,7 @@ export class AestheticSessionHandler {
       // Determine validity period
       if (formConfig.scoringLogic) {
         assessmentResult.validityPeriod = new Date(
-          Date.now() + (90 * 24 * 60 * 60 * 1000) // 90 days validity
+          Date.now() + (90 * 24 * 60 * 60 * 1000), // 90 days validity
         );
       }
 
@@ -757,7 +769,7 @@ export class AestheticSessionHandler {
 
       // Create or update consent record
       let consentRecord: ConsentRecord;
-      
+
       switch (consentAction.type) {
         case 'grant':
           consentRecord = {
@@ -765,15 +777,15 @@ export class AestheticSessionHandler {
             type: consentAction.consentType,
             granted: true,
             grantedAt: new Date(),
-            expiresAt: consentAction.data?.expiresAt 
-              ? new Date(consentAction.data.expiresAt) 
+            expiresAt: consentAction.data?.expiresAt
+              ? new Date(consentAction.data.expiresAt)
               : new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), // 1 year
             documentUrl: consentAction.data?.documentUrl,
             ipAddress: consentAction.data?.ipAddress,
             userAgent: consentAction.data?.userAgent,
           };
           break;
-          
+
         case 'revoke':
           consentRecord = {
             id: this.generateConsentId(),
@@ -783,44 +795,44 @@ export class AestheticSessionHandler {
             revokedAt: new Date(),
           };
           break;
-          
+
         case 'update':
           // Find existing consent and update it
           const existingConsent = aestheticSession.consentRecords.find(
-            c => c.type === consentAction.consentType && c.granted
+            c => c.type === consentAction.consentType && c.granted,
           );
-          
+
           if (!existingConsent) {
             return {
               success: false,
               errors: ['No active consent found to update'],
             };
           }
-          
-          existingConsent.expiresAt = consentAction.data?.expiresAt 
-            ? new Date(consentAction.data.expiresAt) 
+
+          existingConsent.expiresAt = consentAction.data?.expiresAt
+            ? new Date(consentAction.data.expiresAt)
             : existingConsent.expiresAt;
-          
+
           consentRecord = existingConsent;
           break;
-          
+
         case 'expire':
           // Find and expire existing consent
           const activeConsent = aestheticSession.consentRecords.find(
-            c => c.type === consentAction.consentType && c.granted
+            c => c.type === consentAction.consentType && c.granted,
           );
-          
+
           if (!activeConsent) {
             return {
               success: false,
               errors: ['No active consent found to expire'],
             };
           }
-          
+
           activeConsent.expiresAt = new Date();
           consentRecord = activeConsent;
           break;
-          
+
         default:
           throw new Error(`Unsupported consent action: ${consentAction.type}`);
       }
@@ -829,7 +841,7 @@ export class AestheticSessionHandler {
       if (consentAction.type === 'update' || consentAction.type === 'expire') {
         // Consent already exists in array, just update the reference
         const index = aestheticSession.consentRecords.findIndex(
-          c => c.id === consentRecord.id
+          c => c.id === consentRecord.id,
         );
         if (index !== -1) {
           aestheticSession.consentRecords[index] = consentRecord;
@@ -873,13 +885,15 @@ export class AestheticSessionHandler {
    */
   async getAestheticSessionStatus(
     sessionId: string,
-  ): Promise<{
-    session: AestheticTreatmentSession;
-    workflowProgress?: TreatmentWorkflow;
-    analytics?: AestheticSessionAnalytics;
-    complianceStatus: ComplianceStatus;
-    recommendations?: string[];
-  } | null> {
+  ): Promise<
+    {
+      session: AestheticTreatmentSession;
+      workflowProgress?: TreatmentWorkflow;
+      analytics?: AestheticSessionAnalytics;
+      complianceStatus: ComplianceStatus;
+      recommendations?: string[];
+    } | null
+  > {
     try {
       const aestheticSession = this.aestheticSessions.get(sessionId);
       if (!aestheticSession) {
@@ -1140,17 +1154,20 @@ export class AestheticSessionHandler {
     return workflow;
   }
 
-  private async validateStepDependencies(workflow: TreatmentWorkflow, stepId: string): Promise<string[]> {
+  private async validateStepDependencies(
+    workflow: TreatmentWorkflow,
+    stepId: string,
+  ): Promise<string[]> {
     const stepConfig = this.config.treatmentWorkflowSteps.find(s => s.id === stepId);
     if (!stepConfig?.dependencies?.length) {
       return [];
     }
 
     const errors: string[] = [];
-    
+
     for (const dependency of stepConfig.dependencies) {
       const dependencyStep = workflow.steps.find(s => s.stepId === dependency);
-      
+
       if (!dependencyStep || dependencyStep.status !== 'completed') {
         errors.push(`Dependency ${dependency} not completed`);
       }
@@ -1182,7 +1199,7 @@ export class AestheticSessionHandler {
           errors.push('Score must be between 0 and 10');
         }
         break;
-      
+
       case 'treatment':
         // Validate treatment data
         if (data.products && !Array.isArray(data.products)) {
@@ -1194,7 +1211,11 @@ export class AestheticSessionHandler {
     return errors;
   }
 
-  private async executeWorkflowStep(sessionId: string, stepConfig: TreatmentWorkflowStep, data: Record<string, any>): Promise<any> {
+  private async executeWorkflowStep(
+    sessionId: string,
+    stepConfig: TreatmentWorkflowStep,
+    data: Record<string, any>,
+  ): Promise<any> {
     // This would integrate with the aesthetic service to execute specific workflow steps
     switch (stepConfig.type) {
       case 'consultation':
@@ -1250,7 +1271,11 @@ export class AestheticSessionHandler {
     }
   }
 
-  private async updateSessionFromStepResult(sessionId: string, stepId: string, result: any): Promise<void> {
+  private async updateSessionFromStepResult(
+    sessionId: string,
+    stepId: string,
+    result: any,
+  ): Promise<void> {
     const aestheticSession = this.aestheticSessions.get(sessionId);
     if (!aestheticSession) {
       return;
@@ -1290,7 +1315,10 @@ export class AestheticSessionHandler {
     }
   }
 
-  private async determineNextStep(workflow: TreatmentWorkflow, currentStepId: string): Promise<string | undefined> {
+  private async determineNextStep(
+    workflow: TreatmentWorkflow,
+    currentStepId: string,
+  ): Promise<string | undefined> {
     const currentStepIndex = workflow.steps.findIndex(s => s.stepId === currentStepId);
     if (currentStepIndex === -1) {
       return undefined;
@@ -1300,18 +1328,18 @@ export class AestheticSessionHandler {
     for (let i = currentStepIndex + 1; i < workflow.steps.length; i++) {
       const nextStep = workflow.steps[i];
       const stepConfig = this.config.treatmentWorkflowSteps.find(s => s.id === nextStep.stepId);
-      
+
       // Check if step can be accessed (dependencies met)
       if (stepConfig && !stepConfig.dependencies?.length) {
         return nextStep.stepId;
       }
-      
+
       // Check dependencies
       if (stepConfig && stepConfig.dependencies) {
         const dependenciesMet = stepConfig.dependencies.every(depId =>
           workflow.steps.find(s => s.stepId === depId && s.status === 'completed')
         );
-        
+
         if (dependenciesMet) {
           return nextStep.stepId;
         }
@@ -1321,15 +1349,18 @@ export class AestheticSessionHandler {
     return undefined;
   }
 
-  private async validatePhotoConsent(sessionId: string): Promise<{ granted: boolean; reason?: string }> {
+  private async validatePhotoConsent(
+    sessionId: string,
+  ): Promise<{ granted: boolean; reason?: string }> {
     const aestheticSession = this.aestheticSessions.get(sessionId);
     if (!aestheticSession) {
       return { granted: false, reason: 'Session not found' };
     }
 
     const photoConsent = aestheticSession.consentRecords.find(
-      c => c.type === 'photo' && c.granted && 
-      (!c.expiresAt || c.expiresAt > new Date())
+      c =>
+        c.type === 'photo' && c.granted
+        && (!c.expiresAt || c.expiresAt > new Date()),
     );
 
     if (!photoConsent) {
@@ -1339,7 +1370,10 @@ export class AestheticSessionHandler {
     return { granted: true };
   }
 
-  private async analyzeTreatmentPhoto(sessionId: string, photoRecord: PhotoRecord): Promise<PhotoAnalysisResult> {
+  private async analyzeTreatmentPhoto(
+    sessionId: string,
+    photoRecord: PhotoRecord,
+  ): Promise<PhotoAnalysisResult> {
     // Send photo for analysis through aesthetic service
     const analysisResponse = await this.aestheticService.sendAestheticMessage({
       id: this.generateMessageId(),
@@ -1367,7 +1401,10 @@ export class AestheticSessionHandler {
     };
   }
 
-  private validateAssessmentResponses(formConfig: AssessmentForm, responses: Record<string, any>): string[] {
+  private validateAssessmentResponses(
+    formConfig: AssessmentForm,
+    responses: Record<string, any>,
+  ): string[] {
     const errors: string[] = [];
 
     for (const field of formConfig.fields) {
@@ -1388,39 +1425,50 @@ export class AestheticSessionHandler {
     return errors;
   }
 
-  private validateFieldValue(fieldId: string, value: any, validation: ValidationRule): string | null {
+  private validateFieldValue(
+    fieldId: string,
+    value: any,
+    validation: ValidationRule,
+  ): string | null {
     switch (validation.type) {
       case 'required':
         return !value ? validation.message : null;
-      
+
       case 'min_length':
-        return typeof value === 'string' && value.length < validation.value 
-          ? validation.message 
+        return typeof value === 'string' && value.length < validation.value
+          ? validation.message
           : null;
-      
+
       case 'max_length':
-        return typeof value === 'string' && value.length > validation.value 
-          ? validation.message 
+        return typeof value === 'string' && value.length > validation.value
+          ? validation.message
           : null;
-      
+
       case 'pattern':
         return typeof value === 'string' && !new RegExp(validation.value).test(value)
           ? validation.message
           : null;
-      
+
       case 'range':
-        return typeof value === 'number' && (value < validation.value.min || value > validation.value.max)
+        return typeof value === 'number'
+            && (value < validation.value.min || value > validation.value.max)
           ? validation.message
           : null;
-      
+
       default:
         return null;
     }
   }
 
-  private calculateAssessmentScore(scoringLogic: ScoringLogic, responses: Record<string, any>): number {
+  private calculateAssessmentScore(
+    scoringLogic: ScoringLogic,
+    responses: Record<string, any>,
+  ): number {
     if (scoringLogic.type === 'sum') {
-      return Object.values(responses).reduce((sum: number, value: any) => sum + (Number(value) || 0), 0);
+      return Object.values(responses).reduce(
+        (sum: number, value: any) => sum + (Number(value) || 0),
+        0,
+      );
     }
 
     if (scoringLogic.type === 'average') {
@@ -1431,14 +1479,14 @@ export class AestheticSessionHandler {
     if (scoringLogic.type === 'weighted' && scoringLogic.weights) {
       let weightedSum = 0;
       let totalWeight = 0;
-      
+
       for (const [field, weight] of Object.entries(scoringLogic.weights)) {
         if (field in responses) {
           weightedSum += (Number(responses[field]) || 0) * weight;
           totalWeight += weight;
         }
       }
-      
+
       return totalWeight > 0 ? weightedSum / totalWeight : 0;
     }
 
@@ -1451,7 +1499,7 @@ export class AestheticSessionHandler {
         return threshold.result;
       }
     }
-    
+
     return scoringLogic.thresholds[scoringLogic.thresholds.length - 1].result;
   }
 
@@ -1468,8 +1516,9 @@ export class AestheticSessionHandler {
     const requiredConsents = ['treatment', 'photo'];
     for (const consentType of requiredConsents) {
       const activeConsent = aestheticSession.consentRecords.find(
-        c => c.type === consentType && c.granted && 
-        (!c.expiresAt || c.expiresAt > new Date())
+        c =>
+          c.type === consentType && c.granted
+          && (!c.expiresAt || c.expiresAt > new Date()),
       );
 
       if (!activeConsent) {
@@ -1485,7 +1534,7 @@ export class AestheticSessionHandler {
     // Check data retention
     const cutoffDate = new Date(Date.now() - 365 * 24 * 60 * 60 * 1000); // 1 year
     const oldPhotos = aestheticSession.photoHistory.filter(p => p.date < cutoffDate);
-    
+
     if (oldPhotos.length > 0) {
       flags.push({
         type: 'data_retention',
@@ -1510,7 +1559,8 @@ export class AestheticSessionHandler {
     }
 
     const sessionDuration = Date.now() - aestheticSession.createdAt.getTime();
-    const completedSteps = aestheticSession.currentWorkflow?.steps.filter(s => s.status === 'completed').length || 0;
+    const completedSteps =
+      aestheticSession.currentWorkflow?.steps.filter(s => s.status === 'completed').length || 0;
     const totalSteps = aestheticSession.currentWorkflow?.steps.length || 0;
 
     return {
@@ -1531,18 +1581,19 @@ export class AestheticSessionHandler {
   private calculateConsentScore(consentRecords: ConsentRecord[]): number {
     const requiredTypes = ['treatment', 'photo'];
     let activeCount = 0;
-    
+
     for (const type of requiredTypes) {
       const activeConsent = consentRecords.find(
-        c => c.type === type && c.granted && 
-        (!c.expiresAt || c.expiresAt > new Date())
+        c =>
+          c.type === type && c.granted
+          && (!c.expiresAt || c.expiresAt > new Date()),
       );
-      
+
       if (activeConsent) {
         activeCount++;
       }
     }
-    
+
     return (activeCount / requiredTypes.length) * 100;
   }
 
@@ -1553,23 +1604,24 @@ export class AestheticSessionHandler {
 
     const completedSteps = workflow.steps.filter(s => s.status === 'completed').length;
     const estimatedTimePerStep = 30; // minutes
-    const _actualTime = Date.now() - workflow.estimatedCompletion.getTime() + (workflow.steps.length * estimatedTimePerStep * 60 * 1000);
-    
+    const _actualTime = Date.now() - workflow.estimatedCompletion.getTime()
+      + (workflow.steps.length * estimatedTimePerStep * 60 * 1000);
+
     return Math.min(100, (completedSteps / workflow.steps.length) * 100);
   }
 
   private calculateClientEngagement(session: AestheticTreatmentSession): number {
     let engagementScore = 0;
-    
+
     // Photo uploads contribute to engagement
     engagementScore += Math.min(session.photoHistory.length * 10, 30);
-    
+
     // Assessment completion
     engagementScore += Math.min(session.assessmentResults.length * 15, 30);
-    
+
     // Treatment adherence
     engagementScore += Math.min(session.treatmentHistory.length * 20, 40);
-    
+
     return Math.min(engagementScore, 100);
   }
 
@@ -1582,12 +1634,17 @@ export class AestheticSessionHandler {
     const recommendations: string[] = [];
 
     // Workflow recommendations
-    if (aestheticSession.currentWorkflow && aestheticSession.currentWorkflow.status === 'in_progress') {
-      const currentStep = aestheticSession.currentWorkflow.steps[aestheticSession.currentWorkflow.currentStep];
+    if (
+      aestheticSession.currentWorkflow && aestheticSession.currentWorkflow.status === 'in_progress'
+    ) {
+      const currentStep =
+        aestheticSession.currentWorkflow.steps[aestheticSession.currentWorkflow.currentStep];
       if (currentStep && currentStep.status === 'in_progress') {
         const stepDuration = Date.now() - (currentStep.startedAt?.getTime() || Date.now());
         if (stepDuration > 60 * 60 * 1000) { // 1 hour
-          recommendations.push('Consider completing the current workflow step or adding notes about any delays');
+          recommendations.push(
+            'Consider completing the current workflow step or adding notes about any delays',
+          );
         }
       }
     }
@@ -1596,7 +1653,7 @@ export class AestheticSessionHandler {
     if (aestheticSession.photoHistory.length > 0 && this.config.enablePhotoAnalysis) {
       const latestPhoto = aestheticSession.photoHistory[aestheticSession.photoHistory.length - 1];
       const daysSinceLastPhoto = (Date.now() - latestPhoto.date.getTime()) / (24 * 60 * 60 * 1000);
-      
+
       if (daysSinceLastPhoto > 30) {
         recommendations.push('Consider taking progress photos to track treatment effectiveness');
       }
@@ -1604,7 +1661,7 @@ export class AestheticSessionHandler {
 
     // Follow-up recommendations
     const overdueFollowUps = aestheticSession.treatmentHistory.filter(
-      t => t.followUpRequired && t.followUpDate && t.followUpDate < new Date()
+      t => t.followUpRequired && t.followUpDate && t.followUpDate < new Date(),
     );
 
     if (overdueFollowUps.length > 0) {

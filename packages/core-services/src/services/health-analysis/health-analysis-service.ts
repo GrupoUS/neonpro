@@ -12,19 +12,19 @@
  * - Structured response parsing and storage
  */
 
-import { AIProvider } from "../ai-provider";
-import { logHealthcareError } from "@neonpro/shared";
+import { logHealthcareError } from '@neonpro/shared';
+import { AIProvider } from '../ai-provider';
 
 // Simple error class for health analysis
 class HealthAnalysisError extends Error {
   constructor(
     public code: string,
     message: string,
-    public category: string = "system",
-    public severity: string = "medium",
+    public category: string = 'system',
+    public severity: string = 'medium',
   ) {
     super(message);
-    this.name = "HealthAnalysisError";
+    this.name = 'HealthAnalysisError';
   }
 }
 
@@ -72,7 +72,7 @@ export interface HealthAnalysisPrompt {
   analysisType: string;
   patientData: PatientAnalysisData;
   customPrompt?: string;
-  language?: "pt-BR" | "en-US";
+  language?: 'pt-BR' | 'en-US';
 }
 
 export interface AIResponse {
@@ -115,26 +115,26 @@ export class HealthAnalysisService {
       // Mock patient data gathering - in real implementation would query database
       const patient = {
         age: 35,
-        gender: "female",
-        bloodType: "O+",
-        chronicConditions: ["hypertension"],
-        currentMedications: ["losartan"],
-        allergies: ["penicillin"],
+        gender: 'female',
+        bloodType: 'O+',
+        chronicConditions: ['hypertension'],
+        currentMedications: ['losartan'],
+        allergies: ['penicillin'],
         totalNoShows: 2,
         totalAppointments: 15,
-        preferredAppointmentTime: ["morning", "afternoon"],
+        preferredAppointmentTime: ['morning', 'afternoon'],
         communicationPreferences: { email: true, sms: true },
-        lastVisitDate: new Date("2024-01-15"),
-        nextAppointmentDate: new Date("2024-02-15"),
+        lastVisitDate: new Date('2024-01-15'),
+        nextAppointmentDate: new Date('2024-02-15'),
       };
 
       const appointments = [
         {
-          date: new Date("2024-01-15"),
-          type: "consultation",
-          status: "completed",
-          treatmentType: "general",
-          professional: "Dr. Silva",
+          date: new Date('2024-01-15'),
+          type: 'consultation',
+          status: 'completed',
+          treatmentType: 'general',
+          professional: 'Dr. Silva',
         },
       ];
 
@@ -142,7 +142,7 @@ export class HealthAnalysisService {
         appointmentAdherence: 0.87,
         cancellationRate: 0.13,
         noShowRate: 0.13,
-        preferredTimes: ["morning", "afternoon"],
+        preferredTimes: ['morning', 'afternoon'],
         communicationPreferences: { email: true, sms: true },
       };
 
@@ -165,7 +165,7 @@ export class HealthAnalysisService {
         dataPointCount: 5,
         demographics: {
           age: patient.age,
-          gender: patient.gender || "unknown",
+          gender: patient.gender || 'unknown',
           bloodType: patient.bloodType,
           chronicConditions: patient.chronicConditions || [],
           currentMedications: patient.currentMedications || [],
@@ -180,10 +180,12 @@ export class HealthAnalysisService {
       return analysisData;
     } catch (error) {
       throw new HealthAnalysisError(
-        "DATA_GATHERING_FAILED",
-        `Failed to gather patient analysis data: ${error instanceof Error ? error.message : "Unknown error"}`,
-        "system",
-        "high",
+        'DATA_GATHERING_FAILED',
+        `Failed to gather patient analysis data: ${
+          error instanceof Error ? error.message : 'Unknown error'
+        }`,
+        'system',
+        'high',
       );
     }
   }
@@ -192,12 +194,11 @@ export class HealthAnalysisService {
    * Build structured prompt for health analysis
    */
   buildHealthAnalysisPrompt(config: HealthAnalysisPrompt): string {
-    const { patientData, customPrompt, language = "pt-BR" } = config;
+    const { patientData, customPrompt, language = 'pt-BR' } = config;
 
-    const basePrompt =
-      language === "pt-BR"
-        ? `Análise de saúde para paciente com histórico médico e padrões de comportamento.`
-        : `Health analysis for patient with medical history and behavioral patterns.`;
+    const basePrompt = language === 'pt-BR'
+      ? `Análise de saúde para paciente com histórico médico e padrões de comportamento.`
+      : `Health analysis for patient with medical history and behavioral patterns.`;
 
     const patientContext = this.formatPatientContext(patientData);
 
@@ -207,11 +208,11 @@ ${basePrompt}
 ${patientContext}
 
 ${
-  customPrompt
-    ? `INSTRUÇÕES ADICIONAIS:
+      customPrompt
+        ? `INSTRUÇÕES ADICIONAIS:
 ${customPrompt}`
-    : ""
-}
+        : ''
+    }
 
 FORMATO DE RESPOSTA ESPERADO:
 {
@@ -240,19 +241,25 @@ DADOS DO PACIENTE:
 - ID: ${patientData.patientId}
 - Idade: ${patientData.demographics.age}
 - Gênero: ${patientData.demographics.gender}
-- Tipo Sanguíneo: ${patientData.demographics.bloodType || "Não informado"}
-- Condições Crônicas: ${patientData.demographics.chronicConditions.join(", ") || "Nenhuma"}
-- Medicamentos: ${patientData.demographics.currentMedications.join(", ") || "Nenhum"}
-- Alergias: ${patientData.demographics.allergies.join(", ") || "Nenhuma"}
+- Tipo Sanguíneo: ${patientData.demographics.bloodType || 'Não informado'}
+- Condições Crônicas: ${patientData.demographics.chronicConditions.join(', ') || 'Nenhuma'}
+- Medicamentos: ${patientData.demographics.currentMedications.join(', ') || 'Nenhum'}
+- Alergias: ${patientData.demographics.allergies.join(', ') || 'Nenhuma'}
 
 HISTÓRICO DE CONSULTAS:
 - Total de Consultas: ${patientData.patientProfile.totalAppointments}
-- Taxa de Não Comparecimento: ${((patientData.behavioralPatterns.noShowRate || 0) * 100).toFixed(1)}%
-- Adesão ao Tratamento: ${((patientData.behavioralPatterns.appointmentAdherence || 0) * 100).toFixed(1)}%
+- Taxa de Não Comparecimento: ${
+      ((patientData.behavioralPatterns.noShowRate || 0) * 100).toFixed(1)
+    }%
+- Adesão ao Tratamento: ${
+      ((patientData.behavioralPatterns.appointmentAdherence || 0) * 100).toFixed(1)
+    }%
 
 PADRÕES DE COMPORTAMENTO:
-- Horários Preferidos: ${patientData.behavioralPatterns.preferredTimes.join(", ")}
-- Preferências de Comunicação: ${Object.keys(patientData.behavioralPatterns.communicationPreferences).join(", ")}
+- Horários Preferidos: ${patientData.behavioralPatterns.preferredTimes.join(', ')}
+- Preferências de Comunicação: ${
+      Object.keys(patientData.behavioralPatterns.communicationPreferences).join(', ')
+    }
     `.trim();
   }
 
@@ -269,7 +276,7 @@ PADRÕES DE COMPORTAMENTO:
       const result = await this.aiProvider.generateAnswer({
         prompt: params.prompt,
         system:
-          "Você é um especialista em saúde com conhecimento em medicina brasileira, LGPD e normas da ANVISA.",
+          'Você é um especialista em saúde com conhecimento em medicina brasileira, LGPD e normas da ANVISA.',
         temperature: params.temperature || 0.3,
         maxTokens: params.maxTokens || 2000,
       });
@@ -281,14 +288,14 @@ PADRÕES DE COMPORTAMENTO:
           completion_tokens: 0,
           total_tokens: 0,
         },
-        model: params.model || "gpt-4",
+        model: params.model || 'gpt-4',
       };
     } catch (error) {
       throw new HealthAnalysisError(
-        "AI_SERVICE_ERROR",
-        `Failed to call AI _service: ${error instanceof Error ? error.message : "Unknown error"}`,
-        "external_service",
-        "high",
+        'AI_SERVICE_ERROR',
+        `Failed to call AI _service: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        'external_service',
+        'high',
       );
     }
   }
@@ -301,18 +308,18 @@ PADRÕES DE COMPORTAMENTO:
       // Extract JSON from response
       const jsonMatch = response.match(/\{[\s\S]*\}/);
       if (!jsonMatch) {
-        throw new Error("No JSON found in response");
+        throw new Error('No JSON found in response');
       }
 
       const parsed = JSON.parse(jsonMatch[0]);
 
       // Validate required fields
       const requiredFields = [
-        "summary",
-        "recommendations",
-        "riskFactors",
-        "keyFindings",
-        "confidence",
+        'summary',
+        'recommendations',
+        'riskFactors',
+        'keyFindings',
+        'confidence',
       ];
       for (const field of requiredFields) {
         if (!parsed[field]) {
@@ -340,8 +347,8 @@ PADRÕES DE COMPORTAMENTO:
           ? parsed.followUpActions
           : [],
         metadata: {
-          analysisType: parsed.analysisType || "health_analysis",
-          model: parsed.model || "gpt-4",
+          analysisType: parsed.analysisType || 'health_analysis',
+          model: parsed.model || 'gpt-4',
           confidence: Math.max(
             0,
             Math.min(1, Number(parsed.confidence) || 0.5),
@@ -352,10 +359,10 @@ PADRÕES DE COMPORTAMENTO:
       };
     } catch (error) {
       throw new HealthAnalysisError(
-        "RESPONSE_PARSING_ERROR",
-        `Failed to parse AI response: ${error instanceof Error ? error.message : "Unknown error"}`,
-        "validation",
-        "high",
+        'RESPONSE_PARSING_ERROR',
+        `Failed to parse AI response: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        'validation',
+        'high',
       );
     }
   }
@@ -373,10 +380,12 @@ PADRÕES DE COMPORTAMENTO:
       return analysisId;
     } catch (error) {
       throw new HealthAnalysisError(
-        "STORAGE_FAILED",
-        `Failed to store health analysis: ${error instanceof Error ? error.message : "Unknown error"}`,
-        "system",
-        "high",
+        'STORAGE_FAILED',
+        `Failed to store health analysis: ${
+          error instanceof Error ? error.message : 'Unknown error'
+        }`,
+        'system',
+        'high',
       );
     }
   }

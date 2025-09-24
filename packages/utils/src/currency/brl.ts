@@ -7,15 +7,15 @@
  * Format number as Brazilian Real currency
  */
 export function formatBRL(amount: number | string): string {
-  const numAmount = typeof amount === "string" ? parseFloat(amount) : amount;
+  const numAmount = typeof amount === 'string' ? parseFloat(amount) : amount;
 
   if (isNaN(numAmount)) {
-    return "R$ 0,00";
+    return 'R$ 0,00';
   }
 
-  return new Intl.NumberFormat("pt-BR", {
-    style: "currency",
-    currency: "BRL",
+  return new Intl.NumberFormat('pt-BR', {
+    style: 'currency',
+    currency: 'BRL',
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   }).format(numAmount);
@@ -27,9 +27,9 @@ export function formatBRL(amount: number | string): string {
 export function parseBRL(brlString: string): number {
   // Remove currency symbol and normalize decimal separators
   const cleaned = brlString
-    .replace(/R\$\s*/, "")
-    .replace(/\./g, "") // Remove thousands separators
-    .replace(",", "."); // Convert decimal comma to dot
+    .replace(/R\$\s*/, '')
+    .replace(/\./g, '') // Remove thousands separators
+    .replace(',', '.'); // Convert decimal comma to dot
 
   const parsed = parseFloat(cleaned);
   return isNaN(parsed) ? 0 : parsed;
@@ -40,9 +40,9 @@ export function parseBRL(brlString: string): number {
  */
 export function maskBRLInput(value: string): string {
   // Remove all non-numeric characters
-  const numericValue = value.replace(/\D/g, "");
+  const numericValue = value.replace(/\D/g, '');
 
-  if (!numericValue) return "";
+  if (!numericValue) return '';
 
   // Convert to cents
   const cents = parseInt(numericValue, 10);
@@ -70,7 +70,6 @@ export function centsToBRL(cents: number): string {
  * Convert BRL to cents (for storage as integers)
  */
 export function brlToCents(brlAmount: number | string): number {
-  const amount =
-    typeof brlAmount === "string" ? parseBRL(brlAmount) : brlAmount;
+  const amount = typeof brlAmount === 'string' ? parseBRL(brlAmount) : brlAmount;
   return Math.round(amount * 100);
 }

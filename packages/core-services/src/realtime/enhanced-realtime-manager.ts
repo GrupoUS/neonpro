@@ -11,15 +11,15 @@
  * - Healthcare-specific optimizations
  */
 
+import { logHealthcareError, realtimeLogger } from '@neonpro/shared';
 import {
   createClient,
   RealtimeChannel,
   RealtimePostgresChangesPayload,
   SupabaseClient,
-} from "@supabase/supabase-js";
-import { QueryClient } from "@tanstack/react-query";
-import { logHealthcareError, realtimeLogger } from "@neonpro/shared";
-import { HealthcareResilienceService } from "../resilience";
+} from '@supabase/supabase-js';
+import { QueryClient } from '@tanstack/react-query';
+import { HealthcareResilienceService } from '../resilience';
 
 // ============================================================================
 // Enhanced Types
@@ -37,7 +37,7 @@ export interface EnhancedRealtimeOptions<T = any> {
   // Enhanced options
   fallbackPollingEnabled?: boolean;
   fallbackPollingIntervalMs?: number;
-  cacheInvalidationStrategy?: "aggressive" | "conservative" | "smart";
+  cacheInvalidationStrategy?: 'aggressive' | 'conservative' | 'smart';
   healthCheckEnabled?: boolean;
   latencyMonitoringEnabled?: boolean;
   retryOnFailure?: boolean;
@@ -45,7 +45,7 @@ export interface EnhancedRealtimeOptions<T = any> {
 
   // Healthcare-specific
   isEmergencyData?: boolean;
-  dataClassification?: "sensitive" | "normal" | "public";
+  dataClassification?: 'sensitive' | 'normal' | 'public';
   requiresImmediateSync?: boolean;
 }
 
@@ -68,7 +68,7 @@ export interface ConnectionHealth {
   lastPing: Date;
   consecutiveFailures: number;
   retryBackoffMs: number;
-  quality: "excellent" | "good" | "fair" | "poor" | "disconnected";
+  quality: 'excellent' | 'good' | 'fair' | 'poor' | 'disconnected';
 }
 
 // ============================================================================
@@ -78,20 +78,20 @@ export interface ConnectionHealth {
 export class CacheInvalidationStrategy {
   constructor(
     private queryClient: QueryClient,
-    private strategy: "aggressive" | "conservative" | "smart" = "smart",
+    private strategy: 'aggressive' | 'conservative' | 'smart' = 'smart',
   ) {}
 
   async invalidateForEvent(
-    eventType: "INSERT" | "UPDATE" | "DELETE",
+    eventType: 'INSERT' | 'UPDATE' | 'DELETE',
     tableName: string,
     _payload: any,
     queryKeys: string[][],
   ): Promise<void> {
     switch (this.strategy) {
-      case "aggressive":
+      case 'aggressive':
         await this.aggressiveInvalidation(tableName, queryKeys);
         break;
-      case "conservative":
+      case 'conservative':
         await this.conservativeInvalidation(
           eventType,
           tableName,
@@ -99,7 +99,7 @@ export class CacheInvalidationStrategy {
           queryKeys,
         );
         break;
-      case "smart":
+      case 'smart':
         await this.smartInvalidation(eventType, tableName, _payload, queryKeys);
         break;
     }
@@ -112,9 +112,7 @@ export class CacheInvalidationStrategy {
     // Invalidate all related queries aggressively
     await Promise.all([
       this.queryClient.invalidateQueries({ queryKey: [tableName] }),
-      ...queryKeys.map((queryKey) =>
-        this.queryClient.invalidateQueries({ queryKey }),
-      ),
+      ...queryKeys.map(queryKey => this.queryClient.invalidateQueries({ queryKey })),
     ]);
 
     // Also invalidate related queries (e.g., patient data changes affect appointments)
@@ -131,7 +129,7 @@ export class CacheInvalidationStrategy {
     queryKeys: string[][],
   ): Promise<void> {
     // Only invalidate specific affected queries
-    if (eventType === "UPDATE" && _payload.id) {
+    if (eventType === 'UPDATE' && _payload.id) {
       // Only invalidate the specific record and list views
       await Promise.all([
         this.queryClient.invalidateQueries({
@@ -177,10 +175,10 @@ export class CacheInvalidationStrategy {
   private getRelatedTables(tableName: string): string[] {
     // Define relationships between tables for smart invalidation
     const relationships: Record<string, string[]> = {
-      patients: ["appointments", "patient_documents", "medical_records"],
-      appointments: ["patients", "professionals", "services"],
-      professionals: ["appointments", "schedules"],
-      services: ["appointments", "pricing_rules"],
+      patients: ['appointments', 'patient_documents', 'medical_records'],
+      appointments: ['patients', 'professionals', 'services'],
+      professionals: ['appointments', 'schedules'],
+      services: ['appointments', 'pricing_rules'],
     };
 
     return relationships[tableName] || [];
@@ -191,12 +189,12 @@ export class CacheInvalidationStrategy {
     _payload: any,
   ): boolean {
     // Heuristics for when to use aggressive invalidation
-    const criticalFields = ["status", "priority", "emergency", "cancelled"];
+    const criticalFields = ['status', 'priority', 'emergency', 'cancelled'];
 
     return criticalFields.some(
-      (field) =>
-        _payload[field] !== undefined &&
-        (_payload[field] === "emergency" || _payload[field] === "high_priority"),
+      field =>
+        _payload[field] !== undefined
+        && (_payload[field] === 'emergency' || _payload[field] === 'high_priority'),
     );
   }
 }
@@ -234,7 +232,7 @@ export class EnhancedRealtimeManager {
     lastPing: new Date(),
     consecutiveFailures: 0,
     retryBackoffMs: 1000,
-    quality: "disconnected",
+    quality: 'disconnected',
   };
 
   private cacheInvalidationStrategy: CacheInvalidationStrategy;
@@ -259,10 +257,9 @@ export class EnhancedRealtimeManager {
     );
 
     // Use provided resilience service or create default
-    this.resilienceService =
-      resilienceService ||
-      new HealthcareResilienceService(
-        require("../resilience").DEFAULT_HEALTHCARE_RESILIENCE_SERVICE_CONFIG,
+    this.resilienceService = resilienceService
+      || new HealthcareResilienceService(
+        require('../resilience').DEFAULT_HEALTHCARE_RESILIENCE_SERVICE_CONFIG,
       );
 
     // Start health monitoring
@@ -277,7 +274,7 @@ export class EnhancedRealtimeManager {
     filter?: string,
     options: EnhancedRealtimeOptions<T> = {},
   ): RealtimeChannel {
-    const channelName = `${tableName}-${filter || "all"}`;
+    const channelName = `${tableName}-${filter || 'all'}`;
 
     // Return existing channel if already subscribed
     if (this.channels.has(channelName)) {
@@ -301,15 +298,15 @@ export class EnhancedRealtimeManager {
     filter: string | undefined,
     options: EnhancedRealtimeOptions<T>,
   ): RealtimeChannel {
-    const channelName = `${tableName}-${filter || "all"}`;
+    const channelName = `${tableName}-${filter || 'all'}`;
 
     return this.supabase
       .channel(channelName)
       .on(
-        "postgres_changes",
+        'postgres_changes',
         {
-          event: "*",
-          schema: "public",
+          event: '*',
+          schema: 'public',
           table: tableName,
           filter,
         },
@@ -319,7 +316,7 @@ export class EnhancedRealtimeManager {
           await this.handleEnhancedRealtimeEvent(payload, tableName, options);
         },
       )
-      .subscribe(async (status) => {
+      .subscribe(async status => {
         await this.handleSubscriptionStatus(
           status,
           channelName,
@@ -362,7 +359,7 @@ export class EnhancedRealtimeManager {
         method: 'handleEnhancedRealtimeEvent',
         component: 'EnhancedRealtimeManager',
         tableName,
-        severity: 'high'
+        severity: 'high',
       });
 
       // Attempt recovery for emergency data
@@ -379,19 +376,19 @@ export class EnhancedRealtimeManager {
   ): Promise<void> {
     // Execute event handlers
     switch (_payload.eventType) {
-      case "INSERT":
+      case 'INSERT':
         await options.onInsert?.(_payload.new as T);
         if (options.optimisticUpdates !== false) {
           await this.optimisticInsert(tableName, _payload.new as T);
         }
         break;
-      case "UPDATE":
+      case 'UPDATE':
         await options.onUpdate?.(_payload.new as T);
         if (options.optimisticUpdates !== false) {
           await this.optimisticUpdate(tableName, _payload.new as T);
         }
         break;
-      case "DELETE":
+      case 'DELETE':
         await options.onDelete?.({ old: _payload.old as T });
         if (options.optimisticUpdates !== false) {
           await this.optimisticDelete(tableName, _payload.old as T);
@@ -429,10 +426,10 @@ export class EnhancedRealtimeManager {
     );
 
     switch (status) {
-      case "SUBSCRIBED":
+      case 'SUBSCRIBED':
         this.connectionHealth.isConnected = true;
         this.connectionHealth.consecutiveFailures = 0;
-        this.connectionHealth.quality = "excellent";
+        this.connectionHealth.quality = 'excellent';
 
         // Clear fallback polling when real-time connection is restored
         this.clearFallbackPolling(channelName);
@@ -443,8 +440,8 @@ export class EnhancedRealtimeManager {
         );
         break;
 
-      case "CHANNEL_ERROR":
-      case "TIMED_OUT":
+      case 'CHANNEL_ERROR':
+      case 'TIMED_OUT':
         this.connectionHealth.isConnected = false;
         this.connectionHealth.consecutiveFailures++;
         this.metrics.connectionDrops++;
@@ -454,7 +451,7 @@ export class EnhancedRealtimeManager {
           component: 'EnhancedRealtimeManager',
           tableName,
           severity: 'high',
-          status
+          status,
         });
 
         // Enable fallback polling if configured
@@ -468,13 +465,13 @@ export class EnhancedRealtimeManager {
         }
         break;
 
-      case "CLOSED":
+      case 'CLOSED':
         this.connectionHealth.isConnected = false;
-        this.connectionHealth.quality = "disconnected";
+        this.connectionHealth.quality = 'disconnected';
         realtimeLogger.info(`Enhanced realtime connection closed`, {
           tableName,
           reason: 'normal_closure',
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         });
         break;
     }
@@ -485,7 +482,7 @@ export class EnhancedRealtimeManager {
     filter: string | undefined,
     options: EnhancedRealtimeOptions<T>,
   ): void {
-    const channelName = `${tableName}-${filter || "all"}-fallback`;
+    const channelName = `${tableName}-${filter || 'all'}-fallback`;
 
     if (this.fallbackIntervals.has(channelName)) {
       return; // Already polling
@@ -503,7 +500,7 @@ export class EnhancedRealtimeManager {
           component: 'EnhancedRealtimeManager',
           tableName,
           severity: 'medium',
-          operation: 'fallback_polling'
+          operation: 'fallback_polling',
         });
       }
     }, intervalMs);
@@ -566,11 +563,11 @@ export class EnhancedRealtimeManager {
     filter: string | undefined,
     options: EnhancedRealtimeOptions<T>,
   ): void {
-    const channelName = `${tableName}-${filter || "all"}-fallback`;
+    const channelName = `${tableName}-${filter || 'all'}-fallback`;
 
     if (
-      !this.fallbackIntervals.has(channelName) &&
-      options.fallbackPollingEnabled
+      !this.fallbackIntervals.has(channelName)
+      && options.fallbackPollingEnabled
     ) {
       this.setupFallbackPolling(tableName, filter, options);
     }
@@ -595,12 +592,11 @@ export class EnhancedRealtimeManager {
     this.metrics.retryAttempts++;
 
     // Calculate backoff with jitter
-    const backoffMs =
-      Math.min(
-        this.connectionHealth.retryBackoffMs * Math.pow(2, retryCount),
-        30000, // Max 30 seconds
-      ) *
-      (0.5 + Math.random() * 0.5); // Add jitter
+    const backoffMs = Math.min(
+      this.connectionHealth.retryBackoffMs * Math.pow(2, retryCount),
+      30000, // Max 30 seconds
+    )
+      * (0.5 + Math.random() * 0.5); // Add jitter
 
     realtimeLogger.info(
       `Retrying enhanced subscription`,
@@ -608,7 +604,7 @@ export class EnhancedRealtimeManager {
     );
 
     // Remove failed channel
-    const channelName = `${tableName}-${filter || "all"}`;
+    const channelName = `${tableName}-${filter || 'all'}`;
     const existingChannel = this.channels.get(channelName);
     if (existingChannel) {
       this.supabase.removeChannel(existingChannel);
@@ -616,7 +612,7 @@ export class EnhancedRealtimeManager {
     }
 
     // Wait before retry
-    await new Promise((resolve) => setTimeout(resolve, backoffMs));
+    await new Promise(resolve => setTimeout(resolve, backoffMs));
 
     // Retry subscription
     this.subscribeToTable(tableName, filter, options);
@@ -633,31 +629,30 @@ export class EnhancedRealtimeManager {
       const startTime = Date.now();
 
       // Test connection with a simple health check
-      const healthCheck =
-        await this.resilienceService.executeHealthcareOperation(
-          "supabase-realtime",
-          async () => {
-            // Test the Supabase connection
-            const { data, error } = await this.supabase
-              .from("health_checks")
-              .select("count")
-              .single();
+      const healthCheck = await this.resilienceService.executeHealthcareOperation(
+        'supabase-realtime',
+        async () => {
+          // Test the Supabase connection
+          const { data, error } = await this.supabase
+            .from('health_checks')
+            .select('count')
+            .single();
 
-            return !error && data !== null;
-          },
-          {
-            operation: "realtime_health_check",
-            serviceName: "supabase-realtime",
-            isEmergency: false,
-            requiresAudit: false,
-            dataClassification: "normal" as any,
-            lgpdCategories: [],
-            healthcareUseCase: "system_health" as any,
-            requiresPIIProtection: false,
-            isLifeCritical: false,
-            requiresConsent: false,
-          },
-        );
+          return !error && data !== null;
+        },
+        {
+          operation: 'realtime_health_check',
+          serviceName: 'supabase-realtime',
+          isEmergency: false,
+          requiresAudit: false,
+          dataClassification: 'normal' as any,
+          lgpdCategories: [],
+          healthcareUseCase: 'system_health' as any,
+          requiresPIIProtection: false,
+          isLifeCritical: false,
+          requiresConsent: false,
+        },
+      );
 
       const latency = Date.now() - startTime;
 
@@ -668,15 +663,15 @@ export class EnhancedRealtimeManager {
 
       // Determine connection quality
       if (latency < 100) {
-        this.connectionHealth.quality = "excellent";
+        this.connectionHealth.quality = 'excellent';
       } else if (latency < 500) {
-        this.connectionHealth.quality = "good";
+        this.connectionHealth.quality = 'good';
       } else if (latency < 1000) {
-        this.connectionHealth.quality = "fair";
+        this.connectionHealth.quality = 'fair';
       } else if (latency < 3000) {
-        this.connectionHealth.quality = "poor";
+        this.connectionHealth.quality = 'poor';
       } else {
-        this.connectionHealth.quality = "disconnected";
+        this.connectionHealth.quality = 'disconnected';
       }
 
       // Update metrics
@@ -701,10 +696,10 @@ export class EnhancedRealtimeManager {
         method: 'checkHealth',
         component: 'EnhancedRealtimeManager',
         severity: 'medium',
-        operation: 'health_check'
-        });
+        operation: 'health_check',
+      });
       this.connectionHealth.isConnected = false;
-      this.connectionHealth.quality = "disconnected";
+      this.connectionHealth.quality = 'disconnected';
       this.connectionHealth.consecutiveFailures++;
       this.metrics.isHealthy = false;
     }
@@ -714,8 +709,7 @@ export class EnhancedRealtimeManager {
     if (this.metrics.averageLatency === 0) {
       this.metrics.averageLatency = newLatency;
     } else {
-      this.metrics.averageLatency =
-        this.metrics.averageLatency * 0.9 + newLatency * 0.1;
+      this.metrics.averageLatency = this.metrics.averageLatency * 0.9 + newLatency * 0.1;
     }
   }
 
@@ -750,9 +744,7 @@ export class EnhancedRealtimeManager {
     await this.queryClient.cancelQueries({ queryKey: [tableName] });
     this.queryClient.setQueryData([tableName], (old: T[] | undefined) => {
       return (
-        old?.map((item) =>
-          item.id === updatedRecord.id ? updatedRecord : item,
-        ) || []
+        old?.map(item => item.id === updatedRecord.id ? updatedRecord : item) || []
       );
     });
     this.queryClient.setQueryData([tableName, updatedRecord.id], updatedRecord);
@@ -764,7 +756,7 @@ export class EnhancedRealtimeManager {
   ): Promise<void> {
     await this.queryClient.cancelQueries({ queryKey: [tableName] });
     this.queryClient.setQueryData([tableName], (old: T[] | undefined) => {
-      return old?.filter((item) => item.id !== deletedRecord.id) || [];
+      return old?.filter(item => item.id !== deletedRecord.id) || [];
     });
     this.queryClient.removeQueries({ queryKey: [tableName, deletedRecord.id] });
   }
@@ -776,9 +768,7 @@ export class EnhancedRealtimeManager {
     // Force immediate refetch for critical data
     await Promise.all([
       this.queryClient.invalidateQueries({ queryKey: [tableName] }),
-      ...(queryKeys || []).map((queryKey) =>
-        this.queryClient.invalidateQueries({ queryKey }),
-      ),
+      ...(queryKeys || []).map(queryKey => this.queryClient.invalidateQueries({ queryKey })),
     ]);
   }
 
@@ -788,7 +778,7 @@ export class EnhancedRealtimeManager {
   ): Promise<void> {
     realtimeLogger.warn(`Attempting emergency recovery`, {
       tableName,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
 
     // Force immediate cache invalidation
@@ -835,7 +825,7 @@ export class EnhancedRealtimeManager {
       this.clearFallbackPolling(channelName);
       realtimeLogger.info(`Unsubscribed from enhanced realtime channel`, {
         channelName,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
     }
   }
@@ -846,7 +836,7 @@ export class EnhancedRealtimeManager {
       this.clearFallbackPolling(name);
       realtimeLogger.info(`Unsubscribed from all enhanced realtime channels`, {
         channelName: name,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
     });
     this.channels.clear();

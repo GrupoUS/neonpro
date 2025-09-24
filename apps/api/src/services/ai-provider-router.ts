@@ -14,13 +14,7 @@
  * - PII protection and data sanitization
  */
 
-import {
-  
-  HealthcareAIOptimizationUtils,
-  HealthcareAIUseCase,
-  
-  
-} from '@neonpro/shared';
+import { HealthcareAIOptimizationUtils, HealthcareAIUseCase } from '@neonpro/shared';
 import { AuditTrailService } from './audit-trail';
 import { SemanticCacheService } from './semantic-cache';
 
@@ -31,7 +25,6 @@ import { AISecurityManager } from './ai-provider/security';
 import {
   ProviderConfig,
   ProviderHealthCheck,
-  
   RoutingRequest,
   RoutingResponse,
   RoutingStrategy,

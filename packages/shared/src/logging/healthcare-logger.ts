@@ -1,6 +1,6 @@
 /**
  * Healthcare Logging Configuration
- * 
+ *
  * Provides structured logging for healthcare applications with LGPD compliance,
  * sensitive data filtering, and proper log levels for production environments.
  */
@@ -50,7 +50,7 @@ const sensitivePatterns = [
 function redactSensitiveData(message: string): string {
   let redactedMessage = message;
   sensitivePatterns.forEach(pattern => {
-    redactedMessage = redactedMessage.replace(pattern, (match) => {
+    redactedMessage = redactedMessage.replace(pattern, match => {
       return match.replace(/"[^"]+"/g, '"[REDACTED]"');
     });
   });
@@ -63,27 +63,27 @@ const healthcareFormat = format.combine(
     format: 'YYYY-MM-DD HH:mm:ss.SSS',
   }),
   format.errors({ stack: true }),
-  format((info) => {
+  format(info => {
     // Redact sensitive data from the message
     if (info.message && typeof info.message === 'string') {
       info.message = redactSensitiveData(info.message);
     }
-    
+
     // Redact sensitive data from metadata
     if (info.metadata) {
       info.metadata = JSON.parse(
-        redactSensitiveData(JSON.stringify(info.metadata))
+        redactSensitiveData(JSON.stringify(info.metadata)),
       );
     }
-    
+
     // Add healthcare-specific metadata
     info.service = info.service || 'unknown';
     info.environment = process.env.NODE_ENV || 'development';
     info.version = process.env.npm_package_version || '1.0.0';
-    
+
     return info;
   })(),
-  format.json()
+  format.json(),
 );
 
 // Console format for development
@@ -93,8 +93,10 @@ const consoleFormat = format.combine(
   format.printf(({ timestamp, level, message, service, ...meta }) => {
     const serviceTag = service ? `[${service}]` : '';
     const metaStr = Object.keys(meta).length > 0 ? ` ${JSON.stringify(meta)}` : '';
-    return `${timestamp} ${level}: ${serviceTag} ${redactSensitiveData(String(message || ''))}${metaStr}`;
-  })
+    return `${timestamp} ${level}: ${serviceTag} ${
+      redactSensitiveData(String(message || ''))
+    }${metaStr}`;
+  }),
 );
 
 // Create logger factory for different services
@@ -107,7 +109,7 @@ export function createHealthcareLogger(service: string, options: winston.LoggerO
       new winston.transports.Console({
         level: 'debug',
         format: consoleFormat,
-      })
+      }),
     );
   } else {
     // Production console transport (errors only)
@@ -115,7 +117,7 @@ export function createHealthcareLogger(service: string, options: winston.LoggerO
       new winston.transports.Console({
         level: 'error',
         format: consoleFormat,
-      })
+      }),
     );
   }
 
@@ -127,7 +129,7 @@ export function createHealthcareLogger(service: string, options: winston.LoggerO
       format: healthcareFormat,
       maxsize: 5242880, // 5MB
       maxFiles: 5,
-    })
+    }),
   );
 
   // Combined logs file
@@ -138,7 +140,7 @@ export function createHealthcareLogger(service: string, options: winston.LoggerO
       format: healthcareFormat,
       maxsize: 5242880, // 5MB
       maxFiles: 5,
-    })
+    }),
   );
 
   // Audit log for healthcare compliance
@@ -149,7 +151,7 @@ export function createHealthcareLogger(service: string, options: winston.LoggerO
       format: healthcareFormat,
       maxsize: 10485760, // 10MB
       maxFiles: 10,
-    })
+    }),
   );
 
   return winston.createLogger({
@@ -192,7 +194,7 @@ export function logAuditEvent(
   action: string,
   resource: string,
   userId?: string,
-  metadata?: Record<string, any>
+  metadata?: Record<string, any>,
 ): void {
   auditLogger.log('audit', 'Healthcare audit event', {
     action,
@@ -207,7 +209,7 @@ export function logAuditEvent(
 export function logHealthcareError(
   service: string,
   error: Error,
-  context?: Record<string, any>
+  context?: Record<string, any>,
 ): void {
   const logger = createHealthcareLogger(service);
   logger.error('Healthcare service error', {
@@ -225,7 +227,7 @@ export function logPerformanceMetric(
   service: string,
   operation: string,
   durationMs: number,
-  metadata?: Record<string, any>
+  metadata?: Record<string, any>,
 ): void {
   const logger = createHealthcareLogger(service);
   logger.info('Performance metric', {

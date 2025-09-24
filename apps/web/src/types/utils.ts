@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 // Utility types for common patterns
 export type Optional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
@@ -15,18 +15,15 @@ export type DeepReadonly<T> = {
 };
 
 // Extract error type from Zod schema
-export type ErrorType<T> =
-  T extends z.ZodSchema<infer U> ? z.ZodError<U> : never;
+export type ErrorType<T> = T extends z.ZodSchema<infer U> ? z.ZodError<U> : never;
 
 // Extract success type from Result
-export type SuccessType<T> = T extends { success: true; data: infer U }
-  ? U
+export type SuccessType<T> = T extends { success: true; data: infer U } ? U
   : never;
 export type ErrorTypeFromResult<T> = T extends {
   success: false;
   error: infer E;
-}
-  ? E
+} ? E
   : never;
 
 // API response types
@@ -74,7 +71,7 @@ export interface Appointment {
   patientId: string;
   doctorId: string;
   scheduledAt: Date;
-  status: "scheduled" | "confirmed" | "cancelled" | "completed" | "no-show";
+  status: 'scheduled' | 'confirmed' | 'cancelled' | 'completed' | 'no-show';
   type: string;
   duration: number;
   notes?: string;
@@ -102,31 +99,29 @@ export interface AsyncState<T = unknown, E = Error> {
 // Query key factory for React Query
 export const QueryKeyFactory = {
   patients: {
-    all: ["patients"] as const,
-    lists: () => [...QueryKeyFactory.patients.all, "list"] as const,
+    all: ['patients'] as const,
+    lists: () => [...QueryKeyFactory.patients.all, 'list'] as const,
     list: (filters: Record<string, unknown>) =>
       [...QueryKeyFactory.patients.lists(), filters] as const,
-    details: () => [...QueryKeyFactory.patients.all, "detail"] as const,
-    detail: (id: string) =>
-      [...QueryKeyFactory.patients.details(), id] as const,
+    details: () => [...QueryKeyFactory.patients.all, 'detail'] as const,
+    detail: (id: string) => [...QueryKeyFactory.patients.details(), id] as const,
   },
 
   appointments: {
-    all: ["appointments"] as const,
-    lists: () => [...QueryKeyFactory.appointments.all, "list"] as const,
+    all: ['appointments'] as const,
+    lists: () => [...QueryKeyFactory.appointments.all, 'list'] as const,
     list: (filters: Record<string, unknown>) =>
       [...QueryKeyFactory.appointments.lists(), filters] as const,
-    details: () => [...QueryKeyFactory.appointments.all, "detail"] as const,
-    detail: (id: string) =>
-      [...QueryKeyFactory.appointments.details(), id] as const,
+    details: () => [...QueryKeyFactory.appointments.all, 'detail'] as const,
+    detail: (id: string) => [...QueryKeyFactory.appointments.details(), id] as const,
   },
 
   doctors: {
-    all: ["doctors"] as const,
-    lists: () => [...QueryKeyFactory.doctors.all, "list"] as const,
+    all: ['doctors'] as const,
+    lists: () => [...QueryKeyFactory.doctors.all, 'list'] as const,
     list: (filters: Record<string, unknown>) =>
       [...QueryKeyFactory.doctors.lists(), filters] as const,
-    details: () => [...QueryKeyFactory.doctors.all, "detail"] as const,
+    details: () => [...QueryKeyFactory.doctors.all, 'detail'] as const,
     detail: (id: string) => [...QueryKeyFactory.doctors.details(), id] as const,
   },
 } as const;
@@ -144,14 +139,14 @@ export type EventHandler<T extends AppEvent = AppEvent> = (event: T) => void;
 // Utility functions
 export const createApiResponse = <T>(
   data: T,
-  meta?: ApiResponse<T>["meta"],
+  meta?: ApiResponse<T>['meta'],
 ): ApiResponse<T> => ({
   success: true,
   data,
   meta: {
     timestamp: new Date().toISOString(),
     requestId: crypto.randomUUID(),
-    version: "1.0.0",
+    version: '1.0.0',
     ...meta,
   },
 });
@@ -170,14 +165,14 @@ export const createApiError = (
   meta: {
     timestamp: new Date().toISOString(),
     requestId: crypto.randomUUID(),
-    version: "1.0.0",
+    version: '1.0.0',
   },
 });
 
 export const createPaginatedResponse = <T>(
   data: T[],
-  pagination: PaginatedResponse<T>["pagination"],
-  meta?: PaginatedResponse<T>["meta"],
+  pagination: PaginatedResponse<T>['pagination'],
+  meta?: PaginatedResponse<T>['meta'],
 ): PaginatedResponse<T> => ({
   success: true,
   data,
@@ -185,7 +180,7 @@ export const createPaginatedResponse = <T>(
   meta: {
     timestamp: new Date().toISOString(),
     requestId: crypto.randomUUID(),
-    version: "1.0.0",
+    version: '1.0.0',
     ...meta,
   },
 });
@@ -212,7 +207,7 @@ export class EventEmitter<TEvents extends Record<string, unknown>> {
   }
 
   emit<K extends keyof TEvents>(event: K, payload: TEvents[K]): void {
-    this.listeners.get(event)?.forEach((listener) => listener(payload));
+    this.listeners.get(event)?.forEach(listener => listener(payload));
   }
 
   removeAllListeners<K extends keyof TEvents>(event?: K): void {

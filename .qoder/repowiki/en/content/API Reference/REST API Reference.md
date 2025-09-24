@@ -608,10 +608,10 @@ async function getPatients(clinicId, token) {
     {
       method: 'GET',
       headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      }
-    }
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    },
   );
   return await response.json();
 }
@@ -621,10 +621,10 @@ async function createPatient(patientData, token) {
   const response = await fetch('https://api.neonpro.health/v1/patients', {
     method: 'POST',
     headers: {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
     },
-    body: JSON.stringify(patientData)
+    body: JSON.stringify(patientData),
   });
   return await response.json();
 }
@@ -638,10 +638,10 @@ async function createAppointment(appointmentData, token) {
   const response = await fetch('https://api.neonpro.health/v1/appointments', {
     method: 'POST',
     headers: {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
     },
-    body: JSON.stringify(appointmentData)
+    body: JSON.stringify(appointmentData),
   });
   return await response.json();
 }
@@ -653,9 +653,9 @@ async function getPatientAppointments(patientId, token) {
     {
       method: 'GET',
       headers: {
-        'Authorization': `Bearer ${token}`
-      }
-    }
+        Authorization: `Bearer ${token}`,
+      },
+    },
   );
   return await response.json();
 }
@@ -669,10 +669,10 @@ async function createInvoice(invoiceData, token) {
   const response = await fetch('https://api.neonpro.health/billing/invoices', {
     method: 'POST',
     headers: {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
     },
-    body: JSON.stringify(invoiceData)
+    body: JSON.stringify(invoiceData),
   });
   return await response.json();
 }
@@ -684,11 +684,11 @@ async function processPayment(invoiceId, paymentData, token) {
     {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
       },
-      body: JSON.stringify(paymentData)
-    }
+      body: JSON.stringify(paymentData),
+    },
   );
   return await response.json();
 }

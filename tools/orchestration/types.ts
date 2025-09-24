@@ -3,17 +3,17 @@
  */
 
 export type AgentCoordinationPattern =
-  | "parallel"
-  | "sequential"
-  | "hierarchical"
-  | "event-driven"
-  | "consensus";
+  | 'parallel'
+  | 'sequential'
+  | 'hierarchical'
+  | 'event-driven'
+  | 'consensus';
 
 export type WorkflowType =
-  | "standard-tdd"
-  | "security-critical"
-  | "performance-focused"
-  | "healthcare-compliant";
+  | 'standard-tdd'
+  | 'security-critical'
+  | 'performance-focused'
+  | 'healthcare-compliant';
 
 export interface ToolExecutionRequest {
   id: string;
@@ -22,7 +22,7 @@ export interface ToolExecutionRequest {
   parameters: Record<string, any>;
   context: FeatureContext;
   timeout: number;
-  priority: "low" | "medium" | "high";
+  priority: 'low' | 'medium' | 'high';
   retries: number;
   dependencies?: string[];
   resources?: {
@@ -68,7 +68,7 @@ export interface ResultAnalysis {
   recommendations: string[];
   performanceScore: number;
   riskAssessment: {
-    level: "low" | "medium" | "high";
+    level: 'low' | 'medium' | 'high';
     factors: string[];
   };
 }
@@ -79,7 +79,7 @@ export interface AgentCapability {
   description: string;
   capabilities: string[];
   specializations: string[];
-  priority: "primary" | "secondary" | "tertiary";
+  priority: 'primary' | 'secondary' | 'tertiary';
   phases: TDDPhase[];
   triggers: string[];
   configuration: Record<string, any>;
@@ -93,8 +93,8 @@ export interface AgentCapability {
 export interface OrchestrationContext {
   featureName: string;
   featureType: string;
-  complexity: "low" | "medium" | "high";
-  criticalityLevel: "low" | "medium" | "high" | "critical";
+  complexity: 'low' | 'medium' | 'high';
+  criticalityLevel: 'low' | 'medium' | 'high' | 'critical';
   requirements: string[];
   healthcareCompliance: {
     required: boolean;
@@ -105,19 +105,19 @@ export interface OrchestrationContext {
 }
 
 export type AgentType =
-  | "tdd-orchestrator"
-  | "architect-review"
-  | "code-reviewer"
-  | "security-auditor"
-  | "test"
-  | "test-auditor"
-  | "custom-agent"
-  | "tertiary-agent"
-  | "non-existent-agent";
+  | 'tdd-orchestrator'
+  | 'architect-review'
+  | 'code-reviewer'
+  | 'security-auditor'
+  | 'test'
+  | 'test-auditor'
+  | 'custom-agent'
+  | 'tertiary-agent'
+  | 'non-existent-agent';
 
 export type AgentName = AgentType;
 
-export type TDDPhase = "red" | "green" | "refactor";
+export type TDDPhase = 'red' | 'green' | 'refactor';
 
 export interface AgentStats {
   executionCount: number;
@@ -207,7 +207,7 @@ export interface OrchestrationMetrics {
 export interface SystemStatus {
   system: string;
   version: string;
-  status: "ready" | "busy" | "error";
+  status: 'ready' | 'busy' | 'error';
   components: {
     orchestrator: string;
     agentRegistry: string;
@@ -293,7 +293,7 @@ export interface FeatureContext {
   name: string;
   description: string;
   domain: string[];
-  complexity: "low" | "medium" | "high";
+  complexity: 'low' | 'medium' | 'high';
   requirements: string[];
   acceptance?: string[];
   healthcareCompliance?: boolean;

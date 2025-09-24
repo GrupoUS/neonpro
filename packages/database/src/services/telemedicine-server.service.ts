@@ -4,36 +4,36 @@
  * with CFM compliance, LGPD privacy, and comprehensive audit trails
  */
 
-import express from "express";
-import { createServer } from "http";
-import cors from "cors";
-import helmet from "helmet";
-import rateLimit from "express-rate-limit";
+import cors from 'cors';
+import express from 'express';
+import rateLimit from 'express-rate-limit';
+import helmet from 'helmet';
+import { createServer } from 'http';
 
 // Import WebRTC services
-import { WebRTCSignalingServer } from "./webrtc-signaling.service";
-import { WebRTCSessionService } from "./webrtc-session.service";
-import { CFMComplianceService } from "./cfm-compliance.service";
-import { PatientIdentityService } from "./patient-identity.service";
-import { MedicalLicenseService } from "./medical-license.service";
-import { winstonLogger, logHealthcareError } from "../../../shared/src/logging/healthcare-logger";
+import { logHealthcareError, winstonLogger } from '../../../shared/src/logging/healthcare-logger';
+import { CFMComplianceService } from './cfm-compliance.service';
+import { MedicalLicenseService } from './medical-license.service';
+import { PatientIdentityService } from './patient-identity.service';
+import { WebRTCSessionService } from './webrtc-session.service';
+import { WebRTCSignalingServer } from './webrtc-signaling.service';
 
 interface TelemedicineServerConfig {
   port: number;
   signalingPort: number;
-  environment: "development" | "staging" | "production";
+  environment: 'development' | 'staging' | 'production';
   corsOrigins: string[];
   enableRecording: boolean;
   enableQualityMonitoring: boolean;
   maxSessionDuration: number; // in minutes
-  complianceLevel: "basic" | "enhanced" | "full";
+  complianceLevel: 'basic' | 'enhanced' | 'full';
 }
 
 interface SessionRequest {
   sessionId: string;
   patientId: string;
   physicianId: string;
-  sessionType: "consultation" | "follow_up" | "emergency" | "second_opinion";
+  sessionType: 'consultation' | 'follow_up' | 'emergency' | 'second_opinion';
   scheduledAt: Date;
   estimatedDuration: number;
   specialtyCode?: string;
@@ -99,11 +99,11 @@ export class TelemedicineServer {
       helmet({
         contentSecurityPolicy: {
           directives: {
-            defaultSrc: ["'self'"],
-            scriptSrc: ["'self'", "'unsafe-inline'"],
-            styleSrc: ["'self'", "'unsafe-inline'"],
-            mediaSrc: ["'self'", "blob:", "data:"],
-            connectSrc: ["'self'", "ws:", "wss:"],
+            defaultSrc: ['\'self\''],
+            scriptSrc: ['\'self\'', '\'unsafe-inline\''],
+            styleSrc: ['\'self\'', '\'unsafe-inline\''],
+            mediaSrc: ['\'self\'', 'blob:', 'data:'],
+            connectSrc: ['\'self\'', 'ws:', 'wss:'],
           },
         },
         hsts: {
@@ -119,45 +119,45 @@ export class TelemedicineServer {
       cors({
         origin: this.config.corsOrigins,
         credentials: true,
-        methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-        allowedHeaders: ["Content-Type", "Authorization", "X-Session-ID"],
+        methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+        allowedHeaders: ['Content-Type', 'Authorization', 'X-Session-ID'],
       }),
     );
 
     // Rate limiting
     const limiter = rateLimit({
       windowMs: 15 * 60 * 1000, // 15 minutes
-      max: this.config.environment === "production" ? 100 : 1000,
-      message: "Too many requests from this IP",
+      max: this.config.environment === 'production' ? 100 : 1000,
+      message: 'Too many requests from this IP',
       standardHeaders: true,
       legacyHeaders: false,
     });
-    this.app.use("/api/", limiter);
+    this.app.use('/api/', limiter);
 
     // Body parsing
-    this.app.use(express.json({ limit: "10mb" }));
+    this.app.use(express.json({ limit: '10mb' }));
     this.app.use(express.urlencoded({ extended: true }));
 
     // Request logging for compliance
     this.app.use((req, res, next) => {
-      const sessionId = req.headers["x-session-id"] as string;
+      const sessionId = req.headers['x-session-id'] as string;
 
       if (sessionId) {
         // Log API request for compliance
         this.cfmService
           .logComplianceEvent({
             sessionId,
-            eventType: "api_request",
+            eventType: 'api_request',
             description: `API ${req.method} ${req.path}`,
             metadata: {
               method: req.method,
               path: req.path,
-              userAgent: req.headers["user-agent"],
+              userAgent: req.headers['user-agent'],
               ip: req.ip,
               timestamp: new Date().toISOString(),
             },
           })
-          .catch((error) => {
+          .catch(error => {
             logHealthcareError('database', error, { method: 'apiRequestLogging', sessionId });
           });
       }
@@ -171,78 +171,78 @@ export class TelemedicineServer {
    */
   private setupRoutes(): void {
     // Health check
-    this.app.get("/health", (req, res) => {
+    this.app.get('/health', (req, res) => {
       res.json({
-        status: "healthy",
+        status: 'healthy',
         timestamp: new Date().toISOString(),
         services: {
           signaling: this.signalingServer.getActiveSessionsCount(),
           activeSessions: this.activeSessions.size,
         },
-        version: "1.0.0",
+        version: '1.0.0',
       });
     });
 
     // Session management routes
-    this.app.post("/api/sessions/validate", this.validateSession.bind(this));
-    this.app.post("/api/sessions/create", this.createSession.bind(this));
-    this.app.get("/api/sessions/:sessionId", this.getSession.bind(this)); // res used
+    this.app.post('/api/sessions/validate', this.validateSession.bind(this));
+    this.app.post('/api/sessions/create', this.createSession.bind(this));
+    this.app.get('/api/sessions/:sessionId', this.getSession.bind(this)); // res used
     this.app.put(
-      "/api/sessions/:sessionId/start",
+      '/api/sessions/:sessionId/start',
       this.startSession.bind(this),
     ); // req used
-    this.app.put("/api/sessions/:sessionId/end", this.endSession.bind(this));
-    this.app.delete("/api/sessions/:sessionId", this.cancelSession.bind(this));
+    this.app.put('/api/sessions/:sessionId/end', this.endSession.bind(this));
+    this.app.delete('/api/sessions/:sessionId', this.cancelSession.bind(this));
 
     // Compliance and monitoring routes
     this.app.get(
-      "/api/sessions/:sessionId/compliance",
+      '/api/sessions/:sessionId/compliance',
       this.getComplianceStatus.bind(this),
     );
     this.app.get(
-      "/api/sessions/:sessionId/quality",
+      '/api/sessions/:sessionId/quality',
       this.getQualityMetrics.bind(this),
     );
     this.app.post(
-      "/api/sessions/:sessionId/consent",
+      '/api/sessions/:sessionId/consent',
       this.updateConsent.bind(this),
     );
 
     // Identity verification routes
     this.app.post(
-      "/api/identity/verify-patient",
+      '/api/identity/verify-patient',
       this.verifyPatientIdentity.bind(this),
     );
     this.app.post(
-      "/api/identity/verify-physician",
+      '/api/identity/verify-physician',
       this.verifyPhysicianIdentity.bind(this),
     );
     this.app.get(
-      "/api/licenses/:crm/validate",
+      '/api/licenses/:crm/validate',
       this.validateMedicalLicense.bind(this),
     );
 
     // WebRTC configuration routes
-    this.app.get("/api/webrtc/config", this.getWebRTCConfig.bind(this));
-    this.app.get("/api/webrtc/ice-servers", this.getIceServers.bind(this));
+    this.app.get('/api/webrtc/config', this.getWebRTCConfig.bind(this));
+    this.app.get('/api/webrtc/ice-servers', this.getIceServers.bind(this));
 
     // Recording and storage routes
     this.app.post(
-      "/api/sessions/:sessionId/recording/start",
+      '/api/sessions/:sessionId/recording/start',
       this.startRecording.bind(this),
     );
     this.app.post(
-      "/api/sessions/:sessionId/recording/stop",
+      '/api/sessions/:sessionId/recording/stop',
       this.stopRecording.bind(this),
     );
     this.app.get(
-      "/api/sessions/:sessionId/recording/download",
+      '/api/sessions/:sessionId/recording/download',
       this.downloadRecording.bind(this),
     );
 
     // Analytics and reporting routes
     this.app.get(
-      "/api/compliance/audit-trail/:sessionId",
+      '/api/compliance/audit-trail/:sessionId',
       this.getAuditTrail.bind(this),
     );
   }
@@ -268,26 +268,24 @@ export class TelemedicineServer {
       };
 
       // Validate patient identity - using verifyPatientIdentity method
-      const patientValidation =
-        await this.identityService.verifyPatientIdentity(
-          sessionRequest.patientId,
-          [], // Empty documents array for basic validation
-          false, // No biometric verification
-        );
+      const patientValidation = await this.identityService.verifyPatientIdentity(
+        sessionRequest.patientId,
+        [], // Empty documents array for basic validation
+        false, // No biometric verification
+      );
       if (patientValidation.riskScore > 50) {
-        result.errors.push("Patient identity verification failed");
+        result.errors.push('Patient identity verification failed');
         result.isValid = false;
       }
 
       // Validate physician license - using verifyMedicalLicense method
-      const physicianValidation =
-        await this.licenseService.verifyMedicalLicense(
-          sessionRequest.physicianId, // Using physicianId as CFM number
-          "SP", // Default state - should be extracted from physician data
-          sessionRequest.specialtyCode,
-        );
-      if (physicianValidation.cfmRegistration.registrationStatus !== "active") {
-        result.errors.push("Physician license is not active");
+      const physicianValidation = await this.licenseService.verifyMedicalLicense(
+        sessionRequest.physicianId, // Using physicianId as CFM number
+        'SP', // Default state - should be extracted from physician data
+        sessionRequest.specialtyCode,
+      );
+      if (physicianValidation.cfmRegistration.registrationStatus !== 'active') {
+        result.errors.push('Physician license is not active');
         result.isValid = false;
       }
 
@@ -296,27 +294,24 @@ export class TelemedicineServer {
         appointment_id: sessionRequest.sessionId,
         patient_id: sessionRequest.patientId,
         cfm_professional_crm: sessionRequest.physicianId,
-        cfm_professional_state: "SP",
-        patient_consent_obtained:
-          sessionRequest.consentStatus.patient &&
-          sessionRequest.consentStatus.physician,
+        cfm_professional_state: 'SP',
+        patient_consent_obtained: sessionRequest.consentStatus.patient
+          && sessionRequest.consentStatus.physician,
         recording_consent_required: sessionRequest.requiresRecording,
-        data_retention_period: "20 years",
+        data_retention_period: '20 years',
       });
-      result.complianceStatus.cfm =
-        cfmCompliance.complianceStatus.complianceScore >= 80;
+      result.complianceStatus.cfm = cfmCompliance.complianceStatus.complianceScore >= 80;
 
       // Check LGPD consent
       if (
-        !sessionRequest.consentStatus.patient ||
-        !sessionRequest.consentStatus.physician
+        !sessionRequest.consentStatus.patient
+        || !sessionRequest.consentStatus.physician
       ) {
-        result.errors.push("Required consents not obtained");
+        result.errors.push('Required consents not obtained');
         result.isValid = false;
       }
-      result.complianceStatus.lgpd =
-        sessionRequest.consentStatus.patient &&
-        sessionRequest.consentStatus.physician;
+      result.complianceStatus.lgpd = sessionRequest.consentStatus.patient
+        && sessionRequest.consentStatus.physician;
 
       // ANVISA compliance (simplified for demo)
       result.complianceStatus.anvisa = true;
@@ -332,8 +327,8 @@ export class TelemedicineServer {
     } catch (error) {
       logHealthcareError('database', error, { method: 'validateSession' });
       res.status(500).json({
-        error: "Session validation failed",
-        message: error instanceof Error ? error.message : "Unknown error",
+        error: 'Session validation failed',
+        message: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   }
@@ -369,8 +364,8 @@ export class TelemedicineServer {
       // Log compliance event
       await this.cfmService.logComplianceEvent({
         sessionId: webrtcSession.sessionId,
-        eventType: "session_created",
-        description: "Telemedicine session created",
+        eventType: 'session_created',
+        description: 'Telemedicine session created',
         metadata: {
           patientId: sessionRequest.patientId,
           sessionType: sessionRequest.sessionType,
@@ -380,7 +375,7 @@ export class TelemedicineServer {
 
       res.status(201).json({
         sessionId: webrtcSession.sessionId,
-        status: "created",
+        status: 'created',
         signalingUrl: `ws://localhost:${this.config.signalingPort}`,
         iceServers: await this.getIceServersConfig(),
         compliance: {
@@ -392,8 +387,8 @@ export class TelemedicineServer {
     } catch (error) {
       logHealthcareError('database', error, { method: 'createSession' });
       res.status(500).json({
-        error: "Failed to create session",
-        message: error instanceof Error ? error.message : "Unknown error",
+        error: 'Failed to create session',
+        message: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   }
@@ -408,10 +403,9 @@ export class TelemedicineServer {
     try {
       const { sessionId } = req.params;
 
-      const sessionDetails =
-        await this.webrtcService.getSessionDetails(sessionId);
+      const sessionDetails = await this.webrtcService.getSessionDetails(sessionId);
       if (!sessionDetails) {
-        res.status(404).json({ error: "Session not found" });
+        res.status(404).json({ error: 'Session not found' });
         return;
       }
 
@@ -424,10 +418,13 @@ export class TelemedicineServer {
         ...(activeSession && { requestDetails: activeSession }),
       });
     } catch (error) {
-      logHealthcareError('database', error, { method: 'getSession', sessionId: req.params.sessionId });
+      logHealthcareError('database', error, {
+        method: 'getSession',
+        sessionId: req.params.sessionId,
+      });
       res.status(500).json({
-        error: "Failed to get session",
-        message: error instanceof Error ? error.message : "Unknown error",
+        error: 'Failed to get session',
+        message: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   }
@@ -447,20 +444,23 @@ export class TelemedicineServer {
       // Log compliance event
       await this.cfmService.logComplianceEvent({
         sessionId,
-        eventType: "session_started",
-        description: "Telemedicine session started",
+        eventType: 'session_started',
+        description: 'Telemedicine session started',
         metadata: {
           startedAt: new Date().toISOString(),
-          initiatedBy: req.headers["user-id"] as string,
+          initiatedBy: req.headers['user-id'] as string,
         },
       });
 
       res.json(result);
     } catch (error) {
-      logHealthcareError('database', error, { method: 'startSession', sessionId: req.params.sessionId });
+      logHealthcareError('database', error, {
+        method: 'startSession',
+        sessionId: req.params.sessionId,
+      });
       res.status(500).json({
-        error: "Failed to start session",
-        message: error instanceof Error ? error.message : "Unknown error",
+        error: 'Failed to start session',
+        message: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   }
@@ -478,7 +478,7 @@ export class TelemedicineServer {
 
       const result = await this.webrtcService.endSession(
         sessionId,
-        String(reason ?? "completed"),
+        String(reason ?? 'completed'),
       );
 
       // Remove from active sessions
@@ -487,22 +487,25 @@ export class TelemedicineServer {
       // Log compliance event
       await this.cfmService.logComplianceEvent({
         sessionId,
-        eventType: "session_ended",
-        description: "Telemedicine session ended",
+        eventType: 'session_ended',
+        description: 'Telemedicine session ended',
         metadata: {
           endedAt: new Date().toISOString(),
           reason,
           summary,
-          endedBy: req.headers["user-id"] as string,
+          endedBy: req.headers['user-id'] as string,
         },
       });
 
       res.json(result);
     } catch (error) {
-      logHealthcareError('database', error, { method: 'endSession', sessionId: req.params.sessionId });
+      logHealthcareError('database', error, {
+        method: 'endSession',
+        sessionId: req.params.sessionId,
+      });
       res.status(500).json({
-        error: "Failed to end session",
-        message: error instanceof Error ? error.message : "Unknown error",
+        error: 'Failed to end session',
+        message: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   }
@@ -526,21 +529,24 @@ export class TelemedicineServer {
       // Log compliance event
       await this.cfmService.logComplianceEvent({
         sessionId,
-        eventType: "session_cancelled",
-        description: "Telemedicine session cancelled",
+        eventType: 'session_cancelled',
+        description: 'Telemedicine session cancelled',
         metadata: {
           cancelledAt: new Date().toISOString(),
           reason,
-          cancelledBy: req.headers["user-id"] as string,
+          cancelledBy: req.headers['user-id'] as string,
         },
       });
 
       res.json(result);
     } catch (error) {
-      logHealthcareError('database', error, { method: 'cancelSession', sessionId: req.params.sessionId });
+      logHealthcareError('database', error, {
+        method: 'cancelSession',
+        sessionId: req.params.sessionId,
+      });
       res.status(500).json({
-        error: "Failed to cancel session",
-        message: error instanceof Error ? error.message : "Unknown error",
+        error: 'Failed to cancel session',
+        message: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   }
@@ -559,10 +565,13 @@ export class TelemedicineServer {
 
       res.json(complianceStatus);
     } catch (error) {
-      logHealthcareError('database', error, { method: 'getComplianceStatus', sessionId: req.params.sessionId });
+      logHealthcareError('database', error, {
+        method: 'getComplianceStatus',
+        sessionId: req.params.sessionId,
+      });
       res.status(500).json({
-        error: "Failed to get compliance status",
-        message: error instanceof Error ? error.message : "Unknown error",
+        error: 'Failed to get compliance status',
+        message: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   }
@@ -577,15 +586,17 @@ export class TelemedicineServer {
     try {
       const { sessionId } = req.params;
 
-      const qualityMetrics =
-        await this.webrtcService.getQualityMetrics(sessionId);
+      const qualityMetrics = await this.webrtcService.getQualityMetrics(sessionId);
 
       res.json(qualityMetrics);
     } catch (error) {
-      logHealthcareError('database', error, { method: 'getQualityMetrics', sessionId: req.params.sessionId });
+      logHealthcareError('database', error, {
+        method: 'getQualityMetrics',
+        sessionId: req.params.sessionId,
+      });
       res.status(500).json({
-        error: "Failed to get quality metrics",
-        message: error instanceof Error ? error.message : "Unknown error",
+        error: 'Failed to get quality metrics',
+        message: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   }
@@ -603,12 +614,12 @@ export class TelemedicineServer {
 
       // Update consent in database
       const { error } = await this.webrtcService.supabase
-        .from("telemedicine_sessions")
+        .from('telemedicine_sessions')
         .update({
           lgpd_compliant: granted === true,
           updated_at: new Date().toISOString(),
         })
-        .eq("id", sessionId);
+        .eq('id', sessionId);
 
       if (error) {
         throw new Error(`Failed to update consent: ${error.message}`);
@@ -616,15 +627,18 @@ export class TelemedicineServer {
 
       res.json({
         success: true,
-        message: "Consent updated successfully",
+        message: 'Consent updated successfully',
         sessionId,
         consentGiven: granted === true,
       });
     } catch (error) {
-      logHealthcareError('database', error, { method: 'updateConsent', sessionId: req.params.sessionId });
+      logHealthcareError('database', error, {
+        method: 'updateConsent',
+        sessionId: req.params.sessionId,
+      });
       res.status(500).json({
-        error: "Failed to update consent",
-        message: error instanceof Error ? error.message : "Unknown error",
+        error: 'Failed to update consent',
+        message: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   }
@@ -647,10 +661,13 @@ export class TelemedicineServer {
 
       res.json(verification);
     } catch (error) {
-      logHealthcareError('database', error, { method: 'verifyPatientIdentity', patientId: req.body.patientId });
+      logHealthcareError('database', error, {
+        method: 'verifyPatientIdentity',
+        patientId: req.body.patientId,
+      });
       res.status(500).json({
-        error: "Identity verification failed",
-        message: error instanceof Error ? error.message : "Unknown error",
+        error: 'Identity verification failed',
+        message: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   }
@@ -673,10 +690,13 @@ export class TelemedicineServer {
 
       res.json(verification);
     } catch (error) {
-      logHealthcareError('database', error, { method: 'verifyPhysicianIdentity', physicianId: req.body.physicianId });
+      logHealthcareError('database', error, {
+        method: 'verifyPhysicianIdentity',
+        physicianId: req.body.physicianId,
+      });
       res.status(500).json({
-        error: "Identity verification failed",
-        message: error instanceof Error ? error.message : "Unknown error",
+        error: 'Identity verification failed',
+        message: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   }
@@ -693,16 +713,19 @@ export class TelemedicineServer {
 
       const validation = await this.licenseService.verifyMedicalLicense(
         crm,
-        "SP",
+        'SP',
         undefined,
       );
 
       res.json(validation);
     } catch (error) {
-      logHealthcareError('database', error, { method: 'validateMedicalLicense', crm: req.params.crm });
+      logHealthcareError('database', error, {
+        method: 'validateMedicalLicense',
+        crm: req.params.crm,
+      });
       res.status(500).json({
-        error: "License validation failed",
-        message: error instanceof Error ? error.message : "Unknown error",
+        error: 'License validation failed',
+        message: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   }
@@ -717,9 +740,9 @@ export class TelemedicineServer {
     try {
       const config = {
         iceServers: await this.getIceServersConfig(),
-        sdpSemantics: "unified-plan",
-        bundlePolicy: "max-bundle",
-        rtcpMuxPolicy: "require",
+        sdpSemantics: 'unified-plan',
+        bundlePolicy: 'max-bundle',
+        rtcpMuxPolicy: 'require',
         iceCandidatePoolSize: 10,
         mediaConstraints: {
           video: {
@@ -739,8 +762,8 @@ export class TelemedicineServer {
     } catch (error) {
       logHealthcareError('database', error, { method: 'getWebRTCConfig' });
       res.status(500).json({
-        error: "Failed to get WebRTC config",
-        message: error instanceof Error ? error.message : "Unknown error",
+        error: 'Failed to get WebRTC config',
+        message: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   }
@@ -758,8 +781,8 @@ export class TelemedicineServer {
     } catch (error) {
       logHealthcareError('database', error, { method: 'getIceServers' });
       res.status(500).json({
-        error: "Failed to get ICE servers",
-        message: error instanceof Error ? error.message : "Unknown error",
+        error: 'Failed to get ICE servers',
+        message: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   }
@@ -776,15 +799,18 @@ export class TelemedicineServer {
 
       const result = await this.webrtcService.startRecording(
         sessionId,
-        "digital",
+        'digital',
       );
 
       res.json(result);
     } catch (error) {
-      logHealthcareError('database', error, { method: 'startRecording', sessionId: req.params.sessionId });
+      logHealthcareError('database', error, {
+        method: 'startRecording',
+        sessionId: req.params.sessionId,
+      });
       res.status(500).json({
-        error: "Failed to start recording",
-        message: error instanceof Error ? error.message : "Unknown error",
+        error: 'Failed to start recording',
+        message: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   }
@@ -803,10 +829,13 @@ export class TelemedicineServer {
 
       res.json(result);
     } catch (error) {
-      logHealthcareError('database', error, { method: 'stopRecording', sessionId: req.params.sessionId });
+      logHealthcareError('database', error, {
+        method: 'stopRecording',
+        sessionId: req.params.sessionId,
+      });
       res.status(500).json({
-        error: "Failed to stop recording",
-        message: error instanceof Error ? error.message : "Unknown error",
+        error: 'Failed to stop recording',
+        message: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   }
@@ -823,12 +852,15 @@ export class TelemedicineServer {
       void _sessionId;
 
       // This would implement secure recording download
-      res.status(501).json({ error: "Recording download not implemented" });
+      res.status(501).json({ error: 'Recording download not implemented' });
     } catch (error) {
-      logHealthcareError('database', error, { method: 'downloadRecording', sessionId: req.params.sessionId });
+      logHealthcareError('database', error, {
+        method: 'downloadRecording',
+        sessionId: req.params.sessionId,
+      });
       res.status(500).json({
-        error: "Failed to download recording",
-        message: error instanceof Error ? error.message : "Unknown error",
+        error: 'Failed to download recording',
+        message: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   }
@@ -847,10 +879,13 @@ export class TelemedicineServer {
 
       res.json(auditTrail);
     } catch (error) {
-      logHealthcareError('database', error, { method: 'getAuditTrail', sessionId: req.params.sessionId });
+      logHealthcareError('database', error, {
+        method: 'getAuditTrail',
+        sessionId: req.params.sessionId,
+      });
       res.status(500).json({
-        error: "Failed to get audit trail",
-        message: error instanceof Error ? error.message : "Unknown error",
+        error: 'Failed to get audit trail',
+        message: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   }
@@ -862,7 +897,7 @@ export class TelemedicineServer {
     // 404 handler
     this.app.use((req: express.Request, res: express.Response) => {
       res.status(404).json({
-        error: "Not found",
+        error: 'Not found',
         message: `Route ${req.method} ${req.path} not found`,
       });
     });
@@ -875,15 +910,18 @@ export class TelemedicineServer {
         res: express.Response,
         _next: express.NextFunction,
       ) => {
-        logHealthcareError('database', error, { method: 'globalErrorHandler', path: _req.path, method: _req.method });
+        logHealthcareError('database', error, {
+          method: 'globalErrorHandler',
+          path: _req.path,
+          method: _req.method,
+        });
 
         res.status(error.status || 500).json({
-          error: "Internal server error",
-          message:
-            this.config.environment === "development"
-              ? error.message
-              : "Something went wrong",
-          ...(this.config.environment === "development" && {
+          error: 'Internal server error',
+          message: this.config.environment === 'development'
+            ? error.message
+            : 'Something went wrong',
+          ...(this.config.environment === 'development' && {
             stack: error.stack,
           }),
         });
@@ -919,7 +957,7 @@ export class TelemedicineServer {
   private async getIceServersConfig(): Promise<RTCIceServer[]> {
     return [
       {
-        urls: ["stun:stun.l.google.com:19302", "stun:stun1.l.google.com:19302"],
+        urls: ['stun:stun.l.google.com:19302', 'stun:stun1.l.google.com:19302'],
       },
       // Add TURN servers for production
     ];
@@ -935,9 +973,9 @@ export class TelemedicineServer {
         undefined,
         {
           healthcare: {
-            workflowType: "system_startup",
+            workflowType: 'system_startup',
             clinicalContext: {
-              facilityId: "telemedicine-server",
+              facilityId: 'telemedicine-server',
               port: this.config.port,
               environment: this.config.environment,
               complianceLevel: this.config.complianceLevel,
@@ -951,9 +989,9 @@ export class TelemedicineServer {
         undefined,
         {
           healthcare: {
-            workflowType: "system_startup",
+            workflowType: 'system_startup',
             clinicalContext: {
-              facilityId: "signaling-server",
+              facilityId: 'signaling-server',
               port: this.config.signalingPort,
               requiresAudit: true,
             },
@@ -968,13 +1006,13 @@ export class TelemedicineServer {
    */
   public async stop(): Promise<void> {
     winstonLogger.info(
-      "Stopping Telemedicine Server...",
+      'Stopping Telemedicine Server...',
       undefined,
       {
         healthcare: {
-          workflowType: "system_shutdown",
+          workflowType: 'system_shutdown',
           clinicalContext: {
-            facilityId: "telemedicine-server",
+            facilityId: 'telemedicine-server',
             requiresAudit: true,
           },
         },
@@ -988,13 +1026,13 @@ export class TelemedicineServer {
     this.httpServer.close();
 
     winstonLogger.info(
-      "Telemedicine Server stopped",
+      'Telemedicine Server stopped',
       undefined,
       {
         healthcare: {
-          workflowType: "system_shutdown",
+          workflowType: 'system_shutdown',
           clinicalContext: {
-            facilityId: "telemedicine-server",
+            facilityId: 'telemedicine-server',
             requiresAudit: true,
           },
         },
@@ -1020,16 +1058,16 @@ export class TelemedicineServer {
 const defaultConfig: TelemedicineServerConfig = {
   port: 3002,
   signalingPort: 3001,
-  environment: (process.env.NODE_ENV as any) || "development",
+  environment: (process.env.NODE_ENV as any) || 'development',
   corsOrigins: [
-    "http://localhost:3000",
-    "http://localhost:5173",
-    process.env.FRONTEND_URL || "",
+    'http://localhost:3000',
+    'http://localhost:5173',
+    process.env.FRONTEND_URL || '',
   ].filter(Boolean),
-  enableRecording: process.env.ENABLE_RECORDING === "true",
+  enableRecording: process.env.ENABLE_RECORDING === 'true',
   enableQualityMonitoring: true,
   maxSessionDuration: 120, // 2 hours
-  complianceLevel: "full",
+  complianceLevel: 'full',
 };
 
 export const telemedicineServer = new TelemedicineServer(defaultConfig);
@@ -1039,12 +1077,12 @@ if (require.main === module) {
   telemedicineServer.start();
 
   // Graceful shutdown
-  process.on("SIGTERM", async () => {
+  process.on('SIGTERM', async () => {
     await telemedicineServer.stop();
     process.exit(0);
   });
 
-  process.on("SIGINT", async () => {
+  process.on('SIGINT', async () => {
     await telemedicineServer.stop();
     process.exit(0);
   });

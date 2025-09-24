@@ -2,32 +2,32 @@
  * Base patient schema (T084 - Code duplication removal)
  * Core patient fields used across all layers
  */
-import { z } from "zod";
+import { z } from 'zod';
 
 export const BasePatientSchema = z.object({
   id: z.string().uuid().optional(),
   name: z
     .string()
-    .min(1, "Nome é obrigatório")
-    .max(100, "Nome não pode ter mais de 100 caracteres")
-    .transform((val) => val.trim()),
-  email: z.string().email("Email inválido").optional().nullable(),
+    .min(1, 'Nome é obrigatório')
+    .max(100, 'Nome não pode ter mais de 100 caracteres')
+    .transform(val => val.trim()),
+  email: z.string().email('Email inválido').optional().nullable(),
   phone: z.string().optional().nullable(),
   gender: z
-    .enum(["male", "female", "other"], {
-      errorMap: () => ({ message: "Gênero inválido" }),
+    .enum(['male', 'female', 'other'], {
+      errorMap: () => ({ message: 'Gênero inválido' }),
     })
     .optional(),
   birthDate: z
     .string()
-    .datetime("Data de nascimento inválida")
+    .datetime('Data de nascimento inválida')
     .optional()
     .nullable(),
   status: z
-    .enum(["active", "inactive", "pending"], {
-      errorMap: () => ({ message: "Status inválido" }),
+    .enum(['active', 'inactive', 'pending'], {
+      errorMap: () => ({ message: 'Status inválido' }),
     })
-    .default("active"),
+    .default('active'),
   createdAt: z.string().datetime().optional(),
   updatedAt: z.string().datetime().optional(),
 });
@@ -38,22 +38,22 @@ export const BasePatientSchema = z.object({
 export const PatientAddressSchema = z.object({
   street: z
     .string()
-    .min(1, "Rua é obrigatória")
-    .max(100, "Rua não pode ter mais de 100 caracteres"),
-  number: z.string().min(1, "Número é obrigatório"),
+    .min(1, 'Rua é obrigatória')
+    .max(100, 'Rua não pode ter mais de 100 caracteres'),
+  number: z.string().min(1, 'Número é obrigatório'),
   complement: z.string().optional(),
   neighborhood: z
     .string()
-    .min(1, "Bairro é obrigatório")
-    .max(50, "Bairro não pode ter mais de 50 caracteres"),
+    .min(1, 'Bairro é obrigatório')
+    .max(50, 'Bairro não pode ter mais de 50 caracteres'),
   city: z
     .string()
-    .min(1, "Cidade é obrigatória")
-    .max(50, "Cidade não pode ter mais de 50 caracteres"),
-  state: z.string().length(2, "Estado deve ter 2 caracteres").toUpperCase(),
+    .min(1, 'Cidade é obrigatória')
+    .max(50, 'Cidade não pode ter mais de 50 caracteres'),
+  state: z.string().length(2, 'Estado deve ter 2 caracteres').toUpperCase(),
   cep: z
     .string()
-    .regex(/^\d{5}-\d{3}$/, "CEP inválido. Use o formato 00000-000"),
+    .regex(/^\d{5}-\d{3}$/, 'CEP inválido. Use o formato 00000-000'),
 });
 
 /**
@@ -62,20 +62,20 @@ export const PatientAddressSchema = z.object({
 export const PatientHealthInsuranceSchema = z.object({
   provider: z
     .string()
-    .min(1, "Plano de saúde é obrigatório")
-    .max(50, "Nome do plano não pode ter mais de 50 caracteres"),
+    .min(1, 'Plano de saúde é obrigatório')
+    .max(50, 'Nome do plano não pode ter mais de 50 caracteres'),
   plan: z
     .string()
-    .min(1, "Plano é obrigatório")
-    .max(30, "Nome do plano não pode ter mais de 30 caracteres"),
+    .min(1, 'Plano é obrigatório')
+    .max(30, 'Nome do plano não pode ter mais de 30 caracteres'),
   cardNumber: z
     .string()
-    .min(10, "Número do cartão inválido")
-    .max(20, "Número do cartão não pode ter mais de 20 caracteres")
+    .min(10, 'Número do cartão inválido')
+    .max(20, 'Número do cartão não pode ter mais de 20 caracteres')
     .optional(),
   validity: z
     .string()
-    .regex(/^\d{2}\/\d{4}$/, "Validade inválida. Use o formato MM/AAAA")
+    .regex(/^\d{2}\/\d{4}$/, 'Validade inválida. Use o formato MM/AAAA')
     .optional(),
 });
 
@@ -85,13 +85,13 @@ export const PatientHealthInsuranceSchema = z.object({
 export const EmergencyContactSchema = z.object({
   name: z
     .string()
-    .min(1, "Nome do contato é obrigatório")
-    .max(100, "Nome não pode ter mais de 100 caracteres"),
+    .min(1, 'Nome do contato é obrigatório')
+    .max(100, 'Nome não pode ter mais de 100 caracteres'),
   relationship: z
     .string()
-    .min(1, "Grau de parentesco é obrigatório")
-    .max(30, "Grau de parentesco não pode ter mais de 30 caracteres"),
-  phone: z.string().min(1, "Telefone do contato é obrigatório"),
+    .min(1, 'Grau de parentesco é obrigatório')
+    .max(30, 'Grau de parentesco não pode ter mais de 30 caracteres'),
+  phone: z.string().min(1, 'Telefone do contato é obrigatório'),
 });
 
 /**
@@ -101,8 +101,8 @@ export const LGPDConsentSchema = z.object({
   dataProcessing: z.boolean(),
   dataSharing: z.boolean(),
   marketing: z.boolean().default(false),
-  retentionPeriod: z.enum(["5_years", "10_years", "25_years"], {
-    errorMap: () => ({ message: "Período de retenção inválido" }),
+  retentionPeriod: z.enum(['5_years', '10_years', '25_years'], {
+    errorMap: () => ({ message: 'Período de retenção inválido' }),
   }),
   consentedAt: z.string().datetime().optional(),
   ipAddress: z.string().ip().optional(),
@@ -119,7 +119,7 @@ export const CompletePatientSchema = BasePatientSchema.extend({
   lgpdConsent: LGPDConsentSchema.optional(),
   notes: z
     .string()
-    .max(500, "Anotações não podem ter mais de 500 caracteres")
+    .max(500, 'Anotações não podem ter mais de 500 caracteres')
     .optional(),
   tags: z.array(z.string()).default([]),
   metadata: z.record(z.unknown()).optional(),

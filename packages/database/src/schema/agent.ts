@@ -2,8 +2,8 @@
 export const AgentSessionSchema = z.object({
   id: z.string().uuid(),
   user_id: z.string().uuid(),
-  agent_type: z.enum(["client", "financial", "appointment"]),
-  status: z.enum(["active", "inactive", "archived"]).default("active"),
+  agent_type: z.enum(['client', 'financial', 'appointment']),
+  status: z.enum(['active', 'inactive', 'archived']).default('active'),
   metadata: z.record(z.unknown()).default({}),
   created_at: z.date(),
   updated_at: z.date(),
@@ -15,7 +15,7 @@ export type AgentSession = z.infer<typeof AgentSessionSchema>;
 export const AgentMessageSchema = z.object({
   id: z.string().uuid(),
   session_id: z.string().uuid(),
-  _role: z.enum(["user", "assistant", "system"]),
+  _role: z.enum(['user', 'assistant', 'system']),
   content: z.string().min(1),
   metadata: z.record(z.unknown()).default({}),
   created_at: z.date(),
@@ -26,7 +26,7 @@ export type AgentMessage = z.infer<typeof AgentMessageSchema>;
 // Agent Knowledge Base Schema
 export const AgentKnowledgeBaseSchema = z.object({
   id: z.string().uuid(),
-  agent_type: z.enum(["client", "financial", "appointment"]),
+  agent_type: z.enum(['client', 'financial', 'appointment']),
   content: z.string().min(1),
   source: z.string().nullable(),
   embedding: z.array(z.number()).length(1536).nullable(),
@@ -42,8 +42,8 @@ export const AgentAnalyticsSchema = z.object({
   id: z.string().uuid(),
   session_id: z.string().uuid().nullable(),
   user_id: z.string().uuid(),
-  agent_type: z.enum(["client", "financial", "appointment"]),
-  metric_type: z.enum(["query", "response_time", "satisfaction", "error"]),
+  agent_type: z.enum(['client', 'financial', 'appointment']),
+  metric_type: z.enum(['query', 'response_time', 'satisfaction', 'error']),
   metric_value: z.number(),
   metadata: z.record(z.unknown()).default({}),
   created_at: z.date(),
@@ -55,7 +55,7 @@ export type AgentAnalytics = z.infer<typeof AgentAnalyticsSchema>;
 
 // Chat Request
 export const ChatRequestSchema = z.object({
-  agentType: z.enum(["client", "financial", "appointment"]),
+  agentType: z.enum(['client', 'financial', 'appointment']),
   message: z.string().min(1).max(2000),
   sessionId: z.string().uuid().optional(),
 });
@@ -99,7 +99,7 @@ export type KnowledgeEntryResponse = z.infer<
 >;
 
 // Agent Types
-export type AgentType = "client" | "financial" | "appointment";
+export type AgentType = 'client' | 'financial' | 'appointment';
 
 // Agent Configuration
 export interface AgentConfig {
@@ -125,7 +125,7 @@ export interface AgentContext {
 
 // Search Parameters
 export const KnowledgeSearchParamsSchema = z.object({
-  agentType: z.enum(["client", "financial", "appointment"]),
+  agentType: z.enum(['client', 'financial', 'appointment']),
   _query: z.string().min(1),
   limit: z.number().min(1).max(100).default(5),
   threshold: z.number().min(0).max(1).default(0.7),
@@ -135,11 +135,11 @@ export type KnowledgeSearchParams = z.infer<typeof KnowledgeSearchParamsSchema>;
 
 // Error Types
 export enum AgentErrorType {
-  SESSION_NOT_FOUND = "SESSION_NOT_FOUND",
-  INVALID_AGENT_TYPE = "INVALID_AGENT_TYPE",
-  PERMISSION_DENIED = "PERMISSION_DENIED",
-  QUOTA_EXCEEDED = "QUOTA_EXCEEDED",
-  PROCESSING_ERROR = "PROCESSING_ERROR",
+  SESSION_NOT_FOUND = 'SESSION_NOT_FOUND',
+  INVALID_AGENT_TYPE = 'INVALID_AGENT_TYPE',
+  PERMISSION_DENIED = 'PERMISSION_DENIED',
+  QUOTA_EXCEEDED = 'QUOTA_EXCEEDED',
+  PROCESSING_ERROR = 'PROCESSING_ERROR',
 }
 
 export const AgentErrorSchema = z.object({

@@ -249,12 +249,12 @@ export const clientRouter = t.router({
     .query(async ({ input }) => {
       return await prisma.client.findUnique({ where: { id: input.id } });
     }),
-  
+
   // ❌ Missing input validation
   getClient: t.procedure
     .query(async ({ input }) => {
       // input will be undefined
-    })
+    }),
 });
 
 // 2. Missing context
@@ -270,7 +270,7 @@ export const createProtectedRouter = () => {
       })
       .query(async ({ ctx }) => {
         return ctx.user;
-      })
+      }),
   });
 };
 ```
@@ -321,16 +321,16 @@ useEffect(() => {
 
 // 2. State mutation
 // ❌ Problem: Direct state mutation
-const updateClient = (client) => {
+const updateClient = client => {
   client.name = 'New Name'; // Direct mutation
   setClients(clients);
 };
 
 // ✅ Solution: Create new reference
 const updateClient = (clientId, newName) => {
-  setClients(prev => 
-    prev.map(client => 
-      client.id === clientId 
+  setClients(prev =>
+    prev.map(client =>
+      client.id === clientId
         ? { ...client, name: newName }
         : client
     )
@@ -473,35 +473,35 @@ document.cookie = `token=${token}; path=/; secure; httpOnly; samesite=strict`;
 // ❌ Problem: No session timeout
 const session = {
   userId: user.id,
-  token: jwt.sign({ userId: user.id }, secret)
+  token: jwt.sign({ userId: user.id }, secret),
 };
 
 // ✅ Solution: Add session timeout
 const session = {
   userId: user.id,
   token: jwt.sign(
-    { userId: user.id }, 
-    secret, 
-    { expiresIn: '24h' }
+    { userId: user.id },
+    secret,
+    { expiresIn: '24h' },
   ),
-  expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000)
+  expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
 };
 
 // 2. Concurrent session issues
 // ❌ Problem: Multiple sessions for same user
 const sessions = await db.session.findMany({
-  where: { userId: user.id }
+  where: { userId: user.id },
 });
 
 // ✅ Solution: Single active session
 const existingSession = await db.session.findFirst({
-  where: { userId: user.id, isActive: true }
+  where: { userId: user.id, isActive: true },
 });
 
 if (existingSession) {
   await db.session.update({
     where: { id: existingSession.id },
-    data: { isActive: false }
+    data: { isActive: false },
   });
 }
 
@@ -510,8 +510,8 @@ const newSession = await db.session.create({
   data: {
     userId: user.id,
     token,
-    isActive: true
-  }
+    isActive: true,
+  },
 });
 ```
 
@@ -530,7 +530,7 @@ if (user.role === 'admin') {
 const permissions = {
   admin: ['clients:create', 'clients:read', 'clients:update', 'clients:delete'],
   professional: ['clients:read', 'clients:update'],
-  receptionist: ['clients:read', 'clients:create']
+  receptionist: ['clients:read', 'clients:create'],
 };
 
 const hasPermission = (user: User, permission: string): boolean => {
@@ -546,17 +546,17 @@ app.put('/clients/:id', authMiddleware, async (req, res) => {
 // ✅ Solution: Check ownership
 app.put('/clients/:id', authMiddleware, async (req, res) => {
   const client = await prisma.client.findUnique({
-    where: { id: req.params.id }
+    where: { id: req.params.id },
   });
-  
+
   if (!client) {
     return res.status(404).json({ error: 'Client not found' });
   }
-  
+
   if (client.professionalId !== req.user.id && req.user.role !== 'admin') {
     return res.status(403).json({ error: 'Access denied' });
   }
-  
+
   // Update client
 });
 ```
@@ -572,7 +572,7 @@ app.put('/clients/:id', authMiddleware, async (req, res) => {
 // ❌ Problem: Component re-renders on every state change
 const Parent = () => {
   const [count, setCount] = useState(0);
-  
+
   return (
     <div>
       <button onClick={() => setCount(c => c + 1)}>
@@ -588,13 +588,13 @@ const ExpensiveComponent = memo(({ data }) => {
   const processedData = useMemo(() => {
     return expensiveOperation(data);
   }, [data]);
-  
+
   return <div>{processedData}</div>;
 });
 
 // 2. Large bundle size
 // ❌ Problem: Large JavaScript bundle
-import { Chart, Calendar, DatePicker } from 'heavy-library';
+import { Calendar, Chart, DatePicker } from 'heavy-library';
 
 // ✅ Solution: Code splitting and lazy loading
 const Chart = lazy(() => import('heavy-library').then(mod => ({ default: mod.Chart })));
@@ -610,7 +610,7 @@ useEffect(() => {
 
 // ✅ Solution: Use GraphQL or batch requests
 const { data, loading } = useQuery(GET_DASHBOARD_DATA, {
-  variables: { clientId }
+  variables: { clientId },
 });
 ```
 
@@ -624,7 +624,7 @@ const { data, loading } = useQuery(GET_DASHBOARD_DATA, {
 const clients = await prisma.client.findMany();
 for (const client of clients) {
   client.treatments = await prisma.treatment.findMany({
-    where: { clientId: client.id }
+    where: { clientId: client.id },
   });
 }
 
@@ -632,8 +632,8 @@ for (const client of clients) {
 const clients = await prisma.client.findMany({
   include: {
     treatments: true,
-    appointments: true
-  }
+    appointments: true,
+  },
 });
 
 // 2. No caching
@@ -648,17 +648,17 @@ const cache = new Map();
 
 app.get('/api/v1/clients', async (req, res) => {
   const cacheKey = 'clients:' + JSON.stringify(req.query);
-  
+
   if (cache.has(cacheKey)) {
     return res.json(cache.get(cacheKey));
   }
-  
+
   const clients = await prisma.client.findMany();
   cache.set(cacheKey, clients);
-  
+
   // Set cache expiration
   setTimeout(() => cache.delete(cacheKey), 5 * 60 * 1000);
-  
+
   res.json(clients);
 });
 
@@ -674,24 +674,24 @@ app.get('/api/v1/clients', async (req, res) => {
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 10;
   const offset = (page - 1) * limit;
-  
+
   const [clients, total] = await Promise.all([
     prisma.client.findMany({
       skip: offset,
       take: limit,
-      orderBy: { createdAt: 'desc' }
+      orderBy: { createdAt: 'desc' },
     }),
-    prisma.client.count()
+    prisma.client.count(),
   ]);
-  
+
   res.json({
     clients,
     pagination: {
       page,
       limit,
       total,
-      totalPages: Math.ceil(total / limit)
-    }
+      totalPages: Math.ceil(total / limit),
+    },
   });
 });
 ```
@@ -819,11 +819,11 @@ kubectl describe service service-name
 // ❌ Problem: Tests not isolated
 describe('ClientService', () => {
   let service: ClientService;
-  
+
   beforeAll(() => {
     service = new ClientService();
   });
-  
+
   it('should create client', async () => {
     // Tests might interfere with each other
   });
@@ -833,17 +833,17 @@ describe('ClientService', () => {
 describe('ClientService', () => {
   let service: ClientService;
   let prisma: PrismaClient;
-  
+
   beforeEach(async () => {
     prisma = new TestPrismaClient();
     service = new ClientService(prisma);
     await prisma.aestheticClientProfile.deleteMany();
   });
-  
+
   afterEach(async () => {
     await prisma.$disconnect();
   });
-  
+
   it('should create client', async () => {
     const client = await service.createClient(validClientData);
     expect(client).toMatchObject(validClientData);
@@ -853,14 +853,14 @@ describe('ClientService', () => {
 // 2. Mock setup issues
 // ❌ Problem: Incomplete mock setup
 jest.mock('nodemailer', () => ({
-  createTransport: jest.fn()
+  createTransport: jest.fn(),
 }));
 
 // ✅ Solution: Complete mock setup
 jest.mock('nodemailer', () => ({
   createTransport: jest.fn(() => ({
-    sendMail: jest.fn().mockResolvedValue({ messageId: 'test-id' })
-  }))
+    sendMail: jest.fn().mockResolvedValue({ messageId: 'test-id' }),
+  })),
 }));
 ```
 
@@ -888,7 +888,7 @@ describe('Client Workflow', () => {
   it('should create client', async () => {
     // Depends on client being created first
   });
-  
+
   it('should create treatment', async () => {
     // Depends on treatment being created second
   });
@@ -897,11 +897,11 @@ describe('Client Workflow', () => {
 // ✅ Solution: Independent tests or proper setup
 describe('Client Workflow', () => {
   let client: any;
-  
+
   beforeEach(async () => {
     client = await createTestClient();
   });
-  
+
   it('should create treatment', async () => {
     const treatment = await createTestTreatment(client.id);
     expect(treatment.clientId).toBe(client.id);
@@ -945,7 +945,7 @@ test('should display client list', async ({ page }) => {
 test('should display client list', async ({ page }) => {
   // Create test clients via API or setup script
   await createTestClients(5);
-  
+
   await page.goto('/clients');
   await page.waitForSelector('[data-testid="client-item"]');
   expect(page.locator('[data-testid="client-item"]')).toHaveCount(5);
@@ -966,7 +966,7 @@ const client = await prisma.aestheticClientProfile.create({
     fullName: 'Test Client',
     email: 'test@example.com',
     // Missing lgpdConsent field
-  }
+  },
 });
 
 // ✅ Solution: Require consent
@@ -976,8 +976,8 @@ const client = await prisma.aestheticClientProfile.create({
     email: 'test@example.com',
     lgpdConsent: true, // Required
     consentDate: new Date(), // When consent was given
-    consentVersion: '1.0' // Version of privacy policy
-  }
+    consentVersion: '1.0', // Version of privacy policy
+  },
 });
 
 // 2. Data retention issues
@@ -991,18 +991,18 @@ retentionDate.setFullYear(retentionDate.getFullYear() - 7); // 7 years
 const clientsToArchive = await prisma.aestheticClientProfile.findMany({
   where: {
     status: 'inactive',
-    updatedAt: { lt: retentionDate }
-  }
+    updatedAt: { lt: retentionDate },
+  },
 });
 
 // Archive or delete old data
 for (const client of clientsToArchive) {
   await prisma.aestheticClientProfile.update({
     where: { id: client.id },
-    data: { 
+    data: {
       status: 'archived',
-      archivedAt: new Date()
-    }
+      archivedAt: new Date(),
+    },
   });
 }
 
@@ -1016,24 +1016,24 @@ export async function exportUserData(userId: string): Promise<UserDataExport> {
       aestheticClientProfiles: {
         include: {
           treatments: true,
-          appointments: true
-        }
-      }
-    }
+          appointments: true,
+        },
+      },
+    },
   });
-  
+
   if (!user) {
     throw new Error('User not found');
   }
-  
+
   return {
     personalData: {
       fullName: user.fullName,
       email: user.email,
-      phone: user.phone
+      phone: user.phone,
     },
     clientProfiles: user.aestheticClientProfiles,
-    exportedAt: new Date()
+    exportedAt: new Date(),
   };
 }
 ```
@@ -1049,7 +1049,7 @@ const treatment = await prisma.aestheticTreatment.create({
   data: {
     name: 'Botox Treatment',
     // Missing ANVISA code
-  }
+  },
 });
 
 // ✅ Solution: Track ANVISA codes
@@ -1061,7 +1061,7 @@ const treatment = await prisma.aestheticTreatment.create({
     batchNumber: 'LOT001', // Product batch number
     manufacturer: 'Allergan', // Manufacturer name
     // ... other fields
-  }
+  },
 });
 
 // 2. Adverse event reporting
@@ -1078,15 +1078,15 @@ export async function reportAdverseEvent(data: AdverseEventReport) {
       description: data.description,
       action: data.action,
       reportedAt: new Date(),
-      anvisaNotified: false
-    }
+      anvisaNotified: false,
+    },
   });
-  
+
   // Notify ANVISA if required
   if (event.severity === 'severe') {
     await notifyANVISA(event);
   }
-  
+
   return event;
 }
 ```
@@ -1106,8 +1106,8 @@ const result = await prisma.$queryRawUnsafe(query);
 // ✅ Solution: Use parameterized queries
 const result = await prisma.client.findMany({
   where: {
-    email: req.body.email
-  }
+    email: req.body.email,
+  },
 });
 
 // 2. XSS vulnerabilities
@@ -1125,9 +1125,11 @@ import DOMPurify from 'dompurify';
 const UserCard = ({ user }) => (
   <div>
     <h3>{user.fullName}</h3>
-    <p dangerouslySetInnerHTML={{ 
-      __html: DOMPurify.sanitize(user.bio) 
-    }} />
+    <p
+      dangerouslySetInnerHTML={{
+        __html: DOMPurify.sanitize(user.bio),
+      }}
+    />
   </div>
 );
 
@@ -1152,8 +1154,8 @@ const client = await prisma.client.create({
   data: {
     fullName: 'Test Client',
     cpf: '12345678900', // Sensitive data in plaintext
-    phone: '+5511999999999' // Sensitive data in plaintext
-  }
+    phone: '+5511999999999', // Sensitive data in plaintext
+  },
 });
 
 // ✅ Solution: Encrypt sensitive data
@@ -1163,8 +1165,8 @@ const client = await prisma.client.create({
   data: {
     fullName: 'Test Client',
     cpf: await encrypt('12345678900'),
-    phone: await encrypt('+5511999999999')
-  }
+    phone: await encrypt('+5511999999999'),
+  },
 });
 ```
 

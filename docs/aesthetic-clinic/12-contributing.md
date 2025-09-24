@@ -193,7 +193,7 @@ export class ClientService {
 
       // Check for existing client
       const existingClient = await this.prisma.aestheticClientProfile.findUnique({
-        where: { email: data.email }
+        where: { email: data.email },
       });
 
       if (existingClient) {
@@ -205,8 +205,8 @@ export class ClientService {
         data: {
           ...data,
           cpf: await this.encryptionService.encrypt(data.cpf),
-          phone: await this.encryptionService.encrypt(data.phone)
-        }
+          phone: await this.encryptionService.encrypt(data.phone),
+        },
       });
 
       return client;
@@ -220,7 +220,7 @@ export class ClientService {
 // Use proper async/await patterns
 export async function getClientHistory(
   clientId: string,
-  options: GetClientHistoryOptions = {}
+  options: GetClientHistoryOptions = {},
 ): Promise<ClientHistory> {
   const { includeTreatments = true, includeSessions = true } = options;
 
@@ -228,30 +228,30 @@ export async function getClientHistory(
     prisma.aestheticClientProfile.findUnique({
       where: { id: clientId },
       include: {
-        professional: true
-      }
+        professional: true,
+      },
     }),
-    includeTreatments 
+    includeTreatments
       ? prisma.aestheticTreatment.findMany({
-          where: { clientId },
-          include: {
-            sessions: includeSessions
-          }
-        })
+        where: { clientId },
+        include: {
+          sessions: includeSessions,
+        },
+      })
       : Promise.resolve([]),
     includeSessions && !includeTreatments
       ? prisma.aestheticSession.findMany({
-          where: {
-            treatment: {
-              clientId
-            }
+        where: {
+          treatment: {
+            clientId,
           },
-          include: {
-            treatment: true,
-            professional: true
-          }
-        })
-      : Promise.resolve([])
+        },
+        include: {
+          treatment: true,
+          professional: true,
+        },
+      })
+      : Promise.resolve([]),
   ]);
 
   if (!client) {
@@ -261,7 +261,7 @@ export async function getClientHistory(
   return {
     client,
     treatments,
-    sessions
+    sessions,
   };
 }
 ```
@@ -283,7 +283,7 @@ export const ClientList: React.FC<ClientListProps> = ({
   onClientSelect,
   loading = false,
   error = null,
-  className = ''
+  className = '',
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState<'name' | 'date'>('name');
@@ -291,9 +291,9 @@ export const ClientList: React.FC<ClientListProps> = ({
   // Memoize expensive operations
   const filteredClients = useMemo(() => {
     return clients
-      .filter(client => 
-        client.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        client.email.toLowerCase().includes(searchTerm.toLowerCase())
+      .filter(client =>
+        client.fullName.toLowerCase().includes(searchTerm.toLowerCase())
+        || client.email.toLowerCase().includes(searchTerm.toLowerCase())
       )
       .sort((a, b) => {
         if (sortBy === 'name') {
@@ -309,17 +309,17 @@ export const ClientList: React.FC<ClientListProps> = ({
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-64">
-        <Loader className="h-8 w-8 animate-spin" />
+      <div className='flex justify-center items-center h-64'>
+        <Loader className='h-8 w-8 animate-spin' />
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="text-center p-4">
-        <Alert variant="destructive">
-          <AlertCircle className="h-4 w-4" />
+      <div className='text-center p-4'>
+        <Alert variant='destructive'>
+          <AlertCircle className='h-4 w-4' />
           <AlertTitle>Error</AlertTitle>
           <AlertDescription>{error}</AlertDescription>
         </Alert>
@@ -330,29 +330,29 @@ export const ClientList: React.FC<ClientListProps> = ({
   return (
     <div className={cn('space-y-4', className)}>
       {/* Search and filters */}
-      <div className="flex flex-col sm:flex-row gap-4">
-        <div className="flex-1">
+      <div className='flex flex-col sm:flex-row gap-4'>
+        <div className='flex-1'>
           <SearchInput
             value={searchTerm}
-            onChange={(value) => setSearchTerm(value)}
-            placeholder="Buscar clientes..."
-            className="w-full"
+            onChange={value => setSearchTerm(value)}
+            placeholder='Buscar clientes...'
+            className='w-full'
           />
         </div>
         <Select value={sortBy} onValueChange={(value: 'name' | 'date') => setSortBy(value)}>
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Ordenar por" />
+          <SelectTrigger className='w-[180px]'>
+            <SelectValue placeholder='Ordenar por' />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="name">Nome</SelectItem>
-            <SelectItem value="date">Data</SelectItem>
+            <SelectItem value='name'>Nome</SelectItem>
+            <SelectItem value='date'>Data</SelectItem>
           </SelectContent>
         </Select>
       </div>
 
       {/* Client list */}
-      <div className="space-y-2">
-        {filteredClients.map((client) => (
+      <div className='space-y-2'>
+        {filteredClients.map(client => (
           <ClientListItem
             key={client.id}
             client={client}
@@ -363,10 +363,10 @@ export const ClientList: React.FC<ClientListProps> = ({
 
       {/* Empty state */}
       {filteredClients.length === 0 && (
-        <div className="text-center py-8">
-          <Users className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-          <h3 className="text-lg font-semibold mb-2">Nenhum cliente encontrado</h3>
-          <p className="text-muted-foreground">
+        <div className='text-center py-8'>
+          <Users className='h-12 w-12 mx-auto text-muted-foreground mb-4' />
+          <h3 className='text-lg font-semibold mb-2'>Nenhum cliente encontrado</h3>
+          <p className='text-muted-foreground'>
             {searchTerm ? 'Tente outros termos de busca.' : 'Comece adicionando clientes.'}
           </p>
         </div>
@@ -387,9 +387,9 @@ export const aestheticClinicRouter = t.router({
   createClient: t.procedure
     .input(CreateAestheticClientInputSchema)
     .output(AestheticClientProfileSchema)
-    .meta({ 
+    .meta({
       description: 'Create a new aesthetic client profile',
-      requiredPermissions: ['clients:create']
+      requiredPermissions: ['clients:create'],
     })
     .mutation(async ({ input, ctx }) => {
       return await ctx.aestheticClinicService.createClient(input, ctx.user.id);
@@ -398,9 +398,9 @@ export const aestheticClinicRouter = t.router({
   getClient: t.procedure
     .input(z.object({ id: z.string() }))
     .output(AestheticClientProfileSchema.nullable())
-    .meta({ 
+    .meta({
       description: 'Get client profile by ID',
-      requiredPermissions: ['clients:read']
+      requiredPermissions: ['clients:read'],
     })
     .query(async ({ input, ctx }) => {
       return await ctx.aestheticClinicService.getClient(input.id);
@@ -409,9 +409,9 @@ export const aestheticClinicRouter = t.router({
   listClients: t.procedure
     .input(ListClientsInputSchema)
     .output(ListClientsOutputSchema)
-    .meta({ 
+    .meta({
       description: 'List clients with filtering and pagination',
-      requiredPermissions: ['clients:read']
+      requiredPermissions: ['clients:read'],
     })
     .query(async ({ input, ctx }) => {
       return await ctx.aestheticClinicService.listClients(input);
@@ -420,17 +420,17 @@ export const aestheticClinicRouter = t.router({
   updateClient: t.procedure
     .input(UpdateAestheticClientInputSchema)
     .output(AestheticClientProfileSchema)
-    .meta({ 
+    .meta({
       description: 'Update client profile',
-      requiredPermissions: ['clients:update']
+      requiredPermissions: ['clients:update'],
     })
     .mutation(async ({ input, ctx }) => {
       return await ctx.aestheticClinicService.updateClient(
-        input.id, 
-        input.data, 
-        ctx.user.id
+        input.id,
+        input.data,
+        ctx.user.id,
       );
-    })
+    }),
 });
 
 // Use proper input validation
@@ -446,10 +446,10 @@ export const CreateAestheticClientInputSchema = z.object({
   medicalHistory: z.object({
     allergies: z.array(z.string()).optional(),
     medications: z.array(z.string()).optional(),
-    conditions: z.array(z.string()).optional()
+    conditions: z.array(z.string()).optional(),
   }).optional(),
   lgpdConsent: z.boolean().default(true),
-  status: z.enum(['active', 'inactive', 'archived']).default('active')
+  status: z.enum(['active', 'inactive', 'archived']).default('active'),
 });
 ```
 
@@ -459,8 +459,8 @@ export const CreateAestheticClientInputSchema = z.object({
 
 ```typescript
 // apps/api/src/__tests__/services/aesthetic-clinic-service.test.ts
+import { cleanup, createTestClient, createTestProfessional } from '../__tests__/utils/test-utils';
 import { AestheticClinicService } from '../services/aesthetic-clinic-service';
-import { createTestClient, createTestProfessional, cleanup } from '../__tests__/utils/test-utils';
 
 describe('AestheticClinicService', () => {
   let service: AestheticClinicService;
@@ -487,7 +487,7 @@ describe('AestheticClinicService', () => {
         gender: 'female' as const,
         skinType: 'combination' as const,
         skinConcerns: ['acne'],
-        lgpdConsent: true
+        lgpdConsent: true,
       };
 
       const result = await service.createClient(clientData, professional.id);
@@ -495,7 +495,7 @@ describe('AestheticClinicService', () => {
       expect(result).toMatchObject({
         fullName: 'Maria Silva',
         email: 'maria.silva@example.com',
-        status: 'active'
+        status: 'active',
       });
 
       expect(result.id).toBeDefined();
@@ -511,7 +511,7 @@ describe('AestheticClinicService', () => {
         dateOfBirth: '1990-01-01',
         gender: 'female' as const,
         skinType: 'combination' as const,
-        lgpdConsent: true
+        lgpdConsent: true,
       };
 
       // Create first client
@@ -531,7 +531,7 @@ describe('AestheticClinicService', () => {
         dateOfBirth: '1990-01-01',
         gender: 'female' as const,
         skinType: 'combination' as const,
-        lgpdConsent: false // No consent
+        lgpdConsent: false, // No consent
       };
 
       await expect(service.createClient(clientData, professional.id))
@@ -546,7 +546,7 @@ describe('AestheticClinicService', () => {
 ```typescript
 // apps/api/src/__tests__/integration/client-workflow.test.ts
 import { TestClient } from '../__tests__/utils/test-client';
-import { createTestProfessional, createTestClient } from '../__tests__/utils/test-utils';
+import { createTestClient, createTestProfessional } from '../__tests__/utils/test-utils';
 
 describe('Client Management Workflow', () => {
   let testClient: TestClient;
@@ -562,7 +562,7 @@ describe('Client Management Workflow', () => {
       // Login
       const loginResponse = await testClient.login({
         email: professional.email,
-        password: 'password123'
+        password: 'password123',
       });
 
       expect(loginResponse.status).toBe(200);
@@ -576,7 +576,7 @@ describe('Client Management Workflow', () => {
         dateOfBirth: '1985-05-15',
         gender: 'male',
         skinType: 'oily',
-        lgpdConsent: true
+        lgpdConsent: true,
       }, loginResponse.data.token);
 
       expect(createResponse.status).toBe(201);
@@ -590,7 +590,7 @@ describe('Client Management Workflow', () => {
       // Update client
       const updateResponse = await testClient.updateClient(clientId, {
         phone: '+5511977777777',
-        skinConcerns: ['acne', 'scars']
+        skinConcerns: ['acne', 'scars'],
       }, loginResponse.data.token);
 
       expect(updateResponse.status).toBe(200);
@@ -614,7 +614,7 @@ describe('Client Management Workflow', () => {
 
 ```typescript
 // apps/web/e2e/client-management.spec.ts
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 
 test.describe('Client Management', () => {
   test.beforeEach(async ({ page }) => {
@@ -677,10 +677,10 @@ open coverage/lcov-report/index.html
 ```typescript
 /**
  * Service for managing aesthetic client profiles
- * 
+ *
  * This service handles all operations related to client management including
  * creation, updates, retrieval, and compliance with LGPD requirements.
- * 
+ *
  * @class AestheticClinicService
  * @example
  * const service = new AestheticClinicService(prisma);
@@ -703,7 +703,7 @@ export class AestheticClinicService {
     prisma: PrismaClient,
     encryptionService: EncryptionService,
     auditService: AuditService,
-    logger: Logger
+    logger: Logger,
   ) {
     this.prisma = prisma;
     this.encryptionService = encryptionService;
@@ -713,15 +713,15 @@ export class AestheticClinicService {
 
   /**
    * Creates a new aesthetic client profile
-   * 
+   *
    * This method validates input data, checks for duplicates, encrypts sensitive
    * information, and creates a new client profile with proper audit logging.
-   * 
+   *
    * @param {CreateAestheticClientInput} data - Client data to create
    * @param {string} professionalId - ID of the creating professional
    * @returns {Promise<AestheticClientProfile>} Created client profile
    * @throws {Error} When validation fails or client already exists
-   * 
+   *
    * @example
    * const clientData = {
    *   fullName: 'Maria Silva',
@@ -732,8 +732,8 @@ export class AestheticClinicService {
    * const client = await service.createClient(clientData, professionalId);
    */
   async createClient(
-    data: CreateAestheticClientInput, 
-    professionalId: string
+    data: CreateAestheticClientInput,
+    professionalId: string,
   ): Promise<AestheticClientProfile> {
     // Implementation
   }
@@ -764,11 +764,11 @@ import { ClientList } from '~/components/aesthetic/client-management/ClientList'
 
 const MyComponent = () => {
   const [clients, setClients] = useState<ClientProfile[]>([]);
-  
+
   return (
     <ClientList
       clients={clients}
-      onClientSelect={(clientId) => console.log('Selected:', clientId)}
+      onClientSelect={clientId => console.log('Selected:', clientId)}
       loading={loading}
       error={error}
     />

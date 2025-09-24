@@ -3,20 +3,20 @@
  * Handles product tracking, batch management, automated reordering, and regulatory compliance
  */
 
-import { createClient } from '@supabase/supabase-js';
-import { logHealthcareError } from "@neonpro/shared";
-import { logHealthcareError } from "@neonpro/shared";
+import { logHealthcareError } from '@neonpro/shared';
+import { logHealthcareError } from '@neonpro/shared';
 import type {
-  InventoryCategory,
-  Product,
-  InventoryBatch,
-  InventoryTransaction,
-  InventoryStockLevel,
-  ProductUsageRecord,
   InventoryAlert,
+  InventoryBatch,
+  InventoryCategory,
+  InventoryStockLevel,
+  InventoryTransaction,
+  Product,
+  ProductUsageRecord,
   PurchaseOrder,
-  PurchaseOrderItem
+  PurchaseOrderItem,
 } from '@neonpro/types';
+import { createClient } from '@supabase/supabase-js';
 
 export interface InventoryManagementConfig {
   clinicId: string;
@@ -71,22 +71,25 @@ export class InventoryManagementService {
 
   // === Product Management ===
 
-  async createProduct(productData: Omit<Product, 'id' | 'created_at' | 'updated_at'>): Promise<Product> {
+  async createProduct(
+    productData: Omit<Product, 'id' | 'created_at' | 'updated_at'>,
+  ): Promise<Product> {
     const { data, error } = await this.supabase
       .from('products')
       .insert([{
         ...productData,
         clinic_id: this.config.clinicId,
-        profit_margin: ((productData.selling_price - productData.cost_price) / productData.cost_price) * 100
+        profit_margin:
+          ((productData.selling_price - productData.cost_price) / productData.cost_price) * 100,
       }])
       .select()
       .single();
 
     if (error) throw new Error(`Failed to create product: ${error.message}`);
-    
+
     // Initialize stock level
     await this.initializeStockLevel(data.id);
-    
+
     return data;
   }
 
@@ -138,7 +141,9 @@ export class InventoryManagementService {
     }
 
     if (filters?.search) {
-      query = query.or(`name.ilike.%${filters.search}%,sku.ilike.%${filters.search}%,description.ilike.%${filters.search}%`);
+      query = query.or(
+        `name.ilike.%${filters.search}%,sku.ilike.%${filters.search}%,description.ilike.%${filters.search}%`,
+      );
     }
 
     const { data, error } = await query;
@@ -149,7 +154,9 @@ export class InventoryManagementService {
 
   // === Batch Management ===
 
-  async createInventoryBatch(batchData: Omit<InventoryBatch, 'id' | 'created_at' | 'updated_at'>): Promise<InventoryBatch> {
+  async createInventoryBatch(
+    batchData: Omit<InventoryBatch, 'id' | 'created_at' | 'updated_at'>,
+  ): Promise<InventoryBatch> {
     const { data, error } = await this.supabase
       .from('inventory_batches')
       .insert([batchData])
@@ -157,10 +164,10 @@ export class InventoryManagementService {
       .single();
 
     if (error) throw new Error(`Failed to create inventory batch: ${error.message}`);
-    
+
     // Update stock level
     await this.updateStockLevel(batchData.product_id, batchData.current_quantity, 'purchase');
-    
+
     return data;
   }
 
@@ -188,7 +195,11 @@ export class InventoryManagementService {
     return data || [];
   }
 
-  async checkBatchExpiry(productId: string): Promise<{ valid: InventoryBatch[]; expiringSoon: InventoryBatch[]; expired: InventoryBatch[] }> {
+  async checkBatchExpiry(
+    productId: string,
+  ): Promise<
+    { valid: InventoryBatch[]; expiringSoon: InventoryBatch[]; expired: InventoryBatch[] }
+  > {
     const batches = await this.getInventoryBatches(productId);
     const now = new Date();
     const thirtyDaysFromNow = new Date();
@@ -196,14 +207,21 @@ export class InventoryManagementService {
 
     return {
       valid: batches.filter(batch => !batch.expiry_date || batch.expiry_date > thirtyDaysFromNow),
-      expiringSoon: batches.filter(batch => batch.expiry_date && batch.expiry_date <= thirtyDaysFromNow && batch.expiry_date > now),
-      expired: batches.filter(batch => batch.expiry_date && batch.expiry_date <= now)
+      expiringSoon: batches.filter(batch =>
+        batch.expiry_date && batch.expiry_date <= thirtyDaysFromNow && batch.expiry_date > now
+      ),
+      expired: batches.filter(batch => batch.expiry_date && batch.expiry_date <= now),
     };
   }
 
   // === Stock Management ===
 
-  async updateStockLevel(productId: string, quantityChange: number, transactionType: 'purchase' | 'sale' | 'adjustment' | 'waste', referenceId?: string): Promise<void> {
+  async updateStockLevel(
+    productId: string,
+    quantityChange: number,
+    transactionType: 'purchase' | 'sale' | 'adjustment' | 'waste',
+    referenceId?: string,
+  ): Promise<void> {
     const { data: stockLevel, error: fetchError } = await this.supabase
       .from('inventory_stock_levels')
       .select('*')
@@ -214,13 +232,13 @@ export class InventoryManagementService {
     if (fetchError) throw new Error(`Failed to fetch stock level: ${fetchError.message}`);
 
     const newStock = Math.max(0, stockLevel.current_stock + quantityChange);
-    
+
     const { error: updateError } = await this.supabase
       .from('inventory_stock_levels')
       .update({
         current_stock: newStock,
         available_stock: newStock - stockLevel.reserved_stock,
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       })
       .eq('id', stockLevel.id);
 
@@ -232,7 +250,7 @@ export class InventoryManagementService {
       quantity: quantityChange,
       transaction_type: transactionType,
       reference_id: referenceId,
-      clinic_id: this.config.clinicId
+      clinic_id: this.config.clinicId,
     });
 
     // Update stock status
@@ -248,7 +266,7 @@ export class InventoryManagementService {
         current_stock: 0,
         reserved_stock: 0,
         available_stock: 0,
-        stock_status: 'normal'
+        stock_status: 'normal',
       }]);
 
     if (error && !error.message.includes('duplicate key')) {
@@ -275,7 +293,7 @@ export class InventoryManagementService {
     if (stockError) throw new Error(`Failed to fetch stock level: ${stockError.message}`);
 
     let status: 'normal' | 'low' | 'critical' | 'excess' = 'normal';
-    
+
     if (stockLevel.current_stock <= product.min_stock_level * 0.5) {
       status = 'critical';
     } else if (stockLevel.current_stock <= product.min_stock_level) {
@@ -298,12 +316,14 @@ export class InventoryManagementService {
         product_id: productId,
         alert_type: 'low_stock',
         severity: status === 'critical' ? 'critical' : 'medium',
-        message: `Product stock is ${status}: ${stockLevel.current_stock} units remaining`
+        message: `Product stock is ${status}: ${stockLevel.current_stock} units remaining`,
       });
     }
   }
 
-  async recordInventoryTransaction(transaction: Omit<InventoryTransaction, 'id' | 'transaction_date' | 'created_at'>): Promise<void> {
+  async recordInventoryTransaction(
+    transaction: Omit<InventoryTransaction, 'id' | 'transaction_date' | 'created_at'>,
+  ): Promise<void> {
     const { error } = await this.supabase
       .from('inventory_transactions')
       .insert([transaction]);
@@ -321,7 +341,12 @@ export class InventoryManagementService {
     if (error) throw new Error(`Failed to record product usage: ${error.message}`);
 
     // Update stock level
-    await this.updateStockLevel(usage.product_id, -usage.quantity_used, 'sale', usage.appointment_id);
+    await this.updateStockLevel(
+      usage.product_id,
+      -usage.quantity_used,
+      'sale',
+      usage.appointment_id,
+    );
   }
 
   async getProductUsageStats(productId: string, days: number = 90): Promise<ProductUsageStats> {
@@ -347,7 +372,7 @@ export class InventoryManagementService {
     const secondHalf = usage.slice(Math.floor(usage.length / 2));
     const firstHalfUsage = firstHalf.reduce((sum, record) => sum + record.quantity_used, 0);
     const secondHalfUsage = secondHalf.reduce((sum, record) => sum + record.quantity_used, 0);
-    
+
     let trend: 'increasing' | 'decreasing' | 'stable' = 'stable';
     if (secondHalfUsage > firstHalfUsage * 1.1) trend = 'increasing';
     else if (secondHalfUsage < firstHalfUsage * 0.9) trend = 'decreasing';
@@ -359,13 +384,15 @@ export class InventoryManagementService {
       quarterlyUsage: totalUsage,
       averageDailyUsage: dailyUsage,
       trend,
-      forecast: dailyUsage * 30 // Simple 30-day forecast
+      forecast: dailyUsage * 30, // Simple 30-day forecast
     };
   }
 
   // === Alerts and Notifications ===
 
-  async createInventoryAlert(alert: Omit<InventoryAlert, 'id' | 'created_at' | 'updated_at'>): Promise<void> {
+  async createInventoryAlert(
+    alert: Omit<InventoryAlert, 'id' | 'created_at' | 'updated_at'>,
+  ): Promise<void> {
     const { error } = await this.supabase
       .from('inventory_alerts')
       .insert([alert]);
@@ -426,8 +453,12 @@ export class InventoryManagementService {
 
     return (data || []).map(item => {
       const product = item.products as any;
-      const severity = item.days_of_stock < 7 ? 'critical' : item.days_of_stock < 14 ? 'high' : 'medium';
-      
+      const severity = item.days_of_stock < 7
+        ? 'critical'
+        : item.days_of_stock < 14
+        ? 'high'
+        : 'medium';
+
       return {
         productId: product.id,
         productName: product.name,
@@ -435,7 +466,7 @@ export class InventoryManagementService {
         minStockLevel: product.min_stock_level,
         daysOfStock: item.days_of_stock,
         severity,
-        recommendedOrderQuantity: product.reorder_point - item.current_stock
+        recommendedOrderQuantity: product.reorder_point - item.current_stock,
       };
     });
   }
@@ -460,7 +491,9 @@ export class InventoryManagementService {
 
   // === Purchase Order Management ===
 
-  async createPurchaseOrder(orderData: Omit<PurchaseOrder, 'id' | 'created_at' | 'updated_at'>): Promise<PurchaseOrder> {
+  async createPurchaseOrder(
+    orderData: Omit<PurchaseOrder, 'id' | 'created_at' | 'updated_at'>,
+  ): Promise<PurchaseOrder> {
     const { data, error } = await this.supabase
       .from('purchase_orders')
       .insert([orderData])
@@ -542,7 +575,7 @@ export class InventoryManagementService {
     const totalProducts = products?.length || 0;
     const lowStockItems = stockLevels?.filter(s => s.stock_status === 'low').length || 0;
     const criticalStockItems = stockLevels?.filter(s => s.stock_status === 'critical').length || 0;
-    
+
     const totalInventoryValue = products?.reduce((sum, product) => {
       const stock = stockLevels?.find(s => s.product_id === product.id);
       return sum + (product.cost_price * (stock?.current_stock || 0));
@@ -557,19 +590,19 @@ export class InventoryManagementService {
     const productUsage = usage?.reduce((acc, record) => {
       const product = products?.find(p => p.id === record.product_id);
       if (!product) return acc;
-      
+
       if (!acc[record.product_id]) {
         acc[record.product_id] = {
           productId: record.product_id,
           productName: product.name || 'Unknown',
           quantityUsed: 0,
-          revenue: 0
+          revenue: 0,
         };
       }
-      
+
       acc[record.product_id].quantityUsed += record.quantity_used;
       acc[record.product_id].revenue += product.selling_price * record.quantity_used;
-      
+
       return acc;
     }, {} as Record<string, any>);
 
@@ -585,7 +618,7 @@ export class InventoryManagementService {
       expiredItems: 0, // Would need to calculate from batches
       totalInventoryValue,
       monthlyUsageValue,
-      topSellingProducts: topSellingProducts as any
+      topSellingProducts: topSellingProducts as any,
     };
   }
 
@@ -603,10 +636,10 @@ export class InventoryManagementService {
       summary,
       products: products.map(p => ({
         ...p,
-        inventoryValue: (p as any).inventory_stock_levels?.[0]?.current_stock * p.cost_price || 0
+        inventoryValue: (p as any).inventory_stock_levels?.[0]?.current_stock * p.cost_price || 0,
       })),
       alerts,
-      generatedAt: new Date().toISOString()
+      generatedAt: new Date().toISOString(),
     };
   }
 
@@ -622,38 +655,52 @@ export class InventoryManagementService {
           product_id: alert.productId,
           alert_type: 'low_stock',
           severity: alert.severity,
-          message: `Low stock alert: ${alert.productName} - ${alert.currentStock} units remaining (${alert.daysOfStock} days)`
+          message:
+            `Low stock alert: ${alert.productName} - ${alert.currentStock} units remaining (${alert.daysOfStock} days)`,
         });
       }
 
       // Check expiry
       const expiringBatches = await this.checkExpiryAlerts();
       for (const batch of expiringBatches) {
-        const daysUntilExpiry = Math.ceil((batch.expiry_date!.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
-        const severity = daysUntilExpiry < 7 ? 'critical' : daysUntilExpiry < 14 ? 'high' : 'medium';
-        
+        const daysUntilExpiry = Math.ceil(
+          (batch.expiry_date!.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24),
+        );
+        const severity = daysUntilExpiry < 7
+          ? 'critical'
+          : daysUntilExpiry < 14
+          ? 'high'
+          : 'medium';
+
         await this.createInventoryAlert({
           clinic_id: this.config.clinicId,
           product_id: batch.product_id,
           alert_type: 'expiring_soon',
           severity,
-          message: `Batch expiring soon: ${batch.batch_number} - ${daysUntilExpiry} days remaining`
+          message: `Batch expiring soon: ${batch.batch_number} - ${daysUntilExpiry} days remaining`,
         });
       }
 
-      inventoryLogger.info(`Processed ${lowStockAlerts.length} low stock alerts and ${expiringBatches.length} expiry alerts`, {
-        clinicId,
-        lowStockCount: lowStockAlerts.length,
-        expiryCount: expiringBatches.length
-      });
+      inventoryLogger.info(
+        `Processed ${lowStockAlerts.length} low stock alerts and ${expiringBatches.length} expiry alerts`,
+        {
+          clinicId,
+          lowStockCount: lowStockAlerts.length,
+          expiryCount: expiringBatches.length,
+        },
+      );
     } catch (error) {
       logHealthcareError('inventory', error, { method: 'performDailyInventoryChecks', clinicId });
     }
   }
 
-  async calculateReorderQuantities(): Promise<Array<{ productId: string; recommendedQuantity: number; reason: string }>> {
+  async calculateReorderQuantities(): Promise<
+    Array<{ productId: string; recommendedQuantity: number; reason: string }>
+  > {
     const products = await this.getProducts();
-    const recommendations: Array<{ productId: string; recommendedQuantity: number; reason: string }> = [];
+    const recommendations: Array<
+      { productId: string; recommendedQuantity: number; reason: string }
+    > = [];
 
     for (const product of products) {
       const stockLevel = (product as any).inventory_stock_levels?.[0];
@@ -676,7 +723,10 @@ export class InventoryManagementService {
         recommendations.push({
           productId: product.id,
           recommendedQuantity: Math.max(0, recommendedQuantity),
-          reason: `Current stock ${stockLevel.current_stock} is below reorder point ${product.reorder_point}. Lead time demand: ${leadTimeDemand.toFixed(1)}`
+          reason:
+            `Current stock ${stockLevel.current_stock} is below reorder point ${product.reorder_point}. Lead time demand: ${
+              leadTimeDemand.toFixed(1)
+            }`,
         });
       }
     }

@@ -1,16 +1,16 @@
 import type {
+  AgentCoordinationPattern,
+  AgentResult,
   OrchestrationContext,
   TDDPhase,
-  AgentResult,
-  AgentCoordinationPattern,
-} from "../types";
+} from '../types';
 
 /**
  * Security Critical Workflow implementation
  */
 export class SecurityCriticalWorkflow {
-  name = "security-critical";
-  description = "Security-focused TDD workflow for critical features";
+  name = 'security-critical';
+  description = 'Security-focused TDD workflow for critical features';
 
   async executeAgent(
     agent: string,

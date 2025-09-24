@@ -18,7 +18,14 @@ export {
 } from './audit/logger';
 
 // Security utilities and validation
-export { RateLimiter, rateLimiter, SecurityUtils, securityUtils, SecureLogger, secureLogger } from './utils';
+export {
+  RateLimiter,
+  rateLimiter,
+  SecureLogger,
+  secureLogger,
+  SecurityUtils,
+  securityUtils,
+} from './utils';
 
 // LGPD anonymization and data masking utilities
 export {

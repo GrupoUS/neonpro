@@ -1,53 +1,53 @@
-import { defineConfig, devices } from "@playwright/test";
-import { resolve } from "path";
-import { fileURLToPath } from "url";
+import { defineConfig, devices } from '@playwright/test';
+import { resolve } from 'path';
+import { fileURLToPath } from 'url';
 
 // ES module __dirname equivalent
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = resolve(__filename, "..");
+const __dirname = resolve(__filename, '..');
 
 export default defineConfig({
   // Test directory and output
-  testDir: "./e2e",
-  outputDir: "./test-results",
-  
+  testDir: './e2e',
+  outputDir: './test-results',
+
   // Performance optimization for clinic workflows
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 1,
   workers: process.env.CI ? 4 : 3,
   maxFailures: process.env.CI ? 5 : 10,
-  
+
   // Comprehensive reporting for clinic compliance
   reporter: [
-    ["html", { open: "never", outputFolder: "playwright-report" }],
-    ["json", { outputFile: "test-results/results.json" }],
-    ["junit", { outputFile: "test-results/results.xml" }],
-    ["list"],
-    ["line"],
-    ["github"],
+    ['html', { open: 'never', outputFolder: 'playwright-report' }],
+    ['json', { outputFile: 'test-results/results.json' }],
+    ['junit', { outputFile: 'test-results/results.xml' }],
+    ['list'],
+    ['line'],
+    ['github'],
   ],
-  
+
   // Global configuration optimized for clinic app
   use: {
-    baseURL: process.env.BASE_URL || "http://localhost:8080",
-    trace: process.env.CI ? "retain-on-failure" : "on-first-retry",
-    screenshot: process.env.CI ? "only-on-failure" : "on",
-    video: process.env.CI ? "retain-on-failure" : "on-first-retry",
+    baseURL: process.env.BASE_URL || 'http://localhost:8080',
+    trace: process.env.CI ? 'retain-on-failure' : 'on-first-retry',
+    screenshot: process.env.CI ? 'only-on-failure' : 'on',
+    video: process.env.CI ? 'retain-on-failure' : 'on-first-retry',
 
     // Performance settings optimized for clinic workflows
     launchOptions: {
       slowMo: process.env.DEBUG ? 100 : 0,
-      headless: process.env.HEADLESS !== "false",
+      headless: process.env.HEADLESS !== 'false',
       args: [
-        "--disable-web-security",
-        "--disable-features=VizDisplayCompositor",
-        "--no-sandbox",
-        "--disable-setuid-sandbox",
-        "--enable-precise-memory-info",
-        "--disable-background-timer-throttling",
-        "--disable-renderer-backgrounding"
-      ]
+        '--disable-web-security',
+        '--disable-features=VizDisplayCompositor',
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        '--enable-precise-memory-info',
+        '--disable-background-timer-throttling',
+        '--disable-renderer-backgrounding',
+      ],
     },
 
     // Navigation timeout optimized for clinic app performance
@@ -61,10 +61,11 @@ export default defineConfig({
 
     // Geolocation for clinic location testing
     geolocation: { latitude: -23.5505, longitude: -46.6333 }, // São Paulo
-    permissions: ["geolocation"], // consolidated above; remove duplicates below
+    permissions: ['geolocation'], // consolidated above; remove duplicates below
 
     // User agent for realistic testing
-    userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+    userAgent:
+      'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
 
     // Extra HTTP headers for clinic app
     extraHTTPHeaders: {
@@ -72,37 +73,37 @@ export default defineConfig({
     },
 
     // Test isolation
-    serviceWorkers: "block",
+    serviceWorkers: 'block',
     // permissions: ["camera", "microphone", "notifications"],
   },
 
   // Browser projects optimized for clinic testing
   projects: [
     {
-      name: "chromium",
+      name: 'chromium',
       use: {
-        ...devices["Desktop Chrome"],
-        screenshot: "only-on-failure",
+        ...devices['Desktop Chrome'],
+        screenshot: 'only-on-failure',
         viewport: { width: 1920, height: 1080 },
       },
       grep: /@desktop|@clinic/,
     },
 
     {
-      name: "firefox",
+      name: 'firefox',
       use: {
-        ...devices["Desktop Firefox"],
-        screenshot: "only-on-failure",
+        ...devices['Desktop Firefox'],
+        screenshot: 'only-on-failure',
         viewport: { width: 1920, height: 1080 },
       },
       grep: /@firefox|@desktop/,
     },
 
     {
-      name: "webkit",
+      name: 'webkit',
       use: {
-        ...devices["Desktop Safari"],
-        screenshot: "only-on-failure",
+        ...devices['Desktop Safari'],
+        screenshot: 'only-on-failure',
         viewport: { width: 1920, height: 1080 },
       },
       grep: /@safari|@desktop/,
@@ -110,18 +111,18 @@ export default defineConfig({
 
     // Mobile projects optimized for clinic on-the-go testing
     {
-      name: "Mobile Chrome",
+      name: 'Mobile Chrome',
       use: {
-        ...devices["Pixel 5"],
+        ...devices['Pixel 5'],
         viewport: { width: 414, height: 896 },
       },
       grep: /@mobile|@phone/,
     },
 
     {
-      name: "Mobile Safari",
+      name: 'Mobile Safari',
       use: {
-        ...devices["iPhone 12"],
+        ...devices['iPhone 12'],
         viewport: { width: 390, height: 844 },
       },
       grep: /@mobile|@phone/,
@@ -129,9 +130,9 @@ export default defineConfig({
 
     // Tablet testing for clinic dashboard
     {
-      name: "iPad",
+      name: 'iPad',
       use: {
-        ...devices["iPad Air"],
+        ...devices['iPad Air'],
         viewport: { width: 820, height: 1180 },
       },
       grep: /@tablet|@ipad/,
@@ -139,10 +140,10 @@ export default defineConfig({
 
     // Accessibility testing for WCAG compliance
     {
-      name: "accessibility",
+      name: 'accessibility',
       use: {
-        ...devices["Desktop Chrome"],
-        screenshot: "only-on-failure",
+        ...devices['Desktop Chrome'],
+        screenshot: 'only-on-failure',
         viewport: { width: 1920, height: 1080 },
       },
       grep: /@a11y|@accessibility/,
@@ -150,10 +151,10 @@ export default defineConfig({
 
     // Performance testing for clinic workflows
     {
-      name: "performance",
+      name: 'performance',
       use: {
-        ...devices["Desktop Chrome"],
-        screenshot: "only-on-failure",
+        ...devices['Desktop Chrome'],
+        screenshot: 'only-on-failure',
         viewport: { width: 1920, height: 1080 },
       },
       grep: /@perf|@performance/,
@@ -161,10 +162,10 @@ export default defineConfig({
 
     // Visual regression testing for clinic UI
     {
-      name: "visual",
+      name: 'visual',
       use: {
-        ...devices["Desktop Chrome"],
-        screenshot: "only-on-failure",
+        ...devices['Desktop Chrome'],
+        screenshot: 'only-on-failure',
         viewport: { width: 1920, height: 1080 },
       },
       grep: /@visual|@screenshot/,
@@ -175,23 +176,23 @@ export default defineConfig({
   webServer: [
     {
       command: process.env.CI
-        ? "cd ../../apps/web && bun run build:vercel && bun run preview"
-        : "cd ../../apps/web && bun run dev",
-      url: process.env.BASE_URL || "http://localhost:8080",
+        ? 'cd ../../apps/web && bun run build:vercel && bun run preview'
+        : 'cd ../../apps/web && bun run dev',
+      url: process.env.BASE_URL || 'http://localhost:8080',
       reuseExistingServer: !process.env.CI,
       timeout: 180 * 1000, // Increased timeout for clinic app startup
-      stdout: "pipe",
-      stderr: "pipe",
+      stdout: 'pipe',
+      stderr: 'pipe',
     },
     {
       command: process.env.CI
-        ? "cd ../../apps/api && bun run build && bun start"
-        : "cd ../../apps/api && bun run dev",
-      url: process.env.API_URL || "http://localhost:3001",
+        ? 'cd ../../apps/api && bun run build && bun start'
+        : 'cd ../../apps/api && bun run dev',
+      url: process.env.API_URL || 'http://localhost:3001',
       reuseExistingServer: !process.env.CI,
       timeout: 180 * 1000, // Increased timeout for API startup
-      stdout: "pipe",
-      stderr: "pipe",
+      stdout: 'pipe',
+      stderr: 'pipe',
     },
   ],
 
@@ -209,67 +210,69 @@ export default defineConfig({
   },
 
   // Global setup and teardown
-  globalSetup: resolve(__dirname, "e2e/setup/global-setup.ts"),
-  globalTeardown: resolve(__dirname, "e2e/setup/global-teardown.ts"),
-  
+  globalSetup: resolve(__dirname, 'e2e/setup/global-setup.ts'),
+  globalTeardown: resolve(__dirname, 'e2e/setup/global-teardown.ts'),
+
   // Test metadata for clinic app
   metadata: {
-    project: "neonpro-e2e",
-    version: "1.0.0",
-    type: "aesthetic-clinic",
+    project: 'neonpro-e2e',
+    version: '1.0.0',
+    type: 'aesthetic-clinic',
     features: [
-      "patient-management",
-      "appointment-scheduling",
-      "professional-dashboard",
-      "treatment-planning",
-      "realtime-communication",
-      "whatsapp-integration",
-      "anti-no-show-engine",
-      "lgpd-compliance"
+      'patient-management',
+      'appointment-scheduling',
+      'professional-dashboard',
+      'treatment-planning',
+      'realtime-communication',
+      'whatsapp-integration',
+      'anti-no-show-engine',
+      'lgpd-compliance',
     ],
   },
 
   // Test matching optimized for clinic workflows
   testMatch: [
-    "**/*.e2e.ts",
-    "**/*.spec.ts",
-    "**/*.test.ts",
-    "**/flows/**/*.ts",
-    "**/clinic-**/*.ts",
-    "**/aesthetic/**/*.ts",
-    "**/appointment/**/*.ts",
-    "**/patient/**/*.ts",
-    "**/professional/**/*.ts"
+    '**/*.e2e.ts',
+    '**/*.spec.ts',
+    '**/*.test.ts',
+    '**/flows/**/*.ts',
+    '**/clinic-**/*.ts',
+    '**/aesthetic/**/*.ts',
+    '**/appointment/**/*.ts',
+    '**/patient/**/*.ts',
+    '**/professional/**/*.ts',
   ],
-  
+
   // Artifacts configuration
-  preserveOutput: process.env.CI ? "always" : "failures-only",
+  preserveOutput: process.env.CI ? 'always' : 'failures-only',
 
   // Test organization
-  shard: process.env.SHARD ? {
-    current: parseInt(process.env.SHARD.split('/')[0]),
-    total: parseInt(process.env.SHARD.split('/')[1])
-  } : undefined,
-  
+  shard: process.env.SHARD
+    ? {
+      current: parseInt(process.env.SHARD.split('/')[0]),
+      total: parseInt(process.env.SHARD.split('/')[1]),
+    }
+    : undefined,
+
   // Configuration for different environments
   ...(process.env.CI && {
     reporter: [
-      ["html", { open: "never", outputFolder: "playwright-report" }],
-      ["json", { outputFile: "test-results/results.json" }],
-      ["junit", { outputFile: "test-results/results.xml" }],
-      ["list"],
+      ['html', { open: 'never', outputFolder: 'playwright-report' }],
+      ['json', { outputFile: 'test-results/results.json' }],
+      ['junit', { outputFile: 'test-results/results.xml' }],
+      ['list'],
     ],
     retries: 3,
     workers: 4,
     maxFailures: 3,
   }),
-  
+
   // Development mode configuration
   ...(!process.env.CI && {
     reporter: [
-      ["html", { open: "never", outputFolder: "playwright-report" }],
-      ["list"],
-      ["line"],
+      ['html', { open: 'never', outputFolder: 'playwright-report' }],
+      ['list'],
+      ['line'],
     ],
     retries: 1,
     workers: 3,

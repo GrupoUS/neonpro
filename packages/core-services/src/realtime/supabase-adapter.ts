@@ -10,20 +10,20 @@
  * - Error handling and retry logic
  */
 
-import type { RealtimeChannel } from "@supabase/supabase-js";
+import type { RealtimeChannel } from '@supabase/supabase-js';
 // Note: For testing, we'll use a mock client. In production, inject the real client
 // import { createSupabaseClient } from '../../clients/supabase';
+import { logHealthcareError, realtimeLogger } from '@neonpro/shared';
 import type {
-  RealtimeEventAdapter,
-  RealtimeEvent,
-  RealtimeParticipant,
-  RealtimeChannelState,
-  RealtimeEventHandlers,
   RealtimeAdapterConfig,
   RealtimeAdapterError,
-} from "./event-adapter.js";
-import { createRealtimeEvent, validateParticipant } from "./event-adapter.js";
-import { logHealthcareError, realtimeLogger } from "@neonpro/shared";
+  RealtimeChannelState,
+  RealtimeEvent,
+  RealtimeEventAdapter,
+  RealtimeEventHandlers,
+  RealtimeParticipant,
+} from './event-adapter.js';
+import { createRealtimeEvent, validateParticipant } from './event-adapter.js';
 
 // Mock Supabase client for testing
 const createMockSupabaseClient = () => ({
@@ -41,11 +41,11 @@ const createMockSupabaseClient = () => ({
       unsubscribe: async () => {},
       presenceState: () => ({}),
       subscribe: async () => {},
-      topic: "mock-topic",
+      topic: 'mock-topic',
       params: {},
       socket: null,
       bindings: [],
-      state: "closed",
+      state: 'closed',
       joinedOnce: false,
       joinRef: null,
       timeout: 10000,
@@ -72,13 +72,13 @@ export class SupabaseRealtimeAdapter implements RealtimeEventAdapter {
   private config: RealtimeAdapterConfig;
   private isInitialized = false;
   private healthStatus: {
-    status: "healthy" | "degraded" | "unhealthy";
+    status: 'healthy' | 'degraded' | 'unhealthy';
     latency: number;
     activeChannels: number;
     totalParticipants: number;
     lastHeartbeat: string;
   } = {
-    status: "healthy",
+    status: 'healthy',
     latency: 0,
     activeChannels: 0,
     totalParticipants: 0,
@@ -95,7 +95,7 @@ export class SupabaseRealtimeAdapter implements RealtimeEventAdapter {
     try {
       // Test Supabase connection - simplified for compatibility
       const result = (await (this.supabase as any)
-        .from("profiles")
+        .from('profiles')
         .select()) as any;
       if (result.error) {
         throw new Error(`Supabase connection failed: ${String(result.error)}`);
@@ -105,7 +105,9 @@ export class SupabaseRealtimeAdapter implements RealtimeEventAdapter {
       this.startHealthMonitoring();
 
       this.isInitialized = true;
-      realtimeLogger.info('SupabaseRealtimeAdapter initialized successfully', { config: this.config });
+      realtimeLogger.info('SupabaseRealtimeAdapter initialized successfully', {
+        config: this.config,
+      });
     } catch (error) {
       throw new Error(`Failed to initialize SupabaseRealtimeAdapter: ${error}`);
     }
@@ -126,28 +128,28 @@ export class SupabaseRealtimeAdapter implements RealtimeEventAdapter {
 
   async joinChannel(
     channelId: string,
-    participant: Omit<RealtimeParticipant, "metadata">,
+    participant: Omit<RealtimeParticipant, 'metadata'>,
     initialState?: Record<string, any>,
   ): Promise<void> {
     if (!this.isInitialized) {
-      throw new Error("Adapter not initialized");
+      throw new Error('Adapter not initialized');
     }
 
     // Create full participant with metadata
     const fullParticipant: RealtimeParticipant = {
       ...participant,
       metadata: {
-        clinicId: initialState?.clinicId || "default-clinic",
+        clinicId: initialState?.clinicId || 'default-clinic',
         sessionId: initialState?.sessionId || `session-${Date.now()}`,
-        deviceType: initialState?.deviceType || "desktop",
-        connectionQuality: "good",
+        deviceType: initialState?.deviceType || 'desktop',
+        connectionQuality: 'good',
         joinedAt: new Date().toISOString(),
         lastActivity: new Date().toISOString(),
       },
     };
 
     if (!validateParticipant(fullParticipant)) {
-      throw new Error("Invalid participant data");
+      throw new Error('Invalid participant data');
     }
 
     try {
@@ -157,11 +159,11 @@ export class SupabaseRealtimeAdapter implements RealtimeEventAdapter {
       }
 
       // Update channel state
-      this.updateChannelState(channelId, fullParticipant, "join");
+      this.updateChannelState(channelId, fullParticipant, 'join');
 
       // Create and emit join event
       const joinEvent = this.createRealtimeEvent(
-        "join",
+        'join',
         channelId,
         fullParticipant,
         {
@@ -182,7 +184,7 @@ export class SupabaseRealtimeAdapter implements RealtimeEventAdapter {
       if (channel) {
         await channel.track({
           participant: fullParticipant,
-          action: "join",
+          action: 'join',
           timestamp: new Date().toISOString(),
         });
       }
@@ -190,13 +192,13 @@ export class SupabaseRealtimeAdapter implements RealtimeEventAdapter {
       realtimeLogger.info(`Participant ${fullParticipant.id} joined channel ${channelId}`, {
         channelId,
         participantId: fullParticipant.id,
-        participantRole: fullParticipant._role
+        participantRole: fullParticipant._role,
       });
     } catch (error) {
       await this.handleError({
-        code: "JOIN_CHANNEL_FAILED",
+        code: 'JOIN_CHANNEL_FAILED',
         message: `Failed to join channel ${channelId}: ${error}`,
-        severity: "high",
+        severity: 'high',
         channelId,
         participantId: fullParticipant.id,
         timestamp: new Date().toISOString(),
@@ -212,13 +214,19 @@ export class SupabaseRealtimeAdapter implements RealtimeEventAdapter {
   ): Promise<void> {
     const channelState = this.channelStates.get(channelId);
     if (!channelState) {
-      realtimeLogger.warn(`Channel ${channelId} not found for leave operation`, { channelId, participantId });
+      realtimeLogger.warn(`Channel ${channelId} not found for leave operation`, {
+        channelId,
+        participantId,
+      });
       return;
     }
 
     const participant = channelState.participants.get(participantId);
     if (!participant) {
-      realtimeLogger.warn(`Participant ${participantId} not found in channel ${channelId}`, { channelId, participantId });
+      realtimeLogger.warn(`Participant ${participantId} not found in channel ${channelId}`, {
+        channelId,
+        participantId,
+      });
       return;
     }
 
@@ -228,15 +236,15 @@ export class SupabaseRealtimeAdapter implements RealtimeEventAdapter {
       const duration = Math.floor((Date.now() - joinedAt.getTime()) / 1000); // seconds
 
       // Update channel state
-      this.updateChannelState(channelId, participant, "leave");
+      this.updateChannelState(channelId, participant, 'leave');
 
       // Create and emit leave event
       const leaveEvent = this.createRealtimeEvent(
-        "leave",
+        'leave',
         channelId,
         participant,
         {
-          reason: reason || "User left",
+          reason: reason || 'User left',
           duration,
         },
       );
@@ -264,13 +272,13 @@ export class SupabaseRealtimeAdapter implements RealtimeEventAdapter {
         channelId,
         participantId,
         reason,
-        duration
+        duration,
       });
     } catch (error) {
       await this.handleError({
-        code: "LEAVE_CHANNEL_FAILED",
+        code: 'LEAVE_CHANNEL_FAILED',
         message: `Failed to leave channel ${channelId}: ${error}`,
-        severity: "medium",
+        severity: 'medium',
         channelId,
         participantId,
         timestamp: new Date().toISOString(),
@@ -282,7 +290,7 @@ export class SupabaseRealtimeAdapter implements RealtimeEventAdapter {
   async updateParticipantStatus(
     channelId: string,
     participantId: string,
-    status: RealtimeParticipant["status"],
+    status: RealtimeParticipant['status'],
   ): Promise<void> {
     const channelState = this.channelStates.get(channelId);
     if (!channelState) return;
@@ -296,7 +304,7 @@ export class SupabaseRealtimeAdapter implements RealtimeEventAdapter {
 
     // Create and emit status change event
     const statusEvent = this.createRealtimeEvent(
-      "status_change",
+      'status_change',
       channelId,
       participant,
       {
@@ -312,7 +320,7 @@ export class SupabaseRealtimeAdapter implements RealtimeEventAdapter {
     if (channel) {
       await channel.track({
         participant,
-        action: "status_update",
+        action: 'status_update',
         timestamp: new Date().toISOString(),
       });
     }
@@ -344,7 +352,7 @@ export class SupabaseRealtimeAdapter implements RealtimeEventAdapter {
     // Set up presence tracking - simplified for compatibility
     try {
       // Use type assertion to bypass strict typing
-      (channel as any).on("presence", () => {
+      (channel as any).on('presence', () => {
         this.handlePresenceSync(channelId, channel as any);
       });
     } catch (e) {
@@ -363,7 +371,7 @@ export class SupabaseRealtimeAdapter implements RealtimeEventAdapter {
         lastActivity: new Date().toISOString(),
         totalParticipants: 0,
         maxParticipants: this.config.performance.maxParticipantsPerChannel,
-        channelType: "consultation",
+        channelType: 'consultation',
       },
     });
 
@@ -394,14 +402,14 @@ export class SupabaseRealtimeAdapter implements RealtimeEventAdapter {
     // Simple latency check - simplified for compatibility
     const start = Date.now();
     try {
-      const result = await (this.supabase as any).from("profiles").select("id");
+      const result = await (this.supabase as any).from('profiles').select('id');
       if (result.error) throw result.error;
       this.healthStatus.latency = Date.now() - start;
-      this.healthStatus.status = "healthy";
+      this.healthStatus.status = 'healthy';
     } catch (_error) {
       void _error;
       this.healthStatus.latency = -1;
-      this.healthStatus.status = "unhealthy";
+      this.healthStatus.status = 'unhealthy';
     }
 
     return { ...this.healthStatus };
@@ -424,11 +432,11 @@ export class SupabaseRealtimeAdapter implements RealtimeEventAdapter {
       participant,
       data,
       metadata: {
-        source: "remote",
+        source: 'remote',
         eventId: `supabase-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
         compliance: {
           lgpdLogged: this.config.healthcare.lgpdCompliance,
-          auditRequired: type === "join" || type === "leave",
+          auditRequired: type === 'join' || type === 'leave',
           sensitiveData: false,
         },
       },
@@ -438,12 +446,12 @@ export class SupabaseRealtimeAdapter implements RealtimeEventAdapter {
   private updateChannelState(
     channelId: string,
     participant: RealtimeParticipant,
-    action: "join" | "leave",
+    action: 'join' | 'leave',
   ): void {
     const channelState = this.channelStates.get(channelId);
     if (!channelState) return;
 
-    if (action === "join") {
+    if (action === 'join') {
       channelState.participants.set(participant.id, participant);
       channelState.metadata.totalParticipants = channelState.participants.size;
     } else {
@@ -457,21 +465,25 @@ export class SupabaseRealtimeAdapter implements RealtimeEventAdapter {
   private async emitEvent(event: RealtimeEvent): Promise<void> {
     try {
       switch (event.type) {
-        case "join":
+        case 'join':
           await this.eventHandlers.onJoin?.(event);
           break;
-        case "leave":
+        case 'leave':
           await this.eventHandlers.onLeave?.(event);
           break;
-        case "status_change":
+        case 'status_change':
           await this.eventHandlers.onStatusChange?.(event);
           break;
-        case "presence_sync":
+        case 'presence_sync':
           await this.eventHandlers.onPresenceSync?.(event);
           break;
       }
     } catch (error) {
-      logHealthcareError('realtime', error as Error, { method: 'emitEvent', eventType: event.type, channelId: event.channelId });
+      logHealthcareError('realtime', error as Error, {
+        method: 'emitEvent',
+        eventType: event.type,
+        channelId: event.channelId,
+      });
     }
   }
 
@@ -481,7 +493,7 @@ export class SupabaseRealtimeAdapter implements RealtimeEventAdapter {
       realtimeLogger.info('Audit event logged', {
         userId: event.participant.id,
         action: event.type,
-        resource: "realtime_channel",
+        resource: 'realtime_channel',
         resourceId: event.channelId,
         metadata: {
           participant: event.participant,
@@ -493,18 +505,25 @@ export class SupabaseRealtimeAdapter implements RealtimeEventAdapter {
       // Mark as logged for compliance
       event.metadata.compliance.lgpdLogged = true;
     } catch (error) {
-      logHealthcareError('realtime', error as Error, { method: 'logAuditEvent', eventType: event.type });
+      logHealthcareError('realtime', error as Error, {
+        method: 'logAuditEvent',
+        eventType: event.type,
+      });
     }
   }
 
   private async handleError(error: RealtimeAdapterError): Promise<void> {
     const jsError = new Error(error.message);
     jsError.name = error.code;
-    logHealthcareError('realtime', jsError, { method: 'handleError', errorCode: error.code, severity: error.severity });
+    logHealthcareError('realtime', jsError, {
+      method: 'handleError',
+      errorCode: error.code,
+      severity: error.severity,
+    });
 
     // Update health status for critical errors
-    if (error.severity === "critical") {
-      this.healthStatus.status = "unhealthy";
+    if (error.severity === 'critical') {
+      this.healthStatus.status = 'unhealthy';
     }
 
     // Emit error to handlers
@@ -519,7 +538,7 @@ export class SupabaseRealtimeAdapter implements RealtimeEventAdapter {
     const participants: RealtimeParticipant[] = [];
 
     Object.values(presenceState).forEach((presences: any[]) => {
-      presences.forEach((presence) => {
+      presences.forEach(presence => {
         if (presence.participant) {
           participants.push(presence.participant);
         }
@@ -528,7 +547,7 @@ export class SupabaseRealtimeAdapter implements RealtimeEventAdapter {
 
     // Emit presence sync event
     const syncEvent = this.createRealtimeEvent(
-      "presence_sync",
+      'presence_sync',
       channelId,
       participants[0]!,
       {

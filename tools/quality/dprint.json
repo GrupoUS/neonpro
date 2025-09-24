@@ -15,10 +15,8 @@
     "conditionalExpression.linePerExpression": true,
     "ignoreNodeCommentText": "dprint-ignore",
     "ignoreFileCommentText": "dprint-ignore-file",
-    "arguments": {
-      "forceMultiLine": false,
-      "preferSingleLine": false
-    }
+    
+    "arguments.preferSingleLine": false
   },
   "json": {
     "array.preferSingleLine": false,
@@ -70,7 +68,10 @@
     "./readme*",
     "./CHANGELOG*",
     "./changelog*",
-    "./.yarn"
+    "./.yarn",
+    "lint-report.json",
+    "oxlint-report.json",
+    "oxlint-issues.json"
   ],
   "plugins": [
     "https://plugins.dprint.dev/typescript-0.88.4.wasm",

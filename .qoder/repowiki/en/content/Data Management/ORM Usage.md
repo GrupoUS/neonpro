@@ -463,7 +463,10 @@ The repository layer abstracts the Prisma client behind domain-specific interfac
 
 ```typescript
 interface AppointmentRepository {
-  findWithFilter(filter: AppointmentFilter, options?: PaginationOptions): Promise<PaginatedResult<Appointment>>;
+  findWithFilter(
+    filter: AppointmentFilter,
+    options?: PaginationOptions,
+  ): Promise<PaginatedResult<Appointment>>;
   create(appointmentData: CreateAppointmentRequest): Promise<Appointment>;
   update(id: string, appointmentData: UpdateAppointmentRequest): Promise<Appointment>;
   delete(id: string): Promise<boolean>;
@@ -547,15 +550,15 @@ The system implements several approaches to prevent N+1 queries:
 const patients = await prisma.patient.findMany();
 for (const patient of patients) {
   const appointments = await prisma.appointment.findMany({
-    where: { patientId: patient.id }
+    where: { patientId: patient.id },
   });
 }
 
 // Correct pattern: Single query with include
 const patients = await prisma.patient.findMany({
   include: {
-    appointments: true
-  }
+    appointments: true,
+  },
 });
 ```
 
@@ -570,10 +573,10 @@ const patients = await prisma.patient.findMany({
       select: {
         id: true,
         startTime: true,
-        status: true
-      }
-    }
-  }
+        status: true,
+      },
+    },
+  },
 });
 ```
 
@@ -731,16 +734,16 @@ The application implements Prisma middleware for cross-cutting concerns:
 prisma.$use(async (params, next) => {
   const start = Date.now();
   const result = await next(params);
-  
+
   if (['create', 'update', 'delete'].includes(params.action)) {
     await prisma.createAuditLog(
       params.action.toUpperCase(),
       params.model || 'UNKNOWN',
       JSON.stringify(params.args?.where || {}),
-      { duration: Date.now() - start }
+      { duration: Date.now() - start },
     );
   }
-  
+
   return result;
 });
 ```
@@ -760,14 +763,14 @@ The system extends Prisma with healthcare-specific methods:
 const exportData = await prisma.exportPatientData(
   patientId,
   requestedBy,
-  'Patient data portability request'
+  'Patient data portability request',
 );
 
 // Delete patient data per LGPD Article 18.VI
 await prisma.deletePatientData(patientId, {
   cascadeDelete: true,
   retainAuditTrail: true,
-  reason: 'Right to erasure request'
+  reason: 'Right to erasure request',
 });
 ```
 

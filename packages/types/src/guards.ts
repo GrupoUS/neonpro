@@ -50,3 +50,33 @@ export const getSecurityHeaders = (): Record<string, string> => ({
   'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
   'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
 });
+
+export const isSafeHeaderValue = (value: unknown): boolean => {
+  if (typeof value !== 'string') return false;
+  return !/[\r\n]/.test(value); // No CRLF injection
+};
+
+export class RateLimiter {
+  private tokens: number;
+  private lastRefill: number;
+  private rate: number;
+
+  constructor(rate: number) {
+    this.tokens = rate;
+    this.lastRefill = Date.now();
+    this.rate = rate;
+  }
+
+  async consume(): Promise<boolean> {
+    const now = Date.now();
+    const delta = (now - this.lastRefill) / 1000;
+    this.tokens = Math.min(this.rate, this.tokens + delta * (this.rate / 60)); // Refill per minute
+    this.lastRefill = now;
+
+    if (this.tokens >= 1) {
+      this.tokens -= 1;
+      return true;
+    }
+    return false;
+  }
+}

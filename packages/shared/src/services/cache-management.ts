@@ -14,8 +14,8 @@
  * @compliance LGPD, ANVISA, ISO 27001, NIST Cybersecurity Framework
  */
 
-import { z } from "zod";
-import { logHealthcareError, auditLogger } from '../logging/healthcare-logger';
+import { z } from 'zod';
+import { auditLogger, logHealthcareError } from '../logging/healthcare-logger';
 
 // ============================================================================
 // TYPES & SCHEMAS
@@ -25,31 +25,31 @@ import { logHealthcareError, auditLogger } from '../logging/healthcare-logger';
  * Cache data sensitivity levels
  */
 export enum CacheDataSensitivity {
-  PUBLIC = "public",
-  INTERNAL = "internal",
-  CONFIDENTIAL = "confidential",
-  RESTRICTED = "restricted",
+  PUBLIC = 'public',
+  INTERNAL = 'internal',
+  CONFIDENTIAL = 'confidential',
+  RESTRICTED = 'restricted',
 }
 
 /**
  * Cache invalidation strategies
  */
 export enum CacheInvalidationStrategy {
-  TTL = "ttl",
-  LRU = "lru",
-  LFU = "lfu",
-  MANUAL = "manual",
-  EVENT_DRIVEN = "event_driven",
+  TTL = 'ttl',
+  LRU = 'lru',
+  LFU = 'lfu',
+  MANUAL = 'manual',
+  EVENT_DRIVEN = 'event_driven',
 }
 
 /**
  * Cache tier types
  */
 export enum CacheTier {
-  MEMORY = "memory",
-  REDIS = "redis",
-  DATABASE = "database",
-  CDN = "cdn",
+  MEMORY = 'memory',
+  REDIS = 'redis',
+  DATABASE = 'database',
+  CDN = 'cdn',
 }
 
 /**
@@ -62,11 +62,11 @@ export const HealthcareCacheContextSchema = z.object({
   departmentId: z.string().optional(),
   clinicalContext: z
     .enum([
-      "consultation",
-      "surgery",
-      "emergency",
-      "administrative",
-      "research",
+      'consultation',
+      'surgery',
+      'emergency',
+      'administrative',
+      'research',
     ])
     .optional(),
   dataClassification: z
@@ -75,8 +75,8 @@ export const HealthcareCacheContextSchema = z.object({
   lgpdConsentId: z.string().optional(),
   auditTrailId: z.string().optional(),
   retentionRequirement: z
-    .enum(["session", "temporary", "standard", "extended"])
-    .default("standard"),
+    .enum(['session', 'temporary', 'standard', 'extended'])
+    .default('standard'),
 });
 
 export type HealthcareCacheContext = z.infer<
@@ -248,7 +248,7 @@ export type CacheStatistics = z.infer<typeof CacheStatisticsSchema>;
 export const CacheAuditEventSchema = z.object({
   eventId: z.string().uuid(),
   timestamp: z.date(),
-  operation: z.enum(["get", "set", "delete", "clear", "invalidate", "expire"]),
+  operation: z.enum(['get', 'set', 'delete', 'clear', 'invalidate', 'expire']),
 
   // Cache information
   key: z.string(),
@@ -350,16 +350,16 @@ export function calculateHealthcareTTL(
   let ttl = basePolicy[sensitivity] || config.defaultTTL;
 
   // Adjust based on clinical context
-  if (_context?.clinicalContext === "emergency") {
+  if (_context?.clinicalContext === 'emergency') {
     ttl = Math.min(ttl, 1800); // Max 30 minutes for emergency data
-  } else if (_context?.clinicalContext === "surgery") {
+  } else if (_context?.clinicalContext === 'surgery') {
     ttl = Math.min(ttl, 3600); // Max 1 hour for surgical data
   }
 
   // Adjust based on retention requirement
-  if (_context?.retentionRequirement === "session") {
+  if (_context?.retentionRequirement === 'session') {
     ttl = Math.min(ttl, 3600); // Max 1 hour for session data
-  } else if (_context?.retentionRequirement === "temporary") {
+  } else if (_context?.retentionRequirement === 'temporary') {
     ttl = Math.min(ttl, 900); // Max 15 minutes for temporary data
   }
 
@@ -384,7 +384,7 @@ export function requiresEncryption(
   }
 
   // Encrypt emergency clinical data
-  if (_context?.clinicalContext === "emergency") {
+  if (_context?.clinicalContext === 'emergency') {
     return true;
   }
 
@@ -405,14 +405,14 @@ export function requiresAuditLogging(
   }
 
   // Audit patient data access
-  if (_context?.patientId && ["get", "set"].includes(operation)) {
+  if (_context?.patientId && ['get', 'set'].includes(operation)) {
     return true;
   }
 
   // Audit clinical operations
   if (
-    _context?.clinicalContext &&
-    _context.clinicalContext !== "administrative"
+    _context?.clinicalContext
+    && _context.clinicalContext !== 'administrative'
   ) {
     return true;
   }
@@ -450,7 +450,7 @@ export function generateHealthcareCacheKey(
     parts.push(`context:${_context.clinicalContext}`);
   }
 
-  return parts.join(":");
+  return parts.join(':');
 }
 
 /**
@@ -459,7 +459,7 @@ export function generateHealthcareCacheKey(
 export function anonymizeCacheEntry(entry: CacheEntry): CacheEntry {
   return {
     ...entry,
-    value: "[ANONYMIZED]",
+    value: '[ANONYMIZED]',
     ownerId: undefined,
     healthcareContext: {
       ...entry.healthcareContext,
@@ -467,7 +467,7 @@ export function anonymizeCacheEntry(entry: CacheEntry): CacheEntry {
       providerId: undefined,
       lgpdConsentId: undefined,
       dataClassification: CacheDataSensitivity.PUBLIC, // Required field
-      retentionRequirement: "standard", // Required field
+      retentionRequirement: 'standard', // Required field
     },
     metadata: {},
   };
@@ -482,7 +482,7 @@ export function estimateCacheEntrySize(entry: CacheEntry): number {
     return new Blob([serialized]).size;
   } catch {
     // Fallback estimation
-    return JSON.stringify(entry.value || "").length * 2; // Rough UTF-16 estimation
+    return JSON.stringify(entry.value || '').length * 2; // Rough UTF-16 estimation
   }
 }
 
@@ -602,16 +602,16 @@ export class InMemoryCacheBackend implements CacheBackend {
     }
 
     // Simple pattern matching (in production, use proper regex)
-    const regex = new RegExp(pattern.replace("*", ".*"));
-    return keys.filter((key) => regex.test(key));
+    const regex = new RegExp(pattern.replace('*', '.*'));
+    return keys.filter(key => regex.test(key));
   }
 
   async getEntriesBySensitivity(
     sensitivity: CacheDataSensitivity,
   ): Promise<CacheEntry[]> {
     return Array.from(this.entries.values())
-      .filter((entry) => entry.sensitivity === sensitivity)
-      .map((entry) => ({ ...entry }));
+      .filter(entry => entry.sensitivity === sensitivity)
+      .map(entry => ({ ...entry }));
   }
 
   async cleanup(): Promise<number> {
@@ -634,8 +634,8 @@ export class InMemoryCacheBackend implements CacheBackend {
 
   private async enforceMemoryLimits(newEntrySize: number): Promise<void> {
     while (
-      this.getCurrentMemoryUsage() + newEntrySize >
-      this.config.maxMemoryUsage
+      this.getCurrentMemoryUsage() + newEntrySize
+        > this.config.maxMemoryUsage
     ) {
       if (this.config.evictionStrategy === CacheInvalidationStrategy.LRU) {
         await this.evictLRU();
@@ -662,7 +662,7 @@ export class InMemoryCacheBackend implements CacheBackend {
     if (this.entries.size === 0) return;
 
     let minAccessCount = Infinity;
-    let lfuKey = "";
+    let lfuKey = '';
 
     for (const [key, entry] of Array.from(this.entries.entries())) {
       if (entry.accessCount < minAccessCount) {
@@ -708,13 +708,13 @@ export class InMemoryCacheBackend implements CacheBackend {
 
   private updateSensitivityStats(): void {
     this.stats.sensitiveDataEntries = Array.from(this.entries.values()).filter(
-      (entry) =>
-        entry.sensitivity === CacheDataSensitivity.CONFIDENTIAL ||
-        entry.sensitivity === CacheDataSensitivity.RESTRICTED,
+      entry =>
+        entry.sensitivity === CacheDataSensitivity.CONFIDENTIAL
+        || entry.sensitivity === CacheDataSensitivity.RESTRICTED,
     ).length;
 
     this.stats.lgpdCompliantEntries = Array.from(this.entries.values()).filter(
-      (entry) => entry.lgpdCompliant,
+      entry => entry.lgpdCompliant,
     ).length;
   }
 }
@@ -781,7 +781,7 @@ export class CacheManagementService {
 
           // Audit if required
           const auditRequired = requiresAuditLogging(
-            "get",
+            'get',
             entry.sensitivity,
             _context,
           );
@@ -789,7 +789,7 @@ export class CacheManagementService {
             await this.logAudit({
               eventId: crypto.randomUUID(),
               timestamp: new Date(),
-              operation: "get",
+              operation: 'get',
               key: scopedKey,
               tier,
               sensitivity: entry.sensitivity,
@@ -800,14 +800,14 @@ export class CacheManagementService {
               success: true,
               latency,
               lgpdCompliant: entry.lgpdCompliant,
-              metadata: { operation: "get", cacheHit: true }, // Required metadata field
+              metadata: { operation: 'get', cacheHit: true }, // Required metadata field
             });
           }
 
           return {
             key: scopedKey,
             timestamp: new Date(),
-            metadata: { operation: "get", cacheHit: true, size: entry.size },
+            metadata: { operation: 'get', cacheHit: true, size: entry.size },
             success: true,
             lgpdCompliant: entry.lgpdCompliant,
             auditLogged: auditRequired,
@@ -822,7 +822,7 @@ export class CacheManagementService {
       return {
         key: scopedKey,
         timestamp: new Date(),
-        metadata: { operation: "get", cacheHit: false },
+        metadata: { operation: 'get', cacheHit: false },
         success: true,
         lgpdCompliant: true,
         auditLogged: false,
@@ -833,12 +833,15 @@ export class CacheManagementService {
       return {
         key,
         timestamp: new Date(),
-        metadata: { operation: "get", error: error instanceof Error ? error.message : "Unknown error" },
+        metadata: {
+          operation: 'get',
+          error: error instanceof Error ? error.message : 'Unknown error',
+        },
         success: false,
         lgpdCompliant: true,
         auditLogged: false,
-        error: error instanceof Error ? error.message : "Unknown error",
-        errorCode: "CACHE_GET_ERROR",
+        error: error instanceof Error ? error.message : 'Unknown error',
+        errorCode: 'CACHE_GET_ERROR',
         latency,
       };
     }
@@ -881,8 +884,7 @@ export class CacheManagementService {
       );
 
       // Calculate TTL
-      const calculatedTTL =
-        ttl || calculateHealthcareTTL(sensitivity, this.config, _context);
+      const calculatedTTL = ttl || calculateHealthcareTTL(sensitivity, this.config, _context);
 
       // Create cache entry
       const entry: CacheEntry = {
@@ -899,7 +901,7 @@ export class CacheManagementService {
         permissions: [],
         tags: [],
         lgpdCompliant: !_context?.patientId || !!_context?.lgpdConsentId,
-        auditRequired: requiresAuditLogging("set", sensitivity, _context),
+        auditRequired: requiresAuditLogging('set', sensitivity, _context),
         encryptionRequired: requiresEncryption(sensitivity, _context),
         tier,
         metadata: {},
@@ -921,7 +923,7 @@ export class CacheManagementService {
         await this.logAudit({
           eventId: crypto.randomUUID(),
           timestamp: new Date(),
-          operation: "set",
+          operation: 'set',
           key: scopedKey,
           tier,
           sensitivity,
@@ -932,14 +934,14 @@ export class CacheManagementService {
           success: true,
           latency,
           lgpdCompliant: entry.lgpdCompliant,
-          metadata: { operation: "set", size: entry.size }, // Required metadata field
+          metadata: { operation: 'set', size: entry.size }, // Required metadata field
         });
       }
 
       return {
         key: scopedKey,
         timestamp: new Date(),
-        metadata: { operation: "set", size: entry.size },
+        metadata: { operation: 'set', size: entry.size },
         success: true,
         lgpdCompliant: entry.lgpdCompliant,
         auditLogged: entry.auditRequired,
@@ -951,12 +953,15 @@ export class CacheManagementService {
       return {
         key,
         timestamp: new Date(),
-        metadata: { operation: "get", error: error instanceof Error ? error.message : "Unknown error" },
+        metadata: {
+          operation: 'get',
+          error: error instanceof Error ? error.message : 'Unknown error',
+        },
         success: false,
         lgpdCompliant: true,
         auditLogged: false,
-        error: error instanceof Error ? error.message : "Unknown error",
-        errorCode: "CACHE_GET_ERROR",
+        error: error instanceof Error ? error.message : 'Unknown error',
+        errorCode: 'CACHE_GET_ERROR',
         latency,
       };
     }
@@ -1001,7 +1006,7 @@ export class CacheManagementService {
         await this.logAudit({
           eventId: crypto.randomUUID(),
           timestamp: new Date(),
-          operation: "delete",
+          operation: 'delete',
           key: scopedKey,
           tier: deletedTier!,
           sensitivity: CacheDataSensitivity.INTERNAL, // Default
@@ -1012,14 +1017,14 @@ export class CacheManagementService {
           success: true,
           latency,
           lgpdCompliant: true, // Required field
-          metadata: { operation: "delete" }, // Required metadata field
+          metadata: { operation: 'delete' }, // Required metadata field
         });
       }
 
       return {
         key: scopedKey,
         timestamp: new Date(),
-        metadata: { operation: "delete", deleted },
+        metadata: { operation: 'delete', deleted },
         success: deleted,
         lgpdCompliant: true,
         auditLogged: !!_context,
@@ -1031,12 +1036,15 @@ export class CacheManagementService {
       return {
         key,
         timestamp: new Date(),
-        metadata: { operation: "get", error: error instanceof Error ? error.message : "Unknown error" },
+        metadata: {
+          operation: 'get',
+          error: error instanceof Error ? error.message : 'Unknown error',
+        },
         success: false,
         lgpdCompliant: true,
         auditLogged: false,
-        error: error instanceof Error ? error.message : "Unknown error",
-        errorCode: "CACHE_GET_ERROR",
+        error: error instanceof Error ? error.message : 'Unknown error',
+        errorCode: 'CACHE_GET_ERROR',
         latency,
       };
     }
@@ -1111,8 +1119,8 @@ export class CacheManagementService {
 
       for (const entry of sensitiveEntries) {
         if (
-          entry.healthcareContext?.patientId &&
-          !entry.healthcareContext.lgpdConsentId
+          entry.healthcareContext?.patientId
+          && !entry.healthcareContext.lgpdConsentId
         ) {
           // Anonymize entry without consent
           const anonymizedEntry = anonymizeCacheEntry(entry);
@@ -1157,9 +1165,9 @@ export class CacheManagementService {
 
     // In a real implementation, this would integrate with your audit system
     if (this.config.lgpdSettings.enableAuditLogging) {
-      auditLogger.info("Cache audit event logged", {
+      auditLogger.info('Cache audit event logged', {
         ...validatedEvent,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
     }
   }
@@ -1175,16 +1183,20 @@ export class CacheManagementService {
     startDate?: Date;
     endDate?: Date;
   }): CacheAuditEvent[] {
-    return this.auditLog.filter((event) => {
+    return this.auditLog.filter(event => {
       if (filters?._userId && event._userId !== filters._userId) return false;
-      if (filters?.sessionId && event.sessionId !== filters.sessionId)
+      if (filters?.sessionId && event.sessionId !== filters.sessionId) {
         return false;
-      if (filters?.operation && event.operation !== filters.operation)
+      }
+      if (filters?.operation && event.operation !== filters.operation) {
         return false;
-      if (filters?.sensitivity && event.sensitivity !== filters.sensitivity)
+      }
+      if (filters?.sensitivity && event.sensitivity !== filters.sensitivity) {
         return false;
-      if (filters?.startDate && event.timestamp < filters.startDate)
+      }
+      if (filters?.startDate && event.timestamp < filters.startDate) {
         return false;
+      }
       if (filters?.endDate && event.timestamp > filters.endDate) return false;
       return true;
     });
@@ -1216,11 +1228,11 @@ export class HealthcareCachePatterns {
       providerId?: string;
       facilityId?: string;
       clinicalContext?:
-        | "consultation"
-        | "surgery"
-        | "emergency"
-        | "administrative"
-        | "research";
+        | 'consultation'
+        | 'surgery'
+        | 'emergency'
+        | 'administrative'
+        | 'research';
       ttl?: number;
       lgpdConsentId?: string;
     } = {},
@@ -1234,10 +1246,10 @@ export class HealthcareCachePatterns {
         patientId,
         providerId: options.providerId,
         facilityId: options.facilityId,
-        clinicalContext: options.clinicalContext || "consultation",
+        clinicalContext: options.clinicalContext || 'consultation',
         dataClassification: CacheDataSensitivity.CONFIDENTIAL,
         lgpdConsentId: options.lgpdConsentId,
-        retentionRequirement: "standard",
+        retentionRequirement: 'standard',
       },
     });
   }
@@ -1252,11 +1264,11 @@ export class HealthcareCachePatterns {
       patientId?: string;
       providerId?: string;
       clinicalContext?:
-        | "consultation"
-        | "surgery"
-        | "emergency"
-        | "administrative"
-        | "research";
+        | 'consultation'
+        | 'surgery'
+        | 'emergency'
+        | 'administrative'
+        | 'research';
     } = {},
   ): Promise<CacheOperationResult> {
     const key = `clinical:session:${sessionId}`;
@@ -1267,9 +1279,9 @@ export class HealthcareCachePatterns {
       _context: {
         patientId: options.patientId,
         providerId: options.providerId,
-        clinicalContext: options.clinicalContext || "consultation",
+        clinicalContext: options.clinicalContext || 'consultation',
         dataClassification: CacheDataSensitivity.CONFIDENTIAL,
-        retentionRequirement: "session",
+        retentionRequirement: 'session',
       },
     });
   }
@@ -1295,9 +1307,9 @@ export class HealthcareCachePatterns {
       _context: {
         patientId: options.patientId,
         facilityId: options.facilityId,
-        clinicalContext: "emergency",
+        clinicalContext: 'emergency',
         dataClassification: CacheDataSensitivity.RESTRICTED,
-        retentionRequirement: "temporary",
+        retentionRequirement: 'temporary',
       },
     });
   }
@@ -1310,7 +1322,7 @@ export class HealthcareCachePatterns {
     return this.cache.invalidatePattern(pattern, {
       patientId,
       dataClassification: CacheDataSensitivity.CONFIDENTIAL,
-      retentionRequirement: "standard", // Required field
+      retentionRequirement: 'standard', // Required field
     });
   }
 
@@ -1322,7 +1334,7 @@ export class HealthcareCachePatterns {
     return this.cache.invalidatePattern(pattern, {
       providerId,
       dataClassification: CacheDataSensitivity.INTERNAL,
-      retentionRequirement: "standard", // Required field
+      retentionRequirement: 'standard', // Required field
     });
   }
 }

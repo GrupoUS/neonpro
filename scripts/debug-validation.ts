@@ -3,15 +3,15 @@
  * Debug Script for PII Validation Issues
  */
 
-import { BrazilianPIIPatterns } from "../apps/api/src/lib/pii-redaction";
+import { BrazilianPIIPatterns } from '../apps/api/src/lib/pii-redaction';
 
 async function debugValidation() {
-  console.log("🔍 Debugging PII Validation Issues");
-  console.log("==================================\n");
+  console.log('🔍 Debugging PII Validation Issues');
+  console.log('==================================\n');
 
   // Test CPF validation
-  console.log("TEST 1: CPF Validation");
-  const testCPF = "123.456.789-00";
+  console.log('TEST 1: CPF Validation');
+  const testCPF = '123.456.789-00';
   console.log(`Testing CPF: "${testCPF}"`);
 
   try {
@@ -19,7 +19,7 @@ async function debugValidation() {
     console.log(`Validation result: ${isValid}`);
 
     // Test step by step
-    const digits = testCPF.replace(/\D/g, "");
+    const digits = testCPF.replace(/\D/g, '');
     console.log(`Digits: "${digits}" (length: ${digits.length})`);
 
     // Check for invalid sequences
@@ -51,8 +51,8 @@ async function debugValidation() {
   }
 
   // Test context pattern
-  console.log("\nTEST 2: Context Pattern Debugging");
-  const contextText = "Patient João Silva (CPF: 123.456.789-00)";
+  console.log('\nTEST 2: Context Pattern Debugging');
+  const contextText = 'Patient João Silva (CPF: 123.456.789-00)';
   const contextPattern =
     /(?:cpf|cadastro\s+de\s+pessoas?\s+físicas?)\s*[:=]\s*(\d{3}\.?\d{3}\.?\d{3}-?\d{2})/gi;
 
@@ -63,18 +63,20 @@ async function debugValidation() {
   if (match) {
     console.log(`Full match: "${match[0]}"`);
     console.log(
-      `Groups: [${match
-        .slice(1)
-        .map((g) => `"${g}"`)
-        .join(", ")}]`,
+      `Groups: [${
+        match
+          .slice(1)
+          .map(g => `"${g}"`)
+          .join(', ')
+      }]`,
     );
     console.log(`Group 1 (should be CPF): "${match[1]}"`);
   } else {
-    console.log("No match found");
+    console.log('No match found');
   }
 
   // Test different context patterns
-  console.log("\nTEST 3: Alternative Context Patterns");
+  console.log('\nTEST 3: Alternative Context Patterns');
   const patterns = [
     /CPF:\s*(\d{3}\.?\d{3}\.?\d{3}-?\d{2})/gi,
     /\(CPF:\s*(\d{3}\.?\d{3}\.?\d{3}-?\d{2})\)/gi,
@@ -86,12 +88,12 @@ async function debugValidation() {
     pattern.lastIndex = 0; // Reset
     const match = pattern.exec(contextText);
     console.log(
-      `Pattern ${i + 1}: ${match ? `FOUND "${match[1]}"` : "NOT FOUND"}`,
+      `Pattern ${i + 1}: ${match ? `FOUND "${match[1]}"` : 'NOT FOUND'}`,
     );
   }
 
   // Test confidence calculation
-  console.log("\nTEST 4: Confidence Calculation");
+  console.log('\nTEST 4: Confidence Calculation');
   const minConfidence = 0.7;
   const isValid = true;
   const confidence = isValid ? 0.9 : 0.5;

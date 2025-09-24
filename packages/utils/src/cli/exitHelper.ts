@@ -6,7 +6,7 @@
  */
 
 export interface ExitResult {
-  status: "ok" | "error";
+  status: 'ok' | 'error';
   code: number;
   message?: string;
   details?: object;
@@ -28,12 +28,12 @@ function safeStringify(obj: unknown): string {
   try {
     return JSON.stringify(obj, (_key, value) => {
       // Handle circular references
-      if (typeof value === "object" && value !== null) {
-        if (WeakSet && typeof WeakSet === "function") {
+      if (typeof value === 'object' && value !== null) {
+        if (WeakSet && typeof WeakSet === 'function') {
           const seen = new WeakSet();
           return JSON.stringify(obj, (_k, v) => {
-            if (typeof v === "object" && v !== null) {
-              if (seen.has(v)) return "[Circular]";
+            if (typeof v === 'object' && v !== null) {
+              if (seen.has(v)) return '[Circular]';
               seen.add(v);
             }
             return v;
@@ -46,7 +46,7 @@ function safeStringify(obj: unknown): string {
   } catch (error) {
     // Fallback for stringify errors
     return JSON.stringify({
-      error: "JSON serialization failed",
+      error: 'JSON serialization failed',
       originalError: String(error),
       type: typeof obj,
     });
@@ -58,7 +58,7 @@ function safeStringify(obj: unknown): string {
  */
 export function exitOk(message?: string, options: ExitOptions = {}): void {
   const result: ExitResult = {
-    status: "ok",
+    status: 'ok',
     code: 0,
     ...(message && { message }),
     ...(options.details && { details: options.details }),
@@ -67,7 +67,7 @@ export function exitOk(message?: string, options: ExitOptions = {}): void {
   const output = options.output || process.stdout;
   const jsonOutput = safeStringify(result);
 
-  output.write(jsonOutput + "\n");
+  output.write(jsonOutput + '\n');
 
   if (options.exit !== false) {
     // Use setImmediate to allow output to flush before exiting
@@ -86,7 +86,7 @@ export function exitError(
   options: ExitOptions = {},
 ): void {
   const result: ExitResult = {
-    status: "error",
+    status: 'error',
     code,
     message,
     ...(options.details && { details: options.details }),
@@ -95,7 +95,7 @@ export function exitError(
   const output = options.output || process.stderr;
   const jsonOutput = safeStringify(result);
 
-  output.write(jsonOutput + "\n");
+  output.write(jsonOutput + '\n');
 
   if (options.exit !== false) {
     // Use setImmediate to allow output to flush before exiting
@@ -109,8 +109,8 @@ export function exitError(
  * Handle uncaught exceptions with proper JSON error output
  */
 export function setupGlobalErrorHandling(): void {
-  process.on("uncaughtException", (error) => {
-    exitError("Uncaught exception occurred", 1, {
+  process.on('uncaughtException', error => {
+    exitError('Uncaught exception occurred', 1, {
       details: {
         name: error.name,
         message: error.message,
@@ -121,8 +121,8 @@ export function setupGlobalErrorHandling(): void {
     });
   });
 
-  process.on("unhandledRejection", (reason) => {
-    exitError("Unhandled promise rejection", 1, {
+  process.on('unhandledRejection', reason => {
+    exitError('Unhandled promise rejection', 1, {
       details: {
         reason: String(reason),
         timestamp: new Date().toISOString(),
@@ -136,17 +136,17 @@ export function setupGlobalErrorHandling(): void {
  * Validate exit result schema
  */
 export function validateExitResult(result: unknown): result is ExitResult {
-  if (!result || typeof result !== "object") {
+  if (!result || typeof result !== 'object') {
     return false;
   }
 
   const r = result as Record<string, unknown>;
 
   return (
-    (r.status === "ok" || r.status === "error") &&
-    typeof r.code === "number" &&
-    (r.message === undefined || typeof r.message === "string") &&
-    (r.details === undefined ||
-      (typeof r.details === "object" && r.details !== null))
+    (r.status === 'ok' || r.status === 'error')
+    && typeof r.code === 'number'
+    && (r.message === undefined || typeof r.message === 'string')
+    && (r.details === undefined
+      || (typeof r.details === 'object' && r.details !== null))
   );
 }

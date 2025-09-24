@@ -4,33 +4,30 @@
  */
 
 // Legacy exports for backward compatibility
-export { RealtimeManager } from "./realtime-manager";
-export type { RealtimeSubscriptionOptions } from "./realtime-manager";
+export { RealtimeManager } from './realtime-manager';
+export type { RealtimeSubscriptionOptions } from './realtime-manager';
 
 // Enhanced resilience-focused exports
 export {
-  EnhancedRealtimeManager,
   CacheInvalidationStrategy,
+  type ConnectionHealth,
+  EnhancedRealtimeManager,
   type EnhancedRealtimeOptions,
   type RealtimeMetrics,
-  type ConnectionHealth,
-} from "./enhanced-realtime-manager";
+} from './enhanced-realtime-manager';
 
 // Legacy adapter system
-import type {
-  RealtimeEventAdapter,
-  RealtimeAdapterConfig,
-} from "./event-adapter";
-import { SupabaseRealtimeAdapter } from "./supabase-adapter";
-import { MockRealtimeAdapter } from "./mock-adapter";
+import type { RealtimeAdapterConfig, RealtimeEventAdapter } from './event-adapter';
+import { MockRealtimeAdapter } from './mock-adapter';
+import { SupabaseRealtimeAdapter } from './supabase-adapter';
 
 export function createRealtimeAdapter(
   config: RealtimeAdapterConfig,
 ): RealtimeEventAdapter {
   switch (config.provider) {
-    case "supabase":
+    case 'supabase':
       return new SupabaseRealtimeAdapter(config);
-    case "mock":
+    case 'mock':
       return new MockRealtimeAdapter(config);
     default:
       throw new Error(`Unsupported provider: ${config.provider}`);
@@ -42,7 +39,7 @@ export const defaultConfigs = {
   supabase: (
     overrides: Partial<RealtimeAdapterConfig> = {},
   ): RealtimeAdapterConfig => ({
-    provider: "supabase",
+    provider: 'supabase',
     connection: {
       timeout: 30000,
       retryAttempts: 3,
@@ -67,7 +64,7 @@ export const defaultConfigs = {
   mock: (
     overrides: Partial<RealtimeAdapterConfig> = {},
   ): RealtimeAdapterConfig => ({
-    provider: "mock",
+    provider: 'mock',
     connection: {
       timeout: 5000,
       retryAttempts: 1,
@@ -92,21 +89,21 @@ export const defaultConfigs = {
 
 // Re-export all types and utilities
 export type {
-  RealtimeEventAdapter,
-  RealtimeEvent,
-  RealtimeParticipant,
-  RealtimeChannelState,
-  RealtimeEventHandlers,
   RealtimeAdapterConfig,
   RealtimeAdapterError,
+  RealtimeChannelState,
+  RealtimeEvent,
+  RealtimeEventAdapter,
+  RealtimeEventHandlers,
   RealtimeEventType,
-} from "./event-adapter.js";
+  RealtimeParticipant,
+} from './event-adapter.js';
 
 export {
   createRealtimeEvent,
-  validateParticipant,
   isHealthcareCompliant,
-} from "./event-adapter.js";
+  validateParticipant,
+} from './event-adapter.js';
 
-export { SupabaseRealtimeAdapter } from "./supabase-adapter.js";
-export { MockRealtimeAdapter } from "./mock-adapter.js";
+export { MockRealtimeAdapter } from './mock-adapter.js';
+export { SupabaseRealtimeAdapter } from './supabase-adapter.js';

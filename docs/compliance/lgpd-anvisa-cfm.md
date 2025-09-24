@@ -98,7 +98,7 @@ const LGPDConsentForm: React.FC = () => {
     dataProcessing: false,
     dataSharing: false,
     marketing: false,
-    photoUsage: false
+    photoUsage: false,
   });
 
   const handleSubmit = async () => {
@@ -106,7 +106,7 @@ const LGPDConsentForm: React.FC = () => {
       ...consents,
       retentionPeriod: '10_years',
       ipAddress: await getIPAddress(),
-      userAgent: navigator.userAgent
+      userAgent: navigator.userAgent,
     });
   };
 
@@ -114,24 +114,24 @@ const LGPDConsentForm: React.FC = () => {
     <form>
       <h3>Termo de Consentimento LGPD - Clínica Estética</h3>
       <ConsentCheckbox
-        label="Autorizo o tratamento de meus dados para finalidades estéticas"
+        label='Autorizo o tratamento de meus dados para finalidades estéticas'
         checked={consents.dataProcessing}
-        onChange={(v) => setConsents(prev => ({ ...prev, dataProcessing: v }))}
+        onChange={v => setConsents(prev => ({ ...prev, dataProcessing: v }))}
       />
       <ConsentCheckbox
-        label="Autorizo o compartilhamento com profissionais estéticos"
+        label='Autorizo o compartilhamento com profissionais estéticos'
         checked={consents.dataSharing}
-        onChange={(v) => setConsents(prev => ({ ...prev, dataSharing: v }))}
+        onChange={v => setConsents(prev => ({ ...prev, dataSharing: v }))}
       />
       <ConsentCheckbox
-        label="Autorizo o uso de fotos antes/depois para tratamento"
+        label='Autorizo o uso de fotos antes/depois para tratamento'
         checked={consents.photoUsage}
-        onChange={(v) => setConsents(prev => ({ ...prev, photoUsage: v }))}
+        onChange={v => setConsents(prev => ({ ...prev, photoUsage: v }))}
       />
       <ConsentCheckbox
-        label="Autorizo comunicação sobre serviços estéticos"
+        label='Autorizo comunicação sobre serviços estéticos'
         checked={consents.marketing}
-        onChange={(v) => setConsents(prev => ({ ...prev, marketing: v }))}
+        onChange={v => setConsents(prev => ({ ...prev, marketing: v }))}
       />
     </form>
   );
@@ -143,14 +143,14 @@ const LGPDConsentForm: React.FC = () => {
 ```typescript
 // Mask sensitive data
 export function maskCPF(cpf: string): string {
-  if (!cpf) return "";
+  if (!cpf) return '';
   const clean = cleanDocument(cpf);
   return `${clean.substring(0, 3)}.***.${clean.substring(6, 9)}-**`;
 }
 
 export function maskEmail(email: string): string {
-  if (!email) return "";
-  const [username, domain] = email.split("@");
+  if (!email) return '';
+  const [username, domain] = email.split('@');
   return `${username.substring(0, 2)}***@${domain}`;
 }
 ```
@@ -211,7 +211,7 @@ interface AuditLog {
   resource: string;
   resourceId: string;
   changes?: Record<string, any>;
-  result: "success" | "failure";
+  result: 'success' | 'failure';
   ipAddress: string;
   userAgent: string;
 }
@@ -223,7 +223,7 @@ class AuditService {
     resource: string;
     resourceId: string;
     changes?: Record<string, any>;
-    result: "success" | "failure";
+    result: 'success' | 'failure';
   }) {
     const audit: AuditLog = {
       id: generateUUID(),
@@ -248,17 +248,17 @@ class AuditService {
 ```typescript
 // Validation matrix
 const VALIDATION_MATRIX = {
-  "client-registration": {
-    requirements: ["REQ-CLI-001", "REQ-CLI-002"],
-    testCases: ["TC-CLI-001", "TC-CLI-002"],
-    risks: ["RISK-001"],
-    mitigations: ["MIT-001"],
+  'client-registration': {
+    requirements: ['REQ-CLI-001', 'REQ-CLI-002'],
+    testCases: ['TC-CLI-001', 'TC-CLI-002'],
+    risks: ['RISK-001'],
+    mitigations: ['MIT-001'],
   },
-  "aesthetic-procedure": {
-    requirements: ["REQ-AES-001"],
-    testCases: ["TC-AES-001", "TC-AES-002"],
-    risks: ["RISK-002", "RISK-003"],
-    mitigations: ["MIT-002", "MIT-003"],
+  'aesthetic-procedure': {
+    requirements: ['REQ-AES-001'],
+    testCases: ['TC-AES-001', 'TC-AES-002'],
+    risks: ['RISK-002', 'RISK-003'],
+    mitigations: ['MIT-002', 'MIT-003'],
   },
 };
 ```
@@ -322,7 +322,7 @@ export async function validateProfessionalLicense(
   const response = await fetch(endpoints[councilType]);
   const data = await response.json();
 
-  return data.situacao === "Ativo" && data.uf === state;
+  return data.situacao === 'Ativo' && data.uf === state;
 }
 
 // Professional scope check
@@ -331,10 +331,10 @@ export function validateScopeOfPractice(
   procedure: string,
 ): boolean {
   const SCOPE_MATRIX = {
-    Dermatologia: ["Dermatoscopia", "Biópsia", "Peeling Químico"],
-    "Cirurgia Plástica": ["Botox", "Preenchimento", "Lipoaspiração"],
-    "Enfermagem Estética": ["Limpeza de Pele", "Aplicação de Cosméticos"],
-    Estética: ["Massagem Facial", "Tratamentos Capilares"],
+    Dermatologia: ['Dermatoscopia', 'Biópsia', 'Peeling Químico'],
+    'Cirurgia Plástica': ['Botox', 'Preenchimento', 'Lipoaspiração'],
+    'Enfermagem Estética': ['Limpeza de Pele', 'Aplicação de Cosméticos'],
+    Estética: ['Massagem Facial', 'Tratamentos Capilares'],
     // ... other specialties
   };
 
@@ -364,7 +364,7 @@ class SignatureService {
   ): Promise<ElectronicSignature> {
     // Create cryptographic signature
     const signature = await crypto.subtle.sign(
-      "RSASSA-PKCS1-v1_5",
+      'RSASSA-PKCS1-v1_5',
       professional.privateKey,
       new TextEncoder().encode(documentId),
     );
@@ -405,15 +405,15 @@ class SignatureService {
 
    ```typescript
    const ROLES = {
-     ADMIN: ["read", "write", "delete", "manage"],
+     ADMIN: ['read', 'write', 'delete', 'manage'],
      MEDICAL_DIRECTOR: [
-       "read",
-       "write",
-       "diagnose",
-       "manage_aesthetic_procedures",
+       'read',
+       'write',
+       'diagnose',
+       'manage_aesthetic_procedures',
      ],
-     AESTHETIC_PROFESSIONAL: ["read", "write", "perform_authorized_procedures"],
-     CLINIC_STAFF: ["read", "create-appointments", "manage_client_data"],
+     AESTHETIC_PROFESSIONAL: ['read', 'write', 'perform_authorized_procedures'],
+     CLINIC_STAFF: ['read', 'create-appointments', 'manage_client_data'],
    };
    ```
 
@@ -492,20 +492,20 @@ class SignatureService {
 1. **Unit Tests**
 
    ```typescript
-   describe("LGPD Compliance", () => {
-     it("should mask CPF correctly", () => {
-       expect(maskCPF("123.456.789-09")).toBe("123.***.789-**");
+   describe('LGPD Compliance', () => {
+     it('should mask CPF correctly', () => {
+       expect(maskCPF('123.456.789-09')).toBe('123.***.789-**');
      });
 
-     it("should require valid consent", async () => {
+     it('should require valid consent', async () => {
        await expect(saveClientData({})).rejects.toThrow(
-         "LGPD consent required",
+         'LGPD consent required',
        );
      });
 
-     it("should validate photo consent", async () => {
+     it('should validate photo consent', async () => {
        await expect(saveBeforeAfterPhotos({})).rejects.toThrow(
-         "Photo usage consent required",
+         'Photo usage consent required',
        );
      });
    });

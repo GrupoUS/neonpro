@@ -44,7 +44,7 @@ export interface UserPreferences {
   language?: string;
   timezone?: string;
   dateFormat?: string;
-  theme?: "light" | "dark" | "auto";
+  theme?: 'light' | 'dark' | 'auto';
   notifications?: {
     email: boolean;
     push: boolean;
@@ -76,7 +76,7 @@ export interface MessageData {
 
 export interface MessageMetadata {
   source?: string;
-  priority?: "low" | "medium" | "high";
+  priority?: 'low' | 'medium' | 'high';
   category?: string;
   [key: string]: unknown;
 }
@@ -109,11 +109,11 @@ export interface UserQuery {
 }
 
 export type QueryIntent =
-  | "client_data"
-  | "appointments"
-  | "financial"
-  | "general"
-  | "unknown";
+  | 'client_data'
+  | 'appointments'
+  | 'financial'
+  | 'general'
+  | 'unknown';
 
 export interface QueryParameters {
   /** Client names extracted from query */
@@ -124,8 +124,8 @@ export interface QueryParameters {
   dates?: Date[];
   /** Financial parameters */
   financial?: {
-    type?: "revenue" | "payments" | "expenses" | "all";
-    period?: "today" | "week" | "month" | "year" | "custom";
+    type?: 'revenue' | 'payments' | 'expenses' | 'all';
+    period?: 'today' | 'week' | 'month' | 'year' | 'custom';
   };
   /** Raw extracted entities for further processing */
   rawEntities?: QueryEntities;
@@ -136,7 +136,7 @@ export interface DateRange {
   end: Date;
 }
 
-export type QueryStatus = "pending" | "processing" | "completed" | "failed";
+export type QueryStatus = 'pending' | 'processing' | 'completed' | 'failed';
 
 export interface ResponseMetadata {
   /** Response confidence score */
@@ -168,7 +168,7 @@ export interface AgentResponse {
   processingTime: number;
 }
 
-export type ResponseType = "text" | "list" | "table" | "chart" | "error";
+export type ResponseType = 'text' | 'list' | 'table' | 'chart' | 'error';
 
 export interface ResponseContent {
   /** Display title for the response */
@@ -195,7 +195,7 @@ export interface TableColumn {
   /** Display label */
   label: string;
   /** Data type */
-  type: "string" | "number" | "date" | "boolean" | "currency";
+  type: 'string' | 'number' | 'date' | 'boolean' | 'currency';
   /** Whether column is sortable */
   sortable?: boolean;
   /** Column width (CSS) */
@@ -206,7 +206,7 @@ export interface TableColumn {
 
 export interface ChartConfig {
   /** Chart type */
-  type: "line" | "bar" | "pie" | "area";
+  type: 'line' | 'bar' | 'pie' | 'area';
   /** Data points */
   data: ChartDataPoint[];
   /** X-axis configuration */
@@ -227,7 +227,7 @@ export interface ChartDataPoint {
 
 export interface ChartAxis {
   title?: string;
-  type?: "category" | "number" | "time";
+  type?: 'category' | 'number' | 'time';
   format?: (value: unknown) => string;
 }
 
@@ -237,7 +237,7 @@ export interface InteractiveAction {
   /** Display label for the action */
   label: string;
   /** Action type */
-  type: "button" | "link" | "form";
+  type: 'button' | 'link' | 'form';
   /** Action handler function name */
   action: string;
   /** Action-specific parameters */
@@ -249,7 +249,7 @@ export interface InteractiveAction {
   /** Icon for the action */
   icon?: string;
   /** Styling variant */
-  variant?: "primary" | "secondary" | "danger";
+  variant?: 'primary' | 'secondary' | 'danger';
 }
 
 export interface ChatSession {
@@ -269,7 +269,7 @@ export interface ChatSession {
   messageCount: number;
 }
 
-export type SessionStatus = "active" | "expired" | "terminated";
+export type SessionStatus = 'active' | 'expired' | 'terminated';
 
 export interface SessionContext {
   /** User's current domain */
@@ -284,7 +284,7 @@ export interface SessionContext {
   cachedData?: CachedData;
 }
 
-export type UserRole = "admin" | "doctor" | "nurse" | "receptionist";
+export type UserRole = 'admin' | 'doctor' | 'nurse' | 'receptionist';
 
 export interface PermissionContext {
   /** User identifier */
@@ -304,24 +304,24 @@ export interface PermissionContext {
 }
 
 export type Permission =
-  | "read_clients"
-  | "write_clients"
-  | "read_appointments"
-  | "write_appointments"
-  | "read_financial"
-  | "write_financial"
-  | "read_medical"
-  | "write_medical"
-  | "manage_users"
-  | "view_analytics";
+  | 'read_clients'
+  | 'write_clients'
+  | 'read_appointments'
+  | 'write_appointments'
+  | 'read_financial'
+  | 'write_financial'
+  | 'read_medical'
+  | 'write_medical'
+  | 'manage_users'
+  | 'view_analytics';
 
 export type DataScope =
-  | "own_clients"
-  | "all_clients"
-  | "financial_read"
-  | "financial_write"
-  | "medical_read"
-  | "medical_write";
+  | 'own_clients'
+  | 'all_clients'
+  | 'financial_read'
+  | 'financial_write'
+  | 'medical_read'
+  | 'medical_write';
 
 export interface AgentQueryRequest {
   /** Natural language query from user */
@@ -341,7 +341,7 @@ export interface ChatMessage {
   /** Unique identifier (UUID) */
   id: string;
   /** Message role */
-  role: "user" | "assistant";
+  role: 'user' | 'assistant';
   /** Message content */
   content: string;
   /** When the message was sent */
@@ -360,10 +360,10 @@ export interface AgentAction {
   icon?: string;
   primary?: boolean;
   type:
-    | "view_details"
-    | "create_appointment"
-    | "export_data"
-    | "navigate"
-    | "refresh";
+    | 'view_details'
+    | 'create_appointment'
+    | 'export_data'
+    | 'navigate'
+    | 'refresh';
   payload?: ActionPayload;
 }

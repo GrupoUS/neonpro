@@ -185,7 +185,7 @@ Each category has its own `vitest.config.ts`:
 // tools/frontend/vitest.config.ts
 export default defineConfig({
   test: {
-    environment: "jsdom", // For React testing
+    environment: 'jsdom', // For React testing
     coverage: {
       thresholds: { global: { lines: 85 } },
     },

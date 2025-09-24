@@ -7,9 +7,9 @@
  * Ensures bundles meet <250KB limit and <100ms response time requirements.
  */
 
-const fs = require("fs");
-const path = require("path");
-const { execSync } = require("child_process");
+const fs = require('fs');
+const path = require('path');
+const { execSync } = require('child_process');
 
 // Healthcare bundle size limits (in bytes)
 const HEALTHCARE_LIMITS = {
@@ -22,24 +22,24 @@ const HEALTHCARE_LIMITS = {
 // Healthcare module categories for analysis
 const HEALTHCARE_MODULES = {
   critical: [
-    "healthcare-middleware",
-    "lgpd-compliance",
-    "emergency-protocols",
-    "patient-safety",
+    'healthcare-middleware',
+    'lgpd-compliance',
+    'emergency-protocols',
+    'patient-safety',
   ],
   compliance: [
-    "lgpd-validation",
-    "cfm-certification",
-    "anvisa-reporting",
-    "brazilian-standards",
+    'lgpd-validation',
+    'cfm-certification',
+    'anvisa-reporting',
+    'brazilian-standards',
   ],
   api: [
-    "telemedicine-routes",
-    "patient-routes",
-    "prescription-routes",
-    "audit-routes",
+    'telemedicine-routes',
+    'patient-routes',
+    'prescription-routes',
+    'audit-routes',
   ],
-  deferred: ["report-generation", "analytics", "backup-systems"],
+  deferred: ['report-generation', 'analytics', 'backup-systems'],
 };
 
 class HealthcareBundleAnalyzer {
@@ -57,7 +57,7 @@ class HealthcareBundleAnalyzer {
    * Main analysis function
    */
   async analyze() {
-    console.log("🏥 Starting Healthcare Bundle Analysis for Edge Runtime...\n");
+    console.log('🏥 Starting Healthcare Bundle Analysis for Edge Runtime...\n');
 
     try {
       // 1. Build the application for analysis
@@ -78,7 +78,7 @@ class HealthcareBundleAnalyzer {
       // 6. Create compliance report
       this.generateComplianceReport();
     } catch (error) {
-      console.error("❌ Healthcare bundle analysis failed:", error.message);
+      console.error('❌ Healthcare bundle analysis failed:', error.message);
       process.exit(1);
     }
   }
@@ -87,20 +87,20 @@ class HealthcareBundleAnalyzer {
    * Build application with bundle analysis enabled
    */
   async buildForAnalysis() {
-    console.log("📦 Building application with bundle analysis...");
+    console.log('📦 Building application with bundle analysis...');
 
     try {
       // Set environment for bundle analysis
-      process.env.ANALYZE = "true";
-      process.env.NODE_ENV = "production";
+      process.env.ANALYZE = 'true';
+      process.env.NODE_ENV = 'production';
 
       // Build the application
-      execSync("bun run build", {
-        stdio: "inherit",
-        cwd: path.join(__dirname, "../apps/api"),
+      execSync('bun run build', {
+        stdio: 'inherit',
+        cwd: path.join(__dirname, '../apps/api'),
       });
 
-      console.log("✅ Build completed successfully\n");
+      console.log('✅ Build completed successfully\n');
     } catch (error) {
       throw new Error(`Build failed: ${error.message}`);
     }
@@ -110,9 +110,9 @@ class HealthcareBundleAnalyzer {
    * Analyze bundle sizes for healthcare compliance
    */
   async analyzeBundleSizes() {
-    console.log("📊 Analyzing healthcare bundle sizes...");
+    console.log('📊 Analyzing healthcare bundle sizes...');
 
-    const buildDir = path.join(__dirname, "../apps/api/.next");
+    const buildDir = path.join(__dirname, '../apps/api/.next');
 
     // Analyze static chunks
     await this.analyzeStaticChunks(buildDir);
@@ -135,17 +135,17 @@ class HealthcareBundleAnalyzer {
    * Analyze static chunks
    */
   async analyzeStaticChunks(buildDir) {
-    const staticDir = path.join(buildDir, "static", "chunks");
+    const staticDir = path.join(buildDir, 'static', 'chunks');
 
     if (!fs.existsSync(staticDir)) {
-      console.warn("⚠️  Static chunks directory not found");
+      console.warn('⚠️  Static chunks directory not found');
       return;
     }
 
     const chunks = fs
       .readdirSync(staticDir)
-      .filter((file) => file.endsWith(".js"))
-      .map((file) => {
+      .filter(file => file.endsWith('.js'))
+      .map(file => {
         const filePath = path.join(staticDir, file);
         const stats = fs.statSync(filePath);
         return {
@@ -156,7 +156,7 @@ class HealthcareBundleAnalyzer {
       });
 
     // Categorize chunks by healthcare modules
-    chunks.forEach((chunk) => {
+    chunks.forEach(chunk => {
       this.results.totalSize += chunk.size;
 
       // Check if chunk contains healthcare modules
@@ -171,12 +171,12 @@ class HealthcareBundleAnalyzer {
 
     // Sort chunks by size
     const largeChunks = chunks
-      .filter((chunk) => chunk.size > 20000)
+      .filter(chunk => chunk.size > 20000)
       .sort((a, b) => b.size - a.size);
 
     if (largeChunks.length > 0) {
-      console.log("📊 Large chunks detected:");
-      largeChunks.slice(0, 5).forEach((chunk) => {
+      console.log('📊 Large chunks detected:');
+      largeChunks.slice(0, 5).forEach(chunk => {
         console.log(`  ${chunk.name}: ${this.formatBytes(chunk.size)}`);
       });
     }
@@ -186,24 +186,24 @@ class HealthcareBundleAnalyzer {
    * Analyze API routes for healthcare compliance
    */
   async analyzeApiRoutes(buildDir) {
-    const serverDir = path.join(buildDir, "server", "app", "api");
+    const serverDir = path.join(buildDir, 'server', 'app', 'api');
 
     if (!fs.existsSync(serverDir)) {
-      console.warn("⚠️  API routes directory not found");
+      console.warn('⚠️  API routes directory not found');
       return;
     }
 
-    const analyzeDirectory = (dir, basePath = "") => {
+    const analyzeDirectory = (dir, basePath = '') => {
       const items = fs.readdirSync(dir);
 
-      items.forEach((item) => {
+      items.forEach(item => {
         const itemPath = path.join(dir, item);
         const stats = fs.statSync(itemPath);
 
         if (stats.isDirectory()) {
           analyzeDirectory(itemPath, path.join(basePath, item));
-        } else if (item.endsWith(".js")) {
-          const routeName = path.join(basePath, item.replace(".js", ""));
+        } else if (item.endsWith('.js')) {
+          const routeName = path.join(basePath, item.replace('.js', ''));
           const routeSize = stats.size;
 
           // Check if route exceeds healthcare limits
@@ -231,7 +231,7 @@ class HealthcareBundleAnalyzer {
    */
   async analyzeHealthcareModules(buildDir) {
     Object.entries(HEALTHCARE_MODULES).forEach(([category, modules]) => {
-      modules.forEach((moduleName) => {
+      modules.forEach(moduleName => {
         // Estimate module size based on healthcare complexity
         const estimatedSize = this.estimateHealthcareModuleSize(
           moduleName,
@@ -255,7 +255,7 @@ class HealthcareBundleAnalyzer {
    * Check healthcare compliance requirements
    */
   async checkHealthcareCompliance() {
-    console.log("🏥 Checking Brazilian healthcare compliance...");
+    console.log('🏥 Checking Brazilian healthcare compliance...');
 
     // LGPD compliance check
     this.results.complianceStatus.lgpd = {
@@ -280,27 +280,25 @@ class HealthcareBundleAnalyzer {
 
     // Edge runtime compliance
     this.results.complianceStatus.edgeRuntime = {
-      sizeCompliance:
-        this.results.totalSize <= HEALTHCARE_LIMITS.EDGE_RUNTIME_MAX,
+      sizeCompliance: this.results.totalSize <= HEALTHCARE_LIMITS.EDGE_RUNTIME_MAX,
       performanceCompliance: true, // Will be checked in performance analysis
       regionCompliance: this.checkRegionCompliance(),
     };
 
-    console.log("✅ Healthcare compliance check completed\n");
+    console.log('✅ Healthcare compliance check completed\n');
   }
 
   /**
    * Analyze performance for healthcare requirements
    */
   async analyzePerformance() {
-    console.log("⚡ Analyzing healthcare performance requirements...");
+    console.log('⚡ Analyzing healthcare performance requirements...');
 
     this.results.performance = {
       bundleSize: {
         current: this.results.totalSize,
         limit: HEALTHCARE_LIMITS.EDGE_RUNTIME_MAX,
-        compliance:
-          this.results.totalSize <= HEALTHCARE_LIMITS.EDGE_RUNTIME_MAX,
+        compliance: this.results.totalSize <= HEALTHCARE_LIMITS.EDGE_RUNTIME_MAX,
         utilizationPercent: Math.round(
           (this.results.totalSize / HEALTHCARE_LIMITS.EDGE_RUNTIME_MAX) * 100,
         ),
@@ -325,25 +323,25 @@ class HealthcareBundleAnalyzer {
    * Generate optimization recommendations
    */
   generateRecommendations() {
-    console.log("💡 Generating healthcare optimization recommendations...");
+    console.log('💡 Generating healthcare optimization recommendations...');
 
     const recommendations = [];
 
     // Bundle size recommendations
     if (this.results.performance.bundleSize.utilizationPercent > 90) {
       recommendations.push(
-        "🚨 CRITICAL: Bundle size exceeds 90% of edge runtime limit - immediate optimization required",
+        '🚨 CRITICAL: Bundle size exceeds 90% of edge runtime limit - immediate optimization required',
       );
     } else if (this.results.performance.bundleSize.utilizationPercent > 75) {
       recommendations.push(
-        "⚠️  WARNING: Bundle size exceeds 75% of edge runtime limit - optimization recommended",
+        '⚠️  WARNING: Bundle size exceeds 75% of edge runtime limit - optimization recommended',
       );
     }
 
     // Performance recommendations
     if (this.results.performance.estimatedResponseTime > 100) {
       recommendations.push(
-        "⚠️  Response time may exceed 100ms healthcare SLA - consider module optimization",
+        '⚠️  Response time may exceed 100ms healthcare SLA - consider module optimization',
       );
     }
 
@@ -360,7 +358,9 @@ class HealthcareBundleAnalyzer {
         const issues = Object.entries(status).filter(([key, value]) => !value);
         if (issues.length > 0) {
           recommendations.push(
-            `📋 ${standard.toUpperCase()} compliance issues: ${issues.map(([key]) => key).join(", ")}`,
+            `📋 ${standard.toUpperCase()} compliance issues: ${
+              issues.map(([key]) => key).join(', ')
+            }`,
           );
         }
       },
@@ -369,11 +369,11 @@ class HealthcareBundleAnalyzer {
     this.results.recommendations = recommendations;
 
     if (recommendations.length > 0) {
-      console.log("Recommendations:");
-      recommendations.forEach((rec) => console.log(`  ${rec}`));
+      console.log('Recommendations:');
+      recommendations.forEach(rec => console.log(`  ${rec}`));
     } else {
       console.log(
-        "✅ No optimization recommendations - bundle is well optimized for healthcare edge runtime",
+        '✅ No optimization recommendations - bundle is well optimized for healthcare edge runtime',
       );
     }
     console.log();
@@ -383,14 +383,13 @@ class HealthcareBundleAnalyzer {
    * Generate compliance report
    */
   generateComplianceReport() {
-    console.log("📋 Generating healthcare compliance report...");
+    console.log('📋 Generating healthcare compliance report...');
 
     const report = {
       timestamp: new Date().toISOString(),
       summary: {
         totalBundleSize: this.formatBytes(this.results.totalSize),
-        edgeRuntimeCompliance:
-          this.results.complianceStatus.edgeRuntime.sizeCompliance,
+        edgeRuntimeCompliance: this.results.complianceStatus.edgeRuntime.sizeCompliance,
         estimatedPerformance: `${this.results.performance.estimatedResponseTime}ms`,
         healthcareCompliance: this.isFullyCompliant(),
       },
@@ -398,25 +397,29 @@ class HealthcareBundleAnalyzer {
     };
 
     // Save report to file
-    const reportPath = path.join(__dirname, "../healthcare-bundle-report.json");
+    const reportPath = path.join(__dirname, '../healthcare-bundle-report.json');
     fs.writeFileSync(reportPath, JSON.stringify(report, null, 2));
 
     console.log(`✅ Healthcare compliance report saved to: ${reportPath}`);
 
     // Summary
-    console.log("\n📊 HEALTHCARE BUNDLE ANALYSIS SUMMARY");
-    console.log("=====================================");
+    console.log('\n📊 HEALTHCARE BUNDLE ANALYSIS SUMMARY');
+    console.log('=====================================');
     console.log(
-      `Bundle Size: ${this.formatBytes(this.results.totalSize)} / ${this.formatBytes(HEALTHCARE_LIMITS.EDGE_RUNTIME_MAX)}`,
+      `Bundle Size: ${this.formatBytes(this.results.totalSize)} / ${
+        this.formatBytes(HEALTHCARE_LIMITS.EDGE_RUNTIME_MAX)
+      }`,
     );
     console.log(
-      `Edge Runtime Compliance: ${this.results.complianceStatus.edgeRuntime.sizeCompliance ? "✅ PASS" : "❌ FAIL"}`,
+      `Edge Runtime Compliance: ${
+        this.results.complianceStatus.edgeRuntime.sizeCompliance ? '✅ PASS' : '❌ FAIL'
+      }`,
     );
     console.log(
       `Performance Estimate: ${this.results.performance.estimatedResponseTime}ms`,
     );
     console.log(
-      `Healthcare Compliance: ${this.isFullyCompliant() ? "✅ COMPLIANT" : "❌ NON-COMPLIANT"}`,
+      `Healthcare Compliance: ${this.isFullyCompliant() ? '✅ COMPLIANT' : '❌ NON-COMPLIANT'}`,
     );
 
     if (this.results.recommendations.length > 0) {
@@ -428,11 +431,13 @@ class HealthcareBundleAnalyzer {
 
   // Helper methods
   categorizeChunk(chunkName) {
-    if (chunkName.includes("healthcare") || chunkName.includes("medical"))
-      return "healthcare";
-    if (chunkName.includes("lgpd") || chunkName.includes("compliance"))
-      return "compliance";
-    if (chunkName.includes("api") || chunkName.includes("route")) return "api";
+    if (chunkName.includes('healthcare') || chunkName.includes('medical')) {
+      return 'healthcare';
+    }
+    if (chunkName.includes('lgpd') || chunkName.includes('compliance')) {
+      return 'compliance';
+    }
+    if (chunkName.includes('api') || chunkName.includes('route')) return 'api';
     return null;
   }
 
@@ -494,25 +499,25 @@ class HealthcareBundleAnalyzer {
   }
 
   isFullyCompliant() {
-    return Object.values(this.results.complianceStatus).every((status) =>
-      Object.values(status).every((check) => check === true),
+    return Object.values(this.results.complianceStatus).every(status =>
+      Object.values(status).every(check => check === true)
     );
   }
 
   formatBytes(bytes) {
-    if (bytes === 0) return "0 B";
+    if (bytes === 0) return '0 B';
     const k = 1024;
-    const sizes = ["B", "KB", "MB"];
+    const sizes = ['B', 'KB', 'MB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return `${parseFloat((bytes / Math.pow(k, i)).toFixed(1))  } ${  sizes[i]}`;
+    return `${parseFloat((bytes / Math.pow(k, i)).toFixed(1))} ${sizes[i]}`;
   }
 }
 
 // Run analysis if called directly
 if (require.main === module) {
   const analyzer = new HealthcareBundleAnalyzer();
-  analyzer.analyze().catch((error) => {
-    console.error("Healthcare bundle analysis failed:", error);
+  analyzer.analyze().catch(error => {
+    console.error('Healthcare bundle analysis failed:', error);
     process.exit(1);
   });
 }

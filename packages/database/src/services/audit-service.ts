@@ -1,24 +1,24 @@
-import { SupabaseClient } from "@supabase/supabase-js";
-import { logHealthcareError } from "../../../shared/src/logging/healthcare-logger";
+import { SupabaseClient } from '@supabase/supabase-js';
+import { logHealthcareError } from '../../../shared/src/logging/healthcare-logger';
 import type {
   AuditLogRequest,
-  ComplianceReport,
   AuditSearchCriteria,
+  ComplianceReport,
   MedicalDataClassification,
   RTCAuditLogEntry,
-} from "../types/audit.types";
+} from '../types/audit.types';
 
 // Re-export types for external use
 export type {
   AuditLogRequest,
-  ComplianceReport,
   AuditSearchCriteria,
-  MedicalDataClassification,
-  ResourceType,
   AuditStatusType,
   ComplianceCheck,
+  ComplianceReport,
+  MedicalDataClassification,
+  ResourceType,
   RTCAuditLogEntry,
-} from "../types/audit.types";
+} from '../types/audit.types';
 
 // Database log entry interface
 interface DatabaseLogEntry {
@@ -26,7 +26,7 @@ interface DatabaseLogEntry {
   session_id?: string;
   user_id: string;
   action: string;
-  user_role?: "doctor" | "patient" | "nurse" | "admin" | "system";
+  user_role?: 'doctor' | 'patient' | 'nurse' | 'admin' | 'system';
   data_classification?: MedicalDataClassification;
   description?: string;
   created_at: string;
@@ -60,20 +60,20 @@ export class AuditService {
   async createAuditLog(_request: AuditLogRequest): Promise<string> {
     try {
       const { data, error } = await this.supabase
-        .from("webrtc_audit_logs")
+        .from('webrtc_audit_logs')
         .insert({
-          action: request.action || request.eventType || "UNKNOWN",
+          action: request.action || request.eventType || 'UNKNOWN',
           user_id: request._userId,
-          resource: request.resource || request.description || "UNKNOWN",
-          resource_type: request.resource || "session", // Default resource type
-          ip_address: request.ipAddress || "unknown",
-          user_agent: request.userAgent || "unknown",
+          resource: request.resource || request.description || 'UNKNOWN',
+          resource_type: request.resource || 'session', // Default resource type
+          ip_address: request.ipAddress || 'unknown',
+          user_agent: request.userAgent || 'unknown',
           clinic_id: request.clinicId,
           lgpd_basis: request.metadata?.legalBasis || null,
           old_values: request.metadata?.oldValues || null,
           new_values: request.metadata?.newValues || null,
         })
-        .select("id")
+        .select('id')
         .single();
 
       if (error) {
@@ -99,7 +99,7 @@ export class AuditService {
   async logSessionStart(
     sessionId: string,
     _userId: string,
-    userRole: "doctor" | "patient" | "nurse" | "admin",
+    userRole: 'doctor' | 'patient' | 'nurse' | 'admin',
     metadata?: {
       ipAddress?: string;
       userAgent?: string;
@@ -109,9 +109,9 @@ export class AuditService {
   ): Promise<string> {
     return this.createAuditLog({
       sessionId,
-      action: "CREATE",
-      resource: "TELEMEDICINE_SESSION",
-      eventType: "session-start",
+      action: 'CREATE',
+      resource: 'TELEMEDICINE_SESSION',
+      eventType: 'session-start',
       userId,
       userRole,
       dataClassification: metadata?.dataClassification,
@@ -134,7 +134,7 @@ export class AuditService {
   async logSessionEnd(
     sessionId: string,
     _userId: string,
-    userRole: "doctor" | "patient" | "nurse" | "admin",
+    userRole: 'doctor' | 'patient' | 'nurse' | 'admin',
     duration: number,
     metadata?: {
       ipAddress?: string;
@@ -146,14 +146,14 @@ export class AuditService {
   ): Promise<string> {
     return this.createAuditLog({
       sessionId,
-      action: "UPDATE",
-      resource: "TELEMEDICINE_SESSION",
-      eventType: "session-end",
+      action: 'UPDATE',
+      resource: 'TELEMEDICINE_SESSION',
+      eventType: 'session-end',
       userId,
       userRole,
       dataClassification: metadata?.dataClassification,
       description: `${userRole} ended WebRTC session (duration: ${duration}s)${
-        metadata?.reason ? ` - ${metadata.reason}` : ""
+        metadata?.reason ? ` - ${metadata.reason}` : ''
       }`,
       ipAddress: metadata?.ipAddress,
       userAgent: metadata?.userAgent,
@@ -176,7 +176,7 @@ export class AuditService {
    */
   async logDataAccess(
     _userId: string,
-    userRole: "doctor" | "patient" | "nurse" | "admin",
+    userRole: 'doctor' | 'patient' | 'nurse' | 'admin',
     dataType: string,
     patientId?: string,
     metadata?: {
@@ -189,14 +189,14 @@ export class AuditService {
   ): Promise<string> {
     return this.createAuditLog({
       sessionId: `data-access-${Date.now()}`,
-      action: "READ",
-      resource: "PATIENT_DATA",
-      eventType: "data-access",
+      action: 'READ',
+      resource: 'PATIENT_DATA',
+      eventType: 'data-access',
       userId,
       userRole,
       dataClassification: metadata?.dataClassification,
       description: `${userRole} accessed ${dataType}${
-        patientId ? ` for patient ${patientId}` : ""
+        patientId ? ` for patient ${patientId}` : ''
       }`,
       ipAddress: metadata?.ipAddress,
       userAgent: metadata?.userAgent,
@@ -232,15 +232,13 @@ export class AuditService {
   ): Promise<string> {
     return this.createAuditLog({
       sessionId: metadata?.sessionId || `consent-${Date.now()}`,
-      action: "READ",
-      resource: "PATIENT_CONSENT",
-      eventType: "consent-verification",
+      action: 'READ',
+      resource: 'PATIENT_CONSENT',
+      eventType: 'consent-verification',
       userId,
-      userRole: "system",
-      dataClassification: "sensitive",
-      description: `Consent verification for ${consentType}: ${
-        isValid ? "VALID" : "INVALID"
-      }`,
+      userRole: 'system',
+      dataClassification: 'sensitive',
+      description: `Consent verification for ${consentType}: ${isValid ? 'VALID' : 'INVALID'}`,
       ipAddress: metadata?.ipAddress,
       userAgent: metadata?.userAgent,
       clinicId: metadata?.clinicId,
@@ -264,7 +262,7 @@ export class AuditService {
   async logSecurityEvent(
     eventType: string,
     _userId: string | null,
-    severity: "low" | "medium" | "high" | "critical",
+    severity: 'low' | 'medium' | 'high' | 'critical',
     description: string,
     metadata?: {
       ipAddress?: string;
@@ -276,12 +274,12 @@ export class AuditService {
   ): Promise<string> {
     return this.createAuditLog({
       sessionId: metadata?.sessionId || `security-${Date.now()}`,
-      action: "CREATE",
-      resource: "SYSTEM_CONFIG",
+      action: 'CREATE',
+      resource: 'SYSTEM_CONFIG',
       eventType: `security-${eventType}`,
-      _userId: userId || "system",
-      userRole: "system",
-      dataClassification: "restricted",
+      _userId: userId || 'system',
+      userRole: 'system',
+      dataClassification: 'restricted',
       description,
       ipAddress: metadata?.ipAddress,
       userAgent: metadata?.userAgent,
@@ -301,7 +299,7 @@ export class AuditService {
   async getSessionAuditLogs(sessionId: string): Promise<RTCAuditLogEntry[]> {
     try {
       const { data: logs, error } = await this.supabase
-        .from("webrtc_audit_logs")
+        .from('webrtc_audit_logs')
         .select(
           `
           id,
@@ -316,8 +314,8 @@ export class AuditService {
           risk_level
         `,
         )
-        .eq("session_id", sessionId)
-        .order("timestamp", { ascending: false });
+        .eq('session_id', sessionId)
+        .order('timestamp', { ascending: false });
 
       if (error) {
         logHealthcareError('database', error, { method: 'getSessionAuditLogs', sessionId });
@@ -328,9 +326,7 @@ export class AuditService {
         return [];
       }
 
-      return logs.map((log: DatabaseLogEntry) =>
-        this.mapDatabaseLogToEntry(log),
-      );
+      return logs.map((log: DatabaseLogEntry) => this.mapDatabaseLogToEntry(log));
     } catch (error) {
       logHealthcareError('database', error, { method: 'getSessionAuditLogs', sessionId });
       return [];
@@ -349,10 +345,10 @@ export class AuditService {
   ): Promise<RTCAuditLogEntry[]> {
     try {
       let query = this.supabase
-        .from("webrtc_audit_logs")
-        .select("*")
-        .eq("user_id", _userId)
-        .order("timestamp", { ascending: false });
+        .from('webrtc_audit_logs')
+        .select('*')
+        .eq('user_id', _userId)
+        .order('timestamp', { ascending: false });
 
       if (limit) {
         query = query.limit(limit);
@@ -369,9 +365,7 @@ export class AuditService {
         return [];
       }
 
-      return logs.map((log: DatabaseLogEntry) =>
-        this.mapDatabaseLogToEntry(log),
-      );
+      return logs.map((log: DatabaseLogEntry) => this.mapDatabaseLogToEntry(log));
     } catch (error) {
       logHealthcareError('database', error, { method: 'getUserAuditLogs', userId: _userId });
       return [];
@@ -394,13 +388,13 @@ export class AuditService {
   ): Promise<RTCAuditLogEntry[]> {
     try {
       let query = this.supabase
-        .from("webrtc_audit_logs")
-        .select("*")
-        .gte("timestamp", startDate.toISOString())
-        .lte("timestamp", endDate.toISOString());
+        .from('webrtc_audit_logs')
+        .select('*')
+        .gte('timestamp', startDate.toISOString())
+        .lte('timestamp', endDate.toISOString());
 
       if (clinicId) {
-        query = query.eq("clinic_id", clinicId);
+        query = query.eq('clinic_id', clinicId);
       }
 
       if (limit) {
@@ -410,7 +404,12 @@ export class AuditService {
       const { data: logs, error } = await query;
 
       if (error) {
-        logHealthcareError('database', error, { method: 'getAuditLogsByDateRange', startDate, endDate, clinicId });
+        logHealthcareError('database', error, {
+          method: 'getAuditLogsByDateRange',
+          startDate,
+          endDate,
+          clinicId,
+        });
         return [];
       }
 
@@ -420,7 +419,12 @@ export class AuditService {
 
       return logs.map((log: any) => this.mapDatabaseLogToEntry(log));
     } catch (error) {
-      logHealthcareError('database', error, { method: 'getAuditLogsByDateRange', startDate, endDate, clinicId });
+      logHealthcareError('database', error, {
+        method: 'getAuditLogsByDateRange',
+        startDate,
+        endDate,
+        clinicId,
+      });
       return [];
     }
   }
@@ -439,19 +443,24 @@ export class AuditService {
   ): Promise<ComplianceReport> {
     try {
       let query = this.supabase
-        .from("webrtc_audit_logs")
-        .select("*")
-        .gte("timestamp", startDate.toISOString())
-        .lte("timestamp", endDate.toISOString());
+        .from('webrtc_audit_logs')
+        .select('*')
+        .gte('timestamp', startDate.toISOString())
+        .lte('timestamp', endDate.toISOString());
 
       if (clinicId) {
-        query = query.eq("clinic_id", clinicId);
+        query = query.eq('clinic_id', clinicId);
       }
 
       const { data: logs, error } = await query;
 
       if (error) {
-        logHealthcareError('database', error, { method: 'getComplianceReport', startDate, endDate, clinicId });
+        logHealthcareError('database', error, {
+          method: 'getComplianceReport',
+          startDate,
+          endDate,
+          clinicId,
+        });
         throw new Error(
           `Failed to generate compliance report: ${error.message}`,
         );
@@ -463,7 +472,12 @@ export class AuditService {
 
       return this.generateComplianceReport(auditLogs, startDate, endDate);
     } catch (error) {
-      logHealthcareError('database', error, { method: 'getComplianceReport', startDate, endDate, clinicId });
+      logHealthcareError('database', error, {
+        method: 'getComplianceReport',
+        startDate,
+        endDate,
+        clinicId,
+      });
       throw error;
     }
   }
@@ -477,54 +491,52 @@ export class AuditService {
     criteria: AuditSearchCriteria,
   ): Promise<RTCAuditLogEntry[]> {
     try {
-      let query = this.supabase.from("webrtc_audit_logs").select("*");
+      let query = this.supabase.from('webrtc_audit_logs').select('*');
 
       if (criteria.sessionIds?.length) {
-        query = query.in("session_id", criteria.sessionIds);
+        query = query.in('session_id', criteria.sessionIds);
       }
 
       if (criteria.userIds?.length) {
-        query = query.in("user_id", criteria.userIds);
+        query = query.in('user_id', criteria.userIds);
       }
 
       if (criteria.eventTypes?.length) {
-        query = query.in("event_type", criteria.eventTypes);
+        query = query.in('event_type', criteria.eventTypes);
       }
 
       if (criteria.dataClassifications?.length) {
-        query = query.in("data_classification", criteria.dataClassifications);
+        query = query.in('data_classification', criteria.dataClassifications);
       }
 
       if (criteria.startDate) {
-        const startDate =
-          typeof criteria.startDate === "string"
-            ? new Date(criteria.startDate)
-            : criteria.startDate;
-        query = query.gte("timestamp", startDate.toISOString());
+        const startDate = typeof criteria.startDate === 'string'
+          ? new Date(criteria.startDate)
+          : criteria.startDate;
+        query = query.gte('timestamp', startDate.toISOString());
       }
 
       if (criteria.endDate) {
-        const endDate =
-          typeof criteria.endDate === "string"
-            ? new Date(criteria.endDate)
-            : criteria.endDate;
-        query = query.lte("timestamp", endDate.toISOString());
+        const endDate = typeof criteria.endDate === 'string'
+          ? new Date(criteria.endDate)
+          : criteria.endDate;
+        query = query.lte('timestamp', endDate.toISOString());
       }
 
       if (criteria.clinicId) {
-        query = query.eq("clinic_id", criteria.clinicId);
+        query = query.eq('clinic_id', criteria.clinicId);
       }
 
       if (criteria.complianceStatus !== undefined) {
-        const statusFilter = criteria.complianceStatus ? "SUCCESS" : "FAILED";
-        query = query.eq("status", statusFilter);
+        const statusFilter = criteria.complianceStatus ? 'SUCCESS' : 'FAILED';
+        query = query.eq('status', statusFilter);
       }
 
       if (criteria.limit) {
         query = query.limit(criteria.limit);
       }
 
-      query = query.order("timestamp", { ascending: false });
+      query = query.order('timestamp', { ascending: false });
 
       const { data: logs, error } = await query;
 
@@ -553,27 +565,24 @@ export class AuditService {
       id: log.id,
       sessionId: log.session_id,
       _userId: log.user_id,
-      action:
-        log.action || this.mapActionToEventType(log.event_type || log.action),
-      userRole: log.user_role || "system",
-      dataClassification:
-        typeof log.data_classification === "string"
-          ? log.data_classification
-          : "general",
-      description: log.description || "",
+      action: log.action || this.mapActionToEventType(log.event_type || log.action),
+      userRole: log.user_role || 'system',
+      dataClassification: typeof log.data_classification === 'string'
+        ? log.data_classification
+        : 'general',
+      description: log.description || '',
       timestamp: log.timestamp || log.created_at,
       ipAddress: log.ip_address,
       userAgent: log.user_agent,
       clinicContext: log.clinic_id ? { clinicId: log.clinic_id } : undefined,
       metadata: log.metadata,
       complianceCheck: {
-        isCompliant:
-          log.compliance_check?.status === "COMPLIANT" ||
-          log.status === "SUCCESS",
+        isCompliant: log.compliance_check?.status === 'COMPLIANT'
+          || log.status === 'SUCCESS',
         violations: [],
-        riskLevel: (log.compliance_check?.risk_level ||
-          log.risk_level ||
-          "LOW") as "LOW" | "MEDIUM" | "HIGH" | "CRITICAL",
+        riskLevel: (log.compliance_check?.risk_level
+          || log.risk_level
+          || 'LOW') as 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL',
       },
     };
   }
@@ -584,11 +593,11 @@ export class AuditService {
    */
   private mapActionToEventType(action: string): string {
     const actionMap: Record<string, string> = {
-      "session-start": "video-call-start",
-      "session-end": "video-call-end",
-      "data-access": "data-access",
-      "consent-verification": "consent-verification",
-      "security-event": "security-event",
+      'session-start': 'video-call-start',
+      'session-end': 'video-call-end',
+      'data-access': 'data-access',
+      'consent-verification': 'consent-verification',
+      'security-event': 'security-event',
     };
 
     return actionMap[action] || action;
@@ -605,7 +614,7 @@ export class AuditService {
   ): ComplianceReport {
     const totalEvents = logs.length;
     const compliantEvents = logs.filter(
-      (log) => log.complianceCheck?.isCompliant === true,
+      log => log.complianceCheck?.isCompliant === true,
     ).length;
     const nonCompliantEvents = totalEvents - compliantEvents;
 
@@ -618,8 +627,8 @@ export class AuditService {
 
     const violations: Record<string, number> = {};
 
-    logs.forEach((log) => {
-      const riskLevel = log.complianceCheck?.riskLevel || "LOW";
+    logs.forEach(log => {
+      const riskLevel = log.complianceCheck?.riskLevel || 'LOW';
       if (riskLevel in riskLevels) {
         riskLevels[riskLevel.toLowerCase() as keyof typeof riskLevels]++;
       }
@@ -628,21 +637,21 @@ export class AuditService {
     const recommendations: string[] = [];
 
     if (nonCompliantEvents > 0) {
-      recommendations.push("Review and address non-compliant events");
+      recommendations.push('Review and address non-compliant events');
     }
 
     if (riskLevels.high > 0 || riskLevels.critical > 0) {
-      recommendations.push("Investigate high and critical risk events");
+      recommendations.push('Investigate high and critical risk events');
     }
 
     if (Object.keys(violations).length > 0) {
-      recommendations.push("Address identified compliance violations");
+      recommendations.push('Address identified compliance violations');
     }
 
     return {
       id: `compliance-report-${Date.now()}`,
       generatedAt: new Date().toISOString(),
-      reportType: "GENERAL",
+      reportType: 'GENERAL',
       periodStart: startDate.toISOString(),
       periodEnd: endDate.toISOString(),
       reportPeriod: {
@@ -651,8 +660,7 @@ export class AuditService {
       },
       summary: {
         totalEvents,
-        complianceScore:
-          totalEvents > 0 ? (compliantEvents / totalEvents) * 100 : 100,
+        complianceScore: totalEvents > 0 ? (compliantEvents / totalEvents) * 100 : 100,
         violationsCount: nonCompliantEvents,
         riskLevel: this.calculateOverallRiskLevel(riskLevels),
         compliantEvents,
@@ -670,10 +678,10 @@ export class AuditService {
     medium: number;
     high: number;
     critical: number;
-  }): "LOW" | "MEDIUM" | "HIGH" | "CRITICAL" {
-    if (riskLevels.critical > 0) return "CRITICAL";
-    if (riskLevels.high > 0) return "HIGH";
-    if (riskLevels.medium > 0) return "MEDIUM";
-    return "LOW";
+  }): 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL' {
+    if (riskLevels.critical > 0) return 'CRITICAL';
+    if (riskLevels.high > 0) return 'HIGH';
+    if (riskLevels.medium > 0) return 'MEDIUM';
+    return 'LOW';
   }
 }

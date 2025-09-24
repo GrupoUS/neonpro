@@ -1,7 +1,7 @@
-import { createPrometheusRegistry } from "./prometheus";
-import { initializeCounters } from "./counters";
-import { initializeHistograms } from "./histograms";
-import { initializeGauges } from "./gauges";
+import { initializeCounters } from './counters';
+import { initializeGauges } from './gauges';
+import { initializeHistograms } from './histograms';
+import { createPrometheusRegistry } from './prometheus';
 
 interface MetricsConfig {
   serviceName: string;

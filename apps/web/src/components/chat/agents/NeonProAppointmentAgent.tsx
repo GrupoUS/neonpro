@@ -1,6 +1,6 @@
 /**
  * NeonPro Appointment Scheduling Agent Component
- * 
+ *
  * Specialized AI agent for intelligent appointment scheduling with optimization
  * Features:
  * - Real-time availability management
@@ -10,28 +10,21 @@
  * - Portuguese healthcare workflows
  */
 
+import { useCoAgent, useCopilotAction, useCopilotReadable } from '@copilotkit/react-core';
 import React, { useCallback } from 'react';
-import { useCopilotAction, useCopilotReadable, useCoAgent } from '@copilotkit/react-core';
-import { useNeonProChat } from '../NeonProChatProvider';
-import { NeonProAppointmentCard } from '../NeonProChatComponents';
 import { Button } from '../../ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../../ui/card';
+import { NeonProAppointmentCard } from '../NeonProChatComponents';
+import { useNeonProChat } from '../NeonProChatProvider';
 // Removed unused Badge import
 // Removed unused Alert imports
 // Removed unused Input import
 // Removed unused Label import
 // Removed unused Textarea import
 // Removed unused Select imports
-import { 
-  Calendar, 
-  Clock, 
-  Search, 
-  CheckCircle,
-  TrendingUp,
-  Brain
-} from 'lucide-react';
-import { format, addDays, isBefore } from 'date-fns';
+import { addDays, format, isBefore } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { Brain, Calendar, CheckCircle, Clock, Search, TrendingUp } from 'lucide-react';
 
 // Types
 interface TimeSlot {
@@ -121,13 +114,13 @@ const mockProfessionals: Professional[] = [
     availability: [
       { day: 'monday', startTime: '09:00', endTime: '18:00' },
       { day: 'wednesday', startTime: '09:00', endTime: '18:00' },
-      { day: 'friday', startTime: '09:00', endTime: '17:00' }
+      { day: 'friday', startTime: '09:00', endTime: '17:00' },
     ],
     performance: {
       completionRate: 0.95,
       noShowRate: 0.08,
-      patientSatisfaction: 4.8
-    }
+      patientSatisfaction: 4.8,
+    },
   },
   {
     id: '2',
@@ -136,14 +129,14 @@ const mockProfessionals: Professional[] = [
     availability: [
       { day: 'tuesday', startTime: '08:00', endTime: '17:00' },
       { day: 'thursday', startTime: '08:00', endTime: '17:00' },
-      { day: 'saturday', startTime: '09:00', endTime: '13:00' }
+      { day: 'saturday', startTime: '09:00', endTime: '13:00' },
     ],
     performance: {
       completionRate: 0.92,
       noShowRate: 0.12,
-      patientSatisfaction: 4.6
-    }
-  }
+      patientSatisfaction: 4.6,
+    },
+  },
 ];
 
 const mockServices = [
@@ -152,14 +145,14 @@ const mockServices = [
   { name: 'Fio de Sustentação', duration: 60, baseRevenue: 2500 },
   { name: 'Laser CO2', duration: 90, baseRevenue: 1800 },
   { name: 'Limpeza de Pele', duration: 60, baseRevenue: 300 },
-  { name: 'Peeling Químico', duration: 45, baseRevenue: 600 }
+  { name: 'Peeling Químico', duration: 45, baseRevenue: 600 },
 ];
 
 export const NeonProAppointmentAgent: React.FC<AppointmentAgentProps> = ({
   clinicId: _clinicId,
   onAppointmentScheduled,
   onAppointmentAction,
-  onError
+  onError,
 }) => {
   const { config: _config } = useNeonProChat();
 
@@ -171,7 +164,7 @@ export const NeonProAppointmentAgent: React.FC<AppointmentAgentProps> = ({
       duration: 30,
       preferredDates: [],
       preferredProfessionals: [],
-      urgency: 'medium'
+      urgency: 'medium',
     },
     availableSlots: [],
     scheduledAppointments: [],
@@ -179,20 +172,20 @@ export const NeonProAppointmentAgent: React.FC<AppointmentAgentProps> = ({
       suggestions: [],
       riskFactors: [],
       recommendations: [],
-      efficiency: 0
+      efficiency: 0,
     },
     professionals: mockProfessionals,
     metrics: {
       totalSlots: 0,
       optimalSlots: 0,
       conflicts: 0,
-      utilization: 0
-    }
+      utilization: 0,
+    },
   };
 
   const { state, setState } = useCoAgent<AppointmentAgentState>({
     name: 'appointment-agent',
-    initialState
+    initialState,
   });
 
   // Provide context to CopilotKit
@@ -204,8 +197,8 @@ export const NeonProAppointmentAgent: React.FC<AppointmentAgentProps> = ({
       selectedSlot: state.selectedSlot,
       searchCriteria: state.searchCriteria,
       optimization: state.optimization,
-      metrics: state.metrics
-    }
+      metrics: state.metrics,
+    },
   }, [state]);
 
   // Find available time slots action
@@ -215,16 +208,31 @@ export const NeonProAppointmentAgent: React.FC<AppointmentAgentProps> = ({
     parameters: [
       { name: 'service', type: 'string', description: 'Service type', required: true },
       { name: 'duration', type: 'number', description: 'Duration in minutes', required: true },
-      { name: 'preferredDates', type: 'string[]', description: 'Preferred date ranges (YYYY-MM-DD)', required: false },
-      { name: 'preferredProfessionals', type: 'string[]', description: 'Preferred professional names', required: false },
-      { name: 'urgency', type: 'string', description: 'Priority level (low, medium, high, urgent)', required: false },
+      {
+        name: 'preferredDates',
+        type: 'string[]',
+        description: 'Preferred date ranges (YYYY-MM-DD)',
+        required: false,
+      },
+      {
+        name: 'preferredProfessionals',
+        type: 'string[]',
+        description: 'Preferred professional names',
+        required: false,
+      },
+      {
+        name: 'urgency',
+        type: 'string',
+        description: 'Priority level (low, medium, high, urgent)',
+        required: false,
+      },
     ],
     handler: async (
       service: string,
       duration: number,
       preferredDates: string[] = [],
       preferredProfessionals: string[] = [],
-      urgency: string = 'medium'
+      urgency: string = 'medium',
     ) => {
       try {
         setState(prev => ({
@@ -236,8 +244,8 @@ export const NeonProAppointmentAgent: React.FC<AppointmentAgentProps> = ({
             duration,
             preferredDates: preferredDates.map(d => new Date(d)),
             preferredProfessionals,
-            urgency: urgency as 'low' | 'medium' | 'high' | 'urgent'
-          }
+            urgency: urgency as 'low' | 'medium' | 'high' | 'urgent',
+          },
         }));
 
         // Simulate search delay
@@ -248,7 +256,7 @@ export const NeonProAppointmentAgent: React.FC<AppointmentAgentProps> = ({
           service,
           duration,
           preferredDates.map(d => new Date(d)),
-          preferredProfessionals
+          preferredProfessionals,
         );
 
         const optimization = generateOptimizationInsights(slots, service, urgency);
@@ -258,17 +266,19 @@ export const NeonProAppointmentAgent: React.FC<AppointmentAgentProps> = ({
           currentOperation: 'idle',
           availableSlots: slots,
           optimization,
-          metrics: calculateMetrics(slots)
+          metrics: calculateMetrics(slots),
         }));
 
         return `Found ${slots.length} optimal time slots for ${service}`;
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'Failed to find available slots';
+        const errorMessage = error instanceof Error
+          ? error.message
+          : 'Failed to find available slots';
         onError?.(errorMessage);
         setState(prev => ({ ...prev, currentOperation: 'idle' }));
         throw error;
       }
-    }
+    },
   });
 
   // Schedule appointment action
@@ -306,25 +316,29 @@ export const NeonProAppointmentAgent: React.FC<AppointmentAgentProps> = ({
           status: 'scheduled',
           priority: state.searchCriteria.urgency,
           notes,
-          revenue: calculateRevenue(state.searchCriteria.service)
+          revenue: calculateRevenue(state.searchCriteria.service),
         };
 
         setState(prev => ({
           ...prev,
           currentOperation: 'idle',
           scheduledAppointments: [...prev.scheduledAppointments, newAppointment],
-          selectedSlot: undefined
+          selectedSlot: undefined,
         }));
 
         onAppointmentScheduled?.(newAppointment.id);
-        return `Appointment scheduled successfully for ${patientName} on ${format(selectedSlot.start, 'PPP', { locale: ptBR })}`;
+        return `Appointment scheduled successfully for ${patientName} on ${
+          format(selectedSlot.start, 'PPP', { locale: ptBR })
+        }`;
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'Failed to schedule appointment';
+        const errorMessage = error instanceof Error
+          ? error.message
+          : 'Failed to schedule appointment';
         onError?.(errorMessage);
         setState(prev => ({ ...prev, currentOperation: 'idle' }));
         throw error;
       }
-    }
+    },
   });
 
   // Optimize schedule action
@@ -332,8 +346,18 @@ export const NeonProAppointmentAgent: React.FC<AppointmentAgentProps> = ({
     name: 'optimize_schedule',
     description: 'AI-powered schedule optimization for better resource utilization',
     parameters: [
-      { name: 'dateRange', type: 'string', description: 'Date range to optimize (YYYY-MM-DD to YYYY-MM-DD)', required: true },
-      { name: 'objective', type: 'string', description: 'Optimization objective (efficiency, revenue, satisfaction)', required: false },
+      {
+        name: 'dateRange',
+        type: 'string',
+        description: 'Date range to optimize (YYYY-MM-DD to YYYY-MM-DD)',
+        required: true,
+      },
+      {
+        name: 'objective',
+        type: 'string',
+        description: 'Optimization objective (efficiency, revenue, satisfaction)',
+        required: false,
+      },
     ],
     handler: async (dateRange: string, objective: string = 'efficiency') => {
       try {
@@ -349,8 +373,8 @@ export const NeonProAppointmentAgent: React.FC<AppointmentAgentProps> = ({
           currentOperation: 'idle',
           optimization: {
             ...prev.optimization,
-            ...optimization
-          }
+            ...optimization,
+          },
         }));
 
         return `Schedule optimized successfully for ${objective}`;
@@ -360,7 +384,7 @@ export const NeonProAppointmentAgent: React.FC<AppointmentAgentProps> = ({
         setState(prev => ({ ...prev, currentOperation: 'idle' }));
         throw error;
       }
-    }
+    },
   });
 
   // Handle slot selection
@@ -368,7 +392,7 @@ export const NeonProAppointmentAgent: React.FC<AppointmentAgentProps> = ({
     setState(prev => ({
       ...prev,
       selectedSlot: slot,
-      currentOperation: 'confirming'
+      currentOperation: 'confirming',
     }));
   }, []);
 
@@ -377,22 +401,26 @@ export const NeonProAppointmentAgent: React.FC<AppointmentAgentProps> = ({
     service: string,
     duration: number,
     preferredDates: Date[],
-    preferredProfessionals: string[]
+    preferredProfessionals: string[],
   ): TimeSlot[] => {
     const slots: TimeSlot[] = [];
-    const serviceInfo = mockServices.find(s => s.name.toLowerCase().includes(service.toLowerCase()));
+    const serviceInfo = mockServices.find(s =>
+      s.name.toLowerCase().includes(service.toLowerCase())
+    );
     const actualDuration = serviceInfo?.duration || duration;
 
     // Generate slots for the next 7 days
-    const startDate = preferredDates.length > 0 ? 
-      new Date(Math.min(...preferredDates.map(d => d.getTime()))) : 
-      new Date();
+    const startDate = preferredDates.length > 0
+      ? new Date(Math.min(...preferredDates.map(d => d.getTime())))
+      : new Date();
 
     for (let day = 0; day < 7; day++) {
       const currentDate = addDays(startDate, day);
-      
+
       mockProfessionals.forEach(professional => {
-        if (preferredProfessionals.length > 0 && !preferredProfessionals.includes(professional.name)) {
+        if (
+          preferredProfessionals.length > 0 && !preferredProfessionals.includes(professional.name)
+        ) {
           return;
         }
 
@@ -421,7 +449,7 @@ export const NeonProAppointmentAgent: React.FC<AppointmentAgentProps> = ({
               confidence,
               efficiency,
               noShowRisk,
-              optimizationScore
+              optimizationScore,
             });
           }
         }
@@ -445,25 +473,29 @@ export const NeonProAppointmentAgent: React.FC<AppointmentAgentProps> = ({
       avgNoShowRisk > 0.15 ? 'Consider confirmation calls for high-risk slots' : undefined,
       avgEfficiency < 0.8 ? 'Optimize resource allocation for better efficiency' : undefined,
       'Morning slots show 15% higher attendance rates',
-      'Mid-week appointments have optimal professional availability'
+      'Mid-week appointments have optimal professional availability',
     ].filter(Boolean) as string[];
 
     const riskFactors = slots
       .filter(slot => slot.noShowRisk > 0.15)
-      .map(slot => `${format(slot.start, 'HH:mm')} - ${slot.noShowRisk > 0.2 ? 'Alto risco' : 'Médio risco'} de não comparecimento`);
+      .map(slot =>
+        `${format(slot.start, 'HH:mm')} - ${
+          slot.noShowRisk > 0.2 ? 'Alto risco' : 'Médio risco'
+        } de não comparecimento`
+      );
 
     const recommendations = [
       'Envie lembretes 24h antes via WhatsApp',
       'Considere horários vespertinos para maior taxa de comparecimento',
       'Agrupe procedimentos similares para otimizar tempo do profissional',
-      'Mantenha 10% de buffer entre agendamentos para atrasos'
+      'Mantenha 10% de buffer entre agendamentos para atrasos',
     ];
 
     return {
       suggestions,
       riskFactors,
       recommendations,
-      efficiency: avgEfficiency
+      efficiency: avgEfficiency,
     };
   };
 
@@ -477,13 +509,15 @@ export const NeonProAppointmentAgent: React.FC<AppointmentAgentProps> = ({
       totalSlots: slots.length,
       optimalSlots: optimalSlots.length,
       conflicts,
-      utilization
+      utilization,
     };
   };
 
   // Calculate revenue
   const calculateRevenue = (service: string) => {
-    const serviceInfo = mockServices.find(s => s.name.toLowerCase().includes(service.toLowerCase()));
+    const serviceInfo = mockServices.find(s =>
+      s.name.toLowerCase().includes(service.toLowerCase())
+    );
     return serviceInfo?.baseRevenue || 500;
   };
 
@@ -492,25 +526,25 @@ export const NeonProAppointmentAgent: React.FC<AppointmentAgentProps> = ({
     const baseSuggestions = [
       'Redistribuir agendamentos para melhor utilização de recursos',
       'Identificar padrões de não comparecimento e ajustar estratégias',
-      'Otimizar intervalos entre procedimentos para reduzir tempo ocioso'
+      'Otimizar intervalos entre procedimentos para reduzir tempo ocioso',
     ];
 
     const specificRecommendations = {
       efficiency: [
         'Agrupar procedimentos por tipo para reduzir setup time',
         'Alocar profissionais conforme especialidade e demanda',
-        'Implementar sistema de triagem para melhor direcionamento'
+        'Implementar sistema de triagem para melhor direcionamento',
       ],
       revenue: [
         'Priorizar procedimentos de maior valor em horários de pico',
         'Otimizar mix de serviços para maximizar receita por hora',
-        'Identificar oportunidades para upsell de serviços complementares'
+        'Identificar oportunidades para upsell de serviços complementares',
       ],
       satisfaction: [
         'Oferecer horários preferenciais para pacientes fiéis',
         'Reduzir tempo de espera entre check-in e procedimento',
-        'Personalizar experiência baseada no histórico do paciente'
-      ]
+        'Personalizar experiência baseada no histórico do paciente',
+      ],
     };
 
     return {
@@ -518,34 +552,40 @@ export const NeonProAppointmentAgent: React.FC<AppointmentAgentProps> = ({
       riskFactors: [
         'Alta demanda nos finais de semana pode causar sobrecarga',
         'Distribuição desigual de procedimentos entre profissionais',
-        'Picos de demanda em horários específicos do dia'
+        'Picos de demanda em horários específicos do dia',
       ],
-      recommendations: specificRecommendations[objective as keyof typeof specificRecommendations] || specificRecommendations.efficiency,
-      efficiency: Math.random() * 0.3 + 0.7
+      recommendations: specificRecommendations[objective as keyof typeof specificRecommendations]
+        || specificRecommendations.efficiency,
+      efficiency: Math.random() * 0.3 + 0.7,
     };
   };
 
   // Get status icon
   const getStatusIcon = () => {
     switch (state.currentOperation) {
-      case 'searching_slots': return <Search className="h-4 w-4 text-blue-500" />;
-      case 'scheduling': return <Calendar className="h-4 w-4 text-yellow-500" />;
-      case 'optimizing': return <Brain className="h-4 w-4 text-purple-500" />;
-      case 'confirming': return <CheckCircle className="h-4 w-4 text-green-500" />;
-      default: return <Clock className="h-4 w-4 text-gray-500" />;
+      case 'searching_slots':
+        return <Search className='h-4 w-4 text-blue-500' />;
+      case 'scheduling':
+        return <Calendar className='h-4 w-4 text-yellow-500' />;
+      case 'optimizing':
+        return <Brain className='h-4 w-4 text-purple-500' />;
+      case 'confirming':
+        return <CheckCircle className='h-4 w-4 text-green-500' />;
+      default:
+        return <Clock className='h-4 w-4 text-gray-500' />;
     }
   };
 
   return (
-    <div className="space-y-6">
+    <div className='space-y-6'>
       {/* Header */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Calendar className="h-5 w-5" />
+          <CardTitle className='flex items-center gap-2'>
+            <Calendar className='h-5 w-5' />
             Assistente de Agendamento Inteligente
           </CardTitle>
-          <div className="flex items-center gap-2 text-sm text-gray-600">
+          <div className='flex items-center gap-2 text-sm text-gray-600'>
             {getStatusIcon()}
             <span>
               {state.currentOperation === 'idle' && 'Pronto para otimizar agendamentos'}
@@ -561,28 +601,30 @@ export const NeonProAppointmentAgent: React.FC<AppointmentAgentProps> = ({
       {/* Metrics Overview */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg flex items-center gap-2">
-            <TrendingUp className="h-4 w-4" />
+          <CardTitle className='text-lg flex items-center gap-2'>
+            <TrendingUp className='h-4 w-4' />
             Métricas de Otimização
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="text-center">
-              <div className="text-2xl font-bold text-blue-600">{state.metrics.totalSlots}</div>
-              <div className="text-sm text-gray-600">Total de Slots</div>
+          <div className='grid grid-cols-2 md:grid-cols-4 gap-4'>
+            <div className='text-center'>
+              <div className='text-2xl font-bold text-blue-600'>{state.metrics.totalSlots}</div>
+              <div className='text-sm text-gray-600'>Total de Slots</div>
             </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-green-600">{state.metrics.optimalSlots}</div>
-              <div className="text-sm text-gray-600">Slots Ótimos</div>
+            <div className='text-center'>
+              <div className='text-2xl font-bold text-green-600'>{state.metrics.optimalSlots}</div>
+              <div className='text-sm text-gray-600'>Slots Ótimos</div>
             </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-red-600">{state.metrics.conflicts}</div>
-              <div className="text-sm text-gray-600">Conflitos</div>
+            <div className='text-center'>
+              <div className='text-2xl font-bold text-red-600'>{state.metrics.conflicts}</div>
+              <div className='text-sm text-gray-600'>Conflitos</div>
             </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-purple-600">{state.metrics.utilization.toFixed(1)}%</div>
-              <div className="text-sm text-gray-600">Utilização</div>
+            <div className='text-center'>
+              <div className='text-2xl font-bold text-purple-600'>
+                {state.metrics.utilization.toFixed(1)}%
+              </div>
+              <div className='text-sm text-gray-600'>Utilização</div>
             </div>
           </div>
         </CardContent>
@@ -592,45 +634,45 @@ export const NeonProAppointmentAgent: React.FC<AppointmentAgentProps> = ({
       {state.optimization.suggestions.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
-              <Brain className="h-4 w-4" />
+            <CardTitle className='text-lg flex items-center gap-2'>
+              <Brain className='h-4 w-4' />
               Insights de Otimização
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className='space-y-4'>
             <div>
-              <h4 className="font-medium text-green-700 mb-2">Sugestões de IA</h4>
-              <ul className="space-y-1">
+              <h4 className='font-medium text-green-700 mb-2'>Sugestões de IA</h4>
+              <ul className='space-y-1'>
                 {state.optimization.suggestions.map((suggestion, index) => (
-                  <li key={index} className="text-sm text-green-600">• {suggestion}</li>
+                  <li key={index} className='text-sm text-green-600'>• {suggestion}</li>
                 ))}
               </ul>
             </div>
 
             {state.optimization.riskFactors.length > 0 && (
               <div>
-                <h4 className="font-medium text-yellow-700 mb-2">Fatores de Risco</h4>
-                <ul className="space-y-1">
+                <h4 className='font-medium text-yellow-700 mb-2'>Fatores de Risco</h4>
+                <ul className='space-y-1'>
                   {state.optimization.riskFactors.map((factor, index) => (
-                    <li key={index} className="text-sm text-yellow-600">⚠️ {factor}</li>
+                    <li key={index} className='text-sm text-yellow-600'>⚠️ {factor}</li>
                   ))}
                 </ul>
               </div>
             )}
 
             <div>
-              <h4 className="font-medium text-blue-700 mb-2">Recomendações</h4>
-              <ul className="space-y-1">
+              <h4 className='font-medium text-blue-700 mb-2'>Recomendações</h4>
+              <ul className='space-y-1'>
                 {state.optimization.recommendations.map((rec, index) => (
-                  <li key={index} className="text-sm text-blue-600">• {rec}</li>
+                  <li key={index} className='text-sm text-blue-600'>• {rec}</li>
                 ))}
               </ul>
             </div>
 
-            <div className="bg-purple-50 p-3 rounded-lg">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-purple-700">Eficiência Atual</span>
-                <span className="text-lg font-bold text-purple-700">
+            <div className='bg-purple-50 p-3 rounded-lg'>
+              <div className='flex items-center justify-between'>
+                <span className='text-sm font-medium text-purple-700'>Eficiência Atual</span>
+                <span className='text-lg font-bold text-purple-700'>
                   {(state.optimization.efficiency * 100).toFixed(1)}%
                 </span>
               </div>
@@ -643,14 +685,14 @@ export const NeonProAppointmentAgent: React.FC<AppointmentAgentProps> = ({
       {state.availableSlots.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg">Horários Otimizados Disponíveis</CardTitle>
-            <p className="text-sm text-gray-600">
+            <CardTitle className='text-lg'>Horários Otimizados Disponíveis</CardTitle>
+            <p className='text-sm text-gray-600'>
               {state.searchCriteria.service} • {state.searchCriteria.duration} minutos
             </p>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {state.availableSlots.slice(0, 12).map((slot) => (
+            <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
+              {state.availableSlots.slice(0, 12).map(slot => (
                 <div
                   key={slot.id}
                   className={`p-4 border rounded-lg cursor-pointer transition-colors ${
@@ -660,31 +702,39 @@ export const NeonProAppointmentAgent: React.FC<AppointmentAgentProps> = ({
                   }`}
                   onClick={() => handleSlotSelect(slot)}
                 >
-                  <div className="flex justify-between items-start mb-2">
-                    <span className="text-lg font-medium text-gray-900">
+                  <div className='flex justify-between items-start mb-2'>
+                    <span className='text-lg font-medium text-gray-900'>
                       {format(slot.start, 'HH:mm')}
                     </span>
-                    <div className="text-right">
-                      <div className={`text-xs px-2 py-1 rounded-full ${
-                        slot.optimizationScore > 0.8
-                          ? 'bg-green-100 text-green-800'
-                          : slot.optimizationScore > 0.6
-                          ? 'bg-yellow-100 text-yellow-800'
-                          : 'bg-red-100 text-red-800'
-                      }`}>
+                    <div className='text-right'>
+                      <div
+                        className={`text-xs px-2 py-1 rounded-full ${
+                          slot.optimizationScore > 0.8
+                            ? 'bg-green-100 text-green-800'
+                            : slot.optimizationScore > 0.6
+                            ? 'bg-yellow-100 text-yellow-800'
+                            : 'bg-red-100 text-red-800'
+                        }`}
+                      >
                         {(slot.optimizationScore * 100).toFixed(0)}%
                       </div>
                     </div>
                   </div>
-                  
-                  <div className="text-sm text-gray-600 mb-2">
+
+                  <div className='text-sm text-gray-600 mb-2'>
                     {format(slot.start, 'EEE, d MMM', { locale: ptBR })}
                   </div>
-                  
-                  <div className="text-xs text-gray-500 space-y-1">
+
+                  <div className='text-xs text-gray-500 space-y-1'>
                     <div>👨‍⚕️ {slot.professional.split(' ')[0]}</div>
                     <div>📍 {slot.room}</div>
-                    <div>⚡ {slot.noShowRisk < 0.1 ? 'Baixo risco' : slot.noShowRisk < 0.2 ? 'Médio risco' : 'Alto risco'}</div>
+                    <div>
+                      ⚡ {slot.noShowRisk < 0.1
+                        ? 'Baixo risco'
+                        : slot.noShowRisk < 0.2
+                        ? 'Médio risco'
+                        : 'Alto risco'}
+                    </div>
                   </div>
                 </div>
               ))}
@@ -697,15 +747,15 @@ export const NeonProAppointmentAgent: React.FC<AppointmentAgentProps> = ({
       {state.scheduledAppointments.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg">Agendamentos Recentes</CardTitle>
+            <CardTitle className='text-lg'>Agendamentos Recentes</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-3">
-              {state.scheduledAppointments.slice(-5).map((appointment) => (
+            <div className='space-y-3'>
+              {state.scheduledAppointments.slice(-5).map(appointment => (
                 <NeonProAppointmentCard
                   key={appointment.id}
                   appointment={appointment}
-                  onAction={(action) => onAppointmentAction?.(action, appointment.id)}
+                  onAction={action => onAppointmentAction?.(action, appointment.id)}
                 />
               ))}
             </div>
@@ -715,42 +765,42 @@ export const NeonProAppointmentAgent: React.FC<AppointmentAgentProps> = ({
 
       {/* Selected Slot Confirmation */}
       {state.selectedSlot && (
-        <Card className="border-blue-500 bg-blue-50">
+        <Card className='border-blue-500 bg-blue-50'>
           <CardHeader>
-            <CardTitle className="text-lg text-blue-900">Confirmar Agendamento</CardTitle>
+            <CardTitle className='text-lg text-blue-900'>Confirmar Agendamento</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-3">
-              <div className="bg-white p-4 rounded-lg">
-                <div className="grid grid-cols-2 gap-4 text-sm">
+            <div className='space-y-3'>
+              <div className='bg-white p-4 rounded-lg'>
+                <div className='grid grid-cols-2 gap-4 text-sm'>
                   <div>
-                    <span className="font-medium text-gray-700">Data:</span>
+                    <span className='font-medium text-gray-700'>Data:</span>
                     <div>{format(state.selectedSlot.start, 'PPP', { locale: ptBR })}</div>
                   </div>
                   <div>
-                    <span className="font-medium text-gray-700">Horário:</span>
+                    <span className='font-medium text-gray-700'>Horário:</span>
                     <div>{format(state.selectedSlot.start, 'HH:mm')}</div>
                   </div>
                   <div>
-                    <span className="font-medium text-gray-700">Profissional:</span>
+                    <span className='font-medium text-gray-700'>Profissional:</span>
                     <div>{state.selectedSlot.professional}</div>
                   </div>
                   <div>
-                    <span className="font-medium text-gray-700">Sala:</span>
+                    <span className='font-medium text-gray-700'>Sala:</span>
                     <div>{state.selectedSlot.room}</div>
                   </div>
                 </div>
               </div>
-              
-              <div className="flex gap-2">
-                <Button 
-                  variant="outline" 
+
+              <div className='flex gap-2'>
+                <Button
+                  variant='outline'
                   onClick={() => setState(prev => ({ ...prev, selectedSlot: undefined }))}
                 >
                   Cancelar
                 </Button>
-                <Button 
-                  className="flex-1"
+                <Button
+                  className='flex-1'
                   onClick={() => {
                     // This would trigger the schedule_appointment action
                     setState(prev => ({ ...prev, currentOperation: 'scheduling' }));

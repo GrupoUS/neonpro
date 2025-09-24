@@ -208,7 +208,7 @@ export class AestheticRAGService {
         longevity: { min: 90, max: 120 },
         priceRange: { min: 300, max: 800 },
         contraindications: ['pregnancy', 'neuromuscular_disorders'],
-        anvisaRequired: true
+        anvisaRequired: true,
       },
       {
         id: 'hyaluronic_acid',
@@ -222,7 +222,7 @@ export class AestheticRAGService {
         longevity: { min: 180, max: 365 },
         priceRange: { min: 800, max: 3000 },
         contraindications: ['autoimmune_disorders', 'bleeding_disorders'],
-        anvisaRequired: true
+        anvisaRequired: true,
       },
       {
         id: 'chemical_peel',
@@ -236,8 +236,8 @@ export class AestheticRAGService {
         longevity: { min: 90, max: 180 },
         priceRange: { min: 200, max: 600 },
         contraindications: ['active_infections', 'photosensitivity'],
-        anvisaRequired: false
-      }
+        anvisaRequired: false,
+      },
     ]);
 
     // Initialize skin type knowledge
@@ -246,32 +246,32 @@ export class AestheticRAGService {
         type: 'normal',
         characteristics: ['balanced', 'no_excess_oil', 'no_dryness'],
         concerns: ['prevention', 'maintenance'],
-        recommendedTreatments: ['maintenance', 'prevention', 'light_treatments']
+        recommendedTreatments: ['maintenance', 'prevention', 'light_treatments'],
       },
       {
         type: 'oily',
         characteristics: ['excess_sebum', 'enlarged_pores', 'shine'],
         concerns: ['acne', 'blackheads', 'enlarged_pores'],
-        recommendedTreatments: ['deep_cleansing', 'chemical_peels', 'laser_treatments']
+        recommendedTreatments: ['deep_cleansing', 'chemical_peels', 'laser_treatments'],
       },
       {
         type: 'dry',
         characteristics: ['tightness', 'flaking', 'rough_texture'],
         concerns: ['dehydration', 'fine_lines', 'sensitivity'],
-        recommendedTreatments: ['hydrating', 'nourishing', 'gentle_treatments']
+        recommendedTreatments: ['hydrating', 'nourishing', 'gentle_treatments'],
       },
       {
         type: 'combination',
         characteristics: ['oily_tzone', 'dry_cheeks', 'mixed'],
         concerns: ['multiple', 'balance_needed'],
-        recommendedTreatments: ['balanced', 'targeted', 'combination_approaches']
+        recommendedTreatments: ['balanced', 'targeted', 'combination_approaches'],
       },
       {
         type: 'sensitive',
         characteristics: ['redness', 'irritation', 'reactivity'],
         concerns: ['sensitivity', 'redness', 'irritation'],
-        recommendedTreatments: ['gentle', 'soothing', 'anti-inflammatory']
-      }
+        recommendedTreatments: ['gentle', 'soothing', 'anti-inflammatory'],
+      },
     ]);
 
     // Initialize product knowledge
@@ -284,7 +284,7 @@ export class AestheticRAGService {
         concerns: ['wrinkles', 'texture', 'hyperpigmentation'],
         activeIngredients: ['retinol', 'hyaluronic_acid', 'vitamin_e'],
         usage: 'nightly',
-        contraindications: ['pregnancy', 'sensitive_skin']
+        contraindications: ['pregnancy', 'sensitive_skin'],
       },
       {
         id: 'vitamin_c_serum',
@@ -294,14 +294,14 @@ export class AestheticRAGService {
         concerns: ['hyperpigmentation', 'dullness', 'free_radicals'],
         activeIngredients: ['vitamin_c', 'ferulic_acid', 'vitamin_e'],
         usage: 'morning',
-        contraindications: ['sensitive_skin']
-      }
+        contraindications: ['sensitive_skin'],
+      },
     ]);
   }
 
   async queryTreatmentCatalog(query: TreatmentCatalogQuery): Promise<AestheticTreatment[]> {
     const treatments = this.knowledgeBase.get('treatments') || [];
-    
+
     let filteredTreatments = treatments.filter(treatment => {
       // Category filter
       if (query.category && treatment.category !== query.category) {
@@ -315,7 +315,7 @@ export class AestheticRAGService {
 
       // Concerns filter
       if (query.concerns && query.concerns.length > 0) {
-        const hasMatchingConcern = query.concerns.some(concern => 
+        const hasMatchingConcern = query.concerns.some(concern =>
           treatment.concerns.includes(concern)
         );
         if (!hasMatchingConcern) {
@@ -325,8 +325,10 @@ export class AestheticRAGService {
 
       // Budget filter
       if (query.budget) {
-        if (treatment.priceRange.min > query.budget.max || 
-            treatment.priceRange.max < query.budget.min) {
+        if (
+          treatment.priceRange.min > query.budget.max
+          || treatment.priceRange.max < query.budget.min
+        ) {
           return false;
         }
       }
@@ -344,7 +346,7 @@ export class AestheticRAGService {
 
     return filteredTreatments.map(treatment => ({
       ...treatment,
-      relevanceScore: this.calculateRelevanceScore(treatment, query)
+      relevanceScore: this.calculateRelevanceScore(treatment, query),
     }));
   }
 
@@ -357,8 +359,12 @@ export class AestheticRAGService {
     specialRequirements?: string[];
   }): Promise<TreatmentAvailability> {
     // Mock availability check - in real implementation, this would query the actual schedule
-    const availableSlots = this.generateMockSlots(availability.startDate, availability.endDate, availability.location);
-    
+    const availableSlots = this.generateMockSlots(
+      availability.startDate,
+      availability.endDate,
+      availability.location,
+    );
+
     return {
       treatmentId: availability.treatmentId,
       professionalId: availability.professionalId,
@@ -367,9 +373,9 @@ export class AestheticRAGService {
       location: availability.location,
       specialRequirements: availability.specialRequirements,
       availableSlots,
-      alternatives: availableSlots.length === 0 ? 
-        await this.findAlternativeSlots(availability) : 
-        undefined
+      alternatives: availableSlots.length === 0
+        ? await this.findAlternativeSlots(availability)
+        : undefined,
     };
   }
 
@@ -394,8 +400,8 @@ export class AestheticRAGService {
       requirements: {
         consultation: appointmentData.requiresConsultation,
         preCare: [],
-        postCare: []
-      }
+        postCare: [],
+      },
     };
 
     return appointment;
@@ -410,7 +416,7 @@ export class AestheticRAGService {
   }): Promise<ScheduleOptimization> {
     // Mock optimization - in real implementation, this would use AI-powered optimization
     const optimizedSchedule = this.generateOptimizedSchedule(optimization);
-    
+
     return {
       professionalId: optimization.professionalId,
       dateRange: optimization.dateRange,
@@ -421,8 +427,8 @@ export class AestheticRAGService {
       improvement: {
         timeUtilization: 15, // 15% improvement
         patientSatisfaction: 10, // 10% improvement
-        staffPreference: 8 // 8% improvement
-      }
+        staffPreference: 8, // 8% improvement
+      },
     };
   }
 
@@ -430,11 +436,11 @@ export class AestheticRAGService {
     // Mock skin assessment - in real implementation, this would use AI image analysis
     const skinType = this.determineSkinType(assessment.answers, assessment.concerns);
     const _skinProfile = this.knowledgeBase.get('skin_types')?.find(st => st.type === skinType);
-    
+
     const concerns = assessment.concerns.map(concern => ({
       concern,
       severity: this.assessConcernSeverity(concern, assessment.answers),
-      recommendations: this.getRecommendationsForConcern(concern, skinType)
+      recommendations: this.getRecommendationsForConcern(concern, skinType),
     }));
 
     return {
@@ -443,9 +449,12 @@ export class AestheticRAGService {
       concerns,
       recommendedProducts: this.getRecommendedProducts(skinType, assessment.concerns),
       recommendedTreatments: this.getRecommendedTreatments(skinType, assessment.concerns),
-      lifestyleRecommendations: this.getLifestyleRecommendations(skinType, assessment.lifestyleFactors),
+      lifestyleRecommendations: this.getLifestyleRecommendations(
+        skinType,
+        assessment.lifestyleFactors,
+      ),
       followUpSchedule: this.getFollowUpSchedule(skinType, concerns),
-      confidence: 0.85
+      confidence: 0.85,
     };
   }
 
@@ -460,7 +469,7 @@ export class AestheticRAGService {
   }): Promise<FinancingOptions> {
     // Mock financing calculation - in real implementation, this would integrate with financial APIs
     const availableOptions = this.generateFinancingOptions(financing);
-    
+
     return {
       treatmentId: financing.treatmentId,
       totalAmount: financing.totalAmount,
@@ -470,8 +479,8 @@ export class AestheticRAGService {
       preApproved: financing.creditScore ? financing.creditScore > 650 : false,
       creditScoreImpact: {
         shortTerm: 'minimal',
-        longTerm: 'positive'
-      }
+        longTerm: 'positive',
+      },
     };
   }
 
@@ -486,7 +495,10 @@ export class AestheticRAGService {
   }): Promise<ClientProfileEnhancement> {
     // Mock profile enhancement - in real implementation, this would use AI analysis
     const skinProfile = this.analyzeSkinProfile(enhancement.skinAssessments);
-    const treatmentPreferences = this.analyzeTreatmentPreferences(enhancement.treatmentHistory, enhancement.preferences);
+    const treatmentPreferences = this.analyzeTreatmentPreferences(
+      enhancement.treatmentHistory,
+      enhancement.preferences,
+    );
     const behavioralInsights = this.analyzeBehavioralPatterns(enhancement.behavioralData);
     const personalizationData = this.analyzePersonalizationData(enhancement.feedbackHistory);
 
@@ -496,20 +508,20 @@ export class AestheticRAGService {
         skinProfile,
         treatmentPreferences,
         behavioralInsights,
-        personalizationData
+        personalizationData,
       },
       recommendations: this.generateProfileRecommendations({
         skinProfile,
         treatmentPreferences,
         behavioralInsights,
-        personalizationData
+        personalizationData,
       }),
       retentionScore: this.calculateRetentionScore(enhancement.retentionIndicators),
       nextBestActions: this.generateNextBestActions(enhancement.clientId, {
         skinProfile,
         treatmentPreferences,
-        behavioralInsights
-      })
+        behavioralInsights,
+      }),
     };
   }
 
@@ -535,7 +547,7 @@ export class AestheticRAGService {
       factors,
       recommendedActions,
       predictionWindow: '3_months',
-      lastAssessment: new Date().toISOString()
+      lastAssessment: new Date().toISOString(),
     };
   }
 
@@ -569,7 +581,7 @@ export class AestheticRAGService {
 
     // Concern matches
     if (query.concerns) {
-      const concernMatches = query.concerns.filter(concern => 
+      const concernMatches = query.concerns.filter(concern =>
         treatment.concerns.includes(concern)
       ).length;
       score += (concernMatches / query.concerns.length) * 40;
@@ -596,7 +608,7 @@ export class AestheticRAGService {
     const slots = [];
     const start = new Date(startDate);
     const end = new Date(endDate);
-    
+
     for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
       if (d.getDay() !== 0 && d.getDay() !== 6) { // Weekdays only
         // Generate slots for 9 AM to 6 PM
@@ -604,7 +616,7 @@ export class AestheticRAGService {
           slots.push({
             dateTime: new Date(d.getFullYear(), d.getMonth(), d.getDate(), hour, 0).toISOString(),
             professionalId: 'prof_001',
-            duration: 60
+            duration: 60,
           });
         }
       }
@@ -637,7 +649,10 @@ export class AestheticRAGService {
     return 'normal';
   }
 
-  private assessConcernSeverity(_concern: string, _answers: Record<string, any>): 'low' | 'medium' | 'high' {
+  private assessConcernSeverity(
+    _concern: string,
+    _answers: Record<string, any>,
+  ): 'low' | 'medium' | 'high' {
     // Mock severity assessment
     return 'medium';
   }
@@ -654,21 +669,24 @@ export class AestheticRAGService {
 
   private getRecommendedProducts(skinType: string, concerns: string[]): any[] {
     const products = this.knowledgeBase.get('products') || [];
-    return products.filter(product => 
-      product.skinTypes.includes(skinType) || 
-      product.concerns.some(concern => concerns.includes(concern))
+    return products.filter(product =>
+      product.skinTypes.includes(skinType)
+      || product.concerns.some(concern => concerns.includes(concern))
     );
   }
 
   private getRecommendedTreatments(skinType: string, concerns: string[]): any[] {
     const treatments = this.knowledgeBase.get('treatments') || [];
-    return treatments.filter(treatment => 
-      treatment.skinTypes.includes(skinType) || 
-      treatment.concerns.some(concern => concerns.includes(concern))
+    return treatments.filter(treatment =>
+      treatment.skinTypes.includes(skinType)
+      || treatment.concerns.some(concern => concerns.includes(concern))
     );
   }
 
-  private getLifestyleRecommendations(_skinType: string, _lifestyleFactors?: Record<string, any>): string[] {
+  private getLifestyleRecommendations(
+    _skinType: string,
+    _lifestyleFactors?: Record<string, any>,
+  ): string[] {
     // Mock lifestyle recommendations
     return ['Stay hydrated', 'Use sunscreen daily', 'Maintain healthy diet'];
   }
@@ -679,8 +697,8 @@ export class AestheticRAGService {
       {
         timeframe: '1_month',
         assessmentType: 'follow_up',
-        focusAreas: ['skin_health', 'treatment_effectiveness']
-      }
+        focusAreas: ['skin_health', 'treatment_effectiveness'],
+      },
     ];
   }
 
@@ -700,17 +718,20 @@ export class AestheticRAGService {
       type: 'normal',
       concerns: [],
       sensitivityLevel: 'low',
-      agingFactors: []
+      agingFactors: [],
     };
   }
 
-  private analyzeTreatmentPreferences(_treatmentHistory?: any[], _preferences?: Record<string, any>): any {
+  private analyzeTreatmentPreferences(
+    _treatmentHistory?: any[],
+    _preferences?: Record<string, any>,
+  ): any {
     // Mock treatment preference analysis
     return {
       preferredCategories: [],
       riskTolerance: 'medium',
       budgetRange: { min: 0, max: 0 },
-      timeCommitment: 'moderate'
+      timeCommitment: 'moderate',
     };
   }
 
@@ -720,7 +741,7 @@ export class AestheticRAGService {
       bookingPattern: 'regular',
       cancellationRate: 0.1,
       preferredCommunication: ['email'],
-      loyaltyIndicators: []
+      loyaltyIndicators: [],
     };
   }
 
@@ -730,7 +751,7 @@ export class AestheticRAGService {
       motivations: [],
       goals: [],
       concerns: [],
-      expectations: []
+      expectations: [],
     };
   }
 

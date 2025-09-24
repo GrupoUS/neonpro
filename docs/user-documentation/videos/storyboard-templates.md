@@ -48,13 +48,15 @@ interface Scene {
 interface Scene1 {
   sceneNumber: 1;
   duration: 30;
-  visualDescription: "Professional clinic setting with modern technology, doctors and staff using tablets, clean aesthetic environment";
-  screenContent: ["Opening title card", "NeonPro logo animation"];
-  narration: "Bem-vindo ao NeonPro - a plataforma revolucionária para gestão de clínicas estéticas que está transformando o atendimento estético no Brasil.";
-  onScreenText: ["NeonPro", "Gestão Estética Inteligente"];
-  transition: "Fade in with soft background music";
-  audioElements: ["Upbeat background music", "Professional voiceover"];
-  specialEffects: ["Logo animation", "Text fade in/out"];
+  visualDescription:
+    'Professional clinic setting with modern technology, doctors and staff using tablets, clean aesthetic environment';
+  screenContent: ['Opening title card', 'NeonPro logo animation'];
+  narration:
+    'Bem-vindo ao NeonPro - a plataforma revolucionária para gestão de clínicas estéticas que está transformando o atendimento estético no Brasil.';
+  onScreenText: ['NeonPro', 'Gestão Estética Inteligente'];
+  transition: 'Fade in with soft background music';
+  audioElements: ['Upbeat background music', 'Professional voiceover'];
+  specialEffects: ['Logo animation', 'Text fade in/out'];
 }
 ```
 
@@ -64,13 +66,19 @@ interface Scene1 {
 interface Scene2 {
   sceneNumber: 2;
   duration: 30;
-  visualDescription: "Split screen showing system interface alongside real clinic operations";
-  screenContent: ["Benefit highlights", "Feature showcase"];
-  narration: "O NeonPro combina inteligência artificial avançada, compliance total com a legislação brasileira e uma interface intuitiva para simplificar sua operação e aumentar seus resultados.";
-  onScreenText: ["IA Avançada", "Compliance Total", "Interface Intuitiva", "Resultados Comprovados"];
-  transition: "Smooth slide transition";
-  audioElements: ["Background music continues", "Voiceover"];
-  specialEffects: ["Feature highlight animations", "Text transitions"];
+  visualDescription: 'Split screen showing system interface alongside real clinic operations';
+  screenContent: ['Benefit highlights', 'Feature showcase'];
+  narration:
+    'O NeonPro combina inteligência artificial avançada, compliance total com a legislação brasileira e uma interface intuitiva para simplificar sua operação e aumentar seus resultados.';
+  onScreenText: [
+    'IA Avançada',
+    'Compliance Total',
+    'Interface Intuitiva',
+    'Resultados Comprovados',
+  ];
+  transition: 'Smooth slide transition';
+  audioElements: ['Background music continues', 'Voiceover'];
+  specialEffects: ['Feature highlight animations', 'Text transitions'];
 }
 ```
 
@@ -80,13 +88,21 @@ interface Scene2 {
 interface Scene3 {
   sceneNumber: 3;
   duration: 60;
-  visualDescription: "Screen recording of system dashboard with highlighted navigation elements";
-  screenContent: ["Dashboard overview", "Navigation menu", "Key features highlighted"];
-  narration: "Vamos conhecer a interface principal do sistema. Seu dashboard personalizado mostra todas as informações importantes de forma clara e organizada. No menu superior, você encontrá acesso rápido a todas as funcionalidades.";
-  onScreenText: ["Dashboard", "Pacientes", "Agendamentos", "Tratamentos", "Financeiro", "Relatórios"];
-  transition: "Screen recording with zoom effects";
-  audioElements: ["Voiceover", "Mouse click sounds"];
-  specialEffects: ["Screen highlight", "Zoom effects", "Text callouts"];
+  visualDescription: 'Screen recording of system dashboard with highlighted navigation elements';
+  screenContent: ['Dashboard overview', 'Navigation menu', 'Key features highlighted'];
+  narration:
+    'Vamos conhecer a interface principal do sistema. Seu dashboard personalizado mostra todas as informações importantes de forma clara e organizada. No menu superior, você encontrá acesso rápido a todas as funcionalidades.';
+  onScreenText: [
+    'Dashboard',
+    'Pacientes',
+    'Agendamentos',
+    'Tratamentos',
+    'Financeiro',
+    'Relatórios',
+  ];
+  transition: 'Screen recording with zoom effects';
+  audioElements: ['Voiceover', 'Mouse click sounds'];
+  specialEffects: ['Screen highlight', 'Zoom effects', 'Text callouts'];
 }
 ```
 
@@ -96,13 +112,14 @@ interface Scene3 {
 interface Scene4 {
   sceneNumber: 4;
   duration: 30;
-  visualDescription: "Step-by-step login process with security features";
-  screenContent: ["Login screen", "2FA setup", "Dashboard access"];
-  narration: "Para acessar o sistema, utilize seu email e senha. Por segurança, recomendamos a autenticação de dois fatores. Após o login, você será direcionado para seu dashboard personalizado.";
-  onScreenText: ["Login Seguro", "Autenticação de Dois Fatores", "Acesso Rápido"];
-  transition: "Step-by-step transition";
-  audioElements: ["Voiceover", "Keyboard typing sounds"];
-  specialEffects: ["Screen recording", "Highlight cursor movements"];
+  visualDescription: 'Step-by-step login process with security features';
+  screenContent: ['Login screen', '2FA setup', 'Dashboard access'];
+  narration:
+    'Para acessar o sistema, utilize seu email e senha. Por segurança, recomendamos a autenticação de dois fatores. Após o login, você será direcionado para seu dashboard personalizado.';
+  onScreenText: ['Login Seguro', 'Autenticação de Dois Fatores', 'Acesso Rápido'];
+  transition: 'Step-by-step transition';
+  audioElements: ['Voiceover', 'Keyboard typing sounds'];
+  specialEffects: ['Screen recording', 'Highlight cursor movements'];
 }
 ```
 
@@ -112,13 +129,14 @@ interface Scene4 {
 interface Scene5 {
   sceneNumber: 5;
   duration: 30;
-  visualDescription: "Quick preview of upcoming episodes with highlights";
-  screenContent: ["Episode thumbnails", "Learning path preview"];
-  narration: "Nesta série de treinamento, você aprenderá desde os conceitos básicos até recursos avançados do sistema. Próximo episódio: Configuração inicial e personalização da sua conta.";
-  onScreenText: ["Próximo: Configuração Inicial", "Série Completa: 8 Episódios"];
-  transition: "Fade out with music";
-  audioElements: ["Background music", "Voiceover"];
-  specialEffects: ["Episode preview montage", "Fade out"];
+  visualDescription: 'Quick preview of upcoming episodes with highlights';
+  screenContent: ['Episode thumbnails', 'Learning path preview'];
+  narration:
+    'Nesta série de treinamento, você aprenderá desde os conceitos básicos até recursos avançados do sistema. Próximo episódio: Configuração inicial e personalização da sua conta.';
+  onScreenText: ['Próximo: Configuração Inicial', 'Série Completa: 8 Episódios'];
+  transition: 'Fade out with music';
+  audioElements: ['Background music', 'Voiceover'];
+  specialEffects: ['Episode preview montage', 'Fade out'];
 }
 ```
 
@@ -135,13 +153,14 @@ interface Scene5 {
 interface AIPlanningScene1 {
   sceneNumber: 1;
   duration: 90;
-  visualDescription: "Healthcare professional reviewing AI recommendations on tablet";
-  screenContent: ["AI features overview", "Benefits highlight"];
-  narration: "A inteligência artificial do NeonPro revoluciona o planejamento de tratamentos estéticos. Neste episódio, você aprenderá a utilizar o motor de recomendações IA para criar planos de tratamento personalizados e otimizados.";
-  onScreenText: ["Planejamento IA", "Recomendações Personalizadas", "Otimização de Resultados"];
-  transition: "Professional setting to screen recording";
-  audioElements: ["Background music", "Voiceover", "Subtle tech sounds"];
-  specialEffects: ["AI visualization animation", "Text highlighting"];
+  visualDescription: 'Healthcare professional reviewing AI recommendations on tablet';
+  screenContent: ['AI features overview', 'Benefits highlight'];
+  narration:
+    'A inteligência artificial do NeonPro revoluciona o planejamento de tratamentos estéticos. Neste episódio, você aprenderá a utilizar o motor de recomendações IA para criar planos de tratamento personalizados e otimizados.';
+  onScreenText: ['Planejamento IA', 'Recomendações Personalizadas', 'Otimização de Resultados'];
+  transition: 'Professional setting to screen recording';
+  audioElements: ['Background music', 'Voiceover', 'Subtle tech sounds'];
+  specialEffects: ['AI visualization animation', 'Text highlighting'];
 }
 ```
 
@@ -151,13 +170,14 @@ interface AIPlanningScene1 {
 interface AIPlanningScene2 {
   sceneNumber: 2;
   duration: 120;
-  visualDescription: "Detailed screen recording of patient analysis interface";
-  screenContent: ["Patient profile", "AI analysis dashboard", "Key metrics"];
-  narration: "O módulo de análise de pacientes utiliza algoritmos avançados para avaliar o perfil, histórico e objetivos estéticos. A IA considera fatores como tipo de pele, condições médicas, resultados anteriores e preferências pessoais.";
-  onScreenText: ["Análise de Perfil", "Avaliação de Riscos", "Histórico de Tratamentos"];
-  transition: "Screen recording with zoom and pan";
-  audioElements: ["Voiceover", "Interface interaction sounds"];
-  specialEffects: ["Data visualization", "Metric highlighting", "Screen annotations"];
+  visualDescription: 'Detailed screen recording of patient analysis interface';
+  screenContent: ['Patient profile', 'AI analysis dashboard', 'Key metrics'];
+  narration:
+    'O módulo de análise de pacientes utiliza algoritmos avançados para avaliar o perfil, histórico e objetivos estéticos. A IA considera fatores como tipo de pele, condições médicas, resultados anteriores e preferências pessoais.';
+  onScreenText: ['Análise de Perfil', 'Avaliação de Riscos', 'Histórico de Tratamentos'];
+  transition: 'Screen recording with zoom and pan';
+  audioElements: ['Voiceover', 'Interface interaction sounds'];
+  specialEffects: ['Data visualization', 'Metric highlighting', 'Screen annotations'];
 }
 ```
 
@@ -167,13 +187,14 @@ interface AIPlanningScene2 {
 interface AIPlanningScene3 {
   sceneNumber: 3;
   duration: 150;
-  visualDescription: "Step-by-step demonstration of AI recommendation process";
-  screenContent: ["Recommendation engine", "Treatment options", "Success probabilities"];
-  narration: "O motor de recomendações IA sugere tratamentos baseados em evidências científicas e dados de sucesso. Cada recomendação inclui probabilidade de sucesso, risco de complicações, tempo de recuperação e custo estimado.";
-  onScreenText: ["Recomendações Baseadas em IA", "Taxa de Sucesso", "Análise de Riscos"];
-  transition: "Step-by-step screen recording";
-  audioElements: ["Voiceover", "Click sounds", "Data visualization sounds"];
-  specialEffects: ["AI thinking animation", "Probability charts", "Risk assessment graphics"];
+  visualDescription: 'Step-by-step demonstration of AI recommendation process';
+  screenContent: ['Recommendation engine', 'Treatment options', 'Success probabilities'];
+  narration:
+    'O motor de recomendações IA sugere tratamentos baseados em evidências científicas e dados de sucesso. Cada recomendação inclui probabilidade de sucesso, risco de complicações, tempo de recuperação e custo estimado.';
+  onScreenText: ['Recomendações Baseadas em IA', 'Taxa de Sucesso', 'Análise de Riscos'];
+  transition: 'Step-by-step screen recording';
+  audioElements: ['Voiceover', 'Click sounds', 'Data visualization sounds'];
+  specialEffects: ['AI thinking animation', 'Probability charts', 'Risk assessment graphics'];
 }
 ```
 
@@ -183,13 +204,18 @@ interface AIPlanningScene3 {
 interface AIPlanningScene4 {
   sceneNumber: 4;
   duration: 150;
-  visualDescription: "Treatment sequence planning interface with timeline visualization";
-  screenContent: ["Treatment timeline", "Sequence optimization", "Resource allocation"];
-  narration: "A IA otimiza a sequência de tratamentos considerando tempo de recuperação, sinergia entre procedimentos, disponibilidade do paciente e recursos da clínica. O sistema sugere a ordem ideal para maximizar resultados.";
-  onScreenText: ["Otimização de Sequência", "Timeline Inteligente", "Recursos Otimizados"];
-  transition: "Timeline animation and transitions";
-  audioElements: ["Voiceover", "Timeline animation sounds"];
-  specialEffects: ["Timeline visualization", "Resource allocation animation", "Sequence optimization"];
+  visualDescription: 'Treatment sequence planning interface with timeline visualization';
+  screenContent: ['Treatment timeline', 'Sequence optimization', 'Resource allocation'];
+  narration:
+    'A IA otimiza a sequência de tratamentos considerando tempo de recuperação, sinergia entre procedimentos, disponibilidade do paciente e recursos da clínica. O sistema sugere a ordem ideal para maximizar resultados.';
+  onScreenText: ['Otimização de Sequência', 'Timeline Inteligente', 'Recursos Otimizados'];
+  transition: 'Timeline animation and transitions';
+  audioElements: ['Voiceover', 'Timeline animation sounds'];
+  specialEffects: [
+    'Timeline visualization',
+    'Resource allocation animation',
+    'Sequence optimization',
+  ];
 }
 ```
 
@@ -199,13 +225,14 @@ interface AIPlanningScene4 {
 interface AIPlanningScene5 {
   sceneNumber: 5;
   duration: 120;
-  visualDescription: "Outcome prediction dashboard with visual projections";
-  screenContent: ["Outcome predictions", "Timeline projections", "Confidence intervals"];
-  narration: "O sistema de previsão de resultados utiliza machine learning para projetar outcomes com base em casos similares. As projeções incluem intervalos de confiança e fatores que podem influenciar os resultados.";
-  onScreenText: ["Previsão de Resultados", "Intervalo de Confiança", "Fatores de Influência"];
-  transition: "Data visualization transitions";
-  audioElements: ["Voiceover", "Data visualization sounds"];
-  specialEffects: ["Prediction charts", "Confidence interval visualization", "Timeline projection"];
+  visualDescription: 'Outcome prediction dashboard with visual projections';
+  screenContent: ['Outcome predictions', 'Timeline projections', 'Confidence intervals'];
+  narration:
+    'O sistema de previsão de resultados utiliza machine learning para projetar outcomes com base em casos similares. As projeções incluem intervalos de confiança e fatores que podem influenciar os resultados.';
+  onScreenText: ['Previsão de Resultados', 'Intervalo de Confiança', 'Fatores de Influência'];
+  transition: 'Data visualization transitions';
+  audioElements: ['Voiceover', 'Data visualization sounds'];
+  specialEffects: ['Prediction charts', 'Confidence interval visualization', 'Timeline projection'];
 }
 ```
 
@@ -215,13 +242,18 @@ interface AIPlanningScene5 {
 interface AIPlanningScene6 {
   sceneNumber: 6;
   duration: 90;
-  visualDescription: "Treatment plan implementation and follow-up planning";
-  screenContent: ["Plan implementation", "Follow-up scheduling", "Progress tracking"];
-  narration: "Após finalizar o plano, o sistema auxilia na implementação, agendamento das sessões e acompanhamento dos resultados. A IA continua aprendendo e ajustando as recomendações com base nos resultados reais.";
-  onScreenText: ["Implementação", "Acompanhamento", "Aprendizado Contínuo"];
-  transition: "Implementation workflow animation";
-  audioElements: ["Voiceover", "Workflow sounds", "Success notification"];
-  specialEffects: ["Implementation workflow", "Progress tracking visualization", "Learning loop animation"];
+  visualDescription: 'Treatment plan implementation and follow-up planning';
+  screenContent: ['Plan implementation', 'Follow-up scheduling', 'Progress tracking'];
+  narration:
+    'Após finalizar o plano, o sistema auxilia na implementação, agendamento das sessões e acompanhamento dos resultados. A IA continua aprendendo e ajustando as recomendações com base nos resultados reais.';
+  onScreenText: ['Implementação', 'Acompanhamento', 'Aprendizado Contínuo'];
+  transition: 'Implementation workflow animation';
+  audioElements: ['Voiceover', 'Workflow sounds', 'Success notification'];
+  specialEffects: [
+    'Implementation workflow',
+    'Progress tracking visualization',
+    'Learning loop animation',
+  ];
 }
 ```
 
@@ -238,13 +270,14 @@ interface AIPlanningScene6 {
 interface LGPDSite1 {
   sceneNumber: 1;
   duration: 90;
-  visualDescription: "Professional explaining LGPD concepts with system interface overlay";
-  screenContent: ["LGPD overview", "Key principles", "System compliance features"];
-  narration: "A Lei Geral de Proteção de Dados (LGPD) estabelece regras rigorosas para o tratamento de dados pessoais no Brasil. O NeonPro foi projetado com LGPD compliance como prioridade fundamental.";
-  onScreenText: ["LGPD", "Proteção de Dados", "Compliance Automatizado"];
-  transition: "Professional setting to system interface";
-  audioElements: ["Professional background music", "Voiceover"];
-  specialEffects: ["LGPD law visualization", "Compliance features highlight"];
+  visualDescription: 'Professional explaining LGPD concepts with system interface overlay';
+  screenContent: ['LGPD overview', 'Key principles', 'System compliance features'];
+  narration:
+    'A Lei Geral de Proteção de Dados (LGPD) estabelece regras rigorosas para o tratamento de dados pessoais no Brasil. O NeonPro foi projetado com LGPD compliance como prioridade fundamental.';
+  onScreenText: ['LGPD', 'Proteção de Dados', 'Compliance Automatizado'];
+  transition: 'Professional setting to system interface';
+  audioElements: ['Professional background music', 'Voiceover'];
+  specialEffects: ['LGPD law visualization', 'Compliance features highlight'];
 }
 ```
 
@@ -254,13 +287,14 @@ interface LGPDSite1 {
 interface LGPDSite2 {
   sceneNumber: 2;
   duration: 90;
-  visualDescription: "Data classification interface with sensitivity levels";
-  screenContent: ["Classification system", "Sensitivity levels", "Protection measures"];
-  narration: "O sistema classifica automaticamente os dados por níveis de sensibilidade: Público, Interno, Confidencial, Restrito e Crítico. Cada nível requer medidas específicas de proteção.";
-  onScreenText: ["Classificação de Dados", "Níveis de Sensibilidade", "Proteção Automatizada"];
-  transition: "Data classification visualization";
-  audioElements: ["Voiceover", "Classification sounds"];
-  specialEffects: ["Data classification animation", "Sensitivity level indicators"];
+  visualDescription: 'Data classification interface with sensitivity levels';
+  screenContent: ['Classification system', 'Sensitivity levels', 'Protection measures'];
+  narration:
+    'O sistema classifica automaticamente os dados por níveis de sensibilidade: Público, Interno, Confidencial, Restrito e Crítico. Cada nível requer medidas específicas de proteção.';
+  onScreenText: ['Classificação de Dados', 'Níveis de Sensibilidade', 'Proteção Automatizada'];
+  transition: 'Data classification visualization';
+  audioElements: ['Voiceover', 'Classification sounds'];
+  specialEffects: ['Data classification animation', 'Sensitivity level indicators'];
 }
 ```
 
@@ -270,13 +304,14 @@ interface LGPDSite2 {
 interface LGPDSite3 {
   sceneNumber: 3;
   duration: 120;
-  visualDescription: "Consent management interface demonstration";
-  screenContent: ["Consent forms", "Preference management", "Withdrawal process"];
-  narration: "O gerenciamento de consentimento é central para LGPD compliance. O sistema permite gerenciar preferências de consentimento, histórico de autorizações e processo de retirada de consentimento.";
-  onScreenText: ["Gestão de Consentimento", "Preferências", "Retirada de Consentimento"];
-  transition: "Consent management workflow";
-  audioElements: ["Voiceover", "Form interaction sounds"];
-  specialEffects: ["Consent form animation", "Preference management visualization"];
+  visualDescription: 'Consent management interface demonstration';
+  screenContent: ['Consent forms', 'Preference management', 'Withdrawal process'];
+  narration:
+    'O gerenciamento de consentimento é central para LGPD compliance. O sistema permite gerenciar preferências de consentimento, histórico de autorizações e processo de retirada de consentimento.';
+  onScreenText: ['Gestão de Consentimento', 'Preferências', 'Retirada de Consentimento'];
+  transition: 'Consent management workflow';
+  audioElements: ['Voiceover', 'Form interaction sounds'];
+  specialEffects: ['Consent form animation', 'Preference management visualization'];
 }
 ```
 
@@ -286,13 +321,14 @@ interface LGPDSite3 {
 interface LGPDSite4 {
   sceneNumber: 4;
   duration: 90;
-  visualDescription: "Data subject rights management interface";
-  screenContent: ["Rights overview", "Request handling", "Response workflow"];
-  narration: "O sistema facilita o exercício dos direitos dos titulares de dados: acesso, correção, eliminação, portabilidade e informação. Todos os pedidos são registrados e processados dentro dos prazos legais.";
-  onScreenText: ["Direitos do Titular", "Gestão de Pedidos", "Resposta Legal"];
-  transition: "Rights management workflow";
-  audioElements: ["Voiceover", "Request processing sounds"];
-  specialEffects: ["Rights visualization", "Request workflow animation"];
+  visualDescription: 'Data subject rights management interface';
+  screenContent: ['Rights overview', 'Request handling', 'Response workflow'];
+  narration:
+    'O sistema facilita o exercício dos direitos dos titulares de dados: acesso, correção, eliminação, portabilidade e informação. Todos os pedidos são registrados e processados dentro dos prazos legais.';
+  onScreenText: ['Direitos do Titular', 'Gestão de Pedidos', 'Resposta Legal'];
+  transition: 'Rights management workflow';
+  audioElements: ['Voiceover', 'Request processing sounds'];
+  specialEffects: ['Rights visualization', 'Request workflow animation'];
 }
 ```
 
@@ -302,13 +338,18 @@ interface LGPDSite4 {
 interface LGPDSite5 {
   sceneNumber: 5;
   duration: 90;
-  visualDescription: "Data breach response procedures and system features";
-  screenContent: ["Breach detection", "Response procedures", "Notification workflow"];
-  narration: "Em caso de violação de dados, o sistema aciona protocolos automáticos de resposta, incluindo notificação à ANPD, comunicação com titulares afetados e medidas de mitigação.";
-  onScreenText: ["Resposta a Incidentes", "Notificação ANPD", "Comunicação com Titulares"];
-  transition: "Breach response workflow animation";
-  audioElements: ["Voiceover", "Alert sounds", "Workflow sounds"];
-  specialEffects: ["Breach detection visualization", "Response workflow animation", "Timeline visualization"];
+  visualDescription: 'Data breach response procedures and system features';
+  screenContent: ['Breach detection', 'Response procedures', 'Notification workflow'];
+  narration:
+    'Em caso de violação de dados, o sistema aciona protocolos automáticos de resposta, incluindo notificação à ANPD, comunicação com titulares afetados e medidas de mitigação.';
+  onScreenText: ['Resposta a Incidentes', 'Notificação ANPD', 'Comunicação com Titulares'];
+  transition: 'Breach response workflow animation';
+  audioElements: ['Voiceover', 'Alert sounds', 'Workflow sounds'];
+  specialEffects: [
+    'Breach detection visualization',
+    'Response workflow animation',
+    'Timeline visualization',
+  ];
 }
 ```
 

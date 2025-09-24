@@ -88,7 +88,7 @@ export class AIDataService {
         timestamp: new Date().toISOString(),
       });
     } catch {
-  void _error;
+      void _error;
       console.error('Failed to log audit entry:', error);
       // Don't throw - audit logging failures shouldn't block operations
     }
@@ -422,7 +422,7 @@ export class AIDataService {
         database: 'connected',
       };
     } catch {
-  void _error;
+      void _error;
       return {
         status: 'unhealthy',
         timestamp: new Date().toISOString(),
@@ -483,7 +483,7 @@ export class AIDataService {
 
       return response;
     } catch {
-  void _error;
+      void _error;
       console.error('Ottomator agent query failed:', error);
 
       // Fallback to direct processing
@@ -514,7 +514,7 @@ export class AIDataService {
           try {
             result = await this.getClientsByName({ clientNames: [query] });
           } catch {
-  void _error;
+            void _error;
             result = {
               message: 'Erro ao buscar clientes: '
                 + (error instanceof Error ? error.message : 'Erro desconhecido'),
@@ -530,7 +530,7 @@ export class AIDataService {
               dateRanges: [{ start: today, end: tomorrow }],
             });
           } catch {
-  void _error;
+            void _error;
             result = {
               message: 'Erro ao buscar agendamentos: '
                 + (error instanceof Error ? error.message : 'Erro desconhecido'),
@@ -543,7 +543,7 @@ export class AIDataService {
               financial: { period: 'today', type: 'all' },
             });
           } catch {
-  void _error;
+            void _error;
             result = {
               message: 'Erro ao buscar dados financeiros: '
                 + (error instanceof Error ? error.message : 'Erro desconhecido'),
@@ -574,7 +574,7 @@ export class AIDataService {
         },
       };
     } catch {
-  void _error;
+      void _error;
       return {
         success: false,
         error: {

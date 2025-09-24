@@ -10,7 +10,7 @@ console.log('undefined:', validateTUSS(undefined));
 console.log('"null":', validateTUSS('null'));
 console.log('"undefined":', validateTUSS('undefined'));
 
-// Test Professional License with null and undefined  
+// Test Professional License with null and undefined
 console.log('\nProfessional License validation:');
 console.log('null:', validateProfessionalLicense(null));
 console.log('undefined:', validateProfessionalLicense(undefined));

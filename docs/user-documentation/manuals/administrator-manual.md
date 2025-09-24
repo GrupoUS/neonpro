@@ -137,27 +137,27 @@ interface ProfessionalRegistration {
   // Dados básicos
   fullName: string;
   professionalType: 'doctor' | 'nurse' | 'aesthetician' | 'assistant';
-  
+
   // Documentação obrigatória
   cfmCrmNumber: string;
   cfmCrmState: string;
   cfmCrmSpecialty: string;
   professionalLicense: string;
   licenseExpiration: Date;
-  
+
   // Especializações
   specializations: string[];
   certifications: Certification[];
-  
+
   // Disponibilidade
   workSchedule: WorkSchedule;
   appointmentTypes: string[];
-  
+
   // Financeiro
   commissionRate: number;
   baseSalary?: number;
   paymentMethod: 'hourly' | 'commission' | 'fixed' | 'hybrid';
-  
+
   // Status
   status: 'active' | 'inactive' | 'suspended' | 'on_leave';
   startDate: Date;
@@ -194,15 +194,15 @@ interface ReceptionStaff {
   fullName: string;
   email: string;
   phone: string;
-  
+
   // Permissões de acesso
   permissions: ReceptionPermission[];
   accessLevel: 'basic' | 'supervisor' | 'manager';
-  
+
   // Responsabilidades
   responsibilities: string[];
   departments: string[];
-  
+
   // Horário de trabalho
   workShift: 'morning' | 'afternoon' | 'evening' | 'full_time';
   availability: AvailabilitySchedule;
@@ -239,7 +239,7 @@ interface AIOptimizationConfig {
     travelTime: boolean;
     treatmentDuration: boolean;
   };
-  
+
   // Preferências
   preferences: {
     preferredTimeOfDay: 'morning' | 'afternoon' | 'evening';
@@ -249,7 +249,7 @@ interface AIOptimizationConfig {
     allowSameDay: boolean;
     allowWeekend: boolean;
   };
-  
+
   // Restrições
   constraints: {
     timeWindows: TimeWindow[];
@@ -298,16 +298,16 @@ Métricas de otimização:
 interface ResourceManagement {
   // Salas de tratamento
   treatmentRooms: TreatmentRoom[];
-  
+
   // Equipamentos
   equipment: Equipment[];
-  
+
   // Materiais e insumos
   supplies: SupplyItem[];
-  
+
   // Disponibilidade
   availability: ResourceAvailability;
-  
+
   // Manutenção
   maintenanceSchedule: MaintenanceSchedule[];
 }
@@ -329,14 +329,14 @@ interface RevenueAnalytics {
     laserTreatments: number;
     consultation: number;
   };
-  
+
   // Tendências
   trends: {
     monthly: MonthlyRevenue[];
     quarterly: QuarterlyRevenue[];
     yearly: YearlyRevenue[];
   };
-  
+
   // Análise de lucratividade
   profitability: {
     byTreatment: TreatmentProfitability[];
@@ -432,7 +432,7 @@ interface LGPDCompliance {
     marketing: ConsentRecord[];
     communication: ConsentRecord[];
   };
-  
+
   // Direitos do titular
   dataSubjectRights: {
     accessRequests: DataRequest[];
@@ -440,10 +440,10 @@ interface LGPDCompliance {
     correctionRequests: DataRequest[];
     portabilityRequests: DataRequest[];
   };
-  
+
   // Incidentes de segurança
   securityIncidents: SecurityIncident[];
-  
+
   // Auditoria
   auditTrail: AuditRecord[];
 }
@@ -475,7 +475,7 @@ interface AnvisaCompliance {
     manufacturer: string;
     batchTracking: BatchRecord[];
   };
-  
+
   // Rastreamento de produtos
   productTracking: {
     productId: string;
@@ -484,7 +484,7 @@ interface AnvisaCompliance {
     storageConditions: string;
     usageRecords: UsageRecord[];
   };
-  
+
   // Notificações adversas
   adverseEvents: AdverseEventReport[];
 }
@@ -515,7 +515,7 @@ interface CFMCompliance {
     lastValidation: Date;
     nextValidation: Date;
   };
-  
+
   // Especializações
   specializations: {
     specialization: string;
@@ -523,7 +523,7 @@ interface CFMCompliance {
     issuingBody: string;
     validUntil: Date;
   };
-  
+
   // Responsabilidades éticas
   ethicalCompliance: {
     professionalConduct: ConductRecord[];
@@ -548,14 +548,14 @@ interface OperationalReports {
     staffPerformance: DailyStaffReport;
     compliance: DailyComplianceReport;
   };
-  
+
   // Semanal
   weekly: {
     performance: WeeklyPerformanceReport;
     financial: WeeklyFinancialReport;
     marketing: WeeklyMarketingReport;
   };
-  
+
   // Mensal
   monthly: {
     comprehensive: MonthlyComprehensiveReport;
@@ -585,26 +585,26 @@ Análise preditiva:
 interface KPIs {
   // Financeiros
   financial: {
-    monthlyRevenue: { target: 100000, current: 85000, unit: 'BRL' };
-    profitMargin: { target: 30, current: 29, unit: '%' };
-    averageTicket: { target: 500, current: 450, unit: 'BRL' };
-    customerLifetimeValue: { target: 5000, current: 4500, unit: 'BRL' };
+    monthlyRevenue: { target: 100000; current: 85000; unit: 'BRL' };
+    profitMargin: { target: 30; current: 29; unit: '%' };
+    averageTicket: { target: 500; current: 450; unit: 'BRL' };
+    customerLifetimeValue: { target: 5000; current: 4500; unit: 'BRL' };
   };
-  
+
   // Operacionais
   operational: {
-    appointmentOccupancy: { target: 85, current: 78, unit: '%' };
-    noShowRate: { target: 5, current: 8, unit: '%' };
-    staffUtilization: { target: 90, current: 82, unit: '%' };
-    resourceUtilization: { target: 80, current: 75, unit: '%' };
+    appointmentOccupancy: { target: 85; current: 78; unit: '%' };
+    noShowRate: { target: 5; current: 8; unit: '%' };
+    staffUtilization: { target: 90; current: 82; unit: '%' };
+    resourceUtilization: { target: 80; current: 75; unit: '%' };
   };
-  
+
   // Clientes
   customer: {
-    satisfactionScore: { target: 4.5, current: 4.2, unit: '/5.0' };
-    retentionRate: { target: 85, current: 78, unit: '%' };
-    netPromoterScore: { target: 50, current: 45, unit: '' };
-    complaintRate: { target: 2, current: 3, unit: '%' };
+    satisfactionScore: { target: 4.5; current: 4.2; unit: '/5.0' };
+    retentionRate: { target: 85; current: 78; unit: '%' };
+    netPromoterScore: { target: 50; current: 45; unit: '' };
+    complaintRate: { target: 2; current: 3; unit: '%' };
   };
 }
 ```
@@ -626,7 +626,7 @@ interface SystemConfiguration {
     dateFormat: string;
     timeFormat: '12h' | '24h';
   };
-  
+
   // Configurações de agendamento
   scheduling: {
     appointmentDuration: number;
@@ -635,7 +635,7 @@ interface SystemConfiguration {
     cancellationPolicy: CancellationPolicy;
     reminderSettings: ReminderSettings;
   };
-  
+
   // Configurações de pagamento
   payment: {
     acceptedMethods: PaymentMethod[];
@@ -643,7 +643,7 @@ interface SystemConfiguration {
     currency: string;
     taxSettings: TaxSettings;
   };
-  
+
   // Configurações de conformidade
   compliance: {
     lgpdEnabled: boolean;
@@ -666,14 +666,14 @@ interface InterfaceCustomization {
     accentColor: string;
     theme: 'light' | 'dark' | 'auto';
   };
-  
+
   // Layout do dashboard
   dashboard: {
     layout: 'standard' | 'compact' | 'detailed';
     widgets: DashboardWidget[];
     refreshInterval: number;
   };
-  
+
   // Notificações
   notifications: {
     email: EmailNotificationSettings;
@@ -696,21 +696,21 @@ interface ThirdPartyIntegrations {
     apiKey: string;
     webhookUrl: string;
   };
-  
+
   // Comunicação
   communication: {
     emailProvider: 'sendgrid' | 'ses' | 'mailgun';
     smsProvider: 'twilio' | 'vonage' | 'infobip';
     whatsappProvider: 'twilio' | 'zenvia' | 'messagebird';
   };
-  
+
   // Análise
   analytics: {
     googleAnalytics: GoogleAnalyticsConfig;
     mixpanel: MixpanelConfig;
     hotjar: HotjarConfig;
   };
-  
+
   // Compliance
   compliance: {
     anvisaApi: AnvisaApiConfig;
@@ -779,21 +779,21 @@ interface AdminMobileApp {
     pushNotifications: boolean;
     offlineMode: boolean;
   };
-  
+
   // Gestão de equipe
   teamManagement: {
     staffDirectory: boolean;
     scheduleManagement: boolean;
     performanceTracking: boolean;
   };
-  
+
   // Relatórios
   reports: {
     exportToPDF: boolean;
     exportToExcel: boolean;
     scheduledReports: boolean;
   };
-  
+
   // Comunicação
   communication: {
     teamChat: boolean;

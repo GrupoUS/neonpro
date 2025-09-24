@@ -1,15 +1,15 @@
-import { SupabaseClient } from "@supabase/supabase-js";
 import {
-  AppointmentRepository as IAppointmentRepository,
   Appointment,
+  AppointmentFilter,
+  AppointmentQueryOptions,
+  AppointmentRepository as IAppointmentRepository,
+  AppointmentSearchResult,
   AppointmentStatus,
   CreateAppointmentRequest,
   UpdateAppointmentRequest,
-  AppointmentFilter,
-  AppointmentSearchResult,
-  AppointmentQueryOptions,
-} from "@neonpro/domain";
-import { databaseLogger, logHealthcareError } from "../../../shared/src/logging/healthcare-logger";
+} from '@neonpro/domain';
+import { SupabaseClient } from '@supabase/supabase-js';
+import { databaseLogger, logHealthcareError } from '../../../shared/src/logging/healthcare-logger';
 
 /**
  * Supabase implementation of AppointmentRepository
@@ -21,7 +21,7 @@ export class AppointmentRepository implements IAppointmentRepository {
   async findById(id: string): Promise<Appointment | null> {
     try {
       const { data, error } = await this.supabase
-        .from("appointments")
+        .from('appointments')
         .select(
           `
           *,
@@ -30,7 +30,7 @@ export class AppointmentRepository implements IAppointmentRepository {
           service_type:service_types(id, name, duration)
         `,
         )
-        .eq("id", id)
+        .eq('id', id)
         .single();
 
       if (error) {
@@ -53,22 +53,22 @@ export class AppointmentRepository implements IAppointmentRepository {
   ): Promise<AppointmentSearchResult> {
     try {
       let query = this.supabase
-        .from("appointments")
-        .select("*", { count: "exact" })
-        .eq("patient_id", patientId);
+        .from('appointments')
+        .select('*', { count: 'exact' })
+        .eq('patient_id', patientId);
 
       // Apply filters
       if (options?.status) {
-        query = query.eq("status", options.status);
+        query = query.eq('status', options.status);
       }
 
       // Apply date range filter
       if (options?.startDate) {
-        query = query.gte("start_time", options.startDate.toISOString());
+        query = query.gte('start_time', options.startDate.toISOString());
       }
 
       if (options?.endDate) {
-        query = query.lte("end_time", options.endDate.toISOString());
+        query = query.lte('end_time', options.endDate.toISOString());
       }
 
       // Apply pagination
@@ -85,10 +85,10 @@ export class AppointmentRepository implements IAppointmentRepository {
 
       // Apply sorting
       if (options?.sortBy) {
-        const sortOrder = options.sortOrder === "desc" ? false : true;
+        const sortOrder = options.sortOrder === 'desc' ? false : true;
         query = query.order(options.sortBy, { ascending: sortOrder });
       } else {
-        query = query.order("start_time", { ascending: false });
+        query = query.order('start_time', { ascending: false });
       }
 
       const { data, error, count } = await query;
@@ -120,22 +120,22 @@ export class AppointmentRepository implements IAppointmentRepository {
   ): Promise<AppointmentSearchResult> {
     try {
       let query = this.supabase
-        .from("appointments")
-        .select("*", { count: "exact" })
-        .eq("professional_id", professionalId);
+        .from('appointments')
+        .select('*', { count: 'exact' })
+        .eq('professional_id', professionalId);
 
       // Apply filters
       if (options?.status) {
-        query = query.eq("status", options.status);
+        query = query.eq('status', options.status);
       }
 
       // Apply date range filter
       if (options?.startDate) {
-        query = query.gte("start_time", options.startDate.toISOString());
+        query = query.gte('start_time', options.startDate.toISOString());
       }
 
       if (options?.endDate) {
-        query = query.lte("end_time", options.endDate.toISOString());
+        query = query.lte('end_time', options.endDate.toISOString());
       }
 
       // Apply pagination
@@ -152,10 +152,10 @@ export class AppointmentRepository implements IAppointmentRepository {
 
       // Apply sorting
       if (options?.sortBy) {
-        const sortOrder = options.sortOrder === "desc" ? false : true;
+        const sortOrder = options.sortOrder === 'desc' ? false : true;
         query = query.order(options.sortBy, { ascending: sortOrder });
       } else {
-        query = query.order("start_time", { ascending: false });
+        query = query.order('start_time', { ascending: false });
       }
 
       const { data, error, count } = await query;
@@ -187,22 +187,22 @@ export class AppointmentRepository implements IAppointmentRepository {
   ): Promise<AppointmentSearchResult> {
     try {
       let query = this.supabase
-        .from("appointments")
-        .select("*", { count: "exact" })
-        .eq("clinic_id", clinicId);
+        .from('appointments')
+        .select('*', { count: 'exact' })
+        .eq('clinic_id', clinicId);
 
       // Apply filters
       if (options?.status) {
-        query = query.eq("status", options.status);
+        query = query.eq('status', options.status);
       }
 
       // Apply date range filter
       if (options?.startDate) {
-        query = query.gte("start_time", options.startDate.toISOString());
+        query = query.gte('start_time', options.startDate.toISOString());
       }
 
       if (options?.endDate) {
-        query = query.lte("end_time", options.endDate.toISOString());
+        query = query.lte('end_time', options.endDate.toISOString());
       }
 
       // Apply pagination
@@ -219,10 +219,10 @@ export class AppointmentRepository implements IAppointmentRepository {
 
       // Apply sorting
       if (options?.sortBy) {
-        const sortOrder = options.sortOrder === "desc" ? false : true;
+        const sortOrder = options.sortOrder === 'desc' ? false : true;
         query = query.order(options.sortBy, { ascending: sortOrder });
       } else {
-        query = query.order("start_time", { ascending: false });
+        query = query.order('start_time', { ascending: false });
       }
 
       const { data, error, count } = await query;
@@ -254,35 +254,35 @@ export class AppointmentRepository implements IAppointmentRepository {
   ): Promise<AppointmentSearchResult> {
     try {
       let query = this.supabase
-        .from("appointments")
-        .select("*", { count: "exact" });
+        .from('appointments')
+        .select('*', { count: 'exact' });
 
       // Apply filters
       if (filter.clinicId) {
-        query = query.eq("clinic_id", filter.clinicId);
+        query = query.eq('clinic_id', filter.clinicId);
       }
 
       if (filter.patientId) {
-        query = query.eq("patient_id", filter.patientId);
+        query = query.eq('patient_id', filter.patientId);
       }
 
       if (filter.professionalId) {
-        query = query.eq("professional_id", filter.professionalId);
+        query = query.eq('professional_id', filter.professionalId);
       }
 
       if (filter.status) {
-        query = query.eq("status", filter.status);
+        query = query.eq('status', filter.status);
       }
 
       if (filter.serviceTypeId) {
-        query = query.eq("service_type_id", filter.serviceTypeId);
+        query = query.eq('service_type_id', filter.serviceTypeId);
       }
 
       // Apply date range filter
       if (filter.dateRange) {
         query = query
-          .gte("start_time", filter.dateRange.start.toISOString())
-          .lte("end_time", filter.dateRange.end.toISOString());
+          .gte('start_time', filter.dateRange.start.toISOString())
+          .lte('end_time', filter.dateRange.end.toISOString());
       }
 
       // Apply pagination
@@ -299,10 +299,10 @@ export class AppointmentRepository implements IAppointmentRepository {
 
       // Apply sorting
       if (options?.sortBy) {
-        const sortOrder = options.sortOrder === "desc" ? false : true;
+        const sortOrder = options.sortOrder === 'desc' ? false : true;
         query = query.order(options.sortBy, { ascending: sortOrder });
       } else {
-        query = query.order("start_time", { ascending: false });
+        query = query.order('start_time', { ascending: false });
       }
 
       const { data, error, count } = await query;
@@ -335,7 +335,7 @@ export class AppointmentRepository implements IAppointmentRepository {
       const dbAppointment = this.mapCreateRequestToDatabase(appointmentData);
 
       const { data, error } = await this.supabase
-        .from("appointments")
+        .from('appointments')
         .insert(dbAppointment)
         .select()
         .single();
@@ -360,20 +360,28 @@ export class AppointmentRepository implements IAppointmentRepository {
       const updateData = this.mapUpdateRequestToDatabase(appointmentData);
 
       const { data, error } = await this.supabase
-        .from("appointments")
+        .from('appointments')
         .update(updateData)
-        .eq("id", id)
+        .eq('id', id)
         .select()
         .single();
 
       if (error) {
-        logHealthcareError('database', error, { method: 'update', appointmentId: id, appointmentData });
+        logHealthcareError('database', error, {
+          method: 'update',
+          appointmentId: id,
+          appointmentData,
+        });
         throw new Error(`Failed to update appointment: ${error.message}`);
       }
 
       return this.mapDatabaseAppointmentToDomain(data);
     } catch (error) {
-      logHealthcareError('database', error, { method: 'update', appointmentId: id, appointmentData });
+      logHealthcareError('database', error, {
+        method: 'update',
+        appointmentId: id,
+        appointmentData,
+      });
       throw error;
     }
   }
@@ -381,9 +389,9 @@ export class AppointmentRepository implements IAppointmentRepository {
   async delete(id: string): Promise<boolean> {
     try {
       const { error } = await this.supabase
-        .from("appointments")
+        .from('appointments')
         .delete()
-        .eq("id", id);
+        .eq('id', id);
 
       if (error) {
         logHealthcareError('database', error, { method: 'delete', appointmentId: id });
@@ -404,21 +412,26 @@ export class AppointmentRepository implements IAppointmentRepository {
   ): Promise<Appointment[]> {
     try {
       let query = this.supabase
-        .from("appointments")
-        .select("*")
-        .gte("start_time", startDate.toISOString())
-        .lte("end_time", endDate.toISOString());
+        .from('appointments')
+        .select('*')
+        .gte('start_time', startDate.toISOString())
+        .lte('end_time', endDate.toISOString());
 
       if (clinicId) {
-        query = query.eq("clinic_id", clinicId);
+        query = query.eq('clinic_id', clinicId);
       }
 
-      query = query.order("start_time", { ascending: true });
+      query = query.order('start_time', { ascending: true });
 
       const { data, error } = await query;
 
       if (error) {
-        logHealthcareError('database', error, { method: 'findByDateRange', startDate, endDate, clinicId });
+        logHealthcareError('database', error, {
+          method: 'findByDateRange',
+          startDate,
+          endDate,
+          clinicId,
+        });
         return [];
       }
 
@@ -426,7 +439,12 @@ export class AppointmentRepository implements IAppointmentRepository {
 
       return data.map(this.mapDatabaseAppointmentToDomain);
     } catch (error) {
-      logHealthcareError('database', error, { method: 'findByDateRange', startDate, endDate, clinicId });
+      logHealthcareError('database', error, {
+        method: 'findByDateRange',
+        startDate,
+        endDate,
+        clinicId,
+      });
       return [];
     }
   }
@@ -434,33 +452,33 @@ export class AppointmentRepository implements IAppointmentRepository {
   async count(filter: AppointmentFilter): Promise<number> {
     try {
       let query = this.supabase
-        .from("appointments")
-        .select("*", { count: "exact", head: true });
+        .from('appointments')
+        .select('*', { count: 'exact', head: true });
 
       if (filter.clinicId) {
-        query = query.eq("clinic_id", filter.clinicId);
+        query = query.eq('clinic_id', filter.clinicId);
       }
 
       if (filter.patientId) {
-        query = query.eq("patient_id", filter.patientId);
+        query = query.eq('patient_id', filter.patientId);
       }
 
       if (filter.professionalId) {
-        query = query.eq("professional_id", filter.professionalId);
+        query = query.eq('professional_id', filter.professionalId);
       }
 
       if (filter.status) {
-        query = query.eq("status", filter.status);
+        query = query.eq('status', filter.status);
       }
 
       if (filter.serviceTypeId) {
-        query = query.eq("service_type_id", filter.serviceTypeId);
+        query = query.eq('service_type_id', filter.serviceTypeId);
       }
 
       if (filter.dateRange) {
         query = query
-          .gte("start_time", filter.dateRange.start.toISOString())
-          .lte("end_time", filter.dateRange.end.toISOString());
+          .gte('start_time', filter.dateRange.start.toISOString())
+          .lte('end_time', filter.dateRange.end.toISOString());
       }
 
       const { count, error } = await query;
@@ -542,28 +560,37 @@ export class AppointmentRepository implements IAppointmentRepository {
     const updateData: any = {};
 
     if (request.status !== undefined) updateData.status = request.status;
-    if (request.startTime !== undefined)
+    if (request.startTime !== undefined) {
       updateData.start_time = request.startTime;
+    }
     if (request.endTime !== undefined) updateData.end_time = request.endTime;
     if (request.notes !== undefined) updateData.notes = request.notes;
-    if (request.internalNotes !== undefined)
+    if (request.internalNotes !== undefined) {
       updateData.internal_notes = request.internalNotes;
-    if (request.reminderSentAt !== undefined)
+    }
+    if (request.reminderSentAt !== undefined) {
       updateData.reminder_sent_at = request.reminderSentAt;
-    if (request.confirmationSentAt !== undefined)
+    }
+    if (request.confirmationSentAt !== undefined) {
       updateData.confirmation_sent_at = request.confirmationSentAt;
-    if (request.whatsappReminderSent !== undefined)
+    }
+    if (request.whatsappReminderSent !== undefined) {
       updateData.whatsapp_reminder_sent = request.whatsappReminderSent;
-    if (request.smsReminderSent !== undefined)
+    }
+    if (request.smsReminderSent !== undefined) {
       updateData.sms_reminder_sent = request.smsReminderSent;
+    }
     if (request.roomId !== undefined) updateData.room_id = request.roomId;
     if (request.priority !== undefined) updateData.priority = request.priority;
-    if (request.cancelledAt !== undefined)
+    if (request.cancelledAt !== undefined) {
       updateData.cancelled_at = request.cancelledAt;
-    if (request.cancelledBy !== undefined)
+    }
+    if (request.cancelledBy !== undefined) {
       updateData.cancelled_by = request.cancelledBy;
-    if (request.cancellationReason !== undefined)
+    }
+    if (request.cancellationReason !== undefined) {
       updateData.cancellation_reason = request.cancellationReason;
+    }
     if (request.title !== undefined) updateData.title = request.title;
     if (request.color !== undefined) updateData.color = request.color;
 

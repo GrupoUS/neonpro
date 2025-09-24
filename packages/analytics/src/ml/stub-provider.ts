@@ -6,19 +6,19 @@
  */
 
 import {
-  ModelProvider,
-  ModelMetadata,
-  PredictionInput,
-  PredictionResult,
   BatchPredictionInput,
   BatchPredictionResult,
-  PredictionType,
   ConfidenceLevel,
   FeatureImportance,
   InvalidInputError,
-  PredictionError,
   ModelInitializationError,
-} from "./interfaces";
+  ModelMetadata,
+  ModelProvider,
+  PredictionError,
+  PredictionInput,
+  PredictionResult,
+  PredictionType,
+} from './interfaces';
 
 // ============================================================================
 // Stub Configuration
@@ -42,15 +42,15 @@ interface StubModelConfig {
 }
 
 const DEFAULT_STUB_CONFIG: StubModelConfig = {
-  id: "healthcare-stub-v1",
-  name: "Healthcare Analytics Stub Model",
-  version: "1.0.0",
+  id: 'healthcare-stub-v1',
+  name: 'Healthcare Analytics Stub Model',
+  version: '1.0.0',
   supportedTypes: [
-    "patient_outcome",
-    "readmission_risk",
-    "treatment_effectiveness",
-    "no_show_risk",
-    "cost_prediction",
+    'patient_outcome',
+    'readmission_risk',
+    'treatment_effectiveness',
+    'no_show_risk',
+    'cost_prediction',
   ],
   accuracy: 0.85,
   latencyMs: 100,
@@ -75,17 +75,17 @@ export class StubModelProvider implements ModelProvider {
       id: this._config.id,
       name: this._config.name,
       version: this._config.version,
-      type: "stub",
-      description: "Stub model provider for development and testing",
-      trainedAt: new Date("2024-01-01T00:00:00Z"),
+      type: 'stub',
+      description: 'Stub model provider for development and testing',
+      trainedAt: new Date('2024-01-01T00:00:00Z'),
       accuracy: this._config.accuracy,
       supportedTypes: this._config.supportedTypes,
       requiredFeatures: [
-        "age",
-        "gender",
-        "medical_history",
-        "current_symptoms",
-        "vital_signs",
+        'age',
+        'gender',
+        'medical_history',
+        'current_symptoms',
+        'vital_signs',
       ],
     };
   }
@@ -107,7 +107,7 @@ export class StubModelProvider implements ModelProvider {
 
   async predict(input: PredictionInput): Promise<PredictionResult> {
     if (!this._initialized) {
-      throw new ModelInitializationError("Model not initialized");
+      throw new ModelInitializationError('Model not initialized');
     }
 
     // Validate input
@@ -118,7 +118,7 @@ export class StubModelProvider implements ModelProvider {
 
     // Simulate random failures for testing
     if (Math.random() < (this._config.failureRate || 0)) {
-      throw new PredictionError("Simulated prediction failure", {
+      throw new PredictionError('Simulated prediction failure', {
         input: input.type,
         modelId: this._config.id,
       });
@@ -155,7 +155,7 @@ export class StubModelProvider implements ModelProvider {
     for (let i = 0; i < input.inputs.length; i += maxConcurrency) {
       const batch = input.inputs.slice(i, i + maxConcurrency);
 
-      const batchPromises = batch.map(async (predInput) => {
+      const batchPromises = batch.map(async predInput => {
         try {
           const result = await this.predict(predInput);
           successful++;
@@ -166,9 +166,9 @@ export class StubModelProvider implements ModelProvider {
           return {
             prediction: null,
             confidence: 0,
-            confidenceLevel: "low" as ConfidenceLevel,
+            confidenceLevel: 'low' as ConfidenceLevel,
             metadata: {
-              error: error instanceof Error ? error.message : "Unknown error",
+              error: error instanceof Error ? error.message : 'Unknown error',
               modelId: this._config.id,
             },
             timestamp: new Date(),
@@ -208,12 +208,12 @@ export class StubModelProvider implements ModelProvider {
     // Check required features
     const requiredFeatures = this._metadata.requiredFeatures;
     const missingFeatures = requiredFeatures.filter(
-      (feature) => !(feature in input.features),
+      feature => !(feature in input.features),
     );
 
     if (missingFeatures.length > 0) {
       throw new InvalidInputError(
-        `Missing required features: ${missingFeatures.join(", ")}`,
+        `Missing required features: ${missingFeatures.join(', ')}`,
         {
           requiredFeatures,
           providedFeatures: Object.keys(input.features),
@@ -226,7 +226,7 @@ export class StubModelProvider implements ModelProvider {
   }
 
   async healthCheck(): Promise<{
-    status: "healthy" | "degraded" | "unhealthy";
+    status: 'healthy' | 'degraded' | 'unhealthy';
     details?: Record<string, unknown>;
   }> {
     // Simulate health check
@@ -235,7 +235,7 @@ export class StubModelProvider implements ModelProvider {
     const isHealthy = this._initialized && Math.random() > 0.1; // 90% healthy
 
     return {
-      status: isHealthy ? "healthy" : "degraded",
+      status: isHealthy ? 'healthy' : 'degraded',
       details: {
         initialized: this._initialized,
         modelId: this._config.id,
@@ -256,7 +256,7 @@ export class StubModelProvider implements ModelProvider {
   // ============================================================================
 
   private async _delay(ms: number): Promise<void> {
-    return new Promise((resolve) => setTimeout(resolve, ms));
+    return new Promise(resolve => setTimeout(resolve, ms));
   }
 
   private _generateMockPrediction(input: PredictionInput): {
@@ -266,78 +266,76 @@ export class StubModelProvider implements ModelProvider {
     const features = input.features;
 
     switch (input.type) {
-      case "patient_outcome":
+      case 'patient_outcome':
         return {
-          value: Math.random() > 0.7 ? "positive" : "negative",
+          value: Math.random() > 0.7 ? 'positive' : 'negative',
           confidence: 0.7 + Math.random() * 0.3,
         };
 
-      case "readmission_risk":
+      case 'readmission_risk':
         const age = Number(features.age) || 50;
         const riskScore = Math.min(1, age / 100 + Math.random() * 0.3);
         return {
           value: {
-            riskLevel:
-              riskScore > 0.7 ? "high" : riskScore > 0.4 ? "medium" : "low",
+            riskLevel: riskScore > 0.7 ? 'high' : riskScore > 0.4 ? 'medium' : 'low',
             riskScore: Math.round(riskScore * 100) / 100,
-            factors: ["age", "medical_history", "previous_admissions"],
+            factors: ['age', 'medical_history', 'previous_admissions'],
           },
           confidence: 0.8 + Math.random() * 0.2,
         };
 
-      case "no_show_risk":
+      case 'no_show_risk':
         return {
           value: {
-            riskLevel:
-              Math.random() > 0.6
-                ? "low"
-                : Math.random() > 0.3
-                  ? "medium"
-                  : "high",
+            riskLevel: Math.random() > 0.6
+              ? 'low'
+              : Math.random() > 0.3
+              ? 'medium'
+              : 'high',
             riskScore: Math.random(),
-            factors: ["appointment_history", "distance", "weather"],
+            factors: ['appointment_history', 'distance', 'weather'],
           },
           confidence: 0.75 + Math.random() * 0.25,
         };
 
-      case "cost_prediction":
+      case 'cost_prediction':
         const baseCost = 500;
         const predictedCost = baseCost + Math.random() * 1000;
         return {
           value: {
             estimatedCost: Math.round(predictedCost * 100) / 100,
-            currency: "BRL",
+            currency: 'BRL',
             factors: [
-              "procedure_complexity",
-              "length_of_stay",
-              "complications",
+              'procedure_complexity',
+              'length_of_stay',
+              'complications',
             ],
           },
           confidence: 0.6 + Math.random() * 0.3,
         };
 
-      case "treatment_effectiveness":
+      case 'treatment_effectiveness':
         return {
           value: {
             effectivenessScore: Math.random(),
-            recommendedTreatment: "Standard Protocol A",
-            alternativeTreatments: ["Protocol B", "Protocol C"],
+            recommendedTreatment: 'Standard Protocol A',
+            alternativeTreatments: ['Protocol B', 'Protocol C'],
           },
           confidence: 0.7 + Math.random() * 0.3,
         };
 
       default:
         return {
-          value: "unknown",
+          value: 'unknown',
           confidence: 0.5,
         };
     }
   }
 
   private _getConfidenceLevel(confidence: number): ConfidenceLevel {
-    if (confidence >= 0.8) return "high";
-    if (confidence >= 0.6) return "medium";
-    return "low";
+    if (confidence >= 0.8) return 'high';
+    if (confidence >= 0.6) return 'medium';
+    return 'low';
   }
 
   private _generateFeatureImportance(

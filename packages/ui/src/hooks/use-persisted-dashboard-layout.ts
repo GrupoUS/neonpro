@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from 'react';
 
 interface CardPosition {
   x: number;
@@ -83,12 +83,12 @@ export function usePersistedDashboardLayout() {
 
   // Load positions from localStorage on mount
   useEffect(() => {
-    const savedPositions = localStorage.getItem("neonpro-dashboard-layout");
+    const savedPositions = localStorage.getItem('neonpro-dashboard-layout');
     if (savedPositions) {
       try {
         setPositions(JSON.parse(savedPositions));
       } catch (error) {
-        console.warn("Failed to parse saved dashboard layout:", error);
+        console.warn('Failed to parse saved dashboard layout:', error);
       }
     }
   }, []);
@@ -96,12 +96,13 @@ export function usePersistedDashboardLayout() {
   // Auto-distribute cards when container dimensions change or cards are added
   const autoDistributeCards = useCallback(
     (cardIds: string[]) => {
-      if (!containerSize.width || !containerSize.height || cardIds.length === 0)
-        {return;}
+      if (!containerSize.width || !containerSize.height || cardIds.length === 0) {
+        return;
+      }
 
       // Only auto-distribute if we have no saved positions for any card
-      const hasExistingPositions = cardIds.some((id) => positions[id]);
-      if (hasExistingPositions) {return;}
+      const hasExistingPositions = cardIds.some(id => positions[id]);
+      if (hasExistingPositions) return;
 
       const cardSize = { width: 280, height: 200 }; // Default card size
       const newPositions = calculateGridPositions(
@@ -112,12 +113,12 @@ export function usePersistedDashboardLayout() {
         gridConfig,
       );
 
-      console.log("Auto-distributing cards:", {
+      console.log('Auto-distributing cards:', {
         cardIds,
         newPositions,
         containerSize,
       });
-      setPositions((prev) => ({ ...prev, ...newPositions }));
+      setPositions(prev => ({ ...prev, ...newPositions }));
     },
     [containerSize, gridConfig, positions],
   );
@@ -135,11 +136,11 @@ export function usePersistedDashboardLayout() {
       const timeoutId = setTimeout(() => {
         try {
           localStorage.setItem(
-            "neonpro-dashboard-layout",
+            'neonpro-dashboard-layout',
             JSON.stringify(newPositions),
           );
         } catch (error) {
-          console.warn("Failed to save dashboard layout:", error);
+          console.warn('Failed to save dashboard layout:', error);
         }
       }, 300);
 
@@ -182,7 +183,7 @@ export function usePersistedDashboardLayout() {
         y: constrainedY,
       };
 
-      setPositions((prev) => {
+      setPositions(prev => {
         const newPositions = {
           ...prev,
           [cardId]: finalPosition,
@@ -205,7 +206,7 @@ export function usePersistedDashboardLayout() {
   // Reset all positions
   const resetLayout = useCallback(() => {
     setPositions({});
-    localStorage.removeItem("neonpro-dashboard-layout");
+    localStorage.removeItem('neonpro-dashboard-layout');
   }, []);
 
   // Update container size (call from parent component)

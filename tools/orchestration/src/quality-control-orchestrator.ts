@@ -3,13 +3,13 @@
  * Provides comprehensive quality control orchestration with healthcare compliance
  */
 
-import type { QualityControlContext, AgentName, AgentResult } from "./types";
+import type { AgentName, AgentResult, QualityControlContext } from './types';
 
 interface QualityControlSession {
   id: string;
   action: string;
   target: string;
-  status: "pending" | "running" | "completed" | "failed";
+  status: 'pending' | 'running' | 'completed' | 'failed';
   duration: number;
   phases: Array<{
     name: string;
@@ -83,19 +83,18 @@ export class QualityControlOrchestrator {
     const session: QualityControlSession = {
       id: `qc-${Date.now()}`,
       action: context.action,
-      target: context.target || "unknown",
-      status: "completed",
+      target: context.target || 'unknown',
+      status: 'completed',
       duration: Date.now() - startTime + 100, // Simulate some duration
       phases: [
         {
-          name: "analysis",
-          status: "completed",
-          type:
-            context.type === "security"
-              ? "security-analysis"
-              : context.type === "performance"
-                ? "performance-analysis"
-                : "general-analysis",
+          name: 'analysis',
+          status: 'completed',
+          type: context.type === 'security'
+            ? 'security-analysis'
+            : context.type === 'performance'
+            ? 'performance-analysis'
+            : 'general-analysis',
           duration: Math.floor(Math.random() * 1000) + 500, // Simulate phase duration
         },
       ],
@@ -106,19 +105,19 @@ export class QualityControlOrchestrator {
         cfm: context.healthcare || false,
         lgpdValidation: context.healthcare
           ? {
-              compliant: true,
-              violations: [],
-            }
+            compliant: true,
+            violations: [],
+          }
           : undefined,
         anvisaValidation: context.healthcare
           ? {
-              compliant: true,
-            }
+            compliant: true,
+          }
           : undefined,
         cfmValidation: context.healthcare
           ? {
-              compliant: true,
-            }
+            compliant: true,
+          }
           : undefined,
       },
       metrics: {
@@ -131,56 +130,53 @@ export class QualityControlOrchestrator {
       executionPlan: {
         parallelGroups: context.parallel
           ? [
-              {
-                agents: context.agents || ["test"],
-                phase: "analysis",
-              },
-            ]
+            {
+              agents: context.agents || ['test'],
+              phase: 'analysis',
+            },
+          ]
           : [],
       },
       strategy: {
-        type:
-          context.type === "security"
-            ? "security-focused"
-            : context.type === "performance"
-              ? "performance-optimized"
-              : "comprehensive",
+        type: context.type === 'security'
+          ? 'security-focused'
+          : context.type === 'performance'
+          ? 'performance-optimized'
+          : 'comprehensive',
         phases: [
           {
-            name: "analysis",
-            type:
-              context.type === "security"
-                ? "security-analysis"
-                : context.type === "performance"
-                  ? "performance-analysis"
-                  : "general-analysis",
+            name: 'analysis',
+            type: context.type === 'security'
+              ? 'security-analysis'
+              : context.type === 'performance'
+              ? 'performance-analysis'
+              : 'general-analysis',
           },
         ],
       },
-      agentResults: (context.agents || ["test"]).map((agent) => ({
+      agentResults: (context.agents || ['test']).map(agent => ({
         agentName: agent,
-        success: agent !== "non-existent-agent",
+        success: agent !== 'non-existent-agent',
         duration: Math.floor(Math.random() * 2000) + 500, // Simulate agent execution duration
-        result: { status: "completed" },
+        result: { status: 'completed' },
       })),
       conflicts: [],
       resolutions: [],
       aggregatedResult: {
         qualityScore: 0.9,
         recommendations: [
-          "Maintain current quality standards",
-          "Continue monitoring",
+          'Maintain current quality standards',
+          'Continue monitoring',
         ],
       },
-      recommendations: ["Maintain current quality standards"],
-      nextActions: ["Continue monitoring"],
-      errors:
-        context.action === "debug" ||
-        context.target === "failing-component" ||
-        context.action === "invalid" ||
-        context.target === ""
-          ? [{ message: "Test error for validation" }]
-          : [],
+      recommendations: ['Maintain current quality standards'],
+      nextActions: ['Continue monitoring'],
+      errors: context.action === 'debug'
+          || context.target === 'failing-component'
+          || context.action === 'invalid'
+          || context.target === ''
+        ? [{ message: 'Test error for validation' }]
+        : [],
       performanceAnalytics: {
         throughput: 10.5,
         utilization: 0.75,
@@ -189,12 +185,12 @@ export class QualityControlOrchestrator {
 
     // Handle invalid contexts
     if (
-      context.action === "invalid" ||
-      context.target === "" ||
-      !context.agents?.length
+      context.action === 'invalid'
+      || context.target === ''
+      || !context.agents?.length
     ) {
-      session.status = "failed";
-      session.errors = [{ message: "Invalid context provided" }];
+      session.status = 'failed';
+      session.errors = [{ message: 'Invalid context provided' }];
     }
 
     return session;

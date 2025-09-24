@@ -251,10 +251,10 @@ Integrating the validators package into applications is straightforward. For for
 ```typescript
 // Example integration with a patient registration form
 const patientData = [
-  { value: formData.cpf, type: "cpf" as const },
-  { value: formData.cns, type: "cns" as const },
-  { value: formData.phone, type: "phone" as const },
-  { value: formData.crm, type: "crm" as const }
+  { value: formData.cpf, type: 'cpf' as const },
+  { value: formData.cns, type: 'cns' as const },
+  { value: formData.phone, type: 'phone' as const },
+  { value: formData.crm, type: 'crm' as const },
 ];
 
 const results = validateHealthcareDocuments(patientData);

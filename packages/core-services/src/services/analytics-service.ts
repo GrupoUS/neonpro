@@ -4,9 +4,9 @@
  * Supports real-time dashboards, predictive analytics, and comprehensive reporting
  */
 
+import { logHealthcareError } from '@neonpro/shared';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { z } from 'zod';
-import { logHealthcareError } from "@neonpro/shared";
 
 // Schema Types
 const AnalyticsConfigurationSchema = z.object({
@@ -102,7 +102,13 @@ const PredictiveModelSchema = z.object({
   id: z.string(),
   clinicId: z.string(),
   name: z.string(),
-  modelType: z.enum(['no_show_prediction', 'revenue_forecast', 'inventory_demand', 'patient_retention', 'treatment_outcome']),
+  modelType: z.enum([
+    'no_show_prediction',
+    'revenue_forecast',
+    'inventory_demand',
+    'patient_retention',
+    'treatment_outcome',
+  ]),
   modelConfig: z.record(z.any()),
   trainingDataConfig: z.record(z.any()),
   accuracyScore: z.number().nullable(),
@@ -220,7 +226,13 @@ const CreateScheduledReportInputSchema = z.object({
 const CreatePredictiveModelInputSchema = z.object({
   clinicId: z.string(),
   name: z.string(),
-  modelType: z.enum(['no_show_prediction', 'revenue_forecast', 'inventory_demand', 'patient_retention', 'treatment_outcome']),
+  modelType: z.enum([
+    'no_show_prediction',
+    'revenue_forecast',
+    'inventory_demand',
+    'patient_retention',
+    'treatment_outcome',
+  ]),
   modelConfig: z.record(z.any),
   trainingDataConfig: z.record(z.any),
   accuracyScore: z.number().optional(),
@@ -402,8 +414,13 @@ type DataExportInput = z.infer<typeof DataExportInputSchema>;
 // Analytics Service Interface
 export interface AnalyticsService {
   // Analytics Configuration
-  createAnalyticsConfiguration(config: CreateAnalyticsConfigurationInput): Promise<AnalyticsConfiguration>;
-  updateAnalyticsConfiguration(id: string, config: UpdateAnalyticsConfigurationInput): Promise<AnalyticsConfiguration>;
+  createAnalyticsConfiguration(
+    config: CreateAnalyticsConfigurationInput,
+  ): Promise<AnalyticsConfiguration>;
+  updateAnalyticsConfiguration(
+    id: string,
+    config: UpdateAnalyticsConfigurationInput,
+  ): Promise<AnalyticsConfiguration>;
   deleteAnalyticsConfiguration(id: string): Promise<boolean>;
   getAnalyticsConfigurations(clinicId: string): Promise<AnalyticsConfiguration[]>;
 
@@ -412,7 +429,12 @@ export interface AnalyticsService {
   updateKPIDefinition(id: string, kpi: UpdateKPIDefinitionInput): Promise<KPIDefinition>;
   deleteKPIDefinition(id: string): Promise<boolean>;
   getKPIDefinitions(clinicId: string): Promise<KPIDefinition[]>;
-  calculateKPIValue(clinicId: string, kpiName: string, startDate?: string, endDate?: string): Promise<number>;
+  calculateKPIValue(
+    clinicId: string,
+    kpiName: string,
+    startDate?: string,
+    endDate?: string,
+  ): Promise<number>;
 
   // BI Dashboards
   createBIDashboard(dashboard: CreateBIDashboardInput): Promise<BIDashboard>;
@@ -453,7 +475,12 @@ export interface AnalyticsService {
   getAnalyticsData(query: AnalyticsQueryInput): Promise<AnalyticsDataWarehouse[]>;
   getPerformanceMetrics(query: PerformanceMetricsQueryInput): Promise<PerformanceMetrics[]>;
   aggregateData(clinicId: string, config: any): Promise<any>;
-  generateComparativeAnalysis(clinicId: string, comparisonType: string, baselinePeriod: any, comparisonPeriod: any): Promise<ComparativeAnalytics>;
+  generateComparativeAnalysis(
+    clinicId: string,
+    comparisonType: string,
+    baselinePeriod: any,
+    comparisonPeriod: any,
+  ): Promise<ComparativeAnalytics>;
 
   // Data Export
   createDataExport(exportData: DataExportInput): Promise<any>;
@@ -461,12 +488,22 @@ export interface AnalyticsService {
   downloadExport(id: string): Promise<Blob>;
 
   // Real-time Analytics
-  trackEvent(clinicId: string, eventType: string, eventData: any, userId?: string, sessionId?: string): Promise<void>;
+  trackEvent(
+    clinicId: string,
+    eventType: string,
+    eventData: any,
+    userId?: string,
+    sessionId?: string,
+  ): Promise<void>;
   getRealtimeMetrics(clinicId: string): Promise<any>;
   getDashboardData(dashboardId: string): Promise<any>;
 
   // Predictive Analytics
-  predictNoShowProbability(patientId: string, clinicId: string, appointmentDate: string): Promise<number>;
+  predictNoShowProbability(
+    patientId: string,
+    clinicId: string,
+    appointmentDate: string,
+  ): Promise<number>;
   generateRevenueForecast(clinicId: string, forecastDays: number): Promise<any>;
   predictInventoryDemand(clinicId: string, productId: string, forecastDays: number): Promise<any>;
   predictPatientRetention(clinicId: string, patientId: string): Promise<number>;
@@ -481,7 +518,9 @@ export class AnalyticsService implements AnalyticsService {
   }
 
   // Analytics Configuration
-  async createAnalyticsConfiguration(config: CreateAnalyticsConfigurationInput): Promise<AnalyticsConfiguration> {
+  async createAnalyticsConfiguration(
+    config: CreateAnalyticsConfigurationInput,
+  ): Promise<AnalyticsConfiguration> {
     const validatedConfig = CreateAnalyticsConfigurationInputSchema.parse(config);
 
     const { data, error } = await this.supabase
@@ -507,14 +546,18 @@ export class AnalyticsService implements AnalyticsService {
     });
   }
 
-  async updateAnalyticsConfiguration(id: string, config: UpdateAnalyticsConfigurationInput): Promise<AnalyticsConfiguration> {
+  async updateAnalyticsConfiguration(
+    id: string,
+    config: UpdateAnalyticsConfigurationInput,
+  ): Promise<AnalyticsConfiguration> {
     const validatedConfig = UpdateAnalyticsConfigurationInputSchema.parse(config);
 
     const { data, error } = await this.supabase
       .from('analytics_configurations')
       .update({
         ...(validatedConfig.name && { name: validatedConfig.name }),
-        ...(validatedConfig.configuration !== undefined && { configuration: validatedConfig.configuration }),
+        ...(validatedConfig.configuration !== undefined
+          && { configuration: validatedConfig.configuration }),
         ...(validatedConfig.isActive !== undefined && { is_active: validatedConfig.isActive }),
         updated_at: new Date().toISOString(),
       })
@@ -557,11 +600,13 @@ export class AnalyticsService implements AnalyticsService {
       throw new Error(`Failed to get analytics configurations: ${error.message}`);
     }
 
-    return data.map(item => AnalyticsConfigurationSchema.parse({
-      ...item,
-      clinicId: item.clinic_id,
-      configType: item.config_type,
-    }));
+    return data.map(item =>
+      AnalyticsConfigurationSchema.parse({
+        ...item,
+        clinicId: item.clinic_id,
+        configType: item.config_type,
+      })
+    );
   }
 
   // KPI Management
@@ -610,11 +655,14 @@ export class AnalyticsService implements AnalyticsService {
       .update({
         ...(validatedKPI.name !== undefined && { name: validatedKPI.name }),
         ...(validatedKPI.description !== undefined && { description: validatedKPI.description }),
-        ...(validatedKPI.calculationFormula !== undefined && { calculation_formula: validatedKPI.calculationFormula }),
+        ...(validatedKPI.calculationFormula !== undefined
+          && { calculation_formula: validatedKPI.calculationFormula }),
         ...(validatedKPI.unit !== undefined && { unit: validatedKPI.unit }),
         ...(validatedKPI.targetValue !== undefined && { target_value: validatedKPI.targetValue }),
-        ...(validatedKPI.benchmarkValue !== undefined && { benchmark_value: validatedKPI.benchmarkValue }),
-        ...(validatedKPI.aggregationType !== undefined && { aggregation_type: validatedKPI.aggregationType }),
+        ...(validatedKPI.benchmarkValue !== undefined
+          && { benchmark_value: validatedKPI.benchmarkValue }),
+        ...(validatedKPI.aggregationType !== undefined
+          && { aggregation_type: validatedKPI.aggregationType }),
         ...(validatedKPI.frequency !== undefined && { frequency: validatedKPI.frequency }),
         ...(validatedKPI.isActive !== undefined && { is_active: validatedKPI.isActive }),
         updated_at: new Date().toISOString(),
@@ -663,19 +711,26 @@ export class AnalyticsService implements AnalyticsService {
       throw new Error(`Failed to get KPI definitions: ${error.message}`);
     }
 
-    return data.map(item => KPIDefinitionSchema.parse({
-      ...item,
-      clinicId: item.clinic_id,
-      calculationFormula: item.calculation_formula,
-      targetValue: item.target_value,
-      benchmarkValue: item.benchmark_value,
-      aggregationType: item.aggregation_type,
-      frequency: item.frequency,
-      isActive: item.is_active,
-    }));
+    return data.map(item =>
+      KPIDefinitionSchema.parse({
+        ...item,
+        clinicId: item.clinic_id,
+        calculationFormula: item.calculation_formula,
+        targetValue: item.target_value,
+        benchmarkValue: item.benchmark_value,
+        aggregationType: item.aggregation_type,
+        frequency: item.frequency,
+        isActive: item.is_active,
+      })
+    );
   }
 
-  async calculateKPIValue(clinicId: string, kpiName: string, startDate?: string, endDate?: string): Promise<number> {
+  async calculateKPIValue(
+    clinicId: string,
+    kpiName: string,
+    startDate?: string,
+    endDate?: string,
+  ): Promise<number> {
     const { data, error } = await this.supabase.rpc('calculate_kpi_value', {
       p_clinic_id: clinicId,
       p_kpi_name: kpiName,
@@ -728,10 +783,14 @@ export class AnalyticsService implements AnalyticsService {
       .from('bi_dashboards')
       .update({
         ...(validatedDashboard.name !== undefined && { name: validatedDashboard.name }),
-        ...(validatedDashboard.description !== undefined && { description: validatedDashboard.description }),
-        ...(validatedDashboard.layoutConfig !== undefined && { layout_config: validatedDashboard.layoutConfig }),
-        ...(validatedDashboard.isPublic !== undefined && { is_public: validatedDashboard.isPublic }),
-        ...(validatedDashboard.isTemplate !== undefined && { is_template: validatedDashboard.isTemplate }),
+        ...(validatedDashboard.description !== undefined
+          && { description: validatedDashboard.description }),
+        ...(validatedDashboard.layoutConfig !== undefined
+          && { layout_config: validatedDashboard.layoutConfig }),
+        ...(validatedDashboard.isPublic !== undefined
+          && { is_public: validatedDashboard.isPublic }),
+        ...(validatedDashboard.isTemplate !== undefined
+          && { is_template: validatedDashboard.isTemplate }),
         updated_at: new Date().toISOString(),
       })
       .eq('id', id)
@@ -786,7 +845,10 @@ export class AnalyticsService implements AnalyticsService {
     }
 
     if (query.offset) {
-      queryBuilder = queryBuilder.range(query.offset, (query.offset || 0) + (query.limit || 10) - 1);
+      queryBuilder = queryBuilder.range(
+        query.offset,
+        (query.offset || 0) + (query.limit || 10) - 1,
+      );
     }
 
     const { data, error } = await queryBuilder;
@@ -795,14 +857,16 @@ export class AnalyticsService implements AnalyticsService {
       throw new Error(`Failed to get BI dashboards: ${error.message}`);
     }
 
-    return data.map(item => BIDashboardSchema.parse({
-      ...item,
-      clinicId: item.clinic_id,
-      layoutConfig: item.layout_config,
-      isPublic: item.is_public,
-      isTemplate: item.is_template,
-      createdBy: item.created_by,
-    }));
+    return data.map(item =>
+      BIDashboardSchema.parse({
+        ...item,
+        clinicId: item.clinic_id,
+        layoutConfig: item.layout_config,
+        isPublic: item.is_public,
+        isTemplate: item.is_template,
+        createdBy: item.created_by,
+      })
+    );
   }
 
   async getBIDashboardById(id: string): Promise<BIDashboard | null> {
@@ -865,21 +929,28 @@ export class AnalyticsService implements AnalyticsService {
     });
   }
 
-  async updateDashboardWidget(id: string, widget: UpdateDashboardWidgetInput): Promise<DashboardWidget> {
+  async updateDashboardWidget(
+    id: string,
+    widget: UpdateDashboardWidgetInput,
+  ): Promise<DashboardWidget> {
     const validatedWidget = UpdateDashboardWidgetInputSchema.parse(widget);
 
     const { data, error } = await this.supabase
       .from('dashboard_widgets')
       .update({
-        ...(validatedWidget.widgetType !== undefined && { widget_type: validatedWidget.widgetType }),
+        ...(validatedWidget.widgetType !== undefined
+          && { widget_type: validatedWidget.widgetType }),
         ...(validatedWidget.title !== undefined && { title: validatedWidget.title }),
-        ...(validatedWidget.dataSource !== undefined && { data_source: validatedWidget.dataSource }),
-        ...(validatedWidget.configuration !== undefined && { configuration: validatedWidget.configuration }),
+        ...(validatedWidget.dataSource !== undefined
+          && { data_source: validatedWidget.dataSource }),
+        ...(validatedWidget.configuration !== undefined
+          && { configuration: validatedWidget.configuration }),
         ...(validatedWidget.positionX !== undefined && { position_x: validatedWidget.positionX }),
         ...(validatedWidget.positionY !== undefined && { position_y: validatedWidget.positionY }),
         ...(validatedWidget.width !== undefined && { width: validatedWidget.width }),
         ...(validatedWidget.height !== undefined && { height: validatedWidget.height }),
-        ...(validatedWidget.refreshInterval !== undefined && { refresh_interval: validatedWidget.refreshInterval }),
+        ...(validatedWidget.refreshInterval !== undefined
+          && { refresh_interval: validatedWidget.refreshInterval }),
         updated_at: new Date().toISOString(),
       })
       .eq('id', id)
@@ -925,15 +996,17 @@ export class AnalyticsService implements AnalyticsService {
       throw new Error(`Failed to get dashboard widgets: ${error.message}`);
     }
 
-    return data.map(item => DashboardWidgetSchema.parse({
-      ...item,
-      dashboardId: item.dashboard_id,
-      widgetType: item.widget_type,
-      dataSource: item.data_source,
-      positionX: item.position_x,
-      positionY: item.position_y,
-      refreshInterval: item.refresh_interval,
-    }));
+    return data.map(item =>
+      DashboardWidgetSchema.parse({
+        ...item,
+        dashboardId: item.dashboard_id,
+        widgetType: item.widget_type,
+        dataSource: item.data_source,
+        positionX: item.position_x,
+        positionY: item.position_y,
+        refreshInterval: item.refresh_interval,
+      })
+    );
   }
 
   // Scheduled Reports
@@ -972,16 +1045,22 @@ export class AnalyticsService implements AnalyticsService {
     });
   }
 
-  async updateScheduledReport(id: string, report: UpdateScheduledReportInput): Promise<ScheduledReport> {
+  async updateScheduledReport(
+    id: string,
+    report: UpdateScheduledReportInput,
+  ): Promise<ScheduledReport> {
     const validatedReport = UpdateScheduledReportInputSchema.parse(report);
 
     const { data, error } = await this.supabase
       .from('scheduled_reports')
       .update({
         ...(validatedReport.name !== undefined && { name: validatedReport.name }),
-        ...(validatedReport.description !== undefined && { description: validatedReport.description }),
-        ...(validatedReport.reportType !== undefined && { report_type: validatedReport.reportType }),
-        ...(validatedReport.scheduleConfig !== undefined && { schedule_config: validatedReport.scheduleConfig }),
+        ...(validatedReport.description !== undefined
+          && { description: validatedReport.description }),
+        ...(validatedReport.reportType !== undefined
+          && { report_type: validatedReport.reportType }),
+        ...(validatedReport.scheduleConfig !== undefined
+          && { schedule_config: validatedReport.scheduleConfig }),
         ...(validatedReport.recipients !== undefined && { recipients: validatedReport.recipients }),
         ...(validatedReport.format !== undefined && { format: validatedReport.format }),
         ...(validatedReport.isActive !== undefined && { is_active: validatedReport.isActive }),
@@ -1042,7 +1121,10 @@ export class AnalyticsService implements AnalyticsService {
     }
 
     if (query.offset) {
-      queryBuilder = queryBuilder.range(query.offset, (query.offset || 0) + (query.limit || 10) - 1);
+      queryBuilder = queryBuilder.range(
+        query.offset,
+        (query.offset || 0) + (query.limit || 10) - 1,
+      );
     }
 
     const { data, error } = await queryBuilder;
@@ -1051,17 +1133,19 @@ export class AnalyticsService implements AnalyticsService {
       throw new Error(`Failed to get scheduled reports: ${error.message}`);
     }
 
-    return data.map(item => ScheduledReportSchema.parse({
-      ...item,
-      clinicId: item.clinic_id,
-      reportType: item.report_type,
-      scheduleConfig: item.schedule_config,
-      format: item.format,
-      isActive: item.is_active,
-      lastRunAt: item.last_run_at,
-      nextRunAt: item.next_run_at,
-      createdBy: item.created_by,
-    }));
+    return data.map(item =>
+      ScheduledReportSchema.parse({
+        ...item,
+        clinicId: item.clinic_id,
+        reportType: item.report_type,
+        scheduleConfig: item.schedule_config,
+        format: item.format,
+        isActive: item.is_active,
+        lastRunAt: item.last_run_at,
+        nextRunAt: item.next_run_at,
+        createdBy: item.created_by,
+      })
+    );
   }
 
   async generateReport(id: string): Promise<Blob> {
@@ -1122,16 +1206,22 @@ export class AnalyticsService implements AnalyticsService {
     });
   }
 
-  async updatePredictiveModel(id: string, model: UpdatePredictiveModelInput): Promise<PredictiveModel> {
+  async updatePredictiveModel(
+    id: string,
+    model: UpdatePredictiveModelInput,
+  ): Promise<PredictiveModel> {
     const validatedModel = UpdatePredictiveModelInputSchema.parse(model);
 
     const { data, error } = await this.supabase
       .from('predictive_models')
       .update({
         ...(validatedModel.name !== undefined && { name: validatedModel.name }),
-        ...(validatedModel.modelConfig !== undefined && { model_config: validatedModel.modelConfig }),
-        ...(validatedModel.trainingDataConfig !== undefined && { training_data_config: validatedModel.trainingDataConfig }),
-        ...(validatedModel.accuracyScore !== undefined && { accuracy_score: validatedModel.accuracyScore }),
+        ...(validatedModel.modelConfig !== undefined
+          && { model_config: validatedModel.modelConfig }),
+        ...(validatedModel.trainingDataConfig !== undefined
+          && { training_data_config: validatedModel.trainingDataConfig }),
+        ...(validatedModel.accuracyScore !== undefined
+          && { accuracy_score: validatedModel.accuracyScore }),
         ...(validatedModel.isActive !== undefined && { is_active: validatedModel.isActive }),
         updated_at: new Date().toISOString(),
       })
@@ -1190,7 +1280,10 @@ export class AnalyticsService implements AnalyticsService {
     }
 
     if (query.offset) {
-      queryBuilder = queryBuilder.range(query.offset, (query.offset || 0) + (query.limit || 10) - 1);
+      queryBuilder = queryBuilder.range(
+        query.offset,
+        (query.offset || 0) + (query.limit || 10) - 1,
+      );
     }
 
     const { data, error } = await queryBuilder;
@@ -1199,17 +1292,19 @@ export class AnalyticsService implements AnalyticsService {
       throw new Error(`Failed to get predictive models: ${error.message}`);
     }
 
-    return data.map(item => PredictiveModelSchema.parse({
-      ...item,
-      clinicId: item.clinic_id,
-      modelType: item.model_type,
-      modelConfig: item.model_config,
-      trainingDataConfig: item.training_data_config,
-      accuracyScore: item.accuracy_score,
-      isActive: item.is_active,
-      lastTrainedAt: item.last_trained_at,
-      nextTrainingAt: item.next_training_at,
-    }));
+    return data.map(item =>
+      PredictiveModelSchema.parse({
+        ...item,
+        clinicId: item.clinic_id,
+        modelType: item.model_type,
+        modelConfig: item.model_config,
+        trainingDataConfig: item.training_data_config,
+        accuracyScore: item.accuracy_score,
+        isActive: item.is_active,
+        lastTrainedAt: item.last_trained_at,
+        nextTrainingAt: item.next_training_at,
+      })
+    );
   }
 
   async trainModel(id: string): Promise<PredictiveModel> {
@@ -1314,7 +1409,10 @@ export class AnalyticsService implements AnalyticsService {
     });
   }
 
-  async updateAnalyticsAlert(id: string, alert: UpdateAnalyticsAlertInput): Promise<AnalyticsAlert> {
+  async updateAnalyticsAlert(
+    id: string,
+    alert: UpdateAnalyticsAlertInput,
+  ): Promise<AnalyticsAlert> {
     const validatedAlert = UpdateAnalyticsAlertInputSchema.parse(alert);
 
     const { data, error } = await this.supabase
@@ -1322,7 +1420,8 @@ export class AnalyticsService implements AnalyticsService {
       .update({
         ...(validatedAlert.name !== undefined && { name: validatedAlert.name }),
         ...(validatedAlert.alertType !== undefined && { alert_type: validatedAlert.alertType }),
-        ...(validatedAlert.conditionConfig !== undefined && { condition_config: validatedAlert.conditionConfig }),
+        ...(validatedAlert.conditionConfig !== undefined
+          && { condition_config: validatedAlert.conditionConfig }),
         ...(validatedAlert.severity !== undefined && { severity: validatedAlert.severity }),
         ...(validatedAlert.recipients !== undefined && { recipients: validatedAlert.recipients }),
         ...(validatedAlert.isActive !== undefined && { is_active: validatedAlert.isActive }),
@@ -1386,7 +1485,10 @@ export class AnalyticsService implements AnalyticsService {
     }
 
     if (query.offset) {
-      queryBuilder = queryBuilder.range(query.offset, (query.offset || 0) + (query.limit || 10) - 1);
+      queryBuilder = queryBuilder.range(
+        query.offset,
+        (query.offset || 0) + (query.limit || 10) - 1,
+      );
     }
 
     const { data, error } = await queryBuilder;
@@ -1395,16 +1497,18 @@ export class AnalyticsService implements AnalyticsService {
       throw new Error(`Failed to get analytics alerts: ${error.message}`);
     }
 
-    return data.map(item => AnalyticsAlertSchema.parse({
-      ...item,
-      clinicId: item.clinic_id,
-      alertType: item.alert_type,
-      conditionConfig: item.condition_config,
-      severity: item.severity,
-      isActive: item.is_active,
-      lastTriggeredAt: item.last_triggered_at,
-      createdBy: item.created_by,
-    }));
+    return data.map(item =>
+      AnalyticsAlertSchema.parse({
+        ...item,
+        clinicId: item.clinic_id,
+        alertType: item.alert_type,
+        conditionConfig: item.condition_config,
+        severity: item.severity,
+        isActive: item.is_active,
+        lastTriggeredAt: item.last_triggered_at,
+        createdBy: item.created_by,
+      })
+    );
   }
 
   async checkAndTriggerAlerts(clinicId: string): Promise<AnalyticsAlert[]> {
@@ -1453,7 +1557,7 @@ export class AnalyticsService implements AnalyticsService {
 
   private async checkThresholdAlert(alert: AnalyticsAlert, clinicId: string): Promise<boolean> {
     const { kpi, operator, value } = alert.conditionConfig;
-    
+
     if (!kpi || !operator || value === undefined) {
       return false;
     }
@@ -1479,16 +1583,18 @@ export class AnalyticsService implements AnalyticsService {
   private async checkTrendAlert(alert: AnalyticsAlert, clinicId: string): Promise<boolean> {
     // Simplified trend detection - would use more sophisticated algorithms in production
     const { kpi, direction, threshold } = alert.conditionConfig;
-    
+
     if (!kpi || !direction || threshold === undefined) {
       return false;
     }
 
     // Get current and previous values
     const currentValue = await this.calculateKPIValue(clinicId, kpi);
-    const previousValue = await this.calculateKPIValue(clinicId, kpi, 
+    const previousValue = await this.calculateKPIValue(
+      clinicId,
+      kpi,
       new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
-      new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString()
+      new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString(),
     );
 
     if (previousValue === 0) return false;
@@ -1508,7 +1614,7 @@ export class AnalyticsService implements AnalyticsService {
   private async checkAnomalyAlert(alert: AnalyticsAlert, clinicId: string): Promise<boolean> {
     // Simplified anomaly detection - would use statistical methods in production
     const { kpi, threshold } = alert.conditionConfig;
-    
+
     if (!kpi || threshold === undefined) {
       return false;
     }
@@ -1572,19 +1678,21 @@ export class AnalyticsService implements AnalyticsService {
       throw new Error(`Failed to get analytics data: ${error.message}`);
     }
 
-    return data.map(item => AnalyticsDataWarehouseSchema.parse({
-      ...item,
-      clinicId: item.clinic_id,
-      date: item.date_date,
-      hour: item.hour,
-      metricName: item.metric_name,
-      metricValue: item.metric_value,
-      metricCategory: item.metric_category,
-      dimension1: item.dimension_1,
-      dimension2: item.dimension_2,
-      dimension3: item.dimension_3,
-      sourceSystem: item.source_system,
-    }));
+    return data.map(item =>
+      AnalyticsDataWarehouseSchema.parse({
+        ...item,
+        clinicId: item.clinic_id,
+        date: item.date_date,
+        hour: item.hour,
+        metricName: item.metric_name,
+        metricValue: item.metric_value,
+        metricCategory: item.metric_category,
+        dimension1: item.dimension_1,
+        dimension2: item.dimension_2,
+        dimension3: item.dimension_3,
+        sourceSystem: item.source_system,
+      })
+    );
   }
 
   async getPerformanceMetrics(query: PerformanceMetricsQueryInput): Promise<PerformanceMetrics[]> {
@@ -1613,23 +1721,25 @@ export class AnalyticsService implements AnalyticsService {
       throw new Error(`Failed to get performance metrics: ${error.message}`);
     }
 
-    return data.map(item => PerformanceMetricsSchema.parse({
-      ...item,
-      clinicId: item.clinic_id,
-      metricDate: item.metric_date,
-      metricHour: item.metric_hour,
-      revenueTotal: item.revenue_total,
-      revenueTreatments: item.revenue_treatments,
-      revenueProducts: item.revenue_products,
-      appointmentCount: item.appointment_count,
-      newPatients: item.new_patients,
-      patientRetentionRate: item.patient_retention_rate,
-      treatmentSuccessRate: item.treatment_success_rate,
-      inventoryTurnover: item.inventory_turnover,
-      professionalUtilization: item.professional_utilization,
-      patientSatisfactionScore: item.patient_satisfaction_score,
-      noShowRate: item.no_show_rate,
-    }));
+    return data.map(item =>
+      PerformanceMetricsSchema.parse({
+        ...item,
+        clinicId: item.clinic_id,
+        metricDate: item.metric_date,
+        metricHour: item.metric_hour,
+        revenueTotal: item.revenue_total,
+        revenueTreatments: item.revenue_treatments,
+        revenueProducts: item.revenue_products,
+        appointmentCount: item.appointment_count,
+        newPatients: item.new_patients,
+        patientRetentionRate: item.patient_retention_rate,
+        treatmentSuccessRate: item.treatment_success_rate,
+        inventoryTurnover: item.inventory_turnover,
+        professionalUtilization: item.professional_utilization,
+        patientSatisfactionScore: item.patient_satisfaction_score,
+        noShowRate: item.no_show_rate,
+      })
+    );
   }
 
   async aggregateData(clinicId: string, config: any): Promise<any> {
@@ -1716,7 +1826,7 @@ export class AnalyticsService implements AnalyticsService {
     clinicId: string,
     comparisonType: string,
     baselinePeriod: any,
-    comparisonPeriod: any
+    comparisonPeriod: any,
   ): Promise<ComparativeAnalytics> {
     // Get data for both periods
     const baselineData = await this.getAnalyticsData({
@@ -1807,15 +1917,27 @@ export class AnalyticsService implements AnalyticsService {
 
       if (Math.abs(change) > 10) {
         const direction = change > 0 ? 'aumentou' : 'diminuiu';
-        insights.push(`${metric} ${direction} ${Math.abs(change).toFixed(1)}% em comparação com o período anterior`);
+        insights.push(
+          `${metric} ${direction} ${
+            Math.abs(change).toFixed(1)
+          }% em comparação com o período anterior`,
+        );
       }
 
       if (comparison > baseline * 1.5) {
-        insights.push(`${metric} mostrou crescimento significativo de ${((comparison - baseline) / baseline * 100).toFixed(1)}%`);
+        insights.push(
+          `${metric} mostrou crescimento significativo de ${
+            ((comparison - baseline) / baseline * 100).toFixed(1)
+          }%`,
+        );
       }
 
       if (comparison < baseline * 0.5) {
-        insights.push(`${metric} apresentou queda preocupante de ${((baseline - comparison) / baseline * 100).toFixed(1)}%`);
+        insights.push(
+          `${metric} apresentou queda preocupante de ${
+            ((baseline - comparison) / baseline * 100).toFixed(1)
+          }%`,
+        );
       }
     });
 
@@ -1827,15 +1949,21 @@ export class AnalyticsService implements AnalyticsService {
 
     insights.forEach(insight => {
       if (insight.includes('aumentou') && insight.includes('pacientes')) {
-        recommendations.push('Considere expandir a capacidade de atendimento ou adicionar mais profissionais');
+        recommendations.push(
+          'Considere expandir a capacidade de atendimento ou adicionar mais profissionais',
+        );
       }
 
       if (insight.includes('diminuiu') && insight.includes('receita')) {
-        recommendations.push('Analise as causas da queda de receita e implemente estratégias de recuperação');
+        recommendations.push(
+          'Analise as causas da queda de receita e implemente estratégias de recuperação',
+        );
       }
 
       if (insight.includes('crescimento significativo')) {
-        recommendations.push('Monitore de perto este indicador para garantir sustentabilidade do crescimento');
+        recommendations.push(
+          'Monitore de perto este indicador para garantir sustentabilidade do crescimento',
+        );
       }
 
       if (insight.includes('queda preocupante')) {
@@ -1923,7 +2051,7 @@ export class AnalyticsService implements AnalyticsService {
     eventType: string,
     eventData: any,
     userId?: string,
-    sessionId?: string
+    sessionId?: string,
   ): Promise<void> {
     const { error } = await this.supabase
       .from('analytics_events')
@@ -1980,7 +2108,10 @@ export class AnalyticsService implements AnalyticsService {
       try {
         widgetData[widget.id] = await this.getWidgetData(widget);
       } catch (error) {
-        logHealthcareError('analytics', error, { method: 'getBIDashboardData', widgetId: widget.id });
+        logHealthcareError('analytics', error, {
+          method: 'getBIDashboardData',
+          widgetId: widget.id,
+        });
         widgetData[widget.id] = { error: 'Failed to load data' };
       }
     }
@@ -2026,7 +2157,11 @@ export class AnalyticsService implements AnalyticsService {
   }
 
   // Predictive Analytics
-  async predictNoShowProbability(patientId: string, clinicId: string, appointmentDate: string): Promise<number> {
+  async predictNoShowProbability(
+    patientId: string,
+    clinicId: string,
+    appointmentDate: string,
+  ): Promise<number> {
     const { data, error } = await this.supabase.rpc('predict_no_show_probability', {
       p_patient_id: patientId,
       p_clinic_id: clinicId,
@@ -2053,7 +2188,11 @@ export class AnalyticsService implements AnalyticsService {
     return data;
   }
 
-  async predictInventoryDemand(clinicId: string, productId: string, forecastDays: number): Promise<any> {
+  async predictInventoryDemand(
+    clinicId: string,
+    productId: string,
+    forecastDays: number,
+  ): Promise<any> {
     // This would integrate with a machine learning service
     // For now, we'll return mock predictions
     const forecast = Array.from({ length: forecastDays }, (_, i) => ({

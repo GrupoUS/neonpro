@@ -1,42 +1,38 @@
-export { orchestrateTools } from "./src/orchestrator";
-export {
-  TOOL_WORKFLOWS,
-  type ToolWorkflow,
-  type OrchestrationStep,
-} from "./src/config";
+export { type OrchestrationStep, TOOL_WORKFLOWS, type ToolWorkflow } from './src/config';
+export { orchestrateTools } from './src/orchestrator';
 
 // TDD Orchestration System exports
-export { createTDDOrchestrationSystem } from "./src/orchestration-system";
-export { executeQualityControl, runTDDCycle } from "./src/utils";
-export { TDDOrchestrator } from "./src/tdd-orchestrator";
-export { QualityControlBridge } from "./src/quality-control-bridge";
-export { QualityControlOrchestrator } from "./src/quality-control-orchestrator";
-export { WorkflowEngine } from "./src/workflow-engine";
-export { TDDAgentRegistry } from "./src/agent-registry";
+export { TDDAgentRegistry } from './src/agent-registry';
+export { createTDDOrchestrationSystem } from './src/orchestration-system';
+export { QualityControlBridge } from './src/quality-control-bridge';
+export { QualityControlOrchestrator } from './src/quality-control-orchestrator';
+export { TDDOrchestrator } from './src/tdd-orchestrator';
+export { executeQualityControl, runTDDCycle } from './src/utils';
+export { WorkflowEngine } from './src/workflow-engine';
 
 // New orchestration components
-export { ExecutionPatternSelector } from "./src/execution-pattern-selector";
-export { ToolOrchestrator } from "./src/tool-orchestrator";
-export { ResultAggregator } from "./src/result-aggregator";
-export { TestSuiteCoordinator } from "./src/test-suite-coordinator";
+export { ExecutionPatternSelector } from './src/execution-pattern-selector';
+export { ResultAggregator } from './src/result-aggregator';
+export { TestSuiteCoordinator } from './src/test-suite-coordinator';
+export { ToolOrchestrator } from './src/tool-orchestrator';
 
 // Type exports
 export type {
   AgentCoordinationPattern,
-  OrchestrationOptions,
-  FeatureContext,
-  QualityControlContext,
-  OrchestrationResult,
-  QualityControlResult,
   AgentResult,
+  CommandExample,
   ConsensusResult,
+  FeatureContext,
   HealthcareCompliance,
   OrchestrationMetrics,
+  OrchestrationOptions,
+  OrchestrationResult,
+  QualityControlContext,
+  QualityControlResult,
   SystemStatus,
-  CommandExample,
   TDDOrchestrationSystem,
   ToolExecutionRequest,
   ToolExecutionResult,
-} from "./types";
+} from './types';
 
 // Additional type exports for new components

@@ -451,12 +451,12 @@ const minimizeEventData = (event: CalendarEvent): Partial<CalendarEvent> => {
 
 ```typescript
 // Error Message
-"Invalid healthcare data. Please check appointment details.";
+'Invalid healthcare data. Please check appointment details.';
 
 // Solutions
 // 1. Validate healthcare-specific fields
 const validateHealthcareEvent = (event: CalendarEvent) => {
-  const requiredFields = ["patientId", "practitionerId", "appointmentType"];
+  const requiredFields = ['patientId', 'practitionerId', 'appointmentType'];
 
   for (const field of requiredFields) {
     if (!event[field as keyof CalendarEvent]) {
@@ -465,9 +465,9 @@ const validateHealthcareEvent = (event: CalendarEvent) => {
   }
 
   // Validate appointment type
-  const validTypes = ["consultation", "follow-up", "procedure", "emergency"];
+  const validTypes = ['consultation', 'follow-up', 'procedure', 'emergency'];
   if (!validTypes.includes(event.appointmentType as string)) {
-    throw new Error("Invalid appointment type");
+    throw new Error('Invalid appointment type');
   }
 };
 
@@ -481,13 +481,13 @@ const validateBusinessRules = (event: CalendarEvent) => {
   );
 
   if (!practitionerAvailable) {
-    throw new Error("Practitioner is not available at selected time");
+    throw new Error('Practitioner is not available at selected time');
   }
 
   // Check if patient has required documentation
   const patientDocumentation = getPatientDocumentation(event.patientId);
   if (!patientDocumentation.complete) {
-    throw new Error("Patient documentation is incomplete");
+    throw new Error('Patient documentation is incomplete');
   }
 };
 ```
@@ -498,7 +498,7 @@ const validateBusinessRules = (event: CalendarEvent) => {
 
 ```typescript
 // Error Message
-"Your browser is not supported. Please upgrade to a modern browser."
+'Your browser is not supported. Please upgrade to a modern browser.';
 
 // Detection and Handling
 const useBrowserCompatibility = () => {
@@ -515,10 +515,12 @@ const useBrowserCompatibility = () => {
       chrome: { minVersion: 90 },
       firefox: { minVersion: 88 },
       safari: { minVersion: 14 },
-      edge: { minVersion: 90 }
+      edge: { minVersion: 90 },
     };
 
-    const isSupported = supportedBrowsers[browser.name as keyof typeof supportedBrowsers]?.minVersion <= browser.version;
+    const isSupported =
+      supportedBrowsers[browser.name as keyof typeof supportedBrowsers]?.minVersion
+        <= browser.version;
 
     setIsCompatible(isSupported);
 
@@ -536,17 +538,17 @@ function CalendarWrapper() {
 
   if (!isCompatible) {
     return (
-      <div className="browser-unsupported">
+      <div className='browser-unsupported'>
         <h2>Browser Not Supported</h2>
         <p>
-          Your browser ({browserInfo.name} {browserInfo.version}) is not supported.
-          Please upgrade to a modern browser.
+          Your browser ({browserInfo.name}{' '}
+          {browserInfo.version}) is not supported. Please upgrade to a modern browser.
         </p>
-        <div className="supported-browsers">
-          <a href="https://www.google.com/chrome/">Chrome 90+</a>
-          <a href="https://www.mozilla.org/firefox/">Firefox 88+</a>
-          <a href="https://www.apple.com/safari/">Safari 14+</a>
-          <a href="https://www.microsoft.com/edge/">Edge 90+</a>
+        <div className='supported-browsers'>
+          <a href='https://www.google.com/chrome/'>Chrome 90+</a>
+          <a href='https://www.mozilla.org/firefox/'>Firefox 88+</a>
+          <a href='https://www.apple.com/safari/'>Safari 14+</a>
+          <a href='https://www.microsoft.com/edge/'>Edge 90+</a>
         </div>
       </div>
     );
@@ -582,7 +584,7 @@ const useRetry = (fn: Function, maxRetries = 3) => {
         if (i === maxRetries - 1) break;
 
         // Wait before retrying
-        await new Promise((resolve) => setTimeout(resolve, 1000 * (i + 1)));
+        await new Promise(resolve => setTimeout(resolve, 1000 * (i + 1)));
       }
     }
 
@@ -675,7 +677,7 @@ const CalendarDebugPanel = () => {
       timestamp: new Date().toISOString(),
       eventsCount: events.length,
       view: currentView,
-      performance: performance.getEntriesByType('measure')
+      performance: performance.getEntriesByType('measure'),
     };
 
     setDebugInfo(info);
@@ -686,7 +688,7 @@ const CalendarDebugPanel = () => {
   }
 
   return (
-    <div className="debug-panel">
+    <div className='debug-panel'>
       <h3>Calendar Debug Info</h3>
       <pre>{JSON.stringify(debugInfo, null, 2)}</pre>
     </div>
@@ -711,7 +713,7 @@ const usePerformanceMonitor = () => {
       // Measure render performance
       const end = performance.now();
 
-      setMetrics((prev) => ({
+      setMetrics(prev => ({
         ...prev,
         renderTime: end - start,
         eventCount: events.length,
@@ -737,19 +739,19 @@ const validateCalendarEvent = (event: Partial<CalendarEvent>) => {
   const errors: string[] = [];
 
   if (!event.title || event.title.trim().length === 0) {
-    errors.push("Event title is required");
+    errors.push('Event title is required');
   }
 
   if (!event.start || !(event.start instanceof Date)) {
-    errors.push("Valid start time is required");
+    errors.push('Valid start time is required');
   }
 
   if (!event.end || !(event.end instanceof Date)) {
-    errors.push("Valid end time is required");
+    errors.push('Valid end time is required');
   }
 
   if (event.start && event.end && event.start >= event.end) {
-    errors.push("End time must be after start time");
+    errors.push('End time must be after start time');
   }
 
   return errors;
@@ -760,10 +762,11 @@ const validateCalendarEvent = (event: Partial<CalendarEvent>) => {
 
 ```typescript
 // Use strict TypeScript
-type StrictCalendarEvent = Required<
-  Pick<CalendarEvent, "id" | "title" | "start" | "end">
-> &
-  Partial<Omit<CalendarEvent, "id" | "title" | "start" | "end">>;
+type StrictCalendarEvent =
+  & Required<
+    Pick<CalendarEvent, 'id' | 'title' | 'start' | 'end'>
+  >
+  & Partial<Omit<CalendarEvent, 'id' | 'title' | 'start' | 'end'>>;
 
 const createStrictEvent = (event: StrictCalendarEvent) => {
   // TypeScript will enforce required fields
@@ -793,14 +796,14 @@ class CalendarErrorBoundary extends React.Component<
     // Log error to monitoring service
     errorMonitoringService.captureException(error, {
       component: 'Calendar',
-      errorInfo
+      errorInfo,
     });
   }
 
   render() {
     if (this.state.hasError) {
       return this.props.fallback || (
-        <div className="calendar-error">
+        <div className='calendar-error'>
           <h3>Calendar Error</h3>
           <p>Something went wrong with the calendar. Please refresh the page.</p>
           <button onClick={() => this.setState({ hasError: false })}>
@@ -836,7 +839,7 @@ const handleEventCreate = (eventData: any) => {
 const useToast = () => {
   const showToast = (
     message: string,
-    type: "success" | "error" | "warning" | "info",
+    type: 'success' | 'error' | 'warning' | 'info',
   ) => {
     // Implementation depends on your toast library
   };
@@ -866,12 +869,12 @@ const logger = {
 ### 4. Test Error Scenarios
 
 ```typescript
-describe("Calendar Error Handling", () => {
-  test("handles network errors gracefully", async () => {
+describe('Calendar Error Handling', () => {
+  test('handles network errors gracefully', async () => {
     // Mock network error
     jest
-      .spyOn(calendarApi, "createEvent")
-      .mockRejectedValueOnce(new Error("Network error"));
+      .spyOn(calendarApi, 'createEvent')
+      .mockRejectedValueOnce(new Error('Network error'));
 
     const { result } = renderHook(() => useCalendar());
 
@@ -880,7 +883,7 @@ describe("Calendar Error Handling", () => {
     });
 
     expect(result.current.error).toBe(
-      "Failed to create event. Please try again.",
+      'Failed to create event. Please try again.',
     );
   });
 });

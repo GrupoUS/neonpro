@@ -1,6 +1,6 @@
 /**
  * NeonPro Client Management Agent Component
- * 
+ *
  * Specialized AI agent for patient management with LGPD compliance
  * Features:
  * - Patient registration and management
@@ -10,32 +10,32 @@
  * - Portuguese healthcare workflows
  */
 
-import React, { useState, useCallback, useEffect } from 'react';
-import { useCopilotAction, useCopilotReadable, useCoAgent } from '@copilotkit/react-core';
-import { useNeonProChat } from '../NeonProChatProvider';
-import { NeonProMessage, NeonProPatientDataCard } from '../NeonProChatComponents';
+import { useCoAgent, useCopilotAction, useCopilotReadable } from '@copilotkit/react-core';
+import {
+  AlertTriangle,
+  Calendar,
+  CheckCircle,
+  Clock,
+  FileText,
+  Mail,
+  Phone,
+  Plus,
+  Search,
+  Shield,
+  Stethoscope,
+  User,
+} from 'lucide-react';
+import React, { useCallback, useEffect, useState } from 'react';
+import { Alert, AlertDescription } from '../../ui/alert';
+import { Badge } from '../../ui/badge';
 import { Button } from '../../ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../../ui/card';
-import { Badge } from '../../ui/badge';
-import { Alert, AlertDescription } from '../../ui/alert';
 import { Input } from '../../ui/input';
 import { Label } from '../../ui/label';
-import { Textarea } from '../../ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../ui/select';
-import { 
-  User, 
-  Phone, 
-  Mail, 
-  Calendar, 
-  Stethoscope, 
-  Search, 
-  Plus,
-  Shield,
-  FileText,
-  AlertTriangle,
-  CheckCircle,
-  Clock
-} from 'lucide-react';
+import { Textarea } from '../../ui/textarea';
+import { NeonProMessage, NeonProPatientDataCard } from '../NeonProChatComponents';
+import { useNeonProChat } from '../NeonProChatProvider';
 
 // Types
 interface Patient {
@@ -98,7 +98,7 @@ const mockPatients: Patient[] = [
     lastVisit: new Date('2024-09-10'),
     treatments: ['Botox', 'Preenchimento Labial', 'Limpeza de Pele'],
     notes: 'Paciente com sensibilidade a certos ácidos. Prefere horários vespertinos.',
-    sensitivityLevel: 'enhanced'
+    sensitivityLevel: 'enhanced',
   },
   {
     id: '2',
@@ -111,14 +111,14 @@ const mockPatients: Patient[] = [
     registrationDate: new Date('2023-03-20'),
     lastVisit: new Date('2024-09-12'),
     treatments: ['Fio de Sustentação', 'Laser CO2', 'Peeling Químico'],
-    sensitivityLevel: 'standard'
-  }
+    sensitivityLevel: 'standard',
+  },
 ];
 
 export const NeonProClientAgent: React.FC<ClientAgentProps> = ({
   clinicId,
   onPatientAction,
-  onError
+  onError,
 }) => {
   const { config } = useNeonProChat();
   const [showSensitiveData, setShowSensitiveData] = useState(false);
@@ -132,13 +132,13 @@ export const NeonProClientAgent: React.FC<ClientAgentProps> = ({
     operationHistory: [],
     compliance: {
       dataAccess: [],
-      consentLevel: 'basic'
-    }
+      consentLevel: 'basic',
+    },
   };
 
   const { state, setState } = useCoAgent<ClientAgentState>({
     name: 'client-agent',
-    initialState
+    initialState,
   });
 
   // Provide context to CopilotKit
@@ -149,8 +149,8 @@ export const NeonProClientAgent: React.FC<ClientAgentProps> = ({
       selectedPatient: state.selectedPatient,
       searchResultsCount: state.searchResults.length,
       clinicId,
-      compliance: state.compliance.consentLevel
-    }
+      compliance: state.compliance.consentLevel,
+    },
   }, [state, clinicId]);
 
   // Search for patients action
@@ -158,14 +158,19 @@ export const NeonProClientAgent: React.FC<ClientAgentProps> = ({
     name: 'search_patients',
     description: 'Search for patients by name, contact, or ID',
     parameters: [
-      { name: 'query', type: 'string', description: 'Search query (name, contact, or ID)', required: true },
+      {
+        name: 'query',
+        type: 'string',
+        description: 'Search query (name, contact, or ID)',
+        required: true,
+      },
     ],
     handler: async (query: string) => {
       try {
         setState(prev => ({
           ...prev,
           currentOperation: 'searching',
-          searchQuery: query
+          searchQuery: query,
         }));
 
         // Simulate search delay
@@ -173,16 +178,16 @@ export const NeonProClientAgent: React.FC<ClientAgentProps> = ({
 
         // Search in mock database
         const results = mockPatients.filter(patient =>
-          patient.name.toLowerCase().includes(query.toLowerCase()) ||
-          patient.contact.toLowerCase().includes(query.toLowerCase()) ||
-          patient.id === query
+          patient.name.toLowerCase().includes(query.toLowerCase())
+          || patient.contact.toLowerCase().includes(query.toLowerCase())
+          || patient.id === query
         );
 
         setState(prev => ({
           ...prev,
           currentOperation: 'idle',
           searchResults: results,
-          selectedPatient: results.length === 1 ? results[0] : undefined
+          selectedPatient: results.length === 1 ? results[0] : undefined,
         }));
 
         // Log data access for LGPD compliance
@@ -198,10 +203,10 @@ export const NeonProClientAgent: React.FC<ClientAgentProps> = ({
                   userId: config.userId,
                   patientId: 'search-multiple',
                   action: 'search',
-                  purpose: `Patient search: ${query}`
-                }
-              ]
-            }
+                  purpose: `Patient search: ${query}`,
+                },
+              ],
+            },
           }));
         }
 
@@ -212,7 +217,7 @@ export const NeonProClientAgent: React.FC<ClientAgentProps> = ({
         setState(prev => ({ ...prev, currentOperation: 'idle' }));
         throw error;
       }
-    }
+    },
   });
 
   // Register new patient action
@@ -221,11 +226,31 @@ export const NeonProClientAgent: React.FC<ClientAgentProps> = ({
     description: 'Register a new patient in the system',
     parameters: [
       { name: 'name', type: 'string', description: 'Patient full name', required: true },
-      { name: 'contact', type: 'string', description: 'Contact information (phone or email)', required: true },
-      { name: 'contactType', type: 'string', description: 'Contact type (phone or email)', required: true },
-      { name: 'dateOfBirth', type: 'string', description: 'Date of birth (YYYY-MM-DD)', required: true },
+      {
+        name: 'contact',
+        type: 'string',
+        description: 'Contact information (phone or email)',
+        required: true,
+      },
+      {
+        name: 'contactType',
+        type: 'string',
+        description: 'Contact type (phone or email)',
+        required: true,
+      },
+      {
+        name: 'dateOfBirth',
+        type: 'string',
+        description: 'Date of birth (YYYY-MM-DD)',
+        required: true,
+      },
       { name: 'gender', type: 'string', description: 'Gender (M, F, or Other)', required: true },
-      { name: 'notes', type: 'string', description: 'Additional notes about the patient', required: false },
+      {
+        name: 'notes',
+        type: 'string',
+        description: 'Additional notes about the patient',
+        required: false,
+      },
     ],
     handler: async (
       name: string,
@@ -233,12 +258,12 @@ export const NeonProClientAgent: React.FC<ClientAgentProps> = ({
       contactType: string,
       dateOfBirth: string,
       gender: string,
-      notes?: string
+      notes?: string,
     ) => {
       try {
         setState(prev => ({
           ...prev,
-          currentOperation: 'registering'
+          currentOperation: 'registering',
         }));
 
         // Simulate registration delay
@@ -256,7 +281,7 @@ export const NeonProClientAgent: React.FC<ClientAgentProps> = ({
           registrationDate: new Date(),
           treatments: [],
           notes,
-          sensitivityLevel: 'standard'
+          sensitivityLevel: 'standard',
         };
 
         // Add to mock database (in real implementation, this would be an API call)
@@ -273,9 +298,9 @@ export const NeonProClientAgent: React.FC<ClientAgentProps> = ({
               timestamp: new Date(),
               patientId: newPatient.id,
               success: true,
-              details: `New patient registered: ${name}`
-            }
-          ]
+              details: `New patient registered: ${name}`,
+            },
+          ],
         }));
 
         // Log data access for LGPD compliance
@@ -291,10 +316,10 @@ export const NeonProClientAgent: React.FC<ClientAgentProps> = ({
                   userId: config.userId,
                   patientId: newPatient.id,
                   action: 'register',
-                  purpose: `New patient registration: ${name}`
-                }
-              ]
-            }
+                  purpose: `New patient registration: ${name}`,
+                },
+              ],
+            },
           }));
         }
 
@@ -305,7 +330,7 @@ export const NeonProClientAgent: React.FC<ClientAgentProps> = ({
         setState(prev => ({ ...prev, currentOperation: 'idle' }));
         throw error;
       }
-    }
+    },
   });
 
   // Update patient information action
@@ -320,7 +345,7 @@ export const NeonProClientAgent: React.FC<ClientAgentProps> = ({
       try {
         setState(prev => ({
           ...prev,
-          currentOperation: 'updating'
+          currentOperation: 'updating',
         }));
 
         // Simulate update delay
@@ -334,7 +359,7 @@ export const NeonProClientAgent: React.FC<ClientAgentProps> = ({
 
         const updatedPatient = {
           ...mockPatients[patientIndex],
-          ...updates
+          ...updates,
         };
 
         mockPatients[patientIndex] = updatedPatient;
@@ -350,9 +375,9 @@ export const NeonProClientAgent: React.FC<ClientAgentProps> = ({
               timestamp: new Date(),
               patientId,
               success: true,
-              details: `Updated patient information: ${Object.keys(updates).join(', ')}`
-            }
-          ]
+              details: `Updated patient information: ${Object.keys(updates).join(', ')}`,
+            },
+          ],
         }));
 
         return `Patient information updated successfully`;
@@ -362,7 +387,7 @@ export const NeonProClientAgent: React.FC<ClientAgentProps> = ({
         setState(prev => ({ ...prev, currentOperation: 'idle' }));
         throw error;
       }
-    }
+    },
   });
 
   // Get patient treatment history action
@@ -384,22 +409,24 @@ export const NeonProClientAgent: React.FC<ClientAgentProps> = ({
           treatments: patient.treatments,
           lastVisit: patient.lastVisit,
           registrationDate: patient.registrationDate,
-          totalTreatments: patient.treatments.length
+          totalTreatments: patient.treatments.length,
         };
 
         setState(prev => ({
           ...prev,
           selectedPatient: patient,
-          currentOperation: 'viewing'
+          currentOperation: 'viewing',
         }));
 
         return JSON.stringify(treatmentHistory, null, 2);
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'Failed to get treatment history';
+        const errorMessage = error instanceof Error
+          ? error.message
+          : 'Failed to get treatment history';
         onError?.(errorMessage);
         throw error;
       }
-    }
+    },
   });
 
   // Handle form changes
@@ -408,8 +435,8 @@ export const NeonProClientAgent: React.FC<ClientAgentProps> = ({
       ...prev,
       formData: {
         ...prev.formData,
-        [field]: value
-      }
+        [field]: value,
+      },
     }));
   }, []);
 
@@ -418,7 +445,7 @@ export const NeonProClientAgent: React.FC<ClientAgentProps> = ({
     setState(prev => ({
       ...prev,
       selectedPatient: patient,
-      currentOperation: 'viewing'
+      currentOperation: 'viewing',
     }));
 
     // Log access for LGPD compliance
@@ -434,10 +461,10 @@ export const NeonProClientAgent: React.FC<ClientAgentProps> = ({
               userId: config.userId,
               patientId: patient.id,
               action: 'view',
-              purpose: 'Patient record access'
-            }
-          ]
-        }
+              purpose: 'Patient record access',
+            },
+          ],
+        },
       }));
     }
   }, [config]);
@@ -453,7 +480,7 @@ export const NeonProClientAgent: React.FC<ClientAgentProps> = ({
     try {
       // This would trigger the CopilotKit action
       await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate action call
-      
+
       // For demo purposes, update state directly
       const newPatient: Patient = {
         id: `patient-${Date.now()}`,
@@ -466,11 +493,11 @@ export const NeonProClientAgent: React.FC<ClientAgentProps> = ({
         registrationDate: new Date(),
         treatments: [],
         notes: formData.notes,
-        sensitivityLevel: 'standard'
+        sensitivityLevel: 'standard',
       };
 
       mockPatients.push(newPatient);
-      
+
       setState(prev => ({
         ...prev,
         currentOperation: 'idle',
@@ -483,9 +510,9 @@ export const NeonProClientAgent: React.FC<ClientAgentProps> = ({
             timestamp: new Date(),
             patientId: newPatient.id,
             success: true,
-            details: `New patient registered: ${newPatient.name}`
-          }
-        ]
+            details: `New patient registered: ${newPatient.name}`,
+          },
+        ],
       }));
 
       onPatientAction?.('register', newPatient.id);
@@ -497,24 +524,29 @@ export const NeonProClientAgent: React.FC<ClientAgentProps> = ({
   // Get status icon
   const getStatusIcon = () => {
     switch (state.currentOperation) {
-      case 'searching': return <Search className="h-4 w-4 text-blue-500" />;
-      case 'registering': return <User className="h-4 w-4 text-yellow-500" />;
-      case 'updating': return <FileText className="h-4 w-4 text-orange-500" />;
-      case 'viewing': return <Stethoscope className="h-4 w-4 text-green-500" />;
-      default: return <Clock className="h-4 w-4 text-gray-500" />;
+      case 'searching':
+        return <Search className='h-4 w-4 text-blue-500' />;
+      case 'registering':
+        return <User className='h-4 w-4 text-yellow-500' />;
+      case 'updating':
+        return <FileText className='h-4 w-4 text-orange-500' />;
+      case 'viewing':
+        return <Stethoscope className='h-4 w-4 text-green-500' />;
+      default:
+        return <Clock className='h-4 w-4 text-gray-500' />;
     }
   };
 
   return (
-    <div className="space-y-6">
+    <div className='space-y-6'>
       {/* Header */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <User className="h-5 w-5" />
+          <CardTitle className='flex items-center gap-2'>
+            <User className='h-5 w-5' />
             Assistente de Gestão de Pacientes
           </CardTitle>
-          <div className="flex items-center gap-2 text-sm text-gray-600">
+          <div className='flex items-center gap-2 text-sm text-gray-600'>
             {getStatusIcon()}
             <span>
               {state.currentOperation === 'idle' && 'Pronto para ajudar'}
@@ -529,53 +561,57 @@ export const NeonProClientAgent: React.FC<ClientAgentProps> = ({
 
       {/* Compliance Alert */}
       <Alert>
-        <Shield className="h-4 w-4" />
+        <Shield className='h-4 w-4' />
         <AlertDescription>
-          <strong>LGPD Compliance:</strong> Todas as operações com dados de pacientes são registradas 
-          para auditoria. O acesso a informações sensíveis requer consentimento explícito.
+          <strong>LGPD Compliance:</strong>{' '}
+          Todas as operações com dados de pacientes são registradas para auditoria. O acesso a
+          informações sensíveis requer consentimento explícito.
         </AlertDescription>
       </Alert>
 
       {/* Search Section */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">Buscar Pacientes</CardTitle>
+          <CardTitle className='text-lg'>Buscar Pacientes</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex gap-2">
+        <CardContent className='space-y-4'>
+          <div className='flex gap-2'>
             <Input
-              placeholder="Buscar por nome, contato ou ID..."
+              placeholder='Buscar por nome, contato ou ID...'
               value={state.searchQuery}
-              onChange={(e) => handleFormChange('searchQuery', e.target.value)}
-              className="flex-1"
+              onChange={e => handleFormChange('searchQuery', e.target.value)}
+              className='flex-1'
             />
             <Button
               onClick={() => state.searchQuery && handlePatientSelect(state.searchResults[0])}
               disabled={!state.searchQuery || state.searchResults.length === 0}
             >
-              <Search className="h-4 w-4" />
+              <Search className='h-4 w-4' />
             </Button>
           </div>
 
           {/* Search Results */}
           {state.searchResults.length > 0 && (
-            <div className="space-y-2">
-              <h4 className="text-sm font-medium">Resultados ({state.searchResults.length})</h4>
-              {state.searchResults.map((patient) => (
+            <div className='space-y-2'>
+              <h4 className='text-sm font-medium'>Resultados ({state.searchResults.length})</h4>
+              {state.searchResults.map(patient => (
                 <div
                   key={patient.id}
-                  className="flex items-center justify-between p-3 border rounded-lg cursor-pointer hover:bg-gray-50"
+                  className='flex items-center justify-between p-3 border rounded-lg cursor-pointer hover:bg-gray-50'
                   onClick={() => handlePatientSelect(patient)}
                 >
                   <div>
-                    <p className="font-medium">{patient.name}</p>
-                    <p className="text-sm text-gray-600">{patient.contact}</p>
-                    <Badge variant="outline" className="mt-1">
-                      {patient.status === 'active' ? 'Ativo' : 
-                       patient.status === 'new' ? 'Novo' : 'Inativo'}
+                    <p className='font-medium'>{patient.name}</p>
+                    <p className='text-sm text-gray-600'>{patient.contact}</p>
+                    <Badge variant='outline' className='mt-1'>
+                      {patient.status === 'active'
+                        ? 'Ativo'
+                        : patient.status === 'new'
+                        ? 'Novo'
+                        : 'Inativo'}
                     </Badge>
                   </div>
-                  <ChevronRight className="h-4 w-4 text-gray-400" />
+                  <ChevronRight className='h-4 w-4 text-gray-400' />
                 </div>
               ))}
             </div>
@@ -586,78 +622,78 @@ export const NeonProClientAgent: React.FC<ClientAgentProps> = ({
       {/* Registration Form */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg flex items-center gap-2">
-            <Plus className="h-4 w-4" />
+          <CardTitle className='text-lg flex items-center gap-2'>
+            <Plus className='h-4 w-4' />
             Registrar Novo Paciente
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <CardContent className='space-y-4'>
+          <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
             <div>
-              <Label htmlFor="name">Nome Completo *</Label>
+              <Label htmlFor='name'>Nome Completo *</Label>
               <Input
-                id="name"
+                id='name'
                 value={state.formData.name || ''}
-                onChange={(e) => handleFormChange('name', e.target.value)}
-                placeholder="Nome completo do paciente"
+                onChange={e => handleFormChange('name', e.target.value)}
+                placeholder='Nome completo do paciente'
               />
             </div>
             <div>
-              <Label htmlFor="contact">Contato *</Label>
+              <Label htmlFor='contact'>Contato *</Label>
               <Input
-                id="contact"
+                id='contact'
                 value={state.formData.contact || ''}
-                onChange={(e) => handleFormChange('contact', e.target.value)}
-                placeholder="Email ou telefone"
+                onChange={e => handleFormChange('contact', e.target.value)}
+                placeholder='Email ou telefone'
               />
             </div>
             <div>
-              <Label htmlFor="contactType">Tipo de Contato</Label>
-              <Select onValueChange={(value) => handleFormChange('contactType', value)}>
+              <Label htmlFor='contactType'>Tipo de Contato</Label>
+              <Select onValueChange={value => handleFormChange('contactType', value)}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Selecione o tipo" />
+                  <SelectValue placeholder='Selecione o tipo' />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="email">Email</SelectItem>
-                  <SelectItem value="phone">Telefone</SelectItem>
+                  <SelectItem value='email'>Email</SelectItem>
+                  <SelectItem value='phone'>Telefone</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <div>
-              <Label htmlFor="dateOfBirth">Data de Nascimento *</Label>
+              <Label htmlFor='dateOfBirth'>Data de Nascimento *</Label>
               <Input
-                id="dateOfBirth"
-                type="date"
+                id='dateOfBirth'
+                type='date'
                 value={state.formData.dateOfBirth || ''}
-                onChange={(e) => handleFormChange('dateOfBirth', e.target.value)}
+                onChange={e => handleFormChange('dateOfBirth', e.target.value)}
               />
             </div>
             <div>
-              <Label htmlFor="gender">Gênero</Label>
-              <Select onValueChange={(value) => handleFormChange('gender', value)}>
+              <Label htmlFor='gender'>Gênero</Label>
+              <Select onValueChange={value => handleFormChange('gender', value)}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Selecione o gênero" />
+                  <SelectValue placeholder='Selecione o gênero' />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="F">Feminino</SelectItem>
-                  <SelectItem value="M">Masculino</SelectItem>
-                  <SelectItem value="Other">Outro</SelectItem>
+                  <SelectItem value='F'>Feminino</SelectItem>
+                  <SelectItem value='M'>Masculino</SelectItem>
+                  <SelectItem value='Other'>Outro</SelectItem>
                 </SelectContent>
               </Select>
             </div>
           </div>
           <div>
-            <Label htmlFor="notes">Observações</Label>
+            <Label htmlFor='notes'>Observações</Label>
             <Textarea
-              id="notes"
+              id='notes'
               value={state.formData.notes || ''}
-              onChange={(e) => handleFormChange('notes', e.target.value)}
-              placeholder="Informações adicionais sobre o paciente..."
+              onChange={e => handleFormChange('notes', e.target.value)}
+              placeholder='Informações adicionais sobre o paciente...'
               rows={3}
             />
           </div>
-          <Button onClick={handleRegisterPatient} className="w-full">
-            <Plus className="h-4 w-4 mr-2" />
+          <Button onClick={handleRegisterPatient} className='w-full'>
+            <Plus className='h-4 w-4 mr-2' />
             Registrar Paciente
           </Button>
         </CardContent>
@@ -676,22 +712,20 @@ export const NeonProClientAgent: React.FC<ClientAgentProps> = ({
       {state.operationHistory.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg">Histórico de Operações</CardTitle>
+            <CardTitle className='text-lg'>Histórico de Operações</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-2">
+            <div className='space-y-2'>
               {state.operationHistory.map((op, index) => (
-                <div key={index} className="flex items-center gap-2 p-2 border rounded">
-                  {op.success ? (
-                    <CheckCircle className="h-4 w-4 text-green-500" />
-                  ) : (
-                    <AlertTriangle className="h-4 w-4 text-red-500" />
-                  )}
-                  <div className="flex-1">
-                    <p className="text-sm font-medium">{op.operation}</p>
-                    <p className="text-xs text-gray-600">{op.details}</p>
+                <div key={index} className='flex items-center gap-2 p-2 border rounded'>
+                  {op.success
+                    ? <CheckCircle className='h-4 w-4 text-green-500' />
+                    : <AlertTriangle className='h-4 w-4 text-red-500' />}
+                  <div className='flex-1'>
+                    <p className='text-sm font-medium'>{op.operation}</p>
+                    <p className='text-xs text-gray-600'>{op.details}</p>
                   </div>
-                  <span className="text-xs text-gray-500">
+                  <span className='text-xs text-gray-500'>
                     {op.timestamp.toLocaleString('pt-BR')}
                   </span>
                 </div>
@@ -706,8 +740,8 @@ export const NeonProClientAgent: React.FC<ClientAgentProps> = ({
 
 // Helper component
 const ChevronRight = () => (
-  <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-    <path d="M6.22 3.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L9.94 8 6.22 4.28a.75.75 0 0 1 0-1.06Z"/>
+  <svg width='16' height='16' viewBox='0 0 16 16' fill='currentColor'>
+    <path d='M6.22 3.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L9.94 8 6.22 4.28a.75.75 0 0 1 0-1.06Z' />
   </svg>
 );
 

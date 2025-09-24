@@ -359,7 +359,7 @@ export class AestheticClinicMiddleware {
       const hasPermission = await this.securityService.hasPermission(
         userId,
         'patient_data_access',
-        { patientId }
+        { patientId },
       );
 
       if (!hasPermission) {
@@ -442,11 +442,11 @@ export class AestheticClinicMiddleware {
     if (path.includes('/medical-images') || path.includes('/financial')) {
       return REQUEST_SENSITIVITY.CRITICAL;
     }
-    
+
     if (path.includes('/patients') || path.includes('/treatments')) {
       return REQUEST_SENSITIVITY.HIGH;
     }
-    
+
     if (path.includes('/appointments') || path.includes('/professionals')) {
       return REQUEST_SENSITIVITY.MEDIUM;
     }
@@ -460,24 +460,24 @@ export class AestheticClinicMiddleware {
     if (path.includes('/patients')) {
       dataTypes.push(HEALTHCARE_DATA_TYPE.PATIENT_DEMOGRAPHICS);
     }
-    
+
     if (path.includes('/medical-records') || path.includes('/treatments')) {
       dataTypes.push(HEALTHCARE_DATA_TYPE.MEDICAL_HISTORY);
       dataTypes.push(HEALTHCARE_DATA_TYPE.TREATMENT_RECORDS);
     }
-    
+
     if (path.includes('/medical-images')) {
       dataTypes.push(HEALTHCARE_DATA_TYPE.MEDICAL_IMAGES);
     }
-    
+
     if (path.includes('/financial') || path.includes('/payments')) {
       dataTypes.push(HEALTHCARE_DATA_TYPE.FINANCIAL_DATA);
     }
-    
+
     if (path.includes('/appointments')) {
       dataTypes.push(HEALTHCARE_DATA_TYPE.APPOINTMENT_DATA);
     }
-    
+
     if (path.includes('/consent')) {
       dataTypes.push(HEALTHCARE_DATA_TYPE.CONSENT_FORMS);
     }
@@ -487,10 +487,10 @@ export class AestheticClinicMiddleware {
 
   private getClientIP(c: Context): string {
     return (
-      c.req.header('cf-connecting-ip') ||
-      c.req.header('x-forwarded-for') ||
-      c.req.header('x-real-ip') ||
-      'unknown'
+      c.req.header('cf-connecting-ip')
+      || c.req.header('x-forwarded-for')
+      || c.req.header('x-real-ip')
+      || 'unknown'
     );
   }
 
@@ -502,13 +502,15 @@ export class AestheticClinicMiddleware {
   ): Promise<void> {
     const now = Date.now();
     const key = `${ipAddress}:${sensitivity}`;
-    
+
     if (!this.requestCounts.has(key)) {
       this.requestCounts.set(key, []);
     }
 
     const requests = this.requestCounts.get(key)!;
-    const validRequests = requests.filter(time => now - time < this.getRateLimitWindow(sensitivity));
+    const validRequests = requests.filter(time =>
+      now - time < this.getRateLimitWindow(sensitivity)
+    );
 
     if (validRequests.length >= this.getRateLimit(sensitivity)) {
       throw new HTTPException(429, {
@@ -655,7 +657,7 @@ export class AestheticClinicMiddleware {
     const hasPermission = await this.securityService.hasPermission(
       userId,
       'healthcare_data_access',
-      { dataTypes, sensitivity }
+      { dataTypes, sensitivity },
     );
 
     if (!hasPermission) {
@@ -763,7 +765,12 @@ export class AestheticClinicMiddleware {
     c.set('securityContext', context);
   }
 
-  private async handleSecurityError(c: Context, error: any, path: string, method: string): Promise<void> {
+  private async handleSecurityError(
+    c: Context,
+    error: any,
+    path: string,
+    method: string,
+  ): Promise<void> {
     logger.error('Security middleware error', {
       error: error instanceof Error ? error.message : String(error),
       path,
@@ -814,11 +821,19 @@ export class AestheticClinicMiddleware {
     // Validate financial transaction data
   }
 
-  private async checkSuspiciousActivity(_c: Context, _userId: string, _ipAddress: string): Promise<void> {
+  private async checkSuspiciousActivity(
+    _c: Context,
+    _userId: string,
+    _ipAddress: string,
+  ): Promise<void> {
     // Check for suspicious transaction patterns
   }
 
-  private async logPatientDataAccess(userId: string, patientId: string, ipAddress: string): Promise<void> {
+  private async logPatientDataAccess(
+    userId: string,
+    patientId: string,
+    ipAddress: string,
+  ): Promise<void> {
     logger.info('Patient data access', {
       userId,
       patientId,
@@ -850,8 +865,15 @@ export class AestheticClinicMiddleware {
 
 // Export middleware functions
 export const aestheticClinicMiddleware = new AestheticClinicMiddleware();
-export const healthcareDataMiddleware = aestheticClinicMiddleware.healthcareDataMiddleware.bind(aestheticClinicMiddleware);
-export const medicalImageUploadMiddleware = aestheticClinicMiddleware.medicalImageUploadMiddleware.bind(aestheticClinicMiddleware);
-export const financialTransactionMiddleware = aestheticClinicMiddleware.financialTransactionMiddleware.bind(aestheticClinicMiddleware);
-export const patientDataAccessMiddleware = aestheticClinicMiddleware.patientDataAccessMiddleware.bind(aestheticClinicMiddleware);
-export const auditTrailMiddleware = aestheticClinicMiddleware.auditTrailMiddleware.bind(aestheticClinicMiddleware);
+export const healthcareDataMiddleware = aestheticClinicMiddleware.healthcareDataMiddleware.bind(
+  aestheticClinicMiddleware,
+);
+export const medicalImageUploadMiddleware = aestheticClinicMiddleware.medicalImageUploadMiddleware
+  .bind(aestheticClinicMiddleware);
+export const financialTransactionMiddleware = aestheticClinicMiddleware
+  .financialTransactionMiddleware.bind(aestheticClinicMiddleware);
+export const patientDataAccessMiddleware = aestheticClinicMiddleware.patientDataAccessMiddleware
+  .bind(aestheticClinicMiddleware);
+export const auditTrailMiddleware = aestheticClinicMiddleware.auditTrailMiddleware.bind(
+  aestheticClinicMiddleware,
+);

@@ -14,7 +14,8 @@ import type {
 export type { DatabaseType as SupabaseDatabase, JsonType as SupabaseJson };
 
 // Type aliases for commonly used tables
-export type Tables<T extends keyof DatabaseType['public']['Tables']> = DatabaseType['public']['Tables'][T];
+export type Tables<T extends keyof DatabaseType['public']['Tables']> =
+  DatabaseType['public']['Tables'][T];
 export type TableRow<T extends keyof DatabaseType['public']['Tables']> =
   DatabaseType['public']['Tables'][T]['Row'];
 export type TableInsert<T extends keyof DatabaseType['public']['Tables']> =

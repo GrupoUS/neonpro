@@ -1,12 +1,12 @@
 // ChatSession model (Phase 1)
 // Mirrors packages/types/src/ai-chat.ts shape; provides helper predicates and factories.
 
-import type { ChatSession as ChatSessionType } from "@neonpro/types";
+import type { ChatSession as ChatSessionType } from '@neonpro/types';
 
 export type ChatSession = ChatSessionType;
 
 export const createChatSession = (
-  input: Omit<ChatSession, "startedAt" | "lastActivityAt"> & {
+  input: Omit<ChatSession, 'startedAt' | 'lastActivityAt'> & {
     startedAt?: string;
     lastActivityAt?: string;
   },

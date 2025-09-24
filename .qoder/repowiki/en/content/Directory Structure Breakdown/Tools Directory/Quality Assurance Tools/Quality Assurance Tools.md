@@ -272,14 +272,14 @@ For behavioral rules within the TDD process, developers can extend the SecurityA
 
 ```typescript
 // Example extension to executeGreenPhase
-if (context.domain.includes("medical-data") || context.files?.implementation?.includes("phi")) {
+if (context.domain.includes('medical-data') || context.files?.implementation?.includes('phi')) {
   findings.push(
     this.createFinding(
-      "security-implementation",
-      "Medical data handling requires PHI encryption validation",
-      "critical",
+      'security-implementation',
+      'Medical data handling requires PHI encryption validation',
+      'critical',
       context.files.implementation,
-      "Ensure all PHI fields are encrypted using approved algorithms and key management practices",
+      'Ensure all PHI fields are encrypted using approved algorithms and key management practices',
     ),
   );
 }

@@ -3,8 +3,8 @@
  */
 
 import React from 'react';
-import type { DayViewProps, CalendarEvent } from '../../types/event-calendar';
-import { formatCalendarTime, getEventColor, generateTimeSlots, isTimeSlotAvailable } from './utils';
+import type { CalendarEvent, DayViewProps } from '../../types/event-calendar';
+import { formatCalendarTime, generateTimeSlots, getEventColor, isTimeSlotAvailable } from './utils';
 
 export function DayView({
   date,
@@ -35,8 +35,8 @@ export function DayView({
   };
 
   return (
-    <div className="day-view flex-1 overflow-auto">
-      <div className="time-grid">
+    <div className='day-view flex-1 overflow-auto'>
+      <div className='time-grid'>
         {timeSlots.map((slot, index) => {
           const slotEvents = getEventsForTimeSlot(slot);
           const isAvailable = isTimeSlotAvailable(slot, events);
@@ -49,10 +49,10 @@ export function DayView({
               }`}
               onClick={() => isAvailable && handleTimeSlotClick(slot)}
             >
-              <div className="time-label w-20 px-2 py-1 text-sm text-gray-500 border-r border-gray-200">
+              <div className='time-label w-20 px-2 py-1 text-sm text-gray-500 border-r border-gray-200'>
                 {formatCalendarTime(slot.start)}
               </div>
-              <div className="events flex-1 p-1 relative">
+              <div className='events flex-1 p-1 relative'>
                 {slotEvents.map((event, eventIndex) => (
                   <div
                     key={event.id}
@@ -65,16 +65,16 @@ export function DayView({
                       top: `${eventIndex * 24}px`,
                       height: '20px',
                     }}
-                    onClick={(e) => {
+                    onClick={e => {
                       e.stopPropagation();
                       onEventClick(event);
                     }}
                   >
-                    <div className="event-title font-medium truncate">
+                    <div className='event-title font-medium truncate'>
                       {event.title}
                     </div>
                     {event.patientName && (
-                      <div className="event-patient text-xs text-gray-600 truncate">
+                      <div className='event-patient text-xs text-gray-600 truncate'>
                         {event.patientName}
                       </div>
                     )}

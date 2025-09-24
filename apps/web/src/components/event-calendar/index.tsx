@@ -3,43 +3,43 @@
  * Main calendar component for healthcare scheduling
  */
 
-export { default as EventCalendar } from './EventCalendar';
-export { default as EventModal } from './EventModal';
-export { default as EventForm } from './EventForm';
 export { default as CalendarHeader } from './CalendarHeader';
 export { default as DayView } from './DayView';
-export { default as WeekView } from './WeekView';
+export { default as EventCalendar } from './EventCalendar';
+export { default as EventForm } from './EventForm';
+export { default as EventModal } from './EventModal';
 export { default as MonthView } from './MonthView';
+export { default as WeekView } from './WeekView';
 
 // Utility exports
 export * from './utils';
 
 // Type exports
 export type {
-  CalendarComponentProps,
-  CalendarState,
+  CalendarAccessibilityProps,
   CalendarActions,
-  EventFormProps,
-  EventFormData,
-  EventFormErrors,
-  DraggedEvent,
-  DropTarget,
-  DayViewProps,
-  WeekViewProps,
-  MonthViewProps,
+  CalendarAnalytics,
+  CalendarApiParams,
+  CalendarApiResponse,
+  CalendarComponentProps,
+  CalendarFiltersProps,
   CalendarHeaderProps,
   CalendarNavigationProps,
-  CalendarFiltersProps,
-  EventModalProps,
-  EventDialogProps,
-  ResponsiveCalendarProps,
-  CalendarAccessibilityProps,
-  CalendarTheme,
-  CalendarApiResponse,
-  CalendarApiParams,
-  CalendarUpdateMessage,
-  CalendarAnalytics,
   CalendarReportParams,
+  CalendarState,
+  CalendarTheme,
+  CalendarUpdateMessage,
+  DayViewProps,
+  DraggedEvent,
+  DropTarget,
+  EventDialogProps,
+  EventFormData,
+  EventFormErrors,
+  EventFormProps,
+  EventModalProps,
   ExternalCalendarIntegration,
+  MonthViewProps,
+  ResponsiveCalendarProps,
   SyncResult,
+  WeekViewProps,
 } from '../../types/event-calendar';

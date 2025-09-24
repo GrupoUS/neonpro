@@ -259,7 +259,9 @@ export class CircuitBreakerService {
         );
       } catch (fallbackError) {
         // Fallback failed, use default behavior
-        logger?.warn?.('Custom fallback failed', { message: fallbackError instanceof Error ? fallbackError.message : String(fallbackError) });
+        logger?.warn?.('Custom fallback failed', {
+          message: fallbackError instanceof Error ? fallbackError.message : String(fallbackError),
+        });
       }
     }
 
@@ -306,7 +308,9 @@ export class CircuitBreakerService {
         return fallbackResult;
       } catch (fallbackError) {
         // Fallback failed, continue with default handling
-        logger?.warn?.('Custom fallback failed', { message: fallbackError instanceof Error ? fallbackError.message : String(fallbackError) });
+        logger?.warn?.('Custom fallback failed', {
+          message: fallbackError instanceof Error ? fallbackError.message : String(fallbackError),
+        });
       }
     }
 

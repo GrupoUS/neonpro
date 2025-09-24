@@ -5,14 +5,14 @@
  */
 
 import type {
+  CallParticipant,
   RTCCallManager,
+  RTCCallQualityMetrics,
+  RTCConnectionState,
+  RTCError,
   RTCHealthcareConfiguration,
   TelemedicineCallSession,
-  CallParticipant,
-  RTCCallQualityMetrics,
-  RTCError,
-  RTCConnectionState,
-} from "@neonpro/types";
+} from '@neonpro/types';
 import { auditLogger } from '../logging/healthcare-logger';
 
 const callManagerLogger = auditLogger.child({ component: 'webrtc-call-manager' });
@@ -33,8 +33,7 @@ export class RTCCallManagerStub implements RTCCallManager {
   private onParticipantJoinedHandler:
     | ((participant: CallParticipant) => void)
     | null = null;
-  private onParticipantLeftHandler: ((participantId: string) => void) | null =
-    null;
+  private onParticipantLeftHandler: ((participantId: string) => void) | null = null;
   private onErrorHandler: ((error: RTCError) => void) | null = null;
 
   constructor(
@@ -55,24 +54,24 @@ export class RTCCallManagerStub implements RTCCallManager {
    */
   async initialize(config: RTCHealthcareConfiguration): Promise<void> {
     this.config = config;
-    this.log("Call manager initialized with healthcare configuration");
+    this.log('Call manager initialized with healthcare configuration');
   }
 
   /**
    * Create new telemedicine call session
    */
   async createCall(
-    session: Omit<TelemedicineCallSession, "sessionId" | "startTime" | "state">,
+    session: Omit<TelemedicineCallSession, 'sessionId' | 'startTime' | 'state'>,
   ): Promise<TelemedicineCallSession> {
     if (!this.config) {
-      throw new Error("Call manager not initialized");
+      throw new Error('Call manager not initialized');
     }
 
     const newSession: TelemedicineCallSession = {
       ...session,
       sessionId: `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
       startTime: new Date().toISOString(),
-      state: "new" as RTCConnectionState,
+      state: 'new' as RTCConnectionState,
     };
 
     this.activeSessions.set(newSession.sessionId, newSession);
@@ -81,9 +80,9 @@ export class RTCCallManagerStub implements RTCCallManager {
 
     // Simulate connection process
     setTimeout(() => {
-      this.updateSessionState(newSession.sessionId, "connecting");
+      this.updateSessionState(newSession.sessionId, 'connecting');
       setTimeout(() => {
-        this.updateSessionState(newSession.sessionId, "connected");
+        this.updateSessionState(newSession.sessionId, 'connected');
       }, 1000);
     }, 500);
 
@@ -98,7 +97,7 @@ export class RTCCallManagerStub implements RTCCallManager {
    */
   async joinCall(
     sessionId: string,
-    participant: Omit<CallParticipant, "connectionState">,
+    participant: Omit<CallParticipant, 'connectionState'>,
   ): Promise<void> {
     const session = this.activeSessions.get(sessionId);
     if (!session) {
@@ -107,7 +106,7 @@ export class RTCCallManagerStub implements RTCCallManager {
 
     const newParticipant: CallParticipant = {
       ...participant,
-      connectionState: "connecting" as RTCConnectionState,
+      connectionState: 'connecting' as RTCConnectionState,
     };
 
     // Add participant to session
@@ -118,7 +117,7 @@ export class RTCCallManagerStub implements RTCCallManager {
 
     // Simulate connection
     setTimeout(() => {
-      newParticipant.connectionState = "connected";
+      newParticipant.connectionState = 'connected';
       this.onParticipantJoinedHandler?.(newParticipant);
     }, 800);
 
@@ -136,11 +135,11 @@ export class RTCCallManagerStub implements RTCCallManager {
 
     // Remove participant from session
     session.participants = session.participants.filter(
-      (p) => p.id !== participantId,
+      p => p.id !== participantId,
     );
     const sessionParticipants = this.participants.get(sessionId) || [];
     const updatedParticipants = sessionParticipants.filter(
-      (p) => p.id !== participantId,
+      p => p.id !== participantId,
     );
     this.participants.set(sessionId, updatedParticipants);
 
@@ -159,11 +158,11 @@ export class RTCCallManagerStub implements RTCCallManager {
 
     // Update session end time and state
     session.endTime = new Date().toISOString();
-    session.state = "closed";
+    session.state = 'closed';
     session.duration = Math.floor(
-      (new Date(session.endTime).getTime() -
-        new Date(session.startTime).getTime()) /
-        1000,
+      (new Date(session.endTime).getTime()
+        - new Date(session.startTime).getTime())
+        / 1000,
     );
 
     // Clean up
@@ -197,11 +196,10 @@ export class RTCCallManagerStub implements RTCCallManager {
    */
   async toggleAudio(sessionId: string, participantId: string): Promise<void> {
     const participants = this.participants.get(sessionId);
-    const participant = participants?.find((p) => p.id === participantId);
+    const participant = participants?.find(p => p.id === participantId);
 
     if (participant) {
-      participant.mediaState.audioEnabled =
-        !participant.mediaState.audioEnabled;
+      participant.mediaState.audioEnabled = !participant.mediaState.audioEnabled;
       this.log(
         `Toggled audio for participant ${participantId}: ${participant.mediaState.audioEnabled}`,
       );
@@ -213,11 +211,10 @@ export class RTCCallManagerStub implements RTCCallManager {
    */
   async toggleVideo(sessionId: string, participantId: string): Promise<void> {
     const participants = this.participants.get(sessionId);
-    const participant = participants?.find((p) => p.id === participantId);
+    const participant = participants?.find(p => p.id === participantId);
 
     if (participant) {
-      participant.mediaState.videoEnabled =
-        !participant.mediaState.videoEnabled;
+      participant.mediaState.videoEnabled = !participant.mediaState.videoEnabled;
       this.log(
         `Toggled video for participant ${participantId}: ${participant.mediaState.videoEnabled}`,
       );
@@ -232,11 +229,10 @@ export class RTCCallManagerStub implements RTCCallManager {
     participantId: string,
   ): Promise<void> {
     const participants = this.participants.get(sessionId);
-    const participant = participants?.find((p) => p.id === participantId);
+    const participant = participants?.find(p => p.id === participantId);
 
     if (participant) {
-      participant.mediaState.screenShareEnabled =
-        !participant.mediaState.screenShareEnabled;
+      participant.mediaState.screenShareEnabled = !participant.mediaState.screenShareEnabled;
       this.log(
         `Toggled screen share for participant ${participantId}: ${participant.mediaState.screenShareEnabled}`,
       );
@@ -263,7 +259,7 @@ export class RTCCallManagerStub implements RTCCallManager {
         jitter: Math.random() * 20, // ms
         roundTripTime: 50 + Math.random() * 100, // ms
         bitrate: 64 + Math.random() * 32, // kbps
-        codecName: "opus",
+        codecName: 'opus',
       },
       video: {
         packetsLost: Math.floor(Math.random() * 5),
@@ -275,15 +271,15 @@ export class RTCCallManagerStub implements RTCCallManager {
           height: 720,
         },
         bitrate: 800 + Math.random() * 400, // kbps
-        codecName: "H264",
+        codecName: 'H264',
       },
       connection: {
         state: session.state,
-        iceConnectionState: "connected" as
-          | "connected"
-          | "disconnected"
-          | "failed",
-        bundlePolicy: "balanced" as "balanced" | "max-bundle" | "max-compat",
+        iceConnectionState: 'connected' as
+          | 'connected'
+          | 'disconnected'
+          | 'failed',
+        bundlePolicy: 'balanced' as 'balanced' | 'max-bundle' | 'max-compat',
         signalStrength: 80 + Math.random() * 20, // 0-100
         bandwidth: {
           available: 2000 + Math.random() * 1000, // kbps
@@ -342,7 +338,7 @@ export class RTCCallManagerStub implements RTCCallManager {
         component: 'webrtc-call-manager',
         action: 'debug_log',
         message,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
     }
   }

@@ -1,18 +1,18 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import { corsHeaders } from "../_shared/cors.ts";
+import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { corsHeaders } from '../_shared/cors.ts';
 
-const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
-const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
+const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 
 interface PerformanceMetric {
   metric_type:
-    | "response_time"
-    | "error_rate"
-    | "throughput"
-    | "availability"
-    | "user_sessions";
+    | 'response_time'
+    | 'error_rate'
+    | 'throughput'
+    | 'availability'
+    | 'user_sessions';
   metric_value: number;
   timestamp: string;
   service_name: string;
@@ -24,7 +24,7 @@ interface PerformanceMetric {
 
 interface HealthCheckResult {
   service: string;
-  status: "healthy" | "degraded" | "unhealthy";
+  status: 'healthy' | 'degraded' | 'unhealthy';
   response_time: number;
   last_check: string;
   error_message?: string;
@@ -33,11 +33,11 @@ interface HealthCheckResult {
 
 interface PerformanceAlert {
   alert_type:
-    | "performance_degradation"
-    | "high_error_rate"
-    | "system_down"
-    | "sla_breach";
-  severity: "low" | "medium" | "high" | "critical";
+    | 'performance_degradation'
+    | 'high_error_rate'
+    | 'system_down'
+    | 'sla_breach';
+  severity: 'low' | 'medium' | 'high' | 'critical';
   description: string;
   affected_services: string[];
   metrics: any;
@@ -66,40 +66,40 @@ const PERFORMANCE_THRESHOLDS = {
   },
 };
 
-serve(async (req) => {
+serve(async req => {
   // Handle CORS preflight requests
-  if (req.method === "OPTIONS") {
-    return new Response("ok", { headers: corsHeaders });
+  if (req.method === 'OPTIONS') {
+    return new Response('ok', { headers: corsHeaders });
   }
 
   try {
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
     const url = new URL(req.url);
-    const action = url.pathname.split("/").pop();
+    const action = url.pathname.split('/').pop();
 
     switch (action) {
-      case "metrics":
+      case 'metrics':
         return await handleMetricsCollection(req, supabase);
-      case "health":
+      case 'health':
         return await handleHealthCheck(req, supabase);
-      case "alerts":
+      case 'alerts':
         return await handleAlertGeneration(req, supabase);
-      case "dashboard":
+      case 'dashboard':
         return await handleDashboardData(req, supabase);
       default:
         return await handleHealthCheck(req, supabase);
     }
   } catch (error) {
-    console.error("Healthcare Performance Monitor Error:", error);
+    console.error('Healthcare Performance Monitor Error:', error);
     return new Response(
       JSON.stringify({
-        error: "Internal server error",
+        error: 'Internal server error',
         message: error.message,
         timestamp: new Date().toISOString(),
       }),
       {
         status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       },
     );
   }
@@ -112,27 +112,27 @@ async function handleMetricsCollection(req: Request, supabase: any) {
     const { metrics }: { metrics: PerformanceMetric[] } = await req.json();
 
     // Validate metrics
-    const validatedMetrics = metrics.map((metric) => ({
+    const validatedMetrics = metrics.map(metric => ({
       ...metric,
       timestamp: metric.timestamp || new Date().toISOString(),
-      service_name: metric.service_name || "unknown",
+      service_name: metric.service_name || 'unknown',
     }));
 
     // Store metrics in database
     const { data, error } = await supabase
-      .from("performance_metrics")
+      .from('performance_metrics')
       .insert(validatedMetrics);
 
     if (error) {
-      console.error("Database error storing metrics:", error);
+      console.error('Database error storing metrics:', error);
       return new Response(
         JSON.stringify({
-          error: "Failed to store metrics",
+          error: 'Failed to store metrics',
           details: error.message,
         }),
         {
           status: 500,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         },
       );
     }
@@ -152,19 +152,19 @@ async function handleMetricsCollection(req: Request, supabase: any) {
       }),
       {
         status: 200,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       },
     );
   } catch (error) {
-    console.error("Error in metrics collection:", error);
+    console.error('Error in metrics collection:', error);
     return new Response(
       JSON.stringify({
-        error: "Invalid request format",
+        error: 'Invalid request format',
         message: error.message,
       }),
       {
         status: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       },
     );
   }
@@ -177,23 +177,23 @@ async function handleHealthCheck(req: Request, supabase: any) {
   const dbStart = performance.now();
   try {
     const { data, error } = await supabase
-      .from("clinics")
-      .select("id")
+      .from('clinics')
+      .select('id')
       .limit(1);
 
     const dbTime = performance.now() - dbStart;
     healthResults.push({
-      service: "database",
-      status: error ? "unhealthy" : dbTime > 100 ? "degraded" : "healthy",
+      service: 'database',
+      status: error ? 'unhealthy' : dbTime > 100 ? 'degraded' : 'healthy',
       response_time: Math.round(dbTime),
       last_check: new Date().toISOString(),
       error_message: error?.message,
-      metadata: { query_type: "connection_test" },
+      metadata: { query_type: 'connection_test' },
     });
   } catch (error) {
     healthResults.push({
-      service: "database",
-      status: "unhealthy",
+      service: 'database',
+      status: 'unhealthy',
       response_time: 0,
       last_check: new Date().toISOString(),
       error_message: error.message,
@@ -207,7 +207,7 @@ async function handleHealthCheck(req: Request, supabase: any) {
     const realtimeResponse = await fetch(
       `${supabaseUrl}/realtime/v1/websocket`,
       {
-        method: "HEAD",
+        method: 'HEAD',
         headers: {
           Authorization: `Bearer ${supabaseAnonKey}`,
         },
@@ -216,20 +216,20 @@ async function handleHealthCheck(req: Request, supabase: any) {
 
     const realtimeTime = performance.now() - realtimeStart;
     healthResults.push({
-      service: "realtime",
+      service: 'realtime',
       status: realtimeResponse.ok
         ? realtimeTime > 50
-          ? "degraded"
-          : "healthy"
-        : "unhealthy",
+          ? 'degraded'
+          : 'healthy'
+        : 'unhealthy',
       response_time: Math.round(realtimeTime),
       last_check: new Date().toISOString(),
       metadata: { status_code: realtimeResponse.status },
     });
   } catch (error) {
     healthResults.push({
-      service: "realtime",
-      status: "unhealthy",
+      service: 'realtime',
+      status: 'unhealthy',
       response_time: 0,
       last_check: new Date().toISOString(),
       error_message: error.message,
@@ -240,17 +240,17 @@ async function handleHealthCheck(req: Request, supabase: any) {
   const edgeFunctionsStart = performance.now();
   try {
     const functionChecks = [
-      "patient-lookup",
-      "appointment-reminders",
-      "anvisa-adverse-events",
+      'patient-lookup',
+      'appointment-reminders',
+      'anvisa-adverse-events',
     ];
 
     const functionResults = await Promise.allSettled(
-      functionChecks.map(async (funcName) => {
+      functionChecks.map(async funcName => {
         const response = await fetch(
           `${supabaseUrl}/functions/v1/${funcName}`,
           {
-            method: "OPTIONS",
+            method: 'OPTIONS',
             headers: {
               Authorization: `Bearer ${supabaseServiceKey}`,
             },
@@ -262,17 +262,16 @@ async function handleHealthCheck(req: Request, supabase: any) {
 
     const edgeFunctionsTime = performance.now() - edgeFunctionsStart;
     const healthyFunctions = functionResults.filter(
-      (result) => result.status === "fulfilled" && result.value.ok,
+      result => result.status === 'fulfilled' && result.value.ok,
     ).length;
 
     healthResults.push({
-      service: "edge_functions",
-      status:
-        healthyFunctions === functionChecks.length
-          ? "healthy"
-          : healthyFunctions > 0
-            ? "degraded"
-            : "unhealthy",
+      service: 'edge_functions',
+      status: healthyFunctions === functionChecks.length
+        ? 'healthy'
+        : healthyFunctions > 0
+        ? 'degraded'
+        : 'unhealthy',
       response_time: Math.round(edgeFunctionsTime / functionChecks.length),
       last_check: new Date().toISOString(),
       metadata: {
@@ -283,8 +282,8 @@ async function handleHealthCheck(req: Request, supabase: any) {
     });
   } catch (error) {
     healthResults.push({
-      service: "edge_functions",
-      status: "unhealthy",
+      service: 'edge_functions',
+      status: 'unhealthy',
       response_time: 0,
       last_check: new Date().toISOString(),
       error_message: error.message,
@@ -292,11 +291,11 @@ async function handleHealthCheck(req: Request, supabase: any) {
   }
 
   // Overall system health
-  const overallStatus = healthResults.every((r) => r.status === "healthy")
-    ? "healthy"
-    : healthResults.some((r) => r.status === "unhealthy")
-      ? "unhealthy"
-      : "degraded";
+  const overallStatus = healthResults.every(r => r.status === 'healthy')
+    ? 'healthy'
+    : healthResults.some(r => r.status === 'unhealthy')
+    ? 'unhealthy'
+    : 'degraded';
 
   const totalResponseTime = performance.now() - startTime;
 
@@ -309,33 +308,32 @@ async function handleHealthCheck(req: Request, supabase: any) {
       sla_compliance: {
         target_response_time: PERFORMANCE_THRESHOLDS.response_time.good,
         actual_response_time: Math.round(totalResponseTime),
-        meets_sla:
-          totalResponseTime < PERFORMANCE_THRESHOLDS.response_time.good,
+        meets_sla: totalResponseTime < PERFORMANCE_THRESHOLDS.response_time.good,
       },
     }),
     {
       status: 200,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     },
   );
 }
 
 async function handleAlertGeneration(req: Request, supabase: any) {
   try {
-    const { clinic_id, time_window = "5m" } = await req.json();
+    const { clinic_id, time_window = '5m' } = await req.json();
 
     // Get recent performance metrics
     const timeWindowMs = parseTimeWindow(time_window);
     const since = new Date(Date.now() - timeWindowMs).toISOString();
 
     let query = supabase
-      .from("performance_metrics")
-      .select("*")
-      .gte("timestamp", since)
-      .order("timestamp", { ascending: false });
+      .from('performance_metrics')
+      .select('*')
+      .gte('timestamp', since)
+      .order('timestamp', { ascending: false });
 
     if (clinic_id) {
-      query = query.eq("clinic_id", clinic_id);
+      query = query.eq('clinic_id', clinic_id);
     }
 
     const { data: metrics, error } = await query;
@@ -356,19 +354,19 @@ async function handleAlertGeneration(req: Request, supabase: any) {
       }),
       {
         status: 200,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       },
     );
   } catch (error) {
-    console.error("Error generating alerts:", error);
+    console.error('Error generating alerts:', error);
     return new Response(
       JSON.stringify({
-        error: "Failed to generate alerts",
+        error: 'Failed to generate alerts',
         message: error.message,
       }),
       {
         status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       },
     );
   }
@@ -376,20 +374,20 @@ async function handleAlertGeneration(req: Request, supabase: any) {
 async function handleDashboardData(req: Request, supabase: any) {
   try {
     const url = new URL(req.url);
-    const clinic_id = url.searchParams.get("clinic_id");
-    const time_range = url.searchParams.get("time_range") || "1h";
+    const clinic_id = url.searchParams.get('clinic_id');
+    const time_range = url.searchParams.get('time_range') || '1h';
 
     const timeWindowMs = parseTimeWindow(time_range);
     const since = new Date(Date.now() - timeWindowMs).toISOString();
 
     // Get performance metrics summary
     let metricsQuery = supabase
-      .from("performance_metrics")
-      .select("*")
-      .gte("timestamp", since);
+      .from('performance_metrics')
+      .select('*')
+      .gte('timestamp', since);
 
     if (clinic_id) {
-      metricsQuery = metricsQuery.eq("clinic_id", clinic_id);
+      metricsQuery = metricsQuery.eq('clinic_id', clinic_id);
     }
 
     const { data: metrics, error: metricsError } = await metricsQuery;
@@ -403,20 +401,20 @@ async function handleDashboardData(req: Request, supabase: any) {
 
     // Get recent alerts
     let alertsQuery = supabase
-      .from("performance_alerts")
-      .select("*")
-      .gte("timestamp", since)
-      .order("timestamp", { ascending: false })
+      .from('performance_alerts')
+      .select('*')
+      .gte('timestamp', since)
+      .order('timestamp', { ascending: false })
       .limit(10);
 
     if (clinic_id) {
-      alertsQuery = alertsQuery.eq("clinic_id", clinic_id);
+      alertsQuery = alertsQuery.eq('clinic_id', clinic_id);
     }
 
     const { data: alerts, error: alertsError } = await alertsQuery;
 
     if (alertsError) {
-      console.warn("Failed to fetch alerts:", alertsError.message);
+      console.warn('Failed to fetch alerts:', alertsError.message);
     }
 
     return new Response(
@@ -429,19 +427,19 @@ async function handleDashboardData(req: Request, supabase: any) {
       }),
       {
         status: 200,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       },
     );
   } catch (error) {
-    console.error("Error generating dashboard data:", error);
+    console.error('Error generating dashboard data:', error);
     return new Response(
       JSON.stringify({
-        error: "Failed to generate dashboard data",
+        error: 'Failed to generate dashboard data',
         message: error.message,
       }),
       {
         status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       },
     );
   }
@@ -466,18 +464,19 @@ async function generatePerformanceAlerts(
 
   // Check each service for threshold violations
   for (const [serviceKey, serviceMetrics] of Object.entries(metricsByService)) {
-    const [serviceName, metricType] = serviceKey.split("_");
+    const [serviceName, metricType] = serviceKey.split('_');
 
-    if (metricType === "response_time") {
-      const avgResponseTime =
-        serviceMetrics.reduce((sum, m) => sum + m.metric_value, 0) /
-        serviceMetrics.length;
+    if (metricType === 'response_time') {
+      const avgResponseTime = serviceMetrics.reduce((sum, m) => sum + m.metric_value, 0)
+        / serviceMetrics.length;
 
       if (avgResponseTime > PERFORMANCE_THRESHOLDS.response_time.poor) {
         alerts.push({
-          alert_type: "performance_degradation",
-          severity: "critical",
-          description: `${serviceName} response time (${Math.round(avgResponseTime)}ms) exceeds critical threshold (${PERFORMANCE_THRESHOLDS.response_time.poor}ms)`,
+          alert_type: 'performance_degradation',
+          severity: 'critical',
+          description: `${serviceName} response time (${
+            Math.round(avgResponseTime)
+          }ms) exceeds critical threshold (${PERFORMANCE_THRESHOLDS.response_time.poor}ms)`,
           affected_services: [serviceName],
           metrics: {
             avg_response_time: avgResponseTime,
@@ -489,9 +488,11 @@ async function generatePerformanceAlerts(
         avgResponseTime > PERFORMANCE_THRESHOLDS.response_time.acceptable
       ) {
         alerts.push({
-          alert_type: "performance_degradation",
-          severity: "medium",
-          description: `${serviceName} response time (${Math.round(avgResponseTime)}ms) exceeds acceptable threshold (${PERFORMANCE_THRESHOLDS.response_time.acceptable}ms)`,
+          alert_type: 'performance_degradation',
+          severity: 'medium',
+          description: `${serviceName} response time (${
+            Math.round(avgResponseTime)
+          }ms) exceeds acceptable threshold (${PERFORMANCE_THRESHOLDS.response_time.acceptable}ms)`,
           affected_services: [serviceName],
           metrics: {
             avg_response_time: avgResponseTime,
@@ -502,16 +503,17 @@ async function generatePerformanceAlerts(
       }
     }
 
-    if (metricType === "error_rate") {
-      const avgErrorRate =
-        serviceMetrics.reduce((sum, m) => sum + m.metric_value, 0) /
-        serviceMetrics.length;
+    if (metricType === 'error_rate') {
+      const avgErrorRate = serviceMetrics.reduce((sum, m) => sum + m.metric_value, 0)
+        / serviceMetrics.length;
 
       if (avgErrorRate > PERFORMANCE_THRESHOLDS.error_rate.poor) {
         alerts.push({
-          alert_type: "high_error_rate",
-          severity: "critical",
-          description: `${serviceName} error rate (${avgErrorRate.toFixed(2)}%) exceeds critical threshold (${PERFORMANCE_THRESHOLDS.error_rate.poor}%)`,
+          alert_type: 'high_error_rate',
+          severity: 'critical',
+          description: `${serviceName} error rate (${
+            avgErrorRate.toFixed(2)
+          }%) exceeds critical threshold (${PERFORMANCE_THRESHOLDS.error_rate.poor}%)`,
           affected_services: [serviceName],
           metrics: {
             avg_error_rate: avgErrorRate,
@@ -526,9 +528,9 @@ async function generatePerformanceAlerts(
   // Store alerts in database
   if (alerts.length > 0) {
     try {
-      await supabase.from("performance_alerts").insert(alerts);
+      await supabase.from('performance_alerts').insert(alerts);
     } catch (error) {
-      console.error("Failed to store alerts:", error);
+      console.error('Failed to store alerts:', error);
     }
   }
 
@@ -557,11 +559,11 @@ function calculatePerformanceSummary(metrics: PerformanceMetric[]) {
         };
       }
 
-      if (metric.metric_type === "response_time") {
+      if (metric.metric_type === 'response_time') {
         acc[metric.service_name].response_times.push(metric.metric_value);
-      } else if (metric.metric_type === "error_rate") {
+      } else if (metric.metric_type === 'error_rate') {
         acc[metric.service_name].error_rates.push(metric.metric_value);
-      } else if (metric.metric_type === "throughput") {
+      } else if (metric.metric_type === 'throughput') {
         acc[metric.service_name].total_requests += metric.metric_value;
       }
 
@@ -576,27 +578,24 @@ function calculatePerformanceSummary(metrics: PerformanceMetric[]) {
   let totalRequests = 0;
 
   for (const [serviceName, data] of Object.entries(serviceMetrics)) {
-    const avgResponseTime =
-      data.response_times.length > 0
-        ? data.response_times.reduce((a: number, b: number) => a + b, 0) /
-          data.response_times.length
-        : 0;
-    const avgErrorRate =
-      data.error_rates.length > 0
-        ? data.error_rates.reduce((a: number, b: number) => a + b, 0) /
-          data.error_rates.length
-        : 0;
+    const avgResponseTime = data.response_times.length > 0
+      ? data.response_times.reduce((a: number, b: number) => a + b, 0)
+        / data.response_times.length
+      : 0;
+    const avgErrorRate = data.error_rates.length > 0
+      ? data.error_rates.reduce((a: number, b: number) => a + b, 0)
+        / data.error_rates.length
+      : 0;
 
     summary.services[serviceName] = {
       avg_response_time: Math.round(avgResponseTime),
       error_rate: parseFloat(avgErrorRate.toFixed(2)),
       total_requests: data.total_requests,
-      sla_compliance:
-        avgResponseTime < PERFORMANCE_THRESHOLDS.response_time.good
-          ? 100
-          : avgResponseTime < PERFORMANCE_THRESHOLDS.response_time.acceptable
-            ? 75
-            : 50,
+      sla_compliance: avgResponseTime < PERFORMANCE_THRESHOLDS.response_time.good
+        ? 100
+        : avgResponseTime < PERFORMANCE_THRESHOLDS.response_time.acceptable
+        ? 75
+        : 50,
     };
 
     totalResponseTime += avgResponseTime * data.response_times.length;
@@ -614,22 +613,19 @@ function calculatePerformanceSummary(metrics: PerformanceMetric[]) {
   );
 
   summary.total_requests = totalRequests;
-  summary.avg_response_time =
-    totalResponseTimeEntries > 0
-      ? Math.round(totalResponseTime / totalResponseTimeEntries)
-      : 0;
-  summary.error_rate =
-    totalErrorRateEntries > 0
-      ? parseFloat((totalErrors / totalErrorRateEntries).toFixed(2))
-      : 0;
+  summary.avg_response_time = totalResponseTimeEntries > 0
+    ? Math.round(totalResponseTime / totalResponseTimeEntries)
+    : 0;
+  summary.error_rate = totalErrorRateEntries > 0
+    ? parseFloat((totalErrors / totalErrorRateEntries).toFixed(2))
+    : 0;
   summary.availability = summary.error_rate < 1 ? 99.9 : 99.0;
-  summary.sla_compliance =
-    summary.avg_response_time < PERFORMANCE_THRESHOLDS.response_time.good
-      ? 100
-      : summary.avg_response_time <
-          PERFORMANCE_THRESHOLDS.response_time.acceptable
-        ? 75
-        : 50;
+  summary.sla_compliance = summary.avg_response_time < PERFORMANCE_THRESHOLDS.response_time.good
+    ? 100
+    : summary.avg_response_time
+        < PERFORMANCE_THRESHOLDS.response_time.acceptable
+    ? 75
+    : 50;
 
   return summary;
 }
@@ -642,20 +638,20 @@ function parseTimeWindow(timeWindow: string): number {
   const unit = match[2];
 
   switch (unit) {
-    case "s":
+    case 's':
       return value * 1000;
-    case "m":
+    case 'm':
       return value * 60 * 1000;
-    case "h":
+    case 'h':
       return value * 60 * 60 * 1000;
-    case "d":
+    case 'd':
       return value * 24 * 60 * 60 * 1000;
     default:
       return 5 * 60 * 1000;
   }
 }
 
-/* 
+/*
 Healthcare Performance Monitor Edge Function
 
 This function provides comprehensive performance monitoring for healthcare applications

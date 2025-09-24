@@ -3,10 +3,10 @@
  * Provides real-time performance monitoring and optimization insights
  */
 
-import { Router } from "express";
-import { AestheticClinicPerformanceOptimizer } from "../services/performance/aesthetic-clinic-performance-optimizer";
-import { PerformanceMonitor } from "../middleware/performance-middleware";
-import { ErrorMapper } from "@neonpro/shared/errors";
+import { ErrorMapper } from '@neonpro/shared/errors';
+import { Router } from 'express';
+import { PerformanceMonitor } from '../middleware/performance-middleware';
+import { AestheticClinicPerformanceOptimizer } from '../services/performance/aesthetic-clinic-performance-optimizer';
 
 export const createPerformanceDashboardRoutes = (
   optimizer: AestheticClinicPerformanceOptimizer,
@@ -17,29 +17,31 @@ export const createPerformanceDashboardRoutes = (
   /**
    * Get current performance metrics
    */
-  router.get("/metrics", async (req, res) => {
+  router.get('/metrics', async (req, res) => {
     try {
       const timeRange = req.query.timeRange as string;
       let timeRangeObj;
-      
+
       if (timeRange) {
-        const [start, end] = timeRange.split(",");
+        const [start, end] = timeRange.split(',');
         timeRangeObj = { start, end };
       }
 
       const metrics = optimizer.getPerformanceMetrics(timeRangeObj);
       const dbMetrics = optimizer.getPerformanceMetrics(timeRangeObj);
-      
+
       res.json({
         success: true,
         data: {
           applicationMetrics: metrics,
           databaseMetrics: dbMetrics,
           apiMetrics: monitor.getMetrics(
-            timeRangeObj ? {
-              start: new Date(timeRangeObj.start).getTime(),
-              end: new Date(timeRangeObj.end).getTime(),
-            } : undefined
+            timeRangeObj
+              ? {
+                start: new Date(timeRangeObj.start).getTime(),
+                end: new Date(timeRangeObj.end).getTime(),
+              }
+              : undefined,
           ),
           statistics: {
             application: calculateApplicationStatistics(metrics),
@@ -51,10 +53,10 @@ export const createPerformanceDashboardRoutes = (
       });
     } catch {
       const mappedError = ErrorMapper.mapError(error, {
-        action: "get_performance_metrics",
+        action: 'get_performance_metrics',
         timestamp: new Date().toISOString(),
       });
-      
+
       res.status(500).json({
         success: false,
         error: mappedError.message,
@@ -66,10 +68,10 @@ export const createPerformanceDashboardRoutes = (
   /**
    * Get performance insights and recommendations
    */
-  router.get("/insights", async (req, res) => {
+  router.get('/insights', async (req, res) => {
     try {
       const insights = await generatePerformanceInsights(optimizer, monitor);
-      
+
       res.json({
         success: true,
         data: insights,
@@ -77,10 +79,10 @@ export const createPerformanceDashboardRoutes = (
       });
     } catch {
       const mappedError = ErrorMapper.mapError(error, {
-        action: "get_performance_insights",
+        action: 'get_performance_insights',
         timestamp: new Date().toISOString(),
       });
-      
+
       res.status(500).json({
         success: false,
         error: mappedError.message,
@@ -92,10 +94,10 @@ export const createPerformanceDashboardRoutes = (
   /**
    * Get cache performance data
    */
-  router.get("/cache", async (req, res) => {
+  router.get('/cache', async (req, res) => {
     try {
       const cacheStats = getCacheStatistics(optimizer);
-      
+
       res.json({
         success: true,
         data: cacheStats,
@@ -103,10 +105,10 @@ export const createPerformanceDashboardRoutes = (
       });
     } catch {
       const mappedError = ErrorMapper.mapError(error, {
-        action: "get_cache_statistics",
+        action: 'get_cache_statistics',
         timestamp: new Date().toISOString(),
       });
-      
+
       res.status(500).json({
         success: false,
         error: mappedError.message,
@@ -118,26 +120,26 @@ export const createPerformanceDashboardRoutes = (
   /**
    * Clear cache entries
    */
-  router.post("/cache/clear", async (req, res) => {
+  router.post('/cache/clear', async (req, res) => {
     try {
       const { pattern } = req.body;
-      
+
       optimizer.clearCache(pattern);
-      
+
       res.json({
         success: true,
-        message: pattern 
+        message: pattern
           ? `Cache entries matching pattern '${pattern}' cleared`
-          : "All cache entries cleared",
+          : 'All cache entries cleared',
         timestamp: new Date().toISOString(),
       });
     } catch {
       const mappedError = ErrorMapper.mapError(error, {
-        action: "clear_cache",
+        action: 'clear_cache',
         pattern: req.body.pattern,
         timestamp: new Date().toISOString(),
       });
-      
+
       res.status(500).json({
         success: false,
         error: mappedError.message,
@@ -149,21 +151,21 @@ export const createPerformanceDashboardRoutes = (
   /**
    * Warm up cache
    */
-  router.post("/cache/warmup", async (req, res) => {
+  router.post('/cache/warmup', async (req, res) => {
     try {
       await optimizer.warmUpCache();
-      
+
       res.json({
         success: true,
-        message: "Cache warm-up initiated",
+        message: 'Cache warm-up initiated',
         timestamp: new Date().toISOString(),
       });
     } catch {
       const mappedError = ErrorMapper.mapError(error, {
-        action: "warm_up_cache",
+        action: 'warm_up_cache',
         timestamp: new Date().toISOString(),
       });
-      
+
       res.status(500).json({
         success: false,
         error: mappedError.message,
@@ -175,19 +177,19 @@ export const createPerformanceDashboardRoutes = (
   /**
    * Get query performance data
    */
-  router.get("/queries", async (req, res) => {
+  router.get('/queries', async (req, res) => {
     try {
       const timeRange = req.query.timeRange as string;
       let timeRangeObj;
-      
+
       if (timeRange) {
-        const [start, end] = timeRange.split(",");
+        const [start, end] = timeRange.split(',');
         timeRangeObj = { start, end };
       }
 
       const queryMetrics = optimizer.getPerformanceMetrics(timeRangeObj);
       const queryStats = calculateQueryStatistics(queryMetrics);
-      
+
       res.json({
         success: true,
         data: {
@@ -200,10 +202,10 @@ export const createPerformanceDashboardRoutes = (
       });
     } catch {
       const mappedError = ErrorMapper.mapError(error, {
-        action: "get_query_performance",
+        action: 'get_query_performance',
         timestamp: new Date().toISOString(),
       });
-      
+
       res.status(500).json({
         success: false,
         error: mappedError.message,
@@ -215,10 +217,10 @@ export const createPerformanceDashboardRoutes = (
   /**
    * Get image optimization metrics
    */
-  router.get("/images", async (req, res) => {
+  router.get('/images', async (req, res) => {
     try {
       const imageMetrics = getImageOptimizationMetrics(optimizer);
-      
+
       res.json({
         success: true,
         data: imageMetrics,
@@ -226,10 +228,10 @@ export const createPerformanceDashboardRoutes = (
       });
     } catch {
       const mappedError = ErrorMapper.mapError(error, {
-        action: "get_image_metrics",
+        action: 'get_image_metrics',
         timestamp: new Date().toISOString(),
       });
-      
+
       res.status(500).json({
         success: false,
         error: mappedError.message,
@@ -241,42 +243,44 @@ export const createPerformanceDashboardRoutes = (
   /**
    * Get real-time performance stream
    */
-  router.get("/stream", async (req, res) => {
+  router.get('/stream', async (req, res) => {
     try {
-      res.setHeader("Content-Type", "text/event-stream");
-      res.setHeader("Cache-Control", "no-cache");
-      res.setHeader("Connection", "keep-alive");
-      
+      res.setHeader('Content-Type', 'text/event-stream');
+      res.setHeader('Cache-Control', 'no-cache');
+      res.setHeader('Connection', 'keep-alive');
+
       const sendMetrics = () => {
         const _metrics = optimizer.getPerformanceMetrics();
         const stats = monitor.getStatistics();
-        
-        res.write(`data: ${JSON.stringify({
-          type: "metrics",
-          data: {
-            metrics,
-            statistics: stats,
-            timestamp: new Date().toISOString(),
-          },
-        })}\n\n`);
+
+        res.write(`data: ${
+          JSON.stringify({
+            type: 'metrics',
+            data: {
+              metrics,
+              statistics: stats,
+              timestamp: new Date().toISOString(),
+            },
+          })
+        }\n\n`);
       };
 
       // Send initial metrics
       sendMetrics();
-      
+
       // Send metrics every 5 seconds
       const interval = setInterval(sendMetrics, 5000);
-      
+
       // Cleanup on client disconnect
-      req.on("close", () => {
+      req.on('close', () => {
         clearInterval(interval);
       });
     } catch {
       const mappedError = ErrorMapper.mapError(error, {
-        action: "performance_stream",
+        action: 'performance_stream',
         timestamp: new Date().toISOString(),
       });
-      
+
       res.status(500).json({
         success: false,
         error: mappedError.message,
@@ -288,13 +292,16 @@ export const createPerformanceDashboardRoutes = (
   /**
    * Performance health check
    */
-  router.get("/health", async (req, res) => {
+  router.get('/health', async (req, res) => {
     try {
       const health = await getPerformanceHealth(optimizer, monitor);
-      
-      const statusCode = health.status === "healthy" ? 200 : 
-                        health.status === "degraded" ? 503 : 500;
-      
+
+      const statusCode = health.status === 'healthy'
+        ? 200
+        : health.status === 'degraded'
+        ? 503
+        : 500;
+
       res.status(statusCode).json({
         success: true,
         data: health,
@@ -302,10 +309,10 @@ export const createPerformanceDashboardRoutes = (
       });
     } catch {
       const mappedError = ErrorMapper.mapError(error, {
-        action: "performance_health_check",
+        action: 'performance_health_check',
         timestamp: new Date().toISOString(),
       });
-      
+
       res.status(500).json({
         success: false,
         error: mappedError.message,
@@ -317,23 +324,25 @@ export const createPerformanceDashboardRoutes = (
   /**
    * Export performance data
    */
-  router.get("/export", async (req, res) => {
+  router.get('/export', async (req, res) => {
     try {
-      const format = req.query.format as string || "json";
+      const format = req.query.format as string || 'json';
       const timeRange = req.query.timeRange as string;
-      
+
       let timeRangeObj;
       if (timeRange) {
-        const [start, end] = timeRange.split(",");
+        const [start, end] = timeRange.split(',');
         timeRangeObj = { start, end };
       }
 
       const metrics = optimizer.getPerformanceMetrics(timeRangeObj);
       const apiMetrics = monitor.getMetrics(
-        timeRangeObj ? {
-          start: new Date(timeRangeObj.start).getTime(),
-          end: new Date(timeRangeObj.end).getTime(),
-        } : undefined
+        timeRangeObj
+          ? {
+            start: new Date(timeRangeObj.start).getTime(),
+            end: new Date(timeRangeObj.end).getTime(),
+          }
+          : undefined,
       );
 
       let exportData;
@@ -341,29 +350,29 @@ export const createPerformanceDashboardRoutes = (
       let filename;
 
       switch (format) {
-        case "csv":
+        case 'csv':
           exportData = exportToCsv(metrics, apiMetrics);
-          contentType = "text/csv";
+          contentType = 'text/csv';
           filename = `performance_metrics_${new Date().toISOString().split('T')[0]}.csv`;
           break;
-        case "json":
+        case 'json':
         default:
           exportData = JSON.stringify({ metrics, apiMetrics }, null, 2);
-          contentType = "application/json";
+          contentType = 'application/json';
           filename = `performance_metrics_${new Date().toISOString().split('T')[0]}.json`;
           break;
       }
 
-      res.setHeader("Content-Type", contentType);
-      res.setHeader("Content-Disposition", `attachment; filename="${filename}"`);
+      res.setHeader('Content-Type', contentType);
+      res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
       res.send(exportData);
     } catch {
       const mappedError = ErrorMapper.mapError(error, {
-        action: "export_performance_data",
+        action: 'export_performance_data',
         format: req.query.format,
         timestamp: new Date().toISOString(),
       });
-      
+
       res.status(500).json({
         success: false,
         error: mappedError.message,
@@ -392,12 +401,12 @@ function calculateApplicationStatistics(metrics: any[]) {
 
   const responseTimes = metrics.map(m => m.duration || 0);
   const errors = metrics.filter(m => !m.success).length;
-  
+
   responseTimes.sort((a, b) => a - b);
-  
+
   const p95Index = Math.floor(responseTimes.length * 0.95);
   const p99Index = Math.floor(responseTimes.length * 0.99);
-  
+
   return {
     totalRequests: metrics.length,
     averageResponseTime: responseTimes.reduce((sum, time) => sum + time, 0) / responseTimes.length,
@@ -424,7 +433,7 @@ function calculateDatabaseStatistics(metrics: any[]) {
 
   const queryTimes = metrics.map(m => m.duration || 0);
   const slowQueries = queryTimes.filter(time => time > 1000).length;
-  
+
   return {
     totalQueries: metrics.length,
     averageQueryTime: queryTimes.reduce((sum, time) => sum + time, 0) / queryTimes.length,
@@ -450,15 +459,15 @@ function calculateQueryStatistics(metrics: any[]) {
 
   const queryTimes = metrics.map(m => m.duration || 0);
   const slowQueries = queryTimes.filter(time => time > 1000).length;
-  
+
   const queriesByTable = metrics.reduce((acc, metric) => {
-    const table = metric.table || "unknown";
+    const table = metric.table || 'unknown';
     acc[table] = (acc[table] || 0) + 1;
     return acc;
   }, {} as Record<string, number>);
-  
+
   const queriesByOperation = metrics.reduce((acc, metric) => {
-    const operation = metric.operation || "unknown";
+    const operation = metric.operation || 'unknown';
     acc[operation] = (acc[operation] || 0) + 1;
     return acc;
   }, {} as Record<string, number>);
@@ -478,25 +487,29 @@ function calculateQueryStatistics(metrics: any[]) {
  */
 function generateQueryRecommendations(stats: any) {
   const recommendations = [];
-  
+
   if (stats.slowQueryRate > 10) {
     recommendations.push({
-      type: "warning",
-      category: "query_performance",
-      message: `${stats.slowQueryRate.toFixed(1)}% of queries are slow (>1s). Consider adding indexes or optimizing queries.`,
-      priority: "high",
+      type: 'warning',
+      category: 'query_performance',
+      message: `${
+        stats.slowQueryRate.toFixed(1)
+      }% of queries are slow (>1s). Consider adding indexes or optimizing queries.`,
+      priority: 'high',
     });
   }
-  
+
   if (stats.averageQueryTime > 500) {
     recommendations.push({
-      type: "warning",
-      category: "query_performance",
-      message: `Average query time is ${stats.averageQueryTime.toFixed(0)}ms. Consider database optimization.`,
-      priority: "medium",
+      type: 'warning',
+      category: 'query_performance',
+      message: `Average query time is ${
+        stats.averageQueryTime.toFixed(0)
+      }ms. Consider database optimization.`,
+      priority: 'medium',
     });
   }
-  
+
   return recommendations;
 }
 
@@ -524,75 +537,83 @@ async function generatePerformanceInsights(
 ) {
   const _metrics = optimizer.getPerformanceMetrics();
   const stats = monitor.getStatistics();
-  
+
   const insights = [];
-  
+
   // Response time insights
   if (stats.averageResponseTime > 1000) {
     insights.push({
-      type: "performance_issue",
-      category: "response_time",
-      severity: "high",
-      title: "High Average Response Time",
-      description: `Average response time is ${stats.averageResponseTime.toFixed(0)}ms, which is above the recommended threshold.`,
-      recommendation: "Consider implementing caching, optimizing database queries, or scaling resources.",
+      type: 'performance_issue',
+      category: 'response_time',
+      severity: 'high',
+      title: 'High Average Response Time',
+      description: `Average response time is ${
+        stats.averageResponseTime.toFixed(0)
+      }ms, which is above the recommended threshold.`,
+      recommendation:
+        'Consider implementing caching, optimizing database queries, or scaling resources.',
     });
   }
-  
+
   // Error rate insights
   if (stats.errorRate > 5) {
     insights.push({
-      type: "reliability_issue",
-      category: "error_rate",
-      severity: "high",
-      title: "High Error Rate",
-      description: `Error rate is ${stats.errorRate.toFixed(1)}%, which is above the acceptable threshold.`,
-      recommendation: "Review error logs and implement better error handling and monitoring.",
+      type: 'reliability_issue',
+      category: 'error_rate',
+      severity: 'high',
+      title: 'High Error Rate',
+      description: `Error rate is ${
+        stats.errorRate.toFixed(1)
+      }%, which is above the acceptable threshold.`,
+      recommendation: 'Review error logs and implement better error handling and monitoring.',
     });
   }
-  
+
   // Memory usage insights
   if (stats.memoryUsage.average > 300 * 1024 * 1024) {
     insights.push({
-      type: "resource_issue",
-      category: "memory_usage",
-      severity: "medium",
-      title: "High Memory Usage",
-      description: `Average memory usage is ${(stats.memoryUsage.average / 1024 / 1024).toFixed(0)}MB.`,
-      recommendation: "Consider implementing memory optimization and garbage collection strategies.",
+      type: 'resource_issue',
+      category: 'memory_usage',
+      severity: 'medium',
+      title: 'High Memory Usage',
+      description: `Average memory usage is ${
+        (stats.memoryUsage.average / 1024 / 1024).toFixed(0)
+      }MB.`,
+      recommendation:
+        'Consider implementing memory optimization and garbage collection strategies.',
     });
   }
-  
+
   return {
     summary: {
       totalIssues: insights.length,
-      criticalIssues: insights.filter(i => i.severity === "high").length,
-      warningIssues: insights.filter(i => i.severity === "medium").length,
+      criticalIssues: insights.filter(i => i.severity === 'high').length,
+      warningIssues: insights.filter(i => i.severity === 'medium').length,
     },
     insights,
     trends: {
-      responseTime: "stable", // Would need historical data
-      errorRate: "stable",
-      memoryUsage: "stable",
+      responseTime: 'stable', // Would need historical data
+      errorRate: 'stable',
+      memoryUsage: 'stable',
     },
     recommendations: [
       {
-        category: "performance",
-        priority: "high",
-        action: "Implement caching for frequently accessed aesthetic clinic data",
-        expectedImpact: "Reduce response times by 40-60%",
+        category: 'performance',
+        priority: 'high',
+        action: 'Implement caching for frequently accessed aesthetic clinic data',
+        expectedImpact: 'Reduce response times by 40-60%',
       },
       {
-        category: "database",
-        priority: "medium",
-        action: "Optimize database queries and add proper indexing",
-        expectedImpact: "Improve query performance by 30-50%",
+        category: 'database',
+        priority: 'medium',
+        action: 'Optimize database queries and add proper indexing',
+        expectedImpact: 'Improve query performance by 30-50%',
       },
       {
-        category: "monitoring",
-        priority: "medium",
-        action: "Set up automated alerts for performance thresholds",
-        expectedImpact: "Early detection of performance issues",
+        category: 'monitoring',
+        priority: 'medium',
+        action: 'Set up automated alerts for performance thresholds',
+        expectedImpact: 'Early detection of performance issues',
       },
     ],
   };
@@ -606,37 +627,37 @@ async function getPerformanceHealth(
   monitor: PerformanceMonitor,
 ) {
   const stats = monitor.getStatistics();
-  
-  let status: "healthy" | "degraded" | "unhealthy" = "healthy";
+
+  let status: 'healthy' | 'degraded' | 'unhealthy' = 'healthy';
   const issues = [];
-  
+
   // Check response time
   if (stats.averageResponseTime > 2000) {
-    status = "unhealthy";
-    issues.push("Response time too high");
+    status = 'unhealthy';
+    issues.push('Response time too high');
   } else if (stats.averageResponseTime > 1000) {
-    status = "degraded";
-    issues.push("Response time elevated");
+    status = 'degraded';
+    issues.push('Response time elevated');
   }
-  
+
   // Check error rate
   if (stats.errorRate > 10) {
-    status = "unhealthy";
-    issues.push("Error rate too high");
+    status = 'unhealthy';
+    issues.push('Error rate too high');
   } else if (stats.errorRate > 5) {
-    status = "degraded";
-    issues.push("Error rate elevated");
+    status = 'degraded';
+    issues.push('Error rate elevated');
   }
-  
+
   // Check memory usage
   if (stats.memoryUsage.peak > 400 * 1024 * 1024) {
-    status = "unhealthy";
-    issues.push("Memory usage too high");
+    status = 'unhealthy';
+    issues.push('Memory usage too high');
   } else if (stats.memoryUsage.peak > 300 * 1024 * 1024) {
-    status = "degraded";
-    issues.push("Memory usage elevated");
+    status = 'degraded';
+    issues.push('Memory usage elevated');
   }
-  
+
   return {
     status,
     issues,
@@ -673,45 +694,45 @@ function getImageOptimizationMetrics(_optimizer: AestheticClinicPerformanceOptim
  */
 function exportToCsv(metrics: any[], apiMetrics: any[]) {
   const headers = [
-    "timestamp",
-    "type",
-    "duration",
-    "success",
-    "table",
-    "operation",
-    "statusCode",
-    "responseSize",
+    'timestamp',
+    'type',
+    'duration',
+    'success',
+    'table',
+    'operation',
+    'statusCode',
+    'responseSize',
   ];
-  
-  const rows = [headers.join(",")];
-  
+
+  const rows = [headers.join(',')];
+
   // Add application metrics
   metrics.forEach(metric => {
     rows.push([
       metric.timestamp,
-      "database",
-      metric.duration || "",
-      metric.success || "",
-      metric.table || "",
-      metric.operation || "",
-      "",
-      "",
-    ].join(","));
+      'database',
+      metric.duration || '',
+      metric.success || '',
+      metric.table || '',
+      metric.operation || '',
+      '',
+      '',
+    ].join(','));
   });
-  
+
   // Add API metrics
   apiMetrics.forEach(metric => {
     rows.push([
       new Date(metric.startTime).toISOString(),
-      "api",
-      metric.duration || "",
-      metric.statusCode ? metric.statusCode < 400 : "",
-      "",
-      "",
-      metric.statusCode || "",
-      metric.responseSize || "",
-    ].join(","));
+      'api',
+      metric.duration || '',
+      metric.statusCode ? metric.statusCode < 400 : '',
+      '',
+      '',
+      metric.statusCode || '',
+      metric.responseSize || '',
+    ].join(','));
   });
-  
-  return rows.join("\n");
+
+  return rows.join('\n');
 }

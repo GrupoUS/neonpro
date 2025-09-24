@@ -9,14 +9,14 @@
  */
 
 export {
-  EventCollector,
-  createEventCollector,
-  defaultEventCollector,
-  type EventCollectorConfig,
   type CollectResult,
-  type FlushResult,
+  createEventCollector,
   DEFAULT_CONFIG,
-} from "./event-collector";
+  defaultEventCollector,
+  EventCollector,
+  type EventCollectorConfig,
+  type FlushResult,
+} from './event-collector';
 
 // Re-export ingestion-related types from the types module
-export type { IngestionEvent } from "../types/ingestion";
+export type { IngestionEvent } from '../types/ingestion';

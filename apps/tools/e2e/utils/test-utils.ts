@@ -1,4 +1,4 @@
-import { Page, expect } from "@playwright/test";
+import { expect, Page } from '@playwright/test';
 
 export class TestUtils {
   constructor(private page: Page) {}
@@ -14,8 +14,8 @@ export class TestUtils {
   async clickAndWaitForNavigation(selector: string, url?: string) {
     const [response] = await Promise.all([
       this.page.waitForResponse(
-        url ? (res) => res.url().includes(url) : () => true,
-        { timeout: 10000 }
+        url ? res => res.url().includes(url) : () => true,
+        { timeout: 10000 },
       ),
       this.page.click(selector),
     ]);
@@ -44,11 +44,11 @@ export class TestUtils {
   async checkAccessibility() {
     // Basic accessibility check
     const violations: any = await this.page.accessibility.snapshot();
-    
+
     if (violations) {
-      console.log("🔍 Accessibility violations found:", violations);
+      console.log('🔍 Accessibility violations found:', violations);
     }
-    
+
     return violations;
   }
 
@@ -74,20 +74,20 @@ export class TestUtils {
 
   async waitForAPIResponse(endpoint: string, timeout = 10000) {
     const response = await this.page.waitForResponse(
-      (res) => res.url().includes(endpoint),
-      { timeout }
+      res => res.url().includes(endpoint),
+      { timeout },
     );
     return response;
   }
 
   async getLocalStorageItem(key: string) {
-    return await this.page.evaluate((k) => localStorage.getItem(k), key);
+    return await this.page.evaluate(k => localStorage.getItem(k), key);
   }
 
   async setLocalStorageItem(key: string, value: string) {
     await this.page.evaluate(
       ([k, v]) => localStorage.setItem(k, v),
-      [key, value]
+      [key, value],
     );
   }
 
@@ -96,7 +96,7 @@ export class TestUtils {
   }
 
   async mockAPIResponse(endpoint: string, mockData: any) {
-    await this.page.route(endpoint, (route) => {
+    await this.page.route(endpoint, route => {
       route.fulfill({
         status: 200,
         contentType: 'application/json',
@@ -110,12 +110,12 @@ export class TestUtils {
       if ('performance' in window) {
         return {
           timing: window.performance.timing,
-          navigation: window.performance.navigation
+          navigation: window.performance.navigation,
         };
       }
       return null;
     });
-    console.log("📊 Performance metrics:", performanceMetrics);
+    console.log('📊 Performance metrics:', performanceMetrics);
     return performanceMetrics;
   }
 

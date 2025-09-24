@@ -366,7 +366,7 @@ async function validateWithAI(
       transformedData: validationResult.transformedData || data,
     };
   } catch {
-  void _error;
+    void _error;
     // Use global error handler for consistent sanitization
     const appError = GlobalErrorHandler.createError(
       'VALIDATION_ERROR',
@@ -428,7 +428,7 @@ async function generatePreview(
 
     return preview;
   } catch {
-  void _error;
+    void _error;
     // Use global error handler for consistent sanitization
     const appError = GlobalErrorHandler.createError(
       'INTERNAL_ERROR',
@@ -475,7 +475,7 @@ async function getCurrentData(
         return null;
     }
   } catch {
-  void _error;
+    void _error;
     // Use global error handler for consistent sanitization
     const appError = GlobalErrorHandler.createError(
       'INTERNAL_ERROR',
@@ -526,7 +526,8 @@ export const crudRouter = router({
             });
         }
       } catch {
-  void _error; void _error;
+        void _error;
+        void _error;
         console.error('CRUD operation error:', error);
 
         // Create error audit trail
@@ -598,7 +599,8 @@ export const crudRouter = router({
           metadata: operationState.metadata,
         };
       } catch {
-  void _error; void _error;
+        void _error;
+        void _error;
         if (error instanceof TRPCError) {
           throw error;
         }

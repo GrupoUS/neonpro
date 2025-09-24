@@ -1,11 +1,11 @@
 // T045: Mock AI provider for testing purposes
 import type {
   AIProvider,
+  AIProviderConfig,
   ChatMessage,
   ChatResponse,
   StreamingChatResponse,
-  AIProviderConfig,
-} from "@neonpro/types";
+} from '@neonpro/types';
 
 export interface MockAIProviderConfig extends AIProviderConfig {
   responses?: MockResponse[];
@@ -60,7 +60,7 @@ export class MockAIProvider {
 
     // Simulate random failures
     if (Math.random() < (this.config.failureRate || 0)) {
-      throw new Error("Mock AI provider simulated failure");
+      throw new Error('Mock AI provider simulated failure');
     }
 
     const lastMessage = messages[messages.length - 1];
@@ -95,7 +95,7 @@ export class MockAIProvider {
       response: `I understand you said: "${input}". This is a mock response for testing purposes.`,
       tokens: {
         input: this.estimateTokens(input),
-        output: this.estimateTokens("mock response"),
+        output: this.estimateTokens('mock response'),
       },
     };
   }
@@ -103,7 +103,7 @@ export class MockAIProvider {
   private matchesTrigger(input: string, trigger?: string | RegExp): boolean {
     if (!trigger) return false;
 
-    if (typeof trigger === "string") {
+    if (typeof trigger === 'string') {
       return input.toLowerCase().includes(trigger.toLowerCase());
     }
 
@@ -114,47 +114,46 @@ export class MockAIProvider {
     return [
       {
         trigger: /hello|hi|hey/i,
-        response: "Hello! How can I help you today?",
+        response: 'Hello! How can I help you today?',
         tokens: { input: 1, output: 8 },
       },
       {
         trigger: /help|assist/i,
-        response: "I'm here to help! What do you need assistance with?",
+        response: 'I\'m here to help! What do you need assistance with?',
         tokens: { input: 1, output: 12 },
       },
       {
         trigger: /error|problem|issue/i,
-        response:
-          "I understand you're experiencing an issue. Can you provide more details?",
+        response: 'I understand you\'re experiencing an issue. Can you provide more details?',
         tokens: { input: 3, output: 15 },
       },
       {
         trigger: /thank|thanks/i,
-        response: "You're welcome! Is there anything else I can help you with?",
+        response: 'You\'re welcome! Is there anything else I can help you with?',
         tokens: { input: 1, output: 13 },
       },
       {
         trigger: /test|testing/i,
         response:
-          "This is a test response from the mock AI provider. Everything is working correctly!",
+          'This is a test response from the mock AI provider. Everything is working correctly!',
         tokens: { input: 1, output: 18 },
       },
       {
         trigger: /medical|health|patient/i,
         response:
-          "I can help with medical-related questions. Please provide more specific information about what you need.",
+          'I can help with medical-related questions. Please provide more specific information about what you need.',
         tokens: { input: 3, output: 20 },
       },
       {
         trigger: /appointment|schedule/i,
         response:
-          "For appointment scheduling, I can help you find available time slots and book appointments.",
+          'For appointment scheduling, I can help you find available time slots and book appointments.',
         tokens: { input: 2, output: 18 },
       },
       {
         trigger: /prescription|medication/i,
         response:
-          "I can provide information about prescriptions and medications. What specific information do you need?",
+          'I can provide information about prescriptions and medications. What specific information do you need?',
         tokens: { input: 2, output: 19 },
       },
     ];
@@ -163,7 +162,7 @@ export class MockAIProvider {
   private async simulateLatency(): Promise<void> {
     const latency = this.config.latency!;
     const delay = Math.random() * (latency.max - latency.min) + latency.min;
-    await new Promise((resolve) => setTimeout(resolve, delay));
+    await new Promise(resolve => setTimeout(resolve, delay));
   }
 
   private estimateTokens(text: string): number {
@@ -173,15 +172,14 @@ export class MockAIProvider {
 
   private createResponse(mockResponse: MockResponse): ChatResponse {
     const inputTokens = mockResponse.tokens?.input || 0;
-    const outputTokens =
-      mockResponse.tokens?.output || this.estimateTokens(mockResponse.response);
+    const outputTokens = mockResponse.tokens?.output || this.estimateTokens(mockResponse.response);
 
     return {
       id: `mock_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
       content: mockResponse.response,
-      _role: "assistant" as const,
-      model: this.config.models?.default || "mock-model",
-      provider: "mock" as AIProvider,
+      _role: 'assistant' as const,
+      model: this.config.models?.default || 'mock-model',
+      provider: 'mock' as AIProvider,
       usage: {
         input: inputTokens,
         output: outputTokens,
@@ -200,8 +198,7 @@ export class MockAIProvider {
     mockResponse: MockResponse,
   ): StreamingChatResponse {
     const inputTokens = mockResponse.tokens?.input || 0;
-    const outputTokens =
-      mockResponse.tokens?.output || this.estimateTokens(mockResponse.response);
+    const outputTokens = mockResponse.tokens?.output || this.estimateTokens(mockResponse.response);
     const response = mockResponse.response;
     const chunkSize = this.config.streamingChunkSize!;
     const delay = this.config.streamingDelay!;
@@ -218,14 +215,14 @@ export class MockAIProvider {
       async start(controller) {
         try {
           for (const chunk of chunks) {
-            await new Promise((resolve) => setTimeout(resolve, delay));
+            await new Promise(resolve => setTimeout(resolve, delay));
 
             const streamChunk = {
               id: `mock_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
               content: chunk,
-              _role: "assistant" as const,
-              model: "mock-model",
-              provider: "mock" as AIProvider,
+              _role: 'assistant' as const,
+              model: 'mock-model',
+              provider: 'mock' as AIProvider,
               isComplete: false,
               metadata: {
                 chunkIndex: chunkIndex++,
@@ -234,16 +231,16 @@ export class MockAIProvider {
               },
             };
 
-            controller.enqueue(JSON.stringify(streamChunk) + "\n");
+            controller.enqueue(JSON.stringify(streamChunk) + '\n');
           }
 
           // Send completion chunk
           const completionChunk = {
             id: `mock_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
-            content: "",
-            _role: "assistant" as const,
-            model: "mock-model",
-            provider: "mock" as AIProvider,
+            content: '',
+            _role: 'assistant' as const,
+            model: 'mock-model',
+            provider: 'mock' as AIProvider,
             isComplete: true,
             usage: {
               inputTokens,
@@ -257,7 +254,7 @@ export class MockAIProvider {
             },
           };
 
-          controller.enqueue(JSON.stringify(completionChunk) + "\n");
+          controller.enqueue(JSON.stringify(completionChunk) + '\n');
           controller.close();
         } catch (error) {
           controller.error(error);
@@ -268,8 +265,8 @@ export class MockAIProvider {
     return {
       id: `mock_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
       stream,
-      model: this.config.models?.default || "mock-model",
-      provider: "mock" as AIProvider,
+      model: this.config.models?.default || 'mock-model',
+      provider: 'mock' as AIProvider,
       metadata: {
         ...mockResponse.metadata,
         mockProvider: true,
@@ -315,12 +312,12 @@ export function createMockAIProvider(
 ): MockAIProvider {
   const defaultConfig: MockAIProviderConfig = {
     enabled: true,
-    apiKey: "mock-api-key",
-    baseUrl: "https://mock-ai-provider.test",
+    apiKey: 'mock-api-key',
+    baseUrl: 'https://mock-ai-provider.test',
     models: {
-      default: "mock-gpt-4",
-      streaming: "mock-gpt-4-stream",
-      fast: "mock-gpt-3.5",
+      default: 'mock-gpt-4',
+      streaming: 'mock-gpt-4-stream',
+      fast: 'mock-gpt-3.5',
     },
     rateLimits: {
       requestsPerMinute: 1000,
@@ -363,13 +360,13 @@ export const testProviders = {
     provider.addCustomResponse({
       trigger: /symptom|pain|fever/i,
       response:
-        "Based on the symptoms you described, I recommend consulting with a healthcare professional for proper evaluation.",
+        'Based on the symptoms you described, I recommend consulting with a healthcare professional for proper evaluation.',
       tokens: { input: 3, output: 20 },
     });
     provider.addCustomResponse({
       trigger: /appointment|book|schedule/i,
       response:
-        "I can help you schedule an appointment. What type of appointment would you like to book?",
+        'I can help you schedule an appointment. What type of appointment would you like to book?',
       tokens: { input: 3, output: 18 },
     });
     return provider;

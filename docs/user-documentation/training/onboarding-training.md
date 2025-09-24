@@ -50,20 +50,20 @@ interface CompanyValues {
     commitment: 'Resultados naturais e seguros';
     approach: 'Personalização e inovação';
   };
-  
+
   vision: {
     leadership: 'Referência em estética brasileira';
     innovation: 'Tecnologia e IA aplicada';
     growth: 'Expansão sustentável e humana';
   };
-  
+
   values: [
     'Excelência em tudo que fazemos',
     'Segurança acima de tudo',
     'Inovação constante',
     'Respeito e dignidade',
     'Transparência total',
-    'Desenvolvimento contínuo'
+    'Desenvolvimento contínuo',
   ];
 }
 ```
@@ -111,7 +111,7 @@ interface SystemOverview {
     complianceManagement: 'LGPD, ANVISA, CFM';
     analyticsReporting: 'Relatórios e insights';
   };
-  
+
   // Integrações
   integrations: {
     laboratorySystems: 'Resultados de exames';
@@ -119,7 +119,7 @@ interface SystemOverview {
     communicationTools: 'WhatsApp, SMS, Email';
     medicalDevices: 'Equipamentos inteligentes';
   };
-  
+
   // Segurança
   security: {
     authentication: 'MFA, biometria';
@@ -177,7 +177,7 @@ interface PatientManagement {
     consentForms: ConsentForm[];
     insuranceInfo: InsuranceData;
   };
-  
+
   // Histórico e acompanhamento
   tracking: {
     treatmentHistory: TreatmentRecord[];
@@ -185,7 +185,7 @@ interface PatientManagement {
     clinicalNotes: ClinicalNote[];
     followUpSchedule: FollowUp[];
   };
-  
+
   // Comunicação com paciente
   communication: {
     appointmentReminders: Reminder[];
@@ -216,7 +216,7 @@ interface SmartScheduling {
     patientPreferences: boolean;
     efficiencyScoring: boolean;
   };
-  
+
   // Gestão de agenda
   calendarManagement: {
     viewModes: 'day' | 'week' | 'month';
@@ -224,7 +224,7 @@ interface SmartScheduling {
     conflictDetection: boolean;
     colorCoding: boolean;
   };
-  
+
   // Confirmações e lembretes
   automation: {
     reminderSequences: ReminderSequence[];
@@ -256,7 +256,7 @@ interface AITreatmentPlanning {
     medicalConstraints: MedicalConstraint[];
     budgetConsiderations: BudgetAnalysis;
   };
-  
+
   // Recomendações inteligentes
   aiRecommendations: {
     primaryTreatments: TreatmentRecommendation[];
@@ -265,7 +265,7 @@ interface AITreatmentPlanning {
     confidenceScore: number;
     riskAssessment: RiskAssessment;
   };
-  
+
   // Plano personalizado
   customPlan: {
     treatmentPhases: TreatmentPhase[];
@@ -296,7 +296,7 @@ interface ClinicalDocumentation {
     treatmentPlan: TreatmentPlan;
     progressNotes: ProgressNote[];
   };
-  
+
   // Documentos obrigatórios
   requiredDocuments: {
     informedConsent: InformedConsentForm;
@@ -305,7 +305,7 @@ interface ClinicalDocumentation {
     photoConsent: PhotoConsentForm;
     financialConsent: FinancialConsentForm;
   };
-  
+
   // Padrões de documentação
   documentationStandards: {
     soapNotes: 'Subjective, Objective, Assessment, Plan';
@@ -341,7 +341,7 @@ interface CustomerServiceWorkflow {
     treatmentExecution: TreatmentWorkflow;
     followUpCare: FollowUpWorkflow;
   };
-  
+
   // Padrões de excelência
   excellenceStandards: {
     responseTime: '< 2 minutos';
@@ -349,7 +349,7 @@ interface CustomerServiceWorkflow {
     issueResolution: '> 95% primeira resolução';
     personalization: '100% personalizado';
   };
-  
+
   // Gestão de experiências
   experienceManagement: {
     touchpointMapping: TouchpointMap[];
@@ -379,7 +379,7 @@ interface FinancialManagement {
     insuranceBilling: InsuranceClaimProcess;
     installmentManagement: InstallmentTracking;
   };
-  
+
   // Gestão de receitas
   revenueManagement: {
     invoiceGeneration: InvoiceSystem;
@@ -387,7 +387,7 @@ interface FinancialManagement {
     financialReporting: FinancialReport[];
     costOptimization: CostAnalysis[];
   };
-  
+
   // Compliance financeiro
   financialCompliance: {
     taxRequirements: TaxCompliance[];
@@ -419,7 +419,7 @@ interface SafetyProtocols {
     medicationSafety: MedicationSafetyProtocol[];
     equipmentSafety: EquipmentSafetyCheck[];
   };
-  
+
   // Segurança de dados
   dataSecurity: {
     encryptionStandards: EncryptionProtocol[];
@@ -427,7 +427,7 @@ interface SafetyProtocols {
     breachResponse: BreachResponsePlan[];
     backupRecovery: BackupRecoveryPlan[];
   };
-  
+
   // Segurança física
   physicalSecurity: {
     facilitySecurity: SecurityMeasure[];
@@ -457,7 +457,7 @@ interface QualityManagement {
     operationalEfficiency: EfficiencyMetric[];
     complianceScore: ComplianceMetric[];
   };
-  
+
   // Melhoria contínua
   continuousImprovement: {
     feedbackCollection: FeedbackSystem[];
@@ -465,7 +465,7 @@ interface QualityManagement {
     improvementPlanning: ImprovementPlan[];
     changeManagement: ChangeProcess[];
   };
-  
+
   // Auditorias e certificações
   certifications: {
     internalAudits: AuditProcess[];
@@ -504,7 +504,7 @@ interface LGPDCompliance {
     prevention: 'Prevenção de danos';
     accountability: 'Responsabilização';
   };
-  
+
   // Direitos do titular
   dataSubjectRights: {
     access: 'Acesso a dados';
@@ -514,7 +514,7 @@ interface LGPDCompliance {
     objection: 'Oposição a tratamento';
     nondiscrimination: 'Não discriminação';
   };
-  
+
   // Procedimentos de conformidade
   complianceProcedures: {
     dataMapping: DataInventory[];
@@ -545,7 +545,7 @@ interface RegulatoryCompliance {
     adverseEvents: AdverseEventReporting[];
     pharmacovigilance: PharmacovigilanceSystem[];
   };
-  
+
   // CFM
   cfmCompliance: {
     professionalValidation: ValidationProcess[];
@@ -553,7 +553,7 @@ interface RegulatoryCompliance {
     recordKeeping: DocumentationStandard[];
     continuingEducation: EducationRequirement[];
   };
-  
+
   // Outras regulamentações
   otherRegulations: {
     healthSurveillance: SurveillanceRequirement[];
@@ -760,7 +760,7 @@ interface GradingSystem {
     practicalAssessment: 20; // Avaliação prática
     finalProject: 10; // Projeto final
   };
-  
+
   // Níveis de proficiência
   proficiencyLevels: {
     excellent: '95-100% - Certificação com mérito';
@@ -768,7 +768,7 @@ interface GradingSystem {
     developing: '70-84% - Certificação condicional';
     needsImprovement: '<70% - Retreinamento necessário';
   };
-  
+
   // Competências avaliadas
   assessedCompetencies: {
     technicalSkills: 'Domínio do sistema e ferramentas';
@@ -794,7 +794,7 @@ interface CertificationLevels {
     validity: '1 ano';
     renewal: '20h de educação continuada';
   };
-  
+
   // NeonPro Advanced Professional
   advancedLevel: {
     name: 'NeonPro Advanced Professional';
@@ -802,7 +802,7 @@ interface CertificationLevels {
     validity: '2 anos';
     renewal: '40h de educação continuada';
   };
-  
+
   // NeonPro Expert
   expertLevel: {
     name: 'NeonPro Expert';
@@ -872,7 +872,7 @@ interface MentorshipProgram {
     progressTracking: 'Acompanhamento semanal';
     feedbackSessions: 'Feedback construtivo regular';
   };
-  
+
   // Suporte entre pares
   peerSupport: {
     buddySystem: 'Colega de mesma experiência';
@@ -880,7 +880,7 @@ interface MentorshipProgram {
     knowledgeSharing: 'Compartilhamento de aprendizados';
     collaborativeLearning: 'Aprendizagem colaborativa';
   };
-  
+
   // Desenvolvimento contínuo
   continuousDevelopment: {
     skillAssessments: 'Avaliação trimestral de skills';

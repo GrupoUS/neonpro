@@ -26,28 +26,28 @@ class SimpleAestheticSchedulingService {
   async validateProfessionalCertifications(professionalId: string, procedures: string[]) {
     return {
       isValid: true,
-      missingCertifications: []
+      missingCertifications: [],
     };
   }
 
   async calculateVariableDuration(request: any) {
     return {
       duration: 60,
-      factors: []
+      factors: [],
     };
   }
 
   async checkContraindications(request: any) {
     return {
       contraindications: [],
-      warnings: []
+      warnings: [],
     };
   }
 
   async optimizeRoomAllocation(request: any) {
     return {
       recommendations: [],
-      efficiency: 0.8
+      efficiency: 0.8,
     };
   }
 
@@ -64,15 +64,20 @@ class SimpleAestheticSchedulingService {
         followUpAppointments: [],
         emergencyContacts: [],
         restrictions: [],
-        expectedOutcomes: []
+        expectedOutcomes: [],
       },
       professionalAssignments: [],
       warnings: [],
-      contraindications: []
+      contraindications: [],
     };
   }
 
-  async scheduleTreatmentPackage(packageId: string, patientId: string, startDate: Date, preferences: any) {
+  async scheduleTreatmentPackage(
+    packageId: string,
+    patientId: string,
+    startDate: Date,
+    preferences: any,
+  ) {
     return {
       success: true,
       appointments: [],
@@ -83,11 +88,11 @@ class SimpleAestheticSchedulingService {
         followUpAppointments: [],
         emergencyContacts: [],
         restrictions: [],
-        expectedOutcomes: []
+        expectedOutcomes: [],
       },
       professionalAssignments: [],
       warnings: [],
-      contraindications: []
+      contraindications: [],
     };
   }
 }

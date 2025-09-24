@@ -1,13 +1,9 @@
-import { SupabaseClient } from "@supabase/supabase-js";
-import {
-  Patient,
-  PatientRepository as IPatientRepository,
-  PatientFilters,
-} from "@neonpro/domain";
-import { CreatePatientRequest, UpdatePatientRequest } from "@neonpro/types";
-import { PatientQueryOptions, PatientSearchResult } from "../types/index.js";
-import { DatabasePatient } from "../types/supabase.js";
-import { databaseLogger, logHealthcareError } from "../../../shared/src/logging/healthcare-logger";
+import { Patient, PatientFilters, PatientRepository as IPatientRepository } from '@neonpro/domain';
+import { CreatePatientRequest, UpdatePatientRequest } from '@neonpro/types';
+import { SupabaseClient } from '@supabase/supabase-js';
+import { databaseLogger, logHealthcareError } from '../../../shared/src/logging/healthcare-logger';
+import { PatientQueryOptions, PatientSearchResult } from '../types/index.js';
+import { DatabasePatient } from '../types/supabase.js';
 
 /**
  * Supabase implementation of PatientRepository
@@ -19,7 +15,7 @@ export class PatientRepository implements IPatientRepository {
   async findById(id: string): Promise<Patient | null> {
     try {
       const { data, error } = await this.supabase
-        .from("patients")
+        .from('patients')
         .select(
           `
           *,
@@ -27,7 +23,7 @@ export class PatientRepository implements IPatientRepository {
           appointments(count)
         `,
         )
-        .eq("id", id)
+        .eq('id', id)
         .single();
 
       if (error) {
@@ -49,16 +45,19 @@ export class PatientRepository implements IPatientRepository {
   ): Promise<Patient | null> {
     try {
       const { data, error } = await this.supabase
-        .from("patients")
-        .select("*")
-        .eq("medical_record_number", medicalRecordNumber)
+        .from('patients')
+        .select('*')
+        .eq('medical_record_number', medicalRecordNumber)
         .single();
 
       if (error || !data) return null;
 
       return this.mapDatabasePatientToDomain(data);
     } catch (error) {
-      logHealthcareError('database', error, { method: 'findByMedicalRecordNumber', medicalRecordNumber });
+      logHealthcareError('database', error, {
+        method: 'findByMedicalRecordNumber',
+        medicalRecordNumber,
+      });
       return null;
     }
   }
@@ -66,13 +65,13 @@ export class PatientRepository implements IPatientRepository {
   async findByCPF(cpf: string): Promise<Patient[]> {
     try {
       const { data, error } = await this.supabase
-        .from("patients")
-        .select("*")
-        .eq("cpf", cpf);
+        .from('patients')
+        .select('*')
+        .eq('cpf', cpf);
 
       if (error || !data) return [];
 
-      return data.map((patient) => this.mapDatabasePatientToDomain(patient));
+      return data.map(patient => this.mapDatabasePatientToDomain(patient));
     } catch (error) {
       logHealthcareError('database', error, { method: 'findByCPF' });
       return [];
@@ -85,13 +84,13 @@ export class PatientRepository implements IPatientRepository {
   ): Promise<PatientSearchResult> {
     try {
       let query = this.supabase
-        .from("patients")
-        .select("*", { count: "exact" })
-        .eq("clinic_id", clinicId);
+        .from('patients')
+        .select('*', { count: 'exact' })
+        .eq('clinic_id', clinicId);
 
       // Apply filters
       if (options?.status) {
-        query = query.eq("status", options.status);
+        query = query.eq('status', options.status);
       }
 
       if (options?.search) {
@@ -114,10 +113,10 @@ export class PatientRepository implements IPatientRepository {
 
       // Apply sorting
       if (options?.sortBy) {
-        const sortOrder = options.sortOrder === "desc" ? false : true;
+        const sortOrder = options.sortOrder === 'desc' ? false : true;
         query = query.order(options.sortBy, { ascending: sortOrder });
       } else {
-        query = query.order("created_at", { ascending: false });
+        query = query.order('created_at', { ascending: false });
       }
 
       const { data, error, count } = await query;
@@ -147,26 +146,26 @@ export class PatientRepository implements IPatientRepository {
   ): Promise<PatientSearchResult> {
     try {
       let query = this.supabase
-        .from("patients")
-        .select("*", { count: "exact" });
+        .from('patients')
+        .select('*', { count: 'exact' });
 
       // Apply filters
       if (filter.clinicId) {
-        query = query.eq("clinic_id", filter.clinicId);
+        query = query.eq('clinic_id', filter.clinicId);
       }
 
       if (filter.status) {
-        query = query.eq("status", filter.status);
+        query = query.eq('status', filter.status);
       }
 
       if (filter.gender) {
-        query = query.eq("gender", filter.gender);
+        query = query.eq('gender', filter.gender);
       }
 
       if (filter.birthDateFrom && filter.birthDateTo) {
         query = query
-          .gte("birth_date", filter.birthDateFrom)
-          .lte("birth_date", filter.birthDateTo);
+          .gte('birth_date', filter.birthDateFrom)
+          .lte('birth_date', filter.birthDateTo);
       }
 
       if (filter.search) {
@@ -189,10 +188,10 @@ export class PatientRepository implements IPatientRepository {
 
       // Apply sorting
       if (options?.sortBy) {
-        const sortOrder = options.sortOrder === "desc" ? false : true;
+        const sortOrder = options.sortOrder === 'desc' ? false : true;
         query = query.order(options.sortBy, { ascending: sortOrder });
       } else {
-        query = query.order("created_at", { ascending: false });
+        query = query.order('created_at', { ascending: false });
       }
 
       const { data, error, count } = await query;
@@ -221,7 +220,7 @@ export class PatientRepository implements IPatientRepository {
       const dbPatient = this.mapCreateRequestToDatabase(patientData);
 
       const { data, error } = await this.supabase
-        .from("patients")
+        .from('patients')
         .insert(dbPatient)
         .select()
         .single();
@@ -246,9 +245,9 @@ export class PatientRepository implements IPatientRepository {
       const updateData = this.mapUpdateRequestToDatabase(patientData);
 
       const { data, error } = await this.supabase
-        .from("patients")
+        .from('patients')
         .update(updateData)
-        .eq("id", id)
+        .eq('id', id)
         .select()
         .single();
 
@@ -267,9 +266,9 @@ export class PatientRepository implements IPatientRepository {
   async delete(id: string): Promise<boolean> {
     try {
       const { error } = await this.supabase
-        .from("patients")
+        .from('patients')
         .delete()
-        .eq("id", id);
+        .eq('id', id);
 
       if (error) {
         logHealthcareError('database', error, { method: 'delete', patientId: id });
@@ -290,14 +289,15 @@ export class PatientRepository implements IPatientRepository {
   ): Promise<PatientSearchResult> {
     try {
       let dbQuery = this.supabase
-        .from("patients")
-        .select("*", { count: "exact" });
+        .from('patients')
+        .select('*', { count: 'exact' });
 
       // Build search query
-      const searchCondition = `full_name.ilike.%${_query}%,email.ilike.%${_query}%,cpf.ilike.%${_query}%,medical_record_number.ilike.%${_query}%`;
+      const searchCondition =
+        `full_name.ilike.%${_query}%,email.ilike.%${_query}%,cpf.ilike.%${_query}%,medical_record_number.ilike.%${_query}%`;
 
       if (clinicId) {
-        dbQuery = dbQuery.eq("clinic_id", clinicId);
+        dbQuery = dbQuery.eq('clinic_id', clinicId);
       }
 
       dbQuery = dbQuery.or(searchCondition);
@@ -316,10 +316,10 @@ export class PatientRepository implements IPatientRepository {
 
       // Apply sorting
       if (options?.sortBy) {
-        const sortOrder = options.sortOrder === "desc" ? false : true;
+        const sortOrder = options.sortOrder === 'desc' ? false : true;
         dbQuery = dbQuery.order(options.sortBy, { ascending: sortOrder });
       } else {
-        dbQuery = dbQuery.order("created_at", { ascending: false });
+        dbQuery = dbQuery.order('created_at', { ascending: false });
       }
 
       const { data, error, count } = await dbQuery;
@@ -346,25 +346,25 @@ export class PatientRepository implements IPatientRepository {
   async count(filter: PatientFilters): Promise<number> {
     try {
       let query = this.supabase
-        .from("patients")
-        .select("*", { count: "exact", head: true });
+        .from('patients')
+        .select('*', { count: 'exact', head: true });
 
       if (filter.clinicId) {
-        query = query.eq("clinic_id", filter.clinicId);
+        query = query.eq('clinic_id', filter.clinicId);
       }
 
       if (filter.status) {
-        query = query.eq("status", filter.status);
+        query = query.eq('status', filter.status);
       }
 
       if (filter.gender) {
-        query = query.eq("gender", filter.gender);
+        query = query.eq('gender', filter.gender);
       }
 
       if (filter.birthDateFrom && filter.birthDateTo) {
         query = query
-          .gte("birth_date", filter.birthDateFrom)
-          .lte("birth_date", filter.birthDateTo);
+          .gte('birth_date', filter.birthDateFrom)
+          .lte('birth_date', filter.birthDateTo);
       }
 
       const { count, error } = await query;
@@ -391,8 +391,8 @@ export class PatientRepository implements IPatientRepository {
       medicalRecordNumber: dbPatient.medical_record_number,
       externalIds: dbPatient.external_ids || {},
       givenNames: dbPatient.given_names || [],
-      familyName: dbPatient.family_name || "",
-      fullName: dbPatient.full_name || "",
+      familyName: dbPatient.family_name || '',
+      fullName: dbPatient.full_name || '',
       preferredName: dbPatient.preferred_name || undefined,
       phonePrimary: dbPatient.phone_primary || undefined,
       phoneSecondary: dbPatient.phone_secondary || undefined,
@@ -431,8 +431,7 @@ export class PatientRepository implements IPatientRepository {
       insurancePlan: dbPatient.insurance_plan || undefined,
       emergencyContactName: dbPatient.emergency_contact_name || undefined,
       emergencyContactPhone: dbPatient.emergency_contact_phone || undefined,
-      emergencyContactRelationship:
-        dbPatient.emergency_contact_relationship || undefined,
+      emergencyContactRelationship: dbPatient.emergency_contact_relationship || undefined,
       lgpdConsentGiven: dbPatient.lgpd_consent_given || false,
     };
   }
@@ -498,71 +497,99 @@ export class PatientRepository implements IPatientRepository {
   ): Partial<DatabasePatient> {
     const updateData: Partial<DatabasePatient> = {};
 
-    if (_request.familyName !== undefined)
+    if (_request.familyName !== undefined) {
       updateData.family_name = _request.familyName;
-    if (_request.fullName !== undefined)
+    }
+    if (_request.fullName !== undefined) {
       updateData.full_name = _request.fullName;
-    if (_request.preferredName !== undefined)
+    }
+    if (_request.preferredName !== undefined) {
       updateData.preferred_name = _request.preferredName;
-    if (_request.phonePrimary !== undefined)
+    }
+    if (_request.phonePrimary !== undefined) {
       updateData.phone_primary = _request.phonePrimary;
-    if (_request.phoneSecondary !== undefined)
+    }
+    if (_request.phoneSecondary !== undefined) {
       updateData.phone_secondary = _request.phoneSecondary;
+    }
     if (_request.email !== undefined) updateData.email = _request.email;
-    if (_request.addressLine1 !== undefined)
+    if (_request.addressLine1 !== undefined) {
       updateData.address_line1 = _request.addressLine1;
-    if (_request.addressLine2 !== undefined)
+    }
+    if (_request.addressLine2 !== undefined) {
       updateData.address_line2 = _request.addressLine2;
+    }
     if (_request.city !== undefined) updateData.city = _request.city;
     if (_request.state !== undefined) updateData.state = _request.state;
-    if (_request.postalCode !== undefined)
+    if (_request.postalCode !== undefined) {
       updateData.postal_code = _request.postalCode;
+    }
     if (_request.country !== undefined) updateData.country = _request.country;
     if (_request.gender !== undefined) updateData.gender = _request.gender;
-    if (_request.maritalStatus !== undefined)
+    if (_request.maritalStatus !== undefined) {
       updateData.marital_status = _request.maritalStatus;
-    if (_request.isActive !== undefined)
+    }
+    if (_request.isActive !== undefined) {
       updateData.is_active = _request.isActive;
-    if (_request.deceasedIndicator !== undefined)
+    }
+    if (_request.deceasedIndicator !== undefined) {
       updateData.deceased_indicator = _request.deceasedIndicator;
-    if (_request.deceasedDate !== undefined)
+    }
+    if (_request.deceasedDate !== undefined) {
       updateData.deceased_date = _request.deceasedDate;
-    if (_request.dataConsentStatus !== undefined)
+    }
+    if (_request.dataConsentStatus !== undefined) {
       updateData.data_consent_status = _request.dataConsentStatus;
-    if (_request.dataConsentDate !== undefined)
+    }
+    if (_request.dataConsentDate !== undefined) {
       updateData.data_consent_date = _request.dataConsentDate;
-    if (_request.dataRetentionUntil !== undefined)
+    }
+    if (_request.dataRetentionUntil !== undefined) {
       updateData.data_retention_until = _request.dataRetentionUntil;
-    if (_request.photoUrl !== undefined)
+    }
+    if (_request.photoUrl !== undefined) {
       updateData.photo_url = _request.photoUrl;
+    }
     if (_request.rg !== undefined) updateData.rg = _request.rg;
-    if (_request.passportNumber !== undefined)
+    if (_request.passportNumber !== undefined) {
       updateData.passport_number = _request.passportNumber;
-    if (_request.preferredContactMethod !== undefined)
+    }
+    if (_request.preferredContactMethod !== undefined) {
       updateData.preferred_contact_method = _request.preferredContactMethod;
-    if (_request.bloodType !== undefined)
+    }
+    if (_request.bloodType !== undefined) {
       updateData.blood_type = _request.bloodType;
-    if (_request.allergies !== undefined)
+    }
+    if (_request.allergies !== undefined) {
       updateData.allergies = _request.allergies;
-    if (_request.chronicConditions !== undefined)
+    }
+    if (_request.chronicConditions !== undefined) {
       updateData.chronic_conditions = _request.chronicConditions;
-    if (_request.currentMedications !== undefined)
+    }
+    if (_request.currentMedications !== undefined) {
       updateData.current_medications = _request.currentMedications;
-    if (_request.insuranceProvider !== undefined)
+    }
+    if (_request.insuranceProvider !== undefined) {
       updateData.insurance_provider = _request.insuranceProvider;
-    if (_request.insuranceNumber !== undefined)
+    }
+    if (_request.insuranceNumber !== undefined) {
       updateData.insurance_number = _request.insuranceNumber;
-    if (_request.insurancePlan !== undefined)
+    }
+    if (_request.insurancePlan !== undefined) {
       updateData.insurance_plan = _request.insurancePlan;
-    if (_request.emergencyContactName !== undefined)
+    }
+    if (_request.emergencyContactName !== undefined) {
       updateData.emergency_contact_name = _request.emergencyContactName;
-    if (_request.emergencyContactPhone !== undefined)
+    }
+    if (_request.emergencyContactPhone !== undefined) {
       updateData.emergency_contact_phone = _request.emergencyContactPhone;
-    if (_request.emergencyContactRelationship !== undefined)
-      updateData.emergency_contact_relationship =
-        _request.emergencyContactRelationship;
-    if (_request.lgpdConsentGiven !== undefined)
+    }
+    if (_request.emergencyContactRelationship !== undefined) {
+      updateData.emergency_contact_relationship = _request.emergencyContactRelationship;
+    }
+    if (_request.lgpdConsentGiven !== undefined) {
       updateData.lgpd_consent_given = _request.lgpdConsentGiven;
+    }
 
     return updateData;
   }

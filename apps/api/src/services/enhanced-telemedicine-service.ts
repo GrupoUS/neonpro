@@ -1,6 +1,6 @@
 /**
  * Enhanced Telemedicine Service for Aesthetic Clinics
- * 
+ *
  * Focused telemedicine service for aesthetic procedures with proper database integration
  * Following KISS/YAGNI principles and avoiding overengineering
  */
@@ -126,7 +126,7 @@ export class EnhancedTelemedicineService {
       // Validate professional authorization
       const isAuthorized = await this.validateProfessionalAuthorization(
         input.professionalId,
-        input.clinicId
+        input.clinicId,
       );
 
       if (!isAuthorized) {
@@ -206,7 +206,7 @@ export class EnhancedTelemedicineService {
    */
   async getProfessionalSessions(
     professionalId: string,
-    status?: TelemedicineSession['status']
+    status?: TelemedicineSession['status'],
   ): Promise<TelemedicineSession[]> {
     try {
       let query = this.supabase
@@ -236,7 +236,7 @@ export class EnhancedTelemedicineService {
    */
   async getPatientSessions(
     patientId: string,
-    status?: TelemedicineSession['status']
+    status?: TelemedicineSession['status'],
   ): Promise<TelemedicineSession[]> {
     try {
       let query = this.supabase
@@ -306,7 +306,7 @@ export class EnhancedTelemedicineService {
   async endSession(
     sessionId: string,
     professionalId: string,
-    endReason: string = 'completed'
+    endReason: string = 'completed',
   ): Promise<void> {
     try {
       // Verify session ownership
@@ -361,7 +361,7 @@ export class EnhancedTelemedicineService {
 
       // Sanitize message content
       const sanitizedContent = aiSecurityService.sanitizeForAI(input.content);
-      
+
       const messageData = {
         sessionId: input.sessionId,
         senderId: input.senderId,
@@ -468,7 +468,10 @@ export class EnhancedTelemedicineService {
 
       return validatedPrescription;
     } catch (error) {
-      logger.error('Error creating telemedicine prescription', { error, sessionId: input.sessionId });
+      logger.error('Error creating telemedicine prescription', {
+        error,
+        sessionId: input.sessionId,
+      });
       throw error;
     }
   }
@@ -478,7 +481,7 @@ export class EnhancedTelemedicineService {
    */
   private async validateProfessionalAuthorization(
     professionalId: string,
-    clinicId: string
+    clinicId: string,
   ): Promise<boolean> {
     try {
       // Check if professional is active and has telemedicine authorization

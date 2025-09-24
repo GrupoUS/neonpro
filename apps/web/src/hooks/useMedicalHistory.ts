@@ -1,8 +1,8 @@
 /**
  * Hook for managing medical history in MultiSessionScheduler
  */
-import { useState } from 'react';
 import { type PregnancyStatus } from '@/types/aesthetic-scheduling';
+import { useState } from 'react';
 
 interface MedicalHistoryState {
   pregnancyStatus: PregnancyStatus;
@@ -35,17 +35,20 @@ export function useMedicalHistory(): UseMedicalHistoryReturn {
     medications: [] as string[],
     allergies: [] as string[],
   });
-  
+
   const [newContraindication, setNewContraindication] = useState('');
   const [newMedication, setNewMedication] = useState('');
   const [newAllergy, setNewAllergy] = useState('');
 
   const updatePregnancyStatus = (status: PregnancyStatus) => {
-    setMedicalHistory({...medicalHistory, pregnancyStatus: status});
+    setMedicalHistory({ ...medicalHistory, pregnancyStatus: status });
   };
 
   const handleAddContraindication = () => {
-    if (newContraindication.trim() && !medicalHistory.contraindications.includes(newContraindication.trim())) {
+    if (
+      newContraindication.trim()
+      && !medicalHistory.contraindications.includes(newContraindication.trim())
+    ) {
       setMedicalHistory({
         ...medicalHistory,
         contraindications: [...medicalHistory.contraindications, newContraindication.trim()],

@@ -1,9 +1,5 @@
-import {
-  type Gender,
-  type BloodType,
-  type ContactMethod,
-} from "../value-objects/gender";
-import { validateCPF, formatCPF } from "../value-objects/healthcare";
+import { type BloodType, type ContactMethod, type Gender } from '../value-objects/gender';
+import { formatCPF, validateCPF } from '../value-objects/healthcare';
 
 /**
  * Consolidated Patient Entity - Single source of truth for patient data
@@ -106,7 +102,7 @@ export class PatientValidator {
    * Format patient CPF for display
    */
   static formatCPF(patient: Patient): string {
-    if (!patient.cpf) return "";
+    if (!patient.cpf) return '';
     return formatCPF(patient.cpf);
   }
 
@@ -116,14 +112,16 @@ export class PatientValidator {
   static validateRequired(patient: Patient): string[] {
     const errors: string[] = [];
 
-    if (!patient.id) errors.push("Patient ID is required");
-    if (!patient.clinicId) errors.push("Clinic ID is required");
-    if (!patient.medicalRecordNumber)
-      errors.push("Medical record number is required");
-    if (!patient.givenNames || patient.givenNames.length === 0)
-      errors.push("Given names are required");
-    if (!patient.familyName) errors.push("Family name is required");
-    if (!patient.fullName) errors.push("Full name is required");
+    if (!patient.id) errors.push('Patient ID is required');
+    if (!patient.clinicId) errors.push('Clinic ID is required');
+    if (!patient.medicalRecordNumber) {
+      errors.push('Medical record number is required');
+    }
+    if (!patient.givenNames || patient.givenNames.length === 0) {
+      errors.push('Given names are required');
+    }
+    if (!patient.familyName) errors.push('Family name is required');
+    if (!patient.fullName) errors.push('Full name is required');
 
     return errors;
   }
@@ -144,7 +142,7 @@ export class PatientFactory {
    * Create a new patient with default values
    */
   static create(
-    data: Omit<Patient, "id" | "createdAt" | "updatedAt">,
+    data: Omit<Patient, 'id' | 'createdAt' | 'updatedAt'>,
   ): Patient {
     const now = new Date().toISOString();
 
@@ -172,7 +170,7 @@ export class PatientFactory {
   }): Patient {
     return this.create({
       ...data,
-      fullName: `${data.givenNames.join(" ")} ${data.familyName}`,
+      fullName: `${data.givenNames.join(' ')} ${data.familyName}`,
       allergies: [],
       chronicConditions: [],
       currentMedications: [],

@@ -28,11 +28,11 @@ This comprehensive security guide covers best practices, compliance requirements
 ```typescript
 // Patient data classification
 enum DataSensitivity {
-  PUBLIC = "public", // Non-sensitive information
-  INTERNAL = "internal", // Internal business data
-  CONFIDENTIAL = "confidential", // Patient appointment times
-  RESTRICTED = "restricted", // Patient health information
-  CRITICAL = "critical", // Special health data
+  PUBLIC = 'public', // Non-sensitive information
+  INTERNAL = 'internal', // Internal business data
+  CONFIDENTIAL = 'confidential', // Patient appointment times
+  RESTRICTED = 'restricted', // Patient health information
+  CRITICAL = 'critical', // Special health data
 }
 
 // Data minimization principle
@@ -96,17 +96,17 @@ const retentionPolicies = {
   appointmentData: {
     retentionPeriod: 730, // 2 years
     archivePeriod: 3650, // 10 years
-    deletionMethod: "secure_wipe",
+    deletionMethod: 'secure_wipe',
   },
   auditLogs: {
     retentionPeriod: 3650, // 10 years
     archivePeriod: 0, // Keep forever
-    deletionMethod: "none",
+    deletionMethod: 'none',
   },
   userActivity: {
     retentionPeriod: 90, // 3 months
     archivePeriod: 365, // 1 year
-    deletionMethod: "standard",
+    deletionMethod: 'standard',
   },
 };
 
@@ -136,7 +136,7 @@ class DataRetentionService {
         end: {
           lt: cutoffDate,
         },
-        status: "completed",
+        status: 'completed',
       },
     });
   }
@@ -208,20 +208,20 @@ class CalendarAuthService {
 ```typescript
 // User roles and permissions
 enum UserRole {
-  ADMIN = "admin",
-  PRACTITIONER = "practitioner",
-  RECEPTIONIST = "receptionist",
-  PATIENT = "patient",
+  ADMIN = 'admin',
+  PRACTITIONER = 'practitioner',
+  RECEPTIONIST = 'receptionist',
+  PATIENT = 'patient',
 }
 
 enum Permission {
-  VIEW_APPOINTMENTS = "view:appointments",
-  CREATE_APPOINTMENTS = "create:appointments",
-  EDIT_APPOINTMENTS = "edit:appointments",
-  DELETE_APPOINTMENTS = "delete:appointments",
-  VIEW_PATIENTS = "view:patients",
-  MANAGE_CLINIC = "manage:clinic",
-  VIEW_AUDIT_LOGS = "view:audit_logs",
+  VIEW_APPOINTMENTS = 'view:appointments',
+  CREATE_APPOINTMENTS = 'create:appointments',
+  EDIT_APPOINTMENTS = 'edit:appointments',
+  DELETE_APPOINTMENTS = 'delete:appointments',
+  VIEW_PATIENTS = 'view:patients',
+  MANAGE_CLINIC = 'manage:clinic',
+  VIEW_AUDIT_LOGS = 'view:audit_logs',
 }
 
 // Role permissions mapping
@@ -273,8 +273,8 @@ function useCalendarAuth() {
 
     // Users can edit their own appointments or have general edit permission
     return (
-      CalendarAuthService.hasPermission(token, Permission.EDIT_APPOINTMENTS) ||
-      appointment.createdBy === user.userId
+      CalendarAuthService.hasPermission(token, Permission.EDIT_APPOINTMENTS)
+      || appointment.createdBy === user.userId
     );
   };
 
@@ -309,20 +309,20 @@ class EventValidator {
 
     // Required field validation
     if (!event.title || event.title.trim().length === 0) {
-      errors.push("Event title is required");
+      errors.push('Event title is required');
     }
 
     if (!event.start || !(event.start instanceof Date)) {
-      errors.push("Valid start time is required");
+      errors.push('Valid start time is required');
     }
 
     if (!event.end || !(event.end instanceof Date)) {
-      errors.push("Valid end time is required");
+      errors.push('Valid end time is required');
     }
 
     // Business rule validation
     if (event.start && event.end && event.start >= event.end) {
-      errors.push("End time must be after start time");
+      errors.push('End time must be after start time');
     }
 
     // Duration validation
@@ -332,26 +332,26 @@ class EventValidator {
       const maxDuration = 8 * 60 * 60 * 1000; // 8 hours
 
       if (duration < minDuration) {
-        errors.push("Minimum appointment duration is 15 minutes");
+        errors.push('Minimum appointment duration is 15 minutes');
       }
 
       if (duration > maxDuration) {
-        errors.push("Maximum appointment duration is 8 hours");
+        errors.push('Maximum appointment duration is 8 hours');
       }
     }
 
     // Business hours validation
     if (event.start && !isDuringBusinessHours(event.start)) {
-      errors.push("Appointments must be scheduled during business hours");
+      errors.push('Appointments must be scheduled during business hours');
     }
 
     // XSS prevention
     if (event.title && containsXSS(event.title)) {
-      errors.push("Event title contains invalid characters");
+      errors.push('Event title contains invalid characters');
     }
 
     if (event.description && containsXSS(event.description)) {
-      errors.push("Event description contains invalid characters");
+      errors.push('Event description contains invalid characters');
     }
 
     return {
@@ -372,17 +372,17 @@ function containsXSS(input: string): boolean {
     /<embed\b[^<]*(?:(?!<\/embed>)<[^<]*)*<\/embed>/gi,
   ];
 
-  return xssPatterns.some((pattern) => pattern.test(input));
+  return xssPatterns.some(pattern => pattern.test(input));
 }
 
 // Sanitization utility
 function sanitizeInput(input: string): string {
   return input
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#x27;")
-    .replace(/\//g, "&#x2F;");
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#x27;')
+    .replace(/\//g, '&#x2F;');
 }
 ```
 
@@ -397,7 +397,7 @@ export const calendarSecurityMiddleware = async (
 ) => {
   try {
     // 1. Rate limiting
-    const clientIp = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+    const clientIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
     const rateLimitKey = `calendar_api:${clientIp}`;
 
     const current = await redis.incr(rateLimitKey);
@@ -407,24 +407,24 @@ export const calendarSecurityMiddleware = async (
 
     if (current > 100) {
       // 100 requests per minute
-      return res.status(429).json({ error: "Rate limit exceeded" });
+      return res.status(429).json({ error: 'Rate limit exceeded' });
     }
 
     // 2. Authentication
-    const token = req.headers.authorization?.replace("Bearer ", "");
+    const token = req.headers.authorization?.replace('Bearer ', '');
     if (!token) {
-      return res.status(401).json({ error: "Authentication required" });
+      return res.status(401).json({ error: 'Authentication required' });
     }
 
     const user = CalendarAuthService.validateToken(token);
     if (!user) {
-      return res.status(401).json({ error: "Invalid token" });
+      return res.status(401).json({ error: 'Invalid token' });
     }
 
     // 3. Authorization
     const requiredPermission = getRequiredPermission(req.method, req.path);
     if (!CalendarAuthService.hasPermission(token, requiredPermission)) {
-      return res.status(403).json({ error: "Insufficient permissions" });
+      return res.status(403).json({ error: 'Insufficient permissions' });
     }
 
     // 4. Input validation
@@ -432,7 +432,7 @@ export const calendarSecurityMiddleware = async (
       const validation = EventValidator.validateEvent(req.body);
       if (!validation.isValid) {
         return res.status(400).json({
-          error: "Invalid event data",
+          error: 'Invalid event data',
           details: validation.errors,
         });
       }
@@ -443,8 +443,8 @@ export const calendarSecurityMiddleware = async (
 
     next();
   } catch (error) {
-    console.error("Security middleware error:", error);
-    return res.status(500).json({ error: "Internal server error" });
+    console.error('Security middleware error:', error);
+    return res.status(500).json({ error: 'Internal server error' });
   }
 };
 ```
@@ -456,15 +456,15 @@ export const calendarSecurityMiddleware = async (
 ```typescript
 // Audit event types
 enum AuditEventType {
-  APPOINTMENT_CREATED = "appointment_created",
-  APPOINTMENT_UPDATED = "appointment_updated",
-  APPOINTMENT_DELETED = "appointment_deleted",
-  APPOINTMENT_VIEWED = "appointment_viewed",
-  USER_LOGIN = "user_login",
-  USER_LOGOUT = "user_logout",
-  PERMISSION_DENIED = "permission_denied",
-  DATA_EXPORT = "data_export",
-  SYSTEM_CONFIG_CHANGED = "system_config_changed",
+  APPOINTMENT_CREATED = 'appointment_created',
+  APPOINTMENT_UPDATED = 'appointment_updated',
+  APPOINTMENT_DELETED = 'appointment_deleted',
+  APPOINTMENT_VIEWED = 'appointment_viewed',
+  USER_LOGIN = 'user_login',
+  USER_LOGOUT = 'user_logout',
+  PERMISSION_DENIED = 'permission_denied',
+  DATA_EXPORT = 'data_export',
+  SYSTEM_CONFIG_CHANGED = 'system_config_changed',
 }
 
 // Audit log entry
@@ -482,13 +482,13 @@ interface AuditLogEntry {
   ipAddress: string;
   userAgent: string;
   sessionId: string;
-  result: "success" | "failure";
+  result: 'success' | 'failure';
   errorMessage?: string;
 }
 
 // Audit service
 class AuditService {
-  static async log(entry: Omit<AuditLogEntry, "id" | "timestamp">) {
+  static async log(entry: Omit<AuditLogEntry, 'id' | 'timestamp'>) {
     try {
       await prisma.auditLog.create({
         data: {
@@ -498,7 +498,7 @@ class AuditService {
         },
       });
     } catch (error) {
-      console.error("Failed to create audit log:", error);
+      console.error('Failed to create audit log:', error);
       // Don't throw - audit failures shouldn't break the main application
     }
   }
@@ -508,16 +508,16 @@ class AuditService {
     userId: string,
     userType: UserRole,
     appointment: CalendarEvent,
-    result: "success" | "failure" = "success",
+    result: 'success' | 'failure' = 'success',
     errorMessage?: string,
   ) {
-    const entry: Omit<AuditLogEntry, "id" | "timestamp"> = {
+    const entry: Omit<AuditLogEntry, 'id' | 'timestamp'> = {
       userId,
       userType,
       eventType: action,
       action: action.toString(),
       resourceId: appointment.id,
-      resourceType: "appointment",
+      resourceType: 'appointment',
       newValues: appointment,
       ipAddress: await getClientIP(),
       userAgent: navigator.userAgent,
@@ -534,9 +534,9 @@ class AuditService {
     userType: UserRole,
     action: string,
     details: any,
-    result: "success" | "failure",
+    result: 'success' | 'failure',
   ) {
-    const entry: Omit<AuditLogEntry, "id" | "timestamp"> = {
+    const entry: Omit<AuditLogEntry, 'id' | 'timestamp'> = {
       userId,
       userType,
       eventType: AuditEventType.PERMISSION_DENIED,
@@ -575,12 +575,12 @@ class SecurityMonitor {
     const recentFailures = await prisma.auditLog.findMany({
       where: {
         eventType: AuditEventType.USER_LOGIN,
-        result: "failure",
+        result: 'failure',
         timestamp: {
           gte: subMinutes(new Date(), 15), // Last 15 minutes
         },
       },
-      groupBy: ["userId", "ipAddress"],
+      groupBy: ['userId', 'ipAddress'],
       having: {
         count: {
           gt: 5, // More than 5 failed attempts
@@ -590,17 +590,17 @@ class SecurityMonitor {
 
     for (const failure of recentFailures) {
       await this.createSecurityAlert({
-        type: "brute_force",
-        severity: "high",
+        type: 'brute_force',
+        severity: 'high',
         userId: failure.userId,
         ipAddress: failure.ipAddress,
-        message: "Multiple failed login attempts detected",
+        message: 'Multiple failed login attempts detected',
       });
     }
   }
 
   private static async createSecurityAlert(
-    alert: Omit<SecurityAlert, "id" | "timestamp">,
+    alert: Omit<SecurityAlert, 'id' | 'timestamp'>,
   ) {
     const fullAlert: SecurityAlert = {
       ...alert,
@@ -615,11 +615,11 @@ class SecurityMonitor {
 
     // Log the alert
     await AuditService.logSecurityEvent(
-      "system",
+      'system',
       UserRole.ADMIN,
-      "security_alert_created",
+      'security_alert_created',
       fullAlert,
-      "success",
+      'success',
     );
   }
 }
@@ -632,10 +632,10 @@ class SecurityMonitor {
 ```typescript
 // Patient consent types
 enum ConsentType {
-  APPOINTMENT_SCHEDULING = "appointment_scheduling",
-  DATA_PROCESSING = "data_processing",
-  MARKETING_COMMUNICATIONS = "marketing_communications",
-  EMERGENCY_CONTACT = "emergency_contact",
+  APPOINTMENT_SCHEDULING = 'appointment_scheduling',
+  DATA_PROCESSING = 'data_processing',
+  MARKETING_COMMUNICATIONS = 'marketing_communications',
+  EMERGENCY_CONTACT = 'emergency_contact',
 }
 
 // Consent record
@@ -664,7 +664,7 @@ class ConsentService {
         given: true,
         OR: [{ expiryDate: null }, { expiryDate: { gt: new Date() } }],
       },
-      orderBy: { timestamp: "desc" },
+      orderBy: { timestamp: 'desc' },
     });
 
     return !!consent;
@@ -695,7 +695,7 @@ class ConsentService {
       UserRole.PATIENT,
       `consent_${consentType}`,
       { given, documentHash },
-      "success",
+      'success',
     );
   }
 
@@ -710,7 +710,7 @@ class ConsentService {
     );
 
     if (!hasAppointmentConsent) {
-      throw new Error("Patient consent required for appointment scheduling");
+      throw new Error('Patient consent required for appointment scheduling');
     }
 
     // Check data processing consent
@@ -720,7 +720,7 @@ class ConsentService {
     );
 
     if (!hasDataProcessingConsent) {
-      throw new Error("Patient consent required for data processing");
+      throw new Error('Patient consent required for data processing');
     }
 
     return true;
@@ -733,11 +733,11 @@ class ConsentService {
 ```typescript
 // Data subject request types
 enum DataSubjectRequestType {
-  ACCESS = "access",
-  RECTIFICATION = "rectification",
-  ERASURE = "erasure",
-  PORTABILITY = "portability",
-  OBJECTION = "objection",
+  ACCESS = 'access',
+  RECTIFICATION = 'rectification',
+  ERASURE = 'erasure',
+  PORTABILITY = 'portability',
+  OBJECTION = 'objection',
 }
 
 // Data subject request
@@ -745,7 +745,7 @@ interface DataSubjectRequest {
   id: string;
   patientId: string;
   requestType: DataSubjectRequestType;
-  status: "pending" | "processing" | "completed" | "rejected";
+  status: 'pending' | 'processing' | 'completed' | 'rejected';
   requestedAt: Date;
   processedAt?: Date;
   processedBy?: string;
@@ -765,7 +765,7 @@ class DataSubjectRightsService {
         id: generateUUID(),
         patientId,
         requestType,
-        status: "pending",
+        status: 'pending',
         requestedAt: new Date(),
         details,
       },
@@ -788,7 +788,7 @@ class DataSubjectRightsService {
     await prisma.dataSubjectRequest.update({
       where: { id: request.id },
       data: {
-        status: "completed",
+        status: 'completed',
         processedAt: new Date(),
         response: processedData,
       },
@@ -807,7 +807,7 @@ class DataSubjectRightsService {
     await prisma.dataSubjectRequest.update({
       where: { id: request.id },
       data: {
-        status: "completed",
+        status: 'completed',
         processedAt: new Date(),
       },
     });
@@ -825,9 +825,8 @@ export const calendarApiRouter = createRouter()
   .middleware(authMiddleware)
   .middleware(rateLimitMiddleware)
   .middleware(inputValidationMiddleware)
-
   // Create appointment
-  .mutation("create", {
+  .mutation('create', {
     input: z.object({
       title: z.string().min(1).max(200),
       start: z.date(),
@@ -838,18 +837,18 @@ export const calendarApiRouter = createRouter()
     }),
     async resolve({ input, ctx }) {
       // Check permissions
-      if (!ctx.user.permissions.includes("create:appointments")) {
+      if (!ctx.user.permissions.includes('create:appointments')) {
         throw new TRPCError({
-          code: "FORBIDDEN",
-          message: "Insufficient permissions",
+          code: 'FORBIDDEN',
+          message: 'Insufficient permissions',
         });
       }
 
       // Validate business rules
       if (input.start >= input.end) {
         throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "End time must be after start time",
+          code: 'BAD_REQUEST',
+          message: 'End time must be after start time',
         });
       }
 
@@ -857,8 +856,8 @@ export const calendarApiRouter = createRouter()
       const conflicts = await checkForConflicts(input);
       if (conflicts.length > 0) {
         throw new TRPCError({
-          code: "CONFLICT",
-          message: "Appointment conflicts with existing schedule",
+          code: 'CONFLICT',
+          message: 'Appointment conflicts with existing schedule',
         });
       }
 
@@ -882,15 +881,14 @@ export const calendarApiRouter = createRouter()
         ctx.user.id,
         ctx.user.role,
         appointment,
-        "success",
+        'success',
       );
 
       return appointment;
     },
   })
-
   // Get appointments
-  .query("list", {
+  .query('list', {
     input: z.object({
       start: z.date(),
       end: z.date(),
@@ -898,18 +896,18 @@ export const calendarApiRouter = createRouter()
     }),
     async resolve({ input, ctx }) {
       // Check permissions
-      if (!ctx.user.permissions.includes("view:appointments")) {
+      if (!ctx.user.permissions.includes('view:appointments')) {
         throw new TRPCError({
-          code: "FORBIDDEN",
-          message: "Insufficient permissions",
+          code: 'FORBIDDEN',
+          message: 'Insufficient permissions',
         });
       }
 
       // Validate date range
       if (input.end < input.start) {
         throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "End date must be after start date",
+          code: 'BAD_REQUEST',
+          message: 'End date must be after start date',
         });
       }
 
@@ -918,8 +916,8 @@ export const calendarApiRouter = createRouter()
       const daysDiff = differenceInDays(input.end, input.start);
       if (daysDiff > maxRange) {
         throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "Date range cannot exceed 1 year",
+          code: 'BAD_REQUEST',
+          message: 'Date range cannot exceed 1 year',
         });
       }
 
@@ -934,11 +932,11 @@ export const calendarApiRouter = createRouter()
             lte: input.end,
           },
           // Filter by patient if specified and user has permission
-          ...(input.patientId && ctx.user.permissions.includes("view:patients")
+          ...(input.patientId && ctx.user.permissions.includes('view:patients')
             ? { patientId: input.patientId }
             : {}),
         },
-        orderBy: { start: "asc" },
+        orderBy: { start: 'asc' },
       });
 
       // Audit access
@@ -950,7 +948,7 @@ export const calendarApiRouter = createRouter()
           count: appointments.length,
           dateRange: { start: input.start, end: input.end },
         },
-        "success",
+        'success',
       );
 
       return appointments;
@@ -977,37 +975,37 @@ class SecureWebSocket {
       this.ws = new WebSocket(`${this.url}?token=${this.token}`);
 
       this.ws.onopen = () => {
-        console.log("WebSocket connected");
+        console.log('WebSocket connected');
         this.reconnectAttempts = 0;
       };
 
-      this.ws.onmessage = (event) => {
+      this.ws.onmessage = event => {
         try {
           const message = JSON.parse(event.data);
 
           // Validate message structure
           if (!this.validateMessage(message)) {
-            console.error("Invalid message received:", message);
+            console.error('Invalid message received:', message);
             return;
           }
 
           // Handle different message types
           this.handleMessage(message);
         } catch (error) {
-          console.error("Error processing WebSocket message:", error);
+          console.error('Error processing WebSocket message:', error);
         }
       };
 
       this.ws.onclose = () => {
-        console.log("WebSocket disconnected");
+        console.log('WebSocket disconnected');
         this.reconnect();
       };
 
-      this.ws.onerror = (error) => {
-        console.error("WebSocket error:", error);
+      this.ws.onerror = error => {
+        console.error('WebSocket error:', error);
       };
     } catch (error) {
-      console.error("Failed to connect WebSocket:", error);
+      console.error('Failed to connect WebSocket:', error);
       this.reconnect();
     }
   }
@@ -1020,9 +1018,9 @@ class SecureWebSocket {
 
     // Validate message type
     const validTypes = [
-      "appointment_update",
-      "appointment_created",
-      "appointment_deleted",
+      'appointment_update',
+      'appointment_created',
+      'appointment_deleted',
     ];
     if (!validTypes.includes(message.type)) {
       return false;
@@ -1030,11 +1028,11 @@ class SecureWebSocket {
 
     // Validate payload based on type
     switch (message.type) {
-      case "appointment_update":
-      case "appointment_created":
+      case 'appointment_update':
+      case 'appointment_created':
         return this.validateAppointmentPayload(message.payload);
-      case "appointment_deleted":
-        return typeof message.payload.id === "string";
+      case 'appointment_deleted':
+        return typeof message.payload.id === 'string';
       default:
         return false;
     }
@@ -1042,10 +1040,10 @@ class SecureWebSocket {
 
   private validateAppointmentPayload(payload: any): boolean {
     return (
-      typeof payload.id === "string" &&
-      typeof payload.title === "string" &&
-      payload.start instanceof Date &&
-      payload.end instanceof Date
+      typeof payload.id === 'string'
+      && typeof payload.title === 'string'
+      && payload.start instanceof Date
+      && payload.end instanceof Date
     );
   }
 
@@ -1072,9 +1070,9 @@ class SecureWebSocket {
 
 ```typescript
 // Security tests for calendar components
-describe("Calendar Security", () => {
-  describe("Input Validation", () => {
-    test("should reject XSS attempts in event titles", () => {
+describe('Calendar Security', () => {
+  describe('Input Validation', () => {
+    test('should reject XSS attempts in event titles', () => {
       const maliciousTitle = '<script>alert("xss")</script>';
 
       expect(() =>
@@ -1082,19 +1080,19 @@ describe("Calendar Security", () => {
           title: maliciousTitle,
           start: new Date(),
           end: addHours(new Date(), 1),
-        }),
+        })
       ).toThrow();
     });
 
-    test("should validate appointment duration limits", () => {
+    test('should validate appointment duration limits', () => {
       const tooShort = {
-        title: "Test",
+        title: 'Test',
         start: new Date(),
         end: addMinutes(new Date(), 5), // Less than 15 minutes
       };
 
       const tooLong = {
-        title: "Test",
+        title: 'Test',
         start: new Date(),
         end: addHours(new Date(), 10), // More than 8 hours
       };
@@ -1104,17 +1102,17 @@ describe("Calendar Security", () => {
     });
   });
 
-  describe("Authentication", () => {
-    test("should reject invalid tokens", () => {
-      const invalidToken = "invalid.token.here";
+  describe('Authentication', () => {
+    test('should reject invalid tokens', () => {
+      const invalidToken = 'invalid.token.here';
       const user = CalendarAuthService.validateToken(invalidToken);
 
       expect(user).toBeNull();
     });
 
-    test("should reject expired tokens", () => {
+    test('should reject expired tokens', () => {
       const expiredToken = jwt.sign(
-        { userId: "test", exp: Math.floor(Date.now() / 1000) - 3600 },
+        { userId: 'test', exp: Math.floor(Date.now() / 1000) - 3600 },
         process.env.JWT_SECRET,
       );
 
@@ -1123,11 +1121,11 @@ describe("Calendar Security", () => {
     });
   });
 
-  describe("Authorization", () => {
-    test("should restrict access based on permissions", () => {
+  describe('Authorization', () => {
+    test('should restrict access based on permissions', () => {
       const patientToken = CalendarAuthService.generateSecureToken(
-        "patient-123",
-        "clinic-456",
+        'patient-123',
+        'clinic-456',
         UserRole.PATIENT,
       );
 
@@ -1140,11 +1138,11 @@ describe("Calendar Security", () => {
     });
   });
 
-  describe("Data Protection", () => {
-    test("should encrypt sensitive patient data", () => {
+  describe('Data Protection', () => {
+    test('should encrypt sensitive patient data', () => {
       const sensitiveData = {
-        patientId: "patient-123",
-        description: "Sensitive medical information",
+        patientId: 'patient-123',
+        description: 'Sensitive medical information',
       };
 
       const encrypted = CalendarSecurity.encryptEventData(sensitiveData);
@@ -1153,8 +1151,8 @@ describe("Calendar Security", () => {
       expect(decrypted).toEqual(sensitiveData);
     });
 
-    test("should hash patient identifiers for privacy", () => {
-      const patientId = "patient-123";
+    test('should hash patient identifiers for privacy', () => {
+      const patientId = 'patient-123';
       const hash = CalendarSecurity.hashPatientId(patientId);
 
       expect(hash).not.toBe(patientId);
@@ -1170,57 +1168,57 @@ describe("Calendar Security", () => {
 // Security penetration test scenarios
 const penTestScenarios = [
   {
-    name: "SQL Injection",
-    description: "Test for SQL injection in API parameters",
+    name: 'SQL Injection',
+    description: 'Test for SQL injection in API parameters',
     tests: [
-      { payload: "' OR '1'='1", expected: "Should be rejected" },
+      { payload: '\' OR \'1\'=\'1', expected: 'Should be rejected' },
       {
-        payload: "'; DROP TABLE appointments; --",
-        expected: "Should be rejected",
+        payload: '\'; DROP TABLE appointments; --',
+        expected: 'Should be rejected',
       },
     ],
   },
   {
-    name: "XSS Attacks",
-    description: "Test for cross-site scripting vulnerabilities",
+    name: 'XSS Attacks',
+    description: 'Test for cross-site scripting vulnerabilities',
     tests: [
-      { payload: "<script>alert(1)</script>", expected: "Should be sanitized" },
-      { payload: "javascript:alert(1)", expected: "Should be rejected" },
+      { payload: '<script>alert(1)</script>', expected: 'Should be sanitized' },
+      { payload: 'javascript:alert(1)', expected: 'Should be rejected' },
     ],
   },
   {
-    name: "Authentication Bypass",
-    description: "Test for authentication bypass vulnerabilities",
+    name: 'Authentication Bypass',
+    description: 'Test for authentication bypass vulnerabilities',
     tests: [
       {
-        scenario: "Access protected endpoint without token",
-        expected: "401 Unauthorized",
+        scenario: 'Access protected endpoint without token',
+        expected: '401 Unauthorized',
       },
-      { scenario: "Access with malformed token", expected: "401 Unauthorized" },
+      { scenario: 'Access with malformed token', expected: '401 Unauthorized' },
     ],
   },
   {
-    name: "Authorization Bypass",
-    description: "Test for privilege escalation",
+    name: 'Authorization Bypass',
+    description: 'Test for privilege escalation',
     tests: [
       {
-        scenario: "Patient accessing admin functions",
-        expected: "403 Forbidden",
+        scenario: 'Patient accessing admin functions',
+        expected: '403 Forbidden',
       },
-      { scenario: "Accessing other patients' data", expected: "403 Forbidden" },
+      { scenario: 'Accessing other patients\' data', expected: '403 Forbidden' },
     ],
   },
   {
-    name: "Data Exfiltration",
-    description: "Test for data theft vulnerabilities",
+    name: 'Data Exfiltration',
+    description: 'Test for data theft vulnerabilities',
     tests: [
       {
-        scenario: "Large date range requests",
-        expected: "Should be rate limited",
+        scenario: 'Large date range requests',
+        expected: 'Should be rate limited',
       },
       {
-        scenario: "Bulk data export without authorization",
-        expected: "Should be blocked",
+        scenario: 'Bulk data export without authorization',
+        expected: 'Should be blocked',
       },
     ],
   },

@@ -175,7 +175,8 @@ export class BulkOperationsService {
 
       result.processingTimeMs = Date.now() - startTime;
       return result;
-    } catch { void _error;
+    } catch {
+      void _error;
       // Log error
       await this.logOperationError(request, error, auditTrailId);
 
@@ -220,7 +221,8 @@ export class BulkOperationsService {
       logger.info('Bulk operation undone', { undoToken, requesterUserId });
 
       return true;
-    } catch { void _error;
+    } catch {
+      void _error;
       logger.error('Failed to undo bulk operation', { undoToken, error });
       return false;
     }
@@ -316,7 +318,8 @@ export class BulkOperationsService {
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
       try {
         return await this.executeBulkOperationCore(request, auditTrailId);
-      } catch { void _error;
+      } catch {
+        void _error;
         lastError = error;
 
         // Don't retry validation errors or auth errors
@@ -376,7 +379,8 @@ export class BulkOperationsService {
           await this.executeEntityOperation(request, entityId);
 
           result.processed++;
-        } catch { void _error;
+        } catch {
+          void _error;
           result.failed++;
           result.errors.push({
             entityId,

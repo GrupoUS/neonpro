@@ -78,7 +78,8 @@ export class CertificateMonitor {
         certificatePath: this.config.certificatePath,
         timestamp: new Date().toISOString(),
       });
-    } catch { void _error;
+    } catch {
+      void _error;
       this.logger.logError('certificate_monitor_start_failed', {
         error: error instanceof Error ? error.message : 'Unknown error',
         config: this.config,
@@ -116,7 +117,8 @@ export class CertificateMonitor {
         if (stats.size === 0) {
           throw new Error(`Certificate file is empty: ${filePath}`);
         }
-      } catch { void _error;
+      } catch {
+        void _error;
         throw new Error(`Cannot read certificate file: ${filePath}`);
       }
     }
@@ -145,7 +147,8 @@ export class CertificateMonitor {
 
       // Determine alert level based on expiry
       await this.handleCertificateExpiry(certInfo, daysUntilExpiry);
-    } catch { void _error;
+    } catch {
+      void _error;
       await this.logger.logError('certificate_check_failed', {
         error: error instanceof Error ? error.message : 'Unknown error',
         certificatePath: this.config.certificatePath,
@@ -174,7 +177,8 @@ export class CertificateMonitor {
       );
 
       return await this.parseCertificateOutput(stdout);
-    } catch { void _error;
+    } catch {
+      void _error;
       throw new Error(
         `Failed to get certificate info: ${
           error instanceof Error ? error.message : 'Unknown error'
@@ -231,7 +235,8 @@ export class CertificateMonitor {
       certInfo.fingerprint = fingerprintOutput
         .replace('SHA1 Fingerprint=', '')
         .trim();
-    } catch { void _error;
+    } catch {
+      void _error;
       // Fingerprint is optional
     }
 
@@ -240,7 +245,8 @@ export class CertificateMonitor {
         `openssl x509 -in "${this.config.certificatePath}" -serial -noout`,
       );
       certInfo.serialNumber = serialOutput.replace('serial=', '').trim();
-    } catch { void _error;
+    } catch {
+      void _error;
       // Serial number is optional
     }
 
@@ -359,7 +365,8 @@ export class CertificateMonitor {
       if (this.config.webhookUrl) {
         await this.sendWebhookAlert(alert);
       }
-    } catch { void _error;
+    } catch {
+      void _error;
       await this.logger.logError('certificate_alert_failed', {
         error: error instanceof Error ? error.message : 'Unknown error',
         alert,
@@ -404,7 +411,8 @@ export class CertificateMonitor {
         type: alert.type,
         timestamp: new Date().toISOString(),
       });
-    } catch { void _error;
+    } catch {
+      void _error;
       throw new Error(
         `Failed to send webhook alert: ${error instanceof Error ? error.message : 'Unknown error'}`,
       );
@@ -446,7 +454,8 @@ export class CertificateMonitor {
         message: 'Certificate automatically renewed successfully',
         timestamp: new Date(),
       });
-    } catch { void _error;
+    } catch {
+      void _error;
       await this.logger.logError('auto_renewal_failed', {
         error: error instanceof Error ? error.message : 'Unknown error',
         certificate: alert.certificate.subject,
@@ -491,7 +500,8 @@ export class CertificateMonitor {
         status,
         lastCheck: new Date(),
       };
-    } catch { void _error;
+    } catch {
+      void _error;
       return {
         certificate: null,
         daysUntilExpiry: null,

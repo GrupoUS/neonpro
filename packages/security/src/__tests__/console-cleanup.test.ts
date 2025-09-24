@@ -57,6 +57,7 @@ describe('Security Package Console Logging Cleanup - TDD RED Phase', () => {
           json: vi.fn().mockRejectedValue(new Error('Parse error')),
         },
         set: vi.fn(),
+        header: vi.fn(),
       } as any;
 
       const mockNext = vi.fn();
@@ -81,6 +82,7 @@ describe('Security Package Console Logging Cleanup - TDD RED Phase', () => {
           header: vi.fn().mockReturnValue('Bearer valid-token-12345'),
         },
         set: vi.fn(),
+        header: vi.fn(),
       } as any;
 
       const mockNext = vi.fn();
@@ -104,6 +106,7 @@ describe('Security Package Console Logging Cleanup - TDD RED Phase', () => {
           header: vi.fn().mockReturnValue('Bearer invalid-token'),
         },
         set: vi.fn(),
+        header: vi.fn(),
       } as any;
 
       const mockNext = vi.fn();

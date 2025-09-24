@@ -1,34 +1,34 @@
 // Utils package exports
 
 // Logging utilities
-export * from "./logging/logger";
-export * from "./logging/redact";
+export * from './logging/logger';
+export * from './logging/redact';
 
 // CLI utilities
-export * from "./cli";
+export * from './cli';
 
 // Healthcare utilities
-export * from "./healthcare-errors";
+export * from './healthcare-errors';
 
 // UI utilities
-export * from "./currency/brl";
-export * from "./utils";
-export * from "./br/identifiers";
+export * from './br/identifiers';
+export * from './currency/brl';
+export * from './utils';
 
 // Re-export specific functions for clarity
-export { formatBRL, maskBRLInput, parseBRL } from "./currency/brl";
+export { formatBRL, maskBRLInput, parseBRL } from './currency/brl';
 
 export {
+  cleanDocument,
   formatBRPhone,
   formatCPF,
-  validateCPF,
   validateBrazilianPhone,
-  validateCPFMask,
   validateBRPhoneMask,
-  cleanDocument,
-} from "./br/identifiers";
+  validateCPF,
+  validateCPFMask,
+} from './br/identifiers';
 
-export { cn, formatDate, formatDateTime, debounce, throttle } from "./utils";
+export { cn, debounce, formatDate, formatDateTime, throttle } from './utils';
 
 // Placeholder exports - will be populated with actual utilities
 export const _auth = {};
@@ -41,7 +41,7 @@ export const _compliance = {
     // Note: callers should handle async if we switch to true dynamic import later
     // For now, keep sync require but fix double export typo
     // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const { lgpdCompliance } = require("./lgpd");
+    const { lgpdCompliance } = require('./lgpd');
     return lgpdCompliance(input);
   },
 };

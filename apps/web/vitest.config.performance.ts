@@ -1,13 +1,13 @@
 /**
  * Vitest Configuration for Performance Tests
- * 
+ *
  * Configuration for running performance tests with proper
  * monitoring, benchmarking, and regression detection
  */
 
-import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
 import path from 'path';
+import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   plugins: [react()],
@@ -16,17 +16,17 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: [
       './src/__tests__/setup/test-setup.ts',
-      './src/__tests__/setup/performance-setup.ts'
+      './src/__tests__/setup/performance-setup.ts',
     ],
     include: [
       'src/**/performance/**/*.test.{js,jsx,ts,tsx}',
-      'src/**/*performance*.test.{js,jsx,ts,tsx}'
+      'src/**/*performance*.test.{js,jsx,ts,tsx}',
     ],
     exclude: [
       'node_modules/',
       'dist/',
       'src/**/*.unit.{test,spec}.{js,jsx,ts,tsx}',
-      'src/**/*.integration.{test,spec}.{js,jsx,ts,tsx}'
+      'src/**/*.integration.{test,spec}.{js,jsx,ts,tsx}',
     ],
     // Performance test specific settings
     testTimeout: 30000, // 30 seconds for performance tests
@@ -41,10 +41,10 @@ export default defineConfig({
       [
         'json',
         {
-          outputFile: 'performance-results.json'
-        }
-      ]
-    ]
+          outputFile: 'performance-results.json',
+        },
+      ],
+    ],
   },
   resolve: {
     alias: {
@@ -54,8 +54,8 @@ export default defineConfig({
       '@/utils': path.resolve(__dirname, './src/utils'),
       '@/types': path.resolve(__dirname, './src/types'),
       '@/services': path.resolve(__dirname, './src/services'),
-      '@/__tests__': path.resolve(__dirname, './src/__tests__')
-    }
+      '@/__tests__': path.resolve(__dirname, './src/__tests__'),
+    },
   },
   server: {
     port: 3000,
@@ -65,9 +65,9 @@ export default defineConfig({
       '/api': {
         target: 'http://localhost:3001',
         changeOrigin: true,
-        secure: false
-      }
-    }
+        secure: false,
+      },
+    },
   },
   define: {
     global: 'globalThis',
@@ -75,8 +75,8 @@ export default defineConfig({
       NODE_ENV: '"test"',
       DATABASE_URL: '"postgresql://postgres:postgres@localhost:5432/neonpro_test"',
       VITE_API_URL: '"http://localhost:3001"',
-      VITE_PERFORMANCE_MONITORING: '"true"'
-    }
+      VITE_PERFORMANCE_MONITORING: '"true"',
+    },
   },
   // Performance monitoring settings
   performance: {
@@ -88,31 +88,31 @@ export default defineConfig({
       renderTime: {
         fast: 100,
         acceptable: 200,
-        slow: 500
+        slow: 500,
       },
       // Memory usage thresholds (MB)
       memoryUsage: {
         low: 50,
         medium: 100,
-        high: 200
+        high: 200,
       },
       // Response time thresholds (ms)
       responseTime: {
         fast: 200,
         acceptable: 500,
-        slow: 1000
+        slow: 1000,
       },
       // WebSocket latency thresholds (ms)
       websocketLatency: {
         excellent: 50,
         good: 100,
-        acceptable: 200
+        acceptable: 200,
       },
       // Concurrent user thresholds
       concurrentUsers: {
         successRate: 0.95,
-        errorRate: 0.05
-      }
+        errorRate: 0.05,
+      },
     },
     // Performance monitoring intervals
     monitoring: {
@@ -121,7 +121,7 @@ export default defineConfig({
       // Long task monitoring
       longTaskThreshold: 100,
       // Network request monitoring
-      networkTimeout: 5000
+      networkTimeout: 5000,
     },
     // Benchmark configuration
     benchmark: {
@@ -132,7 +132,7 @@ export default defineConfig({
       // Minimum sample size
       minSamples: 20,
       // Maximum time for benchmarks (ms)
-      maxTime: 30000
+      maxTime: 30000,
     },
     // Load testing configuration
     loadTesting: {
@@ -145,7 +145,7 @@ export default defineConfig({
       // Think time between requests (ms)
       thinkTime: 1000,
       // Timeout for requests (ms)
-      requestTimeout: 10000
+      requestTimeout: 10000,
     },
     // Regression detection
     regression: {
@@ -154,7 +154,7 @@ export default defineConfig({
       // Minimum number of samples to consider
       minSamples: 10,
       // Confidence interval (0-1)
-      confidence: 0.95
-    }
-  }
+      confidence: 0.95,
+    },
+  },
 });

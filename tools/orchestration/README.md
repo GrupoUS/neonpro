@@ -37,10 +37,7 @@ Complete multi-agent TDD orchestration system with quality control integration a
 ## Quick Start
 
 ```typescript
-import {
-  createTDDOrchestrationSystem,
-  runTDDCycle,
-} from "@neonpro/tools-orchestration";
+import { createTDDOrchestrationSystem, runTDDCycle } from '@neonpro/tools-orchestration';
 
 // Create orchestration system
 const system = createTDDOrchestrationSystem({
@@ -54,24 +51,26 @@ await system.initialize();
 
 // Execute TDD cycle
 const feature = {
-  name: "user-authentication",
-  description: "User authentication with healthcare compliance",
-  domain: ["auth", "healthcare"],
-  complexity: "medium",
-  requirements: ["LGPD compliance", "secure authentication"],
-  acceptance: ["All security tests pass", "LGPD validation complete"],
+  name: 'user-authentication',
+  description: 'User authentication with healthcare compliance',
+  domain: ['auth', 'healthcare'],
+  complexity: 'medium',
+  requirements: ['LGPD compliance', 'secure authentication'],
+  acceptance: ['All security tests pass', 'LGPD validation complete'],
 };
 
 const result = await runTDDCycle(feature, {
-  workflow: "parallel",
-  coordination: "parallel",
-  agents: ["test-auditor", "code-reviewer", "architect-review"],
+  workflow: 'parallel',
+  coordination: 'parallel',
+  agents: ['test-auditor', 'code-reviewer', 'architect-review'],
   healthcare: true,
 });
 
-console.log(`TDD Cycle: ${result.success ? "SUCCESS" : "FAILED"}`);
+console.log(`TDD Cycle: ${result.success ? 'SUCCESS' : 'FAILED'}`);
 console.log(
-  `Healthcare Compliance: ${result.healthcareCompliance?.overall.compliant ? "COMPLIANT" : "NON-COMPLIANT"}`,
+  `Healthcare Compliance: ${
+    result.healthcareCompliance?.overall.compliant ? 'COMPLIANT' : 'NON-COMPLIANT'
+  }`,
 );
 ```
 
@@ -200,11 +199,11 @@ All compliance activities are logged with constitutional principles:
 ```typescript
 logger.constitutional(
   LogLevel.INFO,
-  "Healthcare compliance validation completed",
+  'Healthcare compliance validation completed',
   {
     compliance: true,
-    requirement: "Healthcare Compliance Validation",
-    standard: "LGPD,ANVISA,CFM",
+    requirement: 'Healthcare Compliance Validation',
+    standard: 'LGPD,ANVISA,CFM',
   },
 );
 ```

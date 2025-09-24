@@ -138,13 +138,13 @@ export const safeParseValibot = <T>(
   value: unknown,
 ):
   | {
-      success: true;
-      data: T;
-    }
+    success: true;
+    data: T;
+  }
   | {
-      success: false;
-      error: valibot.ParseError<T>;
-    } =>
+    success: false;
+    error: valibot.ParseError<T>;
+  } =>
 {
   const result = valibot.safeParse(schema, value);
   return result.success

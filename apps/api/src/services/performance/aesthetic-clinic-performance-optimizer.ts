@@ -4,9 +4,9 @@
  * Includes multi-level caching, query optimization, and real-time monitoring
  */
 
-import { SupabaseClient } from "@supabase/supabase-js";
-import { DatabasePerformanceService, type PerformanceConfig } from "@neonpro/database";
-import { ErrorMapper } from "@neonpro/shared/errors";
+import { DatabasePerformanceService, type PerformanceConfig } from '@neonpro/database';
+import { ErrorMapper } from '@neonpro/shared/errors';
+import { SupabaseClient } from '@supabase/supabase-js';
 
 // Performance monitoring interfaces
 export interface AestheticPerformanceMetrics {
@@ -40,12 +40,12 @@ export interface AestheticCacheConfig {
   clientProfiles: {
     ttl: number;
     maxSize: number;
-    strategy: "lru" | "fifo";
+    strategy: 'lru' | 'fifo';
   };
   treatmentCatalog: {
     ttl: number;
     maxSize: number;
-    strategy: "lru";
+    strategy: 'lru';
   };
   beforeAfterPhotos: {
     ttl: number;
@@ -63,7 +63,7 @@ export interface AestheticCacheConfig {
 export interface ImageOptimizationConfig {
   maxWidth: number;
   quality: number;
-  formats: ("webp" | "avif" | "jpeg")[];
+  formats: ('webp' | 'avif' | 'jpeg')[];
   lazyLoading: boolean;
   placeholderEnabled: boolean;
   cdnEnabled: boolean;
@@ -110,12 +110,12 @@ export class AestheticClinicPerformanceOptimizer {
         clientProfiles: {
           ttl: 300000, // 5 minutes
           maxSize: 1000,
-          strategy: "lru",
+          strategy: 'lru',
         },
         treatmentCatalog: {
           ttl: 3600000, // 1 hour
           maxSize: 500,
-          strategy: "lru",
+          strategy: 'lru',
         },
         beforeAfterPhotos: {
           ttl: 1800000, // 30 minutes
@@ -132,7 +132,7 @@ export class AestheticClinicPerformanceOptimizer {
       images: {
         maxWidth: 1200,
         quality: 85,
-        formats: ["webp", "jpeg"],
+        formats: ['webp', 'jpeg'],
         lazyLoading: true,
         placeholderEnabled: true,
         cdnEnabled: true,
@@ -144,7 +144,7 @@ export class AestheticClinicPerformanceOptimizer {
         enableConnectionPooling: true,
         poolSize: 10,
         enableReadReplicas: false,
-        indexHints: ["idx_aesthetic_clients_email", "idx_treatment_sessions_date"],
+        indexHints: ['idx_aesthetic_clients_email', 'idx_treatment_sessions_date'],
         ...config?.queries,
       },
     };
@@ -171,7 +171,7 @@ export class AestheticClinicPerformanceOptimizer {
     if (!options.forceRefresh) {
       const cached = this.getFromCache(cacheKey);
       if (cached) {
-        this.recordMetric("cache_hit", performance.now() - startTime);
+        this.recordMetric('cache_hit', performance.now() - startTime);
         return cached;
       }
     }
@@ -179,7 +179,7 @@ export class AestheticClinicPerformanceOptimizer {
     try {
       // Build optimized query with column selection
       let query = this.supabase
-        .from("aesthetic_clients")
+        .from('aesthetic_clients')
         .select(`
           id,
           name,
@@ -193,7 +193,7 @@ export class AestheticClinicPerformanceOptimizer {
           created_at,
           updated_at
         `)
-        .eq("id", clientId)
+        .eq('id', clientId)
         .single();
 
       const { data: client, error } = await query;
@@ -207,7 +207,7 @@ export class AestheticClinicPerformanceOptimizer {
       // Fetch related data if requested
       if (options.includeTreatments) {
         const { data: treatments } = await this.supabase
-          .from("treatment_sessions")
+          .from('treatment_sessions')
           .select(`
             id,
             treatment_type,
@@ -219,8 +219,8 @@ export class AestheticClinicPerformanceOptimizer {
             results,
             created_at
           `)
-          .eq("client_id", clientId)
-          .order("date", { ascending: false })
+          .eq('client_id', clientId)
+          .order('date', { ascending: false })
           .limit(10);
 
         result.treatments = treatments || [];
@@ -228,10 +228,10 @@ export class AestheticClinicPerformanceOptimizer {
 
       if (options.includePhotos) {
         const { data: photos } = await this.supabase
-          .from("treatment_photos")
-          .select("id, photo_url, thumbnail_url, treatment_type, created_at")
-          .eq("client_id", clientId)
-          .order("created_at", { ascending: false })
+          .from('treatment_photos')
+          .select('id, photo_url, thumbnail_url, treatment_type, created_at')
+          .eq('client_id', clientId)
+          .order('created_at', { ascending: false })
           .limit(20);
 
         result.photos = await this.optimizePhotos(photos || []);
@@ -245,15 +245,15 @@ export class AestheticClinicPerformanceOptimizer {
       );
 
       const duration = performance.now() - startTime;
-      this.recordMetric("client_profile_query", duration);
+      this.recordMetric('client_profile_query', duration);
 
       return result;
     } catch {
       const duration = performance.now() - startTime;
-      this.recordMetric("client_profile_error", duration);
-      
+      this.recordMetric('client_profile_error', duration);
+
       throw ErrorMapper.mapError(error, {
-        action: "get_optimized_client_profile",
+        action: 'get_optimized_client_profile',
         clientId,
         timestamp: new Date().toISOString(),
       });
@@ -267,20 +267,20 @@ export class AestheticClinicPerformanceOptimizer {
     category?: string;
     forceRefresh?: boolean;
   } = {}) {
-    const cacheKey = `treatment_catalog:${options.category || "all"}`;
+    const cacheKey = `treatment_catalog:${options.category || 'all'}`;
     const startTime = performance.now();
 
     if (!options.forceRefresh) {
       const cached = this.getFromCache(cacheKey);
       if (cached) {
-        this.recordMetric("cache_hit", performance.now() - startTime);
+        this.recordMetric('cache_hit', performance.now() - startTime);
         return cached;
       }
     }
 
     try {
       let query = this.supabase
-        .from("treatment_catalog")
+        .from('treatment_catalog')
         .select(`
           id,
           name,
@@ -298,10 +298,10 @@ export class AestheticClinicPerformanceOptimizer {
         `);
 
       if (options.category) {
-        query = query.eq("category", options.category);
+        query = query.eq('category', options.category);
       }
 
-      query = query.order("popularity_score", { ascending: false });
+      query = query.order('popularity_score', { ascending: false });
 
       const { data: treatments, error } = await query;
 
@@ -317,15 +317,15 @@ export class AestheticClinicPerformanceOptimizer {
       );
 
       const duration = performance.now() - startTime;
-      this.recordMetric("treatment_catalog_query", duration);
+      this.recordMetric('treatment_catalog_query', duration);
 
       return treatments || [];
     } catch {
       const duration = performance.now() - startTime;
-      this.recordMetric("treatment_catalog_error", duration);
-      
+      this.recordMetric('treatment_catalog_error', duration);
+
       throw ErrorMapper.mapError(error, {
-        action: "get_optimized_treatment_catalog",
+        action: 'get_optimized_treatment_catalog',
         category: options.category,
         timestamp: new Date().toISOString(),
       });
@@ -343,18 +343,20 @@ export class AestheticClinicPerformanceOptimizer {
       includeThumbnails?: boolean;
     } = {},
   ) {
-    const cacheKey = `before_after_photos:${clientId}:${options.treatmentType || "all"}:${options.limit || 20}`;
+    const cacheKey = `before_after_photos:${clientId}:${options.treatmentType || 'all'}:${
+      options.limit || 20
+    }`;
     const startTime = performance.now();
 
     const cached = this.getFromCache(cacheKey);
     if (cached) {
-      this.recordMetric("cache_hit", performance.now() - startTime);
+      this.recordMetric('cache_hit', performance.now() - startTime);
       return cached;
     }
 
     try {
       let query = this.supabase
-        .from("treatment_photos")
+        .from('treatment_photos')
         .select(`
           id,
           client_id,
@@ -365,13 +367,13 @@ export class AestheticClinicPerformanceOptimizer {
           created_at,
           updated_at
         `)
-        .eq("client_id", clientId);
+        .eq('client_id', clientId);
 
       if (options.treatmentType) {
-        query = query.eq("treatment_type", options.treatmentType);
+        query = query.eq('treatment_type', options.treatmentType);
       }
 
-      query = query.order("created_at", { ascending: false });
+      query = query.order('created_at', { ascending: false });
 
       if (options.limit) {
         query = query.limit(options.limit);
@@ -394,15 +396,15 @@ export class AestheticClinicPerformanceOptimizer {
       );
 
       const duration = performance.now() - startTime;
-      this.recordMetric("before_after_photos_query", duration);
+      this.recordMetric('before_after_photos_query', duration);
 
       return optimizedPhotos;
     } catch {
       const duration = performance.now() - startTime;
-      this.recordMetric("before_after_photos_error", duration);
-      
+      this.recordMetric('before_after_photos_error', duration);
+
       throw ErrorMapper.mapError(error, {
-        action: "get_optimized_before_after_photos",
+        action: 'get_optimized_before_after_photos',
         clientId,
         treatmentType: options.treatmentType,
         timestamp: new Date().toISOString(),
@@ -424,7 +426,7 @@ export class AestheticClinicPerformanceOptimizer {
     if (!options.forceRefresh) {
       const cached = this.getFromCache(cacheKey);
       if (cached) {
-        this.recordMetric("cache_hit", performance.now() - startTime);
+        this.recordMetric('cache_hit', performance.now() - startTime);
         return cached;
       }
     }
@@ -438,32 +440,33 @@ export class AestheticClinicPerformanceOptimizer {
         popularTreatmentsQuery,
       ] = await Promise.all([
         this.supabase
-          .from("aesthetic_clients")
-          .select("count", { count: "exact", head: true }),
+          .from('aesthetic_clients')
+          .select('count', { count: 'exact', head: true }),
         this.supabase
-          .from("treatment_sessions")
-          .select("count", { count: "exact", head: true })
-          .gte("date", options.dateRange?.start || "1970-01-01")
-          .lte("date", options.dateRange?.end || new Date().toISOString()),
+          .from('treatment_sessions')
+          .select('count', { count: 'exact', head: true })
+          .gte('date', options.dateRange?.start || '1970-01-01')
+          .lte('date', options.dateRange?.end || new Date().toISOString()),
         this.supabase
-          .from("treatment_sessions")
-          .select("total_amount")
-          .gte("date", options.dateRange?.start || "1970-01-01")
-          .lte("date", options.dateRange?.end || new Date().toISOString()),
+          .from('treatment_sessions')
+          .select('total_amount')
+          .gte('date', options.dateRange?.start || '1970-01-01')
+          .lte('date', options.dateRange?.end || new Date().toISOString()),
         this.supabase
-          .from("treatment_sessions")
-          .select("treatment_type, count")
-          .gte("date", options.dateRange?.start || "1970-01-01")
-          .lte("date", options.dateRange?.end || new Date().toISOString())
-          .group("treatment_type")
-          .order("count", { ascending: false })
+          .from('treatment_sessions')
+          .select('treatment_type, count')
+          .gte('date', options.dateRange?.start || '1970-01-01')
+          .lte('date', options.dateRange?.end || new Date().toISOString())
+          .group('treatment_type')
+          .order('count', { ascending: false })
           .limit(5),
       ]);
 
       const analytics = {
         totalClients: clientsQuery.count || 0,
         totalSessions: sessionsQuery.count || 0,
-        totalRevenue: revenueQuery.data?.reduce((sum, session) => sum + (session.total_amount || 0), 0) || 0,
+        totalRevenue: revenueQuery.data?.reduce((sum, session) =>
+          sum + (session.total_amount || 0), 0) || 0,
         popularTreatments: popularTreatmentsQuery.data || [],
         timestamp: new Date().toISOString(),
       };
@@ -472,15 +475,15 @@ export class AestheticClinicPerformanceOptimizer {
       this.setToCache(cacheKey, analytics, this.config.cache.analytics.ttl);
 
       const duration = performance.now() - startTime;
-      this.recordMetric("clinic_analytics_query", duration);
+      this.recordMetric('clinic_analytics_query', duration);
 
       return analytics;
     } catch {
       const duration = performance.now() - startTime;
-      this.recordMetric("clinic_analytics_error", duration);
-      
+      this.recordMetric('clinic_analytics_error', duration);
+
       throw ErrorMapper.mapError(error, {
-        action: "get_optimized_clinic_analytics",
+        action: 'get_optimized_clinic_analytics',
         dateRange: options.dateRange,
         timestamp: new Date().toISOString(),
       });
@@ -505,8 +508,9 @@ export class AestheticClinicPerformanceOptimizer {
 
     try {
       let query = this.supabase
-        .from("aesthetic_clients")
-        .select(`
+        .from('aesthetic_clients')
+        .select(
+          `
           id,
           name,
           email,
@@ -515,24 +519,26 @@ export class AestheticClinicPerformanceOptimizer {
           concerns,
           created_at,
           treatment_sessions(count)
-        `, { count: "exact" });
+        `,
+          { count: 'exact' },
+        );
 
       // Apply search filters
       if (params.query) {
         query = query.or(
-          `name.ilike.%${params.query}%,email.ilike.%${params.query}%,phone.ilike.%${params.query}%`
+          `name.ilike.%${params.query}%,email.ilike.%${params.query}%,phone.ilike.%${params.query}%`,
         );
       }
 
       if (params.filters?.skinType) {
-        query = query.eq("skin_type", params.filters.skinType);
+        query = query.eq('skin_type', params.filters.skinType);
       }
 
       if (params.filters?.treatmentType) {
         query = query.filter(
-          "treatment_sessions.treatment_type",
-          "eq",
-          params.filters.treatmentType
+          'treatment_sessions.treatment_type',
+          'eq',
+          params.filters.treatmentType,
         );
       }
 
@@ -541,7 +547,7 @@ export class AestheticClinicPerformanceOptimizer {
       const offset = (page - 1) * pageSize;
 
       query = query
-        .order("created_at", { ascending: false })
+        .order('created_at', { ascending: false })
         .range(offset, offset + pageSize - 1);
 
       const { data: clients, count, error } = await query;
@@ -564,15 +570,15 @@ export class AestheticClinicPerformanceOptimizer {
       this.setToCache(cacheKey, result, 300000); // 5 minutes
 
       const duration = performance.now() - startTime;
-      this.recordMetric("client_search_query", duration);
+      this.recordMetric('client_search_query', duration);
 
       return result;
     } catch {
       const duration = performance.now() - startTime;
-      this.recordMetric("client_search_error", duration);
-      
+      this.recordMetric('client_search_error', duration);
+
       throw ErrorMapper.mapError(error, {
-        action: "search_clients_optimized",
+        action: 'search_clients_optimized',
         params,
         timestamp: new Date().toISOString(),
       });
@@ -588,14 +594,14 @@ export class AestheticClinicPerformanceOptimizer {
     }
 
     const optimizedPhotos = await Promise.all(
-      photos.map(async (photo) => {
+      photos.map(async photo => {
         const optimized: any = { ...photo };
 
         // Generate optimized image URLs
         if (photo.photo_url) {
           optimized.optimized_url = this.generateOptimizedImageUrl(
             photo.photo_url,
-            this.config.images
+            this.config.images,
           );
         }
 
@@ -606,11 +612,11 @@ export class AestheticClinicPerformanceOptimizer {
 
         // Add lazy loading attributes
         if (this.config.images.lazyLoading) {
-          optimized.loading = "lazy";
+          optimized.loading = 'lazy';
         }
 
         return optimized;
-      })
+      }),
     );
 
     return optimizedPhotos;
@@ -626,14 +632,14 @@ export class AestheticClinicPerformanceOptimizer {
 
     try {
       const url = new URL(originalUrl);
-      
+
       // Add optimization parameters
-      url.searchParams.set("width", config.maxWidth.toString());
-      url.searchParams.set("quality", config.quality.toString());
-      
+      url.searchParams.set('width', config.maxWidth.toString());
+      url.searchParams.set('quality', config.quality.toString());
+
       // Add format parameter
-      if (config.formats.includes("webp")) {
-        url.searchParams.set("format", "webp");
+      if (config.formats.includes('webp')) {
+        url.searchParams.set('format', 'webp');
       }
 
       return url.toString();
@@ -648,9 +654,9 @@ export class AestheticClinicPerformanceOptimizer {
   private generateThumbnailUrl(originalUrl: string): string {
     try {
       const url = new URL(originalUrl);
-      url.searchParams.set("width", "300");
-      url.searchParams.set("height", "300");
-      url.searchParams.set("fit", "cover");
+      url.searchParams.set('width', '300');
+      url.searchParams.set('height', '300');
+      url.searchParams.set('fit', 'cover');
       return url.toString();
     } catch {
       return originalUrl;
@@ -666,7 +672,7 @@ export class AestheticClinicPerformanceOptimizer {
 
     const now = Date.now();
     const entryTime = new Date(entry.timestamp).getTime();
-    
+
     if (now - entryTime > entry.ttl) {
       this.cache.delete(key);
       return null;
@@ -697,7 +703,7 @@ export class AestheticClinicPerformanceOptimizer {
   private initializePerformanceMonitoring(): void {
     // Start periodic cleanup
     setInterval(() => this.cleanupCache(), 300000); // Every 5 minutes
-    
+
     // Start metrics aggregation
     setInterval(() => this.aggregateMetrics(), 60000); // Every minute
   }
@@ -709,7 +715,7 @@ export class AestheticClinicPerformanceOptimizer {
 
   private cleanupCache(): void {
     const now = Date.now();
-    
+
     for (const [key, entry] of this.cache) {
       const entryTime = new Date(entry.timestamp).getTime();
       if (now - entryTime > entry.ttl) {
@@ -742,7 +748,7 @@ export class AestheticClinicPerformanceOptimizer {
     };
 
     this.metrics.push(metrics);
-    
+
     // Keep only last 24 hours of metrics
     const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
     this.metrics = this.metrics.filter(m => m.timestamp > oneDayAgo);
@@ -789,7 +795,7 @@ export class AestheticClinicPerformanceOptimizer {
     try {
       // Warm up treatment catalog
       await this.getOptimizedTreatmentCatalog();
-      
+
       // Warm up recent analytics
       await this.getOptimizedClinicAnalytics({
         dateRange: {
@@ -798,9 +804,9 @@ export class AestheticClinicPerformanceOptimizer {
         },
       });
 
-      console.log("[Performance] Cache warm-up completed");
+      console.log('[Performance] Cache warm-up completed');
     } catch {
-      console.error("[Performance] Cache warm-up failed:", error);
+      console.error('[Performance] Cache warm-up failed:', error);
     }
   }
 }

@@ -79,7 +79,16 @@ const PaymentTransactionInputSchema = z.object({
   invoiceId: z.string().uuid().optional(),
   patientId: z.string().uuid(),
   transactionId: z.string().min(1),
-  paymentMethod: z.enum(['credit_card', 'debit_card', 'bank_transfer', 'pix', 'boleto', 'cash', 'check', 'installment']),
+  paymentMethod: z.enum([
+    'credit_card',
+    'debit_card',
+    'bank_transfer',
+    'pix',
+    'boleto',
+    'cash',
+    'check',
+    'installment',
+  ]),
   paymentProvider: z.enum(['stripe', 'mercadopago', 'pagseguro', 'manual']),
   amount: z.number().min(0),
   currency: z.enum(['BRL', 'USD', 'EUR']).default('BRL'),
@@ -306,7 +315,7 @@ export class FinancialManagementService {
   // Financial Account Management
   async createFinancialAccount(account: FinancialAccountInput): Promise<FinancialAccount> {
     const validatedAccount = FinancialAccountInputSchema.parse(account);
-    
+
     const { data, error } = await this.supabase
       .from('financial_accounts')
       .insert({
@@ -333,7 +342,10 @@ export class FinancialManagementService {
     return data;
   }
 
-  async updateFinancialAccount(id: string, updates: Partial<FinancialAccountInput>): Promise<FinancialAccount> {
+  async updateFinancialAccount(
+    id: string,
+    updates: Partial<FinancialAccountInput>,
+  ): Promise<FinancialAccount> {
     const { data, error } = await this.supabase
       .from('financial_accounts')
       .update({
@@ -376,7 +388,7 @@ export class FinancialManagementService {
   // Service Pricing Management
   async createServicePrice(price: ServicePriceInput): Promise<ServicePrice> {
     const validatedPrice = ServicePriceInputSchema.parse(price);
-    
+
     const { data, error } = await this.supabase
       .from('service_prices')
       .insert({
@@ -426,7 +438,7 @@ export class FinancialManagementService {
   // Treatment Package Management
   async createTreatmentPackage(pkg: TreatmentPackageInput): Promise<TreatmentPackage> {
     const validatedPackage = TreatmentPackageInputSchema.parse(pkg);
-    
+
     const { data, error } = await this.supabase
       .from('treatment_packages')
       .insert({
@@ -473,7 +485,7 @@ export class FinancialManagementService {
   // Invoice Management
   async createInvoice(invoice: InvoiceInput): Promise<Invoice> {
     const validatedInvoice = InvoiceInputSchema.parse(invoice);
-    
+
     // Generate invoice number
     const { data: invoiceNumber, error: invoiceNumberError } = await this.supabase
       .rpc('generate_invoice_number', { p_clinic_id: validatedInvoice.clinicId });
@@ -621,7 +633,7 @@ export class FinancialManagementService {
   // Payment Management
   async createPaymentTransaction(payment: PaymentTransactionInput): Promise<PaymentTransaction> {
     const validatedPayment = PaymentTransactionInputSchema.parse(payment);
-    
+
     const { data, error } = await this.supabase
       .from('payment_transactions')
       .insert({
@@ -669,8 +681,11 @@ export class FinancialManagementService {
     }
 
     const newPaidAmount = invoice.paid_amount + amount;
-    const newStatus = newPaidAmount >= invoice.total_amount ? 'paid' : 
-                     newPaidAmount > 0 ? 'partial' : invoice.status;
+    const newStatus = newPaidAmount >= invoice.total_amount
+      ? 'paid'
+      : newPaidAmount > 0
+      ? 'partial'
+      : invoice.status;
 
     const { error: updateError } = await this.supabase
       .from('invoices')
@@ -721,10 +736,13 @@ export class FinancialManagementService {
   }
 
   // Professional Commission Management
-  async createProfessionalCommission(commission: ProfessionalCommissionInput): Promise<ProfessionalCommission> {
+  async createProfessionalCommission(
+    commission: ProfessionalCommissionInput,
+  ): Promise<ProfessionalCommission> {
     const validatedCommission = ProfessionalCommissionInputSchema.parse(commission);
-    
-    const commissionAmount = validatedCommission.baseAmount * validatedCommission.commissionRate / 100;
+
+    const commissionAmount = validatedCommission.baseAmount * validatedCommission.commissionRate
+      / 100;
 
     const { data, error } = await this.supabase
       .from('professional_commissions')
@@ -751,7 +769,10 @@ export class FinancialManagementService {
     return data;
   }
 
-  async getProfessionalCommissions(clinicId: string, professionalId?: string): Promise<ProfessionalCommission[]> {
+  async getProfessionalCommissions(
+    clinicId: string,
+    professionalId?: string,
+  ): Promise<ProfessionalCommission[]> {
     let query = this.supabase
       .from('professional_commissions')
       .select('*')
@@ -773,7 +794,7 @@ export class FinancialManagementService {
   // Financial Goals Management
   async createFinancialGoal(goal: FinancialGoalInput): Promise<FinancialGoal> {
     const validatedGoal = FinancialGoalInputSchema.parse(goal);
-    
+
     const { data, error } = await this.supabase
       .from('financial_goals')
       .insert({
@@ -848,7 +869,7 @@ export class FinancialManagementService {
     const { data, error } = await this.supabase
       .rpc('generate_monthly_financial_report', {
         p_clinic_id: clinicId,
-        p_report_date: reportDate
+        p_report_date: reportDate,
       });
 
     if (error) {
@@ -871,12 +892,20 @@ export class FinancialManagementService {
   }> {
     // Get current month data
     const currentDate = new Date();
-    const currentMonthStart = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1).toISOString().split('T')[0];
-    const currentMonthEnd = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).toISOString().split('T')[0];
+    const currentMonthStart =
+      new Date(currentDate.getFullYear(), currentDate.getMonth(), 1).toISOString().split('T')[0];
+    const currentMonthEnd =
+      new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).toISOString().split(
+        'T',
+      )[0];
 
     // Get previous month data for growth calculation
-    const previousMonthStart = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1).toISOString().split('T')[0];
-    const previousMonthEnd = new Date(currentDate.getFullYear(), currentDate.getMonth(), 0).toISOString().split('T')[0];
+    const previousMonthStart =
+      new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1).toISOString().split(
+        'T',
+      )[0];
+    const previousMonthEnd =
+      new Date(currentDate.getFullYear(), currentDate.getMonth(), 0).toISOString().split('T')[0];
 
     // Current month revenue
     const { data: currentRevenue } = await this.supabase
@@ -898,11 +927,12 @@ export class FinancialManagementService {
       .gte('issue_date', previousMonthStart)
       .lte('issue_date', previousMonthEnd);
 
-    const previousMonthRevenue = previousRevenue?.reduce((sum, inv) => sum + inv.total_amount, 0) || 0;
+    const previousMonthRevenue = previousRevenue?.reduce((sum, inv) => sum + inv.total_amount, 0)
+      || 0;
 
     // Calculate monthly growth
-    const monthlyGrowth = previousMonthRevenue > 0 
-      ? ((totalRevenue - previousMonthRevenue) / previousMonthRevenue) * 100 
+    const monthlyGrowth = previousMonthRevenue > 0
+      ? ((totalRevenue - previousMonthRevenue) / previousMonthRevenue) * 100
       : 0;
 
     // Current month expenses (payments made)
@@ -914,7 +944,8 @@ export class FinancialManagementService {
       .gte('transaction_date', currentMonthStart)
       .lte('transaction_date', currentMonthEnd);
 
-    const totalExpenses = currentExpenses?.reduce((sum, payment) => sum + payment.net_amount, 0) || 0;
+    const totalExpenses = currentExpenses?.reduce((sum, payment) => sum + payment.net_amount, 0)
+      || 0;
 
     // Net profit
     const netProfit = totalRevenue - totalExpenses;
@@ -993,15 +1024,17 @@ export class FinancialManagementService {
   }
 
   // Tax Configuration Management
-  async getTaxConfigurations(clinicId: string): Promise<Array<{
-    id: string;
-    tax_type: string;
-    tax_rate: number;
-    is_active: boolean;
-    effective_date: string;
-    end_date?: string;
-    description?: string;
-  }>> {
+  async getTaxConfigurations(clinicId: string): Promise<
+    Array<{
+      id: string;
+      tax_type: string;
+      tax_rate: number;
+      is_active: boolean;
+      effective_date: string;
+      end_date?: string;
+      description?: string;
+    }>
+  > {
     const { data, error } = await this.supabase
       .from('tax_configurations')
       .select('*')
@@ -1064,7 +1097,7 @@ export class FinancialManagementService {
     pdf_url?: string;
   }> {
     const invoice = await this.getInvoice(invoiceId);
-    
+
     // Generate barcode and digitable line
     const barcode = this.generateBoletoBarcode(invoice.total_amount, dueDays);
     const digitable_line = this.generateDigitableLine(barcode);
@@ -1085,8 +1118,10 @@ export class FinancialManagementService {
     const currencyCode = '9'; // Real
     const amountField = amount.toString().padStart(10, '0');
     const dueDateField = this.getBoletoDueDateFactor(dueDays);
-    
-    return `${bankCode}${currencyCode}${dueDateField}${amountField}${Math.random().toString(36).substring(2, 10)}`;
+
+    return `${bankCode}${currencyCode}${dueDateField}${amountField}${
+      Math.random().toString(36).substring(2, 10)
+    }`;
   }
 
   private generateDigitableLine(barcode: string): string {
@@ -1098,7 +1133,7 @@ export class FinancialManagementService {
     const baseDate = new Date('1997-10-07');
     const dueDate = new Date();
     dueDate.setDate(dueDate.getDate() + dueDays);
-    
+
     const daysDiff = Math.floor((dueDate.getTime() - baseDate.getTime()) / (1000 * 60 * 60 * 24));
     return daysDiff.toString().padStart(4, '0');
   }

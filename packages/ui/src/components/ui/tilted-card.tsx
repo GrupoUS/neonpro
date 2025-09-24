@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
-import React, { useRef } from "react";
-import { cn } from "../../utils";
+import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
+import React, { useRef } from 'react';
+import { cn } from '../../utils';
 
 interface TiltedCardProps {
   children: React.ReactNode;
@@ -26,7 +26,7 @@ export function TiltedCard({
   scale = 1.05,
   transitionEasing = [0.03, 0.98, 0.52, 0.99],
   transitionDuration = 400,
-  transformOrigin = "center center",
+  transformOrigin = 'center center',
   disableHoverEffect = false,
 }: TiltedCardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
@@ -49,7 +49,7 @@ export function TiltedCard({
   );
 
   const handleMouseMove = (event: React.MouseEvent<HTMLDivElement>) => {
-    if (disableHoverEffect || !cardRef.current) {return;}
+    if (disableHoverEffect || !cardRef.current) return;
 
     const rect = cardRef.current.getBoundingClientRect();
     const centerX = rect.left + rect.width / 2;
@@ -70,38 +70,36 @@ export function TiltedCard({
   return (
     <motion.div
       ref={cardRef}
-      className={cn("relative", className)}
+      className={cn('relative', className)}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       style={{
-        transformStyle: "preserve-3d",
+        transformStyle: 'preserve-3d',
         transformOrigin,
         rotateX: disableHoverEffect ? 0 : rotateX,
         rotateY: disableHoverEffect ? 0 : rotateY,
       }}
       transition={{
-        type: "spring",
+        type: 'spring',
         stiffness: 300,
         damping: 30,
         mass: 0.5,
       }}
-      whileHover={
-        disableHoverEffect
-          ? {}
-          : {
-              scale: scale,
-              transition: {
-                duration: transitionDuration / 1000,
-                ease: transitionEasing,
-              },
-            }
-      }
+      whileHover={disableHoverEffect
+        ? {}
+        : {
+          scale: scale,
+          transition: {
+            duration: transitionDuration / 1000,
+            ease: transitionEasing,
+          },
+        }}
     >
       <div
-        className="w-full h-full"
+        className='w-full h-full'
         style={{
           perspective: `${perspective}px`,
-          transformStyle: "preserve-3d",
+          transformStyle: 'preserve-3d',
         }}
       >
         {children}

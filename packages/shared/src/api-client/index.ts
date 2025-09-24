@@ -6,7 +6,7 @@ export const apiClient = {
         $get: async (_opts: Record<string, unknown> = {}) => ({
           json: async () => ({ success: true, data: [] }),
         }),
-        ":id": {
+        ':id': {
           $get: async (_opts: Record<string, unknown> = {}) => ({
             json: async () => ({ success: true, data: {} }),
           }),
@@ -15,7 +15,7 @@ export const apiClient = {
               json: async () => ({ success: true, data: [] }),
             }),
           },
-          "medical-records": {
+          'medical-records': {
             $get: async (_opts: Record<string, unknown> = {}) => ({
               json: async () => ({ success: true, data: [] }),
             }),
@@ -26,7 +26,7 @@ export const apiClient = {
         $get: async (_opts: Record<string, unknown> = {}) => ({
           json: async () => ({ success: true, data: [] }),
         }),
-        ":id": {
+        ':id': {
           $get: async (_opts: Record<string, unknown> = {}) => ({
             json: async () => ({ success: true, data: {} }),
           }),

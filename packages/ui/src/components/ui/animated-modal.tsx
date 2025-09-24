@@ -1,14 +1,7 @@
-"use client";
-import { AnimatePresence, motion } from "motion/react";
-import React, {
-  createContext,
-  ReactNode,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
-import { cn } from "../../utils";
+'use client';
+import { AnimatePresence, motion } from 'motion/react';
+import React, { createContext, ReactNode, useContext, useEffect, useRef, useState } from 'react';
+import { cn } from '../../utils';
 
 interface ModalContextType {
   open: boolean;
@@ -30,7 +23,7 @@ export const ModalProvider = ({ children }: { children: ReactNode }) => {
 export const useModal = () => {
   const context = useContext(ModalContext);
   if (!context) {
-    throw new Error("useModal must be used within a ModalProvider");
+    throw new Error('useModal must be used within a ModalProvider');
   }
   return context;
 };
@@ -50,7 +43,7 @@ export const ModalTrigger = ({
   return (
     <button
       className={cn(
-        "px-4 py-2 rounded-md text-black dark:text-white text-center relative overflow-hidden",
+        'px-4 py-2 rounded-md text-black dark:text-white text-center relative overflow-hidden',
         className,
       )}
       onClick={() => setOpen(true)}
@@ -71,9 +64,9 @@ export const ModalBody = ({
 
   useEffect(() => {
     if (open) {
-      document.body.style.overflow = "hidden";
+      document.body.style.overflow = 'hidden';
     } else {
-      document.body.style.overflow = "auto";
+      document.body.style.overflow = 'auto';
     }
   }, [open]);
 
@@ -90,20 +83,20 @@ export const ModalBody = ({
           }}
           animate={{
             opacity: 1,
-            backdropFilter: "blur(10px)",
+            backdropFilter: 'blur(10px)',
           }}
           exit={{
             opacity: 0,
-            backdropFilter: "blur(0px)",
+            backdropFilter: 'blur(0px)',
           }}
-          className="fixed [perspective:800px] [transform-style:preserve-3d] inset-0 h-full w-full  flex items-center justify-center z-50"
+          className='fixed [perspective:800px] [transform-style:preserve-3d] inset-0 h-full w-full  flex items-center justify-center z-50'
         >
           <Overlay />
 
           <motion.div
             ref={modalRef}
             className={cn(
-              "min-h-[50%] max-h-[90%] md:max-w-[40%] bg-white dark:bg-neutral-950 border border-transparent dark:border-neutral-800 md:rounded-2xl relative z-50 flex flex-col flex-1 overflow-hidden",
+              'min-h-[50%] max-h-[90%] md:max-w-[40%] bg-white dark:bg-neutral-950 border border-transparent dark:border-neutral-800 md:rounded-2xl relative z-50 flex flex-col flex-1 overflow-hidden',
               className,
             )}
             initial={{
@@ -124,7 +117,7 @@ export const ModalBody = ({
               rotateX: 10,
             }}
             transition={{
-              type: "spring",
+              type: 'spring',
               stiffness: 260,
               damping: 15,
             }}
@@ -146,7 +139,7 @@ export const ModalContent = ({
   className?: string;
 }) => {
   return (
-    <div className={cn("flex flex-col flex-1 p-8 md:p-10", className)}>
+    <div className={cn('flex flex-col flex-1 p-8 md:p-10', className)}>
       {children}
     </div>
   );
@@ -162,7 +155,7 @@ export const ModalFooter = ({
   return (
     <div
       className={cn(
-        "flex justify-end p-4 bg-gray-100 dark:bg-neutral-900",
+        'flex justify-end p-4 bg-gray-100 dark:bg-neutral-900',
         className,
       )}
     >
@@ -179,14 +172,15 @@ const Overlay = ({ className }: { className?: string }) => {
       }}
       animate={{
         opacity: 1,
-        backdropFilter: "blur(10px)",
+        backdropFilter: 'blur(10px)',
       }}
       exit={{
         opacity: 0,
-        backdropFilter: "blur(0px)",
+        backdropFilter: 'blur(0px)',
       }}
       className={`fixed inset-0 h-full w-full bg-black bg-opacity-50 z-50 ${className}`}
-    ></motion.div>
+    >
+    </motion.div>
   );
 };
 
@@ -195,23 +189,23 @@ const CloseIcon = () => {
   return (
     <button
       onClick={() => setOpen(false)}
-      className="absolute top-4 right-4 group"
+      className='absolute top-4 right-4 group'
     >
       <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        className="text-black dark:text-white h-4 w-4 group-hover:scale-125 group-hover:rotate-3 transition duration-200"
+        xmlns='http://www.w3.org/2000/svg'
+        width='24'
+        height='24'
+        viewBox='0 0 24 24'
+        fill='none'
+        stroke='currentColor'
+        strokeWidth='2'
+        strokeLinecap='round'
+        strokeLinejoin='round'
+        className='text-black dark:text-white h-4 w-4 group-hover:scale-125 group-hover:rotate-3 transition duration-200'
       >
-        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-        <path d="M18 6l-12 12" />
-        <path d="M6 6l12 12" />
+        <path stroke='none' d='M0 0h24v24H0z' fill='none' />
+        <path d='M18 6l-12 12' />
+        <path d='M6 6l12 12' />
       </svg>
     </button>
   );
@@ -240,12 +234,12 @@ export const useOutsideClick = (
       callback(event as unknown as MouseEvent);
     };
 
-    document.addEventListener("mousedown", listener);
-    document.addEventListener("touchstart", touchListener);
+    document.addEventListener('mousedown', listener);
+    document.addEventListener('touchstart', touchListener);
 
     return () => {
-      document.removeEventListener("mousedown", listener);
-      document.removeEventListener("touchstart", touchListener);
+      document.removeEventListener('mousedown', listener);
+      document.removeEventListener('touchstart', touchListener);
     };
   }, [ref, callback]);
 };

@@ -297,7 +297,7 @@ export class OttomatorAgentBridge extends EventEmitter {
         const message = JSON.parse(line);
         this.handleAgentMessage(message);
       } catch {
-      void _error;
+        void _error;
         // Non-JSON agent output is handled as info below
         if (this.config.enableLogging) {
           logger.info('Agent output (non-JSON)', { output: line });

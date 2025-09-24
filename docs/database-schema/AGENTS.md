@@ -1,281 +1,323 @@
 ---
-title: "Database Schema Orchestrator (docs/database-schema) — v2"
-version: 2.0.0
-last_updated: 2025-09-02
-language: en
-applyTo:
-  - "docs/database-schema/**"
-llm:
-  mandatory_sequence:
-    - sequential-thinking
-    - task-management
-    - codebase-analysis
-  pre_read:
-    - path: "docs/AGENTS.md"
-      reason: "Root docs orchestrator"
-    - path: "docs/memory.md"
-      reason: "Memory protocol"
-  retrieval_hints:
-    prefer:
-      - "docs/database-schema/AGENTS.md"
-      - "docs/database-schema/database-schema-consolidated.md"
-      - "docs/database-schema/tables/tables-consolidated.md"
-    avoid:
-      - "images/**"
-      - "*.pdf"
-  guardrails:
-    tone: "concise, professional, English"
-    formatting: "Markdown with clear headings and short lists"
-    stop_criteria: "finish only when the task is 100% resolved"
-  output_preferences:
-    - "Use short bullets"
-    - "Include relative paths in backticks"
-    - "Provide shell commands in fenced code blocks when applicable"
+title: "🗄️ Database Schema Orchestrator"
+version: 5.0.0
+last_updated: 2025-09-24
+form: orchestrator
+tags: [database-orchestrator, schema-coordination, healthcare-data]
+priority: CRITICAL
+llm_instructions:
+  mandatory_read: true
+  database_entry_point: true
+  execution_rules: |
+    1. ALWAYS start here for database schema coordination
+    2. Follow healthcare compliance patterns (LGPD, ANVISA, CFM)
+    3. Ensure data integrity and security policies
+    4. Maintain multi-tenant isolation and RLS
 ---
 
-# 📚 Database Schema Orchestrator (docs/database-schema)
+# 🗄️ Database Schema Orchestrator — Data Management Command
 
-Purpose: single source of truth for how to use, extend, and maintain the database schema docs. Follow this guide end‑to‑end before editing any file here.
+> **Coordenador central para todo o esquema de banco de dados do NeonPro Healthcare Platform**
 
-## What lives here (inventory)
+## 🎯 CORE IDENTITY & MISSION
 
-Current files:
+**Role**: Database Schema Coordinator and Data Architecture Hub
+**Mission**: Orchestrate secure, compliant database schemas with healthcare data protection
+**Philosophy**: Security-First + Compliance-by-Design - Secure, compliant data over complex schemas
+**Quality Standard**: 100% LGPD/ANVISA/CFM compliance, RLS-protected, 24 essential tables
 
-- `AGENTS.md` — Database schema orchestrator and standards
-- `database-schema-consolidated.md` — Complete database architecture with Supabase integration
-- `tables/tables-consolidated.md` — Essential table definitions with RLS patterns
-- `migrations/README.md` — Migrations guide and conventions
-- `policies/` — Reusable RLS policy snippets (see `policies/README.md`)
+### **Methodology Integration**
 
-## NeonPro Database Overview
+- **Analyze**: Examine data requirements and compliance constraints
+- **Design**: Create secure, multi-tenant schema patterns
+- **Implement**: Deploy with RLS policies and audit trails
+- **Validate**: Ensure compliance and performance optimization
 
-**Architecture**: Multi-tenant aesthetic clinic management with Supabase PostgreSQL 17
-**Compliance**: LGPD + ANVISA + CFM requirements built-in
-**Tech Stack**: TanStack Router + Vite + Hono + Supabase + Vercel AI SDK v5.0
+## 🧠 CORE PRINCIPLES
 
-### Core Tables
+### **Database Philosophy**
 
-- **patients** - Patient records with LGPD compliance and consent management
-- **appointments** - Scheduling with conflict detection and no-show prediction
-- **professionals** - Healthcare professionals with CFM license validation
-- **clinics** - Multi-tenant clinic management with regulatory compliance
-- **medical_records** - Advanced aesthetic procedures with digital signatures
-- **services** - Procedure catalog with ANVISA classification
+```yaml
+CORE_PRINCIPLES:
+  compliance_first: "LGPD, ANVISA, CFM compliance built into every table"
+  security_by_design: "Row Level Security (RLS) and multi-tenant isolation"
+  data_minimization: "24 essential tables (92% reduction from 292)"
+  audit_everything: "Complete audit trail for healthcare data access"
 
-### AI Integration Tables
-
-- **ai_chat_sessions** - AI conversations with professional oversight
-- **ai_chat_messages** - PHI-sanitized AI interactions with compliance monitoring
-- **ai_no_show_predictions** - ML-powered appointment risk assessment
-
-### Compliance Tables
-
-- **audit_logs** - Immutable audit trail for all system activities
-- **compliance_tracking** - Automated regulatory compliance monitoring
-- **consent_records** - LGPD consent management and tracking
-
-## Quick Start
-
-```sql
--- Enable required extensions
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-CREATE EXTENSION IF NOT EXISTS "pgcrypto";
-CREATE EXTENSION IF NOT EXISTS "vector";
-
--- Enable RLS for healthcare data protection
-ALTER TABLE table_name ENABLE ROW LEVEL SECURITY;
-
--- Create healthcare professional access policy
-CREATE POLICY "professional_clinic_access" ON table_name
-  FOR ALL USING (
-    EXISTS (
-      SELECT 1 FROM professionals p
-      WHERE p.user_id = auth.uid()
-      AND p.clinic_id = table_name.clinic_id
-      AND p.is_active = true
-    )
-  );
+QUALITY_STANDARDS:
+  accuracy_threshold: "100% schema compliance with healthcare regulations"
+  validation_process: "RLS policies validated, audit trails tested"
+  output_quality: "Production-ready, secure database schemas"
+  success_metrics: "Zero data breaches, 100% compliance validation"
 ```
 
-### LGPD Compliance Example
+## 🔍 SPECIALIZED METHODOLOGY
 
-```sql
--- Patient with LGPD consent fields
-CREATE TABLE patients (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  clinic_id uuid NOT NULL REFERENCES clinics(id),
-  full_name text NOT NULL,
-  cpf text UNIQUE, -- Encrypted at rest
-  -- LGPD compliance
-  lgpd_consent_given boolean DEFAULT false,
-  data_retention_until timestamptz,
-  created_at timestamptz DEFAULT now()
-);
+### **Database Coordination Approach**
 
--- RLS policy with consent validation
-CREATE POLICY "professionals_clinic_patients" ON patients
-  FOR ALL USING (
-    EXISTS (
-      SELECT 1 FROM professionals p
-      WHERE p.user_id = auth.uid()
-      AND p.clinic_id = patients.clinic_id
-      AND p.is_active = true
-    )
-  );
+1. **Schema Analysis** → Analyze data requirements and compliance needs
+2. **Security Design** → Design RLS policies and multi-tenant isolation
+3. **Implementation** → Deploy tables, policies, and audit mechanisms
+4. **Compliance Validation** → Verify LGPD, ANVISA, CFM compliance
+5. **Performance Optimization** → Optimize indexes and query patterns
+
+## 🛠️ DATABASE RESOURCE ORCHESTRATION
+
+### **Available Database Resources**
+
+```yaml
+DATABASE_CATEGORIES:
+  schema_overview:
+    file: "DATABASE_SYNC_COMPLETE.md"
+    purpose: "Complete database synchronization documentation and status"
+    priority: "Primary"
+    content: ["100+ table consolidation", "RLS implementation", "compliance features"]
+    
+  implementation_summary:
+    file: "IMPLEMENTATION_SUMMARY.md"
+    purpose: "Schema implementation results and success metrics"
+    priority: "Critical"
+    content: ["24 essential tables", "performance metrics", "compliance validation"]
+    
+  table_definitions:
+    file: "tables/tables-consolidated.md"
+    purpose: "Complete table reference with RLS policies and relationships"
+    priority: "High"
+    content: ["table schemas", "RLS policies", "relationships", "indexes"]
+    
+  schema_essentials:
+    file: "schema-essentials.md"
+    purpose: "Quick reference for core database operations and migrations"
+    priority: "High"
+    content: ["core tables", "migrations", "RLS patterns", "performance"]
+    
+  auth_configuration:
+    file: "supabase-auth-redirects.md"
+    purpose: "Authentication flow configuration for Vercel and Vite"
+    priority: "Medium"
+    content: ["OAuth flows", "redirect URLs", "environment configuration"]
+    
+  migration_policies:
+    file: "migrations/ai-chat-phase1-policies.md"
+    purpose: "Migration documentation and RLS policy examples"
+    priority: "Reference"
+    content: ["migration patterns", "policy examples", "implementation guides"]
 ```
 
-## How to work here (Archon-first)
+## 📋 EXECUTION WORKFLOW
 
-1. Check Current Task
+### **Mandatory Database Process**
 
-- Use Archon MCP → find or create a task for your schema change.
-- Move to "doing" before edits.
+```yaml
+EXECUTION_PHASES:
+  phase_1_analysis:
+    trigger: "Database schema modification or new table requirement"
+    primary_tool: "Schema analysis and compliance requirement identification"
+    process:
+      - "Identify data requirements and entity relationships"
+      - "Analyze compliance requirements (LGPD, ANVISA, CFM)"
+      - "Determine multi-tenant isolation and security needs"
+    quality_gate: "100% compliance requirements identified and documented"
 
-2. Research for Task
+  phase_2_design:
+    trigger: "Requirements validated and compliance constraints identified"
+    process:
+      - "Design table schema with appropriate data types and constraints"
+      - "Create RLS policies for multi-tenant access control"
+      - "Plan audit trail and compliance tracking mechanisms"
+    quality_gate: "Schema design validates against all compliance requirements"
 
-- If unsure, read:
-  - `database-schema-consolidated.md` for patterns
-  - `tables/tables-consolidated.md` for table baselines
-  - Rules in `docs/rules/` (see below)
+  phase_3_implementation:
+    trigger: "Schema design approved and validated"
+    process:
+      - "Create migration scripts with proper table definitions"
+      - "Implement RLS policies and security constraints"
+      - "Deploy audit triggers and compliance functions"
+    quality_gate: "All migrations applied successfully with security validation"
 
-3. Implement the Task (docs first)
-
-- Update the relevant doc(s) in this folder first (KISS/YAGNI).
-- For DB changes, prepare a migration (Supabase MCP) and link it from docs.
-
-4. Update Task Status
-
-- Move task to "review" with notes and affected files.
-
-5. Get Next Task
-
-- Repeat the cycle. No direct "done" without review.
-
-## Mandatory rules to apply
-
-Always follow these rules from `docs/rules`:
-
-- `coding-standards.md` — KISS/YAGNI, TypeScript strict, quality ≥9.5/10
-- `supabase-best-practices.md` — client factories, RLS, SRK usage boundaries
-- `supabase-auth-guidelines.md` — auth patterns (client/server/SSR)
-- `supabase-realtime-usage.md` — use wrapper, not direct channel in UI
-- `variables-configuration.md` — required envs, never hardcode secrets
-- `supabase-consolidation.md` — single source under packages/database/supabase
-
-Compliance checkpoints (LGPD/ANVISA/Professional Councils):
-
-- RLS enabled on sensitive tables; consent validation when applicable
-- Audit trail present for sensitive operations
-- Data retention policies documented where relevant (e.g., medical_records)
-
-## Authoring standards (concise, actionable)
-
-- Keep docs factual (current state). Avoid speculation/future ideas.
-- Prefer tables, lists, and minimal SQL blocks over long prose.
-- Link to migrations and code paths (services/repositories) when useful.
-- Remove stale content immediately when schema changes.
-
-## File templates
-
-Table file (example structure):
-
-````markdown
-# <table_name>
-
-## Schema
-
-| Column | Type | Constraints | Default | Description |
-| ------ | ---- | ----------- | ------- | ----------- |
-
-## Relationships
-
-- <fk_table>.<fk_col> → <table_name>.<pk>
-
-## Row Level Security (RLS)
-
-Status: ✅/❌ (risk if disabled)
-
-### Policies
-
-```sql
--- enable RLS/policies here
+  phase_4_validation:
+    trigger: "Implementation completed and deployed"
+    process:
+      - "Validate RLS policies protect data appropriately"
+      - "Test compliance features and audit trail functionality"
+      - "Verify performance with indexes and optimization"
+    quality_gate: "100% compliance validation and performance approval"
 ```
 
-Functions file:
+## 🎯 SPECIALIZED CAPABILITIES
 
-```markdown
-# Database Functions
+### **Database Competencies**
 
-## <function_name>
+```yaml
+SPECIALIZED_SKILLS:
+  healthcare_compliance_schemas:
+    description: "Design database schemas that inherently comply with healthcare regulations"
+    applications: "Patient data, medical records, professional licensing, audit trails"
+    tools_used: "DATABASE_SYNC_COMPLETE.md, tables-consolidated.md resources"
+    success_criteria: "Zero compliance violations, complete audit coverage"
 
-Purpose: ...\
-Parameters: ...\
-Returns: ...\
-Usage: ...
+  multi_tenant_security:
+    description: "Implement secure multi-tenant isolation with Row Level Security"
+    applications: "Clinic-based access control, professional authorization, patient privacy"
+    tools_used: "RLS policies, security functions, audit mechanisms"
+    success_criteria: "Zero data leakage between tenants, secure access patterns"
+
+  performance_optimization:
+    description: "Optimize database performance for healthcare workflows"
+    applications: "Query optimization, index strategy, connection pooling"
+    tools_used: "schema-essentials.md, performance indexes, optimization patterns"
+    success_criteria: "Sub-100ms query response, efficient resource utilization"
 ```
 
-```sql
-CREATE OR REPLACE FUNCTION ...
+## 📊 DATABASE ARCHITECTURE MATRIX
+
+### **Data Domain to Resource Mapping**
+
+| Data Domain         | Primary Resource                      | Secondary Resources       | Security Pattern           |
+| ------------------- | ------------------------------------- | ------------------------- | -------------------------- |
+| **Healthcare Core** | tables-consolidated.md                | DATABASE_SYNC_COMPLETE.md | Clinic-based RLS           |
+| **Compliance Data** | IMPLEMENTATION_SUMMARY.md             | tables-consolidated.md    | LGPD-compliant RLS         |
+| **Authentication**  | supabase-auth-redirects.md            | schema-essentials.md      | User-based access          |
+| **Audit & Logging** | DATABASE_SYNC_COMPLETE.md             | tables-consolidated.md    | Immutable audit logs       |
+| **AI Integration**  | tables-consolidated.md                | schema-essentials.md      | PHI-sanitized access       |
+| **Performance**     | schema-essentials.md                  | IMPLEMENTATION_SUMMARY.md | Optimized indexes          |
+| **Migrations**      | migrations/ai-chat-phase1-policies.md | schema-essentials.md      | Version-controlled changes |
+
+## 🎯 PERFORMANCE TARGETS
+
+### **Database Success Metrics**
+
+- **Schema Complexity**: 24 essential tables (92% reduction achieved)
+- **Query Performance**: <100ms for core healthcare operations
+- **Compliance**: 100% LGPD, ANVISA, CFM validation
+- **Security**: Zero data breaches, complete RLS coverage
+- **Availability**: >99.9% uptime with connection pooling
+- **Audit Coverage**: 100% of sensitive operations logged
+
+### **Quality Gates**
+
+```yaml
+QUALITY_VALIDATION:
+  schema_validation:
+    - "All tables follow healthcare compliance patterns"
+    - "Foreign key relationships properly defined"
+    - "Data types appropriate for healthcare data"
+    
+  security_validation:
+    - "RLS policies protect all sensitive tables"
+    - "Multi-tenant isolation properly implemented"
+    - "Audit trails capture all data access"
+    
+  performance_validation:
+    - "Strategic indexes optimize common queries"
+    - "Connection pooling configured correctly"
+    - "Query performance meets healthcare requirements"
 ```
 
-Triggers file:
+## 🔄 DATABASE WORKFLOWS
 
-```markdown
-# Database Triggers
+### **Common Database Patterns**
 
-## <trigger_name>
-
-Table: ...\
-Event: INSERT/UPDATE/DELETE\
-Timing: BEFORE/AFTER\
-Function: ...\
-Purpose: ...
+```yaml
+DATABASE_WORKFLOWS:
+  new_table_creation:
+    sequence:
+      1. "tables-consolidated.md → Table schema design and relationships"
+      2. "DATABASE_SYNC_COMPLETE.md → RLS policy patterns"
+      3. "schema-essentials.md → Migration and deployment"
+      4. "IMPLEMENTATION_SUMMARY.md → Validation and testing"
+    output: "Secure, compliant table with proper RLS and audit"
+    
+  compliance_audit:
+    sequence:
+      1. "IMPLEMENTATION_SUMMARY.md → Current compliance status"
+      2. "tables-consolidated.md → Table-by-table compliance review"
+      3. "DATABASE_SYNC_COMPLETE.md → Audit trail validation"
+    output: "Complete compliance report with recommendations"
+    
+  performance_optimization:
+    sequence:
+      1. "schema-essentials.md → Performance analysis"
+      2. "IMPLEMENTATION_SUMMARY.md → Metrics review"
+      3. "tables-consolidated.md → Index optimization"
+    output: "Optimized database with improved performance"
+    
+  migration_deployment:
+    sequence:
+      1. "migrations/ai-chat-phase1-policies.md → Migration patterns"
+      2. "schema-essentials.md → Deployment procedures"
+      3. "DATABASE_SYNC_COMPLETE.md → Validation checklist"
+    output: "Successfully deployed migration with validation"
 ```
 
-```sql
-CREATE TRIGGER ...
+## 📊 CURRENT SCHEMA STATUS
+
+### **Essential Tables (24 Total)**
+
+```yaml
+CORE_HEALTHCARE:
+  - patients: "LGPD-compliant patient records"
+  - appointments: "Smart scheduling with conflict prevention"
+  - professionals: "CFM license validation"
+  - clinics: "Multi-tenant clinic management"
+  - medical_records: "Digital signature compliance"
+  - services: "Aesthetic procedure catalog"
+
+COMPLIANCE_SECURITY:
+  - lgpd_consents: "Granular consent management"
+  - consent_records: "Historical consent tracking"
+  - audit_logs: "Immutable audit trail"
+  - resource_permissions: "Granular access control"
+
+AI_ANALYTICS:
+  - ai_logs: "AI interaction logging"
+  - ai_predictions: "No-show and treatment predictions"
+  - ai_model_performance: "ML model metrics"
+
+MEDICAL_RECORDS:
+  - medical_records: "Structured medical documentation"
+  - prescriptions: "Controlled prescription management"
+  - telemedicine_sessions: "CFM-compliant telemedicine"
 ```
 
-Enums file:
+### **Compliance Features**
 
-```markdown
-# Enum Types
+- **LGPD**: Granular consent, right to erasure, data retention
+- **ANVISA**: Medical device compliance, procedure tracking
+- **CFM**: Digital signatures, professional validation, telemedicine
+- **Security**: End-to-end RLS, multi-tenant isolation, audit trails
 
-## <enum_name>
+## 📚 DATABASE RESOURCE DIRECTORY
 
-Values: a | b | c
-```
+### **Quick Access Links**
 
-## When to edit which file
+- [Database Sync Status](./DATABASE_SYNC_COMPLETE.md) - Complete synchronization documentation
+- [Implementation Summary](./IMPLEMENTATION_SUMMARY.md) - Schema results and metrics
+- [Table Definitions](./tables/tables-consolidated.md) - Complete table reference
+- [Schema Essentials](./schema-essentials.md) - Quick operations reference
+- [Auth Configuration](./supabase-auth-redirects.md) - Authentication setup
+- [Migration Policies](./migrations/ai-chat-phase1-policies.md) - Migration patterns
 
-- Broad patterns, architecture, common SQL templates → `database-schema-consolidated.md`
-- Concrete table details (columns, RLS, indexes) → `tables/<table>.md` and update `tables-consolidated.md` if the baseline changes
-- New PL/pgSQL functions → add to `functions.md` and reference from consolidated doc
-- New triggers/policies → document under `triggers.md` and cross-link to affected tables
-- Relationships changes → `relationships.md` and reflect on each table file
-- New enums → `enums.md` and list usage sites
+## 🎯 SUCCESS CRITERIA
 
-## Using Supabase MCP (required)
+### **Database Excellence Metrics**
 
-- Schema read/list: list tables, check RLS, verify extensions
-- DDL changes: use migrations (apply_migration). Do not hardcode IDs in data migrations
-- Validation: run advisors (security/performance) after structural changes
-- Types: regenerate TS types when columns/enums change
+- **Compliance**: 100% healthcare regulation adherence in all schemas
+- **Security**: Zero data breaches with complete RLS implementation
+- **Performance**: All healthcare queries under 100ms response time
+- **Maintainability**: Clear schema documentation and migration patterns
+- **Scalability**: Multi-tenant architecture supports clinic growth
 
-## Minimal PR checklist (quality gates)
+### **Termination Criteria**
 
-- [ ] Docs updated first (this folder) and consistent
-- [ ] Migration created/applied in branch DB (no drift)
-- [ ] RLS, consent, audit policies verified as needed
-- [ ] Supabase advisors checked (security + performance)
-- [ ] TS types regenerated and compile passes
-- [ ] Links added to tasks; task moved to review
+**Only stop when:**
 
-## Quick links
+- All database requirements fully satisfied
+- Healthcare compliance validated (LGPD, ANVISA, CFM)
+- RLS policies tested and verified secure
+- Performance benchmarks achieved
+- Migration and deployment procedures documented
 
-- Architecture: `./database-schema-consolidated.md`
-- Tables reference: `./tables/tables-consolidated.md`
-- Rules: `../rules/`
+---
 
-Notes: Keep this orchestrator short. Expand details in the consolidated docs and per-table files.
-````
+> **🎯 Database Excellence**: Orchestrating NeonPro's database architecture with healthcare compliance, multi-tenant security, and comprehensive data protection across all platform operations.

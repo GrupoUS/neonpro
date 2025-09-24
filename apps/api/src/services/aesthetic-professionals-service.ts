@@ -1,14 +1,14 @@
 /**
  * Aesthetic Professionals Service for Brazilian Aesthetic Clinics
- * 
+ *
  * Comprehensive service for managing all aesthetic health professionals including:
  * - Doctors (CFM - Conselho Federal de Medicina)
- * - Nurses (COREN - Conselho Regional de Enfermagem)  
+ * - Nurses (COREN - Conselho Regional de Enfermagem)
  * - Pharmacists (CFF - Conselho Federal de Farmácia)
  * - Physiotherapists (CREFITO - Conselho Regional de Fisioterapia e Terapia Ocupacional)
  * - Biomedical professionals (CRBM - Conselho Regional de Biomedicina)
  * - Beauty professionals (CNEP - Conselho Nacional de Estética Profissional)
- * 
+ *
  * Features:
  * - Multi-council license validation
  * - Aesthetic procedure certification tracking
@@ -23,12 +23,12 @@ import { logger } from '../lib/logger';
 
 // Brazilian Professional Council Types
 export const PROFESSIONAL_COUNCILS = {
-  CFM: 'cfm',        // Conselho Federal de Medicina (Doctors)
-  COREN: 'coren',    // Conselho Regional de Enfermagem (Nurses)
-  CFF: 'cff',        // Conselho Federal de Farmácia (Pharmacists)
+  CFM: 'cfm', // Conselho Federal de Medicina (Doctors)
+  COREN: 'coren', // Conselho Regional de Enfermagem (Nurses)
+  CFF: 'cff', // Conselho Federal de Farmácia (Pharmacists)
   CREFITO: 'crefito', // Conselho Regional de Fisioterapia e Terapia Ocupacional (Physiotherapists)
-  CRBM: 'crbm',      // Conselho Regional de Biomedicina (Biomedical)
-  CNEP: 'cnep',      // Conselho Nacional de Estética Profissional (Beauty Professionals)
+  CRBM: 'crbm', // Conselho Regional de Biomedicina (Biomedical)
+  CNEP: 'cnep', // Conselho Nacional de Estética Profissional (Beauty Professionals)
 } as const;
 
 export type ProfessionalCouncil = keyof typeof PROFESSIONAL_COUNCILS;
@@ -40,24 +40,24 @@ export const AESTHETIC_SPECIALIZATIONS = {
   DERMAL_FILLERS: 'dermal_fillers',
   BIOSTIMULATORS: 'biostimulators',
   THREAD_LIFTING: 'thread_lifting',
-  
+
   // Laser & Light Therapies
   LASER_TREATMENTS: 'laser_treatments',
   IPL_THERAPIES: 'ipl_therapies',
   PHOTOREJUVENATION: 'photorejuvenation',
-  
+
   // Facial Treatments
   CHEMICAL_PEELS: 'chemical_peels',
   MICRONEEDLING: 'microneedling',
   FACIAL_TREATMENTS: 'facial_treatments',
   SKIN_ANALYSIS: 'skin_analysis',
-  
+
   // Body Treatments
   BODY_CONTOURING: 'body_contouring',
   CRYOLIPOLYSIS: 'cryolipolysis',
   RADIOFREQUENCY: 'radiofrequency',
   ULTRASOUND_THERAPY: 'ultrasound_therapy',
-  
+
   // Advanced Procedures
   MESOTHERAPY: 'mesotherapy',
   PRP_THERAPY: 'prp_therapy',
@@ -168,7 +168,9 @@ const CreateProfessionalSchema = z.object({
   councilType: z.enum(Object.values(PROFESSIONAL_COUNCILS) as [string, ...string[]]),
   councilLicense: z.string().min(4, 'License number is required'),
   councilState: z.string().length(2, 'State must be 2 characters'),
-  specializations: z.array(z.enum(Object.values(AESTHETIC_SPECIALIZATIONS) as [string, ...string[]]))
+  specializations: z.array(
+    z.enum(Object.values(AESTHETIC_SPECIALIZATIONS) as [string, ...string[]]),
+  )
     .min(1, 'At least one specialization is required'),
   preferredProcedures: z.array(z.string()).optional(),
   maxDailyAppointments: z.number().min(1).max(50).optional(),
@@ -184,11 +186,13 @@ class AestheticProfessionalsService {
   /**
    * Create a new aesthetic professional
    */
-  async createProfessional(input: CreateProfessionalInput): Promise<ServiceResponse<AestheticProfessional>> {
+  async createProfessional(
+    input: CreateProfessionalInput,
+  ): Promise<ServiceResponse<AestheticProfessional>> {
     try {
       // Validate input
       const validated = CreateProfessionalSchema.parse(input);
-      
+
       // Check for duplicate license
       const { data: existingProfessional } = await this.supabase
         .from('professionals')
@@ -239,7 +243,11 @@ class AestheticProfessionalsService {
       }
 
       // Initiate license validation (async)
-      this.validateProfessionalLicense(professional.id, validated.councilType, validated.councilLicense)
+      this.validateProfessionalLicense(
+        professional.id,
+        validated.councilType,
+        validated.councilLicense,
+      )
         .catch(err => logger.error('License validation failed', { error: err }));
 
       return {
@@ -294,7 +302,10 @@ class AestheticProfessionalsService {
   /**
    * Get professionals by clinic
    */
-  async getProfessionalsByClinic(clinicId: string, activeOnly = true): Promise<ServiceResponse<AestheticProfessional[]>> {
+  async getProfessionalsByClinic(
+    clinicId: string,
+    activeOnly = true,
+  ): Promise<ServiceResponse<AestheticProfessional[]>> {
     try {
       let query = this.supabase
         .from('professionals')
@@ -334,10 +345,12 @@ class AestheticProfessionalsService {
   /**
    * Update professional information
    */
-  async updateProfessional(input: UpdateProfessionalInput): Promise<ServiceResponse<AestheticProfessional>> {
+  async updateProfessional(
+    input: UpdateProfessionalInput,
+  ): Promise<ServiceResponse<AestheticProfessional>> {
     try {
       const { id, ...updateData } = input;
-      
+
       const { data: professional, error } = await this.supabase
         .from('professionals')
         .update({
@@ -386,15 +399,15 @@ class AestheticProfessionalsService {
   async validateProfessionalLicense(
     professionalId: string,
     councilType: ProfessionalCouncil,
-    licenseNumber: string
+    licenseNumber: string,
   ): Promise<LicenseValidationResult> {
     try {
       // Mock validation - in production, integrate with council APIs
       const isValid = await this.mockCouncilValidation(councilType, licenseNumber);
-      
+
       const status: LicenseStatus = isValid ? LICENSE_STATUS.VERIFIED : LICENSE_STATUS.INVALID;
       const expiryDate = isValid ? this.calculateLicenseExpiry(councilType) : undefined;
-      
+
       // Update professional record
       await this.supabase
         .from('professionals')
@@ -427,7 +440,7 @@ class AestheticProfessionalsService {
    */
   async getProfessionalsBySpecialization(
     clinicId: string,
-    specialization: AestheticSpecialization
+    specialization: AestheticSpecialization,
   ): Promise<ServiceResponse<AestheticProfessional[]>> {
     try {
       const { data: professionals, error } = await this.supabase
@@ -453,7 +466,11 @@ class AestheticProfessionalsService {
         data: professionals.map(p => this.mapProfessionalFromDb(p)),
       };
     } catch (error) {
-      logger.error('Get professionals by specialization error', { error, clinicId, specialization });
+      logger.error('Get professionals by specialization error', {
+        error,
+        clinicId,
+        specialization,
+      });
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -467,7 +484,7 @@ class AestheticProfessionalsService {
   async checkProfessionalAvailability(
     professionalId: string,
     startTime: Date,
-    duration: number
+    duration: number,
   ): Promise<ServiceResponse<{ available: boolean; conflicts?: any[] }>> {
     try {
       const endTime = new Date(startTime.getTime() + duration * 60000);
@@ -509,14 +526,16 @@ class AestheticProfessionalsService {
   /**
    * Get professional statistics
    */
-  async getProfessionalStats(professionalId: string): Promise<ServiceResponse<{
-    totalAppointments: number;
-    completedAppointments: number;
-    noShowRate: number;
-    averageRating?: number;
-    revenueGenerated: number;
-    topProcedures: Array<{ name: string; count: number }>;
-  }>> {
+  async getProfessionalStats(professionalId: string): Promise<
+    ServiceResponse<{
+      totalAppointments: number;
+      completedAppointments: number;
+      noShowRate: number;
+      averageRating?: number;
+      revenueGenerated: number;
+      topProcedures: Array<{ name: string; count: number }>;
+    }>
+  > {
     try {
       // Get appointment statistics
       const { data: appointments, error } = await this.supabase
@@ -535,7 +554,7 @@ class AestheticProfessionalsService {
       const completedAppointments = appointments.filter(apt => apt.status === 'COMPLETED').length;
       const noShows = appointments.filter(apt => apt.status === 'NO_SHOW').length;
       const noShowRate = totalAppointments > 0 ? (noShows / totalAppointments) * 100 : 0;
-      
+
       const revenueGenerated = appointments
         .filter(apt => apt.status === 'COMPLETED')
         .reduce((sum, apt) => sum + (apt.price || 0), 0);
@@ -547,7 +566,7 @@ class AestheticProfessionalsService {
       }, {} as Record<string, number>);
 
       const topProcedures = Object.entries(procedureCounts)
-        .sort(([,a], [,b]) => b - a)
+        .sort(([, a], [, b]) => b - a)
         .slice(0, 5)
         .map(([name, count]) => ({ name, count }));
 
@@ -583,7 +602,9 @@ class AestheticProfessionalsService {
       councilLicense: dbProfessional.council_license,
       councilState: dbProfessional.council_state,
       councilValidation: dbProfessional.council_validation,
-      licenseExpiryDate: dbProfessional.license_expiry_date ? new Date(dbProfessional.license_expiry_date) : undefined,
+      licenseExpiryDate: dbProfessional.license_expiry_date
+        ? new Date(dbProfessional.license_expiry_date)
+        : undefined,
       specializations: dbProfessional.aesthetic_specializations || [],
       certificationLevels: dbProfessional.certification_levels || {},
       preferredProcedures: dbProfessional.preferred_procedures || [],
@@ -607,10 +628,13 @@ class AestheticProfessionalsService {
     };
   }
 
-  private async mockCouncilValidation(councilType: ProfessionalCouncil, licenseNumber: string): Promise<boolean> {
+  private async mockCouncilValidation(
+    councilType: ProfessionalCouncil,
+    licenseNumber: string,
+  ): Promise<boolean> {
     // Mock validation - replace with actual council API integrations
     await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API call
-    
+
     // Basic format validation based on council type
     switch (councilType) {
       case 'CFM':
@@ -632,7 +656,7 @@ class AestheticProfessionalsService {
 
   private calculateLicenseExpiry(councilType: ProfessionalCouncil): Date {
     const expiry = new Date();
-    
+
     // Different expiry periods based on council type
     switch (councilType) {
       case 'CFM':
@@ -656,7 +680,7 @@ class AestheticProfessionalsService {
       default:
         expiry.setFullYear(expiry.getFullYear() + 2); // Default 2 years
     }
-    
+
     return expiry;
   }
 }

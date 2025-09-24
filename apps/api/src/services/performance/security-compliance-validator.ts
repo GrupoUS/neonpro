@@ -3,8 +3,8 @@
  * Ensures all performance optimizations maintain healthcare security standards
  */
 
-import { AestheticClinicPerformanceOptimizer } from "./aesthetic-clinic-performance-optimizer";
-import { WebSocketOptimizer } from "./websocket-optimizer";
+import { AestheticClinicPerformanceOptimizer } from './aesthetic-clinic-performance-optimizer';
+import { WebSocketOptimizer } from './websocket-optimizer';
 // import { ErrorMapper } from "@neonpro/shared/errors";
 
 export interface SecurityValidationResult {
@@ -16,8 +16,8 @@ export interface SecurityValidationResult {
 }
 
 export interface SecurityViolation {
-  type: "data_leak" | "access_control" | "encryption" | "audit" | "retention" | "consent";
-  severity: "low" | "medium" | "high" | "critical";
+  type: 'data_leak' | 'access_control' | 'encryption' | 'audit' | 'retention' | 'consent';
+  severity: 'low' | 'medium' | 'high' | 'critical';
   description: string;
   component: string;
   recommendation: string;
@@ -25,8 +25,8 @@ export interface SecurityViolation {
 }
 
 export interface SecurityRecommendation {
-  category: "encryption" | "access_control" | "audit" | "data_minimization" | "retention";
-  priority: "low" | "medium" | "high";
+  category: 'encryption' | 'access_control' | 'audit' | 'data_minimization' | 'retention';
+  priority: 'low' | 'medium' | 'high';
   title: string;
   description: string;
   implementation: string;
@@ -84,7 +84,7 @@ export class SecurityComplianceValidator {
 
   constructor(
     optimizer: AestheticClinicPerformanceOptimizer,
-    websocketOptimizer?: WebSocketOptimizer
+    websocketOptimizer?: WebSocketOptimizer,
   ) {
     this.optimizer = optimizer;
     this.websocketOptimizer = websocketOptimizer;
@@ -95,7 +95,7 @@ export class SecurityComplianceValidator {
    */
   async validateOptimizations(): Promise<SecurityValidationResult> {
     const startTime = performance.now();
-    
+
     const violations: SecurityViolation[] = [];
     const recommendations: SecurityRecommendation[] = [];
 
@@ -136,7 +136,8 @@ export class SecurityComplianceValidator {
     const complianceScore = this.calculateComplianceScore(violations);
 
     const result: SecurityValidationResult = {
-      isValid: violations.filter(v => v.severity === "critical" || v.severity === "high").length === 0,
+      isValid:
+        violations.filter(v => v.severity === 'critical' || v.severity === 'high').length === 0,
       violations,
       recommendations,
       complianceScore,
@@ -144,11 +145,11 @@ export class SecurityComplianceValidator {
     };
 
     // Cache result
-    this.validationCache.set("current_validation", result);
+    this.validationCache.set('current_validation', result);
 
     // Log validation
     this.auditLog.push({
-      type: "security_validation",
+      type: 'security_validation',
       result,
       duration: performance.now() - startTime,
       timestamp: new Date().toISOString(),
@@ -165,30 +166,30 @@ export class SecurityComplianceValidator {
 
     // Check for sensitive data in cache
     violations.push({
-      type: "data_leak",
-      severity: "high",
-      description: "Cache may contain sensitive patient data without proper encryption",
-      component: "AestheticClinicPerformanceOptimizer",
-      recommendation: "Implement cache encryption and exclude sensitive PHI from cache keys",
-      affectedData: ["patient_medical_history", "treatment_notes", "before_after_photos"],
+      type: 'data_leak',
+      severity: 'high',
+      description: 'Cache may contain sensitive patient data without proper encryption',
+      component: 'AestheticClinicPerformanceOptimizer',
+      recommendation: 'Implement cache encryption and exclude sensitive PHI from cache keys',
+      affectedData: ['patient_medical_history', 'treatment_notes', 'before_after_photos'],
     });
 
     // Check cache key security
     violations.push({
-      type: "data_leak",
-      severity: "medium",
-      description: "Cache keys may contain identifiable information",
-      component: "Cache Management",
-      recommendation: "Use hashed cache keys instead of raw data",
+      type: 'data_leak',
+      severity: 'medium',
+      description: 'Cache keys may contain identifiable information',
+      component: 'Cache Management',
+      recommendation: 'Use hashed cache keys instead of raw data',
     });
 
     // Check cache TTL compliance
     violations.push({
-      type: "retention",
-      severity: "medium",
-      description: "Cache retention periods may exceed data retention policies",
-      component: "Cache Configuration",
-      recommendation: "Align cache TTL with data retention policies",
+      type: 'retention',
+      severity: 'medium',
+      description: 'Cache retention periods may exceed data retention policies',
+      component: 'Cache Configuration',
+      recommendation: 'Align cache TTL with data retention policies',
     });
 
     return violations;
@@ -202,29 +203,29 @@ export class SecurityComplianceValidator {
 
     // Check for TLS/SSL enforcement
     violations.push({
-      type: "encryption",
-      severity: "critical",
-      description: "Data transmission must use TLS 1.3 encryption",
-      component: "API Endpoints",
-      recommendation: "Enforce HTTPS and HSTS headers for all API communications",
+      type: 'encryption',
+      severity: 'critical',
+      description: 'Data transmission must use TLS 1.3 encryption',
+      component: 'API Endpoints',
+      recommendation: 'Enforce HTTPS and HSTS headers for all API communications',
     });
 
     // Check for data compression security
     violations.push({
-      type: "data_leak",
-      severity: "medium",
-      description: "Response compression may leak sensitive data through side channels",
-      component: "Performance Middleware",
-      recommendation: "Disable compression for sensitive data endpoints",
+      type: 'data_leak',
+      severity: 'medium',
+      description: 'Response compression may leak sensitive data through side channels',
+      component: 'Performance Middleware',
+      recommendation: 'Disable compression for sensitive data endpoints',
     });
 
     // Check for secure headers
     violations.push({
-      type: "access_control",
-      severity: "medium",
-      description: "Missing security headers for API responses",
-      component: "HTTP Headers",
-      recommendation: "Implement security headers: CSP, XSS Protection, HSTS",
+      type: 'access_control',
+      severity: 'medium',
+      description: 'Missing security headers for API responses',
+      component: 'HTTP Headers',
+      recommendation: 'Implement security headers: CSP, XSS Protection, HSTS',
     });
 
     return violations;
@@ -238,29 +239,29 @@ export class SecurityComplianceValidator {
 
     // Check for proper authentication
     violations.push({
-      type: "access_control",
-      severity: "critical",
-      description: "Performance optimizations must not bypass authentication requirements",
-      component: "Authentication Middleware",
-      recommendation: "Ensure all cached data respects user access permissions",
+      type: 'access_control',
+      severity: 'critical',
+      description: 'Performance optimizations must not bypass authentication requirements',
+      component: 'Authentication Middleware',
+      recommendation: 'Ensure all cached data respects user access permissions',
     });
 
     // Check for authorization
     violations.push({
-      type: "access_control",
-      severity: "high",
-      description: "Cached data may be accessible to unauthorized users",
-      component: "Authorization System",
-      recommendation: "Implement cache segmentation by user role and permissions",
+      type: 'access_control',
+      severity: 'high',
+      description: 'Cached data may be accessible to unauthorized users',
+      component: 'Authorization System',
+      recommendation: 'Implement cache segmentation by user role and permissions',
     });
 
     // Check for rate limiting
     violations.push({
-      type: "access_control",
-      severity: "medium",
-      description: "Performance optimizations may circumvent rate limiting",
-      component: "Rate Limiting",
-      recommendation: "Apply rate limiting before cache checks",
+      type: 'access_control',
+      severity: 'medium',
+      description: 'Performance optimizations may circumvent rate limiting',
+      component: 'Rate Limiting',
+      recommendation: 'Apply rate limiting before cache checks',
     });
 
     return violations;
@@ -274,29 +275,29 @@ export class SecurityComplianceValidator {
 
     // Check for log retention
     violations.push({
-      type: "retention",
-      severity: "medium",
-      description: "Performance metrics logs may contain sensitive data beyond retention period",
-      component: "Performance Monitoring",
-      recommendation: "Implement automatic log rotation and data purging",
+      type: 'retention',
+      severity: 'medium',
+      description: 'Performance metrics logs may contain sensitive data beyond retention period',
+      component: 'Performance Monitoring',
+      recommendation: 'Implement automatic log rotation and data purging',
     });
 
     // Check for cache retention
     violations.push({
-      type: "retention",
-      severity: "medium",
-      description: "Cached data retention may violate data retention policies",
-      component: "Cache Management",
-      recommendation: "Configure cache TTL based on data sensitivity",
+      type: 'retention',
+      severity: 'medium',
+      description: 'Cached data retention may violate data retention policies',
+      component: 'Cache Management',
+      recommendation: 'Configure cache TTL based on data sensitivity',
     });
 
     // Check for backup retention
     violations.push({
-      type: "retention",
-      severity: "low",
-      description: "Performance monitoring backups may exceed retention requirements",
-      component: "Backup System",
-      recommendation: "Implement backup retention policies",
+      type: 'retention',
+      severity: 'low',
+      description: 'Performance monitoring backups may exceed retention requirements',
+      component: 'Backup System',
+      recommendation: 'Implement backup retention policies',
     });
 
     return violations;
@@ -310,29 +311,29 @@ export class SecurityComplianceValidator {
 
     // Check for comprehensive logging
     violations.push({
-      type: "audit",
-      severity: "high",
-      description: "Performance optimizations may reduce audit log completeness",
-      component: "Audit System",
-      recommendation: "Ensure all data access is logged regardless of cache hits",
+      type: 'audit',
+      severity: 'high',
+      description: 'Performance optimizations may reduce audit log completeness',
+      component: 'Audit System',
+      recommendation: 'Ensure all data access is logged regardless of cache hits',
     });
 
     // Check for log integrity
     violations.push({
-      type: "audit",
-      severity: "medium",
-      description: "Performance metrics may interfere with audit log integrity",
-      component: "Log Management",
-      recommendation: "Separate performance logs from security audit logs",
+      type: 'audit',
+      severity: 'medium',
+      description: 'Performance metrics may interfere with audit log integrity',
+      component: 'Log Management',
+      recommendation: 'Separate performance logs from security audit logs',
     });
 
     // Check for log protection
     violations.push({
-      type: "audit",
-      severity: "medium",
-      description: "Audit logs may not be protected from tampering",
-      component: "Log Storage",
-      recommendation: "Implement write-once, read-many audit log storage",
+      type: 'audit',
+      severity: 'medium',
+      description: 'Audit logs may not be protected from tampering',
+      component: 'Log Storage',
+      recommendation: 'Implement write-once, read-many audit log storage',
     });
 
     return violations;
@@ -346,29 +347,29 @@ export class SecurityComplianceValidator {
 
     // Check for data-at-rest encryption
     violations.push({
-      type: "encryption",
-      severity: "critical",
-      description: "Cached data may not be encrypted at rest",
-      component: "Cache Storage",
-      recommendation: "Implement AES-256 encryption for cached sensitive data",
+      type: 'encryption',
+      severity: 'critical',
+      description: 'Cached data may not be encrypted at rest',
+      component: 'Cache Storage',
+      recommendation: 'Implement AES-256 encryption for cached sensitive data',
     });
 
     // Check for key management
     violations.push({
-      type: "encryption",
-      severity: "high",
-      description: "Encryption keys may not be properly managed",
-      component: "Key Management",
-      recommendation: "Implement proper key rotation and management system",
+      type: 'encryption',
+      severity: 'high',
+      description: 'Encryption keys may not be properly managed',
+      component: 'Key Management',
+      recommendation: 'Implement proper key rotation and management system',
     });
 
     // Check for algorithm strength
     violations.push({
-      type: "encryption",
-      severity: "medium",
-      description: "Performance optimizations may use weak encryption algorithms",
-      component: "Encryption Algorithms",
-      recommendation: "Use only FIPS-140-2 approved encryption algorithms",
+      type: 'encryption',
+      severity: 'medium',
+      description: 'Performance optimizations may use weak encryption algorithms',
+      component: 'Encryption Algorithms',
+      recommendation: 'Use only FIPS-140-2 approved encryption algorithms',
     });
 
     return violations;
@@ -382,29 +383,29 @@ export class SecurityComplianceValidator {
 
     // Check for WebSocket authentication
     violations.push({
-      type: "access_control",
-      severity: "high",
-      description: "WebSocket connections may not enforce authentication",
-      component: "WebSocket Optimizer",
-      recommendation: "Implement token-based authentication for WebSocket connections",
+      type: 'access_control',
+      severity: 'high',
+      description: 'WebSocket connections may not enforce authentication',
+      component: 'WebSocket Optimizer',
+      recommendation: 'Implement token-based authentication for WebSocket connections',
     });
 
     // Check for message validation
     violations.push({
-      type: "data_leak",
-      severity: "medium",
-      description: "WebSocket messages may not be properly validated",
-      component: "WebSocket Message Handler",
-      recommendation: "Implement strict message validation and sanitization",
+      type: 'data_leak',
+      severity: 'medium',
+      description: 'WebSocket messages may not be properly validated',
+      component: 'WebSocket Message Handler',
+      recommendation: 'Implement strict message validation and sanitization',
     });
 
     // Check for connection limits
     violations.push({
-      type: "access_control",
-      severity: "medium",
-      description: "WebSocket connections may not have proper rate limiting",
-      component: "WebSocket Connection Pool",
-      recommendation: "Implement connection limits and rate limiting",
+      type: 'access_control',
+      severity: 'medium',
+      description: 'WebSocket connections may not have proper rate limiting',
+      component: 'WebSocket Connection Pool',
+      recommendation: 'Implement connection limits and rate limiting',
     });
 
     return violations;
@@ -413,64 +414,68 @@ export class SecurityComplianceValidator {
   /**
    * Generate security recommendations based on violations
    */
-  private generateSecurityRecommendations(violations: SecurityViolation[]): SecurityRecommendation[] {
+  private generateSecurityRecommendations(
+    violations: SecurityViolation[],
+  ): SecurityRecommendation[] {
     const recommendations: SecurityRecommendation[] = [];
 
     // High-priority recommendations
-    if (violations.some(v => v.type === "encryption" && v.severity === "critical")) {
+    if (violations.some(v => v.type === 'encryption' && v.severity === 'critical')) {
       recommendations.push({
-        category: "encryption",
-        priority: "high",
-        title: "Implement End-to-End Encryption",
-        description: "All cached data and communications must be encrypted using AES-256",
-        implementation: "Integrate with existing encryption service and ensure all cache operations use encryption",
-        expectedImpact: "Eliminates risk of data exposure through cache compromise",
+        category: 'encryption',
+        priority: 'high',
+        title: 'Implement End-to-End Encryption',
+        description: 'All cached data and communications must be encrypted using AES-256',
+        implementation:
+          'Integrate with existing encryption service and ensure all cache operations use encryption',
+        expectedImpact: 'Eliminates risk of data exposure through cache compromise',
       });
     }
 
-    if (violations.some(v => v.type === "access_control" && v.severity === "critical")) {
+    if (violations.some(v => v.type === 'access_control' && v.severity === 'critical')) {
       recommendations.push({
-        category: "access_control",
-        priority: "high",
-        title: "Implement Attribute-Based Access Control",
-        description: "Ensure all cached data respects user permissions and access levels",
-        implementation: "Integrate with existing RBAC system and implement cache key segmentation",
-        expectedImpact: "Prevents unauthorized access to sensitive cached data",
+        category: 'access_control',
+        priority: 'high',
+        title: 'Implement Attribute-Based Access Control',
+        description: 'Ensure all cached data respects user permissions and access levels',
+        implementation: 'Integrate with existing RBAC system and implement cache key segmentation',
+        expectedImpact: 'Prevents unauthorized access to sensitive cached data',
       });
     }
 
     // Medium-priority recommendations
-    if (violations.some(v => v.type === "audit" && v.severity === "high")) {
+    if (violations.some(v => v.type === 'audit' && v.severity === 'high')) {
       recommendations.push({
-        category: "audit",
-        priority: "medium",
-        title: "Enhance Audit Logging",
-        description: "Ensure comprehensive audit logging for all data access operations",
-        implementation: "Implement audit log middleware that captures all data access regardless of cache usage",
-        expectedImpact: "Maintains compliance with healthcare audit requirements",
+        category: 'audit',
+        priority: 'medium',
+        title: 'Enhance Audit Logging',
+        description: 'Ensure comprehensive audit logging for all data access operations',
+        implementation:
+          'Implement audit log middleware that captures all data access regardless of cache usage',
+        expectedImpact: 'Maintains compliance with healthcare audit requirements',
       });
     }
 
-    if (violations.some(v => v.type === "retention" && v.severity === "medium")) {
+    if (violations.some(v => v.type === 'retention' && v.severity === 'medium')) {
       recommendations.push({
-        category: "retention",
-        priority: "medium",
-        title: "Implement Data Retention Policies",
-        description: "Align cache and log retention with healthcare data retention requirements",
-        implementation: "Configure automatic data purging based on retention policies",
-        expectedImpact: "Ensures compliance with LGPD and other retention requirements",
+        category: 'retention',
+        priority: 'medium',
+        title: 'Implement Data Retention Policies',
+        description: 'Align cache and log retention with healthcare data retention requirements',
+        implementation: 'Configure automatic data purging based on retention policies',
+        expectedImpact: 'Ensures compliance with LGPD and other retention requirements',
       });
     }
 
     // Low-priority recommendations
-    if (violations.some(v => v.type === "data_leak" && v.severity === "low")) {
+    if (violations.some(v => v.type === 'data_leak' && v.severity === 'low')) {
       recommendations.push({
-        category: "data_minimization",
-        priority: "low",
-        title: "Implement Data Minimization",
-        description: "Minimize the amount of sensitive data stored in cache",
-        implementation: "Review cache contents and remove non-essential sensitive data",
-        expectedImpact: "Reduces risk surface area for data exposure",
+        category: 'data_minimization',
+        priority: 'low',
+        title: 'Implement Data Minimization',
+        description: 'Minimize the amount of sensitive data stored in cache',
+        implementation: 'Review cache contents and remove non-essential sensitive data',
+        expectedImpact: 'Reduces risk surface area for data exposure',
       });
     }
 
@@ -510,7 +515,7 @@ export class SecurityComplianceValidator {
     overall: boolean;
   }> {
     const validation = await this.validateOptimizations();
-    
+
     return {
       lgpd: {
         dataSubjectRights: this.checkDataSubjectRights(validation),
@@ -542,47 +547,41 @@ export class SecurityComplianceValidator {
    * LGPD compliance checks
    */
   private checkDataSubjectRights(validation: SecurityValidationResult): boolean {
-    return !validation.violations.some(v => 
-      v.type === "access_control" && v.severity === "critical"
+    return !validation.violations.some(v =>
+      v.type === 'access_control' && v.severity === 'critical'
     );
   }
 
   private checkConsentManagement(validation: SecurityValidationResult): boolean {
-    return !validation.violations.some(v => 
-      v.type === "access_control" && v.description.includes("consent")
+    return !validation.violations.some(v =>
+      v.type === 'access_control' && v.description.includes('consent')
     );
   }
 
   private checkDataMinimization(validation: SecurityValidationResult): boolean {
-    return !validation.violations.some(v => 
-      v.type === "data_leak" && v.description.includes("minimization")
+    return !validation.violations.some(v =>
+      v.type === 'data_leak' && v.description.includes('minimization')
     );
   }
 
   private checkRetentionPolicies(validation: SecurityValidationResult): boolean {
-    return !validation.violations.some(v => 
-      v.type === "retention" && v.severity === "high"
-    );
+    return !validation.violations.some(v => v.type === 'retention' && v.severity === 'high');
   }
 
   private checkBreachNotification(validation: SecurityValidationResult): boolean {
-    return !validation.violations.some(v => 
-      v.type === "audit" && v.description.includes("breach")
-    );
+    return !validation.violations.some(v => v.type === 'audit' && v.description.includes('breach'));
   }
 
   private checkDataProcessingRecords(validation: SecurityValidationResult): boolean {
-    return !validation.violations.some(v => 
-      v.type === "audit" && v.severity === "high"
-    );
+    return !validation.violations.some(v => v.type === 'audit' && v.severity === 'high');
   }
 
   /**
    * ANVISA compliance checks
    */
   private checkMedicalDeviceData(validation: SecurityValidationResult): boolean {
-    return !validation.violations.some(v => 
-      v.type === "encryption" && v.description.includes("medical")
+    return !validation.violations.some(v =>
+      v.type === 'encryption' && v.description.includes('medical')
     );
   }
 
@@ -591,8 +590,8 @@ export class SecurityComplianceValidator {
   }
 
   private checkAdverseEventReporting(validation: SecurityValidationResult): boolean {
-    return !validation.violations.some(v => 
-      v.type === "audit" && v.description.includes("adverse")
+    return !validation.violations.some(v =>
+      v.type === 'audit' && v.description.includes('adverse')
     );
   }
 
@@ -601,35 +600,29 @@ export class SecurityComplianceValidator {
   }
 
   private checkTraceability(validation: SecurityValidationResult): boolean {
-    return !validation.violations.some(v => 
-      v.type === "audit" && v.severity === "high"
-    );
+    return !validation.violations.some(v => v.type === 'audit' && v.severity === 'high');
   }
 
   /**
    * CFM compliance checks
    */
   private checkPatientConfidentiality(validation: SecurityValidationResult): boolean {
-    return !validation.violations.some(v => 
-      v.type === "data_leak" && v.severity === "critical"
-    );
+    return !validation.violations.some(v => v.type === 'data_leak' && v.severity === 'critical');
   }
 
   private checkProfessionalAccountability(validation: SecurityValidationResult): boolean {
-    return !validation.violations.some(v => 
-      v.type === "audit" && v.description.includes("accountability")
+    return !validation.violations.some(v =>
+      v.type === 'audit' && v.description.includes('accountability')
     );
   }
 
   private checkMedicalRecordIntegrity(validation: SecurityValidationResult): boolean {
-    return !validation.violations.some(v => 
-      v.type === "encryption" && v.severity === "critical"
-    );
+    return !validation.violations.some(v => v.type === 'encryption' && v.severity === 'critical');
   }
 
   private checkTelemedicineStandards(validation: SecurityValidationResult): boolean {
-    return !validation.violations.some(v => 
-      v.component === "WebSocket Optimizer" && v.severity === "critical"
+    return !validation.violations.some(v =>
+      v.component === 'WebSocket Optimizer' && v.severity === 'critical'
     );
   }
 
@@ -642,14 +635,14 @@ export class SecurityComplianceValidator {
    */
   getAuditLog(timeRange?: { start: Date; end: Date }): SecurityAuditLog[] {
     let logs = [...this.auditLog];
-    
+
     if (timeRange) {
       logs = logs.filter(log => {
         const logTime = new Date(log.timestamp);
         return logTime >= timeRange.start && logTime <= timeRange.end;
       });
     }
-    
+
     return logs.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
   }
 
@@ -677,10 +670,10 @@ export class SecurityComplianceValidator {
       deadline: string;
     }>;
   } {
-    const latestValidation = this.validationCache.get("current_validation");
-    
+    const latestValidation = this.validationCache.get('current_validation');
+
     if (!latestValidation) {
-      throw new Error("No validation results available. Run validateOptimizations() first.");
+      throw new Error('No validation results available. Run validateOptimizations() first.');
     }
 
     const frameworks = this.validateComplianceFrameworks();
@@ -689,7 +682,8 @@ export class SecurityComplianceValidator {
       summary: {
         overallScore: latestValidation.complianceScore,
         totalViolations: latestValidation.violations.length,
-        criticalViolations: latestValidation.violations.filter(v => v.severity === "critical").length,
+        criticalViolations:
+          latestValidation.violations.filter(v => v.severity === 'critical').length,
         lastValidation: latestValidation.timestamp,
       },
       frameworks: frameworks as any,
@@ -708,20 +702,20 @@ export class SecurityComplianceValidator {
     owner: string;
     deadline: string;
   }> {
-    const criticalViolations = validation.violations.filter(v => v.severity === "critical");
-    const highViolations = validation.violations.filter(v => v.severity === "high");
+    const criticalViolations = validation.violations.filter(v => v.severity === 'critical');
+    const highViolations = validation.violations.filter(v => v.severity === 'high');
 
     return [
       ...criticalViolations.map((violation, _index) => ({
-        priority: "Immediate",
+        priority: 'Immediate',
         action: `Fix critical security issue: ${violation.description}`,
-        owner: "Security Team",
+        owner: 'Security Team',
         deadline: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 1 week
       })),
       ...highViolations.map((violation, _index) => ({
-        priority: "High",
+        priority: 'High',
         action: `Address security issue: ${violation.description}`,
-        owner: "Development Team",
+        owner: 'Development Team',
         deadline: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString(), // 2 weeks
       })),
     ];
@@ -738,7 +732,7 @@ export class SecurityComplianceValidator {
 
 // Audit log interface
 interface SecurityAuditLog {
-  type: "security_validation" | "compliance_check" | "incident_response";
+  type: 'security_validation' | 'compliance_check' | 'incident_response';
   result: SecurityValidationResult;
   duration: number;
   timestamp: string;

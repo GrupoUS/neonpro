@@ -1,30 +1,30 @@
 import {
-  GovernanceService,
   AuditTrailEntry,
   CreateAuditTrailEntry,
+  GovernanceService,
   PolicyManagement,
-} from "./governance.types";
+} from './governance.types';
 export type HealthcareMetricType =
-  | "PATIENT_SAFETY"
-  | "CLINICAL_QUALITY"
-  | "OPERATIONAL_EFFICIENCY"
-  | "COMPLIANCE_SCORE"
-  | "TELEMEDICINE_QUALITY"
-  | "DATA_SECURITY"
-  | "RESPONSE_TIME"
-  | "ERROR_RATE";
+  | 'PATIENT_SAFETY'
+  | 'CLINICAL_QUALITY'
+  | 'OPERATIONAL_EFFICIENCY'
+  | 'COMPLIANCE_SCORE'
+  | 'TELEMEDICINE_QUALITY'
+  | 'DATA_SECURITY'
+  | 'RESPONSE_TIME'
+  | 'ERROR_RATE';
 export type HealthcareMetricStatus =
-  | "ACTIVE"
-  | "INACTIVE"
-  | "UNDER_REVIEW"
-  | "CRITICAL";
+  | 'ACTIVE'
+  | 'INACTIVE'
+  | 'UNDER_REVIEW'
+  | 'CRITICAL';
 export type HealthcareMetricCategory =
-  | "CFM_COMPLIANCE"
-  | "ANVISA_COMPLIANCE"
-  | "PATIENT_SAFETY"
-  | "CLINICAL_OUTCOMES"
-  | "OPERATIONAL"
-  | "SECURITY";
+  | 'CFM_COMPLIANCE'
+  | 'ANVISA_COMPLIANCE'
+  | 'PATIENT_SAFETY'
+  | 'CLINICAL_OUTCOMES'
+  | 'OPERATIONAL'
+  | 'SECURITY';
 export interface HealthcareMetric {
   id: string;
   clinicId: string;
@@ -38,7 +38,7 @@ export interface HealthcareMetric {
   unit: string;
   status: HealthcareMetricStatus;
   complianceFramework: string;
-  riskLevel: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
+  riskLevel: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
   lastUpdated: Date;
   metadata?: Record<string, unknown>;
   createdAt: Date;
@@ -56,7 +56,7 @@ export interface CreateHealthcareMetric {
   unit: string;
   status?: HealthcareMetricStatus;
   complianceFramework: string;
-  riskLevel?: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
+  riskLevel?: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
   metadata?: Record<string, unknown>;
 }
 export interface UpdateHealthcareMetric {
@@ -65,27 +65,27 @@ export interface UpdateHealthcareMetric {
   targetValue?: number;
   threshold?: number;
   status?: HealthcareMetricStatus;
-  riskLevel?: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
+  riskLevel?: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
   metadata?: Record<string, unknown>;
 }
 export interface HealthcarePolicy extends PolicyManagement {
-  regulatoryBody: "CFM" | "ANVISA" | "MS" | "CRM";
+  regulatoryBody: 'CFM' | 'ANVISA' | 'MS' | 'CRM';
   regulationNumber: string;
   applicableServices: string[];
   complianceDeadline?: Date;
-  auditFrequency: "MONTHLY" | "QUARTERLY" | "ANNUALLY";
-  criticalityLevel: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
+  auditFrequency: 'MONTHLY' | 'QUARTERLY' | 'ANNUALLY';
+  criticalityLevel: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
 }
 export interface CreateHealthcarePolicy {
   name: string;
   description: string;
   category: string;
-  regulatoryBody: "CFM" | "ANVISA" | "MS" | "CRM";
+  regulatoryBody: 'CFM' | 'ANVISA' | 'MS' | 'CRM';
   regulationNumber: string;
   applicableServices: string[];
   complianceDeadline?: Date;
-  auditFrequency: "MONTHLY" | "QUARTERLY" | "ANNUALLY";
-  criticalityLevel: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
+  auditFrequency: 'MONTHLY' | 'QUARTERLY' | 'ANNUALLY';
+  criticalityLevel: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
   content: string;
   metadata?: Record<string, unknown>;
 }
@@ -94,20 +94,20 @@ export interface PatientSafetyKPI {
   clinicId: string;
   kpiName: string;
   category:
-    | "MEDICATION_SAFETY"
-    | "DIAGNOSTIC_ACCURACY"
-    | "TREATMENT_OUTCOMES"
-    | "INFECTION_CONTROL";
+    | 'MEDICATION_SAFETY'
+    | 'DIAGNOSTIC_ACCURACY'
+    | 'TREATMENT_OUTCOMES'
+    | 'INFECTION_CONTROL';
   currentValue: number;
   targetValue: number;
   benchmark: number;
-  trend: "IMPROVING" | "STABLE" | "DECLINING";
+  trend: 'IMPROVING' | 'STABLE' | 'DECLINING';
   alertThreshold: number;
   lastIncident?: Date;
   incidentCount: number;
   mitigationActions: string[];
   responsibleTeam: string;
-  reportingFrequency: "DAILY" | "WEEKLY" | "MONTHLY";
+  reportingFrequency: 'DAILY' | 'WEEKLY' | 'MONTHLY';
   createdAt: Date;
   updatedAt: Date;
 }
@@ -115,16 +115,16 @@ export interface HealthcareAlert {
   id: string;
   clinicId: string;
   alertType:
-    | "COMPLIANCE_VIOLATION"
-    | "SAFETY_INCIDENT"
-    | "METRIC_THRESHOLD"
-    | "POLICY_BREACH";
-  severity: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
+    | 'COMPLIANCE_VIOLATION'
+    | 'SAFETY_INCIDENT'
+    | 'METRIC_THRESHOLD'
+    | 'POLICY_BREACH';
+  severity: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
   title: string;
   description: string;
   source: string;
   triggeredBy: string;
-  status: "ACTIVE" | "ACKNOWLEDGED" | "RESOLVED" | "DISMISSED";
+  status: 'ACTIVE' | 'ACKNOWLEDGED' | 'RESOLVED' | 'DISMISSED';
   assignedTo?: string;
   escalationLevel: number;
   autoEscalationTime?: Date;
@@ -148,16 +148,16 @@ export interface HealthcareComplianceReport {
   id: string;
   clinicId: string;
   reportType:
-    | "CFM_TELEMEDICINE"
-    | "ANVISA_ESTABLISHMENT"
-    | "PATIENT_SAFETY"
-    | "COMPREHENSIVE";
+    | 'CFM_TELEMEDICINE'
+    | 'ANVISA_ESTABLISHMENT'
+    | 'PATIENT_SAFETY'
+    | 'COMPREHENSIVE';
   period: {
     startDate: Date;
     endDate: Date;
   };
   overallScore: number;
-  complianceStatus: "COMPLIANT" | "NON_COMPLIANT" | "UNDER_REVIEW" | "CRITICAL";
+  complianceStatus: 'COMPLIANT' | 'NON_COMPLIANT' | 'UNDER_REVIEW' | 'CRITICAL';
   metrics: HealthcareMetric[];
   violations: {
     count: number;
@@ -204,7 +204,7 @@ export interface HealthcareGovernanceService extends GovernanceService {
     filters?: HealthcareAlertFilters,
   ): Promise<HealthcareAlert[]>;
   createHealthcareAlert(
-    alert: Omit<HealthcareAlert, "id" | "createdAt" | "updatedAt">,
+    alert: Omit<HealthcareAlert, 'id' | 'createdAt' | 'updatedAt'>,
   ): Promise<HealthcareAlert>;
   updateHealthcareAlert(
     id: string,
@@ -212,7 +212,7 @@ export interface HealthcareGovernanceService extends GovernanceService {
   ): Promise<HealthcareAlert>;
   generateComplianceReport(
     clinicId: string,
-    reportType: HealthcareComplianceReport["reportType"],
+    reportType: HealthcareComplianceReport['reportType'],
     period: {
       startDate: Date;
       endDate: Date;
@@ -234,25 +234,25 @@ export interface HealthcareMetricFilters {
   category?: HealthcareMetricCategory;
   status?: HealthcareMetricStatus;
   complianceFramework?: string;
-  riskLevel?: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
+  riskLevel?: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
 }
 export interface HealthcarePolicyFilters {
-  regulatoryBody?: "CFM" | "ANVISA" | "MS" | "CRM";
+  regulatoryBody?: 'CFM' | 'ANVISA' | 'MS' | 'CRM';
   category?: string;
-  criticalityLevel?: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
+  criticalityLevel?: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
   applicableService?: string;
 }
 export interface HealthcareAlertFilters {
-  alertType?: HealthcareAlert["alertType"];
-  severity?: HealthcareAlert["severity"];
-  status?: HealthcareAlert["status"];
+  alertType?: HealthcareAlert['alertType'];
+  severity?: HealthcareAlert['severity'];
+  status?: HealthcareAlert['status'];
   assignedTo?: string;
   dateFrom?: Date;
   dateTo?: Date;
 }
 export interface ComplianceReportFilters {
-  reportType?: HealthcareComplianceReport["reportType"];
-  complianceStatus?: HealthcareComplianceReport["complianceStatus"];
+  reportType?: HealthcareComplianceReport['reportType'];
+  complianceStatus?: HealthcareComplianceReport['complianceStatus'];
   dateFrom?: Date;
   dateTo?: Date;
 }
@@ -263,13 +263,13 @@ export interface HealthcareDashboardData {
   patientSafetyScore: number;
   cfmComplianceStatus: {
     score: number;
-    status: "COMPLIANT" | "NON_COMPLIANT" | "UNDER_REVIEW" | "CRITICAL";
+    status: 'COMPLIANT' | 'NON_COMPLIANT' | 'UNDER_REVIEW' | 'CRITICAL';
     lastAudit: Date;
     nextAudit: Date;
   };
   anvisaComplianceStatus: {
     score: number;
-    status: "COMPLIANT" | "NON_COMPLIANT" | "UNDER_REVIEW" | "CRITICAL";
+    status: 'COMPLIANT' | 'NON_COMPLIANT' | 'UNDER_REVIEW' | 'CRITICAL';
     lastAudit: Date;
     nextAudit: Date;
   };
@@ -285,4 +285,4 @@ export interface HealthcareDashboardData {
     alertResolutionTrend: string;
   };
 }
-//# sourceMappingURL=healthcare-governance.types.d.ts.map
+// # sourceMappingURL=healthcare-governance.types.d.ts.map

@@ -3,16 +3,16 @@
 // Handles usage metrics, cost calculations, and quota enforcement
 // Date: 2025-09-19
 
+import { calculateRequestCost } from '@neonpro/config/quotas';
 import type {
-  SubscriptionTier,
-  EnhancedAIModel,
-  AIUsageRecord,
-  BillingMetrics,
-  AuditTrail,
-  MedicalSpecialty,
   AIProvider,
-} from "@neonpro/types";
-import { calculateRequestCost } from "@neonpro/config/quotas";
+  AIUsageRecord,
+  AuditTrail,
+  BillingMetrics,
+  EnhancedAIModel,
+  MedicalSpecialty,
+  SubscriptionTier,
+} from '@neonpro/types';
 
 // ================================================
 // USAGE COUNTER INTERFACES
@@ -53,7 +53,7 @@ export interface UsageCounterData {
  * Usage aggregation by time period
  */
 export interface UsageAggregation {
-  readonly period: "hour" | "day" | "week" | "month";
+  readonly period: 'hour' | 'day' | 'week' | 'month';
   readonly timestamp: Date;
   queries: number;
   costUsd: number;
@@ -150,9 +150,9 @@ export class UsageCounter {
   get cacheSavingsPercentage(): number {
     if (this._data.totalCostUsd === 0) return 0;
     return (
-      (this._data.cacheSavingsUsd /
-        (this._data.totalCostUsd + this._data.cacheSavingsUsd)) *
-      100
+      (this._data.cacheSavingsUsd
+        / (this._data.totalCostUsd + this._data.cacheSavingsUsd))
+      * 100
     );
   }
 
@@ -212,7 +212,7 @@ export class UsageCounter {
       sessionId: usage.sessionId,
       modelCode: usage.modelCode,
       provider: this.getProviderForModel(usage.modelCode),
-      requestType: "chat",
+      requestType: 'chat',
       inputTokens: usage.inputTokens,
       outputTokens: usage.outputTokens,
       totalTokens,
@@ -227,14 +227,14 @@ export class UsageCounter {
       patientDataProcessed: Boolean(usage.medicalSpecialty),
       anonymizationApplied: true, // Always apply for healthcare
       auditTrail: {
-        action: "ai_request_processed",
+        action: 'ai_request_processed',
         timestamp: now,
         userId: this._data._userId,
-        consentStatus: "valid",
+        consentStatus: 'valid',
         dataProcessingPurpose: usage.medicalSpecialty
-          ? "diagnosis"
-          : "analytics",
-        anonymizationLevel: "pseudonymized",
+          ? 'diagnosis'
+          : 'analytics',
+        anonymizationLevel: 'pseudonymized',
         metadata: {
           modelCode: usage.modelCode,
           tokens: totalTokens,
@@ -328,12 +328,12 @@ export class UsageCounter {
     };
 
     return {
-      action: "daily_counters_reset",
+      action: 'daily_counters_reset',
       timestamp: new Date(),
       userId: this._data._userId,
-      consentStatus: "valid",
-      dataProcessingPurpose: "audit",
-      anonymizationLevel: "none",
+      consentStatus: 'valid',
+      dataProcessingPurpose: 'audit',
+      anonymizationLevel: 'none',
       metadata: {
         previousDailyQueries: previousDaily,
         planCode: this._data.planCode,
@@ -358,12 +358,12 @@ export class UsageCounter {
     };
 
     return {
-      action: "monthly_counters_reset",
+      action: 'monthly_counters_reset',
       timestamp: new Date(),
       userId: this._data._userId,
-      consentStatus: "valid",
-      dataProcessingPurpose: "audit",
-      anonymizationLevel: "none",
+      consentStatus: 'valid',
+      dataProcessingPurpose: 'audit',
+      anonymizationLevel: 'none',
       metadata: {
         previousMonthlyQueries: previousMonthly,
         previousCostUsd: previousCost,
@@ -409,25 +409,25 @@ export class UsageCounter {
     // Generate recommendations
     if (insights.efficiency.cacheOptimization < 50) {
       insights.recommendations.push(
-        "Otimize consultas para melhorar cache hit rate",
+        'Otimize consultas para melhorar cache hit rate',
       );
     }
 
     if (insights.efficiency.costEfficiency < 30) {
       insights.recommendations.push(
-        "Considere usar modelos mais econômicos para consultas simples",
+        'Considere usar modelos mais econômicos para consultas simples',
       );
     }
 
     if (this.averageLatencyMs > 3000) {
       insights.recommendations.push(
-        "Latência alta detectada - verifique configuração de rede",
+        'Latência alta detectada - verifique configuração de rede',
       );
     }
 
     if (this._data.errorRate > 0.05) {
       insights.recommendations.push(
-        "Taxa de erro elevada - revise integrações",
+        'Taxa de erro elevada - revise integrações',
       );
     }
 
@@ -439,7 +439,7 @@ export class UsageCounter {
    */
   getBillingMetrics(startDate: Date, endDate: Date): BillingMetrics {
     const relevantRequests = this._recentRequests.filter(
-      (req) => req.createdAt >= startDate && req.createdAt <= endDate,
+      req => req.createdAt >= startDate && req.createdAt <= endDate,
     );
 
     const totalCostUsd = relevantRequests.reduce(
@@ -461,16 +461,15 @@ export class UsageCounter {
       totalTokens,
       totalRequests: relevantRequests.length,
       cacheSavingsUsd,
-      cacheSavingsPercentage:
-        totalCostUsd > 0
-          ? (cacheSavingsUsd / (totalCostUsd + cacheSavingsUsd)) * 100
-          : 0,
-      averageCostPerRequest:
-        relevantRequests.length > 0
-          ? totalCostUsd / relevantRequests.length
-          : 0,
-      averageTokensPerRequest:
-        relevantRequests.length > 0 ? totalTokens / relevantRequests.length : 0,
+      cacheSavingsPercentage: totalCostUsd > 0
+        ? (cacheSavingsUsd / (totalCostUsd + cacheSavingsUsd)) * 100
+        : 0,
+      averageCostPerRequest: relevantRequests.length > 0
+        ? totalCostUsd / relevantRequests.length
+        : 0,
+      averageTokensPerRequest: relevantRequests.length > 0
+        ? totalTokens / relevantRequests.length
+        : 0,
       period: {
         start: startDate,
         end: endDate,
@@ -482,10 +481,10 @@ export class UsageCounter {
    * Gets usage aggregations by period
    */
   getAggregations(
-    period: "hour" | "day" | "week" | "month",
+    period: 'hour' | 'day' | 'week' | 'month',
   ): UsageAggregation[] {
     return Array.from(this._aggregations.values())
-      .filter((agg) => agg.period === period)
+      .filter(agg => agg.period === period)
       .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
   }
 
@@ -495,19 +494,19 @@ export class UsageCounter {
 
   private getProviderForModel(
     modelCode: EnhancedAIModel,
-  ): AIProvider | "healthcare-br" {
-    if (modelCode.startsWith("gpt-")) return "openai";
-    if (modelCode.startsWith("claude-")) return "anthropic";
-    if (modelCode.startsWith("gemini-")) return "google";
-    if (modelCode === "healthcare-pt-br") return "healthcare-br";
-    return "mock" as AIProvider;
+  ): AIProvider | 'healthcare-br' {
+    if (modelCode.startsWith('gpt-')) return 'openai';
+    if (modelCode.startsWith('claude-')) return 'anthropic';
+    if (modelCode.startsWith('gemini-')) return 'google';
+    if (modelCode === 'healthcare-pt-br') return 'healthcare-br';
+    return 'mock' as AIProvider;
   }
 
   private isDiagnosisSpecialty(specialty?: MedicalSpecialty): boolean {
     const diagnosisSpecialties: MedicalSpecialty[] = [
-      "dermatologia",
-      "cirurgia_plastica",
-      "medicina_geral",
+      'dermatologia',
+      'cirurgia_plastica',
+      'medicina_geral',
     ];
     return specialty ? diagnosisSpecialties.includes(specialty) : false;
   }
@@ -516,12 +515,12 @@ export class UsageCounter {
     const flags: string[] = [];
 
     if (specialty) {
-      flags.push("CFM_OVERSIGHT");
+      flags.push('CFM_OVERSIGHT');
 
       if (
-        ["dermatologia", "cirurgia_plastica", "cosmiatria"].includes(specialty)
+        ['dermatologia', 'cirurgia_plastica', 'cosmiatria'].includes(specialty)
       ) {
-        flags.push("ANVISA_OVERSIGHT");
+        flags.push('ANVISA_OVERSIGHT');
       }
     }
 
@@ -539,7 +538,7 @@ export class UsageCounter {
 
   private updateCacheHitRate(cacheHit: boolean): number {
     const recentCacheHits = this._recentRequests.filter(
-      (req) => req.cacheHit,
+      req => req.cacheHit,
     ).length;
     const totalRecent = this._recentRequests.length;
 
@@ -549,8 +548,7 @@ export class UsageCounter {
 
   private updateErrorRate(hasError: boolean): number {
     const recentErrors = this._recentRequests.filter(
-      (req) =>
-        req.safetyFlags.length > 0 || req.regulatoryFlags.includes("ERROR"),
+      req => req.safetyFlags.length > 0 || req.regulatoryFlags.includes('ERROR'),
     ).length;
     const totalRecent = this._recentRequests.length;
 
@@ -561,7 +559,7 @@ export class UsageCounter {
   private calculatePeakHours(): number[] {
     const hourCounts = Array.from({ length: 24 }, () => 0);
 
-    this._recentRequests.forEach((req) => {
+    this._recentRequests.forEach(req => {
       const hour = req.createdAt.getHours();
       if (hour !== undefined && hourCounts[hour] !== undefined) {
         hourCounts[hour]++;
@@ -578,7 +576,7 @@ export class UsageCounter {
   private getPreferredModels(): EnhancedAIModel[] {
     const modelCounts = new Map<EnhancedAIModel, number>();
 
-    this._recentRequests.forEach((req) => {
+    this._recentRequests.forEach(req => {
       const current = modelCounts.get(req.modelCode) || 0;
       modelCounts.set(req.modelCode, current + 1);
     });
@@ -592,7 +590,7 @@ export class UsageCounter {
   private getCommonSpecialties(): MedicalSpecialty[] {
     const specialtyCounts = new Map<MedicalSpecialty, number>();
 
-    this._recentRequests.forEach((req) => {
+    this._recentRequests.forEach(req => {
       if (req.medicalSpecialty) {
         const current = specialtyCounts.get(req.medicalSpecialty) || 0;
         specialtyCounts.set(req.medicalSpecialty, current + 1);
@@ -606,14 +604,14 @@ export class UsageCounter {
   }
 
   private updateAggregations(usageRecord: AIUsageRecord): void {
-    const periods: Array<"hour" | "day" | "week" | "month"> = [
-      "hour",
-      "day",
-      "week",
-      "month",
+    const periods: Array<'hour' | 'day' | 'week' | 'month'> = [
+      'hour',
+      'day',
+      'week',
+      'month',
     ];
 
-    periods.forEach((period) => {
+    periods.forEach(period => {
       const key = this.getAggregationKey(usageRecord.createdAt, period);
       const existing = this._aggregations.get(key);
 
@@ -629,8 +627,8 @@ export class UsageCounter {
         }
 
         if (
-          usageRecord.medicalSpecialty &&
-          existing.specialtyBreakdown[usageRecord.medicalSpecialty]
+          usageRecord.medicalSpecialty
+          && existing.specialtyBreakdown[usageRecord.medicalSpecialty]
         ) {
           existing.specialtyBreakdown[usageRecord.medicalSpecialty]++;
         } else if (usageRecord.medicalSpecialty) {
@@ -650,9 +648,9 @@ export class UsageCounter {
           >,
           specialtyBreakdown: usageRecord.medicalSpecialty
             ? ({ [usageRecord.medicalSpecialty]: 1 } as Record<
-                MedicalSpecialty,
-                number
-              >)
+              MedicalSpecialty,
+              number
+            >)
             : ({} as Record<MedicalSpecialty, number>),
         };
 
@@ -663,41 +661,41 @@ export class UsageCounter {
 
   private getAggregationKey(
     date: Date,
-    period: "hour" | "day" | "week" | "month",
+    period: 'hour' | 'day' | 'week' | 'month',
   ): string {
     const d = new Date(date);
 
     switch (period) {
-      case "hour":
+      case 'hour':
         return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}-${d.getHours()}`;
-      case "day":
+      case 'day':
         return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
-      case "week":
+      case 'week':
         const weekStart = new Date(d);
         weekStart.setDate(d.getDate() - d.getDay());
         return `${weekStart.getFullYear()}-W${Math.ceil(weekStart.getDate() / 7)}`;
-      case "month":
+      case 'month':
         return `${d.getFullYear()}-${d.getMonth()}`;
     }
   }
 
   private getPeriodStart(
     date: Date,
-    period: "hour" | "day" | "week" | "month",
+    period: 'hour' | 'day' | 'week' | 'month',
   ): Date {
     const d = new Date(date);
 
     switch (period) {
-      case "hour":
+      case 'hour':
         return new Date(
           d.getFullYear(),
           d.getMonth(),
           d.getDate(),
           d.getHours(),
         );
-      case "day":
+      case 'day':
         return new Date(d.getFullYear(), d.getMonth(), d.getDate());
-      case "week":
+      case 'week':
         const weekStart = new Date(d);
         weekStart.setDate(d.getDate() - d.getDay());
         return new Date(
@@ -705,7 +703,7 @@ export class UsageCounter {
           weekStart.getMonth(),
           weekStart.getDate(),
         );
-      case "month":
+      case 'month':
         return new Date(d.getFullYear(), d.getMonth(), 1);
     }
   }
@@ -718,7 +716,7 @@ export class UsageCounter {
    * Converts to serializable object
    */
   toJSON(): UsageCounterData & {
-    insights: ReturnType<UsageCounter["getUsageInsights"]>;
+    insights: ReturnType<UsageCounter['getUsageInsights']>;
     recentActivity: AIUsageRecord[];
   } {
     return {

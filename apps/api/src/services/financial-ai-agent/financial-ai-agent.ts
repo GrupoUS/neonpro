@@ -11,8 +11,8 @@ import { z } from 'zod';
 
 // Import existing billing types and services
 import {
-  BillingService,
   Billing,
+  BillingService,
   // BillingType,
   // PaymentStatus,
   // PaymentMethod,
@@ -141,7 +141,7 @@ export class FinancialAIAgent {
       id: config.id || randomUUID(),
       clinicId: config.clinicId || randomUUID(),
     });
-    
+
     this.billingService = new BillingService();
     this.initialize();
   }
@@ -172,7 +172,10 @@ export class FinancialAIAgent {
    */
   private setupFraudDetectionRules(): void {
     this.fraudDetectionRules.set('rapid_fire_billing', this.detectRapidFireBilling.bind(this));
-    this.fraudDetectionRules.set('unusual_payment_methods', this.detectUnusualPaymentMethods.bind(this));
+    this.fraudDetectionRules.set(
+      'unusual_payment_methods',
+      this.detectUnusualPaymentMethods.bind(this),
+    );
     this.fraudDetectionRules.set('suspicious_discounts', this.detectSuspiciousDiscounts.bind(this));
     this.fraudDetectionRules.set('duplicate_billing', this.detectDuplicateBilling.bind(this));
   }
@@ -191,12 +194,12 @@ export class FinancialAIAgent {
    */
   async createIntelligentBilling(
     billingData: Partial<Billing>,
-    aiOptimization: boolean = true
+    aiOptimization: boolean = true,
   ): Promise<ServiceResponse<Billing & { aiOptimizations?: AIBillingOptimization }>> {
     try {
       // Step 1: Create standard billing
       const billingResult = await this.billingService.createBilling(billingData);
-      
+
       if (!billingResult.success || !billingResult.data) {
         return billingResult;
       }
@@ -205,16 +208,16 @@ export class FinancialAIAgent {
 
       // Step 2: AI-powered optimization if enabled
       let aiOptimizations: AIBillingOptimization | undefined;
-      
+
       if (aiOptimization && this.config.features.includes('billing_optimization')) {
         aiOptimizations = await this.generateBillingOptimizations(billing);
-        
+
         // Apply automated optimizations with high confidence
         if (aiOptimizations.suggestions.length > 0) {
           const highConfidenceSuggestions = aiOptimizations.suggestions.filter(
-            s => s.confidence > 0.85
+            s => s.confidence > 0.85,
           );
-          
+
           // Apply optimizations (in real implementation, would require user confirmation)
           for (const suggestion of highConfidenceSuggestions) {
             await this.applyBillingOptimization(billing, suggestion);
@@ -309,7 +312,7 @@ export class FinancialAIAgent {
   private async analyzeBillingPatterns(billing: Billing): Promise<any> {
     // In a real implementation, this would use ML models and historical data
     // For now, we'll return mock analysis data
-    
+
     return {
       pricingOpportunity: {
         impact: billing.total * 0.05, // 5% potential increase
@@ -329,7 +332,10 @@ export class FinancialAIAgent {
   /**
    * Apply billing optimization suggestion
    */
-  private async applyBillingOptimization(billing: Billing, suggestion: AIBillingOptimization['suggestions'][0]): Promise<void> {
+  private async applyBillingOptimization(
+    billing: Billing,
+    suggestion: AIBillingOptimization['suggestions'][0],
+  ): Promise<void> {
     // In a real implementation, this would apply the optimization
     console.log(`Applying optimization: ${suggestion.description}`);
   }
@@ -343,7 +349,7 @@ export class FinancialAIAgent {
         const result = await detector(billing);
         if (result) {
           this.alerts.set(result.id, result);
-          
+
           // Trigger notification if enabled
           if (this.config.notificationSettings.anomalyAlerts) {
             await this.sendAnomalyAlert(result);
@@ -364,7 +370,7 @@ export class FinancialAIAgent {
         const result = await rule(billing);
         if (result) {
           this.alerts.set(result.id, result);
-          
+
           // Trigger notification if enabled
           if (this.config.notificationSettings.fraudAlerts) {
             await this.sendFraudAlert(result);
@@ -408,7 +414,9 @@ export class FinancialAIAgent {
     return null; // Placeholder
   }
 
-  private async detectUnusualPaymentMethods(_billing: Billing): Promise<FraudDetectionAlert | null> {
+  private async detectUnusualPaymentMethods(
+    _billing: Billing,
+  ): Promise<FraudDetectionAlert | null> {
     // Detect unusual payment method patterns
     return null; // Placeholder
   }
@@ -443,7 +451,7 @@ export class FinancialAIAgent {
    * Generate predictive financial analytics
    */
   async generateFinancialPredictions(
-    timeFrame: '7d' | '30d' | '90d' | '1y' = '30d'
+    timeFrame: '7d' | '30d' | '90d' | '1y' = '30d',
   ): Promise<ServiceResponse<FinancialPrediction>> {
     try {
       if (!this.config.features.includes('predictive_analytics')) {
@@ -455,7 +463,7 @@ export class FinancialAIAgent {
 
       // Get historical financial data
       const summary = await this.billingService.getFinancialSummary(this.config.clinicId);
-      
+
       if (!summary.success || !summary.data) {
         return {
           success: false,
@@ -485,14 +493,14 @@ export class FinancialAIAgent {
    */
   private async generatePrediction(
     summary: FinancialSummary,
-    timeFrame: '7d' | '30d' | '90d' | '1y'
+    timeFrame: '7d' | '30d' | '90d' | '1y',
   ): Promise<FinancialPrediction> {
     // In a real implementation, this would use ML models
     // For now, we'll use rule-based predictions
 
     const baseRevenue = summary.totalRevenue;
     const growthRate = this.calculateGrowthRate(summary);
-    
+
     let predictedRevenue: number;
     let confidence: number;
     const factors: FinancialPrediction['factors'] = [];
@@ -558,7 +566,7 @@ export class FinancialAIAgent {
     // For now, use a simple calculation based on revenue distribution
     const totalRevenue = summary.totalRevenue;
     const totalPending = summary.totalPending;
-    
+
     // Simple growth rate calculation
     return (totalRevenue - totalPending) / (totalRevenue || 1) - 1;
   }
@@ -598,7 +606,7 @@ export class FinancialAIAgent {
    * Update agent configuration
    */
   updateConfiguration(
-    updates: Partial<FinancialAIAgentConfig>
+    updates: Partial<FinancialAIAgentConfig>,
   ): ServiceResponse<FinancialAIAgentConfig> {
     try {
       this.config = financialAIAgentSchema.parse({
@@ -634,7 +642,7 @@ export class FinancialAIAgent {
    */
   clearAlert(alertId: string): ServiceResponse<boolean> {
     const cleared = this.alerts.delete(alertId);
-    
+
     return {
       success: true,
       data: cleared,

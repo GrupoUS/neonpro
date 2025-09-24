@@ -1229,7 +1229,8 @@ export class TelemedicineService {
     const retentionPeriod = this.getRetentionPeriod(session.sessionType);
 
     // Encrypt session data
-    const _encryptedData = this.encryptSessionData(session); void _encryptedData;
+    const _encryptedData = this.encryptSessionData(session);
+    void _encryptedData;
 
     // In real implementation, store in secure archive
     console.log(`Archiving session ${session.id} with ID ${archiveId}`);

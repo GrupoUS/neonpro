@@ -42,7 +42,7 @@ interface ReceptionPermissions {
     modifyAppointments: boolean;
     cancelAppointments: boolean;
   };
-  
+
   // Pacientes
   patients: {
     viewPatients: boolean;
@@ -50,7 +50,7 @@ interface ReceptionPermissions {
     updatePatients: boolean;
     viewMedicalInfo: boolean; // Limitado
   };
-  
+
   // Financeiro
   financial: {
     processPayments: boolean;
@@ -58,7 +58,7 @@ interface ReceptionPermissions {
     issueReceipts: boolean;
     manageRefunds: boolean;
   };
-  
+
   // Comunicação
   communication: {
     sendEmails: boolean;
@@ -106,12 +106,12 @@ Estação de trabalho padrão:
 interface WelcomeProtocol {
   // Saudação inicial
   greeting: {
-    standardGreeting: "Bem-vindo à NeonPro Aesthetic Clinic! Como posso ajudar?";
+    standardGreeting: 'Bem-vindo à NeonPro Aesthetic Clinic! Como posso ajudar?';
     smileAndEyeContact: true;
     warmTone: true;
     professionalAppearance: true;
   };
-  
+
   // Identificação das necessidades
   needsIdentification: {
     activeListening: true;
@@ -119,7 +119,7 @@ interface WelcomeProtocol {
     patienceLevel: 'high';
     empathyLevel: 'high';
   };
-  
+
   // Direcionamento adequado
   routing: {
     appointmentCheck: boolean;
@@ -163,7 +163,7 @@ interface PatientRegistration {
     phone: string;
     address: Address;
   };
-  
+
   // Informações de contato
   contactInfo: {
     preferredContactMethod: 'phone' | 'email' | 'whatsapp' | 'sms';
@@ -171,7 +171,7 @@ interface PatientRegistration {
     relationship: string;
     notificationPreferences: NotificationPreference[];
   };
-  
+
   // Informações iniciais para tratamento
   treatmentInfo: {
     howDidYouFindUs: string;
@@ -180,7 +180,7 @@ interface PatientRegistration {
     availability: Availability;
     urgency: 'low' | 'medium' | 'high';
   };
-  
+
   // Consentimentos iniciais
   consents: {
     lgpdConsent: boolean;
@@ -219,7 +219,7 @@ interface WaitingRoomManagement {
     delayNotifications: boolean;
     waitTimeUpdates: boolean;
   };
-  
+
   // Conforto do paciente
   patientComfort: {
     beverages: 'water' | 'coffee' | 'tea';
@@ -228,7 +228,7 @@ interface WaitingRoomManagement {
     chargingStations: boolean;
     temperatureControl: boolean;
   };
-  
+
   // Comunicação durante espera
   waitCommunication: {
     delayNotifications: boolean;
@@ -272,7 +272,7 @@ interface AppointmentTypes {
     cost: 150;
     requiresPriorTests: boolean;
   };
-  
+
   // Sessão de tratamento
   treatmentSession: {
     duration: 30; // varia por tratamento
@@ -281,7 +281,7 @@ interface AppointmentTypes {
     cost: 'variable';
     requiresPriorSessions: boolean;
   };
-  
+
   // Acompanhamento
   followUp: {
     duration: 30;
@@ -290,7 +290,7 @@ interface AppointmentTypes {
     cost: 50;
     requiresPreviousTreatment: boolean;
   };
-  
+
   // Emergência
   emergency: {
     duration: 15;
@@ -334,7 +334,7 @@ interface SmartScheduling {
     travelTime: boolean;
     breakScheduling: boolean;
   };
-  
+
   // Prevenção de não comparecimento
   noShowPrevention: {
     riskAssessment: boolean;
@@ -342,7 +342,7 @@ interface SmartScheduling {
     confirmationProtocol: boolean;
     backupScheduling: boolean;
   };
-  
+
   // Balanceamento de carga
   loadBalancing: {
     professionalUtilization: boolean;
@@ -383,7 +383,7 @@ interface AppointmentChanges {
     noShowFee: 100;
     emergencyException: boolean;
   };
-  
+
   // Processo de remarcação
   reschedulingProcess: {
     availabilityCheck: boolean;
@@ -391,7 +391,7 @@ interface AppointmentChanges {
     professionalApproval: boolean;
     confirmationRequired: boolean;
   };
-  
+
   // Gestão de cancelamentos
   cancellationManagement: {
     reasonCollection: boolean;
@@ -437,14 +437,14 @@ interface PaymentMethods {
     minimumAmount: 10;
     fees: 2.5;
   };
-  
+
   // Cartão de débito
   debitCard: {
     enabled: true;
     instantConfirmation: true;
     fees: 1.5;
   };
-  
+
   // PIX
   pix: {
     enabled: true;
@@ -452,7 +452,7 @@ interface PaymentMethods {
     fees: 0;
     qrCode: true;
   };
-  
+
   // Boleto
   boleto: {
     enabled: true;
@@ -460,7 +460,7 @@ interface PaymentMethods {
     fees: 2.0;
     minimumAmount: 50;
   };
-  
+
   // Dinheiro
   cash: {
     enabled: true;
@@ -498,7 +498,7 @@ interface AccountsReceivable {
     overdue: 'payment_overdue';
     cancelled: 'payment_cancelled';
   };
-  
+
   // Gestão de inadimplência
   overdueManagement: {
     gracePeriodDays: 7;
@@ -506,7 +506,7 @@ interface AccountsReceivable {
     penaltyRate: 2.0;
     suspensionThreshold: 3;
   };
-  
+
   // Acordos de pagamento
   paymentAgreements: {
     installmentPlans: boolean;
@@ -548,7 +548,7 @@ interface CommunicationChannels {
     promotional: boolean;
     templates: EmailTemplate[];
   };
-  
+
   // SMS
   sms: {
     reminders: boolean;
@@ -556,7 +556,7 @@ interface CommunicationChannels {
     emergencies: boolean;
     characterLimit: 160;
   };
-  
+
   // WhatsApp
   whatsapp: {
     confirmations: boolean;
@@ -565,7 +565,7 @@ interface CommunicationChannels {
     mediaSupport: boolean;
     templates: WhatsAppTemplate[];
   };
-  
+
   // Telefone
   phone: {
     confirmations: boolean;
@@ -607,7 +607,7 @@ interface EmergencyProtocol {
     emotionalDistress: 'psychological_support';
     securityIncident: 'security_team_call';
   };
-  
+
   // Fluxo de ação
   actionFlow: {
     immediateAction: string[];
@@ -616,7 +616,7 @@ interface EmergencyProtocol {
     familyNotification: boolean;
     documentationRequired: boolean;
   };
-  
+
   // Comunicação de emergência
   emergencyCommunication: {
     internalAlert: boolean;
@@ -668,7 +668,7 @@ interface DocumentManagement {
     financialRecords: boolean;
     regulatoryDocuments: boolean;
   };
-  
+
   // Documentos digitais
   digitalDocuments: {
     scans: boolean;
@@ -676,7 +676,7 @@ interface DocumentManagement {
     cloudStorage: boolean;
     backupSystem: boolean;
   };
-  
+
   // Retenção e descarte
   retentionPolicy: {
     medicalRecords: 20; // anos
@@ -726,7 +726,7 @@ interface DailyOperationsReport {
     revenue: number;
     paymentMethods: PaymentMethodStats[];
   };
-  
+
   // Ocorrências especiais
   specialOccurrences: {
     emergencies: Emergency[];
@@ -734,7 +734,7 @@ interface DailyOperationsReport {
     compliments: Compliment[];
     systemIssues: SystemIssue[];
   };
-  
+
   // Observações e recomendações
   notes: {
     staffPerformance: string;
@@ -773,7 +773,7 @@ interface ReceptionLGPD {
     consentManagement: boolean;
     transparency: boolean;
   };
-  
+
   // Armazenamento seguro
   secureStorage: {
     accessControl: boolean;
@@ -781,7 +781,7 @@ interface ReceptionLGPD {
     backupProcedures: boolean;
     retentionPolicy: boolean;
   };
-  
+
   // Direitos do paciente
   patientRights: {
     accessRequests: boolean;
@@ -819,7 +819,7 @@ interface InitialScreening {
     painAssessment: boolean;
     emergencyIndicators: boolean;
   };
-  
+
   // Histórico rápido
   quickHistory: {
     currentMedications: boolean;
@@ -827,7 +827,7 @@ interface InitialScreening {
     recentProcedures: boolean;
     relevantConditions: boolean;
   };
-  
+
   // Decisão de triagem
   triageDecision: {
     urgentCare: boolean;
@@ -866,7 +866,7 @@ interface ReceptionMobileApp {
     patientSearch: boolean;
     availabilityCheck: boolean;
   };
-  
+
   // Comunicação
   mobileCommunication: {
     quickMessages: boolean;
@@ -874,7 +874,7 @@ interface ReceptionMobileApp {
     whatsappIntegration: boolean;
     emailTemplates: boolean;
   };
-  
+
   // Pagamentos
   mobilePayments: {
     cardProcessing: boolean;
@@ -882,7 +882,7 @@ interface ReceptionMobileApp {
     receiptGeneration: boolean;
     paymentHistory: boolean;
   };
-  
+
   // Gestão de pacientes
   patientManagement: {
     quickRegistration: boolean;
@@ -940,7 +940,7 @@ interface PerformanceEvaluation {
     schedulingEfficiency: number;
     problemResolution: number;
   };
-  
+
   // Métricas operacionais
   operationalMetrics: {
     appointmentAccuracy: number;
@@ -948,7 +948,7 @@ interface PerformanceEvaluation {
     documentationQuality: number;
     teamwork: number;
   };
-  
+
   // Desenvolvimento profissional
   professionalDevelopment: {
     trainingCompletion: number;

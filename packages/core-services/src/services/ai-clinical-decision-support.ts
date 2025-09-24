@@ -6,7 +6,6 @@
 
 import { prisma } from '@neonpro/database';
 
-
 export interface PatientAssessment {
   id: string;
   patientId: string;
@@ -160,7 +159,7 @@ export class AIClinicalDecisionSupport {
    * Generate comprehensive treatment recommendations based on patient assessment
    */
   async generateTreatmentRecommendations(
-    assessment: PatientAssessment
+    assessment: PatientAssessment,
   ): Promise<TreatmentRecommendation[]> {
     const recommendations: TreatmentRecommendation[] = [];
 
@@ -170,7 +169,7 @@ export class AIClinicalDecisionSupport {
     for (const procedure of procedures) {
       const recommendation = await this.evaluateProcedureForPatient(
         procedure,
-        assessment
+        assessment,
       );
 
       if (recommendation.suitability > 0.4) { // Minimum suitability threshold
@@ -188,7 +187,7 @@ export class AIClinicalDecisionSupport {
   async createTreatmentPlan(
     patientId: string,
     selectedRecommendations: TreatmentRecommendation[],
-    goals: string[]
+    goals: string[],
   ): Promise<TreatmentPlan> {
     // Prioritize recommendations
     const prioritized = this.prioritizeProcedures(selectedRecommendations, goals);
@@ -213,7 +212,7 @@ export class AIClinicalDecisionSupport {
       prioritizedPlan: phases,
       budgetBreakdown,
       riskAssessment,
-      followUpSchedule
+      followUpSchedule,
     };
   }
 
@@ -222,7 +221,7 @@ export class AIClinicalDecisionSupport {
    */
   async analyzeContraindications(
     patientId: string,
-    procedureIds: string[]
+    procedureIds: string[],
   ): Promise<ContraindicationAnalysis[]> {
     const analyses: ContraindicationAnalysis[] = [];
 
@@ -232,8 +231,8 @@ export class AIClinicalDecisionSupport {
       include: {
         medicalRecords: true,
         allergies: true,
-        medications: true
-      }
+        medications: true,
+      },
     });
 
     if (!patient) {
@@ -243,7 +242,7 @@ export class AIClinicalDecisionSupport {
     for (const procedureId of procedureIds) {
       const analysis = await this.analyzeProcedureContraindications(
         patient,
-        procedureId
+        procedureId,
       );
       analyses.push(analysis);
     }
@@ -261,7 +260,7 @@ export class AIClinicalDecisionSupport {
       age: number;
       gender: string;
       concerns: string[];
-    }
+    },
   ): Promise<{
     guidelines: AestheticTreatmentGuidelines;
     personalizedRecommendations: string[];
@@ -275,19 +274,19 @@ export class AIClinicalDecisionSupport {
     // Personalize guidelines based on patient factors
     const personalizedRecommendations = this.personalizeGuidelines(
       guidelines,
-      patientFactors
+      patientFactors,
     );
 
     // Generate specific precautions
     const precautions = this.generatePrecautions(
       guidelines,
-      patientFactors
+      patientFactors,
     );
 
     return {
       guidelines,
       personalizedRecommendations,
-      precautions
+      precautions,
     };
   }
 
@@ -301,7 +300,7 @@ export class AIClinicalDecisionSupport {
       sessions: number;
       intensity: 'low' | 'medium' | 'high';
       frequency: string;
-    }
+    },
   ): Promise<{
     efficacy: number;
     satisfaction: number;
@@ -329,7 +328,7 @@ export class AIClinicalDecisionSupport {
       patientHistory,
       procedureId,
       treatmentPlan,
-      outcomeAnalysis
+      outcomeAnalysis,
     );
 
     return prediction;
@@ -350,7 +349,7 @@ export class AIClinicalDecisionSupport {
       improvement: number; // 0-100
       complications: string[];
       healing: 'excellent' | 'good' | 'fair' | 'poor';
-    }
+    },
   ): Promise<{
     progress: 'ahead' | 'on_track' | 'behind' | 'concerns';
     recommendations: string[];
@@ -366,40 +365,40 @@ export class AIClinicalDecisionSupport {
     const progress = this.assessProgress(
       treatmentPlanId,
       currentSession,
-      clinicalAssessment.improvement
+      clinicalAssessment.improvement,
     );
 
     // Generate recommendations
     const recommendations = this.generateProgressRecommendations(
       patientFeedback,
-      clinicalAssessment
+      clinicalAssessment,
     );
 
     // Suggest adjustments if needed
     const adjustments = this.recommendAdjustments(
       progress,
       patientFeedback,
-      clinicalAssessment
+      clinicalAssessment,
     );
 
     // Plan next session
     const nextSessionPlan = this.planNextSession(
       adjustments,
-      clinicalAssessment
+      clinicalAssessment,
     );
 
     return {
       progress,
       recommendations,
       adjustments,
-      nextSessionPlan
+      nextSessionPlan,
     };
   }
 
   // Private helper methods
   private async evaluateProcedureForPatient(
     procedure: any,
-    assessment: PatientAssessment
+    assessment: PatientAssessment,
   ): Promise<TreatmentRecommendation> {
     // Calculate suitability based on multiple factors
     const skinCompatibility = this.evaluateSkinCompatibility(procedure, assessment);
@@ -427,28 +426,28 @@ export class AIClinicalDecisionSupport {
       cost: procedure.price || 0,
       sessions: procedure.sessionCount || 1,
       recovery: this.getRecoveryInfo(procedure),
-      evidenceLevel: procedure.evidenceLevel || 'B'
+      evidenceLevel: procedure.evidenceLevel || 'B',
     };
   }
 
   private prioritizeProcedures(
     recommendations: TreatmentRecommendation[],
-    goals: string[]
+    goals: string[],
   ): TreatmentRecommendation[] {
     // Sort by suitability and goal alignment
     return recommendations.sort((a, b) => {
       const aGoalScore = this.calculateGoalScore(a, goals);
       const bGoalScore = this.calculateGoalScore(b, goals);
-      
+
       const aScore = a.suitability * 0.7 + aGoalScore * 0.3;
       const bScore = b.suitability * 0.7 + bGoalScore * 0.3;
-      
+
       return bScore - aScore;
     });
   }
 
   private createTreatmentPhases(
-    procedures: TreatmentRecommendation[]
+    procedures: TreatmentRecommendation[],
   ): Array<{
     phase: number;
     procedures: string[];
@@ -463,44 +462,40 @@ export class AIClinicalDecisionSupport {
     }> = [];
 
     // Phase 1: Foundation treatments
-    const foundationProcedures = procedures.filter(p => 
+    const foundationProcedures = procedures.filter(p =>
       p.recovery.downtime === 'minimal' || p.recovery.downtime === 'none'
     );
-    
+
     if (foundationProcedures.length > 0) {
       phases.push({
         phase: 1,
         procedures: foundationProcedures.map(p => p.procedureName),
         timeline: 'Weeks 1-4',
-        objectives: ['Establish foundation', 'Minimize downtime', 'Build patient confidence']
+        objectives: ['Establish foundation', 'Minimize downtime', 'Build patient confidence'],
       });
     }
 
     // Phase 2: Core treatments
-    const coreProcedures = procedures.filter(p => 
-      p.recovery.downtime === 'moderate'
-    );
-    
+    const coreProcedures = procedures.filter(p => p.recovery.downtime === 'moderate');
+
     if (coreProcedures.length > 0) {
       phases.push({
         phase: 2,
         procedures: coreProcedures.map(p => p.procedureName),
         timeline: 'Weeks 5-12',
-        objectives: ['Address primary concerns', 'Optimize results', 'Monitor progress']
+        objectives: ['Address primary concerns', 'Optimize results', 'Monitor progress'],
       });
     }
 
     // Phase 3: Advanced treatments
-    const advancedProcedures = procedures.filter(p => 
-      p.recovery.downtime === 'significant'
-    );
-    
+    const advancedProcedures = procedures.filter(p => p.recovery.downtime === 'significant');
+
     if (advancedProcedures.length > 0) {
       phases.push({
         phase: 3,
         procedures: advancedProcedures.map(p => p.procedureName),
         timeline: 'Weeks 13-24',
-        objectives: ['Advanced correction', 'Fine-tuning results', 'Long-term planning']
+        objectives: ['Advanced correction', 'Fine-tuning results', 'Long-term planning'],
       });
     }
 
@@ -513,7 +508,7 @@ export class AIClinicalDecisionSupport {
       procedures: string[];
       timeline: string;
       objectives: string[];
-    }>
+    }>,
   ) {
     const total = phases.reduce((sum, phase) => {
       // This would integrate with actual pricing
@@ -525,8 +520,8 @@ export class AIClinicalDecisionSupport {
       byPhase: phases.map(phase => ({
         phase: phase.phase,
         cost: phase.procedures.length * 1000, // Placeholder
-        procedures: phase.procedures
-      }))
+        procedures: phase.procedures,
+      })),
     };
   }
 
@@ -543,7 +538,7 @@ export class AIClinicalDecisionSupport {
       'Thorough patient education',
       'Detailed informed consent',
       'Gradual treatment approach',
-      'Close monitoring'
+      'Close monitoring',
     ];
 
     return { overall, factors, mitigations };
@@ -553,13 +548,13 @@ export class AIClinicalDecisionSupport {
     return procedures.map(p => ({
       procedure: p.procedureName,
       timing: '1-2 weeks post-treatment',
-      purpose: 'Assess results and plan next steps'
+      purpose: 'Assess results and plan next steps',
     }));
   }
 
   private async analyzeProcedureContraindications(
     patient: any,
-    procedureId: string
+    procedureId: string,
   ): Promise<ContraindicationAnalysis> {
     const guidelines = this.guidelines.get(procedureId);
     if (!guidelines) {
@@ -570,7 +565,7 @@ export class AIClinicalDecisionSupport {
         relativeContraindications: [],
         riskFactors: [],
         recommendations: ['Guidelines not available for this procedure'],
-        canProceed: false
+        canProceed: false,
       };
     }
 
@@ -611,12 +606,12 @@ export class AIClinicalDecisionSupport {
 
     // Determine if procedure can proceed
     const canProceed = absoluteContraindications.length === 0;
-    
+
     // Generate recommendations
     const recommendations = this.generateContraindicationRecommendations(
       absoluteContraindications,
       relativeContraindications,
-      riskFactors
+      riskFactors,
     );
 
     return {
@@ -627,8 +622,9 @@ export class AIClinicalDecisionSupport {
       riskFactors,
       recommendations,
       canProceed,
-      modifiedApproach: absoluteContraindications.length > 0 ? 
-        this.generateModifiedApproach(procedureId, absoluteContraindications) : undefined
+      modifiedApproach: absoluteContraindications.length > 0
+        ? this.generateModifiedApproach(procedureId, absoluteContraindications)
+        : undefined,
     };
   }
 
@@ -677,7 +673,7 @@ export class AIClinicalDecisionSupport {
     return {
       timeline: '4-6 weeks',
       improvement: 'Moderate to significant',
-      longevity: '6-12 months'
+      longevity: '6-12 months',
     };
   }
 
@@ -686,8 +682,8 @@ export class AIClinicalDecisionSupport {
       {
         type: 'common' as const,
         description: 'Temporary redness',
-        probability: 0.3
-      }
+        probability: 0.3,
+      },
     ];
   }
 
@@ -702,7 +698,7 @@ export class AIClinicalDecisionSupport {
   private getRecoveryInfo(_procedure: any) {
     return {
       downtime: 'minimal',
-      activityRestrictions: ['Avoid intense exercise for 24h']
+      activityRestrictions: ['Avoid intense exercise for 24h'],
     };
   }
 
@@ -713,14 +709,14 @@ export class AIClinicalDecisionSupport {
 
   private personalizeGuidelines(
     _guidelines: AestheticTreatmentGuidelines,
-    _patientFactors: any
+    _patientFactors: any,
   ): string[] {
     return []; // Would return personalized recommendations
   }
 
   private generatePrecautions(
     _guidelines: AestheticTreatmentGuidelines,
-    _patientFactors: any
+    _patientFactors: any,
   ): string[] {
     return []; // Would return specific precautions
   }
@@ -741,7 +737,7 @@ export class AIClinicalDecisionSupport {
     _patientHistory: any[],
     _procedureId: string,
     _treatmentPlan: any,
-    _outcomeAnalysis: any
+    _outcomeAnalysis: any,
   ): any {
     return {}; // Would apply ML model for prediction
   }
@@ -749,14 +745,14 @@ export class AIClinicalDecisionSupport {
   private assessProgress(
     _treatmentPlanId: string,
     _currentSession: number,
-    _improvement: number
+    _improvement: number,
   ): 'ahead' | 'on_track' | 'behind' | 'concerns' {
     return 'on_track'; // Placeholder
   }
 
   private generateProgressRecommendations(
     _patientFeedback: any,
-    _clinicalAssessment: any
+    _clinicalAssessment: any,
   ): string[] {
     return []; // Would generate progress recommendations
   }
@@ -764,7 +760,7 @@ export class AIClinicalDecisionSupport {
   private recommendAdjustments(
     _progress: string,
     _patientFeedback: any,
-    _clinicalAssessment: any
+    _clinicalAssessment: any,
   ): any[] {
     return []; // Would recommend adjustments
   }
@@ -784,7 +780,7 @@ export class AIClinicalDecisionSupport {
   private generateContraindicationRecommendations(
     _absoluteContraindications: string[],
     _relativeContraindications: string[],
-    _riskFactors: string[]
+    _riskFactors: string[],
   ): string[] {
     const recommendations: string[] = [];
 

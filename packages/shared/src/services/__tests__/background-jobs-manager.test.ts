@@ -1213,7 +1213,9 @@ describe("Healthcare Job Handlers - DataRetentionCleanupHandler", () => {
 describe("BaseHealthcareJobHandler - Abstract Features", () => {
   // Create a concrete implementation for testing abstract base class
   class TestHandler extends BaseHealthcareJobHandler {
-    protected override supportedTypes = [HealthcareJobType.PATIENT_DATA_SYNC];
+    override getSupportedTypes(): HealthcareJobType[] {
+      return [HealthcareJobType.PATIENT_DATA_SYNC];
+    }
 
     override async execute(job: JobData): Promise<JobExecutionResult> {
       return {

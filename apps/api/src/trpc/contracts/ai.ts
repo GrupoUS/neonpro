@@ -186,7 +186,8 @@ export const aiRouter = router({
         clinicId: input.clinicId,
         patientId: input.patientId,
         timestamp: new Date().toISOString(),
-      }; void _systemContext;
+      };
+      void _systemContext;
 
       // Get conversation history if requested
       let conversationHistory: any[] = [];

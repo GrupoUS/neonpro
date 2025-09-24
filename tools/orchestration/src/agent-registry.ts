@@ -7,7 +7,7 @@ export interface AgentCapability {
   description: string;
   capabilities: string[];
   specializations: string[];
-  priority: "primary" | "secondary" | "tertiary";
+  priority: 'primary' | 'secondary' | 'tertiary';
   phases: TDDPhase[];
   triggers: string[];
   configuration: Record<string, any>;
@@ -24,8 +24,8 @@ export interface AgentCapability {
 export interface OrchestrationContext {
   featureName: string;
   featureType: string;
-  complexity: "low" | "medium" | "high";
-  criticalityLevel: "low" | "medium" | "high" | "critical";
+  complexity: 'low' | 'medium' | 'high';
+  criticalityLevel: 'low' | 'medium' | 'high' | 'critical';
   requirements: string[];
   healthcareCompliance: {
     required: boolean;
@@ -39,18 +39,18 @@ export interface OrchestrationContext {
  * Agent type enumeration
  */
 export type AgentType =
-  | "tdd-orchestrator"
-  | "architect-review"
-  | "code-reviewer"
-  | "security-auditor"
-  | "test"
-  | "custom-agent"
-  | "tertiary-agent";
+  | 'tdd-orchestrator'
+  | 'architect-review'
+  | 'code-reviewer'
+  | 'security-auditor'
+  | 'test'
+  | 'custom-agent'
+  | 'tertiary-agent';
 
 /**
  * TDD phase enumeration
  */
-export type TDDPhase = "red" | "green" | "refactor";
+export type TDDPhase = 'red' | 'green' | 'refactor';
 
 /**
  * Agent statistics for performance tracking
@@ -67,18 +67,18 @@ export interface AgentStats {
  */
 const DEFAULT_AGENTS: AgentCapability[] = [
   {
-    type: "tdd-orchestrator",
-    name: "TDD Orchestrator",
-    description: "Main orchestrator for TDD workflow coordination",
+    type: 'tdd-orchestrator',
+    name: 'TDD Orchestrator',
+    description: 'Main orchestrator for TDD workflow coordination',
     capabilities: [
-      "workflow-coordination",
-      "phase-management",
-      "quality-control",
+      'workflow-coordination',
+      'phase-management',
+      'quality-control',
     ],
-    specializations: ["tdd-workflow", "multi-agent-coordination"],
-    priority: "primary",
-    phases: ["red", "green", "refactor"],
-    triggers: ["tdd-cycle", "workflow-start"],
+    specializations: ['tdd-workflow', 'multi-agent-coordination'],
+    priority: 'primary',
+    phases: ['red', 'green', 'refactor'],
+    triggers: ['tdd-cycle', 'workflow-start'],
     configuration: {},
     healthcareCompliance: {
       lgpd: true,
@@ -87,22 +87,22 @@ const DEFAULT_AGENTS: AgentCapability[] = [
     },
   },
   {
-    type: "architect-review",
-    name: "Architecture Review Agent",
-    description: "Reviews system architecture and design patterns",
+    type: 'architect-review',
+    name: 'Architecture Review Agent',
+    description: 'Reviews system architecture and design patterns',
     capabilities: [
-      "architecture-validation",
-      "design-patterns",
-      "scalability-analysis",
+      'architecture-validation',
+      'design-patterns',
+      'scalability-analysis',
     ],
     specializations: [
-      "microservices-architecture",
-      "system-design",
-      "scalability",
+      'microservices-architecture',
+      'system-design',
+      'scalability',
     ],
-    priority: "secondary",
-    phases: ["red", "refactor"],
-    triggers: ["architecture-review", "design-validation"],
+    priority: 'secondary',
+    phases: ['red', 'refactor'],
+    triggers: ['architecture-review', 'design-validation'],
     configuration: {},
     healthcareCompliance: {
       lgpd: true,
@@ -111,18 +111,18 @@ const DEFAULT_AGENTS: AgentCapability[] = [
     },
   },
   {
-    type: "code-reviewer",
-    name: "Code Review Agent",
-    description: "Performs code quality analysis and review",
-    capabilities: ["code-quality-analysis", "static-analysis", "linting"],
+    type: 'code-reviewer',
+    name: 'Code Review Agent',
+    description: 'Performs code quality analysis and review',
+    capabilities: ['code-quality-analysis', 'static-analysis', 'linting'],
     specializations: [
-      "code-quality",
-      "best-practices",
-      "performance-optimization",
+      'code-quality',
+      'best-practices',
+      'performance-optimization',
     ],
-    priority: "secondary",
-    phases: ["green", "refactor"],
-    triggers: ["code-review", "quality-check"],
+    priority: 'secondary',
+    phases: ['green', 'refactor'],
+    triggers: ['code-review', 'quality-check'],
     configuration: {},
     healthcareCompliance: {
       lgpd: true,
@@ -131,23 +131,22 @@ const DEFAULT_AGENTS: AgentCapability[] = [
     },
   },
   {
-    type: "security-auditor",
-    name: "Security Audit Agent",
-    description:
-      "Performs security vulnerability scanning and compliance checks",
+    type: 'security-auditor',
+    name: 'Security Audit Agent',
+    description: 'Performs security vulnerability scanning and compliance checks',
     capabilities: [
-      "security-vulnerability-scanning",
-      "compliance-validation",
-      "penetration-testing",
+      'security-vulnerability-scanning',
+      'compliance-validation',
+      'penetration-testing',
     ],
     specializations: [
-      "security-analysis",
-      "vulnerability-assessment",
-      "compliance",
+      'security-analysis',
+      'vulnerability-assessment',
+      'compliance',
     ],
-    priority: "secondary",
-    phases: ["red", "green"],
-    triggers: ["security-scan", "compliance-check"],
+    priority: 'secondary',
+    phases: ['red', 'green'],
+    triggers: ['security-scan', 'compliance-check'],
     configuration: {},
     healthcareCompliance: {
       lgpd: true,
@@ -156,18 +155,18 @@ const DEFAULT_AGENTS: AgentCapability[] = [
     },
   },
   {
-    type: "test",
-    name: "Test Coordination Agent",
-    description: "Manages test execution and validation",
+    type: 'test',
+    name: 'Test Coordination Agent',
+    description: 'Manages test execution and validation',
     capabilities: [
-      "test-pattern-enforcement",
-      "test-execution",
-      "coverage-analysis",
+      'test-pattern-enforcement',
+      'test-execution',
+      'coverage-analysis',
     ],
-    specializations: ["testing", "test-automation", "quality-assurance"],
-    priority: "primary",
-    phases: ["red", "green"],
-    triggers: ["test-execution", "validation"],
+    specializations: ['testing', 'test-automation', 'quality-assurance'],
+    priority: 'primary',
+    phases: ['red', 'green'],
+    triggers: ['test-execution', 'validation'],
     configuration: {},
     healthcareCompliance: {
       lgpd: true,
@@ -192,7 +191,7 @@ export class TDDAgentRegistry {
    * Initialize default agents
    */
   private initializeDefaultAgents(): void {
-    DEFAULT_AGENTS.forEach((agent) => {
+    DEFAULT_AGENTS.forEach(agent => {
       this.agents.set(agent.type, agent);
       this.agentStats.set(agent.type, {
         executionCount: 0,
@@ -251,12 +250,10 @@ export class TDDAgentRegistry {
     // Handle undefined or empty context gracefully
     if (!context || !context.healthcareCompliance) {
       // Return all agents that support the phase if context is invalid
-      return Array.from(this.agents.values()).filter((agent) =>
-        agent.phases.includes(phase),
-      );
+      return Array.from(this.agents.values()).filter(agent => agent.phases.includes(phase));
     }
 
-    const agents = Array.from(this.agents.values()).filter((agent) => {
+    const agents = Array.from(this.agents.values()).filter(agent => {
       // Check if agent supports the phase
       if (!agent.phases.includes(phase)) {
         return false;
@@ -266,23 +263,26 @@ export class TDDAgentRegistry {
       if (context.healthcareCompliance.required) {
         if (!agent.healthcareCompliance) return false;
         if (
-          context.healthcareCompliance.lgpd &&
-          !agent.healthcareCompliance.lgpd
-        )
+          context.healthcareCompliance.lgpd
+          && !agent.healthcareCompliance.lgpd
+        ) {
           return false;
+        }
         if (
-          context.healthcareCompliance.anvisa &&
-          !agent.healthcareCompliance.anvisa
-        )
+          context.healthcareCompliance.anvisa
+          && !agent.healthcareCompliance.anvisa
+        ) {
           return false;
-        if (context.healthcareCompliance.cfm && !agent.healthcareCompliance.cfm)
+        }
+        if (context.healthcareCompliance.cfm && !agent.healthcareCompliance.cfm) {
           return false;
+        }
       }
 
       // Filter based on criticality level (exclude tertiary agents for critical features)
       if (
-        context.criticalityLevel === "critical" &&
-        agent.priority === "tertiary"
+        context.criticalityLevel === 'critical'
+        && agent.priority === 'tertiary'
       ) {
         return false;
       }
@@ -297,8 +297,8 @@ export class TDDAgentRegistry {
    * Get agents for specific capability
    */
   getAgentsForCapability(capability: string): AgentCapability[] {
-    return Array.from(this.agents.values()).filter((agent) =>
-      agent.capabilities.includes(capability),
+    return Array.from(this.agents.values()).filter(agent =>
+      agent.capabilities.includes(capability)
     );
   }
 
@@ -308,9 +308,9 @@ export class TDDAgentRegistry {
   selectOptimalAgents(context: OrchestrationContext): AgentCapability[] {
     // Handle undefined or incomplete context gracefully
     if (
-      !context ||
-      !context.requirements ||
-      !Array.isArray(context.requirements)
+      !context
+      || !context.requirements
+      || !Array.isArray(context.requirements)
     ) {
       // Return all agents in default order if context is invalid
       return this.getAllAgents();
@@ -319,7 +319,7 @@ export class TDDAgentRegistry {
     const allAgents = this.getAllAgents();
 
     // Calculate scores for each agent
-    const scoredAgents = allAgents.map((agent) => ({
+    const scoredAgents = allAgents.map(agent => ({
       agent,
       score: this.calculateAgentScore(agent, context),
     }));
@@ -327,7 +327,7 @@ export class TDDAgentRegistry {
     // Sort by score (highest first)
     scoredAgents.sort((a, b) => b.score - a.score);
 
-    return scoredAgents.map((item) => item.agent);
+    return scoredAgents.map(item => item.agent);
   }
 
   /**
@@ -341,52 +341,53 @@ export class TDDAgentRegistry {
 
     // Base score by priority
     switch (agent.priority) {
-      case "primary":
+      case 'primary':
         score += 100;
         break;
-      case "secondary":
+      case 'secondary':
         score += 75;
         break;
-      case "tertiary":
+      case 'tertiary':
         score += 50;
         break;
     }
 
     // Bonus for matching triggers
     const matchingTriggers = agent.triggers.filter(
-      (trigger) =>
-        context.featureName.toLowerCase().includes(trigger.toLowerCase()) ||
-        context.requirements.some((req) =>
-          req.toLowerCase().includes(trigger.toLowerCase()),
-        ),
+      trigger =>
+        context.featureName.toLowerCase().includes(trigger.toLowerCase())
+        || context.requirements.some(req => req.toLowerCase().includes(trigger.toLowerCase())),
     );
     score += matchingTriggers.length * 10;
 
     // Bonus for matching specializations
     const matchingSpecializations = agent.specializations.filter(
-      (spec) =>
-        context.featureName.toLowerCase().includes(spec.toLowerCase()) ||
-        context.featureType.toLowerCase().includes(spec.toLowerCase()),
+      spec =>
+        context.featureName.toLowerCase().includes(spec.toLowerCase())
+        || context.featureType.toLowerCase().includes(spec.toLowerCase()),
     );
     score += matchingSpecializations.length * 15;
 
     // Bonus for healthcare compliance when required
     if (context.healthcareCompliance.required && agent.healthcareCompliance) {
       let complianceScore = 0;
-      if (context.healthcareCompliance.lgpd && agent.healthcareCompliance.lgpd)
+      if (context.healthcareCompliance.lgpd && agent.healthcareCompliance.lgpd) {
         complianceScore += 25;
+      }
       if (
-        context.healthcareCompliance.anvisa &&
-        agent.healthcareCompliance.anvisa
-      )
+        context.healthcareCompliance.anvisa
+        && agent.healthcareCompliance.anvisa
+      ) {
         complianceScore += 25;
-      if (context.healthcareCompliance.cfm && agent.healthcareCompliance.cfm)
+      }
+      if (context.healthcareCompliance.cfm && agent.healthcareCompliance.cfm) {
         complianceScore += 25;
+      }
       score += complianceScore;
     }
 
     // Bonus for complexity matching
-    if (context.complexity === "high" && agent.priority === "primary") {
+    if (context.complexity === 'high' && agent.priority === 'primary') {
       score += 20;
     }
 
@@ -407,19 +408,19 @@ export class TDDAgentRegistry {
    */
   getRecommendedWorkflow(context: OrchestrationContext): AgentType[] {
     // Always start with orchestrator
-    const workflow: AgentType[] = ["tdd-orchestrator"];
+    const workflow: AgentType[] = ['tdd-orchestrator'];
 
     // Add other agents based on context
-    if (context.complexity === "high") {
-      workflow.push("architect-review");
+    if (context.complexity === 'high') {
+      workflow.push('architect-review');
     }
 
     if (context.healthcareCompliance.required) {
-      workflow.push("security-auditor");
+      workflow.push('security-auditor');
     }
 
-    workflow.push("test");
-    workflow.push("code-reviewer");
+    workflow.push('test');
+    workflow.push('code-reviewer');
 
     return workflow;
   }
@@ -459,15 +460,15 @@ export class TDDAgentRegistry {
     const capabilities: string[] = [];
 
     if (context.healthcareCompliance.required) {
-      capabilities.push("healthcare-compliance-validation");
+      capabilities.push('healthcare-compliance-validation');
     }
 
-    if (context.criticalityLevel === "critical") {
-      capabilities.push("security-vulnerability-scanning");
+    if (context.criticalityLevel === 'critical') {
+      capabilities.push('security-vulnerability-scanning');
     }
 
-    if (context.featureType === "microservice") {
-      capabilities.push("architecture-validation");
+    if (context.featureType === 'microservice') {
+      capabilities.push('architecture-validation');
     }
 
     return capabilities;

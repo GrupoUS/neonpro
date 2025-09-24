@@ -29,7 +29,7 @@ export class PWAIndexedDB {
         resolve();
       };
 
-      request.onupgradeneeded = (event) => {
+      request.onupgradeneeded = event => {
         const db = (event.target as IDBOpenDBRequest).result;
 
         // Store for offline data
@@ -63,9 +63,9 @@ export class PWAIndexedDB {
     return new Promise((resolve, reject) => {
       const transaction = this.db!.transaction(['offlineData'], 'readwrite');
       const store = transaction.objectStore('offlineData');
-      
+
       const request = store.add(offlineData);
-      
+
       request.onsuccess = () => resolve(id);
       request.onerror = () => reject(new Error('Failed to add offline data'));
     });
@@ -78,9 +78,9 @@ export class PWAIndexedDB {
       const transaction = this.db!.transaction(['offlineData'], 'readonly');
       const store = transaction.objectStore('offlineData');
       const index = store.index('synced');
-      
+
       const request = index.getAll(false); // Get only unsynced data
-      
+
       request.onsuccess = () => resolve(request.result);
       request.onerror = () => reject(new Error('Failed to get offline data'));
     });
@@ -92,9 +92,9 @@ export class PWAIndexedDB {
     return new Promise((resolve, reject) => {
       const transaction = this.db!.transaction(['offlineData'], 'readwrite');
       const store = transaction.objectStore('offlineData');
-      
+
       const request = store.get(id);
-      
+
       request.onsuccess = () => {
         const data = request.result;
         if (data) {
@@ -106,7 +106,7 @@ export class PWAIndexedDB {
           resolve();
         }
       };
-      
+
       request.onerror = () => reject(new Error('Failed to get offline data for sync'));
     });
   }
@@ -120,9 +120,9 @@ export class PWAIndexedDB {
     return new Promise((resolve, reject) => {
       const transaction = this.db!.transaction(['cachedData'], 'readwrite');
       const store = transaction.objectStore('cachedData');
-      
+
       const request = store.put(cachedItem);
-      
+
       request.onsuccess = () => resolve();
       request.onerror = () => reject(new Error('Failed to cache data'));
     });
@@ -134,9 +134,9 @@ export class PWAIndexedDB {
     return new Promise((resolve, reject) => {
       const transaction = this.db!.transaction(['cachedData'], 'readonly');
       const store = transaction.objectStore('cachedData');
-      
+
       const request = store.get(key);
-      
+
       request.onsuccess = () => {
         const result = request.result;
         if (result && result.expiry > Date.now()) {
@@ -145,7 +145,7 @@ export class PWAIndexedDB {
           resolve(null);
         }
       };
-      
+
       request.onerror = () => reject(new Error('Failed to get cached data'));
     });
   }
@@ -157,9 +157,9 @@ export class PWAIndexedDB {
       const transaction = this.db!.transaction(['cachedData'], 'readwrite');
       const store = transaction.objectStore('cachedData');
       const index = store.index('expiry');
-      
+
       const request = index.openCursor(IDBKeyRange.upperBound(Date.now()));
-      
+
       request.onsuccess = () => {
         const cursor = request.result;
         if (cursor) {
@@ -169,7 +169,7 @@ export class PWAIndexedDB {
           resolve();
         }
       };
-      
+
       request.onerror = () => reject(new Error('Failed to clear expired cache'));
     });
   }
@@ -188,13 +188,14 @@ export class PWAPushManager {
     try {
       // Register service worker
       const registration = await navigator.serviceWorker.ready;
-      
+
       // Subscribe to push notifications
       this.subscription = await registration.pushManager.subscribe({
         userVisibleOnly: true,
         applicationServerKey: this.urlBase64ToUint8Array(
-          process.env.VITE_VAPID_PUBLIC_KEY || 'BH2jO8W3j8Z2gF3h6K9L1mN3pQ6rT2yV5bX8cF4j7H1k9L2mN3pQ6rT2yV5bX8cF4j7H'
-        )
+          process.env.VITE_VAPID_PUBLIC_KEY
+            || 'BH2jO8W3j8Z2gF3h6K9L1mN3pQ6rT2yV5bX8cF4j7H1k9L2mN3pQ6rT2yV5bX8cF4j7H',
+        ),
       });
 
       console.log('Push notification subscription successful');
@@ -229,7 +230,7 @@ export class PWAPushManager {
       new Notification(title, {
         icon: '/icons/icon-192x192.png',
         badge: '/icons/badge-72x72.png',
-        ...options
+        ...options,
       });
     }
   }
@@ -237,14 +238,14 @@ export class PWAPushManager {
   private urlBase64ToUint8Array(base64String: string): Uint8Array {
     const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
     const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
-    
+
     const rawData = window.atob(base64);
     const outputArray = new Uint8Array(rawData.length);
-    
+
     for (let i = 0; i < rawData.length; ++i) {
       outputArray[i] = rawData.charCodeAt(i);
     }
-    
+
     return outputArray;
   }
 }
@@ -262,7 +263,7 @@ export class PWAOfflineSync {
 
   async init(): Promise<void> {
     await this.indexedDB.init();
-    
+
     // Set up background sync
     if ('serviceWorker' in navigator && 'SyncManager' in window) {
       try {
@@ -275,7 +276,7 @@ export class PWAOfflineSync {
 
     // Listen for online events to trigger sync
     window.addEventListener('online', () => this.sync());
-    
+
     // Periodic sync check
     setInterval(() => this.sync(), 30000); // Check every 30 seconds
   }
@@ -286,17 +287,16 @@ export class PWAOfflineSync {
     }
 
     this.syncInProgress = true;
-    
+
     try {
       const offlineData = await this.indexedDB.getOfflineData();
-      
+
       for (const item of offlineData) {
         await this.syncItem(item);
       }
-      
+
       // Clear expired cache
       await this.indexedDB.clearExpiredCache();
-      
     } catch (error) {
       console.error('Sync failed:', error);
     } finally {
@@ -309,13 +309,12 @@ export class PWAOfflineSync {
       // Here you would make API calls to sync the data
       // This is a placeholder - implement actual API calls based on your backend
       console.log(`Syncing ${item.type} item:`, item);
-      
+
       // Mark as synced
       await this.indexedDB.markAsSynced(item.id);
-      
     } catch (error) {
       console.error(`Failed to sync item ${item.id}:`, error);
-      
+
       if (attempt < this.retryAttempts) {
         setTimeout(() => {
           this.syncItem(item, attempt + 1);
@@ -324,13 +323,17 @@ export class PWAOfflineSync {
     }
   }
 
-  async addOfflineAction(type: OfflineData['type'], action: OfflineData['action'], data: any): Promise<string> {
+  async addOfflineAction(
+    type: OfflineData['type'],
+    action: OfflineData['action'],
+    data: any,
+  ): Promise<string> {
     return await this.indexedDB.addOfflineData({
       type,
       action,
       data,
       timestamp: Date.now(),
-      synced: false
+      synced: false,
     });
   }
 }

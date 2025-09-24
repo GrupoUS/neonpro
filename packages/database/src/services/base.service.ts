@@ -3,8 +3,8 @@
  * Provides common functionality for all database services
  */
 
-import type { PrismaClient } from "@prisma/client";
-import { logHealthcareError } from "../../../shared/src/logging/healthcare-logger";
+import type { PrismaClient } from '@prisma/client';
+import { logHealthcareError } from '../../../shared/src/logging/healthcare-logger';
 
 // Lazy load prisma to avoid test environment issues
 let _prismaInstance: PrismaClient | null = null;
@@ -26,7 +26,7 @@ export interface PrismaDeleteParams {
 const getPrisma = async (): Promise<PrismaClient> => {
   if (!_prismaInstance) {
     // Dynamic import to avoid module-level initialization
-    const { prisma } = await import("../client.js");
+    const { prisma } = await import('../client.js');
     _prismaInstance = prisma;
   }
   return prismaInstance;
@@ -61,18 +61,18 @@ export abstract class BaseService {
   // Create audit log entry
   protected async createAuditLog(
     action:
-      | "VIEW"
-      | "CREATE"
-      | "READ"
-      | "UPDATE"
-      | "DELETE"
-      | "EXPORT"
-      | "LOGIN"
-      | "LOGOUT"
-      | "AI_CHAT"
-      | "AI_PREDICTION"
-      | "AI_ANALYSIS"
-      | "AI_RECOMMENDATION",
+      | 'VIEW'
+      | 'CREATE'
+      | 'READ'
+      | 'UPDATE'
+      | 'DELETE'
+      | 'EXPORT'
+      | 'LOGIN'
+      | 'LOGOUT'
+      | 'AI_CHAT'
+      | 'AI_PREDICTION'
+      | 'AI_ANALYSIS'
+      | 'AI_RECOMMENDATION',
     resource: string,
     additionalInfo?: Record<string, unknown>,
     _userId?: string,
@@ -81,16 +81,16 @@ export abstract class BaseService {
       const prisma = await this.getPrisma();
       await prisma.auditTrail.create({
         data: {
-          _userId: userId || "system",
+          _userId: userId || 'system',
           action,
           resource,
-          resourceType: "SYSTEM_CONFIG",
+          resourceType: 'SYSTEM_CONFIG',
           additionalInfo: additionalInfo
             ? JSON.stringify(additionalInfo)
             : undefined,
-          ipAddress: "127.0.0.1",
-          userAgent: "NeonPro-Service",
-          status: "SUCCESS",
+          ipAddress: '127.0.0.1',
+          userAgent: 'NeonPro-Service',
+          status: 'SUCCESS',
         },
       });
     } catch (error) {
@@ -112,7 +112,7 @@ export abstract class BaseService {
       });
 
       await this.createAuditLog(
-        "CREATE",
+        'CREATE',
         model,
         { id: (result as any).id, data },
         userId,
@@ -122,10 +122,10 @@ export abstract class BaseService {
     } catch (_error) {
       void _error;
       await this.createAuditLog(
-        "CREATE",
+        'CREATE',
         model,
         {
-          action: "CREATE",
+          action: 'CREATE',
           error: (error as Error).message,
           data,
         },
@@ -150,16 +150,16 @@ export abstract class BaseService {
         data,
       });
 
-      await this.createAuditLog("UPDATE", model, { id, data }, userId);
+      await this.createAuditLog('UPDATE', model, { id, data }, userId);
 
       return result;
     } catch (_error) {
       void _error;
       await this.createAuditLog(
-        "UPDATE",
+        'UPDATE',
         model,
         {
-          action: "UPDATE",
+          action: 'UPDATE',
           id,
           error: (error as Error).message,
           data,
@@ -183,14 +183,14 @@ export abstract class BaseService {
         where: { id },
       });
 
-      await this.createAuditLog("DELETE", model, { id }, userId);
+      await this.createAuditLog('DELETE', model, { id }, userId);
     } catch (_error) {
       void _error;
       await this.createAuditLog(
-        "DELETE",
+        'DELETE',
         model,
         {
-          action: "DELETE",
+          action: 'DELETE',
           id,
           error: (error as Error).message,
         },
@@ -240,14 +240,14 @@ export abstract class BaseService {
     try {
       await this.getPrisma();
       return {
-        status: "healthy",
+        status: 'healthy',
         timestamp: new Date(),
         _service: this.serviceName,
       };
     } catch (_error) {
       void _error;
       return {
-        status: "unhealthy",
+        status: 'unhealthy',
         timestamp: new Date(),
         _service: this.serviceName,
       };

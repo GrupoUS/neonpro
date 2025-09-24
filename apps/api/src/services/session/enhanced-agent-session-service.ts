@@ -1,6 +1,6 @@
 /**
  * Enhanced Agent Session Service with CopilotKit Integration
- * 
+ *
  * Extends the base AgentSessionService with CopilotKit integration,
  * improved security, and aesthetic clinic-specific session handling.
  */
@@ -8,16 +8,16 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { v4 as uuidv4 } from 'uuid';
 import { Database } from '../../types/database';
-import { 
-  AestheticAguiService, 
-  // AestheticAguiMessage, 
+import { AestheticComplianceService } from '../agui-protocol/aesthetic-compliance-service';
+import { AestheticDataHandlingService } from '../agui-protocol/aesthetic-data-handling';
+import {
+  AestheticAguiService,
+  AestheticClientProfile,
+  // AestheticAguiMessage,
   // AestheticAguiMessageType,
   // AestheticSessionContext,
   AestheticTreatmentData,
-  AestheticClientProfile
 } from '../agui-protocol/aesthetic-service';
-import { AestheticDataHandlingService } from '../agui-protocol/aesthetic-data-handling';
-import { AestheticComplianceService } from '../agui-protocol/aesthetic-compliance-service';
 
 // Enhanced session types with CopilotKit integration
 export interface EnhancedSessionConfig {
@@ -37,7 +37,7 @@ export interface EnhancedSessionContext extends SessionContext {
   // CopilotKit integration
   copilotKitSessionId?: string;
   copilotKitContext?: Record<string, any>;
-  
+
   // Aesthetic clinic specific
   aestheticData?: {
     currentTreatment?: AestheticTreatmentData;
@@ -47,14 +47,14 @@ export interface EnhancedSessionContext extends SessionContext {
     photos?: any[];
     consentRecords?: any[];
   };
-  
+
   // Security and compliance
   securityContext?: {
     authenticationLevel: 'basic' | 'enhanced' | 'mfa';
     dataAccessLevel: 'standard' | 'sensitive' | 'critical';
     complianceMode: 'standard' | 'enhanced';
   };
-  
+
   // Real-time collaboration
   collaborationContext?: {
     enabled: boolean;
@@ -77,7 +77,7 @@ export interface EnhancedSessionData extends SessionData {
   // Enhanced features
   enhancedContext: EnhancedSessionContext;
   copilotKitIntegration?: CopilotKitIntegration;
-  
+
   // Analytics and metrics
   analytics?: {
     totalProcessingTime: number;
@@ -90,7 +90,7 @@ export interface EnhancedSessionData extends SessionData {
       interactionDepth: number;
     };
   };
-  
+
   // Security and compliance
   securityMetadata?: {
     riskScore: number;
@@ -98,7 +98,7 @@ export interface EnhancedSessionData extends SessionData {
     auditTrail: any[];
     dataEncryptionLevel: string;
   };
-  
+
   // Aesthetic specific
   aestheticMetadata?: {
     treatmentsDiscussed: number;
@@ -135,15 +135,15 @@ export class EnhancedAgentSessionService {
   private cleanupTimer?: NodeJS.Timeout;
   private sessionCache: Map<string, EnhancedSessionData> = new Map();
   private cacheTimeout = 300000; // 5 minutes
-  
+
   // Service integrations
   private aestheticService?: AestheticAguiService;
   private dataHandlingService?: AestheticDataHandlingService;
   private complianceService?: AestheticComplianceService;
-  
+
   // CopilotKit integration
   private copilotKitConnections: Map<string, CopilotKitIntegration> = new Map();
-  
+
   // Analytics
   private sessionAnalytics: Map<string, SessionAnalytics[]> = new Map();
 
@@ -180,12 +180,12 @@ export class EnhancedAgentSessionService {
         this.supabase.supabaseUrl,
         this.supabase.supabaseKey,
       );
-      
+
       this.dataHandlingService = new AestheticDataHandlingService(
         this.supabase.supabaseUrl,
         this.supabase.supabaseKey,
       );
-      
+
       this.complianceService = new AestheticComplianceService(
         this.supabase.supabaseUrl,
         this.supabase.supabaseKey,
@@ -213,7 +213,7 @@ export class EnhancedAgentSessionService {
 
       const sessionId = uuidv4();
       const now = new Date();
-      const expirationMs = options.context?.expiresAt 
+      const expirationMs = options.context?.expiresAt
         ? new Date(options.context.expiresAt).getTime() - now.getTime()
         : this.config.defaultExpirationMs;
       const expiresAt = new Date(now.getTime() + expirationMs);
@@ -225,20 +225,20 @@ export class EnhancedAgentSessionService {
         userPreferences: options.context?.userPreferences || {},
         previousTopics: options.context?.previousTopics || [],
         clinicId: options.context?.clinicId,
-        
+
         // CopilotKit integration
         copilotKitContext: options.context?.copilotKitContext || {},
-        
+
         // Aesthetic features
         aestheticData: options.aestheticData || {},
-        
+
         // Security context
         securityContext: options.securityContext || {
           authenticationLevel: 'enhanced',
           dataAccessLevel: 'standard',
           complianceMode: 'enhanced',
         },
-        
+
         // Collaboration
         collaborationContext: options.context?.collaborationContext || {
           enabled: false,
@@ -261,7 +261,7 @@ export class EnhancedAgentSessionService {
         messageCount: 0,
         lastActivity: now.toISOString(),
         metadata: options.metadata || {},
-        
+
         // Initialize analytics
         analytics: {
           totalProcessingTime: 0,
@@ -273,7 +273,7 @@ export class EnhancedAgentSessionService {
             interactionDepth: 0,
           },
         },
-        
+
         // Security metadata
         securityMetadata: {
           riskScore: 0,
@@ -281,7 +281,7 @@ export class EnhancedAgentSessionService {
           auditTrail: [],
           dataEncryptionLevel: 'AES-256',
         },
-        
+
         // Aesthetic metadata
         aestheticMetadata: {
           treatmentsDiscussed: 0,
@@ -321,7 +321,9 @@ export class EnhancedAgentSessionService {
     } catch {
       console.error('Error creating enhanced session:', error);
       throw new Error(
-        `Failed to create enhanced session: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        `Failed to create enhanced session: ${
+          error instanceof Error ? error.message : 'Unknown error'
+        }`,
       );
     }
   }
@@ -504,15 +506,15 @@ export class EnhancedAgentSessionService {
       // Update analytics
       if (session.analytics && activity.processingTime) {
         session.analytics.totalProcessingTime += activity.processingTime;
-        session.analytics.averageResponseTime = 
-          session.analytics.totalProcessingTime / session.messageCount;
+        session.analytics.averageResponseTime = session.analytics.totalProcessingTime
+          / session.messageCount;
       }
 
       // Track feature usage
       if (activity.features && session.analytics) {
         activity.features.forEach(feature => {
-          session.analytics!.featureUsage[feature] = 
-            (session.analytics!.featureUsage[feature] || 0) + 1;
+          session.analytics!.featureUsage[feature] = (session.analytics!.featureUsage[feature] || 0)
+            + 1;
         });
       }
 
@@ -583,10 +585,12 @@ export class EnhancedAgentSessionService {
         },
         engagementScore: this.calculateEngagementScore(session.analytics),
         satisfactionScore: session.analytics.satisfactionScore,
-        conversionMetrics: session.aestheticMetadata ? {
-          treatmentsBooked: session.aestheticMetadata.treatmentsDiscussed,
-          consultationsScheduled: session.aestheticMetadata.consultationsProvided,
-        } : undefined,
+        conversionMetrics: session.aestheticMetadata
+          ? {
+            treatmentsBooked: session.aestheticMetadata.treatmentsDiscussed,
+            consultationsScheduled: session.aestheticMetadata.consultationsProvided,
+          }
+          : undefined,
         createdAt: new Date(session.createdAt),
       };
 
@@ -675,8 +679,10 @@ export class EnhancedAgentSessionService {
       }
 
       // Assess data access patterns
-      if (session.enhancedContext.aestheticData && 
-          Object.keys(session.enhancedContext.aestheticData).length > 10) {
+      if (
+        session.enhancedContext.aestheticData
+        && Object.keys(session.enhancedContext.aestheticData).length > 10
+      ) {
         riskFactors.push('extensive_data_access');
         riskScore += 25;
       }
@@ -820,12 +826,12 @@ export class EnhancedAgentSessionService {
     const { featureUsage, engagementMetrics } = analytics;
     const featureCount = Object.keys(featureUsage).length;
     const messageRate = engagementMetrics.messagesPerHour;
-    
+
     // Simple scoring algorithm (can be enhanced)
     let score = Math.min(featureCount * 10, 30); // Max 30 points for features
     score += Math.min(messageRate * 2, 40); // Max 40 points for message rate
     score += Math.min(engagementMetrics.interactionDepth * 5, 30); // Max 30 points for depth
-    
+
     return Math.min(score, 100);
   }
 
@@ -833,8 +839,8 @@ export class EnhancedAgentSessionService {
    * Archive session analytics
    */
   private async archiveSessionAnalytics(
-    sessionId: string, 
-    analytics: any
+    sessionId: string,
+    analytics: any,
   ): Promise<void> {
     try {
       await this.supabase.from('session_analytics_archive').insert({

@@ -268,7 +268,7 @@ Applications consume shared packages through standardized import patterns that f
 For example, an API service might import and use the core-services package as follows:
 
 ```typescript
-import { AIService } from "@neonpro/core-services";
+import { AIService } from '@neonpro/core-services';
 const ai = new AIService();
 const result = await ai.makePrediction(predictionData);
 ```
@@ -276,7 +276,7 @@ const result = await ai.makePrediction(predictionData);
 Similarly, validation of Brazilian documents can be performed using the validators package:
 
 ```typescript
-import { validateCPF, validateCNPJ } from "@neonpro/validators";
+import { validateCNPJ, validateCPF } from '@neonpro/validators';
 if (validateCPF(cpfValue)) {
   // Process valid CPF
 }
@@ -285,22 +285,22 @@ if (validateCPF(cpfValue)) {
 Security middleware can be integrated into Hono applications:
 
 ```typescript
-import { getSecurityMiddlewareStack } from "@neonpro/security";
-app.use("*", getSecurityMiddlewareStack());
+import { getSecurityMiddlewareStack } from '@neonpro/security';
+app.use('*', getSecurityMiddlewareStack());
 ```
 
 Database services are initialized with proper configuration:
 
 ```typescript
-import { createClient } from "@neonpro/database";
+import { createClient } from '@neonpro/database';
 const dbClient = createClient(databaseConfig);
 ```
 
 Type definitions from shared packages ensure consistency across the codebase:
 
 ```typescript
-import { Patient } from "@neonpro/shared";
-const patient: Patient = { id: "123", name: "John Doe", cpf: "123.456.789-00" };
+import { Patient } from '@neonpro/shared';
+const patient: Patient = { id: '123', name: 'John Doe', cpf: '123.456.789-00' };
 ```
 
 These import patterns promote discoverability and reduce configuration overhead, allowing developers to focus on business logic rather than infrastructure setup.

@@ -3,15 +3,15 @@
  * Coordinates test execution across all test categories with parallel/sequential support
  */
 
-import { createLogger, LogLevel } from "./utils/logger";
+import { createLogger, LogLevel } from './utils/logger';
 import {
+  TDDPhase,
+  TEST_CATEGORIES,
   TestCategory,
   TestCategoryManager,
-  TEST_CATEGORIES,
-  TDDPhase,
-} from "./utils/test-categories";
+} from './utils/test-categories';
 
-const logger = createLogger("TestSuiteCoordinator", LogLevel.INFO);
+const logger = createLogger('TestSuiteCoordinator', LogLevel.INFO);
 
 export interface TestSuiteOptions {
   categories?: TestCategory[];
@@ -76,67 +76,67 @@ export class TestSuiteCoordinator {
   private initializeTestTools(): Record<TestCategory, TestToolConfig> {
     return {
       frontend: {
-        packageName: "@neonpro/tools-frontend-tests",
-        workingDir: "tools/frontend",
+        packageName: '@neonpro/tools-frontend-tests',
+        workingDir: 'tools/frontend',
         commands: {
-          unit: "bun test",
-          components: "bun test src/components",
-          routes: "bun test src/routes",
-          e2e: "bun test:e2e",
-          a11y: "bun test:a11y",
-          "healthcare-ui": "bun test:healthcare-ui",
-          coverage: "bun test:coverage",
-          watch: "bun test:watch",
-          ui: "bun test:ui",
+          unit: 'bun test',
+          components: 'bun test src/components',
+          routes: 'bun test src/routes',
+          e2e: 'bun test:e2e',
+          a11y: 'bun test:a11y',
+          'healthcare-ui': 'bun test:healthcare-ui',
+          coverage: 'bun test:coverage',
+          watch: 'bun test:watch',
+          ui: 'bun test:ui',
         },
-        healthcareTests: ["a11y", "healthcare-ui"],
-        frameworks: ["vitest", "playwright", "testing-library"],
+        healthcareTests: ['a11y', 'healthcare-ui'],
+        frameworks: ['vitest', 'playwright', 'testing-library'],
       },
       backend: {
-        packageName: "@neonpro/tools-backend-tests",
-        workingDir: "tools/backend",
+        packageName: '@neonpro/tools-backend-tests',
+        workingDir: 'tools/backend',
         commands: {
-          unit: "bun test",
-          api: "bun test src/api",
-          integration: "bun test src/integration",
-          middleware: "bun test src/middleware",
-          monorepo: "bun test src/monorepo",
-          coverage: "bun test:coverage",
-          watch: "bun test:watch",
-          ui: "bun test:ui",
+          unit: 'bun test',
+          api: 'bun test src/api',
+          integration: 'bun test src/integration',
+          middleware: 'bun test src/middleware',
+          monorepo: 'bun test src/monorepo',
+          coverage: 'bun test:coverage',
+          watch: 'bun test:watch',
+          ui: 'bun test:ui',
         },
-        healthcareTests: ["api", "integration"],
-        frameworks: ["vitest", "supertest", "msw"],
+        healthcareTests: ['api', 'integration'],
+        frameworks: ['vitest', 'supertest', 'msw'],
       },
       database: {
-        packageName: "@neonpro/tools-database-tests",
-        workingDir: "tools/database",
+        packageName: '@neonpro/tools-database-tests',
+        workingDir: 'tools/database',
         commands: {
-          unit: "bun test",
-          rls: "bun test:rls",
-          compliance: "bun test:compliance",
-          schema: "bun test src/schema",
-          migrations: "bun test src/migrations",
-          coverage: "bun test:coverage",
-          watch: "bun test:watch",
+          unit: 'bun test',
+          rls: 'bun test:rls',
+          compliance: 'bun test:compliance',
+          schema: 'bun test src/schema',
+          migrations: 'bun test src/migrations',
+          coverage: 'bun test:coverage',
+          watch: 'bun test:watch',
         },
-        healthcareTests: ["rls", "compliance"],
-        frameworks: ["vitest", "supabase"],
+        healthcareTests: ['rls', 'compliance'],
+        frameworks: ['vitest', 'supabase'],
       },
       quality: {
-        packageName: "@neonpro/tools-quality-tests",
-        workingDir: "tools/quality",
+        packageName: '@neonpro/tools-quality-tests',
+        workingDir: 'tools/quality',
         commands: {
-          unit: "bun test",
-          lint: "bun test src/lint",
-          security: "bun test src/security",
-          performance: "bun test src/performance",
-          accessibility: "bun test src/accessibility",
-          coverage: "bun test:coverage",
-          watch: "bun test:watch",
+          unit: 'bun test',
+          lint: 'bun test src/lint',
+          security: 'bun test src/security',
+          performance: 'bun test src/performance',
+          accessibility: 'bun test src/accessibility',
+          coverage: 'bun test:coverage',
+          watch: 'bun test:watch',
         },
-        healthcareTests: ["security", "accessibility"],
-        frameworks: ["vitest", "oxlint", "lighthouse"],
+        healthcareTests: ['security', 'accessibility'],
+        frameworks: ['vitest', 'oxlint', 'lighthouse'],
       },
     };
   }
@@ -151,11 +151,11 @@ export class TestSuiteCoordinator {
 
     logger.constitutional(
       LogLevel.INFO,
-      "Starting coordinated test suite execution",
+      'Starting coordinated test suite execution',
       {
         compliance: options.healthcareCompliance || false,
-        requirement: "Test Suite Coordination",
-        standard: "Testing",
+        requirement: 'Test Suite Coordination',
+        standard: 'Testing',
       },
     );
 
@@ -170,26 +170,26 @@ export class TestSuiteCoordinator {
       let categoryResults: Record<TestCategory, CategoryTestResult>;
 
       if (options.parallel) {
-        logger.info("Executing test suites in parallel");
+        logger.info('Executing test suites in parallel');
         categoryResults = await this.executeInParallel(commands, options);
       } else {
-        logger.info("Executing test suites sequentially");
+        logger.info('Executing test suites sequentially');
         categoryResults = await this.executeSequentially(commands, options);
       }
 
       const duration = performance.now() - startTime;
       const overallMetrics = this.calculateOverallMetrics(categoryResults);
       const success = Object.values(categoryResults).every(
-        (result) => result.success,
+        result => result.success,
       );
 
       logger.constitutional(
         success ? LogLevel.INFO : LogLevel.ERROR,
-        `Test suite execution completed: ${success ? "SUCCESS" : "FAILED"}`,
+        `Test suite execution completed: ${success ? 'SUCCESS' : 'FAILED'}`,
         {
           compliance: success,
-          requirement: "Test Suite Completion",
-          standard: "Testing",
+          requirement: 'Test Suite Completion',
+          standard: 'Testing',
         },
       );
 
@@ -202,7 +202,7 @@ export class TestSuiteCoordinator {
       };
     } catch (error) {
       const duration = performance.now() - startTime;
-      logger.error("Test suite execution failed", error);
+      logger.error('Test suite execution failed', error);
 
       return {
         success: false,
@@ -239,8 +239,8 @@ export class TestSuiteCoordinator {
         if (command) {
           commands.push({
             category,
-            command: command.split(" ")[0],
-            args: command.split(" ").slice(1),
+            command: command.split(' ')[0],
+            args: command.split(' ').slice(1),
             workingDir: toolConfig.workingDir,
             timeout: options.timeout || 30000,
             env: this.getEnvironmentVariables(category, options),
@@ -262,18 +262,18 @@ export class TestSuiteCoordinator {
     const toolConfig = this.testTools[category];
 
     if (options.healthcareCompliance) {
-      return ["unit", ...toolConfig.healthcareTests];
+      return ['unit', ...toolConfig.healthcareTests];
     }
 
     if (options.coverage) {
-      return ["unit", "coverage"];
+      return ['unit', 'coverage'];
     }
 
     if (options.watch) {
-      return ["watch"];
+      return ['watch'];
     }
 
-    return ["unit"];
+    return ['unit'];
   }
 
   /**
@@ -284,19 +284,19 @@ export class TestSuiteCoordinator {
     options: TestSuiteOptions,
   ): Record<string, string> {
     const env: Record<string, string> = {
-      NODE_ENV: "test",
-      CI: options.ci ? "true" : "false",
+      NODE_ENV: 'test',
+      CI: options.ci ? 'true' : 'false',
     };
 
     if (options.healthcareCompliance) {
-      env.HEALTHCARE_COMPLIANCE = "true";
-      env.LGPD_TESTING = "true";
-      env.ANVISA_TESTING = "true";
-      env.CFM_TESTING = "true";
+      env.HEALTHCARE_COMPLIANCE = 'true';
+      env.LGPD_TESTING = 'true';
+      env.ANVISA_TESTING = 'true';
+      env.CFM_TESTING = 'true';
     }
 
     if (options.coverage) {
-      env.COVERAGE = "true";
+      env.COVERAGE = 'true';
     }
 
     return env;
@@ -314,8 +314,8 @@ export class TestSuiteCoordinator {
 
     // Execute categories in parallel
     const results = await Promise.all(
-      categories.map((category) =>
-        this.executeCategoryTests(category, groupedCommands[category], options),
+      categories.map(category =>
+        this.executeCategoryTests(category, groupedCommands[category], options)
       ),
     );
 
@@ -402,10 +402,9 @@ export class TestSuiteCoordinator {
         duration,
         metrics,
         output: `Test execution completed for ${category}`,
-        errors:
-          metrics.failed > 0
-            ? [`${metrics.failed} tests failed in ${category}`]
-            : [],
+        errors: metrics.failed > 0
+          ? [`${metrics.failed} tests failed in ${category}`]
+          : [],
       };
     } catch (error) {
       const duration = performance.now() - startTime;
@@ -422,8 +421,8 @@ export class TestSuiteCoordinator {
           skipped: 0,
           coverage: 0,
         },
-        output: "",
-        errors: [error instanceof Error ? error.message : "Unknown error"],
+        output: '',
+        errors: [error instanceof Error ? error.message : 'Unknown error'],
       };
     }
   }
@@ -446,7 +445,7 @@ export class TestSuiteCoordinator {
     const commandMultiplier = commands.length * 0.5;
     const totalTime = baseTime + commandMultiplier * 1000;
 
-    await new Promise((resolve) => setTimeout(resolve, totalTime));
+    await new Promise(resolve => setTimeout(resolve, totalTime));
   }
 
   /**
@@ -488,7 +487,7 @@ export class TestSuiteCoordinator {
     categoryResults: Record<TestCategory, CategoryTestResult>,
   ) {
     const allMetrics = Object.values(categoryResults).map(
-      (result) => result.metrics,
+      result => result.metrics,
     );
 
     const totalTests = allMetrics.reduce(
@@ -508,11 +507,10 @@ export class TestSuiteCoordinator {
       0,
     );
 
-    const coverage =
-      allMetrics.length > 0
-        ? allMetrics.reduce((sum, metrics) => sum + metrics.coverage, 0) /
-          allMetrics.length
-        : 0;
+    const coverage = allMetrics.length > 0
+      ? allMetrics.reduce((sum, metrics) => sum + metrics.coverage, 0)
+        / allMetrics.length
+      : 0;
 
     return {
       totalTests,

@@ -1,9 +1,5 @@
+import { getSecurityHeaders, isSafeHeaderValue, RateLimiter } from '@neonpro/types/guards';
 import { Context, Next } from 'hono';
-import {
-  getSecurityHeaders,
-  isSafeHeaderValue,
-  RateLimiter,
-} from '@neonpro/types/guards';
 
 // Security configuration
 const SECURITY_CONFIG = {

@@ -394,7 +394,7 @@ logger.audit('patient_data_access', 'Patient record accessed', {
   patientId: 'pat_123',
   clinicId: 'clinic_456',
   userId: 'user_789',
-  action: 'view_medical_record'
+  action: 'view_medical_record',
 });
 ```
 
