@@ -20,7 +20,7 @@ export function setupGlobalErrorHandlers(): void {
 
     // In production, we might want to exit the process
     if (process.env.NODE_ENV === 'production') {
-      console.error('Uncaught exception in production, exiting...');
+      logger.error('Uncaught exception in production, exiting...');
       process.exit(1);
     }
   });
@@ -37,7 +37,7 @@ export function setupGlobalErrorHandlers(): void {
 
       // In production, we might want to exit the process
       if (process.env.NODE_ENV === 'production') {
-        console.error('Unhandled promise rejection in production, exiting...');
+        logger.error('Unhandled promise rejection in production, exiting...');
         process.exit(1);
       }
     },
@@ -65,7 +65,7 @@ export function errorTrackingMiddleware() {
   return async (c: any, next: () => Promise<void>) => {
     try {
       await next();
-    } catch {
+    } catch (error) {
       // Log the error
       logger.error('Request error', {
         error: error instanceof Error ? error.message : String(error),

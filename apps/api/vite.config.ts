@@ -1,10 +1,7 @@
-import { visualizer } from 'rollup-plugin-visualizer';
 import { defineConfig } from 'vite';
-import { nodePolyfills } from 'vite-plugin-node-polyfills';
 import tsconfigPaths from 'vite-tsconfig-paths';
 
 export default defineConfig(({ mode }) => {
-  const isAnalyze = mode === 'analyze';
   const isEdge = process.env.EDGE_RUNTIME === 'true';
 
   return {
@@ -12,23 +9,7 @@ export default defineConfig(({ mode }) => {
       tsconfigPaths({
         ignoreConfigErrors: true,
       }),
-      nodePolyfills({
-        exclude: [],
-        globals: {
-          Buffer: true,
-          global: true,
-          process: true,
-        },
-        protocolImports: true,
-      }),
-      isAnalyze
-      && visualizer({
-        filename: '../../bundle-analysis.html',
-        open: false,
-        gzipSize: true,
-        brotliSize: true,
-      }),
-    ].filter(Boolean),
+    ],
     build: {
       outDir: 'dist',
       lib: {

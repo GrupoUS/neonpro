@@ -399,7 +399,7 @@ export class CompressionMiddleware {
     // Update average compression ratio
     if (this.compressionStats.compressedResponses > 0) {
       const totalRatio = this.metrics.reduce(
-        (sum, _m) => sum + m.compressionRatio,
+        (sum, m) => sum + m.compressionRatio,
         0,
       );
       this.compressionStats.averageCompressionRatio = totalRatio / this.metrics.length;
@@ -418,11 +418,11 @@ export class CompressionMiddleware {
           * 100
         : 0,
       averageResponseSize: this.metrics.length > 0
-        ? this.metrics.reduce((sum, _m) => sum + m.originalSize, 0)
+        ? this.metrics.reduce((sum, m) => sum + m.originalSize, 0)
           / this.metrics.length
         : 0,
       averageCompressedSize: this.metrics.length > 0
-        ? this.metrics.reduce((sum, _m) => sum + m.compressedSize, 0)
+        ? this.metrics.reduce((sum, m) => sum + m.compressedSize, 0)
           / this.metrics.length
         : 0,
       topCompressedRoutes: this.getTopCompressedRoutes(5),
@@ -449,9 +449,9 @@ export class CompressionMiddleware {
     });
 
     return Object.entries(routeStats)
-      .sort((a, _b) => b[1].bytesSaved - a[1].bytesSaved)
+      .sort((a, b) => b[1].bytesSaved - a[1].bytesSaved)
       .slice(0, limit)
-      .map(([route, _stats]) => ({
+      .map(([route, stats]) => ({
         route,
         requestsCompressed: stats.count,
         bytesSaved: stats.bytesSaved,
@@ -526,7 +526,7 @@ function shouldCompress(
   if (method === 'none') return false;
 
   // Don't compress very small responses
-  if (buffer.length < config.minSize) return false;
+  if (buffer.length < _config.minSize) return false;
 
   // Don't compress already compressed content
   const contentType = ''; // Would need to be passed in
@@ -568,8 +568,8 @@ function compressResponse(
     }
 
     return null;
-  } catch {
-    console.error('Compression failed:', error);
+  } catch (error) {
+    // In a real implementation, you'd use proper logging here
     return null;
   }
 }

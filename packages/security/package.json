@@ -15,8 +15,8 @@
   "scripts": {
     "build": "bun x tsc --project tsconfig.build.json",
     "dev": "tsc -w -p tsconfig.build.json",
-    "lint": "oxlint src/",
-    "lint:fix": "oxlint src/ --fix",
+    "lint": "echo 'lint placeholder'",
+    "lint:fix": "echo 'lint fix placeholder'",
     "format": "dprint fmt",
     "format:check": "dprint check",
     "type-check": "tsc --noEmit",

@@ -158,7 +158,7 @@ export class UsageCounterRepository {
       date: now.toISOString(),
       month: now.toISOString().slice(0, 7), // YYYY-MM format
       metadata: {
-        user_id: data.userId,
+        user_id: data._userId,
         plan_code: data.planCode,
         concurrent_requests: 0,
         total_requests: data.totalRequests || 0,
@@ -197,7 +197,7 @@ export class UsageCounterRepository {
     // First, try to get existing counter
     const existing = await this.findByUserAndClinic(
       params.clinicId,
-      params.userId,
+      params._userId,
     );
 
     if (existing) {
@@ -305,7 +305,7 @@ export class UsageCounterRepository {
       // Create new counter
       const createData: UsageCounterCreateData = {
         clinicId: params.clinicId,
-        _userId: params.userId,
+        _userId: params._userId,
         planCode: params.planCode,
         monthlyQueries: params.increment?.monthlyQueries || 0,
         dailyQueries: params.increment?.dailyQueries || 0,
@@ -644,7 +644,7 @@ export class UsageCounterRepository {
 
     return {
       clinicId: row.entity_id,
-      userId: metadata.userId || "",
+      userId: metadata._userId || "",
       planCode: metadata.planCode || "basic",
       monthlyQueries: row.monthly_queries || 0,
       dailyQueries: row.daily_queries || 0,

@@ -5,7 +5,7 @@
  * sensitive data filtering, and proper log levels for production environments.
  */
 
-import winston from 'winston';
+import * as winston from 'winston';
 import { format } from 'winston';
 
 // Healthcare-specific log levels with compliance focus
@@ -168,6 +168,13 @@ export const databaseLogger = createHealthcareLogger('database');
 export const apiLogger = createHealthcareLogger('api');
 export const securityLogger = createHealthcareLogger('security');
 export const middlewareLogger = createHealthcareLogger('middleware');
+export const realtimeLogger = createHealthcareLogger('realtime');
+export const complianceLogger = createHealthcareLogger('compliance');
+export const chatLogger = createHealthcareLogger('chat');
+export const analyticsLogger = createHealthcareLogger('analytics');
+export const governanceLogger = createHealthcareLogger('governance');
+export const resilienceLogger = createHealthcareLogger('resilience');
+export const cacheLogger = createHealthcareLogger('cache');
 export const auditLogger = createHealthcareLogger('audit', {
   level: 'audit',
   transports: [
@@ -233,6 +240,14 @@ export default {
   databaseLogger,
   apiLogger,
   securityLogger,
+  middlewareLogger,
+  realtimeLogger,
+  complianceLogger,
+  chatLogger,
+  analyticsLogger,
+  governanceLogger,
+  resilienceLogger,
+  cacheLogger,
   auditLogger,
   logAuditEvent,
   logHealthcareError,

@@ -1,7 +1,7 @@
 // Event logger utility for governance services observability
 // Console JSON logging for development; replace with structured logging in production
 
-import healthcareLogger, { logHealthcareError } from '../../../../shared/src/logging/healthcare-logger';
+import { logHealthcareError, governanceLogger } from "@neonpro/shared";
 
 export interface GovernanceEvent {
   timestamp: Date;

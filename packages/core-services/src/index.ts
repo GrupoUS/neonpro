@@ -12,57 +12,6 @@ export * from "./audit/index";
 // Error handling utilities
 export * from "./errors/map";
 
-// Phase 4 Analytics Module - selective exports to avoid conflicts
-export type {
-  BaseMetric,
-  AnalyticsEvent,
-  MetricType,
-  Currency,
-  Frequency,
-  AggregationType,
-  ClinicalKPI,
-  PatientSafetyKPI,
-  PatientOutcomeKPI,
-  InfectionControlKPI,
-  ClinicalCategory,
-  FinancialKPI,
-  RevenueCycleKPI,
-  InsuranceClaimsKPI,
-  CostManagementKPI,
-  ProfitabilityKPI,
-  FinancialCategory,
-  PaymentSource,
-  IngestionAdapter,
-  IngestionConfig,
-  IngestionResult,
-  IngestionEvent,
-  ValidationRule,
-  TransformationRule,
-} from "./analytics/index";
-
-export {
-  createMockMetric,
-  createMockAnalyticsEvent,
-  anonymizeMetric,
-  validateMetricCompliance,
-  aggregateMetrics,
-  createPatientSafetyKPI,
-  createPatientOutcomeKPI,
-  calculateClinicalRiskScore,
-  validateClinicalCompliance,
-  createRevenueCycleKPI,
-  createInsuranceClaimsKPI,
-  calculateFinancialHealthScore,
-  validateBrazilianFinancialCompliance,
-  calculatePayerMixDiversity,
-  BaseIngestionAdapter,
-  DatabaseIngestionAdapter,
-  APIIngestionAdapter,
-  ANALYTICS_CONSTANTS,
-  createAnalyticsConfig,
-  ANALYTICS_VERSION,
-  ANALYTICS_MODULE_INFO,
-} from "./analytics/index";
 
 // Phase 1 AI Chat models/services
 export * from "./models/chat-session";
@@ -87,3 +36,6 @@ export * from "./usage/repository";
 
 // Enhanced AI Abuse Window Tracker (T018)
 export * from "./usage/abuseWindow";
+
+// Config utilities
+export * from "./config/logger";

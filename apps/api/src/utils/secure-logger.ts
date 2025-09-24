@@ -71,7 +71,7 @@ class SecureLogger {
       maskSensitiveData: config.maskSensitiveData ?? true,
       lgpdCompliant: config.lgpdCompliant ?? true,
       auditTrail: config.auditTrail ?? true,
-      _service: config.service || 'neonpro-api',
+      _service: config._service || 'neonpro-api',
     };
   }
 
@@ -84,12 +84,12 @@ class SecureLogger {
     const logEntry = {
       timestamp,
       level,
-      _service: this.config.service,
+      _service: this.config._service,
       environment: process.env.NODE_ENV || 'development',
       message: this.config.maskSensitiveData
         ? this.maskSensitiveData(message)
         : message,
-      ...this.maskObjectData(context || {}),
+      ...this.maskObjectData(_context || {}),
     };
 
     const formattedMessage = JSON.stringify(logEntry);
@@ -277,9 +277,9 @@ class SecureLogger {
 
   private enrichContext(_context?: LogContext): LogContext {
     return {
-      ...context,
+      ..._context,
       timestamp: new Date().toISOString(),
-      correlationId: context?.correlationId || this.generateCorrelationId(),
+      correlationId: _context?.correlationId || this.generateCorrelationId(),
     };
   }
 

@@ -129,7 +129,7 @@ export class Logger {
       const redacted = { ...obj };
       for (const key of Object.keys(redacted)) {
         if (
-          _piiFields.some((field: string) => key.toLowerCase().includes(field))
+          piiFields.some((field: string) => key.toLowerCase().includes(field))
         ) {
           redacted[key] = "[REDACTED]";
         } else if (typeof redacted[key] === "object") {
@@ -152,7 +152,7 @@ export class Logger {
       timestamp: new Date().toISOString(),
       level,
       message,
-      _context: context ? this.redactPII(_context) : undefined,
+      _context: _context ? this.redactPII(_context) : undefined,
       error,
     };
   }

@@ -15,7 +15,6 @@
 
 import { Redis } from "ioredis";
 import { createHash } from "crypto";
-// import { z } from "zod";
 import {
   CacheBackend,
   CacheEntry,
@@ -23,8 +22,10 @@ import {
   CacheConfig,
   CacheDataSensitivity,
   CacheTier,
+  CacheEntrySchema,
 } from "./cache-management";
-import { logHealthcareError, cacheLogger } from '../logging/healthcare-logger';
+import { logHealthcareError } from '../logging/healthcare-logger';
+import healthcareLogger from '../logging/healthcare-logger';
 
 /**
  * Redis connection configuration with security options
@@ -50,7 +51,7 @@ export interface RedisConfig {
  * Redis cache backend with healthcare compliance
  */
 export class RedisCacheBackend implements CacheBackend {
-  private redis: Redis;
+  private redis!: Redis;
   private config: CacheConfig;
   private redisConfig: RedisConfig;
   private stats: CacheStatistics;
@@ -78,6 +79,7 @@ export class RedisCacheBackend implements CacheBackend {
   async get(key: string): Promise<CacheEntry | null> {
     const _startTime = Date.now();
     void _startTime;
+    let secureKey: string;
 
     try {
       if (!this.isConnected || !this.redis) {
@@ -85,7 +87,7 @@ export class RedisCacheBackend implements CacheBackend {
       }
 
       // Generate secure cache key
-      const secureKey = this.generateSecureKey(key);
+      secureKey = this.generateSecureKey(key);
 
       // Get value from Redis with timeout
       const result = await this.safeRedisOperation(() =>
@@ -100,7 +102,7 @@ export class RedisCacheBackend implements CacheBackend {
       // Parse and validate cache entry with safe JSON parsing
       const entry = this.safeJSONParse(result);
       if (!entry) {
-        cacheLogger.warn(`Invalid JSON or failed schema validation for key`, {
+        healthcareLogger.cacheLogger.warn(`Invalid JSON or failed schema validation for key`, {
           component: 'redis-cache',
           action: 'validation_error',
           secureKey,
@@ -113,7 +115,7 @@ export class RedisCacheBackend implements CacheBackend {
 
       // Validate entry structure
       if (!this.validateCacheEntry(entry)) {
-        cacheLogger.warn(`Invalid cache entry structure for key`, {
+        healthcareLogger.cacheLogger.warn(`Invalid cache entry structure for key`, {
           component: 'redis-cache',
           action: 'structure_error',
           secureKey,
@@ -150,7 +152,7 @@ export class RedisCacheBackend implements CacheBackend {
 
       return entry;
     } catch (error) {
-      logHealthcareError('redis-cache', error, {
+      logHealthcareError('redis-cache', error as Error, {
         method: 'get',
         component: 'redis-cache',
         secureKey,
@@ -188,7 +190,7 @@ export class RedisCacheBackend implements CacheBackend {
       // Update statistics
       this.stats.totalEntries = await this.getRedisSize();
     } catch (error) {
-      logHealthcareError('redis-cache', error, {
+      logHealthcareError('redis-cache', error as Error, {
         method: 'set',
         component: 'redis-cache',
         key,
@@ -215,7 +217,7 @@ export class RedisCacheBackend implements CacheBackend {
       this.stats.totalEntries = await this.getRedisSize();
       return result > 0;
     } catch (error) {
-      logHealthcareError('redis-cache', error, {
+      logHealthcareError('redis-cache', error as Error, {
         method: 'delete',
         component: 'redis-cache',
         key,
@@ -247,7 +249,7 @@ export class RedisCacheBackend implements CacheBackend {
       const entry = await this.get(key);
       return entry !== null;
     } catch (error) {
-      logHealthcareError('redis-cache', error, {
+      logHealthcareError('redis-cache', error as Error, {
         method: 'has',
         component: 'redis-cache',
         key,
@@ -284,7 +286,7 @@ export class RedisCacheBackend implements CacheBackend {
       // Reset statistics
       this.stats = this.initializeStats();
     } catch (error) {
-      logHealthcareError('redis-cache', error, {
+      logHealthcareError('redis-cache', error as Error, {
         method: 'clear',
         component: 'redis-cache',
         operation: 'cache_clear'
@@ -333,7 +335,7 @@ export class RedisCacheBackend implements CacheBackend {
 
       return { ...this.stats };
     } catch (error) {
-      logHealthcareError('redis-cache', error, {
+      logHealthcareError('redis-cache', error as Error, {
         method: 'getStats',
         component: 'redis-cache',
         operation: 'cache_stats'
@@ -364,7 +366,7 @@ export class RedisCacheBackend implements CacheBackend {
         key.startsWith(prefix) ? key.substring(prefix.length) : key,
       );
     } catch (error) {
-      logHealthcareError('redis-cache', error, {
+      logHealthcareError('redis-cache', error as Error, {
         method: 'getKeys',
         component: 'redis-cache',
         pattern,
@@ -397,7 +399,7 @@ export class RedisCacheBackend implements CacheBackend {
 
       return entries;
     } catch (error) {
-      logHealthcareError('redis-cache', error, {
+      logHealthcareError('redis-cache', error as Error, {
         method: 'getEntriesBySensitivity',
         component: 'redis-cache',
         sensitivity,
@@ -431,7 +433,7 @@ export class RedisCacheBackend implements CacheBackend {
       this.stats.totalEntries = await this.getRedisSize();
       return cleanedCount;
     } catch (error) {
-      logHealthcareError('redis-cache', error, {
+      logHealthcareError('redis-cache', error as Error, {
         method: 'cleanup',
         component: 'redis-cache',
         operation: 'cache_cleanup'
@@ -470,7 +472,7 @@ export class RedisCacheBackend implements CacheBackend {
       this.redis.on("connect", () => {
         this.isConnected = true;
         this.connectionRetries = 0;
-        cacheLogger.info("Connected to Redis securely", {
+        healthcareLogger.cacheLogger.info("Connected to Redis securely", {
           component: 'redis-cache',
           action: 'connect',
           event: 'connected'
@@ -478,7 +480,7 @@ export class RedisCacheBackend implements CacheBackend {
       });
 
       this.redis.on("error", (error) => {
-        logHealthcareError('redis-cache', error, {
+        logHealthcareError('redis-cache', error as Error, {
           method: 'initializeRedis',
           component: 'redis-cache',
           event: 'connection_error'
@@ -489,7 +491,7 @@ export class RedisCacheBackend implements CacheBackend {
 
       this.redis.on("close", () => {
         this.isConnected = false;
-        cacheLogger.warn("Redis connection closed", {
+        healthcareLogger.cacheLogger.warn("Redis connection closed", {
           component: 'redis-cache',
           action: 'connection',
           event: 'closed'
@@ -497,7 +499,7 @@ export class RedisCacheBackend implements CacheBackend {
       });
 
       this.redis.on("ready", () => {
-        cacheLogger.info("Redis connection ready", {
+        healthcareLogger.cacheLogger.info("Redis connection ready", {
           component: 'redis-cache',
           action: 'connection',
           event: 'ready'
@@ -506,7 +508,7 @@ export class RedisCacheBackend implements CacheBackend {
 
       // Connect to Redis
       this.redis.connect().catch((error) => {
-        logHealthcareError('redis-cache', error, {
+        logHealthcareError('redis-cache', error as Error, {
           method: 'initializeRedis',
           component: 'redis-cache',
           event: 'connection_failed'
@@ -514,7 +516,7 @@ export class RedisCacheBackend implements CacheBackend {
         this.isConnected = false;
       });
     } catch (error) {
-      logHealthcareError('redis-cache', error, {
+      logHealthcareError('redis-cache', error as Error, {
         method: 'initializeRedis',
         component: 'redis-cache',
         event: 'initialization_error'
@@ -532,7 +534,7 @@ export class RedisCacheBackend implements CacheBackend {
       const delay = Math.pow(2, this.connectionRetries) * 1000; // Exponential backoff
 
       setTimeout(() => {
-        cacheLogger.info(`Retrying connection`, {
+        healthcareLogger.cacheLogger.info(`Retrying connection`, {
           component: 'redis-cache',
           action: 'retry',
           attempt: this.connectionRetries,
@@ -540,7 +542,7 @@ export class RedisCacheBackend implements CacheBackend {
           event: 'connection_retry'
         });
         this.redis.connect().catch((error) => {
-          logHealthcareError('redis-cache', error, {
+          logHealthcareError('redis-cache', error as Error, {
             method: 'handleConnectionError',
             component: 'redis-cache',
             attempt: this.connectionRetries,
@@ -549,7 +551,7 @@ export class RedisCacheBackend implements CacheBackend {
         });
       }, delay);
     } else {
-      cacheLogger.error("Max connection retries reached", {
+      healthcareLogger.cacheLogger.error("Max connection retries reached", {
         component: 'redis-cache',
         action: 'connection',
         event: 'max_retries_reached',
@@ -577,7 +579,7 @@ export class RedisCacheBackend implements CacheBackend {
         await this.safeRedisOperation(() => this.redis.ping());
       }
     } catch (error) {
-      logHealthcareError('redis-cache', error, {
+      logHealthcareError('redis-cache', error as Error, {
         method: 'healthCheck',
         component: 'redis-cache',
         event: 'health_check_failed'
@@ -597,12 +599,12 @@ export class RedisCacheBackend implements CacheBackend {
     try {
       return await Promise.race([
         operation(),
-        new Promise((_, reject) =>
+        new Promise<never>((_, reject) =>
           setTimeout(() => reject(new Error("Redis operation timeout")), 5000),
         ),
-      ]);
+      ]) as T;
     } catch (error) {
-      logHealthcareError('redis-cache', error, {
+      logHealthcareError('redis-cache', error as Error, {
         method: 'safeRedisOperation',
         component: 'redis-cache',
         event: 'operation_failed'
@@ -678,7 +680,7 @@ export class RedisCacheBackend implements CacheBackend {
       // Validate against Zod schema
       const validationResult = this.validateWithSchema(parsed);
       if (!validationResult.success) {
-        cacheLogger.warn("Schema validation failed", {
+        healthcareLogger.cacheLogger.warn("Schema validation failed", {
           component: 'redis-cache',
           action: 'validation',
           error: validationResult.error,
@@ -690,7 +692,7 @@ export class RedisCacheBackend implements CacheBackend {
       // Convert date strings to Date objects
       return this.normalizeDates(validationResult.data);
     } catch (error) {
-      cacheLogger.warn("JSON parsing failed", {
+      healthcareLogger.cacheLogger.warn("JSON parsing failed", {
         component: 'redis-cache',
         action: 'parsing',
         error,
@@ -709,9 +711,6 @@ export class RedisCacheBackend implements CacheBackend {
     error?: string;
   } {
     try {
-      // Import schema dynamically to avoid circular dependencies
-      const { CacheEntrySchema } = require("./cache-management");
-
       const result = CacheEntrySchema.safeParse(data);
       if (result.success) {
         return { success: true, data: result.data };
@@ -719,7 +718,7 @@ export class RedisCacheBackend implements CacheBackend {
         return {
           success: false,
           error: result.error.errors
-            .map((e) => `${e.path.join(".")}: ${e.message}`)
+            .map((e: any) => `${e.path.join(".")}: ${e.message}`)
             .join(", "),
         };
       }
@@ -732,7 +731,7 @@ export class RedisCacheBackend implements CacheBackend {
    * Normalize date strings to Date objects
    */
   private normalizeDates(data: unknown): CacheEntry {
-    const normalized = { ...data };
+    const normalized = data as Record<string, unknown>;
 
     if (typeof normalized.createdAt === "string") {
       normalized.createdAt = new Date(normalized.createdAt);
@@ -744,7 +743,7 @@ export class RedisCacheBackend implements CacheBackend {
       normalized.expiresAt = new Date(normalized.expiresAt);
     }
 
-    return normalized;
+    return normalized as CacheEntry;
   }
 
   /**
@@ -754,11 +753,11 @@ export class RedisCacheBackend implements CacheBackend {
     return !!(
       entry &&
       typeof entry === "object" &&
-      entry.key &&
-      typeof entry.createdAt === "string" &&
-      typeof entry.lastAccessedAt === "string" &&
-      typeof entry.accessCount === "number" &&
-      entry.sensitivity
+      (entry as Record<string, unknown>).key &&
+      typeof (entry as Record<string, unknown>).createdAt === "string" &&
+      typeof (entry as Record<string, unknown>).lastAccessedAt === "string" &&
+      typeof (entry as Record<string, unknown>).accessCount === "number" &&
+      (entry as Record<string, unknown>).sensitivity
     );
   }
 

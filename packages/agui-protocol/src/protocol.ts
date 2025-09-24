@@ -5,13 +5,14 @@
  * between frontend and backend agents.
  */
 
-import { 
-  AguiMessage, 
-  AguiMessageType, 
+import {
+  AguiMessage,
+  AguiMessageType,
   AguiMessageMetadata,
   AguiConnectionStatus,
-  AguiServiceConfig 
+  AguiServiceConfig
 } from './types';
+import { getLogger } from '@neonpro/core-services';
 
 export class AguiProtocol {
   private ws: WebSocket | null = null;
@@ -116,14 +117,16 @@ export class AguiProtocol {
           this.status.lastPing = new Date().toISOString();
           break;
         case 'error':
-          console.error('AG-UI Protocol Error:', message._payload);
+          const logger = getLogger();
+          logger.error('AG-UI Protocol Error', { component: 'agui-protocol', operation: 'handle_message', sessionId: this.sessionId, _payload: message._payload });
           break;
         default:
           // Handle other message types through event listeners
           this.emit('message', message);
       }
     } catch (error) {
-      console.error('Failed to parse AG-UI message:', error);
+      const logger = getLogger();
+      logger.error('Failed to parse AG-UI message', { component: 'agui-protocol', operation: 'parse_message', sessionId: this.sessionId }, error instanceof Error ? error : new Error(String(error)));
     }
   }
 
@@ -145,7 +148,8 @@ export class AguiProtocol {
    */
   private handleError(event: Event): void {
     this.status.error = `WebSocket error: ${event}`;
-    console.error('AG-UI WebSocket Error:', event);
+    const logger = getLogger();
+    logger.error('AG-UI WebSocket Error', { component: 'agui-protocol', operation: 'handle_error', sessionId: this.sessionId, error: event.toString() });
   }
 
   /**
@@ -197,6 +201,7 @@ export class AguiProtocol {
    */
   private emit(event: string, data: any): void {
     // In a real implementation, you'd use EventEmitter or similar
-    console.log(`AG-UI Event: ${event}`, data);
+    const logger = getLogger();
+    logger.info('AG-UI Event emitted', { component: 'agui-protocol', operation: 'emit_event', sessionId: this.sessionId, eventType: event, hasData: !!data });
   }
 }

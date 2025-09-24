@@ -131,7 +131,9 @@ export function HealthcareThemeProvider({
       try {
         localStorage.setItem("healthcare-theme", JSON.stringify(newTheme));
       } catch (error) {
-        console.warn("Failed to persist healthcare theme:", error);
+        const { getLogger } = await import("@neonpro/core-services/config/logger");
+        const logger = getLogger();
+        logger.warn("Failed to persist healthcare theme", { component: "healthcare-theme-provider", operation: "persist_theme" }, error instanceof Error ? error : new Error(String(error)));
       }
     }
 

@@ -14,40 +14,40 @@ describe('GET /api/ai/sessions/{sessionId} - Contract Test', () => {
   beforeAll(async () => {
     // This will fail until the endpoint is implemented
     try {
-      ap: p = [ (await import('../../src/app')).default;
+      app = (await import('../../src/app')).default;
     } catch (error) {
       console.log('Expected failure: App not available during TDD phase')
     }
-  }
+  });
 
   afterAll(async () => {
     if (testServer) {
-      testServer.close(
+      testServer.close();
     }
-  }
+  });
 
   describe('Contract Validation', () => {
     test('should return session data for valid sessionId', async () => {
       // This test MUST FAIL until implementation is complete
-      expect(app).toBeDefined(
+      expect(app).toBeDefined();
 
-      const: sessionId = [ '550e8400-e29b-41d4-a716-446655440000';
+      const sessionId = '550e8400-e29b-41d4-a716-446655440000';
 
-      const: response = [ await app.request(`/api/ai/sessions/${sessionId}`, {
+      const response = await app.request(`/api/ai/sessions/${sessionId}`, {
         method: 'GET',
         headers: {
           Authorization: 'Bearer valid-jwt-token',
         },
-      }
+      });
 
       // Contract assertions - these will fail initially
-      expect(response.status).toBe(200
+      expect(response.status).toBe(200);
 
-      const: sessionData = [ await response.json(
+      const sessionData = await response.json();
 
       // Validate SessionResponse structure according to OpenAPI contract
-      expect(sessionData).toHaveProperty('sessionId', sessionId
-      expect(sessionData).toHaveProperty('userId')
+      expect(sessionData).toHaveProperty('sessionId', sessionId);
+      expect(sessionData).toHaveProperty('userId');
       expect(sessionData).toHaveProperty('status')
       expect(sessionData).toHaveProperty('createdAt')
       expect(sessionData).toHaveProperty('lastActivity')

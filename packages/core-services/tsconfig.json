@@ -8,17 +8,19 @@
     "types": ["vitest"],
     "tsBuildInfoFile": "./dist/.tsbuildinfo"
   },
-  "include": ["src"],
+  "include": ["src/**/*"],
   "exclude": [
     "dist",
     "node_modules",
     "**/*.test.ts",
     "**/*.test.tsx",
-    "**/__tests__/**"
+    "**/__tests__/**",
+    "tests/**/*"
   ],
   "references": [
     { "path": "../types" },
     { "path": "../utils" },
-    { "path": "../config" }
+    { "path": "../config" },
+    { "path": "../shared" }
   ]
 }

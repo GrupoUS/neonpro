@@ -5,14 +5,14 @@ const mem = new Map<string, ChatSession>();
 
 export class SessionRepo {
   async create(
-    _userId: string,
+    userId: string,
     locale: ChatSession["locale"] = "pt-BR",
   ): Promise<ChatSession> {
     const id = crypto.randomUUID();
     const now = new Date().toISOString();
     const sess: ChatSession = {
       id,
-      userId: userId,
+      userId,
       locale,
       startedAt: now,
       lastActivityAt: now,

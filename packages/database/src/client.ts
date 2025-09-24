@@ -248,11 +248,16 @@ export const checkDatabaseHealth = async () => {
 export const closeDatabaseConnections = async () => {
   try {
     await prisma.$disconnect();
-    console.log("Database connections closed successfully");
+    const { getLogger } = await import("@neonpro/core-services/config/logger");
+    const logger = getLogger();
+    logger.info("Database connections closed successfully", { component: "database-client", action: "close_connections" });
   } catch (error) {
-    console.error(
+    const { getLogger } = await import("@neonpro/core-services/config/logger");
+    const logger = getLogger();
+    logger.error(
       "Error closing database connections",
-      error instanceof Error ? error : new Error(String(error)),
+      { component: "database-client", action: "close_connections_error" },
+      error instanceof Error ? error : new Error(String(error))
     );
   }
 };

@@ -5,7 +5,6 @@
  * Runs periodic certificate checks and sends alerts
  */
 
-const path = require('path');
 const { certificateMonitor } = require('../dist/services/certificate-monitor');
 
 // Configuration
@@ -43,7 +42,7 @@ async function runCertificateCheck() {
     } else {
       process.exit(0);
     }
-  } catch (_error) {
+  } catch (error) {
     console.error(
       `[${new Date().toISOString()}] Certificate monitoring failed:`,
       error.message,
@@ -70,7 +69,7 @@ async function startMonitoring() {
     setInterval(async () => {
       try {
         await runCertificateCheck();
-      } catch (_error) {
+      } catch (error) {
         console.error(
           `[${new Date().toISOString()}] Monitoring error:`,
           error.message,

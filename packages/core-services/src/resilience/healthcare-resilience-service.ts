@@ -23,7 +23,7 @@ import {
   DataCategory as LGPDDataCategory,
   HealthcareAIUseCase,
 } from "@neonpro/shared";
-import { logHealthcareError, resilienceLogger } from '../../../shared/src/logging/healthcare-logger';
+import { logHealthcareError, resilienceLogger } from "@neonpro/shared";
 
 // ============================================================================
 // Healthcare-Specific Types

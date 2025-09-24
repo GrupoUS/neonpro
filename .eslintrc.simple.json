@@ -1,0 +1,71 @@
+{
+  "env": {
+    "browser": true,
+    "node": true,
+    "es2022": true,
+    "jest": true
+  },
+
+  "extends": [
+    "eslint:recommended"
+  ],
+
+  "parserOptions": {
+    "ecmaVersion": 2022,
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true
+    }
+  },
+
+  "rules": {
+    "no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
+    "no-console": ["warn", { "allow": ["warn", "error"] }],
+    "no-debugger": "error",
+    "prefer-const": "error",
+    "no-var": "error",
+    "object-shorthand": "error",
+    "prefer-arrow-callback": "error",
+    "no-eval": "error",
+    "no-implied-eval": "error",
+    "no-new-func": "error",
+    "no-throw-literal": "error",
+    "eqeqeq": ["error", "always"],
+    "no-unneeded-ternary": "error",
+    "prefer-template": "error"
+  },
+
+  "overrides": [
+    {
+      "files": ["**/*.test.{ts,tsx}", "**/*.spec.{ts,tsx}"],
+      "rules": {
+        "no-console": "off",
+        "no-unused-vars": "off"
+      }
+    },
+    {
+      "files": ["**/*.config.{js,ts}"],
+      "rules": {
+        "no-console": "off"
+      }
+    }
+  ],
+
+  "ignorePatterns": [
+    "node_modules/**",
+    "dist/**",
+    "build/**",
+    "coverage/**",
+    "test-results/**",
+    "*.min.js",
+    "playwright-report/**",
+    ".next/**",
+    ".turbo/**",
+    "tools/**/node_modules/**",
+    "packages/**/dist/**",
+    "apps/**/dist/**",
+    "vitest.config.*",
+    "vite.config.*",
+    "tailwind.config.*"
+  ]
+}

@@ -94,7 +94,6 @@ export default defineConfig({
     globalTeardown: ['./src/test/global-teardown.ts'],
 
     // Test isolation
-    isolate: true,
     singleThread: false,
 
     // Environment variables for testing
@@ -212,9 +211,5 @@ export default defineConfig({
     strictPort: true,
   },
 
-  // Define configuration for testing
-  define: {
-    __DEV__: true,
-    __TEST__: true,
-  },
+  // Test configuration flags (already defined above - removing duplicate)
 });

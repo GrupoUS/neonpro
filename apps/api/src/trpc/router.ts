@@ -15,6 +15,9 @@ import { healthcareServicesRouter } from './routers/healthcare-services';
 import { patientsRouter } from './routers/patients';
 import { realtimeTelemedicineRouter } from './routers/realtime-telemedicine';
 import { telemedicineRouter } from './routers/telemedicine';
+import { enhancedAestheticProfessionalsRouter } from './routers/enhanced-aesthetic-professionals';
+import { enhancedPatientIdentityRouter } from './routers/enhanced-patient-identity';
+import { enhancedTelemedicineRouter } from './routers/enhanced-telemedicine';
 import { router } from './trpc';
 
 // Import comprehensive API contracts from T016
@@ -96,6 +99,11 @@ export const appRouter = router({
 
   // AI Clinical Decision Support router with comprehensive treatment planning
   aiClinicalSupport: aiClinicalSupportRouter,
+
+  // Phase 5 Enhanced Services with comprehensive database integration
+  enhancedAestheticProfessionals: enhancedAestheticProfessionalsRouter,
+  enhancedPatientIdentity: enhancedPatientIdentityRouter,
+  enhancedTelemedicine: enhancedTelemedicineRouter,
 
   // Comprehensive API contracts with tRPC v11 (T016)
   // New healthcare-compliant API contracts with enhanced features

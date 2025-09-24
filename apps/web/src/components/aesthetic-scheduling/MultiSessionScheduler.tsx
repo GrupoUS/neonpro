@@ -56,12 +56,12 @@ export function MultiSessionScheduler({ patientId, onSuccess, onError }: MultiSe
   const { data: proceduresData, isLoading: proceduresLoading } = trpc.aestheticScheduling.getAestheticProcedures.useQuery(
     { limit: 100, offset: 0 },
     {
-      select: (data: { procedures: AestheticProcedure[] }) => data.procedures,
+      select: (data) => data.procedures || [],
     }
   );
 
   // Fetch available professionals
-  const { data: professionalsData, isLoading: professionalsLoading } = trpc.professional.getAll.useQuery();
+  const { data: professionalsData, isLoading: professionalsLoading } = trpc.enhancedAestheticProfessionals.getProfessionals.useQuery();
 
   // Schedule procedures mutation
   const scheduleMutation = trpc.aestheticScheduling.scheduleProcedures.useMutation({

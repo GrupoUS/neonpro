@@ -61,7 +61,7 @@ export class ErrorMapper {
         logLevel: "warn",
         shouldLog: true,
         metadata: {
-          _userId: context?._userId,
+          _userId: _context?._userId,
           timestamp,
           originalError: "Rate limit exceeded",
         },
@@ -79,7 +79,7 @@ export class ErrorMapper {
         logLevel: "info",
         shouldLog: false,
         metadata: {
-          _userId: context?._userId,
+          _userId: _context?._userId,
           timestamp,
         },
       };
@@ -100,9 +100,9 @@ export class ErrorMapper {
         logLevel: "warn",
         shouldLog: true,
         metadata: {
-          _userId: context?._userId,
-          clinicId: context?.clinicId,
-          action: context?.action,
+          _userId: _context?._userId,
+          clinicId: _context?.clinicId,
+          action: _context?.action,
           timestamp,
         },
       };
@@ -119,8 +119,8 @@ export class ErrorMapper {
         logLevel: "info",
         shouldLog: true,
         metadata: {
-          _userId: context?._userId,
-          clinicId: context?.clinicId,
+          _userId: _context?._userId,
+          clinicId: _context?.clinicId,
           timestamp,
           complianceIssue: true,
         },
@@ -143,8 +143,8 @@ export class ErrorMapper {
         logLevel: "error",
         shouldLog: true,
         metadata: {
-          _userId: context?._userId,
-          sessionId: context?.sessionId,
+          _userId: _context?._userId,
+          sessionId: _context?.sessionId,
           timestamp,
           serviceType: "ai",
         },
@@ -167,8 +167,8 @@ export class ErrorMapper {
         logLevel: "error",
         shouldLog: true,
         metadata: {
-          _userId: context?._userId,
-          clinicId: context?.clinicId,
+          _userId: _context?._userId,
+          clinicId: _context?.clinicId,
           timestamp,
           serviceType: "database",
         },
@@ -190,8 +190,8 @@ export class ErrorMapper {
         logLevel: "warn",
         shouldLog: true,
         metadata: {
-          _userId: context?._userId,
-          sessionId: context?.sessionId,
+          _userId: _context?._userId,
+          sessionId: _context?.sessionId,
           timestamp,
           complianceIssue: true,
           dataProtection: true,
@@ -216,9 +216,9 @@ export class ErrorMapper {
       logLevel: "error",
       shouldLog: true,
       metadata: {
-        _userId: context?._userId,
-        clinicId: context?.clinicId,
-        sessionId: context?.sessionId,
+        _userId: _context?._userId,
+        clinicId: _context?.clinicId,
+        sessionId: _context?.sessionId,
         timestamp,
         errorType: typeof error,
         hasStack: error instanceof Error && !!error.stack,
@@ -256,7 +256,7 @@ export class ErrorMapper {
         timestamp: new Date().toISOString(),
       },
       // Include request ID if available for support debugging
-      ...(_context?.sessionId && { requestId: context.sessionId }),
+      ...(_context?.sessionId && { requestId: _context.sessionId }),
     };
   }
 
@@ -276,10 +276,10 @@ export class ErrorMapper {
       code: mapped.code,
       statusCode: mapped.statusCode,
       _context: {
-        _userId: context?._userId,
-        clinicId: context?.clinicId,
-        sessionId: context?.sessionId,
-        action: context?.action,
+        _userId: _context?._userId,
+        clinicId: _context?.clinicId,
+        sessionId: _context?.sessionId,
+        action: _context?.action,
         timestamp: mapped.metadata?.timestamp,
       },
       metadata: mapped.metadata,

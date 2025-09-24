@@ -13,7 +13,7 @@
  */
 
 import { AIProvider } from "../ai-provider";
-import { logHealthcareError } from "../../../shared/src/logging/healthcare-logger";
+import { logHealthcareError } from "@neonpro/shared";
 
 // Simple error class for health analysis
 class HealthAnalysisError extends Error {

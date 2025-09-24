@@ -1,28 +1,12 @@
 /**
- * @fileoverview LGPD Anonymization and Data Masking Utilities
- *
- * This module provides utilities for anonymizing and masking personal data
- * in compliance with LGPD (Lei Geral de Proteção de Dados) requirements.
- *
- * @example
- * ```typescript
- * import { maskPatientData, anonymizePersonalData } from '@neonpro/security/anonymization';
- *
- * const patient = {
- *   name: 'João Silva',
- *   cpf: '12345678901',
- *   email: 'joao@email.com',
- *   phone: '11987654321',
- *   birthDate: '1990-01-01'
- * };
- *
- * const masked = maskPatientData(patient);
- * // Result: { name: 'J*** S****', cpf: '***.***.***-**', ... }
- * ```
+ * @fileoverview LGPD-compliant data anonymization utilities for healthcare
+ * @version 1.0.0
+ * @author NeonPro Platform Team
+ * @compliance LGPD, ANVISA
  */
 
 // ============================================================================
-// Types and Interfaces
+// TYPES & INTERFACES
 // ============================================================================
 
 /**
@@ -92,20 +76,35 @@ export interface AnonymizationMetadata {
 }
 
 // ============================================================================
-// Core Masking Functions
+// CONSTANTS
+// ============================================================================
+
+/**
+ * Version of the anonymization module
+ */
+export const ANONYMIZATION_VERSION = '1.0.0';
+
+/**
+ * Default masking options for standard LGPD compliance
+ */
+export const DEFAULT_MASKING_OPTIONS: MaskingOptions = {
+  maskChar: '*',
+  visibleStart: 2,
+  visibleEnd: 2,
+  preserveFormat: true,
+};
+
+// ============================================================================
+// CORE MASKING FUNCTIONS
 // ============================================================================
 
 /**
  * Mask a CPF according to LGPD guidelines
- *
- * @param cpf - CPF to mask
- * @param options - Masking options
- * @returns Masked CPF
  */
 export function maskCPF(cpf: string, options: MaskingOptions = {}): string {
   if (!cpf) return '';
+
   const cleaned = cpf.replace(/\D/g, '');
-  
   if (cleaned.length !== 11) {
     return cpf; // Return original if invalid CPF
   }
@@ -114,12 +113,17 @@ export function maskCPF(cpf: string, options: MaskingOptions = {}): string {
 
   if (preserveFormat) {
     // Preserve CPF format: XXX.XXX.XXX-XX
-    const firstPart = cleaned.slice(0, 3).padStart(3, maskChar);
-    const secondPart = cleaned.slice(3, 6).padStart(3, maskChar);
-    const thirdPart = cleaned.slice(6, 9).padStart(3, maskChar);
-    const fourthPart = cleaned.slice(9, 11).padStart(2, maskChar);
-    
-    return `${firstPart.slice(0, visibleStart)}${maskChar.repeat(3 - visibleStart)}.${secondPart.slice(0, visibleStart)}${maskChar.repeat(3 - visibleStart)}.${thirdPart.slice(0, visibleStart)}${maskChar.repeat(3 - visibleStart)}-${fourthPart.slice(0, visibleEnd)}${maskChar.repeat(2 - visibleEnd)}`;
+    const formatted = cleaned.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+    const visibleChars = visibleStart + visibleEnd;
+    const totalChars = formatted.length;
+
+    if (visibleChars >= totalChars) return formatted;
+
+    const start = formatted.slice(0, visibleStart);
+    const end = formatted.slice(-visibleEnd);
+    const middle = maskChar.repeat(totalChars - visibleChars);
+
+    return start + middle + end;
   }
 
   // Simple masking without format
@@ -127,21 +131,17 @@ export function maskCPF(cpf: string, options: MaskingOptions = {}): string {
   const maskedChars = maskChar.repeat(Math.max(0, cleaned.length - visibleChars));
   const startPart = cleaned.slice(0, visibleStart);
   const endPart = cleaned.slice(-visibleEnd);
-  
+
   return startPart + maskedChars + endPart;
 }
 
 /**
  * Mask a CNPJ according to LGPD guidelines
- *
- * @param cnpj - CNPJ to mask
- * @param options - Masking options
- * @returns Masked CNPJ
  */
 export function maskCNPJ(cnpj: string, options: MaskingOptions = {}): string {
   if (!cnpj) return '';
+
   const cleaned = cnpj.replace(/\D/g, '');
-  
   if (cleaned.length !== 14) {
     return cnpj; // Return original if invalid CNPJ
   }
@@ -150,13 +150,17 @@ export function maskCNPJ(cnpj: string, options: MaskingOptions = {}): string {
 
   if (preserveFormat) {
     // Preserve CNPJ format: XX.XXX.XXX/XXXX-XX
-    const firstPart = cleaned.slice(0, 2).padStart(2, maskChar);
-    const secondPart = cleaned.slice(2, 5).padStart(3, maskChar);
-    const thirdPart = cleaned.slice(5, 8).padStart(3, maskChar);
-    const fourthPart = cleaned.slice(8, 12).padStart(4, maskChar);
-    const fifthPart = cleaned.slice(12, 14).padStart(2, maskChar);
-    
-    return `${firstPart.slice(0, visibleStart)}${maskChar.repeat(2 - visibleStart)}.${secondPart.slice(0, visibleStart)}${maskChar.repeat(3 - visibleStart)}.${thirdPart.slice(0, visibleStart)}${maskChar.repeat(3 - visibleStart)}/${fourthPart.slice(0, visibleStart)}${maskChar.repeat(4 - visibleStart)}-${fifthPart.slice(0, visibleEnd)}${maskChar.repeat(2 - visibleEnd)}`;
+    const formatted = cleaned.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.$2.$3/$4-$5');
+    const visibleChars = visibleStart + visibleEnd;
+    const totalChars = formatted.length;
+
+    if (visibleChars >= totalChars) return formatted;
+
+    const start = formatted.slice(0, visibleStart);
+    const end = formatted.slice(-visibleEnd);
+    const middle = maskChar.repeat(totalChars - visibleChars);
+
+    return start + middle + end;
   }
 
   // Simple masking without format
@@ -164,38 +168,34 @@ export function maskCNPJ(cnpj: string, options: MaskingOptions = {}): string {
   const maskedChars = maskChar.repeat(Math.max(0, cleaned.length - visibleChars));
   const startPart = cleaned.slice(0, visibleStart);
   const endPart = cleaned.slice(-visibleEnd);
-  
+
   return startPart + maskedChars + endPart;
 }
 
 /**
  * Mask an email address
- *
- * @param email - Email to mask
- * @param options - Masking options
- * @returns Masked email
  */
 export function maskEmail(email: string, options: MaskingOptions = {}): string {
   if (!email) return '';
-  
+
   const { maskChar = '*', visibleStart = 2, visibleEnd = 1 } = options;
   const [localPart, domain] = email.split('@');
-  
+
   if (!localPart || !domain) {
     return email;
   }
 
   // Mask local part
   const visibleLocalChars = Math.min(visibleStart, localPart.length - 1);
-  const maskedLocal = localPart.slice(0, visibleLocalChars) + 
-                     maskChar.repeat(Math.max(0, localPart.length - visibleLocalChars - visibleEnd)) +
-                     localPart.slice(-visibleEnd);
+  const maskedLocal = localPart.slice(0, visibleLocalChars)
+    + maskChar.repeat(Math.max(0, localPart.length - visibleLocalChars - visibleEnd))
+    + localPart.slice(-visibleEnd);
 
   // Mask domain name (keep TLD visible)
   const domainParts = domain.split('.');
-  const tld = domainParts[domainParts.length - 1];
-  const maskedDomainParts = domainParts.slice(0, -1).map(part => 
-    maskChar.repeat(Math.max(1, part.length - 1)) + part.slice(-1)
+  const tld = domainParts.pop() || '';
+  const maskedDomainParts = domainParts.map(part =>
+    part.slice(0, 1) + maskChar.repeat(Math.max(0, part.length - 1))
   );
 
   return `${maskedLocal}@${maskedDomainParts.join('.')}.${tld}`;
@@ -203,17 +203,13 @@ export function maskEmail(email: string, options: MaskingOptions = {}): string {
 
 /**
  * Mask a phone number
- *
- * @param phone - Phone number to mask
- * @param options - Masking options
- * @returns Masked phone number
  */
 export function maskPhone(phone: string, options: MaskingOptions = {}): string {
   if (!phone) return '';
-  
+
   const { maskChar = '*', visibleStart = 2, visibleEnd = 2 } = options;
   const cleaned = phone.replace(/\D/g, '');
-  
+
   if (cleaned.length < 10) {
     return phone;
   }
@@ -222,33 +218,54 @@ export function maskPhone(phone: string, options: MaskingOptions = {}): string {
   const countryCode = cleaned.slice(0, 2);
   const areaCode = cleaned.slice(2, 4);
   const number = cleaned.slice(4);
-  
+
   const visibleNumberChars = Math.min(visibleStart + visibleEnd, number.length);
-  const maskedNumber = number.slice(0, visibleStart) + 
-                      maskChar.repeat(Math.max(0, number.length - visibleNumberChars)) +
-                      number.slice(-visibleEnd);
+  const maskedNumber = number.slice(0, visibleStart)
+    + maskChar.repeat(Math.max(0, number.length - visibleNumberChars))
+    + number.slice(-visibleEnd);
 
   return `+${countryCode} (${areaCode}) ${maskedNumber}`;
 }
 
 /**
+ * Mask a name (first and last name visible, middle names masked)
+ */
+export function maskName(name: string, options: MaskingOptions = {}): string {
+  if (!name) return '';
+
+  const { maskChar = '*' } = options;
+  const names = name.split(' ');
+
+  return names.map((namepart, index) => {
+    if (index === 0 || index === names.length - 1) {
+      return namepart.slice(0, 2) + maskChar.repeat(Math.max(0, namepart.length - 2));
+    }
+    return maskChar.repeat(namepart.length);
+  }).join(' ');
+}
+
+/**
+ * Mask an address
+ */
+export function maskAddress(address: string, options: MaskingOptions = {}): string {
+  if (!address) return '';
+
+  const { maskChar = '*' } = options;
+  return address.replace(/./g, maskChar);
+}
+
+// ============================================================================
+// PATIENT DATA MASKING
+// ============================================================================
+
+/**
  * Mask patient data according to LGPD guidelines
- *
- * @param patient - Patient data to mask
- * @param options - Masking options
- * @returns Masked patient data
  */
 export function maskPatientData(patient: PatientData, options: MaskingOptions = {}): PatientData {
   const masked: PatientData = { ...patient };
 
   if (masked.name) {
-    const names = masked.name.split(' ');
-    masked.name = names.map((name, index) => {
-      if (index === 0 || index === names.length - 1) {
-        return name.slice(0, 2) + '*'.repeat(Math.max(0, name.length - 2));
-      }
-      return '*'.repeat(name.length);
-    }).join(' ');
+    masked.name = maskName(masked.name, options);
   }
 
   if (masked.cpf) {
@@ -275,7 +292,7 @@ export function maskPatientData(patient: PatientData, options: MaskingOptions = 
   if (masked.address) {
     masked.address = {
       ...masked.address,
-      street: masked.address.street ? masked.address.street.replace(/./g, '*') : undefined,
+      street: masked.address.street ? maskAddress(masked.address.street, options) : undefined,
       number: masked.address.number ? '***' : undefined,
       complement: masked.address.complement ? '***' : undefined,
       neighborhood: masked.address.neighborhood ? '***' : undefined,
@@ -285,16 +302,16 @@ export function maskPatientData(patient: PatientData, options: MaskingOptions = 
   return masked;
 }
 
+// ============================================================================
+// ANONYMIZATION FUNCTIONS
+// ============================================================================
+
 /**
  * Complete anonymization of personal data
- *
- * @param data - Data to anonymize
- * @param complianceLevel - Level of anonymization to apply
- * @returns Anonymized data with metadata
  */
 export function anonymizePersonalData(
   data: Record<string, unknown>,
-  complianceLevel: LGPDComplianceLevel = 'basic'
+  complianceLevel: LGPDComplianceLevel = 'basic',
 ): { anonymizedData: Record<string, unknown>; metadata: AnonymizationMetadata } {
   const anonymizedData: Record<string, unknown> = {};
   const fieldsAnonymized: string[] = [];
@@ -302,7 +319,7 @@ export function anonymizePersonalData(
   const fieldsToAnonymize = {
     basic: ['name', 'cpf', 'cnpj', 'email', 'phone', 'birthDate'],
     enhanced: ['name', 'cpf', 'cnpj', 'email', 'phone', 'birthDate', 'address'],
-    full_anonymization: ['name', 'cpf', 'cnpj', 'email', 'phone', 'birthDate', 'address', 'id']
+    full_anonymization: ['name', 'cpf', 'cnpj', 'email', 'phone', 'birthDate', 'address', 'id'],
   };
 
   const targetFields = fieldsToAnonymize[complianceLevel];
@@ -327,7 +344,7 @@ export function anonymizePersonalData(
           anonymizedData[key] = `**/**/${date.getFullYear()}`;
           break;
         default:
-          anonymizedData[key] = typeof value === 'string' ? value.replace(/./g, '*') : '***';
+          anonymizedData[key] = '***ANONYMIZED***';
       }
       fieldsAnonymized.push(key);
     } else {
@@ -340,8 +357,41 @@ export function anonymizePersonalData(
     method: 'lgpd_compliant_masking',
     complianceLevel,
     fieldsAnonymized,
-    version: '1.0.0'
+    version: ANONYMIZATION_VERSION,
   };
 
   return { anonymizedData, metadata };
+}
+
+// ============================================================================
+// UTILITY FUNCTIONS
+// ============================================================================
+
+/**
+ * Check if data has been anonymized
+ */
+export function isDataAnonymized(data: Record<string, unknown>): boolean {
+  const commonAnonymizedPatterns = ['***', '***ANONYMIZED***', '**/**'];
+
+  return Object.values(data).some(value =>
+    typeof value === 'string'
+    && commonAnonymizedPatterns.some(pattern => value.includes(pattern))
+  );
+}
+
+/**
+ * Generate privacy report for anonymized data
+ */
+export function generatePrivacyReport(metadata: AnonymizationMetadata): string {
+  return `
+Privacy Anonymization Report
+============================
+Anonymized At: ${metadata.anonymizedAt}
+Method: ${metadata.method}
+Compliance Level: ${metadata.complianceLevel}
+Fields Anonymized: ${metadata.fieldsAnonymized.join(', ')}
+Version: ${metadata.version}
+============================
+This data has been processed according to LGPD requirements.
+  `.trim();
 }

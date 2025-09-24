@@ -1,6 +1,6 @@
 /**
  * NeonPro Accessibility Enhancements
- * 
+ *
  * Comprehensive WCAG 2.1 AA+ accessibility features for healthcare chat components
  * Features:
  * - Screen reader support with ARIA labels and live regions
@@ -13,37 +13,37 @@
  * - Portuguese accessibility labels
  */
 
-import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Button } from '../ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
-import { Badge } from '../ui/badge';
-import { Alert, AlertDescription } from '../ui/alert';
 import {
-  Eye,
-  Volume2,
-  VolumeX,
-  Keyboard,
-  Moon,
-  Sun,
-  RotateCcw,
   Accessibility,
   ChevronDown,
   ChevronUp,
+  Eye,
+  Keyboard,
+  Moon,
+  Pause,
   Play,
-  Pause
+  RotateCcw,
+  Sun,
+  Volume2,
+  VolumeX,
 } from 'lucide-react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import {
+  type AccessibilitySettings,
+  applyFontSize,
+  applyHighContrastTheme,
+  applyReducedMotion,
+  DEFAULT_ACCESSIBILITY_SETTINGS,
+  FONT_SIZE_MAP,
+  type FontSize,
+  type HighContrastTheme,
+} from '../../config/accessibility-theme';
+import { Alert, AlertDescription } from '../ui/alert';
+import { Badge } from '../ui/badge';
+import { Button } from '../ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 
 // Types for accessibility features
-interface AccessibilitySettings {
-  highContrast: boolean;
-  reducedMotion: boolean;
-  screenReader: boolean;
-  fontSize: 'small' | 'medium' | 'large' | 'x-large';
-  textToSpeech: boolean;
-  keyboardMode: boolean;
-  focusVisible: boolean;
-  announcementsEnabled: boolean;
-}
 
 interface AnnouncerProps {
   message: string;
@@ -63,43 +63,33 @@ interface KeyboardNavigationProps {
   onActivate?: () => void;
 }
 
-interface HighContrastTheme {
-  primary: string;
-  secondary: string;
-  background: string;
-  text: string;
-  border: string;
-  focus: string;
-  success: string;
-  warning: string;
-  error: string;
-}
-
 // Screen Reader Announcer Component
 export const ScreenReaderAnnouncer: React.FC<AnnouncerProps> = ({
   message,
   priority,
-  timeout = 5000
+  timeout = 5000,
 }) => {
-  const [announcements, setAnnouncements] = useState<Array<{ id: string; message: string; priority: string }>>([]);
-  
+  const [announcements, setAnnouncements] = useState<
+    Array<{ id: string; message: string; priority: string }>
+  >([]);
+
   useEffect(() => {
     if (!message) return;
-    
+
     const id = Math.random().toString(36).substr(2, 9);
     const announcement = { id, message, priority };
-    
+
     setAnnouncements(prev => [...prev, announcement]);
-    
+
     const timer = setTimeout(() => {
       setAnnouncements(prev => prev.filter(a => a.id !== id));
     }, timeout);
-    
+
     return () => clearTimeout(timer);
   }, [message, priority, timeout]);
 
   return (
-    <div className="sr-only" aria-live={priority} aria-atomic="true">
+    <div className='sr-only' aria-live={priority} aria-atomic='true'>
       {announcements.map(a => a.message).join('. ')}
     </div>
   );
@@ -109,7 +99,7 @@ export const ScreenReaderAnnouncer: React.FC<AnnouncerProps> = ({
 export const FocusTrap: React.FC<FocusTrapProps> = ({
   children,
   active,
-  onEscape
+  onEscape,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -121,9 +111,9 @@ export const FocusTrap: React.FC<FocusTrapProps> = ({
 
     // Get all focusable elements
     const focusableElements = container.querySelectorAll(
-      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
     );
-    
+
     const firstElement = focusableElements[0] as HTMLElement;
     const lastElement = focusableElements[focusableElements.length - 1] as HTMLElement;
 
@@ -166,7 +156,7 @@ export const FocusTrap: React.FC<FocusTrapProps> = ({
 export const KeyboardNavigation: React.FC<KeyboardNavigationProps> = ({
   children,
   onNavigate,
-  onActivate
+  onActivate,
 }) => {
   const ref = useRef<HTMLDivElement>(null);
 
@@ -209,7 +199,7 @@ export const KeyboardNavigation: React.FC<KeyboardNavigationProps> = ({
   }, [handleKeyDown]);
 
   return (
-    <div ref={ref} role="application" aria-label="Navegação por teclado">
+    <div ref={ref} role='application' aria-label='Navegação por teclado'>
       {children}
     </div>
   );
@@ -217,68 +207,40 @@ export const KeyboardNavigation: React.FC<KeyboardNavigationProps> = ({
 
 // Accessibility Settings Panel
 export const AccessibilitySettingsPanel: React.FC = () => {
-  const [settings, setSettings] = useState<AccessibilitySettings>({
-    highContrast: false,
-    reducedMotion: false,
-    screenReader: false,
-    fontSize: 'medium',
-    textToSpeech: false,
-    keyboardMode: false,
-    focusVisible: true,
-    announcementsEnabled: true
-  });
+  const [settings, setSettings] = useState<AccessibilitySettings>(DEFAULT_ACCESSIBILITY_SETTINGS);
 
   const [isOpen, setIsOpen] = useState(false);
 
   const updateSetting = useCallback(<K extends keyof AccessibilitySettings>(
     key: K,
-    value: AccessibilitySettings[K]
+    value: AccessibilitySettings[K],
   ) => {
     setSettings(prev => ({ ...prev, [key]: value }));
-    
-    // Apply settings to document
+
+    // Apply settings to document using utility functions
     if (key === 'highContrast') {
-      document.documentElement.classList.toggle('high-contrast', value);
+      applyHighContrastTheme(value as boolean);
     }
     if (key === 'reducedMotion') {
-      document.documentElement.classList.toggle('reduced-motion', value);
+      applyReducedMotion(value as boolean);
     }
     if (key === 'fontSize') {
-      document.documentElement.setAttribute('data-font-size', value);
+      applyFontSize(value as FontSize);
     }
   }, []);
-
-  const _highContrastTheme: HighContrastTheme = {
-    primary: '#000000',
-    secondary: '#ffffff',
-    background: '#ffffff',
-    text: '#000000',
-    border: '#000000',
-    focus: '#0000ff',
-    success: '#008000',
-    warning: '#ff8c00',
-    error: '#ff0000'
-  };
-
-  const _fontSizeMap = {
-    small: '14px',
-    medium: '16px',
-    large: '18px',
-    'x-large': '20px'
-  };
 
   useEffect(() => {
     // Load settings from localStorage
     const savedSettings = localStorage.getItem('accessibility-settings');
     if (savedSettings) {
       try {
-        const parsed = JSON.parse(savedSettings);
+        const parsed = JSON.parse(savedSettings) as AccessibilitySettings;
         setSettings(parsed);
-        
-        // Apply saved settings
-        Object.entries(parsed).forEach(([key, value]) => {
-          updateSetting(key as keyof AccessibilitySettings, value);
-        });
+
+        // Apply saved settings with conditional checks
+        applyHighContrastTheme(parsed.highContrast);
+        applyReducedMotion(parsed.reducedMotion);
+        applyFontSize(parsed.fontSize);
       } catch (error) {
         console.error('Failed to load accessibility settings:', error);
       }
@@ -304,13 +266,13 @@ export const AccessibilitySettingsPanel: React.FC = () => {
   if (!isOpen) {
     return (
       <Button
-        variant="outline"
-        size="sm"
+        variant='outline'
+        size='sm'
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-4 right-4 z-50 shadow-lg"
-        aria-label="Abrir configurações de acessibilidade"
+        className='fixed bottom-4 right-4 z-50 shadow-lg'
+        aria-label='Abrir configurações de acessibilidade'
       >
-        <Accessibility className="h-4 w-4 mr-2" />
+        <Accessibility className='h-4 w-4 mr-2' />
         Acessibilidade
       </Button>
     );
@@ -318,166 +280,166 @@ export const AccessibilitySettingsPanel: React.FC = () => {
 
   return (
     <FocusTrap active={isOpen} onEscape={() => setIsOpen(false)}>
-      <Card className="fixed bottom-4 right-4 w-80 z-50 shadow-xl border-2">
-        <CardHeader className="pb-3">
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-lg flex items-center gap-2">
-              <Accessibility className="h-5 w-5" />
+      <Card className='fixed bottom-4 right-4 w-80 z-50 shadow-xl border-2'>
+        <CardHeader className='pb-3'>
+          <div className='flex items-center justify-between'>
+            <CardTitle className='text-lg flex items-center gap-2'>
+              <Accessibility className='h-5 w-5' />
               Configurações de Acessibilidade
             </CardTitle>
             <Button
-              variant="ghost"
-              size="sm"
+              variant='ghost'
+              size='sm'
               onClick={() => setIsOpen(false)}
-              aria-label="Fechar configurações"
+              aria-label='Fechar configurações'
             >
               ×
             </Button>
           </div>
         </CardHeader>
-        <CardContent className="space-y-4 max-h-96 overflow-y-auto">
+        <CardContent className='space-y-4 max-h-96 overflow-y-auto'>
           {/* High Contrast */}
-          <div className="space-y-2">
-            <label className="flex items-center justify-between cursor-pointer">
-              <span className="text-sm font-medium">Alto Contraste</span>
+          <div className='space-y-2'>
+            <label className='flex items-center justify-between cursor-pointer'>
+              <span className='text-sm font-medium'>Alto Contraste</span>
               <Button
-                variant={settings.highContrast ? "default" : "outline"}
-                size="sm"
+                variant={settings.highContrast ? 'default' : 'outline'}
+                size='sm'
                 onClick={() => updateSetting('highContrast', !settings.highContrast)}
                 aria-pressed={settings.highContrast}
               >
-                {settings.highContrast ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+                {settings.highContrast ? <Sun className='h-4 w-4' /> : <Moon className='h-4 w-4' />}
               </Button>
             </label>
           </div>
 
           {/* Reduced Motion */}
-          <div className="space-y-2">
-            <label className="flex items-center justify-between cursor-pointer">
-              <span className="text-sm font-medium">Reduzir Animações</span>
+          <div className='space-y-2'>
+            <label className='flex items-center justify-between cursor-pointer'>
+              <span className='text-sm font-medium'>Reduzir Animações</span>
               <Button
-                variant={settings.reducedMotion ? "default" : "outline"}
-                size="sm"
+                variant={settings.reducedMotion ? 'default' : 'outline'}
+                size='sm'
                 onClick={() => updateSetting('reducedMotion', !settings.reducedMotion)}
                 aria-pressed={settings.reducedMotion}
               >
-                {settings.reducedMotion ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+                {settings.reducedMotion
+                  ? <Pause className='h-4 w-4' />
+                  : <Play className='h-4 w-4' />}
               </Button>
             </label>
           </div>
 
           {/* Font Size */}
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Tamanho do Texto</label>
-            <div className="flex gap-2">
-              {(['small', 'medium', 'large', 'x-large'] as const).map(size => (
+          <div className='space-y-2'>
+            <label className='text-sm font-medium'>Tamanho do Texto</label>
+            <div className='flex gap-2'>
+              {(Object.keys(FONT_SIZE_MAP) as FontSize[]).map(size => (
                 <Button
                   key={size}
-                  variant={settings.fontSize === size ? "default" : "outline"}
-                  size="sm"
+                  variant={settings.fontSize === size ? 'default' : 'outline'}
+                  size='sm'
                   onClick={() => updateSetting('fontSize', size)}
                   aria-label={`Tamanho ${size}`}
-                  className="flex-1"
+                  className='flex-1'
                 >
                   {size === 'small' && 'A'}
                   {size === 'medium' && 'A'}
-                  {size === 'large' && <span className="text-lg">A</span>}
-                  {size === 'x-large' && <span className="text-xl">A</span>}
+                  {size === 'large' && <span className='text-lg'>A</span>}
+                  {size === 'x-large' && <span className='text-xl'>A</span>}
                 </Button>
               ))}
             </div>
           </div>
 
           {/* Text to Speech */}
-          <div className="space-y-2">
-            <label className="flex items-center justify-between cursor-pointer">
-              <span className="text-sm font-medium">Texto para Voz</span>
+          <div className='space-y-2'>
+            <label className='flex items-center justify-between cursor-pointer'>
+              <span className='text-sm font-medium'>Texto para Voz</span>
               <Button
-                variant={settings.textToSpeech ? "default" : "outline"}
-                size="sm"
+                variant={settings.textToSpeech ? 'default' : 'outline'}
+                size='sm'
                 onClick={() => updateSetting('textToSpeech', !settings.textToSpeech)}
                 aria-pressed={settings.textToSpeech}
               >
-                {settings.textToSpeech ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
+                {settings.textToSpeech
+                  ? <Volume2 className='h-4 w-4' />
+                  : <VolumeX className='h-4 w-4' />}
               </Button>
             </label>
           </div>
 
           {/* Keyboard Mode */}
-          <div className="space-y-2">
-            <label className="flex items-center justify-between cursor-pointer">
-              <span className="text-sm font-medium">Modo Teclado</span>
+          <div className='space-y-2'>
+            <label className='flex items-center justify-between cursor-pointer'>
+              <span className='text-sm font-medium'>Modo Teclado</span>
               <Button
-                variant={settings.keyboardMode ? "default" : "outline"}
-                size="sm"
+                variant={settings.keyboardMode ? 'default' : 'outline'}
+                size='sm'
                 onClick={() => updateSetting('keyboardMode', !settings.keyboardMode)}
                 aria-pressed={settings.keyboardMode}
               >
-                <Keyboard className="h-4 w-4" />
+                <Keyboard className='h-4 w-4' />
               </Button>
             </label>
           </div>
 
           {/* Focus Visible */}
-          <div className="space-y-2">
-            <label className="flex items-center justify-between cursor-pointer">
-              <span className="text-sm font-medium">Indicador de Foco</span>
+          <div className='space-y-2'>
+            <label className='flex items-center justify-between cursor-pointer'>
+              <span className='text-sm font-medium'>Indicador de Foco</span>
               <Button
-                variant={settings.focusVisible ? "default" : "outline"}
-                size="sm"
+                variant={settings.focusVisible ? 'default' : 'outline'}
+                size='sm'
                 onClick={() => updateSetting('focusVisible', !settings.focusVisible)}
                 aria-pressed={settings.focusVisible}
               >
-                <Eye className="h-4 w-4" />
+                <Eye className='h-4 w-4' />
               </Button>
             </label>
           </div>
 
           {/* Announcements */}
-          <div className="space-y-2">
-            <label className="flex items-center justify-between cursor-pointer">
-              <span className="text-sm font-medium">Anúncios de Tela</span>
+          <div className='space-y-2'>
+            <label className='flex items-center justify-between cursor-pointer'>
+              <span className='text-sm font-medium'>Anúncios de Tela</span>
               <Button
-                variant={settings.announcementsEnabled ? "default" : "outline"}
-                size="sm"
-                onClick={() => updateSetting('announcementsEnabled', !settings.announcementsEnabled)}
+                variant={settings.announcementsEnabled ? 'default' : 'outline'}
+                size='sm'
+                onClick={() =>
+                  updateSetting('announcementsEnabled', !settings.announcementsEnabled)}
                 aria-pressed={settings.announcementsEnabled}
               >
-                {settings.announcementsEnabled ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
+                {settings.announcementsEnabled
+                  ? <Volume2 className='h-4 w-4' />
+                  : <VolumeX className='h-4 w-4' />}
               </Button>
             </label>
           </div>
 
           {/* Reset Button */}
           <Button
-            variant="outline"
-            size="sm"
+            variant='outline'
+            size='sm'
             onClick={() => {
-              const defaultSettings: AccessibilitySettings = {
-                highContrast: false,
-                reducedMotion: false,
-                screenReader: false,
-                fontSize: 'medium',
-                textToSpeech: false,
-                keyboardMode: false,
-                focusVisible: true,
-                announcementsEnabled: true
-              };
-              Object.entries(defaultSettings).forEach(([key, value]) => {
-                updateSetting(key as keyof AccessibilitySettings, value);
-              });
+              setSettings(DEFAULT_ACCESSIBILITY_SETTINGS);
+              // Apply default settings
+              applyHighContrastTheme(DEFAULT_ACCESSIBILITY_SETTINGS.highContrast);
+              applyReducedMotion(DEFAULT_ACCESSIBILITY_SETTINGS.reducedMotion);
+              applyFontSize(DEFAULT_ACCESSIBILITY_SETTINGS.fontSize);
             }}
-            className="w-full"
+            className='w-full'
           >
-            <RotateCcw className="h-4 w-4 mr-2" />
+            <RotateCcw className='h-4 w-4 mr-2' />
             Restaurar Padrões
           </Button>
 
           {/* Keyboard Shortcuts Info */}
           <Alert>
-            <Keyboard className="h-4 w-4" />
-            <AlertDescription className="text-xs">
-              <strong>Atalhos do Teclado:</strong><br />
+            <Keyboard className='h-4 w-4' />
+            <AlertDescription className='text-xs'>
+              <strong>Atalhos do Teclado:</strong>
+              <br />
               • Tab / Shift+Tab: Navegar<br />
               • Enter / Espaço: Ativar<br />
               • Esc: Fechar diálogos<br />
@@ -511,7 +473,7 @@ interface AccessibleChatMessageProps {
 export const AccessibleChatMessage: React.FC<AccessibleChatMessageProps> = ({
   message,
   isUser = false,
-  onAction
+  onAction,
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
@@ -522,7 +484,7 @@ export const AccessibleChatMessage: React.FC<AccessibleChatMessageProps> = ({
       month: '2-digit',
       year: 'numeric',
       hour: '2-digit',
-      minute: '2-digit'
+      minute: '2-digit',
     });
   };
 
@@ -551,8 +513,8 @@ export const AccessibleChatMessage: React.FC<AccessibleChatMessageProps> = ({
     >
       <div
         className={`max-w-lg lg:max-w-xl rounded-lg shadow-sm ${
-          isUser 
-            ? 'bg-blue-600 text-white' 
+          isUser
+            ? 'bg-blue-600 text-white'
             : 'bg-white border border-gray-200 text-gray-900'
         }`}
         role={isUser ? 'user' : 'assistant'}
@@ -560,102 +522,105 @@ export const AccessibleChatMessage: React.FC<AccessibleChatMessageProps> = ({
         aria-describedby={`message-${message.id}-content`}
       >
         {/* Message Header */}
-        <div 
+        <div
           id={`message-${message.id}-title`}
-          className="flex items-center justify-between p-3 pb-2 border-b border-gray-200"
+          className='flex items-center justify-between p-3 pb-2 border-b border-gray-200'
         >
-          <div className="flex items-center gap-2">
-            <span className="text-sm font-medium">
+          <div className='flex items-center gap-2'>
+            <span className='text-sm font-medium'>
               {isUser ? 'Você' : message.metadata?.agentType || 'Assistente'}
             </span>
             {message.metadata?.complianceLevel && (
-              <Badge 
-                variant={message.metadata.complianceLevel === 'restricted' ? 'destructive' : 'secondary'}
-                className="text-xs"
+              <Badge
+                variant={message.metadata.complianceLevel === 'restricted'
+                  ? 'destructive'
+                  : 'secondary'}
+                className='text-xs'
               >
                 {message.metadata.complianceLevel === 'restricted' ? 'Restrito' : 'Padrão'}
               </Badge>
             )}
           </div>
-          <time 
+          <time
             dateTime={message.timestamp.toISOString()}
-            className="text-xs opacity-75"
+            className='text-xs opacity-75'
           >
             {formatTime(message.timestamp)}
           </time>
         </div>
 
         {/* Message Content */}
-        <div 
+        <div
           id={`message-${message.id}-content`}
-          className="p-3"
+          className='p-3'
         >
-          <p className="text-sm leading-relaxed whitespace-pre-wrap break-words">
-            {isExpanded || !isLongContent 
-              ? message.content 
-              : `${message.content.substring(0, 300)}...`
-            }
+          <p className='text-sm leading-relaxed whitespace-pre-wrap break-words'>
+            {isExpanded || !isLongContent
+              ? message.content
+              : `${message.content.substring(0, 300)}...`}
           </p>
-          
+
           {isLongContent && (
             <Button
-              variant="ghost"
-              size="sm"
+              variant='ghost'
+              size='sm'
               onClick={() => setIsExpanded(!isExpanded)}
-              className="mt-2 p-0 h-auto text-xs"
+              className='mt-2 p-0 h-auto text-xs'
               aria-expanded={isExpanded}
               aria-controls={`message-${message.id}-content`}
             >
-              {isExpanded ? (
-                <>
-                  <ChevronUp className="h-3 w-3 mr-1" />
-                  Mostrar menos
-                </>
-              ) : (
-                <>
-                  <ChevronDown className="h-3 w-3 mr-1" />
-                  Mostrar mais
-                </>
-              )}
+              {isExpanded
+                ? (
+                  <>
+                    <ChevronUp className='h-3 w-3 mr-1' />
+                    Mostrar menos
+                  </>
+                )
+                : (
+                  <>
+                    <ChevronDown className='h-3 w-3 mr-1' />
+                    Mostrar mais
+                  </>
+                )}
             </Button>
           )}
 
           {message.metadata?.processingTime && (
-            <p className="text-xs mt-2 opacity-75">
+            <p className='text-xs mt-2 opacity-75'>
               Processado em {Math.round(message.metadata.processingTime)}ms
             </p>
           )}
         </div>
 
         {/* Message Actions */}
-        <div className="flex items-center gap-2 p-3 pt-2 border-t border-gray-200">
+        <div className='flex items-center gap-2 p-3 pt-2 border-t border-gray-200'>
           <Button
-            variant="ghost"
-            size="sm"
+            variant='ghost'
+            size='sm'
             onClick={() => onAction?.('copy')}
-            className="text-xs"
-            aria-label="Copiar mensagem"
+            className='text-xs'
+            aria-label='Copiar mensagem'
           >
             Copiar
           </Button>
-          
+
           <Button
-            variant="ghost"
-            size="sm"
+            variant='ghost'
+            size='sm'
             onClick={handleSpeak}
-            className="text-xs"
+            className='text-xs'
             aria-label={isSpeaking ? 'Parar leitura' : 'Ouvir mensagem'}
             aria-pressed={isSpeaking}
           >
             {isSpeaking ? 'Parar' : 'Ouvir'}
           </Button>
-          
+
           <Button
-            variant="ghost"
-            size="sm"
+            variant='ghost'
+            size='sm'
             onClick={() => onAction?.('report')}
-            className="text-xs"
-            aria-label="Reportar problema"
+            className='text-xs'
+            aria-label='Reportar problema'
           >
             Reportar
           </Button>
@@ -684,7 +649,7 @@ export const SkipLinks: React.FC = () => {
 
     document.addEventListener('keydown', handleKeyDown);
     document.addEventListener('keyup', handleKeyUp);
-    
+
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
       document.removeEventListener('keyup', handleKeyUp);
@@ -694,12 +659,12 @@ export const SkipLinks: React.FC = () => {
   if (!showSkipLinks) return null;
 
   return (
-    <nav className="fixed top-0 left-0 z-50 bg-white border-b shadow-lg p-2" role="navigation">
-      <div className="flex gap-2">
+    <nav className='fixed top-0 left-0 z-50 bg-white border-b shadow-lg p-2' role='navigation'>
+      <div className='flex gap-2'>
         <a
-          href="#main-content"
-          className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700"
-          onClick={(e) => {
+          href='#main-content'
+          className='px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700'
+          onClick={e => {
             e.preventDefault();
             document.getElementById('main-content')?.focus();
           }}
@@ -707,9 +672,9 @@ export const SkipLinks: React.FC = () => {
           Pular para conteúdo principal
         </a>
         <a
-          href="#navigation"
-          className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700"
-          onClick={(e) => {
+          href='#navigation'
+          className='px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700'
+          onClick={e => {
             e.preventDefault();
             document.getElementById('navigation')?.focus();
           }}
@@ -717,9 +682,9 @@ export const SkipLinks: React.FC = () => {
           Pular para navegação
         </a>
         <a
-          href="#search"
-          className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700"
-          onClick={(e) => {
+          href='#search'
+          className='px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700'
+          onClick={e => {
             e.preventDefault();
             document.getElementById('search')?.focus();
           }}
@@ -739,19 +704,19 @@ interface AccessibleLoadingProps {
 
 export const AccessibleLoading: React.FC<AccessibleLoadingProps> = ({
   message = 'Carregando...',
-  description = 'Por favor, aguarde enquanto processamos sua solicitação'
+  description = 'Por favor, aguarde enquanto processamos sua solicitação',
 }) => {
   return (
-    <div 
-      className="flex items-center justify-center p-4"
-      role="status"
-      aria-live="polite"
-      aria-busy="true"
+    <div
+      className='flex items-center justify-center p-4'
+      role='status'
+      aria-live='polite'
+      aria-busy='true'
     >
-      <div className="text-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2" />
-        <p className="font-medium">{message}</p>
-        <p className="text-sm text-gray-500">{description}</p>
+      <div className='text-center'>
+        <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2' />
+        <p className='font-medium'>{message}</p>
+        <p className='text-sm text-gray-500'>{description}</p>
       </div>
     </div>
   );
@@ -782,7 +747,7 @@ export class AccessibleErrorBoundary extends React.Component<
     return {
       hasError: true,
       error,
-      errorId: Math.random().toString(36).substr(2, 9)
+      errorId: Math.random().toString(36).substr(2, 9),
     };
   }
 
@@ -793,27 +758,28 @@ export class AccessibleErrorBoundary extends React.Component<
   render() {
     if (this.state.hasError) {
       return (
-        <div 
-          role="alert"
-          className="p-4 border border-red-300 bg-red-50 rounded-lg"
+        <div
+          role='alert'
+          className='p-4 border border-red-300 bg-red-50 rounded-lg'
           aria-labelledby={`error-${this.state.errorId}-title`}
           aria-describedby={`error-${this.state.errorId}-description`}
         >
-          <h2 
+          <h2
             id={`error-${this.state.errorId}-title`}
-            className="text-lg font-semibold text-red-800 mb-2"
+            className='text-lg font-semibold text-red-800 mb-2'
           >
             Ocorreu um erro inesperado
           </h2>
-          <p 
+          <p
             id={`error-${this.state.errorId}-description`}
-            className="text-red-700 mb-4"
+            className='text-red-700 mb-4'
           >
-            Desculpe pelo inconveniente. Por favor, tente novamente ou contate o suporte se o problema persistir.
+            Desculpe pelo inconveniente. Por favor, tente novamente ou contate o suporte se o
+            problema persistir.
           </p>
           <Button
             onClick={() => this.setState({ hasError: false })}
-            variant="outline"
+            variant='outline'
           >
             Tentar novamente
           </Button>
@@ -823,13 +789,10 @@ export class AccessibleErrorBoundary extends React.Component<
 
     return this.props.children;
   }
-};
+}
 
 // Export all accessibility components
-export {
-  AccessibilitySettings,
-  type HighContrastTheme
-};
+export { AccessibilitySettings, type HighContrastTheme };
 
 export default {
   ScreenReaderAnnouncer,
@@ -839,5 +802,5 @@ export default {
   AccessibleChatMessage,
   SkipLinks,
   AccessibleLoading,
-  AccessibleErrorBoundary
+  AccessibleErrorBoundary,
 };

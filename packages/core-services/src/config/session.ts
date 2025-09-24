@@ -64,7 +64,8 @@ export class MemorySessionStore implements SessionStore {
 
   async cleanup(): Promise<void> {
     const now = new Date();
-    for (const [sessionId, session] of this.sessions.entries()) {
+    const entries = Array.from(this.sessions.entries());
+    for (const [sessionId, session] of entries) {
       if (new Date(session.expiresAt) < now) {
         this.sessions.delete(sessionId);
       }

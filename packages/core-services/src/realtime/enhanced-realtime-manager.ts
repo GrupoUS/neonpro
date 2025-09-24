@@ -18,7 +18,7 @@ import {
   SupabaseClient,
 } from "@supabase/supabase-js";
 import { QueryClient } from "@tanstack/react-query";
-import { logHealthcareError, realtimeLogger } from '../../../shared/src/logging/healthcare-logger';
+import { logHealthcareError, realtimeLogger } from "@neonpro/shared";
 import { HealthcareResilienceService } from "../resilience";
 
 // ============================================================================

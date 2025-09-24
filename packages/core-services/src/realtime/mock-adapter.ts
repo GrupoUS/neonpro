@@ -19,7 +19,7 @@ import type {
   RealtimeAdapterConfig,
 } from "./event-adapter.js";
 import { createRealtimeEvent, validateParticipant } from "./event-adapter.js";
-import { logHealthcareError, realtimeLogger } from '../../../shared/src/logging/healthcare-logger';
+import { logHealthcareError, realtimeLogger } from "@neonpro/shared";
 
 export class MockRealtimeAdapter implements RealtimeEventAdapter {
   private channelStates = new Map<string, RealtimeChannelState>();

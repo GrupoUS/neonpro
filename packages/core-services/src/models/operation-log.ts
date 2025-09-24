@@ -10,7 +10,8 @@ import type {
   MedicalSpecialty,
   AIFeatureCode,
 } from "@neonpro/types";
-import { logHealthcareError, auditLogger } from '../../../shared/src/logging/healthcare-logger';
+import { logHealthcareError } from "@neonpro/shared";
+import { getLogger } from "../config/logger";
 
 // ================================================
 // OPERATION LOG INTERFACES
@@ -823,12 +824,12 @@ export class OperationLog {
           consentIssues:
             existing.compliance.consentIssues +
             (entry.consentStatus !== "valid" ? 1 : 0),
-          regulatoryFlags: [
-            ...new Set([
+          regulatoryFlags: Array.from(
+            new Set([
               ...existing.compliance.regulatoryFlags,
               ...entry.regulatoryFlags,
-            ]),
-          ],
+            ])
+          ),
         };
 
         // Replace the entire aggregation object
@@ -939,7 +940,8 @@ export class OperationLog {
 
   private triggerCriticalAlert(entry: OperationLogEntry): void {
     // In a real implementation, this would integrate with alerting systems
-    auditLogger.warn(`Critical operation logged`, {
+    const logger = getLogger();
+    logger.warn(`Critical operation logged`, {
       id: entry.id,
       operation: entry.operation,
       clinicId: entry.clinicId,

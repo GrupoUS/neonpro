@@ -41,13 +41,13 @@ describe('Integration Test: Query Upcoming Appointments', () => {
           permissions: ['read:appointments'],
         },
       }),
-    }
+    });
 
-    expect(response.status).toBe(200
-    const data = await response.json(
-    expect(data.response).toBeDefined(
-    expect(data.sessionId).toBe('test-appointment-session')
-  }
+    expect(response.status).toBe(200);
+    const data = await response.json();
+    expect(data.response).toBeDefined();
+    expect(data.sessionId).toBe('test-appointment-session');
+  });
 
   it('T015 should return structured appointment data', async () => {
     const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
@@ -65,16 +65,16 @@ describe('Integration Test: Query Upcoming Appointments', () => {
           permissions: ['read:appointments'],
         },
       }),
-    }
+    });
 
-    expect(response.status).toBe(200
-    const data = await response.json(
+    expect(response.status).toBe(200);
+    const data = await response.json();
     
     // Response should contain appointment-related information
-    expect(data.response).toBeDefined(
+    expect(data.response).toBeDefined();
     // Should handle LGPD compliance for appointment data
     expect(data.response).not.toContain('ssn'); // No sensitive PII
-  }
+  });
 
   it('T015 should filter appointments by user permissions', async () => {
     const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
@@ -92,16 +92,16 @@ describe('Integration Test: Query Upcoming Appointments', () => {
           permissions: ['read:own-appointments'], // Limited permissions
         },
       }),
-    }
+    });
 
-    expect(response.status).toBe(200
-    const data = await response.json(
+    expect(response.status).toBe(200);
+    const data = await response.json();
     
     // Should respect user's limited permissions
-    expect(data.response).toBeDefined(
+    expect(data.response).toBeDefined();
     // Should not expose other users' appointments
-    expect(data.response).not.toContain('unauthorized')
-  }
+    expect(data.response).not.toContain('unauthorized');
+  });
 
   it('T015 should handle appointment queries with specific criteria', async () => {
     const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
@@ -119,20 +119,20 @@ describe('Integration Test: Query Upcoming Appointments', () => {
           permissions: ['read:appointments'],
         },
       }),
-    }
+    });
 
-    expect(response.status).toBe(200
-    const data = await response.json(
-    expect(data.response).toBeDefined(
-    expect(data.sessionId).toBe('test-criteria-session')
-  }
+    expect(response.status).toBe(200);
+    const data = await response.json();
+    expect(data.response).toBeDefined();
+    expect(data.sessionId).toBe('test-criteria-session');
+  });
 
   it('T015 should handle appointment queries for different time periods', async () => {
     const testQueries = [
       'appointments this week',
       'appointments next month',
       'appointments today',
-      'appointments for the rest of the day')
+      'appointments for the rest of the day'
     ];
 
     for (const query of testQueries) {
@@ -151,13 +151,13 @@ describe('Integration Test: Query Upcoming Appointments', () => {
             permissions: ['read:appointments'],
           },
         }),
-      }
+      });
 
-      expect(response.status).toBe(200
-      const data = await response.json(
-      expect(data.response).toBeDefined(
+      expect(response.status).toBe(200);
+      const data = await response.json();
+      expect(data.response).toBeDefined();
     }
-  }
+  });
 
   it('T015 should handle appointment queries with patient context', async () => {
     const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
@@ -175,13 +175,13 @@ describe('Integration Test: Query Upcoming Appointments', () => {
           permissions: ['read:appointments', 'read:patients'],
         },
       }),
-    }
+    });
 
-    expect(response.status).toBe(200
-    const data = await response.json(
-    expect(data.response).toBeDefined(
+    expect(response.status).toBe(200);
+    const data = await response.json();
+    expect(data.response).toBeDefined();
     
     // Should handle patient-specific queries while maintaining LGPD compliance
-    expect(data.response).not.toContain('medical-record-number')
-  }
+    expect(data.response).not.toContain('medical-record-number');
+  });
 }

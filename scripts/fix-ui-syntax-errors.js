@@ -111,10 +111,10 @@ function fixFile(filePath) {
 
         if (importInsertPosition !== -1 && importEndPosition !== -1) {
           content =
-            content.slice(0, importEndPosition + 1) +
-            importStatement +
-            "\n" +
-            content.slice(importEndPosition + 1);
+            `${content.slice(0, importEndPosition + 1) +
+            importStatement 
+            }\n${ 
+            content.slice(importEndPosition + 1)}`;
           console.log(`  ✅ Added missing import: ${module}`);
           changesMade = true;
         }

@@ -55,7 +55,7 @@ class SlidingWindow {
    * Add new request to the window
    */
   addRequest(_request: RequestEntry): void {
-    this.requests.push(request);
+    this.requests.push(_request);
 
     // Keep memory usage bounded
     if (this.requests.length > this.maxSize) {
@@ -161,7 +161,7 @@ export class AbuseWindowTracker {
 
     // Request is allowed - track it
     const requestEntry: RequestEntry = {
-      ...request,
+      ..._request,
       timestamp: now,
     };
 

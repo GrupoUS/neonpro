@@ -5,14 +5,14 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { AIMetadata, AuditLogEntry, AuditLogger, HealthcareAccessMetadata } from '../logger';
 // Mock Supabase
-const mockSupabase = {
+const mockSupabase = {}
   from: vi.fn(),
 };
 vi.mock('@supabase/supabase-js', () => ({}
   createClient: vi.fn(() => mockSupabase),
 })
 
-describe('Audit Logger Security Tests', () => {
+describe('Audit Logger Security Tests', () => {}
   let auditLogger: AuditLogger;
   beforeEach(() => {}
     vi.clearAllMocks();

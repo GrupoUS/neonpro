@@ -4,7 +4,7 @@
 
 import { describe, expect, it, beforeEach, vi, afterEach } from "vitest";
 // import type { ChatSession } from "@neonpro/types";
-import { SessionRepo } from "../src/chat/SessionRepo";
+import { ChatRepository } from "../src/database/chat-repository";
 import {
   SessionManager,
   MemorySessionStore,
@@ -12,13 +12,13 @@ import {
 } from "../src/config/session";
 
 describe("T010: Chat Session Expiration Logic", () => {
-  let sessionRepo: SessionRepo;
+  let sessionRepo: ChatRepository;
   let sessionManager: SessionManager;
   let sessionStore: MemorySessionStore;
   let sessionConfig: SessionConfig;
 
   beforeEach(() => {
-    sessionRepo = new SessionRepo();
+    sessionRepo = new ChatRepository();
 
     sessionConfig = {
       cookieName: "test-session",

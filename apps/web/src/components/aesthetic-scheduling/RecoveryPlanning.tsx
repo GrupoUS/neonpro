@@ -32,11 +32,13 @@ import {
   Snowflake,
   Droplets,
   Coffee,
-  X,
+  XCircle,
   Users,
   Phone,
   MapPin,
-  RefreshCw
+  RefreshCw,
+  Pill,
+  Zap
 } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -46,13 +48,15 @@ interface RecoveryPlanningProps {
   treatmentPlanId?: string;
   procedureIds?: string[];
   patientId?: string;
+  onRecoveryPlanCreate?: (plan: Partial<RecoveryPlan>) => Promise<any>;
 }
 
 export function RecoveryPlanning({ 
   appointmentId,
   treatmentPlanId,
   procedureIds,
-  patientId
+  patientId,
+  onRecoveryPlanCreate
 }: RecoveryPlanningProps) {
   const [selectedProcedure, setSelectedProcedure] = useState<string>('');
   const [activeTab, setActiveTab] = useState('planning');
@@ -75,8 +79,7 @@ export function RecoveryPlanning({
         return await api.aestheticScheduling.getRecoveryPlan({
           procedureId: selectedProcedure,
           treatmentPlanId: treatmentPlanId || '',
-          appointmentId: appointmentId || '',
-          includePersonalizedInstructions: true
+          patientId: patientId || undefined
         });
       }
       return null;
@@ -91,7 +94,7 @@ export function RecoveryPlanning({
     },
     onSuccess: () => {
       refetch();
-      setIsCreatingPlan(false);
+      _setIsCreatingPlan(false);
     },
   });
 
@@ -101,7 +104,6 @@ export function RecoveryPlanning({
 
     createRecoveryPlan.mutate({
       patientId,
-      treatmentPlanId,
       appointmentId,
       procedureId: selectedProcedure,
       phases: recoveryPlan.phases,
@@ -293,7 +295,7 @@ export function RecoveryPlanning({
             {/* Recovery Plan */}
             <TabsContent value="planning" className="space-y-4">
               <div className="space-y-6">
-                {recoveryPlan.phases.map((phase, index) => (
+                {recoveryPlan.phases.map((phase: any, index: number) => (
                   <RecoveryPhaseCard key={index} phase={phase} getPhaseColor={getPhaseColor} />
                 ))}
               </div>
@@ -312,13 +314,13 @@ export function RecoveryPlanning({
                   <CardContent>
                     <div className="space-y-3">
                       {recoveryPlan.instructions
-                        .filter(i => i.category === 'daily_care')
-                        .map((instruction, index) => (
+                        .filter((i: any) => i.category === 'daily_care')
+                        .map((instruction: any, index: number) => (
                           <div key={index} className="flex items-start gap-3">
-                            <CheckCircle className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
-                            <div className="flex-1">
-                              <div className="font-medium text-sm">{instruction.title}</div>
-                              <div className="text-xs text-gray-600">{instruction.description}</div>
+                            <CheckCircle className="h-4 w-4 text-green-500 mt-1" />
+                            <div>
+                              <div className="font-medium">{instruction.title}</div>
+                              <div className="text-sm text-gray-600">{instruction.description}</div>
                             </div>
                           </div>
                         ))}
@@ -336,13 +338,13 @@ export function RecoveryPlanning({
                   <CardContent>
                     <div className="space-y-3">
                       {recoveryPlan.instructions
-                        .filter(i => i.category === 'restrictions')
-                        .map((instruction, index) => (
+                        .filter((i: any) => i.category === 'restrictions')
+                        .map((instruction: any, index: number) => (
                           <div key={index} className="flex items-start gap-3">
-                            <X className="h-4 w-4 text-red-500 mt-0.5 flex-shrink-0" />
-                            <div className="flex-1">
-                              <div className="font-medium text-sm">{instruction.title}</div>
-                              <div className="text-xs text-gray-600">{instruction.description}</div>
+                            <XCircle className="h-4 w-4 text-red-500 mt-1" />
+                            <div>
+                              <div className="font-medium">{instruction.title}</div>
+                              <div className="text-sm text-gray-600">{instruction.description}</div>
                             </div>
                           </div>
                         ))}
@@ -360,13 +362,13 @@ export function RecoveryPlanning({
                   <CardContent>
                     <div className="space-y-3">
                       {recoveryPlan.instructions
-                        .filter(i => i.category === 'skin_care')
-                        .map((instruction, index) => (
+                        .filter((i: any) => i.category === 'warnings')
+                        .map((instruction: any, index: number) => (
                           <div key={index} className="flex items-start gap-3">
-                            <Heart className="h-4 w-4 text-pink-500 mt-0.5 flex-shrink-0" />
-                            <div className="flex-1">
-                              <div className="font-medium text-sm">{instruction.title}</div>
-                              <div className="text-xs text-gray-600">{instruction.description}</div>
+                            <AlertTriangle className="h-4 w-4 text-amber-500 mt-1" />
+                            <div>
+                              <div className="font-medium">{instruction.title}</div>
+                              <div className="text-sm text-gray-600">{instruction.description}</div>
                             </div>
                           </div>
                         ))}
@@ -384,13 +386,13 @@ export function RecoveryPlanning({
                   <CardContent>
                     <div className="space-y-3">
                       {recoveryPlan.instructions
-                        .filter(i => i.category === 'diet_hydration')
-                        .map((instruction, index) => (
+                        .filter((i: any) => i.category === 'medications')
+                        .map((instruction: any, index: number) => (
                           <div key={index} className="flex items-start gap-3">
-                            <Zap className="h-4 w-4 text-yellow-500 mt-0.5 flex-shrink-0" />
-                            <div className="flex-1">
-                              <div className="font-medium text-sm">{instruction.title}</div>
-                              <div className="text-xs text-gray-600">{instruction.description}</div>
+                            <Pill className="h-4 w-4 text-blue-500 mt-1" />
+                            <div>
+                              <div className="font-medium">{instruction.title}</div>
+                              <div className="text-sm text-gray-600">{instruction.description}</div>
                             </div>
                           </div>
                         ))}
@@ -414,32 +416,26 @@ export function RecoveryPlanning({
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    {recoveryPlan.followUpAppointments.map((appointment, index) => (
-                      <div key={index} className="border rounded-lg p-4">
-                        <div className="flex items-center justify-between mb-2">
-                          <h4 className="font-medium">{appointment.title}</h4>
-                          <Badge variant="outline">{appointment.type}</Badge>
-                        </div>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-                          <div>
-                            <span className="text-gray-500">Data:</span>
-                            <div className="font-medium">{formatDate(appointment.date)}</div>
+                    {recoveryPlan.followUpAppointments.map((appointment: any, index: number) => (
+                      <Card key={index}>
+                        <CardContent className="p-4">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                              <Calendar className="h-5 w-5 text-blue-500" />
+                              <div>
+                                <div className="font-medium">{appointment.title}</div>
+                                <div className="text-sm text-gray-600">
+                                  {formatDate(appointment.scheduledDate)} - {appointment.duration} min
+                                </div>
+                              </div>
+                            </div>
+                            <Badge variant="outline">{appointment.type}</Badge>
                           </div>
-                          <div>
-                            <span className="text-gray-500">Método:</span>
-                            <div className="font-medium capitalize">{appointment.method}</div>
+                          <div className="mt-3 text-sm text-gray-600">
+                            {appointment.description}
                           </div>
-                          <div>
-                            <span className="text-gray-500">Duração:</span>
-                            <div className="font-medium">{appointment.duration} min</div>
-                          </div>
-                        </div>
-                        {appointment.notes && (
-                          <div className="mt-2 text-sm text-gray-600">
-                            {appointment.notes}
-                          </div>
-                        )}
-                      </div>
+                        </CardContent>
+                      </Card>
                     ))}
                   </div>
                 </CardContent>
@@ -458,18 +454,14 @@ export function RecoveryPlanning({
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-3">
-                      {recoveryPlan.warningSigns.map((sign, index) => (
+                      {recoveryPlan.warningSigns.map((sign: any, index: number) => (
                         <div key={index} className="flex items-start gap-3">
-                          <AlertTriangle className={`h-4 w-4 mt-0.5 flex-shrink-0 ${
-                            sign.severity === 'critical' ? 'text-red-500' :
-                            sign.severity === 'moderate' ? 'text-yellow-500' : 'text-green-500'
-                          }`} />
-                          <div className="flex-1">
-                            <div className="font-medium text-sm">{sign.description}</div>
-                            <Badge variant="outline" className={`mt-1 ${getSeverityColor(sign.severity)}`}>
-                              {sign.severity === 'critical' ? 'Crítico' :
-                               sign.severity === 'moderate' ? 'Moderado' :
-                               sign.severity === 'mild' ? 'Leve' : sign.severity}
+                          <AlertTriangle className="h-4 w-4 text-red-500 mt-1" />
+                          <div>
+                            <div className="font-medium">{sign.sign}</div>
+                            <div className="text-sm text-gray-600">{sign.description}</div>
+                            <Badge variant="destructive" className="text-xs mt-1">
+                              {sign.severity}
                             </Badge>
                           </div>
                         </div>
@@ -487,22 +479,26 @@ export function RecoveryPlanning({
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-3">
-                      {recoveryPlan.emergencyContacts.map((contact, index) => (
-                        <div key={index} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                          <div className="flex-shrink-0">
-                            {contact.type === 'clinic' ? <MapPin className="h-4 w-4 text-blue-500" /> :
-                             contact.type === 'doctor' ? <Users className="h-4 w-4 text-green-500" /> :
-                             <Phone className="h-4 w-4 text-red-500" />}
-                          </div>
-                          <div className="flex-1">
-                            <div className="font-medium text-sm">{contact.name}</div>
-                            <div className="text-xs text-gray-600">{contact.role}</div>
-                          </div>
-                          <div className="text-right">
-                            <div className="text-sm font-medium">{contact.phone}</div>
-                            <div className="text-xs text-gray-500">24h</div>
-                          </div>
-                        </div>
+                      {recoveryPlan.emergencyContacts.map((contact: any, index: number) => (
+                        <Card key={index}>
+                          <CardContent className="p-4">
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-3">
+                                <Phone className="h-5 w-5 text-red-500" />
+                                <div>
+                                  <div className="font-medium">{contact.name}</div>
+                                  <div className="text-sm text-gray-600">{contact.role}</div>
+                                </div>
+                              </div>
+                              <div className="text-right">
+                                <div className="font-medium">{contact.phone}</div>
+                                <div className="text-sm text-gray-600">
+                                  {contact.available24h ? '24h disponível' : 'Horário comercial'}
+                                </div>
+                              </div>
+                            </div>
+                          </CardContent>
+                        </Card>
                       ))}
                     </div>
                   </CardContent>

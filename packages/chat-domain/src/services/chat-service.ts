@@ -3,6 +3,7 @@
 import type { ChatMessage, ChatSession } from "@neonpro/types";
 import { PIIRedactionService } from "./pii-redaction.js";
 import { AIProviderFactory } from "./ai-provider-factory.js";
+import { getLogger } from "@neonpro/core-services/config/logger";
 
 export class ChatService {
   constructor(private pii = new PIIRedactionService()) {}
@@ -45,7 +46,8 @@ export class ChatService {
 
       return message;
     } catch (error) {
-      console.error("Chat service error:", error);
+      const logger = getLogger();
+      logger.error("Chat service error", { service: "chat-service", operation: "generateResponse" }, error);
       throw new Error("Failed to generate response");
     }
   }
@@ -76,7 +78,8 @@ export class ChatService {
         yield message;
       }
     } catch (error) {
-      console.error("Chat streaming error:", error);
+      const logger = getLogger();
+      logger.error("Chat streaming error", { service: "chat-service", operation: "generateStream" }, error);
       throw new Error("Failed to generate streaming response");
     }
   }
@@ -103,7 +106,8 @@ export class ChatService {
         createdAt: new Date().toISOString(),
       };
     } catch (error) {
-      console.error("Explanation service error:", error);
+      const logger = getLogger();
+      logger.error("Explanation service error", { service: "chat-service", operation: "explain" }, error);
       throw new Error("Failed to generate explanation");
     }
   }

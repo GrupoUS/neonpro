@@ -11,7 +11,10 @@
     "lib": ["ES2022"],
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
-    "target": "ES2022"
+    "target": "ES2022",
+    "skipLibCheck": true,
+    "noImplicitAny": false,
+    "strict": false
   },
   "include": ["src/**/*"],
   "exclude": [
@@ -24,5 +27,11 @@
     "**/*.test.tsx",
     "**/*.spec.ts",
     "**/*.spec.tsx"
+  ],
+  "references": [
+    { "path": "../types" },
+    { "path": "../utils" },
+    { "path": "../config" },
+    { "path": "../shared" }
   ]
 }

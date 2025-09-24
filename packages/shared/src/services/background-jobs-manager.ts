@@ -13,6 +13,8 @@
  * @compliance LGPD, ANVISA, ISO 27001, NIST Cybersecurity Framework
  */
 
+import { logHealthcareError } from '../logging/healthcare-logger';
+import healthcareLogger from '../logging/healthcare-logger';
 import {
   calculateRetryDelay,
   CreateJobRequest,
@@ -27,9 +29,7 @@ import {
   JobStatus,
   validateHealthcareContext,
   WorkerConfig,
-} from "./background-jobs-framework";
-import { logHealthcareError } from '../logging/healthcare-logger';
-import healthcareLogger from '../logging/healthcare-logger';
+} from './background-jobs-framework';
 
 // ============================================================================
 // JOB MANAGER
@@ -44,9 +44,39 @@ export class JobManager {
   private workers: Map<string, Worker> = new Map();
   private isRunning = false;
   private auditLog: any[] = [];
+  private processingLoop?: NodeJS.Timeout;
 
   constructor(jobQueue: JobQueue) {
     this.jobQueue = jobQueue;
+  }
+
+  /**
+   * Register a job handler
+   */
+  registerHandler(type: HealthcareJobType, handler: JobHandlerFunction): void {
+    // Convert function to JobHandler interface with full compliance
+    const jobHandler: JobHandler = {
+      execute: handler,
+      getSupportedTypes: () => [type],
+      validatePayload: async (payload: Record<string, any>) => {
+        return typeof payload === 'object' && payload !== null;
+      },
+      getEstimatedExecutionTime: async (payload: Record<string, any>) => {
+        return 5000; // Default 5 seconds estimation
+      }
+    };
+    this.handlers.set(type, jobHandler);
+  }
+
+  /**
+   * Process jobs (main processing loop)
+   */
+  private processJobs(): void {
+    if (!this.isRunning) return;
+
+    this.processingLoop = setInterval(async () => {
+      // Simple implementation - in real scenario would be more sophisticated
+    }, 1000);
   }
 
   /**
@@ -58,14 +88,36 @@ export class JobManager {
     }
 
     this.isRunning = true;
-    healthcareLogger.auditLogger.info("Job manager started successfully", {
+    healthcareLogger.auditLogger.info('Job manager started successfully', {
       component: 'job-manager',
       action: 'start',
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
 
     // Start processing loop
-    this.processJobs();
+    this.startProcessingLoop();
+  }
+
+  /**
+   * Start processing loop for jobs
+   */
+  private startProcessingLoop(): void {
+    this.processingLoop = setInterval(async () => {
+      if (!this.isRunning) {
+        return;
+      }
+
+      try {
+        // Get pending jobs and distribute to workers
+        for (const [workerId, worker] of Array.from(this.workers.entries())) {
+          // Logic to assign jobs to workers
+        }
+      } catch (error) {
+        logHealthcareError('job-manager', error as Error, {
+          method: 'processJobs',
+        });
+      }
+    }, 1000);
   }
 
   /**
@@ -74,13 +126,15 @@ export class JobManager {
   async stop(): Promise<void> {
     this.isRunning = false;
 
+    // Stop processing loop
+    if (this.processingLoop) {
+      clearInterval(this.processingLoop);
+    }
+
     // Stop all workers
-    const stopPromises = Array.from(this.workers.values()).map(worker => 
-      worker.stop()
-    );
+    const stopPromises = Array.from(this.workers.values()).map(worker => worker.stop());
     await Promise.all(stopPromises);
 
-    this.stop();
     this.workers.clear();
     this.handlers.clear();
     this.auditLog = [];
@@ -91,7 +145,7 @@ export class JobManager {
    */
   private async logAudit(event: any): Promise<void> {
     this.auditLog.push(event);
-    healthcareLogger.auditLogger.info("Job audit event", event);
+    healthcareLogger.auditLogger.info('Job audit event', event);
   }
 }
 
@@ -135,7 +189,7 @@ export class Worker {
       component: 'job-worker',
       action: 'start',
       workerId: this.config.workerId,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
 
     // Start processing loop
@@ -153,14 +207,14 @@ export class Worker {
 
     // Wait for current jobs to complete
     while (this.currentJobs.size > 0) {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await new Promise(resolve => setTimeout(resolve, 1000));
     }
 
     healthcareLogger.auditLogger.info(`Worker ${this.config.workerId} stopped successfully`, {
       component: 'job-worker',
       action: 'stop',
       workerId: this.config.workerId,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 
@@ -187,8 +241,8 @@ export class Worker {
         // Check if we can take more jobs
         if (this.currentJobs.size < this.config.concurrency) {
           const job = await this.jobQueue.getNextJob(
-            this.config.allowedJobTypes,
-            this.config.maxJobPriority
+            this.config.allowedJobTypes || Object.values(HealthcareJobType),
+            this.config.maxJobPriority || JobPriority.HIGH,
           );
 
           if (job) {
@@ -197,13 +251,13 @@ export class Worker {
         }
 
         // Wait before next iteration
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+        await new Promise(resolve => setTimeout(resolve, 1000));
       } catch (error) {
         logHealthcareError('job-worker', error as Error, {
           workerId: this.config.workerId,
-          method: 'processJobs'
+          method: 'processJobs',
         });
-        await new Promise((resolve) => setTimeout(resolve, 5000));
+        await new Promise(resolve => setTimeout(resolve, 5000));
       }
     }
   }
@@ -224,8 +278,8 @@ export class Worker {
     this.currentJobs.set(job.jobId, job);
 
     try {
-      const result = await handler(job);
-      
+      const result = await handler.execute(job);
+
       await this.jobQueue.updateJob(job.jobId, {
         status: JobStatus.COMPLETED,
         result,
@@ -238,17 +292,17 @@ export class Worker {
         jobId: job.jobId,
         jobType: job.type,
         workerId: this.config.workerId,
-        duration: Date.now() - job.createdAt.getTime()
+        duration: Date.now() - job.createdAt.getTime(),
       });
     } catch (error) {
       const errorObj = error instanceof Error ? error : new Error(String(error));
-      
+
       await this.jobQueue.updateJob(job.jobId, {
         status: JobStatus.FAILED,
         error: errorObj.message,
         attemptCount: job.attemptCount + 1,
-        nextRetryAt: job.attemptCount < job.maxRetries 
-          ? new Date(Date.now() + calculateRetryDelay(job.attemptCount + 1))
+        nextRetryAt: job.attemptCount < job.maxRetries
+          ? new Date(Date.now() + calculateRetryDelay(job.attemptCount + 1, 5000, true, 300000))
           : undefined,
       });
 
@@ -256,7 +310,7 @@ export class Worker {
         workerId: this.config.workerId,
         jobId: job.jobId,
         jobType: job.type,
-        attemptCount: job.attemptCount + 1
+        attemptCount: job.attemptCount + 1,
       });
     } finally {
       this.currentJobs.delete(job.jobId);
@@ -280,32 +334,65 @@ export class Worker {
 // ============================================================================
 
 /**
+ * Job handler function type
+ */
+export type JobHandlerFunction = (job: JobData) => Promise<JobExecutionResult>;
+
+/**
  * Healthcare-specific job handlers
  */
-export const healthcareJobHandlers: Map<HealthcareJobType, JobHandler> = new Map([
+export const healthcareJobHandlers: Map<HealthcareJobType, JobHandlerFunction> = new Map([
   [HealthcareJobType.APPOINTMENT_REMINDER, async (job: JobData): Promise<JobExecutionResult> => {
     // Send appointment reminders
-    return { success: true, processedAt: new Date() };
+    return {
+      success: true,
+      progress: 100,
+      auditEvents: [],
+      metadata: { jobType: 'appointment_reminder' },
+    };
   }],
 
-  [HealthcareJobType.MEDICAL_REPORT_GENERATION, async (job: JobData): Promise<JobExecutionResult> => {
-    // Generate medical reports
-    return { success: true, processedAt: new Date() };
-  }],
+  [
+    HealthcareJobType.CLINICAL_REPORT_GENERATION,
+    async (job: JobData): Promise<JobExecutionResult> => {
+      // Generate clinical reports
+      return {
+        success: true,
+        progress: 100,
+        auditEvents: [],
+        metadata: { jobType: 'clinical_report_generation' },
+      };
+    },
+  ],
 
-  [HealthcareJobType.DATA_BACKUP, async (job: JobData): Promise<JobExecutionResult> => {
+  [HealthcareJobType.BACKUP_OPERATION, async (job: JobData): Promise<JobExecutionResult> => {
     // Perform data backups
-    return { success: true, processedAt: new Date() };
+    return {
+      success: true,
+      progress: 100,
+      auditEvents: [],
+      metadata: { jobType: 'backup_operation' },
+    };
   }],
 
-  [HealthcareJobType.AUDIT_LOG_PROCESSING, async (job: JobData): Promise<JobExecutionResult> => {
-    // Process audit logs
-    return { success: true, processedAt: new Date() };
+  [HealthcareJobType.COMPLIANCE_AUDIT, async (job: JobData): Promise<JobExecutionResult> => {
+    // Process compliance audits
+    return {
+      success: true,
+      progress: 100,
+      auditEvents: [],
+      metadata: { jobType: 'compliance_audit' },
+    };
   }],
 
-  [HealthcareJobType.COMPLIANCE_CHECK, async (job: JobData): Promise<JobExecutionResult> => {
-    // Perform compliance checks
-    return { success: true, processedAt: new Date() };
+  [HealthcareJobType.ANVISA_REPORTING, async (job: JobData): Promise<JobExecutionResult> => {
+    // Perform ANVISA reporting
+    return {
+      success: true,
+      progress: 100,
+      auditEvents: [],
+      metadata: { jobType: 'anvisa_reporting' },
+    };
   }],
 ]);
 
@@ -318,7 +405,7 @@ export const healthcareJobHandlers: Map<HealthcareJobType, JobHandler> = new Map
  */
 export function createHealthcareJobManager(jobQueue: JobQueue): JobManager {
   const manager = new JobManager(jobQueue);
-  
+
   // Register healthcare handlers
   healthcareJobHandlers.forEach((handler, type) => {
     manager.registerHandler(type, handler);
@@ -333,19 +420,49 @@ export function createHealthcareJobManager(jobQueue: JobQueue): JobManager {
 export function createWorkerPool(
   jobQueue: JobQueue,
   poolSize: number = 3,
-  allowedJobTypes?: HealthcareJobType[]
+  allowedJobTypes?: HealthcareJobType[],
 ): Worker[] {
   const workers: Worker[] = [];
-  
+
   for (let i = 0; i < poolSize; i++) {
     const workerConfig: WorkerConfig = {
       workerId: `healthcare-worker-${i}`,
       concurrency: 5,
-      maxJobPriority: JobPriority.HIGH,
+      pollInterval: 1000,
+      emergencyJobsOnly: false,
+      maxMemoryUsage: 512 * 1024 * 1024,
+      maxCpuUsage: 2,
+      jobTimeout: 300000,
+      heartbeatInterval: 30000,
+      priorityQueues: [
+        JobPriority.CRITICAL,
+        JobPriority.HIGH,
+        JobPriority.MEDIUM,
+        JobPriority.LOW,
+        JobPriority.BACKGROUND,
+      ],
       allowedJobTypes: allowedJobTypes || Object.values(HealthcareJobType),
+      maxJobPriority: JobPriority.HIGH,
+      tags: [],
+      metadata: {},
     };
 
-    const worker = new Worker(workerConfig, jobQueue, healthcareJobHandlers);
+    // Convert JobHandlerFunction to JobHandler for Worker compatibility
+    const convertedHandlers = new Map<HealthcareJobType, JobHandler>();
+    healthcareJobHandlers.forEach((handler, type) => {
+      convertedHandlers.set(type, {
+        execute: handler,
+        getSupportedTypes: () => [type],
+        validatePayload: async (payload: Record<string, any>) => {
+          return typeof payload === 'object' && payload !== null;
+        },
+        getEstimatedExecutionTime: async (payload: Record<string, any>) => {
+          return 5000; // Default 5 seconds estimation
+        }
+      });
+    });
+
+    const worker = new Worker(workerConfig, jobQueue, convertedHandlers);
     workers.push(worker);
   }
 

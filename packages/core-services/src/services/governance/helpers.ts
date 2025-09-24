@@ -45,7 +45,7 @@ export const scorePriority = ({
   _riskReduction,
   strategicFit,
 }: PriorityScoreFactors) => {
-  const base = impact * 2 + riskReduction * 1.5 + strategicFit * 1.2 - effort;
+  const base = impact * 2 + _riskReduction * 1.5 + strategicFit * 1.2 - effort;
   return base;
 };
 

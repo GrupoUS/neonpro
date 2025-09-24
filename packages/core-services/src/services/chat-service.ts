@@ -3,7 +3,7 @@
 import type { ChatMessage, ChatSession } from "@neonpro/types";
 import { PIIRedactionService } from "./pii-redaction.js";
 import { AIProviderFactory } from "./ai-provider-factory.js";
-import { logHealthcareError, chatLogger } from '../../../shared/src/logging/healthcare-logger';
+import { logHealthcareError } from "@neonpro/shared";
 
 export class ChatService {
   constructor(private pii = new PIIRedactionService()) {}

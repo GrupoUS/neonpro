@@ -1,5 +1,6 @@
 // Realistic zod schemas for compliance integration tests (Phase 1)
 // --- Compliance Validation Schemas (Phase 1 minimal) ---
+import { z } from "zod";
 
 // Basic patient schema focusing on fields used in prediction & compliance flows
 export const patientSchema = z.object({

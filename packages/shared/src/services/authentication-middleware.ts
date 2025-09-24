@@ -1974,7 +1974,7 @@ export class HealthcareAuthMiddleware {
     const now = Date.now();
     const expiredSessions: string[] = [];
 
-    for (const [sessionId, session] of this.activeSessions.entries()) {
+    for (const [sessionId, session] of Array.from(this.activeSessions.entries())) {
       const expirationTime = new Date(
         session.sessionMetadata.expiresAt,
       ).getTime();

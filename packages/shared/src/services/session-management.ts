@@ -571,26 +571,26 @@ export function validateHealthcareContext(
   const errors: string[] = [];
 
   // Patient sessions must have patient ID
-  if (userType === SessionType.PATIENT && !context.patientId) {
+  if (userType === SessionType.PATIENT && !_context.patientId) {
     errors.push("Patient sessions require patientId");
   }
 
   // Provider sessions must have provider ID
-  if (userType === SessionType.HEALTHCARE_PROVIDER && !context.providerId) {
+  if (userType === SessionType.HEALTHCARE_PROVIDER && !_context.providerId) {
     errors.push("Healthcare provider sessions require providerId");
   }
 
   // Emergency sessions must have emergency code
-  if (userType === SessionType.EMERGENCY && !context.emergencyCode) {
+  if (userType === SessionType.EMERGENCY && !_context.emergencyCode) {
     errors.push("Emergency sessions require emergencyCode");
   }
 
   // Clinical context validation
-  if (context.clinicalContext && userType === SessionType.PATIENT) {
+  if (_context.clinicalContext && userType === SessionType.PATIENT) {
     const allowedPatientContexts = ["consultation", "emergency"];
-    if (!allowedPatientContexts.includes(context.clinicalContext)) {
+    if (!allowedPatientContexts.includes(_context.clinicalContext)) {
       errors.push(
-        `Invalid clinical context for patient: ${context.clinicalContext}`,
+        `Invalid clinical context for patient: ${_context.clinicalContext}`,
       );
     }
   }
@@ -620,6 +620,7 @@ export function getEmergencySessionOverride(): SessionConfig {
 export class SessionManagementService {
   private store: SessionStore;
   private activityLog: SessionActivityEvent[] = [];
+  private logger = createHealthcareLogger('session-management');
 
   constructor(store: SessionStore) {
     this.store = store;
@@ -629,7 +630,7 @@ export class SessionManagementService {
    * Create a new session
    */
   async createSession(_request: CreateSessionRequest): Promise<SessionData> {
-    const validatedRequest = CreateSessionRequestSchema.parse(request);
+    const validatedRequest = CreateSessionRequestSchema.parse(_request);
 
     // Get configuration
     const defaultConfig = DEFAULT_SESSION_CONFIGS[validatedRequest.userType];
@@ -652,7 +653,7 @@ export class SessionManagementService {
     // Check concurrent session limits
     if (!config.allowConcurrentSessions) {
       const existingSessions = await this.store.getUserSessions(
-        validatedRequest.userId,
+        validatedRequest._userId,
       );
       const activeSessions = existingSessions.filter(
         (s) => s.status === SessionStatus.ACTIVE,
@@ -661,13 +662,15 @@ export class SessionManagementService {
       if (activeSessions.length >= config.maxConcurrentSessions) {
         // Terminate oldest session
         const oldestSession = activeSessions.sort(
-          (a, _b) => a.createdAt.getTime() - b.createdAt.getTime(),
+          (a, b) => a.createdAt.getTime() - b.createdAt.getTime(),
         )[0];
 
-        await this.terminateSession(
-          oldestSession.sessionId,
-          "concurrent_limit_exceeded",
-        );
+        if (oldestSession) {
+          await this.terminateSession(
+            oldestSession.sessionId,
+            "concurrent_limit_exceeded",
+          );
+        }
       }
     }
 
@@ -680,7 +683,7 @@ export class SessionManagementService {
 
     const sessionData: SessionData = {
       sessionId,
-      _userId: validatedRequest.userId,
+      _userId: validatedRequest._userId,
       userType: validatedRequest.userType,
       status: SessionStatus.ACTIVE,
       securityLevel: validatedRequest.securityLevel,
@@ -731,7 +734,7 @@ export class SessionManagementService {
     // Log activity
     await this.logActivity({
       sessionId,
-      _userId: validatedRequest.userId,
+      _userId: validatedRequest._userId,
       eventType: "session_created",
       timestamp: now,
       ipAddress: validatedRequest.ipAddress,
@@ -827,7 +830,7 @@ export class SessionManagementService {
     ) {
       await this.logActivity({
         sessionId,
-        _userId: session.userId,
+        _userId: session._userId,
         eventType: "security_violation",
         timestamp: new Date(),
         ipAddress: currentIpAddress,
@@ -1075,7 +1078,7 @@ export class SessionManagementService {
     this.activityLog.push(validatedEvent);
 
     // In a real implementation, this would integrate with your logging system
-    sessionLogger.info("Session activity logged", {
+    this.logger.info("Session activity logged", {
       ...validatedEvent,
       timestamp: new Date().toISOString()
     });

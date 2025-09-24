@@ -5,12 +5,12 @@
  */
 
 import { AIAppointmentSchedulingService } from '../../../apps/api/src/services/ai-appointment-scheduling-service';
-import type { 
-  Appointment, 
-  Professional, 
-  ServiceType,
+import type {
+  Appointment,
   NoShowPredictionFeatures,
-  NoShowPredictionResult 
+  NoShowPredictionResult,
+  Professional,
+  ServiceType,
 } from '../../../apps/api/src/services/ai-appointment-scheduling-service';
 
 export interface AestheticProcedureDetails {
@@ -96,12 +96,25 @@ export interface AestheticAppointment extends Appointment {
 
 export interface RecoveryPlan {
   procedureName: string;
+  appointmentId?: string;
+  procedureId?: string;
   recoveryPeriodDays: number;
   dailyInstructions: string[];
   followUpAppointments: FollowUpAppointment[];
   emergencyContacts: string[];
   restrictions: string[];
   expectedOutcomes: string[];
+  // Propriedades adicionais para compatibilidade
+  phases?: any[];
+  totalRecoveryTime?: number;
+  instructions?: any[];
+  warningSigns?: any[];
+  risks?: any[];
+  careLevel?: 'low' | 'medium' | 'high' | 'intensive';
+  customNotes?: string;
+  patientId?: string;
+  activityRestrictions?: string[];
+  careInstructions?: string[];
 }
 
 export interface FollowUpAppointment {
@@ -143,7 +156,7 @@ export class EnhancedAestheticSchedulingService extends AIAppointmentSchedulingS
    * Schedule aesthetic procedures with enhanced logic
    */
   async scheduleAestheticProcedures(
-    request: AestheticSchedulingRequest
+    request: AestheticSchedulingRequest,
   ): Promise<AestheticSchedulingResult> {
     // Validate medical history and contraindications
     const validation = this.validateMedicalContraindications(request);
@@ -156,14 +169,14 @@ export class EnhancedAestheticSchedulingService extends AIAppointmentSchedulingS
         recoveryPlan: this.createEmptyRecoveryPlan(),
         professionalAssignments: [],
         warnings: validation.warnings,
-        contraindications: validation.contraindications
+        contraindications: validation.contraindications,
       };
     }
 
     // Get procedure details
-    const procedures = request.procedures.map(id => 
-      this.aestheticProcedures.get(id)
-    ).filter(Boolean) as AestheticProcedureDetails[];
+    const procedures = request.procedures.map(id => this.aestheticProcedures.get(id)).filter(
+      Boolean,
+    ) as AestheticProcedureDetails[];
 
     if (procedures.length !== request.procedures.length) {
       return {
@@ -174,7 +187,7 @@ export class EnhancedAestheticSchedulingService extends AIAppointmentSchedulingS
         recoveryPlan: this.createEmptyRecoveryPlan(),
         professionalAssignments: [],
         warnings: ['Some selected procedures are not available'],
-        contraindications: []
+        contraindications: [],
       };
     }
 
@@ -184,14 +197,14 @@ export class EnhancedAestheticSchedulingService extends AIAppointmentSchedulingS
     // Assign professionals with certification validation
     const professionalAssignments = await this.assignProfessionals(
       procedures,
-      request.preferredProfessionals
+      request.preferredProfessionals,
     );
 
     // Check availability and create appointments
     const appointments = await this.createAestheticAppointments(
       treatmentSchedule,
       professionalAssignments,
-      request
+      request,
     );
 
     // Calculate total cost and duration
@@ -210,7 +223,7 @@ export class EnhancedAestheticSchedulingService extends AIAppointmentSchedulingS
       professionalAssignments,
       warnings: validation.warnings,
       contraindications: validation.contraindications,
-      alternativeOptions: this.generateAlternativeOptions(request, procedures)
+      alternativeOptions: this.generateAlternativeOptions(request, procedures),
     };
   }
 
@@ -225,7 +238,7 @@ export class EnhancedAestheticSchedulingService extends AIAppointmentSchedulingS
       preferredProfessionals?: string[];
       timePreferences?: 'morning' | 'afternoon' | 'evening';
       dayPreferences?: string[];
-    }
+    },
   ): Promise<AestheticSchedulingResult> {
     const treatmentPackage = this.treatmentPackages.get(packageId);
     if (!treatmentPackage) {
@@ -237,7 +250,7 @@ export class EnhancedAestheticSchedulingService extends AIAppointmentSchedulingS
       procedures: treatmentPackage.procedures.map(p => p.id),
       preferredProfessionals: preferences.preferredProfessionals,
       preferredDates: this.generatePackageDates(startDate, treatmentPackage),
-      urgencyLevel: 'medium'
+      urgencyLevel: 'medium',
     };
 
     return this.scheduleAestheticProcedures(request);
@@ -248,10 +261,10 @@ export class EnhancedAestheticSchedulingService extends AIAppointmentSchedulingS
    */
   calculateVariableDuration(
     baseDuration: number,
-    factors: DurationVariableFactor[]
+    factors: DurationVariableFactor[],
   ): number {
     let totalDuration = baseDuration;
-    
+
     for (const factor of factors) {
       if (factor.impact === 'add_minutes') {
         totalDuration += factor.value;
@@ -268,7 +281,7 @@ export class EnhancedAestheticSchedulingService extends AIAppointmentSchedulingS
    */
   async validateProfessionalCertifications(
     professionalId: string,
-    procedureIds: string[]
+    procedureIds: string[],
   ): Promise<{
     isValid: boolean;
     missingCertifications: string[];
@@ -277,7 +290,7 @@ export class EnhancedAestheticSchedulingService extends AIAppointmentSchedulingS
     // This would integrate with the professional database
     // For now, we'll use a mock validation
     const professional = await this.getProfessionalDetails(professionalId);
-    
+
     const missingCertifications: string[] = [];
     let isValid = true;
     let experienceLevel = professional.experienceLevel || 0;
@@ -297,7 +310,7 @@ export class EnhancedAestheticSchedulingService extends AIAppointmentSchedulingS
       // Check experience level
       if (experienceLevel < procedure.minExperienceLevel) {
         missingCertifications.push(
-          `${procedure.name}: Insufficient experience (requires ${procedure.minExperienceLevel}+ years)`
+          `${procedure.name}: Insufficient experience (requires ${procedure.minExperienceLevel}+ years)`,
         );
         isValid = false;
       }
@@ -306,7 +319,7 @@ export class EnhancedAestheticSchedulingService extends AIAppointmentSchedulingS
     return {
       isValid,
       missingCertifications,
-      experienceLevel
+      experienceLevel,
     };
   }
 
@@ -314,7 +327,7 @@ export class EnhancedAestheticSchedulingService extends AIAppointmentSchedulingS
    * Optimize room allocation for aesthetic procedures
    */
   optimizeRoomAllocation(
-    appointments: AestheticAppointment[]
+    appointments: AestheticAppointment[],
   ): {
     roomAssignments: Map<string, string[]>;
     utilization: number;
@@ -322,9 +335,9 @@ export class EnhancedAestheticSchedulingService extends AIAppointmentSchedulingS
   } {
     const roomAssignments = new Map<string, string[]>();
     const conflicts: string[] = [];
-    
+
     // Group appointments by special requirements
-    const appointmentsByRequirements = appointments.filter(apt => 
+    const appointmentsByRequirements = appointments.filter(apt =>
       apt.procedureDetails.specialRequirements.length > 0
     );
 
@@ -339,7 +352,7 @@ export class EnhancedAestheticSchedulingService extends AIAppointmentSchedulingS
     for (const appointment of sortedAppointments) {
       const suitableRooms = this.findSuitableRooms(appointment);
       const assignedRoom = this.findBestAvailableRoom(suitableRooms, appointment.startTime);
-      
+
       if (!assignedRoom) {
         conflicts.push(`No suitable room available for ${appointment.procedureDetails.name}`);
         continue;
@@ -360,7 +373,7 @@ export class EnhancedAestheticSchedulingService extends AIAppointmentSchedulingS
     return {
       roomAssignments,
       utilization,
-      conflicts
+      conflicts,
     };
   }
 
@@ -386,7 +399,7 @@ export class EnhancedAestheticSchedulingService extends AIAppointmentSchedulingS
       for (const contraindication of procedure.contraindications) {
         if (request.medicalHistory.contraindications.includes(contraindication)) {
           contraindications.push(
-            `${procedure.name}: Contraindicated due to ${contraindication}`
+            `${procedure.name}: Contraindicated due to ${contraindication}`,
           );
           isValid = false;
         }
@@ -395,11 +408,14 @@ export class EnhancedAestheticSchedulingService extends AIAppointmentSchedulingS
       // Check for pregnancy (absolute contraindication for many procedures)
       if (request.medicalHistory.contraindications.includes('gravidez')) {
         const pregnancyContraindicatedProcedures = [
-          'injectable', 'laser', 'body', 'surgical'
+          'injectable',
+          'laser',
+          'body',
+          'surgical',
         ];
         if (pregnancyContraindicatedProcedures.includes(procedure.procedureType)) {
           contraindications.push(
-            `${procedure.name}: Contraindicated during pregnancy`
+            `${procedure.name}: Contraindicated during pregnancy`,
           );
           isValid = false;
         }
@@ -408,7 +424,7 @@ export class EnhancedAestheticSchedulingService extends AIAppointmentSchedulingS
       // Check for allergies
       if (request.medicalHistory.allergies.length > 0) {
         warnings.push(
-          `Review allergies for ${procedure.name}: ${request.medicalHistory.allergies.join(', ')}`
+          `Review allergies for ${procedure.name}: ${request.medicalHistory.allergies.join(', ')}`,
         );
       }
     }
@@ -418,7 +434,7 @@ export class EnhancedAestheticSchedulingService extends AIAppointmentSchedulingS
 
   private calculateTreatmentSchedule(
     procedures: AestheticProcedureDetails[],
-    request: AestheticSchedulingRequest
+    request: AestheticSchedulingRequest,
   ): {
     sessions: Array<{
       procedure: AestheticProcedureDetails;
@@ -443,14 +459,14 @@ export class EnhancedAestheticSchedulingService extends AIAppointmentSchedulingS
       for (let session = 1; session <= procedure.sessionCount; session++) {
         const duration = this.calculateVariableDuration(
           procedure.baseDurationMinutes,
-          procedure.variableDurationFactors
+          procedure.variableDurationFactors,
         );
 
         sessions.push({
           procedure,
           sessionNumber: session,
           duration,
-          recommendedInterval: procedure.intervalBetweenSessionsDays
+          recommendedInterval: procedure.intervalBetweenSessionsDays,
         });
 
         totalDuration += duration;
@@ -463,7 +479,7 @@ export class EnhancedAestheticSchedulingService extends AIAppointmentSchedulingS
 
   private async assignProfessionals(
     procedures: AestheticProcedureDetails[],
-    preferredProfessionals?: string[]
+    preferredProfessionals?: string[],
   ): Promise<ProfessionalAssignment[]> {
     const assignments: ProfessionalAssignment[] = [];
 
@@ -471,7 +487,7 @@ export class EnhancedAestheticSchedulingService extends AIAppointmentSchedulingS
       // Find suitable professionals
       const suitableProfessionals = await this.findSuitableProfessionals(
         procedure,
-        preferredProfessionals
+        preferredProfessionals,
       );
 
       if (suitableProfessionals.length > 0) {
@@ -482,7 +498,7 @@ export class EnhancedAestheticSchedulingService extends AIAppointmentSchedulingS
           role: 'primary',
           certificationVerified: true,
           experienceLevel: primary.experienceLevel,
-          specialNotes: primary.specialNotes
+          specialNotes: primary.specialNotes,
         });
 
         // Assign assistant if required
@@ -494,7 +510,7 @@ export class EnhancedAestheticSchedulingService extends AIAppointmentSchedulingS
               procedureId: procedure.id,
               role: 'assistant',
               certificationVerified: true,
-              experienceLevel: assistant.experienceLevel
+              experienceLevel: assistant.experienceLevel,
             });
           }
         }
@@ -507,7 +523,7 @@ export class EnhancedAestheticSchedulingService extends AIAppointmentSchedulingS
   private async createAestheticAppointments(
     treatmentSchedule: any,
     professionalAssignments: ProfessionalAssignment[],
-    request: AestheticSchedulingRequest
+    request: AestheticSchedulingRequest,
   ): Promise<AestheticAppointment[]> {
     const appointments: AestheticAppointment[] = [];
 
@@ -517,7 +533,7 @@ export class EnhancedAestheticSchedulingService extends AIAppointmentSchedulingS
       const appointment: AestheticAppointment = {
         id: `apt_${Date.now()}_${Math.random()}`,
         patientId: request.patientId,
-        professionalId: professionalAssignments.find(a => 
+        professionalId: professionalAssignments.find(a =>
           a.procedureId === session.procedure.id && a.role === 'primary'
         )?.professionalId || '',
         serviceTypeId: session.procedure.id,
@@ -531,7 +547,7 @@ export class EnhancedAestheticSchedulingService extends AIAppointmentSchedulingS
         specialEquipment: session.procedure.specialRequirements,
         assistantRequired: session.procedure.specialRequirements.includes('assistant_required'),
         preProcedureInstructions: session.procedure.aftercareInstructions,
-        postProcedureInstructions: session.procedure.aftercareInstructions
+        postProcedureInstructions: session.procedure.aftercareInstructions,
       };
 
       appointments.push(appointment);
@@ -540,7 +556,10 @@ export class EnhancedAestheticSchedulingService extends AIAppointmentSchedulingS
     return appointments;
   }
 
-  private calculateTotalCost(procedures: AestheticProcedureDetails[], appointments: AestheticAppointment[]): number {
+  private calculateTotalCost(
+    procedures: AestheticProcedureDetails[],
+    appointments: AestheticAppointment[],
+  ): number {
     // This would integrate with pricing system
     return procedures.reduce((total, procedure) => total + (procedure as any).price || 0, 0);
   }
@@ -549,9 +568,12 @@ export class EnhancedAestheticSchedulingService extends AIAppointmentSchedulingS
     return appointments.reduce((total, apt) => total + apt.procedureDetails.baseDurationMinutes, 0);
   }
 
-  private createRecoveryPlan(procedures: AestheticProcedureDetails[], appointments: AestheticAppointment[]): RecoveryPlan {
+  private createRecoveryPlan(
+    procedures: AestheticProcedureDetails[],
+    appointments: AestheticAppointment[],
+  ): RecoveryPlan {
     const maxRecovery = Math.max(...procedures.map(p => p.recoveryPeriodDays));
-    
+
     return {
       procedureName: procedures.map(p => p.name).join(' + '),
       recoveryPeriodDays: maxRecovery,
@@ -559,29 +581,29 @@ export class EnhancedAestheticSchedulingService extends AIAppointmentSchedulingS
         'Avoid sun exposure',
         'Keep area clean and moisturized',
         'Avoid strenuous exercise',
-        'Follow specific aftercare instructions'
+        'Follow specific aftercare instructions',
       ],
       followUpAppointments: [
         { dayNumber: 7, purpose: 'Initial follow-up', durationMinutes: 15, inPerson: true },
-        { dayNumber: 30, purpose: 'Final assessment', durationMinutes: 30, inPerson: true }
+        { dayNumber: 30, purpose: 'Final assessment', durationMinutes: 30, inPerson: true },
       ],
       emergencyContacts: ['Emergency Hotline: +55 11 9999-9999'],
       restrictions: [
         'No alcohol for 48 hours',
         'Avoid blood thinners',
-        'No facial treatments for 1 week'
+        'No facial treatments for 1 week',
       ],
       expectedOutcomes: [
         'Gradual improvement over 2-4 weeks',
         'Final results visible in 4-6 weeks',
-        'Results may vary based on individual factors'
-      ]
+        'Results may vary based on individual factors',
+      ],
     };
   }
 
   private generateAlternativeOptions(
     request: AestheticSchedulingRequest,
-    procedures: AestheticProcedureDetails[]
+    procedures: AestheticProcedureDetails[],
   ): AlternativeTreatmentOption[] {
     // Generate alternative treatment options based on budget, duration, or recovery preferences
     return [];
@@ -605,18 +627,18 @@ export class EnhancedAestheticSchedulingService extends AIAppointmentSchedulingS
       followUpAppointments: [],
       emergencyContacts: [],
       restrictions: [],
-      expectedOutcomes: []
+      expectedOutcomes: [],
     };
   }
 
   private getProcedurePriority(procedure: AestheticProcedureDetails): number {
     const priorityMap = {
-      'surgical': 5,
-      'injectable': 4,
-      'laser': 3,
-      'body': 2,
-      'facial': 1,
-      'combination': 6
+      surgical: 5,
+      injectable: 4,
+      laser: 3,
+      body: 2,
+      facial: 1,
+      combination: 6,
     };
     return priorityMap[procedure.procedureType] || 0;
   }
@@ -634,12 +656,12 @@ export class EnhancedAestheticSchedulingService extends AIAppointmentSchedulingS
   private calculateRecoveryBuffer(procedure: AestheticProcedureDetails): number {
     // Calculate recovery buffer time based on procedure type
     const bufferMap = {
-      'surgical': 60,
-      'injectable': 15,
-      'laser': 30,
-      'body': 45,
-      'facial': 15,
-      'combination': 45
+      surgical: 60,
+      injectable: 15,
+      laser: 30,
+      body: 45,
+      facial: 15,
+      combination: 45,
     };
     return bufferMap[procedure.procedureType] || 15;
   }
@@ -658,13 +680,15 @@ export class EnhancedAestheticSchedulingService extends AIAppointmentSchedulingS
 
   private async findSuitableProfessionals(
     procedure: AestheticProcedureDetails,
-    preferredProfessionals?: string[]
-  ): Promise<Array<{
-    id: string;
-    experienceLevel: number;
-    role: string;
-    specialNotes?: string;
-  }>> {
+    preferredProfessionals?: string[],
+  ): Promise<
+    Array<{
+      id: string;
+      experienceLevel: number;
+      role: string;
+      specialNotes?: string;
+    }>
+  > {
     // Find professionals with required certifications and experience
     // This would integrate with the professional database
     return [
@@ -672,8 +696,8 @@ export class EnhancedAestheticSchedulingService extends AIAppointmentSchedulingS
         id: 'prof_1',
         experienceLevel: 5,
         role: 'primary',
-        specialNotes: 'Specialized in injectable procedures'
-      }
+        specialNotes: 'Specialized in injectable procedures',
+      },
     ]; // Mock implementation
   }
 
@@ -684,7 +708,7 @@ export class EnhancedAestheticSchedulingService extends AIAppointmentSchedulingS
     // Get professional details from database
     return {
       certifications: ['botox_certification', 'filler_certification'],
-      experienceLevel: 5
+      experienceLevel: 5,
     }; // Mock implementation
   }
 }

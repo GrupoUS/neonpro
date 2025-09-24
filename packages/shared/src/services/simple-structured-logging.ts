@@ -1,6 +1,6 @@
 // Simple structured logging service for testing
 export interface LoggerConfig {
-  level: "debug" | "info" | "warn" | "error";
+  level: 'debug' | 'info' | 'warn' | 'error';
   enableConsole: boolean;
   enableFile: boolean;
   enableAudit: boolean;
@@ -50,40 +50,40 @@ export class SimpleStructuredLogger {
       level,
       message,
       data,
-      context: _context,
+      // _context: _context, // Temporarily disabled - field not in LogEntry interface
       correlationId: this.correlationId,
     };
   }
 
   public debug(message: string, data?: any, _context?: any): void {
     if (this.config.enableConsole) {
-      const entry = this.createLogEntry("debug", message, data, _context);
+      const entry = this.createLogEntry('debug', message, data, _context);
       // Fallback to console.log if structured logging is not available
-      this.logger.log("[DEBUG]", entry);
+      this.logger.log('[DEBUG]', entry);
     }
   }
 
   public info(message: string, data?: any, _context?: any): void {
     if (this.config.enableConsole) {
-      const entry = this.createLogEntry("info", message, data, _context);
+      const entry = this.createLogEntry('info', message, data, _context);
       // Fallback to console.log if structured logging is not available
-      this.logger.log("[INFO]", entry);
+      this.logger.log('[INFO]', entry);
     }
   }
 
   public warn(message: string, data?: any, _context?: any): void {
     if (this.config.enableConsole) {
-      const entry = this.createLogEntry("warn", message, data, _context);
+      const entry = this.createLogEntry('warn', message, data, _context);
       // Fallback to console.warn if structured logging is not available
-      this.logger.warn("[WARN]", entry);
+      this.logger.warn('[WARN]', entry);
     }
   }
 
   public error(message: string, data?: any, _context?: any): void {
     if (this.config.enableConsole) {
-      const entry = this.createLogEntry("error", message, data, _context);
+      const entry = this.createLogEntry('error', message, data, _context);
       // Fallback to console.error if structured logging is not available
-      this.logger.error("[ERROR]", entry);
+      this.logger.error('[ERROR]', entry);
     }
   }
 
@@ -94,7 +94,7 @@ export class SimpleStructuredLogger {
 
 // Default logger instance
 export const defaultLogger = new SimpleStructuredLogger({
-  level: "info",
+  level: 'info',
   enableConsole: true,
   enableFile: false,
   enableAudit: false,

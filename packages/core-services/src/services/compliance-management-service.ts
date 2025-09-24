@@ -24,7 +24,7 @@ import {
   type ComplianceAlertInput,
   type ComplianceReportInput
 } from '@neonpro/types';
-import { logHealthcareError, complianceLogger } from '../../../shared/src/logging/healthcare-logger';
+import { logHealthcareError } from "@neonpro/shared";
 
 export class ComplianceManagementService {
   private supabase: any;

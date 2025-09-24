@@ -23,7 +23,7 @@ import type {
   RealtimeAdapterError,
 } from "./event-adapter.js";
 import { createRealtimeEvent, validateParticipant } from "./event-adapter.js";
-import { logHealthcareError, realtimeLogger } from '../../../shared/src/logging/healthcare-logger';
+import { logHealthcareError, realtimeLogger } from "@neonpro/shared";
 
 // Mock Supabase client for testing
 const createMockSupabaseClient = () => ({

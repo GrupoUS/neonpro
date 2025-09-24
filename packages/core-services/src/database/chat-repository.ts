@@ -10,7 +10,7 @@ export class ChatRepository {
   }
 
   async createSession(
-    _userId: string,
+    userId: string,
     metadata?: Record<string, any>,
   ): Promise<ChatSession> {
     const { data, error } = await this.supabase

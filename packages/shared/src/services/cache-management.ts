@@ -653,7 +653,9 @@ export class InMemoryCacheBackend implements CacheBackend {
     if (this.accessOrder.length === 0) return;
 
     const oldestKey = this.accessOrder[0];
-    await this.delete(oldestKey);
+    if (oldestKey) {
+      await this.delete(oldestKey);
+    }
   }
 
   private async evictLFU(): Promise<void> {

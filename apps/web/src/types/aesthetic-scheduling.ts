@@ -110,21 +110,21 @@ export interface CertificationValidation {
   isValid: boolean;
   professionalId: string;
   professional: {
-    id: string
-    name: string
-    council: string
-    councilNumber: string
-    specialty: string
-  }
+    id: string;
+    name: string;
+    council: string;
+    councilNumber: string;
+    specialty: string;
+  };
   procedures: Array<{
-    id: string
-    name: string
-    certified: boolean
-    requirements: string[]
-  }>
-  complianceStatus: 'compliant' | 'non-compliant' | 'partial'
-  recommendations: string[]
-  warnings: string[]
+    id: string;
+    name: string;
+    certified: boolean;
+    requirements: string[];
+  }>;
+  complianceStatus: 'compliant' | 'non-compliant' | 'partial';
+  recommendations: string[];
+  warnings: string[];
   missingCertifications?: string[];
   experienceLevel?: 'beginner' | 'intermediate' | 'advanced' | 'expert';
 }
@@ -203,7 +203,12 @@ export interface ContraindicationResult {
 // =====================================
 
 export interface DurationFactor {
-  type: 'patient_complexity' | 'procedure_modification' | 'equipment_setup' | 'recovery_time' | 'staff_experience';
+  type:
+    | 'patient_complexity'
+    | 'procedure_modification'
+    | 'equipment_setup'
+    | 'recovery_time'
+    | 'staff_experience';
   description: string;
   impact: number; // percentage increase
   mandatory: boolean;
@@ -251,13 +256,49 @@ export interface AestheticSchedulingResponse {
   };
 }
 
+export interface RecoveryInstruction {
+  id: string;
+  title: string;
+  description: string;
+  category: 'daily_care' | 'restrictions' | 'warnings' | 'medications';
+  timing?: string;
+  mandatory: boolean;
+}
+
+export interface WarningSign {
+  id: string;
+  sign: string;
+  description: string;
+  severity: 'mild' | 'moderate' | 'critical';
+  actionRequired: string;
+}
+
+export interface RiskFactor {
+  id: string;
+  factor: string;
+  description: string;
+  probability: 'low' | 'medium' | 'high';
+  severity: 'minor' | 'moderate' | 'major';
+  mitigation: string[];
+}
+
 export interface RecoveryPlan {
   patientId?: string;
+  appointmentId?: string;
+  procedureId?: string;
   recoveryPeriodDays: number;
   followUpAppointments: FollowUpAppointment[];
   activityRestrictions: string[];
   careInstructions: string[];
   emergencyContacts: string[];
+  // Propriedades adicionais para compatibilidade com componente React
+  phases?: RecoveryPhase[];
+  totalRecoveryTime?: number;
+  instructions?: RecoveryInstruction[];
+  warningSigns?: WarningSign[];
+  risks?: RiskFactor[];
+  careLevel?: 'low' | 'medium' | 'high' | 'intensive';
+  customNotes?: string;
 }
 
 export interface RecoveryPhase {
@@ -269,6 +310,14 @@ export interface RecoveryPhase {
   restrictions: string[];
   warnings: string[];
   followUpRequired: boolean;
+  // Propriedades adicionais para compatibilidade com componente React
+  phaseNumber?: number;
+  phase?: 'immediate' | 'early' | 'intermediate' | 'late' | 'maintenance';
+  startDate?: Date | string;
+  endDate?: Date | string;
+  keyActivities?: string[];
+  milestones?: string[];
+  warningSigns?: string[];
 }
 
 export interface FollowUpAppointment {
@@ -331,11 +380,14 @@ export interface PackageBooking {
 
 export const MultiSessionSchedulingSchema = z.object({
   patientId: z.string().uuid('ID do paciente inválido'),
-  procedures: z.array(z.string().uuid('ID do procedimento inválido')).min(1, 'Selecione ao menos um procedimento'),
+  procedures: z.array(z.string().uuid('ID do procedimento inválido')).min(
+    1,
+    'Selecione ao menos um procedimento',
+  ),
   preferredDates: z.array(z.date()).min(1, 'Selecione ao menos uma data preferida'),
   preferredProfessionals: z.array(z.string().uuid()).optional(),
-  urgencyLevel: z.enum(['routine', 'priority', 'urgent'], {
-    errorMap: () => ({ message: 'Nível de urgência inválido' }),
+  urgencyLevel: z.enum(['routine', 'priority', 'urgent']).refine((val) => val, {
+    message: 'Nível de urgência inválido'
   }),
   specialRequirements: z.array(z.string()).optional(),
   medicalHistory: z.object({
@@ -355,7 +407,10 @@ export const TreatmentPackageSchedulingSchema = z.object({
 
 export const CertificationValidationSchema = z.object({
   professionalId: z.string().uuid('ID do profissional inválido'),
-  procedureIds: z.array(z.string().uuid('ID do procedimento inválido')).min(1, 'Selecione ao menos um procedimento'),
+  procedureIds: z.array(z.string().uuid('ID do procedimento inválido')).min(
+    1,
+    'Selecione ao menos um procedimento',
+  ),
 });
 
 export const RoomOptimizationSchema = z.object({
@@ -370,7 +425,10 @@ export const RoomOptimizationSchema = z.object({
 
 export const ContraindicationCheckSchema = z.object({
   patientId: z.string().uuid('ID do paciente inválido'),
-  procedureIds: z.array(z.string().uuid('ID do procedimento inválido')).min(1, 'Selecione ao menos um procedimento'),
+  procedureIds: z.array(z.string().uuid('ID do procedimento inválido')).min(
+    1,
+    'Selecione ao menos um procedimento',
+  ),
   medicalHistory: z.object({
     pregnancyStatus: z.enum(['none', 'pregnant', 'breastfeeding', 'planning']).optional(),
     chronicConditions: z.array(z.string()).optional(),
@@ -383,7 +441,13 @@ export const ContraindicationCheckSchema = z.object({
 export const DurationCalculationSchema = z.object({
   baseDuration: z.number().min(1, 'Duração base deve ser maior que 0'),
   factors: z.array(z.object({
-    type: z.enum(['patient_complexity', 'procedure_modification', 'equipment_setup', 'recovery_time', 'staff_experience']),
+    type: z.enum([
+      'patient_complexity',
+      'procedure_modification',
+      'equipment_setup',
+      'recovery_time',
+      'staff_experience',
+    ]),
     description: z.string().min(1, 'Descrição é obrigatória'),
     impact: z.number().min(0, 'Impacto deve ser maior ou igual a 0'),
     mandatory: z.boolean(),
@@ -394,33 +458,33 @@ export const DurationCalculationSchema = z.object({
 // UTILITY TYPES
 // =====================================
 
-export type ProcedureCategory = 
-  | 'facial' 
-  | 'body' 
-  | 'injectable' 
-  | 'laser' 
-  | 'surgical' 
+export type ProcedureCategory =
+  | 'facial'
+  | 'body'
+  | 'injectable'
+  | 'laser'
+  | 'surgical'
   | 'combination';
 
 export type RiskLevel = 'low' | 'medium' | 'high';
 
-export type AppointmentStatus = 
-  | 'scheduled' 
-  | 'confirmed' 
-  | 'in_progress' 
-  | 'completed' 
-  | 'cancelled' 
+export type AppointmentStatus =
+  | 'scheduled'
+  | 'confirmed'
+  | 'in_progress'
+  | 'completed'
+  | 'cancelled'
   | 'no_show';
 
-export type PregnancyStatus = 
-  | 'none' 
-  | 'pregnant' 
-  | 'breastfeeding' 
+export type PregnancyStatus =
+  | 'none'
+  | 'pregnant'
+  | 'breastfeeding'
   | 'planning';
 
-export type CertificationType = 
-  | 'cfm' 
-  | 'anvisa' 
-  | 'specialization' 
-  | 'training' 
+export type CertificationType =
+  | 'cfm'
+  | 'anvisa'
+  | 'specialization'
+  | 'training'
   | 'experience';

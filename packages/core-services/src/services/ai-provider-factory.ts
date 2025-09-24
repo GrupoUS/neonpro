@@ -5,7 +5,7 @@ import type {
   StreamChunk,
   AIProvider,
 } from "@neonpro/types";
-import { logHealthcareError, analyticsLogger } from '../../../shared/src/logging/healthcare-logger';
+import { logHealthcareError, analyticsLogger } from "@neonpro/shared";
 
 export type AIProviderType = AIProvider | "mock";
 

@@ -63,7 +63,9 @@ Promise.all([
     );
   })
   .catch(error => {
-    console.error('Failed to initialize monitoring:', error);
+    logger.error('Failed to initialize monitoring', error, {
+      component: 'initialization',
+    });
   });
 
 // Global error tracker instance is now accessed via the bridge
@@ -100,7 +102,10 @@ app.use(
       if (allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
-        console.warn(`CORS: Blocked origin ${origin}`);
+        logger.warn('CORS: Blocked origin', {
+          origin,
+          component: 'cors-middleware',
+        });
         callback(new Error('Not allowed by CORS'), false);
       }
     },
@@ -200,7 +205,7 @@ app.use('*', async (c, next) => {
       duration,
       requestId,
     });
-  } catch {
+  } catch (error) {
     const duration = Date.now() - startTime;
 
     // Capture error with context
@@ -526,7 +531,7 @@ if (process.env.NODE_ENV !== 'production') {
     // Test error tracking
     try {
       throw new Error('This is a test error for error tracking');
-    } catch {
+    } catch (error) {
       errorTracker.captureException(error as Error, {
         requestId,
         endpoint: 'test',

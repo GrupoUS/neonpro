@@ -55,6 +55,7 @@ model Clinic {
   treatmentPlans           TreatmentPlan[]
   financialTransactions    FinancialTransaction[]
   clientRetentionRecords   ClientRetentionRecord[]
+  telemedicinePrescriptions  TelemedicinePrescription[]
 
   @@map("clinics")
 }
@@ -170,6 +171,7 @@ model Patient {
   auditTrails           AuditTrail[]
   auditLogs             AuditLog[]
   telemedicineSessions  TelemedicineSession[]
+  telemedicinePrescriptions  TelemedicinePrescription[]
   aestheticClientProfile    AestheticClientProfile?
   aestheticSessions          AestheticSession[]
   photoAssessments          PhotoAssessment[]
@@ -412,7 +414,6 @@ model TelemedicineSession {
   clinicalNotes              String?  @map("clinical_notes")
   diagnosisCode              String?  @map("diagnosis_code") // ICD-10 or similar
   treatmentPlan              String?  @map("treatment_plan")
-  prescriptions              Json[]   @default([]) @map("prescriptions")
   followUpRequired           Boolean  @default(false) @map("follow_up_required")
   followUpInstructions       String?  @map("follow_up_instructions")
   
@@ -446,6 +447,12 @@ model TelemedicineSession {
   sessionMetadata            Json?    @map("session_metadata")
   internalNotes              String?  @map("internal_notes")
   tags                       String[] @default([])
+  
+  // Relations
+  messages                   TelemedicineMessage[]
+  prescriptions              TelemedicinePrescription[]
+  sessionNotes               TelemedicineSessionNote[]
+  qualityMetrics             TelemedicineQualityMetric[]
   
   createdAt                  DateTime @default(now()) @map("created_at")
   updatedAt                  DateTime @updatedAt @map("updated_at")
@@ -509,6 +516,8 @@ model Professional {
   appointments         Appointment[]
   aestheticSessions     AestheticSession[]
   treatmentPlans        TreatmentPlan[]
+  telemedicinePrescriptions  TelemedicinePrescription[]
+  telemedicineSessionNotes  TelemedicineSessionNote[]
 
   @@map("professionals")
 }
@@ -1900,4 +1909,167 @@ model ClientRetentionRecord {
   @@index([retentionRiskLevel])
   @@index([lastVisitDate])
   @@index([createdAt])
+}
+
+// Enhanced Telemedicine Models for Aesthetic Clinics
+// These models complement the existing compliance-focused telemedicine models
+// and provide simplified structures for aesthetic procedure consultations
+
+model TelemedicineMessage {
+  id                  String   @id @default(uuid())
+  sessionId           String   @map("session_id")
+  session             TelemedicineSession @relation(fields: [sessionId], references: [id])
+  
+  // Message sender
+  senderId            String   @map("sender_id")
+  senderRole          String   @map("sender_role") // patient, professional, admin
+  
+  // Message content
+  messageType          String   @default("text") @map("message_type") // text, image, file, system
+  content             String
+  fileUrl             String?  @map("file_url")
+  fileName            String?  @map("file_name")
+  fileSize            BigInt?  @map("file_size")
+  fileType            String?  @map("file_type")
+  
+  // Security
+  encrypted           Boolean  @default(true) @map("encrypted")
+  encryptionKeyId     String?  @map("encryption_key_id")
+  
+  // Message metadata
+  parentMessageId     String?  @map("parent_message_id")
+  isRead              Boolean  @default(false) @map("is_read")
+  readAt              DateTime? @map("read_at")
+  priority            String   @default("normal") @map("priority") // low, normal, high, urgent
+  
+  // Timestamps
+  timestamp           DateTime @default(now()) @map("timestamp")
+  createdAt           DateTime @default(now()) @map("created_at")
+  updatedAt           DateTime @updatedAt @map("updated_at")
+
+  @@map("telemedicine_messages")
+  @@index([sessionId])
+  @@index([senderId])
+  @@index([timestamp])
+  @@index([isRead])
+}
+
+model TelemedicinePrescription {
+  id                  String   @id @default(uuid())
+  sessionId           String   @map("session_id")
+  session             TelemedicineSession @relation(fields: [sessionId], references: [id])
+  patientId           String   @map("patient_id")
+  patient             Patient   @relation(fields: [patientId], references: [id])
+  professionalId      String   @map("professional_id")
+  professional        Professional @relation(fields: [professionalId], references: [id])
+  clinicId            String   @map("clinic_id")
+  clinic              Clinic    @relation(fields: [clinicId], references: [id])
+  
+  // Prescription details
+  prescriptionType     String   @default("medication") @map("prescription_type") // medication, procedure, cosmetic, topical, oral_medication
+  status              String   @default("draft") @map("status") // draft, active, completed, cancelled, expired
+  
+  // Medication/Procedure information
+  medicationName      String   @map("medication_name")
+  dosage              String?
+  frequency           String?
+  duration            String?
+  instructions        String?
+  quantity            String?
+  
+  // Aesthetic specific fields
+  treatmentArea       String?  @map("treatment_area")
+  productBrand        String?  @map("product_brand")
+  concentration       String?  @map("concentration")
+  applicationMethod   String?  @map("application_method")
+  
+  // Security and compliance
+  requiresApproval    Boolean  @default(false) @map("requires_approval")
+  approvedBy          String?  @map("approved_by")
+  approvedAt          DateTime? @map("approved_at")
+  digitalSignature    Boolean  @default(false) @map("digital_signature")
+  
+  // Validity
+  validFrom           DateTime?    @map("valid_from")
+  validUntil          DateTime?    @map("valid_until")
+  isRefillable        Boolean  @default(false) @map("is_refillable")
+  refillCount         Int      @default(0) @map("refill_count")
+  maxRefills          Int      @default(0) @map("max_refills")
+  
+  // Timestamps
+  issuedAt            DateTime @default(now()) @map("issued_at")
+  expiresAt           DateTime? @map("expires_at")
+  createdAt           DateTime @default(now()) @map("created_at")
+  updatedAt           DateTime @updatedAt @map("updated_at")
+
+  @@map("telemedicine_prescriptions")
+  @@index([sessionId])
+  @@index([patientId])
+  @@index([professionalId])
+  @@index([clinicId])
+  @@index([status])
+  @@index([issuedAt])
+}
+
+model TelemedicineSessionNote {
+  id                  String   @id @default(uuid())
+  sessionId           String   @map("session_id")
+  session             TelemedicineSession @relation(fields: [sessionId], references: [id])
+  professionalId      String   @map("professional_id")
+  professional        Professional @relation(fields: [professionalId], references: [id])
+  
+  // Note content
+  noteType            String   @map("note_type") // clinical_observation, treatment_plan, follow_up_instructions, patient_concerns, recommendations
+  content             String
+  
+  // Visibility
+  isVisibleToPatient  Boolean  @default(false) @map("is_visible_to_patient")
+  sharedWithPatient    Boolean  @default(false) @map("shared_with_patient")
+  
+  // Attachments
+  attachmentUrls      String[] @default([]) @map("attachment_urls")
+  attachmentNames     String[] @default([]) @map("attachment_names")
+  
+  // Timestamps
+  createdAt           DateTime @default(now()) @map("created_at")
+  updatedAt           DateTime @updatedAt @map("updated_at")
+
+  @@map("telemedicine_session_notes")
+  @@index([sessionId])
+  @@index([professionalId])
+}
+
+model TelemedicineQualityMetric {
+  id                  String   @id @default(uuid())
+  sessionId           String   @map("session_id")
+  session             TelemedicineSession @relation(fields: [sessionId], references: [id])
+  
+  // Technical quality metrics
+  videoQualityScore   Decimal? @map("video_quality_score") @db.Decimal(3, 2)
+  audioQualityScore   Decimal? @map("audio_quality_score") @db.Decimal(3, 2)
+  connectionStabilityScore Decimal? @map("connection_stability_score") @db.Decimal(3, 2)
+  
+  // Patient experience metrics
+  patientSatisfactionScore Decimal? @map("patient_satisfaction_score") @db.Decimal(3, 2)
+  easeOfUseScore      Decimal? @map("ease_of_use_score") @db.Decimal(3, 2)
+  
+  // Clinical quality metrics
+  clinicalOutcomeScore Decimal? @map("clinical_outcome_score") @db.Decimal(3, 2)
+  followUpRequired    Boolean  @default(true) @map("follow_up_required")
+  
+  // Issues reported
+  technicalIssues     String[] @default([]) @map("technical_issues")
+  patientConcerns     String[] @default([]) @map("patient_concerns")
+  
+  // Feedback
+  patientFeedback     String?  @map("patient_feedback")
+  professionalFeedback String?  @map("professional_feedback")
+  
+  // Timestamps
+  collectedAt         DateTime @default(now()) @map("collected_at")
+  createdAt           DateTime @default(now()) @map("created_at")
+
+  @@map("telemedicine_quality_metrics")
+  @@index([sessionId])
+  @@index([collectedAt])
 }

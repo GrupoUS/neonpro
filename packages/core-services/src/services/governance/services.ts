@@ -123,6 +123,8 @@ export interface PolicyAttachmentRecord {
 
 export class InMemoryPolicyService {
   private store = new Map<string, PolicyRecord>();
+  private attachments = new Map<string, PolicyAttachmentRecord>();
+  
   async register(input: PolicyRegisterInput): Promise<PolicyRecord> {
     this.store.set(input.id, input);
     return input;
@@ -134,6 +136,24 @@ export class InMemoryPolicyService {
   }
   async list(): Promise<PolicyRecord[]> {
     return [...this.store.values()];
+  }
+  async attach(input: PolicyAttachmentInput): Promise<PolicyAttachmentRecord> {
+    const key = `${input.policyId}:${input.kpiId}`;
+    const existing = this.attachments.get(key);
+    
+    if (existing) {
+      return existing;
+    }
+    
+    const record: PolicyAttachmentRecord = {
+      policyId: input.policyId,
+      kpiId: input.kpiId,
+      resolvedThresholds: input.thresholds,
+      attachedAt: new Date(),
+    };
+    
+    this.attachments.set(key, record);
+    return record;
   }
 }
 
@@ -172,7 +192,7 @@ export interface FeatureScoreInput {
   featureId: string;
   impact: number;
   effort: number;
-  riskReduction: number;
+  _riskReduction: number;
   strategicFit: number;
 }
 export interface FeatureScoreResult {
@@ -204,6 +224,7 @@ export interface RiskRecord extends RiskRegisterInput {
 
 export class InMemoryRiskService {
   private store = new Map<string, RiskRecord>();
+  
   async register(input: RiskRegisterInput): Promise<RiskRecord> {
     const exposure = computeRiskExposure({
       probability: input.probability,
@@ -213,8 +234,14 @@ export class InMemoryRiskService {
     this.store.set(rec.id, rec);
     return rec;
   }
+  
   async list(): Promise<RiskRecord[]> {
     return [...this.store.values()];
+  }
+  
+  async calculateExposure(input: { probability: number; impact: number }): Promise<{ exposure: number }> {
+    const exposure = computeRiskExposure(input);
+    return { exposure };
   }
 }
 

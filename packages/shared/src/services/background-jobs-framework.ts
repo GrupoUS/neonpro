@@ -14,7 +14,7 @@
  * @compliance LGPD, ANVISA, ISO 27001, NIST Cybersecurity Framework
  */
 
-import { z } from "zod";
+import { z } from 'zod';
 
 // ============================================================================
 // TYPES & SCHEMAS
@@ -24,42 +24,42 @@ import { z } from "zod";
  * Job priority levels for healthcare workflows
  */
 export enum JobPriority {
-  CRITICAL = "critical", // Emergency, patient safety
-  HIGH = "high", // Urgent clinical tasks
-  MEDIUM = "medium", // Standard clinical workflows
-  LOW = "low", // Administrative tasks
-  BACKGROUND = "background", // Maintenance, cleanup
+  CRITICAL = 'critical', // Emergency, patient safety
+  HIGH = 'high', // Urgent clinical tasks
+  MEDIUM = 'medium', // Standard clinical workflows
+  LOW = 'low', // Administrative tasks
+  BACKGROUND = 'background', // Maintenance, cleanup
 }
 
 /**
  * Job status enumeration
  */
 export enum JobStatus {
-  PENDING = "pending",
-  RUNNING = "running",
-  COMPLETED = "completed",
-  FAILED = "failed",
-  RETRYING = "retrying",
-  CANCELLED = "cancelled",
-  DEAD_LETTER = "dead_letter",
+  PENDING = 'pending',
+  RUNNING = 'running',
+  COMPLETED = 'completed',
+  FAILED = 'failed',
+  RETRYING = 'retrying',
+  CANCELLED = 'cancelled',
+  DEAD_LETTER = 'dead_letter',
 }
 
 /**
  * Healthcare job types
  */
 export enum HealthcareJobType {
-  PATIENT_DATA_SYNC = "patient_data_sync",
-  CLINICAL_REPORT_GENERATION = "clinical_report_generation",
-  COMPLIANCE_AUDIT = "compliance_audit",
-  DATA_RETENTION_CLEANUP = "data_retention_cleanup",
-  EMERGENCY_NOTIFICATION = "emergency_notification",
-  APPOINTMENT_REMINDER = "appointment_reminder",
-  LAB_RESULT_PROCESSING = "lab_result_processing",
-  BILLING_INTEGRATION = "billing_integration",
-  BACKUP_OPERATION = "backup_operation",
-  SYSTEM_MAINTENANCE = "system_maintenance",
-  LGPD_DATA_PROCESSING = "lgpd_data_processing",
-  ANVISA_REPORTING = "anvisa_reporting",
+  PATIENT_DATA_SYNC = 'patient_data_sync',
+  CLINICAL_REPORT_GENERATION = 'clinical_report_generation',
+  COMPLIANCE_AUDIT = 'compliance_audit',
+  DATA_RETENTION_CLEANUP = 'data_retention_cleanup',
+  EMERGENCY_NOTIFICATION = 'emergency_notification',
+  APPOINTMENT_REMINDER = 'appointment_reminder',
+  LAB_RESULT_PROCESSING = 'lab_result_processing',
+  BILLING_INTEGRATION = 'billing_integration',
+  BACKUP_OPERATION = 'backup_operation',
+  SYSTEM_MAINTENANCE = 'system_maintenance',
+  LGPD_DATA_PROCESSING = 'lgpd_data_processing',
+  ANVISA_REPORTING = 'anvisa_reporting',
 }
 
 /**
@@ -72,23 +72,23 @@ export const HealthcareJobContextSchema = z.object({
   providerId: z.string().optional(),
   clinicalContext: z
     .enum([
-      "consultation",
-      "surgery",
-      "emergency",
-      "administrative",
-      "research",
+      'consultation',
+      'surgery',
+      'emergency',
+      'administrative',
+      'research',
     ])
     .optional(),
   urgencyLevel: z
-    .enum(["routine", "urgent", "critical", "emergency"])
-    .default("routine"),
+    .enum(['routine', 'urgent', 'critical', 'emergency'])
+    .default('routine'),
   dataClassification: z
-    .enum(["public", "internal", "confidential", "restricted"])
-    .default("internal"),
+    .enum(['public', 'internal', 'confidential', 'restricted'])
+    .default('internal'),
   lgpdConsentId: z.string().optional(),
   auditTrailId: z.string().optional(),
   regulatoryRequirement: z
-    .enum(["anvisa", "lgpd", "iso27001", "hipaa"])
+    .enum(['anvisa', 'lgpd', 'iso27001', 'hipaa'])
     .optional(),
 });
 
@@ -116,7 +116,7 @@ export const JobConfigSchema = z.object({
   // Scheduling
   delay: z.number().min(0).default(0), // Delay before execution
   cron: z.string().optional(), // Cron expression for recurring jobs
-  timezone: z.string().default("UTC"),
+  timezone: z.string().default('UTC'),
 
   // Resource limits
   memoryLimit: z
@@ -236,6 +236,7 @@ export type JobExecutionResult = z.infer<typeof JobExecutionResultSchema>;
 export const WorkerConfigSchema = z.object({
   workerId: z.string(),
   concurrency: z.number().min(1).max(50).default(5),
+  maxJobPriority: z.nativeEnum(JobPriority).default(JobPriority.HIGH),
   pollInterval: z.number().min(100).default(1000), // ms
 
   // Healthcare-specific
@@ -360,6 +361,11 @@ export interface JobQueue {
   dequeue(priority?: JobPriority): Promise<JobData | null>;
 
   /**
+   * Get next job for specific types and priority
+   */
+  getNextJob(allowedTypes: HealthcareJobType[], maxPriority: JobPriority): Promise<JobData | null>;
+
+  /**
    * Get job by ID
    */
   getJob(jobId: string): Promise<JobData | null>;
@@ -398,7 +404,7 @@ export interface JobQueue {
  * Generate unique job ID
  */
 export function generateJobId(): string {
-  if (typeof crypto !== "undefined" && crypto.randomUUID) {
+  if (typeof crypto !== 'undefined' && crypto.randomUUID) {
     return crypto.randomUUID();
   }
 
@@ -441,21 +447,21 @@ export function calculatePriorityScore(
   if (healthcareContext) {
     // Urgency level bonus
     switch (healthcareContext.urgencyLevel) {
-      case "emergency":
+      case 'emergency':
         score += 500;
         break;
-      case "critical":
+      case 'critical':
         score += 300;
         break;
-      case "urgent":
+      case 'urgent':
         score += 150;
         break;
     }
 
     // Clinical context bonus
-    if (healthcareContext.clinicalContext === "emergency") {
+    if (healthcareContext.clinicalContext === 'emergency') {
       score += 400;
-    } else if (healthcareContext.clinicalContext === "surgery") {
+    } else if (healthcareContext.clinicalContext === 'surgery') {
       score += 200;
     }
 
@@ -504,11 +510,11 @@ export function validateHealthcareContext(
 
   // Emergency jobs must have emergency urgency
   if (
-    jobType === HealthcareJobType.EMERGENCY_NOTIFICATION &&
-    _context.urgencyLevel !== "emergency"
+    jobType === HealthcareJobType.EMERGENCY_NOTIFICATION
+    && _context.urgencyLevel !== 'emergency'
   ) {
     errors.push(
-      "Emergency notification jobs must have emergency urgency level",
+      'Emergency notification jobs must have emergency urgency level',
     );
   }
 
@@ -520,15 +526,15 @@ export function validateHealthcareContext(
   ];
 
   if (patientJobTypes.includes(jobType) && !_context.patientId) {
-    errors.push("Patient-related jobs require patientId in healthcare context");
+    errors.push('Patient-related jobs require patientId in healthcare context');
   }
 
   // LGPD jobs must have consent ID
   if (
-    jobType === HealthcareJobType.LGPD_DATA_PROCESSING &&
-    !_context.lgpdConsentId
+    jobType === HealthcareJobType.LGPD_DATA_PROCESSING
+    && !_context.lgpdConsentId
   ) {
-    errors.push("LGPD data processing jobs require lgpdConsentId");
+    errors.push('LGPD data processing jobs require lgpdConsentId');
   }
 
   // Compliance jobs must have audit trail
@@ -538,7 +544,7 @@ export function validateHealthcareContext(
   ];
 
   if (complianceJobTypes.includes(jobType) && !_context.auditTrailId) {
-    errors.push("Compliance jobs require auditTrailId");
+    errors.push('Compliance jobs require auditTrailId');
   }
 
   return {
@@ -561,8 +567,8 @@ export function requiresEmergencyProcessing(
 
   // Jobs with emergency context
   if (
-    _context?.urgencyLevel === "emergency" ||
-    _context?.clinicalContext === "emergency"
+    _context?.urgencyLevel === 'emergency'
+    || _context?.clinicalContext === 'emergency'
   ) {
     return true;
   }
@@ -590,7 +596,7 @@ export function getDefaultJobConfig(
         auditRequired: true,
         lgpdCompliant: true,
         delay: 0,
-        timezone: "UTC",
+        timezone: 'UTC',
         memoryLimit: 128 * 1024 * 1024,
         cpuLimit: 1,
         tags: [],
@@ -608,7 +614,7 @@ export function getDefaultJobConfig(
         auditRequired: true,
         lgpdCompliant: true,
         delay: 0,
-        timezone: "UTC",
+        timezone: 'UTC',
         memoryLimit: 128 * 1024 * 1024,
         cpuLimit: 1,
         tags: [],
@@ -626,7 +632,7 @@ export function getDefaultJobConfig(
         auditRequired: true,
         lgpdCompliant: true,
         delay: 0,
-        timezone: "UTC",
+        timezone: 'UTC',
         memoryLimit: 128 * 1024 * 1024,
         cpuLimit: 1,
         tags: [],
@@ -644,7 +650,7 @@ export function getDefaultJobConfig(
         auditRequired: true,
         lgpdCompliant: true,
         delay: 0,
-        timezone: "UTC",
+        timezone: 'UTC',
         memoryLimit: 128 * 1024 * 1024,
         cpuLimit: 1,
         tags: [],
@@ -669,7 +675,7 @@ export class InMemoryJobQueue implements JobQueue {
 
   constructor() {
     // Initialize priority queues
-    Object.values(JobPriority).forEach((priority) => {
+    Object.values(JobPriority).forEach(priority => {
       this.priorityQueues.set(priority, []);
     });
 
@@ -700,54 +706,101 @@ export class InMemoryJobQueue implements JobQueue {
     this.updateStatistics();
   }
 
-  async dequeue(priority?: JobPriority): Promise<JobData | null> {
-    // Get priorities to check (in order)
-    const prioritiesToCheck = priority
-      ? [priority]
-      : [
-          JobPriority.CRITICAL,
-          JobPriority.HIGH,
-          JobPriority.MEDIUM,
-          JobPriority.LOW,
-          JobPriority.BACKGROUND,
-        ];
+  async getNextJob(
+    allowedTypes: HealthcareJobType[],
+    maxPriority: JobPriority,
+  ): Promise<JobData | null> {
+    // Get priorities to check (in order up to maxPriority)
+    const allPriorities = [
+      JobPriority.CRITICAL,
+      JobPriority.HIGH,
+      JobPriority.MEDIUM,
+      JobPriority.LOW,
+      JobPriority.BACKGROUND,
+    ];
 
-    for (const pri of prioritiesToCheck) {
-      const queue = this.priorityQueues.get(pri);
+    const maxPriorityIndex = allPriorities.indexOf(maxPriority);
+    const prioritiesToCheck = maxPriorityIndex >= 0
+      ? allPriorities.slice(0, maxPriorityIndex + 1)
+      : allPriorities;
+
+    for (const priority of prioritiesToCheck) {
+      const queue = this.priorityQueues.get(priority);
       if (queue && queue.length > 0) {
-        // Sort by priority score
-        queue.sort((a, b) => {
-          const jobA = this.jobs.get(a);
-          const jobB = this.jobs.get(b);
-          if (!jobA || !jobB) return 0;
-
-          const scoreA = calculatePriorityScore(
-            jobA.priority,
-            jobA.healthcareContext,
-            jobA.createdAt,
-          );
-          const scoreB = calculatePriorityScore(
-            jobB.priority,
-            jobB.healthcareContext,
-            jobB.createdAt,
-          );
-
-          return scoreB - scoreA; // Higher score first
+        // Filter jobs by allowed types
+        const eligibleJobs = queue.filter(jobId => {
+          const job = this.jobs.get(jobId);
+          return job
+            && job.status === JobStatus.PENDING
+            && allowedTypes.includes(job.type);
         });
 
-        const jobId = queue.shift()!;
-        const job = this.jobs.get(jobId);
+        if (eligibleJobs.length > 0) {
+          // Sort by priority score
+          eligibleJobs.sort((a, b) => {
+            const jobA = this.jobs.get(a);
+            const jobB = this.jobs.get(b);
+            if (!jobA || !jobB) return 0;
 
-        if (job && job.status === JobStatus.PENDING) {
-          // Update job status
-          await this.updateJob(jobId, {
-            status: JobStatus.RUNNING,
-            startedAt: new Date(),
+            const scoreA = calculatePriorityScore(
+              jobA.priority,
+              jobA.healthcareContext,
+              jobA.createdAt,
+            );
+            const scoreB = calculatePriorityScore(
+              jobB.priority,
+              jobB.healthcareContext,
+              jobB.createdAt,
+            );
+
+            return scoreB - scoreA; // Higher score first
           });
 
-          this.updateStatistics();
-          return job;
+          const jobId = eligibleJobs[0];
+          if (!jobId) continue;
+          const job = this.jobs.get(jobId);
+
+          if (job) {
+            // Remove from queue
+            const index = queue.indexOf(jobId);
+            if (index > -1) {
+              queue.splice(index, 1);
+            }
+
+            // Update job status
+            await this.updateJob(jobId, {
+              status: JobStatus.RUNNING,
+              startedAt: new Date(),
+            });
+
+            this.updateStatistics();
+            return { ...job };
+          }
         }
+      }
+    }
+
+    return null;
+  }
+  async dequeue(priority?: JobPriority): Promise<JobData | null> {
+    // Use getNextJob with all allowed types if no specific priority
+    if (!priority) {
+      return this.getNextJob(Object.values(HealthcareJobType), JobPriority.BACKGROUND);
+    }
+
+    const queue = this.priorityQueues.get(priority);
+    if (queue && queue.length > 0) {
+      const jobId = queue.shift()!;
+      const job = this.jobs.get(jobId);
+
+      if (job && job.status === JobStatus.PENDING) {
+        await this.updateJob(jobId, {
+          status: JobStatus.RUNNING,
+          startedAt: new Date(),
+        });
+
+        this.updateStatistics();
+        return { ...job };
       }
     }
 
@@ -773,7 +826,7 @@ export class InMemoryJobQueue implements JobQueue {
 
     if (deleted) {
       // Remove from priority queues
-      for (const queue of this.priorityQueues.values()) {
+      for (const queue of Array.from(this.priorityQueues.values())) {
         const index = queue.indexOf(jobId);
         if (index > -1) {
           queue.splice(index, 1);
@@ -795,9 +848,9 @@ export class InMemoryJobQueue implements JobQueue {
 
   async getJobsByStatus(status: JobStatus, limit = 100): Promise<JobData[]> {
     return Array.from(this.jobs.values())
-      .filter((job) => job.status === status)
+      .filter(job => job.status === status)
       .slice(0, limit)
-      .map((job) => ({ ...job }));
+      .map(job => ({ ...job }));
   }
 
   async getStatistics(): Promise<QueueStatistics> {
@@ -810,12 +863,12 @@ export class InMemoryJobQueue implements JobQueue {
   ): Promise<number> {
     let cleanedCount = 0;
 
-    for (const [jobId, job] of this.jobs.entries()) {
+    for (const [jobId, job] of Array.from(this.jobs.entries())) {
       if (
-        (job.status === JobStatus.COMPLETED ||
-          job.status === JobStatus.FAILED) &&
-        job.completedAt &&
-        job.completedAt < olderThan
+        (job.status === JobStatus.COMPLETED
+          || job.status === JobStatus.FAILED)
+        && job.completedAt
+        && job.completedAt < olderThan
       ) {
         await this.deleteJob(jobId);
         cleanedCount++;
@@ -837,28 +890,28 @@ export class InMemoryJobQueue implements JobQueue {
 
     this.statistics = {
       totalJobs: allJobs.length,
-      pendingJobs: allJobs.filter((j) => j.status === JobStatus.PENDING).length,
-      runningJobs: allJobs.filter((j) => j.status === JobStatus.RUNNING).length,
-      completedJobs: allJobs.filter((j) => j.status === JobStatus.COMPLETED)
+      pendingJobs: allJobs.filter(j => j.status === JobStatus.PENDING).length,
+      runningJobs: allJobs.filter(j => j.status === JobStatus.RUNNING).length,
+      completedJobs: allJobs.filter(j => j.status === JobStatus.COMPLETED)
         .length,
-      failedJobs: allJobs.filter((j) => j.status === JobStatus.FAILED).length,
-      deadLetterJobs: allJobs.filter((j) => j.status === JobStatus.DEAD_LETTER)
+      failedJobs: allJobs.filter(j => j.status === JobStatus.FAILED).length,
+      deadLetterJobs: allJobs.filter(j => j.status === JobStatus.DEAD_LETTER)
         .length,
 
       priorityDistribution: {
         [JobPriority.CRITICAL]: allJobs.filter(
-          (j) => j.priority === JobPriority.CRITICAL,
+          j => j.priority === JobPriority.CRITICAL,
         ).length,
         [JobPriority.HIGH]: allJobs.filter(
-          (j) => j.priority === JobPriority.HIGH,
+          j => j.priority === JobPriority.HIGH,
         ).length,
         [JobPriority.MEDIUM]: allJobs.filter(
-          (j) => j.priority === JobPriority.MEDIUM,
+          j => j.priority === JobPriority.MEDIUM,
         ).length,
-        [JobPriority.LOW]: allJobs.filter((j) => j.priority === JobPriority.LOW)
+        [JobPriority.LOW]: allJobs.filter(j => j.priority === JobPriority.LOW)
           .length,
         [JobPriority.BACKGROUND]: allJobs.filter(
-          (j) => j.priority === JobPriority.BACKGROUND,
+          j => j.priority === JobPriority.BACKGROUND,
         ).length,
       },
 
@@ -867,16 +920,16 @@ export class InMemoryJobQueue implements JobQueue {
       errorRate: this.calculateErrorRate(allJobs),
 
       emergencyJobsProcessed: allJobs.filter(
-        (j) => j.healthcareContext?.urgencyLevel === "emergency",
+        j => j.healthcareContext?.urgencyLevel === 'emergency',
       ).length,
       patientSafetyJobsProcessed: allJobs.filter(
-        (j) => j.config.patientSafetyRelevant,
+        j => j.config.patientSafetyRelevant,
       ).length,
       complianceJobsCompleted: allJobs.filter(
-        (j) =>
-          j.type === HealthcareJobType.COMPLIANCE_AUDIT ||
-          j.type === HealthcareJobType.ANVISA_REPORTING ||
-          j.type === HealthcareJobType.LGPD_DATA_PROCESSING,
+        j =>
+          j.type === HealthcareJobType.COMPLIANCE_AUDIT
+          || j.type === HealthcareJobType.ANVISA_REPORTING
+          || j.type === HealthcareJobType.LGPD_DATA_PROCESSING,
       ).length,
 
       activeWorkers: 0, // Would be tracked separately in real implementation
@@ -888,7 +941,7 @@ export class InMemoryJobQueue implements JobQueue {
   }
 
   private calculateAverageExecutionTime(jobs: JobData[]): number {
-    const completedJobs = jobs.filter((j) => j.executionTime);
+    const completedJobs = jobs.filter(j => j.executionTime);
     if (completedJobs.length === 0) return 0;
 
     const totalTime = completedJobs.reduce(
@@ -901,7 +954,7 @@ export class InMemoryJobQueue implements JobQueue {
   private calculateThroughput(jobs: JobData[]): number {
     const lastHour = new Date(Date.now() - 60 * 60 * 1000);
     const recentJobs = jobs.filter(
-      (j) => j.completedAt && j.completedAt > lastHour,
+      j => j.completedAt && j.completedAt > lastHour,
     );
 
     return recentJobs.length;
@@ -909,17 +962,16 @@ export class InMemoryJobQueue implements JobQueue {
 
   private calculateErrorRate(jobs: JobData[]): number {
     const totalJobs = jobs.filter(
-      (j) =>
-        j.status === JobStatus.COMPLETED ||
-        j.status === JobStatus.FAILED ||
-        j.status === JobStatus.DEAD_LETTER,
+      j =>
+        j.status === JobStatus.COMPLETED
+        || j.status === JobStatus.FAILED
+        || j.status === JobStatus.DEAD_LETTER,
     ).length;
 
     if (totalJobs === 0) return 0;
 
     const failedJobs = jobs.filter(
-      (j) =>
-        j.status === JobStatus.FAILED || j.status === JobStatus.DEAD_LETTER,
+      j => j.status === JobStatus.FAILED || j.status === JobStatus.DEAD_LETTER,
     ).length;
 
     return failedJobs / totalJobs;
@@ -967,7 +1019,7 @@ export class JobScheduler {
         healthcareContext: jobTemplate.healthcareContext,
         config: jobTemplate.config || getDefaultJobConfig(jobTemplate.type),
         dependencies: jobTemplate.dependencies,
-        tags: [...(jobTemplate.tags || []), "scheduled", name],
+        tags: [...(jobTemplate.tags || []), 'scheduled', name],
         metadata: {
           ...jobTemplate.metadata,
           scheduledJob: name,
@@ -1013,11 +1065,11 @@ export class JobScheduler {
   private parseCronExpression(cronExpression: string): number {
     // Simplified cron parser - in production use proper library
     // This only handles basic minute intervals
-    const parts = cronExpression.split(" ");
+    const parts = cronExpression.split(' ');
 
     if (parts.length >= 2) {
       const minutes = parts[0];
-      if (minutes?.startsWith("*/")) {
+      if (minutes?.startsWith('*/')) {
         const interval = parseInt(minutes!.substring(2));
         return interval * 60 * 1000; // Convert to milliseconds
       }

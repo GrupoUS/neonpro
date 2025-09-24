@@ -31,7 +31,7 @@ describe('Contract Test: GET /api/ai/sessions/{sessionId}', () => {
       headers: {
         'Authorization': 'Bearer test-token',
       },
-    }
+    });
 
     expect(response.status).toBe(404);
     const data = await response.json();
@@ -41,7 +41,7 @@ describe('Contract Test: GET /api/ai/sessions/{sessionId}', () => {
   it('T010 should return 401 for missing authentication', async () => {
     const response = await fetch(`${baseUrl}/api/ai/sessions/test-session-123`, {
       method: 'GET',
-    }
+    });
 
     expect(response.status).toBe(401);
   });
@@ -52,7 +52,7 @@ describe('Contract Test: GET /api/ai/sessions/{sessionId}', () => {
       headers: {
         'Authorization': 'Bearer test-token',
       },
-    }
+    });
 
     expect(response.status).toBe(200);
     const data = await response.json();
@@ -68,7 +68,7 @@ describe('Contract Test: GET /api/ai/sessions/{sessionId}', () => {
       headers: {
         'Authorization': 'Bearer test-token',
       },
-    }
+    });
 
     expect(response.status).toBe(200);
     const data = await response.json();
@@ -85,7 +85,7 @@ describe('Contract Test: GET /api/ai/sessions/{sessionId}', () => {
       headers: {
         'Authorization': 'Bearer test-token',
       },
-    }
+    });
 
     expect(response.status).toBe(410);
     const data = await response.json();

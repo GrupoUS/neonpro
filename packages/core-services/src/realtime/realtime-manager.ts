@@ -9,7 +9,7 @@ import {
   RealtimePostgresChangesPayload,
 } from "@supabase/supabase-js";
 import { QueryClient } from "@tanstack/react-query";
-import { logHealthcareError, realtimeLogger } from '../../../shared/src/logging/healthcare-logger';
+import { logHealthcareError, realtimeLogger } from "@neonpro/shared";
 
 export interface RealtimeSubscriptionOptions<T = any> {
   onInsert?: (_payload: T) => void;

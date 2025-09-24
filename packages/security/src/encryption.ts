@@ -4,15 +4,15 @@
  * @version 1.0.0
  */
 
-import * as crypto from "crypto";
+import * as crypto from 'crypto';
 
 // Type for GCM cipher with getAuthTag method
-interface CipherGCM extends crypto.Cipheriv {
+interface CipherGCM extends crypto.Cipher {
   getAuthTag(): Buffer;
 }
 
 // Type for GCM decipher with setAuthTag method
-interface DecipherGCM extends crypto.Decipheriv {
+interface DecipherGCM extends crypto.Decipher {
   setAuthTag(tag: Buffer): void;
 }
 
@@ -21,7 +21,7 @@ interface DecipherGCM extends crypto.Decipheriv {
  * Implements AES-256-GCM for authenticated encryption
  */
 export class EncryptionManager {
-  private algorithm = "aes-256-gcm";
+  private algorithm = 'aes-256-gcm';
   private keyLength = 32; // 256 bits
   private ivLength = 16; // 96 bits for GCM
 
@@ -30,7 +30,7 @@ export class EncryptionManager {
    * @returns Base64 encoded encryption key
    */
   generateKey(): string {
-    return crypto.randomBytes(this.keyLength).toString("base64");
+    return crypto.randomBytes(this.keyLength).toString('base64');
   }
 
   /**
@@ -40,7 +40,7 @@ export class EncryptionManager {
    */
   validateKey(key: string): boolean {
     try {
-      const buffer = Buffer.from(key, "base64");
+      const buffer = Buffer.from(key, 'base64');
       return buffer.length === this.keyLength;
     } catch {
       return false;
@@ -55,29 +55,29 @@ export class EncryptionManager {
    */
   encryptData(data: string, key: string): string {
     if (!this.validateKey(key)) {
-      throw new Error("Invalid encryption key");
+      throw new Error('Invalid encryption key');
     }
 
     const iv = crypto.randomBytes(this.ivLength);
     const cipher = crypto.createCipheriv(
       this.algorithm,
-      Buffer.from(key, "base64"),
+      Buffer.from(key, 'base64'),
       iv,
     );
 
-    let encrypted = cipher.update(data, "utf8", "hex");
-    encrypted += cipher.final("hex");
+    let encrypted = cipher.update(data, 'utf8', 'hex');
+    encrypted += cipher.final('hex');
 
-    const authTag = (cipher as CipherGCM).getAuthTag();
+    const authTag = (cipher as unknown as CipherGCM).getAuthTag();
 
     // Combine IV + encrypted data + auth tag
     const combined = Buffer.concat([
       iv,
-      Buffer.from(encrypted, "hex"),
+      Buffer.from(encrypted, 'hex'),
       authTag,
     ]);
 
-    return combined.toString("base64");
+    return combined.toString('base64');
   }
 
   /**
@@ -88,10 +88,10 @@ export class EncryptionManager {
    */
   decryptData(encryptedData: string, key: string): string {
     if (!this.validateKey(key)) {
-      throw new Error("Invalid encryption key");
+      throw new Error('Invalid encryption key');
     }
 
-    const combined = Buffer.from(encryptedData, "base64");
+    const combined = Buffer.from(encryptedData, 'base64');
 
     // Extract IV (first 16 bytes), auth tag (last 16 bytes), and encrypted data (middle)
     const iv = combined.subarray(0, this.ivLength);
@@ -100,13 +100,13 @@ export class EncryptionManager {
 
     const decipher = crypto.createDecipheriv(
       this.algorithm,
-      Buffer.from(key, "base64"),
+      Buffer.from(key, 'base64'),
       iv,
     );
-    (decipher as DecipherGCM).setAuthTag(authTag);
+    (decipher as unknown as DecipherGCM).setAuthTag(authTag);
 
-    let decrypted = decipher.update(encrypted, undefined, "utf8");
-    decrypted += decipher.final("utf8");
+    let decrypted = decipher.update(encrypted, undefined, 'utf8');
+    decrypted += decipher.final('utf8');
 
     return decrypted;
   }
@@ -126,7 +126,7 @@ export class EncryptionManager {
     const result = { ...obj } as T;
 
     for (const field of sensitiveFields) {
-      if (result[field] && typeof result[field] === "string") {
+      if (result[field] && typeof result[field] === 'string') {
         (result as Record<string, unknown>)[field] = this.encryptData(
           result[field],
           key,
@@ -152,7 +152,7 @@ export class EncryptionManager {
     const result = { ...obj } as T;
 
     for (const field of sensitiveFields) {
-      if (result[field] && typeof result[field] === "string") {
+      if (result[field] && typeof result[field] === 'string') {
         try {
           (result as Record<string, unknown>)[field] = this.decryptData(
             result[field],
@@ -175,7 +175,7 @@ export class EncryptionManager {
    * @returns SHA-256 hash of the data
    */
   hashData(data: string): string {
-    return crypto.createHash("sha256").update(data).digest("hex");
+    return crypto.createHash('sha256').update(data).digest('hex');
   }
 
   /**
@@ -195,8 +195,7 @@ export class EncryptionManager {
 export class KeyManager {
   private static instance: KeyManager;
   private keys: Map<string, string> = new Map();
-  private keyMetadata: Map<string, { createdAt: Date; expiresAt?: Date }> =
-    new Map();
+  private keyMetadata: Map<string, { createdAt: Date; expiresAt?: Date }> = new Map();
 
   /**
    * Get singleton instance of KeyManager

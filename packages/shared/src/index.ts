@@ -5,6 +5,10 @@
 // Core library
 export const shared = { version: "1.0.0" };
 
+// Healthcare logging
+export { default as healthcareLogger, createHealthcareLogger, databaseLogger, apiLogger, securityLogger, middlewareLogger, auditLogger, realtimeLogger, complianceLogger, chatLogger, analyticsLogger, governanceLogger, resilienceLogger, cacheLogger } from './logging/healthcare-logger';
+export { logHealthcareError, logAuditEvent, logPerformanceMetric } from './logging/healthcare-logger';
+
 // Telemetry and observability models
 // Export only types to avoid function name collisions; alias helper if needed
 export type {

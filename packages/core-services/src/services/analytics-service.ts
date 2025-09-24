@@ -6,8 +6,7 @@
 
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { z } from 'zod';
-import { logHealthcareError } from '../../../shared/src/logging/healthcare-logger';
-import healthcareLogger from '../../../shared/src/logging/healthcare-logger';
+import { logHealthcareError } from "@neonpro/shared";
 
 // Schema Types
 const AnalyticsConfigurationSchema = z.object({

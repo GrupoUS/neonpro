@@ -12,7 +12,8 @@
  * - WhatsApp integration
  */
 
-import { ModelProvider } from '@neonpro/analytics';
+// TODO: Fix analytics package dependency
+// import { ModelProvider } from '@neonpro/analytics';
 // import { WhatsAppService } from './chat-service';
 
 // ============================================================================

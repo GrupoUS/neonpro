@@ -23,7 +23,7 @@ import {
   ComplianceReportFilters,
   AuditTrailEntry,
 } from "@neonpro/types";
-import { logHealthcareError, governanceLogger } from '../../../../shared/src/logging/healthcare-logger';
+import { logHealthcareError, governanceLogger } from '@neonpro/shared';
 import {
   HealthcareMetricRecord,
   PatientSafetyKPIRecord,
@@ -236,7 +236,7 @@ export class HealthcareGovernanceService
         },
       });
     } catch (error) {
-      logHealthcareError('governance', error, { method: 'deleteHealthcareMetric', metricId });
+      logHealthcareError('governance', error, { method: 'deleteHealthcareMetric', metricId: id });
       if (error instanceof Error) {
         throw new Error(`Failed to delete healthcare metric: ${error.message}`);
       }
@@ -291,7 +291,7 @@ export class HealthcareGovernanceService
 
       return this.mapPatientSafetyKPI(data);
     } catch (error) {
-      logHealthcareError('governance', error, { method: 'updatePatientSafetyKPI', kpiId, update });
+      logHealthcareError('governance', error, { method: 'updatePatientSafetyKPI', kpiId: id, update: updates });
       throw error;
     }
   }
@@ -394,7 +394,7 @@ export class HealthcareGovernanceService
 
       return this.mapHealthcarePolicy(data);
     } catch (error) {
-      logHealthcareError('governance', error, { method: 'updateHealthcarePolicy', policyId, update });
+      logHealthcareError('governance', error, { method: 'updateHealthcarePolicy', policyId: id, update: updates });
       throw error;
     }
   }
@@ -506,7 +506,7 @@ export class HealthcareGovernanceService
 
       return this.mapHealthcareAlert(data);
     } catch (error) {
-      logHealthcareError('governance', error, { method: 'updateHealthcareAlert', alertId, update });
+      logHealthcareError('governance', error, { method: 'updateHealthcareAlert', alertId: id, update: updates });
       throw error;
     }
   }
