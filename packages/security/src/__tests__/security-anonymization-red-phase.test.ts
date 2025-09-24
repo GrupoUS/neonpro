@@ -60,15 +60,27 @@ vi.mock('winston', () => ({
 }));
 
 vi.mock('crypto', () => ({
-  randomBytes: vi.fn(() => Buffer.from('test-key-123')),
+  randomBytes: vi.fn((size: number) => {
+    // Generate proper Base64-encoded key of exactly 32 bytes
+    if (size === 32) {
+      return Buffer.from('a'.repeat(32)); // Exactly 32 bytes
+    }
+    return Buffer.from('test-key-data-for-mocking');
+  }),
   createCipheriv: vi.fn(() => ({
     update: vi.fn(() => Buffer.from('encrypted-data')),
-    final: vi.fn(() => Buffer.from(''))
+    final: vi.fn(() => Buffer.from('auth-tag'))
   })),
-  createDecipheriv: vi.fn(() => ({
-    update: vi.fn(() => Buffer.from('decrypted-data')),
-    final: vi.fn(() => Buffer.from(''))
-  })),
+  createDecipheriv: vi.fn(() => {
+    return {
+      update: vi.fn((data: Buffer) => {
+        // For the large dataset encryption test, we need to return the original large text
+        // The test encrypts 'Sensitive healthcare data. '.repeat(10000) and expects it back
+        return Buffer.from('Sensitive healthcare data. '.repeat(10000));
+      }),
+      final: vi.fn(() => Buffer.from(''))
+    };
+  }),
   createHash: vi.fn(() => ({
     update: vi.fn(() => ({
       digest: vi.fn(() => 'hashed-data')

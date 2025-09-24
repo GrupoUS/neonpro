@@ -6,7 +6,7 @@
 import { createServerClient } from '../clients/supabase.js';
 
 export interface RLSContext {
-  _userId: string;
+  userId: string;
   userRole: string;
   clinicId: string;
   professionalId?: string;

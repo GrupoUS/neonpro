@@ -93,7 +93,7 @@ function anonymizeCPF(cpf: string): string {
 
 function anonymizeEmail(email: string): string {
   const [local, domain] = email.split("@");
-  if (!domain) return "*****@*****.***";
+  if (!domain || !local) return "*****@*****.***";
 
   const anonymizedLocal =
     local.length > 2
@@ -205,7 +205,7 @@ export class PredictiveAnalyticsService {
     try {
       await this.ensureInitialized();
 
-      let processedData = request.patientData || {};
+      let processedData = _request.patientData || {};
 
       // Apply LGPD anonymization if enabled
       if (this.enableLGPDCompliance) {
@@ -223,7 +223,7 @@ export class PredictiveAnalyticsService {
           vital_signs:
             processedData.vitalSigns || processedData.vitals || "normal",
           appointment_history: processedData.appointmentHistory || "regular",
-          timeframe: request.timeframe,
+          timeframe: _request.timeframe,
         },
       };
 
@@ -242,7 +242,7 @@ export class PredictiveAnalyticsService {
             : result.confidence > 0.5
               ? "medium"
               : "low",
-        description: `No-show risk prediction for ${request.timeframe} timeframe`,
+        description: `No-show risk prediction for ${_request.timeframe} timeframe`,
         recommendation:
           "Send appointment reminders and offer flexible scheduling options to reduce no-show risk",
         createdAt: new Date(),
@@ -274,7 +274,7 @@ export class PredictiveAnalyticsService {
     try {
       await this.ensureInitialized();
 
-      let processedData = request.patientData || {};
+      let processedData = _request.patientData || {};
 
       if (this.enableLGPDCompliance) {
         processedData = maskSensitiveFields(processedData);
@@ -292,7 +292,7 @@ export class PredictiveAnalyticsService {
             processedData.vitalSigns || processedData.vitals || "normal",
           procedure_type: processedData.procedureType || "consultation",
           historical_revenue: processedData.historicalRevenue || 1000,
-          timeframe: request.timeframe,
+          timeframe: _request.timeframe,
         },
       };
 
@@ -311,7 +311,7 @@ export class PredictiveAnalyticsService {
             : result.confidence > 0.5
               ? "medium"
               : "low",
-        description: `Revenue forecast for ${request.timeframe} timeframe`,
+        description: `Revenue forecast for ${_request.timeframe} timeframe`,
         recommendation:
           "Optimize appointment scheduling and implement dynamic pricing strategies to maximize revenue",
         createdAt: new Date(),
@@ -343,7 +343,7 @@ export class PredictiveAnalyticsService {
     try {
       await this.ensureInitialized();
 
-      let processedData = request.patientData || {};
+      let processedData = _request.patientData || {};
 
       if (this.enableLGPDCompliance) {
         processedData = maskSensitiveFields(processedData);
@@ -420,7 +420,7 @@ export class PredictiveAnalyticsService {
 
       // If no valid insights were generated, throw an error
       if (
-        _validInsights.length === 0 &&
+        validInsights.length === 0 &&
         insights.some((insight) => insight === null)
       ) {
         throw new Error("Failed to generate predictive insights");

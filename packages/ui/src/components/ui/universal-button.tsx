@@ -96,6 +96,9 @@ export interface UniversalButtonProps
 
   // Advanced animation props
   animations?: AdvancedAnimationProps;
+
+  // Internal props for backward compatibility (not part of public API)
+  _gradientColors?: { from?: string; via?: string; to?: string };
 }
 
 const UniversalButton = forwardRef<HTMLButtonElement, UniversalButtonProps>(
@@ -119,7 +122,7 @@ const UniversalButton = forwardRef<HTMLButtonElement, UniversalButtonProps>(
       animations,
 
       // Legacy customization props should not reach DOM
-      gradientColors,
+      _gradientColors,
 
       disabled,
       onMouseEnter,
@@ -196,7 +199,8 @@ const UniversalButton = forwardRef<HTMLButtonElement, UniversalButtonProps>(
 
     // Combine all CSS classes
     const buttonClasses = cn(
-      universalButtonVariants({ variant, size, className }),
+      universalButtonVariants({ variant, size }),
+      className,
       {
         // Legacy gradient effects (backward compatibility)
         "bg-gradient-to-r animate-gradient-x from-blue-600 via-blue-500 to-cyan-500":
@@ -210,7 +214,7 @@ const UniversalButton = forwardRef<HTMLButtonElement, UniversalButtonProps>(
         "border-2 border-transparent before:animate-spin":
           legacyBorderGradientEnabled,
         ...(legacyBorderGradientEnabled && duration !== undefined
-          ? ({ "--animation-duration": `${duration}s` } as any)
+          ? ({ "--animation-duration": `${duration}s` } as React.CSSProperties)
           : {}),
         ...(legacyBorderGradientEnabled && clockwise === false
           ? { "before:animate-reverse-spin": true }
@@ -219,7 +223,6 @@ const UniversalButton = forwardRef<HTMLButtonElement, UniversalButtonProps>(
       // Animation classes (strings)
       hoverBorderClasses,
       shineBorderClasses,
-      className,
     );
 
     // Combined event handlers
@@ -286,7 +289,7 @@ const UniversalButton = forwardRef<HTMLButtonElement, UniversalButtonProps>(
           "--mouse-y": `${mousePosition.y}px`,
         }),
       ...(legacyBorderGradientEnabled && duration !== undefined
-        ? { ["--animation-duration" as any]: `${duration}s` }
+        ? { ["--animation-duration" as keyof React.CSSProperties]: `${duration}s` }
         : {}),
     };
 
@@ -298,27 +301,27 @@ const UniversalButton = forwardRef<HTMLButtonElement, UniversalButtonProps>(
           "UniversalButton with asChild requires a single valid React element as child",
         );
       }
-      const child = arr[0] as React.ReactElement<any>;
+      const child = arr[0] as React.ReactElement<Record<string, unknown>>;
       const mergedProps = {
-        className: cn(child.props.className, buttonClasses),
+        className: cn((child.props as Record<string, unknown>).className as string, buttonClasses),
         ref: combinedRef,
         disabled: disabled || loading,
         style: buttonStyle,
-        onMouseEnter: (e: React.MouseEvent<any>) => {
-          child.props?.onMouseEnter?.(e);
-          handleMouseEnterCombined(e as any);
+        onMouseEnter: (e: React.MouseEvent<HTMLElement>) => {
+          (child.props as any)?.onMouseEnter?.(e);
+          handleMouseEnterCombined(e as React.MouseEvent<HTMLButtonElement>);
         },
-        onMouseLeave: (e: React.MouseEvent<any>) => {
-          child.props?.onMouseLeave?.(e);
-          handleMouseLeaveCombined(e as any);
+        onMouseLeave: (e: React.MouseEvent<HTMLElement>) => {
+          (child.props as any)?.onMouseLeave?.(e);
+          handleMouseLeaveCombined(e as React.MouseEvent<HTMLButtonElement>);
         },
-        onMouseMove: (e: React.MouseEvent<any>) => {
-          child.props?.onMouseMove?.(e);
-          handleMouseMoveCombined(e as any);
+        onMouseMove: (e: React.MouseEvent<HTMLElement>) => {
+          (child.props as any)?.onMouseMove?.(e);
+          handleMouseMoveCombined(e as React.MouseEvent<HTMLButtonElement>);
         },
-        onClick: (e: React.MouseEvent<any>) => {
-          child.props?.onClick?.(e);
-          onClick?.(e as any);
+        onClick: (e: React.MouseEvent<HTMLElement>) => {
+          (child.props as any)?.onClick?.(e);
+          onClick?.(e as React.MouseEvent<HTMLButtonElement>);
         },
         ...props,
       };
@@ -329,7 +332,7 @@ const UniversalButton = forwardRef<HTMLButtonElement, UniversalButtonProps>(
     return (
       <button
         className={buttonClasses}
-        ref={combinedRef as any}
+        ref={combinedRef as React.Ref<HTMLButtonElement>}
         disabled={disabled || loading}
         style={buttonStyle}
         onMouseEnter={handleMouseEnterCombined}

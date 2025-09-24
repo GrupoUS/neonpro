@@ -10,7 +10,7 @@ import {
   HealthcareContext,
   MetricFrequency,
   RiskLevel,
-} from "./base-metrics.ts";
+} from "./base-metrics.js";
 
 /**
  * Clinical metric categories aligned with healthcare standards

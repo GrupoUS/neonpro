@@ -1,5 +1,5 @@
 // Debug remaining issues
-import { validateCNS, validateProfessionalLicense, validateCPF } from './src/index.ts';
+import { validateCNS, validateProfessionalLicense, validateCPF } from './src/index';
 
 console.log("=== CNS Debug ===");
 const testCNS = "170185783640008";
@@ -14,7 +14,9 @@ if (firstDigit === 1 || firstDigit === 2) {
   const weights = [15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1];
   let sum = 0;
   for (let i = 0; i < 15; i++) {
-    sum += digits[i] * weights[i];
+    if (digits[i] !== undefined && weights[i] !== undefined) {
+      sum += digits[i]! * weights[i]!;
+    }
   }
   const remainder = sum % 11;
   console.log(`Definitive CNS - Sum: ${sum}, Remainder: ${remainder}, Valid: ${remainder === 0}`);

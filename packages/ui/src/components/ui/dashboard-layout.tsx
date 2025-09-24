@@ -55,10 +55,10 @@ export function DashboardCard({
       drag
       dragMomentum={false}
       dragElastic={0.1}
-      dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
+      dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 } as any}
       animate={{
-        x: position.x,
-        y: position.y,
+        x: position.x || 0,
+        y: position.y || 0,
       }}
       onDragStart={() => setIsDragging(true)}
       onDragEnd={handleDragEnd}
@@ -114,11 +114,11 @@ export function DashboardLayout({
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Extract card IDs from children
-  const cardIds = React.Children.toArray(children).map((child, index) => {
+  const cardIds = React.Children.toArray(children).map((child, index): string => {
     if (React.isValidElement(child)) {
       return (
         child.key?.toString() ||
-        (child.props as any)?.id ||
+        ((child.props as Record<string, unknown>)?.id as string) ||
         `dashboard-card-${index}`
       );
     }
@@ -150,9 +150,8 @@ export function DashboardLayout({
 
       return () => clearTimeout(timer);
     }
-    // Explicitly return undefined to satisfy noImplicitReturns in strict DTS builds
     return undefined;
-  }, [cardIds.join(","), autoDistributeCards]);
+  }, [cardIds, autoDistributeCards]);
 
   return (
     <div className={`relative min-h-[600px] ${className}`} ref={containerRef}>
@@ -176,13 +175,13 @@ export function DashboardLayout({
             // Generate consistent ID for each card
             const cardId =
               child.key?.toString() ||
-              (child.props as any)?.id ||
+              ((child.props as Record<string, unknown>)?.id as string) ||
               `dashboard-card-${index}`;
 
-            return React.cloneElement(child as any, {
-              key: cardId,
+              return React.cloneElement(child as React.ReactElement<Record<string, unknown>>, {
+              key: cardId as React.Key,
               cardId: cardId,
-              className: `${(child.props as any)?.className || ""} w-80 h-64`, // Fixed size for consistent layout
+              className: `${((child.props as Record<string, unknown>)?.className as string) || ""} w-80 h-64`, // Fixed size for consistent layout
             });
           }
           return child;

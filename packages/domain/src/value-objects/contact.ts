@@ -1,4 +1,4 @@
-// import type { Address } from './address.js'; // TODO: Use when implementing address functionality
+// import type { Address } from './address'; // TODO: Use when implementing address functionality
 
 /**
  * Emergency contact information
@@ -8,7 +8,7 @@ export interface EmergencyContact {
   relationship: string;
   phone: string;
   email?: string;
-  address?: import("./address.js").Address;
+  address?: import("./address").Address;
 }
 
 /**

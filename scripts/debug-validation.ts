@@ -94,7 +94,7 @@ async function debugValidation() {
   console.log("\nTEST 4: Confidence Calculation");
   const minConfidence = 0.7;
   const isValid = true;
-  let confidence = isValid ? 0.9 : 0.5;
+  const confidence = isValid ? 0.9 : 0.5;
   console.log(`Base confidence (valid=${isValid}): ${confidence}`);
   console.log(`Min confidence threshold: ${minConfidence}`);
   console.log(`Passes threshold: ${confidence >= minConfidence}`);

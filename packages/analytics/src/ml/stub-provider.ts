@@ -347,11 +347,11 @@ export class StubModelProvider implements ModelProvider {
 
     return features
       .slice(0, 5)
-      .map((feature, _index) => ({
+      .map((feature, index) => ({
         feature,
         importance: Math.max(0.1, Math.random() * (1 - index * 0.15)),
         description: `Impact of ${feature} on ${input.type} prediction`,
       }))
-      .sort((a, _b) => b.importance - a.importance);
+      .sort((a, b) => b.importance - a.importance);
   }
 }

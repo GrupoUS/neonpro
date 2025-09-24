@@ -16,6 +16,9 @@ describe("T007 validateEnv", () => {
   it("returns true when required vars present", () => {
     const original = { ...process.env };
     process.env.SUPABASE_URL = "https://example.supabase.co";
+    process.env.SUPABASE_ANON_KEY = "test_anon_key";
+    process.env.NEXT_PUBLIC_SUPABASE_URL = process.env.SUPABASE_URL;
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = "test_public_anon_key";
     try {
       expect(validateEnv()).toBe(true);
     } finally {

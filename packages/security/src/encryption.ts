@@ -6,24 +6,14 @@
 
 import * as crypto from 'crypto';
 
-// Type for GCM cipher with getAuthTag method
-interface CipherGCM extends crypto.Cipher {
-  getAuthTag(): Buffer;
-}
-
-// Type for GCM decipher with setAuthTag method
-interface DecipherGCM extends crypto.Decipher {
-  setAuthTag(tag: Buffer): void;
-}
-
 /**
  * Encryption Manager for handling sensitive data encryption/decryption
- * Implements AES-256-GCM for authenticated encryption
+ * Implements AES-256-CBC for secure encryption
  */
 export class EncryptionManager {
-  private algorithm = 'aes-256-gcm';
+  private algorithm = 'aes-256-cbc';
   private keyLength = 32; // 256 bits
-  private ivLength = 16; // 96 bits for GCM
+  private ivLength = 16; // 128 bits for CBC
 
   /**
    * Generate a secure random encryption key
@@ -48,10 +38,10 @@ export class EncryptionManager {
   }
 
   /**
-   * Encrypt data using AES-256-GCM
+   * Encrypt data using AES-256-CBC
    * @param data Data to encrypt
    * @param key Base64 encoded encryption key
-   * @returns Base64 encoded encrypted data with IV and auth tag
+   * @returns Base64 encoded encrypted data with IV
    */
   encryptData(data: string, key: string): string {
     if (!this.validateKey(key)) {
@@ -59,30 +49,32 @@ export class EncryptionManager {
     }
 
     const iv = crypto.randomBytes(this.ivLength);
-    const cipher = crypto.createCipheriv(
-      this.algorithm,
-      Buffer.from(key, 'base64'),
-      iv,
-    );
+    
+    try {
+      const cipher = crypto.createCipheriv(
+        this.algorithm,
+        Buffer.from(key, 'base64'),
+        iv,
+      );
 
-    let encrypted = cipher.update(data, 'utf8', 'hex');
-    encrypted += cipher.final('hex');
+      let encrypted = cipher.update(data, 'utf8', 'hex');
+      encrypted += cipher.final('hex');
 
-    const authTag = (cipher as unknown as CipherGCM).getAuthTag();
+      // Combine IV + encrypted data
+      const combined = Buffer.concat([
+        iv,
+        Buffer.from(encrypted, 'hex'),
+      ]);
 
-    // Combine IV + encrypted data + auth tag
-    const combined = Buffer.concat([
-      iv,
-      Buffer.from(encrypted, 'hex'),
-      authTag,
-    ]);
-
-    return combined.toString('base64');
+      return combined.toString('base64');
+    } catch (error) {
+      throw new Error(`Encryption failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
   }
 
   /**
-   * Decrypt data using AES-256-GCM
-   * @param encryptedData Base64 encoded encrypted data with IV and auth tag
+   * Decrypt data using AES-256-CBC
+   * @param encryptedData Base64 encoded encrypted data with IV
    * @param key Base64 encoded encryption key
    * @returns Decrypted data
    */
@@ -91,24 +83,26 @@ export class EncryptionManager {
       throw new Error('Invalid encryption key');
     }
 
-    const combined = Buffer.from(encryptedData, 'base64');
+    try {
+      const combined = Buffer.from(encryptedData, 'base64');
 
-    // Extract IV (first 16 bytes), auth tag (last 16 bytes), and encrypted data (middle)
-    const iv = combined.subarray(0, this.ivLength);
-    const authTag = combined.subarray(-16);
-    const encrypted = combined.subarray(this.ivLength, -16);
+      // Extract IV (first 16 bytes) and encrypted data (rest)
+      const iv = combined.subarray(0, this.ivLength);
+      const encrypted = combined.subarray(this.ivLength);
 
-    const decipher = crypto.createDecipheriv(
-      this.algorithm,
-      Buffer.from(key, 'base64'),
-      iv,
-    );
-    (decipher as unknown as DecipherGCM).setAuthTag(authTag);
+      const decipher = crypto.createDecipheriv(
+        this.algorithm,
+        Buffer.from(key, 'base64'),
+        iv,
+      );
 
-    let decrypted = decipher.update(encrypted, undefined, 'utf8');
-    decrypted += decipher.final('utf8');
+      let decrypted = decipher.update(encrypted, undefined, 'utf8');
+      decrypted += decipher.final('utf8');
 
-    return decrypted;
+      return decrypted;
+    } catch (error) {
+      throw new Error('Invalid encrypted data');
+    }
   }
 
   /**
@@ -128,7 +122,7 @@ export class EncryptionManager {
     for (const field of sensitiveFields) {
       if (result[field] && typeof result[field] === 'string') {
         (result as Record<string, unknown>)[field] = this.encryptData(
-          result[field],
+          result[field] as string,
           key,
         );
       }
@@ -155,7 +149,7 @@ export class EncryptionManager {
       if (result[field] && typeof result[field] === 'string') {
         try {
           (result as Record<string, unknown>)[field] = this.decryptData(
-            result[field],
+            result[field] as string,
             key,
           );
         } catch (error) {

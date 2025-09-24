@@ -209,7 +209,7 @@ export function useShineBorderAnimation(
 
   // Duration mapping based on speed
   const getDuration = useCallback(() => {
-    if (duration) return duration;
+    if (duration) {return duration;}
     switch (speed) {
       case "slow":
         return 5;
@@ -222,7 +222,7 @@ export function useShineBorderAnimation(
 
   // Animation control methods
   const start = useCallback(() => {
-    if (!enabled) return;
+    if (!enabled) {return;}
     setIsPlaying(true);
     animationStateRef.current = "playing";
   }, [enabled]);
@@ -254,7 +254,7 @@ export function useShineBorderAnimation(
 
   // Event handlers
   const handleMouseEnter = useCallback(() => {
-    if (!enabled) return;
+    if (!enabled) {return;}
     setIsHovering(true);
 
     // Handle shine border
@@ -273,7 +273,7 @@ export function useShineBorderAnimation(
   }, [enabled, hoverOnly, start, enableHoverGradient]);
 
   const handleMouseLeave = useCallback(() => {
-    if (!enabled) return;
+    if (!enabled) {return;}
     setIsHovering(false);
 
     // Handle shine border

@@ -1,5 +1,5 @@
 // Debug script for TUSS validation
-import { validateTUSS } from './src/index.ts';
+import { validateTUSS } from './src/index';
 
 const testTUSS = [
   "101010", // 6 digits - should be valid

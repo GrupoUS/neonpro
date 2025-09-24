@@ -3,6 +3,13 @@
 
 import { SupabaseGovernanceService } from "./supabase-governance.service";
 
+// Simple logger for now - replace with proper logger later
+const logger = {
+  error: (message: string, context: any, error?: any) => {
+    console.error(`[${new Date().toISOString()}] ${message}`, context, error);
+  }
+};
+
 // Define missing interfaces locally to avoid import issues
 interface KPIMetric {
   id: string;
@@ -313,8 +320,6 @@ export class HealthcareGovernanceServiceImpl implements HealthcareGovernanceServ
       
       return baseMetrics;
     } catch (error) {
-      const { getLogger } = await import("@neonpro/core-services/config/logger");
-      const logger = getLogger();
       logger.error("Error getting KPI metrics", { component: "healthcare-governance-service", operation: "get_kpi_metrics", filters }, error);
       throw new Error("Failed to get KPI metrics");
     }
@@ -330,8 +335,6 @@ export class HealthcareGovernanceServiceImpl implements HealthcareGovernanceServ
       
       return await this.supabaseService.createKPIMetric(metricWithClinic);
     } catch (error) {
-      const { getLogger } = await import("@neonpro/core-services/config/logger");
-      const logger = getLogger();
       logger.error("Error creating KPI metric", { component: "healthcare-governance-service", operation: "create_kpi_metric", metric }, error);
       throw new Error("Failed to create KPI metric");
     }
@@ -341,9 +344,7 @@ export class HealthcareGovernanceServiceImpl implements HealthcareGovernanceServ
     try {
       return await this.supabaseService.updateKPIMetric(updates);
     } catch (error) {
-      const { getLogger } = await import("@neonpro/core-services/config/logger");
-      const logger = getLogger();
-      logger.error("Error updating KPI metric", { component: "healthcare-governance-service", operation: "update_kpi_metric", id, updates }, error);
+      logger.error("Error updating KPI metric", { component: "healthcare-governance-service", operation: "update_kpi_metric", id: _id, updates }, error);
       throw new Error("Failed to update KPI metric");
     }
   }
@@ -353,9 +354,7 @@ export class HealthcareGovernanceServiceImpl implements HealthcareGovernanceServ
     try {
       return await this.supabaseService.getRiskAssessments(clinicId);
     } catch (error) {
-      const { getLogger } = await import("@neonpro/core-services/config/logger");
-      const logger = getLogger();
-      logger.error("Error getting risk assessments", { component: "healthcare-governance-service", operation: "get_risk_assessments", filters }, error);
+      logger.error("Error getting risk assessments", { component: "healthcare-governance-service", operation: "get_risk_assessments", filters: _filters }, error);
       throw new Error("Failed to get risk assessments");
     }
   }
@@ -364,8 +363,6 @@ export class HealthcareGovernanceServiceImpl implements HealthcareGovernanceServ
     try {
       return await this.supabaseService.createRiskAssessment(assessment);
     } catch (error) {
-      const { getLogger } = await import("@neonpro/core-services/config/logger");
-      const logger = getLogger();
       logger.error("Error creating risk assessment", { component: "healthcare-governance-service", operation: "create_risk_assessment", assessment }, error);
       throw new Error("Failed to create risk assessment");
     }
@@ -376,9 +373,7 @@ export class HealthcareGovernanceServiceImpl implements HealthcareGovernanceServ
     try {
       return await this.supabaseService.getAIGovernanceMetrics();
     } catch (error) {
-      const { getLogger } = await import("@neonpro/core-services/config/logger");
-      const logger = getLogger();
-      logger.error("Error getting AI governance metrics", { component: "healthcare-governance-service", operation: "get_ai_governance_metrics", filters }, error);
+      logger.error("Error getting AI governance metrics", { component: "healthcare-governance-service", operation: "get_ai_governance_metrics", filters: _filters }, error);
       throw new Error("Failed to get AI governance metrics");
     }
   }
@@ -387,8 +382,6 @@ export class HealthcareGovernanceServiceImpl implements HealthcareGovernanceServ
     try {
       return await this.supabaseService.updateAIGovernanceMetric("temp", metric);
     } catch (error) {
-      const { getLogger } = await import("@neonpro/core-services/config/logger");
-      const logger = getLogger();
       logger.error("Error creating AI governance metric", { component: "healthcare-governance-service", operation: "create_ai_governance_metric", metric }, error);
       throw new Error("Failed to create AI governance metric");
     }
@@ -399,9 +392,7 @@ export class HealthcareGovernanceServiceImpl implements HealthcareGovernanceServ
     try {
       return await this.supabaseService.getPolicies();
     } catch (error) {
-      const { getLogger } = await import("@neonpro/core-services/config/logger");
-      const logger = getLogger();
-      logger.error("Error getting policies", { component: "healthcare-governance-service", operation: "get_policies", filters }, error);
+      logger.error("Error getting policies", { component: "healthcare-governance-service", operation: "get_policies", filters: _filters }, error);
       throw new Error("Failed to get policies");
     }
   }
@@ -410,8 +401,6 @@ export class HealthcareGovernanceServiceImpl implements HealthcareGovernanceServ
     try {
       return await this.supabaseService.updatePolicy("temp", policy);
     } catch (error) {
-      const { getLogger } = await import("@neonpro/core-services/config/logger");
-      const logger = getLogger();
       logger.error("Error creating policy", { component: "healthcare-governance-service", operation: "create_policy", policy }, error);
       throw new Error("Failed to create policy");
     }
@@ -426,8 +415,6 @@ export class HealthcareGovernanceServiceImpl implements HealthcareGovernanceServ
       });
       return result.entries;
     } catch (error) {
-      const { getLogger } = await import("@neonpro/core-services/config/logger");
-      const logger = getLogger();
       logger.error("Error getting audit trail", { component: "healthcare-governance-service", operation: "get_audit_trail", filters }, error);
       throw new Error("Failed to get audit trail");
     }
@@ -437,8 +424,6 @@ export class HealthcareGovernanceServiceImpl implements HealthcareGovernanceServ
     try {
       return await this.supabaseService.createAuditEntry(entry);
     } catch (error) {
-      const { getLogger } = await import("@neonpro/core-services/config/logger");
-      const logger = getLogger();
       logger.error("Error creating audit entry", { component: "healthcare-governance-service", operation: "create_audit_entry", entry }, error);
       throw new Error("Failed to create audit entry");
     }
@@ -449,9 +434,7 @@ export class HealthcareGovernanceServiceImpl implements HealthcareGovernanceServ
     try {
       return await this.supabaseService.getComplianceStatus(clinicId);
     } catch (error) {
-      const { getLogger } = await import("@neonpro/core-services/config/logger");
-      const logger = getLogger();
-      logger.error("Error getting compliance status", { component: "healthcare-governance-service", operation: "get_compliance_status", filters }, error);
+      logger.error("Error getting compliance status", { component: "healthcare-governance-service", operation: "get_compliance_status" }, error);
       throw new Error("Failed to get compliance status");
     }
   }
@@ -480,9 +463,7 @@ export class HealthcareGovernanceServiceImpl implements HealthcareGovernanceServ
         compliance: this.formatComplianceData(complianceStatus)
       };
     } catch (error) {
-      const { getLogger } = await import("@neonpro/core-services/config/logger");
-      const logger = getLogger();
-      logger.error("Error getting healthcare dashboard data", { component: "healthcare-governance-service", operation: "get_healthcare_dashboard_data", filters }, error);
+      logger.error("Error getting healthcare dashboard data", { component: "healthcare-governance-service", operation: "get_healthcare_dashboard_data" }, error);
       throw new Error("Failed to get healthcare dashboard data");
     }
   }

@@ -7,17 +7,8 @@ import { describe, it, expect, beforeAll, afterAll, beforeEach, afterEach } from
 import { AestheticClinicPerformanceOptimizer } from "../../services/performance/aesthetic-clinic-performance-optimizer";
 import { PerformanceMonitor } from "../../middleware/performance-middleware";
 import { createSupabaseClient } from "../../config/supabase";
+import { PERFORMANCE_THRESHOLDS } from "../../../../packages/shared/src/config/performance";
 // import { ErrorMapper } from "@neonpro/shared/errors";
-
-// Performance test configuration
-const: PERFORMANCE_THRESHOLDS = [ {
-  MAX_RESPONSE_TIME: 2000, // 2 seconds
-  MAX_QUERY_TIME: 1000, // 1 second
-  CACHE_HIT_RATE_MIN: 0.7, // 70%
-  CONCURRENT_USERS: 100,
-  RAMP_UP_TIME: 30, // seconds
-  TEST_DURATION: 60, // seconds
-};
 
 describe("Aesthetic Clinic Performance Tests", () => {
   let optimizer: AestheticClinicPerformanceOptimizer;

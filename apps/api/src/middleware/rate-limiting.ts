@@ -140,12 +140,13 @@ function createRateLimit(config: RateLimitConfig) {
       if (skipSuccessfulRequests && c.res.status < 400) {
         shouldCount = false;
       }
-    } catch {
+    } catch (error) {
       // Check if we should skip counting failed requests
       if (skipFailedRequests) {
         shouldCount = false;
       }
 
+      // Re-throw the caught error
       throw error;
     } finally {
       // Increment counter if needed

@@ -12,6 +12,14 @@
 
 import { render } from '@testing-library/react';
 import { ReactElement } from 'react';
+import { 
+  PERFORMANCE_THRESHOLDS, 
+  PERFORMANCE_MONITORING,
+  MOBILE_PERFORMANCE,
+  LOAD_TESTING,
+  WEBSOCKET_CONFIG,
+  PERFORMANCE_REPORTING
+} from '../../../../packages/shared/src/config/performance';
 
 // Performance metrics interfaces
 export interface PerformanceMetrics {
@@ -281,7 +289,7 @@ export async function simulateConcurrentUsers(options: {
       }
       
       // Add small delay between actions
-      await new Promise(resolve => setTimeout(resolve, Math.random() * 100));
+      await new Promise(resolve => setTimeout(resolve, Math.random() * (LOAD_TESTING.ACTION_DELAY_RANGE[1] - LOAD_TESTING.ACTION_DELAY_RANGE[0]) + LOAD_TESTING.ACTION_DELAY_RANGE[0]));
     }
     
     return userResults;
@@ -304,8 +312,8 @@ export async function simulateConcurrentUsers(options: {
   
   // Calculate percentiles
   const sortedTimes = responseTimes.sort((a, b) => a - b);
-  const p95ResponseTime = sortedTimes[Math.floor(sortedTimes.length * 0.95)];
-  const p99ResponseTime = sortedTimes[Math.floor(sortedTimes.length * 0.99)];
+  const p95ResponseTime = sortedTimes[Math.floor(sortedTimes.length * PERFORMANCE_REPORTING.PERCENTILES.P95)];
+  const p99ResponseTime = sortedTimes[Math.floor(sortedTimes.length * PERFORMANCE_REPORTING.PERCENTILES.P99)];
   
   return {
     successRate,
@@ -326,7 +334,7 @@ export async function measureWebSocketPerformance(options: {
   frequency?: number;
   testData?: any;
 }): Promise<WebSocketMetrics> {
-  const { messageCount, messageType, frequency = 100, testData = {} } = options;
+  const { messageCount, messageType, frequency = WEBSOCKET_CONFIG.DEFAULT_FREQUENCY, testData = {} } = options;
   
   const results: Array<{ latency: number; success: boolean }> = [];
   let totalMessages = 0;
@@ -351,7 +359,7 @@ export async function measureWebSocketPerformance(options: {
         
         // Simulate message back to client
         window.postMessage(response, '*');
-      }, Math.random() * 50);
+      }, Math.random() * WEBSOCKET_CONFIG.PROCESSING_TIMEOUT);
     }),
     
     close: vi.fn()
@@ -389,7 +397,7 @@ export async function measureWebSocketPerformance(options: {
   }
   
   // Wait for all messages to be processed
-  await new Promise(resolve => setTimeout(resolve, 1000));
+  await new Promise(resolve => setTimeout(resolve, WEBSOCKET_CONFIG.DELIVERY_DELAY));
   
   window.removeEventListener('message', messageHandler);
   
@@ -440,7 +448,7 @@ export async function measureResponseTime<T>(
 // Mobile responsiveness testing
 export async function measureMobilePerformance<T>(
   testFn: () => T,
-  viewport: { width: number; height: number } = { width: 375, height: 667 }
+  viewport: { width: number; height: number } = MOBILE_PERFORMANCE.DEFAULT_VIEWPORT
 ): Promise<PerformanceMetrics> {
   // Save original viewport
   const originalWidth = window.innerWidth;
@@ -498,33 +506,38 @@ export async function measureMobilePerformance<T>(
   }
 }
 
-// Performance thresholds configuration
-export const PERFORMANCE_THRESHOLDS = {
-  RENDER_TIME: {
-    FAST: 100,    // < 100ms
-    ACCEPTABLE: 200,  // < 200ms
-    SLOW: 500    // < 500ms
-  },
-  MEMORY_USAGE: {
-    LOW: 50,     // < 50MB
-    MEDIUM: 100,   // < 100MB
-    HIGH: 200    // < 200MB
-  },
-  RESPONSE_TIME: {
-    FAST: 200,   // < 200ms
-    ACCEPTABLE: 500,  // < 500ms
-    SLOW: 1000   // < 1s
-  },
-  WEBSOCKET_LATENCY: {
-    EXCELLENT: 50,  // < 50ms
-    GOOD: 100,    // < 100ms
-    ACCEPTABLE: 200 // < 200ms
-  },
-  CONCURRENT_USERS: {
-    SUCCESS_RATE: 0.95,  // > 95%
-    ERROR_RATE: 0.05     // < 5%
+// Performance monitoring setup
+export function setupPerformanceMonitoring() {
+  if ('performance' in window && 'memory' in performance) {
+    // Monitor memory usage
+    setInterval(() => {
+      const memory = performance.memory;
+      if (memory) {
+        const usedMB = memory.usedJSHeapSize / (1024 * 1024);
+        const _totalMB = memory.totalJSHeapSize / (1024 * 1024);
+        const limitMB = memory.jsHeapSizeLimit / (1024 * 1024);
+        
+        if (usedMB > limitMB * PERFORMANCE_MONITORING.MEMORY_WARNING_THRESHOLD) {
+          console.warn(`High memory usage: ${usedMB.toFixed(2)}MB / ${limitMB.toFixed(2)}MB`);
+        }
+      }
+    }, PERFORMANCE_MONITORING.MEMORY_CHECK_INTERVAL);
   }
-};
+  
+  // Monitor long tasks
+  if ('PerformanceObserver' in window) {
+    const observer = new PerformanceObserver((list) => {
+      const entries = list.getEntries();
+      entries.forEach((entry) => {
+        if (entry.duration > PERFORMANCE_MONITORING.LONG_TASK_THRESHOLD) {
+          console.warn(`Long task detected: ${entry.duration.toFixed(2)}ms`);
+        }
+      });
+    });
+    
+    observer.observe({ entryTypes: PERFORMANCE_MONITORING.OBSERVED_ENTRY_TYPES });
+  }
+}
 
 // Performance assertion helpers
 export function expectPerformanceThreshold(
@@ -547,39 +560,6 @@ export function expectPerformanceThreshold(
   expect(actual).toBeLessThanOrEqual(thresholds.SLOW);
 }
 
-// Performance monitoring setup
-export function setupPerformanceMonitoring() {
-  if ('performance' in window && 'memory' in performance) {
-    // Monitor memory usage
-    setInterval(() => {
-      const memory = performance.memory;
-      if (memory) {
-        const usedMB = memory.usedJSHeapSize / (1024 * 1024);
-        const _totalMB = memory.totalJSHeapSize / (1024 * 1024);
-        const limitMB = memory.jsHeapSizeLimit / (1024 * 1024);
-        
-        if (usedMB > limitMB * 0.9) {
-          console.warn(`High memory usage: ${usedMB.toFixed(2)}MB / ${limitMB.toFixed(2)}MB`);
-        }
-      }
-    }, 5000);
-  }
-  
-  // Monitor long tasks
-  if ('PerformanceObserver' in window) {
-    const observer = new PerformanceObserver((list) => {
-      const entries = list.getEntries();
-      entries.forEach((entry) => {
-        if (entry.duration > 100) {
-          console.warn(`Long task detected: ${entry.duration.toFixed(2)}ms`);
-        }
-      });
-    });
-    
-    observer.observe({ entryTypes: ['longtask'] });
-  }
-}
-
 // Export performance test helpers
 export const PerformanceTestUtils = {
   measureRenderTime,
@@ -591,5 +571,10 @@ export const PerformanceTestUtils = {
   measureMobilePerformance,
   expectPerformanceThreshold,
   setupPerformanceMonitoring,
-  PERFORMANCE_THRESHOLDS
+  PERFORMANCE_THRESHOLDS,
+  PERFORMANCE_MONITORING,
+  MOBILE_PERFORMANCE,
+  LOAD_TESTING,
+  WEBSOCKET_CONFIG,
+  PERFORMANCE_REPORTING
 };

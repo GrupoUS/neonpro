@@ -57,7 +57,6 @@ export default defineConfig({
 
     // Navigation timeout optimized for clinic app performance
     navigationTimeout: 45000,
-    timeout: 15000,
 
     // Viewport size optimized for clinic dashboard
     viewport: { width: 1920, height: 1080 },
@@ -214,21 +213,6 @@ export default defineConfig({
 
   // Test matching (duplicate removed)
   
-  // Exclude patterns
-  exclude: [
-    "**/node_modules/**",
-    "**/dist/**",
-    "**/build/**",
-    "**/.next/**",
-    "**/coverage/**",
-  ],
-  
   // Artifacts configuration
   preserveOutput: process.env.CI ? "always" : "failures-only",
-  
-  // Reporter filters
-  reporterProcessEnv: (env) => ({
-    ...env,
-    PLAYWRIGHT_HTML_REPORT: "true",
-  }),
 });

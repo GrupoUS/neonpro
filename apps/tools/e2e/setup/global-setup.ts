@@ -12,8 +12,8 @@ async function globalSetup(_config: FullConfig) {
     await setupTestData();
     
     // Setup environment variables
-    process.env.E2E_TESTING = "true";
-    process.env.NODE_ENV = "test";
+    process.env['E2E_TESTING'] = "true";
+    process.env['NODE_ENV'] = "test";
     
     // Clear any existing test data
     await clearTestData();
@@ -52,7 +52,7 @@ async function setupTestData() {
   ];
   
   // Store test users in environment for use in tests
-  process.env.TEST_USERS = JSON.stringify(testUsers);
+  process.env['TEST_USERS'] = JSON.stringify(testUsers);
   
   console.log("📊 Test data setup completed");
 }

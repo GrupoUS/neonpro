@@ -106,7 +106,7 @@ export function useFocusTrap(isActive: boolean) {
   const containerRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
-    if (!isActive || !containerRef.current) return;
+    if (!isActive || !containerRef.current) {return;}
 
     const container = containerRef.current;
     const focusableElements = container.querySelectorAll(
@@ -119,7 +119,7 @@ export function useFocusTrap(isActive: boolean) {
     ] as HTMLElement;
 
     function handleTabKey(event: KeyboardEvent) {
-      if (event.key !== "Tab") return;
+      if (event.key !== "Tab") {return;}
 
       if (event.shiftKey) {
         if (document.activeElement === firstElement) {
@@ -180,11 +180,11 @@ export function useTableNavigation() {
 
   useEffect(() => {
     const table = tableRef.current;
-    if (!table) return;
+    if (!table) {return;}
 
     function handleKeyDown(event: KeyboardEvent) {
       const currentTable = tableRef.current;
-      if (!currentTable || !currentTable.contains(event.target as Node)) return;
+      if (!currentTable || !currentTable.contains(event.target as Node)) {return;}
 
       const currentCell = event.target as HTMLElement;
       const row = currentCell.closest("tr");
@@ -243,16 +243,20 @@ export function useTableNavigation() {
 
         case "Home":
           event.preventDefault();
-          const firstCellInRow = allCellsInRow[0] as HTMLElement;
-          firstCellInRow?.focus();
+          {
+            const firstCellInRow = allCellsInRow[0] as HTMLElement;
+            firstCellInRow?.focus();
+          }
           break;
 
         case "End":
           event.preventDefault();
-          const lastCellInRow = allCellsInRow[
-            allCellsInRow.length - 1
-          ] as HTMLElement;
-          lastCellInRow?.focus();
+          {
+            const lastCellInRow = allCellsInRow[
+              allCellsInRow.length - 1
+            ] as HTMLElement;
+            lastCellInRow?.focus();
+          }
           break;
       }
     }
@@ -392,7 +396,7 @@ export function useHealthcareKeyboardShortcuts(
   isEnabled: boolean = true,
 ) {
   useEffect(() => {
-    if (!isEnabled) return;
+    if (!isEnabled) {return;}
 
     function handleKeyDown(event: KeyboardEvent) {
       const key = [
@@ -423,26 +427,26 @@ export function useHealthcareKeyboardShortcuts(
  * Screen reader utility for complex healthcare data
  */
 export function createScreenReaderDescription(
-  data: Record<string, any>,
+  data: Record<string, unknown>,
   type: "patient" | "appointment" | "medication" | "result",
 ): string {
   const descriptions = {
-    patient: (data: any) =>
+    patient: (data: Record<string, unknown>) =>
       `Paciente: ${data.name || "Nome não informado"}. ` +
       `Idade: ${data.age || "Não informada"}. ` +
       `Prontuário: ${data.medicalRecord || "Não informado"}.`,
 
-    appointment: (data: any) =>
+    appointment: (data: Record<string, unknown>) =>
       `Consulta: ${data.date || "Data não informada"} às ${data.time || "Horário não informado"}. ` +
       `Especialidade: ${data.specialty || "Não informada"}. ` +
       `Status: ${data.status || "Não informado"}.`,
 
-    medication: (data: any) =>
+    medication: (data: Record<string, unknown>) =>
       `Medicamento: ${data.name || "Nome não informado"}. ` +
       `Dosagem: ${data.dosage || "Não informada"}. ` +
       `Frequência: ${data.frequency || "Não informada"}.`,
 
-    result: (data: any) =>
+    result: (data: Record<string, unknown>) =>
       `Exame: ${data.type || "Tipo não informado"}. ` +
       `Data: ${data.date || "Data não informada"}. ` +
       `Status: ${data.status || "Status não informado"}.`,
@@ -456,7 +460,7 @@ export function createScreenReaderDescription(
  */
 export function useHighContrastMode() {
   const getHighContrastPreference = () => {
-    if (typeof window === "undefined") return false;
+    if (typeof window === "undefined") {return false;}
     return (
       window.matchMedia("(prefers-contrast: high)").matches ||
       localStorage.getItem("healthcare-high-contrast") === "true"
@@ -464,7 +468,7 @@ export function useHighContrastMode() {
   };
 
   const setHighContrastMode = (enabled: boolean) => {
-    if (typeof window === "undefined") return;
+    if (typeof window === "undefined") {return;}
 
     localStorage.setItem("healthcare-high-contrast", enabled.toString());
     document.documentElement.classList.toggle("high-contrast", enabled);
@@ -489,7 +493,7 @@ export function useHighContrastMode() {
  */
 export function useReducedMotion() {
   const prefersReducedMotion = () => {
-    if (typeof window === "undefined") return false;
+    if (typeof window === "undefined") {return false;}
     return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   };
 

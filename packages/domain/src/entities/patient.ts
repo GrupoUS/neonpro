@@ -2,8 +2,8 @@ import {
   type Gender,
   type BloodType,
   type ContactMethod,
-} from "../value-objects/gender.js";
-import { validateCPF, formatCPF } from "../value-objects/healthcare.js";
+} from "../value-objects/gender";
+import { validateCPF, formatCPF } from "../value-objects/healthcare";
 
 /**
  * Consolidated Patient Entity - Single source of truth for patient data

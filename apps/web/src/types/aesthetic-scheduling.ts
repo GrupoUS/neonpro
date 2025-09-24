@@ -386,8 +386,8 @@ export const MultiSessionSchedulingSchema = z.object({
   ),
   preferredDates: z.array(z.date()).min(1, 'Selecione ao menos uma data preferida'),
   preferredProfessionals: z.array(z.string().uuid()).optional(),
-  urgencyLevel: z.enum(['routine', 'priority', 'urgent']).refine((val) => val, {
-    message: 'Nível de urgência inválido'
+  urgencyLevel: z.enum(['routine', 'priority', 'urgent']).refine(val => val, {
+    message: 'Nível de urgência inválido',
   }),
   specialRequirements: z.array(z.string()).optional(),
   medicalHistory: z.object({
@@ -402,7 +402,7 @@ export const TreatmentPackageSchedulingSchema = z.object({
   packageId: z.string().uuid('ID do pacote inválido'),
   patientId: z.string().uuid('ID do paciente inválido'),
   startDate: z.date('Data de início inválida'),
-  preferences: z.record(z.any()).optional(),
+  preferences: z.record(z.string(), z.any()).optional(),
 });
 
 export const CertificationValidationSchema = z.object({

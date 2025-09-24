@@ -24,57 +24,23 @@
     "noPropertyAccessFromIndexSignature": false,
     "baseUrl": ".",
     "paths": {
-      "@/*": [
-        "./src/*"
-      ],
-      "@shared/*": [
-        "packages/shared/src/*"
-      ],
-      "@neonpro/*": [
-        "packages/*/src"
-      ],
-      "@neonpro/ui": [
-        "packages/ui/src"
-      ],
-      "@neonpro/ui/*": [
-        "packages/ui/src/*"
-      ],
-      "@neonpro/utils": [
-        "packages/utils/src"
-      ],
-      "@neonpro/utils/*": [
-        "packages/utils/src/*"
-      ],
-      "@neonpro/types": [
-        "packages/types/src"
-      ],
-      "@neonpro/types/*": [
-        "packages/types/src/*"
-      ],
-      "@neonpro/shared": [
-        "packages/shared/src"
-      ],
-      "@neonpro/shared/*": [
-        "packages/shared/src/*"
-      ],
-      "@neonpro/security": [
-        "packages/security/src"
-      ],
-      "@neonpro/security/*": [
-        "packages/security/src/*"
-      ],
-      "@neonpro/database": [
-        "packages/database/src"
-      ],
-      "@neonpro/database/*": [
-        "packages/database/src/*"
-      ],
-      "@apps/*": [
-        "apps/*/src"
-      ],
-      "@tests/*": [
-        "./tools/tests/*"
-      ]
+      "@/*": ["./src/*"],
+      "@shared/*": ["./packages/shared/src/*"],
+      "@neonpro/*": ["./packages/*/src"],
+      "@neonpro/ui": ["./packages/ui/src"],
+      "@neonpro/ui/*": ["./packages/ui/src/*"],
+      "@neonpro/utils": ["./packages/utils/src"],
+      "@neonpro/utils/*": ["./packages/utils/src/*"],
+      "@neonpro/types": ["./packages/types/src"],
+      "@neonpro/types/*": ["./packages/types/src/*"],
+      "@neonpro/shared": ["./packages/shared/src"],
+      "@neonpro/shared/*": ["./packages/shared/src/*"],
+      "@neonpro/security": ["./packages/security/src"],
+      "@neonpro/security/*": ["./packages/security/src/*"],
+      "@neonpro/database": ["./packages/database/src"],
+      "@neonpro/database/*": ["./packages/database/src/*"],
+      "@apps/*": ["./apps/*/src"],
+      "@tests/*": ["./tools/tests/*"]
     }
   },
   "include": [

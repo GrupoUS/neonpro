@@ -1,4 +1,4 @@
-// import { BloodType } from './gender.js'; // TODO: Use when implementing blood type functionality
+// import { BloodType } from './gender'; // TODO: Use when implementing blood type functionality
 
 /**
  * Healthcare-specific information
@@ -9,7 +9,7 @@ export interface HealthcareInfo {
   allergies: string[];
   medications: string[];
   medicalConditions: string[];
-  bloodType?: import("./gender.js").BloodType;
+  bloodType?: import("./gender").BloodType;
   organDonor: boolean;
   medicalNotes?: string;
 }

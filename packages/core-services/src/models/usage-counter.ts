@@ -563,7 +563,9 @@ export class UsageCounter {
 
     this._recentRequests.forEach((req) => {
       const hour = req.createdAt.getHours();
-      hourCounts[hour]++;
+      if (hour !== undefined && hourCounts[hour] !== undefined) {
+        hourCounts[hour]++;
+      }
     });
 
     const maxCount = Math.max(...hourCounts);

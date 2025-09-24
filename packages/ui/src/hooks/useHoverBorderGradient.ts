@@ -85,7 +85,7 @@ export function useHoverBorderGradient(
   // Performance-optimized mouse tracking with RAF
   const updateMousePosition = useCallback(
     (event: React.MouseEvent) => {
-      if (!enabled || !elementRef.current) return;
+      if (!enabled || !elementRef.current) {return;}
 
       // Cancel previous RAF if pending
       if (rafRef.current) {
@@ -93,7 +93,7 @@ export function useHoverBorderGradient(
       }
 
       rafRef.current = requestAnimationFrame(() => {
-        if (!elementRef.current) return;
+        if (!elementRef.current) {return;}
 
         const rect = elementRef.current.getBoundingClientRect();
         const x = ((event.clientX - rect.left) / rect.width) * 100;
@@ -125,7 +125,7 @@ export function useHoverBorderGradient(
   // Event handlers
   const handleMouseEnter = useCallback(
     (event: React.MouseEvent) => {
-      if (!enabled) return;
+      if (!enabled) {return;}
       setIsHovering(true);
       updateMousePosition(event);
     },
@@ -133,7 +133,7 @@ export function useHoverBorderGradient(
   );
 
   const handleMouseLeave = useCallback(() => {
-    if (!enabled) return;
+    if (!enabled) {return;}
     setIsHovering(false);
     setMousePosition({ x: 50, y: 50 }); // Reset to center
   }, [enabled]);

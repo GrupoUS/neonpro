@@ -16,6 +16,8 @@
 // import { ModelProvider } from '@neonpro/analytics';
 // import { WhatsAppService } from './chat-service';
 
+type ModelProvider = any; // Placeholder type until analytics package is fixed
+
 // ============================================================================
 // Core Types for Aesthetic Clinic No-Show Prediction
 // ============================================================================
@@ -524,7 +526,7 @@ export class AntiNoShowEngine {
   private getInterventionConfig(riskLevel: RiskLevel): InterventionConfig {
     const baseConfig = {
       riskLevel,
-      enabledChannels: ['whatsapp', 'sms'] as const,
+      enabledChannels: ['whatsapp', 'sms'] as ('whatsapp' | 'sms')[],
       timing: {
         initialReminder: 24,
         followUp: 6
@@ -607,7 +609,7 @@ export class AntiNoShowEngine {
 
   private async executeIntervention(
     type: InterventionStrategy,
-    channel: 'whatsapp' | 'sms' | 'email' | 'phone',
+    _channel: 'whatsapp' | 'sms' | 'email' | 'phone',
     patientContact: { phone: string; email?: string; whatsapp?: string },
     riskResult: NoShowRiskResult
   ): Promise<InterventionResult> {

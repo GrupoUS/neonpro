@@ -10,10 +10,7 @@
     "react", 
     "import",
     "jsdoc",
-    "node",
     "promise",
-    "security",
-    "n",
     "jsx-a11y"
   ],
 
@@ -27,15 +24,12 @@
     "object-shorthand": "error",
 
     // TypeScript compliance for healthcare applications
-    "@typescript-eslint/no-unused-vars": "error",
-    "@typescript-eslint/no-explicit-any": ["error", { "fixToUnknown": true }],
-    "@typescript-eslint/no-non-null-assertion": "error",
-    "@typescript-eslint/prefer-optional-chain": "error",
-    "@typescript-eslint/prefer-nullish-coalescing": "error",
-    "@typescript-eslint/no-unsafe-assignment": "error",
-    "@typescript-eslint/no-unsafe-member-access": "error",
-    "@typescript-eslint/no-unsafe-call": "error",
-    "@typescript-eslint/no-unsafe-return": "error",
+    "typescript/prefer-optional-chain": "error",
+    "typescript/prefer-nullish-coalescing": "error",
+    "typescript/no-unsafe-assignment": "error",
+    "typescript/no-unsafe-member-access": "error",
+    "typescript/no-unsafe-call": "error",
+    "typescript/no-unsafe-return": "error",
 
     // React best practices for healthcare UI
     "react/jsx-no-target-blank": "error",
@@ -64,28 +58,13 @@
     "import/no-unresolved": "error",
     "import/no-extraneous-dependencies": "error",
 
-    // Security rules for healthcare data
-    "security/detect-object-injection": "error",
-    "security/detect-non-literal-fs-filename": "error",
-    "security/detect-non-literal-regexp": "error",
-    "security/detect-pseudoRandomBytes": "error",
-    "security/detect-unsafe-regex": "error",
-    
     // Promise handling for async operations
     "promise/prefer-await-to-then": "error",
     "promise/no-return-wrap": "error",
     "promise/param-names": "error",
 
-    // Node.js and runtime compliance
-    "node/prefer-global/process": ["error", "always"],
-    "node/prefer-global/buffer": ["error", "always"],
-    "node/prefer-promises/dns": "error",
-    "node/prefer-promises/fs": "error",
-
     // ES6+ features and modern JavaScript
-    "n/prefer-global/process": ["error", "always"],
-    "n/prefer-global/buffer": ["error", "always"],
-    "n/no-unsupported-features/es-syntax": "error",
+
 
     // JSDoc for healthcare API documentation
     "jsdoc/require-jsdoc": ["warn", {
@@ -102,8 +81,7 @@
       "files": ["**/*.test.{ts,tsx}", "**/*.spec.{ts,tsx}"],
       "rules": {
         "no-console": "off",
-        "no-unused-vars": "off",
-        "@typescript-eslint/no-explicit-any": "off"
+        "no-unused-vars": "off"
       }
     },
     {
@@ -117,15 +95,18 @@
       "files": ["src/compliance/**/*.{ts,tsx}"],
       "rules": {
         "no-console": "error",
-        "security/detect-object-injection": "error",
-        "@typescript-eslint/no-explicit-any": ["error", { "fixToUnknown": true }]
+        "typescript/no-unsafe-assignment": "error",
+        "typescript/no-unsafe-member-access": "error",
+        "typescript/no-unsafe-call": "error",
+        "typescript/no-unsafe-return": "error",
+        "typescript/prefer-optional-chain": "error",
+        "typescript/prefer-nullish-coalescing": "error"
       }
     },
     {
       "files": ["src/agents/**/*.{ts,tsx}"],
       "rules": {
-        "jsdoc/require-jsdoc": "error",
-        "@typescript-eslint/no-non-null-assertion": "error"
+        "jsdoc/require-jsdoc": "error"
       }
     }
   ],

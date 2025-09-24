@@ -60,7 +60,7 @@ class ConsentStore {
     _userId: string,
     purpose: ProcessingPurpose,
   ): Promise<LGPDConsent[]> {
-    const userConsents = this.consents.get(userId) || [];
+    const userConsents = this.consents.get(_userId) || [];
     return userConsents.filter(consent => consent.purpose === purpose);
   }
 
@@ -68,7 +68,7 @@ class ConsentStore {
     _userId: string,
     purpose: ProcessingPurpose,
   ): Promise<boolean> {
-    const consents = await this.getConsents(userId, purpose);
+    const consents = await this.getConsents(_userId, purpose);
     const now = new Date();
 
     return consents.some(
@@ -81,14 +81,14 @@ class ConsentStore {
   async recordConsent(consent: LGPDConsent): Promise<void> {
     const userConsents = this.consents.get(consent._userId) || [];
     userConsents.push(consent);
-    this.consents.set(consent.userId, userConsents);
+    this.consents.set(consent._userId, userConsents);
   }
 
   async withdrawConsent(
     _userId: string,
     purpose: ProcessingPurpose,
   ): Promise<void> {
-    const userConsents = this.consents.get(userId) || [];
+    const userConsents = this.consents.get(_userId) || [];
     userConsents.forEach(consent => {
       if (consent.purpose === purpose && consent.status === 'granted') {
         consent.status = 'withdrawn';
@@ -150,7 +150,7 @@ export function lgpdMiddleware(config: LGPDConfig = {}) {
       const userId = user?.id || c.get('userId');
 
       // Skip LGPD checks for unauthenticated requests
-      if (!_userId) {
+      if (!userId) {
         await next();
         return;
       }
@@ -204,7 +204,7 @@ export function lgpdMiddleware(config: LGPDConfig = {}) {
       c.set('lgpdCompliant', true);
 
       await next();
-    } catch {
+    } catch (error) {
       if (error instanceof HTTPException) {
         throw error;
       }
@@ -264,7 +264,7 @@ export function consentMiddleware() {
 
         if (action === 'grant') {
           const consent: LGPDConsent = {
-            userId,
+            _userId: userId,
             purpose,
             status: 'granted',
             grantedAt: new Date(),
@@ -309,7 +309,7 @@ export function consentMiddleware() {
         throw new HTTPException(400, {
           message: 'Invalid action. Use "grant" or "withdraw"',
         });
-      } catch {
+      } catch (error) {
         if (error instanceof HTTPException) {
           throw error;
         }

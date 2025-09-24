@@ -9,37 +9,6 @@
  * - CFM (Conselho Federal de Medicina) - Telemedicine regulations
  */
 
-// WebRTC ambient type declarations for browser compatibility
-declare global {
-  interface RTCIceServer {
-    urls: string | string[];
-    username?: string;
-    credential?: string;
-    credentialType?: "password";
-  }
-
-  interface RTCCertificate {
-    expires: number;
-    getFingerprints(): RTCFingerprint[];
-  }
-
-  type RTCBundlePolicy = "balanced" | "max-compat" | "max-bundle";
-
-  type RTCIceConnectionState =
-    | "new"
-    | "checking"
-    | "connected"
-    | "completed"
-    | "failed"
-    | "disconnected"
-    | "closed";
-
-  interface RTCFingerprint {
-    algorithm: string;
-    value: string;
-  }
-}
-
 // ============================================================================
 // Core WebRTC Connection Types
 // ============================================================================
@@ -308,13 +277,21 @@ export interface TelemedicineCallSession {
  */
 export interface RTCHealthcareConfiguration {
   /** ICE servers configuration */
-  iceServers: RTCIceServer[];
+  iceServers: {
+    urls: string | string[];
+    username?: string;
+    credential?: string;
+    credentialType?: "password";
+  }[];
 
   /** Certificate configuration for security */
-  certificates?: RTCCertificate[];
+  certificates?: {
+    expires: number;
+    getFingerprints(): { algorithm: string; value: string }[];
+  }[];
 
   /** Bundle policy for media optimization */
-  bundlePolicy?: RTCBundlePolicy;
+  bundlePolicy?: "balanced" | "max-compat" | "max-bundle";
 
   /** ICE candidate pool size */
   iceCandidatePoolSize?: number;
@@ -435,8 +412,15 @@ export interface RTCCallQualityMetrics {
   /** Connection quality metrics */
   connection: {
     state: RTCConnectionState;
-    iceConnectionState: RTCIceConnectionState;
-    bundlePolicy: RTCBundlePolicy;
+    iceConnectionState:
+      | "new"
+      | "checking"
+      | "connected"
+      | "completed"
+      | "failed"
+      | "disconnected"
+      | "closed";
+    bundlePolicy: "balanced" | "max-compat" | "max-bundle";
     signalStrength: number; // 0-100
     bandwidth: {
       available: number; // kbps

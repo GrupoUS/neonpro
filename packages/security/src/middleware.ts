@@ -184,7 +184,7 @@ export function authentication() {
       });
     }
 
-    const token = authHeader.substring(7); // Remove 'Bearer ' prefix
+    // const token = authHeader.substring(7); // Remove 'Bearer ' prefix - unused for now
 
     try {
       // Validate JWT token (placeholder - actual implementation needed)
@@ -266,11 +266,22 @@ export function securityLogging() {
 
       // Log successful requests through audit logger
       // Security events are logged through the audit system for compliance
+      // TODO: Implement actual logging with requestId, clientIp, userAgent, duration, status
+      void requestId;
+      void clientIp;
+      void userAgent;
+      void duration;
+      void status;
     } catch (error) {
-      const duration = Date.now() - startTime;
+      const errorDuration = Date.now() - startTime;
 
       // Log errors and security events through audit logger
       // Security errors are logged through the audit system for compliance
+      // TODO: Implement actual error logging with requestId, clientIp, userAgent, errorDuration
+      void requestId;
+      void clientIp;
+      void userAgent;
+      void errorDuration;
 
       throw error;
     }

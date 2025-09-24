@@ -2,7 +2,7 @@ import {
   type ConsentRecord,
   ConsentStatus,
   type ComplianceViolation,
-} from "../entities/consent.js";
+} from "../entities/consent";
 
 /**
  * Consent Repository Interface

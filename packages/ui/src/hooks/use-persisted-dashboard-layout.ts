@@ -97,11 +97,11 @@ export function usePersistedDashboardLayout() {
   const autoDistributeCards = useCallback(
     (cardIds: string[]) => {
       if (!containerSize.width || !containerSize.height || cardIds.length === 0)
-        return;
+        {return;}
 
       // Only auto-distribute if we have no saved positions for any card
       const hasExistingPositions = cardIds.some((id) => positions[id]);
-      if (hasExistingPositions) return;
+      if (hasExistingPositions) {return;}
 
       const cardSize = { width: 280, height: 200 }; // Default card size
       const newPositions = calculateGridPositions(

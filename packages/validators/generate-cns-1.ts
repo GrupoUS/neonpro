@@ -13,7 +13,9 @@ function generateValidCNSStartingWith1() {
   // Calculate what the 15th digit should be
   let sum = 0;
   for (let i = 0; i < 14; i++) {
-    sum += digits[i] * weights[i];
+    if (digits[i] !== undefined && weights[i] !== undefined) {
+      sum += digits[i]! * weights[i]!;
+    }
   }
   
   const remainder = sum % 11;
@@ -27,7 +29,9 @@ function generateValidCNSStartingWith1() {
   // Verify it
   let verifySum = 0;
   for (let i = 0; i < 15; i++) {
-    verifySum += digits[i] * weights[i];
+    if (digits[i] !== undefined && weights[i] !== undefined) {
+      verifySum += digits[i]! * weights[i]!;
+    }
   }
   console.log(`Verification sum: ${verifySum}, Remainder: ${verifySum % 11}`);
   

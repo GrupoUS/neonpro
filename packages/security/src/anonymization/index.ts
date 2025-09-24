@@ -3,7 +3,10 @@ export function maskCPF(_cpf: string): string {
 }
 
 export function maskEmail(email: string): string {
-  const [local, domain] = email.split("@");
+  const parts = email.split("@");
+  if (parts.length !== 2) return "*****@*****.com";
+  const [local, domain] = parts;
+  if (!local || !domain) return "*****@*****.com";
   const maskedLocal = local[0] + "*".repeat(local.length - 1);
   return maskedLocal + "@" + domain;
 }

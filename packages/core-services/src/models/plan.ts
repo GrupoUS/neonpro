@@ -357,13 +357,15 @@ export class Plan {
     const currentIndex = tiers.indexOf(this._tier);
 
     let recommendedPlan: SubscriptionTier | null = null;
-    for (let i = currentIndex + 1; i < tiers.length; i++) {
-      const tier = tiers[i];
-      const plan = new Plan(tier);
+    if (currentIndex !== -1) {
+      for (let i = currentIndex + 1; i < tiers.length; i++) {
+        const tier = tiers[i];
+        const plan = new Plan(tier);
 
-      if (desiredFeatures.every((feature) => plan.hasFeature(feature))) {
-        recommendedPlan = tier;
-        break;
+        if (desiredFeatures.every((feature) => plan.hasFeature(feature))) {
+          recommendedPlan = tier;
+          break;
+        }
       }
     }
 

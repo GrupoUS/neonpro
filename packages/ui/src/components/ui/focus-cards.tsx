@@ -10,7 +10,7 @@ export const Card = React.memo(
     hovered,
     setHovered,
   }: {
-    card: any;
+    card: Card;
     index: number;
     hovered: number | null;
     setHovered: React.Dispatch<React.SetStateAction<number | null>>;
@@ -24,8 +24,8 @@ export const Card = React.memo(
       )}
     >
       <img
-        src={card.src}
-        alt={card.title}
+        src={card.src as string}
+        alt={card.title as string}
         className="object-cover absolute inset-0"
       />
       <div
@@ -35,7 +35,7 @@ export const Card = React.memo(
         )}
       >
         <div className="text-xl md:text-2xl font-medium bg-clip-text text-transparent bg-gradient-to-b from-neutral-50 to-neutral-200">
-          {card.title}
+          {card.title as string}
         </div>
       </div>
     </div>

@@ -142,7 +142,7 @@ const detectDeviceCapabilities = (): DeviceCapabilities => {
     const memory = hasNavigator
       ? (navigator as NavigatorWithDeviceCapabilities).deviceMemory || 4
       : 4;
-    if (isMobile) return Math.min(cores + memory - 2, 6);
+    if (isMobile) {return Math.min(cores + memory - 2, 6);}
     return Math.min(cores + memory - 1, 10);
   })();
 
@@ -242,7 +242,7 @@ export function useAnimationPerformance(): AnimationPerformanceReturn {
 
   // FPS monitoring
   useEffect(() => {
-    if (!settings.enableAnimations) return;
+    if (!settings.enableAnimations) {return;}
 
     let frameCount = 0;
     let lastTime = performance.now();
@@ -275,8 +275,8 @@ export function useAnimationPerformance(): AnimationPerformanceReturn {
   // Utility functions
   const shouldAnimate = useCallback(
     (complexity: "low" | "medium" | "high") => {
-      if (!settings.enableAnimations) return false;
-      if (capabilities.prefersReducedMotion) return false;
+      if (!settings.enableAnimations) {return false;}
+      if (capabilities.prefersReducedMotion) {return false;}
 
       switch (complexity) {
         case "low":
@@ -294,9 +294,9 @@ export function useAnimationPerformance(): AnimationPerformanceReturn {
 
   const getOptimizedDuration = useCallback(
     (baseDuration: number) => {
-      if (capabilities.prefersReducedMotion) return 0;
-      if (capabilities.isLowEnd) return baseDuration * 1.5;
-      if (capabilities.isMobile) return baseDuration * 1.2;
+      if (capabilities.prefersReducedMotion) {return 0;}
+      if (capabilities.isLowEnd) {return baseDuration * 1.5;}
+      if (capabilities.isMobile) {return baseDuration * 1.2;}
       return baseDuration;
     },
     [capabilities],

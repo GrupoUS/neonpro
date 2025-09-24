@@ -176,30 +176,30 @@ function createHealthcarePrismaClient(): HealthcarePrismaClient {
     _context: HealthcareContext,
   ): HealthcarePrismaClient {
     const newInstance = Object.create(this);
-    newInstance.currentContext = context;
+    newInstance.currentContext = _context;
     return newInstance;
   };
 
   healthcarePrisma.validateContext = async function(): Promise<boolean> {
-    if (!this.currentContext?.userId || !this.currentContext?.clinicId) {
+    if (!this.currentContext?._userId || !this.currentContext?.clinicId) {
       return false;
     }
 
     try {
       // Validate user access to clinic using existing Supabase RLS
       const hasAccess = await healthcareRLS.canAccessClinic(
-        this.currentContext.userId,
+        this.currentContext._userId,
         this.currentContext.clinicId,
       );
 
       // Additional CFM validation for healthcare professionals
       if (
-        this.currentContext.role === 'professional'
+        this.currentContext._role === 'professional'
         && !this.currentContext.cfmValidated
       ) {
         const professional = await this.professional.findFirst({
           where: {
-            _userId: this.currentContext.userId,
+            userId: this.currentContext._userId,
             clinicId: this.currentContext.clinicId,
             isActive: true,
           },
@@ -219,7 +219,7 @@ function createHealthcarePrismaClient(): HealthcarePrismaClient {
       }
 
       return hasAccess;
-    } catch {
+    } catch (error) {
       console.error('Context validation failed:', error);
       return false;
     }
@@ -349,7 +349,7 @@ function createHealthcarePrismaClient(): HealthcarePrismaClient {
       });
 
       return exportData;
-    } catch {
+    } catch (error) {
       console.error('Patient data export failed:', error);
       throw error;
     }

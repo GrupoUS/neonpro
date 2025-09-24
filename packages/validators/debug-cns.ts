@@ -1,5 +1,5 @@
 // Debug script for CNS validation
-import { validateCNS } from './src/index.ts';
+import { validateCNS } from './src/index';
 
 const testCNS = [
   "184959687370903", // Should be valid CNS starting with 1 (definitive)
@@ -22,14 +22,18 @@ testCNS.forEach((cns, index) => {
     const weights = [15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1];
     let sum = 0;
     for (let i = 0; i < 15; i++) {
-      sum += digits[i] * weights[i];
+      if (digits[i] !== undefined && weights[i] !== undefined) {
+        sum += digits[i]! * weights[i]!;
+      }
     }
     const remainder = sum % 11;
     console.log(`   Definitive CNS - Sum: ${sum}, Remainder: ${remainder}, Valid: ${remainder === 0}`);
   } else if (firstDigit === 7 || firstDigit === 8 || firstDigit === 9) {
     let sum = 0;
     for (let i = 0; i < 15; i++) {
-      sum += digits[i];
+      if (digits[i] !== undefined) {
+        sum += digits[i]!;
+      }
     }
     const remainder = sum % 11;
     console.log(`   Provisional CNS - Sum: ${sum}, Remainder: ${remainder}, Valid: ${remainder === 0}`);

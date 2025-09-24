@@ -94,12 +94,12 @@ export function SharedAnimatedList<T = SharedAnimatedListItem>(
 
   // Keyboard navigation (SSR safe: only runs on client)
   React.useEffect(() => {
-    if (!keyboardNavigation) return;
+    if (!keyboardNavigation) {return;}
     const el = listRef.current;
-    if (!el) return;
+    if (!el) {return;}
 
     function onKeyDown(e: KeyboardEvent) {
-      if (!items || items.length === 0) return;
+      if (!items || items.length === 0) {return;}
       if (e.key === "ArrowDown") {
         e.preventDefault();
         setFocusedIndex((idx) => Math.min(idx + 1, items.length - 1));
@@ -120,9 +120,9 @@ export function SharedAnimatedList<T = SharedAnimatedListItem>(
   }, [items, keyboardNavigation]);
 
   React.useEffect(() => {
-    if (focusedIndex < 0) return;
+    if (focusedIndex < 0) {return;}
     const el = listRef.current;
-    if (!el) return;
+    if (!el) {return;}
     const item = el.querySelectorAll('[role="listitem"], [role="option"]')[
       focusedIndex
     ] as HTMLElement | undefined;
@@ -172,14 +172,14 @@ export function SharedAnimatedList<T = SharedAnimatedListItem>(
 
       <AnimatePresence initial={false}>
         {(items ?? []).map((item, idx) => {
-          const key = (item as any)?.id ?? idx;
+          const key = (item as SharedAnimatedListItem)?.id ?? idx;
           return (
             <motion.li
               key={key}
               initial={motionCfg.initial}
               animate={motionCfg.animate}
               exit={motionCfg.exit}
-              transition={motionCfg.transition as any}
+              transition={motionCfg.transition as import("framer-motion").Transition}
               role={role === "listbox" ? "option" : "listitem"}
               tabIndex={0}
               className={cn(
@@ -193,23 +193,23 @@ export function SharedAnimatedList<T = SharedAnimatedListItem>(
               ) : (
                 <div className="flex items-start justify-between gap-2">
                   <div>
-                    {(item as any)?.title && (
+                    {(item as SharedAnimatedListItem)?.title && (
                       <div className="text-sm font-medium">
-                        {(item as any).title}
+                        {(item as SharedAnimatedListItem).title}
                       </div>
                     )}
-                    {(item as any)?.message && (
+                    {(item as SharedAnimatedListItem)?.message && (
                       <div className="text-xs text-muted-foreground">
-                        {(item as any).message}
+                        {(item as SharedAnimatedListItem).message}
                       </div>
                     )}
                   </div>
-                  {(item as any)?.createdAt && (
+                  {(item as SharedAnimatedListItem)?.createdAt && (
                     <time
                       className="text-[11px] text-muted-foreground"
-                      dateTime={new Date((item as any).createdAt).toISOString()}
+                      dateTime={new Date((item as SharedAnimatedListItem).createdAt || "").toISOString()}
                     >
-                      {new Date((item as any).createdAt).toLocaleTimeString(
+                      {new Date((item as SharedAnimatedListItem).createdAt || "").toLocaleTimeString(
                         "pt-BR",
                         {
                           hour: "2-digit",

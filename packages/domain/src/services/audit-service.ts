@@ -1,7 +1,7 @@
 import {
   type DomainEvent,
   type DomainEventBus,
-} from "../events/domain-events.js";
+} from "../events/domain-events";
 import {
   type PatientCreatedEvent,
   type PatientUpdatedEvent,
@@ -13,7 +13,7 @@ import {
   type ConsentRevokedEvent,
   type ComplianceCheckedEvent,
   type ComplianceViolationEvent,
-} from "../events/domain-events.js";
+} from "../events/domain-events";
 
 /**
  * Audit event types

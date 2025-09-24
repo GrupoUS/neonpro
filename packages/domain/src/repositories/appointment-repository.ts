@@ -4,7 +4,7 @@ import {
   AppointmentType,
   AppointmentPriority,
   type AppointmentCalendarView,
-} from "../entities/appointment.js";
+} from "../entities/appointment";
 
 /**
  * Appointment Repository Interface

@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
-import { AuthUtils, TEST_USERS } from '../utils/auth-utils';
-import { createTestUtils } from '../utils/test-utils';
+import { AuthUtils, TEST_USERS } from '../utils/auth-utils.js';
+import { createTestUtils } from '../utils/test-utils.js';
 
 test.describe('Appointment Management', () => {
   let authUtils: AuthUtils;
@@ -227,12 +227,12 @@ test.describe('Appointment Management', () => {
     // Verify all interactive elements are accessible
     const buttons = await page.locator('button').all();
     for (const button of buttons) {
-      await expect(button).toHaveAccessibleName();
+      await expect(button).toHaveAccessibleName('');
     }
     
     const inputs = await page.locator('input').all();
     for (const input of inputs) {
-      await expect(input).toHaveAccessibleName();
+      await expect(input).toHaveAccessibleName('');
     }
   });
 

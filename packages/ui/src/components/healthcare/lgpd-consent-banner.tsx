@@ -214,7 +214,7 @@ export const LGPDConsentBanner: React.FC<LGPDConsentBannerProps> = ({
 
   // Check if consent was already given
   const checkExistingConsent = useCallback(() => {
-    if (!persistConsent) return false;
+    if (!persistConsent) {return false;}
 
     try {
       const stored = localStorage.getItem("lgpd-healthcare-consent");
@@ -390,7 +390,7 @@ export const LGPDConsentBanner: React.FC<LGPDConsentBannerProps> = ({
   // };
 
   // Don't render if not visible
-  if (!isVisible) return null;
+  if (!isVisible) {return null;}
 
   const bannerClasses = cn(
     "lgpd-consent-banner bg-background border shadow-lg",

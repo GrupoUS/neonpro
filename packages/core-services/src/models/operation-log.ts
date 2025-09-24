@@ -10,7 +10,6 @@ import type {
   MedicalSpecialty,
   AIFeatureCode,
 } from "@neonpro/types";
-import { logHealthcareError } from "@neonpro/shared";
 import { getLogger } from "../config/logger";
 
 // ================================================

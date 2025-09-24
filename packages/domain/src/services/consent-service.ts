@@ -7,11 +7,11 @@ import {
   ConsentFactory,
   ConsentAction,
   ConsentStatus,
-} from "../entities/consent.js";
+} from "../entities/consent";
 import {
   type ConsentRepository,
   type ConsentQueryRepository,
-} from "../repositories/consent-repository.js";
+} from "../repositories/consent-repository";
 
 /**
  * Domain Service for Consent Management

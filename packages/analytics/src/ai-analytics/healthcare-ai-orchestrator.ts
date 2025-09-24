@@ -38,7 +38,7 @@ export class HealthcareAIOrchestrator {
       enableCompliance: true,
       region: "brazil",
       dataRetentionDays: 2555, // 7 years as per Brazilian healthcare regulations
-      ...__config,
+      ..._config,
     };
     void this.config; // mark as read to satisfy TS unused private property rule
   }
@@ -47,7 +47,7 @@ export class HealthcareAIOrchestrator {
    * Generate comprehensive healthcare insights
    */
   async generateHealthcareInsights(
-    _request: PredictiveRequest = { timeframe: "month" },
+    request: PredictiveRequest = { timeframe: "month" },
   ): Promise<HealthcareInsights> {
     try {
       // Generate insights using the predictive service

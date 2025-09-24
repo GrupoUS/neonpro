@@ -20,3 +20,7 @@ export const _validateEnv = (): boolean => {
 
   return true;
 };
+
+export function validateEnv(): boolean {
+  return _validateEnv();
+}

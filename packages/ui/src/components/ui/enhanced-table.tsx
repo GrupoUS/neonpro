@@ -1,7 +1,7 @@
 import * as React from "react";
-import { flexRender } from "@tanstack/react-table";
+import { flexRender, type Table, type RowData, type HeaderGroup, type Row, type Cell } from "@tanstack/react-table";
 import {
-  Table,
+  Table as UITable,
   TableBody,
   TableCell,
   TableHead,
@@ -10,8 +10,8 @@ import {
 } from "./table";
 
 // Note: keep props non-generic to avoid unused generic type errors in consumers
-export interface EnhancedTableProps {
-  table: any; // Table from @tanstack/react-table (kept loose to avoid cross-package type issues)
+export interface EnhancedTableProps<TData extends RowData = any> {
+  table: Table<TData>;
   loading?: boolean;
   columnsCount?: number;
   ariaLabel?: string;
@@ -21,8 +21,8 @@ export interface EnhancedTableProps {
   renderToolbar?: React.ReactNode;
   renderPagination?: React.ReactNode;
   // Optional behavior for clickable rows
-  onRowClick?: (row: any) => void;
-  stopRowClickPredicate?: (cell: any) => boolean;
+  onRowClick?: (row: Row<TData>) => void;
+  stopRowClickPredicate?: (cell: Cell<TData, unknown>) => boolean;
 }
 
 /**
@@ -31,7 +31,7 @@ export interface EnhancedTableProps {
  * - Works with TanStack Table instances passed via `table`
  * - Preserves keyboard/screen-reader semantics
  */
-export function EnhancedTable(props: EnhancedTableProps) {
+export function EnhancedTable<TData extends RowData = any>(props: EnhancedTableProps<TData>) {
   const {
     table,
     loading = false,
@@ -45,7 +45,7 @@ export function EnhancedTable(props: EnhancedTableProps) {
     stopRowClickPredicate,
   } = props;
 
-  const colSpan = columnsCount ?? table?.getAllLeafColumns?.().length ?? 1;
+  const colSpan = columnsCount ?? table.getAllLeafColumns().length ?? 1;
 
   return (
     <div
@@ -59,15 +59,15 @@ export function EnhancedTable(props: EnhancedTableProps) {
         </div>
       ) : null}
 
-      <Table aria-label={ariaLabel}>
+      <UITable aria-label={ariaLabel}>
         <TableHeader>
-          {table.getHeaderGroups().map((headerGroup: any) => (
+          {table.getHeaderGroups().map((headerGroup: HeaderGroup<TData>) => (
             <TableRow key={headerGroup.id}>
-              {headerGroup.headers.map((header: any) => (
+              {headerGroup.headers.map((header) => (
                 <TableHead
                   key={header.id}
                   style={{
-                    width: header.getSize?.()
+                    width: header.getSize()
                       ? `${header.getSize()}px`
                       : undefined,
                   }}
@@ -90,8 +90,8 @@ export function EnhancedTable(props: EnhancedTableProps) {
                 Carregando...
               </TableCell>
             </TableRow>
-          ) : table.getRowModel().rows?.length ? (
-            table.getRowModel().rows.map((row: any) => (
+          ) : table.getRowModel().rows.length ? (
+            table.getRowModel().rows.map((row: Row<TData>) => (
               <TableRow
                 key={row.id}
                 data-state={
@@ -100,7 +100,7 @@ export function EnhancedTable(props: EnhancedTableProps) {
                 className={onRowClick ? "cursor-pointer" : undefined}
                 onClick={onRowClick ? () => onRowClick(row) : undefined}
               >
-                {row.getVisibleCells().map((cell: any) => (
+                {row.getVisibleCells().map((cell: Cell<TData, unknown>) => (
                   <TableCell
                     key={cell.id}
                     onClick={(e) => {
@@ -125,7 +125,7 @@ export function EnhancedTable(props: EnhancedTableProps) {
             </TableRow>
           )}
         </TableBody>
-      </Table>
+      </UITable>
 
       {renderPagination ? (
         <div className="flex items-center justify-between px-3 pb-3">

@@ -106,9 +106,17 @@ export class TestUtils {
   }
 
   async getPerformanceMetrics() {
-    const metrics = await this.page.metrics();
-    console.log("📊 Performance metrics:", metrics);
-    return metrics;
+    const performanceMetrics = await this.page.evaluate(() => {
+      if ('performance' in window) {
+        return {
+          timing: window.performance.timing,
+          navigation: window.performance.navigation
+        };
+      }
+      return null;
+    });
+    console.log("📊 Performance metrics:", performanceMetrics);
+    return performanceMetrics;
   }
 
   async waitForStableNetwork(timeout = 2000) {

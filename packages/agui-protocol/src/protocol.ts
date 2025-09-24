@@ -12,7 +12,16 @@ import {
   AguiConnectionStatus,
   AguiServiceConfig
 } from './types';
-import { getLogger } from '@neonpro/core-services';
+
+// Simple logger for now - replace with proper logger later
+const logger = {
+  error: (message: string, context: any, error?: any) => {
+    console.error(`[${new Date().toISOString()}] ${message}`, context, error);
+  },
+  info: (message: string, context: any) => {
+    console.info(`[${new Date().toISOString()}] ${message}`, context);
+  }
+};
 
 export class AguiProtocol {
   private ws: WebSocket | null = null;
@@ -117,7 +126,6 @@ export class AguiProtocol {
           this.status.lastPing = new Date().toISOString();
           break;
         case 'error':
-          const logger = getLogger();
           logger.error('AG-UI Protocol Error', { component: 'agui-protocol', operation: 'handle_message', sessionId: this.sessionId, _payload: message._payload });
           break;
         default:
@@ -125,7 +133,6 @@ export class AguiProtocol {
           this.emit('message', message);
       }
     } catch (error) {
-      const logger = getLogger();
       logger.error('Failed to parse AG-UI message', { component: 'agui-protocol', operation: 'parse_message', sessionId: this.sessionId }, error instanceof Error ? error : new Error(String(error)));
     }
   }
@@ -148,7 +155,6 @@ export class AguiProtocol {
    */
   private handleError(event: Event): void {
     this.status.error = `WebSocket error: ${event}`;
-    const logger = getLogger();
     logger.error('AG-UI WebSocket Error', { component: 'agui-protocol', operation: 'handle_error', sessionId: this.sessionId, error: event.toString() });
   }
 
@@ -201,7 +207,6 @@ export class AguiProtocol {
    */
   private emit(event: string, data: any): void {
     // In a real implementation, you'd use EventEmitter or similar
-    const logger = getLogger();
     logger.info('AG-UI Event emitted', { component: 'agui-protocol', operation: 'emit_event', sessionId: this.sessionId, eventType: event, hasData: !!data });
   }
 }

@@ -1,7 +1,5 @@
-import { createServer } from 'http';
-import { createServer } from 'node:http';
+import { serve } from '@hono/node-server';
 import app from './app';
-import { createWebSocketServer } from './middleware/websocket-server';
 import { initializeErrorTracking, shutdownErrorTracking } from './services/error-tracking-init';
 import { secureLogger } from './utils/secure-logger';
 
@@ -13,63 +11,36 @@ async function startServer() {
   try {
     // Initialize error tracking systems
     await initializeErrorTracking();
-    secureLogger.info('Error tracking initialized', {
-      // component: 'server-startup', // Removed non-existent property
-    });
+    secureLogger.info('Error tracking initialized');
 
     if (process.env.VERCEL === undefined) {
       // Only start a local server when not running on Vercel
-      const server = createServer(app.fetch);
-
-      // Initialize WebSocket server for AG-UI Protocol (simplified)
-      // const _wsServer = createWebSocketServer(server); // Commented out due to type mismatch
-
-      server.listen(port, () => {
-        secureLogger.info(`API server listening`, {
-          // port, // Removed non-existent property
-          // url: `http://localhost:${port}`, // Moved to message
-          // component: 'server-startup', // Removed non-existent property
-        });
+      serve({
+        fetch: app.fetch,
+        port,
+      }, info => {
+        secureLogger.info(`API server listening on http://localhost:${info.port}`);
         secureLogger.info(
-          `WebSocket server initialized for AG-UI Protocol on http://localhost:${port}`,
-          {
-            // component: 'websocket-server', // Removed non-existent property
-          },
+          `WebSocket server initialized for AG-UI Protocol on http://localhost:${info.port}`,
         );
-      });
-
-      // Graceful shutdown for WebSocket server
-      server.on('close', () => {
-        secureLogger.info('WebSocket server closed', {
-          // component: 'server-shutdown', // Removed non-existent property
-        });
       });
     }
   } catch (error) {
-    secureLogger.error('Failed to start server', error as Error, {
-      // component: 'server-startup', // Removed non-existent property
-    });
+    secureLogger.error('Failed to start server', error as Error);
     process.exit(1);
   }
 }
 
 // Graceful shutdown
 const gracefulShutdown = async (signal: string) => {
-  secureLogger.info(`Starting graceful shutdown (${signal})`, {
-    // signal, // Removed non-existent property
-    // component: 'server-shutdown', // Removed non-existent property
-  });
+  secureLogger.info(`Starting graceful shutdown (${signal})`);
 
   try {
     await shutdownErrorTracking();
-    secureLogger.info('Error tracking shutdown complete', {
-      // component: 'server-shutdown', // Removed non-existent property
-    });
+    secureLogger.info('Error tracking shutdown complete');
     process.exit(0);
   } catch (error) {
-    secureLogger.error('Error during shutdown', error as Error, {
-      // component: 'server-shutdown', // Removed non-existent property
-    });
+    secureLogger.error('Error during shutdown', error as Error);
     process.exit(1);
   }
 };
@@ -80,18 +51,13 @@ process.on('SIGINT', () => gracefulShutdown('SIGINT'));
 
 // Handle uncaught exceptions
 process.on('uncaughtException', error => {
-  secureLogger.error('Uncaught Exception', error, {
-    // component: 'server-error', // Removed non-existent property
-  });
+  secureLogger.error('Uncaught Exception', error);
   gracefulShutdown('uncaughtException');
 });
 
 // Handle unhandled promise rejections
-process.on('unhandledRejection', (reason, promise) => {
-  secureLogger.error('Unhandled Rejection', reason as Error, {
-    // promise: promise.toString(), // Removed to avoid complexity
-    // component: 'server-error', // Removed non-existent property
-  });
+process.on('unhandledRejection', (reason, _promise) => {
+  secureLogger.error('Unhandled Rejection', reason as Error);
 });
 
 startServer();

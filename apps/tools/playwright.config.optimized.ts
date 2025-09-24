@@ -52,7 +52,6 @@ export default defineConfig({
 
     // Navigation timeout optimized for clinic app performance
     navigationTimeout: 45000,
-    timeout: 15000,
 
     // Viewport size optimized for clinic dashboard
     viewport: { width: 1920, height: 1080 },
@@ -243,31 +242,14 @@ export default defineConfig({
     "**/professional/**/*.ts"
   ],
   
-  // Exclude patterns
-  exclude: [
-    "**/node_modules/**",
-    "**/dist/**",
-    "**/build/**",
-    "**/.next/**",
-    "**/coverage/**",
-    "**/test-results/**",
-  ],
-  
   // Artifacts configuration
   preserveOutput: process.env.CI ? "always" : "failures-only",
-  
-  // Reporter filters
-  reporterProcessEnv: (env) => ({
-    ...env,
-    PLAYWRIGHT_HTML_REPORT: "true",
-    PLAYWRIGHT_BAIL_ON_CI_FAILURE: "true",
-  }),
 
   // Test organization
-  shard: process.env.SHARD ? process.env.SHARD : undefined,
-  
-  // Dependency management
-  dependencies: ["../../apps/web"],
+  shard: process.env.SHARD ? {
+    current: parseInt(process.env.SHARD.split('/')[0]),
+    total: parseInt(process.env.SHARD.split('/')[1])
+  } : undefined,
   
   // Configuration for different environments
   ...(process.env.CI && {

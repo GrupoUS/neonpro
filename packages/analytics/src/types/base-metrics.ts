@@ -5,7 +5,11 @@
  * with compliance-aware design (LGPD/ANVISA/CFM) and extensible architecture.
  */
 
-import type { RiskLevel, ComplianceFramework } from "../../audit/types";
+// import type { RiskLevel, ComplianceFramework } from "../../audit/types";
+
+// Local type definitions to avoid circular dependencies
+type RiskLevel = "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
+type ComplianceFramework = "LGPD" | "ANVISA" | "CFM" | "HIPAA" | "GDPR";
 
 /**
  * Analytics event interface for tracking user interactions and system events
@@ -521,10 +525,10 @@ export function aggregateMetrics(
 
   switch (aggregation) {
     case "sum":
-      return values.reduce((sum, _val) => sum + val, 0);
+      return values.reduce((sum, _val) => sum + _val, 0);
 
     case "average":
-      return values.reduce((sum, _val) => sum + val, 0) / values.length;
+      return values.reduce((sum, _val) => sum + _val, 0) / values.length;
 
     case "count":
       return values.length;
@@ -536,7 +540,7 @@ export function aggregateMetrics(
       return Math.max(...values);
 
     case "median":
-      const sorted = values.sort((a, _b) => a - b);
+      const sorted = values.sort((a, _b) => a - _b);
       const mid = Math.floor(sorted.length / 2);
       return sorted.length % 2 === 0
         ? (sorted[mid - 1] + sorted[mid]) / 2
@@ -544,7 +548,7 @@ export function aggregateMetrics(
 
     case "percentile":
       // Default to 95th percentile
-      const sortedValues = values.sort((a, _b) => a - b);
+      const sortedValues = values.sort((a, _b) => a - _b);
       const index = Math.ceil(0.95 * sortedValues.length) - 1;
       return sortedValues[index];
 
@@ -552,6 +556,6 @@ export function aggregateMetrics(
       return values[values.length - 1];
 
     default:
-      return values.reduce((sum, _val) => sum + val, 0) / values.length;
+      return values.reduce((sum, _val) => sum + _val, 0) / values.length;
   }
 }

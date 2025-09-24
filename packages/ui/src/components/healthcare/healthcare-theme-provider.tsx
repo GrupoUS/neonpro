@@ -14,6 +14,7 @@ import {
   useContext,
   useEffect,
   useState,
+  useCallback,
   ReactNode,
 } from "react";
 import {
@@ -122,7 +123,7 @@ export function HealthcareThemeProvider({
   };
 
   // Update theme function
-  const updateTheme = (updates: Partial<HealthcareThemeConfig>) => {
+  const updateTheme = useCallback((updates: Partial<HealthcareThemeConfig>) => {
     const newTheme = { ...theme, ...updates };
     setTheme(newTheme);
 
@@ -131,9 +132,8 @@ export function HealthcareThemeProvider({
       try {
         localStorage.setItem("healthcare-theme", JSON.stringify(newTheme));
       } catch (error) {
-        const { getLogger } = await import("@neonpro/core-services/config/logger");
-        const logger = getLogger();
-        logger.warn("Failed to persist healthcare theme", { component: "healthcare-theme-provider", operation: "persist_theme" }, error instanceof Error ? error : new Error(String(error)));
+        // Simple console logging for now - replace with proper logger later
+        console.warn("Failed to persist healthcare theme", error);
       }
     }
 
@@ -158,7 +158,7 @@ export function HealthcareThemeProvider({
         HealthcarePriority.MEDIUM,
       );
     }
-  };
+  }, [theme, persistTheme, onThemeChange]);
 
   // Emergency mode toggle
   const toggleEmergencyMode = () => {
@@ -197,7 +197,7 @@ export function HealthcareThemeProvider({
 
   // Apply theme to document element
   useEffect(() => {
-    if (typeof document === "undefined") return;
+    if (typeof document === "undefined") {return;}
 
     const root = document.documentElement;
 
@@ -241,7 +241,7 @@ export function HealthcareThemeProvider({
 
   // Listen for system preference changes
   useEffect(() => {
-    if (typeof window === "undefined") return;
+    if (typeof window === "undefined") {return;}
 
     const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
     const handleChange = (e: MediaQueryListEvent) => {
@@ -252,7 +252,7 @@ export function HealthcareThemeProvider({
 
     mediaQuery.addEventListener("change", handleChange);
     return () => mediaQuery.removeEventListener("change", handleChange);
-  }, [theme.reduceMotion]);
+  }, [theme.reduceMotion, updateTheme]);
 
   // Context value
   const contextValue: HealthcareThemeContextValue = {
@@ -429,13 +429,13 @@ export const healthcareThemeStyles = `
  * Install healthcare theme styles in document head
  */
 export function installHealthcareThemeStyles(target?: Document) {
-  if (typeof document === "undefined") return;
+  if (typeof document === "undefined") {return;}
 
   const head = (target ?? document).head;
-  if (!head) return;
+  if (!head) {return;}
 
   // Avoid duplicate injection
-  if (head.querySelector("style[data-healthcare-theme]")) return;
+  if (head.querySelector("style[data-healthcare-theme]")) {return;}
 
   const style = document.createElement("style");
   style.setAttribute("data-healthcare-theme", "true");

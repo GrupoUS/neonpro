@@ -99,14 +99,12 @@ export function ExportButton({
 }: ExportButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedFormat, setSelectedFormat] = useState<"csv" | "xlsx">("csv");
-  const [_selectedFields, _setSelectedFields] = useState<string[]>([]);
   const [lgpdOptions, setLgpdOptions] = useState({
     anonymize: true,
     consent: true,
     excludeRestricted: false,
   });
   const [currentJob, setCurrentJob] = useState<ExportJob | null>(null);
-  const [_exportHistory, _setExportHistory] = useState<ExportJob[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleExport = async () => {
@@ -189,7 +187,7 @@ export function ExportButton({
   };
 
   const downloadFile = async (job: ExportJob) => {
-    if (!job.result) return;
+    if (!job.result) {return;}
 
     try {
       const response = await fetch(job.result.downloadUrl, {
@@ -232,7 +230,7 @@ export function ExportButton({
   };
 
   const formatFileSize = (bytes: number) => {
-    if (bytes === 0) return "0 Bytes";
+    if (bytes === 0) {return "0 Bytes";}
     const k = 1024;
     const sizes = ["Bytes", "KB", "MB", "GB"];
     const i = Math.floor(Math.log(bytes) / Math.log(k));

@@ -8,8 +8,8 @@ async function globalTeardown(_config: FullConfig) {
     await cleanupTestData();
     
     // Reset environment variables
-    delete process.env.E2E_TESTING;
-    delete process.env.TEST_USERS;
+    delete process.env['E2E_TESTING'];
+    delete process.env['TEST_USERS'];
     
     // Close any remaining browser contexts
     console.log("✅ Global E2E test teardown completed");

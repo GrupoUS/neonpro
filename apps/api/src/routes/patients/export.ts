@@ -1,7 +1,8 @@
 import { Hono } from 'hono';
+import { Hono } from 'hono';
 import { jwt } from 'hono/jwt';
+import { z } from 'zod';
 import { ExportService } from '../../services/export/export-service';
-
 import { ExportFilter, ExportPagination, LGPDComplianceOptions } from '../../services/export/types';
 
 const exportRouter = new Hono();
@@ -81,7 +82,7 @@ exportRouter.post(
       const lgpdOptions: LGPDComplianceOptions = validatedData.lgpdOptions;
 
       const job = await ExportService.createExportJob(
-        userId,
+        _userId,
         validatedData.format,
         filters,
         pagination,
@@ -100,7 +101,7 @@ exportRouter.post(
         },
         202,
       );
-    } catch {
+    } catch (error) {
       console.error('Erro ao iniciar exportação:', error);
 
       if (error instanceof z.ZodError) {
@@ -158,7 +159,7 @@ exportRouter.get(
           completedAt: job.completedAt,
         },
       });
-    } catch {
+    } catch (error) {
       console.error('Erro ao buscar status da exportação:', error);
       return c.json(
         {
@@ -195,7 +196,7 @@ exportRouter.delete(
         success: true,
         message: 'Exportação cancelada com sucesso',
       });
-    } catch {
+    } catch (error) {
       console.error('Erro ao cancelar exportação:', error);
       return c.json(
         {

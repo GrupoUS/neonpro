@@ -8,21 +8,22 @@ import {
   TreatmentRecommendation,
   TreatmentDocument,
   TreatmentOutcome,
-  TreatmentAssessmentTemplate,
-  TreatmentDocumentationTemplate,
-  CreateTreatmentPlanInput,
-  UpdateTreatmentPlanInput,
-  CreateTreatmentSessionInput,
-  UpdateTreatmentSessionInput,
-  CreateTreatmentProcedureInput,
-  CreateTreatmentAssessmentInput,
-  CreateTreatmentProgressInput,
-  CreateTreatmentRecommendationInput,
-  CreateTreatmentDocumentInput,
-  CreateTreatmentOutcomeInput,
-  TreatmentPlanStats,
-  TreatmentSessionStats,
-  TreatmentProgressSummary
+  TreatmentAssessmentTemplate
+  // Comentando imports que não existem
+  // TreatmentDocumentationTemplate,
+  // CreateTreatmentPlanInput,
+  // UpdateTreatmentPlanInput,
+  // CreateTreatmentSessionInput,
+  // UpdateTreatmentSessionInput,
+  // CreateTreatmentProcedureInput,
+  // CreateTreatmentAssessmentInput,
+  // CreateTreatmentProgressInput,
+  // CreateTreatmentRecommendationInput,
+  // CreateTreatmentDocumentInput,
+  // CreateTreatmentOutcomeInput,
+  // TreatmentPlanStats,
+  // TreatmentSessionStats,
+  // TreatmentProgressSummary
 } from '@neonpro/types';
 
 export class TreatmentPlanningService {

@@ -177,7 +177,7 @@ export function HealthcareForm({
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    if (isSubmitting) return;
+    if (isSubmitting) {return;}
 
     const form = event.currentTarget;
     const formData = new FormData(form);
@@ -286,7 +286,7 @@ export function HealthcareForm({
 
   // Keyboard shortcuts for emergency forms
   useEffect(() => {
-    if (!emergencyShortcuts || !emergencyForm) return;
+    if (!emergencyShortcuts || !emergencyForm) {return;}
 
     const handleKeyDown = (event: KeyboardEvent) => {
       // Ctrl+Shift+S: Quick save for emergency

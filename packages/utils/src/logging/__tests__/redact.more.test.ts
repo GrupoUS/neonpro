@@ -22,4 +22,4 @@ describe("redact() extended patterns", () => {
     });
     expect(out).toContain("[REDACTED_ID]");
   });
-}
+});

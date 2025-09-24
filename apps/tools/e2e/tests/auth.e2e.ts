@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
-import { AuthUtils, TEST_USERS } from '../utils/auth-utils';
-import { createTestUtils } from '../utils/test-utils';
+import { AuthUtils, TEST_USERS } from '../utils/auth-utils.js';
+import { createTestUtils } from '../utils/test-utils.js';
 
 test.describe('Authentication Flow', () => {
   let authUtils: AuthUtils;
@@ -154,7 +154,7 @@ test.describe('Authentication Flow', () => {
     // Check form labels
     const inputs = await loginForm.locator('input').all();
     for (const input of inputs) {
-      await expect(input).toHaveAccessibleName();
+      await expect(input).toHaveAccessibleName('');
     }
   });
 });

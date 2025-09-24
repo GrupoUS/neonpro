@@ -45,7 +45,7 @@ appointments.get('/', async c => {
       },
       where: {
         // Add multi-tenant scoping - only appointments for this clinic
-        clinicId: clinicId,
+        clinicId,
         // Only return appointments for patients with LGPD consent
         patient: {
           lgpdConsentGiven: true,
@@ -77,7 +77,7 @@ appointments.get('/patient/:patientId', async c => {
       where: {
         patientId,
         // Add multi-tenant scoping - only appointments for this clinic
-        clinicId: clinicId,
+        clinicId,
         patient: {
           lgpdConsentGiven: true,
           isActive: true,
