@@ -169,8 +169,7 @@ module.exports = {
             pattern: '@neonpro/core-services/**',
             group: 'internal',
             position: 'before',
-          },
-          {
+          },\n          {
             pattern: '@neonpro/shared/**',
             group: 'internal',
             position: 'after',

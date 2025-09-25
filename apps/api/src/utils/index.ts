@@ -7,25 +7,46 @@ export { HealthcareAppointmentHelper } from './healthcare-helpers';
 export { LGPDComplianceHelper } from './lgpd-compliance-validator';
 export { PatientDataHelper } from './healthcare-helpers';
 
+// LGPD compliance exports
+export {
+  LGPDLegalBasis,
+  LGPDDataCategory,
+  LGPDDataSubjectRights,
+  LGPDProcessingPurpose,
+  type DataProcessingRecord,
+  type LGPDAuditEvent,
+  type LGPDComplianceStatus,
+} from './lgpd-compliance-validator';
+
 // Security and privacy utilities
 export { CryptoAudit } from './crypto-audit';
 export { PrivacyAlgorithms } from './privacy-algorithms';
 export { SecureLogger } from './secure-logger';
+export { HealthcareLogger } from './healthcare-errors';
 
 // Error handling and responses
 export { badRequest, unauthorized, forbidden, notFound, serverError, success, ok, created } from './responses';
-export { 
-  HealthcareError, 
-  HealthcareAuthenticationError, 
-  HealthcareAuthorizationError, 
-  LGPDComplianceError, 
-  BrazilianRegulatoryError, 
-  PatientDataValidationError, 
-  AppointmentSchedulingError, 
-  HealthcareDataIntegrityError, 
-  ExternalHealthcareServiceError,
-  HealthcareLogger
+export {
+  HealthcareError,
+  HealthcareAuthenticationError,
+  HealthcareAuthorizationError,
+  LGPDComplianceError,
+  BrazilianRegulatoryError,
+  PatientDataValidationError,
+  AppointmentSchedulingError,
+  HealthcareDataIntegrityError,
+  ExternalHealthcareServiceError
 } from './healthcare-errors';
+export { 
+  ErrorHandler, 
+  createErrorHandler, 
+  withErrorHandling, 
+  HandleErrors,
+  type ErrorContext,
+  type ErrorResponse,
+  type ErrorHandlerConfig,
+  type ErrorRecoveryStrategy
+} from './error-handler';
 export type { ApiResponseFormat } from './responses';
 
 // Helper functions for response creation
@@ -76,6 +97,15 @@ export {
   type ObservabilityManagerOptions
 } from './observability-manager';
 
+// Monitoring integration
+export { 
+  MonitoringIntegration, 
+  createMonitoringIntegration,
+  DEFAULT_MONITORING_CONFIGS,
+  type MonitoringConfig,
+  type MonitoringContext
+} from './monitoring-integration';
+
 // Appointment management
 export { hasConflict } from './appointments';
 
@@ -83,6 +113,7 @@ export { hasConflict } from './appointments';
 export type { HealthcareValidationResult } from './brazilian-healthcare-validation';
 export type { HealthcareError as HealthcareErrorType } from './healthcare-errors';
 export type { ApiResponseFormat } from './responses';
+export type { HealthcareErrorDetails } from './healthcare-errors';
 
 // Utility collections for easy import
 export const HealthcareUtils = {
@@ -91,6 +122,7 @@ export const HealthcareUtils = {
   compliance: LGPDComplianceHelper,
   errors: HealthcareError,
   performance: HealthcarePerformance,
+  logger: HealthcareLogger,
 };
 
 export const SecurityUtils = {
@@ -98,6 +130,7 @@ export const SecurityUtils = {
   privacy: PrivacyAlgorithms,
   logger: SecureLogger,
   secrets: SecretManager,
+  errorHandling: { ErrorHandler, createErrorHandler },
 };
 
 export const ApiUtils = {
@@ -111,4 +144,5 @@ export const InfrastructureUtils = {
   backup: { BackupManager, createBackupManager },
   config: { ConfigManager, createConfigManager, HealthcareConfigSchemas },
   observability: { ObservabilityManager, createObservabilityManager, withTrace, timeOperation },
+  monitoring: { MonitoringIntegration, createMonitoringIntegration, DEFAULT_MONITORING_CONFIGS },
 };

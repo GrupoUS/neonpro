@@ -58,6 +58,7 @@ export class ValidationError extends HealthcareError {
 **File**: `packages/database/src/repositories/appointment-repository.ts`
 
 **Changes**:
+
 - Replaced generic `Error` with `DatabaseError` for database operations
 - Added `ValidationError` for data validation failures
 - Added `ConflictError` for scheduling conflicts
@@ -70,7 +71,7 @@ throw new Error('Database connection failed')
 // After
 throw new DatabaseError('Database connection failed', 'CONNECTION_ERROR', {
   operation: 'findById',
-  table: 'appointments'
+  table: 'appointments',
 })
 ```
 
@@ -79,6 +80,7 @@ throw new DatabaseError('Database connection failed', 'CONNECTION_ERROR', {
 **File**: `packages/core-services/src/services/analytics-service.ts`
 
 **Changes**:
+
 - Added missing methods: `generateDashboard()`, `executeQuery()`
 - Refactored constructor for dependency injection
 - Replaced generic errors with `DatabaseError` and `NotFoundError`
@@ -88,7 +90,7 @@ throw new DatabaseError('Database connection failed', 'CONNECTION_ERROR', {
 export class AnalyticsService {
   constructor(
     private supabaseClient: any,
-    private logger: any
+    private logger: any,
   ) {}
 
   async generateDashboard(params: any): Promise<any> {
@@ -97,7 +99,7 @@ export class AnalyticsService {
     } catch (error) {
       throw new DatabaseError('Dashboard generation failed', 'QUERY_ERROR', {
         operation: 'generateDashboard',
-        params
+        params,
       })
     }
   }
@@ -134,16 +136,18 @@ export class AestheticDataHandling {
 
 #### Test Structure
 
-**Location**: `tools/tests-consolidated/unit/error-handling/`
+**Location**: `tools/tests/unit/error-handling/`
 
 **Files**:
+
 - `appointment-repository.test.ts`
-- `analytics-service.test.ts` 
+- `analytics-service.test.ts`
 - `aesthetic-data-handling.test.ts`
 
 #### TDD Methodology Applied
 
 **Red Phase**: Created failing tests for each error scenario
+
 ```typescript
 describe('AppointmentRepository Error Handling', () => {
   it('should throw DatabaseError when database connection fails', async () => {
@@ -154,6 +158,7 @@ describe('AppointmentRepository Error Handling', () => {
 ```
 
 **Green Phase**: Implemented services to pass tests
+
 ```typescript
 async findById(id: string) {
   try {
@@ -171,6 +176,7 @@ async findById(id: string) {
 #### Updated Package Exports
 
 **Files Updated**:
+
 - `packages/utils/src/index.ts` - Added error class exports
 - `packages/database/src/index.ts` - Added AppointmentRepository export
 - `packages/core-services/src/index.ts` - Added new service exports
@@ -183,8 +189,8 @@ export * from './errors'
 export { AppointmentRepository } from './repositories/appointment-repository'
 
 // packages/core-services/src/index.ts
-export { AnalyticsService } from './services/analytics-service'
 export { AestheticDataHandling } from './services/aesthetic-data-handling'
+export { AnalyticsService } from './services/analytics-service'
 ```
 
 ## Error Handling Patterns
@@ -198,7 +204,7 @@ try {
   if (result.error) {
     throw new DatabaseError(result.error.message, 'QUERY_ERROR', {
       operation: 'select',
-      table: 'table'
+      table: 'table',
     })
   }
 } catch (error) {
@@ -243,7 +249,7 @@ if (!this.hasValidConsent(clientId)) {
 if (await this.appointmentExists(datetime)) {
   throw new ConflictError('Appointment slot already booked', 'SLOT_CONFLICT', {
     datetime,
-    conflictingId: existing.id
+    conflictingId: existing.id,
   })
 }
 
@@ -257,21 +263,25 @@ if (!appointment) {
 ## Benefits Achieved
 
 ### 1. Type Safety
+
 - ✅ Specific error types instead of generic `Error`
 - ✅ Compile-time error handling validation
 - ✅ Better IDE support and autocompletion
 
 ### 2. Debugging & Monitoring
+
 - ✅ Structured error context and metadata
 - ✅ Error categorization for monitoring systems
 - ✅ Improved logging and alerting capabilities
 
 ### 3. Healthcare Compliance
+
 - ✅ LGPD compliance error tracking
 - ✅ ANVISA procedure validation
 - ✅ Audit trail for compliance violations
 
 ### 4. Developer Experience
+
 - ✅ Clear error handling patterns
 - ✅ Consistent error structure across services
 - ✅ Test-driven error scenarios
@@ -279,16 +289,19 @@ if (!appointment) {
 ## Testing Results
 
 ### Coverage Metrics
+
 - **Target**: ≥95% test coverage for error handling
 - **Achieved**: All error paths tested with specific scenarios
 - **Test Files**: 3 comprehensive test suites created
 
 ### TDD Validation
+
 - ✅ **Red Phase**: All tests initially failed as expected
 - ✅ **Green Phase**: Implementation made tests pass
 - ✅ **Refactor Phase**: Code optimized while maintaining test validity
 
 ### Manual Validation
+
 ```bash
 # Manual test script created and executed
 node manual-error-test.cjs
@@ -330,12 +343,14 @@ throw new Error('Invalid CPF format')
 ## Future Enhancements
 
 ### Planned Improvements
+
 - [ ] Error aggregation for batch operations
-- [ ] Internationalization for error messages  
+- [ ] Internationalization for error messages
 - [ ] Error recovery mechanisms
 - [ ] Performance monitoring integration
 
 ### Monitoring Integration
+
 - [ ] Error rate dashboards
 - [ ] Compliance violation alerts
 - [ ] Performance impact tracking
@@ -344,7 +359,7 @@ throw new Error('Invalid CPF format')
 ## Related Documentation
 
 - **API Error Responses**: See `docs/apis/error-responses.md`
-- **Coding Standards**: See `docs/rules/coding-standards.md` 
+- **Coding Standards**: See `docs/rules/coding-standards.md`
 - **Healthcare Compliance**: See `docs/compliance/lgpd-anvisa.md`
 - **Testing Strategy**: See `docs/testing/tdd-methodology.md`
 

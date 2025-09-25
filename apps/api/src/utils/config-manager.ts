@@ -26,6 +26,15 @@ export interface ConfigSchema<T = any> {
   description?: string
   sensitive?: boolean
   environment?: string[] // Environments where this config is applicable
+  allowedValues?: any[] // Enum-like validation
+  min?: number // For numeric values
+  max?: number // For numeric values
+  minLength?: number // For strings/arrays
+  maxLength?: number // For strings/arrays
+  pattern?: RegExp // For string validation
+  dependencies?: string[] // Other config keys this depends on
+  deprecated?: boolean // Mark as deprecated
+  deprecationMessage?: string // Message when deprecated config is used
 }
 
 export interface ConfigChangeEvent<T = any> {
@@ -50,6 +59,11 @@ export interface ConfigManagerOptions {
   enableChangeTracking?: boolean
   strictValidation?: boolean
   auditLogChanges?: boolean
+  enableTemplates?: boolean
+  enableMigrationSupport?: boolean
+  enableHealthChecks?: boolean
+  templatePath?: string
+  migrationPath?: string
 }
 
 export class ConfigManager<T extends Record<string, any> = Record<string, any>> {
@@ -60,6 +74,9 @@ export class ConfigManager<T extends Record<string, any> = Record<string, any>> 
   private options: ConfigManagerOptions
   private changeListeners: Set<(event: ConfigChangeEvent) => void> = new Set()
   private validationCache: Map<string, { valid: boolean; value: any; error?: string }> = new Map()
+  private templates: Map<string, Partial<T>> = new Map()
+  private migrations: ConfigMigration[] = []
+  private healthStatus: ConfigHealthStatus = { healthy: true, issues: [] }
 
   constructor(options: ConfigManagerOptions) {
     this.options = {
@@ -67,6 +84,9 @@ export class ConfigManager<T extends Record<string, any> = Record<string, any>> 
       enableChangeTracking: true,
       strictValidation: true,
       auditLogChanges: true,
+      enableTemplates: true,
+      enableMigrationSupport: true,
+      enableHealthChecks: true,
       ...options
     }
 
@@ -79,6 +99,15 @@ export class ConfigManager<T extends Record<string, any> = Record<string, any>> 
     })
 
     this.secretManager = new SecretManager()
+
+    // Initialize advanced features
+    if (this.options.enableTemplates) {
+      this.loadTemplates()
+    }
+
+    if (this.options.enableMigrationSupport) {
+      this.loadMigrations()
+    }
   }
 
   /**
@@ -486,6 +515,422 @@ export class ConfigManager<T extends Record<string, any> = Record<string, any>> 
     // Mock implementation - in real scenario, read and parse file
     return {}
   }
+
+  /**
+   * Configuration Templates
+   */
+  defineTemplate(name: string, template: Partial<T>): void {
+    if (!this.options.enableTemplates) {
+      this.logger.warn('Template support is disabled', { templateName: name })
+      return
+    }
+
+    // Validate template against schema
+    const validation = this.validateConfiguration(template)
+    if (!validation.valid) {
+      throw new HealthcareError(
+        'INVALID_TEMPLATE',
+        HealthcareErrorCategory.VALIDATION,
+        HealthcareErrorSeverity.MEDIUM,
+        `Template ${name} validation failed: ${validation.errors.join(', ')}`
+      )
+    }
+
+    this.templates.set(name, template)
+    this.logger.info('Configuration template defined', { name, keys: Object.keys(template) })
+  }
+
+  applyTemplate(name: string, options: {
+    override?: boolean
+    mergeStrategy?: 'merge' | 'replace' | 'deep-merge'
+  } = {}): void {
+    if (!this.templates.has(name)) {
+      throw new HealthcareError(
+        'TEMPLATE_NOT_FOUND',
+        HealthcareErrorCategory.VALIDATION,
+        HealthcareErrorSeverity.MEDIUM,
+        `Configuration template ${name} not found`
+      )
+    }
+
+    const template = this.templates.get(name)!
+    const { override = false, mergeStrategy = 'deep-merge' } = options
+
+    // Check for conflicts if not overriding
+    if (!override) {
+      const conflicts = Object.keys(template).filter(key => key in this.config)
+      if (conflicts.length > 0) {
+        throw new HealthcareError(
+          'TEMPLATE_CONFLICT',
+          HealthcareErrorCategory.VALIDATION,
+          HealthcareErrorSeverity.MEDIUM,
+          `Template ${name} conflicts with existing configuration: ${conflicts.join(', ')}`
+        )
+      }
+    }
+
+    // Apply template based on merge strategy
+    switch (mergeStrategy) {
+      case 'replace':
+        Object.assign(this.config, template)
+        break
+      case 'merge':
+        Object.assign(this.config, template)
+        break
+      case 'deep-merge':
+        this.deepMerge(this.config, template)
+        break
+    }
+
+    this.logger.info('Configuration template applied', {
+      name,
+      mergeStrategy,
+      keys: Object.keys(template)
+    })
+
+    // Clear validation cache
+    this.validationCache.clear()
+  }
+
+  getTemplate(name: string): Partial<T> | undefined {
+    return this.templates.get(name)
+  }
+
+  listTemplates(): string[] {
+    return Array.from(this.templates.keys())
+  }
+
+  /**
+   * Environment-specific configuration overrides
+   */
+  async applyEnvironmentOverrides(environment: string): Promise<void> {
+    const overrideConfig = this.generateEnvironmentConfig(environment)
+
+    for (const [key, value] of Object.entries(overrideConfig)) {
+      if (key in this.schema) {
+        await this.set(key as keyof T, value as T[keyof T], {
+          source: 'environment',
+          skipValidation: false
+        })
+      }
+    }
+
+    this.logger.info('Environment overrides applied', { environment, keys: Object.keys(overrideConfig) })
+  }
+
+  private generateEnvironmentConfig(environment: string): Partial<T> {
+    const baseConfig: Partial<T> = {}
+
+    // Environment-specific defaults
+    switch (environment) {
+      case 'development':
+        Object.assign(baseConfig, {
+          debug: true,
+          logLevel: 'debug',
+          enableHotReload: true,
+          cors: { origin: '*' }
+        } as Partial<T>)
+        break
+      case 'staging':
+        Object.assign(baseConfig, {
+          debug: false,
+          logLevel: 'info',
+          enableHotReload: false,
+          cors: { origin: ['https://staging.example.com'] }
+        } as Partial<T>)
+        break
+      case 'production':
+        Object.assign(baseConfig, {
+          debug: false,
+          logLevel: 'warn',
+          enableHotReload: false,
+          cors: { origin: ['https://example.com'] }
+        } as Partial<T>)
+        break
+    }
+
+    return baseConfig
+  }
+
+  /**
+   * Configuration Migration Support
+   */
+  async addMigration(migration: ConfigMigration): Promise<void> {
+    if (!this.options.enableMigrationSupport) {
+      this.logger.warn('Migration support is disabled', { migrationId: migration.id })
+      return
+    }
+
+    // Validate migration
+    if (!migration.id || !migration.description || !migration.migrate) {
+      throw new HealthcareError(
+        'INVALID_MIGRATION',
+        HealthcareErrorCategory.VALIDATION,
+        HealthcareErrorSeverity.MEDIUM,
+        'Migration must have id, description, and migrate function'
+      )
+    }
+
+    // Check for duplicate migration IDs
+    if (this.migrations.some(m => m.id === migration.id)) {
+      throw new HealthcareError(
+        'DUPLICATE_MIGRATION',
+        HealthcareErrorCategory.VALIDATION,
+        HealthcareErrorSeverity.MEDIUM,
+        `Migration with ID ${migration.id} already exists`
+      )
+    }
+
+    this.migrations.push(migration)
+    this.logger.info('Configuration migration added', {
+      id: migration.id,
+      description: migration.description
+    })
+  }
+
+  async runMigrations(options: {
+    dryRun?: boolean
+    targetVersion?: string
+    force?: boolean
+  } = {}): Promise<MigrationResult[]> {
+    const { dryRun = false, targetVersion, force = false } = options
+    const results: MigrationResult[] = []
+
+    this.logger.info('Starting configuration migrations', {
+      dryRun,
+      targetVersion,
+      migrationCount: this.migrations.length
+    })
+
+    for (const migration of this.migrations) {
+      // Skip if already applied (unless forced)
+      if (!force && migration.applied) {
+        results.push({
+          id: migration.id,
+          success: true,
+          skipped: true,
+          message: 'Already applied'
+        })
+        continue
+      }
+
+      // Stop at target version if specified
+      if (targetVersion && migration.version > targetVersion) {
+        break
+      }
+
+      try {
+        if (!dryRun) {
+          const context: MigrationContext = {
+            currentConfig: this.config,
+            schema: this.schema,
+            logger: this.logger,
+            dryRun
+          }
+
+          await migration.migrate(context)
+          migration.applied = true
+          migration.appliedAt = new Date()
+        }
+
+        results.push({
+          id: migration.id,
+          success: true,
+          message: dryRun ? 'Would be applied' : 'Applied successfully'
+        })
+
+        this.logger.info('Migration processed', {
+          id: migration.id,
+          dryRun,
+          success: true
+        })
+      } catch (error) {
+        results.push({
+          id: migration.id,
+          success: false,
+          message: error instanceof Error ? error.message : String(error)
+        })
+
+        this.logger.error('Migration failed', {
+          id: migration.id,
+          error: error instanceof Error ? error.message : String(error)
+        }, HealthcareErrorSeverity.HIGH)
+
+        if (!dryRun && !migration.continueOnFailure) {
+          break
+        }
+      }
+    }
+
+    // Clear validation cache after migrations
+    if (!dryRun && results.some(r => r.success && !r.skipped)) {
+      this.validationCache.clear()
+    }
+
+    return results
+  }
+
+  /**
+   * Configuration Health Checks
+   */
+  async runHealthChecks(): Promise<ConfigHealthStatus> {
+    if (!this.options.enableHealthChecks) {
+      return { healthy: true, issues: [] }
+    }
+
+    const issues: ConfigHealthIssue[] = []
+
+    // Validate all configuration
+    const validation = this.validateAll()
+    if (!validation.valid) {
+      issues.push({
+        type: 'validation_error',
+        severity: 'high',
+        message: 'Configuration validation failed',
+        details: validation.errors
+      })
+    }
+
+    // Check for deprecated configurations
+    for (const [key, schema] of Object.entries(this.schema)) {
+      if (schema.deprecated && key in this.config) {
+        issues.push({
+          type: 'deprecated_config',
+          severity: 'medium',
+          message: `Deprecated configuration ${key} is in use`,
+          details: {
+            key,
+            deprecationMessage: schema.deprecationMessage
+          }
+        })
+      }
+    }
+
+    // Check for missing required configurations
+    for (const [key, schema] of Object.entries(this.schema)) {
+      if (schema.required && this.config[key] === undefined && schema.default === undefined) {
+        issues.push({
+          type: 'missing_required',
+          severity: 'high',
+          message: `Required configuration ${key} is missing`
+        })
+      }
+    }
+
+    // Check configuration dependencies
+    for (const [key, schema] of Object.entries(this.schema)) {
+      if (schema.dependencies && key in this.config) {
+        for (const dep of schema.dependencies) {
+          if (!(dep in this.config)) {
+            issues.push({
+              type: 'missing_dependency',
+              severity: 'medium',
+              message: `Configuration ${key} depends on missing ${dep}`,
+              details: { key, dependencies: schema.dependencies }
+            })
+          }
+        }
+      }
+    }
+
+    this.healthStatus = {
+      healthy: issues.length === 0,
+      issues
+    }
+
+    this.logger.info('Configuration health check completed', {
+      healthy: this.healthStatus.healthy,
+      issuesCount: issues.length
+    })
+
+    return this.healthStatus
+  }
+
+  getHealthStatus(): ConfigHealthStatus {
+    return this.healthStatus
+  }
+
+  /**
+   * Private helper methods
+   */
+  private loadTemplates(): void {
+    // Load predefined templates
+    this.logger.info('Configuration templates loaded')
+  }
+
+  private loadMigrations(): void {
+    // Load migration files if path is specified
+    if (this.options.migrationPath) {
+      this.logger.info('Configuration migrations loaded', { path: this.options.migrationPath })
+    }
+  }
+
+  private deepMerge(target: any, source: any): void {
+    for (const key in source) {
+      if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key])) {
+        if (!target[key]) target[key] = {}
+        this.deepMerge(target[key], source[key])
+      } else {
+        target[key] = source[key]
+      }
+    }
+  }
+
+  private validateConfiguration(config: Partial<T>): { valid: boolean; errors: string[] } {
+    const errors: string[] = []
+
+    for (const [key, value] of Object.entries(config)) {
+      if (key in this.schema) {
+        const validation = this.validateValue(key, value)
+        if (!validation.valid) {
+          errors.push(`${key}: ${validation.error}`)
+        }
+      }
+    }
+
+    return { valid: errors.length === 0, errors }
+  }
+}
+
+// Configuration migration interfaces
+export interface ConfigMigration {
+  id: string
+  version: string
+  description: string
+  migrate: (context: MigrationContext) => Promise<void>
+  applied?: boolean
+  appliedAt?: Date
+  continueOnFailure?: boolean
+  rollback?: (context: MigrationContext) => Promise<void>
+}
+
+export interface MigrationContext {
+  currentConfig: Partial<T>
+  schema: Record<string, ConfigSchema>
+  logger: SecureLogger
+  dryRun: boolean
+}
+
+export interface MigrationResult {
+  id: string
+  success: boolean
+  message: string
+  skipped?: boolean
+  error?: string
+}
+
+// Configuration health check interfaces
+export interface ConfigHealthStatus {
+  healthy: boolean
+  issues: ConfigHealthIssue[]
+  lastChecked?: Date
+}
+
+export interface ConfigHealthIssue {
+  type: 'validation_error' | 'deprecated_config' | 'missing_required' | 'missing_dependency'
+  severity: 'low' | 'medium' | 'high' | 'critical'
+  message: string
+  details?: any
 }
 
 // Factory function for easy instantiation
