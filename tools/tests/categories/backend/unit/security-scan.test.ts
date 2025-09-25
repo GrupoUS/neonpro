@@ -33,8 +33,8 @@ describe('Security Analysis', () => {
       const codeWithApiSecret = 'const API_KEY = "sk-1234567890abcdef"'
       const codeWithPassword = 'const password = "secret123"'
       
-      expect(codeWithApiSecret).toMatch(secretPatterns[0])
-      expect(codeWithPassword).toMatch(secretPatterns[1])
+      expect(codeWithApiSecret).toMatch(secretPatterns[0]!)
+      expect(codeWithPassword).toMatch(secretPatterns[1]!)
     })
   })
 

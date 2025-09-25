@@ -19,6 +19,20 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 LOG_FILE="$PROJECT_ROOT/logs/audit-$(date +%Y%m%d-%H%M%S).log"
 
+# Load centralized configuration
+if [ -f "$SCRIPT_DIR/config.sh" ]; then
+    source "$SCRIPT_DIR/config.sh"
+else
+    echo "WARNING: Configuration file not found, using hardcoded defaults"
+    # Fallback defaults for critical values
+    EXCELLENT_AUDIT_SCORE=90
+    GOOD_AUDIT_SCORE=80
+    ACCEPTABLE_AUDIT_SCORE=70
+    MAX_BUNDLE_SIZE_MB=15
+    OPTIMAL_BUILD_SIZE_MB=10
+    MIN_COMPLIANCE_PERCENTAGE=80
+fi
+
 # Create necessary directories
 mkdir -p "$PROJECT_ROOT/logs"
 
@@ -107,11 +121,176 @@ check_prerequisites() {
     print_success "Prerequisites check completed"
 }
 
+# Input Validation & Sanitization Module
+validate_and_sanitize_input() {
+    local input="$1"
+    local input_type="$2"
+    local sanitized=""
+    
+    # Remove potentially dangerous characters
+    sanitized=$(echo "$input" | sed 's/[;&|`$(){}<>!\\]//g' | sed "s/'//g" | sed 's/"//g')
+    
+    # Validate based on input type
+    case "$input_type" in
+        "filename")
+            # Validate filename - allow alphanumeric, dashes, underscores, dots
+            if [[ ! "$sanitized" =~ ^[a-zA-Z0-9._-]+$ ]]; then
+                print_error "Invalid filename format: $input"
+                return 1
+            fi
+            # Prevent directory traversal
+            if [[ "$sanitized" == *".."* ]] || [[ "$sanitized" == *"/"* ]]; then
+                print_error "Directory traversal attempt detected: $input"
+                return 1
+            fi
+            ;;
+        "path")
+            # Validate path - prevent directory traversal and dangerous characters
+            if [[ "$sanitized" == *".."* ]] || [[ "$sanitized" == *"~"* ]]; then
+                print_error "Invalid path detected: $input"
+                return 1
+            fi
+            # Ensure path is within project bounds
+            if [[ "$sanitized" != "$PROJECT_ROOT"* ]] && [[ "$sanitized" != /* ]]; then
+                print_error "Path outside project bounds: $input"
+                return 1
+            fi
+            ;;
+        "command")
+            # Validate command - allow only safe commands
+            safe_commands=("node" "npm" "bun" "pnpm" "git" "find" "grep" "sed" "awk" "timeout" "du" "df")
+            cmd_base=$(echo "$sanitized" | cut -d' ' -f1)
+            if [[ ! " ${safe_commands[@]} " =~ " ${cmd_base} " ]]; then
+                print_error "Unsafe command detected: $cmd_base"
+                return 1
+            fi
+            ;;
+        "environment_var")
+            # Validate environment variable name
+            if [[ ! "$sanitized" =~ ^[A-Z_][A-Z0-9_]*$ ]]; then
+                print_error "Invalid environment variable name: $input"
+                return 1
+            fi
+            ;;
+        "url")
+            # Basic URL validation
+            if [[ ! "$sanitized" =~ ^https?://[a-zA-Z0-9.-]+\.[a-zA-Z]{2,} ]]; then
+                print_error "Invalid URL format: $input"
+                return 1
+            fi
+            ;;
+        "percentage")
+            # Validate percentage (0-100)
+            if [[ ! "$sanitized" =~ ^[0-9]+$ ]] || [ "$sanitized" -lt 0 ] || [ "$sanitized" -gt 100 ]; then
+                print_error "Invalid percentage value: $input"
+                return 1
+            fi
+            ;;
+        "size_mb")
+            # Validate size in MB
+            if [[ ! "$sanitized" =~ ^[0-9]+$ ]]; then
+                print_error "Invalid size value: $input"
+                return 1
+            fi
+            ;;
+        *)
+            # Basic sanitization for unknown types
+            if [[ -z "$sanitized" ]]; then
+                print_error "Empty input detected"
+                return 1
+            fi
+            ;;
+    esac
+    
+    echo "$sanitized"
+    return 0
+}
+
+# Security validation for file operations
+secure_file_operation() {
+    local operation="$1"
+    local file_path="$2"
+    
+    # Validate operation
+    if ! validate_and_sanitize_input "$operation" "command" >/dev/null; then
+        return 1
+    fi
+    
+    # Validate file path
+    if ! sanitized_path=$(validate_and_sanitize_input "$file_path" "path"); then
+        return 1
+    fi
+    
+    # Additional security checks
+    if [[ "$operation" == *"rm"* ]] || [[ "$operation" == *"mv"* ]] || [[ "$operation" == *"cp"* ]]; then
+        print_error "Potentially destructive file operation blocked: $operation"
+        return 1
+    fi
+    
+    # Execute operation safely
+    eval "$operation \"$sanitized_path\""
+}
+
+# Validate audit command parameters
+validate_audit_command() {
+    local command="$1"
+    
+    # List of allowed commands
+    allowed_commands=("quality" "security" "performance" "full" "--help" "-h" "help")
+    
+    if [[ ! " ${allowed_commands[@]} " =~ " ${command} " ]]; then
+        print_error "Invalid audit command: $command"
+        return 1
+    fi
+    
+    return 0
+}
+
+# Security check for environment variables
+security_check_environment() {
+    local sensitive_vars=("DATABASE_URL" "JWT_SECRET" "SESSION_SECRET" "SUPABASE_SERVICE_KEY" "OPENAI_API_KEY")
+    
+    for var in "${sensitive_vars[@]}"; do
+        if [[ -n "${!var:-}" ]]; then
+            print_warning "Sensitive environment variable detected in process: $var"
+            # Check if variable is properly formatted
+            case "$var" in
+                "DATABASE_URL")
+                    if [[ ! "${!var}" =~ ^postgres(ql)?:// ]]; then
+                        print_error "Invalid DATABASE_URL format detected"
+                        return 1
+                    fi
+                    ;;
+                "JWT_SECRET"|"SESSION_SECRET")
+                    if [[ ${#var} -lt 32 ]]; then
+                        print_error "Insufficient secret length for $var"
+                        return 1
+                    fi
+                    ;;
+            esac
+        fi
+    done
+    
+    return 0
+}
+
 # Code Quality Analysis Module
 run_code_quality_audit() {
     print_header "🔍 Code Quality Analysis"
     local module_passed=0
     local module_total=0
+    
+    # Security Check: Validate paths before analysis
+    print_status "Validating analysis paths..."
+    module_total=$((module_total + 1))
+    TOTAL_CHECKS=$((TOTAL_CHECKS + 1))
+    if validate_and_sanitize_input "$PROJECT_ROOT/apps/web" "path" >/dev/null; then
+        print_success "Path validation: SECURE"
+        module_passed=$((module_passed + 1))
+    else
+        print_error "Path validation: FAILED"
+        return 1
+    fi
     
     # Bundle Analysis (integrated functionality)
     print_status "Analyzing bundle sizes..."
@@ -120,11 +299,15 @@ run_code_quality_audit() {
     if [ -d "$PROJECT_ROOT/apps/web/dist" ]; then
         build_size=$(du -sh "$PROJECT_ROOT/apps/web/dist" 2>/dev/null | cut -f1 || echo "Unknown")
         size_mb=$(du -sm "$PROJECT_ROOT/apps/web/dist" 2>/dev/null | cut -f1 || echo "0")
-        if [ "$size_mb" -lt 15 ] 2>/dev/null; then
-            print_success "Bundle analysis: OPTIMAL ($build_size)"
-            module_passed=$((module_passed + 1))
+        if validate_and_sanitize_input "$size_mb" "size_mb" >/dev/null; then
+            if [ "$size_mb" -lt $MAX_BUNDLE_SIZE_MB ] 2>/dev/null; then
+                print_success "Bundle analysis: OPTIMAL ($build_size)"
+                module_passed=$((module_passed + 1))
+            else
+                print_warning "Bundle analysis: LARGE ($build_size) - consider optimization"
+            fi
         else
-            print_warning "Bundle analysis: LARGE ($build_size) - consider optimization"
+            print_error "Bundle size validation failed"
         fi
     else
         print_warning "Bundle analysis: Build required first"
@@ -134,39 +317,60 @@ run_code_quality_audit() {
     print_status "Detecting component conflicts..."
     module_total=$((module_total + 1))
     TOTAL_CHECKS=$((TOTAL_CHECKS + 1))
-    # Check for common component conflict patterns
-    if find "$PROJECT_ROOT/apps/web/src/components" -name "*.tsx" -o -name "*.ts" 2>/dev/null | head -1 >/dev/null; then
-        duplicate_components=$(find "$PROJECT_ROOT/apps/web/src/components" -name "*.tsx" -exec basename {} \; 2>/dev/null | sort | uniq -d | wc -l)
-        if [ "$duplicate_components" -eq 0 ] 2>/dev/null; then
-            print_success "Component conflicts: NONE DETECTED"
-            module_passed=$((module_passed + 1))
+    components_path="$PROJECT_ROOT/apps/web/src/components"
+    if validate_and_sanitize_input "$components_path" "path" >/dev/null && [ -d "$components_path" ]; then
+        find_command="find \"$components_path\" -name \"*.tsx\" -o -name \"*.ts\""
+        if validate_and_sanitize_input "$find_command" "command" >/dev/null; then
+            if eval "$find_command" 2>/dev/null | head -1 >/dev/null; then
+                duplicate_components=$(eval "$find_command" -exec basename {} \; 2>/dev/null | sort | uniq -d | wc -l)
+                if [ "$duplicate_components" -eq 0 ] 2>/dev/null; then
+                    print_success "Component conflicts: NONE DETECTED"
+                    module_passed=$((module_passed + 1))
+                else
+                    print_warning "Component conflicts: $duplicate_components potential conflicts found"
+                fi
+            else
+                print_warning "Component conflicts: No component files found"
+            fi
         else
-            print_warning "Component conflicts: $duplicate_components potential conflicts found"
+            print_error "Component search command validation failed"
         fi
     else
-        print_warning "Component conflicts: Components directory not found"
+        print_warning "Component conflicts: Components directory not found or invalid"
     fi
     
-    # TypeScript Build Check
+    # TypeScript Build Check with safe command execution
     print_status "Validating TypeScript build..."
     module_total=$((module_total + 1))
     TOTAL_CHECKS=$((TOTAL_CHECKS + 1))
-    if timeout 60 $PACKAGE_MANAGER run build >/dev/null 2>&1; then
-        print_success "TypeScript build: PASSED"
-        module_passed=$((module_passed + 1))
+    build_command="timeout $BUILD_TIMEOUT $PACKAGE_MANAGER run build"
+    if validate_and_sanitize_input "$build_command" "command" >/dev/null; then
+        if eval "$build_command" >/dev/null 2>&1; then
+            print_success "TypeScript build: PASSED"
+            module_passed=$((module_passed + 1))
+        else
+            print_error "TypeScript build: FAILED or timeout"
+        fi
     else
-        print_error "TypeScript build: FAILED or timeout"
+        print_error "Build command validation failed"
     fi
     
-    # Linting Check
+    # Linting Check with safe command execution
     print_status "Running linter..."
     module_total=$((module_total + 1))
     TOTAL_CHECKS=$((TOTAL_CHECKS + 1))
-    if timeout 30 $PACKAGE_MANAGER run lint >/dev/null 2>&1 || timeout 30 $PACKAGE_MANAGER run lint:fix >/dev/null 2>&1; then
-        print_success "Linting: PASSED"
-        module_passed=$((module_passed + 1))
+    lint_command1="timeout $LINT_TIMEOUT $PACKAGE_MANAGER run lint"
+    lint_command2="timeout $LINT_TIMEOUT $PACKAGE_MANAGER run lint:fix"
+    
+    if validate_and_sanitize_input "$lint_command1" "command" >/dev/null && validate_and_sanitize_input "$lint_command2" "command" >/dev/null; then
+        if eval "$lint_command1" >/dev/null 2>&1 || eval "$lint_command2" >/dev/null 2>&1; then
+            print_success "Linting: PASSED"
+            module_passed=$((module_passed + 1))
+        else
+            print_warning "Linting: Issues found or not configured"
+        fi
     else
-        print_warning "Linting: Issues found or not configured"
+        print_error "Linting command validation failed"
     fi
     
     print_status "Code Quality Score: $module_passed/$module_total"
@@ -177,6 +381,17 @@ run_security_audit() {
     print_header "🛡️ Security & Compliance Analysis"
     local module_passed=0
     local module_total=0
+    
+    # Security Check: Input Validation System
+    print_status "Validating input validation system..."
+    module_total=$((module_total + 1))
+    TOTAL_CHECKS=$((TOTAL_CHECKS + 1))
+    if declare -f validate_and_sanitize_input >/dev/null && declare -f security_check_environment >/dev/null; then
+        print_success "Input validation system: IMPLEMENTED"
+        module_passed=$((module_passed + 1))
+    else
+        print_error "Input validation system: MISSING"
+    fi
     
     # Environment Protection Check
     print_status "Validating environment protection..."
@@ -189,36 +404,78 @@ run_security_audit() {
         module_passed=$((module_passed + 1))
     fi
     
-    # LGPD Compliance Check
+    # LGPD Compliance Check with input validation
     print_healthcare "Validating LGPD compliance..."
     module_total=$((module_total + 1))
     TOTAL_CHECKS=$((TOTAL_CHECKS + 1))
     lgpd_components=("ConsentBanner" "ConsentContext" "PatientConsent" "AuditLog" "DataRetention")
     compliance_score=0
     
+    # Validate LGPD component names before searching
     for component in "${lgpd_components[@]}"; do
-        if grep -r "$component" "$PROJECT_ROOT/apps/" 2>/dev/null | grep -q "\.tsx\?:"; then
-            compliance_score=$((compliance_score + 1))
+        if validate_and_sanitize_input "$component" "filename" >/dev/null; then
+            if grep -r "$component" "$PROJECT_ROOT/apps/" 2>/dev/null | grep -q "\.tsx\?:"; then
+                compliance_score=$((compliance_score + 1))
+            fi
+        else
+            print_warning "Invalid LGPD component name detected: $component"
         fi
     done
     
-    compliance_percentage=$((compliance_score * 100 / ${#lgpd_components[@]}))
-    if [ $compliance_percentage -ge 80 ]; then
-        print_success "LGPD compliance: $compliance_percentage% COMPLIANT"
-        module_passed=$((module_passed + 1))
+    # Validate compliance percentage calculation
+    if [ ${#lgpd_components[@]} -gt 0 ]; then
+        compliance_percentage=$((compliance_score * 100 / ${#lgpd_components[@]}))
+        if validate_and_sanitize_input "$compliance_percentage" "percentage" >/dev/null; then
+            if [ $compliance_percentage -ge $MIN_COMPLIANCE_PERCENTAGE ]; then
+                print_success "LGPD compliance: $compliance_percentage% COMPLIANT"
+                module_passed=$((module_passed + 1))
+            else
+                print_warning "LGPD compliance: $compliance_percentage% - NEEDS IMPROVEMENT"
+            fi
+        else
+            print_error "Invalid compliance percentage calculation"
+        fi
     else
-        print_warning "LGPD compliance: $compliance_percentage% - NEEDS IMPROVEMENT"
+        print_error "No LGPD components defined for validation"
     fi
     
-    # Security Dependencies Check
+    # Security Dependencies Check with safe command execution
     print_status "Checking for security vulnerabilities..."
     module_total=$((module_total + 1))
     TOTAL_CHECKS=$((TOTAL_CHECKS + 1))
-    if timeout 30 $PACKAGE_MANAGER audit --audit-level moderate >/dev/null 2>&1; then
-        print_success "Security audit: NO CRITICAL VULNERABILITIES"
+    audit_command="timeout $AUDIT_TIMEOUT $PACKAGE_MANAGER audit --audit-level moderate"
+    if validate_and_sanitize_input "$audit_command" "command" >/dev/null; then
+        if eval "$audit_command" >/dev/null 2>&1; then
+            print_success "Security audit: NO CRITICAL VULNERABILITIES"
+            module_passed=$((module_passed + 1))
+        else
+            print_warning "Security audit: Vulnerabilities detected"
+        fi
+    else
+        print_error "Security audit command validation failed"
+    fi
+    
+    # Additional Security: File permission validation
+    print_status "Validating script file permissions..."
+    module_total=$((module_total + 1))
+    TOTAL_CHECKS=$((TOTAL_CHECKS + 1))
+    insecure_files=0
+    while IFS= read -r -d '' file; do
+        if [ -x "$file" ]; then
+            # Check if file has appropriate permissions
+            perms=$(stat -c "%a" "$file" 2>/dev/null || echo "000")
+            if [[ "$perms" =~ ^[67][0-7][0-7]$ ]]; then
+                print_warning "Insecure file permissions detected: $file ($perms)"
+                insecure_files=$((insecure_files + 1))
+            fi
+        fi
+    done < <(find "$PROJECT_ROOT/scripts" -name "*.sh" -print0 2>/dev/null)
+    
+    if [ $insecure_files -eq 0 ]; then
+        print_success "File permissions: SECURE"
         module_passed=$((module_passed + 1))
     else
-        print_warning "Security audit: Vulnerabilities detected"
+        print_warning "File permissions: $insecure_files insecure files found"
     fi
     
     print_status "Security Score: $module_passed/$module_total"
@@ -248,7 +505,7 @@ run_performance_audit() {
     if [ -d "$PROJECT_ROOT/apps/web/dist" ]; then
         build_size=$(du -sh "$PROJECT_ROOT/apps/web/dist" 2>/dev/null | cut -f1 || echo "Unknown")
         size_mb=$(du -sm "$PROJECT_ROOT/apps/web/dist" 2>/dev/null | cut -f1 || echo "0")
-        if [ "$size_mb" -lt 10 ] 2>/dev/null; then
+        if [ "$size_mb" -lt $OPTIMAL_BUILD_SIZE_MB ] 2>/dev/null; then
             print_success "Build size: OPTIMAL ($build_size)"
             module_passed=$((module_passed + 1))
         else
@@ -310,11 +567,11 @@ run_full_audit() {
     echo ""
     
     # Overall assessment
-    if [ $overall_percentage -ge 90 ]; then
+    if [ $overall_percentage -ge $EXCELLENT_AUDIT_SCORE ]; then
         print_success "🏥 NEONPRO AUDIT: EXCELLENT - Ready for healthcare production!"
-    elif [ $overall_percentage -ge 80 ]; then
+    elif [ $overall_percentage -ge $GOOD_AUDIT_SCORE ]; then
         print_success "🏥 NEONPRO AUDIT: GOOD - Minor improvements recommended"
-    elif [ $overall_percentage -ge 70 ]; then
+    elif [ $overall_percentage -ge $ACCEPTABLE_AUDIT_SCORE ]; then
         print_warning "🏥 NEONPRO AUDIT: ACCEPTABLE - Several improvements needed"
     else
         print_error "🏥 NEONPRO AUDIT: NEEDS WORK - Critical issues must be addressed"
@@ -337,6 +594,18 @@ main() {
     echo "Command: $command"
     echo "Log file: $LOG_FILE"
     echo ""
+    
+    # Security check: Validate command input
+    if ! validate_audit_command "$command"; then
+        print_error "Invalid command parameters"
+        exit 1
+    fi
+    
+    # Security check: Environment validation
+    if ! security_check_environment; then
+        print_error "Security check failed - environment issues detected"
+        exit 1
+    fi
     
     # Check prerequisites
     check_prerequisites

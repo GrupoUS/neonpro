@@ -118,6 +118,92 @@ validate_environment() {
     fi
     
     log_success "Vercel authenticated as: $(npx vercel whoami)"
+    
+    # Validate required environment variables
+    validate_required_env_vars
+}
+
+validate_required_env_vars() {
+    log_step "Environment Variables Validation"
+    
+    local required_vars=()
+    local missing_vars=()
+    
+    # Add required variables based on deployment mode
+    if [ "${NODE_ENV:-}" = "production" ]; then
+        required_vars+=(
+            "DATABASE_URL"
+            "SUPABASE_SERVICE_ROLE_KEY"
+            "SUPABASE_ANON_KEY"
+            "NEXTAUTH_SECRET"
+            "NEXTAUTH_URL"
+        )
+    fi
+    
+    # Vercel-specific variables
+    required_vars+=(
+        "VERCEL_ORG_ID"
+        "VERCEL_PROJECT_ID"
+    )
+    
+    # Check each required variable
+    for var in "${required_vars[@]}"; do
+        if [ -z "${!var:-}" ]; then
+            missing_vars+=("$var")
+        else
+            log_success "✓ $var is set"
+        fi
+    done
+    
+    # Report missing variables
+    if [ ${#missing_vars[@]} -gt 0 ]; then
+        log_error "Missing required environment variables:"
+        for var in "${missing_vars[@]}"; do
+            log_error "  - $var"
+        done
+        log_info "Please set these variables in your .env file or deployment environment"
+        exit 1
+    fi
+    
+    log_success "All required environment variables are set"
+    
+    # Validate variable formats
+    validate_env_var_formats
+}
+
+validate_env_var_formats() {
+    log_step "Environment Variable Format Validation"
+    
+    # Validate DATABASE_URL format
+    if [ -n "${DATABASE_URL:-}" ]; then
+        if [[ ! "$DATABASE_URL" =~ ^postgresql:// ]]; then
+            log_error "DATABASE_URL must start with 'postgresql://'"
+            exit 1
+        fi
+        log_success "DATABASE_URL format is valid"
+    fi
+    
+    # Validate URL formats
+    for url_var in "NEXTAUTH_URL" "PRODUCTION_URL"; do
+        if [ -n "${!url_var:-}" ]; then
+            if [[ ! "${!url_var}" =~ ^https?:// ]]; then
+                log_error "$url_var must be a valid URL (http:// or https://)"
+                exit 1
+            fi
+            log_success "$url_var format is valid"
+        fi
+    done
+    
+    # Validate Supabase keys format
+    for key_var in "SUPABASE_SERVICE_ROLE_KEY" "SUPABASE_ANON_KEY"; do
+        if [ -n "${!key_var:-}" ]; then
+            if [[ ! "${!key_var}" =~ ^eyJ ]]; then
+                log_warning "$key_var doesn't appear to be a valid JWT token"
+            else
+                log_success "$key_var format appears valid"
+            fi
+        fi
+    done
 }
 
 healthcare_compliance_check() {
@@ -252,9 +338,19 @@ run_tests() {
     log_success "Tests completed"
 }
 
-deploy_application() {
-    local env=${1:-"production"}
-    local strategy=$(get_build_strategy "${2:-auto}")
+# Added from deploy-vercel.sh: Config choice based on env
+function choose_config() {
+    if [ \"$1\" = \"production\" ]; then
+        echo \"vercel.json\"
+    else
+        echo \"vercel-turbo.json\"
+    fi
+}
+
+# Modify deploy_application to use config
+function deploy_application() {
+    local env=${1:-\"preview\"}
+    local strategy=${2:-\"auto\"}
     local force=${3:-false}
     local skip_tests=${4:-false}
     local skip_build_test=${5:-false}
@@ -623,6 +719,131 @@ cmd_validate() {
     validate_deployment "$url" "$validation_type"
 }
 
+cmd_monitor() {
+    local action=${1:-"logs"}
+    local url=${2:-""}
+    monitor_deployment "$action" "$url"
+}
+
+cmd_rollback() {
+    local url=${1:-""}
+    rollback_deployment "$url"
+}
+
+cmd_config() {
+    verify_configuration
+}
+
+# -----------------------------
+# Main Function
+# -----------------------------
+main() {
+    print_header
+    ensure_project_root
+
+    local command=${1:-"help"}
+    shift || true
+
+    case "$command" in
+        deploy) cmd_deploy "$@";;
+        build) cmd_build "$@";;
+        test) cmd_test "$@";;
+        validate) cmd_validate "$@";;
+        monitor) cmd_monitor "$@";;
+        rollback) cmd_rollback "$@";;
+        config) cmd_config "$@";;
+        help|-h|--help) show_usage;;
+        *)
+            log_error "Unknown command: $command"
+            echo ""
+            show_usage
+            exit 1
+            ;;
+    esac
+}
+
+# Execute main function if script is run directly
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+    main "$@"
+fi
+
+# Added from deploy-api-separate.sh: Separate API deploy
+function deploy_api_separate() {
+    local TEMP_DIR=\"./temp-api-deploy\"
+    rm -rf \"$TEMP_DIR\"
+    mkdir -p \"$TEMP_DIR\"
+
+    cp -r apps/api/* \"$TEMP_DIR/\"
+    cp api-vercel.json \"$TEMP_DIR/vercel.json\"
+
+    # Create package.json for API
+    cat > \"$TEMP_DIR/package.json\" << EOF
+{
+  \"name\": \"neonpro-api\",
+  \"version\": \"1.0.0\",
+  \"private\": true,
+  \"main\": \"dist/index.js\",
+  \"scripts\": {
+    \"build\": \"tsc\",
+    \"start\": \"node dist/index.js\"
+  },
+  \"dependencies\": {
+    \"hono\": \"^4.0.0\"
+  }
+}
+EOF
+
+    cd \"$TEMP_DIR\"
+    vercel --prod --yes
+    cd -
+    rm -rf \"$TEMP_DIR\"
+}
+
+# Add to main or cmd_deploy: option for --api
+# Assuming added to cmd_deploy
+cmd_deploy() {
+    local env="production"
+    local strategy="auto"
+    local force=false
+    local skip_tests=false
+    local skip_build_test=false
+
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            --production) env="production"; shift;;
+            --preview) env="preview"; shift;;
+            --strategy) strategy="$2"; shift 2;;
+            --force) force=true; shift;;
+            --skip-tests) skip_tests=true; shift;;
+            --skip-build-test) skip_build_test=true; shift;;
+            *) log_error "Unknown deploy option: $1"; exit 1;;
+        esac
+    done
+
+    local api=false
+    # Add to while loop
+    --api) api=true; shift;;
+
+    # After parsing
+    if $api; then
+        deploy_api_separate
+    else
+        deploy_application \"$env\" \"$strategy\" \"$force\" \"$skip_tests\" \"$skip_build_test\"
+    fi
+}
+
+# Added env checks from deploy.js
+function check_env_vars() {
+    local required_vars=(\"DATABASE_URL\" \"NEXT_PUBLIC_SUPABASE_URL\" \"NEXT_PUBLIC_SUPABASE_ANON_KEY\" \"SUPABASE_SERVICE_ROLE_KEY\" \"VERCEL_TOKEN\")
+    for var in \"${required_vars[@]}\"; do
+        if [ -z \"${!var:-}\" ]; then
+            log_error \"Missing required env var: $var\"
+            exit 1
+        fi
+    done
+}
+
+# Call in main or deploy
 cmd_monitor() {
     local action=${1:-"logs"}
     local url=${2:-""}

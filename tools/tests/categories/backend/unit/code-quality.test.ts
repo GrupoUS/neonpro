@@ -24,6 +24,10 @@ describe('Code Quality Analysis', () => {
       const validClasses = ['UserService', 'DatabaseConnection', 'ApiController']
       const invalidClasses = ['userService', 'API_Controller', 'database-connection']
       
+      invalidClasses.forEach(name => {
+        expect(name).not.toMatch(/^[A-Z][a-zA-Z0-9]*$/)
+      })
+      
       validClasses.forEach(name => {
         expect(name).toMatch(/^[A-Z][a-zA-Z0-9]*$/)
       })
