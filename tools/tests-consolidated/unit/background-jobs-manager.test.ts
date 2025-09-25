@@ -3,8 +3,8 @@
  * Comprehensive test suite for healthcare background job processing system
  * 
  * Following TDD principles and KISS/YAGNI methodology
- * @version 1.0.0
- * @compliance LGPD, ANVISA, ISO 27001
+ * Version: 1.0.0
+ * Compliance: LGPD, ANVISA, ISO 27001
  */
 
 import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest'

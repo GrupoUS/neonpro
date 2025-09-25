@@ -4,8 +4,8 @@
  * Comprehensive integration tests for security validation service
  * with input validation, threat detection, and healthcare data protection.
  * 
- * @security_critical
- * @test_coverage Security Validation Service
+ * Security: Critical - Security validation and threat detection tests
+ * Test Coverage: Security Validation Service
  * Compliance: OWASP Top 10, LGPD, HIPAA, GDPR
  */
 

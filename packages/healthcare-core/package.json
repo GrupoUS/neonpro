@@ -40,10 +40,10 @@
     "validate-workflows": "tsx scripts/validate-workflows.ts"
   },
   "dependencies": {
-    "@neonpro/types": "workspace:*",
-    "@neonpro/shared": "workspace:*",
     "@neonpro/database": "workspace:*",
     "@neonpro/ai-services": "workspace:*",
+    "@neonpro/core-services": "workspace:*",
+    "@neonpro/utils": "workspace:*",
     "zod": "^4.1.11",
     "date-fns": "^3.6.0",
     "valibot": "^1.1.0"

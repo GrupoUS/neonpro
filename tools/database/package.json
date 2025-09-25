@@ -20,7 +20,7 @@
     "build": "tsup"
   },
   "dependencies": {
-    "@neonpro/tools-shared": "file:../tools-shared",
+    "@neonpro/tools-shared": "workspace:*",
     "@supabase/supabase-js": "^2.38.0",
     "postgres": "^3.4.0",
     "pg": "^8.11.0",

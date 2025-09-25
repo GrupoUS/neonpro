@@ -11,7 +11,7 @@
  *
  * @version 1.0.0
  * Compliance: LGPD, HIPAA, ANVISA, CFM
- * @healthcare-platform NeonPro
+ * Platform: NeonPro Healthcare Platform
  */
 
 import { Context } from 'hono'

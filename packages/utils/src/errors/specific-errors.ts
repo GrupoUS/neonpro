@@ -120,6 +120,24 @@ export class ValidationError extends HealthcareError {
     )
   }
 
+  static field(
+    field: string,
+    message: string,
+    value: any,
+    constraints: string[],
+    auditData: Record<string, any> = {},
+  ): ValidationError {
+    return new ValidationError(
+      message,
+      'VALIDATION_FIELD_ERROR',
+      constraints,
+      auditData,
+      'Field validation',
+      field,
+      value,
+    )
+  }
+
   static businessRule(
     rule: string,
     message: string,
@@ -288,14 +306,15 @@ export class ComplianceError extends HealthcareError {
   }
 
   static lgpdViolation(
-    violationType: string,
     message: string,
     auditData: Record<string, any> = {},
     requiredAction?: string,
   ): ComplianceError {
+    const violationType = auditData.violationType || 'lgpd_violation'
+    const errorCode = auditData.errorCode || 'COMPLIANCE_LGPD_VIOLATION'
     return new ComplianceError(
       message,
-      'COMPLIANCE_LGPD_VIOLATION',
+      errorCode,
       'LGPD',
       violationType,
       auditData,
@@ -305,14 +324,15 @@ export class ComplianceError extends HealthcareError {
   }
 
   static anvisaViolation(
-    violationType: string,
     message: string,
     auditData: Record<string, any> = {},
     requiredAction?: string,
   ): ComplianceError {
+    const violationType = auditData.violationType || 'anvisa_violation'
+    const errorCode = auditData.errorCode || 'COMPLIANCE_ANVISA_VIOLATION'
     return new ComplianceError(
       message,
-      'COMPLIANCE_ANVISA_VIOLATION',
+      errorCode,
       'ANVISA',
       violationType,
       auditData,
@@ -322,14 +342,15 @@ export class ComplianceError extends HealthcareError {
   }
 
   static cfmViolation(
-    violationType: string,
     message: string,
     auditData: Record<string, any> = {},
     requiredAction?: string,
   ): ComplianceError {
+    const violationType = auditData.violationType || 'cfm_violation'
+    const errorCode = auditData.errorCode || 'COMPLIANCE_CFM_VIOLATION'
     return new ComplianceError(
       message,
-      'COMPLIANCE_CFM_VIOLATION',
+      errorCode,
       'CFM',
       violationType,
       auditData,

@@ -33,8 +33,6 @@
     "**/*.spec.tsx"
   ],
   "references": [
-    { "path": "../types" },
-    { "path": "../shared" },
     { "path": "../healthcare-core" }
   ]
 }

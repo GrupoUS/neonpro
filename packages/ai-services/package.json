@@ -59,8 +59,8 @@
     "compliance-check": "tsx scripts/compliance-check.ts"
   },
   "dependencies": {
-    "@neonpro/types": "workspace:*",
-    "@neonpro/shared": "workspace:*",
+    "@neonpro/core-services": "workspace:*",
+    "@neonpro/utils": "workspace:*",
     "@anthropic-ai/sdk": "^0.63.1",
     "@google/generative-ai": "^0.24.1",
     "openai": "^4.0.0",

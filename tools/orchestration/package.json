@@ -25,7 +25,7 @@
     "orchestrate:parallel": "pnpm --filter @neonpro/tools-orchestration build && node dist/index.js --parallel"
   },
   "dependencies": {
-    "@neonpro/tools-shared": "file:../tools-shared"
+    "@neonpro/tools-shared": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",

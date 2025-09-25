@@ -7,10 +7,10 @@
  * authorization system, and database layer. Ensures LGPD/ANVISA/CFM compliance, data protection 
  * measures, and security monitoring. Target: ≥90% integration coverage, all security flows validated.
  * 
- * @test_coverage Security & Logging Services Integration
- * @compliance OWASP, LGPD, ANVISA, CFM
- * @security_critical
- * @quality_target ≥90% integration coverage
+ * Test Coverage: Security & Logging Services Integration
+ * Compliance: OWASP, LGPD, ANVISA, CFM
+ * Security: Critical - Security and logging services validation tests
+ * Quality Target: ≥90% integration coverage
  */
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'

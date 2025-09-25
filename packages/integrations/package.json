@@ -24,8 +24,9 @@
     "prepare": "echo 'prepare script temporarily disabled for workspace install'"
   },
   "dependencies": {
-    "@neonpro/config": "0.1.0",
-    "@neonpro/types": "0.1.0",
+    "@neonpro/database": "workspace:*",
+    "@neonpro/core-services": "workspace:*",
+    "@neonpro/utils": "workspace:*",
     "@nestjs/common": "^11.1.6",
     "@supabase/supabase-js": "^2.57.4",
     "@tanstack/react-query": "^5.87.4",

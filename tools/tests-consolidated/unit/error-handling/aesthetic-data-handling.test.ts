@@ -9,18 +9,35 @@ import {
   ValidationError,
   DatabaseError,
   NotFoundError,
-} from '@neonpro/shared/src/errors'
+} from '@neonpro/utils'
+import { AestheticDataHandling } from '@neonpro/core-services'
 
-// Mock the aesthetic data handling service
-// Note: We'll need to import the actual service once it's properly structured
-const mockAestheticDataHandling = {
-  processLGPDRequest: vi.fn(),
-  validateConsentStatus: vi.fn(),
-  handleDataRetention: vi.fn(),
-  processPatientData: vi.fn(),
-  validateProfessionalLicense: vi.fn(),
-  processAestheticProcedure: vi.fn(),
+// Mock Supabase client for testing
+const mockSupabaseClient = {
+  from: vi.fn(() => ({
+    select: vi.fn(() => ({
+      eq: vi.fn(() => ({
+        eq: vi.fn(() => ({
+          eq: vi.fn(() => ({
+            single: vi.fn(() => ({ data: null, error: { message: 'Not found' } })),
+            order: vi.fn(() => ({
+              limit: vi.fn(() => ({ data: [], error: null }))
+            }))
+          })),
+          single: vi.fn(() => ({ data: null, error: { message: 'Not found' } }))
+        })),
+        single: vi.fn(() => ({ data: null, error: { message: 'Not found' } }))
+      }))
+    })),
+    insert: vi.fn(() => ({
+      select: vi.fn(() => ({
+        single: vi.fn(() => ({ data: {}, error: null }))
+      }))
+    }))
+  }))
 }
+
+const aestheticDataHandling = new AestheticDataHandling({ supabaseClient: mockSupabaseClient as any })
 
 describe('AestheticDataHandling Error Handling (RED Phase)', () => {
   beforeEach(() => {
@@ -37,20 +54,28 @@ describe('AestheticDataHandling Error Handling (RED Phase)', () => {
         processingPurpose: 'treatment_planning'
       }
 
-      // Mock to simulate missing consent
-      mockAestheticDataHandling.validateConsentStatus.mockResolvedValue({
-        hasConsent: false,
-        consentType: null,
-        expirationDate: null
-      })
+      // Mock Supabase to simulate missing consent
+      vi.spyOn(mockSupabaseClient, 'from').mockReturnValue({
+        select: vi.fn(() => ({
+          eq: vi.fn(() => ({
+            eq: vi.fn(() => ({
+              eq: vi.fn(() => ({
+                order: vi.fn(() => ({
+                  limit: vi.fn(() => ({ data: [], error: null })) // No consent data
+                }))
+              }))
+            }))
+          }))
+        }))
+      } as any)
 
       // Act & Assert: Should throw ComplianceError for missing consent
       await expect(
-        mockAestheticDataHandling.processPatientData(patientData)
+        aestheticDataHandling.processPatientData(patientData)
       ).rejects.toThrow(ComplianceError)
       
       await expect(
-        mockAestheticDataHandling.processPatientData(patientData)
+        aestheticDataHandling.processPatientData(patientData)
       ).rejects.toMatchObject({
         regulatoryFramework: 'LGPD',
         violationType: 'missing_consent',

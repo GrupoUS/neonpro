@@ -43,8 +43,11 @@
     "vite": "^5.4.20"
   },
   "dependencies": {
-    "@neonpro/types": "0.1.0",
-    "@neonpro/shared": "0.1.0"
+    "@neonpro/database": "workspace:*",
+    "@neonpro/healthcare-core": "workspace:*",
+    "@neonpro/core-services": "workspace:*",
+    "@neonpro/utils": "workspace:*",
+    "@neonpro/security": "workspace:*"
   },
   "engines": {
     "node": ">=18.0.0",

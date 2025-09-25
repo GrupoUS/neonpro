@@ -29,8 +29,6 @@
     "**/*.spec.ts"
   ],
   "references": [
-    { "path": "../types" },
-    { "path": "../shared" },
     { "path": "../healthcare-core" },
     { "path": "../database" }
   ]

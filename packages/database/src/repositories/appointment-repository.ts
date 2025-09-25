@@ -15,7 +15,7 @@ import {
   NotFoundError,
   ConflictError,
   ValidationError,
-} from '@neonpro/shared/src/errors'
+} from '@neonpro/utils'
 
 /**
  * Supabase implementation of AppointmentRepository
@@ -403,11 +403,22 @@ export class AppointmentRepository implements IAppointmentRepository {
           startTime,
           endTime,
         })
-        return false
+        
+        throw DatabaseError.fromSupabaseError(error, {
+          component: 'appointment-repository',
+          action: 'hasTimeConflict',
+          professionalId,
+          startTime,
+          endTime,
+        })
       }
 
       return data.length > 0
     } catch (error) {
+      if (error instanceof DatabaseError) {
+        throw error
+      }
+      
       logHealthcareError('database', error as Error, {
         component: 'appointment-repository',
         action: 'hasTimeConflict',
@@ -415,7 +426,13 @@ export class AppointmentRepository implements IAppointmentRepository {
         startTime,
         endTime,
       })
-      return false
+      throw DatabaseError.fromGenericError(error as Error, {
+        component: 'appointment-repository',
+        action: 'hasTimeConflict',
+        professionalId,
+        startTime,
+        endTime,
+      })
     }
   }
 
@@ -436,11 +453,27 @@ export class AppointmentRepository implements IAppointmentRepository {
           action: 'create',
         })
         
-        // Handle Prisma/Database specific errors with proper types
-        throw DatabaseError.fromPrismaError(error, 'create', {
-          userId: 'system',
-          clinicId: appointment.clinicId,
-          patientId: appointment.patientId
+        // Handle unique constraint violations  
+        if (error.code === 'P2002' || error.code === '23505') {
+          throw ConflictError.forResource('Appointment', 'already_exists', {
+            resourceId: `${appointment.professionalId}-${appointment.startTime}`,
+            conflictFields: ['professional_id', 'start_time']
+          })
+        }
+        
+        // Handle foreign key violations
+        if (error.code === 'P2003' || error.code === '23503') {
+          throw DatabaseError.fromSupabaseError(error, {
+            component: 'appointment-repository',
+            action: 'create',
+            constraint: error.details || 'foreign_key'
+          })
+        }
+        
+        // Handle other database errors
+        throw DatabaseError.fromSupabaseError(error, {
+          component: 'appointment-repository',
+          action: 'create',
         })
       }
 

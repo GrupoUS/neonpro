@@ -5,13 +5,13 @@
 
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { createClient } from '@supabase/supabase-js'
-import { AppointmentRepository } from '@neonpro/database/src/repositories/appointment-repository'
+import { AppointmentRepository } from '@neonpro/database'
 import {
   DatabaseError,
   NotFoundError,
   ConflictError,
   ValidationError,
-} from '@neonpro/shared/src/errors'
+} from '@neonpro/utils'
 
 // Mock Supabase client
 const mockSupabase = {

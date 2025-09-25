@@ -4,8 +4,8 @@
  * Comprehensive integration tests for JWT token generation, validation, 
  * refresh, and revocation with healthcare compliance.
  * 
- * @security_critical
- * @test_coverage JWT Security Service
+ * Security: Critical - JWT token management and validation tests
+ * Test Coverage: JWT Security Service
  * Compliance: OWASP, LGPD, ANVISA, CFM
  */
 

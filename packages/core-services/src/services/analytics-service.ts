@@ -5,6 +5,7 @@
  */
 
 import { logHealthcareError } from '@neonpro/shared'
+import { DatabaseError, NotFoundError } from '@neonpro/utils'
 import { createClient, SupabaseClient } from '@supabase/supabase-js'
 import { z } from 'zod'
 
@@ -514,8 +515,12 @@ export interface AnalyticsService {
 export class AnalyticsService implements AnalyticsService {
   private supabase: SupabaseClient
 
-  constructor(config: { supabaseUrl: string; supabaseKey: string }) {
-    this.supabase = createClient(config.supabaseUrl, config.supabaseKey)
+  constructor(config: { supabaseUrl: string; supabaseKey: string } | { supabaseClient: SupabaseClient }) {
+    if ('supabaseClient' in config) {
+      this.supabase = config.supabaseClient
+    } else {
+      this.supabase = createClient(config.supabaseUrl, config.supabaseKey)
+    }
   }
 
   // Analytics Configuration
@@ -537,7 +542,7 @@ export class AnalyticsService implements AnalyticsService {
       .single()
 
     if (error) {
-      throw new Error(`Failed to create analytics configuration: ${error.message}`)
+      throw new DatabaseError(`Failed to create analytics configuration: ${error.message}`)
     }
 
     return AnalyticsConfigurationSchema.parse({
@@ -567,7 +572,7 @@ export class AnalyticsService implements AnalyticsService {
       .single()
 
     if (error) {
-      throw new Error(`Failed to update analytics configuration: ${error.message}`)
+      throw new DatabaseError(`Failed to update analytics configuration: ${error.message}`)
     }
 
     return AnalyticsConfigurationSchema.parse({
@@ -584,7 +589,7 @@ export class AnalyticsService implements AnalyticsService {
       .eq('id', id)
 
     if (error) {
-      throw new Error(`Failed to delete analytics configuration: ${error.message}`)
+      throw new DatabaseError(`Failed to delete analytics configuration: ${error.message}`)
     }
 
     return true
@@ -598,7 +603,7 @@ export class AnalyticsService implements AnalyticsService {
       .order('created_at', { ascending: false })
 
     if (error) {
-      throw new Error(`Failed to get analytics configurations: ${error.message}`)
+      throw new DatabaseError(`Failed to get analytics configurations: ${error.message}`)
     }
 
     return data.map(item =>
@@ -633,7 +638,7 @@ export class AnalyticsService implements AnalyticsService {
       .single()
 
     if (error) {
-      throw new Error(`Failed to create KPI definition: ${error.message}`)
+      throw new DatabaseError(`Failed to create KPI definition: ${error.message}`)
     }
 
     return KPIDefinitionSchema.parse({
@@ -740,7 +745,7 @@ export class AnalyticsService implements AnalyticsService {
     })
 
     if (error) {
-      throw new Error(`Failed to calculate KPI value: ${error.message}`)
+      throw new DatabaseError(`Failed to calculate KPI value: ${error.message}`)
     }
 
     return data
@@ -881,7 +886,7 @@ export class AnalyticsService implements AnalyticsService {
       if (error.code === 'PGRST116') {
         return null
       }
-      throw new Error(`Failed to get BI dashboard: ${error.message}`)
+      throw new DatabaseError(`Failed to get BI dashboard: ${error.message}`)
     }
 
     return BIDashboardSchema.parse({
@@ -2244,5 +2249,59 @@ export class AnalyticsService implements AnalyticsService {
     const retentionProbability = Math.max(0, Math.min(1, 1 - (timeSinceLast / avgInterval)))
 
     return retentionProbability
+  }
+
+  // Missing methods expected by tests
+  async generateDashboard(dashboardId: string): Promise<any> {
+    try {
+      const dashboard = await this.getBIDashboardById(dashboardId)
+      if (!dashboard) {
+        throw new NotFoundError(`Dashboard not found: ${dashboardId}`)
+      }
+
+      const widgets = await this.getDashboardWidgets(dashboardId)
+      const widgetData: any = {}
+
+      for (const widget of widgets) {
+        try {
+          widgetData[widget.id] = await this.getWidgetData(widget)
+        } catch (error) {
+          throw new DatabaseError(`Failed to generate widget data for widget ${widget.id}: ${(error as Error).message}`)
+        }
+      }
+
+      return {
+        dashboard,
+        widgets,
+        widgetData,
+      }
+    } catch (error) {
+      if (error instanceof NotFoundError || error instanceof DatabaseError) {
+        throw error
+      }
+      throw new DatabaseError(`Failed to generate dashboard: ${(error as Error).message}`)
+    }
+  }
+
+  async executeQuery(query: string, params?: any[]): Promise<any> {
+    try {
+      // This is a simplified query executor
+      // In production, this would have proper SQL parsing and execution
+      const { data, error } = await this.supabase.rpc('execute_analytics_query', {
+        query_string: query,
+        query_params: params || []
+      })
+
+      if (error) {
+        throw new DatabaseError(`Query execution failed: ${error.message}`)
+      }
+
+      return data
+    } catch (error) {
+      if (error instanceof DatabaseError) {
+        throw error
+      }
+      throw new DatabaseError(`Failed to execute query: ${(error as Error).message}`)
+    }
   }
 }

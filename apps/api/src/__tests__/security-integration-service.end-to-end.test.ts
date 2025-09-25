@@ -4,8 +4,8 @@
  * Comprehensive end-to-end tests for the complete security integration service
  * validating all security components working together seamlessly.
  * 
- * @security_critical
- * @test_coverage Security Integration Service
+ * Security: Critical - Complete security integration validation tests
+ * Test Coverage: Security Integration Service
  * Compliance: OWASP Top 10, LGPD, ANVISA, CFM, HIPAA
  */
 

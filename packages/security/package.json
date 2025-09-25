@@ -36,10 +36,10 @@
     "compliance-check": "tsx scripts/compliance-check.ts"
   },
   "dependencies": {
-    "@neonpro/types": "workspace:*",
-    "@neonpro/shared": "workspace:*",
     "@neonpro/database": "workspace:*",
     "@neonpro/healthcare-core": "workspace:*",
+    "@neonpro/core-services": "workspace:*",
+    "@neonpro/utils": "workspace:*",
     "jsonwebtoken": "^9.0.2",
     "bcrypt": "^5.1.1",
     "jose": "^5.9.6",

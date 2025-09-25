@@ -4,9 +4,9 @@
  * Comprehensive integration tests for enhanced authentication middleware
  * with JWT validation, session management, RBAC, and healthcare compliance.
  * 
- * @security_critical
- * @test_coverage Enhanced Authentication Middleware
- * @compliance OWASP, LGPD, ANVISA, CFM
+ * Security: Critical - Enhanced authentication middleware tests
+ * Test Coverage: Enhanced Authentication Middleware
+ * Compliance: OWASP, LGPD, ANVISA, CFM
  */
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'

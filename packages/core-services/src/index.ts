@@ -15,11 +15,15 @@ export { TreatmentPlanningService } from './services/treatment-planning-service'
 
 // Aesthetic Services
 export * from './services/aesthetic-appointment-service'
+export { AestheticDataHandling } from './services/aesthetic-data-handling'
 export { EnhancedAestheticSchedulingService } from './services/enhanced-aesthetic-scheduling-service'
 export { NoShowPredictionService } from './services/no-show-prediction-service'
 export { ProfessionalValidationService } from './services/professional-validation-service'
 export { RecoveryPlanningService } from './services/recovery-planning-service'
 export { TreatmentPackageService } from './services/treatment-package-service'
+
+// Analytics & Business Intelligence
+export { AnalyticsService } from './services/analytics-service'
 
 // Governance & Compliance
 export * from './services/governance'

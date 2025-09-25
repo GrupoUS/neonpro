@@ -5,9 +5,9 @@
  * with ≥90% coverage target. Validates Background Jobs Manager (77/77 tests), 
  * Security & Logging (106/106 tests), and Authorization System integration.
  * 
- * @test_coverage Cross-Service Integration
- * @compliance LGPD, ANVISA, CFM
- * @quality_target ≥90% coverage
+ * Test Coverage: Cross-Service Integration
+ * Compliance: LGPD, ANVISA, CFM
+ * Quality Target: ≥90% coverage
  */
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'

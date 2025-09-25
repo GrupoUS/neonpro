@@ -11,3 +11,6 @@ export type { SupabaseClient } from './client.js'
 
 // Health check utilities
 export { checkDatabaseHealth, closeDatabaseConnections } from './client.js'
+
+// Repository exports for testing and error handling
+export { AppointmentRepository } from './repositories/appointment-repository.js'
