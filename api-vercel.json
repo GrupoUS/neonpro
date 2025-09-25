@@ -8,8 +8,32 @@
   "outputDirectory": "apps/api/dist",
   "installCommand": "corepack enable && corepack prepare pnpm@9.0.0 --activate && pnpm install --frozen-lockfile",
   "functions": {
-    "api/*.ts": { "runtime": "nodejs20.x", "memory": 1024 },
-    "api/**/*.ts": { "runtime": "nodejs20.x", "memory": 1024 }
+    "api/*.ts": {
+      "runtime": "nodejs20.x",
+      "memory": 1024,
+      "env": {
+        "DATABASE_URL": "@database_url",
+        "DIRECT_URL": "@direct_url",
+        "SUPABASE_URL": "@supabase_url",
+        "SUPABASE_ANON_KEY": "@supabase_anon_key",
+        "SUPABASE_SERVICE_ROLE_KEY": "@supabase_service_role_key",
+        "JWT_SECRET": "@jwt_secret",
+        "ENCRYPTION_KEY": "@encryption_key"
+      }
+    },
+    "api/**/*.ts": {
+      "runtime": "nodejs20.x",
+      "memory": 1024,
+      "env": {
+        "DATABASE_URL": "@database_url",
+        "DIRECT_URL": "@direct_url",
+        "SUPABASE_URL": "@supabase_url",
+        "SUPABASE_ANON_KEY": "@supabase_anon_key",
+        "SUPABASE_SERVICE_ROLE_KEY": "@supabase_service_role_key",
+        "JWT_SECRET": "@jwt_secret",
+        "ENCRYPTION_KEY": "@encryption_key"
+      }
+    }
   },
   "rewrites": [
     { "source": "/health", "destination": "/api/health.ts" },
@@ -69,14 +93,6 @@
   ],
   "env": {
     "NODE_ENV": "production",
-    "VERCEL": "1",
-    "DATABASE_URL": "@database_url",
-    "DIRECT_URL": "@direct_url",
-    "SUPABASE_URL": "@supabase_url",
-    "SUPABASE_ANON_KEY": "@supabase_anon_key",
-    "SUPABASE_SERVICE_ROLE_KEY": "@supabase_service_role_key",
-    "JWT_SECRET": "@jwt_secret",
-    "ENCRYPTION_KEY": "@encryption_key",
     "LOG_LEVEL": "info",
     "VERCEL_REGION": "gru1"
   }

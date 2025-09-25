@@ -4,6 +4,7 @@ import { errorHandler } from './middleware/error-handler'
 import { errorSanitizationMiddleware } from './middleware/error-sanitization'
 import aiRouter from './routes/ai'
 import financialCopilotRouter from './routes/ai/financial-copilot'
+import copilotBridge from './routes/ai/copilot-bridge'
 import appointmentsRouter from './routes/appointments'
 import { billing } from './routes/billing'
 import chatRouter from './routes/chat'
@@ -261,6 +262,9 @@ app.route('/api/v2/ai', aiRouter)
 
 // Mount Financial CopilotKit routes under /api/v2/financial-copilot
 app.route('/api/v2/financial-copilot', financialCopilotRouter)
+
+// Mount CopilotKit bridge routes under /api/copilotkit
+app.route('/api/copilotkit', copilotBridge)
 
 // Mount V1 API routes under /api/v1
 app.route('/api/v1', v1Router)

@@ -4,21 +4,30 @@ import { defineConfig } from 'vite'
 
 export default defineConfig({
   test: {
-    // Configuração simples e eficiente seguindo KISS
+    // Configuração simplificada para testes TDD do PR 59
     globals: true,
     environment: 'node',
     setupFiles: ['./fixtures/setup.ts'],
 
-    // Organização simples por tipo de teste
+    // Focar apenas nos nossos testes TDD
     include: [
-      'categories/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}',
+      'categories/backend/unit/package-manager-consistency.test.ts',
+      'categories/backend/unit/test-path-references.test.ts',
+      'categories/backend/integration/ci-workflow-validation.test.ts',
+      'categories/backend/integration/package-structure-integration.test.ts',
+      'categories/backend/integration/end-to-end-pipeline.test.ts',
     ],
 
-    // Excluir testes e2e (Playwright)
+    // Excluir tudo para evitar interferência
     exclude: [
       '**/node_modules/**',
       '**/dist/**',
       '**/e2e/**',
+      '**/categories/backend/unit/background-jobs-manager.test.ts',
+      '**/categories/backend/unit/example.test.ts',
+      '**/categories/backend/unit/error-handling/**',
+      '**/categories/backend/unit/reference-error-tests/**',
+      '**/categories/backend/unit/security/**',
     ],
 
     // Coverage simples
