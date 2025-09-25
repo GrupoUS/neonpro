@@ -11,7 +11,7 @@ interface TreatmentGuidelinesLoaderData {
   searchQuery?: string
 }
 
-export const Route = createFileRoute('/ai-clinical-support/guidelines/')({
+export const Route = createFileRoute('/ai-clinical-support/guidelines')({
   component: TreatmentGuidelinesPage,
   loader: async ({ search }) => {
     const procedureId = search.procedureId as string

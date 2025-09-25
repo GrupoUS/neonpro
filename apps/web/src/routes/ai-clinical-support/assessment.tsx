@@ -10,7 +10,7 @@ interface PatientAssessmentLoaderData {
   assessmentId?: string
 }
 
-export const Route = createFileRoute('/ai-clinical-support/assessment/')({
+export const Route = createFileRoute('/ai-clinical-support/assessment')({
   component: PatientAssessmentPage,
   loader: async ({ search }) => {
     const patientId = search.patientId as string

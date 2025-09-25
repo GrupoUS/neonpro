@@ -4,7 +4,7 @@
  */
 
 import type { PrismaClient } from '@prisma/client'
-import { logHealthcareError } from '../../../shared/src/logging/healthcare-logger'
+import { logHealthcareError } from '../utils/logging'
 
 // Lazy load prisma to avoid test environment issues
 let _prismaInstance: PrismaClient | null = null

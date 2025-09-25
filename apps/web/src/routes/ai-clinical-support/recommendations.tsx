@@ -10,7 +10,7 @@ interface TreatmentRecommendationsLoaderData {
   assessmentId?: string
 }
 
-export const Route = createFileRoute('/ai-clinical-support/recommendations/')({
+export const Route = createFileRoute('/ai-clinical-support/recommendations')({
   component: TreatmentRecommendationsPage,
   loader: async ({ search }) => {
     const patientId = search.patientId as string

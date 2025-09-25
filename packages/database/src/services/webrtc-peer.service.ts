@@ -4,7 +4,7 @@
  * with quality monitoring, recording capabilities, and compliance features
  */
 
-import { databaseLogger, logHealthcareError } from '../../../shared/src/logging/healthcare-logger'
+import { databaseLogger, logHealthcareError } from '../utils/logging'
 
 // Using native WebRTC types from DOM lib
 

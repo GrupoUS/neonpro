@@ -105,7 +105,7 @@ export async function validateSchema(): Promise<boolean> {
     logger.error('Schema validation error', {
       component: 'database-validation',
       action: 'validate_schema_error',
-    }, error)
+    }, error instanceof Error ? error : new Error(String(error)))
     return false
   }
 }
@@ -197,7 +197,7 @@ export async function checkTablesExist(
     logger.error('Schema validation error', {
       component: 'database-validation',
       action: 'check_tables_error',
-    }, error)
+    }, error instanceof Error ? error : new Error(String(error)))
     return false
   }
 }

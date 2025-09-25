@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 import * as React from 'react'
 
-export const Route = createFileRoute('/aesthetic-scheduling/packages/')({
+export const Route = createFileRoute('/aesthetic-scheduling/packages')({
   component: TreatmentPackageSchedulerPage,
   loader: () => {
     // Pre-load data for better UX

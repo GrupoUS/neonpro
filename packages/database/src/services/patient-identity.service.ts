@@ -4,7 +4,7 @@
  * for secure and reliable patient identification
  */
 
-import { databaseLogger, logHealthcareError } from '../../../shared/src/logging/healthcare-logger'
+import { databaseLogger, logHealthcareError } from '../utils/logging'
 
 import type { Patient } from '@neonpro/types'
 import { createClient } from '../client'

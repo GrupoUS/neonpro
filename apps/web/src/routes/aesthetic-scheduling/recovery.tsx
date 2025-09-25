@@ -12,7 +12,7 @@ interface RecoveryPlanningLoaderData {
   patientId?: string
 }
 
-export const Route = createFileRoute('/aesthetic-scheduling/recovery/')({
+export const Route = createFileRoute('/aesthetic-scheduling/recovery')({
   component: RecoveryPlanningPage,
   loader: async ({ params: _params, search: _search }) => {
     // Get procedure IDs from URL parameters or search params

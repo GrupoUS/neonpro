@@ -11,7 +11,7 @@ interface RoomAllocationLoaderData {
   date?: string
 }
 
-export const Route = createFileRoute('/aesthetic-scheduling/rooms/')({
+export const Route = createFileRoute('/aesthetic-scheduling/rooms')({
   component: RoomAllocationPage,
   loader: async ({ search }) => {
     const appointmentId = search.appointmentId as string

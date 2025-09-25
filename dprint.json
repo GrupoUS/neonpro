@@ -17,7 +17,13 @@
     "**/*.spec.{ts,tsx,js,jsx}",
     "lint-report.json",
     "oxlint-report.json",
-    "oxlint-issues.json"
+    "oxlint-issues.json",
+    "**/tests/**",
+    "**/test_*.{ts,tsx,js,jsx}",
+    "**/spec_*.{ts,tsx,js,jsx}",
+    "scripts/fix-lint-warnings.js",
+    "scripts/fix-deployment-errors.cjs",
+    "**/tools/quality/**"
   ],
   "plugins": [
     "https://plugins.dprint.dev/typescript-0.91.1.wasm",
@@ -35,7 +41,19 @@
     "trailingCommas": "onlyMultiLine",
     "binaryExpression.operatorPosition": "sameLine",
     "conditionalExpression.operatorPosition": "nextLine",
-    "arrowFunction.useParentheses": "preferNone"
+    "arrowFunction.useParentheses": "preferNone",
+    "associations": [
+      "**/*.ts",
+      "**/*.tsx",
+      "**/*.js",
+      "**/*.jsx",
+      "!**/__tests__/**/*",
+      "!**/tests/**/*",
+      "!**/*.test.{ts,tsx,js,jsx}",
+      "!**/*.spec.{ts,tsx,js,jsx}",
+      "!**/test_*.{ts,tsx,js,jsx}",
+      "!**/spec_*.{ts,tsx,js,jsx}"
+    ]
   },
   "json": {
     "indentWidth": 2

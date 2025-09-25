@@ -11,7 +11,7 @@ interface TreatmentPredictionLoaderData {
   procedureIds?: string[]
 }
 
-export const Route = createFileRoute('/ai-clinical-support/predictions/')({
+export const Route = createFileRoute('/ai-clinical-support/predictions')({
   component: TreatmentPredictionPage,
   loader: async ({ search }) => {
     const patientId = search.patientId as string

@@ -1,16 +1,29 @@
 import {
-  ConsentFilter,
-  ConsentQueryOptions,
+  ConsentFilters as ConsentFilter,
   ConsentRecord,
   ConsentRepository as IConsentRepository,
   ConsentRequest,
-  ConsentSearchResult,
   ConsentStatus,
   ConsentType,
 } from '@neonpro/domain'
 import { SupabaseClient } from '@supabase/supabase-js'
-import { databaseLogger, logHealthcareError } from '../../../shared/src/logging/healthcare-logger'
 import { DatabasePerformanceService } from '../services/database-performance.service.js'
+import { databaseLogger, logHealthcareError } from '../utils/logging'
+
+// Type aliases for missing interfaces
+type ConsentQueryOptions = {
+  limit?: number
+  offset?: number
+  sortBy?: string
+  sortOrder?: 'asc' | 'desc'
+}
+
+type ConsentSearchResult = {
+  consents: ConsentRecord[]
+  total: number
+  limit?: number
+  offset?: number
+}
 
 /**
  * Supabase implementation of ConsentRepository
@@ -58,7 +71,7 @@ export class ConsentRepository implements IConsentRepository {
         },
       )
     } catch (error) {
-      logHealthcareError('database', error, { method: 'findById', consentId: id })
+      logHealthcareError('database', error as Error, { method: 'findById', consentId: id })
       return null
     }
   }
@@ -72,7 +85,7 @@ export class ConsentRepository implements IConsentRepository {
         .order('granted_at', { ascending: false })
 
       if (error) {
-        logHealthcareError('database', error, { method: 'findByPatientId', patientId })
+        logHealthcareError('database', error as Error, { method: 'findByPatientId', patientId })
         return []
       }
 
@@ -80,7 +93,7 @@ export class ConsentRepository implements IConsentRepository {
 
       return data.map(this.mapDatabaseConsentToDomain)
     } catch (error) {
-      logHealthcareError('database', error, { method: 'findByPatientId', patientId })
+      logHealthcareError('database', error as Error, { method: 'findByPatientId', patientId })
       return []
     }
   }
@@ -107,10 +120,20 @@ export class ConsentRepository implements IConsentRepository {
         query = query.eq('status', filter.status)
       }
 
-      if (filter.dateRange) {
-        query = query
-          .gte('granted_at', filter.dateRange.start.toISOString())
-          .lte('granted_at', filter.dateRange.end.toISOString())
+      if (filter.createdFrom) {
+        query = query.gte('granted_at', filter.createdFrom)
+      }
+
+      if (filter.createdTo) {
+        query = query.lte('granted_at', filter.createdTo)
+      }
+
+      if (filter.expiresFrom) {
+        query = query.gte('expires_at', filter.expiresFrom)
+      }
+
+      if (filter.expiresTo) {
+        query = query.lte('expires_at', filter.expiresTo)
       }
 
       // Apply pagination
@@ -136,7 +159,7 @@ export class ConsentRepository implements IConsentRepository {
       const { data, error, count } = await query
 
       if (error) {
-        logHealthcareError('database', error, { method: 'findWithFilter', filter })
+        logHealthcareError('database', error as Error, { method: 'findWithFilter', filter })
         return { consents: [], total: 0 }
       }
 
@@ -149,26 +172,26 @@ export class ConsentRepository implements IConsentRepository {
         offset: options?.offset || 0,
       }
     } catch (error) {
-      logHealthcareError('database', error, { method: 'findWithFilter', filter })
+      logHealthcareError('database', error as Error, { method: 'findWithFilter', filter })
       return { consents: [], total: 0 }
     }
   }
 
   async create(
-    consentData: ConsentRequest,
-    grantedBy: string,
+    consent: Omit<ConsentRecord, 'id' | 'auditTrail'>,
   ): Promise<ConsentRecord> {
     try {
       const dbConsent = {
-        patient_id: consentData.patientId,
-        consent_type: consentData.consentType,
-        purpose: consentData.purpose,
-        data_types: consentData.dataTypes,
-        expires_at: consentData.expiration,
-        metadata: consentData.metadata,
-        granted_by: grantedBy,
-        granted_at: new Date().toISOString(),
-        status: ConsentStatus.ACTIVE,
+        patient_id: consent.patientId,
+        consent_type: consent.consentType,
+        purpose: consent.purpose,
+        data_types: consent.dataTypes,
+        expires_at: consent.expiresAt,
+        metadata: consent.metadata,
+        legal_basis: consent.legalBasis,
+        consent_version: consent.consentVersion,
+        granted_at: consent.grantedAt,
+        status: consent.status,
       }
 
       const { data, error } = await this.supabase
@@ -178,13 +201,13 @@ export class ConsentRepository implements IConsentRepository {
         .single()
 
       if (error) {
-        logHealthcareError('database', error, { method: 'create', consentData })
+        logHealthcareError('database', error as Error, { method: 'create', consent })
         throw new Error(`Failed to create consent: ${error.message}`)
       }
 
       return this.mapDatabaseConsentToDomain(data)
     } catch (error) {
-      logHealthcareError('database', error, { method: 'create', consentData })
+      logHealthcareError('database', error as Error, { method: 'create', consent })
       throw error
     }
   }
@@ -204,13 +227,13 @@ export class ConsentRepository implements IConsentRepository {
         .single()
 
       if (error) {
-        logHealthcareError('database', error, { method: 'update', consentId: id })
+        logHealthcareError('database', error as Error, { method: 'update', consentId: id })
         throw new Error(`Failed to update consent: ${error.message}`)
       }
 
       return this.mapDatabaseConsentToDomain(data)
     } catch (error) {
-      logHealthcareError('database', error, { method: 'update', consentId: id })
+      logHealthcareError('database', error as Error, { method: 'update', consentId: id })
       throw error
     }
   }
@@ -229,13 +252,13 @@ export class ConsentRepository implements IConsentRepository {
         .single()
 
       if (error) {
-        logHealthcareError('database', error, { method: 'revoke', consentId: id })
+        logHealthcareError('database', error as Error, { method: 'revoke', consentId: id })
         throw new Error(`Failed to revoke consent: ${error.message}`)
       }
 
       return this.mapDatabaseConsentToDomain(data)
     } catch (error) {
-      logHealthcareError('database', error, { method: 'revoke', consentId: id })
+      logHealthcareError('database', error as Error, { method: 'revoke', consentId: id })
       throw error
     }
   }
@@ -248,13 +271,13 @@ export class ConsentRepository implements IConsentRepository {
         .eq('id', id)
 
       if (error) {
-        logHealthcareError('database', error, { method: 'delete', consentId: id })
+        logHealthcareError('database', error as Error, { method: 'delete', consentId: id })
         return false
       }
 
       return true
     } catch (error) {
-      logHealthcareError('database', error, { method: 'delete', consentId: id })
+      logHealthcareError('database', error as Error, { method: 'delete', consentId: id })
       return false
     }
   }
@@ -299,7 +322,7 @@ export class ConsentRepository implements IConsentRepository {
         },
       )
     } catch (error) {
-      logHealthcareError('database', error, { method: 'checkExpiration' })
+      logHealthcareError('database', error as Error, { method: 'checkExpiration' })
       return []
     }
   }
@@ -333,7 +356,7 @@ export class ConsentRepository implements IConsentRepository {
         },
       )
     } catch (error) {
-      logHealthcareError('database', error, { method: 'getActiveConsents', patientId })
+      logHealthcareError('database', error as Error, { method: 'getActiveConsents', patientId })
       return []
     }
   }
@@ -370,7 +393,11 @@ export class ConsentRepository implements IConsentRepository {
         },
       )
     } catch (error) {
-      logHealthcareError('database', error, { method: 'hasActiveConsent', patientId, consentType })
+      logHealthcareError('database', error as Error, {
+        method: 'hasActiveConsent',
+        patientId,
+        consentType,
+      })
       return false
     }
   }
@@ -389,7 +416,9 @@ export class ConsentRepository implements IConsentRepository {
       grantedAt: dbConsent.granted_at,
       expiresAt: dbConsent.expires_at,
       revokedAt: dbConsent.revoked_at,
-      grantedBy: dbConsent.granted_by,
+      // grantedBy: dbConsent.granted_by, // This field is not in ConsentRecord interface
+      legalBasis: dbConsent.legal_basis,
+      consentVersion: dbConsent.consent_version || '1.0.0',
       revokedBy: dbConsent.revoked_by,
       metadata: dbConsent.metadata || {},
       auditTrail: dbConsent.audit_trail || [],

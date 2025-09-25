@@ -11,7 +11,7 @@ interface ContraindicationAnalysisLoaderData {
   treatmentPlanId?: string
 }
 
-export const Route = createFileRoute('/aesthetic-scheduling/contraindications/')({
+export const Route = createFileRoute('/aesthetic-scheduling/contraindications')({
   component: ContraindicationAnalysisPage,
   loader: async ({ search }) => {
     const patientId = search.patientId as string

@@ -2,7 +2,7 @@ import { createFileRoute, Outlet } from '@tanstack/react-router'
 import { AlertTriangle, Package, ShoppingCart, TrendingUp } from 'lucide-react'
 import * as React from 'react'
 
-export const Route = createFileRoute('/inventory')({
+export const Route = createFileRoute('/inventory/__root')({
   component: InventoryRoot,
 })
 

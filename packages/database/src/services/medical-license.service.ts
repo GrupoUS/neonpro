@@ -4,8 +4,8 @@
  * verifying physician licenses and authorizations
  */
 
-import { databaseLogger, logHealthcareError } from '../../../shared/src/logging/healthcare-logger'
 import { createClient } from '../client'
+import { databaseLogger, logHealthcareError } from '../utils/logging'
 
 export interface CFMRegistration {
   cfmNumber: string

@@ -1,10 +1,12 @@
 // Agent Session Schema
+import { z } from 'zod'
+
 export const AgentSessionSchema = z.object({
   id: z.string().uuid(),
   user_id: z.string().uuid(),
   agent_type: z.enum(['client', 'financial', 'appointment']),
   status: z.enum(['active', 'inactive', 'archived']).default('active'),
-  metadata: z.record(z.unknown()).default({}),
+  metadata: z.record(z.string(), z.unknown()).default({}),
   created_at: z.date(),
   updated_at: z.date(),
 })
@@ -17,7 +19,7 @@ export const AgentMessageSchema = z.object({
   session_id: z.string().uuid(),
   _role: z.enum(['user', 'assistant', 'system']),
   content: z.string().min(1),
-  metadata: z.record(z.unknown()).default({}),
+  metadata: z.record(z.string(), z.unknown()).default({}),
   created_at: z.date(),
 })
 
@@ -30,7 +32,7 @@ export const AgentKnowledgeBaseSchema = z.object({
   content: z.string().min(1),
   source: z.string().nullable(),
   embedding: z.array(z.number()).length(1536).nullable(),
-  metadata: z.record(z.unknown()).default({}),
+  metadata: z.record(z.string(), z.unknown()).default({}),
   created_at: z.date(),
   updated_at: z.date(),
 })
@@ -45,7 +47,7 @@ export const AgentAnalyticsSchema = z.object({
   agent_type: z.enum(['client', 'financial', 'appointment']),
   metric_type: z.enum(['query', 'response_time', 'satisfaction', 'error']),
   metric_value: z.number(),
-  metadata: z.record(z.unknown()).default({}),
+  metadata: z.record(z.string(), z.unknown()).default({}),
   created_at: z.date(),
 })
 
@@ -75,7 +77,7 @@ export const ChatResponseSchema = z.object({
       }),
     )
     .default([]),
-  metadata: z.record(z.unknown()).default({}),
+  metadata: z.record(z.string(), z.unknown()).default({}),
 })
 
 export type ChatResponse = z.infer<typeof ChatResponseSchema>
@@ -146,7 +148,7 @@ export const AgentErrorSchema = z.object({
   type: z.nativeEnum(AgentErrorType),
   message: z.string(),
   code: z.string(),
-  details: z.record(z.unknown()).optional(),
+  details: z.record(z.string(), z.unknown()).optional(),
 })
 
 export type AgentError = z.infer<typeof AgentErrorSchema>

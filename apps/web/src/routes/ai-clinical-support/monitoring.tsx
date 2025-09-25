@@ -10,7 +10,7 @@ interface ProgressMonitoringLoaderData {
   treatmentPlanId?: string
 }
 
-export const Route = createFileRoute('/ai-clinical-support/monitoring/')({
+export const Route = createFileRoute('/ai-clinical-support/monitoring')({
   component: ProgressMonitoringPage,
   loader: async ({ search }) => {
     const patientId = search.patientId as string

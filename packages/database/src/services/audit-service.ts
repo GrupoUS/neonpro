@@ -1,5 +1,4 @@
 import { SupabaseClient } from '@supabase/supabase-js'
-import { logHealthcareError } from '../../../shared/src/logging/healthcare-logger'
 import type {
   AuditLogRequest,
   AuditSearchCriteria,
@@ -7,6 +6,7 @@ import type {
   MedicalDataClassification,
   RTCAuditLogEntry,
 } from '../types/audit.types'
+import { logHealthcareError } from '../utils/logging'
 
 // Re-export types for external use
 export type {
@@ -62,28 +62,28 @@ export class AuditService {
       const { data, error } = await this.supabase
         .from('webrtc_audit_logs')
         .insert({
-          action: request.action || request.eventType || 'UNKNOWN',
-          user_id: request._userId,
-          resource: request.resource || request.description || 'UNKNOWN',
-          resource_type: request.resource || 'session', // Default resource type
-          ip_address: request.ipAddress || 'unknown',
-          user_agent: request.userAgent || 'unknown',
-          clinic_id: request.clinicId,
-          lgpd_basis: request.metadata?.legalBasis || null,
-          old_values: request.metadata?.oldValues || null,
-          new_values: request.metadata?.newValues || null,
+          action: _request.action || _request.eventType || 'UNKNOWN',
+          user_id: _request._userId,
+          resource: _request.resource || _request.description || 'UNKNOWN',
+          resource_type: _request.resource || 'session', // Default resource type
+          ip_address: _request.ipAddress || 'unknown',
+          user_agent: _request.userAgent || 'unknown',
+          clinic_id: _request.clinicId,
+          lgpd_basis: _request.metadata?.legalBasis || null,
+          old_values: _request.metadata?.oldValues || null,
+          new_values: _request.metadata?.newValues || null,
         })
         .select('id')
         .single()
 
       if (error) {
-        logHealthcareError('database', error, { method: 'createAuditLog', action: request.action })
+        logHealthcareError('database', error, { method: 'createAuditLog', action: _request.action })
         throw new Error(`Failed to create audit log: ${error.message}`)
       }
 
       return data.id
     } catch (error) {
-      logHealthcareError('database', error, { method: 'createAuditLog', action: request.action })
+      logHealthcareError('database', error, { method: 'createAuditLog', action: _request.action })
       throw error
     }
   }
@@ -112,7 +112,7 @@ export class AuditService {
       action: 'CREATE',
       resource: 'TELEMEDICINE_SESSION',
       eventType: 'session-start',
-      userId,
+      _userId: _userId,
       userRole,
       dataClassification: metadata?.dataClassification,
       description: `${userRole} started WebRTC session`,
@@ -149,7 +149,7 @@ export class AuditService {
       action: 'UPDATE',
       resource: 'TELEMEDICINE_SESSION',
       eventType: 'session-end',
-      userId,
+      _userId: _userId,
       userRole,
       dataClassification: metadata?.dataClassification,
       description: `${userRole} ended WebRTC session (duration: ${duration}s)${
@@ -192,7 +192,7 @@ export class AuditService {
       action: 'READ',
       resource: 'PATIENT_DATA',
       eventType: 'data-access',
-      userId,
+      _userId: _userId,
       userRole,
       dataClassification: metadata?.dataClassification,
       description: `${userRole} accessed ${dataType}${
@@ -235,7 +235,7 @@ export class AuditService {
       action: 'READ',
       resource: 'PATIENT_CONSENT',
       eventType: 'consent-verification',
-      userId,
+      _userId: _userId,
       userRole: 'system',
       dataClassification: 'sensitive',
       description: `Consent verification for ${consentType}: ${isValid ? 'VALID' : 'INVALID'}`,

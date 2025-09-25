@@ -103,9 +103,7 @@
     "src/components/ai-scheduling/**",
     "src/components/chat/**",
     "src/components/pwa/**",
-    "src/components/clients/**",
-    "src/components/providers/TRPCProvider.tsx",
-    "src/hooks/useSchedulingSubmission.ts"
+    "src/components/clients/**"
   ],
   "references": [
     {

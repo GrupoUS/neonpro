@@ -3,7 +3,6 @@
  * Specialized for aesthetic clinic data models and Brazilian healthcare compliance
  */
 
-import { logHealthcareError } from '../../../shared/src/logging/healthcare-logger'
 import { prisma, supabase } from '../client'
 import {
   AestheticAnalyticsQuery,
@@ -18,6 +17,7 @@ import {
   CreateAestheticTreatmentRequest,
   UpdateAestheticClientProfileRequest,
 } from '../types/aesthetic-types'
+import { logHealthcareError } from '../utils/logging'
 
 // Database result interfaces
 export interface AestheticClientSearchResult {

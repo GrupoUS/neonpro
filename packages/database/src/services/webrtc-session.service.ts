@@ -3,8 +3,8 @@
  * Handles real-time video calling for telemedicine with CFM compliance
  */
 
-import { databaseLogger, logHealthcareError } from '../../../shared/src/logging/healthcare-logger'
 import { createClient } from '../client'
+import { logHealthcareError } from '../utils/logging'
 // import type { Database } from '../types/supabase';
 
 export interface WebRTCConfig {
@@ -164,7 +164,11 @@ export class WebRTCSessionService {
         sessionToken: session.session_token,
       }
     } catch (error) {
-      logHealthcareError('database', error, { method: 'initializeSession', telemedicineSessionId })
+      logHealthcareError(
+        'webrtc-session-service',
+        error instanceof Error ? error : new Error(String(error)),
+        { method: 'initializeSession', telemedicineSessionId },
+      )
       throw error
     }
   }
@@ -210,7 +214,11 @@ export class WebRTCSessionService {
         roomId,
       }
     } catch (error) {
-      logHealthcareError('database', error, { method: 'createSession', sessionData })
+      logHealthcareError(
+        'webrtc-session-service',
+        error instanceof Error ? error : new Error(String(error)),
+        { method: 'createSession', sessionData },
+      )
       throw error
     }
   }
@@ -248,7 +256,11 @@ export class WebRTCSessionService {
       // Initialize WebRTC connections
       await this.initializeSession(sessionId)
     } catch (error) {
-      logHealthcareError('database', error, { method: 'startSession', sessionId })
+      logHealthcareError(
+        'webrtc-session-service',
+        error instanceof Error ? error : new Error(String(error)),
+        { method: 'startSession', sessionId },
+      )
       throw error
     }
   }
@@ -301,16 +313,20 @@ export class WebRTCSessionService {
       await this.logSessionEvent(webrtcSession.telemedicine_session_id, {
         event: 'participant_joined',
         participant_id: participant.id,
-        participant_role: participant.role,
+        participant_role: participant._role,
         timestamp: new Date().toISOString(),
         platform: participant.platform,
       })
     } catch (error) {
-      logHealthcareError('database', error, {
-        method: 'addParticipant',
-        roomId,
-        participantId: participant.id,
-      })
+      logHealthcareError(
+        'webrtc-session-service',
+        error instanceof Error ? error : new Error(String(error)),
+        {
+          method: 'addParticipant',
+          roomId,
+          participantId: participant.id,
+        },
+      )
       throw error
     }
   }
@@ -350,7 +366,11 @@ export class WebRTCSessionService {
         await this.handleQualityIssues(roomId, metrics)
       }
     } catch (error) {
-      logHealthcareError('database', error, { method: 'updateQualityMetrics', roomId })
+      logHealthcareError(
+        'webrtc-session-service',
+        error instanceof Error ? error : new Error(String(error)),
+        { method: 'updateQualityMetrics', roomId },
+      )
       throw error
     }
   }
@@ -443,7 +463,11 @@ export class WebRTCSessionService {
         storageLocation,
       }
     } catch (error) {
-      logHealthcareError('database', error, { method: 'startRecording', roomId, consentMethod })
+      logHealthcareError(
+        'webrtc-session-service',
+        error instanceof Error ? error : new Error(String(error)),
+        { method: 'startRecording', roomId, consentMethod },
+      )
       throw error
     }
   }
@@ -536,7 +560,11 @@ export class WebRTCSessionService {
         duration,
       }
     } catch (error) {
-      logHealthcareError('database', error, { method: 'stopRecording', roomId })
+      logHealthcareError(
+        'webrtc-session-service',
+        error instanceof Error ? error : new Error(String(error)),
+        { method: 'stopRecording', roomId },
+      )
       throw error
     }
   }
@@ -585,7 +613,11 @@ export class WebRTCSessionService {
         reason,
       })
     } catch (error) {
-      logHealthcareError('database', error, { method: 'endSession', sessionId, reason })
+      logHealthcareError(
+        'webrtc-session-service',
+        error instanceof Error ? error : new Error(String(error)),
+        { method: 'endSession', sessionId, reason },
+      )
       throw error
     }
   }
@@ -661,7 +693,11 @@ export class WebRTCSessionService {
         duration,
       }
     } catch (error) {
-      logHealthcareError('database', error, { method: 'getSessionStatus', roomId })
+      logHealthcareError(
+        'webrtc-session-service',
+        error instanceof Error ? error : new Error(String(error)),
+        { method: 'getSessionStatus', roomId },
+      )
       throw error
     }
   }
@@ -722,11 +758,19 @@ export class WebRTCSessionService {
           .eq('room_id', roomId)
 
         if (error) {
-          logHealthcareError('database', error, { method: 'handleQualityIssues', roomId, metrics })
+          logHealthcareError(
+            'webrtc-session-service',
+            error instanceof Error ? error : new Error(String(error)),
+            { method: 'handleQualityIssues', roomId, metrics },
+          )
         }
       }
     } catch (error) {
-      logHealthcareError('database', error, { method: 'handleQualityIssues', roomId })
+      logHealthcareError(
+        'webrtc-session-service',
+        error instanceof Error ? error : new Error(String(error)),
+        { method: 'handleQualityIssues', roomId },
+      )
     }
   }
 
@@ -743,11 +787,15 @@ export class WebRTCSessionService {
         .single()
 
       if (getError) {
-        logHealthcareError('database', getError, {
-          method: 'logSessionEvent',
-          telemedicineSessionId,
-          step: 'getCurrentEvents',
-        })
+        logHealthcareError(
+          'webrtc-session-service',
+          getError instanceof Error ? getError : new Error(String(getError)),
+          {
+            method: 'logSessionEvent',
+            telemedicineSessionId,
+            step: 'getCurrentEvents',
+          },
+        )
         return
       }
 
@@ -763,14 +811,22 @@ export class WebRTCSessionService {
         .eq('id', telemedicineSessionId)
 
       if (updateError) {
-        logHealthcareError('database', updateError, {
-          method: 'logSessionEvent',
-          telemedicineSessionId,
-          step: 'updateEvents',
-        })
+        logHealthcareError(
+          'webrtc-session-service',
+          updateError instanceof Error ? updateError : new Error(String(updateError)),
+          {
+            method: 'logSessionEvent',
+            telemedicineSessionId,
+            step: 'updateEvents',
+          },
+        )
       }
     } catch (error) {
-      logHealthcareError('database', error, { method: 'logSessionEvent', telemedicineSessionId })
+      logHealthcareError(
+        'webrtc-session-service',
+        error instanceof Error ? error : new Error(String(error)),
+        { method: 'logSessionEvent', telemedicineSessionId },
+      )
     }
   }
 
@@ -826,7 +882,11 @@ export class WebRTCSessionService {
         recording: recording || null,
       }
     } catch (error) {
-      logHealthcareError('database', error, { method: 'getSessionDetails', sessionId })
+      logHealthcareError(
+        'webrtc-session-service',
+        error instanceof Error ? error : new Error(String(error)),
+        { method: 'getSessionDetails', sessionId },
+      )
       return null
     }
   }
@@ -869,7 +929,11 @@ export class WebRTCSessionService {
         cancelled_at: new Date().toISOString(),
       })
     } catch (error) {
-      logHealthcareError('database', error, { method: 'cancelSession', sessionId, reason })
+      logHealthcareError(
+        'webrtc-session-service',
+        error instanceof Error ? error : new Error(String(error)),
+        { method: 'cancelSession', sessionId, reason },
+      )
       throw error
     }
   }
@@ -896,7 +960,11 @@ export class WebRTCSessionService {
 
       return data || null
     } catch (error) {
-      logHealthcareError('database', error, { method: 'getQualityMetrics', sessionId })
+      logHealthcareError(
+        'webrtc-session-service',
+        error instanceof Error ? error : new Error(String(error)),
+        { method: 'getQualityMetrics', sessionId },
+      )
       return null
     }
   }

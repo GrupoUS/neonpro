@@ -1,9 +1,9 @@
 import { TanStackRouterVite } from '@tanstack/router-plugin/vite'
 import react from '@vitejs/plugin-react'
 import path from 'path'
-import { defineConfig } from 'vite'
 
-export default defineConfig({
+// Define config without importing vite to avoid dependency resolution issues
+export default {
   plugins: [
     // @ts-ignore - Ignore TanStackRouterVite type mismatch due to monorepo version differences
     TanStackRouterVite(),
@@ -50,4 +50,4 @@ export default defineConfig({
       '@copilotkit/react-ui',
     ],
   },
-})
+}

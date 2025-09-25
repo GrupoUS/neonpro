@@ -4,7 +4,7 @@ import { AlertTriangle, Info, Package, Plus, Save, Trash2, X } from 'lucide-reac
 import * as React from 'react'
 import { useState } from 'react'
 
-export const Route = createFileRoute('/inventory/new-product/')({
+export const Route = createFileRoute('/inventory/new-product')({
   component: NewProduct,
 })
 

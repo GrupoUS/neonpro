@@ -4,8 +4,8 @@
  * for telemedicine platform
  */
 
-import { databaseLogger, logHealthcareError } from '../../../shared/src/logging/healthcare-logger'
 import { createClient } from '../client'
+import { databaseLogger, logHealthcareError } from '../utils/logging'
 // import type { Database } from '../types/supabase';
 
 export interface CFMLicenseValidation {

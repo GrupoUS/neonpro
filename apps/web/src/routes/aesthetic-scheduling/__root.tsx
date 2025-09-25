@@ -12,7 +12,7 @@ import {
 } from 'lucide-react'
 import * as React from 'react'
 
-export const Route = createFileRoute('/aesthetic-scheduling/')({
+export const Route = createFileRoute('/aesthetic-scheduling/__root')({
   component: AestheticSchedulingLayout,
 })
 

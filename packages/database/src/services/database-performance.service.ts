@@ -5,7 +5,7 @@
 
 import { ErrorMapper } from '@neonpro/shared/errors'
 import { SupabaseClient } from '@supabase/supabase-js'
-import { databaseLogger } from '../../../shared/src/logging/healthcare-logger'
+import { databaseLogger } from '../utils/logging'
 
 export interface QueryPerformanceMetrics {
   _query: string

@@ -11,7 +11,7 @@ import helmet from 'helmet'
 import { createServer } from 'http'
 
 // Import WebRTC services
-import { logHealthcareError, winstonLogger } from '../../../shared/src/logging/healthcare-logger'
+import { logHealthcareError, winstonLogger } from '../utils/logging'
 import { CFMComplianceService } from './cfm-compliance.service'
 import { MedicalLicenseService } from './medical-license.service'
 import { PatientIdentityService } from './patient-identity.service'

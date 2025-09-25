@@ -9,7 +9,7 @@ import { Server as SocketIOServer } from 'socket.io'
 import type { Socket } from 'socket.io'
 
 // Import services
-import { logHealthcareError, winstonLogger } from '@neonpro/shared/services/structured-logging'
+import { logHealthcareError, winstonLogger } from '../utils/logging'
 import { CFMComplianceService } from './cfm-compliance.service'
 import { WebRTCSessionService } from './webrtc-session.service'
 
@@ -186,7 +186,7 @@ export class WebRTCSignalingServer {
         } catch (error) {
           logHealthcareError('database', error, {
             method: 'handleLeaveSession',
-            sessionId,
+            sessionId: data.sessionId,
             socketId: socket.id,
           })
         }
@@ -291,7 +291,7 @@ export class WebRTCSignalingServer {
     // Create participant record
     const participant: SignalingParticipant = {
       socketId: socket.id,
-      userId,
+      _userId: userId,
       sessionId,
       participantType,
       deviceInfo,
@@ -646,14 +646,14 @@ export class WebRTCSignalingServer {
       // Check if user is authorized for this session
       if (
         participantType === 'patient' &&
-        sessionDetails.session.patient_id === userId
+        sessionDetails.session.patient_id === _userId
       ) {
         return true
       }
 
       if (
         participantType === 'physician' &&
-        sessionDetails.session.physician_id === userId
+        sessionDetails.session.physician_id === _userId
       ) {
         return true
       }
@@ -669,7 +669,7 @@ export class WebRTCSignalingServer {
       logHealthcareError('database', error, {
         method: 'validateUserAuthorization',
         sessionId,
-        userId,
+        _userId,
         participantType,
       })
       return false

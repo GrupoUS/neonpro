@@ -1,15 +1,15 @@
-import { Patient, PatientFilters, PatientRepository } from '@neonpro/domain'
+import { Patient, PatientFilters } from '@neonpro/domain'
+import type { PatientRepository as IPatientRepository } from '@neonpro/domain'
 import { UpdatePatientRequest } from '@neonpro/types'
 import { SupabaseClient } from '@supabase/supabase-js'
-import { databaseLogger, logHealthcareError } from '../../../shared/src/logging/healthcare-logger'
-import { PatientQueryOptions, PatientSearchResult } from '../types/index.js'
-import { DatabasePatient } from '../types/supabase.js'
+import { databaseLogger, logHealthcareError } from '../utils/logging'
+import { PatientQueryOptions, PatientSearchResult, DatabasePatient } from '../types/index.js'
 
 /**
  * Supabase implementation of PatientRepository
  * Handles all patient data access operations with proper error handling and validation
  */
-export class PatientRepository implements PatientRepository {
+export class PatientRepository implements IPatientRepository {
   constructor(private supabase: SupabaseClient) {}
 
   async findById(id: string): Promise<Patient | null> {
@@ -80,63 +80,27 @@ export class PatientRepository implements PatientRepository {
 
   async findByClinicId(
     clinicId: string,
-    options?: PatientQueryOptions,
-  ): Promise<PatientSearchResult> {
+  ): Promise<Patient[]> {
     try {
       let query = this.supabase
         .from('patients')
-        .select('*', { count: 'exact' })
+        .select('*')
         .eq('clinic_id', clinicId)
+        .eq('is_active', true)
+        .order('created_at', { ascending: false })
 
-      // Apply filters
-      if (options?.status) {
-        query = query.eq('status', options.status)
-      }
-
-      if (options?.search) {
-        query = query.or(
-          `full_name.ilike.%${options.search}%,email.ilike.%${options.search}%,cpf.ilike.%${options.search}%`,
-        )
-      }
-
-      // Apply pagination
-      if (options?.limit) {
-        query = query.limit(options.limit)
-      }
-
-      if (options?.offset) {
-        query = query.range(
-          options.offset,
-          options.offset + (options.limit || 10) - 1,
-        )
-      }
-
-      // Apply sorting
-      if (options?.sortBy) {
-        const sortOrder = options.sortOrder === 'desc' ? false : true
-        query = query.order(options.sortBy, { ascending: sortOrder })
-      } else {
-        query = query.order('created_at', { ascending: false })
-      }
-
-      const { data, error, count } = await query
+      const { data, error } = await query
 
       if (error) {
         logHealthcareError('database', error, { method: 'findByClinicId', clinicId })
-        return { patients: [], total: 0 }
+        return []
       }
 
       const patients = data ? data.map(this.mapDatabasePatientToDomain) : []
-
-      return {
-        patients,
-        total: count || 0,
-        limit: options?.limit || 10,
-        offset: options?.offset || 0,
-      }
+      return patients
     } catch (error) {
       logHealthcareError('database', error, { method: 'findByClinicId', clinicId })
-      return { patients: [], total: 0 }
+      return []
     }
   }
 
@@ -154,8 +118,8 @@ export class PatientRepository implements PatientRepository {
         query = query.eq('clinic_id', filter.clinicId)
       }
 
-      if (filter.status) {
-        query = query.eq('status', filter.status)
+      if (filter.isActive !== undefined) {
+        query = query.eq('is_active', filter.isActive)
       }
 
       if (filter.gender) {
@@ -168,9 +132,9 @@ export class PatientRepository implements PatientRepository {
           .lte('birth_date', filter.birthDateTo)
       }
 
-      if (filter.search) {
+      if (filter.searchQuery) {
         query = query.or(
-          `full_name.ilike.%${filter.search}%,email.ilike.%${filter.search}%,cpf.ilike.%${filter.search}%`,
+          `full_name.ilike.%${filter.searchQuery}%,email.ilike.%${filter.searchQuery}%,cpf.ilike.%${filter.searchQuery}%`,
         )
       }
 
@@ -198,7 +162,7 @@ export class PatientRepository implements PatientRepository {
 
       if (error) {
         logHealthcareError('database', error, { method: 'findWithFilter' })
-        return { patients: [], total: 0 }
+        return { patients: [], total: 0, limit: options?.limit || 10, offset: options?.offset || 0 }
       }
 
       const patients = data ? data.map(this.mapDatabasePatientToDomain) : []
@@ -211,7 +175,7 @@ export class PatientRepository implements PatientRepository {
       }
     } catch (error) {
       logHealthcareError('database', error, { method: 'findWithFilter' })
-      return { patients: [], total: 0 }
+      return { patients: [], total: 0, limit: options?.limit || 10, offset: options?.offset || 0 }
     }
   }
 
@@ -286,12 +250,11 @@ export class PatientRepository implements PatientRepository {
   async search(
     _query: string,
     clinicId?: string,
-    options?: PatientQueryOptions,
-  ): Promise<PatientSearchResult> {
+  ): Promise<Patient[]> {
     try {
       let dbQuery = this.supabase
         .from('patients')
-        .select('*', { count: 'exact' })
+        .select('*')
 
       // Build search query
       const searchCondition =
@@ -302,45 +265,20 @@ export class PatientRepository implements PatientRepository {
       }
 
       dbQuery = dbQuery.or(searchCondition)
+      dbQuery = dbQuery.order('created_at', { ascending: false })
 
-      // Apply pagination
-      if (options?.limit) {
-        dbQuery = dbQuery.limit(options.limit)
-      }
-
-      if (options?.offset) {
-        dbQuery = dbQuery.range(
-          options.offset,
-          options.offset + (options.limit || 10) - 1,
-        )
-      }
-
-      // Apply sorting
-      if (options?.sortBy) {
-        const sortOrder = options.sortOrder === 'desc' ? false : true
-        dbQuery = dbQuery.order(options.sortBy, { ascending: sortOrder })
-      } else {
-        dbQuery = dbQuery.order('created_at', { ascending: false })
-      }
-
-      const { data, error, count } = await dbQuery
+      const { data, error } = await dbQuery
 
       if (error) {
         logHealthcareError('database', error, { method: 'search', query: _query, clinicId })
-        return { patients: [], total: 0 }
+        return []
       }
 
       const patients = data ? data.map(this.mapDatabasePatientToDomain) : []
-
-      return {
-        patients,
-        total: count || 0,
-        limit: options?.limit || 10,
-        offset: options?.offset || 0,
-      }
+      return patients
     } catch (error) {
       logHealthcareError('database', error, { method: 'search', query: _query, clinicId })
-      return { patients: [], total: 0 }
+      return []
     }
   }
 
@@ -354,8 +292,8 @@ export class PatientRepository implements PatientRepository {
         query = query.eq('clinic_id', filter.clinicId)
       }
 
-      if (filter.status) {
-        query = query.eq('status', filter.status)
+      if (filter.isActive !== undefined) {
+        query = query.eq('is_active', filter.isActive)
       }
 
       if (filter.gender) {
@@ -514,8 +452,8 @@ export class PatientRepository implements PatientRepository {
       cpf: dbPatient.cpf || undefined,
       rg: dbPatient.rg || undefined,
       passportNumber: dbPatient.passport_number || undefined,
-      preferredContactMethod: dbPatient.preferred_contact_method || undefined,
-      bloodType: dbPatient.blood_type || undefined,
+      preferredContactMethod: dbPatient.preferred_contact_method as any || undefined,
+      bloodType: dbPatient.blood_type as any || undefined,
       allergies: dbPatient.allergies || [],
       chronicConditions: dbPatient.chronic_conditions || [],
       currentMedications: dbPatient.current_medications || [],
@@ -586,7 +524,7 @@ export class PatientRepository implements PatientRepository {
    * Maps update request to database format
    */
   private mapUpdateRequestToDatabase(
-    _request: UpdatePatientRequest,
+    _request: Partial<Patient>,
   ): Partial<DatabasePatient> {
     const updateData: Partial<DatabasePatient> = {}
 

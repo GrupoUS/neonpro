@@ -96,6 +96,29 @@
           "ClassDeclaration": true
         }
       }
+    ],
+    // Healthcare-specific security rules
+    "no-eval": "error",
+    "no-implied-eval": "error",
+    // Healthcare data validation rules
+    "no-restricted-imports": [
+      "error",
+      {
+        "paths": [
+          {
+            "name": "crypto",
+            "message": "Use secure crypto utilities from healthcare security package"
+          }
+        ]
+      }
+    ],
+    // Performance rules for healthcare applications
+    "no-warning-comments": [
+      "warn",
+      {
+        "terms": ["todo", "fixme", "hack"],
+        "location": "start"
+      }
     ]
   },
   "overrides": [
@@ -106,7 +129,8 @@
       ],
       "rules": {
         "no-console": "off",
-        "no-unused-vars": "off"
+        "no-unused-vars": "off",
+        "jsdoc/require-jsdoc": "off"
       }
     },
     {
@@ -129,7 +153,8 @@
         "typescript/no-unsafe-call": "error",
         "typescript/no-unsafe-return": "error",
         "typescript/prefer-optional-chain": "error",
-        "typescript/prefer-nullish-coalescing": "error"
+        "typescript/prefer-nullish-coalescing": "error",
+        "jsdoc/require-jsdoc": "error"
       }
     },
     {
@@ -137,7 +162,42 @@
         "src/agents/**/*.{ts,tsx}"
       ],
       "rules": {
-        "jsdoc/require-jsdoc": "error"
+        "jsdoc/require-jsdoc": "error",
+        "no-console": "warn"
+      }
+    },
+    {
+      "files": [
+        "src/patient-data/**/*.{ts,tsx}",
+        "src/medical-records/**/*.{ts,tsx}",
+        "src/appointments/**/*.{ts,tsx}",
+        "src/compliance/**/*.{ts,tsx}"
+      ],
+      "rules": {
+        "typescript/no-unsafe-assignment": "error",
+        "typescript/no-unsafe-member-access": "error",
+        "typescript/no-unsafe-call": "error",
+        "typescript/no-unsafe-return": "error",
+        "no-console": "error",
+        "jsdoc/require-jsdoc": "error",
+        "prefer-const": "error",
+        "no-var": "error"
+      }
+    },
+    {
+      "files": [
+        "src/components/**/*.{tsx,ts}"
+      ],
+      "rules": {
+        "jsx-a11y/alt-text": "error",
+        "jsx-a11y/anchor-is-valid": "error",
+        "jsx-a11y/aria-props": "error",
+        "jsx-a11y/aria-proptypes": "error",
+        "jsx-a11y/aria-unsupported-elements": "error",
+        "jsx-a11y/role-has-required-aria-props": "error",
+        "jsx-a11y/role-supports-aria-props": "error",
+        "react/jsx-no-target-blank": "error",
+        "react/no-unescaped-entities": "error"
       }
     }
   ],
@@ -153,11 +213,27 @@
     ".turbo/**",
     "tools/**/node_modules/**",
     "packages/**/dist/**",
-    "apps/**/dist/**"
+    "apps/**/dist/**",
+    "tools/tests-consolidated/**"
   ],
   "env": {
     "browser": true,
     "node": true,
     "es2022": true
+  },
+  "settings": {
+    "healthcare": {
+      "lgpdCompliance": true,
+      "anvisaValidation": true,
+      "cfmStandards": true,
+      "patientDataValidation": true,
+      "auditRequirements": true,
+      "brazilianDataResidency": true
+    },
+    "performance": {
+      "maxFileSize": "500kb",
+      "maxLines": 2000,
+      "complexityThreshold": 10
+    }
   }
 }
