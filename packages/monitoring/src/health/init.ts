@@ -1,4 +1,23 @@
 import type { HealthCheck, HealthStatus } from '../types'
+import { HealthcareSecurityLogger } from '@neonpro/security'
+
+// Global healthcare security logger instance
+let healthcareLogger: HealthcareSecurityLogger | null = null
+
+function getHealthcareLogger(): HealthcareSecurityLogger {
+  if (!healthcareLogger) {
+    healthcareLogger = new HealthcareSecurityLogger({
+      enableConsoleLogging: true,
+      enableDatabaseLogging: false,
+      enableFileLogging: false,
+      enableAuditLogging: true,
+      logLevel: 'info',
+      sanitizeSensitiveData: true,
+      complianceLevel: 'standard',
+    })
+  }
+  return healthcareLogger
+}
 
 interface HealthConfig {
   endpoint: string
@@ -8,7 +27,11 @@ interface HealthConfig {
 let healthInterval: NodeJS.Timeout | null = null
 
 export function initializeHealthChecks(config: HealthConfig): void {
-  console.log(`🏥 Initializing health checks on ${config.endpoint}`)
+  const logger = getHealthcareLogger()
+  logger.info(`🏥 Initializing health checks on ${config.endpoint}`, {
+    endpoint: config.endpoint,
+    interval: config.interval
+  })
 
   // Register default health checks
   registerHealthCheck('system', checkSystemHealth)
@@ -19,14 +42,21 @@ export function initializeHealthChecks(config: HealthConfig): void {
   // Start periodic health checks
   healthInterval = setInterval(runHealthChecks, config.interval)
 
-  console.log(`🏥 Health checks running every ${config.interval}ms`)
+  logger.info(`🏥 Health checks running every ${config.interval}ms`, {
+    action: 'health_checks_started',
+    interval: config.interval
+  })
 }
 
 export function registerHealthCheck(
   name: string,
   _checkFn: () => Promise<HealthCheck>,
 ): void {
-  console.log(`📋 Registering health check: ${name}`)
+  const logger = getHealthcareLogger()
+  logger.info(`📋 Registering health check: ${name}`, {
+    action: 'register_health_check',
+    checkName: name
+  })
 }
 
 export async function runHealthChecks(): Promise<HealthStatus> {
@@ -209,9 +239,12 @@ async function checkMemoryUsage(): Promise<HealthCheck> {
 }
 
 export function stopHealthChecks(): void {
+  const logger = getHealthcareLogger()
   if (healthInterval) {
     clearInterval(healthInterval)
     healthInterval = null
-    console.log('🏥 Health checks stopped')
+    logger.info('🏥 Health checks stopped', {
+      action: 'health_checks_stopped'
+    })
   }
 }

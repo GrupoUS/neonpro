@@ -1,4 +1,23 @@
 import { type DomainEvent, type DomainEventBus } from '../events/domain-events'
+import { HealthcareSecurityLogger } from '@neonpro/security'
+
+// Global healthcare security logger instance
+let healthcareLogger: HealthcareSecurityLogger | null = null
+
+function getHealthcareLogger(): HealthcareSecurityLogger {
+  if (!healthcareLogger) {
+    healthcareLogger = new HealthcareSecurityLogger({
+      enableConsoleLogging: true,
+      enableDatabaseLogging: false,
+      enableFileLogging: false,
+      enableAuditLogging: true,
+      logLevel: 'info',
+      sanitizeSensitiveData: true,
+      complianceLevel: 'standard',
+    })
+  }
+  return healthcareLogger
+}
 import {
   type AppointmentCancelledEvent,
   type AppointmentCompletedEvent,
@@ -534,11 +553,15 @@ export class AuditDomainService {
     // Implement security alert handling
     // This would send notifications, trigger investigations, etc.
 
-    console.warn(`SECURITY ALERT: ${auditEvent.description}`, {
+    const logger = getHealthcareLogger()
+    logger.security(`SECURITY ALERT: ${auditEvent.description}`, {
       severity: auditEvent.severity,
       userId: auditEvent._userId,
       timestamp: auditEvent.timestamp,
       metadata: auditEvent.metadata,
+      action: 'security_alert',
+      resourceType: auditEvent.resourceType,
+      resourceId: auditEvent.resourceId
     })
   }
 

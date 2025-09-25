@@ -1,4 +1,24 @@
 // T042: Enhanced logging and monitoring setup
+import { HealthcareSecurityLogger } from '@neonpro/security'
+
+// Global healthcare security logger instance
+let healthcareLogger: HealthcareSecurityLogger | null = null
+
+export function getHealthcareLogger(): HealthcareSecurityLogger {
+  if (!healthcareLogger) {
+    healthcareLogger = new HealthcareSecurityLogger({
+      enableConsoleLogging: true,
+      enableDatabaseLogging: false,
+      enableFileLogging: false,
+      enableAuditLogging: true,
+      logLevel: 'info',
+      sanitizeSensitiveData: true,
+      complianceLevel: 'standard',
+    })
+  }
+  return healthcareLogger
+}
+
 export interface LogLevel {
   DEBUG: 0
   INFO: 1
@@ -68,7 +88,8 @@ export class Logger {
       this.lgpdUtils = lgpdModule
     } catch (error) {
       // Fallback to basic PII redaction if LGPD utils are not available
-      console.warn('LGPD utilities not available, using basic PII redaction')
+      const logger = getHealthcareLogger()
+      logger.warn('LGPD utilities not available, using basic PII redaction', { error: error?.message })
     }
   }
 
@@ -111,7 +132,8 @@ export class Logger {
     const formattedLog = this.formatLogEntry(entry)
 
     if (this.config.enableConsole) {
-      console.log(formattedLog)
+      const logger = getHealthcareLogger()
+      logger.info('Console log output', { formattedLog, level: entry.level })
     }
 
     // Enhanced file logging with error handling
@@ -128,7 +150,8 @@ export class Logger {
 
         await fs.promises.appendFile(this.config.filePath, formattedLog + '\n')
       } catch (error) {
-        console.error('Failed to write to log file:', error)
+        const logger = getHealthcareLogger()
+        logger.error('Failed to write to log file', { error: error?.message, filePath: this.config.filePath })
       }
     }
   }
@@ -143,7 +166,8 @@ export class Logger {
     try {
       await Promise.all(batch.map(entry => this.writeToLog(entry)))
     } catch (error) {
-      console.error('Failed to process log batch:', error)
+      const logger = getHealthcareLogger()
+      logger.error('Failed to process log batch', { error: error?.message, batchSize: batch.length })
       // Re-add failed entries to the batch for retry
       this.logBatch.unshift(...batch)
     } finally {
@@ -276,23 +300,33 @@ export class Logger {
 
   // Legacy synchronous methods for backward compatibility (deprecated)
   debugSync(message: string, _context?: Record<string, any>): void {
-    this.debug(message, _context).catch(async (console.error)
+    this.debug(message, _context).catch(error => {
+      console.error('Failed to log debug message:', error)
+    })
   }
 
   infoSync(message: string, context?: Record<string, any>): void {
-    this.info(message, context).catch(async (console.error)
+    this.info(message, context).catch(error => {
+      console.error('Failed to log info message:', error)
+    })
   }
 
   warnSync(message: string, context?: Record<string, any>, error?: Error): void {
-    this.warn(message, context, error).catch(async (console.error)
+    this.warn(message, context, error).catch(err => {
+      console.error('Failed to log warn message:', err)
+    })
   }
 
   errorSync(message: string, context?: Record<string, any>, error?: Error): void {
-    this.error(message, context, error).catch(async (console.error)
+    this.error(message, context, error).catch(err => {
+      console.error('Failed to log error message:', err)
+    })
   }
 
   fatalSync(message: string, context?: Record<string, any>, error?: Error): void {
-    this.fatal(message, context, error).catch(async (console.error)
+    this.fatal(message, context, error).catch(err => {
+      console.error('Failed to log fatal message:', err)
+    })
   }
 
   // Specialized healthcare logging methods

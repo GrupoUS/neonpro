@@ -2,18 +2,43 @@ import { JaegerExporter } from '@opentelemetry/exporter-jaeger'
 import { ExpressInstrumentation } from '@opentelemetry/instrumentation-express'
 import { HttpInstrumentation } from '@opentelemetry/instrumentation-http'
 import { NodeSDK } from '@opentelemetry/sdk-node'
+import { HealthcareSecurityLogger } from '@neonpro/security'
 import { initializeHealthChecks } from './health'
 import { createLogger } from './logging'
 import { initializeMetrics } from './metrics'
 import type { MonitoringConfig } from './types'
+
+// Global healthcare security logger instance
+let healthcareLogger: HealthcareSecurityLogger | null = null
+
+function getHealthcareLogger(): HealthcareSecurityLogger {
+  if (!healthcareLogger) {
+    healthcareLogger = new HealthcareSecurityLogger({
+      enableConsoleLogging: true,
+      enableDatabaseLogging: false,
+      enableFileLogging: false,
+      enableAuditLogging: true,
+      logLevel: 'info',
+      sanitizeSensitiveData: true,
+      complianceLevel: 'standard',
+    })
+  }
+  return healthcareLogger
+}
 
 export type { MonitoringConfig }
 
 let sdk: NodeSDK | null = null
 
 export function initializeMonitoring(config: MonitoringConfig): void {
-  console.error(
+  const logger = getHealthcareLogger()
+  logger.info(
     `🔍 Initializing monitoring for ${config.serviceName} v${config.serviceVersion}`,
+    {
+      serviceName: config.serviceName,
+      serviceVersion: config.serviceVersion,
+      environment: config.environment
+    }
   )
 
   // Initialize logging first
@@ -90,10 +115,11 @@ export function initializeMonitoring(config: MonitoringConfig): void {
 }
 
 export function shutdownMonitoring(): void {
+  const logger = getHealthcareLogger()
   if (sdk) {
     sdk
       .shutdown()
-      .then(() => console.error('📊 Monitoring system shut down successfully'))
-      .catch((error) => console.error('Error shutting down monitoring:', error))
+      .then(() => logger.info('📊 Monitoring system shut down successfully', { action: 'shutdown' }))
+      .catch((error) => logger.error('Error shutting down monitoring', { error: error?.message, action: 'shutdown' }))
   }
 }

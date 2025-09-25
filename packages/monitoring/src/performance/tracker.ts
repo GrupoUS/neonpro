@@ -1,5 +1,24 @@
 import { observeAIProviderLatency, observeChatResponseTime } from '../metrics/histograms'
+import { HealthcareSecurityLogger } from '@neonpro/security'
 import type { PerformanceMetrics } from '../types'
+
+// Global healthcare security logger instance
+let healthcareLogger: HealthcareSecurityLogger | null = null
+
+function getHealthcareLogger(): HealthcareSecurityLogger {
+  if (!healthcareLogger) {
+    healthcareLogger = new HealthcareSecurityLogger({
+      enableConsoleLogging: true,
+      enableDatabaseLogging: false,
+      enableFileLogging: false,
+      enableAuditLogging: true,
+      logLevel: 'info',
+      sanitizeSensitiveData: true,
+      complianceLevel: 'standard',
+    })
+  }
+  return healthcareLogger
+}
 
 export class PerformanceTracker {
   private startTimes: Map<string, number> = new Map()
@@ -11,7 +30,12 @@ export class PerformanceTracker {
   endTimer(operation: string, labels?: Record<string, string>): number {
     const startTime = this.startTimes.get(operation)
     if (!startTime) {
-      console.warn(`No start time found for operation: ${operation}`)
+      const logger = getHealthcareLogger()
+      logger.warn(`No start time found for operation: ${operation}`, {
+        action: 'performance_tracking_error',
+        operation,
+        labels
+      })
       return 0
     }
 

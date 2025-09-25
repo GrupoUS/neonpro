@@ -18,6 +18,25 @@
 
 import { nanoid } from 'nanoid'
 import { z } from 'zod'
+import { HealthcareSecurityLogger } from '@neonpro/security'
+
+// Global healthcare security logger instance
+let healthcareLogger: HealthcareSecurityLogger | null = null
+
+function getHealthcareLogger(): HealthcareSecurityLogger {
+  if (!healthcareLogger) {
+    healthcareLogger = new HealthcareSecurityLogger({
+      enableConsoleLogging: true,
+      enableDatabaseLogging: false,
+      enableFileLogging: false,
+      enableAuditLogging: true,
+      logLevel: 'info',
+      sanitizeSensitiveData: true,
+      complianceLevel: 'standard',
+    })
+  }
+  return healthcareLogger
+}
 
 // ============================================================================
 // TYPES & INTERFACES
@@ -536,7 +555,12 @@ export class DatabaseManager {
         await this.query('SELECT 1', [], { logQuery: false })
         this.lastHealthCheck = new Date()
       } catch (error) {
-        console.error('Database health check failed:', error)
+        const logger = getHealthcareLogger()
+        logger.error('Database health check failed', {
+          action: 'health_check_failed',
+          component: 'database_manager',
+          error: error instanceof Error ? error.message : String(error)
+        })
       }
     }
 
