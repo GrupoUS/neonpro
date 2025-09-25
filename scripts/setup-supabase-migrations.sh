@@ -24,6 +24,9 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # Load centralized configuration
 if [ -f "$SCRIPT_DIR/config.sh" ]; then
     source "$SCRIPT_DIR/config.sh"
+    # Export database and Supabase configuration
+    export_db_config
+    export_supabase_config
 else
     echo "WARNING: Configuration file not found, using hardcoded defaults"
     # Fallback defaults for critical values
@@ -34,6 +37,13 @@ else
     SUPABASE_SHADOW_PORT=54320
     SUPABASE_FILE_SIZE_LIMIT="50MiB"
     SUPABASE_PG_META_PORT=54323
+    PACKAGE_VERSION="0.1.0"
+    SUPABASE_JS_VERSION="^2.57.4"
+    TYPES_NODE_VERSION="^20.19.13"
+    TYPESCRIPT_VERSION="^5.9.2"
+    SUPABASE_CLI_VERSION="^1.210.0"
+    POSTGRES_JS_VERSION="^3.4.4"
+    SUPABASE_MAJOR_VERSION=15
 fi
 
 # Logging functions
@@ -242,7 +252,7 @@ info "Updating packages/database/package.json scripts..."
 cat > package.json << 'EOF'
 {
   "name": "@neonpro/database",
-  "version": "0.1.0",
+  "version": "${PACKAGE_VERSION:-0.1.0}",
   "private": true,
   "type": "module",
   "main": "dist/index.js",
@@ -269,12 +279,12 @@ cat > package.json << 'EOF'
     "migration:new": "supabase migration new"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.57.4"
+    "@supabase/supabase-js": "${SUPABASE_JS_VERSION:-^2.57.4}"
   },
   "devDependencies": {
-    "@types/node": "^20.19.13",
-    "typescript": "^5.9.2",
-    "supabase": "^1.210.0"
+    "@types/node": "${TYPES_NODE_VERSION:-^20.19.13}",
+    "typescript": "${TYPESCRIPT_VERSION:-^5.9.2}",
+    "supabase": "${SUPABASE_CLI_VERSION:-^1.210.0}"
   },
   "publishConfig": {
     "access": "restricted"
@@ -352,23 +362,23 @@ project_id = "${SUPABASE_PROJECT_ID:-neonpro}"
 
 [api]
 enabled = true
-port = ${SUPABASE_PORT:-54321}
+port = ${SUPABASE_PORT}
 schemas = ["public", "graphql_public"]
 extra_search_path = ["public", "extensions"]
-max_rows = ${SUPABASE_MAX_ROWS:-1000}
+max_rows = ${SUPABASE_MAX_ROWS}
 
 [auth]
 enabled = true
 site_url = "${LOCAL_DEVELOPMENT_URL:-http://localhost:3000}"
 additional_redirect_urls = ["${LOCAL_DEVELOPMENT_URL_SECURE:-https://localhost:3000}"]
-jwt_expiry = ${SUPABASE_JWT_EXPIRY:-3600}
+jwt_expiry = ${SUPABASE_JWT_EXPIRY}
 enable_signup = true
 enable_confirmations = false
 
 [db]
-port = ${SUPABASE_STUDIO_PORT:-54322}
-shadow_port = ${SUPABASE_SHADOW_PORT:-54320}
-major_version = 15
+port = ${SUPABASE_STUDIO_PORT}
+shadow_port = ${SUPABASE_SHADOW_PORT}
+major_version = ${SUPABASE_MAJOR_VERSION}
 
 [storage]
 enabled = true
@@ -377,7 +387,7 @@ file_transforms = true
 
 [edge_functions]
 enabled = true
-port = ${SUPABASE_PG_META_PORT:-54323}
+port = ${SUPABASE_PG_META_PORT}
 
 [analytics]
 enabled = false
@@ -736,7 +746,7 @@ export function createClient() {
     },
     realtime: {
       params: {
-        eventsPerSecond: 10,
+        eventsPerSecond: ${SUPABASE_EVENTS_PER_SECOND:-10},
       },
     },
   });
@@ -783,7 +793,7 @@ export async function checkTablesExist(client: any): Promise<boolean> {
   
   try {
     for (const table of requiredTables) {
-      const { error } = await client.from(table).select('id').limit(1);
+      const { error } = await client.from(table).select('id').limit(${SUPABASE_QUERY_LIMIT:-1});
       if (error) {
         console.error(`Table ${table} validation failed:`, error);
         return false;

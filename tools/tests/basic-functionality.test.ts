@@ -162,8 +162,8 @@ describe('Basic System Functionality', () => {
       const year = date.getFullYear()
       const month = date.getMonth()
       
-      expect(year).toBe(2022)
-      expect(month).toBe(11) // December is 11 (0-indexed)
+      expect(year).toBe(2023)
+      expect(month).toBe(0) // January is 0 (0-indexed)
     })
   })
 

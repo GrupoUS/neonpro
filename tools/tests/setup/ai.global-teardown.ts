@@ -1,6 +1,6 @@
-import type { GlobalTeardownContext } from 'vitest/node'
+import type { Vitest } from 'vitest/node'
 
-export default async function globalTeardown(_context: GlobalTeardownContext) {
+export default async function globalTeardown(context: Vitest) {
   console.log('🧹 AI testing global teardown starting')
   
   // Clean up AI service mocks
