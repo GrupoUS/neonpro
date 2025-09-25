@@ -673,8 +673,8 @@ export function withTimeout<T>(
     }, timeoutMs)
 
     promise
-      .then((resolve) => resolve)
-      .catch((reject) => reject)
+      .then((result) => resolve(result))
+      .catch((error) => reject(error))
       .finally(() => clearTimeout(timer))
   })
 }

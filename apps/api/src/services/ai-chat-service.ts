@@ -18,6 +18,21 @@ import {
   AIProvider,
   createAIInsight,
 } from '../../../../packages/shared/src/types/ai-insights'
+import { ComprehensiveAuditService } from './audit-service'
+import { HealthcareLogger } from '../logging/healthcare-logger'
+
+// Minimal audit interface to avoid tight coupling
+export interface AuditLogger {
+  logActivity(data: {
+    _userId?: string
+    userId?: string
+    action: string
+    resource?: string
+    details?: Record<string, any>
+    result?: 'success' | 'failure' | 'blocked' | 'alert'
+    severity?: any
+  }): Promise<void>
+}
 
 // Service response interface
 export interface ServiceResponse<T = any> {
@@ -180,8 +195,13 @@ export class AIChatService {
   private rateLimits: Map<string, RateLimit> = new Map()
   private startTime: Date = new Date()
   private isInitialized = false
+  private audit: AuditLogger
+  private logger: HealthcareLogger
 
-  constructor() {
+  constructor(auditService?: AuditLogger, logger?: HealthcareLogger) {
+    // Backwards-compatible defaults
+    this.audit = auditService || new ComprehensiveAuditService()
+    this.logger = logger || new HealthcareLogger()
     this.initialize()
   }
 
@@ -232,7 +252,7 @@ export class AIChatService {
    * Generate AI response with multi-model support
    */
   async generateResponse(
-    _request: AIRequest,
+    request: AIRequest,
   ): Promise<ServiceResponse<AIResponse>> {
     try {
       const startTime = Date.now()
@@ -240,6 +260,11 @@ export class AIChatService {
       // Validate input
       const validation = this.validateAIRequest(request)
       if (!validation.isValid) {
+        await this.audit.logActivity({
+          action: 'ai_generate_response',
+          details: { errors: validation.errors, patientId: request.patientId, provider: request.provider, model: request.model },
+          result: 'failure',
+        })
         return {
           success: false,
           errors: validation.errors,
@@ -249,6 +274,11 @@ export class AIChatService {
       // Check provider support
       const supportedProviders = ['openai', 'anthropic', 'google', 'local']
       if (!supportedProviders.includes(request.provider)) {
+        await this.audit.logActivity({
+          action: 'ai_generate_response',
+          details: { reason: 'unsupported_provider', patientId: request.patientId, provider: request.provider, model: request.model },
+          result: 'failure',
+        })
         return {
           success: false,
           error: 'Provedor de IA não suportado',
@@ -265,8 +295,7 @@ export class AIChatService {
 
       const responseTime = Date.now() - startTime
       const response: AIResponse = {
-        response: mockResponses[request.provider as keyof typeof mockResponses] ||
-          'Resposta padrão',
+        response: mockResponses[request.provider as keyof typeof mockResponses] || 'Resposta padrão',
         provider: request.provider,
         model: request.model,
         responseTime,
@@ -275,11 +304,23 @@ export class AIChatService {
         confidence: 0.85 + Math.random() * 0.1,
       }
 
+      await this.audit.logActivity({
+        action: 'ai_generate_response',
+        details: { patientId: request.patientId, provider: request.provider, model: request.model, responseTime },
+        result: 'success',
+      })
+
       return {
         success: true,
         data: response,
       }
-    } catch {
+    } catch (error: any) {
+      this.logger.error('generateResponse failed', error, { request: { provider: request?.provider, model: request?.model, patientId: request?.patientId } })
+      await this.audit.logActivity({
+        action: 'ai_generate_response',
+        details: { error: error?.message, patientId: request?.patientId, provider: request?.provider, model: request?.model },
+        result: 'failure',
+      })
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -297,20 +338,30 @@ export class AIChatService {
   }): Promise<ServiceResponse<HealthcareResponse>> {
     try {
       const response: HealthcareResponse = {
-        response:
-          `Resposta médica sobre ${params.query} adaptada para o contexto brasileiro de saúde. Esta informação é baseada em diretrizes da ANVISA e protocolos do SUS.`,
+        response: `Resposta médica sobre ${params._query} adaptada para o contexto brasileiro de saúde. Esta informação é baseada em diretrizes da ANVISA e protocolos do SUS.`,
         language: 'pt-BR',
-        _context: params.context,
-        disclaimer:
-          'Esta informação não substitui consulta médica profissional. Procure sempre orientação médica qualificada.',
+        _context: params._context,
+        disclaimer: 'Esta informação não substitui consulta médica profissional. Procure sempre orientação médica qualificada.',
         sources: ['ANVISA', 'Ministério da Saúde', 'SUS'],
       }
+
+      await this.audit.logActivity({
+        action: 'ai_generate_healthcare_response',
+        details: { patientId: params.patientId, context: params._context, query: params._query },
+        result: 'success',
+      })
 
       return {
         success: true,
         data: response,
       }
-    } catch {
+    } catch (error: any) {
+      this.logger.error('generateHealthcareResponse failed', error, { params })
+      await this.audit.logActivity({
+        action: 'ai_generate_healthcare_response',
+        details: { error: error?.message, patientId: params.patientId, context: params._context },
+        result: 'failure',
+      })
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -328,8 +379,7 @@ export class AIChatService {
   }): Promise<ServiceResponse<PersonalizedResponse>> {
     try {
       const response: PersonalizedResponse = {
-        response:
-          `Resposta personalizada para o paciente ${params.patientId}: Com base no seu histórico médico e perfil de saúde, posso fornecer informações específicas sobre ${params.query}.`,
+        response: `Resposta personalizada para o paciente ${params.patientId}: Com base no seu histórico médico e perfil de saúde, posso fornecer informações específicas sobre ${params._query}.`,
         personalized: true,
         patientId: params.patientId,
         patientContext: {
@@ -339,11 +389,23 @@ export class AIChatService {
         },
       }
 
+      await this.audit.logActivity({
+        action: 'ai_generate_personalized_response',
+        details: { patientId: params.patientId, includeHistory: !!params.includeHistory },
+        result: 'success',
+      })
+
       return {
         success: true,
         data: response,
       }
-    } catch {
+    } catch (error: any) {
+      this.logger.error('generatePersonalizedResponse failed', error, { params })
+      await this.audit.logActivity({
+        action: 'ai_generate_personalized_response',
+        details: { error: error?.message, patientId: params.patientId },
+        result: 'failure',
+      })
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -361,20 +423,30 @@ export class AIChatService {
   }): Promise<ServiceResponse<MedicalInfo>> {
     try {
       const response: MedicalInfo = {
-        response:
-          `Informações médicas sobre ${params.query} em conformidade com regulamentações da ANVISA. Este conteúdo segue as diretrizes brasileiras de informação médica.`,
+        response: `Informações médicas sobre ${params._query} em conformidade com regulamentações da ANVISA. Este conteúdo segue as diretrizes brasileiras de informação médica.`,
         compliance: params.complianceLevel,
-        disclaimer:
-          'Informação regulamentada pela ANVISA. Não substitui prescrição médica. Consulte sempre um profissional de saúde.',
+        disclaimer: 'Informação regulamentada pela ANVISA. Não substitui prescrição médica. Consulte sempre um profissional de saúde.',
         sources: ['ANVISA', 'Bulário Eletrônico', 'RDC ANVISA'],
         lastUpdated: new Date(),
       }
+
+      await this.audit.logActivity({
+        action: 'ai_generate_medical_info',
+        details: { topic: params.topic, query: params._query, complianceLevel: params.complianceLevel },
+        result: 'success',
+      })
 
       return {
         success: true,
         data: response,
       }
-    } catch {
+    } catch (error: any) {
+      this.logger.error('generateMedicalInfo failed', error, { params })
+      await this.audit.logActivity({
+        action: 'ai_generate_medical_info',
+        details: { error: error?.message, topic: params.topic, query: params._query },
+        result: 'failure',
+      })
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -403,11 +475,29 @@ export class AIChatService {
 
       this.conversations.set(conversation.id, conversation)
 
+      // Audit
+      await this.audit.logActivity({
+        action: 'ai_conversation_create',
+        details: {
+          patientId: params.patientId,
+          title: params.title,
+          context: params.context,
+          conversationId: conversation.id,
+        },
+        result: 'success',
+      })
+
       return {
         success: true,
         data: conversation,
       }
-    } catch {
+    } catch (error: any) {
+      this.logger.error('createConversation failed', error, { params })
+      await this.audit.logActivity({
+        action: 'ai_conversation_create',
+        details: { error: error?.message, params },
+        result: 'failure',
+      })
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -443,11 +533,28 @@ export class AIChatService {
       conversation.updatedAt = new Date()
       this.conversations.set(params.conversationId, conversation)
 
+      // Audit
+      await this.audit.logActivity({
+        action: 'ai_message_add',
+        details: {
+          conversationId: params.conversationId,
+          role: params.role,
+          hasMetadata: !!params.metadata,
+        },
+        result: 'success',
+      })
+
       return {
         success: true,
         data: message,
       }
-    } catch {
+    } catch (error: any) {
+      this.logger.error('addMessage failed', error, { params })
+      await this.audit.logActivity({
+        action: 'ai_message_add',
+        details: { error: error?.message, params },
+        result: 'failure',
+      })
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -474,14 +581,28 @@ export class AIChatService {
         }
       }
 
+      const result = {
+        conversationId,
+        messages: conversation.messages,
+      }
+
+      await this.audit.logActivity({
+        action: 'ai_conversation_history',
+        details: { conversationId, messageCount: result.messages.length },
+        result: 'success',
+      })
+
       return {
         success: true,
-        data: {
-          conversationId,
-          messages: conversation.messages,
-        },
+        data: result,
       }
-    } catch {
+    } catch (error: any) {
+      this.logger.error('getConversationHistory failed', error, { conversationId })
+      await this.audit.logActivity({
+        action: 'ai_conversation_history',
+        details: { error: error?.message, conversationId },
+        result: 'failure',
+      })
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -503,14 +624,28 @@ export class AIChatService {
         .filter(conv => conv.patientId === patientId)
         .sort((a, _b) => b.updatedAt.getTime() - a.updatedAt.getTime())
 
+      const result = {
+        patientId,
+        conversations: patientConversations,
+      }
+
+      await this.audit.logActivity({
+        action: 'ai_conversation_list',
+        details: { patientId, count: patientConversations.length },
+        result: 'success',
+      })
+
       return {
         success: true,
-        data: {
-          patientId,
-          conversations: patientConversations,
-        },
+        data: result,
       }
-    } catch {
+    } catch (error: any) {
+      this.logger.error('listConversations failed', error, { patientId })
+      await this.audit.logActivity({
+        action: 'ai_conversation_list',
+        details: { error: error?.message, patientId },
+        result: 'failure',
+      })
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -554,14 +689,25 @@ export class AIChatService {
         }),
       ]
 
+      const result = { insights, analysisType: params.analysisType }
+
+      await this.audit.logActivity({
+        action: 'ai_insights_generate',
+        details: { conversationId: params.conversationId, count: insights.length },
+        result: 'success',
+      })
+
       return {
         success: true,
-        data: {
-          insights,
-          analysisType: params.analysisType,
-        },
+        data: result,
       }
-    } catch {
+    } catch (error: any) {
+      this.logger.error('generateInsights failed', error, { params })
+      await this.audit.logActivity({
+        action: 'ai_insights_generate',
+        details: { error: error?.message, params },
+        result: 'failure',
+      })
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -586,13 +732,25 @@ export class AIChatService {
         'Gostaria de agendar uma consulta médica?',
       ]
 
+      const result = { suggestions: suggestions.slice(0, params.maxSuggestions || 3) }
+
+      await this.audit.logActivity({
+        action: 'ai_followup_suggest',
+        details: { conversationId: params.conversationId, count: result.suggestions.length },
+        result: 'success',
+      })
+
       return {
         success: true,
-        data: {
-          suggestions: suggestions.slice(0, params.maxSuggestions || 3),
-        },
+        data: result,
       }
-    } catch {
+    } catch (error: any) {
+      this.logger.error('suggestFollowUp failed', error, { params })
+      await this.audit.logActivity({
+        action: 'ai_followup_suggest',
+        details: { error: error?.message, params },
+        result: 'failure',
+      })
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -622,17 +780,31 @@ export class AIChatService {
         urgentKeywords.some(keyword => msg.content.toLowerCase().includes(keyword))
       )
 
+      const result = {
+        urgent: hasUrgentSymptoms,
+        urgencyLevel: hasUrgentSymptoms ? 'high' : 'low',
+        recommendation: hasUrgentSymptoms
+          ? 'Procure atendimento médico imediatamente ou ligue para o SAMU (192)'
+          : 'Continue monitorando os sintomas e agende consulta se necessário',
+      }
+
+      await this.audit.logActivity({
+        action: 'ai_urgent_detection',
+        details: { urgent: hasUrgentSymptoms, messagesChecked: params.messages.length },
+        result: 'success',
+      })
+
       return {
         success: true,
-        data: {
-          urgent: hasUrgentSymptoms,
-          urgencyLevel: hasUrgentSymptoms ? 'high' : 'low',
-          recommendation: hasUrgentSymptoms
-            ? 'Procure atendimento médico imediatamente ou ligue para o SAMU (192)'
-            : 'Continue monitorando os sintomas e agende consulta se necessário',
-        },
+        data: result,
       }
-    } catch {
+    } catch (error: any) {
+      this.logger.error('detectUrgentSymptoms failed', error, { params })
+      await this.audit.logActivity({
+        action: 'ai_urgent_detection',
+        details: { error: error?.message, params },
+        result: 'failure',
+      })
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -677,11 +849,28 @@ export class AIChatService {
 
       this.conversations.set(params.conversationId, conversation)
 
+      await this.audit.logActivity({
+        action: 'ai_conversation_access',
+        details: {
+          conversationId: params.conversationId,
+          _userId: params.userId,
+          action: params.action,
+          ipAddress: params.ipAddress,
+        },
+        result: 'success',
+      })
+
       return {
         success: true,
         data: { accessLogged: true },
       }
-    } catch {
+    } catch (error: any) {
+      this.logger.error('trackConversationAccess failed', error, { params })
+      await this.audit.logActivity({
+        action: 'ai_conversation_access',
+        details: { error: error?.message, params },
+        result: 'failure',
+      })
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -718,12 +907,24 @@ export class AIChatService {
 
       this.conversations.set(conversationId, conversation)
 
+      await this.audit.logActivity({
+        action: 'ai_conversation_anonymize',
+        details: { conversationId },
+        result: 'success',
+      })
+
       return {
         success: true,
         data: { anonymized: true },
         message: 'Conversa anonimizada com sucesso',
       }
-    } catch {
+    } catch (error: any) {
+      this.logger.error('anonymizeConversation failed', error, { conversationId })
+      await this.audit.logActivity({
+        action: 'ai_conversation_anonymize',
+        details: { error: error?.message, conversationId },
+        result: 'failure',
+      })
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -744,6 +945,12 @@ export class AIChatService {
       // Mock export URL generation
       const exportUrl = `/exports/conversations-${params.patientId}-${Date.now()}.${params.format}`
 
+      await this.audit.logActivity({
+        action: 'ai_conversation_export',
+        details: { patientId: params.patientId, format: params.format },
+        result: 'success',
+      })
+
       return {
         success: true,
         data: {
@@ -751,7 +958,13 @@ export class AIChatService {
           format: params.format,
         },
       }
-    } catch {
+    } catch (error: any) {
+      this.logger.error('exportConversationData failed', error, { params })
+      await this.audit.logActivity({
+        action: 'ai_conversation_export',
+        details: { error: error?.message, patientId: params.patientId, format: params.format },
+        result: 'failure',
+      })
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -771,11 +984,23 @@ export class AIChatService {
         limit: 100,
       }
 
+      await this.audit.logActivity({
+        action: 'ai_rate_limit_check',
+        details: { patientId, remaining: rateLimit.remaining, limit: rateLimit.limit, resetTime: rateLimit.resetTime },
+        result: 'success',
+      })
+
       return {
         success: true,
         data: rateLimit,
       }
-    } catch {
+    } catch (error: any) {
+      this.logger.error('checkRateLimit failed', error, { patientId })
+      await this.audit.logActivity({
+        action: 'ai_rate_limit_check',
+        details: { error: error?.message, patientId },
+        result: 'failure',
+      })
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -787,18 +1012,38 @@ export class AIChatService {
    * Generate response with timeout handling
    */
   async generateResponseWithTimeout(
-    _request: AIRequest & { timeout: number },
+    request: AIRequest & { timeout: number },
   ): Promise<ServiceResponse<AIResponse>> {
     try {
       if (request.timeout < 100) {
+        await this.audit.logActivity({
+          action: 'ai_generate_response_timeout',
+          details: { reason: 'timeout_too_low', timeout: request.timeout, patientId: request.patientId, provider: request.provider, model: request.model },
+          result: 'failure',
+        })
         return {
           success: false,
           error: 'Timeout na requisição para o provedor de IA',
         }
       }
 
-      return this.generateResponse(request)
-    } catch {
+      const result = await this.generateResponse(request)
+
+      // Optionally reflect success/failure at wrapper level
+      await this.audit.logActivity({
+        action: 'ai_generate_response_timeout',
+        details: { timeout: request.timeout, patientId: request.patientId, provider: request.provider, model: request.model, innerResult: result.success ? 'success' : 'failure' },
+        result: result.success ? 'success' : 'failure',
+      })
+
+      return result
+    } catch (error: any) {
+      this.logger.error('generateResponseWithTimeout failed', error, { request: { timeout: request?.timeout, patientId: request?.patientId, provider: request?.provider, model: request?.model } })
+      await this.audit.logActivity({
+        action: 'ai_generate_response_timeout',
+        details: { error: error?.message, timeout: request?.timeout, patientId: request?.patientId, provider: request?.provider, model: request?.model },
+        result: 'failure',
+      })
       return {
         success: false,
         error: 'Erro interno do servidor',
@@ -812,7 +1057,7 @@ export class AIChatService {
   getHealthStatus(): HealthStatus {
     const uptime = Date.now() - this.startTime.getTime()
 
-    return {
+    const status: HealthStatus = {
       status: 'healthy',
       providers: {
         openai: true,
@@ -823,6 +1068,15 @@ export class AIChatService {
       uptime: Math.floor(uptime / 1000), // seconds
       lastCheck: new Date(),
     }
+
+    // Non-PII audit for health check
+    void this.audit.logActivity({
+      action: 'ai_health_check',
+      details: { uptime: status.uptime },
+      result: 'success',
+    })
+
+    return status
   }
 
   /**

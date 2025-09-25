@@ -19,7 +19,7 @@ declare module '@tanstack/react-router' {
 }
 
 // PWA Install Prompt Handler
-let deferredPrompt: any
+let deferredPrompt: BeforeInstallPromptEvent | null = null
 
 // Function to setup event listeners with cleanup
 function setupPWAEventListeners() {
@@ -34,31 +34,37 @@ function setupPWAEventListeners() {
       }
     }
 
-    window.addEventListener('load', handleLoad) // Store for cleanup
-    ;(window as any).__pwaCleanup = {
+    window.addEventListener('load', handleLoad)
+    // store typed handler
+    window.__pwaCleanup = {
+      ...window.__pwaCleanup,
       loadHandler: handleLoad,
     }
   }
 
   // Before install prompt
-  const handleBeforeInstall = (e: any) => {
-    e.preventDefault()
-    deferredPrompt = e
+  const handleBeforeInstall = (e: Event) => {
+    const event = e as BeforeInstallPromptEvent
+    event.preventDefault?.()
+    deferredPrompt = event
 
-    // Show custom install UI if needed
-    const installButton = document.getElementById('pwa-install-button')
+    // typed install button with optional __installHandler
+    const installButton = document.getElementById('pwa-install-button') as
+      | (HTMLElement & { __installHandler?: EventListener })
+      | null
     if (installButton) {
       installButton.style.display = 'block'
 
       // Remove existing listener if any
-      const existingCleanup = (installButton as any).__installHandler
+      const existingCleanup = installButton.__installHandler
       if (existingCleanup) {
         installButton.removeEventListener('click', existingCleanup)
       }
 
-      const handleInstallClick = async () => {
-        deferredPrompt.prompt()
-        const choiceResult: any = await deferredPrompt.userChoice
+      const handleInstallClick: EventListener = async () => {
+        if (!deferredPrompt) return
+        await deferredPrompt.prompt()
+        const choiceResult = await deferredPrompt.userChoice
         if (choiceResult.outcome === 'accepted') {
           console.warn('User accepted the install prompt')
         } else {
@@ -68,7 +74,7 @@ function setupPWAEventListeners() {
       }
 
       installButton.addEventListener('click', handleInstallClick)
-      ;(installButton as any).__installHandler = handleInstallClick
+      installButton.__installHandler = handleInstallClick
     }
   }
 
@@ -101,24 +107,31 @@ function setupPWAEventListeners() {
   window.addEventListener('online', handleOnline)
   window.addEventListener('offline', handleOffline)
 
-  // Store cleanup functions
-  const cleanup = (window as any).__pwaCleanup || {}
-  ;(window as any).__pwaCleanup = {
-    ...cleanup,
+  // Store cleanup functions safely
+  const prev = window.__pwaCleanup || {}
+  window.__pwaCleanup = {
+    ...prev,
     beforeInstallHandler: handleBeforeInstall,
     appInstalledHandler: handleAppInstalled,
     onlineHandler: handleOnline,
     offlineHandler: handleOffline,
     cleanup: function() {
-      window.removeEventListener('load', cleanup.loadHandler)
-      window.removeEventListener('beforeinstallprompt', cleanup.beforeInstallHandler)
-      window.removeEventListener('appinstalled', cleanup.appInstalledHandler)
-      window.removeEventListener('online', cleanup.onlineHandler)
-      window.removeEventListener('offline', cleanup.offlineHandler)
+      if (prev.loadHandler) window.removeEventListener('load', prev.loadHandler)
+      if (prev.beforeInstallHandler) {
+        window.removeEventListener('beforeinstallprompt', prev.beforeInstallHandler)
+      }
+      if (prev.appInstalledHandler) {
+        window.removeEventListener('appinstalled', prev.appInstalledHandler)
+      }
+      if (prev.onlineHandler) window.removeEventListener('online', prev.onlineHandler)
+      if (prev.offlineHandler) window.removeEventListener('offline', prev.offlineHandler)
 
-      const installButton = document.getElementById('pwa-install-button')
-      if (installButton && (installButton as any).__installHandler) {
-        installButton.removeEventListener('click', (installButton as any).__installHandler)
+      const installButton = document.getElementById('pwa-install-button') as
+        | (HTMLElement & { __installHandler?: EventListener })
+        | null
+      if (installButton && installButton.__installHandler) {
+        installButton.removeEventListener('click', installButton.__installHandler)
+        delete installButton.__installHandler
       }
     },
   }
@@ -137,8 +150,8 @@ if (navigator.onLine) {
 // Cleanup function for development hot-reloading
 if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
   window.addEventListener('beforeunload', () => {
-    const cleanup = (window as any).__pwaCleanup
-    if (cleanup && typeof cleanup.cleanup === 'function') {
+    const cleanup = window.__pwaCleanup
+    if (cleanup?.cleanup) {
       cleanup.cleanup()
     }
   })
@@ -156,3 +169,24 @@ root.render(
     </TanStackQueryProvider>
   </React.StrictMode>,
 )
+
+// Add typed BeforeInstallPromptEvent and PWA cleanup types
+type BeforeInstallPromptEvent = Event & {
+  prompt: () => Promise<void>
+  userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>
+}
+
+type PWACleanup = {
+  loadHandler?: (this: Window, ev?: Event) => void
+  beforeInstallHandler?: (e: Event) => void
+  appInstalledHandler?: () => void
+  onlineHandler?: () => void
+  offlineHandler?: () => void
+  cleanup?: () => void
+}
+
+declare global {
+  interface Window {
+    __pwaCleanup?: PWACleanup
+  }
+}

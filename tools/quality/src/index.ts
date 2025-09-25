@@ -1,5 +1,4 @@
 /**
- * @custom
  * Quality testing utilities for Coverage, Performance, Audit & Monitoring
  */
 

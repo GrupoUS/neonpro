@@ -22,6 +22,8 @@ import {
 import { PermissionContext, QueryIntent, QueryParameters } from '@neonpro/types'
 import { createHash } from 'crypto'
 import { AIDataService } from './ai-data-service'
+import { aiCacheInvalidationManager } from './ai-cache-invalidation-service'
+import { logger } from '../lib/logger'
 
 /**
  * Cache configuration for AI data queries
@@ -56,6 +58,15 @@ export class EnhancedAIDataService extends AIDataService {
 
     // Initialize Redis cache backend
     this.cache = createRedisCacheBackend(AIDATA_CACHE_CONFIG)
+    
+    // Initialize cache invalidation service
+    const invalidationService = aiCacheInvalidationManager.getService()
+    if (invalidationService) {
+      // Set up event listeners for cache invalidation
+      invalidationService.on('cache:invalidation', (event) => {
+        this.handleCacheInvalidation(event)
+      })
+    }
   }
 
   /**
@@ -124,7 +135,7 @@ export class EnhancedAIDataService extends AIDataService {
       // Cache miss - get from database
       this.cacheStats.misses++
       const dbStartTime = Date.now()
-      const _data = await dbOperation()
+      const data = await dbOperation()
       const dbTime = Date.now() - dbStartTime
 
       this.cacheStats.avgDbTime = this.updateAverage(
@@ -232,6 +243,26 @@ export class EnhancedAIDataService extends AIDataService {
   }
 
   /**
+   * Handle cache invalidation events
+   */
+  private handleCacheInvalidation(event: any): void {
+    logger.info('Cache invalidation event received', {
+      type: event.type,
+      entityType: event.entityType,
+      domain: event.domain,
+      userId: event.userId
+    })
+    
+    // Invalidate relevant cache entries
+    if (event.domain === this.permissionContext.domain || 
+        event.userId === this.permissionContext.userId) {
+      // Clear cache stats for affected user/domain
+      this.cacheStats.hits = 0
+      this.cacheStats.misses = 0
+    }
+  }
+
+  /**
    * Get cache performance statistics
    */
   async getCacheStats() {
@@ -273,12 +304,23 @@ export class EnhancedAIDataService extends AIDataService {
    */
   async clearIntentCache(intent: QueryIntent): Promise<void> {
     try {
+      // Use cache invalidation service for proper invalidation
+      const invalidationService = aiCacheInvalidationManager.getService()
+      if (invalidationService) {
+        await invalidationService.invalidateByQueryContext(
+          intent,
+          this.permissionContext,
+          `Manual cache clear for ${intent}`
+        )
+      }
+      
+      // Fallback to direct cache clearing
       const keys = await this.cache.getKeys(`${intent}_*`)
       for (const key of keys) {
         await this.cache.delete(key)
       }
-    } catch {
-      console.error(
+    } catch (error) {
+      logger.error(
         `[EnhancedAIDataService] Error clearing cache for ${intent}:`,
         error,
       )

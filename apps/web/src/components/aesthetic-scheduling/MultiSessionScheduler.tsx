@@ -17,7 +17,6 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { trpc } from '@/lib/trpc'
 import {
   type AestheticProcedure,
   type AestheticSchedulingResponse,
@@ -33,7 +32,8 @@ import { useProcedureSelection } from '@/hooks/useProcedureSelection'
 import { useProfessionalSelection } from '@/hooks/useProfessionalSelection'
 import { useSchedulingSubmission } from '@/hooks/useSchedulingSubmission'
 import { useSpecialRequirements } from '@/hooks/useSpecialRequirements'
-import { type MultiSessionSchedulingRequest } from '@/types/aesthetic-scheduling'
+import { useSchedulingData } from '@/hooks/useSchedulingData'
+import { useSchedulingForm } from '@/hooks/useSchedulingForm'
 
 interface MultiSessionSchedulerProps {
   patientId: string
@@ -95,54 +95,35 @@ export function MultiSessionScheduler(
     onError,
   )
 
+  // New hooks for extracted logic
+  const {
+    proceduresData,
+    professionalsData,
+    proceduresLoading,
+    professionalsLoading,
+  } = useSchedulingData()
+
+  const { handleSubmitForm } = useSchedulingForm(onSuccess, onError)
+
   // Local state for urgency level
   const [urgencyLevel, setUrgencyLevel] = useState<'routine' | 'priority' | 'urgent'>('routine')
 
-  // Fetch available procedures
-  const { data: proceduresData, isLoading: proceduresLoading } = trpc.aestheticScheduling
-    .getAestheticProcedures.useQuery(
-      { limit: 100, offset: 0 },
-      {
-        select: data => data.procedures || [],
-      },
-    )
-
-  // Fetch available professionals
-  const { data: professionalsData, isLoading: professionalsLoading } = trpc
-    .enhancedAestheticProfessionals.getProfessionals.useQuery()
-
-  // Check contraindications
-  const _checkContraindicationsMutation = trpc.aestheticScheduling.checkContraindications
-    .useMutation()
-
   // Form submission handler
-  const handleSubmitForm = async (e: React.FormEvent) => {
+  const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
     try {
-      // Validate form data
-      const formData: MultiSessionSchedulingRequest = {
+      const requestData = await handleSubmitForm(e, {
         patientId,
-        procedures: selectedProcedures,
+        selectedProcedures,
         preferredDates,
-        preferredProfessionals: preferredProfessionals.length > 0
-          ? preferredProfessionals
-          : undefined,
+        preferredProfessionals,
         urgencyLevel,
-        specialRequirements: specialRequirements.length > 0 ? specialRequirements : undefined,
-        medicalHistory: {
-          pregnancyStatus: medicalHistory.pregnancyStatus,
-          contraindications: medicalHistory.contraindications.length > 0
-            ? medicalHistory.contraindications
-            : undefined,
-          medications: medicalHistory.medications.length > 0
-            ? medicalHistory.medications
-            : undefined,
-          allergies: medicalHistory.allergies.length > 0 ? medicalHistory.allergies : undefined,
-        },
-      }
+        specialRequirements,
+        medicalHistory,
+      })
 
-      await handleSubmit(formData)
+      await handleSubmit(requestData)
     } catch (error) {
       onError?.(error as Error)
     }
@@ -175,7 +156,7 @@ export function MultiSessionScheduler(
         </Alert>
       )}
 
-      <form onSubmit={handleSubmitForm} className='space-y-6'>
+      <form onSubmit={handleFormSubmit} className='space-y-6'>
         <Tabs defaultValue='procedures' className='w-full'>
           <TabsList className='grid w-full grid-cols-4'>
             <TabsTrigger value='procedures'>Procedimentos</TabsTrigger>

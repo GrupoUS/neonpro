@@ -35,7 +35,7 @@ async function testSimpleIntegration() {
 // CLI execution
 if (import.meta.main) {
   testSimpleIntegration()
-    .then(async (success => {
+    .then((success) => {
       if (success) {
         logger.success('\n✨ Simple Test: PASSED')
         process.exit(0)
@@ -44,7 +44,7 @@ if (import.meta.main) {
         process.exit(1)
       }
     })
-    .catch(async (error => {
+    .catch((error) => {
       logger.error('💥 Simple Test crashed:', error)
       process.exit(1)
     })

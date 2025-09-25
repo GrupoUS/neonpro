@@ -72,7 +72,7 @@ const runCommand = (
     return Promise.resolve()
   }
 
-  return new Promise((resolvePromise, rejectPromise) => {
+  return new Promise((resolve, reject) => {
     const [cmd, ...args] = command
     const child = spawn(cmd, args, {
       cwd,

@@ -56,14 +56,14 @@ const BRAZILIAN_PATTERNS = {
 
       let sum = 0
       for (let i = 0; i < 12; i++) {
-        sum += parseInt(digits[i] || '0') * weights1[i]
+        sum += parseInt(digits[i] || '0', 10) * (weights1[i] || 0)
       }
       let remainder = sum % 11
       const digit1 = remainder < 2 ? 0 : 11 - remainder
 
       sum = 0
       for (let i = 0; i < 13; i++) {
-        sum += parseInt(digits[i] || '0') * weights2[i]
+        sum += parseInt(digits[i] || '0', 10) * (weights2[i] || 0)
       }
       remainder = sum % 11
       const digit2 = remainder < 2 ? 0 : 11 - remainder

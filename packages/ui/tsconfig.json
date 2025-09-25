@@ -1,32 +1,38 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    "outDir": "dist",
+    "rootDir": "src",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "@/components/*": ["src/components/*"],
+      "@/hooks/*": ["src/hooks/*"],
+      "@/utils/*": ["src/utils/*"],
+      "@/types/*": ["src/types/*"]
+    },
     "composite": true,
     "noEmit": false,
-    "outDir": "dist",
-    "rootDir": "./src",
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
-    "emitDeclarationOnly": false,
     "jsx": "react-jsx",
-    "moduleResolution": "node",
-    "module": "ESNext",
-    "target": "ES2022",
-    "skipLibCheck": true,
-    "strict": true,
-    "lib": ["dom", "dom.iterable", "esnext"],
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["./src/*"],
-      "@neonpro/*": ["../../packages/*/src"],
-      "@apps/*": ["../../apps/*/src"]
-    },
-    "tsBuildInfoFile": "./dist/.tsbuildinfo"
+    "lib": ["dom", "dom.iterable", "esnext"]
   },
   "include": [
     "src/**/*"
   ],
-  "exclude": ["dist", "node_modules", "**/*.config.ts", "**/*.config.js"],
-  "references": [{ "path": "../types" }, { "path": "../utils" }]
+  "exclude": [
+    "dist",
+    "node_modules",
+    "**/*.test.ts",
+    "**/*.spec.ts",
+    "**/*.test.tsx",
+    "**/*.spec.tsx"
+  ],
+  "references": [
+    { "path": "../types" },
+    { "path": "../shared" },
+    { "path": "../healthcare-core" }
+  ]
 }

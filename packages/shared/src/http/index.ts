@@ -13,58 +13,28 @@
  * @compliance LGPD, ANVISA, Healthcare Standards
  */
 
-// Core HTTP client and types
+// Core HTTP client and utilities
 export {
   HttpClient,
-  HttpRequestConfig,
-  HttpRequestConfigSchema,
-  HttpResponse,
-  HttpResponseSchema,
-  HttpError,
-  HttpErrorSchema,
-  HttpMethod,
-  HttpMethodSchema,
-} from './http-client'
-
-// Circuit breaker
-export {
   CircuitBreaker,
-  CircuitState,
-  CircuitStateSchema,
-  CircuitBreakerConfig,
-  CircuitBreakerConfigSchema,
-} from './http-client'
-
-// Rate limiting
-export {
   RateLimiter,
-  type RateLimitConfig,
-} from './http-client'
-
-// Healthcare compliance utilities
-export {
   HEALTHCARE_HEADERS,
-  sanitizeRequestData,
-} from './http-client'
-
-// Default instances and factories
-export {
   defaultHttpClient,
   createHealthcareHttpClient,
   createPublicApiClient,
-} from './http-client'
-
-// Utility functions
-export {
   isHttpError,
   getRetryInfo,
   createAuditContext,
+  sanitizeRequestData,
 } from './http-client'
 
-// Re-export for convenience
+// Type exports
 export type {
-  HttpRequestConfig as HTTPRequestConfig,
-  HttpResponse as HTTPResponse,
-  HttpError as HTTPError,
-  CircuitState as CircuitBreakerState,
-}
+  HttpRequestConfig,
+  HttpResponse,
+  HttpError,
+  CircuitState,
+  CircuitBreakerConfig,
+  RateLimitConfig,
+  HttpMethod,
+} from './http-client'

@@ -6,7 +6,7 @@
 import type { Context, Next } from 'hono'
 import { auditLogger } from '../logging/healthcare-logger'
 import { getGlobalTelemetryManager, HealthcareOperations } from './index'
-import { ComplianceLevel, DataClassification, HealthcareOperationType } from './types'
+import { ComplianceLevel, HealthcareOperationType } from './types'
 
 const telemetryMiddlewareLogger = auditLogger.child({ component: 'telemetry-middleware' })
 
@@ -95,7 +95,7 @@ export function healthcareTelemetryMiddleware() {
   return async (c: Context, next: Next) => {
     const startTime = Date.now()
     const url = c.req.url
-    const method = c.req.method
+    const _method = c.req.method
     const healthcareContext = extractHealthcareContext(c)
 
     try {

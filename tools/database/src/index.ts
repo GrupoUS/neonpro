@@ -1,5 +1,4 @@
 /**
- * @neonpro/tools-database-tests
  * Database testing utilities for RLS, Security, Compliance & Migrations
  */
 

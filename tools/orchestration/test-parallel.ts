@@ -202,7 +202,7 @@ async function testParallelExecution() {
 
 // Run the tests
 testParallelExecution()
-  .then(async (success => {
+  .then((success) => {
     if (success) {
       console.error('\n✨ Test Suite: PASSED')
       process.exit(0)
@@ -211,7 +211,7 @@ testParallelExecution()
       process.exit(1)
     }
   })
-  .catch(async (error => {
+  .catch((error) => {
     console.error('💥 Test Suite crashed:', error)
     process.exit(1)
   })

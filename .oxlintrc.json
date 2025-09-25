@@ -214,7 +214,9 @@
     "tools/**/node_modules/**",
     "packages/**/dist/**",
     "apps/**/dist/**",
-    "tools/tests-consolidated/**"
+    "tools/tests-consolidated/**",
+    ".serena/**",
+    ".specify/**"
   ],
   "env": {
     "browser": true,

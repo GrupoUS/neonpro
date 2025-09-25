@@ -1,5 +1,4 @@
 /**
- * @neonpro/tools-frontend-tests
  * Frontend testing utilities for React, E2E, Accessibility & Healthcare UI
  */
 

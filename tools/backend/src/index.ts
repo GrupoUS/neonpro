@@ -1,5 +1,4 @@
 /**
- * @neonpro/tools-backend-tests
  * Backend testing utilities for API, Integration, Monorepo & Middleware
  */
 

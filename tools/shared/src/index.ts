@@ -1,5 +1,5 @@
 /**
- * - Shared Utilities for NeonPro Development Tools
+ * Shared Utilities for NeonPro Development Tools
  *
  * This package consolidates common functionality used across different tools
  * in the NeonPro monorepo to eliminate duplication and ensure consistency.

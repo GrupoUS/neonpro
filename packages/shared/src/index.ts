@@ -5,6 +5,38 @@
 // Core library
 export const shared = { version: '1.0.0' }
 
+// Key infrastructure classes (convenience exports)
+// Note: New infrastructure packages (http, events, database, security) are temporarily excluded
+// from build due to TypeScript errors. They will be re-enabled once the issues are resolved.
+// export {
+//   HttpClient,
+//   CircuitBreaker,
+//   RateLimiter,
+//   createHealthcareHttpClient,
+//   createPublicApiClient
+// } from './http'
+
+// export {
+//   EventBus,
+//   EventEncryptionService,
+//   DeadLetterQueue,
+//   createHealthcareEventBus
+// } from './events'
+
+// export {
+//   DatabaseManager,
+//   ConnectionPool,
+//   DatabaseEncryptionService,
+//   createHealthcareDatabaseManager
+// } from './database'
+
+// export {
+//   CryptoService,
+//   DataMaskingService,
+//   SecurityAuditLogger,
+//   SessionManager
+// } from './security'
+
 // Healthcare logging
 export {
   analyticsLogger,
@@ -154,6 +186,22 @@ export * from './i18n/ai-chat'
 
 // WebRTC infrastructure
 export * from './webrtc'
+
+// HTTP Client utilities
+// Temporarily excluded due to TypeScript errors
+// export * from './http'
+
+// Event system infrastructure
+// Temporarily excluded due to TypeScript errors
+// export * from './events'
+
+// Database connection utilities
+// Temporarily excluded due to TypeScript errors
+// export * from './database'
+
+// Security utilities
+// Temporarily excluded due to TypeScript errors
+// export * from './security'
 
 // Telemetry and observability
 export type { CFMComplianceLevel as ComplianceLevel } from '@neonpro/types'

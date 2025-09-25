@@ -1,0 +1,84 @@
+{
+  "name": "@neonpro/api-gateway",
+  "version": "1.0.0",
+  "description": "tRPC server, REST API, and WebSocket management for NeonPro healthcare platform",
+  "main": "dist/src/index.js",
+  "module": "dist/src/index.js",
+  "types": "dist/src/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/src/index.d.ts",
+      "import": "./dist/src/index.js",
+      "require": "./dist/src/index.js"
+    },
+    "./server": {
+      "types": "./dist/src/server/index.d.ts",
+      "import": "./dist/src/server/index.js",
+      "require": "./dist/src/server/index.js"
+    },
+    "./routers/*": {
+      "types": "./dist/src/routers/*.d.ts",
+      "import": "./dist/src/routers/*.js",
+      "require": "./dist/src/routers/*.js"
+    },
+    "./middleware/*": {
+      "types": "./dist/src/middleware/*.d.ts",
+      "import": "./dist/src/middleware/*.js",
+      "require": "./dist/src/middleware/*.js"
+    }
+  },
+  "scripts": {
+    "build": "bun x tsc -b",
+    "dev": "tsc -w -p tsconfig.json",
+    "type-check": "tsc -p tsconfig.json --noEmit",
+    "clean": "rimraf dist",
+    "test": "bun test run",
+    "test:watch": "bun test --watch",
+    "test:coverage": "bun test --coverage",
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
+    "start": "bun dist/src/index.js",
+    "dev:server": "tsx watch src/index.ts"
+  },
+  "dependencies": {
+    "@neonpro/types": "workspace:*",
+    "@neonpro/shared": "workspace:*",
+    "@neonpro/database": "workspace:*",
+    "@neonpro/healthcare-core": "workspace:*",
+    "@neonpro/ai-services": "workspace:*",
+    "@neonpro/security-compliance": "workspace:*",
+    "@trpc/server": "^11.5.1",
+    "@hono/trpc-server": "^0.4.0",
+    "hono": "^4.9.7",
+    "@hono/node-server": "^1.13.7",
+    "zod": "^4.1.11",
+    "valibot": "^1.1.0",
+    "ws": "^8.18.0",
+    "@types/ws": "^8.5.13"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.13",
+    "typescript": "^5.9.2",
+    "vitest": "^3.2.4",
+    "tsx": "^4.6.2"
+  },
+  "files": [
+    "dist",
+    "src/**/*"
+  ],
+  "keywords": [
+    "api-gateway",
+    "trpc",
+    "rest",
+    "websocket",
+    "server",
+    "healthcare-api",
+    "typescript",
+    "hono"
+  ],
+  "author": "NeonPro Team",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "restricted"
+  }
+}
