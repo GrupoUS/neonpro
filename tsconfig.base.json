@@ -85,9 +85,11 @@
     { "path": "./packages/security" },
     { "path": "./packages/ui" },
     { "path": "./packages/utils" },
+    { "path": "./packages/core-services" },
     { "path": "./packages/observability" },
     { "path": "./packages/integrations" },
     { "path": "./packages/workflows" },
+    { "path": "./packages/monitoring" },
     
     // Applications
     { "path": "./apps/ai-agent" },

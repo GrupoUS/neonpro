@@ -6,7 +6,14 @@
 
 import { databaseLogger, logHealthcareError } from '../utils/logging'
 
-import type { Patient } from '@neonpro/types'
+// Minimal Patient type for identity service
+interface Patient {
+  id: string
+  cpf?: string
+  rg?: string
+  lgpdConsentGiven: boolean
+  dataConsentStatus?: string
+}
 import { createClient } from '../client'
 
 export interface PatientIdentityDocument {

@@ -32,12 +32,7 @@
       "@neonpro/database/*": [
         "../../packages/database/src/*"
       ],
-      "@neonpro/core-services": [
-        "../../packages/core-services/src"
-      ],
-      "@neonpro/core-services/*": [
-        "../../packages/core-services/src/*"
-      ],
+      
       "@neonpro/healthcare-core": [
         "../../packages/healthcare-core/src"
       ],
@@ -108,9 +103,7 @@
     {
       "path": "../../packages/database"
     },
-    {
-      "path": "../../packages/core-services"
-    },
+    
     {
       "path": "../../packages/healthcare-core"
     },

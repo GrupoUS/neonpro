@@ -4,13 +4,13 @@
  */
 
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { AnalyticsService } from '@neonpro/core-services/src/services/analytics-service'
+import { AnalyticsService } from './services/analytics-service'
 import {
   DatabaseError,
   NotFoundError,
   ValidationError,
   ConflictError,
-} from '@neonpro/shared/src/errors'
+} from '@neonpro/utils'
 
 // Mock dependencies
 const mockSupabase = {

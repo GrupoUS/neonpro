@@ -1,7 +1,11 @@
 // Governance Service Provider
 // Configures and provides the governance service instance
 
-import { GovernanceService } from '@neonpro/types/governance.types'
+// Minimal GovernanceService interface
+interface GovernanceService {
+  // Methods would be defined as needed
+  healthCheck(): Promise<boolean>
+}
 import { SupabaseGovernanceService } from './supabase-governance.service'
 
 // Service instance (singleton)

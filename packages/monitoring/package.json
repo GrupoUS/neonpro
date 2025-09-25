@@ -1,0 +1,40 @@
+{
+  "name": "@neonpro/monitoring",
+  "version": "1.0.0",
+  "description": "Monitoring and performance tracking for NeonPro platform",
+  "main": "dist/src/index.js",
+  "module": "dist/src/index.js",
+  "types": "dist/src/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/src/index.d.ts",
+      "import": "./dist/src/index.js",
+      "require": "./dist/src/index.js"
+    }
+  },
+  "scripts": {
+    "build": "bun x tsc -b",
+    "dev": "tsc -w -p tsconfig.json",
+    "type-check": "tsc -p tsconfig.json --noEmit",
+    "clean": "rimraf dist"
+  },
+  "dependencies": {
+    "@neonpro/utils": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.13",
+    "typescript": "^5.9.2"
+  },
+  "files": [
+    "dist",
+    "src/**/*"
+  ],
+  "keywords": [
+    "neonpro",
+    "monitoring",
+    "performance",
+    "healthcare"
+  ],
+  "author": "NeonPro Team",
+  "license": "MIT"
+}

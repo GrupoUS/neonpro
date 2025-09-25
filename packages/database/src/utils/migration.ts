@@ -33,8 +33,8 @@ export async function migrateData(): Promise<void> {
         up: async () => {
           // This would contain actual migration logic
           // For now, just log that migration would occur
-          const { getLogger } = await import('@neonpro/core-services')
-          const logger = getLogger()
+          const { createLogger } = await import('@neonpro/utils')
+          const logger = createLogger('migration')
           logger.info('Running initial schema setup migration...', {
             component: 'migration',
             version: '1.0.0',
@@ -45,8 +45,8 @@ export async function migrateData(): Promise<void> {
         version: '1.0.1',
         description: 'Add indexes for performance',
         up: async () => {
-          const { getLogger } = await import('@neonpro/core-services')
-          const logger = getLogger()
+          const { createLogger } = await import('@neonpro/utils')
+          const logger = createLogger('migration')
           logger.info('Adding performance indexes...', {
             component: 'migration',
             version: '1.0.1',
@@ -57,8 +57,8 @@ export async function migrateData(): Promise<void> {
         version: '1.1.0',
         description: 'Add new healthcare fields',
         up: async () => {
-          const { getLogger } = await import('@neonpro/core-services')
-          const logger = getLogger()
+          const { createLogger } = await import('@neonpro/utils')
+          const logger = createLogger('migration')
           logger.info('Adding new healthcare-specific fields...', {
             component: 'migration',
             version: '1.1.0',
@@ -68,8 +68,8 @@ export async function migrateData(): Promise<void> {
     ]
 
     // Apply pending migrations
-    const { getLogger } = await import('@neonpro/core-services')
-    const logger = getLogger()
+    const { createLogger } = await import('@neonpro/utils')
+    const logger = createLogger('migration')
 
     for (const migration of migrations) {
       if (isMigrationPending(currentVersion, migration.version)) {
@@ -89,8 +89,8 @@ export async function migrateData(): Promise<void> {
 
     await prisma.$disconnect()
   } catch (error) {
-    const { getLogger } = await import('@neonpro/core-services')
-    const logger = getLogger()
+    const { createLogger } = await import('@neonpro/utils')
+    const logger = createLogger('migration')
     logger.error('Data migration error', { component: 'migration' }, error as Error)
     throw error
   }
@@ -163,8 +163,8 @@ export async function backupData(): Promise<string> {
     await prisma.$disconnect()
     return backupPath
   } catch (error) {
-    const { getLogger } = await import('@neonpro/core-services')
-    const logger = getLogger()
+    const { createLogger } = await import('@neonpro/utils')
+    const logger = createLogger('migration')
     logger.error('Backup error', { component: 'migration', action: 'backup' }, error as Error)
     throw error
   }
@@ -193,13 +193,13 @@ async function ensureMigrationsTable(prisma: PrismaClient): Promise<void> {
           applied_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
         )
       `
-      const { getLogger } = await import('@neonpro/core-services')
-      const logger = getLogger()
+      const { createLogger } = await import('@neonpro/utils')
+      const logger = createLogger('migration')
       logger.info('Created migrations table', { component: 'migration', action: 'create_table' })
     }
   } catch (error) {
-    const { getLogger } = await import('@neonpro/core-services')
-    const logger = getLogger()
+    const { createLogger } = await import('@neonpro/utils')
+    const logger = createLogger('migration')
     logger.error('Error ensuring migrations table', {
       component: 'migration',
       action: 'ensure_table',
@@ -218,8 +218,8 @@ async function getCurrentSchemaVersion(prisma: PrismaClient): Promise<string> {
 
     return result[0]?.version || '0.0.0'
   } catch (error) {
-    const { getLogger } = await import('@neonpro/core-services')
-    const logger = getLogger()
+    const { createLogger } = await import('@neonpro/utils')
+    const logger = createLogger('migration')
     logger.error('Error getting current schema version', {
       component: 'migration',
       action: 'get_version',
@@ -247,8 +247,8 @@ async function recordMigration(
       VALUES (${version}, ${description})
     `
   } catch (error) {
-    const { getLogger } = await import('@neonpro/core-services')
-    const logger = getLogger()
+    const { createLogger } = await import('@neonpro/utils')
+    const logger = createLogger('migration')
     logger.error('Error recording migration', {
       component: 'migration',
       action: 'record_migration',

@@ -35,11 +35,9 @@
     "build:integrations": "turbo build --filter=@neonpro/integrations",
     "build:workflows": "turbo build --filter=@neonpro/workflows",
     "build:observability": "turbo build --filter=@neonpro/observability",
-    
     "build:ui": "turbo build --filter=@neonpro/ui",
     "dev": "turbo dev --concurrency=20",
     "dev:core": "turbo dev --filter=@neonpro/*",
-    
     "dev:integrations": "turbo dev --filter=@neonpro/integrations",
     "dev:workflows": "turbo dev --filter=@neonpro/workflows",
     "dev:observability": "turbo dev --filter=@neonpro/observability",
@@ -127,6 +125,7 @@
     "@types/node": "^24.5.2",
     "@typescript-eslint/eslint-plugin": "8.44.1",
     "@typescript-eslint/parser": "8.44.1",
+    "@vitejs/plugin-react": "^5.0.3",
     "@vitest/ui": "^3.2.4",
     "autoprefixer": "^10.4.21",
     "bun": "^1.2.22",

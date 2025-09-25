@@ -1,9 +1,15 @@
-// ChatMessage model (Phase 1)
-// Mirrors packages/types/src/ai-chat.ts; add small helpers.
+// ChatMessage model - Minimal essential types
 
-import type { ChatMessage as ChatMessageType } from '@neonpro/types'
-
-export type ChatMessage = ChatMessageType
+export type ChatMessage = {
+  id: string
+  sessionId: string
+  role: 'user' | 'assistant' | 'system'
+  content: string
+  createdAt: string
+  updatedAt: string
+  metadata?: Record<string, unknown>
+  redactionFlags?: string[]
+}
 
 export const isFresh = (
   message: ChatMessage,

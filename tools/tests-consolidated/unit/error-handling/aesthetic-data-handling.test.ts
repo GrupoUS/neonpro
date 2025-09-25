@@ -10,7 +10,7 @@ import {
   DatabaseError,
   NotFoundError,
 } from '@neonpro/utils'
-import { AestheticDataHandling } from '@neonpro/core-services'
+import { AestheticDataHandlingService } from '@neonpro/api/agui-protocol/aesthetic-data-handling'
 
 // Mock Supabase client for testing
 const mockSupabaseClient = {
@@ -37,7 +37,7 @@ const mockSupabaseClient = {
   }))
 }
 
-const aestheticDataHandling = new AestheticDataHandling({ supabaseClient: mockSupabaseClient as any })
+const aestheticDataHandling = new AestheticDataHandlingService({ supabaseClient: mockSupabaseClient as any })
 
 describe('AestheticDataHandling Error Handling (RED Phase)', () => {
   beforeEach(() => {

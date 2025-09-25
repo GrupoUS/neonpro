@@ -3,7 +3,7 @@ import type {
   GenerateAnswerInput,
   GenerateAnswerResult,
   StreamChunk,
-} from '@neonpro/types'
+} from './ai-provider-factory.js'
 
 // Placeholder Google provider. Real implementation will require
 // @google/generative-ai and proper credential management.

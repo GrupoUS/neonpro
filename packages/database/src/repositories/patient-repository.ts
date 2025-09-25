@@ -1,6 +1,43 @@
 import { Patient, PatientFilters } from '@neonpro/healthcare-core'
 import type { PatientRepository as IPatientRepository } from '@neonpro/healthcare-core'
-import { UpdatePatientRequest } from '@neonpro/types'
+// UpdatePatientRequest type defined locally
+interface UpdatePatientRequest {
+  familyName?: string
+  fullName?: string
+  preferredName?: string
+  phonePrimary?: string
+  phoneSecondary?: string
+  email?: string
+  addressLine1?: string
+  addressLine2?: string
+  city?: string
+  state?: string
+  postalCode?: string
+  country?: string
+  gender?: string
+  maritalStatus?: string
+  isActive?: boolean
+  deceasedIndicator?: boolean
+  deceasedDate?: string
+  dataConsentStatus?: string
+  dataConsentDate?: string
+  dataRetentionUntil?: string
+  photoUrl?: string
+  rg?: string
+  passportNumber?: string
+  preferredContactMethod?: string
+  bloodType?: string
+  allergies?: string[]
+  chronicConditions?: string[]
+  currentMedications?: string[]
+  insuranceProvider?: string
+  insuranceNumber?: string
+  insurancePlan?: string
+  emergencyContactName?: string
+  emergencyContactPhone?: string
+  emergencyContactRelationship?: string
+  lgpdConsentGiven?: boolean
+}
 import { SupabaseClient } from '@supabase/supabase-js'
 import { databaseLogger, logHealthcareError } from '../utils/logging'
 import { PatientQueryOptions, PatientSearchResult, DatabasePatient } from '../types/index.js'

@@ -1,5 +1,5 @@
 /**
- * Metrics and monitoring exports for Background Jobs Manager
+ * Metrics and monitoring exports for Healthcare Core
  */
 
-export * from './base-metrics'
+export * from './aiChat'

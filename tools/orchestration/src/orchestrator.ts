@@ -82,15 +82,15 @@ const runCommand = (
 
     child.on('close', code => {
       if (code === 0) {
-        resolvePromise()
+        resolve()
       } else {
-        rejectPromise(
+        reject(
           new Error(`${command.join(' ')} exited with code ${code}`),
         )
       }
     })
 
-    child.on('error', rejectPromise)
+    child.on('error', reject)
   })
 }
 
@@ -303,5 +303,7 @@ const isCliExecution = (): boolean => {
 }
 
 if (isCliExecution()) {
-  runFromCli().catch(async (exitOnError)
+  runFromCli().catch(async () => {
+    process.exit(1);
+  });
 }

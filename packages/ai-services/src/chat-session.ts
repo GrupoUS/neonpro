@@ -1,9 +1,15 @@
-// ChatSession model (Phase 1)
-// Mirrors packages/types/src/ai-chat.ts shape; provides helper predicates and factories.
+// ChatSession model - Minimal essential types
 
-import type { ChatSession as ChatSessionType } from '@neonpro/types'
-
-export type ChatSession = ChatSessionType
+export type ChatSession = {
+  id: string
+  userId?: string
+  sessionId: string
+  title?: string
+  startedAt: string
+  lastActivityAt: string
+  status: 'active' | 'idle' | 'closed'
+  metadata?: Record<string, unknown>
+}
 
 export const createChatSession = (
   input: Omit<ChatSession, 'startedAt' | 'lastActivityAt'> & {

@@ -40,7 +40,7 @@ echo "✅ desktop-commander MCP: Required for file operations"
 cd /home/vibecode/neonpro
 
 # Validate structure exists
-ls -la apps/        # Should show: ai-agent, api, tools, web
+ls -la apps/        # Should show: api, web
 ls -la packages/    # Should show: 20+ packages (@neonpro/*)
 ls -la docs/        # Should show: apis, architecture directories
 ```
@@ -50,9 +50,7 @@ ls -la docs/        # Should show: apis, architecture directories
 // Use serena MCP to analyze structure
 const structureAnalysis = {
   apps: {
-    "apps/ai-agent": "✅ AI agent with CopilotKit",
     "apps/api": "✅ Backend API (tRPC v11 + Prisma + Supabase)",
-    "apps/tools": "✅ Development tools",
     "apps/web": "✅ Frontend (TanStack Router + React 19)"
   },
   packages: {

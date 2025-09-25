@@ -1,8 +1,8 @@
 // ChatService orchestrator (Phase 2) - Enhanced with real AI providers and streaming
 
 import { logHealthcareError } from '@neonpro/shared'
-import type { ChatMessage, ChatSession } from '@neonpro/types'
-import { AIProviderFactory } from './ai-provider-factory.js'
+import type { ChatMessage, ChatSession } from '../chat-message.js'
+import { AIProviderFactory } from '../providers/ai-provider-factory.js'
 import { PIIRedactionService } from './pii-redaction.js'
 
 export class ChatService {
