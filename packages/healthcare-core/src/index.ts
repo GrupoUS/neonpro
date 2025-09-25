@@ -1,54 +1,50 @@
 /**
- * Shared Schemas Package (T084 - Code duplication removal)
- * Centralized validation schemas for the NeonPro platform
+ * NeonPro Healthcare Core - Ultra Simplified
+ * Comprehensive healthcare business logic with absorbed services
  */
 
-// Patient schemas
+// Core Healthcare Services
+export * from './healthcare'
+
+// Essential Business Services  
+export * from './services/multi-professional-coordination-service'
+export * from './services/patient-engagement-service'
+export * from './services/treatment-planning-service'
+
+// Aesthetic Services Core
+export * from './services/enhanced-aesthetic-scheduling-service'
+export * from './services/no-show-prediction-service'
+export * from './services/professional-validation-service'
+
+// Analytics & Business Intelligence
+export * from './services/analytics-service'
+
+// Governance & Compliance
+export * from './services/compliance-management-service'
+
+// Patient Data Models
 export * from './patient/base-patient.schema'
 export * from './patient/brazilian-patient.schema'
-export {
-  BrazilianCEPSchema,
-  BrazilianPatientRegistrationSchema,
-  BrazilianPatientUpdateSchema,
-  BrazilianPhoneSchema,
-  CNPJSchema,
-  CPFSchema,
-  PatientExportSchema,
-  PatientSearchSchema,
-} from './patient/brazilian-patient.schema'
 
-// Utility schemas
-import { z } from 'zod'
+// Validation Schemas
+export * from './lgpd.valibot'
+export * from './appointment.valibot'
+export * from './prescription.valibot'
 
-export const PaginationSchema = z.object({
-  page: z.coerce.number().min(1).default(1),
-  limit: z.coerce.number().min(1).max(100).default(20),
-  total: z.number().optional(),
-  totalPages: z.number().optional(),
-})
+// Utilities & Helpers
+export * from './guards'
+export * from './analytics'
 
-export const ResponseSchema = <T>(dataSchema: z.ZodType<T>) =>
-  z.object({
-    success: z.boolean(),
-    data: dataSchema.optional(),
-    error: z
-      .object({
-        code: z.string(),
-        message: z.string(),
-        details: z.record(z.unknown()).optional(),
-        timestamp: z.string().datetime(),
-        requestId: z.string(),
-      })
-      .optional(),
-    meta: z
-      .object({
-        pagination: PaginationSchema.optional(),
-        requestId: z.string(),
-        timestamp: z.string().datetime(),
-      })
-      .optional(),
-  })
+// Re-export essential types
+export type {
+  AestheticAppointment,
+  AestheticProcedureDetails,
+  FollowUpAppointment,
+  ProfessionalAssignment,
+  RecoveryPlan,
+} from './services/enhanced-aesthetic-scheduling-service'
 
-// Export utility types
-export type Pagination = z.infer<typeof PaginationSchema>
-export type ApiResponse<T> = z.infer<ReturnType<typeof ResponseSchema<T>>>
+export type {
+  NoShowPredictionFeatures,
+  NoShowPredictionResult,
+} from './services/no-show-prediction-service'

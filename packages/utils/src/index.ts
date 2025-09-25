@@ -806,6 +806,12 @@ export function sanitizeHealthcareData(
 }
 
 /**
+ * Logger System
+ * Export structured logging functionality for healthcare applications
+ */
+export * from './logging/logger'
+
+/**
  * Error Handling System
  * Export comprehensive error classes for healthcare, compliance, and technical operations
  */

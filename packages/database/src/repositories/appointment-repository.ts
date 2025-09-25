@@ -1,13 +1,22 @@
-import {
-  type Appointment,
-  type AppointmentCalendarView,
-  type AppointmentFilters,
-  AppointmentRepository as IAppointmentRepository,
-  type AppointmentStatistics,
-  AppointmentStatus,
-  type AppointmentTimeline,
-  type DailyAppointmentCount,
-} from '@neonpro/healthcare-core'
+// Remove circular dependency - define minimal types locally
+type Appointment = {
+  id: string
+  client_id: string
+  professional_id: string
+  scheduled_at: Date
+  status: string
+  // ... other essential fields
+}
+
+type AppointmentFilters = {
+  client_id?: string
+  professional_id?: string
+  start_date?: Date
+  end_date?: Date
+  status?: string
+}
+
+type AppointmentStatus = 'scheduled' | 'confirmed' | 'in_progress' | 'completed' | 'cancelled' | 'no_show'
 import { SupabaseClient } from '@supabase/supabase-js'
 import { logHealthcareError } from '../utils/logging'
 import {

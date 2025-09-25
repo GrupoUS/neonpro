@@ -3,7 +3,13 @@
  * Handles structured logging for healthcare data access and operations
  */
 
-import { createClient } from '@supabase/supabase-js'
+// Supabase client is optional - only import if available
+let createClient: any = null
+try {
+  createClient = require('@supabase/supabase-js').createClient
+} catch {
+  // Supabase not available - database logging will be disabled
+}
 
 // Local interface to avoid external type dependencies
 interface LocalDatabase {
@@ -91,13 +97,14 @@ export class AuditLogger {
       ...options,
     }
 
-    // Initialize Supabase client if database logging is enabled
+    // Initialize Supabase client if database logging is enabled and available
     if (
       this.options.enableDatabaseLogging &&
+      createClient &&
       this.options.supabaseUrl &&
       this.options.supabaseKey
     ) {
-      this.supabase = createClient<LocalDatabase>(
+      this.supabase = createClient(
         this.options.supabaseUrl,
         this.options.supabaseKey,
       )
@@ -409,7 +416,12 @@ export class AuditLogger {
 
     // Safely handle metadata
     if (entry.metadata) {
-      sanitized.metadata = this.sanitizeMetadata(entry.metadata)
+      try {
+        sanitized.metadata = this.sanitizeMetadata(entry.metadata)
+      } catch {
+        // If metadata sanitization fails, continue without metadata
+        sanitized.metadata = undefined
+      }
     }
 
     return sanitized

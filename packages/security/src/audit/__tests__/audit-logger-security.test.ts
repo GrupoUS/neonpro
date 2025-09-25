@@ -402,7 +402,9 @@ describe('Audit Logger Security - TDD RED PHASE', () => {
       ]
 
       for (const entry of invalidEntries) {
-        await expect(auditLogger.log(entry as any)).resolves.not.toThrow()
+        await expect(async () => {
+          await auditLogger.log(entry as any)
+        }).not.toThrow()
       }
     })
 
@@ -410,9 +412,9 @@ describe('Audit Logger Security - TDD RED PHASE', () => {
       const circularReference: any = { name: 'test' }
       circularReference.self = circularReference
 
-      await expect(
-        auditLogger.success('user123', 'test', 'resource', circularReference)
-      ).resolves.not.toThrow()
+      await expect(async () => {
+        await auditLogger.success('user123', 'test', 'resource', circularReference)
+      }).not.toThrow()
     })
 
     it('should continue logging even if some operations fail', async () => {
@@ -422,9 +424,9 @@ describe('Audit Logger Security - TDD RED PHASE', () => {
         throw new Error('Logging failed')
       })
 
-      await expect(
-        auditLogger.success('user123', 'test', 'resource')
-      ).resolves.not.toThrow()
+      await expect(async () => {
+        await auditLogger.success('user123', 'test', 'resource')
+      }).not.toThrow()
 
       // Restore original mock
       consoleSpy.log.mockRestore()

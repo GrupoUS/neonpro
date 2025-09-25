@@ -41,7 +41,6 @@
     "sync": "npm run validate-schema && npm run build"
   },
   "dependencies": {
-    "@neonpro/core-services": "workspace:*",
     "@neonpro/utils": "workspace:*",
     "@prisma/adapter-pg": "^6.16.1",
     "@prisma/client": "^5.22.0",

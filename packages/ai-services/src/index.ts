@@ -1,118 +1,25 @@
-// NeonPro Unified AI Services
-// Healthcare-optimized AI provider management system
+// Integrations Package
+// Third-party service integrations and AI providers
 
-// Main exports
-export * from './providers/index.js';
-export * from './services/index.js';
+// AI Providers
+export * from './providers/ai-provider'
+export * from './providers/ai-provider-factory'
+export * from './providers/openai-provider'
+export * from './providers/anthropic-provider'
+export * from './providers/google-provider'
 
-// AI Management (absorbed from ai-providers)
-export * from './services/ai-management/pii-redaction.js';
-export * from './services/ai-management/ai-service-management.js';
-export * from './types/ai-management.js';
+// AI Services
+export * from './services/ai-service-management'
+export * from './services/ai-clinical-decision-support'
+export * from './services/AIService'
 
-// Types and interfaces
-export type {
-  // Provider interfaces
-  IUnifiedAIProvider,
-  ProviderConfig,
-  ProviderCapabilities,
-  ProviderHealth,
-  ProviderStats,
-  
-  // Response types
-  CompletionResponse,
-  CompletionChunk,
-  CompletionOptions,
-  ImageAnalysisResponse,
-  ImageAnalysisOptions,
-  TokenUsage,
-  Tool,
-  ToolCall,
-  
-  // Healthcare compliance
-  HealthcareComplianceConfig,
-  
-  // Service types (temporarily commented for consolidation)
-  // ProviderManagementConfig,
-  // ProviderMetrics,
-  // ProviderAlert,
-  // HealthcareContext,
-  // ComplianceCheckResult,
-  // ComplianceViolation,
-  // ComplianceAuditLog,
-  // PIIType,
-  // PIIRedactionStrategy,
-  // ViolationSeverity,
-  // BrazilianRegulatoryFramework,
-} from './providers/index.js';
+// Communication Services
+export * from './services/chat-service'
 
-// Provider implementations
-export {
-  OpenAIProvider,
-  AnthropicProvider,
-  GoogleAIProvider,
-  BaseAIProvider,
-} from './providers/index.js';
+// Security & Privacy Services
+export * from './services/pii-redaction'
+export * from './services/consent-validation'
 
-// Factory and management
-export {
-  AIProviderFactory,
-  providerFactory,
-  createProvider,
-} from './providers/index.js';
-
-// Services
-export {
-  ProviderManagementService,
-  HealthcareComplianceService,
-  providerManagementService,
-  healthcareComplianceService,
-} from './services/index.js';
-
-// Enums (temporarily commented during consolidation)
-// export {
-//   AlertLevel,
-//   AlertType,
-// } from './services/index.js';
-
-/**
- * Initialize AI services with default configuration
- */
-// Temporarily disabled during consolidation
-// export function initializeAIServices(config?: {
-//   providerFactory?: any;
-//   providerManagement?: any;
-//   healthcareCompliance?: any;
-// }) {
-//   if (config?.providerFactory) {
-//     AIProviderFactory.getInstance(config.providerFactory);
-//   }
-//
-//   if (config?.providerManagement) {
-//     ProviderManagementService.getInstance(
-//       AIProviderFactory.getInstance(),
-//       config.providerManagement
-//     );
-//   }
-//
-//   if (config?.healthcareCompliance) {
-//     HealthcareComplianceService.getInstance(config.healthcareCompliance);
-//   }
-//
-//   return {
-//     providerFactory: AIProviderFactory.getInstance(),
-//     providerManagement: ProviderManagementService.getInstance(),
-//     healthcareCompliance: HealthcareComplianceService.getInstance(),
-//   };
-// }
-
-/**
- * Get dashboard data for monitoring
- * Temporarily disabled during consolidation
- */
-// export function getAIDashboardData() {
-//   return {
-//     providers: providerManagementService.getDashboardData(),
-//     compliance: healthcareComplianceService.getComplianceStats(),
-//   };
-// }
+// Chat Models
+export * from './chat-message'
+export * from './chat-session'

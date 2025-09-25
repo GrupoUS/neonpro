@@ -11,6 +11,14 @@ import { setupServer } from 'msw/node'
 import { afterAll, afterEach, beforeAll, vi } from 'vitest'
 import { handlers } from '../fixtures/api-handlers'
 
+// Declare global testUtils property
+declare global {
+  var testUtils: {
+    mockConsole: typeof console
+    server: typeof server
+  } | undefined
+}
+
 // MSW server for API mocking
 export const server = setupServer(...handlers)
 
@@ -45,13 +53,7 @@ afterAll(() => {
   server.close()
 })
 
-// Global test utilities
-declare global {
-  const testUtils: {
-    mockConsole: typeof console
-    server: typeof server
-  }
-}
+
 
 globalThis.testUtils = {
   mockConsole: global.console,

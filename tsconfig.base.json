@@ -64,8 +64,7 @@
       "@neonpro/integrations/*": ["./packages/integrations/src/*"],
       "@neonpro/workflows": ["./packages/workflows/src"],
       "@neonpro/workflows/*": ["./packages/workflows/src/*"],
-      "@neonpro/core-services": ["./packages/core-services/src"],
-      "@neonpro/core-services/*": ["./packages/core-services/src/*"],
+      
       // Legacy package paths (for backward compatibility)
       "@neonpro/*": ["./packages/*/src"],
       "@apps/*": ["./apps/*/src"]
@@ -89,7 +88,7 @@
     { "path": "./packages/observability" },
     { "path": "./packages/integrations" },
     { "path": "./packages/workflows" },
-    { "path": "./packages/core-services" },
+    
     // Applications
     { "path": "./apps/ai-agent" },
     { "path": "./apps/api" },
