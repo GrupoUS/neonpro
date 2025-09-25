@@ -11,6 +11,8 @@ import chatRouter from './routes/chat'
 import { medicalRecords } from './routes/medical-records'
 import patientsRouter from './routes/patients'
 import v1Router from './routes/v1'
+import aiSessionsCleanup from './routes/api/cleanup/ai-sessions'
+import expiredPredictionsCleanup from './routes/api/cleanup/expired-predictions'
 import { Context } from './trpc/context'
 import { appRouter } from './trpc/router'
 
@@ -291,6 +293,10 @@ const tRPCHandle = trpcServer({
     } as Context
   },
 })
+
+// Mount AI agents cleanup and monitoring routes
+app.route('/api/cleanup/ai-sessions', aiSessionsCleanup)
+app.route('/api/cleanup/expired-predictions', expiredPredictionsCleanup)
 
 // Mount tRPC router with healthcare compliance
 app.mount('/trpc', tRPCHandle)
