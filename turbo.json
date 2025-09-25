@@ -9,7 +9,7 @@
       "cache": true,
       "persistent": false,
       "env": ["NODE_ENV", "CI"],
-      "inputs": ["tsconfig*.json", "package.json", "bun.lockb"]
+      "inputs": ["tsconfig*.json", "package.json", "pnpm-lock.yaml"]
     },
     "build:core": {
       "dependsOn": ["@neonpro/healthcare-core#build", "@neonpro/utils#build", "@neonpro/security#build", "@neonpro/database#build", "@neonpro/ai-services#build", "@neonpro/ui#build"],
@@ -33,21 +33,6 @@
       "cache": true,
       "persistent": false
     },
-    "lint:oxlint": {
-      "outputs": [],
-      "cache": true,
-      "persistent": false
-    },
-    "format": {
-      "outputs": [],
-      "cache": true,
-      "persistent": false
-    },
-    "format:dprint": {
-      "outputs": [],
-      "cache": true,
-      "persistent": false
-    },
     "type-check": {
       "dependsOn": ["^build"],
       "outputs": [],
@@ -57,26 +42,9 @@
     "clean": {
       "cache": false,
       "outputs": []
-    },
-    "build:analyze": {
-      "dependsOn": ["^build"],
-      "outputs": ["*.stats.json", "*.stats.html", "bundle-analysis*.html"],
-      "cache": true,
-      "persistent": false
-    },
-    "build:production": {
-      "dependsOn": ["^build"],
-      "outputs": ["dist/**", ".next/**", "!.next/cache/**", "*.stats.json", "*.stats.html", "**/.tsbuildinfo/**"],
-      "cache": true,
-      "persistent": false,
-      "env": ["NODE_ENV=production", "CI=1"],
-      "inputs": ["tsconfig*.json", "tsconfig.production.json", "package.json", "bun.lockb"]
-    },
-    "build:copilot": {
-      "dependsOn": ["^build"],
-      "outputs": ["dist/**", ".next/**"],
-      "cache": true,
-      "persistent": false
     }
+  },
+  "remoteCache": {
+    "enabled": false
   }
 }

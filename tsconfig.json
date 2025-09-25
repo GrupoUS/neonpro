@@ -34,8 +34,7 @@
       "@neonpro/config/*": ["./packages/config/src/*"],
       "@neonpro/database": ["./packages/database/src"],
       "@neonpro/database/*": ["./packages/database/src/*"],
-      "@neonpro/business-services": ["./packages/business-services/src"],
-      "@neonpro/business-services/*": ["./packages/business-services/src/*"],
+      
       "@neonpro/integrations": ["./packages/integrations/src"],
       "@neonpro/integrations/*": ["./packages/integrations/src/*"],
       "@neonpro/workflows": ["./packages/workflows/src"],

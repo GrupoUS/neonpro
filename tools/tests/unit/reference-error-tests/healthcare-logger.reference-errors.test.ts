@@ -7,7 +7,7 @@
  * RED PHASE: These tests MUST fail initially with "variable is not defined" errors
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { HealthcareLogger } from '../../../../apps/api/agents/ag-ui-rag-agent/src/logging/healthcare-logger'
 
 describe('HealthcareLogger ReferenceError Tests - RED PHASE', () => {

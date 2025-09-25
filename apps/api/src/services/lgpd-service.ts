@@ -13,13 +13,72 @@
  * - Comprehensive error handling with Portuguese error messages
  */
 
-import {
-  createDataSubjectRequest,
-  createLGPDConsent,
-  DataSubjectRequest,
-  LegalBasis,
-  LGPDConsent,
-} from '../../../../packages/shared/src/types/lgpd-consent'
+// Basic LGPD types to replace shared package imports
+export interface LGPDConsent {
+  id: string
+  userId: string
+  purpose: string
+  legalBasis: LegalBasis
+  status: ConsentStatus
+  grantedAt: Date
+  revokedAt?: Date
+  expirationDate?: Date
+}
+
+export interface DataSubjectRequest {
+  id: string
+  userId: string
+  type: RequestType
+  description: string
+  status: RequestStatus
+  createdAt: Date
+  resolvedAt?: Date
+}
+
+export enum LegalBasis {
+  CONSENT = 'consent',
+  CONTRACT = 'contract',
+  LEGAL_OBLIGATION = 'legal_obligation',
+  VITAL_INTEREST = 'vital_interest',
+  PUBLIC_INTEREST = 'public_interest',
+  LEGITIMATE_INTEREST = 'legitimate_interest'
+}
+
+export enum RequestType {
+  ACCESS = 'access',
+  PORTABILITY = 'portability',
+  DELETION = 'deletion',
+  RECTIFICATION = 'rectification',
+  OBJECTION = 'objection'
+}
+
+export enum RequestStatus {
+  PENDING = 'pending',
+  IN_PROGRESS = 'in_progress',
+  COMPLETED = 'completed',
+  REJECTED = 'rejected'
+}
+
+export const createLGPDConsent = (data: Partial<LGPDConsent>): LGPDConsent => ({
+  id: Math.random().toString(36).substr(2, 9),
+  userId: data.userId || '',
+  purpose: data.purpose || '',
+  legalBasis: data.legalBasis || LegalBasis.CONSENT,
+  status: data.status || ConsentStatus.PENDING,
+  grantedAt: new Date(),
+  revokedAt: data.revokedAt,
+  expirationDate: data.expirationDate
+})
+
+export const createDataSubjectRequest = (data: Partial<DataSubjectRequest>): DataSubjectRequest => ({
+  id: Math.random().toString(36).substr(2, 9),
+  userId: data.userId || '',
+  type: data.type || RequestType.ACCESS,
+  description: data.description || '',
+  status: data.status || RequestStatus.PENDING,
+  createdAt: new Date(),
+  resolvedAt: data.resolvedAt
+})
 
 // Define missing enums locally
 export enum ConsentStatus {

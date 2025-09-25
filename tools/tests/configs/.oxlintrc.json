@@ -1,0 +1,655 @@
+{
+  "$schema": "https://raw.githubusercontent.com/oxc-project/oxc/main/npm/oxlint/configuration_schema.json",
+  "categories": {
+    "correctness": "warn",
+    "suspicious": "warn",
+    "perf": "warn",
+    "style": "off",
+    "pedantic": "off",
+    "nursery": "off",
+    "restriction": "off"
+  },
+  "ignore": [
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/build/**",
+    "**/.next/**",
+    "**/.turbo/**",
+    "**/coverage/**",
+    "**/playwright-report/**",
+    "**/test-results/**",
+    "**/.vercel/**",
+    "**/.git/**",
+    "**/.trunk/**",
+    "**/.claude/**",
+    "**/.github/**",
+    "**/.vscode/**",
+    "**/.idea/**",
+    "**/.trae/**",
+    "**/.ruler/**",
+    "**/archon/**",
+    "**/serena/**",
+    "**/temp-*/**",
+    "**/tmp.*/**",
+    "**/.tmp/**",
+    "**/archives/**",
+    "**/backups/**",
+    "**/deprecated/**",
+    "**/legacy/**",
+    "**/supabase/migrations/**",
+    "**/supabase/types/**",
+    "**/*.generated.*",
+    "**/*.d.ts",
+    "tools/*/reports/**",
+    "tools/frontend/reports/**",
+    // Ignore compiled JS artifacts inside source trees to reduce noise
+    "packages/utils/src/**/*.js",
+    "packages/ai/src/**/*.js",
+    "packages/monitoring/src/**/*.js"
+  ],
+  "env": {
+    "browser": true,
+    "node": true,
+    "es2024": true,
+    "vitest": true
+  },
+  "globals": {
+    // Healthcare/Medical specific globals
+    "HL7": "readonly",
+    "FHIR": "readonly",
+
+    // Modern web globals
+    "globalThis": "readonly",
+    "structuredClone": "readonly",
+
+    // Testing globals
+    "describe": "readonly",
+    "it": "readonly",
+    "test": "readonly",
+    "expect": "readonly",
+    "beforeEach": "readonly",
+    "afterEach": "readonly",
+    "beforeAll": "readonly",
+    "afterAll": "readonly",
+    "vi": "readonly"
+  },
+  "settings": {
+    "react": {
+      "version": "detect",
+      "linkComponents": [{ "name": "Link", "linkAttribute": ["href", "to"] }],
+      "formComponents": [
+        { "name": "Form", "formAttribute": ["action", "endpoint"] }
+      ]
+    },
+    "jsx-a11y": {
+      "components": {
+        "Link": "a",
+        "Button": "button"
+      }
+    }
+  },
+  "rules": {
+    // ===== RELAXED RULES (Healthcare Context) =====
+    "eqeqeq": ["error", "smart"],
+    "curly": ["error", "multi-line"],
+    "react/no-unstable-nested-components": "warn",
+    "react/no-unused-prop-types": "warn",
+    "sort-keys": "off", // Allow flexible object key ordering
+    "no-magic-numbers": "off", // Allow numeric constants in healthcare context
+    "id-length": "off", // Allow short variable names (c, i, id, etc.)
+    "no-ternary": "off", // Allow ternary operators for readability patterns
+    "sort-imports": "off", // Allow flexible import ordering
+    "complexity": "off", // Allow complex functions for healthcare logic
+    "max-depth": "off", // Allow nested logic for medical validations
+    "max-lines-per-function": "off", // Allow longer functions for healthcare workflows
+    "max-params": "off", // Allow multiple parameters for medical functions
+    "max-statements": "off", // Allow complex healthcare procedures
+    "no-await-in-loop": "off", // Healthcare may require sequential processing for safety
+    "eslint/no-await-in-loop": "off", // Same as above for eslint plugin
+    "max-lines": "off", // Allow longer files for healthcare modules
+    "no-nested-ternary": "off", // Allow nested ternary for conditional logic
+    "unicorn/no-nested-ternary": "off", // Same as above for unicorn plugin
+    "new-cap": "off", // Allow font constructors like Inter(), JetBrains_Mono()
+    "no-new": "off", // Allow new operators for specific patterns
+    "import/no-unassigned-import": "off", // Allow CSS imports and side-effect imports
+    "unicorn/prefer-global-this": "off", // Allow window, self, global in appropriate contextsng
+    "import/order": "off", // Allow flexible import ordering
+    "import/extensions": "off", // Allow imports without extensions
+    "unicorn/consistent-function-scoping": "off", // Allow functions inside components
+    "no-extraneous-class": "off", // Allow static class patterns for services
+    "typescript/no-extraneous-class": "off", // Same as above for typescript
+    "no-array-index-key": "off", // Allow array indices as keys for simple cases
+    "react/no-array-index-key": "off", // Same as above for React
+
+    // ===== CORRECTNESS RULES (Healthcare Critical) =====
+    "no-debugger": "error",
+    "no-console": "off",
+    "no-alert": "error",
+    "no-eval": "error",
+    "no-implied-eval": "error",
+    "no-new-func": "error",
+
+    // ===== TYPESCRIPT EXCELLENCE =====
+    "typescript/consistent-type-imports": "warn",
+    "typescript/consistent-type-exports": "warn",
+    "typescript/no-explicit-any": "warn",
+    "typescript/no-unused-vars": [
+      "warn",
+      {
+        "argsIgnorePattern": "^_|^req|^res|^next|^error|^context|^c$",
+        "varsIgnorePattern": "^_|^React$|^Component$"
+      }
+    ],
+    "typescript/array-type": ["error", { "default": "array" }],
+    "typescript/consistent-type-definitions": ["error", "interface"],
+    "typescript/no-non-null-assertion": "warn",
+    "typescript/prefer-as-const": "error",
+    "typescript/prefer-ts-expect-error": "error",
+    "typescript/ban-ts-comment": [
+      "error",
+      {
+        "ts-expect-error": "allow-with-description",
+        "ts-ignore": false,
+        "ts-nocheck": false,
+        "ts-check": false
+      }
+    ],
+    "typescript/no-unnecessary-type-assertion": "error",
+    "typescript/no-useless-empty-export": "error",
+
+    // Disable base rule in favor of TS variant
+    "no-unused-vars": "off",
+
+    // ===== IMPORT/EXPORT EXCELLENCE =====
+    "import/first": "warn",
+    "import/no-duplicates": "error",
+    "import/no-self-import": "error",
+    "import/no-cycle": "warn",
+    "import/no-useless-path-segments": "error",
+    "import/consistent-type-specifier-style": ["error", "prefer-top-level"],
+
+    // ===== NOISE REDUCTION (Global defaults; stricter per overrides) =====
+
+    "jsx-a11y/anchor-is-valid": "warn",
+    "unicorn/no-empty-file": "warn",
+    "unicorn/no-thenable": "warn",
+    "no-useless-rename": "warn",
+    "no-array-constructor": "warn",
+    "unicorn/no-new-array": "warn",
+
+    // ===== REACT EXCELLENCE =====
+    "react/jsx-uses-react": "off", // React 17+ doesn't need React import
+    "react/react-in-jsx-scope": "off",
+    "react/jsx-key": "error",
+    "react/jsx-no-duplicate-props": "error",
+    "react/jsx-no-undef": "error",
+    "react/no-children-prop": "error",
+    "react/no-danger-with-children": "error",
+    "react/no-direct-mutation-state": "error",
+    "react/no-unescaped-entities": "warn",
+    "react/self-closing-comp": ["warn", { "component": true, "html": true }],
+    "react/jsx-boolean-value": ["warn", "never"],
+    "react/jsx-curly-brace-presence": [
+      "warn",
+      { "props": "never", "children": "never" }
+    ],
+    "react/jsx-fragments": ["warn", "syntax"],
+
+    // React Hooks
+    "react/exhaustive-deps": "warn",
+
+    // ===== ACCESSIBILITY (WCAG 2.1 AA+) =====
+    "jsx-a11y/alt-text": "error",
+    "jsx-a11y/aria-props": "error",
+    "jsx-a11y/aria-role": "error",
+    "jsx-a11y/aria-unsupported-elements": "error",
+    "jsx-a11y/autocomplete-valid": "error",
+    "jsx-a11y/click-events-have-key-events": "warn",
+    "jsx-a11y/heading-has-content": "error",
+    "jsx-a11y/html-has-lang": "error",
+    "jsx-a11y/iframe-has-title": "error",
+    "jsx-a11y/img-redundant-alt": "error",
+    "jsx-a11y/label-has-associated-control": "warn",
+    "jsx-a11y/media-has-caption": "error",
+    "jsx-a11y/mouse-events-have-key-events": "error",
+    "jsx-a11y/no-access-key": "error",
+    "jsx-a11y/no-autofocus": "error",
+    "jsx-a11y/no-distracting-elements": "error",
+    "jsx-a11y/role-has-required-aria-props": "error",
+    "jsx-a11y/role-supports-aria-props": "error",
+    "jsx-a11y/scope": "error",
+    "jsx-a11y/tabindex-no-positive": "error",
+    "jsx-a11y/prefer-tag-over-role": "warn",
+
+    // ===== PERFORMANCE OPTIMIZATION =====
+    "no-accumulating-spread": "warn",
+    "no-delete": "warn",
+    "react/jsx-no-jsx-as-prop": "warn",
+    "react/jsx-no-new-array-as-prop": "warn",
+    "react/jsx-no-new-function-as-prop": "warn",
+    "react/jsx-no-new-object-as-prop": "warn",
+    "unicorn/prefer-array-find": "off", // Allow filter patterns
+    "unicorn/prefer-array-flat-map": "warn",
+    "unicorn/prefer-set-has": "warn",
+
+    // ===== SECURITY & HEALTHCARE COMPLIANCE =====
+    "no-script-url": "error",
+    "react/jsx-no-script-url": "error",
+    "react/jsx-no-target-blank": "error",
+    "unicorn/no-document-cookie": "warn", // LGPD/GDPR compliance (warn globally; errors in security/compliance overrides)
+
+    // ===== MODERN JAVASCRIPT/TYPESCRIPT =====
+    "prefer-const": "warn",
+    "prefer-template": "warn",
+    "prefer-spread": "warn",
+    "prefer-rest-params": "warn",
+    "no-sparse-arrays": "warn",
+    "prefer-destructuring": [
+      "warn",
+      {
+        "array": true,
+        "object": true
+      },
+      {
+        "enforceForRenamedProperties": false
+      }
+    ],
+    "no-var": "error",
+    "object-shorthand": "warn",
+    "prefer-arrow-callback": "warn",
+
+    // ===== UNICORN BEST PRACTICES =====
+    "unicorn/no-useless-length-check": "warn",
+    "unicorn/prefer-node-protocol": "warn",
+    "unicorn/prefer-module": "warn",
+    "unicorn/prefer-string-starts-ends-with": "error",
+    "unicorn/prefer-string-trim-start-end": "error",
+    "unicorn/prefer-string-slice": "warn",
+    "unicorn/prefer-regexp-test": "warn",
+    "unicorn/prefer-math-trunc": "warn",
+    "unicorn/prefer-modern-dom-apis": "off",
+    "unicorn/prefer-query-selector": "off",
+    "unicorn/prefer-dom-node-text-content": "warn",
+    "unicorn/prefer-dom-node-append": "warn",
+    "unicorn/prefer-dom-node-remove": "off",
+    "unicorn/prefer-add-event-listener": "warn",
+    "unicorn/prefer-optional-catch-binding": "off",
+    "unicorn/throw-new-error": "error",
+    "unicorn/error-message": "error",
+    "unicorn/no-null": "off",
+    "unicorn/no-useless-undefined": "warn",
+    "unicorn/no-zero-fractions": "error",
+    "unicorn/number-literal-case": "error",
+    "unicorn/numeric-separators-style": "error",
+
+    // ===== SELECTIVE RESTRICTION RULES (Healthcare Critical) =====
+    "no-void": "warn",
+    "typescript/no-var-requires": "warn",
+    "typescript/no-require-imports": "warn"
+    // ===== JSDOC (Documentation Quality) - not using external jsdoc plugin in oxlint binary mode =====
+  },
+  "ignorePatterns": [
+    // Build and dependency directories
+    "**/node_modules/**",
+    "**/.next/**",
+    "**/.turbo/**",
+    "**/dist/**",
+    "**/build/**",
+    "**/coverage/**",
+    "**/out/**",
+    "**/logs/**",
+    "**/.cache/**",
+    "**/.tmp/**",
+    "**/tmp.*/**",
+    "**/temp-*/**",
+
+    // IDE and development tool configurations
+    "**/.github/**",
+    "**/.claude/**",
+    "**/.vscode/**",
+    "**/.idea/**",
+    "**/.ruler/**",
+
+    // System and temporary files
+    "**/*.log",
+    "**/.tmp.*",
+    "**/.git/**",
+    "**/.DS_Store",
+    "**/Thumbs.db",
+    "**/nul",
+    "**/$null",
+    "**/~/**",
+
+    // Legacy and archive directories
+    "**/archon/original_archon/**",
+    "**/serena/test/**",
+    "**/temp-broken-files/**",
+    "**/archives/**",
+    "**/backups/**",
+    "**/deprecated/**",
+    "**/legacy/**",
+    "**/old/**",
+    "**/unused/**",
+
+    // Infrastructure and configuration
+    "**/infrastructure/scripts/**",
+    "**/supabase/migrations/**",
+    "**/.vscode/settings.json",
+    "**/.claude/settings.*.json",
+
+    // Configuration files
+    "**/sentry.*.config.*",
+    "**/next.config.*",
+    "**/turbo.json",
+    "**/trigger.config.*",
+    "**/instrumentation*.ts",
+    "**/vitest.setup.*",
+    "**/playwright.config.*",
+    "**/vitest.config.*",
+    "**/eslint.config.*",
+    "**/tailwind.config.*",
+    "**/postcss.config.*",
+    "**/vite.config.*",
+    "**/rollup.config.*",
+    "**/webpack.config.*",
+    "**/babel.config.*",
+    "**/jest.config.*",
+
+    // Lock files and type definitions
+    "**/pnpm-lock.yaml",
+    "**/package-lock.json",
+    "**/yarn.lock",
+    "**/tsconfig.tsbuildinfo",
+    "**/*.d.ts",
+
+    // Environment and security
+    "**/.env*",
+
+    // Test and report outputs
+    "**/playwright-report/**",
+    "**/test-results/**",
+    "**/performance-report.json",
+    "**/load-test-report.json",
+
+    // Documentation (specific subdirectories)
+    "**/docs/api/**",
+    "**/docs/deployment/**",
+    "**/docs/qa/**",
+    "**/docs/realtime/**",
+    "**/docs/shards/**",
+
+    // Project specific reports
+    "**/MIGRATION_LOG.md",
+    "**/CI-CD-OPTIMIZATION-REPORT.md",
+    "**/DEPLOYMENT-STATUS-REPORT.md",
+    "**/DEVOPS-FIXES-DOCUMENTATION.md",
+    "**/PRODUCTION-DEPLOYMENT-REPORT.md",
+    "**/TURBOREPO-ANALYSIS-REPORT.md",
+    "**/WORKFLOW-EXECUTION-REPORT.md",
+
+    // Test report artifacts and vendors
+    "tools/*/reports/**",
+    "tools/frontend/reports/**"
+  ],
+  "overrides": [
+    {
+      "files": ["**/*.{ts,tsx}"],
+
+      "rules": {
+        "typescript/no-explicit-any": "warn",
+        "typescript/consistent-type-imports": "warn",
+        "typescript/no-unused-vars": ["warn", { "argsIgnorePattern": "^_" }],
+        "typescript/prefer-as-const": "error",
+        "typescript/no-non-null-assertion": "warn",
+        "typescript/ban-ts-comment": [
+          "error",
+          {
+            "ts-expect-error": "allow-with-description"
+          }
+        ]
+      }
+    },
+    {
+      "files": ["**/*.{jsx,tsx}"],
+
+      "env": {
+        "browser": true
+      },
+      "rules": {
+        "react/jsx-uses-react": "off",
+        "react/react-in-jsx-scope": "off",
+        "react/jsx-key": "error",
+        "react/no-unescaped-entities": "warn",
+        "jsx-a11y/alt-text": "error",
+        "jsx-a11y/aria-props": "error",
+        "jsx-a11y/aria-role": "error"
+      }
+    },
+    {
+      "files": [
+        "**/test/**",
+        "**/*.test.*",
+        "**/*.spec.*",
+        "**/__tests__/**",
+        "tools/frontend/src/**/*.test.*",
+        "tools/backend/src/**/*.test.*",
+        "tools/database/src/**/*.test.*",
+        "tools/quality/src/**/*.test.*",
+        "tools/shared/src/**/*.test.*"
+      ],
+
+      "globals": {
+        "vi": "readonly",
+        "vitest": "readonly",
+        "mock": "readonly",
+        "spy": "readonly"
+      },
+      "rules": {
+        // Relax rules for tests
+        "no-console": "off",
+        "typescript/no-explicit-any": "off", // Allow any in test mocks
+        "typescript/no-non-null-assertion": "off",
+        "typescript/no-unsafe-assignment": "off",
+        "typescript/no-unsafe-member-access": "off",
+        "typescript/no-unsafe-call": "off",
+        "import/no-extraneous-dependencies": "off",
+        "no-magic-numbers": "off", // Allow test data constants
+        "max-lines-per-function": "off", // Allow long test functions
+        "max-statements": "off", // Allow complex test scenarios
+        "complexity": "off", // Allow complex test logic
+        "no-duplicate-string": "off", // Allow repeated test strings
+        "unicorn/consistent-function-scoping": "off", // Allow helper functions in tests
+        "unicorn/no-useless-undefined": "off" // Allow explicit undefined in tests
+        // Vitest rules removed to avoid external plugin requirement
+      }
+    },
+    {
+      "files": [
+        "tools/frontend/src/e2e/**",
+        "**/e2e/**",
+        "**/*.e2e.*",
+        "**/playwright/**"
+      ],
+
+      "env": {
+        "browser": true,
+        "node": true
+      },
+      "globals": {
+        "page": "readonly",
+        "browser": "readonly",
+        "context": "readonly",
+        "playwright": "readonly",
+        "test": "readonly",
+        "expect": "readonly"
+      },
+      "rules": {
+        // Very relaxed rules for E2E tests
+        "no-console": "off",
+        "typescript/no-explicit-any": "off",
+        "typescript/no-non-null-assertion": "off",
+        "typescript/no-unsafe-assignment": "off",
+        "typescript/no-unsafe-member-access": "off",
+        "typescript/no-unsafe-call": "off",
+        "import/no-extraneous-dependencies": "off",
+        "no-magic-numbers": "off",
+        "max-lines-per-function": "off",
+        "max-statements": "off",
+        "complexity": "off",
+        "max-depth": "off",
+        "max-params": "off",
+        "no-duplicate-string": "off",
+        "unicorn/consistent-function-scoping": "off",
+        "unicorn/no-useless-undefined": "off",
+        "unicorn/prefer-query-selector": "off", // Allow Playwright locators
+        "unicorn/prefer-dom-node-text-content": "off", // Allow Playwright text methods
+        "no-await-in-loop": "off", // E2E tests often need sequential operations
+        "eslint/no-await-in-loop": "off",
+        "no-empty-pattern": "warn",
+        "unicorn/no-document-cookie": "off",
+
+        "no-empty-function": "off", // Allow empty test placeholders
+        "class-methods-use-this": "off", // Allow Page Object methods without this
+        "typescript/class-methods-use-this": "off"
+      }
+    },
+    {
+      "files": [
+        "**/integration/**",
+        "**/*.integration.*",
+        "**/api/**/*.test.*"
+      ],
+
+      "env": {
+        "node": true
+      },
+      "rules": {
+        // Moderate relaxation for integration tests
+        "no-console": "off",
+        "typescript/no-explicit-any": "off",
+        "typescript/no-non-null-assertion": "off",
+        "import/no-extraneous-dependencies": "off",
+        "no-magic-numbers": "off",
+        "max-lines-per-function": "off",
+        "complexity": "off",
+        "no-await-in-loop": "off", // Integration tests may need sequential API calls
+        "eslint/no-await-in-loop": "off",
+
+        "unicorn/consistent-function-scoping": "off"
+      }
+    },
+    {
+      "files": [
+        "scripts/**/*.js",
+        "tools/**/*.js",
+        "infrastructure/**/*.js",
+        "packages/**/scripts/**/*.js"
+      ],
+      "env": {
+        "node": true
+      },
+      "rules": {
+        "no-console": "off",
+        "unicorn/prefer-module": "off", // Allow CommonJS in scripts
+        "import/no-extraneous-dependencies": "off",
+        "typescript/no-require-imports": "off",
+        "typescript/no-var-requires": "off"
+      }
+    },
+    {
+      "files": ["**/pages/**", "**/app/**"],
+
+      "rules": {
+        // Next-specific rules removed to avoid external plugin requirement
+      }
+    },
+    {
+      "files": ["packages/brazilian-healthcare-ui/**"],
+      "rules": {
+        // Extra strict rules for healthcare UI components
+        "jsx-a11y/alt-text": "error",
+        "jsx-a11y/aria-props": "error",
+        "jsx-a11y/aria-role": "error",
+        "jsx-a11y/autocomplete-valid": "error",
+        "jsx-a11y/click-events-have-key-events": "error",
+        "jsx-a11y/label-has-associated-control": "error",
+        "jsx-a11y/role-has-required-aria-props": "error",
+        "jsx-a11y/role-supports-aria-props": "error",
+        "jsx-a11y/tabindex-no-positive": "error",
+        "jsx-a11y/prefer-tag-over-role": "warn",
+        "typescript/no-explicit-any": "error",
+        "no-console": "warn" // Relax for MVP to avoid failing builds; still discouraged
+      }
+    },
+    {
+      "files": [
+        "packages/compliance/**",
+        "packages/auth/**",
+        "packages/security/**"
+      ],
+      "rules": {
+        // Extra strict rules for security/compliance packages (relax console to warn for MVP)
+        "typescript/no-explicit-any": "warn",
+        "typescript/no-non-null-assertion": "error",
+        "no-console": "warn",
+        "no-debugger": "error",
+        "no-alert": "error",
+        "no-eval": "error",
+        "no-void": "error",
+        "unicorn/no-document-cookie": "error"
+      }
+    },
+    {
+      "files": ["apps/web/components/examples/**/*"],
+      "rules": {
+        "no-alert": "warn"
+      }
+    }
+  ],
+  "performance": {
+    "maxFileSize": "1MB",
+    "maxWorkers": 2,
+    "memoryLimit": "512MB",
+    "cacheEnabled": true,
+    "incrementalMode": true
+  },
+  "includes": [
+    "apps/**/*.{ts,tsx,js,jsx}",
+    "packages/**/*.{ts,tsx,js,jsx}",
+    "scripts/**/*.{ts,js}"
+  ],
+  "excludes": [
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/build/**",
+    "**/.next/**",
+    "**/.turbo/**",
+    "**/coverage/**",
+    "**/playwright-report/**",
+    "**/test-results/**",
+    "**/.vercel/**",
+    "**/.git/**",
+    "**/.trunk/**",
+    "**/.claude/**",
+    "**/.github/**",
+    "**/.vscode/**",
+    "**/.idea/**",
+    "**/.trae/**",
+    "**/.ruler/**",
+    "**/archon/**",
+    "**/serena/**",
+    "**/temp-*/**",
+    "**/tmp.*/**",
+    "**/.tmp/**",
+    "**/archives/**",
+    "**/backups/**",
+    "**/deprecated/**",
+    "**/legacy/**",
+    "**/supabase/migrations/**",
+    "**/supabase/types/**",
+    "**/*.generated.*",
+    "**/*.d.ts",
+    "tools/*/reports/**",
+    "tools/frontend/reports/**"
+  ]
+}

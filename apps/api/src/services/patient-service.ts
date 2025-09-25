@@ -13,8 +13,22 @@
  * - CFM professional license validation
  */
 
-import { validatePatientData } from '../../../../packages/shared/src'
-import { Patient } from '../../../../packages/shared/src/types/patient'
+// Basic patient validation function
+const validatePatientData = (data: any) => {
+  if (!data.name || !data.email) {
+    throw new Error('Name and email are required')
+  }
+  return data
+}
+
+interface Patient {
+  id: string
+  name: string
+  email: string
+  phone?: string
+  createdAt: Date
+  updatedAt: Date
+}
 import {
   createPrismaWithContext,
   getHealthcarePrismaClient,

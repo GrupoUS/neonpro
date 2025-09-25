@@ -1,4 +1,4 @@
-import { MultiProfessionalCoordinationService } from '@neonpro/business-services'
+import { MultiProfessionalCoordinationService } from '@neonpro/healthcare-core'
 import { z } from 'zod'
 import { protectedProcedure, router } from '../trpc'
 

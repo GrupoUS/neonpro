@@ -331,10 +331,10 @@ export class ConversationAPI {
   }
 
   private async handleSearchConversations(
-    _payload: {
-      _userId: string
+    payload: {
+      userId: string
       clinicId: string
-      _query: string
+      query: string
       filters?: {
         patientId?: string
         dateFrom?: string
@@ -346,7 +346,7 @@ export class ConversationAPI {
   ): Promise<ConversationAPIResponse> {
     try {
       // Validate required fields
-      if (!payload.userId || !payload.clinicId || !payload._query) {
+      if (!payload.userId || !payload.clinicId || !payload.query) {
         throw new Error('Missing required fields: userId, clinicId, query')
       }
 
@@ -370,14 +370,14 @@ export class ConversationAPI {
         action: 'api_search_conversations',
         resource: 'conversation_api',
         requestId,
-        _query: payload.query,
+        query: payload.query,
         resultCount: conversations.length,
         success: true,
       })
 
       return {
         type: 'conversation_history',
-        _payload: { conversations, total: conversations.length },
+        payload: { conversations, total: conversations.length },
         requestId,
         success: true,
       }
@@ -396,7 +396,7 @@ export class ConversationAPI {
         ws.send(
           JSON.stringify({
             type: 'realtime_update',
-            _payload: update,
+            payload: update,
             timestamp: new Date().toISOString(),
           }),
         )
@@ -413,7 +413,7 @@ export class ConversationAPI {
   // Helper method to validate session from request payload
   private async validateSession(
     sessionId: string,
-    _userId: string,
+    userId: string,
   ): Promise<boolean> {
     try {
       const session = await this.sessionManager.getSession(sessionId)
@@ -425,7 +425,7 @@ export class ConversationAPI {
 
   // Helper method to check user permissions for conversation operations
   private async checkConversationPermissions(
-    _userId: string,
+    userId: string,
     clinicId: string,
     action: string,
   ): Promise<boolean> {

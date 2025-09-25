@@ -17,3 +17,17 @@ export * from './guards'
 
 // Core utilities
 export * from './core'
+
+// Healthcare Services
+export * from './services/patient-engagement'
+export * from './services/treatment-planning'
+export * from './services/inventory-management'
+export * from './services/financial-management'
+export * from './services/aesthetic-scheduling'
+export * from './services/compliance-management'
+export * from './services/multi-professional-coordination'
+export * from './services/ai-clinical-support'
+export * from './services/analytics'
+
+// Analytics Schemas
+export * from './schemas/analytics'

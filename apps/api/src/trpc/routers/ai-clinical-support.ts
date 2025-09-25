@@ -14,7 +14,7 @@
  * - CFM-compliant medical decision support
  */
 
-import { AIClinicalDecisionSupport } from '@neonpro/business-services'
+import { AIClinicalDecisionSupport } from '@neonpro/healthcare-core'
 import { AuditAction, AuditStatus, ResourceType, RiskLevel } from '@prisma/client'
 import { TRPCError } from '@trpc/server'
 import * as z from 'zod'

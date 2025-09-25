@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "ES2022",
-    "module": "ESNext",
+    "module": "Node16",
     "moduleResolution": "node16",
     "lib": ["ES2022"],
     "allowJs": true,
@@ -45,7 +45,7 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
-      // Core 12-package architecture paths
+      // Core 6-package architecture paths
       "@neonpro/database": ["./packages/database/src"],
       "@neonpro/database/*": ["./packages/database/src/*"],
       "@neonpro/ai-services": ["./packages/ai-services/src"],
@@ -58,12 +58,6 @@
       "@neonpro/ui/*": ["./packages/ui/src/*"],
       "@neonpro/utils": ["./packages/utils/src"],
       "@neonpro/utils/*": ["./packages/utils/src/*"],
-      "@neonpro/observability": ["./packages/observability/src"],
-      "@neonpro/observability/*": ["./packages/observability/src/*"],
-      "@neonpro/integrations": ["./packages/integrations/src"],
-      "@neonpro/integrations/*": ["./packages/integrations/src/*"],
-      "@neonpro/workflows": ["./packages/workflows/src"],
-      "@neonpro/workflows/*": ["./packages/workflows/src/*"],
       
       // Legacy package paths (for backward compatibility)
       "@neonpro/*": ["./packages/*/src"],
@@ -78,18 +72,13 @@
   },
   "exclude": ["node_modules", "dist", "build", "**/*.d.ts"],
   "references": [
-    // Core 12-package architecture
+    // Core 6-package architecture
     { "path": "./packages/database" },
     { "path": "./packages/ai-services" },
     { "path": "./packages/healthcare-core" },
     { "path": "./packages/security" },
     { "path": "./packages/ui" },
     { "path": "./packages/utils" },
-    { "path": "./packages/core-services" },
-    { "path": "./packages/observability" },
-    { "path": "./packages/integrations" },
-    { "path": "./packages/workflows" },
-    { "path": "./packages/monitoring" },
     
     // Applications
     { "path": "./apps/api" },

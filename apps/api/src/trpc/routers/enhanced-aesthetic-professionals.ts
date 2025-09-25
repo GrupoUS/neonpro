@@ -6,7 +6,7 @@
  */
 
 import { z } from 'zod'
-import { EnhancedAestheticProfessionalsService } from '../../services/enhanced-aesthetic-professionals-service'
+import { AestheticProfessionalsService } from '../../services/aesthetic-professionals-service'
 import { protectedProcedure, publicProcedure, router } from '../trpc'
 
 // Input schemas
@@ -51,7 +51,7 @@ const ProfessionalQueryInput = z.object({
 })
 
 // Initialize service
-const professionalsService = new EnhancedAestheticProfessionalsService()
+const professionalsService = new AestheticProfessionalsService()
 
 export const enhancedAestheticProfessionalsRouter = router({
   // Create new professional

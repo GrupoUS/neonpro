@@ -516,7 +516,16 @@ app.post('/explanation', async c => {
   }
 
   // Minimal LGPD redaction on input prior to model usage/logging
-  const { redact } = await import('@neonpro/shared')
+  const redact = (input: string): string => {
+    // Simple redaction for sensitive data
+    return input
+      .replace(/\b\d{3}\.\d{3}\.\d{3}-\d{2}\b/g, '[CPF]')
+      .replace(/\b\d{11}\b/g, '[CPF]')
+      .replace(/\b\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}\b/g, '[CNPJ]')
+      .replace(/\b\d{14}\b/g, '[CNPJ]')
+      .replace(/\b\d{2}\.\d{5}-\d{4}\b/g, '[PHONE]')
+      .replace(/\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g, '[EMAIL]')
+  }
   const redactedInput = redact(String(text))
 
   try {

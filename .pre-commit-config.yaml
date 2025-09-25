@@ -12,6 +12,13 @@ repos:
         files: \.(ts|tsx|js|jsx|json|md|toml)$
         pass_filenames: false
 
+      - id: oxlint-healthcare
+        name: Oxlint with healthcare compliance rules
+        entry: bunx oxlint --fix --config tools/tests/configs/.oxlintrc.json
+        language: system
+        files: \.(ts|tsx|js|jsx)$
+        exclude: ^(dist/|node_modules/|coverage/)
+
       - id: eslint-healthcare
         name: ESLint with healthcare compliance rules
         entry: bunx eslint --fix --config .config/eslint/.eslintrc.json

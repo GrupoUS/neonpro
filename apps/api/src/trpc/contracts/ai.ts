@@ -28,7 +28,7 @@ import { ConsentPurpose } from '../../services/lgpd-consent-service'
 import { protectedProcedure, router } from '../trpc'
 
 // Health analysis service
-import { HealthAnalysisService } from '@neonpro/business-services'
+import { HealthAnalysisService } from '@neonpro/healthcare-core'
 
 // AI service management functions
 import {

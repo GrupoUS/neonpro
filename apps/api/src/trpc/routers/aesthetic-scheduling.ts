@@ -18,7 +18,7 @@ import { AuditAction, AuditStatus, ResourceType, RiskLevel } from '@prisma/clien
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
 
-import { EnhancedAestheticSchedulingService } from '@neonpro/business-services'
+import { EnhancedAestheticSchedulingService } from '@neonpro/healthcare-core'
 
 // Initialize the aesthetic scheduling service
 const aestheticSchedulingService = new EnhancedAestheticSchedulingService()

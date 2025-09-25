@@ -43,8 +43,10 @@ export const retry = async <T>(
   throw lastError!
 }
 
-export const formatDate = (date: Date): string => 
-  date.toISOString().split('T')[0]
+export const formatDate = (date: Date | null | undefined): string => {
+  const d = date || new Date()
+  return d.toISOString().split('T')[0] || ''
+}
 
 export const generateId = (): string => 
   Math.random().toString(36).substring(2) + Date.now().toString(36)
