@@ -49,7 +49,7 @@ interface VerificationIssue {
 
 ```typescript
 interface ImportDependencyMap {
-  source_app: string; // apps/api, apps/web, apps/ai-agent, apps/tools
+  source_app: string; // apps/api, apps/web
   target_packages: PackageConnection[];
   missing_imports: MissingImport[];
   incorrect_imports: IncorrectImport[];

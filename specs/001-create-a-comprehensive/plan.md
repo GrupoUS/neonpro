@@ -68,11 +68,11 @@ specs/001-create-a-comprehensive/
 ### Target Analysis Structure (existing NeonPro)
 ```
 /home/vibecode/neonpro/
-├── apps/                # 4 applications to analyze
-│   ├── ai-agent/        # AI agent application
+├── apps/                # 2 applications to analyze
 │   ├── api/             # Backend API (tRPC + Prisma + Supabase)
-│   ├── tools/           # Development tools
 │   └── web/             # Frontend (TanStack Router + React 19)
+├── tools/               # Testing tools (moved from apps/)
+│   └── e2e-testing/     # End-to-end testing infrastructure
 ├── packages/            # 20+ packages to verify integration
 │   ├── types/           # TypeScript definitions
 │   ├── database/        # Prisma + Supabase

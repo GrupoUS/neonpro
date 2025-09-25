@@ -112,20 +112,6 @@ const APPLICATIONS = [
     type: 'web',
     port: 3000,
     hot: true
-  },
-  {
-    name: '@neonpro/ai-agent',
-    path: 'apps/ai-agent',
-    type: 'service',
-    port: 3002,
-    hot: true
-  },
-  {
-    name: '@neonpro/tools',
-    path: 'apps/tools',
-    type: 'tool',
-    port: 3003,
-    hot: false
   }
 ];
 

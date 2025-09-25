@@ -16,7 +16,7 @@ export interface ConversationAPIRequest {
     | 'get_details'
     | 'delete'
     | 'search'
-  _payload: any
+  payload: any
   requestId: string
 }
 
@@ -26,7 +26,7 @@ export interface ConversationAPIResponse {
     | 'conversation_history'
     | 'conversation_details'
     | 'error'
-  _payload: any
+  payload: any
   requestId: string
   success: boolean
   error?: string
@@ -51,7 +51,7 @@ export class ConversationAPI {
   }
 
   async handleRequest(
-    _request: ConversationAPIRequest,
+    request: ConversationAPIRequest,
     ws?: WebSocket,
   ): Promise<ConversationAPIResponse> {
     const { type, payload, requestId } = request
@@ -90,7 +90,7 @@ export class ConversationAPI {
 
       return {
         type: 'error',
-        _payload: null,
+        payload: null,
         requestId,
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error occurred',
@@ -99,7 +99,7 @@ export class ConversationAPI {
   }
 
   private async handleStartConversation(
-    _payload: ConversationRequest,
+    payload: ConversationRequest,
     requestId: string,
     ws?: WebSocket,
   ): Promise<ConversationAPIResponse> {
@@ -133,7 +133,7 @@ export class ConversationAPI {
 
       return {
         type: 'conversation_response',
-        _payload: response,
+        payload: response,
         requestId,
         success: true,
       }
@@ -145,11 +145,11 @@ export class ConversationAPI {
   }
 
   private async handleContinueConversation(
-    _payload: {
+    payload: {
       conversationId: string
-      _userId: string
+      userId: string
       message: string
-      _context?: any
+      context?: any
     },
     requestId: string,
     ws?: WebSocket,
@@ -189,7 +189,7 @@ export class ConversationAPI {
 
       return {
         type: 'conversation_response',
-        _payload: response,
+        payload: response,
         requestId,
         success: true,
       }
@@ -203,8 +203,8 @@ export class ConversationAPI {
   }
 
   private async handleGetHistory(
-    _payload: {
-      _userId: string
+    payload: {
+      userId: string
       clinicId: string
       patientId?: string
       limit?: number
@@ -231,7 +231,7 @@ export class ConversationAPI {
 
       return {
         type: 'conversation_history',
-        _payload: result,
+        payload: result,
         requestId,
         success: true,
       }
@@ -245,15 +245,15 @@ export class ConversationAPI {
   }
 
   private async handleGetDetails(
-    _payload: {
+    payload: {
       conversationId: string
-      _userId: string
+      userId: string
     },
     requestId: string,
   ): Promise<ConversationAPIResponse> {
     try {
       // Validate required fields
-      if (!payload.conversationId || !payload._userId) {
+      if (!payload.conversationId || !payload.userId) {
         throw new Error('Missing required fields: conversationId, userId')
       }
 
@@ -276,7 +276,7 @@ export class ConversationAPI {
 
       return {
         type: 'conversation_details',
-        _payload: conversation,
+        payload: conversation,
         requestId,
         success: true,
       }
@@ -290,21 +290,21 @@ export class ConversationAPI {
   }
 
   private async handleDeleteConversation(
-    _payload: {
+    payload: {
       conversationId: string
-      _userId: string
+      userId: string
     },
     requestId: string,
   ): Promise<ConversationAPIResponse> {
     try {
       // Validate required fields
-      if (!payload.conversationId || !payload._userId) {
+      if (!payload.conversationId || !payload.userId) {
         throw new Error('Missing required fields: conversationId, userId')
       }
 
       await this.conversationService.deleteConversation(
         payload.conversationId,
-        payload._userId,
+        payload.userId,
       )
 
       await this.logger.logDataAccess(payload.userId, 'unknown', {
@@ -317,7 +317,7 @@ export class ConversationAPI {
 
       return {
         type: 'conversation_details',
-        _payload: { deleted: true, conversationId: payload.conversationId },
+        payload: { deleted: true, conversationId: payload.conversationId },
         requestId,
         success: true,
       }

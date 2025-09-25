@@ -92,9 +92,7 @@
     { "path": "./packages/monitoring" },
     
     // Applications
-    { "path": "./apps/ai-agent" },
     { "path": "./apps/api" },
-    { "path": "./apps/tools" },
     { "path": "./apps/web" }
   ]
 }

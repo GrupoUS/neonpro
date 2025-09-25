@@ -38,9 +38,7 @@ const CORE_PACKAGES = [
 // Applications in build order
 const APPLICATIONS = [
   '@neonpro/api',
-  '@neonpro/web',
-  '@neonpro/ai-agent',
-  '@neonpro/tools'
+  '@neonpro/web'
 ];
 
 class BuildSystem {
