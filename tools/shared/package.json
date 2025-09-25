@@ -34,7 +34,7 @@
   "scripts": {
     "dev": "tsup --watch",
     "clean": "rm -rf dist",
-    "lint": "oxlint --fix src",
+    "lint": "bun run oxlint --fix src",
     "type-check": "tsc --noEmit"
   },
   "devDependencies": {
@@ -60,7 +60,7 @@
   ],
   "author": "NeonPro Team",
   "license": "MIT",
-  "type": "commonjs",
+  "type": "module",
   "bugs": {
     "url": "https://github.com/neonpro/neonpro/issues"
   },

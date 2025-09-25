@@ -92,7 +92,8 @@ export class ConversationService {
   ): Promise<ConversationResponse> {
     return await withErrorHandling(async () => {
       // Validate session and permissions
-      await this.validateRequestPermissions(request)
+      const validationResult = await this.validationService.validateConversationRequest(request)
+      ValidationService.throwIfInvalid(validationResult)
 
       // Check for existing active conversation
       const existingConversation = await this.findExistingConversation(request)
@@ -185,7 +186,14 @@ export class ConversationService {
       }
 
       // Validate permissions
-      await this.validateUserAccess(userId, conversation.clinicId)
+      const validationParams: ConversationValidationParams = {
+        conversationId,
+        userId,
+        clinicId: conversation.clinicId,
+        action: 'read',
+      }
+      const validationResult = await this.validationService.validateConversation(validationParams)
+      ValidationService.throwIfInvalid(validationResult)
 
       // Add user message
       await this.contextManager.addMessage(conversationId, userId, {
@@ -252,7 +260,13 @@ export class ConversationService {
     params: ConversationHistoryParams,
   ): Promise<{ conversations: ConversationContext[]; total: number }> {
     return await withErrorHandling(async () => {
-      await this.validateUserAccess(params.userId, params.clinicId)
+      const validationParams: ConversationValidationParams = {
+        userId: params.userId,
+        clinicId: params.clinicId,
+        action: 'read'
+      }
+      const validationResult = await this.validationService.validateConversation(validationParams)
+      ValidationService.throwIfInvalid(validationResult)
 
       const conversations = await this.contextManager.getUserConversations(
         params.userId,
@@ -309,7 +323,14 @@ export class ConversationService {
         return null
       }
 
-      await this.validateUserAccess(userId, conversation.clinicId)
+      const validationParams: ConversationValidationParams = {
+        conversationId,
+        userId,
+        clinicId: conversation.clinicId,
+        action: 'read'
+      }
+      const validationResult = await this.validationService.validateConversation(validationParams)
+      ValidationService.throwIfInvalid(validationResult)
 
       await this.logger.logDataAccess(userId, conversation.clinicId, {
         action: 'get_conversation_details',
@@ -336,7 +357,14 @@ export class ConversationService {
         throw new Error('Conversation not found')
       }
 
-      await this.validateUserAccess(userId, conversation.clinicId)
+      const validationParams: ConversationValidationParams = {
+        conversationId,
+        userId,
+        clinicId: conversation.clinicId,
+        action: 'delete'
+      }
+      const validationResult = await this.validationService.validateConversation(validationParams)
+      ValidationService.throwIfInvalid(validationResult)
 
       await this.contextManager.deleteConversation(conversationId, userId)
 
@@ -357,7 +385,13 @@ export class ConversationService {
     filters?: ConversationSearchFilters,
   ): Promise<ConversationContext[]> {
     return await withErrorHandling(async () => {
-      await this.validateUserAccess(userId, clinicId)
+      const validationParams: ConversationValidationParams = {
+        userId,
+        clinicId,
+        action: 'read'
+      }
+      const validationResult = await this.validationService.validateConversation(validationParams)
+      ValidationService.throwIfInvalid(validationResult)
 
       const conversations = await this.contextManager.getUserConversations(
         userId,
@@ -401,42 +435,7 @@ export class ConversationService {
     }, 'conversation_search_error', this.logger, ErrorContext.dataAccess(userId, clinicId, 'ai_conversation_contexts', 'search'))
   }
 
-  private async validateRequestPermissions(
-    request: ConversationRequest,
-  ): Promise<void> {
-    const hasAccess = await this.supabaseConnector.validateDataAccess({
-      userId: request.userId,
-      clinicId: request.clinicId,
-      action: 'read',
-      resource: 'ai_conversation_contexts',
-    })
-
-    if (!hasAccess) {
-      throw new Error('Insufficient permissions to start conversation')
-    }
-
-    // Validate session
-    const session = await this.sessionManager.getSession(request.sessionId)
-    if (!session || session.userId !== request.userId) {
-      throw new Error('Invalid session')
-    }
-  }
-
-  private async validateUserAccess(
-    userId: string,
-    clinicId: string,
-  ): Promise<void> {
-    const hasAccess = await this.supabaseConnector.validateDataAccess({
-      userId,
-      clinicId,
-      action: 'read',
-      resource: 'ai_conversation_contexts',
-    })
-
-    if (!hasAccess) {
-      throw new Error('Insufficient permissions to access conversations')
-    }
-  }
+  // Removed redundant validation methods - now using centralized ValidationService
 
   private async findExistingConversation(
     request: ConversationRequest,
