@@ -7,7 +7,7 @@
 
 import { z } from 'zod'
 
-// Temporary mock for startup - TODO: Replace with actual @neonpro/security auditLogger
+// Temporary mock for startup - TODO: Replace with actual auditLogger
 const auditLogger = {
   log: (..._args: any[]) => {},
   info: (..._args: any[]) => {},

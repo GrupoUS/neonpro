@@ -276,23 +276,23 @@ export class Logger {
 
   // Legacy synchronous methods for backward compatibility (deprecated)
   debugSync(message: string, _context?: Record<string, any>): void {
-    this.debug(message, _context).catch(console.error)
+    this.debug(message, _context).catch(async (console.error)
   }
 
   infoSync(message: string, context?: Record<string, any>): void {
-    this.info(message, context).catch(console.error)
+    this.info(message, context).catch(async (console.error)
   }
 
   warnSync(message: string, context?: Record<string, any>, error?: Error): void {
-    this.warn(message, context, error).catch(console.error)
+    this.warn(message, context, error).catch(async (console.error)
   }
 
   errorSync(message: string, context?: Record<string, any>, error?: Error): void {
-    this.error(message, context, error).catch(console.error)
+    this.error(message, context, error).catch(async (console.error)
   }
 
   fatalSync(message: string, context?: Record<string, any>, error?: Error): void {
-    this.fatal(message, context, error).catch(console.error)
+    this.fatal(message, context, error).catch(async (console.error)
   }
 
   // Specialized healthcare logging methods

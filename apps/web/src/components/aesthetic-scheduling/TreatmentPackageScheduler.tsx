@@ -11,7 +11,6 @@ import { Progress } from '@/components/ui/progress'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { trpc } from '@/lib/trpc'
 import {
-  type PackageProcedure,
   type TreatmentPackage,
   type TreatmentPackageResponse,
 } from '@/types/aesthetic-scheduling'

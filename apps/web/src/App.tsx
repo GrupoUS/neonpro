@@ -19,7 +19,7 @@ export function registerServiceWorker() {
 
     window.addEventListener('load', handleLoad) // Store for cleanup
     ;(window as any).__appCleanup = {
-      ...((window as any).__appCleanup || {}),
+      ...(window as any).__appCleanup,
       loadHandler: handleLoad,
     }
   }
@@ -47,7 +47,7 @@ export function setupPWAInstallHandlers() {
   window.addEventListener('beforeinstallprompt', handleBeforeInstall)
   window.addEventListener('appinstalled', handleAppInstalled) // Store for cleanup
   ;(window as any).__appCleanup = {
-    ...((window as any).__appCleanup || {}),
+    ...(window as any).__appCleanup,
     beforeInstallHandler: handleBeforeInstall,
     appInstalledHandler: handleAppInstalled,
   }
@@ -109,7 +109,7 @@ function App() {
     window.addEventListener('online', handleOnline)
     window.addEventListener('offline', handleOffline) // Store handlers for cleanup
     ;(window as any).__appCleanup = {
-      ...((window as any).__appCleanup || {}),
+      ...(window as any).__appCleanup,
       handleOnline,
       handleOffline,
     }

@@ -84,7 +84,7 @@ const TARGET_FILES = [
 ]
 
 function fixFile(filePath) {
-  console.log(`\n🔧 Fixing ${filePath}...`)
+  console.error(`\n🔧 Fixing ${filePath}...`)
 
   try {
     let content = fs.readFileSync(filePath, 'utf8')
@@ -97,7 +97,7 @@ function fixFile(filePath) {
       content = content.replace(fix.pattern, fix.replacement)
 
       if (beforeFix !== content) {
-        console.log(`  ✅ Applied: ${fix.description}`)
+        console.error(`  ✅ Applied: ${fix.description}`)
         changesMade = true
       }
     }
@@ -114,7 +114,7 @@ function fixFile(filePath) {
             content.slice(0, importEndPosition + 1) +
             importStatement
           }\n${content.slice(importEndPosition + 1)}`
-          console.log(`  ✅ Added missing import: ${module}`)
+          console.error(`  ✅ Added missing import: ${module}`)
           changesMade = true
         }
       }
@@ -123,10 +123,10 @@ function fixFile(filePath) {
     // Write back if changes were made
     if (changesMade) {
       fs.writeFileSync(filePath, content, 'utf8')
-      console.log(`  📝 File updated successfully`)
+      console.error(`  📝 File updated successfully`)
       return true
     } else {
-      console.log(`  ℹ️  No changes needed`)
+      console.error(`  ℹ️  No changes needed`)
       return false
     }
   } catch (error) {
@@ -136,15 +136,15 @@ function fixFile(filePath) {
 }
 
 function validateCompilation() {
-  console.log('\n🔍 Validating UI package compilation...')
+  console.error('\n🔍 Validating UI package compilation...')
 
   try {
     // Try to check if TypeScript compilation would work
     const packageJsonPath = path.join(UI_COMPONENTS_DIR, '..', 'package.json')
     const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'))
 
-    console.log(`  📦 Package: ${packageJson.name}`)
-    console.log(
+    console.error(`  📦 Package: ${packageJson.name}`)
+    console.error(
       `  📋 Build script: ${packageJson.scripts?.build || 'not found'}`,
     )
 
@@ -161,9 +161,9 @@ function validateCompilation() {
 
     filesChecked.forEach(({ file, exists, size }) => {
       if (exists) {
-        console.log(`  ✅ ${file} (${size} characters)`)
+        console.error(`  ✅ ${file} (${size} characters)`)
       } else {
-        console.log(`  ❌ ${file} - NOT FOUND`)
+        console.error(`  ❌ ${file} - NOT FOUND`)
       }
     })
 
@@ -175,8 +175,8 @@ function validateCompilation() {
 }
 
 function main() {
-  console.log('🚀 Starting UI Package Syntax Error Fixer')
-  console.log('===========================================')
+  console.error('🚀 Starting UI Package Syntax Error Fixer')
+  console.error('===========================================')
 
   let filesFixed = 0
   let totalFiles = 0
@@ -191,23 +191,23 @@ function main() {
         filesFixed++
       }
     } else {
-      console.log(`❌ File not found: ${fullPath}`)
+      console.error(`❌ File not found: ${fullPath}`)
     }
   }
 
-  console.log('\n📊 Summary:')
-  console.log(`   Files processed: ${totalFiles}`)
-  console.log(`   Files fixed: ${filesFixed}`)
-  console.log(`   Files unchanged: ${totalFiles - filesFixed}`)
+  console.error('\n📊 Summary:')
+  console.error(`   Files processed: ${totalFiles}`)
+  console.error(`   Files fixed: ${filesFixed}`)
+  console.error(`   Files unchanged: ${totalFiles - filesFixed}`)
 
   // Validate the fixes
   validateCompilation()
 
-  console.log('\n✨ UI syntax error fixing complete!')
-  console.log('\n🎯 Next steps:')
-  console.log('   1. Run the test suite to verify fixes')
-  console.log('   2. Check if UI package compiles successfully')
-  console.log('   3. Verify all UI components work as expected')
+  console.error('\n✨ UI syntax error fixing complete!')
+  console.error('\n🎯 Next steps:')
+  console.error('   1. Run the test suite to verify fixes')
+  console.error('   2. Check if UI package compiles successfully')
+  console.error('   3. Verify all UI components work as expected')
 }
 
 // Run the script

@@ -419,7 +419,7 @@ export class HTTPSServerManager {
         )
       }
 
-      Promise.all(stopPromises).then(() => {
+      Promise.all(stopPromises).then(async (() => {
         this.cleanupEventListeners()
         resolve()
       })

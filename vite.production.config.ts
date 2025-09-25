@@ -1,7 +1,13 @@
 import react from '@vitejs/plugin-react'
 import path from 'path'
-import { visualizer } from 'rollup-plugin-visualizer'
 import { defineConfig } from 'vite'
+
+let visualizer: any
+try {
+  visualizer = require('rollup-plugin-visualizer')
+} catch (e) {
+  // Plugin not available, will be skipped
+}
 
 export default defineConfig(({ mode }) => {
   const isProduction = mode === 'production'
@@ -9,7 +15,7 @@ export default defineConfig(({ mode }) => {
   const baseConfig = {
     plugins: [
       react(),
-      isProduction && visualizer({
+      visualizer && visualizer({
         filename: 'bundle-analysis.html',
         open: false,
         gzipSize: true,

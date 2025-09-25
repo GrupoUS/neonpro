@@ -10,7 +10,7 @@ import { createAdminClient } from '../clients/supabase'
 import { logger } from '../lib/logger'
 import { aiSecurityService } from './ai-security-service'
 
-// Mock audit logger for startup - TODO: Replace with actual @neonpro/security auditLogger
+// Mock audit logger for startup - TODO: Replace with actual auditLogger
 const auditLogger = {
   log: (..._args: any[]) => {},
   info: (..._args: any[]) => {},

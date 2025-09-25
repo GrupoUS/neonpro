@@ -252,7 +252,7 @@ app.put('/:id', requireAuth, dataProtection.clientView, async c => {
         complianceContext: 'LGPD',
         sensitivityLevel,
       })
-      .catch(err => {
+      .catch(async (err => {
         console.error('Audit logging failed:', err)
       })
 
@@ -265,7 +265,7 @@ app.put('/:id', requireAuth, dataProtection.clientView, async c => {
           reason: 'Patient consent update',
           updatedBy: userId,
         })
-        .catch(err => {
+        .catch(async (err => {
           console.error('Failed to update consent record:', err)
         })
     }
@@ -289,7 +289,7 @@ app.put('/:id', requireAuth, dataProtection.clientView, async c => {
           priority: 'medium',
           lgpdConsent: true,
         })
-        .catch(err => {
+        .catch(async (err => {
           console.error('Update notification failed:', err)
         })
     }

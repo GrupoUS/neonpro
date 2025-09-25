@@ -393,9 +393,9 @@ export class PredictiveAnalyticsService {
       await this.ensureInitialized()
 
       const insights: (PredictiveInsight | null)[] = await Promise.all([
-        this.predictNoShowRisk(request).catch(() => null),
-        this.predictRevenueForecast(request).catch(() => null),
-        this.predictPatientOutcome(request).catch(() => null),
+        this.predictNoShowRisk(request).catch(async (() => null),
+        this.predictRevenueForecast(request).catch(async (() => null),
+        this.predictPatientOutcome(request).catch(async (() => null),
       ])
 
       // Filter out null results and return valid insights

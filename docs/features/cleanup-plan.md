@@ -21,11 +21,12 @@ Status: Completed Option A, Phase 1; Phase 2–4 executed (apps/web scoped)
 ## Phase 2 — API/Validation Alignment (tRPC + Valibot)
 
 - Kept TRPCProvider as a no-op stub until backend router types stabilize.
-- Added minimal tRPC client shim that avoids importing router types:
-  - src/lib/trpcClient.ts
-  - Exposes `createTRPCClientShim()` and `trpcClient` with `query`/`mutation` no-ops.
+- Upgraded the minimal tRPC client shim to call the real API without importing router types:
+  - src/lib/trpcClient.ts now uses untyped `@trpc/client` + `httpBatchLink`
+  - Base URL: `${VITE_API_URL || window.origin}/trpc` (override with VITE_API_URL)
+  - Exposes `{ query(path, input), mutation(path, input) }` used by hooks (e.g., useSchedulingSubmission)
 - Zod → Valibot: only change where strictly necessary. Current web type-check did not require changes; defer schema migration to when specific schemas become active.
-- apps/web type-check: PASS after shim introduction.
+- apps/web type-check: PASS after wiring the shim.
 
 ## Phase 3 — Final QA (apps/web scoped)
 

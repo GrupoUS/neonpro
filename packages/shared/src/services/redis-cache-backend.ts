@@ -489,7 +489,7 @@ export class RedisCacheBackend implements CacheBackend {
       })
 
       // Connect to Redis
-      this.redis.connect().catch(error => {
+      this.redis.connect().catch(async (error => {
         logHealthcareError('redis-cache', error as Error, {
           method: 'initializeRedis',
           component: 'redis-cache',
@@ -523,7 +523,7 @@ export class RedisCacheBackend implements CacheBackend {
           maxRetries: this.maxRetries,
           event: 'connection_retry',
         })
-        this.redis.connect().catch(error => {
+        this.redis.connect().catch(async (error => {
           logHealthcareError('redis-cache', error as Error, {
             method: 'handleConnectionError',
             component: 'redis-cache',

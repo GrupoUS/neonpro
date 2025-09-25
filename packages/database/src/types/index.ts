@@ -1,5 +1,5 @@
 /**
- * Database types and interfaces for @neonpro/database package
+ * Database types and interfaces for package
  */
 
 export interface DatabasePatient {

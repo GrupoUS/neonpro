@@ -1,4 +1,4 @@
-// @neonpro/cli-helpers placeholder
+// placeholder
 // TODO: Implement CLI helpers
 
 export const placeholder = 'CLI helpers placeholder'

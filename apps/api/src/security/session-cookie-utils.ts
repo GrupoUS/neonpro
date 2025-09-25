@@ -208,7 +208,7 @@ export class SessionCookieUtils {
     const _data = encoder.encode(sessionId)
     const key = encoder.encode(secretKey)
 
-    return crypto.subtle.sign('HMAC', key, data).then(signature => {
+    return crypto.subtle.sign('HMAC', key, data).then(async (signature => {
       const signatureArray = new Uint8Array(signature)
       return Array.from(signatureArray, byte => byte.toString(16).padStart(2, '0')).join('')
     })

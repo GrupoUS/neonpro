@@ -584,7 +584,7 @@ export class WebRTCSignalingServer {
       const participant = room.participants.get(socket.id)
       if (participant) {
         // Handle graceful leave
-        this.handleLeaveSession(socket, sessionId).catch(error => {
+        this.handleLeaveSession(socket, sessionId).catch(async (error => {
           logHealthcareError('database', error, {
             method: 'handleDisconnect',
             sessionId,
@@ -740,7 +740,7 @@ export class WebRTCSignalingServer {
                 signaling: true,
               },
             })
-            .catch(error => {
+            .catch(async (error => {
               logHealthcareError('database', error, {
                 method: 'cleanupInactiveSessions',
                 sessionId,

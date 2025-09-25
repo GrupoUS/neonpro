@@ -148,7 +148,7 @@ global.simulateEmergencyScenario = async (
   const maskedOptions = maskSensitiveData(JSON.stringify(options))
 
   // Log emergency scenario without exposing sensitive data
-  console.log(
+  console.error(
     `[EMERGENCY SIMULATION] Scenario type: ${scenarioType}, Data: ${maskedOptions}`,
   )
 }

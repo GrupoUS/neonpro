@@ -212,11 +212,11 @@ export class CircuitBreakerService {
       }, this.config.requestTimeout)
 
       operation()
-        .then(result => {
+        .then(async (result => {
           clearTimeout(timeout)
           resolve(result)
         })
-        .catch(error => {
+        .catch(async (error => {
           clearTimeout(timeout)
           reject(error)
         })

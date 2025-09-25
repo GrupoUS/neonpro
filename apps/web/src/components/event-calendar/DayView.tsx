@@ -3,7 +3,7 @@
  */
 
 import React from 'react'
-import type { CalendarEvent, DayViewProps } from '../../types/event-calendar'
+import type { DayViewProps } from '../../types/event-calendar'
 import { formatCalendarTime, generateTimeSlots, getEventColor, isTimeSlotAvailable } from './utils'
 
 export function DayView({

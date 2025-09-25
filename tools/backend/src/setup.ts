@@ -1,4 +1,3 @@
-import { supabase } from '@neonpro/database'
 import { afterAll, beforeAll } from 'vitest'
 
 // Setup test environment

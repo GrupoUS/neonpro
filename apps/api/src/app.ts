@@ -52,7 +52,7 @@ Promise.all([
   // Initialize OpenTelemetry if available
   // telemetrySDK ? telemetrySDK.start() : Promise.resolve(),
 ])
-  .then(() => {
+  .then(async (() => {
     logger.info(
       'Application monitoring and telemetry initialized successfully',
       {
@@ -62,7 +62,7 @@ Promise.all([
       },
     )
   })
-  .catch(error => {
+  .catch(async (error => {
     logger.error('Failed to initialize monitoring', error, {
       component: 'initialization',
     })

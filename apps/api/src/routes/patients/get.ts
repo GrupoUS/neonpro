@@ -152,7 +152,7 @@ const getHandler = async (c: any) => {
         complianceContext: 'LGPD',
         sensitivityLevel: 'high',
       })
-      .catch(err => {
+      .catch(async (err => {
         console.error('Audit logging failed:', err)
         return { success: false }
       })

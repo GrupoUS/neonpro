@@ -205,7 +205,7 @@ class QualityControlAutomator {
 
   private async validateSecurity(): Promise<{ errors: number; output: string }> {
     try {
-      const output = execSync('bun run lint --filter=@neonpro/security', {
+      const output = execSync('bun run lint --filter={
         cwd: this.workspaceRoot,
         encoding: 'utf-8',
         stdio: 'pipe',

@@ -4,36 +4,10 @@
  */
 
 import {
-  AlertQueryInput,
-  AnalyticsAlertSchema,
   AnalyticsConfigurationSchema,
-  AnalyticsQueryInput,
-  BIDashboardSchema,
-  CreateAnalyticsAlertInput,
   CreateAnalyticsConfigurationInput,
-  CreateBIDashboardInput,
-  CreateDashboardWidgetInput,
-  CreateKPIDefinitionInput,
-  CreatePredictiveModelInput,
-  CreateScheduledReportInput,
-  DashboardQueryInput,
-  DashboardWidgetSchema,
-  DataExportInput,
-  DataExportSchema,
-  KPIDefinitionSchema,
-  PerformanceMetricsQueryInput,
-  PerformanceMetricsSchema,
-  PredictiveModelSchema,
-  PredictiveQueryInput,
-  ReportQueryInput,
-  ScheduledReportSchema,
-  UpdateAnalyticsAlertInput,
+  DeleteAnalyticsConfigurationInput,
   UpdateAnalyticsConfigurationInput,
-  UpdateBIDashboardInput,
-  UpdateDashboardWidgetInput,
-  UpdateKPIDefinitionInput,
-  UpdatePredictiveModelInput,
-  UpdateScheduledReportInput,
 } from '@neonpro/core-services'
 import { router } from '../trpc'
 import { SuccessResponseSchema } from '../utils/response-schemas'
@@ -108,10 +82,33 @@ export const analyticsRouter = router({
 
   deleteAnalyticsConfiguration: {
     input: DeleteAnalyticsConfigurationInput,
-    output: SuccessResponseSchema(AliasFrom__T_type),
-    resolve({ input }, context) {
-      const result = c.env.deleteViewsMutate(c, qhubSetupQhubViewWithUserId__T_type, input)
-      return result
+    output: SuccessResponseSchema(AnalyticsConfigurationSchema),
+    resolve: async ({ input, ctx: _ctx }) => {
+      try {
+        const analyticsService = new AnalyticsService({
+          supabaseUrl: process.env.SUPABASE_URL!,
+          supabaseKey: process.env.SUPABASE_SERVICE_ROLE_KEY!,
+        })
+
+        const configuration = await analyticsService.deleteAnalyticsConfiguration(
+          input.id,
+        )
+
+        return {
+          success: true,
+          message: 'Configuração de analytics deletada com sucesso',
+          data: configuration,
+        }
+      } catch (error) {
+        console.error('Error deleting analytics configuration:', error)
+        return {
+          success: false,
+          message: error instanceof Error
+            ? error.message
+            : 'Erro ao deletar configuração de analytics',
+          data: null,
+        }
+      }
     },
   },
 })

@@ -12,7 +12,7 @@ export type { MonitoringConfig }
 let sdk: NodeSDK | null = null
 
 export function initializeMonitoring(config: MonitoringConfig): void {
-  console.log(
+  console.error(
     `🔍 Initializing monitoring for ${config.serviceName} v${config.serviceVersion}`,
   )
 
@@ -93,7 +93,7 @@ export function shutdownMonitoring(): void {
   if (sdk) {
     sdk
       .shutdown()
-      .then(() => console.log('📊 Monitoring system shut down successfully'))
-      .catch(error => console.error('Error shutting down monitoring:', error))
+      .then(() => console.error('📊 Monitoring system shut down successfully'))
+      .catch((error) => console.error('Error shutting down monitoring:', error))
   }
 }

@@ -24,20 +24,20 @@ const BRAZILIAN_PATTERNS = {
       // CPF validation algorithm
       let sum = 0
       for (let i = 0; i < 9; i++) {
-        sum += parseInt(digits[i]) * (10 - i)
+        sum += parseInt(digits[i] || '0') * (10 - i)
       }
       let remainder = (sum * 10) % 11
       if (remainder === 10 || remainder === 11) remainder = 0
-      if (remainder !== parseInt(digits[9])) return false
+      if (remainder !== parseInt(digits[9] || '0')) return false
 
       sum = 0
       for (let i = 0; i < 10; i++) {
-        sum += parseInt(digits[i]) * (11 - i)
+        sum += parseInt(digits[i] || '0') * (11 - i)
       }
       remainder = (sum * 10) % 11
       if (remainder === 10 || remainder === 11) remainder = 0
 
-      return remainder === parseInt(digits[10])
+      return remainder === parseInt(digits[10] || '0')
     },
   },
 
@@ -56,19 +56,19 @@ const BRAZILIAN_PATTERNS = {
 
       let sum = 0
       for (let i = 0; i < 12; i++) {
-        sum += parseInt(digits[i]!) * weights1[i]
+        sum += parseInt(digits[i] || '0') * weights1[i]
       }
       let remainder = sum % 11
       const digit1 = remainder < 2 ? 0 : 11 - remainder
 
       sum = 0
       for (let i = 0; i < 13; i++) {
-        sum += parseInt(digits[i]!) * weights2[i]
+        sum += parseInt(digits[i] || '0') * weights2[i]
       }
       remainder = sum % 11
       const digit2 = remainder < 2 ? 0 : 11 - remainder
 
-      return digit1 === parseInt(digits[12]!) && digit2 === parseInt(digits[13]!)
+      return digit1 === parseInt(digits[12] || '0') && digit2 === parseInt(digits[13] || '0')
     },
   },
 

@@ -303,5 +303,5 @@ const isCliExecution = (): boolean => {
 }
 
 if (isCliExecution()) {
-  runFromCli().catch(exitOnError)
+  runFromCli().catch(async (exitOnError)
 }

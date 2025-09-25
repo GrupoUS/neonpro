@@ -22,7 +22,7 @@ import {
   createHealthcareLogger,
   logHealthcareError,
 } from '../logging/healthcare-logger'
-import type { AuthSession, HealthcarePermission, HealthcareRole } from './authentication-middleware'
+import type { AuthSession } from './authentication-middleware'
 
 // Create authorization logger
 const authorizationLogger = createHealthcareLogger('authorization')

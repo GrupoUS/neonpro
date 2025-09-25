@@ -247,25 +247,25 @@ export class HealthcareErrorHandler extends EventEmitter {
   private setupDefaultRecoveryStrategies(): void {
     // Network retry strategy
     this.recoveryStrategies.set(ErrorCategory.NETWORK, async (error: StandardError) => {
-      console.log(`Attempting network recovery for error: ${error.id}`)
+      console.error(`Attempting network recovery for error: ${error.id}`)
       // Implement network retry logic
     })
 
     // Database connection recovery
     this.recoveryStrategies.set(ErrorCategory.DATABASE, async (error: StandardError) => {
-      console.log(`Attempting database recovery for error: ${error.id}`)
+      console.error(`Attempting database recovery for error: ${error.id}`)
       // Implement database reconnection logic
     })
 
     // Authentication token refresh
     this.recoveryStrategies.set(ErrorCategory.AUTHENTICATION, async (error: StandardError) => {
-      console.log(`Attempting authentication recovery for error: ${error.id}`)
+      console.error(`Attempting authentication recovery for error: ${error.id}`)
       // Implement token refresh logic
     })
 
     // Default recovery strategy
     this.recoveryStrategies.set('default', async (error: StandardError) => {
-      console.log(`Attempting default recovery for error: ${error.id}`)
+      console.error(`Attempting default recovery for error: ${error.id}`)
       // Implement generic recovery logic
     })
   }
@@ -454,32 +454,32 @@ export class HealthcareErrorHandler extends EventEmitter {
   }
 
   private async auditPatientDataAccess(error: StandardError): Promise<void> {
-    console.log(`Auditing patient data access error: ${error.id}`)
+    console.error(`Auditing patient data access error: ${error.id}`)
     // Implement patient data access audit
   }
 
   private async notifyHealthcareCompliance(error: StandardError): Promise<void> {
-    console.log(`Notifying healthcare compliance team: ${error.id}`)
+    console.error(`Notifying healthcare compliance team: ${error.id}`)
     // Implement healthcare compliance notification
   }
 
   private async triggerClinicalWorkflowAlert(error: StandardError): Promise<void> {
-    console.log(`Triggering clinical workflow alert: ${error.id}`)
+    console.error(`Triggering clinical workflow alert: ${error.id}`)
     // Implement clinical workflow alert
   }
 
   private async handleConsentViolation(error: StandardError): Promise<void> {
-    console.log(`Handling LGPD consent violation: ${error.id}`)
+    console.error(`Handling LGPD consent violation: ${error.id}`)
     // Implement consent violation handling
   }
 
   private async handleAnonymizationFailure(error: StandardError): Promise<void> {
-    console.log(`Handling data anonymization failure: ${error.id}`)
+    console.error(`Handling data anonymization failure: ${error.id}`)
     // Implement anonymization failure handling
   }
 
   private async handleDataTransferViolation(error: StandardError): Promise<void> {
-    console.log(`Handling data transfer violation: ${error.id}`)
+    console.error(`Handling data transfer violation: ${error.id}`)
     // Implement data transfer violation handling
   }
 
@@ -494,7 +494,7 @@ export class HealthcareErrorHandler extends EventEmitter {
   }
 
   private async storeHealthcareAuditLog(logEntry: any): Promise<void> {
-    console.log(`Storing healthcare audit log: ${logEntry.errorId}`)
+    console.error(`Storing healthcare audit log: ${logEntry.errorId}`)
     // Implement healthcare audit log storage
   }
 

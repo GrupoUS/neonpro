@@ -157,7 +157,7 @@ export class TelemedicineServer {
               timestamp: new Date().toISOString(),
             },
           })
-          .catch(error => {
+          .catch(async (error => {
             logHealthcareError('database', error, { method: 'apiRequestLogging', sessionId })
           })
       }

@@ -4,6 +4,17 @@ import { ChatMessage } from './ai-chat'
 // Types Package Index Exports
 // This file exports all types from the packages/types directory
 
+// Enhanced Domain-Driven Design types
+export * from './core/base'
+export * from './core/primitives'
+export * from './domain'
+
+// Validation schemas and utilities
+export * from './validation/validators'
+export * from './validation/zod/patient'
+export * from './validation/valibot/patient'
+export * from './validation/valibot/appointment'
+
 // Core AI types
 // AI Agent types (avoiding conflicts with ai-chat)
 export type {

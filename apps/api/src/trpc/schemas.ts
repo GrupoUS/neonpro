@@ -166,6 +166,10 @@ export const ScheduleAestheticProceduresSchema = v.object({
     previousProcedures: v.array(v.string()),
     skinConditions: v.array(v.string()),
     contraindications: v.array(v.string()),
+    // Accept both app/web values and backend values for flexibility during alignment
+    pregnancyStatus: v.optional(
+      v.picklist(['not_pregnant', 'pregnant', 'breastfeeding', 'none', 'planning']),
+    ),
   })),
   urgencyLevel: v.optional(v.picklist(['low', 'medium', 'high', 'immediate'])),
   budgetRange: v.optional(v.object({

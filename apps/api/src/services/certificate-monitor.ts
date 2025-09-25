@@ -521,7 +521,7 @@ export class CertificateMonitor {
 
     // Restart monitoring with new config
     this.stop()
-    this.start().catch(async error => {
+    this.start().catch(async (async error => {
       await this.logger.logError('certificate_monitor_restart_failed', {
         error: error instanceof Error ? error.message : 'Unknown error',
         timestamp: new Date().toISOString(),

@@ -317,7 +317,7 @@ export function createHealthcareRouteLoader<T>(
 
   // Preload if specified (for critical healthcare routes)
   if (preload && typeof window !== 'undefined') {
-    routeImport().catch(error => {
+    routeImport().catch(async (error => {
       console.error('Failed to preload healthcare route:', error)
     })
   }

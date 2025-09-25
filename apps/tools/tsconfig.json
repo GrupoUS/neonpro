@@ -31,7 +31,8 @@
     "removeComments": true,
     "downlevelIteration": true,
     "experimentalDecorators": true,
-    "emitDecoratorMetadata": true
+    "emitDecoratorMetadata": true,
+    "tsBuildInfoFile": ".tsbuildinfo-tools"
   },
   "include": [
     "**/*.ts",

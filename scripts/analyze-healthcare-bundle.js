@@ -57,7 +57,7 @@ class HealthcareBundleAnalyzer {
    * Main analysis function
    */
   async analyze() {
-    console.log('🏥 Starting Healthcare Bundle Analysis for Edge Runtime...\n')
+    console.error('🏥 Starting Healthcare Bundle Analysis for Edge Runtime...\n')
 
     try {
       // 1. Build the application for analysis
@@ -87,7 +87,7 @@ class HealthcareBundleAnalyzer {
    * Build application with bundle analysis enabled
    */
   async buildForAnalysis() {
-    console.log('📦 Building application with bundle analysis...')
+    console.error('📦 Building application with bundle analysis...')
 
     try {
       // Set environment for bundle analysis
@@ -100,7 +100,7 @@ class HealthcareBundleAnalyzer {
         cwd: path.join(__dirname, '../apps/api'),
       })
 
-      console.log('✅ Build completed successfully\n')
+      console.error('✅ Build completed successfully\n')
     } catch (error) {
       throw new Error(`Build failed: ${error.message}`)
     }
@@ -110,7 +110,7 @@ class HealthcareBundleAnalyzer {
    * Analyze bundle sizes for healthcare compliance
    */
   async analyzeBundleSizes() {
-    console.log('📊 Analyzing healthcare bundle sizes...')
+    console.error('📊 Analyzing healthcare bundle sizes...')
 
     const buildDir = path.join(__dirname, '../apps/api/.next')
 
@@ -123,10 +123,10 @@ class HealthcareBundleAnalyzer {
     // Analyze healthcare modules
     await this.analyzeHealthcareModules(buildDir)
 
-    console.log(
+    console.error(
       `Total bundle size: ${this.formatBytes(this.results.totalSize)}`,
     )
-    console.log(
+    console.error(
       `Edge runtime limit: ${this.formatBytes(HEALTHCARE_LIMITS.EDGE_RUNTIME_MAX)}\n`,
     )
   }
@@ -175,9 +175,9 @@ class HealthcareBundleAnalyzer {
       .sort((a, b) => b.size - a.size)
 
     if (largeChunks.length > 0) {
-      console.log('📊 Large chunks detected:')
+      console.error('📊 Large chunks detected:')
       largeChunks.slice(0, 5).forEach(chunk => {
-        console.log(`  ${chunk.name}: ${this.formatBytes(chunk.size)}`)
+        console.error(`  ${chunk.name}: ${this.formatBytes(chunk.size)}`)
       })
     }
   }
@@ -255,7 +255,7 @@ class HealthcareBundleAnalyzer {
    * Check healthcare compliance requirements
    */
   async checkHealthcareCompliance() {
-    console.log('🏥 Checking Brazilian healthcare compliance...')
+    console.error('🏥 Checking Brazilian healthcare compliance...')
 
     // LGPD compliance check
     this.results.complianceStatus.lgpd = {
@@ -285,14 +285,14 @@ class HealthcareBundleAnalyzer {
       regionCompliance: this.checkRegionCompliance(),
     }
 
-    console.log('✅ Healthcare compliance check completed\n')
+    console.error('✅ Healthcare compliance check completed\n')
   }
 
   /**
    * Analyze performance for healthcare requirements
    */
   async analyzePerformance() {
-    console.log('⚡ Analyzing healthcare performance requirements...')
+    console.error('⚡ Analyzing healthcare performance requirements...')
 
     this.results.performance = {
       bundleSize: {
@@ -308,13 +308,13 @@ class HealthcareBundleAnalyzer {
       memoryUsage: this.estimateMemoryUsage(),
     }
 
-    console.log(
+    console.error(
       `Bundle utilization: ${this.results.performance.bundleSize.utilizationPercent}%`,
     )
-    console.log(
+    console.error(
       `Estimated load time: ${this.results.performance.estimatedLoadTime}ms`,
     )
-    console.log(
+    console.error(
       `Estimated response time: ${this.results.performance.estimatedResponseTime}ms\n`,
     )
   }
@@ -323,7 +323,7 @@ class HealthcareBundleAnalyzer {
    * Generate optimization recommendations
    */
   generateRecommendations() {
-    console.log('💡 Generating healthcare optimization recommendations...')
+    console.error('💡 Generating healthcare optimization recommendations...')
 
     const recommendations = []
 
@@ -369,21 +369,21 @@ class HealthcareBundleAnalyzer {
     this.results.recommendations = recommendations
 
     if (recommendations.length > 0) {
-      console.log('Recommendations:')
-      recommendations.forEach(rec => console.log(`  ${rec}`))
+      console.error('Recommendations:')
+      recommendations.forEach(rec => console.error(`  ${rec}`))
     } else {
-      console.log(
+      console.error(
         '✅ No optimization recommendations - bundle is well optimized for healthcare edge runtime',
       )
     }
-    console.log()
+    console.error()
   }
 
   /**
    * Generate compliance report
    */
   generateComplianceReport() {
-    console.log('📋 Generating healthcare compliance report...')
+    console.error('📋 Generating healthcare compliance report...')
 
     const report = {
       timestamp: new Date().toISOString(),
@@ -400,30 +400,30 @@ class HealthcareBundleAnalyzer {
     const reportPath = path.join(__dirname, '../healthcare-bundle-report.json')
     fs.writeFileSync(reportPath, JSON.stringify(report, null, 2))
 
-    console.log(`✅ Healthcare compliance report saved to: ${reportPath}`)
+    console.error(`✅ Healthcare compliance report saved to: ${reportPath}`)
 
     // Summary
-    console.log('\n📊 HEALTHCARE BUNDLE ANALYSIS SUMMARY')
-    console.log('=====================================')
-    console.log(
+    console.error('\n📊 HEALTHCARE BUNDLE ANALYSIS SUMMARY')
+    console.error('=====================================')
+    console.error(
       `Bundle Size: ${this.formatBytes(this.results.totalSize)} / ${
         this.formatBytes(HEALTHCARE_LIMITS.EDGE_RUNTIME_MAX)
       }`,
     )
-    console.log(
+    console.error(
       `Edge Runtime Compliance: ${
         this.results.complianceStatus.edgeRuntime.sizeCompliance ? '✅ PASS' : '❌ FAIL'
       }`,
     )
-    console.log(
+    console.error(
       `Performance Estimate: ${this.results.performance.estimatedResponseTime}ms`,
     )
-    console.log(
+    console.error(
       `Healthcare Compliance: ${this.isFullyCompliant() ? '✅ COMPLIANT' : '❌ NON-COMPLIANT'}`,
     )
 
     if (this.results.recommendations.length > 0) {
-      console.log(
+      console.error(
         `Recommendations: ${this.results.recommendations.length} items need attention`,
       )
     }

@@ -30,28 +30,28 @@ class SimpleAestheticSchedulingService {
     }
   }
 
-  async calculateVariableDuration(request: any) {
+  async calculateVariableDuration(_request: any) {
     return {
       duration: 60,
       factors: [],
     }
   }
 
-  async checkContraindications(request: any) {
+  async checkContraindications(_request: any) {
     return {
       contraindications: [],
       warnings: [],
     }
   }
 
-  async optimizeRoomAllocation(request: any) {
+  async optimizeRoomAllocation(_request: any) {
     return {
       recommendations: [],
       efficiency: 0.8,
     }
   }
 
-  async scheduleAestheticProcedures(request: any) {
+  async scheduleAestheticProcedures(_request: any) {
     return {
       success: true,
       appointments: [],
@@ -175,7 +175,7 @@ async function _validateANVISACompliance(
  * Enhanced aesthetic procedure validation with Brazilian standards
  */
 async function validateAestheticProcedureRequest(
-  request: any,
+  _request: any,
   ctx: any,
 ): Promise<{
   valid: boolean
@@ -1132,7 +1132,7 @@ export const aestheticSchedulingRouter = router({
               phase: 'immediate' as const,
               phaseNumber: 1,
               startDate: new Date(),
-              endDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000),
+              _endDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000),
               instructions: ['Repouso absoluto', 'Aplicar gelo'],
               restrictions: ['Não se exercitar', 'Evitar exposição solar'],
               warnings: ['Dor intensa', 'Sangramento excessivo'],

@@ -68,8 +68,8 @@ class QualityGateValidator {
   }
 
   async validateAllGates(): Promise<QualityValidationResult> {
-    console.log('🚀 Executing Automated Quality Gate Validation System...')
-    console.log('🏥 Healthcare compliance mode: ENABLED')
+    console.error('🚀 Executing Automated Quality Gate Validation System...')
+    console.error('🏥 Healthcare compliance mode: ENABLED')
 
     const gates: QualityGateResult[] = []
 
@@ -117,7 +117,7 @@ class QualityGateValidator {
   }
 
   private async validateTypeScriptCompilation(): Promise<QualityGateResult> {
-    console.log('🔍 Validating TypeScript Compilation...')
+    console.error('🔍 Validating TypeScript Compilation...')
 
     try {
       execSync('bun run type-check', {
@@ -154,7 +154,7 @@ class QualityGateValidator {
   }
 
   private async validateLintingCompliance(): Promise<QualityGateResult> {
-    console.log('🧹 Validating Linting Compliance...')
+    console.error('🧹 Validating Linting Compliance...')
 
     try {
       execSync('bun run lint', {
@@ -197,10 +197,10 @@ class QualityGateValidator {
   }
 
   private async validateSecurityCompliance(): Promise<QualityGateResult> {
-    console.log('🔒 Validating Security Compliance...')
+    console.error('🔒 Validating Security Compliance...')
 
     try {
-      execSync('bun run lint --filter=@neonpro/security', {
+      execSync('bun run lint --filter={
         cwd: this.workspaceRoot,
         stdio: 'pipe',
       })
@@ -234,7 +234,7 @@ class QualityGateValidator {
   }
 
   private async validateTestCoverage(): Promise<QualityGateResult> {
-    console.log('🧪 Validating Test Coverage...')
+    console.error('🧪 Validating Test Coverage...')
 
     // Simulated test coverage validation
     // In production, this would integrate with actual test runners
@@ -254,7 +254,7 @@ class QualityGateValidator {
   }
 
   private async validatePerformance(): Promise<QualityGateResult> {
-    console.log('⚡ Validating Performance...')
+    console.error('⚡ Validating Performance...')
 
     // Simulated performance validation
     // In production, this would run actual performance tests
@@ -274,7 +274,7 @@ class QualityGateValidator {
   }
 
   private async validateHealthcareCompliance(): Promise<QualityGateResult> {
-    console.log('🏥 Validating Healthcare Compliance...')
+    console.error('🏥 Validating Healthcare Compliance...')
 
     // Check for LGPD compliance implementation
     const lgpdFile = path.join(this.workspaceRoot, 'packages/utils/src/lgpd.ts')
@@ -324,7 +324,7 @@ class QualityGateValidator {
           ],
         }
       }
-    } catch (_error) {
+    } catch (_unused_error) {
       return {
         gate: 'healthcare_compliance',
         status: 'failed',
@@ -429,7 +429,7 @@ ${
     `
 
     await fs.writeFile(reportPath, report, 'utf-8')
-    console.log(`\n📊 Quality Gate Validation Report: ${reportPath}`)
+    console.error(`\n📊 Quality Gate Validation Report: ${reportPath}`)
   }
 }
 
@@ -442,26 +442,26 @@ async function main() {
   await validator.generateValidationReport(result)
 
   // Output final summary
-  console.log('\n' + '='.repeat(80))
-  console.log(`🎯 QUALITY GATE VALIDATION COMPLETE`)
-  console.log(`📊 Overall Status: ${result.overall.toUpperCase()}`)
-  console.log(`📈 Quality Score: ${result.score.toFixed(1)}%`)
-  console.log(`✅ Passed: ${result.summary.passed}/${result.summary.total} gates`)
-  console.log(`❌ Failed: ${result.summary.failed}/${result.summary.total} gates`)
-  console.log(
+  console.error('\n' + '='.repeat(80))
+  console.error(`🎯 QUALITY GATE VALIDATION COMPLETE`)
+  console.error(`📊 Overall Status: ${result.overall.toUpperCase()}`)
+  console.error(`📈 Quality Score: ${result.score.toFixed(1)}%`)
+  console.error(`✅ Passed: ${result.summary.passed}/${result.summary.total} gates`)
+  console.error(`❌ Failed: ${result.summary.failed}/${result.summary.total} gates`)
+  console.error(
     `🏥 Healthcare Compliance: ${
       result.healthcareCompliance.lgpd && result.healthcareCompliance.security
         ? 'COMPLIANT'
         : 'NON-COMPLIANT'
     }`,
   )
-  console.log('='.repeat(80))
+  console.error('='.repeat(80))
 
   process.exit(result.overall === 'passed' ? 0 : 1)
 }
 
 if (import.meta.main) {
-  main().catch(console.error)
+  main().catch(async (console.error)
 }
 
 export { QualityGateValidator, type QualityValidationResult }

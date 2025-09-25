@@ -27,7 +27,7 @@ async function testTDDOrchestrationIntegration(): Promise<void> {
 
 // Run if executed directly
 if (import.meta.url === `file://${process.argv[1]}`) {
-  testTDDOrchestrationIntegration().catch(error => {
+  testTDDOrchestrationIntegration().catch(async (error => {
     console.error('Test execution failed:', error)
     process.exit(1)
   })

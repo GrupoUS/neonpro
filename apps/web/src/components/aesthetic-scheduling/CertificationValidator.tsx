@@ -13,9 +13,7 @@ import { Progress } from '@/components/ui/progress'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { trpc } from '@/lib/trpc'
 import {
-  type AestheticProcedure,
   type CertificationValidation,
-  type ProfessionalCertification,
 } from '@/types/aesthetic-scheduling'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {

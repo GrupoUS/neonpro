@@ -11,14 +11,16 @@ Goal: Keep apps/web type-check green while preparing a safe path to typed API/va
 ## Implemented
 
 - src/lib/trpcClient.ts
-  - `createTRPCClientShim()` → returns `{ query, mutation }` no-ops
+  - `createTRPCClientShim()` → now backed by an untyped `@trpc/client` with `httpBatchLink`
+  - Targets `${VITE_API_URL || window.origin}/trpc` (override with VITE_API_URL)
+  - Exposes `{ query(path, input), mutation(path, input) }` without importing router types
   - `trpcClient` singleton for convenience in non-critical places
 - Zod enums previously using deprecated patterns were simplified (errorMap removed). No further changes needed now.
 
 ## Next Steps
 
 1. Stabilize backend router contracts (tRPC v11) and expose a small, stable public client surface.
-2. Gradually wire the shim to real client methods (per domain) without importing router types in the web app.
+2. Incrementally map domain calls (e.g., `aestheticScheduling.*`) from the shim to real server methods — keep web decoupled from router types.
 3. For schemas actively used in apps/web, convert brittle zod constructs to Valibot one-by-one.
 4. Keep type-check green after each incremental change; revert if change causes cascading errors.
 

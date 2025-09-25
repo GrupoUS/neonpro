@@ -14,74 +14,75 @@ import { ComprehensiveAuditService } from '../../services/audit-service'
 import { LGPDService } from '../../services/lgpd-service'
 import { NotificationService } from '../../services/notification-service'
 import { PatientService } from '../../services/patient-service'
+import * as v from 'valibot'
 
 const app = new OpenAPIHono()
 
 // Address validation schema
-const AddressSchema = z.object({
-  street: z.string().min(5).max(200),
-  city: z.string().min(2).max(100),
-  state: z.string().length(2),
-  zipCode: z.string().refine(validateCEP, 'CEP inválido'),
-  complement: z.string().max(100).optional(),
+const AddressSchema = v.object({
+  street: v.string([v.minLength(5), v.maxLength(200)]),
+  city: v.string([v.minLength(2), v.maxLength(100)]),
+  state: v.string([v.minLength(2), v.maxLength(2)]),
+  zipCode: v.string([v.custom(validateCEP, 'CEP inválido')]),
+  complement: v.optional(v.string([v.maxLength(100)])),
 })
 
 // Healthcare info validation schema
-const HealthcareInfoSchema = z.object({
-  allergies: z.array(z.string()).optional(),
-  medications: z.array(z.string()).optional(),
-  medicalHistory: z.array(z.string()).optional(),
-  emergencyContact: z
-    .object({
-      name: z.string().min(2).max(100),
-      phone: z.string().refine(validatePhone, 'Telefone inválido'),
-      relationship: z.string().min(2).max(50),
-    })
-    .optional(),
+const HealthcareInfoSchema = v.object({
+  allergies: v.optional(v.array(v.string())),
+  medications: v.optional(v.array(v.string())),
+  medicalHistory: v.optional(v.array(v.string())),
+  emergencyContact: v.optional(
+    v.object({
+      name: v.string([v.minLength(2), v.maxLength(100)]),
+      phone: v.string([v.custom(validatePhone, 'Telefone inválido')]),
+      relationship: v.string([v.minLength(2), v.maxLength(50)]),
+    }),
+  ),
 })
 
 // LGPD consent validation schema
-const LGPDConsentSchema = z.object({
-  dataProcessing: z
-    .boolean()
-    .refine(
+const LGPDConsentSchema = v.object({
+  dataProcessing: v.boolean([
+    v.custom(
       val => val === true,
       'Consentimento para processamento de dados é obrigatório',
     ),
-  marketing: z.boolean().optional(),
-  dataSharing: z.boolean().optional(),
-  consentDate: z.string().datetime().optional(),
+  ]),
+  marketing: v.optional(v.boolean()),
+  dataSharing: v.optional(v.boolean()),
+  consentDate: v.optional(v.string([v.datetime()])),
 })
 
 // Patient creation validation schema
-const CreatePatientSchema = z.object({
-  name: z.string().min(2).max(100),
-  cpf: z.string().refine(validateCPF, 'CPF inválido').optional(),
-  email: z.string().email('Email inválido'),
-  phone: z.string().refine(validatePhone, 'Telefone inválido').optional(),
-  birthDate: z.string().datetime().optional(),
-  gender: z.enum(['male', 'female', 'other']).optional(),
-  address: AddressSchema.optional(),
-  healthcareInfo: HealthcareInfoSchema.optional(),
+const CreatePatientSchema = v.object({
+  name: v.string([v.minLength(2), v.maxLength(100)]),
+  cpf: v.optional(v.string([v.custom(validateCPF, 'CPF inválido')])),
+  email: v.string([v.email('Email inválido')]),
+  phone: v.optional(v.string([v.custom(validatePhone, 'Telefone inválido')])),
+  birthDate: v.optional(v.string([v.datetime()])),
+  gender: v.optional(v.picklist(['male', 'female', 'other'])),
+  address: v.optional(AddressSchema),
+  healthcareInfo: v.optional(HealthcareInfoSchema),
   lgpdConsent: LGPDConsentSchema,
-  notes: z.string().max(1000).optional(),
+  notes: v.optional(v.string([v.maxLength(1000)])),
 })
 
 // Patient response schema
-const PatientResponseSchema = z.object({
-  id: z.string().uuid(),
-  name: z.string(),
-  email: z.string().email(),
-  phone: z.string().optional(),
-  cpf: z.string().optional(),
-  birthDate: z.string().datetime().optional(),
-  gender: z.enum(['male', 'female', 'other']).optional(),
-  address: AddressSchema.optional(),
-  healthcareInfo: HealthcareInfoSchema.optional(),
+const PatientResponseSchema = v.object({
+  id: v.string([v.uuid()]),
+  name: v.string(),
+  email: v.string([v.email()]),
+  phone: v.optional(v.string()),
+  cpf: v.optional(v.string()),
+  birthDate: v.optional(v.string([v.datetime()])),
+  gender: v.optional(v.picklist(['male', 'female', 'other'])),
+  address: v.optional(AddressSchema),
+  healthcareInfo: v.optional(HealthcareInfoSchema),
   lgpdConsent: LGPDConsentSchema,
-  notes: z.string().optional(),
-  createdAt: z.string().datetime(),
-  updatedAt: z.string().datetime(),
+  notes: v.optional(v.string()),
+  createdAt: v.string([v.datetime()]),
+  updatedAt: v.string([v.datetime()]),
 })
 
 // OpenAPI route definition
@@ -107,10 +108,10 @@ const createPatientRoute = createHealthcareRoute({
       description: 'Patient created successfully',
       content: {
         'application/json': {
-          schema: z.object({
-            success: z.literal(true),
+          schema: v.object({
+            success: v.literal(true),
             data: PatientResponseSchema,
-            message: z.string(),
+            message: v.string(),
           }),
         },
       },
@@ -281,7 +282,7 @@ app.openapi(
         },
         201,
       )
-    } catch {
+    } catch (error) {
       console.error('Error creating patient:', error)
 
       return c.json(

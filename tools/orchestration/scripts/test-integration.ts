@@ -19,8 +19,8 @@ async function testIntegration(): Promise<void> {
 
     // Test 2: Command generation simulation
     console.error('2️⃣ Testing command generation...')
-    console.error('✅ Frontend E2E command: pnpm --filter @neonpro/web e2e')
-    console.error('✅ Backend command: pnpm --filter @neonpro/api test')
+    console.error('✅ Frontend E2E command: pnpm --filter e2e')
+    console.error('✅ Backend command: pnpm --filter test')
     console.error()
 
     console.error('✅ Integration test completed successfully!')
@@ -32,7 +32,7 @@ async function testIntegration(): Promise<void> {
 
 // Run the test if this script is executed directly
 if (import.meta.url === `file://${process.argv[1]}`) {
-  testIntegration().catch(error => {
+  testIntegration().catch(async (error => {
     console.error('Test execution failed:', error)
     process.exit(1)
   })

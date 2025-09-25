@@ -22,8 +22,7 @@
     "**/*.test.ts",
     "**/*.spec.ts",
     "src/services/redis-cache-backend.ts",
-    "src/services/winston-logging/**",
-    "src/services/structured-logging.ts"
+    "src/services/notification-service.ts"
   ],
   "references": [
     { "path": "../types" },

@@ -68,38 +68,38 @@ class PerformanceOptimizer {
   }
 
   async optimizePerformance(): Promise<OptimizationResult> {
-    console.log('🚀 Starting Performance Optimization for NeonPro Healthcare Platform...')
+    console.error('🚀 Starting Performance Optimization for NeonPro Healthcare Platform...')
 
     const optimizations: string[] = []
     const recommendations: string[] = []
 
     try {
       // Step 1: Analyze current bundle size
-      console.log('📊 Analyzing bundle sizes...')
+      console.error('📊 Analyzing bundle sizes...')
       await this.analyzeBundleSize(optimizations, recommendations)
 
       // Step 2: Implement code splitting
-      console.log('✂️ Implementing code splitting...')
+      console.error('✂️ Implementing code splitting...')
       await this.implementCodeSplitting(optimizations, recommendations)
 
       // Step 3: Optimize dependencies
-      console.log('📦 Optimizing dependencies...')
+      console.error('📦 Optimizing dependencies...')
       await this.optimizeDependencies(optimizations, recommendations)
 
       // Step 4: Enable tree shaking
-      console.log('🌳 Enhancing tree shaking...')
+      console.error('🌳 Enhancing tree shaking...')
       await this.enhanceTreeShaking(optimizations, recommendations)
 
       // Step 5: Implement asset optimization
-      console.log('🖼️ Optimizing assets...')
+      console.error('🖼️ Optimizing assets...')
       await this.optimizeAssets(optimizations, recommendations)
 
       // Step 6: Configure compression
-      console.log('🗜️ Configuring compression...')
+      console.error('🗜️ Configuring compression...')
       await this.configureCompression(optimizations, recommendations)
 
       // Step 7: Measure performance
-      console.log('📈 Measuring performance improvements...')
+      console.error('📈 Measuring performance improvements...')
       const metrics = await this.measurePerformance()
 
       const result: OptimizationResult = {
@@ -114,7 +114,7 @@ class PerformanceOptimizer {
         },
       }
 
-      console.log('✅ Performance optimization completed!')
+      console.error('✅ Performance optimization completed!')
       return result
     } catch (error) {
       console.error('❌ Performance optimization failed:', error)
@@ -150,7 +150,7 @@ export default defineConfig({
           vendor: ['react', 'react-dom'],
           router: ['@tanstack/react-router'],
           ui: ['@radix-ui/react-toast', '@radix-ui/react-dialog'],
-          healthcare: ['@neonpro/security', '@neonpro/validators']
+          healthcare: [''@neonpro/validators']
         }
       }
     }
@@ -639,7 +639,7 @@ ${result.recommendations.map(rec => `- 📋 ${rec}`).join('\n')}
     `
 
     await fs.writeFile(reportPath, report, 'utf-8')
-    console.log(`\n📊 Performance Optimization Report: ${reportPath}`)
+    console.error(`\n📊 Performance Optimization Report: ${reportPath}`)
   }
 }
 
@@ -652,19 +652,19 @@ async function main() {
   await optimizer.generatePerformanceReport(result)
 
   // Output summary
-  console.log('\n' + '='.repeat(80))
-  console.log(`🎯 PERFORMANCE OPTIMIZATION COMPLETE`)
-  console.log(`📊 Status: ${result.status.toUpperCase()}`)
-  console.log(`📦 Bundle Size: ${(result.metrics.bundleSize.total / 1024).toFixed(1)}KB`)
-  console.log(`⚡ Performance Score: ${result.metrics.lighthouse.performance}%`)
-  console.log(`🚀 Load Time: ${result.metrics.loadTime.timeToInteractive}ms`)
-  console.log('='.repeat(80))
+  console.error('\n' + '='.repeat(80))
+  console.error(`🎯 PERFORMANCE OPTIMIZATION COMPLETE`)
+  console.error(`📊 Status: ${result.status.toUpperCase()}`)
+  console.error(`📦 Bundle Size: ${(result.metrics.bundleSize.total / 1024).toFixed(1)}KB`)
+  console.error(`⚡ Performance Score: ${result.metrics.lighthouse.performance}%`)
+  console.error(`🚀 Load Time: ${result.metrics.loadTime.timeToInteractive}ms`)
+  console.error('='.repeat(80))
 
   process.exit(result.status === 'error' ? 1 : 0)
 }
 
 if (import.meta.main) {
-  main().catch(console.error)
+  main().catch(async (console.error)
 }
 
 export { type OptimizationResult, PerformanceOptimizer }

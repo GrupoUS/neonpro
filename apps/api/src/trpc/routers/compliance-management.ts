@@ -6,7 +6,7 @@
 import { ComplianceManagementService } from '@neonpro/core-services'
 import { createTRPCRouter } from '@trpc/server'
 import { z } from 'zod'
-// Removed unused @neonpro/types import
+// Removed unused import
 
 // Input schemas
 const ComplianceAssessmentInputSchema = z.object({

@@ -1,6 +1,6 @@
 import { api } from '@/lib/api'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { AlertTriangle, Info, Package, Plus, Save, Trash2, X } from 'lucide-react'
+import { Info, Package, Plus, Save, Trash2, X } from 'lucide-react'
 import * as React from 'react'
 import { useState } from 'react'
 

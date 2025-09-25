@@ -107,9 +107,9 @@ async function analyzeTelemedicineService(): Promise<SecurityIssue[]> {
 }
 
 async function generateSecurityReport(): Promise<void> {
-  console.log('🔍 NEONPRO SECURITY ANALYSIS - PR 40 VULNERABILITIES')
-  console.log('='.repeat(60))
-  console.log()
+  console.error('🔍 NEONPRO SECURITY ANALYSIS - PR 40 VULNERABILITIES')
+  console.error('='.repeat(60))
+  console.error()
 
   const issues = await analyzeTelemedicineService()
 
@@ -118,56 +118,56 @@ async function generateSecurityReport(): Promise<void> {
   const high = issues.filter(i => i.severity === 'high')
   const medium = issues.filter(i => i.severity === 'medium')
 
-  console.log(`🚨 CRITICAL ISSUES: ${critical.length}`)
+  console.error(`🚨 CRITICAL ISSUES: ${critical.length}`)
   critical.forEach(issue => {
-    console.log(`  📍 Line ${issue.line}: ${issue.description}`)
-    console.log(`     Code: ${issue.code}`)
-    console.log(`     LGPD Compliant: ${issue.lgpdCompliance ? '✅' : '❌'}`)
-    console.log(`     CFM Compliant: ${issue.cfmCompliance ? '✅' : '❌'}`)
-    console.log()
+    console.error(`  📍 Line ${issue.line}: ${issue.description}`)
+    console.error(`     Code: ${issue.code}`)
+    console.error(`     LGPD Compliant: ${issue.lgpdCompliance ? '✅' : '❌'}`)
+    console.error(`     CFM Compliant: ${issue.cfmCompliance ? '✅' : '❌'}`)
+    console.error()
   })
 
-  console.log(`⚠️  HIGH ISSUES: ${high.length}`)
+  console.error(`⚠️  HIGH ISSUES: ${high.length}`)
   high.forEach(issue => {
-    console.log(`  📍 Line ${issue.line}: ${issue.description}`)
-    console.log(`     Code: ${issue.code}`)
-    console.log(`     LGPD Compliant: ${issue.lgpdCompliance ? '✅' : '❌'}`)
-    console.log(`     CFM Compliant: ${issue.cfmCompliance ? '✅' : '❌'}`)
-    console.log()
+    console.error(`  📍 Line ${issue.line}: ${issue.description}`)
+    console.error(`     Code: ${issue.code}`)
+    console.error(`     LGPD Compliant: ${issue.lgpdCompliance ? '✅' : '❌'}`)
+    console.error(`     CFM Compliant: ${issue.cfmCompliance ? '✅' : '❌'}`)
+    console.error()
   })
 
-  console.log(`⚡ MEDIUM ISSUES: ${medium.length}`)
+  console.error(`⚡ MEDIUM ISSUES: ${medium.length}`)
   medium.forEach(issue => {
-    console.log(`  📍 Line ${issue.line}: ${issue.description}`)
-    console.log(`     Code: ${issue.code}`)
-    console.log()
+    console.error(`  📍 Line ${issue.line}: ${issue.description}`)
+    console.error(`     Code: ${issue.code}`)
+    console.error()
   })
 
   // Compliance Summary
-  console.log('📊 COMPLIANCE SUMMARY')
-  console.log('='.repeat(30))
-  console.log(`Total Issues: ${issues.length}`)
-  console.log(
+  console.error('📊 COMPLIANCE SUMMARY')
+  console.error('='.repeat(30))
+  console.error(`Total Issues: ${issues.length}`)
+  console.error(
     `LGPD Violations: ${issues.filter(i => !i.lgpdCompliance).length}`,
   )
-  console.log(
+  console.error(
     `CFM Violations: ${issues.filter(i => !i.cfmCompliance).length}`,
   )
-  console.log()
+  console.error()
 
   if (issues.length === 0) {
-    console.log('✅ No security issues detected!')
+    console.error('✅ No security issues detected!')
   } else {
-    console.log('❌ Security issues found. TDD remediation required.')
+    console.error('❌ Security issues found. TDD remediation required.')
   }
 
-  console.log()
-  console.log('🔧 NEXT STEPS (TDD Methodology):')
-  console.log('1. GREEN Phase: Fix each issue systematically')
-  console.log('2. Create secure configuration management')
-  console.log('3. Implement proper encryption with random salts')
-  console.log('4. Replace console.log with secure audit logging')
-  console.log('5. REFACTOR Phase: Optimize security implementation')
+  console.error()
+  console.error('🔧 NEXT STEPS (TDD Methodology):')
+  console.error('1. GREEN Phase: Fix each issue systematically')
+  console.error('2. Create secure configuration management')
+  console.error('3. Implement proper encryption with random salts')
+  console.error('4. Replace console.log with secure audit logging')
+  console.error('5. REFACTOR Phase: Optimize security implementation')
 }
 
 // Run analysis

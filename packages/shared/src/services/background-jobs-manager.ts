@@ -28,7 +28,6 @@ import {
   JobPriority,
   JobQueue,
   JobStatus,
-  validateHealthcareContext,
   WorkerConfig,
 } from './background-jobs-framework'
 
@@ -68,7 +67,7 @@ export class JobManager {
         validatePayload: async (payload: Record<string, any>) => {
           return typeof payload === 'object' && payload !== null
         },
-        getEstimatedExecutionTime: async (payload: Record<string, any>) => {
+        getEstimatedExecutionTime: async (_payload: Record<string, any>) => {
           return 5000 // Default 5 seconds estimation
         },
       }
@@ -137,7 +136,7 @@ export class JobManager {
 
       try {
         // Get pending jobs and distribute to workers
-        for (const [workerId, worker] of Array.from(this.workers.entries())) {
+        for (const [__workerId, worker] of Array.from(this.workers.entries())) {
           // Logic to assign jobs to workers
         }
       } catch (error) {
@@ -698,7 +697,7 @@ export abstract class BaseHealthcareJobHandler implements JobHandler {
     return typeof payload === 'object' && payload !== null
   }
 
-  async getEstimatedExecutionTime(payload: Record<string, any>): Promise<number> {
+  async getEstimatedExecutionTime(_payload: Record<string, any>): Promise<number> {
     return 30000 // Default 30 seconds estimation
   }
 
@@ -1146,7 +1145,7 @@ export function createWorkerPool(
         validatePayload: async (payload: Record<string, any>) => {
           return typeof payload === 'object' && payload !== null
         },
-        getEstimatedExecutionTime: async (payload: Record<string, any>) => {
+        getEstimatedExecutionTime: async (_payload: Record<string, any>) => {
           return 5000 // Default 5 seconds estimation
         },
       })

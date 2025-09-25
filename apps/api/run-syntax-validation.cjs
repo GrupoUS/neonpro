@@ -14,16 +14,16 @@ class TestFileSyntaxValidator {
   }
 
   collectTestFiles() {
-    console.log(`Scanning for test files in: ${this.basePath}`)
+    console.error(`Scanning for test files in: ${this.basePath}`)
 
     const scanDirectory = (dir, depth = 0) => {
       if (!fs.existsSync(dir)) {
-        console.log(`Directory does not exist: ${dir}`)
+        console.error(`Directory does not exist: ${dir}`)
         return
       }
 
       const entries = fs.readdirSync(dir, { withFileTypes: true })
-      console.log(`Scanning ${dir} (depth ${depth}), found ${entries.length} entries`)
+      console.error(`Scanning ${dir} (depth ${depth}), found ${entries.length} entries`)
 
       for (const entry of entries) {
         const fullPath = path.join(dir, entry.name)
@@ -37,13 +37,13 @@ class TestFileSyntaxValidator {
           scanDirectory(fullPath, depth + 1)
         } else if (entry.isFile() && this.isTestFile(entry.name)) {
           this.testFiles.push(fullPath)
-          console.log(`Found test file: ${fullPath}`)
+          console.error(`Found test file: ${fullPath}`)
         }
       }
     }
 
     scanDirectory(this.basePath)
-    console.log(`Total test files found: ${this.testFiles.length}`)
+    console.error(`Total test files found: ${this.testFiles.length}`)
   }
 
   isTestFile(filename) {
@@ -58,7 +58,7 @@ class TestFileSyntaxValidator {
     const isTest = hasTestPattern || hasTestExtension
 
     if (hasTestPattern || hasTestExtension) {
-      console.log(
+      console.error(
         `Found test file: ${filename}, pattern: ${hasTestPattern}, extension: ${ext}, isTest: ${isTest}`,
       )
     }
@@ -221,25 +221,25 @@ class TestFileSyntaxValidator {
   }
 
   runValidation() {
-    console.log('=== Test File Syntax Validation Report ===\n')
+    console.error('=== Test File Syntax Validation Report ===\n')
 
     const summary = this.getSummary()
     const results = this.validateAllFiles()
 
-    console.log(`📊 Summary:`)
-    console.log(`   Total test files found: ${summary.totalFiles}`)
-    console.log(`   Files with syntax errors: ${summary.filesWithErrors}`)
-    console.log(`   Total syntax errors: ${summary.totalErrors}`)
-    console.log(`   Total warnings: ${summary.totalWarnings}`)
-    console.log(`   Error types:`, Object.keys(summary.errorTypes))
+    console.error(`📊 Summary:`)
+    console.error(`   Total test files found: ${summary.totalFiles}`)
+    console.error(`   Files with syntax errors: ${summary.filesWithErrors}`)
+    console.error(`   Total syntax errors: ${summary.totalErrors}`)
+    console.error(`   Total warnings: ${summary.totalWarnings}`)
+    console.error(`   Error types:`, Object.keys(summary.errorTypes))
 
     if (summary.totalErrors === 0) {
-      console.log('\n✅ No syntax errors found!')
+      console.error('\n✅ No syntax errors found!')
       return
     }
 
-    console.log('\n❌ Syntax Errors Found:')
-    console.log(`   Expected 220+ errors, found ${summary.totalErrors}`)
+    console.error('\n❌ Syntax Errors Found:')
+    console.error(`   Expected 220+ errors, found ${summary.totalErrors}`)
 
     // Show files with most errors
     const filesWithErrors = results
@@ -247,13 +247,13 @@ class TestFileSyntaxValidator {
       .sort((a, b) => b.errors.length - a.errors.length)
       .slice(0, 10)
 
-    console.log('\n📂 Top 10 files with most errors:')
+    console.error('\n📂 Top 10 files with most errors:')
     filesWithErrors.forEach((file, index) => {
-      console.log(`   ${index + 1}. ${file.filePath} (${file.errors.length} errors)`)
+      console.error(`   ${index + 1}. ${file.filePath} (${file.errors.length} errors)`)
     })
 
     // Show specific error examples
-    console.log('\n🔍 Error Examples:')
+    console.error('\n🔍 Error Examples:')
     const firstFewErrors = results
       .filter(r => r.errors.length > 0)
       .slice(0, 5)
@@ -263,34 +263,34 @@ class TestFileSyntaxValidator {
       }))
 
     firstFewErrors.forEach(({ file, errors }) => {
-      console.log(`\n   File: ${path.relative(this.basePath, file)}`)
+      console.error(`\n   File: ${path.relative(this.basePath, file)}`)
       errors.forEach(error => {
-        console.log(`      Line ${error.line}: ${error.message}`)
-        console.log(`         Code: ${error.code.trim()}`)
+        console.error(`      Line ${error.line}: ${error.message}`)
+        console.error(`         Code: ${error.code.trim()}`)
       })
     })
 
     // Show import issues
     const importIssues = results.reduce((sum, r) => sum + r.importErrors.length, 0)
     if (importIssues > 0) {
-      console.log(`\n📦 Import Issues Found: ${importIssues}`)
+      console.error(`\n📦 Import Issues Found: ${importIssues}`)
       results.filter(r => r.importErrors.length > 0).slice(0, 3).forEach(file => {
-        console.log(`   ${path.relative(this.basePath, file.filePath)}:`)
+        console.error(`   ${path.relative(this.basePath, file.filePath)}:`)
         file.importErrors.slice(0, 2).forEach(issue => {
-          console.log(`      ${issue}`)
+          console.error(`      ${issue}`)
         })
       })
     }
 
-    console.log(`\n🎯 RED Phase Test Result: FAIL`)
-    console.log(`   This test should fail because syntax errors were found.`)
-    console.log(`   Expected: 220+ errors`)
-    console.log(`   Found: ${summary.totalErrors} errors`)
+    console.error(`\n🎯 RED Phase Test Result: FAIL`)
+    console.error(`   This test should fail because syntax errors were found.`)
+    console.error(`   Expected: 220+ errors`)
+    console.error(`   Found: ${summary.totalErrors} errors`)
 
     if (summary.totalErrors >= 220) {
-      console.log(`   ✅ Met or exceeded expected error count`)
+      console.error(`   ✅ Met or exceeded expected error count`)
     } else {
-      console.log(`   ⚠️  Found fewer errors than expected`)
+      console.error(`   ⚠️  Found fewer errors than expected`)
     }
 
     return summary
@@ -298,7 +298,7 @@ class TestFileSyntaxValidator {
 }
 
 // Run the validation
-console.log('🚀 Starting Test File Syntax Validation...\n')
+console.error('🚀 Starting Test File Syntax Validation...\n')
 const validator = new TestFileSyntaxValidator()
 const summary = validator.runValidation()
 

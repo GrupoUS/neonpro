@@ -622,7 +622,7 @@ export const aiRouter = router({
                     createdAt: true,
                   },
                 })
-                .then(msgs =>
+                .then(async (msgs =>
                   msgs.map(msg => {
                     const msgInfo = parseMessageInfo(msg.additionalInfo)
                     return {

@@ -1,5 +1,5 @@
 /**
- * @neonpro/security - Security utilities and middleware for NeonPro
+ * - Security utilities and middleware for NeonPro
  * Provides encryption, authentication, authorization, and security middleware
  */
 
