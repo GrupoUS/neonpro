@@ -1,11 +1,10 @@
 /**
  * Unified Security Base for NeonPro Platform
- * 
+ *
  * Consolidates common security patterns, validation utilities,
  * and error handling across all security services.
- * 
+ *
  * @version 2.0.0
- * @security_critical
  */
 
 import { randomUUID, createHash } from 'crypto'

@@ -18,11 +18,10 @@ import { AuditAction, AuditStatus, ResourceType, RiskLevel } from '@prisma/clien
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
 
-// Comentando import problemático temporariamente
-// import { EnhancedAestheticSchedulingService } from '@neonpro/core-services/services/enhanced-aesthetic-scheduling-service';
+import { EnhancedAestheticSchedulingService } from '@neonpro/business-services'
 
-// Implementação temporária simples do serviço
-class SimpleAestheticSchedulingService {
+// Initialize the aesthetic scheduling service
+const aestheticSchedulingService = new EnhancedAestheticSchedulingService()
   async validateProfessionalCertifications(professionalId: string, procedures: string[]) {
     return {
       isValid: true,
@@ -108,8 +107,6 @@ import {
 } from '../schemas'
 import { healthcareProcedure, protectedProcedure, router } from '../trpc'
 
-// Initialize the aesthetic scheduling service
-const aestheticSchedulingService = new SimpleAestheticSchedulingService()
 
 // =====================================
 // BRAZILIAN HEALTHCARE COMPLIANCE HELPERS

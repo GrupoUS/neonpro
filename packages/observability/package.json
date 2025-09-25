@@ -25,6 +25,7 @@
   },
   "dependencies": {
     "@neonpro/config": "0.1.0",
+    "@neonpro/security": "0.1.0",
     "@neonpro/types": "0.1.0",
     "@nestjs/common": "^11.1.6",
     "@supabase/supabase-js": "^2.57.4",

@@ -77,7 +77,7 @@ export function initializeMonitoring(config: MonitoringConfig): void {
     sdk = new NodeSDK({
       serviceName: config.serviceName,
       instrumentations,
-      traceExporter,
+      traceExporter: traceExporter as any,
     })
 
     // Start the SDK

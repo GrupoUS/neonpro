@@ -78,106 +78,80 @@ describe('Enhanced Authentication Middleware Integration Tests', () => {
 
   describe('JWT Authentication Flow', () => {
     it('should authenticate successfully with valid JWT', async () => {
-      // Simple test first - verify we can import and call the method
-      console.log('=== TEST START ===')
-      try {
-        const testContext = createMockContext({
-          req: {
-            ...createMockContext().req,
-            header: vi.fn()
-              .mockReturnValueOnce('Bearer valid-jwt-token')
-              .mockReturnValueOnce('192.168.1.1')  // Proper IP address
-              .mockReturnValueOnce('test-user-agent'),
-          },
-        })
-
-        console.log('Test context created successfully')
-
-        // Mock the JWT service to return a valid response
-        const jwtMock = vi.spyOn(jwtService, 'validateToken').mockResolvedValueOnce({
-          isValid: true,
-          payload: {
-            sub: 'user-123',
-            userId: 'user-123',
-            userRole: 'healthcare_professional',
-            healthcareProvider: 'test-hospital',
-            permissions: ['read_patient_data'],
-            sessionId: 'session-123',
-            cfmLicense: 'CRM-12345-SP',
-            anvisaCompliance: true,
-            lgpdConsentVersion: '1.0'
-          },
-        })
-
-        console.log('JWT mock created:', jwtMock)
-        console.log('JWT mock implementation:', jwtMock.getMockImplementation())
-
-        console.log('JWT service mocked successfully')
-
-        const result = await EnhancedAuthenticationMiddleware.authenticateRequest(testContext, {
-          requireAuth: true,
-          methods: ['jwt'],
-        })
-
-        console.log('Authentication result:', JSON.stringify(result, null, 2))
-        console.log('isAuthenticated value:', result.isAuthenticated)
-        console.log('typeof isAuthenticated:', typeof result.isAuthenticated)
-        expect(result.isAuthenticated).toBe(true)
-      } catch (error) {
-        console.log('Test error:', error)
-        throw error
-      }
-      console.log('=== TEST END ===')
-      const c = createMockContext({
+      // Create test context with JWT header
+      const testContext = createMockContext({
         req: {
           ...createMockContext().req,
           header: vi.fn()
             .mockReturnValueOnce('Bearer valid-jwt-token')
-            .mockReturnValueOnce('localhost')
+            .mockReturnValueOnce('192.168.1.1')
             .mockReturnValueOnce('test-user-agent'),
         },
       })
 
-      const next = createMockNext()
-
-      // Mock JWT validation
-      vi.spyOn(jwtService, 'validateToken').mockResolvedValueOnce({
+      // Mock the JWT service to return a valid response
+      const jwtMock = vi.spyOn(jwtService, 'validateToken').mockResolvedValueOnce({
         isValid: true,
         payload: {
+          sub: 'user-123',
           userId: 'user-123',
           userRole: 'healthcare_professional',
           healthcareProvider: 'test-hospital',
-          sessionId: 'session-123',
           permissions: ['read_patient_data'],
+          sessionId: 'session-123',
+          cfmLicense: 'CRM-12345-SP',
+          anvisaCompliance: true,
+          lgpdConsentVersion: '1.0'
         },
       })
 
-      // Mock session validation
-      vi.spyOn(sessionService, 'validateSession').mockResolvedValueOnce({
-        isValid: true,
-        session: {
-          id: 'session-123',
-          userId: 'user-123',
-          userRole: 'healthcare_professional',
-          isActive: true,
+      // Call the authentication method
+      const result = await EnhancedAuthenticationMiddleware.authenticateRequest(testContext, {
+        requireAuth: true,
+        methods: ['jwt'],
+      })
+
+      // Assert the result
+      expect(result.isAuthenticated).toBe(true)
+      expect(result.isAuthorized).toBe(true)
+      expect(result.userId).toBe('user-123')
+      expect(result.userRole).toBe('healthcare_professional')
+      expect(result.healthcareProvider).toBe('test-hospital')
+      expect(result.permissions).toEqual(['read_patient_data'])
+      expect(result.sessionId).toBe('session-123')
+      expect(result.cfmLicense).toBe('CRM-12345-SP')
+      expect(result.anvisaCompliance).toBe(true)
+      expect(result.lgpdConsentVersion).toBe('1.0')
+    })
+
+    it('should reject authentication with invalid JWT', async () => {
+      const c = createMockContext({
+        req: {
+          ...createMockContext().req,
+          header: vi.fn()
+            .mockReturnValueOnce('Bearer invalid-jwt-token')
+            .mockReturnValueOnce('192.168.1.1')
+            .mockReturnValueOnce('test-user-agent'),
         },
       })
 
-      console.log('TEST DEBUG: About to call authenticateRequest')
-      console.log('TEST DEBUG: authMiddleware type:', typeof authMiddleware)
-      console.log('TEST DEBUG: EnhancedAuthenticationMiddleware type:', typeof EnhancedAuthenticationMiddleware)
+      // Mock the JWT service to return an invalid response
+      vi.spyOn(jwtService, 'validateToken').mockResolvedValueOnce({
+        isValid: false,
+        error: 'Invalid token signature',
+        errorCode: 'INVALID_SIGNATURE'
+      })
+
+      // Call the authentication method
       const result = await EnhancedAuthenticationMiddleware.authenticateRequest(c, {
         requireAuth: true,
         methods: ['jwt'],
       })
-      console.log('TEST DEBUG: Authentication result:', result)
 
-      expect(result.isAuthenticated).toBe(true)
-      expect(result.userId).toBe('user-123')
-      expect(result.userRole).toBe('healthcare_professional')
-      expect(result.healthcareProvider).toBe('test-hospital')
-      expect(result.sessionId).toBe('session-123')
-      expect(result.permissions).toEqual(['read_patient_data'])
+      // Assert the result
+      expect(result.isAuthenticated).toBe(false)
+      expect(result.isAuthorized).toBe(false)
+      expect(result.error).toBe('Invalid token signature')
     })
 
     it('should reject authentication with invalid JWT', async () => {

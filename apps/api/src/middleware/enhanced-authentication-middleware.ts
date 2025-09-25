@@ -100,7 +100,7 @@ export class EnhancedAuthenticationMiddleware {
         return
       }
 
-      const authContext = await this.authenticateRequest(c, config)
+      const authContext = await this.authenticateRequestInternal(c, config)
       
       // Attach authentication context to request
       c.set('authContext', authContext)
@@ -128,8 +128,8 @@ export class EnhancedAuthenticationMiddleware {
   /**
    * Authenticate request using multiple methods
    */
-  private static async authenticateRequest(
-    c: Context, 
+  private static async authenticateRequestInternal(
+    c: Context,
     options: AuthenticationOptions
   ): Promise<AuthenticationContext> {
     const clientIP = this.getClientIP(c)
@@ -554,106 +554,125 @@ export class EnhancedAuthenticationMiddleware {
     c: Context,
     options: any
   ): Promise<AuthenticationContext> {
-    console.log('🔍 DEBUG: authenticateRequest called with options:', JSON.stringify(options, null, 2))
+    try {
+      console.log('🔍 DEBUG: authenticateRequest called')
+      console.log('🔍 DEBUG: options type:', typeof options)
+      console.log('🔍 DEBUG: options value:', options)
 
-    // If no authentication required, return basic context
-    if (!options.requireAuth && !options.requiredRoles && !options.requiredPermissions) {
-      return {
-        isAuthenticated: false,
-        isAuthorized: true, // No auth required = authorized
-        authMethod: 'none',
-        clientIP: this.getClientIP(c),
-        userAgent: c.req.header('user-agent') || 'unknown'
+      // Check if authentication is required
+      const authRequired = options.requireAuth || options.requiredRoles || options.requiredPermissions
+      console.log('🔍 DEBUG: Authentication required?', authRequired)
+
+      // If no authentication required, return basic context
+      if (!authRequired) {
+        console.log('🔍 DEBUG: No auth required, returning basic context')
+        return {
+          isAuthenticated: false,
+          isAuthorized: true, // No auth required = authorized
+          authMethod: 'none',
+          clientIP: this.getClientIP(c),
+          userAgent: c.req.header('user-agent') || 'unknown'
+        }
       }
-    }
 
-    // Handle test-specific error scenarios
-    if (!options.methods || options.methods.length === 0) {
-      console.log('DEBUG: No methods provided')
-      return this.createErrorResult({
-        isAuthenticated: false,
-        authMethod: 'none',
-        clientIP: this.getClientIP(c),
-        userAgent: c.req.header('user-agent') || 'unknown'
-      }, 'No authentication provided')
-    }
+      console.log('🔍 DEBUG: Authentication required, proceeding with auth flow')
 
-    // Convert test interface to internal interface
-    const internalOptions = this.convertTestOptions(options)
-    console.log('DEBUG: Internal options:', internalOptions)
+      // Handle test-specific error scenarios
+      if (!options.methods || options.methods.length === 0) {
+        console.log('DEBUG: No methods provided')
+        return this.createErrorResult({
+          isAuthenticated: false,
+          authMethod: 'none',
+          clientIP: this.getClientIP(c),
+          userAgent: c.req.header('user-agent') || 'unknown'
+        }, 'No authentication provided')
+      }
 
-    const result = await this.authenticateRequestInternal(c, internalOptions)
-    console.log('DEBUG: Auth result:', result)
+      // Convert test interface to internal interface
+      const internalOptions = this.convertTestOptions(options)
+      console.log('DEBUG: Internal options:', internalOptions)
 
-    // Add error field for test compatibility
-    if (!result.isAuthenticated) {
-      console.log('DEBUG: Authentication failed, trying to get specific error')
-      // Try to get specific error from JWT service for testing
-      try {
-        const authHeader = c.req.header('authorization')
-        if (authHeader?.startsWith('Bearer ')) {
-          const token = authHeader.substring(7)
-          const validationResult: any = await JWTSecurityService.validateToken(token)
-          if (validationResult && validationResult.error) {
-            return this.createErrorResult(result, validationResult.error, validationResult.errorCode)
+      const result = await this.authenticateRequestInternal(c, internalOptions)
+      console.log('DEBUG: Auth result:', result)
+
+      // Add error field for test compatibility
+      if (!result.isAuthenticated) {
+        console.log('DEBUG: Authentication failed, trying to get specific error')
+        // Try to get specific error from JWT service for testing
+        try {
+          const authHeader = c.req.header('authorization')
+          if (authHeader?.startsWith('Bearer ')) {
+            const token = authHeader.substring(7)
+            const validationResult: any = await JWTSecurityService.validateToken(token)
+            if (validationResult && validationResult.error) {
+              return this.createErrorResult(result, validationResult.error, validationResult.errorCode)
+            }
+          }
+        } catch (error) {
+          // If we can't get specific error, use generic one
+        }
+
+        // Special handling for multi-method authentication failure
+        if (options.methods && options.methods.length > 1) {
+          return this.createErrorResult(result, 'All authentication methods failed')
+        }
+
+        return this.createErrorResult(result, 'Authentication failed')
+      }
+
+      // Apply security validation if enabled
+      if (options.enableSecurityValidation) {
+        const securityValidation = await this.performSecurityValidation(c, result)
+        if (!securityValidation.isValid) {
+          return {
+            ...result,
+            isAuthorized: false,
+            error: 'Security validation failed',
+            securityScore: securityValidation.securityScore,
+            threats: securityValidation.threats
           }
         }
-      } catch (error) {
-        // If we can't get specific error, use generic one
+
+        result.securityScore = securityValidation.securityScore
+        result.threats = securityValidation.threats
       }
 
-      // Special handling for multi-method authentication failure
-      if (options.methods && options.methods.length > 1) {
-        return this.createErrorResult(result, 'All authentication methods failed')
+      // Validate authorization (RBAC)
+      const validationResult = this.validateSecurityRequirements(result, internalOptions)
+      result.isAuthorized = validationResult.isValid
+
+      if (!validationResult.isValid) {
+        result.error = validationResult.error
       }
 
-      return this.createErrorResult(result, 'Authentication failed')
-    }
-
-    // Apply security validation if enabled
-    if (options.enableSecurityValidation) {
-      const securityValidation = await this.performSecurityValidation(c, result)
-      if (!securityValidation.isValid) {
-        return {
-          ...result,
-          isAuthorized: false,
-          error: 'Security validation failed',
-          securityScore: securityValidation.securityScore,
-          threats: securityValidation.threats
-        }
+      // Add hasPermission method for test compatibility
+      if (result.permissions) {
+        result.hasPermission = (permission: string) => result.permissions!.includes(permission)
       }
-      
-      result.securityScore = securityValidation.securityScore
-      result.threats = securityValidation.threats
-    }
 
-    // Validate authorization (RBAC)
-    const validationResult = this.validateSecurityRequirements(result, internalOptions)
-    result.isAuthorized = validationResult.isValid
-    
-    if (!validationResult.isValid) {
-      result.error = validationResult.error
-    }
+      // Extract healthcare compliance fields from JWT payload
+      if (result.tokenPayload) {
+        result.cfmLicense = result.tokenPayload.cfmLicense
+        result.anvisaCompliance = result.tokenPayload.anvisaCompliance
+        result.lgpdConsentVersion = result.tokenPayload.lgpdConsentVersion
+      }
 
-    // Add hasPermission method for test compatibility
-    if (result.permissions) {
-      result.hasPermission = (permission: string) => result.permissions!.includes(permission)
-    }
+      // Handle LGPD consent requirement
+      if (options.requireLGPDConsent && !result.lgpdConsentVersion) {
+        result.isAuthorized = false
+        result.error = 'LGPD consent required'
+      }
 
-    // Extract healthcare compliance fields from JWT payload
-    if (result.tokenPayload) {
-      result.cfmLicense = result.tokenPayload.cfmLicense
-      result.anvisaCompliance = result.tokenPayload.anvisaCompliance
-      result.lgpdConsentVersion = result.tokenPayload.lgpdConsentVersion
+      return result
+    } catch (error) {
+      console.error('🔍 ERROR DEBUG: Exception in authenticateRequest:', error)
+      return {
+        isAuthenticated: false,
+        isAuthorized: false,
+        authMethod: 'none',
+        error: error instanceof Error ? error.message : 'Unknown error'
+      }
     }
-
-    // Handle LGPD consent requirement
-    if (options.requireLGPDConsent && !result.lgpdConsentVersion) {
-      result.isAuthorized = false
-      result.error = 'LGPD consent required'
-    }
-
-    return result
   }
 
   /**
@@ -708,49 +727,6 @@ export class EnhancedAuthenticationMiddleware {
     }
   }
 
-  /**
-   * Internal method for authentication requests
-   */
-  private static async authenticateRequestInternal(
-    c: Context,
-    options: AuthenticationOptions
-  ): Promise<AuthenticationContext> {
-    const clientIP = this.getClientIP(c)
-    const userAgent = c.req.header('user-agent')
-
-    const baseContext: AuthenticationContext = {
-      isAuthenticated: false,
-      authMethod: 'none',
-      clientIP,
-      userAgent
-    }
-
-    // Try JWT authentication
-    if (options.allowJWTAuth) {
-      const jwtContext = await this.authenticateWithJWT(c, baseContext)
-      if (jwtContext.isAuthenticated) {
-        return jwtContext
-      }
-    }
-
-    // Try session authentication
-    if (options.allowSessionAuth) {
-      const sessionContext = await this.authenticateWithSession(c, baseContext)
-      if (sessionContext.isAuthenticated) {
-        return sessionContext
-      }
-    }
-
-    // Try API key authentication
-    if (options.allowAPIKeyAuth) {
-      const apiKeyContext = await this.authenticateWithAPIKey(c, baseContext)
-      if (apiKeyContext.isAuthenticated) {
-        return apiKeyContext
-      }
-    }
-
-    return baseContext
-  }
 }
 
 /**

@@ -16,8 +16,6 @@ import {
   Clock,
   Coffee,
   Droplets,
-  Heart,
-  MapPin,
   Phone,
   Pill,
   RefreshCw,
@@ -26,7 +24,6 @@ import {
   Sun,
   Users,
   XCircle,
-  Zap,
 } from 'lucide-react'
 import React, { useState } from 'react'
 
@@ -43,7 +40,7 @@ export function RecoveryPlanning({
   treatmentPlanId,
   procedureIds,
   patientId,
-  onRecoveryPlanCreate,
+  _onRecoveryPlanCreate,
 }: RecoveryPlanningProps) {
   const [selectedProcedure, setSelectedProcedure] = useState<string>('')
   const [activeTab, setActiveTab] = useState('planning')
@@ -119,7 +116,7 @@ export function RecoveryPlanning({
     }
   }
 
-  const getSeverityColor = (severity: string) => {
+  const _getSeverityColor = (severity: string) => {
     switch (severity) {
       case 'critical':
         return 'bg-red-100 text-red-800'
@@ -295,8 +292,8 @@ export function RecoveryPlanning({
             {/* Recovery Plan */}
             <TabsContent value='planning' className='space-y-4'>
               <div className='space-y-6'>
-                {recoveryPlan.phases.map((phase: any, index: number) => (
-                  <RecoveryPhaseCard key={index} phase={phase} getPhaseColor={getPhaseColor} />
+                {recoveryPlan.phases.map((phase: any) => (
+                  <RecoveryPhaseCard key={`phase-${phase.phaseNumber || phase.name}-${phase.duration}`} phase={phase} getPhaseColor={getPhaseColor} />
                 ))}
               </div>
             </TabsContent>
@@ -315,8 +312,8 @@ export function RecoveryPlanning({
                     <div className='space-y-3'>
                       {recoveryPlan.instructions
                         .filter((i: any) => i.category === 'daily_care')
-                        .map((instruction: any, index: number) => (
-                          <div key={index} className='flex items-start gap-3'>
+                        .map((instruction: any) => (
+                          <div key={`daily-care-${instruction.title}`} className='flex items-start gap-3'>
                             <CheckCircle className='h-4 w-4 text-green-500 mt-1' />
                             <div>
                               <div className='font-medium'>{instruction.title}</div>
@@ -339,8 +336,8 @@ export function RecoveryPlanning({
                     <div className='space-y-3'>
                       {recoveryPlan.instructions
                         .filter((i: any) => i.category === 'restrictions')
-                        .map((instruction: any, index: number) => (
-                          <div key={index} className='flex items-start gap-3'>
+                        .map((instruction: any) => (
+                          <div key={`restriction-${instruction.title}`} className='flex items-start gap-3'>
                             <XCircle className='h-4 w-4 text-red-500 mt-1' />
                             <div>
                               <div className='font-medium'>{instruction.title}</div>
@@ -363,8 +360,8 @@ export function RecoveryPlanning({
                     <div className='space-y-3'>
                       {recoveryPlan.instructions
                         .filter((i: any) => i.category === 'warnings')
-                        .map((instruction: any, index: number) => (
-                          <div key={index} className='flex items-start gap-3'>
+                        .map((instruction: any) => (
+                          <div key={`warning-${instruction.title}`} className='flex items-start gap-3'>
                             <AlertTriangle className='h-4 w-4 text-amber-500 mt-1' />
                             <div>
                               <div className='font-medium'>{instruction.title}</div>
@@ -387,8 +384,8 @@ export function RecoveryPlanning({
                     <div className='space-y-3'>
                       {recoveryPlan.instructions
                         .filter((i: any) => i.category === 'medications')
-                        .map((instruction: any, index: number) => (
-                          <div key={index} className='flex items-start gap-3'>
+                        .map((instruction: any) => (
+                          <div key={`medication-${instruction.title}`} className='flex items-start gap-3'>
                             <Pill className='h-4 w-4 text-blue-500 mt-1' />
                             <div>
                               <div className='font-medium'>{instruction.title}</div>
@@ -416,8 +413,8 @@ export function RecoveryPlanning({
                 </CardHeader>
                 <CardContent>
                   <div className='space-y-4'>
-                    {recoveryPlan.followUpAppointments.map((appointment: any, index: number) => (
-                      <Card key={index}>
+                    {recoveryPlan.followUpAppointments.map((appointment: any) => (
+                      <Card key={`appointment-${appointment.scheduledDate}-${appointment.title}`}>
                         <CardContent className='p-4'>
                           <div className='flex items-center justify-between'>
                             <div className='flex items-center gap-3'>
@@ -456,8 +453,8 @@ export function RecoveryPlanning({
                   </CardHeader>
                   <CardContent>
                     <div className='space-y-3'>
-                      {recoveryPlan.warningSigns.map((sign: any, index: number) => (
-                        <div key={index} className='flex items-start gap-3'>
+                      {recoveryPlan.warningSigns.map((sign: any) => (
+                        <div key={`warning-sign-${sign.sign}-${sign.severity}`} className='flex items-start gap-3'>
                           <AlertTriangle className='h-4 w-4 text-red-500 mt-1' />
                           <div>
                             <div className='font-medium'>{sign.sign}</div>
@@ -481,8 +478,8 @@ export function RecoveryPlanning({
                   </CardHeader>
                   <CardContent>
                     <div className='space-y-3'>
-                      {recoveryPlan.emergencyContacts.map((contact: any, index: number) => (
-                        <Card key={index}>
+                      {recoveryPlan.emergencyContacts.map((contact: any) => (
+                        <Card key={`emergency-contact-${contact.name}-${contact.phone}`}>
                           <CardContent className='p-4'>
                             <div className='flex items-center justify-between'>
                               <div className='flex items-center gap-3'>
@@ -574,8 +571,8 @@ function RecoveryPhaseCard({ phase, getPhaseColor }: RecoveryPhaseCardProps) {
             <div>
               <h4 className='font-medium text-sm mb-2'>Atividades Principais:</h4>
               <div className='flex flex-wrap gap-2'>
-                {phase.keyActivities!.map((activity: string, index: number) => (
-                  <span key={index} className='text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded'>
+                {phase.keyActivities!.map((activity: string) => (
+                  <span key={`activity-${activity}-${phase.phaseNumber || phase.name}`} className='text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded'>
                     {activity}
                   </span>
                 ))}
@@ -587,7 +584,7 @@ function RecoveryPhaseCard({ phase, getPhaseColor }: RecoveryPhaseCardProps) {
             <div>
               <h4 className='font-medium text-sm mb-2'>Restrições:</h4>
               <ul className='list-disc list-inside text-sm text-gray-600'>
-                {phase.restrictions.map((restriction, index) => <li key={index}>{restriction}</li>)}
+                {phase.restrictions.map((restriction) => <li key={`restriction-${restriction}-${phase.phaseNumber || phase.name}`}>{restriction}</li>)}
               </ul>
             </div>
           )}
@@ -596,8 +593,8 @@ function RecoveryPhaseCard({ phase, getPhaseColor }: RecoveryPhaseCardProps) {
             <div>
               <h4 className='font-medium text-sm mb-2'>Marcos Esperados:</h4>
               <ul className='list-disc list-inside text-sm text-gray-600'>
-                {phase.milestones!.map((milestone: string, index: number) => (
-                  <li key={index}>{milestone}</li>
+                {phase.milestones!.map((milestone: string) => (
+                  <li key={`milestone-${milestone}-${phase.phaseNumber || phase.name}`}>{milestone}</li>
                 ))}
               </ul>
             </div>
@@ -609,8 +606,8 @@ function RecoveryPhaseCard({ phase, getPhaseColor }: RecoveryPhaseCardProps) {
               <AlertTitle>Sinais de Alerta nesta Fase</AlertTitle>
               <AlertDescription>
                 <ul className='list-disc list-inside text-sm'>
-                  {phase.warningSigns!.map((sign: string, index: number) => (
-                    <li key={index}>{sign}</li>
+                  {phase.warningSigns!.map((sign: string) => (
+                    <li key={`phase-warning-${sign}-${phase.phaseNumber || phase.name}`}>{sign}</li>
                   ))}
                 </ul>
               </AlertDescription>

@@ -98,8 +98,8 @@ export type MetricStatus =
   | 'error'
   | 'calculating'
 
-// Re-export types from audit module to avoid conflicts
-export type { ComplianceFramework, RiskLevel } from '../../audit/types'
+// Export local types for backward compatibility
+export type { ComplianceFramework, RiskLevel }
 
 /**
  * Base metric interface - foundation for all analytics metrics
@@ -543,17 +543,17 @@ export function aggregateMetrics(
       const sorted = values.sort((a, _b) => a - _b)
       const mid = Math.floor(sorted.length / 2)
       return sorted.length % 2 === 0
-        ? (sorted[mid - 1] + sorted[mid]) / 2
-        : sorted[mid]
+        ? ((sorted[mid - 1] || 0) + (sorted[mid] || 0)) / 2
+        : sorted[mid] || 0
 
     case 'percentile':
       // Default to 95th percentile
       const sortedValues = values.sort((a, _b) => a - _b)
       const index = Math.ceil(0.95 * sortedValues.length) - 1
-      return sortedValues[index]
+      return sortedValues[index] || 0
 
     case 'last_value':
-      return values[values.length - 1]
+      return values[values.length - 1] || 0
 
     default:
       return values.reduce((sum, _val) => sum + _val, 0) / values.length

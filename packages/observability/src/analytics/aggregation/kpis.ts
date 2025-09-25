@@ -686,7 +686,7 @@ export function createMockEvents(count: number = 10): AnalyticsEvent[] {
   const events: AnalyticsEvent[] = []
 
   for (let i = 0; i < count; i++) {
-    const eventType = eventTypes[Math.floor(Math.random() * eventTypes.length)]
+    const eventType = eventTypes[Math.floor(Math.random() * eventTypes.length)] || 'default_event'
 
     events.push({
       id: `mock_event_${i + 1}`,
@@ -694,7 +694,7 @@ export function createMockEvents(count: number = 10): AnalyticsEvent[] {
       timestamp: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000), // Last 7 days
       _userId: `user_${Math.floor(Math.random() * 100)}`,
       sessionId: `session_${Math.floor(Math.random() * 50)}`,
-      properties: generateMockProperties(eventType),
+      properties: generateMockProperties(eventType) || {},
       _context: {
         userAgent: 'Healthcare System',
         ip: '127.0.0.1',

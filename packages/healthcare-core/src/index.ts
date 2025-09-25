@@ -1,6 +1,6 @@
 /**
- * @neonpro/healthcare-core
- * 
+ * @package Healthcare core services
+ *
  * Healthcare business logic and workflows for NeonPro platform
  */
 

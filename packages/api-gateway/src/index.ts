@@ -1,6 +1,6 @@
 /**
- * @neonpro/api-gateway
- * 
+ * @package API gateway
+ *
  * tRPC server, REST API, and WebSocket management for NeonPro healthcare platform
  */
 

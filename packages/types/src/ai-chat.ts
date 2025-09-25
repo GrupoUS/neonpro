@@ -14,7 +14,7 @@ export type ChatRole = 'user' | 'assistant' | 'system'
 
 export type ChatSessionStatus = 'active' | 'closed' | 'error'
 
-/** @see也是如此 диспелефбуками. В толкак тут sessionId string,  */
+/** Session ID string */
 export interface FeedbackRequest {
   messageId: string
   feedback: {

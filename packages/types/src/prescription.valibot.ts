@@ -8,7 +8,7 @@
  * @package `@neonpro/types`
  * @author Claude AI Agent
  * @version 1.0.0
- * @compliance CFM, ANVISA, Brazilian Pharmaceutical Standards
+ * CFM, ANVISA, Brazilian Pharmaceutical Standards
  */
 
 import * as v from 'valibot'

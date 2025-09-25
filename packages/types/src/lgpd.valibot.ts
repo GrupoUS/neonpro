@@ -7,7 +7,7 @@
  * @package `@neonpro/types`
  * @author Claude AI Agent
  * @version 1.0.0
- * @compliance LGPD Art. 7º, 11º - Brazilian Data Protection Law
+ * LGPD Art. 7º, 11º - Brazilian Data Protection Law
  */
 
 import * as v from 'valibot'

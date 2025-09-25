@@ -922,7 +922,7 @@ Provide:
     };
   }
 
-  private generateProcedureEducation(procedure: AestheticProcedure, patientProfile: AestheticPatientProfile): string[] {
+  private generateProcedureEducation(procedure: AestheticProcedure, _patientProfile: AestheticPatientProfile): string[] {
     return [
       `Understanding ${procedure.name} treatment`,
       `What to expect during recovery`,
@@ -956,7 +956,7 @@ Provide:
     return nextSteps;
   }
 
-  private isMedicationContraindicated(medication: string, procedure: AestheticProcedure): boolean {
+  private isMedicationContraindicated(medication: string, _procedure: AestheticProcedure): boolean {
     // Simple medication contraindication checking
     const contraindicatedMeds = [
       'blood thinners', 'anticoagulants', 'immunosuppressants',
@@ -1222,7 +1222,7 @@ Professional Declaration: "I have explained all aspects of the procedure and ans
     ];
   }
 
-  private generateDocumentationRequirements(consultation: AestheticConsultationRequest): string[] {
+  private generateDocumentationRequirements(_consultation: AestheticConsultationRequest): string[] {
     return [
       'Complete medical history documentation',
       'Photographic documentation (before and after)',

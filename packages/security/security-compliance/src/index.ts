@@ -1,6 +1,6 @@
 /**
- * @neonpro/security-compliance
- * 
+ * @package Security and compliance framework
+ *
  * Security, authentication, and compliance frameworks for NeonPro healthcare platform
  * Unified package containing all security functionality
  */

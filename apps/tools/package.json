@@ -44,7 +44,7 @@
   },
   "dependencies": {
     "@neonpro/types": "0.1.0",
-    "@neonpro/utils": "0.1.0"
+    "@neonpro/shared": "0.1.0"
   },
   "engines": {
     "node": ">=18.0.0",

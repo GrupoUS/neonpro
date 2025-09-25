@@ -1,11 +1,10 @@
 /**
  * Unified Session Management Base
- * 
+ *
  * Provides common session management functionality extracted from
  * EnhancedSessionManager to reduce duplication and improve maintainability.
- * 
+ *
  * @version 2.0.0
- * @security_critical
  */
 
 import { SecurityValidator, SecurityRateLimiter, SecurityConfig, SecurityResult, ValidationContext } from './security-base'
@@ -111,6 +110,7 @@ export class BaseSessionManager {
       return {
         isExpired: true,
         reason: 'Session exceeded maximum duration',
+        shouldWarn: false,
       }
     }
 
@@ -119,6 +119,7 @@ export class BaseSessionManager {
       return {
         isExpired: true,
         reason: 'Session expired due to inactivity',
+        shouldWarn: false,
       }
     }
 

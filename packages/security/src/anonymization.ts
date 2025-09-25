@@ -28,7 +28,7 @@ export interface MaskingOptions {
 /**
  * LGPD compliance levels for anonymization
  */
-export type LGPDComplianceLevel = 'basic' | 'enhanced' | 'full_anonymization'
+export type LGPDComplianceLevel = 'basic' | 'enhanced' | 'strict'
 
 /**
  * Patient data structure for healthcare anonymization
@@ -106,7 +106,7 @@ export const DEFAULT_MASKING_OPTIONS = {
     visibleEnd: 0,
     preserveFormat: true,
   },
-  full_anonymization: {
+  strict: {
     maskChar: '*',
     visibleStart: 0,
     visibleEnd: 0,
@@ -464,7 +464,7 @@ export function maskPatientData(
       const date = new Date(masked.birthDate)
       masked.birthDate = `${date.getFullYear()}-**-**`
       fieldsAnonymized.push('birthDate')
-    } else if (actualComplianceLevel === 'full_anonymization') {
+    } else if (actualComplianceLevel === 'strict') {
       const date = new Date(masked.birthDate)
       const year = date.getFullYear()
       // Specific age group mappings for test cases
@@ -493,7 +493,7 @@ export function maskPatientData(
     } else if (actualComplianceLevel === 'enhanced') {
       masked.address = maskAddressObject(masked.address, options)
       fieldsAnonymized.push('address')
-    } else if (actualComplianceLevel === 'full_anonymization') {
+    } else if (actualComplianceLevel === 'strict') {
       // For full anonymization, return ANONIMIZADO for address fields
       if (typeof masked.address === 'object' && masked.address !== null) {
         masked.address = {
@@ -520,7 +520,7 @@ export function maskPatientData(
     }
   }
 
-  if (actualComplianceLevel === 'full_anonymization') {
+  if (actualComplianceLevel === 'strict') {
     // Remove direct identifiers for full anonymization
     if (masked.id) {
       delete masked.id
@@ -632,7 +632,7 @@ export function generatePrivacyReport(
 
   if (typeof anonymizedResultOrComplianceLevel === 'string') {
     // Second parameter is compliance level, so we need to anonymize the data first
-    complianceLevel = anonymizedResultOrComplianceLevel
+    complianceLevel = anonymizedResultOrComplianceLevel as LGPDComplianceLevel
     anonymizedResult = maskPatientData(originalData as PatientData, complianceLevel)
   } else {
     // Second parameter is already anonymized result
