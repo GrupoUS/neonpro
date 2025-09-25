@@ -4,9 +4,9 @@
  * Comprehensive test runner for all security components integration tests.
  * Provides detailed reporting and validation of security system integrity.
  * 
- * @security_critical
- * @test_coverage Complete Security System
- * @compliance OWASP Top 10, LGPD, ANVISA, CFM
+ * Security: Critical - Complete security system validation tests
+ * Test Coverage: Complete Security System
+ * Compliance: OWASP Top 10, LGPD, ANVISA, CFM
  */
 
 import { describe, it, expect, beforeAll, afterAll } from 'vitest'

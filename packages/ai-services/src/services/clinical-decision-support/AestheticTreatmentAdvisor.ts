@@ -354,7 +354,7 @@ export class AestheticTreatmentAdvisor {
         procedureName: procedure.name,
         confidence: rec.confidence,
         efficacy: rec.efficacy,
-        safety: this.calculateSafetyScore(patientProfile, procedure),
+        safety: this.calculateSafetyScore(request.patientProfile, procedure),
         suitability: this.calculateSuitabilityScore(request.patientProfile, procedure),
         expectedResults: rec.expectedResults,
         risks: this.assessProcedureRisks(procedure, request.patientProfile),
@@ -371,7 +371,7 @@ export class AestheticTreatmentAdvisor {
 
   private async createPrioritizedTreatmentPlan(
     recommendations: TreatmentRecommendation[],
-    request: AestheticConsultationRequest
+    _request: AestheticConsultationRequest
   ): Promise<Array<{
     phase: number;
     procedures: string[];
@@ -444,7 +444,7 @@ export class AestheticTreatmentAdvisor {
 
   private async assessComprehensiveRisks(
     recommendations: TreatmentRecommendation[],
-    patientProfile: AestheticPatientProfile
+    _patientProfile: AestheticPatientProfile
   ): Promise<{
     overall: 'low' | 'medium' | 'high';
     factors: string[];
@@ -471,7 +471,7 @@ export class AestheticTreatmentAdvisor {
 
   private async identifyContraindications(
     _patientProfile: AestheticPatientProfile,
-    recommendations: TreatmentRecommendation[]
+    _recommendations: TreatmentRecommendation[]
   ): Promise<string[]> {
     const contraindications: string[] = [];
 
@@ -872,7 +872,7 @@ Provide:
     return Math.max(0.1, Math.min(1.0, suitabilityScore));
   }
 
-  private assessProcedureRisks(procedure: AestheticProcedure, patientProfile: AestheticPatientProfile): any[] {
+  private assessProcedureRisks(procedure: AestheticProcedure, _patientProfile: AestheticPatientProfile): any[] {
     return procedure.safetyProfile.commonRisks.map(risk => ({
       type: 'common',
       description: risk,
@@ -905,7 +905,7 @@ Provide:
     return alternatives[procedure.id] || [];
   }
 
-  private calculateTreatmentCost(procedure: AestheticProcedure, recommendation: any): any {
+  private calculateTreatmentCost(procedure: AestheticProcedure, _recommendation: any): any {
     return {
       estimate: procedure.cost.base,
       currency: procedure.cost.currency,
@@ -922,7 +922,7 @@ Provide:
     };
   }
 
-  private generateProcedureEducation(procedure: AestheticProcedure, patientProfile: AestheticPatientProfile): string[] {
+  private generateProcedureEducation(procedure: AestheticProcedure, _patientProfile: AestheticPatientProfile): string[] {
     return [
       `Understanding ${procedure.name} treatment`,
       `What to expect during recovery`,
@@ -956,7 +956,7 @@ Provide:
     return nextSteps;
   }
 
-  private isMedicationContraindicated(medication: string, procedure: AestheticProcedure): boolean {
+  private isMedicationContraindicated(medication: string, _procedure: AestheticProcedure): boolean {
     // Simple medication contraindication checking
     const contraindicatedMeds = [
       'blood thinners', 'anticoagulants', 'immunosuppressants',
@@ -1222,7 +1222,7 @@ Professional Declaration: "I have explained all aspects of the procedure and ans
     ];
   }
 
-  private generateDocumentationRequirements(consultation: AestheticConsultationRequest): string[] {
+  private generateDocumentationRequirements(_consultation: AestheticConsultationRequest): string[] {
     return [
       'Complete medical history documentation',
       'Photographic documentation (before and after)',

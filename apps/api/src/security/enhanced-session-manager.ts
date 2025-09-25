@@ -4,8 +4,8 @@
  * Comprehensive session management with IP binding, fixation protection,
  * concurrent session limits, timeout controls, and anomaly detection.
  *
- * @security_critical
- * @compliance OWASP Session Management Cheat Sheet, LGPD
+ * Security: Critical - Core session management with advanced security features
+ * Compliance: OWASP Session Management Cheat Sheet, LGPD
  * @version 2.0.0
  */
 

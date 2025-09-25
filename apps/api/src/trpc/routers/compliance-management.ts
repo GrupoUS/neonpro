@@ -3,7 +3,7 @@
  * Handles LGPD, ANVISA, and Professional Council compliance requirements
  */
 
-import { ComplianceManagementService } from '@neonpro/core-services'
+import { ComplianceManagementService } from '@neonpro/healthcare-core'
 import { createTRPCRouter } from '@trpc/server'
 import { z } from 'zod'
 // Removed unused import

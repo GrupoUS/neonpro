@@ -1,6 +1,6 @@
 ---
 title: "NeonPro Tools Usage Guide"
-last_updated: 2025-09-16
+last_updated: 2025-09-25
 form: how-to
 tags: [tools, testing, healthcare, neonpro]
 related:
@@ -31,11 +31,11 @@ The NeonPro Tools collection provides a categorized testing infrastructure for h
 # Install all dependencies
 pnpm install
 
-# Run all tests by category
-pnpm run test:frontend    # React, E2E, Accessibility tests
-pnpm run test:backend     # API, Integration, Middleware tests
-pnpm run test:database    # RLS, Security, Compliance tests
-pnpm run test:quality     # Coverage, Performance, Audit tests
+# Run all tests by category (using Bun for performance)
+cd tools/tests && bun run test:frontend    # React, E2E, Accessibility tests
+cd tools/tests && bun run test:backend     # API, Integration, Middleware tests
+cd tools/tests && bun run test:database    # RLS, Security, Compliance tests
+cd tools/tests && bun run test:quality     # Coverage, Performance, Audit tests
 
 # Run orchestrated test suite
 pnpm run test:orchestrate
@@ -43,21 +43,21 @@ pnpm run test:orchestrate
 
 ## Test Categories
 
-### 🎨 Frontend Tests (`@neonpro/tools-frontend-tests`)
+### 🎨 Frontend Tests (`@neonpro/tests` → `categories/frontend/`)
 
 **Focus**: React components, E2E workflows, accessibility, and healthcare UI compliance.
 
 ```bash
 # All frontend tests
-pnpm run test:frontend
+cd tools/tests && bun run test:frontend
 
 # Specific test types
-pnpm --filter @neonpro/tools-frontend-tests test:components
-pnpm --filter @neonpro/tools-frontend-tests test:e2e
-pnpm --filter @neonpro/tools-frontend-tests test:a11y
+cd tools/tests && bun run test:react
+cd tools/tests && bun run test:e2e
+cd tools/tests && bun run test:accessibility
 
 # Healthcare UI compliance
-pnpm run test:a11y
+cd tools/tests && bun run test:accessibility
 ```
 
 **Key Features**:
@@ -67,18 +67,18 @@ pnpm run test:a11y
 - WCAG 2.1 AA+ accessibility validation
 - Healthcare-specific UI component testing
 
-### 🔧 Backend Tests (`@neonpro/tools-backend-tests`)
+### 🔧 Backend Tests (`@neonpro/tests` → `categories/backend/`)
 
 **Focus**: API endpoints, integration testing, monorepo validation, and middleware.
 
 ```bash
 # All backend tests
-pnpm run test:backend
+cd tools/tests && bun run test:backend
 
 # Specific test types
-pnpm --filter @neonpro/tools-backend-tests test:api
-pnpm --filter @neonpro/tools-backend-tests test:integration
-pnpm --filter @neonpro/tools-backend-tests test:middleware
+cd tools/tests && bun run test:api
+cd tools/tests && bun run test:integration
+cd tools/tests && bun run test:middleware
 ```
 
 **Key Features**:
@@ -88,17 +88,17 @@ pnpm --filter @neonpro/tools-backend-tests test:middleware
 - MSW mocking integration
 - Healthcare compliance validation
 
-### 🗄️ Database Tests (`@neonpro/tools-database-tests`)
+### 🗄️ Database Tests (`@neonpro/tests` → `categories/database/`)
 
 **Focus**: Row Level Security (RLS), data compliance, and migration validation.
 
 ```bash
 # All database tests
-pnpm run test:database
+cd tools/tests && bun run test:database
 
 # Specific test types
-pnpm run test:rls         # Row Level Security
-pnpm run test:compliance  # LGPD/ANVISA/CFM compliance
+cd tools/tests && bun run test:rls         # Row Level Security
+cd tools/tests && bun run test:compliance  # LGPD/ANVISA/CFM compliance
 ```
 
 **Key Features**:
@@ -108,18 +108,18 @@ pnpm run test:compliance  # LGPD/ANVISA/CFM compliance
 - Migration safety validation
 - Data encryption verification
 
-### ⚡ Quality Tests (`@neonpro/tools-quality-tests`)
+### ⚡ Quality Tests (`@neonpro/tests` → `categories/quality/`)
 
 **Focus**: Code coverage, performance benchmarks, and monitoring.
 
 ```bash
 # All quality tests
-pnpm run test:quality
+cd tools/tests && bun run test:quality
 
 # Specific quality checks
-pnpm --filter @neonpro/tools-quality-tests test:coverage
-pnpm --filter @neonpro/tools-quality-tests test:performance
-pnpm --filter @neonpro/tools-quality-tests benchmark
+cd tools/tests && bun run test:coverage
+cd tools/tests && bun run test:performance
+cd tools/tests && bun run test:audit
 ```
 
 **Key Features**:

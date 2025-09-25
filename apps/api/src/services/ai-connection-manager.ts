@@ -4,10 +4,10 @@
  * Provides intelligent connection management for AI agent operations with
  * healthcare compliance, dynamic scaling, and comprehensive monitoring
  * 
- * @features Dynamic connection pooling
- * @features Circuit breaker patterns
- * @compliance LGPD, ANVISA, CFM
- * @performance Auto-scaling and optimization
+ * Features: Dynamic connection pooling
+ * Features: Circuit breaker patterns
+ * Compliance: LGPD, ANVISA, CFM
+ * Performance: Auto-scaling and optimization
  */
 
 import { SupabaseClient, createClient } from '@supabase/supabase-js'

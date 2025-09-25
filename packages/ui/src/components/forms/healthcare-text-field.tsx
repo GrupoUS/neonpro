@@ -4,7 +4,7 @@
  * Enhanced text input with healthcare-specific validation, accessibility features,
  * medical data handling, and LGPD compliance built-in.
  *
- * @fileoverview Healthcare text field with React Aria integration
+ * @file Healthcare text field with React Aria integration
  */
 
 'use client'

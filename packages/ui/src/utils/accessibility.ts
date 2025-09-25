@@ -4,7 +4,7 @@
  * Provides comprehensive accessibility support for healthcare interfaces
  * with WCAG 2.1 AA compliance and medical-specific considerations.
  *
- * @fileoverview Accessibility utilities and helpers for healthcare UI
+ * @file Accessibility utilities and helpers for healthcare UI
  */
 
 import { useEffect, useRef } from 'react'

@@ -4,7 +4,7 @@
  * Enhanced form wrapper with healthcare-specific validation, LGPD compliance,
  * accessibility features, and medical data handling capabilities.
  *
- * @fileoverview Healthcare form foundation with compliance and accessibility
+ * @file Healthcare form foundation with compliance and accessibility
  */
 
 'use client'

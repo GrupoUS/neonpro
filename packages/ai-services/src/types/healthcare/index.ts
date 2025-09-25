@@ -1,6 +1,6 @@
 /**
  * Healthcare-specific types for unified AI services
- * @package @neonpro/ai-services
+ * @package `@neonpro/ai-services`
  */
 
 // Healthcare event types

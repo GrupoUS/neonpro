@@ -10,7 +10,6 @@ import { logger } from '@neonpro/shared';
 
 // Import unified AI providers
 import { UnifiedAIProviderManager } from '../providers/unified-provider-manager';
-import type { IUnifiedAIProvider } from '../providers/base-unified-provider';
 
 // Import specialized services
 import { ClinicalAIService } from '../clinical-ai-service';
@@ -22,29 +21,21 @@ import { AguiService } from '../../../agui-protocol/src/service';
 
 // Import comprehensive types
 import {
-  ClinicalContext,
   PatientProfile,
   ClinicalAssessmentRequest,
   ClinicalAssessmentResult,
-  AestheticPatientProfile,
   AestheticConsultationRequest,
   AestheticConsultationResult,
   TreatmentRecommendation,
   PredictionRequest,
-  PredictionResult,
   ComplianceValidationRequest,
   ComplianceValidationResult,
   ClinicalEvent,
-  ClinicalEventResponse,
   ClinicalDecisionRequest,
   ClinicalDecisionResponse,
   ClinicalDecisionSupportConfig,
   ClinicalFinding,
-  FitzpatrickScale,
-  LGPDCompliance,
-  ANVISACompliance,
-  CFMCompliance,
-  ComplianceFramework
+  FitzpatrickScale
 } from '../../types/clinical-decision-support';
 
 // Import compliance services
@@ -837,7 +828,7 @@ Please provide:
 Consider patient safety, evidence-based practices, and individual patient factors.`;
   }
 
-  private parseTreatmentPlanResponse(response: string): any {
+  private parseTreatmentPlanResponse(_response: string): any {
     // Parse AI response into structured treatment plan
     return {
       planId: uuidv4(),
@@ -863,7 +854,7 @@ Consider patient safety, evidence-based practices, and individual patient factor
     };
   }
 
-  private generateTreatmentPlanRecommendations(plan: any): string[] {
+  private generateTreatmentPlanRecommendations(_plan: any): string[] {
     return [
       'Review treatment plan with patient',
       'Schedule initial treatment session',

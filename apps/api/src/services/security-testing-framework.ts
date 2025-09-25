@@ -12,8 +12,8 @@
  * - Compliance validation
  *
  * @version 1.0.0
- * @compliance LGPD, HIPAA, ANVISA, CFM, OWASP
- * @healthcare-platform NeonPro
+ * Compliance: LGPD, HIPAA, ANVISA, CFM, OWASP
+ * Platform: NeonPro Healthcare Platform
  */
 
 import { logger } from '../lib/logger'

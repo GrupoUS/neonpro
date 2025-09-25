@@ -46,9 +46,7 @@
     "**/*.spec.tsx"
   ],
   "references": [
-    { "path": "../../packages/types" },
     { "path": "../../packages/utils" },
-    { "path": "../../packages/shared" },
     { "path": "../../packages/database" },
     { "path": "../../packages/security" }
   ]

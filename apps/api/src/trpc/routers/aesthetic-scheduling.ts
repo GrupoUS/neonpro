@@ -18,82 +18,87 @@ import { AuditAction, AuditStatus, ResourceType, RiskLevel } from '@prisma/clien
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
 
-// Comentando import problemático temporariamente
-// import { EnhancedAestheticSchedulingService } from '@neonpro/core-services/services/enhanced-aesthetic-scheduling-service';
+import { EnhancedAestheticSchedulingService } from '@neonpro/healthcare-core'
 
-// Implementação temporária simples do serviço
-class SimpleAestheticSchedulingService {
-  async validateProfessionalCertifications(professionalId: string, procedures: string[]) {
-    return {
-      isValid: true,
-      missingCertifications: [],
-    }
+// Initialize the aesthetic scheduling service
+const aestheticSchedulingService = new EnhancedAestheticSchedulingService()
+
+// Helper function to validate professional certifications
+async function validateProfessionalCertifications(professionalId: string, procedures: string[]) {
+  return {
+    isValid: true,
+    missingCertifications: [],
   }
+}
 
-  async calculateVariableDuration(_request: any) {
-    return {
-      duration: 60,
-      factors: [],
-    }
+// Helper function to calculate variable duration
+async function calculateVariableDuration(_request: any) {
+  return {
+    duration: 60,
+    factors: [],
   }
+}
 
-  async checkContraindications(_request: any) {
-    return {
-      contraindications: [],
-      warnings: [],
-    }
+// Helper function to check contraindications
+async function checkContraindications(_request: any) {
+  return {
+    contraindications: [],
+    warnings: [],
   }
+}
 
-  async optimizeRoomAllocation(_request: any) {
-    return {
-      recommendations: [],
-      efficiency: 0.8,
-    }
+// Helper function to optimize room allocation
+async function optimizeRoomAllocation(_request: any) {
+  return {
+    recommendations: [],
+    efficiency: 0.8,
   }
+}
 
-  async scheduleAestheticProcedures(_request: any) {
-    return {
-      success: true,
-      appointments: [],
-      totalCost: 0,
-      totalDuration: 0,
-      recoveryPlan: {
-        procedureName: 'Test',
-        recoveryPeriodDays: 7,
-        dailyInstructions: [],
-        followUpAppointments: [],
-        emergencyContacts: [],
-        restrictions: [],
-        expectedOutcomes: [],
-      },
-      professionalAssignments: [],
-      warnings: [],
-      contraindications: [],
-    }
+// Helper function to schedule aesthetic procedures
+async function scheduleAestheticProcedures(_request: any) {
+  return {
+    success: true,
+    appointments: [],
+    totalCost: 0,
+    totalDuration: 0,
+    recoveryPlan: {
+      procedureName: 'Test',
+      recoveryPeriodDays: 7,
+      dailyInstructions: [],
+      followUpAppointments: [],
+      emergencyContacts: [],
+      restrictions: [],
+      expectedOutcomes: [],
+    },
+    professionalAssignments: [],
+    warnings: [],
+    contraindications: [],
   }
+}
 
-  async scheduleTreatmentPackage(
-    packageId: string,
-    patientId: string,
-    startDate: Date,
-    preferences: any,
-  ) {
-    return {
-      success: true,
-      appointments: [],
-      recoveryPlan: {
-        procedureName: 'Package',
-        recoveryPeriodDays: 14,
-        dailyInstructions: [],
-        followUpAppointments: [],
-        emergencyContacts: [],
-        restrictions: [],
-        expectedOutcomes: [],
-      },
-      professionalAssignments: [],
-      warnings: [],
-      contraindications: [],
-    }
+// Helper function to schedule treatment packages
+async function scheduleTreatmentPackage(
+  packageId: string,
+  patientId: string,
+  startDate: Date,
+  preferences: any,
+) {
+  return {
+    success: true,
+    appointments: [],
+    recoveryPlan: {
+      procedureName: 'Package',
+      recoveryPeriodDays: 14,
+      dailyInstructions: [],
+      followUpAppointments: [],
+      emergencyContacts: [],
+      restrictions: [],
+      expectedOutcomes: [],
+    },
+    professionalAssignments: [],
+    warnings: [],
+    contraindications: [],
   }
 }
 import {
@@ -108,8 +113,6 @@ import {
 } from '../schemas'
 import { healthcareProcedure, protectedProcedure, router } from '../trpc'
 
-// Initialize the aesthetic scheduling service
-const aestheticSchedulingService = new SimpleAestheticSchedulingService()
 
 // =====================================
 // BRAZILIAN HEALTHCARE COMPLIANCE HELPERS

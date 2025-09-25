@@ -1,568 +1,247 @@
-import { Anthropic } from '@anthropic-ai/sdk';
-import {
-  BaseAIProvider,
-  IUnifiedAIProvider,
-  ProviderConfig,
-  ProviderHealth,
-  ProviderCapabilities,
-  CompletionResponse,
-  CompletionChunk,
-  CompletionOptions,
-  ImageAnalysisResponse,
-  ImageAnalysisOptions,
-  TokenUsage
-} from './base-ai-provider.js';
-import { healthcareLogger as logger } from '@neonpro/shared';
+import Anthropic from '@anthropic-ai/sdk'
+import type {
+  AIProvider,
+  GenerateAnswerInput,
+  GenerateAnswerResult,
+  StreamChunk,
+} from './ai-provider.js'
+import { 
+  sanitizeForAI, 
+  validatePromptSecurity, 
+  validateAIOutputSafety,
+  logAIInteraction,
+  aiSecurityService 
+} from '../../../apps/api/src/services/ai-security-service.js'
 
-/**
- * Anthropic Provider Implementation
- * Healthcare-optimized with comprehensive compliance features
- * Optimized for Brazilian healthcare regulations (LGPD, ANVISA, CFM)
- */
-export class AnthropicProvider extends BaseAIProvider implements IUnifiedAIProvider {
-  readonly name = 'anthropic';
-  readonly model: string;
-  readonly capabilities: ProviderCapabilities;
-  private readonly client: Anthropic;
+interface AnthropicConfig {
+  apiKey: string
+  model?: string
+  baseUrl?: string
+  timeout?: number
+  maxRetries?: number
+}
 
-  constructor(config: ProviderConfig) {
-    super(config);
-    this.model = config.model;
-    this.capabilities = {
-      streaming: true,
-      vision: true,
-      functionCalling: true,
-      jsonMode: true,
-      multimodal: true,
-      contextWindow: 200000,
-      maxOutputTokens: 8192,
-      supportsHealthcare: true,
-    };
-    
-    this.client = new Anthropic({
+export class AnthropicProvider implements AIProvider {
+  private readonly client: Anthropic
+  private readonly config: Required<AnthropicConfig>
+
+  constructor(config: AnthropicConfig) {
+    if (!config.apiKey) {
+      throw new Error('Anthropic API key is required')
+    }
+
+    this.config = {
+      model: config.model || 'claude-3-sonnet-20240229',
+      baseUrl: config.baseUrl,
+      timeout: config.timeout || 30000,
+      maxRetries: config.maxRetries || 3,
       apiKey: config.apiKey,
-      baseURL: config.baseUrl,
-    });
+    }
+
+    this.client = new Anthropic({
+      apiKey: this.config.apiKey,
+      baseURL: this.config.baseUrl,
+      timeout: this.config.timeout,
+      maxRetries: this.config.maxRetries,
+    })
   }
 
-  async generateCompletion(
-    prompt: string,
-    options?: CompletionOptions
-  ): Promise<CompletionResponse> {
-    return this.withRetry(async () => {
-      const startTime = Date.now();
-      
-      if (this.compliance.auditLogging) {
-        this.logHealthcareAudit('generateCompletion_start', { 
-          prompt: this.sanitizePrompt(prompt), 
-          options 
-        });
-      }
-
-      const messages = this.formatMessages(prompt, options);
-
-      const response = await this.client.messages.create({
-        model: this.model,
-        max_tokens: options?.maxTokens || this.config.maxTokens,
-        temperature: options?.temperature ?? this.config.temperature,
-        top_p: options?.topP,
-        top_k: options?.topK,
-        stop_sequences: options?.stopSequences,
-        messages,
-        stream: false,
-      });
-
-      const content = this.extractContent(response);
-      const usage = this.extractUsage(response);
-      const processingTimeMs = Date.now() - startTime;
-
-      // Apply healthcare compliance
-      const sanitizedContent = this.sanitizeContent(content, 'completion');
-
-      const result: CompletionResponse = {
-        id: response.id,
-        text: sanitizedContent,
-        usage,
-        finishReason: this.mapFinishReason(response.stop_reason),
-        metadata: {
-          provider: this.name,
-          model: this.model,
-          compliance: this.compliance,
-          processingTimeMs,
-          sanitized: content !== sanitizedContent,
-          auditId: this.compliance.auditLogging ? this.generateAuditId() : undefined,
-        },
-      };
-
-      this.updateStats(true, processingTimeMs, usage.totalTokens);
-
-      if (this.compliance.auditLogging) {
-        this.logHealthcareAudit('generateCompletion_success', {
-          prompt: this.sanitizePrompt(prompt),
-          result: { ...result, text: '[SANITIZED]' },
-          processingTimeMs,
-        });
-      }
-
-      return result;
-    }, 'generateCompletion');
-  }
-
-  async *generateCompletionStream(
-    prompt: string,
-    options?: CompletionOptions
-  ): AsyncIterable<CompletionChunk> {
+  async generateAnswer(
+    input: GenerateAnswerInput,
+  ): Promise<GenerateAnswerResult> {
     try {
-      const startTime = Date.now();
-      
-      if (this.compliance.auditLogging) {
-        this.logHealthcareAudit('generateCompletionStream_start', { 
-          prompt: this.sanitizePrompt(prompt), 
-          options 
-        });
+      // Validate and sanitize input for healthcare compliance
+      if (!validatePromptSecurity(input.prompt)) {
+        throw new Error('Prompt failed security validation')
       }
 
-      const messages = this.formatMessages(prompt, options);
+      const sanitizedPrompt = sanitizeForAI(input.prompt)
+
+      const message = await this.client.messages.create({
+        model: this.config.model,
+        max_tokens: input.maxTokens || 1000,
+        temperature: input.temperature || 0.7,
+        messages: this.buildMessages(input, sanitizedPrompt),
+        stream: false,
+      })
+
+      const content = this.extractContent(message)
+      
+      // Validate AI output for healthcare safety
+      if (!validateAIOutputSafety(content)) {
+        throw new Error('AI output failed safety validation')
+      }
+
+      const result: GenerateAnswerResult = {
+        content,
+        tokensUsed: message.usage?.input_tokens + message.usage?.output_tokens,
+        model: message.model,
+        finishReason: this.mapFinishReason(message.stop_reason),
+      }
+
+      // Log interaction for audit trail
+      this.logInteraction(input, result, 'anthropic')
+
+      return result
+    } catch (error) {
+      this.handleError(error, 'generateAnswer')
+      throw error
+    }
+  }
+
+  async *generateStream(
+    input: GenerateAnswerInput,
+  ): AsyncIterable<StreamChunk> {
+    try {
+      // Validate and sanitize input for healthcare compliance
+      if (!validatePromptSecurity(input.prompt)) {
+        throw new Error('Prompt failed security validation')
+      }
+
+      const sanitizedPrompt = sanitizeForAI(input.prompt)
 
       const stream = await this.client.messages.create({
-        model: this.model,
-        max_tokens: options?.maxTokens || this.config.maxTokens,
-        temperature: options?.temperature ?? this.config.temperature,
-        top_p: options?.topP,
-        top_k: options?.topK,
-        stop_sequences: options?.stopSequences,
-        messages,
+        model: this.config.model,
+        max_tokens: input.maxTokens || 1000,
+        temperature: input.temperature || 0.7,
+        messages: this.buildMessages(input, sanitizedPrompt),
         stream: true,
-      });
+      })
 
-      for await (const chunk of stream) {
-        if (chunk.type === 'content_block_delta') {
-          const delta = (chunk.delta as any).text || '';
-          const sanitizedDelta = this.sanitizeContent(delta, 'stream');
-          
-          const streamChunk: CompletionChunk = {
-            id: 'anthropic-stream',
-            text: sanitizedDelta,
-            delta: sanitizedDelta,
-            isComplete: false,
-            metadata: {
-              provider: this.name,
-              chunkType: chunk.type,
-              index: chunk.index,
-            },
-          };
-          
-          yield streamChunk;
-        }
+      let accumulatedContent = ''
 
-        if (chunk.type === 'message_stop') {
-          const processingTimeMs = Date.now() - startTime;
-          
-          const finalChunk: CompletionChunk = {
-            id: 'anthropic-complete',
-            text: '',
-            delta: '',
-            isComplete: true,
-            metadata: {
-              provider: this.name,
-              chunkType: 'completion',
-            },
-          };
-          
-          yield finalChunk;
+      for await (const messageStreamEvent of stream) {
+        if (messageStreamEvent.type === 'content_block_delta') {
+          const delta = messageStreamEvent.delta?.text || ''
+          accumulatedContent += delta
 
-          if (this.compliance.auditLogging) {
-            this.logHealthcareAudit('generateCompletionStream_complete', {
-              prompt: this.sanitizePrompt(prompt),
-              processingTimeMs,
-            });
+          const streamChunk: StreamChunk = {
+            content: accumulatedContent,
+            delta,
+            finished: false,
           }
+
+          yield streamChunk
+        } else if (messageStreamEvent.type === 'message_stop') {
+          // Validate final AI output for healthcare safety
+          if (!validateAIOutputSafety(accumulatedContent)) {
+            throw new Error('AI output failed safety validation')
+          }
+
+          const finalChunk: StreamChunk = {
+            content: accumulatedContent,
+            delta: '',
+            finished: true,
+            finishReason: 'stop',
+          }
+
+          yield finalChunk
+
+          // Log interaction for audit trail
+          this.logInteraction({
+            ...input,
+            prompt: sanitizedPrompt,
+          }, {
+            content: accumulatedContent,
+            provider: 'anthropic',
+          }, 'anthropic')
         }
       }
     } catch (error) {
-      const processingTimeMs = Date.now() - (this.stats.lastUsed?.getTime() || Date.now());
-      
-      if (this.compliance.auditLogging) {
-        this.logHealthcareAudit('generateCompletionStream_error', {
-          prompt: this.sanitizePrompt(prompt),
-          error: error instanceof Error ? error.message : 'Unknown error',
-        });
-      }
-
-      this.updateStats(false, processingTimeMs, 0);
-
-      throw this.handleError(error);
+      this.handleError(error, 'generateStream')
+      throw error
     }
   }
 
-  async analyzeImage(
-    imageUrl: string | Buffer,
-    prompt: string,
-    options?: ImageAnalysisOptions
-  ): Promise<ImageAnalysisResponse> {
-    if (!this.capabilities.vision) {
-      throw new Error('Image analysis not supported by this provider');
-    }
+  private buildMessages(input: GenerateAnswerInput, sanitizedPrompt: string): any[] {
+    const messages: any[] = []
 
-    return this.withRetry(async () => {
-      const startTime = Date.now();
-      
-      if (this.compliance.auditLogging) {
-        this.logHealthcareAudit('analyzeImage_start', { 
-          prompt: this.sanitizePrompt(prompt), 
-          options,
-          imageType: typeof imageUrl === 'string' ? 'url' : 'buffer'
-        });
-      }
-
-      // Format image content for Anthropic
-      const imageContent = typeof imageUrl === 'string'
-        ? { type: 'image' as const, source: { type: 'url' as const, url: imageUrl } }
-        : { type: 'image' as const, source: { type: 'base64' as const, media_type: 'image/jpeg' as const, data: imageUrl.toString('base64') } };
-
-      const message = {
-        role: 'user' as const,
-        content: [
-          { type: 'text' as const, text: this.buildHealthcarePrompt(prompt, this.convertImageHealthcareOptions(options?.healthcare)) },
-          imageContent,
-        ],
-      };
-
-      const response = await this.client.messages.create({
-        model: this.model,
-        max_tokens: options?.maxTokens || 1000,
-        temperature: options?.temperature ?? 0.7,
-        messages: [message],
-      });
-
-      const analysis = this.extractContent(response);
-      const usage = this.extractUsage(response);
-      const processingTimeMs = Date.now() - startTime;
-
-      // Apply healthcare compliance for medical image analysis
-      const sanitizedAnalysis = this.sanitizeContent(analysis, 'image_analysis');
-
-      const result: ImageAnalysisResponse = {
-        id: response.id,
-        analysis: sanitizedAnalysis,
-        confidence: this.calculateConfidence(response),
-        usage,
-        metadata: {
-          provider: this.name,
-          model: this.model,
-          imageType: typeof imageUrl === 'string' ? 'url' : 'buffer',
-          processingTimeMs,
-        },
-      };
-
-      this.updateStats(true, processingTimeMs, usage.totalTokens);
-
-      if (this.compliance.auditLogging) {
-        this.logHealthcareAudit('analyzeImage_success', {
-          prompt: this.sanitizePrompt(prompt),
-          analysis: '[SANITIZED]',
-          processingTimeMs,
-        });
-      }
-
-      return result;
-    }, 'analyzeImage');
-  }
-
-  async healthCheck(): Promise<ProviderHealth> {
-    const startTime = Date.now();
-
-    try {
-      const response = await this.client.messages.create({
-        model: this.model,
-        max_tokens: 10,
-        temperature: 0,
-        messages: [{ role: 'user', content: 'health check' }],
-      });
-
-      const responseTime = Date.now() - startTime;
-      const stats = this.getStats();
-
-      return {
-        isHealthy: true,
-        responseTime,
-        latency: responseTime,
-        lastCheck: new Date(),
-        uptime: stats.errorRate < 0.05 ? 100 : Math.max(0, 100 - (stats.errorRate * 100)),
-        errorRate: stats.errorRate,
-      };
-    } catch (error) {
-      const responseTime = Date.now() - startTime;
-      
-      return {
-        isHealthy: false,
-        responseTime,
-        error: error instanceof Error ? error.message : 'Unknown error',
-        lastCheck: new Date(),
-      };
-    }
-  }
-
-  /**
-   * Format messages for Anthropic API with healthcare compliance
-   */
-  private formatMessages(
-    prompt: string,
-    options?: CompletionOptions
-  ): Array<any> {
-    const messages: Array<any> = [];
-
-    // Add system message with healthcare compliance
-    const systemPrompt = this.buildSystemPrompt(options?.systemPrompt);
-    if (systemPrompt) {
-      messages.push({
-        role: 'user',
-        content: `System instructions: ${systemPrompt}`,
-      });
-    }
-
-    // Add current user message
+    // Add user message
     messages.push({
       role: 'user',
-      content: this.buildHealthcarePrompt(prompt, options?.healthcare),
-    });
+      content: sanitizedPrompt,
+    })
 
-    return messages;
+    return messages
   }
 
-  /**
-   * Build system prompt with healthcare compliance
-   */
-  private buildSystemPrompt(customSystemPrompt?: string): string {
-    const basePrompt = this.compliance.brazilianContext
-      ? `You are Claude, an AI assistant helping with a Brazilian aesthetic clinic management system.
-
-Healthcare Compliance Guidelines:
-- LGPD (Lei Geral de Proteção de Dados): Strict patient data privacy protection
-- ANVISA Compliance: Follow Brazilian health surveillance regulations
-- CFM (Conselho Federal de Medicina): Adhere to medical ethics standards
-- Aesthetic Medicine Context: Focus on evidence-based cosmetic procedures
-
-Key Areas:
-- Botox and dermal fillers
-- Facial treatments and skincare
-- Patient consultation and management
-- Clinical documentation and procedures
-- Professional healthcare communication
-
-Communication Style:
-- Professional and ethical
-- Evidence-based information
-- Clear and accurate explanations
-- Cultural awareness for Brazilian context
-- Portuguese (pt-BR) when appropriate`
-      : `You are Claude, an AI assistant created by Anthropic.`;
-
-    return customSystemPrompt ? `${basePrompt}\n\n${customSystemPrompt}` : basePrompt;
-  }
-
-  /**
-   * Build healthcare prompt with context
-   */
-  private buildHealthcarePrompt(prompt: string, healthcare?: CompletionOptions['healthcare']): string {
-    let formattedPrompt = prompt;
-
-    if (healthcare?.language === 'pt-BR') {
-      formattedPrompt = `[Contexto Brasileiro/Português] ${formattedPrompt}`;
+  private extractContent(message: any): string {
+    if (message.content && Array.isArray(message.content)) {
+      return message.content
+        .filter((block: any) => block.type === 'text')
+        .map((block: any) => block.text)
+        .join('')
     }
-
-    if (healthcare?.context) {
-      const contextMap = {
-        clinical: '[Contexto Clínico]',
-        administrative: '[Contexto Administrativo]',
-        research: '[Contexto de Pesquisa]',
-      };
-      formattedPrompt = `${contextMap[healthcare.context]} ${formattedPrompt}`;
-    }
-
-    if (this.compliance.enableANVISA) {
-      formattedPrompt = `${formattedPrompt}\n\n[Nota: Seguir diretrizes da ANVISA para informações de saúde.]`;
-    }
-
-    return formattedPrompt;
+    return ''
   }
 
-  /**
-   * Extract content from Anthropic response
-   */
-  private extractContent(response: any): string {
-    if (!response.content || response.content.length === 0) {
-      return '';
-    }
-
-    const textContent = response.content
-      .filter((block: any) => block.type === 'text')
-      .map((block: any) => block.text)
-      .join('');
-
-    return textContent;
-  }
-
-  /**
-   * Extract usage information from Anthropic response
-   */
-  private extractUsage(response: any): TokenUsage {
-    const usage = response.usage || {};
-    
-    // Calculate cost (rough estimate for Claude)
-    const inputCost = (usage.input_tokens || 0) * 0.000015; // $0.015 per 1K tokens
-    const outputCost = (usage.output_tokens || 0) * 0.000075; // $0.075 per 1K tokens
-    const totalCost = inputCost + outputCost;
-
-    return {
-      promptTokens: usage.input_tokens || 0,
-      completionTokens: usage.output_tokens || 0,
-      totalTokens: (usage.input_tokens || 0) + (usage.output_tokens || 0),
-      cost: totalCost,
-      currency: 'USD',
-    };
-  }
-
-  /**
-   * Map Anthropic finish reason to standard format
-   */
-  private mapFinishReason(stopReason: string | null): 'stop' | 'length' | 'tool_calls' | 'content_filter' {
+  private mapFinishReason(stopReason?: string): 'stop' | 'length' | 'content_filter' | 'function_call' | undefined {
     switch (stopReason) {
       case 'end_turn':
-      case 'stop_sequence':
-        return 'stop';
+        return 'stop'
       case 'max_tokens':
-        return 'length';
-      case 'tool_use':
-        return 'tool_calls';
+        return 'length'
+      case 'stop_sequence':
+        return 'stop'
       default:
-        return 'stop';
+        return undefined
     }
   }
 
-  /**
-   * Calculate confidence score for analysis
-   */
-  private calculateConfidence(response: any): number {
-    // Anthropic doesn't provide confidence scores, so we estimate based on content
-    if (!response.content || response.content.length === 0) {
-      return 0;
+  private logInteraction(
+    input: GenerateAnswerInput, 
+    result: GenerateAnswerResult | { content: string; provider: string }, 
+    provider: string
+  ): void {
+    // In a real implementation, this would get user/patient context from the calling service
+    logAIInteraction({
+      userId: 'system', // Should be provided by caller
+      clinicId: 'system', // Should be provided by caller
+      provider,
+      prompt: input.prompt,
+      response: result.content,
+      timestamp: Date.now(),
+    })
+  }
+
+  private handleError(error: unknown, method: string): void {
+    if (error instanceof Anthropic.APIError) {
+      console.error(`Anthropic ${method} API Error:`, {
+        status: error.status,
+        message: error.message,
+        type: error.type,
+        error: error.error,
+      })
+    } else {
+      console.error(`Anthropic ${method} Error:`, error)
     }
-
-    const contentLength = response.content
-      .filter((block: any) => block.type === 'text')
-      .reduce((sum: number, block: any) => sum + (block.text?.length || 0), 0);
-
-    // Simple heuristic: longer, more detailed responses get higher confidence
-    return Math.min(0.95, Math.max(0.5, contentLength / 1000));
   }
 
-  /**
-   * Enhanced PII removal for healthcare context
-   */
-  protected sanitizeContent(content: string, context?: string): string {
-    let sanitizedContent = super.sanitizeContent(content, context);
-
-    // Additional healthcare-specific PII patterns
-    if (this.compliance.piiRedaction) {
-      // Medical record numbers
-      sanitizedContent = sanitizedContent.replace(/\b(?:MRN|Medical Record|Prontuário)\s*[:-]?\s*\d+/gi, '[MEDICAL_RECORD]');
-      
-      // Healthcare professional licenses (CRM, COREN, etc.)
-      sanitizedContent = sanitizedContent.replace(/\b(?:CRM|COREN|CFF|CREFITO)\s*[:-]?\s*[A-Z]{0,2}\/\d+/gi, '[LICENSE]');
-      
-      // Brazilian healthcare identifiers
-      sanitizedContent = sanitizedContent.replace(/\b(?:CNS|Cartão SUS)\s*[:-]?\s*\d{15}\b/g, '[HEALTH_ID]');
-      
-      // Procedure codes
-      sanitizedContent = sanitizedContent.replace(/\b(?:CID-10|CBHPM|TUSS)\s*[:-]?\s*[A-Z]\d{2}(?:\.\d+)?/gi, '[PROCEDURE_CODE]');
-      
-      // Medical device identifiers
-      sanitizedContent = sanitizedContent.replace(/\b(?:Registro ANVISA)\s*[:-]?\s*\d+/gi, '[DEVICE_ID]');
+  // Health check method
+  async healthCheck(): Promise<boolean> {
+    try {
+      await this.client.messages.create({
+        model: this.config.model,
+        max_tokens: 10,
+        messages: [{ role: 'user', content: 'test' }],
+      })
+      return true
+    } catch (error) {
+      console.error('Anthropic health check failed:', error)
+      return false
     }
-
-    // Enhanced ANVISA compliance
-    if (this.compliance.enableANVISA) {
-      const prohibitedHealthTerms = [
-        'diagnóstico definitivo',
-        'tratamento garantido',
-        'cura garantida',
-        'procedimento seguro',
-        'sem riscos',
-        'resultado certo',
-        '100% eficaz',
-      ];
-
-      for (const term of prohibitedHealthTerms) {
-        const regex = new RegExp(`\\b${term}\\b`, 'gi');
-        sanitizedContent = sanitizedContent.replace(regex, '[REDACTED: ANVISA]');
-      }
-    }
-
-    return sanitizedContent.trim();
   }
 
-  /**
-   * Sanitize prompt for audit logging
-   */
-  private sanitizePrompt(prompt: string): string {
-    return prompt
-      .replace(/\b\d{3}[-.\s]?\d{3}[-.\s]?\d{3}[-.\s]?\d{1,2}\b/g, '[PHONE]')
-      .replace(/\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g, '[EMAIL]')
-      .replace(/\b\d{3}\.\d{3}\.\d{3}-\d{1}\b/g, '[CPF]')
-      .substring(0, 300);
-  }
-
-  /**
-   * Generate audit ID for tracking
-   */
-  private generateAuditId(): string {
-    return `anthropic_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-  }
-
-  /**
-   * Convert ImageAnalysisOptions healthcare to CompletionOptions healthcare format
-   */
-  private convertImageHealthcareOptions(healthcare?: ImageAnalysisOptions['healthcare']): CompletionOptions['healthcare'] | undefined {
-    if (!healthcare) return undefined;
-
+  // Get provider info
+  getProviderInfo(): {
+    name: string
+    model: string
+    healthy: boolean
+  } {
     return {
-      enablePIIRedaction: healthcare.enableRedaction,
-      enableAuditLogging: false, // Not available in ImageAnalysisOptions
-      context: healthcare.analysisType === 'medical' ? 'clinical' : 'administrative',
-      language: 'pt-BR' // Default for healthcare context
-    };
-  }
-
-  /**
-   * Handle Anthropic specific errors
-   */
-  private handleError(error: unknown): never {
-    logger.error('Anthropic API Error:', error);
-
-    if (error instanceof Error) {
-      if (error.message.includes('api_key') || error.message.includes('401')) {
-        throw new Error('Invalid Anthropic API key');
-      }
-      if (error.message.includes('rate_limit') || error.message.includes('429')) {
-        throw new Error('Anthropic rate limit exceeded. Please try again later.');
-      }
-      if (error.message.includes('quota') || error.message.includes('overloaded')) {
-        throw new Error('Anthropic service overloaded. Please try again later.');
-      }
-      if (error.message.includes('timeout')) {
-        throw new Error('Anthropic request timeout. Please try again.');
-      }
-      if (error.message.includes('network') || error.message.includes('ECONN')) {
-        throw new Error('Network error connecting to Anthropic. Please check your connection.');
-      }
-      if (error.message.includes('model_not_found') || error.message.includes('404')) {
-        throw new Error(`Model ${this.model} not found. Please check the model name.`);
-      }
-      
-      throw new Error(`Anthropic API error: ${error.message}`);
+      name: 'anthropic',
+      model: this.config.model,
+      healthy: true, // Will be updated by health check
     }
-
-    throw new Error('Unknown error occurred with Anthropic provider');
   }
 }

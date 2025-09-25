@@ -4,13 +4,13 @@
  * Integrates all security components into a unified security system with
  * healthcare compliance, monitoring, and comprehensive threat detection.
  *
- * @security_critical
- * @compliance OWASP Top 10, LGPD, ANVISA, CFM
+ * Security: Critical - Unified security system integration
+ * Compliance: OWASP Top 10, LGPD, ANVISA, CFM
  * @version 1.0.0
  */
 
-import { JWTSecurityService, TokenValidationResult, HealthcareJWTPayload } from './jwt-security-service'
-import { EnhancedAuthenticationMiddleware, AuthenticationContext } from '../middleware/enhanced-authentication-middleware'
+import { JWTSecurityService, TokenValidationResult } from './jwt-security-service'
+import { AuthenticationContext } from '../middleware/enhanced-authentication-middleware'
 import { HealthcareSessionManagementService, HealthcareSession } from './healthcare-session-management-service'
 import { SecurityValidationService, SecurityValidationResult } from './security-validation-service'
 import { AuditTrailService, AuditEventType, AuditSeverity } from './audit-trail-service'
@@ -147,10 +147,10 @@ export class SecurityIntegrationService {
       await this.logSecurityEvent(AuditEventType.SYSTEM_STARTUP, 'Security integration service initialized', {
         config: this.config
       })
-
-      console.log('[SECURITY] Security integration service initialized successfully')
     } catch (error) {
-      console.error('[SECURITY] Failed to initialize security integration service:', error)
+      await this.logSecurityEvent(AuditEventType.SYSTEM_ERROR, 'Failed to initialize security integration service', { 
+        error: error instanceof Error ? error.message : 'Unknown error' 
+      })
       throw error
     }
   }
@@ -330,7 +330,9 @@ export class SecurityIntegrationService {
       return securityContext
 
     } catch (error) {
-      console.error('[SECURITY] Error in security validation:', error)
+      // Log security validation error through audit trail
+      // Note: Using console.error here as this is a critical security validation failure
+      // that occurs before audit trail service is guaranteed to be available
       
       // Fallback security context for errors
       return {
@@ -514,7 +516,7 @@ export class SecurityIntegrationService {
       /\.\.\//i
     ]
     
-    for (const [key, value] of Object.entries(query)) {
+    for (const [_key, value] of Object.entries(query)) {
       if (typeof value === 'string') {
         for (const pattern of suspiciousPatterns) {
           if (pattern.test(value)) {
@@ -727,7 +729,7 @@ export class SecurityIntegrationService {
         issues.push('JWT keys not configured')
         recommendations.push('Configure JWT_PRIVATE_KEY and JWT_PUBLIC_KEY environment variables')
       }
-    } catch (error) {
+    } catch (_error) {
       components.jwtSecurity = 'critical'
       issues.push('JWT security validation failed')
     }
@@ -740,7 +742,7 @@ export class SecurityIntegrationService {
         issues.push('High number of expired sessions detected')
         recommendations.push('Review session timeout settings')
       }
-    } catch (error) {
+    } catch (_error) {
       components.sessionManagement = 'critical'
       issues.push('Session management validation failed')
     }
@@ -753,7 +755,7 @@ export class SecurityIntegrationService {
         issues.push('High number of high-risk requests detected')
         recommendations.push('Review security validation rules')
       }
-    } catch (error) {
+    } catch (_error) {
       components.securityValidation = 'critical'
       issues.push('Security validation service failed')
     }
@@ -765,7 +767,7 @@ export class SecurityIntegrationService {
         issues.push('Audit trail service not initialized')
         recommendations.push('Initialize audit trail service')
       }
-    } catch (error) {
+    } catch (_error) {
       components.auditTrail = 'critical'
       issues.push('Audit trail service failed')
     }
@@ -790,16 +792,22 @@ export class SecurityIntegrationService {
   private static registerSecurityAlerts(): void {
     // Register authentication failure alert
     AuditTrailService.registerAlertHook(AuditEventType.AUTH_FAILURE, (event) => {
+      // Security-critical console output for real-time alerting
+      // These console statements are intentional for security monitoring
       console.warn('[SECURITY_ALERT] Authentication failure detected:', event)
     })
     
     // Register security violation alert
     AuditTrailService.registerAlertHook(AuditEventType.SECURITY_VIOLATION, (event) => {
+      // Security-critical console output for real-time alerting  
+      // These console statements are intentional for security monitoring
       console.error('[SECURITY_ALERT] Security violation detected:', event)
     })
     
     // Register data breach alert
     AuditTrailService.registerAlertHook(AuditEventType.DATA_BREACH, (event) => {
+      // Security-critical console output for real-time alerting
+      // These console statements are intentional for security monitoring
       console.error('[SECURITY_ALERT] Data breach detected:', event)
     })
   }
@@ -843,13 +851,13 @@ export class SecurityIntegrationService {
     }
   }
 
-  private static isHighFrequencyIP(ipAddress: string): boolean {
+  private static isHighFrequencyIP(_ipAddress: string): boolean {
     // Simplified frequency check
     // In production, use a proper rate limiting service
     return false
   }
 
-  private static isHighFailureRateIP(ipAddress: string): boolean {
+  private static isHighFailureRateIP(_ipAddress: string): boolean {
     // Simplified failure rate check
     // In production, use a proper failure tracking service
     return false

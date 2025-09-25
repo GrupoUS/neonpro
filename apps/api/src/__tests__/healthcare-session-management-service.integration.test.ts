@@ -4,9 +4,9 @@
  * Comprehensive integration tests for healthcare-compliant session management
  * with LGPD compliance, patient data access logging, and audit trail integration.
  * 
- * @security_critical
- * @test_coverage Healthcare Session Management Service
- * @compliance LGPD, ANVISA, CFM, HIPAA
+ * Security: Critical - Healthcare session management service tests
+ * Test Coverage: Healthcare Session Management Service
+ * Compliance: LGPD, ANVISA, CFM, HIPAA
  */
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'

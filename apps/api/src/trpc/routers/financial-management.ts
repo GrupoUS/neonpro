@@ -4,7 +4,7 @@
  * Brazilian tax compliance and payment processing
  */
 
-import { FinancialManagementService } from '@neonpro/core-services'
+import { FinancialManagementService } from '@neonpro/healthcare-core'
 import {
   FinancialAccountInputSchema,
   FinancialGoalInputSchema,
@@ -13,7 +13,7 @@ import {
   ProfessionalCommissionInputSchema,
   ServicePriceInputSchema,
   TreatmentPackageInputSchema,
-} from '@neonpro/core-services'
+} from '@neonpro/healthcare-core'
 import { z } from 'zod'
 import { createTRPCRouter } from '../../trpc'
 

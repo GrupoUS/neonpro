@@ -10,8 +10,8 @@
  * - Real-time security monitoring and anomaly detection
  * - Brazilian healthcare compliance (ANVISA, CFM, LGPD)
  *
- * @security_critical
- * @compliance LGPD, ANVISA, CFM, NGS2
+ * Security: Critical - Core security service for aesthetic clinic operations
+ * Compliance: LGPD, ANVISA, CFM, NGS2
  * @version 1.0.0
  */
 

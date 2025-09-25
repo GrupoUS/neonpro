@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "ES2022",
-    "module": "ESNext",
+    "module": "Node16",
     "moduleResolution": "node16",
     "lib": ["ES2022"],
     "allowJs": true,
@@ -42,34 +42,25 @@
     "incremental": true,
     "tsBuildInfoFile": "./.tsbuildinfo",
 
-    "tsBuildInfoFile": "./.tsbuildinfo",
-
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
-      // Core 8-package architecture paths
-      "@neonpro/types": ["./packages/types/src"],
-      "@neonpro/types/*": ["./packages/types/src/*"],
-      "@neonpro/shared": ["./packages/shared/src"],
-      "@neonpro/shared/*": ["./packages/shared/src/*"],
+      // Core 6-package architecture paths
       "@neonpro/database": ["./packages/database/src"],
       "@neonpro/database/*": ["./packages/database/src/*"],
       "@neonpro/ai-services": ["./packages/ai-services/src"],
       "@neonpro/ai-services/*": ["./packages/ai-services/src/*"],
       "@neonpro/healthcare-core": ["./packages/healthcare-core/src"],
       "@neonpro/healthcare-core/*": ["./packages/healthcare-core/src/*"],
-      "@neonpro/security-compliance": ["./packages/security-compliance/src"],
-      "@neonpro/security-compliance/*": ["./packages/security-compliance/src/*"],
-      "@neonpro/api-gateway": ["./packages/api-gateway/src"],
-      "@neonpro/api-gateway/*": ["./packages/api-gateway/src/*"],
-      "@neonpro/ui": ["./packages/ui/src"],
-      "@neonpro/ui/*": ["./packages/ui/src/*"],
-      // Legacy package paths (for backward compatibility)
-      "@neonpro/*": ["./packages/*/src"],
       "@neonpro/security": ["./packages/security/src"],
       "@neonpro/security/*": ["./packages/security/src/*"],
+      "@neonpro/ui": ["./packages/ui/src"],
+      "@neonpro/ui/*": ["./packages/ui/src/*"],
       "@neonpro/utils": ["./packages/utils/src"],
-      "utils/*": ["./packages/utils/src/*"],
+      "@neonpro/utils/*": ["./packages/utils/src/*"],
+      
+      // Legacy package paths (for backward compatibility)
+      "@neonpro/*": ["./packages/*/src"],
       "@apps/*": ["./apps/*/src"]
     },
     "composite": true,
@@ -81,35 +72,16 @@
   },
   "exclude": ["node_modules", "dist", "build", "**/*.d.ts"],
   "references": [
-    // Core 8-package architecture
-    { "path": "./packages/types" },
-    { "path": "./packages/shared" },
+    // Core 6-package architecture
     { "path": "./packages/database" },
     { "path": "./packages/ai-services" },
     { "path": "./packages/healthcare-core" },
-    { "path": "./packages/security-compliance" },
-    { "path": "./packages/api-gateway" },
-    { "path": "./packages/ui" },
-    // Legacy packages (maintained for backward compatibility)
-    { "path": "./packages/agui-protocol" },
-    { "path": "./packages/ai-providers" },
-    { "path": "./packages/analytics" },
-    { "path": "./packages/chat-domain" },
-    { "path": "./packages/cli" },
-    { "path": "./packages/compliance" },
-    { "path": "./packages/config" },
-    { "path": "./packages/core-services" },
-    { "path": "./packages/domain" },
-    { "path": "./packages/governance" },
-    { "path": "./packages/monitoring" },
-    { "path": "./packages/schemas" },
     { "path": "./packages/security" },
+    { "path": "./packages/ui" },
     { "path": "./packages/utils" },
-    { "path": "./packages/validators" },
+    
     // Applications
-    { "path": "./apps/ai-agent" },
     { "path": "./apps/api" },
-    { "path": "./apps/tools" },
     { "path": "./apps/web" }
   ]
 }

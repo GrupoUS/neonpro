@@ -4,9 +4,9 @@
  * Comprehensive integration tests for audit trail service
  * with security event logging, compliance reporting, and real-time monitoring.
  * 
- * @security_critical
- * @test_coverage Audit Trail Service
- * @compliance LGPD, ANVISA, CFM, HIPAA, GDPR
+ * Security: Critical - Security event logging and compliance monitoring tests
+ * Test Coverage: Audit Trail Service
+ * Compliance: LGPD, ANVISA, CFM, HIPAA, GDPR
  */
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'

@@ -11,6 +11,7 @@ import {
   HealthcareTRPCError,
   PaginationSchema,
 } from '@neonpro/types/api/contracts'
+import { z } from 'zod'
 // import { LGPDComplianceMiddleware } from '../../middleware/lgpd-compliance';
 import {
   aiSecurityService,
@@ -27,14 +28,14 @@ import { ConsentPurpose } from '../../services/lgpd-consent-service'
 import { protectedProcedure, router } from '../trpc'
 
 // Health analysis service
-import { HealthAnalysisService } from '@neonpro/core-services'
+import { HealthAnalysisService } from '@neonpro/healthcare-core'
 
 // AI service management functions
 import {
   checkAIServiceHealth,
   checkModelAvailability,
   getAIUsageStats,
-} from '@neonpro/core-services'
+} from '@neonpro/integrations'
 
 // Initialize services
 const healthAnalysisService = new HealthAnalysisService()
@@ -1139,6 +1140,57 @@ async function _checkAIUsageLimit(
   return { allowed: true, currentUsage: 0, limit: 1000, resetTime: new Date() }
 }
 
-function hasHealthAnalysisPermission(_role: string): boolean {
+function hasHealthAnalysisPermission(role: string): boolean {
   return ['doctor', 'admin'].includes(role)
+}
+
+async function gatherAppointmentAnalysisData(
+  _patientId: string,
+  _clinicId: string,
+  _includePrevious: boolean,
+): Promise<any> {
+  // Placeholder function for gathering appointment analysis data
+  return {
+    patientHistory: [],
+    preferences: {},
+    schedulingConstraints: {},
+  }
+}
+
+async function getClinicScheduleData(_clinicId: string): Promise<any> {
+  // Placeholder function for getting clinic schedule data
+  return {
+    availability: [],
+    staffSchedules: [],
+    holidays: [],
+  }
+}
+
+function buildAppointmentSuggestionPrompt(_clinicSchedule: any): string {
+  // Placeholder function for building appointment suggestion prompts
+  return 'Generate appointment suggestions based on patient data and clinic availability.'
+}
+
+function parseAppointmentSuggestions(_content: any): any {
+  // Placeholder function for parsing AI appointment suggestions
+  return {
+    suggestions: [],
+    optimization: {
+      bestTimeSlots: [],
+      conflictWarnings: [],
+      efficiencyScore: 0.8,
+    },
+    patientInsights: {
+      appointmentHistory: {
+        totalAppointments: 0,
+        averageInterval: 0,
+        lastAppointment: null,
+      },
+      preferences: {
+        preferredTimes: [],
+        preferredDays: [],
+        noShowRisk: 'medium',
+      },
+    },
+  }
 }

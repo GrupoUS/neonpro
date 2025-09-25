@@ -5,7 +5,7 @@
  * smart invalidation, and performance monitoring.
  *
  * @version 1.0.0
- * @compliance LGPD, ANVISA, CFM, ISO 27001
+ * Compliance: LGPD, ANVISA, CFM, ISO 27001
  */
 
 import { createHash } from 'crypto'

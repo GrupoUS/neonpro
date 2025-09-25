@@ -40,10 +40,10 @@
     "validate-workflows": "tsx scripts/validate-workflows.ts"
   },
   "dependencies": {
-    "@neonpro/types": "workspace:*",
-    "@neonpro/shared": "workspace:*",
     "@neonpro/database": "workspace:*",
     "@neonpro/ai-services": "workspace:*",
+    "@neonpro/utils": "workspace:*",
+    "@neonpro/security": "workspace:*",
     "zod": "^4.1.11",
     "date-fns": "^3.6.0",
     "valibot": "^1.1.0"
@@ -54,9 +54,7 @@
     "vitest": "^3.2.4",
     "tsx": "^4.6.2"
   },
-  "peerDependencies": {
-    "@neonpro/security-compliance": "workspace:*"
-  },
+  "peerDependencies": {},
   "files": [
     "dist",
     "src/**/*"

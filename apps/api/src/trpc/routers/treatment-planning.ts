@@ -1,4 +1,4 @@
-import { treatmentPlanningService } from '@neonpro/core-services'
+import { treatmentPlanningService } from '@neonpro/healthcare-core'
 import {
   CreateTreatmentAssessmentInput,
   CreateTreatmentDocumentInput,

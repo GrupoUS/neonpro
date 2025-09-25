@@ -203,7 +203,72 @@
     {
       "files": [
         "**/logger/**/*.{ts,js}",
-        "**/console-manager.ts"
+        "**/console-manager.ts",
+        "**/logging/**/*.{ts,js}",
+        "**/healthcare-logger.ts"
+      ],
+      "rules": {
+        "no-console": "off"
+      }
+    },
+    {
+      "files": [
+        "**/orchestration/**/*.{ts,js}",
+        "**/tools/**/orchestration/**/*.{ts,js}"
+      ],
+      "rules": {
+        "no-console": "off"
+      }
+    },
+    {
+      "files": [
+        "**/tools/**/backend/**/*.{ts,js}",
+        "**/tools/**/setup.ts"
+      ],
+      "rules": {
+        "no-console": "off"
+      }
+    },
+    {
+      "files": [
+        "**/audit*/**/*.{ts,js}",
+        "**/tools/**/audit*/**/*.{ts,js}"
+      ],
+      "rules": {
+        "no-console": "off"
+      }
+    },
+    {
+      "files": [
+        "**/validators/**/*.{ts,js}",
+        "**/packages/**/validators/**/*.{ts,js}",
+        "**/generate-*.ts",
+        "**/generate-*.js"
+      ],
+      "rules": {
+        "no-console": "off"
+      }
+    },
+    {
+      "files": [
+        "**/services/**/*.{ts,js}",
+        "**/packages/**/services/**/*.{ts,js}",
+        "**/governance/**/*.{ts,js}",
+        "**/compliance/**/*.{ts,js}",
+        "**/analytics/**/*.{ts,js}",
+        "**/ai-*/**/*.{ts,js}",
+        "**/protocol/**/*.{ts,js}",
+        "**/agui-*/**/*.{ts,js}"
+      ],
+      "rules": {
+        "no-console": "off"
+      }
+    },
+    {
+      "files": [
+        "**/utils/**/*.{ts,js}",
+        "**/packages/**/utils/**/*.{ts,js}",
+        "**/hooks/**/*.{ts,tsx}"
       ],
       "rules": {
         "no-console": "off"
@@ -214,7 +279,11 @@
         "**/scripts/**/*.{js,ts,cjs}",
         "**/fix-*.cjs",
         "**/fix-*.js",
-        "**/fix-*.ts"
+        "**/fix-*.ts",
+        "**/debug-*.js",
+        "**/debug-*.ts",
+        "**/quick-fix*.cjs",
+        "**/simple-fix*.cjs"
       ],
       "rules": {
         "no-console": "off",
@@ -228,6 +297,56 @@
       ],
       "rules": {
         "no-restricted-imports": "off",
+        "no-console": "off"
+      }
+    },
+    {
+      "files": [
+        "**/debug*/**/*.{ts,js}",
+        "**/tools/**/debug*/**/*.{ts,js}",
+        "**/security-analysis.ts",
+        "**/security-audit.ts"
+      ],
+      "rules": {
+        "no-console": "off"
+      }
+    },
+    {
+      "files": [
+        "**/fix-*.cjs",
+        "**/fix-*.js",
+        "**/fix-*.ts",
+        "**/quick-fix*.cjs",
+        "**/simple-fix*.cjs",
+        "**/analyze-*.js",
+        "**/analyze-*.ts"
+      ],
+      "rules": {
+        "no-console": "off",
+        "no-unused-vars": "warn"
+      }
+    },
+    {
+      "files": [
+        "**/logging/**/*.{ts,js}",
+        "**/logger/**/*.{ts,js}",
+        "**/console-manager.ts",
+        "**/healthcare-logger.ts",
+        "**/packages/**/logging/**/*.{ts,js}"
+      ],
+      "rules": {
+        "no-console": "off"
+      }
+    },
+    {
+      "files": [
+        "**/config*/**/*.{ts,js}",
+        "**/*.config.{js,ts}",
+        "**/setup*.ts",
+        "**/vitest.config.*",
+        "**/jest.config.*"
+      ],
+      "rules": {
         "no-console": "off"
       }
     }

@@ -10,7 +10,7 @@
  *
  * @version 1.0.0
  * @author NeonPro Platform Team
- * @compliance LGPD, ANVISA, CFM, ISO 27001
+ * Compliance: LGPD, ANVISA, CFM, ISO 27001
  */
 
 import { PoolManager } from '../clients/prisma'

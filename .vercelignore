@@ -16,7 +16,6 @@
 
 # Ignore all other apps
 apps/api/
-apps/tools/
 
 # Ignore all packages
 packages/

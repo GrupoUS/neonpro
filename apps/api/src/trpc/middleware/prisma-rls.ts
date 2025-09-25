@@ -6,9 +6,9 @@
  * for healthcare multi-tenant architecture with fallback policies for edge cases.
  *
  * @author AI Development Agent
- * @compliance Multi-tenant data isolation with Row Level Security
- * @compliance LGPD data protection requirements
- * @performance <200ms RLS overhead target
+ * Multi-tenant data isolation with Row Level Security
+ * LGPD data protection requirements
+ * Performance target: <200ms RLS overhead
  */
 
 import { TRPCError } from '@trpc/server'

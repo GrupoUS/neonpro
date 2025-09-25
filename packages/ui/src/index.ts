@@ -1,31 +1,34 @@
 /**
- * @file NeonPro UI Component Library
- *
- * React component library with healthcare-specific components for NeonPro platform
+ * Minimal UI Component Library
+ * Basic types and utilities for healthcare applications
  * @version 1.0.0
  */
 
-// Export core components
-export * from './components/ui';
+// Basic types
+export interface BaseComponentProps {
+  className?: string
+}
 
-// Export healthcare-specific components
-export * from './components/healthcare';
+export interface ButtonProps extends BaseComponentProps {
+  children: string
+  onClick?: () => void
+  disabled?: boolean
+}
 
-// Export form components
-export * from './components/forms';
+export interface InputProps extends BaseComponentProps {
+  type?: string
+  placeholder?: string
+  value?: string
+}
 
-// Export enhanced UI components
-export * from './components/aceternity';
-export * from './components/magicui';
+export interface CardProps extends BaseComponentProps {
+  children: string
+}
 
-// Export custom hooks
-export * from './hooks';
-
-// Export utilities
-export * from './utils';
-
-// Export styles
-export * from './styles';
+// Utility functions
+export const cn = (...classes: (string | undefined)[]): string => {
+  return classes.filter(Boolean).join(' ')
+}
 
 // Version info
-export const UI_PACKAGE_VERSION = '1.0.0';
+export const UI_PACKAGE_VERSION = '1.0.0'

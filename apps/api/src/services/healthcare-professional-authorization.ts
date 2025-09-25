@@ -5,10 +5,10 @@
  * role-based access control, and specialty-specific permissions. Replaces mock validation
  * with actual healthcare regulatory compliance checking.
  *
- * @critical SECURITY CVSS: 7.5 - Replaces mock authorization with real RBAC
+ * SECURITY CVSS: 7.5 - Replaces mock authorization with real RBAC
  * @author AI Development Agent
- * @compliance CFM Resolution 2,314/2022, LGPD, ANVISA, NGS2 Level 2
- * @performance <150ms validation target
+ * CFM Resolution 2,314/2022, LGPD, ANVISA, NGS2 Level 2
+ * Performance target: <150ms validation
  */
 
 import { PrismaClient } from '@prisma/client'

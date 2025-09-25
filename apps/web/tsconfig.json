@@ -11,7 +11,8 @@
     ],
     "tsBuildInfoFile": "./.tsbuildinfo",
     "types": [
-      "vite/client"
+      "vite/client",
+      "node"
     ],
     "noUnusedLocals": false,
     "noUnusedParameters": false,
@@ -31,30 +32,14 @@
       "@neonpro/database/*": [
         "../../packages/database/src/*"
       ],
-      "@neonpro/core-services": [
-        "../../packages/core-services/src"
+      
+      "@neonpro/healthcare-core": [
+        "../../packages/healthcare-core/src"
       ],
-      "@neonpro/core-services/*": [
-        "../../packages/core-services/src/*"
+      "@neonpro/healthcare-core/*": [
+        "../../packages/healthcare-core/src/*"
       ],
-      "@neonpro/domain": [
-        "../../packages/domain/src"
-      ],
-      "@neonpro/domain/*": [
-        "../../packages/domain/src/*"
-      ],
-      "@neonpro/types": [
-        "../../packages/types/src"
-      ],
-      "@neonpro/types/*": [
-        "../../packages/types/src/*"
-      ],
-      "@neonpro/shared": [
-        "../../packages/shared/src"
-      ],
-      "@neonpro/shared/*": [
-        "../../packages/shared/src/*"
-      ],
+  
       "@neonpro/ui": [
         "../../packages/ui/src"
       ],
@@ -118,17 +103,9 @@
     {
       "path": "../../packages/database"
     },
+    
     {
-      "path": "../../packages/core-services"
-    },
-    {
-      "path": "../../packages/domain"
-    },
-    {
-      "path": "../../packages/types"
-    },
-    {
-      "path": "../../packages/shared"
+      "path": "../../packages/healthcare-core"
     },
     {
       "path": "../../packages/ui"

@@ -4,9 +4,9 @@
  * Provides intelligent cache invalidation for AI agent data with
  * healthcare compliance and performance optimization
  * 
- * @features Multi-tier cache invalidation
- * @compliance LGPD, ANVISA, CFM
- * @performance Real-time invalidation with event-driven architecture
+ * Features: Multi-tier cache invalidation
+ * Compliance: LGPD, ANVISA, CFM
+ * Performance: Real-time invalidation with event-driven architecture
  */
 
 import { 

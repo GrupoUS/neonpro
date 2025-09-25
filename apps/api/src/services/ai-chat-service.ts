@@ -12,12 +12,36 @@
  * - Comprehensive error handling
  */
 
-import {
-  AIInsight,
-  AIInsightType,
-  AIProvider,
-  createAIInsight,
-} from '../../../../packages/shared/src/types/ai-insights'
+// Basic AI types to replace shared package imports
+export interface AIInsight {
+  id: string
+  type: AIInsightType
+  content: string
+  confidence: number
+  timestamp: Date
+}
+
+export enum AIInsightType {
+  SYMPTOM_ANALYSIS = 'symptom_analysis',
+  TREATMENT_SUGGESTION = 'treatment_suggestion',
+  RISK_ASSESSMENT = 'risk_assessment',
+  EMERGENCY_DETECTION = 'emergency_detection'
+}
+
+export enum AIProvider {
+  OPENAI = 'openai',
+  ANTHROPIC = 'anthropic',
+  GOOGLE = 'google',
+  LOCAL = 'local'
+}
+
+export const createAIInsight = (type: AIInsightType, content: string, confidence: number): AIInsight => ({
+  id: Math.random().toString(36).substr(2, 9),
+  type,
+  content,
+  confidence,
+  timestamp: new Date()
+})
 import { ComprehensiveAuditService } from './audit-service'
 import { HealthcareLogger } from '../logging/healthcare-logger'
 

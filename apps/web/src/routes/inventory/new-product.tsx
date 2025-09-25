@@ -1,6 +1,6 @@
 import { api } from '@/lib/api'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { Info, Package, Plus, Save, Trash2, X } from 'lucide-react'
+import { Plus, Save, Trash2, X } from 'lucide-react'
 import * as React from 'react'
 import { useState } from 'react'
 
@@ -142,10 +142,11 @@ function NewProduct() {
             <h3 className='text-lg font-medium text-gray-900 mb-4'>Informações Básicas</h3>
             <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
               <div>
-                <label className='block text-sm font-medium text-gray-700 mb-1'>
+                <label htmlFor='product-name' className='block text-sm font-medium text-gray-700 mb-1'>
                   Nome do Produto *
                 </label>
                 <input
+                  id='product-name'
                   type='text'
                   required
                   className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500'
@@ -154,10 +155,11 @@ function NewProduct() {
                 />
               </div>
               <div>
-                <label className='block text-sm font-medium text-gray-700 mb-1'>
+                <label htmlFor='product-sku' className='block text-sm font-medium text-gray-700 mb-1'>
                   SKU *
                 </label>
                 <input
+                  id='product-sku'
                   type='text'
                   required
                   className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500'
@@ -166,10 +168,11 @@ function NewProduct() {
                 />
               </div>
               <div>
-                <label className='block text-sm font-medium text-gray-700 mb-1'>
+                <label htmlFor='product-barcode' className='block text-sm font-medium text-gray-700 mb-1'>
                   Código de Barras
                 </label>
                 <input
+                  id='product-barcode'
                   type='text'
                   className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500'
                   value={formData.barcode}
@@ -177,10 +180,11 @@ function NewProduct() {
                 />
               </div>
               <div>
-                <label className='block text-sm font-medium text-gray-700 mb-1'>
+                <label htmlFor='product-category' className='block text-sm font-medium text-gray-700 mb-1'>
                   Categoria *
                 </label>
                 <select
+                  id='product-category'
                   required
                   className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500'
                   value={formData.category_id}
@@ -195,10 +199,11 @@ function NewProduct() {
                 </select>
               </div>
               <div>
-                <label className='block text-sm font-medium text-gray-700 mb-1'>
+                <label htmlFor='product-unit' className='block text-sm font-medium text-gray-700 mb-1'>
                   Unidade de Medida *
                 </label>
                 <select
+                  id='product-unit'
                   required
                   className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500'
                   value={formData.unit_of_measure}
@@ -213,10 +218,11 @@ function NewProduct() {
                 </select>
               </div>
               <div>
-                <label className='block text-sm font-medium text-gray-700 mb-1'>
+                <label htmlFor='product-manufacturer' className='block text-sm font-medium text-gray-700 mb-1'>
                   Fabricante
                 </label>
                 <input
+                  id='product-manufacturer'
                   type='text'
                   className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500'
                   value={formData.manufacturer}
@@ -423,7 +429,7 @@ function NewProduct() {
                 </label>
                 <div className='space-y-2'>
                   {formData.contraindications.map((contraindication, index) => (
-                    <div key={index} className='flex items-center space-x-2'>
+                    <div key={`contraindication-${index}`} className='flex items-center space-x-2'>
                       <input
                         type='text'
                         className='flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500'

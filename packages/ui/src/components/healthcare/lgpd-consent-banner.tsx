@@ -4,7 +4,7 @@
  * Enhanced consent management banner with healthcare-specific LGPD compliance,
  * granular consent options, accessibility features, and audit trail.
  *
- * @fileoverview LGPD-compliant consent banner for healthcare applications
+ * @file LGPD-compliant consent banner for healthcare applications
  */
 
 'use client'

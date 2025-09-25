@@ -5,7 +5,7 @@
  * Full LGPD/ANVISA/CFM compliance for healthcare data interactions
  */
 
-import { HealthcareTRPCError } from '@neonpro/utils/healthcare-errors'
+import { HealthcareTRPCError } from '@neonpro/shared/healthcare-errors'
 import { AuditAction, AuditStatus, ResourceType, RiskLevel } from '@prisma/client'
 import { TRPCError } from '@trpc/server'
 import {

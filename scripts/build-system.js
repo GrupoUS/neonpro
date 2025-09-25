@@ -5,18 +5,18 @@
  * =================================
  * 
  * Unified build system for the new 8-package architecture:
- * 1. @neonpro/types - Core type definitions and schemas
- * 2. @neonpro/shared - Shared utilities and services
- * 3. @neonpro/database - Database layer and models
- * 4. @neonpro/ai-services - AI and ML services
- * 5. @neonpro/healthcare-core - Healthcare business logic
- * 6. @neonpro/security-compliance - Security and compliance
- * 7. @neonpro/api-gateway - API gateway and routing
- * 8. @neonpro/ui - React component library
+ * 1. `@neonpro/types` - Core type definitions and schemas
+ * 2. `@neonpro/shared` - Shared utilities and services
+ * 3. `@neonpro/database` - Database layer and models
+ * 4. `@neonpro/ai-services` - AI and ML services
+ * 5. `@neonpro/healthcare-core` - Healthcare business logic
+ * 6. `@neonpro/security-compliance` - Security and compliance
+ * 7. `@neonpro/api-gateway` - API gateway and routing
+ * 8. `@neonpro/ui` - React component library
  */
 
 import { execSync } from 'child_process';
-import { readFileSync, writeFileSync, existsSync } from 'fs';
+import { existsSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
@@ -38,9 +38,7 @@ const CORE_PACKAGES = [
 // Applications in build order
 const APPLICATIONS = [
   '@neonpro/api',
-  '@neonpro/web',
-  '@neonpro/ai-agent',
-  '@neonpro/tools'
+  '@neonpro/web'
 ];
 
 class BuildSystem {
@@ -93,7 +91,7 @@ class BuildSystem {
 
     this.log(`Building ${packages.length} packages in ${mode} mode`);
 
-    const buildCommand = parallel 
+    let buildCommand = parallel
       ? `turbo run build --filter=${packages.join('--filter=')}`
       : packages.map(pkg => `turbo run build --filter=${pkg}`).join(' && ');
 
@@ -114,7 +112,7 @@ class BuildSystem {
 
   // Build all packages with proper dependency order
   buildAll(options = {}) {
-    const { mode = 'development', includeTests = false } = options;
+    const { _mode = 'development', _includeTests = false } = options;
     
     this.log('🚀 Starting full build process');
     
@@ -129,7 +127,7 @@ class BuildSystem {
 
   // Development server with hot reloading
   dev(options = {}) {
-    const { packages = APPLICATIONS, port = 3000 } = options;
+    const { packages = APPLICATIONS, _port = 3000 } = options;
     
     this.log(`🚀 Starting development server for ${packages.join(', ')}`);
     
@@ -459,7 +457,7 @@ Options:
         `);
         process.exit(1);
     }
-  } catch (error) {
+  } catch (_error) {
     process.exit(1);
   }
 }

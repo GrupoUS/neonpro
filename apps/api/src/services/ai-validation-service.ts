@@ -4,9 +4,9 @@
  * Provides comprehensive input validation, sanitization, and security checks
  * for AI agent queries with healthcare compliance (LGPD, ANVISA, CFM)
  * 
- * @security Input validation and sanitization
- * @compliance LGPD, ANVISA, CFM
- * @performance Optimized validation with caching
+ * Security: Input validation and sanitization
+ * Compliance: LGPD, ANVISA, CFM
+ * Performance: Optimized validation with caching
  */
 
 import { z } from 'zod'

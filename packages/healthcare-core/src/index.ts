@@ -1,32 +1,33 @@
 /**
- * @neonpro/healthcare-core
- * 
- * Healthcare business logic and workflows for NeonPro platform
+ * NeonPro Healthcare Core - Ultra Simplified
+ * Essential healthcare business logic and utilities
  */
 
-// Export domain value objects
-export * from './value-objects';
+// Core healthcare functionality
+export * from './healthcare'
+export * from './ai'
+export * from './ai-chat'
+export * from './ai-provider'
+export * from './map'
+export * from './webrtc'
+export * from './aesthetic-data'
+export * from './database-records'
+export * from './governance'
+export * from './guards'
 
-// Export domain entities
-export * from './entities';
+// Core utilities
+export * from './core'
 
-// Export domain services
-export * from './services';
+// Healthcare Services
+export * from './services/patient-engagement'
+export * from './services/treatment-planning'
+export * from './services/inventory-management'
+export * from './services/financial-management'
+export * from './services/aesthetic-scheduling'
+export * from './services/compliance-management'
+export * from './services/multi-professional-coordination'
+export * from './services/ai-clinical-support'
+export * from './services/analytics'
 
-// Export domain repositories
-export * from './repositories';
-
-// Export domain errors
-export * from './errors';
-
-// Export domain events
-export * from './events';
-
-// Export business workflows and processes
-export * from './workflows';
-
-// Export healthcare utilities
-export * from './utils';
-
-// Version info
-export const HEALTHCARE_CORE_PACKAGE_VERSION = '1.0.0';
+// Analytics Schemas
+export * from './schemas/analytics'

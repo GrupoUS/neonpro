@@ -7,29 +7,49 @@ import {
   ConversationContextManager,
   ConversationMessage,
 } from './conversation-context'
+import {
+  getErrorMessage,
+  logErrorWithContext,
+  ErrorContext,
+  withErrorHandling,
+} from '../utils/error-handling'
+import {
+  Intent,
+  Entity,
+  Citation,
+  ToolCall,
+  RAGAgentResponse,
+  ConversationContextData,
+  MessageMetadata,
+} from '../types/common'
+import {
+  ValidationService,
+  ValidationResult,
+  ConversationValidationParams,
+} from '../utils/validation-helpers'
 
 export interface ConversationRequest {
   sessionId: string
-  _userId: string
+  userId: string
   clinicId: string
   patientId?: string
   message: string
-  _context?: any
+  context?: ConversationContextData
   title?: string
 }
 
 export interface ConversationResponse {
   conversationId: string
   message: string
-  _role: 'assistant' | 'system'
-  _context: any
-  citations?: any[]
+  role: 'assistant' | 'system'
+  context: ConversationContextData
+  citations?: Citation[]
   confidence?: number
   followUpQuestions?: string[]
 }
 
 export interface ConversationHistoryParams {
-  _userId: string
+  userId: string
   clinicId: string
   patientId?: string
   limit?: number
@@ -43,6 +63,7 @@ export class ConversationService {
   private logger: HealthcareLogger
   private sessionManager: SessionManager
   private supabaseConnector: SupabaseConnector
+  private validationService: ValidationService
 
   constructor(
     supabase: SupabaseClient,
@@ -54,6 +75,11 @@ export class ConversationService {
     this.logger = logger
     this.sessionManager = sessionManager
     this.supabaseConnector = supabaseConnector
+    this.validationService = new ValidationService(
+      supabaseConnector,
+      sessionManager,
+      logger,
+    )
     this.contextManager = new ConversationContextManager(
       supabase,
       logger,
@@ -62,11 +88,12 @@ export class ConversationService {
   }
 
   async startConversation(
-    _request: ConversationRequest,
+    request: ConversationRequest,
   ): Promise<ConversationResponse> {
-    try {
+    return await withErrorHandling(async () => {
       // Validate session and permissions
-      await this.validateRequestPermissions(request)
+      const validationResult = await this.validationService.validateConversationRequest(request)
+      ValidationService.throwIfInvalid(validationResult)
 
       // Check for existing active conversation
       const existingConversation = await this.findExistingConversation(request)
@@ -78,7 +105,7 @@ export class ConversationService {
         // Create new conversation
         conversation = await this.contextManager.createConversation({
           sessionId: request.sessionId,
-          _userId: request.userId,
+          userId: request.userId,
           clinicId: request.clinicId,
           patientId: request.patientId,
           title: request.title || this.generateConversationTitle(request.message),
@@ -88,12 +115,12 @@ export class ConversationService {
 
       // Add user message
       await this.contextManager.addMessage(conversation.id, request.userId, {
-        _role: 'user',
+        role: 'user',
         content: request.message,
         metadata: {
           intent: await this.analyzeIntent(request.message),
           entities: await this.extractEntities(request.message),
-        },
+        } as MessageMetadata,
       })
 
       // Process with RAG agent and get response
@@ -104,13 +131,13 @@ export class ConversationService {
 
       // Add assistant response to conversation
       await this.contextManager.addMessage(conversation.id, request.userId, {
-        _role: 'assistant',
+        role: 'assistant',
         content: agentResponse.message,
         metadata: {
           confidence: agentResponse.confidence,
           citations: agentResponse.citations,
           tool_calls: agentResponse.tool_calls,
-        },
+        } as MessageMetadata,
       })
 
       // Update conversation context
@@ -133,54 +160,49 @@ export class ConversationService {
       return {
         conversationId: conversation.id,
         message: agentResponse.message,
-        _role: 'assistant',
-        _context: agentResponse.context,
+        role: 'assistant',
+        context: agentResponse.context,
         citations: agentResponse.citations,
         confidence: agentResponse.confidence,
         followUpQuestions: agentResponse.followUpQuestions,
       }
-    } catch (error) {
-      await this.logger.logError('conversation_start_error', {
-        error: error instanceof Error ? error.message : 'Unknown error',
-        _request: {
-          _userId: request.userId,
-          clinicId: request.clinicId,
-          patientId: request.patientId,
-          messageLength: request.message.length,
-        },
-        timestamp: new Date().toISOString(),
-      })
-      throw error
-    }
+    }, 'conversation_start_error', this.logger, ErrorContext.conversation('temp', request.userId, request.clinicId))
   }
 
   async continueConversation(
     conversationId: string,
-    _userId: string,
+    userId: string,
     message: string,
-    _context?: any,
+    context?: ConversationContextData,
   ): Promise<ConversationResponse> {
-    try {
+    return await withErrorHandling(async () => {
       // Get conversation
       const conversation = await this.contextManager.getConversation(
         conversationId,
-        _userId,
+        userId,
       )
       if (!conversation) {
         throw new Error('Conversation not found')
       }
 
       // Validate permissions
-      await this.validateUserAccess(userId, conversation.clinicId)
+      const validationParams: ConversationValidationParams = {
+        conversationId,
+        userId,
+        clinicId: conversation.clinicId,
+        action: 'read',
+      }
+      const validationResult = await this.validationService.validateConversation(validationParams)
+      ValidationService.throwIfInvalid(validationResult)
 
       // Add user message
       await this.contextManager.addMessage(conversationId, userId, {
-        _role: 'user',
+        role: 'user',
         content: message,
         metadata: {
           intent: await this.analyzeIntent(message),
           entities: await this.extractEntities(message),
-        },
+        } as MessageMetadata,
       })
 
       // Get conversation history for context
@@ -196,13 +218,13 @@ export class ConversationService {
 
       // Add assistant response
       await this.contextManager.addMessage(conversationId, userId, {
-        _role: 'assistant',
+        role: 'assistant',
         content: agentResponse.message,
         metadata: {
           confidence: agentResponse.confidence,
           citations: agentResponse.citations,
           tool_calls: agentResponse.tool_calls,
-        },
+        } as MessageMetadata,
       })
 
       // Update conversation context
@@ -225,29 +247,26 @@ export class ConversationService {
       return {
         conversationId,
         message: agentResponse.message,
-        _role: 'assistant',
-        _context: agentResponse.context,
+        role: 'assistant',
+        context: agentResponse.context,
         citations: agentResponse.citations,
         confidence: agentResponse.confidence,
         followUpQuestions: agentResponse.followUpQuestions,
       }
-    } catch (error) {
-      await this.logger.logError('conversation_continue_error', {
-        error: error instanceof Error ? error.message : 'Unknown error',
-        conversationId,
-        userId,
-        messageLength: message.length,
-        timestamp: new Date().toISOString(),
-      })
-      throw error
-    }
+    }, 'conversation_continue_error', this.logger, ErrorContext.conversation(conversationId, userId, 'unknown'))
   }
 
   async getConversationHistory(
     params: ConversationHistoryParams,
   ): Promise<{ conversations: ConversationContext[]; total: number }> {
-    try {
-      await this.validateUserAccess(params.userId, params.clinicId)
+    return await withErrorHandling(async () => {
+      const validationParams: ConversationValidationParams = {
+        userId: params.userId,
+        clinicId: params.clinicId,
+        action: 'read'
+      }
+      const validationResult = await this.validationService.validateConversation(validationParams)
+      ValidationService.throwIfInvalid(validationResult)
 
       const conversations = await this.contextManager.getUserConversations(
         params.userId,
@@ -288,30 +307,30 @@ export class ConversationService {
         conversations: paginatedConversations,
         total: filteredConversations.length,
       }
-    } catch (error) {
-      await this.logger.logError('conversation_history_error', {
-        error: error instanceof Error ? error.message : 'Unknown error',
-        params,
-        timestamp: new Date().toISOString(),
-      })
-      throw error
-    }
+    }, 'conversation_history_error', this.logger, ErrorContext.dataAccess(params.userId, params.clinicId, 'ai_conversation_contexts', 'get_history'))
   }
 
   async getConversationDetails(
     conversationId: string,
-    _userId: string,
+    userId: string,
   ): Promise<ConversationContext | null> {
-    try {
+    return await withErrorHandling(async () => {
       const conversation = await this.contextManager.getConversation(
         conversationId,
-        _userId,
+        userId,
       )
       if (!conversation) {
         return null
       }
 
-      await this.validateUserAccess(userId, conversation.clinicId)
+      const validationParams: ConversationValidationParams = {
+        conversationId,
+        userId,
+        clinicId: conversation.clinicId,
+        action: 'read'
+      }
+      const validationResult = await this.validationService.validateConversation(validationParams)
+      ValidationService.throwIfInvalid(validationResult)
 
       await this.logger.logDataAccess(userId, conversation.clinicId, {
         action: 'get_conversation_details',
@@ -322,33 +341,32 @@ export class ConversationService {
       })
 
       return conversation
-    } catch (error) {
-      await this.logger.logError('conversation_details_error', {
-        error: error instanceof Error ? error.message : 'Unknown error',
-        conversationId,
-        userId,
-        timestamp: new Date().toISOString(),
-      })
-      throw error
-    }
+    }, 'conversation_details_error', this.logger, ErrorContext.dataAccess(userId, 'unknown', 'ai_conversation_contexts', 'get_details'))
   }
 
   async deleteConversation(
     conversationId: string,
-    _userId: string,
+    userId: string,
   ): Promise<void> {
-    try {
+    return await withErrorHandling(async () => {
       const conversation = await this.contextManager.getConversation(
         conversationId,
-        _userId,
+        userId,
       )
       if (!conversation) {
         throw new Error('Conversation not found')
       }
 
-      await this.validateUserAccess(userId, conversation.clinicId)
+      const validationParams: ConversationValidationParams = {
+        conversationId,
+        userId,
+        clinicId: conversation.clinicId,
+        action: 'delete'
+      }
+      const validationResult = await this.validationService.validateConversation(validationParams)
+      ValidationService.throwIfInvalid(validationResult)
 
-      await this.contextManager.deleteConversation(conversationId, _userId)
+      await this.contextManager.deleteConversation(conversationId, userId)
 
       await this.logger.logDataAccess(userId, conversation.clinicId, {
         action: 'delete_conversation',
@@ -357,30 +375,23 @@ export class ConversationService {
         messageCount: conversation.messages.length,
         success: true,
       })
-    } catch (error) {
-      await this.logger.logError('conversation_delete_error', {
-        error: error instanceof Error ? error.message : 'Unknown error',
-        conversationId,
-        userId,
-        timestamp: new Date().toISOString(),
-      })
-      throw error
-    }
+    }, 'conversation_delete_error', this.logger, ErrorContext.dataAccess(userId, 'unknown', 'ai_conversation_contexts', 'delete'))
   }
 
   async searchConversations(
-    _userId: string,
+    userId: string,
     clinicId: string,
-    _query: string,
-    filters?: {
-      patientId?: string
-      dateFrom?: Date
-      dateTo?: Date
-      status?: 'active' | 'archived'
-    },
+    query: string,
+    filters?: ConversationSearchFilters,
   ): Promise<ConversationContext[]> {
-    try {
-      await this.validateUserAccess(userId, clinicId)
+    return await withErrorHandling(async () => {
+      const validationParams: ConversationValidationParams = {
+        userId,
+        clinicId,
+        action: 'read'
+      }
+      const validationResult = await this.validationService.validateConversation(validationParams)
+      ValidationService.throwIfInvalid(validationResult)
 
       const conversations = await this.contextManager.getUserConversations(
         userId,
@@ -421,58 +432,13 @@ export class ConversationService {
       })
 
       return filteredConversations
-    } catch (error) {
-      await this.logger.logError('conversation_search_error', {
-        error: error instanceof Error ? error.message : 'Unknown error',
-        userId,
-        clinicId,
-        query,
-        filters,
-        timestamp: new Date().toISOString(),
-      })
-      throw error
-    }
+    }, 'conversation_search_error', this.logger, ErrorContext.dataAccess(userId, clinicId, 'ai_conversation_contexts', 'search'))
   }
 
-  private async validateRequestPermissions(
-    _request: ConversationRequest,
-  ): Promise<void> {
-    const hasAccess = await this.supabaseConnector.validateDataAccess({
-      _userId: request.userId,
-      clinicId: request.clinicId,
-      action: 'read',
-      resource: 'ai_conversation_contexts',
-    })
-
-    if (!hasAccess) {
-      throw new Error('Insufficient permissions to start conversation')
-    }
-
-    // Validate session
-    const session = await this.sessionManager.getSession(request.sessionId)
-    if (!session || session.userId !== request._userId) {
-      throw new Error('Invalid session')
-    }
-  }
-
-  private async validateUserAccess(
-    _userId: string,
-    clinicId: string,
-  ): Promise<void> {
-    const hasAccess = await this.supabaseConnector.validateDataAccess({
-      userId,
-      clinicId,
-      action: 'read',
-      resource: 'ai_conversation_contexts',
-    })
-
-    if (!hasAccess) {
-      throw new Error('Insufficient permissions to access conversations')
-    }
-  }
+  // Removed redundant validation methods - now using centralized ValidationService
 
   private async findExistingConversation(
-    _request: ConversationRequest,
+    request: ConversationRequest,
   ): Promise<ConversationContext | null> {
     // Look for active conversations in the same session
     const conversations = await this.contextManager.getUserConversations(
@@ -524,7 +490,7 @@ export class ConversationService {
     }
   }
 
-  private async extractEntities(message: string): Promise<any[]> {
+  private async extractEntities(message: string): Promise<Entity[]> {
     // Placeholder for entity extraction - in real implementation, this would use NLP
     const entities = []
 
@@ -548,18 +514,8 @@ export class ConversationService {
     message: string,
     conversation: ConversationContext,
     history?: ConversationMessage[],
-    additionalContext?: any,
-  ): Promise<{
-    message: string
-    intent: string
-    _context: any
-    confidence: number
-    citations?: any[]
-    tool_calls?: any[]
-    patientContext?: any
-    topic: string
-    followUpQuestions?: string[]
-  }> {
+    additionalContext?: ConversationContextData,
+  ): Promise<RAGAgentResponse> {
     // This is a placeholder for RAG agent processing
     // In a real implementation, this would:
     // 1. Retrieve relevant documents from vector database
@@ -599,7 +555,13 @@ export class ConversationService {
     }
   }
 
-  getStatistics(): any {
+  getStatistics(): {
+    activeConversations: number
+    memoryUsage: {
+      activeContexts: number
+      estimatedMemorySize: number
+    }
+  } {
     return {
       activeConversations: this.contextManager.getActiveContextCount(),
       memoryUsage: this.contextManager.getMemoryUsage(),

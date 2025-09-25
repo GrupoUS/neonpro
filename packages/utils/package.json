@@ -10,21 +10,6 @@
       "import": "./dist/index.js",
       "require": "./dist/index.js",
       "types": "./dist/index.d.ts"
-    },
-    "./logging/*": {
-      "import": "./dist/logging/*.js",
-      "require": "./dist/logging/*.js",
-      "types": "./dist/logging/*.d.ts"
-    },
-    "./logging/logger": {
-      "import": "./dist/logging/logger.js",
-      "require": "./dist/logging/logger.js",
-      "types": "./dist/logging/logger.d.ts"
-    },
-    "./healthcare-errors": {
-      "import": "./dist/healthcare-errors.js",
-      "require": "./dist/healthcare-errors.js",
-      "types": "./dist/healthcare-errors.d.ts"
     }
   },
   "scripts": {
@@ -38,9 +23,7 @@
     "prepare": "echo 'prepare script disabled for workspace install'"
   },
   "dependencies": {
-    "clsx": "^2.1.1",
-    "tailwind-merge": "^2.6.0",
-    "@trpc/server": "^11.5.1"
+    "zod": "^3.22.0"
   },
   "devDependencies": {
     "@types/node": "^20.19.13",

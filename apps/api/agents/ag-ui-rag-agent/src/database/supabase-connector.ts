@@ -9,9 +9,9 @@ import { createClient, SupabaseClient } from '@supabase/supabase-js'
 import { HealthcareLogger } from '../logging/healthcare-logger'
 
 interface UserPermissions {
-  _userId: string
+  userId: string
   clinicId: string
-  _role: 'doctor' | 'nurse' | 'admin' | 'receptionist' | 'agent'
+  role: 'doctor' | 'nurse' | 'admin' | 'receptionist' | 'agent'
   permissions: {
     canAccessPatients: boolean
     canModifyPatients: boolean
@@ -29,7 +29,7 @@ interface DataAccessRequest {
   resourceId?: string
   patientId?: string
   clinicId: string
-  _userId: string
+  userId: string
   sessionId: string
 }
 
@@ -77,11 +77,11 @@ export class SupabaseConnector {
    * Get user permissions with role-based access control
    */
   private async getUserPermissions(
-    _userId: string,
+    userId: string,
     clinicId: string,
   ): Promise<UserPermissions | null> {
     const cacheKey = `${userId}-${clinicId}`
-    const _now = Date.now()
+    const now = Date.now()
 
     // Check cache (5 minute expiry)
     if (
@@ -184,7 +184,7 @@ export class SupabaseConnector {
    * Get role-based permissions for specific actions
    */
   private getRolePermission(
-    _role: string,
+    role: string,
     action: string,
     resource: string,
   ): boolean {
@@ -218,7 +218,7 @@ export class SupabaseConnector {
    * Validate data access request
    */
   private async validateDataAccess(
-    _request: DataAccessRequest,
+    request: DataAccessRequest,
   ): Promise<boolean> {
     const permissions = await this.getUserPermissions(
       request.userId,
@@ -288,7 +288,7 @@ export class SupabaseConnector {
    * Validate patient-specific access (LGPD compliance)
    */
   private async validatePatientAccess(
-    _userId: string,
+    userId: string,
     patientId: string,
     clinicId: string,
   ): Promise<boolean> {
@@ -333,7 +333,7 @@ export class SupabaseConnector {
    */
   public async setAISessionContext(
     sessionId: string,
-    _userId: string,
+    userId: string,
     clinicId: string,
   ): Promise<void> {
     if (!this.supabase) {
@@ -377,11 +377,11 @@ export class SupabaseConnector {
    */
   public async getPatientData(
     patientId: string,
-    _userId: string,
+    userId: string,
     clinicId: string,
     sessionId: string,
   ): Promise<any> {
-    const _request: DataAccessRequest = {
+    const request: DataAccessRequest = {
       action: 'read',
       resourceType: 'patient',
       resourceId: patientId,
@@ -440,11 +440,11 @@ export class SupabaseConnector {
    */
   public async getAppointmentData(
     clinicId: string,
-    _userId: string,
+    userId: string,
     sessionId: string,
     filters?: any,
   ): Promise<any> {
-    const _request: DataAccessRequest = {
+    const request: DataAccessRequest = {
       action: 'read',
       resourceType: 'appointment',
       clinicId,
@@ -526,10 +526,10 @@ export class SupabaseConnector {
    */
   public async getClinicSummary(
     clinicId: string,
-    _userId: string,
+    userId: string,
     sessionId: string,
   ): Promise<any> {
-    const _request: DataAccessRequest = {
+    const request: DataAccessRequest = {
       action: 'read',
       resourceType: 'appointment',
       clinicId,
@@ -591,7 +591,7 @@ export class SupabaseConnector {
   /**
    * Clear permissions cache (useful for role changes)
    */
-  public clearPermissionsCache(_userId?: string, clinicId?: string): void {
+  public clearPermissionsCache(userId?: string, clinicId?: string): void {
     if (userId && clinicId) {
       const cacheKey = `${userId}-${clinicId}`
       this.permissionsCache.delete(cacheKey)

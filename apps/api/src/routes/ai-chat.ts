@@ -2,7 +2,7 @@
 // Handles AI chat requests with LGPD compliance and audit logging
 
 import { zValidator } from '@hono/zod-validator'
-import { type AIMessage, AIProviderFactory } from '@neonpro/core-services'
+import { type AIMessage, AIProviderFactory } from '@neonpro/integrations'
 import { ComplianceLevel, type HealthcareAIContext } from '@neonpro/shared'
 
 import { Hono } from 'hono'

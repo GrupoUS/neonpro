@@ -13,19 +13,20 @@
     }
   },
   "scripts": {
-    "build": "pnpm --filter @neonpro/tools-shared build && tsup",
+    "build": "bun --filter @neonpro/tools-shared build && tsup",
     "dev": "tsup --watch",
     "clean": "rm -rf dist",
-    "lint": "oxlint --fix src",
+    "lint": "bun run oxlint --fix src",
     "type-check": "tsc --noEmit",
-    "test": "vitest",
-    "test:watch": "vitest --watch",
-    "test:coverage": "vitest run --coverage",
-    "orchestrate": "pnpm --filter @neonpro/tools-orchestration build && node dist/index.js",
-    "orchestrate:parallel": "pnpm --filter @neonpro/tools-orchestration build && node dist/index.js --parallel"
+    "test": "cd ../tests && bun run test",
+    "test:watch": "cd ../tests && bun run test:watch",
+    "test:coverage": "cd ../tests && bun run test:coverage",
+    "orchestrate": "bun --filter @neonpro/tools-orchestration build && node dist/index.js",
+    "orchestrate:parallel": "bun --filter @neonpro/tools-orchestration build && node dist/index.js --parallel"
   },
   "dependencies": {
-    "@neonpro/tools-shared": "file:../tools-shared"
+    "@neonpro/tools-shared": "workspace:*",
+    "@neonpro/tests": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",

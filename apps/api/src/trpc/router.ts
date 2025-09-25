@@ -11,7 +11,6 @@ import { aiClinicalSupportRouter } from './routers/ai-clinical-support'
 import { appointmentsRouter } from './routers/appointments'
 import { crudRouter } from './routers/crud'
 import { enhancedAestheticProfessionalsRouter } from './routers/enhanced-aesthetic-professionals'
-import { enhancedPatientIdentityRouter } from './routers/enhanced-patient-identity'
 import { enhancedTelemedicineRouter } from './routers/enhanced-telemedicine'
 import { financialAgentRouter } from './routers/financial-agent'
 import { healthcareServicesRouter } from './routers/healthcare-services'
@@ -102,7 +101,6 @@ export const appRouter = router({
 
   // Phase 5 Enhanced Services with comprehensive database integration
   enhancedAestheticProfessionals: enhancedAestheticProfessionalsRouter,
-  enhancedPatientIdentity: enhancedPatientIdentityRouter,
   enhancedTelemedicine: enhancedTelemedicineRouter,
 
   // Comprehensive API contracts with tRPC v11 (T016)

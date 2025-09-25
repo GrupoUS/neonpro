@@ -13,8 +13,8 @@
  * - Rate limiting for authentication attempts
  * - Security header validation
  *
- * @security_critical CVSS: 9.8
- * @compliance OWASP JWT Security Best Practices, LGPD, ANVISA
+ * Security: CVSS 9.8
+ * Compliance: OWASP JWT Security Best Practices, LGPD, ANVISA
  * @author AI Development Agent
  * @version 1.0.0
  */

@@ -3,7 +3,7 @@
  * Complete inventory management for aesthetic clinics with Brazilian regulatory compliance
  */
 
-import { InventoryManagementService } from '@neonpro/core-services'
+import { InventoryManagementService } from '@neonpro/healthcare-core'
 import { z } from 'zod'
 import { router } from '../trpc'
 
