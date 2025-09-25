@@ -4,7 +4,7 @@
  * Integrates all security components into a unified security system with
  * healthcare compliance, monitoring, and comprehensive threat detection.
  *
- * @security_critical
+ * Security: Critical - Unified security system integration
  * Compliance: OWASP Top 10, LGPD, ANVISA, CFM
  * @version 1.0.0
  */

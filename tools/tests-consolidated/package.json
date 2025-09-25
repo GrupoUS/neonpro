@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Testes consolidados seguindo princípios KISS e YAGNI",
   "type": "module",
-  "packageManager": "bun@1.2.22",
+  "packageManager": "pnpm@8.15.0",
   "scripts": {
     "test": "bun run vitest --config ./configs/vitest.config.ts",
     "test:unit": "bun run vitest --config ./configs/vitest.config.ts unit/",

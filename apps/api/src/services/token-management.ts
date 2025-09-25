@@ -11,7 +11,7 @@
  * - Session invalidation
  * - Audit logging for token operations
  *
- * @security_critical CVSS: 8.5
+ * Security: CVSS 8.5
  * Compliance: LGPD, ANVISA, OWASP
  * @author AI Development Agent
  * @version 1.0.0

@@ -11,8 +11,8 @@ import { aiConnectionManager } from './ai-connection-manager'
  * Provides secure data access with Row Level Security (RLS) enforcement,
  * permission validation, and audit logging for all AI agent queries.
  * 
- * @security LGPD compliant with proper input validation and audit logging
- * @performance Optimized with connection pooling and query caching
+ * Security: LGPD compliant with proper input validation and audit logging
+ * Performance: Optimized with connection pooling and query caching
  * Compliance: ANVISA, CFM, and healthcare data protection standards
  */
 export class AIDataService {

@@ -1,32 +1,54 @@
 /**
- * @package Healthcare core services
- *
- * Healthcare business logic and workflows for NeonPro platform
+ * Shared Schemas Package (T084 - Code duplication removal)
+ * Centralized validation schemas for the NeonPro platform
  */
 
-// Export domain value objects
-export * from './value-objects';
+// Patient schemas
+export * from './patient/base-patient.schema'
+export * from './patient/brazilian-patient.schema'
+export {
+  BrazilianCEPSchema,
+  BrazilianPatientRegistrationSchema,
+  BrazilianPatientUpdateSchema,
+  BrazilianPhoneSchema,
+  CNPJSchema,
+  CPFSchema,
+  PatientExportSchema,
+  PatientSearchSchema,
+} from './patient/brazilian-patient.schema'
 
-// Export domain entities
-export * from './entities';
+// Utility schemas
+import { z } from 'zod'
 
-// Export domain services
-export * from './services';
+export const PaginationSchema = z.object({
+  page: z.coerce.number().min(1).default(1),
+  limit: z.coerce.number().min(1).max(100).default(20),
+  total: z.number().optional(),
+  totalPages: z.number().optional(),
+})
 
-// Export domain repositories
-export * from './repositories';
+export const ResponseSchema = <T>(dataSchema: z.ZodType<T>) =>
+  z.object({
+    success: z.boolean(),
+    data: dataSchema.optional(),
+    error: z
+      .object({
+        code: z.string(),
+        message: z.string(),
+        details: z.record(z.unknown()).optional(),
+        timestamp: z.string().datetime(),
+        requestId: z.string(),
+      })
+      .optional(),
+    meta: z
+      .object({
+        pagination: PaginationSchema.optional(),
+        requestId: z.string(),
+        timestamp: z.string().datetime(),
+      })
+      .optional(),
+  })
 
-// Export domain errors
-export * from './errors';
-
-// Export domain events
-export * from './events';
-
-// Export business workflows and processes
-export * from './workflows';
-
-// Export healthcare utilities
-export * from './utils';
-
-// Version info
-export const HEALTHCARE_CORE_PACKAGE_VERSION = '1.0.0';
+// Export utility types
+export type Pagination = z.infer<typeof PaginationSchema>
+export type ApiResponse<T> = z.infer<ReturnType<typeof ResponseSchema<T>>>

@@ -593,5 +593,28 @@ export function maskSensitiveData(data: string, maskChar: string = '*') {
 //   // ... all the exports would go here
 // }
 
+// Governance and compliance services
+export {
+  HealthcareGovernanceService,
+  HealthcareGovernanceServiceImpl,
+  type KPIMetric,
+  type CreateKPIMetric,
+  type UpdateKPIMetric,
+  type RiskAssessment,
+  type CreateRiskAssessment,
+  type AIGovernanceMetric,
+  type CreateAIGovernanceMetric,
+  type PolicyManagement,
+  type AuditTrailEntry,
+  type CreateAuditTrailEntry,
+  type ComplianceStatus,
+  type EscalationWorkflow,
+  type CreateEscalationWorkflow,
+  type UpdateEscalationWorkflow,
+  type AuditTrailFilters,
+  type EscalationFilters,
+  type HealthcareDashboardData,
+} from './governance/services/healthcare-governance.service'
+
 // Re-export Hono types for convenience
 export type { Context, Next } from 'hono'

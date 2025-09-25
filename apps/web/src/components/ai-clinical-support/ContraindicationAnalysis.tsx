@@ -4,18 +4,13 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Progress } from '@/components/ui/progress'
-import { Separator } from '@/components/ui/separator'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { api } from '@/lib/api'
 import {
   ContraindicationAnalysis,
   ContraindicationRisk,
-  PatientAssessment,
 } from '@/types/ai-clinical-support'
 import { useQuery } from '@tanstack/react-query'
-import { format } from 'date-fns'
-import { ptBR } from 'date-fns/locale'
 import {
   Activity,
   AlertTriangle,
@@ -30,7 +25,6 @@ import {
   Pill,
   Scissors,
   Shield,
-  Syringe,
   Thermometer,
   XCircle,
   Zap,
@@ -353,8 +347,8 @@ export function ContraindicationAnalysis({
             )
             : (
               <div className='space-y-4'>
-                {analysis.mitigationMeasures.map((measure, index) => (
-                  <Card key={index}>
+                {analysis.mitigationMeasures.map((measure) => (
+                  <Card key={`mitigation-${measure.title}`}>
                     <CardHeader>
                       <CardTitle className='flex items-center gap-2 text-lg'>
                         <Shield className='h-5 w-5' />
@@ -369,8 +363,8 @@ export function ContraindicationAnalysis({
                         <div>
                           <h4 className='font-medium text-sm mb-2'>Aplicável para:</h4>
                           <div className='flex flex-wrap gap-2'>
-                            {measure.applicableContraindications.map((contraindication, idx) => (
-                              <Badge key={idx} variant='outline'>
+                            {measure.applicableContraindications.map((contraindication) => (
+                              <Badge key={`contraindication-${contraindication}-${measure.title}`} variant='outline'>
                                 {contraindication}
                               </Badge>
                             ))}
@@ -381,7 +375,7 @@ export function ContraindicationAnalysis({
                           <div>
                             <h4 className='font-medium text-sm mb-2'>Exames necessários:</h4>
                             <ul className='list-disc list-inside text-sm text-gray-600'>
-                              {measure.requiredTests.map((test, idx) => <li key={idx}>{test}</li>)}
+                              {measure.requiredTests.map((test) => <li key={`test-${test}-${measure.title}`}>{test}</li>)}
                             </ul>
                           </div>
                         )}
@@ -390,8 +384,8 @@ export function ContraindicationAnalysis({
                           <div>
                             <h4 className='font-medium text-sm mb-2'>Precauções:</h4>
                             <ul className='list-disc list-inside text-sm text-gray-600'>
-                              {measure.precautions.map((precaution, idx) => (
-                                <li key={idx}>{precaution}</li>
+                              {measure.precautions.map((precaution) => (
+                                <li key={`precaution-${precaution}-${measure.title}`}>{precaution}</li>
                               ))}
                             </ul>
                           </div>
@@ -403,8 +397,8 @@ export function ContraindicationAnalysis({
                               Procedimentos alternativos:
                             </h4>
                             <ul className='list-disc list-inside text-sm text-gray-600'>
-                              {measure.alternativeProcedures.map((alternative, idx) => (
-                                <li key={idx}>{alternative}</li>
+                              {measure.alternativeProcedures.map((alternative) => (
+                                <li key={`alternative-${alternative}-${measure.title}`}>{alternative}</li>
                               ))}
                             </ul>
                           </div>
@@ -429,8 +423,8 @@ export function ContraindicationAnalysis({
               </CardHeader>
               <CardContent>
                 <ul className='space-y-2'>
-                  {analysis.preTreatmentGuidelines.map((guideline, index) => (
-                    <li key={index} className='flex items-start gap-2 text-sm'>
+                  {analysis.preTreatmentGuidelines.map((guideline) => (
+                    <li key={`pre-treatment-${guideline}`} className='flex items-start gap-2 text-sm'>
                       <CheckCircle className='h-4 w-4 text-green-500 mt-0.5 flex-shrink-0' />
                       {guideline}
                     </li>
@@ -448,8 +442,8 @@ export function ContraindicationAnalysis({
               </CardHeader>
               <CardContent>
                 <ul className='space-y-2'>
-                  {analysis.monitoringGuidelines.map((guideline, index) => (
-                    <li key={index} className='flex items-start gap-2 text-sm'>
+                  {analysis.monitoringGuidelines.map((guideline) => (
+                    <li key={`monitoring-${guideline}`} className='flex items-start gap-2 text-sm'>
                       <Activity className='h-4 w-4 text-blue-500 mt-0.5 flex-shrink-0' />
                       {guideline}
                     </li>
@@ -467,8 +461,8 @@ export function ContraindicationAnalysis({
               </CardHeader>
               <CardContent>
                 <ul className='space-y-2'>
-                  {analysis.warningSigns.map((sign, index) => (
-                    <li key={index} className='flex items-start gap-2 text-sm'>
+                  {analysis.warningSigns.map((sign) => (
+                    <li key={`warning-${sign}`} className='flex items-start gap-2 text-sm'>
                       <AlertTriangle className='h-4 w-4 text-orange-500 mt-0.5 flex-shrink-0' />
                       {sign}
                     </li>
@@ -486,8 +480,8 @@ export function ContraindicationAnalysis({
               </CardHeader>
               <CardContent>
                 <ul className='space-y-2'>
-                  {analysis.postTreatmentGuidelines.map((guideline, index) => (
-                    <li key={index} className='flex items-start gap-2 text-sm'>
+                  {analysis.postTreatmentGuidelines.map((guideline) => (
+                    <li key={`post-treatment-${guideline}`} className='flex items-start gap-2 text-sm'>
                       <CheckCircle className='h-4 w-4 text-green-500 mt-0.5 flex-shrink-0' />
                       {guideline}
                     </li>
@@ -569,8 +563,8 @@ function ContraindicationRiskCard({
             <div>
               <h4 className='font-medium text-sm mb-2'>Referências</h4>
               <ul className='text-sm text-gray-600 space-y-1'>
-                {risk.references.map((reference, index) => (
-                  <li key={index} className='flex items-start gap-2'>
+                {risk.references.map((reference) => (
+                  <li key={`reference-${reference}-${risk.condition}`} className='flex items-start gap-2'>
                     <span className='text-blue-600 cursor-pointer hover:underline'>
                       {reference}
                     </span>

@@ -4,7 +4,7 @@
  * Provides comprehensive audit trail functionality for authentication events,
  * data access, security incidents, and compliance monitoring with healthcare-specific features.
  *
- * @security_critical
+ * Security: Critical - Comprehensive audit trail with healthcare compliance
  * Compliance: LGPD, ANVISA, CFM, HIPAA, OWASP Logging
  * @version 1.0.0
  */

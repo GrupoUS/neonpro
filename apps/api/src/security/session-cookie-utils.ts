@@ -4,7 +4,7 @@
  * Provides secure cookie handling for session management including
  * validation, integrity checking, and secure attribute management.
  *
- * @security_critical
+ * Security: Critical - Secure cookie utilities for session management
  * Compliance: OWASP Session Management Cheat Sheet
  * @version 1.0.0
  */

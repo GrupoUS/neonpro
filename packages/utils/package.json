@@ -25,6 +25,26 @@
       "import": "./dist/healthcare-errors.js",
       "require": "./dist/healthcare-errors.js",
       "types": "./dist/healthcare-errors.d.ts"
+    },
+    "./errors/*": {
+      "import": "./dist/errors/*.js",
+      "require": "./dist/errors/*.js",
+      "types": "./dist/errors/*.d.ts"
+    },
+    "./errors/healthcare-errors": {
+      "import": "./dist/errors/healthcare-errors.js",
+      "require": "./dist/errors/healthcare-errors.js",
+      "types": "./dist/errors/healthcare-errors.d.ts"
+    },
+    "./services/*": {
+      "import": "./dist/services/*.js",
+      "require": "./dist/services/*.js",
+      "types": "./dist/services/*.d.ts"
+    },
+    "./services/structured-logging": {
+      "import": "./dist/services/structured-logging.js",
+      "require": "./dist/services/structured-logging.js",
+      "types": "./dist/services/structured-logging.d.ts"
     }
   },
   "scripts": {
@@ -40,10 +60,31 @@
   "dependencies": {
     "clsx": "^2.1.1",
     "tailwind-merge": "^2.6.0",
-    "@trpc/server": "^11.5.1"
+    "@trpc/server": "^11.5.1",
+    "@opentelemetry/api": "^1.9.0",
+    "@opentelemetry/sdk-node": "^0.57.2",
+    "@opentelemetry/resources": "^1.29.0",
+    "@opentelemetry/semantic-conventions": "^1.29.0",
+    "@opentelemetry/exporter-jaeger": "^1.29.0",
+    "@opentelemetry/sdk-trace-base": "^1.29.0",
+    "@opentelemetry/sdk-metrics": "^1.29.0",
+    "@opentelemetry/exporter-prometheus": "^0.57.2",
+    "@opentelemetry/instrumentation-express": "^0.45.0",
+    "@opentelemetry/instrumentation-http": "^0.57.2",
+    "@tanstack/react-query": "^5.87.4",
+    "hono": "^4.9.7",
+    "ioredis": "^5.4.1",
+    "nanoid": "^5.0.0",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "winston": "^3.11.0",
+    "winston-daily-rotate-file": "^5.0.0",
+    "zod": "^3.22.0"
   },
   "devDependencies": {
     "@types/node": "^20.19.13",
+    "@types/react": "^19.1.12",
+    "@types/react-dom": "^19.1.9",
     "typescript": "^5.9.2"
   },
   "publishConfig": {

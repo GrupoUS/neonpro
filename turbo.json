@@ -12,7 +12,7 @@
       "inputs": ["tsconfig*.json", "package.json", "bun.lockb"]
     },
     "build:core": {
-      "dependsOn": ["@neonpro/types#build", "@neonpro/shared#build", "@neonpro/config#build", "@neonpro/security#build", "@neonpro/database#build", "@neonpro/business-services#build", "@neonpro/integrations#build", "@neonpro/workflows#build", "@neonpro/observability#build", "@neonpro/ui#build"],
+      "dependsOn": ["@neonpro/healthcare-core#build", "@neonpro/utils#build", "@neonpro/security#build", "@neonpro/database#build", "@neonpro/core-services#build", "@neonpro/integrations#build", "@neonpro/workflows#build", "@neonpro/observability#build", "@neonpro/ui#build"],
       "outputs": ["dist/**", "**/.tsbuildinfo/**"],
       "cache": true,
       "persistent": false

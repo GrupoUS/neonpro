@@ -4,7 +4,7 @@
  * Provides comprehensive authentication and authorization with JWT validation,
  * role-based access control (RBAC), and healthcare compliance features.
  *
- * @security_critical
+ * Security: Critical - Core authentication service
  * Compliance: OWASP JWT Best Practices, LGPD, ANVISA, CFM
  * @version 1.0.0
  */

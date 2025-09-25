@@ -4,7 +4,7 @@
  * Provides comprehensive JWT token management including generation, validation,
  * revocation, and healthcare compliance features.
  *
- * @security_critical
+ * Security: Critical - JWT token management with healthcare compliance
  * Compliance: OWASP JWT Best Practices, LGPD, ANVISA, CFM
  * @version 1.0.0
  */
@@ -143,10 +143,10 @@ export class JWTSecurityService {
     const warnings: string[] = []
 
     try {
-      // Special handling for test tokens
-      if (process.env.NODE_ENV === 'test') {
-        return this.validateTokenForTesting(token)
-      }
+      // Special handling for test tokens - TEMPORARILY DISABLED FOR DEBUGGING
+      // if (process.env.NODE_ENV === 'test') {
+      //   return this.validateTokenForTesting(token)
+      // }
 
       // Check if token is revoked
       if (this.isTokenRevoked(token)) {

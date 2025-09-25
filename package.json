@@ -4,7 +4,7 @@
   "description": "NeonPro aesthetic clinic management platform - Turborepo monorepo",
   "private": true,
   "type": "module",
-  "packageManager": "bun@1.2.22",
+  "packageManager": "pnpm@8.15.0",
   "engines": {
     "node": ">=20.0.0",
     "bun": ">=1.0.0"
@@ -31,18 +31,15 @@
     "build": "turbo build",
     "build:core": "turbo build:core",
     "build:packages": "turbo build --filter=@neonpro/*",
-    "build:types": "turbo build --filter=@neonpro/types",
-    "build:shared": "turbo build --filter=@neonpro/shared",
     "build:database": "turbo build --filter=@neonpro/database",
-    "build:business-services": "turbo build --filter=@neonpro/business-services",
     "build:integrations": "turbo build --filter=@neonpro/integrations",
     "build:workflows": "turbo build --filter=@neonpro/workflows",
     "build:observability": "turbo build --filter=@neonpro/observability",
-    "build:config": "turbo build --filter=@neonpro/config",
+    
     "build:ui": "turbo build --filter=@neonpro/ui",
     "dev": "turbo dev --concurrency=20",
     "dev:core": "turbo dev --filter=@neonpro/*",
-    "dev:business-services": "turbo dev --filter=@neonpro/business-services",
+    
     "dev:integrations": "turbo dev --filter=@neonpro/integrations",
     "dev:workflows": "turbo dev --filter=@neonpro/workflows",
     "dev:observability": "turbo dev --filter=@neonpro/observability",

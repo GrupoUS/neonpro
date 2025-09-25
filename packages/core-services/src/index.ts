@@ -1,22 +1,46 @@
-/**
- * Core Services exports for Background Jobs Manager
- * Consolidates common patterns from circuit breaker and performance optimization services
- */
+// Business Services Package
+// Core business logic and healthcare services
 
-// Security services
-export * from './security'
+// Health Analysis Services
+export * from './services/health-analysis'
 
-// Metrics and monitoring
-export * from './metrics'
+// Multi-Professional Coordination
+export { MultiProfessionalCoordinationService } from './services/multi-professional-coordination-service'
 
-// Job processing
-export * from './job-processing'
+// Patient Engagement
+export { PatientEngagementService } from './services/patient-engagement-service'
 
-// Configuration management
-export * from './config'
+// Treatment Planning
+export { TreatmentPlanningService } from './services/treatment-planning-service'
 
-// Utilities
-export * from './utils'
+// Aesthetic Services
+export * from './services/aesthetic-appointment-service'
+export { EnhancedAestheticSchedulingService } from './services/enhanced-aesthetic-scheduling-service'
+export { NoShowPredictionService } from './services/no-show-prediction-service'
+export { ProfessionalValidationService } from './services/professional-validation-service'
+export { RecoveryPlanningService } from './services/recovery-planning-service'
+export { TreatmentPackageService } from './services/treatment-package-service'
 
-// Resilience
-export * from './resilience'
+// Governance & Compliance
+export * from './services/governance'
+export { ComplianceManagementService } from './services/compliance-management-service'
+
+// Audit & Compliance
+export * from './audit'
+
+// Business Models
+export * from './plan'
+
+// Type exports for aesthetic services
+export type {
+  AestheticAppointment,
+  AestheticProcedureDetails,
+  FollowUpAppointment,
+  ProfessionalAssignment,
+  RecoveryPlan,
+} from './services/enhanced-aesthetic-scheduling-service'
+
+export type {
+  NoShowPredictionFeatures,
+  NoShowPredictionResult,
+} from './services/no-show-prediction-service'

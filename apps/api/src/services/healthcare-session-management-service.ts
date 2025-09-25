@@ -4,7 +4,7 @@
  * Provides secure session management with healthcare compliance features including
  * patient data access controls, consent management, and audit trails.
  *
- * @security_critical
+ * Security: Critical - Healthcare session management with compliance features
  * Compliance: LGPD, ANVISA, CFM, OWASP Session Management
  * @version 1.0.0
  */

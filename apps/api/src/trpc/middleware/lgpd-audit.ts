@@ -7,7 +7,7 @@
  *
  * @author AI Development Agent
  * Compliance: LGPD Art. 7º, 11º - Data Processing and Sensitive Data
- * @performance <200ms audit overhead target
+ * Performance: <200ms audit overhead target
  */
 
 import { AuditAction, AuditStatus, ResourceType, RiskLevel } from '@prisma/client'

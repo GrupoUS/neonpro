@@ -4,7 +4,7 @@
  * Provides comprehensive security validation for authentication, authorization,
  * input validation, and threat detection with healthcare compliance features.
  *
- * @security_critical
+ * Security: Critical - Comprehensive security validation with healthcare compliance
  * Compliance: OWASP Top 10, LGPD, ANVISA, CFM
  * @version 1.0.0
  */

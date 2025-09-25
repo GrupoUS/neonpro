@@ -10,6 +10,12 @@ import {
 } from '@neonpro/healthcare-core'
 import { SupabaseClient } from '@supabase/supabase-js'
 import { logHealthcareError } from '../utils/logging'
+import {
+  DatabaseError,
+  NotFoundError,
+  ConflictError,
+  ValidationError,
+} from '@neonpro/shared/src/errors'
 
 /**
  * Supabase implementation of AppointmentRepository
@@ -32,17 +38,50 @@ export class AppointmentRepository implements IAppointmentRepository {
           appointmentId: id,
           component: 'appointment-repository',
         })
-        return null
+        
+        // Check for specific error types
+        if (error.code === 'PGRST116') {
+          // Record not found
+          throw NotFoundError.byId('Appointment', id, { 
+            userId: 'system',
+            appointmentId: id 
+          })
+        }
+        
+        // Generic database error
+        throw DatabaseError.fromPrismaError(error, 'findById', { 
+          userId: 'system',
+          appointmentId: id 
+        })
       }
 
-      return data ? this.mapToDomain(data) : null
+      if (!data) {
+        throw NotFoundError.byId('Appointment', id, { 
+          userId: 'system',
+          appointmentId: id 
+        })
+      }
+
+      return this.mapToDomain(data)
     } catch (error) {
+      // Re-throw our custom errors
+      if (error instanceof NotFoundError || error instanceof DatabaseError) {
+        throw error
+      }
+
       logHealthcareError('database', error as Error, {
         component: 'appointment-repository',
         action: 'findById',
         appointmentId: id,
       })
-      return null
+      
+      throw new DatabaseError(
+        'Failed to find appointment by ID',
+        'DB_OPERATION_FAILED',
+        'findById',
+        { userId: 'system', appointmentId: id },
+        'Database operation failed'
+      )
     }
   }
 
@@ -396,16 +435,38 @@ export class AppointmentRepository implements IAppointmentRepository {
           component: 'appointment-repository',
           action: 'create',
         })
-        throw error
+        
+        // Handle Prisma/Database specific errors with proper types
+        throw DatabaseError.fromPrismaError(error, 'create', {
+          userId: 'system',
+          clinicId: appointment.clinicId,
+          patientId: appointment.patientId
+        })
       }
 
       return this.mapToDomain(data)
     } catch (error) {
+      // Re-throw our custom errors
+      if (error instanceof DatabaseError || error instanceof ConflictError || error instanceof ValidationError) {
+        throw error
+      }
+
       logHealthcareError('database', error as Error, {
         component: 'appointment-repository',
         action: 'create',
       })
-      throw error
+      
+      throw new DatabaseError(
+        'Failed to create appointment',
+        'DB_OPERATION_FAILED',
+        'create',
+        { 
+          userId: 'system',
+          clinicId: appointment.clinicId,
+          patientId: appointment.patientId
+        },
+        'Database operation failed'
+      )
     }
   }
 
@@ -425,17 +486,34 @@ export class AppointmentRepository implements IAppointmentRepository {
           action: 'update',
           appointmentId: id,
         })
-        throw error
+        
+        if (error.code === 'PGRST116') {
+          throw NotFoundError.forAppointment(id)
+        }
+        
+        throw DatabaseError.fromSupabaseError(error, {
+          component: 'appointment-repository',
+          action: 'update',
+          appointmentId: id,
+        })
       }
 
       return this.mapToDomain(data)
     } catch (error) {
+      if (error instanceof NotFoundError || error instanceof DatabaseError) {
+        throw error
+      }
+      
       logHealthcareError('database', error as Error, {
         component: 'appointment-repository',
         action: 'update',
         appointmentId: id,
       })
-      throw error
+      throw DatabaseError.fromGenericError(error as Error, {
+        component: 'appointment-repository',
+        action: 'update',
+        appointmentId: id,
+      })
     }
   }
 
@@ -533,17 +611,34 @@ export class AppointmentRepository implements IAppointmentRepository {
           action: 'delete',
           appointmentId: id,
         })
-        return false
+        
+        if (error.code === 'PGRST116') {
+          throw NotFoundError.forAppointment(id)
+        }
+        
+        throw DatabaseError.fromSupabaseError(error, {
+          component: 'appointment-repository',
+          action: 'delete',
+          appointmentId: id,
+        })
       }
 
       return true
     } catch (error) {
+      if (error instanceof NotFoundError || error instanceof DatabaseError) {
+        throw error
+      }
+      
       logHealthcareError('database', error as Error, {
         component: 'appointment-repository',
         action: 'delete',
         appointmentId: id,
       })
-      return false
+      throw DatabaseError.fromGenericError(error as Error, {
+        component: 'appointment-repository',
+        action: 'delete',
+        appointmentId: id,
+      })
     }
   }
 

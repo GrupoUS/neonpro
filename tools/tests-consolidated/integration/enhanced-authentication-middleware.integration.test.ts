@@ -83,13 +83,14 @@ describe('Enhanced Authentication Middleware Integration Tests', () => {
         req: {
           ...createMockContext().req,
           header: vi.fn()
-            .mockReturnValueOnce('Bearer valid-jwt-token')
+            .mockReturnValueOnce('Bearer custom-test-token')
             .mockReturnValueOnce('192.168.1.1')
             .mockReturnValueOnce('test-user-agent'),
         },
       })
 
       // Mock the JWT service to return a valid response
+      // Use a custom token that doesn't trigger the built-in test handling
       const jwtMock = vi.spyOn(jwtService, 'validateToken').mockResolvedValueOnce({
         isValid: true,
         payload: {
@@ -122,6 +123,9 @@ describe('Enhanced Authentication Middleware Integration Tests', () => {
       expect(result.cfmLicense).toBe('CRM-12345-SP')
       expect(result.anvisaCompliance).toBe(true)
       expect(result.lgpdConsentVersion).toBe('1.0')
+
+      // Verify the mock was called
+      expect(jwtMock).toHaveBeenCalledWith('custom-test-token')
     })
 
     it('should reject authentication with invalid JWT', async () => {

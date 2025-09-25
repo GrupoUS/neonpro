@@ -48,8 +48,6 @@
       "@neonpro/ui/*": ["./packages/ui/src*"],
       // Legacy package paths (for backward compatibility)
       "@neonpro/*": ["./packages/*/src"],
-      "@neonpro/security": ["./packages/security/src"],
-      "@neonpro/security/*": ["./packages/security/src/*"],
       "@apps/*": ["./apps/*/src"],
       "@tests/*": ["./tools/tests/*"]
     }
