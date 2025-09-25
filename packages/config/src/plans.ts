@@ -9,7 +9,7 @@ import type {
   EnhancedAIModel,
   MedicalSpecialty,
   SubscriptionTier,
-} from '@neonpro/types';
+} from '@neonpro/types'
 
 // ================================================
 // FEATURE GATES CONFIGURATION
@@ -49,7 +49,7 @@ export const FEATURE_GATES: Record<AIFeatureCode, SubscriptionTier[]> = {
 
   // Priority Support - Enhanced customer support
   priority_support: ['pro', 'enterprise'],
-} as const;
+} as const
 
 // ================================================
 // MODEL ACCESS CONTROL CONFIGURATION
@@ -62,12 +62,12 @@ export const FEATURE_GATES: Record<AIFeatureCode, SubscriptionTier[]> = {
 export const MODEL_ACCESS_CONTROL: Record<
   EnhancedAIModel,
   {
-    minimumPlan: SubscriptionTier;
-    requiresApproval: boolean;
-    healthcareOptimized: boolean;
-    cfmApproved: boolean;
-    anvisaCertified: boolean;
-    costTier: 'low' | 'medium' | 'high' | 'premium';
+    minimumPlan: SubscriptionTier
+    requiresApproval: boolean
+    healthcareOptimized: boolean
+    cfmApproved: boolean
+    anvisaCertified: boolean
+    costTier: 'low' | 'medium' | 'high' | 'premium'
   }
 > = {
   // OpenAI GPT-4o Mini - Entry-level model for all plans
@@ -129,7 +129,7 @@ export const MODEL_ACCESS_CONTROL: Record<
     anvisaCertified: false,
     costTier: 'medium',
   },
-} as const;
+} as const
 
 // ================================================
 // PLAN CONFIGURATION MATRIX
@@ -141,45 +141,45 @@ export const MODEL_ACCESS_CONTROL: Record<
 export const PLAN_CONFIG: Record<
   SubscriptionTier,
   {
-    displayName: string;
-    description: string;
+    displayName: string
+    description: string
 
     // Usage Limits
-    monthlyQueryLimit: number; // -1 for unlimited
-    dailyRateLimit: number;
-    concurrentRequests: number;
-    maxTokensPerRequest: number;
-    maxClinics: number; // -1 for unlimited
+    monthlyQueryLimit: number // -1 for unlimited
+    dailyRateLimit: number
+    concurrentRequests: number
+    maxTokensPerRequest: number
+    maxClinics: number // -1 for unlimited
 
     // Cost Management
-    costBudgetUsdMonthly: number;
+    costBudgetUsdMonthly: number
     costOptimization: {
-      semanticCaching: boolean;
-      rateLimiting: boolean;
-      costAlerts: boolean;
-    };
+      semanticCaching: boolean
+      rateLimiting: boolean
+      costAlerts: boolean
+    }
 
     // Brazilian Healthcare Compliance
     compliance: {
-      cfmLevel: CFMComplianceLevel;
-      anvisaCertified: boolean;
-      lgpdEnhanced: boolean;
-      dataRetentionDays: number;
-      auditTrailEnhanced: boolean;
-    };
+      cfmLevel: CFMComplianceLevel
+      anvisaCertified: boolean
+      lgpdEnhanced: boolean
+      dataRetentionDays: number
+      auditTrailEnhanced: boolean
+    }
 
     // Available Models
-    availableModels: EnhancedAIModel[];
+    availableModels: EnhancedAIModel[]
 
     // Feature Access
-    features: AIFeatureCode[];
+    features: AIFeatureCode[]
 
     // Support Level
     support: {
-      priority: boolean;
-      slaHours: number;
-      dedicatedSupport: boolean;
-    };
+      priority: boolean
+      slaHours: number
+      dedicatedSupport: boolean
+    }
   }
 > = {
   free: {
@@ -368,7 +368,7 @@ export const PLAN_CONFIG: Record<
       dedicatedSupport: false,
     },
   },
-} as const;
+} as const
 
 // ================================================
 // HEALTHCARE COMPLIANCE CONFIGURATION
@@ -380,10 +380,10 @@ export const PLAN_CONFIG: Record<
 export const MEDICAL_SPECIALTY_REQUIREMENTS: Record<
   MedicalSpecialty,
   {
-    requiredCfmLevel: CFMComplianceLevel;
-    anvisaOversight: boolean;
-    specialPermissions: string[];
-    dataRetentionDays: number;
+    requiredCfmLevel: CFMComplianceLevel
+    anvisaOversight: boolean
+    specialPermissions: string[]
+    dataRetentionDays: number
   }
 > = {
   dermatologia: {
@@ -428,7 +428,7 @@ export const MEDICAL_SPECIALTY_REQUIREMENTS: Record<
     specialPermissions: ['physiotherapy_planning'],
     dataRetentionDays: 180,
   },
-} as const;
+} as const
 
 // ================================================
 // COST OPTIMIZATION CONFIGURATION
@@ -470,7 +470,7 @@ export const COST_OPTIMIZATION_CONFIG = {
     burstAllowance: 2, // Allow 2x rate limit for short bursts
     backoffMultiplier: 1.5,
   },
-} as const;
+} as const
 
 // ================================================
 // VALIDATION FUNCTIONS
@@ -483,8 +483,8 @@ export function validateFeatureAccess(
   userPlan: SubscriptionTier,
   featureCode: AIFeatureCode,
 ): boolean {
-  const allowedPlans = FEATURE_GATES[featureCode];
-  return allowedPlans.includes(userPlan);
+  const allowedPlans = FEATURE_GATES[featureCode]
+  return allowedPlans.includes(userPlan)
 }
 
 /**
@@ -494,13 +494,13 @@ export function validateModelAccess(
   userPlan: SubscriptionTier,
   modelCode: EnhancedAIModel,
 ): boolean {
-  const modelConfig = MODEL_ACCESS_CONTROL[modelCode];
-  const planConfig = PLAN_CONFIG[userPlan];
+  const modelConfig = MODEL_ACCESS_CONTROL[modelCode]
+  const planConfig = PLAN_CONFIG[userPlan]
 
   return (
-    planConfig.availableModels.includes(modelCode)
-    && getPlanPriority(userPlan) >= getPlanPriority(modelConfig.minimumPlan)
-  );
+    planConfig.availableModels.includes(modelCode) &&
+    getPlanPriority(userPlan) >= getPlanPriority(modelConfig.minimumPlan)
+  )
 }
 
 /**
@@ -512,8 +512,8 @@ function getPlanPriority(plan: SubscriptionTier): number {
     trial: 2,
     pro: 3,
     enterprise: 4,
-  };
-  return priorities[plan];
+  }
+  return priorities[plan]
 }
 
 /**
@@ -523,18 +523,18 @@ export function getRecommendedUpgrade(
   currentPlan: SubscriptionTier,
   desiredFeature: AIFeatureCode,
 ): SubscriptionTier | null {
-  const allowedPlans = FEATURE_GATES[desiredFeature];
-  const currentPriority = getPlanPriority(currentPlan);
+  const allowedPlans = FEATURE_GATES[desiredFeature]
+  const currentPriority = getPlanPriority(currentPlan)
 
   // Find the lowest tier plan that has access to the feature
   const availableUpgrades = allowedPlans
     .map(plan => ({ plan, priority: getPlanPriority(plan) }))
     .filter(({ priority }) => priority > currentPriority)
-    .sort((a, b) => a.priority - b.priority);
+    .sort((a, b) => a.priority - b.priority)
 
   return availableUpgrades.length > 0
     ? (availableUpgrades[0]?.plan ?? null)
-    : null;
+    : null
 }
 
 /**
@@ -544,18 +544,18 @@ export function getPreferredModel(
   plan: SubscriptionTier,
   useCase: 'chat' | 'analysis' | 'prediction' = 'chat',
 ): EnhancedAIModel {
-  const planConfig = PLAN_CONFIG[plan];
-  const routingConfig = COST_OPTIMIZATION_CONFIG.modelRouting[plan];
+  const planConfig = PLAN_CONFIG[plan]
+  const routingConfig = COST_OPTIMIZATION_CONFIG.modelRouting[plan]
 
   // For healthcare-specific use cases, prefer healthcare-optimized models
   if (useCase === 'analysis' || useCase === 'prediction') {
     const healthcareModel = planConfig.availableModels.find(
       model => MODEL_ACCESS_CONTROL[model].healthcareOptimized,
-    );
-    if (healthcareModel) return healthcareModel;
+    )
+    if (healthcareModel) return healthcareModel
   }
 
-  return routingConfig.preferredModel;
+  return routingConfig.preferredModel
 }
 
 // ================================================
@@ -563,6 +563,6 @@ export function getPreferredModel(
 // ================================================
 
 // Named exports already declared above. Avoid re-declaring.
-export type PlanConfigType = typeof PLAN_CONFIG;
-export type FeatureGatesType = typeof FEATURE_GATES;
-export type ModelAccessControlType = typeof MODEL_ACCESS_CONTROL;
+export type PlanConfigType = typeof PLAN_CONFIG
+export type FeatureGatesType = typeof FEATURE_GATES
+export type ModelAccessControlType = typeof MODEL_ACCESS_CONTROL

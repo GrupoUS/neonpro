@@ -5,13 +5,13 @@
  * Optimized for Brazilian healthcare compliance and edge runtime performance.
  */
 
-import { Metadata } from 'next';
+import { Metadata } from 'next'
 
 export const metadata: Metadata = {
   title: 'NeonPro Healthcare API',
   description: 'Brazilian healthcare platform API - LGPD compliant and CFM certified',
   robots: 'noindex, nofollow', // API should not be indexed
-};
+}
 
 export default function RootPage() {
   return (
@@ -59,5 +59,5 @@ export default function RootPage() {
         </div>
       </div>
     </div>
-  );
+  )
 }

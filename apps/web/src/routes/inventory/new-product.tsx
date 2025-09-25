@@ -1,48 +1,48 @@
-import { api } from '@/lib/api';
-import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import { AlertTriangle, Info, Package, Plus, Save, Trash2, X } from 'lucide-react';
-import * as React from 'react';
-import { useState } from 'react';
+import { api } from '@/lib/api'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { Info, Package, Plus, Save, Trash2, X } from 'lucide-react'
+import * as React from 'react'
+import { useState } from 'react'
 
-export const Route = createFileRoute('/inventory/new-product/')({
+export const Route = createFileRoute('/inventory/new-product')({
   component: NewProduct,
-});
+})
 
 interface Category {
-  id: string;
-  name: string;
-  description?: string;
+  id: string
+  name: string
+  description?: string
 }
 
 interface ProductFormData {
-  name: string;
-  description: string;
-  sku: string;
-  barcode: string;
-  category_id: string;
-  unit_of_measure: string;
-  requires_refrigeration: boolean;
-  is_controlled_substance: boolean;
-  min_stock_level: number;
-  max_stock_level: number;
-  reorder_point: number;
-  anvisa_registration: string;
-  expiry_required: boolean;
-  batch_tracking_required: boolean;
-  contraindications: string[];
-  usage_instructions: string;
-  storage_conditions: string;
-  manufacturer: string;
-  supplier: string;
-  cost_price: number;
-  selling_price: number;
-  notes: string;
+  name: string
+  description: string
+  sku: string
+  barcode: string
+  category_id: string
+  unit_of_measure: string
+  requires_refrigeration: boolean
+  is_controlled_substance: boolean
+  min_stock_level: number
+  max_stock_level: number
+  reorder_point: number
+  anvisa_registration: string
+  expiry_required: boolean
+  batch_tracking_required: boolean
+  contraindications: string[]
+  usage_instructions: string
+  storage_conditions: string
+  manufacturer: string
+  supplier: string
+  cost_price: number
+  selling_price: number
+  notes: string
 }
 
 function NewProduct() {
-  const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
-  const [categories, setCategories] = useState<Category[]>([]);
+  const navigate = useNavigate()
+  const [loading, setLoading] = useState(false)
+  const [categories, setCategories] = useState<Category[]>([])
   const [formData, setFormData] = useState<ProductFormData>({
     name: '',
     description: '',
@@ -66,66 +66,66 @@ function NewProduct() {
     cost_price: 0,
     selling_price: 0,
     notes: '',
-  });
+  })
 
   React.useEffect(() => {
-    loadCategories();
-  }, []);
+    loadCategories()
+  }, [])
 
   const loadCategories = async () => {
     try {
-      const response = await api.inventory.getCategories.query();
-      setCategories(response);
+      const response = await api.inventory.getCategories.query()
+      setCategories(response)
     } catch (error) {
-      console.error('Error loading categories:', error);
+      console.error('Error loading categories:', error)
     }
-  };
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
+    e.preventDefault()
+    setLoading(true)
 
     try {
-      await api.inventory.createProduct.mutate(formData);
-      navigate({ to: '/inventory' });
+      await api.inventory.createProduct.mutate(formData)
+      navigate({ to: '/inventory' })
     } catch (error) {
-      console.error('Error creating product:', error);
+      console.error('Error creating product:', error)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   const handleInputChange = (field: keyof ProductFormData, value: any) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-  };
+    setFormData(prev => ({ ...prev, [field]: value }))
+  }
 
   const addContraindication = () => {
     setFormData(prev => ({
       ...prev,
       contraindications: [...prev.contraindications, ''],
-    }));
-  };
+    }))
+  }
 
   const removeContraindication = (index: number) => {
     setFormData(prev => ({
       ...prev,
       contraindications: prev.contraindications.filter((_, i) => i !== index),
-    }));
-  };
+    }))
+  }
 
   const updateContraindication = (index: number, value: string) => {
     setFormData(prev => ({
       ...prev,
       contraindications: prev.contraindications.map((item, i) => i === index ? value : item),
-    }));
-  };
+    }))
+  }
 
   if (loading) {
     return (
       <div className='flex items-center justify-center h-64'>
         <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600'></div>
       </div>
-    );
+    )
   }
 
   return (
@@ -489,5 +489,5 @@ function NewProduct() {
         </form>
       </div>
     </div>
-  );
+  )
 }

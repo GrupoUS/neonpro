@@ -3,8 +3,8 @@
  * Brazilian Aesthetic Clinic Operations
  */
 
-import * as v from 'valibot';
-import { BrazilianPhoneSchema } from './patient.valibot';
+import * as v from 'valibot'
+import { BrazilianPhoneSchema } from './patient.valibot'
 
 // Appointment Status Types
 export const AppointmentStatus = v.picklist([
@@ -16,9 +16,9 @@ export const AppointmentStatus = v.picklist([
   'cancelled',
   'no_show',
   'rescheduled',
-]);
+])
 
-export type AppointmentStatus = v.InferOutput<typeof AppointmentStatus>;
+export type AppointmentStatus = v.InferOutput<typeof AppointmentStatus>
 
 // Aesthetic Procedure Types
 export const AestheticProcedureType = v.picklist([
@@ -30,11 +30,11 @@ export const AestheticProcedureType = v.picklist([
   'harmonização_facial',
   'microagulhamento',
   'fotorejuvenescimento',
-]);
+])
 
 export type AestheticProcedureType = v.InferOutput<
   typeof AestheticProcedureType
->;
+>
 
 // Appointment Priority
 export const AppointmentPriority = v.picklist([
@@ -42,15 +42,15 @@ export const AppointmentPriority = v.picklist([
   'normal',
   'high',
   'urgent',
-]);
+])
 
-export type AppointmentPriority = v.InferOutput<typeof AppointmentPriority>;
+export type AppointmentPriority = v.InferOutput<typeof AppointmentPriority>
 
 // Brazilian CPF Schema
 export const BrazilianCPFSchema = v.pipe(
   v.string(),
   v.regex(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/, 'Invalid CPF format'),
-);
+)
 
 // Patient Schema
 export const PatientSchema = v.object({
@@ -70,9 +70,9 @@ export const PatientSchema = v.object({
   whatsapp_consent: v.boolean(),
   created_at: v.pipe(v.string(), v.isoDateTime()),
   updated_at: v.pipe(v.string(), v.isoDateTime()),
-});
+})
 
-export type Patient = v.InferOutput<typeof PatientSchema>;
+export type Patient = v.InferOutput<typeof PatientSchema>
 
 // Professional Schema
 export const ProfessionalSchema = v.object({
@@ -86,9 +86,9 @@ export const ProfessionalSchema = v.object({
   can_prescribe: v.boolean(),
   created_at: v.pipe(v.string(), v.isoDateTime()),
   updated_at: v.pipe(v.string(), v.isoDateTime()),
-});
+})
 
-export type Professional = v.InferOutput<typeof ProfessionalSchema>;
+export type Professional = v.InferOutput<typeof ProfessionalSchema>
 
 // Appointment Schema
 export const AppointmentSchema = v.object({
@@ -128,9 +128,9 @@ export const AppointmentSchema = v.object({
   updated_at: v.pipe(v.string(), v.isoDateTime()),
   cancelled_at: v.optional(v.pipe(v.string(), v.isoDateTime())),
   cancellation_reason: v.optional(v.string()),
-});
+})
 
-export type Appointment = v.InferOutput<typeof AppointmentSchema>;
+export type Appointment = v.InferOutput<typeof AppointmentSchema>
 
 // Appointment Creation Schema
 export const CreateAppointmentSchema = v.object({
@@ -158,9 +158,9 @@ export const CreateAppointmentSchema = v.object({
       ),
     }),
   ),
-});
+})
 
-export type CreateAppointment = v.InferOutput<typeof CreateAppointmentSchema>;
+export type CreateAppointment = v.InferOutput<typeof CreateAppointmentSchema>
 
 // Appointment Update Schema
 export const UpdateAppointmentSchema = v.object({
@@ -175,9 +175,9 @@ export const UpdateAppointmentSchema = v.object({
     v.picklist(['pending', 'partial', 'paid', 'refunded']),
   ),
   consent_forms_signed: v.optional(v.boolean()),
-});
+})
 
-export type UpdateAppointment = v.InferOutput<typeof UpdateAppointmentSchema>;
+export type UpdateAppointment = v.InferOutput<typeof UpdateAppointmentSchema>
 
 // Appointment Search Filters
 export const AppointmentFiltersSchema = v.object({
@@ -192,9 +192,9 @@ export const AppointmentFiltersSchema = v.object({
   payment_status: v.optional(
     v.picklist(['pending', 'partial', 'paid', 'refunded']),
   ),
-});
+})
 
-export type AppointmentFilters = v.InferOutput<typeof AppointmentFiltersSchema>;
+export type AppointmentFilters = v.InferOutput<typeof AppointmentFiltersSchema>
 
 // Reminder Configuration
 export const ReminderConfigSchema = v.object({
@@ -208,9 +208,9 @@ export const ReminderConfigSchema = v.object({
   response_type: v.optional(
     v.picklist(['confirmed', 'cancelled', 'rescheduled']),
   ),
-});
+})
 
-export type ReminderConfig = v.InferOutput<typeof ReminderConfigSchema>;
+export type ReminderConfig = v.InferOutput<typeof ReminderConfigSchema>
 
 // No-Show Prediction
 export const NoShowPredictionSchema = v.object({
@@ -226,9 +226,9 @@ export const NoShowPredictionSchema = v.object({
   }),
   recommendations: v.array(v.string()),
   prediction_date: v.pipe(v.string(), v.isoDateTime()),
-});
+})
 
-export type NoShowPrediction = v.InferOutput<typeof NoShowPredictionSchema>;
+export type NoShowPrediction = v.InferOutput<typeof NoShowPredictionSchema>
 
 // Appointment Analytics
 export const AppointmentAnalyticsSchema = v.object({
@@ -250,8 +250,8 @@ export const AppointmentAnalyticsSchema = v.object({
   period_start: v.pipe(v.string(), v.isoDate()),
   period_end: v.pipe(v.string(), v.isoDate()),
   generated_at: v.pipe(v.string(), v.isoDateTime()),
-});
+})
 
 export type AppointmentAnalytics = v.InferOutput<
   typeof AppointmentAnalyticsSchema
->;
+>

@@ -1,4 +1,4 @@
-import { defineConfig } from 'tsup';
+import { defineConfig } from 'tsup'
 
 export default defineConfig({
   entry: ['index.ts'],
@@ -10,4 +10,4 @@ export default defineConfig({
   minify: false,
   target: 'node20',
   external: ['@neonpro/tools-shared'],
-});
+})

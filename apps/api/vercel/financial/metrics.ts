@@ -1,9 +1,9 @@
 export async function GET(request: Request) {
   try {
-    const url = new URL(request.url);
-    const type = url.searchParams.get('type') || 'all';
-    const timeframe = url.searchParams.get('timeframe') || '30d';
-    const category = url.searchParams.get('category');
+    const url = new URL(request.url)
+    const type = url.searchParams.get('type') || 'all'
+    const timeframe = url.searchParams.get('timeframe') || '30d'
+    const category = url.searchParams.get('category')
 
     // Mock financial metrics data
     const allMetrics = {
@@ -56,28 +56,28 @@ export async function GET(request: Request) {
         returnOnAssets: 15.2,
         returnOnEquity: 22.1,
       },
-    };
+    }
 
-    let responseData;
+    let responseData
 
     switch (type) {
       case 'revenue':
-        responseData = { revenue: allMetrics.revenue };
-        break;
+        responseData = { revenue: allMetrics.revenue }
+        break
       case 'expenses':
-        responseData = { expenses: allMetrics.expenses };
-        break;
+        responseData = { expenses: allMetrics.expenses }
+        break
       case 'profitability':
-        responseData = { profitability: allMetrics.profitability };
-        break;
+        responseData = { profitability: allMetrics.profitability }
+        break
       case 'cashflow':
-        responseData = { cashFlow: allMetrics.cashFlow };
-        break;
+        responseData = { cashFlow: allMetrics.cashFlow }
+        break
       case 'performance':
-        responseData = { performance: allMetrics.performance };
-        break;
+        responseData = { performance: allMetrics.performance }
+        break
       default:
-        responseData = allMetrics;
+        responseData = allMetrics
     }
 
     // Add metadata
@@ -93,7 +93,7 @@ export async function GET(request: Request) {
           end: new Date().toISOString(),
         },
       },
-    };
+    }
 
     return new Response(JSON.stringify(finalData), {
       status: 200,
@@ -101,9 +101,9 @@ export async function GET(request: Request) {
         'Content-Type': 'application/json',
         'Cache-Control': 'public, max-age=180',
       },
-    });
+    })
   } catch (error) {
-    console.error('Financial metrics API error:', error);
+    console.error('Financial metrics API error:', error)
 
     return new Response(
       JSON.stringify({
@@ -116,6 +116,6 @@ export async function GET(request: Request) {
           'Content-Type': 'application/json',
         },
       },
-    );
+    )
   }
 }

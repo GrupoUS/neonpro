@@ -7,7 +7,7 @@
   "main": "dist/index.js",
   "scripts": {
     "dev": "vite",
-    "build": "tsc --noEmit",
+    "build": "tsc --noEmit && vite build --mode production",
     "build:vercel": "vite build",
     "preview": "vite preview",
     "type-check": "tsc --noEmit",

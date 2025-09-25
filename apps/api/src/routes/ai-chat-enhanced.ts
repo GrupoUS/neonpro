@@ -1,31 +1,28 @@
 // Enhanced AI Chat Route with Semantic Caching for NeonPro Aesthetic Clinic
 // Integrates semantic caching with existing AI chat infrastructure for optimized performance
-import { zValidator } from '@hono/zod-validator';
-import { type AIMessage, AIProviderFactory } from '@neonpro/core-services';
-import { Hono } from 'hono';
-import { cors } from 'hono/cors';
-import { z } from 'zod';
-import { endTimerMs, logMetric, startTimer } from '../services/metrics';
+import { zValidator } from '@hono/zod-validator'
+import { type AIMessage, AIProviderFactory } from '@neonpro/core-services'
+import { Hono } from 'hono'
+import { cors } from 'hono/cors'
+import { z } from 'zod'
+import { endTimerMs, logMetric, startTimer } from '../services/metrics'
 
 // Import semantic caching components
-import { HealthcareDataSanitizer, PIIRedactionLevel } from '../lib/pii-redaction';
-import { AIProviderResponse, AIProviderRouter } from '../services/ai-provider-router-new';
-import { CacheKeyGenerator, SemanticCacheService } from '../services/semantic-cache';
+import { HealthcareDataSanitizer, PIIRedactionLevel } from '../lib/pii-redaction'
+import { AIProviderResponse, AIProviderRouter } from '../services/ai-provider-router-new'
+import { CacheKeyGenerator, SemanticCacheService } from '../services/semantic-cache'
 
 // Import healthcare compliance utilities
-import {
-  HealthcareComplianceContext,
-  LGPDComplianceValidator,
-} from '../middleware/lgpd-compliance';
+import { HealthcareComplianceContext, LGPDComplianceValidator } from '../middleware/lgpd-compliance'
 
 // Import OpenTelemetry for performance monitoring
-import { SpanStatusCode, trace } from '@opentelemetry/api';
+import { SpanStatusCode, trace } from '@opentelemetry/api'
 
 // Request validation schemas
 const ChatMessageSchema = z.object({
   _role: z.enum(['user', 'assistant', 'system']),
   content: z.string().min(1),
-});
+})
 
 const EnhancedChatRequestSchema = z.object({
   messages: z.array(ChatMessageSchema).default([]),
@@ -49,28 +46,28 @@ const EnhancedChatRequestSchema = z.object({
         .default('restricted'),
     })
     .optional(),
-});
+})
 
-const app = new Hono();
+const app = new Hono()
 
 // Initialize services
-const semanticCache = new SemanticCacheService();
-const piiSanitizer = new HealthcareDataSanitizer(PIIRedactionLevel.HEALTHCARE);
-const aiRouter = new AIProviderRouter();
-const lgpdValidator = new LGPDComplianceValidator();
+const semanticCache = new SemanticCacheService()
+const piiSanitizer = new HealthcareDataSanitizer(PIIRedactionLevel.HEALTHCARE)
+const aiRouter = new AIProviderRouter()
+const lgpdValidator = new LGPDComplianceValidator()
 
 // Enable CORS for browser requests
 const allowedOrigins = [
   process.env.FRONTEND_URL,
   process.env.NEXT_PUBLIC_APP_URL,
-].filter(Boolean) as string[];
+].filter(Boolean) as string[]
 
 if (process.env.NODE_ENV !== 'production') {
   allowedOrigins.push(
     'http://localhost:3000',
     'http://localhost:5173',
     'http://localhost:8081',
-  );
+  )
 }
 
 app.use(
@@ -85,7 +82,7 @@ app.use(
     allowMethods: ['GET', 'POST'],
     allowHeaders: ['Content-Type', 'Authorization'],
   }),
-);
+)
 
 // Enhanced system prompt with healthcare compliance
 const SYSTEM_PROMPT =
@@ -119,7 +116,7 @@ DIRETRIZES DE RESPOSTA:
 - Use linguagem acessível, empática e acolhedora
 - Promova confiança e segurança nos tratamentos
 
-Responda sempre de forma útil, segura e focada em estética.`;
+Responda sempre de forma útil, segura e focada em estética.`
 
 // Cache key generator for healthcare AI conversations
 class HealthcareCacheKeyGenerator implements CacheKeyGenerator {
@@ -127,12 +124,12 @@ class HealthcareCacheKeyGenerator implements CacheKeyGenerator {
     const normalizedMessages = messages.map(msg => ({
       _role: msg.role,
       content: piiSanitizer.sanitize(msg.content),
-    }));
+    }))
 
-    const contextHash = this.hashContext(context);
-    const messagesHash = this.hashMessages(normalizedMessages);
+    const contextHash = this.hashContext(context)
+    const messagesHash = this.hashMessages(normalizedMessages)
 
-    return `healthcare-ai-chat:${contextHash}:${messagesHash}`;
+    return `healthcare-ai-chat:${contextHash}:${messagesHash}`
   }
 
   private hashContext(_context: any): string {
@@ -141,31 +138,31 @@ class HealthcareCacheKeyGenerator implements CacheKeyGenerator {
       presetId: context.presetId,
       treatmentType: context.healthcareContext?.treatmentType,
       urgency: context.healthcareContext?.urgency,
-    };
+    }
     return Buffer.from(JSON.stringify(relevantContext))
       .toString('base64')
-      .slice(0, 16);
+      .slice(0, 16)
   }
 
   private hashMessages(messages: AIMessage[]): string {
     const messageString = messages
       .map(m => `${m.role}:${m.content}`)
-      .join('|');
-    return Buffer.from(messageString).toString('base64').slice(0, 16);
+      .join('|')
+    return Buffer.from(messageString).toString('base64').slice(0, 16)
   }
 }
 
-const cacheKeyGenerator = new HealthcareCacheKeyGenerator();
+const cacheKeyGenerator = new HealthcareCacheKeyGenerator()
 
 // Enhanced streaming AI response endpoint with semantic caching
 app.post(
   '/stream',
   zValidator('json', EnhancedChatRequestSchema),
   async c => {
-    const tracer = trace.getTracer('neonpro-ai-chat');
-    const span = tracer.startSpan('/ai-chat/stream');
+    const tracer = trace.getTracer('neonpro-ai-chat')
+    const span = tracer.startSpan('/ai-chat/stream')
 
-    const t0 = startTimer();
+    const t0 = startTimer()
     try {
       const {
         messages,
@@ -177,46 +174,46 @@ app.post(
         enableCache,
         cacheTTL,
         healthcareContext,
-      } = c.req.valid('json');
+      } = c.req.valid('json')
 
-      span.setAttribute('session.id', sessionId);
-      span.setAttribute('cache.enabled', enableCache);
+      span.setAttribute('session.id', sessionId)
+      span.setAttribute('cache.enabled', enableCache)
       span.setAttribute(
         'healthcare.urgency',
         healthcareContext?.urgency || 'medium',
-      );
+      )
       span.setAttribute(
         'healthcare.data_classification',
         healthcareContext?.dataClassification || 'restricted',
-      );
+      )
 
-      const url = new URL(c.req.url);
-      const mockMode = url.searchParams.get('mock') === 'true'
-        || process.env.AI_CHAT_MOCK_MODE === 'true'
-        || (!process.env.OPENAI_API_KEY
-          && !process.env.ANTHROPIC_API_KEY
-          && !process.env.GOOGLE_AI_API_KEY);
+      const url = new URL(c.req.url)
+      const mockMode = url.searchParams.get('mock') === 'true' ||
+        process.env.AI_CHAT_MOCK_MODE === 'true' ||
+        (!process.env.OPENAI_API_KEY &&
+          !process.env.ANTHROPIC_API_KEY &&
+          !process.env.GOOGLE_AI_API_KEY)
 
       // Build AI messages with compliance validation
       const aiMessages: AIMessage[] = [
         { _role: 'system', content: SYSTEM_PROMPT },
-      ];
+      ]
 
       // Add existing conversation messages with PII redaction
       if (Array.isArray(messages)) {
         for (const msg of messages) {
-          const sanitizedContent = piiSanitizer.sanitize(msg.content);
+          const sanitizedContent = piiSanitizer.sanitize(msg.content)
           aiMessages.push({
             _role: msg.role,
             content: sanitizedContent,
-          });
+          })
         }
       }
 
       // Add new text message if provided
       if (text && text.trim().length > 0) {
-        const sanitizedText = piiSanitizer.sanitize(text.trim());
-        aiMessages.push({ _role: 'user', content: sanitizedText });
+        const sanitizedText = piiSanitizer.sanitize(text.trim())
+        aiMessages.push({ _role: 'user', content: sanitizedText })
       }
 
       // Validate LGPD compliance for healthcare context
@@ -227,71 +224,71 @@ app.post(
           professionalId: healthcareContext.professionalId,
           dataClassification: healthcareContext.dataClassification,
           legalBasis: 'consent',
-        };
+        }
 
-        const validationResult = await lgpdValidator.validate(complianceContext);
+        const validationResult = await lgpdValidator.validate(complianceContext)
         if (!validationResult.compliant) {
-          span.setAttribute('lgpd.compliance', 'failed');
+          span.setAttribute('lgpd.compliance', 'failed')
           span.setAttribute(
             'lgpd.violations',
             validationResult.violations.join(','),
-          );
+          )
 
           // Log compliance violation
           console.warn('LGPD compliance violation in AI chat:', {
             timestamp: new Date().toISOString(),
             sessionId,
             violations: validationResult.violations,
-          });
+          })
         } else {
-          span.setAttribute('lgpd.compliance', 'passed');
+          span.setAttribute('lgpd.compliance', 'passed')
         }
       }
 
       // Check cache first if enabled
-      let cachedResponse: AIProviderResponse | null = null;
-      let cacheKey: string | null = null;
+      let cachedResponse: AIProviderResponse | null = null
+      let cacheKey: string | null = null
 
       if (enableCache && !mockMode) {
         cacheKey = cacheKeyGenerator.generateKey(aiMessages, {
           locale,
           healthcareContext,
-        });
+        })
         cachedResponse = await semanticCache.get(cacheKey, {
           ttl: cacheTTL,
           validateHealthcare: true,
-        });
+        })
 
         if (cachedResponse) {
-          span.setAttribute('cache.hit', true);
+          span.setAttribute('cache.hit', true)
           span.setAttribute(
             'cache.response_age',
             Date.now() - cachedResponse.timestamp,
-          );
+          )
 
-          const ms = endTimerMs(t0);
+          const ms = endTimerMs(t0)
           logMetric({
             route: '/v1/ai-chat/stream',
             ms,
             ok: true,
             model: cachedResponse.provider,
             cacheHit: true,
-          });
+          })
 
           // Stream cached response
-          const encoder = new TextEncoder();
+          const encoder = new TextEncoder()
           const stream = new ReadableStream({
             async start(controller) {
               try {
                 for (const chunk of cachedResponse!.chunks) {
-                  controller.enqueue(encoder.encode(chunk));
+                  controller.enqueue(encoder.encode(chunk))
                 }
-                controller.close();
+                controller.close()
               } catch {
-                controller.error(error);
+                controller.error(error)
               }
             },
-          });
+          })
 
           return new Response(stream, {
             status: 200,
@@ -303,18 +300,18 @@ app.post(
               'X-Cache-Key': cacheKey,
               'X-Chat-Started-At': new Date().toISOString(),
             },
-          });
+          })
         }
       }
 
-      span.setAttribute('cache.hit', false);
+      span.setAttribute('cache.hit', false)
 
       if (mockMode) {
         // Use mock provider with caching
         const mockResponse = await AIProviderFactory.generateWithFailover(
           aiMessages,
           1,
-        );
+        )
 
         // Cache mock response for development
         if (enableCache && cacheKey) {
@@ -323,23 +320,23 @@ app.post(
             chunks: [mockResponse.content],
             timestamp: Date.now(),
             healthcareContext,
-          });
+          })
         }
 
-        const encoder = new TextEncoder();
+        const encoder = new TextEncoder()
         const stream = new ReadableStream({
           async start(controller) {
             try {
-              controller.enqueue(encoder.encode(mockResponse.content));
-              controller.close();
+              controller.enqueue(encoder.encode(mockResponse.content))
+              controller.close()
             } catch {
-              controller.error(error);
+              controller.error(error)
             }
           },
-        });
+        })
 
-        const ms = endTimerMs(t0);
-        logMetric({ route: '/v1/ai-chat/stream', ms, ok: true, model: 'mock' });
+        const ms = endTimerMs(t0)
+        logMetric({ route: '/v1/ai-chat/stream', ms, ok: true, model: 'mock' })
 
         return new Response(stream, {
           status: 200,
@@ -349,17 +346,17 @@ app.post(
             'X-Response-Time': `${ms}ms`,
             'X-Chat-Started-At': new Date().toISOString(),
           },
-        });
+        })
       }
 
       // Use real AI providers with failover and caching
       const provider = await aiRouter.getOptimalProvider(aiMessages, {
         healthcare: healthcareContext,
         preferredProvider: model,
-      });
+      })
 
-      const encoder = new TextEncoder();
-      const chunks: string[] = [];
+      const encoder = new TextEncoder()
+      const chunks: string[] = []
 
       const stream = new ReadableStream({
         async start(controller) {
@@ -369,16 +366,16 @@ app.post(
                 aiMessages,
               )
             ) {
-              chunks.push(chunk);
-              controller.enqueue(encoder.encode(chunk));
+              chunks.push(chunk)
+              controller.enqueue(encoder.encode(chunk))
             }
-            controller.close();
+            controller.close()
           } catch {
-            console.error('Streaming error:', error);
-            controller.error(error);
+            console.error('Streaming error:', error)
+            controller.error(error)
           }
         },
-      });
+      })
 
       // Cache successful response
       if (enableCache && cacheKey && chunks.length > 0) {
@@ -387,16 +384,16 @@ app.post(
           chunks,
           timestamp: Date.now(),
           healthcareContext,
-        });
+        })
       }
 
       // Enhanced audit logging with healthcare context
-      const lastText = text
-        || (Array.isArray(messages)
+      const lastText = text ||
+        (Array.isArray(messages)
           ? messages[messages.length - 1]?.content
-          : '')
-        || '';
-      console.log('Enhanced AI Chat Interaction:', {
+          : '') ||
+        ''
+      console.warn('Enhanced AI Chat Interaction:', {
         timestamp: new Date().toISOString(),
         sessionId,
         clientId: clientId || 'anonymous',
@@ -406,18 +403,18 @@ app.post(
         cacheEnabled: enableCache,
         cacheHit: false,
         healthcareContext,
-      });
+      })
 
-      const ms = endTimerMs(t0);
+      const ms = endTimerMs(t0)
       logMetric({
         route: '/v1/ai-chat/stream',
         ms,
         ok: true,
         model: provider.name,
         cacheHit: false,
-      });
+      })
 
-      span.setStatus({ code: SpanStatusCode.OK });
+      span.setStatus({ code: SpanStatusCode.OK })
 
       return new Response(stream, {
         status: 200,
@@ -428,52 +425,52 @@ app.post(
           'X-Cache-Hit': 'false',
           'X-Chat-Started-At': new Date().toISOString(),
         },
-      });
+      })
     } catch {
-      const ms = endTimerMs(t0);
-      logMetric({ route: '/v1/ai-chat/stream', ms, ok: false });
+      const ms = endTimerMs(t0)
+      logMetric({ route: '/v1/ai-chat/stream', ms, ok: false })
 
       span.setStatus({
         code: SpanStatusCode.ERROR,
         message: error instanceof Error ? error.message : 'Unknown error',
-      });
+      })
 
-      console.error('Enhanced AI chat error:', error);
+      console.error('Enhanced AI chat error:', error)
       return c.json(
         {
           error: 'Erro interno do servidor',
           message: 'Não foi possível processar sua solicitação',
         },
         500,
-      );
+      )
     } finally {
-      span.end();
+      span.end()
     }
   },
-);
+)
 
 // Cache management endpoints
 app.post('/cache/clear', async c => {
-  const { pattern } = (await c.req.json()) as { pattern?: string };
+  const { pattern } = (await c.req.json()) as { pattern?: string }
 
   if (pattern) {
-    await semanticCache.clearPattern(pattern);
+    await semanticCache.clearPattern(pattern)
   } else {
-    await semanticCache.clear();
+    await semanticCache.clear()
   }
 
-  return c.json({ success: true, cleared: pattern ? 'pattern' : 'all' });
-});
+  return c.json({ success: true, cleared: pattern ? 'pattern' : 'all' })
+})
 
 app.get('/cache/stats', async c => {
-  const stats = await semanticCache.getStatistics();
-  return c.json(stats);
-});
+  const stats = await semanticCache.getStatistics()
+  return c.json(stats)
+})
 
 // Enhanced health check with cache and provider status
 app.get('/health', c => {
-  const availableProviders = AIProviderFactory.getAvailableProviders();
-  const cacheHealth = semanticCache.getHealthStatus();
+  const availableProviders = AIProviderFactory.getAvailableProviders()
+  const cacheHealth = semanticCache.getHealthStatus()
 
   return c.json({
     status: 'ok',
@@ -481,13 +478,13 @@ app.get('/health', c => {
     timestamp: new Date().toISOString(),
     providers: availableProviders.reduce(
       (acc, _provider) => {
-        acc[provider] = 'available';
-        return acc;
+        acc[provider] = 'available'
+        return acc
       },
       {} as Record<string, string>,
     ),
     cache: cacheHealth,
-  });
-});
+  })
+})
 
-export default app;
+export default app

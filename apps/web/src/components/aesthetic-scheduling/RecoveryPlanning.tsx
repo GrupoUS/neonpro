@@ -1,13 +1,13 @@
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { api } from '@/lib/api';
-import { RecoveryPhase, RecoveryPlan } from '@/types/aesthetic-scheduling';
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { format, parseISO } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { api } from '@/lib/api'
+import { RecoveryPhase, RecoveryPlan } from '@/types/aesthetic-scheduling'
+import { useMutation, useQuery } from '@tanstack/react-query'
+import { format, parseISO } from 'date-fns'
+import { ptBR } from 'date-fns/locale'
 import {
   Activity,
   AlertTriangle,
@@ -27,15 +27,15 @@ import {
   Users,
   XCircle,
   Zap,
-} from 'lucide-react';
-import React, { useState } from 'react';
+} from 'lucide-react'
+import React, { useState } from 'react'
 
 interface RecoveryPlanningProps {
-  appointmentId?: string;
-  treatmentPlanId?: string;
-  procedureIds?: string[];
-  patientId?: string;
-  onRecoveryPlanCreate?: (plan: Partial<RecoveryPlan>) => Promise<any>;
+  appointmentId?: string
+  treatmentPlanId?: string
+  procedureIds?: string[]
+  patientId?: string
+  onRecoveryPlanCreate?: (plan: Partial<RecoveryPlan>) => Promise<any>
 }
 
 export function RecoveryPlanning({
@@ -45,9 +45,9 @@ export function RecoveryPlanning({
   patientId,
   onRecoveryPlanCreate,
 }: RecoveryPlanningProps) {
-  const [selectedProcedure, setSelectedProcedure] = useState<string>('');
-  const [activeTab, setActiveTab] = useState('planning');
-  const [_isCreatingPlan, _setIsCreatingPlan] = useState(false);
+  const [selectedProcedure, setSelectedProcedure] = useState<string>('')
+  const [activeTab, setActiveTab] = useState('planning')
+  const [_isCreatingPlan, _setIsCreatingPlan] = useState(false)
   const [customInstructions] = useState({
     phase: '',
     title: '',
@@ -56,7 +56,7 @@ export function RecoveryPlanning({
     restrictions: [] as string[],
     careInstructions: [] as string[],
     warningSigns: [] as string[],
-  });
+  })
 
   // Fetch recovery plan template
   const { data: recoveryPlan, isLoading, error, refetch } = useQuery({
@@ -67,27 +67,27 @@ export function RecoveryPlanning({
           procedureId: selectedProcedure,
           treatmentPlanId: treatmentPlanId || '',
           patientId: patientId || undefined,
-        });
+        })
       }
-      return null;
+      return null
     },
     enabled: !!selectedProcedure,
-  });
+  })
 
   // Create recovery plan mutation
   const createRecoveryPlan = useMutation({
     mutationFn: async (plan: Partial<RecoveryPlan>) => {
-      return await api.aestheticScheduling.createRecoveryPlan(plan);
+      return await api.aestheticScheduling.createRecoveryPlan(plan)
     },
     onSuccess: () => {
-      refetch();
-      _setIsCreatingPlan(false);
+      refetch()
+      _setIsCreatingPlan(false)
     },
-  });
+  })
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const _handleCreatePlan = () => {
-    if (!recoveryPlan || !patientId) return;
+    if (!recoveryPlan || !patientId) return
 
     createRecoveryPlan.mutate({
       patientId,
@@ -99,43 +99,43 @@ export function RecoveryPlanning({
       followUpAppointments: recoveryPlan.followUpAppointments,
       emergencyContacts: recoveryPlan.emergencyContacts,
       customNotes: customInstructions.description,
-    });
-  };
+    })
+  }
 
   const getPhaseColor = (phase: string) => {
     switch (phase) {
       case 'immediate':
-        return 'bg-red-100 text-red-800';
+        return 'bg-red-100 text-red-800'
       case 'early':
-        return 'bg-orange-100 text-orange-800';
+        return 'bg-orange-100 text-orange-800'
       case 'intermediate':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'bg-yellow-100 text-yellow-800'
       case 'late':
-        return 'bg-green-100 text-green-800';
+        return 'bg-green-100 text-green-800'
       case 'maintenance':
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-blue-100 text-blue-800'
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-gray-100 text-gray-800'
     }
-  };
+  }
 
   const getSeverityColor = (severity: string) => {
     switch (severity) {
       case 'critical':
-        return 'bg-red-100 text-red-800';
+        return 'bg-red-100 text-red-800'
       case 'moderate':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'bg-yellow-100 text-yellow-800'
       case 'mild':
-        return 'bg-green-100 text-green-800';
+        return 'bg-green-100 text-green-800'
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-gray-100 text-gray-800'
     }
-  };
+  }
 
   const formatDate = (date: Date | string) => {
-    const dateObj = typeof date === 'string' ? parseISO(date) : date;
-    return format(dateObj, 'dd/MM/yyyy', { locale: ptBR });
-  };
+    const dateObj = typeof date === 'string' ? parseISO(date) : date
+    return format(dateObj, 'dd/MM/yyyy', { locale: ptBR })
+  }
 
   if (isLoading) {
     return (
@@ -145,7 +145,7 @@ export function RecoveryPlanning({
           <div className='h-32 bg-gray-200 rounded'></div>
         </div>
       </div>
-    );
+    )
   }
 
   if (error) {
@@ -157,7 +157,7 @@ export function RecoveryPlanning({
           Não foi possível gerar o plano de recuperação. Por favor, tente novamente.
         </AlertDescription>
       </Alert>
-    );
+    )
   }
 
   return (
@@ -511,19 +511,19 @@ export function RecoveryPlanning({
         </>
       )}
     </div>
-  );
+  )
 }
 
 interface RecoveryPhaseCardProps {
-  phase: RecoveryPhase;
-  getPhaseColor: (phase: string) => string;
+  phase: RecoveryPhase
+  getPhaseColor: (phase: string) => string
 }
 
 function RecoveryPhaseCard({ phase, getPhaseColor }: RecoveryPhaseCardProps) {
   const formatDate = (date: Date | string) => {
-    const dateObj = typeof date === 'string' ? parseISO(date) : date;
-    return format(dateObj, 'dd/MM/yyyy', { locale: ptBR });
-  };
+    const dateObj = typeof date === 'string' ? parseISO(date) : date
+    return format(dateObj, 'dd/MM/yyyy', { locale: ptBR })
+  }
 
   return (
     <Card>
@@ -619,5 +619,5 @@ function RecoveryPhaseCard({ phase, getPhaseColor }: RecoveryPhaseCardProps) {
         </div>
       </CardContent>
     </Card>
-  );
+  )
 }

@@ -11,7 +11,7 @@ const path = require("path");
 console.log("🔧 TDD-Orchestrator: Fixing deployment-critical errors...");
 
 // Critical error patterns that could block deployment
-// const CRITICAL_PATTERNS = {
+const CRITICAL_PATTERNS = {
   // Catch parameters (TypeScript strict mode issues)
   unusedCatchParam: /catch \(([^)]+)\) \{/g,
   // Unused imports that increase bundle size

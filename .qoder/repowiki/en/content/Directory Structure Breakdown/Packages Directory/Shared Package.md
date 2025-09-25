@@ -404,9 +404,9 @@ These tools help ensure that the application maintains lawful grounds for proces
 To use shared components in a frontend application, import them directly from the shared package:
 
 ```typescript
-import { useRealtimeQuery } from '@neonpro/shared';
-import { ProtectedRoute } from '@neonpro/shared/auth';
-import { validateCPF } from '@neonpro/shared/validators';
+import { useRealtimeQuery } from '@neonpro/shared'
+import { ProtectedRoute } from '@neonpro/shared/auth'
+import { validateCPF } from '@neonpro/shared/validators'
 
 // Example: Real-time patient list
 function PatientList() {
@@ -420,10 +420,10 @@ function PatientList() {
         onUpdate: patient => console.log('Patient updated:', patient),
       },
     },
-  );
+  )
 
-  if (isLoading) return <div>Loading...</div>;
-  return <ul>{data?.map(patient => <li key={patient.id}>{patient.name}</li>)}</ul>;
+  if (isLoading) return <div>Loading...</div>
+  return <ul>{data?.map(patient => <li key={patient.id}>{patient.name}</li>)}</ul>
 }
 
 // Example: Route protection
@@ -433,13 +433,13 @@ function AdminDashboard() {
       <h1>Admin Dashboard</h1>
       {/* Protected content */}
     </ProtectedRoute>
-  );
+  )
 }
 
 // Example: Form validation
 function handlePatientSubmit(formData: any) {
   if (!validateCPF(formData.cpf)) {
-    throw new Error('Invalid CPF');
+    throw new Error('Invalid CPF')
   }
   // Process valid data
 }
@@ -450,10 +450,10 @@ function handlePatientSubmit(formData: any) {
 Backend services can leverage shared utilities for consistent logging and data validation:
 
 ```typescript
-import { healthcareLogger, logHealthcareError } from '@neonpro/shared/logging';
-import { validateCNPJ } from '@neonpro/shared/validators';
+import { healthcareLogger, logHealthcareError } from '@neonpro/shared/logging'
+import { validateCNPJ } from '@neonpro/shared/validators'
 
-const logger = healthcareLogger.createLogger('billing-service');
+const logger = healthcareLogger.createLogger('billing-service')
 
 // Example: Service with shared validation
 async function processInvoice(invoiceData: any) {
@@ -462,22 +462,22 @@ async function processInvoice(invoiceData: any) {
       logger.warn('Invalid CNPJ in invoice', {
         clinicId: invoiceData.clinicId,
         cnpj: invoiceData.clinicCNPJ,
-      });
-      throw new Error('Invalid clinic identifier');
+      })
+      throw new Error('Invalid clinic identifier')
     }
 
     logger.info('Processing invoice', {
       invoiceId: invoiceData.id,
       amount: invoiceData.amount,
-    });
+    })
 
     // Process invoice...
   } catch (error) {
     logHealthcareError('billing-service', error, {
       context: 'invoice-processing',
       invoiceId: invoiceData.id,
-    });
-    throw error;
+    })
+    throw error
   }
 }
 ```

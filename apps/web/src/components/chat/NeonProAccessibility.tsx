@@ -26,8 +26,8 @@ import {
   Sun,
   Volume2,
   VolumeX,
-} from 'lucide-react';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+} from 'lucide-react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import {
   type AccessibilitySettings,
   applyFontSize,
@@ -37,30 +37,30 @@ import {
   FONT_SIZE_MAP,
   type FontSize,
   type HighContrastTheme,
-} from '../../config/accessibility-theme';
-import { Alert, AlertDescription } from '../ui/alert';
-import { Badge } from '../ui/badge';
-import { Button } from '../ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
+} from '../../config/accessibility-theme'
+import { Alert, AlertDescription } from '../ui/alert'
+import { Badge } from '../ui/badge'
+import { Button } from '../ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card'
 
 // Types for accessibility features
 
 interface AnnouncerProps {
-  message: string;
-  priority: 'polite' | 'assertive';
-  timeout?: number;
+  message: string
+  priority: 'polite' | 'assertive'
+  timeout?: number
 }
 
 interface FocusTrapProps {
-  children: React.ReactNode;
-  active: boolean;
-  onEscape?: () => void;
+  children: React.ReactNode
+  active: boolean
+  onEscape?: () => void
 }
 
 interface KeyboardNavigationProps {
-  children: React.ReactNode;
-  onNavigate?: (direction: 'next' | 'previous' | 'first' | 'last') => void;
-  onActivate?: () => void;
+  children: React.ReactNode
+  onNavigate?: (direction: 'next' | 'previous' | 'first' | 'last') => void
+  onActivate?: () => void
 }
 
 // Screen Reader Announcer Component
@@ -71,29 +71,29 @@ export const ScreenReaderAnnouncer: React.FC<AnnouncerProps> = ({
 }) => {
   const [announcements, setAnnouncements] = useState<
     Array<{ id: string; message: string; priority: string }>
-  >([]);
+  >([])
 
   useEffect(() => {
-    if (!message) return;
+    if (!message) return
 
-    const id = Math.random().toString(36).substr(2, 9);
-    const announcement = { id, message, priority };
+    const id = Math.random().toString(36).substr(2, 9)
+    const announcement = { id, message, priority }
 
-    setAnnouncements(prev => [...prev, announcement]);
+    setAnnouncements(prev => [...prev, announcement])
 
     const timer = setTimeout(() => {
-      setAnnouncements(prev => prev.filter(a => a.id !== id));
-    }, timeout);
+      setAnnouncements(prev => prev.filter(a => a.id !== id))
+    }, timeout)
 
-    return () => clearTimeout(timer);
-  }, [message, priority, timeout]);
+    return () => clearTimeout(timer)
+  }, [message, priority, timeout])
 
   return (
     <div className='sr-only' aria-live={priority} aria-atomic='true'>
       {announcements.map(a => a.message).join('. ')}
     </div>
-  );
-};
+  )
+}
 
 // Focus Trap Component for modal dialogs
 export const FocusTrap: React.FC<FocusTrapProps> = ({
@@ -101,56 +101,56 @@ export const FocusTrap: React.FC<FocusTrapProps> = ({
   active,
   onEscape,
 }) => {
-  const containerRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    if (!active) return;
+    if (!active) return
 
-    const container = containerRef.current;
-    if (!container) return;
+    const container = containerRef.current
+    if (!container) return
 
     // Get all focusable elements
     const focusableElements = container.querySelectorAll(
       'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
-    );
+    )
 
-    const firstElement = focusableElements[0] as HTMLElement;
-    const lastElement = focusableElements[focusableElements.length - 1] as HTMLElement;
+    const firstElement = focusableElements[0] as HTMLElement
+    const lastElement = focusableElements[focusableElements.length - 1] as HTMLElement
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        onEscape?.();
-        return;
+        onEscape?.()
+        return
       }
 
       if (e.key === 'Tab') {
         if (e.shiftKey) {
           if (document.activeElement === firstElement) {
-            e.preventDefault();
-            lastElement.focus();
+            e.preventDefault()
+            lastElement.focus()
           }
         } else {
           if (document.activeElement === lastElement) {
-            e.preventDefault();
-            firstElement.focus();
+            e.preventDefault()
+            firstElement.focus()
           }
         }
       }
-    };
+    }
 
     // Focus first element when trap activates
-    firstElement?.focus();
+    firstElement?.focus()
 
-    container.addEventListener('keydown', handleKeyDown);
-    return () => container.removeEventListener('keydown', handleKeyDown);
-  }, [active, onEscape]);
+    container.addEventListener('keydown', handleKeyDown)
+    return () => container.removeEventListener('keydown', handleKeyDown)
+  }, [active, onEscape])
 
   return (
     <div ref={containerRef} tabIndex={-1}>
       {children}
     </div>
-  );
-};
+  )
+}
 
 // Enhanced Keyboard Navigation
 export const KeyboardNavigation: React.FC<KeyboardNavigationProps> = ({
@@ -158,110 +158,110 @@ export const KeyboardNavigation: React.FC<KeyboardNavigationProps> = ({
   onNavigate,
   onActivate,
 }) => {
-  const ref = useRef<HTMLDivElement>(null);
+  const ref = useRef<HTMLDivElement>(null)
 
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
-    if (!ref.current?.contains(e.target as Node)) return;
+    if (!ref.current?.contains(e.target as Node)) return
 
     switch (e.key) {
       case 'ArrowDown':
       case 'ArrowRight':
-        e.preventDefault();
-        onNavigate?.('next');
-        break;
+        e.preventDefault()
+        onNavigate?.('next')
+        break
       case 'ArrowUp':
       case 'ArrowLeft':
-        e.preventDefault();
-        onNavigate?.('previous');
-        break;
+        e.preventDefault()
+        onNavigate?.('previous')
+        break
       case 'Home':
-        e.preventDefault();
-        onNavigate?.('first');
-        break;
+        e.preventDefault()
+        onNavigate?.('first')
+        break
       case 'End':
-        e.preventDefault();
-        onNavigate?.('last');
-        break;
+        e.preventDefault()
+        onNavigate?.('last')
+        break
       case 'Enter':
       case ' ':
-        e.preventDefault();
-        onActivate?.();
-        break;
+        e.preventDefault()
+        onActivate?.()
+        break
     }
-  }, [onNavigate, onActivate]);
+  }, [onNavigate, onActivate])
 
   useEffect(() => {
-    const element = ref.current;
-    if (!element) return;
+    const element = ref.current
+    if (!element) return
 
-    element.addEventListener('keydown', handleKeyDown);
-    return () => element.removeEventListener('keydown', handleKeyDown);
-  }, [handleKeyDown]);
+    element.addEventListener('keydown', handleKeyDown)
+    return () => element.removeEventListener('keydown', handleKeyDown)
+  }, [handleKeyDown])
 
   return (
     <div ref={ref} role='application' aria-label='Navegação por teclado'>
       {children}
     </div>
-  );
-};
+  )
+}
 
 // Accessibility Settings Panel
 export const AccessibilitySettingsPanel: React.FC = () => {
-  const [settings, setSettings] = useState<AccessibilitySettings>(DEFAULT_ACCESSIBILITY_SETTINGS);
+  const [settings, setSettings] = useState<AccessibilitySettings>(DEFAULT_ACCESSIBILITY_SETTINGS)
 
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false)
 
   const updateSetting = useCallback(<K extends keyof AccessibilitySettings>(
     key: K,
     value: AccessibilitySettings[K],
   ) => {
-    setSettings(prev => ({ ...prev, [key]: value }));
+    setSettings(prev => ({ ...prev, [key]: value }))
 
     // Apply settings to document using utility functions
     if (key === 'highContrast') {
-      applyHighContrastTheme(value as boolean);
+      applyHighContrastTheme(value as boolean)
     }
     if (key === 'reducedMotion') {
-      applyReducedMotion(value as boolean);
+      applyReducedMotion(value as boolean)
     }
     if (key === 'fontSize') {
-      applyFontSize(value as FontSize);
+      applyFontSize(value as FontSize)
     }
-  }, []);
+  }, [])
 
   useEffect(() => {
     // Load settings from localStorage
-    const savedSettings = localStorage.getItem('accessibility-settings');
+    const savedSettings = localStorage.getItem('accessibility-settings')
     if (savedSettings) {
       try {
-        const parsed = JSON.parse(savedSettings) as AccessibilitySettings;
-        setSettings(parsed);
+        const parsed = JSON.parse(savedSettings) as AccessibilitySettings
+        setSettings(parsed)
 
         // Apply saved settings with conditional checks
-        applyHighContrastTheme(parsed.highContrast);
-        applyReducedMotion(parsed.reducedMotion);
-        applyFontSize(parsed.fontSize);
+        applyHighContrastTheme(parsed.highContrast)
+        applyReducedMotion(parsed.reducedMotion)
+        applyFontSize(parsed.fontSize)
       } catch (error) {
-        console.error('Failed to load accessibility settings:', error);
+        console.error('Failed to load accessibility settings:', error)
       }
     }
 
     // Detect system preferences
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     if (prefersReducedMotion) {
-      updateSetting('reducedMotion', true);
+      updateSetting('reducedMotion', true)
     }
 
-    const prefersHighContrast = window.matchMedia('(prefers-contrast: high)').matches;
+    const prefersHighContrast = window.matchMedia('(prefers-contrast: high)').matches
     if (prefersHighContrast) {
-      updateSetting('highContrast', true);
+      updateSetting('highContrast', true)
     }
-  }, [updateSetting]);
+  }, [updateSetting])
 
   useEffect(() => {
     // Save settings to localStorage
-    localStorage.setItem('accessibility-settings', JSON.stringify(settings));
-  }, [settings]);
+    localStorage.setItem('accessibility-settings', JSON.stringify(settings))
+  }, [settings])
 
   if (!isOpen) {
     return (
@@ -275,7 +275,7 @@ export const AccessibilitySettingsPanel: React.FC = () => {
         <Accessibility className='h-4 w-4 mr-2' />
         Acessibilidade
       </Button>
-    );
+    )
   }
 
   return (
@@ -422,11 +422,11 @@ export const AccessibilitySettingsPanel: React.FC = () => {
             variant='outline'
             size='sm'
             onClick={() => {
-              setSettings(DEFAULT_ACCESSIBILITY_SETTINGS);
+              setSettings(DEFAULT_ACCESSIBILITY_SETTINGS)
               // Apply default settings
-              applyHighContrastTheme(DEFAULT_ACCESSIBILITY_SETTINGS.highContrast);
-              applyReducedMotion(DEFAULT_ACCESSIBILITY_SETTINGS.reducedMotion);
-              applyFontSize(DEFAULT_ACCESSIBILITY_SETTINGS.fontSize);
+              applyHighContrastTheme(DEFAULT_ACCESSIBILITY_SETTINGS.highContrast)
+              applyReducedMotion(DEFAULT_ACCESSIBILITY_SETTINGS.reducedMotion)
+              applyFontSize(DEFAULT_ACCESSIBILITY_SETTINGS.fontSize)
             }}
             className='w-full'
           >
@@ -449,25 +449,25 @@ export const AccessibilitySettingsPanel: React.FC = () => {
         </CardContent>
       </Card>
     </FocusTrap>
-  );
-};
+  )
+}
 
 // Accessible Chat Message Component
 interface AccessibleChatMessageProps {
   message: {
-    id: string;
-    content: string;
-    role: 'user' | 'assistant';
-    timestamp: Date;
+    id: string
+    content: string
+    role: 'user' | 'assistant'
+    timestamp: Date
     metadata?: {
-      agentType?: string;
-      processingTime?: number;
-      sensitiveData?: boolean;
-      complianceLevel?: 'standard' | 'enhanced' | 'restricted';
-    };
-  };
-  isUser?: boolean;
-  onAction?: (action: 'copy' | 'speak' | 'report') => void;
+      agentType?: string
+      processingTime?: number
+      sensitiveData?: boolean
+      complianceLevel?: 'standard' | 'enhanced' | 'restricted'
+    }
+  }
+  isUser?: boolean
+  onAction?: (action: 'copy' | 'speak' | 'report') => void
 }
 
 export const AccessibleChatMessage: React.FC<AccessibleChatMessageProps> = ({
@@ -475,8 +475,8 @@ export const AccessibleChatMessage: React.FC<AccessibleChatMessageProps> = ({
   isUser = false,
   onAction,
 }) => {
-  const [isExpanded, setIsExpanded] = useState(false);
-  const [isSpeaking, setIsSpeaking] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false)
+  const [isSpeaking, setIsSpeaking] = useState(false)
 
   const formatTime = (date: Date) => {
     return date.toLocaleString('pt-BR', {
@@ -485,26 +485,39 @@ export const AccessibleChatMessage: React.FC<AccessibleChatMessageProps> = ({
       year: 'numeric',
       hour: '2-digit',
       minute: '2-digit',
-    });
-  };
+    })
+  }
+
+  // Cleanup speech synthesis on unmount
+  useEffect(() => {
+    return () => {
+      if ('speechSynthesis' in window && isSpeaking) {
+        speechSynthesis.cancel()
+      }
+    }
+  }, [isSpeaking])
 
   const handleSpeak = useCallback(() => {
     if ('speechSynthesis' in window) {
       if (isSpeaking) {
-        speechSynthesis.cancel();
-        setIsSpeaking(false);
+        speechSynthesis.cancel()
+        setIsSpeaking(false)
       } else {
-        const utterance = new SpeechSynthesisUtterance(message.content);
-        utterance.lang = 'pt-BR';
-        utterance.onend = () => setIsSpeaking(false);
-        speechSynthesis.speak(utterance);
-        setIsSpeaking(true);
-        onAction?.('speak');
+        // Cancel any ongoing speech to prevent overlapping
+        speechSynthesis.cancel()
+
+        const utterance = new SpeechSynthesisUtterance(message.content)
+        utterance.lang = 'pt-BR'
+        utterance.onend = () => setIsSpeaking(false)
+        utterance.onerror = () => setIsSpeaking(false)
+        speechSynthesis.speak(utterance)
+        setIsSpeaking(true)
+        onAction?.('speak')
       }
     }
-  }, [message.content, isSpeaking, onAction]);
+  }, [message.content, isSpeaking, onAction])
 
-  const isLongContent = message.content.length > 300;
+  const isLongContent = message.content.length > 300
 
   return (
     <article
@@ -627,46 +640,46 @@ export const AccessibleChatMessage: React.FC<AccessibleChatMessageProps> = ({
         </div>
       </div>
     </article>
-  );
-};
+  )
+}
 
 // Skip Links Component for keyboard navigation
 export const SkipLinks: React.FC = () => {
-  const [showSkipLinks, setShowSkipLinks] = useState(false);
+  const [showSkipLinks, setShowSkipLinks] = useState(false)
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.altKey) {
-        setShowSkipLinks(true);
+        setShowSkipLinks(true)
       }
-    };
+    }
 
     const handleKeyUp = (e: KeyboardEvent) => {
       if (!e.altKey) {
-        setShowSkipLinks(false);
+        setShowSkipLinks(false)
       }
-    };
+    }
 
-    document.addEventListener('keydown', handleKeyDown);
-    document.addEventListener('keyup', handleKeyUp);
+    document.addEventListener('keydown', handleKeyDown)
+    document.addEventListener('keyup', handleKeyUp)
 
     return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-      document.removeEventListener('keyup', handleKeyUp);
-    };
-  }, []);
+      document.removeEventListener('keydown', handleKeyDown)
+      document.removeEventListener('keyup', handleKeyUp)
+    }
+  }, [])
 
-  if (!showSkipLinks) return null;
+  if (!showSkipLinks) return null
 
   return (
-    <nav className='fixed top-0 left-0 z-50 bg-white border-b shadow-lg p-2' role='navigation'>
+    <nav className='fixed top-0 left-0 z-50 bg-white border-b shadow-lg p-2'>
       <div className='flex gap-2'>
         <a
           href='#main-content'
           className='px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700'
           onClick={e => {
-            e.preventDefault();
-            document.getElementById('main-content')?.focus();
+            e.preventDefault()
+            document.getElementById('main-content')?.focus()
           }}
         >
           Pular para conteúdo principal
@@ -675,8 +688,8 @@ export const SkipLinks: React.FC = () => {
           href='#navigation'
           className='px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700'
           onClick={e => {
-            e.preventDefault();
-            document.getElementById('navigation')?.focus();
+            e.preventDefault()
+            document.getElementById('navigation')?.focus()
           }}
         >
           Pular para navegação
@@ -685,21 +698,21 @@ export const SkipLinks: React.FC = () => {
           href='#search'
           className='px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700'
           onClick={e => {
-            e.preventDefault();
-            document.getElementById('search')?.focus();
+            e.preventDefault()
+            document.getElementById('search')?.focus()
           }}
         >
           Pular para busca
         </a>
       </div>
     </nav>
-  );
-};
+  )
+}
 
 // Accessible Loading Component
 interface AccessibleLoadingProps {
-  message?: string;
-  description?: string;
+  message?: string
+  description?: string
 }
 
 export const AccessibleLoading: React.FC<AccessibleLoadingProps> = ({
@@ -719,19 +732,19 @@ export const AccessibleLoading: React.FC<AccessibleLoadingProps> = ({
         <p className='text-sm text-gray-500'>{description}</p>
       </div>
     </div>
-  );
-};
+  )
+}
 
 // Error Boundary with Accessibility
 interface AccessibleErrorBoundaryProps {
-  children: React.ReactNode;
-  onError?: (error: Error, errorInfo: React.ErrorInfo) => void;
+  children: React.ReactNode
+  onError?: (error: Error, errorInfo: React.ErrorInfo) => void
 }
 
 interface AccessibleErrorBoundaryState {
-  hasError: boolean;
-  error?: Error;
-  errorId?: string;
+  hasError: boolean
+  error?: Error
+  errorId?: string
 }
 
 export class AccessibleErrorBoundary extends React.Component<
@@ -739,8 +752,8 @@ export class AccessibleErrorBoundary extends React.Component<
   AccessibleErrorBoundaryState
 > {
   constructor(props: AccessibleErrorBoundaryProps) {
-    super(props);
-    this.state = { hasError: false };
+    super(props)
+    this.state = { hasError: false }
   }
 
   static getDerivedStateFromError(error: Error): AccessibleErrorBoundaryState {
@@ -748,11 +761,11 @@ export class AccessibleErrorBoundary extends React.Component<
       hasError: true,
       error,
       errorId: Math.random().toString(36).substr(2, 9),
-    };
+    }
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    this.props.onError?.(error, errorInfo);
+    this.props.onError?.(error, errorInfo)
   }
 
   render() {
@@ -784,15 +797,15 @@ export class AccessibleErrorBoundary extends React.Component<
             Tentar novamente
           </Button>
         </div>
-      );
+      )
     }
 
-    return this.props.children;
+    return this.props.children
   }
 }
 
 // Export all accessibility components
-export { AccessibilitySettings, type HighContrastTheme };
+export { AccessibilitySettings, type HighContrastTheme }
 
 export default {
   ScreenReaderAnnouncer,
@@ -803,4 +816,4 @@ export default {
   SkipLinks,
   AccessibleLoading,
   AccessibleErrorBoundary,
-};
+}

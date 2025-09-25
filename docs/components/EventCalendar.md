@@ -16,12 +16,12 @@ import { EventCalendar } from '@/components/event-calendar';
 
 ```typescript
 interface EventCalendarProps {
-  events?: CalendarEvent[]; // Array of calendar events to display
-  onEventAdd?: (event: CalendarEvent) => void; // Callback when event is added
-  onEventUpdate?: (event: CalendarEvent) => void; // Callback when event is updated
-  onEventDelete?: (eventId: string) => void; // Callback when event is deleted
-  className?: string; // Additional CSS classes
-  initialView?: CalendarView; // Initial calendar view (default: "month")
+  events?: CalendarEvent[] // Array of calendar events to display
+  onEventAdd?: (event: CalendarEvent) => void // Callback when event is added
+  onEventUpdate?: (event: CalendarEvent) => void // Callback when event is updated
+  onEventDelete?: (eventId: string) => void // Callback when event is deleted
+  className?: string // Additional CSS classes
+  initialView?: CalendarView // Initial calendar view (default: "month")
 }
 ```
 
@@ -31,22 +31,22 @@ interface EventCalendarProps {
 
 ```typescript
 interface CalendarEvent {
-  id: string; // Unique event identifier
-  title: string; // Event title
-  description?: string; // Event description (optional)
-  start: Date; // Event start time
-  end: Date; // Event end time
-  allDay?: boolean; // Is this an all-day event?
-  color?: EventColor; // Event color for visual distinction
-  label?: string; // Event label/category
-  location?: string; // Event location (optional)
+  id: string // Unique event identifier
+  title: string // Event title
+  description?: string // Event description (optional)
+  start: Date // Event start time
+  end: Date // Event end time
+  allDay?: boolean // Is this an all-day event?
+  color?: EventColor // Event color for visual distinction
+  label?: string // Event label/category
+  location?: string // Event location (optional)
 }
 ```
 
 ### CalendarView
 
 ```typescript
-type CalendarView = 'month' | 'week' | 'day' | 'agenda';
+type CalendarView = 'month' | 'week' | 'day' | 'agenda'
 ```
 
 ### EventColor
@@ -58,7 +58,7 @@ type EventColor =
   | 'secondary'
   | 'success'
   | 'warning'
-  | 'error';
+  | 'error'
 ```
 
 ## Features
@@ -90,8 +90,8 @@ type EventColor =
 ### Basic Implementation
 
 ```typescript
-import { EventCalendar } from '@/components/event-calendar';
-import { CalendarEvent } from '@/components/event-calendar/types';
+import { EventCalendar } from '@/components/event-calendar'
+import { CalendarEvent } from '@/components/event-calendar/types'
 
 const sampleEvents: CalendarEvent[] = [
   {
@@ -110,22 +110,22 @@ const sampleEvents: CalendarEvent[] = [
     end: new Date('2024-01-15T15:00:00'),
     color: 'secondary',
   },
-];
+]
 
 function AppointmentsPage() {
   const handleEventAdd = async (event: CalendarEvent) => {
     // Save to backend
-    const savedEvent = await saveEvent(event);
-    return savedEvent;
-  };
+    const savedEvent = await saveEvent(event)
+    return savedEvent
+  }
 
   const handleEventUpdate = async (event: CalendarEvent) => {
-    await updateEvent(event.id, event);
-  };
+    await updateEvent(event.id, event)
+  }
 
   const handleEventDelete = async (eventId: string) => {
-    await deleteEvent(eventId);
-  };
+    await deleteEvent(eventId)
+  }
 
   return (
     <div className='p-6'>
@@ -138,7 +138,7 @@ function AppointmentsPage() {
         initialView='week'
       />
     </div>
-  );
+  )
 }
 ```
 
@@ -155,7 +155,7 @@ function ClinicCalendar() {
         onEventAdd={handleAppointmentCreate}
       />
     </div>
-  );
+  )
 }
 ```
 
@@ -171,7 +171,7 @@ function DailySchedule() {
         className='bg-gray-50'
       />
     </div>
-  );
+  )
 }
 ```
 
@@ -206,11 +206,11 @@ const handleEventCreate = async (startTime: Date) => {
     end: addHours(startTime, 1),
     allDay: false,
     color: 'primary',
-  };
+  }
 
   // The calendar automatically opens the event dialog
-  return await createEvent(newEvent);
-};
+  return await createEvent(newEvent)
+}
 ```
 
 ### Updating Events
@@ -224,11 +224,11 @@ Events can be updated through:
 ```typescript
 const handleEventUpdate = async (updatedEvent: CalendarEvent) => {
   // Update event in backend
-  await updateEvent(updatedEvent.id, updatedEvent);
+  await updateEvent(updatedEvent.id, updatedEvent)
 
   // Calendar automatically updates the display
-  showSuccessToast('Appointment updated successfully');
-};
+  showSuccessToast('Appointment updated successfully')
+}
 ```
 
 ### Deleting Events
@@ -236,10 +236,10 @@ const handleEventUpdate = async (updatedEvent: CalendarEvent) => {
 ```typescript
 const handleEventDelete = async (eventId: string) => {
   if (confirm('Are you sure you want to delete this appointment?')) {
-    await deleteEvent(eventId);
-    showSuccessToast('Appointment deleted');
+    await deleteEvent(eventId)
+    showSuccessToast('Appointment deleted')
   }
-};
+}
 ```
 
 ## Context Integration
@@ -263,7 +263,7 @@ const {
   navigateToToday,
   navigatePrevious,
   navigateNext,
-} = useCalendarContext();
+} = useCalendarContext()
 ```
 
 ## Healthcare-Specific Features
@@ -274,13 +274,13 @@ All events automatically snap to 15-minute intervals for clinical scheduling:
 
 ```typescript
 // Automatic time snapping logic
-const minutes = startTime.getMinutes();
-const remainder = minutes % 15;
+const minutes = startTime.getMinutes()
+const remainder = minutes % 15
 if (remainder !== 0) {
   if (remainder < 7.5) {
-    startTime.setMinutes(minutes - remainder); // Round down
+    startTime.setMinutes(minutes - remainder) // Round down
   } else {
-    startTime.setMinutes(minutes + (15 - remainder)); // Round up
+    startTime.setMinutes(minutes + (15 - remainder)) // Round up
   }
 }
 ```
@@ -297,7 +297,7 @@ const clinicEvent: CalendarEvent = {
   clinicId: currentClinic.id, // From clinic context
   practitionerId: currentPractitioner.id,
   patientId: selectedPatient?.id,
-};
+}
 ```
 
 ## Performance Optimization
@@ -306,15 +306,15 @@ const clinicEvent: CalendarEvent = {
 
 ```typescript
 // Memoize events to prevent unnecessary re-renders
-const memoizedEvents = useMemo(() => events, [events]);
+const memoizedEvents = useMemo(() => events, [events])
 
 // Virtual scrolling for large event sets
 const visibleEvents = useMemo(() => {
   if (events.length > 1000) {
-    return getEventsForCurrentView(events, currentDate, currentView);
+    return getEventsForCurrentView(events, currentDate, currentView)
   }
-  return events;
-}, [events, currentDate, currentView]);
+  return events
+}, [events, currentDate, currentView])
 ```
 
 ### Lazy Loading
@@ -322,16 +322,16 @@ const visibleEvents = useMemo(() => {
 ```typescript
 // Load events on demand
 const loadEventsForDateRange = async (start: Date, end: Date) => {
-  setLoading(true);
+  setLoading(true)
   try {
-    const events = await calendarService.getEvents(start, end);
-    setEvents(events);
+    const events = await calendarService.getEvents(start, end)
+    setEvents(events)
   } catch (error) {
-    console.error('Failed to load events:', error);
+    console.error('Failed to load events:', error)
   } finally {
-    setLoading(false);
+    setLoading(false)
   }
-};
+}
 ```
 
 ## Error Handling
@@ -343,33 +343,33 @@ const handleEventSave = async (event: CalendarEvent) => {
   try {
     // Validate event data
     if (!event.title || !event.start || !event.end) {
-      throw new Error('Event must have title, start, and end times');
+      throw new Error('Event must have title, start, and end times')
     }
 
     if (event.start >= event.end) {
-      throw new Error('Event end time must be after start time');
+      throw new Error('Event end time must be after start time')
     }
 
     // Check for overlapping appointments
-    const overlapping = checkForOverlappingEvents(event);
+    const overlapping = checkForOverlappingEvents(event)
     if (overlapping.length > 0) {
-      throw new Error('This time slot conflicts with existing appointments');
+      throw new Error('This time slot conflicts with existing appointments')
     }
 
     // Save event
     if (event.id) {
-      await updateEvent(event);
+      await updateEvent(event)
     } else {
-      await createEvent(event);
+      await createEvent(event)
     }
 
-    setIsEventDialogOpen(false);
-    setSelectedEvent(null);
+    setIsEventDialogOpen(false)
+    setSelectedEvent(null)
   } catch (error) {
-    console.error('Failed to save event:', error);
+    console.error('Failed to save event:', error)
     // Error is automatically handled by context with user-friendly toast
   }
-};
+}
 ```
 
 ## Accessibility
@@ -403,7 +403,7 @@ const handleEventSave = async (event: CalendarEvent) => {
       {/* Day content */}
     </div>
   ))}
-</div>;
+</div>
 ```
 
 ## Integration Examples
@@ -419,10 +419,10 @@ function CalendarWithQuery() {
         getViewStart(currentView, currentDate),
         getViewEnd(currentView, currentDate),
       ),
-  });
+  })
 
-  if (isLoading) return <CalendarLoading />;
-  if (error) return <CalendarError error={error} />;
+  if (isLoading) return <CalendarLoading />
+  if (error) return <CalendarError error={error} />
 
   return (
     <EventCalendar
@@ -431,7 +431,7 @@ function CalendarWithQuery() {
       onEventUpdate={handleEventUpdate}
       onEventDelete={handleEventDelete}
     />
-  );
+  )
 }
 ```
 
@@ -439,13 +439,13 @@ function CalendarWithQuery() {
 
 ```typescript
 function CalendarWithRedux() {
-  const dispatch = useDispatch();
-  const events = useSelector(selectEvents);
-  const loading = useSelector(selectEventsLoading);
+  const dispatch = useDispatch()
+  const events = useSelector(selectEvents)
+  const loading = useSelector(selectEventsLoading)
 
   const handleEventAdd = (event: CalendarEvent) => {
-    dispatch(addEvent(event));
-  };
+    dispatch(addEvent(event))
+  }
 
   return (
     <EventCalendar
@@ -455,7 +455,7 @@ function CalendarWithRedux() {
       onEventUpdate={event => dispatch(updateEvent(event))}
       onEventDelete={id => dispatch(deleteEvent(id))}
     />
-  );
+  )
 }
 ```
 

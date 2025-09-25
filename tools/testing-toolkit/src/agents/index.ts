@@ -5,10 +5,10 @@
  * Provides utilities for coordinating testing with specialized agents.
  */
 
-export * from './coordinator';
-export * from './red-phase-specialist';
-export * from './types';
-export * from './validation';
+export * from './coordinator'
+export * from './red-phase-specialist'
+export * from './types'
+export * from './validation'
 
 // Agent types matching the code review agents
 export const AGENT_REGISTRY = {
@@ -54,16 +54,16 @@ export const AGENT_REGISTRY = {
     specialties: ['tdd', 'orchestration', 'coordination'],
     qualityGates: ['tdd-compliance', 'test-coverage', 'cycle-validation'],
   },
-} as const;
+} as const
 
-export type AgentType = keyof typeof AGENT_REGISTRY;
+export type AgentType = keyof typeof AGENT_REGISTRY
 
 // Agent coordination patterns
 export const COORDINATION_PATTERNS = {
   SEQUENTIAL: 'sequential',
   PARALLEL: 'parallel',
   HIERARCHICAL: 'hierarchical',
-} as const;
+} as const
 
 // Quality gate definitions
 export const QUALITY_GATES = {
@@ -88,4 +88,4 @@ export const QUALITY_GATES = {
     coverage: 90,
     structure: 95,
   },
-} as const;
+} as const

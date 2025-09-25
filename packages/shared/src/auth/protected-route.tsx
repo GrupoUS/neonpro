@@ -4,24 +4,24 @@
  * This component is kept for backward compatibility but not used in current app
  */
 
-'use client';
+'use client'
 
 // NOTE: Using TanStack Router for protected routes
 // import { useRouter, } from 'next/navigation'
-import type React from 'react';
-import type { ReactNode } from 'react';
-import { auditLogger } from '../logging/healthcare-logger';
-import { useAuth } from './auth-provider';
+import type React from 'react'
+import type { ReactNode } from 'react'
+import { auditLogger } from '../logging/healthcare-logger'
+import { useAuth } from './auth-provider'
 
-const authLogger = auditLogger.child({ component: 'protected-route' });
+const authLogger = auditLogger.child({ component: 'protected-route' })
 
 export interface ProtectedRouteProps {
-  children: ReactNode;
-  fallback?: ReactNode;
-  redirectTo?: string;
-  requireAuth?: boolean;
-  requiredRole?: string;
-  requiredPermissions?: string[];
+  children: ReactNode
+  fallback?: ReactNode
+  redirectTo?: string
+  requireAuth?: boolean
+  requiredRole?: string
+  requiredPermissions?: string[]
 }
 
 /**
@@ -32,7 +32,7 @@ function DefaultLoadingFallback() {
     <div className='flex min-h-screen items-center justify-center'>
       <div className='h-8 w-8 animate-spin rounded-full border-primary border-b-2' />
     </div>
-  );
+  )
 }
 
 /**
@@ -48,7 +48,7 @@ function DefaultUnauthorizedFallback() {
         </p>
       </div>
     </div>
-  );
+  )
 }
 
 /**
@@ -62,7 +62,7 @@ export function ProtectedRoute({
   requiredRole,
   requiredPermissions = [],
 }: ProtectedRouteProps) {
-  const { user, isAuthenticated, isLoading } = useAuth();
+  const { user, isAuthenticated, isLoading } = useAuth()
   // DISABLED: Using TanStack Router authentication instead
   // const router = useRouter()
 
@@ -71,12 +71,12 @@ export function ProtectedRoute({
 
   // Ainda carregando
   if (isLoading) {
-    return <>{fallback}</>;
+    return <>{fallback}</>
   }
 
   // Não requer autenticação
   if (!requireAuth) {
-    return <>{children}</>;
+    return <>{children}</>
   }
 
   // Não autenticado - redirecionar
@@ -88,32 +88,32 @@ export function ProtectedRoute({
       action: 'authentication_redirect',
       redirectTo,
       timestamp: new Date().toISOString(),
-    });
-    return <>{fallback}</>;
+    })
+    return <>{fallback}</>
   }
 
   // Verificar role obrigatória
   if (requiredRole && user._role !== requiredRole) {
-    return <DefaultUnauthorizedFallback />;
+    return <DefaultUnauthorizedFallback />
   }
 
   // Verificar permissões (implementação básica - pode ser expandida)
   if (requiredPermissions.length > 0) {
     // TODO: Implementar sistema de permissões mais robusto
     // Por enquanto, apenas verifica se é admin para qualquer permissão especial
-    const hasPermissions = user._role === 'admin'
-      || requiredPermissions.every(permission => {
+    const hasPermissions = user._role === 'admin' ||
+      requiredPermissions.every(permission => {
         // Lógica de permissões específica pode ser implementada aqui
-        return true; // Placeholder
-      });
+        return true // Placeholder
+      })
 
     if (!hasPermissions) {
-      return <DefaultUnauthorizedFallback />;
+      return <DefaultUnauthorizedFallback />
     }
   }
 
   // Usuário autorizado
-  return <>{children}</>;
+  return <>{children}</>
 }
 
 /**
@@ -128,42 +128,42 @@ export function withAuth<P extends object>(
       <ProtectedRoute {...options}>
         <Component {...props} />
       </ProtectedRoute>
-    );
-  };
+    )
+  }
 
-  WrappedComponent.displayName = `withAuth(${Component.displayName || Component.name})`;
+  WrappedComponent.displayName = `withAuth(${Component.displayName || Component.name})`
 
-  return WrappedComponent;
+  return WrappedComponent
 }
 
 /**
  * Hook para verificar permissões
  */
 export function usePermissions() {
-  const { user } = useAuth();
+  const { user } = useAuth()
 
   const hasRole = (requiredRole: string): boolean => {
-    return user?._role === requiredRole;
-  };
+    return user?._role === requiredRole
+  }
 
   const hasPermission = (permission: string): boolean => {
     // TODO: Implementar lógica de permissões mais sofisticada
     // Por enquanto, admin tem todas as permissões
     if (user?._role === 'admin') {
-      return true;
+      return true
     }
 
     // Implementar verificação específica de permissões aqui
-    return false;
-  };
+    return false
+  }
 
   const hasAnyPermission = (permissions: string[]): boolean => {
-    return permissions.some(permission => hasPermission(permission));
-  };
+    return permissions.some(permission => hasPermission(permission))
+  }
 
   const hasAllPermissions = (permissions: string[]): boolean => {
-    return permissions.every(permission => hasPermission(permission));
-  };
+    return permissions.every(permission => hasPermission(permission))
+  }
 
   return {
     hasRole,
@@ -173,5 +173,5 @@ export function usePermissions() {
     isAdmin: hasRole('admin'),
     isUser: hasRole('user'),
     isHealthcareProfessional: hasRole('healthcare_professional'),
-  };
+  }
 }

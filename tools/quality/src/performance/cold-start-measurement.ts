@@ -77,7 +77,7 @@ export class ColdStartMeasurement {
         if (output.includes('listening on') && !serverReady) {
           serverReady = true
           const readyTime = performance.now() - startTime
-          console.log(`Server ready in ${readyTime.toFixed(2)}ms`)
+          console.error(`Server ready in ${readyTime.toFixed(2)}ms`)
           setTimeout(resolve, this.config.restartDelay)
         }
       })
@@ -159,20 +159,20 @@ export class ColdStartMeasurement {
    * Perform cold start measurement for a specific endpoint
    */
   async measureEndpoint(endpoint: string): Promise<ColdStartMetrics> {
-    console.log(`\\n📊 Measuring cold start performance for ${endpoint}`)
+    console.error(`\\n📊 Measuring cold start performance for ${endpoint}`)
 
     // Simulate cold start
-    console.log('🔄 Simulating cold start...')
+    console.error('🔄 Simulating cold start...')
     const initialStartTime = performance.now()
     await this.simulateColdStart()
     await this.waitForServer()
 
     // Measure first request (cold start)
-    console.log('❄️  Measuring cold start request...')
+    console.error('❄️  Measuring cold start request...')
     const firstRequestTime = await this.measureRequest(endpoint)
 
     // Warm up with several requests
-    console.log(`🔥 Warming up with ${this.config.warmupRequests} requests...`)
+    console.error(`🔥 Warming up with ${this.config.warmupRequests} requests...`)
     for (let i = 0; i < this.config.warmupRequests; i++) {
       try {
         await this.measureRequest(endpoint)
@@ -183,7 +183,7 @@ export class ColdStartMeasurement {
     }
 
     // Measure subsequent requests (warm)
-    console.log(
+    console.error(
       `🌡️  Measuring ${this.config.measurementRequests} warm requests...`,
     )
     const subsequentRequests: number[] = []
@@ -222,8 +222,8 @@ export class ColdStartMeasurement {
    * Run comprehensive cold start measurement for all endpoints
    */
   async measureAll(): Promise<Record<string, ColdStartMetrics>> {
-    console.log('🚀 Starting comprehensive cold start measurement...')
-    console.log(`📋 Testing endpoints: ${this.config.endpoints.join(', ')}`)
+    console.error('🚀 Starting comprehensive cold start measurement...')
+    console.error(`📋 Testing endpoints: ${this.config.endpoints.join(', ')}`)
 
     const results: Record<string, ColdStartMetrics> = {}
 
@@ -380,9 +380,9 @@ export class ColdStartMeasurement {
     const reportPath = path.join(outputDir, 'cold-start-performance-report.md')
     await fs.writeFile(reportPath, report)
 
-    console.log(`\\n📄 Results saved:`)
-    console.log(`   JSON: ${jsonPath}`)
-    console.log(`   Report: ${reportPath}`)
+    console.error(`\\n📄 Results saved:`)
+    console.error(`   JSON: ${jsonPath}`)
+    console.error(`   Report: ${reportPath}`)
   }
 
   /**
@@ -403,30 +403,30 @@ async function runColdStartMeasurement() {
   const measurement = new ColdStartMeasurement()
 
   try {
-    console.log('🔧 Initializing cold start measurement tool...')
+    console.error('🔧 Initializing cold start measurement tool...')
 
     const results = await measurement.measureAll()
 
-    console.log('\\n📊 Measurement completed!\\n')
+    console.error('\\n📊 Measurement completed!\\n')
 
     // Display summary
-    console.log('=== PERFORMANCE SUMMARY ===')
+    console.error('=== PERFORMANCE SUMMARY ===')
     for (const [endpoint, metrics] of Object.entries(results)) {
       if (metrics.firstRequestTime === -1) {
-        console.log(`❌ ${endpoint}: FAILED`)
+        console.error(`❌ ${endpoint}: FAILED`)
         continue
       }
 
-      console.log(`📍 ${endpoint}:`)
-      console.log(`   Cold Start: ${metrics.firstRequestTime.toFixed(2)}ms`)
-      console.log(`   Warm Average: ${metrics.averageWarmTime.toFixed(2)}ms`)
-      console.log(`   Penalty: ${metrics.coldStartDelta.toFixed(2)}ms`)
+      console.error(`📍 ${endpoint}:`)
+      console.error(`   Cold Start: ${metrics.firstRequestTime.toFixed(2)}ms`)
+      console.error(`   Warm Average: ${metrics.averageWarmTime.toFixed(2)}ms`)
+      console.error(`   Penalty: ${metrics.coldStartDelta.toFixed(2)}ms`)
     }
 
     // Save results
     await measurement.saveResults(results)
 
-    console.log('\\n✅ Cold start measurement completed successfully!')
+    console.error('\\n✅ Cold start measurement completed successfully!')
   } catch (error) {
     console.error('❌ Cold start measurement failed:', error)
     process.exit(1)

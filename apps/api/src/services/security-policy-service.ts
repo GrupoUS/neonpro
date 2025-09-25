@@ -7,7 +7,7 @@
  * @compliance LGPD, ANVISA, CFM
  */
 
-import { z } from 'zod';
+import { z } from 'zod'
 
 // Security Policy Schema
 export const SecurityPolicySchema = z.object({
@@ -37,9 +37,9 @@ export const SecurityPolicySchema = z.object({
     updatedAt: z.date().default(() => new Date()),
     version: z.number().default(1),
   }),
-});
+})
 
-export type SecurityPolicy = z.infer<typeof SecurityPolicySchema>;
+export type SecurityPolicy = z.infer<typeof SecurityPolicySchema>
 
 // Security Policy Configuration Schema
 export const SecurityPolicyConfigSchema = z.object({
@@ -50,18 +50,18 @@ export const SecurityPolicyConfigSchema = z.object({
     encryptSensitiveData: z.boolean().default(true),
     requireMfaForAdmin: z.boolean().default(true),
   }),
-});
+})
 
-export type SecurityPolicyConfig = z.infer<typeof SecurityPolicyConfigSchema>;
+export type SecurityPolicyConfig = z.infer<typeof SecurityPolicyConfigSchema>
 
 // In-memory storage for TDD (will be replaced with database)
-const securityPolicies = new Map<string, SecurityPolicy>();
+const securityPolicies = new Map<string, SecurityPolicy>()
 let globalConfig: SecurityPolicyConfig['globalSettings'] = {
   enforceStrictMode: true,
   auditAllActions: true,
   encryptSensitiveData: true,
   requireMfaForAdmin: true,
-};
+}
 
 /**
  * Create a new security policy
@@ -69,7 +69,7 @@ let globalConfig: SecurityPolicyConfig['globalSettings'] = {
 export async function createSecurityPolicy(
   policy: Omit<SecurityPolicy, 'id' | 'metadata'>,
 ): Promise<SecurityPolicy> {
-  const id = crypto.randomUUID();
+  const id = crypto.randomUUID()
 
   const newPolicy: SecurityPolicy = {
     ...policy,
@@ -80,11 +80,11 @@ export async function createSecurityPolicy(
       updatedAt: new Date(),
       version: 1,
     },
-  };
+  }
 
-  securityPolicies.set(id, newPolicy);
+  securityPolicies.set(id, newPolicy)
 
-  return newPolicy;
+  return newPolicy
 }
 
 /**
@@ -93,7 +93,7 @@ export async function createSecurityPolicy(
 export async function getSecurityPolicy(
   id: string,
 ): Promise<SecurityPolicy | null> {
-  return securityPolicies.get(id) || null;
+  return securityPolicies.get(id) || null
 }
 
 /**
@@ -103,10 +103,10 @@ export async function updateSecurityPolicy(
   id: string,
   updates: Partial<Omit<SecurityPolicy, 'id' | 'metadata'>>,
 ): Promise<SecurityPolicy | null> {
-  const existing = securityPolicies.get(id);
+  const existing = securityPolicies.get(id)
 
   if (!existing) {
-    return null;
+    return null
   }
 
   const updated: SecurityPolicy = {
@@ -117,68 +117,68 @@ export async function updateSecurityPolicy(
       updatedAt: new Date(),
       version: existing.metadata.version + 1,
     },
-  };
+  }
 
-  securityPolicies.set(id, updated);
+  securityPolicies.set(id, updated)
 
-  return updated;
+  return updated
 }
 
 /**
  * Delete a security policy
  */
 export async function deleteSecurityPolicy(id: string): Promise<boolean> {
-  return securityPolicies.delete(id);
+  return securityPolicies.delete(id)
 }
 
 /**
  * List all security policies
  */
 export async function listSecurityPolicies(): Promise<SecurityPolicy[]> {
-  return Array.from(securityPolicies.values());
+  return Array.from(securityPolicies.values())
 }
 
 /**
  * Evaluate security policies for a given context
  */
 export async function evaluateSecurityPolicies(_context: {
-  _userId?: string;
-  patientId?: string;
-  clinicId?: string;
-  action: string;
-  resource: string;
-  metadata?: Record<string, unknown>;
+  _userId?: string
+  patientId?: string
+  clinicId?: string
+  action: string
+  resource: string
+  metadata?: Record<string, unknown>
 }): Promise<{
-  allowed: boolean;
-  appliedPolicies: string[];
-  requiredActions: string[];
+  allowed: boolean
+  appliedPolicies: string[]
+  requiredActions: string[]
 }> {
   const policies = Array.from(securityPolicies.values()).filter(
     p => p.enabled,
-  );
-  const appliedPolicies: string[] = [];
-  const requiredActions: string[] = [];
-  let allowed = true;
+  )
+  const appliedPolicies: string[] = []
+  const requiredActions: string[] = []
+  let allowed = true
 
   for (const policy of policies) {
     // Simple rule evaluation (will be enhanced)
     for (const rule of policy.rules) {
       if (rule.condition === 'always' || rule.condition === context.action) {
-        appliedPolicies.push(policy.id);
+        appliedPolicies.push(policy.id)
 
         switch (rule.action) {
           case 'deny':
-            allowed = false;
-            break;
+            allowed = false
+            break
           case 'require_mfa':
-            requiredActions.push('mfa_required');
-            break;
+            requiredActions.push('mfa_required')
+            break
           case 'audit':
-            requiredActions.push('audit_required');
-            break;
+            requiredActions.push('audit_required')
+            break
           case 'encrypt':
-            requiredActions.push('encryption_required');
-            break;
+            requiredActions.push('encryption_required')
+            break
         }
       }
     }
@@ -188,7 +188,7 @@ export async function evaluateSecurityPolicies(_context: {
     allowed,
     appliedPolicies,
     requiredActions,
-  };
+  }
 }
 
 /**
@@ -197,7 +197,7 @@ export async function evaluateSecurityPolicies(_context: {
 export async function getGlobalSecurityConfig(): Promise<
   SecurityPolicyConfig['globalSettings']
 > {
-  return { ...globalConfig };
+  return { ...globalConfig }
 }
 
 /**
@@ -206,19 +206,19 @@ export async function getGlobalSecurityConfig(): Promise<
 export async function updateGlobalSecurityConfig(
   updates: Partial<SecurityPolicyConfig['globalSettings']>,
 ): Promise<SecurityPolicyConfig['globalSettings']> {
-  globalConfig = { ...globalConfig, ...updates };
-  return { ...globalConfig };
+  globalConfig = { ...globalConfig, ...updates }
+  return { ...globalConfig }
 }
 
 /**
  * Clear all security policies (for testing)
  */
 export function clearSecurityPolicies(): void {
-  securityPolicies.clear();
+  securityPolicies.clear()
   globalConfig = {
     enforceStrictMode: true,
     auditAllActions: true,
     encryptSensitiveData: true,
     requireMfaForAdmin: true,
-  };
+  }
 }

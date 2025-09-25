@@ -5,29 +5,28 @@
  * Focuses on unused imports and variables that can be safely prefixed with underscore
  */
 
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import fs from 'fs'
+import path from 'path'
+import { fileURLToPath } from 'url'
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 // Common patterns to fix
 const PATTERNS = [
   // Unused parameters - prefix with underscore
   {
-    pattern:
-      /(\w+): [^}]+is declared but never used\. Unused parameters should start with a '_'\./g,
+    pattern: /(w+): [^}]+is declared but never used\. Unused parameters should start with a '_'\./g,
     fix: (content, matches) => {
-      matches.forEach(match => {
-        const paramName = match[1];
+      matches.forEach((match: RegExpMatchArray) => {
+        const paramName = match[1] as string
         // Only fix if it's clearly a parameter context
         const paramRegex = new RegExp(
           `\\b${paramName}\\b(?=\\s*[,)]|\\s*:)`,
           'g',
-        );
-        content = content.replace(paramRegex, `_${paramName}`);
-      });
-      return content;
+        )
+        content = content.replace(paramRegex, `_${paramName}`)
+      })
+      return content
     },
   },
 
@@ -36,12 +35,12 @@ const PATTERNS = [
     pattern: /(\w+)' is declared but never used\. Unused variables should start with a '_'\./g,
     fix: (content, matches) => {
       matches.forEach(match => {
-        const varName = match[1];
+        const varName = match[1]
         // Only fix if it's clearly a variable declaration
-        const varRegex = new RegExp(`(const|let|var)\\s+${varName}\\b`, 'g');
-        content = content.replace(varRegex, `$1 _${varName}`);
-      });
-      return content;
+        const varRegex = new RegExp(`(const|let|var)\\s+${varName}\\b`, 'g')
+        content = content.replace(varRegex, `$1 _${varName}`)
+      })
+      return content
     },
   },
 
@@ -50,14 +49,14 @@ const PATTERNS = [
     pattern: /Catch parameter '(\w+)' is caught but never used\./g,
     fix: (content, matches) => {
       matches.forEach(match => {
-        const paramName = match[1];
+        const paramName = match[1]
         const catchRegex = new RegExp(
           `catch\\s*\\(\\s*${paramName}\\s*\\)`,
           'g',
-        );
-        content = content.replace(catchRegex, `catch (_${paramName})`);
-      });
-      return content;
+        )
+        content = content.replace(catchRegex, `catch (_${paramName})`)
+      })
+      return content
     },
   },
 
@@ -66,108 +65,108 @@ const PATTERNS = [
     pattern: /Identifier '(\w+)' is imported but never used\./g,
     fix: (content, matches) => {
       matches.forEach(match => {
-        const importName = match[1];
+        const importName = match[1]
 
         // Remove from named imports
         const namedImportRegex = new RegExp(
           `\\s*,?\\s*${importName}\\s*,?`,
           'g',
-        );
+        )
         content = content.replace(namedImportRegex, match => {
           // Keep comma if it's between other imports
           if (match.includes(',')) {
-            return match.replace(importName, '').replace(/,\s*,/, ',');
+            return match.replace(importName, '').replace(/,\s*,/, ',')
           }
-          return '';
-        });
+          return ''
+        })
 
         // Clean up empty import statements
         content = content.replace(
           /import\s*{\s*}\s*from\s*['""][^'"]*['""];?\s*/g,
           '',
-        );
+        )
         content = content.replace(
           /import\s*{\s*,\s*([^}]+)\s*}/g,
           'import { $1 }',
-        );
+        )
         content = content.replace(
           /import\s*{\s*([^}]+)\s*,\s*}/g,
           'import { $1 }',
-        );
-      });
-      return content;
+        )
+      })
+      return content
     },
   },
-];
+]
 
 function fixFile(filePath, patterns) {
   if (!fs.existsSync(filePath)) {
-    return false;
+    return false
   }
 
-  let content = fs.readFileSync(filePath, 'utf8');
-  let modified = false;
+  let content = fs.readFileSync(filePath, 'utf8')
+  let modified = false
 
   patterns.forEach(pattern => {
-    const matches = [...content.matchAll(pattern.pattern)];
+    const matches = [...content.matchAll(pattern.pattern)]
     if (matches.length > 0) {
-      const newContent = pattern.fix(content, matches);
+      const newContent = pattern.fix(content, matches)
       if (newContent !== content) {
-        content = newContent;
-        modified = true;
+        content = newContent
+        modified = true
       }
     }
-  });
+  })
 
   if (modified) {
-    fs.writeFileSync(filePath, content);
-    console.log(`Fixed: ${filePath}`);
-    return true;
+    fs.writeFileSync(filePath, content)
+    console.log(`Fixed: ${filePath}`)
+    return true
   }
 
-  return false;
+  return false
 }
 
 function findTsxFiles(dir) {
-  const files = [];
+  const files = []
 
   function walkDir(currentPath) {
-    const items = fs.readdirSync(currentPath);
+    const items = fs.readdirSync(currentPath)
 
     for (const item of items) {
-      const fullPath = path.join(currentPath, item);
-      const stat = fs.statSync(fullPath);
+      const fullPath = path.join(currentPath, item)
+      const stat = fs.statSync(fullPath)
 
       if (
-        stat.isDirectory()
-        && !item.startsWith('.')
-        && item !== 'node_modules'
+        stat.isDirectory() &&
+        !item.startsWith('.') &&
+        item !== 'node_modules'
       ) {
-        walkDir(fullPath);
+        walkDir(fullPath)
       } else if (
-        stat.isFile()
-        && (item.endsWith('.tsx') || item.endsWith('.ts'))
+        stat.isFile() &&
+        (item.endsWith('.tsx') || item.endsWith('.ts'))
       ) {
-        files.push(fullPath);
+        files.push(fullPath)
       }
     }
   }
 
-  walkDir(dir);
-  return files;
+  walkDir(dir)
+  return files
 }
 
 // Main execution
-const webDir = path.join(__dirname, '../apps/web/src');
-const files = findTsxFiles(webDir);
+const webDir = path.join(__dirname, '../apps/web/src')
+const files = findTsxFiles(webDir)
 
-console.log(`Found ${files.length} TypeScript files to process...`);
+console.log(`Found ${files.length} TypeScript files to process...`)
 
-let fixedCount = 0;
+let fixedCount = 0
 files.forEach(file => {
   if (fixFile(file, PATTERNS)) {
-    fixedCount++;
+    fixedCount++
   }
-});
+})
 
-console.log(`Fixed ${fixedCount} files with lint warnings.`);
+console.log(`Fixed ${fixedCount} files with lint warnings.`)

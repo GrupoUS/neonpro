@@ -1,21 +1,21 @@
-'use client';
+'use client'
 
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
-import { Separator } from '@/components/ui/separator';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { api } from '@/lib/api';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Progress } from '@/components/ui/progress'
+import { Separator } from '@/components/ui/separator'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { api } from '@/lib/api'
 import {
   ContraindicationAnalysis,
   ContraindicationRisk,
   PatientAssessment,
-} from '@/types/ai-clinical-support';
-import { useQuery } from '@tanstack/react-query';
-import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+} from '@/types/ai-clinical-support'
+import { useQuery } from '@tanstack/react-query'
+import { format } from 'date-fns'
+import { ptBR } from 'date-fns/locale'
 import {
   Activity,
   AlertTriangle,
@@ -34,14 +34,14 @@ import {
   Thermometer,
   XCircle,
   Zap,
-} from 'lucide-react';
-import React, { useState } from 'react';
+} from 'lucide-react'
+import React, { useState } from 'react'
 
 interface ContraindicationAnalysisProps {
-  patientId: string;
-  procedureId?: string;
-  treatmentPlanId?: string;
-  onExportReport?: (analysis: ContraindicationAnalysis) => void;
+  patientId: string
+  procedureId?: string
+  treatmentPlanId?: string
+  onExportReport?: (analysis: ContraindicationAnalysis) => void
 }
 
 export function ContraindicationAnalysis({
@@ -50,9 +50,9 @@ export function ContraindicationAnalysis({
   treatmentPlanId,
   onExportReport,
 }: ContraindicationAnalysisProps) {
-  const [selectedCategory, setSelectedCategory] = useState('all');
-  const [showOnlyCritical, setShowOnlyCritical] = useState(false);
-  const [activeTab, setActiveTab] = useState('analysis');
+  const [selectedCategory, setSelectedCategory] = useState('all')
+  const [showOnlyCritical, setShowOnlyCritical] = useState(false)
+  const [activeTab, setActiveTab] = useState('analysis')
 
   // Fetch contraindication analysis
   const { data: analysis, isLoading, error } = useQuery({
@@ -63,65 +63,65 @@ export function ContraindicationAnalysis({
         procedureId,
         treatmentPlanId,
         includeDetailedAnalysis: true,
-      });
+      })
     },
     enabled: !!patientId,
-  });
+  })
 
   const filteredRisks = analysis?.contraindicationRisks.filter(risk => {
-    if (showOnlyCritical && risk.severity !== 'critical') return false;
-    if (selectedCategory !== 'all' && risk.category !== selectedCategory) return false;
-    return true;
-  }) || [];
+    if (showOnlyCritical && risk.severity !== 'critical') return false
+    if (selectedCategory !== 'all' && risk.category !== selectedCategory) return false
+    return true
+  }) || []
 
   const getSeverityColor = (severity: string) => {
     switch (severity) {
       case 'critical':
-        return 'bg-red-100 text-red-800 border-red-200';
+        return 'bg-red-100 text-red-800 border-red-200'
       case 'high':
-        return 'bg-orange-100 text-orange-800 border-orange-200';
+        return 'bg-orange-100 text-orange-800 border-orange-200'
       case 'moderate':
-        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+        return 'bg-yellow-100 text-yellow-800 border-yellow-200'
       case 'low':
-        return 'bg-green-100 text-green-800 border-green-200';
+        return 'bg-green-100 text-green-800 border-green-200'
       default:
-        return 'bg-gray-100 text-gray-800 border-gray-200';
+        return 'bg-gray-100 text-gray-800 border-gray-200'
     }
-  };
+  }
 
   const getSeverityIcon = (severity: string) => {
     switch (severity) {
       case 'critical':
-        return <XCircle className='h-4 w-4' />;
+        return <XCircle className='h-4 w-4' />
       case 'high':
-        return <AlertTriangle className='h-4 w-4' />;
+        return <AlertTriangle className='h-4 w-4' />
       case 'moderate':
-        return <AlertTriangle className='h-4 w-4' />;
+        return <AlertTriangle className='h-4 w-4' />
       case 'low':
-        return <Shield className='h-4 w-4' />;
+        return <Shield className='h-4 w-4' />
       default:
-        return <CheckCircle className='h-4 w-4' />;
+        return <CheckCircle className='h-4 w-4' />
     }
-  };
+  }
 
   const getCategoryIcon = (category: string) => {
     switch (category) {
       case 'medical':
-        return <Heart className='h-4 w-4' />;
+        return <Heart className='h-4 w-4' />
       case 'dermatological':
-        return <Eye className='h-4 w-4' />;
+        return <Eye className='h-4 w-4' />
       case 'medication':
-        return <Pill className='h-4 w-4' />;
+        return <Pill className='h-4 w-4' />
       case 'allergy':
-        return <Leaf className='h-4 w-4' />;
+        return <Leaf className='h-4 w-4' />
       case 'lifestyle':
-        return <Activity className='h-4 w-4' />;
+        return <Activity className='h-4 w-4' />
       case 'procedural':
-        return <Scissors className='h-4 w-4' />;
+        return <Scissors className='h-4 w-4' />
       default:
-        return <Zap className='h-4 w-4' />;
+        return <Zap className='h-4 w-4' />
     }
-  };
+  }
 
   const categories = [
     { id: 'all', label: 'Todos', icon: <Filter className='h-4 w-4' /> },
@@ -131,7 +131,7 @@ export function ContraindicationAnalysis({
     { id: 'allergy', label: 'Alergias', icon: <Leaf className='h-4 w-4' /> },
     { id: 'lifestyle', label: 'Estilo de Vida', icon: <Activity className='h-4 w-4' /> },
     { id: 'procedural', label: 'Procedurais', icon: <Scissors className='h-4 w-4' /> },
-  ];
+  ]
 
   if (isLoading) {
     return (
@@ -141,7 +141,7 @@ export function ContraindicationAnalysis({
           <div className='h-32 bg-gray-200 rounded'></div>
         </div>
       </div>
-    );
+    )
   }
 
   if (error) {
@@ -153,7 +153,7 @@ export function ContraindicationAnalysis({
           Não foi possível realizar a análise. Por favor, tente novamente.
         </AlertDescription>
       </Alert>
-    );
+    )
   }
 
   if (!analysis) {
@@ -171,7 +171,7 @@ export function ContraindicationAnalysis({
           </div>
         </CardContent>
       </Card>
-    );
+    )
   }
 
   return (
@@ -499,14 +499,14 @@ export function ContraindicationAnalysis({
         </TabsContent>
       </Tabs>
     </div>
-  );
+  )
 }
 
 interface ContraindicationRiskCardProps {
-  risk: ContraindicationRisk;
-  getSeverityColor: (severity: string) => string;
-  getSeverityIcon: (severity: string) => React.ReactNode;
-  getCategoryIcon: (category: string) => React.ReactNode;
+  risk: ContraindicationRisk
+  getSeverityColor: (severity: string) => string
+  getSeverityIcon: (severity: string) => React.ReactNode
+  getCategoryIcon: (category: string) => React.ReactNode
 }
 
 function ContraindicationRiskCard({
@@ -592,5 +592,5 @@ function ContraindicationRiskCard({
         </div>
       </CardContent>
     </Card>
-  );
+  )
 }

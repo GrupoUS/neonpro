@@ -190,7 +190,7 @@ export default defineConfig({
       thresholds: { global: { lines: 85 } },
     },
   },
-});
+})
 ```
 
 ### Playwright Configuration

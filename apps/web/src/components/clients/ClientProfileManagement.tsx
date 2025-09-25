@@ -5,28 +5,28 @@
  * healthcare compliance, privacy controls, and integrated treatment history.
  */
 
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { zodResolver } from '@hookform/resolvers/zod';
-import React, { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { zodResolver } from '@hookform/resolvers/zod'
+import React, { useEffect, useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
 // import { Textarea } from "@/components/ui/textarea";
-import { Label } from '@/components/ui/label';
+import { Label } from '@/components/ui/label'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from '@/components/ui/select'
 // import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Progress } from '@/components/ui/progress';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { createClient } from '@/integrations/supabase/client';
-import { cn } from '@/lib/utils';
+import { Progress } from '@/components/ui/progress'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { createClient } from '@/integrations/supabase/client'
+import { cn } from '@/lib/utils'
 import {
   Activity,
   AlertTriangle,
@@ -53,114 +53,114 @@ import {
   Upload,
   User,
   X,
-} from 'lucide-react';
+} from 'lucide-react'
 
 // =====================================
 // TYPES AND SCHEMAS
 // =====================================
 
 interface ClientProfile {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  cpf: string;
-  dateOfBirth: string;
-  gender: 'male' | 'female' | 'other';
+  id: string
+  name: string
+  email: string
+  phone: string
+  cpf: string
+  dateOfBirth: string
+  gender: 'male' | 'female' | 'other'
   address: {
-    street: string;
-    number: string;
-    complement?: string;
-    neighborhood: string;
-    city: string;
-    state: string;
-    zipCode: string;
-  };
+    street: string
+    number: string
+    complement?: string
+    neighborhood: string
+    city: string
+    state: string
+    zipCode: string
+  }
   medicalHistory: {
-    allergies: string[];
-    medications: string[];
-    chronicConditions: string[];
-    previousSurgeries: string[];
-    skinType: 'normal' | 'dry' | 'oily' | 'combination' | 'sensitive';
-    fitzpatrickType: 'I' | 'II' | 'III' | 'IV' | 'V' | 'VI';
-  };
+    allergies: string[]
+    medications: string[]
+    chronicConditions: string[]
+    previousSurgeries: string[]
+    skinType: 'normal' | 'dry' | 'oily' | 'combination' | 'sensitive'
+    fitzpatrickType: 'I' | 'II' | 'III' | 'IV' | 'V' | 'VI'
+  }
   aestheticHistory: {
-    previousTreatments: TreatmentRecord[];
-    skinConcerns: string[];
-    treatmentGoals: string[];
-    budgetRange: 'under_2k' | '2k_5k' | '5k_10k' | '10k_20k' | 'over_20k';
-    preferredFrequency: 'weekly' | 'biweekly' | 'monthly' | 'quarterly' | 'as_needed';
-  };
+    previousTreatments: TreatmentRecord[]
+    skinConcerns: string[]
+    treatmentGoals: string[]
+    budgetRange: 'under_2k' | '2k_5k' | '5k_10k' | '10k_20k' | 'over_20k'
+    preferredFrequency: 'weekly' | 'biweekly' | 'monthly' | 'quarterly' | 'as_needed'
+  }
   privacySettings: {
-    photoConsent: boolean;
-    marketingConsent: boolean;
-    dataSharingLevel: 'minimal' | 'standard' | 'full';
+    photoConsent: boolean
+    marketingConsent: boolean
+    dataSharingLevel: 'minimal' | 'standard' | 'full'
     emergencyContact: {
-      name: string;
-      relationship: string;
-      phone: string;
-    };
-  };
+      name: string
+      relationship: string
+      phone: string
+    }
+  }
   financial: {
-    paymentMethods: string[];
+    paymentMethods: string[]
     insuranceInfo?: {
-      provider: string;
-      policyNumber: string;
-      coverageDetails: string;
-    };
+      provider: string
+      policyNumber: string
+      coverageDetails: string
+    }
     billingAddress?: {
-      street: string;
-      number: string;
-      complement?: string;
-      neighborhood: string;
-      city: string;
-      state: string;
-      zipCode: string;
-    };
-  };
-  createdAt: string;
-  updatedAt: string;
-  lastVisit?: string;
-  nextAppointment?: string;
-  status: 'active' | 'inactive' | 'prospect' | 'archived';
-  riskLevel: 'low' | 'medium' | 'high';
-  satisfactionScore?: number;
-  notes: string[];
-  attachments: ClientAttachment[];
+      street: string
+      number: string
+      complement?: string
+      neighborhood: string
+      city: string
+      state: string
+      zipCode: string
+    }
+  }
+  createdAt: string
+  updatedAt: string
+  lastVisit?: string
+  nextAppointment?: string
+  status: 'active' | 'inactive' | 'prospect' | 'archived'
+  riskLevel: 'low' | 'medium' | 'high'
+  satisfactionScore?: number
+  notes: string[]
+  attachments: ClientAttachment[]
 }
 
 interface TreatmentRecord {
-  id: string;
-  procedureName: string;
-  date: string;
-  professional: string;
-  clinic: string;
-  results: 'excellent' | 'good' | 'fair' | 'poor';
-  notes: string;
-  beforePhotos?: string[];
-  afterPhotos?: string[];
-  cost: number;
-  satisfaction: number;
+  id: string
+  procedureName: string
+  date: string
+  professional: string
+  clinic: string
+  results: 'excellent' | 'good' | 'fair' | 'poor'
+  notes: string
+  beforePhotos?: string[]
+  afterPhotos?: string[]
+  cost: number
+  satisfaction: number
 }
 
 interface ClientAttachment {
-  id: string;
-  name: string;
-  type: 'photo' | 'document' | 'consent_form' | 'medical_record' | 'invoice';
-  url: string;
-  uploadedAt: string;
-  size: number;
-  description?: string;
-  accessLevel: 'public' | 'restricted' | 'confidential';
+  id: string
+  name: string
+  type: 'photo' | 'document' | 'consent_form' | 'medical_record' | 'invoice'
+  url: string
+  uploadedAt: string
+  size: number
+  description?: string
+  accessLevel: 'public' | 'restricted' | 'confidential'
 }
 
 interface LGPDComplianceStatus {
-  consentVerified: boolean;
-  dataMinimizationApplied: boolean;
-  retentionPolicyCompliant: boolean;
-  accessControlsEnabled: boolean;
-  auditTrailActive: boolean;
-  lastAuditDate: string;
+  consentVerified: boolean
+  dataMinimizationApplied: boolean
+  retentionPolicyCompliant: boolean
+  accessControlsEnabled: boolean
+  auditTrailActive: boolean
+  lastAuditDate: string
 }
 
 const ClientProfileSchema = z.object({
@@ -199,28 +199,28 @@ const ClientProfileSchema = z.object({
   }),
 }).refine(data => {
   // Validate minimum age (18 years for aesthetic treatments)
-  const age = new Date().getFullYear() - new Date(data.dateOfBirth).getFullYear();
-  return age >= 18;
+  const age = new Date().getFullYear() - new Date(data.dateOfBirth).getFullYear()
+  return age >= 18
 }, {
   message: 'Cliente deve ter pelo menos 18 anos para tratamentos estéticos',
   path: ['dateOfBirth'],
-});
+})
 
-type ClientProfileFormData = z.infer<typeof ClientProfileSchema>;
+type ClientProfileFormData = z.infer<typeof ClientProfileSchema>
 
 // =====================================
 // MAIN COMPONENT
 // =====================================
 
 export const ClientProfileManagement: React.FC = () => {
-  const [client, setClient] = useState<ClientProfile | null>(null);
-  const [lgpdStatus, setLgpdStatus] = useState<LGPDComplianceStatus | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isEditing, setIsEditing] = useState(false);
-  const [showSensitiveData, setShowSensitiveData] = useState(false);
-  const [selectedTab, setSelectedTab] = useState('overview');
-  const [uploadProgress, setUploadProgress] = useState(0);
-  const [isUploading, setIsUploading] = useState(false);
+  const [client, setClient] = useState<ClientProfile | null>(null)
+  const [lgpdStatus, setLgpdStatus] = useState<LGPDComplianceStatus | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const [isEditing, setIsEditing] = useState(false)
+  const [showSensitiveData, setShowSensitiveData] = useState(false)
+  const [selectedTab, setSelectedTab] = useState('overview')
+  const [uploadProgress, setUploadProgress] = useState(0)
+  const [isUploading, setIsUploading] = useState(false)
 
   const form = useForm<ClientProfileFormData>({
     resolver: zodResolver(ClientProfileSchema),
@@ -236,17 +236,17 @@ export const ClientProfileManagement: React.FC = () => {
         },
       },
     },
-  });
+  })
 
-  const _supabase = createClient();
+  const _supabase = createClient()
 
   // Load client data
   useEffect(() => {
-    loadClientData();
-  }, []);
+    loadClientData()
+  }, [])
 
   const loadClientData = async () => {
-    setIsLoading(true);
+    setIsLoading(true)
     try {
       // Simulated API call - replace with actual tRPC call
       const mockClient: ClientProfile = {
@@ -335,7 +335,7 @@ export const ClientProfileManagement: React.FC = () => {
             accessLevel: 'restricted',
           },
         ],
-      };
+      }
 
       const mockLgpdStatus: LGPDComplianceStatus = {
         consentVerified: true,
@@ -344,10 +344,10 @@ export const ClientProfileManagement: React.FC = () => {
         accessControlsEnabled: true,
         auditTrailActive: true,
         lastAuditDate: '2024-01-10',
-      };
+      }
 
-      setClient(mockClient);
-      setLgpdStatus(mockLgpdStatus);
+      setClient(mockClient)
+      setLgpdStatus(mockLgpdStatus)
 
       // Populate form with client data
       form.reset({
@@ -360,18 +360,18 @@ export const ClientProfileManagement: React.FC = () => {
         address: mockClient.address,
         medicalHistory: mockClient.medicalHistory,
         privacySettings: mockClient.privacySettings,
-      });
+      })
     } catch (error) {
-      console.error('Error loading client data:', error);
+      console.error('Error loading client data:', error)
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
 
   const onSubmit = async (data: ClientProfileFormData) => {
     try {
       // Simulated API call - replace with actual tRPC mutation
-      console.log('Updating client profile:', data);
+      console.warn('Updating client profile:', data)
 
       // Update local state
       if (client) {
@@ -379,114 +379,114 @@ export const ClientProfileManagement: React.FC = () => {
           ...client,
           ...data,
           updatedAt: new Date().toISOString(),
-        });
+        })
       }
 
-      setIsEditing(false);
+      setIsEditing(false)
 
       // Show success feedback
-      alert('Perfil atualizado com sucesso!');
+      alert('Perfil atualizado com sucesso!')
     } catch (error) {
-      console.error('Error updating client profile:', error);
-      alert('Erro ao atualizar perfil. Tente novamente.');
+      console.error('Error updating client profile:', error)
+      alert('Erro ao atualizar perfil. Tente novamente.')
     }
-  };
+  }
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
+    const file = event.target.files?.[0]
+    if (!file) return
 
-    setIsUploading(true);
-    setUploadProgress(0);
+    setIsUploading(true)
+    setUploadProgress(0)
 
     try {
       // Simulated upload progress
       const progressInterval = setInterval(() => {
         setUploadProgress(prev => {
           if (prev >= 100) {
-            clearInterval(progressInterval);
-            setIsUploading(false);
-            return 100;
+            clearInterval(progressInterval)
+            setIsUploading(false)
+            return 100
           }
-          return prev + 10;
-        });
-      }, 200);
+          return prev + 10
+        })
+      }, 200)
 
       // Actual upload logic would go here
-      console.log('Uploading file:', file.name);
+      console.warn('Uploading file:', file.name)
     } catch (error) {
-      console.error('Error uploading file:', error);
-      setIsUploading(false);
-      setUploadProgress(0);
+      console.error('Error uploading file:', error)
+      setIsUploading(false)
+      setUploadProgress(0)
     }
-  };
+  }
 
   const getRiskColor = (riskLevel: string) => {
     switch (riskLevel) {
       case 'high':
-        return 'bg-red-500';
+        return 'bg-red-500'
       case 'medium':
-        return 'bg-yellow-500';
+        return 'bg-yellow-500'
       case 'low':
-        return 'bg-green-500';
+        return 'bg-green-500'
       default:
-        return 'bg-gray-500';
+        return 'bg-gray-500'
     }
-  };
+  }
 
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'active':
-        return 'bg-green-100 text-green-800';
+        return 'bg-green-100 text-green-800'
       case 'inactive':
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-gray-100 text-gray-800'
       case 'prospect':
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-blue-100 text-blue-800'
       case 'archived':
-        return 'bg-red-100 text-red-800';
+        return 'bg-red-100 text-red-800'
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-gray-100 text-gray-800'
     }
-  };
+  }
 
   const getTreatmentResultColor = (result: string) => {
     switch (result) {
       case 'excellent':
-        return 'bg-green-100 text-green-800';
+        return 'bg-green-100 text-green-800'
       case 'good':
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-blue-100 text-blue-800'
       case 'fair':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'bg-yellow-100 text-yellow-800'
       case 'poor':
-        return 'bg-red-100 text-red-800';
+        return 'bg-red-100 text-red-800'
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-gray-100 text-gray-800'
     }
-  };
+  }
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('pt-BR');
-  };
+    return new Date(dateString).toLocaleDateString('pt-BR')
+  }
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
       currency: 'BRL',
-    }).format(value);
-  };
+    }).format(value)
+  }
 
   const maskSensitiveData = (data: string) => {
     if (!showSensitiveData) {
       if (data.includes('@')) {
-        const [local, domain] = data.split('@');
-        return `${local.substring(0, 3)}***@${domain}`;
+        const [local, domain] = data.split('@')
+        return `${local.substring(0, 3)}***@${domain}`
       }
       if (data.length > 4) {
-        return `***-${data.slice(-4)}`;
+        return `***-${data.slice(-4)}`
       }
     }
-    return data;
-  };
+    return data
+  }
 
   if (isLoading) {
     return (
@@ -497,7 +497,7 @@ export const ClientProfileManagement: React.FC = () => {
           <p>Carregando perfil do cliente...</p>
         </div>
       </div>
-    );
+    )
   }
 
   if (!client) {
@@ -509,7 +509,7 @@ export const ClientProfileManagement: React.FC = () => {
           <p className='text-gray-600'>Verifique o ID do cliente e tente novamente.</p>
         </div>
       </div>
-    );
+    )
   }
 
   return (
@@ -1323,8 +1323,8 @@ export const ClientProfileManagement: React.FC = () => {
         </TabsContent>
       </Tabs>
     </div>
-  );
-};
+  )
+}
 
 // Export the component
-export default ClientProfileManagement;
+export default ClientProfileManagement

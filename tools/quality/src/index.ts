@@ -1,5 +1,4 @@
 /**
- * @neonpro/tools-quality-tests
  * Quality testing utilities for Coverage, Performance, Audit & Monitoring
  */
 
@@ -19,7 +18,7 @@ export * from './performance/cold-start-measurement'
 
 // Version information
 export const QUALITY_TESTING_VERSION = '1.0.0'
-export const QUALITY_TESTING_PACKAGE = '@neonpro/tools-quality-tests'
+export const QUALITY_TESTING_PACKAGE = '@custom'
 
 // Default configurations
 export const DEFAULT_QUALITY_CONFIG = {

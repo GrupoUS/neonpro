@@ -11,10 +11,10 @@ export {
   logHealthcareError,
   logPerformanceMetric,
   securityLogger,
-} from './healthcare-logger';
+} from './healthcare-logger'
 
 // Convenience re-exports
-export * from './healthcare-logger';
+export * from './healthcare-logger'
 
 // Default export for easy importing
-export { default as healthcareLogger } from './healthcare-logger';
+export { default as healthcareLogger } from './healthcare-logger'

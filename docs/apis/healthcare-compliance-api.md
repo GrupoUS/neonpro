@@ -25,12 +25,12 @@ POST /api/compliance/anvisa/register    # Register medical device
 
 ```typescript
 interface ANVISAComplianceReport {
-  overallCompliance: 'compliant' | 'partial' | 'non_compliant';
-  deviceClass: 'class_i' | 'class_ii' | 'class_iii' | 'class_iv';
-  accessibilityCompliance: boolean;
-  terminologyCompliance: boolean;
-  workflowCompliance: boolean;
-  registrationStatus: 'required' | 'approved' | 'pending';
+  overallCompliance: 'compliant' | 'partial' | 'non_compliant'
+  deviceClass: 'class_i' | 'class_ii' | 'class_iii' | 'class_iv'
+  accessibilityCompliance: boolean
+  terminologyCompliance: boolean
+  workflowCompliance: boolean
+  registrationStatus: 'required' | 'approved' | 'pending'
 }
 ```
 
@@ -84,12 +84,12 @@ const compliance = await fetch('/api/compliance/anvisa/validate', {
     deviceClass: 'class_ii',
     softwareCategory: 'patient_management',
   }),
-});
+})
 
 // Check LGPD consent
 const consent = await fetch(`/api/lgpd/consent/${patientId}`, {
   headers: { Authorization: `Bearer ${token}` },
-});
+})
 ```
 
 ## Compliance Requirements

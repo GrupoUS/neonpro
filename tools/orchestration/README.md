@@ -37,7 +37,7 @@ Complete multi-agent TDD orchestration system with quality control integration a
 ## Quick Start
 
 ```typescript
-import { createTDDOrchestrationSystem, runTDDCycle } from '@neonpro/tools-orchestration';
+import { createTDDOrchestrationSystem, runTDDCycle } from '@neonpro/tools-orchestration'
 
 // Create orchestration system
 const system = createTDDOrchestrationSystem({
@@ -45,9 +45,9 @@ const system = createTDDOrchestrationSystem({
   enableMetrics: true,
   enableCompliance: true,
   healthcareMode: true,
-});
+})
 
-await system.initialize();
+await system.initialize()
 
 // Execute TDD cycle
 const feature = {
@@ -57,21 +57,21 @@ const feature = {
   complexity: 'medium',
   requirements: ['LGPD compliance', 'secure authentication'],
   acceptance: ['All security tests pass', 'LGPD validation complete'],
-};
+}
 
 const result = await runTDDCycle(feature, {
   workflow: 'parallel',
   coordination: 'parallel',
   agents: ['test-auditor', 'code-reviewer', 'architect-review'],
   healthcare: true,
-});
+})
 
-console.log(`TDD Cycle: ${result.success ? 'SUCCESS' : 'FAILED'}`);
+console.log(`TDD Cycle: ${result.success ? 'SUCCESS' : 'FAILED'}`)
 console.log(
   `Healthcare Compliance: ${
     result.healthcareCompliance?.overall.compliant ? 'COMPLIANT' : 'NON-COMPLIANT'
   }`,
-);
+)
 ```
 
 ## Test Execution
@@ -205,7 +205,7 @@ logger.constitutional(
     requirement: 'Healthcare Compliance Validation',
     standard: 'LGPD,ANVISA,CFM',
   },
-);
+)
 ```
 
 ## Contributing

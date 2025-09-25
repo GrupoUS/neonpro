@@ -5,96 +5,96 @@
  * for aesthetic clinic sessions with advanced features and security.
  */
 
-import { AestheticDataHandlingService } from '../agui-protocol/aesthetic-data-handling';
-import { AestheticAguiService } from '../agui-protocol/aesthetic-service';
-import { EnhancedAgentSessionService, EnhancedSessionData } from './enhanced-agent-session-service';
+import { AestheticDataHandlingService } from '../agui-protocol/aesthetic-data-handling'
+import { AestheticAguiService } from '../agui-protocol/aesthetic-service'
+import { EnhancedAgentSessionService, EnhancedSessionData } from './enhanced-agent-session-service'
 
 export interface CopilotKitSessionConfig {
-  endpoint: string;
-  apiKey?: string;
-  enableRealtimeSync: boolean;
-  enableAestheticFeatures: boolean;
-  maxConcurrentRequests: number;
-  requestTimeout: number;
-  enableSecurityValidation: boolean;
-  enableDataEncryption: boolean;
+  endpoint: string
+  apiKey?: string
+  enableRealtimeSync: boolean
+  enableAestheticFeatures: boolean
+  maxConcurrentRequests: number
+  requestTimeout: number
+  enableSecurityValidation: boolean
+  enableDataEncryption: boolean
 }
 
 export interface CopilotKitMessage {
-  id: string;
-  type: 'user_message' | 'assistant_message' | 'system_message' | 'action_message';
-  content: string;
-  timestamp: Date;
-  sessionId: string;
+  id: string
+  type: 'user_message' | 'assistant_message' | 'system_message' | 'action_message'
+  content: string
+  timestamp: Date
+  sessionId: string
   metadata?: {
-    userId?: string;
-    requestId?: string;
-    features?: string[];
-    processingTime?: number;
-    confidence?: number;
-  };
+    userId?: string
+    requestId?: string
+    features?: string[]
+    processingTime?: number
+    confidence?: number
+  }
 }
 
 export interface CopilotKitAction {
-  id: string;
+  id: string
   type:
     | 'schedule_appointment'
     | 'view_patient'
     | 'analyze_photo'
     | 'generate_report'
-    | 'send_message';
-  parameters: Record<string, any>;
-  timestamp: Date;
-  sessionId: string;
-  status: 'pending' | 'executing' | 'completed' | 'failed';
-  result?: any;
-  error?: string;
+    | 'send_message'
+  parameters: Record<string, any>
+  timestamp: Date
+  sessionId: string
+  status: 'pending' | 'executing' | 'completed' | 'failed'
+  result?: any
+  error?: string
 }
 
 export interface CopilotKitSessionState {
-  sessionId: string;
-  status: 'initializing' | 'ready' | 'busy' | 'error' | 'closed';
-  connectedAt: Date;
-  lastActivity: Date;
-  messageCount: number;
-  actionCount: number;
-  errorCount: number;
+  sessionId: string
+  status: 'initializing' | 'ready' | 'busy' | 'error' | 'closed'
+  connectedAt: Date
+  lastActivity: Date
+  messageCount: number
+  actionCount: number
+  errorCount: number
   performanceMetrics: {
-    averageResponseTime: number;
-    totalProcessingTime: number;
-    requestsPerSecond: number;
-  };
+    averageResponseTime: number
+    totalProcessingTime: number
+    requestsPerSecond: number
+  }
   features: {
-    chat: boolean;
-    codeExecution: boolean;
-    webSearch: boolean;
-    fileAnalysis: boolean;
-    aestheticConsultation: boolean;
-    photoAnalysis: boolean;
-    treatmentPlanning: boolean;
-  };
+    chat: boolean
+    codeExecution: boolean
+    webSearch: boolean
+    fileAnalysis: boolean
+    aestheticConsultation: boolean
+    photoAnalysis: boolean
+    treatmentPlanning: boolean
+  }
 }
 
 export class CopilotKitSessionIntegration {
-  private enhancedSessionService: EnhancedAgentSessionService;
-  private aestheticService?: AestheticAguiService;
-  private dataHandlingService?: AestheticDataHandlingService;
-  private config: CopilotKitSessionConfig;
+  private enhancedSessionService: EnhancedAgentSessionService
+  private aestheticService?: AestheticAguiService
+  private dataHandlingService?: AestheticDataHandlingService
+  private config: CopilotKitSessionConfig
 
   // Session state management
-  private sessionStates: Map<string, CopilotKitSessionState> = new Map();
-  private activeConnections: Map<string, WebSocket> = new Map();
-  private messageQueue: Map<string, CopilotKitMessage[]> = new Map();
+  private sessionStates: Map<string, CopilotKitSessionState> = new Map()
+  private activeConnections: Map<string, WebSocket> = new Map()
+  private messageQueue: Map<string, CopilotKitMessage[]> = new Map()
 
   // Rate limiting and security
-  private requestCounters: Map<string, { count: number; resetTime: Date }> = new Map();
-  private securityValidators: Map<string, (data: any) => boolean> = new Map();
+  private requestCounters: Map<string, { count: number; resetTime: Date }> = new Map()
+  private securityValidators: Map<string, (data: any) => boolean> = new Map()
 
   constructor(
     enhancedSessionService: EnhancedAgentSessionService,
     config: Partial<CopilotKitSessionConfig> = {},
   ) {
-    this.enhancedSessionService = enhancedSessionService;
+    this.enhancedSessionService = enhancedSessionService
     this.config = {
       endpoint: '/api/copilotkit',
       enableRealtimeSync: true,
@@ -104,10 +104,10 @@ export class CopilotKitSessionIntegration {
       enableSecurityValidation: true,
       enableDataEncryption: true,
       ...config,
-    };
+    }
 
-    this.initializeSecurityValidators();
-    this.startPeriodicCleanup();
+    this.initializeSecurityValidators()
+    this.startPeriodicCleanup()
   }
 
   /**
@@ -116,18 +116,18 @@ export class CopilotKitSessionIntegration {
   async initializeCopilotKitSession(
     sessionId: string,
     options: {
-      userId?: string;
-      enableAestheticFeatures?: boolean;
-      customFeatures?: string[];
-      securityLevel?: 'standard' | 'enhanced' | 'strict';
+      userId?: string
+      enableAestheticFeatures?: boolean
+      customFeatures?: string[]
+      securityLevel?: 'standard' | 'enhanced' | 'strict'
     } = {},
   ): Promise<CopilotKitSessionState> {
     try {
       // Get or create enhanced session
-      let session = await this.enhancedSessionService.getEnhancedSession(sessionId);
+      let session = await this.enhancedSessionService.getEnhancedSession(sessionId)
       if (!session) {
         if (!options.userId) {
-          throw new Error('User ID required for session creation');
+          throw new Error('User ID required for session creation')
         }
 
         session = await this.enhancedSessionService.createEnhancedSession(
@@ -143,7 +143,7 @@ export class CopilotKitSessionIntegration {
               },
             },
           },
-        );
+        )
       }
 
       // Initialize CopilotKit session state
@@ -165,59 +165,59 @@ export class CopilotKitSessionIntegration {
           codeExecution: true,
           webSearch: true,
           fileAnalysis: true,
-          aestheticConsultation: options.enableAestheticFeatures
-            ?? this.config.enableAestheticFeatures,
+          aestheticConsultation: options.enableAestheticFeatures ??
+            this.config.enableAestheticFeatures,
           photoAnalysis: options.enableAestheticFeatures ?? this.config.enableAestheticFeatures,
           treatmentPlanning: options.enableAestheticFeatures ?? this.config.enableAestheticFeatures,
         },
-      };
+      }
 
       // Initialize services if aesthetic features are enabled
       if (sessionState.features.aestheticConsultation && !this.aestheticService) {
-        this.initializeAestheticServices();
+        this.initializeAestheticServices()
       }
 
       // Store session state
-      this.sessionStates.set(sessionId, sessionState);
-      this.messageQueue.set(sessionId, []);
+      this.sessionStates.set(sessionId, sessionState)
+      this.messageQueue.set(sessionId, [])
 
       // Perform security validation
       if (this.config.enableSecurityValidation) {
-        await this.validateSessionSecurity(session, options);
+        await this.validateSessionSecurity(session, options)
       }
 
       // Setup real-time connection if enabled
       if (this.config.enableRealtimeSync) {
-        await this.setupRealtimeConnection(sessionId);
+        await this.setupRealtimeConnection(sessionId)
       }
 
       // Mark session as ready
-      sessionState.status = 'ready';
-      this.sessionStates.set(sessionId, sessionState);
+      sessionState.status = 'ready'
+      this.sessionStates.set(sessionId, sessionState)
 
       // Log initialization for compliance
       await this.logSessionActivity(sessionId, 'copilotkit_initialized', {
         features: sessionState.features,
         securityLevel: options.securityLevel,
-      });
+      })
 
-      return sessionState;
+      return sessionState
     } catch {
-      console.error('Error initializing CopilotKit session:', error);
+      console.error('Error initializing CopilotKit session:', error)
 
       // Update session state to error
-      const sessionState = this.sessionStates.get(sessionId);
+      const sessionState = this.sessionStates.get(sessionId)
       if (sessionState) {
-        sessionState.status = 'error';
-        sessionState.errorCount += 1;
-        this.sessionStates.set(sessionId, sessionState);
+        sessionState.status = 'error'
+        sessionState.errorCount += 1
+        this.sessionStates.set(sessionId, sessionState)
       }
 
       throw new Error(
         `Failed to initialize CopilotKit session: ${
           error instanceof Error ? error.message : 'Unknown error'
         }`,
-      );
+      )
     }
   }
 
@@ -228,26 +228,26 @@ export class CopilotKitSessionIntegration {
     sessionId: string,
     message: Omit<CopilotKitMessage, 'id' | 'timestamp' | 'sessionId'>,
   ): Promise<{
-    success: boolean;
-    response?: any;
-    error?: string;
-    processingTime: number;
+    success: boolean
+    response?: any
+    error?: string
+    processingTime: number
   }> {
-    const startTime = Date.now();
+    const startTime = Date.now()
 
     try {
       // Validate session state
-      const sessionState = this.sessionStates.get(sessionId);
+      const sessionState = this.sessionStates.get(sessionId)
       if (!sessionState || sessionState.status === 'closed') {
-        throw new Error('Session not found or closed');
+        throw new Error('Session not found or closed')
       }
 
       // Rate limiting check
-      await this.validateRateLimit(sessionId);
+      await this.validateRateLimit(sessionId)
 
       // Security validation
       if (this.config.enableSecurityValidation) {
-        await this.validateMessageSecurity(message);
+        await this.validateMessageSecurity(message)
       }
 
       // Create complete message
@@ -256,29 +256,29 @@ export class CopilotKitSessionIntegration {
         id: this.generateMessageId(),
         timestamp: new Date(),
         sessionId,
-      };
+      }
 
       // Process message based on type and features
-      let response: any;
-      let processingSuccess = true;
+      let response: any
+      let processingSuccess = true
 
       switch (message.type) {
         case 'user_message':
-          response = await this.processUserMessage(sessionId, completeMessage);
-          break;
+          response = await this.processUserMessage(sessionId, completeMessage)
+          break
         case 'action_message':
-          response = await this.processActionMessage(sessionId, completeMessage);
-          break;
+          response = await this.processActionMessage(sessionId, completeMessage)
+          break
         case 'system_message':
-          response = await this.processSystemMessage(sessionId, completeMessage);
-          break;
+          response = await this.processSystemMessage(sessionId, completeMessage)
+          break
         default:
-          throw new Error(`Unsupported message type: ${message.type}`);
+          throw new Error(`Unsupported message type: ${message.type}`)
       }
 
       // Update session metrics
-      const processingTime = Date.now() - startTime;
-      await this.updateSessionMetrics(sessionId, processingTime, true);
+      const processingTime = Date.now() - startTime
+      await this.updateSessionMetrics(sessionId, processingTime, true)
 
       // Record activity in enhanced session
       await this.enhancedSessionService.recordEnhancedActivity(sessionId, {
@@ -286,29 +286,29 @@ export class CopilotKitSessionIntegration {
         content: message.content,
         processingTime,
         features: message.metadata?.features,
-      });
+      })
 
       return {
         success: processingSuccess,
         response,
         processingTime,
-      };
+      }
     } catch {
-      const processingTime = Date.now() - startTime;
-      await this.updateSessionMetrics(sessionId, processingTime, false);
+      const processingTime = Date.now() - startTime
+      await this.updateSessionMetrics(sessionId, processingTime, false)
 
       // Log error for compliance
       await this.logSessionActivity(sessionId, 'message_error', {
         error: error instanceof Error ? error.message : 'Unknown error',
         messageType: message.type,
         processingTime,
-      });
+      })
 
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
         processingTime,
-      };
+      }
     }
   }
 
@@ -319,18 +319,18 @@ export class CopilotKitSessionIntegration {
     sessionId: string,
     message: CopilotKitMessage,
   ): Promise<any> {
-    const sessionState = this.sessionStates.get(sessionId);
+    const sessionState = this.sessionStates.get(sessionId)
     if (!sessionState) {
-      throw new Error('Session not found');
+      throw new Error('Session not found')
     }
 
     // Check for aesthetic clinic specific content
     if (sessionState.features.aestheticConsultation) {
-      return await this.processAestheticUserMessage(sessionId, message);
+      return await this.processAestheticUserMessage(sessionId, message)
     }
 
     // Standard message processing
-    return await this.processStandardMessage(sessionId, message);
+    return await this.processStandardMessage(sessionId, message)
   }
 
   /**
@@ -341,7 +341,7 @@ export class CopilotKitSessionIntegration {
     message: CopilotKitMessage,
   ): Promise<any> {
     if (!this.aestheticService) {
-      throw new Error('Aesthetic service not initialized');
+      throw new Error('Aesthetic service not initialized')
     }
 
     // Analyze message content for aesthetic clinic keywords
@@ -356,11 +356,11 @@ export class CopilotKitSessionIntegration {
       'foto',
       'cliente',
       'paciente',
-    ];
+    ]
 
     const hasAestheticContent = aestheticKeywords.some(keyword =>
       message.content.toLowerCase().includes(keyword)
-    );
+    )
 
     if (hasAestheticContent) {
       // Send through aesthetic AG-UI protocol
@@ -382,21 +382,21 @@ export class CopilotKitSessionIntegration {
           sessionId,
           version: '1.0.0',
         },
-      });
+      })
 
       // Update session with aesthetic data if present
       if (aestheticResponse.aestheticData) {
         await this.enhancedSessionService.updateAestheticSessionData(
           sessionId,
           aestheticResponse.aestheticData,
-        );
+        )
       }
 
-      return aestheticResponse;
+      return aestheticResponse
     }
 
     // Fallback to standard processing
-    return await this.processStandardMessage(sessionId, message);
+    return await this.processStandardMessage(sessionId, message)
   }
 
   /**
@@ -406,49 +406,49 @@ export class CopilotKitSessionIntegration {
     sessionId: string,
     message: CopilotKitMessage,
   ): Promise<any> {
-    const sessionState = this.sessionStates.get(sessionId);
+    const sessionState = this.sessionStates.get(sessionId)
     if (!sessionState) {
-      throw new Error('Session not found');
+      throw new Error('Session not found')
     }
 
     // Parse action from message content
-    let action: CopilotKitAction;
+    let action: CopilotKitAction
     try {
-      action = JSON.parse(message.content);
+      action = JSON.parse(message.content)
     } catch {
-      throw new Error('Invalid action message format');
+      throw new Error('Invalid action message format')
     }
 
     // Validate action parameters
-    await this.validateActionParameters(action);
+    await this.validateActionParameters(action)
 
     // Execute action based on type
-    let result: any;
+    let result: any
     switch (action.type) {
       case 'schedule_appointment':
-        result = await this.executeScheduleAppointment(sessionId, action);
-        break;
+        result = await this.executeScheduleAppointment(sessionId, action)
+        break
       case 'view_patient':
-        result = await this.executeViewPatient(sessionId, action);
-        break;
+        result = await this.executeViewPatient(sessionId, action)
+        break
       case 'analyze_photo':
-        result = await this.executeAnalyzePhoto(sessionId, action);
-        break;
+        result = await this.executeAnalyzePhoto(sessionId, action)
+        break
       case 'generate_report':
-        result = await this.executeGenerateReport(sessionId, action);
-        break;
+        result = await this.executeGenerateReport(sessionId, action)
+        break
       case 'send_message':
-        result = await this.executeSendMessage(sessionId, action);
-        break;
+        result = await this.executeSendMessage(sessionId, action)
+        break
       default:
-        throw new Error(`Unsupported action type: ${action.type}`);
+        throw new Error(`Unsupported action type: ${action.type}`)
     }
 
     // Update action metrics
-    sessionState.actionCount += 1;
-    this.sessionStates.set(sessionId, sessionState);
+    sessionState.actionCount += 1
+    this.sessionStates.set(sessionId, sessionState)
 
-    return result;
+    return result
   }
 
   /**
@@ -459,11 +459,11 @@ export class CopilotKitSessionIntegration {
     action: CopilotKitAction,
   ): Promise<any> {
     if (!this.aestheticService || !this.config.enableAestheticFeatures) {
-      throw new Error('Photo analysis not available');
+      throw new Error('Photo analysis not available')
     }
 
     try {
-      action.status = 'executing';
+      action.status = 'executing'
 
       const result = await this.aestheticService.sendAestheticMessage({
         id: action.id,
@@ -480,21 +480,21 @@ export class CopilotKitSessionIntegration {
           sessionId,
           version: '1.0.0',
         },
-      });
+      })
 
-      action.status = 'completed';
-      action.result = result;
+      action.status = 'completed'
+      action.result = result
 
       // Update session with analysis results
       await this.enhancedSessionService.updateAestheticSessionData(sessionId, {
         photos: [result.analysisData],
-      });
+      })
 
-      return result;
+      return result
     } catch {
-      action.status = 'failed';
-      action.error = error instanceof Error ? error.message : 'Unknown error';
-      throw error;
+      action.status = 'failed'
+      action.error = error instanceof Error ? error.message : 'Unknown error'
+      throw error
     }
   }
 
@@ -503,41 +503,41 @@ export class CopilotKitSessionIntegration {
    */
   private async setupRealtimeConnection(sessionId: string): Promise<void> {
     try {
-      const wsUrl = `${this.config.endpoint.replace('http', 'ws')}/session/${sessionId}`;
-      const ws = new WebSocket(wsUrl);
+      const wsUrl = `${this.config.endpoint.replace('http', 'ws')}/session/${sessionId}`
+      const ws = new WebSocket(wsUrl)
 
       ws.onopen = () => {
-        this.activeConnections.set(sessionId, ws);
-        console.log(`CopilotKit WebSocket connected for session ${sessionId}`);
-      };
+        this.activeConnections.set(sessionId, ws)
+        console.warn(`CopilotKit WebSocket connected for session ${sessionId}`)
+      }
 
       ws.onmessage = async event => {
         try {
-          const message = JSON.parse(event.data);
-          await this.handleRealtimeMessage(sessionId, message);
+          const message = JSON.parse(event.data)
+          await this.handleRealtimeMessage(sessionId, message)
         } catch {
-          console.error('Error handling realtime message:', error);
+          console.error('Error handling realtime message:', error)
         }
-      };
+      }
 
       ws.onclose = () => {
-        this.activeConnections.delete(sessionId);
-        console.log(`CopilotKit WebSocket disconnected for session ${sessionId}`);
-      };
+        this.activeConnections.delete(sessionId)
+        console.warn(`CopilotKit WebSocket disconnected for session ${sessionId}`)
+      }
 
       ws.onerror = error => {
-        console.error('CopilotKit WebSocket error:', error);
-        this.activeConnections.delete(sessionId);
-      };
+        console.error('CopilotKit WebSocket error:', error)
+        this.activeConnections.delete(sessionId)
+      }
 
       // Set connection timeout
       setTimeout(() => {
         if (ws.readyState !== WebSocket.OPEN) {
-          ws.close();
+          ws.close()
         }
-      }, this.config.requestTimeout);
+      }, this.config.requestTimeout)
     } catch {
-      console.error('Error setting up realtime connection:', error);
+      console.error('Error setting up realtime connection:', error)
     }
   }
 
@@ -549,26 +549,26 @@ export class CopilotKitSessionIntegration {
     message: any,
   ): Promise<void> {
     try {
-      const sessionState = this.sessionStates.get(sessionId);
+      const sessionState = this.sessionStates.get(sessionId)
       if (!sessionState) {
-        return;
+        return
       }
 
       switch (message.type) {
         case 'message':
-          await this.processRealtimeMessage(sessionId, message);
-          break;
+          await this.processRealtimeMessage(sessionId, message)
+          break
         case 'status_update':
-          await this.processStatusUpdate(sessionId, message);
-          break;
+          await this.processStatusUpdate(sessionId, message)
+          break
         case 'action_result':
-          await this.processActionResult(sessionId, message);
-          break;
+          await this.processActionResult(sessionId, message)
+          break
         default:
-          console.warn(`Unknown realtime message type: ${message.type}`);
+          console.warn(`Unknown realtime message type: ${message.type}`)
       }
     } catch {
-      console.error('Error handling realtime message:', error);
+      console.error('Error handling realtime message:', error)
     }
   }
 
@@ -578,7 +578,7 @@ export class CopilotKitSessionIntegration {
   async getCopilotKitSessionState(
     sessionId: string,
   ): Promise<CopilotKitSessionState | null> {
-    return this.sessionStates.get(sessionId) || null;
+    return this.sessionStates.get(sessionId) || null
   }
 
   /**
@@ -588,20 +588,20 @@ export class CopilotKitSessionIntegration {
     sessionId: string,
   ): Promise<
     {
-      sessionState: CopilotKitSessionState;
-      messageHistory: CopilotKitMessage[];
-      actionHistory: CopilotKitAction[];
-      performanceMetrics: any;
-      securityMetrics: any;
+      sessionState: CopilotKitSessionState
+      messageHistory: CopilotKitMessage[]
+      actionHistory: CopilotKitAction[]
+      performanceMetrics: any
+      securityMetrics: any
     } | null
   > {
-    const sessionState = this.sessionStates.get(sessionId);
+    const sessionState = this.sessionStates.get(sessionId)
     if (!sessionState) {
-      return null;
+      return null
     }
 
-    const enhancedSession = await this.enhancedSessionService.getEnhancedSession(sessionId);
-    const analytics = await this.enhancedSessionService.getSessionAnalytics(sessionId);
+    const enhancedSession = await this.enhancedSessionService.getEnhancedSession(sessionId)
+    const analytics = await this.enhancedSessionService.getSessionAnalytics(sessionId)
 
     return {
       sessionState,
@@ -609,7 +609,7 @@ export class CopilotKitSessionIntegration {
       actionHistory: [], // TODO: Implement action history tracking
       performanceMetrics: analytics?.performanceMetrics || {},
       securityMetrics: enhancedSession?.securityMetadata || {},
-    };
+    }
   }
 
   /**
@@ -617,34 +617,34 @@ export class CopilotKitSessionIntegration {
    */
   async closeCopilotKitSession(sessionId: string): Promise<void> {
     try {
-      const sessionState = this.sessionStates.get(sessionId);
+      const sessionState = this.sessionStates.get(sessionId)
       if (sessionState) {
-        sessionState.status = 'closed';
-        this.sessionStates.set(sessionId, sessionState);
+        sessionState.status = 'closed'
+        this.sessionStates.set(sessionId, sessionState)
       }
 
       // Close WebSocket connection
-      const ws = this.activeConnections.get(sessionId);
+      const ws = this.activeConnections.get(sessionId)
       if (ws) {
-        ws.close();
-        this.activeConnections.delete(sessionId);
+        ws.close()
+        this.activeConnections.delete(sessionId)
       }
 
       // Clear message queue
-      this.messageQueue.delete(sessionId);
-      this.requestCounters.delete(sessionId);
+      this.messageQueue.delete(sessionId)
+      this.requestCounters.delete(sessionId)
 
       // Log session closure for compliance
       await this.logSessionActivity(sessionId, 'copilotkit_closed', {
         duration: Date.now() - sessionState.connectedAt.getTime(),
         messageCount: sessionState.messageCount,
         actionCount: sessionState.actionCount,
-      });
+      })
 
       // Enhanced session cleanup
-      await this.enhancedSessionService.expireEnhancedSession(sessionId);
+      await this.enhancedSessionService.expireEnhancedSession(sessionId)
     } catch {
-      console.error('Error closing CopilotKit session:', error);
+      console.error('Error closing CopilotKit session:', error)
     }
   }
 
@@ -652,20 +652,20 @@ export class CopilotKitSessionIntegration {
 
   private initializeAestheticServices(): void {
     // TODO: Initialize aesthetic services based on available dependencies
-    console.log('Aesthetic services initialization would go here');
+    console.warn('Aesthetic services initialization would go here')
   }
 
   private initializeSecurityValidators(): void {
     // Initialize security validators for different data types
     this.securityValidators.set('personal_data', (data: any) => {
       // Validate personal data format and content
-      return typeof data === 'object' && data !== null;
-    });
+      return typeof data === 'object' && data !== null
+    })
 
     this.securityValidators.set('medical_data', (data: any) => {
       // Validate medical data format and sensitivity
-      return typeof data === 'object' && data !== null;
-    });
+      return typeof data === 'object' && data !== null
+    })
   }
 
   private async validateSessionSecurity(
@@ -679,23 +679,23 @@ export class CopilotKitSessionIntegration {
   }
 
   private async validateRateLimit(sessionId: string): Promise<void> {
-    const counter = this.requestCounters.get(sessionId);
-    const now = new Date();
+    const counter = this.requestCounters.get(sessionId)
+    const now = new Date()
 
     if (!counter || now > counter.resetTime) {
       this.requestCounters.set(sessionId, {
         count: 1,
         resetTime: new Date(now.getTime() + 60000), // 1 minute window
-      });
-      return;
+      })
+      return
     }
 
     if (counter.count >= this.config.maxConcurrentRequests) {
-      throw new Error('Rate limit exceeded');
+      throw new Error('Rate limit exceeded')
     }
 
-    counter.count += 1;
-    this.requestCounters.set(sessionId, counter);
+    counter.count += 1
+    this.requestCounters.set(sessionId, counter)
   }
 
   private async validateMessageSecurity(message: any): Promise<void> {
@@ -704,11 +704,11 @@ export class CopilotKitSessionIntegration {
       /<script[^>]*>.*?<\/script>/gi, // XSS attempts
       /javascript:[^>]*/gi, // JavaScript injection
       /data:[^>]*/gi, // Data URI schemes
-    ];
+    ]
 
     for (const pattern of suspiciousPatterns) {
       if (pattern.test(message.content)) {
-        throw new Error('Security validation failed: suspicious content detected');
+        throw new Error('Security validation failed: suspicious content detected')
       }
     }
   }
@@ -721,13 +721,13 @@ export class CopilotKitSessionIntegration {
       analyze_photo: ['photoData'],
       generate_report: ['reportType'],
       send_message: ['recipient', 'content'],
-    };
+    }
 
-    const required = requiredParams[action.type as keyof typeof requiredParams];
+    const required = requiredParams[action.type as keyof typeof requiredParams]
     if (required) {
       for (const param of required) {
         if (!(param in action.parameters)) {
-          throw new Error(`Missing required parameter: ${param}`);
+          throw new Error(`Missing required parameter: ${param}`)
         }
       }
     }
@@ -738,30 +738,30 @@ export class CopilotKitSessionIntegration {
     processingTime: number,
     success: boolean,
   ): Promise<void> {
-    const sessionState = this.sessionStates.get(sessionId);
+    const sessionState = this.sessionStates.get(sessionId)
     if (!sessionState) {
-      return;
+      return
     }
 
-    sessionState.messageCount += 1;
-    sessionState.lastActivity = new Date();
+    sessionState.messageCount += 1
+    sessionState.lastActivity = new Date()
 
     if (!success) {
-      sessionState.errorCount += 1;
+      sessionState.errorCount += 1
     }
 
     // Update performance metrics
-    const totalTime = sessionState.performanceMetrics.totalProcessingTime + processingTime;
-    const avgTime = totalTime / sessionState.messageCount;
+    const totalTime = sessionState.performanceMetrics.totalProcessingTime + processingTime
+    const avgTime = totalTime / sessionState.messageCount
 
     sessionState.performanceMetrics = {
       averageResponseTime: avgTime,
       totalProcessingTime: totalTime,
-      requestsPerSecond: sessionState.messageCount
-        / ((Date.now() - sessionState.connectedAt.getTime()) / 1000),
-    };
+      requestsPerSecond: sessionState.messageCount /
+        ((Date.now() - sessionState.connectedAt.getTime()) / 1000),
+    }
 
-    this.sessionStates.set(sessionId, sessionState);
+    this.sessionStates.set(sessionId, sessionState)
   }
 
   private async logSessionActivity(
@@ -770,11 +770,11 @@ export class CopilotKitSessionIntegration {
     details: any,
   ): Promise<void> {
     // TODO: Implement activity logging for compliance and analytics
-    console.log(`[${sessionId}] ${activityType}:`, details);
+    console.warn(`[${sessionId}] ${activityType}:`, details)
   }
 
   private generateMessageId(): string {
-    return `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    return `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
   }
 
   private async processStandardMessage(
@@ -786,7 +786,7 @@ export class CopilotKitSessionIntegration {
       type: 'response',
       content: `Processed message: ${message.content}`,
       timestamp: new Date(),
-    };
+    }
   }
 
   private async processSystemMessage(
@@ -798,22 +798,22 @@ export class CopilotKitSessionIntegration {
       type: 'system_response',
       content: 'System message processed',
       timestamp: new Date(),
-    };
+    }
   }
 
   private async processRealtimeMessage(sessionId: string, message: any): Promise<void> {
     // TODO: Implement realtime message processing
-    console.log('Realtime message received:', message);
+    console.warn('Realtime message received:', message)
   }
 
   private async processStatusUpdate(sessionId: string, message: any): Promise<void> {
     // TODO: Implement status update processing
-    console.log('Status update received:', message);
+    console.warn('Status update received:', message)
   }
 
   private async processActionResult(sessionId: string, message: any): Promise<void> {
     // TODO: Implement action result processing
-    console.log('Action result received:', message);
+    console.warn('Action result received:', message)
   }
 
   private async executeScheduleAppointment(
@@ -821,54 +821,54 @@ export class CopilotKitSessionIntegration {
     _action: CopilotKitAction,
   ): Promise<any> {
     // TODO: Implement appointment scheduling logic
-    return { success: true, appointmentId: 'generated_id' };
+    return { success: true, appointmentId: 'generated_id' }
   }
 
   private async executeViewPatient(_sessionId: string, _action: CopilotKitAction): Promise<any> {
     // TODO: Implement patient viewing logic
-    return { success: true, patientData: {} };
+    return { success: true, patientData: {} }
   }
 
   private async executeGenerateReport(_sessionId: string, _action: CopilotKitAction): Promise<any> {
     // TODO: Implement report generation logic
-    return { success: true, reportUrl: 'generated_url' };
+    return { success: true, reportUrl: 'generated_url' }
   }
 
   private async executeSendMessage(_sessionId: string, _action: CopilotKitAction): Promise<any> {
     // TODO: Implement message sending logic
-    return { success: true, messageId: 'sent_id' };
+    return { success: true, messageId: 'sent_id' }
   }
 
   private startPeriodicCleanup(): void {
     // Clean up expired sessions and connections every 5 minutes
     setInterval(() => {
-      this.performCleanup();
-    }, 300000);
+      this.performCleanup()
+    }, 300000)
   }
 
   private async performCleanup(): Promise<void> {
-    const now = new Date();
+    const now = new Date()
 
     // Clean up expired rate limit counters
     for (const [sessionId, counter] of this.requestCounters.entries()) {
       if (now > counter.resetTime) {
-        this.requestCounters.delete(sessionId);
+        this.requestCounters.delete(sessionId)
       }
     }
 
     // Clean up inactive WebSocket connections
     for (const [sessionId, ws] of this.activeConnections.entries()) {
       if (ws.readyState === WebSocket.CLOSED) {
-        this.activeConnections.delete(sessionId);
+        this.activeConnections.delete(sessionId)
       }
     }
 
     // Clean up old session states (older than 24 hours)
     for (const [sessionId, sessionState] of this.sessionStates.entries()) {
-      const sessionAge = now.getTime() - sessionState.connectedAt.getTime();
+      const sessionAge = now.getTime() - sessionState.connectedAt.getTime()
       if (sessionAge > 24 * 60 * 60 * 1000) { // 24 hours
-        this.sessionStates.delete(sessionId);
-        this.messageQueue.delete(sessionId);
+        this.sessionStates.delete(sessionId)
+        this.messageQueue.delete(sessionId)
       }
     }
   }

@@ -1,44 +1,105 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { RouterProvider } from '@tanstack/react-router';
-import * as React from 'react';
-import { PWAInstallPrompt } from './components/stubs/PWAInstallPrompt';
-import { PWAOfflineIndicator } from './components/stubs/PWAOfflineIndicator';
-import { router } from './router';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { RouterProvider } from '@tanstack/react-router'
+import * as React from 'react'
+import { AccessibilityProvider } from './components/stubs/AccessibilityProvider.js'
+import { PWAInstallPrompt } from './components/stubs/PWAInstallPrompt.js'
+import { PWAOfflineIndicator } from './components/stubs/PWAOfflineIndicator.js'
+import { router } from './router.js'
+import './styles/healthcare-colors.css'
+import './styles/healthcare-mobile.css'
+
+// Add typed definitions for PWA event and app cleanup to avoid `any` usage
+type AppEventHandler = (this: Window, ev: Event) => any
+
+interface AppCleanup {
+  loadHandler?: AppEventHandler
+  beforeInstallHandler?: AppEventHandler
+  appInstalledHandler?: AppEventHandler
+  handleOnline?: AppEventHandler
+  handleOffline?: AppEventHandler
+}
+
+interface BeforeInstallPromptEvent extends Event {
+  prompt: () => Promise<void>
+  userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>
+}
+
+declare global {
+  interface Window {
+    __appCleanup?: AppCleanup
+  }
+}
 
 // Service Worker Registration
 export function registerServiceWorker() {
   if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker
-        .register('/sw.js')
-        .then(registration => {
-          console.log('SW registered: ', registration);
-        })
-        .catch(registrationError => {
-          console.log('SW registration failed: ', registrationError);
-        });
-    });
+    const handleLoad = async () => {
+      try {
+        const registration = await navigator.serviceWorker.register('/sw.js')
+        console.warn('SW registered: ', registration)
+      } catch (registrationError) {
+        console.warn('SW registration failed: ', registrationError)
+      }
+    }
+
+    window.addEventListener('load', handleLoad) // Store for cleanup
+    const prevCleanup = window.__appCleanup ?? {}
+    window.__appCleanup = {
+      ...prevCleanup,
+      loadHandler: handleLoad,
+    }
   }
 }
 
 // PWA Install Handlers
 export function setupPWAInstallHandlers() {
-  let deferredPrompt: any;
+  let deferredPrompt: BeforeInstallPromptEvent | null = null
 
-  window.addEventListener('beforeinstallprompt', e => {
-    e.preventDefault();
-    deferredPrompt = e;
+  const handleBeforeInstall: AppEventHandler = (e: Event) => {
+    e.preventDefault()
+    deferredPrompt = e as BeforeInstallPromptEvent
     window.dispatchEvent(
       new CustomEvent('pwa-install-available', {
         detail: deferredPrompt,
       }),
-    );
-  });
+    )
+  }
 
-  window.addEventListener('appinstalled', () => {
-    console.log('PWA was installed');
-    window.dispatchEvent(new CustomEvent('pwa-installed'));
-  });
+  const handleAppInstalled: AppEventHandler = () => {
+    console.warn('PWA was installed')
+    window.dispatchEvent(new CustomEvent('pwa-installed'))
+  }
+
+  window.addEventListener('beforeinstallprompt', handleBeforeInstall)
+  window.addEventListener('appinstalled', handleAppInstalled) // Store for cleanup
+  const prevCleanup = window.__appCleanup ?? {}
+  window.__appCleanup = {
+    ...prevCleanup,
+    beforeInstallHandler: handleBeforeInstall,
+    appInstalledHandler: handleAppInstalled,
+  }
+}
+
+// Cleanup function for development
+export function cleanupAppEventListeners() {
+  const cleanup = window.__appCleanup
+  if (cleanup) {
+    if (cleanup.loadHandler) {
+      window.removeEventListener('load', cleanup.loadHandler)
+    }
+    if (cleanup.beforeInstallHandler) {
+      window.removeEventListener('beforeinstallprompt', cleanup.beforeInstallHandler)
+    }
+    if (cleanup.appInstalledHandler) {
+      window.removeEventListener('appinstalled', cleanup.appInstalledHandler)
+    }
+    if (cleanup.handleOnline) {
+      window.removeEventListener('online', cleanup.handleOnline)
+    }
+    if (cleanup.handleOffline) {
+      window.removeEventListener('offline', cleanup.handleOffline)
+    }
+  }
 }
 
 function App() {
@@ -52,47 +113,61 @@ function App() {
           },
         },
       }),
-  );
+  )
 
   React.useEffect(() => {
     // Register Service Worker
-    registerServiceWorker();
+    registerServiceWorker()
 
     // Setup PWA Install Handlers
-    setupPWAInstallHandlers();
+    setupPWAInstallHandlers()
 
     // Set up online/offline event listeners
-    const handleOnline = () => {
-      console.log('App is online');
-      window.dispatchEvent(new CustomEvent('app-online'));
-    };
+    const handleOnline: AppEventHandler = () => {
+      console.warn('App is online')
+      window.dispatchEvent(new CustomEvent('app-online'))
+    }
 
-    const handleOffline = () => {
-      console.log('App is offline');
-      window.dispatchEvent(new CustomEvent('app-offline'));
-    };
+    const handleOffline: AppEventHandler = () => {
+      console.warn('App is offline')
+      window.dispatchEvent(new CustomEvent('app-offline'))
+    }
 
-    window.addEventListener('online', handleOnline);
-    window.addEventListener('offline', handleOffline);
+    window.addEventListener('online', handleOnline)
+    window.addEventListener('offline', handleOffline) // Store handlers for cleanup
+    const prevCleanup = window.__appCleanup ?? {}
+    window.__appCleanup = {
+      ...prevCleanup,
+      handleOnline,
+      handleOffline,
+    }
 
+    // Cleanup function
     return () => {
-      window.removeEventListener('online', handleOnline);
-      window.removeEventListener('offline', handleOffline);
-    };
-  }, []);
+      window.removeEventListener('online', handleOnline)
+      window.removeEventListener('offline', handleOffline)
+
+      // Full cleanup for development
+      if (process.env.NODE_ENV === 'development') {
+        cleanupAppEventListeners()
+      }
+    }
+  }, [])
 
   return (
     <QueryClientProvider client={queryClient}>
-      <div className='min-h-screen bg-gray-50'>
-        {/* PWA Components */}
-        <PWAInstallPrompt className='fixed bottom-4 right-4 z-50' />
-        <PWAOfflineIndicator className='fixed top-4 right-4 z-50' />
+      <AccessibilityProvider>
+        <div className='min-h-screen healthcare-bg-primary'>
+          {/* PWA Components */}
+          <PWAInstallPrompt className='fixed bottom-4 right-4 z-50' />
+          <PWAOfflineIndicator className='fixed top-4 right-4 z-50' />
 
-        {/* Main Application Router */}
-        <RouterProvider router={router} />
-      </div>
+          {/* Main Application Router */}
+          <RouterProvider router={router} />
+        </div>
+      </AccessibilityProvider>
     </QueryClientProvider>
-  );
+  )
 }
 
-export default App;
+export default App

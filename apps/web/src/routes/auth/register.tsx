@@ -1,15 +1,15 @@
-import { createFileRoute, Link } from '@tanstack/react-router';
-import { Building2, Eye, EyeOff, Lock, Mail, Phone, User } from 'lucide-react';
-import * as React from 'react';
-import { useState } from 'react';
+import { createFileRoute, Link } from '@tanstack/react-router'
+import { Building2, Eye, EyeOff, Lock, Mail, Phone, User } from 'lucide-react'
+import * as React from 'react'
+import { useState } from 'react'
 
 export const Route = createFileRoute('/auth/register')({
   component: Register,
-});
+})
 
 function Register() {
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -18,24 +18,24 @@ function Register() {
     confirmPassword: '',
     clinicName: '',
     acceptTerms: false,
-  });
-  const [isLoading, setIsLoading] = useState(false);
+  })
+  const [isLoading, setIsLoading] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
+    e.preventDefault()
+    setIsLoading(true)
 
     // Simulate registration - replace with actual API call
     setTimeout(() => {
-      setIsLoading(false);
+      setIsLoading(false)
       // Redirect to login after successful registration
-      window.location.href = '/auth/login';
-    }, 2000);
-  };
+      window.location.href = '/auth/login'
+    }, 2000)
+  }
 
   const handleChange = (field: string, value: string | boolean) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-  };
+    setFormData(prev => ({ ...prev, [field]: value }))
+  }
 
   return (
     <div className='min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 py-12 px-4 sm:px-6 lg:px-8'>
@@ -274,5 +274,5 @@ function Register() {
         </form>
       </div>
     </div>
-  );
+  )
 }

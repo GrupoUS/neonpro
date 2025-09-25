@@ -371,13 +371,13 @@ This section addresses frequent challenges encountered when working with the Age
 
 ```typescript
 // Ensure at least one compliant agent is available
-const compliantAgents = registry.getAgentsForPhase(phase, context);
+const compliantAgents = registry.getAgentsForPhase(phase, context)
 if (compliantAgents.length === 0 && context.healthcareCompliance.required) {
   // Fall back to default compliant agents
   return DEFAULT_AGENTS.filter(a =>
-    a.phases.includes(phase)
-    && a.healthcareCompliance?.lgpd
-  );
+    a.phases.includes(phase) &&
+    a.healthcareCompliance?.lgpd
+  )
 }
 ```
 
@@ -389,9 +389,9 @@ if (compliantAgents.length === 0 && context.healthcareCompliance.required) {
 
 ```typescript
 try {
-  registry.registerAgent(customAgent);
+  registry.registerAgent(customAgent)
 } catch (error) {
-  console.warn('Failed to register agent, falling back to defaults:', error);
+  console.warn('Failed to register agent, falling back to defaults:', error)
   // Continue with existing agents
 }
 ```
@@ -404,7 +404,7 @@ try {
 
 ```typescript
 // Use getAgentStats to identify underperforming agents
-const stats = registry.getAgentStats('security-auditor');
+const stats = registry.getAgentStats('security-auditor')
 if (stats.averageExecutionTime > threshold) {
   // Consider alternative agents or optimization
 }

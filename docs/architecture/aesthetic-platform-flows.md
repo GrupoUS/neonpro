@@ -84,17 +84,17 @@ flowchart TD
 ```typescript
 // auth-flow.ts
 export const authenticateUser = async (credentials: UserCredentials) => {
-  const { userType, identifier, password } = credentials;
+  const { userType, identifier, password } = credentials
 
   switch (userType) {
     case 'client':
-      return await authenticateClient(identifier, password);
+      return await authenticateClient(identifier, password)
     case 'professional':
-      return await authenticateProfessional(identifier, password);
+      return await authenticateProfessional(identifier, password)
     case 'admin':
-      return await authenticateAdmin(identifier, password);
+      return await authenticateAdmin(identifier, password)
   }
-};
+}
 ```
 
 **Procedure**:
@@ -146,13 +146,13 @@ sequenceDiagram
 ```typescript
 // client-registration.ts
 export const registerClient = async (clientData: ClientRegistrationData) => {
-  const { personalInfo, aestheticHistory, preferences } = clientData;
+  const { personalInfo, aestheticHistory, preferences } = clientData
 
   // LGPD compliance check
-  const consentValid = await validateLGPDConsent(clientData.consents);
+  const consentValid = await validateLGPDConsent(clientData.consents)
 
   if (!consentValid) {
-    throw new Error('LGPD consent required');
+    throw new Error('LGPD consent required')
   }
 
   // Create client profile
@@ -163,13 +163,13 @@ export const registerClient = async (clientData: ClientRegistrationData) => {
       preferences,
       consents: clientData.consents,
     },
-  });
+  })
 
   // Send WhatsApp welcome message
-  await sendWhatsAppWelcome(client.phone, client.name);
+  await sendWhatsAppWelcome(client.phone, client.name)
 
-  return client;
-};
+  return client
+}
 ```
 
 ### 3. Professional Dashboard & Workflow Management
@@ -221,15 +221,15 @@ export const getProfessionalDashboard = async (professionalId: string) => {
     getAppointmentsForToday(professionalId),
     getMonthlyRevenue(professionalId),
     getClientSatisfactionScore(professionalId),
-  ]);
+  ])
 
   return {
     todayAppointments,
     monthlyRevenue,
     clientSatisfaction,
     noShowRate: calculateNoShowRate(todayAppointments),
-  };
-};
+  }
+}
 ```
 
 ### 4. Appointment Scheduling Flow
@@ -276,13 +276,13 @@ sequenceDiagram
 ```typescript
 // appointment-scheduling.ts
 export const scheduleAppointment = async (data: AppointmentRequest) => {
-  const { clientId, professionalId, procedureType, preferredTime } = data;
+  const { clientId, professionalId, procedureType, preferredTime } = data
 
   // AI-powered risk assessment
-  const noShowRisk = await assessNoShowRisk(clientId, procedureType);
+  const noShowRisk = await assessNoShowRisk(clientId, procedureType)
 
   // Get optimal time slots
-  const availableSlots = await getAvailableSlots(professionalId, preferredTime);
+  const availableSlots = await getAvailableSlots(professionalId, preferredTime)
 
   // Create appointment
   const appointment = await db.appointments.create({
@@ -294,13 +294,13 @@ export const scheduleAppointment = async (data: AppointmentRequest) => {
       noShowRisk,
       status: 'confirmed',
     },
-  });
+  })
 
   // Send WhatsApp confirmation
-  await sendWhatsAppConfirmation(appointment);
+  await sendWhatsAppConfirmation(appointment)
 
-  return appointment;
-};
+  return appointment
+}
 ```
 
 ### 5. Anti-No-Show Engine Flow
@@ -354,25 +354,25 @@ export const predictAndPreventNoShow = async (appointmentId: string) => {
   const appointment = await db.appointments.findUnique({
     where: { id: appointmentId },
     include: { client: true, professional: true },
-  });
+  })
 
   // Calculate risk score
-  const riskScore = await calculateNoShowRisk(appointment);
+  const riskScore = await calculateNoShowRisk(appointment)
 
   // Deploy communication strategy based on risk
-  const communicationStrategy = getCommunicationStrategy(riskScore);
+  const communicationStrategy = getCommunicationStrategy(riskScore)
 
   // Send WhatsApp reminders
-  await sendWhatsAppReminders(appointment, communicationStrategy);
+  await sendWhatsAppReminders(appointment, communicationStrategy)
 
   // Monitor responses
-  const response = await monitorWhatsAppResponse(appointmentId);
+  const response = await monitorWhatsAppResponse(appointmentId)
 
   // Update prediction model
-  await updatePredictionModel(appointmentId, response);
+  await updatePredictionModel(appointmentId, response)
 
-  return { riskScore, communicationStrategy, response };
-};
+  return { riskScore, communicationStrategy, response }
+}
 ```
 
 ### 6. Client Management Flow
@@ -534,14 +534,14 @@ flowchart TD
 ```typescript
 // treatment-planning.ts
 export const createTreatmentPlan = async (data: TreatmentPlanData) => {
-  const { clientId, professionalId, goals, budget, timeline } = data;
+  const { clientId, professionalId, goals, budget, timeline } = data
 
   // AI-powered treatment recommendations
   const recommendations = await getTreatmentRecommendations({
     clientGoals: goals,
     budget,
     timeline,
-  });
+  })
 
   // Create treatment plan
   const treatmentPlan = await db.treatmentPlans.create({
@@ -553,13 +553,13 @@ export const createTreatmentPlan = async (data: TreatmentPlanData) => {
       estimatedCost: calculateTotalCost(recommendations),
       timeline,
     },
-  });
+  })
 
   // Send plan via WhatsApp
-  await sendTreatmentPlanWhatsApp(clientId, treatmentPlan);
+  await sendTreatmentPlanWhatsApp(clientId, treatmentPlan)
 
-  return treatmentPlan;
-};
+  return treatmentPlan
+}
 ```
 
 ### 10. Procedure Execution Flow

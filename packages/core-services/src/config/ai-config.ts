@@ -1,25 +1,25 @@
 // T041: AI Provider configuration and environment setup
-import type { AIProvider, AIProviderConfig } from '@neonpro/types';
+import type { AIProvider, AIProviderConfig } from '@neonpro/types'
 
 export interface AIConfig {
-  defaultProvider: AIProvider;
-  providers: Record<AIProvider, AIProviderConfig>;
+  defaultProvider: AIProvider
+  providers: Record<AIProvider, AIProviderConfig>
   rateLimit: {
-    requestsPerMinute: number;
-    tokensPerMinute: number;
-    concurrentRequests: number;
-  };
+    requestsPerMinute: number
+    tokensPerMinute: number
+    concurrentRequests: number
+  }
   features: {
-    streaming: boolean;
-    piiRedaction: boolean;
-    auditLogging: boolean;
-    multiModel: boolean;
-  };
+    streaming: boolean
+    piiRedaction: boolean
+    auditLogging: boolean
+    multiModel: boolean
+  }
   security: {
-    encryptApiKeys: boolean;
-    requireAuth: boolean;
-    allowedDomains: string[];
-  };
+    encryptApiKeys: boolean
+    requireAuth: boolean
+    allowedDomains: string[]
+  }
 }
 
 export function createAIConfig(): AIConfig {
@@ -62,8 +62,8 @@ export function createAIConfig(): AIConfig {
       google: {
         enabled: Boolean(process.env.GOOGLE_AI_API_KEY),
         apiKey: process.env.GOOGLE_AI_API_KEY || '',
-        baseUrl: process.env.GOOGLE_AI_BASE_URL
-          || 'https://generativelanguage.googleapis.com/v1',
+        baseUrl: process.env.GOOGLE_AI_BASE_URL ||
+          'https://generativelanguage.googleapis.com/v1',
         models: {
           default: process.env.GOOGLE_AI_DEFAULT_MODEL || 'gemini-pro',
           streaming: process.env.GOOGLE_AI_STREAMING_MODEL || 'gemini-pro',
@@ -107,115 +107,115 @@ export function createAIConfig(): AIConfig {
         .split(',')
         .filter(Boolean),
     },
-  };
+  }
 
-  return config;
+  return config
 }
 
 export function validateAIConfig(config: AIConfig): {
-  valid: boolean;
-  errors: string[];
+  valid: boolean
+  errors: string[]
 } {
-  const errors: string[] = [];
+  const errors: string[] = []
 
   // Check if at least one provider is enabled
   const enabledProviders = Object.entries(config.providers).filter(
     ([, providerConfig]) => providerConfig.enabled,
-  );
+  )
 
   if (enabledProviders.length === 0) {
-    errors.push('At least one AI provider must be enabled');
+    errors.push('At least one AI provider must be enabled')
   }
 
   // Validate default provider is enabled
   if (!config.providers[config.defaultProvider]?.enabled) {
-    errors.push(`Default provider '${config.defaultProvider}' is not enabled`);
+    errors.push(`Default provider '${config.defaultProvider}' is not enabled`)
   }
 
   // Validate API keys for enabled providers
   for (const [provider, providerConfig] of Object.entries(config.providers)) {
     if (providerConfig.enabled && !providerConfig.apiKey) {
-      errors.push(`API key required for enabled provider: ${provider}`);
+      errors.push(`API key required for enabled provider: ${provider}`)
     }
   }
 
   // Validate rate limits
   if (config.rateLimit.requestsPerMinute <= 0) {
-    errors.push('Rate limit requestsPerMinute must be positive');
+    errors.push('Rate limit requestsPerMinute must be positive')
   }
 
   if (config.rateLimit.tokensPerMinute <= 0) {
-    errors.push('Rate limit tokensPerMinute must be positive');
+    errors.push('Rate limit tokensPerMinute must be positive')
   }
 
   if (config.rateLimit.concurrentRequests <= 0) {
-    errors.push('Rate limit concurrentRequests must be positive');
+    errors.push('Rate limit concurrentRequests must be positive')
   }
 
   return {
     valid: errors.length === 0,
     errors,
-  };
+  }
 }
 
 // Global config instance
-let aiConfigInstance: AIConfig | null = null;
+let aiConfigInstance: AIConfig | null = null
 
 export function getAIConfig(): AIConfig {
   if (!aiConfigInstance) {
-    aiConfigInstance = createAIConfig();
-    const validation = validateAIConfig(aiConfigInstance);
+    aiConfigInstance = createAIConfig()
+    const validation = validateAIConfig(aiConfigInstance)
 
     if (!validation.valid) {
       throw new Error(
         `Invalid AI configuration: ${validation.errors.join(', ')}`,
-      );
+      )
     }
   }
 
-  return aiConfigInstance;
+  return aiConfigInstance
 }
 
 export function resetAIConfig(): void {
-  aiConfigInstance = null;
+  aiConfigInstance = null
 }
 
 // Helper functions for provider selection
 export function getEnabledProviders(config: AIConfig): AIProvider[] {
   return Object.entries(config.providers)
     .filter(([, providerConfig]) => providerConfig.enabled)
-    .map(([provider]) => provider as AIProvider);
+    .map(([provider]) => provider as AIProvider)
 }
 
 export function getBestProvider(
   config: AIConfig,
   requirements?: {
-    streaming?: boolean;
-    speed?: 'fast' | 'balanced' | 'quality';
+    streaming?: boolean
+    speed?: 'fast' | 'balanced' | 'quality'
   },
 ): AIProvider {
-  const enabledProviders = getEnabledProviders(config);
+  const enabledProviders = getEnabledProviders(config)
 
   if (enabledProviders.length === 0) {
-    throw new Error('No AI providers are enabled');
+    throw new Error('No AI providers are enabled')
   }
 
   // If no specific requirements, return default
   if (!requirements) {
-    return config.defaultProvider;
+    return config.defaultProvider
   }
 
   // Simple provider selection logic (can be enhanced)
   if (requirements.speed === 'fast' && enabledProviders.includes('openai')) {
-    return 'openai';
+    return 'openai'
   }
 
   if (
-    requirements.speed === 'quality'
-    && enabledProviders.includes('anthropic')
+    requirements.speed === 'quality' &&
+    enabledProviders.includes('anthropic')
   ) {
-    return 'anthropic';
+    return 'anthropic'
   }
 
-  return config.defaultProvider;
+  return config.defaultProvider
 }

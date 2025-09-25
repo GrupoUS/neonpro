@@ -3,7 +3,7 @@
 // Handles usage metrics, cost calculations, and quota enforcement
 // Date: 2025-09-19
 
-import { calculateRequestCost } from '@neonpro/config/quotas';
+import { calculateRequestCost } from '@neonpro/config/quotas'
 import type {
   AIProvider,
   AIUsageRecord,
@@ -12,7 +12,7 @@ import type {
   EnhancedAIModel,
   MedicalSpecialty,
   SubscriptionTier,
-} from '@neonpro/types';
+} from '@neonpro/types'
 
 // ================================================
 // USAGE COUNTER INTERFACES
@@ -22,45 +22,45 @@ import type {
  * Real-time usage tracking for a specific user/clinic
  */
 export interface UsageCounterData {
-  readonly clinicId: string;
-  readonly _userId: string;
-  readonly planCode: SubscriptionTier;
+  readonly clinicId: string
+  readonly _userId: string
+  readonly planCode: SubscriptionTier
 
   // Current period counters
-  readonly monthlyQueries: number;
-  readonly dailyQueries: number;
-  readonly currentCostUsd: number;
-  readonly concurrentRequests: number;
+  readonly monthlyQueries: number
+  readonly dailyQueries: number
+  readonly currentCostUsd: number
+  readonly concurrentRequests: number
 
   // Historical aggregations
-  readonly totalRequests: number;
-  readonly totalCostUsd: number;
-  readonly totalTokensUsed: number;
-  readonly cacheSavingsUsd: number;
+  readonly totalRequests: number
+  readonly totalCostUsd: number
+  readonly totalTokensUsed: number
+  readonly cacheSavingsUsd: number
 
   // Performance metrics
-  readonly averageLatencyMs: number;
-  readonly cacheHitRate: number;
-  readonly errorRate: number;
+  readonly averageLatencyMs: number
+  readonly cacheHitRate: number
+  readonly errorRate: number
 
   // Period tracking
-  readonly periodStart: Date;
-  readonly lastActivity: Date;
-  readonly lastReset: Date;
+  readonly periodStart: Date
+  readonly lastActivity: Date
+  readonly lastReset: Date
 }
 
 /**
  * Usage aggregation by time period
  */
 export interface UsageAggregation {
-  readonly period: 'hour' | 'day' | 'week' | 'month';
-  readonly timestamp: Date;
-  queries: number;
-  costUsd: number;
-  tokens: number;
-  readonly uniqueUsers: number;
-  readonly modelBreakdown: Record<EnhancedAIModel, number>;
-  readonly specialtyBreakdown: Record<MedicalSpecialty, number>;
+  readonly period: 'hour' | 'day' | 'week' | 'month'
+  readonly timestamp: Date
+  queries: number
+  costUsd: number
+  tokens: number
+  readonly uniqueUsers: number
+  readonly modelBreakdown: Record<EnhancedAIModel, number>
+  readonly specialtyBreakdown: Record<MedicalSpecialty, number>
 }
 
 // ================================================
@@ -71,12 +71,12 @@ export interface UsageAggregation {
  * Real-time usage counter with LGPD compliance and healthcare tracking
  */
 export class UsageCounter {
-  private _data: UsageCounterData;
-  private _recentRequests: AIUsageRecord[] = [];
-  private _aggregations: Map<string, UsageAggregation> = new Map();
+  private _data: UsageCounterData
+  private _recentRequests: AIUsageRecord[] = []
+  private _aggregations: Map<string, UsageAggregation> = new Map()
 
   constructor(data: UsageCounterData) {
-    this._data = { ...data };
+    this._data = { ...data }
   }
 
   // ================================================
@@ -84,51 +84,51 @@ export class UsageCounter {
   // ================================================
 
   get clinicId(): string {
-    return this._data.clinicId;
+    return this._data.clinicId
   }
 
   get userId(): string {
-    return this._data._userId;
+    return this._data._userId
   }
 
   get planCode(): SubscriptionTier {
-    return this._data.planCode;
+    return this._data.planCode
   }
 
   get monthlyQueries(): number {
-    return this._data.monthlyQueries;
+    return this._data.monthlyQueries
   }
 
   get dailyQueries(): number {
-    return this._data.dailyQueries;
+    return this._data.dailyQueries
   }
 
   get currentCostUsd(): number {
-    return this._data.currentCostUsd;
+    return this._data.currentCostUsd
   }
 
   get concurrentRequests(): number {
-    return this._data.concurrentRequests;
+    return this._data.concurrentRequests
   }
 
   get totalRequests(): number {
-    return this._data.totalRequests;
+    return this._data.totalRequests
   }
 
   get totalCostUsd(): number {
-    return this._data.totalCostUsd;
+    return this._data.totalCostUsd
   }
 
   get totalTokensUsed(): number {
-    return this._data.totalTokensUsed;
+    return this._data.totalTokensUsed
   }
 
   get cacheSavingsUsd(): number {
-    return this._data.cacheSavingsUsd;
+    return this._data.cacheSavingsUsd
   }
 
   get lastActivity(): Date {
-    return this._data.lastActivity;
+    return this._data.lastActivity
   }
 
   // ================================================
@@ -136,34 +136,34 @@ export class UsageCounter {
   // ================================================
 
   get averageLatencyMs(): number {
-    return this._data.averageLatencyMs;
+    return this._data.averageLatencyMs
   }
 
   get cacheHitRate(): number {
-    return this._data.cacheHitRate;
+    return this._data.cacheHitRate
   }
 
   get errorRate(): number {
-    return this._data.errorRate;
+    return this._data.errorRate
   }
 
   get cacheSavingsPercentage(): number {
-    if (this._data.totalCostUsd === 0) return 0;
+    if (this._data.totalCostUsd === 0) return 0
     return (
-      (this._data.cacheSavingsUsd
-        / (this._data.totalCostUsd + this._data.cacheSavingsUsd))
-      * 100
-    );
+      (this._data.cacheSavingsUsd /
+        (this._data.totalCostUsd + this._data.cacheSavingsUsd)) *
+      100
+    )
   }
 
   get averageCostPerRequest(): number {
-    if (this._data.totalRequests === 0) return 0;
-    return this._data.totalCostUsd / this._data.totalRequests;
+    if (this._data.totalRequests === 0) return 0
+    return this._data.totalCostUsd / this._data.totalRequests
   }
 
   get averageTokensPerRequest(): number {
-    if (this._data.totalRequests === 0) return 0;
-    return this._data.totalTokensUsed / this._data.totalRequests;
+    if (this._data.totalRequests === 0) return 0
+    return this._data.totalTokensUsed / this._data.totalRequests
   }
 
   // ================================================
@@ -174,25 +174,25 @@ export class UsageCounter {
    * Records a new AI request usage with real-time aggregation
    */
   recordUsage(usage: {
-    modelCode: EnhancedAIModel;
-    inputTokens: number;
-    outputTokens: number;
-    latencyMs: number;
-    cacheHit: boolean;
-    medicalSpecialty?: MedicalSpecialty;
-    sessionId?: string;
-    error?: boolean;
+    modelCode: EnhancedAIModel
+    inputTokens: number
+    outputTokens: number
+    latencyMs: number
+    cacheHit: boolean
+    medicalSpecialty?: MedicalSpecialty
+    sessionId?: string
+    error?: boolean
   }): {
-    usageRecord: AIUsageRecord;
-    updatedCounters: UsageCounterData;
+    usageRecord: AIUsageRecord
+    updatedCounters: UsageCounterData
     costCalculation: {
-      totalCost: number;
-      cacheSavings: number;
-      effectiveCost: number;
-    };
+      totalCost: number
+      cacheSavings: number
+      effectiveCost: number
+    }
   } {
-    const now = new Date();
-    const totalTokens = usage.inputTokens + usage.outputTokens;
+    const now = new Date()
+    const totalTokens = usage.inputTokens + usage.outputTokens
 
     // Calculate cost
     const fullCost = calculateRequestCost(
@@ -200,9 +200,9 @@ export class UsageCounter {
       usage.inputTokens,
       usage.outputTokens,
       false,
-    );
-    const effectiveCost = usage.cacheHit ? fullCost * 0.1 : fullCost;
-    const cacheSavings = usage.cacheHit ? fullCost * 0.9 : 0;
+    )
+    const effectiveCost = usage.cacheHit ? fullCost * 0.1 : fullCost
+    const cacheSavings = usage.cacheHit ? fullCost * 0.9 : 0
 
     // Create usage record
     const usageRecord: AIUsageRecord = {
@@ -247,7 +247,7 @@ export class UsageCounter {
       safetyFlags: [],
       regulatoryFlags: this.getRegulatoryFlags(usage.medicalSpecialty),
       createdAt: now,
-    };
+    }
 
     // Update counters
     this._data = {
@@ -269,16 +269,16 @@ export class UsageCounter {
       ),
       cacheHitRate: this.updateCacheHitRate(usage.cacheHit),
       errorRate: this.updateErrorRate(Boolean(usage.error)),
-    };
+    }
 
     // Store recent request for analysis
-    this._recentRequests.push(usageRecord);
+    this._recentRequests.push(usageRecord)
     if (this._recentRequests.length > 100) {
-      this._recentRequests = this._recentRequests.slice(-100); // Keep last 100 requests
+      this._recentRequests = this._recentRequests.slice(-100) // Keep last 100 requests
     }
 
     // Update aggregations
-    this.updateAggregations(usageRecord);
+    this.updateAggregations(usageRecord)
 
     return {
       usageRecord,
@@ -288,7 +288,7 @@ export class UsageCounter {
         cacheSavings,
         effectiveCost,
       },
-    };
+    }
   }
 
   /**
@@ -298,7 +298,7 @@ export class UsageCounter {
     this._data = {
       ...this._data,
       concurrentRequests: this._data.concurrentRequests + 1,
-    };
+    }
   }
 
   /**
@@ -308,7 +308,7 @@ export class UsageCounter {
     this._data = {
       ...this._data,
       concurrentRequests: Math.max(0, this._data.concurrentRequests - 1),
-    };
+    }
   }
 
   // ================================================
@@ -319,13 +319,13 @@ export class UsageCounter {
    * Resets daily counters
    */
   resetDailyCounters(): AuditTrail {
-    const previousDaily = this._data.dailyQueries;
+    const previousDaily = this._data.dailyQueries
 
     this._data = {
       ...this._data,
       dailyQueries: 0,
       lastReset: new Date(),
-    };
+    }
 
     return {
       action: 'daily_counters_reset',
@@ -338,15 +338,15 @@ export class UsageCounter {
         previousDailyQueries: previousDaily,
         planCode: this._data.planCode,
       },
-    };
+    }
   }
 
   /**
    * Resets monthly counters
    */
   resetMonthlyCounters(): AuditTrail {
-    const previousMonthly = this._data.monthlyQueries;
-    const previousCost = this._data.currentCostUsd;
+    const previousMonthly = this._data.monthlyQueries
+    const previousCost = this._data.currentCostUsd
 
     this._data = {
       ...this._data,
@@ -355,7 +355,7 @@ export class UsageCounter {
       currentCostUsd: 0,
       periodStart: new Date(),
       lastReset: new Date(),
-    };
+    }
 
     return {
       action: 'monthly_counters_reset',
@@ -369,7 +369,7 @@ export class UsageCounter {
         previousCostUsd: previousCost,
         planCode: this._data.planCode,
       },
-    };
+    }
   }
 
   // ================================================
@@ -381,16 +381,16 @@ export class UsageCounter {
    */
   getUsageInsights(): {
     efficiency: {
-      cacheOptimization: number; // 0-100 score
-      costEfficiency: number; // 0-100 score
-      performanceScore: number; // 0-100 score
-    };
+      cacheOptimization: number // 0-100 score
+      costEfficiency: number // 0-100 score
+      performanceScore: number // 0-100 score
+    }
     patterns: {
-      peakHours: number[];
-      preferredModels: EnhancedAIModel[];
-      commonSpecialties: MedicalSpecialty[];
-    };
-    recommendations: string[];
+      peakHours: number[]
+      preferredModels: EnhancedAIModel[]
+      commonSpecialties: MedicalSpecialty[]
+    }
+    recommendations: string[]
   } {
     const insights = {
       efficiency: {
@@ -404,34 +404,34 @@ export class UsageCounter {
         commonSpecialties: this.getCommonSpecialties(),
       },
       recommendations: [] as string[],
-    };
+    }
 
     // Generate recommendations
     if (insights.efficiency.cacheOptimization < 50) {
       insights.recommendations.push(
         'Otimize consultas para melhorar cache hit rate',
-      );
+      )
     }
 
     if (insights.efficiency.costEfficiency < 30) {
       insights.recommendations.push(
         'Considere usar modelos mais econômicos para consultas simples',
-      );
+      )
     }
 
     if (this.averageLatencyMs > 3000) {
       insights.recommendations.push(
         'Latência alta detectada - verifique configuração de rede',
-      );
+      )
     }
 
     if (this._data.errorRate > 0.05) {
       insights.recommendations.push(
         'Taxa de erro elevada - revise integrações',
-      );
+      )
     }
 
-    return insights;
+    return insights
   }
 
   /**
@@ -440,20 +440,20 @@ export class UsageCounter {
   getBillingMetrics(startDate: Date, endDate: Date): BillingMetrics {
     const relevantRequests = this._recentRequests.filter(
       req => req.createdAt >= startDate && req.createdAt <= endDate,
-    );
+    )
 
     const totalCostUsd = relevantRequests.reduce(
       (sum, req) => sum + req.costUsd,
       0,
-    );
+    )
     const totalTokens = relevantRequests.reduce(
       (sum, req) => sum + req.totalTokens,
       0,
-    );
+    )
     const cacheSavingsUsd = relevantRequests.reduce(
       (sum, req) => sum + req.cacheSavingsUsd,
       0,
-    );
+    )
 
     return {
       totalCostUsd,
@@ -474,7 +474,7 @@ export class UsageCounter {
         start: startDate,
         end: endDate,
       },
-    };
+    }
   }
 
   /**
@@ -485,7 +485,7 @@ export class UsageCounter {
   ): UsageAggregation[] {
     return Array.from(this._aggregations.values())
       .filter(agg => agg.period === period)
-      .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
+      .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime())
   }
 
   // ================================================
@@ -495,11 +495,11 @@ export class UsageCounter {
   private getProviderForModel(
     modelCode: EnhancedAIModel,
   ): AIProvider | 'healthcare-br' {
-    if (modelCode.startsWith('gpt-')) return 'openai';
-    if (modelCode.startsWith('claude-')) return 'anthropic';
-    if (modelCode.startsWith('gemini-')) return 'google';
-    if (modelCode === 'healthcare-pt-br') return 'healthcare-br';
-    return 'mock' as AIProvider;
+    if (modelCode.startsWith('gpt-')) return 'openai'
+    if (modelCode.startsWith('claude-')) return 'anthropic'
+    if (modelCode.startsWith('gemini-')) return 'google'
+    if (modelCode === 'healthcare-pt-br') return 'healthcare-br'
+    return 'mock' as AIProvider
   }
 
   private isDiagnosisSpecialty(specialty?: MedicalSpecialty): boolean {
@@ -507,24 +507,24 @@ export class UsageCounter {
       'dermatologia',
       'cirurgia_plastica',
       'medicina_geral',
-    ];
-    return specialty ? diagnosisSpecialties.includes(specialty) : false;
+    ]
+    return specialty ? diagnosisSpecialties.includes(specialty) : false
   }
 
   private getRegulatoryFlags(specialty?: MedicalSpecialty): string[] {
-    const flags: string[] = [];
+    const flags: string[] = []
 
     if (specialty) {
-      flags.push('CFM_OVERSIGHT');
+      flags.push('CFM_OVERSIGHT')
 
       if (
         ['dermatologia', 'cirurgia_plastica', 'cosmiatria'].includes(specialty)
       ) {
-        flags.push('ANVISA_OVERSIGHT');
+        flags.push('ANVISA_OVERSIGHT')
       }
     }
 
-    return flags;
+    return flags
   }
 
   private updateRollingAverage(
@@ -532,75 +532,75 @@ export class UsageCounter {
     newValue: number,
     totalCount: number,
   ): number {
-    if (totalCount <= 1) return newValue;
-    return (currentAvg * (totalCount - 1) + newValue) / totalCount;
+    if (totalCount <= 1) return newValue
+    return (currentAvg * (totalCount - 1) + newValue) / totalCount
   }
 
   private updateCacheHitRate(cacheHit: boolean): number {
     const recentCacheHits = this._recentRequests.filter(
       req => req.cacheHit,
-    ).length;
-    const totalRecent = this._recentRequests.length;
+    ).length
+    const totalRecent = this._recentRequests.length
 
-    if (totalRecent === 0) return cacheHit ? 1 : 0;
-    return (recentCacheHits + (cacheHit ? 1 : 0)) / (totalRecent + 1);
+    if (totalRecent === 0) return cacheHit ? 1 : 0
+    return (recentCacheHits + (cacheHit ? 1 : 0)) / (totalRecent + 1)
   }
 
   private updateErrorRate(hasError: boolean): number {
     const recentErrors = this._recentRequests.filter(
       req => req.safetyFlags.length > 0 || req.regulatoryFlags.includes('ERROR'),
-    ).length;
-    const totalRecent = this._recentRequests.length;
+    ).length
+    const totalRecent = this._recentRequests.length
 
-    if (totalRecent === 0) return hasError ? 1 : 0;
-    return (recentErrors + (hasError ? 1 : 0)) / (totalRecent + 1);
+    if (totalRecent === 0) return hasError ? 1 : 0
+    return (recentErrors + (hasError ? 1 : 0)) / (totalRecent + 1)
   }
 
   private calculatePeakHours(): number[] {
-    const hourCounts = Array.from({ length: 24 }, () => 0);
+    const hourCounts = Array.from({ length: 24 }, () => 0)
 
     this._recentRequests.forEach(req => {
-      const hour = req.createdAt.getHours();
+      const hour = req.createdAt.getHours()
       if (hour !== undefined && hourCounts[hour] !== undefined) {
-        hourCounts[hour]++;
+        hourCounts[hour]++
       }
-    });
+    })
 
-    const maxCount = Math.max(...hourCounts);
+    const maxCount = Math.max(...hourCounts)
     return hourCounts
       .map((count, hour) => ({ hour, count }))
       .filter(({ count }) => count > maxCount * 0.7)
-      .map(({ hour }) => hour);
+      .map(({ hour }) => hour)
   }
 
   private getPreferredModels(): EnhancedAIModel[] {
-    const modelCounts = new Map<EnhancedAIModel, number>();
+    const modelCounts = new Map<EnhancedAIModel, number>()
 
     this._recentRequests.forEach(req => {
-      const current = modelCounts.get(req.modelCode) || 0;
-      modelCounts.set(req.modelCode, current + 1);
-    });
+      const current = modelCounts.get(req.modelCode) || 0
+      modelCounts.set(req.modelCode, current + 1)
+    })
 
     return Array.from(modelCounts.entries())
       .sort((a, b) => b[1] - a[1])
       .slice(0, 3)
-      .map(([model]) => model);
+      .map(([model]) => model)
   }
 
   private getCommonSpecialties(): MedicalSpecialty[] {
-    const specialtyCounts = new Map<MedicalSpecialty, number>();
+    const specialtyCounts = new Map<MedicalSpecialty, number>()
 
     this._recentRequests.forEach(req => {
       if (req.medicalSpecialty) {
-        const current = specialtyCounts.get(req.medicalSpecialty) || 0;
-        specialtyCounts.set(req.medicalSpecialty, current + 1);
+        const current = specialtyCounts.get(req.medicalSpecialty) || 0
+        specialtyCounts.set(req.medicalSpecialty, current + 1)
       }
-    });
+    })
 
     return Array.from(specialtyCounts.entries())
       .sort((a, b) => b[1] - a[1])
       .slice(0, 3)
-      .map(([specialty]) => specialty);
+      .map(([specialty]) => specialty)
   }
 
   private updateAggregations(usageRecord: AIUsageRecord): void {
@@ -609,30 +609,30 @@ export class UsageCounter {
       'day',
       'week',
       'month',
-    ];
+    ]
 
     periods.forEach(period => {
-      const key = this.getAggregationKey(usageRecord.createdAt, period);
-      const existing = this._aggregations.get(key);
+      const key = this.getAggregationKey(usageRecord.createdAt, period)
+      const existing = this._aggregations.get(key)
 
       if (existing) {
-        existing.queries++;
-        existing.costUsd += usageRecord.costUsd;
-        existing.tokens += usageRecord.totalTokens;
+        existing.queries++
+        existing.costUsd += usageRecord.costUsd
+        existing.tokens += usageRecord.totalTokens
 
         if (existing.modelBreakdown[usageRecord.modelCode]) {
-          existing.modelBreakdown[usageRecord.modelCode]++;
+          existing.modelBreakdown[usageRecord.modelCode]++
         } else {
-          existing.modelBreakdown[usageRecord.modelCode] = 1;
+          existing.modelBreakdown[usageRecord.modelCode] = 1
         }
 
         if (
-          usageRecord.medicalSpecialty
-          && existing.specialtyBreakdown[usageRecord.medicalSpecialty]
+          usageRecord.medicalSpecialty &&
+          existing.specialtyBreakdown[usageRecord.medicalSpecialty]
         ) {
-          existing.specialtyBreakdown[usageRecord.medicalSpecialty]++;
+          existing.specialtyBreakdown[usageRecord.medicalSpecialty]++
         } else if (usageRecord.medicalSpecialty) {
-          existing.specialtyBreakdown[usageRecord.medicalSpecialty] = 1;
+          existing.specialtyBreakdown[usageRecord.medicalSpecialty] = 1
         }
       } else {
         const aggregation: UsageAggregation = {
@@ -652,30 +652,30 @@ export class UsageCounter {
               number
             >)
             : ({} as Record<MedicalSpecialty, number>),
-        };
+        }
 
-        this._aggregations.set(key, aggregation);
+        this._aggregations.set(key, aggregation)
       }
-    });
+    })
   }
 
   private getAggregationKey(
     date: Date,
     period: 'hour' | 'day' | 'week' | 'month',
   ): string {
-    const d = new Date(date);
+    const d = new Date(date)
 
     switch (period) {
       case 'hour':
-        return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}-${d.getHours()}`;
+        return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}-${d.getHours()}`
       case 'day':
-        return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+        return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`
       case 'week':
-        const weekStart = new Date(d);
-        weekStart.setDate(d.getDate() - d.getDay());
-        return `${weekStart.getFullYear()}-W${Math.ceil(weekStart.getDate() / 7)}`;
+        const weekStart = new Date(d)
+        weekStart.setDate(d.getDate() - d.getDay())
+        return `${weekStart.getFullYear()}-W${Math.ceil(weekStart.getDate() / 7)}`
       case 'month':
-        return `${d.getFullYear()}-${d.getMonth()}`;
+        return `${d.getFullYear()}-${d.getMonth()}`
     }
   }
 
@@ -683,7 +683,7 @@ export class UsageCounter {
     date: Date,
     period: 'hour' | 'day' | 'week' | 'month',
   ): Date {
-    const d = new Date(date);
+    const d = new Date(date)
 
     switch (period) {
       case 'hour':
@@ -692,19 +692,19 @@ export class UsageCounter {
           d.getMonth(),
           d.getDate(),
           d.getHours(),
-        );
+        )
       case 'day':
-        return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+        return new Date(d.getFullYear(), d.getMonth(), d.getDate())
       case 'week':
-        const weekStart = new Date(d);
-        weekStart.setDate(d.getDate() - d.getDay());
+        const weekStart = new Date(d)
+        weekStart.setDate(d.getDate() - d.getDay())
         return new Date(
           weekStart.getFullYear(),
           weekStart.getMonth(),
           weekStart.getDate(),
-        );
+        )
       case 'month':
-        return new Date(d.getFullYear(), d.getMonth(), 1);
+        return new Date(d.getFullYear(), d.getMonth(), 1)
     }
   }
 
@@ -716,21 +716,21 @@ export class UsageCounter {
    * Converts to serializable object
    */
   toJSON(): UsageCounterData & {
-    insights: ReturnType<UsageCounter['getUsageInsights']>;
-    recentActivity: AIUsageRecord[];
+    insights: ReturnType<UsageCounter['getUsageInsights']>
+    recentActivity: AIUsageRecord[]
   } {
     return {
       ...this._data,
       insights: this.getUsageInsights(),
       recentActivity: this._recentRequests.slice(-10), // Last 10 requests
-    };
+    }
   }
 
   /**
    * Creates UsageCounter from data
    */
   static fromData(data: UsageCounterData): UsageCounter {
-    return new UsageCounter(data);
+    return new UsageCounter(data)
   }
 
   /**
@@ -741,7 +741,7 @@ export class UsageCounter {
     _userId: string,
     planCode: SubscriptionTier,
   ): UsageCounter {
-    const now = new Date();
+    const now = new Date()
 
     const data: UsageCounterData = {
       clinicId,
@@ -761,8 +761,8 @@ export class UsageCounter {
       periodStart: now,
       lastActivity: now,
       lastReset: now,
-    };
+    }
 
-    return new UsageCounter(data);
+    return new UsageCounter(data)
   }
 }

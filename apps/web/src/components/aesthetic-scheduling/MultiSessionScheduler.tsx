@@ -3,42 +3,42 @@
  * Brazilian healthcare compliant aesthetic procedure scheduling with multi-session support
  */
 
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { trpc } from '@/lib/trpc';
+} from '@/components/ui/select'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import {
   type AestheticProcedure,
   type AestheticSchedulingResponse,
   type PregnancyStatus,
-} from '@/types/aesthetic-scheduling';
-import { AlertTriangle, Calendar, Loader2, User, XCircle } from 'lucide-react';
-import React, { useState } from 'react';
+} from '@/types/aesthetic-scheduling'
+import { AlertTriangle, Calendar, Loader2, User, XCircle } from 'lucide-react'
+import React, { useState } from 'react'
 
 // Custom hooks
-import { useDateManagement } from '@/hooks/useDateManagement';
-import { useMedicalHistory } from '@/hooks/useMedicalHistory';
-import { useProcedureSelection } from '@/hooks/useProcedureSelection';
-import { useProfessionalSelection } from '@/hooks/useProfessionalSelection';
-import { useSchedulingSubmission } from '@/hooks/useSchedulingSubmission';
-import { useSpecialRequirements } from '@/hooks/useSpecialRequirements';
-import { type MultiSessionSchedulingRequest } from '@/types/aesthetic-scheduling';
+import { useDateManagement } from '@/hooks/useDateManagement'
+import { useMedicalHistory } from '@/hooks/useMedicalHistory'
+import { useProcedureSelection } from '@/hooks/useProcedureSelection'
+import { useProfessionalSelection } from '@/hooks/useProfessionalSelection'
+import { useSchedulingSubmission } from '@/hooks/useSchedulingSubmission'
+import { useSpecialRequirements } from '@/hooks/useSpecialRequirements'
+import { useSchedulingData } from '@/hooks/useSchedulingData'
+import { useSchedulingForm } from '@/hooks/useSchedulingForm'
 
 interface MultiSessionSchedulerProps {
-  patientId: string;
-  onSuccess?: (response: AestheticSchedulingResponse) => void;
-  onError?: (error: Error) => void;
+  patientId: string
+  onSuccess?: (response: AestheticSchedulingResponse) => void
+  onError?: (error: Error) => void
 }
 
 export function MultiSessionScheduler(
@@ -51,18 +51,18 @@ export function MultiSessionScheduler(
     getSelectedProceduresData,
     getTotalEstimatedDuration,
     getTotalEstimatedCost,
-  } = useProcedureSelection();
+  } = useProcedureSelection()
 
   const {
     preferredDates,
     handleAddDate,
     handleRemoveDate,
-  } = useDateManagement();
+  } = useDateManagement()
 
   const {
     preferredProfessionals,
     handleProfessionalSelect,
-  } = useProfessionalSelection();
+  } = useProfessionalSelection()
 
   const {
     specialRequirements,
@@ -70,7 +70,7 @@ export function MultiSessionScheduler(
     setNewRequirement,
     handleAddRequirement,
     handleRemoveRequirement,
-  } = useSpecialRequirements();
+  } = useSpecialRequirements()
 
   const {
     medicalHistory,
@@ -87,71 +87,52 @@ export function MultiSessionScheduler(
     handleRemoveMedication,
     handleAddAllergy,
     handleRemoveAllergy,
-  } = useMedicalHistory();
+  } = useMedicalHistory()
 
   const { scheduleMutation, isSubmitting, handleSubmit } = useSchedulingSubmission(
     patientId,
     onSuccess,
     onError,
-  );
+  )
+
+  // New hooks for extracted logic
+  const {
+    proceduresData,
+    professionalsData,
+    proceduresLoading,
+    professionalsLoading,
+  } = useSchedulingData()
+
+  const { handleSubmitForm } = useSchedulingForm(onSuccess, onError)
 
   // Local state for urgency level
-  const [urgencyLevel, setUrgencyLevel] = useState<'routine' | 'priority' | 'urgent'>('routine');
-
-  // Fetch available procedures
-  const { data: proceduresData, isLoading: proceduresLoading } = trpc.aestheticScheduling
-    .getAestheticProcedures.useQuery(
-      { limit: 100, offset: 0 },
-      {
-        select: data => data.procedures || [],
-      },
-    );
-
-  // Fetch available professionals
-  const { data: professionalsData, isLoading: professionalsLoading } = trpc
-    .enhancedAestheticProfessionals.getProfessionals.useQuery();
-
-  // Check contraindications
-  const _checkContraindicationsMutation = trpc.aestheticScheduling.checkContraindications
-    .useMutation();
+  const [urgencyLevel, setUrgencyLevel] = useState<'routine' | 'priority' | 'urgent'>('routine')
 
   // Form submission handler
-  const handleSubmitForm = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleFormSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
 
     try {
-      // Validate form data
-      const formData: MultiSessionSchedulingRequest = {
+      const requestData = await handleSubmitForm(e, {
         patientId,
-        procedures: selectedProcedures,
+        selectedProcedures,
         preferredDates,
-        preferredProfessionals: preferredProfessionals.length > 0
-          ? preferredProfessionals
-          : undefined,
+        preferredProfessionals,
         urgencyLevel,
-        specialRequirements: specialRequirements.length > 0 ? specialRequirements : undefined,
-        medicalHistory: {
-          pregnancyStatus: medicalHistory.pregnancyStatus,
-          contraindications: medicalHistory.contraindications.length > 0
-            ? medicalHistory.contraindications
-            : undefined,
-          medications: medicalHistory.medications.length > 0
-            ? medicalHistory.medications
-            : undefined,
-          allergies: medicalHistory.allergies.length > 0 ? medicalHistory.allergies : undefined,
-        },
-      };
+        specialRequirements,
+        medicalHistory,
+      })
 
-      await handleSubmit(formData);
+      await handleSubmit(requestData)
     } catch (error) {
-      onError?.(error as Error);
+      onError?.(error as Error)
     }
-  };
+  }
 
   // Computed values
-  const selectedProceduresData = getSelectedProceduresData(proceduresData || []);
-  const totalEstimatedDuration = getTotalEstimatedDuration(proceduresData || []);
-  const totalEstimatedCost = getTotalEstimatedCost(proceduresData || []);
+  const selectedProceduresData = getSelectedProceduresData(proceduresData || [])
+  const totalEstimatedDuration = getTotalEstimatedDuration(proceduresData || [])
+  const totalEstimatedCost = getTotalEstimatedCost(proceduresData || [])
 
   return (
     <div className='max-w-6xl mx-auto space-y-6'>
@@ -175,7 +156,7 @@ export function MultiSessionScheduler(
         </Alert>
       )}
 
-      <form onSubmit={handleSubmitForm} className='space-y-6'>
+      <form onSubmit={handleFormSubmit} className='space-y-6'>
         <Tabs defaultValue='procedures' className='w-full'>
           <TabsList className='grid w-full grid-cols-4'>
             <TabsTrigger value='procedures'>Procedimentos</TabsTrigger>
@@ -287,8 +268,8 @@ export function MultiSessionScheduler(
                       onClick={() => {
                         const input = document.querySelector(
                           'input[type="date"]',
-                        ) as HTMLInputElement;
-                        if (input?.value) handleAddDate(input.value);
+                        ) as HTMLInputElement
+                        if (input?.value) handleAddDate(input.value)
                       }}
                     >
                       Adicionar
@@ -598,14 +579,14 @@ export function MultiSessionScheduler(
                       {preferredProfessionals.map((professionalId: string) => {
                         const professional = professionalsData?.find((p: any) =>
                           p.id === professionalId
-                        );
+                        )
                         return professional
                           ? (
                             <Badge key={professionalId} variant='secondary'>
                               {professional.name}
                             </Badge>
                           )
-                          : null;
+                          : null
                       })}
                     </div>
                   </div>
@@ -634,8 +615,9 @@ export function MultiSessionScheduler(
           </Button>
           <Button
             type='submit'
-            disabled={selectedProcedures.length === 0 || preferredDates.length === 0
-              || isSubmitting}
+            disabled={selectedProcedures.length === 0 ||
+              preferredDates.length === 0 ||
+              isSubmitting}
             className='min-w-32'
           >
             {isSubmitting
@@ -652,5 +634,5 @@ export function MultiSessionScheduler(
         </div>
       </form>
     </div>
-  );
+  )
 }

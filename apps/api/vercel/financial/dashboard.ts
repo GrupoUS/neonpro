@@ -1,8 +1,8 @@
 export async function GET(request: Request) {
   try {
-    const url = new URL(request.url);
-    const timeframe = url.searchParams.get('timeframe') || '30d';
-    const includeProjections = url.searchParams.get('includeProjections') === 'true';
+    const url = new URL(request.url)
+    const timeframe = url.searchParams.get('timeframe') || '30d'
+    const includeProjections = url.searchParams.get('includeProjections') === 'true'
 
     // Mock financial dashboard data
     const dashboardData = {
@@ -57,7 +57,7 @@ export async function GET(request: Request) {
       lastUpdated: new Date().toISOString(),
       timeframe,
       currency: 'BRL',
-    };
+    }
 
     return new Response(JSON.stringify(dashboardData), {
       status: 200,
@@ -65,9 +65,9 @@ export async function GET(request: Request) {
         'Content-Type': 'application/json',
         'Cache-Control': 'public, max-age=300',
       },
-    });
+    })
   } catch (error) {
-    console.error('Financial dashboard API error:', error);
+    console.error('Financial dashboard API error:', error)
 
     return new Response(
       JSON.stringify({
@@ -80,6 +80,6 @@ export async function GET(request: Request) {
           'Content-Type': 'application/json',
         },
       },
-    );
+    )
   }
 }

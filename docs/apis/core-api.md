@@ -54,31 +54,31 @@ GET    /api/treatments/:id # Treatment details
 ## Authentication Setup
 
 ```typescript
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from '@supabase/supabase-js'
 
 const supabase = createClient(
   process.env.SUPABASE_URL!,
   process.env.SUPABASE_ANON_KEY!,
-);
+)
 
 // Auth middleware
 const auth = async (c, next) => {
-  const token = c.req.header('authorization')?.replace('Bearer ', '');
-  const { data: { user } } = await supabase.auth.getUser(token);
-  if (!user) return c.json({ error: 'Unauthorized' }, 401);
-  c.set('user', user);
-  await next();
-};
+  const token = c.req.header('authorization')?.replace('Bearer ', '')
+  const { data: { user } } = await supabase.auth.getUser(token)
+  if (!user) return c.json({ error: 'Unauthorized' }, 401)
+  c.set('user', user)
+  await next()
+}
 ```
 
 ## Example Implementation
 
 ```typescript
-import { zValidator } from '@hono/zod-validator';
-import { Hono } from 'hono';
-import { z } from 'zod';
+import { zValidator } from '@hono/zod-validator'
+import { Hono } from 'hono'
+import { z } from 'zod'
 
-const app = new Hono();
+const app = new Hono()
 
 // Create client
 app.post(
@@ -93,17 +93,17 @@ app.post(
     }),
   ),
   async c => {
-    const data = c.req.valid('json');
+    const data = c.req.valid('json')
     const { data: client, error } = await supabase
       .from('clients')
       .insert(data)
       .select()
-      .single();
+      .single()
 
-    if (error) return c.json({ error }, 500);
-    return c.json({ data: client });
+    if (error) return c.json({ error }, 500)
+    return c.json({ data: client })
   },
-);
+)
 
 // Schedule appointment
 app.post(
@@ -117,11 +117,11 @@ app.post(
     }),
   ),
   async c => {
-    const data = c.req.valid('json');
+    const data = c.req.valid('json')
     // Implementation here
-    return c.json({ data: appointment });
+    return c.json({ data: appointment })
   },
-);
+)
 ```
 
 ## Performance Targets

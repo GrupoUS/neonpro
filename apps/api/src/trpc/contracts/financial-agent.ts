@@ -5,12 +5,12 @@
  * Supporting Brazilian aesthetic clinic financial workflows with LGPD compliance
  */
 
-import { z } from 'zod';
+import { z } from 'zod'
 import {
   AgentMessageRoleSchema,
   AgentSessionResponseSchema,
   // AgentMessageResponseSchema,
-} from './agent';
+} from './agent'
 
 /**
  * Financial-Specific Agent Types
@@ -21,8 +21,8 @@ export const FinancialAgentTypeSchema = z.enum([
   'analytics', // Financial analytics and reporting
   'compliance', // LGPD and regulatory compliance
   'audit', // Financial audit and fraud detection
-]);
-export type FinancialAgentType = z.infer<typeof FinancialAgentTypeSchema>;
+])
+export type FinancialAgentType = z.infer<typeof FinancialAgentTypeSchema>
 
 /**
  * Financial Message Types - Extended AG-UI Protocol
@@ -53,8 +53,8 @@ export const FinancialMessageTypeSchema = z.enum([
   'reconciliation_status', // Payment reconciliation status
   'dispute_resolution', // Payment dispute handling
   'refund_processing', // Refund processing and tracking
-]);
-export type FinancialMessageType = z.infer<typeof FinancialMessageTypeSchema>;
+])
+export type FinancialMessageType = z.infer<typeof FinancialMessageTypeSchema>
 
 /**
  * Financial Operation Context Schema
@@ -67,8 +67,8 @@ export const FinancialContextSchema = z.object({
   currency: z.enum(['BRL', 'USD', 'EUR']).default('BRL'),
   tax_region: z.enum(['BR', 'US', 'EU']).default('BR'),
   compliance_level: z.enum(['standard', 'enhanced', 'strict']).default('strict'),
-});
-export type FinancialContext = z.infer<typeof FinancialContextSchema>;
+})
+export type FinancialContext = z.infer<typeof FinancialContextSchema>
 
 /**
  * Financial Message Schema - Core AG-UI Extension
@@ -93,7 +93,7 @@ export const CreateFinancialMessageSchema = z.object({
     .optional(),
   priority: z.enum(['low', 'normal', 'high', 'urgent']).default('normal'),
   requires_approval: z.boolean().default(false),
-});
+})
 
 export const FinancialMessageResponseSchema = z.object({
   id: z.string().uuid(),
@@ -116,7 +116,7 @@ export const FinancialMessageResponseSchema = z.object({
   confidence_score: z.number().min(0).max(1).optional(),
   ai_insights: z.record(z.unknown()).optional(),
   created_at: z.date(),
-});
+})
 
 /**
  * Billing Operation Schemas
@@ -164,7 +164,7 @@ export const BillingOperationSchema = z.object({
     .optional(),
   notes: z.string().optional(),
   due_date: z.date().optional(),
-});
+})
 
 export const BillingResponseSchema = z.object({
   billing_id: z.string().uuid(),
@@ -195,7 +195,7 @@ export const BillingResponseSchema = z.object({
   ),
   tax_breakdown: z.record(z.number()),
   discount_breakdown: z.record(z.number()),
-});
+})
 
 /**
  * Payment Processing Schemas
@@ -210,7 +210,7 @@ export const PaymentRequestSchema = z.object({
   customer_ip: z.string().ip().optional(),
   device_fingerprint: z.string().optional(),
   metadata: z.record(z.unknown()).optional(),
-});
+})
 
 export const PaymentResponseSchema = z.object({
   payment_id: z.string().uuid(),
@@ -233,7 +233,7 @@ export const PaymentResponseSchema = z.object({
     .optional(),
   created_at: z.date(),
   processed_at: z.date().nullable(),
-});
+})
 
 /**
  * Financial Analytics Schemas
@@ -268,7 +268,7 @@ export const AnalyticsQuerySchema = z.object({
       patients: z.array(z.string().uuid()).optional(),
     })
     .optional(),
-});
+})
 
 export const AnalyticsResponseSchema = z.object({
   time_range: z.object({
@@ -281,7 +281,7 @@ export const AnalyticsResponseSchema = z.object({
   recommendations: z.array(z.string()),
   confidence_level: z.number().min(0).max(1),
   generated_at: z.date(),
-});
+})
 
 /**
  * Fraud Detection and Audit Schemas
@@ -308,7 +308,7 @@ export const FraudAlertSchema = z.object({
   recommended_action: z.enum(['review', 'block', 'investigate', 'monitor']),
   created_at: z.date(),
   status: z.enum(['open', 'investigating', 'resolved', 'false_positive']),
-});
+})
 
 export const AuditTrailSchema = z.object({
   event_id: z.string().uuid(),
@@ -320,7 +320,7 @@ export const AuditTrailSchema = z.object({
   user_agent: z.string().optional(),
   timestamp: z.date(),
   compliance_flags: z.array(z.string()).optional(),
-});
+})
 
 /**
  * LGPD Compliance Schemas
@@ -341,7 +341,7 @@ export const LGPDComplianceRequestSchema = z.object({
   legal_basis: z.enum(['consent', 'contract', 'legal_obligation', 'vital_interests']),
   retention_period: z.number().optional(),
   purpose: z.string(),
-});
+})
 
 export const LGPDComplianceResponseSchema = z.object({
   request_id: z.string().uuid(),
@@ -351,7 +351,7 @@ export const LGPDComplianceResponseSchema = z.object({
   retention_scheduled: z.boolean().optional(),
   compliance_certificate: z.string().optional(),
   completed_at: z.date().nullable(),
-});
+})
 
 /**
  * Financial Agent Session Schema - Extended
@@ -363,7 +363,7 @@ export const CreateFinancialAgentSessionSchema = z.object({
   capabilities: z.array(z.enum(['billing', 'analytics', 'fraud_detection', 'compliance'])),
   initial_context: z.record(z.unknown()).optional(),
   metadata: z.record(z.unknown()).optional(),
-});
+})
 
 export const FinancialAgentSessionResponseSchema = AgentSessionResponseSchema.extend({
   agent_type: z.literal('financial'),
@@ -376,7 +376,7 @@ export const FinancialAgentSessionResponseSchema = AgentSessionResponseSchema.ex
     fraud_detection_rate: z.number().min(0).max(1),
     compliance_score: z.number().min(0).max(1),
   }),
-});
+})
 
 /**
  * Financial Action Schemas - AG-UI Protocol Actions
@@ -405,7 +405,7 @@ export const FinancialActionSchema = z.object({
       auto_approve_threshold: z.number().optional(), // amount threshold
     })
     .optional(),
-});
+})
 
 export const FinancialEventSchema = z.object({
   event: FinancialMessageTypeSchema,
@@ -414,7 +414,7 @@ export const FinancialEventSchema = z.object({
   financial_context: FinancialContextSchema,
   timestamp: z.date(),
   correlation_id: z.string().uuid().optional(),
-});
+})
 
 /**
  * Response Wrappers
@@ -432,7 +432,7 @@ export const FinancialMessageListResponseSchema = z.object({
   }),
   timestamp: z.string().datetime(),
   requestId: z.string().optional(),
-});
+})
 
 export const FinancialOperationResponseSchema = z.object({
   success: z.literal(true),
@@ -446,7 +446,7 @@ export const FinancialOperationResponseSchema = z.object({
   }),
   timestamp: z.string().datetime(),
   requestId: z.string().optional(),
-});
+})
 
 export const FinancialAnalyticsResponseSchema = z.object({
   success: z.literal(true),
@@ -473,7 +473,7 @@ export const FinancialAnalyticsResponseSchema = z.object({
   }),
   timestamp: z.string().datetime(),
   requestId: z.string().optional(),
-});
+})
 
 /**
  * Error Response Schema
@@ -489,30 +489,30 @@ export const FinancialErrorResponseSchema = z.object({
   }),
   timestamp: z.string().datetime(),
   requestId: z.string().optional(),
-});
+})
 
 /**
  * Export all types
  */
-export type CreateFinancialMessageRequest = z.infer<typeof CreateFinancialMessageSchema>;
-export type FinancialMessage = z.infer<typeof FinancialMessageResponseSchema>;
-export type BillingOperation = z.infer<typeof BillingOperationSchema>;
-export type BillingResponse = z.infer<typeof BillingResponseSchema>;
-export type PaymentRequest = z.infer<typeof PaymentRequestSchema>;
-export type PaymentResponse = z.infer<typeof PaymentResponseSchema>;
-export type AnalyticsQuery = z.infer<typeof AnalyticsQuerySchema>;
-export type AnalyticsResponse = z.infer<typeof AnalyticsResponseSchema>;
-export type FraudAlert = z.infer<typeof FraudAlertSchema>;
-export type AuditTrail = z.infer<typeof AuditTrailSchema>;
-export type LGPDComplianceRequest = z.infer<typeof LGPDComplianceRequestSchema>;
-export type LGPDComplianceResponse = z.infer<typeof LGPDComplianceResponseSchema>;
+export type CreateFinancialMessageRequest = z.infer<typeof CreateFinancialMessageSchema>
+export type FinancialMessage = z.infer<typeof FinancialMessageResponseSchema>
+export type BillingOperation = z.infer<typeof BillingOperationSchema>
+export type BillingResponse = z.infer<typeof BillingResponseSchema>
+export type PaymentRequest = z.infer<typeof PaymentRequestSchema>
+export type PaymentResponse = z.infer<typeof PaymentResponseSchema>
+export type AnalyticsQuery = z.infer<typeof AnalyticsQuerySchema>
+export type AnalyticsResponse = z.infer<typeof AnalyticsResponseSchema>
+export type FraudAlert = z.infer<typeof FraudAlertSchema>
+export type AuditTrail = z.infer<typeof AuditTrailSchema>
+export type LGPDComplianceRequest = z.infer<typeof LGPDComplianceRequestSchema>
+export type LGPDComplianceResponse = z.infer<typeof LGPDComplianceResponseSchema>
 export type CreateFinancialAgentSessionRequest = z.infer<
   typeof CreateFinancialAgentSessionSchema
->;
-export type FinancialAgentSession = z.infer<typeof FinancialAgentSessionResponseSchema>;
-export type FinancialAction = z.infer<typeof FinancialActionSchema>;
-export type FinancialEvent = z.infer<typeof FinancialEventSchema>;
-export type FinancialMessageListResponse = z.infer<typeof FinancialMessageListResponseSchema>;
-export type FinancialOperationResponse = z.infer<typeof FinancialOperationResponseSchema>;
-export type FinancialAnalyticsResponse = z.infer<typeof FinancialAnalyticsResponseSchema>;
-export type FinancialErrorResponse = z.infer<typeof FinancialErrorResponseSchema>;
+>
+export type FinancialAgentSession = z.infer<typeof FinancialAgentSessionResponseSchema>
+export type FinancialAction = z.infer<typeof FinancialActionSchema>
+export type FinancialEvent = z.infer<typeof FinancialEventSchema>
+export type FinancialMessageListResponse = z.infer<typeof FinancialMessageListResponseSchema>
+export type FinancialOperationResponse = z.infer<typeof FinancialOperationResponseSchema>
+export type FinancialAnalyticsResponse = z.infer<typeof FinancialAnalyticsResponseSchema>
+export type FinancialErrorResponse = z.infer<typeof FinancialErrorResponseSchema>

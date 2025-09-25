@@ -612,8 +612,8 @@ async function getPatients(clinicId, token) {
         'Content-Type': 'application/json',
       },
     },
-  );
-  return await response.json();
+  )
+  return await response.json()
 }
 
 // Create patient
@@ -625,8 +625,8 @@ async function createPatient(patientData, token) {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(patientData),
-  });
-  return await response.json();
+  })
+  return await response.json()
 }
 ```
 
@@ -642,8 +642,8 @@ async function createAppointment(appointmentData, token) {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(appointmentData),
-  });
-  return await response.json();
+  })
+  return await response.json()
 }
 
 // Get patient appointments
@@ -656,8 +656,8 @@ async function getPatientAppointments(patientId, token) {
         Authorization: `Bearer ${token}`,
       },
     },
-  );
-  return await response.json();
+  )
+  return await response.json()
 }
 ```
 
@@ -673,8 +673,8 @@ async function createInvoice(invoiceData, token) {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(invoiceData),
-  });
-  return await response.json();
+  })
+  return await response.json()
 }
 
 // Process payment
@@ -689,8 +689,8 @@ async function processPayment(invoiceId, paymentData, token) {
       },
       body: JSON.stringify(paymentData),
     },
-  );
-  return await response.json();
+  )
+  return await response.json()
 }
 ```
 

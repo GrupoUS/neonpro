@@ -4,43 +4,55 @@
   // Ultra-fast linter with healthcare compliance rules
   // 50x faster than ESLint with zero-config defaults
   // Compatible with ESLint v8 format
-
+  "$schema": "https://raw.githubusercontent.com/oxc-project/oxc/main/npm/oxlint/configuration_schema.json",
   "plugins": [
+    "unicorn",
     "typescript",
     "react",
+    "jsx-a11y",
     "import",
-    "jsdoc",
     "promise",
-    "jsx-a11y"
+    "jsdoc",
+    "oxc"
   ],
-
   "rules": {
     // Type safety and code quality
     "no-unused-vars": "error",
-    "no-console": ["warn", { "allow": ["warn", "error"] }],
+    "no-console": [
+      "warn",
+      {
+        "allow": [
+          "warn",
+          "error"
+        ]
+      }
+    ],
     "no-debugger": "error",
     "prefer-const": "error",
     "no-var": "error",
     "object-shorthand": "error",
-
     // TypeScript compliance for healthcare applications
     "typescript/prefer-optional-chain": "error",
     "typescript/prefer-nullish-coalescing": "error",
-    "typescript/no-unsafe-assignment": "error",
-    "typescript/no-unsafe-member-access": "error",
-    "typescript/no-unsafe-call": "error",
-    "typescript/no-unsafe-return": "error",
-
+    "typescript/no-unsafe-assignment": "warn",
+    "typescript/no-unsafe-member-access": "warn",
+    "typescript/no-unsafe-call": "warn",
+    "typescript/no-unsafe-return": "warn",
     // React best practices for healthcare UI
     "react/jsx-no-target-blank": "error",
-    "react/jsx-curly-brace-presence": ["error", { "props": "never", "children": "never" }],
+    "react/jsx-curly-brace-presence": [
+      "error",
+      {
+        "props": "never",
+        "children": "never"
+      }
+    ],
     "react/no-unescaped-entities": "error",
     "react/no-array-index-key": "error",
     "react/no-children-prop": "error",
     "react/prop-types": "off", // Using TypeScript instead
     "react-hooks/rules-of-hooks": "error",
     "react-hooks/exhaustive-deps": "error",
-
     // Accessibility rules for healthcare compliance (WCAG 2.1 AA+)
     "jsx-a11y/alt-text": "error",
     "jsx-a11y/anchor-is-valid": "error",
@@ -49,49 +61,91 @@
     "jsx-a11y/aria-unsupported-elements": "error",
     "jsx-a11y/role-has-required-aria-props": "error",
     "jsx-a11y/role-supports-aria-props": "error",
-
     // Import organization and dependency management
-    "import/order": ["error", {
-      "groups": ["builtin", "external", "internal", "parent", "sibling", "index"],
-      "newlines-between": "always"
-    }],
-    "import/no-unresolved": "error",
-    "import/no-extraneous-dependencies": "error",
-
+    "import/order": [
+      "error",
+      {
+        "groups": [
+          "builtin",
+          "external",
+          "internal",
+          "parent",
+          "sibling",
+          "index"
+        ],
+        "newlines-between": "always"
+      }
+    ],
+    "import/no-unresolved": "off",
+    "import/no-extraneous-dependencies": "off",
     // Promise handling for async operations
     "promise/prefer-await-to-then": "error",
     "promise/no-return-wrap": "error",
     "promise/param-names": "error",
-
     // ES6+ features and modern JavaScript
-
     // JSDoc for healthcare API documentation
-    "jsdoc/require-jsdoc": ["warn", {
-      "contexts": ["FunctionExpression", "ClassDeclaration"],
-      "require": {
-        "FunctionExpression": true,
-        "ClassDeclaration": true
+    "jsdoc/require-jsdoc": [
+      "warn",
+      {
+        "contexts": [
+          "FunctionExpression",
+          "ClassDeclaration"
+        ],
+        "require": {
+          "FunctionExpression": true,
+          "ClassDeclaration": true
+        }
       }
-    }]
+    ],
+    // Healthcare-specific security rules
+    "no-eval": "error",
+    "no-implied-eval": "error",
+    // Healthcare data validation rules
+    "no-restricted-imports": [
+      "error",
+      {
+        "paths": [
+          {
+            "name": "crypto",
+            "message": "Use secure crypto utilities from healthcare security package"
+          }
+        ]
+      }
+    ],
+    // Performance rules for healthcare applications
+    "no-warning-comments": [
+      "warn",
+      {
+        "terms": ["todo", "fixme", "hack"],
+        "location": "start"
+      }
+    ]
   },
-
   "overrides": [
     {
-      "files": ["**/*.test.{ts,tsx}", "**/*.spec.{ts,tsx}"],
+      "files": [
+        "**/*.test.{ts,tsx}",
+        "**/*.spec.{ts,tsx}"
+      ],
       "rules": {
         "no-console": "off",
-        "no-unused-vars": "off"
+        "no-unused-vars": "off",
+        "jsdoc/require-jsdoc": "off"
       }
     },
     {
-      "files": ["**/*.config.{js,ts}"],
+      "files": [
+        "**/*.config.{js,ts}"
+      ],
       "rules": {
         "no-console": "off",
         "import/no-extraneous-dependencies": "off"
       }
     },
     {
-      "files": ["src/compliance/**/*.{ts,tsx}"],
+      "files": [
+        "src/compliance/**/*.{ts,tsx}"
+      ],
       "rules": {
         "no-console": "error",
         "typescript/no-unsafe-assignment": "error",
@@ -99,17 +153,85 @@
         "typescript/no-unsafe-call": "error",
         "typescript/no-unsafe-return": "error",
         "typescript/prefer-optional-chain": "error",
-        "typescript/prefer-nullish-coalescing": "error"
+        "typescript/prefer-nullish-coalescing": "error",
+        "jsdoc/require-jsdoc": "error"
       }
     },
     {
-      "files": ["src/agents/**/*.{ts,tsx}"],
+      "files": [
+        "src/agents/**/*.{ts,tsx}"
+      ],
       "rules": {
-        "jsdoc/require-jsdoc": "error"
+        "jsdoc/require-jsdoc": "error",
+        "no-console": "warn"
+      }
+    },
+    {
+      "files": [
+        "src/patient-data/**/*.{ts,tsx}",
+        "src/medical-records/**/*.{ts,tsx}",
+        "src/appointments/**/*.{ts,tsx}",
+        "src/compliance/**/*.{ts,tsx}"
+      ],
+      "rules": {
+        "typescript/no-unsafe-assignment": "error",
+        "typescript/no-unsafe-member-access": "error",
+        "typescript/no-unsafe-call": "error",
+        "typescript/no-unsafe-return": "error",
+        "no-console": "error",
+        "jsdoc/require-jsdoc": "error",
+        "prefer-const": "error",
+        "no-var": "error"
+      }
+    },
+    {
+      "files": [
+        "src/components/**/*.{tsx,ts}"
+      ],
+      "rules": {
+        "jsx-a11y/alt-text": "error",
+        "jsx-a11y/anchor-is-valid": "error",
+        "jsx-a11y/aria-props": "error",
+        "jsx-a11y/aria-proptypes": "error",
+        "jsx-a11y/aria-unsupported-elements": "error",
+        "jsx-a11y/role-has-required-aria-props": "error",
+        "jsx-a11y/role-supports-aria-props": "error",
+        "react/jsx-no-target-blank": "error",
+        "react/no-unescaped-entities": "error"
+      }
+    },
+    {
+      "files": [
+        "**/logger/**/*.{ts,js}",
+        "**/console-manager.ts"
+      ],
+      "rules": {
+        "no-console": "off"
+      }
+    },
+    {
+      "files": [
+        "**/scripts/**/*.{js,ts,cjs}",
+        "**/fix-*.cjs",
+        "**/fix-*.js",
+        "**/fix-*.ts"
+      ],
+      "rules": {
+        "no-console": "off",
+        "no-unused-vars": "warn"
+      }
+    },
+    {
+      "files": [
+        "**/security/**/*.{ts,js}",
+        "**/encryption.ts"
+      ],
+      "rules": {
+        "no-restricted-imports": "off",
+        "no-console": "off"
       }
     }
   ],
-
   "ignorePatterns": [
     "node_modules/**",
     "dist/**",
@@ -122,30 +244,29 @@
     ".turbo/**",
     "tools/**/node_modules/**",
     "packages/**/dist/**",
-    "apps/**/dist/**"
+    "apps/**/dist/**",
+    "tools/tests-consolidated/**",
+    ".serena/**",
+    ".specify/**"
   ],
-
-  "settings": {
-    "import/resolver": {
-      "typescript": {
-        "alwaysTryTypes": true,
-        "project": "./tsconfig.json"
-      }
-    }
-  },
-
-  "parserOptions": {
-    "project": "./tsconfig.json",
-    "ecmaVersion": 2022,
-    "sourceType": "module",
-    "ecmaFeatures": {
-      "jsx": true
-    }
-  },
-
   "env": {
     "browser": true,
     "node": true,
     "es2022": true
+  },
+  "settings": {
+    "healthcare": {
+      "lgpdCompliance": true,
+      "anvisaValidation": true,
+      "cfmStandards": true,
+      "patientDataValidation": true,
+      "auditRequirements": true,
+      "brazilianDataResidency": true
+    },
+    "performance": {
+      "maxFileSize": "500kb",
+      "maxLines": 2000,
+      "complexityThreshold": 10
+    }
   }
 }

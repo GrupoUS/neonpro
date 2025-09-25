@@ -6,115 +6,115 @@ export interface Database {
     Tables: {
       users: {
         Row: {
-          id: string;
-          email: string;
-          name: string;
-          role: 'admin' | 'doctor' | 'receptionist' | 'patient';
-          created_at: string;
-          updated_at: string;
-        };
+          id: string
+          email: string
+          name: string
+          role: 'admin' | 'doctor' | 'receptionist' | 'patient'
+          created_at: string
+          updated_at: string
+        }
         Insert: {
-          id?: string;
-          email: string;
-          name: string;
-          role: 'admin' | 'doctor' | 'receptionist' | 'patient';
-          created_at?: string;
-          updated_at?: string;
-        };
+          id?: string
+          email: string
+          name: string
+          role: 'admin' | 'doctor' | 'receptionist' | 'patient'
+          created_at?: string
+          updated_at?: string
+        }
         Update: {
-          id?: string;
-          email?: string;
-          name?: string;
-          role?: 'admin' | 'doctor' | 'receptionist' | 'patient';
-          created_at?: string;
-          updated_at?: string;
-        };
-      };
+          id?: string
+          email?: string
+          name?: string
+          role?: 'admin' | 'doctor' | 'receptionist' | 'patient'
+          created_at?: string
+          updated_at?: string
+        }
+      }
       patients: {
         Row: {
-          id: string;
-          user_id: string;
-          full_name: string;
-          phone: string;
-          date_of_birth: string;
-          gender: 'male' | 'female' | 'other';
-          created_at: string;
-          updated_at: string;
-        };
+          id: string
+          user_id: string
+          full_name: string
+          phone: string
+          date_of_birth: string
+          gender: 'male' | 'female' | 'other'
+          created_at: string
+          updated_at: string
+        }
         Insert: {
-          id?: string;
-          user_id: string;
-          full_name: string;
-          phone: string;
-          date_of_birth: string;
-          gender: 'male' | 'female' | 'other';
-          created_at?: string;
-          updated_at?: string;
-        };
+          id?: string
+          user_id: string
+          full_name: string
+          phone: string
+          date_of_birth: string
+          gender: 'male' | 'female' | 'other'
+          created_at?: string
+          updated_at?: string
+        }
         Update: {
-          id?: string;
-          user_id?: string;
-          full_name?: string;
-          phone?: string;
-          date_of_birth?: string;
-          gender?: 'male' | 'female' | 'other';
-          created_at?: string;
-          updated_at?: string;
-        };
-      };
+          id?: string
+          user_id?: string
+          full_name?: string
+          phone?: string
+          date_of_birth?: string
+          gender?: 'male' | 'female' | 'other'
+          created_at?: string
+          updated_at?: string
+        }
+      }
       appointments: {
         Row: {
-          id: string;
-          patient_id: string;
-          doctor_id: string;
-          service_id: string;
-          scheduled_at: string;
+          id: string
+          patient_id: string
+          doctor_id: string
+          service_id: string
+          scheduled_at: string
           status:
             | 'scheduled'
             | 'confirmed'
             | 'in_progress'
             | 'completed'
             | 'cancelled'
-            | 'no_show';
-          notes?: string;
-          created_at: string;
-          updated_at: string;
-        };
+            | 'no_show'
+          notes?: string
+          created_at: string
+          updated_at: string
+        }
         Insert: {
-          id?: string;
-          patient_id: string;
-          doctor_id: string;
-          service_id: string;
-          scheduled_at: string;
+          id?: string
+          patient_id: string
+          doctor_id: string
+          service_id: string
+          scheduled_at: string
           status:
             | 'scheduled'
             | 'confirmed'
             | 'in_progress'
             | 'completed'
             | 'cancelled'
-            | 'no_show';
-          notes?: string;
-          created_at?: string;
-          updated_at?: string;
-        };
+            | 'no_show'
+          notes?: string
+          created_at?: string
+          updated_at?: string
+        }
         Update: {
-          id?: string;
-          patient_id?: string;
-          doctor_id?: string;
-          service_id?: string;
-          scheduled_at?: string;
+          id?: string
+          patient_id?: string
+          doctor_id?: string
+          service_id?: string
+          scheduled_at?: string
           status?:
             | 'scheduled'
             | 'confirmed'
             | 'in_progress'
             | 'completed'
             | 'cancelled'
-            | 'no_show';
-          notes?: string;
-          created_at?: string;
-          updated_at?: string;
-        };
-      };
-    };
-  };
+            | 'no_show'
+          notes?: string
+          created_at?: string
+          updated_at?: string
+        }
+      }
+    }
+  }
 }

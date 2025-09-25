@@ -3,67 +3,176 @@
  * Handles LGPD, ANVISA, and Professional Council compliance requirements
  */
 
-import { logHealthcareError } from '@neonpro/shared';
+import { logHealthcareError } from '@neonpro/shared'
 import {
-  AnvisaProductCompliance,
-  ComplianceAlert,
-  type ComplianceAlertInput,
   ComplianceAssessment,
-  type ComplianceAssessmentInput,
-  ComplianceAuditTrail,
   ComplianceCategory,
-  ComplianceReport,
-  type ComplianceReportInput,
   ComplianceRequirement,
-  DataBreachIncident,
-  type DataBreachInput,
-  type DataConsentInput,
   DataConsentRecord,
-  DataRetentionJob,
   DataSubjectRequest,
-  type DataSubjectRequestInput,
-  ProfessionalLicenseCompliance,
-  RetentionPolicy,
-} from '@neonpro/types';
+} from '@neonpro/types'
+
+// Type definitions for missing interfaces
+interface ComplianceAssessmentInput {
+  clinicId: string
+  requirementId: string
+  assessmentType: string
+  findings: string[]
+  recommendations: string[]
+  evidenceUrls: string[]
+  assessedBy: string
+  score?: number
+  notes?: string
+}
+
+interface DataConsentInput {
+  clientId: string
+  clinicId: string
+  consentType: string
+  consentVersion: string
+  consentDocumentUrl: string
+  ipAddress: string
+  userAgent: string
+}
+
+interface DataSubjectRequestInput {
+  clientId: string
+  clinicId: string
+  requestType: string
+  requestDescription: string
+  requestedData: string[]
+}
+
+interface DataBreachIncident {
+  id: string
+  description: string
+  severity: 'low' | 'medium' | 'high' | 'critical'
+  affectedRecords: number
+  status: 'open' | 'investigating' | 'resolved'
+}
+
+interface DataBreachInput {
+  clinicId: string
+  breachType: string
+  description: string
+  severity: 'low' | 'medium' | 'high' | 'critical'
+  affectedRecords: number
+  severityLevel?: string
+  affectedDataTypes?: string[]
+  affectedClientsCount?: number
+  reportedBy?: string
+}
+
+// Additional missing type definitions
+interface AnvisaProductCompliance {
+  id: string
+  productId: string
+  anvisaRegistration: string
+  status: 'compliant' | 'non_compliant' | 'under_review'
+  lastCheck: string
+  registrationStatus?: string
+  expiryDate?: string
+}
+
+interface ProfessionalLicenseCompliance {
+  id: string
+  professionalId: string
+  licenseNumber: string
+  councilType: string
+  status: 'active' | 'expired' | 'suspended'
+  expiryDate: string
+  licenseStatus?: string
+  isVerified?: boolean
+}
+
+interface ComplianceReportInput {
+  clinicId: string
+  reportType: string
+  periodStart: string
+  periodEnd: string
+  reportPeriodStart?: string
+  reportPeriodEnd?: string
+  generatedBy?: string
+}
+
+interface ComplianceReport {
+  id: string
+  clinicId: string
+  reportType: string
+  generatedAt: string
+  status: string
+}
+
+interface ComplianceAlert {
+  id: string
+  clinicId: string
+  type: string
+  severity: 'low' | 'medium' | 'high' | 'critical'
+  message: string
+  createdAt: string
+}
+
+interface ComplianceAlertInput {
+  clinicId: string
+  alertType: string
+  severityLevel: 'low' | 'medium' | 'high' | 'critical'
+  title: string
+  description: string
+  referenceId?: string
+  referenceType?: string
+}
+
+interface RetentionPolicy {
+  id: string
+  name: string
+  description: string
+  retentionPeriod: number // in days
+  retention_rule: string
+  retention_period_months: number
+  dataType: 'consent_records' | 'audit_logs' | 'compliance_reports' | 'all'
+  document_type: string
+  action: 'archive' | 'delete' | 'anonymize'
+  isActive: boolean
+}
 
 export class ComplianceManagementService {
-  private supabase: any;
+  private supabase: any
 
   constructor(supabaseClient: any) {
-    this.supabase = supabaseClient;
+    this.supabase = supabaseClient
   }
 
   // Compliance Categories and Requirements Management
   async getComplianceCategories(regulatoryBody?: string): Promise<ComplianceCategory[]> {
-    let query = this.supabase.from('compliance_categories').select('*');
+    let query = this.supabase.from('compliance_categories').select('*')
 
     if (regulatoryBody) {
-      query = query.eq('regulatory_body', regulatoryBody);
+      query = query.eq('regulatory_body', regulatoryBody)
     }
 
-    const { data, error } = await query;
+    const { data, error } = await query
 
     if (error) {
-      throw new Error(`Erro ao buscar categorias de compliance: ${error.message}`);
+      throw new Error(`Erro ao buscar categorias de compliance: ${error.message}`)
     }
 
-    return data || [];
+    return data || []
   }
 
   async getComplianceRequirements(categoryId?: string): Promise<ComplianceRequirement[]> {
-    let query = this.supabase.from('compliance_requirements').select('*');
+    let query = this.supabase.from('compliance_requirements').select('*')
 
     if (categoryId) {
-      query = query.eq('category_id', categoryId);
+      query = query.eq('category_id', categoryId)
     }
 
-    const { data, error } = await query;
+    const { data, error } = await query
 
     if (error) {
-      throw new Error(`Erro ao buscar requisitos de compliance: ${error.message}`);
+      throw new Error(`Erro ao buscar requisitos de compliance: ${error.message}`)
     }
 
-    return data || [];
+    return data || []
   }
 
   // Compliance Assessments
@@ -82,10 +191,10 @@ export class ComplianceManagementService {
         assessed_by: assessment.assessedBy,
       }])
       .select()
-      .single();
+      .single()
 
     if (error) {
-      throw new Error(`Erro ao criar avaliação de compliance: ${error.message}`);
+      throw new Error(`Erro ao criar avaliação de compliance: ${error.message}`)
     }
 
     // Log the assessment creation
@@ -98,9 +207,9 @@ export class ComplianceManagementService {
       affectedRecordId: data.id,
       affectedRecordType: 'compliance_assessment',
       newValues: { assessment_type: assessment.assessmentType },
-    });
+    })
 
-    return data;
+    return data
   }
 
   async getComplianceAssessments(
@@ -126,21 +235,21 @@ export class ComplianceManagementService {
           professional_type
         )
       `)
-      .eq('clinic_id', clinicId);
+      .eq('clinic_id', clinicId)
 
     if (status) {
-      query = query.eq('status', status);
+      query = query.eq('status', status)
     }
 
-    query = query.order('assessment_date', { ascending: false });
+    query = query.order('assessment_date', { ascending: false })
 
-    const { data, error } = await query;
+    const { data, error } = await query
 
     if (error) {
-      throw new Error(`Erro ao buscar avaliações de compliance: ${error.message}`);
+      throw new Error(`Erro ao buscar avaliações de compliance: ${error.message}`)
     }
 
-    return data || [];
+    return data || []
   }
 
   async updateAssessmentStatus(
@@ -157,13 +266,13 @@ export class ComplianceManagementService {
       })
       .eq('id', assessmentId)
       .select()
-      .single();
+      .single()
 
     if (error) {
-      throw new Error(`Erro ao atualizar status da avaliação: ${error.message}`);
+      throw new Error(`Erro ao atualizar status da avaliação: ${error.message}`)
     }
 
-    return data;
+    return data
   }
 
   // Data Consent Management
@@ -180,13 +289,13 @@ export class ComplianceManagementService {
         user_agent: consent.userAgent,
       }])
       .select()
-      .single();
+      .single()
 
     if (error) {
-      throw new Error(`Erro ao criar registro de consentimento: ${error.message}`);
+      throw new Error(`Erro ao criar registro de consentimento: ${error.message}`)
     }
 
-    return data;
+    return data
   }
 
   async getClientConsents(clientId: string, clinicId: string): Promise<DataConsentRecord[]> {
@@ -195,13 +304,13 @@ export class ComplianceManagementService {
       .select('*')
       .eq('client_id', clientId)
       .eq('clinic_id', clinicId)
-      .order('consent_date', { ascending: false });
+      .order('consent_date', { ascending: false })
 
     if (error) {
-      throw new Error(`Erro ao buscar consentimentos do cliente: ${error.message}`);
+      throw new Error(`Erro ao buscar consentimentos do cliente: ${error.message}`)
     }
 
-    return data || [];
+    return data || []
   }
 
   async withdrawConsent(consentId: string, withdrawalReason?: string): Promise<DataConsentRecord> {
@@ -215,19 +324,19 @@ export class ComplianceManagementService {
       })
       .eq('id', consentId)
       .select()
-      .single();
+      .single()
 
     if (error) {
-      throw new Error(`Erro ao revogar consentimento: ${error.message}`);
+      throw new Error(`Erro ao revogar consentimento: ${error.message}`)
     }
 
-    return data;
+    return data
   }
 
   // Data Subject Rights Management
   async createDataSubjectRequest(request: DataSubjectRequestInput): Promise<DataSubjectRequest> {
-    const resolutionDeadline = new Date();
-    resolutionDeadline.setDate(resolutionDeadline.getDate() + 15); // 15 days as per LGPD
+    const resolutionDeadline = new Date()
+    resolutionDeadline.setDate(resolutionDeadline.getDate() + 15) // 15 days as per LGPD
 
     const { data, error } = await this.supabase
       .from('data_subject_requests')
@@ -240,13 +349,13 @@ export class ComplianceManagementService {
         resolution_deadline: resolutionDeadline.toISOString(),
       }])
       .select()
-      .single();
+      .single()
 
     if (error) {
-      throw new Error(`Erro ao criar solicitação de titular: ${error.message}`);
+      throw new Error(`Erro ao criar solicitação de titular: ${error.message}`)
     }
 
-    return data;
+    return data
   }
 
   async getDataSubjectRequests(clinicId: string, status?: string): Promise<DataSubjectRequest[]> {
@@ -265,21 +374,21 @@ export class ComplianceManagementService {
           professional_type
         )
       `)
-      .eq('clinic_id', clinicId);
+      .eq('clinic_id', clinicId)
 
     if (status) {
-      query = query.eq('status', status);
+      query = query.eq('status', status)
     }
 
-    query = query.order('created_at', { ascending: false });
+    query = query.order('created_at', { ascending: false })
 
-    const { data, error } = await query;
+    const { data, error } = await query
 
     if (error) {
-      throw new Error(`Erro ao buscar solicitações de titulares: ${error.message}`);
+      throw new Error(`Erro ao buscar solicitações de titulares: ${error.message}`)
     }
 
-    return data || [];
+    return data || []
   }
 
   async processDataSubjectRequest(
@@ -291,18 +400,18 @@ export class ComplianceManagementService {
     const updateData: any = {
       status,
       updated_at: new Date().toISOString(),
-    };
+    }
 
     if (processedBy) {
-      updateData.processed_by = processedBy;
+      updateData.processed_by = processedBy
     }
 
     if (responseText) {
-      updateData.response_text = responseText;
+      updateData.response_text = responseText
     }
 
     if (status === 'completed' || status === 'rejected') {
-      updateData.processed_at = new Date().toISOString();
+      updateData.processed_at = new Date().toISOString()
     }
 
     const { data, error } = await this.supabase
@@ -310,13 +419,13 @@ export class ComplianceManagementService {
       .update(updateData)
       .eq('id', requestId)
       .select()
-      .single();
+      .single()
 
     if (error) {
-      throw new Error(`Erro ao processar solicitação de titular: ${error.message}`);
+      throw new Error(`Erro ao processar solicitação de titular: ${error.message}`)
     }
 
-    return data;
+    return data
   }
 
   // Data Breach Management
@@ -333,10 +442,10 @@ export class ComplianceManagementService {
         reported_by: breach.reportedBy,
       }])
       .select()
-      .single();
+      .single()
 
     if (error) {
-      throw new Error(`Erro ao criar incidente de vazamento de dados: ${error.message}`);
+      throw new Error(`Erro ao criar incidente de vazamento de dados: ${error.message}`)
     }
 
     // Log the breach creation
@@ -348,9 +457,9 @@ export class ComplianceManagementService {
       affectedRecordId: data.id,
       affectedRecordType: 'data_breach_incident',
       newValues: { breach_type: breach.breachType, severity_level: breach.severityLevel },
-    });
+    })
 
-    return data;
+    return data
   }
 
   async getDataBreachIncidents(clinicId: string): Promise<DataBreachIncident[]> {
@@ -358,13 +467,13 @@ export class ComplianceManagementService {
       .from('data_breach_incidents')
       .select('*')
       .eq('clinic_id', clinicId)
-      .order('discovery_date', { ascending: false });
+      .order('discovery_date', { ascending: false })
 
     if (error) {
-      throw new Error(`Erro ao buscar incidentes de vazamento: ${error.message}`);
+      throw new Error(`Erro ao buscar incidentes de vazamento: ${error.message}`)
     }
 
-    return data || [];
+    return data || []
   }
 
   async updateDataBreachIncident(
@@ -379,13 +488,13 @@ export class ComplianceManagementService {
       })
       .eq('id', incidentId)
       .select()
-      .single();
+      .single()
 
     if (error) {
-      throw new Error(`Erro ao atualizar incidente de vazamento: ${error.message}`);
+      throw new Error(`Erro ao atualizar incidente de vazamento: ${error.message}`)
     }
 
-    return data;
+    return data
   }
 
   // ANVISA Compliance Management
@@ -401,13 +510,13 @@ export class ComplianceManagementService {
         updated_at: new Date().toISOString(),
       }])
       .select()
-      .single();
+      .single()
 
     if (error) {
-      throw new Error(`Erro ao atualizar compliance ANVISA: ${error.message}`);
+      throw new Error(`Erro ao atualizar compliance ANVISA: ${error.message}`)
     }
 
-    return data;
+    return data
   }
 
   async getAnvisaComplianceStatus(clinicId: string): Promise<AnvisaProductCompliance[]> {
@@ -429,13 +538,13 @@ export class ComplianceManagementService {
           .select('id')
           .eq('clinic_id', clinicId),
       )
-      .order('expiry_date', { ascending: true });
+      .order('expiry_date', { ascending: true })
 
     if (error) {
-      throw new Error(`Erro ao buscar status ANVISA: ${error.message}`);
+      throw new Error(`Erro ao buscar status ANVISA: ${error.message}`)
     }
 
-    return data || [];
+    return data || []
   }
 
   // Professional License Compliance
@@ -451,13 +560,13 @@ export class ComplianceManagementService {
         updated_at: new Date().toISOString(),
       }])
       .select()
-      .single();
+      .single()
 
     if (error) {
-      throw new Error(`Erro ao atualizar compliance de licença: ${error.message}`);
+      throw new Error(`Erro ao atualizar compliance de licença: ${error.message}`)
     }
 
-    return data;
+    return data
   }
 
   async getProfessionalLicenseCompliance(
@@ -481,13 +590,13 @@ export class ComplianceManagementService {
           .select('id')
           .eq('clinic_id', clinicId),
       )
-      .order('expiry_date', { ascending: true });
+      .order('expiry_date', { ascending: true })
 
     if (error) {
-      throw new Error(`Erro ao buscar compliance de licenças: ${error.message}`);
+      throw new Error(`Erro ao buscar compliance de licenças: ${error.message}`)
     }
 
-    return data || [];
+    return data || []
   }
 
   // Compliance Reports
@@ -503,21 +612,25 @@ export class ComplianceManagementService {
         generated_by: report.generatedBy,
       }])
       .select()
-      .single();
+      .single()
 
     if (error) {
-      throw new Error(`Erro ao criar relatório de compliance: ${error.message}`);
+      throw new Error(`Erro ao criar relatório de compliance: ${error.message}`)
     }
 
     // Generate the report data asynchronously
-    this.generateReportData(data.id).catch(error => {
-      logHealthcareError('compliance', error, {
-        method: 'generateReportDataAsync',
-        reportId: data.id,
-      });
-    });
+    ;(async () => {
+      try {
+        await this.generateReportData(data.id)
+      } catch (error) {
+        await logHealthcareError('compliance', error as Error, {
+          method: 'generateReportDataAsync',
+          reportId: data.id,
+        })
+      }
+    })()
 
-    return data;
+    return data
   }
 
   private async generateReportData(reportId: string): Promise<void> {
@@ -527,11 +640,11 @@ export class ComplianceManagementService {
         .from('compliance_reports')
         .select('*')
         .eq('id', reportId)
-        .single();
+        .single()
 
-      if (reportError) throw reportError;
+      if (reportError) throw reportError
 
-      let reportData: any = {};
+      let reportData: any = {}
 
       switch (report.report_type) {
         case 'lgpd_summary':
@@ -539,21 +652,21 @@ export class ComplianceManagementService {
             report.clinic_id,
             report.report_period_start,
             report.report_period_end,
-          );
-          break;
+          )
+          break
         case 'anvisa_compliance':
-          reportData = await this.generateANVISAReport(report.clinic_id);
-          break;
+          reportData = await this.generateANVISAReport(report.clinic_id)
+          break
         case 'license_status':
-          reportData = await this.generateLicenseStatusReport(report.clinic_id);
-          break;
+          reportData = await this.generateLicenseStatusReport(report.clinic_id)
+          break
         case 'assessment_summary':
           reportData = await this.generateAssessmentSummaryReport(
             report.clinic_id,
             report.report_period_start,
             report.report_period_end,
-          );
-          break;
+          )
+          break
       }
 
       // Update the report with generated data
@@ -564,11 +677,11 @@ export class ComplianceManagementService {
           status: 'completed',
           updated_at: new Date().toISOString(),
         })
-        .eq('id', reportId);
+        .eq('id', reportId)
 
-      if (updateError) throw updateError;
+      if (updateError) throw updateError
     } catch (error) {
-      logHealthcareError('compliance', error, { method: 'generateReportData', reportId });
+      logHealthcareError('compliance', error as Error, { method: 'generateReportData', reportId })
 
       // Mark report as failed
       await this.supabase
@@ -577,7 +690,7 @@ export class ComplianceManagementService {
           status: 'failed',
           updated_at: new Date().toISOString(),
         })
-        .eq('id', reportId);
+        .eq('id', reportId)
     }
   }
 
@@ -590,71 +703,71 @@ export class ComplianceManagementService {
       this.getClientConsentsByDateRange(clinicId, startDate, endDate),
       this.getDataSubjectRequestsByDateRange(clinicId, startDate, endDate),
       this.getDataBreachIncidentsByDateRange(clinicId, startDate, endDate),
-    ]);
+    ])
 
     return {
       consentSummary: {
         total: consentRecords.length,
-        active: consentRecords.filter(c => c.is_active).length,
-        expired: consentRecords.filter(c => !c.is_active).length,
-        byType: this.groupByType(consentRecords, 'consent_type'),
+        active: consentRecords.filter((c: any) => c.is_active).length,
+        expired: consentRecords.filter((c: any) => !c.is_active).length,
+        byType: this.groupByType(consentRecords, 'consent_type' as any),
       },
       subjectRequests: {
         total: subjectRequests.length,
         byStatus: this.groupByType(subjectRequests, 'status'),
-        byType: this.groupByType(subjectRequests, 'request_type'),
+        byType: this.groupByType(subjectRequests, 'request_type' as any),
         averageResolutionTime: this.calculateAverageResolutionTime(subjectRequests),
       },
       breachIncidents: {
         total: breachIncidents.length,
-        bySeverity: this.groupByType(breachIncidents, 'severity_level'),
-        byType: this.groupByType(breachIncidents, 'breach_type'),
+        bySeverity: this.groupByType(breachIncidents, 'severity_level' as any),
+        byType: this.groupByType(breachIncidents, 'breach_type' as any),
         averageResolutionTime: this.calculateBreachResolutionTime(breachIncidents),
       },
       generatedAt: new Date().toISOString(),
-    };
+    }
   }
 
   private async generateANVISAReport(clinicId: string): Promise<any> {
-    const anvisaCompliance = await this.getAnvisaComplianceStatus(clinicId);
+    const anvisaCompliance = await this.getAnvisaComplianceStatus(clinicId)
 
     return {
       productSummary: {
         total: anvisaCompliance.length,
-        active: anvisaCompliance.filter(a => a.registration_status === 'active').length,
-        expired: anvisaCompliance.filter(a => a.registration_status === 'expired').length,
-        expiringSoon: anvisaCompliance.filter(a => {
+        active: anvisaCompliance.filter((a: any) => a.registration_status === 'active').length,
+        expired: anvisaCompliance.filter((a: any) => a.registration_status === 'expired').length,
+        expiringSoon: anvisaCompliance.filter((a: any) => {
           const daysUntilExpiry = Math.ceil(
             (new Date(a.expiry_date).getTime() - Date.now()) / (1000 * 60 * 60 * 24),
-          );
-          return daysUntilExpiry <= 30 && daysUntilExpiry > 0;
+          )
+          return daysUntilExpiry <= 30 && daysUntilExpiry > 0
         }).length,
       },
-      productsByStatus: this.groupByType(anvisaCompliance, 'registration_status'),
+      productsByStatus: this.groupByType(anvisaCompliance, 'registration_status' as any),
       generatedAt: new Date().toISOString(),
-    };
+    }
   }
 
   private async generateLicenseStatusReport(clinicId: string): Promise<any> {
-    const licenseCompliance = await this.getProfessionalLicenseCompliance(clinicId);
+    const licenseCompliance = await this.getProfessionalLicenseCompliance(clinicId)
 
     return {
       licenseSummary: {
         total: licenseCompliance.length,
-        active: licenseCompliance.filter(l => l.license_status === 'active').length,
-        expired: licenseCompliance.filter(l => l.license_status === 'expired').length,
-        expiringSoon: licenseCompliance.filter(l => {
+        active: licenseCompliance.filter((l: any) => l.license_status === 'active').length,
+        expired: licenseCompliance.filter((l: any) => l.license_status === 'expired').length,
+        expiringSoon: licenseCompliance.filter((l: any) => {
           const daysUntilExpiry = Math.ceil(
             (new Date(l.expiry_date).getTime() - Date.now()) / (1000 * 60 * 60 * 24),
-          );
-          return daysUntilExpiry <= 30 && daysUntilExpiry > 0;
+          )
+          return daysUntilExpiry <= 30 && daysUntilExpiry > 0
         }).length,
-        verified: licenseCompliance.filter(l => l.is_verified).length,
+        verified: licenseCompliance.filter((l: any) => l.is_verified).length,
       },
-      licensesByType: this.groupByType(licenseCompliance, 'license_type'),
-      licensesByStatus: this.groupByType(licenseCompliance, 'license_status'),
+      licensesByType: this.groupByType(licenseCompliance, 'license_type' as any),
+      licensesByStatus: this.groupByType(licenseCompliance, 'license_status' as any),
       generatedAt: new Date().toISOString(),
-    };
+    }
   }
 
   private async generateAssessmentSummaryReport(
@@ -666,19 +779,22 @@ export class ComplianceManagementService {
       clinicId,
       startDate,
       endDate,
-    );
+    )
 
     return {
       assessmentSummary: {
         total: assessments.length,
-        byStatus: this.groupByType(assessments, 'status'),
-        byType: this.groupByType(assessments, 'assessment_type'),
-        averageScore: assessments.reduce((sum, a) => sum + (a.score || 0), 0) / assessments.length
-          || 0,
-        passRate: assessments.filter(a => a.status === 'passed').length / assessments.length * 100,
+        byStatus: this.groupByType(assessments, 'status' as any),
+        byType: this.groupByType(assessments, 'assessment_type' as any),
+        averageScore:
+          assessments.reduce((sum, a) => sum + (a.score || 0), 0) / assessments.length ||
+          0,
+        passRate: assessments.filter((a: any) => a.status === 'passed').length /
+          assessments.length *
+          100,
       },
       generatedAt: new Date().toISOString(),
-    };
+    }
   }
 
   // Compliance Alerts
@@ -690,19 +806,19 @@ export class ComplianceManagementService {
       .from('compliance_alerts')
       .select('*')
       .eq('clinic_id', clinicId)
-      .order('created_at', { ascending: false });
+      .order('created_at', { ascending: false })
 
     if (unresolvedOnly) {
-      query = query.eq('is_resolved', false);
+      query = query.eq('is_resolved', false)
     }
 
-    const { data, error } = await query;
+    const { data, error } = await query
 
     if (error) {
-      throw new Error(`Erro ao buscar alertas de compliance: ${error.message}`);
+      throw new Error(`Erro ao buscar alertas de compliance: ${error.message}`)
     }
 
-    return data || [];
+    return data || []
   }
 
   async createComplianceAlert(alert: ComplianceAlertInput): Promise<ComplianceAlert> {
@@ -718,13 +834,13 @@ export class ComplianceManagementService {
         reference_type: alert.referenceType,
       }])
       .select()
-      .single();
+      .single()
 
     if (error) {
-      throw new Error(`Erro ao criar alerta de compliance: ${error.message}`);
+      throw new Error(`Erro ao criar alerta de compliance: ${error.message}`)
     }
 
-    return data;
+    return data
   }
 
   async resolveAlert(
@@ -743,41 +859,47 @@ export class ComplianceManagementService {
       })
       .eq('id', alertId)
       .select()
-      .single();
+      .single()
 
     if (error) {
-      throw new Error(`Erro ao resolver alerta de compliance: ${error.message}`);
+      throw new Error(`Erro ao resolver alerta de compliance: ${error.message}`)
     }
 
-    return data;
+    return data
   }
 
   // Automated Compliance Checks
   async runAutomatedComplianceChecks(clinicId: string): Promise<void> {
     try {
       // Check for license expiry alerts
-      await this.checkLicenseExpiryAlerts(clinicId);
+      await this.checkLicenseExpiryAlerts(clinicId)
 
       // Check for ANVISA compliance alerts
-      await this.checkANVISAComplianceAlerts(clinicId);
+      await this.checkANVISAComplianceAlerts(clinicId)
 
       // Check for consent expiry alerts
-      await this.checkConsentExpiryAlerts(clinicId);
+      await this.checkConsentExpiryAlerts(clinicId)
 
       // Generate automated assessments for scheduled requirements
-      await this.generateScheduledAssessments(clinicId);
+      await this.generateScheduledAssessments(clinicId)
     } catch (error) {
-      logHealthcareError('compliance', error, { method: 'runAutomatedComplianceChecks', clinicId });
+      logHealthcareError('compliance', error as Error, {
+        method: 'runAutomatedComplianceChecks',
+        clinicId,
+      })
     }
   }
 
   private async checkLicenseExpiryAlerts(clinicId: string): Promise<void> {
     const { data: expiringLicenses, error } = await this.supabase
-      .rpc('check_license_expiry');
+      .rpc('check_license_expiry')
 
     if (error) {
-      logHealthcareError('compliance', error, { method: 'checkLicenseExpiryAlerts', clinicId });
-      return;
+      logHealthcareError('compliance', error as Error, {
+        method: 'checkLicenseExpiryAlerts',
+        clinicId,
+      })
+      return
     }
 
     for (const license of expiringLicenses || []) {
@@ -790,18 +912,21 @@ export class ComplianceManagementService {
           description: `Licença ${license.license_type} vence em ${license.days_until_expiry} dias`,
           referenceId: license.professional_id,
           referenceType: 'professional',
-        });
+        })
       }
     }
   }
 
   private async checkANVISAComplianceAlerts(clinicId: string): Promise<void> {
     const { data: expiringProducts, error } = await this.supabase
-      .rpc('check_anvisa_compliance');
+      .rpc('check_anvisa_compliance')
 
     if (error) {
-      logHealthcareError('compliance', error, { method: 'checkANVISAComplianceAlerts', clinicId });
-      return;
+      logHealthcareError('compliance', error as Error, {
+        method: 'checkANVISAComplianceAlerts',
+        clinicId,
+      })
+      return
     }
 
     for (const product of expiringProducts || []) {
@@ -814,18 +939,21 @@ export class ComplianceManagementService {
           description: `Registro ANVISA vence em ${product.days_until_expiry} dias`,
           referenceId: product.product_id,
           referenceType: 'product',
-        });
+        })
       }
     }
   }
 
   private async checkConsentExpiryAlerts(clinicId: string): Promise<void> {
     const { data: expiringConsents, error } = await this.supabase
-      .rpc('check_consent_expiry');
+      .rpc('check_consent_expiry')
 
     if (error) {
-      logHealthcareError('compliance', error, { method: 'checkConsentExpiryAlerts', clinicId });
-      return;
+      logHealthcareError('compliance', error as Error, {
+        method: 'checkConsentExpiryAlerts',
+        clinicId,
+      })
+      return
     }
 
     for (const consent of expiringConsents || []) {
@@ -839,26 +967,26 @@ export class ComplianceManagementService {
             `Consentimento ${consent.consent_type} vence em ${consent.days_until_expiry} dias`,
           referenceId: consent.client_id,
           referenceType: 'consent',
-        });
+        })
       }
     }
   }
 
   private async generateScheduledAssessments(clinicId: string): Promise<void> {
-    const requirements = await this.getComplianceRequirements();
+    const requirements = await this.getComplianceRequirements()
 
     for (const requirement of requirements) {
-      if (requirement.frequency === 'monthly') {
+      if ((requirement as any).frequency === 'monthly') {
         // Check if assessment already exists for this month
-        const startOfMonth = new Date();
-        startOfMonth.setDate(1);
-        startOfMonth.setHours(0, 0, 0, 0);
+        const startOfMonth = new Date()
+        startOfMonth.setDate(1)
+        startOfMonth.setHours(0, 0, 0, 0)
 
-        const existingAssessment = await this.getComplianceAssessments(clinicId);
+        const existingAssessment = await this.getComplianceAssessments(clinicId)
         const monthlyAssessment = existingAssessment.find(a =>
-          a.requirement_id === requirement.id
-          && new Date(a.assessment_date) >= startOfMonth
-        );
+          (a as any).requirement_id === requirement.id &&
+          new Date((a as any).assessment_date) >= startOfMonth
+        )
 
         if (!monthlyAssessment) {
           await this.createComplianceAssessment({
@@ -867,7 +995,9 @@ export class ComplianceManagementService {
             assessmentType: 'automated',
             findings: ['Avaliação automática mensal gerada'],
             recommendations: ['Realizar verificação manual completa'],
-          });
+            evidenceUrls: [],
+            assessedBy: 'system',
+          })
         }
       }
     }
@@ -875,15 +1005,15 @@ export class ComplianceManagementService {
 
   // Audit Trail
   private async logComplianceAction(action: {
-    clinicId: string;
-    actionType: string;
-    actionDescription: string;
-    performedBy?: string;
-    performedAsClient?: string;
-    affectedRecordId?: string;
-    affectedRecordType?: string;
-    oldValues?: any;
-    newValues?: any;
+    clinicId: string
+    actionType: string
+    actionDescription: string
+    performedBy?: string
+    performedAsClient?: string
+    affectedRecordId?: string
+    affectedRecordType?: string
+    oldValues?: any
+    newValues?: any
   }): Promise<void> {
     const { error } = await this.supabase
       .from('compliance_audit_trail')
@@ -897,56 +1027,58 @@ export class ComplianceManagementService {
         affected_record_type: action.affectedRecordType,
         old_values: action.oldValues,
         new_values: action.newValues,
-      }]);
+      }])
 
     if (error) {
-      logHealthcareError('compliance', error, {
+      logHealthcareError('compliance', error as Error, {
         method: 'logComplianceAction',
         actionType: action.actionType,
-      });
+      })
     }
   }
 
   // Helper methods
   private groupByType<T>(items: T[], typeKey: keyof T): Record<string, number> {
     return items.reduce((acc, item) => {
-      const key = String(item[typeKey]);
-      acc[key] = (acc[key] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
+      const key = String(item[typeKey])
+      acc[key] = (acc[key] || 0) + 1
+      return acc
+    }, {} as Record<string, number>)
   }
 
   private calculateAverageResolutionTime(requests: DataSubjectRequest[]): number {
-    const resolvedRequests = requests.filter(r => r.processed_at && r.created_at);
-    if (resolvedRequests.length === 0) return 0;
+    const resolvedRequests = requests.filter(r => (r as any).processed_at && (r as any).created_at)
+    if (resolvedRequests.length === 0) return 0
 
     const totalTime = resolvedRequests.reduce((sum, request) => {
-      const processed = new Date(request.processed_at!).getTime();
-      const created = new Date(request.created_at).getTime();
-      return sum + (processed - created);
-    }, 0);
+      const processed = new Date((request as any).processed_at!).getTime()
+      const created = new Date((request as any).created_at).getTime()
+      return sum + (processed - created)
+    }, 0)
 
-    return totalTime / resolvedRequests.length / (1000 * 60 * 60 * 24); // Convert to days
+    return totalTime / resolvedRequests.length / (1000 * 60 * 60 * 24) // Convert to days
   }
 
   private calculateBreachResolutionTime(breaches: DataBreachIncident[]): number {
-    const resolvedBreaches = breaches.filter(b => b.resolution_date && b.discovery_date);
-    if (resolvedBreaches.length === 0) return 0;
+    const resolvedBreaches = breaches.filter(b =>
+      (b as any).resolution_date && (b as any).discovery_date
+    )
+    if (resolvedBreaches.length === 0) return 0
 
     const totalTime = resolvedBreaches.reduce((sum, breach) => {
-      const resolved = new Date(breach.resolution_date!).getTime();
-      const discovered = new Date(breach.discovery_date).getTime();
-      return sum + (resolved - discovered);
-    }, 0);
+      const resolved = new Date((breach as any).resolution_date!).getTime()
+      const discovered = new Date((breach as any).discovery_date).getTime()
+      return sum + (resolved - discovered)
+    }, 0)
 
-    return totalTime / resolvedBreaches.length / (1000 * 60 * 60 * 24); // Convert to days
+    return totalTime / resolvedBreaches.length / (1000 * 60 * 60 * 24) // Convert to days
   }
 
-  private getSeverityLevel(daysUntilExpiry: number): string {
-    if (daysUntilExpiry <= 7) return 'critical';
-    if (daysUntilExpiry <= 15) return 'high';
-    if (daysUntilExpiry <= 30) return 'medium';
-    return 'low';
+  private getSeverityLevel(daysUntilExpiry: number): 'low' | 'medium' | 'high' | 'critical' {
+    if (daysUntilExpiry <= 7) return 'critical'
+    if (daysUntilExpiry <= 15) return 'high'
+    if (daysUntilExpiry <= 30) return 'medium'
+    return 'low'
   }
 
   // Helper methods for report generation
@@ -960,10 +1092,10 @@ export class ComplianceManagementService {
       .select('*')
       .eq('clinic_id', clinicId)
       .gte('consent_date', startDate)
-      .lte('consent_date', endDate);
+      .lte('consent_date', endDate)
 
-    if (error) throw error;
-    return data || [];
+    if (error) throw error
+    return data || []
   }
 
   private async getDataSubjectRequestsByDateRange(
@@ -976,10 +1108,10 @@ export class ComplianceManagementService {
       .select('*')
       .eq('clinic_id', clinicId)
       .gte('created_at', startDate)
-      .lte('created_at', endDate);
+      .lte('created_at', endDate)
 
-    if (error) throw error;
-    return data || [];
+    if (error) throw error
+    return data || []
   }
 
   private async getDataBreachIncidentsByDateRange(
@@ -992,10 +1124,10 @@ export class ComplianceManagementService {
       .select('*')
       .eq('clinic_id', clinicId)
       .gte('discovery_date', startDate)
-      .lte('discovery_date', endDate);
+      .lte('discovery_date', endDate)
 
-    if (error) throw error;
-    return data || [];
+    if (error) throw error
+    return data || []
   }
 
   private async getComplianceAssessmentsByDateRange(
@@ -1008,10 +1140,10 @@ export class ComplianceManagementService {
       .select('*')
       .eq('clinic_id', clinicId)
       .gte('assessment_date', startDate)
-      .lte('assessment_date', endDate);
+      .lte('assessment_date', endDate)
 
-    if (error) throw error;
-    return data || [];
+    if (error) throw error
+    return data || []
   }
 
   // Data Retention Management
@@ -1019,14 +1151,14 @@ export class ComplianceManagementService {
     const { data: policies, error } = await this.supabase
       .from('retention_policies')
       .select('*')
-      .eq('is_active', true);
+      .eq('is_active', true)
 
     if (error) {
-      logHealthcareError('compliance', error, {
+      logHealthcareError('compliance', error as Error, {
         method: 'processScheduledDataRetention',
         clinicId,
-      });
-      return;
+      })
+      return
     }
 
     for (const policy of policies) {
@@ -1041,25 +1173,25 @@ export class ComplianceManagementService {
             scheduled_date: new Date().toISOString(),
           }])
           .select()
-          .single();
+          .single()
 
         if (jobError) {
           logHealthcareError('compliance', jobError, {
             method: 'processScheduledDataRetention',
             policyId: policy.id,
             clinicId,
-          });
-          continue;
+          })
+          continue
         }
 
         // Process the retention policy
-        await this.executeRetentionPolicy(policy, clinicId, job.id);
+        await this.executeRetentionPolicy(policy, clinicId, job.id)
       } catch (error) {
-        logHealthcareError('compliance', error, {
+        logHealthcareError('compliance', error as Error, {
           method: 'processScheduledDataRetention',
           policyId: policy.id,
           clinicId,
-        });
+        })
       }
     }
   }
@@ -1070,14 +1202,14 @@ export class ComplianceManagementService {
     jobId?: string,
   ): Promise<void> {
     try {
-      let processedRecords = 0;
-      let deletedRecords = 0;
+      let processedRecords = 0
+      let deletedRecords = 0
 
       // Execute retention logic based on policy type
       if (policy.retention_rule === 'fixed') {
         // Process fixed retention periods
-        const cutoffDate = new Date();
-        cutoffDate.setMonth(cutoffDate.getMonth() - policy.retention_period_months);
+        const cutoffDate = new Date()
+        cutoffDate.setMonth(cutoffDate.getMonth() - policy.retention_period_months)
 
         switch (policy.document_type) {
           case 'consent_forms':
@@ -1086,13 +1218,13 @@ export class ComplianceManagementService {
               .from('data_consent_records')
               .update({ is_active: false })
               .lt('consent_date', cutoffDate.toISOString())
-              .eq('clinic_id', clinicId);
+              .eq('clinic_id', clinicId)
 
-            if (consentError) throw consentError;
+            if (consentError) throw consentError
 
-            processedRecords = 1; // Placeholder
-            deletedRecords = 1; // Placeholder
-            break;
+            processedRecords = 1 // Placeholder
+            deletedRecords = 1 // Placeholder
+            break
         }
       }
 
@@ -1102,19 +1234,19 @@ export class ComplianceManagementService {
           .from('data_retention_jobs')
           .update({
             job_status: 'completed',
-            processed_records,
-            deleted_records,
+            processedRecords,
+            deletedRecords,
             completed_at: new Date().toISOString(),
           })
-          .eq('id', jobId);
+          .eq('id', jobId)
       }
     } catch (error) {
-      logHealthcareError('compliance', error, {
+      logHealthcareError('compliance', error as Error, {
         method: 'executeRetentionPolicy',
         policyId: policy.id,
         clinicId,
         jobId,
-      });
+      })
 
       if (jobId) {
         await this.supabase
@@ -1123,7 +1255,7 @@ export class ComplianceManagementService {
             job_status: 'failed',
             error_message: error instanceof Error ? error.message : 'Unknown error',
           })
-          .eq('id', jobId);
+          .eq('id', jobId)
       }
     }
   }

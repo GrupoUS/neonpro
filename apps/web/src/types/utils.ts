@@ -1,99 +1,99 @@
-import { z } from 'zod';
+import { z } from 'zod'
 
 // Utility types for common patterns
-export type Optional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
-export type RequiredFields<T, K extends keyof T> = T & Required<Pick<T, K>>;
+export type Optional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>
+export type RequiredFields<T, K extends keyof T> = T & Required<Pick<T, K>>
 
 // Deep partial type
 export type DeepPartial<T> = {
-  [P in keyof T]?: T[P] extends object ? DeepPartial<T[P]> : T[P];
-};
+  [P in keyof T]?: T[P] extends object ? DeepPartial<T[P]> : T[P]
+}
 
 // Deep readonly type
 export type DeepReadonly<T> = {
-  readonly [P in keyof T]: T[P] extends object ? DeepReadonly<T[P]> : T[P];
-};
+  readonly [P in keyof T]: T[P] extends object ? DeepReadonly<T[P]> : T[P]
+}
 
 // Extract error type from Zod schema
-export type ErrorType<T> = T extends z.ZodSchema<infer U> ? z.ZodError<U> : never;
+export type ErrorType<T> = T extends z.ZodSchema<infer U> ? z.ZodError<U> : never
 
 // Extract success type from Result
 export type SuccessType<T> = T extends { success: true; data: infer U } ? U
-  : never;
+  : never
 export type ErrorTypeFromResult<T> = T extends {
-  success: false;
-  error: infer E;
+  success: false
+  error: infer E
 } ? E
-  : never;
+  : never
 
 // API response types
 export interface ApiResponse<T = unknown> {
-  success: boolean;
-  data?: T;
+  success: boolean
+  data?: T
   error?: {
-    code: string;
-    message: string;
-    details?: Record<string, unknown>;
-  };
+    code: string
+    message: string
+    details?: Record<string, unknown>
+  }
   meta?: {
-    timestamp: string;
-    requestId: string;
-    version: string;
-  };
+    timestamp: string
+    requestId: string
+    version: string
+  }
 }
 
 export interface PaginatedResponse<T> extends ApiResponse<T[]> {
   pagination: {
-    page: number;
-    pageSize: number;
-    total: number;
-    totalPages: number;
-    hasNext: boolean;
-    hasPrev: boolean;
-  };
+    page: number
+    pageSize: number
+    total: number
+    totalPages: number
+    hasNext: boolean
+    hasPrev: boolean
+  }
 }
 
 // Healthcare-specific types
 export interface Patient {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  cpf: string;
-  dateOfBirth: Date;
-  createdAt: Date;
-  updatedAt: Date;
-  isActive: boolean;
+  id: string
+  name: string
+  email: string
+  phone: string
+  cpf: string
+  dateOfBirth: Date
+  createdAt: Date
+  updatedAt: Date
+  isActive: boolean
 }
 
 export interface Appointment {
-  id: string;
-  patientId: string;
-  doctorId: string;
-  scheduledAt: Date;
-  status: 'scheduled' | 'confirmed' | 'cancelled' | 'completed' | 'no-show';
-  type: string;
-  duration: number;
-  notes?: string;
-  createdAt: Date;
-  updatedAt: Date;
+  id: string
+  patientId: string
+  doctorId: string
+  scheduledAt: Date
+  status: 'scheduled' | 'confirmed' | 'cancelled' | 'completed' | 'no-show'
+  type: string
+  duration: number
+  notes?: string
+  createdAt: Date
+  updatedAt: Date
 }
 
 // Form state types
 export interface FormState<T = unknown> {
-  data: T;
-  errors: Record<string, string>;
-  isSubmitting: boolean;
-  isDirty: boolean;
-  isValid: boolean;
+  data: T
+  errors: Record<string, string>
+  isSubmitting: boolean
+  isDirty: boolean
+  isValid: boolean
 }
 
 // Async state types
 export interface AsyncState<T = unknown, E = Error> {
-  data: T | null;
-  loading: boolean;
-  error: E | null;
-  success: boolean;
+  data: T | null
+  loading: boolean
+  error: E | null
+  success: boolean
 }
 
 // Query key factory for React Query
@@ -124,17 +124,17 @@ export const QueryKeyFactory = {
     details: () => [...QueryKeyFactory.doctors.all, 'detail'] as const,
     detail: (id: string) => [...QueryKeyFactory.doctors.details(), id] as const,
   },
-} as const;
+} as const
 
 // Event types
 export interface AppEvent {
-  type: string;
-  payload: unknown;
-  timestamp: Date;
-  userId?: string;
+  type: string
+  payload: unknown
+  timestamp: Date
+  userId?: string
 }
 
-export type EventHandler<T extends AppEvent = AppEvent> = (event: T) => void;
+export type EventHandler<T extends AppEvent = AppEvent> = (event: T) => void
 
 // Utility functions
 export const createApiResponse = <T>(
@@ -149,7 +149,7 @@ export const createApiResponse = <T>(
     version: '1.0.0',
     ...meta,
   },
-});
+})
 
 export const createApiError = (
   code: string,
@@ -167,7 +167,7 @@ export const createApiError = (
     requestId: crypto.randomUUID(),
     version: '1.0.0',
   },
-});
+})
 
 export const createPaginatedResponse = <T>(
   data: T[],
@@ -183,38 +183,38 @@ export const createPaginatedResponse = <T>(
     version: '1.0.0',
     ...meta,
   },
-});
+})
 
 // Type-safe event emitter
 export class EventEmitter<TEvents extends Record<string, unknown>> {
-  private listeners = new Map<keyof TEvents, Set<Function>>();
+  private listeners = new Map<keyof TEvents, Set<Function>>()
 
   on<K extends keyof TEvents>(
     event: K,
     listener: (payload: TEvents[K]) => void,
   ): void {
     if (!this.listeners.has(event)) {
-      this.listeners.set(event, new Set());
+      this.listeners.set(event, new Set())
     }
-    this.listeners.get(event)!.add(listener);
+    this.listeners.get(event)!.add(listener)
   }
 
   off<K extends keyof TEvents>(
     event: K,
     listener: (payload: TEvents[K]) => void,
   ): void {
-    this.listeners.get(event)?.delete(listener);
+    this.listeners.get(event)?.delete(listener)
   }
 
   emit<K extends keyof TEvents>(event: K, payload: TEvents[K]): void {
-    this.listeners.get(event)?.forEach(listener => listener(payload));
+    this.listeners.get(event)?.forEach(listener => listener(payload))
   }
 
   removeAllListeners<K extends keyof TEvents>(event?: K): void {
     if (event) {
-      this.listeners.delete(event);
+      this.listeners.delete(event)
     } else {
-      this.listeners.clear();
+      this.listeners.clear()
     }
   }
 }

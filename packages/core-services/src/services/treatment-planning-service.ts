@@ -1,4 +1,4 @@
-import { SupabaseClient } from '@neonpro/database';
+import { SupabaseClient } from '@neonpro/database'
 import {
   TreatmentAssessment,
   TreatmentAssessmentTemplate,
@@ -24,210 +24,210 @@ import {
   // TreatmentPlanStats,
   // TreatmentSessionStats,
   // TreatmentProgressSummary
-} from '@neonpro/types';
+} from '@neonpro/types'
 
 // Input interfaces for treatment planning operations
 export interface CreateTreatmentPlanInput {
-  clinic_id: string;
-  patient_id: string;
-  professional_id: string;
-  plan_name: string;
-  description?: string;
-  treatment_goals?: string[];
-  priority_level?: 'low' | 'medium' | 'high' | 'urgent';
-  estimated_duration_interval?: string;
-  estimated_sessions?: number;
-  total_estimated_cost?: number;
-  start_date?: string;
-  target_completion_date?: string;
-  contraindications?: string[];
-  precautions?: string[];
-  patient_preferences?: Record<string, any>;
-  professional_notes?: string;
-  metadata?: Record<string, any>;
+  clinic_id: string
+  patient_id: string
+  professional_id: string
+  plan_name: string
+  description?: string
+  treatment_goals?: string[]
+  priority_level?: 'low' | 'medium' | 'high' | 'urgent'
+  estimated_duration_interval?: string
+  estimated_sessions?: number
+  total_estimated_cost?: number
+  start_date?: string
+  target_completion_date?: string
+  contraindications?: string[]
+  precautions?: string[]
+  patient_preferences?: Record<string, any>
+  professional_notes?: string
+  metadata?: Record<string, any>
 }
 
 export interface UpdateTreatmentPlanInput {
-  plan_name?: string;
-  description?: string;
-  treatment_goals?: string[];
-  priority_level?: 'low' | 'medium' | 'high' | 'urgent';
-  estimated_duration_interval?: string;
-  estimated_sessions?: number;
-  total_estimated_cost?: number;
-  start_date?: string;
-  target_completion_date?: string;
-  contraindications?: string[];
-  precautions?: string[];
-  patient_preferences?: Record<string, any>;
-  professional_notes?: string;
-  status?: 'draft' | 'active' | 'completed' | 'paused' | 'cancelled';
-  progress_percentage?: number;
-  actual_completion_date?: string;
-  metadata?: Record<string, any>;
+  plan_name?: string
+  description?: string
+  treatment_goals?: string[]
+  priority_level?: 'low' | 'medium' | 'high' | 'urgent'
+  estimated_duration_interval?: string
+  estimated_sessions?: number
+  total_estimated_cost?: number
+  start_date?: string
+  target_completion_date?: string
+  contraindications?: string[]
+  precautions?: string[]
+  patient_preferences?: Record<string, any>
+  professional_notes?: string
+  status?: 'draft' | 'active' | 'completed' | 'paused' | 'cancelled'
+  progress_percentage?: number
+  actual_completion_date?: string
+  metadata?: Record<string, any>
 }
 
 export interface CreateTreatmentSessionInput {
-  treatment_plan_id: string;
-  session_number: number;
-  session_name: string;
-  description?: string;
-  scheduled_date: string;
-  duration_minutes: number;
-  professional_id: string;
-  room_id?: string;
-  products_used?: string[];
-  procedures_performed?: string[];
-  before_photos?: string[];
-  after_photos?: string[];
-  measurements_before?: Record<string, any>;
-  measurements_after?: Record<string, any>;
-  follow_up_required?: boolean;
-  follow_up_date?: string;
+  treatment_plan_id: string
+  session_number: number
+  session_name: string
+  description?: string
+  scheduled_date: string
+  duration_minutes: number
+  professional_id: string
+  room_id?: string
+  products_used?: string[]
+  procedures_performed?: string[]
+  before_photos?: string[]
+  after_photos?: string[]
+  measurements_before?: Record<string, any>
+  measurements_after?: Record<string, any>
+  follow_up_required?: boolean
+  follow_up_date?: string
 }
 
 export interface UpdateTreatmentSessionInput {
-  session_name?: string;
-  description?: string;
-  scheduled_date?: string;
-  duration_minutes?: number;
-  professional_id?: string;
-  room_id?: string;
-  status?: 'scheduled' | 'in_progress' | 'completed' | 'cancelled' | 'no_show' | 'rescheduled';
-  products_used?: string[];
-  procedures_performed?: string[];
-  before_photos?: string[];
-  after_photos?: string[];
-  measurements_before?: Record<string, any>;
-  measurements_after?: Record<string, any>;
-  follow_up_required?: boolean;
-  follow_up_date?: string;
-  notes?: string;
+  session_name?: string
+  description?: string
+  scheduled_date?: string
+  duration_minutes?: number
+  professional_id?: string
+  room_id?: string
+  status?: 'scheduled' | 'in_progress' | 'completed' | 'cancelled' | 'no_show' | 'rescheduled'
+  products_used?: string[]
+  procedures_performed?: string[]
+  before_photos?: string[]
+  after_photos?: string[]
+  measurements_before?: Record<string, any>
+  measurements_after?: Record<string, any>
+  follow_up_required?: boolean
+  follow_up_date?: string
+  notes?: string
 }
 
 export interface CreateTreatmentProcedureInput {
-  treatment_plan_id: string;
-  procedure_name: string;
-  procedure_type: string;
-  description?: string;
-  target_areas?: string[];
-  products_required?: string[];
-  estimated_duration_minutes?: number;
-  sessions_needed?: number;
-  interval_between_sessions?: string;
-  cost_per_session?: number;
-  total_cost?: number;
-  order_in_plan?: number;
+  treatment_plan_id: string
+  procedure_name: string
+  procedure_type: string
+  description?: string
+  target_areas?: string[]
+  products_required?: string[]
+  estimated_duration_minutes?: number
+  sessions_needed?: number
+  interval_between_sessions?: string
+  cost_per_session?: number
+  total_cost?: number
+  order_in_plan?: number
 }
 
 export interface CreateTreatmentAssessmentInput {
-  treatment_plan_id: string;
-  session_id?: string;
-  template_id?: string;
-  assessor_id: string;
-  assessment_data: Record<string, any>;
-  notes?: string;
-  recommendations?: string[];
+  treatment_plan_id: string
+  session_id?: string
+  template_id?: string
+  assessor_id: string
+  assessment_data: Record<string, any>
+  notes?: string
+  recommendations?: string[]
 }
 
 export interface CreateTreatmentProgressInput {
-  treatment_plan_id: string;
-  session_id?: string;
-  tracked_by: string;
-  progress_type: string;
-  progress_data: Record<string, any>;
-  photos?: string[];
-  measurements?: Record<string, any>;
-  patient_reported_outcomes?: Record<string, any>;
-  professional_observations?: string;
-  satisfaction_rating?: number;
+  treatment_plan_id: string
+  session_id?: string
+  tracked_by: string
+  progress_type: string
+  progress_data: Record<string, any>
+  photos?: string[]
+  measurements?: Record<string, any>
+  patient_reported_outcomes?: Record<string, any>
+  professional_observations?: string
+  satisfaction_rating?: number
 }
 
 export interface CreateTreatmentRecommendationInput {
-  treatment_plan_id: string;
-  patient_id: string;
-  recommendation_type: string;
-  title: string;
-  description: string;
-  recommendation_data?: Record<string, any>;
-  confidence_score?: number;
-  source_type?: 'ai' | 'professional' | 'system';
+  treatment_plan_id: string
+  patient_id: string
+  recommendation_type: string
+  title: string
+  description: string
+  recommendation_data?: Record<string, any>
+  confidence_score?: number
+  source_type?: 'ai' | 'professional' | 'system'
 }
 
 export interface CreateTreatmentDocumentInput {
-  treatment_plan_id: string;
-  session_id?: string;
-  template_id?: string;
-  document_type: string;
-  document_data: Record<string, any>;
-  patient_signature_required?: boolean;
-  version?: string;
-  created_by: string;
+  treatment_plan_id: string
+  session_id?: string
+  template_id?: string
+  document_type: string
+  document_data: Record<string, any>
+  patient_signature_required?: boolean
+  version?: string
+  created_by: string
 }
 
 export interface CreateTreatmentOutcomeInput {
-  treatment_plan_id: string;
-  session_id?: string;
-  outcome_type: string;
-  outcome_data: Record<string, any>;
-  satisfaction_metrics?: Record<string, any>;
-  before_after_comparison?: Record<string, any>;
-  duration_of_effect?: string;
-  complications_reported?: string[];
-  patient_testimonials?: string;
-  professional_evaluation?: string;
-  follow_up_recommendations?: string[];
-  created_by: string;
+  treatment_plan_id: string
+  session_id?: string
+  outcome_type: string
+  outcome_data: Record<string, any>
+  satisfaction_metrics?: Record<string, any>
+  before_after_comparison?: Record<string, any>
+  duration_of_effect?: string
+  complications_reported?: string[]
+  patient_testimonials?: string
+  professional_evaluation?: string
+  follow_up_recommendations?: string[]
+  created_by: string
 }
 
 // Additional types for statistics and summaries
 export interface TreatmentPlanStats {
-  total: number;
-  draft: number;
-  active: number;
-  completed: number;
-  paused: number;
-  cancelled: number;
+  total: number
+  draft: number
+  active: number
+  completed: number
+  paused: number
+  cancelled: number
 }
 
 export interface TreatmentSessionStats {
-  total: number;
-  scheduled: number;
-  in_progress: number;
-  completed: number;
-  cancelled: number;
-  no_show: number;
-  rescheduled: number;
+  total: number
+  scheduled: number
+  in_progress: number
+  completed: number
+  cancelled: number
+  no_show: number
+  rescheduled: number
 }
 
 export interface TreatmentProgressSummary {
-  total_sessions: number;
-  completed_sessions: number;
-  upcoming_sessions: number;
-  progress_records: number;
-  assessments_completed: number;
-  average_satisfaction_rating: number;
-  next_session_date: string | null;
-  last_progress_date: string | null;
+  total_sessions: number
+  completed_sessions: number
+  upcoming_sessions: number
+  progress_records: number
+  assessments_completed: number
+  average_satisfaction_rating: number
+  next_session_date: string | null
+  last_progress_date: string | null
 }
 
 export interface TreatmentDocumentationTemplate {
-  id: string;
-  name: string;
-  description?: string;
-  procedure_type: string;
-  template_type: string;
-  is_required: boolean;
-  version: string;
-  created_at: string;
-  updated_at: string;
+  id: string
+  name: string
+  description?: string
+  procedure_type: string
+  template_type: string
+  is_required: boolean
+  version: string
+  created_at: string
+  updated_at: string
 }
 
 export class TreatmentPlanningService {
-  private supabase: SupabaseClient;
+  private supabase: SupabaseClient
 
   constructor(supabase: SupabaseClient) {
-    this.supabase = supabase;
+    this.supabase = supabase
   }
 
   // Treatment Plan Management
@@ -254,13 +254,13 @@ export class TreatmentPlanningService {
         metadata: input.metadata || {},
       })
       .select()
-      .single();
+      .single()
 
     if (error) {
-      throw new Error(`Erro ao criar plano de tratamento: ${error.message}`);
+      throw new Error(`Erro ao criar plano de tratamento: ${error.message}`)
     }
 
-    return data;
+    return data
   }
 
   async getTreatmentPlanById(id: string): Promise<TreatmentPlan | null> {
@@ -273,21 +273,21 @@ export class TreatmentPlanningService {
         clinic:clinics(name)
       `)
       .eq('id', id)
-      .single();
+      .single()
 
     if (error) {
-      throw new Error(`Erro ao buscar plano de tratamento: ${error.message}`);
+      throw new Error(`Erro ao buscar plano de tratamento: ${error.message}`)
     }
 
-    return data;
+    return data
   }
 
   async getTreatmentPlansByClinic(clinicId: string, filters?: {
-    patientId?: string;
-    professionalId?: string;
-    status?: string;
-    priorityLevel?: string;
-    dateRange?: { start: Date; end: Date };
+    patientId?: string
+    professionalId?: string
+    status?: string
+    priorityLevel?: string
+    dateRange?: { start: Date; end: Date }
   }): Promise<TreatmentPlan[]> {
     let query = this.supabase
       .from('treatment_plans')
@@ -296,33 +296,33 @@ export class TreatmentPlanningService {
         patient:patients(name, email, phone),
         professional:professionals(name, professional_license, council_type)
       `)
-      .eq('clinic_id', clinicId);
+      .eq('clinic_id', clinicId)
 
     if (filters?.patientId) {
-      query = query.eq('patient_id', filters.patientId);
+      query = query.eq('patient_id', filters.patientId)
     }
     if (filters?.professionalId) {
-      query = query.eq('professional_id', filters.professionalId);
+      query = query.eq('professional_id', filters.professionalId)
     }
     if (filters?.status) {
-      query = query.eq('status', filters.status);
+      query = query.eq('status', filters.status)
     }
     if (filters?.priorityLevel) {
-      query = query.eq('priority_level', filters.priorityLevel);
+      query = query.eq('priority_level', filters.priorityLevel)
     }
     if (filters?.dateRange) {
       query = query
         .gte('start_date', filters.dateRange.start.toISOString())
-        .lte('start_date', filters.dateRange.end.toISOString());
+        .lte('start_date', filters.dateRange.end.toISOString())
     }
 
-    const { data, error } = await query.order('created_at', { ascending: false });
+    const { data, error } = await query.order('created_at', { ascending: false })
 
     if (error) {
-      throw new Error(`Erro ao buscar planos de tratamento: ${error.message}`);
+      throw new Error(`Erro ao buscar planos de tratamento: ${error.message}`)
     }
 
-    return data || [];
+    return data || []
   }
 
   async updateTreatmentPlan(id: string, input: UpdateTreatmentPlanInput): Promise<TreatmentPlan> {
@@ -334,13 +334,13 @@ export class TreatmentPlanningService {
       })
       .eq('id', id)
       .select()
-      .single();
+      .single()
 
     if (error) {
-      throw new Error(`Erro ao atualizar plano de tratamento: ${error.message}`);
+      throw new Error(`Erro ao atualizar plano de tratamento: ${error.message}`)
     }
 
-    return data;
+    return data
   }
 
   async updateTreatmentPlanProgress(id: string, progressPercentage: number): Promise<void> {
@@ -348,14 +348,14 @@ export class TreatmentPlanningService {
       ? 'completed'
       : progressPercentage > 0
       ? 'active'
-      : 'draft';
-    const actualCompletionDate = progressPercentage >= 100 ? new Date().toISOString() : null;
+      : 'draft'
+    const actualCompletionDate = progressPercentage >= 100 ? new Date().toISOString() : null
 
     await this.updateTreatmentPlan(id, {
       progress_percentage: progressPercentage,
       status,
       actual_completion_date: actualCompletionDate || undefined,
-    });
+    })
   }
 
   // Treatment Session Management
@@ -381,16 +381,16 @@ export class TreatmentPlanningService {
         follow_up_date: input.follow_up_date,
       })
       .select()
-      .single();
+      .single()
 
     if (error) {
-      throw new Error(`Erro ao criar sessão de tratamento: ${error.message}`);
+      throw new Error(`Erro ao criar sessão de tratamento: ${error.message}`)
     }
 
     // Update treatment plan progress
-    await this.updateTreatmentPlanProgressFromSessions(input.treatment_plan_id);
+    await this.updateTreatmentPlanProgressFromSessions(input.treatment_plan_id)
 
-    return data;
+    return data
   }
 
   async getTreatmentSessionsByPlan(treatmentPlanId: string): Promise<TreatmentSession[]> {
@@ -402,13 +402,13 @@ export class TreatmentPlanningService {
         room:rooms(name, room_type)
       `)
       .eq('treatment_plan_id', treatmentPlanId)
-      .order('session_number', { ascending: true });
+      .order('session_number', { ascending: true })
 
     if (error) {
-      throw new Error(`Erro ao buscar sessões de tratamento: ${error.message}`);
+      throw new Error(`Erro ao buscar sessões de tratamento: ${error.message}`)
     }
 
-    return data || [];
+    return data || []
   }
 
   async updateTreatmentSession(
@@ -423,31 +423,31 @@ export class TreatmentPlanningService {
       })
       .eq('id', id)
       .select()
-      .single();
+      .single()
 
     if (error) {
-      throw new Error(`Erro ao atualizar sessão de tratamento: ${error.message}`);
+      throw new Error(`Erro ao atualizar sessão de tratamento: ${error.message}`)
     }
 
     // Update treatment plan progress
-    await this.updateTreatmentPlanProgressFromSessions(data.treatment_plan_id);
+    await this.updateTreatmentPlanProgressFromSessions(data.treatment_plan_id)
 
-    return data;
+    return data
   }
 
   private async updateTreatmentPlanProgressFromSessions(treatmentPlanId: string): Promise<void> {
     const { data: sessions } = await this.supabase
       .from('treatment_sessions')
       .select('status')
-      .eq('treatment_plan_id', treatmentPlanId);
+      .eq('treatment_plan_id', treatmentPlanId)
 
-    if (!sessions) return;
+    if (!sessions) return
 
-    const totalSessions = sessions.length;
-    const completedSessions = sessions.filter(s => s.status === 'completed').length;
-    const progressPercentage = totalSessions > 0 ? (completedSessions / totalSessions) * 100 : 0;
+    const totalSessions = sessions.length
+    const completedSessions = sessions.filter(s => s.status === 'completed').length
+    const progressPercentage = totalSessions > 0 ? (completedSessions / totalSessions) * 100 : 0
 
-    await this.updateTreatmentPlanProgress(treatmentPlanId, progressPercentage);
+    await this.updateTreatmentPlanProgress(treatmentPlanId, progressPercentage)
   }
 
   // Treatment Procedure Management
@@ -471,13 +471,13 @@ export class TreatmentPlanningService {
         order_in_plan: input.order_in_plan || 0,
       })
       .select()
-      .single();
+      .single()
 
     if (error) {
-      throw new Error(`Erro ao criar procedimento de tratamento: ${error.message}`);
+      throw new Error(`Erro ao criar procedimento de tratamento: ${error.message}`)
     }
 
-    return data;
+    return data
   }
 
   async getTreatmentProceduresByPlan(treatmentPlanId: string): Promise<TreatmentProcedure[]> {
@@ -485,13 +485,13 @@ export class TreatmentPlanningService {
       .from('treatment_procedures')
       .select('*')
       .eq('treatment_plan_id', treatmentPlanId)
-      .order('order_in_plan', { ascending: true });
+      .order('order_in_plan', { ascending: true })
 
     if (error) {
-      throw new Error(`Erro ao buscar procedimentos de tratamento: ${error.message}`);
+      throw new Error(`Erro ao buscar procedimentos de tratamento: ${error.message}`)
     }
 
-    return data || [];
+    return data || []
   }
 
   // Assessment Management
@@ -510,13 +510,13 @@ export class TreatmentPlanningService {
         recommendations: input.recommendations || [],
       })
       .select()
-      .single();
+      .single()
 
     if (error) {
-      throw new Error(`Erro ao criar avaliação de tratamento: ${error.message}`);
+      throw new Error(`Erro ao criar avaliação de tratamento: ${error.message}`)
     }
 
-    return data;
+    return data
   }
 
   async getTreatmentAssessmentsByPlan(treatmentPlanId: string): Promise<TreatmentAssessment[]> {
@@ -528,13 +528,13 @@ export class TreatmentPlanningService {
         template:treatment_assessment_templates(name, description)
       `)
       .eq('treatment_plan_id', treatmentPlanId)
-      .order('assessment_date', { ascending: false });
+      .order('assessment_date', { ascending: false })
 
     if (error) {
-      throw new Error(`Erro ao buscar avaliações de tratamento: ${error.message}`);
+      throw new Error(`Erro ao buscar avaliações de tratamento: ${error.message}`)
     }
 
-    return data || [];
+    return data || []
   }
 
   // Progress Tracking
@@ -556,13 +556,13 @@ export class TreatmentPlanningService {
         satisfaction_rating: input.satisfaction_rating,
       })
       .select()
-      .single();
+      .single()
 
     if (error) {
-      throw new Error(`Erro ao criar registro de progresso: ${error.message}`);
+      throw new Error(`Erro ao criar registro de progresso: ${error.message}`)
     }
 
-    return data;
+    return data
   }
 
   async getTreatmentProgressByPlan(treatmentPlanId: string): Promise<TreatmentProgressTracking[]> {
@@ -573,13 +573,13 @@ export class TreatmentPlanningService {
         tracked_by:professionals(name, professional_license, council_type)
       `)
       .eq('treatment_plan_id', treatmentPlanId)
-      .order('tracking_date', { ascending: false });
+      .order('tracking_date', { ascending: false })
 
     if (error) {
-      throw new Error(`Erro ao buscar registros de progresso: ${error.message}`);
+      throw new Error(`Erro ao buscar registros de progresso: ${error.message}`)
     }
 
-    return data || [];
+    return data || []
   }
 
   // AI Recommendations
@@ -599,13 +599,13 @@ export class TreatmentPlanningService {
         source_type: input.source_type || 'ai',
       })
       .select()
-      .single();
+      .single()
 
     if (error) {
-      throw new Error(`Erro ao criar recomendação de tratamento: ${error.message}`);
+      throw new Error(`Erro ao criar recomendação de tratamento: ${error.message}`)
     }
 
-    return data;
+    return data
   }
 
   async getTreatmentRecommendationsByPlan(
@@ -615,13 +615,13 @@ export class TreatmentPlanningService {
       .from('treatment_recommendations')
       .select('*')
       .eq('treatment_plan_id', treatmentPlanId)
-      .order('created_at', { ascending: false });
+      .order('created_at', { ascending: false })
 
     if (error) {
-      throw new Error(`Erro ao buscar recomendações de tratamento: ${error.message}`);
+      throw new Error(`Erro ao buscar recomendações de tratamento: ${error.message}`)
     }
 
-    return data || [];
+    return data || []
   }
 
   async acceptTreatmentRecommendation(id: string, acceptedBy: string): Promise<void> {
@@ -632,10 +632,10 @@ export class TreatmentPlanningService {
         accepted_by: acceptedBy,
         accepted_at: new Date().toISOString(),
       })
-      .eq('id', id);
+      .eq('id', id)
 
     if (error) {
-      throw new Error(`Erro ao aceitar recomendação: ${error.message}`);
+      throw new Error(`Erro ao aceitar recomendação: ${error.message}`)
     }
   }
 
@@ -646,10 +646,10 @@ export class TreatmentPlanningService {
         is_accepted: false,
         rejection_reason: reason,
       })
-      .eq('id', id);
+      .eq('id', id)
 
     if (error) {
-      throw new Error(`Erro ao rejeitar recomendação: ${error.message}`);
+      throw new Error(`Erro ao rejeitar recomendação: ${error.message}`)
     }
   }
 
@@ -668,13 +668,13 @@ export class TreatmentPlanningService {
         created_by: input.created_by,
       })
       .select()
-      .single();
+      .single()
 
     if (error) {
-      throw new Error(`Erro ao criar documento de tratamento: ${error.message}`);
+      throw new Error(`Erro ao criar documento de tratamento: ${error.message}`)
     }
 
-    return data;
+    return data
   }
 
   async getTreatmentDocumentsByPlan(treatmentPlanId: string): Promise<TreatmentDocument[]> {
@@ -687,13 +687,13 @@ export class TreatmentPlanningService {
         created_by:professionals(name, professional_license, council_type)
       `)
       .eq('treatment_plan_id', treatmentPlanId)
-      .order('created_at', { ascending: false });
+      .order('created_at', { ascending: false })
 
     if (error) {
-      throw new Error(`Erro ao buscar documentos de tratamento: ${error.message}`);
+      throw new Error(`Erro ao buscar documentos de tratamento: ${error.message}`)
     }
 
-    return data || [];
+    return data || []
   }
 
   // Treatment Outcomes
@@ -715,13 +715,13 @@ export class TreatmentPlanningService {
         created_by: input.created_by,
       })
       .select()
-      .single();
+      .single()
 
     if (error) {
-      throw new Error(`Erro ao criar registro de resultado: ${error.message}`);
+      throw new Error(`Erro ao criar registro de resultado: ${error.message}`)
     }
 
-    return data;
+    return data
   }
 
   // Assessment Templates
@@ -730,22 +730,22 @@ export class TreatmentPlanningService {
   ): Promise<TreatmentAssessmentTemplate[]> {
     let query = this.supabase
       .from('treatment_assessment_templates')
-      .select('*');
+      .select('*')
 
     if (filters?.procedureType) {
-      query = query.eq('procedure_type', filters.procedureType);
+      query = query.eq('procedure_type', filters.procedureType)
     }
     if (filters?.isActive !== undefined) {
-      query = query.eq('is_active', filters.isActive);
+      query = query.eq('is_active', filters.isActive)
     }
 
-    const { data, error } = await query.order('name', { ascending: true });
+    const { data, error } = await query.order('name', { ascending: true })
 
     if (error) {
-      throw new Error(`Erro ao buscar templates de avaliação: ${error.message}`);
+      throw new Error(`Erro ao buscar templates de avaliação: ${error.message}`)
     }
 
-    return data || [];
+    return data || []
   }
 
   // Documentation Templates
@@ -754,25 +754,25 @@ export class TreatmentPlanningService {
   ): Promise<TreatmentDocumentationTemplate[]> {
     let query = this.supabase
       .from('treatment_documentation_templates')
-      .select('*');
+      .select('*')
 
     if (filters?.procedureType) {
-      query = query.eq('procedure_type', filters.procedureType);
+      query = query.eq('procedure_type', filters.procedureType)
     }
     if (filters?.templateType) {
-      query = query.eq('template_type', filters.templateType);
+      query = query.eq('template_type', filters.templateType)
     }
     if (filters?.isRequired !== undefined) {
-      query = query.eq('is_required', filters.isRequired);
+      query = query.eq('is_required', filters.isRequired)
     }
 
-    const { data, error } = await query.order('name', { ascending: true });
+    const { data, error } = await query.order('name', { ascending: true })
 
     if (error) {
-      throw new Error(`Erro ao buscar templates de documentação: ${error.message}`);
+      throw new Error(`Erro ao buscar templates de documentação: ${error.message}`)
     }
 
-    return data || [];
+    return data || []
   }
 
   // Statistics and Analytics
@@ -783,18 +783,18 @@ export class TreatmentPlanningService {
     let query = this.supabase
       .from('treatment_plans')
       .select('status, count', { count: 'exact' })
-      .eq('clinic_id', clinicId);
+      .eq('clinic_id', clinicId)
 
     if (dateRange) {
       query = query
         .gte('created_at', dateRange.start.toISOString())
-        .lte('created_at', dateRange.end.toISOString());
+        .lte('created_at', dateRange.end.toISOString())
     }
 
-    const { data, error } = await query;
+    const { data, error } = await query
 
     if (error) {
-      throw new Error(`Erro ao buscar estatísticas de planos: ${error.message}`);
+      throw new Error(`Erro ao buscar estatísticas de planos: ${error.message}`)
     }
 
     const stats: TreatmentPlanStats = {
@@ -804,18 +804,18 @@ export class TreatmentPlanningService {
       completed: 0,
       paused: 0,
       cancelled: 0,
-    };
+    }
 
     data?.forEach(item => {
-      stats.total += item.count || 0;
-      if (item.status === 'draft') stats.draft = item.count || 0;
-      if (item.status === 'active') stats.active = item.count || 0;
-      if (item.status === 'completed') stats.completed = item.count || 0;
-      if (item.status === 'paused') stats.paused = item.count || 0;
-      if (item.status === 'cancelled') stats.cancelled = item.count || 0;
-    });
+      stats.total += item.count || 0
+      if (item.status === 'draft') stats.draft = item.count || 0
+      if (item.status === 'active') stats.active = item.count || 0
+      if (item.status === 'completed') stats.completed = item.count || 0
+      if (item.status === 'paused') stats.paused = item.count || 0
+      if (item.status === 'cancelled') stats.cancelled = item.count || 0
+    })
 
-    return stats;
+    return stats
   }
 
   async getTreatmentSessionStats(
@@ -825,18 +825,18 @@ export class TreatmentPlanningService {
     let query = this.supabase
       .from('treatment_sessions')
       .select('status, count', { count: 'exact' })
-      .eq('clinic_id', clinicId);
+      .eq('clinic_id', clinicId)
 
     if (dateRange) {
       query = query
         .gte('created_at', dateRange.start.toISOString())
-        .lte('created_at', dateRange.end.toISOString());
+        .lte('created_at', dateRange.end.toISOString())
     }
 
-    const { data, error } = await query;
+    const { data, error } = await query
 
     if (error) {
-      throw new Error(`Erro ao buscar estatísticas de sessões: ${error.message}`);
+      throw new Error(`Erro ao buscar estatísticas de sessões: ${error.message}`)
     }
 
     const stats: TreatmentSessionStats = {
@@ -847,19 +847,19 @@ export class TreatmentPlanningService {
       cancelled: 0,
       no_show: 0,
       rescheduled: 0,
-    };
+    }
 
     data?.forEach(item => {
-      stats.total += item.count || 0;
-      if (item.status === 'scheduled') stats.scheduled = item.count || 0;
-      if (item.status === 'in_progress') stats.in_progress = item.count || 0;
-      if (item.status === 'completed') stats.completed = item.count || 0;
-      if (item.status === 'cancelled') stats.cancelled = item.count || 0;
-      if (item.status === 'no_show') stats.no_show = item.count || 0;
-      if (item.status === 'rescheduled') stats.rescheduled = item.count || 0;
-    });
+      stats.total += item.count || 0
+      if (item.status === 'scheduled') stats.scheduled = item.count || 0
+      if (item.status === 'in_progress') stats.in_progress = item.count || 0
+      if (item.status === 'completed') stats.completed = item.count || 0
+      if (item.status === 'cancelled') stats.cancelled = item.count || 0
+      if (item.status === 'no_show') stats.no_show = item.count || 0
+      if (item.status === 'rescheduled') stats.rescheduled = item.count || 0
+    })
 
-    return stats;
+    return stats
   }
 
   async getTreatmentProgressSummary(treatmentPlanId: string): Promise<TreatmentProgressSummary> {
@@ -867,13 +867,12 @@ export class TreatmentPlanningService {
       this.getTreatmentSessionsByPlan(treatmentPlanId),
       this.getTreatmentProgressByPlan(treatmentPlanId),
       this.getTreatmentAssessmentsByPlan(treatmentPlanId),
-    ]);
+    ])
 
     const summary: TreatmentProgressSummary = {
       total_sessions: sessions.length,
       completed_sessions: sessions.filter(s => s.date < new Date()).length,
-      upcoming_sessions:
-        sessions.filter(s => s.date >= new Date()).length,
+      upcoming_sessions: sessions.filter(s => s.date >= new Date()).length,
       progress_records: progress.length,
       assessments_completed: assessments.length,
       average_satisfaction_rating: progress.length > 0
@@ -881,27 +880,27 @@ export class TreatmentPlanningService {
         : 0,
       next_session_date: sessions.find(s => s.date >= new Date())?.date?.toISOString() || null,
       last_progress_date: progress.length > 0 ? progress[0]?.date?.toISOString() || null : null,
-    };
+    }
 
-    return summary;
+    return summary
   }
 
   // Advanced Features
   async generateTreatmentPlanSummary(treatmentPlanId: string): Promise<string> {
-    const plan = await this.getTreatmentPlanById(treatmentPlanId);
+    const plan = await this.getTreatmentPlanById(treatmentPlanId)
     if (!plan) {
-      throw new Error('Plano de tratamento não encontrado');
+      throw new Error('Plano de tratamento não encontrado')
     }
 
     const [sessions, procedures] = await Promise.all([
       this.getTreatmentSessionsByPlan(treatmentPlanId),
       this.getTreatmentProceduresByPlan(treatmentPlanId),
-    ]);
+    ])
 
-    const completedSessions = sessions.filter(s => s.date < new Date()).length;
+    const completedSessions = sessions.filter(s => s.date < new Date()).length
     const progressPercentage = sessions.length > 0
       ? (completedSessions / sessions.length) * 100
-      : 0;
+      : 0
 
     const summary = `
 Plano de Tratamento: ${plan.id}
@@ -923,61 +922,59 @@ Próxima Sessão: ${
         )
         : 'Nenhuma agendada'
     }
-    `.trim();
+    `.trim()
 
-    return summary;
+    return summary
   }
 
   async checkTreatmentPlanCompliance(treatmentPlanId: string): Promise<{
-    compliant: boolean;
-    issues: string[];
-    recommendations: string[];
+    compliant: boolean
+    issues: string[]
+    recommendations: string[]
   }> {
-    const plan = await this.getTreatmentPlanById(treatmentPlanId);
+    const plan = await this.getTreatmentPlanById(treatmentPlanId)
     if (!plan) {
-      throw new Error('Plano de tratamento não encontrado');
+      throw new Error('Plano de tratamento não encontrado')
     }
 
     const [sessions, documents, assessments] = await Promise.all([
       this.getTreatmentSessionsByPlan(treatmentPlanId),
       this.getTreatmentDocumentsByPlan(treatmentPlanId),
       this.getTreatmentAssessmentsByPlan(treatmentPlanId),
-    ]);
+    ])
 
-    const issues: string[] = [];
-    const recommendations: string[] = [];
+    const issues: string[] = []
+    const recommendations: string[] = []
 
     // Check for missing documentation
-    const requiredDocs = documents.filter(d => d.type === 'consent');
-    const missingRequiredDocs = requiredDocs;
+    const requiredDocs = documents.filter(d => d.type === 'consent')
+    const missingRequiredDocs = requiredDocs
     if (missingRequiredDocs.length > 0) {
-      issues.push(`Documentos obrigatórios não assinados: ${missingRequiredDocs.length}`);
-      recommendations.push('Assine todos os documentos obrigatórios o mais rápido possível');
+      issues.push(`Documentos obrigatórios não assinados: ${missingRequiredDocs.length}`)
+      recommendations.push('Assine todos os documentos obrigatórios o mais rápido possível')
     }
 
     // Check for overdue sessions
-    const overdueSessions = sessions.filter(s =>
-      s.date < new Date()
-    );
+    const overdueSessions = sessions.filter(s => s.date < new Date())
     if (overdueSessions.length > 0) {
-      issues.push(`Sessões atrasadas: ${overdueSessions.length}`);
-      recommendations.push('Reagende as sessões atrasadas ou atualize o status');
+      issues.push(`Sessões atrasadas: ${overdueSessions.length}`)
+      recommendations.push('Reagende as sessões atrasadas ou atualize o status')
     }
 
     // Check for missing assessments
-    const completedSessions = sessions.filter(s => s.date < new Date());
+    const completedSessions = sessions.filter(s => s.date < new Date())
     const sessionsWithoutAssessment = completedSessions.filter(session =>
       !assessments.some(a => a.sessionId === session.id)
-    );
+    )
     if (sessionsWithoutAssessment.length > 0) {
-      issues.push(`Sessões sem avaliação: ${sessionsWithoutAssessment.length}`);
-      recommendations.push('Realize avaliações para todas as sessões concluídas');
+      issues.push(`Sessões sem avaliação: ${sessionsWithoutAssessment.length}`)
+      recommendations.push('Realize avaliações para todas as sessões concluídas')
     }
 
     return {
       compliant: issues.length === 0,
       issues,
       recommendations,
-    };
+    }
   }
 }

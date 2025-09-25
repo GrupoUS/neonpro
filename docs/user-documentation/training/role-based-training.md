@@ -17,19 +17,19 @@ This document provides specialized training programs for each user role in the N
 
 ```typescript
 interface RoleTrainingProgram {
-  role: UserRole;
-  duration: number; // days
-  modules: TrainingModule[];
-  prerequisites: string[];
-  certification: CertificationRequirements;
+  role: UserRole
+  duration: number // days
+  modules: TrainingModule[]
+  prerequisites: string[]
+  certification: CertificationRequirements
 }
 
 interface TrainingModule {
-  name: string;
-  duration: number; // hours
-  objectives: string[];
-  activities: TrainingActivity[];
-  assessment: AssessmentCriteria;
+  name: string
+  duration: number // hours
+  objectives: string[]
+  activities: TrainingActivity[]
+  assessment: AssessmentCriteria
 }
 ```
 
@@ -51,11 +51,11 @@ interface TrainingModule {
 ```typescript
 // Healthcare Professional Dashboard
 interface HealthcareDashboard {
-  patientSummary: PatientOverview;
-  todaysAppointments: Appointment[];
-  treatmentQueue: TreatmentSession[];
-  complianceAlerts: ComplianceAlert[];
-  aiRecommendations: AIInsight[];
+  patientSummary: PatientOverview
+  todaysAppointments: Appointment[]
+  treatmentQueue: TreatmentSession[]
+  complianceAlerts: ComplianceAlert[]
+  aiRecommendations: AIInsight[]
 }
 ```
 
@@ -85,13 +85,13 @@ async function exercisePatientNavigation() {
 
 ```typescript
 interface PatientAssessment {
-  demographicData: PatientDemographics;
-  medicalHistory: MedicalHistory[];
-  aestheticGoals: AestheticGoal[];
-  contraindications: Contraindication[];
-  assessmentNotes: ClinicalNote[];
-  photos: MedicalImage[];
-  measurements: BodyMeasurement[];
+  demographicData: PatientDemographics
+  medicalHistory: MedicalHistory[]
+  aestheticGoals: AestheticGoal[]
+  contraindications: Contraindication[]
+  assessmentNotes: ClinicalNote[]
+  photos: MedicalImage[]
+  measurements: BodyMeasurement[]
 }
 ```
 
@@ -119,12 +119,12 @@ interface PatientAssessment {
 
 ```typescript
 interface AITreatmentPlan {
-  patientAnalysis: PatientProfile;
-  recommendedTreatments: TreatmentRecommendation[];
-  sequence: TreatmentSequence[];
-  expectedOutcomes: OutcomePrediction[];
-  riskAssessment: RiskAnalysis[];
-  costEstimate: FinancialProjection[];
+  patientAnalysis: PatientProfile
+  recommendedTreatments: TreatmentRecommendation[]
+  sequence: TreatmentSequence[]
+  expectedOutcomes: OutcomePrediction[]
+  riskAssessment: RiskAnalysis[]
+  costEstimate: FinancialProjection[]
 }
 ```
 
@@ -155,11 +155,11 @@ async function exerciseAIPlanning() {
 
 ```typescript
 interface TreatmentCatalog {
-  anvisaApproved: ANVISATreatment[];
-  protocols: TreatmentProtocol[];
-  pricing: TreatmentPricing[];
-  inventory: TreatmentInventory[];
-  contraindications: TreatmentContraindication[];
+  anvisaApproved: ANVISATreatment[]
+  protocols: TreatmentProtocol[]
+  pricing: TreatmentPricing[]
+  inventory: TreatmentInventory[]
+  contraindications: TreatmentContraindication[]
 }
 ```
 
@@ -187,15 +187,15 @@ interface TreatmentCatalog {
 
 ```typescript
 interface TreatmentSession {
-  sessionId: string;
-  patientId: string;
-  professionalId: string;
-  treatmentPlan: TreatmentPlan;
-  actualProcedure: ProcedureExecution[];
-  measurements: SessionMeasurement[];
-  complications: ComplicationRecord[];
-  patientFeedback: FeedbackRecord[];
-  followUpPlan: FollowUpSchedule[];
+  sessionId: string
+  patientId: string
+  professionalId: string
+  treatmentPlan: TreatmentPlan
+  actualProcedure: ProcedureExecution[]
+  measurements: SessionMeasurement[]
+  complications: ComplicationRecord[]
+  patientFeedback: FeedbackRecord[]
+  followUpPlan: FollowUpSchedule[]
 }
 ```
 
@@ -226,12 +226,12 @@ async function exerciseSessionManagement() {
 
 ```typescript
 interface ClinicalDocumentation {
-  beforePhotos: StandardizedPhoto[];
-  afterPhotos: StandardizedPhoto[];
-  progressNotes: ProgressNote[];
-  measurementTracking: MeasurementHistory[];
-  patientSatisfaction: SatisfactionSurvey[];
-  outcomeAssessment: OutcomeEvaluation[];
+  beforePhotos: StandardizedPhoto[]
+  afterPhotos: StandardizedPhoto[]
+  progressNotes: ProgressNote[]
+  measurementTracking: MeasurementHistory[]
+  patientSatisfaction: SatisfactionSurvey[]
+  outcomeAssessment: OutcomeEvaluation[]
 }
 ```
 
@@ -259,11 +259,11 @@ interface ClinicalDocumentation {
 
 ```typescript
 interface ProfessionalCoordination {
-  careTeam: CareTeamMember[];
-  sharedNotes: InterprofessionalNote[];
-  referralSystem: ReferralManagement[];
-  consultationRequests: ConsultationRequest[];
-  collaborativePlanning: CollaborativeSession[];
+  careTeam: CareTeamMember[]
+  sharedNotes: InterprofessionalNote[]
+  referralSystem: ReferralManagement[]
+  consultationRequests: ConsultationRequest[]
+  collaborativePlanning: CollaborativeSession[]
 }
 ```
 
@@ -294,11 +294,11 @@ async function exerciseCollaboration() {
 
 ```typescript
 interface AdvancedAI {
-  outcomePrediction: OutcomePredictor[];
-  complicationRisk: RiskAssessment[];
-  treatmentOptimization: TreatmentOptimizer[];
-  patientSatisfaction: SatisfactionPredictor[];
-  revenueOptimization: RevenueAnalyzer[];
+  outcomePrediction: OutcomePredictor[]
+  complicationRisk: RiskAssessment[]
+  treatmentOptimization: TreatmentOptimizer[]
+  patientSatisfaction: SatisfactionPredictor[]
+  revenueOptimization: RevenueAnalyzer[]
 }
 ```
 
@@ -326,11 +326,11 @@ interface AdvancedAI {
 
 ```typescript
 interface ComplianceRequirements {
-  lgpdCompliance: LGPDRequirements[];
-  anvisaRegulations: ANVISACompliance[];
-  cfmStandards: CFMRequirements[];
-  documentationStandards: DocumentationProtocol[];
-  auditTrail: ComplianceAudit[];
+  lgpdCompliance: LGPDRequirements[]
+  anvisaRegulations: ANVISACompliance[]
+  cfmStandards: CFMRequirements[]
+  documentationStandards: DocumentationProtocol[]
+  auditTrail: ComplianceAudit[]
 }
 ```
 
@@ -361,11 +361,11 @@ async function exerciseCompliance() {
 
 ```typescript
 interface CertificationExam {
-  theoreticalTest: Question[];
-  practicalAssessment: Scenario[];
-  caseStudyEvaluation: PatientCase[];
-  complianceAssessment: ComplianceScenario[];
-  finalInterview: InterviewQuestion[];
+  theoreticalTest: Question[]
+  practicalAssessment: Scenario[]
+  caseStudyEvaluation: PatientCase[]
+  complianceAssessment: ComplianceScenario[]
+  finalInterview: InterviewQuestion[]
 }
 ```
 
@@ -401,12 +401,12 @@ interface CertificationExam {
 
 ```typescript
 interface ReceptionDashboard {
-  todaysSchedule: AppointmentSchedule[];
-  patientQueue: PatientQueue[];
-  registrationQueue: RegistrationRequest[];
-  paymentQueue: PaymentTransaction[];
-  notifications: SystemAlert[];
-  quickActions: QuickAction[];
+  todaysSchedule: AppointmentSchedule[]
+  patientQueue: PatientQueue[]
+  registrationQueue: RegistrationRequest[]
+  paymentQueue: PaymentTransaction[]
+  notifications: SystemAlert[]
+  quickActions: QuickAction[]
 }
 ```
 
@@ -432,13 +432,13 @@ interface ReceptionDashboard {
 
 ```typescript
 interface PatientRegistration {
-  personalInfo: PersonalData;
-  contactInfo: ContactData;
-  medicalHistory: MedicalQuestionnaire[];
-  insuranceInfo: InsuranceData[];
-  consentForms: ConsentDocument[];
-  photoCapture: PatientPhoto[];
-  documentation: RequiredDocument[];
+  personalInfo: PersonalData
+  contactInfo: ContactData
+  medicalHistory: MedicalQuestionnaire[]
+  insuranceInfo: InsuranceData[]
+  consentForms: ConsentDocument[]
+  photoCapture: PatientPhoto[]
+  documentation: RequiredDocument[]
 }
 ```
 
@@ -466,12 +466,12 @@ interface PatientRegistration {
 
 ```typescript
 interface AppointmentManagement {
-  calendarView: CalendarDisplay[];
-  availabilityManagement: TimeSlot[];
-  resourceAllocation: ResourceSchedule[];
-  appointmentOptimization: AIOptimization[];
-  conflictResolution: ScheduleConflict[];
-  reminderSystem: NotificationManager[];
+  calendarView: CalendarDisplay[]
+  availabilityManagement: TimeSlot[]
+  resourceAllocation: ResourceSchedule[]
+  appointmentOptimization: AIOptimization[]
+  conflictResolution: ScheduleConflict[]
+  reminderSystem: NotificationManager[]
 }
 ```
 
@@ -502,11 +502,11 @@ async function exerciseComplexScheduling() {
 
 ```typescript
 interface CustomerService {
-  communicationTools: CommunicationChannel[];
-  complaintResolution: ComplaintProcess[];
-  feedbackCollection: FeedbackSystem[];
-  satisfactionMonitoring: SatisfactionTracker[];
-  loyaltyProgram: LoyaltyManager[];
+  communicationTools: CommunicationChannel[]
+  complaintResolution: ComplaintProcess[]
+  feedbackCollection: FeedbackSystem[]
+  satisfactionMonitoring: SatisfactionTracker[]
+  loyaltyProgram: LoyaltyManager[]
 }
 ```
 
@@ -534,12 +534,12 @@ interface CustomerService {
 
 ```typescript
 interface PaymentProcessing {
-  paymentMethods: PaymentMethod[];
-  transactionProcessing: TransactionFlow[];
-  refundManagement: RefundProcess[];
-  installmentPlans: InstallmentManager[];
-  financialReporting: ReportGenerator[];
-  reconciliation: ReconciliationProcess[];
+  paymentMethods: PaymentMethod[]
+  transactionProcessing: TransactionFlow[]
+  refundManagement: RefundProcess[]
+  installmentPlans: InstallmentManager[]
+  financialReporting: ReportGenerator[]
+  reconciliation: ReconciliationProcess[]
 }
 ```
 
@@ -565,11 +565,11 @@ interface PaymentProcessing {
 
 ```typescript
 interface FinancialAnalytics {
-  revenueTracking: RevenueTracker[];
-  appointmentMetrics: AppointmentAnalytics[];
-  paymentTrends: PaymentAnalysis[];
-  customerLifetimeValue: CLVCalculator[];
-  financialForecasting: RevenuePredictor[];
+  revenueTracking: RevenueTracker[]
+  appointmentMetrics: AppointmentAnalytics[]
+  paymentTrends: PaymentAnalysis[]
+  customerLifetimeValue: CLVCalculator[]
+  financialForecasting: RevenuePredictor[]
 }
 ```
 
@@ -597,11 +597,11 @@ interface FinancialAnalytics {
 
 ```typescript
 interface ResourceManagement {
-  treatmentRoomSchedule: RoomBooking[];
-  equipmentManagement: EquipmentTracker[];
-  supplyInventory: InventoryManager[];
-  staffAllocation: StaffScheduler[];
-  facilityManagement: FacilityTracker[];
+  treatmentRoomSchedule: RoomBooking[]
+  equipmentManagement: EquipmentTracker[]
+  supplyInventory: InventoryManager[]
+  staffAllocation: StaffScheduler[]
+  facilityManagement: FacilityTracker[]
 }
 ```
 
@@ -627,11 +627,11 @@ interface ResourceManagement {
 
 ```typescript
 interface ReceptionCertification {
-  systemSkills: SystemOperation[];
-  customerService: ServiceScenario[];
-  financialProcessing: TransactionHandling[];
-  complianceKnowledge: ComplianceAssessment[];
-  emergencyProcedures: EmergencyResponse[];
+  systemSkills: SystemOperation[]
+  customerService: ServiceScenario[]
+  financialProcessing: TransactionHandling[]
+  complianceKnowledge: ComplianceAssessment[]
+  emergencyProcedures: EmergencyResponse[]
 }
 ```
 
@@ -668,12 +668,12 @@ interface ReceptionCertification {
 
 ```typescript
 interface SystemAdministration {
-  globalSettings: SystemConfiguration[];
-  userManagement: UserAccount[];
-  roleConfiguration: PermissionSettings[];
-  securitySettings: SecurityConfiguration[];
-  integrationManagement: ThirdPartyIntegration[];
-  systemMonitoring: MonitoringDashboard[];
+  globalSettings: SystemConfiguration[]
+  userManagement: UserAccount[]
+  roleConfiguration: PermissionSettings[]
+  securitySettings: SecurityConfiguration[]
+  integrationManagement: ThirdPartyIntegration[]
+  systemMonitoring: MonitoringDashboard[]
 }
 ```
 
@@ -699,11 +699,11 @@ interface SystemAdministration {
 
 ```typescript
 interface UserLifecycle {
-  onboardingProcess: UserOnboarding[];
-  roleAssignment: PermissionManagement[];
-  trainingTracking: TrainingProgress[];
-  performanceMonitoring: PerformanceMetrics[];
-  offboardingProcess: UserOffboarding[];
+  onboardingProcess: UserOnboarding[]
+  roleAssignment: PermissionManagement[]
+  trainingTracking: TrainingProgress[]
+  performanceMonitoring: PerformanceMetrics[]
+  offboardingProcess: UserOffboarding[]
 }
 ```
 
@@ -731,12 +731,12 @@ interface UserLifecycle {
 
 ```typescript
 interface FinancialAdministration {
-  revenueManagement: RevenueTracker[];
-  expenseTracking: ExpenseManager[];
-  profitAnalysis: ProfitAnalyzer[];
-  budgetPlanning: BudgetPlanner[];
-  financialForecasting: RevenuePredictor[];
-  complianceReporting: ComplianceReporter[];
+  revenueManagement: RevenueTracker[]
+  expenseTracking: ExpenseManager[]
+  profitAnalysis: ProfitAnalyzer[]
+  budgetPlanning: BudgetPlanner[]
+  financialForecasting: RevenuePredictor[]
+  complianceReporting: ComplianceReporter[]
 }
 ```
 
@@ -762,11 +762,11 @@ interface FinancialAdministration {
 
 ```typescript
 interface BusinessAnalytics {
-  kpiTracking: KPIMonitor[];
-  trendAnalysis: TrendAnalyzer[];
-  performanceMetrics: PerformanceTracker[];
-  customerAnalytics: CustomerInsights[];
-  operationalEfficiency: EfficiencyAnalyzer[];
+  kpiTracking: KPIMonitor[]
+  trendAnalysis: TrendAnalyzer[]
+  performanceMetrics: PerformanceTracker[]
+  customerAnalytics: CustomerInsights[]
+  operationalEfficiency: EfficiencyAnalyzer[]
 }
 ```
 
@@ -794,11 +794,11 @@ interface BusinessAnalytics {
 
 ```typescript
 interface ComplianceManagement {
-  lgpdCompliance: LGPDManager[];
-  anvisaCompliance: ANVISAReporter[];
-  cfmCompliance: CFMValidator[];
-  auditManagement: AuditTracker[];
-  documentationControl: DocumentManager[];
+  lgpdCompliance: LGPDManager[]
+  anvisaCompliance: ANVISAReporter[]
+  cfmCompliance: CFMValidator[]
+  auditManagement: AuditTracker[]
+  documentationControl: DocumentManager[]
 }
 ```
 
@@ -829,11 +829,11 @@ async function exerciseComplianceManagement() {
 
 ```typescript
 interface SecurityAdministration {
-  accessControl: AccessManager[];
-  dataProtection: DataSecurity[];
-  threatDetection: ThreatMonitor[];
-  incidentResponse: IncidentHandler[];
-  disasterRecovery: RecoveryPlanner[];
+  accessControl: AccessManager[]
+  dataProtection: DataSecurity[]
+  threatDetection: ThreatMonitor[]
+  incidentResponse: IncidentHandler[]
+  disasterRecovery: RecoveryPlanner[]
 }
 ```
 
@@ -861,11 +861,11 @@ interface SecurityAdministration {
 
 ```typescript
 interface IntegrationManagement {
-  apiManagement: APIConnector[];
-  externalServices: ExternalService[];
-  dataSynchronization: SyncManager[];
-  webhookConfiguration: WebhookManager[];
-  errorHandling: IntegrationErrorHandler[];
+  apiManagement: APIConnector[]
+  externalServices: ExternalService[]
+  dataSynchronization: SyncManager[]
+  webhookConfiguration: WebhookManager[]
+  errorHandling: IntegrationErrorHandler[]
 }
 ```
 
@@ -891,11 +891,11 @@ interface IntegrationManagement {
 
 ```typescript
 interface PerformanceManagement {
-  systemOptimization: PerformanceTuner[];
-  resourceManagement: ResourceAllocator[];
-  loadBalancing: LoadBalancer[];
-  cachingStrategy: CacheManager[];
-  monitoringAlerts: AlertManager[];
+  systemOptimization: PerformanceTuner[]
+  resourceManagement: ResourceAllocator[]
+  loadBalancing: LoadBalancer[]
+  cachingStrategy: CacheManager[]
+  monitoringAlerts: AlertManager[]
 }
 ```
 
@@ -923,11 +923,11 @@ interface PerformanceManagement {
 
 ```typescript
 interface StrategicManagement {
-  businessPlanning: BusinessPlanner[];
-  growthStrategy: GrowthAnalyzer[];
-  competitiveAnalysis: CompetitorTracker[];
-  marketTrends: TrendAnalyzer[];
-  decisionSupport: DecisionSupportSystem[];
+  businessPlanning: BusinessPlanner[]
+  growthStrategy: GrowthAnalyzer[]
+  competitiveAnalysis: CompetitorTracker[]
+  marketTrends: TrendAnalyzer[]
+  decisionSupport: DecisionSupportSystem[]
 }
 ```
 
@@ -953,11 +953,11 @@ interface StrategicManagement {
 
 ```typescript
 interface AdministratorCertification {
-  systemAdministration: AdminTask[];
-  strategicPlanning: StrategyScenario[];
-  complianceManagement: ComplianceTest[];
-  securityAdministration: SecurityAssessment[];
-  decisionMaking: DecisionScenario[];
+  systemAdministration: AdminTask[]
+  strategicPlanning: StrategyScenario[]
+  complianceManagement: ComplianceTest[]
+  securityAdministration: SecurityAssessment[]
+  decisionMaking: DecisionScenario[]
 }
 ```
 
@@ -994,11 +994,11 @@ interface AdministratorCertification {
 
 ```typescript
 interface RegulatoryFramework {
-  lgpd: LGPDRequirements[];
-  anvisa: ANVISARegulations[];
-  cfm: CFMStandards[];
-  healthMinistry: MinistryGuidelines[];
-  municipalRegulations: LocalRequirements[];
+  lgpd: LGPDRequirements[]
+  anvisa: ANVISARegulations[]
+  cfm: CFMStandards[]
+  healthMinistry: MinistryGuidelines[]
+  municipalRegulations: LocalRequirements[]
 }
 ```
 
@@ -1024,11 +1024,11 @@ interface RegulatoryFramework {
 
 ```typescript
 interface LGPDImplementation {
-  dataMapping: DataInventory[];
-  consentManagement: ConsentTracker[];
-  dataSubjectRights: RightsManager[];
-  breachNotification: BreachHandler[];
-  privacyAssessments: PIAProcessor[];
+  dataMapping: DataInventory[]
+  consentManagement: ConsentTracker[]
+  dataSubjectRights: RightsManager[]
+  breachNotification: BreachHandler[]
+  privacyAssessments: PIAProcessor[]
 }
 ```
 
@@ -1056,11 +1056,11 @@ interface LGPDImplementation {
 
 ```typescript
 interface HealthcareCompliance {
-  treatmentStandards: TreatmentProtocol[];
-  safetyRegulations: SafetyStandard[];
-  qualityManagement: QualitySystem[];
-  riskManagement: RiskAssessment[];
-  incidentReporting: IncidentManager[];
+  treatmentStandards: TreatmentProtocol[]
+  safetyRegulations: SafetyStandard[]
+  qualityManagement: QualitySystem[]
+  riskManagement: RiskAssessment[]
+  incidentReporting: IncidentManager[]
 }
 ```
 
@@ -1091,11 +1091,11 @@ async function exerciseHealthcareCompliance() {
 
 ```typescript
 interface AuditManagement {
-  internalAudits: InternalAudit[];
-  externalAudits: ExternalAudit[];
-  auditPreparation: AuditReadiness[];
-  findingTracking: FindingManager[];
-  correctiveActions: ActionTracker[];
+  internalAudits: InternalAudit[]
+  externalAudits: ExternalAudit[]
+  auditPreparation: AuditReadiness[]
+  findingTracking: FindingManager[]
+  correctiveActions: ActionTracker[]
 }
 ```
 
@@ -1123,11 +1123,11 @@ interface AuditManagement {
 
 ```typescript
 interface SecurityCompliance {
-  dataProtection: DataSecurity[];
-  accessControl: AccessManagement[];
-  encryptionStandards: EncryptionPolicy[];
-  vulnerabilityManagement: VulnerabilityScanner[];
-  securityTesting: SecurityTest[];
+  dataProtection: DataSecurity[]
+  accessControl: AccessManagement[]
+  encryptionStandards: EncryptionPolicy[]
+  vulnerabilityManagement: VulnerabilityScanner[]
+  securityTesting: SecurityTest[]
 }
 ```
 
@@ -1153,11 +1153,11 @@ interface SecurityCompliance {
 
 ```typescript
 interface RiskManagement {
-  riskAssessment: RiskAnalysis[];
-  incidentResponse: IncidentPlan[];
-  businessContinuity: ContinuityPlan[];
-  disasterRecovery: RecoveryStrategy[];
-  crisisManagement: CrisisResponse[];
+  riskAssessment: RiskAnalysis[]
+  incidentResponse: IncidentPlan[]
+  businessContinuity: ContinuityPlan[]
+  disasterRecovery: RecoveryStrategy[]
+  crisisManagement: CrisisResponse[]
 }
 ```
 
@@ -1185,11 +1185,11 @@ interface RiskManagement {
 
 ```typescript
 interface ComplianceAnalytics {
-  complianceMetrics: ComplianceKPI[];
-  trendAnalysis: TrendTracker[];
-  predictiveCompliance: CompliancePredictor[];
-  reportingAutomation: ReportGenerator[];
-  dashboardManagement: ComplianceDashboard[];
+  complianceMetrics: ComplianceKPI[]
+  trendAnalysis: TrendTracker[]
+  predictiveCompliance: CompliancePredictor[]
+  reportingAutomation: ReportGenerator[]
+  dashboardManagement: ComplianceDashboard[]
 }
 ```
 
@@ -1215,11 +1215,11 @@ interface ComplianceAnalytics {
 
 ```typescript
 interface ComplianceCertification {
-  regulatoryKnowledge: RegulationTest[];
-  lgpdImplementation: LGPDScenario[];
-  auditManagement: AuditScenario[];
-  securityCompliance: SecurityAssessment[];
-  riskManagement: RiskScenario[];
+  regulatoryKnowledge: RegulationTest[]
+  lgpdImplementation: LGPDScenario[]
+  auditManagement: AuditScenario[]
+  securityCompliance: SecurityAssessment[]
+  riskManagement: RiskScenario[]
 }
 ```
 
@@ -1245,11 +1245,11 @@ interface ComplianceCertification {
 
 ```typescript
 interface TrainingMetrics {
-  completionRates: CompletionRate[];
-  assessmentScores: ScoreDistribution[];
-  skillImprovement: SkillProgress[];
-  timeToCompetency: CompetencyTimeline[];
-  certificationRates: CertificationStats[];
+  completionRates: CompletionRate[]
+  assessmentScores: ScoreDistribution[]
+  skillImprovement: SkillProgress[]
+  timeToCompetency: CompetencyTimeline[]
+  certificationRates: CertificationStats[]
 }
 ```
 

@@ -14,8 +14,8 @@
  * @compliance LGPD, ANVISA, ISO 27001, NIST Cybersecurity Framework
  */
 
-import { z } from 'zod';
-import { auditLogger, logHealthcareError } from '../logging/healthcare-logger';
+import { z } from 'zod'
+import { auditLogger, logHealthcareError } from '../logging/healthcare-logger'
 
 // ============================================================================
 // TYPES & SCHEMAS
@@ -77,11 +77,11 @@ export const HealthcareCacheContextSchema = z.object({
   retentionRequirement: z
     .enum(['session', 'temporary', 'standard', 'extended'])
     .default('standard'),
-});
+})
 
 export type HealthcareCacheContext = z.infer<
   typeof HealthcareCacheContextSchema
->;
+>
 
 /**
  * Cache entry schema
@@ -122,9 +122,9 @@ export const CacheEntrySchema = z.object({
 
   // Metadata
   metadata: z.record(z.unknown()).default({}),
-});
+})
 
-export type CacheEntry = z.infer<typeof CacheEntrySchema>;
+export type CacheEntry = z.infer<typeof CacheEntrySchema>
 
 /**
  * Cache configuration schema
@@ -173,9 +173,9 @@ export const CacheConfigSchema = z.object({
       batchOperations: z.boolean().default(true),
     })
     .default({}),
-});
+})
 
-export type CacheConfig = z.infer<typeof CacheConfigSchema>;
+export type CacheConfig = z.infer<typeof CacheConfigSchema>
 
 /**
  * Cache operation result schema
@@ -202,9 +202,9 @@ export const CacheOperationResultSchema = z.object({
   timestamp: z.date().default(() => new Date()),
   tier: z.nativeEnum(CacheTier).optional(),
   metadata: z.record(z.unknown()).default({}),
-});
+})
 
-export type CacheOperationResult = z.infer<typeof CacheOperationResultSchema>;
+export type CacheOperationResult = z.infer<typeof CacheOperationResultSchema>
 
 /**
  * Cache statistics schema
@@ -238,9 +238,9 @@ export const CacheStatisticsSchema = z.object({
   // Time-based metrics
   lastResetTime: z.date().default(() => new Date()),
   uptime: z.number().default(0),
-});
+})
 
-export type CacheStatistics = z.infer<typeof CacheStatisticsSchema>;
+export type CacheStatistics = z.infer<typeof CacheStatisticsSchema>
 
 /**
  * Cache audit event schema
@@ -274,9 +274,9 @@ export const CacheAuditEventSchema = z.object({
 
   // Metadata
   metadata: z.record(z.unknown()).default({}),
-});
+})
 
-export type CacheAuditEvent = z.infer<typeof CacheAuditEventSchema>;
+export type CacheAuditEvent = z.infer<typeof CacheAuditEventSchema>
 
 // ============================================================================
 // CACHE BACKEND INTERFACE
@@ -289,49 +289,49 @@ export interface CacheBackend {
   /**
    * Get a value from cache
    */
-  get(key: string): Promise<CacheEntry | null>;
+  get(key: string): Promise<CacheEntry | null>
 
   /**
    * Set a value in cache
    */
-  set(key: string, entry: CacheEntry): Promise<void>;
+  set(key: string, entry: CacheEntry): Promise<void>
 
   /**
    * Delete a value from cache
    */
-  delete(key: string): Promise<boolean>;
+  delete(key: string): Promise<boolean>
 
   /**
    * Check if key exists
    */
-  has(key: string): Promise<boolean>;
+  has(key: string): Promise<boolean>
 
   /**
    * Clear all cache entries
    */
-  clear(): Promise<void>;
+  clear(): Promise<void>
 
   /**
    * Get cache statistics
    */
-  getStats(): Promise<CacheStatistics>;
+  getStats(): Promise<CacheStatistics>
 
   /**
    * Get keys matching pattern
    */
-  getKeys(pattern?: string): Promise<string[]>;
+  getKeys(pattern?: string): Promise<string[]>
 
   /**
    * Get entries by sensitivity level
    */
   getEntriesBySensitivity(
     sensitivity: CacheDataSensitivity,
-  ): Promise<CacheEntry[]>;
+  ): Promise<CacheEntry[]>
 
   /**
    * Cleanup expired entries
    */
-  cleanup(): Promise<number>;
+  cleanup(): Promise<number>
 }
 
 // ============================================================================
@@ -346,24 +346,24 @@ export function calculateHealthcareTTL(
   config: CacheConfig,
   _context?: HealthcareCacheContext,
 ): number {
-  const basePolicy = config.healthcareRetentionPolicy;
-  let ttl = basePolicy[sensitivity] || config.defaultTTL;
+  const basePolicy = config.healthcareRetentionPolicy
+  let ttl = basePolicy[sensitivity] || config.defaultTTL
 
   // Adjust based on clinical context
   if (_context?.clinicalContext === 'emergency') {
-    ttl = Math.min(ttl, 1800); // Max 30 minutes for emergency data
+    ttl = Math.min(ttl, 1800) // Max 30 minutes for emergency data
   } else if (_context?.clinicalContext === 'surgery') {
-    ttl = Math.min(ttl, 3600); // Max 1 hour for surgical data
+    ttl = Math.min(ttl, 3600) // Max 1 hour for surgical data
   }
 
   // Adjust based on retention requirement
   if (_context?.retentionRequirement === 'session') {
-    ttl = Math.min(ttl, 3600); // Max 1 hour for session data
+    ttl = Math.min(ttl, 3600) // Max 1 hour for session data
   } else if (_context?.retentionRequirement === 'temporary') {
-    ttl = Math.min(ttl, 900); // Max 15 minutes for temporary data
+    ttl = Math.min(ttl, 900) // Max 15 minutes for temporary data
   }
 
-  return Math.min(ttl, config.maxTTL);
+  return Math.min(ttl, config.maxTTL)
 }
 
 /**
@@ -375,20 +375,20 @@ export function requiresEncryption(
 ): boolean {
   // Always encrypt restricted data
   if (sensitivity === CacheDataSensitivity.RESTRICTED) {
-    return true;
+    return true
   }
 
   // Encrypt confidential patient data
   if (sensitivity === CacheDataSensitivity.CONFIDENTIAL && _context?.patientId) {
-    return true;
+    return true
   }
 
   // Encrypt emergency clinical data
   if (_context?.clinicalContext === 'emergency') {
-    return true;
+    return true
   }
 
-  return false;
+  return false
 }
 
 /**
@@ -401,23 +401,23 @@ export function requiresAuditLogging(
 ): boolean {
   // Always audit restricted data
   if (sensitivity === CacheDataSensitivity.RESTRICTED) {
-    return true;
+    return true
   }
 
   // Audit patient data access
   if (_context?.patientId && ['get', 'set'].includes(operation)) {
-    return true;
+    return true
   }
 
   // Audit clinical operations
   if (
-    _context?.clinicalContext
-    && _context.clinicalContext !== 'administrative'
+    _context?.clinicalContext &&
+    _context.clinicalContext !== 'administrative'
   ) {
-    return true;
+    return true
   }
 
-  return false;
+  return false
 }
 
 /**
@@ -428,29 +428,29 @@ export function generateHealthcareCacheKey(
   _context?: HealthcareCacheContext,
   userScope?: string,
 ): string {
-  const parts = [baseKey];
+  const parts = [baseKey]
 
   if (userScope) {
-    parts.push(`user:${userScope}`);
+    parts.push(`user:${userScope}`)
   }
 
   if (_context?.patientId) {
-    parts.push(`patient:${_context.patientId}`);
+    parts.push(`patient:${_context.patientId}`)
   }
 
   if (_context?.providerId) {
-    parts.push(`provider:${_context.providerId}`);
+    parts.push(`provider:${_context.providerId}`)
   }
 
   if (_context?.facilityId) {
-    parts.push(`facility:${_context.facilityId}`);
+    parts.push(`facility:${_context.facilityId}`)
   }
 
   if (_context?.clinicalContext) {
-    parts.push(`context:${_context.clinicalContext}`);
+    parts.push(`context:${_context.clinicalContext}`)
   }
 
-  return parts.join(':');
+  return parts.join(':')
 }
 
 /**
@@ -470,7 +470,7 @@ export function anonymizeCacheEntry(entry: CacheEntry): CacheEntry {
       retentionRequirement: 'standard', // Required field
     },
     metadata: {},
-  };
+  }
 }
 
 /**
@@ -478,11 +478,11 @@ export function anonymizeCacheEntry(entry: CacheEntry): CacheEntry {
  */
 export function estimateCacheEntrySize(entry: CacheEntry): number {
   try {
-    const serialized = JSON.stringify(entry);
-    return new Blob([serialized]).size;
+    const serialized = JSON.stringify(entry)
+    return new Blob([serialized]).size
   } catch {
     // Fallback estimation
-    return JSON.stringify(entry.value || '').length * 2; // Rough UTF-16 estimation
+    return JSON.stringify(entry.value || '').length * 2 // Rough UTF-16 estimation
   }
 }
 
@@ -494,116 +494,116 @@ export function estimateCacheEntrySize(entry: CacheEntry): number {
  * In-memory cache backend implementation
  */
 export class InMemoryCacheBackend implements CacheBackend {
-  private entries: Map<string, CacheEntry> = new Map();
-  private accessOrder: string[] = [];
-  private config: CacheConfig;
-  private stats: CacheStatistics;
-  private startTime: Date;
+  private entries: Map<string, CacheEntry> = new Map()
+  private accessOrder: string[] = []
+  private config: CacheConfig
+  private stats: CacheStatistics
+  private startTime: Date
 
   constructor(config: CacheConfig) {
-    this.config = CacheConfigSchema.parse(config);
-    this.stats = CacheStatisticsSchema.parse({});
-    this.startTime = new Date();
+    this.config = CacheConfigSchema.parse(config)
+    this.stats = CacheStatisticsSchema.parse({})
+    this.startTime = new Date()
   }
 
   async get(key: string): Promise<CacheEntry | null> {
-    const entry = this.entries.get(key);
+    const entry = this.entries.get(key)
 
     if (!entry) {
-      this.stats.missRate = this.updateRate(this.stats.missRate, false);
-      return null;
+      this.stats.missRate = this.updateRate(this.stats.missRate, false)
+      return null
     }
 
     // Check expiration
     if (entry.expiresAt && entry.expiresAt < new Date()) {
-      this.entries.delete(key);
-      this.updateAccessOrder(key, true);
-      this.stats.missRate = this.updateRate(this.stats.missRate, false);
-      return null;
+      this.entries.delete(key)
+      this.updateAccessOrder(key, true)
+      this.stats.missRate = this.updateRate(this.stats.missRate, false)
+      return null
     }
 
     // Update access information
-    entry.lastAccessedAt = new Date();
-    entry.accessCount++;
-    this.updateAccessOrder(key);
+    entry.lastAccessedAt = new Date()
+    entry.accessCount++
+    this.updateAccessOrder(key)
 
-    this.stats.hitRate = this.updateRate(this.stats.hitRate, true);
-    this.stats.totalEntries = this.entries.size;
+    this.stats.hitRate = this.updateRate(this.stats.hitRate, true)
+    this.stats.totalEntries = this.entries.size
 
-    return { ...entry };
+    return { ...entry }
   }
 
   async set(key: string, entry: CacheEntry): Promise<void> {
-    const validatedEntry = CacheEntrySchema.parse(entry);
+    const validatedEntry = CacheEntrySchema.parse(entry)
 
     // Calculate size
-    validatedEntry.size = estimateCacheEntrySize(validatedEntry);
+    validatedEntry.size = estimateCacheEntrySize(validatedEntry)
 
     // Check memory limits
-    await this.enforceMemoryLimits(validatedEntry.size);
+    await this.enforceMemoryLimits(validatedEntry.size)
 
     // Set expiration if TTL provided
     if (validatedEntry.ttl) {
       validatedEntry.expiresAt = new Date(
         Date.now() + validatedEntry.ttl * 1000,
-      );
+      )
     }
 
-    this.entries.set(key, validatedEntry);
-    this.updateAccessOrder(key);
+    this.entries.set(key, validatedEntry)
+    this.updateAccessOrder(key)
 
     // Update statistics
-    this.stats.totalEntries = this.entries.size;
-    this.updateMemoryUsage();
+    this.stats.totalEntries = this.entries.size
+    this.updateMemoryUsage()
   }
 
   async delete(key: string): Promise<boolean> {
-    const deleted = this.entries.delete(key);
+    const deleted = this.entries.delete(key)
     if (deleted) {
-      this.updateAccessOrder(key, true);
-      this.stats.totalEntries = this.entries.size;
-      this.updateMemoryUsage();
+      this.updateAccessOrder(key, true)
+      this.stats.totalEntries = this.entries.size
+      this.updateMemoryUsage()
     }
-    return deleted;
+    return deleted
   }
 
   async has(key: string): Promise<boolean> {
-    const entry = this.entries.get(key);
-    if (!entry) return false;
+    const entry = this.entries.get(key)
+    if (!entry) return false
 
     // Check expiration
     if (entry.expiresAt && entry.expiresAt < new Date()) {
-      this.entries.delete(key);
-      this.updateAccessOrder(key, true);
-      return false;
+      this.entries.delete(key)
+      this.updateAccessOrder(key, true)
+      return false
     }
 
-    return true;
+    return true
   }
 
   async clear(): Promise<void> {
-    this.entries.clear();
-    this.accessOrder = [];
-    this.stats = CacheStatisticsSchema.parse({});
+    this.entries.clear()
+    this.accessOrder = []
+    this.stats = CacheStatisticsSchema.parse({})
   }
 
   async getStats(): Promise<CacheStatistics> {
-    this.stats.uptime = Date.now() - this.startTime.getTime();
-    this.updateMemoryUsage();
-    this.updateSensitivityStats();
-    return { ...this.stats };
+    this.stats.uptime = Date.now() - this.startTime.getTime()
+    this.updateMemoryUsage()
+    this.updateSensitivityStats()
+    return { ...this.stats }
   }
 
   async getKeys(pattern?: string): Promise<string[]> {
-    const keys = Array.from(this.entries.keys());
+    const keys = Array.from(this.entries.keys())
 
     if (!pattern) {
-      return keys;
+      return keys
     }
 
     // Simple pattern matching (in production, use proper regex)
-    const regex = new RegExp(pattern.replace('*', '.*'));
-    return keys.filter(key => regex.test(key));
+    const regex = new RegExp(pattern.replace('*', '.*'))
+    return keys.filter(key => regex.test(key))
   }
 
   async getEntriesBySensitivity(
@@ -611,111 +611,111 @@ export class InMemoryCacheBackend implements CacheBackend {
   ): Promise<CacheEntry[]> {
     return Array.from(this.entries.values())
       .filter(entry => entry.sensitivity === sensitivity)
-      .map(entry => ({ ...entry }));
+      .map(entry => ({ ...entry }))
   }
 
   async cleanup(): Promise<number> {
-    const now = new Date();
-    let cleanedCount = 0;
+    const now = new Date()
+    let cleanedCount = 0
 
     for (const [key, entry] of Array.from(this.entries.entries())) {
       if (entry.expiresAt && entry.expiresAt < now) {
-        this.entries.delete(key);
-        this.updateAccessOrder(key, true);
-        cleanedCount++;
+        this.entries.delete(key)
+        this.updateAccessOrder(key, true)
+        cleanedCount++
       }
     }
 
-    this.stats.totalEntries = this.entries.size;
-    this.updateMemoryUsage();
+    this.stats.totalEntries = this.entries.size
+    this.updateMemoryUsage()
 
-    return cleanedCount;
+    return cleanedCount
   }
 
   private async enforceMemoryLimits(newEntrySize: number): Promise<void> {
     while (
-      this.getCurrentMemoryUsage() + newEntrySize
-        > this.config.maxMemoryUsage
+      this.getCurrentMemoryUsage() + newEntrySize >
+        this.config.maxMemoryUsage
     ) {
       if (this.config.evictionStrategy === CacheInvalidationStrategy.LRU) {
-        await this.evictLRU();
+        await this.evictLRU()
       } else if (
         this.config.evictionStrategy === CacheInvalidationStrategy.LFU
       ) {
-        await this.evictLFU();
+        await this.evictLFU()
       } else {
-        break; // No automatic eviction
+        break // No automatic eviction
       }
     }
   }
 
   private async evictLRU(): Promise<void> {
-    if (this.accessOrder.length === 0) return;
+    if (this.accessOrder.length === 0) return
 
-    const oldestKey = this.accessOrder[0];
+    const oldestKey = this.accessOrder[0]
     if (oldestKey) {
-      await this.delete(oldestKey);
+      await this.delete(oldestKey)
     }
   }
 
   private async evictLFU(): Promise<void> {
-    if (this.entries.size === 0) return;
+    if (this.entries.size === 0) return
 
-    let minAccessCount = Infinity;
-    let lfuKey = '';
+    let minAccessCount = Infinity
+    let lfuKey = ''
 
     for (const [key, entry] of Array.from(this.entries.entries())) {
       if (entry.accessCount < minAccessCount) {
-        minAccessCount = entry.accessCount;
-        lfuKey = key;
+        minAccessCount = entry.accessCount
+        lfuKey = key
       }
     }
 
     if (lfuKey) {
-      await this.delete(lfuKey);
+      await this.delete(lfuKey)
     }
   }
 
   private updateAccessOrder(key: string, remove = false): void {
     // Remove from current position
-    const index = this.accessOrder.indexOf(key);
+    const index = this.accessOrder.indexOf(key)
     if (index > -1) {
-      this.accessOrder.splice(index, 1);
+      this.accessOrder.splice(index, 1)
     }
 
     // Add to end if not removing
     if (!remove) {
-      this.accessOrder.push(key);
+      this.accessOrder.push(key)
     }
   }
 
   private updateRate(currentRate: number, hit: boolean): number {
-    const weight = 0.1; // Exponential moving average weight
-    return currentRate * (1 - weight) + (hit ? 1 : 0) * weight;
+    const weight = 0.1 // Exponential moving average weight
+    return currentRate * (1 - weight) + (hit ? 1 : 0) * weight
   }
 
   private getCurrentMemoryUsage(): number {
-    let total = 0;
+    let total = 0
     for (const entry of Array.from(this.entries.values())) {
-      total += entry.size || 0;
+      total += entry.size || 0
     }
-    return total;
+    return total
   }
 
   private updateMemoryUsage(): void {
-    this.stats.memoryUsage = this.getCurrentMemoryUsage();
+    this.stats.memoryUsage = this.getCurrentMemoryUsage()
   }
 
   private updateSensitivityStats(): void {
     this.stats.sensitiveDataEntries = Array.from(this.entries.values()).filter(
       entry =>
-        entry.sensitivity === CacheDataSensitivity.CONFIDENTIAL
-        || entry.sensitivity === CacheDataSensitivity.RESTRICTED,
-    ).length;
+        entry.sensitivity === CacheDataSensitivity.CONFIDENTIAL ||
+        entry.sensitivity === CacheDataSensitivity.RESTRICTED,
+    ).length
 
     this.stats.lgpdCompliantEntries = Array.from(this.entries.values()).filter(
       entry => entry.lgpdCompliant,
-    ).length;
+    ).length
   }
 }
 
@@ -727,22 +727,22 @@ export class InMemoryCacheBackend implements CacheBackend {
  * Comprehensive Cache Management Service
  */
 export class CacheManagementService {
-  private backends: Map<CacheTier, CacheBackend> = new Map();
-  private config: CacheConfig;
-  private auditLog: CacheAuditEvent[] = [];
+  private backends: Map<CacheTier, CacheBackend> = new Map()
+  private config: CacheConfig
+  private auditLog: CacheAuditEvent[] = []
 
   constructor(config: CacheConfig) {
-    this.config = CacheConfigSchema.parse(config);
+    this.config = CacheConfigSchema.parse(config)
 
     // Initialize default in-memory backend
-    this.backends.set(CacheTier.MEMORY, new InMemoryCacheBackend(config));
+    this.backends.set(CacheTier.MEMORY, new InMemoryCacheBackend(config))
   }
 
   /**
    * Register cache backend
    */
   registerBackend(tier: CacheTier, backend: CacheBackend): void {
-    this.backends.set(tier, backend);
+    this.backends.set(tier, backend)
   }
 
   /**
@@ -752,12 +752,12 @@ export class CacheManagementService {
     key: string,
     _context?: HealthcareCacheContext,
     userContext?: {
-      _userId?: string;
-      sessionId?: string;
-      ipAddress?: string;
+      _userId?: string
+      sessionId?: string
+      ipAddress?: string
     },
   ): Promise<CacheOperationResult> {
-    const startTime = Date.now();
+    const startTime = Date.now()
 
     try {
       // Generate scoped key
@@ -765,18 +765,18 @@ export class CacheManagementService {
         key,
         _context,
         userContext?._userId,
-      );
+      )
 
       // Try each tier in order
       for (const [tier, backend] of Array.from(this.backends.entries())) {
-        const entry = await backend.get(scopedKey);
+        const entry = await backend.get(scopedKey)
 
         if (entry) {
-          const latency = Date.now() - startTime;
+          const latency = Date.now() - startTime
 
           // Check permissions
           if (!this.checkPermissions(entry, userContext?._userId)) {
-            continue;
+            continue
           }
 
           // Audit if required
@@ -784,7 +784,7 @@ export class CacheManagementService {
             'get',
             entry.sensitivity,
             _context,
-          );
+          )
           if (auditRequired) {
             await this.logAudit({
               eventId: crypto.randomUUID(),
@@ -801,7 +801,7 @@ export class CacheManagementService {
               latency,
               lgpdCompliant: entry.lgpdCompliant,
               metadata: { operation: 'get', cacheHit: true }, // Required metadata field
-            });
+            })
           }
 
           return {
@@ -813,12 +813,12 @@ export class CacheManagementService {
             auditLogged: auditRequired,
             latency,
             tier,
-          };
+          }
         }
       }
 
       // Cache miss
-      const latency = Date.now() - startTime;
+      const latency = Date.now() - startTime
       return {
         key: scopedKey,
         timestamp: new Date(),
@@ -827,9 +827,9 @@ export class CacheManagementService {
         lgpdCompliant: true,
         auditLogged: false,
         latency,
-      };
+      }
     } catch (error) {
-      const latency = Date.now() - startTime;
+      const latency = Date.now() - startTime
       return {
         key,
         timestamp: new Date(),
@@ -843,7 +843,7 @@ export class CacheManagementService {
         error: error instanceof Error ? error.message : 'Unknown error',
         errorCode: 'CACHE_GET_ERROR',
         latency,
-      };
+      }
     }
   }
 
@@ -854,18 +854,18 @@ export class CacheManagementService {
     key: string,
     value: unknown,
     options: {
-      ttl?: number;
-      sensitivity?: CacheDataSensitivity;
-      _context?: HealthcareCacheContext;
-      tier?: CacheTier;
+      ttl?: number
+      sensitivity?: CacheDataSensitivity
+      _context?: HealthcareCacheContext
+      tier?: CacheTier
       userContext?: {
-        _userId?: string;
-        sessionId?: string;
-        ipAddress?: string;
-      };
+        _userId?: string
+        sessionId?: string
+        ipAddress?: string
+      }
     } = {},
   ): Promise<CacheOperationResult> {
-    const startTime = Date.now();
+    const startTime = Date.now()
 
     try {
       const {
@@ -874,17 +874,17 @@ export class CacheManagementService {
         _context,
         tier = CacheTier.MEMORY,
         userContext,
-      } = options;
+      } = options
 
       // Generate scoped key
       const scopedKey = generateHealthcareCacheKey(
         key,
         _context,
         userContext?._userId,
-      );
+      )
 
       // Calculate TTL
-      const calculatedTTL = ttl || calculateHealthcareTTL(sensitivity, this.config, _context);
+      const calculatedTTL = ttl || calculateHealthcareTTL(sensitivity, this.config, _context)
 
       // Create cache entry
       const entry: CacheEntry = {
@@ -905,18 +905,18 @@ export class CacheManagementService {
         encryptionRequired: requiresEncryption(sensitivity, _context),
         tier,
         metadata: {},
-      };
+      }
 
       // Get backend
-      const backend = this.backends.get(tier);
+      const backend = this.backends.get(tier)
       if (!backend) {
-        throw new Error(`Cache backend not available for tier: ${tier}`);
+        throw new Error(`Cache backend not available for tier: ${tier}`)
       }
 
       // Store entry
-      await backend.set(scopedKey, entry);
+      await backend.set(scopedKey, entry)
 
-      const latency = Date.now() - startTime;
+      const latency = Date.now() - startTime
 
       // Audit if required
       if (entry.auditRequired) {
@@ -935,7 +935,7 @@ export class CacheManagementService {
           latency,
           lgpdCompliant: entry.lgpdCompliant,
           metadata: { operation: 'set', size: entry.size }, // Required metadata field
-        });
+        })
       }
 
       return {
@@ -947,9 +947,9 @@ export class CacheManagementService {
         auditLogged: entry.auditRequired,
         latency,
         tier,
-      };
+      }
     } catch (error) {
-      const latency = Date.now() - startTime;
+      const latency = Date.now() - startTime
       return {
         key,
         timestamp: new Date(),
@@ -963,7 +963,7 @@ export class CacheManagementService {
         error: error instanceof Error ? error.message : 'Unknown error',
         errorCode: 'CACHE_GET_ERROR',
         latency,
-      };
+      }
     }
   }
 
@@ -974,32 +974,32 @@ export class CacheManagementService {
     key: string,
     _context?: HealthcareCacheContext,
     userContext?: {
-      _userId?: string;
-      sessionId?: string;
-      ipAddress?: string;
+      _userId?: string
+      sessionId?: string
+      ipAddress?: string
     },
   ): Promise<CacheOperationResult> {
-    const startTime = Date.now();
+    const startTime = Date.now()
 
     try {
       const scopedKey = generateHealthcareCacheKey(
         key,
         _context,
         userContext?._userId,
-      );
-      let deleted = false;
-      let deletedTier: CacheTier | undefined;
+      )
+      let deleted = false
+      let deletedTier: CacheTier | undefined
 
       // Try to delete from all tiers
       for (const [_tier, backend] of Array.from(this.backends.entries())) {
-        const result = await backend.delete(scopedKey);
+        const result = await backend.delete(scopedKey)
         if (result) {
-          deleted = true;
-          deletedTier = _tier;
+          deleted = true
+          deletedTier = _tier
         }
       }
 
-      const latency = Date.now() - startTime;
+      const latency = Date.now() - startTime
 
       // Audit if required
       if (deleted && _context) {
@@ -1018,7 +1018,7 @@ export class CacheManagementService {
           latency,
           lgpdCompliant: true, // Required field
           metadata: { operation: 'delete' }, // Required metadata field
-        });
+        })
       }
 
       return {
@@ -1030,9 +1030,9 @@ export class CacheManagementService {
         auditLogged: !!_context,
         latency,
         tier: deletedTier,
-      };
+      }
     } catch (error) {
-      const latency = Date.now() - startTime;
+      const latency = Date.now() - startTime
       return {
         key,
         timestamp: new Date(),
@@ -1046,7 +1046,7 @@ export class CacheManagementService {
         error: error instanceof Error ? error.message : 'Unknown error',
         errorCode: 'CACHE_GET_ERROR',
         latency,
-      };
+      }
     }
   }
 
@@ -1057,80 +1057,80 @@ export class CacheManagementService {
     pattern: string,
     _context?: HealthcareCacheContext,
     userContext?: {
-      _userId?: string;
-      sessionId?: string;
-      ipAddress?: string;
+      _userId?: string
+      sessionId?: string
+      ipAddress?: string
     },
   ): Promise<number> {
-    let invalidatedCount = 0;
+    let invalidatedCount = 0
 
     for (const [_tier, backend] of Array.from(this.backends.entries())) {
-      const keys = await backend.getKeys(pattern);
+      const keys = await backend.getKeys(pattern)
 
       for (const key of keys) {
-        const result = await this.delete(key, _context, userContext);
+        const result = await this.delete(key, _context, userContext)
         if (result.success) {
-          invalidatedCount++;
+          invalidatedCount++
         }
       }
     }
 
-    return invalidatedCount;
+    return invalidatedCount
   }
 
   /**
    * Get cache statistics
    */
   async getStatistics(): Promise<Map<CacheTier, CacheStatistics>> {
-    const stats = new Map<CacheTier, CacheStatistics>();
+    const stats = new Map<CacheTier, CacheStatistics>()
 
     for (const [_tier, backend] of Array.from(this.backends.entries())) {
-      const tierStats = await backend.getStats();
-      stats.set(_tier, tierStats);
+      const tierStats = await backend.getStats()
+      stats.set(_tier, tierStats)
     }
 
-    return stats;
+    return stats
   }
 
   /**
    * Cleanup expired entries
    */
   async cleanup(): Promise<Map<CacheTier, number>> {
-    const results = new Map<CacheTier, number>();
+    const results = new Map<CacheTier, number>()
 
     for (const [_tier, backend] of Array.from(this.backends.entries())) {
-      const cleanedCount = await backend.cleanup();
-      results.set(_tier, cleanedCount);
+      const cleanedCount = await backend.cleanup()
+      results.set(_tier, cleanedCount)
     }
 
-    return results;
+    return results
   }
 
   /**
    * LGPD compliance cleanup
    */
   async lgpdCleanup(): Promise<number> {
-    let anonymizedCount = 0;
+    let anonymizedCount = 0
 
     for (const [_tier, backend] of Array.from(this.backends.entries())) {
       const sensitiveEntries = await backend.getEntriesBySensitivity(
         CacheDataSensitivity.RESTRICTED,
-      );
+      )
 
       for (const entry of sensitiveEntries) {
         if (
-          entry.healthcareContext?.patientId
-          && !entry.healthcareContext.lgpdConsentId
+          entry.healthcareContext?.patientId &&
+          !entry.healthcareContext.lgpdConsentId
         ) {
           // Anonymize entry without consent
-          const anonymizedEntry = anonymizeCacheEntry(entry);
-          await backend.set(entry.key, anonymizedEntry);
-          anonymizedCount++;
+          const anonymizedEntry = anonymizeCacheEntry(entry)
+          await backend.set(entry.key, anonymizedEntry)
+          anonymizedCount++
         }
       }
     }
 
-    return anonymizedCount;
+    return anonymizedCount
   }
 
   /**
@@ -1139,36 +1139,36 @@ export class CacheManagementService {
   private checkPermissions(entry: CacheEntry, _userId?: string): boolean {
     // Owner can always access
     if (entry.ownerId === _userId) {
-      return true;
+      return true
     }
 
     // Check if user has required permissions
     if (_userId && entry.permissions.includes(_userId)) {
-      return true;
+      return true
     }
 
     // Public data can be accessed by anyone
     if (entry.sensitivity === CacheDataSensitivity.PUBLIC) {
-      return true;
+      return true
     }
 
     // Restrict access to sensitive data without explicit permission
-    return false;
+    return false
   }
 
   /**
    * Log audit event
    */
   private async logAudit(event: CacheAuditEvent): Promise<void> {
-    const validatedEvent = CacheAuditEventSchema.parse(event);
-    this.auditLog.push(validatedEvent);
+    const validatedEvent = CacheAuditEventSchema.parse(event)
+    this.auditLog.push(validatedEvent)
 
     // In a real implementation, this would integrate with your audit system
     if (this.config.lgpdSettings.enableAuditLogging) {
       auditLogger.info('Cache audit event logged', {
         ...validatedEvent,
         timestamp: new Date().toISOString(),
-      });
+      })
     }
   }
 
@@ -1176,30 +1176,30 @@ export class CacheManagementService {
    * Get audit log
    */
   getAuditLog(filters?: {
-    _userId?: string;
-    sessionId?: string;
-    operation?: string;
-    sensitivity?: CacheDataSensitivity;
-    startDate?: Date;
-    endDate?: Date;
+    _userId?: string
+    sessionId?: string
+    operation?: string
+    sensitivity?: CacheDataSensitivity
+    startDate?: Date
+    endDate?: Date
   }): CacheAuditEvent[] {
     return this.auditLog.filter(event => {
-      if (filters?._userId && event._userId !== filters._userId) return false;
+      if (filters?._userId && event._userId !== filters._userId) return false
       if (filters?.sessionId && event.sessionId !== filters.sessionId) {
-        return false;
+        return false
       }
       if (filters?.operation && event.operation !== filters.operation) {
-        return false;
+        return false
       }
       if (filters?.sensitivity && event.sensitivity !== filters.sensitivity) {
-        return false;
+        return false
       }
       if (filters?.startDate && event.timestamp < filters.startDate) {
-        return false;
+        return false
       }
-      if (filters?.endDate && event.timestamp > filters.endDate) return false;
-      return true;
-    });
+      if (filters?.endDate && event.timestamp > filters.endDate) return false
+      return true
+    })
   }
 }
 
@@ -1211,10 +1211,10 @@ export class CacheManagementService {
  * Healthcare-specific cache patterns and utilities
  */
 export class HealthcareCachePatterns {
-  private cache: CacheManagementService;
+  private cache: CacheManagementService
 
   constructor(cache: CacheManagementService) {
-    this.cache = cache;
+    this.cache = cache
   }
 
   /**
@@ -1225,19 +1225,19 @@ export class HealthcareCachePatterns {
     dataType: string,
     data: unknown,
     options: {
-      providerId?: string;
-      facilityId?: string;
+      providerId?: string
+      facilityId?: string
       clinicalContext?:
         | 'consultation'
         | 'surgery'
         | 'emergency'
         | 'administrative'
-        | 'research';
-      ttl?: number;
-      lgpdConsentId?: string;
+        | 'research'
+      ttl?: number
+      lgpdConsentId?: string
     } = {},
   ): Promise<CacheOperationResult> {
-    const key = `patient:${patientId}:${dataType}`;
+    const key = `patient:${patientId}:${dataType}`
 
     return this.cache.set(key, data, {
       sensitivity: CacheDataSensitivity.CONFIDENTIAL,
@@ -1251,7 +1251,7 @@ export class HealthcareCachePatterns {
         lgpdConsentId: options.lgpdConsentId,
         retentionRequirement: 'standard',
       },
-    });
+    })
   }
 
   /**
@@ -1261,17 +1261,17 @@ export class HealthcareCachePatterns {
     sessionId: string,
     sessionData: unknown,
     options: {
-      patientId?: string;
-      providerId?: string;
+      patientId?: string
+      providerId?: string
       clinicalContext?:
         | 'consultation'
         | 'surgery'
         | 'emergency'
         | 'administrative'
-        | 'research';
+        | 'research'
     } = {},
   ): Promise<CacheOperationResult> {
-    const key = `clinical:session:${sessionId}`;
+    const key = `clinical:session:${sessionId}`
 
     return this.cache.set(key, sessionData, {
       sensitivity: CacheDataSensitivity.CONFIDENTIAL,
@@ -1283,7 +1283,7 @@ export class HealthcareCachePatterns {
         dataClassification: CacheDataSensitivity.CONFIDENTIAL,
         retentionRequirement: 'session',
       },
-    });
+    })
   }
 
   /**
@@ -1293,12 +1293,12 @@ export class HealthcareCachePatterns {
     emergencyId: string,
     data: unknown,
     options: {
-      patientId?: string;
-      facilityId?: string;
-      ttl?: number;
+      patientId?: string
+      facilityId?: string
+      ttl?: number
     } = {},
   ): Promise<CacheOperationResult> {
-    const key = `emergency:${emergencyId}`;
+    const key = `emergency:${emergencyId}`
 
     return this.cache.set(key, data, {
       sensitivity: CacheDataSensitivity.RESTRICTED,
@@ -1311,31 +1311,31 @@ export class HealthcareCachePatterns {
         dataClassification: CacheDataSensitivity.RESTRICTED,
         retentionRequirement: 'temporary',
       },
-    });
+    })
   }
 
   /**
    * Invalidate patient-related cache
    */
   async invalidatePatientCache(patientId: string): Promise<number> {
-    const pattern = `*patient:${patientId}*`;
+    const pattern = `*patient:${patientId}*`
     return this.cache.invalidatePattern(pattern, {
       patientId,
       dataClassification: CacheDataSensitivity.CONFIDENTIAL,
       retentionRequirement: 'standard', // Required field
-    });
+    })
   }
 
   /**
    * Invalidate provider-related cache
    */
   async invalidateProviderCache(providerId: string): Promise<number> {
-    const pattern = `*provider:${providerId}*`;
+    const pattern = `*provider:${providerId}*`
     return this.cache.invalidatePattern(pattern, {
       providerId,
       dataClassification: CacheDataSensitivity.INTERNAL,
       retentionRequirement: 'standard', // Required field
-    });
+    })
   }
 }
 
@@ -1345,4 +1345,4 @@ export class HealthcareCachePatterns {
 // Note: All classes are already exported above with their definitions
 // No need to re-export them here to avoid TS2484 conflicts
 
-export default CacheManagementService;
+export default CacheManagementService

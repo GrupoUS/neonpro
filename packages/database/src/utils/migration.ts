@@ -1,14 +1,14 @@
-import { PrismaClient } from '@prisma/client';
-import * as fs from 'fs';
-import * as path from 'path';
+import { PrismaClient } from '@prisma/client'
+import * as fs from 'fs'
+import * as path from 'path'
 
 /**
  * Data migration utilities for Supabase
  */
 
 // Migration version tracking
-const SCHEMA_VERSION = '1.0.0';
-const MIGRATION_TABLE = '_migrations';
+const SCHEMA_VERSION = '1.0.0'
+const MIGRATION_TABLE = '_migrations'
 
 /**
  * Migrate data between schema versions
@@ -17,13 +17,13 @@ const MIGRATION_TABLE = '_migrations';
 export async function migrateData(): Promise<void> {
   try {
     // Initialize clients
-    const prisma = new PrismaClient();
+    const prisma = new PrismaClient()
 
     // Ensure migrations table exists
-    await ensureMigrationsTable(prisma);
+    await ensureMigrationsTable(prisma)
 
     // Get current schema version
-    const currentVersion = await getCurrentSchemaVersion(prisma);
+    const currentVersion = await getCurrentSchemaVersion(prisma)
 
     // Define migration steps
     const migrations = [
@@ -33,66 +33,66 @@ export async function migrateData(): Promise<void> {
         up: async () => {
           // This would contain actual migration logic
           // For now, just log that migration would occur
-          const { getLogger } = await import('@neonpro/core-services/config/logger');
-          const logger = getLogger();
+          const { getLogger } = await import('@neonpro/core-services')
+          const logger = getLogger()
           logger.info('Running initial schema setup migration...', {
             component: 'migration',
             version: '1.0.0',
-          });
+          })
         },
       },
       {
         version: '1.0.1',
         description: 'Add indexes for performance',
         up: async () => {
-          const { getLogger } = await import('@neonpro/core-services/config/logger');
-          const logger = getLogger();
+          const { getLogger } = await import('@neonpro/core-services')
+          const logger = getLogger()
           logger.info('Adding performance indexes...', {
             component: 'migration',
             version: '1.0.1',
-          });
+          })
         },
       },
       {
         version: '1.1.0',
         description: 'Add new healthcare fields',
         up: async () => {
-          const { getLogger } = await import('@neonpro/core-services/config/logger');
-          const logger = getLogger();
+          const { getLogger } = await import('@neonpro/core-services')
+          const logger = getLogger()
           logger.info('Adding new healthcare-specific fields...', {
             component: 'migration',
             version: '1.1.0',
-          });
+          })
         },
       },
-    ];
+    ]
 
     // Apply pending migrations
-    const { getLogger } = await import('@neonpro/core-services/config/logger');
-    const logger = getLogger();
+    const { getLogger } = await import('@neonpro/core-services')
+    const logger = getLogger()
 
     for (const migration of migrations) {
       if (isMigrationPending(currentVersion, migration.version)) {
         logger.info(
           `Applying migration ${migration.version}: ${migration.description}`,
           { component: 'migration', version: migration.version, action: 'apply' },
-        );
-        await migration.up();
-        await recordMigration(prisma, migration.version, migration.description);
+        )
+        await migration.up()
+        await recordMigration(prisma, migration.version, migration.description)
       }
     }
 
     logger.info('Data migration completed successfully', {
       component: 'migration',
       status: 'completed',
-    });
+    })
 
-    await prisma.$disconnect();
+    await prisma.$disconnect()
   } catch (error) {
-    const { getLogger } = await import('@neonpro/core-services/config/logger');
-    const logger = getLogger();
-    logger.error('Data migration error', { component: 'migration' }, error);
-    throw error;
+    const { getLogger } = await import('@neonpro/core-services')
+    const logger = getLogger()
+    logger.error('Data migration error', { component: 'migration' }, error as Error)
+    throw error
   }
 }
 
@@ -103,18 +103,18 @@ export async function migrateData(): Promise<void> {
 export async function backupData(): Promise<string> {
   try {
     // Create backup directory if it doesn't exist
-    const backupDir = path.join(process.cwd(), 'backups');
+    const backupDir = path.join(process.cwd(), 'backups')
     if (!fs.existsSync(backupDir)) {
-      fs.mkdirSync(backupDir, { recursive: true });
+      fs.mkdirSync(backupDir, { recursive: true })
     }
 
     // Generate backup filename
-    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-    const backupFilename = `backup-${timestamp}.json`;
-    const backupPath = path.join(backupDir, backupFilename);
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '-')
+    const backupFilename = `backup-${timestamp}.json`
+    const backupPath = path.join(backupDir, backupFilename)
 
     // Initialize clients
-    const prisma = new PrismaClient();
+    const prisma = new PrismaClient()
 
     // Backup critical healthcare tables
     const backupData = {
@@ -156,17 +156,17 @@ export async function backupData(): Promise<string> {
           updatedAt: true,
         },
       }),
-    };
+    }
 
-    fs.writeFileSync(backupPath, JSON.stringify(backupData, null, 2));
+    fs.writeFileSync(backupPath, JSON.stringify(backupData, null, 2))
 
-    await prisma.$disconnect();
-    return backupPath;
+    await prisma.$disconnect()
+    return backupPath
   } catch (error) {
-    const { getLogger } = await import('@neonpro/core-services/config/logger');
-    const logger = getLogger();
-    logger.error('Backup error', { component: 'migration', action: 'backup' }, error);
-    throw error;
+    const { getLogger } = await import('@neonpro/core-services')
+    const logger = getLogger()
+    logger.error('Backup error', { component: 'migration', action: 'backup' }, error as Error)
+    throw error
   }
 }
 
@@ -181,7 +181,7 @@ async function ensureMigrationsTable(prisma: PrismaClient): Promise<void> {
         WHERE table_schema = 'public_ 
         AND table_name = ${MIGRATION_TABLE}
       )
-    `) as any[];
+    `) as any[]
 
     if (!result[0]?.exists) {
       // Create migrations table
@@ -192,19 +192,19 @@ async function ensureMigrationsTable(prisma: PrismaClient): Promise<void> {
           description TEXT,
           applied_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
         )
-      `;
-      const { getLogger } = await import('@neonpro/core-services/config/logger');
-      const logger = getLogger();
-      logger.info('Created migrations table', { component: 'migration', action: 'create_table' });
+      `
+      const { getLogger } = await import('@neonpro/core-services')
+      const logger = getLogger()
+      logger.info('Created migrations table', { component: 'migration', action: 'create_table' })
     }
   } catch (error) {
-    const { getLogger } = await import('@neonpro/core-services/config/logger');
-    const logger = getLogger();
+    const { getLogger } = await import('@neonpro/core-services')
+    const logger = getLogger()
     logger.error('Error ensuring migrations table', {
       component: 'migration',
       action: 'ensure_table',
-    }, error);
-    throw error;
+    }, error as Error)
+    throw error
   }
 }
 
@@ -214,17 +214,17 @@ async function getCurrentSchemaVersion(prisma: PrismaClient): Promise<string> {
       SELECT version FROM ${MIGRATION_TABLE} 
       ORDER BY applied_at DESC 
       LIMIT 1
-    `) as any[];
+    `) as any[]
 
-    return result[0]?.version || '0.0.0';
+    return result[0]?.version || '0.0.0'
   } catch (error) {
-    const { getLogger } = await import('@neonpro/core-services/config/logger');
-    const logger = getLogger();
+    const { getLogger } = await import('@neonpro/core-services')
+    const logger = getLogger()
     logger.error('Error getting current schema version', {
       component: 'migration',
       action: 'get_version',
-    }, error);
-    return '0.0.0';
+    }, error as Error)
+    return '0.0.0'
   }
 }
 
@@ -233,7 +233,7 @@ function isMigrationPending(
   migrationVersion: string,
 ): boolean {
   // Simple version comparison (in a real app, use semver library)
-  return migrationVersion > currentVersion;
+  return migrationVersion > currentVersion
 }
 
 async function recordMigration(
@@ -245,14 +245,14 @@ async function recordMigration(
     await prisma.$executeRaw`
       INSERT INTO ${MIGRATION_TABLE} (version, description)
       VALUES (${version}, ${description})
-    `;
+    `
   } catch (error) {
-    const { getLogger } = await import('@neonpro/core-services/config/logger');
-    const logger = getLogger();
+    const { getLogger } = await import('@neonpro/core-services')
+    const logger = getLogger()
     logger.error('Error recording migration', {
       component: 'migration',
       action: 'record_migration',
-    }, error);
-    throw error;
+    }, error as Error)
+    throw error
   }
 }

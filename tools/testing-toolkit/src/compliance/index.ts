@@ -5,10 +5,10 @@
  * including LGPD, ANVISA, and CFM requirements.
  */
 
-export * from './anvisa';
-export * from './audit-trail';
-export * from './cfm';
-export * from './lgpd';
+export * from './anvisa'
+export * from './audit-trail'
+export * from './cfm'
+export * from './lgpd'
 export type {
   AuditTrailEntry,
   ComplianceReport,
@@ -17,8 +17,8 @@ export type {
   ComplianceTestResult,
   ConsentRecord,
   RiskLevel,
-} from './types';
-export type { DataSubjectRights } from './types';
+} from './types'
+export type { DataSubjectRights } from './types'
 
 // Compliance standards
 export const COMPLIANCE_STANDARDS = {
@@ -53,7 +53,7 @@ export const COMPLIANCE_STANDARDS = {
       'patient-confidentiality',
     ],
   },
-} as const;
+} as const
 
 // Compliance test categories
 export const COMPLIANCE_CATEGORIES = {
@@ -61,7 +61,7 @@ export const COMPLIANCE_CATEGORIES = {
   MEDICAL_DEVICE: 'medical-device',
   PROFESSIONAL_LICENSING: 'professional-licensing',
   AUDIT_TRAIL: 'audit-trail',
-} as const;
+} as const
 
 // Risk levels for compliance violations
 export const RISK_LEVELS = {
@@ -69,4 +69,4 @@ export const RISK_LEVELS = {
   HIGH: 'high',
   MEDIUM: 'medium',
   LOW: 'low',
-} as const;
+} as const

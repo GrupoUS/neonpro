@@ -3,88 +3,88 @@
  * Features: LGPD compliance, audit logging, performance optimization, type safety
  */
 
-import { zValidator } from '@hono/zod-validator';
-import { Hono } from 'hono';
-import { cache } from 'hono/cache';
-import { cors } from 'hono/cors';
-import { createMiddleware } from 'hono/factory';
+import { zValidator } from '@hono/zod-validator'
+import { Hono } from 'hono'
+import { cache } from 'hono/cache'
+import { cors } from 'hono/cors'
+import { createMiddleware } from 'hono/factory'
 // import removed: jwt was unused
-import { logger } from 'hono/logger';
-import { timing } from 'hono/timing';
-import { supabase } from '../lib/supabase';
+import { logger } from 'hono/logger'
+import { timing } from 'hono/timing'
+import { supabase } from '../lib/supabase'
 
 // Healthcare-specific types
 type HealthcareEnv = {
   Variables: {
     user: {
-      id: string;
-      _role: 'admin' | 'professional' | 'coordinator';
-      permissions: string[];
-    };
+      id: string
+      _role: 'admin' | 'professional' | 'coordinator'
+      permissions: string[]
+    }
     auditContext: {
-      action: string;
-      resourceType: string;
-      resourceId?: string;
-    };
+      action: string
+      resourceType: string
+      resourceId?: string
+    }
     performanceMetrics: {
-      startTime: number;
-      dbQueries: number;
-    };
-  };
-};
+      startTime: number
+      dbQueries: number
+    }
+  }
+}
 
 // Create healthcare API instance
-const healthcare = new Hono<HealthcareEnv>();
+const healthcare = new Hono<HealthcareEnv>()
 
 // Performance monitoring middleware
 const performanceMiddleware = createMiddleware<HealthcareEnv>(
   async (c, _next) => {
-    const startTime = Date.now();
-    c.set('performanceMetrics', { startTime, dbQueries: 0 });
+    const startTime = Date.now()
+    c.set('performanceMetrics', { startTime, dbQueries: 0 })
 
-    await next();
+    await next()
 
-    const endTime = Date.now();
-    const duration = endTime - startTime;
-    const metrics = c.get('performanceMetrics');
+    const endTime = Date.now()
+    const duration = endTime - startTime
+    const metrics = c.get('performanceMetrics')
 
     // Log performance metrics for healthcare compliance
-    console.log(
+    console.warn(
       `Healthcare API Performance: ${c.req.method} ${c.req.path} - ${duration}ms, ${metrics.dbQueries} DB queries`,
-    );
+    )
 
     // Add performance headers
-    c.header('X-Response-Time', `${duration}ms`);
-    c.header('X-DB-Queries', metrics.dbQueries.toString());
+    c.header('X-Response-Time', `${duration}ms`)
+    c.header('X-DB-Queries', metrics.dbQueries.toString())
   },
-);
+)
 
 // LGPD compliance audit middleware
 const auditMiddleware = createMiddleware<HealthcareEnv>(async (c, _next) => {
-  const user = c.get('user');
-  const method = c.req.method;
-  const path = c.req.path;
+  const user = c.get('user')
+  const method = c.req.method
+  const path = c.req.path
 
   // Determine audit context based on route
-  let auditContext = { action: 'unknown', resourceType: 'unknown' };
+  let auditContext = { action: 'unknown', resourceType: 'unknown' }
 
   if (path.includes('/patients')) {
     auditContext = {
       action: `patient_${method.toLowerCase()}`,
       resourceType: 'patient',
       resourceId: c.req.param('id'),
-    };
+    }
   } else if (path.includes('/appointments')) {
     auditContext = {
       action: `appointment_${method.toLowerCase()}`,
       resourceType: 'appointment',
       resourceId: c.req.param('id'),
-    };
+    }
   }
 
-  c.set('auditContext', auditContext);
+  c.set('auditContext', auditContext)
 
-  await next();
+  await next()
 
   // Log audit trail for LGPD compliance
   try {
@@ -102,19 +102,19 @@ const auditMiddleware = createMiddleware<HealthcareEnv>(async (c, _next) => {
         userAgent: c.req.header('User-Agent'),
         ip: c.req.header('CF-Connecting-IP') || c.req.header('X-Forwarded-For'),
       },
-    });
+    })
   } catch {
-    console.error('Failed to log audit trail:', error);
+    console.error('Failed to log audit trail:', error)
   }
-});
+})
 
 // Healthcare role-based authorization middleware
 const healthcareAuthMiddleware = createMiddleware<HealthcareEnv>(
   async (c, _next) => {
-    const token = c.req.header('Authorization')?.replace('Bearer ', '');
+    const token = c.req.header('Authorization')?.replace('Bearer ', '')
 
     if (!token) {
-      return c.json({ error: 'Token de autorização necessário' }, 401);
+      return c.json({ error: 'Token de autorização necessário' }, 401)
     }
 
     try {
@@ -122,10 +122,10 @@ const healthcareAuthMiddleware = createMiddleware<HealthcareEnv>(
       const {
         data: { user },
         error,
-      } = await supabase.auth.getUser(token);
+      } = await supabase.auth.getUser(token)
 
       if (error || !user) {
-        return c.json({ error: 'Token inválido' }, 401);
+        return c.json({ error: 'Token inválido' }, 401)
       }
 
       // Get user role and permissions
@@ -133,42 +133,42 @@ const healthcareAuthMiddleware = createMiddleware<HealthcareEnv>(
         .from('user_profiles')
         .select('role, permissions')
         .eq('user_id', user.id)
-        .single();
+        .single()
 
       if (!profile) {
-        return c.json({ error: 'Perfil de usuário não encontrado' }, 403);
+        return c.json({ error: 'Perfil de usuário não encontrado' }, 403)
       }
 
       c.set('user', {
         id: user.id,
         _role: profile.role,
         permissions: profile.permissions || [],
-      });
+      })
 
-      await next();
+      await next()
     } catch {
-      console.error('Authentication error:', error);
-      return c.json({ error: 'Erro de autenticação' }, 401);
+      console.error('Authentication error:', error)
+      return c.json({ error: 'Erro de autenticação' }, 401)
     }
   },
-);
+)
 
 // Apply global middleware
-healthcare.use('*', logger());
-healthcare.use('*', timing());
-healthcare.use('*', performanceMiddleware);
+healthcare.use('*', logger())
+healthcare.use('*', timing())
+healthcare.use('*', performanceMiddleware)
 
 // Standardized CORS
 const allowedOrigins = [
   process.env.FRONTEND_URL,
   process.env.NEXT_PUBLIC_APP_URL,
-].filter(Boolean) as string[];
+].filter(Boolean) as string[]
 if (process.env.NODE_ENV !== 'production') {
   allowedOrigins.push(
     'http://localhost:3000',
     'http://localhost:5173',
     'http://localhost:8081',
-  );
+  )
 }
 healthcare.use(
   '*',
@@ -183,9 +183,9 @@ healthcare.use(
     allowHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
   }),
-);
-healthcare.use('*', healthcareAuthMiddleware);
-healthcare.use('*', auditMiddleware);
+)
+healthcare.use('*', healthcareAuthMiddleware)
+healthcare.use('*', auditMiddleware)
 
 // Validation schemas
 const patientSchema = z.object({
@@ -199,7 +199,7 @@ const patientSchema = z.object({
   birth_date: z.string().datetime().optional(),
   aesthetic_preferences: z.record(z.any()).optional(),
   medical_history: z.record(z.any()).optional(),
-});
+})
 
 const appointmentSchema = z.object({
   patient_id: z.string().uuid('ID do paciente inválido'),
@@ -207,7 +207,7 @@ const appointmentSchema = z.object({
   procedure_type: z.string().min(1, 'Tipo de procedimento obrigatório'),
   notes: z.string().optional(),
   priority: z.enum(['low', 'medium', 'high']).default('medium'),
-});
+})
 
 // Patient routes with caching and optimization
 healthcare.get(
@@ -217,16 +217,16 @@ healthcare.get(
     cacheControl: 'max-age=300', // 5 minutes
   }),
   async c => {
-    const user = c.get('user');
-    const metrics = c.get('performanceMetrics');
+    const user = c.get('user')
+    const metrics = c.get('performanceMetrics')
 
     // Check permissions
     if (!user.permissions.includes('read_patients')) {
-      return c.json({ error: 'Sem permissão para visualizar pacientes' }, 403);
+      return c.json({ error: 'Sem permissão para visualizar pacientes' }, 403)
     }
 
     try {
-      metrics.dbQueries++;
+      metrics.dbQueries++
 
       const { data: patients, error } = await supabase
         .from('patients')
@@ -241,10 +241,10 @@ healthcare.get(
         `,
         )
         .order('created_at', { ascending: false })
-        .limit(50); // Pagination for performance
+        .limit(50) // Pagination for performance
 
       if (error) {
-        throw error;
+        throw error
       }
 
       return c.json({
@@ -254,31 +254,31 @@ healthcare.get(
           count: patients?.length || 0,
           cached: false,
         },
-      });
+      })
     } catch {
-      console.error('Error fetching patients:', error);
+      console.error('Error fetching patients:', error)
       return c.json(
         {
           success: false,
           error: 'Erro ao buscar pacientes',
         },
         500,
-      );
+      )
     }
   },
-);
+)
 
 healthcare.get('/patients/:id', async c => {
-  const patientId = c.req.param('id');
-  const user = c.get('user');
-  const metrics = c.get('performanceMetrics');
+  const patientId = c.req.param('id')
+  const user = c.get('user')
+  const metrics = c.get('performanceMetrics')
 
   if (!user.permissions.includes('read_patients')) {
-    return c.json({ error: 'Sem permissão para visualizar paciente' }, 403);
+    return c.json({ error: 'Sem permissão para visualizar paciente' }, 403)
   }
 
   try {
-    metrics.dbQueries++;
+    metrics.dbQueries++
 
     const { data: patient, error } = await supabase
       .from('patients')
@@ -297,42 +297,42 @@ healthcare.get('/patients/:id', async c => {
       `,
       )
       .eq('id', patientId)
-      .single();
+      .single()
 
     if (error) {
       if (error.code === 'PGRST116') {
-        return c.json({ error: 'Paciente não encontrado' }, 404);
+        return c.json({ error: 'Paciente não encontrado' }, 404)
       }
-      throw error;
+      throw error
     }
 
     return c.json({
       success: true,
       data: patient,
-    });
+    })
   } catch {
-    console.error('Error fetching patient:', error);
+    console.error('Error fetching patient:', error)
     return c.json(
       {
         success: false,
         error: 'Erro ao buscar paciente',
       },
       500,
-    );
+    )
   }
-});
+})
 
 healthcare.post('/patients', zValidator('json', patientSchema), async c => {
-  const user = c.get('user');
-  const metrics = c.get('performanceMetrics');
-  const patientData = c.req.valid('json');
+  const user = c.get('user')
+  const metrics = c.get('performanceMetrics')
+  const patientData = c.req.valid('json')
 
   if (!user.permissions.includes('create_patients')) {
-    return c.json({ error: 'Sem permissão para criar pacientes' }, 403);
+    return c.json({ error: 'Sem permissão para criar pacientes' }, 403)
   }
 
   try {
-    metrics.dbQueries++;
+    metrics.dbQueries++
 
     const { data: patient, error } = await supabase
       .from('patients')
@@ -341,10 +341,10 @@ healthcare.post('/patients', zValidator('json', patientSchema), async c => {
         created_by: user.id,
       })
       .select()
-      .single();
+      .single()
 
     if (error) {
-      throw error;
+      throw error
     }
 
     return c.json(
@@ -354,34 +354,34 @@ healthcare.post('/patients', zValidator('json', patientSchema), async c => {
         message: 'Paciente criado com sucesso',
       },
       201,
-    );
+    )
   } catch {
-    console.error('Error creating patient:', error);
+    console.error('Error creating patient:', error)
     return c.json(
       {
         success: false,
         error: 'Erro ao criar paciente',
       },
       500,
-    );
+    )
   }
-});
+})
 
 healthcare.put(
   '/patients/:id',
   zValidator('json', patientSchema.partial()),
   async c => {
-    const patientId = c.req.param('id');
-    const user = c.get('user');
-    const metrics = c.get('performanceMetrics');
-    const updates = c.req.valid('json');
+    const patientId = c.req.param('id')
+    const user = c.get('user')
+    const metrics = c.get('performanceMetrics')
+    const updates = c.req.valid('json')
 
     if (!user.permissions.includes('update_patients')) {
-      return c.json({ error: 'Sem permissão para atualizar pacientes' }, 403);
+      return c.json({ error: 'Sem permissão para atualizar pacientes' }, 403)
     }
 
     try {
-      metrics.dbQueries++;
+      metrics.dbQueries++
 
       const { data: patient, error } = await supabase
         .from('patients')
@@ -392,45 +392,45 @@ healthcare.put(
         })
         .eq('id', patientId)
         .select()
-        .single();
+        .single()
 
       if (error) {
         if (error.code === 'PGRST116') {
-          return c.json({ error: 'Paciente não encontrado' }, 404);
+          return c.json({ error: 'Paciente não encontrado' }, 404)
         }
-        throw error;
+        throw error
       }
 
       return c.json({
         success: true,
         data: patient,
         message: 'Paciente atualizado com sucesso',
-      });
+      })
     } catch {
-      console.error('Error updating patient:', error);
+      console.error('Error updating patient:', error)
       return c.json(
         {
           success: false,
           error: 'Erro ao atualizar paciente',
         },
         500,
-      );
+      )
     }
   },
-);
+)
 
 // Appointment routes
 healthcare.get('/patients/:id/appointments', async c => {
-  const patientId = c.req.param('id');
-  const user = c.get('user');
-  const metrics = c.get('performanceMetrics');
+  const patientId = c.req.param('id')
+  const user = c.get('user')
+  const metrics = c.get('performanceMetrics')
 
   if (!user.permissions.includes('read_appointments')) {
-    return c.json({ error: 'Sem permissão para visualizar agendamentos' }, 403);
+    return c.json({ error: 'Sem permissão para visualizar agendamentos' }, 403)
   }
 
   try {
-    metrics.dbQueries++;
+    metrics.dbQueries++
 
     const { data: appointments, error } = await supabase
       .from('appointments')
@@ -446,43 +446,43 @@ healthcare.get('/patients/:id/appointments', async c => {
       `,
       )
       .eq('patient_id', patientId)
-      .order('scheduled_at', { ascending: false });
+      .order('scheduled_at', { ascending: false })
 
     if (error) {
-      throw error;
+      throw error
     }
 
     return c.json({
       success: true,
       data: appointments || [],
-    });
+    })
   } catch {
-    console.error('Error fetching appointments:', error);
+    console.error('Error fetching appointments:', error)
     return c.json(
       {
         success: false,
         error: 'Erro ao buscar agendamentos',
       },
       500,
-    );
+    )
   }
-});
+})
 
 healthcare.post(
   '/appointments',
   zValidator('json', appointmentSchema),
   async c => {
-    const user = c.get('user');
-    const metrics = c.get('performanceMetrics');
-    const appointmentData = c.req.valid('json');
+    const user = c.get('user')
+    const metrics = c.get('performanceMetrics')
+    const appointmentData = c.req.valid('json')
 
     if (!user.permissions.includes('create_appointments')) {
-      return c.json({ error: 'Sem permissão para criar agendamentos' }, 403);
+      return c.json({ error: 'Sem permissão para criar agendamentos' }, 403)
     }
 
     // Healthcare-specific validation
-    const scheduledDate = new Date(appointmentData.scheduled_at);
-    const now = new Date();
+    const scheduledDate = new Date(appointmentData.scheduled_at)
+    const now = new Date()
 
     if (scheduledDate <= now) {
       return c.json(
@@ -491,17 +491,17 @@ healthcare.post(
           error: 'Agendamento deve ser para uma data futura',
         },
         400,
-      );
+      )
     }
 
     try {
       // Check for scheduling conflicts
-      metrics.dbQueries++;
+      metrics.dbQueries++
       const { data: conflicts } = await supabase
         .from('appointments')
         .select('id')
         .eq('scheduled_at', appointmentData.scheduled_at)
-        .neq('status', 'cancelled');
+        .neq('status', 'cancelled')
 
       if (conflicts && conflicts.length > 0) {
         return c.json(
@@ -510,10 +510,10 @@ healthcare.post(
             error: 'Já existe um agendamento para este horário',
           },
           409,
-        );
+        )
       }
 
-      metrics.dbQueries++;
+      metrics.dbQueries++
       const { data: appointment, error } = await supabase
         .from('appointments')
         .insert({
@@ -522,10 +522,10 @@ healthcare.post(
           created_by: user.id,
         })
         .select()
-        .single();
+        .single()
 
       if (error) {
-        throw error;
+        throw error
       }
 
       return c.json(
@@ -535,19 +535,19 @@ healthcare.post(
           message: 'Agendamento criado com sucesso',
         },
         201,
-      );
+      )
     } catch {
-      console.error('Error creating appointment:', error);
+      console.error('Error creating appointment:', error)
       return c.json(
         {
           success: false,
           error: 'Erro ao criar agendamento',
         },
         500,
-      );
+      )
     }
   },
-);
+)
 
 // Healthcare analytics endpoint with caching
 healthcare.get(
@@ -557,11 +557,11 @@ healthcare.get(
     cacheControl: 'max-age=600', // 10 minutes
   }),
   async c => {
-    const user = c.get('user');
-    const metrics = c.get('performanceMetrics');
+    const user = c.get('user')
+    const metrics = c.get('performanceMetrics')
 
     if (!user.permissions.includes('read_analytics')) {
-      return c.json({ error: 'Sem permissão para visualizar analytics' }, 403);
+      return c.json({ error: 'Sem permissão para visualizar analytics' }, 403)
     }
 
     try {
@@ -576,37 +576,37 @@ healthcare.get(
         supabase
           .from('procedures')
           .select('id, performed_at', { count: 'exact' }),
-      ]);
+      ])
 
-      metrics.dbQueries += 3;
+      metrics.dbQueries += 3
 
       const analytics = {
         totalPatients: patientsResult.count || 0,
         totalAppointments: appointmentsResult.count || 0,
         totalProcedures: proceduresResult.count || 0,
         appointmentsByStatus: appointmentsResult.data?.reduce((acc: any, _apt) => {
-          acc[apt.status] = (acc[apt.status] || 0) + 1;
-          return acc;
+          acc[apt.status] = (acc[apt.status] || 0) + 1
+          return acc
         }, {}) || {},
         lastUpdated: new Date().toISOString(),
-      };
+      }
 
       return c.json({
         success: true,
         data: analytics,
-      });
+      })
     } catch {
-      console.error('Error fetching analytics:', error);
+      console.error('Error fetching analytics:', error)
       return c.json(
         {
           success: false,
           error: 'Erro ao buscar analytics',
         },
         500,
-      );
+      )
     }
   },
-);
+)
 
 // Health check endpoint
 healthcare.get('/health', async c => {
@@ -615,7 +615,7 @@ healthcare.get('/health', async c => {
     timestamp: new Date().toISOString(),
     version: '1.0.0',
     environment: process.env.NODE_ENV || 'development',
-  });
-});
+  })
+})
 
-export default healthcare;
+export default healthcare

@@ -12,49 +12,49 @@ import type {
   RTCError,
   RTCHealthcareConfiguration,
   TelemedicineCallSession,
-} from '@neonpro/types';
-import { auditLogger } from '../logging/healthcare-logger';
+} from '@neonpro/types'
+import { auditLogger } from '../logging/healthcare-logger'
 
-const callManagerLogger = auditLogger.child({ component: 'webrtc-call-manager' });
+const callManagerLogger = auditLogger.child({ component: 'webrtc-call-manager' })
 
 /**
  * WebRTC Call Manager stub implementation for development and testing
  */
 export class RTCCallManagerStub implements RTCCallManager {
-  private config: RTCHealthcareConfiguration | null = null;
-  private currentSession: TelemedicineCallSession | null = null;
-  private activeSessions = new Map<string, TelemedicineCallSession>();
-  private participants = new Map<string, CallParticipant[]>();
+  private config: RTCHealthcareConfiguration | null = null
+  private currentSession: TelemedicineCallSession | null = null
+  private activeSessions = new Map<string, TelemedicineCallSession>()
+  private participants = new Map<string, CallParticipant[]>()
 
   // Event handlers
   private onCallStateChangeHandler:
     | ((session: TelemedicineCallSession) => void)
-    | null = null;
+    | null = null
   private onParticipantJoinedHandler:
     | ((participant: CallParticipant) => void)
-    | null = null;
-  private onParticipantLeftHandler: ((participantId: string) => void) | null = null;
-  private onErrorHandler: ((error: RTCError) => void) | null = null;
+    | null = null
+  private onParticipantLeftHandler: ((participantId: string) => void) | null = null
+  private onErrorHandler: ((error: RTCError) => void) | null = null
 
   constructor(
     private options: {
-      enableLogging?: boolean;
-      simulateNetworkIssues?: boolean;
+      enableLogging?: boolean
+      simulateNetworkIssues?: boolean
     } = {},
   ) {
     this.options = {
       enableLogging: true,
       simulateNetworkIssues: false,
       ...options,
-    };
+    }
   }
 
   /**
    * Initialize call manager with healthcare configuration
    */
   async initialize(config: RTCHealthcareConfiguration): Promise<void> {
-    this.config = config;
-    this.log('Call manager initialized with healthcare configuration');
+    this.config = config
+    this.log('Call manager initialized with healthcare configuration')
   }
 
   /**
@@ -64,7 +64,7 @@ export class RTCCallManagerStub implements RTCCallManager {
     session: Omit<TelemedicineCallSession, 'sessionId' | 'startTime' | 'state'>,
   ): Promise<TelemedicineCallSession> {
     if (!this.config) {
-      throw new Error('Call manager not initialized');
+      throw new Error('Call manager not initialized')
     }
 
     const newSession: TelemedicineCallSession = {
@@ -72,24 +72,24 @@ export class RTCCallManagerStub implements RTCCallManager {
       sessionId: `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
       startTime: new Date().toISOString(),
       state: 'new' as RTCConnectionState,
-    };
+    }
 
-    this.activeSessions.set(newSession.sessionId, newSession);
-    this.participants.set(newSession.sessionId, [...newSession.participants]);
-    this.currentSession = newSession;
+    this.activeSessions.set(newSession.sessionId, newSession)
+    this.participants.set(newSession.sessionId, [...newSession.participants])
+    this.currentSession = newSession
 
     // Simulate connection process
     setTimeout(() => {
-      this.updateSessionState(newSession.sessionId, 'connecting');
+      this.updateSessionState(newSession.sessionId, 'connecting')
       setTimeout(() => {
-        this.updateSessionState(newSession.sessionId, 'connected');
-      }, 1000);
-    }, 500);
+        this.updateSessionState(newSession.sessionId, 'connected')
+      }, 1000)
+    }, 500)
 
     this.log(
       `Created call session ${newSession.sessionId} for ${newSession.callType}`,
-    );
-    return newSession;
+    )
+    return newSession
   }
 
   /**
@@ -99,110 +99,110 @@ export class RTCCallManagerStub implements RTCCallManager {
     sessionId: string,
     participant: Omit<CallParticipant, 'connectionState'>,
   ): Promise<void> {
-    const session = this.activeSessions.get(sessionId);
+    const session = this.activeSessions.get(sessionId)
     if (!session) {
-      throw new Error(`Session ${sessionId} not found`);
+      throw new Error(`Session ${sessionId} not found`)
     }
 
     const newParticipant: CallParticipant = {
       ...participant,
       connectionState: 'connecting' as RTCConnectionState,
-    };
+    }
 
     // Add participant to session
-    session.participants.push(newParticipant);
-    const sessionParticipants = this.participants.get(sessionId) || [];
-    sessionParticipants.push(newParticipant);
-    this.participants.set(sessionId, sessionParticipants);
+    session.participants.push(newParticipant)
+    const sessionParticipants = this.participants.get(sessionId) || []
+    sessionParticipants.push(newParticipant)
+    this.participants.set(sessionId, sessionParticipants)
 
     // Simulate connection
     setTimeout(() => {
-      newParticipant.connectionState = 'connected';
-      this.onParticipantJoinedHandler?.(newParticipant);
-    }, 800);
+      newParticipant.connectionState = 'connected'
+      this.onParticipantJoinedHandler?.(newParticipant)
+    }, 800)
 
-    this.log(`Participant ${participant.id} joining session ${sessionId}`);
+    this.log(`Participant ${participant.id} joining session ${sessionId}`)
   }
 
   /**
    * Leave current call session
    */
   async leaveCall(sessionId: string, participantId: string): Promise<void> {
-    const session = this.activeSessions.get(sessionId);
+    const session = this.activeSessions.get(sessionId)
     if (!session) {
-      throw new Error(`Session ${sessionId} not found`);
+      throw new Error(`Session ${sessionId} not found`)
     }
 
     // Remove participant from session
     session.participants = session.participants.filter(
       p => p.id !== participantId,
-    );
-    const sessionParticipants = this.participants.get(sessionId) || [];
+    )
+    const sessionParticipants = this.participants.get(sessionId) || []
     const updatedParticipants = sessionParticipants.filter(
       p => p.id !== participantId,
-    );
-    this.participants.set(sessionId, updatedParticipants);
+    )
+    this.participants.set(sessionId, updatedParticipants)
 
-    this.onParticipantLeftHandler?.(participantId);
-    this.log(`Participant ${participantId} left session ${sessionId}`);
+    this.onParticipantLeftHandler?.(participantId)
+    this.log(`Participant ${participantId} left session ${sessionId}`)
   }
 
   /**
    * End call session (host only)
    */
   async endCall(sessionId: string): Promise<void> {
-    const session = this.activeSessions.get(sessionId);
+    const session = this.activeSessions.get(sessionId)
     if (!session) {
-      throw new Error(`Session ${sessionId} not found`);
+      throw new Error(`Session ${sessionId} not found`)
     }
 
     // Update session end time and state
-    session.endTime = new Date().toISOString();
-    session.state = 'closed';
+    session.endTime = new Date().toISOString()
+    session.state = 'closed'
     session.duration = Math.floor(
-      (new Date(session.endTime).getTime()
-        - new Date(session.startTime).getTime())
-        / 1000,
-    );
+      (new Date(session.endTime).getTime() -
+        new Date(session.startTime).getTime()) /
+        1000,
+    )
 
     // Clean up
-    this.activeSessions.delete(sessionId);
-    this.participants.delete(sessionId);
+    this.activeSessions.delete(sessionId)
+    this.participants.delete(sessionId)
 
     if (this.currentSession?.sessionId === sessionId) {
-      this.currentSession = null;
+      this.currentSession = null
     }
 
-    this.onCallStateChangeHandler?.(session);
-    this.log(`Ended call session ${sessionId}`);
+    this.onCallStateChangeHandler?.(session)
+    this.log(`Ended call session ${sessionId}`)
   }
 
   /**
    * Get current call session info
    */
   getCurrentSession(): TelemedicineCallSession | null {
-    return this.currentSession;
+    return this.currentSession
   }
 
   /**
    * Get all active sessions
    */
   getActiveSessions(): TelemedicineCallSession[] {
-    return Array.from(this.activeSessions.values());
+    return Array.from(this.activeSessions.values())
   }
 
   /**
    * Toggle audio for participant
    */
   async toggleAudio(sessionId: string, participantId: string): Promise<void> {
-    const participants = this.participants.get(sessionId);
-    const participant = participants?.find(p => p.id === participantId);
+    const participants = this.participants.get(sessionId)
+    const participant = participants?.find(p => p.id === participantId)
 
     if (participant) {
-      participant.mediaState.audioEnabled = !participant.mediaState.audioEnabled;
+      participant.mediaState.audioEnabled = !participant.mediaState.audioEnabled
       this.log(
         `Toggled audio for participant ${participantId}: ${participant.mediaState.audioEnabled}`,
-      );
+      )
     }
   }
 
@@ -210,14 +210,14 @@ export class RTCCallManagerStub implements RTCCallManager {
    * Toggle video for participant
    */
   async toggleVideo(sessionId: string, participantId: string): Promise<void> {
-    const participants = this.participants.get(sessionId);
-    const participant = participants?.find(p => p.id === participantId);
+    const participants = this.participants.get(sessionId)
+    const participant = participants?.find(p => p.id === participantId)
 
     if (participant) {
-      participant.mediaState.videoEnabled = !participant.mediaState.videoEnabled;
+      participant.mediaState.videoEnabled = !participant.mediaState.videoEnabled
       this.log(
         `Toggled video for participant ${participantId}: ${participant.mediaState.videoEnabled}`,
-      );
+      )
     }
   }
 
@@ -228,14 +228,14 @@ export class RTCCallManagerStub implements RTCCallManager {
     sessionId: string,
     participantId: string,
   ): Promise<void> {
-    const participants = this.participants.get(sessionId);
-    const participant = participants?.find(p => p.id === participantId);
+    const participants = this.participants.get(sessionId)
+    const participant = participants?.find(p => p.id === participantId)
 
     if (participant) {
-      participant.mediaState.screenShareEnabled = !participant.mediaState.screenShareEnabled;
+      participant.mediaState.screenShareEnabled = !participant.mediaState.screenShareEnabled
       this.log(
         `Toggled screen share for participant ${participantId}: ${participant.mediaState.screenShareEnabled}`,
-      );
+      )
     }
   }
 
@@ -243,9 +243,9 @@ export class RTCCallManagerStub implements RTCCallManager {
    * Get call quality metrics (simulated)
    */
   async getCallQuality(sessionId: string): Promise<RTCCallQualityMetrics> {
-    const session = this.activeSessions.get(sessionId);
+    const session = this.activeSessions.get(sessionId)
     if (!session) {
-      throw new Error(`Session ${sessionId} not found`);
+      throw new Error(`Session ${sessionId} not found`)
     }
 
     // Generate realistic quality metrics
@@ -292,7 +292,7 @@ export class RTCCallManagerStub implements RTCCallManager {
         latency: 50 + Math.random() * 100, // ms
         reliability: 95 + Math.random() * 5, // 0-100
       },
-    };
+    }
   }
 
   /**
@@ -301,19 +301,19 @@ export class RTCCallManagerStub implements RTCCallManager {
   onCallStateChange(
     callback: (session: TelemedicineCallSession) => void,
   ): void {
-    this.onCallStateChangeHandler = callback;
+    this.onCallStateChangeHandler = callback
   }
 
   onParticipantJoined(callback: (participant: CallParticipant) => void): void {
-    this.onParticipantJoinedHandler = callback;
+    this.onParticipantJoinedHandler = callback
   }
 
   onParticipantLeft(callback: (participantId: string) => void): void {
-    this.onParticipantLeftHandler = callback;
+    this.onParticipantLeftHandler = callback
   }
 
   onError(callback: (error: RTCError) => void): void {
-    this.onErrorHandler = callback;
+    this.onErrorHandler = callback
   }
 
   // ============================================================================
@@ -324,11 +324,11 @@ export class RTCCallManagerStub implements RTCCallManager {
     sessionId: string,
     newState: RTCConnectionState,
   ): void {
-    const session = this.activeSessions.get(sessionId);
+    const session = this.activeSessions.get(sessionId)
     if (session) {
-      session.state = newState;
-      this.onCallStateChangeHandler?.(session);
-      this.log(`Session ${sessionId} state changed to ${newState}`);
+      session.state = newState
+      this.onCallStateChangeHandler?.(session)
+      this.log(`Session ${sessionId} state changed to ${newState}`)
     }
   }
 
@@ -339,7 +339,7 @@ export class RTCCallManagerStub implements RTCCallManager {
         action: 'debug_log',
         message,
         timestamp: new Date().toISOString(),
-      });
+      })
     }
   }
 }
@@ -348,8 +348,8 @@ export class RTCCallManagerStub implements RTCCallManager {
  * Create and configure call manager stub for development
  */
 export function createCallManagerStub(options?: {
-  enableLogging?: boolean;
-  simulateNetworkIssues?: boolean;
+  enableLogging?: boolean
+  simulateNetworkIssues?: boolean
 }): RTCCallManager {
-  return new RTCCallManagerStub(options);
+  return new RTCCallManagerStub(options)
 }

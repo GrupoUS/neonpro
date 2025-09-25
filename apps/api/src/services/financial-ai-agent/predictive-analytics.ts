@@ -5,95 +5,95 @@
  * forecasting, and intelligent insights for Brazilian aesthetic clinics.
  */
 
-import { z } from 'zod';
-import { Billing } from '../billing-service';
+import { z } from 'zod'
+import { Billing } from '../billing-service'
 
 /**
  * Advanced Analytics Types
  */
 export interface TrendAnalysis {
-  period: string;
-  revenueTrend: 'increasing' | 'decreasing' | 'stable';
-  growthRate: number;
-  confidence: number;
+  period: string
+  revenueTrend: 'increasing' | 'decreasing' | 'stable'
+  growthRate: number
+  confidence: number
   seasonalityFactors: Array<{
-    factor: string;
-    impact: number;
-    period: string;
-  }>;
+    factor: string
+    impact: number
+    period: string
+  }>
   anomalies: Array<{
-    date: string;
-    expected: number;
-    actual: number;
-    deviation: number;
-  }>;
+    date: string
+    expected: number
+    actual: number
+    deviation: number
+  }>
 }
 
 export interface FinancialForecast {
-  timeframe: '7d' | '30d' | '90d' | '6m' | '1y';
+  timeframe: '7d' | '30d' | '90d' | '6m' | '1y'
   predictions: Array<{
-    period: string;
-    predictedRevenue: number;
-    confidence: number;
+    period: string
+    predictedRevenue: number
+    confidence: number
     factors: Array<{
-      factor: string;
-      impact: 'positive' | 'negative';
-      weight: number;
-    }>;
-  }>;
+      factor: string
+      impact: 'positive' | 'negative'
+      weight: number
+    }>
+  }>
   summary: {
-    totalPredictedRevenue: number;
-    averageGrowthRate: number;
-    riskFactors: string[];
-    opportunities: string[];
-  };
+    totalPredictedRevenue: number
+    averageGrowthRate: number
+    riskFactors: string[]
+    opportunities: string[]
+  }
 }
 
 export interface RevenueInsights {
   topPerformers: Array<{
-    category: string;
-    revenue: number;
-    growth: number;
-    contribution: number;
-  }>;
+    category: string
+    revenue: number
+    growth: number
+    contribution: number
+  }>
   underperformers: Array<{
-    category: string;
-    revenue: number;
-    growth: number;
-    potential: number;
-  }>;
+    category: string
+    revenue: number
+    growth: number
+    potential: number
+  }>
   seasonalTrends: Array<{
-    month: string;
-    averageRevenue: number;
-    trend: 'up' | 'down' | 'stable';
-    drivers: string[];
-  }>;
+    month: string
+    averageRevenue: number
+    trend: 'up' | 'down' | 'stable'
+    drivers: string[]
+  }>
   recommendations: Array<{
-    priority: 'high' | 'medium' | 'low';
-    action: string;
-    expectedImpact: string;
-    timeline: string;
-  }>;
+    priority: 'high' | 'medium' | 'low'
+    action: string
+    expectedImpact: string
+    timeline: string
+  }>
 }
 
 export interface CashFlowAnalysis {
-  currentBalance: number;
-  projectedBalance: number;
+  currentBalance: number
+  projectedBalance: number
   cashFlowItems: Array<{
-    date: string;
-    type: 'inflow' | 'outflow';
-    amount: number;
-    category: string;
-    probability: number;
-  }>;
+    date: string
+    type: 'inflow' | 'outflow'
+    amount: number
+    category: string
+    probability: number
+  }>
   risks: Array<{
-    type: 'shortage' | 'surplus';
-    severity: 'low' | 'medium' | 'high';
-    date: string;
-    amount: number;
-    mitigation: string;
-  }>;
-  recommendations: string[];
+    type: 'shortage' | 'surplus'
+    severity: 'low' | 'medium' | 'high'
+    date: string
+    amount: number
+    mitigation: string
+  }>
+  recommendations: string[]
 }
 
 /**
@@ -126,20 +126,20 @@ const analyticsConfigSchema = z.object({
   ])).default(['billing_transactions', 'payment_history']),
   refreshInterval: z.number().default(3600), // seconds
   retentionPeriod: z.number().default(365), // days
-});
+})
 
-export type AnalyticsConfig = z.infer<typeof analyticsConfigSchema>;
+export type AnalyticsConfig = z.infer<typeof analyticsConfigSchema>
 
 /**
  * Predictive Analytics Service
  */
 export class PredictiveAnalyticsService {
-  private config: AnalyticsConfig;
-  private modelCache: Map<string, any> = new Map();
-  private lastUpdate: Date = new Date();
+  private config: AnalyticsConfig
+  private modelCache: Map<string, any> = new Map()
+  private lastUpdate: Date = new Date()
 
   constructor(config: Partial<AnalyticsConfig> = {}) {
-    this.config = analyticsConfigSchema.parse(config);
+    this.config = analyticsConfigSchema.parse(config)
   }
 
   /**
@@ -151,20 +151,20 @@ export class PredictiveAnalyticsService {
   ): Promise<TrendAnalysis> {
     try {
       // Filter data by period
-      const cutoffDate = this.getCutoffDate(period);
+      const cutoffDate = this.getCutoffDate(period)
       const periodData = historicalData.filter(
         billing => new Date(billing.createdAt) >= cutoffDate,
-      );
+      )
 
       // Calculate revenue trends
-      const dailyRevenue = this.calculateDailyRevenue(periodData);
-      const trend = this.calculateRevenueTrend(dailyRevenue);
+      const dailyRevenue = this.calculateDailyRevenue(periodData)
+      const trend = this.calculateRevenueTrend(dailyRevenue)
 
       // Detect seasonality
-      const seasonality = this.detectSeasonality(dailyRevenue);
+      const seasonality = this.detectSeasonality(dailyRevenue)
 
       // Identify anomalies
-      const anomalies = this.detectTrendAnomalies(dailyRevenue);
+      const anomalies = this.detectTrendAnomalies(dailyRevenue)
 
       return {
         period,
@@ -173,10 +173,10 @@ export class PredictiveAnalyticsService {
         confidence: trend.confidence,
         seasonalityFactors: seasonality,
         anomalies,
-      };
+      }
     } catch {
-      console.error('Trend analysis failed:', error);
-      throw error;
+      console.error('Trend analysis failed:', error)
+      throw error
     }
   }
 
@@ -189,13 +189,13 @@ export class PredictiveAnalyticsService {
   ): Promise<FinancialForecast> {
     try {
       // Prepare training data
-      const trainingData = this.prepareTrainingData(historicalData);
+      const trainingData = this.prepareTrainingData(historicalData)
 
       // Generate predictions
-      const predictions = await this.generatePredictions(trainingData, timeframe);
+      const predictions = await this.generatePredictions(trainingData, timeframe)
 
       // Analyze risk factors and opportunities
-      const analysis = this.analyzeForecastFactors(predictions);
+      const analysis = this.analyzeForecastFactors(predictions)
 
       return {
         timeframe,
@@ -206,10 +206,10 @@ export class PredictiveAnalyticsService {
           riskFactors: analysis.risks,
           opportunities: analysis.opportunities,
         },
-      };
+      }
     } catch {
-      console.error('Financial forecast failed:', error);
-      throw error;
+      console.error('Financial forecast failed:', error)
+      throw error
     }
   }
 
@@ -221,33 +221,33 @@ export class PredictiveAnalyticsService {
   ): Promise<RevenueInsights> {
     try {
       // Categorize billing data
-      const categorizedData = this.categorizeBillingData(billingData);
+      const categorizedData = this.categorizeBillingData(billingData)
 
       // Identify top performers
-      const topPerformers = this.identifyTopPerformers(categorizedData);
+      const topPerformers = this.identifyTopPerformers(categorizedData)
 
       // Identify underperformers
-      const underperformers = this.identifyUnderperformers(categorizedData);
+      const underperformers = this.identifyUnderperformers(categorizedData)
 
       // Analyze seasonal trends
-      const seasonalTrends = this.analyzeSeasonalTrends(billingData);
+      const seasonalTrends = this.analyzeSeasonalTrends(billingData)
 
       // Generate recommendations
       const recommendations = this.generateInsightRecommendations(
         topPerformers,
         underperformers,
         seasonalTrends,
-      );
+      )
 
       return {
         topPerformers,
         underperformers,
         seasonalTrends,
         recommendations,
-      };
+      }
     } catch {
-      console.error('Revenue insights failed:', error);
-      throw error;
+      console.error('Revenue insights failed:', error)
+      throw error
     }
   }
 
@@ -260,19 +260,19 @@ export class PredictiveAnalyticsService {
   ): Promise<CashFlowAnalysis> {
     try {
       // Calculate current cash position
-      const currentBalance = this.calculateCurrentBalance(billingData);
+      const currentBalance = this.calculateCurrentBalance(billingData)
 
       // Project future cash flows
-      const cashFlowItems = await this.projectCashFlows(billingData, forecastDays);
+      const cashFlowItems = await this.projectCashFlows(billingData, forecastDays)
 
       // Calculate projected balance
-      const projectedBalance = this.calculateProjectedBalance(currentBalance, cashFlowItems);
+      const projectedBalance = this.calculateProjectedBalance(currentBalance, cashFlowItems)
 
       // Identify cash flow risks
-      const risks = this.identifyCashFlowRisks(cashFlowItems);
+      const risks = this.identifyCashFlowRisks(cashFlowItems)
 
       // Generate recommendations
-      const recommendations = this.generateCashFlowRecommendations(risks);
+      const recommendations = this.generateCashFlowRecommendations(risks)
 
       return {
         currentBalance,
@@ -280,10 +280,10 @@ export class PredictiveAnalyticsService {
         cashFlowItems,
         risks,
         recommendations,
-      };
+      }
     } catch {
-      console.error('Cash flow analysis failed:', error);
-      throw error;
+      console.error('Cash flow analysis failed:', error)
+      throw error
     }
   }
 
@@ -291,136 +291,136 @@ export class PredictiveAnalyticsService {
    * Calculate daily revenue from billing data
    */
   private calculateDailyRevenue(billingData: Billing[]): Array<{ date: string; revenue: number }> {
-    const dailyRevenue = new Map<string, number>();
+    const dailyRevenue = new Map<string, number>()
 
     billingData.forEach(billing => {
       if (billing.paymentStatus === 'paid') {
-        const date = new Date(billing.paymentDate || billing.createdAt).toISOString().split('T')[0];
-        dailyRevenue.set(date, (dailyRevenue.get(date) || 0) + billing.total);
+        const date = new Date(billing.paymentDate || billing.createdAt).toISOString().split('T')[0]
+        dailyRevenue.set(date, (dailyRevenue.get(date) || 0) + billing.total)
       }
-    });
+    })
 
     return Array.from(dailyRevenue.entries())
       .map(([date, revenue]) => ({ date, revenue }))
-      .sort((a, b) => a.date.localeCompare(b.date));
+      .sort((a, b) => a.date.localeCompare(b.date))
   }
 
   /**
    * Calculate revenue trend
    */
   private calculateRevenueTrend(dailyRevenue: Array<{ date: string; revenue: number }>): {
-    direction: 'increasing' | 'decreasing' | 'stable';
-    rate: number;
-    confidence: number;
+    direction: 'increasing' | 'decreasing' | 'stable'
+    rate: number
+    confidence: number
   } {
     if (dailyRevenue.length < 2) {
-      return { direction: 'stable', rate: 0, confidence: 0 };
+      return { direction: 'stable', rate: 0, confidence: 0 }
     }
 
     // Simple linear regression for trend calculation
-    const n = dailyRevenue.length;
-    const xValues = dailyRevenue.map((_, i) => i);
-    const yValues = dailyRevenue.map(d => d.revenue);
+    const n = dailyRevenue.length
+    const xValues = dailyRevenue.map((_, i) => i)
+    const yValues = dailyRevenue.map(d => d.revenue)
 
-    const xMean = xValues.reduce((sum, x) => sum + x, 0) / n;
-    const yMean = yValues.reduce((sum, y) => sum + y, 0) / n;
+    const xMean = xValues.reduce((sum, x) => sum + x, 0) / n
+    const yMean = yValues.reduce((sum, y) => sum + y, 0) / n
 
-    const numerator = xValues.reduce((sum, x, i) => sum + (x - xMean) * (yValues[i] - yMean), 0);
-    const denominator = xValues.reduce((sum, x) => sum + Math.pow(x - xMean, 2), 0);
+    const numerator = xValues.reduce((sum, x, i) => sum + (x - xMean) * (yValues[i] - yMean), 0)
+    const denominator = xValues.reduce((sum, x) => sum + Math.pow(x - xMean, 2), 0)
 
-    const slope = denominator !== 0 ? numerator / denominator : 0;
-    const direction = slope > 0.01 ? 'increasing' : slope < -0.01 ? 'decreasing' : 'stable';
+    const slope = denominator !== 0 ? numerator / denominator : 0
+    const direction = slope > 0.01 ? 'increasing' : slope < -0.01 ? 'decreasing' : 'stable'
 
     // Calculate confidence based on R-squared
     const ssRes = yValues.reduce((sum, y, i) => {
-      const predicted = yMean + slope * (xValues[i] - xMean);
-      return sum + Math.pow(y - predicted, 2);
-    }, 0);
+      const predicted = yMean + slope * (xValues[i] - xMean)
+      return sum + Math.pow(y - predicted, 2)
+    }, 0)
 
-    const ssTot = yValues.reduce((sum, y) => sum + Math.pow(y - yMean, 2), 0);
-    const rSquared = ssTot !== 0 ? 1 - (ssRes / ssTot) : 0;
+    const ssTot = yValues.reduce((sum, y) => sum + Math.pow(y - yMean, 2), 0)
+    const rSquared = ssTot !== 0 ? 1 - (ssRes / ssTot) : 0
 
     return {
       direction,
       rate: slope,
       confidence: Math.abs(rSquared),
-    };
+    }
   }
 
   /**
    * Detect seasonality patterns
    */
   private detectSeasonality(dailyRevenue: Array<{ date: string; revenue: number }>): Array<{
-    factor: string;
-    impact: number;
-    period: string;
+    factor: string
+    impact: number
+    period: string
   }> {
     // Simple seasonality detection based on day of week and month
-    const dayOfWeekImpact = this.calculateDayOfWeekImpact(dailyRevenue);
-    const monthlyImpact = this.calculateMonthlyImpact(dailyRevenue);
+    const dayOfWeekImpact = this.calculateDayOfWeekImpact(dailyRevenue)
+    const monthlyImpact = this.calculateMonthlyImpact(dailyRevenue)
 
     return [
       ...dayOfWeekImpact,
       ...monthlyImpact,
-    ];
+    ]
   }
 
   /**
    * Calculate day of week impact
    */
   private calculateDayOfWeekImpact(dailyRevenue: Array<{ date: string; revenue: number }>): Array<{
-    factor: string;
-    impact: number;
-    period: string;
+    factor: string
+    impact: number
+    period: string
   }> {
-    const dayOfWeekRevenue = new Map<number, { total: number; count: number }>();
+    const dayOfWeekRevenue = new Map<number, { total: number; count: number }>()
 
     dailyRevenue.forEach(({ date, revenue }) => {
-      const dayOfWeek = new Date(date).getDay();
-      const current = dayOfWeekRevenue.get(dayOfWeek) || { total: 0, count: 0 };
+      const dayOfWeek = new Date(date).getDay()
+      const current = dayOfWeekRevenue.get(dayOfWeek) || { total: 0, count: 0 }
       dayOfWeekRevenue.set(dayOfWeek, {
         total: current.total + revenue,
         count: current.count + 1,
-      });
-    });
+      })
+    })
 
-    const overallAverage = dailyRevenue.reduce((sum, d) => sum + d.revenue, 0)
-      / dailyRevenue.length;
-    const daysOfWeek = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
+    const overallAverage = dailyRevenue.reduce((sum, d) => sum + d.revenue, 0) /
+      dailyRevenue.length
+    const daysOfWeek = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado']
 
     return Array.from(dayOfWeekRevenue.entries()).map(([day, data]) => {
-      const average = data.total / data.count;
-      const impact = (average - overallAverage) / overallAverage;
+      const average = data.total / data.count
+      const impact = (average - overallAverage) / overallAverage
 
       return {
         factor: `${daysOfWeek[day]} - Impacto Sazonal`,
         impact,
         period: 'weekly',
-      };
-    });
+      }
+    })
   }
 
   /**
    * Calculate monthly impact
    */
   private calculateMonthlyImpact(dailyRevenue: Array<{ date: string; revenue: number }>): Array<{
-    factor: string;
-    impact: number;
-    period: string;
+    factor: string
+    impact: number
+    period: string
   }> {
-    const monthlyRevenue = new Map<number, { total: number; count: number }>();
+    const monthlyRevenue = new Map<number, { total: number; count: number }>()
 
     dailyRevenue.forEach(({ date, revenue }) => {
-      const month = new Date(date).getMonth();
-      const current = monthlyRevenue.get(month) || { total: 0, count: 0 };
+      const month = new Date(date).getMonth()
+      const current = monthlyRevenue.get(month) || { total: 0, count: 0 }
       monthlyRevenue.set(month, {
         total: current.total + revenue,
         count: current.count + 1,
-      });
-    });
+      })
+    })
 
-    const overallAverage = dailyRevenue.reduce((sum, d) => sum + d.revenue, 0)
-      / dailyRevenue.length;
+    const overallAverage = dailyRevenue.reduce((sum, d) => sum + d.revenue, 0) /
+      dailyRevenue.length
     const months = [
       'Janeiro',
       'Fevereiro',
@@ -434,48 +434,48 @@ export class PredictiveAnalyticsService {
       'Outubro',
       'Novembro',
       'Dezembro',
-    ];
+    ]
 
     return Array.from(monthlyRevenue.entries()).map(([month, data]) => {
-      const average = data.total / data.count;
-      const impact = (average - overallAverage) / overallAverage;
+      const average = data.total / data.count
+      const impact = (average - overallAverage) / overallAverage
 
       return {
         factor: `${months[month]} - Impacto Mensal`,
         impact,
         period: 'yearly',
-      };
-    });
+      }
+    })
   }
 
   /**
    * Detect trend anomalies
    */
   private detectTrendAnomalies(dailyRevenue: Array<{ date: string; revenue: number }>): Array<{
-    date: string;
-    expected: number;
-    actual: number;
-    deviation: number;
+    date: string
+    expected: number
+    actual: number
+    deviation: number
   }> {
-    if (dailyRevenue.length < 10) return [];
+    if (dailyRevenue.length < 10) return []
 
     // Calculate moving average
-    const windowSize = 7;
+    const windowSize = 7
     const anomalies: Array<{
-      date: string;
-      expected: number;
-      actual: number;
-      deviation: number;
-    }> = [];
+      date: string
+      expected: number
+      actual: number
+      deviation: number
+    }> = []
 
     for (let i = windowSize; i < dailyRevenue.length; i++) {
-      const window = dailyRevenue.slice(i - windowSize, i);
-      const movingAverage = window.reduce((sum, d) => sum + d.revenue, 0) / windowSize;
-      const current = dailyRevenue[i];
+      const window = dailyRevenue.slice(i - windowSize, i)
+      const movingAverage = window.reduce((sum, d) => sum + d.revenue, 0) / windowSize
+      const current = dailyRevenue[i]
 
       // Check if deviation is significant (> 2 standard deviations)
-      const stdDev = this.calculateStandardDeviation(window.map(d => d.revenue));
-      const deviation = Math.abs(current.revenue - movingAverage);
+      const stdDev = this.calculateStandardDeviation(window.map(d => d.revenue))
+      const deviation = Math.abs(current.revenue - movingAverage)
 
       if (deviation > 2 * stdDev) {
         anomalies.push({
@@ -483,45 +483,45 @@ export class PredictiveAnalyticsService {
           expected: movingAverage,
           actual: current.revenue,
           deviation: deviation / movingAverage,
-        });
+        })
       }
     }
 
-    return anomalies;
+    return anomalies
   }
 
   /**
    * Calculate standard deviation
    */
   private calculateStandardDeviation(values: number[]): number {
-    const mean = values.reduce((sum, val) => sum + val, 0) / values.length;
-    const variance = values.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / values.length;
-    return Math.sqrt(variance);
+    const mean = values.reduce((sum, val) => sum + val, 0) / values.length
+    const variance = values.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / values.length
+    return Math.sqrt(variance)
   }
 
   /**
    * Get cutoff date for period filtering
    */
   private getCutoffDate(period: '30d' | '90d' | '6m' | '1y'): Date {
-    const now = new Date();
-    const cutoffDate = new Date(now);
+    const now = new Date()
+    const cutoffDate = new Date(now)
 
     switch (period) {
       case '30d':
-        cutoffDate.setDate(now.getDate() - 30);
-        break;
+        cutoffDate.setDate(now.getDate() - 30)
+        break
       case '90d':
-        cutoffDate.setDate(now.getDate() - 90);
-        break;
+        cutoffDate.setDate(now.getDate() - 90)
+        break
       case '6m':
-        cutoffDate.setMonth(now.getMonth() - 6);
-        break;
+        cutoffDate.setMonth(now.getMonth() - 6)
+        break
       case '1y':
-        cutoffDate.setFullYear(now.getFullYear() - 1);
-        break;
+        cutoffDate.setFullYear(now.getFullYear() - 1)
+        break
     }
 
-    return cutoffDate;
+    return cutoffDate
   }
 
   /**
@@ -544,7 +544,7 @@ export class PredictiveAnalyticsService {
           month: new Date(billing.createdAt).getMonth(),
         },
       }))
-      .sort((a, b) => a.date.localeCompare(b.date));
+      .sort((a, b) => a.date.localeCompare(b.date))
   }
 
   /**
@@ -555,33 +555,33 @@ export class PredictiveAnalyticsService {
     timeframe: '7d' | '30d' | '90d' | '6m' | '1y',
   ): Promise<
     Array<{
-      period: string;
-      predictedRevenue: number;
-      confidence: number;
+      period: string
+      predictedRevenue: number
+      confidence: number
       factors: Array<{
-        factor: string;
-        impact: 'positive' | 'negative';
-        weight: number;
-      }>;
+        factor: string
+        impact: 'positive' | 'negative'
+        weight: number
+      }>
     }>
   > {
     // Simplified prediction algorithm
     // In a real implementation, this would use ML models
 
-    const periods = this.getPredictionPeriods(timeframe);
+    const periods = this.getPredictionPeriods(timeframe)
     const trend = this.calculateRevenueTrend(
       trainingData.map(d => ({ date: d.date, revenue: d.revenue })),
-    );
+    )
     const baseRevenue = trainingData.length > 0
       ? trainingData.slice(-7).reduce((sum, d) => sum + d.revenue, 0) / 7
-      : 0;
+      : 0
 
     return periods.map((period, index) => {
-      const growthFactor = 1 + (trend.rate * (index + 1) * 0.1);
-      const predictedRevenue = baseRevenue * growthFactor;
+      const growthFactor = 1 + (trend.rate * (index + 1) * 0.1)
+      const predictedRevenue = baseRevenue * growthFactor
 
       // Adjust confidence based on prediction distance
-      const confidence = Math.max(0.5, trend.confidence - (index * 0.05));
+      const confidence = Math.max(0.5, trend.confidence - (index * 0.05))
 
       return {
         period,
@@ -594,151 +594,151 @@ export class PredictiveAnalyticsService {
             weight: Math.abs(trend.rate),
           },
         ],
-      };
-    });
+      }
+    })
   }
 
   /**
    * Get prediction periods based on timeframe
    */
   private getPredictionPeriods(timeframe: '7d' | '30d' | '90d' | '6m' | '1y'): string[] {
-    const now = new Date();
-    const periods: string[] = [];
+    const now = new Date()
+    const periods: string[] = []
 
     switch (timeframe) {
       case '7d':
         for (let i = 1; i <= 7; i++) {
-          const date = new Date(now);
-          date.setDate(date.getDate() + i);
-          periods.push(date.toISOString().split('T')[0]);
+          const date = new Date(now)
+          date.setDate(date.getDate() + i)
+          periods.push(date.toISOString().split('T')[0])
         }
-        break;
+        break
       case '30d':
         for (let i = 1; i <= 30; i += 3) {
-          const date = new Date(now);
-          date.setDate(date.getDate() + i);
-          periods.push(`Semana ${Math.ceil(i / 7)}`);
+          const date = new Date(now)
+          date.setDate(date.getDate() + i)
+          periods.push(`Semana ${Math.ceil(i / 7)}`)
         }
-        break;
+        break
       case '90d':
         for (let i = 1; i <= 12; i++) {
-          periods.push(`Semana ${i}`);
+          periods.push(`Semana ${i}`)
         }
-        break;
+        break
       case '6m':
         for (let i = 1; i <= 6; i++) {
-          periods.push(`Mês ${i}`);
+          periods.push(`Mês ${i}`)
         }
-        break;
+        break
       case '1y':
         for (let i = 1; i <= 12; i++) {
-          periods.push(`Mês ${i}`);
+          periods.push(`Mês ${i}`)
         }
-        break;
+        break
     }
 
-    return periods;
+    return periods
   }
 
   /**
    * Analyze forecast factors
    */
   private analyzeForecastFactors(predictions: any[]): { risks: string[]; opportunities: string[] } {
-    const risks: string[] = [];
-    const opportunities: string[] = [];
+    const risks: string[] = []
+    const opportunities: string[] = []
 
     // Analyze prediction trends
-    const avgRevenue = predictions.reduce((sum, p) => sum + p.predictedRevenue, 0)
-      / predictions.length;
-    const minRevenue = Math.min(...predictions.map(p => p.predictedRevenue));
-    const maxRevenue = Math.max(...predictions.map(p => p.predictedRevenue));
+    const avgRevenue = predictions.reduce((sum, p) => sum + p.predictedRevenue, 0) /
+      predictions.length
+    const minRevenue = Math.min(...predictions.map(p => p.predictedRevenue))
+    const maxRevenue = Math.max(...predictions.map(p => p.predictedRevenue))
 
     if (minRevenue < avgRevenue * 0.7) {
-      risks.push('Volatilidade significativa na receita projetada');
+      risks.push('Volatilidade significativa na receita projetada')
     }
 
     if (maxRevenue > avgRevenue * 1.5) {
-      opportunities.push('Potencial de crescimento acima da média');
+      opportunities.push('Potencial de crescimento acima da média')
     }
 
-    return { risks, opportunities };
+    return { risks, opportunities }
   }
 
   /**
    * Categorize billing data
    */
   private categorizeBillingData(billingData: Billing[]): Map<string, Billing[]> {
-    const categorized = new Map<string, Billing[]>();
+    const categorized = new Map<string, Billing[]>()
 
     billingData.forEach(billing => {
       // Categorize by procedure type or billing type
-      const category = billing.billingType;
+      const category = billing.billingType
 
       if (!categorized.has(category)) {
-        categorized.set(category, []);
+        categorized.set(category, [])
       }
-      categorized.get(category)!.push(billing);
-    });
+      categorized.get(category)!.push(billing)
+    })
 
-    return categorized;
+    return categorized
   }
 
   /**
    * Identify top performers
    */
   private identifyTopPerformers(categorizedData: Map<string, Billing[]>): Array<{
-    category: string;
-    revenue: number;
-    growth: number;
-    contribution: number;
+    category: string
+    revenue: number
+    growth: number
+    contribution: number
   }> {
     const totalRevenue = Array.from(categorizedData.values())
       .flat()
       .filter(b => b.paymentStatus === 'paid')
-      .reduce((sum, b) => sum + b.total, 0);
+      .reduce((sum, b) => sum + b.total, 0)
 
     return Array.from(categorizedData.entries())
       .map(([category, billings]) => {
         const revenue = billings
           .filter(b => b.paymentStatus === 'paid')
-          .reduce((sum, b) => sum + b.total, 0);
+          .reduce((sum, b) => sum + b.total, 0)
 
-        const contribution = totalRevenue > 0 ? revenue / totalRevenue : 0;
+        const contribution = totalRevenue > 0 ? revenue / totalRevenue : 0
 
         // Calculate simple growth (comparing first half vs second half of period)
-        const midPoint = Math.floor(billings.length / 2);
-        const firstHalf = billings.slice(0, midPoint);
-        const secondHalf = billings.slice(midPoint);
+        const midPoint = Math.floor(billings.length / 2)
+        const firstHalf = billings.slice(0, midPoint)
+        const secondHalf = billings.slice(midPoint)
 
         const firstHalfRevenue = firstHalf
           .filter(b => b.paymentStatus === 'paid')
-          .reduce((sum, b) => sum + b.total, 0);
+          .reduce((sum, b) => sum + b.total, 0)
 
         const secondHalfRevenue = secondHalf
           .filter(b => b.paymentStatus === 'paid')
-          .reduce((sum, b) => sum + b.total, 0);
+          .reduce((sum, b) => sum + b.total, 0)
 
         const growth = firstHalfRevenue > 0
           ? (secondHalfRevenue - firstHalfRevenue) / firstHalfRevenue
-          : 0;
+          : 0
 
-        return { category, revenue, growth, contribution };
+        return { category, revenue, growth, contribution }
       })
       .sort((a, b) => b.revenue - a.revenue)
-      .slice(0, 5);
+      .slice(0, 5)
   }
 
   /**
    * Identify underperformers
    */
   private identifyUnderperformers(categorizedData: Map<string, Billing[]>): Array<{
-    category: string;
-    revenue: number;
-    growth: number;
-    potential: number;
+    category: string
+    revenue: number
+    growth: number
+    potential: number
   }> {
     // Similar to top performers but focusing on low growth/revenue
-    const performers = this.identifyTopPerformers(categorizedData);
+    const performers = this.identifyTopPerformers(categorizedData)
 
     return performers
       .filter(p => p.growth < 0 || p.contribution < 0.05)
@@ -748,19 +748,19 @@ export class PredictiveAnalyticsService {
         growth: p.growth,
         potential: p.revenue * 0.2, // 20% growth potential
       }))
-      .sort((a, b) => a.potential - b.potential);
+      .sort((a, b) => a.potential - b.potential)
   }
 
   /**
    * Analyze seasonal trends
    */
   private analyzeSeasonalTrends(billingData: Billing[]): Array<{
-    month: string;
-    averageRevenue: number;
-    trend: 'up' | 'down' | 'stable';
-    drivers: string[];
+    month: string
+    averageRevenue: number
+    trend: 'up' | 'down' | 'stable'
+    drivers: string[]
   }> {
-    const monthlyData = new Map<number, { total: number; count: number }>();
+    const monthlyData = new Map<number, { total: number; count: number }>()
     const months = [
       'Janeiro',
       'Fevereiro',
@@ -774,40 +774,40 @@ export class PredictiveAnalyticsService {
       'Outubro',
       'Novembro',
       'Dezembro',
-    ];
+    ]
 
     billingData.forEach(billing => {
       if (billing.paymentStatus === 'paid') {
-        const month = new Date(billing.createdAt).getMonth();
-        const current = monthlyData.get(month) || { total: 0, count: 0 };
+        const month = new Date(billing.createdAt).getMonth()
+        const current = monthlyData.get(month) || { total: 0, count: 0 }
         monthlyData.set(month, {
           total: current.total + billing.total,
           count: current.count + 1,
-        });
+        })
       }
-    });
+    })
 
     return Array.from(monthlyData.entries()).map(([month, data]) => {
-      const averageRevenue = data.total / data.count;
+      const averageRevenue = data.total / data.count
 
       // Simple trend analysis (compare with previous month)
-      const prevMonth = month === 0 ? 11 : month - 1;
-      const prevData = monthlyData.get(prevMonth);
+      const prevMonth = month === 0 ? 11 : month - 1
+      const prevData = monthlyData.get(prevMonth)
       const trend = prevData
         ? averageRevenue > (prevData.total / prevData.count) * 1.05
           ? 'up'
           : averageRevenue < (prevData.total / prevData.count) * 0.95
           ? 'down'
           : 'stable'
-        : 'stable';
+        : 'stable'
 
       return {
         month: months[month],
         averageRevenue,
         trend,
         drivers: this.identifyMonthlyDrivers(month, billingData),
-      };
-    });
+      }
+    })
   }
 
   /**
@@ -815,29 +815,29 @@ export class PredictiveAnalyticsService {
    */
   private identifyMonthlyDrivers(month: number, billingData: Billing[]): string[] {
     const monthBillings = billingData.filter(b =>
-      new Date(b.createdAt).getMonth() === month
-      && b.paymentStatus === 'paid'
-    );
+      new Date(b.createdAt).getMonth() === month &&
+      b.paymentStatus === 'paid'
+    )
 
-    const drivers: string[] = [];
+    const drivers: string[] = []
 
     // Analyze top procedures in this month
-    const procedureCounts = new Map<string, number>();
+    const procedureCounts = new Map<string, number>()
     monthBillings.forEach(billing => {
       billing.items.forEach(item => {
-        const procedure = item.procedureCode.description;
-        procedureCounts.set(procedure, (procedureCounts.get(procedure) || 0) + 1);
-      });
-    });
+        const procedure = item.procedureCode.description
+        procedureCounts.set(procedure, (procedureCounts.get(procedure) || 0) + 1)
+      })
+    })
 
     const topProcedures = Array.from(procedureCounts.entries())
       .sort((a, b) => b[1] - a[1])
       .slice(0, 3)
-      .map(([procedure]) => procedure);
+      .map(([procedure]) => procedure)
 
-    drivers.push(`Procedimentos principais: ${topProcedures.join(', ')}`);
+    drivers.push(`Procedimentos principais: ${topProcedures.join(', ')}`)
 
-    return drivers;
+    return drivers
   }
 
   /**
@@ -848,17 +848,17 @@ export class PredictiveAnalyticsService {
     underperformers: any[],
     seasonalTrends: any[],
   ): Array<{
-    priority: 'high' | 'medium' | 'low';
-    action: string;
-    expectedImpact: string;
-    timeline: string;
+    priority: 'high' | 'medium' | 'low'
+    action: string
+    expectedImpact: string
+    timeline: string
   }> {
     const recommendations: Array<{
-      priority: 'high' | 'medium' | 'low';
-      action: string;
-      expectedImpact: string;
-      timeline: string;
-    }> = [];
+      priority: 'high' | 'medium' | 'low'
+      action: string
+      expectedImpact: string
+      timeline: string
+    }> = []
 
     // High performers recommendations
     if (topPerformers.length > 0 && topPerformers[0].growth > 0.1) {
@@ -869,7 +869,7 @@ export class PredictiveAnalyticsService {
         }%`,
         expectedImpact: 'Aumento de 15-25% na receita',
         timeline: '90 dias',
-      });
+      })
     }
 
     // Underperformers recommendations
@@ -880,22 +880,22 @@ export class PredictiveAnalyticsService {
           action: `Revisar estratégia para ${underperformer.category}`,
           expectedImpact: 'Recuperar até R$ ' + underperformer.potential.toFixed(2),
           timeline: '60 dias',
-        });
+        })
       }
-    });
+    })
 
     // Seasonal recommendations
-    const highSeasonMonths = seasonalTrends.filter(t => t.trend === 'up');
+    const highSeasonMonths = seasonalTrends.filter(t => t.trend === 'up')
     if (highSeasonMonths.length > 0) {
       recommendations.push({
         priority: 'high',
         action: 'Preparar equipe e estoque para alta temporada',
         expectedImpact: 'Maximizar receita durante pico de demanda',
         timeline: '30 dias',
-      });
+      })
     }
 
-    return recommendations;
+    return recommendations
   }
 
   /**
@@ -904,7 +904,7 @@ export class PredictiveAnalyticsService {
   private calculateCurrentBalance(billingData: Billing[]): number {
     return billingData
       .filter(b => b.paymentStatus === 'paid')
-      .reduce((sum, b) => sum + b.total, 0);
+      .reduce((sum, b) => sum + b.total, 0)
   }
 
   /**
@@ -915,30 +915,30 @@ export class PredictiveAnalyticsService {
     forecastDays: number,
   ): Promise<
     Array<{
-      date: string;
-      type: 'inflow' | 'outflow';
-      amount: number;
-      category: string;
-      probability: number;
+      date: string
+      type: 'inflow' | 'outflow'
+      amount: number
+      category: string
+      probability: number
     }>
   > {
     // Simplified cash flow projection
     const cashFlows: Array<{
-      date: string;
-      type: 'inflow' | 'outflow';
-      amount: number;
-      category: string;
-      probability: number;
-    }> = [];
+      date: string
+      type: 'inflow' | 'outflow'
+      amount: number
+      category: string
+      probability: number
+    }> = []
 
-    const now = new Date();
-    const paidBillings = billingData.filter(b => b.paymentStatus === 'paid');
-    const pendingBillings = billingData.filter(b => b.paymentStatus === 'pending');
+    const now = new Date()
+    const paidBillings = billingData.filter(b => b.paymentStatus === 'paid')
+    const pendingBillings = billingData.filter(b => b.paymentStatus === 'pending')
 
     // Project inflows from pending payments
     pendingBillings.forEach(billing => {
-      const dueDate = new Date(billing.dueDate);
-      const daysUntilDue = Math.ceil((dueDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+      const dueDate = new Date(billing.dueDate)
+      const daysUntilDue = Math.ceil((dueDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24))
 
       if (daysUntilDue <= forecastDays && daysUntilDue >= 0) {
         cashFlows.push({
@@ -947,16 +947,16 @@ export class PredictiveAnalyticsService {
           amount: billing.total,
           category: 'Recebimento de cliente',
           probability: this.calculatePaymentProbability(billing),
-        });
+        })
       }
-    });
+    })
 
     // Project regular outflows (simplified)
-    const averageMonthlyOutflow = this.calculateAverageMonthlyOutflow(paidBillings);
+    const averageMonthlyOutflow = this.calculateAverageMonthlyOutflow(paidBillings)
 
     for (let i = 1; i <= forecastDays; i += 7) {
-      const date = new Date(now);
-      date.setDate(date.getDate() + i);
+      const date = new Date(now)
+      date.setDate(date.getDate() + i)
 
       cashFlows.push({
         date: date.toISOString().split('T')[0],
@@ -964,10 +964,10 @@ export class PredictiveAnalyticsService {
         amount: averageMonthlyOutflow / 4.33, // Weekly outflow
         category: 'Despesas operacionais',
         probability: 0.9,
-      });
+      })
     }
 
-    return cashFlows.sort((a, b) => a.date.localeCompare(b.date));
+    return cashFlows.sort((a, b) => a.date.localeCompare(b.date))
   }
 
   /**
@@ -975,18 +975,18 @@ export class PredictiveAnalyticsService {
    */
   private calculatePaymentProbability(billing: Billing): number {
     // Simple probability calculation based on billing characteristics
-    let probability = 0.7; // Base probability
+    let probability = 0.7 // Base probability
 
     // Adjust based on billing type
-    if (billing.billingType === 'health_plan') probability += 0.1;
-    if (billing.billingType === 'sus') probability += 0.05;
-    if (billing.billingType === 'private') probability += 0.15;
+    if (billing.billingType === 'health_plan') probability += 0.1
+    if (billing.billingType === 'sus') probability += 0.05
+    if (billing.billingType === 'private') probability += 0.15
 
     // Adjust based on amount
-    if (billing.total > 1000) probability -= 0.1;
-    if (billing.total > 5000) probability -= 0.1;
+    if (billing.total > 1000) probability -= 0.1
+    if (billing.total > 5000) probability -= 0.1
 
-    return Math.max(0.1, Math.min(1.0, probability));
+    return Math.max(0.1, Math.min(1.0, probability))
   }
 
   /**
@@ -994,8 +994,8 @@ export class PredictiveAnalyticsService {
    */
   private calculateAverageMonthlyOutflow(paidBillings: Billing[]): number {
     // Simplified calculation - assumes outflows are 70% of inflows
-    const totalInflow = paidBillings.reduce((sum, b) => sum + b.total, 0);
-    return totalInflow * 0.7 / 12; // Monthly outflow
+    const totalInflow = paidBillings.reduce((sum, b) => sum + b.total, 0)
+    return totalInflow * 0.7 / 12 // Monthly outflow
   }
 
   /**
@@ -1004,17 +1004,17 @@ export class PredictiveAnalyticsService {
   private calculateProjectedBalance(
     currentBalance: number,
     cashFlows: Array<{
-      date: string;
-      type: 'inflow' | 'outflow';
-      amount: number;
-      category: string;
-      probability: number;
+      date: string
+      type: 'inflow' | 'outflow'
+      amount: number
+      category: string
+      probability: number
     }>,
   ): number {
     return cashFlows.reduce((balance, flow) => {
-      const expectedAmount = flow.amount * flow.probability;
-      return flow.type === 'inflow' ? balance + expectedAmount : balance - expectedAmount;
-    }, currentBalance);
+      const expectedAmount = flow.amount * flow.probability
+      return flow.type === 'inflow' ? balance + expectedAmount : balance - expectedAmount
+    }, currentBalance)
   }
 
   /**
@@ -1022,39 +1022,39 @@ export class PredictiveAnalyticsService {
    */
   private identifyCashFlowRisks(
     cashFlows: Array<{
-      date: string;
-      type: 'inflow' | 'outflow';
-      amount: number;
-      category: string;
-      probability: number;
+      date: string
+      type: 'inflow' | 'outflow'
+      amount: number
+      category: string
+      probability: number
     }>,
   ): Array<{
-    type: 'shortage' | 'surplus';
-    severity: 'low' | 'medium' | 'high';
-    date: string;
-    amount: number;
-    mitigation: string;
+    type: 'shortage' | 'surplus'
+    severity: 'low' | 'medium' | 'high'
+    date: string
+    amount: number
+    mitigation: string
   }> {
     const risks: Array<{
-      type: 'shortage' | 'surplus';
-      severity: 'low' | 'medium' | 'high';
-      date: string;
-      amount: number;
-      mitigation: string;
-    }> = [];
+      type: 'shortage' | 'surplus'
+      severity: 'low' | 'medium' | 'high'
+      date: string
+      amount: number
+      mitigation: string
+    }> = []
 
-    let runningBalance = 0;
+    let runningBalance = 0
 
     cashFlows.forEach(flow => {
-      const expectedAmount = flow.amount * flow.probability;
-      runningBalance += flow.type === 'inflow' ? expectedAmount : -expectedAmount;
+      const expectedAmount = flow.amount * flow.probability
+      runningBalance += flow.type === 'inflow' ? expectedAmount : -expectedAmount
 
       if (runningBalance < 0) {
         const severity = runningBalance < -10000
           ? 'high'
           : runningBalance < -5000
           ? 'medium'
-          : 'low';
+          : 'low'
         risks.push({
           type: 'shortage',
           severity,
@@ -1063,54 +1063,54 @@ export class PredictiveAnalyticsService {
           mitigation: severity === 'high'
             ? 'Buscar financiamento ou adiar despesas não essenciais'
             : 'Acelerar cobranças de clientes',
-        });
+        })
       }
-    });
+    })
 
-    return risks;
+    return risks
   }
 
   /**
    * Generate cash flow recommendations
    */
   private generateCashFlowRecommendations(risks: any[]): string[] {
-    const recommendations: string[] = [];
+    const recommendations: string[] = []
 
     if (risks.some(r => r.severity === 'high')) {
-      recommendations.push('Estabelecer linha de crédito emergencial');
-      recommendations.push('Renegociar prazos com fornecedores');
+      recommendations.push('Estabelecer linha de crédito emergencial')
+      recommendations.push('Renegociar prazos com fornecedores')
     }
 
     if (risks.some(r => r.severity === 'medium')) {
-      recommendations.push('Implementar política de cobrança antecipada');
-      recommendations.push('Revisar cronograma de despesas');
+      recommendations.push('Implementar política de cobrança antecipada')
+      recommendations.push('Revisar cronograma de despesas')
     }
 
-    recommendations.push('Monitorar fluxo de caixa diariamente');
-    recommendations.push('Manter reserva de emergência');
+    recommendations.push('Monitorar fluxo de caixa diariamente')
+    recommendations.push('Manter reserva de emergência')
 
-    return recommendations;
+    return recommendations
   }
 
   /**
    * Calculate average growth rate
    */
   private calculateAverageGrowthRate(predictions: any[]): number {
-    if (predictions.length < 2) return 0;
+    if (predictions.length < 2) return 0
 
-    const totalGrowth = predictions[predictions.length - 1].predictedRevenue
-      - predictions[0].predictedRevenue;
-    const averageGrowth = totalGrowth / predictions.length;
-    const baseRevenue = predictions[0].predictedRevenue;
+    const totalGrowth = predictions[predictions.length - 1].predictedRevenue -
+      predictions[0].predictedRevenue
+    const averageGrowth = totalGrowth / predictions.length
+    const baseRevenue = predictions[0].predictedRevenue
 
-    return baseRevenue > 0 ? averageGrowth / baseRevenue : 0;
+    return baseRevenue > 0 ? averageGrowth / baseRevenue : 0
   }
 
   /**
    * Get service configuration
    */
   getConfiguration(): AnalyticsConfig {
-    return { ...this.config };
+    return { ...this.config }
   }
 
   /**
@@ -1120,13 +1120,13 @@ export class PredictiveAnalyticsService {
     this.config = analyticsConfigSchema.parse({
       ...this.config,
       ...updates,
-    });
+    })
 
     // Clear model cache on configuration change
-    this.modelCache.clear();
-    this.lastUpdate = new Date();
+    this.modelCache.clear()
+    this.lastUpdate = new Date()
 
-    return this.config;
+    return this.config
   }
 
   /**
@@ -1138,6 +1138,6 @@ export class PredictiveAnalyticsService {
       lastUpdate: this.lastUpdate.toISOString(),
       modelCacheSize: this.modelCache.size,
       config: this.config,
-    };
+    }
   }
 }

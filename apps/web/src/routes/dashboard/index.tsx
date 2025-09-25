@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from '@tanstack/react-router';
+import { createFileRoute, Link } from '@tanstack/react-router'
 import {
   Activity,
   Bell,
@@ -11,16 +11,16 @@ import {
   TrendingUp,
   Users,
   X,
-} from 'lucide-react';
-import * as React from 'react';
-import { useState } from 'react';
+} from 'lucide-react'
+import * as React from 'react'
+import { useState } from 'react'
 
 export const Route = createFileRoute('/dashboard/')({
   component: Dashboard,
-});
+})
 
 function Dashboard() {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false)
 
   const menuItems = [
     { icon: TrendingUp, label: 'Visão Geral', href: '/dashboard' },
@@ -30,7 +30,7 @@ function Dashboard() {
     { icon: Activity, label: 'Prontuários', href: '/records' },
     { icon: Calendar, label: 'Agendamento Estético', href: '/aesthetic-scheduling' },
     { icon: Activity, label: 'Suporte Clínico IA', href: '/ai-clinical-support' },
-  ];
+  ]
 
   const stats = [
     {
@@ -61,7 +61,7 @@ function Dashboard() {
       icon: Activity,
       color: 'text-orange-600',
     },
-  ];
+  ]
 
   const recentAppointments = [
     {
@@ -88,7 +88,7 @@ function Dashboard() {
       service: 'Ácido',
       status: 'Confirmado',
     },
-  ];
+  ]
 
   return (
     <div className='min-h-screen bg-gray-50'>
@@ -180,8 +180,8 @@ function Dashboard() {
 
           {/* Stats cards */}
           <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8'>
-            {stats.map((stat, index) => (
-              <div key={index} className='bg-white rounded-lg shadow p-6'>
+            {stats.map(stat => (
+              <div key={stat.title} className='bg-white rounded-lg shadow p-6'>
                 <div className='flex items-center'>
                   <div className='flex-shrink-0'>
                     <stat.icon className={`h-8 w-8 ${stat.color}`} />
@@ -215,8 +215,8 @@ function Dashboard() {
                 </h3>
               </div>
               <div className='divide-y divide-gray-200'>
-                {recentAppointments.map((appointment, index) => (
-                  <div key={index} className='px-6 py-4'>
+                {recentAppointments.map(appointment => (
+                  <div key={`${appointment.name}-${appointment.time}`} className='px-6 py-4'>
                     <div className='flex items-center justify-between'>
                       <div>
                         <p className='text-sm font-medium text-gray-900'>
@@ -296,5 +296,5 @@ function Dashboard() {
         </main>
       </div>
     </div>
-  );
+  )
 }

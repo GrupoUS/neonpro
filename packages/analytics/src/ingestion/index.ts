@@ -16,7 +16,7 @@ export {
   EventCollector,
   type EventCollectorConfig,
   type FlushResult,
-} from './event-collector';
+} from './event-collector'
 
 // Re-export ingestion-related types from the types module
-export type { IngestionEvent } from '../types/ingestion';
+export type { IngestionEvent } from '../types/ingestion'

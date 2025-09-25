@@ -1,6 +1,6 @@
-import { SupabaseClient } from '@neonpro/database';
-import { SupabaseClient as SupabaseJSClient } from '@supabase/supabase-js';
-import { z } from 'zod';
+import { SupabaseClient } from '@neonpro/database'
+import { SupabaseClient as SupabaseJSClient } from '@supabase/supabase-js'
+import { z } from 'zod'
 
 // Schemas for validation
 const CommunicationPreferencesSchema = z.object({
@@ -28,7 +28,7 @@ const CommunicationPreferencesSchema = z.object({
   }).default({}),
   doNotContact: z.boolean().default(false),
   doNotContactReason: z.string().optional(),
-});
+})
 
 const CommunicationHistorySchema = z.object({
   patientId: z.string().uuid(),
@@ -52,7 +52,7 @@ const CommunicationHistorySchema = z.object({
   status: z.enum(['pending', 'sent', 'delivered', 'opened', 'clicked', 'failed', 'bounced'])
     .default('pending'),
   metadata: z.record(z.any()).default({}),
-});
+})
 
 const CommunicationTemplateSchema = z.object({
   clinicId: z.string().uuid(),
@@ -73,7 +73,7 @@ const CommunicationTemplateSchema = z.object({
   variables: z.array(z.string()).default([]),
   isActive: z.boolean().default(true),
   isDefault: z.boolean().default(false),
-});
+})
 
 const PatientJourneyStageSchema = z.object({
   patientId: z.string().uuid(),
@@ -97,7 +97,7 @@ const PatientJourneyStageSchema = z.object({
   lastTreatmentDate: z.date().optional(),
   nextRecommendedTreatmentDate: z.date().optional(),
   riskFactors: z.array(z.string()).default([]),
-});
+})
 
 const EngagementActionSchema = z.object({
   patientId: z.string().uuid(),
@@ -117,7 +117,7 @@ const EngagementActionSchema = z.object({
   actionValue: z.string().optional(),
   pointsEarned: z.number().default(0),
   metadata: z.record(z.any()).default({}),
-});
+})
 
 const LoyaltyProgramSchema = z.object({
   clinicId: z.string().uuid(),
@@ -130,7 +130,7 @@ const LoyaltyProgramSchema = z.object({
   })).default({}),
   benefits: z.record(z.array(z.string())).default({}),
   isActive: z.boolean().default(true),
-});
+})
 
 const PatientSurveySchema = z.object({
   clinicId: z.string().uuid(),
@@ -139,7 +139,7 @@ const PatientSurveySchema = z.object({
   questions: z.array(z.any()),
   triggerConditions: z.array(z.any()).default([]),
   isActive: z.boolean().default(true),
-});
+})
 
 const SurveyResponseSchema = z.object({
   surveyId: z.string().uuid(),
@@ -151,7 +151,7 @@ const SurveyResponseSchema = z.object({
   feedbackText: z.string().optional(),
   followUpRequired: z.boolean().default(false),
   followUpNotes: z.string().optional(),
-});
+})
 
 const EngagementCampaignSchema = z.object({
   clinicId: z.string().uuid(),
@@ -170,7 +170,7 @@ const EngagementCampaignSchema = z.object({
   status: z.enum(['draft', 'active', 'paused', 'completed']).default('draft'),
   startDate: z.date().optional(),
   endDate: z.date().optional(),
-});
+})
 
 const ReengagementTriggerSchema = z.object({
   patientId: z.string().uuid(),
@@ -185,22 +185,22 @@ const ReengagementTriggerSchema = z.object({
   ]),
   actionTaken: z.string().optional(),
   outcome: z.record(z.any()).default({}),
-});
+})
 
-type CommunicationPreferencesInput = z.infer<typeof CommunicationPreferencesSchema>;
-type CommunicationHistoryInput = z.infer<typeof CommunicationHistorySchema>;
-type CommunicationTemplateInput = z.infer<typeof CommunicationTemplateSchema>;
-type PatientJourneyStageInput = z.infer<typeof PatientJourneyStageSchema>;
-type EngagementActionInput = z.infer<typeof EngagementActionSchema>;
-type LoyaltyProgramInput = z.infer<typeof LoyaltyProgramSchema>;
-type PatientSurveyInput = z.infer<typeof PatientSurveySchema>;
-type SurveyResponseInput = z.infer<typeof SurveyResponseSchema>;
-type EngagementCampaignInput = z.infer<typeof EngagementCampaignSchema>;
-type ReengagementTriggerInput = z.infer<typeof ReengagementTriggerSchema>;
+type CommunicationPreferencesInput = z.infer<typeof CommunicationPreferencesSchema>
+type CommunicationHistoryInput = z.infer<typeof CommunicationHistorySchema>
+type CommunicationTemplateInput = z.infer<typeof CommunicationTemplateSchema>
+type PatientJourneyStageInput = z.infer<typeof PatientJourneyStageSchema>
+type EngagementActionInput = z.infer<typeof EngagementActionSchema>
+type LoyaltyProgramInput = z.infer<typeof LoyaltyProgramSchema>
+type PatientSurveyInput = z.infer<typeof PatientSurveySchema>
+type SurveyResponseInput = z.infer<typeof SurveyResponseSchema>
+type EngagementCampaignInput = z.infer<typeof EngagementCampaignSchema>
+type ReengagementTriggerInput = z.infer<typeof ReengagementTriggerSchema>
 
 export interface PatientEngagementServiceConfig {
-  supabaseUrl: string;
-  supabaseKey: string;
+  supabaseUrl: string
+  supabaseKey: string
 }
 
 export class PatientEngagementService {
@@ -213,17 +213,17 @@ export class PatientEngagementService {
       .select('*')
       .eq('patient_id', patientId)
       .eq('clinic_id', clinicId)
-      .single();
+      .single()
 
     if (error) {
-      throw new Error(`Failed to get communication preferences: ${error.message}`);
+      throw new Error(`Failed to get communication preferences: ${error.message}`)
     }
 
-    return data;
+    return data
   }
 
   async updateCommunicationPreferences(preferences: CommunicationPreferencesInput) {
-    const validatedPreferences = CommunicationPreferencesSchema.parse(preferences);
+    const validatedPreferences = CommunicationPreferencesSchema.parse(preferences)
 
     const { data, error } = await (this.supabase as SupabaseJSClient)
       .from('patient_communication_preferences')
@@ -239,18 +239,18 @@ export class PatientEngagementService {
         updated_at: new Date().toISOString(),
       })
       .select()
-      .single();
+      .single()
 
     if (error) {
-      throw new Error(`Failed to update communication preferences: ${error.message}`);
+      throw new Error(`Failed to update communication preferences: ${error.message}`)
     }
 
-    return data;
+    return data
   }
 
   // Communication History Management
   async sendCommunication(communication: CommunicationHistoryInput) {
-    const validatedCommunication = CommunicationHistorySchema.parse(communication);
+    const validatedCommunication = CommunicationHistorySchema.parse(communication)
 
     const { data, error } = await (this.supabase as SupabaseJSClient)
       .from('patient_communication_history')
@@ -267,13 +267,13 @@ export class PatientEngagementService {
         sent_at: new Date().toISOString(),
       })
       .select()
-      .single();
+      .single()
 
     if (error) {
-      throw new Error(`Failed to send communication: ${error.message}`);
+      throw new Error(`Failed to send communication: ${error.message}`)
     }
 
-    return data;
+    return data
   }
 
   async getCommunicationHistory(patientId: string, clinicId: string, limit = 50) {
@@ -283,18 +283,18 @@ export class PatientEngagementService {
       .eq('patient_id', patientId)
       .eq('clinic_id', clinicId)
       .order('created_at', { ascending: false })
-      .limit(limit);
+      .limit(limit)
 
     if (error) {
-      throw new Error(`Failed to get communication history: ${error.message}`);
+      throw new Error(`Failed to get communication history: ${error.message}`)
     }
 
-    return data;
+    return data
   }
 
   // Template Management
   async createTemplate(template: CommunicationTemplateInput) {
-    const validatedTemplate = CommunicationTemplateSchema.parse(template);
+    const validatedTemplate = CommunicationTemplateSchema.parse(template)
 
     const { data, error } = await (this.supabase as SupabaseJSClient)
       .from('communication_templates')
@@ -310,13 +310,13 @@ export class PatientEngagementService {
         is_default: validatedTemplate.isDefault,
       })
       .select()
-      .single();
+      .single()
 
     if (error) {
-      throw new Error(`Failed to create template: ${error.message}`);
+      throw new Error(`Failed to create template: ${error.message}`)
     }
 
-    return data;
+    return data
   }
 
   async getTemplatesByCategory(clinicId: string, category: string) {
@@ -326,18 +326,18 @@ export class PatientEngagementService {
       .eq('clinic_id', clinicId)
       .eq('category', category)
       .eq('is_active', true)
-      .order('is_default', { ascending: false });
+      .order('is_default', { ascending: false })
 
     if (error) {
-      throw new Error(`Failed to get templates: ${error.message}`);
+      throw new Error(`Failed to get templates: ${error.message}`)
     }
 
-    return data;
+    return data
   }
 
   // Patient Journey Management
   async updatePatientJourneyStage(journey: PatientJourneyStageInput) {
-    const validatedJourney = PatientJourneyStageSchema.parse(journey);
+    const validatedJourney = PatientJourneyStageSchema.parse(journey)
 
     const { data, error } = await (this.supabase as SupabaseJSClient)
       .from('patient_journey_stages')
@@ -355,13 +355,13 @@ export class PatientEngagementService {
         updated_at: new Date().toISOString(),
       })
       .select()
-      .single();
+      .single()
 
     if (error) {
-      throw new Error(`Failed to update patient journey stage: ${error.message}`);
+      throw new Error(`Failed to update patient journey stage: ${error.message}`)
     }
 
-    return data;
+    return data
   }
 
   async getPatientJourney(patientId: string, clinicId: string) {
@@ -370,18 +370,18 @@ export class PatientEngagementService {
       .select('*')
       .eq('patient_id', patientId)
       .eq('clinic_id', clinicId)
-      .single();
+      .single()
 
     if (error) {
-      throw new Error(`Failed to get patient journey: ${error.message}`);
+      throw new Error(`Failed to get patient journey: ${error.message}`)
     }
 
-    return data;
+    return data
   }
 
   // Engagement Actions Management
   async recordEngagementAction(action: EngagementActionInput) {
-    const validatedAction = EngagementActionSchema.parse(action);
+    const validatedAction = EngagementActionSchema.parse(action)
 
     const { data, error } = await (this.supabase as SupabaseJSClient)
       .from('patient_engagement_actions')
@@ -394,13 +394,13 @@ export class PatientEngagementService {
         metadata: validatedAction.metadata,
       })
       .select()
-      .single();
+      .single()
 
     if (error) {
-      throw new Error(`Failed to record engagement action: ${error.message}`);
+      throw new Error(`Failed to record engagement action: ${error.message}`)
     }
 
-    return data;
+    return data
   }
 
   async getPatientEngagementActions(patientId: string, clinicId: string, limit = 50) {
@@ -410,18 +410,18 @@ export class PatientEngagementService {
       .eq('patient_id', patientId)
       .eq('clinic_id', clinicId)
       .order('created_at', { ascending: false })
-      .limit(limit);
+      .limit(limit)
 
     if (error) {
-      throw new Error(`Failed to get engagement actions: ${error.message}`);
+      throw new Error(`Failed to get engagement actions: ${error.message}`)
     }
 
-    return data;
+    return data
   }
 
   // Loyalty Program Management
   async createLoyaltyProgram(program: LoyaltyProgramInput) {
-    const validatedProgram = LoyaltyProgramSchema.parse(program);
+    const validatedProgram = LoyaltyProgramSchema.parse(program)
 
     const { data, error } = await (this.supabase as SupabaseJSClient)
       .from('loyalty_programs')
@@ -435,13 +435,13 @@ export class PatientEngagementService {
         is_active: validatedProgram.isActive,
       })
       .select()
-      .single();
+      .single()
 
     if (error) {
-      throw new Error(`Failed to create loyalty program: ${error.message}`);
+      throw new Error(`Failed to create loyalty program: ${error.message}`)
     }
 
-    return data;
+    return data
   }
 
   async getLoyaltyPrograms(clinicId: string) {
@@ -449,13 +449,13 @@ export class PatientEngagementService {
       .from('loyalty_programs')
       .select('*')
       .eq('clinic_id', clinicId)
-      .eq('is_active', true);
+      .eq('is_active', true)
 
     if (error) {
-      throw new Error(`Failed to get loyalty programs: ${error.message}`);
+      throw new Error(`Failed to get loyalty programs: ${error.message}`)
     }
 
-    return data;
+    return data
   }
 
   async getPatientPointsBalance(patientId: string, clinicId: string) {
@@ -464,7 +464,7 @@ export class PatientEngagementService {
       .select('*')
       .eq('patient_id', patientId)
       .eq('clinic_id', clinicId)
-      .single();
+      .single()
 
     if (error) {
       // Create balance if it doesn't exist
@@ -479,22 +479,22 @@ export class PatientEngagementService {
             points_redeemed: 0,
           })
           .select()
-          .single();
+          .single()
 
         if (createError) {
-          throw new Error(`Failed to create points balance: ${createError.message}`);
+          throw new Error(`Failed to create points balance: ${createError.message}`)
         }
 
-        return newBalance;
+        return newBalance
       }
-      throw new Error(`Failed to get points balance: ${error.message}`);
+      throw new Error(`Failed to get points balance: ${error.message}`)
     }
 
-    return data;
+    return data
   }
 
   async updatePatientPoints(patientId: string, clinicId: string, pointsToAdd: number) {
-    const balance = await this.getPatientPointsBalance(patientId, clinicId);
+    const balance = await this.getPatientPointsBalance(patientId, clinicId)
 
     const { data, error } = await (this.supabase as SupabaseJSClient)
       .from('patient_points_balance')
@@ -505,18 +505,18 @@ export class PatientEngagementService {
       })
       .eq('id', balance.id)
       .select()
-      .single();
+      .single()
 
     if (error) {
-      throw new Error(`Failed to update patient points: ${error.message}`);
+      throw new Error(`Failed to update patient points: ${error.message}`)
     }
 
-    return data;
+    return data
   }
 
   // Survey Management
   async createSurvey(survey: PatientSurveyInput) {
-    const validatedSurvey = PatientSurveySchema.parse(survey);
+    const validatedSurvey = PatientSurveySchema.parse(survey)
 
     const { data, error } = await (this.supabase as SupabaseJSClient)
       .from('patient_surveys')
@@ -529,13 +529,13 @@ export class PatientEngagementService {
         is_active: validatedSurvey.isActive,
       })
       .select()
-      .single();
+      .single()
 
     if (error) {
-      throw new Error(`Failed to create survey: ${error.message}`);
+      throw new Error(`Failed to create survey: ${error.message}`)
     }
 
-    return data;
+    return data
   }
 
   async getSurveys(clinicId: string) {
@@ -543,17 +543,17 @@ export class PatientEngagementService {
       .from('patient_surveys')
       .select('*')
       .eq('clinic_id', clinicId)
-      .eq('is_active', true);
+      .eq('is_active', true)
 
     if (error) {
-      throw new Error(`Failed to get surveys: ${error.message}`);
+      throw new Error(`Failed to get surveys: ${error.message}`)
     }
 
-    return data;
+    return data
   }
 
   async submitSurveyResponse(response: SurveyResponseInput) {
-    const validatedResponse = SurveyResponseSchema.parse(response);
+    const validatedResponse = SurveyResponseSchema.parse(response)
 
     const { data, error } = await (this.supabase as SupabaseJSClient)
       .from('patient_survey_responses')
@@ -569,18 +569,18 @@ export class PatientEngagementService {
         follow_up_notes: validatedResponse.followUpNotes,
       })
       .select()
-      .single();
+      .single()
 
     if (error) {
-      throw new Error(`Failed to submit survey response: ${error.message}`);
+      throw new Error(`Failed to submit survey response: ${error.message}`)
     }
 
-    return data;
+    return data
   }
 
   // Campaign Management
   async createCampaign(campaign: EngagementCampaignInput) {
-    const validatedCampaign = EngagementCampaignSchema.parse(campaign);
+    const validatedCampaign = EngagementCampaignSchema.parse(campaign)
 
     const { data, error } = await (this.supabase as SupabaseJSClient)
       .from('engagement_campaigns')
@@ -596,13 +596,13 @@ export class PatientEngagementService {
         end_date: validatedCampaign.endDate?.toISOString(),
       })
       .select()
-      .single();
+      .single()
 
     if (error) {
-      throw new Error(`Failed to create campaign: ${error.message}`);
+      throw new Error(`Failed to create campaign: ${error.message}`)
     }
 
-    return data;
+    return data
   }
 
   async getCampaigns(clinicId: string) {
@@ -610,18 +610,18 @@ export class PatientEngagementService {
       .from('engagement_campaigns')
       .select('*')
       .eq('clinic_id', clinicId)
-      .order('created_at', { ascending: false });
+      .order('created_at', { ascending: false })
 
     if (error) {
-      throw new Error(`Failed to get campaigns: ${error.message}`);
+      throw new Error(`Failed to get campaigns: ${error.message}`)
     }
 
-    return data;
+    return data
   }
 
   // Reengagement Management
   async createReengagementTrigger(trigger: ReengagementTriggerInput) {
-    const validatedTrigger = ReengagementTriggerSchema.parse(trigger);
+    const validatedTrigger = ReengagementTriggerSchema.parse(trigger)
 
     const { data, error } = await (this.supabase as SupabaseJSClient)
       .from('reengagement_triggers')
@@ -633,13 +633,13 @@ export class PatientEngagementService {
         outcome: validatedTrigger.outcome,
       })
       .select()
-      .single();
+      .single()
 
     if (error) {
-      throw new Error(`Failed to create reengagement trigger: ${error.message}`);
+      throw new Error(`Failed to create reengagement trigger: ${error.message}`)
     }
 
-    return data;
+    return data
   }
 
   async getReengagementTriggers(clinicId: string, status = 'pending') {
@@ -648,13 +648,13 @@ export class PatientEngagementService {
       .select('*')
       .eq('clinic_id', clinicId)
       .eq('status', status)
-      .order('trigger_date', { ascending: true });
+      .order('trigger_date', { ascending: true })
 
     if (error) {
-      throw new Error(`Failed to get reengagement triggers: ${error.message}`);
+      throw new Error(`Failed to get reengagement triggers: ${error.message}`)
     }
 
-    return data;
+    return data
   }
 
   async updateReengagementTrigger(
@@ -673,13 +673,13 @@ export class PatientEngagementService {
       })
       .eq('id', triggerId)
       .select()
-      .single();
+      .single()
 
     if (error) {
-      throw new Error(`Failed to update reengagement trigger: ${error.message}`);
+      throw new Error(`Failed to update reengagement trigger: ${error.message}`)
     }
 
-    return data;
+    return data
   }
 
   // Analytics and Reporting
@@ -689,13 +689,13 @@ export class PatientEngagementService {
         p_clinic_id: clinicId,
         p_start_date: dateRange.start,
         p_end_date: dateRange.end,
-      });
+      })
 
     if (error) {
-      throw new Error(`Failed to get engagement analytics: ${error.message}`);
+      throw new Error(`Failed to get engagement analytics: ${error.message}`)
     }
 
-    return data;
+    return data
   }
 
   async getPatientEngagementReport(patientId: string, clinicId: string) {
@@ -703,13 +703,13 @@ export class PatientEngagementService {
       .rpc('get_patient_engagement_report', {
         p_patient_id: patientId,
         p_clinic_id: clinicId,
-      });
+      })
 
     if (error) {
-      throw new Error(`Failed to get patient engagement report: ${error.message}`);
+      throw new Error(`Failed to get patient engagement report: ${error.message}`)
     }
 
-    return data;
+    return data
   }
 
   // Automated Communication Workflows
@@ -717,39 +717,39 @@ export class PatientEngagementService {
     const { data, error } = await (this.supabase as SupabaseJSClient)
       .rpc('process_appointment_reminders', {
         p_clinic_id: clinicId,
-      });
+      })
 
     if (error) {
-      throw new Error(`Failed to process appointment reminders: ${error.message}`);
+      throw new Error(`Failed to process appointment reminders: ${error.message}`)
     }
 
-    return data;
+    return data
   }
 
   async processFollowUpCommunications(clinicId: string) {
     const { data, error } = await (this.supabase as SupabaseJSClient)
       .rpc('process_follow_up_communications', {
         p_clinic_id: clinicId,
-      });
+      })
 
     if (error) {
-      throw new Error(`Failed to process follow up communications: ${error.message}`);
+      throw new Error(`Failed to process follow up communications: ${error.message}`)
     }
 
-    return data;
+    return data
   }
 
   async processBirthdayGreetings(clinicId: string) {
     const { data, error } = await (this.supabase as SupabaseJSClient)
       .rpc('process_birthday_greetings', {
         p_clinic_id: clinicId,
-      });
+      })
 
     if (error) {
-      throw new Error(`Failed to process birthday greetings: ${error.message}`);
+      throw new Error(`Failed to process birthday greetings: ${error.message}`)
     }
 
-    return data;
+    return data
   }
 
   // Template Processing
@@ -758,28 +758,28 @@ export class PatientEngagementService {
       .from('communication_templates')
       .select('*')
       .eq('id', templateId)
-      .single();
+      .single()
 
     if (error) {
-      throw new Error(`Failed to get template: ${error.message}`);
+      throw new Error(`Failed to get template: ${error.message}`)
     }
 
-    let processedContent = template.content;
-    let processedSubject = template.subject;
+    let processedContent = template.content
+    let processedSubject = template.subject
 
     // Replace variables in content and subject
     Object.entries(variables).forEach(([key, value]) => {
-      const placeholder = `{{${key}}}`;
-      processedContent = processedContent.replace(new RegExp(placeholder, 'g'), String(value));
+      const placeholder = `{{${key}}}`
+      processedContent = processedContent.replace(new RegExp(placeholder, 'g'), String(value))
       if (processedSubject) {
-        processedSubject = processedSubject.replace(new RegExp(placeholder, 'g'), String(value));
+        processedSubject = processedSubject.replace(new RegExp(placeholder, 'g'), String(value))
       }
-    });
+    })
 
     return {
       content: processedContent,
       subject: processedSubject,
-    };
+    }
   }
 }
 
@@ -793,7 +793,7 @@ export class BasePatientEngagementService {
       patientId: input.patientId,
       type: input.type,
       createdAt: new Date().toISOString(),
-    };
+    }
   }
 
   async getEngagementStats(_input: any) {
@@ -802,6 +802,6 @@ export class BasePatientEngagementService {
       totalEngagements: 0,
       activeEngagements: 0,
       engagementRate: 0,
-    };
+    }
   }
 }

@@ -6,19 +6,19 @@
  */
 
 export interface ExitResult {
-  status: 'ok' | 'error';
-  code: number;
-  message?: string;
-  details?: object;
+  status: 'ok' | 'error'
+  code: number
+  message?: string
+  details?: object
 }
 
 export interface ExitOptions {
   /** Additional details to include in output */
-  details?: object;
+  details?: object
   /** Whether to actually exit the process (default: true) */
-  exit?: boolean;
+  exit?: boolean
   /** Custom output stream (default: process.stdout for ok, process.stderr for error) */
-  output?: NodeJS.WriteStream;
+  output?: NodeJS.WriteStream
 }
 
 /**
@@ -30,26 +30,26 @@ function safeStringify(obj: unknown): string {
       // Handle circular references
       if (typeof value === 'object' && value !== null) {
         if (WeakSet && typeof WeakSet === 'function') {
-          const seen = new WeakSet();
+          const seen = new WeakSet()
           return JSON.stringify(obj, (_k, v) => {
             if (typeof v === 'object' && v !== null) {
-              if (seen.has(v)) return '[Circular]';
-              seen.add(v);
+              if (seen.has(v)) return '[Circular]'
+              seen.add(v)
             }
-            return v;
-          });
+            return v
+          })
         }
       }
       // Convert undefined to null for JSON compatibility
-      return value === undefined ? null : value;
-    });
+      return value === undefined ? null : value
+    })
   } catch (error) {
     // Fallback for stringify errors
     return JSON.stringify({
       error: 'JSON serialization failed',
       originalError: String(error),
       type: typeof obj,
-    });
+    })
   }
 }
 
@@ -62,18 +62,18 @@ export function exitOk(message?: string, options: ExitOptions = {}): void {
     code: 0,
     ...(message && { message }),
     ...(options.details && { details: options.details }),
-  };
+  }
 
-  const output = options.output || process.stdout;
-  const jsonOutput = safeStringify(result);
+  const output = options.output || process.stdout
+  const jsonOutput = safeStringify(result)
 
-  output.write(jsonOutput + '\n');
+  output.write(jsonOutput + '\n')
 
   if (options.exit !== false) {
     // Use setImmediate to allow output to flush before exiting
     setImmediate(() => {
-      process.exit(0);
-    });
+      process.exit(0)
+    })
   }
 }
 
@@ -90,18 +90,18 @@ export function exitError(
     code,
     message,
     ...(options.details && { details: options.details }),
-  };
+  }
 
-  const output = options.output || process.stderr;
-  const jsonOutput = safeStringify(result);
+  const output = options.output || process.stderr
+  const jsonOutput = safeStringify(result)
 
-  output.write(jsonOutput + '\n');
+  output.write(jsonOutput + '\n')
 
   if (options.exit !== false) {
     // Use setImmediate to allow output to flush before exiting
     setImmediate(() => {
-      process.exit(code);
-    });
+      process.exit(code)
+    })
   }
 }
 
@@ -118,8 +118,8 @@ export function setupGlobalErrorHandling(): void {
         timestamp: new Date().toISOString(),
       },
       exit: true,
-    });
-  });
+    })
+  })
 
   process.on('unhandledRejection', reason => {
     exitError('Unhandled promise rejection', 1, {
@@ -128,8 +128,8 @@ export function setupGlobalErrorHandling(): void {
         timestamp: new Date().toISOString(),
       },
       exit: true,
-    });
-  });
+    })
+  })
 }
 
 /**
@@ -137,16 +137,16 @@ export function setupGlobalErrorHandling(): void {
  */
 export function validateExitResult(result: unknown): result is ExitResult {
   if (!result || typeof result !== 'object') {
-    return false;
+    return false
   }
 
-  const r = result as Record<string, unknown>;
+  const r = result as Record<string, unknown>
 
   return (
-    (r.status === 'ok' || r.status === 'error')
-    && typeof r.code === 'number'
-    && (r.message === undefined || typeof r.message === 'string')
-    && (r.details === undefined
-      || (typeof r.details === 'object' && r.details !== null))
-  );
+    (r.status === 'ok' || r.status === 'error') &&
+    typeof r.code === 'number' &&
+    (r.message === undefined || typeof r.message === 'string') &&
+    (r.details === undefined ||
+      (typeof r.details === 'object' && r.details !== null))
+  )
 }

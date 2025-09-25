@@ -1,14 +1,12 @@
 import {
-  CreatePatientRequest,
   Patient,
-  PatientEntityValidationError,
-  PatientError,
-  PatientFilter,
-  PatientQueryOptions,
-  PatientRepository as IPatientRepository,
-  PatientSearchResult,
-  UpdatePatientRequest,
-} from '@neonpro/domain';
+  PatientAlreadyExistsError,
+  PatientFilters as PatientFilter,
+  PatientNotFoundError,
+  PatientNotFoundError as PatientEntityValidationError,
+  PatientValidationError,
+} from '@neonpro/healthcare-core'
+import type { PatientRepository as IPatientRepository } from '@neonpro/healthcare-core'
 
 /**
  * Application service for patient management
@@ -21,40 +19,37 @@ export class PatientService {
   /**
    * Create a new patient with validation
    */
-  async createPatient(_request: CreatePatientRequest): Promise<Patient> {
+  async createPatient(request: Omit<Patient, 'id' | 'createdAt' | 'updatedAt'>): Promise<Patient> {
     try {
       // Validate required fields
-      this.validateCreateRequest(_request);
+      this.validateCreateRequest(request)
 
       // Check for duplicate CPF instead (since medicalRecordNumber doesn't exist in API)
       const existingPatients = await this.patientRepository.findByCPF(
-        _request.cpf,
-      );
+        request.cpf!,
+      )
       if (existingPatients.length > 0) {
-        throw new PatientEntityValidationError([
-          'Patient with this CPF already exists',
-        ]);
+        throw new PatientValidationError(['Patient with this CPF already exists'])
       }
 
       // Validate CPF (required field)
-      if (!this.validateCPF(_request.cpf)) {
-        throw new PatientValidationError(['Invalid CPF format']);
+      if (!this.validateCPF(request.cpf!)) {
+        throw new PatientValidationError(['Invalid CPF format'])
       }
 
       // Create patient (need to adapt API request to domain format)
-      const domainPatient = this.adaptApiRequestToDomain(_request);
-      const patient = await this.patientRepository.create(domainPatient);
+      const domainPatient = this.adaptApiRequestToDomain(request)
+      const patient = await this.patientRepository.create(domainPatient)
 
-      return patient;
+      return patient
     } catch (error) {
-      if (error instanceof PatientEntityValidationError) {
-        throw error;
+      if (error instanceof PatientValidationError) {
+        throw error
       }
-      throw new PatientError(
-        `Failed to create patient: ${error instanceof Error ? error.message : 'Unknown error'}`,
-        'PATIENT_CREATE_ERROR',
-        500,
-      );
+      throw new PatientAlreadyExistsError(
+        request.cpf || 'unknown',
+        'cpf',
+      )
     }
   }
 
@@ -63,33 +58,32 @@ export class PatientService {
    */
   async updatePatient(
     id: string,
-    _request: UpdatePatientRequest,
+    request: Partial<Patient>,
   ): Promise<Patient> {
     try {
       // Check if patient exists
-      const existingPatient = await this.patientRepository.findById(id);
+      const existingPatient = await this.patientRepository.findById(id)
       if (!existingPatient) {
-        throw new PatientEntityValidationError(['Patient not found']);
+        throw new PatientValidationError(['Patient not found'])
       }
 
       // Validate CPF if provided
-      if (_request.cpf && !this.validateCPF(_request.cpf)) {
-        throw new PatientValidationError(['Invalid CPF format']);
+      if (request.cpf && !this.validateCPF(request.cpf)) {
+        throw new PatientValidationError(['Invalid CPF format'])
       }
 
       // Update patient
-      const updatedPatient = await this.patientRepository.update(id, _request);
+      const updatedPatient = await this.patientRepository.update(id, request)
 
-      return updatedPatient;
+      return updatedPatient
     } catch (error) {
       if (error instanceof PatientEntityValidationError) {
-        throw error;
+        throw error
       }
-      throw new PatientError(
-        `Failed to update patient: ${error instanceof Error ? error.message : 'Unknown error'}`,
-        'PATIENT_UPDATE_ERROR',
-        500,
-      );
+      throw new PatientAlreadyExistsError(
+        id || 'unknown',
+        'cpf',
+      )
     }
   }
 
@@ -98,13 +92,9 @@ export class PatientService {
    */
   async getPatient(id: string): Promise<Patient | null> {
     try {
-      return await this.patientRepository.findById(id);
-    } catch (error) {
-      throw new PatientError(
-        `Failed to get patient: ${error instanceof Error ? error.message : 'Unknown error'}`,
-        'PATIENT_GET_ERROR',
-        500,
-      );
+      return await this.patientRepository.findById(id)
+    } catch {
+      throw new PatientNotFoundError(id)
     }
   }
 
@@ -113,41 +103,37 @@ export class PatientService {
    */
   async getPatientsByClinic(
     clinicId: string,
-    options?: PatientQueryOptions,
-  ): Promise<PatientSearchResult> {
+    options?: { search?: string; offset?: number; limit?: number },
+  ): Promise<{ patients: Patient[]; total: number; limit: number; offset: number }> {
     try {
-      const patients = await this.patientRepository.findByClinicId(clinicId);
+      const patients = await this.patientRepository.findByClinicId(clinicId)
 
       // Apply simple filtering (this is a basic implementation)
-      let filteredPatients = patients;
+      let filteredPatients = patients
 
       if (options?.search) {
-        const searchLower = options.search.toLowerCase();
+        const searchLower = options.search.toLowerCase()
         filteredPatients = filteredPatients.filter(
           p =>
-            p.fullName.toLowerCase().includes(searchLower)
-            || p.email?.toLowerCase().includes(searchLower)
-            || p.cpf?.includes(searchLower),
-        );
+            p.fullName.toLowerCase().includes(searchLower) ||
+            p.email?.toLowerCase().includes(searchLower) ||
+            p.cpf?.includes(searchLower),
+        )
       }
 
       // Apply pagination
-      const offset = options?.offset || 0;
-      const limit = options?.limit || 20;
-      const paginatedPatients = filteredPatients.slice(offset, offset + limit);
+      const offset = options?.offset || 0
+      const limit = options?.limit || 20
+      const paginatedPatients = filteredPatients.slice(offset, offset + limit)
 
       return {
         patients: paginatedPatients,
         total: filteredPatients.length,
         limit,
         offset,
-      };
-    } catch (error) {
-      throw new PatientError(
-        `Failed to get patients: ${error instanceof Error ? error.message : 'Unknown error'}`,
-        'PATIENT_LIST_ERROR',
-        500,
-      );
+      }
+    } catch {
+      throw new PatientNotFoundError('unknown')
     }
   }
 
@@ -155,48 +141,44 @@ export class PatientService {
    * Search patients by query string
    */
   async searchPatients(
-    _query: string,
+    query: string,
     clinicId?: string,
-    options?: PatientQueryOptions,
-  ): Promise<PatientSearchResult> {
+    options?: { search?: string; offset?: number; limit?: number },
+  ): Promise<{ patients: Patient[]; total: number; limit: number; offset: number }> {
     try {
-      let patients: Patient[];
+      let patients: Patient[]
 
       if (clinicId) {
-        patients = await this.patientRepository.findByClinicId(clinicId);
+        patients = await this.patientRepository.findByClinicId(clinicId)
       } else {
         // For now, return empty array when no clinicId is provided
         // In a real implementation, you might want to search across all clinics
-        patients = [];
+        patients = []
       }
 
       // Apply search filtering
-      const searchLower = _query.toLowerCase();
+      const searchLower = query.toLowerCase()
       const filteredPatients = patients.filter(
         p =>
-          p.fullName.toLowerCase().includes(searchLower)
-          || p.email?.toLowerCase().includes(searchLower)
-          || p.cpf?.includes(searchLower)
-          || p.medicalRecordNumber.toLowerCase().includes(searchLower),
-      );
+          p.fullName.toLowerCase().includes(searchLower) ||
+          p.email?.toLowerCase().includes(searchLower) ||
+          p.cpf?.includes(searchLower) ||
+          p.medicalRecordNumber.toLowerCase().includes(searchLower),
+      )
 
       // Apply pagination
-      const offset = options?.offset || 0;
-      const limit = options?.limit || 20;
-      const paginatedPatients = filteredPatients.slice(offset, offset + limit);
+      const offset = options?.offset || 0
+      const limit = options?.limit || 20
+      const paginatedPatients = filteredPatients.slice(offset, offset + limit)
 
       return {
         patients: paginatedPatients,
         total: filteredPatients.length,
         limit,
         offset,
-      };
-    } catch (error) {
-      throw new PatientError(
-        `Failed to search patients: ${error instanceof Error ? error.message : 'Unknown error'}`,
-        'PATIENT_SEARCH_ERROR',
-        500,
-      );
+      }
+    } catch {
+      throw new PatientNotFoundError('unknown')
     }
   }
 
@@ -206,21 +188,20 @@ export class PatientService {
   async deletePatient(id: string): Promise<boolean> {
     try {
       // Check if patient exists
-      const existingPatient = await this.patientRepository.findById(id);
+      const existingPatient = await this.patientRepository.findById(id)
       if (!existingPatient) {
-        throw new PatientEntityValidationError(['Patient not found']);
+        throw new PatientValidationError(['Patient not found'])
       }
 
-      return await this.patientRepository.delete(id);
+      return await this.patientRepository.delete(id, 'system')
     } catch (error) {
       if (error instanceof PatientEntityValidationError) {
-        throw error;
+        throw error
       }
-      throw new PatientError(
-        `Failed to delete patient: ${error instanceof Error ? error.message : 'Unknown error'}`,
-        'PATIENT_DELETE_ERROR',
-        500,
-      );
+      throw new PatientAlreadyExistsError(
+        id || 'unknown',
+        'cpf',
+      )
     }
   }
 
@@ -229,108 +210,100 @@ export class PatientService {
    */
   async countPatients(filter: PatientFilter): Promise<number> {
     try {
-      let patients: Patient[];
+      let patients: Patient[]
 
       if (filter.clinicId) {
-        patients = await this.patientRepository.findByClinicId(filter.clinicId);
+        patients = await this.patientRepository.findByClinicId(filter.clinicId)
       } else {
-        patients = [];
+        patients = []
       }
 
       // Apply additional filters
-      let filteredPatients = patients;
+      let filteredPatients = patients
 
       if (filter.isActive !== undefined) {
         filteredPatients = filteredPatients.filter(
           p => p.isActive === filter.isActive,
-        );
+        )
       }
 
       if (filter.gender) {
         filteredPatients = filteredPatients.filter(
           p => p.gender === filter.gender,
-        );
+        )
       }
 
       if (filter.birthDateFrom && filter.birthDateTo) {
         filteredPatients = filteredPatients.filter(p => {
-          if (!p.birthDate) return false;
-          const birthDate = new Date(p.birthDate);
-          const fromDate = new Date(filter.birthDateFrom);
-          const toDate = new Date(filter.birthDateTo);
-          return birthDate >= fromDate && birthDate <= toDate;
-        });
+          if (!p.birthDate) return false
+          const birthDate = new Date(p.birthDate)
+          const fromDate = new Date(filter.birthDateFrom!)
+          const toDate = new Date(filter.birthDateTo!)
+          return birthDate >= fromDate && birthDate <= toDate
+        })
       }
 
-      return filteredPatients.length;
-    } catch (error) {
-      throw new PatientError(
-        `Failed to count patients: ${error instanceof Error ? error.message : 'Unknown error'}`,
-        'PATIENT_COUNT_ERROR',
-        500,
-      );
+      return filteredPatients.length
+    } catch {
+      throw new PatientNotFoundError('unknown')
     }
   }
 
   /**
    * Validate patient creation request
    */
-  private validateCreateRequest(_request: CreatePatientRequest): void {
-    if (!_request.clinicId) {
-      throw new PatientEntityValidationError(['Clinic ID is required']);
+  private validateCreateRequest(request: Omit<Patient, 'id' | 'createdAt' | 'updatedAt'>): void {
+    if (!request.clinicId) {
+      throw new PatientValidationError(['Clinic ID is required'])
     }
 
-    if (!_request.fullName) {
-      throw new PatientEntityValidationError(['Full name is required']);
+    if (!request.fullName) {
+      throw new PatientValidationError(['Full name is required'])
     }
 
-    if (!_request.cpf) {
-      throw new PatientEntityValidationError(['CPF is required']);
+    if (!request.cpf) {
+      throw new PatientValidationError(['CPF is required'])
     }
 
-    if (!_request.dateOfBirth) {
-      throw new PatientEntityValidationError(['Date of birth is required']);
+    if (!request.birthDate) {
+      throw new PatientValidationError(['Date of birth is required'])
     }
 
-    if (!_request.lgpdConsent) {
-      throw new PatientEntityValidationError(['LGPD consent is required']);
+    if (!request.lgpdConsentGiven) {
+      throw new PatientValidationError(['LGPD consent is required'])
     }
 
     // Validate birth date
-    const birthDate = new Date(_request.dateOfBirth);
-    const now = new Date();
+    const birthDate = new Date(request.birthDate)
+    const now = new Date()
 
     if (isNaN(birthDate.getTime())) {
-      throw new PatientEntityValidationError(['Invalid birth date format']);
+      throw new PatientValidationError(['Invalid birth date format'])
     }
 
     if (birthDate > now) {
-      throw new PatientEntityValidationError([
-        'Birth date cannot be in the future',
-      ]);
+      throw new PatientValidationError(['Birth date cannot be in the future'])
     }
 
     // Check if person is reasonably old (not older than 150 years)
-    const maxAge = 150;
+    const maxAge = 150
     const minDate = new Date(
       now.getFullYear() - maxAge,
       now.getMonth(),
       now.getDate(),
-    );
+    )
     if (birthDate < minDate) {
-      throw new PatientEntityValidationError([
-        'Birth date is too far in the past',
-      ]);
+      throw new PatientValidationError(['Birth date is too far in the past'])
     }
 
     // Validate phone number if provided
-    if (_request.phone && !this.validateBrazilianPhone(_request.phone)) {
-      throw new PatientEntityValidationError(['Invalid phone number format']);
+    if (request.phonePrimary && !this.validateBrazilianPhone(request.phonePrimary)) {
+      throw new PatientValidationError(['Invalid phone number format'])
     }
 
     // Validate email if provided
-    if (_request.email && !this.validateEmail(_request.email)) {
-      throw new PatientEntityValidationError(['Invalid email format']);
+    if (request.email && !this.validateEmail(request.email)) {
+      throw new PatientValidationError(['Invalid email format'])
     }
   }
 
@@ -339,10 +312,10 @@ export class PatientService {
    */
   private validateCPF(cpf: string): boolean {
     // Remove formatting
-    const cleanCPF = cpf.replace(/[^\d]/g, '');
+    const cleanCPF = cpf.replace(/[^\d]/g, '')
 
     // Check length
-    if (cleanCPF.length !== 11) return false;
+    if (cleanCPF.length !== 11) return false
 
     // Check for known invalid CPFs
     const invalidCPFs = [
@@ -356,30 +329,30 @@ export class PatientService {
       '77777777777',
       '88888888888',
       '99999999999',
-    ];
+    ]
 
-    if (invalidCPFs.includes(cleanCPF)) return false;
+    if (invalidCPFs.includes(cleanCPF)) return false
 
     // Validate check digits
-    let sum = 0;
+    let sum = 0
     for (let i = 0; i < 9; i++) {
-      sum += parseInt(cleanCPF.charAt(i)) * (10 - i);
+      sum += parseInt(cleanCPF.charAt(i)) * (10 - i)
     }
 
-    let remainder = (sum * 10) % 11;
-    if (remainder === 10 || remainder === 11) remainder = 0;
-    if (remainder !== parseInt(cleanCPF.charAt(9))) return false;
+    let remainder = (sum * 10) % 11
+    if (remainder === 10 || remainder === 11) remainder = 0
+    if (remainder !== parseInt(cleanCPF.charAt(9))) return false
 
-    sum = 0;
+    sum = 0
     for (let i = 0; i < 10; i++) {
-      sum += parseInt(cleanCPF.charAt(i)) * (11 - i);
+      sum += parseInt(cleanCPF.charAt(i)) * (11 - i)
     }
 
-    remainder = (sum * 10) % 11;
-    if (remainder === 10 || remainder === 11) remainder = 0;
-    if (remainder !== parseInt(cleanCPF.charAt(10))) return false;
+    remainder = (sum * 10) % 11
+    if (remainder === 10 || remainder === 11) remainder = 0
+    if (remainder !== parseInt(cleanCPF.charAt(10))) return false
 
-    return true;
+    return true
   }
 
   /**
@@ -387,59 +360,52 @@ export class PatientService {
    */
   private validateBrazilianPhone(phone: string): boolean {
     // Remove formatting
-    const cleanPhone = phone.replace(/[^\d]/g, '');
+    const cleanPhone = phone.replace(/[^\d]/g, '')
 
     // Check length (10 or 11 digits)
-    if (cleanPhone.length !== 10 && cleanPhone.length !== 11) return false;
+    if (cleanPhone.length !== 10 && cleanPhone.length !== 11) return false
 
     // Check area code (11-99)
-    const areaCode = parseInt(cleanPhone.substring(0, 2));
-    if (areaCode < 11 || areaCode > 99) return false;
+    const areaCode = parseInt(cleanPhone.substring(0, 2))
+    if (areaCode < 11 || areaCode > 99) return false
 
     // Check mobile number format (9 digits starting with 9)
     if (cleanPhone.length === 11) {
-      const firstDigit = parseInt(cleanPhone.charAt(2));
-      if (firstDigit !== 9) return false;
+      const firstDigit = parseInt(cleanPhone.charAt(2))
+      if (firstDigit !== 9) return false
     }
 
-    return true;
+    return true
   }
 
   /**
    * Validate email format
    */
   private validateEmail(email: string): boolean {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    return emailRegex.test(email)
   }
 
   /**
    * Adapt API request to domain format
    */
   private adaptApiRequestToDomain(
-    request: CreatePatientRequest,
+    request: Omit<Patient, 'id' | 'createdAt' | 'updatedAt'>,
   ): Omit<Patient, 'id' | 'createdAt' | 'updatedAt'> {
-    const names = request.fullName.split(' ');
-    const givenNames = names.slice(0, -1);
-    const familyName = names[names.length - 1];
+    const names = request.fullName.split(' ')
+    const givenNames = names.slice(0, -1)
+    const familyName = names[names.length - 1]
 
     return {
-      clinicId: request.clinicId,
-      medicalRecordNumber: `MRN-${Date.now()}`, // Generate one since API doesn't provide it
+      ...request,
       givenNames: givenNames.length > 0
         ? givenNames
         : [givenNames.join(' ') || 'Unknown'],
       familyName: familyName || 'Unknown',
-      fullName: request.fullName,
-      cpf: request.cpf,
-      birthDate: request.dateOfBirth,
-      email: request.email,
-      phonePrimary: request.phone,
-      lgpdConsentGiven: request.lgpdConsent,
-      allergies: [],
-      chronicConditions: [],
-      currentMedications: [],
-      isActive: true,
-    };
+      allergies: request.allergies || [],
+      chronicConditions: request.chronicConditions || [],
+      currentMedications: request.currentMedications || [],
+      isActive: request.isActive ?? true,
+    }
   }
 }

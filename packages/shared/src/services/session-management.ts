@@ -14,12 +14,12 @@
  * @compliance LGPD, ANVISA, ISO 27001, NIST Cybersecurity Framework
  */
 
-import { webcrypto } from 'node:crypto';
-import { z } from 'zod';
-import { createHealthcareLogger, logHealthcareError } from '../logging/healthcare-logger';
+import { webcrypto } from 'node:crypto'
+import { z } from 'zod'
+import { createHealthcareLogger, logHealthcareError } from '../logging/healthcare-logger'
 
 // Ensure crypto is available in both Node.js and browser environments
-const crypto = globalThis.crypto || webcrypto;
+const crypto = globalThis.crypto || webcrypto
 
 // ============================================================================
 // TYPES & SCHEMAS
@@ -81,11 +81,11 @@ export const HealthcareSessionContextSchema = z.object({
     .default('internal'),
   lgpdConsentId: z.string().optional(),
   auditTrailId: z.string().optional(),
-});
+})
 
 export type HealthcareSessionContext = z.infer<
   typeof HealthcareSessionContextSchema
->;
+>
 
 /**
  * Session configuration schema
@@ -102,9 +102,9 @@ export const SessionConfigSchema = z.object({
   auditLevel: z
     .enum(['minimal', 'standard', 'comprehensive'])
     .default('standard'),
-});
+})
 
-export type SessionConfig = z.infer<typeof SessionConfigSchema>;
+export type SessionConfig = z.infer<typeof SessionConfigSchema>
 
 /**
  * Session data schema
@@ -143,9 +143,9 @@ export const SessionDataSchema = z.object({
   lgpdConsentVersion: z.string().optional(),
   auditTrailId: z.string().optional(),
   dataRetentionDate: z.date().optional(),
-});
+})
 
-export type SessionData = z.infer<typeof SessionDataSchema>;
+export type SessionData = z.infer<typeof SessionDataSchema>
 
 /**
  * Session creation request schema
@@ -162,9 +162,9 @@ export const CreateSessionRequestSchema = z.object({
   healthcareContext: HealthcareSessionContextSchema.optional(),
   config: SessionConfigSchema.optional(),
   metadata: z.record(z.any()).default({}),
-});
+})
 
-export type CreateSessionRequest = z.infer<typeof CreateSessionRequestSchema>;
+export type CreateSessionRequest = z.infer<typeof CreateSessionRequestSchema>
 
 /**
  * Session validation result schema
@@ -176,11 +176,11 @@ export const SessionValidationResultSchema = z.object({
   requiresRefresh: z.boolean().default(false),
   securityFlags: z.array(z.string()).default([]),
   complianceFlags: z.array(z.string()).default([]),
-});
+})
 
 export type SessionValidationResult = z.infer<
   typeof SessionValidationResultSchema
->;
+>
 
 /**
  * Session activity event schema
@@ -212,9 +212,9 @@ export const SessionActivityEventSchema = z.object({
       dataRetentionApplied: z.boolean().default(false),
     })
     .default({}),
-});
+})
 
-export type SessionActivityEvent = z.infer<typeof SessionActivityEventSchema>;
+export type SessionActivityEvent = z.infer<typeof SessionActivityEventSchema>
 
 // ============================================================================
 // SESSION STORE INTERFACE
@@ -227,37 +227,37 @@ export interface SessionStore {
   /**
    * Store a session
    */
-  store(sessionData: SessionData): Promise<void>;
+  store(sessionData: SessionData): Promise<void>
 
   /**
    * Retrieve a session by ID
    */
-  get(sessionId: string): Promise<SessionData | null>;
+  get(sessionId: string): Promise<SessionData | null>
 
   /**
    * Update a session
    */
-  update(sessionId: string, updates: Partial<SessionData>): Promise<void>;
+  update(sessionId: string, updates: Partial<SessionData>): Promise<void>
 
   /**
    * Delete a session
    */
-  delete(sessionId: string): Promise<void>;
+  delete(sessionId: string): Promise<void>
 
   /**
    * Get all sessions for a user
    */
-  getUserSessions(_userId: string): Promise<SessionData[]>;
+  getUserSessions(_userId: string): Promise<SessionData[]>
 
   /**
    * Get expired sessions
    */
-  getExpiredSessions(before?: Date): Promise<SessionData[]>;
+  getExpiredSessions(before?: Date): Promise<SessionData[]>
 
   /**
    * Clean up expired sessions
    */
-  cleanup(retentionDays?: number): Promise<number>;
+  cleanup(retentionDays?: number): Promise<number>
 }
 
 // ============================================================================
@@ -334,7 +334,7 @@ export const DEFAULT_SESSION_CONFIGS: Record<SessionType, SessionConfig> = {
     lgpdRetentionDays: 1095, // 3 years
     auditLevel: 'standard',
   },
-};
+}
 
 // ============================================================================
 // SESSION SECURITY UTILITIES
@@ -346,34 +346,34 @@ export const DEFAULT_SESSION_CONFIGS: Record<SessionType, SessionConfig> = {
 export function generateSessionId(): string {
   // Use crypto.randomUUID() in browser, or fallback to secure random
   if (typeof crypto !== 'undefined' && crypto.randomUUID) {
-    return crypto.randomUUID();
+    return crypto.randomUUID()
   }
 
   // Fallback implementation for Node.js environments
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  let result = '';
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+  let result = ''
   for (let i = 0; i < 32; i++) {
-    result += chars.charAt(Math.floor(Math.random() * chars.length));
+    result += chars.charAt(Math.floor(Math.random() * chars.length))
   }
-  return result;
+  return result
 }
 
 /**
  * Generate CSRF token
  */
 export function generateCSRFToken(): string {
-  const array = new Uint8Array(32);
+  const array = new Uint8Array(32)
   if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
-    (crypto.getRandomValues as (array: Uint8Array) => Uint8Array)(array);
+    ;(crypto.getRandomValues as (array: Uint8Array) => Uint8Array)(array)
   } else {
     // Fallback for environments without crypto
     for (let i = 0; i < array.length; i++) {
-      array[i] = Math.floor(Math.random() * 256);
+      array[i] = Math.floor(Math.random() * 256)
     }
   }
   return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join(
     '',
-  );
+  )
 }
 
 /**
@@ -385,14 +385,14 @@ export function generateSessionBinding(
   ipAddress: string,
 ): string {
   // Simple hash-based binding (in production, use proper HMAC)
-  const data = `${sessionId}:${userAgent}:${ipAddress}`;
-  let hash = 0;
+  const data = `${sessionId}:${userAgent}:${ipAddress}`
+  let hash = 0
   for (let i = 0; i < data.length; i++) {
-    const char = data.charCodeAt(i);
-    hash = (hash << 5) - hash + char;
-    hash = hash & hash; // Convert to 32-bit integer
+    const char = data.charCodeAt(i)
+    hash = (hash << 5) - hash + char
+    hash = hash & hash // Convert to 32-bit integer
   }
-  return Math.abs(hash).toString(16);
+  return Math.abs(hash).toString(16)
 }
 
 /**
@@ -408,16 +408,16 @@ export function generateDeviceFingerprint(
     platform: typeof navigator !== 'undefined' ? navigator.platform : 'unknown',
     timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
     ...additionalData,
-  };
-
-  const dataString = JSON.stringify(data);
-  let hash = 0;
-  for (let i = 0; i < dataString.length; i++) {
-    const char = dataString.charCodeAt(i);
-    hash = (hash << 5) - hash + char;
-    hash = hash & hash;
   }
-  return Math.abs(hash).toString(16);
+
+  const dataString = JSON.stringify(data)
+  let hash = 0
+  for (let i = 0; i < dataString.length; i++) {
+    const char = dataString.charCodeAt(i)
+    hash = (hash << 5) - hash + char
+    hash = hash & hash
+  }
+  return Math.abs(hash).toString(16)
 }
 
 // ============================================================================
@@ -428,7 +428,7 @@ export function generateDeviceFingerprint(
  * Validate session expiry
  */
 export function isSessionExpired(session: SessionData): boolean {
-  return new Date() > session.expiresAt;
+  return new Date() > session.expiresAt
 }
 
 /**
@@ -438,8 +438,8 @@ export function isSessionIdleTimeout(
   session: SessionData,
   config: SessionConfig,
 ): boolean {
-  const idleTime = Date.now() - session.lastAccessedAt.getTime();
-  return idleTime > config.maxIdleTime * 1000;
+  const idleTime = Date.now() - session.lastAccessedAt.getTime()
+  return idleTime > config.maxIdleTime * 1000
 }
 
 /**
@@ -451,16 +451,16 @@ export function validateSessionBinding(
   currentIpAddress: string,
 ): boolean {
   if (!session.sessionBinding) {
-    return false;
+    return false
   }
 
   const expectedBinding = generateSessionBinding(
     session.sessionId,
     currentUserAgent,
     currentIpAddress,
-  );
+  )
 
-  return session.sessionBinding === expectedBinding;
+  return session.sessionBinding === expectedBinding
 }
 
 /**
@@ -471,34 +471,34 @@ export function assessSessionSecurityRisk(
   currentIpAddress: string,
   currentUserAgent: string,
 ): string[] {
-  const risks: string[] = [];
+  const risks: string[] = []
 
   // IP address change
   if (session.ipAddress !== currentIpAddress) {
-    risks.push('ip_address_change');
+    risks.push('ip_address_change')
   }
 
   // User agent change
   if (session.userAgent !== currentUserAgent) {
-    risks.push('user_agent_change');
+    risks.push('user_agent_change')
   }
 
   // Long session duration
-  const sessionDuration = Date.now() - session.createdAt.getTime();
+  const sessionDuration = Date.now() - session.createdAt.getTime()
   if (sessionDuration > 86400000) {
     // 24 hours
-    risks.push('long_session_duration');
+    risks.push('long_session_duration')
   }
 
   // High security level without MFA
   if (
-    session.securityLevel === SessionSecurityLevel.CRITICAL
-    && !session.mfaVerified
+    session.securityLevel === SessionSecurityLevel.CRITICAL &&
+    !session.mfaVerified
   ) {
-    risks.push('high_security_without_mfa');
+    risks.push('high_security_without_mfa')
   }
 
-  return risks;
+  return risks
 }
 
 // ============================================================================
@@ -513,16 +513,16 @@ export function calculateDataRetentionDate(
   config: SessionConfig,
   healthcareContext?: HealthcareSessionContext,
 ): Date {
-  let retentionDays = config.lgpdRetentionDays;
+  let retentionDays = config.lgpdRetentionDays
 
   // Healthcare-specific retention rules
   if (healthcareContext?.clinicalContext === 'emergency') {
-    retentionDays = Math.max(retentionDays, 3650); // 10 years for emergency records
+    retentionDays = Math.max(retentionDays, 3650) // 10 years for emergency records
   }
 
-  const retentionDate = new Date();
-  retentionDate.setDate(retentionDate.getDate() + retentionDays);
-  return retentionDate;
+  const retentionDate = new Date()
+  retentionDate.setDate(retentionDate.getDate() + retentionDays)
+  return retentionDate
 }
 
 /**
@@ -530,14 +530,14 @@ export function calculateDataRetentionDate(
  */
 export function shouldAnonymizeSessionData(session: SessionData): boolean {
   if (!session.dataRetentionDate) {
-    return false;
+    return false
   }
 
   // Anonymize 30 days before retention date
-  const anonymizationDate = new Date(session.dataRetentionDate);
-  anonymizationDate.setDate(anonymizationDate.getDate() - 30);
+  const anonymizationDate = new Date(session.dataRetentionDate)
+  anonymizationDate.setDate(anonymizationDate.getDate() - 30)
 
-  return new Date() > anonymizationDate;
+  return new Date() > anonymizationDate
 }
 
 /**
@@ -553,7 +553,7 @@ export function anonymizeSessionData(session: SessionData): SessionData {
     healthcareContext: undefined,
     metadata: {},
     lgpdConsentVersion: undefined,
-  };
+  }
 }
 
 // ============================================================================
@@ -567,37 +567,37 @@ export function validateHealthcareContext(
   _context: HealthcareSessionContext,
   userType: SessionType,
 ): { isValid: boolean; errors: string[] } {
-  const errors: string[] = [];
+  const errors: string[] = []
 
   // Patient sessions must have patient ID
   if (userType === SessionType.PATIENT && !_context.patientId) {
-    errors.push('Patient sessions require patientId');
+    errors.push('Patient sessions require patientId')
   }
 
   // Provider sessions must have provider ID
   if (userType === SessionType.HEALTHCARE_PROVIDER && !_context.providerId) {
-    errors.push('Healthcare provider sessions require providerId');
+    errors.push('Healthcare provider sessions require providerId')
   }
 
   // Emergency sessions must have emergency code
   if (userType === SessionType.EMERGENCY && !_context.emergencyCode) {
-    errors.push('Emergency sessions require emergencyCode');
+    errors.push('Emergency sessions require emergencyCode')
   }
 
   // Clinical context validation
   if (_context.clinicalContext && userType === SessionType.PATIENT) {
-    const allowedPatientContexts = ['consultation', 'emergency'];
+    const allowedPatientContexts = ['consultation', 'emergency']
     if (!allowedPatientContexts.includes(_context.clinicalContext)) {
       errors.push(
         `Invalid clinical context for patient: ${_context.clinicalContext}`,
-      );
+      )
     }
   }
 
   return {
     isValid: errors.length === 0,
     errors,
-  };
+  }
 }
 
 /**
@@ -606,7 +606,7 @@ export function validateHealthcareContext(
 export function getEmergencySessionOverride(): SessionConfig {
   return {
     ...DEFAULT_SESSION_CONFIGS[SessionType.EMERGENCY],
-  };
+  }
 }
 
 // ============================================================================
@@ -617,35 +617,35 @@ export function getEmergencySessionOverride(): SessionConfig {
  * Comprehensive Session Management Service
  */
 export class SessionManagementService {
-  private store: SessionStore;
-  private activityLog: SessionActivityEvent[] = [];
-  private logger = createHealthcareLogger('session-management');
+  private store: SessionStore
+  private activityLog: SessionActivityEvent[] = []
+  private logger = createHealthcareLogger('session-management')
 
   constructor(store: SessionStore) {
-    this.store = store;
+    this.store = store
   }
 
   /**
    * Create a new session
    */
   async createSession(_request: CreateSessionRequest): Promise<SessionData> {
-    const validatedRequest = CreateSessionRequestSchema.parse(_request);
+    const validatedRequest = CreateSessionRequestSchema.parse(_request)
 
     // Get configuration
-    const defaultConfig = DEFAULT_SESSION_CONFIGS[validatedRequest.userType];
-    const config = { ...defaultConfig, ...validatedRequest.config };
+    const defaultConfig = DEFAULT_SESSION_CONFIGS[validatedRequest.userType]
+    const config = { ...defaultConfig, ...validatedRequest.config }
 
     // Validate healthcare context if provided
     if (validatedRequest.healthcareContext) {
       const contextValidation = validateHealthcareContext(
         validatedRequest.healthcareContext,
         validatedRequest.userType,
-      );
+      )
 
       if (!contextValidation.isValid) {
         throw new Error(
           `Invalid healthcare _context: ${contextValidation.errors.join(', ')}`,
-        );
+        )
       }
     }
 
@@ -653,32 +653,32 @@ export class SessionManagementService {
     if (!config.allowConcurrentSessions) {
       const existingSessions = await this.store.getUserSessions(
         validatedRequest._userId,
-      );
+      )
       const activeSessions = existingSessions.filter(
         s => s.status === SessionStatus.ACTIVE,
-      );
+      )
 
       if (activeSessions.length >= config.maxConcurrentSessions) {
         // Terminate oldest session
         const oldestSession = activeSessions.sort(
           (a, b) => a.createdAt.getTime() - b.createdAt.getTime(),
-        )[0];
+        )[0]
 
         if (oldestSession) {
           await this.terminateSession(
             oldestSession.sessionId,
             'concurrent_limit_exceeded',
-          );
+          )
         }
       }
     }
 
     // Generate session data
-    const now = new Date();
+    const now = new Date()
     const expiresAt = new Date(
       now.getTime() + config.maxSessionDuration * 1000,
-    );
-    const sessionId = generateSessionId();
+    )
+    const sessionId = generateSessionId()
 
     const sessionData: SessionData = {
       sessionId,
@@ -695,8 +695,8 @@ export class SessionManagementService {
       // Security information
       ipAddress: validatedRequest.ipAddress,
       userAgent: validatedRequest.userAgent,
-      deviceFingerprint: validatedRequest.deviceFingerprint
-        || generateDeviceFingerprint(validatedRequest.userAgent),
+      deviceFingerprint: validatedRequest.deviceFingerprint ||
+        generateDeviceFingerprint(validatedRequest.userAgent),
       mfaVerified: false,
 
       // Healthcare context
@@ -724,10 +724,10 @@ export class SessionManagementService {
         config,
         validatedRequest.healthcareContext,
       ),
-    };
+    }
 
     // Store session
-    await this.store.store(sessionData);
+    await this.store.store(sessionData)
 
     // Log activity
     await this.logActivity({
@@ -748,9 +748,9 @@ export class SessionManagementService {
         auditRequired: true,
         dataRetentionApplied: true,
       },
-    });
+    })
 
-    return sessionData;
+    return sessionData
   }
 
   /**
@@ -761,7 +761,7 @@ export class SessionManagementService {
     currentIpAddress: string,
     currentUserAgent: string,
   ): Promise<SessionValidationResult> {
-    const session = await this.store.get(sessionId);
+    const session = await this.store.get(sessionId)
 
     if (!session) {
       return {
@@ -770,7 +770,7 @@ export class SessionManagementService {
         requiresRefresh: false,
         securityFlags: [],
         complianceFlags: [],
-      };
+      }
     }
 
     // Check session status
@@ -782,12 +782,12 @@ export class SessionManagementService {
         requiresRefresh: false,
         securityFlags: [],
         complianceFlags: [],
-      };
+      }
     }
 
     // Check expiration
     if (isSessionExpired(session)) {
-      await this.expireSession(sessionId);
+      await this.expireSession(sessionId)
       return {
         isValid: false,
         session,
@@ -795,15 +795,15 @@ export class SessionManagementService {
         requiresRefresh: false,
         securityFlags: [],
         complianceFlags: [],
-      };
+      }
     }
 
     // Get configuration
-    const config = DEFAULT_SESSION_CONFIGS[session.userType];
+    const config = DEFAULT_SESSION_CONFIGS[session.userType]
 
     // Check idle timeout
     if (isSessionIdleTimeout(session, config)) {
-      await this.expireSession(sessionId);
+      await this.expireSession(sessionId)
       return {
         isValid: false,
         session,
@@ -811,7 +811,7 @@ export class SessionManagementService {
         requiresRefresh: false,
         securityFlags: [],
         complianceFlags: [],
-      };
+      }
     }
 
     // Security validation
@@ -819,12 +819,12 @@ export class SessionManagementService {
       session,
       currentIpAddress,
       currentUserAgent,
-    );
+    )
 
     // Session binding validation
     if (
-      config.enableSessionBinding
-      && !validateSessionBinding(session, currentUserAgent, currentIpAddress)
+      config.enableSessionBinding &&
+      !validateSessionBinding(session, currentUserAgent, currentIpAddress)
     ) {
       await this.logActivity({
         sessionId,
@@ -840,7 +840,7 @@ export class SessionManagementService {
           auditRequired: true,
           dataRetentionApplied: false,
         },
-      });
+      })
 
       return {
         isValid: false,
@@ -849,13 +849,13 @@ export class SessionManagementService {
         securityFlags,
         requiresRefresh: false,
         complianceFlags: [],
-      };
+      }
     }
 
     // Update last accessed time
     await this.store.update(sessionId, {
       lastAccessedAt: new Date(),
-    });
+    })
 
     return {
       isValid: true,
@@ -863,24 +863,24 @@ export class SessionManagementService {
       securityFlags,
       requiresRefresh: securityFlags.length > 0,
       complianceFlags: [],
-    };
+    }
   }
 
   /**
    * Refresh a session
    */
   async refreshSession(sessionId: string): Promise<SessionData> {
-    const session = await this.store.get(sessionId);
+    const session = await this.store.get(sessionId)
 
     if (!session) {
-      throw new Error('Session not found');
+      throw new Error('Session not found')
     }
 
-    const config = DEFAULT_SESSION_CONFIGS[session.userType];
-    const now = new Date();
+    const config = DEFAULT_SESSION_CONFIGS[session.userType]
+    const now = new Date()
     const newExpiresAt = new Date(
       now.getTime() + config.maxSessionDuration * 1000,
-    );
+    )
 
     const updates: Partial<SessionData> = {
       lastAccessedAt: now,
@@ -888,9 +888,9 @@ export class SessionManagementService {
       csrfToken: config.enableSessionBinding
         ? generateCSRFToken()
         : session.csrfToken,
-    };
+    }
 
-    await this.store.update(sessionId, updates);
+    await this.store.update(sessionId, updates)
 
     // Log activity
     await this.logActivity({
@@ -907,32 +907,32 @@ export class SessionManagementService {
         auditRequired: true,
         dataRetentionApplied: false,
       },
-    });
+    })
 
-    const updatedSession = await this.store.get(sessionId);
+    const updatedSession = await this.store.get(sessionId)
     if (!updatedSession) {
-      throw new Error('Failed to retrieve updated session');
+      throw new Error('Failed to retrieve updated session')
     }
 
-    return updatedSession;
+    return updatedSession
   }
 
   /**
    * Terminate a session
    */
   async terminateSession(sessionId: string, reason?: string): Promise<void> {
-    const session = await this.store.get(sessionId);
+    const session = await this.store.get(sessionId)
 
     if (!session) {
-      return; // Session already doesn't exist
+      return // Session already doesn't exist
     }
 
-    const now = new Date();
+    const now = new Date()
 
     await this.store.update(sessionId, {
       status: SessionStatus.TERMINATED,
       terminatedAt: now,
-    });
+    })
 
     // Log activity
     await this.logActivity({
@@ -949,25 +949,25 @@ export class SessionManagementService {
         auditRequired: true,
         dataRetentionApplied: false,
       },
-    });
+    })
   }
 
   /**
    * Revoke a session
    */
   async revokeSession(sessionId: string, reason?: string): Promise<void> {
-    const session = await this.store.get(sessionId);
+    const session = await this.store.get(sessionId)
 
     if (!session) {
-      return;
+      return
     }
 
-    const now = new Date();
+    const now = new Date()
 
     await this.store.update(sessionId, {
       status: SessionStatus.REVOKED,
       terminatedAt: now,
-    });
+    })
 
     // Log activity
     await this.logActivity({
@@ -984,25 +984,25 @@ export class SessionManagementService {
         auditRequired: true,
         dataRetentionApplied: false,
       },
-    });
+    })
   }
 
   /**
    * Expire a session
    */
   async expireSession(sessionId: string): Promise<void> {
-    const session = await this.store.get(sessionId);
+    const session = await this.store.get(sessionId)
 
     if (!session) {
-      return;
+      return
     }
 
-    const now = new Date();
+    const now = new Date()
 
     await this.store.update(sessionId, {
       status: SessionStatus.EXPIRED,
       terminatedAt: now,
-    });
+    })
 
     // Log activity
     await this.logActivity({
@@ -1019,14 +1019,14 @@ export class SessionManagementService {
         auditRequired: true,
         dataRetentionApplied: false,
       },
-    });
+    })
   }
 
   /**
    * Get user sessions
    */
   async getUserSessions(_userId: string): Promise<SessionData[]> {
-    return this.store.getUserSessions(_userId);
+    return this.store.getUserSessions(_userId)
   }
 
   /**
@@ -1036,13 +1036,13 @@ export class SessionManagementService {
     _userId: string,
     reason?: string,
   ): Promise<void> {
-    const sessions = await this.store.getUserSessions(_userId);
+    const sessions = await this.store.getUserSessions(_userId)
     const activeSessions = sessions.filter(
       s => s.status === SessionStatus.ACTIVE,
-    );
+    )
 
     for (const session of activeSessions) {
-      await this.terminateSession(session.sessionId, reason);
+      await this.terminateSession(session.sessionId, reason)
     }
   }
 
@@ -1050,36 +1050,36 @@ export class SessionManagementService {
    * Cleanup expired sessions
    */
   async cleanupExpiredSessions(): Promise<number> {
-    const expiredSessions = await this.store.getExpiredSessions();
-    let cleanedCount = 0;
+    const expiredSessions = await this.store.getExpiredSessions()
+    let cleanedCount = 0
 
     for (const session of expiredSessions) {
       if (shouldAnonymizeSessionData(session)) {
         // Anonymize session data
-        const anonymizedSession = anonymizeSessionData(session);
-        await this.store.update(session.sessionId, anonymizedSession);
+        const anonymizedSession = anonymizeSessionData(session)
+        await this.store.update(session.sessionId, anonymizedSession)
       } else {
         // Mark as expired
-        await this.expireSession(session.sessionId);
+        await this.expireSession(session.sessionId)
       }
-      cleanedCount++;
+      cleanedCount++
     }
 
-    return cleanedCount;
+    return cleanedCount
   }
 
   /**
    * Log session activity
    */
   private async logActivity(event: SessionActivityEvent): Promise<void> {
-    const validatedEvent = SessionActivityEventSchema.parse(event);
-    this.activityLog.push(validatedEvent);
+    const validatedEvent = SessionActivityEventSchema.parse(event)
+    this.activityLog.push(validatedEvent)
 
     // In a real implementation, this would integrate with your logging system
     this.logger.info('Session activity logged', {
       ...validatedEvent,
       timestamp: new Date().toISOString(),
-    });
+    })
   }
 
   /**
@@ -1087,10 +1087,10 @@ export class SessionManagementService {
    */
   getActivityLog(sessionId?: string, _userId?: string): SessionActivityEvent[] {
     return this.activityLog.filter(event => {
-      if (sessionId && event.sessionId !== sessionId) return false;
-      if (_userId && event._userId !== _userId) return false;
-      return true;
-    });
+      if (sessionId && event.sessionId !== sessionId) return false
+      if (_userId && event._userId !== _userId) return false
+      return true
+    })
   }
 
   /**
@@ -1103,7 +1103,7 @@ export class SessionManagementService {
     userAgent: string,
   ): Promise<SessionData> {
     // Terminate all existing sessions
-    await this.terminateAllUserSessions(_userId, 'emergency_access_enabled');
+    await this.terminateAllUserSessions(_userId, 'emergency_access_enabled')
 
     // Create emergency session
     const emergencySession = await this.createSession({
@@ -1119,7 +1119,7 @@ export class SessionManagementService {
       },
       config: getEmergencySessionOverride(),
       metadata: { reason: 'emergency_access', emergencyCode },
-    });
+    })
 
     // Log emergency access
     await this.logActivity({
@@ -1136,9 +1136,9 @@ export class SessionManagementService {
         auditRequired: true,
         dataRetentionApplied: true,
       },
-    });
+    })
 
-    return emergencySession;
+    return emergencySession
   }
 }
 
@@ -1150,64 +1150,64 @@ export class SessionManagementService {
  * In-memory session store for development and testing
  */
 export class InMemorySessionStore implements SessionStore {
-  private sessions: Map<string, SessionData> = new Map();
+  private sessions: Map<string, SessionData> = new Map()
 
   async store(sessionData: SessionData): Promise<void> {
-    this.sessions.set(sessionData.sessionId, { ...sessionData });
+    this.sessions.set(sessionData.sessionId, { ...sessionData })
   }
 
   async get(sessionId: string): Promise<SessionData | null> {
-    const session = this.sessions.get(sessionId);
-    return session ? { ...session } : null;
+    const session = this.sessions.get(sessionId)
+    return session ? { ...session } : null
   }
 
   async update(
     sessionId: string,
     updates: Partial<SessionData>,
   ): Promise<void> {
-    const session = this.sessions.get(sessionId);
+    const session = this.sessions.get(sessionId)
     if (session) {
-      this.sessions.set(sessionId, { ...session, ...updates });
+      this.sessions.set(sessionId, { ...session, ...updates })
     }
   }
 
   async delete(sessionId: string): Promise<void> {
-    this.sessions.delete(sessionId);
+    this.sessions.delete(sessionId)
   }
 
   async getUserSessions(_userId: string): Promise<SessionData[]> {
     return Array.from(this.sessions.values())
       .filter(session => session._userId === _userId)
-      .map(session => ({ ...session }));
+      .map(session => ({ ...session }))
   }
 
   async getExpiredSessions(before: Date = new Date()): Promise<SessionData[]> {
     return Array.from(this.sessions.values())
       .filter(session => session.expiresAt < before)
-      .map(session => ({ ...session }));
+      .map(session => ({ ...session }))
   }
 
   async cleanup(retentionDays: number = 30): Promise<number> {
-    const cutoffDate = new Date();
-    cutoffDate.setDate(cutoffDate.getDate() - retentionDays);
+    const cutoffDate = new Date()
+    cutoffDate.setDate(cutoffDate.getDate() - retentionDays)
 
-    let cleanedCount = 0;
-    const sessionsToDelete: string[] = [];
+    let cleanedCount = 0
+    const sessionsToDelete: string[] = []
 
     // Collect sessions to delete
     for (const [sessionId, session] of Array.from(this.sessions.entries())) {
       if (session.dataRetentionDate && session.dataRetentionDate < cutoffDate) {
-        sessionsToDelete.push(sessionId);
+        sessionsToDelete.push(sessionId)
       }
     }
 
     // Delete collected sessions
     for (const sessionId of sessionsToDelete) {
-      this.sessions.delete(sessionId);
-      cleanedCount++;
+      this.sessions.delete(sessionId)
+      cleanedCount++
     }
 
-    return cleanedCount;
+    return cleanedCount
   }
 }
 
@@ -1215,4 +1215,4 @@ export class InMemorySessionStore implements SessionStore {
 // EXPORTS
 // ============================================================================
 
-export default SessionManagementService;
+export default SessionManagementService

@@ -4,81 +4,81 @@
  */
 
 export interface HealthcareTelemetryConfig {
-  enabled: boolean;
-  serviceName: string;
-  serviceVersion: string;
-  environment: string;
+  enabled: boolean
+  serviceName: string
+  serviceVersion: string
+  environment: string
 
   // LGPD compliance settings
-  lgpdCompliant: boolean;
-  dataRetentionDays: number;
-  sensitiveDataSampling: boolean;
+  lgpdCompliant: boolean
+  dataRetentionDays: number
+  sensitiveDataSampling: boolean
 
   // Exporter configuration
   exporters: {
     traces: {
-      endpoint: string;
-      apiKey?: string;
-      batchSize: number;
-      timeoutMs: number;
-    };
+      endpoint: string
+      apiKey?: string
+      batchSize: number
+      timeoutMs: number
+    }
     metrics: {
-      endpoint: string;
-      apiKey?: string;
-      intervalMs: number;
-    };
-  };
+      endpoint: string
+      apiKey?: string
+      intervalMs: number
+    }
+  }
 
   // Healthcare-specific settings
   healthcare: {
-    patientDataProtection: boolean;
-    auditTrailRequired: boolean;
-    complianceLevel: 'basic' | 'enhanced' | 'maximum';
-    allowedDataClassifications: string[];
-  };
+    patientDataProtection: boolean
+    auditTrailRequired: boolean
+    complianceLevel: 'basic' | 'enhanced' | 'maximum'
+    allowedDataClassifications: string[]
+  }
 }
 
 export interface TelemetryContext {
-  clinicId?: string;
-  _userId?: string;
-  sessionId?: string;
-  requestId?: string;
-  feature?: string;
-  complianceLevel?: 'public' | 'internal' | 'sensitive';
+  clinicId?: string
+  _userId?: string
+  sessionId?: string
+  requestId?: string
+  feature?: string
+  complianceLevel?: 'public' | 'internal' | 'sensitive'
 }
 
 export interface HealthcareMetrics {
   // API metrics
-  apiRequestDuration: number;
-  apiRequestTotal: number;
-  apiErrorRate: number;
+  apiRequestDuration: number
+  apiRequestTotal: number
+  apiErrorRate: number
 
   // Healthcare-specific metrics
-  patientDataAccess: number;
-  appointmentOperations: number;
-  medicalRecordViews: number;
-  complianceViolations: number;
+  patientDataAccess: number
+  appointmentOperations: number
+  medicalRecordViews: number
+  complianceViolations: number
 
   // Performance metrics
-  databaseQueryTime: number;
-  renderTime: number;
-  memoryUsage: number;
+  databaseQueryTime: number
+  renderTime: number
+  memoryUsage: number
 }
 
 export interface ComplianceEvent {
-  eventType: 'data_access' | 'data_export' | 'data_deletion' | 'consent_update';
-  timestamp: string;
-  _userId: string;
-  clinicId: string;
-  dataClassification: string;
-  complianceNotes: string;
-  auditTrailId: string;
+  eventType: 'data_access' | 'data_export' | 'data_deletion' | 'consent_update'
+  timestamp: string
+  _userId: string
+  clinicId: string
+  dataClassification: string
+  complianceNotes: string
+  auditTrailId: string
 }
 
 // Default configuration for healthcare telemetry
 export const DEFAULT_HEALTHCARE_TELEMETRY_CONFIG: HealthcareTelemetryConfig = {
-  enabled: process.env.NODE_ENV === 'production'
-    || process.env.ENABLE_TRACING === 'true',
+  enabled: process.env.NODE_ENV === 'production' ||
+    process.env.ENABLE_TRACING === 'true',
   serviceName: 'neonpro-healthcare-platform',
   serviceVersion: process.env.APP_VERSION || '1.0.0',
   environment: process.env.NODE_ENV || 'development',
@@ -89,15 +89,15 @@ export const DEFAULT_HEALTHCARE_TELEMETRY_CONFIG: HealthcareTelemetryConfig = {
 
   exporters: {
     traces: {
-      endpoint: process.env.OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-        || 'http://localhost:4318/v1/traces',
+      endpoint: process.env.OTEL_EXPORTER_OTLP_TRACES_ENDPOINT ||
+        'http://localhost:4318/v1/traces',
       apiKey: process.env.OTEL_API_KEY,
       batchSize: 100,
       timeoutMs: 5000,
     },
     metrics: {
-      endpoint: process.env.OTEL_EXPORTER_OTLP_METRICS_ENDPOINT
-        || 'http://localhost:4318/v1/metrics',
+      endpoint: process.env.OTEL_EXPORTER_OTLP_METRICS_ENDPOINT ||
+        'http://localhost:4318/v1/metrics',
       apiKey: process.env.OTEL_API_KEY,
       intervalMs: 30000,
     },
@@ -109,7 +109,7 @@ export const DEFAULT_HEALTHCARE_TELEMETRY_CONFIG: HealthcareTelemetryConfig = {
     complianceLevel: 'maximum',
     allowedDataClassifications: ['public', 'internal'],
   },
-};
+}
 
 // Healthcare data classification levels
 export enum DataClassification {
@@ -158,7 +158,7 @@ export const SENSITIVE_DATA_PATTERNS = [
   // Medical codes
   /\b[A-Z]\d{2}\.?\d{1,2}\b/g, // CID-10
   /\b\d{8}\.\d{2}\.\d{2}\b/g, // TUSS procedures
-];
+]
 
 // Field names that contain sensitive data
 export const SENSITIVE_FIELD_NAMES = [
@@ -199,6 +199,6 @@ export const SENSITIVE_FIELD_NAMES = [
   'cro',
   'professional_id',
   'id_profissional',
-];
+]
 
-export { getGlobalTelemetryManager, initializeGlobalTelemetry } from './index';
+export { getGlobalTelemetryManager, initializeGlobalTelemetry } from './index'

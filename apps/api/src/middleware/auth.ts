@@ -1,6 +1,6 @@
-import { Context, Next } from 'hono';
-import { HTTPException } from 'hono/http-exception';
-import { logger } from '../lib/logger';
+import { Context, Next } from 'hono'
+import { HTTPException } from 'hono/http-exception'
+import { logger } from '../lib/logger'
 
 /**
  * Basic authentication middleware
@@ -11,12 +11,12 @@ import { logger } from '../lib/logger';
  * Mock user interface
  */
 interface User {
-  id: string;
-  email: string;
-  _role: string;
-  clinicId: string;
-  name: string;
-  permissions: string[];
+  id: string
+  email: string
+  _role: string
+  clinicId: string
+  name: string
+  permissions: string[]
 }
 
 /**
@@ -24,9 +24,9 @@ interface User {
  */
 function extractToken(authHeader: string | undefined): string | null {
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return null;
+    return null
   }
-  return authHeader.replace('Bearer ', '');
+  return authHeader.replace('Bearer ', '')
 }
 
 /**
@@ -45,10 +45,10 @@ async function validateToken(token: string): Promise<User | null> {
       clinicId: 'test-clinic-id',
       name: 'Test User',
       permissions: ['read', 'write', 'admin'],
-    };
+    }
   }
 
-  return null;
+  return null
 }
 
 /**
@@ -57,64 +57,64 @@ async function validateToken(token: string): Promise<User | null> {
 export function auth() {
   return async (c: Context, next: Next) => {
     try {
-      const authHeader = c.req.header('authorization');
-      const token = extractToken(authHeader);
+      const authHeader = c.req.header('authorization')
+      const token = extractToken(authHeader)
 
       if (!token) {
         logger.warn('Missing authentication token', {
           path: c.req.path,
           method: c.req.method,
           ip: c.req.header('x-forwarded-for') || c.req.header('x-real-ip'),
-        });
+        })
 
         throw new HTTPException(401, {
           message: 'Authentication required',
-        });
+        })
       }
 
-      const user = await validateToken(token);
+      const user = await validateToken(token)
 
       if (!user) {
         logger.warn('Invalid authentication token', {
           path: c.req.path,
           method: c.req.method,
           ip: c.req.header('x-forwarded-for') || c.req.header('x-real-ip'),
-        });
+        })
 
         throw new HTTPException(401, {
           message: 'Invalid or expired token',
-        });
+        })
       }
 
       // Set user context
-      c.set('user', user);
-      c.set('userId', user.id);
-      c.set('clinicId', user.clinicId);
+      c.set('user', user)
+      c.set('userId', user.id)
+      c.set('clinicId', user.clinicId)
 
       logger.debug('User authenticated', {
         _userId: user.id,
         _role: user.role,
         path: c.req.path,
         method: c.req.method,
-      });
+      })
 
-      await next();
+      await next()
     } catch {
       if (error instanceof HTTPException) {
-        throw error;
+        throw error
       }
 
       logger.error('Authentication error', {
         error: error instanceof Error ? error.message : String(error),
         path: c.req.path,
         method: c.req.method,
-      });
+      })
 
       throw new HTTPException(500, {
         message: 'Authentication failed',
-      });
+      })
     }
-  };
+  }
 }
 
 /**
@@ -123,43 +123,43 @@ export function auth() {
 export function optionalAuth() {
   return async (c: Context, next: Next) => {
     try {
-      const authHeader = c.req.header('authorization');
-      const token = extractToken(authHeader);
+      const authHeader = c.req.header('authorization')
+      const token = extractToken(authHeader)
 
       if (token) {
-        const user = await validateToken(token);
+        const user = await validateToken(token)
         if (user) {
-          c.set('user', user);
-          c.set('userId', user.id);
-          c.set('clinicId', user.clinicId);
+          c.set('user', user)
+          c.set('userId', user.id)
+          c.set('clinicId', user.clinicId)
         }
       }
 
-      await next();
+      await next()
     } catch {
       // Silent fail for optional auth
       logger.debug('Optional auth failed', {
         error: error instanceof Error ? error.message : String(error),
-      });
+      })
 
-      await next();
+      await next()
     }
-  };
+  }
 }
 
 /**
  * Role-based authorization middleware
  */
 export function requireRole(allowedRoles: string | string[]) {
-  const roles = Array.isArray(allowedRoles) ? allowedRoles : [allowedRoles];
+  const roles = Array.isArray(allowedRoles) ? allowedRoles : [allowedRoles]
 
   return async (c: Context, next: Next) => {
-    const user = c.get('user');
+    const user = c.get('user')
 
     if (!user) {
       throw new HTTPException(401, {
         message: 'Authentication required',
-      });
+      })
     }
 
     if (!roles.includes(user._role)) {
@@ -169,15 +169,15 @@ export function requireRole(allowedRoles: string | string[]) {
         requiredRoles: roles,
         path: c.req.path,
         method: c.req.method,
-      });
+      })
 
       throw new HTTPException(403, {
         message: 'Insufficient permissions',
-      });
+      })
     }
 
-    await next();
-  };
+    await next()
+  }
 }
 
 /**
@@ -186,18 +186,18 @@ export function requireRole(allowedRoles: string | string[]) {
 export function requirePermission(requiredPermissions: string | string[]) {
   const permissions = Array.isArray(requiredPermissions)
     ? requiredPermissions
-    : [requiredPermissions];
+    : [requiredPermissions]
 
   return async (c: Context, next: Next) => {
-    const user = c.get('user');
+    const user = c.get('user')
 
     if (!user) {
       throw new HTTPException(401, {
         message: 'Authentication required',
-      });
+      })
     }
 
-    const hasPermission = permissions.some(permission => user.permissions.includes(permission));
+    const hasPermission = permissions.some(permission => user.permissions.includes(permission))
 
     if (!hasPermission) {
       logger.warn('Access denied - insufficient permissions', {
@@ -206,15 +206,15 @@ export function requirePermission(requiredPermissions: string | string[]) {
         requiredPermissions: permissions,
         path: c.req.path,
         method: c.req.method,
-      });
+      })
 
       throw new HTTPException(403, {
         message: 'Insufficient permissions',
-      });
+      })
     }
 
-    await next();
-  };
+    await next()
+  }
 }
 
 /**
@@ -222,13 +222,13 @@ export function requirePermission(requiredPermissions: string | string[]) {
  */
 export function requireClinicAccess() {
   return async (c: Context, next: Next) => {
-    const user = c.get('user');
-    const requestedClinicId = c.req.param('clinicId') || c.req.query('clinicId');
+    const user = c.get('user')
+    const requestedClinicId = c.req.param('clinicId') || c.req.query('clinicId')
 
     if (!user) {
       throw new HTTPException(401, {
         message: 'Authentication required',
-      });
+      })
     }
 
     if (requestedClinicId && requestedClinicId !== user.clinicId) {
@@ -238,15 +238,15 @@ export function requireClinicAccess() {
         requestedClinicId,
         path: c.req.path,
         method: c.req.method,
-      });
+      })
 
       throw new HTTPException(403, {
         message: 'Access denied to clinic data',
-      });
+      })
     }
 
-    await next();
-  };
+    await next()
+  }
 }
 
 /**
@@ -254,9 +254,9 @@ export function requireClinicAccess() {
  */
 export function authWithRole(allowedRoles: string | string[]) {
   return async (c: Context, next: Next) => {
-    await auth()(c, async () => {});
-    await requireRole(allowedRoles)(c, next);
-  };
+    await auth()(c, async () => {})
+    await requireRole(allowedRoles)(c, next)
+  }
 }
 
 /**
@@ -264,19 +264,19 @@ export function authWithRole(allowedRoles: string | string[]) {
  */
 export function authWithPermission(requiredPermissions: string | string[]) {
   return async (c: Context, next: Next) => {
-    await auth()(c, async () => {});
-    await requirePermission(requiredPermissions)(c, next);
-  };
+    await auth()(c, async () => {})
+    await requirePermission(requiredPermissions)(c, next)
+  }
 }
 
 /**
  * Alias for auth middleware (for backward compatibility)
  */
-export const requireAuth = auth;
+export const requireAuth = auth
 
 /**
  * AI-specific access control middleware
  */
 export function requireAIAccess() {
-  return authWithPermission(['ai_access', 'admin']);
+  return authWithPermission(['ai_access', 'admin'])
 }

@@ -1,93 +1,165 @@
-import { createRouter, RouterProvider } from '@tanstack/react-router';
-import * as React from 'react';
-import { createRoot } from 'react-dom/client';
-import { TanStackQueryProvider } from './components/providers/TanStackQueryProvider';
-import { TRPCProvider } from './components/stubs/TRPCProvider';
-import { routeTree } from './routeTree.gen';
+import { createRouter, RouterProvider } from '@tanstack/react-router'
+import * as React from 'react'
+import { createRoot } from 'react-dom/client'
+import { TanStackQueryProvider } from './components/stubs/TanStackQueryProvider.js'
+import { TRPCProvider } from './components/stubs/TRPCProvider.js'
+import { routeTree } from './routeTree.gen.js'
 
 // Import PWA Styles
-import './styles/pwa.css';
+import './styles/pwa.css'
 
 // Create the router
-const router = createRouter({ routeTree });
+const router = createRouter({ routeTree })
 
 // Register the router
 declare module '@tanstack/react-router' {
   interface Register {
-    router: typeof router;
+    router: typeof router
   }
-}
-
-// PWA Initialization
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker
-      .register('/sw.js')
-      .then(registration => {
-        console.log('ServiceWorker registration successful with scope: ', registration.scope);
-      })
-      .catch(error => {
-        console.log('ServiceWorker registration failed: ', error);
-      });
-  });
 }
 
 // PWA Install Prompt Handler
-let deferredPrompt: any;
-window.addEventListener('beforeinstallprompt', e => {
-  e.preventDefault();
-  deferredPrompt = e;
+let deferredPrompt: BeforeInstallPromptEvent | null = null
 
-  // Show custom install UI if needed
-  const installButton = document.getElementById('pwa-install-button');
-  if (installButton) {
-    installButton.style.display = 'block';
-    installButton.addEventListener('click', () => {
-      deferredPrompt.prompt();
-      deferredPrompt.userChoice.then((choiceResult: any) => {
+// Function to setup event listeners with cleanup
+function setupPWAEventListeners() {
+  // Service Worker registration
+  if ('serviceWorker' in navigator) {
+    const handleLoad = async () => {
+      try {
+        const registration = await navigator.serviceWorker.register('/sw.js')
+        console.warn('ServiceWorker registration successful with scope: ', registration.scope)
+      } catch (error) {
+        console.error('ServiceWorker registration failed: ', error)
+      }
+    }
+
+    window.addEventListener('load', handleLoad)
+    // store typed handler
+    window.__pwaCleanup = {
+      ...window.__pwaCleanup,
+      loadHandler: handleLoad,
+    }
+  }
+
+  // Before install prompt
+  const handleBeforeInstall = (e: Event) => {
+    const event = e as BeforeInstallPromptEvent
+    event.preventDefault?.()
+    deferredPrompt = event
+
+    // typed install button with optional __installHandler
+    const installButton = document.getElementById('pwa-install-button') as
+      | (HTMLElement & { __installHandler?: EventListener })
+      | null
+    if (installButton) {
+      installButton.style.display = 'block'
+
+      // Remove existing listener if any
+      const existingCleanup = installButton.__installHandler
+      if (existingCleanup) {
+        installButton.removeEventListener('click', existingCleanup)
+      }
+
+      const handleInstallClick: EventListener = async () => {
+        if (!deferredPrompt) return
+        await deferredPrompt.prompt()
+        const choiceResult = await deferredPrompt.userChoice
         if (choiceResult.outcome === 'accepted') {
-          console.log('User accepted the install prompt');
+          console.warn('User accepted the install prompt')
         } else {
-          console.log('User dismissed the install prompt');
+          console.warn('User dismissed the install prompt')
         }
-        deferredPrompt = null;
-      });
-    });
+        deferredPrompt = null
+      }
+
+      installButton.addEventListener('click', handleInstallClick)
+      installButton.__installHandler = handleInstallClick
+    }
   }
-});
 
-// Handle app installed
-window.addEventListener('appinstalled', () => {
-  console.log('PWA was installed');
-  const installButton = document.getElementById('pwa-install-button');
-  if (installButton) {
-    installButton.style.display = 'none';
+  // App installed
+  const handleAppInstalled = () => {
+    console.warn('PWA was installed')
+    const installButton = document.getElementById('pwa-install-button')
+    if (installButton) {
+      installButton.style.display = 'none'
+    }
   }
-});
 
-// Handle online/offline status
-window.addEventListener('online', () => {
-  console.log('App is online');
-  document.body.classList.remove('offline');
-  document.body.classList.add('online');
-});
+  // Online status
+  const handleOnline = () => {
+    console.warn('App is online')
+    document.body.classList.remove('offline')
+    document.body.classList.add('online')
+  }
 
-window.addEventListener('offline', () => {
-  console.log('App is offline');
-  document.body.classList.remove('online');
-  document.body.classList.add('offline');
-});
+  // Offline status
+  const handleOffline = () => {
+    console.warn('App is offline')
+    document.body.classList.remove('online')
+    document.body.classList.add('offline')
+  }
+
+  // Add all event listeners
+  window.addEventListener('beforeinstallprompt', handleBeforeInstall)
+  window.addEventListener('appinstalled', handleAppInstalled)
+  window.addEventListener('online', handleOnline)
+  window.addEventListener('offline', handleOffline)
+
+  // Store cleanup functions safely
+  const prev = window.__pwaCleanup || {}
+  window.__pwaCleanup = {
+    ...prev,
+    beforeInstallHandler: handleBeforeInstall,
+    appInstalledHandler: handleAppInstalled,
+    onlineHandler: handleOnline,
+    offlineHandler: handleOffline,
+    cleanup: function() {
+      if (prev.loadHandler) window.removeEventListener('load', prev.loadHandler)
+      if (prev.beforeInstallHandler) {
+        window.removeEventListener('beforeinstallprompt', prev.beforeInstallHandler)
+      }
+      if (prev.appInstalledHandler) {
+        window.removeEventListener('appinstalled', prev.appInstalledHandler)
+      }
+      if (prev.onlineHandler) window.removeEventListener('online', prev.onlineHandler)
+      if (prev.offlineHandler) window.removeEventListener('offline', prev.offlineHandler)
+
+      const installButton = document.getElementById('pwa-install-button') as
+        | (HTMLElement & { __installHandler?: EventListener })
+        | null
+      if (installButton && installButton.__installHandler) {
+        installButton.removeEventListener('click', installButton.__installHandler)
+        delete installButton.__installHandler
+      }
+    },
+  }
+}
+
+// Setup PWA event listeners
+setupPWAEventListeners()
 
 // Set initial online status
 if (navigator.onLine) {
-  document.body.classList.add('online');
+  document.body.classList.add('online')
 } else {
-  document.body.classList.add('offline');
+  document.body.classList.add('offline')
+}
+
+// Cleanup function for development hot-reloading
+if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
+  window.addEventListener('beforeunload', () => {
+    const cleanup = window.__pwaCleanup
+    if (cleanup?.cleanup) {
+      cleanup.cleanup()
+    }
+  })
 }
 
 // Render the app
-const rootElement = document.getElementById('root')!;
-const root = createRoot(rootElement);
+const rootElement = document.getElementById('root')!
+const root = createRoot(rootElement)
 root.render(
   <React.StrictMode>
     <TanStackQueryProvider>
@@ -96,4 +168,25 @@ root.render(
       </TRPCProvider>
     </TanStackQueryProvider>
   </React.StrictMode>,
-);
+)
+
+// Add typed BeforeInstallPromptEvent and PWA cleanup types
+type BeforeInstallPromptEvent = Event & {
+  prompt: () => Promise<void>
+  userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>
+}
+
+type PWACleanup = {
+  loadHandler?: (this: Window, ev?: Event) => void
+  beforeInstallHandler?: (e: Event) => void
+  appInstalledHandler?: () => void
+  onlineHandler?: () => void
+  offlineHandler?: () => void
+  cleanup?: () => void
+}
+
+declare global {
+  interface Window {
+    __pwaCleanup?: PWACleanup
+  }
+}

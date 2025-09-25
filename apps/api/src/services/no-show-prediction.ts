@@ -12,9 +12,9 @@
  * - LGPD compliance for patient data processing
  */
 
-import type { PrismaClient } from '@prisma/client';
-import { z } from 'zod';
-import { generateWithFailover } from '../config/ai';
+import type { PrismaClient } from '@prisma/client'
+import { z } from 'zod'
+import { generateWithFailover } from '../config/ai'
 
 // No-Show Risk Levels
 export const NO_SHOW_RISK_LEVELS = {
@@ -23,9 +23,9 @@ export const NO_SHOW_RISK_LEVELS = {
   MEDIUM: 'medium', // 41-60%
   HIGH: 'high', // 61-80%
   VERY_HIGH: 'very_high', // 81-100%
-} as const;
+} as const
 
-export type NoShowRiskLevel = (typeof NO_SHOW_RISK_LEVELS)[keyof typeof NO_SHOW_RISK_LEVELS];
+export type NoShowRiskLevel = (typeof NO_SHOW_RISK_LEVELS)[keyof typeof NO_SHOW_RISK_LEVELS]
 
 // Brazilian Patient Behavior Factors
 export const BRAZILIAN_BEHAVIOR_FACTORS = {
@@ -58,10 +58,10 @@ export const BRAZILIAN_BEHAVIOR_FACTORS = {
   PROFESSIONAL_REPUTATION: 'professional_reputation',
   CLINIC_LOCATION: 'clinic_location',
   WAITING_TIME_HISTORY: 'waiting_time_history',
-} as const;
+} as const
 
 export type BrazilianBehaviorFactor =
-  (typeof BRAZILIAN_BEHAVIOR_FACTORS)[keyof typeof BRAZILIAN_BEHAVIOR_FACTORS];
+  (typeof BRAZILIAN_BEHAVIOR_FACTORS)[keyof typeof BRAZILIAN_BEHAVIOR_FACTORS]
 
 // Intervention Types
 export const INTERVENTION_TYPES = {
@@ -90,9 +90,9 @@ export const INTERVENTION_TYPES = {
   APPOINTMENT_IMPORTANCE: 'appointment_importance',
   PROCEDURE_PREPARATION: 'procedure_preparation',
   COST_EXPLANATION: 'cost_explanation',
-} as const;
+} as const
 
-export type InterventionType = (typeof INTERVENTION_TYPES)[keyof typeof INTERVENTION_TYPES];
+export type InterventionType = (typeof INTERVENTION_TYPES)[keyof typeof INTERVENTION_TYPES]
 
 // AI Model Types
 export const AI_MODEL_TYPES = {
@@ -100,9 +100,9 @@ export const AI_MODEL_TYPES = {
   BEHAVIOR_ANALYSIS: 'behavior_analysis',
   INTERVENTION_RECOMMENDATION: 'intervention_recommendation',
   OUTCOME_PREDICTION: 'outcome_prediction',
-} as const;
+} as const
 
-export type AIModelType = (typeof AI_MODEL_TYPES)[keyof typeof AI_MODEL_TYPES];
+export type AIModelType = (typeof AI_MODEL_TYPES)[keyof typeof AI_MODEL_TYPES]
 
 // Patient Behavior Profile Schema
 export const PatientBehaviorProfileSchema = z.object({
@@ -160,11 +160,11 @@ export const PatientBehaviorProfileSchema = z.object({
     workFlexibility: z.number().min(0).max(1),
   }),
   lastUpdated: z.date(),
-});
+})
 
 export type PatientBehaviorProfile = z.infer<
   typeof PatientBehaviorProfileSchema
->;
+>
 
 // No-Show Prediction Schema
 export const NoShowPredictionSchema = z.object({
@@ -214,19 +214,19 @@ export const NoShowPredictionSchema = z.object({
   }),
   metadata: z.record(z.any()).optional(),
   createdAt: z.date(),
-});
+})
 
-export type NoShowPrediction = z.infer<typeof NoShowPredictionSchema>; /**
+export type NoShowPrediction = z.infer<typeof NoShowPredictionSchema> /**
  * No-Show Prediction Service Implementation
  */
 
 export class NoShowPredictionService {
-  private prisma: PrismaClient;
-  private behaviorProfiles: Map<string, PatientBehaviorProfile> = new Map();
-  private modelPerformanceMetrics: Map<string, any> = new Map();
+  private prisma: PrismaClient
+  private behaviorProfiles: Map<string, PatientBehaviorProfile> = new Map()
+  private modelPerformanceMetrics: Map<string, any> = new Map()
 
   constructor(prisma: PrismaClient) {
-    this.prisma = prisma;
+    this.prisma = prisma
   }
 
   /**
@@ -236,42 +236,42 @@ export class NoShowPredictionService {
     appointmentId: string,
     patientId: string,
     appointmentDetails: {
-      scheduledDate: Date;
-      appointmentType: string;
-      professionalId: string;
-      clinicId: string;
-      estimatedDuration: number;
-      cost?: number;
+      scheduledDate: Date
+      appointmentType: string
+      professionalId: string
+      clinicId: string
+      estimatedDuration: number
+      cost?: number
     },
   ): Promise<NoShowPrediction> {
-    const startTime = Date.now();
+    const startTime = Date.now()
 
     try {
       // Get or create patient behavior profile
-      const behaviorProfile = await this.getOrCreateBehaviorProfile(patientId);
+      const behaviorProfile = await this.getOrCreateBehaviorProfile(patientId)
 
       // Analyze Brazilian-specific behavior factors
       const behaviorAnalysis = await this.analyzeBrazilianBehaviorFactors(
         behaviorProfile,
         appointmentDetails,
-      );
+      )
 
       // Generate AI-powered risk prediction
       const riskPrediction = await this.generateRiskPrediction(
         behaviorProfile,
         behaviorAnalysis,
         appointmentDetails,
-      );
+      )
 
       // Generate intervention recommendations
       const interventions = await this.generateInterventionRecommendations(
         riskPrediction,
         behaviorProfile,
         appointmentDetails,
-      );
+      )
 
       // Calculate data quality metrics
-      const dataQuality = this.calculateDataQuality(behaviorProfile);
+      const dataQuality = this.calculateDataQuality(behaviorProfile)
 
       // Create prediction record
       const prediction: NoShowPrediction = {
@@ -300,18 +300,18 @@ export class NoShowPredictionService {
           ],
         },
         createdAt: new Date(),
-      };
+      }
 
       // Update model performance metrics
-      await this.updateModelMetrics(prediction);
+      await this.updateModelMetrics(prediction)
 
       // Log audit trail for LGPD compliance
-      await this.logPredictionAudit(prediction);
+      await this.logPredictionAudit(prediction)
 
-      return prediction;
+      return prediction
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      throw new Error(`No-show prediction failed: ${errorMessage}`);
+      const errorMessage = error instanceof Error ? error.message : String(error)
+      throw new Error(`No-show prediction failed: ${errorMessage}`)
     }
   }
 
@@ -322,50 +322,50 @@ export class NoShowPredictionService {
     profile: PatientBehaviorProfile,
     appointmentDetails: any,
   ): Promise<Record<BrazilianBehaviorFactor, number>> {
-    const factors: Record<BrazilianBehaviorFactor, number> = {} as any;
+    const factors: Record<BrazilianBehaviorFactor, number> = {} as any
 
     // Urban mobility analysis
     factors[BRAZILIAN_BEHAVIOR_FACTORS.URBAN_MOBILITY] = await this.analyzeUrbanMobility(
       profile,
       appointmentDetails,
-    );
+    )
 
     // SUS dependency impact
     factors[BRAZILIAN_BEHAVIOR_FACTORS.SUS_DEPENDENCY] =
-      profile.demographicFactors.healthcareType === 'sus' ? 0.7 : 0.2;
+      profile.demographicFactors.healthcareType === 'sus' ? 0.7 : 0.2
 
     // Socioeconomic status impact
     factors[BRAZILIAN_BEHAVIOR_FACTORS.SOCIOECONOMIC_STATUS] = this.calculateSocioeconomicImpact(
       profile,
-    );
+    )
 
     // Work flexibility
-    factors[BRAZILIAN_BEHAVIOR_FACTORS.WORK_FLEXIBILITY] = profile.riskFactors.workFlexibility;
+    factors[BRAZILIAN_BEHAVIOR_FACTORS.WORK_FLEXIBILITY] = profile.riskFactors.workFlexibility
 
     // Digital literacy
-    factors[BRAZILIAN_BEHAVIOR_FACTORS.DIGITAL_LITERACY] = profile.riskFactors.digitalLiteracy;
+    factors[BRAZILIAN_BEHAVIOR_FACTORS.DIGITAL_LITERACY] = profile.riskFactors.digitalLiteracy
 
     // Family support
-    factors[BRAZILIAN_BEHAVIOR_FACTORS.FAMILY_SUPPORT] = profile.riskFactors.familySupport;
+    factors[BRAZILIAN_BEHAVIOR_FACTORS.FAMILY_SUPPORT] = profile.riskFactors.familySupport
 
     // Weather conditions (seasonal analysis)
     factors[BRAZILIAN_BEHAVIOR_FACTORS.WEATHER_CONDITIONS] = await this.analyzeWeatherImpact(
       appointmentDetails.scheduledDate,
-    );
+    )
 
     // Holiday/carnival season impact
     factors[BRAZILIAN_BEHAVIOR_FACTORS.CARNIVAL_SEASON] = this.isCarnavalSeason(
         appointmentDetails.scheduledDate,
       )
       ? 0.8
-      : 0.1;
+      : 0.1
 
     // Appointment type impact
     factors[BRAZILIAN_BEHAVIOR_FACTORS.APPOINTMENT_TYPE] = this.getAppointmentTypeRisk(
       appointmentDetails.appointmentType,
-    );
+    )
 
-    return factors;
+    return factors
   }
 
   /**
@@ -376,21 +376,21 @@ export class NoShowPredictionService {
     behaviorFactors: Record<BrazilianBehaviorFactor, number>,
     appointmentDetails: any,
   ): Promise<{
-    riskScore: number;
-    confidence: number;
+    riskScore: number
+    confidence: number
     factors: Array<{
-      factor: BrazilianBehaviorFactor;
-      impact: number;
-      confidence: number;
-      explanation: string;
-    }>;
+      factor: BrazilianBehaviorFactor
+      impact: number
+      confidence: number
+      explanation: string
+    }>
   }> {
     // Prepare AI prompt with Brazilian healthcare context
     const prompt = this.createPredictionPrompt(
       profile,
       behaviorFactors,
       appointmentDetails,
-    );
+    )
 
     try {
       // Use existing AI infrastructure
@@ -399,32 +399,32 @@ export class NoShowPredictionService {
         prompt,
         temperature: 0.3, // Lower temperature for more consistent predictions
         maxOutputTokens: 800,
-      });
+      })
 
       // Parse AI response
-      const analysis = this.parseAIResponse(aiResponse.text);
+      const analysis = this.parseAIResponse(aiResponse.text)
 
       // Calculate base risk score from historical data
-      const historicalRisk = 1 - profile.historicalAttendance.attendanceRate;
+      const historicalRisk = 1 - profile.historicalAttendance.attendanceRate
 
       // Weight factors based on Brazilian healthcare research
-      const weightedFactors = this.applyBrazilianWeights(behaviorFactors);
+      const weightedFactors = this.applyBrazilianWeights(behaviorFactors)
 
       // Combine AI insights with statistical analysis
       const combinedRiskScore = this.combineRiskScores(
         historicalRisk,
         weightedFactors,
         analysis.aiRiskScore,
-      );
+      )
 
       return {
         riskScore: Math.min(Math.max(combinedRiskScore, 0), 1),
         confidence: analysis.confidence,
         factors: this.identifyTopFactors(behaviorFactors, analysis),
-      };
+      }
     } catch (error) {
-      console.error('AI prediction failed, using fallback:', error);
-      return this.generateFallbackPrediction(profile, behaviorFactors);
+      console.error('AI prediction failed, using fallback:', error)
+      return this.generateFallbackPrediction(profile, behaviorFactors)
     }
   }
 
@@ -437,15 +437,15 @@ export class NoShowPredictionService {
     appointmentDetails: any,
   ): Promise<
     Array<{
-      type: InterventionType;
-      priority: 'high' | 'medium' | 'low';
-      expectedImpact: number;
-      implementationCost: 'low' | 'medium' | 'high';
-      timeToImplement: number;
-      description: string;
+      type: InterventionType
+      priority: 'high' | 'medium' | 'low'
+      expectedImpact: number
+      implementationCost: 'low' | 'medium' | 'high'
+      timeToImplement: number
+      description: string
     }>
   > {
-    const interventions: any[] = [];
+    const interventions: any[] = []
 
     // High-risk interventions
     if (riskPrediction.riskScore > 0.6) {
@@ -457,7 +457,7 @@ export class NoShowPredictionService {
         implementationCost: 'low' as const,
         timeToImplement: 0.5,
         description: 'Envio de lembrete via WhatsApp 24h antes da consulta',
-      });
+      })
 
       // Voice call for high-risk patients
       interventions.push({
@@ -467,7 +467,7 @@ export class NoShowPredictionService {
         implementationCost: 'medium' as const,
         timeToImplement: 2,
         description: 'Ligação de confirmação 48h antes da consulta',
-      });
+      })
     }
 
     // Transportation assistance for mobility issues
@@ -479,7 +479,7 @@ export class NoShowPredictionService {
         implementationCost: 'high' as const,
         timeToImplement: 24,
         description: 'Auxílio com transporte ou orientações sobre acesso',
-      });
+      })
     }
 
     // Payment plan for financial constraints
@@ -491,7 +491,7 @@ export class NoShowPredictionService {
         implementationCost: 'low' as const,
         timeToImplement: 1,
         description: 'Oferta de parcelamento ou orientação sobre cobertura',
-      });
+      })
     }
 
     // Family notification for patients with family support
@@ -503,7 +503,7 @@ export class NoShowPredictionService {
         implementationCost: 'low' as const,
         timeToImplement: 0.5,
         description: 'Notificação para contato de emergência sobre a consulta',
-      });
+      })
     }
 
     // Telemedicine option for convenience
@@ -515,7 +515,7 @@ export class NoShowPredictionService {
         implementationCost: 'low' as const,
         timeToImplement: 0.25,
         description: 'Opção de consulta por telemedicina se disponível',
-      });
+      })
     }
 
     return interventions.sort((a, b) => {
@@ -523,11 +523,11 @@ export class NoShowPredictionService {
         high: 3,
         medium: 2,
         low: 1,
-      };
+      }
       return (
         (priorityOrder[b.priority] || 0) - (priorityOrder[a.priority] || 0)
-      );
-    });
+      )
+    })
   }
 
   /**
@@ -538,7 +538,7 @@ export class NoShowPredictionService {
   ): Promise<PatientBehaviorProfile> {
     // Check cache first
     if (this.behaviorProfiles.has(patientId)) {
-      return this.behaviorProfiles.get(patientId)!;
+      return this.behaviorProfiles.get(patientId)!
     }
 
     try {
@@ -606,13 +606,13 @@ export class NoShowPredictionService {
           workFlexibility: 0.5,
         },
         lastUpdated: new Date(),
-      };
+      }
 
-      this.behaviorProfiles.set(patientId, profile);
-      return profile;
+      this.behaviorProfiles.set(patientId, profile)
+      return profile
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      throw new Error(`Failed to get behavior profile: ${errorMessage}`);
+      const errorMessage = error instanceof Error ? error.message : String(error)
+      throw new Error(`Failed to get behavior profile: ${errorMessage}`)
     }
   }
 
@@ -664,26 +664,26 @@ Responda APENAS em formato JSON:
   "primaryFactors": ["fator1", "fator2", "fator3"],
   "reasoning": "Explicação de 2-3 frases em português"
 }
-`;
+`
   }
 
   /**
    * Parse AI response and extract prediction data
    */
   private parseAIResponse(response: string): {
-    aiRiskScore: number;
-    confidence: number;
-    primaryFactors: string[];
-    reasoning: string;
+    aiRiskScore: number
+    confidence: number
+    primaryFactors: string[]
+    reasoning: string
   } {
     try {
       // Extract JSON from response
-      const jsonMatch = response.match(/\{[\s\S]*\}/);
+      const jsonMatch = response.match(/\{[\s\S]*\}/)
       if (!jsonMatch) {
-        throw new Error('No JSON found in AI response');
+        throw new Error('No JSON found in AI response')
       }
 
-      const parsed = JSON.parse(jsonMatch[0]);
+      const parsed = JSON.parse(jsonMatch[0])
 
       return {
         aiRiskScore: Math.max(0, Math.min(1, parsed.riskScore || 0.5)),
@@ -692,15 +692,15 @@ Responda APENAS em formato JSON:
           ? parsed.primaryFactors
           : [],
         reasoning: parsed.reasoning || 'Análise baseada em fatores comportamentais',
-      };
+      }
     } catch (error) {
-      console.error('Failed to parse AI response:', error);
+      console.error('Failed to parse AI response:', error)
       return {
         aiRiskScore: 0.5,
         confidence: 0.5,
         primaryFactors: ['unknown'],
         reasoning: 'Análise padrão aplicada',
-      };
+      }
     }
   }
 
@@ -726,15 +726,15 @@ Responda APENAS em formato JSON:
       [BRAZILIAN_BEHAVIOR_FACTORS.PRIVATE_INSURANCE]: 0.03,
       [BRAZILIAN_BEHAVIOR_FACTORS.PRIOR_AUTHORIZATION]: 0.03,
       [BRAZILIAN_BEHAVIOR_FACTORS.HOLIDAY_PERIODS]: 0.02,
-    };
-
-    let weightedScore = 0;
-    for (const [factor, value] of Object.entries(factors)) {
-      const weight = weights[factor as keyof typeof weights] || 0.01;
-      weightedScore += value * weight;
     }
 
-    return Math.max(0, Math.min(1, weightedScore));
+    let weightedScore = 0
+    for (const [factor, value] of Object.entries(factors)) {
+      const weight = weights[factor as keyof typeof weights] || 0.01
+      weightedScore += value * weight
+    }
+
+    return Math.max(0, Math.min(1, weightedScore))
   }
 
   /**
@@ -746,58 +746,58 @@ Responda APENAS em formato JSON:
     aiRisk: number,
   ): number {
     // Weights based on Brazilian healthcare studies
-    const historicalWeight = 0.4; // Historical data is strong predictor
-    const behavioralWeight = 0.35; // Brazilian factors are important
-    const aiWeight = 0.25; // AI provides additional insights
+    const historicalWeight = 0.4 // Historical data is strong predictor
+    const behavioralWeight = 0.35 // Brazilian factors are important
+    const aiWeight = 0.25 // AI provides additional insights
 
     return (
-      historicalRisk * historicalWeight
-      + behavioralRisk * behavioralWeight
-      + aiRisk * aiWeight
-    );
+      historicalRisk * historicalWeight +
+      behavioralRisk * behavioralWeight +
+      aiRisk * aiWeight
+    )
   }
 
   /**
    * Calculate risk level from risk score
    */
   private calculateRiskLevel(riskScore: number): NoShowRiskLevel {
-    if (riskScore <= 0.2) return NO_SHOW_RISK_LEVELS.VERY_LOW;
-    if (riskScore <= 0.4) return NO_SHOW_RISK_LEVELS.LOW;
-    if (riskScore <= 0.6) return NO_SHOW_RISK_LEVELS.MEDIUM;
-    if (riskScore <= 0.8) return NO_SHOW_RISK_LEVELS.HIGH;
-    return NO_SHOW_RISK_LEVELS.VERY_HIGH;
+    if (riskScore <= 0.2) return NO_SHOW_RISK_LEVELS.VERY_LOW
+    if (riskScore <= 0.4) return NO_SHOW_RISK_LEVELS.LOW
+    if (riskScore <= 0.6) return NO_SHOW_RISK_LEVELS.MEDIUM
+    if (riskScore <= 0.8) return NO_SHOW_RISK_LEVELS.HIGH
+    return NO_SHOW_RISK_LEVELS.VERY_HIGH
   }
 
   /**
    * Calculate data quality metrics
    */
   private calculateDataQuality(profile: PatientBehaviorProfile): {
-    completeness: number;
-    recency: number;
-    accuracy: number;
+    completeness: number
+    recency: number
+    accuracy: number
   } {
     // Calculate completeness based on available data
-    const totalFields = Object.keys(profile.behaviorFactors).length
-      + Object.keys(profile.riskFactors).length
-      + 5; // demographic fields
-    const completedFields = Object.values(profile.behaviorFactors).filter(v => v > 0).length
-      + Object.values(profile.riskFactors).filter(v => v > 0).length
-      + 5;
-    const completeness = completedFields / totalFields;
+    const totalFields = Object.keys(profile.behaviorFactors).length +
+      Object.keys(profile.riskFactors).length +
+      5 // demographic fields
+    const completedFields = Object.values(profile.behaviorFactors).filter(v => v > 0).length +
+      Object.values(profile.riskFactors).filter(v => v > 0).length +
+      5
+    const completeness = completedFields / totalFields
 
     // Calculate recency based on last update
-    const daysSinceUpdate = (Date.now() - profile.lastUpdated.getTime()) / (1000 * 60 * 60 * 24);
-    const recency = Math.max(0, 1 - daysSinceUpdate / 30); // Degrade over 30 days
+    const daysSinceUpdate = (Date.now() - profile.lastUpdated.getTime()) / (1000 * 60 * 60 * 24)
+    const recency = Math.max(0, 1 - daysSinceUpdate / 30) // Degrade over 30 days
 
     // Estimate accuracy based on historical performance
-    const appointmentCount = profile.historicalAttendance.totalAppointments;
-    const accuracy = Math.min(1, appointmentCount / 10); // More appointments = higher accuracy
+    const appointmentCount = profile.historicalAttendance.totalAppointments
+    const accuracy = Math.min(1, appointmentCount / 10) // More appointments = higher accuracy
 
     return {
       completeness: Math.max(0, Math.min(1, completeness)),
       recency: Math.max(0, Math.min(1, recency)),
       accuracy: Math.max(0, Math.min(1, accuracy)),
-    };
+    }
   } /**
    * Helper methods for Brazilian behavior analysis
    */
@@ -807,23 +807,23 @@ Responda APENAS em formato JSON:
     appointmentDetails: any,
   ): Promise<number> {
     // Analyze urban mobility based on appointment time and location
-    const hour = appointmentDetails.scheduledDate.getHours();
+    const hour = appointmentDetails.scheduledDate.getHours()
 
     // Rush hours in Brazilian cities (7-9 AM, 5-7 PM)
-    const isRushHour = (hour >= 7 && hour <= 9) || (hour >= 17 && hour <= 19);
+    const isRushHour = (hour >= 7 && hour <= 9) || (hour >= 17 && hour <= 19)
 
     // Urban areas have higher mobility issues during rush hours
     if (profile.demographicFactors.urbanRural === 'urban' && isRushHour) {
-      return 0.7; // High mobility risk
+      return 0.7 // High mobility risk
     }
 
-    return profile.demographicFactors.urbanRural === 'rural' ? 0.4 : 0.3;
+    return profile.demographicFactors.urbanRural === 'rural' ? 0.4 : 0.3
   }
 
   private calculateSocioeconomicImpact(
     profile: PatientBehaviorProfile,
   ): number {
-    let impact = 0.5; // Base impact
+    let impact = 0.5 // Base impact
 
     // Education level impact
     const educationImpact = {
@@ -831,8 +831,8 @@ Responda APENAS em formato JSON:
       high_school: 0.1,
       undergraduate: -0.1,
       graduate: -0.2,
-    };
-    impact += educationImpact[profile.demographicFactors.educationLevel] || 0;
+    }
+    impact += educationImpact[profile.demographicFactors.educationLevel] || 0
 
     // Employment status impact
     const employmentImpact = {
@@ -841,44 +841,44 @@ Responda APENAS em formato JSON:
       employed: -0.1,
       self_employed: 0.05,
       retired: 0.0,
-    };
-    impact += employmentImpact[profile.demographicFactors.employmentStatus] || 0;
+    }
+    impact += employmentImpact[profile.demographicFactors.employmentStatus] || 0
 
     // Healthcare type impact
     if (profile.demographicFactors.healthcareType === 'sus') {
-      impact += 0.1; // SUS patients may have more constraints
+      impact += 0.1 // SUS patients may have more constraints
     }
 
-    return Math.max(0, Math.min(1, impact));
+    return Math.max(0, Math.min(1, impact))
   }
 
   private async analyzeWeatherImpact(scheduledDate: Date): Promise<number> {
     // Analyze weather impact based on season and region
     // In real implementation, this would integrate with weather APIs
 
-    const month = scheduledDate.getMonth();
+    const month = scheduledDate.getMonth()
 
     // Brazilian rainy season impacts (varies by region)
     if (month >= 11 || month <= 2) {
       // Summer/rainy season
-      return 0.3; // Higher risk due to rain and holidays
+      return 0.3 // Higher risk due to rain and holidays
     }
 
     if (month >= 5 && month <= 8) {
       // Winter/dry season
-      return 0.1; // Lower weather impact
+      return 0.1 // Lower weather impact
     }
 
-    return 0.2; // Moderate impact for other seasons
+    return 0.2 // Moderate impact for other seasons
   }
 
   private isCarnavalSeason(date: Date): boolean {
     // Carnival typically occurs in February/March
-    const month = date.getMonth();
-    const day = date.getDate();
+    const month = date.getMonth()
+    const day = date.getDate()
 
     // Approximate carnival period (varies each year)
-    return (month === 1 && day > 15) || (month === 2 && day < 15);
+    return (month === 1 && day > 15) || (month === 2 && day < 15)
   }
 
   private getAppointmentTypeRisk(appointmentType: string): number {
@@ -894,9 +894,9 @@ Responda APENAS em formato JSON:
       vaccination: 0.25,
       lab_test: 0.3,
       imaging: 0.25,
-    };
+    }
 
-    return riskByType[appointmentType.toLowerCase()] || 0.25;
+    return riskByType[appointmentType.toLowerCase()] || 0.25
   }
 
   /**
@@ -906,15 +906,15 @@ Responda APENAS em formato JSON:
     behaviorFactors: Record<BrazilianBehaviorFactor, number>,
     _analysis: any,
   ): Array<{
-    factor: BrazilianBehaviorFactor;
-    impact: number;
-    confidence: number;
-    explanation: string;
+    factor: BrazilianBehaviorFactor
+    impact: number
+    confidence: number
+    explanation: string
   }> {
     // Sort factors by impact and select top 5
     const sortedFactors = Object.entries(behaviorFactors)
       .sort(([, a], [, b]) => b - a)
-      .slice(0, 5);
+      .slice(0, 5)
 
     return sortedFactors.map(([factor, impact]) => ({
       factor: factor as BrazilianBehaviorFactor,
@@ -924,7 +924,7 @@ Responda APENAS em formato JSON:
         factor as BrazilianBehaviorFactor,
         impact,
       ),
-    }));
+    }))
   }
 
   private getFactorExplanation(
@@ -992,11 +992,11 @@ Responda APENAS em formato JSON:
       [BRAZILIAN_BEHAVIOR_FACTORS.WAITING_TIME_HISTORY]: impact > 0.5
         ? 'Histórico de pontualidade favorece comparecimento'
         : 'Histórico de espera pode desestimular comparecimento',
-    };
+    }
 
     return (
       explanations[factor] || 'Fator analisado conforme padrões comportamentais'
-    );
+    )
   }
 
   /**
@@ -1006,21 +1006,21 @@ Responda APENAS em formato JSON:
     profile: PatientBehaviorProfile,
     behaviorFactors: Record<BrazilianBehaviorFactor, number>,
   ): {
-    riskScore: number;
-    confidence: number;
-    factors: any[];
+    riskScore: number
+    confidence: number
+    factors: any[]
   } {
     // Use statistical model as fallback
-    const historicalRisk = 1 - profile.historicalAttendance.attendanceRate;
-    const behavioralRisk = this.applyBrazilianWeights(behaviorFactors);
+    const historicalRisk = 1 - profile.historicalAttendance.attendanceRate
+    const behavioralRisk = this.applyBrazilianWeights(behaviorFactors)
 
-    const riskScore = historicalRisk * 0.6 + behavioralRisk * 0.4;
+    const riskScore = historicalRisk * 0.6 + behavioralRisk * 0.4
 
     return {
       riskScore,
       confidence: 0.6, // Lower confidence for fallback
       factors: this.identifyTopFactors(behaviorFactors, { primaryFactors: [] }),
-    };
+    }
   }
 
   /**
@@ -1029,7 +1029,7 @@ Responda APENAS em formato JSON:
   private async updateModelMetrics(
     prediction: NoShowPrediction,
   ): Promise<void> {
-    const modelKey = `${prediction.modelType}_${prediction.modelVersion}`;
+    const modelKey = `${prediction.modelType}_${prediction.modelVersion}`
 
     if (!this.modelPerformanceMetrics.has(modelKey)) {
       this.modelPerformanceMetrics.set(modelKey, {
@@ -1044,21 +1044,22 @@ Responda APENAS em formato JSON:
           very_high: 0,
         },
         lastUpdated: new Date(),
-      });
+      })
     }
 
-    const metrics = this.modelPerformanceMetrics.get(modelKey)!;
-    metrics.totalPredictions++;
-    metrics.averageProcessingTime = (metrics.averageProcessingTime * (metrics.totalPredictions - 1)
-      + prediction.processingTime)
-      / metrics.totalPredictions;
-    metrics.averageConfidence = (metrics.averageConfidence * (metrics.totalPredictions - 1)
-      + prediction.confidenceScore)
-      / metrics.totalPredictions;
-    metrics.riskDistribution[prediction.riskLevel]++;
-    metrics.lastUpdated = new Date();
+    const metrics = this.modelPerformanceMetrics.get(modelKey)!
+    metrics.totalPredictions++
+    metrics.averageProcessingTime =
+      (metrics.averageProcessingTime * (metrics.totalPredictions - 1) +
+        prediction.processingTime) /
+      metrics.totalPredictions
+    metrics.averageConfidence = (metrics.averageConfidence * (metrics.totalPredictions - 1) +
+      prediction.confidenceScore) /
+      metrics.totalPredictions
+    metrics.riskDistribution[prediction.riskLevel]++
+    metrics.lastUpdated = new Date()
 
-    this.modelPerformanceMetrics.set(modelKey, metrics);
+    this.modelPerformanceMetrics.set(modelKey, metrics)
   }
 
   /**
@@ -1068,7 +1069,7 @@ Responda APENAS em formato JSON:
     prediction: NoShowPrediction,
   ): Promise<void> {
     // In real implementation, this would log to audit database
-    console.log(
+    console.warn(
       `Audit: No-show prediction generated for patient ${prediction.patientId}`,
       {
         predictionId: prediction.id,
@@ -1078,7 +1079,7 @@ Responda APENAS em formato JSON:
         processingTime: prediction.processingTime,
         dataQuality: prediction.dataQuality,
       },
-    );
+    )
   }
 
   /**
@@ -1086,49 +1087,49 @@ Responda APENAS em formato JSON:
    */
   async getModelPerformanceReport(): Promise<{
     models: Array<{
-      modelType: AIModelType;
-      version: string;
-      metrics: any;
-    }>;
+      modelType: AIModelType
+      version: string
+      metrics: any
+    }>
     overallPerformance: {
-      totalPredictions: number;
-      averageAccuracy: number;
-      averageProcessingTime: number;
-    };
-    recommendations: string[];
+      totalPredictions: number
+      averageAccuracy: number
+      averageProcessingTime: number
+    }
+    recommendations: string[]
   }> {
     const models = Array.from(this.modelPerformanceMetrics.entries()).map(
       ([key, metrics]) => {
-        const [modelType, version] = key.split('_');
+        const [modelType, version] = key.split('_')
         return {
           modelType: modelType as AIModelType,
           version,
           metrics,
-        };
+        }
       },
-    );
+    )
 
     const totalPredictions = models.reduce(
       (sum, model) => sum + model.metrics.totalPredictions,
       0,
-    );
+    )
     const averageProcessingTime = models.length > 0
       ? models.reduce(
         (sum, model) => sum + model.metrics.averageProcessingTime,
         0,
       ) / models.length
-      : 0;
+      : 0
 
-    const recommendations: string[] = [];
+    const recommendations: string[] = []
 
     if (averageProcessingTime > 5000) {
       recommendations.push(
         'Consider model optimization to reduce processing time',
-      );
+      )
     }
 
     if (totalPredictions < 100) {
-      recommendations.push('Collect more data to improve model accuracy');
+      recommendations.push('Collect more data to improve model accuracy')
     }
 
     return {
@@ -1139,8 +1140,8 @@ Responda APENAS em formato JSON:
         averageProcessingTime,
       },
       recommendations,
-    };
+    }
   }
 }
 
-export default NoShowPredictionService;
+export default NoShowPredictionService

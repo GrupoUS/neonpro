@@ -5,64 +5,64 @@
  * Features include LGPD anonymization, audit logging, and CFM compliance.
  */
 
-import type { ModelProvider, PredictionInput, PredictionResult } from '../ml/interfaces';
-import { StubModelProvider } from '../ml/stub-provider';
+import type { ModelProvider, PredictionInput, PredictionResult } from '../ml/interfaces'
+import { StubModelProvider } from '../ml/stub-provider'
 
 // ============================================================================
 // Types and Interfaces
 // ============================================================================
 
 export interface PredictiveRequest {
-  timeframe: 'week' | 'month' | 'quarter';
-  filters?: Record<string, unknown>;
-  patientData?: Record<string, unknown>;
-  metadata?: Record<string, unknown>;
+  timeframe: 'week' | 'month' | 'quarter'
+  filters?: Record<string, unknown>
+  patientData?: Record<string, unknown>
+  metadata?: Record<string, unknown>
 }
 
 export interface PredictiveInsight {
-  id: string;
-  type: string;
-  title: string;
-  prediction: unknown;
-  confidence: number;
-  impact: 'low' | 'medium' | 'high';
-  description: string;
-  recommendation: string;
-  createdAt: Date;
-  recommendations: string[];
+  id: string
+  type: string
+  title: string
+  prediction: unknown
+  confidence: number
+  impact: 'low' | 'medium' | 'high'
+  description: string
+  recommendation: string
+  createdAt: Date
+  recommendations: string[]
   metadata: {
-    generatedAt: Date;
-    modelVersion: string;
-    complianceStatus: 'compliant' | 'non-compliant';
-  };
+    generatedAt: Date
+    modelVersion: string
+    complianceStatus: 'compliant' | 'non-compliant'
+  }
 }
 
 export interface AnalyticsMetrics {
-  attendanceRate: number;
-  revenuePerPatient: number;
-  revenueGrowth: number;
-  patientSatisfaction: number;
-  operationalEfficiency: number;
-  averageWaitTime: number;
-  capacityUtilization: number;
-  avgAppointmentDuration: number;
-  cancellationRate: number;
-  avgWaitTime: number;
-  npsScore: number;
-  returnRate: number;
-  dataQuality: number;
-  lastUpdated: string;
+  attendanceRate: number
+  revenuePerPatient: number
+  revenueGrowth: number
+  patientSatisfaction: number
+  operationalEfficiency: number
+  averageWaitTime: number
+  capacityUtilization: number
+  avgAppointmentDuration: number
+  cancellationRate: number
+  avgWaitTime: number
+  npsScore: number
+  returnRate: number
+  dataQuality: number
+  lastUpdated: string
 }
 
 export interface ComplianceReport {
-  anonymizationEnabled: boolean;
-  dataProcessingCompliant: boolean;
-  auditTrail: string[];
-  lastAudit: Date;
-  complianceScore: number;
-  privacyProtections: string[];
-  recommendations: string[];
-  generatedAt: Date;
+  anonymizationEnabled: boolean
+  dataProcessingCompliant: boolean
+  auditTrail: string[]
+  lastAudit: Date
+  complianceScore: number
+  privacyProtections: string[]
+  recommendations: string[]
+  generatedAt: Date
 }
 
 // ============================================================================
@@ -71,31 +71,31 @@ export interface ComplianceReport {
 
 function anonymizeString(value: string, revealLength: number = 2): string {
   if (value.length <= revealLength * 2) {
-    return '*'.repeat(value.length);
+    return '*'.repeat(value.length)
   }
-  const start = value.substring(0, revealLength);
-  const end = value.substring(value.length - revealLength);
-  const middle = '*'.repeat(value.length - revealLength * 2);
-  return start + middle + end;
+  const start = value.substring(0, revealLength)
+  const end = value.substring(value.length - revealLength)
+  const middle = '*'.repeat(value.length - revealLength * 2)
+  return start + middle + end
 }
 
 function anonymizeCPF(cpf: string): string {
   if (!/^\d{11}$/.test(cpf.replace(/\D/g, ''))) {
-    return '***.***.***-**';
+    return '***.***.***-**'
   }
-  const cleaned = cpf.replace(/\D/g, '');
-  return `${cleaned.substring(0, 3)}.***.***.${cleaned.substring(9)}`;
+  const cleaned = cpf.replace(/\D/g, '')
+  return `${cleaned.substring(0, 3)}.***.***.${cleaned.substring(9)}`
 }
 
 function anonymizeEmail(email: string): string {
-  const [local, domain] = email.split('@');
-  if (!domain || !local) return '*****@*****.***';
+  const [local, domain] = email.split('@')
+  if (!domain || !local) return '*****@*****.***'
 
   const anonymizedLocal = local.length > 2
     ? local.substring(0, 2) + '*'.repeat(Math.max(1, local.length - 2))
-    : '*'.repeat(local.length);
+    : '*'.repeat(local.length)
 
-  return `${anonymizedLocal}@${domain}`;
+  return `${anonymizedLocal}@${domain}`
 }
 
 function maskSensitiveFields(
@@ -108,24 +108,24 @@ function maskSensitiveFields(
     'address',
     'name',
     'fullName',
-  ];
-  const masked = { ...data };
+  ]
+  const masked = { ...data }
 
   for (const field of sensitiveFields) {
     if (masked[field] && typeof masked[field] === 'string') {
-      const value = masked[field] as string;
+      const value = masked[field] as string
 
       if (field === 'cpf') {
-        masked[field] = anonymizeCPF(value);
+        masked[field] = anonymizeCPF(value)
       } else if (field === 'email') {
-        masked[field] = anonymizeEmail(value);
+        masked[field] = anonymizeEmail(value)
       } else {
-        masked[field] = anonymizeString(value);
+        masked[field] = anonymizeString(value)
       }
     }
   }
 
-  return masked;
+  return masked
 }
 
 // ============================================================================
@@ -133,34 +133,34 @@ function maskSensitiveFields(
 // ============================================================================
 
 export class PredictiveAnalyticsService {
-  private modelProvider: ModelProvider;
-  private enableLGPDCompliance: boolean;
-  private initialized: boolean = false;
+  private modelProvider: ModelProvider
+  private enableLGPDCompliance: boolean
+  private initialized: boolean = false
 
   constructor(
     mlProvider?: ModelProvider,
     enableLGPDCompliance: boolean = true,
   ) {
-    this.modelProvider = mlProvider || new StubModelProvider();
-    this.enableLGPDCompliance = enableLGPDCompliance;
+    this.modelProvider = mlProvider || new StubModelProvider()
+    this.enableLGPDCompliance = enableLGPDCompliance
 
     // Initialize the provider
-    this.initializeProvider();
+    this.initializeProvider()
   }
 
   private async initializeProvider(): Promise<void> {
     try {
-      await this.modelProvider.initialize();
-      this.initialized = true;
+      await this.modelProvider.initialize()
+      this.initialized = true
     } catch (error) {
-      console.warn('Failed to initialize ML provider:', error);
-      this.initialized = false;
+      console.warn('Failed to initialize ML provider:', error)
+      this.initialized = false
     }
   }
 
   private async ensureInitialized(): Promise<void> {
     if (!this.initialized) {
-      await this.initializeProvider();
+      await this.initializeProvider()
     }
   }
 
@@ -184,10 +184,10 @@ export class PredictiveAnalyticsService {
         returnRate: 0.68,
         dataQuality: 0.92,
         lastUpdated: new Date().toISOString(),
-      };
+      }
     } catch (error) {
-      console.error('Error getting analytics metrics:', error);
-      throw new Error('Failed to generate analytics metrics');
+      console.error('Error getting analytics metrics:', error)
+      throw new Error('Failed to generate analytics metrics')
     }
   }
 
@@ -198,13 +198,13 @@ export class PredictiveAnalyticsService {
     _request: PredictiveRequest,
   ): Promise<PredictiveInsight | null> {
     try {
-      await this.ensureInitialized();
+      await this.ensureInitialized()
 
-      let processedData = _request.patientData || {};
+      let processedData = _request.patientData || {}
 
       // Apply LGPD anonymization if enabled
       if (this.enableLGPDCompliance) {
-        processedData = maskSensitiveFields(processedData);
+        processedData = maskSensitiveFields(processedData)
       }
 
       const predictionInput: PredictionInput = {
@@ -218,9 +218,9 @@ export class PredictiveAnalyticsService {
           appointment_history: processedData.appointmentHistory || 'regular',
           timeframe: _request.timeframe,
         },
-      };
+      }
 
-      const result: PredictionResult = await this.modelProvider.predict(predictionInput);
+      const result: PredictionResult = await this.modelProvider.predict(predictionInput)
 
       return {
         id: `no-show-${Date.now()}`,
@@ -249,10 +249,10 @@ export class PredictiveAnalyticsService {
             ? 'compliant'
             : 'non-compliant',
         },
-      };
+      }
     } catch (error) {
-      console.error('Error predicting no-show risk:', error);
-      return null;
+      console.error('Error predicting no-show risk:', error)
+      return null
     }
   }
 
@@ -263,12 +263,12 @@ export class PredictiveAnalyticsService {
     _request: PredictiveRequest,
   ): Promise<PredictiveInsight | null> {
     try {
-      await this.ensureInitialized();
+      await this.ensureInitialized()
 
-      let processedData = _request.patientData || {};
+      let processedData = _request.patientData || {}
 
       if (this.enableLGPDCompliance) {
-        processedData = maskSensitiveFields(processedData);
+        processedData = maskSensitiveFields(processedData)
       }
 
       const predictionInput: PredictionInput = {
@@ -283,9 +283,9 @@ export class PredictiveAnalyticsService {
           historical_revenue: processedData.historicalRevenue || 1000,
           timeframe: _request.timeframe,
         },
-      };
+      }
 
-      const result: PredictionResult = await this.modelProvider.predict(predictionInput);
+      const result: PredictionResult = await this.modelProvider.predict(predictionInput)
 
       return {
         id: `revenue-${Date.now()}`,
@@ -314,10 +314,10 @@ export class PredictiveAnalyticsService {
             ? 'compliant'
             : 'non-compliant',
         },
-      };
+      }
     } catch (error) {
-      console.error('Error forecasting revenue:', error);
-      return null;
+      console.error('Error forecasting revenue:', error)
+      return null
     }
   }
 
@@ -328,12 +328,12 @@ export class PredictiveAnalyticsService {
     _request: PredictiveRequest,
   ): Promise<PredictiveInsight | null> {
     try {
-      await this.ensureInitialized();
+      await this.ensureInitialized()
 
-      let processedData = _request.patientData || {};
+      let processedData = _request.patientData || {}
 
       if (this.enableLGPDCompliance) {
-        processedData = maskSensitiveFields(processedData);
+        processedData = maskSensitiveFields(processedData)
       }
 
       const predictionInput: PredictionInput = {
@@ -345,9 +345,9 @@ export class PredictiveAnalyticsService {
           current_symptoms: processedData.symptoms || 'none',
           vital_signs: processedData.vitals || 'normal',
         },
-      };
+      }
 
-      const result: PredictionResult = await this.modelProvider.predict(predictionInput);
+      const result: PredictionResult = await this.modelProvider.predict(predictionInput)
 
       return {
         id: `outcome-${Date.now()}`,
@@ -376,10 +376,10 @@ export class PredictiveAnalyticsService {
             ? 'compliant'
             : 'non-compliant',
         },
-      };
+      }
     } catch (error) {
-      console.error('Error predicting patient outcome:', error);
-      return null;
+      console.error('Error predicting patient outcome:', error)
+      return null
     }
   }
 
@@ -390,31 +390,31 @@ export class PredictiveAnalyticsService {
     _request: PredictiveRequest,
   ): Promise<PredictiveInsight[]> {
     try {
-      await this.ensureInitialized();
+      await this.ensureInitialized()
 
       const insights: (PredictiveInsight | null)[] = await Promise.all([
-        this.predictNoShowRisk(request).catch(() => null),
-        this.predictRevenueForecast(request).catch(() => null),
-        this.predictPatientOutcome(request).catch(() => null),
-      ]);
+        this.predictNoShowRisk(request).catch(() => Promise.resolve(null)),
+        this.predictRevenueForecast(request).catch(() => Promise.resolve(null)),
+        this.predictPatientOutcome(request).catch(() => Promise.resolve(null)),
+      ])
 
       // Filter out null results and return valid insights
       const validInsights = insights.filter(
         (insight): insight is PredictiveInsight => insight !== null,
-      );
+      )
 
       // If no valid insights were generated, throw an error
       if (
-        validInsights.length === 0
-        && insights.some(insight => insight === null)
+        validInsights.length === 0 &&
+        insights.some(insight => insight === null)
       ) {
-        throw new Error('Failed to generate predictive insights');
+        throw new Error('Failed to generate predictive insights')
       }
 
-      return validInsights;
+      return validInsights
     } catch (error) {
-      console.error('Error generating insights:', error);
-      throw error; // Re-throw for proper error handling
+      console.error('Error generating insights:', error)
+      throw error // Re-throw for proper error handling
     }
   }
 
@@ -430,7 +430,7 @@ export class PredictiveAnalyticsService {
       'cfm professional standards adhered to in brazil',
       'audit logging enabled for all data access',
       'compliance verification completed successfully',
-    ];
+    ]
 
     return {
       anonymizationEnabled: this.enableLGPDCompliance,
@@ -448,6 +448,6 @@ export class PredictiveAnalyticsService {
         ? ['Continue current compliance practices']
         : ['Enable LGPD compliance', 'Implement data anonymization'],
       generatedAt: new Date(),
-    };
+    }
   }
 }

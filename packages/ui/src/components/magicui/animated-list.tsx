@@ -1,55 +1,55 @@
-import { AnimatePresence, motion } from 'framer-motion';
-import * as React from 'react';
-import { cn } from '../../utils';
+import { AnimatePresence, motion } from 'framer-motion'
+import * as React from 'react'
+import { cn } from '../../utils'
 
 export type SharedAnimatedListItem = {
-  id: string | number;
-  title?: string;
-  message?: string;
-  type?: string;
-  link?: string;
-  createdAt?: string | number | Date;
-  read?: boolean;
-};
+  id: string | number
+  title?: string
+  message?: string
+  type?: string
+  link?: string
+  createdAt?: string | number | Date
+  read?: boolean
+}
 
 export type SharedAnimatedListRenderItem<T = SharedAnimatedListItem> = (
   item: T,
-) => React.ReactNode;
+) => React.ReactNode
 
 export interface SharedAnimatedListProps<T = SharedAnimatedListItem> {
-  items: readonly T[] | null | undefined;
-  renderItem?: SharedAnimatedListRenderItem<T>;
-  className?: string;
-  role?: 'list' | 'listbox';
-  ariaLabel?: string;
+  items: readonly T[] | null | undefined
+  renderItem?: SharedAnimatedListRenderItem<T>
+  className?: string
+  role?: 'list' | 'listbox'
+  ariaLabel?: string
   /**
    * Visual density and sizing presets
    */
-  size?: 'sm' | 'md' | 'lg';
+  size?: 'sm' | 'md' | 'lg'
   /**
    * Animation config
    */
   motion?: {
-    initial?: import('framer-motion').Target | boolean;
+    initial?: import('framer-motion').Target | boolean
     animate?:
       | import('framer-motion').TargetAndTransition
       | import('framer-motion').VariantLabels
-      | boolean;
+      | boolean
     exit?:
       | import('framer-motion').TargetAndTransition
-      | import('framer-motion').VariantLabels;
-    transition?: import('framer-motion').Transition;
-  };
+      | import('framer-motion').VariantLabels
+    transition?: import('framer-motion').Transition
+  }
   /**
    * Loading/empty/error states
    */
-  loading?: boolean;
-  error?: string | null;
-  emptyMessage?: React.ReactNode;
+  loading?: boolean
+  error?: string | null
+  emptyMessage?: React.ReactNode
   /**
    * Keyboard navigation enabled
    */
-  keyboardNavigation?: boolean;
+  keyboardNavigation?: boolean
 }
 
 const defaultMotion: Required<NonNullable<SharedAnimatedListProps['motion']>> = {
@@ -57,7 +57,7 @@ const defaultMotion: Required<NonNullable<SharedAnimatedListProps['motion']>> = 
   animate: { opacity: 1, y: 0 },
   exit: { opacity: 0, y: -6 },
   transition: { duration: 0.15 },
-};
+}
 
 /**
  * SharedAnimatedList — SSR/CSR-safe animated list with a11y and DS integration
@@ -78,56 +78,56 @@ export function SharedAnimatedList<T = SharedAnimatedListItem>(
     error,
     emptyMessage = <span className='text-xs text-muted-foreground'>Nada para exibir</span>,
     keyboardNavigation = true,
-  } = props;
+  } = props
 
-  const listRef = React.useRef<HTMLUListElement | null>(null);
-  const [focusedIndex, setFocusedIndex] = React.useState<number>(-1);
+  const listRef = React.useRef<HTMLUListElement | null>(null)
+  const [focusedIndex, setFocusedIndex] = React.useState<number>(-1)
 
-  const isEmpty = !loading && !error && (!items || items.length === 0);
+  const isEmpty = !loading && !error && (!items || items.length === 0)
   const motionCfg: Required<NonNullable<SharedAnimatedListProps['motion']>> = {
     ...defaultMotion,
     ...motionOverrides,
-  };
+  }
 
   // Keyboard navigation (SSR safe: only runs on client)
   React.useEffect(() => {
-    if (!keyboardNavigation) {return;}
-    const el = listRef.current;
-    if (!el) {return;}
+    if (!keyboardNavigation) return
+    const el = listRef.current
+    if (!el) return
 
     function onKeyDown(e: KeyboardEvent) {
-      if (!items || items.length === 0) {return;}
+      if (!items || items.length === 0) return
       if (e.key === 'ArrowDown') {
-        e.preventDefault();
-        setFocusedIndex(idx => Math.min(idx + 1, items.length - 1));
+        e.preventDefault()
+        setFocusedIndex(idx => Math.min(idx + 1, items.length - 1))
       } else if (e.key === 'ArrowUp') {
-        e.preventDefault();
-        setFocusedIndex(idx => Math.max(idx - 1, 0));
+        e.preventDefault()
+        setFocusedIndex(idx => Math.max(idx - 1, 0))
       } else if (e.key === 'Home') {
-        e.preventDefault();
-        setFocusedIndex(0);
+        e.preventDefault()
+        setFocusedIndex(0)
       } else if (e.key === 'End') {
-        e.preventDefault();
-        setFocusedIndex(items.length - 1);
+        e.preventDefault()
+        setFocusedIndex(items.length - 1)
       }
     }
 
-    el.addEventListener('keydown', onKeyDown);
-    return () => el.removeEventListener('keydown', onKeyDown);
-  }, [items, keyboardNavigation]);
+    el.addEventListener('keydown', onKeyDown)
+    return () => el.removeEventListener('keydown', onKeyDown)
+  }, [items, keyboardNavigation])
 
   React.useEffect(() => {
-    if (focusedIndex < 0) {return;}
-    const el = listRef.current;
-    if (!el) {return;}
+    if (focusedIndex < 0) return
+    const el = listRef.current
+    if (!el) return
     const item = el.querySelectorAll('[role="listitem"], [role="option"]')[
       focusedIndex
-    ] as HTMLElement | undefined;
-    item?.focus?.();
-  }, [focusedIndex]);
+    ] as HTMLElement | undefined
+    item?.focus?.()
+  }, [focusedIndex])
 
-  const paddingBySize = size === 'lg' ? 'py-3 px-3' : size === 'sm' ? 'py-1.5 px-2' : 'py-2 px-2.5';
-  const gapBySize = size === 'lg' ? 'gap-3' : size === 'sm' ? 'gap-1.5' : 'gap-2';
+  const paddingBySize = size === 'lg' ? 'py-3 px-3' : size === 'sm' ? 'py-1.5 px-2' : 'py-2 px-2.5'
+  const gapBySize = size === 'lg' ? 'gap-3' : size === 'sm' ? 'gap-1.5' : 'gap-2'
 
   return (
     <ul
@@ -167,7 +167,7 @@ export function SharedAnimatedList<T = SharedAnimatedListItem>(
 
       <AnimatePresence initial={false}>
         {(items ?? []).map((item, idx) => {
-          const key = (item as SharedAnimatedListItem)?.id ?? idx;
+          const key = (item as SharedAnimatedListItem)?.id ?? idx
           return (
             <motion.li
               key={key}
@@ -220,11 +220,11 @@ export function SharedAnimatedList<T = SharedAnimatedListItem>(
                   </div>
                 )}
             </motion.li>
-          );
+          )
         })}
       </AnimatePresence>
     </ul>
-  );
+  )
 }
 
-export default SharedAnimatedList;
+export default SharedAnimatedList

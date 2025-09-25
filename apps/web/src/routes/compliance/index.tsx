@@ -3,7 +3,7 @@
  * Provides comprehensive compliance management for LGPD, ANVISA, and Professional Councils
  */
 
-import { createFileRoute, Link } from '@tanstack/react-router';
+import { createFileRoute, Link } from '@tanstack/react-router'
 import {
   AlertTriangle,
   Bell,
@@ -21,43 +21,43 @@ import {
   TrendingUp,
   Users,
   X,
-} from 'lucide-react';
-import * as React from 'react';
-import { useEffect, useState } from 'react';
-import { api } from '~/utils/api';
+} from 'lucide-react'
+import * as React from 'react'
+import { useEffect, useState } from 'react'
+import { api } from '~/utils/api'
 
 export const Route = createFileRoute('/compliance/')({
   component: ComplianceDashboard,
-});
+})
 
 interface ComplianceDashboardData {
-  complianceScore: number;
-  totalAlerts: number;
-  totalAssessments: number;
+  complianceScore: number
+  totalAlerts: number
+  totalAssessments: number
   alertBreakdown: {
-    critical: number;
-    high: number;
-    medium: number;
-    low: number;
-  };
+    critical: number
+    high: number
+    medium: number
+    low: number
+  }
   complianceStatus: {
-    anvisaActive: number;
-    anvisaExpired: number;
-    anvisaExpiringSoon: number;
-    licensesActive: number;
-    licensesExpired: number;
-    licensesExpiringSoon: number;
-  };
-  recentAlerts: any[];
-  recentAssessments: any[];
+    anvisaActive: number
+    anvisaExpired: number
+    anvisaExpiringSoon: number
+    licensesActive: number
+    licensesExpired: number
+    licensesExpiringSoon: number
+  }
+  recentAlerts: any[]
+  recentAssessments: any[]
 }
 
 function ComplianceDashboard() {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [dashboardData, setDashboardData] = useState<ComplianceDashboardData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState('dashboard');
+  const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [dashboardData, setDashboardData] = useState<ComplianceDashboardData | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [activeTab, setActiveTab] = useState('dashboard')
 
   const menuItems = [
     { icon: TrendingUp, label: 'Dashboard', href: '/compliance' },
@@ -68,105 +68,105 @@ function ComplianceDashboard() {
     { icon: Package, label: 'ANVISA', href: '/compliance/anvisa' },
     { icon: Bell, label: 'Alertas', href: '/compliance/alerts' },
     { icon: FileText, label: 'Relatórios', href: '/compliance/reports' },
-  ];
+  ]
 
   useEffect(() => {
-    loadDashboardData();
-  }, []);
+    loadDashboardData()
+  }, [])
 
   const loadDashboardData = async () => {
     try {
-      setLoading(true);
+      setLoading(true)
       const response = await api.complianceManagement.getComplianceDashboard.useQuery({
         clinicId: 'current-clinic-id', // This should come from auth context
-      });
+      })
 
       if (response.data?.success) {
-        setDashboardData(response.data.data);
+        setDashboardData(response.data.data)
       } else {
-        setError(response.data?.message || 'Erro ao carregar dados do dashboard');
+        setError(response.data?.message || 'Erro ao carregar dados do dashboard')
       }
     } catch (err) {
-      setError('Erro ao carregar dados do dashboard');
-      console.error('Error loading dashboard data:', err);
+      setError('Erro ao carregar dados do dashboard')
+      console.error('Error loading dashboard data:', err)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   const getScoreColor = (score: number) => {
-    if (score >= 90) return 'text-green-600';
-    if (score >= 70) return 'text-yellow-600';
-    return 'text-red-600';
-  };
+    if (score >= 90) return 'text-green-600'
+    if (score >= 70) return 'text-yellow-600'
+    return 'text-red-600'
+  }
 
   const getScoreBgColor = (score: number) => {
-    if (score >= 90) return 'bg-green-100';
-    if (score >= 70) return 'bg-yellow-100';
-    return 'bg-red-100';
-  };
+    if (score >= 90) return 'bg-green-100'
+    if (score >= 70) return 'bg-yellow-100'
+    return 'bg-red-100'
+  }
 
   const getSeverityColor = (severity: string) => {
     switch (severity) {
       case 'critical':
-        return 'text-red-600 bg-red-100';
+        return 'text-red-600 bg-red-100'
       case 'high':
-        return 'text-orange-600 bg-orange-100';
+        return 'text-orange-600 bg-orange-100'
       case 'medium':
-        return 'text-yellow-600 bg-yellow-100';
+        return 'text-yellow-600 bg-yellow-100'
       case 'low':
-        return 'text-blue-600 bg-blue-100';
+        return 'text-blue-600 bg-blue-100'
       default:
-        return 'text-gray-600 bg-gray-100';
+        return 'text-gray-600 bg-gray-100'
     }
-  };
+  }
 
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'passed':
-        return 'text-green-600 bg-green-100';
+        return 'text-green-600 bg-green-100'
       case 'failed':
-        return 'text-red-600 bg-red-100';
+        return 'text-red-600 bg-red-100'
       case 'pending':
-        return 'text-yellow-600 bg-yellow-100';
+        return 'text-yellow-600 bg-yellow-100'
       case 'in_progress':
-        return 'text-blue-600 bg-blue-100';
+        return 'text-blue-600 bg-blue-100'
       default:
-        return 'text-gray-600 bg-gray-100';
+        return 'text-gray-600 bg-gray-100'
     }
-  };
+  }
 
   const getStatusText = (status: string) => {
     switch (status) {
       case 'passed':
-        return 'Aprovado';
+        return 'Aprovado'
       case 'failed':
-        return 'Reprovado';
+        return 'Reprovado'
       case 'pending':
-        return 'Pendente';
+        return 'Pendente'
       case 'in_progress':
-        return 'Em Andamento';
+        return 'Em Andamento'
       case 'requires_action':
-        return 'Requer Ação';
+        return 'Requer Ação'
       default:
-        return status;
+        return status
     }
-  };
+  }
 
   const getSeverityText = (severity: string) => {
     switch (severity) {
       case 'critical':
-        return 'Crítico';
+        return 'Crítico'
       case 'high':
-        return 'Alto';
+        return 'Alto'
       case 'medium':
-        return 'Médio';
+        return 'Médio'
       case 'low':
-        return 'Baixo';
+        return 'Baixo'
       default:
-        return severity;
+        return severity
     }
-  };
+  }
 
   if (loading) {
     return (
@@ -177,7 +177,7 @@ function ComplianceDashboard() {
           <p className='mt-4 text-gray-600'>Carregando dashboard de compliance...</p>
         </div>
       </div>
-    );
+    )
   }
 
   if (error) {
@@ -194,7 +194,7 @@ function ComplianceDashboard() {
           </button>
         </div>
       </div>
-    );
+    )
   }
 
   if (!dashboardData) {
@@ -205,7 +205,7 @@ function ComplianceDashboard() {
           <p className='mt-4 text-gray-600'>Nenhum dado disponível</p>
         </div>
       </div>
-    );
+    )
   }
 
   return (
@@ -631,5 +631,5 @@ function ComplianceDashboard() {
         </main>
       </div>
     </div>
-  );
+  )
 }

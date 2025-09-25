@@ -7,10 +7,10 @@
  * Format number as Brazilian Real currency
  */
 export function formatBRL(amount: number | string): string {
-  const numAmount = typeof amount === 'string' ? parseFloat(amount) : amount;
+  const numAmount = typeof amount === 'string' ? parseFloat(amount) : amount
 
   if (isNaN(numAmount)) {
-    return 'R$ 0,00';
+    return 'R$ 0,00'
   }
 
   return new Intl.NumberFormat('pt-BR', {
@@ -18,7 +18,7 @@ export function formatBRL(amount: number | string): string {
     currency: 'BRL',
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
-  }).format(numAmount);
+  }).format(numAmount)
 }
 
 /**
@@ -29,10 +29,10 @@ export function parseBRL(brlString: string): number {
   const cleaned = brlString
     .replace(/R\$\s*/, '')
     .replace(/\./g, '') // Remove thousands separators
-    .replace(',', '.'); // Convert decimal comma to dot
+    .replace(',', '.') // Convert decimal comma to dot
 
-  const parsed = parseFloat(cleaned);
-  return isNaN(parsed) ? 0 : parsed;
+  const parsed = parseFloat(cleaned)
+  return isNaN(parsed) ? 0 : parsed
 }
 
 /**
@@ -40,36 +40,36 @@ export function parseBRL(brlString: string): number {
  */
 export function maskBRLInput(value: string): string {
   // Remove all non-numeric characters
-  const numericValue = value.replace(/\D/g, '');
+  const numericValue = value.replace(/\D/g, '')
 
-  if (!numericValue) return '';
+  if (!numericValue) return ''
 
   // Convert to cents
-  const cents = parseInt(numericValue, 10);
-  const reais = cents / 100;
+  const cents = parseInt(numericValue, 10)
+  const reais = cents / 100
 
-  return formatBRL(reais);
+  return formatBRL(reais)
 }
 
 /**
  * Validate if string is a valid BRL amount
  */
 export function isValidBRLAmount(value: string): boolean {
-  const parsed = parseBRL(value);
-  return !isNaN(parsed) && parsed >= 0;
+  const parsed = parseBRL(value)
+  return !isNaN(parsed) && parsed >= 0
 }
 
 /**
  * Convert cents to BRL format
  */
 export function centsToBRL(cents: number): string {
-  return formatBRL(cents / 100);
+  return formatBRL(cents / 100)
 }
 
 /**
  * Convert BRL to cents (for storage as integers)
  */
 export function brlToCents(brlAmount: number | string): number {
-  const amount = typeof brlAmount === 'string' ? parseBRL(brlAmount) : brlAmount;
-  return Math.round(amount * 100);
+  const amount = typeof brlAmount === 'string' ? parseBRL(brlAmount) : brlAmount
+  return Math.round(amount * 100)
 }

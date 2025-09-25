@@ -5,12 +5,12 @@
 
 // Healthcare-compliant metadata types for AI Enhanced
 export interface AIEnhancedMetadata {
-  processingTime?: number;
-  cacheHit?: boolean;
-  modelVersion?: string;
-  requestSource?: string;
-  complianceLevel?: 'standard' | 'enhanced' | 'restricted';
-  [key: string]: unknown;
+  processingTime?: number
+  cacheHit?: boolean
+  modelVersion?: string
+  requestSource?: string
+  complianceLevel?: 'standard' | 'enhanced' | 'restricted'
+  [key: string]: unknown
 }
 
 // This file defines types that directly match the database schema and models
@@ -32,7 +32,7 @@ import type {
   SubscriptionPlan,
   SubscriptionTier,
   UserSubscription,
-} from './enhanced-ai';
+} from './enhanced-ai.js'
 
 // Re-export the imported types
 export type {
@@ -50,7 +50,7 @@ export type {
   SubscriptionPlan,
   SubscriptionTier,
   UserSubscription,
-};
+}
 
 // ================================================
 // DATABASE SCHEMA MATCHING TYPES
@@ -61,66 +61,66 @@ export type {
  * Maps to packages/core-services/src/models/plan.ts
  */
 export interface Plan {
-  readonly id: string;
-  readonly planCode: SubscriptionTier;
-  readonly planName: string;
-  readonly planDescription: string;
+  readonly id: string
+  readonly planCode: SubscriptionTier
+  readonly planName: string
+  readonly planDescription: string
 
   // Healthcare compliance
-  readonly cfmComplianceLevel: CFMComplianceLevel;
-  readonly anvisaCertified: boolean;
-  readonly lgpdEnhancedFeatures: boolean;
+  readonly cfmComplianceLevel: CFMComplianceLevel
+  readonly anvisaCertified: boolean
+  readonly lgpdEnhancedFeatures: boolean
 
   // Usage limits
-  readonly monthlyQueryLimit: number; // -1 for unlimited
-  readonly dailyRateLimit: number;
-  readonly concurrentRequests: number;
-  readonly maxTokensPerRequest: number;
-  readonly maxClinics: number; // -1 for unlimited
+  readonly monthlyQueryLimit: number // -1 for unlimited
+  readonly dailyRateLimit: number
+  readonly concurrentRequests: number
+  readonly maxTokensPerRequest: number
+  readonly maxClinics: number // -1 for unlimited
 
   // Cost management
-  readonly costBudgetUsdMonthly: number;
-  readonly costPer1kTokens: number;
+  readonly costBudgetUsdMonthly: number
+  readonly costPer1kTokens: number
 
   // Features JSON
-  readonly features: PlanFeatures;
+  readonly features: PlanFeatures
 
   // Data retention and compliance
-  readonly dataRetentionDays: number;
-  readonly anonymizationRequired: boolean;
-  readonly auditTrailEnhanced: boolean;
+  readonly dataRetentionDays: number
+  readonly anonymizationRequired: boolean
+  readonly auditTrailEnhanced: boolean
 
   // Plan metadata
-  readonly active: boolean;
-  readonly sortOrder: number;
+  readonly active: boolean
+  readonly sortOrder: number
 
-  readonly createdAt: Date;
-  readonly updatedAt: Date;
+  readonly createdAt: Date
+  readonly updatedAt: Date
 }
 
 /**
  * Plan data structure for creating new plans
  */
 export interface PlanData {
-  planCode: SubscriptionTier;
-  planName: string;
-  planDescription: string;
-  cfmComplianceLevel?: CFMComplianceLevel;
-  anvisaCertified?: boolean;
-  lgpdEnhancedFeatures?: boolean;
-  monthlyQueryLimit?: number;
-  dailyRateLimit?: number;
-  concurrentRequests?: number;
-  maxTokensPerRequest?: number;
-  maxClinics?: number;
-  costBudgetUsdMonthly?: number;
-  costPer1kTokens?: number;
-  features?: Partial<PlanFeatures>;
-  dataRetentionDays?: number;
-  anonymizationRequired?: boolean;
-  auditTrailEnhanced?: boolean;
-  active?: boolean;
-  sortOrder?: number;
+  planCode: SubscriptionTier
+  planName: string
+  planDescription: string
+  cfmComplianceLevel?: CFMComplianceLevel
+  anvisaCertified?: boolean
+  lgpdEnhancedFeatures?: boolean
+  monthlyQueryLimit?: number
+  dailyRateLimit?: number
+  concurrentRequests?: number
+  maxTokensPerRequest?: number
+  maxClinics?: number
+  costBudgetUsdMonthly?: number
+  costPer1kTokens?: number
+  features?: Partial<PlanFeatures>
+  dataRetentionDays?: number
+  anonymizationRequired?: boolean
+  auditTrailEnhanced?: boolean
+  active?: boolean
+  sortOrder?: number
 }
 
 /**
@@ -128,72 +128,72 @@ export interface PlanData {
  * Maps to packages/core-services/src/models/usage-counter.ts
  */
 export interface UsageCounter {
-  readonly id: string;
-  readonly clinicId: string;
-  readonly userId: string;
-  readonly planCode: SubscriptionTier;
+  readonly id: string
+  readonly clinicId: string
+  readonly userId: string
+  readonly planCode: SubscriptionTier
 
   // Usage metrics
-  readonly monthlyQueries: number;
-  readonly dailyQueries: number;
-  readonly currentCostUsd: number;
-  readonly concurrentRequests: number;
+  readonly monthlyQueries: number
+  readonly dailyQueries: number
+  readonly currentCostUsd: number
+  readonly concurrentRequests: number
 
   // Lifetime metrics
-  readonly totalRequests: number;
-  readonly totalCostUsd: number;
-  readonly totalTokensUsed: number;
-  readonly cacheSavingsUsd: number;
+  readonly totalRequests: number
+  readonly totalCostUsd: number
+  readonly totalTokensUsed: number
+  readonly cacheSavingsUsd: number
 
   // Performance metrics
-  readonly averageLatencyMs: number;
-  readonly cacheHitRate: number; // 0.0 to 1.0
-  readonly errorRate: number; // 0.0 to 1.0
+  readonly averageLatencyMs: number
+  readonly cacheHitRate: number // 0.0 to 1.0
+  readonly errorRate: number // 0.0 to 1.0
 
   // Time tracking
-  readonly periodStart: Date;
-  readonly lastActivity: Date;
-  readonly lastReset: Date;
+  readonly periodStart: Date
+  readonly lastActivity: Date
+  readonly lastReset: Date
 
-  readonly createdAt: Date;
-  readonly updatedAt: Date;
+  readonly createdAt: Date
+  readonly updatedAt: Date
 }
 
 /**
  * Usage counter data structure for updates
  */
 export interface UsageCounterData {
-  clinicId: string;
-  userId: string;
-  planCode: SubscriptionTier;
-  monthlyQueries: number;
-  dailyQueries: number;
-  currentCostUsd: number;
-  concurrentRequests: number;
-  totalRequests: number;
-  totalCostUsd: number;
-  totalTokensUsed: number;
-  cacheSavingsUsd: number;
-  averageLatencyMs: number;
-  cacheHitRate: number;
-  errorRate: number;
-  periodStart: Date;
-  lastActivity: Date;
-  lastReset: Date;
+  clinicId: string
+  userId: string
+  planCode: SubscriptionTier
+  monthlyQueries: number
+  dailyQueries: number
+  currentCostUsd: number
+  concurrentRequests: number
+  totalRequests: number
+  totalCostUsd: number
+  totalTokensUsed: number
+  cacheSavingsUsd: number
+  averageLatencyMs: number
+  cacheHitRate: number
+  errorRate: number
+  periodStart: Date
+  lastActivity: Date
+  lastReset: Date
 }
 
 /**
  * Usage aggregation for analytics
  */
 export interface UsageAggregation {
-  readonly period: 'hour' | 'day' | 'week' | 'month';
-  readonly timestamp: Date;
-  readonly queries: number;
-  readonly costUsd: number;
-  readonly tokens: number;
-  readonly uniqueUsers: number;
-  readonly modelBreakdown: Record<EnhancedAIModel, number>;
-  readonly specialtyBreakdown: Record<MedicalSpecialty, number>;
+  readonly period: 'hour' | 'day' | 'week' | 'month'
+  readonly timestamp: Date
+  readonly queries: number
+  readonly costUsd: number
+  readonly tokens: number
+  readonly uniqueUsers: number
+  readonly modelBreakdown: Record<EnhancedAIModel, number>
+  readonly specialtyBreakdown: Record<MedicalSpecialty, number>
 }
 
 /**
@@ -201,36 +201,36 @@ export interface UsageAggregation {
  * Maps to packages/core-services/src/models/recommendation.ts
  */
 export interface Recommendation {
-  readonly id: string;
-  readonly clinicId: string;
-  readonly userId: string;
+  readonly id: string
+  readonly clinicId: string
+  readonly userId: string
 
   // Recommendation details
-  readonly recommendationType: RecommendationType;
-  readonly category: RecommendationCategory;
-  readonly title: string;
-  readonly description: string;
+  readonly recommendationType: RecommendationType
+  readonly category: RecommendationCategory
+  readonly title: string
+  readonly description: string
 
   // Scoring and priority
-  readonly confidenceScore: number; // 0.00 to 100.00
-  readonly impactScore: number; // 0.00 to 100.00
-  readonly priority: RecommendationPriority;
+  readonly confidenceScore: number // 0.00 to 100.00
+  readonly impactScore: number // 0.00 to 100.00
+  readonly priority: RecommendationPriority
 
   // Lifecycle
-  readonly status: RecommendationStatus;
+  readonly status: RecommendationStatus
 
   // Additional details
-  readonly metadata: Record<string, unknown>;
-  readonly implementationEffort: ImplementationEffort;
-  readonly expectedBenefit: string;
-  readonly riskLevel: RiskLevel;
-  readonly complianceImpact: ComplianceImpact;
-  readonly costImpact: CostImpact;
-  readonly timelineEstimate: string;
-  readonly prerequisites: string[];
+  readonly metadata: Record<string, unknown>
+  readonly implementationEffort: ImplementationEffort
+  readonly expectedBenefit: string
+  readonly riskLevel: RiskLevel
+  readonly complianceImpact: ComplianceImpact
+  readonly costImpact: CostImpact
+  readonly timelineEstimate: string
+  readonly prerequisites: string[]
 
-  readonly createdAt: Date;
-  readonly updatedAt: Date;
+  readonly createdAt: Date
+  readonly updatedAt: Date
 }
 
 /**
@@ -242,7 +242,7 @@ export type RecommendationType =
   | 'feature_suggestion'
   | 'compliance_improvement'
   | 'performance_enhancement'
-  | 'model_optimization';
+  | 'model_optimization'
 
 /**
  * Recommendation categories
@@ -253,12 +253,12 @@ export type RecommendationCategory =
   | 'performance'
   | 'cost_efficiency'
   | 'user_experience'
-  | 'security';
+  | 'security'
 
 /**
  * Recommendation priority levels
  */
-export type RecommendationPriority = 'low' | 'medium' | 'high' | 'critical';
+export type RecommendationPriority = 'low' | 'medium' | 'high' | 'critical'
 
 /**
  * Recommendation status
@@ -267,75 +267,75 @@ export type RecommendationStatus =
   | 'active'
   | 'dismissed'
   | 'implemented'
-  | 'expired';
+  | 'expired'
 
 /**
  * Implementation effort levels
  */
-export type ImplementationEffort = 'low' | 'medium' | 'high';
+export type ImplementationEffort = 'low' | 'medium' | 'high'
 
 /**
  * Risk levels
  */
-export type RiskLevel = 'low' | 'medium' | 'high';
+export type RiskLevel = 'low' | 'medium' | 'high'
 
 /**
  * Compliance impact
  */
-export type ComplianceImpact = 'positive' | 'neutral' | 'negative';
+export type ComplianceImpact = 'positive' | 'neutral' | 'negative'
 
 /**
  * Cost impact levels
  */
-export type CostImpact = 'low' | 'medium' | 'high';
+export type CostImpact = 'low' | 'medium' | 'high'
 
 /**
  * Domain Descriptor entity matching the domain_descriptors table
  * Maps healthcare specialties to AI model configurations
  */
 export interface DomainDescriptor {
-  readonly id: string;
-  readonly domainCode: string;
-  readonly domainName: string;
-  readonly description: string;
+  readonly id: string
+  readonly domainCode: string
+  readonly domainName: string
+  readonly description: string
 
   // Healthcare specialty mapping
-  readonly healthcareSpecialty: MedicalSpecialty;
-  readonly cfmSpecialtyCode: string;
-  readonly anvisaCategory: string;
+  readonly healthcareSpecialty: MedicalSpecialty
+  readonly cfmSpecialtyCode: string
+  readonly anvisaCategory: string
 
   // AI model configuration
-  readonly preferredAiModels: EnhancedAIModel[];
-  readonly complianceRequirements: string[];
-  readonly dataSensitivityLevel: DataSensitivityLevel;
+  readonly preferredAiModels: EnhancedAIModel[]
+  readonly complianceRequirements: string[]
+  readonly dataSensitivityLevel: DataSensitivityLevel
 
   // Use case metadata
-  readonly typicalUseCases: string[];
-  readonly regulatoryFrameworks: string[];
-  readonly performanceBenchmarks: PerformanceBenchmarks;
-  readonly costOptimizationTips: string[];
+  readonly typicalUseCases: string[]
+  readonly regulatoryFrameworks: string[]
+  readonly performanceBenchmarks: PerformanceBenchmarks
+  readonly costOptimizationTips: string[]
 
   // Status
-  readonly active: boolean;
-  readonly metadata: Record<string, unknown>;
+  readonly active: boolean
+  readonly metadata: Record<string, unknown>
 
-  readonly createdAt: Date;
-  readonly updatedAt: Date;
+  readonly createdAt: Date
+  readonly updatedAt: Date
 }
 
 /**
  * Data sensitivity levels for LGPD compliance
  */
-export type DataSensitivityLevel = 'low' | 'medium' | 'high' | 'critical';
+export type DataSensitivityLevel = 'low' | 'medium' | 'high' | 'critical'
 
 /**
  * Performance benchmarks for AI models in specific domains
  */
 export interface PerformanceBenchmarks {
-  readonly accuracyThreshold: number; // 0.0 to 1.0
-  readonly responseTimeMs: number;
-  readonly confidenceThreshold: number; // 0.0 to 1.0
-  readonly costPerRequestUsd?: number;
+  readonly accuracyThreshold: number // 0.0 to 1.0
+  readonly responseTimeMs: number
+  readonly confidenceThreshold: number // 0.0 to 1.0
+  readonly costPerRequestUsd?: number
 }
 
 /**
@@ -358,93 +358,93 @@ export interface PerformanceBenchmarks {
  * Request types for AI enhanced endpoints
  */
 export interface AIAnalyzeRequest {
-  readonly query: string;
-  readonly specialty?: MedicalSpecialty;
-  readonly preferredModel?: EnhancedAIModel;
-  readonly context?: Record<string, unknown>;
-  readonly userId: string;
-  readonly clinicId: string;
+  readonly query: string
+  readonly specialty?: MedicalSpecialty
+  readonly preferredModel?: EnhancedAIModel
+  readonly context?: Record<string, unknown>
+  readonly userId: string
+  readonly clinicId: string
 }
 
 export interface AICrudRequest {
-  readonly operation: 'create' | 'read' | 'update' | 'delete';
-  readonly intent: string;
-  readonly entity?: string;
-  readonly data?: Record<string, unknown>;
-  readonly userId: string;
-  readonly clinicId: string;
+  readonly operation: 'create' | 'read' | 'update' | 'delete'
+  readonly intent: string
+  readonly entity?: string
+  readonly data?: Record<string, unknown>
+  readonly userId: string
+  readonly clinicId: string
 }
 
 export interface AIUsageRequest {
-  readonly userId?: string;
-  readonly clinicId?: string;
-  readonly startDate?: Date;
-  readonly endDate?: Date;
-  readonly aggregation?: 'hour' | 'day' | 'week' | 'month';
+  readonly userId?: string
+  readonly clinicId?: string
+  readonly startDate?: Date
+  readonly endDate?: Date
+  readonly aggregation?: 'hour' | 'day' | 'week' | 'month'
 }
 
 export interface AIRecommendationsRequest {
-  readonly userId: string;
-  readonly clinicId: string;
-  readonly category?: RecommendationCategory;
-  readonly status?: RecommendationStatus;
-  readonly priority?: RecommendationPriority;
+  readonly userId: string
+  readonly clinicId: string
+  readonly category?: RecommendationCategory
+  readonly status?: RecommendationStatus
+  readonly priority?: RecommendationPriority
 }
 
 /**
  * Response types for AI enhanced endpoints
  */
 export interface AIAnalyzeResponse {
-  readonly success: boolean;
-  readonly analysis: string;
-  readonly confidence: number;
-  readonly model: EnhancedAIModel;
-  readonly tokensUsed: number;
-  readonly latencyMs: number;
-  readonly metadata?: AIEnhancedMetadata;
+  readonly success: boolean
+  readonly analysis: string
+  readonly confidence: number
+  readonly model: EnhancedAIModel
+  readonly tokensUsed: number
+  readonly latencyMs: number
+  readonly metadata?: AIEnhancedMetadata
 }
 
 export interface AICrudResponse {
-  readonly success: boolean;
-  readonly operation: string;
-  readonly result?: unknown;
-  readonly confirmation?: string;
-  readonly tokensUsed: number;
-  readonly metadata?: AIEnhancedMetadata;
+  readonly success: boolean
+  readonly operation: string
+  readonly result?: unknown
+  readonly confirmation?: string
+  readonly tokensUsed: number
+  readonly metadata?: AIEnhancedMetadata
 }
 
 export interface AIUsageResponse {
-  readonly success: boolean;
-  readonly usage: UsageCounter;
-  readonly quotaStatus: QuotaStatus;
-  readonly aggregations?: UsageAggregation[];
+  readonly success: boolean
+  readonly usage: UsageCounter
+  readonly quotaStatus: QuotaStatus
+  readonly aggregations?: UsageAggregation[]
   readonly insights?: {
     readonly efficiency: {
-      readonly cacheOptimization: number;
-      readonly costEfficiency: number;
-      readonly performanceScore: number;
-    };
+      readonly cacheOptimization: number
+      readonly costEfficiency: number
+      readonly performanceScore: number
+    }
     readonly patterns: {
-      readonly peakHours: number[];
-      readonly preferredModels: EnhancedAIModel[];
-      readonly commonSpecialties: MedicalSpecialty[];
-    };
-    readonly recommendations: string[];
-  };
+      readonly peakHours: number[]
+      readonly preferredModels: EnhancedAIModel[]
+      readonly commonSpecialties: MedicalSpecialty[]
+    }
+    readonly recommendations: string[]
+  }
 }
 
 export interface AIRecommendationsResponse {
-  readonly success: boolean;
-  readonly recommendations: Recommendation[];
-  readonly total: number;
-  readonly metadata?: AIEnhancedMetadata;
+  readonly success: boolean
+  readonly recommendations: Recommendation[]
+  readonly total: number
+  readonly metadata?: AIEnhancedMetadata
 }
 
 export interface AIModelsResponse {
-  readonly success: boolean;
-  readonly models: EnhancedAIModel[];
-  readonly availability: Record<EnhancedAIModel, boolean>;
-  readonly metadata?: AIEnhancedMetadata;
+  readonly success: boolean
+  readonly models: EnhancedAIModel[]
+  readonly availability: Record<EnhancedAIModel, boolean>
+  readonly metadata?: AIEnhancedMetadata
 }
 
 // ================================================
@@ -452,11 +452,11 @@ export interface AIModelsResponse {
 // ================================================
 
 export interface AIEnhancedError {
-  readonly code: string;
-  readonly message: string;
-  readonly details?: Record<string, unknown>;
-  readonly timestamp: Date;
-  readonly requestId?: string;
+  readonly code: string
+  readonly message: string
+  readonly details?: Record<string, unknown>
+  readonly timestamp: Date
+  readonly requestId?: string
 }
 
 export type AIEnhancedErrorCode =
@@ -468,4 +468,4 @@ export type AIEnhancedErrorCode =
   | 'INTERNAL_ERROR'
   | 'RATE_LIMITED'
   | 'AUTHENTICATION_FAILED'
-  | 'AUTHORIZATION_FAILED';
+  | 'AUTHORIZATION_FAILED'

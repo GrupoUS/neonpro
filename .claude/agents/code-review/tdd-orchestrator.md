@@ -81,10 +81,10 @@ PRIMARY_TOOLS:
     parallel_execution: true
 
   desktop-commander:
-    purpose: "Test execution and file operations"
+    purpose: "Test execution and file operations using consolidated test structure"
     priority: "Secondary - Implementation and validation"
-    usage: "Run test commands, create test files, validate results"
-    expertise: "Test automation and build system integration"
+    usage: "Run consolidated test commands in tools/tests-consolidated, create test files, validate results"
+    expertise: "Test automation and build system integration with centralized configuration"
     lead_agent: "[apex-dev](./agents/apex-dev.md)"
     parallel_execution: true
 

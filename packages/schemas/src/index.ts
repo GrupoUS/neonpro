@@ -4,8 +4,8 @@
  */
 
 // Patient schemas
-export * from './patient/base-patient.schema';
-export * from './patient/brazilian-patient.schema';
+export * from './patient/base-patient.schema'
+export * from './patient/brazilian-patient.schema'
 export {
   BrazilianCEPSchema,
   BrazilianPatientRegistrationSchema,
@@ -15,17 +15,17 @@ export {
   CPFSchema,
   PatientExportSchema,
   PatientSearchSchema,
-} from './patient/brazilian-patient.schema';
+} from './patient/brazilian-patient.schema'
 
 // Utility schemas
-import { z } from 'zod';
+import { z } from 'zod'
 
 export const PaginationSchema = z.object({
   page: z.coerce.number().min(1).default(1),
   limit: z.coerce.number().min(1).max(100).default(20),
   total: z.number().optional(),
   totalPages: z.number().optional(),
-});
+})
 
 export const ResponseSchema = <T>(dataSchema: z.ZodType<T>) =>
   z.object({
@@ -47,8 +47,8 @@ export const ResponseSchema = <T>(dataSchema: z.ZodType<T>) =>
         timestamp: z.string().datetime(),
       })
       .optional(),
-  });
+  })
 
 // Export utility types
-export type Pagination = z.infer<typeof PaginationSchema>;
-export type ApiResponse<T> = z.infer<ReturnType<typeof ResponseSchema<T>>>;
+export type Pagination = z.infer<typeof PaginationSchema>
+export type ApiResponse<T> = z.infer<ReturnType<typeof ResponseSchema<T>>>

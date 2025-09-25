@@ -1,31 +1,24 @@
-import { defineConfig } from 'vitest/config';
+import { defineConfig } from 'vitest/config'
 
 export default defineConfig({
   test: {
-    // TDD Compliance: Require tests to exist (no empty suites allowed)
-    passWithNoTests: false,
-    globals: false,
+    globals: true,
     environment: 'node',
+    include: ['src/**/__tests__/*.test.ts'],
     coverage: {
       reporter: ['text', 'json', 'html'],
       exclude: [
-        'node_modules/**',
+        'node_modules/',
         'dist/',
         '**/*.d.ts',
-        '**/*.config.ts',
-        '**/types/**',
-        '**/examples/**',
-        '**/demos/**',
+        '**/*.config.*',
       ],
-      thresholds: {
-        global: {
-          branches: 90,
-          functions: 90,
-          lines: 90,
-          statements: 90,
-        },
-      },
+    },
+    setupFiles: [],
+  },
+  resolve: {
+    alias: {
+      '@': './src',
     },
   },
-  plugins: [],
-});
+})

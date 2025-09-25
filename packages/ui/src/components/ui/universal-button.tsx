@@ -1,17 +1,17 @@
 // import { Slot } from '@radix-ui/react-slot'; // kept for compatibility, not used when cloning
-import { cva, type VariantProps } from 'class-variance-authority';
-import { Loader2 } from 'lucide-react';
-import React from 'react';
-import { forwardRef } from 'react';
+import { cva, type VariantProps } from 'class-variance-authority'
+import { Loader2 } from 'lucide-react'
+import React from 'react'
+import { forwardRef } from 'react'
 import {
   useAnimationPerformance,
   useHoverBorderGradient,
   useShineBorderAnimation,
-} from '../../hooks';
-import { cn } from '../../utils';
-import './universal-button.css';
-import '../../styles/hover-border-gradient.css';
-import '../../styles/enhanced-shine-border.css';
+} from '../../hooks'
+import { cn } from '../../utils'
+import './universal-button.css'
+import '../../styles/hover-border-gradient.css'
+import '../../styles/enhanced-shine-border.css'
 
 // Base button variants matching shadcn/ui structure
 const universalButtonVariants = cva(
@@ -39,39 +39,39 @@ const universalButtonVariants = cva(
       size: 'default',
     },
   },
-);
+)
 
 // Advanced animation props interface
 interface AdvancedAnimationProps {
   // Hover Border Gradient Animation (AceternityUI style)
   hoverBorderGradient?: {
-    enabled?: boolean;
-    intensity?: 'subtle' | 'normal' | 'vibrant';
+    enabled?: boolean
+    intensity?: 'subtle' | 'normal' | 'vibrant'
     direction?:
       | 'left-right'
       | 'top-bottom'
       | 'diagonal-tl-br'
       | 'diagonal-tr-bl'
-      | 'radial';
-    theme?: 'gold' | 'silver' | 'copper' | 'blue' | 'purple' | 'green' | 'red';
-    speed?: 'slow' | 'normal' | 'fast';
-    borderWidth?: number;
-    colors?: string[];
-  };
+      | 'radial'
+    theme?: 'gold' | 'silver' | 'copper' | 'blue' | 'purple' | 'green' | 'red'
+    speed?: 'slow' | 'normal' | 'fast'
+    borderWidth?: number
+    colors?: string[]
+  }
 
   // Enhanced Shine Border Animation (MagicUI style)
   shineBorder?: {
-    enabled?: boolean;
-    pattern?: 'linear' | 'orbital' | 'pulse' | 'wave' | 'spiral';
-    intensity?: 'subtle' | 'normal' | 'vibrant';
-    theme?: 'gold' | 'silver' | 'copper' | 'blue' | 'purple' | 'green' | 'red';
-    speed?: 'slow' | 'normal' | 'fast';
-    borderWidth?: number;
-    color?: string;
-    duration?: number;
-    autoStart?: boolean;
-    hoverOnly?: boolean;
-  };
+    enabled?: boolean
+    pattern?: 'linear' | 'orbital' | 'pulse' | 'wave' | 'spiral'
+    intensity?: 'subtle' | 'normal' | 'vibrant'
+    theme?: 'gold' | 'silver' | 'copper' | 'blue' | 'purple' | 'green' | 'red'
+    speed?: 'slow' | 'normal' | 'fast'
+    borderWidth?: number
+    color?: string
+    duration?: number
+    autoStart?: boolean
+    hoverOnly?: boolean
+  }
 }
 
 export interface UniversalButtonProps
@@ -79,25 +79,25 @@ export interface UniversalButtonProps
     React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof universalButtonVariants>
 {
-  children: React.ReactNode;
-  loading?: boolean;
-  asChild?: boolean;
+  children: React.ReactNode
+  loading?: boolean
+  asChild?: boolean
 
   // Legacy effect control props (backward compatibility)
-  enableGradient?: boolean;
-  enableNeumorph?: boolean;
-  enableBorderGradient?: boolean;
+  enableGradient?: boolean
+  enableNeumorph?: boolean
+  enableBorderGradient?: boolean
 
   // Legacy customization props (backward compatibility)
-  duration?: number;
-  clockwise?: boolean;
-  gradientColors?: { from?: string; via?: string; to?: string };
+  duration?: number
+  clockwise?: boolean
+  gradientColors?: { from?: string; via?: string; to?: string }
 
   // Advanced animation props
-  animations?: AdvancedAnimationProps;
+  animations?: AdvancedAnimationProps
 
   // Internal props for backward compatibility (not part of public API)
-  _gradientColors?: { from?: string; via?: string; to?: string };
+  _gradientColors?: { from?: string; via?: string; to?: string }
 }
 
 const UniversalButton = forwardRef<HTMLButtonElement, UniversalButtonProps>(
@@ -133,24 +133,24 @@ const UniversalButton = forwardRef<HTMLButtonElement, UniversalButtonProps>(
     ref,
   ) => {
     // Performance optimization hook
-    const { capabilities } = useAnimationPerformance();
+    const { capabilities } = useAnimationPerformance()
 
     // Determine if animations should be enabled based on performance and user preferences
     const deviceCapability = capabilities.isLowEnd
       ? 'low'
       : capabilities.isMobile
       ? 'medium'
-      : 'high';
+      : 'high'
     // We still apply classes even with reduced motion; CSS will disable animations via media query
-    const shouldEnableAnimations = deviceCapability !== 'low';
+    const shouldEnableAnimations = deviceCapability !== 'low'
 
     // Legacy border gradient support (backward compatibility)
-    const legacyBorderGradientEnabled = enableBorderGradient;
+    const legacyBorderGradientEnabled = enableBorderGradient
 
     // Advanced hover border gradient animation
-    const hoverBorderGradientConfig = animations?.hoverBorderGradient;
-    const hoverBorderGradientEnabled = shouldEnableAnimations
-      && (hoverBorderGradientConfig?.enabled || legacyBorderGradientEnabled);
+    const hoverBorderGradientConfig = animations?.hoverBorderGradient
+    const hoverBorderGradientEnabled = shouldEnableAnimations &&
+      (hoverBorderGradientConfig?.enabled || legacyBorderGradientEnabled)
 
     const {
       elementRef: hoverBorderRef,
@@ -170,11 +170,11 @@ const UniversalButton = forwardRef<HTMLButtonElement, UniversalButtonProps>(
       speed: hoverBorderGradientConfig?.speed || 'normal',
       borderWidth: hoverBorderGradientConfig?.borderWidth || 2,
       colors: hoverBorderGradientConfig?.colors,
-    });
+    })
 
     // Enhanced shine border animation
-    const shineBorderConfig = animations?.shineBorder;
-    const shineBorderEnabled = shouldEnableAnimations && shineBorderConfig?.enabled;
+    const shineBorderConfig = animations?.shineBorder
+    const shineBorderEnabled = shouldEnableAnimations && shineBorderConfig?.enabled
 
     const {
       elementRef: shineBorderRef,
@@ -192,7 +192,7 @@ const UniversalButton = forwardRef<HTMLButtonElement, UniversalButtonProps>(
       duration: shineBorderConfig?.duration || 2000,
       autoStart: shineBorderConfig?.autoStart ?? true,
       hoverOnly: shineBorderConfig?.hoverOnly ?? false,
-    });
+    })
 
     // Combine all CSS classes
     const buttonClasses = cn(
@@ -219,119 +219,120 @@ const UniversalButton = forwardRef<HTMLButtonElement, UniversalButtonProps>(
       // Animation classes (strings)
       hoverBorderClasses,
       shineBorderClasses,
-    );
+    )
 
     // Combined event handlers
     const handleMouseEnterCombined = (
       e: React.MouseEvent<HTMLButtonElement>,
     ) => {
       if (hoverBorderGradientEnabled) {
-        handleHoverBorderMouseEnter(e);
+        handleHoverBorderMouseEnter(e)
       }
 
       if (shineBorderEnabled && shineBorderConfig?.hoverOnly) {
-        startShine();
+        startShine()
       }
 
-      onMouseEnter?.(e);
-    };
+      onMouseEnter?.(e)
+    }
 
     const handleMouseLeaveCombined = (
       e: React.MouseEvent<HTMLButtonElement>,
     ) => {
       if (hoverBorderGradientEnabled) {
-        handleHoverBorderMouseLeave(e);
+        handleHoverBorderMouseLeave(e)
       }
 
       if (shineBorderEnabled && shineBorderConfig?.hoverOnly) {
-        stopShine();
+        stopShine()
       }
 
-      onMouseLeave?.(e);
-    };
+      onMouseLeave?.(e)
+    }
 
     const handleMouseMoveCombined = (
       e: React.MouseEvent<HTMLButtonElement>,
     ) => {
       if (hoverBorderGradientEnabled) {
-        handleHoverBorderMouseMove(e);
+        handleHoverBorderMouseMove(e)
       }
 
-      onMouseMove?.(e);
-    };
+      onMouseMove?.(e)
+    }
 
     // Apply ref to the appropriate element
     const combinedRef = (element: HTMLButtonElement | null) => {
       if (hoverBorderRef.current !== element) {
-        hoverBorderRef.current = element as HTMLElement | null;
+        hoverBorderRef.current = element as HTMLElement | null
       }
       if (shineBorderRef.current !== element) {
-        shineBorderRef.current = element as HTMLElement | null;
+        shineBorderRef.current = element as HTMLElement | null
       }
       if (typeof ref === 'function') {
-        ref(element);
+        ref(element)
       } else if (ref) {
-        ref.current = element;
+        ref.current = element
       }
-    };
+    }
 
     // Style object for CSS custom properties
     const buttonStyle: React.CSSProperties = {
       ...props.style,
       ...hoverBorderStyle,
-      ...(hoverBorderGradientEnabled
-        && mousePosition && {
-        '--mouse-x': `${mousePosition.x}px`,
-        '--mouse-y': `${mousePosition.y}px`,
-      }),
+      ...(hoverBorderGradientEnabled &&
+        mousePosition &&
+        {
+          '--mouse-x': `${mousePosition.x}px`,
+          '--mouse-y': `${mousePosition.y}px`,
+        }),
       ...(legacyBorderGradientEnabled && duration !== undefined
         ? { ['--animation-duration' as keyof React.CSSProperties]: `${duration}s` }
         : {}),
-    };
+    }
 
     // If asChild, we need to clone the only valid React element child and inject button props
     if (asChild) {
-      const arr = React.Children.toArray(children).filter(Boolean);
+      const arr = React.Children.toArray(children).filter(Boolean)
       if (arr.length !== 1 || !React.isValidElement(arr[0])) {
         throw new Error(
           'UniversalButton with asChild requires a single valid React element as child',
-        );
+        )
       }
 
       interface ChildElementProps {
-        className?: string;
-        onMouseEnter?: (e: React.MouseEvent<HTMLElement>) => void;
-        onMouseLeave?: (e: React.MouseEvent<HTMLElement>) => void;
-        onMouseMove?: (e: React.MouseEvent<HTMLElement>) => void;
-        onClick?: (e: React.MouseEvent<HTMLElement>) => void;
-        [key: string]: unknown;
+        className?: string
+        onMouseEnter?: (e: React.MouseEvent<HTMLElement>) => void
+        onMouseLeave?: (e: React.MouseEvent<HTMLElement>) => void
+        onMouseMove?: (e: React.MouseEvent<HTMLElement>) => void
+        onClick?: (e: React.MouseEvent<HTMLElement>) => void
+        [key: string]: unknown
       }
 
-      const child = arr[0] as React.ReactElement<ChildElementProps>;
+      const child = arr[0] as React.ReactElement<ChildElementProps>
       const mergedProps = {
         className: cn(child.props.className, buttonClasses),
         ref: combinedRef,
         disabled: disabled || loading,
         style: buttonStyle,
         onMouseEnter: (e: React.MouseEvent<HTMLElement>) => {
-          child.props.onMouseEnter?.(e);
-          handleMouseEnterCombined(e as React.MouseEvent<HTMLButtonElement>);
+          child.props.onMouseEnter?.(e)
+          handleMouseEnterCombined(e as React.MouseEvent<HTMLButtonElement>)
         },
         onMouseLeave: (e: React.MouseEvent<HTMLElement>) => {
-          child.props.onMouseLeave?.(e);
-          handleMouseLeaveCombined(e as React.MouseEvent<HTMLButtonElement>);
+          child.props.onMouseLeave?.(e)
+          handleMouseLeaveCombined(e as React.MouseEvent<HTMLButtonElement>)
         },
         onMouseMove: (e: React.MouseEvent<HTMLElement>) => {
-          child.props.onMouseMove?.(e);
-          handleMouseMoveCombined(e as React.MouseEvent<HTMLButtonElement>);
+          child.props.onMouseMove?.(e)
+          handleMouseMoveCombined(e as React.MouseEvent<HTMLButtonElement>)
         },
         onClick: (e: React.MouseEvent<HTMLElement>) => {
-          child.props.onClick?.(e);
-          onClick?.(e as React.MouseEvent<HTMLButtonElement>);
+          child.props.onClick?.(e)
+          onClick?.(e as React.MouseEvent<HTMLButtonElement>)
         },
         ...props,
-      };
-      return React.cloneElement(child, mergedProps);
+      }
+      return React.cloneElement(child, mergedProps)
     }
 
     // Default render path: regular button
@@ -350,11 +351,11 @@ const UniversalButton = forwardRef<HTMLButtonElement, UniversalButtonProps>(
         {loading && <Loader2 className='mr-2 h-4 w-4 animate-spin' />}
         {children}
       </button>
-    );
+    )
   },
-);
+)
 
-UniversalButton.displayName = 'UniversalButton';
+UniversalButton.displayName = 'UniversalButton'
 
-export { UniversalButton, universalButtonVariants };
-export type { AdvancedAnimationProps };
+export { UniversalButton, universalButtonVariants }
+export type { AdvancedAnimationProps }

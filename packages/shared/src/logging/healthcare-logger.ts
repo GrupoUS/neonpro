@@ -5,8 +5,8 @@
  * sensitive data filtering, and proper log levels for production environments.
  */
 
-import * as winston from 'winston';
-import { format } from 'winston';
+import * as winston from 'winston'
+import { format } from 'winston'
 
 // Healthcare-specific log levels with compliance focus
 const healthcareLevels = {
@@ -19,7 +19,7 @@ const healthcareLevels = {
   info: 6,
   debug: 7,
   trace: 8,
-};
+}
 
 // Healthcare log colors for different severity levels
 const healthcareColors = {
@@ -32,7 +32,7 @@ const healthcareColors = {
   info: 'green',
   debug: 'blue',
   trace: 'gray',
-};
+}
 
 // LGPD compliance - sensitive data patterns to redact
 const sensitivePatterns = [
@@ -44,17 +44,17 @@ const sensitivePatterns = [
   /token:\s*"[^"]+"/gi,
   /secret:\s*"[^"]+"/gi,
   /key:\s*"[^"]+"/gi,
-];
+]
 
 // Redact sensitive data from log messages
 function redactSensitiveData(message: string): string {
-  let redactedMessage = message;
+  let redactedMessage = message
   sensitivePatterns.forEach(pattern => {
     redactedMessage = redactedMessage.replace(pattern, match => {
-      return match.replace(/"[^"]+"/g, '"[REDACTED]"');
-    });
-  });
-  return redactedMessage;
+      return match.replace(/"[^"]+"/g, '"[REDACTED]"')
+    })
+  })
+  return redactedMessage
 }
 
 // Healthcare-specific log format
@@ -66,42 +66,42 @@ const healthcareFormat = format.combine(
   format(info => {
     // Redact sensitive data from the message
     if (info.message && typeof info.message === 'string') {
-      info.message = redactSensitiveData(info.message);
+      info.message = redactSensitiveData(info.message)
     }
 
     // Redact sensitive data from metadata
     if (info.metadata) {
       info.metadata = JSON.parse(
         redactSensitiveData(JSON.stringify(info.metadata)),
-      );
+      )
     }
 
     // Add healthcare-specific metadata
-    info.service = info.service || 'unknown';
-    info.environment = process.env.NODE_ENV || 'development';
-    info.version = process.env.npm_package_version || '1.0.0';
+    info.service = info.service || 'unknown'
+    info.environment = process.env.NODE_ENV || 'development'
+    info.version = process.env.npm_package_version || '1.0.0'
 
-    return info;
+    return info
   })(),
   format.json(),
-);
+)
 
 // Console format for development
 const consoleFormat = format.combine(
   format.colorize({ colors: healthcareColors }),
   format.timestamp({ format: 'HH:mm:ss.SSS' }),
   format.printf(({ timestamp, level, message, service, ...meta }) => {
-    const serviceTag = service ? `[${service}]` : '';
-    const metaStr = Object.keys(meta).length > 0 ? ` ${JSON.stringify(meta)}` : '';
+    const serviceTag = service ? `[${service}]` : ''
+    const metaStr = Object.keys(meta).length > 0 ? ` ${JSON.stringify(meta)}` : ''
     return `${timestamp} ${level}: ${serviceTag} ${
       redactSensitiveData(String(message || ''))
-    }${metaStr}`;
+    }${metaStr}`
   }),
-);
+)
 
 // Create logger factory for different services
 export function createHealthcareLogger(service: string, options: winston.LoggerOptions = {}) {
-  const transports: winston.transport[] = [];
+  const transports: winston.transport[] = []
 
   // Console transport for development
   if (process.env.NODE_ENV !== 'production') {
@@ -110,7 +110,7 @@ export function createHealthcareLogger(service: string, options: winston.LoggerO
         level: 'debug',
         format: consoleFormat,
       }),
-    );
+    )
   } else {
     // Production console transport (errors only)
     transports.push(
@@ -118,7 +118,7 @@ export function createHealthcareLogger(service: string, options: winston.LoggerO
         level: 'error',
         format: consoleFormat,
       }),
-    );
+    )
   }
 
   // File transport for persistent logging
@@ -130,7 +130,7 @@ export function createHealthcareLogger(service: string, options: winston.LoggerO
       maxsize: 5242880, // 5MB
       maxFiles: 5,
     }),
-  );
+  )
 
   // Combined logs file
   transports.push(
@@ -141,7 +141,7 @@ export function createHealthcareLogger(service: string, options: winston.LoggerO
       maxsize: 5242880, // 5MB
       maxFiles: 5,
     }),
-  );
+  )
 
   // Audit log for healthcare compliance
   transports.push(
@@ -152,7 +152,7 @@ export function createHealthcareLogger(service: string, options: winston.LoggerO
       maxsize: 10485760, // 10MB
       maxFiles: 10,
     }),
-  );
+  )
 
   return winston.createLogger({
     levels: healthcareLevels,
@@ -162,21 +162,21 @@ export function createHealthcareLogger(service: string, options: winston.LoggerO
     defaultMeta: { service },
     exitOnError: false,
     ...options,
-  });
+  })
 }
 
 // Pre-configured loggers for different services
-export const databaseLogger = createHealthcareLogger('database');
-export const apiLogger = createHealthcareLogger('api');
-export const securityLogger = createHealthcareLogger('security');
-export const middlewareLogger = createHealthcareLogger('middleware');
-export const realtimeLogger = createHealthcareLogger('realtime');
-export const complianceLogger = createHealthcareLogger('compliance');
-export const chatLogger = createHealthcareLogger('chat');
-export const analyticsLogger = createHealthcareLogger('analytics');
-export const governanceLogger = createHealthcareLogger('governance');
-export const resilienceLogger = createHealthcareLogger('resilience');
-export const cacheLogger = createHealthcareLogger('cache');
+export const databaseLogger = createHealthcareLogger('database')
+export const apiLogger = createHealthcareLogger('api')
+export const securityLogger = createHealthcareLogger('security')
+export const middlewareLogger = createHealthcareLogger('middleware')
+export const realtimeLogger = createHealthcareLogger('realtime')
+export const complianceLogger = createHealthcareLogger('compliance')
+export const chatLogger = createHealthcareLogger('chat')
+export const analyticsLogger = createHealthcareLogger('analytics')
+export const governanceLogger = createHealthcareLogger('governance')
+export const resilienceLogger = createHealthcareLogger('resilience')
+export const cacheLogger = createHealthcareLogger('cache')
 export const auditLogger = createHealthcareLogger('audit', {
   level: 'audit',
   transports: [
@@ -187,7 +187,7 @@ export const auditLogger = createHealthcareLogger('audit', {
       maxFiles: 20,
     }),
   ],
-});
+})
 
 // Specialized audit logging for healthcare compliance
 export function logAuditEvent(
@@ -202,7 +202,7 @@ export function logAuditEvent(
     userId: userId || 'anonymous',
     timestamp: new Date().toISOString(),
     metadata,
-  });
+  })
 }
 
 // Error logging with enhanced context for healthcare
@@ -211,7 +211,7 @@ export function logHealthcareError(
   error: Error,
   context?: Record<string, any>,
 ): void {
-  const logger = createHealthcareLogger(service);
+  const logger = createHealthcareLogger(service)
   logger.error('Healthcare service error', {
     error: {
       name: error.name,
@@ -219,7 +219,7 @@ export function logHealthcareError(
       stack: error.stack,
     },
     context: redactSensitiveData(JSON.stringify(context || {})),
-  });
+  })
 }
 
 // Performance monitoring for healthcare operations
@@ -229,12 +229,12 @@ export function logPerformanceMetric(
   durationMs: number,
   metadata?: Record<string, any>,
 ): void {
-  const logger = createHealthcareLogger(service);
+  const logger = createHealthcareLogger(service)
   logger.info('Performance metric', {
     operation,
     durationMs,
     metadata,
-  });
+  })
 }
 
 export default {
@@ -254,4 +254,4 @@ export default {
   logAuditEvent,
   logHealthcareError,
   logPerformanceMetric,
-};
+}

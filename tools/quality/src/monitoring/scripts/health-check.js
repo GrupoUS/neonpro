@@ -72,8 +72,8 @@ class HealthChecker {
   }
 
   async runHealthChecks() {
-    console.log('🏥 Running Health Checks...')
-    console.log('============================')
+    console.error('🏥 Running Health Checks...')
+    console.error('============================')
 
     for (const [name, config] of Object.entries(this.config.healthChecks)) {
       const result = await this.checkEndpoint(name, config)
@@ -82,10 +82,10 @@ class HealthChecker {
       const status = result.success ? '✅' : '❌'
       const time = result.responseTime ? `(${result.responseTime}ms)` : ''
 
-      console.log(`${status} ${name}: ${result.endpoint} ${time}`)
+      console.error(`${status} ${name}: ${result.endpoint} ${time}`)
 
       if (!result.success && result.error) {
-        console.log(`   Error: ${result.error}`)
+        console.error(`   Error: ${result.error}`)
       }
     }
 
@@ -124,17 +124,23 @@ class HealthChecker {
     const failedChecks = this.results.filter((r) => !r.success)
 
     if (failedChecks.length > 0) {
-      console.log('🚨 ALERT: Health check failures detected!')
-      console.log('Failed checks:', failedChecks.map((f) => f.name).join(', '))
+      console.error('🚨 ALERT: Health check failures detected!')
+      console.error('Failed checks:', failedChecks.map((f) => f.name).join(', '))
 
       // Here you would integrate with your alerting system
       // this.sendAlert(failedChecks);
     } else {
-      console.log('✅ All health checks passed!')
+      console.error('✅ All health checks passed!')
     }
   }
 }
 
 // Run health checks
-const checker = new HealthChecker()
-checker.runHealthChecks().catch(console.error)
+;(async () => {
+  const checker = new HealthChecker()
+  try {
+    await checker.runHealthChecks()
+  } catch (error) {
+    console.error(error)
+  }
+})()

@@ -1,35 +1,35 @@
-import { Context, Next } from 'hono';
-import { logger } from '../lib/logger';
+import { Context, Next } from 'hono'
+import { logger } from '../lib/logger'
 
 /**
  * Audit log entry interface
  */
 interface AuditLogEntry {
-  timestamp: Date;
-  _userId?: string;
-  clinicId?: string;
-  action: string;
-  resource: string;
-  resourceId?: string;
-  method: string;
-  path: string;
-  ip: string;
-  userAgent: string;
-  sessionId?: string;
-  requestId?: string;
-  statusCode?: number;
-  duration?: number;
-  metadata?: Record<string, any>;
+  timestamp: Date
+  _userId?: string
+  clinicId?: string
+  action: string
+  resource: string
+  resourceId?: string
+  method: string
+  path: string
+  ip: string
+  userAgent: string
+  sessionId?: string
+  requestId?: string
+  statusCode?: number
+  duration?: number
+  metadata?: Record<string, any>
 }
 
 /**
  * Audit log configuration
  */
 interface AuditLogConfig {
-  includeRequestBody?: boolean;
-  includeResponseBody?: boolean;
-  sensitiveFields?: string[];
-  logLevel?: 'debug' | 'info' | 'warn' | 'error';
+  includeRequestBody?: boolean
+  includeResponseBody?: boolean
+  sensitiveFields?: string[]
+  logLevel?: 'debug' | 'info' | 'warn' | 'error'
 }
 
 /**
@@ -46,7 +46,7 @@ const DEFAULT_SENSITIVE_FIELDS = [
   'ssn',
   'credit_card',
   'medical_record',
-];
+]
 
 /**
  * Sanitizes sensitive data from an object
@@ -56,30 +56,30 @@ function sanitizeData(
   sensitiveFields: string[] = DEFAULT_SENSITIVE_FIELDS,
 ): any {
   if (!data || typeof data !== 'object') {
-    return data;
+    return data
   }
 
   if (Array.isArray(data)) {
-    return data.map(item => sanitizeData(item, sensitiveFields));
+    return data.map(item => sanitizeData(item, sensitiveFields))
   }
 
-  const sanitized: any = {};
+  const sanitized: any = {}
 
   for (const [key, value] of Object.entries(data)) {
     const isSensitive = sensitiveFields.some(field =>
       key.toLowerCase().includes(field.toLowerCase())
-    );
+    )
 
     if (isSensitive) {
-      sanitized[key] = '[REDACTED]';
+      sanitized[key] = '[REDACTED]'
     } else if (typeof value === 'object' && value !== null) {
-      sanitized[key] = sanitizeData(value, sensitiveFields);
+      sanitized[key] = sanitizeData(value, sensitiveFields)
     } else {
-      sanitized[key] = value;
+      sanitized[key] = value
     }
   }
 
-  return sanitized;
+  return sanitized
 }
 
 /**
@@ -92,8 +92,8 @@ function extractActionAndResource(
   // Extract resource from path
   const pathParts = path
     .split('/')
-    .filter(part => part && !part.match(/^v\d+$/));
-  const resource = pathParts[0] || 'unknown';
+    .filter(part => part && !part.match(/^v\d+$/))
+  const resource = pathParts[0] || 'unknown'
 
   // Map HTTP methods to actions
   const actionMap: Record<string, string> = {
@@ -102,11 +102,11 @@ function extractActionAndResource(
     PUT: 'update',
     PATCH: 'update',
     DELETE: 'delete',
-  };
+  }
 
-  const action = actionMap[method.toUpperCase()] || method.toLowerCase();
+  const action = actionMap[method.toUpperCase()] || method.toLowerCase()
 
-  return { action, resource };
+  return { action, resource }
 }
 
 /**
@@ -117,35 +117,35 @@ export function auditLogMiddleware(config: AuditLogConfig = {}) {
     includeRequestBody = false,
     sensitiveFields = DEFAULT_SENSITIVE_FIELDS,
     logLevel = 'info',
-  } = config;
+  } = config
 
   return async (c: Context, next: Next) => {
-    const startTime = Date.now();
+    const startTime = Date.now()
 
     // Extract request information
-    const method = c.req.method;
-    const path = c.req.path;
-    const ip = c.req.header('x-forwarded-for')
-      || c.req.header('x-real-ip')
-      || c.req.header('cf-connecting-ip')
-      || 'unknown';
-    const userAgent = c.req.header('user-agent') || 'unknown';
-    const requestId = c.get('requestId') || 'unknown';
+    const method = c.req.method
+    const path = c.req.path
+    const ip = c.req.header('x-forwarded-for') ||
+      c.req.header('x-real-ip') ||
+      c.req.header('cf-connecting-ip') ||
+      'unknown'
+    const userAgent = c.req.header('user-agent') || 'unknown'
+    const requestId = c.get('requestId') || 'unknown'
 
     // Extract user information if available
-    const user = c.get('user');
-    const userId = user?.id || c.get('userId');
-    const clinicId = user?.clinicId || c.get('clinicId');
-    const sessionId = c.get('sessionId') || c.req.header('x-session-id');
+    const user = c.get('user')
+    const userId = user?.id || c.get('userId')
+    const clinicId = user?.clinicId || c.get('clinicId')
+    const sessionId = c.get('sessionId') || c.req.header('x-session-id')
 
     // Extract action and resource
-    const { action, resource } = extractActionAndResource(method, path);
+    const { action, resource } = extractActionAndResource(method, path)
 
     // Extract resource ID from path or query params
-    const resourceId = c.req.param('id')
-      || c.req.param('patientId')
-      || c.req.param('appointmentId')
-      || c.req.query('id');
+    const resourceId = c.req.param('id') ||
+      c.req.param('patientId') ||
+      c.req.param('appointmentId') ||
+      c.req.query('id')
 
     // Prepare base audit entry
     const baseAuditEntry: Partial<AuditLogEntry> = {
@@ -161,37 +161,37 @@ export function auditLogMiddleware(config: AuditLogConfig = {}) {
       userAgent,
       sessionId,
       requestId,
-    };
+    }
 
     // Get request body if configured
-    let requestBody: any;
+    let requestBody: any
     if (includeRequestBody && ['POST', 'PUT', 'PATCH'].includes(method)) {
       try {
         // Clone the request to read the body without consuming it
         // Note: HonoRequest may not have clone method, so we try to access body directly
         try {
-          requestBody = await c.req.json();
+          requestBody = await c.req.json()
         } catch (bodyError) {
           // If we can't read the body, continue without it
           console.warn(
             'Could not read request body for audit logging:',
             bodyError,
-          );
+          )
         }
-        requestBody = sanitizeData(requestBody, sensitiveFields);
+        requestBody = sanitizeData(requestBody, sensitiveFields)
       } catch {
         // Ignore errors when reading request body
       }
     }
 
-    let auditEntry: AuditLogEntry;
-    let error: any;
+    let auditEntry: AuditLogEntry
+    let error: any
 
     try {
-      await next();
+      await next()
 
-      const duration = Date.now() - startTime;
-      const statusCode = c.res.status;
+      const duration = Date.now() - startTime
+      const statusCode = c.res.status
 
       // Create successful audit entry
       auditEntry = {
@@ -202,10 +202,10 @@ export function auditLogMiddleware(config: AuditLogConfig = {}) {
           ...(requestBody && { requestBody }),
           success: true,
         },
-      } as AuditLogEntry;
+      } as AuditLogEntry
     } catch (err) {
-      error = err;
-      const duration = Date.now() - startTime;
+      error = err
+      const duration = Date.now() - startTime
 
       // Create error audit entry
       auditEntry = {
@@ -220,44 +220,44 @@ export function auditLogMiddleware(config: AuditLogConfig = {}) {
             name: err instanceof Error ? err.name : 'Unknown',
           },
         },
-      } as AuditLogEntry;
+      } as AuditLogEntry
     }
 
     // Log the audit entry
-    const logMessage = `${action.toUpperCase()} ${resource}`;
+    const logMessage = `${action.toUpperCase()} ${resource}`
     const logContext = {
       audit: auditEntry,
       type: 'audit',
-    };
+    }
 
     if (error) {
-      logger.error(logMessage, logContext);
+      logger.error(logMessage, logContext)
     } else {
       switch (logLevel) {
         case 'debug':
-          logger.debug(logMessage, logContext);
-          break;
+          logger.debug(logMessage, logContext)
+          break
         case 'warn':
-          logger.warn(logMessage, logContext);
-          break;
+          logger.warn(logMessage, logContext)
+          break
         case 'error':
-          logger.error(logMessage, logContext);
-          break;
+          logger.error(logMessage, logContext)
+          break
         case 'info':
         default:
-          logger.info(logMessage, logContext);
-          break;
+          logger.info(logMessage, logContext)
+          break
       }
     }
 
     // Store audit entry in context for potential use by other middleware
-    c.set('auditEntry', auditEntry);
+    c.set('auditEntry', auditEntry)
 
     // Re-throw error if one occurred
     if (error) {
-      throw error;
+      throw error
     }
-  };
+  }
 }
 
 /**
@@ -280,7 +280,7 @@ export function healthcareAuditMiddleware() {
       'health_data',
     ],
     logLevel: 'info',
-  });
+  })
 }
 
 /**
@@ -302,7 +302,7 @@ export function financialAuditMiddleware() {
       'expiry',
     ],
     logLevel: 'info',
-  });
+  })
 }
 
 /**
@@ -320,11 +320,11 @@ export function authAuditMiddleware() {
       'confirm_password',
     ],
     logLevel: 'info',
-  });
+  })
 }
 
 /**
  * Simple audit log function (alias for auditLogMiddleware)
  * @deprecated Use specific audit middleware instead
  */
-export const _auditLog = auditLogMiddleware;
+export const _auditLog = auditLogMiddleware

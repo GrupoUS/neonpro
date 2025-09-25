@@ -4,44 +4,44 @@
  */
 
 export interface CSPDirective {
-  name: string;
-  values: string[];
+  name: string
+  values: string[]
 }
 
 export interface ContentSecurityPolicy {
-  id: string;
-  name: string;
-  directives: CSPDirective[];
-  reportOnly: boolean;
-  createdAt: Date;
-  updatedAt: Date;
+  id: string
+  name: string
+  directives: CSPDirective[]
+  reportOnly: boolean
+  createdAt: Date
+  updatedAt: Date
 }
 
 export interface CSPReport {
   'csp-report': {
-    'document-uri': string;
-    'violated-directive': string;
-    'original-policy': string;
-    'blocked-uri': string;
-    referrer?: string;
-    'status-code'?: number;
-    'source-file'?: string;
-    'line-number'?: number;
-    'column-number'?: number;
-  };
+    'document-uri': string
+    'violated-directive': string
+    'original-policy': string
+    'blocked-uri': string
+    referrer?: string
+    'status-code'?: number
+    'source-file'?: string
+    'line-number'?: number
+    'column-number'?: number
+  }
 }
 
 export interface CSPViolation {
-  documentUri: string;
-  violatedDirective: string;
-  originalPolicy: string;
-  blockedUri: string;
-  referrer?: string;
-  statusCode?: number;
-  sourceFile?: string;
-  lineNumber?: number;
-  columnNumber?: number;
-  timestamp: Date;
+  documentUri: string
+  violatedDirective: string
+  originalPolicy: string
+  blockedUri: string
+  referrer?: string
+  statusCode?: number
+  sourceFile?: string
+  lineNumber?: number
+  columnNumber?: number
+  timestamp: Date
 }
 
 /**
@@ -50,16 +50,16 @@ export interface CSPViolation {
 export function generateCSP(policy: ContentSecurityPolicy): string {
   const directives = policy.directives
     .map(directive => `${directive.name} ${directive.values.join(' ')}`)
-    .join('; ');
+    .join('; ')
 
-  return directives;
+  return directives
 }
 
 /**
  * Parse CSP violation report
  */
 export function parseCSPReport(report: CSPReport): CSPViolation {
-  const cspReport = report['csp-report'];
+  const cspReport = report['csp-report']
 
   return {
     documentUri: cspReport['document-uri'],
@@ -72,32 +72,32 @@ export function parseCSPReport(report: CSPReport): CSPViolation {
     lineNumber: cspReport['line-number'],
     columnNumber: cspReport['column-number'],
     timestamp: new Date(),
-  };
+  }
 }
 
 /**
  * Validate CSP policy configuration
  */
 export function validateCSP(policy: ContentSecurityPolicy): {
-  valid: boolean;
-  errors: string[];
-  warnings: string[];
+  valid: boolean
+  errors: string[]
+  warnings: string[]
 } {
-  const errors: string[] = [];
-  const warnings: string[] = [];
+  const errors: string[] = []
+  const warnings: string[] = []
 
   // Basic validation
   if (!policy.directives || policy.directives.length === 0) {
-    errors.push('Policy must contain at least one directive');
+    errors.push('Policy must contain at least one directive')
   }
 
   // Check for potentially unsafe directives
   for (const directive of policy.directives) {
-    if (directive.values.includes('\'unsafe-inline\'')) {
-      warnings.push(`Directive ${directive.name} contains 'unsafe-inline'`);
+    if (directive.values.includes("'unsafe-inline'")) {
+      warnings.push(`Directive ${directive.name} contains 'unsafe-inline'`)
     }
-    if (directive.values.includes('\'unsafe-eval\'')) {
-      warnings.push(`Directive ${directive.name} contains 'unsafe-eval'`);
+    if (directive.values.includes("'unsafe-eval'")) {
+      warnings.push(`Directive ${directive.name} contains 'unsafe-eval'`)
     }
   }
 
@@ -105,7 +105,7 @@ export function validateCSP(policy: ContentSecurityPolicy): {
     valid: errors.length === 0,
     errors,
     warnings,
-  };
+  }
 }
 
 /**
@@ -118,41 +118,41 @@ export function createHealthcareCSP(): ContentSecurityPolicy {
     directives: [
       {
         name: 'default-src',
-        values: ['\'self\''],
+        values: ["'self'"],
       },
       {
         name: 'script-src',
-        values: ['\'self\'', '\'strict-dynamic\''],
+        values: ["'self'", "'strict-dynamic'"],
       },
       {
         name: 'style-src',
-        values: ['\'self\'', '\'unsafe-inline\''],
+        values: ["'self'", "'unsafe-inline'"],
       },
       {
         name: 'img-src',
-        values: ['\'self\'', 'data:', 'https:'],
+        values: ["'self'", 'data:', 'https:'],
       },
       {
         name: 'connect-src',
-        values: ['\'self\'', 'https://api.supabase.co'],
+        values: ["'self'", 'https://api.supabase.co'],
       },
       {
         name: 'frame-ancestors',
-        values: ['\'none\''],
+        values: ["'none'"],
       },
       {
         name: 'base-uri',
-        values: ['\'self\''],
+        values: ["'self'"],
       },
       {
         name: 'form-action',
-        values: ['\'self\''],
+        values: ["'self'"],
       },
     ],
     reportOnly: false,
     createdAt: new Date(),
     updatedAt: new Date(),
-  };
+  }
 }
 
 /**
@@ -163,9 +163,9 @@ export async function getCSPPolicy(
 ): Promise<ContentSecurityPolicy | null> {
   // Mock implementation for contract testing
   if (id === 'healthcare-default') {
-    return createHealthcareCSP();
+    return createHealthcareCSP()
   }
-  return null;
+  return null
 }
 
 /**
@@ -183,7 +183,7 @@ export async function createCSPPolicy(
     reportOnly,
     createdAt: new Date(),
     updatedAt: new Date(),
-  };
+  }
 }
 
 /**
@@ -194,16 +194,16 @@ export async function updateCSPPolicy(
   updates: Partial<Omit<ContentSecurityPolicy, 'id' | 'createdAt'>>,
 ): Promise<ContentSecurityPolicy | null> {
   // Mock implementation for contract testing
-  const existingPolicy = await getCSPPolicy(id);
+  const existingPolicy = await getCSPPolicy(id)
   if (!existingPolicy) {
-    return null;
+    return null
   }
 
   return {
     ...existingPolicy,
     ...updates,
     updatedAt: new Date(),
-  };
+  }
 }
 
 /**
@@ -211,7 +211,7 @@ export async function updateCSPPolicy(
  */
 export async function deleteCSPPolicy(_id: string): Promise<boolean> {
   // Mock implementation for contract testing
-  return true;
+  return true
 }
 
 /**
@@ -219,5 +219,5 @@ export async function deleteCSPPolicy(_id: string): Promise<boolean> {
  */
 export async function listCSPPolicies(): Promise<ContentSecurityPolicy[]> {
   // Mock implementation for contract testing
-  return [createHealthcareCSP()];
+  return [createHealthcareCSP()]
 }

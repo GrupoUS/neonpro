@@ -1,62 +1,62 @@
 export function maskCPF(_cpf: string): string {
-  return '***.***.***-**';
+  return '***.***.***-**'
 }
 
 export function maskEmail(email: string): string {
-  const parts = email.split('@');
-  if (parts.length !== 2) return '*****@*****.com';
-  const [local, domain] = parts;
-  if (!local || !domain) return '*****@*****.com';
-  const maskedLocal = local[0] + '*'.repeat(local.length - 1);
-  return maskedLocal + '@' + domain;
+  const parts = email.split('@')
+  if (parts.length !== 2) return '*****@*****.com'
+  const [local, domain] = parts
+  if (!local || !domain) return '*****@*****.com'
+  const maskedLocal = local[0] + '*'.repeat(local.length - 1)
+  return maskedLocal + '@' + domain
 }
 
 export function maskPhone(_phone: string): string {
-  return '(11) 9****-****';
+  return '(11) 9****-****'
 }
 
 export function maskName(_name: string): string {
-  return '*** *** ***';
+  return '*** *** ***'
 }
 
 // Type definitions for LGPD compliance levels
-export type LGPDComplianceLevel = 'basic' | 'enhanced' | 'strict';
+export type LGPDComplianceLevel = 'basic' | 'enhanced' | 'strict'
 
 interface PatientData {
-  name: string;
-  cpf: string;
-  email: string;
-  phone: string;
+  name: string
+  cpf: string
+  email: string
+  phone: string
   address: {
-    street: string;
-    number: string;
-    zipCode: string;
-    city: string;
-    state: string;
-  };
+    street: string
+    number: string
+    zipCode: string
+    city: string
+    state: string
+  }
 }
 
 interface AnonymizedPatientResult {
-  data: PatientData;
+  data: PatientData
   metadata: {
-    complianceLevel: LGPDComplianceLevel;
-    fieldsAnonymized: string[];
-    version: string;
-    anonymizedAt: string;
-  };
+    complianceLevel: LGPDComplianceLevel
+    fieldsAnonymized: string[]
+    version: string
+    anonymizedAt: string
+  }
 }
 
 export function maskPatientData(
   data: PatientData,
   level: LGPDComplianceLevel,
 ): AnonymizedPatientResult {
-  let maskedName;
+  let maskedName
   if (level === 'basic') {
-    maskedName = data.name.split(' ')[0] + ' ***';
+    maskedName = data.name.split(' ')[0] + ' ***'
   } else if (level === 'enhanced') {
-    maskedName = '*** *** ***';
+    maskedName = '*** *** ***'
   } else {
-    maskedName = 'ANONIMIZADO';
+    maskedName = 'ANONIMIZADO'
   }
 
   const maskedData: PatientData = {
@@ -73,7 +73,7 @@ export function maskPatientData(
       city: data.address.city, // Keep city
       state: data.address.state, // Keep state
     },
-  };
+  }
 
   return {
     data: maskedData,
@@ -91,5 +91,5 @@ export function maskPatientData(
       version: '1.0',
       anonymizedAt: new Date().toISOString(),
     },
-  };
+  }
 }

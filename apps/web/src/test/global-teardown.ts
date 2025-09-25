@@ -1,22 +1,22 @@
-import { afterAll } from 'vitest';
-import { server } from './global-setup';
+import { afterAll } from 'vitest'
+import { server } from './global-setup'
 
 afterAll(() => {
   // Clean up MSW server
-  server.close();
+  server.close()
 
   // Clean up any global mocks
   if (global.ResizeObserver) {
-    delete global.ResizeObserver;
+    delete global.ResizeObserver
   }
 
   if (global.IntersectionObserver) {
-    delete global.IntersectionObserver;
+    delete global.IntersectionObserver
   }
 
   // Reset all mocks
-  vi.clearAllMocks();
-  vi.resetAllMocks();
+  vi.clearAllMocks()
+  vi.resetAllMocks()
 
-  console.log('🧪 Test environment teardown complete');
-});
+  console.warn('🧪 Test environment teardown complete')
+})

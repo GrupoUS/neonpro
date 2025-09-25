@@ -1,34 +1,34 @@
 // Vercel API OpenAPI JSON Endpoint
-import type { VercelRequest, VercelResponse } from '@vercel/node';
+import type { VercelRequest, VercelResponse } from '@vercel/node'
 
 function getBaseUrl(req: VercelRequest): string {
   // Try to get from environment variable first
   if (process.env.API_URL) {
-    const url = process.env.API_URL;
+    const url = process.env.API_URL
     // Ensure it has protocol
-    return url.startsWith('http') ? `${url}/api` : `https://${url}/api`;
+    return url.startsWith('http') ? `${url}/api` : `https://${url}/api`
   }
 
   // Fallback to constructing from request headers
-  const host = req.headers.host;
-  const protocol = req.headers['x-forwarded-proto'] || 'https';
+  const host = req.headers.host
+  const protocol = req.headers['x-forwarded-proto'] || 'https'
 
-  return `${protocol}://${host}/api`;
+  return `${protocol}://${host}/api`
 }
 
 export default function handler(req: VercelRequest, res: VercelResponse) {
   // Set CORS headers
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Origin', '*')
   res.setHeader(
     'Access-Control-Allow-Methods',
     'GET, POST, PUT, DELETE, OPTIONS',
-  );
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  )
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization')
 
   // Handle preflight requests
   if (req.method === 'OPTIONS') {
-    res.status(200).end();
-    return;
+    res.status(200).end()
+    return
   }
 
   return res.status(200).json({
@@ -78,5 +78,5 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
         },
       },
     },
-  });
+  })
 }

@@ -5,8 +5,8 @@
  * providing automatic Swagger UI generation and API schema validation.
  */
 
-import { OpenAPIHono } from '@hono/zod-openapi';
-import type { Environment } from '../types/environment';
+import { OpenAPIHono } from '@hono/zod-openapi'
+import type { Environment } from '../types/environment'
 
 // Security schemes
 const securitySchemes = {
@@ -16,7 +16,7 @@ const securitySchemes = {
     bearerFormat: 'JWT',
     description: 'JWT token for authenticated access',
   },
-};
+}
 
 // OpenAPI specification
 export const openAPISpec = {
@@ -109,7 +109,7 @@ For API support, contact: api-support@neonpro.health
     securitySchemes,
     schemas: {},
   },
-};
+}
 
 /**
  * Create OpenAPI-enabled Hono app instance
@@ -126,12 +126,12 @@ export function createOpenAPIApp() {
             timestamp: new Date().toISOString(),
           },
           400,
-        );
+        )
       }
       // Return undefined for successful validation
-      return undefined;
+      return undefined
     },
-  });
+  })
 }
 
 /**
@@ -146,9 +146,9 @@ export function setupOpenAPIDocumentation(app: OpenAPIHono<Environment>) {
       securitySchemes,
       schemas: {}, // Will be populated automatically by Hono OpenAPI
     },
-  };
+  }
 
-  app.doc('/openapi.json', finalSpec);
+  app.doc('/openapi.json', finalSpec)
 
   // Swagger UI endpoint
   app.get('/docs', c => {
@@ -212,14 +212,14 @@ export function setupOpenAPIDocumentation(app: OpenAPIHono<Environment>) {
     </script>
   </body>
 </html>
-    `;
-    return c.html(html);
-  });
+    `
+    return c.html(html)
+  })
 
   // API documentation redirect
   app.get('/documentation', c => {
-    return c.redirect('/docs');
-  });
+    return c.redirect('/docs')
+  })
 
   // Health check for documentation
   app.get('/docs/health', c => {
@@ -232,6 +232,6 @@ export function setupOpenAPIDocumentation(app: OpenAPIHono<Environment>) {
         documentation_redirect: '/documentation',
       },
       timestamp: new Date().toISOString(),
-    });
-  });
+    })
+  })
 }

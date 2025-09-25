@@ -1,48 +1,48 @@
-import { SupabaseClient } from '@supabase/supabase-js';
-import { SupabaseConnector } from '../database/supabase-connector';
-import { HealthcareLogger } from '../logging/healthcare-logger';
-import { SessionManager } from '../session/session-manager';
+import { SupabaseClient } from '@supabase/supabase-js'
+import { SupabaseConnector } from '../database/supabase-connector'
+import { HealthcareLogger } from '../logging/healthcare-logger'
+import { SessionManager } from '../session/session-manager'
 import {
   ConversationContext,
   ConversationContextManager,
   ConversationMessage,
-} from './conversation-context';
+} from './conversation-context'
 
 export interface ConversationRequest {
-  sessionId: string;
-  _userId: string;
-  clinicId: string;
-  patientId?: string;
-  message: string;
-  _context?: any;
-  title?: string;
+  sessionId: string
+  _userId: string
+  clinicId: string
+  patientId?: string
+  message: string
+  _context?: any
+  title?: string
 }
 
 export interface ConversationResponse {
-  conversationId: string;
-  message: string;
-  _role: 'assistant' | 'system';
-  _context: any;
-  citations?: any[];
-  confidence?: number;
-  followUpQuestions?: string[];
+  conversationId: string
+  message: string
+  _role: 'assistant' | 'system'
+  _context: any
+  citations?: any[]
+  confidence?: number
+  followUpQuestions?: string[]
 }
 
 export interface ConversationHistoryParams {
-  _userId: string;
-  clinicId: string;
-  patientId?: string;
-  limit?: number;
-  offset?: number;
-  status?: 'active' | 'archived';
+  _userId: string
+  clinicId: string
+  patientId?: string
+  limit?: number
+  offset?: number
+  status?: 'active' | 'archived'
 }
 
 export class ConversationService {
-  private contextManager: ConversationContextManager;
-  private supabase: SupabaseClient;
-  private logger: HealthcareLogger;
-  private sessionManager: SessionManager;
-  private supabaseConnector: SupabaseConnector;
+  private contextManager: ConversationContextManager
+  private supabase: SupabaseClient
+  private logger: HealthcareLogger
+  private sessionManager: SessionManager
+  private supabaseConnector: SupabaseConnector
 
   constructor(
     supabase: SupabaseClient,
@@ -50,15 +50,15 @@ export class ConversationService {
     sessionManager: SessionManager,
     supabaseConnector: SupabaseConnector,
   ) {
-    this.supabase = supabase;
-    this.logger = logger;
-    this.sessionManager = sessionManager;
-    this.supabaseConnector = supabaseConnector;
+    this.supabase = supabase
+    this.logger = logger
+    this.sessionManager = sessionManager
+    this.supabaseConnector = supabaseConnector
     this.contextManager = new ConversationContextManager(
       supabase,
       logger,
       sessionManager,
-    );
+    )
   }
 
   async startConversation(
@@ -66,14 +66,14 @@ export class ConversationService {
   ): Promise<ConversationResponse> {
     try {
       // Validate session and permissions
-      await this.validateRequestPermissions(request);
+      await this.validateRequestPermissions(request)
 
       // Check for existing active conversation
-      const existingConversation = await this.findExistingConversation(request);
+      const existingConversation = await this.findExistingConversation(request)
 
-      let conversation: ConversationContext;
+      let conversation: ConversationContext
       if (existingConversation) {
-        conversation = existingConversation;
+        conversation = existingConversation
       } else {
         // Create new conversation
         conversation = await this.contextManager.createConversation({
@@ -83,7 +83,7 @@ export class ConversationService {
           patientId: request.patientId,
           title: request.title || this.generateConversationTitle(request.message),
           initialContext: request.context || {},
-        });
+        })
       }
 
       // Add user message
@@ -94,13 +94,13 @@ export class ConversationService {
           intent: await this.analyzeIntent(request.message),
           entities: await this.extractEntities(request.message),
         },
-      });
+      })
 
       // Process with RAG agent and get response
       const agentResponse = await this.processWithRAGAgent(
         request.message,
         conversation,
-      );
+      )
 
       // Add assistant response to conversation
       await this.contextManager.addMessage(conversation.id, request.userId, {
@@ -111,7 +111,7 @@ export class ConversationService {
           citations: agentResponse.citations,
           tool_calls: agentResponse.tool_calls,
         },
-      });
+      })
 
       // Update conversation context
       await this.contextManager.updateContext(conversation.id, request.userId, {
@@ -119,7 +119,7 @@ export class ConversationService {
         patientContext: agentResponse.patientContext,
         lastTopic: agentResponse.topic,
         followUpQuestions: agentResponse.followUpQuestions,
-      });
+      })
 
       await this.logger.logDataAccess(request.userId, request.clinicId, {
         action: 'start_conversation',
@@ -128,7 +128,7 @@ export class ConversationService {
         patientId: request.patientId,
         messageLength: request.message.length,
         success: true,
-      });
+      })
 
       return {
         conversationId: conversation.id,
@@ -138,7 +138,7 @@ export class ConversationService {
         citations: agentResponse.citations,
         confidence: agentResponse.confidence,
         followUpQuestions: agentResponse.followUpQuestions,
-      };
+      }
     } catch (error) {
       await this.logger.logError('conversation_start_error', {
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -149,8 +149,8 @@ export class ConversationService {
           messageLength: request.message.length,
         },
         timestamp: new Date().toISOString(),
-      });
-      throw error;
+      })
+      throw error
     }
   }
 
@@ -165,13 +165,13 @@ export class ConversationService {
       const conversation = await this.contextManager.getConversation(
         conversationId,
         _userId,
-      );
+      )
       if (!conversation) {
-        throw new Error('Conversation not found');
+        throw new Error('Conversation not found')
       }
 
       // Validate permissions
-      await this.validateUserAccess(userId, conversation.clinicId);
+      await this.validateUserAccess(userId, conversation.clinicId)
 
       // Add user message
       await this.contextManager.addMessage(conversationId, userId, {
@@ -181,10 +181,10 @@ export class ConversationService {
           intent: await this.analyzeIntent(message),
           entities: await this.extractEntities(message),
         },
-      });
+      })
 
       // Get conversation history for context
-      const recentMessages = conversation.messages.slice(-10); // Last 10 messages
+      const recentMessages = conversation.messages.slice(-10) // Last 10 messages
 
       // Process with RAG agent
       const agentResponse = await this.processWithRAGAgent(
@@ -192,7 +192,7 @@ export class ConversationService {
         conversation,
         recentMessages,
         context,
-      );
+      )
 
       // Add assistant response
       await this.contextManager.addMessage(conversationId, userId, {
@@ -203,7 +203,7 @@ export class ConversationService {
           citations: agentResponse.citations,
           tool_calls: agentResponse.tool_calls,
         },
-      });
+      })
 
       // Update conversation context
       await this.contextManager.updateContext(conversationId, userId, {
@@ -212,7 +212,7 @@ export class ConversationService {
         currentIntent: agentResponse.intent,
         lastTopic: agentResponse.topic,
         followUpQuestions: agentResponse.followUpQuestions,
-      });
+      })
 
       await this.logger.logDataAccess(userId, conversation.clinicId, {
         action: 'continue_conversation',
@@ -220,7 +220,7 @@ export class ConversationService {
         conversationId,
         messageLength: message.length,
         success: true,
-      });
+      })
 
       return {
         conversationId,
@@ -230,7 +230,7 @@ export class ConversationService {
         citations: agentResponse.citations,
         confidence: agentResponse.confidence,
         followUpQuestions: agentResponse.followUpQuestions,
-      };
+      }
     } catch (error) {
       await this.logger.logError('conversation_continue_error', {
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -238,8 +238,8 @@ export class ConversationService {
         userId,
         messageLength: message.length,
         timestamp: new Date().toISOString(),
-      });
-      throw error;
+      })
+      throw error
     }
   }
 
@@ -247,33 +247,33 @@ export class ConversationService {
     params: ConversationHistoryParams,
   ): Promise<{ conversations: ConversationContext[]; total: number }> {
     try {
-      await this.validateUserAccess(params.userId, params.clinicId);
+      await this.validateUserAccess(params.userId, params.clinicId)
 
       const conversations = await this.contextManager.getUserConversations(
         params.userId,
         params.clinicId,
-      );
+      )
 
       // Apply filters
-      let filteredConversations = conversations;
+      let filteredConversations = conversations
       if (params.patientId) {
         filteredConversations = filteredConversations.filter(
           conv => conv.patientId === params.patientId,
-        );
+        )
       }
       if (params.status) {
         filteredConversations = filteredConversations.filter(
           conv => conv.status === params.status,
-        );
+        )
       }
 
       // Apply pagination
-      const offset = params.offset || 0;
-      const limit = params.limit || 20;
+      const offset = params.offset || 0
+      const limit = params.limit || 20
       const paginatedConversations = filteredConversations.slice(
         offset,
         offset + limit,
-      );
+      )
 
       await this.logger.logDataAccess(params.userId, params.clinicId, {
         action: 'get_conversation_history',
@@ -282,19 +282,19 @@ export class ConversationService {
         returnedCount: paginatedConversations.length,
         totalCount: filteredConversations.length,
         success: true,
-      });
+      })
 
       return {
         conversations: paginatedConversations,
         total: filteredConversations.length,
-      };
+      }
     } catch (error) {
       await this.logger.logError('conversation_history_error', {
         error: error instanceof Error ? error.message : 'Unknown error',
         params,
         timestamp: new Date().toISOString(),
-      });
-      throw error;
+      })
+      throw error
     }
   }
 
@@ -306,12 +306,12 @@ export class ConversationService {
       const conversation = await this.contextManager.getConversation(
         conversationId,
         _userId,
-      );
+      )
       if (!conversation) {
-        return null;
+        return null
       }
 
-      await this.validateUserAccess(userId, conversation.clinicId);
+      await this.validateUserAccess(userId, conversation.clinicId)
 
       await this.logger.logDataAccess(userId, conversation.clinicId, {
         action: 'get_conversation_details',
@@ -319,17 +319,17 @@ export class ConversationService {
         conversationId,
         messageCount: conversation.messages.length,
         success: true,
-      });
+      })
 
-      return conversation;
+      return conversation
     } catch (error) {
       await this.logger.logError('conversation_details_error', {
         error: error instanceof Error ? error.message : 'Unknown error',
         conversationId,
         userId,
         timestamp: new Date().toISOString(),
-      });
-      throw error;
+      })
+      throw error
     }
   }
 
@@ -341,14 +341,14 @@ export class ConversationService {
       const conversation = await this.contextManager.getConversation(
         conversationId,
         _userId,
-      );
+      )
       if (!conversation) {
-        throw new Error('Conversation not found');
+        throw new Error('Conversation not found')
       }
 
-      await this.validateUserAccess(userId, conversation.clinicId);
+      await this.validateUserAccess(userId, conversation.clinicId)
 
-      await this.contextManager.deleteConversation(conversationId, _userId);
+      await this.contextManager.deleteConversation(conversationId, _userId)
 
       await this.logger.logDataAccess(userId, conversation.clinicId, {
         action: 'delete_conversation',
@@ -356,15 +356,15 @@ export class ConversationService {
         conversationId,
         messageCount: conversation.messages.length,
         success: true,
-      });
+      })
     } catch (error) {
       await this.logger.logError('conversation_delete_error', {
         error: error instanceof Error ? error.message : 'Unknown error',
         conversationId,
         userId,
         timestamp: new Date().toISOString(),
-      });
-      throw error;
+      })
+      throw error
     }
   }
 
@@ -373,43 +373,43 @@ export class ConversationService {
     clinicId: string,
     _query: string,
     filters?: {
-      patientId?: string;
-      dateFrom?: Date;
-      dateTo?: Date;
-      status?: 'active' | 'archived';
+      patientId?: string
+      dateFrom?: Date
+      dateTo?: Date
+      status?: 'active' | 'archived'
     },
   ): Promise<ConversationContext[]> {
     try {
-      await this.validateUserAccess(userId, clinicId);
+      await this.validateUserAccess(userId, clinicId)
 
       const conversations = await this.contextManager.getUserConversations(
         userId,
         clinicId,
-      );
+      )
 
       // Filter by search query and additional filters
       const filteredConversations = conversations.filter(conv => {
         // Search in title and messages
         const searchText = `${conv.title} ${conv.messages.map(m => m.content).join(' ')}`
-          .toLowerCase();
-        const matchesQuery = searchText.includes(query.toLowerCase());
+          .toLowerCase()
+        const matchesQuery = searchText.includes(query.toLowerCase())
 
         // Apply additional filters
         if (filters?.patientId && conv.patientId !== filters.patientId) {
-          return false;
+          return false
         }
         if (filters?.dateFrom && conv.createdAt < filters.dateFrom) {
-          return false;
+          return false
         }
         if (filters?.dateTo && conv.createdAt > filters.dateTo) {
-          return false;
+          return false
         }
         if (filters?.status && conv.status !== filters.status) {
-          return false;
+          return false
         }
 
-        return matchesQuery;
-      });
+        return matchesQuery
+      })
 
       await this.logger.logDataAccess(userId, clinicId, {
         action: 'search_conversations',
@@ -418,9 +418,9 @@ export class ConversationService {
         filters,
         resultCount: filteredConversations.length,
         success: true,
-      });
+      })
 
-      return filteredConversations;
+      return filteredConversations
     } catch (error) {
       await this.logger.logError('conversation_search_error', {
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -429,8 +429,8 @@ export class ConversationService {
         query,
         filters,
         timestamp: new Date().toISOString(),
-      });
-      throw error;
+      })
+      throw error
     }
   }
 
@@ -442,16 +442,16 @@ export class ConversationService {
       clinicId: request.clinicId,
       action: 'read',
       resource: 'ai_conversation_contexts',
-    });
+    })
 
     if (!hasAccess) {
-      throw new Error('Insufficient permissions to start conversation');
+      throw new Error('Insufficient permissions to start conversation')
     }
 
     // Validate session
-    const session = await this.sessionManager.getSession(request.sessionId);
+    const session = await this.sessionManager.getSession(request.sessionId)
     if (!session || session.userId !== request._userId) {
-      throw new Error('Invalid session');
+      throw new Error('Invalid session')
     }
   }
 
@@ -464,10 +464,10 @@ export class ConversationService {
       clinicId,
       action: 'read',
       resource: 'ai_conversation_contexts',
-    });
+    })
 
     if (!hasAccess) {
-      throw new Error('Insufficient permissions to access conversations');
+      throw new Error('Insufficient permissions to access conversations')
     }
   }
 
@@ -478,70 +478,70 @@ export class ConversationService {
     const conversations = await this.contextManager.getUserConversations(
       request.userId,
       request.clinicId,
-    );
+    )
 
     return (
       conversations.find(
         conv =>
-          conv.sessionId === request.sessionId
-          && conv.status === 'active'
-          && conv.patientId === request.patientId,
+          conv.sessionId === request.sessionId &&
+          conv.status === 'active' &&
+          conv.patientId === request.patientId,
       ) || null
-    );
+    )
   }
 
   private generateConversationTitle(message: string): string {
     // Simple title generation based on first few words
-    const words = message.split(' ').slice(0, 5);
+    const words = message.split(' ').slice(0, 5)
     return (
       words.join(' ') + (words.length < message.split(' ').length ? '...' : '')
-    );
+    )
   }
 
   private async analyzeIntent(message: string): Promise<string> {
     // Placeholder for intent analysis - in real implementation, this would use NLP
-    const lowerMessage = message.toLowerCase();
+    const lowerMessage = message.toLowerCase()
 
     if (lowerMessage.includes('help') || lowerMessage.includes('how to')) {
-      return 'help_request';
+      return 'help_request'
     } else if (
-      lowerMessage.includes('appointment')
-      || lowerMessage.includes('schedule')
+      lowerMessage.includes('appointment') ||
+      lowerMessage.includes('schedule')
     ) {
-      return 'appointment_related';
+      return 'appointment_related'
     } else if (
-      lowerMessage.includes('patient')
-      || lowerMessage.includes('medical')
+      lowerMessage.includes('patient') ||
+      lowerMessage.includes('medical')
     ) {
-      return 'patient_inquiry';
+      return 'patient_inquiry'
     } else if (
-      lowerMessage.includes('billing')
-      || lowerMessage.includes('payment')
+      lowerMessage.includes('billing') ||
+      lowerMessage.includes('payment')
     ) {
-      return 'billing_inquiry';
+      return 'billing_inquiry'
     } else {
-      return 'general_inquiry';
+      return 'general_inquiry'
     }
   }
 
   private async extractEntities(message: string): Promise<any[]> {
     // Placeholder for entity extraction - in real implementation, this would use NLP
-    const entities = [];
+    const entities = []
 
     // Simple regex-based extraction
-    const datePattern = /\b(\d{1,2}[/-]\d{1,2}[/-]\d{2,4})\b/g;
-    const dates = message.match(datePattern);
+    const datePattern = /\b(\d{1,2}[/-]\d{1,2}[/-]\d{2,4})\b/g
+    const dates = message.match(datePattern)
     if (dates) {
-      entities.push({ type: 'date', value: dates[0] });
+      entities.push({ type: 'date', value: dates[0] })
     }
 
-    const phonePattern = /\b(\d{10,11})\b/g;
-    const phones = message.match(phonePattern);
+    const phonePattern = /\b(\d{10,11})\b/g
+    const phones = message.match(phonePattern)
     if (phones) {
-      entities.push({ type: 'phone', value: phones[0] });
+      entities.push({ type: 'phone', value: phones[0] })
     }
 
-    return entities;
+    return entities
   }
 
   private async processWithRAGAgent(
@@ -550,15 +550,15 @@ export class ConversationService {
     history?: ConversationMessage[],
     additionalContext?: any,
   ): Promise<{
-    message: string;
-    intent: string;
-    _context: any;
-    confidence: number;
-    citations?: any[];
-    tool_calls?: any[];
-    patientContext?: any;
-    topic: string;
-    followUpQuestions?: string[];
+    message: string
+    intent: string
+    _context: any
+    confidence: number
+    citations?: any[]
+    tool_calls?: any[]
+    patientContext?: any
+    topic: string
+    followUpQuestions?: string[]
   }> {
     // This is a placeholder for RAG agent processing
     // In a real implementation, this would:
@@ -573,7 +573,7 @@ export class ConversationService {
       patientId: conversation.patientId,
       clinicId: conversation.clinicId,
       messageHistory: history?.map(m => ({ _role: m.role, content: m.content })) || [],
-    };
+    }
 
     return {
       message:
@@ -596,13 +596,13 @@ export class ConversationService {
         'Do you need information about specific medical services?',
         'Is there anything else I can help you with?',
       ],
-    };
+    }
   }
 
   getStatistics(): any {
     return {
       activeConversations: this.contextManager.getActiveContextCount(),
       memoryUsage: this.contextManager.getMemoryUsage(),
-    };
+    }
   }
 }

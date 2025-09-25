@@ -4,25 +4,25 @@
  * Provides user-related test data for authentication and authorization testing.
  */
 
-import { TEST_IDS } from './index';
+import { TEST_IDS } from './index'
 
 export interface MockUser {
-  id: string;
-  email: string;
-  name: string;
-  role: 'admin' | 'professional' | 'patient' | 'staff';
-  clinicId?: string;
-  active: boolean;
-  createdAt: Date;
-  lastLoginAt?: Date;
+  id: string
+  email: string
+  name: string
+  role: 'admin' | 'professional' | 'patient' | 'staff'
+  clinicId?: string
+  active: boolean
+  createdAt: Date
+  lastLoginAt?: Date
 }
 
 export interface MockSession {
-  id: string;
-  userId: string;
-  token: string;
-  expiresAt: Date;
-  createdAt: Date;
+  id: string
+  userId: string
+  token: string
+  expiresAt: Date
+  createdAt: Date
 }
 
 /**
@@ -39,7 +39,7 @@ export function createMockUser(overrides: Partial<MockUser> = {}): MockUser {
     createdAt: new Date(),
     lastLoginAt: new Date(),
     ...overrides,
-  };
+  }
 }
 
 /**
@@ -48,9 +48,9 @@ export function createMockUser(overrides: Partial<MockUser> = {}): MockUser {
 export function createMockSession(
   overrides: Partial<MockSession> = {},
 ): MockSession {
-  const now = new Date();
-  const expiresAt = new Date(now);
-  expiresAt.setHours(expiresAt.getHours() + 24); // 24 hours from now
+  const now = new Date()
+  const expiresAt = new Date(now)
+  expiresAt.setHours(expiresAt.getHours() + 24) // 24 hours from now
 
   return {
     id: 'session-123',
@@ -59,7 +59,7 @@ export function createMockSession(
     expiresAt,
     createdAt: now,
     ...overrides,
-  };
+  }
 }
 
 /**
@@ -93,5 +93,5 @@ export function createTestUsers() {
       role: 'staff',
       clinicId: TEST_IDS.CLINIC,
     }),
-  };
+  }
 }

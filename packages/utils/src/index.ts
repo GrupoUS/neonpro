@@ -1,23 +1,23 @@
 // Utils package exports
 
 // Logging utilities
-export * from './logging/logger';
-export * from './logging/redact';
+export * from './logging/logger'
+export * from './logging/redact'
 
 // CLI utilities
-export * from './cli';
+export * from './cli'
 
 // Healthcare utilities
-export * from './healthcare-errors';
+export * from './healthcare-errors'
 
 // UI utilities
-export * from './br/identifiers';
-export * from './currency/brl';
-export * from './utils';
-export * from './lgpd';
+export * from './br/identifiers'
+export * from './currency/brl'
+export * from './lgpd'
+export * from './utils'
 
 // Re-export specific functions for clarity
-export { formatBRL, maskBRLInput, parseBRL } from './currency/brl';
+export { formatBRL, maskBRLInput, parseBRL } from './currency/brl'
 
 export {
   cleanDocument,
@@ -27,22 +27,22 @@ export {
   validateBRPhoneMask,
   validateCPF,
   validateCPFMask,
-} from './br/identifiers';
+} from './br/identifiers'
 
-export { cn, debounce, formatDate, formatDateTime, throttle } from './utils';
+export { cn, debounce, formatDate, formatDateTime, throttle } from './utils'
 
 // Placeholder exports - will be populated with actual utilities
-export const _auth = {};
-export const _components = {};
-export const _analytics = {};
-export const _performance = {};
+export const _auth = {}
+export const _components = {}
+export const _analytics = {}
+export const _performance = {}
 export const _compliance = {
   lgpdCompliance: (input: string) => {
     // Use dynamic import to keep tree-shaking friendly and avoid CJS require in ESM builds
     // Note: callers should handle async if we switch to true dynamic import later
     // For now, keep sync require but fix double export typo
     // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const { lgpdCompliance } = require('./lgpd');
-    return lgpdCompliance(input);
+    const { lgpdCompliance } = require('./lgpd')
+    return lgpdCompliance(input)
   },
-};
+}

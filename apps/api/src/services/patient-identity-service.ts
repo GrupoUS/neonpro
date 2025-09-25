@@ -13,10 +13,10 @@
  * - Integration with aesthetic clinic workflows
  */
 
-import { z } from 'zod';
-import { createAdminClient } from '../clients/supabase';
-import { logger } from '../lib/logger';
-import { sanitizeForAI } from './ai-security-service';
+import { z } from 'zod'
+import { createAdminClient } from '../clients/supabase'
+import { logger } from '../lib/logger'
+import { sanitizeForAI } from './ai-security-service'
 
 // LGPD Consent Types
 export const LGPD_CONSENT_TYPES = {
@@ -27,9 +27,9 @@ export const LGPD_CONSENT_TYPES = {
   EMERGENCY_CONTACT: 'emergency_contact',
   PHOTOGRAPHY: 'photography',
   FINANCIAL: 'financial',
-} as const;
+} as const
 
-export type LGPDConsentType = keyof typeof LGPD_CONSENT_TYPES;
+export type LGPDConsentType = keyof typeof LGPD_CONSENT_TYPES
 
 // LGPD Consent Status
 export const CONSENT_STATUS = {
@@ -37,9 +37,9 @@ export const CONSENT_STATUS = {
   EXPIRED: 'expired',
   REVOKED: 'revoked',
   SUSPENDED: 'suspended',
-} as const;
+} as const
 
-export type ConsentStatus = keyof typeof CONSENT_STATUS;
+export type ConsentStatus = keyof typeof CONSENT_STATUS
 
 // Data Retention Policies (in days)
 export const RETENTION_POLICIES = {
@@ -49,90 +49,90 @@ export const RETENTION_POLICIES = {
   MARKETING_CONSENT: 365 * 2, // 2 years
   CONVERSATIONS: 365, // 1 year
   ANALYTICS: 90, // 90 days
-} as const;
+} as const
 
 // Service Interfaces
 export interface PatientIdentity {
-  id: string;
-  clinicId: string;
-  userId?: string;
-  fullName: string;
-  cpf?: string;
-  dateOfBirth?: Date;
-  email?: string;
-  phone: string;
-  lgpdConsentGiven: boolean;
-  lgpdConsentDate: Date;
-  dataRetentionUntil: Date;
-  isActive: boolean;
+  id: string
+  clinicId: string
+  userId?: string
+  fullName: string
+  cpf?: string
+  dateOfBirth?: Date
+  email?: string
+  phone: string
+  lgpdConsentGiven: boolean
+  lgpdConsentDate: Date
+  dataRetentionUntil: Date
+  isActive: boolean
   riskProfile: {
-    noShowRisk: number;
-    sensitivityLevel: 'low' | 'medium' | 'high';
-    specialNeeds?: string[];
-  };
+    noShowRisk: number
+    sensitivityLevel: 'low' | 'medium' | 'high'
+    specialNeeds?: string[]
+  }
   preferences: {
-    contactMethod: 'email' | 'phone' | 'whatsapp';
-    language: 'pt-BR' | 'en-US';
-    timezone: string;
-    marketingOptIn: boolean;
-  };
+    contactMethod: 'email' | 'phone' | 'whatsapp'
+    language: 'pt-BR' | 'en-US'
+    timezone: string
+    marketingOptIn: boolean
+  }
   demographics: {
-    skinType?: string;
-    concerns: string[];
-    previousTreatments: string[];
-    allergies: string[];
-    medications: string[];
-    pregnancyStatus?: 'none' | 'possible' | 'confirmed';
-  };
-  createdAt: Date;
-  updatedAt: Date;
+    skinType?: string
+    concerns: string[]
+    previousTreatments: string[]
+    allergies: string[]
+    medications: string[]
+    pregnancyStatus?: 'none' | 'possible' | 'confirmed'
+  }
+  createdAt: Date
+  updatedAt: Date
 }
 
 export interface CreatePatientInput {
-  clinicId: string;
-  fullName: string;
-  cpf?: string;
-  dateOfBirth?: string;
-  email?: string;
-  phone: string;
-  skinType?: string;
-  concerns?: string[];
-  allergies?: string[];
-  medications?: string[];
-  pregnancyStatus?: 'none' | 'possible' | 'confirmed';
-  consentTypes: LGPDConsentType[];
-  marketingOptIn?: boolean;
-  contactMethod?: 'email' | 'phone' | 'whatsapp';
+  clinicId: string
+  fullName: string
+  cpf?: string
+  dateOfBirth?: string
+  email?: string
+  phone: string
+  skinType?: string
+  concerns?: string[]
+  allergies?: string[]
+  medications?: string[]
+  pregnancyStatus?: 'none' | 'possible' | 'confirmed'
+  consentTypes: LGPDConsentType[]
+  marketingOptIn?: boolean
+  contactMethod?: 'email' | 'phone' | 'whatsapp'
 }
 
 export interface ConsentRecord {
-  id: string;
-  patientId: string;
-  consentType: LGPDConsentType;
-  status: ConsentStatus;
-  purpose: string;
-  dataRecipients: string[];
-  retentionPeriod: number; // days
-  expiresAt?: Date;
-  givenAt: Date;
-  ipAddress?: string;
-  userAgent?: string;
-  version: string;
+  id: string
+  patientId: string
+  consentType: LGPDConsentType
+  status: ConsentStatus
+  purpose: string
+  dataRecipients: string[]
+  retentionPeriod: number // days
+  expiresAt?: Date
+  givenAt: Date
+  ipAddress?: string
+  userAgent?: string
+  version: string
 }
 
 export interface PatientSearchOptions {
-  query?: string;
-  clinicId: string;
-  includeInactive?: boolean;
-  limit?: number;
-  offset?: number;
+  query?: string
+  clinicId: string
+  includeInactive?: boolean
+  limit?: number
+  offset?: number
 }
 
 export interface ServiceResponse<T = any> {
-  success: boolean;
-  data?: T;
-  error?: string;
-  message?: string;
+  success: boolean
+  data?: T
+  error?: string
+  message?: string
 }
 
 // Validation Schemas
@@ -152,10 +152,10 @@ const CreatePatientSchema = z.object({
     .min(1, 'At least one consent type is required'),
   marketingOptIn: z.boolean().optional(),
   contactMethod: z.enum(['email', 'phone', 'whatsapp']).optional(),
-});
+})
 
 class PatientIdentityService {
-  private supabase = createAdminClient();
+  private supabase = createAdminClient()
 
   /**
    * Create new patient with LGPD compliance
@@ -163,15 +163,15 @@ class PatientIdentityService {
   async createPatient(input: CreatePatientInput): Promise<ServiceResponse<PatientIdentity>> {
     try {
       // Validate input
-      const validated = CreatePatientSchema.parse(input);
+      const validated = CreatePatientSchema.parse(input)
 
       // Check for existing patient
-      const existingPatient = await this.findExistingPatient(validated.clinicId, validated);
+      const existingPatient = await this.findExistingPatient(validated.clinicId, validated)
       if (existingPatient) {
         return {
           success: false,
           error: 'Patient with this information already exists',
-        };
+        }
       }
 
       // Calculate data retention date
@@ -179,9 +179,9 @@ class PatientIdentityService {
         ...validated.consentTypes.map(type =>
           RETENTION_POLICIES[type.toUpperCase() as keyof typeof RETENTION_POLICIES] || 365
         ),
-      );
-      const dataRetentionUntil = new Date();
-      dataRetentionUntil.setDate(dataRetentionUntil.getDate() + maxRetention);
+      )
+      const dataRetentionUntil = new Date()
+      dataRetentionUntil.setDate(dataRetentionUntil.getDate() + maxRetention)
 
       // Create patient record
       const { data: patient, error } = await this.supabase
@@ -198,18 +198,18 @@ class PatientIdentityService {
           data_retention_until: dataRetentionUntil.toISOString(),
         })
         .select()
-        .single();
+        .single()
 
       if (error) {
-        logger.error('Failed to create patient', { error });
+        logger.error('Failed to create patient', { error })
         return {
           success: false,
           error: error.message,
-        };
+        }
       }
 
       // Create consent records
-      await this.createConsentRecords(patient.id, validated.consentTypes);
+      await this.createConsentRecords(patient.id, validated.consentTypes)
 
       // Update patient demographics and preferences
       await this.updatePatientProfile(patient.id, {
@@ -220,10 +220,10 @@ class PatientIdentityService {
         pregnancyStatus: validated.pregnancyStatus,
         contactMethod: validated.contactMethod || 'whatsapp',
         marketingOptIn: validated.marketingOptIn || false,
-      });
+      })
 
       // Calculate initial risk profile
-      const riskProfile = await this.calculateRiskProfile(patient.id);
+      const riskProfile = await this.calculateRiskProfile(patient.id)
 
       return {
         success: true,
@@ -246,13 +246,13 @@ class PatientIdentityService {
           },
         },
         message: 'Patient created successfully with LGPD compliance',
-      };
+      }
     } catch (error) {
-      logger.error('Create patient error', { error });
+      logger.error('Create patient error', { error })
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
-      };
+      }
     }
   }
 
@@ -276,18 +276,18 @@ class PatientIdentityService {
           )
         `)
         .eq('id', patientId)
-        .single();
+        .single()
 
       if (error) {
         return {
           success: false,
           error: error.message,
-        };
+        }
       }
 
-      const riskProfile = await this.calculateRiskProfile(patientId);
-      const demographics = await this.getPatientDemographics(patientId);
-      const preferences = await this.getPatientPreferences(patientId);
+      const riskProfile = await this.calculateRiskProfile(patientId)
+      const demographics = await this.getPatientDemographics(patientId)
+      const preferences = await this.getPatientPreferences(patientId)
 
       return {
         success: true,
@@ -297,13 +297,13 @@ class PatientIdentityService {
           demographics,
           preferences,
         },
-      };
+      }
     } catch (error) {
-      logger.error('Get patient error', { error, patientId });
+      logger.error('Get patient error', { error, patientId })
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
-      };
+      }
     }
   }
 
@@ -312,59 +312,59 @@ class PatientIdentityService {
    */
   async searchPatients(options: PatientSearchOptions): Promise<
     ServiceResponse<{
-      patients: PatientIdentity[];
-      total: number;
-      page: number;
-      limit: number;
+      patients: PatientIdentity[]
+      total: number
+      page: number
+      limit: number
     }>
   > {
     try {
       let query = this.supabase
         .from('patients')
         .select('*', { count: 'exact' })
-        .eq('clinic_id', options.clinicId);
+        .eq('clinic_id', options.clinicId)
 
       if (!options.includeInactive) {
         // For LGPD compliance, only show active patients by default
-        query = query.eq('is_active', true);
+        query = query.eq('is_active', true)
       }
 
       if (options.query) {
         // Search across multiple fields with LGPD compliance
         query = query.or(
           `full_name.ilike.%${options.query}%,phone.ilike.%${options.query}%,email.ilike.%${options.query}%`,
-        );
+        )
       }
 
-      const limit = options.limit || 20;
-      const offset = options.offset || 0;
+      const limit = options.limit || 20
+      const offset = options.offset || 0
 
       const { data: patients, error, count } = await query
         .order('full_name')
-        .range(offset, offset + limit - 1);
+        .range(offset, offset + limit - 1)
 
       if (error) {
         return {
           success: false,
           error: error.message,
-        };
+        }
       }
 
       // Enrich patient data
       const enrichedPatients = await Promise.all(
         (patients || []).map(async patient => {
-          const riskProfile = await this.calculateRiskProfile(patient.id);
-          const demographics = await this.getPatientDemographics(patient.id);
-          const preferences = await this.getPatientPreferences(patient.id);
+          const riskProfile = await this.calculateRiskProfile(patient.id)
+          const demographics = await this.getPatientDemographics(patient.id)
+          const preferences = await this.getPatientPreferences(patient.id)
 
           return {
             ...this.mapPatientFromDb(patient),
             riskProfile,
             demographics,
             preferences,
-          };
+          }
         }),
-      );
+      )
 
       return {
         success: true,
@@ -374,13 +374,13 @@ class PatientIdentityService {
           page: Math.floor(offset / limit) + 1,
           limit,
         },
-      };
+      }
     } catch (error) {
-      logger.error('Search patients error', { error, options });
+      logger.error('Search patients error', { error, options })
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
-      };
+      }
     }
   }
 
@@ -393,8 +393,8 @@ class PatientIdentityService {
     action: 'grant' | 'revoke',
   ): Promise<ServiceResponse<ConsentRecord>> {
     try {
-      const status = action === 'grant' ? CONSENT_STATUS.ACTIVE : CONSENT_STATUS.REVOKED;
-      const expiresAt = action === 'grant' ? this.calculateConsentExpiry(consentType) : undefined;
+      const status = action === 'grant' ? CONSENT_STATUS.ACTIVE : CONSENT_STATUS.REVOKED
+      const expiresAt = action === 'grant' ? this.calculateConsentExpiry(consentType) : undefined
 
       const { data: consent, error } = await this.supabase
         .from('lgpd_consents')
@@ -409,29 +409,29 @@ class PatientIdentityService {
           version: '1.0',
         })
         .select()
-        .single();
+        .single()
 
       if (error) {
         return {
           success: false,
           error: error.message,
-        };
+        }
       }
 
       // Update patient data retention
-      await this.updateDataRetention(patientId);
+      await this.updateDataRetention(patientId)
 
       return {
         success: true,
         data: this.mapConsentFromDb(consent),
         message: `Consent ${action}ed successfully`,
-      };
+      }
     } catch (error) {
-      logger.error('Update consent error', { error, patientId, consentType, action });
+      logger.error('Update consent error', { error, patientId, consentType, action })
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
-      };
+      }
     }
   }
 
@@ -445,13 +445,13 @@ class PatientIdentityService {
         .from('patients')
         .select('*')
         .eq('id', patientId)
-        .single();
+        .single()
 
       if (!patient) {
         return {
           success: false,
           error: 'Patient not found',
-        };
+        }
       }
 
       // Create audit log
@@ -462,7 +462,7 @@ class PatientIdentityService {
           action: 'ANONYMIZE',
           resource_type: 'PATIENT_DATA',
           details: { reason: 'LGPD right to be forgotten' },
-        });
+        })
 
       // Anonymize sensitive data
       const { error } = await this.supabase
@@ -477,25 +477,25 @@ class PatientIdentityService {
           is_active: false,
           data_retention_until: new Date().toISOString(),
         })
-        .eq('id', patientId);
+        .eq('id', patientId)
 
       if (error) {
         return {
           success: false,
           error: error.message,
-        };
+        }
       }
 
       return {
         success: true,
         message: 'Patient data anonymized successfully',
-      };
+      }
     } catch (error) {
-      logger.error('Anonymize patient error', { error, patientId });
+      logger.error('Anonymize patient error', { error, patientId })
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
-      };
+      }
     }
   }
 
@@ -508,25 +508,25 @@ class PatientIdentityService {
         .from('lgpd_consents')
         .select('*')
         .eq('patient_id', patientId)
-        .order('given_at', { ascending: false });
+        .order('given_at', { ascending: false })
 
       if (error) {
         return {
           success: false,
           error: error.message,
-        };
+        }
       }
 
       return {
         success: true,
         data: consents.map(c => this.mapConsentFromDb(c)),
-      };
+      }
     } catch (error) {
-      logger.error('Get patient consents error', { error, patientId });
+      logger.error('Get patient consents error', { error, patientId })
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
-      };
+      }
     }
   }
 
@@ -539,27 +539,27 @@ class PatientIdentityService {
         .from('patients')
         .select('full_name, cpf, email, phone, date_of_birth')
         .eq('id', patientId)
-        .single();
+        .single()
 
       if (error) {
         return {
           success: false,
           error: error.message,
-        };
+        }
       }
 
-      const sanitized = sanitizeForAI(patient);
+      const sanitized = sanitizeForAI(patient)
 
       return {
         success: true,
         data: sanitized,
-      };
+      }
     } catch (error) {
-      logger.error('Sanitize for AI error', { error, patientId });
+      logger.error('Sanitize for AI error', { error, patientId })
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
-      };
+      }
     }
   }
 
@@ -572,9 +572,9 @@ class PatientIdentityService {
         .select('id')
         .eq('clinic_id', clinicId)
         .eq('cpf', input.cpf)
-        .single();
+        .single()
 
-      if (patient) return patient;
+      if (patient) return patient
     }
 
     // Check by phone
@@ -583,9 +583,9 @@ class PatientIdentityService {
       .select('id')
       .eq('clinic_id', clinicId)
       .eq('phone', input.phone)
-      .single();
+      .single()
 
-    return phonePatient;
+    return phonePatient
   }
 
   private async createConsentRecords(
@@ -601,17 +601,17 @@ class PatientIdentityService {
       retention_period: RETENTION_POLICIES[type.toUpperCase() as keyof typeof RETENTION_POLICIES],
       expires_at: this.calculateConsentExpiry(type)?.toISOString(),
       version: '1.0',
-    }));
+    }))
 
     await this.supabase
       .from('lgpd_consents')
-      .insert(consentRecords);
+      .insert(consentRecords)
   }
 
   private async updatePatientProfile(patientId: string, profile: any): Promise<void> {
     // This would typically update patient profile tables
     // For now, we'll just log the update
-    logger.info('Updating patient profile', { patientId, profile });
+    logger.info('Updating patient profile', { patientId, profile })
   }
 
   private async calculateRiskProfile(patientId: string): Promise<any> {
@@ -619,16 +619,16 @@ class PatientIdentityService {
     const { data: appointments } = await this.supabase
       .from('appointments')
       .select('status')
-      .eq('patient_id', patientId);
+      .eq('patient_id', patientId)
 
-    const totalAppointments = appointments?.length || 0;
-    const noShows = appointments?.filter(apt => apt.status === 'NO_SHOW').length || 0;
-    const noShowRisk = totalAppointments > 0 ? (noShows / totalAppointments) * 100 : 0;
+    const totalAppointments = appointments?.length || 0
+    const noShows = appointments?.filter(apt => apt.status === 'NO_SHOW').length || 0
+    const noShowRisk = totalAppointments > 0 ? (noShows / totalAppointments) * 100 : 0
 
     return {
       noShowRisk,
       sensitivityLevel: noShowRisk > 30 ? 'high' : noShowRisk > 15 ? 'medium' : 'low',
-    };
+    }
   }
 
   private async getPatientDemographics(patientId: string): Promise<any> {
@@ -640,7 +640,7 @@ class PatientIdentityService {
       allergies: [],
       medications: [],
       pregnancyStatus: 'none',
-    };
+    }
   }
 
   private async getPatientPreferences(patientId: string): Promise<any> {
@@ -650,7 +650,7 @@ class PatientIdentityService {
       language: 'pt-BR',
       timezone: 'America/Sao_Paulo',
       marketingOptIn: false,
-    };
+    }
   }
 
   private async updateDataRetention(patientId: string): Promise<void> {
@@ -659,18 +659,18 @@ class PatientIdentityService {
       .from('lgpd_consents')
       .select('consent_type, status')
       .eq('patient_id', patientId)
-      .eq('status', 'active');
+      .eq('status', 'active')
 
     if (!consents || consents.length === 0) {
       // No active consents - set retention to minimum
-      const retentionDate = new Date();
-      retentionDate.setDate(retentionDate.getDate() + RETENTION_POLICIES.ANALYTICS);
+      const retentionDate = new Date()
+      retentionDate.setDate(retentionDate.getDate() + RETENTION_POLICIES.ANALYTICS)
 
       await this.supabase
         .from('patients')
         .update({ data_retention_until: retentionDate.toISOString() })
-        .eq('id', patientId);
-      return;
+        .eq('id', patientId)
+      return
     }
 
     // Calculate max retention period from active consents
@@ -678,15 +678,15 @@ class PatientIdentityService {
       ...consents.map(c =>
         RETENTION_POLICIES[c.consent_type.toUpperCase() as keyof typeof RETENTION_POLICIES]
       ),
-    );
+    )
 
-    const retentionDate = new Date();
-    retentionDate.setDate(retentionDate.getDate() + maxRetention);
+    const retentionDate = new Date()
+    retentionDate.setDate(retentionDate.getDate() + maxRetention)
 
     await this.supabase
       .from('patients')
       .update({ data_retention_until: retentionDate.toISOString() })
-      .eq('id', patientId);
+      .eq('id', patientId)
   }
 
   private getConsentPurpose(consentType: LGPDConsentType): string {
@@ -698,17 +698,17 @@ class PatientIdentityService {
       EMERGENCY_CONTACT: 'Emergency contact and notification purposes',
       PHOTOGRAPHY: 'Before/after treatment photography for medical records',
       FINANCIAL: 'Billing and financial transaction processing',
-    };
-    return purposes[consentType];
+    }
+    return purposes[consentType]
   }
 
   private calculateConsentExpiry(consentType: LGPDConsentType): Date | undefined {
-    const days = RETENTION_POLICIES[consentType.toUpperCase() as keyof typeof RETENTION_POLICIES];
-    if (!days) return undefined;
+    const days = RETENTION_POLICIES[consentType.toUpperCase() as keyof typeof RETENTION_POLICIES]
+    if (!days) return undefined
 
-    const expiry = new Date();
-    expiry.setDate(expiry.getDate() + days);
-    return expiry;
+    const expiry = new Date()
+    expiry.setDate(expiry.getDate() + days)
+    return expiry
   }
 
   private mapPatientFromDb(dbPatient: any): PatientIdentity {
@@ -745,7 +745,7 @@ class PatientIdentityService {
       },
       createdAt: new Date(dbPatient.created_at),
       updatedAt: new Date(dbPatient.updated_at),
-    };
+    }
   }
 
   private mapConsentFromDb(dbConsent: any): ConsentRecord {
@@ -762,9 +762,9 @@ class PatientIdentityService {
       ipAddress: dbConsent.ip_address,
       userAgent: dbConsent.user_agent,
       version: dbConsent.version,
-    };
+    }
   }
 }
 
 // Export singleton instance
-export const patientIdentityService = new PatientIdentityService();
+export const patientIdentityService = new PatientIdentityService()

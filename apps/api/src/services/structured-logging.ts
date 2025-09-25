@@ -13,22 +13,22 @@ export enum LogLevel {
 
 // Define structured log entry interface
 export interface LogEntry {
-  level: LogLevel;
-  message: string;
-  timestamp: Date;
-  requestId?: string;
-  _userId?: string;
-  clinicId?: string;
-  patientId?: string;
-  operationType?: string;
-  endpoint?: string;
-  metadata?: Record<string, any>;
+  level: LogLevel
+  message: string
+  timestamp: Date
+  requestId?: string
+  _userId?: string
+  clinicId?: string
+  patientId?: string
+  operationType?: string
+  endpoint?: string
+  metadata?: Record<string, any>
   error?: {
-    message: string;
-    type?: string;
-    stack?: string;
-  };
-  healthcareCompliant: boolean;
+    message: string
+    type?: string
+    stack?: string
+  }
+  healthcareCompliant: boolean
 }
 
 // Healthcare data patterns that should be redacted
@@ -40,49 +40,49 @@ const HEALTHCARE_PATTERNS: Record<string, RegExp> = {
   medicalRecord: /\b(medical\s+record|prontuário):\s*[A-Z0-9-]+\b/gi,
   diagnosis: /\b(diagnosis|diagnóstico):\s*[^.,]+/gi,
   treatment: /\b(treatment|tratamento):\s*[^.,]+/gi,
-};
+}
 
 /**
  * Redacts sensitive healthcare data from log messages
  */
 function redactSensitiveData(text: string): {
-  redacted: string;
-  fields: string[];
+  redacted: string
+  fields: string[]
 } {
-  let redactedText = text;
-  const redactedFields: string[] = [];
+  let redactedText = text
+  const redactedFields: string[] = []
 
   Object.entries(HEALTHCARE_PATTERNS).forEach(([field, _pattern]) => {
     if (pattern.test(redactedText)) {
-      redactedFields.push(field);
+      redactedFields.push(field)
       redactedText = redactedText.replace(
         pattern,
         `[REDACTED_${field.toUpperCase()}]`,
-      );
+      )
     }
-  });
+  })
 
-  return { redacted: redactedText, fields: redactedFields };
+  return { redacted: redactedText, fields: redactedFields }
 }
 
 /**
  * Redacts sensitive data from metadata objects recursively
  */
 function redactMetadata(metadata: Record<string, any>): Record<string, any> {
-  const redacted: Record<string, any> = {};
+  const redacted: Record<string, any> = {}
 
   Object.entries(metadata).forEach(([key, _value]) => {
     if (typeof value === 'string') {
-      const { redacted: redactedValue } = redactSensitiveData(value);
-      redacted[key] = redactedValue;
+      const { redacted: redactedValue } = redactSensitiveData(value)
+      redacted[key] = redactedValue
     } else if (typeof value === 'object' && value !== null) {
-      redacted[key] = redactMetadata(value);
+      redacted[key] = redactMetadata(value)
     } else {
-      redacted[key] = value;
+      redacted[key] = value
     }
-  });
+  })
 
-  return redacted;
+  return redacted
 }
 
 /**
@@ -92,23 +92,23 @@ function createLogEntry(
   level: LogLevel,
   message: string,
   _context: {
-    requestId?: string;
-    _userId?: string;
-    clinicId?: string;
-    patientId?: string;
-    operationType?: string;
-    endpoint?: string;
-    metadata?: Record<string, any>;
-    error?: Error;
+    requestId?: string
+    _userId?: string
+    clinicId?: string
+    patientId?: string
+    operationType?: string
+    endpoint?: string
+    metadata?: Record<string, any>
+    error?: Error
   } = {},
 ): LogEntry {
   // Redact sensitive data from message
-  const { redacted: redactedMessage, fields: redactedFields } = redactSensitiveData(message);
+  const { redacted: redactedMessage, fields: redactedFields } = redactSensitiveData(message)
 
   // Process metadata if provided
   const processedMetadata = context.metadata
     ? redactMetadata(context.metadata)
-    : undefined;
+    : undefined
 
   // Create log entry
   const logEntry: LogEntry = {
@@ -123,37 +123,37 @@ function createLogEntry(
     endpoint: context.endpoint,
     metadata: processedMetadata,
     healthcareCompliant: redactedFields.length > 0,
-  };
+  }
 
   // Add error information if provided
   if (context.error) {
     const { redacted: redactedErrorMessage } = redactSensitiveData(
       context.error.message,
-    );
+    )
     logEntry.error = {
       message: redactedErrorMessage,
       type: context.error.name,
       stack: context.error.stack,
-    };
+    }
   }
 
-  return logEntry;
+  return logEntry
 }
 
 /**
  * Core structured logger implementation
  */
 class StructuredLogger {
-  private static instance: StructuredLogger;
-  private serviceName: string;
-  private serviceVersion: string;
+  private static instance: StructuredLogger
+  private serviceName: string
+  private serviceVersion: string
 
   private constructor(
     serviceName: string = 'api',
     serviceVersion: string = '1.0.0',
   ) {
-    this.serviceName = serviceName;
-    this.serviceVersion = serviceVersion;
+    this.serviceName = serviceName
+    this.serviceVersion = serviceVersion
   }
 
   public static getInstance(
@@ -164,9 +164,9 @@ class StructuredLogger {
       StructuredLogger.instance = new StructuredLogger(
         serviceName,
         serviceVersion,
-      );
+      )
     }
-    return StructuredLogger.instance;
+    return StructuredLogger.instance
   }
 
   /**
@@ -176,7 +176,7 @@ class StructuredLogger {
     message: string,
     _context?: Parameters<typeof createLogEntry>[1],
   ): void {
-    this.log(LogLevel.DEBUG, message, _context);
+    this.log(LogLevel.DEBUG, message, _context)
   }
 
   /**
@@ -186,7 +186,7 @@ class StructuredLogger {
     message: string,
     _context?: Parameters<typeof createLogEntry>[1],
   ): void {
-    this.log(LogLevel.INFO, message, _context);
+    this.log(LogLevel.INFO, message, _context)
   }
 
   /**
@@ -196,7 +196,7 @@ class StructuredLogger {
     message: string,
     _context?: Parameters<typeof createLogEntry>[1],
   ): void {
-    this.log(LogLevel.WARN, message, _context);
+    this.log(LogLevel.WARN, message, _context)
   }
 
   /**
@@ -206,7 +206,7 @@ class StructuredLogger {
     message: string,
     _context?: Parameters<typeof createLogEntry>[1],
   ): void {
-    this.log(LogLevel.ERROR, message, _context);
+    this.log(LogLevel.ERROR, message, _context)
   }
 
   /**
@@ -217,32 +217,32 @@ class StructuredLogger {
     message: string,
     _context?: Parameters<typeof createLogEntry>[1],
   ): void {
-    const logEntry = createLogEntry(level, message, _context);
+    const logEntry = createLogEntry(level, message, _context)
 
     // Add service information
     const logOutput = {
       _service: this.serviceName,
       version: this.serviceVersion,
       ...logEntry,
-    };
+    }
 
     // Convert to JSON string for structured logging
-    const logJson = JSON.stringify(logOutput);
+    const logJson = JSON.stringify(logOutput)
 
     // Output to appropriate console method based on level
     switch (level) {
       case LogLevel.DEBUG:
-        console.debug(logJson);
-        break;
+        console.warn(logJson)
+        break
       case LogLevel.INFO:
-        console.info(logJson);
-        break;
+        console.warn(logJson)
+        break
       case LogLevel.WARN:
-        console.warn(logJson);
-        break;
+        console.warn(logJson)
+        break
       case LogLevel.ERROR:
-        console.error(logJson);
-        break;
+        console.error(logJson)
+        break
     }
   }
 
@@ -252,9 +252,9 @@ class StructuredLogger {
   public child(
     _context: Parameters<typeof createLogEntry>[1],
   ): StructuredLogger {
-    const childLogger = Object.create(this);
-    childLogger.context = context;
-    return childLogger;
+    const childLogger = Object.create(this)
+    childLogger.context = context
+    return childLogger
   }
 }
 
@@ -262,8 +262,8 @@ class StructuredLogger {
 export const structuredLogger = StructuredLogger.getInstance(
   'neonpro-api',
   '1.0.0',
-);
+)
 
 // Export types and utilities for external use
-export type { LogEntry };
-export { createLogEntry, LogLevel, redactMetadata, redactSensitiveData };
+export type { LogEntry }
+export { createLogEntry, LogLevel, redactMetadata, redactSensitiveData }

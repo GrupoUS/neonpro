@@ -10,22 +10,22 @@ import {
   Mic,
   Phone,
   Video,
-} from 'lucide-react';
-import * as React from 'react';
+} from 'lucide-react'
+import * as React from 'react'
 
 interface NativeDeviceCapability {
-  id: string;
-  name: string;
-  icon: React.ComponentType<{ className?: string }>;
-  available: boolean;
-  permission: 'granted' | 'denied' | 'prompt' | 'unsupported';
-  description: string;
-  aestheticUse: string;
+  id: string
+  name: string
+  icon: React.ComponentType<{ className?: string }>
+  available: boolean
+  permission: 'granted' | 'denied' | 'prompt' | 'unsupported'
+  description: string
+  aestheticUse: string
 }
 
 interface PWANativeDeviceManagerProps {
-  className?: string;
-  onCapabilityChange?: (capabilityId: string, status: boolean) => void;
+  className?: string
+  onCapabilityChange?: (capabilityId: string, status: boolean) => void
 }
 
 export const PWANativeDeviceManager: React.FC<PWANativeDeviceManagerProps> = ({
@@ -96,177 +96,177 @@ export const PWANativeDeviceManager: React.FC<PWANativeDeviceManagerProps> = ({
       description: 'Notificações push do sistema',
       aestheticUse: 'Lembretes de agendamentos, confirmações',
     },
-  ]);
+  ])
 
-  const [selectedCapability, setSelectedCapability] = React.useState<string | null>(null);
-  const [isProcessing, setIsProcessing] = React.useState(false);
+  const [selectedCapability, setSelectedCapability] = React.useState<string | null>(null)
+  const [isProcessing, setIsProcessing] = React.useState(false)
 
   React.useEffect(() => {
-    checkDeviceCapabilities();
-  }, []);
+    checkDeviceCapabilities()
+  }, [])
 
   const checkDeviceCapabilities = async () => {
     const updatedCapabilities = await Promise.all(
       capabilities.map(async capability => {
-        let available = false;
-        let permission: 'granted' | 'denied' | 'prompt' | 'unsupported' = 'unsupported';
+        let available = false
+        let permission: 'granted' | 'denied' | 'prompt' | 'unsupported' = 'unsupported'
 
         switch (capability.id) {
           case 'camera':
-            available = 'mediaDevices' in navigator && 'getUserMedia' in navigator.mediaDevices;
+            available = 'mediaDevices' in navigator && 'getUserMedia' in navigator.mediaDevices
             if (available) {
               try {
                 const result = await navigator.permissions.query({
                   name: 'camera' as PermissionName,
-                });
-                permission = result.state as 'granted' | 'denied' | 'prompt';
+                })
+                permission = result.state as 'granted' | 'denied' | 'prompt'
               } catch {
-                permission = 'prompt';
+                permission = 'prompt'
               }
             }
-            break;
+            break
 
           case 'contacts':
-            available = 'contacts' in navigator;
+            available = 'contacts' in navigator
             if (available) {
               try {
                 const result = await navigator.permissions.query({
                   name: 'contacts' as PermissionName,
-                });
-                permission = result.state as 'granted' | 'denied' | 'prompt';
+                })
+                permission = result.state as 'granted' | 'denied' | 'prompt'
               } catch {
-                permission = 'prompt';
+                permission = 'prompt'
               }
             }
-            break;
+            break
 
           case 'calendar':
-            available = 'calendar' in navigator;
+            available = 'calendar' in navigator
             if (available) {
               try {
                 const result = await navigator.permissions.query({
                   name: 'calendar' as PermissionName,
-                });
-                permission = result.state as 'granted' | 'denied' | 'prompt';
+                })
+                permission = result.state as 'granted' | 'denied' | 'prompt'
               } catch {
-                permission = 'prompt';
+                permission = 'prompt'
               }
             }
-            break;
+            break
 
           case 'microphone':
-            available = 'mediaDevices' in navigator && 'getUserMedia' in navigator.mediaDevices;
+            available = 'mediaDevices' in navigator && 'getUserMedia' in navigator.mediaDevices
             if (available) {
               try {
                 const result = await navigator.permissions.query({
                   name: 'microphone' as PermissionName,
-                });
-                permission = result.state as 'granted' | 'denied' | 'prompt';
+                })
+                permission = result.state as 'granted' | 'denied' | 'prompt'
               } catch {
-                permission = 'prompt';
+                permission = 'prompt'
               }
             }
-            break;
+            break
 
           case 'location':
-            available = 'geolocation' in navigator;
+            available = 'geolocation' in navigator
             if (available) {
               try {
                 const result = await navigator.permissions.query({
                   name: 'geolocation' as PermissionName,
-                });
-                permission = result.state as 'granted' | 'denied' | 'prompt';
+                })
+                permission = result.state as 'granted' | 'denied' | 'prompt'
               } catch {
-                permission = 'prompt';
+                permission = 'prompt'
               }
             }
-            break;
+            break
 
           case 'phone':
-            available = false; // PWA phone access is limited
-            break;
+            available = false // PWA phone access is limited
+            break
 
           case 'notifications':
-            available = 'Notification' in window;
-            permission = Notification.permission as 'granted' | 'denied' | 'prompt';
-            break;
+            available = 'Notification' in window
+            permission = Notification.permission as 'granted' | 'denied' | 'prompt'
+            break
         }
 
-        return { ...capability, available, permission };
+        return { ...capability, available, permission }
       }),
-    );
+    )
 
-    setCapabilities(updatedCapabilities);
-  };
+    setCapabilities(updatedCapabilities)
+  }
 
   const requestPermission = async (capabilityId: string) => {
-    const capability = capabilities.find(c => c.id === capabilityId);
-    if (!capability || !capability.available) return;
+    const capability = capabilities.find(c => c.id === capabilityId)
+    if (!capability || !capability.available) return
 
-    setIsProcessing(true);
-    setSelectedCapability(capabilityId);
+    setIsProcessing(true)
+    setSelectedCapability(capabilityId)
 
     try {
-      let granted = false;
+      let granted = false
 
       switch (capabilityId) {
         case 'camera':
           try {
-            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-            stream.getTracks().forEach(track => track.stop());
-            granted = true;
+            const stream = await navigator.mediaDevices.getUserMedia({ video: true })
+            stream.getTracks().forEach(track => track.stop())
+            granted = true
           } catch {
-            granted = false;
+            granted = false
           }
-          break;
+          break
 
         case 'microphone':
           try {
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            stream.getTracks().forEach(track => track.stop());
-            granted = true;
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+            stream.getTracks().forEach(track => track.stop())
+            granted = true
           } catch {
-            granted = false;
+            granted = false
           }
-          break;
+          break
 
         case 'contacts':
           try {
             // @ts-ignore - Contacts API is experimental
             const contacts = await navigator.contacts.select(['name', 'email', 'tel'], {
               multiple: false,
-            });
-            granted = contacts.length > 0;
+            })
+            granted = contacts.length > 0
           } catch {
-            granted = false;
+            granted = false
           }
-          break;
+          break
 
         case 'calendar':
           try {
             // @ts-ignore - Calendar API is experimental
-            const calendars = await navigator.calendars.get();
-            granted = calendars.length > 0;
+            const calendars = await navigator.calendars.get()
+            granted = calendars.length > 0
           } catch {
-            granted = false;
+            granted = false
           }
-          break;
+          break
 
         case 'location':
           try {
             const position = await new Promise<GeolocationPosition>((resolve, reject) => {
-              navigator.geolocation.getCurrentPosition(resolve, reject);
-            });
-            granted = !!position;
+              navigator.geolocation.getCurrentPosition(resolve, reject)
+            })
+            granted = !!position
           } catch {
-            granted = false;
+            granted = false
           }
-          break;
+          break
 
         case 'notifications':
-          const permission = await Notification.requestPermission();
-          granted = permission === 'granted';
-          break;
+          const permission = await Notification.requestPermission()
+          granted = permission === 'granted'
+          break
       }
 
       // Update capability status
@@ -276,46 +276,46 @@ export const PWANativeDeviceManager: React.FC<PWANativeDeviceManagerProps> = ({
             ? { ...cap, permission: granted ? 'granted' : 'denied' }
             : cap
         )
-      );
+      )
 
-      onCapabilityChange?.(capabilityId, granted);
+      onCapabilityChange?.(capabilityId, granted)
     } catch (error) {
-      console.error(`Error requesting ${capabilityId} permission:`, error);
+      console.error(`Error requesting ${capabilityId} permission:`, error)
     } finally {
-      setIsProcessing(false);
-      setSelectedCapability(null);
+      setIsProcessing(false)
+      setSelectedCapability(null)
     }
-  };
+  }
 
   const getPermissionColor = (permission: string) => {
     switch (permission) {
       case 'granted':
-        return 'text-green-600 bg-green-100';
+        return 'text-green-600 bg-green-100'
       case 'denied':
-        return 'text-red-600 bg-red-100';
+        return 'text-red-600 bg-red-100'
       case 'prompt':
-        return 'text-yellow-600 bg-yellow-100';
+        return 'text-yellow-600 bg-yellow-100'
       case 'unsupported':
-        return 'text-gray-600 bg-gray-100';
+        return 'text-gray-600 bg-gray-100'
       default:
-        return 'text-gray-600 bg-gray-100';
+        return 'text-gray-600 bg-gray-100'
     }
-  };
+  }
 
   const getPermissionText = (permission: string) => {
     switch (permission) {
       case 'granted':
-        return 'Concedido';
+        return 'Concedido'
       case 'denied':
-        return 'Negado';
+        return 'Negado'
       case 'prompt':
-        return 'Solicitar';
+        return 'Solicitar'
       case 'unsupported':
-        return 'Não suportado';
+        return 'Não suportado'
       default:
-        return 'Desconhecido';
+        return 'Desconhecido'
     }
-  };
+  }
 
   return (
     <div className={`bg-white rounded-lg shadow-lg p-6 ${className}`}>
@@ -337,7 +337,7 @@ export const PWANativeDeviceManager: React.FC<PWANativeDeviceManagerProps> = ({
 
       <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
         {capabilities.map(capability => {
-          const Icon = capability.icon;
+          const Icon = capability.icon
           return (
             <div
               key={capability.id}
@@ -347,8 +347,10 @@ export const PWANativeDeviceManager: React.FC<PWANativeDeviceManagerProps> = ({
                   : 'border-gray-100 bg-gray-50 opacity-50'
               }`}
               onClick={() =>
-                capability.available && capability.permission === 'prompt' && !isProcessing
-                && requestPermission(capability.id)}
+                capability.available &&
+                capability.permission === 'prompt' &&
+                !isProcessing &&
+                requestPermission(capability.id)}
             >
               <div className='flex items-start justify-between'>
                 <div className='flex items-start space-x-3'>
@@ -385,7 +387,7 @@ export const PWANativeDeviceManager: React.FC<PWANativeDeviceManagerProps> = ({
                 </div>
               </div>
             </div>
-          );
+          )
         })}
       </div>
 
@@ -415,5 +417,5 @@ export const PWANativeDeviceManager: React.FC<PWANativeDeviceManagerProps> = ({
         </ul>
       </div>
     </div>
-  );
-};
+  )
+}

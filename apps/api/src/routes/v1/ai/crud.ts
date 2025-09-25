@@ -4,14 +4,14 @@
  * Integrates with tRPC router for healthcare-compliant CRUD operations
  */
 
-import { trpcServer } from '@hono/trpc-server';
-import { zValidator } from '@hono/zod-validator';
-import { Hono } from 'hono';
-import { appRouter } from '../../../trpc/router';
+import { trpcServer } from '@hono/trpc-server'
+import { zValidator } from '@hono/zod-validator'
+import { Hono } from 'hono'
+import { appRouter } from '../../../trpc/router'
 
 // Import middleware and utilities
-import { requireAIAccess, requireAuth } from '../../../middleware/auth';
-import { getServices } from '../../../services/shared-services';
+import { requireAIAccess, requireAuth } from '../../../middleware/auth'
+import { getServices } from '../../../services/shared-services'
 
 // Request validation schema - matches the 3-step flow
 const crudRequestSchema = z.object({
@@ -52,16 +52,16 @@ const crudRequestSchema = z.object({
   modifications: z.any().optional(),
   reason: z.string().optional(),
   finalData: z.any().optional(),
-});
+})
 
 // Create tRPC handler for Hono integration
 const tRPCHandle = trpcServer({
   router: appRouter,
   createContext: async opts => {
     // Create context similar to existing tRPC context
-    const headers = opts.req.headers;
-    const userId = headers.get('x-user-id') || 'user-123';
-    const clinicId = headers.get('x-clinic-id') || 'clinic-456';
+    const headers = opts.req.headers
+    const userId = headers.get('x-user-id') || 'user-123'
+    const clinicId = headers.get('x-clinic-id') || 'clinic-456'
 
     return {
       userId,
@@ -73,10 +73,10 @@ const tRPCHandle = trpcServer({
       },
       // Add other necessary context properties
       prisma: null, // Will be handled by tRPC context
-    };
+    }
   },
-});
-const app = new Hono();
+})
+const app = new Hono()
 
 // Main CRUD endpoint
 app.post(
@@ -85,16 +85,16 @@ app.post(
   requireAIAccess,
   zValidator('json', crudRequestSchema),
   async c => {
-    const startTime = Date.now();
-    const _user = c.get('user');
-    const _userId = c.get('userId');
-    const _clinicId = c.get('clinicId');
-    const requestData = c.req.valid('json');
-    const ipAddress = c.req.header('X-Real-IP') || c.req.header('X-Forwarded-For') || 'unknown';
-    const userAgent = c.req.header('User-Agent') || 'unknown';
+    const startTime = Date.now()
+    const _user = c.get('user')
+    const _userId = c.get('userId')
+    const _clinicId = c.get('clinicId')
+    const requestData = c.req.valid('json')
+    const ipAddress = c.req.header('X-Real-IP') || c.req.header('X-Forwarded-For') || 'unknown'
+    const userAgent = c.req.header('User-Agent') || 'unknown'
 
     try {
-      const currentServices = getServices();
+      const currentServices = getServices()
 
       // Validate LGPD compliance for CRUD operations
       const lgpdValidation = await currentServices.lgpdService.validateDataAccess({
@@ -103,7 +103,7 @@ app.post(
         purpose: 'healthcare_data_management',
         legalBasis: 'legitimate_interest',
         operation: requestData.step,
-      });
+      })
 
       if (!lgpdValidation.success) {
         return c.json(
@@ -113,7 +113,7 @@ app.post(
             code: lgpdValidation.code || 'LGPD_CRUD_DENIED',
           },
           403,
-        );
+        )
       }
 
       // Route to tRPC CRUD endpoint
@@ -122,35 +122,35 @@ app.post(
         res: c.res,
         path: '/crud.crud',
         type: 'mutation',
-      });
+      })
 
       // Parse tRPC response
-      let responseData;
+      let responseData
       try {
-        responseData = await tRPCResponse.json();
+        responseData = await tRPCResponse.json()
       } catch (parseError) {
-        console.error('Error parsing tRPC response:', parseError);
+        console.error('Error parsing tRPC response:', parseError)
         return c.json(
           {
             success: false,
             error: 'Internal server error processing CRUD operation',
           },
           500,
-        );
+        )
       }
 
       // Calculate performance metrics
-      const processingTime = Date.now() - startTime;
-      const dataSize = JSON.stringify(requestData).length;
+      const processingTime = Date.now() - startTime
+      const dataSize = JSON.stringify(requestData).length
 
       // Log CRUD operation for audit trail
       await currentServices.auditService.logActivity({
         userId,
         action: mapStepToAuditAction(requestData.step),
         resourceType: 'ai_crud_operation',
-        resourceId: responseData.data?.intentId
-          || responseData.data?.executionId
-          || 'unknown',
+        resourceId: responseData.data?.intentId ||
+          responseData.data?.executionId ||
+          'unknown',
         details: {
           step: requestData.step,
           operation: requestData.operation,
@@ -164,7 +164,7 @@ app.post(
         userAgent,
         complianceContext: 'LGPD',
         sensitivityLevel: 'high',
-      });
+      })
 
       // Prepare response headers
       const responseHeaders: Record<string, string> = {
@@ -173,35 +173,35 @@ app.post(
         'X-AI-CRUD': 'performed',
         'X-LGPD-Compliant': 'true',
         'X-Audit-Logged': 'true',
-      };
+      }
 
       // Add CRUD-specific headers
       if (responseData.data) {
-        responseHeaders['X-CRUD-Step'] = requestData.step;
-        responseHeaders['X-CRUD-Operation'] = requestData.operation || 'unknown';
-        responseHeaders['X-CRUD-Entity'] = requestData.entity || 'unknown';
+        responseHeaders['X-CRUD-Step'] = requestData.step
+        responseHeaders['X-CRUD-Operation'] = requestData.operation || 'unknown'
+        responseHeaders['X-CRUD-Entity'] = requestData.entity || 'unknown'
 
         if (responseData.data.intentId) {
-          responseHeaders['X-Intent-ID'] = responseData.data.intentId;
+          responseHeaders['X-Intent-ID'] = responseData.data.intentId
         }
         if (responseData.data.confirmationId) {
-          responseHeaders['X-Confirmation-ID'] = responseData.data.confirmationId;
+          responseHeaders['X-Confirmation-ID'] = responseData.data.confirmationId
         }
         if (responseData.data.executionId) {
-          responseHeaders['X-Execution-ID'] = responseData.data.executionId;
+          responseHeaders['X-Execution-ID'] = responseData.data.executionId
         }
       }
 
       // Set response headers
       Object.entries(responseHeaders).forEach(([key, value]) => {
-        c.header(key, value);
-      });
+        c.header(key, value)
+      })
 
       return c.json({
         success: true,
-        operationId: responseData.data?.intentId
-          || responseData.data?.executionId
-          || 'crud-op-456',
+        operationId: responseData.data?.intentId ||
+          responseData.data?.executionId ||
+          'crud-op-456',
         data: responseData.data,
         performance: {
           executionTime: processingTime,
@@ -217,12 +217,12 @@ app.post(
             'prescriptions',
           ].includes(requestData.entity || ''),
         },
-      });
+      })
     } catch {
-      console.error('AI CRUD endpoint error:', error);
+      console.error('AI CRUD endpoint error:', error)
 
       // Log error for audit
-      const currentServices = getServices();
+      const currentServices = getServices()
       await currentServices.auditService.logActivity({
         userId,
         action: 'crud_operation_error',
@@ -238,7 +238,7 @@ app.post(
         userAgent,
         complianceContext: 'LGPD',
         sensitivityLevel: 'high',
-      });
+      })
 
       return c.json(
         {
@@ -246,10 +246,10 @@ app.post(
           error: 'Erro interno do servidor. Tente novamente mais tarde.',
         },
         500,
-      );
+      )
     }
   },
-);
+)
 
 // GET endpoint to check CRUD operation status
 app.get(
@@ -257,14 +257,14 @@ app.get(
   requireAuth,
   requireAIAccess,
   async c => {
-    const operationId = c.req.param('operationId');
-    const _user = c.get('user');
-    const _userId = c.get('userId');
-    const ipAddress = c.req.header('X-Real-IP') || c.req.header('X-Forwarded-For') || 'unknown';
-    const userAgent = c.req.header('User-Agent') || 'unknown';
+    const operationId = c.req.param('operationId')
+    const _user = c.get('user')
+    const _userId = c.get('userId')
+    const ipAddress = c.req.header('X-Real-IP') || c.req.header('X-Forwarded-For') || 'unknown'
+    const userAgent = c.req.header('User-Agent') || 'unknown'
 
     try {
-      const currentServices = getServices();
+      const currentServices = getServices()
 
       // Route to tRPC getStatus endpoint
       const tRPCResponse = await tRPCHandle({
@@ -273,9 +273,9 @@ app.get(
         path: '/crud.getStatus',
         type: 'query',
         input: { operationId },
-      });
+      })
 
-      const responseData = await tRPCResponse.json();
+      const responseData = await tRPCResponse.json()
 
       // Log status check for audit
       await currentServices.auditService.logActivity({
@@ -291,14 +291,14 @@ app.get(
         userAgent,
         complianceContext: 'LGPD',
         sensitivityLevel: 'medium',
-      });
+      })
 
       return c.json({
         success: true,
         data: responseData.data,
-      });
+      })
     } catch {
-      console.error('CRUD status check error:', error);
+      console.error('CRUD status check error:', error)
 
       return c.json(
         {
@@ -306,20 +306,20 @@ app.get(
           error: 'Falha ao verificar status da operação CRUD',
         },
         500,
-      );
+      )
     }
   },
-);
+)
 
 // GET endpoint to list supported entities
 app.get('/crud/entities', requireAuth, requireAIAccess, async c => {
-  const _user = c.get('user');
-  const _userId = c.get('userId');
-  const ipAddress = c.req.header('X-Real-IP') || c.req.header('X-Forwarded-For') || 'unknown';
-  const userAgent = c.req.header('User-Agent') || 'unknown';
+  const _user = c.get('user')
+  const _userId = c.get('userId')
+  const ipAddress = c.req.header('X-Real-IP') || c.req.header('X-Forwarded-For') || 'unknown'
+  const userAgent = c.req.header('User-Agent') || 'unknown'
 
   try {
-    const currentServices = getServices();
+    const currentServices = getServices()
 
     // Route to tRPC getSupportedEntities endpoint
     const tRPCResponse = await tRPCHandle({
@@ -327,9 +327,9 @@ app.get('/crud/entities', requireAuth, requireAIAccess, async c => {
       res: c.res,
       path: '/crud.getSupportedEntities',
       type: 'query',
-    });
+    })
 
-    const responseData = await tRPCResponse.json();
+    const responseData = await tRPCResponse.json()
 
     // Log entities access for audit
     await currentServices.auditService.logActivity({
@@ -343,14 +343,14 @@ app.get('/crud/entities', requireAuth, requireAIAccess, async c => {
       userAgent,
       complianceContext: 'LGPD',
       sensitivityLevel: 'low',
-    });
+    })
 
     return c.json({
       success: true,
       data: responseData.data,
-    });
+    })
   } catch {
-    console.error('CRUD entities list error:', error);
+    console.error('CRUD entities list error:', error)
 
     return c.json(
       {
@@ -358,22 +358,22 @@ app.get('/crud/entities', requireAuth, requireAIAccess, async c => {
         error: 'Falha ao listar entidades suportadas',
       },
       500,
-    );
+    )
   }
-});
+})
 
 // Helper function to map CRUD steps to audit actions
 function mapStepToAuditAction(step: string): string {
   switch (step) {
     case 'intent':
-      return 'ai_crud_intent';
+      return 'ai_crud_intent'
     case 'confirm':
-      return 'ai_crud_confirmation';
+      return 'ai_crud_confirmation'
     case 'execute':
-      return 'ai_crud_execution';
+      return 'ai_crud_execution'
     default:
-      return 'ai_crud_operation';
+      return 'ai_crud_operation'
   }
 }
 
-export default app;
+export default app

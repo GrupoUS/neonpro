@@ -5,10 +5,10 @@
  * Simplified version using Prisma directly for better compatibility.
  */
 
-import { AuditAction, AuditStatus, ResourceType, RiskLevel } from '@prisma/client';
-import { TRPCError } from '@trpc/server';
-import * as v from 'valibot';
-import { healthcareProcedure, protectedProcedure, router } from '../trpc';
+import { AuditAction, AuditStatus, ResourceType, RiskLevel } from '@prisma/client'
+import { TRPCError } from '@trpc/server'
+import * as v from 'valibot'
+import { healthcareProcedure, protectedProcedure, router } from '../trpc'
 
 // Import schemas (assuming they're defined in the schemas file)
 // These would typically be imported from '../schemas'
@@ -105,20 +105,20 @@ export const aestheticClinicRouter = router({
           throw new TRPCError({
             code: 'FORBIDDEN',
             message: 'LGPD consent is required for client profile creation',
-          });
+          })
         }
 
         // Check for existing client with same CPF
         if (input.cpf) {
           const existingClient = await ctx.prisma.aestheticClientProfile.findFirst({
             where: { cpf: input.cpf, clinicId: input.clinicId },
-          });
+          })
 
           if (existingClient) {
             throw new TRPCError({
               code: 'CONFLICT',
               message: 'Client with this CPF already exists in this clinic',
-            });
+            })
           }
         }
 
@@ -158,7 +158,7 @@ export const aestheticClinicRouter = router({
             createdBy: ctx._userId,
             updatedBy: ctx._userId,
           },
-        });
+        })
 
         // Log audit trail
         await ctx.prisma.auditLog.create({
@@ -178,23 +178,23 @@ export const aestheticClinicRouter = router({
             ipAddress: ctx.req?.ip,
             userAgent: ctx.req?.headers['user-agent'],
           },
-        });
+        })
 
         return {
           success: true,
           data: client,
           message: 'Aesthetic client profile created successfully',
-        };
+        }
       } catch {
         if (error instanceof TRPCError) {
-          throw error;
+          throw error
         }
 
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to create aesthetic client profile',
           cause: error,
-        });
+        })
       }
     }),
 
@@ -217,13 +217,13 @@ export const aestheticClinicRouter = router({
             photoAssessments: input.includeMedicalHistory,
             financialTransactions: input.includeMedicalHistory,
           },
-        });
+        })
 
         if (!client) {
           throw new TRPCError({
             code: 'NOT_FOUND',
             message: 'Aesthetic client profile not found',
-          });
+          })
         }
 
         // Verify clinic access
@@ -231,23 +231,23 @@ export const aestheticClinicRouter = router({
           throw new TRPCError({
             code: 'FORBIDDEN',
             message: 'Access denied to this client profile',
-          });
+          })
         }
 
         return {
           success: true,
           data: client,
-        };
+        }
       } catch {
         if (error instanceof TRPCError) {
-          throw error;
+          throw error
         }
 
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to retrieve aesthetic client profile',
           cause: error,
-        });
+        })
       }
     }),
 
@@ -285,13 +285,13 @@ export const aestheticClinicRouter = router({
             id: input.id,
             clinicId: ctx.clinicId,
           },
-        });
+        })
 
         if (!existingClient) {
           throw new TRPCError({
             code: 'NOT_FOUND',
             message: 'Aesthetic client profile not found',
-          });
+          })
         }
 
         // Update client profile
@@ -311,18 +311,18 @@ export const aestheticClinicRouter = router({
             ...(input.concerns !== undefined && { concerns: input.concerns }),
             ...(input.expectations !== undefined && { expectations: input.expectations }),
             ...(input.budgetRange !== undefined && { budgetRange: input.budgetRange }),
-            ...(input.preferredContactMethod !== undefined
-              && { preferredContactMethod: input.preferredContactMethod }),
-            ...(input.marketingConsent !== undefined
-              && { marketingConsent: input.marketingConsent }),
+            ...(input.preferredContactMethod !== undefined &&
+              { preferredContactMethod: input.preferredContactMethod }),
+            ...(input.marketingConsent !== undefined &&
+              { marketingConsent: input.marketingConsent }),
             ...(input.photoConsent !== undefined && { photoConsent: input.photoConsent }),
-            ...(input.emergencyContact !== undefined
-              && { emergencyContact: input.emergencyContact }),
+            ...(input.emergencyContact !== undefined &&
+              { emergencyContact: input.emergencyContact }),
             ...(input.notes !== undefined && { notes: input.notes }),
             updatedBy: ctx._userId,
             updatedAt: new Date(),
           },
-        });
+        })
 
         // Log audit trail
         await ctx.prisma.auditLog.create({
@@ -342,23 +342,23 @@ export const aestheticClinicRouter = router({
             ipAddress: ctx.req?.ip,
             userAgent: ctx.req?.headers['user-agent'],
           },
-        });
+        })
 
         return {
           success: true,
           data: updatedClient,
           message: 'Aesthetic client profile updated successfully',
-        };
+        }
       } catch {
         if (error instanceof TRPCError) {
-          throw error;
+          throw error
         }
 
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to update aesthetic client profile',
           cause: error,
-        });
+        })
       }
     }),
 
@@ -379,8 +379,8 @@ export const aestheticClinicRouter = router({
     }))
     .query(async ({ ctx, input }) => {
       try {
-        const { clinicId, query, skinType, status, page, limit, sortBy, sortOrder } = input;
-        const offset = (page - 1) * limit;
+        const { clinicId, query, skinType, status, page, limit, sortBy, sortOrder } = input
+        const offset = (page - 1) * limit
 
         // Build where clause
         const where: any = {
@@ -395,10 +395,10 @@ export const aestheticClinicRouter = router({
           }),
           ...(skinType && { skinType }),
           ...(status && { status }),
-        };
+        }
 
         // Get total count for pagination
-        const total = await ctx.prisma.aestheticClientProfile.count({ where });
+        const total = await ctx.prisma.aestheticClientProfile.count({ where })
 
         // Get clients
         const clients = await ctx.prisma.aestheticClientProfile.findMany({
@@ -406,7 +406,7 @@ export const aestheticClinicRouter = router({
           skip: offset,
           take: limit,
           orderBy: sortBy ? { [sortBy]: sortOrder || 'asc' } : { fullName: 'asc' },
-        });
+        })
 
         return {
           success: true,
@@ -419,13 +419,13 @@ export const aestheticClinicRouter = router({
               pages: Math.ceil(total / limit),
             },
           },
-        };
+        }
       } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to search aesthetic client profiles',
           cause: error,
-        });
+        })
       }
     }),
 
@@ -479,7 +479,7 @@ export const aestheticClinicRouter = router({
             throw new TRPCError({
               code: 'BAD_REQUEST',
               message: 'ANVISA registration is required for surgical and laser procedures',
-            });
+            })
           }
         }
 
@@ -517,7 +517,7 @@ export const aestheticClinicRouter = router({
             createdBy: ctx._userId,
             updatedBy: ctx._userId,
           },
-        });
+        })
 
         // Log audit trail
         await ctx.prisma.auditLog.create({
@@ -538,23 +538,23 @@ export const aestheticClinicRouter = router({
             ipAddress: ctx.req?.ip,
             userAgent: ctx.req?.headers['user-agent'],
           },
-        });
+        })
 
         return {
           success: true,
           data: treatment,
           message: 'Aesthetic treatment created successfully',
-        };
+        }
       } catch {
         if (error instanceof TRPCError) {
-          throw error;
+          throw error
         }
 
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to create aesthetic treatment',
           cause: error,
-        });
+        })
       }
     }),
 
@@ -574,7 +574,7 @@ export const aestheticClinicRouter = router({
           clinicId: input.clinicId,
           ...(input.activeOnly && { isActive: true }),
           ...(input.category && { category: input.category }),
-        };
+        }
 
         const treatments = await ctx.prisma.aestheticTreatment.findMany({
           where,
@@ -582,18 +582,18 @@ export const aestheticClinicRouter = router({
             { category: 'asc' },
             { name: 'asc' },
           ],
-        });
+        })
 
         return {
           success: true,
           data: treatments,
-        };
+        }
       } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to retrieve treatment catalog',
           cause: error,
-        });
+        })
       }
     }),
 
@@ -629,33 +629,33 @@ export const aestheticClinicRouter = router({
         // Validate client exists
         const client = await ctx.prisma.aestheticClientProfile.findUnique({
           where: { id: input.clientId },
-        });
+        })
 
         if (!client || client.clinicId !== input.clinicId) {
           throw new TRPCError({
             code: 'NOT_FOUND',
             message: 'Client not found',
-          });
+          })
         }
 
         // Validate treatment exists and is active
         const treatment = await ctx.prisma.aestheticTreatment.findUnique({
           where: { id: input.treatmentId },
-        });
+        })
 
         if (!treatment || treatment.clinicId !== input.clinicId || !treatment.isActive) {
           throw new TRPCError({
             code: 'NOT_FOUND',
             message: 'Treatment not found or inactive',
-          });
+          })
         }
 
         // Check for scheduling conflicts
-        const sessionDate = new Date(input.scheduledDate);
-        const [hour, minute] = input.scheduledTime.split(':').map(Number);
-        sessionDate.setHours(hour, minute, 0, 0);
+        const sessionDate = new Date(input.scheduledDate)
+        const [hour, minute] = input.scheduledTime.split(':').map(Number)
+        sessionDate.setHours(hour, minute, 0, 0)
 
-        const endTime = new Date(sessionDate.getTime() + input.duration * 60000);
+        const endTime = new Date(sessionDate.getTime() + input.duration * 60000)
 
         const conflict = await ctx.prisma.aestheticTreatmentSession.findFirst({
           where: {
@@ -673,13 +673,13 @@ export const aestheticClinicRouter = router({
               },
             ],
           },
-        });
+        })
 
         if (conflict) {
           throw new TRPCError({
             code: 'CONFLICT',
             message: 'Scheduling conflict detected',
-          });
+          })
         }
 
         // Create session
@@ -702,13 +702,13 @@ export const aestheticClinicRouter = router({
             createdBy: ctx._userId,
             updatedBy: ctx._userId,
           },
-        });
+        })
 
         // Update client's last visit date
         await ctx.prisma.aestheticClientProfile.update({
           where: { id: input.clientId },
           data: { lastVisitDate: sessionDate },
-        });
+        })
 
         // Log audit trail
         await ctx.prisma.auditLog.create({
@@ -730,23 +730,23 @@ export const aestheticClinicRouter = router({
             ipAddress: ctx.req?.ip,
             userAgent: ctx.req?.headers['user-agent'],
           },
-        });
+        })
 
         return {
           success: true,
           data: session,
           message: 'Aesthetic session created successfully',
-        };
+        }
       } catch {
         if (error instanceof TRPCError) {
-          throw error;
+          throw error
         }
 
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to create aesthetic session',
           cause: error,
-        });
+        })
       }
     }),
 
@@ -767,8 +767,8 @@ export const aestheticClinicRouter = router({
     }))
     .query(async ({ ctx, input }) => {
       try {
-        const { clinicId, clientId, professionalId, status, dateFrom, dateTo, page, limit } = input;
-        const offset = (page - 1) * limit;
+        const { clinicId, clientId, professionalId, status, dateFrom, dateTo, page, limit } = input
+        const offset = (page - 1) * limit
 
         // Build where clause
         const where: any = {
@@ -783,10 +783,10 @@ export const aestheticClinicRouter = router({
               lte: new Date(dateTo),
             },
           }),
-        };
+        }
 
         // Get total count for pagination
-        const total = await ctx.prisma.aestheticTreatmentSession.count({ where });
+        const total = await ctx.prisma.aestheticTreatmentSession.count({ where })
 
         // Get sessions with related data
         const sessions = await ctx.prisma.aestheticTreatmentSession.findMany({
@@ -817,7 +817,7 @@ export const aestheticClinicRouter = router({
             },
           },
           orderBy: { scheduledDate: 'asc' },
-        });
+        })
 
         return {
           success: true,
@@ -830,13 +830,13 @@ export const aestheticClinicRouter = router({
               pages: Math.ceil(total / limit),
             },
           },
-        };
+        }
       } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to list aesthetic sessions',
           cause: error,
-        });
+        })
       }
     }),
 
@@ -855,26 +855,26 @@ export const aestheticClinicRouter = router({
     }))
     .query(async ({ ctx, input }) => {
       try {
-        const endDate = new Date();
-        const startDate = new Date();
+        const endDate = new Date()
+        const startDate = new Date()
 
         // Calculate start date based on period
         switch (input.period) {
           case '30d':
-            startDate.setDate(endDate.getDate() - 30);
-            break;
+            startDate.setDate(endDate.getDate() - 30)
+            break
           case '60d':
-            startDate.setDate(endDate.getDate() - 60);
-            break;
+            startDate.setDate(endDate.getDate() - 60)
+            break
           case '90d':
-            startDate.setDate(endDate.getDate() - 90);
-            break;
+            startDate.setDate(endDate.getDate() - 90)
+            break
           case '180d':
-            startDate.setDate(endDate.getDate() - 180);
-            break;
+            startDate.setDate(endDate.getDate() - 180)
+            break
           case '1y':
-            startDate.setFullYear(endDate.getFullYear() - 1);
-            break;
+            startDate.setFullYear(endDate.getFullYear() - 1)
+            break
         }
 
         // Get client metrics
@@ -958,15 +958,15 @@ export const aestheticClinicRouter = router({
             },
             _sum: { amount: true },
           }),
-        ]);
+        ])
 
-        const revenue = totalRevenue._sum.amount || 0;
+        const revenue = totalRevenue._sum.amount || 0
 
         // Calculate metrics
-        const retentionRate = totalClients > 0 ? (activeClients / totalClients) * 100 : 0;
-        const completionRate = totalSessions > 0 ? (completedSessions / totalSessions) * 100 : 0;
-        const cancellationRate = totalSessions > 0 ? (cancelledSessions / totalSessions) * 100 : 0;
-        const avgRevenuePerClient = activeClients > 0 ? revenue / activeClients : 0;
+        const retentionRate = totalClients > 0 ? (activeClients / totalClients) * 100 : 0
+        const completionRate = totalSessions > 0 ? (completedSessions / totalSessions) * 100 : 0
+        const cancellationRate = totalSessions > 0 ? (cancelledSessions / totalSessions) * 100 : 0
+        const avgRevenuePerClient = activeClients > 0 ? revenue / activeClients : 0
 
         return {
           success: true,
@@ -991,13 +991,13 @@ export const aestheticClinicRouter = router({
               avgRevenuePerClient: Math.round(avgRevenuePerClient * 100) / 100,
             },
           },
-        };
+        }
       } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to calculate client retention metrics',
           cause: error,
-        });
+        })
       }
     }),
-});
+})

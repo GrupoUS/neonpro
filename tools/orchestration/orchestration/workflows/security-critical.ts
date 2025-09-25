@@ -1,4 +1,4 @@
-import type { OrchestrationContext, TDDCycleResult } from '../../types';
+import type { OrchestrationContext, TDDCycleResult } from '../../types'
 
 export class SecurityCriticalWorkflow {
   async execute(_context: OrchestrationContext): Promise<TDDCycleResult> {
@@ -9,6 +9,6 @@ export class SecurityCriticalWorkflow {
       agentResults: [],
       qualityScore: 0.9,
       complianceScore: 0.95,
-    };
+    }
   }
 }

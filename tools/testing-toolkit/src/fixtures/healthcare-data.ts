@@ -5,44 +5,44 @@
  * with LGPD and other healthcare regulations.
  */
 
-import type { AuditTrailEntry, ConsentRecord } from '../compliance/types';
-import { TEST_IDS } from './index';
+import type { AuditTrailEntry, ConsentRecord } from '../compliance/types'
+import { TEST_IDS } from './index'
 
 export interface MockPatient {
-  id: string;
-  name: string;
-  email: string;
-  cpf: string;
-  birthDate: Date;
-  clinicId: string;
-  consentGiven: boolean;
-  dataProcessingPurpose: string;
-  auditTrail: AuditTrailEntry[];
-  createdAt: Date;
-  updatedAt: Date;
+  id: string
+  name: string
+  email: string
+  cpf: string
+  birthDate: Date
+  clinicId: string
+  consentGiven: boolean
+  dataProcessingPurpose: string
+  auditTrail: AuditTrailEntry[]
+  createdAt: Date
+  updatedAt: Date
 }
 
 export interface MockClinic {
-  id: string;
-  name: string;
-  cnpj: string;
-  address: string;
-  city: string;
-  state: string;
-  phone: string;
-  email: string;
-  createdAt: Date;
+  id: string
+  name: string
+  cnpj: string
+  address: string
+  city: string
+  state: string
+  phone: string
+  email: string
+  createdAt: Date
 }
 
 export interface MockProfessional {
-  id: string;
-  name: string;
-  email: string;
-  crm: string;
-  specialty: string;
-  clinicId: string;
-  licenseValid: boolean;
-  createdAt: Date;
+  id: string
+  name: string
+  email: string
+  crm: string
+  specialty: string
+  clinicId: string
+  licenseValid: boolean
+  createdAt: Date
 }
 
 /**
@@ -51,7 +51,7 @@ export interface MockProfessional {
 export function createMockPatient(
   overrides: Partial<MockPatient> = {},
 ): MockPatient {
-  const now = new Date();
+  const now = new Date()
 
   return {
     id: TEST_IDS.PATIENT,
@@ -75,7 +75,7 @@ export function createMockPatient(
     createdAt: now,
     updatedAt: now,
     ...overrides,
-  };
+  }
 }
 
 /**
@@ -95,7 +95,7 @@ export function createMockClinic(
     email: 'contato@clinicasp.com.br',
     createdAt: new Date(),
     ...overrides,
-  };
+  }
 }
 
 /**
@@ -114,7 +114,7 @@ export function createMockProfessional(
     licenseValid: true,
     createdAt: new Date(),
     ...overrides,
-  };
+  }
 }
 
 /**
@@ -123,9 +123,9 @@ export function createMockProfessional(
 export function createMockConsentRecord(
   overrides: Partial<ConsentRecord> = {},
 ): ConsentRecord {
-  const now = new Date();
-  const expiryDate = new Date(now);
-  expiryDate.setFullYear(expiryDate.getFullYear() + 2); // 2 years from now
+  const now = new Date()
+  const expiryDate = new Date(now)
+  expiryDate.setFullYear(expiryDate.getFullYear() + 2) // 2 years from now
 
   return {
     id: 'consent-123',
@@ -137,17 +137,17 @@ export function createMockConsentRecord(
     expiryDate,
     legalBasis: 'Art. 7º, I - consentimento do titular',
     ...overrides,
-  };
+  }
 }
 
 /**
  * Create healthcare-compliant test data set
  */
 export function createHealthcareTestDataSet() {
-  const clinic = createMockClinic();
-  const professional = createMockProfessional({ clinicId: clinic.id });
-  const patient = createMockPatient({ clinicId: clinic.id });
-  const consent = createMockConsentRecord({ dataSubjectId: patient.id });
+  const clinic = createMockClinic()
+  const professional = createMockProfessional({ clinicId: clinic.id })
+  const patient = createMockPatient({ clinicId: clinic.id })
+  const consent = createMockConsentRecord({ dataSubjectId: patient.id })
 
   return {
     clinic,
@@ -172,7 +172,7 @@ export function createHealthcareTestDataSet() {
           'Prestação de serviços de saúde pediátrica com consentimento dos responsáveis',
       }),
     },
-  };
+  }
 }
 
 /**
@@ -203,4 +203,4 @@ export const LGPD_TEST_PATTERNS = {
     'data_exported',
     'data_deleted',
   ],
-} as const;
+} as const

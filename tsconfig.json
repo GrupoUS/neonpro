@@ -3,7 +3,7 @@
   "compilerOptions": {
     "target": "ES2022",
     "module": "ESNext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "lib": [
       "ES2022",
       "DOM",
@@ -25,19 +25,29 @@
     "paths": {
       "@/*": ["./src/*"],
       "@shared/*": ["./packages/shared/src/*"],
-      "@neonpro/*": ["./packages/*/src"],
-      "@neonpro/ui": ["./packages/ui/src"],
-      "@neonpro/ui/*": ["./packages/ui/src/*"],
-      "@neonpro/utils": ["./packages/utils/src"],
-      "@neonpro/utils/*": ["./packages/utils/src/*"],
+      // Core 8-package architecture paths
       "@neonpro/types": ["./packages/types/src"],
       "@neonpro/types/*": ["./packages/types/src/*"],
       "@neonpro/shared": ["./packages/shared/src"],
       "@neonpro/shared/*": ["./packages/shared/src/*"],
-      "@neonpro/security": ["./packages/security/src"],
-      "@neonpro/security/*": ["./packages/security/src/*"],
       "@neonpro/database": ["./packages/database/src"],
       "@neonpro/database/*": ["./packages/database/src/*"],
+      "@neonpro/ai-services": ["./packages/ai-services/src"],
+      "@neonpro/ai-services/*": ["./packages/ai-services/src/*"],
+      "@neonpro/healthcare-core": ["./packages/healthcare-core/src"],
+      "@neonpro/healthcare-core/*": ["./packages/healthcare-core/src/*"],
+      "@neonpro/security-compliance": ["./packages/security-compliance/src"],
+      "@neonpro/security-compliance/*": ["./packages/security-compliance/src/*"],
+      "@neonpro/api-gateway": ["./packages/api-gateway/src"],
+      "@neonpro/api-gateway/*": ["./packages/api-gateway/src/*"],
+      "@neonpro/ui": ["./packages/ui/src"],
+      "@neonpro/ui/*": ["./packages/ui/src/*"],
+      // Legacy package paths (for backward compatibility)
+      "@neonpro/*": ["./packages/*/src"],
+      "@neonpro/security": ["./packages/security/src"],
+      "@neonpro/security/*": ["./packages/security/src/*"],
+      "@neonpro/utils": ["./packages/utils/src"],
+      "@neonpro/utils/*": ["./packages/utils/src/*"],
       "@apps/*": ["./apps/*/src"],
       "@tests/*": ["./tools/tests/*"]
     }

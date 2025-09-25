@@ -3,9 +3,9 @@
  * Complete inventory management for aesthetic clinics with Brazilian regulatory compliance
  */
 
-import { InventoryManagementService } from '@neonpro/core-services';
-import { z } from 'zod';
-import { router } from '../trpc';
+import { InventoryManagementService } from '@neonpro/core-services'
+import { z } from 'zod'
+import { router } from '../trpc'
 
 // Input schemas
 const ProductInput = z.object({
@@ -33,7 +33,7 @@ const ProductInput = z.object({
   storageConditions: z.string().optional(),
   usageInstructions: z.string().optional(),
   contraindications: z.array(z.string()).default([]),
-});
+})
 
 const BatchInput = z.object({
   productId: z.string().uuid('Invalid product ID'),
@@ -47,7 +47,7 @@ const BatchInput = z.object({
   qualityCheckDate: z.date().optional(),
   storageLocation: z.string().optional(),
   notes: z.string().optional(),
-});
+})
 
 const _InventoryTransactionInput = z.object({
   productId: z.string().uuid('Invalid product ID'),
@@ -57,7 +57,7 @@ const _InventoryTransactionInput = z.object({
   referenceId: z.string().uuid().optional(),
   referenceType: z.string().optional(),
   notes: z.string().optional(),
-});
+})
 
 const ProductUsageInput = z.object({
   appointmentId: z.string().uuid('Invalid appointment ID'),
@@ -66,32 +66,32 @@ const ProductUsageInput = z.object({
   quantityUsed: z.number().positive('Quantity used must be positive'),
   professionalId: z.string().uuid('Invalid professional ID').optional(),
   notes: z.string().optional(),
-});
+})
 
 const PurchaseOrderInput = z.object({
   supplierId: z.string().uuid('Invalid supplier ID'),
   orderNumber: z.string().optional(),
   expectedDeliveryDate: z.date().optional(),
   notes: z.string().optional(),
-});
+})
 
 const _PurchaseOrderItemInput = z.object({
   productId: z.string().uuid('Invalid product ID'),
   quantityOrdered: z.number().positive('Quantity ordered must be positive'),
   unitCost: z.number().min(0, 'Unit cost must be non-negative'),
   notes: z.string().optional(),
-});
+})
 
 // Update schemas
 const UpdateProductInput = ProductInput.partial().extend({
   id: z.string().uuid('Invalid product ID'),
-});
+})
 
 const _UpdateBatchInput = z.object({
   id: z.string().uuid('Invalid batch ID'),
   currentQuantity: z.number().min(0, 'Current quantity must be non-negative'),
   notes: z.string().optional(),
-});
+})
 
 export const inventoryManagementRouter = router({
   // === Product Management ===
@@ -110,25 +110,25 @@ export const inventoryManagementRouter = router({
           clinicId: ctx.clinicId,
           supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL!,
           supabaseKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-        });
+        })
 
         const product = await inventoryService.createProduct({
           ...input,
           clinic_id: ctx.clinicId,
-        });
+        })
 
         return {
           success: true,
           message: 'Produto criado com sucesso',
           data: product,
-        };
+        }
       } catch (error) {
-        console.error('Error creating product:', error);
+        console.error('Error creating product:', error)
         return {
           success: false,
           message: 'Erro ao criar produto',
           error: error instanceof Error ? error.message : 'Unknown error',
-        };
+        }
       }
     },
   },
@@ -147,23 +147,23 @@ export const inventoryManagementRouter = router({
           clinicId: ctx.clinicId,
           supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL!,
           supabaseKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-        });
+        })
 
-        const { id, ...updates } = input;
-        const product = await inventoryService.updateProduct(id, updates);
+        const { id, ...updates } = input
+        const product = await inventoryService.updateProduct(id, updates)
 
         return {
           success: true,
           message: 'Produto atualizado com sucesso',
           data: product,
-        };
+        }
       } catch {
-        console.error('Error updating product:', error);
+        console.error('Error updating product:', error)
         return {
           success: false,
           message: 'Erro ao atualizar produto',
           error: error instanceof Error ? error.message : 'Unknown error',
-        };
+        }
       }
     },
   },
@@ -188,22 +188,22 @@ export const inventoryManagementRouter = router({
           clinicId: ctx.clinicId,
           supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL!,
           supabaseKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-        });
+        })
 
-        const products = await inventoryService.getProducts(input);
+        const products = await inventoryService.getProducts(input)
 
         return {
           success: true,
           message: 'Produtos recuperados com sucesso',
           data: products,
-        };
+        }
       } catch {
-        console.error('Error getting products:', error);
+        console.error('Error getting products:', error)
         return {
           success: false,
           message: 'Erro ao recuperar produtos',
           error: error instanceof Error ? error.message : 'Unknown error',
-        };
+        }
       }
     },
   },
@@ -224,26 +224,26 @@ export const inventoryManagementRouter = router({
           clinicId: ctx.clinicId,
           supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL!,
           supabaseKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-        });
+        })
 
         const batch = await inventoryService.createInventoryBatch({
           ...input,
           received_date: new Date(),
           current_quantity: input.initialQuantity,
-        });
+        })
 
         return {
           success: true,
           message: 'Lote de inventário criado com sucesso',
           data: batch,
-        };
+        }
       } catch {
-        console.error('Error creating inventory batch:', error);
+        console.error('Error creating inventory batch:', error)
         return {
           success: false,
           message: 'Erro ao criar lote de inventário',
           error: error instanceof Error ? error.message : 'Unknown error',
-        };
+        }
       }
     },
   },
@@ -265,25 +265,25 @@ export const inventoryManagementRouter = router({
           clinicId: ctx.clinicId,
           supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL!,
           supabaseKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-        });
+        })
 
         const batches = await inventoryService.getInventoryBatches(
           input.productId,
           input.expiringSoon,
-        );
+        )
 
         return {
           success: true,
           message: 'Lotes de inventário recuperados com sucesso',
           data: batches,
-        };
+        }
       } catch {
-        console.error('Error getting inventory batches:', error);
+        console.error('Error getting inventory batches:', error)
         return {
           success: false,
           message: 'Erro ao recuperar lotes de inventário',
           error: error instanceof Error ? error.message : 'Unknown error',
-        };
+        }
       }
     },
   },
@@ -308,22 +308,22 @@ export const inventoryManagementRouter = router({
           clinicId: ctx.clinicId,
           supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL!,
           supabaseKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-        });
+        })
 
-        const expiryInfo = await inventoryService.checkBatchExpiry(input.productId);
+        const expiryInfo = await inventoryService.checkBatchExpiry(input.productId)
 
         return {
           success: true,
           message: 'Verificação de validade do lote concluída',
           data: expiryInfo,
-        };
+        }
       } catch {
-        console.error('Error checking batch expiry:', error);
+        console.error('Error checking batch expiry:', error)
         return {
           success: false,
           message: 'Erro ao verificar validade do lote',
           error: error instanceof Error ? error.message : 'Unknown error',
-        };
+        }
       }
     },
   },
@@ -348,26 +348,26 @@ export const inventoryManagementRouter = router({
           clinicId: ctx.clinicId,
           supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL!,
           supabaseKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-        });
+        })
 
         await inventoryService.updateStockLevel(
           input.productId,
           input.quantityChange,
           input.transactionType,
           input.referenceId,
-        );
+        )
 
         return {
           success: true,
           message: 'Nível de estoque atualizado com sucesso',
-        };
+        }
       } catch {
-        console.error('Error updating stock level:', error);
+        console.error('Error updating stock level:', error)
         return {
           success: false,
           message: 'Erro ao atualizar nível de estoque',
           error: error instanceof Error ? error.message : 'Unknown error',
-        };
+        }
       }
     },
   },
@@ -387,24 +387,24 @@ export const inventoryManagementRouter = router({
           clinicId: ctx.clinicId,
           supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL!,
           supabaseKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-        });
+        })
 
         await inventoryService.recordProductUsage({
           ...input,
           usage_date: new Date(),
-        });
+        })
 
         return {
           success: true,
           message: 'Uso de produto registrado com sucesso',
-        };
+        }
       } catch {
-        console.error('Error recording product usage:', error);
+        console.error('Error recording product usage:', error)
         return {
           success: false,
           message: 'Erro ao registrar uso de produto',
           error: error instanceof Error ? error.message : 'Unknown error',
-        };
+        }
       }
     },
   },
@@ -426,22 +426,22 @@ export const inventoryManagementRouter = router({
           clinicId: ctx.clinicId,
           supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL!,
           supabaseKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-        });
+        })
 
-        const stats = await inventoryService.getProductUsageStats(input.productId, input.days);
+        const stats = await inventoryService.getProductUsageStats(input.productId, input.days)
 
         return {
           success: true,
           message: 'Estatísticas de uso recuperadas com sucesso',
           data: stats,
-        };
+        }
       } catch {
-        console.error('Error getting product usage stats:', error);
+        console.error('Error getting product usage stats:', error)
         return {
           success: false,
           message: 'Erro ao recuperar estatísticas de uso',
           error: error instanceof Error ? error.message : 'Unknown error',
-        };
+        }
       }
     },
   },
@@ -466,22 +466,22 @@ export const inventoryManagementRouter = router({
           clinicId: ctx.clinicId,
           supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL!,
           supabaseKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-        });
+        })
 
-        const alerts = await inventoryService.getInventoryAlerts(input);
+        const alerts = await inventoryService.getInventoryAlerts(input)
 
         return {
           success: true,
           message: 'Alertas de inventário recuperados com sucesso',
           data: alerts,
-        };
+        }
       } catch {
-        console.error('Error getting inventory alerts:', error);
+        console.error('Error getting inventory alerts:', error)
         return {
           success: false,
           message: 'Erro ao recuperar alertas de inventário',
           error: error instanceof Error ? error.message : 'Unknown error',
-        };
+        }
       }
     },
   },
@@ -499,22 +499,22 @@ export const inventoryManagementRouter = router({
           clinicId: ctx.clinicId,
           supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL!,
           supabaseKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-        });
+        })
 
-        const alerts = await inventoryService.checkLowStockAlerts();
+        const alerts = await inventoryService.checkLowStockAlerts()
 
         return {
           success: true,
           message: 'Alertas de baixo estoque verificados com sucesso',
           data: alerts,
-        };
+        }
       } catch {
-        console.error('Error checking low stock alerts:', error);
+        console.error('Error checking low stock alerts:', error)
         return {
           success: false,
           message: 'Erro ao verificar alertas de baixo estoque',
           error: error instanceof Error ? error.message : 'Unknown error',
-        };
+        }
       }
     },
   },
@@ -532,22 +532,22 @@ export const inventoryManagementRouter = router({
           clinicId: ctx.clinicId,
           supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL!,
           supabaseKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-        });
+        })
 
-        const alerts = await inventoryService.checkExpiryAlerts();
+        const alerts = await inventoryService.checkExpiryAlerts()
 
         return {
           success: true,
           message: 'Alertas de validade verificados com sucesso',
           data: alerts,
-        };
+        }
       } catch {
-        console.error('Error checking expiry alerts:', error);
+        console.error('Error checking expiry alerts:', error)
         return {
           success: false,
           message: 'Erro ao verificar alertas de validade',
           error: error instanceof Error ? error.message : 'Unknown error',
-        };
+        }
       }
     },
   },
@@ -568,27 +568,27 @@ export const inventoryManagementRouter = router({
           clinicId: ctx.clinicId,
           supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL!,
           supabaseKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-        });
+        })
 
         const order = await inventoryService.createPurchaseOrder({
           ...input,
           clinic_id: ctx.clinicId,
           status: 'draft',
           total_amount: 0,
-        });
+        })
 
         return {
           success: true,
           message: 'Ordem de compra criada com sucesso',
           data: order,
-        };
+        }
       } catch {
-        console.error('Error creating purchase order:', error);
+        console.error('Error creating purchase order:', error)
         return {
           success: false,
           message: 'Erro ao criar ordem de compra',
           error: error instanceof Error ? error.message : 'Unknown error',
-        };
+        }
       }
     },
   },
@@ -612,22 +612,22 @@ export const inventoryManagementRouter = router({
           clinicId: ctx.clinicId,
           supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL!,
           supabaseKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-        });
+        })
 
-        const orders = await inventoryService.getPurchaseOrders(input);
+        const orders = await inventoryService.getPurchaseOrders(input)
 
         return {
           success: true,
           message: 'Ordens de compra recuperadas com sucesso',
           data: orders,
-        };
+        }
       } catch {
-        console.error('Error getting purchase orders:', error);
+        console.error('Error getting purchase orders:', error)
         return {
           success: false,
           message: 'Erro ao recuperar ordens de compra',
           error: error instanceof Error ? error.message : 'Unknown error',
-        };
+        }
       }
     },
   },
@@ -651,22 +651,22 @@ export const inventoryManagementRouter = router({
           clinicId: ctx.clinicId,
           supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL!,
           supabaseKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-        });
+        })
 
-        const summary = await inventoryService.getInventorySummary(input.dateFrom, input.dateTo);
+        const summary = await inventoryService.getInventorySummary(input.dateFrom, input.dateTo)
 
         return {
           success: true,
           message: 'Resumo de inventário recuperado com sucesso',
           data: summary,
-        };
+        }
       } catch {
-        console.error('Error getting inventory summary:', error);
+        console.error('Error getting inventory summary:', error)
         return {
           success: false,
           message: 'Erro ao recuperar resumo de inventário',
           error: error instanceof Error ? error.message : 'Unknown error',
-        };
+        }
       }
     },
   },
@@ -690,22 +690,22 @@ export const inventoryManagementRouter = router({
           clinicId: ctx.clinicId,
           supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL!,
           supabaseKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-        });
+        })
 
-        const report = await inventoryService.generateInventoryReport(input);
+        const report = await inventoryService.generateInventoryReport(input)
 
         return {
           success: true,
           message: 'Relatório de inventário gerado com sucesso',
           data: report,
-        };
+        }
       } catch {
-        console.error('Error generating inventory report:', error);
+        console.error('Error generating inventory report:', error)
         return {
           success: false,
           message: 'Erro ao gerar relatório de inventário',
           error: error instanceof Error ? error.message : 'Unknown error',
-        };
+        }
       }
     },
   },
@@ -724,21 +724,21 @@ export const inventoryManagementRouter = router({
           clinicId: ctx.clinicId,
           supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL!,
           supabaseKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-        });
+        })
 
-        await inventoryService.processDailyInventoryChecks();
+        await inventoryService.processDailyInventoryChecks()
 
         return {
           success: true,
           message: 'Verificações diárias de inventário processadas com sucesso',
-        };
+        }
       } catch {
-        console.error('Error processing daily inventory checks:', error);
+        console.error('Error processing daily inventory checks:', error)
         return {
           success: false,
           message: 'Erro ao processar verificações diárias de inventário',
           error: error instanceof Error ? error.message : 'Unknown error',
-        };
+        }
       }
     },
   },
@@ -756,23 +756,23 @@ export const inventoryManagementRouter = router({
           clinicId: ctx.clinicId,
           supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL!,
           supabaseKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-        });
+        })
 
-        const recommendations = await inventoryService.calculateReorderQuantities();
+        const recommendations = await inventoryService.calculateReorderQuantities()
 
         return {
           success: true,
           message: 'Quantidades de reposição calculadas com sucesso',
           data: recommendations,
-        };
+        }
       } catch {
-        console.error('Error calculating reorder quantities:', error);
+        console.error('Error calculating reorder quantities:', error)
         return {
           success: false,
           message: 'Erro ao calcular quantidades de reposição',
           error: error instanceof Error ? error.message : 'Unknown error',
-        };
+        }
       }
     },
   },
-});
+})

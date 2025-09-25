@@ -1,0 +1,44 @@
+{
+  "$schema": "https://raw.githubusercontent.com/oxc-project/oxc/main/npm/oxlint/configuration_schema.json",
+  "rules": {
+    "correctness": "error",
+    "suspicious": "error",
+    "pedantic": "warn",
+    "style": "warn",
+    "nursery": "off"
+  },
+  "allow": [
+    "no-unused-vars",
+    "no-console"
+  ],
+  "deny": [
+    "no-debugger",
+    "no-alert"
+  ],
+  "env": {
+    "node": true,
+    "browser": true,
+    "es2022": true,
+    "vitest-globals": true
+  },
+  "globals": {
+    "vi": "readonly",
+    "expect": "readonly",
+    "describe": "readonly",
+    "it": "readonly",
+    "test": "readonly",
+    "beforeAll": "readonly",
+    "beforeEach": "readonly",
+    "afterAll": "readonly",
+    "afterEach": "readonly"
+  },
+  "plugins": [],
+  "ignore_patterns": [
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/coverage/**",
+    "**/reports/**",
+    "**/*.config.*",
+    "**/*.d.ts"
+  ]
+}

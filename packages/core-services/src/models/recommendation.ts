@@ -9,10 +9,10 @@ import type {
   EnhancedAIModel,
   MedicalSpecialty,
   SubscriptionTier,
-} from '@neonpro/types';
-import { Plan } from './plan';
-import { UsageCounter } from './usage-counter';
-import { UserPlan } from './user-plan';
+} from '@neonpro/types'
+import { Plan } from './plan'
+import { UsageCounter } from './usage-counter'
+import { UserPlan } from './user-plan'
 
 // ================================================
 // RECOMMENDATION INTERFACES
@@ -22,111 +22,111 @@ import { UserPlan } from './user-plan';
  * Base recommendation interface
  */
 export interface BaseRecommendation {
-  readonly id: string;
+  readonly id: string
   readonly type:
     | 'plan_upgrade'
     | 'cost_optimization'
     | 'feature_suggestion'
     | 'model_optimization'
-    | 'compliance_improvement';
-  readonly priority: 'low' | 'medium' | 'high' | 'critical';
-  readonly title: string;
-  readonly description: string;
-  readonly estimatedImpact: string;
-  readonly implementationEffort: 'baixo' | 'médio' | 'alto';
+    | 'compliance_improvement'
+  readonly priority: 'low' | 'medium' | 'high' | 'critical'
+  readonly title: string
+  readonly description: string
+  readonly estimatedImpact: string
+  readonly implementationEffort: 'baixo' | 'médio' | 'alto'
   readonly category:
     | 'cost'
     | 'performance'
     | 'compliance'
     | 'features'
-    | 'usage';
-  readonly createdAt: Date;
-  readonly validUntil?: Date;
-  readonly dismissed: boolean;
+    | 'usage'
+  readonly createdAt: Date
+  readonly validUntil?: Date
+  readonly dismissed: boolean
 }
 
 /**
  * Plan upgrade recommendation
  */
 export interface PlanUpgradeRecommendation extends BaseRecommendation {
-  readonly type: 'plan_upgrade';
-  readonly currentPlan: SubscriptionTier;
-  readonly recommendedPlan: SubscriptionTier;
-  readonly unlockingFeatures: AIFeatureCode[];
-  readonly additionalModels: EnhancedAIModel[];
-  readonly costDifferenceUsd: number;
-  readonly projectedSavings?: number;
+  readonly type: 'plan_upgrade'
+  readonly currentPlan: SubscriptionTier
+  readonly recommendedPlan: SubscriptionTier
+  readonly unlockingFeatures: AIFeatureCode[]
+  readonly additionalModels: EnhancedAIModel[]
+  readonly costDifferenceUsd: number
+  readonly projectedSavings?: number
   readonly reason:
     | 'quota_exceeded'
     | 'feature_access'
     | 'cost_optimization'
-    | 'compliance_requirement';
+    | 'compliance_requirement'
 }
 
 /**
  * Cost optimization recommendation
  */
 export interface CostOptimizationRecommendation extends BaseRecommendation {
-  readonly type: 'cost_optimization';
+  readonly type: 'cost_optimization'
   readonly optimizationType:
     | 'model_selection'
     | 'caching_improvement'
     | 'usage_pattern'
-    | 'plan_adjustment';
-  readonly currentCostUsd: number;
-  readonly projectedSavingsUsd: number;
-  readonly savingsPercentage: number;
-  readonly actionItems: string[];
+    | 'plan_adjustment'
+  readonly currentCostUsd: number
+  readonly projectedSavingsUsd: number
+  readonly savingsPercentage: number
+  readonly actionItems: string[]
   readonly modelSuggestions?: {
-    current: EnhancedAIModel;
-    suggested: EnhancedAIModel;
-    costSavings: number;
-  }[];
+    current: EnhancedAIModel
+    suggested: EnhancedAIModel
+    costSavings: number
+  }[]
 }
 
 /**
  * Feature suggestion recommendation
  */
 export interface FeatureSuggestionRecommendation extends BaseRecommendation {
-  readonly type: 'feature_suggestion';
-  readonly suggestedFeatures: AIFeatureCode[];
-  readonly useCases: string[];
-  readonly businessValue: string;
-  readonly prerequisites: string[];
-  readonly relatedSpecialties?: MedicalSpecialty[];
+  readonly type: 'feature_suggestion'
+  readonly suggestedFeatures: AIFeatureCode[]
+  readonly useCases: string[]
+  readonly businessValue: string
+  readonly prerequisites: string[]
+  readonly relatedSpecialties?: MedicalSpecialty[]
 }
 
 /**
  * Model optimization recommendation
  */
 export interface ModelOptimizationRecommendation extends BaseRecommendation {
-  readonly type: 'model_optimization';
-  readonly currentModel: EnhancedAIModel;
-  readonly suggestedModel: EnhancedAIModel;
+  readonly type: 'model_optimization'
+  readonly currentModel: EnhancedAIModel
+  readonly suggestedModel: EnhancedAIModel
   readonly reason:
     | 'cost_efficiency'
     | 'performance'
     | 'healthcare_optimized'
-    | 'language_preference';
+    | 'language_preference'
   readonly expectedImprovement: {
-    costSavings?: number;
-    performanceGain?: number;
-    accuracyImprovement?: number;
-  };
-  readonly migrationComplexity: 'baixa' | 'média' | 'alta';
+    costSavings?: number
+    performanceGain?: number
+    accuracyImprovement?: number
+  }
+  readonly migrationComplexity: 'baixa' | 'média' | 'alta'
 }
 
 /**
  * Compliance improvement recommendation
  */
 export interface ComplianceImprovementRecommendation extends BaseRecommendation {
-  readonly type: 'compliance_improvement';
-  readonly complianceArea: 'cfm' | 'anvisa' | 'lgpd' | 'audit_trail';
-  readonly currentLevel: string;
-  readonly recommendedLevel: string;
-  readonly requirements: string[];
-  readonly riskLevel: 'baixo' | 'médio' | 'alto' | 'crítico';
-  readonly regulatoryImpact: string;
+  readonly type: 'compliance_improvement'
+  readonly complianceArea: 'cfm' | 'anvisa' | 'lgpd' | 'audit_trail'
+  readonly currentLevel: string
+  readonly recommendedLevel: string
+  readonly requirements: string[]
+  readonly riskLevel: 'baixo' | 'médio' | 'alto' | 'crítico'
+  readonly regulatoryImpact: string
 }
 
 /**
@@ -137,7 +137,7 @@ export type Recommendation =
   | CostOptimizationRecommendation
   | FeatureSuggestionRecommendation
   | ModelOptimizationRecommendation
-  | ComplianceImprovementRecommendation;
+  | ComplianceImprovementRecommendation
 
 // ================================================
 // RECOMMENDATION CONTEXT
@@ -147,21 +147,21 @@ export type Recommendation =
  * Context data for generating recommendations
  */
 export interface RecommendationContext {
-  readonly userPlan: UserPlan;
-  readonly usageCounter: UsageCounter;
-  readonly billingMetrics: BillingMetrics;
+  readonly userPlan: UserPlan
+  readonly usageCounter: UsageCounter
+  readonly billingMetrics: BillingMetrics
   readonly recentActivity: {
-    readonly requests: number;
-    readonly errors: number;
-    readonly averageLatency: number;
-    readonly cacheHitRate: number;
-  };
-  readonly medicalSpecialties: MedicalSpecialty[];
+    readonly requests: number
+    readonly errors: number
+    readonly averageLatency: number
+    readonly cacheHitRate: number
+  }
+  readonly medicalSpecialties: MedicalSpecialty[]
   readonly complianceRequirements: {
-    readonly cfmRequired: boolean;
-    readonly anvisaRequired: boolean;
-    readonly lgpdEnhanced: boolean;
-  };
+    readonly cfmRequired: boolean
+    readonly anvisaRequired: boolean
+    readonly lgpdEnhanced: boolean
+  }
 }
 
 // ================================================
@@ -172,11 +172,11 @@ export interface RecommendationContext {
  * AI-driven recommendation system for multi-model AI assistant
  */
 export class RecommendationModel {
-  private readonly _context: RecommendationContext;
-  private _recommendations: Map<string, Recommendation> = new Map();
+  private readonly _context: RecommendationContext
+  private _recommendations: Map<string, Recommendation> = new Map()
 
   constructor(context: RecommendationContext) {
-    this._context = context;
+    this._context = context
   }
 
   // ================================================
@@ -187,53 +187,53 @@ export class RecommendationModel {
    * Generates all applicable recommendations based on current context
    */
   generateRecommendations(): Recommendation[] {
-    this._recommendations.clear();
+    this._recommendations.clear()
 
     // Generate different types of recommendations
-    this.generatePlanUpgradeRecommendations();
-    this.generateCostOptimizationRecommendations();
-    this.generateFeatureSuggestionRecommendations();
-    this.generateModelOptimizationRecommendations();
-    this.generateComplianceImprovementRecommendations();
+    this.generatePlanUpgradeRecommendations()
+    this.generateCostOptimizationRecommendations()
+    this.generateFeatureSuggestionRecommendations()
+    this.generateModelOptimizationRecommendations()
+    this.generateComplianceImprovementRecommendations()
 
     // Sort by priority and return
     return Array.from(this._recommendations.values()).sort(
       (a, b) => this.getPriorityScore(b.priority) - this.getPriorityScore(a.priority),
-    );
+    )
   }
 
   /**
    * Generates plan upgrade recommendations
    */
   private generatePlanUpgradeRecommendations(): void {
-    const userPlan = this._context.userPlan;
-    const quotaStatus = userPlan.getQuotaStatus();
+    const userPlan = this._context.userPlan
+    const quotaStatus = userPlan.getQuotaStatus()
     // Usage insights available for potential future use
 
     // Check if user is hitting quota limits
     if (quotaStatus.monthlyUsagePercentage > 90) {
-      const upgrade = this.generateQuotaUpgradeRecommendation();
+      const upgrade = this.generateQuotaUpgradeRecommendation()
       if (upgrade) {
-        this._recommendations.set(upgrade.id, upgrade);
+        this._recommendations.set(upgrade.id, upgrade)
       }
     }
 
     // Check if user needs advanced features
     if (this.shouldRecommendFeatureUpgrade()) {
-      const featureUpgrade = this.generateFeatureUpgradeRecommendation();
+      const featureUpgrade = this.generateFeatureUpgradeRecommendation()
       if (featureUpgrade) {
-        this._recommendations.set(featureUpgrade.id, featureUpgrade);
+        this._recommendations.set(featureUpgrade.id, featureUpgrade)
       }
     }
 
     // Check for cost optimization through plan changes
     if (
-      this._context.billingMetrics.cacheSavingsPercentage > 80
-      && userPlan.planCode === 'pro'
+      this._context.billingMetrics.cacheSavingsPercentage > 80 &&
+      userPlan.planCode === 'pro'
     ) {
-      const costUpgrade = this.generateCostOptimizationUpgradeRecommendation();
+      const costUpgrade = this.generateCostOptimizationUpgradeRecommendation()
       if (costUpgrade) {
-        this._recommendations.set(costUpgrade.id, costUpgrade);
+        this._recommendations.set(costUpgrade.id, costUpgrade)
       }
     }
   }
@@ -242,7 +242,7 @@ export class RecommendationModel {
    * Generates cost optimization recommendations
    */
   private generateCostOptimizationRecommendations(): void {
-    const billingMetrics = this._context.billingMetrics;
+    const billingMetrics = this._context.billingMetrics
     // Usage insights available for potential future use
 
     // Low cache hit rate optimization
@@ -269,15 +269,15 @@ export class RecommendationModel {
         ],
         createdAt: new Date(),
         dismissed: false,
-      };
-      this._recommendations.set(cacheOptimization.id, cacheOptimization);
+      }
+      this._recommendations.set(cacheOptimization.id, cacheOptimization)
     }
 
     // Model selection optimization
     if (billingMetrics.averageCostPerRequest > 0.05) {
-      const modelOptimization = this.generateModelCostOptimization();
+      const modelOptimization = this.generateModelCostOptimization()
       if (modelOptimization) {
-        this._recommendations.set(modelOptimization.id, modelOptimization);
+        this._recommendations.set(modelOptimization.id, modelOptimization)
       }
     }
   }
@@ -286,13 +286,13 @@ export class RecommendationModel {
    * Generates feature suggestion recommendations
    */
   private generateFeatureSuggestionRecommendations(): void {
-    const userPlan = this._context.userPlan;
-    const specialties = this._context.medicalSpecialties;
+    const userPlan = this._context.userPlan
+    const specialties = this._context.medicalSpecialties
 
     // Advanced analytics for high-usage users
     if (
-      !userPlan.plan.hasFeature('ai_analytics')
-      && this._context.recentActivity.requests > 100
+      !userPlan.plan.hasFeature('ai_analytics') &&
+      this._context.recentActivity.requests > 100
     ) {
       const analyticsRecommendation: FeatureSuggestionRecommendation = {
         id: `feature-analytics-${Date.now()}`,
@@ -315,21 +315,21 @@ export class RecommendationModel {
         relatedSpecialties: specialties,
         createdAt: new Date(),
         dismissed: false,
-      };
+      }
       this._recommendations.set(
         analyticsRecommendation.id,
         analyticsRecommendation,
-      );
+      )
     }
 
     // API access for integration opportunities
     if (
-      !userPlan.plan.hasFeature('api_access')
-      && this.detectIntegrationOpportunity()
+      !userPlan.plan.hasFeature('api_access') &&
+      this.detectIntegrationOpportunity()
     ) {
-      const apiRecommendation = this.generateApiAccessRecommendation();
+      const apiRecommendation = this.generateApiAccessRecommendation()
       if (apiRecommendation) {
-        this._recommendations.set(apiRecommendation.id, apiRecommendation);
+        this._recommendations.set(apiRecommendation.id, apiRecommendation)
       }
     }
   }
@@ -338,14 +338,14 @@ export class RecommendationModel {
    * Generates model optimization recommendations
    */
   private generateModelOptimizationRecommendations(): void {
-    const insights = this._context.usageCounter.getUsageInsights();
-    const preferredModels = insights.patterns.preferredModels;
+    const insights = this._context.usageCounter.getUsageInsights()
+    const preferredModels = insights.patterns.preferredModels
 
     // Healthcare-optimized model recommendation
     if (
-      this._context.medicalSpecialties.length > 0
-      && !preferredModels.includes('healthcare-pt-br')
-      && this._context.userPlan.plan.hasModelAccess('healthcare-pt-br')
+      this._context.medicalSpecialties.length > 0 &&
+      !preferredModels.includes('healthcare-pt-br') &&
+      this._context.userPlan.plan.hasModelAccess('healthcare-pt-br')
     ) {
       const healthcareModelRec: ModelOptimizationRecommendation = {
         id: `model-healthcare-${Date.now()}`,
@@ -367,15 +367,15 @@ export class RecommendationModel {
         migrationComplexity: 'baixa',
         createdAt: new Date(),
         dismissed: false,
-      };
-      this._recommendations.set(healthcareModelRec.id, healthcareModelRec);
+      }
+      this._recommendations.set(healthcareModelRec.id, healthcareModelRec)
     }
 
     // Cost-efficient model recommendation
     if (this._context.billingMetrics.averageCostPerRequest > 0.03) {
-      const costEfficientRec = this.generateCostEfficientModelRecommendation();
+      const costEfficientRec = this.generateCostEfficientModelRecommendation()
       if (costEfficientRec) {
-        this._recommendations.set(costEfficientRec.id, costEfficientRec);
+        this._recommendations.set(costEfficientRec.id, costEfficientRec)
       }
     }
   }
@@ -384,13 +384,13 @@ export class RecommendationModel {
    * Generates compliance improvement recommendations
    */
   private generateComplianceImprovementRecommendations(): void {
-    const complianceReqs = this._context.complianceRequirements;
-    const userPlan = this._context.userPlan;
+    const complianceReqs = this._context.complianceRequirements
+    const userPlan = this._context.userPlan
 
     // CFM compliance recommendation
     if (
-      complianceReqs.cfmRequired
-      && userPlan.plan.cfmComplianceLevel === 'basic'
+      complianceReqs.cfmRequired &&
+      userPlan.plan.cfmComplianceLevel === 'basic'
     ) {
       const cfmRec: ComplianceImprovementRecommendation = {
         id: `compliance-cfm-${Date.now()}`,
@@ -414,23 +414,23 @@ export class RecommendationModel {
         regulatoryImpact: 'Não conformidade pode resultar em penalidades do CFM',
         createdAt: new Date(),
         dismissed: false,
-      };
-      this._recommendations.set(cfmRec.id, cfmRec);
+      }
+      this._recommendations.set(cfmRec.id, cfmRec)
     }
 
     // ANVISA compliance for specific specialties
     if (complianceReqs.anvisaRequired && !userPlan.plan.isAnvisaCertified) {
-      const anvisaRec = this.generateAnvisaComplianceRecommendation();
+      const anvisaRec = this.generateAnvisaComplianceRecommendation()
       if (anvisaRec) {
-        this._recommendations.set(anvisaRec.id, anvisaRec);
+        this._recommendations.set(anvisaRec.id, anvisaRec)
       }
     }
 
     // LGPD enhanced features
     if (complianceReqs.lgpdEnhanced && !userPlan.plan.hasLgpdEnhancedFeatures) {
-      const lgpdRec = this.generateLgpdEnhancementRecommendation();
+      const lgpdRec = this.generateLgpdEnhancementRecommendation()
       if (lgpdRec) {
-        this._recommendations.set(lgpdRec.id, lgpdRec);
+        this._recommendations.set(lgpdRec.id, lgpdRec)
       }
     }
   }
@@ -440,16 +440,16 @@ export class RecommendationModel {
   // ================================================
 
   private generateQuotaUpgradeRecommendation(): PlanUpgradeRecommendation | null {
-    const userPlan = this._context.userPlan;
-    const nextTier = this.getNextTier(userPlan.planCode);
+    const userPlan = this._context.userPlan
+    const nextTier = this.getNextTier(userPlan.planCode)
 
-    if (!nextTier) return null;
+    if (!nextTier) return null
 
-    const nextPlan = new Plan(nextTier);
+    const nextPlan = new Plan(nextTier)
     const costDifference = this.estimatePlanCostDifference(
       userPlan.planCode,
       nextTier,
-    );
+    )
 
     return {
       id: `upgrade-quota-${Date.now()}`,
@@ -481,23 +481,23 @@ export class RecommendationModel {
       reason: 'quota_exceeded',
       createdAt: new Date(),
       dismissed: false,
-    };
+    }
   }
 
   private generateFeatureUpgradeRecommendation(): PlanUpgradeRecommendation | null {
-    const userPlan = this._context.userPlan;
-    const missingFeatures = this.identifyMissingBeneficialFeatures();
+    const userPlan = this._context.userPlan
+    const missingFeatures = this.identifyMissingBeneficialFeatures()
 
-    if (missingFeatures.length === 0) return null;
+    if (missingFeatures.length === 0) return null
 
-    const nextTier = this.getNextTier(userPlan.planCode);
-    if (!nextTier) return null;
+    const nextTier = this.getNextTier(userPlan.planCode)
+    if (!nextTier) return null
 
-    const nextPlan = new Plan(nextTier);
+    const nextPlan = new Plan(nextTier)
     const costDifference = this.estimatePlanCostDifference(
       userPlan.planCode,
       nextTier,
-    );
+    )
 
     return {
       id: `upgrade-features-${Date.now()}`,
@@ -520,20 +520,20 @@ export class RecommendationModel {
       reason: 'feature_access',
       createdAt: new Date(),
       dismissed: false,
-    };
+    }
   }
 
   private generateCostOptimizationUpgradeRecommendation(): PlanUpgradeRecommendation | null {
-    const userPlan = this._context.userPlan;
-    const billingMetrics = this._context.billingMetrics;
+    const userPlan = this._context.userPlan
+    const billingMetrics = this._context.billingMetrics
 
     // If user has high cache savings, enterprise plan might be more cost-effective
     if (
-      userPlan.planCode === 'pro'
-      && billingMetrics.cacheSavingsPercentage > 80
+      userPlan.planCode === 'pro' &&
+      billingMetrics.cacheSavingsPercentage > 80
     ) {
-      const enterprisePlan = new Plan('enterprise');
-      const projectedSavings = billingMetrics.totalCostUsd * 0.2; // 20% additional savings on enterprise
+      const enterprisePlan = new Plan('enterprise')
+      const projectedSavings = billingMetrics.totalCostUsd * 0.2 // 20% additional savings on enterprise
 
       return {
         id: `upgrade-cost-${Date.now()}`,
@@ -558,24 +558,24 @@ export class RecommendationModel {
         reason: 'cost_optimization',
         createdAt: new Date(),
         dismissed: false,
-      };
+      }
     }
 
-    return null;
+    return null
   }
 
   private generateModelCostOptimization(): CostOptimizationRecommendation | null {
-    const billingMetrics = this._context.billingMetrics;
+    const billingMetrics = this._context.billingMetrics
     // Insights available for potential future use
 
     // Suggest cheaper models for simple queries
-    const modelSuggestions = this.generateModelCostSuggestions();
-    if (modelSuggestions.length === 0) return null;
+    const modelSuggestions = this.generateModelCostSuggestions()
+    if (modelSuggestions.length === 0) return null
 
     const totalSavings = modelSuggestions.reduce(
       (sum, suggestion) => sum + suggestion.costSavings,
       0,
-    );
+    )
 
     return {
       id: `cost-model-${Date.now()}`,
@@ -599,7 +599,7 @@ export class RecommendationModel {
       modelSuggestions,
       createdAt: new Date(),
       dismissed: false,
-    };
+    }
   }
 
   private generateApiAccessRecommendation(): FeatureSuggestionRecommendation | null {
@@ -626,24 +626,24 @@ export class RecommendationModel {
       ],
       createdAt: new Date(),
       dismissed: false,
-    };
+    }
   }
 
   private generateCostEfficientModelRecommendation(): ModelOptimizationRecommendation | null {
-    const insights = this._context.usageCounter.getUsageInsights();
-    const currentModel = insights.patterns.preferredModels[0];
-    if (!currentModel) return null;
+    const insights = this._context.usageCounter.getUsageInsights()
+    const currentModel = insights.patterns.preferredModels[0]
+    if (!currentModel) return null
 
     // Suggest downgrading to more cost-effective model
     const suggestedModel: EnhancedAIModel = currentModel === 'gpt-4o'
       ? 'gpt-4o-mini'
       : currentModel === 'claude-3.5-sonnet'
       ? 'gpt-4o'
-      : 'gemini-pro';
+      : 'gemini-pro'
 
-    const costSavings = this._context.billingMetrics.averageCostPerRequest
-      * 0.4
-      * this._context.recentActivity.requests;
+    const costSavings = this._context.billingMetrics.averageCostPerRequest *
+      0.4 *
+      this._context.recentActivity.requests
 
     return {
       id: `model-cost-${Date.now()}`,
@@ -664,7 +664,7 @@ export class RecommendationModel {
       migrationComplexity: 'baixa',
       createdAt: new Date(),
       dismissed: false,
-    };
+    }
   }
 
   private generateAnvisaComplianceRecommendation(): ComplianceImprovementRecommendation | null {
@@ -691,7 +691,7 @@ export class RecommendationModel {
       regulatoryImpact: 'Uso sem certificação pode violar regulamentações sanitárias',
       createdAt: new Date(),
       dismissed: false,
-    };
+    }
   }
 
   private generateLgpdEnhancementRecommendation(): ComplianceImprovementRecommendation | null {
@@ -718,7 +718,7 @@ export class RecommendationModel {
       regulatoryImpact: 'Melhor conformidade com LGPD reduz riscos legais',
       createdAt: new Date(),
       dismissed: false,
-    };
+    }
   }
 
   // ================================================
@@ -726,18 +726,18 @@ export class RecommendationModel {
   // ================================================
 
   private getPriorityScore(priority: BaseRecommendation['priority']): number {
-    const scores = { critical: 4, high: 3, medium: 2, low: 1 };
-    return scores[priority];
+    const scores = { critical: 4, high: 3, medium: 2, low: 1 }
+    return scores[priority]
   }
 
   private getNextTier(currentTier: SubscriptionTier): SubscriptionTier | null {
-    const tiers: SubscriptionTier[] = ['free', 'trial', 'pro', 'enterprise'];
-    const currentIndex = tiers.indexOf(currentTier);
-    const nextIndex = currentIndex + 1;
+    const tiers: SubscriptionTier[] = ['free', 'trial', 'pro', 'enterprise']
+    const currentIndex = tiers.indexOf(currentTier)
+    const nextIndex = currentIndex + 1
     if (nextIndex >= 0 && nextIndex < tiers.length) {
-      return tiers[nextIndex] as SubscriptionTier;
+      return tiers[nextIndex] as SubscriptionTier
     }
-    return null;
+    return null
   }
 
   private estimatePlanCostDifference(
@@ -745,92 +745,92 @@ export class RecommendationModel {
     targetTier: SubscriptionTier,
   ): number {
     // This would integrate with actual pricing data
-    const pricing = { free: 0, trial: 0, pro: 49, enterprise: 199 };
-    return pricing[targetTier] - pricing[currentTier];
+    const pricing = { free: 0, trial: 0, pro: 49, enterprise: 199 }
+    return pricing[targetTier] - pricing[currentTier]
   }
 
   private shouldRecommendFeatureUpgrade(): boolean {
     return (
-      this._context.recentActivity.requests > 50
-      || this._context.medicalSpecialties.length > 2
-      || this._context.billingMetrics.totalRequests > 200
-    );
+      this._context.recentActivity.requests > 50 ||
+      this._context.medicalSpecialties.length > 2 ||
+      this._context.billingMetrics.totalRequests > 200
+    )
   }
 
   private identifyMissingBeneficialFeatures(): AIFeatureCode[] {
-    const userPlan = this._context.userPlan;
-    const beneficial: AIFeatureCode[] = [];
+    const userPlan = this._context.userPlan
+    const beneficial: AIFeatureCode[] = []
 
     if (
-      !userPlan.plan.hasFeature('ai_analytics')
-      && this._context.recentActivity.requests > 100
+      !userPlan.plan.hasFeature('ai_analytics') &&
+      this._context.recentActivity.requests > 100
     ) {
-      beneficial.push('ai_analytics');
+      beneficial.push('ai_analytics')
     }
 
     if (
-      !userPlan.plan.hasFeature('api_access')
-      && this.detectIntegrationOpportunity()
+      !userPlan.plan.hasFeature('api_access') &&
+      this.detectIntegrationOpportunity()
     ) {
-      beneficial.push('api_access');
+      beneficial.push('api_access')
     }
 
     if (
-      !userPlan.plan.hasFeature('lgpd_advanced')
-      && this._context.medicalSpecialties.length > 0
+      !userPlan.plan.hasFeature('lgpd_advanced') &&
+      this._context.medicalSpecialties.length > 0
     ) {
-      beneficial.push('lgpd_advanced');
+      beneficial.push('lgpd_advanced')
     }
 
-    return beneficial;
+    return beneficial
   }
 
   private detectIntegrationOpportunity(): boolean {
     return (
-      this._context.recentActivity.requests > 200
-      || this._context.usageCounter.getUsageInsights().patterns.peakHours.length
-        > 8
-    );
+      this._context.recentActivity.requests > 200 ||
+      this._context.usageCounter.getUsageInsights().patterns.peakHours.length >
+        8
+    )
   }
 
   private generateModelCostSuggestions(): Array<{
-    current: EnhancedAIModel;
-    suggested: EnhancedAIModel;
-    costSavings: number;
+    current: EnhancedAIModel
+    suggested: EnhancedAIModel
+    costSavings: number
   }> {
-    const insights = this._context.usageCounter.getUsageInsights();
+    const insights = this._context.usageCounter.getUsageInsights()
     const suggestions: Array<{
-      current: EnhancedAIModel;
-      suggested: EnhancedAIModel;
-      costSavings: number;
-    }> = [];
+      current: EnhancedAIModel
+      suggested: EnhancedAIModel
+      costSavings: number
+    }> = []
 
     for (const model of insights.patterns.preferredModels) {
-      let suggested: EnhancedAIModel | null = null;
-      let savingsMultiplier = 0;
+      let suggested: EnhancedAIModel | null = null
+      let savingsMultiplier = 0
 
       if (model === 'gpt-4o') {
-        suggested = 'gpt-4o-mini';
-        savingsMultiplier = 0.6;
+        suggested = 'gpt-4o-mini'
+        savingsMultiplier = 0.6
       } else if (model === 'claude-3.5-sonnet') {
-        suggested = 'gpt-4o';
-        savingsMultiplier = 0.4;
+        suggested = 'gpt-4o'
+        savingsMultiplier = 0.4
       }
 
       if (suggested) {
-        const monthlyCost = this._context.billingMetrics.totalCostUsd;
-        const modelUsagePercentage = 0.4; // Estimate 40% usage for this model
-        const costSavings = monthlyCost * modelUsagePercentage * savingsMultiplier;
+        const monthlyCost = this._context.billingMetrics.totalCostUsd
+        const modelUsagePercentage = 0.4 // Estimate 40% usage for this model
+        const costSavings = monthlyCost * modelUsagePercentage * savingsMultiplier
 
         suggestions.push({
           current: model,
           suggested,
           costSavings,
-        });
+        })
       }
     }
 
-    return suggestions;
+    return suggestions
   }
 
   // ================================================
@@ -845,7 +845,7 @@ export class RecommendationModel {
   ): Array<Extract<Recommendation, { type: T }>> {
     return Array.from(this._recommendations.values()).filter(
       (rec): rec is Extract<Recommendation, { type: T }> => rec.type === type,
-    );
+    )
   }
 
   /**
@@ -856,7 +856,7 @@ export class RecommendationModel {
   ): Recommendation[] {
     return Array.from(this._recommendations.values()).filter(
       rec => rec.priority === priority,
-    );
+    )
   }
 
   /**
@@ -865,38 +865,38 @@ export class RecommendationModel {
   getActiveRecommendations(): Recommendation[] {
     return Array.from(this._recommendations.values()).filter(
       rec => !rec.dismissed && (!rec.validUntil || rec.validUntil > new Date()),
-    );
+    )
   }
 
   /**
    * Dismisses a recommendation
    */
   dismissRecommendation(id: string): boolean {
-    const recommendation = this._recommendations.get(id);
+    const recommendation = this._recommendations.get(id)
     if (recommendation) {
-      this._recommendations.set(id, { ...recommendation, dismissed: true });
-      return true;
+      this._recommendations.set(id, { ...recommendation, dismissed: true })
+      return true
     }
-    return false;
+    return false
   }
 
   /**
    * Gets summary of recommendations
    */
   getSummary(): {
-    total: number;
-    byPriority: Record<BaseRecommendation['priority'], number>;
-    byCategory: Record<BaseRecommendation['category'], number>;
-    totalPotentialSavings: number;
+    total: number
+    byPriority: Record<BaseRecommendation['priority'], number>
+    byCategory: Record<BaseRecommendation['category'], number>
+    totalPotentialSavings: number
   } {
-    const recommendations = this.getActiveRecommendations();
+    const recommendations = this.getActiveRecommendations()
 
     const byPriority: Record<BaseRecommendation['priority'], number> = {
       critical: 0,
       high: 0,
       medium: 0,
       low: 0,
-    };
+    }
 
     const byCategory: Record<BaseRecommendation['category'], number> = {
       cost: 0,
@@ -904,19 +904,19 @@ export class RecommendationModel {
       compliance: 0,
       features: 0,
       usage: 0,
-    };
+    }
 
-    let totalPotentialSavings = 0;
+    let totalPotentialSavings = 0
 
     for (const rec of recommendations) {
-      byPriority[rec.priority]++;
-      byCategory[rec.category]++;
+      byPriority[rec.priority]++
+      byCategory[rec.category]++
 
       // Calculate potential savings
       if (rec.type === 'cost_optimization') {
-        totalPotentialSavings += rec.projectedSavingsUsd;
+        totalPotentialSavings += rec.projectedSavingsUsd
       } else if (rec.type === 'plan_upgrade' && rec.projectedSavings) {
-        totalPotentialSavings += rec.projectedSavings;
+        totalPotentialSavings += rec.projectedSavings
       }
     }
 
@@ -925,28 +925,28 @@ export class RecommendationModel {
       byPriority,
       byCategory,
       totalPotentialSavings,
-    };
+    }
   }
 
   /**
    * Converts to serializable object
    */
   toJSON(): {
-    _context: RecommendationContext;
-    recommendations: Recommendation[];
-    summary: ReturnType<RecommendationModel['getSummary']>;
+    _context: RecommendationContext
+    recommendations: Recommendation[]
+    summary: ReturnType<RecommendationModel['getSummary']>
   } {
     return {
       _context: this._context,
       recommendations: this.getActiveRecommendations(),
       summary: this.getSummary(),
-    };
+    }
   }
 
   /**
    * Creates RecommendationModel from context
    */
   static fromContext(_context: RecommendationContext): RecommendationModel {
-    return new RecommendationModel(_context);
+    return new RecommendationModel(_context)
   }
 }

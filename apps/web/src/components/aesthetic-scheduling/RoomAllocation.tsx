@@ -1,27 +1,27 @@
-'use client';
+'use client'
 
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Progress } from '@/components/ui/progress';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { api } from '@/lib/api';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Progress } from '@/components/ui/progress'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { api } from '@/lib/api'
 import {
   // Room,
   RoomAllocation,
   // RoomSchedule,
   // OptimizationResult,
   // AestheticAppointment
-} from '@/types/aesthetic-scheduling';
-import { useMutation, useQuery } from '@tanstack/react-query';
-import React, { useState } from 'react';
+} from '@/types/aesthetic-scheduling'
+import { useMutation, useQuery } from '@tanstack/react-query'
+import React, { useState } from 'react'
 // import { Label } from '@/components/ui/label';
 // import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 // import { Separator } from '@/components/ui/separator';
-import { addDays, addHours, format, isAfter, isBefore, parseISO } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+import { addDays, addHours, format, isAfter, isBefore, parseISO } from 'date-fns'
+import { ptBR } from 'date-fns/locale'
 import {
   // Zap,
   // Wifi,
@@ -50,13 +50,13 @@ import {
   // Car,
   // Accessibility,
   // Volume2
-} from 'lucide-react';
+} from 'lucide-react'
 
 interface RoomAllocationProps {
-  appointmentId?: string;
-  treatmentPlanId?: string;
-  date?: Date;
-  onRoomAllocation?: (allocation: RoomAllocation) => void;
+  appointmentId?: string
+  treatmentPlanId?: string
+  date?: Date
+  onRoomAllocation?: (allocation: RoomAllocation) => void
 }
 
 export function RoomAllocation({
@@ -65,19 +65,19 @@ export function RoomAllocation({
   date = new Date(),
   onRoomAllocation,
 }: RoomAllocationProps) {
-  const [selectedDate, setSelectedDate] = useState<Date>(date);
-  const [selectedRoom, setSelectedRoom] = useState<string>('');
-  const [selectedTimeSlot, setSelectedTimeSlot] = useState<string>('');
-  const [activeTab, setActiveTab] = useState('overview');
-  const [isManualMode, setIsManualMode] = useState(false);
+  const [selectedDate, setSelectedDate] = useState<Date>(date)
+  const [selectedRoom, setSelectedRoom] = useState<string>('')
+  const [selectedTimeSlot, setSelectedTimeSlot] = useState<string>('')
+  const [activeTab, setActiveTab] = useState('overview')
+  const [isManualMode, setIsManualMode] = useState(false)
 
   // Fetch available rooms
   const { data: rooms, isLoading: roomsLoading } = useQuery({
     queryKey: ['rooms'],
     queryFn: async () => {
-      return await api.aestheticScheduling.getRooms();
+      return await api.aestheticScheduling.getRooms()
     },
-  });
+  })
 
   // Fetch room schedules
   const { data: schedules, isLoading: schedulesLoading } = useQuery({
@@ -86,10 +86,10 @@ export function RoomAllocation({
       return await api.aestheticScheduling.getRoomSchedules({
         date: selectedDate.toISOString(),
         includeAvailability: true,
-      });
+      })
     },
     enabled: !!selectedDate,
-  });
+  })
 
   // Fetch optimization suggestions
   const { data: optimization, isLoading: optimizationLoading } = useQuery({
@@ -102,92 +102,92 @@ export function RoomAllocation({
           date: selectedDate.toISOString(),
           considerPatientPreferences: true,
           considerEquipmentRequirements: true,
-        });
+        })
       }
-      return null;
+      return null
     },
     enabled: !!(appointmentId || treatmentPlanId) && !!selectedDate,
-  });
+  })
 
   // Create allocation mutation
   const createAllocation = useMutation({
     mutationFn: async (allocation: Partial<RoomAllocation>) => {
-      return await api.aestheticScheduling.createRoomAllocation(allocation);
+      return await api.aestheticScheduling.createRoomAllocation(allocation)
     },
     onSuccess: () => {
       // Refresh schedules
       // queryClient.invalidateQueries(['room-schedules', selectedDate]);
     },
-  });
+  })
 
   const getRoomStatusColor = (status: string) => {
     switch (status) {
       case 'available':
-        return 'bg-green-100 text-green-800';
+        return 'bg-green-100 text-green-800'
       case 'occupied':
-        return 'bg-red-100 text-red-800';
+        return 'bg-red-100 text-red-800'
       case 'maintenance':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'bg-yellow-100 text-yellow-800'
       case 'cleaning':
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-blue-100 text-blue-800'
       case 'reserved':
-        return 'bg-purple-100 text-purple-800';
+        return 'bg-purple-100 text-purple-800'
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-gray-100 text-gray-800'
     }
-  };
+  }
 
   const getEfficiencyColor = (score: number) => {
-    if (score >= 0.8) return 'text-green-600';
-    if (score >= 0.6) return 'text-yellow-600';
-    return 'text-red-600';
-  };
+    if (score >= 0.8) return 'text-green-600'
+    if (score >= 0.6) return 'text-yellow-600'
+    return 'text-red-600'
+  }
 
   const formatDate = (date: Date) => {
-    return format(date, 'dd/MM/yyyy', { locale: ptBR });
-  };
+    return format(date, 'dd/MM/yyyy', { locale: ptBR })
+  }
 
   const formatTime = (date: Date) => {
-    return format(date, 'HH:mm', { locale: ptBR });
-  };
+    return format(date, 'HH:mm', { locale: ptBR })
+  }
 
   const generateTimeSlots = () => {
-    const slots = [];
-    let start = new Date(selectedDate);
-    start.setHours(8, 0, 0, 0);
-    const end = new Date(selectedDate);
-    end.setHours(20, 0, 0, 0);
+    const slots = []
+    let start = new Date(selectedDate)
+    start.setHours(8, 0, 0, 0)
+    const end = new Date(selectedDate)
+    end.setHours(20, 0, 0, 0)
 
     while (start < end) {
-      const slotEnd = addHours(start, 1);
+      const slotEnd = addHours(start, 1)
       slots.push({
         start: new Date(start),
         end: slotEnd,
         id: `${formatTime(start)}-${formatTime(slotEnd)}`,
-      });
-      start = slotEnd;
+      })
+      start = slotEnd
     }
 
-    return slots;
-  };
+    return slots
+  }
 
   const isTimeSlotAvailable = (roomId: string, timeSlot: { start: Date; end: Date }) => {
-    const roomSchedule = schedules?.find(s => s.roomId === roomId);
-    if (!roomSchedule) return true;
+    const roomSchedule = schedules?.find(s => s.roomId === roomId)
+    if (!roomSchedule) return true
 
     return !roomSchedule.appointments.some(appointment => {
-      const appointmentStart = parseISO(appointment.startTime);
-      const appointmentEnd = parseISO(appointment.endTime);
+      const appointmentStart = parseISO(appointment.startTime)
+      const appointmentEnd = parseISO(appointment.endTime)
 
       return (
-        (timeSlot.start >= appointmentStart && timeSlot.start < appointmentEnd)
-        || (timeSlot.end > appointmentStart && timeSlot.end <= appointmentEnd)
-        || (timeSlot.start <= appointmentStart && timeSlot.end >= appointmentEnd)
-      );
-    });
-  };
+        (timeSlot.start >= appointmentStart && timeSlot.start < appointmentEnd) ||
+        (timeSlot.end > appointmentStart && timeSlot.end <= appointmentEnd) ||
+        (timeSlot.start <= appointmentStart && timeSlot.end >= appointmentEnd)
+      )
+    })
+  }
 
-  const timeSlots = generateTimeSlots();
+  const timeSlots = generateTimeSlots()
 
   if (roomsLoading || schedulesLoading) {
     return (
@@ -197,7 +197,7 @@ export function RoomAllocation({
           <div className='h-32 bg-gray-200 rounded'></div>
         </div>
       </div>
-    );
+    )
   }
 
   return (
@@ -267,8 +267,8 @@ export function RoomAllocation({
                 <div className='text-lg font-bold'>
                   {schedules
                     ? Math.round(
-                      (schedules.filter(s => s.appointments.length > 0).length / schedules.length)
-                        * 100,
+                      (schedules.filter(s => s.appointments.length > 0).length / schedules.length) *
+                        100,
                     )
                     : 0}%
                 </div>
@@ -390,7 +390,7 @@ export function RoomAllocation({
               <CardContent>
                 <div className='space-y-4'>
                   {schedules?.map(schedule => {
-                    const utilizationRate = (schedule.appointments.length / 12) * 100; // 12 hours business day
+                    const utilizationRate = (schedule.appointments.length / 12) * 100 // 12 hours business day
                     return (
                       <div key={schedule.roomId} className='space-y-2'>
                         <div className='flex items-center justify-between'>
@@ -403,7 +403,7 @@ export function RoomAllocation({
                         </div>
                         <Progress value={utilizationRate} className='h-2' />
                       </div>
-                    );
+                    )
                   })}
                 </div>
               </CardContent>
@@ -436,13 +436,13 @@ export function RoomAllocation({
 
                     <div className='grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-3'>
                       {rooms?.map(room => {
-                        const isAvailable = isTimeSlotAvailable(room.id, timeSlot);
+                        const isAvailable = isTimeSlotAvailable(room.id, timeSlot)
                         const appointment = schedules?.find(s => s.roomId === room.id)?.appointments
                           .find(a => {
-                            const start = parseISO(a.startTime);
-                            const end = parseISO(a.endTime);
-                            return timeSlot.start >= start && timeSlot.start < end;
-                          });
+                            const start = parseISO(a.startTime)
+                            const end = parseISO(a.endTime)
+                            return timeSlot.start >= start && timeSlot.start < end
+                          })
 
                         return (
                           <div
@@ -465,7 +465,7 @@ export function RoomAllocation({
                               </div>
                             )}
                           </div>
-                        );
+                        )
                       })}
                     </div>
                   </div>
@@ -555,7 +555,7 @@ export function RoomAllocation({
                   ? (
                     <div className='space-y-3'>
                       {timeSlots.map(timeSlot => {
-                        const isAvailable = isTimeSlotAvailable(selectedRoom, timeSlot);
+                        const isAvailable = isTimeSlotAvailable(selectedRoom, timeSlot)
                         return (
                           <div
                             key={timeSlot.id}
@@ -575,7 +575,7 @@ export function RoomAllocation({
                                 : <X className='h-4 w-4 text-gray-400' />}
                             </div>
                           </div>
-                        );
+                        )
                       })}
                     </div>
                   )
@@ -625,5 +625,5 @@ export function RoomAllocation({
         </TabsContent>
       </Tabs>
     </div>
-  );
+  )
 }

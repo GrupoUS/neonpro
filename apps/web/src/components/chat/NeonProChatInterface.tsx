@@ -10,8 +10,8 @@
  * - Mobile-responsive layout
  */
 
-import { useCopilotChat } from '@copilotkit/react-core';
-import { CopilotChat } from '@copilotkit/react-ui';
+import { useCopilotChat } from '@copilotkit/react-core'
+import { CopilotChat } from '@copilotkit/react-ui'
 import {
   Accessibility,
   Calendar,
@@ -24,12 +24,12 @@ import {
   Smartphone,
   Trash2,
   Users,
-} from 'lucide-react';
-import React, { useEffect, useRef, useState } from 'react';
-import { Alert, AlertDescription } from '../ui/alert';
-import { Badge } from '../ui/badge';
-import { Button } from '../ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
+} from 'lucide-react'
+import React, { useEffect, useRef, useState } from 'react'
+import { Alert, AlertDescription } from '../ui/alert'
+import { Badge } from '../ui/badge'
+import { Button } from '../ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card'
 import {
   AccessibilitySettingsPanel,
   AccessibleChatMessage,
@@ -37,23 +37,23 @@ import {
   AccessibleLoading,
   ScreenReaderAnnouncer,
   SkipLinks,
-} from './NeonProAccessibility';
-import { useNeonProChat } from './NeonProChatProvider';
-import './accessibility.css';
+} from './NeonProAccessibility'
+import { useNeonProChat } from './NeonProChatProvider'
+import './accessibility.css'
 
 // Types
 interface Message {
-  id: string;
-  content: string;
-  role: 'user' | 'assistant';
-  timestamp: Date;
-  metadata?: Record<string, any>;
+  id: string
+  content: string
+  role: 'user' | 'assistant'
+  timestamp: Date
+  metadata?: Record<string, any>
 }
 
 interface ChatInputProps {
-  onSendMessage: (message: string) => void;
-  disabled?: boolean;
-  placeholder?: string;
+  onSendMessage: (message: string) => void
+  disabled?: boolean
+  placeholder?: string
 }
 
 const ChatInput: React.FC<ChatInputProps> = ({
@@ -61,15 +61,15 @@ const ChatInput: React.FC<ChatInputProps> = ({
   disabled = false,
   placeholder = 'Digite sua mensagem...',
 }) => {
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState('')
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+    e.preventDefault()
     if (message.trim() && !disabled) {
-      onSendMessage(message.trim());
-      setMessage('');
+      onSendMessage(message.trim())
+      setMessage('')
     }
-  };
+  }
 
   return (
     <form onSubmit={handleSubmit} className='flex gap-2 p-4 border-t bg-gray-50' role='form'>
@@ -99,16 +99,16 @@ const ChatInput: React.FC<ChatInputProps> = ({
         Pressione Enter para enviar a mensagem ou use Alt+1 para navegação por atalhos
       </div>
     </form>
-  );
-};
+  )
+}
 
 const MessageBubble: React.FC<{ message: Message; isUser?: boolean }> = ({ message, isUser }) => {
   const formatTime = (date: Date) => {
     return date.toLocaleTimeString('pt-BR', {
       hour: '2-digit',
       minute: '2-digit',
-    });
-  };
+    })
+  }
 
   return (
     <AccessibleChatMessage
@@ -126,54 +126,54 @@ const MessageBubble: React.FC<{ message: Message; isUser?: boolean }> = ({ messa
       onAction={action => {
         // Handle message actions (copy, speak, report)
         if (action === 'copy') {
-          navigator.clipboard.writeText(message.content);
+          navigator.clipboard.writeText(message.content)
         }
       }}
     />
-  );
-};
+  )
+}
 
 const AgentSidebar: React.FC = () => {
-  const { agents, activeAgent, setActiveAgent } = useNeonProChat();
+  const { agents, activeAgent, setActiveAgent } = useNeonProChat()
 
   const getAgentIcon = (type: string) => {
     switch (type) {
       case 'client':
-        return <Users className='h-5 w-5' />;
+        return <Users className='h-5 w-5' />
       case 'financial':
-        return <DollarSign className='h-5 w-5' />;
+        return <DollarSign className='h-5 w-5' />
       case 'appointment':
-        return <Calendar className='h-5 w-5' />;
+        return <Calendar className='h-5 w-5' />
       default:
-        return <MessageSquare className='h-5 w-5' />;
+        return <MessageSquare className='h-5 w-5' />
     }
-  };
+  }
 
   const getAgentColor = (status: string) => {
     switch (status) {
       case 'thinking':
-        return 'bg-yellow-500';
+        return 'bg-yellow-500'
       case 'responding':
-        return 'bg-blue-500';
+        return 'bg-blue-500'
       case 'error':
-        return 'bg-red-500';
+        return 'bg-red-500'
       default:
-        return 'bg-green-500';
+        return 'bg-green-500'
     }
-  };
+  }
 
   const getAgentLabel = (type: string) => {
     switch (type) {
       case 'client':
-        return 'Pacientes';
+        return 'Pacientes'
       case 'financial':
-        return 'Financeiro';
+        return 'Financeiro'
       case 'appointment':
-        return 'Agendamento';
+        return 'Agendamento'
       default:
-        return 'Assistente';
+        return 'Assistente'
     }
-  };
+  }
 
   return (
     <Card className='h-fit'>
@@ -216,13 +216,13 @@ const AgentSidebar: React.FC = () => {
         ))}
       </CardContent>
     </Card>
-  );
-};
+  )
+}
 
 const ComplianceBanner: React.FC = () => {
-  const { config } = useNeonProChat();
+  const { config } = useNeonProChat()
 
-  if (!config?.compliance.lgpdEnabled) return null;
+  if (!config?.compliance.lgpdEnabled) return null
 
   return (
     <Alert className='mb-4'>
@@ -233,47 +233,47 @@ const ComplianceBanner: React.FC = () => {
         são tratados conforme a Lei Geral de Proteção de Dados.
       </AlertDescription>
     </Alert>
-  );
-};
+  )
+}
 
 export const NeonProChatInterface: React.FC = () => {
-  const { activeAgent, sendMessage, clearChat, exportChat } = useNeonProChat();
-  const [showExport, setShowExport] = useState(false);
+  const { activeAgent, sendMessage, clearChat, exportChat } = useNeonProChat()
+  const [showExport, setShowExport] = useState(false)
   const [announcements, setAnnouncements] = useState<
     { message: string; priority: 'polite' | 'assertive' }[]
-  >([]);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+  >([])
+  const messagesEndRef = useRef<HTMLDivElement>(null)
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [activeAgent?.messages]);
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }, [activeAgent?.messages])
 
   const handleSendMessage = (content: string) => {
     if (activeAgent) {
-      sendMessage(content, activeAgent.type);
+      sendMessage(content, activeAgent.type)
     }
-  };
+  }
 
   const handleExport = async () => {
     if (activeAgent) {
       try {
-        const exportData = await exportChat(activeAgent.type);
-        const blob = new Blob([exportData], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `chat-${activeAgent.type}-${new Date().toISOString().split('T')[0]}.json`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-        setShowExport(false);
+        const exportData = await exportChat(activeAgent.type)
+        const blob = new Blob([exportData], { type: 'application/json' })
+        const url = URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = url
+        a.download = `chat-${activeAgent.type}-${new Date().toISOString().split('T')[0]}.json`
+        document.body.appendChild(a)
+        a.click()
+        document.body.removeChild(a)
+        URL.revokeObjectURL(url)
+        setShowExport(false)
       } catch (error) {
-        console.error('Error exporting chat:', error);
+        console.error('Error exporting chat:', error)
       }
     }
-  };
+  }
 
   const getAgentInstructions = (agentType: string) => {
     const instructions = {
@@ -320,10 +320,10 @@ export const NeonProChatInterface: React.FC = () => {
         - Confirme todos os detalhes do agendamento
         - Considere fatores como no-show e otimização
         - Seja claro sobre prazos e políticas`,
-    };
+    }
 
-    return instructions[agentType as keyof typeof instructions] || instructions.client;
-  };
+    return instructions[agentType as keyof typeof instructions] || instructions.client
+  }
 
   return (
     <AccessibleErrorBoundary>
@@ -469,13 +469,13 @@ export const NeonProChatInterface: React.FC = () => {
             className='hidden'
             onSubmitMessage={message => {
               // Handle message submission through our custom interface
-              handleSendMessage(message);
+              handleSendMessage(message)
             }}
           />
         )}
       </div>
     </AccessibleErrorBoundary>
-  );
-};
+  )
+}
 
-export default NeonProChatInterface;
+export default NeonProChatInterface

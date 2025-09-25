@@ -16,14 +16,14 @@ import {
   ResilienceFramework,
   type ResilienceMetrics,
   type ServiceHealth,
-} from './resilience-framework';
+} from './resilience-framework'
 
 import {
   DataCategory as LGPDDataCategory,
   HealthcareAIUseCase,
   HealthcareDataClassification,
-} from '@neonpro/shared';
-import { resilienceLogger } from '@neonpro/shared';
+} from '@neonpro/shared'
+import { resilienceLogger } from '@neonpro/shared'
 
 // ============================================================================
 // Healthcare-Specific Types
@@ -31,39 +31,39 @@ import { resilienceLogger } from '@neonpro/shared';
 
 export interface HealthcareExecutionContext extends ExecutionContext {
   // Healthcare-specific context
-  dataClassification: HealthcareDataClassification;
-  lgpdCategories: LGPDDataCategory[];
-  healthcareUseCase: HealthcareAIUseCase;
-  patientId?: string;
-  professionalId?: string;
-  requiresPIIProtection: boolean;
-  isLifeCritical: boolean;
-  requiresConsent: boolean;
+  dataClassification: HealthcareDataClassification
+  lgpdCategories: LGPDDataCategory[]
+  healthcareUseCase: HealthcareAIUseCase
+  patientId?: string
+  professionalId?: string
+  requiresPIIProtection: boolean
+  isLifeCritical: boolean
+  requiresConsent: boolean
 }
 
 export interface HealthcareResilienceConfig extends ResilienceConfig {
   // Healthcare-specific settings
   healthcare: {
     // Emergency handling
-    emergencyOverrideEnabled: boolean;
-    emergencyTimeoutMultiplier: number;
+    emergencyOverrideEnabled: boolean
+    emergencyTimeoutMultiplier: number
 
     // Data protection
-    piiProtectionEnabled: boolean;
-    dataEncryptionRequired: boolean;
+    piiProtectionEnabled: boolean
+    dataEncryptionRequired: boolean
 
     // Compliance
-    lgpdAuditLogging: boolean;
-    auditRetentionDays: number;
+    lgpdAuditLogging: boolean
+    auditRetentionDays: number
 
     // Medical device integration (if applicable)
-    medicalDeviceIntegration: boolean;
-    deviceTimeoutMs: number;
+    medicalDeviceIntegration: boolean
+    deviceTimeoutMs: number
 
     // Telemedicine resilience
-    telemedicinePriority: boolean;
-    minimumConnectionQuality: number;
-  };
+    telemedicinePriority: boolean
+    minimumConnectionQuality: number
+  }
 }
 
 // ============================================================================
@@ -71,20 +71,20 @@ export interface HealthcareResilienceConfig extends ResilienceConfig {
 // ============================================================================
 
 export class HealthcareResilienceService {
-  private resilienceFramework: ResilienceFramework;
+  private resilienceFramework: ResilienceFramework
   private auditLog: Array<{
-    timestamp: Date;
-    operation: string;
-    _service: string;
-    _context: HealthcareExecutionContext;
-    success: boolean;
-    error?: string;
-    latency: number;
-    retries: number;
-  }> = [];
+    timestamp: Date
+    operation: string
+    _service: string
+    _context: HealthcareExecutionContext
+    success: boolean
+    error?: string
+    latency: number
+    retries: number
+  }> = []
 
   constructor(config: HealthcareResilienceConfig) {
-    this.resilienceFramework = new ResilienceFramework(config);
+    this.resilienceFramework = new ResilienceFramework(config)
   }
 
   async executeHealthcareOperation<T>(
@@ -92,35 +92,35 @@ export class HealthcareResilienceService {
     operation: () => Promise<T>,
     _context: HealthcareExecutionContext,
   ): Promise<T> {
-    const startTime = Date.now();
-    let retries = 0;
-    let success = false;
-    let error: string | undefined;
+    const startTime = Date.now()
+    let retries = 0
+    let success = false
+    let error: string | undefined
 
     try {
       // Apply emergency configuration if needed
-      this.getEffectiveConfig(_context);
+      this.getEffectiveConfig(_context)
 
       // Execute with resilience framework
       const result = await this.resilienceFramework.execute(
         serviceName,
         async () => {
-          retries++;
-          return await operation();
+          retries++
+          return await operation()
         },
         this.adaptContext(_context),
-      );
+      )
 
-      success = true;
-      return result;
+      success = true
+      return result
     } catch (err) {
-      error = (err as Error).message;
-      success = false;
+      error = (err as Error).message
+      success = false
 
       // Apply healthcare-specific error handling
-      await this.handleHealthcareError(err as Error, _context);
+      await this.handleHealthcareError(err as Error, _context)
 
-      throw err;
+      throw err
     } finally {
       // Audit log for compliance
       await this.auditHealthcareOperation({
@@ -132,7 +132,7 @@ export class HealthcareResilienceService {
         error,
         latency: Date.now() - startTime,
         retries: retries - 1,
-      });
+      })
     }
   }
 
@@ -140,12 +140,12 @@ export class HealthcareResilienceService {
     _context: HealthcareExecutionContext,
   ): ResilienceConfig {
     if (_context.isEmergency || _context.isLifeCritical) {
-      return EMERGENCY_RESILIENCE_CONFIG;
+      return EMERGENCY_RESILIENCE_CONFIG
     }
 
     if (
-      _context.dataClassification
-        === HealthcareDataClassification.PATIENT_SENSITIVE
+      _context.dataClassification ===
+        HealthcareDataClassification.PATIENT_SENSITIVE
     ) {
       // Stricter configuration for sensitive data
       return {
@@ -154,10 +154,10 @@ export class HealthcareResilienceService {
           ...DEFAULT_HEALTHCARE_RESILIENCE_CONFIG.timeout,
           overallMs: DEFAULT_HEALTHCARE_RESILIENCE_CONFIG.timeout.overallMs * 1.5,
         },
-      };
+      }
     }
 
-    return DEFAULT_HEALTHCARE_RESILIENCE_CONFIG;
+    return DEFAULT_HEALTHCARE_RESILIENCE_CONFIG
   }
 
   private adaptContext(_context: HealthcareExecutionContext): ExecutionContext {
@@ -175,7 +175,7 @@ export class HealthcareResilienceService {
         requiresPIIProtection: _context.requiresPIIProtection,
         isLifeCritical: _context.isLifeCritical,
       },
-    };
+    }
   }
 
   private async handleHealthcareError(
@@ -186,20 +186,20 @@ export class HealthcareResilienceService {
 
     if (_context.isLifeCritical) {
       // For life-critical operations, trigger emergency protocols
-      await this.triggerEmergencyProtocol(error, _context);
+      await this.triggerEmergencyProtocol(error, _context)
     }
 
     if (
-      _context.dataClassification
-        === HealthcareDataClassification.PATIENT_SENSITIVE
+      _context.dataClassification ===
+        HealthcareDataClassification.PATIENT_SENSITIVE
     ) {
       // For sensitive data errors, initiate security review
-      await this.initiateSecurityReview(error, _context);
+      await this.initiateSecurityReview(error, _context)
     }
 
     // LGPD compliance - notify data protection officer for certain errors
     if (_context.lgpdCategories.includes(LGPDDataCategory.SENSITIVE_DATA)) {
-      await this.notifyDataProtectionError(error, _context);
+      await this.notifyDataProtectionError(error, _context)
     }
   }
 
@@ -221,7 +221,7 @@ export class HealthcareResilienceService {
       timestamp: new Date().toISOString(),
       severity: 'critical',
       category: 'emergency',
-    });
+    })
   }
 
   private async initiateSecurityReview(
@@ -237,7 +237,7 @@ export class HealthcareResilienceService {
       timestamp: new Date().toISOString(),
       severity: 'high',
       category: 'security',
-    });
+    })
   }
 
   private async notifyDataProtectionError(
@@ -253,27 +253,27 @@ export class HealthcareResilienceService {
       timestamp: new Date().toISOString(),
       severity: 'high',
       category: 'data_protection',
-    });
+    })
   }
 
   private async auditHealthcareOperation(auditEntry: {
-    timestamp: Date;
-    operation: string;
-    _service: string;
-    _context: HealthcareExecutionContext;
-    success: boolean;
-    error?: string;
-    latency: number;
-    retries: number;
+    timestamp: Date
+    operation: string
+    _service: string
+    _context: HealthcareExecutionContext
+    success: boolean
+    error?: string
+    latency: number
+    retries: number
   }): Promise<void> {
     // Add to audit log
-    this.auditLog.push(auditEntry);
+    this.auditLog.push(auditEntry)
 
     // Keep only last 30 days of audit logs
-    const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+    const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
     this.auditLog = this.auditLog.filter(
       entry => entry.timestamp >= thirtyDaysAgo,
-    );
+    )
 
     // In a real implementation, this would persist to audit database
     // and potentially notify compliance monitoring systems
@@ -281,13 +281,13 @@ export class HealthcareResilienceService {
 
   // Health check specific to healthcare services
   async checkHealthcareServiceHealth(serviceName: string): Promise<{
-    isHealthy: boolean;
-    responseTime: number;
-    lastCheck: Date;
-    complianceStatus: 'compliant' | 'warning' | 'non_compliant';
-    issues: string[];
+    isHealthy: boolean
+    responseTime: number
+    lastCheck: Date
+    complianceStatus: 'compliant' | 'warning' | 'non_compliant'
+    issues: string[]
   }> {
-    const health = this.resilienceFramework.getServiceHealth(serviceName);
+    const health = this.resilienceFramework.getServiceHealth(serviceName)
 
     if (!health) {
       return {
@@ -296,31 +296,31 @@ export class HealthcareResilienceService {
         lastCheck: new Date(),
         complianceStatus: 'non_compliant',
         issues: ['Service not registered with resilience framework'],
-      };
+      }
     }
 
     // Healthcare-specific compliance checks
-    const issues: string[] = [];
-    let complianceStatus: 'compliant' | 'warning' | 'non_compliant' = 'compliant';
+    const issues: string[] = []
+    let complianceStatus: 'compliant' | 'warning' | 'non_compliant' = 'compliant'
 
     if (health.successRate < 0.95) {
-      issues.push('Service success rate below 95% threshold');
-      complianceStatus = 'warning';
+      issues.push('Service success rate below 95% threshold')
+      complianceStatus = 'warning'
     }
 
     if (health.latency > 5000) {
-      issues.push('Service response time above 5s threshold');
-      complianceStatus = 'warning';
+      issues.push('Service response time above 5s threshold')
+      complianceStatus = 'warning'
     }
 
     if (health.successRate < 0.8) {
-      issues.push('Service success rate critically low');
-      complianceStatus = 'non_compliant';
+      issues.push('Service success rate critically low')
+      complianceStatus = 'non_compliant'
     }
 
     if (!health.isHealthy) {
-      issues.push('Service currently unhealthy');
-      complianceStatus = 'non_compliant';
+      issues.push('Service currently unhealthy')
+      complianceStatus = 'non_compliant'
     }
 
     return {
@@ -329,29 +329,29 @@ export class HealthcareResilienceService {
       lastCheck: health.lastCheck,
       complianceStatus,
       issues,
-    };
+    }
   }
 
   // Get healthcare-specific metrics
   getHealthcareMetrics(): {
-    resilience: ResilienceMetrics;
+    resilience: ResilienceMetrics
     audit: {
-      totalOperations: number;
-      successRate: number;
-      averageLatency: number;
-      emergencyOperations: number;
-      lifeCriticalOperations: number;
-      complianceViolations: number;
-    };
+      totalOperations: number
+      successRate: number
+      averageLatency: number
+      emergencyOperations: number
+      lifeCriticalOperations: number
+      complianceViolations: number
+    }
     services: Array<{
-      serviceName: string;
-      health: ServiceHealth;
-      complianceStatus: 'compliant' | 'warning' | 'non_compliant';
-    }>;
+      serviceName: string
+      health: ServiceHealth
+      complianceStatus: 'compliant' | 'warning' | 'non_compliant'
+    }>
   } {
     const services = Array.from(
       new Set(this.auditLog.map(entry => entry._service)),
-    );
+    )
 
     return {
       resilience: this.resilienceFramework.getMetrics(),
@@ -367,21 +367,21 @@ export class HealthcareResilienceService {
         ).length,
         complianceViolations: this.auditLog.filter(
           entry =>
-            !entry.success
-            && entry._context.lgpdCategories.includes(
+            !entry.success &&
+            entry._context.lgpdCategories.includes(
               LGPDDataCategory.SENSITIVE_DATA,
             ),
         ).length,
       },
       services: services.map(serviceName => {
-        const health = this.resilienceFramework.getServiceHealth(serviceName);
+        const health = this.resilienceFramework.getServiceHealth(serviceName)
         const recentFailures = this.auditLog.filter(
           entry => entry._service === serviceName && !entry.success,
-        ).length;
+        ).length
 
-        let complianceStatus: 'compliant' | 'warning' | 'non_compliant' = 'compliant';
-        if (recentFailures > 5) complianceStatus = 'non_compliant';
-        else if (recentFailures > 2) complianceStatus = 'warning';
+        let complianceStatus: 'compliant' | 'warning' | 'non_compliant' = 'compliant'
+        if (recentFailures > 5) complianceStatus = 'non_compliant'
+        else if (recentFailures > 2) complianceStatus = 'warning'
 
         return {
           serviceName,
@@ -395,62 +395,62 @@ export class HealthcareResilienceService {
             consecutiveSuccesses: 0,
           },
           complianceStatus,
-        };
+        }
       }),
-    };
+    }
   }
 
   private calculateSuccessRate(): number {
-    if (this.auditLog.length === 0) return 1;
+    if (this.auditLog.length === 0) return 1
 
-    const successful = this.auditLog.filter(entry => entry.success).length;
-    return successful / this.auditLog.length;
+    const successful = this.auditLog.filter(entry => entry.success).length
+    return successful / this.auditLog.length
   }
 
   private calculateAverageLatency(): number {
-    if (this.auditLog.length === 0) return 0;
+    if (this.auditLog.length === 0) return 0
 
     const totalLatency = this.auditLog.reduce(
       (sum, entry) => sum + entry.latency,
       0,
-    );
-    return totalLatency / this.auditLog.length;
+    )
+    return totalLatency / this.auditLog.length
   }
 
   // Generate compliance report
   generateComplianceReport(): {
     reportPeriod: {
-      start: Date;
-      end: Date;
-    };
+      start: Date
+      end: Date
+    }
     lgpdCompliance: {
-      totalOperations: number;
-      compliantOperations: number;
-      nonCompliantOperations: number;
-      complianceRate: number;
-    };
+      totalOperations: number
+      compliantOperations: number
+      nonCompliantOperations: number
+      complianceRate: number
+    }
     serviceAvailability: {
-      overallUptime: number;
-      criticalServicesUptime: number;
+      overallUptime: number
+      criticalServicesUptime: number
       incidents: Array<{
-        _service: string;
-        timestamp: Date;
-        duration: number;
-        impact: 'low' | 'medium' | 'high' | 'critical';
-      }>;
-    };
-    recommendations: string[];
+        _service: string
+        timestamp: Date
+        duration: number
+        impact: 'low' | 'medium' | 'high' | 'critical'
+      }>
+    }
+    recommendations: string[]
   } {
-    const end = new Date();
-    const start = new Date(Date.now() - 24 * 60 * 60 * 1000); // Last 24 hours
+    const end = new Date()
+    const start = new Date(Date.now() - 24 * 60 * 60 * 1000) // Last 24 hours
 
     const periodAuditLog = this.auditLog.filter(
       entry => entry.timestamp >= start && entry.timestamp <= end,
-    );
+    )
 
     const sensitiveDataOperations = periodAuditLog.filter(entry =>
       entry._context.lgpdCategories.includes(LGPDDataCategory.SENSITIVE_DATA)
-    );
+    )
 
     const lgpdCompliance = {
       totalOperations: sensitiveDataOperations.length,
@@ -461,34 +461,34 @@ export class HealthcareResilienceService {
         entry => !entry.success,
       ).length,
       complianceRate: sensitiveDataOperations.length > 0
-        ? sensitiveDataOperations.filter(entry => entry.success).length
-          / sensitiveDataOperations.length
+        ? sensitiveDataOperations.filter(entry => entry.success).length /
+          sensitiveDataOperations.length
         : 1,
-    };
+    }
 
     // Generate recommendations based on analysis
-    const recommendations: string[] = [];
+    const recommendations: string[] = []
 
     if (lgpdCompliance.complianceRate < 0.99) {
       recommendations.push(
         'Review and improve LGPD compliance procedures for sensitive health data',
-      );
+      )
     }
 
     if (this.calculateSuccessRate() < 0.95) {
       recommendations.push(
         'Implement additional redundancy for critical healthcare services',
-      );
+      )
     }
 
     const criticalServices = this.getHealthcareMetrics().services.filter(
       s => s.complianceStatus === 'non_compliant',
-    );
+    )
 
     if (criticalServices.length > 0) {
       recommendations.push(
         `Immediate attention required for ${criticalServices.length} non-compliant services`,
-      );
+      )
     }
 
     return {
@@ -500,7 +500,7 @@ export class HealthcareResilienceService {
         incidents: [], // Would be populated from incident tracking system
       },
       recommendations,
-    };
+    }
   }
 }
 
@@ -522,4 +522,4 @@ export const DEFAULT_HEALTHCARE_RESILIENCE_SERVICE_CONFIG: HealthcareResilienceC
     telemedicinePriority: true,
     minimumConnectionQuality: 0.7,
   },
-};
+}

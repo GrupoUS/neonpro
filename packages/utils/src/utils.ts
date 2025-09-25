@@ -1,11 +1,11 @@
-import { type ClassValue, clsx } from 'clsx';
-import { twMerge } from 'tailwind-merge';
+import { type ClassValue, clsx } from 'clsx'
+import { twMerge } from 'tailwind-merge'
 
 /**
  * Utility function to merge Tailwind CSS classes
  */
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
+  return twMerge(clsx(inputs))
 }
 
 /**
@@ -15,7 +15,7 @@ export function formatDate(
   date: Date | string,
   format: 'short' | 'long' = 'short',
 ): string {
-  const dateObj = typeof date === 'string' ? new Date(date) : date;
+  const dateObj = typeof date === 'string' ? new Date(date) : date
 
   if (format === 'long') {
     return dateObj.toLocaleDateString('pt-BR', {
@@ -23,17 +23,17 @@ export function formatDate(
       year: 'numeric',
       month: 'long',
       day: 'numeric',
-    });
+    })
   }
 
-  return dateObj.toLocaleDateString('pt-BR');
+  return dateObj.toLocaleDateString('pt-BR')
 }
 
 /**
  * Format date and time for Brazilian locale
  */
 export function formatDateTime(date: Date | string): string {
-  const dateObj = typeof date === 'string' ? new Date(date) : date;
+  const dateObj = typeof date === 'string' ? new Date(date) : date
 
   return dateObj.toLocaleString('pt-BR', {
     year: 'numeric',
@@ -41,7 +41,7 @@ export function formatDateTime(date: Date | string): string {
     day: '2-digit',
     hour: '2-digit',
     minute: '2-digit',
-  });
+  })
 }
 
 /**
@@ -51,12 +51,12 @@ export function debounce<T extends (...args: unknown[]) => unknown>(
   func: T,
   delay: number,
 ): (...args: Parameters<T>) => void {
-  let timeoutId: ReturnType<typeof setTimeout>;
+  let timeoutId: ReturnType<typeof setTimeout>
 
   return (...args: Parameters<T>) => {
-    clearTimeout(timeoutId);
-    timeoutId = setTimeout(() => func(...args), delay);
-  };
+    clearTimeout(timeoutId)
+    timeoutId = setTimeout(() => func(...args), delay)
+  }
 }
 
 /**
@@ -66,34 +66,34 @@ export function throttle<T extends (...args: unknown[]) => unknown>(
   func: T,
   limit: number,
 ): (...args: Parameters<T>) => void {
-  let inThrottle: boolean;
+  let inThrottle: boolean
 
   return (...args: Parameters<T>) => {
     if (!inThrottle) {
-      func(...args);
-      inThrottle = true;
-      setTimeout(() => (inThrottle = false), limit);
+      func(...args)
+      inThrottle = true
+      setTimeout(() => (inThrottle = false), limit)
     }
-  };
+  }
 }
 
 /**
  * Generate unique ID for accessibility
  */
 export function generateId(prefix: string = 'element'): string {
-  return `${prefix}-${Math.random().toString(36).substr(2, 9)}`;
+  return `${prefix}-${Math.random().toString(36).substr(2, 9)}`
 }
 
 /**
  * Capitalize first letter of string
  */
 export function capitalize(str: string): string {
-  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase()
 }
 
 /**
  * Sleep utility for async operations
  */
 export function sleep(ms: number): Promise<void> {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise(resolve => setTimeout(resolve, ms))
 }

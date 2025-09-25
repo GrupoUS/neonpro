@@ -2,6 +2,8 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "composite": true,
+    "module": "ESNext",
+    "moduleResolution": "bundler",
     "noEmit": false,
     "outDir": "./dist",
     "rootDir": "./src",
@@ -22,8 +24,15 @@
     "**/*.test.ts",
     "**/*.spec.ts",
     "src/services/redis-cache-backend.ts",
-    "src/services/winston-logging/**",
-    "src/services/structured-logging.ts"
+    "src/services/notification-service.ts",
+    "src/http/http-client.ts",
+    "src/http/index.ts",
+    "src/events/event-system.ts",
+    "src/events/index.ts",
+    "src/database/connection-manager.ts",
+    "src/database/index.ts",
+    "src/security/security-utils.ts",
+    "src/security/index.ts"
   ],
   "references": [
     { "path": "../types" },

@@ -395,7 +395,7 @@ logger.audit('patient_data_access', 'Patient record accessed', {
   clinicId: 'clinic_456',
   userId: 'user_789',
   action: 'view_medical_record',
-});
+})
 ```
 
 Logs include healthcare-specific fields such as data classification, compliance impact, and audit trail identifiers.
@@ -535,12 +535,12 @@ const config: SecurityHeadersConfig = {
   hstsIncludeSubDomains: true,
   hstsPreload: true,
   enableCSP: true,
-  contentSecurityPolicy: 'default-src \'self\'; ...',
+  contentSecurityPolicy: "default-src 'self'; ...",
   enableFrameGuard: true,
   enableXSSProtection: true,
   enableContentTypeSniffingProtection: true,
   referrerPolicy: 'strict-origin-when-cross-origin',
-};
+}
 ```
 
 These headers protect against common web vulnerabilities including XSS, clickjacking, and MIME sniffing attacks.

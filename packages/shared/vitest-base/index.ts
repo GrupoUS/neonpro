@@ -1,5 +1,5 @@
-import { resolve } from 'path';
-import { defineConfig } from 'vitest/config';
+import { resolve } from 'path'
+import { defineConfig } from 'vitest/config'
 
 /**
  * Standardized Vitest Base Configuration for NEONPRO TDD Compliance
@@ -13,18 +13,18 @@ import { defineConfig } from 'vitest/config';
 
 export interface VitestBaseOptions {
   /** Package name for configuration customization */
-  packageName?: string;
+  packageName?: string
   /** Custom coverage thresholds (overrides defaults) */
   coverageThresholds?: {
-    branches?: number;
-    functions?: number;
-    lines?: number;
-    statements?: number;
-  };
+    branches?: number
+    functions?: number
+    lines?: number
+    statements?: number
+  }
   /** Additional test environment setup */
-  setupFiles?: string[];
+  setupFiles?: string[]
   /** Custom exclude patterns for coverage */
-  coverageExclude?: string[];
+  coverageExclude?: string[]
 }
 
 export const createVitestConfig = (options: VitestBaseOptions = {}) => {
@@ -33,7 +33,7 @@ export const createVitestConfig = (options: VitestBaseOptions = {}) => {
     coverageThresholds = {},
     setupFiles = [],
     coverageExclude = [],
-  } = options;
+  } = options
 
   // Default coverage thresholds aligned with TDD quality standards
   const defaultThresholds = {
@@ -42,7 +42,7 @@ export const createVitestConfig = (options: VitestBaseOptions = {}) => {
     lines: 80,
     statements: 80,
     ...coverageThresholds,
-  };
+  }
 
   // Standard exclude patterns for healthcare applications
   const defaultExclude = [
@@ -56,7 +56,7 @@ export const createVitestConfig = (options: VitestBaseOptions = {}) => {
     '**/interfaces/**',
     '**/constants/**',
     ...coverageExclude,
-  ];
+  ]
 
   return defineConfig({
     test: {
@@ -121,8 +121,8 @@ export const createVitestConfig = (options: VitestBaseOptions = {}) => {
 
     // No additional plugins by default - keep it simple
     plugins: [],
-  });
-};
+  })
+}
 
 // Export default configuration for common use cases
-export default createVitestConfig();
+export default createVitestConfig()

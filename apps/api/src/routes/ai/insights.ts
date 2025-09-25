@@ -4,69 +4,69 @@
  * Integration with AIChatService, PatientService, AuditService, and LGPDService
  */
 
-import { zValidator } from '@hono/zod-validator';
-import { Context, Hono, Next } from 'hono';
-import { AIChatService } from '../../services/ai-chat-service.js';
+import { zValidator } from '@hono/zod-validator'
+import { Context, Hono, Next } from 'hono'
+import { AIChatService } from '../../services/ai-chat-service.js'
 
-import { LGPDService } from '../../services/lgpd-service.js';
-import { PatientService } from '../../services/patient-service.js';
+import { LGPDService } from '../../services/lgpd-service.js'
+import { PatientService } from '../../services/patient-service.js'
 
 // Type definitions
 interface ServiceInterface {
-  aiChatService: AIChatService;
-  patientService: PatientService;
-  auditService: AuditService;
-  lgpdService: LGPDService;
+  aiChatService: AIChatService
+  patientService: PatientService
+  auditService: AuditService
+  lgpdService: LGPDService
 }
 
 interface _CacheData {
-  data: AIInsight[] | HealthSummary | Recommendation[] | RiskFactor[];
-  timestamp: number;
-  ttl: number;
+  data: AIInsight[] | HealthSummary | Recommendation[] | RiskFactor[]
+  timestamp: number
+  ttl: number
 }
 
 interface AIInsight {
-  id: string;
-  type: string;
-  content: string;
-  confidence: number;
-  timestamp: Date;
+  id: string
+  type: string
+  content: string
+  confidence: number
+  timestamp: Date
 }
 
 interface HealthSummary {
-  overallHealth: string;
-  keyMetrics: Record<string, number>;
-  trends: Array<{ metric: string; trend: 'up' | 'down' | 'stable' }>;
+  overallHealth: string
+  keyMetrics: Record<string, number>
+  trends: Array<{ metric: string; trend: 'up' | 'down' | 'stable' }>
 }
 
 interface Recommendation {
-  id: string;
-  category: string;
-  priority: 'low' | 'medium' | 'high' | 'critical';
-  description: string;
-  actionItems: string[];
+  id: string
+  category: string
+  priority: 'low' | 'medium' | 'high' | 'critical'
+  description: string
+  actionItems: string[]
 }
 
 interface RiskFactor {
-  factor: string;
-  level: 'low' | 'medium' | 'high';
-  description: string;
-  mitigation: string[];
+  factor: string
+  level: 'low' | 'medium' | 'high'
+  description: string
+  mitigation: string[]
 }
 
 interface QueryParams {
-  includeHistory?: string;
-  medicalSpecialty?: string;
-  _context?: string;
+  includeHistory?: string
+  medicalSpecialty?: string
+  _context?: string
 }
 
 interface InsightsResponse {
-  success: boolean;
+  success: boolean
   data: {
-    insights: AIInsight[];
-    healthSummary: HealthSummary;
-    recommendations: Recommendation[];
-    riskFactors: RiskFactor[];
+    insights: AIInsight[]
+    healthSummary: HealthSummary
+    recommendations: Recommendation[]
+    riskFactors: RiskFactor[]
     [key: string]:
       | AIInsight[]
       | HealthSummary
@@ -74,14 +74,14 @@ interface InsightsResponse {
       | RiskFactor[]
       | string
       | number
-      | boolean;
-  };
-  message?: string;
+      | boolean
+  }
+  message?: string
 }
 
 // Mock middleware for testing
 const mockAuthMiddleware = (c: Context, next: Next) => {
-  const authHeader = c.req.header('authorization');
+  const authHeader = c.req.header('authorization')
   if (!authHeader) {
     return c.json(
       {
@@ -89,7 +89,7 @@ const mockAuthMiddleware = (c: Context, next: Next) => {
         error: 'Não autorizado. Token de acesso necessário.',
       },
       401,
-    );
+    )
   }
 
   // Check for insufficient permissions (mock logic for testing)
@@ -100,20 +100,20 @@ const mockAuthMiddleware = (c: Context, next: Next) => {
         error: 'Acesso negado. Permissões de profissional de saúde necessárias.',
       },
       403,
-    );
+    )
   }
 
-  c.set('user', { id: 'user-123', _role: 'healthcare_professional' });
-  return next();
-};
+  c.set('user', { id: 'user-123', _role: 'healthcare_professional' })
+  return next()
+}
 
-const mockLGPDMiddleware = (c: Context, next: Next) => next();
+const mockLGPDMiddleware = (c: Context, next: Next) => next()
 
-const app = new Hono();
+const app = new Hono()
 
 // Simple in-memory cache for testing
-const cache = new Map();
-const CACHE_DURATION = 30 * 60 * 1000; // 30 minutes in milliseconds
+const cache = new Map()
+const CACHE_DURATION = 30 * 60 * 1000 // 30 minutes in milliseconds
 
 // Function to get cache key
 const getCacheKey = (
@@ -124,18 +124,18 @@ const getCacheKey = (
 ) => {
   return `insights:${patientId}:${userId}:${JSON.stringify(queryParams)}:${
     medicalSpecialty || 'none'
-  }`;
-};
+  }`
+}
 
 // Function to check cache
 const getFromCache = (key: string) => {
-  const cached = cache.get(key);
+  const cached = cache.get(key)
   if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
-    return cached.data;
+    return cached.data
   }
-  cache.delete(key); // Remove expired entry
-  return null;
-};
+  cache.delete(key) // Remove expired entry
+  return null
+}
 
 // Function to set cache
 const setCache = (
@@ -145,13 +145,13 @@ const setCache = (
   cache.set(key, {
     data,
     timestamp: Date.now(),
-  });
-};
+  })
+}
 
 // Path parameter validation schema
 const pathSchema = z.object({
   patientId: z.string().uuid({ message: 'Formato de ID de paciente inválido' }),
-});
+})
 
 // Query parameters validation schema
 const insightsQuerySchema = z.object({
@@ -191,19 +191,19 @@ const insightsQuerySchema = z.object({
     .transform(val => val === 'true')
     .optional(),
   _context: z.string().optional(), // Add support for context parameter
-});
+})
 
 // Services - will be injected during testing or use real services in production
-let services: ServiceInterface | null = null;
+let services: ServiceInterface | null = null
 
 // Function to set services (used by tests)
 export const setServices = (injectedServices: ServiceInterface) => {
-  services = injectedServices;
-};
+  services = injectedServices
+}
 
 // Default services for production
 const getServices = () => {
-  if (services) return services;
+  if (services) return services
 
   // Use real service instances in production
   return {
@@ -211,8 +211,8 @@ const getServices = () => {
     patientService: new PatientService(),
     auditService: new AuditService(),
     lgpdService: new LGPDService(),
-  };
-};
+  }
+}
 
 app.get(
   '/patient/:patientId',
@@ -227,23 +227,23 @@ app.get(
           code: 'INVALID_PATIENT_ID_FORMAT',
         },
         422,
-      );
+      )
     }
   }),
   zValidator('query', insightsQuerySchema),
   async c => {
-    const startTime = Date.now();
-    const user = c.get('user');
-    const patientId = c.req.param('patientId');
-    const queryParams = c.req.valid('query');
-    const ipAddress = c.req.header('X-Real-IP') || c.req.header('X-Forwarded-For') || 'unknown';
-    const userAgent = c.req.header('User-Agent') || 'unknown';
-    const healthcareProfessional = c.req.header('X-Healthcare-Professional');
-    const healthcareContext = c.req.header('X-Healthcare-Context');
-    const medicalSpecialty = c.req.header('X-Medical-Specialty');
+    const startTime = Date.now()
+    const user = c.get('user')
+    const patientId = c.req.param('patientId')
+    const queryParams = c.req.valid('query')
+    const ipAddress = c.req.header('X-Real-IP') || c.req.header('X-Forwarded-For') || 'unknown'
+    const userAgent = c.req.header('User-Agent') || 'unknown'
+    const healthcareProfessional = c.req.header('X-Healthcare-Professional')
+    const healthcareContext = c.req.header('X-Healthcare-Context')
+    const medicalSpecialty = c.req.header('X-Medical-Specialty')
 
     try {
-      const currentServices = getServices();
+      const currentServices = getServices()
 
       // Check cache first
       const cacheKey = getCacheKey(
@@ -251,23 +251,23 @@ app.get(
         queryParams,
         user.id,
         medicalSpecialty,
-      );
-      const cachedResult = getFromCache(cacheKey);
-      let cacheStatus = 'miss';
+      )
+      const cachedResult = getFromCache(cacheKey)
+      let cacheStatus = 'miss'
 
       if (cachedResult) {
-        cacheStatus = 'hit';
+        cacheStatus = 'hit'
 
         // Set cache headers
-        c.header('X-Response-Time', `${Date.now() - startTime}ms`);
-        c.header('X-Cache-Status', cacheStatus);
-        c.header('Cache-Control', 'private, max-age=1800');
+        c.header('X-Response-Time', `${Date.now() - startTime}ms`)
+        c.header('X-Cache-Status', cacheStatus)
+        c.header('Cache-Control', 'private, max-age=1800')
 
-        return c.json(cachedResult);
+        return c.json(cachedResult)
       }
 
       // Validate patient exists
-      const patientValidation = await currentServices.patientService.getPatientById(patientId);
+      const patientValidation = await currentServices.patientService.getPatientById(patientId)
 
       if (!patientValidation.success) {
         return c.json(
@@ -277,7 +277,7 @@ app.get(
             code: patientValidation.code || 'PATIENT_NOT_FOUND',
           },
           404,
-        );
+        )
       }
 
       // Validate LGPD data access for patient insights
@@ -287,7 +287,7 @@ app.get(
         dataType: 'ai_patient_insights',
         purpose: 'healthcare_analysis',
         legalBasis: 'legitimate_interest',
-      });
+      })
 
       if (!lgpdValidation.success) {
         return c.json(
@@ -297,7 +297,7 @@ app.get(
             code: lgpdValidation.code || 'LGPD_AI_INSIGHTS_DENIED',
           },
           403,
-        );
+        )
       }
 
       // Generate patient insights
@@ -310,14 +310,14 @@ app.get(
         includeRecommendations: true,
         healthcareProfessional,
         healthcareContext,
-      };
+      }
 
       // Generate patient insights using PatientService instead of AIChatService
       // since this is for patient-level insights, not conversation-based insights
       const insightsResponse = await currentServices.patientService.generateAIInsights(
         patientId,
         queryParams.include_recommendations,
-      );
+      )
 
       if (!insightsResponse.success) {
         if (insightsResponse.error?.includes('Dados insuficientes')) {
@@ -328,17 +328,17 @@ app.get(
               code: 'INSUFFICIENT_DATA',
             },
             422,
-          );
+          )
         }
 
         return c.json(
           {
             success: false,
-            error: insightsResponse.error
-              || 'Erro interno do serviço de insights de IA',
+            error: insightsResponse.error ||
+              'Erro interno do serviço de insights de IA',
           },
           500,
-        );
+        )
       }
 
       // Mock some insights data with Brazilian context
@@ -359,7 +359,7 @@ app.get(
           processingTime: Date.now() - startTime,
           analysisVersion: 'v2.1',
         },
-      };
+      }
 
       // Add specialty-specific insights if medical specialty is provided
       if (medicalSpecialty) {
@@ -369,11 +369,11 @@ app.get(
           recommendations: [
             `Recomendações específicas para ${medicalSpecialty}`,
           ],
-        };
+        }
 
         // Add specialty to metadata if it exists
         if (responseData.metadata) {
-          responseData.metadata.medicalSpecialty = medicalSpecialty;
+          responseData.metadata.medicalSpecialty = medicalSpecialty
         } else {
           // If metadata doesn't exist, create it
           responseData.metadata = {
@@ -383,23 +383,23 @@ app.get(
             processingTime: Date.now() - startTime,
             analysisVersion: 'v2.1',
             medicalSpecialty: medicalSpecialty,
-          };
+          }
         }
       }
 
       // Add Brazilian healthcare context if specified
       if (
-        queryParams.analysisType === 'brazilian_healthcare'
-        || healthcareContext === 'brazilian'
-        || queryParams.context === 'brazilian_healthcare'
+        queryParams.analysisType === 'brazilian_healthcare' ||
+        healthcareContext === 'brazilian' ||
+        queryParams.context === 'brazilian_healthcare'
       ) {
         responseData.context = {
           language: 'pt-BR',
           region: 'brazil',
           regulations: ['ANVISA', 'CFM', 'LGPD'],
           healthcareSystem: 'SUS',
-        };
-        responseData.brazilianContext = true; // Add this field for the test
+        }
+        responseData.brazilianContext = true // Add this field for the test
       }
 
       // Mask sensitive data based on access level
@@ -409,16 +409,16 @@ app.get(
           insights: currentServices.lgpdService.maskSensitiveData(
             responseData.insights,
           ),
-        };
+        }
       }
 
       // Get additional data if requested
-      let healthSummary = null;
-      let metrics = null;
+      let healthSummary = null
+      let metrics = null
 
       if (queryParams.includeHealth) {
         // Use health status from getHealthStatus method
-        healthSummary = currentServices.aiChatService.getHealthStatus();
+        healthSummary = currentServices.aiChatService.getHealthStatus()
       }
 
       if (queryParams.includeMetrics) {
@@ -428,11 +428,11 @@ app.get(
           avgResponseTime: Math.floor(Math.random() * 2000) + 500,
           successRate: 0.95 + Math.random() * 0.05,
           tokensUsed: Math.floor(Math.random() * 10000),
-        };
+        }
       }
 
       // Log activity for audit trail
-      const processingTime = Date.now() - startTime;
+      const processingTime = Date.now() - startTime
       await currentServices.auditService.logActivity({
         _userId: user.id,
         action: 'ai_patient_insights_access',
@@ -449,7 +449,7 @@ app.get(
         userAgent,
         complianceContext: 'LGPD',
         sensitivityLevel: 'critical',
-      });
+      })
 
       // Prepare response headers
       const responseHeaders: Record<string, string> = {
@@ -463,69 +463,69 @@ app.get(
         'X-Data-Retention-Policy': '7-years-standard-20-years-medical',
         'X-Legal-Basis': 'legitimate_interest',
         'X-Consent-Required': 'true',
-      };
+      }
 
       // Add AI-specific headers
       if (responseData.metadata) {
-        responseHeaders['X-AI-Model'] = responseData.metadata.model || 'unknown';
+        responseHeaders['X-AI-Model'] = responseData.metadata.model || 'unknown'
         responseHeaders['X-AI-Confidence'] = (
           responseData.metadata.confidence || 0
-        ).toString();
+        ).toString()
         responseHeaders['X-AI-Data-Points'] = (
           responseData.metadata.dataPoints || 0
-        ).toString();
-        responseHeaders['X-AI-Processing-Time'] = `${responseData.metadata.processingTime || 0}ms`;
-        responseHeaders['X-Analysis-Version'] = responseData.metadata.analysisVersion || 'unknown';
+        ).toString()
+        responseHeaders['X-AI-Processing-Time'] = `${responseData.metadata.processingTime || 0}ms`
+        responseHeaders['X-Analysis-Version'] = responseData.metadata.analysisVersion || 'unknown'
       }
 
       // Add Brazilian context headers
       if (
-        queryParams.analysisType === 'brazilian_healthcare'
-        || healthcareContext === 'brazilian'
-        || queryParams.context === 'brazilian_healthcare'
+        queryParams.analysisType === 'brazilian_healthcare' ||
+        healthcareContext === 'brazilian' ||
+        queryParams.context === 'brazilian_healthcare'
       ) {
-        responseHeaders['X-Brazilian-Context'] = 'true';
-        responseHeaders['X-ANVISA-Compliant'] = 'true';
-        responseHeaders['X-Healthcare-Professional-Validated'] = 'true';
-        responseHeaders['X-CFM-License-Verified'] = 'true';
+        responseHeaders['X-Brazilian-Context'] = 'true'
+        responseHeaders['X-ANVISA-Compliant'] = 'true'
+        responseHeaders['X-Healthcare-Professional-Validated'] = 'true'
+        responseHeaders['X-CFM-License-Verified'] = 'true'
       }
 
       // Add LGPD headers
-      responseHeaders['X-LGPD-Processed'] = 'true';
-      responseHeaders['X-Consent-Verified'] = 'true';
-      responseHeaders['X-Data-Processing-Basis'] = 'legitimate_interest';
+      responseHeaders['X-LGPD-Processed'] = 'true'
+      responseHeaders['X-Consent-Verified'] = 'true'
+      responseHeaders['X-Data-Processing-Basis'] = 'legitimate_interest'
 
       // Add database queries header
-      responseHeaders['X-Database-Queries'] = '3';
+      responseHeaders['X-Database-Queries'] = '3'
 
       // Set all headers
       Object.entries(responseHeaders).forEach(([key, _value]) => {
-        c.header(key, value);
-      });
+        c.header(key, value)
+      })
 
       // Prepare final response
       const finalResponse: InsightsResponse = {
         success: true,
         data: responseData,
-      };
+      }
 
       if (healthSummary) {
-        finalResponse.data.healthSummary = healthSummary;
+        finalResponse.data.healthSummary = healthSummary
       }
 
       if (metrics) {
-        finalResponse.data.metrics = metrics;
+        finalResponse.data.metrics = metrics
       }
 
       // Cache the result for future requests
-      setCache(cacheKey, finalResponse);
+      setCache(cacheKey, finalResponse)
 
-      return c.json(finalResponse);
+      return c.json(finalResponse)
     } catch {
-      console.error('AI Insights endpoint error:', error);
+      console.error('AI Insights endpoint error:', error)
 
       // Log error for audit
-      const currentServices = getServices();
+      const currentServices = getServices()
       await currentServices.auditService.logActivity({
         _userId: user.id,
         action: 'ai_insights_error',
@@ -539,7 +539,7 @@ app.get(
         userAgent,
         complianceContext: 'LGPD',
         sensitivityLevel: 'critical',
-      });
+      })
 
       return c.json(
         {
@@ -547,10 +547,10 @@ app.get(
           error: 'Erro interno do servidor. Tente novamente mais tarde.',
         },
         500,
-      );
+      )
     }
   },
-);
+)
 
 // POST /no-show-prediction endpoint for AI no-show prediction
 const noShowRequestSchema = z.object({
@@ -572,7 +572,7 @@ const noShowRequestSchema = z.object({
       previousNoShows: z.number().optional(),
     })
     .optional(),
-});
+})
 
 app.post(
   '/no-show-prediction',
@@ -580,14 +580,14 @@ app.post(
   mockLGPDMiddleware,
   zValidator('json', noShowRequestSchema),
   async c => {
-    const startTime = Date.now();
-    const user = c.get('user');
-    const requestData = c.req.valid('json');
-    const ipAddress = c.req.header('X-Real-IP') || c.req.header('X-Forwarded-For') || 'unknown';
-    const userAgent = c.req.header('User-Agent') || 'unknown';
+    const startTime = Date.now()
+    const user = c.get('user')
+    const requestData = c.req.valid('json')
+    const ipAddress = c.req.header('X-Real-IP') || c.req.header('X-Forwarded-For') || 'unknown'
+    const userAgent = c.req.header('User-Agent') || 'unknown'
 
     try {
-      const currentServices = getServices();
+      const currentServices = getServices()
 
       // Validate appointments array
       if (!requestData.appointments || requestData.appointments.length === 0) {
@@ -598,15 +598,15 @@ app.post(
             code: 'EMPTY_APPOINTMENTS_ARRAY',
           },
           400,
-        );
+        )
       }
 
       // Validate appointment data
       for (const appointment of requestData.appointments) {
         if (
-          !appointment.id
-          || !appointment.patientId
-          || !appointment.datetime
+          !appointment.id ||
+          !appointment.patientId ||
+          !appointment.datetime
         ) {
           return c.json(
             {
@@ -615,7 +615,7 @@ app.post(
               code: 'INVALID_APPOINTMENT_DATA',
             },
             422,
-          );
+          )
         }
       }
 
@@ -644,9 +644,9 @@ app.post(
             work_flexibility: Math.random() > 0.4,
           },
         },
-      }));
+      }))
 
-      const processingTime = Date.now() - startTime;
+      const processingTime = Date.now() - startTime
 
       // Log activity for audit trail
       await currentServices.auditService.logActivity({
@@ -663,7 +663,7 @@ app.post(
         userAgent,
         complianceContext: 'LGPD',
         sensitivityLevel: 'medium',
-      });
+      })
 
       const responseHeaders: Record<string, string> = {
         'X-Response-Time': `${processingTime}ms`,
@@ -674,11 +674,11 @@ app.post(
         'X-Data-Retention-Policy': '6-months-prediction-data',
         'X-Predictions-Count': predictions.length.toString(),
         'Cache-Control': 'private, max-age=300',
-      };
+      }
 
       Object.entries(responseHeaders).forEach(([key, _value]) => {
-        c.header(key, value);
-      });
+        c.header(key, value)
+      })
 
       return c.json({
         success: true,
@@ -693,9 +693,9 @@ app.post(
             culturalContext: 'brazilian_healthcare',
           },
         },
-      });
+      })
     } catch {
-      console.error('No-show prediction endpoint error:', error);
+      console.error('No-show prediction endpoint error:', error)
 
       return c.json(
         {
@@ -703,9 +703,9 @@ app.post(
           error: 'Erro interno do servidor. Tente novamente mais tarde.',
         },
         500,
-      );
+      )
     }
   },
-);
+)
 
-export default app;
+export default app

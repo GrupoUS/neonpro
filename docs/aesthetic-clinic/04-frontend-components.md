@@ -32,12 +32,12 @@ apps/web/src/components/
 ```typescript
 // apps/web/src/components/aesthetic/client-management/ClientProfileCard.tsx
 interface ClientProfileCardProps {
-  client: AestheticClientProfile;
-  onEdit?: (client: AestheticClientProfile) => void;
-  onViewDetails?: (clientId: string) => void;
-  onDelete?: (clientId: string) => void;
-  showActions?: boolean;
-  compact?: boolean;
+  client: AestheticClientProfile
+  onEdit?: (client: AestheticClientProfile) => void
+  onViewDetails?: (clientId: string) => void
+  onDelete?: (clientId: string) => void
+  showActions?: boolean
+  compact?: boolean
 }
 
 const ClientProfileCard: React.FC<ClientProfileCardProps> = ({
@@ -48,9 +48,9 @@ const ClientProfileCard: React.FC<ClientProfileCardProps> = ({
   showActions = true,
   compact = false,
 }) => {
-  const { formatCPF, formatPhone } = useFormatting();
-  const { hasPermission } = usePermissions();
-  const { showLGPDConsent } = useCompliance();
+  const { formatCPF, formatPhone } = useFormatting()
+  const { hasPermission } = usePermissions()
+  const { showLGPDConsent } = useCompliance()
 
   return (
     <Card className='w-full'>
@@ -162,8 +162,8 @@ const ClientProfileCard: React.FC<ClientProfileCardProps> = ({
         )}
       </CardContent>
     </Card>
-  );
-};
+  )
+}
 ```
 
 ### ClientRegistrationForm
@@ -171,10 +171,10 @@ const ClientProfileCard: React.FC<ClientProfileCardProps> = ({
 ```typescript
 // apps/web/src/components/aesthetic/client-management/ClientRegistrationForm.tsx
 interface ClientRegistrationFormProps {
-  onSubmit: (data: CreateAestheticClientInput) => Promise<void>;
-  onCancel?: () => void;
-  initialData?: Partial<CreateAestheticClientInput>;
-  isLoading?: boolean;
+  onSubmit: (data: CreateAestheticClientInput) => Promise<void>
+  onCancel?: () => void
+  initialData?: Partial<CreateAestheticClientInput>
+  isLoading?: boolean
 }
 
 const ClientRegistrationForm: React.FC<ClientRegistrationFormProps> = ({
@@ -188,22 +188,22 @@ const ClientRegistrationForm: React.FC<ClientRegistrationFormProps> = ({
   >({
     resolver: zodResolver(createAestheticClientSchema),
     defaultValues: initialData,
-  });
+  })
 
-  const { showLGPDModal } = useCompliance();
-  const [lgpdConsent, setLgpdConsent] = useState(false);
+  const { showLGPDModal } = useCompliance()
+  const [lgpdConsent, setLgpdConsent] = useState(false)
 
-  const watchedValues = watch();
+  const watchedValues = watch()
 
   const handleFormSubmit = async (data: CreateAestheticClientInput) => {
     if (!lgpdConsent) {
-      const consent = await showLGPDModal();
-      if (!consent) return;
-      setLgpdConsent(true);
-      data.lgpdConsent = consent;
+      const consent = await showLGPDModal()
+      if (!consent) return
+      setLgpdConsent(true)
+      data.lgpdConsent = consent
     }
-    await onSubmit(data);
-  };
+    await onSubmit(data)
+  }
 
   return (
     <form onSubmit={handleSubmit(handleFormSubmit)} className='space-y-6'>
@@ -276,8 +276,8 @@ const ClientRegistrationForm: React.FC<ClientRegistrationFormProps> = ({
                       placeholder='123.456.789-00'
                       {...field}
                       onChange={e => {
-                        const value = e.target.value.replace(/\D/g, '');
-                        field.onChange(value);
+                        const value = e.target.value.replace(/\D/g, '')
+                        field.onChange(value)
                       }}
                     />
                   </FormControl>
@@ -310,8 +310,8 @@ const ClientRegistrationForm: React.FC<ClientRegistrationFormProps> = ({
                       placeholder='(11) 98765-4321'
                       {...field}
                       onChange={e => {
-                        const value = e.target.value.replace(/\D/g, '');
-                        field.onChange(value);
+                        const value = e.target.value.replace(/\D/g, '')
+                        field.onChange(value)
                       }}
                     />
                   </FormControl>
@@ -514,8 +514,8 @@ const ClientRegistrationForm: React.FC<ClientRegistrationFormProps> = ({
                       placeholder='(11) 98765-4321'
                       {...field}
                       onChange={e => {
-                        const value = e.target.value.replace(/\D/g, '');
-                        field.onChange(value);
+                        const value = e.target.value.replace(/\D/g, '')
+                        field.onChange(value)
                       }}
                     />
                   </FormControl>
@@ -552,9 +552,9 @@ const ClientRegistrationForm: React.FC<ClientRegistrationFormProps> = ({
               type='button'
               variant='outline'
               onClick={async () => {
-                const consent = await showLGPDModal();
+                const consent = await showLGPDModal()
                 if (consent) {
-                  setLgpdConsent(true);
+                  setLgpdConsent(true)
                 }
               }}
               className='w-full'
@@ -587,8 +587,8 @@ const ClientRegistrationForm: React.FC<ClientRegistrationFormProps> = ({
         </Button>
       </div>
     </form>
-  );
-};
+  )
+}
 ```
 
 ## 💉 Treatment Planning Components
@@ -598,10 +598,10 @@ const ClientRegistrationForm: React.FC<ClientRegistrationFormProps> = ({
 ```typescript
 // apps/web/src/components/aesthetic/treatment-planning/TreatmentPlanner.tsx
 interface TreatmentPlannerProps {
-  clientId: string;
-  professionalId?: string;
-  onSave?: (plan: TreatmentPlan) => void;
-  onCancel?: () => void;
+  clientId: string
+  professionalId?: string
+  onSave?: (plan: TreatmentPlan) => void
+  onCancel?: () => void
 }
 
 const TreatmentPlanner: React.FC<TreatmentPlannerProps> = ({
@@ -610,14 +610,14 @@ const TreatmentPlanner: React.FC<TreatmentPlannerProps> = ({
   onSave,
   onCancel,
 }) => {
-  const { treatments, loading: treatmentsLoading } = useTreatments();
-  const { client } = useClient(clientId);
-  const { professionals } = useProfessionals();
-  const { generateAIRecommendations } = useAI();
+  const { treatments, loading: treatmentsLoading } = useTreatments()
+  const { client } = useClient(clientId)
+  const { professionals } = useProfessionals()
+  const { generateAIRecommendations } = useAI()
 
-  const [selectedTreatments, setSelectedTreatments] = useState<SelectedTreatment[]>([]);
-  const [aiRecommendations, setAiRecommendations] = useState<AIRecommendation[]>([]);
-  const [isGenerating, setIsGenerating] = useState(false);
+  const [selectedTreatments, setSelectedTreatments] = useState<SelectedTreatment[]>([])
+  const [aiRecommendations, setAiRecommendations] = useState<AIRecommendation[]>([])
+  const [isGenerating, setIsGenerating] = useState(false)
 
   const handleAddTreatment = (treatment: AestheticTreatment) => {
     const newTreatment: SelectedTreatment = {
@@ -625,16 +625,16 @@ const TreatmentPlanner: React.FC<TreatmentPlannerProps> = ({
       sessions: treatment.requiredSessions,
       intervalDays: treatment.sessionIntervalDays,
       customNotes: '',
-    };
-    setSelectedTreatments([...selectedTreatments, newTreatment]);
-  };
+    }
+    setSelectedTreatments([...selectedTreatments, newTreatment])
+  }
 
   const handleRemoveTreatment = (index: number) => {
-    setSelectedTreatments(selectedTreatments.filter((_, i) => i !== index));
-  };
+    setSelectedTreatments(selectedTreatments.filter((_, i) => i !== index))
+  }
 
   const handleGenerateRecommendations = async () => {
-    setIsGenerating(true);
+    setIsGenerating(true)
     try {
       const recommendations = await generateAIRecommendations({
         clientId,
@@ -643,27 +643,27 @@ const TreatmentPlanner: React.FC<TreatmentPlannerProps> = ({
         skinTone: client?.skinTone,
         medicalConditions: client?.medicalConditions || [],
         contraindications: client?.contraindications || [],
-      });
-      setAiRecommendations(recommendations);
+      })
+      setAiRecommendations(recommendations)
     } catch (error) {
-      console.error('Failed to generate AI recommendations:', error);
+      console.error('Failed to generate AI recommendations:', error)
     } finally {
-      setIsGenerating(false);
+      setIsGenerating(false)
     }
-  };
+  }
 
   const calculateTotalPlan = () => {
     return selectedTreatments.reduce((total, treatment) => {
-      return total + (treatment.treatment.basePrice * treatment.sessions);
-    }, 0);
-  };
+      return total + (treatment.treatment.basePrice * treatment.sessions)
+    }, 0)
+  }
 
   const estimateDuration = () => {
     const days = selectedTreatments.reduce((total, treatment) => {
-      return total + (treatment.sessions * treatment.intervalDays);
-    }, 0);
-    return Math.ceil(days / 30); // Convert to months
-  };
+      return total + (treatment.sessions * treatment.intervalDays)
+    }, 0)
+    return Math.ceil(days / 30) // Convert to months
+  }
 
   return (
     <div className='space-y-6'>
@@ -756,9 +756,9 @@ const TreatmentPlanner: React.FC<TreatmentPlannerProps> = ({
                         onClick={() => {
                           const treatment = treatments.find(t =>
                             t.id === rec.treatmentId
-                          );
+                          )
                           if (treatment) {
-                            handleAddTreatment(treatment);
+                            handleAddTreatment(treatment)
                           }
                         }}
                       >
@@ -870,9 +870,9 @@ const TreatmentPlanner: React.FC<TreatmentPlannerProps> = ({
                           type='number'
                           value={treatment.sessions}
                           onChange={e => {
-                            const newTreatments = [...selectedTreatments];
-                            newTreatments[index].sessions = parseInt(e.target.value) || 1;
-                            setSelectedTreatments(newTreatments);
+                            const newTreatments = [...selectedTreatments]
+                            newTreatments[index].sessions = parseInt(e.target.value) || 1
+                            setSelectedTreatments(newTreatments)
                           }}
                           className='w-20'
                           min='1'
@@ -884,9 +884,9 @@ const TreatmentPlanner: React.FC<TreatmentPlannerProps> = ({
                           type='number'
                           value={treatment.intervalDays}
                           onChange={e => {
-                            const newTreatments = [...selectedTreatments];
-                            newTreatments[index].intervalDays = parseInt(e.target.value) || 7;
-                            setSelectedTreatments(newTreatments);
+                            const newTreatments = [...selectedTreatments]
+                            newTreatments[index].intervalDays = parseInt(e.target.value) || 7
+                            setSelectedTreatments(newTreatments)
                           }}
                           className='w-20'
                           min='1'
@@ -935,8 +935,8 @@ const TreatmentPlanner: React.FC<TreatmentPlannerProps> = ({
               totalEstimatedSessions: selectedTreatments.reduce((sum, t) => sum + t.sessions, 0),
               estimatedTotalCost: calculateTotalPlan(),
               status: 'planning',
-            };
-            onSave?.(plan);
+            }
+            onSave?.(plan)
           }}
           disabled={selectedTreatments.length === 0}
         >
@@ -944,8 +944,8 @@ const TreatmentPlanner: React.FC<TreatmentPlannerProps> = ({
         </Button>
       </div>
     </div>
-  );
-};
+  )
+}
 ```
 
 ## 📅 Scheduling Components
@@ -955,11 +955,11 @@ const TreatmentPlanner: React.FC<TreatmentPlannerProps> = ({
 ```typescript
 // apps/web/src/components/aesthetic/scheduling/AICalendarScheduler.tsx
 interface AICalendarSchedulerProps {
-  professionalId?: string;
-  clientId?: string;
-  treatmentId?: string;
-  onAppointmentSelect?: (appointment: AestheticAppointment) => void;
-  onAppointmentCreate?: (appointment: CreateAppointmentInput) => Promise<void>;
+  professionalId?: string
+  clientId?: string
+  treatmentId?: string
+  onAppointmentSelect?: (appointment: AestheticAppointment) => void
+  onAppointmentCreate?: (appointment: CreateAppointmentInput) => Promise<void>
 }
 
 const AICalendarScheduler: React.FC<AICalendarSchedulerProps> = ({
@@ -969,25 +969,25 @@ const AICalendarScheduler: React.FC<AICalendarSchedulerProps> = ({
   onAppointmentSelect,
   onAppointmentCreate,
 }) => {
-  const [selectedDate, setSelectedDate] = useState(new Date());
-  const [selectedTimeSlot, setSelectedTimeSlot] = useState<TimeSlot>();
-  const [optimizationResults, setOptimizationResults] = useState<OptimizationResult>();
-  const [isOptimizing, setIsOptimizing] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(new Date())
+  const [selectedTimeSlot, setSelectedTimeSlot] = useState<TimeSlot>()
+  const [optimizationResults, setOptimizationResults] = useState<OptimizationResult>()
+  const [isOptimizing, setIsOptimizing] = useState(false)
 
-  const { appointments, loading } = useAppointments(selectedDate);
-  const { professionals } = useProfessionals();
-  const { treatments } = useTreatments();
-  const { optimizeSchedule } = useAIScheduling();
+  const { appointments, loading } = useAppointments(selectedDate)
+  const { professionals } = useProfessionals()
+  const { treatments } = useTreatments()
+  const { optimizeSchedule } = useAIScheduling()
 
   const handleDateChange = (date: Date) => {
-    setSelectedDate(date);
-    setSelectedTimeSlot(undefined);
-  };
+    setSelectedDate(date)
+    setSelectedTimeSlot(undefined)
+  }
 
   const handleOptimizeSchedule = async () => {
-    if (!clientId || !treatmentId) return;
+    if (!clientId || !treatmentId) return
 
-    setIsOptimizing(true);
+    setIsOptimizing(true)
     try {
       const results = await optimizeSchedule({
         clientId,
@@ -1014,15 +1014,15 @@ const AICalendarScheduler: React.FC<AICalendarSchedulerProps> = ({
           allowWeekend: false,
           reminderTiming: 24,
         },
-      });
+      })
 
-      setOptimizationResults(results);
+      setOptimizationResults(results)
     } catch (error) {
-      console.error('Failed to optimize schedule:', error);
+      console.error('Failed to optimize schedule:', error)
     } finally {
-      setIsOptimizing(false);
+      setIsOptimizing(false)
     }
-  };
+  }
 
   const renderCalendar = () => {
     return (
@@ -1121,11 +1121,11 @@ const AICalendarScheduler: React.FC<AICalendarSchedulerProps> = ({
           </Card>
         </div>
       </div>
-    );
-  };
+    )
+  }
 
   const renderOptimizationResults = () => {
-    if (!optimizationResults) return null;
+    if (!optimizationResults) return null
 
     return (
       <Card>
@@ -1175,7 +1175,7 @@ const AICalendarScheduler: React.FC<AICalendarSchedulerProps> = ({
                         end: rec.scheduledEnd,
                         professionalId: rec.professionalId,
                         roomId: rec.roomId,
-                      });
+                      })
                     }}
                   >
                     Selecionar Horário
@@ -1186,8 +1186,8 @@ const AICalendarScheduler: React.FC<AICalendarSchedulerProps> = ({
           </div>
         </CardContent>
       </Card>
-    );
-  };
+    )
+  }
 
   return (
     <div className='space-y-6'>
@@ -1274,8 +1274,8 @@ const AICalendarScheduler: React.FC<AICalendarSchedulerProps> = ({
         />
       )}
     </div>
-  );
-};
+  )
+}
 ```
 
 ## 🛡️ Compliance Components
@@ -1285,14 +1285,14 @@ const AICalendarScheduler: React.FC<AICalendarSchedulerProps> = ({
 ```typescript
 // apps/web/src/components/aesthetic/compliance/LGPDConsentModal.tsx
 interface LGPDConsentModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onConsent: (consent: LGPDConsentData) => void;
+  isOpen: boolean
+  onClose: () => void
+  onConsent: (consent: LGPDConsentData) => void
   clientData?: {
-    name: string;
-    email: string;
-    phone: string;
-  };
+    name: string
+    email: string
+    phone: string
+  }
 }
 
 const LGPDConsentModal: React.FC<LGPDConsentModalProps> = ({
@@ -1308,26 +1308,26 @@ const LGPDConsentModal: React.FC<LGPDConsentModalProps> = ({
     consentDate: new Date(),
     ip: '',
     userAgent: '',
-  });
-  const [isAccepting, setIsAccepting] = useState(false);
+  })
+  const [isAccepting, setIsAccepting] = useState(false)
 
   const handleConsent = async () => {
-    setIsAccepting(true);
+    setIsAccepting(true)
     try {
       const finalConsent = {
         ...consentData,
         ip: await getClientIP(),
         userAgent: navigator.userAgent,
         consentDate: new Date(),
-      };
-      onConsent(finalConsent);
-      onClose();
+      }
+      onConsent(finalConsent)
+      onClose()
     } catch (error) {
-      console.error('Failed to get client IP:', error);
+      console.error('Failed to get client IP:', error)
     } finally {
-      setIsAccepting(false);
+      setIsAccepting(false)
     }
-  };
+  }
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -1552,8 +1552,8 @@ const LGPDConsentModal: React.FC<LGPDConsentModalProps> = ({
         </div>
       </DialogContent>
     </Dialog>
-  );
-};
+  )
+}
 ```
 
 ## 📊 Dashboard Components
@@ -1564,20 +1564,20 @@ const LGPDConsentModal: React.FC<LGPDConsentModalProps> = ({
 // apps/web/src/components/aesthetic/dashboard/AestheticClinicDashboard.tsx
 interface AestheticClinicDashboardProps {
   dateRange?: {
-    start: Date;
-    end: Date;
-  };
+    start: Date
+    end: Date
+  }
 }
 
 const AestheticClinicDashboard: React.FC<AestheticClinicDashboardProps> = ({
   dateRange,
 }) => {
-  const [selectedTab, setSelectedTab] = useState('overview');
+  const [selectedTab, setSelectedTab] = useState('overview')
 
-  const { analytics, loading } = useAestheticAnalytics(dateRange);
-  const { appointments, loading: appointmentsLoading } = useAppointments();
-  const { clients, loading: clientsLoading } = useClients();
-  const { professionals } = useProfessionals();
+  const { analytics, loading } = useAestheticAnalytics(dateRange)
+  const { appointments, loading: appointmentsLoading } = useAppointments()
+  const { clients, loading: clientsLoading } = useClients()
+  const { professionals } = useProfessionals()
 
   const renderOverviewTab = () => (
     <div className='space-y-6'>
@@ -1677,7 +1677,7 @@ const AestheticClinicDashboard: React.FC<AestheticClinicDashboardProps> = ({
         </Card>
       </div>
     </div>
-  );
+  )
 
   const renderComplianceTab = () => (
     <div className='space-y-6'>
@@ -1754,7 +1754,7 @@ const AestheticClinicDashboard: React.FC<AestheticClinicDashboardProps> = ({
         </CardContent>
       </Card>
     </div>
-  );
+  )
 
   return (
     <div className='space-y-6'>
@@ -1814,8 +1814,8 @@ const AestheticClinicDashboard: React.FC<AestheticClinicDashboardProps> = ({
         </TabsContent>
       </Tabs>
     </div>
-  );
-};
+  )
+}
 ```
 
 This comprehensive component architecture provides a robust foundation for the aesthetic clinic frontend with full Brazilian healthcare compliance, AI-powered features, and exceptional user experience.

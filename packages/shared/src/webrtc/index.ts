@@ -9,10 +9,10 @@ export {
   createSignalingMessage,
   createSignalingServerStub,
   RTCSignalingServerStub,
-} from './signaling-stub';
+} from './signaling-stub'
 
 // Call management
-export { createCallManagerStub, RTCCallManagerStub } from './call-manager-stub';
+export { createCallManagerStub, RTCCallManagerStub } from './call-manager-stub'
 
 // Re-export types for convenience
 export type {
@@ -29,4 +29,4 @@ export type {
   RTCSignalingServer,
   TelemedicineCallSession,
   TelemedicineCallType,
-} from '@neonpro/types';
+} from '@neonpro/types'

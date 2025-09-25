@@ -5,24 +5,24 @@ import {
   type Row,
   type RowData,
   type Table,
-} from '@tanstack/react-table';
-import * as React from 'react';
-import { Table as UITable, TableBody, TableCell, TableHead, TableHeader, TableRow } from './table';
+} from '@tanstack/react-table'
+import * as React from 'react'
+import { Table as UITable, TableBody, TableCell, TableHead, TableHeader, TableRow } from './table'
 
 // Note: keep props non-generic to avoid unused generic type errors in consumers
 export interface EnhancedTableProps<TData extends RowData = Record<string, unknown>> {
-  table: Table<TData>;
-  loading?: boolean;
-  columnsCount?: number;
-  ariaLabel?: string;
-  emptyMessage?: string;
-  className?: string;
+  table: Table<TData>
+  loading?: boolean
+  columnsCount?: number
+  ariaLabel?: string
+  emptyMessage?: string
+  className?: string
   // Optional UI slots
-  renderToolbar?: React.ReactNode;
-  renderPagination?: React.ReactNode;
+  renderToolbar?: React.ReactNode
+  renderPagination?: React.ReactNode
   // Optional behavior for clickable rows
-  onRowClick?: (row: Row<TData>) => void;
-  stopRowClickPredicate?: (cell: Cell<TData, unknown>) => boolean;
+  onRowClick?: (row: Row<TData>) => void
+  stopRowClickPredicate?: (cell: Cell<TData, unknown>) => boolean
 }
 
 /**
@@ -31,7 +31,9 @@ export interface EnhancedTableProps<TData extends RowData = Record<string, unkno
  * - Works with TanStack Table instances passed via `table`
  * - Preserves keyboard/screen-reader semantics
  */
-export function EnhancedTable<TData extends RowData = Record<string, unknown>>(props: EnhancedTableProps<TData>) {
+export function EnhancedTable<TData extends RowData = Record<string, unknown>>(
+  props: EnhancedTableProps<TData>,
+) {
   const {
     table,
     loading = false,
@@ -43,9 +45,9 @@ export function EnhancedTable<TData extends RowData = Record<string, unknown>>(p
     renderPagination,
     onRowClick,
     stopRowClickPredicate,
-  } = props;
+  } = props
 
-  const colSpan = columnsCount ?? table.getAllLeafColumns().length ?? 1;
+  const colSpan = columnsCount ?? table.getAllLeafColumns().length ?? 1
 
   return (
     <div
@@ -108,10 +110,10 @@ export function EnhancedTable<TData extends RowData = Record<string, unknown>>(p
                       key={cell.id}
                       onClick={e => {
                         if (
-                          stopRowClickPredicate
-                          && stopRowClickPredicate(cell)
+                          stopRowClickPredicate &&
+                          stopRowClickPredicate(cell)
                         ) {
-                          e.stopPropagation();
+                          e.stopPropagation()
                         }
                       }}
                     >
@@ -139,5 +141,5 @@ export function EnhancedTable<TData extends RowData = Record<string, unknown>>(p
         )
         : null}
     </div>
-  );
+  )
 }

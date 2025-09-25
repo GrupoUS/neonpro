@@ -146,7 +146,7 @@ The React components are located in `/components/google-calendar/`:
 ### Add to Settings Page
 
 ```tsx
-import { IntegrationPanel } from '@/components/google-calendar/integration-panel';
+import { IntegrationPanel } from '@/components/google-calendar/integration-panel'
 
 export default function Settings() {
   return (
@@ -154,7 +154,7 @@ export default function Settings() {
       <h1>Integrations</h1>
       <IntegrationPanel userId={user.id} />
     </div>
-  );
+  )
 }
 ```
 
@@ -269,7 +269,7 @@ Enable debug logging:
 // In development
 const service = new GoogleCalendarService({
   debug: true,
-});
+})
 ```
 
 ## Support

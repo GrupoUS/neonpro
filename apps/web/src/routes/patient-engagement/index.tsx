@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from '@tanstack/react-router';
+import { createFileRoute, Link } from '@tanstack/react-router'
 import {
   AlertTriangle,
   Bell,
@@ -16,17 +16,17 @@ import {
   TrendingUp,
   Users,
   X,
-} from 'lucide-react';
-import * as React from 'react';
-import { useState } from 'react';
+} from 'lucide-react'
+import * as React from 'react'
+import { useState } from 'react'
 
 export const Route = (createFileRoute as any)('/patient-engagement')({
   component: PatientEngagementDashboard,
-});
+})
 
 function PatientEngagementDashboard() {
-  const [activeTab, setActiveTab] = useState('overview');
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState('overview')
+  const [sidebarOpen, setSidebarOpen] = useState(false)
 
   const menuItems = [
     { icon: TrendingUp, label: 'Visão Geral', href: '/dashboard' },
@@ -35,7 +35,7 @@ function PatientEngagementDashboard() {
     { icon: MessageSquare, label: 'Engajamento', href: '/patient-engagement' },
     { icon: Calendar, label: 'Agendamento Estético', href: '/aesthetic-scheduling' },
     { icon: TrendingUp, label: 'Suporte Clínico IA', href: '/ai-clinical-support' },
-  ];
+  ]
 
   const engagementStats = [
     {
@@ -66,7 +66,7 @@ function PatientEngagementDashboard() {
       icon: Star,
       color: 'text-orange-600',
     },
-  ];
+  ]
 
   const recentCommunications = [
     {
@@ -97,7 +97,7 @@ function PatientEngagementDashboard() {
       status: 'Pendente',
       time: 'Há 1 dia',
     },
-  ];
+  ]
 
   const loyaltyPrograms = [
     {
@@ -112,7 +112,7 @@ function PatientEngagementDashboard() {
       activeCampaigns: 2,
       pointsIssued: '8,230',
     },
-  ];
+  ]
 
   const atRiskPatients = [
     {
@@ -133,7 +133,7 @@ function PatientEngagementDashboard() {
       riskLevel: 'Baixo',
       reason: 'Follow-up necessário',
     },
-  ];
+  ]
 
   const tabs = [
     { id: 'overview', label: 'Visão Geral', icon: TrendingUp },
@@ -142,37 +142,37 @@ function PatientEngagementDashboard() {
     { id: 'surveys', label: 'Pesquisas', icon: Star },
     { id: 'campaigns', label: 'Campanhas', icon: Bell },
     { id: 'analytics', label: 'Análise', icon: Eye },
-  ];
+  ]
 
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
       case 'enviado':
       case 'completed':
-        return 'bg-green-100 text-green-800';
+        return 'bg-green-100 text-green-800'
       case 'aberto':
       case 'in_progress':
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-blue-100 text-blue-800'
       case 'entregue':
-        return 'bg-purple-100 text-purple-800';
+        return 'bg-purple-100 text-purple-800'
       case 'pendente':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'bg-yellow-100 text-yellow-800'
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-gray-100 text-gray-800'
     }
-  };
+  }
 
   const getRiskColor = (level: string) => {
     switch (level.toLowerCase()) {
       case 'alto':
-        return 'bg-red-100 text-red-800';
+        return 'bg-red-100 text-red-800'
       case 'médio':
-        return 'bg-orange-100 text-orange-800';
+        return 'bg-orange-100 text-orange-800'
       case 'baixo':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'bg-yellow-100 text-yellow-800'
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-gray-100 text-gray-800'
     }
-  };
+  }
 
   return (
     <div className='min-h-screen bg-gray-50'>
@@ -578,5 +578,5 @@ function PatientEngagementDashboard() {
         </main>
       </div>
     </div>
-  );
+  )
 }

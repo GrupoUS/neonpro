@@ -1,7 +1,7 @@
 // Healthcare Governance Service - CFM/ANVISA Compliance
 // Extends base governance with healthcare-specific metrics and policies
 
-import { governanceLogger, logHealthcareError } from '@neonpro/shared';
+import { logHealthcareError } from '@neonpro/shared'
 import {
   AuditTrailEntry,
   ComplianceReportFilters,
@@ -22,21 +22,23 @@ import {
   HealthcarePolicyFilters,
   PatientSafetyKPI,
   UpdateHealthcareMetric,
-} from '@neonpro/types';
+} from '@neonpro/types'
+
+// Import proper types from @neonpro/types
 import {
   ComplianceReportRecord,
   HealthcareAlertRecord,
   HealthcareMetricRecord,
   HealthcarePolicyRecord,
   PatientSafetyKPIRecord,
-} from '../../types/database-records';
-import { SupabaseGovernanceService } from './supabase-governance.service';
+} from '../../types/database-records'
+import { SupabaseGovernanceService } from './supabase-governance.service'
 
 export class HealthcareGovernanceService extends SupabaseGovernanceService
   implements IHealthcareGovernanceService
 {
   constructor(supabaseUrl: string, supabaseKey: string) {
-    super(supabaseUrl, supabaseKey);
+    super(supabaseUrl, supabaseKey)
   }
 
   // Healthcare Metrics Management
@@ -48,40 +50,40 @@ export class HealthcareGovernanceService extends SupabaseGovernanceService
       let query = this.supabase
         .from('healthcare_metrics')
         .select('*')
-        .eq('clinic_id', clinicId);
+        .eq('clinic_id', clinicId)
 
       // Apply filters
       if (filters?.metricType) {
-        query = query.eq('metric_type', filters.metricType);
+        query = query.eq('metric_type', filters.metricType)
       }
       if (filters?.category) {
-        query = query.eq('category', filters.category);
+        query = query.eq('category', filters.category)
       }
       if (filters?.status) {
-        query = query.eq('status', filters.status);
+        query = query.eq('status', filters.status)
       }
       if (filters?.complianceFramework) {
-        query = query.eq('compliance_framework', filters.complianceFramework);
+        query = query.eq('compliance_framework', filters.complianceFramework)
       }
       if (filters?.riskLevel) {
-        query = query.eq('risk_level', filters.riskLevel);
+        query = query.eq('risk_level', filters.riskLevel)
       }
 
       const { data, error } = await query.order('created_at', {
         ascending: false,
-      });
+      })
 
       if (error) {
-        throw new Error(`Failed to fetch healthcare metrics: ${error.message}`);
+        throw new Error(`Failed to fetch healthcare metrics: ${error.message}`)
       }
 
-      return this.mapHealthcareMetrics(data || []);
+      return this.mapHealthcareMetrics(data || [])
     } catch (error) {
-      logHealthcareError('governance', error, { method: 'getHealthcareMetrics', filters });
+      logHealthcareError('governance', error as Error, { method: 'getHealthcareMetrics', filters })
       if (error instanceof Error) {
-        throw new Error(`Failed to fetch healthcare metrics: ${error.message}`);
+        throw new Error(`Failed to fetch healthcare metrics: ${error.message}`)
       }
-      throw new Error('Failed to fetch healthcare metrics: Unknown error');
+      throw new Error('Failed to fetch healthcare metrics: Unknown error')
     }
   }
 
@@ -110,10 +112,10 @@ export class HealthcareGovernanceService extends SupabaseGovernanceService
           last_updated: new Date().toISOString(),
         })
         .select()
-        .single();
+        .single()
 
       if (error) {
-        throw new Error(`Failed to create healthcare metric: ${error.message}`);
+        throw new Error(`Failed to create healthcare metric: ${error.message}`)
       }
 
       // Create audit trail entry
@@ -122,26 +124,26 @@ export class HealthcareGovernanceService extends SupabaseGovernanceService
         resource: 'healthcare_metric',
         resourceType: 'REPORT',
         resourceId: data.id,
-        _userId: 'system', // TODO: Get from context
+        userId: 'system', // TODO: Get from context
         ipAddress: '127.0.0.1', // TODO: Get from context
         userAgent: 'system', // TODO: Get from context
         status: 'SUCCESS',
         riskLevel: 'LOW',
-        additionalInfo: `Created healthcare metric: ${metric.name}`,
-        encryptedDetails: { metric },
+        additionalInfo: { action: 'Created healthcare metric', name: metric.name } as any,
+        encryptedDetails: { metric } as any,
         healthcareContext: {
           complianceFramework: metric.complianceFramework,
           clinicalContext: `Healthcare metric creation for ${metric.category}`,
         },
-      });
+      })
 
-      return this.mapHealthcareMetric(data);
+      return this.mapHealthcareMetric(data)
     } catch (error) {
-      logHealthcareError('governance', error, { method: 'createHealthcareMetric', metric });
+      logHealthcareError('governance', error as Error, { method: 'createHealthcareMetric', metric })
       if (error instanceof Error) {
-        throw new Error(`Failed to create healthcare metric: ${error.message}`);
+        throw new Error(`Failed to create healthcare metric: ${error.message}`)
       }
-      throw new Error('Failed to create healthcare metric: Unknown error');
+      throw new Error('Failed to create healthcare metric: Unknown error')
     }
   }
 
@@ -152,32 +154,32 @@ export class HealthcareGovernanceService extends SupabaseGovernanceService
       const updateData: Partial<HealthcareMetricRecord> = {
         updated_at: new Date().toISOString(),
         last_updated: new Date().toISOString(),
-      };
+      }
 
       if (update.currentValue !== undefined) {
-        updateData.current_value = update.currentValue;
+        updateData.current_value = update.currentValue
       }
       if (update.targetValue !== undefined) {
-        updateData.target_value = update.targetValue;
+        updateData.target_value = update.targetValue
       }
       if (update.threshold !== undefined) {
-        updateData.threshold = update.threshold;
+        updateData.threshold = update.threshold
       }
-      if (update.status !== undefined) updateData.status = update.status;
+      if (update.status !== undefined) updateData.status = update.status
       if (update.riskLevel !== undefined) {
-        updateData.risk_level = update.riskLevel;
+        updateData.risk_level = update.riskLevel
       }
-      if (update.metadata !== undefined) updateData.metadata = update.metadata;
+      if (update.metadata !== undefined) updateData.metadata = update.metadata
 
       const { data, error } = await this.supabase
         .from('healthcare_metrics')
         .update(updateData)
         .eq('id', update.id)
         .select()
-        .single();
+        .single()
 
       if (error) {
-        throw new Error(`Failed to update healthcare metric: ${error.message}`);
+        throw new Error(`Failed to update healthcare metric: ${error.message}`)
       }
 
       // Create audit trail entry
@@ -186,26 +188,26 @@ export class HealthcareGovernanceService extends SupabaseGovernanceService
         resource: 'healthcare_metric',
         resourceType: 'REPORT',
         resourceId: update.id,
-        _userId: 'system', // TODO: Get from context
+        userId: 'system', // TODO: Get from context
         ipAddress: '127.0.0.1', // TODO: Get from context
         userAgent: 'system', // TODO: Get from context
         status: 'SUCCESS',
         riskLevel: 'LOW',
-        additionalInfo: `Updated healthcare metric: ${data.name}`,
-        encryptedDetails: { update },
+        additionalInfo: { action: 'Updated healthcare metric', name: data.name } as any,
+        encryptedDetails: { update } as any,
         healthcareContext: {
           complianceFramework: data.compliance_framework,
           clinicalContext: `Healthcare metric update for ${data.category}`,
         },
-      });
+      })
 
-      return this.mapHealthcareMetric(data);
+      return this.mapHealthcareMetric(data)
     } catch (error) {
-      logHealthcareError('governance', error, { method: 'updateHealthcareMetric', update });
+      logHealthcareError('governance', error as Error, { method: 'updateHealthcareMetric', update })
       if (error instanceof Error) {
-        throw new Error(`Failed to update healthcare metric: ${error.message}`);
+        throw new Error(`Failed to update healthcare metric: ${error.message}`)
       }
-      throw new Error('Failed to update healthcare metric: Unknown error');
+      throw new Error('Failed to update healthcare metric: Unknown error')
     }
   }
 
@@ -214,10 +216,10 @@ export class HealthcareGovernanceService extends SupabaseGovernanceService
       const { error } = await this.supabase
         .from('healthcare_metrics')
         .delete()
-        .eq('id', id);
+        .eq('id', id)
 
       if (error) {
-        throw new Error(`Failed to delete healthcare metric: ${error.message}`);
+        throw new Error(`Failed to delete healthcare metric: ${error.message}`)
       }
 
       // Create audit trail entry
@@ -226,24 +228,27 @@ export class HealthcareGovernanceService extends SupabaseGovernanceService
         resource: 'healthcare_metric',
         resourceType: 'REPORT',
         resourceId: id,
-        _userId: 'system', // TODO: Get from context
+        userId: 'system', // TODO: Get from context
         ipAddress: '127.0.0.1', // TODO: Get from context
         userAgent: 'system', // TODO: Get from context
         status: 'SUCCESS',
         riskLevel: 'LOW',
-        additionalInfo: `Deleted healthcare metric: ${id}`,
-        encryptedDetails: { deletedId: id },
+        additionalInfo: { action: 'Deleted healthcare metric', id } as any,
+        encryptedDetails: { deletedId: id } as any,
         healthcareContext: {
           complianceFramework: 'GENERAL',
           clinicalContext: 'Healthcare metric deletion',
         },
-      });
+      })
     } catch (error) {
-      logHealthcareError('governance', error, { method: 'deleteHealthcareMetric', metricId: id });
+      logHealthcareError('governance', error as Error, {
+        method: 'deleteHealthcareMetric',
+        metricId: id,
+      })
       if (error instanceof Error) {
-        throw new Error(`Failed to delete healthcare metric: ${error.message}`);
+        throw new Error(`Failed to delete healthcare metric: ${error.message}`)
       }
-      throw new Error('Failed to delete healthcare metric: Unknown error');
+      throw new Error('Failed to delete healthcare metric: Unknown error')
     }
   }
 
@@ -254,18 +259,18 @@ export class HealthcareGovernanceService extends SupabaseGovernanceService
         .from('patient_safety_kpis')
         .select('*')
         .eq('clinic_id', clinicId)
-        .order('created_at', { ascending: false });
+        .order('created_at', { ascending: false })
 
       if (error) {
         throw new Error(
           `Failed to fetch patient safety KPIs: ${error.message}`,
-        );
+        )
       }
 
-      return this.mapPatientSafetyKPIs(data || []);
+      return this.mapPatientSafetyKPIs(data || [])
     } catch (error) {
-      logHealthcareError('governance', error, { method: 'getPatientSafetyKPIs', clinicId });
-      throw error;
+      logHealthcareError('governance', error as Error, { method: 'getPatientSafetyKPIs', clinicId })
+      throw error
     }
   }
 
@@ -277,29 +282,29 @@ export class HealthcareGovernanceService extends SupabaseGovernanceService
       const updateData = {
         ...updates,
         updated_at: new Date().toISOString(),
-      };
+      }
 
       const { data, error } = await this.supabase
         .from('patient_safety_kpis')
         .update(updateData)
         .eq('id', id)
         .select()
-        .single();
+        .single()
 
       if (error) {
         throw new Error(
           `Failed to update patient safety KPI: ${error.message}`,
-        );
+        )
       }
 
-      return this.mapPatientSafetyKPI(data);
+      return this.mapPatientSafetyKPI(data)
     } catch (error) {
-      logHealthcareError('governance', error, {
+      logHealthcareError('governance', error as Error, {
         method: 'updatePatientSafetyKPI',
         kpiId: id,
         update: updates,
-      });
-      throw error;
+      })
+      throw error
     }
   }
 
@@ -308,38 +313,38 @@ export class HealthcareGovernanceService extends SupabaseGovernanceService
     filters?: HealthcarePolicyFilters,
   ): Promise<HealthcarePolicy[]> {
     try {
-      let query = this.supabase.from('healthcare_policies').select('*');
+      let query = this.supabase.from('healthcare_policies').select('*')
 
       // Apply filters
       if (filters?.regulatoryBody) {
-        query = query.eq('regulatory_body', filters.regulatoryBody);
+        query = query.eq('regulatory_body', filters.regulatoryBody)
       }
       if (filters?.category) {
-        query = query.eq('category', filters.category);
+        query = query.eq('category', filters.category)
       }
       if (filters?.criticalityLevel) {
-        query = query.eq('criticality_level', filters.criticalityLevel);
+        query = query.eq('criticality_level', filters.criticalityLevel)
       }
       if (filters?.applicableService) {
         query = query.contains('applicable_services', [
           filters.applicableService,
-        ]);
+        ])
       }
 
       const { data, error } = await query.order('created_at', {
         ascending: false,
-      });
+      })
 
       if (error) {
         throw new Error(
           `Failed to fetch healthcare policies: ${error.message}`,
-        );
+        )
       }
 
-      return this.mapHealthcarePolicies(data || []);
+      return this.mapHealthcarePolicies(data || [])
     } catch (error) {
-      logHealthcareError('governance', error, { method: 'getHealthcarePolicies', filters });
-      throw error;
+      logHealthcareError('governance', error as Error, { method: 'getHealthcarePolicies', filters })
+      throw error
     }
   }
 
@@ -365,16 +370,16 @@ export class HealthcareGovernanceService extends SupabaseGovernanceService
           updated_at: new Date().toISOString(),
         })
         .select()
-        .single();
+        .single()
 
       if (error) {
-        throw new Error(`Failed to create healthcare policy: ${error.message}`);
+        throw new Error(`Failed to create healthcare policy: ${error.message}`)
       }
 
-      return this.mapHealthcarePolicy(data);
+      return this.mapHealthcarePolicy(data)
     } catch (error) {
-      logHealthcareError('governance', error, { method: 'createHealthcarePolicy', policy });
-      throw error;
+      logHealthcareError('governance', error as Error, { method: 'createHealthcarePolicy', policy })
+      throw error
     }
   }
 
@@ -386,27 +391,27 @@ export class HealthcareGovernanceService extends SupabaseGovernanceService
       const updateData = {
         ...updates,
         updated_at: new Date().toISOString(),
-      };
+      }
 
       const { data, error } = await this.supabase
         .from('healthcare_policies')
         .update(updateData)
         .eq('id', id)
         .select()
-        .single();
+        .single()
 
       if (error) {
-        throw new Error(`Failed to update healthcare policy: ${error.message}`);
+        throw new Error(`Failed to update healthcare policy: ${error.message}`)
       }
 
-      return this.mapHealthcarePolicy(data);
+      return this.mapHealthcarePolicy(data)
     } catch (error) {
-      logHealthcareError('governance', error, {
+      logHealthcareError('governance', error as Error, {
         method: 'updateHealthcarePolicy',
         policyId: id,
         update: updates,
-      });
-      throw error;
+      })
+      throw error
     }
   }
 
@@ -419,40 +424,40 @@ export class HealthcareGovernanceService extends SupabaseGovernanceService
       let query = this.supabase
         .from('healthcare_alerts')
         .select('*')
-        .eq('clinic_id', clinicId);
+        .eq('clinic_id', clinicId)
 
       // Apply filters
       if (filters?.alertType) {
-        query = query.eq('alert_type', filters.alertType);
+        query = query.eq('alert_type', filters.alertType)
       }
       if (filters?.severity) {
-        query = query.eq('severity', filters.severity);
+        query = query.eq('severity', filters.severity)
       }
       if (filters?.status) {
-        query = query.eq('status', filters.status);
+        query = query.eq('status', filters.status)
       }
       if (filters?.assignedTo) {
-        query = query.eq('assigned_to', filters.assignedTo);
+        query = query.eq('assigned_to', filters.assignedTo)
       }
       if (filters?.dateFrom) {
-        query = query.gte('created_at', filters.dateFrom.toISOString());
+        query = query.gte('created_at', filters.dateFrom.toISOString())
       }
       if (filters?.dateTo) {
-        query = query.lte('created_at', filters.dateTo.toISOString());
+        query = query.lte('created_at', filters.dateTo.toISOString())
       }
 
       const { data, error } = await query.order('created_at', {
         ascending: false,
-      });
+      })
 
       if (error) {
-        throw new Error(`Failed to fetch healthcare alerts: ${error.message}`);
+        throw new Error(`Failed to fetch healthcare alerts: ${error.message}`)
       }
 
-      return this.mapHealthcareAlerts(data || []);
+      return this.mapHealthcareAlerts(data || [])
     } catch (error) {
-      logHealthcareError('governance', error, { method: 'getHealthcareAlerts', filters });
-      throw error;
+      logHealthcareError('governance', error as Error, { method: 'getHealthcareAlerts', filters })
+      throw error
     }
   }
 
@@ -481,16 +486,16 @@ export class HealthcareGovernanceService extends SupabaseGovernanceService
           updated_at: new Date().toISOString(),
         })
         .select()
-        .single();
+        .single()
 
       if (error) {
-        throw new Error(`Failed to create healthcare alert: ${error.message}`);
+        throw new Error(`Failed to create healthcare alert: ${error.message}`)
       }
 
-      return this.mapHealthcareAlert(data);
+      return this.mapHealthcareAlert(data)
     } catch (error) {
-      logHealthcareError('governance', error, { method: 'createHealthcareAlert', alert });
-      throw error;
+      logHealthcareError('governance', error as Error, { method: 'createHealthcareAlert', alert })
+      throw error
     }
   }
 
@@ -502,27 +507,27 @@ export class HealthcareGovernanceService extends SupabaseGovernanceService
       const updateData = {
         ...updates,
         updated_at: new Date().toISOString(),
-      };
+      }
 
       const { data, error } = await this.supabase
         .from('healthcare_alerts')
         .update(updateData)
         .eq('id', id)
         .select()
-        .single();
+        .single()
 
       if (error) {
-        throw new Error(`Failed to update healthcare alert: ${error.message}`);
+        throw new Error(`Failed to update healthcare alert: ${error.message}`)
       }
 
-      return this.mapHealthcareAlert(data);
+      return this.mapHealthcareAlert(data)
     } catch (error) {
-      logHealthcareError('governance', error, {
+      logHealthcareError('governance', error as Error, {
         method: 'updateHealthcareAlert',
         alertId: id,
         update: updates,
-      });
-      throw error;
+      })
+      throw error
     }
   }
 
@@ -534,16 +539,16 @@ export class HealthcareGovernanceService extends SupabaseGovernanceService
   ): Promise<HealthcareComplianceReport> {
     try {
       // Get healthcare metrics for the period
-      const metrics = await this.getHealthcareMetrics(clinicId);
+      const metrics = await this.getHealthcareMetrics(clinicId)
 
       // Calculate compliance score based on metrics
-      const overallScore = this.calculateComplianceScore(metrics);
+      const overallScore = this.calculateComplianceScore(metrics)
 
       // Get violations count
-      const violations = await this.getViolationsCount(clinicId, period);
+      const violations = await this.getViolationsCount(clinicId, period)
 
       // Generate recommendations
-      const recommendations = this.generateRecommendations(metrics, violations);
+      const recommendations = this.generateRecommendations(metrics, violations)
 
       const report: HealthcareComplianceReport = {
         id: crypto.randomUUID(),
@@ -562,7 +567,7 @@ export class HealthcareGovernanceService extends SupabaseGovernanceService
           version: '1.0',
         },
         createdAt: new Date(),
-      };
+      }
 
       // Store the report
       const { error } = await this.supabase
@@ -583,16 +588,16 @@ export class HealthcareGovernanceService extends SupabaseGovernanceService
           created_at: report.createdAt.toISOString(),
         })
         .select()
-        .single();
+        .single()
 
       if (error) {
-        throw new Error(`Failed to store compliance report: ${error.message}`);
+        throw new Error(`Failed to store compliance report: ${error.message}`)
       }
 
-      return report;
+      return report
     } catch (error) {
-      logHealthcareError('governance', error, { method: 'generateComplianceReport', filters });
-      throw error;
+      logHealthcareError('governance', error as Error, { method: 'generateComplianceReport' })
+      throw error
     }
   }
 
@@ -604,34 +609,34 @@ export class HealthcareGovernanceService extends SupabaseGovernanceService
       let query = this.supabase
         .from('compliance_reports')
         .select('*')
-        .eq('clinic_id', clinicId);
+        .eq('clinic_id', clinicId)
 
       // Apply filters
       if (filters?.reportType) {
-        query = query.eq('report_type', filters.reportType);
+        query = query.eq('report_type', filters.reportType)
       }
       if (filters?.complianceStatus) {
-        query = query.eq('compliance_status', filters.complianceStatus);
+        query = query.eq('compliance_status', filters.complianceStatus)
       }
       if (filters?.dateFrom) {
-        query = query.gte('created_at', filters.dateFrom.toISOString());
+        query = query.gte('created_at', filters.dateFrom.toISOString())
       }
       if (filters?.dateTo) {
-        query = query.lte('created_at', filters.dateTo.toISOString());
+        query = query.lte('created_at', filters.dateTo.toISOString())
       }
 
       const { data, error } = await query.order('created_at', {
         ascending: false,
-      });
+      })
 
       if (error) {
-        throw new Error(`Failed to fetch compliance reports: ${error.message}`);
+        throw new Error(`Failed to fetch compliance reports: ${error.message}`)
       }
 
-      return this.mapComplianceReports(data || []);
+      return this.mapComplianceReports(data || [])
     } catch (error) {
-      logHealthcareError('governance', error, { method: 'getComplianceReports', filters });
-      throw error;
+      logHealthcareError('governance', error as Error, { method: 'getComplianceReports', filters })
+      throw error
     }
   }
 
@@ -642,34 +647,41 @@ export class HealthcareGovernanceService extends SupabaseGovernanceService
     try {
       // Create the base audit entry
       const auditEntry = await this.createAuditEntry({
-        action: entry.action,
-        resource: entry.resource,
-        resourceType: entry.resourceType,
+        action: (entry.action || 'VIEW') as any,
+        resource: entry.resource || '',
+        resourceType: (entry.resourceType || 'SYSTEM_CONFIG') as any,
         resourceId: entry.resourceId,
-        _userId: entry.userId,
+        userId: entry.userId,
         clinicId: entry.clinicId,
         patientId: entry.patientId,
-        ipAddress: entry.ipAddress,
-        userAgent: entry.userAgent,
+        ipAddress: entry.ipAddress || '',
+        userAgent: entry.userAgent || '',
         sessionId: entry.sessionId,
-        status: entry.status,
-        riskLevel: entry.riskLevel,
-        additionalInfo: entry.additionalInfo,
-        encryptedDetails: {
-          ...entry.encryptedDetails,
-          healthcareContext: entry.healthcareContext,
-        },
-      });
+        status: (entry.status || 'SUCCESS') as any,
+        riskLevel: (entry.riskLevel as any) || 'LOW',
+        additionalInfo: typeof entry.additionalInfo === 'string'
+          ? entry.additionalInfo
+          : JSON.stringify(entry.additionalInfo || {}),
+        encryptedDetails: entry.encryptedDetails && typeof entry.encryptedDetails === 'object'
+          ? {
+            ...(entry.encryptedDetails as any),
+            healthcareContext: entry.healthcareContext,
+          }
+          : undefined,
+      })
 
-      return auditEntry;
+      return auditEntry
     } catch (error) {
-      logHealthcareError('governance', error, { method: 'createHealthcareAuditEntry', audit });
+      logHealthcareError('governance', error as Error, {
+        method: 'createHealthcareAuditEntry',
+        entry,
+      })
       if (error instanceof Error) {
         throw new Error(
           `Failed to create healthcare audit entry: ${error.message}`,
-        );
+        )
       }
-      throw new Error('Failed to create healthcare audit entry: Unknown error');
+      throw new Error('Failed to create healthcare audit entry: Unknown error')
     }
   }
 
@@ -679,28 +691,28 @@ export class HealthcareGovernanceService extends SupabaseGovernanceService
   ): Promise<HealthcareDashboardData> {
     try {
       // Get all healthcare metrics
-      const metrics = await this.getHealthcareMetrics(clinicId);
+      const metrics = await this.getHealthcareMetrics(clinicId)
 
       // Get active alerts
       const alerts = await this.getHealthcareAlerts(clinicId, {
         status: 'ACTIVE',
-      });
+      })
       const criticalAlerts = alerts.filter(
         alert => alert.severity === 'CRITICAL',
-      ).length;
+      ).length
 
       // Calculate compliance scores
-      const overallComplianceScore = this.calculateComplianceScore(metrics);
-      const patientSafetyScore = this.calculatePatientSafetyScore(metrics);
+      const overallComplianceScore = this.calculateComplianceScore(metrics)
+      const patientSafetyScore = this.calculatePatientSafetyScore(metrics)
 
       // Get CFM and ANVISA specific compliance
-      const cfmMetrics = metrics.filter(m => m.complianceFramework === 'CFM');
+      const cfmMetrics = metrics.filter(m => m.complianceFramework === 'CFM')
       const anvisaMetrics = metrics.filter(
         m => m.complianceFramework === 'ANVISA',
-      );
+      )
 
-      const cfmComplianceScore = this.calculateComplianceScore(cfmMetrics);
-      const anvisaComplianceScore = this.calculateComplianceScore(anvisaMetrics);
+      const cfmComplianceScore = this.calculateComplianceScore(cfmMetrics)
+      const anvisaComplianceScore = this.calculateComplianceScore(anvisaMetrics)
 
       return {
         overallComplianceScore,
@@ -732,10 +744,13 @@ export class HealthcareGovernanceService extends SupabaseGovernanceService
           safetyIncidentTrend: 'STABLE',
           alertResolutionTrend: 'IMPROVING',
         },
-      };
+      }
     } catch (error) {
-      logHealthcareError('governance', error, { method: 'getHealthcareDashboardData', clinicId });
-      throw error;
+      logHealthcareError('governance', error as Error, {
+        method: 'getHealthcareDashboardData',
+        clinicId,
+      })
+      throw error
     }
   }
 
@@ -743,7 +758,7 @@ export class HealthcareGovernanceService extends SupabaseGovernanceService
   private mapHealthcareMetrics(
     data: HealthcareMetricRecord[],
   ): HealthcareMetric[] {
-    return data.map(item => this.mapHealthcareMetric(item));
+    return data.map(item => this.mapHealthcareMetric(item))
   }
 
   private mapHealthcareMetric(data: HealthcareMetricRecord): HealthcareMetric {
@@ -765,13 +780,13 @@ export class HealthcareGovernanceService extends SupabaseGovernanceService
       metadata: data.metadata || {},
       createdAt: new Date(data.created_at),
       updatedAt: new Date(data.updated_at),
-    };
+    }
   }
 
   private mapPatientSafetyKPIs(
     data: PatientSafetyKPIRecord[],
   ): PatientSafetyKPI[] {
-    return data.map(item => this.mapPatientSafetyKPI(item));
+    return data.map(item => this.mapPatientSafetyKPI(item))
   }
 
   private mapPatientSafetyKPI(data: PatientSafetyKPIRecord): PatientSafetyKPI {
@@ -801,13 +816,13 @@ export class HealthcareGovernanceService extends SupabaseGovernanceService
         | 'MONTHLY',
       createdAt: new Date(data.created_at),
       updatedAt: new Date(data.updated_at),
-    };
+    }
   }
 
   private mapHealthcarePolicies(
     data: HealthcarePolicyRecord[],
   ): HealthcarePolicy[] {
-    return data.map(item => this.mapHealthcarePolicy(item));
+    return data.map(item => this.mapHealthcarePolicy(item))
   }
 
   private mapHealthcarePolicy(data: HealthcarePolicyRecord): HealthcarePolicy {
@@ -845,13 +860,13 @@ export class HealthcareGovernanceService extends SupabaseGovernanceService
       framework: data.framework as any,
       enforcementRate: data.enforcement_rate || 0,
       violationCount: data.violation_count || 0,
-    };
+    }
   }
 
   private mapHealthcareAlerts(
     data: HealthcareAlertRecord[],
   ): HealthcareAlert[] {
-    return data.map(item => this.mapHealthcareAlert(item));
+    return data.map(item => this.mapHealthcareAlert(item))
   }
 
   private mapHealthcareAlert(data: HealthcareAlertRecord): HealthcareAlert {
@@ -885,7 +900,7 @@ export class HealthcareGovernanceService extends SupabaseGovernanceService
       metadata: data.metadata || {},
       createdAt: new Date(data.created_at),
       updatedAt: new Date(data.updated_at),
-    };
+    }
   }
 
   private mapComplianceReports(
@@ -917,34 +932,34 @@ export class HealthcareGovernanceService extends SupabaseGovernanceService
       approvedBy: item.approved_by || undefined,
       metadata: item.metadata || {},
       createdAt: new Date(item.created_at),
-    }));
+    }))
   }
 
   private calculateComplianceScore(metrics: HealthcareMetric[]): number {
-    if (metrics.length === 0) return 0;
+    if (metrics.length === 0) return 0
 
     const scores = metrics.map(metric => {
-      const performance = metric.currentValue / metric.targetValue;
-      return Math.min(performance * 100, 100);
-    });
+      const performance = metric.currentValue / metric.targetValue
+      return Math.min(performance * 100, 100)
+    })
 
-    return scores.reduce((sum, _score) => sum + score, 0) / scores.length;
+    return scores.reduce((sum, _score) => sum + _score, 0) / scores.length
   }
 
   private calculatePatientSafetyScore(metrics: HealthcareMetric[]): number {
     const safetyMetrics = metrics.filter(
       m => m.category === 'PATIENT_SAFETY',
-    );
-    return this.calculateComplianceScore(safetyMetrics);
+    )
+    return this.calculateComplianceScore(safetyMetrics)
   }
 
   private determineComplianceStatus(
     score: number,
   ): 'COMPLIANT' | 'NON_COMPLIANT' | 'UNDER_REVIEW' | 'CRITICAL' {
-    if (score >= 90) return 'COMPLIANT';
-    if (score >= 70) return 'UNDER_REVIEW';
-    if (score >= 50) return 'NON_COMPLIANT';
-    return 'CRITICAL';
+    if (score >= 90) return 'COMPLIANT'
+    if (score >= 70) return 'UNDER_REVIEW'
+    if (score >= 50) return 'NON_COMPLIANT'
+    return 'CRITICAL'
   }
 
   private async getViolationsCount(
@@ -955,76 +970,76 @@ export class HealthcareGovernanceService extends SupabaseGovernanceService
       alertType: 'COMPLIANCE_VIOLATION',
       dateFrom: period.startDate,
       dateTo: period.endDate,
-    });
+    })
 
     return {
       count: alerts.length,
       critical: alerts.filter(a => a.severity === 'CRITICAL').length,
       resolved: alerts.filter(a => a.status === 'RESOLVED').length,
       pending: alerts.filter(a => a.status === 'ACTIVE').length,
-    };
+    }
   }
 
   private generateRecommendations(
     metrics: HealthcareMetric[],
     violations: {
-      count: number;
-      critical: number;
-      resolved: number;
-      pending: number;
+      count: number
+      critical: number
+      resolved: number
+      pending: number
     },
   ): string[] {
-    const recommendations: string[] = [];
+    const recommendations: string[] = []
 
     // Check for low-performing metrics
     const lowPerformingMetrics = metrics.filter(
       m => m.currentValue < m.threshold,
-    );
+    )
     if (lowPerformingMetrics.length > 0) {
       recommendations.push(
         `Improve performance on ${lowPerformingMetrics.length} metrics below threshold`,
-      );
+      )
     }
 
     // Check for high-risk metrics
     const highRiskMetrics = metrics.filter(
       m => m.riskLevel === 'HIGH' || m.riskLevel === 'CRITICAL',
-    );
+    )
     if (highRiskMetrics.length > 0) {
       recommendations.push(
         `Address ${highRiskMetrics.length} high-risk metrics immediately`,
-      );
+      )
     }
 
     // Check for violations
     if (violations.critical > 0) {
       recommendations.push(
         `Resolve ${violations.critical} critical compliance violations`,
-      );
+      )
     }
 
     if (recommendations.length === 0) {
-      recommendations.push('Continue monitoring current compliance levels');
+      recommendations.push('Continue monitoring current compliance levels')
     }
 
-    return recommendations;
+    return recommendations
   }
 
   private calculateNextAuditDate(
     reportType: HealthcareComplianceReport['reportType'],
   ): Date {
-    const now = new Date();
+    const now = new Date()
     switch (reportType) {
       case 'CFM_TELEMEDICINE':
-        return new Date(now.getTime() + 90 * 24 * 60 * 60 * 1000); // 90 days
+        return new Date(now.getTime() + 90 * 24 * 60 * 60 * 1000) // 90 days
       case 'ANVISA_ESTABLISHMENT':
-        return new Date(now.getTime() + 180 * 24 * 60 * 60 * 1000); // 180 days
+        return new Date(now.getTime() + 180 * 24 * 60 * 60 * 1000) // 180 days
       case 'PATIENT_SAFETY':
-        return new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000); // 30 days
+        return new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000) // 30 days
       case 'COMPREHENSIVE':
-        return new Date(now.getTime() + 365 * 24 * 60 * 60 * 1000); // 365 days
+        return new Date(now.getTime() + 365 * 24 * 60 * 60 * 1000) // 365 days
       default:
-        return new Date(now.getTime() + 90 * 24 * 60 * 60 * 1000); // 90 days default
+        return new Date(now.getTime() + 90 * 24 * 60 * 60 * 1000) // 90 days default
     }
   }
 }

@@ -1,37 +1,37 @@
-import { createFileRoute, useLoaderData } from '@tanstack/react-router';
-import * as React from 'react';
+import { createFileRoute, useLoaderData } from '@tanstack/react-router'
+import * as React from 'react'
 // import { useQuery } from "@tanstack/react-query";
 // import { api } from "@/lib/api";
-import { ContraindicationAnalysis } from '@/components/ai-clinical-support/ContraindicationAnalysis';
+import { ContraindicationAnalysis } from '@/components/ai-clinical-support/ContraindicationAnalysis'
 
 // Define loader data type
 interface ContraindicationAnalysisLoaderData {
-  patientId: string;
-  procedureId?: string;
-  treatmentPlanId?: string;
+  patientId: string
+  procedureId?: string
+  treatmentPlanId?: string
 }
 
-export const Route = createFileRoute('/aesthetic-scheduling/contraindications/')({
+export const Route = createFileRoute('/aesthetic-scheduling/contraindications')({
   component: ContraindicationAnalysisPage,
   loader: async ({ search }) => {
-    const patientId = search.patientId as string;
-    const procedureId = search.procedureId as string;
-    const treatmentPlanId = search.treatmentPlanId as string;
+    const patientId = search.patientId as string
+    const procedureId = search.procedureId as string
+    const treatmentPlanId = search.treatmentPlanId as string
 
     if (!patientId) {
-      throw new Error('Patient ID is required');
+      throw new Error('Patient ID is required')
     }
 
     return {
       patientId,
       procedureId,
       treatmentPlanId,
-    } as ContraindicationAnalysisLoaderData;
+    } as ContraindicationAnalysisLoaderData
   },
-});
+})
 
 function ContraindicationAnalysisPage() {
-  const loaderData = useLoaderData({ from: '/aesthetic-scheduling/contraindications/' });
+  const loaderData = useLoaderData({ from: '/aesthetic-scheduling/contraindications/' })
 
   return (
     <ContraindicationAnalysis
@@ -41,13 +41,13 @@ function ContraindicationAnalysisPage() {
       onExportReport={async analysis => {
         try {
           // Implementation for exporting report
-          console.log('Exporting contraindication analysis:', analysis);
-          return analysis;
+          console.warn('Exporting contraindication analysis:', analysis)
+          return analysis
         } catch (error) {
-          console.error('Error exporting report:', error);
-          throw error;
+          console.error('Error exporting report:', error)
+          throw error
         }
       }}
     />
-  );
+  )
 }

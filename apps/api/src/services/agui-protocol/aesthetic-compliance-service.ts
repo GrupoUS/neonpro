@@ -6,240 +6,240 @@
  */
 
 export interface AestheticComplianceConfig {
-  anvisaApiKey?: string;
-  lgpdEncryptionKey: string;
-  auditLogRetention: number;
-  enableAutoReporting: boolean;
-  complianceLevel: 'basic' | 'enhanced' | 'strict';
+  anvisaApiKey?: string
+  lgpdEncryptionKey: string
+  auditLogRetention: number
+  enableAutoReporting: boolean
+  complianceLevel: 'basic' | 'enhanced' | 'strict'
 }
 
 export interface AnvisaComplianceCheck {
-  treatmentId: string;
-  products: any[];
-  procedures: any[];
-  facilityInfo: any;
-  professionalLicenses: any[];
+  treatmentId: string
+  products: any[]
+  procedures: any[]
+  facilityInfo: any
+  professionalLicenses: any[]
 }
 
 export interface AnvisaComplianceResult {
-  isCompliant: boolean;
+  isCompliant: boolean
   violations: Array<{
-    type: string;
-    severity: 'low' | 'medium' | 'high' | 'critical';
-    description: string;
-    regulation: string;
-    correctiveAction: string;
-    deadline?: string;
-  }>;
-  recommendations: string[];
-  requiresReporting: boolean;
-  reportData?: any;
-  lastChecked: string;
-  nextReview: string;
-  complianceScore: number;
+    type: string
+    severity: 'low' | 'medium' | 'high' | 'critical'
+    description: string
+    regulation: string
+    correctiveAction: string
+    deadline?: string
+  }>
+  recommendations: string[]
+  requiresReporting: boolean
+  reportData?: any
+  lastChecked: string
+  nextReview: string
+  complianceScore: number
 }
 
 export interface LGPDConsentData {
-  clientId: string;
+  clientId: string
   consentType:
     | 'treatment'
     | 'data_sharing'
     | 'marketing'
     | 'emergency_contact'
     | 'research'
-    | 'photos';
-  purpose: string;
-  dataCategories: string[];
-  retentionPeriod: string;
-  thirdPartyShares?: string[];
-  withdrawalAllowed: boolean;
-  automaticExpiration?: boolean;
-  expiresAt?: string;
-  ipAddress?: string;
-  userAgent?: string;
+    | 'photos'
+  purpose: string
+  dataCategories: string[]
+  retentionPeriod: string
+  thirdPartyShares?: string[]
+  withdrawalAllowed: boolean
+  automaticExpiration?: boolean
+  expiresAt?: string
+  ipAddress?: string
+  userAgent?: string
 }
 
 export interface LGPDConsentVerification {
-  isConsentValid: boolean;
+  isConsentValid: boolean
   consentRecord: {
-    id: string;
-    clientId: string;
-    consentType: string;
-    grantedAt: string;
-    expiresAt?: string;
-    withdrawnAt?: string;
-    version: string;
-    ipAddress: string;
-    userAgent: string;
-  };
+    id: string
+    clientId: string
+    consentType: string
+    grantedAt: string
+    expiresAt?: string
+    withdrawnAt?: string
+    version: string
+    ipAddress: string
+    userAgent: string
+  }
   verificationResult: {
-    dataMinimization: boolean;
-    purposeLimitation: boolean;
-    retentionCompliance: boolean;
-    securityMeasures: boolean;
-    rightsGuarantees: boolean;
-  };
+    dataMinimization: boolean
+    purposeLimitation: boolean
+    retentionCompliance: boolean
+    securityMeasures: boolean
+    rightsGuarantees: boolean
+  }
   issues: Array<{
-    type: string;
-    severity: 'warning' | 'error';
-    description: string;
-    recommendation: string;
-  }>;
+    type: string
+    severity: 'warning' | 'error'
+    description: string
+    recommendation: string
+  }>
 }
 
 export interface TreatmentSafetyValidation {
-  treatmentId: string;
-  clientId: string;
-  professionalId: string;
-  proposedProtocol: any;
-  clientConditions: any[];
-  medications: any[];
-  allergies: any[];
-  previousReactions: any[];
+  treatmentId: string
+  clientId: string
+  professionalId: string
+  proposedProtocol: any
+  clientConditions: any[]
+  medications: any[]
+  allergies: any[]
+  previousReactions: any[]
 }
 
 export interface SafetyValidationResult {
-  isSafe: boolean;
-  riskLevel: 'low' | 'medium' | 'high' | 'contraindicated';
+  isSafe: boolean
+  riskLevel: 'low' | 'medium' | 'high' | 'contraindicated'
   contraindications: Array<{
-    type: 'absolute' | 'relative';
-    condition: string;
-    reason: string;
-    references: string[];
-  }>;
+    type: 'absolute' | 'relative'
+    condition: string
+    reason: string
+    references: string[]
+  }>
   warnings: Array<{
-    type: string;
-    condition: string;
-    mitigation: string;
-    monitoring: string;
-  }>;
-  requiredPrecautions: string[];
-  emergencyProtocol: string[];
-  professionalRequirements: string[];
-  facilityRequirements: string[];
-  lastValidated: string;
-  nextReview: string;
+    type: string
+    condition: string
+    mitigation: string
+    monitoring: string
+  }>
+  requiredPrecautions: string[]
+  emergencyProtocol: string[]
+  professionalRequirements: string[]
+  facilityRequirements: string[]
+  lastValidated: string
+  nextReview: string
 }
 
 export interface ProfessionalLicense {
-  id: string;
-  professionalId: string;
-  licenseType: 'medical' | 'nursing' | 'aesthetician' | 'technician';
-  licenseNumber: string;
-  issuingCouncil: string;
-  state: string;
-  issueDate: string;
-  expiryDate: string;
-  status: 'active' | 'expired' | 'suspended' | 'revoked';
-  specializations: string[];
-  restrictions: string[];
-  verificationMethod: string;
-  lastVerified: string;
+  id: string
+  professionalId: string
+  licenseType: 'medical' | 'nursing' | 'aesthetician' | 'technician'
+  licenseNumber: string
+  issuingCouncil: string
+  state: string
+  issueDate: string
+  expiryDate: string
+  status: 'active' | 'expired' | 'suspended' | 'revoked'
+  specializations: string[]
+  restrictions: string[]
+  verificationMethod: string
+  lastVerified: string
 }
 
 export interface LicenseVerificationResult {
-  isValid: boolean;
-  license: ProfessionalLicense;
+  isValid: boolean
+  license: ProfessionalLicense
   verificationDetails: {
-    verificationDate: string;
-    verificationMethod: string;
-    verificationResult: string;
-    dataSource: string;
-  };
+    verificationDate: string
+    verificationMethod: string
+    verificationResult: string
+    dataSource: string
+  }
   issues: Array<{
-    type: string;
-    severity: 'warning' | 'error';
-    description: string;
-    actionRequired: string;
-  }>;
+    type: string
+    severity: 'warning' | 'error'
+    description: string
+    actionRequired: string
+  }>
   renewals: Array<{
-    type: string;
-    dueDate: string;
-    requirements: string[];
-  }>;
+    type: string
+    dueDate: string
+    requirements: string[]
+  }>
 }
 
 export interface ComplianceAudit {
-  scope: string[];
-  timeframe: { start: string; end: string };
-  deepDive?: boolean;
-  generateReport?: boolean;
-  auditedBy?: string;
+  scope: string[]
+  timeframe: { start: string; end: string }
+  deepDive?: boolean
+  generateReport?: boolean
+  auditedBy?: string
 }
 
 export interface ComplianceAuditResult {
-  auditId: string;
-  scope: string[];
-  period: { start: string; end: string };
-  overallScore: number;
+  auditId: string
+  scope: string[]
+  period: { start: string; end: string }
+  overallScore: number
   categories: Array<{
-    category: string;
-    score: number;
+    category: string
+    score: number
     findings: Array<{
-      type: 'compliance' | 'violation' | 'recommendation';
-      severity: 'low' | 'medium' | 'high' | 'critical';
-      description: string;
-      evidence: string[];
-      impact: string;
-      recommendation: string;
-      deadline?: string;
-    }>;
-  }>;
+      type: 'compliance' | 'violation' | 'recommendation'
+      severity: 'low' | 'medium' | 'high' | 'critical'
+      description: string
+      evidence: string[]
+      impact: string
+      recommendation: string
+      deadline?: string
+    }>
+  }>
   recommendations: Array<{
-    priority: 'immediate' | 'short_term' | 'long_term';
-    category: string;
-    action: string;
-    expectedImpact: string;
-    timeframe: string;
-  }>;
-  executiveSummary: string;
-  detailedFindings: string;
-  nextAuditDate: string;
-  generatedAt: string;
+    priority: 'immediate' | 'short_term' | 'long_term'
+    category: string
+    action: string
+    expectedImpact: string
+    timeframe: string
+  }>
+  executiveSummary: string
+  detailedFindings: string
+  nextAuditDate: string
+  generatedAt: string
 }
 
 export interface DocumentationComplianceCheck {
-  documentType: string;
-  documentId: string;
-  requiredFields: string[];
-  currentData: Record<string, any>;
-  retentionPolicy: string;
-  accessControls: string[];
+  documentType: string
+  documentId: string
+  requiredFields: string[]
+  currentData: Record<string, any>
+  retentionPolicy: string
+  accessControls: string[]
 }
 
 export interface DocumentationResult {
-  isCompliant: boolean;
-  completeness: number;
+  isCompliant: boolean
+  completeness: number
   validationResults: Array<{
-    field: string;
-    isValid: boolean;
-    message: string;
-    severity: 'error' | 'warning' | 'info';
-  }>;
+    field: string
+    isValid: boolean
+    message: string
+    severity: 'error' | 'warning' | 'info'
+  }>
   retentionCompliance: {
-    meetsPolicy: boolean;
-    currentRetentionPeriod: string;
-    recommendedRetentionPeriod: string;
-    reason: string;
-  };
+    meetsPolicy: boolean
+    currentRetentionPeriod: string
+    recommendedRetentionPeriod: string
+    reason: string
+  }
   accessControlValidation: {
-    isProperlyControlled: boolean;
-    currentControls: string[];
-    recommendations: string[];
-  };
-  recommendations: string[];
-  lastReviewed: string;
+    isProperlyControlled: boolean
+    currentControls: string[]
+    recommendations: string[]
+  }
+  recommendations: string[]
+  lastReviewed: string
 }
 
 export class AestheticComplianceService {
-  private config: AestheticComplianceConfig;
-  private auditLog: Map<string, any[]> = new Map();
-  private consentRegistry: Map<string, LGPDConsentData> = new Map();
-  private licenseRegistry: Map<string, ProfessionalLicense> = new Map();
+  private config: AestheticComplianceConfig
+  private auditLog: Map<string, any[]> = new Map()
+  private consentRegistry: Map<string, LGPDConsentData> = new Map()
+  private licenseRegistry: Map<string, ProfessionalLicense> = new Map()
 
   constructor(config: AestheticComplianceConfig) {
-    this.config = config;
-    this.initializeComplianceData();
+    this.config = config
+    this.initializeComplianceData()
   }
 
   private initializeComplianceData(): void {
@@ -267,7 +267,7 @@ export class AestheticComplianceService {
         applicableTo: ['procedures', 'safety', 'infection_control'],
         requirements: ['sterilization_protocols', 'quality_control', 'documentation'],
       },
-    ]);
+    ])
 
     // Initialize LGPD requirements
     this.auditLog.set('lgpd_requirements', [
@@ -286,62 +286,62 @@ export class AestheticComplianceService {
         description: 'Rights of the data subject',
         requirements: ['access_right', 'correction_right', 'deletion_right', 'portability_right'],
       },
-    ]);
+    ])
   }
 
   // ANVISA Compliance
   async checkAnvisaCompliance(check: AnvisaComplianceCheck): Promise<AnvisaComplianceResult> {
-    const _startTime = Date.now();
-    const violations: any[] = [];
-    let complianceScore = 100;
+    const _startTime = Date.now()
+    const violations: any[] = []
+    let complianceScore = 100
 
     // Check treatment compliance
-    const treatmentCompliance = await this.validateTreatmentCompliance(check.treatmentId);
-    violations.push(...treatmentCompliance.violations);
+    const treatmentCompliance = await this.validateTreatmentCompliance(check.treatmentId)
+    violations.push(...treatmentCompliance.violations)
     complianceScore -= treatmentCompliance.violations.reduce(
       (sum, v) => sum + this.getSeverityWeight(v.severity),
       0,
-    );
+    )
 
     // Check product compliance
     for (const product of check.products) {
-      const productCompliance = await this.validateProductCompliance(product);
-      violations.push(...productCompliance.violations);
+      const productCompliance = await this.validateProductCompliance(product)
+      violations.push(...productCompliance.violations)
       complianceScore -= productCompliance.violations.reduce(
         (sum, v) => sum + this.getSeverityWeight(v.severity),
         0,
-      );
+      )
     }
 
     // Check procedure compliance
     for (const procedure of check.procedures) {
-      const procedureCompliance = await this.validateProcedureCompliance(procedure);
-      violations.push(...procedureCompliance.violations);
+      const procedureCompliance = await this.validateProcedureCompliance(procedure)
+      violations.push(...procedureCompliance.violations)
       complianceScore -= procedureCompliance.violations.reduce(
         (sum, v) => sum + this.getSeverityWeight(v.severity),
         0,
-      );
+      )
     }
 
     // Check facility compliance
-    const facilityCompliance = await this.validateFacilityCompliance(check.facilityInfo);
-    violations.push(...facilityCompliance.violations);
+    const facilityCompliance = await this.validateFacilityCompliance(check.facilityInfo)
+    violations.push(...facilityCompliance.violations)
     complianceScore -= facilityCompliance.violations.reduce(
       (sum, v) => sum + this.getSeverityWeight(v.severity),
       0,
-    );
+    )
 
     // Check professional licenses
     for (const license of check.professionalLicenses) {
-      const licenseCompliance = await this.validateProfessionalLicense(license);
-      violations.push(...licenseCompliance.violations);
+      const licenseCompliance = await this.validateProfessionalLicense(license)
+      violations.push(...licenseCompliance.violations)
       complianceScore -= licenseCompliance.violations.reduce(
         (sum, v) => sum + this.getSeverityWeight(v.severity),
         0,
-      );
+      )
     }
 
-    complianceScore = Math.max(0, Math.min(100, complianceScore));
+    complianceScore = Math.max(0, Math.min(100, complianceScore))
 
     const result: AnvisaComplianceResult = {
       isCompliant: violations.length === 0,
@@ -352,16 +352,16 @@ export class AestheticComplianceService {
       lastChecked: new Date().toISOString(),
       nextReview: this.calculateNextReviewDate(),
       complianceScore,
-    };
+    }
 
-    this.logComplianceCheck('anvisa', check, result);
-    return result;
+    this.logComplianceCheck('anvisa', check, result)
+    return result
   }
 
   // LGPD Compliance
   async verifyLGPDConsent(consentData: Partial<LGPDConsentData>): Promise<LGPDConsentVerification> {
-    const consentId = this.generateConsentId(consentData);
-    const existingConsent = this.consentRegistry.get(consentId);
+    const consentId = this.generateConsentId(consentData)
+    const existingConsent = this.consentRegistry.get(consentId)
 
     const verificationResult = {
       dataMinimization: this.verifyDataMinimization(consentData),
@@ -369,10 +369,10 @@ export class AestheticComplianceService {
       retentionCompliance: this.verifyRetentionCompliance(consentData),
       securityMeasures: this.verifySecurityMeasures(),
       rightsGuarantees: this.verifyRightsGuarantees(),
-    };
+    }
 
-    const isValid = Object.values(verificationResult).every(result => result === true);
-    const issues = this.identifyConsentIssues(consentData, verificationResult);
+    const isValid = Object.values(verificationResult).every(result => result === true)
+    const issues = this.identifyConsentIssues(consentData, verificationResult)
 
     return {
       isConsentValid: isValid,
@@ -389,47 +389,47 @@ export class AestheticComplianceService {
       },
       verificationResult,
       issues,
-    };
+    }
   }
 
   async registerLGPDConsent(consentData: LGPDConsentData): Promise<string> {
-    const consentId = this.generateConsentId(consentData);
+    const consentId = this.generateConsentId(consentData)
 
     const enhancedConsent: LGPDConsentData = {
       ...consentData,
       ipAddress: consentData.ipAddress || 'unknown',
       userAgent: consentData.userAgent || 'unknown',
-    };
+    }
 
-    this.consentRegistry.set(consentId, enhancedConsent);
+    this.consentRegistry.set(consentId, enhancedConsent)
 
-    this.logConsentAction('granted', consentId, consentData);
+    this.logConsentAction('granted', consentId, consentData)
 
-    return consentId;
+    return consentId
   }
 
   async withdrawLGPDConsent(consentId: string, reason?: string): Promise<boolean> {
-    const consent = this.consentRegistry.get(consentId);
+    const consent = this.consentRegistry.get(consentId)
     if (!consent) {
-      return false;
+      return false
     }
 
     // Mark as withdrawn
-    consent.withdrawnAt = new Date().toISOString();
-    this.consentRegistry.set(consentId, consent);
+    consent.withdrawnAt = new Date().toISOString()
+    this.consentRegistry.set(consentId, consent)
 
-    this.logConsentAction('withdrawn', consentId, { reason });
+    this.logConsentAction('withdrawn', consentId, { reason })
 
-    return true;
+    return true
   }
 
   // Treatment Safety Validation
   async validateTreatmentSafety(
     validation: TreatmentSafetyValidation,
   ): Promise<SafetyValidationResult> {
-    const contraindications = await this.identifyContraindications(validation);
-    const warnings = await this.generateSafetyWarnings(validation);
-    const riskLevel = this.assessRiskLevel(contraindications, warnings);
+    const contraindications = await this.identifyContraindications(validation)
+    const warnings = await this.generateSafetyWarnings(validation)
+    const riskLevel = this.assessRiskLevel(contraindications, warnings)
 
     return {
       isSafe: riskLevel !== 'contraindicated',
@@ -442,20 +442,20 @@ export class AestheticComplianceService {
       facilityRequirements: this.getFacilityRequirements(validation.treatmentId),
       lastValidated: new Date().toISOString(),
       nextReview: this.calculateNextReviewDate(),
-    };
+    }
   }
 
   // Professional License Verification
   async verifyProfessionalLicense(
     licenseData: Partial<ProfessionalLicense>,
   ): Promise<LicenseVerificationResult> {
-    const licenseId = this.generateLicenseId(licenseData);
-    let license = this.licenseRegistry.get(licenseId);
+    const licenseId = this.generateLicenseId(licenseData)
+    let license = this.licenseRegistry.get(licenseId)
 
     if (!license) {
-      license = await this.fetchLicenseFromCouncil(licenseData);
+      license = await this.fetchLicenseFromCouncil(licenseData)
       if (license) {
-        this.licenseRegistry.set(licenseId, license);
+        this.licenseRegistry.set(licenseId, license)
       }
     }
 
@@ -464,14 +464,14 @@ export class AestheticComplianceService {
       verificationMethod: 'api',
       verificationResult: license ? 'valid' : 'not_found',
       dataSource: licenseData.issuingCouncil || 'unknown',
-    };
+    }
 
     const issues = license ? await this.identifyLicenseIssues(license) : [{
       type: 'license_not_found',
       severity: 'error',
       description: 'License not found in registry',
       actionRequired: 'Verify license information with issuing council',
-    }];
+    }]
 
     return {
       isValid: issues.length === 0,
@@ -493,32 +493,32 @@ export class AestheticComplianceService {
       verificationDetails,
       issues,
       renewals: license ? await this.identifyRenewalNeeds(license) : [],
-    };
+    }
   }
 
   // Compliance Audit
   async performComplianceAudit(audit: ComplianceAudit): Promise<ComplianceAuditResult> {
-    const auditId = this.generateAuditId();
-    const categories: any[] = [];
+    const auditId = this.generateAuditId()
+    const categories: any[] = []
 
     // ANVISA Compliance Audit
-    const anvisaCategory = await this.auditAnvisaCompliance(audit);
-    categories.push(anvisaCategory);
+    const anvisaCategory = await this.auditAnvisaCompliance(audit)
+    categories.push(anvisaCategory)
 
     // LGPD Compliance Audit
-    const lgpdCategory = await this.auditLGPDCompliance(audit);
-    categories.push(lgpdCategory);
+    const lgpdCategory = await this.auditLGPDCompliance(audit)
+    categories.push(lgpdCategory)
 
     // Documentation Compliance Audit
-    const documentationCategory = await this.auditDocumentationCompliance(audit);
-    categories.push(documentationCategory);
+    const documentationCategory = await this.auditDocumentationCompliance(audit)
+    categories.push(documentationCategory)
 
     // Professional License Audit
-    const licenseCategory = await this.auditLicenseCompliance(audit);
-    categories.push(licenseCategory);
+    const licenseCategory = await this.auditLicenseCompliance(audit)
+    categories.push(licenseCategory)
 
-    const overallScore = this.calculateOverallScore(categories);
-    const recommendations = this.generateAuditRecommendations(categories);
+    const overallScore = this.calculateOverallScore(categories)
+    const recommendations = this.generateAuditRecommendations(categories)
 
     const result: ComplianceAuditResult = {
       auditId,
@@ -531,10 +531,10 @@ export class AestheticComplianceService {
       detailedFindings: this.generateDetailedFindings(categories),
       nextAuditDate: this.calculateNextAuditDate(),
       generatedAt: new Date().toISOString(),
-    };
+    }
 
-    this.logAuditCompletion(auditId, result);
-    return result;
+    this.logAuditCompletion(auditId, result)
+    return result
   }
 
   // Documentation Compliance
@@ -546,40 +546,41 @@ export class AestheticComplianceService {
       isValid: check.currentData[field] !== undefined && check.currentData[field] !== null,
       message: check.currentData[field] ? 'Field present' : `Missing required field: ${field}`,
       severity: check.currentData[field] ? 'info' as const : 'error' as const,
-    }));
+    }))
 
     const completeness =
-      (validationResults.filter(r => r.isValid).length / validationResults.length) * 100;
+      (validationResults.filter(r => r.isValid).length / validationResults.length) * 100
 
     const retentionCompliance = {
       meetsPolicy: true, // Mock validation
       currentRetentionPeriod: check.retentionPolicy,
       recommendedRetentionPeriod: this.recommendRetentionPeriod(check.documentType),
       reason: 'Compliant with standard retention policies',
-    };
+    }
 
     const accessControlValidation = {
       isProperlyControlled: check.accessControls.length > 0,
       currentControls: check.accessControls,
       recommendations: this.generateAccessControlRecommendations(check.accessControls),
-    };
+    }
 
     return {
-      isCompliant: completeness === 100 && retentionCompliance.meetsPolicy
-        && accessControlValidation.isProperlyControlled,
+      isCompliant: completeness === 100 &&
+        retentionCompliance.meetsPolicy &&
+        accessControlValidation.isProperlyControlled,
       completeness,
       validationResults,
       retentionCompliance,
       accessControlValidation,
       recommendations: this.generateDocumentationRecommendations(validationResults),
       lastReviewed: new Date().toISOString(),
-    };
+    }
   }
 
   // Auto-reporting to ANVISA
   async generateAnvisaReport(violations: any[]): Promise<any> {
     if (!this.config.anvisaApiKey || !this.config.enableAutoReporting) {
-      return null;
+      return null
     }
 
     const reportData = {
@@ -596,38 +597,38 @@ export class AestheticComplianceService {
       },
       correctiveActions: violations.map(v => v.correctiveAction),
       timeline: this.generateCorrectiveTimeline(violations),
-    };
+    }
 
     // In real implementation, this would send the report to ANVISA API
-    this.logAutoReportGeneration(reportData);
+    this.logAutoReportGeneration(reportData)
 
-    return reportData;
+    return reportData
   }
 
   // Helper Methods
   private async validateTreatmentCompliance(_treatmentId: string): Promise<{ violations: any[] }> {
     // Mock validation - in real implementation, this would check against ANVISA database
-    return { violations: [] };
+    return { violations: [] }
   }
 
   private async validateProductCompliance(_product: any): Promise<{ violations: any[] }> {
     // Mock validation
-    return { violations: [] };
+    return { violations: [] }
   }
 
   private async validateProcedureCompliance(_procedure: any): Promise<{ violations: any[] }> {
     // Mock validation
-    return { violations: [] };
+    return { violations: [] }
   }
 
   private async validateFacilityCompliance(_facilityInfo: any): Promise<{ violations: any[] }> {
     // Mock validation
-    return { violations: [] };
+    return { violations: [] }
   }
 
   private async validateProfessionalLicense(_license: any): Promise<{ violations: any[] }> {
     // Mock validation
-    return { violations: [] };
+    return { violations: [] }
   }
 
   private getSeverityWeight(severity: string): number {
@@ -636,65 +637,65 @@ export class AestheticComplianceService {
       medium: 10,
       high: 20,
       critical: 40,
-    };
-    return weights[severity as keyof typeof weights] || 5;
+    }
+    return weights[severity as keyof typeof weights] || 5
   }
 
   private generateComplianceRecommendations(violations: any[]): string[] {
-    const recommendations: string[] = [];
+    const recommendations: string[] = []
 
     if (violations.some(v => v.severity === 'critical')) {
-      recommendations.push('Immediate action required for critical violations');
+      recommendations.push('Immediate action required for critical violations')
     }
 
     if (violations.some(v => v.regulation.includes('safety'))) {
-      recommendations.push('Review and enhance safety protocols');
+      recommendations.push('Review and enhance safety protocols')
     }
 
     if (violations.some(v => v.regulation.includes('documentation'))) {
-      recommendations.push('Improve documentation practices');
+      recommendations.push('Improve documentation practices')
     }
 
-    return recommendations;
+    return recommendations
   }
 
   private calculateNextReviewDate(): string {
-    const nextReview = new Date();
-    nextReview.setMonth(nextReview.getMonth() + 6); // 6 months from now
-    return nextReview.toISOString();
+    const nextReview = new Date()
+    nextReview.setMonth(nextReview.getMonth() + 6) // 6 months from now
+    return nextReview.toISOString()
   }
 
   private generateConsentId(consentData: Partial<LGPDConsentData>): string {
-    return `consent_${consentData.clientId}_${consentData.consentType}_${Date.now()}`;
+    return `consent_${consentData.clientId}_${consentData.consentType}_${Date.now()}`
   }
 
   private verifyDataMinimization(consentData: Partial<LGPDConsentData>): boolean {
-    return consentData.dataCategories ? consentData.dataCategories.length <= 10 : true;
+    return consentData.dataCategories ? consentData.dataCategories.length <= 10 : true
   }
 
   private verifyPurposeLimitation(consentData: Partial<LGPDConsentData>): boolean {
-    return consentData.purpose ? consentData.purpose.length <= 500 : true;
+    return consentData.purpose ? consentData.purpose.length <= 500 : true
   }
 
   private verifyRetentionCompliance(consentData: Partial<LGPDConsentData>): boolean {
     return consentData.retentionPeriod
       ? ['6_months', '1_year', '2_years', '5_years'].includes(consentData.retentionPeriod)
-      : true;
+      : true
   }
 
   private verifySecurityMeasures(): boolean {
-    return true; // Mock implementation
+    return true // Mock implementation
   }
 
   private verifyRightsGuarantees(): boolean {
-    return true; // Mock implementation
+    return true // Mock implementation
   }
 
   private identifyConsentIssues(
     consentData: Partial<LGPDConsentData>,
     verificationResult: any,
   ): any[] {
-    const issues: any[] = [];
+    const issues: any[] = []
 
     if (!verificationResult.dataMinimization) {
       issues.push({
@@ -702,10 +703,10 @@ export class AestheticComplianceService {
         severity: 'warning',
         description: 'Too many data categories requested',
         recommendation: 'Reduce data categories to essential ones only',
-      });
+      })
     }
 
-    return issues;
+    return issues
   }
 
   private logConsentAction(action: string, consentId: string, data: any): void {
@@ -714,21 +715,21 @@ export class AestheticComplianceService {
       consentId,
       timestamp: new Date().toISOString(),
       data,
-    };
+    }
 
-    const logs = this.auditLog.get('consent_actions') || [];
-    logs.push(logEntry);
-    this.auditLog.set('consent_actions', logs);
+    const logs = this.auditLog.get('consent_actions') || []
+    logs.push(logEntry)
+    this.auditLog.set('consent_actions', logs)
   }
 
   private async identifyContraindications(_validation: TreatmentSafetyValidation): Promise<any[]> {
     // Mock contraindication identification
-    return [];
+    return []
   }
 
   private async generateSafetyWarnings(_validation: TreatmentSafetyValidation): Promise<any[]> {
     // Mock warning generation
-    return [];
+    return []
   }
 
   private assessRiskLevel(
@@ -736,15 +737,15 @@ export class AestheticComplianceService {
     warnings: any[],
   ): 'low' | 'medium' | 'high' | 'contraindicated' {
     if (contraindications.some(c => c.type === 'absolute')) {
-      return 'contraindicated';
+      return 'contraindicated'
     }
     if (contraindications.length > 0 || warnings.length > 2) {
-      return 'high';
+      return 'high'
     }
     if (warnings.length > 0) {
-      return 'medium';
+      return 'medium'
     }
-    return 'low';
+    return 'low'
   }
 
   private generateRequiredPrecautions(
@@ -752,39 +753,39 @@ export class AestheticComplianceService {
     _riskLevel: string,
   ): string[] {
     // Mock precaution generation
-    return [];
+    return []
   }
 
   private generateEmergencyProtocol(_riskLevel: string): string[] {
     // Mock emergency protocol
-    return ['Contact emergency services', 'Administer first aid if trained'];
+    return ['Contact emergency services', 'Administer first aid if trained']
   }
 
   private getProfessionalRequirements(_treatmentId: string): string[] {
     // Mock professional requirements
-    return [];
+    return []
   }
 
   private getFacilityRequirements(_treatmentId: string): string[] {
     // Mock facility requirements
-    return [];
+    return []
   }
 
   private generateLicenseId(licenseData: Partial<ProfessionalLicense>): string {
-    return `license_${licenseData.licenseNumber}_${licenseData.issuingCouncil}`;
+    return `license_${licenseData.licenseNumber}_${licenseData.issuingCouncil}`
   }
 
   private async fetchLicenseFromCouncil(
     _licenseData: Partial<ProfessionalLicense>,
   ): Promise<ProfessionalLicense | null> {
     // Mock license fetch from council
-    return null;
+    return null
   }
 
   private async identifyLicenseIssues(license: ProfessionalLicense): Promise<any[]> {
-    const issues: any[] = [];
-    const now = new Date();
-    const expiryDate = new Date(license.expiryDate);
+    const issues: any[] = []
+    const now = new Date()
+    const expiryDate = new Date(license.expiryDate)
 
     if (expiryDate < now) {
       issues.push({
@@ -792,19 +793,19 @@ export class AestheticComplianceService {
         severity: 'error',
         description: 'License has expired',
         actionRequired: 'Renew license immediately',
-      });
+      })
     }
 
-    return issues;
+    return issues
   }
 
   private async identifyRenewalNeeds(_license: ProfessionalLicense): Promise<any[]> {
     // Mock renewal needs identification
-    return [];
+    return []
   }
 
   private generateAuditId(): string {
-    return `audit_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    return `audit_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
   }
 
   private async auditAnvisaCompliance(_audit: ComplianceAudit): Promise<any> {
@@ -813,7 +814,7 @@ export class AestheticComplianceService {
       category: 'ANVISA Compliance',
       score: 85,
       findings: [],
-    };
+    }
   }
 
   private async auditLGPDCompliance(_audit: ComplianceAudit): Promise<any> {
@@ -822,7 +823,7 @@ export class AestheticComplianceService {
       category: 'LGPD Compliance',
       score: 90,
       findings: [],
-    };
+    }
   }
 
   private async auditDocumentationCompliance(_audit: ComplianceAudit): Promise<any> {
@@ -831,7 +832,7 @@ export class AestheticComplianceService {
       category: 'Documentation',
       score: 95,
       findings: [],
-    };
+    }
   }
 
   private async auditLicenseCompliance(_audit: ComplianceAudit): Promise<any> {
@@ -840,31 +841,31 @@ export class AestheticComplianceService {
       category: 'Professional Licenses',
       score: 100,
       findings: [],
-    };
+    }
   }
 
   private calculateOverallScore(categories: any[]): number {
-    const totalScore = categories.reduce((sum, cat) => sum + cat.score, 0);
-    return Math.round(totalScore / categories.length);
+    const totalScore = categories.reduce((sum, cat) => sum + cat.score, 0)
+    return Math.round(totalScore / categories.length)
   }
 
   private generateAuditRecommendations(_categories: any[]): any[] {
     // Mock recommendation generation
-    return [];
+    return []
   }
 
   private generateExecutiveSummary(_categories: any[], overallScore: number): string {
-    return `Compliance audit completed with overall score of ${overallScore}%.`;
+    return `Compliance audit completed with overall score of ${overallScore}%.`
   }
 
   private generateDetailedFindings(_categories: any[]): string {
-    return 'Detailed findings will be generated based on audit results.';
+    return 'Detailed findings will be generated based on audit results.'
   }
 
   private calculateNextAuditDate(): string {
-    const nextAudit = new Date();
-    nextAudit.setFullYear(nextAudit.getFullYear() + 1); // Annual audit
-    return nextAudit.toISOString();
+    const nextAudit = new Date()
+    nextAudit.setFullYear(nextAudit.getFullYear() + 1) // Annual audit
+    return nextAudit.toISOString()
   }
 
   private logAuditCompletion(auditId: string, result: ComplianceAuditResult): void {
@@ -872,11 +873,11 @@ export class AestheticComplianceService {
       auditId,
       completionDate: new Date().toISOString(),
       result,
-    };
+    }
 
-    const logs = this.auditLog.get('audit_completions') || [];
-    logs.push(logEntry);
-    this.auditLog.set('audit_completions', logs);
+    const logs = this.auditLog.get('audit_completions') || []
+    logs.push(logEntry)
+    this.auditLog.set('audit_completions', logs)
   }
 
   private recommendRetentionPeriod(documentType: string): string {
@@ -886,38 +887,38 @@ export class AestheticComplianceService {
       financial_record: '7_years',
       incident_report: '25_years',
       safety_protocol: 'unlimited',
-    };
+    }
 
-    return retentionMap[documentType] || '5_years';
+    return retentionMap[documentType] || '5_years'
   }
 
   private generateAccessControlRecommendations(currentControls: string[]): string[] {
-    const recommendations: string[] = [];
+    const recommendations: string[] = []
 
     if (!currentControls.includes('role_based_access')) {
-      recommendations.push('Implement role-based access control');
+      recommendations.push('Implement role-based access control')
     }
 
     if (!currentControls.includes('audit_logging')) {
-      recommendations.push('Enable audit logging for all access');
+      recommendations.push('Enable audit logging for all access')
     }
 
-    return recommendations;
+    return recommendations
   }
 
   private generateDocumentationRecommendations(validationResults: any[]): string[] {
     return validationResults
       .filter(r => !r.isValid)
-      .map(r => `Complete missing field: ${r.field}`);
+      .map(r => `Complete missing field: ${r.field}`)
   }
 
   private generateReportId(): string {
-    return `report_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    return `report_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
   }
 
   private generateCorrectiveTimeline(_violations: any[]): any[] {
     // Mock timeline generation
-    return [];
+    return []
   }
 
   private logAutoReportGeneration(reportData: any): void {
@@ -925,11 +926,11 @@ export class AestheticComplianceService {
       reportId: reportData.reportId,
       generatedAt: reportData.generationDate,
       summary: reportData.summary,
-    };
+    }
 
-    const logs = this.auditLog.get('anvisa_reports') || [];
-    logs.push(logEntry);
-    this.auditLog.set('anvisa_reports', logs);
+    const logs = this.auditLog.get('anvisa_reports') || []
+    logs.push(logEntry)
+    this.auditLog.set('anvisa_reports', logs)
   }
 
   private logComplianceCheck(type: string, check: any, result: any): void {
@@ -938,26 +939,26 @@ export class AestheticComplianceService {
       timestamp: new Date().toISOString(),
       check,
       result,
-    };
+    }
 
-    const logs = this.auditLog.get('compliance_checks') || [];
-    logs.push(logEntry);
-    this.auditLog.set('compliance_checks', logs);
+    const logs = this.auditLog.get('compliance_checks') || []
+    logs.push(logEntry)
+    this.auditLog.set('compliance_checks', logs)
   }
 
   // Health Check
   async healthCheck(): Promise<boolean> {
     try {
-      return this.auditLog.size > 0 && this.consentRegistry.size >= 0;
+      return this.auditLog.size > 0 && this.consentRegistry.size >= 0
     } catch {
-      return false;
+      return false
     }
   }
 
   // Cleanup
   async cleanup(): Promise<void> {
-    this.auditLog.clear();
-    this.consentRegistry.clear();
-    this.licenseRegistry.clear();
+    this.auditLog.clear()
+    this.consentRegistry.clear()
+    this.licenseRegistry.clear()
   }
 }

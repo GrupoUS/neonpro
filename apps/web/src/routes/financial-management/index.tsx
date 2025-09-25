@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from '@tanstack/react-router';
+import { createFileRoute, Link } from '@tanstack/react-router'
 import {
   AlertTriangle,
   BarChart3,
@@ -16,16 +16,16 @@ import {
   Target,
   TrendingUp,
   Users,
-} from 'lucide-react';
-import * as React from 'react';
-import { useState } from 'react';
+} from 'lucide-react'
+import * as React from 'react'
+import { useState } from 'react'
 
 export const Route = createFileRoute('/financial-management/')({
   component: FinancialManagementDashboard,
-});
+})
 
 function FinancialManagementDashboard() {
-  const [activeTab, setActiveTab] = useState('overview');
+  const [activeTab, setActiveTab] = useState('overview')
 
   const stats = [
     {
@@ -56,7 +56,7 @@ function FinancialManagementDashboard() {
       icon: FileText,
       color: 'text-orange-600',
     },
-  ];
+  ]
 
   const quickActions = [
     {
@@ -87,7 +87,7 @@ function FinancialManagementDashboard() {
       href: '/financial-management/goals',
       color: 'bg-orange-100 text-orange-600',
     },
-  ];
+  ]
 
   const recentInvoices = [
     {
@@ -122,7 +122,7 @@ function FinancialManagementDashboard() {
       status: 'paid',
       date: '2024-01-17',
     },
-  ];
+  ]
 
   const topServices = [
     {
@@ -149,7 +149,7 @@ function FinancialManagementDashboard() {
       count: 12,
       growth: '+22%',
     },
-  ];
+  ]
 
   const financialGoals = [
     {
@@ -173,7 +173,7 @@ function FinancialManagementDashboard() {
       progress: 87,
       status: 'active',
     },
-  ];
+  ]
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -183,29 +183,29 @@ function FinancialManagementDashboard() {
             <CheckCircle className='w-3 h-3 mr-1' />
             Pago
           </span>
-        );
+        )
       case 'pending':
         return (
           <span className='inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800'>
             <Clock className='w-3 h-3 mr-1' />
             Pendente
           </span>
-        );
+        )
       case 'overdue':
         return (
           <span className='inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800'>
             <AlertTriangle className='w-3 h-3 mr-1' />
             Vencido
           </span>
-        );
+        )
       default:
         return (
           <span className='inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800'>
             {status}
           </span>
-        );
+        )
     }
-  };
+  }
 
   return (
     <div className='min-h-screen bg-gray-50'>
@@ -294,8 +294,8 @@ function FinancialManagementDashboard() {
       <main className='p-6'>
         {/* Stats Cards */}
         <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8'>
-          {stats.map((stat, index) => (
-            <div key={index} className='bg-white rounded-lg shadow p-6'>
+          {stats.map(stat => (
+            <div key={stat.title} className='bg-white rounded-lg shadow p-6'>
               <div className='flex items-center'>
                 <div className='flex-shrink-0'>
                   <stat.icon className={`h-8 w-8 ${stat.color}`} />
@@ -331,9 +331,9 @@ function FinancialManagementDashboard() {
               </div>
               <div className='p-6'>
                 <div className='space-y-4'>
-                  {quickActions.map((action, index) => (
+                  {quickActions.map(action => (
                     <Link
-                      key={index}
+                      key={action.title}
                       to={action.href}
                       className='flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors'
                     >
@@ -366,8 +366,8 @@ function FinancialManagementDashboard() {
               </div>
               <div className='p-6'>
                 <div className='space-y-4'>
-                  {financialGoals.map((goal, index) => (
-                    <div key={index}>
+                  {financialGoals.map(goal => (
+                    <div key={goal.name}>
                       <div className='flex items-center justify-between mb-2'>
                         <h4 className='text-sm font-medium text-gray-900'>
                           {goal.name}
@@ -470,8 +470,8 @@ function FinancialManagementDashboard() {
               </div>
               <div className='p-6'>
                 <div className='space-y-4'>
-                  {topServices.map((service, index) => (
-                    <div key={index} className='flex items-center justify-between'>
+                  {topServices.map(service => (
+                    <div key={service.name} className='flex items-center justify-between'>
                       <div className='flex items-center'>
                         <div className='flex-shrink-0'>
                           <div className='h-10 w-10 bg-purple-100 rounded-full flex items-center justify-center'>
@@ -504,5 +504,5 @@ function FinancialManagementDashboard() {
         </div>
       </main>
     </div>
-  );
+  )
 }

@@ -1,6 +1,6 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { createFileRoute, Outlet } from '@tanstack/react-router';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { createFileRoute, Outlet } from '@tanstack/react-router'
 import {
   AlertTriangle,
   Calendar,
@@ -9,12 +9,12 @@ import {
   Package,
   // Users,
   Shield,
-} from 'lucide-react';
-import * as React from 'react';
+} from 'lucide-react'
+import * as React from 'react'
 
-export const Route = createFileRoute('/aesthetic-scheduling/')({
+export const Route = createFileRoute('/aesthetic-scheduling/__root')({
   component: AestheticSchedulingLayout,
-});
+})
 
 function AestheticSchedulingLayout() {
   return (
@@ -163,5 +163,5 @@ function AestheticSchedulingLayout() {
         </Tabs>
       </div>
     </div>
-  );
+  )
 }

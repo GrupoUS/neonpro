@@ -4,24 +4,24 @@
  * Integration with AIChatService for multi-modal analysis
  */
 
-import { zValidator } from '@hono/zod-validator';
-import { Context, Hono, Next } from 'hono';
-import { AIChatService } from '../../services/ai-chat-service.js';
-import { ComprehensiveAuditService } from '../../services/audit-service.js';
-import { LGPDService } from '../../services/lgpd-service.js';
-import { PatientService } from '../../services/patient-service.js';
+import { zValidator } from '@hono/zod-validator'
+import { Context, Hono, Next } from 'hono'
+import { AIChatService } from '../../services/ai-chat-service.js'
+import { ComprehensiveAuditService } from '../../services/audit-service.js'
+import { LGPDService } from '../../services/lgpd-service.js'
+import { PatientService } from '../../services/patient-service.js'
 
 // Type definitions
 interface ServiceInterface {
-  aiChatService: AIChatService;
-  patientService: PatientService;
-  auditService: ComprehensiveAuditService;
-  lgpdService: LGPDService;
+  aiChatService: AIChatService
+  patientService: PatientService
+  auditService: ComprehensiveAuditService
+  lgpdService: LGPDService
 }
 
 // Mock middleware for testing
 const mockAuthMiddleware = (c: Context, next: Next) => {
-  const authHeader = c.req.header('authorization');
+  const authHeader = c.req.header('authorization')
   if (!authHeader) {
     return c.json(
       {
@@ -29,15 +29,15 @@ const mockAuthMiddleware = (c: Context, next: Next) => {
         error: 'Não autorizado. Token de acesso necessário.',
       },
       401,
-    );
+    )
   }
-  c.set('user', { id: 'user-123', _role: 'healthcare_professional' });
-  return next();
-};
+  c.set('user', { id: 'user-123', _role: 'healthcare_professional' })
+  return next()
+}
 
-const mockLGPDMiddleware = (c: Context, next: Next) => next();
+const mockLGPDMiddleware = (c: Context, next: Next) => next()
 
-const app = new Hono();
+const app = new Hono()
 
 // Request validation schema
 const analyzeRequestSchema = z.object({
@@ -72,19 +72,19 @@ const analyzeRequestSchema = z.object({
     })
     .optional()
     .default({}),
-});
+})
 
 // Services - will be injected during testing or use real services in production
-let services: ServiceInterface | null = null;
+let services: ServiceInterface | null = null
 
 // Function to set services (used by tests)
 export const setServices = (injectedServices: ServiceInterface) => {
-  services = injectedServices;
-};
+  services = injectedServices
+}
 
 // Default services for production
 const getServices = () => {
-  if (services) return services;
+  if (services) return services
 
   // Use real service instances in production
   return {
@@ -92,8 +92,8 @@ const getServices = () => {
     auditService: new AuditService(),
     lgpdService: new LGPDService(),
     patientService: new PatientService(),
-  };
-};
+  }
+}
 
 app.post(
   '/',
@@ -101,16 +101,16 @@ app.post(
   mockLGPDMiddleware,
   zValidator('json', analyzeRequestSchema),
   async c => {
-    const startTime = Date.now();
-    const user = c.get('user');
-    const requestData = c.req.valid('json');
-    const ipAddress = c.req.header('X-Real-IP') || c.req.header('X-Forwarded-For') || 'unknown';
-    const userAgent = c.req.header('User-Agent') || 'unknown';
-    const healthcareProfessional = c.req.header('X-Healthcare-Professional');
-    const healthcareContext = c.req.header('X-Healthcare-Context');
+    const startTime = Date.now()
+    const user = c.get('user')
+    const requestData = c.req.valid('json')
+    const ipAddress = c.req.header('X-Real-IP') || c.req.header('X-Forwarded-For') || 'unknown'
+    const userAgent = c.req.header('User-Agent') || 'unknown'
+    const healthcareProfessional = c.req.header('X-Healthcare-Professional')
+    const healthcareContext = c.req.header('X-Healthcare-Context')
 
     try {
-      const currentServices = getServices();
+      const currentServices = getServices()
 
       // Validate supported analysis type
       const supportedTypes = [
@@ -119,16 +119,16 @@ app.post(
         'patient_feedback',
         'multi_modal',
         'diagnostic_support',
-      ];
+      ]
       if (!supportedTypes.includes(requestData.analysisType)) {
         return c.json(
           {
             success: false,
-            error: 'Tipo de análise não suportado. Tipos válidos: '
-              + supportedTypes.join(', '),
+            error: 'Tipo de análise não suportado. Tipos válidos: ' +
+              supportedTypes.join(', '),
           },
           400,
-        );
+        )
       }
 
       // Validate LGPD data access for AI analysis
@@ -138,7 +138,7 @@ app.post(
         purpose: 'healthcare_analysis',
         legalBasis: 'legitimate_interest',
         analysisType: requestData.analysisType,
-      });
+      })
 
       if (!lgpdValidation.success) {
         return c.json(
@@ -148,7 +148,7 @@ app.post(
             code: lgpdValidation.code || 'LGPD_AI_ANALYSIS_DENIED',
           },
           403,
-        );
+        )
       }
 
       // Prepare analysis request
@@ -159,26 +159,26 @@ app.post(
         options: requestData.options,
         healthcareProfessional,
         healthcareContext,
-      };
+      }
 
       // Perform analysis based on type
-      let analysisResponse;
+      let analysisResponse
       switch (requestData.analysisType) {
         case 'structured_data':
         case 'diagnostic_support':
-          analysisResponse = await currentServices.aiChatService.analyzeData(analysisRequest);
-          break;
+          analysisResponse = await currentServices.aiChatService.analyzeData(analysisRequest)
+          break
         case 'medical_image':
-          analysisResponse = await currentServices.aiChatService.analyzeImage(analysisRequest);
-          break;
+          analysisResponse = await currentServices.aiChatService.analyzeImage(analysisRequest)
+          break
         case 'patient_feedback':
-          analysisResponse = await currentServices.aiChatService.analyzeText(analysisRequest);
-          break;
+          analysisResponse = await currentServices.aiChatService.analyzeText(analysisRequest)
+          break
         case 'multi_modal':
           analysisResponse = await currentServices.aiChatService.analyzeMultiModal(
             analysisRequest,
-          );
-          break;
+          )
+          break
         default:
           return c.json(
             {
@@ -186,25 +186,25 @@ app.post(
               error: 'Tipo de análise não implementado',
             },
             400,
-          );
+          )
       }
 
       if (!analysisResponse.success) {
         return c.json(
           {
             success: false,
-            error: analysisResponse.error
-              || 'Erro interno do serviço de análise de IA',
+            error: analysisResponse.error ||
+              'Erro interno do serviço de análise de IA',
           },
           500,
-        );
+        )
       }
 
       // Calculate data size for logging
-      const dataSize = JSON.stringify(requestData.data).length;
+      const dataSize = JSON.stringify(requestData.data).length
 
       // Log activity for audit trail
-      const processingTime = Date.now() - startTime;
+      const processingTime = Date.now() - startTime
       await currentServices.auditService.logActivity({
         _userId: user.id,
         action: 'ai_data_analysis',
@@ -221,7 +221,7 @@ app.post(
         userAgent,
         complianceContext: 'LGPD',
         sensitivityLevel: 'high',
-      });
+      })
 
       // Prepare response headers
       const responseHeaders: Record<string, string> = {
@@ -231,39 +231,39 @@ app.post(
         'X-LGPD-Compliant': 'true',
         'X-Medical-AI-Logged': 'true',
         'X-Database-Queries': '2',
-      };
+      }
 
       // Add AI-specific headers
       if (analysisResponse.data.metadata) {
-        responseHeaders['X-AI-Model'] = analysisResponse.data.metadata.model || 'unknown';
+        responseHeaders['X-AI-Model'] = analysisResponse.data.metadata.model || 'unknown'
         responseHeaders['X-AI-Confidence'] = (
           analysisResponse.data.metadata.confidence || 0
-        ).toString();
+        ).toString()
         responseHeaders['X-AI-Processing-Time'] = `${
           analysisResponse.data.metadata.processingTime || 0
-        }ms`;
-        responseHeaders['X-Analysis-Type'] = requestData.analysisType;
-        responseHeaders['X-Analysis-Version'] = analysisResponse.data.metadata.analysisVersion
-          || 'unknown';
+        }ms`
+        responseHeaders['X-Analysis-Type'] = requestData.analysisType
+        responseHeaders['X-Analysis-Version'] = analysisResponse.data.metadata.analysisVersion ||
+          'unknown'
         responseHeaders['X-AI-Data-Points'] = (
           analysisResponse.data.metadata.dataPoints || 0
-        ).toString();
+        ).toString()
       }
 
       // Set all headers
       Object.entries(responseHeaders).forEach(([key, _value]) => {
-        c.header(key, value);
-      });
+        c.header(key, value)
+      })
 
       return c.json({
         success: true,
         data: analysisResponse.data,
-      });
+      })
     } catch {
-      console.error('AI Analyze endpoint error:', error);
+      console.error('AI Analyze endpoint error:', error)
 
       // Log error for audit
-      const currentServices = getServices();
+      const currentServices = getServices()
       await currentServices.auditService.logActivity({
         _userId: user.id,
         action: 'ai_analysis_error',
@@ -277,7 +277,7 @@ app.post(
         userAgent,
         complianceContext: 'LGPD',
         sensitivityLevel: 'high',
-      });
+      })
 
       return c.json(
         {
@@ -285,9 +285,9 @@ app.post(
           error: 'Erro interno do servidor. Tente novamente mais tarde.',
         },
         500,
-      );
+      )
     }
   },
-);
+)
 
-export default app;
+export default app

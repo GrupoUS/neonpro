@@ -1,20 +1,20 @@
-'use client';
+'use client'
 
-import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
-import React, { useRef } from 'react';
-import { cn } from '../../utils';
+import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion'
+import React, { useRef } from 'react'
+import { cn } from '../../utils'
 
 interface TiltedCardProps {
-  children: React.ReactNode;
-  className?: string;
-  tiltMaxAngleX?: number;
-  tiltMaxAngleY?: number;
-  perspective?: number;
-  scale?: number;
-  transitionEasing?: [number, number, number, number];
-  transitionDuration?: number;
-  transformOrigin?: string;
-  disableHoverEffect?: boolean;
+  children: React.ReactNode
+  className?: string
+  tiltMaxAngleX?: number
+  tiltMaxAngleY?: number
+  perspective?: number
+  scale?: number
+  transitionEasing?: [number, number, number, number]
+  transitionDuration?: number
+  transformOrigin?: string
+  disableHoverEffect?: boolean
 }
 
 export function TiltedCard({
@@ -29,43 +29,43 @@ export function TiltedCard({
   transformOrigin = 'center center',
   disableHoverEffect = false,
 }: TiltedCardProps) {
-  const cardRef = useRef<HTMLDivElement>(null);
+  const cardRef = useRef<HTMLDivElement>(null)
 
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
+  const mouseX = useMotionValue(0)
+  const mouseY = useMotionValue(0)
 
-  const mouseXSpring = useSpring(mouseX);
-  const mouseYSpring = useSpring(mouseY);
+  const mouseXSpring = useSpring(mouseX)
+  const mouseYSpring = useSpring(mouseY)
 
   const rotateX = useTransform(
     mouseYSpring,
     [-0.5, 0.5],
     [tiltMaxAngleX, -tiltMaxAngleX],
-  );
+  )
   const rotateY = useTransform(
     mouseXSpring,
     [-0.5, 0.5],
     [-tiltMaxAngleY, tiltMaxAngleY],
-  );
+  )
 
   const handleMouseMove = (event: React.MouseEvent<HTMLDivElement>) => {
-    if (disableHoverEffect || !cardRef.current) {return;}
+    if (disableHoverEffect || !cardRef.current) return
 
-    const rect = cardRef.current.getBoundingClientRect();
-    const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
+    const rect = cardRef.current.getBoundingClientRect()
+    const centerX = rect.left + rect.width / 2
+    const centerY = rect.top + rect.height / 2
 
-    const mouseXPct = (event.clientX - centerX) / (rect.width / 2);
-    const mouseYPct = (event.clientY - centerY) / (rect.height / 2);
+    const mouseXPct = (event.clientX - centerX) / (rect.width / 2)
+    const mouseYPct = (event.clientY - centerY) / (rect.height / 2)
 
-    mouseX.set(mouseXPct);
-    mouseY.set(mouseYPct);
-  };
+    mouseX.set(mouseXPct)
+    mouseY.set(mouseYPct)
+  }
 
   const handleMouseLeave = () => {
-    mouseX.set(0);
-    mouseY.set(0);
-  };
+    mouseX.set(0)
+    mouseY.set(0)
+  }
 
   return (
     <motion.div
@@ -105,7 +105,7 @@ export function TiltedCard({
         {children}
       </div>
     </motion.div>
-  );
+  )
 }
 
-export default TiltedCard;
+export default TiltedCard

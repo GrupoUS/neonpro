@@ -3,19 +3,18 @@
  * Brazilian healthcare compliant aesthetic treatment package scheduling interface
  */
 
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { trpc } from '@/lib/trpc';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Progress } from '@/components/ui/progress'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { trpc } from '@/lib/trpc'
 import {
-  type PackageProcedure,
   type TreatmentPackage,
   type TreatmentPackageResponse,
-} from '@/types/aesthetic-scheduling';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+} from '@/types/aesthetic-scheduling'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
   Calendar,
   CheckCircle,
@@ -25,22 +24,22 @@ import {
   Loader2,
   Package,
   XCircle,
-} from 'lucide-react';
-import React, { useEffect, useState } from 'react';
+} from 'lucide-react'
+import React, { useEffect, useState } from 'react'
 
 interface TreatmentPackageSchedulerProps {
-  patientId: string;
-  onSuccess?: (response: TreatmentPackageResponse) => void;
-  onError?: (error: Error) => void;
+  patientId: string
+  onSuccess?: (response: TreatmentPackageResponse) => void
+  onError?: (error: Error) => void
 }
 
 export function TreatmentPackageScheduler(
   { patientId, onSuccess, onError }: TreatmentPackageSchedulerProps,
 ) {
-  const queryClient = useQueryClient();
-  const [selectedPackage, setSelectedPackage] = useState<TreatmentPackage | null>(null);
-  const [startDate, setStartDate] = useState<string>('');
-  const [preferences, setPreferences] = useState<Record<string, any>>({});
+  const queryClient = useQueryClient()
+  const [selectedPackage, setSelectedPackage] = useState<TreatmentPackage | null>(null)
+  const [startDate, setStartDate] = useState<string>('')
+  const [preferences, setPreferences] = useState<Record<string, any>>({})
 
   // Fetch treatment packages
   const { data: packagesData, isLoading: packagesLoading } = trpc.aestheticScheduling
@@ -49,42 +48,42 @@ export function TreatmentPackageScheduler(
       {
         select: data => data.packages,
       },
-    );
+    )
 
   // Schedule treatment package mutation
   const scheduleMutation = trpc.aestheticScheduling.scheduleTreatmentPackage.useMutation({
     onSuccess: data => {
-      queryClient.invalidateQueries(['appointments']);
-      queryClient.invalidateQueries(['patients', patientId]);
-      onSuccess?.(data);
+      queryClient.invalidateQueries(['appointments'])
+      queryClient.invalidateQueries(['patients', patientId])
+      onSuccess?.(data)
     },
     onError: error => {
-      onError?.(error as Error);
+      onError?.(error as Error)
     },
-  });
+  })
 
   const handlePackageSelect = (pkg: TreatmentPackage) => {
-    setSelectedPackage(pkg);
+    setSelectedPackage(pkg)
     // Set default start date to tomorrow
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    setStartDate(tomorrow.toISOString().split('T')[0]);
-  };
+    const tomorrow = new Date()
+    tomorrow.setDate(tomorrow.getDate() + 1)
+    setStartDate(tomorrow.toISOString().split('T')[0])
+  }
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+    e.preventDefault()
 
-    if (!selectedPackage || !startDate) return;
+    if (!selectedPackage || !startDate) return
 
     scheduleMutation.mutate({
       packageId: selectedPackage.id,
       patientId,
       startDate: new Date(startDate),
       preferences,
-    });
-  };
+    })
+  }
 
-  const isSubmitting = scheduleMutation.isLoading;
+  const isSubmitting = scheduleMutation.isLoading
 
   if (packagesLoading) {
     return (
@@ -94,7 +93,7 @@ export function TreatmentPackageScheduler(
           <span className='ml-3 text-lg'>Carregando pacotes de tratamento...</span>
         </div>
       </div>
-    );
+    )
   }
 
   return (
@@ -253,15 +252,16 @@ export function TreatmentPackageScheduler(
                             <div className='flex justify-between'>
                               <span className='text-gray-600'>Valor Descontado:</span>
                               <span className='font-medium text-green-600'>
-                                -R$ {(selectedPackage.totalPrice * selectedPackage.packageDiscount
-                                  / 100).toLocaleString('pt-BR')}
+                                -R$ {(selectedPackage.totalPrice *
+                                  selectedPackage.packageDiscount /
+                                  100).toLocaleString('pt-BR')}
                               </span>
                             </div>
                             <div className='border-t pt-2 flex justify-between'>
                               <span className='text-gray-900 font-medium'>Valor Final:</span>
                               <span className='font-bold text-green-600 text-lg'>
-                                R$ {(selectedPackage.totalPrice
-                                  * (1 - selectedPackage.packageDiscount / 100)).toLocaleString(
+                                R$ {(selectedPackage.totalPrice *
+                                  (1 - selectedPackage.packageDiscount / 100)).toLocaleString(
                                     'pt-BR',
                                   )}
                               </span>
@@ -269,8 +269,9 @@ export function TreatmentPackageScheduler(
                             <div className='flex justify-between text-sm'>
                               <span className='text-gray-600'>Economia Total:</span>
                               <span className='font-medium text-green-600'>
-                                R$ {(selectedPackage.totalPrice * selectedPackage.packageDiscount
-                                  / 100).toLocaleString('pt-BR')}
+                                R$ {(selectedPackage.totalPrice *
+                                  selectedPackage.packageDiscount /
+                                  100).toLocaleString('pt-BR')}
                               </span>
                             </div>
                           </div>
@@ -468,19 +469,19 @@ export function TreatmentPackageScheduler(
                                     type='checkbox'
                                     checked={preferences.restrictedDays?.includes(day) || false}
                                     onChange={e => {
-                                      const restrictedDays = preferences.restrictedDays || [];
+                                      const restrictedDays = preferences.restrictedDays || []
                                       if (e.target.checked) {
                                         setPreferences({
                                           ...preferences,
                                           restrictedDays: [...restrictedDays, day],
-                                        });
+                                        })
                                       } else {
                                         setPreferences({
                                           ...preferences,
                                           restrictedDays: restrictedDays.filter((d: string) =>
                                             d !== day
                                           ),
-                                        });
+                                        })
                                       }
                                     }}
                                     className='rounded border-gray-300 text-blue-600 focus:ring-blue-500'
@@ -512,8 +513,8 @@ export function TreatmentPackageScheduler(
                               <p className='text-sm text-gray-600'>
                                 Valor Final:{' '}
                                 <span className='font-medium text-green-600'>
-                                  R$ {(selectedPackage.totalPrice
-                                    * (1 - selectedPackage.packageDiscount / 100)).toLocaleString(
+                                  R$ {(selectedPackage.totalPrice *
+                                    (1 - selectedPackage.packageDiscount / 100)).toLocaleString(
                                       'pt-BR',
                                     )}
                                 </span>
@@ -521,8 +522,9 @@ export function TreatmentPackageScheduler(
                               <p className='text-sm text-gray-600'>
                                 Economia:{' '}
                                 <span className='font-medium text-green-600'>
-                                  R$ {(selectedPackage.totalPrice * selectedPackage.packageDiscount
-                                    / 100).toLocaleString('pt-BR')}
+                                  R$ {(selectedPackage.totalPrice *
+                                    selectedPackage.packageDiscount /
+                                    100).toLocaleString('pt-BR')}
                                 </span>
                               </p>
                             </div>
@@ -573,5 +575,5 @@ export function TreatmentPackageScheduler(
         </div>
       </form>
     </div>
-  );
+  )
 }

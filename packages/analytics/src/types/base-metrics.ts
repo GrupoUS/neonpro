@@ -8,33 +8,33 @@
 // import type { RiskLevel, ComplianceFramework } from "../../audit/types";
 
 // Local type definitions to avoid circular dependencies
-type RiskLevel = 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
-type ComplianceFramework = 'LGPD' | 'ANVISA' | 'CFM' | 'HIPAA' | 'GDPR';
+type RiskLevel = 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL'
+type ComplianceFramework = 'LGPD' | 'ANVISA' | 'CFM' | 'HIPAA' | 'GDPR'
 
 /**
  * Analytics event interface for tracking user interactions and system events
  */
 export interface AnalyticsEvent {
   /** Unique event identifier */
-  id: string;
+  id: string
 
   /** Event type/category */
-  type: string;
+  type: string
 
   /** Event timestamp */
-  timestamp: Date;
+  timestamp: Date
 
   /** User identifier (anonymized) */
-  _userId?: string;
+  _userId?: string
 
   /** Session identifier */
-  sessionId?: string;
+  sessionId?: string
 
   /** Event properties */
-  properties: Record<string, unknown>;
+  properties: Record<string, unknown>
 
   /** Event context */
-  _context?: Record<string, unknown>;
+  _context?: Record<string, unknown>
 }
 
 /**
@@ -47,15 +47,15 @@ export type MetricDataType =
   | 'duration'
   | 'count'
   | 'ratio'
-  | 'boolean';
+  | 'boolean'
 
 // Export aliases for backward compatibility
-export type MetricType = MetricDataType;
+export type MetricType = MetricDataType
 
 /**
  * Currency types supported by the system
  */
-export type Currency = 'BRL' | 'USD' | 'EUR' | 'GBP';
+export type Currency = 'BRL' | 'USD' | 'EUR' | 'GBP'
 
 /**
  * Metric frequency for collection and reporting
@@ -67,10 +67,10 @@ export type MetricFrequency =
   | 'weekly'
   | 'monthly'
   | 'quarterly'
-  | 'yearly';
+  | 'yearly'
 
 // Export alias for backward compatibility
-export type Frequency = MetricFrequency;
+export type Frequency = MetricFrequency
 
 /**
  * Metric aggregation methods
@@ -83,10 +83,10 @@ export type MetricAggregation =
   | 'max'
   | 'median'
   | 'percentile'
-  | 'last_value';
+  | 'last_value'
 
 // Export alias for backward compatibility
-export type AggregationType = MetricAggregation;
+export type AggregationType = MetricAggregation
 
 /**
  * Metric status indicating data quality and reliability
@@ -96,10 +96,10 @@ export type MetricStatus =
   | 'inactive'
   | 'deprecated'
   | 'error'
-  | 'calculating';
+  | 'calculating'
 
 // Re-export types from audit module to avoid conflicts
-export type { ComplianceFramework, RiskLevel } from '../../audit/types';
+export type { ComplianceFramework, RiskLevel } from '../../audit/types'
 
 /**
  * Base metric interface - foundation for all analytics metrics
@@ -109,58 +109,58 @@ export type { ComplianceFramework, RiskLevel } from '../../audit/types';
  */
 export interface BaseMetric {
   /** Unique identifier for the metric */
-  id: string;
+  id: string
 
   /** Human-readable metric name */
-  name: string;
+  name: string
 
   /** Detailed description of what this metric measures */
-  description?: string;
+  description?: string
 
   /** Data type of the metric value */
-  dataType: MetricDataType;
+  dataType: MetricDataType
 
   /** Current metric value */
-  value: number;
+  value: number
 
   /** Unit of measurement (e.g., '%', 'minutes', 'BRL', 'count') */
-  unit: string;
+  unit: string
 
   /** Target/goal value for this metric */
-  targetValue?: number;
+  targetValue?: number
 
   /** Alert threshold value */
-  threshold?: number;
+  threshold?: number
 
   /** Collection and reporting frequency */
-  frequency: MetricFrequency;
+  frequency: MetricFrequency
 
   /** Aggregation method for time-series data */
-  aggregation: MetricAggregation;
+  aggregation: MetricAggregation
 
   /** Current status of the metric */
-  status: MetricStatus;
+  status: MetricStatus
 
   /** Risk level assessment */
-  riskLevel: RiskLevel;
+  riskLevel: RiskLevel
 
   /** Applicable compliance frameworks */
-  complianceFrameworks: ComplianceFramework[];
+  complianceFrameworks: ComplianceFramework[]
 
   /** Data source identifier */
-  source: string;
+  source: string
 
   /** Timestamp of when this value was calculated/measured */
-  timestamp: Date;
+  timestamp: Date
 
   /** Timestamp of when this metric was last updated */
-  lastUpdated: Date;
+  lastUpdated: Date
 
   /** Timestamp of when this metric was created */
-  createdAt: Date;
+  createdAt: Date
 
   /** Additional metadata (extensible) */
-  metadata?: Record<string, unknown>;
+  metadata?: Record<string, unknown>
 }
 
 /**
@@ -168,26 +168,26 @@ export interface BaseMetric {
  */
 export interface HealthcareContext {
   /** Clinic/facility identifier */
-  clinicId?: string;
+  clinicId?: string
 
   /** Department/unit identifier */
-  departmentId?: string;
+  departmentId?: string
 
   /** Provider/practitioner identifier */
-  providerId?: string;
+  providerId?: string
 
   /** Patient identifier (anonymized for LGPD compliance) */
-  patientId?: string;
+  patientId?: string
 
   /** Clinical context/specialty */
-  clinicalContext?: string;
+  clinicalContext?: string
 
   /** Regulatory requirements */
   regulatoryContext?: {
-    framework: ComplianceFramework;
-    requirements: string[];
-    auditRequired: boolean;
-  };
+    framework: ComplianceFramework
+    requirements: string[]
+    auditRequired: boolean
+  }
 }
 
 /**
@@ -195,13 +195,13 @@ export interface HealthcareContext {
  */
 export interface MetricDataPoint {
   /** Timestamp of the data point */
-  timestamp: Date;
+  timestamp: Date
 
   /** Metric value at this point in time */
-  value: number;
+  value: number
 
   /** Optional context for this specific data point */
-  _context?: Record<string, unknown>;
+  _context?: Record<string, unknown>
 }
 
 /**
@@ -209,22 +209,22 @@ export interface MetricDataPoint {
  */
 export interface MetricTrend {
   /** Direction of the trend */
-  direction: 'improving' | 'declining' | 'stable' | 'volatile';
+  direction: 'improving' | 'declining' | 'stable' | 'volatile'
 
   /** Percentage change over the analysis period */
-  percentageChange: number;
+  percentageChange: number
 
   /** Confidence level in the trend analysis (0-1) */
-  confidence: number;
+  confidence: number
 
   /** Time period analyzed */
   period: {
-    start: Date;
-    end: Date;
-  };
+    start: Date
+    end: Date
+  }
 
   /** Historical data points used for analysis */
-  dataPoints: MetricDataPoint[];
+  dataPoints: MetricDataPoint[]
 }
 
 /**
@@ -232,19 +232,19 @@ export interface MetricTrend {
  */
 export interface MetricValidation {
   /** Whether the metric value is valid */
-  isValid: boolean;
+  isValid: boolean
 
   /** Validation error messages */
-  errors: string[];
+  errors: string[]
 
   /** Validation warnings */
-  warnings: string[];
+  warnings: string[]
 
   /** Data quality score (0-1) */
-  qualityScore: number;
+  qualityScore: number
 
   /** Timestamp of validation */
-  validatedAt: Date;
+  validatedAt: Date
 }
 
 /**
@@ -255,20 +255,20 @@ export interface MetricValidation {
  */
 export interface AnonymousMetric extends Omit<BaseMetric, 'metadata'> {
   /** Anonymized/hashed identifier */
-  anonymousId: string;
+  anonymousId: string
 
   /** Geographic region (city/state level) */
-  region?: string;
+  region?: string
 
   /** Demographic cohort (age range, etc.) */
-  cohort?: string;
+  cohort?: string
 
   /** Anonymized metadata (no PII) */
   metadata?: {
-    aggregationLevel: 'individual' | 'group' | 'population';
-    anonymizationMethod: 'hash' | 'generalization' | 'suppression';
-    privacyLevel: 'low' | 'medium' | 'high';
-  };
+    aggregationLevel: 'individual' | 'group' | 'population'
+    anonymizationMethod: 'hash' | 'generalization' | 'suppression'
+    privacyLevel: 'low' | 'medium' | 'high'
+  }
 }
 
 /**
@@ -276,31 +276,31 @@ export interface AnonymousMetric extends Omit<BaseMetric, 'metadata'> {
  */
 export interface MetricAlert {
   /** Alert identifier */
-  id: string;
+  id: string
 
   /** Related metric ID */
-  metricId: string;
+  metricId: string
 
   /** Alert condition */
   condition: {
-    operator: 'gt' | 'lt' | 'eq' | 'gte' | 'lte' | 'range';
-    value: number | [number, number];
-  };
+    operator: 'gt' | 'lt' | 'eq' | 'gte' | 'lte' | 'range'
+    value: number | [number, number]
+  }
 
   /** Alert severity */
-  severity: 'info' | 'warning' | 'critical';
+  severity: 'info' | 'warning' | 'critical'
 
   /** Alert message template */
-  message: string;
+  message: string
 
   /** Notification recipients */
-  recipients: string[];
+  recipients: string[]
 
   /** Whether alert is currently active */
-  isActive: boolean;
+  isActive: boolean
 
   /** Timestamp of last trigger */
-  lastTriggered?: Date;
+  lastTriggered?: Date
 }
 
 /**
@@ -317,7 +317,7 @@ export type MetricUpdate = Partial<
     | 'lastUpdated'
     | 'metadata'
   >
->;
+>
 
 /**
  * Type guard to check if a metric is a healthcare metric
@@ -325,7 +325,7 @@ export type MetricUpdate = Partial<
 export function isHealthcareMetric(metric: BaseMetric): boolean {
   return metric.complianceFrameworks.some(framework =>
     ['LGPD', 'ANVISA', 'CFM', 'HIPAA'].includes(framework)
-  );
+  )
 }
 
 /**
@@ -333,9 +333,9 @@ export function isHealthcareMetric(metric: BaseMetric): boolean {
  */
 export function requiresComplianceAudit(metric: BaseMetric): boolean {
   return (
-    isHealthcareMetric(metric)
-    && ['HIGH', 'CRITICAL'].includes(metric.riskLevel)
-  );
+    isHealthcareMetric(metric) &&
+    ['HIGH', 'CRITICAL'].includes(metric.riskLevel)
+  )
 }
 
 /**
@@ -344,11 +344,11 @@ export function requiresComplianceAudit(metric: BaseMetric): boolean {
 export function anonymizeMetric(
   metric: BaseMetric,
   options?: {
-    includeRegion?: boolean;
-    includeCohort?: boolean;
+    includeRegion?: boolean
+    includeCohort?: boolean
   },
 ): AnonymousMetric {
-  const { metadata, ...baseMetric } = metric;
+  const { metadata, ...baseMetric } = metric
 
   return {
     ...baseMetric,
@@ -360,7 +360,7 @@ export function anonymizeMetric(
       anonymizationMethod: 'hash',
       privacyLevel: 'high',
     },
-  };
+  }
 }
 
 /**
@@ -368,50 +368,50 @@ export function anonymizeMetric(
  */
 function generateAnonymousId(id: string): string {
   // Simple hash function - in production, use crypto.createHash
-  let hash = 0;
+  let hash = 0
   for (let i = 0; i < id.length; i++) {
-    const char = id.charCodeAt(i);
-    hash = (hash << 5) - hash + char;
-    hash = hash & hash; // Convert to 32-bit integer
+    const char = id.charCodeAt(i)
+    hash = (hash << 5) - hash + char
+    hash = hash & hash // Convert to 32-bit integer
   }
-  return `anon_${Math.abs(hash).toString(36)}`;
+  return `anon_${Math.abs(hash).toString(36)}`
 }
 
 /**
  * Extract region information from metadata
  */
 function extractRegion(metadata?: Record<string, unknown>): string | undefined {
-  if (!metadata) return undefined;
+  if (!metadata) return undefined
 
   // Extract city/state level information, avoiding specific addresses
-  const location = metadata.location as any;
+  const location = metadata.location as any
   if (location?.state && location?.city) {
-    return `${location.city}, ${location.state}`;
+    return `${location.city}, ${location.state}`
   }
 
-  return location?.state || location?.region;
+  return location?.state || location?.region
 }
 
 /**
  * Extract demographic cohort from metadata
  */
 function extractCohort(metadata?: Record<string, unknown>): string | undefined {
-  if (!metadata) return undefined;
+  if (!metadata) return undefined
 
   // Extract generalized demographic information
-  const demographics = metadata.demographics as any;
+  const demographics = metadata.demographics as any
   if (demographics?.ageRange) {
-    return `age_${demographics.ageRange}`;
+    return `age_${demographics.ageRange}`
   }
 
-  return undefined;
+  return undefined
 }
 
 /**
  * Create a mock metric for testing purposes
  */
 export function createMockMetric(overrides?: Partial<BaseMetric>): BaseMetric {
-  const now = new Date();
+  const now = new Date()
 
   return {
     id: 'mock_metric_' + Math.random().toString(36).substr(2, 9),
@@ -433,7 +433,7 @@ export function createMockMetric(overrides?: Partial<BaseMetric>): BaseMetric {
     createdAt: now,
     metadata: {},
     ...overrides,
-  };
+  }
 }
 
 /**
@@ -457,50 +457,50 @@ export function createMockAnalyticsEvent(
       ip: '127.0.0.1',
     },
     ...overrides,
-  };
+  }
 }
 
 /**
  * Validate metric compliance based on healthcare frameworks
  */
 export function validateMetricCompliance(metric: BaseMetric): MetricValidation {
-  const errors: string[] = [];
-  const warnings: string[] = [];
-  let qualityScore = 1.0;
+  const errors: string[] = []
+  const warnings: string[] = []
+  let qualityScore = 1.0
 
   // Validate required fields
   if (!metric.id) {
-    errors.push('Metric ID is required');
-    qualityScore -= 0.2;
+    errors.push('Metric ID is required')
+    qualityScore -= 0.2
   }
 
   if (!metric.name) {
-    errors.push('Metric name is required');
-    qualityScore -= 0.2;
+    errors.push('Metric name is required')
+    qualityScore -= 0.2
   }
 
   if (metric.value === undefined || metric.value === null) {
-    errors.push('Metric value is required');
-    qualityScore -= 0.3;
+    errors.push('Metric value is required')
+    qualityScore -= 0.3
   }
 
   // Validate healthcare compliance
   if (isHealthcareMetric(metric)) {
     if (!metric.source.includes('healthcare')) {
-      warnings.push('Healthcare metrics should specify healthcare data source');
-      qualityScore -= 0.1;
+      warnings.push('Healthcare metrics should specify healthcare data source')
+      qualityScore -= 0.1
     }
 
     if (metric.complianceFrameworks.length === 0) {
-      errors.push('Healthcare metrics must specify compliance frameworks');
-      qualityScore -= 0.2;
+      errors.push('Healthcare metrics must specify compliance frameworks')
+      qualityScore -= 0.2
     }
   }
 
   // Validate risk level alignment
   if (metric.riskLevel === 'CRITICAL' && metric.status !== 'active') {
-    warnings.push('Critical risk metrics should typically be active');
-    qualityScore -= 0.1;
+    warnings.push('Critical risk metrics should typically be active')
+    qualityScore -= 0.1
   }
 
   return {
@@ -509,7 +509,7 @@ export function validateMetricCompliance(metric: BaseMetric): MetricValidation {
     warnings,
     qualityScore: Math.max(0, qualityScore),
     validatedAt: new Date(),
-  };
+  }
 }
 
 /**
@@ -519,43 +519,43 @@ export function aggregateMetrics(
   metrics: BaseMetric[],
   aggregation: MetricAggregation = 'average',
 ): number {
-  if (metrics.length === 0) return 0;
+  if (metrics.length === 0) return 0
 
-  const values = metrics.map(m => m.value);
+  const values = metrics.map(m => m.value)
 
   switch (aggregation) {
     case 'sum':
-      return values.reduce((sum, _val) => sum + _val, 0);
+      return values.reduce((sum, _val) => sum + _val, 0)
 
     case 'average':
-      return values.reduce((sum, _val) => sum + _val, 0) / values.length;
+      return values.reduce((sum, _val) => sum + _val, 0) / values.length
 
     case 'count':
-      return values.length;
+      return values.length
 
     case 'min':
-      return Math.min(...values);
+      return Math.min(...values)
 
     case 'max':
-      return Math.max(...values);
+      return Math.max(...values)
 
     case 'median':
-      const sorted = values.sort((a, _b) => a - _b);
-      const mid = Math.floor(sorted.length / 2);
+      const sorted = values.sort((a, _b) => a - _b)
+      const mid = Math.floor(sorted.length / 2)
       return sorted.length % 2 === 0
         ? (sorted[mid - 1] + sorted[mid]) / 2
-        : sorted[mid];
+        : sorted[mid]
 
     case 'percentile':
       // Default to 95th percentile
-      const sortedValues = values.sort((a, _b) => a - _b);
-      const index = Math.ceil(0.95 * sortedValues.length) - 1;
-      return sortedValues[index];
+      const sortedValues = values.sort((a, _b) => a - _b)
+      const index = Math.ceil(0.95 * sortedValues.length) - 1
+      return sortedValues[index]
 
     case 'last_value':
-      return values[values.length - 1];
+      return values[values.length - 1]
 
     default:
-      return values.reduce((sum, _val) => sum + _val, 0) / values.length;
+      return values.reduce((sum, _val) => sum + _val, 0) / values.length
   }
 }

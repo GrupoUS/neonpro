@@ -7,30 +7,30 @@
  */
 
 async function testTDDOrchestrationIntegration(): Promise<void> {
-  console.log('🔗 Starting TDD Orchestration Integration Test\n');
+  console.error('🔗 Starting TDD Orchestration Integration Test\n')
 
   try {
     // Test 1: Basic system validation
-    console.log('1️⃣ Testing basic system...');
-    console.log('✅ TDD Orchestration system structure validated');
+    console.error('1️⃣ Testing basic system...')
+    console.error('✅ TDD Orchestration system structure validated')
 
     // Test 2: Integration readiness
-    console.log('2️⃣ Testing integration readiness...');
-    console.log('✅ Integration endpoints ready');
+    console.error('2️⃣ Testing integration readiness...')
+    console.error('✅ Integration endpoints ready')
 
-    console.log('\n✅ All integration tests passed!');
+    console.error('\n✅ All integration tests passed!')
   } catch (error) {
-    console.error('❌ Integration test failed:', error);
-    process.exit(1);
+    console.error('❌ Integration test failed:', error)
+    process.exit(1)
   }
 }
 
 // Run if executed directly
 if (import.meta.url === `file://${process.argv[1]}`) {
-  testTDDOrchestrationIntegration().catch(error => {
-    console.error('Test execution failed:', error);
-    process.exit(1);
-  });
+  testTDDOrchestrationIntegration().catch((error) => {
+    console.error('Test execution failed:', error)
+    process.exit(1)
+  })
 }
 
-export { testTDDOrchestrationIntegration };
+export { testTDDOrchestrationIntegration }

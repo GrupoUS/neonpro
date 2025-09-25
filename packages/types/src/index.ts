@@ -1,8 +1,36 @@
-import { UserRole } from './ai-agent';
-import { ChatMessage } from './ai-chat';
+import { UserRole } from './ai-agent.js'
+import { ChatMessage } from './ai-chat.js'
 
 // Types Package Index Exports
 // This file exports all types from the packages/types directory
+
+// Enhanced Domain-Driven Design types
+export * from './core/base.js'
+export * from './core/primitives.js'
+
+// Domain types with conflict resolution
+export type { DomainEvent as BaseDomainEvent } from './core/base.js'
+export type {
+  LGPDConsentStatus,
+  validateCPF as validateHealthcareCPF,
+  validateCEP as validateAddressCEP,
+  Gender,
+  BloodType,
+  ContactMethod,
+  AppointmentStatus,
+  AppointmentPriority,
+  AppointmentType
+} from './domain/index.js'
+export type { DomainEvent } from './domain/events/domain-events.js'
+
+// Validation schemas and utilities
+export * from './validation/validators.js'
+export * from './validation/zod/patient.js'
+export type {
+  AppointmentStatus as ValibotAppointmentStatus,
+  AppointmentPriority as ValibotAppointmentPriority,
+  AppointmentType as ValibotAppointmentType
+} from './validation/valibot/appointment.js'
 
 // Core AI types
 // AI Agent types (avoiding conflicts with ai-chat)
@@ -40,7 +68,7 @@ export type {
   UserPreferences,
   UserQuery,
   UserRole,
-} from './ai-agent';
+} from './ai-agent.js'
 
 // AI Chat types (avoiding conflicts with ai-agent)
 export type {
@@ -52,7 +80,7 @@ export type {
   ChatSessionMetadata,
   ChatSessionStatus,
   ConsentStatus,
-} from './ai-chat';
+} from './ai-chat.js'
 
 // AI Enhanced types (conflicting types handled selectively)
 export type {
@@ -97,115 +125,122 @@ export type {
   UsageCounter,
   UsageCounterData,
   UserSubscription,
-} from './ai-enhanced';
-
+} from './ai-enhanced.js'
 
 // AI Provider types
-export * from './ai-provider';
+export * from './ai-provider.js'
+
+// Legacy AI provider types for backward compatibility
+export type {
+  AIProviderInterface,
+  GenerateAnswerInput,
+  GenerateAnswerResult,
+  StreamChunk
+} from './ai-provider.js'
 
 // Database and governance types
-export * from './database-records';
-export * from './governance.types';
-export * from './healthcare';
-export * from './healthcare-governance.types';
+export * from './database-records.js'
+export * from './governance.types.js'
+export type { DataSubjectRequest as HealthcareDataSubjectRequest } from './healthcare.js'
+export * from './healthcare-governance.types.js'
 
 // Healthcare validation schemas
-export * from './appointment.valibot';
-export * from './lgpd.valibot';
-export * from './patient.valibot';
-export * from './prescription.valibot';
+export * from './appointment.valibot.js'
+export * from './lgpd.valibot.js'
+export * from './patient.valibot.js'
+export * from './prescription.valibot.js'
 
 // Utility types
-export * from './aesthetic-data';
+export * from './aesthetic-data.js'
 
 // Enhanced AI types (exporting all since ai-enhanced handles the conflicts)
-export * from './enhanced-ai';
-export * from './webrtc';
+export * from './enhanced-ai.js'
+export * from './webrtc.js'
 
 // API contracts
-export * from './api/contracts';
+export * from './api/contracts.js'
 
 // Re-export commonly used types for convenience
 export interface Patient {
-  id: string;
-  clinicId: string;
-  medicalRecordNumber: string;
-  externalIds?: ExternalIds;
-  givenNames: string[];
-  familyName: string;
-  fullName: string;
-  preferredName?: string;
-  phonePrimary?: string;
-  phoneSecondary?: string;
-  email?: string;
-  addressLine1?: string;
-  addressLine2?: string;
-  city?: string;
-  state?: string;
-  postalCode?: string;
-  country?: string;
-  birthDate?: string;
-  gender?: string;
-  maritalStatus?: string;
-  isActive?: boolean;
-  deceasedIndicator?: boolean;
-  deceasedDate?: string;
-  dataConsentStatus?: string;
-  dataConsentDate?: string;
-  dataRetentionUntil?: string;
-  dataSource?: string;
-  createdAt?: string;
-  updatedAt?: string;
-  createdBy?: string;
-  updatedBy?: string;
-  photoUrl?: string;
-  cpf?: string;
-  rg?: string;
-  passportNumber?: string;
-  preferredContactMethod?: string;
-  bloodType?: string;
-  allergies: string[];
-  chronicConditions: string[];
-  currentMedications: string[];
-  insuranceProvider?: string;
-  insuranceNumber?: string;
-  insurancePlan?: string;
-  emergencyContactName?: string;
-  emergencyContactPhone?: string;
-  emergencyContactRelationship?: string;
-  lgpdConsentGiven: boolean;
+  id: string
+  clinicId: string
+  medicalRecordNumber: string
+  externalIds?: ExternalIds
+  givenNames: string[]
+  familyName: string
+  fullName: string
+  preferredName?: string
+  phonePrimary?: string
+  phoneSecondary?: string
+  email?: string
+  addressLine1?: string
+  addressLine2?: string
+  city?: string
+  state?: string
+  postalCode?: string
+  country?: string
+  birthDate?: string
+  gender?: string
+  maritalStatus?: string
+  isActive?: boolean
+  deceasedIndicator?: boolean
+  deceasedDate?: string
+  dataConsentStatus?: string
+  dataConsentDate?: string
+  dataRetentionUntil?: string
+  dataSource?: string
+  createdAt?: string
+  updatedAt?: string
+  createdBy?: string
+  updatedBy?: string
+  photoUrl?: string
+  cpf?: string
+  rg?: string
+  passportNumber?: string
+  preferredContactMethod?: string
+  bloodType?: string
+  allergies: string[]
+  chronicConditions: string[]
+  currentMedications: string[]
+  insuranceProvider?: string
+  insuranceNumber?: string
+  insurancePlan?: string
+  emergencyContactName?: string
+  emergencyContactPhone?: string
+  emergencyContactRelationship?: string
+  lgpdConsentGiven: boolean
 }
 
 export interface Appointment {
-  id: string;
-  clinicId: string;
-  patientId: string;
-  professionalId: string;
-  serviceTypeId?: string;
-  status?: string;
-  startTime: string;
-  endTime: string;
-  notes?: string;
-  internalNotes?: string;
-  reminderSentAt?: string;
-  confirmationSentAt?: string;
-  whatsappReminderSent?: boolean;
-  smsReminderSent?: boolean;
-  roomId?: string;
-  priority?: number;
-  createdAt?: string;
-  updatedAt?: string;
-  createdBy: string;
-  updatedBy?: string;
-  cancelledAt?: string;
-  cancelledBy?: string;
-  cancellationReason?: string;
+  id: string
+  clinicId: string
+  patientId: string
+  professionalId: string
+  serviceTypeId?: string
+  status?: string
+  startTime: string
+  endTime: string
+  notes?: string
+  internalNotes?: string
+  reminderSentAt?: string
+  confirmationSentAt?: string
+  whatsappReminderSent?: boolean
+  smsReminderSent?: boolean
+  roomId?: string
+  priority?: number
+  createdAt?: string
+  updatedAt?: string
+  createdBy: string
+  updatedBy?: string
+  cancelledAt?: string
+  cancelledBy?: string
+  cancellationReason?: string
   // Calendar-specific properties
-  title?: string;
-  start?: Date | string;
-  end?: Date | string;
-  color?: string;
-  description?: string;
+  title?: string
+  start?: Date | string
+  end?: Date | string
+  color?: string
+  description?: string
 }
 
 // Database types - properly typed with generics for healthcare compliance
@@ -213,98 +248,98 @@ export interface Database<TRow = Record<string, any>, TInsert = TRow, TUpdate = 
   public: {
     Tables: {
       [key: string]: {
-        Row: TRow;
-        Insert: TInsert;
-        Update: TUpdate;
-      };
-    };
+        Row: TRow
+        Insert: TInsert
+        Update: TUpdate
+      }
+    }
     Views: {
       [key: string]: {
-        Row: TRow;
-      };
-    };
+        Row: TRow
+      }
+    }
     Functions: {
       [key: string]: {
-        Args: Record<string, unknown>;
-        Returns: unknown;
-      };
-    };
+        Args: Record<string, unknown>
+        Returns: unknown
+      }
+    }
     Enums: {
-      [key: string]: string;
-    };
-  };
+      [key: string]: string
+    }
+  }
 }
 
 // Base database types with healthcare constraints
 export interface DatabaseRow {
-  id: string;
-  created_at?: string;
-  updated_at?: string;
-  created_by?: string;
-  updated_by?: string;
-  deleted_at?: string;
-  is_active?: boolean;
-  [key: string]: unknown;
+  id: string
+  created_at?: string
+  updated_at?: string
+  created_by?: string
+  updated_by?: string
+  deleted_at?: string
+  is_active?: boolean
+  [key: string]: unknown
 }
 
 export interface DatabaseInsert {
-  id?: string;
-  created_at?: string;
-  updated_at?: string;
-  created_by?: string;
-  updated_by?: string;
-  deleted_at?: string;
-  is_active?: boolean;
-  [key: string]: unknown;
+  id?: string
+  created_at?: string
+  updated_at?: string
+  created_by?: string
+  updated_by?: string
+  deleted_at?: string
+  is_active?: boolean
+  [key: string]: unknown
 }
 
 export interface DatabaseUpdate {
-  id?: string;
-  created_at?: string;
-  updated_at?: string;
-  created_by?: string;
-  updated_by?: string;
-  deleted_at?: string;
-  is_active?: boolean;
-  [key: string]: unknown;
+  id?: string
+  created_at?: string
+  updated_at?: string
+  created_by?: string
+  updated_by?: string
+  deleted_at?: string
+  is_active?: boolean
+  [key: string]: unknown
 }
 
 // Healthcare-specific external ID types
 export interface ExternalIds {
-  integration_id?: string;
-  legacy_id?: string;
-  external_system_id?: string;
-  insurance_id?: string;
-  medical_record_system_id?: string;
-  [key: string]: string | number | boolean | null | undefined;
+  integration_id?: string
+  legacy_id?: string
+  external_system_id?: string
+  insurance_id?: string
+  medical_record_system_id?: string
+  [key: string]: string | number | boolean | null | undefined
 }
 
 // AI Feedback types
 export interface FeedbackRequest {
-  sessionId: string;
-  messageId?: string;
-  rating: number; // 1-5
-  comment?: string;
-  userRole: UserRole;
-  timestamp: string;
+  sessionId: string
+  messageId?: string
+  rating: number // 1-5
+  comment?: string
+  userRole: UserRole
+  timestamp: string
 }
 
 export interface FeedbackResponse {
-  id: string;
-  sessionId: string;
-  rating: number;
-  comment?: string;
-  processed: boolean;
-  createdAt: string;
+  id: string
+  sessionId: string
+  rating: number
+  comment?: string
+  processed: boolean
+  createdAt: string
 }
 
 // AI Session types
 export interface SessionResponse {
-  id: string;
-  userId: string;
-  status: 'active' | 'completed' | 'archived';
-  messages: ChatMessage[];
-  metadata: Record<string, any>;
-  createdAt: string;
-  updatedAt: string;
+  id: string
+  userId: string
+  status: 'active' | 'completed' | 'archived'
+  messages: ChatMessage[]
+  metadata: Record<string, any>
+  createdAt: string
+  updatedAt: string
 }

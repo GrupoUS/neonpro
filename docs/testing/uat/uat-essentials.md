@@ -63,9 +63,9 @@ pnpm test:compliance
 // Basic screen recording
 navigator.mediaDevices.getDisplayMedia()
   .then(stream => {
-    const recorder = new MediaRecorder(stream);
-    recorder.start();
-  });
+    const recorder = new MediaRecorder(stream)
+    recorder.start()
+  })
 ```
 
 ### Issue Tracking

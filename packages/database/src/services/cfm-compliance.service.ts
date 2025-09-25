@@ -4,45 +4,45 @@
  * for telemedicine platform
  */
 
-import { databaseLogger, logHealthcareError } from '../../../shared/src/logging/healthcare-logger';
-import { createClient } from '../client';
+import { createClient } from '../client'
+import { databaseLogger, logHealthcareError } from '../utils/logging'
 // import type { Database } from '../types/supabase';
 
 export interface CFMLicenseValidation {
-  crmNumber: string;
-  crmState: string;
-  specialties?: string[];
-  isValid: boolean;
-  status: 'active' | 'expired' | 'suspended' | 'revoked';
-  expiryDate?: Date;
-  validationTimestamp: Date;
-  errorMessage?: string;
+  crmNumber: string
+  crmState: string
+  specialties?: string[]
+  isValid: boolean
+  status: 'active' | 'expired' | 'suspended' | 'revoked'
+  expiryDate?: Date
+  validationTimestamp: Date
+  errorMessage?: string
 }
 
 export interface CFMComplianceCheck {
-  sessionId: string;
-  professionalLicenseValid: boolean;
-  patientIdentityVerified: boolean;
-  informedConsentObtained: boolean;
-  dataEncryptionEnabled: boolean;
-  auditTrailActive: boolean;
-  complianceScore: number; // 0-100
-  violations: string[];
-  recommendations: string[];
+  sessionId: string
+  professionalLicenseValid: boolean
+  patientIdentityVerified: boolean
+  informedConsentObtained: boolean
+  dataEncryptionEnabled: boolean
+  auditTrailActive: boolean
+  complianceScore: number // 0-100
+  violations: string[]
+  recommendations: string[]
 }
 
 export interface TelemedicineSessionValidation {
-  appointment_id: string;
-  patient_id: string;
-  cfm_professional_crm: string;
-  cfm_professional_state: string;
-  patient_consent_obtained: boolean;
-  recording_consent_required: boolean;
-  data_retention_period?: string;
+  appointment_id: string
+  patient_id: string
+  cfm_professional_crm: string
+  cfm_professional_state: string
+  patient_consent_obtained: boolean
+  recording_consent_required: boolean
+  data_retention_period?: string
 }
 
 export class CFMComplianceService {
-  private supabase = createClient();
+  private supabase = createClient()
 
   /**
    * Validates a medical professional's CFM license
@@ -59,17 +59,17 @@ export class CFMComplianceService {
         .select('*')
         .eq('crm_number', crmNumber)
         .eq('crm_state', crmState)
-        .single();
+        .single()
 
       if (localError && localError.code !== 'PGRST116') {
-        throw new Error(`Database error: ${localError.message}`);
+        throw new Error(`Database error: ${localError.message}`)
       }
 
       if (localLicense) {
         // Check if license is still valid
-        const isValid = localLicense.license_status === 'active'
-          && (!localLicense.license_expiry_date
-            || new Date(localLicense.license_expiry_date) > new Date());
+        const isValid = localLicense.license_status === 'active' &&
+          (!localLicense.license_expiry_date ||
+            new Date(localLicense.license_expiry_date) > new Date())
 
         return {
           crmNumber,
@@ -85,7 +85,7 @@ export class CFMComplianceService {
             ? new Date(localLicense.license_expiry_date)
             : undefined,
           validationTimestamp: new Date(),
-        };
+        }
       }
 
       // If not in local database, we would integrate with CFM API
@@ -102,12 +102,12 @@ export class CFMComplianceService {
           last_cfm_validation: new Date().toISOString(),
         })
         .select()
-        .single();
+        .single()
 
       if (insertError) {
         throw new Error(
           `Failed to create license record: ${insertError.message}`,
-        );
+        )
       }
 
       return {
@@ -117,13 +117,13 @@ export class CFMComplianceService {
         status: 'active', // Assume valid until proven otherwise
         validationTimestamp: new Date(),
         errorMessage: 'License requires external CFM validation',
-      };
+      }
     } catch (error) {
       logHealthcareError('database', error, {
         method: 'validateProfessionalLicense',
         crmNumber,
         crmState,
-      });
+      })
       return {
         crmNumber,
         crmState,
@@ -131,7 +131,7 @@ export class CFMComplianceService {
         status: 'active',
         validationTimestamp: new Date(),
         errorMessage: error instanceof Error ? error.message : 'Validation failed',
-      };
+      }
     }
   }
 
@@ -147,12 +147,12 @@ export class CFMComplianceService {
       const licenseValidation = await this.validateProfessionalLicense(
         params.cfm_professional_crm,
         params.cfm_professional_state,
-      );
+      )
 
       if (!licenseValidation.isValid) {
         throw new Error(
           `Professional license validation failed: ${licenseValidation.errorMessage}`,
-        );
+        )
       }
 
       // Step 2: Verify appointment exists
@@ -160,15 +160,15 @@ export class CFMComplianceService {
         .from('appointments')
         .select('*, patient:patients(*), clinic:clinics(*)')
         .eq('id', params.appointment_id)
-        .single();
+        .single()
 
       if (appointmentError || !appointment) {
-        throw new Error('Appointment not found or invalid');
+        throw new Error('Appointment not found or invalid')
       }
 
       // Step 3: Generate secure session token and encryption key
-      const sessionToken = this.generateSecureToken();
-      const encryptionKey = this.generateEncryptionKey();
+      const sessionToken = this.generateSecureToken()
+      const encryptionKey = this.generateEncryptionKey()
 
       // Step 4: Create telemedicine session with CFM compliance
       const { data: session, error: sessionError } = await this.supabase
@@ -237,32 +237,32 @@ export class CFMComplianceService {
           ],
         })
         .select()
-        .single();
+        .single()
 
       if (sessionError) {
         throw new Error(
           `Failed to create telemedicine session: ${sessionError.message}`,
-        );
+        )
       }
 
       // Step 5: Perform compliance check
-      const complianceCheck = await this.performComplianceCheck(session.id);
+      const complianceCheck = await this.performComplianceCheck(session.id)
 
       // Step 6: Create WebRTC session for video calling
-      await this.createWebRTCSession(session.id);
+      await this.createWebRTCSession(session.id)
 
       return {
         sessionId: session.id,
         complianceStatus: complianceCheck,
-      };
+      }
     } catch (error) {
       logHealthcareError('database', error, {
         method: 'createTelemedicineSession',
         appointmentId: params.appointment_id,
-      });
+      })
       throw new Error(
         `Session creation failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
-      );
+      )
     }
   }
 
@@ -280,72 +280,72 @@ export class CFMComplianceService {
         `,
         )
         .eq('id', sessionId)
-        .single();
+        .single()
 
       if (error || !session) {
-        throw new Error('Session not found');
+        throw new Error('Session not found')
       }
 
-      const violations: string[] = [];
-      const recommendations: string[] = [];
-      let score = 100;
+      const violations: string[] = []
+      const recommendations: string[] = []
+      let score = 100
 
       // Check 1: Professional license validation (CFM Article 4)
-      const professionalLicenseValid = session.cfm_validation_status === 'validated';
+      const professionalLicenseValid = session.cfm_validation_status === 'validated'
       if (!professionalLicenseValid) {
-        violations.push('Professional license not validated');
-        recommendations.push('Validate CFM professional license');
-        score -= 20;
+        violations.push('Professional license not validated')
+        recommendations.push('Validate CFM professional license')
+        score -= 20
       }
 
       // Check 2: Patient identity verification (CFM Article 6)
-      const patientIdentityVerified = session.appointment?.patient?.cpf != null;
+      const patientIdentityVerified = session.appointment?.patient?.cpf != null
       if (!patientIdentityVerified) {
-        violations.push('Patient identity not properly verified');
-        recommendations.push('Implement CPF/RG verification');
-        score -= 15;
+        violations.push('Patient identity not properly verified')
+        recommendations.push('Implement CPF/RG verification')
+        score -= 15
       }
 
       // Check 3: Informed consent (CFM Article 8)
-      const informedConsentObtained = session.lgpd_compliant;
+      const informedConsentObtained = session.lgpd_compliant
       if (!informedConsentObtained) {
-        violations.push('Informed consent not obtained');
-        recommendations.push('Obtain and document informed consent');
-        score -= 25;
+        violations.push('Informed consent not obtained')
+        recommendations.push('Obtain and document informed consent')
+        score -= 25
       }
 
       // Check 4: Data encryption (CFM Article 10)
-      const dataEncryptionEnabled = session.ngs2_encryption_standard === 'AES_256';
+      const dataEncryptionEnabled = session.ngs2_encryption_standard === 'AES_256'
       if (!dataEncryptionEnabled) {
-        violations.push('Adequate data encryption not enabled');
-        recommendations.push('Enable AES-256 encryption');
-        score -= 20;
+        violations.push('Adequate data encryption not enabled')
+        recommendations.push('Enable AES-256 encryption')
+        score -= 20
       }
 
       // Check 5: Audit trail (CFM Article 10)
-      const auditTrailActive = session.audit_events && session.audit_events.length > 0;
+      const auditTrailActive = session.audit_events && session.audit_events.length > 0
       if (!auditTrailActive) {
-        violations.push('Audit trail not properly maintained');
-        recommendations.push('Implement comprehensive audit logging');
-        score -= 10;
+        violations.push('Audit trail not properly maintained')
+        recommendations.push('Implement comprehensive audit logging')
+        score -= 10
       }
 
       // Check 6: Recording consent (CFM Article 8)
       if (session.recording_enabled && !session.recording_consent) {
-        violations.push('Recording enabled without proper consent');
-        recommendations.push('Obtain recording consent before enabling');
-        score -= 15;
+        violations.push('Recording enabled without proper consent')
+        recommendations.push('Obtain recording consent before enabling')
+        score -= 15
       }
 
       // Check 7: Data retention compliance (CFM Article 3)
       if (!session.data_retention_period) {
-        violations.push('Data retention period not defined');
-        recommendations.push('Define and enforce data retention period');
-        score -= 5;
+        violations.push('Data retention period not defined')
+        recommendations.push('Define and enforce data retention period')
+        score -= 5
       }
 
       // Ensure score doesn't go below 0
-      score = Math.max(0, score);
+      score = Math.max(0, score)
 
       // Update session with compliance score
       await this.supabase
@@ -355,7 +355,7 @@ export class CFMComplianceService {
           ngs2_compliance_checked: true,
           compliance_validated_at: new Date().toISOString(),
         })
-        .eq('id', sessionId);
+        .eq('id', sessionId)
 
       return {
         sessionId,
@@ -367,10 +367,10 @@ export class CFMComplianceService {
         complianceScore: score,
         violations,
         recommendations,
-      };
+      }
     } catch (error) {
-      logHealthcareError('database', error, { method: 'performComplianceCheck', sessionId });
-      throw error;
+      logHealthcareError('database', error, { method: 'performComplianceCheck', sessionId })
+      throw error
     }
   }
 
@@ -381,7 +381,7 @@ export class CFMComplianceService {
     telemedicineSessionId: string,
   ): Promise<void> {
     try {
-      const roomId = this.generateRoomId();
+      const roomId = this.generateRoomId()
 
       const { error } = await this.supabase.from('webrtc_sessions').insert({
         telemedicine_session_id: telemedicineSessionId,
@@ -395,17 +395,17 @@ export class CFMComplianceService {
         dtls_enabled: true,
         srtp_enabled: true,
         connection_state: 'new',
-      });
+      })
 
       if (error) {
-        throw new Error(`Failed to create WebRTC session: ${error.message}`);
+        throw new Error(`Failed to create WebRTC session: ${error.message}`)
       }
     } catch (error) {
       logHealthcareError('database', error, {
         method: 'createWebRTCSession',
         telemedicineSessionId,
-      });
-      throw error;
+      })
+      throw error
     }
   }
 
@@ -423,13 +423,13 @@ export class CFMComplianceService {
         .from('cfm_compliance_dashboard')
         .select('*')
         .eq('clinic_id', clinicId)
-        .single();
+        .single()
 
       if (dashboardError) {
         databaseLogger.warn('Dashboard data not available', {
           error: dashboardError.message,
           clinicId,
-        });
+        })
       }
 
       // Get detailed session data for the period
@@ -447,32 +447,32 @@ export class CFMComplianceService {
         )
         .eq('clinic_id', clinicId)
         .gte('created_at', periodStart.toISOString())
-        .lte('created_at', periodEnd.toISOString());
+        .lte('created_at', periodEnd.toISOString())
 
       if (sessionsError) {
         throw new Error(
           `Failed to fetch session data: ${sessionsError.message}`,
-        );
+        )
       }
 
       // Calculate detailed metrics
-      const totalSessions = sessions?.length || 0;
+      const totalSessions = sessions?.length || 0
       const validatedSessions = sessions?.filter(s => s.cfm_validation_status === 'validated')
-        .length || 0;
-      const complianceRate = totalSessions > 0 ? (validatedSessions / totalSessions) * 100 : 100;
+        .length || 0
+      const complianceRate = totalSessions > 0 ? (validatedSessions / totalSessions) * 100 : 100
 
-      const sessionsWithConsent = sessions?.filter(s => s.lgpd_compliant).length || 0;
+      const sessionsWithConsent = sessions?.filter(s => s.lgpd_compliant).length || 0
       const sessionsWithRecording = sessions?.filter(s =>
         s.recording_enabled && s.recording_consent
       )
-        .length || 0;
+        .length || 0
 
       const averageComplianceScore = sessions?.length > 0
         ? sessions.reduce(
           (sum, _s) => sum + (s.ngs2_compliance_score || 0),
           0,
         ) / sessions.length
-        : 100;
+        : 100
 
       // Generate compliance report
       const { data: report, error: reportError } = await this.supabase
@@ -500,21 +500,21 @@ export class CFMComplianceService {
           report_status: 'completed',
         })
         .select()
-        .single();
+        .single()
 
       if (reportError) {
-        throw new Error(`Failed to generate report: ${reportError.message}`);
+        throw new Error(`Failed to generate report: ${reportError.message}`)
       }
 
-      return report;
+      return report
     } catch (error) {
       logHealthcareError('database', error, {
         method: 'generateComplianceReport',
         clinicId,
         periodStart,
         periodEnd,
-      });
-      throw error;
+      })
+      throw error
     }
   }
 
@@ -522,35 +522,35 @@ export class CFMComplianceService {
    * Utility functions for session management
    */
   private generateSecureToken(): string {
-    return crypto.randomUUID() + '-' + Date.now().toString(36);
+    return crypto.randomUUID() + '-' + Date.now().toString(36)
   }
 
   private generateEncryptionKey(): string {
     // In production, this would use proper key management (HSM)
-    const array = new Uint8Array(32);
-    crypto.getRandomValues(array);
-    return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
+    const array = new Uint8Array(32)
+    crypto.getRandomValues(array)
+    return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('')
   }
 
   private generateRoomId(): string {
-    return 'room-' + crypto.randomUUID();
+    return 'room-' + crypto.randomUUID()
   }
 
   /**
    * Validates patient identity according to CFM requirements
    */
   async validatePatientIdentity(patientId: string): Promise<{
-    isValid: boolean;
-    verificationMethod: string;
-    documentsVerified: string[];
-    errors: string[];
+    isValid: boolean
+    verificationMethod: string
+    documentsVerified: string[]
+    errors: string[]
   }> {
     try {
       const { data: patient, error } = await this.supabase
         .from('patients')
         .select('cpf, rg, cns, full_name, birth_date')
         .eq('id', patientId)
-        .single();
+        .single()
 
       if (error || !patient) {
         return {
@@ -558,51 +558,51 @@ export class CFMComplianceService {
           verificationMethod: 'none',
           documentsVerified: [],
           errors: ['Patient not found'],
-        };
+        }
       }
 
-      const errors: string[] = [];
-      const documentsVerified: string[] = [];
+      const errors: string[] = []
+      const documentsVerified: string[] = []
 
       // Validate CPF
       if (patient.cpf) {
         if (this.isValidCPF(patient.cpf)) {
-          documentsVerified.push('CPF');
+          documentsVerified.push('CPF')
         } else {
-          errors.push('Invalid CPF format');
+          errors.push('Invalid CPF format')
         }
       } else {
-        errors.push('CPF is required');
+        errors.push('CPF is required')
       }
 
       // Validate RG
       if (patient.rg) {
-        documentsVerified.push('RG');
+        documentsVerified.push('RG')
       } else {
-        errors.push('RG is required');
+        errors.push('RG is required')
       }
 
       // Optional: CNS validation
       if (patient.cns) {
-        documentsVerified.push('CNS');
+        documentsVerified.push('CNS')
       }
 
-      const isValid = errors.length === 0 && documentsVerified.length >= 2;
+      const isValid = errors.length === 0 && documentsVerified.length >= 2
 
       return {
         isValid,
         verificationMethod: 'document_verification',
         documentsVerified,
         errors,
-      };
+      }
     } catch (error) {
-      logHealthcareError('database', error, { method: 'validatePatientIdentity', patientId });
+      logHealthcareError('database', error, { method: 'validatePatientIdentity', patientId })
       return {
         isValid: false,
         verificationMethod: 'error',
         documentsVerified: [],
         errors: [error instanceof Error ? error.message : 'Validation failed'],
-      };
+      }
     }
   }
 
@@ -611,32 +611,32 @@ export class CFMComplianceService {
    */
   private isValidCPF(cpf: string): boolean {
     // Remove non-numeric characters
-    cpf = cpf.replace(/[^\d]/g, '');
+    cpf = cpf.replace(/[^\d]/g, '')
 
     // Check if has 11 digits
-    if (cpf.length !== 11) return false;
+    if (cpf.length !== 11) return false
 
     // Check if all digits are the same
-    if (/^(\d)\1{10}$/.test(cpf)) return false;
+    if (/^(\d)\1{10}$/.test(cpf)) return false
 
     // Validate check digits
-    let sum = 0;
+    let sum = 0
     for (let i = 0; i < 9; i++) {
-      sum += parseInt(cpf.charAt(i)) * (10 - i);
+      sum += parseInt(cpf.charAt(i)) * (10 - i)
     }
-    let remainder = (sum * 10) % 11;
-    if (remainder === 10 || remainder === 11) remainder = 0;
-    if (remainder !== parseInt(cpf.charAt(9))) return false;
+    let remainder = (sum * 10) % 11
+    if (remainder === 10 || remainder === 11) remainder = 0
+    if (remainder !== parseInt(cpf.charAt(9))) return false
 
-    sum = 0;
+    sum = 0
     for (let i = 0; i < 10; i++) {
-      sum += parseInt(cpf.charAt(i)) * (11 - i);
+      sum += parseInt(cpf.charAt(i)) * (11 - i)
     }
-    remainder = (sum * 10) % 11;
-    if (remainder === 10 || remainder === 11) remainder = 0;
-    if (remainder !== parseInt(cpf.charAt(10))) return false;
+    remainder = (sum * 10) % 11
+    if (remainder === 10 || remainder === 11) remainder = 0
+    if (remainder !== parseInt(cpf.charAt(10))) return false
 
-    return true;
+    return true
   }
 
   /**
@@ -646,11 +646,11 @@ export class CFMComplianceService {
    * Logs compliance events for audit trail
    */
   async logComplianceEvent(event: {
-    sessionId: string;
-    eventType: import('../types/events').ComplianceEventType;
-    description: string;
-    metadata?: Record<string, any>;
-    severity?: 'low' | 'medium' | 'high' | 'critical';
+    sessionId: string
+    eventType: import('../types/events').ComplianceEventType
+    description: string
+    metadata?: Record<string, any>
+    severity?: 'low' | 'medium' | 'high' | 'critical'
   }): Promise<void> {
     try {
       const { error } = await this.supabase
@@ -662,14 +662,14 @@ export class CFMComplianceService {
           metadata: event.metadata || {},
           severity: event.severity || 'medium',
           timestamp: new Date().toISOString(),
-        });
+        })
 
       if (error) {
         logHealthcareError('database', error, {
           method: 'logComplianceEvent',
           sessionId: event.sessionId,
           eventType: event.eventType,
-        });
+        })
         // Don't throw error to avoid breaking the main flow
       }
     } catch (error) {
@@ -677,7 +677,7 @@ export class CFMComplianceService {
         method: 'logComplianceEvent',
         sessionId: event.sessionId,
         eventType: event.eventType,
-      });
+      })
       // Don't throw error to avoid breaking the main flow
     }
   }
@@ -703,10 +703,10 @@ export class CFMComplianceService {
         `,
         )
         .eq('id', sessionId)
-        .single();
+        .single()
 
       if (error) {
-        throw new Error(`Failed to get audit trail: ${error.message}`);
+        throw new Error(`Failed to get audit trail: ${error.message}`)
       }
 
       return {
@@ -714,10 +714,10 @@ export class CFMComplianceService {
         auditTrail: data?.compliance_logs || [],
         sessionData: data,
         generatedAt: new Date().toISOString(),
-      };
+      }
     } catch (error) {
-      logHealthcareError('database', error, { method: 'getSessionAuditTrail', sessionId });
-      throw error;
+      logHealthcareError('database', error, { method: 'getSessionAuditTrail', sessionId })
+      throw error
     }
   }
 }

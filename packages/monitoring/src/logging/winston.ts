@@ -1,14 +1,14 @@
-import winston from 'winston';
-import type { LogLevel } from '../types';
+import winston from 'winston'
+import type { LogLevel } from '../types'
 
 interface LoggingConfig {
-  level: LogLevel;
-  format: 'json' | 'pretty';
-  transports: ('console' | 'file')[];
+  level: LogLevel
+  format: 'json' | 'pretty'
+  transports: ('console' | 'file')[]
 }
 
 export function createLogger(config: LoggingConfig): winston.Logger {
-  const transports: winston.transport[] = [];
+  const transports: winston.transport[] = []
 
   // Console transport
   if (config.transports.includes('console')) {
@@ -22,7 +22,7 @@ export function createLogger(config: LoggingConfig): winston.Logger {
               ({ timestamp, level, _message, ...meta }) => {
                 return `${timestamp} [${level}]: ${_message} ${
                   Object.keys(meta).length ? JSON.stringify(meta, null, 2) : ''
-                }`;
+                }`
               },
             ),
           )
@@ -31,7 +31,7 @@ export function createLogger(config: LoggingConfig): winston.Logger {
             winston.format.json(),
           ),
       }),
-    );
+    )
   }
 
   // File transport
@@ -44,7 +44,7 @@ export function createLogger(config: LoggingConfig): winston.Logger {
           winston.format.json(),
         ),
       }),
-    );
+    )
   }
 
   return winston.createLogger({
@@ -53,5 +53,5 @@ export function createLogger(config: LoggingConfig): winston.Logger {
     defaultMeta: {
       _service: 'neonpro-monitoring',
     },
-  });
+  })
 }

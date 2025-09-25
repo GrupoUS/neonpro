@@ -3,21 +3,19 @@
  * Brazilian healthcare compliant CFM certification validation for aesthetic procedures
  */
 
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Progress } from '@/components/ui/progress';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { trpc } from '@/lib/trpc';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Progress } from '@/components/ui/progress'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { trpc } from '@/lib/trpc'
 import {
-  type AestheticProcedure,
   type CertificationValidation,
-  type ProfessionalCertification,
-} from '@/types/aesthetic-scheduling';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+} from '@/types/aesthetic-scheduling'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
   AlertTriangle,
   Award,
@@ -29,26 +27,26 @@ import {
   Shield,
   User,
   XCircle,
-} from 'lucide-react';
-import React, { useEffect, useState } from 'react';
+} from 'lucide-react'
+import React, { useEffect, useState } from 'react'
 
 interface CertificationValidatorProps {
-  onValidationComplete?: (validation: CertificationValidation) => void;
-  onError?: (error: Error) => void;
+  onValidationComplete?: (validation: CertificationValidation) => void
+  onError?: (error: Error) => void
 }
 
 export function CertificationValidator(
   { onValidationComplete, onError }: CertificationValidatorProps,
 ) {
-  const queryClient = useQueryClient();
-  const [selectedProfessional, setSelectedProfessional] = useState<string>('');
-  const [selectedProcedures, setSelectedProcedures] = useState<string[]>([]);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [validationResults, setValidationResults] = useState<CertificationValidation | null>(null);
+  const queryClient = useQueryClient()
+  const [selectedProfessional, setSelectedProfessional] = useState<string>('')
+  const [selectedProcedures, setSelectedProcedures] = useState<string[]>([])
+  const [searchTerm, setSearchTerm] = useState('')
+  const [validationResults, setValidationResults] = useState<CertificationValidation | null>(null)
 
   // Fetch professionals
   const { data: professionalsData, isLoading: professionalsLoading } = (trpc as any).professional
-    .getAll.useQuery();
+    .getAll.useQuery()
 
   // Fetch aesthetic procedures
   const { data: proceduresData, isLoading: proceduresLoading } = (trpc as any).aestheticScheduling
@@ -57,93 +55,93 @@ export function CertificationValidator(
       {
         select: (data: any) => data.procedures,
       },
-    );
+    )
 
   // Validate certifications mutation
   const validateMutation = (trpc as any).aestheticScheduling.validateProfessionalCertifications
     .useMutation({
       onSuccess: (data: any) => {
-        setValidationResults(data);
-        onValidationComplete?.(data);
-        queryClient.invalidateQueries({ queryKey: ['professionals'] });
+        setValidationResults(data)
+        onValidationComplete?.(data)
+        queryClient.invalidateQueries({ queryKey: ['professionals'] })
       },
       onError: (error: any) => {
-        onError?.(error as Error);
+        onError?.(error as Error)
       },
-    });
+    })
 
   const filteredProfessionals =
     professionalsData?.filter((professional: any) =>
-      professional.fullName.toLowerCase().includes(searchTerm.toLowerCase())
-      || professional.specialization.toLowerCase().includes(searchTerm.toLowerCase())
-    ) || [];
+      professional.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      professional.specialization.toLowerCase().includes(searchTerm.toLowerCase())
+    ) || []
 
   const filteredProcedures =
     proceduresData?.filter((procedure: any) =>
-      procedure.name.toLowerCase().includes(searchTerm.toLowerCase())
-      || procedure.category.toLowerCase().includes(searchTerm.toLowerCase())
-    ) || [];
+      procedure.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      procedure.category.toLowerCase().includes(searchTerm.toLowerCase())
+    ) || []
 
   const handleProfessionalSelect = (professionalId: string) => {
-    setSelectedProfessional(professionalId);
-    setSelectedProcedures([]);
-    setValidationResults(null);
-  };
+    setSelectedProfessional(professionalId)
+    setSelectedProcedures([])
+    setValidationResults(null)
+  }
 
   const handleProcedureSelect = (procedureId: string, checked: boolean) => {
     if (checked) {
-      setSelectedProcedures([...selectedProcedures, procedureId]);
+      setSelectedProcedures([...selectedProcedures, procedureId])
     } else {
-      setSelectedProcedures(selectedProcedures.filter(id => id !== procedureId));
+      setSelectedProcedures(selectedProcedures.filter(id => id !== procedureId))
     }
-    setValidationResults(null);
-  };
+    setValidationResults(null)
+  }
 
   const handleValidate = () => {
     if (selectedProfessional && selectedProcedures.length > 0) {
       validateMutation.mutate({
         professionalId: selectedProfessional,
         procedureIds: selectedProcedures,
-      });
+      })
     }
-  };
+  }
 
   const selectedProfessionalData = professionalsData?.find((p: any) =>
     p.id === selectedProfessional
-  );
+  )
   const selectedProceduresData =
-    proceduresData?.filter((p: any) => selectedProcedures.includes(p.id)) || [];
-  const isValidating = validateMutation.isLoading;
+    proceduresData?.filter((p: any) => selectedProcedures.includes(p.id)) || []
+  const isValidating = validateMutation.isLoading
 
   const getExperienceLevelColor = (level: string) => {
     switch (level) {
       case 'expert':
-        return 'bg-green-100 text-green-800 border-green-200';
+        return 'bg-green-100 text-green-800 border-green-200'
       case 'advanced':
-        return 'bg-blue-100 text-blue-800 border-blue-200';
+        return 'bg-blue-100 text-blue-800 border-blue-200'
       case 'intermediate':
-        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+        return 'bg-yellow-100 text-yellow-800 border-yellow-200'
       case 'beginner':
-        return 'bg-red-100 text-red-800 border-red-200';
+        return 'bg-red-100 text-red-800 border-red-200'
       default:
-        return 'bg-gray-100 text-gray-800 border-gray-200';
+        return 'bg-gray-100 text-gray-800 border-gray-200'
     }
-  };
+  }
 
   const getExperienceLevelIcon = (level: string) => {
     switch (level) {
       case 'expert':
-        return <Award className='h-4 w-4' />;
+        return <Award className='h-4 w-4' />
       case 'advanced':
-        return <Shield className='h-4 w-4' />;
+        return <Shield className='h-4 w-4' />
       case 'intermediate':
-        return <Clock className='h-4 w-4' />;
+        return <Clock className='h-4 w-4' />
       case 'beginner':
-        return <AlertTriangle className='h-4 w-4' />;
+        return <AlertTriangle className='h-4 w-4' />
       default:
-        return <User className='h-4 w-4' />;
+        return <User className='h-4 w-4' />
     }
-  };
+  }
 
   return (
     <div className='max-w-6xl mx-auto space-y-6'>
@@ -447,8 +445,8 @@ export function CertificationValidator(
                                 )}
                               >
                                 {validationResults.experienceLevel
-                                  ? validationResults.experienceLevel.charAt(0).toUpperCase()
-                                    + validationResults.experienceLevel.slice(1)
+                                  ? validationResults.experienceLevel.charAt(0).toUpperCase() +
+                                    validationResults.experienceLevel.slice(1)
                                   : ''}
                               </Badge>
                               <p className='text-sm text-gray-600 mt-1'>
@@ -459,25 +457,27 @@ export function CertificationValidator(
                         </div>
 
                         {/* Missing Certifications */}
-                        {!validationResults.isValid && validationResults.missingCertifications
-                          && validationResults.missingCertifications.length > 0 && (
-                          <div className='bg-red-50 rounded-lg p-4'>
-                            <h4 className='font-medium text-red-900 mb-3'>
-                              Certificações Faltantes
-                            </h4>
-                            <div className='space-y-2'>
-                              {validationResults.missingCertifications.map((
-                                certification,
-                                index,
-                              ) => (
-                                <div key={index} className='flex items-center gap-2'>
-                                  <XCircle className='h-4 w-4 text-red-600' />
-                                  <span className='text-sm text-red-800'>{certification}</span>
-                                </div>
-                              ))}
+                        {!validationResults.isValid &&
+                          validationResults.missingCertifications &&
+                          validationResults.missingCertifications.length > 0 &&
+                          (
+                            <div className='bg-red-50 rounded-lg p-4'>
+                              <h4 className='font-medium text-red-900 mb-3'>
+                                Certificações Faltantes
+                              </h4>
+                              <div className='space-y-2'>
+                                {validationResults.missingCertifications.map((
+                                  certification,
+                                  index,
+                                ) => (
+                                  <div key={index} className='flex items-center gap-2'>
+                                    <XCircle className='h-4 w-4 text-red-600' />
+                                    <span className='text-sm text-red-800'>{certification}</span>
+                                  </div>
+                                ))}
+                              </div>
                             </div>
-                          </div>
-                        )}
+                          )}
 
                         {/* Warnings */}
                         {validationResults.warnings && validationResults.warnings.length > 0 && (
@@ -495,20 +495,21 @@ export function CertificationValidator(
                         )}
 
                         {/* Recommendations */}
-                        {validationResults.recommendations
-                          && validationResults.recommendations.length > 0 && (
-                          <div className='bg-blue-50 rounded-lg p-4'>
-                            <h4 className='font-medium text-blue-900 mb-3'>Recomendações</h4>
-                            <div className='space-y-2'>
-                              {validationResults.recommendations.map((recommendation, index) => (
-                                <div key={index} className='flex items-center gap-2'>
-                                  <Info className='h-4 w-4 text-blue-600' />
-                                  <span className='text-sm text-blue-800'>{recommendation}</span>
-                                </div>
-                              ))}
+                        {validationResults.recommendations &&
+                          validationResults.recommendations.length > 0 &&
+                          (
+                            <div className='bg-blue-50 rounded-lg p-4'>
+                              <h4 className='font-medium text-blue-900 mb-3'>Recomendações</h4>
+                              <div className='space-y-2'>
+                                {validationResults.recommendations.map((recommendation, index) => (
+                                  <div key={index} className='flex items-center gap-2'>
+                                    <Info className='h-4 w-4 text-blue-600' />
+                                    <span className='text-sm text-blue-800'>{recommendation}</span>
+                                  </div>
+                                ))}
+                              </div>
                             </div>
-                          </div>
-                        )}
+                          )}
 
                         {/* Professional Details */}
                         <div className='bg-gray-50 rounded-lg p-4'>
@@ -584,5 +585,5 @@ export function CertificationValidator(
         </TabsContent>
       </Tabs>
     </div>
-  );
+  )
 }

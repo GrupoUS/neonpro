@@ -3,42 +3,42 @@
  * Brazilian healthcare compliant AI-powered clinical decision support interfaces
  */
 
-import { z } from 'zod';
+import { z } from 'zod'
 
 // =====================================
 // PATIENT ASSESSMENT TYPES
 // =====================================
 
 export interface PatientAssessment {
-  id: string;
-  patientId: string;
-  assessmentDate: Date;
-  skinType: 'I' | 'II' | 'III' | 'IV' | 'V' | 'VI';
-  fitzpatrickScale: number;
-  skinConditions: string[];
+  id: string
+  patientId: string
+  assessmentDate: Date
+  skinType: 'I' | 'II' | 'III' | 'IV' | 'V' | 'VI'
+  fitzpatrickScale: number
+  skinConditions: string[]
   medicalHistory: {
-    allergies: string[];
-    medications: string[];
-    previousTreatments: string[];
-    chronicConditions: string[];
-    pregnancyStatus: 'none' | 'pregnant' | 'breastfeeding' | 'planning';
-  };
-  aestheticGoals: string[];
+    allergies: string[]
+    medications: string[]
+    previousTreatments: string[]
+    chronicConditions: string[]
+    pregnancyStatus: 'none' | 'pregnant' | 'breastfeeding' | 'planning'
+  }
+  aestheticGoals: string[]
   budgetRange: {
-    min: number;
-    max: number;
-    currency: 'BRL' | 'USD' | 'EUR';
-  };
-  riskFactors: string[];
-  photos?: AssessmentPhoto[];
+    min: number
+    max: number
+    currency: 'BRL' | 'USD' | 'EUR'
+  }
+  riskFactors: string[]
+  photos?: AssessmentPhoto[]
 }
 
 export interface AssessmentPhoto {
-  id: string;
-  url: string;
-  angle: string;
-  date: Date;
-  description?: string;
+  id: string
+  url: string
+  angle: string
+  date: Date
+  description?: string
 }
 
 // =====================================
@@ -46,41 +46,41 @@ export interface AssessmentPhoto {
 // =====================================
 
 export interface TreatmentRecommendation {
-  id: string;
-  procedureId: string;
-  procedureName: string;
-  confidence: number; // 0-1
-  efficacy: number; // 0-1
-  safety: number; // 0-1
-  suitability: number; // 0-1
+  id: string
+  procedureId: string
+  procedureName: string
+  confidence: number // 0-1
+  efficacy: number // 0-1
+  safety: number // 0-1
+  suitability: number // 0-1
   expectedResults: {
-    timeline: string;
-    improvement: string;
-    longevity: string;
-  };
-  risks: TreatmentRisk[];
-  contraindications: string[];
-  alternatives: string[];
-  cost: number;
-  sessions: number;
+    timeline: string
+    improvement: string
+    longevity: string
+  }
+  risks: TreatmentRisk[]
+  contraindications: string[]
+  alternatives: string[]
+  cost: number
+  sessions: number
   recovery: {
-    downtime: string;
-    activityRestrictions: string[];
-  };
-  evidenceLevel: 'A' | 'B' | 'C' | 'D';
+    downtime: string
+    activityRestrictions: string[]
+  }
+  evidenceLevel: 'A' | 'B' | 'C' | 'D'
   compliance: {
-    cfmCompliant: boolean;
-    anvisaCompliant: boolean;
-    warnings: string[];
-    restrictions: string[];
-  };
+    cfmCompliant: boolean
+    anvisaCompliant: boolean
+    warnings: string[]
+    restrictions: string[]
+  }
 }
 
 export interface TreatmentRisk {
-  type: 'common' | 'rare' | 'serious';
-  description: string;
-  probability: number; // 0-1
-  mitigation?: string;
+  type: 'common' | 'rare' | 'serious'
+  description: string
+  probability: number // 0-1
+  mitigation?: string
 }
 
 // =====================================
@@ -88,59 +88,59 @@ export interface TreatmentRisk {
 // =====================================
 
 export interface TreatmentPlan {
-  id: string;
-  patientId: string;
-  primaryGoals: string[];
-  recommendations: TreatmentRecommendation[];
-  prioritizedPlan: TreatmentPhase[];
-  budgetBreakdown: BudgetBreakdown;
-  riskAssessment: RiskAssessment;
-  followUpSchedule: FollowUpSchedule[];
+  id: string
+  patientId: string
+  primaryGoals: string[]
+  recommendations: TreatmentRecommendation[]
+  prioritizedPlan: TreatmentPhase[]
+  budgetBreakdown: BudgetBreakdown
+  riskAssessment: RiskAssessment
+  followUpSchedule: FollowUpSchedule[]
 }
 
 export interface TreatmentPhase {
-  phase: number;
-  procedures: string[];
-  timeline: string;
-  objectives: string[];
-  estimatedDuration: number; // in days
-  estimatedCost: number;
+  phase: number
+  procedures: string[]
+  timeline: string
+  objectives: string[]
+  estimatedDuration: number // in days
+  estimatedCost: number
 }
 
 export interface BudgetBreakdown {
-  total: number;
-  byPhase: PhaseBudget[];
-  currency: 'BRL' | 'USD' | 'EUR';
-  paymentOptions: PaymentOption[];
+  total: number
+  byPhase: PhaseBudget[]
+  currency: 'BRL' | 'USD' | 'EUR'
+  paymentOptions: PaymentOption[]
 }
 
 export interface PhaseBudget {
-  phase: number;
-  cost: number;
-  procedures: string[];
-  discount?: number;
+  phase: number
+  cost: number
+  procedures: string[]
+  discount?: number
 }
 
 export interface PaymentOption {
-  type: 'full' | 'installments' | 'package';
-  installments?: number;
-  interestRate?: number;
-  description: string;
+  type: 'full' | 'installments' | 'package'
+  installments?: number
+  interestRate?: number
+  description: string
 }
 
 export interface RiskAssessment {
-  overall: 'low' | 'medium' | 'high';
-  factors: string[];
-  mitigations: string[];
-  requiresMedicalSupervision: boolean;
-  emergencyProtocols: string[];
+  overall: 'low' | 'medium' | 'high'
+  factors: string[]
+  mitigations: string[]
+  requiresMedicalSupervision: boolean
+  emergencyProtocols: string[]
 }
 
 export interface FollowUpSchedule {
-  procedure: string;
-  timing: string;
-  purpose: string;
-  mandatory: boolean;
+  procedure: string
+  timing: string
+  purpose: string
+  mandatory: boolean
 }
 
 // =====================================
@@ -148,19 +148,19 @@ export interface FollowUpSchedule {
 // =====================================
 
 export interface ContraindicationAnalysis {
-  patientId: string;
-  procedureId: string;
-  absoluteContraindications: string[];
-  relativeContraindications: string[];
-  riskFactors: string[];
-  recommendations: string[];
-  canProceed: boolean;
-  modifiedApproach?: string;
+  patientId: string
+  procedureId: string
+  absoluteContraindications: string[]
+  relativeContraindications: string[]
+  riskFactors: string[]
+  recommendations: string[]
+  canProceed: boolean
+  modifiedApproach?: string
   compliance: {
-    cfmCompliant: boolean;
-    warnings: string[];
-    restrictions: string[];
-  };
+    cfmCompliant: boolean
+    warnings: string[]
+    restrictions: string[]
+  }
 }
 
 // =====================================
@@ -168,50 +168,50 @@ export interface ContraindicationAnalysis {
 // =====================================
 
 export interface TreatmentGuidelines {
-  guidelines: ProcedureGuidelines;
-  personalizedRecommendations: string[];
-  precautions: string[];
+  guidelines: ProcedureGuidelines
+  personalizedRecommendations: string[]
+  precautions: string[]
 }
 
 export interface ProcedureGuidelines {
-  procedureId: string;
-  indications: string[];
+  procedureId: string
+  indications: string[]
   contraindications: {
-    absolute: string[];
-    relative: string[];
-  };
+    absolute: string[]
+    relative: string[]
+  }
   patientSelection: {
-    idealCandidate: string[];
-    cautionFactors: string[];
-  };
+    idealCandidate: string[]
+    cautionFactors: string[]
+  }
   protocol: {
-    preparation: string[];
-    procedure: string[];
-    aftercare: string[];
-  };
+    preparation: string[]
+    procedure: string[]
+    aftercare: string[]
+  }
   expectedOutcomes: {
-    immediate: string[];
-    shortTerm: string[];
-    longTerm: string[];
-  };
-  complications: GuidelineComplication[];
-  evidenceReferences: EvidenceReference[];
+    immediate: string[]
+    shortTerm: string[]
+    longTerm: string[]
+  }
+  complications: GuidelineComplication[]
+  evidenceReferences: EvidenceReference[]
 }
 
 export interface GuidelineComplication {
-  type: string;
-  frequency: string;
-  management: string;
-  prevention: string;
+  type: string
+  frequency: string
+  management: string
+  prevention: string
 }
 
 export interface EvidenceReference {
-  study: string;
-  year: number;
-  journal: string;
-  findings: string;
-  level: 'I' | 'II' | 'III' | 'IV';
-  url?: string;
+  study: string
+  year: number
+  journal: string
+  findings: string
+  level: 'I' | 'II' | 'III' | 'IV'
+  url?: string
 }
 
 // =====================================
@@ -219,37 +219,37 @@ export interface EvidenceReference {
 // =====================================
 
 export interface OutcomePrediction {
-  efficacy: number; // 0-1
-  satisfaction: number; // 0-1
-  risks: PredictedRisk[];
-  timeline: OutcomeTimeline;
-  recommendations: string[];
+  efficacy: number // 0-1
+  satisfaction: number // 0-1
+  risks: PredictedRisk[]
+  timeline: OutcomeTimeline
+  recommendations: string[]
   confidenceInterval: {
-    min: number;
-    max: number;
-    confidence: number; // 0-1
-  };
+    min: number
+    max: number
+    confidence: number // 0-1
+  }
 }
 
 export interface PredictedRisk {
-  type: string;
-  probability: number; // 0-1
-  severity: 'low' | 'medium' | 'high';
-  prevention: string[];
-  treatment: string[];
+  type: string
+  probability: number // 0-1
+  severity: 'low' | 'medium' | 'high'
+  prevention: string[]
+  treatment: string[]
 }
 
 export interface OutcomeTimeline {
-  initialResults: string;
-  optimalResults: string;
-  maintenance: string;
-  milestones: TimelineMilestone[];
+  initialResults: string
+  optimalResults: string
+  maintenance: string
+  milestones: TimelineMilestone[]
 }
 
 export interface TimelineMilestone {
-  period: string;
-  expectedImprovement: string;
-  confidence: number; // 0-1
+  period: string
+  expectedImprovement: string
+  confidence: number // 0-1
 }
 
 // =====================================
@@ -257,50 +257,50 @@ export interface TimelineMilestone {
 // =====================================
 
 export interface ProgressMonitoring {
-  progress: 'ahead' | 'on_track' | 'behind' | 'concerns';
-  recommendations: string[];
-  adjustments: ProgressAdjustment[];
-  nextSessionPlan: string;
-  riskAlerts: RiskAlert[];
+  progress: 'ahead' | 'on_track' | 'behind' | 'concerns'
+  recommendations: string[]
+  adjustments: ProgressAdjustment[]
+  nextSessionPlan: string
+  riskAlerts: RiskAlert[]
 }
 
 export interface ProgressAdjustment {
-  type: 'intensity' | 'frequency' | 'technique' | 'aftercare';
-  current: string;
-  recommended: string;
-  reason: string;
-  urgency: 'immediate' | 'next_session' | 'future';
+  type: 'intensity' | 'frequency' | 'technique' | 'aftercare'
+  current: string
+  recommended: string
+  reason: string
+  urgency: 'immediate' | 'next_session' | 'future'
 }
 
 export interface RiskAlert {
-  type: 'complication' | 'side_effect' | 'non_compliance' | 'unexpected_result';
-  severity: 'low' | 'medium' | 'high';
-  description: string;
-  action: string;
+  type: 'complication' | 'side_effect' | 'non_compliance' | 'unexpected_result'
+  severity: 'low' | 'medium' | 'high'
+  description: string
+  action: string
 }
 
 export interface PatientFeedback {
-  satisfaction: number; // 0-100
-  sideEffects: string[];
-  adherenceToAftercare: 'excellent' | 'good' | 'fair' | 'poor';
-  concerns: string[];
-  improvements: string[];
+  satisfaction: number // 0-100
+  sideEffects: string[]
+  adherenceToAftercare: 'excellent' | 'good' | 'fair' | 'poor'
+  concerns: string[]
+  improvements: string[]
 }
 
 export interface ClinicalAssessment {
-  improvement: number; // 0-100
-  complications: string[];
-  healing: 'excellent' | 'good' | 'fair' | 'poor';
-  observations: string[];
-  measurements: Measurement[];
+  improvement: number // 0-100
+  complications: string[]
+  healing: 'excellent' | 'good' | 'fair' | 'poor'
+  observations: string[]
+  measurements: Measurement[]
 }
 
 export interface Measurement {
-  type: string;
-  value: number;
-  unit: string;
-  date: Date;
-  notes?: string;
+  type: string
+  value: number
+  unit: string
+  date: Date
+  notes?: string
 }
 
 // =====================================
@@ -308,47 +308,47 @@ export interface Measurement {
 // =====================================
 
 export interface TreatmentHistory {
-  treatments: TreatmentRecord[];
-  summary: TreatmentSummary;
-  patterns: TreatmentPattern[];
-  outcomes: TreatmentOutcome[];
+  treatments: TreatmentRecord[]
+  summary: TreatmentSummary
+  patterns: TreatmentPattern[]
+  outcomes: TreatmentOutcome[]
 }
 
 export interface TreatmentRecord {
-  id: string;
-  appointmentId: string;
-  procedureName: string;
-  date: Date;
-  professional: string;
-  outcome: 'successful' | 'partial' | 'failed';
-  complications: string[];
-  patientSatisfaction: number;
-  notes: string;
-  cost: number;
+  id: string
+  appointmentId: string
+  procedureName: string
+  date: Date
+  professional: string
+  outcome: 'successful' | 'partial' | 'failed'
+  complications: string[]
+  patientSatisfaction: number
+  notes: string
+  cost: number
 }
 
 export interface TreatmentSummary {
-  totalTreatments: number;
-  completedTreatments: number;
-  totalSessions: number;
-  lastTreatment: Date | null;
-  totalInvestment: number;
-  satisfactionTrend: 'improving' | 'stable' | 'declining';
+  totalTreatments: number
+  completedTreatments: number
+  totalSessions: number
+  lastTreatment: Date | null
+  totalInvestment: number
+  satisfactionTrend: 'improving' | 'stable' | 'declining'
 }
 
 export interface TreatmentPattern {
-  pattern: string;
-  frequency: number;
-  description: string;
-  recommendation: string;
+  pattern: string
+  frequency: number
+  description: string
+  recommendation: string
 }
 
 export interface TreatmentOutcome {
-  procedure: string;
-  averageImprovement: number;
-  satisfaction: number;
-  complicationRate: number;
-  recommendation: string;
+  procedure: string
+  averageImprovement: number
+  satisfaction: number
+  complicationRate: number
+  recommendation: string
 }
 
 // =====================================
@@ -356,41 +356,41 @@ export interface TreatmentOutcome {
 // =====================================
 
 export interface ModelStatus {
-  models: ModelInfo[];
-  systemHealth: SystemHealth;
+  models: ModelInfo[]
+  systemHealth: SystemHealth
 }
 
 export interface ModelInfo {
-  name: string;
-  status: 'healthy' | 'degraded' | 'unavailable';
-  accuracy: number;
-  lastTrained: Date;
-  version: string;
-  description: string;
-  dataVersion: string;
-  performance: ModelPerformance;
+  name: string
+  status: 'healthy' | 'degraded' | 'unavailable'
+  accuracy: number
+  lastTrained: Date
+  version: string
+  description: string
+  dataVersion: string
+  performance: ModelPerformance
 }
 
 export interface ModelPerformance {
-  responseTime: number; // in ms
-  throughput: number; // requests per second
-  errorRate: number; // percentage
-  uptime: number; // percentage
+  responseTime: number // in ms
+  throughput: number // requests per second
+  errorRate: number // percentage
+  uptime: number // percentage
 }
 
 export interface SystemHealth {
-  overall: 'healthy' | 'degraded' | 'unavailable';
-  uptime: string;
-  responseTime: string;
-  lastHealthCheck: Date;
-  alerts: HealthAlert[];
+  overall: 'healthy' | 'degraded' | 'unavailable'
+  uptime: string
+  responseTime: string
+  lastHealthCheck: Date
+  alerts: HealthAlert[]
 }
 
 export interface HealthAlert {
-  type: 'warning' | 'error' | 'info';
-  message: string;
-  timestamp: Date;
-  resolved: boolean;
+  type: 'warning' | 'error' | 'info'
+  message: string
+  timestamp: Date
+  resolved: boolean
 }
 
 // =====================================
@@ -427,7 +427,7 @@ export const PatientAssessmentSchema = z.object({
     angle: z.string(),
     date: z.date(),
   })).optional(),
-});
+})
 
 export const TreatmentPlanSchema = z.object({
   patientId: z.string().uuid('ID do paciente inválido'),
@@ -441,7 +441,7 @@ export const TreatmentPlanSchema = z.object({
     suitability: z.number().min(0).max(1),
   })).min(1, 'Selecione ao menos uma recomendação'),
   goals: z.array(z.string()).min(1, 'É necessário fornecer ao menos um objetivo'),
-});
+})
 
 export const ContraindicationAnalysisSchema = z.object({
   patientId: z.string().uuid('ID do paciente inválido'),
@@ -449,7 +449,7 @@ export const ContraindicationAnalysisSchema = z.object({
     1,
     'Selecione ao menos um procedimento',
   ),
-});
+})
 
 export const TreatmentGuidelinesSchema = z.object({
   procedureId: z.string().uuid('ID do procedimento inválido'),
@@ -459,7 +459,7 @@ export const TreatmentGuidelinesSchema = z.object({
     gender: z.string(),
     concerns: z.array(z.string()).default([]),
   }),
-});
+})
 
 export const OutcomePredictionSchema = z.object({
   patientId: z.string().uuid('ID do paciente inválido'),
@@ -469,7 +469,7 @@ export const OutcomePredictionSchema = z.object({
     intensity: z.enum(['low', 'medium', 'high']),
     frequency: z.string().min(1, 'Frequência é obrigatória'),
   }),
-});
+})
 
 export const ProgressMonitoringSchema = z.object({
   treatmentPlanId: z.string().uuid('ID do plano de tratamento inválido'),
@@ -484,17 +484,17 @@ export const ProgressMonitoringSchema = z.object({
     complications: z.array(z.string()).default([]),
     healing: z.enum(['excellent', 'good', 'fair', 'poor']),
   }),
-});
+})
 
 // =====================================
 // UTILITY TYPES
 // =====================================
 
-export type SkinType = 'I' | 'II' | 'III' | 'IV' | 'V' | 'VI';
-export type EvidenceLevel = 'A' | 'B' | 'C' | 'D';
-export type RiskLevel = 'low' | 'medium' | 'high';
-export type PregnancyStatus = 'none' | 'pregnant' | 'breastfeeding' | 'planning';
-export type ProgressStatus = 'ahead' | 'on_track' | 'behind' | 'concerns';
-export type AdjustmentType = 'intensity' | 'frequency' | 'technique' | 'aftercare';
-export type AlertType = 'warning' | 'error' | 'info';
-export type ModelStatusType = 'healthy' | 'degraded' | 'unavailable';
+export type SkinType = 'I' | 'II' | 'III' | 'IV' | 'V' | 'VI'
+export type EvidenceLevel = 'A' | 'B' | 'C' | 'D'
+export type RiskLevel = 'low' | 'medium' | 'high'
+export type PregnancyStatus = 'none' | 'pregnant' | 'breastfeeding' | 'planning'
+export type ProgressStatus = 'ahead' | 'on_track' | 'behind' | 'concerns'
+export type AdjustmentType = 'intensity' | 'frequency' | 'technique' | 'aftercare'
+export type AlertType = 'warning' | 'error' | 'info'
+export type ModelStatusType = 'healthy' | 'degraded' | 'unavailable'

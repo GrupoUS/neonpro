@@ -1,11 +1,11 @@
 // Minimal observability utilities (structured logs & metrics)
-import { endTimerMs, logMetric, startTimer } from '../services/metrics';
+import { endTimerMs, logMetric, startTimer } from '../services/metrics'
 
-export type ObsTimer = ReturnType<typeof startTimer>;
+export type ObsTimer = ReturnType<typeof startTimer>
 
 export function withTimer<T>(fn: (timer: ObsTimer) => Promise<T>): Promise<T> {
-  const timer = startTimer();
-  return fn(timer);
+  const timer = startTimer()
+  return fn(timer)
 }
 
 export function metric(
@@ -14,9 +14,9 @@ export function metric(
   ok: boolean,
   extra?: Record<string, unknown>,
 ) {
-  const ms = endTimerMs(timer);
-  logMetric({ route, ms, ok, ...extra });
-  return ms;
+  const ms = endTimerMs(timer)
+  logMetric({ route, ms, ok, ...extra })
+  return ms
 }
 
 export function structuredLog(
@@ -24,5 +24,5 @@ export function structuredLog(
   _payload: Record<string, unknown>,
 ) {
   // Delegate to metrics logger to keep JSON format consistent
-  logMetric({ type: 'log', event, ...payload });
+  logMetric({ type: 'log', event, ...payload })
 }

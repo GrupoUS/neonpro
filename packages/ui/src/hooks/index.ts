@@ -4,16 +4,13 @@
  * Inspired by AceternityUI and MagicUI with 60fps performance optimization
  */
 
-export { usePersistedDashboardLayout } from './use-persisted-dashboard-layout';
-export { useAnimationPerformance } from './useAnimationPerformance';
-export { useHoverBorderGradient } from './useHoverBorderGradient';
-export { useShineBorderAnimation } from './useShineBorderAnimation';
+export { usePersistedDashboardLayout } from './use-persisted-dashboard-layout'
+export { useAnimationPerformance } from './useAnimationPerformance'
+export { useHoverBorderGradient } from './useHoverBorderGradient'
+export { useShineBorderAnimation } from './useShineBorderAnimation'
 
 // Re-export types for convenience
-export type {
-  HoverBorderGradientConfig,
-  HoverBorderGradientReturn,
-} from './useHoverBorderGradient';
+export type { HoverBorderGradientConfig, HoverBorderGradientReturn } from './useHoverBorderGradient'
 
 export type {
   HoverDirection,
@@ -24,10 +21,10 @@ export type {
   ShinePattern,
   ShineSpeed,
   ShineTheme,
-} from './useShineBorderAnimation';
+} from './useShineBorderAnimation'
 
 export type {
   AnimationPerformanceReturn,
   DeviceCapabilities,
   PerformanceSettings,
-} from './useAnimationPerformance';
+} from './useAnimationPerformance'

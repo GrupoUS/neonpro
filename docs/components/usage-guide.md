@@ -148,10 +148,10 @@ apps/web/src/components/
 
 ```typescript
 interface HealthcareComponentProps {
-  readonly patientId?: string;
-  readonly userRole: 'admin' | 'professional' | 'coordinator';
-  readonly lgpdCompliant: boolean;
-  readonly onAuditLog?: (action: string, details?: Record<string, any>) => void;
+  readonly patientId?: string
+  readonly userRole: 'admin' | 'professional' | 'coordinator'
+  readonly lgpdCompliant: boolean
+  readonly onAuditLog?: (action: string, details?: Record<string, any>) => void
 }
 ```
 
@@ -215,14 +215,14 @@ import { Label } from '@/components/atoms/label';
 **4. Specialized UI Components**
 
 ```typescript
-import { MagicCard } from '@/components/ui/magic-card';
-import { UniversalButton } from '@/components/ui/universal-button';
+import { MagicCard } from '@/components/ui/magic-card'
+import { UniversalButton } from '@/components/ui/universal-button'
 ```
 
 **5. Healthcare Components**
 
 ```typescript
-import { AestheticScheduler, PatientCard } from '@neonpro/shared';
+import { AestheticScheduler, PatientCard } from '@neonpro/shared'
 ```
 
 ### Barrel Exports Pattern
@@ -231,28 +231,28 @@ import { AestheticScheduler, PatientCard } from '@neonpro/shared';
 
 ```typescript
 // Core components
-export * from './components/ui/button';
-export * from './components/ui/card';
+export * from './components/ui/button'
+export * from './components/ui/card'
 
 // Types
-export type { ButtonProps, CardProps } from './types';
+export type { ButtonProps, CardProps } from './types'
 
 // Theme
-export { ThemeProvider } from './theme';
+export { ThemeProvider } from './theme'
 ```
 
 **App-level exports** (`apps/web/src/components/index.ts`):
 
 ```typescript
 // Atoms
-export { Badge } from './atoms/badge';
-export { Input } from './atoms/input';
-export { Label } from './atoms/label';
+export { Badge } from './atoms/badge'
+export { Input } from './atoms/input'
+export { Label } from './atoms/label'
 
 // Molecules
-export { Alert, AlertDescription, AlertTitle } from './molecules/alert';
-export { Card } from './molecules/card';
-export { Table, TableBody, TableCell } from './molecules/table';
+export { Alert, AlertDescription, AlertTitle } from './molecules/alert'
+export { Card } from './molecules/card'
+export { Table, TableBody, TableCell } from './molecules/table'
 
 // Note: Organisms not exported to prevent circular dependencies
 ```
@@ -263,12 +263,12 @@ export { Table, TableBody, TableCell } from './molecules/table';
 
 ```typescript
 // ✅ Good - Tree-shakeable
-import { PatientCard } from '@neonpro/shared/components/patient-card';
-import { Button } from '@neonpro/ui';
+import { PatientCard } from '@neonpro/shared/components/patient-card'
+import { Button } from '@neonpro/ui'
 
 // ❌ Avoid - Imports entire package
-import * as Shared from '@neonpro/shared';
-import * as UI from '@neonpro/ui';
+import * as Shared from '@neonpro/shared'
+import * as UI from '@neonpro/ui'
 ```
 
 ---
@@ -385,21 +385,21 @@ bun run build
 interface LGPDCompliantComponentProps {
   // Consent management
   lgpdConsent?: {
-    version: string;
-    timestamp: string;
-    scope: string[];
-  };
+    version: string
+    timestamp: string
+    scope: string[]
+  }
 
   // Data minimization
-  dataMinimization?: boolean;
+  dataMinimization?: boolean
 
   // Audit requirements
   auditTrail?: {
-    userId: string;
-    action: string;
-    timestamp: string;
-    details?: Record<string, any>;
-  };
+    userId: string
+    action: string
+    timestamp: string
+    details?: Record<string, any>
+  }
 }
 ```
 
@@ -408,7 +408,7 @@ interface LGPDCompliantComponentProps {
 ```typescript
 // Example: Patient data with privacy controls
 export function PatientDataCard({ patient, userRole, lgpdCompliant }: Props) {
-  const shouldMaskData = userRole !== 'admin' && !lgpdCompliant;
+  const shouldMaskData = userRole !== 'admin' && !lgpdCompliant
 
   return (
     <Card>
@@ -417,7 +417,7 @@ export function PatientDataCard({ patient, userRole, lgpdCompliant }: Props) {
         <p>CPF: {shouldMaskData ? maskCPF(patient.cpf) : patient.cpf}</p>
       </CardContent>
     </Card>
-  );
+  )
 }
 ```
 
@@ -445,7 +445,7 @@ export function AccessibleButton({ children, ...props }: ButtonProps) {
     >
       {children}
     </button>
-  );
+  )
 }
 ```
 
@@ -580,11 +580,11 @@ pnpm install
 
 ```typescript
 // Use explicit imports to avoid conflicts
-import { Button as LocalButton } from '@/components/atoms/button';
-import { Button as UIButton } from '@neonpro/ui';
+import { Button as LocalButton } from '@/components/atoms/button'
+import { Button as UIButton } from '@neonpro/ui'
 
 // Or use the recommended hierarchy
-import { Button } from '@neonpro/ui'; // Preferred
+import { Button } from '@neonpro/ui' // Preferred
 ```
 
 #### **Build Performance Issues**
@@ -595,10 +595,10 @@ import { Button } from '@neonpro/ui'; // Preferred
 
 ```typescript
 // ✅ Use specific imports
-import { Button } from '@neonpro/ui/button';
+import { Button } from '@neonpro/ui/button'
 
 // ❌ Avoid barrel imports in large packages
-import { Button } from '@neonpro/ui'; // May import entire package
+import { Button } from '@neonpro/ui' // May import entire package
 ```
 
 #### **Healthcare Component Errors**
@@ -615,9 +615,9 @@ interface Props extends HealthcareComponentProps {
 
 // Always include audit logging
 const handleAction = (action: string) => {
-  onAuditLog?.(action, { patientId, timestamp: new Date().toISOString() });
+  onAuditLog?.(action, { patientId, timestamp: new Date().toISOString() })
   // Action implementation
-};
+}
 ```
 
 ### Development Environment Setup
@@ -653,18 +653,18 @@ pnpm install -g @biomejs/biome # Alternative to ESLint
 export function useComponentPerformance(componentName: string) {
   useEffect(() => {
     const observer = new PerformanceObserver(list => {
-      const entries = list.getEntries();
+      const entries = list.getEntries()
       entries.forEach(entry => {
         if (entry.name.includes(componentName)) {
           // Log performance metrics for healthcare-critical components
-          console.log(`${componentName} render time:`, entry.duration);
+          console.log(`${componentName} render time:`, entry.duration)
         }
-      });
-    });
+      })
+    })
 
-    observer.observe({ entryTypes: ['measure'] });
-    return () => observer.disconnect();
-  }, [componentName]);
+    observer.observe({ entryTypes: ['measure'] })
+    return () => observer.disconnect()
+  }, [componentName])
 }
 ```
 
@@ -693,7 +693,7 @@ export const PatientForm = {
   Section: PatientFormSection,
   Field: PatientFormField,
   Actions: PatientFormActions,
-};
+}
 
 // Usage
 function PatientRegistration() {
@@ -713,7 +713,7 @@ function PatientRegistration() {
         <Button type='submit'>Cadastrar Paciente</Button>
       </PatientForm.Actions>
     </PatientForm.Root>
-  );
+  )
 }
 ```
 
@@ -724,27 +724,27 @@ function PatientRegistration() {
 ```typescript
 // Flexible data fetching for healthcare data
 interface PatientDataProps {
-  patientId: string;
+  patientId: string
   children: (data: {
-    patient: Patient | null;
-    loading: boolean;
-    error: Error | null;
-    refetch: () => void;
-  }) => React.ReactNode;
+    patient: Patient | null
+    loading: boolean
+    error: Error | null
+    refetch: () => void
+  }) => React.ReactNode
 }
 
 export function PatientData({ patientId, children }: PatientDataProps) {
   const { data: patient, isLoading, error, refetch } = useQuery({
     queryKey: ['patient', patientId],
     queryFn: () => fetchPatient(patientId),
-  });
+  })
 
   return children({
     patient,
     loading: isLoading,
     error,
     refetch,
-  });
+  })
 }
 
 // Usage
@@ -752,14 +752,14 @@ function PatientProfile({ patientId }: Props) {
   return (
     <PatientData patientId={patientId}>
       {({ patient, loading, error, refetch }) => {
-        if (loading) return <PatientSkeleton />;
-        if (error) return <ErrorMessage onRetry={refetch} />;
-        if (!patient) return <PatientNotFound />;
+        if (loading) return <PatientSkeleton />
+        if (error) return <ErrorMessage onRetry={refetch} />
+        if (!patient) return <PatientNotFound />
 
-        return <PatientCard patient={patient} />;
+        return <PatientCard patient={patient} />
       }}
     </PatientData>
-  );
+  )
 }
 ```
 
@@ -770,34 +770,34 @@ function PatientProfile({ patientId }: Props) {
 ```typescript
 // Custom hook for patient risk assessment
 export function usePatientRisk(patientId: string) {
-  const [riskScore, setRiskScore] = useState<NoShowRiskScore | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [riskScore, setRiskScore] = useState<NoShowRiskScore | null>(null)
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     async function calculateRisk() {
       try {
-        setLoading(true);
-        const score = await calculateNoShowRisk(patientId);
-        setRiskScore(score);
+        setLoading(true)
+        const score = await calculateNoShowRisk(patientId)
+        setRiskScore(score)
       } catch (error) {
-        console.error('Risk calculation failed:', error);
+        console.error('Risk calculation failed:', error)
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
     }
 
-    calculateRisk();
-  }, [patientId]);
+    calculateRisk()
+  }, [patientId])
 
   const scheduleIntervention = useCallback(
     async (type: string) => {
-      await schedulePatientIntervention(patientId, type);
+      await schedulePatientIntervention(patientId, type)
       // Recalculate risk after intervention
-      const newScore = await calculateNoShowRisk(patientId);
-      setRiskScore(newScore);
+      const newScore = await calculateNoShowRisk(patientId)
+      setRiskScore(newScore)
     },
     [patientId],
-  );
+  )
 
   return {
     riskScore,
@@ -807,7 +807,7 @@ export function usePatientRisk(patientId: string) {
     isMediumRisk: riskScore
       ? riskScore.score > 0.4 && riskScore.score <= 0.7
       : false,
-  };
+  }
 }
 ```
 
@@ -959,14 +959,14 @@ grep -r "import.*@/components/ui/alert" apps/web/src/
 
 ```typescript
 // Before (Legacy)
-import { Alert } from '@/components/ui/alert';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import { Alert } from '@/components/ui/alert'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 
 // After (Current)
-import { Badge } from '@/components/atoms/badge';
-import { Alert, AlertDescription } from '@/components/molecules/alert';
-import { Button } from '@neonpro/ui';
+import { Badge } from '@/components/atoms/badge'
+import { Alert, AlertDescription } from '@/components/molecules/alert'
+import { Button } from '@neonpro/ui'
 ```
 
 3. **Update Component Usage**
@@ -995,9 +995,9 @@ export function checkComponentVersion(component: string, version: string) {
     Button: ['1.0.0', '1.1.0', '2.0.0'],
     PatientCard: ['1.0.0', '1.2.0'],
     Alert: ['1.0.0', '1.1.0'],
-  };
+  }
 
-  return compatibilityMatrix[component]?.includes(version) ?? false;
+  return compatibilityMatrix[component]?.includes(version) ?? false
 }
 ```
 
@@ -1052,41 +1052,41 @@ export function checkComponentVersion(component: string, version: string) {
 
 ```typescript
 // Example: Complete patient registration form using NeonPro components
-import { Badge } from '@/components/atoms/badge';
-import { Input } from '@/components/atoms/input';
-import { Label } from '@/components/atoms/label';
-import { Alert, AlertDescription } from '@/components/molecules/alert';
-import { usePatientRisk } from '@/hooks/usePatientRisk';
-import { Button, Card, CardContent, CardHeader, CardTitle } from '@neonpro/ui';
+import { Badge } from '@/components/atoms/badge'
+import { Input } from '@/components/atoms/input'
+import { Label } from '@/components/atoms/label'
+import { Alert, AlertDescription } from '@/components/molecules/alert'
+import { usePatientRisk } from '@/hooks/usePatientRisk'
+import { Button, Card, CardContent, CardHeader, CardTitle } from '@neonpro/ui'
 
 interface PatientRegistrationProps {
-  onSubmit: (data: PatientData) => Promise<void>;
-  userRole: 'admin' | 'professional' | 'coordinator';
+  onSubmit: (data: PatientData) => Promise<void>
+  userRole: 'admin' | 'professional' | 'coordinator'
 }
 
 export function PatientRegistrationForm({ onSubmit, userRole }: PatientRegistrationProps) {
-  const [formData, setFormData] = useState<PatientData>({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const { riskScore, isHighRisk } = usePatientRisk(formData.id);
+  const [formData, setFormData] = useState<PatientData>({})
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const { riskScore, isHighRisk } = usePatientRisk(formData.id)
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
+    e.preventDefault()
+    setIsSubmitting(true)
 
     try {
-      await onSubmit(formData);
+      await onSubmit(formData)
       // Log successful registration for audit
       logAuditEvent('patient_registered', {
         patientId: formData.id,
         userRole,
         timestamp: new Date().toISOString(),
-      });
+      })
     } catch (error) {
-      console.error('Registration failed:', error);
+      console.error('Registration failed:', error)
     } finally {
-      setIsSubmitting(false);
+      setIsSubmitting(false)
     }
-  };
+  }
 
   return (
     <Card className='max-w-2xl mx-auto'>
@@ -1191,7 +1191,7 @@ export function PatientRegistrationForm({ onSubmit, userRole }: PatientRegistrat
         </form>
       </CardContent>
     </Card>
-  );
+  )
 }
 ```
 
@@ -1199,8 +1199,8 @@ export function PatientRegistrationForm({ onSubmit, userRole }: PatientRegistrat
 
 ```typescript
 // Example: Healthcare dashboard with real-time patient monitoring
-import { Badge } from '@/components/atoms/badge';
-import { Alert, AlertDescription } from '@/components/molecules/alert';
+import { Badge } from '@/components/atoms/badge'
+import { Alert, AlertDescription } from '@/components/molecules/alert'
 import {
   Table,
   TableBody,
@@ -1208,24 +1208,24 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/molecules/table';
-import { Card, CardContent, CardHeader, CardTitle } from '@neonpro/ui';
+} from '@/components/molecules/table'
+import { Card, CardContent, CardHeader, CardTitle } from '@neonpro/ui'
 
 export function HealthcareDashboard() {
   const { data: patients, isLoading } = useQuery({
     queryKey: ['patients', 'dashboard'],
     queryFn: fetchDashboardPatients,
     refetchInterval: 30000, // Real-time updates every 30 seconds
-  });
+  })
 
   const { data: appointments } = useQuery({
     queryKey: ['appointments', 'today'],
     queryFn: fetchTodayAppointments,
     refetchInterval: 60000, // Update appointments every minute
-  });
+  })
 
   if (isLoading) {
-    return <DashboardSkeleton />;
+    return <DashboardSkeleton />
   }
 
   return (
@@ -1314,7 +1314,7 @@ export function HealthcareDashboard() {
         </CardContent>
       </Card>
     </div>
-  );
+  )
 }
 ```
 

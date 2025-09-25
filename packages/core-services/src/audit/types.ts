@@ -1,7 +1,7 @@
 // Generic Audit Types for Compliance & Healthcare (Phase 4)
 // Complements existing AuditService patterns with generic action/actor model
 
-export type ComplianceFramework = 'LGPD' | 'ANVISA' | 'CFM' | 'HIPAA' | 'GDPR';
+export type ComplianceFramework = 'LGPD' | 'ANVISA' | 'CFM' | 'HIPAA' | 'GDPR'
 
 export type AuditAction =
   // Data operations
@@ -23,7 +23,7 @@ export type AuditAction =
   | 'BACKUP'
   | 'RESTORE'
   | 'MIGRATE'
-  | 'AUDIT';
+  | 'AUDIT'
 
 export type ActorType =
   | 'PATIENT'
@@ -32,135 +32,135 @@ export type ActorType =
   | 'ADMIN'
   | 'SYSTEM'
   | 'EXTERNAL_API'
-  | 'ANONYMOUS';
+  | 'ANONYMOUS'
 
-export type RiskLevel = 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+export type RiskLevel = 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL'
 
 export type ComplianceStatus =
   | 'COMPLIANT'
   | 'NON_COMPLIANT'
   | 'PENDING_REVIEW'
-  | 'UNKNOWN';
+  | 'UNKNOWN'
 
 export interface ConsentReference {
   /** Unique consent ID */
-  id: string;
+  id: string
   /** Type of consent (data_processing, treatment, etc.) */
-  type: string;
+  type: string
   /** When consent was granted */
-  grantedAt: string;
+  grantedAt: string
   /** When consent expires (optional) */
-  expiresAt?: string;
+  expiresAt?: string
   /** Consent status */
-  status: 'ACTIVE' | 'EXPIRED' | 'REVOKED' | 'PENDING';
+  status: 'ACTIVE' | 'EXPIRED' | 'REVOKED' | 'PENDING'
   /** Framework this consent applies to */
-  framework: ComplianceFramework;
+  framework: ComplianceFramework
 }
 
 export interface GenericAuditEvent {
   /** Unique audit event ID */
-  id: string;
+  id: string
   /** Action performed */
-  action: AuditAction;
+  action: AuditAction
   /** Who performed the action */
   actor: {
-    id: string;
-    type: ActorType;
-    name?: string;
-    email?: string;
-    _role?: string;
-  };
+    id: string
+    type: ActorType
+    name?: string
+    email?: string
+    _role?: string
+  }
   /** When the action occurred */
-  timestamp: string;
+  timestamp: string
   /** Resource affected by the action */
   resource: {
-    type: string;
-    id: string;
-    name?: string;
-    category?: string;
-  };
+    type: string
+    id: string
+    name?: string
+    category?: string
+  }
   /** Clinic/organization context */
-  clinicId: string;
+  clinicId: string
   /** Related consent reference (healthcare compliance) */
-  consentRef?: ConsentReference;
+  consentRef?: ConsentReference
   /** Risk assessment */
-  riskLevel: RiskLevel;
+  riskLevel: RiskLevel
   /** Compliance status */
-  complianceStatus: ComplianceStatus;
+  complianceStatus: ComplianceStatus
   /** Additional context */
-  metadata?: Record<string, any>;
+  metadata?: Record<string, any>
   /** IP address where action originated */
-  ipAddress?: string;
+  ipAddress?: string
   /** User agent string */
-  userAgent?: string;
+  userAgent?: string
   /** Session ID if applicable */
-  sessionId?: string;
+  sessionId?: string
   /** Applicable compliance frameworks */
-  frameworks: ComplianceFramework[];
+  frameworks: ComplianceFramework[]
 }
 
 export interface ComplianceViolation {
   /** Violation ID */
-  id: string;
+  id: string
   /** Which framework was violated */
-  framework: ComplianceFramework;
+  framework: ComplianceFramework
   /** Severity of violation */
-  severity: RiskLevel;
+  severity: RiskLevel
   /** Description of violation */
-  description: string;
+  description: string
   /** Suggested remediation */
-  remediation?: string;
+  remediation?: string
   /** Related audit event */
-  auditEventId: string;
+  auditEventId: string
 }
 
 export interface ComplianceReport {
   /** Report period */
   period: {
-    start: string;
-    end: string;
-  };
+    start: string
+    end: string
+  }
   /** Clinic this report covers */
-  clinicId: string;
+  clinicId: string
   /** Total events audited */
-  totalEvents: number;
+  totalEvents: number
   /** Events by compliance status */
-  statusBreakdown: Record<ComplianceStatus, number>;
+  statusBreakdown: Record<ComplianceStatus, number>
   /** Events by risk level */
-  riskBreakdown: Record<RiskLevel, number>;
+  riskBreakdown: Record<RiskLevel, number>
   /** Violations found */
-  violations: ComplianceViolation[];
+  violations: ComplianceViolation[]
   /** Compliance score (0-100) */
-  complianceScore: number;
+  complianceScore: number
   /** Frameworks assessed */
-  frameworks: ComplianceFramework[];
+  frameworks: ComplianceFramework[]
   /** Generated at */
-  generatedAt: string;
+  generatedAt: string
 }
 
 export interface AuditSearchFilters {
   /** Filter by action type */
-  action?: AuditAction;
+  action?: AuditAction
   /** Filter by actor type */
-  actorType?: ActorType;
+  actorType?: ActorType
   /** Filter by actor ID */
-  actorId?: string;
+  actorId?: string
   /** Filter by resource type */
-  resourceType?: string;
+  resourceType?: string
   /** Filter by resource ID */
-  resourceId?: string;
+  resourceId?: string
   /** Filter by risk level */
-  riskLevel?: RiskLevel;
+  riskLevel?: RiskLevel
   /** Filter by compliance status */
-  complianceStatus?: ComplianceStatus;
+  complianceStatus?: ComplianceStatus
   /** Filter by framework */
-  framework?: ComplianceFramework;
+  framework?: ComplianceFramework
   /** Date range start */
-  startDate?: string;
+  startDate?: string
   /** Date range end */
-  endDate?: string;
+  endDate?: string
   /** Session ID */
-  sessionId?: string;
+  sessionId?: string
   /** Consent reference ID */
-  consentRefId?: string;
+  consentRefId?: string
 }

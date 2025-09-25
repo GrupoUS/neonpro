@@ -1,6 +1,6 @@
-import { createFileRoute, redirect } from '@tanstack/react-router';
-import { Building2 } from 'lucide-react';
-import * as React from 'react';
+import { createFileRoute, redirect } from '@tanstack/react-router'
+import { Building2 } from 'lucide-react'
+import * as React from 'react'
 
 export const Route = createFileRoute('/')({
   component: Home,
@@ -8,9 +8,9 @@ export const Route = createFileRoute('/')({
     // Redirect to login page
     throw redirect({
       to: '/auth/login',
-    });
+    })
   },
-});
+})
 
 function Home() {
   // This component won't be rendered due to the redirect
@@ -31,5 +31,5 @@ function Home() {
         </div>
       </div>
     </div>
-  );
+  )
 }

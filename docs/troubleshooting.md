@@ -66,7 +66,7 @@ pnpm install --frozen-lockfile
 // ❌ Wrong - modifying base component
 export const Card = styled(BaseCard)`
   background: gradient(...);
-`;
+`
 
 // ✅ Correct - using composition
 export const AnimatedCard = ({ magic, ...props }) => (
@@ -74,7 +74,7 @@ export const AnimatedCard = ({ magic, ...props }) => (
     {magic && <MagicEffects />}
     {children}
   </BaseCard>
-);
+)
 ```
 
 ## Testing Issues
@@ -114,7 +114,7 @@ export default defineConfig({
     globals: true,
     setupFiles: ['./vitest.setup.ts'],
   },
-});
+})
 ```
 
 ## Database Issues

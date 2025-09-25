@@ -1,10 +1,10 @@
-import { createFileRoute, Outlet } from '@tanstack/react-router';
-import { Calendar, FileText, Target, TrendingUp } from 'lucide-react';
-import * as React from 'react';
+import { createFileRoute, Outlet } from '@tanstack/react-router'
+import { Calendar, FileText, Target, TrendingUp } from 'lucide-react'
+import * as React from 'react'
 
 export const Route = (createFileRoute as any)('/treatment-plans')({
   component: TreatmentPlansRoot,
-});
+})
 
 function TreatmentPlansRoot() {
   return (
@@ -31,5 +31,5 @@ function TreatmentPlansRoot() {
       </div>
       <Outlet />
     </div>
-  );
+  )
 }

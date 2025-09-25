@@ -10,32 +10,32 @@ import {
   User,
   Video,
   X,
-} from 'lucide-react';
-import * as React from 'react';
+} from 'lucide-react'
+import * as React from 'react'
 
 interface CalendarEvent {
-  id: string;
-  title: string;
-  description?: string;
-  startTime: Date;
-  endTime: Date;
-  location?: string;
-  attendees?: string[];
-  isNeonProEvent?: boolean;
-  eventType?: 'appointment' | 'procedure' | 'consultation' | 'followup' | 'personal';
-  patientId?: string;
-  professionalId?: string;
-  status?: 'confirmed' | 'pending' | 'cancelled';
+  id: string
+  title: string
+  description?: string
+  startTime: Date
+  endTime: Date
+  location?: string
+  attendees?: string[]
+  isNeonProEvent?: boolean
+  eventType?: 'appointment' | 'procedure' | 'consultation' | 'followup' | 'personal'
+  patientId?: string
+  professionalId?: string
+  status?: 'confirmed' | 'pending' | 'cancelled'
 }
 
 interface PWACalendarIntegrationProps {
-  className?: string;
-  events?: CalendarEvent[];
-  onEventSelect?: (event: CalendarEvent) => void;
-  onEventCreate?: (event: Omit<CalendarEvent, 'id'>) => void;
-  onSyncComplete?: (events: CalendarEvent[]) => void;
-  showSyncButton?: boolean;
-  autoSync?: boolean;
+  className?: string
+  events?: CalendarEvent[]
+  onEventSelect?: (event: CalendarEvent) => void
+  onEventCreate?: (event: Omit<CalendarEvent, 'id'>) => void
+  onSyncComplete?: (events: CalendarEvent[]) => void
+  showSyncButton?: boolean
+  autoSync?: boolean
 }
 
 export const PWACalendarIntegration: React.FC<PWACalendarIntegrationProps> = ({
@@ -47,54 +47,54 @@ export const PWACalendarIntegration: React.FC<PWACalendarIntegrationProps> = ({
   showSyncButton = true,
   autoSync = false,
 }) => {
-  const [events, setEvents] = React.useState<CalendarEvent[]>(propEvents);
-  const [filteredEvents, setFilteredEvents] = React.useState<CalendarEvent[]>([]);
-  const [selectedDate, setSelectedDate] = React.useState(new Date());
-  const [viewMode, setViewMode] = React.useState<'day' | 'week' | 'month'>('week');
-  const [isSyncing, setIsSyncing] = React.useState(false);
-  const [hasCalendarAccess, setHasCalendarAccess] = React.useState(false);
-  const [error, setError] = React.useState<string | null>(null);
-  const [showEventModal, setShowEventModal] = React.useState(false);
-  const [newEvent, setNewEvent] = React.useState<Partial<CalendarEvent>>({});
+  const [events, setEvents] = React.useState<CalendarEvent[]>(propEvents)
+  const [filteredEvents, setFilteredEvents] = React.useState<CalendarEvent[]>([])
+  const [selectedDate, setSelectedDate] = React.useState(new Date())
+  const [viewMode, setViewMode] = React.useState<'day' | 'week' | 'month'>('week')
+  const [isSyncing, setIsSyncing] = React.useState(false)
+  const [hasCalendarAccess, setHasCalendarAccess] = React.useState(false)
+  const [error, setError] = React.useState<string | null>(null)
+  const [showEventModal, setShowEventModal] = React.useState(false)
+  const [newEvent, setNewEvent] = React.useState<Partial<CalendarEvent>>({})
   const [syncStatus, setSyncStatus] = React.useState<{
-    lastSync?: Date;
-    totalEvents: number;
-    neonProEvents: number;
-    deviceEvents: number;
+    lastSync?: Date
+    totalEvents: number
+    neonProEvents: number
+    deviceEvents: number
   }>({
     totalEvents: 0,
     neonProEvents: 0,
     deviceEvents: 0,
-  });
+  })
 
   React.useEffect(() => {
-    checkCalendarAccess();
-    loadStoredEvents();
+    checkCalendarAccess()
+    loadStoredEvents()
 
     if (autoSync && hasCalendarAccess) {
-      performSync();
+      performSync()
     }
-  }, []);
+  }, [])
 
   React.useEffect(() => {
-    filterEventsByDate();
-  }, [events, selectedDate, viewMode]);
+    filterEventsByDate()
+  }, [events, selectedDate, viewMode])
 
   const checkCalendarAccess = async () => {
     if ('calendar' in navigator) {
       try {
         // @ts-ignore - Calendar API is experimental
-        const status = await navigator.permissions.query({ name: 'calendar' });
-        setHasCalendarAccess(status.state === 'granted');
+        const status = await navigator.permissions.query({ name: 'calendar' })
+        setHasCalendarAccess(status.state === 'granted')
       } catch {
-        setHasCalendarAccess(false);
+        setHasCalendarAccess(false)
       }
     }
-  };
+  }
 
   const loadStoredEvents = () => {
-    const stored = localStorage.getItem('neonpro-calendar-events');
-    const syncStatus = localStorage.getItem('neonpro-calendar-sync-status');
+    const stored = localStorage.getItem('neonpro-calendar-events')
+    const syncStatus = localStorage.getItem('neonpro-calendar-sync-status')
 
     if (stored) {
       try {
@@ -102,104 +102,104 @@ export const PWACalendarIntegration: React.FC<PWACalendarIntegrationProps> = ({
           ...e,
           startTime: new Date(e.startTime),
           endTime: new Date(e.endTime),
-        }));
-        setEvents(parsed);
+        }))
+        setEvents(parsed)
       } catch {
-        setEvents([]);
+        setEvents([])
       }
     }
 
     if (syncStatus) {
       try {
-        const parsed = JSON.parse(syncStatus);
+        const parsed = JSON.parse(syncStatus)
         setSyncStatus({
           ...parsed,
           lastSync: new Date(parsed.lastSync),
-        });
+        })
       } catch {
         setSyncStatus({
           totalEvents: 0,
           neonProEvents: 0,
           deviceEvents: 0,
-        });
+        })
       }
     }
-  };
+  }
 
   const saveEvents = (updatedEvents: CalendarEvent[]) => {
-    setEvents(updatedEvents);
-    localStorage.setItem('neonpro-calendar-events', JSON.stringify(updatedEvents));
+    setEvents(updatedEvents)
+    localStorage.setItem('neonpro-calendar-events', JSON.stringify(updatedEvents))
 
-    const neonProCount = updatedEvents.filter(e => e.isNeonProEvent).length;
-    const deviceCount = updatedEvents.filter(e => !e.isNeonProEvent).length;
+    const neonProCount = updatedEvents.filter(e => e.isNeonProEvent).length
+    const deviceCount = updatedEvents.filter(e => !e.isNeonProEvent).length
 
     setSyncStatus(prev => ({
       ...prev,
       totalEvents: updatedEvents.length,
       neonProEvents: neonProCount,
       deviceEvents: deviceCount,
-    }));
-  };
+    }))
+  }
 
   const filterEventsByDate = () => {
-    const now = new Date();
-    let startDate: Date;
-    let endDate: Date;
+    const now = new Date()
+    let startDate: Date
+    let endDate: Date
 
     switch (viewMode) {
       case 'day':
-        startDate = new Date(selectedDate);
-        startDate.setHours(0, 0, 0, 0);
-        endDate = new Date(selectedDate);
-        endDate.setHours(23, 59, 59, 999);
-        break;
+        startDate = new Date(selectedDate)
+        startDate.setHours(0, 0, 0, 0)
+        endDate = new Date(selectedDate)
+        endDate.setHours(23, 59, 59, 999)
+        break
 
       case 'week':
-        startDate = new Date(selectedDate);
-        const dayOfWeek = startDate.getDay();
-        startDate.setDate(startDate.getDate() - dayOfWeek);
-        startDate.setHours(0, 0, 0, 0);
+        startDate = new Date(selectedDate)
+        const dayOfWeek = startDate.getDay()
+        startDate.setDate(startDate.getDate() - dayOfWeek)
+        startDate.setHours(0, 0, 0, 0)
 
-        endDate = new Date(startDate);
-        endDate.setDate(startDate.getDate() + 6);
-        endDate.setHours(23, 59, 59, 999);
-        break;
+        endDate = new Date(startDate)
+        endDate.setDate(startDate.getDate() + 6)
+        endDate.setHours(23, 59, 59, 999)
+        break
 
       case 'month':
-        startDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1);
-        endDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 0);
-        endDate.setHours(23, 59, 59, 999);
-        break;
+        startDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1)
+        endDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 0)
+        endDate.setHours(23, 59, 59, 999)
+        break
     }
 
     const filtered = events.filter(event =>
       event.startTime >= startDate && event.startTime <= endDate
-    );
+    )
 
     // Sort by start time
-    filtered.sort((a, b) => a.startTime.getTime() - b.startTime.getTime());
-    setFilteredEvents(filtered);
-  };
+    filtered.sort((a, b) => a.startTime.getTime() - b.startTime.getTime())
+    setFilteredEvents(filtered)
+  }
 
   const performSync = async () => {
-    if (!hasCalendarAccess || isSyncing) return;
+    if (!hasCalendarAccess || isSyncing) return
 
-    setIsSyncing(true);
-    setError(null);
+    setIsSyncing(true)
+    setError(null)
 
     try {
       if ('calendar' in navigator) {
         // @ts-ignore - Calendar API is experimental
-        const calendars = await navigator.calendars.get();
+        const calendars = await navigator.calendars.get()
 
-        let deviceEvents: CalendarEvent[] = [];
+        let deviceEvents: CalendarEvent[] = []
 
         for (const calendar of calendars) {
           // @ts-ignore - Calendar API is experimental
           const events = await calendar.events.list({
             timeMin: new Date().toISOString(),
             timeMax: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(), // 30 days ahead
-          });
+          })
 
           deviceEvents = deviceEvents.concat(events.map((event: any) => ({
             id: `device-${event.id}`,
@@ -210,56 +210,56 @@ export const PWACalendarIntegration: React.FC<PWACalendarIntegrationProps> = ({
             location: event.location,
             isNeonProEvent: false,
             eventType: 'personal',
-          })));
+          })))
         }
 
         // Merge with existing events, avoiding duplicates
         const existingDeviceIds = events
           .filter(e => !e.isNeonProEvent)
-          .map(e => e.id);
+          .map(e => e.id)
 
         const newDeviceEvents = deviceEvents.filter(
           e => !existingDeviceIds.includes(e.id),
-        );
+        )
 
-        const updatedEvents = [...events, ...newDeviceEvents];
-        saveEvents(updatedEvents);
+        const updatedEvents = [...events, ...newDeviceEvents]
+        saveEvents(updatedEvents)
 
         setSyncStatus(prev => ({
           ...prev,
           lastSync: new Date(),
           deviceEvents: updatedEvents.filter(e => !e.isNeonProEvent).length,
-        }));
+        }))
 
-        onSyncComplete?.(updatedEvents);
+        onSyncComplete?.(updatedEvents)
       }
     } catch (err) {
-      console.error('Calendar sync error:', err);
-      setError('Não foi possível sincronizar com o calendário do dispositivo');
+      console.error('Calendar sync error:', err)
+      setError('Não foi possível sincronizar com o calendário do dispositivo')
     } finally {
-      setIsSyncing(false);
+      setIsSyncing(false)
     }
-  };
+  }
 
   const requestCalendarAccess = async () => {
     try {
       if ('calendar' in navigator) {
         // @ts-ignore - Calendar API is experimental
-        const calendars = await navigator.calendars.get();
-        setHasCalendarAccess(calendars.length > 0);
+        const calendars = await navigator.calendars.get()
+        setHasCalendarAccess(calendars.length > 0)
 
         if (calendars.length > 0) {
-          await performSync();
+          await performSync()
         }
       }
     } catch (err) {
-      console.error('Calendar access error:', err);
-      setError('Não foi possível acessar o calendário do dispositivo');
+      console.error('Calendar access error:', err)
+      setError('Não foi possível acessar o calendário do dispositivo')
     }
-  };
+  }
 
   const createNewEvent = () => {
-    if (!newEvent.title || !newEvent.startTime || !newEvent.endTime) return;
+    if (!newEvent.title || !newEvent.startTime || !newEvent.endTime) return
 
     const event: CalendarEvent = {
       id: `neonpro-${Date.now()}`,
@@ -273,55 +273,55 @@ export const PWACalendarIntegration: React.FC<PWACalendarIntegrationProps> = ({
       status: 'confirmed',
       patientId: newEvent.patientId,
       professionalId: newEvent.professionalId,
-    };
+    }
 
-    const updatedEvents = [...events, event];
-    saveEvents(updatedEvents);
-    onEventCreate?.(event);
+    const updatedEvents = [...events, event]
+    saveEvents(updatedEvents)
+    onEventCreate?.(event)
 
-    setNewEvent({});
-    setShowEventModal(false);
-  };
+    setNewEvent({})
+    setShowEventModal(false)
+  }
 
   const getEventTypeColor = (eventType?: string) => {
     switch (eventType) {
       case 'appointment':
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-blue-100 text-blue-800'
       case 'procedure':
-        return 'bg-purple-100 text-purple-800';
+        return 'bg-purple-100 text-purple-800'
       case 'consultation':
-        return 'bg-green-100 text-green-800';
+        return 'bg-green-100 text-green-800'
       case 'followup':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'bg-yellow-100 text-yellow-800'
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-gray-100 text-gray-800'
     }
-  };
+  }
 
   const formatEventTime = (date: Date) => {
     return date.toLocaleTimeString('pt-BR', {
       hour: '2-digit',
       minute: '2-digit',
-    });
-  };
+    })
+  }
 
   const navigateDate = (direction: 'prev' | 'next') => {
-    const newDate = new Date(selectedDate);
+    const newDate = new Date(selectedDate)
 
     switch (viewMode) {
       case 'day':
-        newDate.setDate(newDate.getDate() + (direction === 'next' ? 1 : -1));
-        break;
+        newDate.setDate(newDate.getDate() + (direction === 'next' ? 1 : -1))
+        break
       case 'week':
-        newDate.setDate(newDate.getDate() + (direction === 'next' ? 7 : -7));
-        break;
+        newDate.setDate(newDate.getDate() + (direction === 'next' ? 7 : -7))
+        break
       case 'month':
-        newDate.setMonth(newDate.getMonth() + (direction === 'next' ? 1 : -1));
-        break;
+        newDate.setMonth(newDate.getMonth() + (direction === 'next' ? 1 : -1))
+        break
     }
 
-    setSelectedDate(newDate);
-  };
+    setSelectedDate(newDate)
+  }
 
   return (
     <div className={`bg-white rounded-lg shadow-lg p-6 ${className}`}>
@@ -673,5 +673,5 @@ export const PWACalendarIntegration: React.FC<PWACalendarIntegrationProps> = ({
         </div>
       )}
     </div>
-  );
-};
+  )
+}

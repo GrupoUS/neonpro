@@ -30,4 +30,4 @@ export const config: TriggerConfig = {
 */
 
 // Empty export to avoid module errors
-export const config = {};
+export const config = {}

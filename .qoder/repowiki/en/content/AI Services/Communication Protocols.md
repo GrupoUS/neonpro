@@ -484,48 +484,48 @@ For the TypeScript frontend, implement the AG-UI protocol client as follows:
 
 ```typescript
 class AguiClient {
-  private socket: WebSocket | null = null;
-  private sessionId: string;
-  private reconnectAttempts = 0;
-  private maxReconnectAttempts = 5;
+  private socket: WebSocket | null = null
+  private sessionId: string
+  private reconnectAttempts = 0
+  private maxReconnectAttempts = 5
 
   constructor(private userId: string, private baseUrl: string) {
-    this.sessionId = this.generateSessionId();
+    this.sessionId = this.generateSessionId()
   }
 
   async connect(): Promise<void> {
-    const url = `${this.baseUrl}/ws/agui/${this.userId}`;
-    this.socket = new WebSocket(url);
+    const url = `${this.baseUrl}/ws/agui/${this.userId}`
+    this.socket = new WebSocket(url)
 
-    this.socket.onopen = this.handleOpen.bind(this);
-    this.socket.onmessage = this.handleMessage.bind(this);
-    this.socket.onclose = this.handleClose.bind(this);
-    this.socket.onerror = this.handleError.bind(this);
+    this.socket.onopen = this.handleOpen.bind(this)
+    this.socket.onmessage = this.handleMessage.bind(this)
+    this.socket.onclose = this.handleClose.bind(this)
+    this.socket.onerror = this.handleError.bind(this)
   }
 
   private handleOpen(): void {
-    console.log('Connected to AG-UI protocol');
+    console.log('Connected to AG-UI protocol')
     // Start heartbeat if needed
   }
 
   private handleMessage(event: MessageEvent): void {
-    const message: AguiEvent = JSON.parse(event.data);
+    const message: AguiEvent = JSON.parse(event.data)
 
     switch (message.type) {
       case 'connection':
-        this.handleConnection(message);
-        break;
+        this.handleConnection(message)
+        break
       case 'response':
-        this.handleResponse(message);
-        break;
+        this.handleResponse(message)
+        break
       case 'error':
-        this.handleErrorEvent(message);
-        break;
+        this.handleErrorEvent(message)
+        break
       case 'heartbeat':
-        this.handleHeartbeat(message);
-        break;
+        this.handleHeartbeat(message)
+        break
       default:
-        this.handleCustomEvent(message);
+        this.handleCustomEvent(message)
     }
   }
 
@@ -537,24 +537,24 @@ class AguiClient {
         timestamp: Date.now(),
         sessionId: this.sessionId,
         ...message,
-      };
+      }
 
-      this.socket.send(JSON.stringify(fullMessage));
+      this.socket.send(JSON.stringify(fullMessage))
     }
   }
 
   disconnect(): void {
     if (this.socket) {
-      this.socket.close();
-      this.socket = null;
+      this.socket.close()
+      this.socket = null
     }
   }
 
   private handleClose(): void {
     // Attempt reconnection if within limits
     if (this.reconnectAttempts < this.maxReconnectAttempts) {
-      this.reconnectAttempts++;
-      setTimeout(() => this.connect(), 1000 * Math.pow(2, this.reconnectAttempts));
+      this.reconnectAttempts++
+      setTimeout(() => this.connect(), 1000 * Math.pow(2, this.reconnectAttempts))
     }
   }
 }

@@ -5,60 +5,60 @@
  * with LGPD compliance and healthcare security requirements.
  */
 
-import { Database } from '@/types/database';
-import { createClient } from '@supabase/supabase-js';
-import { v4 as uuidv4 } from 'uuid';
+import { Database } from '@/types/database'
+import { createClient } from '@supabase/supabase-js'
+import { v4 as uuidv4 } from 'uuid'
 
 export interface SessionConfig {
-  defaultExpirationMs: number;
-  maxSessionLengthMs: number;
-  cleanupIntervalMs: number;
-  maxConcurrentSessions: number;
+  defaultExpirationMs: number
+  maxSessionLengthMs: number
+  cleanupIntervalMs: number
+  maxConcurrentSessions: number
 }
 
 export interface SessionContext {
-  _userId: string;
-  patientId?: string;
-  userPreferences?: Record<string, any>;
-  previousTopics?: string[];
-  clinicId?: string;
+  _userId: string
+  patientId?: string
+  userPreferences?: Record<string, any>
+  previousTopics?: string[]
+  clinicId?: string
 }
 
 export interface SessionData {
-  id: string;
-  sessionId: string;
-  _userId: string;
-  title: string;
-  _context: SessionContext;
-  createdAt: string;
-  updatedAt: string;
-  expiresAt: string;
-  isActive: boolean;
-  messageCount: number;
-  lastActivity: string;
-  metadata?: Record<string, any>;
+  id: string
+  sessionId: string
+  _userId: string
+  title: string
+  _context: SessionContext
+  createdAt: string
+  updatedAt: string
+  expiresAt: string
+  isActive: boolean
+  messageCount: number
+  lastActivity: string
+  metadata?: Record<string, any>
 }
 
 export interface SessionCreateOptions {
-  title?: string;
-  _context?: Partial<SessionContext>;
-  expirationMs?: number;
-  metadata?: Record<string, any>;
+  title?: string
+  _context?: Partial<SessionContext>
+  expirationMs?: number
+  metadata?: Record<string, any>
 }
 
 export class AgentSessionService {
-  private supabase: ReturnType<typeof createClient<Database>>;
-  private config: SessionConfig;
-  private cleanupTimer?: NodeJS.Timeout;
-  private sessionCache: Map<string, SessionData> = new Map();
-  private cacheTimeout = 300000; // 5 minutes
+  private supabase: ReturnType<typeof createClient<Database>>
+  private config: SessionConfig
+  private cleanupTimer?: NodeJS.Timeout
+  private sessionCache: Map<string, SessionData> = new Map()
+  private cacheTimeout = 300000 // 5 minutes
 
   constructor(
     supabaseUrl: string,
     supabaseServiceKey: string,
     config: Partial<SessionConfig> = {},
   ) {
-    this.supabase = createClient<Database>(supabaseUrl, supabaseServiceKey);
+    this.supabase = createClient<Database>(supabaseUrl, supabaseServiceKey)
 
     this.config = {
       defaultExpirationMs: 24 * 60 * 60 * 1000, // 24 hours
@@ -66,9 +66,9 @@ export class AgentSessionService {
       cleanupIntervalMs: 15 * 60 * 1000, // 15 minutes
       maxConcurrentSessions: 10,
       ...config,
-    };
+    }
 
-    this.startCleanupTimer();
+    this.startCleanupTimer()
   }
 
   /**
@@ -80,12 +80,12 @@ export class AgentSessionService {
   ): Promise<SessionData> {
     try {
       // Check concurrent session limit
-      await this.validateConcurrentSessionLimit(userId);
+      await this.validateConcurrentSessionLimit(userId)
 
-      const sessionId = uuidv4();
-      const now = new Date();
-      const expirationMs = options.expirationMs || this.config.defaultExpirationMs;
-      const expiresAt = new Date(now.getTime() + expirationMs);
+      const sessionId = uuidv4()
+      const now = new Date()
+      const expirationMs = options.expirationMs || this.config.defaultExpirationMs
+      const expiresAt = new Date(now.getTime() + expirationMs)
 
       const sessionContext: SessionContext = {
         userId,
@@ -93,7 +93,7 @@ export class AgentSessionService {
         userPreferences: options.context?.userPreferences || {},
         previousTopics: options.context?.previousTopics || [],
         clinicId: options.context?.clinicId,
-      };
+      }
 
       const session: SessionData = {
         id: sessionId,
@@ -108,20 +108,20 @@ export class AgentSessionService {
         messageCount: 0,
         lastActivity: now.toISOString(),
         metadata: options.metadata,
-      };
+      }
 
       // Store session in database
-      await this.storeSession(session);
+      await this.storeSession(session)
 
       // Cache session
-      this.cacheSession(session);
+      this.cacheSession(session)
 
-      return session;
+      return session
     } catch {
-      console.error('Error creating session:', error);
+      console.error('Error creating session:', error)
       throw new Error(
         `Failed to create session: ${error instanceof Error ? error.message : 'Unknown error'}`,
-      );
+      )
     }
   }
 
@@ -131,30 +131,30 @@ export class AgentSessionService {
   async getSession(sessionId: string): Promise<SessionData | null> {
     try {
       // Check cache first
-      const cached = this.sessionCache.get(sessionId);
+      const cached = this.sessionCache.get(sessionId)
       if (cached && cached.expiresAt > new Date().toISOString()) {
-        return cached;
+        return cached
       }
 
       // Retrieve from database
-      const session = await this.retrieveSession(sessionId);
+      const session = await this.retrieveSession(sessionId)
       if (!session) {
-        return null;
+        return null
       }
 
       // Validate session expiration
       if (new Date(session.expiresAt) <= new Date()) {
-        await this.expireSession(sessionId);
-        return null;
+        await this.expireSession(sessionId)
+        return null
       }
 
       // Cache valid session
-      this.cacheSession(session);
+      this.cacheSession(session)
 
-      return session;
+      return session
     } catch {
-      console.error('Error retrieving session:', error);
-      return null;
+      console.error('Error retrieving session:', error)
+      return null
     }
   }
 
@@ -169,21 +169,21 @@ export class AgentSessionService {
         .eq('user_id', _userId)
         .eq('is_active', true)
         .gt('expires_at', new Date().toISOString())
-        .order('last_activity', { ascending: false });
+        .order('last_activity', { ascending: false })
 
       if (error) {
-        throw error;
+        throw error
       }
 
-      const sessions = (data || []).map(this.mapSessionRecord);
+      const sessions = (data || []).map(this.mapSessionRecord)
 
       // Update cache
-      sessions.forEach(session => this.cacheSession(session));
+      sessions.forEach(session => this.cacheSession(session))
 
-      return sessions;
+      return sessions
     } catch {
-      console.error('Error getting user sessions:', error);
-      return [];
+      console.error('Error getting user sessions:', error)
+      return []
     }
   }
 
@@ -193,28 +193,28 @@ export class AgentSessionService {
   async updateSession(
     sessionId: string,
     updates: {
-      title?: string;
-      _context?: Partial<SessionContext>;
-      expiresAt?: Date;
-      metadata?: Record<string, any>;
+      title?: string
+      _context?: Partial<SessionContext>
+      expiresAt?: Date
+      metadata?: Record<string, any>
     },
   ): Promise<SessionData | null> {
     try {
-      const session = await this.getSession(sessionId);
+      const session = await this.getSession(sessionId)
       if (!session) {
-        return null;
+        return null
       }
 
       // Validate session expiration
       const newExpiresAt = updates.expiresAt
         ? new Date(updates.expiresAt)
-        : new Date(session.expiresAt);
+        : new Date(session.expiresAt)
 
       if (
-        newExpiresAt.getTime()
-          > Date.now() + this.config.maxSessionLengthMs
+        newExpiresAt.getTime() >
+          Date.now() + this.config.maxSessionLengthMs
       ) {
-        throw new Error('Session length exceeds maximum allowed duration');
+        throw new Error('Session length exceeds maximum allowed duration')
       }
 
       const updatedSession: SessionData = {
@@ -224,18 +224,18 @@ export class AgentSessionService {
         expiresAt: newExpiresAt.toISOString(),
         metadata: { ...session.metadata, ...updates.metadata },
         updatedAt: new Date().toISOString(),
-      };
+      }
 
       // Store updated session
-      await this.storeSession(updatedSession);
+      await this.storeSession(updatedSession)
 
       // Update cache
-      this.cacheSession(updatedSession);
+      this.cacheSession(updatedSession)
 
-      return updatedSession;
+      return updatedSession
     } catch {
-      console.error('Error updating session:', error);
-      return null;
+      console.error('Error updating session:', error)
+      return null
     }
   }
 
@@ -244,9 +244,9 @@ export class AgentSessionService {
    */
   async recordActivity(sessionId: string): Promise<void> {
     try {
-      const session = await this.getSession(sessionId);
+      const session = await this.getSession(sessionId)
       if (!session) {
-        return;
+        return
       }
 
       const updatedSession: SessionData = {
@@ -254,12 +254,12 @@ export class AgentSessionService {
         messageCount: session.messageCount + 1,
         lastActivity: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
-      };
+      }
 
-      await this.storeSession(updatedSession);
-      this.cacheSession(updatedSession);
+      await this.storeSession(updatedSession)
+      this.cacheSession(updatedSession)
     } catch {
-      console.error('Error recording session activity:', error);
+      console.error('Error recording session activity:', error)
     }
   }
 
@@ -268,9 +268,9 @@ export class AgentSessionService {
    */
   async expireSession(sessionId: string): Promise<boolean> {
     try {
-      const session = await this.getSession(sessionId);
+      const session = await this.getSession(sessionId)
       if (!session) {
-        return false;
+        return false
       }
 
       // Mark session as expired
@@ -280,15 +280,15 @@ export class AgentSessionService {
           is_active: false,
           expires_at: new Date().toISOString(),
         })
-        .eq('session_id', sessionId);
+        .eq('session_id', sessionId)
 
       // Remove from cache
-      this.sessionCache.delete(sessionId);
+      this.sessionCache.delete(sessionId)
 
-      return true;
+      return true
     } catch {
-      console.error('Error expiring session:', error);
-      return false;
+      console.error('Error expiring session:', error)
+      return false
     }
   }
 
@@ -301,27 +301,27 @@ export class AgentSessionService {
       await this.supabase
         .from('agent_messages')
         .delete()
-        .eq('session_id', sessionId);
+        .eq('session_id', sessionId)
 
       // Delete session context
       await this.supabase
         .from('agent_context')
         .delete()
-        .eq('session_id', sessionId);
+        .eq('session_id', sessionId)
 
       // Delete session
       await this.supabase
         .from('agent_sessions')
         .delete()
-        .eq('session_id', sessionId);
+        .eq('session_id', sessionId)
 
       // Remove from cache
-      this.sessionCache.delete(sessionId);
+      this.sessionCache.delete(sessionId)
 
-      return true;
+      return true
     } catch {
-      console.error('Error deleting session:', error);
-      return false;
+      console.error('Error deleting session:', error)
+      return false
     }
   }
 
@@ -335,14 +335,14 @@ export class AgentSessionService {
         .from('agent_sessions')
         .select('session_id')
         .lte('expires_at', new Date().toISOString())
-        .eq('is_active', true);
+        .eq('is_active', true)
 
       if (error) {
-        throw error;
+        throw error
       }
 
       if (!expiredSessions || expiredSessions.length === 0) {
-        return 0;
+        return 0
       }
 
       // Mark sessions as expired
@@ -352,17 +352,17 @@ export class AgentSessionService {
         .in(
           'session_id',
           expiredSessions.map(s => s.session_id),
-        );
+        )
 
       // Remove from cache
       expiredSessions.forEach(session => {
-        this.sessionCache.delete(session.session_id);
-      });
+        this.sessionCache.delete(session.session_id)
+      })
 
-      return expiredSessions.length;
+      return expiredSessions.length
     } catch {
-      console.error('Error cleaning up expired sessions:', error);
-      return 0;
+      console.error('Error cleaning up expired sessions:', error)
+      return 0
     }
   }
 
@@ -374,26 +374,26 @@ export class AgentSessionService {
     additionalMs: number = this.config.defaultExpirationMs,
   ): Promise<SessionData | null> {
     try {
-      const session = await this.getSession(sessionId);
+      const session = await this.getSession(sessionId)
       if (!session) {
-        return null;
+        return null
       }
 
-      const currentExpiresAt = new Date(session.expiresAt);
-      const newExpiresAt = new Date(currentExpiresAt.getTime() + additionalMs);
+      const currentExpiresAt = new Date(session.expiresAt)
+      const newExpiresAt = new Date(currentExpiresAt.getTime() + additionalMs)
 
       // Check maximum session length
-      const sessionLength = newExpiresAt.getTime() - new Date(session.createdAt).getTime();
+      const sessionLength = newExpiresAt.getTime() - new Date(session.createdAt).getTime()
       if (sessionLength > this.config.maxSessionLengthMs) {
-        throw new Error('Cannot extend session beyond maximum length');
+        throw new Error('Cannot extend session beyond maximum length')
       }
 
       return await this.updateSession(sessionId, {
         expiresAt: newExpiresAt,
-      });
+      })
     } catch {
-      console.error('Error extending session:', error);
-      return null;
+      console.error('Error extending session:', error)
+      return null
     }
   }
 
@@ -401,52 +401,52 @@ export class AgentSessionService {
    * Get session statistics
    */
   async getSessionStatistics(_userId?: string): Promise<{
-    totalSessions: number;
-    activeSessions: number;
-    expiredSessions: number;
-    averageSessionLength: number;
-    totalMessages: number;
+    totalSessions: number
+    activeSessions: number
+    expiredSessions: number
+    averageSessionLength: number
+    totalMessages: number
   }> {
     try {
       let query = this.supabase
         .from('agent_sessions')
-        .select('*', { count: 'exact' });
+        .select('*', { count: 'exact' })
 
       if (userId) {
-        query = query.eq('user_id', _userId);
+        query = query.eq('user_id', _userId)
       }
 
-      const { data: sessions, error, count } = await query;
+      const { data: sessions, error, count } = await query
 
       if (error) {
-        throw error;
+        throw error
       }
 
-      const allSessions = sessions || [];
+      const allSessions = sessions || []
       const activeSessions = allSessions.filter(
         s => s.is_active && new Date(s.expires_at) > new Date(),
-      );
+      )
       const expiredSessions = allSessions.filter(
         s => !s.is_active || new Date(s.expires_at) <= new Date(),
-      );
+      )
 
       // Calculate average session length
       const sessionLengths = allSessions
         .map(
           s => new Date(s.expires_at).getTime() - new Date(s.created_at).getTime(),
         )
-        .filter(length => length > 0);
+        .filter(length => length > 0)
 
       const averageSessionLength = sessionLengths.length > 0
-        ? sessionLengths.reduce((sum, _length) => sum + length, 0)
-          / sessionLengths.length
-        : 0;
+        ? sessionLengths.reduce((sum, _length) => sum + length, 0) /
+          sessionLengths.length
+        : 0
 
       // Get total messages
       const totalMessages = allSessions.reduce(
         (sum, _session) => sum + (session.message_count || 0),
         0,
-      );
+      )
 
       return {
         totalSessions: count || 0,
@@ -454,16 +454,16 @@ export class AgentSessionService {
         expiredSessions: expiredSessions.length,
         averageSessionLength,
         totalMessages,
-      };
+      }
     } catch {
-      console.error('Error getting session statistics:', error);
+      console.error('Error getting session statistics:', error)
       return {
         totalSessions: 0,
         activeSessions: 0,
         expiredSessions: 0,
         averageSessionLength: 0,
         totalMessages: 0,
-      };
+      }
     }
   }
 
@@ -483,10 +483,10 @@ export class AgentSessionService {
       message_count: session.messageCount,
       last_activity: session.lastActivity,
       metadata: session.metadata,
-    });
+    })
 
     if (error) {
-      throw error;
+      throw error
     }
   }
 
@@ -500,13 +500,13 @@ export class AgentSessionService {
       .from('agent_sessions')
       .select('*')
       .eq('session_id', sessionId)
-      .single();
+      .single()
 
     if (error || !data) {
-      return null;
+      return null
     }
 
-    return this.mapSessionRecord(data);
+    return this.mapSessionRecord(data)
   }
 
   /**
@@ -526,31 +526,31 @@ export class AgentSessionService {
       messageCount: record.message_count,
       lastActivity: record.last_activity,
       metadata: record.metadata,
-    };
+    }
   }
 
   /**
    * Cache session
    */
   private cacheSession(session: SessionData): void {
-    this.sessionCache.set(session.sessionId, session);
+    this.sessionCache.set(session.sessionId, session)
 
     // Set expiration for cache entry
     setTimeout(() => {
-      this.sessionCache.delete(session.sessionId);
-    }, this.cacheTimeout);
+      this.sessionCache.delete(session.sessionId)
+    }, this.cacheTimeout)
   }
 
   /**
    * Validate concurrent session limit
    */
   private async validateConcurrentSessionLimit(_userId: string): Promise<void> {
-    const activeSessions = await this.getUserSessions(userId);
+    const activeSessions = await this.getUserSessions(userId)
 
     if (activeSessions.length >= this.config.maxConcurrentSessions) {
       throw new Error(
         `Maximum concurrent sessions (${this.config.maxConcurrentSessions}) exceeded`,
-      );
+      )
     }
   }
 
@@ -560,11 +560,11 @@ export class AgentSessionService {
   private startCleanupTimer(): void {
     this.cleanupTimer = setInterval(async () => {
       try {
-        await this.cleanupExpiredSessions();
+        await this.cleanupExpiredSessions()
       } catch {
-        console.error('Error in session cleanup:', error);
+        console.error('Error in session cleanup:', error)
       }
-    }, this.config.cleanupIntervalMs);
+    }, this.config.cleanupIntervalMs)
   }
 
   /**
@@ -573,17 +573,17 @@ export class AgentSessionService {
   async shutdown(): Promise<void> {
     // Clear cleanup timer
     if (this.cleanupTimer) {
-      clearInterval(this.cleanupTimer);
+      clearInterval(this.cleanupTimer)
     }
 
     // Clear cache
-    this.sessionCache.clear();
+    this.sessionCache.clear()
 
     // Final cleanup
     try {
-      await this.cleanupExpiredSessions();
+      await this.cleanupExpiredSessions()
     } catch {
-      console.error('Error in final cleanup:', error);
+      console.error('Error in final cleanup:', error)
     }
   }
 }

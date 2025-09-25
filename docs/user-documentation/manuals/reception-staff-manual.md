@@ -37,35 +37,35 @@ Como membro da equipe de recepção, você é responsável por:
 interface ReceptionPermissions {
   // Agendamento
   scheduling: {
-    viewAppointments: boolean;
-    createAppointments: boolean;
-    modifyAppointments: boolean;
-    cancelAppointments: boolean;
-  };
+    viewAppointments: boolean
+    createAppointments: boolean
+    modifyAppointments: boolean
+    cancelAppointments: boolean
+  }
 
   // Pacientes
   patients: {
-    viewPatients: boolean;
-    registerPatients: boolean;
-    updatePatients: boolean;
-    viewMedicalInfo: boolean; // Limitado
-  };
+    viewPatients: boolean
+    registerPatients: boolean
+    updatePatients: boolean
+    viewMedicalInfo: boolean // Limitado
+  }
 
   // Financeiro
   financial: {
-    processPayments: boolean;
-    viewInvoices: boolean;
-    issueReceipts: boolean;
-    manageRefunds: boolean;
-  };
+    processPayments: boolean
+    viewInvoices: boolean
+    issueReceipts: boolean
+    manageRefunds: boolean
+  }
 
   // Comunicação
   communication: {
-    sendEmails: boolean;
-    sendSMS: boolean;
-    sendWhatsApp: boolean;
-    makeCalls: boolean;
-  };
+    sendEmails: boolean
+    sendSMS: boolean
+    sendWhatsApp: boolean
+    makeCalls: boolean
+  }
 }
 ```
 
@@ -106,27 +106,27 @@ Estação de trabalho padrão:
 interface WelcomeProtocol {
   // Saudação inicial
   greeting: {
-    standardGreeting: 'Bem-vindo à NeonPro Aesthetic Clinic! Como posso ajudar?';
-    smileAndEyeContact: true;
-    warmTone: true;
-    professionalAppearance: true;
-  };
+    standardGreeting: 'Bem-vindo à NeonPro Aesthetic Clinic! Como posso ajudar?'
+    smileAndEyeContact: true
+    warmTone: true
+    professionalAppearance: true
+  }
 
   // Identificação das necessidades
   needsIdentification: {
-    activeListening: true;
-    clarifyingQuestions: string[];
-    patienceLevel: 'high';
-    empathyLevel: 'high';
-  };
+    activeListening: true
+    clarifyingQuestions: string[]
+    patienceLevel: 'high'
+    empathyLevel: 'high'
+  }
 
   // Direcionamento adequado
   routing: {
-    appointmentCheck: boolean;
-    newPatientRegistration: boolean;
-    informationRequest: boolean;
-    emergencyHandling: boolean;
-  };
+    appointmentCheck: boolean
+    newPatientRegistration: boolean
+    informationRequest: boolean
+    emergencyHandling: boolean
+  }
 }
 ```
 
@@ -154,40 +154,40 @@ Média de atendimento: 2-3 minutos por chamada
 interface PatientRegistration {
   // Informações pessoais
   personalInfo: {
-    fullName: string;
-    dateOfBirth: Date;
-    gender: 'male' | 'female' | 'other';
-    cpf: string;
-    rg: string;
-    email: string;
-    phone: string;
-    address: Address;
-  };
+    fullName: string
+    dateOfBirth: Date
+    gender: 'male' | 'female' | 'other'
+    cpf: string
+    rg: string
+    email: string
+    phone: string
+    address: Address
+  }
 
   // Informações de contato
   contactInfo: {
-    preferredContactMethod: 'phone' | 'email' | 'whatsapp' | 'sms';
-    emergencyContact: EmergencyContact;
-    relationship: string;
-    notificationPreferences: NotificationPreference[];
-  };
+    preferredContactMethod: 'phone' | 'email' | 'whatsapp' | 'sms'
+    emergencyContact: EmergencyContact
+    relationship: string
+    notificationPreferences: NotificationPreference[]
+  }
 
   // Informações iniciais para tratamento
   treatmentInfo: {
-    howDidYouFindUs: string;
-    interestAreas: string[];
-    budgetRange: string;
-    availability: Availability;
-    urgency: 'low' | 'medium' | 'high';
-  };
+    howDidYouFindUs: string
+    interestAreas: string[]
+    budgetRange: string
+    availability: Availability
+    urgency: 'low' | 'medium' | 'high'
+  }
 
   // Consentimentos iniciais
   consents: {
-    lgpdConsent: boolean;
-    communicationConsent: boolean;
-    marketingConsent: boolean;
-    photoConsent: boolean;
-  };
+    lgpdConsent: boolean
+    communicationConsent: boolean
+    marketingConsent: boolean
+    photoConsent: boolean
+  }
 }
 ```
 
@@ -214,28 +214,28 @@ Etapas do cadastro:
 interface WaitingRoomManagement {
   // Controle de espera
   waitTimeManagement: {
-    averageWaitTime: number; // 15 minutos
-    maximumWaitTime: number; // 30 minutos
-    delayNotifications: boolean;
-    waitTimeUpdates: boolean;
-  };
+    averageWaitTime: number // 15 minutos
+    maximumWaitTime: number // 30 minutos
+    delayNotifications: boolean
+    waitTimeUpdates: boolean
+  }
 
   // Conforto do paciente
   patientComfort: {
-    beverages: 'water' | 'coffee' | 'tea';
-    readingMaterials: string[];
-    wifiAccess: boolean;
-    chargingStations: boolean;
-    temperatureControl: boolean;
-  };
+    beverages: 'water' | 'coffee' | 'tea'
+    readingMaterials: string[]
+    wifiAccess: boolean
+    chargingStations: boolean
+    temperatureControl: boolean
+  }
 
   // Comunicação durante espera
   waitCommunication: {
-    delayNotifications: boolean;
-    waitTimeUpdates: boolean;
-    professionalDelays: boolean;
-    emergencySituations: boolean;
-  };
+    delayNotifications: boolean
+    waitTimeUpdates: boolean
+    professionalDelays: boolean
+    emergencySituations: boolean
+  }
 }
 ```
 
@@ -266,39 +266,39 @@ Comunicação:
 interface AppointmentTypes {
   // Consulta inicial
   initialConsultation: {
-    duration: 60; // minutos
-    requiredProfessional: 'doctor' | 'aesthetician';
-    preparationTime: 15;
-    cost: 150;
-    requiresPriorTests: boolean;
-  };
+    duration: 60 // minutos
+    requiredProfessional: 'doctor' | 'aesthetician'
+    preparationTime: 15
+    cost: 150
+    requiresPriorTests: boolean
+  }
 
   // Sessão de tratamento
   treatmentSession: {
-    duration: 30; // varia por tratamento
-    requiredProfessional: 'any' | 'specific';
-    preparationTime: 10;
-    cost: 'variable';
-    requiresPriorSessions: boolean;
-  };
+    duration: 30 // varia por tratamento
+    requiredProfessional: 'any' | 'specific'
+    preparationTime: 10
+    cost: 'variable'
+    requiresPriorSessions: boolean
+  }
 
   // Acompanhamento
   followUp: {
-    duration: 30;
-    requiredProfessional: 'same';
-    preparationTime: 5;
-    cost: 50;
-    requiresPreviousTreatment: boolean;
-  };
+    duration: 30
+    requiredProfessional: 'same'
+    preparationTime: 5
+    cost: 50
+    requiresPreviousTreatment: boolean
+  }
 
   // Emergência
   emergency: {
-    duration: 15;
-    requiredProfessional: 'available';
-    preparationTime: 0;
-    cost: 100;
-    priority: 'high';
-  };
+    duration: 15
+    requiredProfessional: 'available'
+    preparationTime: 0
+    cost: 100
+    priority: 'high'
+  }
 }
 ```
 
@@ -326,30 +326,30 @@ Fluxo padrão de agendamento:
 interface SmartScheduling {
   // Fatores de otimização
   optimizationFactors: {
-    professionalAvailability: boolean;
-    roomAvailability: boolean;
-    equipmentAvailability: boolean;
-    patientPreferences: boolean;
-    treatmentCompatibility: boolean;
-    travelTime: boolean;
-    breakScheduling: boolean;
-  };
+    professionalAvailability: boolean
+    roomAvailability: boolean
+    equipmentAvailability: boolean
+    patientPreferences: boolean
+    treatmentCompatibility: boolean
+    travelTime: boolean
+    breakScheduling: boolean
+  }
 
   // Prevenção de não comparecimento
   noShowPrevention: {
-    riskAssessment: boolean;
-    reminderTiming: number[];
-    confirmationProtocol: boolean;
-    backupScheduling: boolean;
-  };
+    riskAssessment: boolean
+    reminderTiming: number[]
+    confirmationProtocol: boolean
+    backupScheduling: boolean
+  }
 
   // Balanceamento de carga
   loadBalancing: {
-    professionalUtilization: boolean;
-    roomUtilization: boolean;
-    equipmentUtilization: boolean;
-    peakTimeManagement: boolean;
-  };
+    professionalUtilization: boolean
+    roomUtilization: boolean
+    equipmentUtilization: boolean
+    peakTimeManagement: boolean
+  }
 }
 ```
 
@@ -378,27 +378,27 @@ Métodos preferenciais:
 interface AppointmentChanges {
   // Política de cancelamento
   cancellationPolicy: {
-    freeCancellationHours: 24;
-    lateCancellationFee: 50;
-    noShowFee: 100;
-    emergencyException: boolean;
-  };
+    freeCancellationHours: 24
+    lateCancellationFee: 50
+    noShowFee: 100
+    emergencyException: boolean
+  }
 
   // Processo de remarcação
   reschedulingProcess: {
-    availabilityCheck: boolean;
-    patientPreferences: boolean;
-    professionalApproval: boolean;
-    confirmationRequired: boolean;
-  };
+    availabilityCheck: boolean
+    patientPreferences: boolean
+    professionalApproval: boolean
+    confirmationRequired: boolean
+  }
 
   // Gestão de cancelamentos
   cancellationManagement: {
-    reasonCollection: boolean;
-    feedbackCollection: boolean;
-    retentionEffort: boolean;
-    followUpScheduling: boolean;
-  };
+    reasonCollection: boolean
+    feedbackCollection: boolean
+    retentionEffort: boolean
+    followUpScheduling: boolean
+  }
 }
 ```
 
@@ -432,41 +432,41 @@ Situações especiais:
 interface PaymentMethods {
   // Cartão de crédito
   creditCard: {
-    enabled: true;
-    installments: 12;
-    minimumAmount: 10;
-    fees: 2.5;
-  };
+    enabled: true
+    installments: 12
+    minimumAmount: 10
+    fees: 2.5
+  }
 
   // Cartão de débito
   debitCard: {
-    enabled: true;
-    instantConfirmation: true;
-    fees: 1.5;
-  };
+    enabled: true
+    instantConfirmation: true
+    fees: 1.5
+  }
 
   // PIX
   pix: {
-    enabled: true;
-    instantConfirmation: true;
-    fees: 0;
-    qrCode: true;
-  };
+    enabled: true
+    instantConfirmation: true
+    fees: 0
+    qrCode: true
+  }
 
   // Boleto
   boleto: {
-    enabled: true;
-    clearingDays: 3;
-    fees: 2.0;
-    minimumAmount: 50;
-  };
+    enabled: true
+    clearingDays: 3
+    fees: 2.0
+    minimumAmount: 50
+  }
 
   // Dinheiro
   cash: {
-    enabled: true;
-    changeRequired: boolean;
-    receiptRequired: true;
-  };
+    enabled: true
+    changeRequired: boolean
+    receiptRequired: true
+  }
 }
 ```
 
@@ -492,28 +492,28 @@ Fluxo de pagamento:
 interface AccountsReceivable {
   // Status de pagamento
   paymentStatus: {
-    pending: 'waiting_payment';
-    partial: 'partial_payment';
-    paid: 'fully_paid';
-    overdue: 'payment_overdue';
-    cancelled: 'payment_cancelled';
-  };
+    pending: 'waiting_payment'
+    partial: 'partial_payment'
+    paid: 'fully_paid'
+    overdue: 'payment_overdue'
+    cancelled: 'payment_cancelled'
+  }
 
   // Gestão de inadimplência
   overdueManagement: {
-    gracePeriodDays: 7;
-    reminderFrequency: 'weekly';
-    penaltyRate: 2.0;
-    suspensionThreshold: 3;
-  };
+    gracePeriodDays: 7
+    reminderFrequency: 'weekly'
+    penaltyRate: 2.0
+    suspensionThreshold: 3
+  }
 
   // Acordos de pagamento
   paymentAgreements: {
-    installmentPlans: boolean;
-    negotiationOptions: string[];
-    discountOptions: boolean;
-    documentationRequired: boolean;
-  };
+    installmentPlans: boolean
+    negotiationOptions: string[]
+    discountOptions: boolean
+    documentationRequired: boolean
+  }
 }
 ```
 
@@ -542,37 +542,37 @@ Comunicação sempre respeitosa e profissional
 interface CommunicationChannels {
   // Email
   email: {
-    confirmations: boolean;
-    reminders: boolean;
-    newsletters: boolean;
-    promotional: boolean;
-    templates: EmailTemplate[];
-  };
+    confirmations: boolean
+    reminders: boolean
+    newsletters: boolean
+    promotional: boolean
+    templates: EmailTemplate[]
+  }
 
   // SMS
   sms: {
-    reminders: boolean;
-    confirmations: boolean;
-    emergencies: boolean;
-    characterLimit: 160;
-  };
+    reminders: boolean
+    confirmations: boolean
+    emergencies: boolean
+    characterLimit: 160
+  }
 
   // WhatsApp
   whatsapp: {
-    confirmations: boolean;
-    reminders: boolean;
-    support: boolean;
-    mediaSupport: boolean;
-    templates: WhatsAppTemplate[];
-  };
+    confirmations: boolean
+    reminders: boolean
+    support: boolean
+    mediaSupport: boolean
+    templates: WhatsAppTemplate[]
+  }
 
   // Telefone
   phone: {
-    confirmations: boolean;
-    reminders: boolean;
-    emergencies: boolean;
-    callRecording: boolean;
-  };
+    confirmations: boolean
+    reminders: boolean
+    emergencies: boolean
+    callRecording: boolean
+  }
 }
 ```
 
@@ -601,29 +601,29 @@ Templates padrão:
 interface EmergencyProtocol {
   // Tipos de emergência
   emergencyTypes: {
-    medicalEmergency: 'immediate_doctor_attention';
-    severeReaction: 'immediate_medical_response';
-    allergicReaction: 'immediate_treatment';
-    emotionalDistress: 'psychological_support';
-    securityIncident: 'security_team_call';
-  };
+    medicalEmergency: 'immediate_doctor_attention'
+    severeReaction: 'immediate_medical_response'
+    allergicReaction: 'immediate_treatment'
+    emotionalDistress: 'psychological_support'
+    securityIncident: 'security_team_call'
+  }
 
   // Fluxo de ação
   actionFlow: {
-    immediateAction: string[];
-    professionalAlert: boolean;
-    emergencyServices: boolean;
-    familyNotification: boolean;
-    documentationRequired: boolean;
-  };
+    immediateAction: string[]
+    professionalAlert: boolean
+    emergencyServices: boolean
+    familyNotification: boolean
+    documentationRequired: boolean
+  }
 
   // Comunicação de emergência
   emergencyCommunication: {
-    internalAlert: boolean;
-    externalServices: boolean;
-    familyContact: boolean;
-    documentationProtocol: boolean;
-  };
+    internalAlert: boolean
+    externalServices: boolean
+    familyContact: boolean
+    documentationProtocol: boolean
+  }
 }
 ```
 
@@ -663,27 +663,27 @@ Procedimentos emergenciais:
 interface DocumentManagement {
   // Documentos físicos
   physicalDocuments: {
-    patientFiles: boolean;
-    consentForms: boolean;
-    financialRecords: boolean;
-    regulatoryDocuments: boolean;
-  };
+    patientFiles: boolean
+    consentForms: boolean
+    financialRecords: boolean
+    regulatoryDocuments: boolean
+  }
 
   // Documentos digitais
   digitalDocuments: {
-    scans: boolean;
-    electronicSignatures: boolean;
-    cloudStorage: boolean;
-    backupSystem: boolean;
-  };
+    scans: boolean
+    electronicSignatures: boolean
+    cloudStorage: boolean
+    backupSystem: boolean
+  }
 
   // Retenção e descarte
   retentionPolicy: {
-    medicalRecords: 20; // anos
-    financialRecords: 10; // anos
-    consentForms: 5; // anos
-    correspondence: 3; // anos
-  };
+    medicalRecords: 20 // anos
+    financialRecords: 10 // anos
+    consentForms: 5 // anos
+    correspondence: 3 // anos
+  }
 }
 ```
 
@@ -719,29 +719,29 @@ Fechamento da clínica (noite):
 interface DailyOperationsReport {
   // Métricas do dia
   dailyMetrics: {
-    totalAppointments: number;
-    newPatients: number;
-    noShows: number;
-    cancellations: number;
-    revenue: number;
-    paymentMethods: PaymentMethodStats[];
-  };
+    totalAppointments: number
+    newPatients: number
+    noShows: number
+    cancellations: number
+    revenue: number
+    paymentMethods: PaymentMethodStats[]
+  }
 
   // Ocorrências especiais
   specialOccurrences: {
-    emergencies: Emergency[];
-    complaints: Complaint[];
-    compliments: Compliment[];
-    systemIssues: SystemIssue[];
-  };
+    emergencies: Emergency[]
+    complaints: Complaint[]
+    compliments: Compliment[]
+    systemIssues: SystemIssue[]
+  }
 
   // Observações e recomendações
   notes: {
-    staffPerformance: string;
-    systemPerformance: string;
-    patientFeedback: string;
-    recommendations: string[];
-  };
+    staffPerformance: string
+    systemPerformance: string
+    patientFeedback: string
+    recommendations: string[]
+  }
 }
 ```
 
@@ -768,27 +768,27 @@ Métricas de acompanhamento:
 interface ReceptionLGPD {
   // Coleta de dados
   dataCollection: {
-    purposeSpecification: boolean;
-    dataMinimization: boolean;
-    consentManagement: boolean;
-    transparency: boolean;
-  };
+    purposeSpecification: boolean
+    dataMinimization: boolean
+    consentManagement: boolean
+    transparency: boolean
+  }
 
   // Armazenamento seguro
   secureStorage: {
-    accessControl: boolean;
-    encryption: boolean;
-    backupProcedures: boolean;
-    retentionPolicy: boolean;
-  };
+    accessControl: boolean
+    encryption: boolean
+    backupProcedures: boolean
+    retentionPolicy: boolean
+  }
 
   // Direitos do paciente
   patientRights: {
-    accessRequests: boolean;
-    rectificationRequests: boolean;
-    deletionRequests: boolean;
-    portabilityRequests: boolean;
-  };
+    accessRequests: boolean
+    rectificationRequests: boolean
+    deletionRequests: boolean
+    portabilityRequests: boolean
+  }
 }
 ```
 
@@ -814,27 +814,27 @@ Regras de LGPD na recepção:
 interface InitialScreening {
   // Avaliação básica
   basicAssessment: {
-    vitalSigns: boolean;
-    visibleSymptoms: boolean;
-    painAssessment: boolean;
-    emergencyIndicators: boolean;
-  };
+    vitalSigns: boolean
+    visibleSymptoms: boolean
+    painAssessment: boolean
+    emergencyIndicators: boolean
+  }
 
   // Histórico rápido
   quickHistory: {
-    currentMedications: boolean;
-    knownAllergies: boolean;
-    recentProcedures: boolean;
-    relevantConditions: boolean;
-  };
+    currentMedications: boolean
+    knownAllergies: boolean
+    recentProcedures: boolean
+    relevantConditions: boolean
+  }
 
   // Decisão de triagem
   triageDecision: {
-    urgentCare: boolean;
-    standardCare: boolean;
-    emergencyCare: boolean;
-    specialistReferral: boolean;
-  };
+    urgentCare: boolean
+    standardCare: boolean
+    emergencyCare: boolean
+    specialistReferral: boolean
+  }
 }
 ```
 
@@ -861,35 +861,35 @@ Reconhecimento de emergências:
 interface ReceptionMobileApp {
   // Agendamento móvel
   mobileScheduling: {
-    quickAppointment: boolean;
-    calendarView: boolean;
-    patientSearch: boolean;
-    availabilityCheck: boolean;
-  };
+    quickAppointment: boolean
+    calendarView: boolean
+    patientSearch: boolean
+    availabilityCheck: boolean
+  }
 
   // Comunicação
   mobileCommunication: {
-    quickMessages: boolean;
-    callHistory: boolean;
-    whatsappIntegration: boolean;
-    emailTemplates: boolean;
-  };
+    quickMessages: boolean
+    callHistory: boolean
+    whatsappIntegration: boolean
+    emailTemplates: boolean
+  }
 
   // Pagamentos
   mobilePayments: {
-    cardProcessing: boolean;
-    pixGeneration: boolean;
-    receiptGeneration: boolean;
-    paymentHistory: boolean;
-  };
+    cardProcessing: boolean
+    pixGeneration: boolean
+    receiptGeneration: boolean
+    paymentHistory: boolean
+  }
 
   // Gestão de pacientes
   patientManagement: {
-    quickRegistration: boolean;
-    photoCapture: boolean;
-    documentScan: boolean;
-    signatureCapture: boolean;
-  };
+    quickRegistration: boolean
+    photoCapture: boolean
+    documentScan: boolean
+    signatureCapture: boolean
+  }
 }
 ```
 
@@ -935,27 +935,27 @@ Atualizações trimestrais:
 interface PerformanceEvaluation {
   // Métricas de atendimento
   serviceMetrics: {
-    patientSatisfaction: number;
-    callQuality: number;
-    schedulingEfficiency: number;
-    problemResolution: number;
-  };
+    patientSatisfaction: number
+    callQuality: number
+    schedulingEfficiency: number
+    problemResolution: number
+  }
 
   // Métricas operacionais
   operationalMetrics: {
-    appointmentAccuracy: number;
-    paymentProcessing: number;
-    documentationQuality: number;
-    teamwork: number;
-  };
+    appointmentAccuracy: number
+    paymentProcessing: number
+    documentationQuality: number
+    teamwork: number
+  }
 
   // Desenvolvimento profissional
   professionalDevelopment: {
-    trainingCompletion: number;
-    skillsImprovement: string[];
-    initiativeLevel: number;
-    adaptability: number;
-  };
+    trainingCompletion: number
+    skillsImprovement: string[]
+    initiativeLevel: number
+    adaptability: number
+  }
 }
 ```
 

@@ -7,15 +7,15 @@
 
 // High Contrast Theme Interface
 export interface HighContrastTheme {
-  primary: string;
-  secondary: string;
-  background: string;
-  text: string;
-  border: string;
-  focus: string;
-  success: string;
-  warning: string;
-  error: string;
+  primary: string
+  secondary: string
+  background: string
+  text: string
+  border: string
+  focus: string
+  success: string
+  warning: string
+  error: string
 }
 
 // High Contrast Theme Configuration
@@ -29,7 +29,7 @@ export const HIGH_CONTRAST_THEME: HighContrastTheme = {
   success: '#008000',
   warning: '#ff8c00',
   error: '#ff0000',
-};
+}
 
 // Font Size Mapping Configuration
 export const FONT_SIZE_MAP = {
@@ -37,21 +37,21 @@ export const FONT_SIZE_MAP = {
   medium: '16px',
   large: '18px',
   'x-large': '20px',
-} as const;
+} as const
 
 // Font Size Type
-export type FontSize = keyof typeof FONT_SIZE_MAP;
+export type FontSize = keyof typeof FONT_SIZE_MAP
 
 // Accessibility Settings Interface
 export interface AccessibilitySettings {
-  highContrast: boolean;
-  reducedMotion: boolean;
-  screenReader: boolean;
-  fontSize: FontSize;
-  textToSpeech: boolean;
-  keyboardMode: boolean;
-  focusVisible: boolean;
-  announcementsEnabled: boolean;
+  highContrast: boolean
+  reducedMotion: boolean
+  screenReader: boolean
+  fontSize: FontSize
+  textToSpeech: boolean
+  keyboardMode: boolean
+  focusVisible: boolean
+  announcementsEnabled: boolean
 }
 
 // Default Accessibility Settings
@@ -64,33 +64,33 @@ export const DEFAULT_ACCESSIBILITY_SETTINGS: AccessibilitySettings = {
   keyboardMode: false,
   focusVisible: true,
   announcementsEnabled: true,
-};
+}
 
 // Theme Application Utilities
 export const applyHighContrastTheme = (enabled: boolean): void => {
-  document.documentElement.classList.toggle('high-contrast', enabled);
+  document.documentElement.classList.toggle('high-contrast', enabled)
 
   if (enabled) {
-    const root = document.documentElement;
+    const root = document.documentElement
     Object.entries(HIGH_CONTRAST_THEME).forEach(([key, value]) => {
-      root.style.setProperty(`--color-${key}`, value);
-    });
+      root.style.setProperty(`--color-${key}`, value)
+    })
   } else {
-    const root = document.documentElement;
+    const root = document.documentElement
     Object.keys(HIGH_CONTRAST_THEME).forEach(key => {
-      root.style.removeProperty(`--color-${key}`);
-    });
+      root.style.removeProperty(`--color-${key}`)
+    })
   }
-};
+}
 
 export const applyFontSize = (fontSize: FontSize): void => {
-  document.documentElement.setAttribute('data-font-size', fontSize);
-  document.documentElement.style.setProperty('--font-size-base', FONT_SIZE_MAP[fontSize]);
-};
+  document.documentElement.setAttribute('data-font-size', fontSize)
+  document.documentElement.style.setProperty('--font-size-base', FONT_SIZE_MAP[fontSize])
+}
 
 export const applyReducedMotion = (enabled: boolean): void => {
-  document.documentElement.classList.toggle('reduced-motion', enabled);
-};
+  document.documentElement.classList.toggle('reduced-motion', enabled)
+}
 
 // CSS Custom Properties for High Contrast Theme
 export const HIGH_CONTRAST_CSS_VARIABLES = `
@@ -127,4 +127,4 @@ export const HIGH_CONTRAST_CSS_VARIABLES = `
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
-`;
+`

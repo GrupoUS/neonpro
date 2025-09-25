@@ -2,40 +2,40 @@
 // Console JSON logging for development; replace with structured logging in production
 
 export interface GovernanceEvent {
-  timestamp: Date;
-  _service: string;
-  action: string;
-  resourceId?: string;
-  metadata?: Record<string, any>;
-  severity?: 'info' | 'warn' | 'error';
+  timestamp: Date
+  _service: string
+  action: string
+  resourceId?: string
+  metadata?: Record<string, any>
+  severity?: 'info' | 'warn' | 'error'
 }
 
 export interface EventLogger {
-  log(event: Omit<GovernanceEvent, 'timestamp'>): void;
+  log(event: Omit<GovernanceEvent, 'timestamp'>): void
   logKPIEvaluated(
     kpiId: string,
     value?: number,
     status?: string,
     metadata?: Record<string, any>,
-  ): void;
+  ): void
   logEscalationTriggered(
     escalationId: string,
     pathId: string,
     kpiId: string,
     reason: string,
-  ): void;
+  ): void
   logPriorityScored(
     featureId: string,
     score: number,
     priority: string,
     factors: Record<string, number>,
-  ): void;
+  ): void
   logPolicyEvaluated(
     policyId: string,
     status: string,
     passed: number,
     total: number,
-  ): void;
+  ): void
 }
 
 export class ConsoleEventLogger implements EventLogger {
@@ -43,8 +43,8 @@ export class ConsoleEventLogger implements EventLogger {
     const fullEvent: GovernanceEvent = {
       ...event,
       timestamp: new Date(),
-    };
-    console.log(JSON.stringify(fullEvent, null, 2));
+    }
+    console.log(JSON.stringify(fullEvent, null, 2))
   }
 
   logKPIEvaluated(
@@ -59,7 +59,7 @@ export class ConsoleEventLogger implements EventLogger {
       resourceId: kpiId,
       metadata: { value, status, ...metadata },
       severity: status === 'breach' ? 'warn' : 'info',
-    });
+    })
   }
 
   logEscalationTriggered(
@@ -74,7 +74,7 @@ export class ConsoleEventLogger implements EventLogger {
       resourceId: escalationId,
       metadata: { pathId, kpiId, reason },
       severity: 'warn',
-    });
+    })
   }
 
   logPriorityScored(
@@ -89,7 +89,7 @@ export class ConsoleEventLogger implements EventLogger {
       resourceId: featureId,
       metadata: { score, priority, factors },
       severity: 'info',
-    });
+    })
   }
 
   logPolicyEvaluated(
@@ -104,9 +104,9 @@ export class ConsoleEventLogger implements EventLogger {
       resourceId: policyId,
       metadata: { status, passed, total },
       severity: status === 'fail' ? 'warn' : 'info',
-    });
+    })
   }
 }
 
 // Default instance for convenience
-export const eventLogger = new ConsoleEventLogger();
+export const eventLogger = new ConsoleEventLogger()

@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from 'zod'
 
 // =====================================
 // BASE HEALTHCARE SCHEMAS
@@ -19,7 +19,7 @@ export const ContactSchema = z.object({
     .regex(/^\d{10,11}$/, 'Telefone de emergência deve ter 10-11 dígitos')
     .optional()
     .nullable(),
-});
+})
 
 /**
  * Brazilian address schema
@@ -36,7 +36,7 @@ export const AddressSchema = z.object({
     .regex(/^[A-Z]{2}$/, 'Estado inválido'),
   cep: z.string().regex(/^\d{8}$/, 'CEP deve ter 8 dígitos'),
   country: z.string().default('Brasil'),
-});
+})
 
 // =====================================
 // PATIENT SCHEMAS
@@ -61,9 +61,9 @@ export const PatientSchema = z
       .string()
       .refine(date => !isNaN(Date.parse(date)), 'Data de nascimento inválida')
       .refine(date => {
-        const birthDate = new Date(date);
-        const age = calculateAge(birthDate);
-        return age >= 0 && age <= 150;
+        const birthDate = new Date(date)
+        const age = calculateAge(birthDate)
+        return age >= 0 && age <= 150
       }, 'Idade deve estar entre 0 e 150 anos'),
     gender: z.enum(['M', 'F', 'X', 'OUTRO']).optional(),
     contact: ContactSchema.optional(),
@@ -94,8 +94,8 @@ export const PatientSchema = z
   })
   .refine(data => {
     // Validate that either email or phone is provided
-    return data.contact?.email || data.contact?.phone;
-  }, 'É necessário fornecer email ou telefone');
+    return data.contact?.email || data.contact?.phone
+  }, 'É necessário fornecer email ou telefone')
 
 // =====================================
 // APPOINTMENT SCHEMAS
@@ -112,15 +112,15 @@ export const AppointmentSchema = z
       .string()
       .refine(date => !isNaN(Date.parse(date)), 'Horário de início inválido')
       .refine(date => {
-        const startTime = new Date(date);
-        const now = new Date();
-        return startTime > now;
+        const startTime = new Date(date)
+        const now = new Date()
+        return startTime > now
       }, 'Horário da consulta não pode estar no passado')
       .refine(date => {
-        const startTime = new Date(date);
-        const now = new Date();
-        const maxFuture = new Date(now.getTime() + 90 * 24 * 60 * 60 * 1000); // 90 days
-        return startTime <= maxFuture;
+        const startTime = new Date(date)
+        const now = new Date()
+        const maxFuture = new Date(now.getTime() + 90 * 24 * 60 * 60 * 1000) // 90 days
+        return startTime <= maxFuture
       }, 'Agendamento não pode ser feito com mais de 90 dias de antecedência'),
     endTime: z.string().optional(),
     duration: z
@@ -173,19 +173,19 @@ export const AppointmentSchema = z
   .refine(data => {
     // Validate endTime if provided
     if (data.endTime) {
-      const startTime = new Date(data.startTime);
-      const endTime = new Date(data.endTime);
-      return endTime > startTime;
+      const startTime = new Date(data.startTime)
+      const endTime = new Date(data.endTime)
+      return endTime > startTime
     }
-    return true;
+    return true
   }, 'Horário de término deve ser após o início')
   .refine(data => {
     // Validate virtual link for virtual appointments
     if (data.isVirtual && !data.virtualLink) {
-      return false;
+      return false
     }
-    return true;
-  }, 'Consulta virtual requer link de acesso');
+    return true
+  }, 'Consulta virtual requer link de acesso')
 
 // =====================================
 // MEDICAL RECORD SCHEMAS
@@ -266,16 +266,16 @@ export const MedicalRecordSchema = z
       'câncer',
       'doença terminal',
       'psiquiátrico',
-    ];
+    ]
     const hasSensitiveContent = sensitiveKeywords.some(keyword =>
       data.content.toLowerCase().includes(keyword)
-    );
+    )
 
     if (hasSensitiveContent && !data.isConfidential) {
-      return false;
+      return false
     }
-    return true;
-  }, 'Conteúdo sensível deve ser marcado como confidencial');
+    return true
+  }, 'Conteúdo sensível deve ser marcado como confidencial')
 
 // =====================================
 // PRESCRIPTION SCHEMAS
@@ -338,15 +338,15 @@ export const PrescriptionSchema = z
   })
   .refine(data => {
     // Validate controlled medications
-    const hasControlled = data.medications.some(med => med.isControlled);
+    const hasControlled = data.medications.some(med => med.isControlled)
     if (
-      hasControlled
-      && !data.medications.every(med => med.registrationNumber)
+      hasControlled &&
+      !data.medications.every(med => med.registrationNumber)
     ) {
-      return false;
+      return false
     }
-    return true;
-  }, 'Medicamentos controlados requerem número de registro');
+    return true
+  }, 'Medicamentos controlados requerem número de registro')
 
 // =====================================
 // PROFESSIONAL SCHEMAS
@@ -395,7 +395,7 @@ export const ProfessionalSchema = z.object({
   organizationId: z.string().optional(),
   qualifications: z.array(z.string()).optional(),
   availableServices: z.array(z.string()).optional(),
-});
+})
 
 // =====================================
 // DYNAMIC VALIDATION FUNCTIONS
@@ -407,15 +407,15 @@ export const ProfessionalSchema = z.object({
 export function getEntitySchema<T = unknown>(entity: string): z.ZodSchema<T> {
   switch (entity) {
     case 'patients':
-      return PatientSchema as unknown as z.ZodSchema<T>;
+      return PatientSchema as unknown as z.ZodSchema<T>
     case 'appointments':
-      return AppointmentSchema as unknown as z.ZodSchema<T>;
+      return AppointmentSchema as unknown as z.ZodSchema<T>
     case 'medical_records':
-      return MedicalRecordSchema as unknown as z.ZodSchema<T>;
+      return MedicalRecordSchema as unknown as z.ZodSchema<T>
     case 'prescriptions':
-      return PrescriptionSchema as unknown as z.ZodSchema<T>;
+      return PrescriptionSchema as unknown as z.ZodSchema<T>
     case 'professionals':
-      return ProfessionalSchema as unknown as z.ZodSchema<T>;
+      return ProfessionalSchema as unknown as z.ZodSchema<T>
     default:
       // Fallback schema for unknown entities
       return z
@@ -424,7 +424,7 @@ export function getEntitySchema<T = unknown>(entity: string): z.ZodSchema<T> {
           createdAt: z.date().optional(),
           updatedAt: z.date().optional(),
         })
-        .passthrough() as unknown as z.ZodSchema<T>;
+        .passthrough() as unknown as z.ZodSchema<T>
   }
 }
 
@@ -435,14 +435,14 @@ export function validateEntityData<T>(
   entity: string,
   data: T,
 ): {
-  isValid: boolean;
-  errors: string[];
-  warnings: string[];
-  sanitizedData: T;
+  isValid: boolean
+  errors: string[]
+  warnings: string[]
+  sanitizedData: T
 } {
   try {
-    const schema = getEntitySchema(entity);
-    const result = schema.safeParse(data);
+    const schema = getEntitySchema(entity)
+    const result = schema.safeParse(data)
 
     if (result.success) {
       return {
@@ -450,18 +450,18 @@ export function validateEntityData<T>(
         errors: [],
         warnings: [],
         sanitizedData: result.data as T,
-      };
+      }
     } else {
       const errors = result.error.errors.map(
         err => `${err.path.join('.')}: ${err.message}`,
-      );
+      )
 
       return {
         isValid: false,
         errors,
         warnings: [],
         sanitizedData: data,
-      };
+      }
     }
   } catch {
     return {
@@ -469,7 +469,7 @@ export function validateEntityData<T>(
       errors: ['Erro na validação do esquema'],
       warnings: [],
       sanitizedData: data,
-    };
+    }
   }
 }
 
@@ -482,60 +482,60 @@ export function validateEntityData<T>(
  */
 export function validateCPF(cpf: string): boolean {
   if (!cpf || typeof cpf !== 'string') {
-    return false;
+    return false
   }
 
-  cpf = cpf.replace(/\D/g, '');
+  cpf = cpf.replace(/\D/g, '')
 
   if (cpf.length !== 11 || /^(\d)\1{10}$/.test(cpf)) {
-    return false;
+    return false
   }
 
-  let sum = 0;
+  let sum = 0
   for (let i = 0; i < 9; i++) {
-    sum += parseInt(cpf[i]) * (10 - i);
+    sum += parseInt(cpf[i]) * (10 - i)
   }
-  let remainder = (sum * 10) % 11;
-  if (remainder === 10 || remainder === 11) remainder = 0;
-  if (remainder !== parseInt(cpf.charAt(9))) return false;
+  let remainder = (sum * 10) % 11
+  if (remainder === 10 || remainder === 11) remainder = 0
+  if (remainder !== parseInt(cpf.charAt(9))) return false
 
-  sum = 0;
+  sum = 0
   for (let i = 0; i < 10; i++) {
-    sum += parseInt(cpf[i]) * (11 - i);
+    sum += parseInt(cpf[i]) * (11 - i)
   }
-  remainder = (sum * 10) % 11;
-  if (remainder === 10 || remainder === 11) remainder = 0;
-  if (remainder !== parseInt(cpf.charAt(10))) return false;
+  remainder = (sum * 10) % 11
+  if (remainder === 10 || remainder === 11) remainder = 0
+  if (remainder !== parseInt(cpf.charAt(10))) return false
 
-  return true;
+  return true
 }
 
 /**
  * Calculate age from birth date
  */
 function calculateAge(birthDate: Date): number {
-  const today = new Date();
-  let age = today.getFullYear() - birthDate.getFullYear();
-  const monthDiff = today.getMonth() - birthDate.getMonth();
+  const today = new Date()
+  let age = today.getFullYear() - birthDate.getFullYear()
+  const monthDiff = today.getMonth() - birthDate.getMonth()
 
   if (
-    monthDiff < 0
-    || (monthDiff === 0 && today.getDate() < birthDate.getDate())
+    monthDiff < 0 ||
+    (monthDiff === 0 && today.getDate() < birthDate.getDate())
   ) {
-    age--;
+    age--
   }
 
-  return age;
+  return age
 }
 
 // =====================================
 // UTILITY TYPES
 // =====================================
 
-export type Patient = z.infer<typeof PatientSchema>;
-export type Appointment = z.infer<typeof AppointmentSchema>;
-export type MedicalRecord = z.infer<typeof MedicalRecordSchema>;
-export type Prescription = z.infer<typeof PrescriptionSchema>;
-export type Professional = z.infer<typeof ProfessionalSchema>;
-export type Contact = z.infer<typeof ContactSchema>;
-export type Address = z.infer<typeof AddressSchema>;
+export type Patient = z.infer<typeof PatientSchema>
+export type Appointment = z.infer<typeof AppointmentSchema>
+export type MedicalRecord = z.infer<typeof MedicalRecordSchema>
+export type Prescription = z.infer<typeof PrescriptionSchema>
+export type Professional = z.infer<typeof ProfessionalSchema>
+export type Contact = z.infer<typeof ContactSchema>
+export type Address = z.infer<typeof AddressSchema>

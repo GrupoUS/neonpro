@@ -27,35 +27,35 @@ This rule defines the standard practices for implementing user authentication ch
 
 ```typescript
 // ✅ DO: Example Client Component Auth Check
-'use client';
+'use client'
 
-import { createClient } from '@/lib/supabase/client';
-import type { Session } from '@supabase/supabase-js';
-import React, { useEffect, useState } from 'react';
+import { createClient } from '@/lib/supabase/client'
+import type { Session } from '@supabase/supabase-js'
+import React, { useEffect, useState } from 'react'
 // ... other imports
 
 export function MyClientComponent() {
-  const [session, setSession] = useState<Session | null>(null);
-  const supabase = createClient();
+  const [session, setSession] = useState<Session | null>(null)
+  const supabase = createClient()
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-    });
+      setSession(session)
+    })
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-    });
+      setSession(session)
+    })
 
-    return () => subscription?.unsubscribe();
-  }, [supabase]);
+    return () => subscription?.unsubscribe()
+  }, [supabase])
 
   return (
     <div>
       {session ? <p>Welcome, User!</p> : <p>Please log in.</p>}
       {/* Rest of component */}
     </div>
-  );
+  )
 }
 
 // ❌ DON'T: Directly call auth methods in render or without useEffect for state management.
@@ -70,17 +70,17 @@ export function MyClientComponent() {
 
 ```typescript
 // ✅ DO: Example Server Component Auth Check
-import { createClient } from '@/lib/supabase/server'; // Assuming server client factory
-import { redirect } from 'next/navigation';
+import { createClient } from '@/lib/supabase/server' // Assuming server client factory
+import { redirect } from 'next/navigation'
 // ... other imports
 
 export default async function ProtectedPage() {
-  const supabase = await createClient(); // Use appropriate server-side factory
+  const supabase = await createClient() // Use appropriate server-side factory
 
-  const { data, error } = await supabase.auth.getUser();
+  const { data, error } = await supabase.auth.getUser()
 
   if (error || !data?.user) {
-    redirect('/login'); // Or your login page path
+    redirect('/login') // Or your login page path
   }
 
   return (
@@ -89,7 +89,7 @@ export default async function ProtectedPage() {
       <p>Welcome, {data.user.email}</p>
       {/* Rest of page */}
     </div>
-  );
+  )
 }
 
 // ❌ DON'T: Use the client-side createClient() in Server Components/API routes.

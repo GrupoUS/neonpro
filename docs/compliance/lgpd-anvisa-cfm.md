@@ -80,16 +80,16 @@ The system implements all LGPD rights:
 
 ```typescript
 interface LGPDConsent {
-  id: string;
-  clientId: string;
-  dataProcessing: boolean;
-  dataSharing: boolean;
-  marketing: boolean;
-  photoUsage: boolean;
-  retentionPeriod: '5_years' | '10_years' | '25_years';
-  consentedAt: Date;
-  ipAddress: string;
-  userAgent: string;
+  id: string
+  clientId: string
+  dataProcessing: boolean
+  dataSharing: boolean
+  marketing: boolean
+  photoUsage: boolean
+  retentionPeriod: '5_years' | '10_years' | '25_years'
+  consentedAt: Date
+  ipAddress: string
+  userAgent: string
 }
 
 // Consent form component
@@ -99,7 +99,7 @@ const LGPDConsentForm: React.FC = () => {
     dataSharing: false,
     marketing: false,
     photoUsage: false,
-  });
+  })
 
   const handleSubmit = async () => {
     await saveConsent({
@@ -107,8 +107,8 @@ const LGPDConsentForm: React.FC = () => {
       retentionPeriod: '10_years',
       ipAddress: await getIPAddress(),
       userAgent: navigator.userAgent,
-    });
-  };
+    })
+  }
 
   return (
     <form>
@@ -134,8 +134,8 @@ const LGPDConsentForm: React.FC = () => {
         onChange={v => setConsents(prev => ({ ...prev, marketing: v }))}
       />
     </form>
-  );
-};
+  )
+}
 ```
 
 #### Data Masking
@@ -143,15 +143,15 @@ const LGPDConsentForm: React.FC = () => {
 ```typescript
 // Mask sensitive data
 export function maskCPF(cpf: string): string {
-  if (!cpf) return '';
-  const clean = cleanDocument(cpf);
-  return `${clean.substring(0, 3)}.***.${clean.substring(6, 9)}-**`;
+  if (!cpf) return ''
+  const clean = cleanDocument(cpf)
+  return `${clean.substring(0, 3)}.***.${clean.substring(6, 9)}-**`
 }
 
 export function maskEmail(email: string): string {
-  if (!email) return '';
-  const [username, domain] = email.split('@');
-  return `${username.substring(0, 2)}***@${domain}`;
+  if (!email) return ''
+  const [username, domain] = email.split('@')
+  return `${username.substring(0, 2)}***@${domain}`
 }
 ```
 
@@ -201,29 +201,29 @@ The system handles data for aesthetic equipment and cosmetic products regulated 
 
 ```typescript
 interface AuditLog {
-  id: string;
-  timestamp: Date;
-  userId: string;
-  userRole: string;
-  professionalLicense: string;
-  councilType: string;
-  action: string;
-  resource: string;
-  resourceId: string;
-  changes?: Record<string, any>;
-  result: 'success' | 'failure';
-  ipAddress: string;
-  userAgent: string;
+  id: string
+  timestamp: Date
+  userId: string
+  userRole: string
+  professionalLicense: string
+  councilType: string
+  action: string
+  resource: string
+  resourceId: string
+  changes?: Record<string, any>
+  result: 'success' | 'failure'
+  ipAddress: string
+  userAgent: string
 }
 
 // Audit service
 class AuditService {
   async logAction(params: {
-    action: string;
-    resource: string;
-    resourceId: string;
-    changes?: Record<string, any>;
-    result: 'success' | 'failure';
+    action: string
+    resource: string
+    resourceId: string
+    changes?: Record<string, any>
+    result: 'success' | 'failure'
   }) {
     const audit: AuditLog = {
       id: generateUUID(),
@@ -235,10 +235,10 @@ class AuditService {
       ...params,
       ipAddress: getClientIP(),
       userAgent: navigator.userAgent,
-    };
+    }
 
-    await this.saveToDatabase(audit);
-    await this.sendToComplianceSystem(audit);
+    await this.saveToDatabase(audit)
+    await this.sendToComplianceSystem(audit)
   }
 }
 ```
@@ -260,7 +260,7 @@ const VALIDATION_MATRIX = {
     risks: ['RISK-002', 'RISK-003'],
     mitigations: ['MIT-002', 'MIT-003'],
   },
-};
+}
 ```
 
 ## Professional Council Compliance
@@ -317,12 +317,12 @@ export async function validateProfessionalLicense(
     CFM: `https://portal.cfm.org.br/api/medicos/${license}`,
     COREN: `https://portal.coren-sp.gov.br/api/enfermeiros/${license}`,
     CFF: `https://www.cff.org.br/api/farmaceuticos/${license}`,
-  };
+  }
 
-  const response = await fetch(endpoints[councilType]);
-  const data = await response.json();
+  const response = await fetch(endpoints[councilType])
+  const data = await response.json()
 
-  return data.situacao === 'Ativo' && data.uf === state;
+  return data.situacao === 'Ativo' && data.uf === state
 }
 
 // Professional scope check
@@ -336,9 +336,9 @@ export function validateScopeOfPractice(
     'Enfermagem Estética': ['Limpeza de Pele', 'Aplicação de Cosméticos'],
     Estética: ['Massagem Facial', 'Tratamentos Capilares'],
     // ... other specialties
-  };
+  }
 
-  return SCOPE_MATRIX[specialty]?.includes(procedure) ?? false;
+  return SCOPE_MATRIX[specialty]?.includes(procedure) ?? false
 }
 ```
 
@@ -346,15 +346,15 @@ export function validateScopeOfPractice(
 
 ```typescript
 interface ElectronicSignature {
-  id: string;
-  documentId: string;
-  professionalId: string;
-  professionalLicense: string;
-  councilType: string;
-  signature: string;
-  timestamp: Date;
-  ipAddress: string;
-  certificateId?: string;
+  id: string
+  documentId: string
+  professionalId: string
+  professionalLicense: string
+  councilType: string
+  signature: string
+  timestamp: Date
+  ipAddress: string
+  certificateId?: string
 }
 
 class SignatureService {
@@ -367,7 +367,7 @@ class SignatureService {
       'RSASSA-PKCS1-v1_5',
       professional.privateKey,
       new TextEncoder().encode(documentId),
-    );
+    )
 
     const electronicSignature: ElectronicSignature = {
       id: generateUUID(),
@@ -378,9 +378,9 @@ class SignatureService {
       signature: arrayBufferToBase64(signature),
       timestamp: new Date(),
       ipAddress: getClientIP(),
-    };
+    }
 
-    return this.saveSignature(electronicSignature);
+    return this.saveSignature(electronicSignature)
   }
 }
 ```
@@ -414,7 +414,7 @@ class SignatureService {
      ],
      AESTHETIC_PROFESSIONAL: ['read', 'write', 'perform_authorized_procedures'],
      CLINIC_STAFF: ['read', 'create-appointments', 'manage_client_data'],
-   };
+   }
    ```
 
 2. **Attribute-Based Access Control (ABAC)**
@@ -494,21 +494,21 @@ class SignatureService {
    ```typescript
    describe('LGPD Compliance', () => {
      it('should mask CPF correctly', () => {
-       expect(maskCPF('123.456.789-09')).toBe('123.***.789-**');
-     });
+       expect(maskCPF('123.456.789-09')).toBe('123.***.789-**')
+     })
 
      it('should require valid consent', async () => {
        await expect(saveClientData({})).rejects.toThrow(
          'LGPD consent required',
-       );
-     });
+       )
+     })
 
      it('should validate photo consent', async () => {
        await expect(saveBeforeAfterPhotos({})).rejects.toThrow(
          'Photo usage consent required',
-       );
-     });
-   });
+       )
+     })
+   })
    ```
 
 2. **Integration Tests**

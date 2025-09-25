@@ -1,8 +1,8 @@
-import { defineConfig } from 'vite';
-import tsconfigPaths from 'vite-tsconfig-paths';
+import { defineConfig } from 'vite'
+import tsconfigPaths from 'vite-tsconfig-paths'
 
 export default defineConfig(({ mode }) => {
-  const isEdge = process.env.EDGE_RUNTIME === 'true';
+  const isEdge = process.env.EDGE_RUNTIME === 'true'
 
   return {
     plugins: [
@@ -28,16 +28,16 @@ export default defineConfig(({ mode }) => {
         output: {
           manualChunks(id) {
             if (id.includes('node_modules')) {
-              if (id.includes('hono')) return 'vendor-hono';
-              if (id.includes('trpc')) return 'vendor-trpc';
+              if (id.includes('hono')) return 'vendor-hono'
+              if (id.includes('trpc')) return 'vendor-trpc'
               if (id.includes('zod') || id.includes('valibot')) {
-                return 'vendor-validation';
+                return 'vendor-validation'
               }
-              if (id.includes('prisma')) return 'vendor-database';
-              if (id.includes('supabase')) return 'vendor-auth';
-              if (id.includes('ai-sdk')) return 'vendor-ai';
-              if (id.includes('opentelemetry')) return 'vendor-monitoring';
-              return 'vendor';
+              if (id.includes('prisma')) return 'vendor-database'
+              if (id.includes('supabase')) return 'vendor-auth'
+              if (id.includes('ai-sdk')) return 'vendor-ai'
+              if (id.includes('opentelemetry')) return 'vendor-monitoring'
+              return 'vendor'
             }
           },
         },
@@ -71,5 +71,5 @@ export default defineConfig(({ mode }) => {
       __PROD__: mode === 'production',
       __EDGE__: isEdge,
     },
-  };
-});
+  }
+})

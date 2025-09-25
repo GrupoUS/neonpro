@@ -14,14 +14,16 @@ import {
   CacheDataSensitivity,
   CacheEntry,
   CacheTier,
-} from '@neonpro/shared/src/services/cache-management';
+} from '@neonpro/shared/src/services/cache-management'
 import {
   createRedisCacheBackend,
   RedisCacheBackend,
-} from '@neonpro/shared/src/services/redis-cache-backend';
-import { PermissionContext, QueryIntent, QueryParameters } from '@neonpro/types';
-import { createHash } from 'crypto';
-import { AIDataService } from './ai-data-service';
+} from '@neonpro/shared/src/services/redis-cache-backend'
+import { PermissionContext, QueryIntent, QueryParameters } from '@neonpro/types'
+import { createHash } from 'crypto'
+import { AIDataService } from './ai-data-service'
+import { aiCacheInvalidationManager } from './ai-cache-invalidation-service'
+import { logger } from '../lib/logger'
 
 /**
  * Cache configuration for AI data queries
@@ -37,25 +39,34 @@ const AIDATA_CACHE_CONFIG: CacheConfig = {
   auditEnabled: true,
   performanceMode: true,
   enableHealthCheck: true,
-};
+}
 
 /**
  * Enhanced AI Data Service with Redis caching and performance optimization
  */
 export class EnhancedAIDataService extends AIDataService {
-  private cache: RedisCacheBackend;
+  private cache: RedisCacheBackend
   private cacheStats = {
     hits: 0,
     misses: 0,
     avgCacheTime: 0,
     avgDbTime: 0,
-  };
+  }
 
   constructor(permissionContext: PermissionContext) {
-    super(permissionContext);
+    super(permissionContext)
 
     // Initialize Redis cache backend
-    this.cache = createRedisCacheBackend(AIDATA_CACHE_CONFIG);
+    this.cache = createRedisCacheBackend(AIDATA_CACHE_CONFIG)
+    
+    // Initialize cache invalidation service
+    const invalidationService = aiCacheInvalidationManager.getService()
+    if (invalidationService) {
+      // Set up event listeners for cache invalidation
+      invalidationService.on('cache:invalidation', (event) => {
+        this.handleCacheInvalidation(event)
+      })
+    }
   }
 
   /**
@@ -71,29 +82,29 @@ export class EnhancedAIDataService extends AIDataService {
       domain: this.permissionContext.domain,
       _role: this.permissionContext.role,
       parameters: this.sanitizeParameters(parameters),
-    };
+    }
 
-    return createHash('sha256').update(JSON.stringify(keyData)).digest('hex');
+    return createHash('sha256').update(JSON.stringify(keyData)).digest('hex')
   }
 
   /**
    * Sanitize parameters for cache key generation
    */
   private sanitizeParameters(parameters: QueryParameters): any {
-    const sanitized = { ...parameters };
+    const sanitized = { ...parameters }
 
     // Remove sensitive data for cache key
-    delete sanitized.patientId;
+    delete sanitized.patientId
 
     // Normalize date ranges
     if (sanitized.dateRanges) {
       sanitized.dateRanges = sanitized.dateRanges.map(range => ({
         start: range.start.toISOString().split('T')[0],
         end: range.end.toISOString().split('T')[0],
-      }));
+      }))
     }
 
-    return sanitized;
+    return sanitized
   }
 
   /**
@@ -104,33 +115,33 @@ export class EnhancedAIDataService extends AIDataService {
     parameters: QueryParameters,
     dbOperation: () => Promise<T>,
   ): Promise<T> {
-    const cacheKey = this.generateCacheKey(intent, parameters);
-    const startTime = Date.now();
+    const cacheKey = this.generateCacheKey(intent, parameters)
+    const startTime = Date.now()
 
     try {
       // Try cache first
-      const cachedEntry = await this.cache.get(cacheKey);
+      const cachedEntry = await this.cache.get(cacheKey)
 
       if (cachedEntry) {
-        this.cacheStats.hits++;
+        this.cacheStats.hits++
         this.cacheStats.avgCacheTime = this.updateAverage(
           this.cacheStats.avgCacheTime,
           Date.now() - startTime,
-        );
+        )
 
-        return cachedEntry.data as T;
+        return cachedEntry.data as T
       }
 
       // Cache miss - get from database
-      this.cacheStats.misses++;
-      const dbStartTime = Date.now();
-      const _data = await dbOperation();
-      const dbTime = Date.now() - dbStartTime;
+      this.cacheStats.misses++
+      const dbStartTime = Date.now()
+      const data = await dbOperation()
+      const dbTime = Date.now() - dbStartTime
 
       this.cacheStats.avgDbTime = this.updateAverage(
         this.cacheStats.avgDbTime,
         dbTime,
-      );
+      )
 
       // Cache the result with appropriate TTL
       if (data && Array.isArray(data) && data.length > 0) {
@@ -150,18 +161,18 @@ export class EnhancedAIDataService extends AIDataService {
             queryTime: dbTime,
             _userId: this.permissionContext.userId,
           },
-        };
+        }
 
-        await this.cache.set(cacheKey, cacheEntry);
+        await this.cache.set(cacheKey, cacheEntry)
       }
 
-      return data;
+      return data
     } catch {
       console.error(
         `[EnhancedAIDataService] Error in getWithCache for ${intent}:`,
         error,
-      );
-      throw error;
+      )
+      throw error
     }
   }
 
@@ -171,13 +182,13 @@ export class EnhancedAIDataService extends AIDataService {
   private getCacheTTL(intent: QueryIntent): number {
     switch (intent) {
       case 'client_data':
-        return 600; // 10 minutes - client data changes less frequently
+        return 600 // 10 minutes - client data changes less frequently
       case 'appointments':
-        return 300; // 5 minutes - appointments change more frequently
+        return 300 // 5 minutes - appointments change more frequently
       case 'financial':
-        return 900; // 15 minutes - financial data is relatively stable
+        return 900 // 15 minutes - financial data is relatively stable
       default:
-        return AIDATA_CACHE_CONFIG.defaultTTL;
+        return AIDATA_CACHE_CONFIG.defaultTTL
     }
   }
 
@@ -187,13 +198,13 @@ export class EnhancedAIDataService extends AIDataService {
   private getDataSensitivity(intent: QueryIntent): CacheDataSensitivity {
     switch (intent) {
       case 'financial':
-        return CacheDataSensitivity.HIGH;
+        return CacheDataSensitivity.HIGH
       case 'client_data':
-        return CacheDataSensitivity.HIGH;
+        return CacheDataSensitivity.HIGH
       case 'appointments':
-        return CacheDataSensitivity.MEDIUM;
+        return CacheDataSensitivity.MEDIUM
       default:
-        return CacheDataSensitivity.MEDIUM;
+        return CacheDataSensitivity.MEDIUM
     }
   }
 
@@ -201,7 +212,7 @@ export class EnhancedAIDataService extends AIDataService {
    * Update running average
    */
   private updateAverage(current: number, newValue: number): number {
-    return current === 0 ? newValue : current * 0.9 + newValue * 0.1;
+    return current === 0 ? newValue : current * 0.9 + newValue * 0.1
   }
 
   /**
@@ -209,8 +220,8 @@ export class EnhancedAIDataService extends AIDataService {
    */
   async getClientsByName(parameters: QueryParameters): Promise<any[]> {
     return this.getWithCache('client_data', parameters, async () => {
-      return super.getClientsByName(parameters);
-    });
+      return super.getClientsByName(parameters)
+    })
   }
 
   /**
@@ -218,8 +229,8 @@ export class EnhancedAIDataService extends AIDataService {
    */
   async getAppointmentsByDate(parameters: QueryParameters): Promise<any[]> {
     return this.getWithCache('appointments', parameters, async () => {
-      return super.getAppointmentsByDate(parameters);
-    });
+      return super.getAppointmentsByDate(parameters)
+    })
   }
 
   /**
@@ -227,17 +238,37 @@ export class EnhancedAIDataService extends AIDataService {
    */
   async getFinancialSummary(parameters: QueryParameters): Promise<any> {
     return this.getWithCache('financial', parameters, async () => {
-      return super.getFinancialSummary(parameters);
-    });
+      return super.getFinancialSummary(parameters)
+    })
+  }
+
+  /**
+   * Handle cache invalidation events
+   */
+  private handleCacheInvalidation(event: any): void {
+    logger.info('Cache invalidation event received', {
+      type: event.type,
+      entityType: event.entityType,
+      domain: event.domain,
+      userId: event.userId
+    })
+    
+    // Invalidate relevant cache entries
+    if (event.domain === this.permissionContext.domain || 
+        event.userId === this.permissionContext.userId) {
+      // Clear cache stats for affected user/domain
+      this.cacheStats.hits = 0
+      this.cacheStats.misses = 0
+    }
   }
 
   /**
    * Get cache performance statistics
    */
   async getCacheStats() {
-    const redisStats = await this.cache.getStats();
-    const totalRequests = this.cacheStats.hits + this.cacheStats.misses;
-    const hitRate = totalRequests > 0 ? this.cacheStats.hits / totalRequests : 0;
+    const redisStats = await this.cache.getStats()
+    const totalRequests = this.cacheStats.hits + this.cacheStats.misses
+    const hitRate = totalRequests > 0 ? this.cacheStats.hits / totalRequests : 0
 
     return {
       ...redisStats,
@@ -255,17 +286,17 @@ export class EnhancedAIDataService extends AIDataService {
           : hitRate > 0.5
           ? 'good'
           : 'needs_improvement',
-        avgResponseTime: hitRate * this.cacheStats.avgCacheTime
-          + (1 - hitRate) * this.cacheStats.avgDbTime,
+        avgResponseTime: hitRate * this.cacheStats.avgCacheTime +
+          (1 - hitRate) * this.cacheStats.avgDbTime,
         speedImprovement: this.cacheStats.avgDbTime > 0
-          ? ((this.cacheStats.avgDbTime
-            - (hitRate * this.cacheStats.avgCacheTime
-              + (1 - hitRate) * this.cacheStats.avgDbTime))
-            / this.cacheStats.avgDbTime)
-            * 100
+          ? ((this.cacheStats.avgDbTime -
+            (hitRate * this.cacheStats.avgCacheTime +
+              (1 - hitRate) * this.cacheStats.avgDbTime)) /
+            this.cacheStats.avgDbTime) *
+            100
           : 0,
       },
-    };
+    }
   }
 
   /**
@@ -273,15 +304,26 @@ export class EnhancedAIDataService extends AIDataService {
    */
   async clearIntentCache(intent: QueryIntent): Promise<void> {
     try {
-      const keys = await this.cache.getKeys(`${intent}_*`);
-      for (const key of keys) {
-        await this.cache.delete(key);
+      // Use cache invalidation service for proper invalidation
+      const invalidationService = aiCacheInvalidationManager.getService()
+      if (invalidationService) {
+        await invalidationService.invalidateByQueryContext(
+          intent,
+          this.permissionContext,
+          `Manual cache clear for ${intent}`
+        )
       }
-    } catch {
-      console.error(
+      
+      // Fallback to direct cache clearing
+      const keys = await this.cache.getKeys(`${intent}_*`)
+      for (const key of keys) {
+        await this.cache.delete(key)
+      }
+    } catch (error) {
+      logger.error(
         `[EnhancedAIDataService] Error clearing cache for ${intent}:`,
         error,
-      );
+      )
     }
   }
 
@@ -289,32 +331,32 @@ export class EnhancedAIDataService extends AIDataService {
    * Health check for cache and database
    */
   async healthCheck(): Promise<{
-    cache: { healthy: boolean; message?: string };
-    database: { healthy: boolean; message?: string };
-    performance: any;
+    cache: { healthy: boolean; message?: string }
+    database: { healthy: boolean; message?: string }
+    performance: any
   }> {
-    const cacheHealthy = await this.cacheHealthCheck();
-    const dbHealthy = await this.databaseHealthCheck();
-    const stats = await this.getCacheStats();
+    const cacheHealthy = await this.cacheHealthCheck()
+    const dbHealthy = await this.databaseHealthCheck()
+    const stats = await this.getCacheStats()
 
     return {
       cache: cacheHealthy,
       database: dbHealthy,
       performance: stats.performance,
-    };
+    }
   }
 
   /**
    * Check cache health
    */
   private async cacheHealthCheck(): Promise<{
-    healthy: boolean;
-    message?: string;
+    healthy: boolean
+    message?: string
   }> {
     try {
       // Test cache with a simple get/set operation
-      const testKey = 'health_check_test';
-      const testData = { test: true, timestamp: Date.now() };
+      const testKey = 'health_check_test'
+      const testData = { test: true, timestamp: Date.now() }
 
       const testEntry: CacheEntry = {
         key: testKey,
@@ -326,24 +368,24 @@ export class EnhancedAIDataService extends AIDataService {
         sensitivity: CacheDataSensitivity.LOW,
         lgpdCompliant: true,
         tier: CacheTier.REDIS,
-      };
-
-      await this.cache.set(testKey, testEntry);
-      const retrieved = await this.cache.get(testKey);
-      await this.cache.delete(testKey);
-
-      if (!retrieved || retrieved.data.test !== true) {
-        return { healthy: false, message: 'Cache read/write test failed' };
       }
 
-      return { healthy: true };
+      await this.cache.set(testKey, testEntry)
+      const retrieved = await this.cache.get(testKey)
+      await this.cache.delete(testKey)
+
+      if (!retrieved || retrieved.data.test !== true) {
+        return { healthy: false, message: 'Cache read/write test failed' }
+      }
+
+      return { healthy: true }
     } catch {
       return {
         healthy: false,
         message: `Cache health check failed: ${
           error instanceof Error ? error.message : 'Unknown error'
         }`,
-      };
+      }
     }
   }
 
@@ -351,30 +393,30 @@ export class EnhancedAIDataService extends AIDataService {
    * Check database health
    */
   private async databaseHealthCheck(): Promise<{
-    healthy: boolean;
-    message?: string;
+    healthy: boolean
+    message?: string
   }> {
     try {
       const { data: _data, error } = await this.supabase
         .from('clients')
         .select('count', { count: 'exact', head: true })
-        .limit(1);
+        .limit(1)
 
       if (error) {
         return {
           healthy: false,
           message: `Database query failed: ${error.message}`,
-        };
+        }
       }
 
-      return { healthy: true };
+      return { healthy: true }
     } catch {
       return {
         healthy: false,
         message: `Database health check failed: ${
           error instanceof Error ? error.message : 'Unknown error'
         }`,
-      };
+      }
     }
   }
 
@@ -383,7 +425,7 @@ export class EnhancedAIDataService extends AIDataService {
    */
   async destroy(): Promise<void> {
     if (this.cache) {
-      await this.cache.destroy();
+      await this.cache.destroy()
     }
   }
 }
@@ -394,7 +436,7 @@ export class EnhancedAIDataService extends AIDataService {
 export function createEnhancedAIDataService(
   permissionContext: PermissionContext,
 ): EnhancedAIDataService {
-  return new EnhancedAIDataService(permissionContext);
+  return new EnhancedAIDataService(permissionContext)
 }
 
-export default EnhancedAIDataService;
+export default EnhancedAIDataService

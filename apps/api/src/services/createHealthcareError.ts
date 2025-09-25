@@ -3,8 +3,8 @@
  * This module provides the missing createHealthcareError export
  */
 
-import { ErrorSeverity } from '../types/error-severity';
-import { HealthcareErrorType } from './error-tracking';
+import { ErrorSeverity } from '../types/error-severity'
+import { HealthcareErrorType } from './error-tracking'
 
 // Define ErrorCategory enum to match the expected export
 export enum ErrorCategory {
@@ -22,7 +22,7 @@ export enum ErrorCategory {
 }
 
 // Re-export ErrorSeverity for convenience
-export { ErrorSeverity };
+export { ErrorSeverity }
 
 /**
  * Creates a healthcare error with the specified parameters
@@ -39,26 +39,24 @@ export function createHealthcareError(
   severity: ErrorSeverity,
   statusCode: number,
   options: {
-    metadata?: Record<string, any>;
-    cause?: Error;
-    type?: HealthcareErrorType;
+    metadata?: Record<string, any>
+    cause?: Error
+    type?: HealthcareErrorType
   } = {},
 ): Error {
-  const error = new Error(message);
-
-  // Add healthcare-specific properties
-  (error as any).category = category;
-  (error as any).severity = severity;
-  (error as any).statusCode = statusCode;
-  (error as any).metadata = options.metadata || {};
-  (error as any).type = options.type || 'business_logic_error';
+  const error = new Error(message) // Add healthcare-specific properties
+  ;(error as any).category = category
+  ;(error as any).severity = severity
+  ;(error as any).statusCode = statusCode
+  ;(error as any).metadata = options.metadata || {}
+  ;(error as any).type = options.type || 'business_logic_error'
 
   // Add cause if provided
   if (options.cause) {
-    (error as any).cause = options.cause;
+    ;(error as any).cause = options.cause
   }
 
-  return error;
+  return error
 }
 
 /**
@@ -78,7 +76,7 @@ export function createValidationError(
       metadata: { ...metadata, field },
       type: 'validation_error',
     },
-  );
+  )
 }
 
 /**
@@ -98,7 +96,7 @@ export function createComplianceError(
       metadata: { ...metadata, regulation },
       type: 'lgpd_compliance_issue',
     },
-  );
+  )
 }
 
 /**
@@ -117,7 +115,7 @@ export function createSecurityError(
       metadata,
       type: 'unauthorized_access',
     },
-  );
+  )
 }
 
 /**
@@ -136,5 +134,5 @@ export function createDatabaseError(
       metadata,
       type: 'database_error',
     },
-  );
+  )
 }

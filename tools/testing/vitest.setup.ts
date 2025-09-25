@@ -1,21 +1,21 @@
 // Vitest setup file for NeonPro testing infrastructure
-import '@vitest/ui';
-import '@testing-library/jest-dom';
-import { vi } from 'vitest';
+import '@vitest/ui'
+import '@testing-library/jest-dom'
+import { vi } from 'vitest'
 
 // Mock global objects that might be missing in test environment
 global.ResizeObserver = vi.fn().mockImplementation(() => ({
   observe: vi.fn(),
   unobserve: vi.fn(),
   disconnect: vi.fn(),
-}));
+}))
 
 // Mock IntersectionObserver
 global.IntersectionObserver = vi.fn().mockImplementation(() => ({
   observe: vi.fn(),
   unobserve: vi.fn(),
   disconnect: vi.fn(),
-}));
+}))
 
 // Mock matchMedia
 Object.defineProperty(window, 'matchMedia', {
@@ -30,16 +30,16 @@ Object.defineProperty(window, 'matchMedia', {
     removeEventListener: vi.fn(),
     dispatchEvent: vi.fn(),
   })),
-});
+})
 
 // Mock scrollIntoView
-Element.prototype.scrollIntoView = vi.fn();
+Element.prototype.scrollIntoView = vi.fn()
 
 // Mock scrollTo
-window.scrollTo = vi.fn();
+window.scrollTo = vi.fn()
 
 // Setup global test utilities
-global.describe = describe;
-global.it = it;
-global.test = test;
-global.expect = expect;
+global.describe = describe
+global.it = it
+global.test = test
+global.expect = expect

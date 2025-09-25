@@ -4,9 +4,9 @@
  * Supports real-time dashboards, predictive analytics, and comprehensive reporting
  */
 
-import { logHealthcareError } from '@neonpro/shared';
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import { z } from 'zod';
+import { logHealthcareError } from '@neonpro/shared'
+import { createClient, SupabaseClient } from '@supabase/supabase-js'
+import { z } from 'zod'
 
 // Schema Types
 const AnalyticsConfigurationSchema = z.object({
@@ -18,7 +18,7 @@ const AnalyticsConfigurationSchema = z.object({
   isActive: z.boolean(),
   createdAt: z.string(),
   updatedAt: z.string(),
-});
+})
 
 const KPIDefinitionSchema = z.object({
   id: z.string(),
@@ -35,7 +35,7 @@ const KPIDefinitionSchema = z.object({
   isActive: z.boolean(),
   createdAt: z.string(),
   updatedAt: z.string(),
-});
+})
 
 const AnalyticsDataWarehouseSchema = z.object({
   id: z.string(),
@@ -50,7 +50,7 @@ const AnalyticsDataWarehouseSchema = z.object({
   dimension3: z.string().nullable(),
   sourceSystem: z.string(),
   createdAt: z.string(),
-});
+})
 
 const BIDashboardSchema = z.object({
   id: z.string(),
@@ -63,7 +63,7 @@ const BIDashboardSchema = z.object({
   createdBy: z.string().nullable(),
   createdAt: z.string(),
   updatedAt: z.string(),
-});
+})
 
 const DashboardWidgetSchema = z.object({
   id: z.string(),
@@ -79,7 +79,7 @@ const DashboardWidgetSchema = z.object({
   refreshInterval: z.number(),
   createdAt: z.string(),
   updatedAt: z.string(),
-});
+})
 
 const ScheduledReportSchema = z.object({
   id: z.string(),
@@ -96,7 +96,7 @@ const ScheduledReportSchema = z.object({
   createdBy: z.string().nullable(),
   createdAt: z.string(),
   updatedAt: z.string(),
-});
+})
 
 const PredictiveModelSchema = z.object({
   id: z.string(),
@@ -117,7 +117,7 @@ const PredictiveModelSchema = z.object({
   nextTrainingAt: z.string().nullable(),
   createdAt: z.string(),
   updatedAt: z.string(),
-});
+})
 
 const AnalyticsAlertSchema = z.object({
   id: z.string(),
@@ -133,7 +133,7 @@ const AnalyticsAlertSchema = z.object({
   createdBy: z.string().nullable(),
   createdAt: z.string(),
   updatedAt: z.string(),
-});
+})
 
 const PerformanceMetricsSchema = z.object({
   id: z.string(),
@@ -152,7 +152,7 @@ const PerformanceMetricsSchema = z.object({
   patientSatisfactionScore: z.number(),
   noShowRate: z.number(),
   createdAt: z.string(),
-});
+})
 
 const ComparativeAnalyticsSchema = z.object({
   id: z.string(),
@@ -165,7 +165,7 @@ const ComparativeAnalyticsSchema = z.object({
   recommendations: z.array(z.string()),
   createdBy: z.string().nullable(),
   createdAt: z.string(),
-});
+})
 
 // Input Schemas
 const CreateAnalyticsConfigurationInputSchema = z.object({
@@ -174,7 +174,7 @@ const CreateAnalyticsConfigurationInputSchema = z.object({
   name: z.string(),
   configuration: z.record(z.any()).optional(),
   isActive: z.boolean().optional(),
-});
+})
 
 const CreateKPIDefinitionInputSchema = z.object({
   clinicId: z.string(),
@@ -188,7 +188,7 @@ const CreateKPIDefinitionInputSchema = z.object({
   aggregationType: z.enum(['sum', 'avg', 'count', 'min', 'max', 'rate']).optional(),
   frequency: z.enum(['hourly', 'daily', 'weekly', 'monthly', 'quarterly', 'yearly']).optional(),
   isActive: z.boolean().optional(),
-});
+})
 
 const CreateBIDashboardInputSchema = z.object({
   clinicId: z.string(),
@@ -197,7 +197,7 @@ const CreateBIDashboardInputSchema = z.object({
   layoutConfig: z.record(z.any()).optional(),
   isPublic: z.boolean().optional(),
   isTemplate: z.boolean().optional(),
-});
+})
 
 const CreateDashboardWidgetInputSchema = z.object({
   dashboardId: z.string(),
@@ -210,7 +210,7 @@ const CreateDashboardWidgetInputSchema = z.object({
   width: z.number().optional(),
   height: z.number().optional(),
   refreshInterval: z.number().optional(),
-});
+})
 
 const CreateScheduledReportInputSchema = z.object({
   clinicId: z.string(),
@@ -221,7 +221,7 @@ const CreateScheduledReportInputSchema = z.object({
   recipients: z.array(z.string()),
   format: z.enum(['pdf', 'excel', 'csv', 'html']).optional(),
   isActive: z.boolean().optional(),
-});
+})
 
 const CreatePredictiveModelInputSchema = z.object({
   clinicId: z.string(),
@@ -237,23 +237,23 @@ const CreatePredictiveModelInputSchema = z.object({
   trainingDataConfig: z.record(z.any()) as z.ZodType<Record<string, any>>,
   accuracyScore: z.number().optional(),
   isActive: z.boolean().optional(),
-});
+})
 
 const CreateAnalyticsAlertInputSchema = z.object({
   clinicId: z.string(),
   name: z.string(),
   alertType: z.enum(['threshold', 'trend', 'anomaly', 'custom']),
-  conditionConfig: z.record(z.any),
+  conditionConfig: z.record(z.any()),
   severity: z.enum(['low', 'medium', 'high', 'critical']).optional(),
   recipients: z.array(z.string()).optional(),
   isActive: z.boolean().optional(),
-});
+})
 
 const UpdateAnalyticsConfigurationInputSchema = z.object({
   name: z.string().optional(),
   configuration: z.record(z.any()).optional(),
   isActive: z.boolean().optional(),
-});
+})
 
 const UpdateKPIDefinitionInputSchema = z.object({
   name: z.string().optional(),
@@ -265,7 +265,7 @@ const UpdateKPIDefinitionInputSchema = z.object({
   aggregationType: z.enum(['sum', 'avg', 'count', 'min', 'max', 'rate']).optional(),
   frequency: z.enum(['hourly', 'daily', 'weekly', 'monthly', 'quarterly', 'yearly']).optional(),
   isActive: z.boolean().optional(),
-});
+})
 
 const UpdateBIDashboardInputSchema = z.object({
   name: z.string().optional(),
@@ -273,7 +273,7 @@ const UpdateBIDashboardInputSchema = z.object({
   layoutConfig: z.record(z.any()).optional(),
   isPublic: z.boolean().optional(),
   isTemplate: z.boolean().optional(),
-});
+})
 
 const UpdateDashboardWidgetInputSchema = z.object({
   widgetType: z.enum(['metric', 'chart', 'table', 'gauge', 'heatmap', 'trend']).optional(),
@@ -285,7 +285,7 @@ const UpdateDashboardWidgetInputSchema = z.object({
   width: z.number().optional(),
   height: z.number().optional(),
   refreshInterval: z.number().optional(),
-});
+})
 
 const UpdateScheduledReportInputSchema = z.object({
   name: z.string().optional(),
@@ -295,24 +295,24 @@ const UpdateScheduledReportInputSchema = z.object({
   recipients: z.array(z.string()).optional(),
   format: z.enum(['pdf', 'excel', 'csv', 'html']).optional(),
   isActive: z.boolean().optional(),
-});
+})
 
 const UpdatePredictiveModelInputSchema = z.object({
   name: z.string().optional(),
-  modelConfig: z.record(z.any()).optional() as z.ZodType<Record<string, any>> | undefined,
-  trainingDataConfig: z.record(z.any()).optional() as z.ZodType<Record<string, any>> | undefined,
+  modelConfig: z.record(z.any()).optional(),
+  trainingDataConfig: z.record(z.any()).optional(),
   accuracyScore: z.number().optional(),
   isActive: z.boolean().optional(),
-});
+})
 
 const UpdateAnalyticsAlertInputSchema = z.object({
   name: z.string().optional(),
   alertType: z.enum(['threshold', 'trend', 'anomaly', 'custom']).optional(),
-  conditionConfig: z.record(z.any).optional(),
+  conditionConfig: z.record(z.any()).optional(),
   severity: z.enum(['low', 'medium', 'high', 'critical']).optional(),
   recipients: z.array(z.string()).optional(),
   isActive: z.boolean().optional(),
-});
+})
 
 // Analytics Query Schemas
 const AnalyticsQueryInputSchema = z.object({
@@ -325,7 +325,7 @@ const AnalyticsQueryInputSchema = z.object({
   aggregationType: z.enum(['sum', 'avg', 'count', 'min', 'max', 'rate']).optional(),
   granularity: z.enum(['hourly', 'daily', 'weekly', 'monthly']).optional(),
   limit: z.number().optional(),
-});
+})
 
 const DashboardQueryInputSchema = z.object({
   clinicId: z.string(),
@@ -333,7 +333,7 @@ const DashboardQueryInputSchema = z.object({
   isTemplate: z.boolean().optional(),
   limit: z.number().optional(),
   offset: z.number().optional(),
-});
+})
 
 const ReportQueryInputSchema = z.object({
   clinicId: z.string(),
@@ -341,7 +341,7 @@ const ReportQueryInputSchema = z.object({
   isActive: z.boolean().optional(),
   limit: z.number().optional(),
   offset: z.number().optional(),
-});
+})
 
 const PredictiveQueryInputSchema = z.object({
   clinicId: z.string(),
@@ -349,7 +349,7 @@ const PredictiveQueryInputSchema = z.object({
   isActive: z.boolean().optional(),
   limit: z.number().optional(),
   offset: z.number().optional(),
-});
+})
 
 const AlertQueryInputSchema = z.object({
   clinicId: z.string(),
@@ -358,7 +358,7 @@ const AlertQueryInputSchema = z.object({
   isActive: z.boolean().optional(),
   limit: z.number().optional(),
   offset: z.number().optional(),
-});
+})
 
 const PerformanceMetricsQueryInputSchema = z.object({
   clinicId: z.string(),
@@ -366,127 +366,127 @@ const PerformanceMetricsQueryInputSchema = z.object({
   endDate: z.string().optional(),
   granularity: z.enum(['hourly', 'daily', 'weekly', 'monthly']).optional(),
   metrics: z.array(z.string()).optional(),
-});
+})
 
 // Export Schemas
 const DataExportInputSchema = z.object({
   clinicId: z.string(),
   requestType: z.enum(['analytics', 'raw_data', 'report', 'custom']),
-  filters: z.record(z.any()).optional() as z.ZodType<Record<string, any>> | undefined,
+  filters: z.record(z.any()).optional(),
   format: z.enum(['csv', 'excel', 'json', 'parquet']).optional(),
-});
+})
 
 // Type exports
-type AnalyticsConfiguration = z.infer<typeof AnalyticsConfigurationSchema>;
-type KPIDefinition = z.infer<typeof KPIDefinitionSchema>;
-type AnalyticsDataWarehouse = z.infer<typeof AnalyticsDataWarehouseSchema>;
-type BIDashboard = z.infer<typeof BIDashboardSchema>;
-type DashboardWidget = z.infer<typeof DashboardWidgetSchema>;
-type ScheduledReport = z.infer<typeof ScheduledReportSchema>;
-type PredictiveModel = z.infer<typeof PredictiveModelSchema>;
-type AnalyticsAlert = z.infer<typeof AnalyticsAlertSchema>;
-type PerformanceMetrics = z.infer<typeof PerformanceMetricsSchema>;
-type ComparativeAnalytics = z.infer<typeof ComparativeAnalyticsSchema>;
+type AnalyticsConfiguration = z.infer<typeof AnalyticsConfigurationSchema>
+type KPIDefinition = z.infer<typeof KPIDefinitionSchema>
+type AnalyticsDataWarehouse = z.infer<typeof AnalyticsDataWarehouseSchema>
+type BIDashboard = z.infer<typeof BIDashboardSchema>
+type DashboardWidget = z.infer<typeof DashboardWidgetSchema>
+type ScheduledReport = z.infer<typeof ScheduledReportSchema>
+type PredictiveModel = z.infer<typeof PredictiveModelSchema>
+type AnalyticsAlert = z.infer<typeof AnalyticsAlertSchema>
+type PerformanceMetrics = z.infer<typeof PerformanceMetricsSchema>
+type ComparativeAnalytics = z.infer<typeof ComparativeAnalyticsSchema>
 
-type CreateAnalyticsConfigurationInput = z.infer<typeof CreateAnalyticsConfigurationInputSchema>;
-type CreateKPIDefinitionInput = z.infer<typeof CreateKPIDefinitionInputSchema>;
-type CreateBIDashboardInput = z.infer<typeof CreateBIDashboardInputSchema>;
-type CreateDashboardWidgetInput = z.infer<typeof CreateDashboardWidgetInputSchema>;
-type CreateScheduledReportInput = z.infer<typeof CreateScheduledReportInputSchema>;
-type CreatePredictiveModelInput = z.infer<typeof CreatePredictiveModelInputSchema>;
-type CreateAnalyticsAlertInput = z.infer<typeof CreateAnalyticsAlertInputSchema>;
+type CreateAnalyticsConfigurationInput = z.infer<typeof CreateAnalyticsConfigurationInputSchema>
+type CreateKPIDefinitionInput = z.infer<typeof CreateKPIDefinitionInputSchema>
+type CreateBIDashboardInput = z.infer<typeof CreateBIDashboardInputSchema>
+type CreateDashboardWidgetInput = z.infer<typeof CreateDashboardWidgetInputSchema>
+type CreateScheduledReportInput = z.infer<typeof CreateScheduledReportInputSchema>
+type CreatePredictiveModelInput = z.infer<typeof CreatePredictiveModelInputSchema>
+type CreateAnalyticsAlertInput = z.infer<typeof CreateAnalyticsAlertInputSchema>
 
-type UpdateAnalyticsConfigurationInput = z.infer<typeof UpdateAnalyticsConfigurationInputSchema>;
-type UpdateKPIDefinitionInput = z.infer<typeof UpdateKPIDefinitionInputSchema>;
-type UpdateBIDashboardInput = z.infer<typeof UpdateBIDashboardInputSchema>;
-type UpdateDashboardWidgetInput = z.infer<typeof UpdateDashboardWidgetInputSchema>;
-type UpdateScheduledReportInput = z.infer<typeof UpdateScheduledReportInputSchema>;
-type UpdatePredictiveModelInput = z.infer<typeof UpdatePredictiveModelInputSchema>;
-type UpdateAnalyticsAlertInput = z.infer<typeof UpdateAnalyticsAlertInputSchema>;
+type UpdateAnalyticsConfigurationInput = z.infer<typeof UpdateAnalyticsConfigurationInputSchema>
+type UpdateKPIDefinitionInput = z.infer<typeof UpdateKPIDefinitionInputSchema>
+type UpdateBIDashboardInput = z.infer<typeof UpdateBIDashboardInputSchema>
+type UpdateDashboardWidgetInput = z.infer<typeof UpdateDashboardWidgetInputSchema>
+type UpdateScheduledReportInput = z.infer<typeof UpdateScheduledReportInputSchema>
+type UpdatePredictiveModelInput = z.infer<typeof UpdatePredictiveModelInputSchema>
+type UpdateAnalyticsAlertInput = z.infer<typeof UpdateAnalyticsAlertInputSchema>
 
-type AnalyticsQueryInput = z.infer<typeof AnalyticsQueryInputSchema>;
-type DashboardQueryInput = z.infer<typeof DashboardQueryInputSchema>;
-type ReportQueryInput = z.infer<typeof ReportQueryInputSchema>;
-type PredictiveQueryInput = z.infer<typeof PredictiveQueryInputSchema>;
-type AlertQueryInput = z.infer<typeof AlertQueryInputSchema>;
-type PerformanceMetricsQueryInput = z.infer<typeof PerformanceMetricsQueryInputSchema>;
-type DataExportInput = z.infer<typeof DataExportInputSchema>;
+type AnalyticsQueryInput = z.infer<typeof AnalyticsQueryInputSchema>
+type DashboardQueryInput = z.infer<typeof DashboardQueryInputSchema>
+type ReportQueryInput = z.infer<typeof ReportQueryInputSchema>
+type PredictiveQueryInput = z.infer<typeof PredictiveQueryInputSchema>
+type AlertQueryInput = z.infer<typeof AlertQueryInputSchema>
+type PerformanceMetricsQueryInput = z.infer<typeof PerformanceMetricsQueryInputSchema>
+type DataExportInput = z.infer<typeof DataExportInputSchema>
 
 // Analytics Service Interface
 export interface AnalyticsService {
   // Analytics Configuration
   createAnalyticsConfiguration(
     config: CreateAnalyticsConfigurationInput,
-  ): Promise<AnalyticsConfiguration>;
+  ): Promise<AnalyticsConfiguration>
   updateAnalyticsConfiguration(
     id: string,
     config: UpdateAnalyticsConfigurationInput,
-  ): Promise<AnalyticsConfiguration>;
-  deleteAnalyticsConfiguration(id: string): Promise<boolean>;
-  getAnalyticsConfigurations(clinicId: string): Promise<AnalyticsConfiguration[]>;
+  ): Promise<AnalyticsConfiguration>
+  deleteAnalyticsConfiguration(id: string): Promise<boolean>
+  getAnalyticsConfigurations(clinicId: string): Promise<AnalyticsConfiguration[]>
 
   // KPI Management
-  createKPIDefinition(kpi: CreateKPIDefinitionInput): Promise<KPIDefinition>;
-  updateKPIDefinition(id: string, kpi: UpdateKPIDefinitionInput): Promise<KPIDefinition>;
-  deleteKPIDefinition(id: string): Promise<boolean>;
-  getKPIDefinitions(clinicId: string): Promise<KPIDefinition[]>;
+  createKPIDefinition(kpi: CreateKPIDefinitionInput): Promise<KPIDefinition>
+  updateKPIDefinition(id: string, kpi: UpdateKPIDefinitionInput): Promise<KPIDefinition>
+  deleteKPIDefinition(id: string): Promise<boolean>
+  getKPIDefinitions(clinicId: string): Promise<KPIDefinition[]>
   calculateKPIValue(
     clinicId: string,
     kpiName: string,
     startDate?: string,
     endDate?: string,
-  ): Promise<number>;
+  ): Promise<number>
 
   // BI Dashboards
-  createBIDashboard(dashboard: CreateBIDashboardInput): Promise<BIDashboard>;
-  updateBIDashboard(id: string, dashboard: UpdateBIDashboardInput): Promise<BIDashboard>;
-  deleteBIDashboard(id: string): Promise<boolean>;
-  getBIDashboards(query: DashboardQueryInput): Promise<BIDashboard[]>;
-  getBIDashboardById(id: string): Promise<BIDashboard | null>;
+  createBIDashboard(dashboard: CreateBIDashboardInput): Promise<BIDashboard>
+  updateBIDashboard(id: string, dashboard: UpdateBIDashboardInput): Promise<BIDashboard>
+  deleteBIDashboard(id: string): Promise<boolean>
+  getBIDashboards(query: DashboardQueryInput): Promise<BIDashboard[]>
+  getBIDashboardById(id: string): Promise<BIDashboard | null>
 
   // Dashboard Widgets
-  createDashboardWidget(widget: CreateDashboardWidgetInput): Promise<DashboardWidget>;
-  updateDashboardWidget(id: string, widget: UpdateDashboardWidgetInput): Promise<DashboardWidget>;
-  deleteDashboardWidget(id: string): Promise<boolean>;
-  getDashboardWidgets(dashboardId: string): Promise<DashboardWidget[]>;
+  createDashboardWidget(widget: CreateDashboardWidgetInput): Promise<DashboardWidget>
+  updateDashboardWidget(id: string, widget: UpdateDashboardWidgetInput): Promise<DashboardWidget>
+  deleteDashboardWidget(id: string): Promise<boolean>
+  getDashboardWidgets(dashboardId: string): Promise<DashboardWidget[]>
 
   // Scheduled Reports
-  createScheduledReport(report: CreateScheduledReportInput): Promise<ScheduledReport>;
-  updateScheduledReport(id: string, report: UpdateScheduledReportInput): Promise<ScheduledReport>;
-  deleteScheduledReport(id: string): Promise<boolean>;
-  getScheduledReports(query: ReportQueryInput): Promise<ScheduledReport[]>;
-  generateReport(id: string): Promise<Blob>;
+  createScheduledReport(report: CreateScheduledReportInput): Promise<ScheduledReport>
+  updateScheduledReport(id: string, report: UpdateScheduledReportInput): Promise<ScheduledReport>
+  deleteScheduledReport(id: string): Promise<boolean>
+  getScheduledReports(query: ReportQueryInput): Promise<ScheduledReport[]>
+  generateReport(id: string): Promise<Blob>
 
   // Predictive Models
-  createPredictiveModel(model: CreatePredictiveModelInput): Promise<PredictiveModel>;
-  updatePredictiveModel(id: string, model: UpdatePredictiveModelInput): Promise<PredictiveModel>;
-  deletePredictiveModel(id: string): Promise<boolean>;
-  getPredictiveModels(query: PredictiveQueryInput): Promise<PredictiveModel[]>;
-  trainModel(id: string): Promise<PredictiveModel>;
-  predictWithModel(id: string, inputData: any): Promise<any>;
+  createPredictiveModel(model: CreatePredictiveModelInput): Promise<PredictiveModel>
+  updatePredictiveModel(id: string, model: UpdatePredictiveModelInput): Promise<PredictiveModel>
+  deletePredictiveModel(id: string): Promise<boolean>
+  getPredictiveModels(query: PredictiveQueryInput): Promise<PredictiveModel[]>
+  trainModel(id: string): Promise<PredictiveModel>
+  predictWithModel(id: string, inputData: any): Promise<any>
 
   // Analytics Alerts
-  createAnalyticsAlert(alert: CreateAnalyticsAlertInput): Promise<AnalyticsAlert>;
-  updateAnalyticsAlert(id: string, alert: UpdateAnalyticsAlertInput): Promise<AnalyticsAlert>;
-  deleteAnalyticsAlert(id: string): Promise<boolean>;
-  getAnalyticsAlerts(query: AlertQueryInput): Promise<AnalyticsAlert[]>;
-  checkAndTriggerAlerts(clinicId: string): Promise<AnalyticsAlert[]>;
+  createAnalyticsAlert(alert: CreateAnalyticsAlertInput): Promise<AnalyticsAlert>
+  updateAnalyticsAlert(id: string, alert: UpdateAnalyticsAlertInput): Promise<AnalyticsAlert>
+  deleteAnalyticsAlert(id: string): Promise<boolean>
+  getAnalyticsAlerts(query: AlertQueryInput): Promise<AnalyticsAlert[]>
+  checkAndTriggerAlerts(clinicId: string): Promise<AnalyticsAlert[]>
 
   // Data Analytics
-  getAnalyticsData(query: AnalyticsQueryInput): Promise<AnalyticsDataWarehouse[]>;
-  getPerformanceMetrics(query: PerformanceMetricsQueryInput): Promise<PerformanceMetrics[]>;
-  aggregateData(clinicId: string, config: any): Promise<any>;
+  getAnalyticsData(query: AnalyticsQueryInput): Promise<AnalyticsDataWarehouse[]>
+  getPerformanceMetrics(query: PerformanceMetricsQueryInput): Promise<PerformanceMetrics[]>
+  aggregateData(clinicId: string, config: any): Promise<any>
   generateComparativeAnalysis(
     clinicId: string,
     comparisonType: string,
     baselinePeriod: any,
     comparisonPeriod: any,
-  ): Promise<ComparativeAnalytics>;
+  ): Promise<ComparativeAnalytics>
 
   // Data Export
-  createDataExport(exportData: DataExportInput): Promise<any>;
-  getDataExports(clinicId: string): Promise<any[]>;
-  downloadExport(id: string): Promise<Blob>;
+  createDataExport(exportData: DataExportInput): Promise<any>
+  getDataExports(clinicId: string): Promise<any[]>
+  downloadExport(id: string): Promise<Blob>
 
   // Real-time Analytics
   trackEvent(
@@ -495,34 +495,34 @@ export interface AnalyticsService {
     eventData: any,
     userId?: string,
     sessionId?: string,
-  ): Promise<void>;
-  getRealtimeMetrics(clinicId: string): Promise<any>;
-  getDashboardData(dashboardId: string): Promise<any>;
+  ): Promise<void>
+  getRealtimeMetrics(clinicId: string): Promise<any>
+  getDashboardData(dashboardId: string): Promise<any>
 
   // Predictive Analytics
   predictNoShowProbability(
     patientId: string,
     clinicId: string,
     appointmentDate: string,
-  ): Promise<number>;
-  generateRevenueForecast(clinicId: string, forecastDays: number): Promise<any>;
-  predictInventoryDemand(clinicId: string, productId: string, forecastDays: number): Promise<any>;
-  predictPatientRetention(clinicId: string, patientId: string): Promise<number>;
+  ): Promise<number>
+  generateRevenueForecast(clinicId: string, forecastDays: number): Promise<any>
+  predictInventoryDemand(clinicId: string, productId: string, forecastDays: number): Promise<any>
+  predictPatientRetention(clinicId: string, patientId: string): Promise<number>
 }
 
 // Analytics Service Implementation
 export class AnalyticsService implements AnalyticsService {
-  private supabase: SupabaseClient;
+  private supabase: SupabaseClient
 
   constructor(config: { supabaseUrl: string; supabaseKey: string }) {
-    this.supabase = createClient(config.supabaseUrl, config.supabaseKey);
+    this.supabase = createClient(config.supabaseUrl, config.supabaseKey)
   }
 
   // Analytics Configuration
   async createAnalyticsConfiguration(
     config: CreateAnalyticsConfigurationInput,
   ): Promise<AnalyticsConfiguration> {
-    const validatedConfig = CreateAnalyticsConfigurationInputSchema.parse(config);
+    const validatedConfig = CreateAnalyticsConfigurationInputSchema.parse(config)
 
     const { data, error } = await this.supabase
       .from('analytics_configurations')
@@ -534,60 +534,60 @@ export class AnalyticsService implements AnalyticsService {
         is_active: validatedConfig.isActive ?? true,
       })
       .select()
-      .single();
+      .single()
 
     if (error) {
-      throw new Error(`Failed to create analytics configuration: ${error.message}`);
+      throw new Error(`Failed to create analytics configuration: ${error.message}`)
     }
 
     return AnalyticsConfigurationSchema.parse({
       ...data,
       clinicId: data.clinic_id,
       configType: data.config_type,
-    });
+    })
   }
 
   async updateAnalyticsConfiguration(
     id: string,
     config: UpdateAnalyticsConfigurationInput,
   ): Promise<AnalyticsConfiguration> {
-    const validatedConfig = UpdateAnalyticsConfigurationInputSchema.parse(config);
+    const validatedConfig = UpdateAnalyticsConfigurationInputSchema.parse(config)
 
     const { data, error } = await this.supabase
       .from('analytics_configurations')
       .update({
         ...(validatedConfig.name && { name: validatedConfig.name }),
-        ...(validatedConfig.configuration !== undefined
-          && { configuration: validatedConfig.configuration }),
+        ...(validatedConfig.configuration !== undefined &&
+          { configuration: validatedConfig.configuration }),
         ...(validatedConfig.isActive !== undefined && { is_active: validatedConfig.isActive }),
         updated_at: new Date().toISOString(),
       })
       .eq('id', id)
       .select()
-      .single();
+      .single()
 
     if (error) {
-      throw new Error(`Failed to update analytics configuration: ${error.message}`);
+      throw new Error(`Failed to update analytics configuration: ${error.message}`)
     }
 
     return AnalyticsConfigurationSchema.parse({
       ...data,
       clinicId: data.clinic_id,
       configType: data.config_type,
-    });
+    })
   }
 
   async deleteAnalyticsConfiguration(id: string): Promise<boolean> {
     const { error } = await this.supabase
       .from('analytics_configurations')
       .delete()
-      .eq('id', id);
+      .eq('id', id)
 
     if (error) {
-      throw new Error(`Failed to delete analytics configuration: ${error.message}`);
+      throw new Error(`Failed to delete analytics configuration: ${error.message}`)
     }
 
-    return true;
+    return true
   }
 
   async getAnalyticsConfigurations(clinicId: string): Promise<AnalyticsConfiguration[]> {
@@ -595,10 +595,10 @@ export class AnalyticsService implements AnalyticsService {
       .from('analytics_configurations')
       .select('*')
       .eq('clinic_id', clinicId)
-      .order('created_at', { ascending: false });
+      .order('created_at', { ascending: false })
 
     if (error) {
-      throw new Error(`Failed to get analytics configurations: ${error.message}`);
+      throw new Error(`Failed to get analytics configurations: ${error.message}`)
     }
 
     return data.map(item =>
@@ -607,12 +607,12 @@ export class AnalyticsService implements AnalyticsService {
         clinicId: item.clinic_id,
         configType: item.config_type,
       })
-    );
+    )
   }
 
   // KPI Management
   async createKPIDefinition(kpi: CreateKPIDefinitionInput): Promise<KPIDefinition> {
-    const validatedKPI = CreateKPIDefinitionInputSchema.parse(kpi);
+    const validatedKPI = CreateKPIDefinitionInputSchema.parse(kpi)
 
     const { data, error } = await this.supabase
       .from('kpi_definitions')
@@ -630,10 +630,10 @@ export class AnalyticsService implements AnalyticsService {
         is_active: validatedKPI.isActive ?? true,
       })
       .select()
-      .single();
+      .single()
 
     if (error) {
-      throw new Error(`Failed to create KPI definition: ${error.message}`);
+      throw new Error(`Failed to create KPI definition: ${error.message}`)
     }
 
     return KPIDefinitionSchema.parse({
@@ -645,35 +645,35 @@ export class AnalyticsService implements AnalyticsService {
       aggregationType: data.aggregation_type,
       frequency: data.frequency,
       isActive: data.is_active,
-    });
+    })
   }
 
   async updateKPIDefinition(id: string, kpi: UpdateKPIDefinitionInput): Promise<KPIDefinition> {
-    const validatedKPI = UpdateKPIDefinitionInputSchema.parse(kpi);
+    const validatedKPI = UpdateKPIDefinitionInputSchema.parse(kpi)
 
     const { data, error } = await this.supabase
       .from('kpi_definitions')
       .update({
         ...(validatedKPI.name !== undefined && { name: validatedKPI.name }),
         ...(validatedKPI.description !== undefined && { description: validatedKPI.description }),
-        ...(validatedKPI.calculationFormula !== undefined
-          && { calculation_formula: validatedKPI.calculationFormula }),
+        ...(validatedKPI.calculationFormula !== undefined &&
+          { calculation_formula: validatedKPI.calculationFormula }),
         ...(validatedKPI.unit !== undefined && { unit: validatedKPI.unit }),
         ...(validatedKPI.targetValue !== undefined && { target_value: validatedKPI.targetValue }),
-        ...(validatedKPI.benchmarkValue !== undefined
-          && { benchmark_value: validatedKPI.benchmarkValue }),
-        ...(validatedKPI.aggregationType !== undefined
-          && { aggregation_type: validatedKPI.aggregationType }),
+        ...(validatedKPI.benchmarkValue !== undefined &&
+          { benchmark_value: validatedKPI.benchmarkValue }),
+        ...(validatedKPI.aggregationType !== undefined &&
+          { aggregation_type: validatedKPI.aggregationType }),
         ...(validatedKPI.frequency !== undefined && { frequency: validatedKPI.frequency }),
         ...(validatedKPI.isActive !== undefined && { is_active: validatedKPI.isActive }),
         updated_at: new Date().toISOString(),
       })
       .eq('id', id)
       .select()
-      .single();
+      .single()
 
     if (error) {
-      throw new Error(`Failed to update KPI definition: ${error.message}`);
+      throw new Error(`Failed to update KPI definition: ${error.message}`)
     }
 
     return KPIDefinitionSchema.parse({
@@ -685,20 +685,20 @@ export class AnalyticsService implements AnalyticsService {
       aggregationType: data.aggregation_type,
       frequency: data.frequency,
       isActive: data.is_active,
-    });
+    })
   }
 
   async deleteKPIDefinition(id: string): Promise<boolean> {
     const { error } = await this.supabase
       .from('kpi_definitions')
       .delete()
-      .eq('id', id);
+      .eq('id', id)
 
     if (error) {
-      throw new Error(`Failed to delete KPI definition: ${error.message}`);
+      throw new Error(`Failed to delete KPI definition: ${error.message}`)
     }
 
-    return true;
+    return true
   }
 
   async getKPIDefinitions(clinicId: string): Promise<KPIDefinition[]> {
@@ -706,10 +706,10 @@ export class AnalyticsService implements AnalyticsService {
       .from('kpi_definitions')
       .select('*')
       .eq('clinic_id', clinicId)
-      .order('created_at', { ascending: false });
+      .order('created_at', { ascending: false })
 
     if (error) {
-      throw new Error(`Failed to get KPI definitions: ${error.message}`);
+      throw new Error(`Failed to get KPI definitions: ${error.message}`)
     }
 
     return data.map(item =>
@@ -723,7 +723,7 @@ export class AnalyticsService implements AnalyticsService {
         frequency: item.frequency,
         isActive: item.is_active,
       })
-    );
+    )
   }
 
   async calculateKPIValue(
@@ -737,18 +737,18 @@ export class AnalyticsService implements AnalyticsService {
       p_kpi_name: kpiName,
       p_start_date: startDate,
       p_end_date: endDate,
-    });
+    })
 
     if (error) {
-      throw new Error(`Failed to calculate KPI value: ${error.message}`);
+      throw new Error(`Failed to calculate KPI value: ${error.message}`)
     }
 
-    return data;
+    return data
   }
 
   // BI Dashboards
   async createBIDashboard(dashboard: CreateBIDashboardInput): Promise<BIDashboard> {
-    const validatedDashboard = CreateBIDashboardInputSchema.parse(dashboard);
+    const validatedDashboard = CreateBIDashboardInputSchema.parse(dashboard)
 
     const { data, error } = await this.supabase
       .from('bi_dashboards')
@@ -761,10 +761,10 @@ export class AnalyticsService implements AnalyticsService {
         is_template: validatedDashboard.isTemplate ?? false,
       })
       .select()
-      .single();
+      .single()
 
     if (error) {
-      throw new Error(`Failed to create BI dashboard: ${error.message}`);
+      throw new Error(`Failed to create BI dashboard: ${error.message}`)
     }
 
     return BIDashboardSchema.parse({
@@ -774,32 +774,32 @@ export class AnalyticsService implements AnalyticsService {
       isPublic: data.is_public,
       isTemplate: data.is_template,
       createdBy: data.created_by,
-    });
+    })
   }
 
   async updateBIDashboard(id: string, dashboard: UpdateBIDashboardInput): Promise<BIDashboard> {
-    const validatedDashboard = UpdateBIDashboardInputSchema.parse(dashboard);
+    const validatedDashboard = UpdateBIDashboardInputSchema.parse(dashboard)
 
     const { data, error } = await this.supabase
       .from('bi_dashboards')
       .update({
         ...(validatedDashboard.name !== undefined && { name: validatedDashboard.name }),
-        ...(validatedDashboard.description !== undefined
-          && { description: validatedDashboard.description }),
-        ...(validatedDashboard.layoutConfig !== undefined
-          && { layout_config: validatedDashboard.layoutConfig }),
-        ...(validatedDashboard.isPublic !== undefined
-          && { is_public: validatedDashboard.isPublic }),
-        ...(validatedDashboard.isTemplate !== undefined
-          && { is_template: validatedDashboard.isTemplate }),
+        ...(validatedDashboard.description !== undefined &&
+          { description: validatedDashboard.description }),
+        ...(validatedDashboard.layoutConfig !== undefined &&
+          { layout_config: validatedDashboard.layoutConfig }),
+        ...(validatedDashboard.isPublic !== undefined &&
+          { is_public: validatedDashboard.isPublic }),
+        ...(validatedDashboard.isTemplate !== undefined &&
+          { is_template: validatedDashboard.isTemplate }),
         updated_at: new Date().toISOString(),
       })
       .eq('id', id)
       .select()
-      .single();
+      .single()
 
     if (error) {
-      throw new Error(`Failed to update BI dashboard: ${error.message}`);
+      throw new Error(`Failed to update BI dashboard: ${error.message}`)
     }
 
     return BIDashboardSchema.parse({
@@ -809,53 +809,53 @@ export class AnalyticsService implements AnalyticsService {
       isPublic: data.is_public,
       isTemplate: data.is_template,
       createdBy: data.created_by,
-    });
+    })
   }
 
   async deleteBIDashboard(id: string): Promise<boolean> {
     const { error } = await this.supabase
       .from('bi_dashboards')
       .delete()
-      .eq('id', id);
+      .eq('id', id)
 
     if (error) {
-      throw new Error(`Failed to delete BI dashboard: ${error.message}`);
+      throw new Error(`Failed to delete BI dashboard: ${error.message}`)
     }
 
-    return true;
+    return true
   }
 
   async getBIDashboards(query: DashboardQueryInput): Promise<BIDashboard[]> {
     let queryBuilder = this.supabase
       .from('bi_dashboards')
       .select('*')
-      .eq('clinic_id', query.clinicId);
+      .eq('clinic_id', query.clinicId)
 
     if (query.dashboardId) {
-      queryBuilder = queryBuilder.eq('id', query.dashboardId);
+      queryBuilder = queryBuilder.eq('id', query.dashboardId)
     }
 
     if (query.isTemplate !== undefined) {
-      queryBuilder = queryBuilder.eq('is_template', query.isTemplate);
+      queryBuilder = queryBuilder.eq('is_template', query.isTemplate)
     }
 
-    queryBuilder = queryBuilder.order('created_at', { ascending: false });
+    queryBuilder = queryBuilder.order('created_at', { ascending: false })
 
     if (query.limit) {
-      queryBuilder = queryBuilder.limit(query.limit);
+      queryBuilder = queryBuilder.limit(query.limit)
     }
 
     if (query.offset) {
       queryBuilder = queryBuilder.range(
         query.offset,
         (query.offset || 0) + (query.limit || 10) - 1,
-      );
+      )
     }
 
-    const { data, error } = await queryBuilder;
+    const { data, error } = await queryBuilder
 
     if (error) {
-      throw new Error(`Failed to get BI dashboards: ${error.message}`);
+      throw new Error(`Failed to get BI dashboards: ${error.message}`)
     }
 
     return data.map(item =>
@@ -867,7 +867,7 @@ export class AnalyticsService implements AnalyticsService {
         isTemplate: item.is_template,
         createdBy: item.created_by,
       })
-    );
+    )
   }
 
   async getBIDashboardById(id: string): Promise<BIDashboard | null> {
@@ -875,13 +875,13 @@ export class AnalyticsService implements AnalyticsService {
       .from('bi_dashboards')
       .select('*')
       .eq('id', id)
-      .single();
+      .single()
 
     if (error) {
       if (error.code === 'PGRST116') {
-        return null;
+        return null
       }
-      throw new Error(`Failed to get BI dashboard: ${error.message}`);
+      throw new Error(`Failed to get BI dashboard: ${error.message}`)
     }
 
     return BIDashboardSchema.parse({
@@ -891,12 +891,12 @@ export class AnalyticsService implements AnalyticsService {
       isPublic: data.is_public,
       isTemplate: data.is_template,
       createdBy: data.created_by,
-    });
+    })
   }
 
   // Dashboard Widgets
   async createDashboardWidget(widget: CreateDashboardWidgetInput): Promise<DashboardWidget> {
-    const validatedWidget = CreateDashboardWidgetInputSchema.parse(widget);
+    const validatedWidget = CreateDashboardWidgetInputSchema.parse(widget)
 
     const { data, error } = await this.supabase
       .from('dashboard_widgets')
@@ -913,10 +913,10 @@ export class AnalyticsService implements AnalyticsService {
         refresh_interval: validatedWidget.refreshInterval || 300,
       })
       .select()
-      .single();
+      .single()
 
     if (error) {
-      throw new Error(`Failed to create dashboard widget: ${error.message}`);
+      throw new Error(`Failed to create dashboard widget: ${error.message}`)
     }
 
     return DashboardWidgetSchema.parse({
@@ -927,39 +927,39 @@ export class AnalyticsService implements AnalyticsService {
       positionX: data.position_x,
       positionY: data.position_y,
       refreshInterval: data.refresh_interval,
-    });
+    })
   }
 
   async updateDashboardWidget(
     id: string,
     widget: UpdateDashboardWidgetInput,
   ): Promise<DashboardWidget> {
-    const validatedWidget = UpdateDashboardWidgetInputSchema.parse(widget);
+    const validatedWidget = UpdateDashboardWidgetInputSchema.parse(widget)
 
     const { data, error } = await this.supabase
       .from('dashboard_widgets')
       .update({
-        ...(validatedWidget.widgetType !== undefined
-          && { widget_type: validatedWidget.widgetType }),
+        ...(validatedWidget.widgetType !== undefined &&
+          { widget_type: validatedWidget.widgetType }),
         ...(validatedWidget.title !== undefined && { title: validatedWidget.title }),
-        ...(validatedWidget.dataSource !== undefined
-          && { data_source: validatedWidget.dataSource }),
-        ...(validatedWidget.configuration !== undefined
-          && { configuration: validatedWidget.configuration }),
+        ...(validatedWidget.dataSource !== undefined &&
+          { data_source: validatedWidget.dataSource }),
+        ...(validatedWidget.configuration !== undefined &&
+          { configuration: validatedWidget.configuration }),
         ...(validatedWidget.positionX !== undefined && { position_x: validatedWidget.positionX }),
         ...(validatedWidget.positionY !== undefined && { position_y: validatedWidget.positionY }),
         ...(validatedWidget.width !== undefined && { width: validatedWidget.width }),
         ...(validatedWidget.height !== undefined && { height: validatedWidget.height }),
-        ...(validatedWidget.refreshInterval !== undefined
-          && { refresh_interval: validatedWidget.refreshInterval }),
+        ...(validatedWidget.refreshInterval !== undefined &&
+          { refresh_interval: validatedWidget.refreshInterval }),
         updated_at: new Date().toISOString(),
       })
       .eq('id', id)
       .select()
-      .single();
+      .single()
 
     if (error) {
-      throw new Error(`Failed to update dashboard widget: ${error.message}`);
+      throw new Error(`Failed to update dashboard widget: ${error.message}`)
     }
 
     return DashboardWidgetSchema.parse({
@@ -970,20 +970,20 @@ export class AnalyticsService implements AnalyticsService {
       positionX: data.position_x,
       positionY: data.position_y,
       refreshInterval: data.refresh_interval,
-    });
+    })
   }
 
   async deleteDashboardWidget(id: string): Promise<boolean> {
     const { error } = await this.supabase
       .from('dashboard_widgets')
       .delete()
-      .eq('id', id);
+      .eq('id', id)
 
     if (error) {
-      throw new Error(`Failed to delete dashboard widget: ${error.message}`);
+      throw new Error(`Failed to delete dashboard widget: ${error.message}`)
     }
 
-    return true;
+    return true
   }
 
   async getDashboardWidgets(dashboardId: string): Promise<DashboardWidget[]> {
@@ -991,10 +991,10 @@ export class AnalyticsService implements AnalyticsService {
       .from('dashboard_widgets')
       .select('*')
       .eq('dashboard_id', dashboardId)
-      .order('created_at', { ascending: false });
+      .order('created_at', { ascending: false })
 
     if (error) {
-      throw new Error(`Failed to get dashboard widgets: ${error.message}`);
+      throw new Error(`Failed to get dashboard widgets: ${error.message}`)
     }
 
     return data.map(item =>
@@ -1007,12 +1007,12 @@ export class AnalyticsService implements AnalyticsService {
         positionY: item.position_y,
         refreshInterval: item.refresh_interval,
       })
-    );
+    )
   }
 
   // Scheduled Reports
   async createScheduledReport(report: CreateScheduledReportInput): Promise<ScheduledReport> {
-    const validatedReport = CreateScheduledReportInputSchema.parse(report);
+    const validatedReport = CreateScheduledReportInputSchema.parse(report)
 
     const { data, error } = await this.supabase
       .from('scheduled_reports')
@@ -1027,10 +1027,10 @@ export class AnalyticsService implements AnalyticsService {
         is_active: validatedReport.isActive ?? true,
       })
       .select()
-      .single();
+      .single()
 
     if (error) {
-      throw new Error(`Failed to create scheduled report: ${error.message}`);
+      throw new Error(`Failed to create scheduled report: ${error.message}`)
     }
 
     return ScheduledReportSchema.parse({
@@ -1043,25 +1043,25 @@ export class AnalyticsService implements AnalyticsService {
       lastRunAt: data.last_run_at,
       nextRunAt: data.next_run_at,
       createdBy: data.created_by,
-    });
+    })
   }
 
   async updateScheduledReport(
     id: string,
     report: UpdateScheduledReportInput,
   ): Promise<ScheduledReport> {
-    const validatedReport = UpdateScheduledReportInputSchema.parse(report);
+    const validatedReport = UpdateScheduledReportInputSchema.parse(report)
 
     const { data, error } = await this.supabase
       .from('scheduled_reports')
       .update({
         ...(validatedReport.name !== undefined && { name: validatedReport.name }),
-        ...(validatedReport.description !== undefined
-          && { description: validatedReport.description }),
-        ...(validatedReport.reportType !== undefined
-          && { report_type: validatedReport.reportType }),
-        ...(validatedReport.scheduleConfig !== undefined
-          && { schedule_config: validatedReport.scheduleConfig }),
+        ...(validatedReport.description !== undefined &&
+          { description: validatedReport.description }),
+        ...(validatedReport.reportType !== undefined &&
+          { report_type: validatedReport.reportType }),
+        ...(validatedReport.scheduleConfig !== undefined &&
+          { schedule_config: validatedReport.scheduleConfig }),
         ...(validatedReport.recipients !== undefined && { recipients: validatedReport.recipients }),
         ...(validatedReport.format !== undefined && { format: validatedReport.format }),
         ...(validatedReport.isActive !== undefined && { is_active: validatedReport.isActive }),
@@ -1069,10 +1069,10 @@ export class AnalyticsService implements AnalyticsService {
       })
       .eq('id', id)
       .select()
-      .single();
+      .single()
 
     if (error) {
-      throw new Error(`Failed to update scheduled report: ${error.message}`);
+      throw new Error(`Failed to update scheduled report: ${error.message}`)
     }
 
     return ScheduledReportSchema.parse({
@@ -1085,53 +1085,53 @@ export class AnalyticsService implements AnalyticsService {
       lastRunAt: data.last_run_at,
       nextRunAt: data.next_run_at,
       createdBy: data.created_by,
-    });
+    })
   }
 
   async deleteScheduledReport(id: string): Promise<boolean> {
     const { error } = await this.supabase
       .from('scheduled_reports')
       .delete()
-      .eq('id', id);
+      .eq('id', id)
 
     if (error) {
-      throw new Error(`Failed to delete scheduled report: ${error.message}`);
+      throw new Error(`Failed to delete scheduled report: ${error.message}`)
     }
 
-    return true;
+    return true
   }
 
   async getScheduledReports(query: ReportQueryInput): Promise<ScheduledReport[]> {
     let queryBuilder = this.supabase
       .from('scheduled_reports')
       .select('*')
-      .eq('clinic_id', query.clinicId);
+      .eq('clinic_id', query.clinicId)
 
     if (query.reportType) {
-      queryBuilder = queryBuilder.eq('report_type', query.reportType);
+      queryBuilder = queryBuilder.eq('report_type', query.reportType)
     }
 
     if (query.isActive !== undefined) {
-      queryBuilder = queryBuilder.eq('is_active', query.isActive);
+      queryBuilder = queryBuilder.eq('is_active', query.isActive)
     }
 
-    queryBuilder = queryBuilder.order('created_at', { ascending: false });
+    queryBuilder = queryBuilder.order('created_at', { ascending: false })
 
     if (query.limit) {
-      queryBuilder = queryBuilder.limit(query.limit);
+      queryBuilder = queryBuilder.limit(query.limit)
     }
 
     if (query.offset) {
       queryBuilder = queryBuilder.range(
         query.offset,
         (query.offset || 0) + (query.limit || 10) - 1,
-      );
+      )
     }
 
-    const { data, error } = await queryBuilder;
+    const { data, error } = await queryBuilder
 
     if (error) {
-      throw new Error(`Failed to get scheduled reports: ${error.message}`);
+      throw new Error(`Failed to get scheduled reports: ${error.message}`)
     }
 
     return data.map(item =>
@@ -1146,20 +1146,20 @@ export class AnalyticsService implements AnalyticsService {
         nextRunAt: item.next_run_at,
         createdBy: item.created_by,
       })
-    );
+    )
   }
 
   async generateReport(id: string): Promise<Blob> {
     // This would integrate with a report generation service
     // For now, we'll return a mock implementation
-    const { data, error } = await this.supabase
+    const { error } = await this.supabase
       .from('scheduled_reports')
       .select('*')
       .eq('id', id)
-      .single();
+      .single()
 
     if (error) {
-      throw new Error(`Failed to generate report: ${error.message}`);
+      throw new Error(`Failed to generate report: ${error.message}`)
     }
 
     // Mock report generation - in reality this would call a report generation service
@@ -1167,14 +1167,14 @@ export class AnalyticsService implements AnalyticsService {
       reportId: id,
       generatedAt: new Date().toISOString(),
       data: 'Report data would be generated here',
-    };
+    }
 
-    return new Blob([JSON.stringify(reportData, null, 2)], { type: 'application/json' });
+    return new Blob([JSON.stringify(reportData, null, 2)], { type: 'application/json' })
   }
 
   // Predictive Models
   async createPredictiveModel(model: CreatePredictiveModelInput): Promise<PredictiveModel> {
-    const validatedModel = CreatePredictiveModelInputSchema.parse(model);
+    const validatedModel = CreatePredictiveModelInputSchema.parse(model)
 
     const { data, error } = await this.supabase
       .from('predictive_models')
@@ -1188,10 +1188,10 @@ export class AnalyticsService implements AnalyticsService {
         is_active: validatedModel.isActive ?? true,
       })
       .select()
-      .single();
+      .single()
 
     if (error) {
-      throw new Error(`Failed to create predictive model: ${error.message}`);
+      throw new Error(`Failed to create predictive model: ${error.message}`)
     }
 
     return PredictiveModelSchema.parse({
@@ -1204,34 +1204,34 @@ export class AnalyticsService implements AnalyticsService {
       isActive: data.is_active,
       lastTrainedAt: data.last_trained_at,
       nextTrainingAt: data.next_training_at,
-    });
+    })
   }
 
   async updatePredictiveModel(
     id: string,
     model: UpdatePredictiveModelInput,
   ): Promise<PredictiveModel> {
-    const validatedModel = UpdatePredictiveModelInputSchema.parse(model);
+    const validatedModel = UpdatePredictiveModelInputSchema.parse(model)
 
     const { data, error } = await this.supabase
       .from('predictive_models')
       .update({
         ...(validatedModel.name !== undefined && { name: validatedModel.name }),
-        ...(validatedModel.modelConfig !== undefined
-          && { model_config: validatedModel.modelConfig }),
-        ...(validatedModel.trainingDataConfig !== undefined
-          && { training_data_config: validatedModel.trainingDataConfig }),
-        ...(validatedModel.accuracyScore !== undefined
-          && { accuracy_score: validatedModel.accuracyScore }),
+        ...(validatedModel.modelConfig !== undefined &&
+          { model_config: validatedModel.modelConfig }),
+        ...(validatedModel.trainingDataConfig !== undefined &&
+          { training_data_config: validatedModel.trainingDataConfig }),
+        ...(validatedModel.accuracyScore !== undefined &&
+          { accuracy_score: validatedModel.accuracyScore }),
         ...(validatedModel.isActive !== undefined && { is_active: validatedModel.isActive }),
         updated_at: new Date().toISOString(),
       })
       .eq('id', id)
       .select()
-      .single();
+      .single()
 
     if (error) {
-      throw new Error(`Failed to update predictive model: ${error.message}`);
+      throw new Error(`Failed to update predictive model: ${error.message}`)
     }
 
     return PredictiveModelSchema.parse({
@@ -1244,53 +1244,53 @@ export class AnalyticsService implements AnalyticsService {
       isActive: data.is_active,
       lastTrainedAt: data.last_trained_at,
       nextTrainingAt: data.next_training_at,
-    });
+    })
   }
 
   async deletePredictiveModel(id: string): Promise<boolean> {
     const { error } = await this.supabase
       .from('predictive_models')
       .delete()
-      .eq('id', id);
+      .eq('id', id)
 
     if (error) {
-      throw new Error(`Failed to delete predictive model: ${error.message}`);
+      throw new Error(`Failed to delete predictive model: ${error.message}`)
     }
 
-    return true;
+    return true
   }
 
   async getPredictiveModels(query: PredictiveQueryInput): Promise<PredictiveModel[]> {
     let queryBuilder = this.supabase
       .from('predictive_models')
       .select('*')
-      .eq('clinic_id', query.clinicId);
+      .eq('clinic_id', query.clinicId)
 
     if (query.modelType) {
-      queryBuilder = queryBuilder.eq('model_type', query.modelType);
+      queryBuilder = queryBuilder.eq('model_type', query.modelType)
     }
 
     if (query.isActive !== undefined) {
-      queryBuilder = queryBuilder.eq('is_active', query.isActive);
+      queryBuilder = queryBuilder.eq('is_active', query.isActive)
     }
 
-    queryBuilder = queryBuilder.order('created_at', { ascending: false });
+    queryBuilder = queryBuilder.order('created_at', { ascending: false })
 
     if (query.limit) {
-      queryBuilder = queryBuilder.limit(query.limit);
+      queryBuilder = queryBuilder.limit(query.limit)
     }
 
     if (query.offset) {
       queryBuilder = queryBuilder.range(
         query.offset,
         (query.offset || 0) + (query.limit || 10) - 1,
-      );
+      )
     }
 
-    const { data, error } = await queryBuilder;
+    const { data, error } = await queryBuilder
 
     if (error) {
-      throw new Error(`Failed to get predictive models: ${error.message}`);
+      throw new Error(`Failed to get predictive models: ${error.message}`)
     }
 
     return data.map(item =>
@@ -1305,7 +1305,7 @@ export class AnalyticsService implements AnalyticsService {
         lastTrainedAt: item.last_trained_at,
         nextTrainingAt: item.next_training_at,
       })
-    );
+    )
   }
 
   async trainModel(id: string): Promise<PredictiveModel> {
@@ -1320,10 +1320,10 @@ export class AnalyticsService implements AnalyticsService {
       })
       .eq('id', id)
       .select()
-      .single();
+      .single()
 
     if (error) {
-      throw new Error(`Failed to train model: ${error.message}`);
+      throw new Error(`Failed to train model: ${error.message}`)
     }
 
     return PredictiveModelSchema.parse({
@@ -1336,7 +1336,7 @@ export class AnalyticsService implements AnalyticsService {
       isActive: data.is_active,
       lastTrainedAt: data.last_trained_at,
       nextTrainingAt: data.next_training_at,
-    });
+    })
   }
 
   async predictWithModel(id: string, _inputData: any): Promise<any> {
@@ -1346,10 +1346,10 @@ export class AnalyticsService implements AnalyticsService {
       .from('predictive_models')
       .select('*')
       .eq('id', id)
-      .single();
+      .single()
 
     if (error) {
-      throw new Error(`Failed to get model for prediction: ${error.message}`);
+      throw new Error(`Failed to get model for prediction: ${error.message}`)
     }
 
     // Mock prediction based on model type
@@ -1358,7 +1358,7 @@ export class AnalyticsService implements AnalyticsService {
         return {
           prediction: Math.random() * 0.5 + 0.1, // Random probability between 0.1 and 0.6
           confidence: 0.75,
-        };
+        }
       case 'revenue_forecast':
         return {
           predictions: Array.from({ length: 30 }, (_, i) => ({
@@ -1367,18 +1367,18 @@ export class AnalyticsService implements AnalyticsService {
             confidence_lower: Math.random() * 3000 + 500,
             confidence_upper: Math.random() * 7000 + 1500,
           })),
-        };
+        }
       default:
         return {
           prediction: Math.random(),
           confidence: 0.7,
-        };
+        }
     }
   }
 
   // Analytics Alerts
   async createAnalyticsAlert(alert: CreateAnalyticsAlertInput): Promise<AnalyticsAlert> {
-    const validatedAlert = CreateAnalyticsAlertInputSchema.parse(alert);
+    const validatedAlert = CreateAnalyticsAlertInputSchema.parse(alert)
 
     const { data, error } = await this.supabase
       .from('analytics_alerts')
@@ -1392,10 +1392,10 @@ export class AnalyticsService implements AnalyticsService {
         is_active: validatedAlert.isActive ?? true,
       })
       .select()
-      .single();
+      .single()
 
     if (error) {
-      throw new Error(`Failed to create analytics alert: ${error.message}`);
+      throw new Error(`Failed to create analytics alert: ${error.message}`)
     }
 
     return AnalyticsAlertSchema.parse({
@@ -1407,22 +1407,22 @@ export class AnalyticsService implements AnalyticsService {
       isActive: data.is_active,
       lastTriggeredAt: data.last_triggered_at,
       createdBy: data.created_by,
-    });
+    })
   }
 
   async updateAnalyticsAlert(
     id: string,
     alert: UpdateAnalyticsAlertInput,
   ): Promise<AnalyticsAlert> {
-    const validatedAlert = UpdateAnalyticsAlertInputSchema.parse(alert);
+    const validatedAlert = UpdateAnalyticsAlertInputSchema.parse(alert)
 
     const { data, error } = await this.supabase
       .from('analytics_alerts')
       .update({
         ...(validatedAlert.name !== undefined && { name: validatedAlert.name }),
         ...(validatedAlert.alertType !== undefined && { alert_type: validatedAlert.alertType }),
-        ...(validatedAlert.conditionConfig !== undefined
-          && { condition_config: validatedAlert.conditionConfig }),
+        ...(validatedAlert.conditionConfig !== undefined &&
+          { condition_config: validatedAlert.conditionConfig }),
         ...(validatedAlert.severity !== undefined && { severity: validatedAlert.severity }),
         ...(validatedAlert.recipients !== undefined && { recipients: validatedAlert.recipients }),
         ...(validatedAlert.isActive !== undefined && { is_active: validatedAlert.isActive }),
@@ -1430,10 +1430,10 @@ export class AnalyticsService implements AnalyticsService {
       })
       .eq('id', id)
       .select()
-      .single();
+      .single()
 
     if (error) {
-      throw new Error(`Failed to update analytics alert: ${error.message}`);
+      throw new Error(`Failed to update analytics alert: ${error.message}`)
     }
 
     return AnalyticsAlertSchema.parse({
@@ -1445,57 +1445,57 @@ export class AnalyticsService implements AnalyticsService {
       isActive: data.is_active,
       lastTriggeredAt: data.last_triggered_at,
       createdBy: data.created_by,
-    });
+    })
   }
 
   async deleteAnalyticsAlert(id: string): Promise<boolean> {
     const { error } = await this.supabase
       .from('analytics_alerts')
       .delete()
-      .eq('id', id);
+      .eq('id', id)
 
     if (error) {
-      throw new Error(`Failed to delete analytics alert: ${error.message}`);
+      throw new Error(`Failed to delete analytics alert: ${error.message}`)
     }
 
-    return true;
+    return true
   }
 
   async getAnalyticsAlerts(query: AlertQueryInput): Promise<AnalyticsAlert[]> {
     let queryBuilder = this.supabase
       .from('analytics_alerts')
       .select('*')
-      .eq('clinic_id', query.clinicId);
+      .eq('clinic_id', query.clinicId)
 
     if (query.alertType) {
-      queryBuilder = queryBuilder.eq('alert_type', query.alertType);
+      queryBuilder = queryBuilder.eq('alert_type', query.alertType)
     }
 
     if (query.severity) {
-      queryBuilder = queryBuilder.eq('severity', query.severity);
+      queryBuilder = queryBuilder.eq('severity', query.severity)
     }
 
     if (query.isActive !== undefined) {
-      queryBuilder = queryBuilder.eq('is_active', query.isActive);
+      queryBuilder = queryBuilder.eq('is_active', query.isActive)
     }
 
-    queryBuilder = queryBuilder.order('created_at', { ascending: false });
+    queryBuilder = queryBuilder.order('created_at', { ascending: false })
 
     if (query.limit) {
-      queryBuilder = queryBuilder.limit(query.limit);
+      queryBuilder = queryBuilder.limit(query.limit)
     }
 
     if (query.offset) {
       queryBuilder = queryBuilder.range(
         query.offset,
         (query.offset || 0) + (query.limit || 10) - 1,
-      );
+      )
     }
 
-    const { data, error } = await queryBuilder;
+    const { data, error } = await queryBuilder
 
     if (error) {
-      throw new Error(`Failed to get analytics alerts: ${error.message}`);
+      throw new Error(`Failed to get analytics alerts: ${error.message}`)
     }
 
     return data.map(item =>
@@ -1509,34 +1509,34 @@ export class AnalyticsService implements AnalyticsService {
         lastTriggeredAt: item.last_triggered_at,
         createdBy: item.created_by,
       })
-    );
+    )
   }
 
   async checkAndTriggerAlerts(clinicId: string): Promise<AnalyticsAlert[]> {
-    const triggeredAlerts: AnalyticsAlert[] = [];
+    const triggeredAlerts: AnalyticsAlert[] = []
 
     // Get all active alerts for the clinic
     const alerts = await this.getAnalyticsAlerts({
       clinicId,
       isActive: true,
-    });
+    })
 
     for (const alert of alerts) {
-      let shouldTrigger = false;
+      let shouldTrigger = false
 
       switch (alert.alertType) {
         case 'threshold':
-          shouldTrigger = await this.checkThresholdAlert(alert, clinicId);
-          break;
+          shouldTrigger = await this.checkThresholdAlert(alert, clinicId)
+          break
         case 'trend':
-          shouldTrigger = await this.checkTrendAlert(alert, clinicId);
-          break;
+          shouldTrigger = await this.checkTrendAlert(alert, clinicId)
+          break
         case 'anomaly':
-          shouldTrigger = await this.checkAnomalyAlert(alert, clinicId);
-          break;
+          shouldTrigger = await this.checkAnomalyAlert(alert, clinicId)
+          break
         default:
           // Custom alerts would have their own logic
-          break;
+          break
       }
 
       if (shouldTrigger) {
@@ -1547,77 +1547,77 @@ export class AnalyticsService implements AnalyticsService {
             last_triggered_at: new Date().toISOString(),
             trigger_count: (alert.triggerCount || 0) + 1,
           })
-          .eq('id', alert.id);
+          .eq('id', alert.id)
 
-        triggeredAlerts.push(alert);
+        triggeredAlerts.push(alert)
       }
     }
 
-    return triggeredAlerts;
+    return triggeredAlerts
   }
 
   private async checkThresholdAlert(alert: AnalyticsAlert, clinicId: string): Promise<boolean> {
-    const { kpi, operator, value } = alert.conditionConfig;
+    const { kpi, operator, value } = alert.conditionConfig
 
     if (!kpi || !operator || value === undefined) {
-      return false;
+      return false
     }
 
-    const currentValue = await this.calculateKPIValue(clinicId, kpi);
+    const currentValue = await this.calculateKPIValue(clinicId, kpi)
 
     switch (operator) {
       case '>':
-        return currentValue > value;
+        return currentValue > value
       case '<':
-        return currentValue < value;
+        return currentValue < value
       case '>=':
-        return currentValue >= value;
+        return currentValue >= value
       case '<=':
-        return currentValue <= value;
+        return currentValue <= value
       case '==':
-        return currentValue === value;
+        return currentValue === value
       default:
-        return false;
+        return false
     }
   }
 
   private async checkTrendAlert(alert: AnalyticsAlert, clinicId: string): Promise<boolean> {
     // Simplified trend detection - would use more sophisticated algorithms in production
-    const { kpi, direction, threshold } = alert.conditionConfig;
+    const { kpi, direction, threshold } = alert.conditionConfig
 
     if (!kpi || !direction || threshold === undefined) {
-      return false;
+      return false
     }
 
     // Get current and previous values
-    const currentValue = await this.calculateKPIValue(clinicId, kpi);
+    const currentValue = await this.calculateKPIValue(clinicId, kpi)
     const previousValue = await this.calculateKPIValue(
       clinicId,
       kpi,
       new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
       new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString(),
-    );
+    )
 
-    if (previousValue === 0) return false;
+    if (previousValue === 0) return false
 
-    const change = ((currentValue - previousValue) / previousValue) * 100;
+    const change = ((currentValue - previousValue) / previousValue) * 100
 
     switch (direction) {
       case 'increasing':
-        return change > threshold;
+        return change > threshold
       case 'decreasing':
-        return change < -threshold;
+        return change < -threshold
       default:
-        return false;
+        return false
     }
   }
 
   private async checkAnomalyAlert(alert: AnalyticsAlert, clinicId: string): Promise<boolean> {
     // Simplified anomaly detection - would use statistical methods in production
-    const { kpi, threshold } = alert.conditionConfig;
+    const { kpi, threshold } = alert.conditionConfig
 
     if (!kpi || threshold === undefined) {
-      return false;
+      return false
     }
 
     // Get historical data for comparison
@@ -1627,21 +1627,21 @@ export class AnalyticsService implements AnalyticsService {
       .eq('clinic_id', clinicId)
       .eq('metric_name', kpi)
       .order('created_at', { ascending: false })
-      .limit(30);
+      .limit(30)
 
     if (error || !data || data.length < 10) {
-      return false;
+      return false
     }
 
-    const values = data.map(d => d.metric_value);
-    const mean = values.reduce((a, b) => a + b, 0) / values.length;
-    const variance = values.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / values.length;
-    const stdDev = Math.sqrt(variance);
+    const values = data.map(d => d.metric_value)
+    const mean = values.reduce((a, b) => a + b, 0) / values.length
+    const variance = values.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / values.length
+    const stdDev = Math.sqrt(variance)
 
-    const currentValue = await this.calculateKPIValue(clinicId, kpi);
-    const zScore = Math.abs((currentValue - mean) / stdDev);
+    const currentValue = await this.calculateKPIValue(clinicId, kpi)
+    const zScore = Math.abs((currentValue - mean) / stdDev)
 
-    return zScore > threshold;
+    return zScore > threshold
   }
 
   // Data Analytics
@@ -1649,34 +1649,34 @@ export class AnalyticsService implements AnalyticsService {
     let queryBuilder = this.supabase
       .from('analytics_data_warehouse')
       .select('*')
-      .eq('clinic_id', query.clinicId);
+      .eq('clinic_id', query.clinicId)
 
     if (query.metricName) {
-      queryBuilder = queryBuilder.eq('metric_name', query.metricName);
+      queryBuilder = queryBuilder.eq('metric_name', query.metricName)
     }
 
     if (query.category) {
-      queryBuilder = queryBuilder.eq('metric_category', query.category);
+      queryBuilder = queryBuilder.eq('metric_category', query.category)
     }
 
     if (query.startDate) {
-      queryBuilder = queryBuilder.gte('date_date', query.startDate);
+      queryBuilder = queryBuilder.gte('date_date', query.startDate)
     }
 
     if (query.endDate) {
-      queryBuilder = queryBuilder.lte('date_date', query.endDate);
+      queryBuilder = queryBuilder.lte('date_date', query.endDate)
     }
 
-    queryBuilder = queryBuilder.order('date_date', { ascending: false });
+    queryBuilder = queryBuilder.order('date_date', { ascending: false })
 
     if (query.limit) {
-      queryBuilder = queryBuilder.limit(query.limit);
+      queryBuilder = queryBuilder.limit(query.limit)
     }
 
-    const { data, error } = await queryBuilder;
+    const { data, error } = await queryBuilder
 
     if (error) {
-      throw new Error(`Failed to get analytics data: ${error.message}`);
+      throw new Error(`Failed to get analytics data: ${error.message}`)
     }
 
     return data.map(item =>
@@ -1693,33 +1693,33 @@ export class AnalyticsService implements AnalyticsService {
         dimension3: item.dimension_3,
         sourceSystem: item.source_system,
       })
-    );
+    )
   }
 
   async getPerformanceMetrics(query: PerformanceMetricsQueryInput): Promise<PerformanceMetrics[]> {
     let queryBuilder = this.supabase
       .from('performance_metrics')
       .select('*')
-      .eq('clinic_id', query.clinicId);
+      .eq('clinic_id', query.clinicId)
 
     if (query.startDate) {
-      queryBuilder = queryBuilder.gte('metric_date', query.startDate);
+      queryBuilder = queryBuilder.gte('metric_date', query.startDate)
     }
 
     if (query.endDate) {
-      queryBuilder = queryBuilder.lte('metric_date', query.endDate);
+      queryBuilder = queryBuilder.lte('metric_date', query.endDate)
     }
 
-    queryBuilder = queryBuilder.order('metric_date', { ascending: false });
+    queryBuilder = queryBuilder.order('metric_date', { ascending: false })
 
-    if (query.limit) {
-      queryBuilder = queryBuilder.limit(query.limit);
+    if ((query as any).limit) {
+      queryBuilder = queryBuilder.limit((query as any).limit)
     }
 
-    const { data, error } = await queryBuilder;
+    const { data, error } = await queryBuilder
 
     if (error) {
-      throw new Error(`Failed to get performance metrics: ${error.message}`);
+      throw new Error(`Failed to get performance metrics: ${error.message}`)
     }
 
     return data.map(item =>
@@ -1740,95 +1740,95 @@ export class AnalyticsService implements AnalyticsService {
         patientSatisfactionScore: item.patient_satisfaction_score,
         noShowRate: item.no_show_rate,
       })
-    );
+    )
   }
 
   async aggregateData(clinicId: string, config: any): Promise<any> {
-    const { metricName, category, startDate, endDate, dimensions, aggregationType } = config;
+    const { metricName, category, startDate, endDate, dimensions, aggregationType } = config
 
     let queryBuilder = this.supabase
       .from('analytics_data_warehouse')
       .select('*')
-      .eq('clinic_id', clinicId);
+      .eq('clinic_id', clinicId)
 
     if (metricName) {
-      queryBuilder = queryBuilder.eq('metric_name', metricName);
+      queryBuilder = queryBuilder.eq('metric_name', metricName)
     }
 
     if (category) {
-      queryBuilder = queryBuilder.eq('metric_category', category);
+      queryBuilder = queryBuilder.eq('metric_category', category)
     }
 
     if (startDate) {
-      queryBuilder = queryBuilder.gte('date_date', startDate);
+      queryBuilder = queryBuilder.gte('date_date', startDate)
     }
 
     if (endDate) {
-      queryBuilder = queryBuilder.lte('date_date', endDate);
+      queryBuilder = queryBuilder.lte('date_date', endDate)
     }
 
-    const { data, error } = await queryBuilder;
+    const { data, error } = await queryBuilder
 
     if (error) {
-      throw new Error(`Failed to aggregate data: ${error.message}`);
+      throw new Error(`Failed to aggregate data: ${error.message}`)
     }
 
     // Aggregate based on configuration
-    const aggregated = this.aggregateByDimensions(data, dimensions, aggregationType);
+    const aggregated = this.aggregateByDimensions(data, dimensions, aggregationType)
 
-    return aggregated;
+    return aggregated
   }
 
   private aggregateByDimensions(data: any[], dimensions: string[], aggregationType: string): any {
-    const groups: { [key: string]: any[] } = {};
+    const groups: { [key: string]: any[] } = {}
 
     // Group by dimensions
     data.forEach(item => {
-      const key = dimensions.map(dim => item[dim] || 'all').join('|');
+      const key = dimensions.map(dim => item[dim] || 'all').join('|')
       if (!groups[key]) {
-        groups[key] = [];
+        groups[key] = []
       }
-      groups[key].push(item.metric_value);
-    });
+      groups[key].push(item.metric_value)
+    })
 
     // Aggregate values
-    const result: any = {};
+    const result: any = {}
     Object.keys(groups).forEach(key => {
-      const values = groups[key];
-      let aggregatedValue: number;
+      const values = groups[key]
+      let aggregatedValue: number
 
       // Filter out undefined values and ensure numeric values
-      const numericValues = values.filter(val => typeof val === 'number' && !isNaN(val));
-      
+      const numericValues = values?.filter(val => typeof val === 'number' && !isNaN(val)) || []
+
       if (numericValues.length === 0) {
         // No valid numeric values, return 0
-        aggregatedValue = 0;
+        aggregatedValue = 0
       } else {
         switch (aggregationType) {
           case 'sum':
-            aggregatedValue = numericValues.reduce((a, b) => a + b, 0);
-            break;
+            aggregatedValue = numericValues.reduce((a, b) => a + b, 0)
+            break
           case 'avg':
-            aggregatedValue = numericValues.reduce((a, b) => a + b, 0) / numericValues.length;
-            break;
+            aggregatedValue = numericValues.reduce((a, b) => a + b, 0) / numericValues.length
+            break
           case 'count':
-            aggregatedValue = numericValues.length;
-            break;
+            aggregatedValue = numericValues.length
+            break
           case 'min':
-            aggregatedValue = Math.min(...numericValues);
-            break;
+            aggregatedValue = Math.min(...numericValues)
+            break
           case 'max':
-            aggregatedValue = Math.max(...numericValues);
-            break;
+            aggregatedValue = Math.max(...numericValues)
+            break
           default:
-            aggregatedValue = numericValues.reduce((a, b) => a + b, 0);
+            aggregatedValue = numericValues.reduce((a, b) => a + b, 0)
         }
       }
 
-      result[key] = aggregatedValue;
-    });
+      result[key] = aggregatedValue
+    })
 
-    return result;
+    return result
   }
 
   async generateComparativeAnalysis(
@@ -1842,18 +1842,18 @@ export class AnalyticsService implements AnalyticsService {
       clinicId,
       startDate: baselinePeriod.startDate,
       endDate: baselinePeriod.endDate,
-    });
+    })
 
     const comparisonData = await this.getAnalyticsData({
       clinicId,
       startDate: comparisonPeriod.startDate,
       endDate: comparisonPeriod.endDate,
-    });
+    })
 
     // Calculate metrics and comparisons
-    const metrics = this.calculateComparativeMetrics(baselineData, comparisonData);
-    const insights = this.generateInsights(metrics, comparisonType);
-    const recommendations = this.generateRecommendations(insights, comparisonType);
+    const metrics = this.calculateComparativeMetrics(baselineData, comparisonData)
+    const insights = this.generateInsights(metrics, comparisonType)
+    const recommendations = this.generateRecommendations(insights, comparisonType)
 
     // Save the analysis
     const { data, error } = await this.supabase
@@ -1868,10 +1868,10 @@ export class AnalyticsService implements AnalyticsService {
         recommendations,
       })
       .select()
-      .single();
+      .single()
 
     if (error) {
-      throw new Error(`Failed to create comparative analysis: ${error.message}`);
+      throw new Error(`Failed to create comparative analysis: ${error.message}`)
     }
 
     return ComparativeAnalyticsSchema.parse({
@@ -1881,56 +1881,56 @@ export class AnalyticsService implements AnalyticsService {
       baselinePeriod: data.baseline_period,
       comparisonPeriod: data.comparison_period,
       createdBy: data.created_by,
-    });
+    })
   }
 
   private calculateComparativeMetrics(baselineData: any[], comparisonData: any[]): any {
-    const baselineMetrics = this.aggregateByMetrics(baselineData);
-    const comparisonMetrics = this.aggregateByMetrics(comparisonData);
+    const baselineMetrics = this.aggregateByMetrics(baselineData)
+    const comparisonMetrics = this.aggregateByMetrics(comparisonData)
 
-    const result: any = {};
+    const result: any = {}
     Object.keys(baselineMetrics).forEach(metric => {
-      const baseline = baselineMetrics[metric];
-      const comparison = comparisonMetrics[metric] || 0;
-      const change = baseline > 0 ? ((comparison - baseline) / baseline) * 100 : 0;
+      const baseline = baselineMetrics[metric]
+      const comparison = comparisonMetrics[metric] || 0
+      const change = baseline > 0 ? ((comparison - baseline) / baseline) * 100 : 0
 
       result[metric] = {
         baseline,
         comparison,
         change,
         absoluteChange: comparison - baseline,
-      };
-    });
+      }
+    })
 
-    return result;
+    return result
   }
 
   private aggregateByMetrics(data: any[]): any {
-    const metrics: { [key: string]: number } = {};
+    const metrics: { [key: string]: number } = {}
 
     data.forEach(item => {
       if (!metrics[item.metric_name]) {
-        metrics[item.metric_name] = 0;
+        metrics[item.metric_name] = 0
       }
-      metrics[item.metric_name] += item.metric_value;
-    });
+      metrics[item.metric_name] += item.metric_value
+    })
 
-    return metrics;
+    return metrics
   }
 
-  private generateInsights(metrics: any, comparisonType: string): string[] {
-    const insights: string[] = [];
+  private generateInsights(metrics: any, _comparisonType: string): string[] {
+    const insights: string[] = []
 
     Object.keys(metrics).forEach(metric => {
-      const { baseline, comparison, change } = metrics[metric];
+      const { baseline, comparison, change } = metrics[metric]
 
       if (Math.abs(change) > 10) {
-        const direction = change > 0 ? 'aumentou' : 'diminuiu';
+        const direction = change > 0 ? 'aumentou' : 'diminuiu'
         insights.push(
           `${metric} ${direction} ${
             Math.abs(change).toFixed(1)
           }% em comparação com o período anterior`,
-        );
+        )
       }
 
       if (comparison > baseline * 1.5) {
@@ -1938,7 +1938,7 @@ export class AnalyticsService implements AnalyticsService {
           `${metric} mostrou crescimento significativo de ${
             ((comparison - baseline) / baseline * 100).toFixed(1)
           }%`,
-        );
+        )
       }
 
       if (comparison < baseline * 0.5) {
@@ -1946,46 +1946,46 @@ export class AnalyticsService implements AnalyticsService {
           `${metric} apresentou queda preocupante de ${
             ((baseline - comparison) / baseline * 100).toFixed(1)
           }%`,
-        );
+        )
       }
-    });
+    })
 
-    return insights;
+    return insights
   }
 
-  private generateRecommendations(insights: string[], comparisonType: string): string[] {
-    const recommendations: string[] = [];
+  private generateRecommendations(insights: string[], _comparisonType: string): string[] {
+    const recommendations: string[] = []
 
     insights.forEach(insight => {
       if (insight.includes('aumentou') && insight.includes('pacientes')) {
         recommendations.push(
           'Considere expandir a capacidade de atendimento ou adicionar mais profissionais',
-        );
+        )
       }
 
       if (insight.includes('diminuiu') && insight.includes('receita')) {
         recommendations.push(
           'Analise as causas da queda de receita e implemente estratégias de recuperação',
-        );
+        )
       }
 
       if (insight.includes('crescimento significativo')) {
         recommendations.push(
           'Monitore de perto este indicador para garantir sustentabilidade do crescimento',
-        );
+        )
       }
 
       if (insight.includes('queda preocupante')) {
-        recommendations.push('Investigue imediatamente as causas e implemente ações corretivas');
+        recommendations.push('Investigue imediatamente as causas e implemente ações corretivas')
       }
-    });
+    })
 
-    return recommendations;
+    return recommendations
   }
 
   // Data Export
   async createDataExport(exportData: DataExportInput): Promise<any> {
-    const validatedExport = DataExportInputSchema.parse(exportData);
+    const validatedExport = DataExportInputSchema.parse(exportData)
 
     const { data, error } = await this.supabase
       .from('data_export_requests')
@@ -1997,10 +1997,10 @@ export class AnalyticsService implements AnalyticsService {
         status: 'pending',
       })
       .select()
-      .single();
+      .single()
 
     if (error) {
-      throw new Error(`Failed to create data export: ${error.message}`);
+      throw new Error(`Failed to create data export: ${error.message}`)
     }
 
     return {
@@ -2010,7 +2010,7 @@ export class AnalyticsService implements AnalyticsService {
       filters: data.filters,
       format: data.format,
       status: data.status,
-    };
+    }
   }
 
   async getDataExports(clinicId: string): Promise<any[]> {
@@ -2018,10 +2018,10 @@ export class AnalyticsService implements AnalyticsService {
       .from('data_export_requests')
       .select('*')
       .eq('clinic_id', clinicId)
-      .order('created_at', { ascending: false });
+      .order('created_at', { ascending: false })
 
     if (error) {
-      throw new Error(`Failed to get data exports: ${error.message}`);
+      throw new Error(`Failed to get data exports: ${error.message}`)
     }
 
     return data.map(item => ({
@@ -2031,7 +2031,7 @@ export class AnalyticsService implements AnalyticsService {
       filters: item.filters,
       format: item.format,
       status: item.status,
-    }));
+    }))
   }
 
   async downloadExport(id: string): Promise<Blob> {
@@ -2039,19 +2039,19 @@ export class AnalyticsService implements AnalyticsService {
       .from('data_export_requests')
       .select('*')
       .eq('id', id)
-      .single();
+      .single()
 
     if (error) {
-      throw new Error(`Failed to get export: ${error.message}`);
+      throw new Error(`Failed to get export: ${error.message}`)
     }
 
     if (data.status !== 'completed' || !data.file_url) {
-      throw new Error('Export is not ready for download');
+      throw new Error('Export is not ready for download')
     }
 
     // In a real implementation, this would download the file from storage
     // For now, we'll return a mock blob
-    return new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    return new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
   }
 
   // Real-time Analytics
@@ -2070,22 +2070,21 @@ export class AnalyticsService implements AnalyticsService {
         event_data: eventData,
         user_id: userId,
         session_id: sessionId,
-      });
+      })
 
     if (error) {
-      logHealthcareError('analytics', error, { method: 'trackAnalyticsEvent', eventType, userId });
+      logHealthcareError('analytics', error, { method: 'trackAnalyticsEvent', eventType, userId })
     }
   }
 
   async getRealtimeMetrics(clinicId: string): Promise<any> {
     // Get today's performance metrics
-    const today = new Date().toISOString().split('T')[0];
+    const today = new Date().toISOString().split('T')[0]
     const metrics = await this.getPerformanceMetrics({
       clinicId,
       startDate: today,
       endDate: today,
-      limit: 1,
-    });
+    } as any)
 
     if (metrics.length === 0) {
       return {
@@ -2093,35 +2092,35 @@ export class AnalyticsService implements AnalyticsService {
         appointmentCount: 0,
         newPatients: 0,
         noShowRate: 0,
-      };
+      }
     }
 
     return {
-      revenueTotal: metrics[0].revenueTotal,
-      appointmentCount: metrics[0].appointmentCount,
-      newPatients: metrics[0].newPatients,
-      noShowRate: metrics[0].noShowRate,
-    };
+      revenueTotal: metrics[0]?.revenueTotal || 0,
+      appointmentCount: metrics[0]?.appointmentCount || 0,
+      newPatients: metrics[0]?.newPatients || 0,
+      noShowRate: metrics[0]?.noShowRate || 0,
+    }
   }
 
   async getDashboardData(dashboardId: string): Promise<any> {
-    const dashboard = await this.getBIDashboardById(dashboardId);
+    const dashboard = await this.getBIDashboardById(dashboardId)
     if (!dashboard) {
-      throw new Error('Dashboard not found');
+      throw new Error('Dashboard not found')
     }
 
-    const widgets = await this.getDashboardWidgets(dashboardId);
-    const widgetData: any = {};
+    const widgets = await this.getDashboardWidgets(dashboardId)
+    const widgetData: any = {}
 
     for (const widget of widgets) {
       try {
-        widgetData[widget.id] = await this.getWidgetData(widget);
+        widgetData[widget.id] = await this.getWidgetData(widget)
       } catch (error) {
-        logHealthcareError('analytics', error, {
+        logHealthcareError('analytics', error as Error, {
           method: 'getBIDashboardData',
           widgetId: widget.id,
-        });
-        widgetData[widget.id] = { error: 'Failed to load data' };
+        })
+        widgetData[widget.id] = { error: 'Failed to load data' }
       }
     }
 
@@ -2129,39 +2128,39 @@ export class AnalyticsService implements AnalyticsService {
       dashboard,
       widgets,
       widgetData,
-    };
+    }
   }
 
   private async getWidgetData(widget: DashboardWidget): Promise<any> {
-    const { dataSource, configuration } = widget;
+    const { dataSource, configuration } = widget
 
     switch (dataSource) {
       case 'kpi':
-        const kpiName = configuration.kpiName;
-        const value = await this.calculateKPIValue('placeholder-clinic-id', kpiName); // Would use actual clinic ID
-        return { value, format: configuration.format || 'number' };
+        const kpiName = configuration.kpiName
+        const value = await this.calculateKPIValue('placeholder-clinic-id', kpiName) // Would use actual clinic ID
+        return { value, format: configuration.format || 'number' }
 
       case 'time_series':
-        const days = configuration.period || 7;
-        const endDate = new Date();
-        const startDate = new Date(endDate.getTime() - days * 24 * 60 * 60 * 1000);
+        const days = configuration.period || 7
+        const endDate = new Date()
+        const startDate = new Date(endDate.getTime() - days * 24 * 60 * 60 * 1000)
 
         const timeSeriesData = await this.getAnalyticsData({
           clinicId: 'placeholder-clinic-id', // Would use actual clinic ID
           startDate: startDate.toISOString().split('T')[0],
           endDate: endDate.toISOString().split('T')[0],
           metricName: configuration.metrics?.[0] || 'revenue_total',
-        });
+        })
 
         return {
           data: timeSeriesData.map(item => ({
             date: item.date,
             value: item.metricValue,
           })),
-        };
+        }
 
       default:
-        return { message: 'Unsupported data source' };
+        return { message: 'Unsupported data source' }
     }
   }
 
@@ -2175,31 +2174,31 @@ export class AnalyticsService implements AnalyticsService {
       p_patient_id: patientId,
       p_clinic_id: clinicId,
       p_appointment_date: appointmentDate,
-    });
+    })
 
     if (error) {
-      throw new Error(`Failed to predict no-show probability: ${error.message}`);
+      throw new Error(`Failed to predict no-show probability: ${error.message}`)
     }
 
-    return data;
+    return data
   }
 
   async generateRevenueForecast(clinicId: string, forecastDays: number): Promise<any> {
     const { data, error } = await this.supabase.rpc('generate_revenue_forecast', {
       p_clinic_id: clinicId,
       p_forecast_days: forecastDays,
-    });
+    })
 
     if (error) {
-      throw new Error(`Failed to generate revenue forecast: ${error.message}`);
+      throw new Error(`Failed to generate revenue forecast: ${error.message}`)
     }
 
-    return data;
+    return data
   }
 
   async predictInventoryDemand(
-    clinicId: string,
-    productId: string,
+    _clinicId: string,
+    _productId: string,
     forecastDays: number,
   ): Promise<any> {
     // This would integrate with a machine learning service
@@ -2208,9 +2207,9 @@ export class AnalyticsService implements AnalyticsService {
       date: new Date(Date.now() + i * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
       predictedDemand: Math.floor(Math.random() * 10) + 1,
       confidence: 0.7 + Math.random() * 0.2,
-    }));
+    }))
 
-    return forecast;
+    return forecast
   }
 
   async predictPatientRetention(clinicId: string, patientId: string): Promise<number> {
@@ -2222,28 +2221,28 @@ export class AnalyticsService implements AnalyticsService {
       .eq('patient_id', patientId)
       .eq('clinic_id', clinicId)
       .order('appointment_date', { ascending: false })
-      .limit(10);
+      .limit(10)
 
     if (error) {
-      throw new Error(`Failed to get patient history: ${error.message}`);
+      throw new Error(`Failed to get patient history: ${error.message}`)
     }
 
     // Simple heuristic based on appointment frequency
-    if (data.length < 2) return 0.5;
+    if (data.length < 2) return 0.5
 
-    const appointments = data.map(d => new Date(d.appointment_date).getTime());
-    const intervals = [];
+    const appointments = data.map(d => new Date(d.appointment_date).getTime())
+    const intervals: number[] = []
     for (let i = 1; i < appointments.length; i++) {
-      intervals.push(appointments[i - 1] - appointments[i]);
+      intervals.push((appointments[i - 1] || 0) - (appointments[i] || 0))
     }
 
-    const avgInterval = intervals.reduce((a, b) => a + b, 0) / intervals.length;
-    const lastAppointment = appointments[0];
-    const timeSinceLast = Date.now() - lastAppointment;
+    const avgInterval = intervals.reduce((a, b) => a + b, 0) / intervals.length
+    const lastAppointment = appointments[0] || 0
+    const timeSinceLast = Date.now() - lastAppointment
 
     // Predict retention based on time since last appointment vs average interval
-    const retentionProbability = Math.max(0, Math.min(1, 1 - (timeSinceLast / avgInterval)));
+    const retentionProbability = Math.max(0, Math.min(1, 1 - (timeSinceLast / avgInterval)))
 
-    return retentionProbability;
+    return retentionProbability
   }
 }

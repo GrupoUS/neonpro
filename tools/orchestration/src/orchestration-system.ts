@@ -1,6 +1,6 @@
-import { TDDAgentRegistry } from './agent-registry';
-import { QualityControlBridge } from './quality-control-bridge';
-import { TDDOrchestrator } from './tdd-orchestrator';
+import { TDDAgentRegistry } from './agent-registry'
+import { QualityControlBridge } from './quality-control-bridge'
+import { TDDOrchestrator } from './tdd-orchestrator'
 import type {
   AgentResult,
   CommandExample,
@@ -8,44 +8,44 @@ import type {
   OrchestrationMetrics,
   SystemStatus,
   TDDOrchestrationSystem,
-} from './types';
-import { WorkflowEngine } from './workflow-engine';
+} from './types'
+import { WorkflowEngine } from './workflow-engine'
 
 type OrchestrationSystemOptions = {
-  enableCommunication?: boolean;
-  enableMetrics?: boolean;
-  enableCompliance?: boolean;
-  healthcareMode?: boolean;
-};
+  enableCommunication?: boolean
+  enableMetrics?: boolean
+  enableCompliance?: boolean
+  healthcareMode?: boolean
+}
 
 export function createTDDOrchestrationSystem(
   options: OrchestrationSystemOptions = {},
 ): TDDOrchestrationSystem {
-  const agentRegistry = new TDDAgentRegistry();
-  const orchestrator = new TDDOrchestrator(agentRegistry);
-  const qualityControlBridge = new QualityControlBridge();
-  const workflowEngine = new WorkflowEngine();
+  const agentRegistry = new TDDAgentRegistry()
+  const orchestrator = new TDDOrchestrator(agentRegistry)
+  const qualityControlBridge = new QualityControlBridge()
+  const workflowEngine = new WorkflowEngine()
 
-  let communication: CommunicationSystem | undefined;
-  let complianceValidator: ComplianceValidator | undefined;
+  let communication: CommunicationSystem | undefined
+  let complianceValidator: ComplianceValidator | undefined
 
   if (options.enableCommunication) {
-    communication = new CommunicationSystem();
+    communication = new CommunicationSystem()
   }
 
   if (options.enableCompliance) {
-    complianceValidator = new ComplianceValidator();
+    complianceValidator = new ComplianceValidator()
   }
 
   const system: TDDOrchestrationSystem = {
     async initialize() {
       // Initialize all components
-      console.log('TDD Orchestration System initialized');
+      console.log('TDD Orchestration System initialized')
     },
 
     async shutdown() {
       // Clean up resources
-      console.log('TDD Orchestration System shutdown');
+      console.log('TDD Orchestration System shutdown')
     },
 
     orchestrator,
@@ -84,7 +84,7 @@ export function createTDDOrchestrationSystem(
             cfmCompliance: 90,
           },
         },
-      };
+      }
     },
 
     getStatus(): SystemStatus {
@@ -107,7 +107,7 @@ export function createTDDOrchestrationSystem(
           realtimeCommunication: options.enableCommunication || false,
         },
         healthcareMode: options.healthcareMode || false,
-      };
+      }
     },
 
     getCommandExamples(): CommandExample {
@@ -141,7 +141,7 @@ export function createTDDOrchestrationSystem(
             capabilities: ['unit-testing', 'integration-testing'],
           },
         ],
-      };
+      }
     },
 
     async validateCompliance(
@@ -162,11 +162,11 @@ export function createTDDOrchestrationSystem(
           score: 90,
         },
         score: 95,
-      };
+      }
     },
-  };
+  }
 
-  return system;
+  return system
 }
 
 // Additional classes for completeness
@@ -184,7 +184,7 @@ class CommunicationSystem {
         activeConflicts: 0,
         messagesThroughput: 25,
       },
-    };
+    }
   }
 }
 

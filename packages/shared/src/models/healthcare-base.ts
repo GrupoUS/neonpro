@@ -5,7 +5,7 @@
  */
 
 // Re-export LGPD types from existing consent module
-export { DataCategory as LGPDDataCategory } from '../types/lgpd-consent';
+export { DataCategory as LGPDDataCategory } from '../types/lgpd-consent'
 
 // Healthcare Data Classification according to Brazilian healthcare regulations
 export enum HealthcareDataClassification {
@@ -153,12 +153,12 @@ export enum HealthcareDataSubjectType {
 
 // Utility type for healthcare data classification mapping
 export interface HealthcareDataClassificationMapping {
-  classification: HealthcareDataClassification;
-  privacyLevel: HealthcarePrivacyLevel;
-  retentionClass: DataRetentionClass;
-  requiredStandards: ComplianceStandard[];
-  allowedPurposes: HealthcareProcessingPurpose[];
-  accessLevels: HealthcareAccessLevel[];
+  classification: HealthcareDataClassification
+  privacyLevel: HealthcarePrivacyLevel
+  retentionClass: DataRetentionClass
+  requiredStandards: ComplianceStandard[]
+  allowedPurposes: HealthcareProcessingPurpose[]
+  accessLevels: HealthcareAccessLevel[]
 }
 
 // Default classification mappings
@@ -279,7 +279,7 @@ export const DEFAULT_HEALTHCARE_CLASSIFICATIONS: Record<
       HealthcareAccessLevel.HEALTHCARE_PROFESSIONAL,
     ],
   },
-};
+}
 
 // Utility functions for healthcare data classification
 export class HealthcareDataClassificationUtils {
@@ -289,7 +289,7 @@ export class HealthcareDataClassificationUtils {
   static getClassificationMapping(
     classification: HealthcareDataClassification,
   ): HealthcareDataClassificationMapping {
-    return DEFAULT_HEALTHCARE_CLASSIFICATIONS[classification];
+    return DEFAULT_HEALTHCARE_CLASSIFICATIONS[classification]
   }
 
   /**
@@ -299,8 +299,8 @@ export class HealthcareDataClassificationUtils {
     classification: HealthcareDataClassification,
     purpose: HealthcareProcessingPurpose,
   ): boolean {
-    const mapping = this.getClassificationMapping(classification);
-    return mapping.allowedPurposes.includes(purpose);
+    const mapping = this.getClassificationMapping(classification)
+    return mapping.allowedPurposes.includes(purpose)
   }
 
   /**
@@ -310,8 +310,8 @@ export class HealthcareDataClassificationUtils {
     classification: HealthcareDataClassification,
     accessLevel: HealthcareAccessLevel,
   ): boolean {
-    const mapping = this.getClassificationMapping(classification);
-    return mapping.accessLevels.includes(accessLevel);
+    const mapping = this.getClassificationMapping(classification)
+    return mapping.accessLevels.includes(accessLevel)
   }
 
   /**
@@ -320,8 +320,8 @@ export class HealthcareDataClassificationUtils {
   static getRequiredStandards(
     classification: HealthcareDataClassification,
   ): ComplianceStandard[] {
-    const mapping = this.getClassificationMapping(classification);
-    return mapping.requiredStandards;
+    const mapping = this.getClassificationMapping(classification)
+    return mapping.requiredStandards
   }
 
   /**
@@ -330,19 +330,19 @@ export class HealthcareDataClassificationUtils {
   static getRetentionPeriodDays(retentionClass: DataRetentionClass): number {
     switch (retentionClass) {
       case DataRetentionClass.IMMEDIATE:
-        return 7;
+        return 7
       case DataRetentionClass.SHORT_TERM:
-        return 30;
+        return 30
       case DataRetentionClass.MEDIUM_TERM:
-        return 365;
+        return 365
       case DataRetentionClass.LONG_TERM:
-        return 3650; // 10 years
+        return 3650 // 10 years
       case DataRetentionClass.PERMANENT:
-        return 7300; // 20 years
+        return 7300 // 20 years
       case DataRetentionClass.LEGAL_HOLD:
-        return -1; // Indefinite
+        return -1 // Indefinite
       default:
-        return 365;
+        return 365
     }
   }
 
@@ -359,13 +359,13 @@ export class HealthcareDataClassificationUtils {
       [HealthcareDataClassification.EMERGENCY_ACCESS]: 4,
       [HealthcareDataClassification.PATIENT_SENSITIVE]: 5,
       [HealthcareDataClassification.MEDICAL_RECORDS]: 6,
-    };
+    }
 
     return classifications.reduce((mostRestrictive, current) => {
       return hierarchy[current] > hierarchy[mostRestrictive]
         ? current
-        : mostRestrictive;
-    }, HealthcareDataClassification.PUBLIC);
+        : mostRestrictive
+    }, HealthcareDataClassification.PUBLIC)
   }
 
   /**
@@ -377,56 +377,56 @@ export class HealthcareDataClassificationUtils {
     accessLevel: HealthcareAccessLevel,
     requiredStandards: ComplianceStandard[],
   ): {
-    valid: boolean;
-    violations: string[];
-    recommendations: string[];
+    valid: boolean
+    violations: string[]
+    recommendations: string[]
   } {
-    const violations: string[] = [];
-    const recommendations: string[] = [];
-    const mapping = this.getClassificationMapping(classification);
+    const violations: string[] = []
+    const recommendations: string[] = []
+    const mapping = this.getClassificationMapping(classification)
 
     // Check purpose
     if (!this.isPurposeAllowed(classification, purpose)) {
       violations.push(
         `Processing purpose '${purpose}' not allowed for classification '${classification}'`,
-      );
+      )
     }
 
     // Check access level
     if (!this.isAccessLevelAllowed(classification, accessLevel)) {
       violations.push(
         `Access level '${accessLevel}' not allowed for classification '${classification}'`,
-      );
+      )
     }
 
     // Check compliance standards
     const missingStandards = mapping.requiredStandards.filter(
       std => !requiredStandards.includes(std),
-    );
+    )
     if (missingStandards.length > 0) {
       violations.push(
         `Missing required compliance standards: ${missingStandards.join(', ')}`,
-      );
+      )
     }
 
     // Recommendations based on classification
     if (
-      classification === HealthcareDataClassification.PATIENT_SENSITIVE
-      || classification === HealthcareDataClassification.MEDICAL_RECORDS
+      classification === HealthcareDataClassification.PATIENT_SENSITIVE ||
+      classification === HealthcareDataClassification.MEDICAL_RECORDS
     ) {
       recommendations.push(
         'Consider implementing additional encryption for sensitive data',
-      );
-      recommendations.push('Ensure regular audit logs are maintained');
+      )
+      recommendations.push('Ensure regular audit logs are maintained')
       recommendations.push(
         'Implement data masking for non-production environments',
-      );
+      )
     }
 
     return {
       valid: violations.length === 0,
       violations,
       recommendations,
-    };
+    }
   }
 }

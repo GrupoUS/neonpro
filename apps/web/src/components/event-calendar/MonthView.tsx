@@ -2,9 +2,9 @@
  * Month View Component
  */
 
-import React from 'react';
-import type { MonthViewProps } from '../../types/event-calendar';
-import { formatCalendarDate, getEventColor } from './utils';
+import React from 'react'
+import type { MonthViewProps } from '../../types/event-calendar.js'
+import { formatCalendarDate, getEventColor } from './utils.js'
 
 export function MonthView({
   date,
@@ -13,54 +13,54 @@ export function MonthView({
   onEventClick,
   onDateClick,
 }: MonthViewProps) {
-  const year = date.getFullYear();
-  const month = date.getMonth();
+  const year = date.getFullYear()
+  const month = date.getMonth()
 
   // Get first day of month
-  const firstDay = new Date(year, month, 1);
+  const firstDay = new Date(year, month, 1)
   // Get last day of month
-  const lastDay = new Date(year, month + 1, 0);
+  const lastDay = new Date(year, month + 1, 0)
 
   // Calculate calendar grid
-  const startDate = new Date(firstDay);
-  startDate.setDate(startDate.getDate() - firstDay.getDay());
+  const startDate = new Date(firstDay)
+  startDate.setDate(startDate.getDate() - firstDay.getDay())
 
-  const endDate = new Date(lastDay);
-  endDate.setDate(endDate.getDate() + (6 - lastDay.getDay()));
+  const endDate = new Date(lastDay)
+  endDate.setDate(endDate.getDate() + (6 - lastDay.getDay()))
 
-  const calendarDays = [];
-  const currentDay = new Date(startDate);
+  const calendarDays = []
+  const currentDay = new Date(startDate)
 
   while (currentDay <= endDate) {
-    calendarDays.push(new Date(currentDay));
-    currentDay.setDate(currentDay.getDate() + 1);
+    calendarDays.push(new Date(currentDay))
+    currentDay.setDate(currentDay.getDate() + 1)
   }
 
-  const dayNames = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+  const dayNames = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb']
 
   const getEventsForDay = (day: Date) => {
-    return events.filter(event => {
-      const eventDate = new Date(event.start);
+    return events.filter((event: any) => {
+      const eventDate = new Date(event.start)
       return (
-        eventDate.getDate() === day.getDate()
-        && eventDate.getMonth() === day.getMonth()
-        && eventDate.getFullYear() === day.getFullYear()
-      );
-    });
-  };
+        eventDate.getDate() === day.getDate() &&
+        eventDate.getMonth() === day.getMonth() &&
+        eventDate.getFullYear() === day.getFullYear()
+      )
+    })
+  }
 
   const isCurrentMonth = (day: Date) => {
-    return day.getMonth() === month;
-  };
+    return day.getMonth() === month
+  }
 
   const isToday = (day: Date) => {
-    const today = new Date();
+    const today = new Date()
     return (
-      day.getDate() === today.getDate()
-      && day.getMonth() === today.getMonth()
-      && day.getFullYear() === today.getFullYear()
-    );
-  };
+      day.getDate() === today.getDate() &&
+      day.getMonth() === today.getMonth() &&
+      day.getFullYear() === today.getFullYear()
+    )
+  }
 
   return (
     <div className='month-view flex-1 overflow-auto'>
@@ -80,9 +80,9 @@ export function MonthView({
         {/* Calendar grid */}
         <div className='month-body grid grid-cols-7'>
           {calendarDays.map((day, index) => {
-            const dayEvents = getEventsForDay(day);
-            const currentMonth = isCurrentMonth(day);
-            const today = isToday(day);
+            const dayEvents = getEventsForDay(day)
+            const currentMonth = isCurrentMonth(day)
+            const today = isToday(day)
 
             return (
               <div
@@ -101,7 +101,7 @@ export function MonthView({
                 </div>
 
                 <div className='events space-y-1 max-h-[80px] overflow-y-auto'>
-                  {dayEvents.slice(0, 3).map((event, eventIndex) => (
+                  {dayEvents.slice(0, 3).map((event: any, eventIndex: number) => (
                     <div
                       key={event.id}
                       className={`event-card p-1 rounded text-xs cursor-pointer hover:shadow-md transition-shadow ${
@@ -111,9 +111,9 @@ export function MonthView({
                         backgroundColor: getEventColor(event) + '20',
                         borderLeft: `2px solid ${getEventColor(event)}`,
                       }}
-                      onClick={e => {
-                        e.stopPropagation();
-                        onEventClick(event);
+                      onClick={(e: React.MouseEvent) => {
+                        e.stopPropagation()
+                        onEventClick(event)
                       }}
                     >
                       <div className='event-title font-medium truncate'>
@@ -135,12 +135,12 @@ export function MonthView({
                   )}
                 </div>
               </div>
-            );
+            )
           })}
         </div>
       </div>
     </div>
-  );
+  )
 }
 
-export default MonthView;
+export default MonthView

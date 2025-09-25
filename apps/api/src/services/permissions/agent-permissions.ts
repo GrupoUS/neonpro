@@ -5,10 +5,10 @@
  * with LGPD compliance and healthcare security requirements.
  */
 
-import { createClient } from '@supabase/supabase-js';
-import { createHash } from 'crypto';
-import { z } from 'zod';
-import { Database } from '../../../../packages/types/src/database';
+import { createClient } from '@supabase/supabase-js'
+import { createHash } from 'crypto'
+import { z } from 'zod'
+import { Database } from '../../../../packages/types/src/database'
 // Input validation schemas
 const PermissionContextSchema = z.object({
   _userId: z.string().min(1, 'User ID is required').max(255),
@@ -31,72 +31,72 @@ const PermissionContextSchema = z.object({
     },
   ),
   metadata: z.record(z.any()).optional(),
-});
+})
 
-const UserIdSchema = z.string().min(1, 'User ID is required').max(255);
-const SessionIdSchema = z.string().min(1, 'Session ID is required').max(255);
+const UserIdSchema = z.string().min(1, 'User ID is required').max(255)
+const SessionIdSchema = z.string().min(1, 'Session ID is required').max(255)
 
 export type ValidatedPermissionContext = z.infer<
   typeof PermissionContextSchema
->;
+>
 
 export interface PermissionContext {
-  _userId: string;
-  sessionId?: string;
-  patientId?: string;
-  action: 'read' | 'write' | 'delete' | 'admin';
+  _userId: string
+  sessionId?: string
+  patientId?: string
+  action: 'read' | 'write' | 'delete' | 'admin'
   resource:
     | 'agent_sessions'
     | 'agent_messages'
     | 'agent_context'
     | 'agent_audit'
     | 'patient_data'
-    | 'financial_data';
-  metadata?: Record<string, any>;
+    | 'financial_data'
+  metadata?: Record<string, any>
 }
 
 export interface PermissionResult {
-  granted: boolean;
-  reason?: string;
-  conditions?: Record<string, any>;
+  granted: boolean
+  reason?: string
+  conditions?: Record<string, any>
   auditLog?: {
-    action: string;
-    resource: string;
-    _userId: string;
-    details: Record<string, any>;
-  };
+    action: string
+    resource: string
+    _userId: string
+    details: Record<string, any>
+  }
 }
 
 export interface UserRole {
-  id: string;
-  _role: 'admin' | 'clinic_admin' | 'professional' | 'staff' | 'patient';
-  clinicId?: string;
-  permissions: string[];
-  scopes: string[];
+  id: string
+  _role: 'admin' | 'clinic_admin' | 'professional' | 'staff' | 'patient'
+  clinicId?: string
+  permissions: string[]
+  scopes: string[]
 }
 
 export class AgentPermissionService {
-  private supabase: ReturnType<typeof createClient<Database>>;
+  private supabase: ReturnType<typeof createClient<Database>>
   private cache: Map<
     string,
     { permissions: UserRole; expires: number; version: number }
-  > = new Map();
-  private cacheTimeout = 300000; // 5 minutes
-  private cacheVersion = 1;
-  private failSecureMode = true;
-  private maxCacheSize = 1000;
-  private auditLogQueue: Array<() => Promise<void>> = [];
-  private isProcessingAuditLog = false;
+  > = new Map()
+  private cacheTimeout = 300000 // 5 minutes
+  private cacheVersion = 1
+  private failSecureMode = true
+  private maxCacheSize = 1000
+  private auditLogQueue: Array<() => Promise<void>> = []
+  private isProcessingAuditLog = false
 
   constructor(supabaseUrl: string, supabaseServiceKey: string) {
     // Validate configuration
     if (!supabaseUrl || !supabaseServiceKey) {
-      throw new Error('Supabase configuration is required');
+      throw new Error('Supabase configuration is required')
     }
 
-    this.supabase = createClient<Database>(supabaseUrl, supabaseServiceKey);
-    this.initializeCacheCleanup();
-    this.setupRealTimeInvalidation();
+    this.supabase = createClient<Database>(supabaseUrl, supabaseServiceKey)
+    this.initializeCacheCleanup()
+    this.setupRealTimeInvalidation()
   }
 
   /**
@@ -105,11 +105,11 @@ export class AgentPermissionService {
   async checkPermission(
     _context: PermissionContext,
   ): Promise<PermissionResult> {
-    const startTime = Date.now();
+    const startTime = Date.now()
 
     try {
       // Validate input
-      const validatedContext = this.validateAndSanitizeContext(_context);
+      const validatedContext = this.validateAndSanitizeContext(_context)
 
       // Rate limiting check
       if (!(await this.checkRateLimit(validatedContext._userId))) {
@@ -126,15 +126,15 @@ export class AgentPermissionService {
               processingTime: Date.now() - startTime,
             },
           },
-        };
+        }
       }
 
       // Get user roles from cache or database
-      const userRoles = await this.getUserRoles(validatedContext._userId);
+      const userRoles = await this.getUserRoles(validatedContext._userId)
 
       // Check each role for required permission
       for (const role of userRoles) {
-        const result = await this.checkRolePermission(role, validatedContext);
+        const result = await this.checkRolePermission(role, validatedContext)
         if (result.granted) {
           // Log successful permission check
           await this.queuePermissionCheckLog({
@@ -142,9 +142,9 @@ export class AgentPermissionService {
             granted: true,
             processingTime: Date.now() - startTime,
             _role: role.role,
-          });
+          })
 
-          return result;
+          return result
         }
       }
 
@@ -162,18 +162,18 @@ export class AgentPermissionService {
             processingTime: Date.now() - startTime,
           },
         },
-      };
+      }
 
       await this.queuePermissionCheckLog({
         ...validatedContext,
         granted: false,
         processingTime: Date.now() - startTime,
-      });
+      })
 
-      return denialResult;
+      return denialResult
     } catch {
-      void _error;
-      console.error('Permission check error:', error);
+      void _error
+      console.error('Permission check error:', error)
 
       // Fail secure - deny permission on error
       const errorResult: PermissionResult = {
@@ -193,16 +193,16 @@ export class AgentPermissionService {
             failSecure: this.failSecureMode,
           },
         },
-      };
+      }
 
       await this.queuePermissionCheckLog({
         ...validatedContext,
         granted: false,
         processingTime: Date.now() - startTime,
         error: error instanceof Error ? this.sanitizeError(error) : 'Unknown error',
-      });
+      })
 
-      return errorResult;
+      return errorResult
     }
   }
 
@@ -211,17 +211,17 @@ export class AgentPermissionService {
    */
   private async getUserRoles(_userId: string): Promise<UserRole[]> {
     // Validate and sanitize userId
-    const validatedUserId = UserIdSchema.parse(userId);
-    const cacheKey = this.generateSecureCacheKey(validatedUserId);
+    const validatedUserId = UserIdSchema.parse(userId)
+    const cacheKey = this.generateSecureCacheKey(validatedUserId)
 
     // Check cache first
-    const cached = this.cache.get(cacheKey);
+    const cached = this.cache.get(cacheKey)
     if (
-      cached
-      && cached.expires > Date.now()
-      && cached.version === this.cacheVersion
+      cached &&
+      cached.expires > Date.now() &&
+      cached.version === this.cacheVersion
     ) {
-      return [cached.permissions];
+      return [cached.permissions]
     }
 
     try {
@@ -238,10 +238,10 @@ export class AgentPermissionService {
         `,
         )
         .eq('user_id', validatedUserId)
-        .eq('active', true);
+        .eq('active', true)
 
       if (error) {
-        throw error;
+        throw error
       }
 
       const roles: UserRole[] = data?.map(role => ({
@@ -250,10 +250,12 @@ export class AgentPermissionService {
         clinicId: role.clinic_id
           ? this.sanitizeString(role.clinic_id)
           : undefined,
-        permissions: role.role_permissions?.map(rp => this.sanitizePermissionString(rp.permission))
-          || [],
+        permissions: role.role_permissions?.map(rp =>
+          this.sanitizePermissionString(rp.permission)
+        ) ||
+          [],
         scopes: role.role_permissions?.map(rp => this.sanitizeScopeString(rp.scope)) || [],
-      })) || [];
+      })) || []
 
       // Cache the result with size limit
       if (roles.length > 0 && this.cache.size < this.maxCacheSize) {
@@ -261,15 +263,15 @@ export class AgentPermissionService {
           permissions: roles[0],
           expires: Date.now() + this.cacheTimeout,
           version: this.cacheVersion,
-        });
+        })
       }
 
-      return roles;
+      return roles
     } catch {
-      void _error;
-      console.error('Error fetching user roles:', error);
+      void _error
+      console.error('Error fetching user roles:', error)
       // Return empty array on error - fail secure
-      return [];
+      return []
     }
   }
 
@@ -280,35 +282,35 @@ export class AgentPermissionService {
     _role: UserRole,
     _context: PermissionContext,
   ): Promise<PermissionResult> {
-    const basePermission = `${context.action}:${context.resource}`;
+    const basePermission = `${context.action}:${context.resource}`
 
     // Check if role has the base permission
     if (
-      !role.permissions.includes(basePermission)
-      && !role.permissions.includes('*:*')
+      !role.permissions.includes(basePermission) &&
+      !role.permissions.includes('*:*')
     ) {
-      return { granted: false, reason: 'Role lacks required permission' };
+      return { granted: false, reason: 'Role lacks required permission' }
     }
 
     // Role-specific permission logic
     switch (role._role) {
       case 'admin':
-        return this.checkAdminPermission(role, _context);
+        return this.checkAdminPermission(role, _context)
 
       case 'clinic_admin':
-        return this.checkClinicAdminPermission(role, _context);
+        return this.checkClinicAdminPermission(role, _context)
 
       case 'professional':
-        return this.checkProfessionalPermission(role, _context);
+        return this.checkProfessionalPermission(role, _context)
 
       case 'staff':
-        return this.checkStaffPermission(role, _context);
+        return this.checkStaffPermission(role, _context)
 
       case 'patient':
-        return this.checkPatientPermission(role, _context);
+        return this.checkPatientPermission(role, _context)
 
       default:
-        return { granted: false, reason: 'Unknown role type' };
+        return { granted: false, reason: 'Unknown role type' }
     }
   }
 
@@ -325,7 +327,7 @@ export class AgentPermissionService {
         _role: 'admin',
         scope: 'global',
       },
-    };
+    }
   }
 
   /**
@@ -341,13 +343,13 @@ export class AgentPermissionService {
         .from('patients')
         .select('clinic_id')
         .eq('id', context.patientId)
-        .single();
+        .single()
 
       if (!patient || patient.clinic_id !== role.clinicId) {
         return {
           granted: false,
           reason: 'Patient not in clinic scope',
-        };
+        }
       }
     }
 
@@ -358,7 +360,7 @@ export class AgentPermissionService {
         scope: 'clinic',
         clinicId: role.clinicId,
       },
-    };
+    }
   }
 
   /**
@@ -376,13 +378,13 @@ export class AgentPermissionService {
         .eq('professional_id', context._userId)
         .eq('patient_id', context.patientId)
         .eq('active', true)
-        .single();
+        .single()
 
       if (!assignment) {
         return {
           granted: false,
           reason: 'No professional-patient assignment',
-        };
+        }
       }
     }
 
@@ -392,7 +394,7 @@ export class AgentPermissionService {
         return {
           granted: false,
           reason: 'Professional lacks financial write permissions',
-        };
+        }
       }
     }
 
@@ -403,7 +405,7 @@ export class AgentPermissionService {
         scope: 'assigned_patients',
         clinicId: role.clinicId,
       },
-    };
+    }
   }
 
   /**
@@ -418,7 +420,7 @@ export class AgentPermissionService {
       return {
         granted: false,
         reason: 'Staff cannot access financial data',
-      };
+      }
     }
 
     // For patient data, verify clinic membership
@@ -427,13 +429,13 @@ export class AgentPermissionService {
         .from('patients')
         .select('clinic_id')
         .eq('id', context.patientId)
-        .single();
+        .single()
 
       if (!patient || patient.clinic_id !== role.clinicId) {
         return {
           granted: false,
           reason: 'Patient not in clinic scope',
-        };
+        }
       }
     }
 
@@ -442,7 +444,7 @@ export class AgentPermissionService {
       return {
         granted: false,
         reason: 'Staff can only read agent data',
-      };
+      }
     }
 
     return {
@@ -452,7 +454,7 @@ export class AgentPermissionService {
         scope: 'clinic_readonly',
         clinicId: role.clinicId,
       },
-    };
+    }
   }
 
   /**
@@ -467,7 +469,7 @@ export class AgentPermissionService {
       return {
         granted: false,
         reason: 'Patients can only access their own data',
-      };
+      }
     }
 
     // Patients can only read their agent sessions and messages
@@ -475,7 +477,7 @@ export class AgentPermissionService {
       return {
         granted: false,
         reason: 'Patients can only read their agent data',
-      };
+      }
     }
 
     return {
@@ -485,22 +487,22 @@ export class AgentPermissionService {
         scope: 'own_data',
         patientId: context.patientId,
       },
-    };
+    }
   }
 
   /**
    * Log permission check for audit purposes
    */
   private async logPermissionCheck(details: {
-    _userId: string;
-    action: string;
-    resource: string;
-    granted: boolean;
-    processingTime: number;
-    _role?: string;
-    error?: string;
-    sessionId?: string;
-    patientId?: string;
+    _userId: string
+    action: string
+    resource: string
+    granted: boolean
+    processingTime: number
+    _role?: string
+    error?: string
+    sessionId?: string
+    patientId?: string
   }): Promise<void> {
     try {
       await this.supabase.from('agent_audit_log').insert({
@@ -517,10 +519,10 @@ export class AgentPermissionService {
           patient_id: details.patientId,
           error: details.error,
         },
-      });
+      })
     } catch {
-      void _error;
-      console.error('Failed to log permission check:', error);
+      void _error
+      console.error('Failed to log permission check:', error)
     }
   }
 
@@ -529,18 +531,18 @@ export class AgentPermissionService {
    */
   clearCache(_userId: string): void {
     try {
-      const validatedUserId = UserIdSchema.parse(userId);
-      const cacheKey = this.generateSecureCacheKey(validatedUserId);
-      this.cache.delete(cacheKey);
+      const validatedUserId = UserIdSchema.parse(userId)
+      const cacheKey = this.generateSecureCacheKey(validatedUserId)
+      this.cache.delete(cacheKey)
 
       // Increment cache version to force refresh
-      this.cacheVersion++;
+      this.cacheVersion++
 
       // Clean up oversized cache
-      this.enforceCacheSizeLimit();
+      this.enforceCacheSizeLimit()
     } catch {
-      void _error;
-      console.error('Error clearing cache:', error);
+      void _error
+      console.error('Error clearing cache:', error)
     }
   }
 
@@ -548,31 +550,31 @@ export class AgentPermissionService {
    * Clear all caches (for emergency situations)
    */
   clearAllCaches(): void {
-    this.cache.clear();
-    this.cacheVersion++;
-    console.warn('All permission caches cleared');
+    this.cache.clear()
+    this.cacheVersion++
+    console.warn('All permission caches cleared')
   }
 
   /**
    * Get all permissions for a user (for debugging/admin)
    */
   async getUserPermissions(_userId: string): Promise<{
-    roles: UserRole[];
-    effectivePermissions: string[];
+    roles: UserRole[]
+    effectivePermissions: string[]
   }> {
-    const roles = await this.getUserRoles(userId);
-    const effectivePermissions = new Set<string>();
+    const roles = await this.getUserRoles(userId)
+    const effectivePermissions = new Set<string>()
 
     roles.forEach(role => {
       role.permissions.forEach(permission => {
-        effectivePermissions.add(permission);
-      });
-    });
+        effectivePermissions.add(permission)
+      })
+    })
 
     return {
       roles,
       effectivePermissions: Array.from(effectivePermissions),
-    };
+    }
   }
 
   /**
@@ -583,10 +585,10 @@ export class AgentPermissionService {
     consentType: 'data_processing' | 'ai_interaction' | 'data_retention',
   ): Promise<boolean> {
     try {
-      const validatedUserId = UserIdSchema.parse(userId);
+      const validatedUserId = UserIdSchema.parse(userId)
       const validConsentType = z
         .enum(['data_processing', 'ai_interaction', 'data_retention'])
-        .parse(consentType);
+        .parse(consentType)
 
       const { data } = await this.supabase
         .from('user_lgpd_consents')
@@ -595,14 +597,14 @@ export class AgentPermissionService {
         .eq('consent_type', validConsentType)
         .eq('granted', true)
         .gt('expires_at', new Date().toISOString())
-        .single();
+        .single()
 
-      return !!data;
+      return !!data
     } catch {
-      void _error;
-      console.error('Error checking LGPD consent:', error);
+      void _error
+      console.error('Error checking LGPD consent:', error)
       // Fail secure - no consent on error
-      return false;
+      return false
     }
   }
 
@@ -613,51 +615,51 @@ export class AgentPermissionService {
     sessionId: string,
     _userId: string,
   ): Promise<{
-    valid: boolean;
-    session?: any;
-    reason?: string;
+    valid: boolean
+    session?: any
+    reason?: string
   }> {
     try {
-      const validatedSessionId = SessionIdSchema.parse(sessionId);
-      const validatedUserId = UserIdSchema.parse(userId);
+      const validatedSessionId = SessionIdSchema.parse(sessionId)
+      const validatedUserId = UserIdSchema.parse(userId)
 
       const { data: session, error } = await this.supabase
         .from('agent_sessions')
         .select('*')
         .eq('session_id', validatedSessionId)
-        .single();
+        .single()
 
       if (error || !session) {
-        return { valid: false, reason: 'Session not found' };
+        return { valid: false, reason: 'Session not found' }
       }
 
       // Check if session belongs to user
       if (session.user_id !== validatedUserId) {
-        return { valid: false, reason: 'Session ownership mismatch' };
+        return { valid: false, reason: 'Session ownership mismatch' }
       }
 
       // Check if session is expired
       if (new Date(session.expires_at) <= new Date()) {
-        return { valid: false, reason: 'Session expired' };
+        return { valid: false, reason: 'Session expired' }
       }
 
       // Check if session is active
       if (!session.is_active) {
-        return { valid: false, reason: 'Session inactive' };
+        return { valid: false, reason: 'Session inactive' }
       }
 
       // Additional security: Check session age
-      const sessionAge = Date.now() - new Date(session.created_at).getTime();
-      const maxSessionAge = 24 * 60 * 60 * 1000; // 24 hours
+      const sessionAge = Date.now() - new Date(session.created_at).getTime()
+      const maxSessionAge = 24 * 60 * 60 * 1000 // 24 hours
       if (sessionAge > maxSessionAge) {
-        return { valid: false, reason: 'Session too old' };
+        return { valid: false, reason: 'Session too old' }
       }
 
-      return { valid: true, session };
+      return { valid: true, session }
     } catch {
-      void _error;
-      console.error('Error validating session access:', error);
-      return { valid: false, reason: 'Validation error' };
+      void _error
+      console.error('Error validating session access:', error)
+      return { valid: false, reason: 'Validation error' }
     }
   }
 
@@ -665,15 +667,15 @@ export class AgentPermissionService {
    * Log permission check for audit purposes with queueing
    */
   private async queuePermissionCheckLog(details: {
-    _userId: string;
-    action: string;
-    resource: string;
-    granted: boolean;
-    processingTime: number;
-    _role?: string;
-    error?: string;
-    sessionId?: string;
-    patientId?: string;
+    _userId: string
+    action: string
+    resource: string
+    granted: boolean
+    processingTime: number
+    _role?: string
+    error?: string
+    sessionId?: string
+    patientId?: string
   }): Promise<void> {
     // Queue the audit log for async processing
     this.auditLogQueue.push(async () => {
@@ -694,16 +696,16 @@ export class AgentPermissionService {
             timestamp: new Date().toISOString(),
             cache_version: this.cacheVersion,
           },
-        });
+        })
       } catch {
-        void _error;
-        console.error('Failed to log permission check:', error);
+        void _error
+        console.error('Failed to log permission check:', error)
       }
-    });
+    })
 
     // Process the queue if not already processing
     if (!this.isProcessingAuditLog) {
-      this.processAuditLogQueue();
+      this.processAuditLogQueue()
     }
   }
 
@@ -712,23 +714,23 @@ export class AgentPermissionService {
    */
   private async processAuditLogQueue(): Promise<void> {
     if (this.isProcessingAuditLog || this.auditLogQueue.length === 0) {
-      return;
+      return
     }
 
-    this.isProcessingAuditLog = true;
+    this.isProcessingAuditLog = true
 
     try {
       while (this.auditLogQueue.length > 0) {
-        const logFunction = this.auditLogQueue.shift();
+        const logFunction = this.auditLogQueue.shift()
         if (logFunction) {
-          await logFunction();
+          await logFunction()
         }
       }
     } catch {
-      void _error;
-      console.error('Error processing audit log queue:', error);
+      void _error
+      console.error('Error processing audit log queue:', error)
     } finally {
-      this.isProcessingAuditLog = false;
+      this.isProcessingAuditLog = false
     }
   }
 
@@ -737,18 +739,18 @@ export class AgentPermissionService {
    */
   private initializeCacheCleanup(): void {
     setInterval(() => {
-      this.cleanupExpiredCache();
-    }, 60000); // Cleanup every minute
+      this.cleanupExpiredCache()
+    }, 60000) // Cleanup every minute
   }
 
   /**
    * Cleanup expired cache entries
    */
   private cleanupExpiredCache(): void {
-    const _now = Date.now();
+    const _now = Date.now()
     for (const [key, entry] of this.cache.entries()) {
       if (entry.expires <= now) {
-        this.cache.delete(key);
+        this.cache.delete(key)
       }
     }
   }
@@ -761,10 +763,10 @@ export class AgentPermissionService {
       // Remove oldest entries
       const entries = Array.from(this.cache.entries()).sort(
         (a, _b) => a[1].expires - b[1].expires,
-      );
+      )
 
-      const toRemove = entries.slice(0, Math.floor(this.maxCacheSize * 0.2));
-      toRemove.forEach(([key]) => this.cache.delete(key));
+      const toRemove = entries.slice(0, Math.floor(this.maxCacheSize * 0.2))
+      toRemove.forEach(([key]) => this.cache.delete(key))
     }
   }
 
@@ -777,7 +779,7 @@ export class AgentPermissionService {
         .update(userId + process.env.CACHE_SALT || 'default_salt')
         .digest('hex')
         .substring(0, 32)
-    }`;
+    }`
   }
 
   /**
@@ -786,19 +788,19 @@ export class AgentPermissionService {
   private validateAndSanitizeContext(
     _context: PermissionContext,
   ): ValidatedPermissionContext {
-    return PermissionContextSchema.parse(context);
+    return PermissionContextSchema.parse(context)
   }
 
   /**
    * Sanitize string inputs to prevent injection
    */
   private sanitizeString(input: string): string {
-    if (typeof input !== 'string') return '';
+    if (typeof input !== 'string') return ''
     return input
       .replace(/[<>]/g, '') // Remove potential HTML/script tags
       .replace(/[;'"\\]/g, '') // Remove potential SQL injection chars
       .trim()
-      .substring(0, 255); // Limit length
+      .substring(0, 255) // Limit length
   }
 
   /**
@@ -811,25 +813,25 @@ export class AgentPermissionService {
       'professional',
       'staff',
       'patient',
-    ];
+    ]
     if (validRoles.includes(role)) {
-      return role as UserRole['role'];
+      return role as UserRole['role']
     }
-    throw new Error(`Invalid role type: ${role}`);
+    throw new Error(`Invalid role type: ${role}`)
   }
 
   /**
    * Sanitize permission string
    */
   private sanitizePermissionString(permission: string): string {
-    return this.sanitizeString(permission);
+    return this.sanitizeString(permission)
   }
 
   /**
    * Sanitize scope string
    */
   private sanitizeScopeString(scope: string): string {
-    return this.sanitizeString(scope);
+    return this.sanitizeString(scope)
   }
 
   /**
@@ -837,17 +839,17 @@ export class AgentPermissionService {
    */
   private sanitizeError(error: unknown): string {
     if (error instanceof Error) {
-      return this.sanitizeErrorString(error.message);
+      return this.sanitizeErrorString(error.message)
     }
-    return this.sanitizeErrorString(String(error));
+    return this.sanitizeErrorString(String(error))
   }
 
   /**
    * Sanitize error string for audit logging
    */
   private sanitizeErrorString(error?: string): string {
-    if (!error) return '';
-    return this.sanitizeString(error);
+    if (!error) return ''
+    return this.sanitizeString(error)
   }
 
   /**
@@ -855,27 +857,27 @@ export class AgentPermissionService {
    */
   private async checkRateLimit(_userId: string): Promise<boolean> {
     // Enhanced rate limiting with security considerations
-    const _rateLimitKey = `rate_limit_${this.sanitizeString(userId)}`;
-    const _now = Date.now();
-    const _windowMs = 60000; // 1 minute
-    const maxRequests = 50; // Reduced for security
+    const _rateLimitKey = `rate_limit_${this.sanitizeString(userId)}`
+    const _now = Date.now()
+    const _windowMs = 60000 // 1 minute
+    const maxRequests = 50 // Reduced for security
 
     // Check if user is in security blocklist
     if (await this.isSecurityBlocklisted(userId)) {
-      return false;
+      return false
     }
 
     // This would ideally use Redis for distributed rate limiting
     // For now, using simple in-memory tracking with security enhancements
-    const currentCount = 0; // Placeholder for actual rate limit tracking
+    const currentCount = 0 // Placeholder for actual rate limit tracking
 
     // Check for suspicious activity patterns
     if (currentCount > maxRequests * 0.8) {
       // 80% threshold
-      await this.logSuspiciousActivity(userId, 'high_permission_check_rate');
+      await this.logSuspiciousActivity(userId, 'high_permission_check_rate')
     }
 
-    return currentCount < maxRequests;
+    return currentCount < maxRequests
   }
 
   /**
@@ -894,7 +896,7 @@ export class AgentPermissionService {
             table: 'user_roles',
           },
           payload => {
-            this.handleRoleChange(payload);
+            this.handleRoleChange(payload)
           },
         )
         .on(
@@ -905,18 +907,16 @@ export class AgentPermissionService {
             table: 'role_permissions',
           },
           payload => {
-            this.handlePermissionChange(payload);
+            this.handlePermissionChange(payload)
           },
         )
         .subscribe(status => {
-          console.log('Real-time permission invalidation status:', status);
-        });
-
-      // Store channel for cleanup
-      (this as any).realtimeChannel = channel;
+          console.warn('Real-time permission invalidation status:', status)
+        }) // Store channel for cleanup
+      ;(this as any).realtimeChannel = channel
     } catch {
-      void _error;
-      console.error('Failed to setup real-time cache invalidation:', error);
+      void _error
+      console.error('Failed to setup real-time cache invalidation:', error)
     }
   }
 
@@ -926,15 +926,15 @@ export class AgentPermissionService {
   private handleRoleChange(_payload: any): void {
     try {
       if (payload.eventType === 'UPDATE' || payload.eventType === 'DELETE') {
-        const userId = payload.old?.user_id || payload.new?.user_id;
+        const userId = payload.old?.user_id || payload.new?.user_id
         if (userId) {
-          this.clearCache(userId);
-          this.logCacheInvalidation('role_change', _userId);
+          this.clearCache(userId)
+          this.logCacheInvalidation('role_change', _userId)
         }
       }
     } catch {
-      void _error;
-      console.error('Error handling role change:', error);
+      void _error
+      console.error('Error handling role change:', error)
     }
   }
 
@@ -944,11 +944,11 @@ export class AgentPermissionService {
   private handlePermissionChange(_payload: any): void {
     try {
       // When permissions change, increment cache version to force refresh
-      this.cacheVersion++;
-      this.logCacheInvalidation('permission_change', 'global');
+      this.cacheVersion++
+      this.logCacheInvalidation('permission_change', 'global')
     } catch {
-      void _error;
-      console.error('Error handling permission change:', error);
+      void _error
+      console.error('Error handling permission change:', error)
     }
   }
 
@@ -963,12 +963,12 @@ export class AgentPermissionService {
         .eq('user_id', this.sanitizeString(userId))
         .eq('active', true)
         .gt('expires_at', new Date().toISOString())
-        .single();
+        .single()
 
-      return !!data;
+      return !!data
     } catch {
-      void _error;
-      return false;
+      void _error
+      return false
     }
   }
 
@@ -990,10 +990,10 @@ export class AgentPermissionService {
           ip_address: 'unknown', // Would be extracted from request
           user_agent: 'unknown', // Would be extracted from request
         },
-      });
+      })
     } catch {
-      void _error;
-      console.error('Failed to log suspicious activity:', error);
+      void _error
+      console.error('Failed to log suspicious activity:', error)
     }
   }
 
@@ -1001,33 +1001,33 @@ export class AgentPermissionService {
    * Log cache invalidation events for audit
    */
   private logCacheInvalidation(reason: string, target: string): void {
-    console.log(
+    console.warn(
       `Cache invalidated - Reason: ${reason}, Target: ${target}, Version: ${this.cacheVersion}`,
-    );
+    )
   }
 
   /**
    * Get cache statistics for monitoring
    */
   getCacheStats(): {
-    size: number;
-    maxSize: number;
-    version: number;
-    hitRate: number;
+    size: number
+    maxSize: number
+    version: number
+    hitRate: number
   } {
     return {
       size: this.cache.size,
       maxSize: this.maxCacheSize,
       version: this.cacheVersion,
       hitRate: 0, // Placeholder for actual hit rate calculation
-    };
+    }
   }
 
   /**
    * Set fail-secure mode
    */
   setFailSecureMode(enabled: boolean): void {
-    this.failSecureMode = enabled;
-    console.log(`Fail-secure mode ${enabled ? 'enabled' : 'disabled'}`);
+    this.failSecureMode = enabled
+    console.warn(`Fail-secure mode ${enabled ? 'enabled' : 'disabled'}`)
   }
 }

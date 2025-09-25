@@ -12,86 +12,86 @@
  * - LGPD compliance
  */
 
-import { prisma } from '../lib/prisma';
-import { aguiAppointmentProtocol } from './ag-ui-appointment-protocol';
-import { AIAppointmentSchedulingService } from './ai-appointment-scheduling-service';
+import { prisma } from '../lib/prisma'
+import { aguiAppointmentProtocol } from './ag-ui-appointment-protocol'
+import { AIAppointmentSchedulingService } from './ai-appointment-scheduling-service'
 
 export interface RealTimeAvailability {
-  professionalId: string;
-  date: Date;
+  professionalId: string
+  date: Date
   availableSlots: Array<{
-    start: Date;
-    end: Date;
-    confidence: number;
-    efficiency: number;
-    roomId?: string;
-  }>;
-  conflicts: AvailabilityConflict[];
-  utilization: ResourceUtilization;
+    start: Date
+    end: Date
+    confidence: number
+    efficiency: number
+    roomId?: string
+  }>
+  conflicts: AvailabilityConflict[]
+  utilization: ResourceUtilization
 }
 
 export interface AvailabilityConflict {
-  id: string;
-  type: 'overlap' | 'resource' | 'capacity' | 'policy';
-  severity: 'low' | 'medium' | 'high' | 'critical';
-  description: string;
-  affectedResources: string[];
-  suggestedResolution: ResolutionSuggestion;
-  detectedAt: Date;
+  id: string
+  type: 'overlap' | 'resource' | 'capacity' | 'policy'
+  severity: 'low' | 'medium' | 'high' | 'critical'
+  description: string
+  affectedResources: string[]
+  suggestedResolution: ResolutionSuggestion
+  detectedAt: Date
 }
 
 export interface ResolutionSuggestion {
-  action: 'reschedule' | 'extend_hours' | 'reassign' | 'cancel' | 'add_resource';
-  targetTime?: Date;
-  targetResource?: string;
-  reason: string;
-  priority: number;
-  estimatedImpact: 'minimal' | 'moderate' | 'significant';
+  action: 'reschedule' | 'extend_hours' | 'reassign' | 'cancel' | 'add_resource'
+  targetTime?: Date
+  targetResource?: string
+  reason: string
+  priority: number
+  estimatedImpact: 'minimal' | 'moderate' | 'significant'
 }
 
 export interface ResourceUtilization {
-  professionals: number;
-  rooms: number;
-  equipment: number;
-  timeSlots: number;
-  overall: number;
+  professionals: number
+  rooms: number
+  equipment: number
+  timeSlots: number
+  overall: number
 }
 
 export interface AvailabilitySubscription {
-  id: string;
-  clinicId: string;
-  professionalId?: string;
-  roomId?: string;
-  dateRange: { start: Date; end: Date };
-  callback: (availability: RealTimeAvailability) => void;
-  isActive: boolean;
-  createdAt: Date;
+  id: string
+  clinicId: string
+  professionalId?: string
+  roomId?: string
+  dateRange: { start: Date; end: Date }
+  callback: (availability: RealTimeAvailability) => void
+  isActive: boolean
+  createdAt: Date
 }
 
 export interface AvailabilityUpdate {
-  type: 'slot_added' | 'slot_removed' | 'conflict_resolved' | 'conflict_detected';
-  resourceId: string;
-  timestamp: Date;
-  data: any;
+  type: 'slot_added' | 'slot_removed' | 'conflict_resolved' | 'conflict_detected'
+  resourceId: string
+  timestamp: Date
+  data: any
 }
 
 export class RealtimeAvailabilityService {
-  private static instance: RealtimeAvailabilityService;
-  private subscriptions: Map<string, AvailabilitySubscription> = new Map();
-  private updateQueue: AvailabilityUpdate[] = [];
-  private isProcessing = false;
-  private wsConnections: Set<any> = new Set(); // WebSocket connections
+  private static instance: RealtimeAvailabilityService
+  private subscriptions: Map<string, AvailabilitySubscription> = new Map()
+  private updateQueue: AvailabilityUpdate[] = []
+  private isProcessing = false
+  private wsConnections: Set<any> = new Set() // WebSocket connections
 
   private constructor() {
-    this.startUpdateProcessor();
-    this.setupProtocolHandlers();
+    this.startUpdateProcessor()
+    this.setupProtocolHandlers()
   }
 
   static getInstance(): RealtimeAvailabilityService {
     if (!RealtimeAvailabilityService.instance) {
-      RealtimeAvailabilityService.instance = new RealtimeAvailabilityService();
+      RealtimeAvailabilityService.instance = new RealtimeAvailabilityService()
     }
-    return RealtimeAvailabilityService.instance;
+    return RealtimeAvailabilityService.instance
   }
 
   /**
@@ -100,14 +100,14 @@ export class RealtimeAvailabilityService {
   async getRealTimeAvailability(
     clinicId: string,
     filters: {
-      professionalId?: string;
-      roomId?: string;
-      dateRange: { start: Date; end: Date };
-      includeConflicts?: boolean;
+      professionalId?: string
+      roomId?: string
+      dateRange: { start: Date; end: Date }
+      includeConflicts?: boolean
     },
   ): Promise<RealTimeAvailability[]> {
     try {
-      const { professionalId, roomId, dateRange, includeConflicts = true } = filters;
+      const { professionalId, roomId, dateRange, includeConflicts = true } = filters
 
       // Get professionals
       const professionals = await prisma.professional.findMany({
@@ -136,7 +136,7 @@ export class RealtimeAvailabilityService {
             },
           },
         },
-      });
+      })
 
       // Get rooms
       const rooms = await prisma.room.findMany({
@@ -145,10 +145,10 @@ export class RealtimeAvailabilityService {
           isActive: true,
           ...(roomId ? { id: roomId } : {}),
         },
-      });
+      })
 
       // Process each professional's availability
-      const results: RealTimeAvailability[] = [];
+      const results: RealTimeAvailability[] = []
 
       for (const professional of professionals) {
         const professionalAvailability = await this.processProfessionalAvailability(
@@ -156,15 +156,15 @@ export class RealtimeAvailabilityService {
           dateRange,
           rooms,
           includeConflicts,
-        );
+        )
 
-        results.push(professionalAvailability);
+        results.push(professionalAvailability)
       }
 
-      return results;
+      return results
     } catch {
-      console.error('Error getting real-time availability:', error);
-      throw new Error('Failed to get real-time availability');
+      console.error('Error getting real-time availability:', error)
+      throw new Error('Failed to get real-time availability')
     }
   }
 
@@ -175,12 +175,12 @@ export class RealtimeAvailabilityService {
     clinicId: string,
     dateRange: { start: Date; end: Date },
     filters?: {
-      professionalId?: string;
-      roomId?: string;
+      professionalId?: string
+      roomId?: string
     },
   ): Promise<AvailabilityConflict[]> {
     try {
-      const conflicts: AvailabilityConflict[] = [];
+      const conflicts: AvailabilityConflict[] = []
 
       // Get all appointments in the date range
       const appointments = await prisma.appointment.findMany({
@@ -197,35 +197,35 @@ export class RealtimeAvailabilityService {
           room: true,
           patient: true,
         },
-      });
+      })
 
       // Detect overlapping appointments
-      const overlapConflicts = this.detectOverlapConflicts(appointments);
-      conflicts.push(...overlapConflicts);
+      const overlapConflicts = this.detectOverlapConflicts(appointments)
+      conflicts.push(...overlapConflicts)
 
       // Detect resource conflicts
-      const resourceConflicts = await this.detectResourceConflicts(appointments, dateRange);
-      conflicts.push(...resourceConflicts);
+      const resourceConflicts = await this.detectResourceConflicts(appointments, dateRange)
+      conflicts.push(...resourceConflicts)
 
       // Detect policy violations
-      const policyConflicts = this.detectPolicyViolations(appointments);
-      conflicts.push(...policyConflicts);
+      const policyConflicts = this.detectPolicyViolations(appointments)
+      conflicts.push(...policyConflicts)
 
       // Detect capacity issues
-      const capacityConflicts = await this.detectCapacityIssues(appointments, dateRange);
-      conflicts.push(...capacityConflicts);
+      const capacityConflicts = await this.detectCapacityIssues(appointments, dateRange)
+      conflicts.push(...capacityConflicts)
 
       // Send conflict notifications
       for (const conflict of conflicts) {
-        await this.notifyConflictDetected(clinicId, conflict);
+        await this.notifyConflictDetected(clinicId, conflict)
       }
 
       return conflicts.sort((a, b) =>
         this.getConflictSeverityPriority(b.severity) - this.getConflictSeverityPriority(a.severity)
-      );
+      )
     } catch {
-      console.error('Error detecting conflicts:', error);
-      throw new Error('Failed to detect conflicts');
+      console.error('Error detecting conflicts:', error)
+      throw new Error('Failed to detect conflicts')
     }
   }
 
@@ -235,13 +235,13 @@ export class RealtimeAvailabilityService {
   subscribeToAvailability(
     clinicId: string,
     filters: {
-      professionalId?: string;
-      roomId?: string;
-      dateRange: { start: Date; end: Date };
+      professionalId?: string
+      roomId?: string
+      dateRange: { start: Date; end: Date }
     },
     callback: (availability: RealTimeAvailability) => void,
   ): string {
-    const subscriptionId = this.generateSubscriptionId();
+    const subscriptionId = this.generateSubscriptionId()
 
     const subscription: AvailabilitySubscription = {
       id: subscriptionId,
@@ -252,24 +252,24 @@ export class RealtimeAvailabilityService {
       callback,
       isActive: true,
       createdAt: new Date(),
-    };
+    }
 
-    this.subscriptions.set(subscriptionId, subscription);
+    this.subscriptions.set(subscriptionId, subscription)
 
     // Send initial availability data
-    this.sendInitialAvailability(subscription);
+    this.sendInitialAvailability(subscription)
 
-    return subscriptionId;
+    return subscriptionId
   }
 
   /**
    * Unsubscribe from availability updates
    */
   unsubscribeFromAvailability(subscriptionId: string): void {
-    const subscription = this.subscriptions.get(subscriptionId);
+    const subscription = this.subscriptions.get(subscriptionId)
     if (subscription) {
-      subscription.isActive = false;
-      this.subscriptions.delete(subscriptionId);
+      subscription.isActive = false
+      this.subscriptions.delete(subscriptionId)
     }
   }
 
@@ -277,28 +277,28 @@ export class RealtimeAvailabilityService {
    * Add WebSocket connection for real-time updates
    */
   addWebSocketConnection(connection: any): void {
-    this.wsConnections.add(connection);
+    this.wsConnections.add(connection)
 
     // Set up connection event handlers
     connection.on('close', () => {
-      this.wsConnections.delete(connection);
-    });
+      this.wsConnections.delete(connection)
+    })
 
     connection.on('message', async (message: string) => {
       try {
-        const _data = JSON.parse(message);
-        await this.handleWebSocketMessage(connection, data);
+        const _data = JSON.parse(message)
+        await this.handleWebSocketMessage(connection, data)
       } catch {
-        console.error('Error handling WebSocket message:', error);
+        console.error('Error handling WebSocket message:', error)
       }
-    });
+    })
   }
 
   /**
    * Remove WebSocket connection
    */
   removeWebSocketConnection(connection: any): void {
-    this.wsConnections.delete(connection);
+    this.wsConnections.delete(connection)
   }
 
   /**
@@ -309,36 +309,36 @@ export class RealtimeAvailabilityService {
     dateRange: { start: Date; end: Date },
   ): Promise<{
     optimizedSlots: Array<{
-      professionalId: string;
-      timeSlot: { start: Date; end: Date };
-      efficiency: number;
-      confidence: number;
-    }>;
-    resolvedConflicts: string[];
-    improvements: string[];
+      professionalId: string
+      timeSlot: { start: Date; end: Date }
+      efficiency: number
+      confidence: number
+    }>
+    resolvedConflicts: string[]
+    improvements: string[]
   }> {
     try {
-      const _aiService = AIAppointmentSchedulingService.getInstance();
+      const _aiService = AIAppointmentSchedulingService.getInstance()
 
       // Get current availability and conflicts
       const currentAvailability = await this.getRealTimeAvailability(clinicId, {
         dateRange,
         includeConflicts: true,
-      });
+      })
 
-      const conflicts = await this.detectConflicts(clinicId, dateRange);
+      const conflicts = await this.detectConflicts(clinicId, dateRange)
 
       // Use AI to optimize slots
       const optimizedSlots: Array<{
-        professionalId: string;
-        timeSlot: { start: Date; end: Date };
-        efficiency: number;
-        confidence: number;
-      }> = [];
+        professionalId: string
+        timeSlot: { start: Date; end: Date }
+        efficiency: number
+        confidence: number
+      }> = []
 
       for (const availability of currentAvailability) {
         // Analyze each professional's availability
-        const professionalId = availability.professionalId;
+        const professionalId = availability.professionalId
 
         // Generate optimized time slots
         for (const slot of availability.availableSlots) {
@@ -348,7 +348,7 @@ export class RealtimeAvailabilityService {
               professionalId,
               slot,
               currentAvailability,
-            );
+            )
 
             if (optimizedSlot) {
               optimizedSlots.push({
@@ -356,19 +356,19 @@ export class RealtimeAvailabilityService {
                 timeSlot: optimizedSlot,
                 efficiency: 0.9, // Improved efficiency
                 confidence: 0.85,
-              });
+              })
             }
           }
         }
       }
 
       // Resolve conflicts
-      const resolvedConflicts: string[] = [];
+      const resolvedConflicts: string[] = []
       for (const conflict of conflicts) {
         if (conflict.severity === 'high' || conflict.severity === 'critical') {
-          const resolved = await this.resolveConflict(conflict);
+          const resolved = await this.resolveConflict(conflict)
           if (resolved) {
-            resolvedConflicts.push(conflict.id);
+            resolvedConflicts.push(conflict.id)
           }
         }
       }
@@ -379,16 +379,16 @@ export class RealtimeAvailabilityService {
         `${resolvedConflicts.length} conflicts resolved`,
         'Resource allocation improved',
         'Efficiency scores enhanced',
-      ];
+      ]
 
       return {
         optimizedSlots,
         resolvedConflicts,
         improvements,
-      };
+      }
     } catch {
-      console.error('Error optimizing availability:', error);
-      throw new Error('Failed to optimize availability');
+      console.error('Error optimizing availability:', error)
+      throw new Error('Failed to optimize availability')
     }
   }
 
@@ -400,47 +400,47 @@ export class RealtimeAvailabilityService {
     includeConflicts: boolean,
   ): Promise<RealTimeAvailability> {
     const availableSlots: Array<{
-      start: Date;
-      end: Date;
-      confidence: number;
-      efficiency: number;
-      roomId?: string;
-    }> = [];
+      start: Date
+      end: Date
+      confidence: number
+      efficiency: number
+      roomId?: string
+    }> = []
 
-    const conflicts: AvailabilityConflict[] = [];
+    const conflicts: AvailabilityConflict[] = []
 
     // Process each availability day
     for (const availability of professional.availabilities) {
-      const dayStart = new Date(availability.date);
+      const dayStart = new Date(availability.date)
       dayStart.setHours(
         availability.startTime.getHours(),
         availability.startTime.getMinutes(),
         0,
         0,
-      );
+      )
 
-      const dayEnd = new Date(availability.date);
-      dayEnd.setHours(availability.endTime.getHours(), availability.endTime.getMinutes(), 0, 0);
+      const dayEnd = new Date(availability.date)
+      dayEnd.setHours(availability.endTime.getHours(), availability.endTime.getMinutes(), 0, 0)
 
       // Generate 15-minute slots
-      const currentSlot = new Date(dayStart);
+      const currentSlot = new Date(dayStart)
       while (currentSlot.getTime() + 15 * 60000 <= dayEnd.getTime()) {
-        const slotEnd = new Date(currentSlot.getTime() + 15 * 60000);
+        const slotEnd = new Date(currentSlot.getTime() + 15 * 60000)
 
         // Check for conflicts
         const hasConflict = professional.appointments.some(apt =>
           apt.startTime < slotEnd && apt.endTime > currentSlot
-        );
+        )
 
         if (!hasConflict) {
           // Find available room
           const availableRoom = rooms.find(room =>
             !professional.appointments.some(apt =>
-              apt.roomId === room.id
-              && apt.startTime < slotEnd
-              && apt.endTime > currentSlot
+              apt.roomId === room.id &&
+              apt.startTime < slotEnd &&
+              apt.endTime > currentSlot
             )
-          );
+          )
 
           if (availableRoom) {
             availableSlots.push({
@@ -449,11 +449,11 @@ export class RealtimeAvailabilityService {
               confidence: 0.9,
               efficiency: this.calculateSlotEfficiency(currentSlot, professional.appointments),
               roomId: availableRoom.id,
-            });
+            })
           }
         }
 
-        currentSlot.setTime(currentSlot.getTime() + 15 * 60000);
+        currentSlot.setTime(currentSlot.getTime() + 15 * 60000)
       }
     }
 
@@ -463,12 +463,12 @@ export class RealtimeAvailabilityService {
         professional.clinicId,
         dateRange,
         { professionalId: professional.id },
-      );
-      conflicts.push(...professionalConflicts);
+      )
+      conflicts.push(...professionalConflicts)
     }
 
     // Calculate utilization
-    const utilization = this.calculateUtilization(professional, dateRange);
+    const utilization = this.calculateUtilization(professional, dateRange)
 
     return {
       professionalId: professional.id,
@@ -476,22 +476,22 @@ export class RealtimeAvailabilityService {
       availableSlots,
       conflicts,
       utilization,
-    };
+    }
   }
 
   private detectOverlapConflicts(appointments: any[]): AvailabilityConflict[] {
-    const conflicts: AvailabilityConflict[] = [];
+    const conflicts: AvailabilityConflict[] = []
 
     for (let i = 0; i < appointments.length; i++) {
       for (let j = i + 1; j < appointments.length; j++) {
-        const apt1 = appointments[i];
-        const apt2 = appointments[j];
+        const apt1 = appointments[i]
+        const apt2 = appointments[j]
 
         // Check for professional overlap
         if (
-          apt1.professionalId === apt2.professionalId
-          && apt1.startTime < apt2.endTime
-          && apt1.endTime > apt2.startTime
+          apt1.professionalId === apt2.professionalId &&
+          apt1.startTime < apt2.endTime &&
+          apt1.endTime > apt2.startTime
         ) {
           conflicts.push({
             id: `overlap_${apt1.id}_${apt2.id}`,
@@ -506,15 +506,15 @@ export class RealtimeAvailabilityService {
               estimatedImpact: 'significant',
             },
             detectedAt: new Date(),
-          });
+          })
         }
 
         // Check for room overlap
         if (
-          apt1.roomId === apt2.roomId
-          && apt1.roomId
-          && apt1.startTime < apt2.endTime
-          && apt1.endTime > apt2.startTime
+          apt1.roomId === apt2.roomId &&
+          apt1.roomId &&
+          apt1.startTime < apt2.endTime &&
+          apt1.endTime > apt2.startTime
         ) {
           conflicts.push({
             id: `room_overlap_${apt1.id}_${apt2.id}`,
@@ -529,34 +529,34 @@ export class RealtimeAvailabilityService {
               estimatedImpact: 'moderate',
             },
             detectedAt: new Date(),
-          });
+          })
         }
       }
     }
 
-    return conflicts;
+    return conflicts
   }
 
   private async detectResourceConflicts(
     appointments: any[],
     _dateRange: { start: Date; end: Date },
   ): Promise<AvailabilityConflict[]> {
-    const conflicts: AvailabilityConflict[] = [];
+    const conflicts: AvailabilityConflict[] = []
 
     // Check for equipment conflicts
-    const equipmentUsage = new Map<string, any[]>();
+    const equipmentUsage = new Map<string, any[]>()
 
     for (const apt of appointments) {
       if (apt.equipmentRequired) {
         const equipment = Array.isArray(apt.equipmentRequired)
           ? apt.equipmentRequired
-          : [apt.equipmentRequired];
+          : [apt.equipmentRequired]
 
         for (const eq of equipment) {
           if (!equipmentUsage.has(eq)) {
-            equipmentUsage.set(eq, []);
+            equipmentUsage.set(eq, [])
           }
-          equipmentUsage.get(eq)!.push(apt);
+          equipmentUsage.get(eq)!.push(apt)
         }
       }
     }
@@ -565,8 +565,8 @@ export class RealtimeAvailabilityService {
     for (const [equipment, appointments] of equipmentUsage) {
       for (let i = 0; i < appointments.length; i++) {
         for (let j = i + 1; j < appointments.length; j++) {
-          const apt1 = appointments[i];
-          const apt2 = appointments[j];
+          const apt1 = appointments[i]
+          const apt2 = appointments[j]
 
           if (apt1.startTime < apt2.endTime && apt1.endTime > apt2.startTime) {
             conflicts.push({
@@ -582,24 +582,24 @@ export class RealtimeAvailabilityService {
                 estimatedImpact: 'moderate',
               },
               detectedAt: new Date(),
-            });
+            })
           }
         }
       }
     }
 
-    return conflicts;
+    return conflicts
   }
 
   private detectPolicyViolations(appointments: any[]): AvailabilityConflict[] {
-    const conflicts: AvailabilityConflict[] = [];
+    const conflicts: AvailabilityConflict[] = []
 
     for (const apt of appointments) {
       // Check for back-to-back appointments without breaks
       const nextAppointment = appointments.find(other =>
-        other.professionalId === apt.professionalId
-        && other.startTime.getTime() === apt.endTime.getTime()
-      );
+        other.professionalId === apt.professionalId &&
+        other.startTime.getTime() === apt.endTime.getTime()
+      )
 
       if (nextAppointment) {
         conflicts.push({
@@ -616,14 +616,14 @@ export class RealtimeAvailabilityService {
             estimatedImpact: 'minimal',
           },
           detectedAt: new Date(),
-        });
+        })
       }
 
       // Check for maximum daily appointments
       const dailyAppointments = appointments.filter(other =>
-        other.professionalId === apt.professionalId
-        && other.startTime.toDateString() === apt.startTime.toDateString()
-      );
+        other.professionalId === apt.professionalId &&
+        other.startTime.toDateString() === apt.startTime.toDateString()
+      )
 
       if (dailyAppointments.length > 12) {
         conflicts.push({
@@ -640,39 +640,39 @@ export class RealtimeAvailabilityService {
             estimatedImpact: 'moderate',
           },
           detectedAt: new Date(),
-        });
+        })
       }
     }
 
-    return conflicts;
+    return conflicts
   }
 
   private async detectCapacityIssues(
     appointments: any[],
     dateRange: { start: Date; end: Date },
   ): Promise<AvailabilityConflict[]> {
-    const conflicts: AvailabilityConflict[] = [];
+    const conflicts: AvailabilityConflict[] = []
 
     // Check room capacity
-    const roomUsage = new Map<string, any[]>();
+    const roomUsage = new Map<string, any[]>()
 
     for (const apt of appointments) {
       if (apt.roomId) {
         if (!roomUsage.has(apt.roomId)) {
-          roomUsage.set(apt.roomId, []);
+          roomUsage.set(apt.roomId, [])
         }
-        roomUsage.get(apt.roomId)!.push(apt);
+        roomUsage.get(apt.roomId)!.push(apt)
       }
     }
 
     for (const [roomId, roomAppointments] of roomUsage) {
       // Check if room is overutilized
       const roomHours = roomAppointments.reduce((total, apt) => {
-        return total + (apt.endTime.getTime() - apt.startTime.getTime()) / (1000 * 60 * 60);
-      }, 0);
+        return total + (apt.endTime.getTime() - apt.startTime.getTime()) / (1000 * 60 * 60)
+      }, 0)
 
-      const totalHours = (dateRange.end.getTime() - dateRange.start.getTime()) / (1000 * 60 * 60);
-      const utilization = roomHours / totalHours;
+      const totalHours = (dateRange.end.getTime() - dateRange.start.getTime()) / (1000 * 60 * 60)
+      const utilization = roomHours / totalHours
 
       if (utilization > 0.9) {
         conflicts.push({
@@ -688,50 +688,50 @@ export class RealtimeAvailabilityService {
             estimatedImpact: 'significant',
           },
           detectedAt: new Date(),
-        });
+        })
       }
     }
 
-    return conflicts;
+    return conflicts
   }
 
   private calculateSlotEfficiency(slotTime: Date, appointments: any[]): number {
     // Simple efficiency calculation based on time of day and appointment density
-    const hour = slotTime.getHours();
-    const dayOfWeek = slotTime.getDay();
+    const hour = slotTime.getHours()
+    const dayOfWeek = slotTime.getDay()
 
-    let efficiency = 0.8; // Base efficiency
+    let efficiency = 0.8 // Base efficiency
 
     // Time of day factors
-    if (hour >= 9 && hour <= 11) efficiency += 0.1; // Morning peak
-    if (hour >= 14 && hour <= 16) efficiency += 0.1; // Afternoon peak
-    if (hour < 8 || hour > 17) efficiency -= 0.2; // Off-hours
+    if (hour >= 9 && hour <= 11) efficiency += 0.1 // Morning peak
+    if (hour >= 14 && hour <= 16) efficiency += 0.1 // Afternoon peak
+    if (hour < 8 || hour > 17) efficiency -= 0.2 // Off-hours
 
     // Day of week factors
-    if (dayOfWeek === 2 || dayOfWeek === 3) efficiency += 0.05; // Mid-week
-    if (dayOfWeek === 1 || dayOfWeek === 5) efficiency -= 0.05; // Monday/Friday
+    if (dayOfWeek === 2 || dayOfWeek === 3) efficiency += 0.05 // Mid-week
+    if (dayOfWeek === 1 || dayOfWeek === 5) efficiency -= 0.05 // Monday/Friday
 
     // Appointment density factor
     const sameDayAppointments =
-      appointments.filter(apt => apt.startTime.toDateString() === slotTime.toDateString()).length;
+      appointments.filter(apt => apt.startTime.toDateString() === slotTime.toDateString()).length
 
-    if (sameDayAppointments > 8) efficiency -= 0.1;
-    if (sameDayAppointments < 4) efficiency -= 0.05;
+    if (sameDayAppointments > 8) efficiency -= 0.1
+    if (sameDayAppointments < 4) efficiency -= 0.05
 
-    return Math.max(0.1, Math.min(1, efficiency));
+    return Math.max(0.1, Math.min(1, efficiency))
   }
 
   private calculateUtilization(
     professional: any,
     dateRange: { start: Date; end: Date },
   ): ResourceUtilization {
-    const totalHours = (dateRange.end.getTime() - dateRange.start.getTime()) / (1000 * 60 * 60);
+    const totalHours = (dateRange.end.getTime() - dateRange.start.getTime()) / (1000 * 60 * 60)
 
     const appointmentHours = professional.appointments.reduce((total: number, apt: any) => {
-      return total + (apt.endTime.getTime() - apt.startTime.getTime()) / (1000 * 60 * 60);
-    }, 0);
+      return total + (apt.endTime.getTime() - apt.startTime.getTime()) / (1000 * 60 * 60)
+    }, 0)
 
-    const professionalUtilization = appointmentHours / totalHours;
+    const professionalUtilization = appointmentHours / totalHours
 
     return {
       professionals: Math.round(professionalUtilization * 100),
@@ -739,16 +739,16 @@ export class RealtimeAvailabilityService {
       equipment: 60, // Placeholder
       timeSlots: Math.round(professionalUtilization * 100),
       overall: Math.round(professionalUtilization * 100),
-    };
+    }
   }
 
   private getConflictSeverityPriority(severity: string): number {
-    const priorities = { critical: 4, high: 3, medium: 2, low: 1 };
-    return priorities[severity as keyof typeof priorities] || 0;
+    const priorities = { critical: 4, high: 3, medium: 2, low: 1 }
+    return priorities[severity as keyof typeof priorities] || 0
   }
 
   private generateSubscriptionId(): string {
-    return `sub_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    return `sub_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
   }
 
   private async sendInitialAvailability(subscription: AvailabilitySubscription): Promise<void> {
@@ -758,11 +758,11 @@ export class RealtimeAvailabilityService {
         roomId: subscription.roomId,
         dateRange: subscription.dateRange,
         includeConflicts: true,
-      });
+      })
 
-      subscription.callback(availability);
+      subscription.callback(availability)
     } catch {
-      console.error('Error sending initial availability:', error);
+      console.error('Error sending initial availability:', error)
     }
   }
 
@@ -771,15 +771,15 @@ export class RealtimeAvailabilityService {
     switch (data.type) {
       case 'subscribe_availability':
         // Handle subscription requests
-        break;
+        break
       case 'request_availability':
         // Handle availability requests
-        break;
+        break
       case 'conflict_resolution':
         // Handle conflict resolution requests
-        break;
+        break
       default:
-        console.warn('Unknown WebSocket message type:', data.type);
+        console.warn('Unknown WebSocket message type:', data.type)
     }
   }
 
@@ -794,7 +794,7 @@ export class RealtimeAvailabilityService {
       conflictingAppointments: [], // Would need to extract from context
       suggestedResolution: conflict.suggestedResolution.action,
       severity: conflict.severity,
-    });
+    })
   }
 
   private async optimizeTimeSlot(
@@ -806,51 +806,51 @@ export class RealtimeAvailabilityService {
     // Use AI to optimize the time slot
     // This would integrate with the AI scheduling service
     // For now, return a simple optimization
-    return null;
+    return null
   }
 
   private async resolveConflict(_conflict: AvailabilityConflict): Promise<boolean> {
     // Attempt to resolve the conflict based on the suggested resolution
     // This would integrate with the appointment management system
     // For now, return false to indicate it couldn't be automatically resolved
-    return false;
+    return false
   }
 
   private startUpdateProcessor(): void {
     // Process updates in batches
     setInterval(() => {
       if (this.updateQueue.length > 0 && !this.isProcessing) {
-        this.processUpdateBatch();
+        this.processUpdateBatch()
       }
-    }, 1000);
+    }, 1000)
   }
 
   private async processUpdateBatch(): Promise<void> {
-    if (this.isProcessing) return;
+    if (this.isProcessing) return
 
-    this.isProcessing = true;
-    const updates = [...this.updateQueue];
-    this.updateQueue = [];
+    this.isProcessing = true
+    const updates = [...this.updateQueue]
+    this.updateQueue = []
 
     try {
       for (const update of updates) {
-        await this.processUpdate(update);
+        await this.processUpdate(update)
       }
     } catch {
-      console.error('Error processing update batch:', error);
+      console.error('Error processing update batch:', error)
     } finally {
-      this.isProcessing = false;
+      this.isProcessing = false
     }
   }
 
   private async processUpdate(update: AvailabilityUpdate): Promise<void> {
     // Process individual updates and notify subscribers
     for (const subscription of this.subscriptions.values()) {
-      if (!subscription.isActive) continue;
+      if (!subscription.isActive) continue
 
       // Check if update is relevant to this subscription
       if (this.isUpdateRelevant(update, subscription)) {
-        await this.sendUpdateToSubscription(subscription, update);
+        await this.sendUpdateToSubscription(subscription, update)
       }
     }
   }
@@ -861,7 +861,7 @@ export class RealtimeAvailabilityService {
   ): boolean {
     // Check if the update is relevant to the subscription
     // This would implement more sophisticated filtering logic
-    return true;
+    return true
   }
 
   private async sendUpdateToSubscription(
@@ -874,11 +874,11 @@ export class RealtimeAvailabilityService {
         roomId: subscription.roomId,
         dateRange: subscription.dateRange,
         includeConflicts: true,
-      });
+      })
 
-      subscription.callback(availability);
+      subscription.callback(availability)
     } catch {
-      console.error('Error sending update to subscription:', error);
+      console.error('Error sending update to subscription:', error)
     }
   }
 
@@ -891,8 +891,8 @@ export class RealtimeAvailabilityService {
         resourceId: message.data.professionalId,
         timestamp: new Date(),
         data: message.data,
-      });
-    });
+      })
+    })
 
     aguiAppointmentProtocol.on('availability.conflict_detected', async message => {
       // Handle conflict detection notifications
@@ -901,10 +901,10 @@ export class RealtimeAvailabilityService {
         resourceId: message.data.resourceId,
         timestamp: new Date(),
         data: message.data,
-      });
-    });
+      })
+    })
   }
 }
 
 // Export singleton instance
-export const realtimeAvailabilityService = RealtimeAvailabilityService.getInstance();
+export const realtimeAvailabilityService = RealtimeAvailabilityService.getInstance()

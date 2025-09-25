@@ -1,12 +1,12 @@
-import { Gauge, Registry } from 'prom-client';
-import type { MetricLabels } from '../types';
+import { Gauge, Registry } from 'prom-client'
+import type { MetricLabels } from '../types'
 
 // Chat-specific gauges
-let activeChatSessions: Gauge<string> | null = null;
-let rateLimitUsage: Gauge<string> | null = null;
-let aiProviderHealth: Gauge<string> | null = null;
-let databaseConnections: Gauge<string> | null = null;
-let systemHealth: Gauge<string> | null = null;
+let activeChatSessions: Gauge<string> | null = null
+let rateLimitUsage: Gauge<string> | null = null
+let aiProviderHealth: Gauge<string> | null = null
+let databaseConnections: Gauge<string> | null = null
+let systemHealth: Gauge<string> | null = null
 
 export function initializeGauges(registry: Registry): void {
   // Active chat sessions gauge
@@ -15,7 +15,7 @@ export function initializeGauges(registry: Registry): void {
     help: 'Number of currently active chat sessions',
     labelNames: ['user_type'],
     registers: [registry],
-  });
+  })
 
   // Rate limit usage gauge
   rateLimitUsage = new Gauge({
@@ -23,7 +23,7 @@ export function initializeGauges(registry: Registry): void {
     help: 'Current rate limit usage ratio (0-1)',
     labelNames: ['user_id', 'limit_type'],
     registers: [registry],
-  });
+  })
 
   // AI provider health gauge
   aiProviderHealth = new Gauge({
@@ -31,7 +31,7 @@ export function initializeGauges(registry: Registry): void {
     help: 'AI provider health status (1=healthy, 0=unhealthy)',
     labelNames: ['provider', 'endpoint'],
     registers: [registry],
-  });
+  })
 
   // Database connections gauge
   databaseConnections = new Gauge({
@@ -39,7 +39,7 @@ export function initializeGauges(registry: Registry): void {
     help: 'Number of active database connections',
     labelNames: ['pool', 'database'],
     registers: [registry],
-  });
+  })
 
   // System health gauge
   systemHealth = new Gauge({
@@ -47,40 +47,40 @@ export function initializeGauges(registry: Registry): void {
     help: 'Overall system health status (1=healthy, 0.5=degraded, 0=unhealthy)',
     labelNames: ['component'],
     registers: [registry],
-  });
+  })
 }
 
 export function setActiveChatSessions(
   value: number,
   labels: MetricLabels = {},
 ): void {
-  activeChatSessions?.set(labels, value);
+  activeChatSessions?.set(labels, value)
 }
 
 export function setRateLimitUsage(
   value: number,
   labels: MetricLabels = {},
 ): void {
-  rateLimitUsage?.set(labels, value);
+  rateLimitUsage?.set(labels, value)
 }
 
 export function setAIProviderHealth(
   value: number,
   labels: MetricLabels = {},
 ): void {
-  aiProviderHealth?.set(labels, value);
+  aiProviderHealth?.set(labels, value)
 }
 
 export function setDatabaseConnections(
   value: number,
   labels: MetricLabels = {},
 ): void {
-  databaseConnections?.set(labels, value);
+  databaseConnections?.set(labels, value)
 }
 
 export function setSystemHealth(
   value: number,
   labels: MetricLabels = {},
 ): void {
-  systemHealth?.set(labels, value);
+  systemHealth?.set(labels, value)
 }

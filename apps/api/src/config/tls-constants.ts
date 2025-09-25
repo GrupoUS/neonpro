@@ -50,7 +50,7 @@ export const TLS_CONSTANTS = {
     ISSUER_PLACEHOLDER: 'Certificate Authority Placeholder',
     SUBJECT_PLACEHOLDER: 'NeonPro Healthcare API',
   },
-} as const;
+} as const
 
 // HTTPS Server Configuration Constants
 export const HTTPS_CONSTANTS = {
@@ -87,13 +87,13 @@ export const HTTPS_CONSTANTS = {
   // Security headers
   SECURITY_HEADERS: {
     CONTENT_SECURITY_POLICY:
-      'default-src \'self\'; script-src \'self\' \'unsafe-inline\' \'unsafe-eval\'; style-src \'self\' \'unsafe-inline\';',
+      "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline';",
     X_FRAME_OPTIONS: 'DENY',
     X_CONTENT_TYPE_OPTIONS: 'nosniff',
     X_XSS_PROTECTION: '1; mode=block',
     REFERRER_POLICY: 'strict-origin-when-cross-origin',
   } as const,
-} as const;
+} as const
 
 // Error handling constants
 export const ERROR_CONSTANTS = {
@@ -121,7 +121,7 @@ export const ERROR_CONSTANTS = {
     TLS_INIT_FAILED: 'E_TLS_INIT_FAILED',
     SERVER_START_FAILED: 'E_SERVER_START_FAILED',
   } as const,
-} as const;
+} as const
 
 // Logging constants
 export const LOGGING_CONSTANTS = {
@@ -148,25 +148,25 @@ export const LOGGING_CONSTANTS = {
     INFO: 'info',
     DEBUG: 'debug',
   } as const,
-} as const;
+} as const
 
 // Type utilities for constants
 export type TLSCipherSuite =
   | (typeof TLS_CONSTANTS.CIPHERS.TLS_1_3)[number]
-  | (typeof TLS_CONSTANTS.CIPHERS.TLS_1_2)[number];
-export type WeakCipher = (typeof TLS_CONSTANTS.WEAK_CIPHERS)[number];
-export type ErrorType = (typeof ERROR_CONSTANTS.TYPES)[keyof typeof ERROR_CONSTANTS.TYPES];
-export type LogEventType = (typeof LOGGING_CONSTANTS.EVENTS)[keyof typeof LOGGING_CONSTANTS.EVENTS];
+  | (typeof TLS_CONSTANTS.CIPHERS.TLS_1_2)[number]
+export type WeakCipher = (typeof TLS_CONSTANTS.WEAK_CIPHERS)[number]
+export type ErrorType = (typeof ERROR_CONSTANTS.TYPES)[keyof typeof ERROR_CONSTANTS.TYPES]
+export type LogEventType = (typeof LOGGING_CONSTANTS.EVENTS)[keyof typeof LOGGING_CONSTANTS.EVENTS]
 
 // Utility functions for constants
 export const getAllCiphers = (): TLSCipherSuite[] => [
   ...TLS_CONSTANTS.CIPHERS.TLS_1_3,
   ...TLS_CONSTANTS.CIPHERS.TLS_1_2,
-];
+]
 
 export const isWeakCipher = (cipher: string): cipher is WeakCipher =>
-  TLS_CONSTANTS.WEAK_CIPHERS.some(weak => cipher.includes(weak));
+  TLS_CONSTANTS.WEAK_CIPHERS.some(weak => cipher.includes(weak))
 
-export const getDefaultTLSVersion = () => TLS_CONSTANTS.SECURITY.MIN_TLS_VERSION;
+export const getDefaultTLSVersion = () => TLS_CONSTANTS.SECURITY.MIN_TLS_VERSION
 
-export const formatCipherList = (ciphers: TLSCipherSuite[]): string => ciphers.join(':');
+export const formatCipherList = (ciphers: TLSCipherSuite[]): string => ciphers.join(':')

@@ -37,24 +37,24 @@ Comprehensive frontend testing strategy for React 19 applications with TanStack 
 
 ```typescript
 // apps/web/src/components/Button/Button.test.tsx
-import { fireEvent, render, screen } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
-import { Button } from './Button';
+import { fireEvent, render, screen } from '@testing-library/react'
+import { describe, expect, it, vi } from 'vitest'
+import { Button } from './Button'
 
 describe('Button Component', () => {
   it('renders with correct label', () => {
-    render(<Button>Click me</Button>);
-    expect(screen.getByRole('button', { name: /click me/i })).toBeInTheDocument();
-  });
+    render(<Button>Click me</Button>)
+    expect(screen.getByRole('button', { name: /click me/i })).toBeInTheDocument()
+  })
 
   it('handles click events', () => {
-    const handleClick = vi.fn();
-    render(<Button onClick={handleClick}>Click me</Button>);
+    const handleClick = vi.fn()
+    render(<Button onClick={handleClick}>Click me</Button>)
 
-    fireEvent.click(screen.getByRole('button'));
-    expect(handleClick).toHaveBeenCalledOnce();
-  });
-});
+    fireEvent.click(screen.getByRole('button'))
+    expect(handleClick).toHaveBeenCalledOnce()
+  })
+})
 ```
 
 ## Component Testing Patterns
@@ -163,55 +163,55 @@ describe('Patient Detail Route', () => {
 
 ```typescript
 // Test route loaders and search parameters
-import { Route } from './patients/index';
+import { Route } from './patients/index'
 
 describe('Patients List Route', () => {
   it('validates search params schema', () => {
-    const validParams = { search: 'João', page: '1' };
-    const result = Route.validateSearch(validParams);
+    const validParams = { search: 'João', page: '1' }
+    const result = Route.validateSearch(validParams)
 
-    expect(result.search).toBe('João');
-    expect(result.page).toBe(1);
-  });
+    expect(result.search).toBe('João')
+    expect(result.page).toBe(1)
+  })
 
   it('handles loader with mock data', async () => {
     const mockLoader = vi.fn().mockResolvedValue({
       patients: [{ id: '1', name: 'João Silva' }],
       total: 1,
-    });
+    })
 
-    Route.loader = mockLoader;
-    const result = await Route.loader({ params: {}, search: {} });
+    Route.loader = mockLoader
+    const result = await Route.loader({ params: {}, search: {} })
 
-    expect(result.patients).toHaveLength(1);
-    expect(mockLoader).toHaveBeenCalledOnce();
-  });
-});
+    expect(result.patients).toHaveLength(1)
+    expect(mockLoader).toHaveBeenCalledOnce()
+  })
+})
 ```
 
 ### 3. Navigation Testing
 
 ```typescript
 // Test navigation and link behavior
-import { Link } from '@tanstack/react-router';
-import { fireEvent, render, screen } from '@testing-library/react';
-import { PatientsList } from './PatientsList';
+import { Link } from '@tanstack/react-router'
+import { fireEvent, render, screen } from '@testing-library/react'
+import { PatientsList } from './PatientsList'
 
 describe('Navigation Tests', () => {
   it('navigates to patient detail on card click', async () => {
-    const mockNavigate = vi.fn();
+    const mockNavigate = vi.fn()
     render(
       <PatientsList
         patients={mockPatients}
         onNavigate={mockNavigate}
       />,
-    );
+    )
 
-    const patientCard = screen.getByTestId('patient-card-1');
-    fireEvent.click(patientCard);
+    const patientCard = screen.getByTestId('patient-card-1')
+    fireEvent.click(patientCard)
 
-    expect(mockNavigate).toHaveBeenCalledWith('/patients/1');
-  });
+    expect(mockNavigate).toHaveBeenCalledWith('/patients/1')
+  })
 
   it('preserves search params during navigation', () => {
     render(
@@ -222,12 +222,12 @@ describe('Navigation Tests', () => {
       >
         View Patient
       </Link>,
-    );
+    )
 
-    const link = screen.getByRole('link');
-    expect(link).toHaveAttribute('href', '/patients/1?from=dashboard');
-  });
-});
+    const link = screen.getByRole('link')
+    expect(link).toHaveAttribute('href', '/patients/1?from=dashboard')
+  })
+})
 ```
 
 ## End-to-End Testing
@@ -236,7 +236,7 @@ describe('Navigation Tests', () => {
 
 ```typescript
 // playwright.config.ts - Healthcare optimized
-import { defineConfig } from '@playwright/test';
+import { defineConfig } from '@playwright/test'
 
 export default defineConfig({
   testDir: './tests/e2e',
@@ -274,7 +274,7 @@ export default defineConfig({
       },
     },
   ],
-});
+})
 ```
 
 ### 2. Patient Management E2E Flow
@@ -399,33 +399,33 @@ describe('PatientForm Accessibility', () => {
 // Test screen reader announcements
 describe('Screen Reader Support', () => {
   it('announces form errors correctly', async () => {
-    render(<PatientForm />);
+    render(<PatientForm />)
 
     // Submit invalid form
-    await user.click(screen.getByRole('button', { name: /salvar/i }));
+    await user.click(screen.getByRole('button', { name: /salvar/i }))
 
     // Verify error announcements
-    const errorRegion = screen.getByRole('alert');
-    expect(errorRegion).toHaveTextContent(/nome é obrigatório/i);
-    expect(errorRegion).toHaveAttribute('aria-live', 'assertive');
-  });
+    const errorRegion = screen.getByRole('alert')
+    expect(errorRegion).toHaveTextContent(/nome é obrigatório/i)
+    expect(errorRegion).toHaveAttribute('aria-live', 'assertive')
+  })
 
   it('provides status updates for async operations', async () => {
-    render(<PatientForm />);
+    render(<PatientForm />)
 
     // Start save operation
-    await user.click(screen.getByRole('button', { name: /salvar/i }));
+    await user.click(screen.getByRole('button', { name: /salvar/i }))
 
     // Loading state
-    expect(screen.getByText(/salvando paciente/i)).toHaveAttribute('aria-live', 'polite');
+    expect(screen.getByText(/salvando paciente/i)).toHaveAttribute('aria-live', 'polite')
 
     // Success state
     await waitFor(() => {
       expect(screen.getByText(/paciente salvo com sucesso/i))
-        .toHaveAttribute('aria-live', 'polite');
-    });
-  });
-});
+        .toHaveAttribute('aria-live', 'polite')
+    })
+  })
+})
 ```
 
 ## Testing Utilities & Mocks
@@ -434,15 +434,15 @@ describe('Screen Reader Support', () => {
 
 ```typescript
 // apps/web/src/test/utils/render.tsx
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { createMemoryRouter, RouterProvider } from '@tanstack/react-router';
-import { render, RenderOptions } from '@testing-library/react';
-import { ReactElement } from 'react';
-import { routeTree } from '../routeTree.gen';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { createMemoryRouter, RouterProvider } from '@tanstack/react-router'
+import { render, RenderOptions } from '@testing-library/react'
+import { ReactElement } from 'react'
+import { routeTree } from '../routeTree.gen'
 
 interface CustomRenderOptions extends RenderOptions {
-  initialEntries?: string[];
-  queryClient?: QueryClient;
+  initialEntries?: string[]
+  queryClient?: QueryClient
 }
 
 const customRender = (
@@ -458,12 +458,12 @@ const customRender = (
       },
     }),
     ...renderOptions
-  } = options;
+  } = options
 
   const router = createMemoryRouter({
     routeTree,
     history: initialEntries,
-  });
+  })
 
   const Wrapper = ({ children }: { children: React.ReactNode }) => (
     <QueryClientProvider client={queryClient}>
@@ -471,20 +471,20 @@ const customRender = (
         {children}
       </RouterProvider>
     </QueryClientProvider>
-  );
+  )
 
-  return render(ui, { wrapper: Wrapper, ...renderOptions });
-};
+  return render(ui, { wrapper: Wrapper, ...renderOptions })
+}
 
-export * from '@testing-library/react';
-export { customRender as render };
+export * from '@testing-library/react'
+export { customRender as render }
 ```
 
 ### 2. Healthcare Data Fixtures
 
 ```typescript
 // apps/web/src/test/fixtures/patient.ts
-import type { Patient } from '@/types/patient';
+import type { Patient } from '@/types/patient'
 
 export const createMockPatient = (
   overrides: Partial<Patient> = {},
@@ -516,7 +516,7 @@ export const createMockPatient = (
   createdAt: '2024-01-15T10:30:00Z',
   updatedAt: '2024-01-15T10:30:00Z',
   ...overrides,
-});
+})
 
 export const createMockPatients = (count: number = 5): Patient[] => {
   return Array.from({ length: count }, (_, index) =>
@@ -524,26 +524,26 @@ export const createMockPatients = (count: number = 5): Patient[] => {
       id: `patient-${index + 1}`,
       name: `Paciente ${index + 1}`,
       cpf: `***.***.***-${String(index + 10).padStart(2, '0')}`,
-    }));
-};
+    }))
+}
 ```
 
 ### 3. API Mocks with MSW
 
 ```typescript
 // apps/web/src/test/mocks/api.ts
-import { rest } from 'msw';
-import { createMockPatients } from '../fixtures/patient';
+import { rest } from 'msw'
+import { createMockPatients } from '../fixtures/patient'
 
 export const patientHandlers = [
   // Get patients list
   rest.get('/api/patients', (req, res, ctx) => {
-    const search = req.url.searchParams.get('search');
-    const patients = createMockPatients(10);
+    const search = req.url.searchParams.get('search')
+    const patients = createMockPatients(10)
 
     const filtered = search
       ? patients.filter(p => p.name.toLowerCase().includes(search.toLowerCase()))
-      : patients;
+      : patients
 
     return res(
       ctx.status(200),
@@ -553,15 +553,15 @@ export const patientHandlers = [
         page: 1,
         pageSize: 10,
       }),
-    );
+    )
   }),
 
   // Get single patient
   rest.get('/api/patients/:id', (req, res, ctx) => {
-    const { id } = req.params;
-    const patient = createMockPatient({ id: id as string });
+    const { id } = req.params
+    const patient = createMockPatient({ id: id as string })
 
-    return res(ctx.status(200), ctx.json({ data: patient }));
+    return res(ctx.status(200), ctx.json({ data: patient }))
   }),
 
   // Create patient
@@ -572,9 +572,9 @@ export const patientHandlers = [
         data: createMockPatient({ id: 'new-patient-id' }),
         message: 'Paciente criado com sucesso',
       }),
-    );
+    )
   }),
-];
+]
 ```
 
 ## Troubleshooting
@@ -600,8 +600,8 @@ export const patientHandlers = [
 describe.concurrent('Patient Components', () => {
   test('renders patient card', async () => {
     // Run tests in parallel when possible
-  });
-});
+  })
+})
 
 // Use test.each for similar test cases
 test.each([
@@ -609,9 +609,9 @@ test.each([
   ['', 'invalid'],
   ['Maria Santos', 'valid'],
 ])('validates patient name: %s (%s)', (name, expected) => {
-  const result = validatePatientName(name);
-  expect(result.isValid).toBe(expected === 'valid');
-});
+  const result = validatePatientName(name)
+  expect(result.isValid).toBe(expected === 'valid')
+})
 ```
 
 ## Examples
@@ -620,17 +620,17 @@ test.each([
 
 ```typescript
 // Complete example combining all patterns
-import { createMockPatient } from '@/test/fixtures/patient';
-import { fireEvent, render, screen, waitFor } from '@/test/utils';
-import { axe } from 'jest-axe';
-import { PatientCard } from './PatientCard';
+import { createMockPatient } from '@/test/fixtures/patient'
+import { fireEvent, render, screen, waitFor } from '@/test/utils'
+import { axe } from 'jest-axe'
+import { PatientCard } from './PatientCard'
 
 describe('PatientCard Integration', () => {
-  const mockPatient = createMockPatient();
+  const mockPatient = createMockPatient()
 
   it('renders and handles all interactions', async () => {
-    const onEdit = vi.fn();
-    const onDelete = vi.fn();
+    const onEdit = vi.fn()
+    const onDelete = vi.fn()
 
     const { container } = render(
       <PatientCard
@@ -638,29 +638,29 @@ describe('PatientCard Integration', () => {
         onEdit={onEdit}
         onDelete={onDelete}
       />,
-    );
+    )
 
     // Accessibility check
-    expect(await axe(container)).toHaveNoViolations();
+    expect(await axe(container)).toHaveNoViolations()
 
     // Content verification
-    expect(screen.getByText('João Silva')).toBeInTheDocument();
-    expect(screen.getByText(/\*\*\*\.\*\*\*\.\*\*\*-12/)).toBeInTheDocument();
+    expect(screen.getByText('João Silva')).toBeInTheDocument()
+    expect(screen.getByText(/\*\*\*\.\*\*\*\.\*\*\*-12/)).toBeInTheDocument()
 
     // Interaction testing
-    fireEvent.click(screen.getByRole('button', { name: /editar/i }));
-    expect(onEdit).toHaveBeenCalledWith(mockPatient.id);
+    fireEvent.click(screen.getByRole('button', { name: /editar/i }))
+    expect(onEdit).toHaveBeenCalledWith(mockPatient.id)
 
     // Confirmation dialog
-    fireEvent.click(screen.getByRole('button', { name: /excluir/i }));
-    const confirmButton = await screen.findByRole('button', { name: /confirmar/i });
-    fireEvent.click(confirmButton);
+    fireEvent.click(screen.getByRole('button', { name: /excluir/i }))
+    const confirmButton = await screen.findByRole('button', { name: /confirmar/i })
+    fireEvent.click(confirmButton)
 
     await waitFor(() => {
-      expect(onDelete).toHaveBeenCalledWith(mockPatient.id);
-    });
-  });
-});
+      expect(onDelete).toHaveBeenCalledWith(mockPatient.id)
+    })
+  })
+})
 ```
 
 ## See Also

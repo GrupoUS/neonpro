@@ -9,7 +9,7 @@ import type {
   ConsentReference,
   GenericAuditEvent,
   RiskLevel,
-} from './types';
+} from './types'
 
 /**
  * LGPD Compliance Validator
@@ -28,15 +28,15 @@ export class LGPDValidator {
       'PRESCRIBE',
       'DIAGNOSE',
       'ACCESS',
-    ];
-    return consentRequiredActions.includes(action);
+    ]
+    return consentRequiredActions.includes(action)
   }
 
   /**
    * Validate consent reference for LGPD compliance
    */
   static validateConsent(consentRef?: ConsentReference): ComplianceViolation[] {
-    const violations: ComplianceViolation[] = [];
+    const violations: ComplianceViolation[] = []
 
     if (!consentRef) {
       violations.push({
@@ -45,8 +45,8 @@ export class LGPDValidator {
         severity: 'HIGH',
         description: 'LGPD violation: No consent reference provided for data processing',
         remediation: 'Obtain and record explicit consent before processing personal data',
-      } as ComplianceViolation);
-      return violations;
+      } as ComplianceViolation)
+      return violations
     }
 
     // Check consent status
@@ -57,7 +57,7 @@ export class LGPDValidator {
         severity: 'CRITICAL',
         description: `LGPD violation: Consent status is ${consentRef.status}, not ACTIVE`,
         remediation: 'Ensure valid, active consent before processing personal data',
-      } as ComplianceViolation);
+      } as ComplianceViolation)
     }
 
     // Check expiration
@@ -68,33 +68,33 @@ export class LGPDValidator {
         severity: 'HIGH',
         description: 'LGPD violation: Consent has expired',
         remediation: 'Renew consent before continuing data processing',
-      } as ComplianceViolation);
+      } as ComplianceViolation)
     }
 
-    return violations;
+    return violations
   }
 
   /**
    * Assess risk level for LGPD compliance
    */
   static assessRisk(auditEvent: GenericAuditEvent): RiskLevel {
-    const { action, actor } = auditEvent;
+    const { action, actor } = auditEvent
 
     // Critical actions
-    if (['DELETE', 'MODIFY'].includes(action)) return 'CRITICAL';
+    if (['DELETE', 'MODIFY'].includes(action)) return 'CRITICAL'
 
     // High-risk medical data
-    if (['PRESCRIBE', 'DIAGNOSE'].includes(action)) return 'HIGH';
+    if (['PRESCRIBE', 'DIAGNOSE'].includes(action)) return 'HIGH'
 
     // System/external actors are higher risk
     if (['SYSTEM', 'EXTERNAL_API', 'ANONYMOUS'].includes(actor.type)) {
-      return 'HIGH';
+      return 'HIGH'
     }
 
     // Administrative access
-    if (actor.type === 'ADMIN') return 'MEDIUM';
+    if (actor.type === 'ADMIN') return 'MEDIUM'
 
-    return 'LOW';
+    return 'LOW'
   }
 }
 
@@ -112,8 +112,8 @@ export class ANVISAValidator {
       'DIAGNOSE',
       'MODIFY',
       'DELETE',
-    ];
-    return trackedActions.includes(action);
+    ]
+    return trackedActions.includes(action)
   }
 
   /**
@@ -122,8 +122,8 @@ export class ANVISAValidator {
   static validateMedicalAction(
     auditEvent: GenericAuditEvent,
   ): ComplianceViolation[] {
-    const violations: ComplianceViolation[] = [];
-    const { action, actor } = auditEvent;
+    const violations: ComplianceViolation[] = []
+    const { action, actor } = auditEvent
 
     // Check if medical actions are performed by authorized actors
     if (['PRESCRIBE', 'DIAGNOSE'].includes(action)) {
@@ -135,7 +135,7 @@ export class ANVISAValidator {
           description:
             `ANVISA violation: Medical action ${action} performed by unauthorized actor ${actor.type}`,
           remediation: 'Ensure only licensed medical professionals perform medical actions',
-        } as ComplianceViolation);
+        } as ComplianceViolation)
       }
 
       // Check for required actor identification
@@ -146,11 +146,11 @@ export class ANVISAValidator {
           severity: 'HIGH',
           description: 'ANVISA violation: Incomplete medical professional identification',
           remediation: 'Ensure complete identification (name, email, license) for medical actions',
-        } as ComplianceViolation);
+        } as ComplianceViolation)
       }
     }
 
-    return violations;
+    return violations
   }
 }
 
@@ -165,8 +165,8 @@ export class CFMValidator {
   static validateTelemedicine(
     auditEvent: GenericAuditEvent,
   ): ComplianceViolation[] {
-    const violations: ComplianceViolation[] = [];
-    const { action, actor, metadata, consentRef } = auditEvent;
+    const violations: ComplianceViolation[] = []
+    const { action, actor, metadata, consentRef } = auditEvent
 
     // Check doctor authorization for telemedicine
     if (action === 'DIAGNOSE' && actor.type === 'DOCTOR') {
@@ -177,7 +177,7 @@ export class CFMValidator {
           severity: 'HIGH',
           description: 'CFM violation: Telemedicine diagnosis without proper authorization',
           remediation: 'Ensure doctor has valid telemedicine authorization',
-        } as ComplianceViolation);
+        } as ComplianceViolation)
       }
 
       // Require explicit consent for telemedicine
@@ -188,11 +188,11 @@ export class CFMValidator {
           severity: 'HIGH',
           description: 'CFM violation: Telemedicine without explicit patient consent',
           remediation: 'Obtain explicit patient consent for telemedicine consultation',
-        } as ComplianceViolation);
+        } as ComplianceViolation)
       }
     }
 
-    return violations;
+    return violations
   }
 
   /**
@@ -201,8 +201,8 @@ export class CFMValidator {
   static validatePrescription(
     auditEvent: GenericAuditEvent,
   ): ComplianceViolation[] {
-    const violations: ComplianceViolation[] = [];
-    const { action, actor, metadata } = auditEvent;
+    const violations: ComplianceViolation[] = []
+    const { action, actor, metadata } = auditEvent
 
     if (action === 'PRESCRIBE') {
       // Check doctor authorization
@@ -213,7 +213,7 @@ export class CFMValidator {
           severity: 'CRITICAL',
           description: 'CFM violation: Prescription by non-doctor',
           remediation: 'Only licensed doctors can prescribe medications',
-        } as ComplianceViolation);
+        } as ComplianceViolation)
       }
 
       // Check for required prescription metadata
@@ -224,11 +224,11 @@ export class CFMValidator {
           severity: 'HIGH',
           description: 'CFM violation: Incomplete prescription documentation',
           remediation: 'Include prescription ID and patient ID in prescription records',
-        } as ComplianceViolation);
+        } as ComplianceViolation)
       }
     }
 
-    return violations;
+    return violations
   }
 }
 
@@ -240,12 +240,12 @@ export class ComplianceValidator {
    * Validate audit event against all applicable frameworks
    */
   static validateEvent(auditEvent: GenericAuditEvent): {
-    complianceStatus: ComplianceStatus;
-    violations: ComplianceViolation[];
-    riskLevel: RiskLevel;
+    complianceStatus: ComplianceStatus
+    violations: ComplianceViolation[]
+    riskLevel: RiskLevel
   } {
-    const violations: ComplianceViolation[] = [];
-    let maxRiskLevel: RiskLevel = 'LOW';
+    const violations: ComplianceViolation[] = []
+    let maxRiskLevel: RiskLevel = 'LOW'
 
     // Validate against each framework
     for (const framework of auditEvent.frameworks) {
@@ -254,54 +254,54 @@ export class ComplianceValidator {
           if (LGPDValidator.requiresConsent(auditEvent.action)) {
             violations.push(
               ...LGPDValidator.validateConsent(auditEvent.consentRef),
-            );
+            )
           }
-          const lgpdRisk = LGPDValidator.assessRisk(auditEvent);
+          const lgpdRisk = LGPDValidator.assessRisk(auditEvent)
           if (this.isHigherRisk(lgpdRisk, maxRiskLevel)) {
-            maxRiskLevel = lgpdRisk;
+            maxRiskLevel = lgpdRisk
           }
-          break;
+          break
 
         case 'ANVISA':
           if (ANVISAValidator.requiresTracking(auditEvent.action)) {
             violations.push(
               ...ANVISAValidator.validateMedicalAction(auditEvent),
-            );
+            )
           }
-          break;
+          break
 
         case 'CFM':
-          violations.push(...CFMValidator.validateTelemedicine(auditEvent));
-          violations.push(...CFMValidator.validatePrescription(auditEvent));
-          break;
+          violations.push(...CFMValidator.validateTelemedicine(auditEvent))
+          violations.push(...CFMValidator.validatePrescription(auditEvent))
+          break
       }
     }
 
     // Add audit event ID to all violations
     violations.forEach(violation => {
-      violation.auditEventId = auditEvent.id;
-    });
+      violation.auditEventId = auditEvent.id
+    })
 
     // Determine compliance status
-    let complianceStatus: ComplianceStatus;
+    let complianceStatus: ComplianceStatus
     if (violations.length === 0) {
-      complianceStatus = 'COMPLIANT';
+      complianceStatus = 'COMPLIANT'
     } else {
       // Any violation makes it non-compliant
-      complianceStatus = 'NON_COMPLIANT';
+      complianceStatus = 'NON_COMPLIANT'
     }
 
     // Risk level is the maximum of assessed risk and violation-based risk
-    const violationRisk = this.getViolationRiskLevel(violations);
+    const violationRisk = this.getViolationRiskLevel(violations)
     if (this.isHigherRisk(violationRisk, maxRiskLevel)) {
-      maxRiskLevel = violationRisk;
+      maxRiskLevel = violationRisk
     }
 
     return {
       complianceStatus,
       violations,
       riskLevel: maxRiskLevel,
-    };
+    }
   }
 
   /**
@@ -310,18 +310,18 @@ export class ComplianceValidator {
   private static getViolationRiskLevel(
     _violations: ComplianceViolation[],
   ): RiskLevel {
-    if (_violations.some(v => v.severity === 'CRITICAL')) return 'CRITICAL';
-    if (_violations.some(v => v.severity === 'HIGH')) return 'HIGH';
-    if (_violations.some(v => v.severity === 'MEDIUM')) return 'MEDIUM';
-    return 'LOW';
+    if (_violations.some(v => v.severity === 'CRITICAL')) return 'CRITICAL'
+    if (_violations.some(v => v.severity === 'HIGH')) return 'HIGH'
+    if (_violations.some(v => v.severity === 'MEDIUM')) return 'MEDIUM'
+    return 'LOW'
   }
 
   /**
    * Compare risk levels
    */
   private static isHigherRisk(risk1: RiskLevel, risk2: RiskLevel): boolean {
-    const riskOrder = { LOW: 0, MEDIUM: 1, HIGH: 2, CRITICAL: 3 };
-    return riskOrder[risk1] > riskOrder[risk2];
+    const riskOrder = { LOW: 0, MEDIUM: 1, HIGH: 2, CRITICAL: 3 }
+    return riskOrder[risk1] > riskOrder[risk2]
   }
 
   /**
@@ -335,10 +335,10 @@ export class ComplianceValidator {
       switch (framework) {
         case 'LGPD':
         case 'GDPR':
-          return LGPDValidator.requiresConsent(action);
+          return LGPDValidator.requiresConsent(action)
         default:
-          return false;
+          return false
       }
-    });
+    })
   }
 }

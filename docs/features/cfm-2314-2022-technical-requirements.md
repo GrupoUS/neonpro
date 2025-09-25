@@ -62,29 +62,29 @@ multimedia_requirements:
 ```typescript
 interface DataPreservationRequirements {
   confidentiality: {
-    encryption: 'AES-256-GCM';
-    accessControl: 'role-based-rbac';
-    auditTrail: 'immutable-logging';
-  };
+    encryption: 'AES-256-GCM'
+    accessControl: 'role-based-rbac'
+    auditTrail: 'immutable-logging'
+  }
 
   availability: {
-    uptime: '99.9%';
-    backupFrequency: 'real-time';
-    disasterRecovery: 'geographic-redundancy';
-  };
+    uptime: '99.9%'
+    backupFrequency: 'real-time'
+    disasterRecovery: 'geographic-redundancy'
+  }
 
   integrity: {
-    digitalSignature: 'required';
-    checksumValidation: 'mandatory';
-    versionControl: 'complete-history';
-  };
+    digitalSignature: 'required'
+    checksumValidation: 'mandatory'
+    versionControl: 'complete-history'
+  }
 
   retention: {
-    aestheticRecords: '20-years';
-    consultationRecordings: '20-years';
-    auditLogs: '10-years';
-    accessLogs: '5-years';
-  };
+    aestheticRecords: '20-years'
+    consultationRecordings: '20-years'
+    auditLogs: '10-years'
+    accessLogs: '5-years'
+  }
 }
 ```
 
@@ -100,20 +100,20 @@ interface ProfessionalLicenseValidation {
     licenseNumber: string,
     councilType: 'CNEP' | 'COREN' | 'CFF' | 'OTHER',
     state: string,
-  ): Promise<LicenseStatus>;
-  checkLicenseExpiry(professionalId: string): Promise<boolean>;
-  verifySpecialization(professionalId: string, specialty: string): Promise<boolean>;
-  updateLicenseStatus(professionalId: string): Promise<void>;
+  ): Promise<LicenseStatus>
+  checkLicenseExpiry(professionalId: string): Promise<boolean>
+  verifySpecialization(professionalId: string, specialty: string): Promise<boolean>
+  updateLicenseStatus(professionalId: string): Promise<void>
 }
 
 interface LicenseStatus {
-  isActive: boolean;
-  licenseNumber: string;
-  councilType: string;
-  state: string;
-  expiryDate: Date;
-  specializations: string[];
-  restrictions: string[];
+  isActive: boolean
+  licenseNumber: string
+  councilType: string
+  state: string
+  expiryDate: Date
+  specializations: string[]
+  restrictions: string[]
 }
 ```
 
@@ -125,27 +125,27 @@ interface LicenseStatus {
 
 ```typescript
 interface ClientIdentification {
-  cpf: string; // Brazilian Tax ID (required)
-  rg: string; // State ID
-  fullName: string;
-  dateOfBirth: Date;
-  phone: string; // Primary contact method
-  email: string; // For appointment confirmations
+  cpf: string // Brazilian Tax ID (required)
+  rg: string // State ID
+  fullName: string
+  dateOfBirth: Date
+  phone: string // Primary contact method
+  email: string // For appointment confirmations
 
   // Biometric verification (recommended)
-  faceVerification?: boolean;
+  faceVerification?: boolean
   documentPhotos?: {
-    cpfPhoto: string;
-    rgPhoto: string;
-  };
+    cpfPhoto: string
+    rgPhoto: string
+  }
 
   // Address verification
   addressVerification: {
-    zipCode: string;
-    state: string;
-    city: string;
-    street: string;
-  };
+    zipCode: string
+    state: string
+    city: string
+    street: string
+  }
 }
 ```
 
@@ -157,32 +157,32 @@ interface ClientIdentification {
 
 ```typescript
 interface VirtualConsultationConsent {
-  consentId: string;
-  clientId: string;
-  consentType: 'virtual_consultation' | 'recording' | 'data_processing' | 'aesthetic_procedure';
+  consentId: string
+  clientId: string
+  consentType: 'virtual_consultation' | 'recording' | 'data_processing' | 'aesthetic_procedure'
 
   consentDetails: {
-    purpose: string;
-    dataTypes: string[];
-    retentionPeriod: string;
-    sharingScope: string[];
-  };
+    purpose: string
+    dataTypes: string[]
+    retentionPeriod: string
+    sharingScope: string[]
+  }
 
-  consentStatus: 'pending' | 'granted' | 'revoked';
-  grantedAt?: Date;
-  revokedAt?: Date;
+  consentStatus: 'pending' | 'granted' | 'revoked'
+  grantedAt?: Date
+  revokedAt?: Date
 
   // Legal basis under LGPD
-  legalBasis: 'consent' | 'legitimate_interest' | 'contractual_necessity';
+  legalBasis: 'consent' | 'legitimate_interest' | 'contractual_necessity'
 
   // Consent evidence
-  ipAddress: string;
-  userAgent: string;
-  consentMethod: 'digital_signature' | 'checkbox' | 'verbal_recorded';
+  ipAddress: string
+  userAgent: string
+  consentMethod: 'digital_signature' | 'checkbox' | 'verbal_recorded'
 
   // Withdrawal rights
-  withdrawalMethod: string;
-  withdrawalEffects: string;
+  withdrawalMethod: string
+  withdrawalEffects: string
 }
 ```
 
@@ -267,47 +267,47 @@ technological_infrastructure:
 interface AestheticRecordIntegration {
   // Standard compliance
   standards: {
-    terminology: 'Aesthetic Procedures' | 'Cosmetic Products' | 'Treatment Codes';
-    representation: 'HL7-FHIR';
-    interoperability: 'openEHR';
-  };
+    terminology: 'Aesthetic Procedures' | 'Cosmetic Products' | 'Treatment Codes'
+    representation: 'HL7-FHIR'
+    interoperability: 'openEHR'
+  }
 
   // Record structure
   consultation_record: {
-    session_id: string;
-    professional_id: string;
-    client_id: string;
-    consultation_date: Date;
-    consultation_type: 'virtual_consultation';
+    session_id: string
+    professional_id: string
+    client_id: string
+    consultation_date: Date
+    consultation_type: 'virtual_consultation'
 
     // Aesthetic consultation data
-    client_concerns: string;
-    aesthetic_history: string;
-    skin_assessment: string;
-    treatment_plan: string;
-    product_recommendations: Product[];
+    client_concerns: string
+    aesthetic_history: string
+    skin_assessment: string
+    treatment_plan: string
+    product_recommendations: Product[]
 
     // Virtual consultation specific
-    technology_used: string;
-    session_quality: QualityMetrics;
-    technical_issues: string[];
+    technology_used: string
+    session_quality: QualityMetrics
+    technical_issues: string[]
 
     // Legal compliance
-    informed_consent_obtained: boolean;
-    client_identification_verified: boolean;
-    professional_license_verified: boolean;
-  };
+    informed_consent_obtained: boolean
+    client_identification_verified: boolean
+    professional_license_verified: boolean
+  }
 
   // Integration methods
   integration_apis: {
-    createConsultationRecord(record: ConsultationRecord): Promise<string>;
+    createConsultationRecord(record: ConsultationRecord): Promise<string>
     updateAestheticRecord(
       clientId: string,
       updates: RecordUpdate[],
-    ): Promise<void>;
-    retrieveClientHistory(clientId: string): Promise<AestheticHistory>;
-    generateAestheticSummary(sessionId: string): Promise<AestheticSummary>;
-  };
+    ): Promise<void>
+    retrieveClientHistory(clientId: string): Promise<AestheticHistory>
+    generateAestheticSummary(sessionId: string): Promise<AestheticSummary>
+  }
 }
 ```
 
@@ -353,10 +353,10 @@ class ProfessionalCouncilAuthenticationService {
       credentials.licenseNumber,
       credentials.councilType,
       credentials.state,
-    );
+    )
 
     if (!licenseStatus.isActive) {
-      throw new Error('Invalid or inactive professional license');
+      throw new Error('Invalid or inactive professional license')
     }
 
     // Create authenticated session
@@ -368,7 +368,7 @@ class ProfessionalCouncilAuthenticationService {
       specializations: licenseStatus.specializations,
       sessionToken: this.generateSecureToken(),
       expiresAt: new Date(Date.now() + 8 * 60 * 60 * 1000), // 8 hours
-    };
+    }
   }
 
   async validateClientIdentity(
@@ -376,7 +376,7 @@ class ProfessionalCouncilAuthenticationService {
   ): Promise<IdentityResult> {
     // Validate CPF format and check digit
     if (!this.validateCPF(identity.cpf)) {
-      throw new Error('Invalid CPF format');
+      throw new Error('Invalid CPF format')
     }
 
     // Optional: Integrate with Receita Federal for CPF validation
@@ -387,7 +387,7 @@ class ProfessionalCouncilAuthenticationService {
       fullName: identity.fullName,
       verificationMethod: 'document_check',
       verifiedAt: new Date(),
-    };
+    }
   }
 }
 ```
@@ -400,7 +400,7 @@ class VirtualConsultationSessionService {
     params: CreateSessionParams,
   ): Promise<VirtualConsultationSession> {
     // Validate all professional council requirements
-    await this.validateCompliance(params);
+    await this.validateCompliance(params)
 
     const session = await this.database.virtual_consultation_sessions.create({
       data: {
@@ -414,7 +414,7 @@ class VirtualConsultationSessionService {
         compliance_verified: true,
         scheduled_at: params.scheduledTime,
       },
-    });
+    })
 
     // Initialize audit logging
     await this.auditService.logEvent({
@@ -423,16 +423,16 @@ class VirtualConsultationSessionService {
       professional_id: params.professionalId,
       client_id: params.clientId,
       compliance_status: 'council_verified',
-    });
+    })
 
-    return session;
+    return session
   }
 
   async startRecording(sessionId: string): Promise<void> {
     // Verify recording consent
-    const session = await this.getSession(sessionId);
+    const session = await this.getSession(sessionId)
     if (!session.client_consent_recording) {
-      throw new Error('Client consent for recording not obtained');
+      throw new Error('Client consent for recording not obtained')
     }
 
     // Start encrypted recording
@@ -441,9 +441,9 @@ class VirtualConsultationSessionService {
       storage: 'brazilian-servers-only',
       retention: '20-years',
       format: 'consultation-grade-quality',
-    };
+    }
 
-    await this.recordingService.startRecording(sessionId, recordingConfig);
+    await this.recordingService.startRecording(sessionId, recordingConfig)
 
     // Log recording start
     await this.auditService.logEvent({
@@ -451,7 +451,7 @@ class VirtualConsultationSessionService {
       session_id: sessionId,
       consent_verified: true,
       encryption_enabled: true,
-    });
+    })
   }
 }
 ```
@@ -468,10 +468,10 @@ class DataPreservationService {
     const encryptedData = await this.encryptionService.encrypt(
       consultationData,
       'AES-256-GCM',
-    );
+    )
 
     // Create digital signature for integrity
-    const digitalSignature = await this.signingService.sign(encryptedData);
+    const digitalSignature = await this.signingService.sign(encryptedData)
 
     // Store with metadata
     await this.database.consultation_records.create({
@@ -488,7 +488,7 @@ class DataPreservationService {
         },
         created_at: new Date(),
       },
-    });
+    })
 
     // Create audit trail
     await this.auditService.logEvent({
@@ -497,31 +497,31 @@ class DataPreservationService {
       encryption_verified: true,
       signature_verified: true,
       geographic_compliance: 'brazil-only',
-    });
+    })
   }
 
   async validateDataIntegrity(recordId: string): Promise<IntegrityResult> {
     const record = await this.database.consultation_records.findUnique({
       where: { id: recordId },
-    });
+    })
 
     // Verify digital signature
     const signatureValid = await this.signingService.verify(
       record.encrypted_data,
       record.digital_signature,
-    );
+    )
 
     // Verify encryption integrity
     const encryptionValid = await this.encryptionService.validateIntegrity(
       record.encrypted_data,
-    );
+    )
 
     return {
       signature_valid: signatureValid,
       encryption_valid: encryptionValid,
       overall_integrity: signatureValid && encryptionValid,
       last_verified: new Date(),
-    };
+    }
   }
 }
 ```
@@ -532,41 +532,41 @@ class DataPreservationService {
 interface ProfessionalCouncilComplianceStatus {
   // Real-time compliance monitoring
   active_sessions: {
-    total: number;
-    license_verified: number;
-    consent_obtained: number;
-    recording_compliant: number;
-  };
+    total: number
+    license_verified: number
+    consent_obtained: number
+    recording_compliant: number
+  }
 
   // Professional verification status
   professional_compliance: {
-    active_licenses: number;
-    expired_licenses: number;
-    pending_verification: number;
-  };
+    active_licenses: number
+    expired_licenses: number
+    pending_verification: number
+  }
 
   // Client consent tracking
   consent_status: {
-    granted: number;
-    pending: number;
-    revoked: number;
-  };
+    granted: number
+    pending: number
+    revoked: number
+  }
 
   // Technical compliance
   technical_status: {
-    encryption_enabled: boolean;
-    data_residency_compliant: boolean;
-    backup_operational: boolean;
-    audit_trail_active: boolean;
-  };
+    encryption_enabled: boolean
+    data_residency_compliant: boolean
+    backup_operational: boolean
+    audit_trail_active: boolean
+  }
 
   // Regulatory alerts
   compliance_alerts: Array<{
-    type: 'license_expiry' | 'consent_missing' | 'technical_issue';
-    severity: 'low' | 'medium' | 'high' | 'critical';
-    message: string;
-    action_required: string;
-  }>;
+    type: 'license_expiry' | 'consent_missing' | 'technical_issue'
+    severity: 'low' | 'medium' | 'high' | 'critical'
+    message: string
+    action_required: string
+  }>
 }
 ```
 

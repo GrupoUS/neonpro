@@ -4,14 +4,14 @@
  * Implements LGPD Articles 7º, 11º, 18º with patient-centric privacy controls
  */
 
-import { createAdminClient } from '../clients/supabase';
-import { LGPDDataCategory } from '../middleware/lgpd-compliance';
-import DataMaskingService, { MaskingContext } from './data-masking-service';
-import DataRetentionService from './data-retention-service';
+import { createAdminClient } from '../clients/supabase'
+import { LGPDDataCategory } from '../middleware/lgpd-compliance'
+import DataMaskingService, { MaskingContext } from './data-masking-service'
+import DataRetentionService from './data-retention-service'
 import EnhancedLGPDConsentService, {
   ConsentStatus,
   // WithdrawalMethod,
-} from './enhanced-lgpd-consent';
+} from './enhanced-lgpd-consent'
 
 // ============================================================================
 // Privacy Control Types
@@ -38,83 +38,83 @@ export enum DataAccessType {
 }
 
 export interface PrivacyPreference {
-  id: string;
-  patientId: string;
-  controlType: PrivacyControlType;
-  setting: string;
-  value: any;
-  enabled: boolean;
-  lastModified: Date;
-  modifiedVia: 'web' | 'mobile' | 'api' | 'support';
+  id: string
+  patientId: string
+  controlType: PrivacyControlType
+  setting: string
+  value: any
+  enabled: boolean
+  lastModified: Date
+  modifiedVia: 'web' | 'mobile' | 'api' | 'support'
 }
 
 export interface DataAccessRequest {
-  id: string;
-  patientId: string;
-  requestType: DataAccessType;
-  dataCategories: LGPDDataCategory[];
-  status: 'pending' | 'processing' | 'completed' | 'expired' | 'cancelled';
-  requestedAt: Date;
-  processedAt?: Date;
-  expiresAt?: Date;
-  downloadUrl?: string;
-  format: 'json' | 'csv' | 'pdf';
-  includeAuditLogs: boolean;
-  includeConsentHistory: boolean;
-  estimatedSize?: number;
-  actualSize?: number;
-  processingTime?: number; // milliseconds
+  id: string
+  patientId: string
+  requestType: DataAccessType
+  dataCategories: LGPDDataCategory[]
+  status: 'pending' | 'processing' | 'completed' | 'expired' | 'cancelled'
+  requestedAt: Date
+  processedAt?: Date
+  expiresAt?: Date
+  downloadUrl?: string
+  format: 'json' | 'csv' | 'pdf'
+  includeAuditLogs: boolean
+  includeConsentHistory: boolean
+  estimatedSize?: number
+  actualSize?: number
+  processingTime?: number // milliseconds
 }
 
 export interface DataSubjectRequest {
-  id: string;
-  patientId: string;
+  id: string
+  patientId: string
   requestType:
     | 'access'
     | 'rectification'
     | 'deletion'
     | 'portability'
-    | 'objection';
-  description: string;
-  status: 'pending' | 'under_review' | 'approved' | 'rejected' | 'completed';
-  requestedAt: Date;
-  reviewedAt?: Date;
-  completedAt?: Date;
-  reviewedBy?: string;
-  decisionReason?: string;
-  affectedDataCategories: LGPDDataCategory[];
-  priority: 'low' | 'medium' | 'high' | 'urgent';
-  estimatedCompletionDate?: Date;
-  actualCompletionDate?: Date;
+    | 'objection'
+  description: string
+  status: 'pending' | 'under_review' | 'approved' | 'rejected' | 'completed'
+  requestedAt: Date
+  reviewedAt?: Date
+  completedAt?: Date
+  reviewedBy?: string
+  decisionReason?: string
+  affectedDataCategories: LGPDDataCategory[]
+  priority: 'low' | 'medium' | 'high' | 'urgent'
+  estimatedCompletionDate?: Date
+  actualCompletionDate?: Date
 }
 
 export interface PrivacyDashboardSummary {
-  patientId: string;
-  activeConsents: number;
-  totalDataCategories: number;
+  patientId: string
+  activeConsents: number
+  totalDataCategories: number
   dataAccessRequests: {
-    pending: number;
-    completed: number;
-    lastAccessDate?: Date;
-  };
+    pending: number
+    completed: number
+    lastAccessDate?: Date
+  }
   dataSubjectRequests: {
-    pending: number;
-    completed: number;
-    lastRequestDate?: Date;
-  };
-  privacyScore: number; // 0-100
-  riskLevel: 'low' | 'medium' | 'high';
-  lastUpdated: Date;
+    pending: number
+    completed: number
+    lastRequestDate?: Date
+  }
+  privacyScore: number // 0-100
+  riskLevel: 'low' | 'medium' | 'high'
+  lastUpdated: Date
   quickActions: Array<{
     type:
       | 'update_consent'
       | 'request_data'
       | 'manage_preferences'
-      | 'emergency_settings';
-    title: string;
-    description: string;
-    priority: number;
-  }>;
+      | 'emergency_settings'
+    title: string
+    description: string
+    priority: number
+  }>
 }
 
 // ============================================================================
@@ -122,10 +122,10 @@ export interface PrivacyDashboardSummary {
 // ============================================================================
 
 export class PatientPrivacyControlsService {
-  private supabase = createAdminClient();
-  private consentService = new EnhancedLGPDConsentService();
-  private maskingService = new DataMaskingService();
-  private retentionService = new DataRetentionService();
+  private supabase = createAdminClient()
+  private consentService = new EnhancedLGPDConsentService()
+  private maskingService = new DataMaskingService()
+  private retentionService = new DataRetentionService()
 
   /**
    * Get patient privacy dashboard summary
@@ -135,34 +135,34 @@ export class PatientPrivacyControlsService {
   ): Promise<PrivacyDashboardSummary> {
     try {
       // Get consent statistics
-      const consentStats = await this.consentService.getConsentStatistics(patientId);
+      const consentStats = await this.consentService.getConsentStatistics(patientId)
 
       // Get data access request statistics
-      const accessStats = await this.getDataAccessStatistics(patientId);
+      const accessStats = await this.getDataAccessStatistics(patientId)
 
       // Get data subject request statistics
-      const subjectStats = await this.getDataSubjectRequestStatistics(patientId);
+      const subjectStats = await this.getDataSubjectRequestStatistics(patientId)
 
       // Calculate privacy score
       const privacyScore = this.calculatePrivacyScore(
         consentStats,
         accessStats,
         subjectStats,
-      );
+      )
 
       // Determine risk level
       const riskLevel = this.assessPrivacyRisk(
         consentStats,
         accessStats,
         subjectStats,
-      );
+      )
 
       // Generate quick actions
       const quickActions = this.generateQuickActions(
         consentStats,
         accessStats,
         patientId,
-      );
+      )
 
       return {
         patientId,
@@ -175,15 +175,15 @@ export class PatientPrivacyControlsService {
         riskLevel,
         lastUpdated: new Date(),
         quickActions,
-      };
+      }
     } catch {
-      console.error('Error getting privacy dashboard summary:', error);
+      console.error('Error getting privacy dashboard summary:', error)
       if (error instanceof Error) {
         throw new Error(
           `Failed to get privacy dashboard summary: ${error.message}`,
-        );
+        )
       }
-      throw new Error('Failed to get privacy dashboard summary: Unknown error');
+      throw new Error('Failed to get privacy dashboard summary: Unknown error')
     }
   }
 
@@ -192,16 +192,16 @@ export class PatientPrivacyControlsService {
    */
   async getPatientConsents(patientId: string): Promise<
     Array<{
-      consent: any;
-      canWithdraw: boolean;
-      canModify: boolean;
-      expiryDate?: Date;
-      dataCategories: LGPDDataCategory[];
-      lastAccessed?: Date;
+      consent: any
+      canWithdraw: boolean
+      canModify: boolean
+      expiryDate?: Date
+      dataCategories: LGPDDataCategory[]
+      lastAccessed?: Date
     }>
   > {
     try {
-      const consents = await this.consentService.getPatientActiveConsents(patientId);
+      const consents = await this.consentService.getPatientActiveConsents(patientId)
 
       return consents.map(consent => ({
         consent,
@@ -212,13 +212,13 @@ export class PatientPrivacyControlsService {
           : undefined,
         dataCategories: consent.granularity.dataCategories,
         lastAccessed: this.getLastAccessDate(consent.id),
-      }));
+      }))
     } catch {
-      console.error('Error getting patient consents:', error);
+      console.error('Error getting patient consents:', error)
       if (error instanceof Error) {
-        throw new Error(`Failed to get patient consents: ${error.message}`);
+        throw new Error(`Failed to get patient consents: ${error.message}`)
       }
-      throw new Error('Failed to get patient consents: Unknown error');
+      throw new Error('Failed to get patient consents: Unknown error')
     }
   }
 
@@ -228,17 +228,17 @@ export class PatientPrivacyControlsService {
   async submitDataAccessRequest(
     patientId: string,
     _request: {
-      accessType: DataAccessType;
-      dataCategories: LGPDDataCategory[];
-      format: 'json' | 'csv' | 'pdf';
-      includeAuditLogs: boolean;
-      includeConsentHistory: boolean;
+      accessType: DataAccessType
+      dataCategories: LGPDDataCategory[]
+      format: 'json' | 'csv' | 'pdf'
+      includeAuditLogs: boolean
+      includeConsentHistory: boolean
     },
   ): Promise<DataAccessRequest> {
     try {
       // Validate request
       if (request.dataCategories.length === 0) {
-        throw new Error('At least one data category must be selected');
+        throw new Error('At least one data category must be selected')
       }
 
       // Check if patient has active consent for requested data
@@ -246,12 +246,12 @@ export class PatientPrivacyControlsService {
         patientId,
         request.dataCategories,
         ['data_access'],
-      );
+      )
 
       if (!hasConsent.consented) {
         throw new Error(
           'No active consent found for requested data categories',
-        );
+        )
       }
 
       // Create access request
@@ -266,17 +266,17 @@ export class PatientPrivacyControlsService {
         includeAuditLogs: request.includeAuditLogs,
         includeConsentHistory: request.includeConsentHistory,
         expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days expiry
-      };
+      }
 
       // Store request
       const { data, error } = await this.supabase
         .from('data_access_requests')
         .insert(accessRequest)
         .select()
-        .single();
+        .single()
 
       if (error) {
-        throw new Error('Failed to create data access request');
+        throw new Error('Failed to create data access request')
       }
 
       // Log request for audit
@@ -284,17 +284,17 @@ export class PatientPrivacyControlsService {
         requestId: data.id,
         accessType: request.accessType,
         dataCategories: request.dataCategories,
-      });
+      })
 
-      return data;
+      return data
     } catch {
-      console.error('Error submitting data access _request:', error);
+      console.error('Error submitting data access _request:', error)
       if (error instanceof Error) {
         throw new Error(
           `Failed to submit data access _request: ${error.message}`,
-        );
+        )
       }
-      throw new Error('Failed to submit data access _request: Unknown error');
+      throw new Error('Failed to submit data access _request: Unknown error')
     }
   }
 
@@ -302,35 +302,35 @@ export class PatientPrivacyControlsService {
    * Process data access request and prepare data export
    */
   async processDataAccessRequest(requestId: string): Promise<{
-    success: boolean;
-    downloadUrl?: string;
-    estimatedSize?: number;
-    processingTime?: number;
-    error?: string;
+    success: boolean
+    downloadUrl?: string
+    estimatedSize?: number
+    processingTime?: number
+    error?: string
   }> {
     try {
-      const startTime = Date.now();
+      const startTime = Date.now()
 
       // Get request details
       const { data: request, error: fetchError } = await this.supabase
         .from('data_access_requests')
         .select('*')
         .eq('id', requestId)
-        .single();
+        .single()
 
       if (fetchError || !_request) {
-        throw new Error('Data access request not found');
+        throw new Error('Data access request not found')
       }
 
       if (request.status !== 'pending') {
-        throw new Error('Request is not in pending status');
+        throw new Error('Request is not in pending status')
       }
 
       // Update status to processing
       await this.supabase
         .from('data_access_requests')
         .update({ status: 'processing' })
-        .eq('id', requestId);
+        .eq('id', requestId)
 
       try {
         // Collect requested data
@@ -342,17 +342,17 @@ export class PatientPrivacyControlsService {
             includeAuditLogs: request.includeAuditLogs,
             includeConsentHistory: request.includeConsentHistory,
           },
-        );
+        )
 
         // Format and export data
         const exportResult = await this.exportPatientData(
           patientData,
           request.format,
           request.patientId,
-        );
+        )
 
         // Update request with results
-        const processingTime = Date.now() - startTime;
+        const processingTime = Date.now() - startTime
         const { error: updateError } = await this.supabase
           .from('data_access_requests')
           .update({
@@ -363,10 +363,10 @@ export class PatientPrivacyControlsService {
             actualSize: exportResult.size,
             processingTime,
           })
-          .eq('id', requestId);
+          .eq('id', requestId)
 
         if (updateError) {
-          throw new Error('Failed to update request status');
+          throw new Error('Failed to update request status')
         }
 
         // Log successful completion
@@ -380,14 +380,14 @@ export class PatientPrivacyControlsService {
             size: exportResult.size,
             processingTime,
           },
-        );
+        )
 
         return {
           success: true,
           downloadUrl: exportResult.downloadUrl,
           estimatedSize: exportResult.size,
           processingTime,
-        };
+        }
       } catch {
         // Mark request as failed
         await this.supabase
@@ -396,23 +396,23 @@ export class PatientPrivacyControlsService {
             status: 'expired',
             processedAt: new Date(),
           })
-          .eq('id', requestId);
+          .eq('id', requestId)
 
-        console.error('Error processing data access _request:', error);
+        console.error('Error processing data access _request:', error)
 
         return {
           success: false,
           error: error instanceof Error ? error.message : 'Processing failed',
-        };
+        }
       }
     } catch {
-      console.error('Error in processDataAccessRequest:', error);
+      console.error('Error in processDataAccessRequest:', error)
       if (error instanceof Error) {
         throw new Error(
           `Failed to process data access _request: ${error.message}`,
-        );
+        )
       }
-      throw new Error('Failed to process data access _request: Unknown error');
+      throw new Error('Failed to process data access _request: Unknown error')
     }
   }
 
@@ -422,17 +422,17 @@ export class PatientPrivacyControlsService {
   async submitDataSubjectRequest(
     patientId: string,
     _request: {
-      requestType: DataSubjectRequest['requestType'];
-      description: string;
-      affectedDataCategories: LGPDDataCategory[];
-      priority?: DataSubjectRequest['priority'];
-      supportingDocuments?: string[];
+      requestType: DataSubjectRequest['requestType']
+      description: string
+      affectedDataCategories: LGPDDataCategory[]
+      priority?: DataSubjectRequest['priority']
+      supportingDocuments?: string[]
     },
   ): Promise<DataSubjectRequest> {
     try {
       // Validate request
       if (!request.description || request.description.trim().length === 0) {
-        throw new Error('Description is required');
+        throw new Error('Description is required')
       }
 
       // Create subject request
@@ -449,17 +449,17 @@ export class PatientPrivacyControlsService {
           request.requestType,
           request.priority,
         ),
-      };
+      }
 
       // Store request
       const { data, error } = await this.supabase
         .from('data_subject_requests')
         .insert(subjectRequest)
         .select()
-        .single();
+        .single()
 
       if (error) {
-        throw new Error('Failed to create data subject request');
+        throw new Error('Failed to create data subject request')
       }
 
       // Log request for audit
@@ -472,17 +472,17 @@ export class PatientPrivacyControlsService {
           priority: request.priority,
           affectedDataCategories: request.affectedDataCategories,
         },
-      );
+      )
 
-      return data;
+      return data
     } catch {
-      console.error('Error submitting data subject _request:', error);
+      console.error('Error submitting data subject _request:', error)
       if (error instanceof Error) {
         throw new Error(
           `Failed to submit data subject _request: ${error.message}`,
-        );
+        )
       }
-      throw new Error('Failed to submit data subject _request: Unknown error');
+      throw new Error('Failed to submit data subject _request: Unknown error')
     }
   }
 
@@ -492,15 +492,15 @@ export class PatientPrivacyControlsService {
   async updatePrivacyPreferences(
     patientId: string,
     preferences: Array<{
-      controlType: PrivacyControlType;
-      setting: string;
-      value: any;
-      enabled: boolean;
+      controlType: PrivacyControlType
+      setting: string
+      value: any
+      enabled: boolean
     }>,
     modifiedVia: PrivacyPreference['modifiedVia'] = 'web',
   ): Promise<PrivacyPreference[]> {
     try {
-      const updatedPreferences: PrivacyPreference[] = [];
+      const updatedPreferences: PrivacyPreference[] = []
 
       for (const pref of preferences) {
         const preference: PrivacyPreference = {
@@ -512,7 +512,7 @@ export class PatientPrivacyControlsService {
           enabled: pref.enabled,
           lastModified: new Date(),
           modifiedVia,
-        };
+        }
 
         // Upsert preference
         const { data, error } = await this.supabase
@@ -521,34 +521,34 @@ export class PatientPrivacyControlsService {
             onConflict: 'patientId, controlType, setting',
           })
           .select()
-          .single();
+          .single()
 
         if (error) {
           console.error(
             `Error updating preference ${pref.controlType}.${pref.setting}:`,
             error,
-          );
-          continue;
+          )
+          continue
         }
 
-        updatedPreferences.push(data);
+        updatedPreferences.push(data)
       }
 
       // Log preference updates
       await this.logPrivacyActivity('privacy_preferences_updated', patientId, {
         preferencesCount: updatedPreferences.length,
         controlTypes: preferences.map(p => p.controlType),
-      });
+      })
 
-      return updatedPreferences;
+      return updatedPreferences
     } catch {
-      console.error('Error updating privacy preferences:', error);
+      console.error('Error updating privacy preferences:', error)
       if (error instanceof Error) {
         throw new Error(
           `Failed to update privacy preferences: ${error.message}`,
-        );
+        )
       }
-      throw new Error('Failed to update privacy preferences: Unknown error');
+      throw new Error('Failed to update privacy preferences: Unknown error')
     }
   }
 
@@ -561,19 +561,19 @@ export class PatientPrivacyControlsService {
         .from('privacy_preferences')
         .select('*')
         .eq('patientId', patientId)
-        .order('lastModified', { ascending: false });
+        .order('lastModified', { ascending: false })
 
       if (error) {
-        throw new Error('Failed to fetch privacy preferences');
+        throw new Error('Failed to fetch privacy preferences')
       }
 
-      return data || [];
+      return data || []
     } catch {
-      console.error('Error getting privacy preferences:', error);
+      console.error('Error getting privacy preferences:', error)
       if (error instanceof Error) {
-        throw new Error(`Failed to get privacy preferences: ${error.message}`);
+        throw new Error(`Failed to get privacy preferences: ${error.message}`)
       }
-      throw new Error('Failed to get privacy preferences: Unknown error');
+      throw new Error('Failed to get privacy preferences: Unknown error')
     }
   }
 
@@ -583,18 +583,18 @@ export class PatientPrivacyControlsService {
   async getPrivacyAuditTrail(
     patientId: string,
     filters?: {
-      startDate?: Date;
-      endDate?: Date;
-      actionTypes?: string[];
-      limit?: number;
+      startDate?: Date
+      endDate?: Date
+      actionTypes?: string[]
+      limit?: number
     },
   ): Promise<
     Array<{
-      timestamp: Date;
-      action: string;
-      details: any;
-      ipAddress?: string;
-      userAgent?: string;
+      timestamp: Date
+      action: string
+      details: any
+      ipAddress?: string
+      userAgent?: string
     }>
   > {
     try {
@@ -602,24 +602,24 @@ export class PatientPrivacyControlsService {
         .from('privacy_audit_trail')
         .select('*')
         .eq('patientId', patientId)
-        .order('timestamp', { ascending: false });
+        .order('timestamp', { ascending: false })
 
       if (filters?.startDate) {
-        query = query.gte('timestamp', filters.startDate.toISOString());
+        query = query.gte('timestamp', filters.startDate.toISOString())
       }
 
       if (filters?.endDate) {
-        query = query.lte('timestamp', filters.endDate.toISOString());
+        query = query.lte('timestamp', filters.endDate.toISOString())
       }
 
       if (filters?.limit) {
-        query = query.limit(filters.limit);
+        query = query.limit(filters.limit)
       }
 
-      const { data, error } = await query;
+      const { data, error } = await query
 
       if (error) {
-        throw new Error('Failed to fetch privacy audit trail');
+        throw new Error('Failed to fetch privacy audit trail')
       }
 
       return (data || []).map(entry => ({
@@ -628,13 +628,13 @@ export class PatientPrivacyControlsService {
         details: entry.details,
         ipAddress: entry.ipAddress,
         userAgent: entry.userAgent,
-      }));
+      }))
     } catch {
-      console.error('Error getting privacy audit trail:', error);
+      console.error('Error getting privacy audit trail:', error)
       if (error instanceof Error) {
-        throw new Error(`Failed to get privacy audit trail: ${error.message}`);
+        throw new Error(`Failed to get privacy audit trail: ${error.message}`)
       }
-      throw new Error('Failed to get privacy audit trail: Unknown error');
+      throw new Error('Failed to get privacy audit trail: Unknown error')
     }
   }
 
@@ -646,8 +646,8 @@ export class PatientPrivacyControlsService {
     dataCategories: LGPDDataCategory[],
     accessType: DataAccessType,
     options: {
-      includeAuditLogs: boolean;
-      includeConsentHistory: boolean;
+      includeAuditLogs: boolean
+      includeConsentHistory: boolean
     },
   ): Promise<any> {
     const collectedData: any = {
@@ -655,38 +655,38 @@ export class PatientPrivacyControlsService {
       exportDate: new Date().toISOString(),
       accessType,
       dataCategories,
-    };
+    }
 
     // Collect data based on categories and access type
     if (dataCategories.includes(LGPDDataCategory.PERSONAL)) {
       collectedData.personal = await this.getPersonalData(
         patientId,
         accessType,
-      );
+      )
     }
 
     if (dataCategories.includes(LGPDDataCategory.MEDICAL)) {
-      collectedData.medical = await this.getMedicalData(patientId, accessType);
+      collectedData.medical = await this.getMedicalData(patientId, accessType)
     }
 
     if (dataCategories.includes(LGPDDataCategory.FINANCIAL)) {
       collectedData.financial = await this.getFinancialData(
         patientId,
         accessType,
-      );
+      )
     }
 
     if (options.includeConsentHistory) {
-      collectedData.consentHistory = await this.consentService.getConsentStatistics(patientId);
+      collectedData.consentHistory = await this.consentService.getConsentStatistics(patientId)
     }
 
     if (options.includeAuditLogs) {
       collectedData.auditLogs = await this.getPrivacyAuditTrail(patientId, {
         limit: 100,
-      });
+      })
     }
 
-    return collectedData;
+    return collectedData
   }
 
   /**
@@ -706,7 +706,7 @@ export class PatientPrivacyControlsService {
       state: 'SP',
       postalCode: '01234-567',
       birthDate: '1990-01-01',
-    };
+    }
 
     if (accessType === DataAccessType.SUMMARY) {
       // Apply masking for summary access
@@ -715,15 +715,15 @@ export class PatientPrivacyControlsService {
         'patient',
         ['data_access'],
         'list',
-      );
+      )
       const result = await this.maskingService.maskData(
         personalData,
         maskingContext,
-      );
-      return result.maskedData;
+      )
+      return result.maskedData
     }
 
-    return personalData;
+    return personalData
   }
 
   /**
@@ -751,7 +751,7 @@ export class PatientPrivacyControlsService {
           date: '2024-01-15',
         },
       ],
-    };
+    }
 
     if (accessType === DataAccessType.SUMMARY) {
       // Return only basic medical info for summary access
@@ -759,10 +759,10 @@ export class PatientPrivacyControlsService {
         bloodType: medicalData.bloodType,
         appointmentsCount: medicalData.appointments.length,
         lastAppointment: medicalData.appointments[0]?.date,
-      };
+      }
     }
 
-    return medicalData;
+    return medicalData
   }
 
   /**
@@ -778,7 +778,7 @@ export class PatientPrivacyControlsService {
       paymentMethods: ['Credit Card'],
       lastPayment: { date: '2024-01-10', amount: 150.0 },
       outstandingBalance: 0.0,
-    };
+    }
 
     if (accessType === DataAccessType.SUMMARY) {
       // Apply masking for summary access
@@ -787,15 +787,15 @@ export class PatientPrivacyControlsService {
         'patient',
         ['data_access'],
         'list',
-      );
+      )
       const result = await this.maskingService.maskData(
         financialData,
         maskingContext,
-      );
-      return result.maskedData;
+      )
+      return result.maskedData
     }
 
-    return financialData;
+    return financialData
   }
 
   /**
@@ -807,8 +807,8 @@ export class PatientPrivacyControlsService {
     patientId: string,
   ): Promise<{ downloadUrl: string; size: number }> {
     // Mock implementation - would integrate with actual export service
-    const filename = `patient_data_${patientId}_${Date.now()}.${format}`;
-    const size = JSON.stringify(data).length; // Approximate size
+    const filename = `patient_data_${patientId}_${Date.now()}.${format}`
+    const size = JSON.stringify(data).length // Approximate size
 
     // In production, this would:
     // 1. Generate the file in the requested format
@@ -816,9 +816,9 @@ export class PatientPrivacyControlsService {
     // 3. Generate a temporary download URL
     // 4. Set appropriate expiration and access controls
 
-    const downloadUrl = `/api/privacy/exports/${filename}`;
+    const downloadUrl = `/api/privacy/exports/${filename}`
 
-    return { downloadUrl, size };
+    return { downloadUrl, size }
   }
 
   /**
@@ -840,7 +840,7 @@ export class PatientPrivacyControlsService {
       isHealthcareProfessional: false,
       viewContext,
       requestScope: 'self',
-    };
+    }
   }
 
   /**
@@ -851,20 +851,20 @@ export class PatientPrivacyControlsService {
     accessStats: any,
     subjectStats: any,
   ): number {
-    let score = 100;
+    let score = 100
 
     // Deduct for expired consents
-    score -= (consentStats.expiredConsents / consentStats.totalConsents) * 20;
+    score -= (consentStats.expiredConsents / consentStats.totalConsents) * 20
 
     // Deduct for pending requests
-    score -= ((accessStats.pending + subjectStats.pending) / 10) * 10;
+    score -= ((accessStats.pending + subjectStats.pending) / 10) * 10
 
     // Deduct for lack of active consents
     if (consentStats.activeConsents === 0) {
-      score -= 30;
+      score -= 30
     }
 
-    return Math.max(0, Math.min(100, Math.round(score)));
+    return Math.max(0, Math.min(100, Math.round(score)))
   }
 
   /**
@@ -879,11 +879,11 @@ export class PatientPrivacyControlsService {
       consentStats,
       accessStats,
       subjectStats,
-    );
+    )
 
-    if (score >= 80) return 'low';
-    if (score >= 60) return 'medium';
-    return 'high';
+    if (score >= 80) return 'low'
+    if (score >= 60) return 'medium'
+    return 'high'
   }
 
   /**
@@ -898,12 +898,12 @@ export class PatientPrivacyControlsService {
       | 'update_consent'
       | 'request_data'
       | 'manage_preferences'
-      | 'emergency_settings';
-    title: string;
-    description: string;
-    priority: number;
+      | 'emergency_settings'
+    title: string
+    description: string
+    priority: number
   }> {
-    const actions = [];
+    const actions = []
 
     if (consentStats.expiredConsents > 0) {
       actions.push({
@@ -911,7 +911,7 @@ export class PatientPrivacyControlsService {
         title: 'Update Expired Consents',
         description: `${consentStats.expiredConsents} consent(s) need renewal`,
         priority: 3,
-      });
+      })
     }
 
     if (accessStats.pending > 0) {
@@ -920,7 +920,7 @@ export class PatientPrivacyControlsService {
         title: 'Check Data Requests',
         description: `${accessStats.pending} data access request(s) pending`,
         priority: 2,
-      });
+      })
     }
 
     actions.push({
@@ -928,73 +928,73 @@ export class PatientPrivacyControlsService {
       title: 'Privacy Preferences',
       description: 'Manage your privacy settings and preferences',
       priority: 1,
-    });
+    })
 
-    return actions.sort((a, _b) => b.priority - a.priority);
+    return actions.sort((a, _b) => b.priority - a.priority)
   }
 
   /**
    * Get data access statistics
    */
   private async getDataAccessStatistics(patientId: string): Promise<{
-    pending: number;
-    completed: number;
-    lastAccessDate?: Date;
+    pending: number
+    completed: number
+    lastAccessDate?: Date
   }> {
     const { data: requests, error } = await this.supabase
       .from('data_access_requests')
       .select('status, processedAt')
-      .eq('patientId', patientId);
+      .eq('patientId', patientId)
 
     if (error) {
-      throw new Error('Failed to fetch data access statistics');
+      throw new Error('Failed to fetch data access statistics')
     }
 
-    const pending = requests?.filter(r => r.status === 'pending').length || 0;
-    const completed = requests?.filter(r => r.status === 'completed').length || 0;
+    const pending = requests?.filter(r => r.status === 'pending').length || 0
+    const completed = requests?.filter(r => r.status === 'completed').length || 0
     const lastAccessDate = requests
       ?.filter(r => r.status === 'completed')
       .sort(
         (a, _b) =>
-          new Date(b.processedAt!).getTime()
-          - new Date(a.processedAt!).getTime(),
-      )[0]?.processedAt;
+          new Date(b.processedAt!).getTime() -
+          new Date(a.processedAt!).getTime(),
+      )[0]?.processedAt
 
     return {
       pending,
       completed,
       lastAccessDate: lastAccessDate ? new Date(lastAccessDate) : undefined,
-    };
+    }
   }
 
   /**
    * Get data subject request statistics
    */
   private async getDataSubjectRequestStatistics(patientId: string): Promise<{
-    pending: number;
-    completed: number;
-    lastRequestDate?: Date;
+    pending: number
+    completed: number
+    lastRequestDate?: Date
   }> {
     const { data: requests, error } = await this.supabase
       .from('data_subject_requests')
       .select('status, requestedAt')
-      .eq('patientId', patientId);
+      .eq('patientId', patientId)
 
     if (error) {
-      throw new Error('Failed to fetch data subject request statistics');
+      throw new Error('Failed to fetch data subject request statistics')
     }
 
-    const pending = requests?.filter(r => r.status === 'pending').length || 0;
-    const completed = requests?.filter(r => r.status === 'completed').length || 0;
+    const pending = requests?.filter(r => r.status === 'pending').length || 0
+    const completed = requests?.filter(r => r.status === 'completed').length || 0
     const lastRequestDate = requests?.sort(
       (a, _b) => new Date(b.requestedAt).getTime() - new Date(a.requestedAt).getTime(),
-    )[0]?.requestedAt;
+    )[0]?.requestedAt
 
     return {
       pending,
       completed,
       lastRequestDate: lastRequestDate ? new Date(lastRequestDate) : undefined,
-    };
+    }
   }
 
   /**
@@ -1010,21 +1010,21 @@ export class PatientPrivacyControlsService {
       deletion: 5,
       portability: 3,
       objection: 7,
-    }[requestType];
+    }[requestType]
 
     const priorityMultiplier = {
       low: 2,
       medium: 1,
       high: 0.5,
       urgent: 0.25,
-    }[priority];
+    }[priority]
 
-    const completionDate = new Date();
+    const completionDate = new Date()
     completionDate.setDate(
       completionDate.getDate() + baseDays * priorityMultiplier,
-    );
+    )
 
-    return completionDate;
+    return completionDate
   }
 
   /**
@@ -1032,7 +1032,7 @@ export class PatientPrivacyControlsService {
    */
   private getLastAccessDate(_consentId: string): Date | undefined {
     // Mock implementation - would query actual usage logs
-    return new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000); // Random date within last 30 days
+    return new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000) // Random date within last 30 days
   }
 
   /**
@@ -1052,13 +1052,13 @@ export class PatientPrivacyControlsService {
         timestamp: new Date(),
         ipAddress: '127.0.0.1', // Would be actual IP in production
         userAgent: 'Privacy Dashboard',
-      };
+      }
 
-      await this.supabase.from('privacy_audit_trail').insert(auditEntry);
+      await this.supabase.from('privacy_audit_trail').insert(auditEntry)
     } catch {
-      console.error('Error logging privacy activity:', error);
+      console.error('Error logging privacy activity:', error)
     }
   }
 }
 
-export default PatientPrivacyControlsService;
+export default PatientPrivacyControlsService

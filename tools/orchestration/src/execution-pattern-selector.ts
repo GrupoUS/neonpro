@@ -3,45 +3,45 @@
  * Selects optimal execution patterns for orchestration workflows
  */
 
-import type { FeatureContext } from './types';
+import type { FeatureContext } from './types'
 
 export interface ExecutionPatternContext {
-  feature: FeatureContext;
-  complexity: 'low' | 'medium' | 'high';
-  criticality: 'low' | 'medium' | 'high' | 'critical';
-  healthcareCompliance: boolean;
-  performanceRequired: boolean;
-  agentCount: number;
-  estimatedDuration: number;
+  feature: FeatureContext
+  complexity: 'low' | 'medium' | 'high'
+  criticality: 'low' | 'medium' | 'high' | 'critical'
+  healthcareCompliance: boolean
+  performanceRequired: boolean
+  agentCount: number
+  estimatedDuration: number
 }
 
 export interface PatternSelection {
-  workflowType: 'parallel' | 'sequential' | 'hierarchical' | 'event-driven';
+  workflowType: 'parallel' | 'sequential' | 'hierarchical' | 'event-driven'
   coordinationPattern:
     | 'parallel'
     | 'sequential'
     | 'hierarchical'
-    | 'event-driven';
+    | 'event-driven'
   agentSelection: {
-    primaryAgents: string[];
-    secondaryAgents: string[];
-    supportAgents?: string[];
-    parallelAgents?: string[];
-  };
+    primaryAgents: string[]
+    secondaryAgents: string[]
+    supportAgents?: string[]
+    parallelAgents?: string[]
+  }
   executionStrategy: {
-    parallel: boolean;
-    timeout: number;
-    retries: number;
-    batchSize?: number;
-  };
+    parallel: boolean
+    timeout: number
+    retries: number
+    batchSize?: number
+  }
   optimization: {
-    performance: number;
-    compliance: number;
-    quality: number;
-  };
-  risks?: string[];
-  mitigations?: string[];
-  justification?: string;
+    performance: number
+    compliance: number
+    quality: number
+  }
+  risks?: string[]
+  mitigations?: string[]
+  justification?: string
 }
 
 export class ExecutionPatternSelector {
@@ -53,16 +53,16 @@ export class ExecutionPatternSelector {
       | 'parallel'
       | 'sequential'
       | 'hierarchical'
-      | 'event-driven';
+      | 'event-driven'
 
     if (context.complexity === 'high') {
-      workflowType = 'hierarchical';
+      workflowType = 'hierarchical'
     } else if (context.healthcareCompliance) {
-      workflowType = 'event-driven';
+      workflowType = 'event-driven'
     } else if (context.complexity === 'low') {
-      workflowType = 'sequential';
+      workflowType = 'sequential'
     } else {
-      workflowType = 'parallel';
+      workflowType = 'parallel'
     }
 
     const basePattern: PatternSelection = {
@@ -76,8 +76,8 @@ export class ExecutionPatternSelector {
         supportAgents: context.complexity !== 'low'
           ? ['documentation', 'quality-control']
           : undefined,
-        parallelAgents: workflowType === 'parallel'
-            || (context.agentCount > 3 && context.complexity !== 'low')
+        parallelAgents: workflowType === 'parallel' ||
+            (context.agentCount > 3 && context.complexity !== 'low')
           ? ['test-auditor', 'code-reviewer']
           : undefined,
       },
@@ -102,8 +102,8 @@ export class ExecutionPatternSelector {
         : undefined,
       justification:
         `Selected ${workflowType} pattern based on complexity: ${context.complexity}, criticality: ${context.criticality}`,
-    };
+    }
 
-    return basePattern;
+    return basePattern
   }
 }

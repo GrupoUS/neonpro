@@ -187,7 +187,7 @@ Patient data retrieval is implemented through the `findPatientsInClinic` method,
 const patients = await prisma.findPatientsInClinic(clinicId, {
   patientStatus: 'active',
   isActive: true,
-});
+})
 ```
 
 The implementation selectively exposes sensitive fields like CPF (Brazilian national identifier) only to users with admin privileges, implementing field-level security based on user role.
@@ -203,7 +203,7 @@ const appointment = await prisma.appointment.create({
     clinicId: context.clinicId,
     createdBy: context.userId,
   },
-});
+})
 ```
 
 The system automatically calculates end time from start time and duration, assigns appropriate status, and creates corresponding audit trails.
@@ -220,7 +220,7 @@ await prisma.consentRecord.update({
     withdrawnAt: new Date(),
     evidence: { withdrawalReason: reason },
   },
-});
+})
 ```
 
 The update operation preserves historical consent states while recording the current status, supporting the legal requirement to maintain consent history.
@@ -280,7 +280,7 @@ const patient = await prisma.patient.findFirst({
     consentRecords: true,
     auditTrails: true,
   },
-});
+})
 ```
 
 **Explicit Selection with Select**: Used to minimize data transfer by specifying only required fields, particularly important for mobile clients and performance-critical operations.
@@ -296,7 +296,7 @@ const patients = await prisma.patient.findMany({
     birthDate: true,
     noShowRiskScore: true,
   },
-});
+})
 ```
 
 ### Healthcare-Specific Query Patterns
@@ -315,7 +315,7 @@ const appointments = await prisma.appointment.findMany({
       lte: endDate,
     },
   },
-});
+})
 ```
 
 **Risk-Based Filtering**: For patient management, the system supports queries based on risk scores such as no-show prediction.
@@ -327,7 +327,7 @@ const highRiskPatients = await prisma.patient.findMany({
       gte: 75,
     },
   },
-});
+})
 ```
 
 The schema is optimized with appropriate indexes on commonly queried fields including clinicId, status, timestamps, and risk scores to ensure query performance at scale.
@@ -402,10 +402,10 @@ async function batchCreatePatients(
   clinicId: string,
   patientsData: Array<Record<string, unknown>>,
 ): Promise<{ created: number; errors: Array<{ index: number; error: string }> }> {
-  const batchSize = Math.min(config.maxBatchSize, patientsData.length);
+  const batchSize = Math.min(config.maxBatchSize, patientsData.length)
   // Process in batches
   for (let i = 0; i < patientsData.length; i += batchSize) {
-    const batch = patientsData.slice(i, i + batchSize);
+    const batch = patientsData.slice(i, i + batchSize)
     // Process batch
   }
 }
@@ -466,10 +466,10 @@ interface AppointmentRepository {
   findWithFilter(
     filter: AppointmentFilter,
     options?: PaginationOptions,
-  ): Promise<PaginatedResult<Appointment>>;
-  create(appointmentData: CreateAppointmentRequest): Promise<Appointment>;
-  update(id: string, appointmentData: UpdateAppointmentRequest): Promise<Appointment>;
-  delete(id: string): Promise<boolean>;
+  ): Promise<PaginatedResult<Appointment>>
+  create(appointmentData: CreateAppointmentRequest): Promise<Appointment>
+  update(id: string, appointmentData: UpdateAppointmentRequest): Promise<Appointment>
+  delete(id: string): Promise<boolean>
 }
 ```
 
@@ -547,11 +547,11 @@ The system implements several approaches to prevent N+1 queries:
 
 ```typescript
 // Anti-pattern: N+1 queries
-const patients = await prisma.patient.findMany();
+const patients = await prisma.patient.findMany()
 for (const patient of patients) {
   const appointments = await prisma.appointment.findMany({
     where: { patientId: patient.id },
-  });
+  })
 }
 
 // Correct pattern: Single query with include
@@ -559,7 +559,7 @@ const patients = await prisma.patient.findMany({
   include: {
     appointments: true,
   },
-});
+})
 ```
 
 **Selective Field Loading with Select**: When only specific fields are needed, the `select` option minimizes data transfer and improves performance.
@@ -577,7 +577,7 @@ const patients = await prisma.patient.findMany({
       },
     },
   },
-});
+})
 ```
 
 ### Performance Monitoring
@@ -586,7 +586,7 @@ The application includes a query optimizer that detects potential N+1 patterns a
 
 ```typescript
 // Query optimization service analyzes query patterns
-const optimizations = await queryOptimizer.analyzeQueries();
+const optimizations = await queryOptimizer.analyzeQueries()
 if (optimizations.some(opt => opt.issues.includes('Potential N+1 query pattern'))) {
   // Alert developers to optimize queries
 }
@@ -634,8 +634,8 @@ The system categorizes database errors into several types:
 ```typescript
 class HealthcareComplianceError extends Error {
   constructor(message: string, code: string, complianceFramework: 'LGPD' | 'ANVISA' | 'CFM') {
-    super(message);
-    this.name = 'HealthcareComplianceError';
+    super(message)
+    this.name = 'HealthcareComplianceError'
   }
 }
 ```
@@ -645,8 +645,8 @@ class HealthcareComplianceError extends Error {
 ```typescript
 class UnauthorizedHealthcareAccessError extends Error {
   constructor(message: string, resourceType: string, resourceId?: string) {
-    super(message);
-    this.name = 'UnauthorizedHealthcareAccessError';
+    super(message)
+    this.name = 'UnauthorizedHealthcareAccessError'
   }
 }
 ```
@@ -719,7 +719,7 @@ const results = await prisma.$queryRaw`
   GROUP BY p.id, p.full_name
   ORDER BY appointment_count DESC
   LIMIT 100
-`;
+`
 ```
 
 Raw queries are carefully audited and parameterized to prevent SQL injection, with additional sanitization through the application's SQL sanitizer module.
@@ -732,8 +732,8 @@ The application implements Prisma middleware for cross-cutting concerns:
 
 ```typescript
 prisma.$use(async (params, next) => {
-  const start = Date.now();
-  const result = await next(params);
+  const start = Date.now()
+  const result = await next(params)
 
   if (['create', 'update', 'delete'].includes(params.action)) {
     await prisma.createAuditLog(
@@ -741,11 +741,11 @@ prisma.$use(async (params, next) => {
       params.model || 'UNKNOWN',
       JSON.stringify(params.args?.where || {}),
       { duration: Date.now() - start },
-    );
+    )
   }
 
-  return result;
-});
+  return result
+})
 ```
 
 **Performance Monitoring**: Tracking query execution times and identifying slow operations.
@@ -764,14 +764,14 @@ const exportData = await prisma.exportPatientData(
   patientId,
   requestedBy,
   'Patient data portability request',
-);
+)
 
 // Delete patient data per LGPD Article 18.VI
 await prisma.deletePatientData(patientId, {
   cascadeDelete: true,
   retainAuditTrail: true,
   reason: 'Right to erasure request',
-});
+})
 ```
 
 **Clinical Decision Support**: Integrating with AI models for risk prediction and treatment recommendations.

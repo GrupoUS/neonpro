@@ -1,16 +1,16 @@
-import { Hono } from 'hono';
+import { Hono } from 'hono'
 
 /**
  * TRPC Hono adapter for integration tests
  * This is a simplified adapter for testing purposes
  */
 export function createTRPCHono() {
-  const honoApp = new Hono();
+  const honoApp = new Hono()
 
   return {
     honoApp,
     router: (path: string, routes: any) => {
-      honoApp.route(path, routes);
+      honoApp.route(path, routes)
     },
-  };
+  }
 }

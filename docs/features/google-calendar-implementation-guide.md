@@ -54,22 +54,22 @@ This guide provides detailed technical implementation instructions for integrati
 
 ```typescript
 // src/services/google-calendar-auth.service.ts
-import { OAuth2Client } from 'google-auth-library';
-import { google } from 'googleapis';
+import { OAuth2Client } from 'google-auth-library'
+import { google } from 'googleapis'
 
 export class GoogleCalendarAuthService {
-  private oauth2Client: OAuth2Client;
+  private oauth2Client: OAuth2Client
   private readonly SCOPES = [
     'https://www.googleapis.com/auth/calendar',
     'https://www.googleapis.com/auth/calendar.events',
-  ];
+  ]
 
   constructor() {
     this.oauth2Client = new google.auth.OAuth2(
       process.env.GOOGLE_CLIENT_ID,
       process.env.GOOGLE_CLIENT_SECRET,
       process.env.GOOGLE_REDIRECT_URI,
-    );
+    )
   }
 
   generateAuthUrl(state: string): string {
@@ -78,39 +78,39 @@ export class GoogleCalendarAuthService {
       scope: this.SCOPES,
       state: state,
       prompt: 'consent',
-    });
+    })
   }
 
   async exchangeCodeForTokens(code: string): Promise<{
-    access_token: string;
-    refresh_token: string;
-    expiry_date: number;
+    access_token: string
+    refresh_token: string
+    expiry_date: number
   }> {
-    const { tokens } = await this.oauth2Client.getToken(code);
-    this.oauth2Client.setCredentials(tokens);
+    const { tokens } = await this.oauth2Client.getToken(code)
+    this.oauth2Client.setCredentials(tokens)
 
     return {
       access_token: tokens.access_token!,
       refresh_token: tokens.refresh_token!,
       expiry_date: tokens.expiry_date!,
-    };
+    }
   }
 
   async refreshAccessToken(refreshToken: string): Promise<string> {
     this.oauth2Client.setCredentials({
       refresh_token: refreshToken,
-    });
+    })
 
-    const { credentials } = await this.oauth2Client.refreshAccessToken();
-    return credentials.access_token!;
+    const { credentials } = await this.oauth2Client.refreshAccessToken()
+    return credentials.access_token!
   }
 
   createAuthenticatedClient(accessToken: string): any {
     this.oauth2Client.setCredentials({
       access_token: accessToken,
-    });
+    })
 
-    return google.calendar({ version: 'v3', auth: this.oauth2Client });
+    return google.calendar({ version: 'v3', auth: this.oauth2Client })
   }
 }
 ```
@@ -131,28 +131,28 @@ ENCRYPTION_KEY=your-encryption-key-for-token-storage
 
 ```typescript
 // src/services/google-calendar.service.ts
-import { google } from 'googleapis';
-import { Logger } from 'winston';
+import { google } from 'googleapis'
+import { Logger } from 'winston'
 
 export interface CalendarEvent {
-  id?: string;
-  summary: string;
-  description?: string;
-  start: Date;
-  end: Date;
-  location?: string;
-  attendees: string[];
-  timeZone: string;
-  recurrence?: string[];
+  id?: string
+  summary: string
+  description?: string
+  start: Date
+  end: Date
+  location?: string
+  attendees: string[]
+  timeZone: string
+  recurrence?: string[]
 }
 
 export class GoogleCalendarService {
-  private calendar: google.calendar_v3.Calendar;
-  private logger: Logger;
+  private calendar: google.calendar_v3.Calendar
+  private logger: Logger
 
   constructor(authClient: any, logger: Logger) {
-    this.calendar = google.calendar({ version: 'v3', auth: authClient });
-    this.logger = logger;
+    this.calendar = google.calendar({ version: 'v3', auth: authClient })
+    this.logger = logger
   }
 
   // Create new event
@@ -175,23 +175,23 @@ export class GoogleCalendarService {
         },
         attendees: eventData.attendees.map(email => ({ email })),
         recurrence: eventData.recurrence,
-      };
+      }
 
       const response = await this.executeWithRetry(() =>
         this.calendar.events.insert({
           calendarId,
           requestBody: event,
         })
-      );
+      )
 
       this.logger.info('Event created successfully', {
         eventId: response.data.id,
-      });
+      })
 
-      return this.transformEvent(response.data);
+      return this.transformEvent(response.data)
     } catch (error) {
-      this.logger.error('Error creating event', { error });
-      throw new Error(`Failed to create event: ${error.message}`);
+      this.logger.error('Error creating event', { error })
+      throw new Error(`Failed to create event: ${error.message}`)
     }
   }
 
@@ -202,25 +202,25 @@ export class GoogleCalendarService {
     calendarId: string = 'primary',
   ): Promise<CalendarEvent> {
     try {
-      const updateData: any = {};
+      const updateData: any = {}
 
-      if (updates.summary) updateData.summary = updates.summary;
-      if (updates.description) updateData.description = updates.description;
-      if (updates.location) updateData.location = updates.location;
+      if (updates.summary) updateData.summary = updates.summary
+      if (updates.description) updateData.description = updates.description
+      if (updates.location) updateData.location = updates.location
       if (updates.start) {
         updateData.start = {
           dateTime: updates.start.toISOString(),
           timeZone: updates.timeZone || 'America/Sao_Paulo',
-        };
+        }
       }
       if (updates.end) {
         updateData.end = {
           dateTime: updates.end.toISOString(),
           timeZone: updates.timeZone || 'America/Sao_Paulo',
-        };
+        }
       }
       if (updates.attendees) {
-        updateData.attendees = updates.attendees.map(email => ({ email }));
+        updateData.attendees = updates.attendees.map(email => ({ email }))
       }
 
       const response = await this.executeWithRetry(() =>
@@ -229,14 +229,14 @@ export class GoogleCalendarService {
           eventId,
           requestBody: updateData,
         })
-      );
+      )
 
-      this.logger.info('Event updated successfully', { eventId });
+      this.logger.info('Event updated successfully', { eventId })
 
-      return this.transformEvent(response.data);
+      return this.transformEvent(response.data)
     } catch (error) {
-      this.logger.error('Error updating event', { eventId, error });
-      throw new Error(`Failed to update event: ${error.message}`);
+      this.logger.error('Error updating event', { eventId, error })
+      throw new Error(`Failed to update event: ${error.message}`)
     }
   }
 
@@ -251,12 +251,12 @@ export class GoogleCalendarService {
           calendarId,
           eventId,
         })
-      );
+      )
 
-      this.logger.info('Event deleted successfully', { eventId });
+      this.logger.info('Event deleted successfully', { eventId })
     } catch (error) {
-      this.logger.error('Error deleting event', { eventId, error });
-      throw new Error(`Failed to delete event: ${error.message}`);
+      this.logger.error('Error deleting event', { eventId, error })
+      throw new Error(`Failed to delete event: ${error.message}`)
     }
   }
 
@@ -275,20 +275,20 @@ export class GoogleCalendarService {
           singleEvents: true,
           orderBy: 'startTime',
         })
-      );
+      )
 
-      const events = response.data.items || [];
+      const events = response.data.items || []
 
       this.logger.info('Events retrieved successfully', {
         count: events.length,
         startTime,
         endTime,
-      });
+      })
 
-      return events.map(event => this.transformEvent(event));
+      return events.map(event => this.transformEvent(event))
     } catch (error) {
-      this.logger.error('Error retrieving events', { error });
-      throw new Error(`Failed to retrieve events: ${error.message}`);
+      this.logger.error('Error retrieving events', { error })
+      throw new Error(`Failed to retrieve events: ${error.message}`)
     }
   }
 
@@ -303,15 +303,15 @@ export class GoogleCalendarService {
           calendarId,
           eventId,
         })
-      );
+      )
 
-      return this.transformEvent(response.data);
+      return this.transformEvent(response.data)
     } catch (error: any) {
       if (error.code === 404) {
-        return null;
+        return null
       }
-      this.logger.error('Error retrieving event', { eventId, error });
-      throw new Error(`Failed to retrieve event: ${error.message}`);
+      this.logger.error('Error retrieving event', { eventId, error })
+      throw new Error(`Failed to retrieve event: ${error.message}`)
     }
   }
 
@@ -320,37 +320,37 @@ export class GoogleCalendarService {
     operation: () => Promise<T>,
     maxRetries: number = 3,
   ): Promise<T> {
-    let lastError: any;
+    let lastError: any
 
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
       try {
-        return await operation();
+        return await operation()
       } catch (error: any) {
-        lastError = error;
+        lastError = error
 
         // Handle rate limiting (429) and quota exceeded (403)
         if (
-          error.code === 429
-          || (error.code === 403 && error.message.includes('quota'))
+          error.code === 429 ||
+          (error.code === 403 && error.message.includes('quota'))
         ) {
-          const delay = Math.pow(2, attempt) * 1000 + Math.random() * 1000;
+          const delay = Math.pow(2, attempt) * 1000 + Math.random() * 1000
           this.logger.warn('Rate limit hit, retrying', {
             attempt,
             delay,
             error: error.message,
-          });
+          })
 
-          await new Promise(resolve => setTimeout(resolve, delay));
-          continue;
+          await new Promise(resolve => setTimeout(resolve, delay))
+          continue
         }
 
         // Non-retryable error
-        throw error;
+        throw error
       }
     }
 
-    this.logger.error('Max retries exceeded', { error: lastError.message });
-    throw lastError;
+    this.logger.error('Max retries exceeded', { error: lastError.message })
+    throw lastError
   }
 
   // Transform Google Calendar event to our format
@@ -365,7 +365,7 @@ export class GoogleCalendarService {
       attendees: event.attendees?.map((a: any) => a.email) || [],
       timeZone: event.start.timeZone || 'America/Sao_Paulo',
       recurrence: event.recurrence,
-    };
+    }
   }
 }
 ```
@@ -374,26 +374,26 @@ export class GoogleCalendarService {
 
 ```typescript
 // src/services/calendar-sync.service.ts
-import { Logger } from 'winston';
-import { GoogleCalendarService } from './google-calendar.service';
+import { Logger } from 'winston'
+import { GoogleCalendarService } from './google-calendar.service'
 
 export interface SyncResult {
-  eventsProcessed: number;
-  eventsCreated: number;
-  eventsUpdated: number;
-  eventsDeleted: number;
-  syncToken?: string;
-  errors: string[];
+  eventsProcessed: number
+  eventsCreated: number
+  eventsUpdated: number
+  eventsDeleted: number
+  syncToken?: string
+  errors: string[]
 }
 
 export class CalendarSyncService {
-  private calendarService: GoogleCalendarService;
-  private logger: Logger;
-  private syncTokenStorage: Map<string, string> = new Map();
+  private calendarService: GoogleCalendarService
+  private logger: Logger
+  private syncTokenStorage: Map<string, string> = new Map()
 
   constructor(calendarService: GoogleCalendarService, logger: Logger) {
-    this.calendarService = calendarService;
-    this.logger = logger;
+    this.calendarService = calendarService
+    this.logger = logger
   }
 
   async performFullSync(
@@ -408,54 +408,54 @@ export class CalendarSyncService {
       eventsUpdated: 0,
       eventsDeleted: 0,
       errors: [],
-    };
+    }
 
     try {
-      this.logger.info('Starting full sync', { userId, calendarId });
+      this.logger.info('Starting full sync', { userId, calendarId })
 
-      const oneYearAgo = new Date();
-      oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+      const oneYearAgo = new Date()
+      oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1)
 
       const events = await this.calendarService.getEventsByTimeRange(
         startTime || oneYearAgo,
         endTime || new Date(),
         calendarId,
-      );
+      )
 
       for (const event of events) {
         try {
-          await this.processEventForSync(userId, event);
-          result.eventsProcessed++;
+          await this.processEventForSync(userId, event)
+          result.eventsProcessed++
 
           if (event.id?.startsWith('new_')) {
-            result.eventsCreated++;
+            result.eventsCreated++
           } else {
-            result.eventsUpdated++;
+            result.eventsUpdated++
           }
         } catch (error) {
           result.errors.push(
             `Failed to process event ${event.id}: ${error.message}`,
-          );
+          )
           this.logger.error('Error processing event in sync', {
             eventId: event.id,
             error,
-          });
+          })
         }
       }
 
       // Store sync token for future incremental syncs
-      const syncToken = await this.generateSyncToken(userId, calendarId);
-      result.syncToken = syncToken;
+      const syncToken = await this.generateSyncToken(userId, calendarId)
+      result.syncToken = syncToken
 
       this.logger.info('Full sync completed', {
         userId,
         result,
-      });
+      })
 
-      return result;
+      return result
     } catch (error) {
-      this.logger.error('Full sync failed', { userId, error });
-      throw new Error(`Full sync failed: ${error.message}`);
+      this.logger.error('Full sync failed', { userId, error })
+      throw new Error(`Full sync failed: ${error.message}`)
     }
   }
 
@@ -469,18 +469,18 @@ export class CalendarSyncService {
       eventsUpdated: 0,
       eventsDeleted: 0,
       errors: [],
-    };
+    }
 
     try {
-      this.logger.info('Starting incremental sync', { userId, calendarId });
+      this.logger.info('Starting incremental sync', { userId, calendarId })
 
-      const syncToken = this.syncTokenStorage.get(`${userId}_${calendarId}`);
+      const syncToken = this.syncTokenStorage.get(`${userId}_${calendarId}`)
 
       if (!syncToken) {
         this.logger.warn('No sync token found, performing full sync', {
           userId,
-        });
-        return this.performFullSync(userId, calendarId);
+        })
+        return this.performFullSync(userId, calendarId)
       }
 
       // In a real implementation, you would use the sync token with Google Calendar API
@@ -489,45 +489,45 @@ export class CalendarSyncService {
         new Date(Date.now() - 24 * 60 * 60 * 1000), // Last 24 hours
         new Date(),
         calendarId,
-      );
+      )
 
       for (const event of recentEvents) {
         try {
-          await this.processEventForSync(userId, event);
-          result.eventsProcessed++;
-          result.eventsUpdated++;
+          await this.processEventForSync(userId, event)
+          result.eventsProcessed++
+          result.eventsUpdated++
         } catch (error) {
           result.errors.push(
             `Failed to process event ${event.id}: ${error.message}`,
-          );
+          )
           this.logger.error('Error processing event in incremental sync', {
             eventId: event.id,
             error,
-          });
+          })
         }
       }
 
       // Update sync token
-      const newSyncToken = await this.generateSyncToken(userId, calendarId);
-      result.syncToken = newSyncToken;
+      const newSyncToken = await this.generateSyncToken(userId, calendarId)
+      result.syncToken = newSyncToken
 
       this.logger.info('Incremental sync completed', {
         userId,
         result,
-      });
+      })
 
-      return result;
+      return result
     } catch (error: any) {
       if (error.code === 410) {
         // Sync token expired, perform full sync
         this.logger.warn('Sync token expired, performing full sync', {
           userId,
-        });
-        return this.performFullSync(userId, calendarId);
+        })
+        return this.performFullSync(userId, calendarId)
       }
 
-      this.logger.error('Incremental sync failed', { userId, error });
-      throw new Error(`Incremental sync failed: ${error.message}`);
+      this.logger.error('Incremental sync failed', { userId, error })
+      throw new Error(`Incremental sync failed: ${error.message}`)
     }
   }
 
@@ -543,7 +543,7 @@ export class CalendarSyncService {
       userId,
       eventId: event.id,
       summary: event.summary,
-    });
+    })
 
     // TODO: Implement actual sync logic with database
   }
@@ -554,9 +554,9 @@ export class CalendarSyncService {
   ): Promise<string> {
     const token = Buffer.from(`${userId}_${calendarId}_${Date.now()}`).toString(
       'base64',
-    );
-    this.syncTokenStorage.set(`${userId}_${calendarId}`, token);
-    return token;
+    )
+    this.syncTokenStorage.set(`${userId}_${calendarId}`, token)
+    return token
   }
 }
 ```
@@ -567,32 +567,32 @@ export class CalendarSyncService {
 
 ```typescript
 // src/services/compliance.service.ts
-import { Logger } from 'winston';
+import { Logger } from 'winston'
 
 export interface ComplianceCheck {
-  passed: boolean;
-  violations: string[];
-  recommendations: string[];
+  passed: boolean
+  violations: string[]
+  recommendations: string[]
 }
 
 export interface AuditLog {
-  id: string;
-  userId: string;
-  action: string;
-  resource: string;
-  timestamp: Date;
-  ipAddress: string;
-  userAgent: string;
-  details: any;
-  complianceFlags: string[];
+  id: string
+  userId: string
+  action: string
+  resource: string
+  timestamp: Date
+  ipAddress: string
+  userAgent: string
+  details: any
+  complianceFlags: string[]
 }
 
 export class ComplianceService {
-  private logger: Logger;
-  private auditLogs: AuditLog[] = [];
+  private logger: Logger
+  private auditLogs: AuditLog[] = []
 
   constructor(logger: Logger) {
-    this.logger = logger;
+    this.logger = logger
   }
 
   // LGPD compliance check for calendar operations
@@ -601,44 +601,44 @@ export class ComplianceService {
     action: string,
     eventData: any,
   ): Promise<ComplianceCheck> {
-    const violations: string[] = [];
-    const recommendations: string[] = [];
+    const violations: string[] = []
+    const recommendations: string[] = []
 
     try {
       // Check for patient data handling
       if (this.containsPatientData(eventData)) {
         if (!(await this.hasPatientConsent(userId, eventData))) {
-          violations.push('Patient data processed without proper consent');
-          recommendations.push('Implement patient consent management system');
+          violations.push('Patient data processed without proper consent')
+          recommendations.push('Implement patient consent management system')
         }
       }
 
       // Check for data minimization
       if (!this.followsDataMinimization(eventData)) {
-        violations.push('Violation of data minimization principle');
+        violations.push('Violation of data minimization principle')
         recommendations.push(
           'Remove unnecessary personal data from calendar events',
-        );
+        )
       }
 
       // Check for retention policies
       if (!this.followsRetentionPolicy(eventData)) {
-        violations.push('Violation of data retention policy');
-        recommendations.push('Implement automated data retention and deletion');
+        violations.push('Violation of data retention policy')
+        recommendations.push('Implement automated data retention and deletion')
       }
 
       return {
         passed: violations.length === 0,
         violations,
         recommendations,
-      };
+      }
     } catch (error) {
-      this.logger.error('LGPD compliance check failed', { error });
+      this.logger.error('LGPD compliance check failed', { error })
       return {
         passed: false,
         violations: ['Compliance check system error'],
         recommendations: ['Review compliance implementation'],
-      };
+      }
     }
   }
 
@@ -660,24 +660,24 @@ export class ComplianceService {
       userAgent: request.get('user-agent') || 'Unknown',
       details,
       complianceFlags: this.getComplianceFlags(action, details),
-    };
+    }
 
-    this.auditLogs.push(auditLog);
+    this.auditLogs.push(auditLog)
 
     // Store in database for long-term retention
-    await this.storeAuditLog(auditLog);
+    await this.storeAuditLog(auditLog)
 
     this.logger.info('Audit log created', {
       auditId: auditLog.id,
       userId,
       action,
-    });
+    })
   }
 
   // Healthcare-specific validation for appointment data
   validateAppointmentData(appointmentData: any): ComplianceCheck {
-    const violations: string[] = [];
-    const recommendations: string[] = [];
+    const violations: string[] = []
+    const recommendations: string[] = []
 
     // Check for required healthcare fields
     const requiredFields = [
@@ -685,35 +685,35 @@ export class ComplianceService {
       'procedureType',
       'startTime',
       'endTime',
-    ];
+    ]
     for (const field of requiredFields) {
       if (!appointmentData[field]) {
-        violations.push(`Missing required field: ${field}`);
-        recommendations.push(`Ensure ${field} is included in appointment data`);
+        violations.push(`Missing required field: ${field}`)
+        recommendations.push(`Ensure ${field} is included in appointment data`)
       }
     }
 
     // Check for professional scope compliance
     if (!this.isValidProcedureType(appointmentData.procedureType)) {
-      violations.push('Invalid procedure type for aesthetic clinic');
+      violations.push('Invalid procedure type for aesthetic clinic')
       recommendations.push(
         'Review and validate procedure types against clinic scope',
-      );
+      )
     }
 
     // Check for duration appropriateness
     if (!this.isValidAppointmentDuration(appointmentData)) {
-      violations.push('Invalid appointment duration for procedure type');
+      violations.push('Invalid appointment duration for procedure type')
       recommendations.push(
         'Validate appointment durations against standard procedure times',
-      );
+      )
     }
 
     return {
       passed: violations.length === 0,
       violations,
       recommendations,
-    };
+    }
   }
 
   // Generate compliance report
@@ -721,26 +721,26 @@ export class ComplianceService {
     startDate: Date,
     endDate: Date,
   ): Promise<{
-    totalOperations: number;
-    complianceViolations: number;
-    criticalViolations: number;
-    recommendations: string[];
+    totalOperations: number
+    complianceViolations: number
+    criticalViolations: number
+    recommendations: string[]
   }> {
     const relevantLogs = this.auditLogs.filter(
       log => log.timestamp >= startDate && log.timestamp <= endDate,
-    );
+    )
 
     const violations = relevantLogs.filter(
       log => log.complianceFlags.length > 0,
-    );
-    const criticalViolations = violations.filter(log => log.complianceFlags.includes('CRITICAL'));
+    )
+    const criticalViolations = violations.filter(log => log.complianceFlags.includes('CRITICAL'))
 
     return {
       totalOperations: relevantLogs.length,
       complianceViolations: violations.length,
       criticalViolations: criticalViolations.length,
       recommendations: this.generateRecommendations(violations),
-    };
+    }
   }
 
   // Helper methods
@@ -751,10 +751,10 @@ export class ComplianceService {
       /\d{3}\.\d{3}\.\d{3}-\d{2}/, // CPF pattern
       /\d{11}/, // Phone number pattern
       /email|e-mail/i,
-    ];
+    ]
 
-    const dataString = JSON.stringify(data);
-    return patientDataPatterns.some(pattern => pattern.test(dataString));
+    const dataString = JSON.stringify(data)
+    return patientDataPatterns.some(pattern => pattern.test(dataString))
   }
 
   private async hasPatientConsent(
@@ -763,13 +763,13 @@ export class ComplianceService {
   ): Promise<boolean> {
     // TODO: Implement actual consent check against database
     // This would check if the patient has given consent for calendar data processing
-    return true;
+    return true
   }
 
   private followsDataMinimization(data: any): boolean {
     // Check if only necessary data is being processed
-    const necessaryFields = ['summary', 'start', 'end'];
-    const dataFields = Object.keys(data);
+    const necessaryFields = ['summary', 'start', 'end']
+    const dataFields = Object.keys(data)
 
     // Allow some additional fields but limit unnecessary data collection
     const allowedFields = [
@@ -777,43 +777,43 @@ export class ComplianceService {
       'description',
       'location',
       'attendees',
-    ];
-    return dataFields.every(field => allowedFields.includes(field));
+    ]
+    return dataFields.every(field => allowedFields.includes(field))
   }
 
   private followsRetentionPolicy(data: any): boolean {
     // Check if data retention policies are being followed
     // This would involve checking if the data should be deleted based on retention rules
-    return true;
+    return true
   }
 
   private generateAuditId(): string {
-    return `audit_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    return `audit_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
   }
 
   private getClientIp(request: any): string {
-    return request.ip || request.connection.remoteAddress || 'Unknown';
+    return request.ip || request.connection.remoteAddress || 'Unknown'
   }
 
   private getComplianceFlags(action: string, details: any): string[] {
-    const flags: string[] = [];
+    const flags: string[] = []
 
     // Flag sensitive operations
     if (action.includes('delete') || action.includes('update')) {
-      flags.push('SENSITIVE_OPERATION');
+      flags.push('SENSITIVE_OPERATION')
     }
 
     // Flag patient data processing
     if (this.containsPatientData(details)) {
-      flags.push('PATIENT_DATA');
+      flags.push('PATIENT_DATA')
     }
 
     // Flag bulk operations
     if (details.bulk && details.count > 10) {
-      flags.push('BULK_OPERATION');
+      flags.push('BULK_OPERATION')
     }
 
-    return flags;
+    return flags
   }
 
   private async storeAuditLog(auditLog: AuditLog): Promise<void> {
@@ -831,46 +831,46 @@ export class ComplianceService {
       'preenchimento',
       'limpeza_de_pele',
       'tratamento_estético',
-    ];
-    return validProcedures.includes(procedureType.toLowerCase());
+    ]
+    return validProcedures.includes(procedureType.toLowerCase())
   }
 
   private isValidAppointmentDuration(appointmentData: any): boolean {
     // TODO: Implement duration validation based on procedure type
-    const duration = new Date(appointmentData.endTime).getTime()
-      - new Date(appointmentData.startTime).getTime();
-    const durationMinutes = duration / (1000 * 60);
+    const duration = new Date(appointmentData.endTime).getTime() -
+      new Date(appointmentData.startTime).getTime()
+    const durationMinutes = duration / (1000 * 60)
 
     // Basic validation - should be between 15 minutes and 4 hours
-    return durationMinutes >= 15 && durationMinutes <= 240;
+    return durationMinutes >= 15 && durationMinutes <= 240
   }
 
   private generateRecommendations(violations: AuditLog[]): string[] {
-    const recommendations: string[] = [];
+    const recommendations: string[] = []
 
     // Analyze common violation patterns
     const violationCounts = violations.reduce(
       (acc, log) => {
         log.complianceFlags.forEach(flag => {
-          acc[flag] = (acc[flag] || 0) + 1;
-        });
-        return acc;
+          acc[flag] = (acc[flag] || 0) + 1
+        })
+        return acc
       },
       {} as Record<string, number>,
-    );
+    )
 
     // Generate recommendations based on common violations
     if (violationCounts['PATIENT_DATA'] > 10) {
       recommendations.push(
         'Implement enhanced patient data protection measures',
-      );
+      )
     }
 
     if (violationCounts['SENSITIVE_OPERATION'] > 5) {
-      recommendations.push('Review and enhance sensitive operation controls');
+      recommendations.push('Review and enhance sensitive operation controls')
     }
 
-    return recommendations;
+    return recommendations
   }
 }
 ```
@@ -879,23 +879,23 @@ export class ComplianceService {
 
 ```typescript
 // src/services/compliant-calendar.service.ts
-import { Logger } from 'winston';
-import { ComplianceService } from './compliance.service';
-import { GoogleCalendarService } from './google-calendar.service';
+import { Logger } from 'winston'
+import { ComplianceService } from './compliance.service'
+import { GoogleCalendarService } from './google-calendar.service'
 
 export class CompliantCalendarService {
-  private calendarService: GoogleCalendarService;
-  private complianceService: ComplianceService;
-  private logger: Logger;
+  private calendarService: GoogleCalendarService
+  private complianceService: ComplianceService
+  private logger: Logger
 
   constructor(
     calendarService: GoogleCalendarService,
     complianceService: ComplianceService,
     logger: Logger,
   ) {
-    this.calendarService = calendarService;
-    this.complianceService = complianceService;
-    this.logger = logger;
+    this.calendarService = calendarService
+    this.complianceService = complianceService
+    this.logger = logger
   }
 
   async createCompliantAppointment(
@@ -905,11 +905,11 @@ export class CompliantCalendarService {
   ): Promise<any> {
     try {
       // Step 1: Compliance validation
-      const appointmentValidation = this.complianceService.validateAppointmentData(appointmentData);
+      const appointmentValidation = this.complianceService.validateAppointmentData(appointmentData)
       if (!appointmentValidation.passed) {
         throw new Error(
           `Appointment validation failed: ${appointmentValidation.violations.join(', ')}`,
-        );
+        )
       }
 
       // Step 2: LGPD compliance check
@@ -917,11 +917,11 @@ export class CompliantCalendarService {
         userId,
         'create',
         appointmentData,
-      );
+      )
       if (!lgpdCheck.passed) {
         throw new Error(
           `LGPD compliance check failed: ${lgpdCheck.violations.join(', ')}`,
-        );
+        )
       }
 
       // Step 3: Log audit trail
@@ -931,24 +931,24 @@ export class CompliantCalendarService {
         'calendar',
         appointmentData,
         request,
-      );
+      )
 
       // Step 4: Create calendar event
-      const eventData = this.transformAppointmentToEvent(appointmentData);
-      const event = await this.calendarService.createEvent(eventData);
+      const eventData = this.transformAppointmentToEvent(appointmentData)
+      const event = await this.calendarService.createEvent(eventData)
 
       this.logger.info('Compliant appointment created successfully', {
         userId,
         eventId: event.id,
-      });
+      })
 
-      return event;
+      return event
     } catch (error) {
       this.logger.error('Failed to create compliant appointment', {
         userId,
         error,
-      });
-      throw error;
+      })
+      throw error
     }
   }
 
@@ -963,11 +963,11 @@ export class CompliantCalendarService {
       if (updates.appointmentData) {
         const validation = this.complianceService.validateAppointmentData(
           updates.appointmentData,
-        );
+        )
         if (!validation.passed) {
           throw new Error(
             `Update validation failed: ${validation.violations.join(', ')}`,
-          );
+          )
         }
       }
 
@@ -976,11 +976,11 @@ export class CompliantCalendarService {
         userId,
         'update',
         updates,
-      );
+      )
       if (!lgpdCheck.passed) {
         throw new Error(
           `LGPD compliance check failed: ${lgpdCheck.violations.join(', ')}`,
-        );
+        )
       }
 
       // Step 3: Log audit trail
@@ -990,28 +990,28 @@ export class CompliantCalendarService {
         `calendar:${eventId}`,
         updates,
         request,
-      );
+      )
 
       // Step 4: Update calendar event
-      const eventUpdates = this.transformAppointmentUpdatesToEvent(updates);
+      const eventUpdates = this.transformAppointmentUpdatesToEvent(updates)
       const event = await this.calendarService.updateEvent(
         eventId,
         eventUpdates,
-      );
+      )
 
       this.logger.info('Compliant appointment updated successfully', {
         userId,
         eventId,
-      });
+      })
 
-      return event;
+      return event
     } catch (error) {
       this.logger.error('Failed to update compliant appointment', {
         userId,
         eventId,
         error,
-      });
-      throw error;
+      })
+      throw error
     }
   }
 
@@ -1029,23 +1029,23 @@ export class CompliantCalendarService {
         `calendar:${eventId}`,
         { reason },
         request,
-      );
+      )
 
       // Step 2: Delete calendar event
-      await this.calendarService.deleteEvent(eventId);
+      await this.calendarService.deleteEvent(eventId)
 
       this.logger.info('Compliant appointment deleted successfully', {
         userId,
         eventId,
         reason,
-      });
+      })
     } catch (error) {
       this.logger.error('Failed to delete compliant appointment', {
         userId,
         eventId,
         error,
-      });
-      throw error;
+      })
+      throw error
     }
   }
 
@@ -1061,33 +1061,33 @@ export class CompliantCalendarService {
       location: appointmentData.clinicLocation || 'Main Clinic',
       attendees: appointmentData.staffEmails || [],
       timeZone: 'America/Sao_Paulo',
-    };
+    }
   }
 
   private transformAppointmentUpdatesToEvent(updates: any): any {
-    const eventUpdates: any = {};
+    const eventUpdates: any = {}
 
     if (updates.appointmentData) {
       if (updates.appointmentData.startTime) {
-        eventUpdates.start = new Date(updates.appointmentData.startTime);
+        eventUpdates.start = new Date(updates.appointmentData.startTime)
       }
       if (updates.appointmentData.endTime) {
-        eventUpdates.end = new Date(updates.appointmentData.endTime);
+        eventUpdates.end = new Date(updates.appointmentData.endTime)
       }
       if (
-        updates.appointmentData.procedureType
-        || updates.appointmentData.patientName
+        updates.appointmentData.procedureType ||
+        updates.appointmentData.patientName
       ) {
         eventUpdates.summary = `${
           updates.appointmentData.procedureType || updates.appointmentData.originalProcedureType
-        } - ${updates.appointmentData.patientName || updates.appointmentData.originalPatientName}`;
+        } - ${updates.appointmentData.patientName || updates.appointmentData.originalPatientName}`
       }
       if (updates.appointmentData.staffEmails) {
-        eventUpdates.attendees = updates.appointmentData.staffEmails;
+        eventUpdates.attendees = updates.appointmentData.staffEmails
       }
     }
 
-    return eventUpdates;
+    return eventUpdates
   }
 }
 ```
@@ -1098,104 +1098,104 @@ export class CompliantCalendarService {
 
 ```typescript
 // src/controllers/calendar.controller.ts
-import { Request, Response } from 'express';
-import { Logger } from 'winston';
-import { CalendarSyncService } from '../services/calendar-sync.service';
-import { CompliantCalendarService } from '../services/compliant-calendar.service';
+import { Request, Response } from 'express'
+import { Logger } from 'winston'
+import { CalendarSyncService } from '../services/calendar-sync.service'
+import { CompliantCalendarService } from '../services/compliant-calendar.service'
 
 export class CalendarController {
-  private calendarService: CompliantCalendarService;
-  private syncService: CalendarSyncService;
-  private logger: Logger;
+  private calendarService: CompliantCalendarService
+  private syncService: CalendarSyncService
+  private logger: Logger
 
   constructor(
     calendarService: CompliantCalendarService,
     syncService: CalendarSyncService,
     logger: Logger,
   ) {
-    this.calendarService = calendarService;
-    this.syncService = syncService;
-    this.logger = logger;
+    this.calendarService = calendarService
+    this.syncService = syncService
+    this.logger = logger
   }
 
   // Create new appointment
   async createAppointment(req: Request, res: Response): Promise<void> {
     try {
-      const userId = req.user!.id;
-      const appointmentData = req.body;
+      const userId = req.user!.id
+      const appointmentData = req.body
 
       // Validate input
       if (
-        !appointmentData.procedureType
-        || !appointmentData.startTime
-        || !appointmentData.endTime
+        !appointmentData.procedureType ||
+        !appointmentData.startTime ||
+        !appointmentData.endTime
       ) {
         res
           .status(400)
           .json({
             error: 'Missing required fields: procedureType, startTime, endTime',
-          });
-        return;
+          })
+        return
       }
 
       const event = await this.calendarService.createCompliantAppointment(
         userId,
         appointmentData,
         req,
-      );
+      )
 
       res.status(201).json({
         success: true,
         data: event,
         message: 'Appointment created successfully',
-      });
+      })
     } catch (error: any) {
-      this.logger.error('Error creating appointment', { error });
+      this.logger.error('Error creating appointment', { error })
       res.status(500).json({
         success: false,
         error: error.message,
-      });
+      })
     }
   }
 
   // Update appointment
   async updateAppointment(req: Request, res: Response): Promise<void> {
     try {
-      const userId = req.user!.id;
-      const { eventId } = req.params;
-      const updates = req.body;
+      const userId = req.user!.id
+      const { eventId } = req.params
+      const updates = req.body
 
       const event = await this.calendarService.updateCompliantAppointment(
         userId,
         eventId,
         updates,
         req,
-      );
+      )
 
       res.json({
         success: true,
         data: event,
         message: 'Appointment updated successfully',
-      });
+      })
     } catch (error: any) {
-      this.logger.error('Error updating appointment', { error });
+      this.logger.error('Error updating appointment', { error })
       res.status(500).json({
         success: false,
         error: error.message,
-      });
+      })
     }
   }
 
   // Delete appointment
   async deleteAppointment(req: Request, res: Response): Promise<void> {
     try {
-      const userId = req.user!.id;
-      const { eventId } = req.params;
-      const { reason } = req.body;
+      const userId = req.user!.id
+      const { eventId } = req.params
+      const { reason } = req.body
 
       if (!reason) {
-        res.status(400).json({ error: 'Deletion reason is required' });
-        return;
+        res.status(400).json({ error: 'Deletion reason is required' })
+        return
       }
 
       await this.calendarService.deleteCompliantAppointment(
@@ -1203,103 +1203,103 @@ export class CalendarController {
         eventId,
         reason,
         req,
-      );
+      )
 
       res.json({
         success: true,
         message: 'Appointment deleted successfully',
-      });
+      })
     } catch (error: any) {
-      this.logger.error('Error deleting appointment', { error });
+      this.logger.error('Error deleting appointment', { error })
       res.status(500).json({
         success: false,
         error: error.message,
-      });
+      })
     }
   }
 
   // Get appointments by date range
   async getAppointments(req: Request, res: Response): Promise<void> {
     try {
-      const userId = req.user!.id;
-      const { startDate, endDate } = req.query;
+      const userId = req.user!.id
+      const { startDate, endDate } = req.query
 
       if (!startDate || !endDate) {
-        res.status(400).json({ error: 'startDate and endDate are required' });
-        return;
+        res.status(400).json({ error: 'startDate and endDate are required' })
+        return
       }
 
       const events = await this.calendarService.getEventsByTimeRange(
         new Date(startDate as string),
         new Date(endDate as string),
-      );
+      )
 
       res.json({
         success: true,
         data: events,
         count: events.length,
-      });
+      })
     } catch (error: any) {
-      this.logger.error('Error retrieving appointments', { error });
+      this.logger.error('Error retrieving appointments', { error })
       res.status(500).json({
         success: false,
         error: error.message,
-      });
+      })
     }
   }
 
   // Sync calendar
   async syncCalendar(req: Request, res: Response): Promise<void> {
     try {
-      const userId = req.user!.id;
-      const { type = 'incremental' } = req.query;
+      const userId = req.user!.id
+      const { type = 'incremental' } = req.query
 
-      let result;
+      let result
       if (type === 'full') {
-        result = await this.syncService.performFullSync(userId);
+        result = await this.syncService.performFullSync(userId)
       } else {
-        result = await this.syncService.performIncrementalSync(userId);
+        result = await this.syncService.performIncrementalSync(userId)
       }
 
       res.json({
         success: true,
         data: result,
         message: `Calendar ${type} sync completed successfully`,
-      });
+      })
     } catch (error: any) {
-      this.logger.error('Error syncing calendar', { error });
+      this.logger.error('Error syncing calendar', { error })
       res.status(500).json({
         success: false,
         error: error.message,
-      });
+      })
     }
   }
 
   // Get compliance report
   async getComplianceReport(req: Request, res: Response): Promise<void> {
     try {
-      const { startDate, endDate } = req.query;
+      const { startDate, endDate } = req.query
 
       if (!startDate || !endDate) {
-        res.status(400).json({ error: 'startDate and endDate are required' });
-        return;
+        res.status(400).json({ error: 'startDate and endDate are required' })
+        return
       }
 
       const report = await this.calendarService.generateComplianceReport(
         new Date(startDate as string),
         new Date(endDate as string),
-      );
+      )
 
       res.json({
         success: true,
         data: report,
-      });
+      })
     } catch (error: any) {
-      this.logger.error('Error generating compliance report', { error });
+      this.logger.error('Error generating compliance report', { error })
       res.status(500).json({
         success: false,
         error: error.message,
-      });
+      })
     }
   }
 }
@@ -1311,30 +1311,30 @@ export class CalendarController {
 
 ```typescript
 // tests/calendar.integration.test.ts
-import { afterEach, beforeEach, describe, expect, it } from '@jest/globals';
-import { ComplianceService } from '../src/services/compliance.service';
-import { CompliantCalendarService } from '../src/services/compliant-calendar.service';
-import { GoogleCalendarService } from '../src/services/google-calendar.service';
+import { afterEach, beforeEach, describe, expect, it } from '@jest/globals'
+import { ComplianceService } from '../src/services/compliance.service'
+import { CompliantCalendarService } from '../src/services/compliant-calendar.service'
+import { GoogleCalendarService } from '../src/services/google-calendar.service'
 
 describe('Google Calendar Integration', () => {
-  let calendarService: GoogleCalendarService;
-  let complianceService: ComplianceService;
-  let compliantService: CompliantCalendarService;
+  let calendarService: GoogleCalendarService
+  let complianceService: ComplianceService
+  let compliantService: CompliantCalendarService
 
   beforeEach(() => {
     // Initialize services with test configuration
-    calendarService = new GoogleCalendarService(testAuthClient, testLogger);
-    complianceService = new ComplianceService(testLogger);
+    calendarService = new GoogleCalendarService(testAuthClient, testLogger)
+    complianceService = new ComplianceService(testLogger)
     compliantService = new CompliantCalendarService(
       calendarService,
       complianceService,
       testLogger,
-    );
-  });
+    )
+  })
 
   afterEach(() => {
     // Clean up test data
-  });
+  })
 
   describe('Event Creation', () => {
     it('should create a valid appointment event', async () => {
@@ -1344,24 +1344,24 @@ describe('Google Calendar Integration', () => {
         startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
         endTime: new Date(Date.now() + 24 * 60 * 60 * 1000 + 60 * 60 * 1000),
         staffEmails: ['doctor@clinic.com'],
-      };
+      }
 
       const event = await compliantService.createCompliantAppointment(
         'test-user-id',
         appointmentData,
         testRequest,
-      );
+      )
 
-      expect(event).toBeDefined();
-      expect(event.summary).toContain('consulta');
-      expect(event.start).toBeInstanceOf(Date);
-    });
+      expect(event).toBeDefined()
+      expect(event.summary).toContain('consulta')
+      expect(event.start).toBeInstanceOf(Date)
+    })
 
     it('should reject appointment without required fields', async () => {
       const invalidData = {
         patientName: 'Test Patient',
         // Missing procedureType, startTime, endTime
-      };
+      }
 
       await expect(
         compliantService.createCompliantAppointment(
@@ -1369,9 +1369,9 @@ describe('Google Calendar Integration', () => {
           invalidData,
           testRequest,
         ),
-      ).rejects.toThrow('validation failed');
-    });
-  });
+      ).rejects.toThrow('validation failed')
+    })
+  })
 
   describe('Compliance Checks', () => {
     it('should validate LGPD compliance', async () => {
@@ -1381,16 +1381,16 @@ describe('Google Calendar Integration', () => {
         startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
         endTime: new Date(Date.now() + 24 * 60 * 60 * 1000 + 60 * 60 * 1000),
         patientId: 'test-patient-id',
-      };
+      }
 
       const complianceCheck = await complianceService.checkLgpdCompliance(
         'test-user-id',
         'create',
         appointmentData,
-      );
+      )
 
-      expect(complianceCheck.passed).toBe(true);
-    });
+      expect(complianceCheck.passed).toBe(true)
+    })
 
     it('should validate appointment data', () => {
       const validAppointment = {
@@ -1398,11 +1398,11 @@ describe('Google Calendar Integration', () => {
         procedureType: 'consulta',
         startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
         endTime: new Date(Date.now() + 24 * 60 * 60 * 1000 + 60 * 60 * 1000),
-      };
+      }
 
-      const validation = complianceService.validateAppointmentData(validAppointment);
-      expect(validation.passed).toBe(true);
-    });
+      const validation = complianceService.validateAppointmentData(validAppointment)
+      expect(validation.passed).toBe(true)
+    })
 
     it('should reject invalid procedure types', () => {
       const invalidAppointment = {
@@ -1410,15 +1410,15 @@ describe('Google Calendar Integration', () => {
         procedureType: 'invalid_procedure',
         startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
         endTime: new Date(Date.now() + 24 * 60 * 60 * 1000 + 60 * 60 * 1000),
-      };
+      }
 
-      const validation = complianceService.validateAppointmentData(invalidAppointment);
-      expect(validation.passed).toBe(false);
+      const validation = complianceService.validateAppointmentData(invalidAppointment)
+      expect(validation.passed).toBe(false)
       expect(validation.violations).toContain(
         'Invalid procedure type for aesthetic clinic',
-      );
-    });
-  });
+      )
+    })
+  })
 
   describe('Error Handling', () => {
     it('should handle rate limiting errors gracefully', async () => {
@@ -1426,14 +1426,14 @@ describe('Google Calendar Integration', () => {
       jest.spyOn(calendarService, 'createEvent').mockRejectedValue({
         code: 429,
         message: 'Rate limit exceeded',
-      });
+      })
 
       const appointmentData = {
         procedureType: 'consulta',
         patientName: 'Test Patient',
         startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
         endTime: new Date(Date.now() + 24 * 60 * 60 * 1000 + 60 * 60 * 1000),
-      };
+      }
 
       await expect(
         compliantService.createCompliantAppointment(
@@ -1441,10 +1441,10 @@ describe('Google Calendar Integration', () => {
           appointmentData,
           testRequest,
         ),
-      ).rejects.toThrow('Rate limit exceeded');
-    });
-  });
-});
+      ).rejects.toThrow('Rate limit exceeded')
+    })
+  })
+})
 ```
 
 ### Step 2: Deployment Configuration
@@ -1497,61 +1497,61 @@ volumes:
 
 ```typescript
 // src/monitoring/calendar-monitoring.ts
-import { Logger } from 'winston';
+import { Logger } from 'winston'
 
 export class CalendarMonitoring {
-  private logger: Logger;
+  private logger: Logger
   private metrics = {
     apiCalls: 0,
     successfulOperations: 0,
     failedOperations: 0,
     rateLimitHits: 0,
     syncOperations: 0,
-  };
+  }
 
   constructor(logger: Logger) {
-    this.logger = logger;
-    this.setupMetricsCollection();
+    this.logger = logger
+    this.setupMetricsCollection()
   }
 
   private setupMetricsCollection(): void {
     // Collect metrics every minute
     setInterval(() => {
-      this.logMetrics();
-      this.resetMetrics();
-    }, 60 * 1000);
+      this.logMetrics()
+      this.resetMetrics()
+    }, 60 * 1000)
   }
 
   incrementApiCall(): void {
-    this.metrics.apiCalls++;
+    this.metrics.apiCalls++
   }
 
   incrementSuccessfulOperation(): void {
-    this.metrics.successfulOperations++;
+    this.metrics.successfulOperations++
   }
 
   incrementFailedOperation(): void {
-    this.metrics.failedOperations++;
+    this.metrics.failedOperations++
   }
 
   incrementRateLimitHit(): void {
-    this.metrics.rateLimitHits++;
+    this.metrics.rateLimitHits++
   }
 
   incrementSyncOperation(): void {
-    this.metrics.syncOperations++;
+    this.metrics.syncOperations++
   }
 
   private logMetrics(): void {
-    this.logger.info('Calendar service metrics', this.metrics);
+    this.logger.info('Calendar service metrics', this.metrics)
 
     // Alert on high error rates
-    const errorRate = this.metrics.failedOperations
-      / (this.metrics.successfulOperations + this.metrics.failedOperations);
+    const errorRate = this.metrics.failedOperations /
+      (this.metrics.successfulOperations + this.metrics.failedOperations)
 
     if (errorRate > 0.05) {
       // 5% error rate threshold
-      this.logger.error('High error rate detected', { errorRate });
+      this.logger.error('High error rate detected', { errorRate })
       // Send alert to monitoring system
     }
 
@@ -1559,7 +1559,7 @@ export class CalendarMonitoring {
     if (this.metrics.rateLimitHits > 10) {
       this.logger.warn('Frequent rate limiting detected', {
         rateLimitHits: this.metrics.rateLimitHits,
-      });
+      })
     }
   }
 
@@ -1570,7 +1570,7 @@ export class CalendarMonitoring {
       failedOperations: 0,
       rateLimitHits: 0,
       syncOperations: 0,
-    };
+    }
   }
 }
 ```

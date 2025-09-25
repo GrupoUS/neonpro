@@ -11,7 +11,7 @@
  * @compliance CFM, ANVISA, Brazilian Pharmaceutical Standards
  */
 
-import * as v from 'valibot';
+import * as v from 'valibot'
 
 // =====================================
 // BRANDED TYPES FOR TYPE SAFETY
@@ -20,38 +20,38 @@ import * as v from 'valibot';
 /**
  * Branded type for Prescription ID - ensures type safety
  */
-export type PrescriptionId = string & { readonly __brand: 'PrescriptionId' };
+export type PrescriptionId = string & { readonly __brand: 'PrescriptionId' }
 
 /**
  * Branded type for Brazilian medication code (EAN/GTIN or Register Number)
  */
-export type MedicationCode = string & { readonly __brand: 'MedicationCode' };
+export type MedicationCode = string & { readonly __brand: 'MedicationCode' }
 
 /**
  * Branded type for ANVISA Registration Number
  */
 export type ANVISARegisterNumber = string & {
-  readonly __brand: 'ANVISARegisterNumber';
-};
+  readonly __brand: 'ANVISARegisterNumber'
+}
 
 /**
  * Branded type for Digital Certificate ID
  */
 export type DigitalCertificateId = string & {
-  readonly __brand: 'DigitalCertificateId';
-};
+  readonly __brand: 'DigitalCertificateId'
+}
 
 /**
  * Branded type for Dosage value with unit
  */
-export type Dosage = string & { readonly __brand: 'Dosage' };
+export type Dosage = string & { readonly __brand: 'Dosage' }
 
 /**
  * Branded type for Brazilian pharmaceutical barcode (EAN-13)
  */
 export type PharmaceuticalBarcode = string & {
-  readonly __brand: 'PharmaceuticalBarcode';
-};
+  readonly __brand: 'PharmaceuticalBarcode'
+}
 
 // =====================================
 // BRAZILIAN PHARMACEUTICAL VALIDATION UTILITIES
@@ -63,33 +63,33 @@ export type PharmaceuticalBarcode = string & {
  */
 const validateANVISARegisterNumber = (register: string): boolean => {
   // ANVISA register format: X.XXXX.XXXX.XXX-X
-  const anvisaRegex = /^\d\.\d{4}\.\d{4}\.\d{3}-\d$/;
+  const anvisaRegex = /^\d\.\d{4}\.\d{4}\.\d{3}-\d$/
 
-  if (!anvisaRegex.test(register)) return false;
+  if (!anvisaRegex.test(register)) return false
 
   // Basic validation - first digit should be 1-9
-  const firstDigit = register.charAt(0);
-  return ['1', '2', '3', '4', '5', '6', '7', '8', '9'].includes(firstDigit);
-};
+  const firstDigit = register.charAt(0)
+  return ['1', '2', '3', '4', '5', '6', '7', '8', '9'].includes(firstDigit)
+}
 
 /**
  * Validates EAN-13 barcode for pharmaceutical products
  */
 const validatePharmaceuticalBarcode = (barcode: string): boolean => {
-  const cleanBarcode = barcode.replace(/[^\d]/g, '');
+  const cleanBarcode = barcode.replace(/[^\d]/g, '')
 
-  if (cleanBarcode.length !== 13) return false;
+  if (cleanBarcode.length !== 13) return false
 
   // EAN-13 check digit validation
-  let sum = 0;
+  let sum = 0
   for (let i = 0; i < 12; i++) {
-    const digit = parseInt(cleanBarcode[i] || '0');
-    sum += i % 2 === 0 ? digit : digit * 3;
+    const digit = parseInt(cleanBarcode[i] || '0')
+    sum += i % 2 === 0 ? digit : digit * 3
   }
 
-  const checkDigit = (10 - (sum % 10)) % 10;
-  return checkDigit === parseInt(cleanBarcode[12] || '0');
-};
+  const checkDigit = (10 - (sum % 10)) % 10
+  return checkDigit === parseInt(cleanBarcode[12] || '0')
+}
 
 /**
  * Validates medication dosage format
@@ -101,10 +101,10 @@ const validateDosage = (dosage: string): boolean => {
     /^\d+(\.\d+)?\s*(mg|g|ml|l|mcg|µg|ui|comprimido|cápsula|gota|aplicação|spray|inalação|sachê|envelope)s?$/i,
     /^\d+(\.\d+)?\s*(mg|g|ml|l|mcg|µg|ui)\s*\/\s*\d+(\.\d+)?\s*(mg|ml|g|l|mcg|µg|ui)$/i, // Concentration format: 500mg/5ml
     /^\d+(\s*a\s*\d+)?\s*(mg|g|ml|l|mcg|µg|ui|comprimido|cápsula|gota|aplicação|spray|inalação|sachê|envelope)s?$/i,
-  ];
+  ]
 
-  return dosagePatterns.some(pattern => pattern.test(dosage.trim()));
-};
+  return dosagePatterns.some(pattern => pattern.test(dosage.trim()))
+}
 
 /**
  * Validates prescription frequency (posologia)
@@ -118,10 +118,10 @@ const validateFrequency = (frequency: string): boolean => {
     /^(conforme\s+necessário|se\s+necessário|sos|prn)/i,
     /^(em\s+jejum|antes\s+das\s+refeições|após\s+as\s+refeições|ao\s+deitar)/i,
     /^\d+\s+(gota|gotas).*\s+(olho|ouvido|nariz)/i,
-  ];
+  ]
 
-  return frequencyPatterns.some(pattern => pattern.test(frequency.trim()));
-};
+  return frequencyPatterns.some(pattern => pattern.test(frequency.trim()))
+}
 
 /**
  * Validates treatment duration
@@ -133,10 +133,10 @@ const validateDuration = (duration: string): boolean => {
     /^(uso\s+contínuo|contínuo|permanente)/i,
     /^até\s+(melhora|resolução|alta\s+médica)/i,
     /^por\s+tempo\s+indeterminado$/i,
-  ];
+  ]
 
-  return durationPatterns.some(pattern => pattern.test(duration.trim()));
-};
+  return durationPatterns.some(pattern => pattern.test(duration.trim()))
+}
 
 /**
  * Validates prescription expiration (maximum 180 days for most medications)
@@ -145,20 +145,20 @@ const validatePrescriptionExpiration = (
   issueDate: string,
   expirationDate: string,
 ): boolean => {
-  const issue = new Date(issueDate);
-  const expiration = new Date(expirationDate);
+  const issue = new Date(issueDate)
+  const expiration = new Date(expirationDate)
 
   // Prescription should not be expired at issue
-  if (expiration <= issue) return false;
+  if (expiration <= issue) return false
 
   // Maximum validity period (CFM regulation)
-  const maxValidityDays = 180; // 6 months for most medications
+  const maxValidityDays = 180 // 6 months for most medications
   const maxExpiration = new Date(
     issue.getTime() + maxValidityDays * 24 * 60 * 60 * 1000,
-  );
+  )
 
-  return expiration <= maxExpiration;
-};
+  return expiration <= maxExpiration
+}
 
 /**
  * Validates controlled substance prescription (special rules)
@@ -170,24 +170,24 @@ const validateControlledSubstanceRules = (
 ): boolean => {
   // Special rules for controlled substances
   if (
-    medicationType === 'controlled_a1'
-    || medicationType === 'controlled_a2'
+    medicationType === 'controlled_a1' ||
+    medicationType === 'controlled_a2'
   ) {
     // Maximum 30 days for A1/A2 controlled substances
-    const maxDays = 30;
-    const daysMatch = prescriptionDuration.match(/^(\d+)\s+dias?$/i);
+    const maxDays = 30
+    const daysMatch = prescriptionDuration.match(/^(\d+)\s+dias?$/i)
 
     if (daysMatch && daysMatch[1]) {
-      const days = parseInt(daysMatch[1]);
-      if (days > maxDays) return false;
+      const days = parseInt(daysMatch[1])
+      if (days > maxDays) return false
     }
 
     // Maximum quantity restrictions
-    if (quantity > 60) return false; // Typically max 60 units for controlled substances
+    if (quantity > 60) return false // Typically max 60 units for controlled substances
   }
 
-  return true;
-};
+  return true
+}
 
 // =====================================
 // PRESCRIPTION ENUM SCHEMAS
@@ -208,7 +208,7 @@ export const PrescriptionStatusSchema = v.picklist(
     'under_review', // Em revisão
   ],
   'Status da receita inválido',
-);
+)
 
 /**
  * Medication Type Schema (Brazilian classification)
@@ -239,7 +239,7 @@ export const MedicationTypeSchema = v.picklist(
     'vaccine', // Vacina
   ],
   'Tipo de medicamento inválido',
-);
+)
 
 /**
  * Administration Route Schema
@@ -267,7 +267,7 @@ export const AdministrationRouteSchema = v.picklist(
     'intravitreal', // Intravítreo
   ],
   'Via de administração inválida',
-);
+)
 
 /**
  * Prescription Type Schema
@@ -285,7 +285,7 @@ export const PrescriptionTypeSchema = v.picklist(
     'telemedicine', // Receita de telemedicina
   ],
   'Tipo de receita inválido',
-);
+)
 
 /**
  * Digital Certificate Type Schema
@@ -298,7 +298,7 @@ export const DigitalCertificateTypeSchema = v.picklist(
     'mobile', // Certificado mobile
   ],
   'Tipo de certificado digital inválido',
-);
+)
 
 // =====================================
 // BASIC VALIDATION SCHEMAS
@@ -317,7 +317,7 @@ export const ANVISARegisterNumberSchema = v.pipe(
   ),
   v.check(validateANVISARegisterNumber, 'Número de registro ANVISA inválido'),
   v.transform(value => value as ANVISARegisterNumber),
-);
+)
 
 /**
  * Pharmaceutical Barcode Validation Schema (EAN-13)
@@ -332,7 +332,7 @@ export const PharmaceuticalBarcodeSchema = v.pipe(
     'Código de barras farmacêutico inválido',
   ),
   v.transform(value => value as PharmaceuticalBarcode),
-);
+)
 
 /**
  * Medication Dosage Validation Schema
@@ -348,7 +348,7 @@ export const DosageSchema = v.pipe(
     'Formato de dosagem inválido. Use formatos como "500mg", "5ml", "1 comprimido"',
   ),
   v.transform(value => value.toLowerCase() as Dosage),
-);
+)
 
 /**
  * Medication Frequency Validation Schema (Posologia)
@@ -364,7 +364,7 @@ export const FrequencySchema = v.pipe(
     'Formato de frequência inválido. Use formatos como "1x ao dia", "de 8 em 8 horas"',
   ),
   v.transform(value => value.toLowerCase()),
-);
+)
 
 /**
  * Treatment Duration Validation Schema
@@ -380,7 +380,7 @@ export const DurationSchema = v.pipe(
     'Formato de duração inválido. Use formatos como "7 dias", "uso contínuo"',
   ),
   v.transform(value => value.toLowerCase()),
-);
+)
 
 /**
  * Prescription Expiration Validation Schema
@@ -394,7 +394,7 @@ const PrescriptionExpirationBaseSchema = v.object({
     v.string(),
     v.isoDate('Data de validade deve estar em formato ISO'),
   ),
-});
+})
 
 export const PrescriptionExpirationSchema = v.pipe(
   PrescriptionExpirationBaseSchema,
@@ -403,7 +403,7 @@ export const PrescriptionExpirationSchema = v.pipe(
       validatePrescriptionExpiration(data.issue_date, data.expiration_date),
     'Data de validade inválida ou excede o prazo máximo de 180 dias',
   ),
-);
+)
 
 /**
  * Brazilian Currency for medication prices
@@ -413,7 +413,7 @@ export const MedicationPriceSchema = v.pipe(
   v.minValue(0, 'Preço deve ser maior ou igual a zero'),
   v.maxValue(999999.99, 'Preço máximo excedido'),
   v.transform(value => Math.round(value * 100) / 100), // Round to 2 decimal places
-);
+)
 
 // =====================================
 // COMPLEX OBJECT SCHEMAS
@@ -462,7 +462,7 @@ export const MedicationInformationSchema = v.object({
   requires_prescription: v.boolean(),
   generic_available: v.boolean(),
   reference_price: v.optional(MedicationPriceSchema),
-});
+})
 
 /**
  * Prescription Instructions Schema
@@ -510,7 +510,7 @@ export const PrescriptionInstructionsSchema = v.object({
   special_storage: v.optional(v.pipe(v.string(), v.maxLength(200))),
   renewal_allowed: v.boolean(),
   max_renewals: v.optional(v.pipe(v.number(), v.minValue(0), v.maxValue(12))),
-});
+})
 
 /**
  * Digital Certificate Information Schema
@@ -533,7 +533,7 @@ export const DigitalCertificateSchema = v.object({
   cfm_validation_status: v.optional(
     v.picklist(['validated', 'pending', 'expired'], 'Status CFM inválido'),
   ),
-});
+})
 
 /**
  * Prescription Audit Trail Schema
@@ -567,7 +567,7 @@ export const PrescriptionAuditTrailSchema = v.object({
   digital_signature: v.optional(v.pipe(v.string(), v.minLength(100))),
   signature_algorithm: v.optional(v.pipe(v.string(), v.maxLength(50))),
   certificate_used: v.optional(DigitalCertificateSchema),
-});
+})
 
 // =====================================
 // MAIN PRESCRIPTION SCHEMAS
@@ -659,9 +659,9 @@ const PrescriptionCreationBaseSchema = v.object({
       relationship: v.pipe(v.string(), v.maxLength(50)),
     }),
   ),
-});
+})
 
-export const PrescriptionCreationSchema = PrescriptionCreationBaseSchema;
+export const PrescriptionCreationSchema = PrescriptionCreationBaseSchema
 
 /**
  * Prescription Update Schema
@@ -700,7 +700,7 @@ export const PrescriptionUpdateSchema = v.object({
   // Update context
   updated_by: v.pipe(v.string(), v.uuid('ID do usuário deve ser UUID válido')),
   update_reason: v.pipe(v.string(), v.minLength(5), v.maxLength(500)),
-});
+})
 
 /**
  * Prescription Query Schema
@@ -747,7 +747,7 @@ export const PrescriptionQuerySchema = v.object({
   sort_order: v.optional(
     v.picklist(['asc', 'desc'], 'Ordem de classificação inválida'),
   ),
-});
+})
 
 // =====================================
 // VALIDATION HELPER FUNCTIONS
@@ -758,11 +758,11 @@ export const PrescriptionQuerySchema = v.object({
  */
 export const validateControlledSubstanceCompliance = (
   medications: Array<{
-    medication: { medication_type: string; controlled_substance: boolean };
-    instructions: { duration: string; quantity_prescribed: number };
+    medication: { medication_type: string; controlled_substance: boolean }
+    instructions: { duration: string; quantity_prescribed: number }
   }>,
 ): { isValid: boolean; errors: string[] } => {
-  const errors: string[] = [];
+  const errors: string[] = []
 
   for (const med of medications) {
     if (med.medication.controlled_substance) {
@@ -770,12 +770,12 @@ export const validateControlledSubstanceCompliance = (
         med.medication.medication_type,
         med.instructions.duration,
         med.instructions.quantity_prescribed,
-      );
+      )
 
       if (!isValid) {
         errors.push(
           `Medicamento controlado ${med.medication.medication_type} não atende aos critérios regulamentares`,
-        );
+        )
       }
     }
   }
@@ -783,8 +783,8 @@ export const validateControlledSubstanceCompliance = (
   return {
     isValid: errors.length === 0,
     errors,
-  };
-};
+  }
+}
 
 /**
  * Generates prescription number following Brazilian standards
@@ -794,23 +794,23 @@ export const generatePrescriptionNumber = (
   professionalCRM: string,
   issueDate: string,
 ): string => {
-  const date = new Date(issueDate);
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
+  const date = new Date(issueDate)
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
 
   // Extract CRM number (before the slash)
-  const crmNumber = professionalCRM.split('/')[0];
+  const crmNumber = professionalCRM.split('/')[0]
 
   // Generate unique sequence (simplified - in production, use database sequence)
   const sequence = Math.floor(Math.random() * 9999)
     .toString()
-    .padStart(4, '0');
+    .padStart(4, '0')
 
   // Format: CLINICPREFIX-CRMNUM-YYYYMMDD-SEQUENCE
-  const clinicPrefix = clinicId.slice(0, 6).toUpperCase();
-  return `${clinicPrefix}-${crmNumber}-${year}${month}${day}-${sequence}`;
-};
+  const clinicPrefix = clinicId.slice(0, 6).toUpperCase()
+  return `${clinicPrefix}-${crmNumber}-${year}${month}${day}-${sequence}`
+}
 
 /**
  * Calculates prescription expiration date based on medication type
@@ -819,32 +819,32 @@ export const calculateExpirationDate = (
   issueDate: string,
   medicationType: string,
 ): string => {
-  const issue = new Date(issueDate);
-  let validityDays = 180; // Default validity
+  const issue = new Date(issueDate)
+  let validityDays = 180 // Default validity
 
   // Special rules for different medication types
   switch (medicationType) {
     case 'controlled_a1':
     case 'controlled_a2':
-      validityDays = 30; // 30 days for controlled substances A1/A2
-      break;
+      validityDays = 30 // 30 days for controlled substances A1/A2
+      break
     case 'controlled_b1':
     case 'controlled_b2':
-      validityDays = 60; // 60 days for controlled substances B1/B2
-      break;
+      validityDays = 60 // 60 days for controlled substances B1/B2
+      break
     case 'antibiotic':
     case 'antimicrobial':
-      validityDays = 30; // 30 days for antibiotics
-      break;
+      validityDays = 30 // 30 days for antibiotics
+      break
     case 'insulin':
-      validityDays = 90; // 90 days for insulin
-      break;
+      validityDays = 90 // 90 days for insulin
+      break
     default:
-      validityDays = 180; // 180 days for common medications
+      validityDays = 180 // 180 days for common medications
   }
 
   const expiration = new Date(
     issue.getTime() + validityDays * 24 * 60 * 60 * 1000,
-  );
-  return expiration.toISOString();
-};
+  )
+  return expiration.toISOString()
+}

@@ -3,7 +3,7 @@ import type {
   OrchestrationResult,
   QualityControlContext,
   QualityControlResult,
-} from '../types';
+} from '../types'
 
 export class QualityControlBridge {
   async executeQualityControl(
@@ -12,14 +12,14 @@ export class QualityControlBridge {
   ): Promise<
     QualityControlResult & { qualityScore?: number; complianceStatus?: any }
   > {
-    const startTime = Date.now();
+    const startTime = Date.now()
 
     // Parse command if context is not provided
-    let parsedContext: QualityControlContext;
+    let parsedContext: QualityControlContext
     if (!context) {
-      parsedContext = this.parseCommand(command);
+      parsedContext = this.parseCommand(command)
     } else {
-      parsedContext = context;
+      parsedContext = context
     }
 
     // Generate healthcare compliance if healthcare context is present
@@ -30,7 +30,7 @@ export class QualityControlBridge {
         cfm: true,
         score: 95,
       }
-      : undefined;
+      : undefined
 
     // Simulate quality control execution
     const orchestrationResult: OrchestrationResult = {
@@ -52,9 +52,9 @@ export class QualityControlBridge {
       coordination: parsedContext.coordination || 'sequential',
       healthcareCompliance,
       duration: 200,
-    };
+    }
 
-    const duration = Date.now() - startTime;
+    const duration = Date.now() - startTime
 
     return {
       success: true,
@@ -76,14 +76,14 @@ export class QualityControlBridge {
             : true,
         }
         : undefined,
-    };
+    }
   }
 
   private parseCommand(command: string): QualityControlContext {
     // Basic command parsing - in real implementation this would be more sophisticated
-    const parts = command.split(' ');
-    const action = parts[0] || 'validate';
-    const _target = parts[1] || 'unknown';
+    const parts = command.split(' ')
+    const action = parts[0] || 'validate'
+    const _target = parts[1] || 'unknown'
 
     const context: QualityControlContext = {
       action,
@@ -95,14 +95,14 @@ export class QualityControlBridge {
         : command.includes('--depth=L4')
         ? 'L4'
         : 'L3',
-    };
-
-    // Parse agents if specified
-    const agentsMatch = command.match(/--agents=([^\\s]+)/);
-    if (agentsMatch) {
-      context.agents = agentsMatch[1].split(',') as any[];
     }
 
-    return context;
+    // Parse agents if specified
+    const agentsMatch = command.match(/--agents=([^\\s]+)/)
+    if (agentsMatch) {
+      context.agents = agentsMatch[1].split(',') as any[]
+    }
+
+    return context
   }
 }

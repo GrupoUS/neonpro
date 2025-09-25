@@ -1,96 +1,96 @@
-import { SupabaseClient } from '@neonpro/database';
+import { SupabaseClient } from '@neonpro/database'
 
 // Type definitions for input parameters
 export interface ProfessionalTeamInput {
-  clinicId: string;
-  name: string;
-  description?: string;
-  teamType: 'multidisciplinary' | 'specialized' | 'consultation' | 'emergency';
-  members?: string[];
+  clinicId: string
+  name: string
+  description?: string
+  teamType: 'multidisciplinary' | 'specialized' | 'consultation' | 'emergency'
+  members?: string[]
 }
 
 export interface ProfessionalSupervisionInput {
-  supervisorId: string;
-  superviseeId: string;
-  supervisionType: 'clinical' | 'administrative' | 'mentorship' | 'training';
-  scope: string;
-  requirements?: string[];
-  frequency: 'daily' | 'weekly' | 'monthly' | 'quarterly' | 'as_needed';
-  maxAutonomyLevel?: number;
-  startDate: Date;
-  endDate?: Date;
+  supervisorId: string
+  superviseeId: string
+  supervisionType: 'clinical' | 'administrative' | 'mentorship' | 'training'
+  scope: string
+  requirements?: string[]
+  frequency: 'daily' | 'weekly' | 'monthly' | 'quarterly' | 'as_needed'
+  maxAutonomyLevel?: number
+  startDate: Date
+  endDate?: Date
 }
 
 export interface CoordinationProtocolInput {
-  clinicId: string;
-  name: string;
-  description?: string;
+  clinicId: string
+  name: string
+  description?: string
   protocolType:
     | 'emergency'
     | 'consultation'
     | 'referral'
     | 'treatment_coordination'
-    | 'supervision';
-  triggerConditions?: string[];
-  requiredProfessions?: string[];
-  workflowSteps?: Record<string, any>;
-  timelineRequirements?: Record<string, any>;
-  documentationRequirements?: string[];
+    | 'supervision'
+  triggerConditions?: string[]
+  requiredProfessions?: string[]
+  workflowSteps?: Record<string, any>
+  timelineRequirements?: Record<string, any>
+  documentationRequirements?: string[]
 }
 
 // Type definitions for return values
 export interface ProfessionalTeamResult {
-  id: string;
-  clinicId: string;
-  name: string;
-  description?: string;
-  teamType: string;
-  members: string[];
-  isActive: boolean;
-  createdAt: string;
-  updatedAt?: string;
+  id: string
+  clinicId: string
+  name: string
+  description?: string
+  teamType: string
+  members: string[]
+  isActive: boolean
+  createdAt: string
+  updatedAt?: string
 }
 
 export interface ProfessionalSupervisionResult {
-  id: string;
-  supervisorId: string;
-  superviseeId: string;
-  supervisionType: string;
-  scope: string;
-  requirements: string[];
-  frequency: string;
-  maxAutonomyLevel?: number;
-  startDate: string;
-  endDate?: string;
-  isActive: boolean;
-  createdAt: string;
-  updatedAt?: string;
+  id: string
+  supervisorId: string
+  superviseeId: string
+  supervisionType: string
+  scope: string
+  requirements: string[]
+  frequency: string
+  maxAutonomyLevel?: number
+  startDate: string
+  endDate?: string
+  isActive: boolean
+  createdAt: string
+  updatedAt?: string
 }
 
 export interface CoordinationProtocolResult {
-  id: string;
-  clinicId: string;
-  name: string;
-  description?: string;
-  protocolType: string;
-  triggerConditions: string[];
-  requiredProfessions: string[];
-  workflowSteps: Record<string, any>;
-  timelineRequirements: Record<string, any>;
-  documentationRequirements: string[];
-  isActive: boolean;
-  version: number;
-  createdAt: string;
-  updatedAt?: string;
+  id: string
+  clinicId: string
+  name: string
+  description?: string
+  protocolType: string
+  triggerConditions: string[]
+  requiredProfessions: string[]
+  workflowSteps: Record<string, any>
+  timelineRequirements: Record<string, any>
+  documentationRequirements: string[]
+  isActive: boolean
+  version: number
+  createdAt: string
+  updatedAt?: string
 }
 
 export interface ProfessionalScopeValidationResult {
-  isAuthorized: boolean;
-  authorizationLevel: 'independent' | 'supervised' | 'prohibited' | 'full';
-  conditions: string[];
-  supervisionRequirements?: string;
-  validFrom?: string;
-  validUntil?: string;
+  isAuthorized: boolean
+  authorizationLevel: 'independent' | 'supervised' | 'prohibited' | 'full'
+  conditions: string[]
+  supervisionRequirements?: string
+  validFrom?: string
+  validUntil?: string
 }
 
 export class MultiProfessionalCoordinationService {
@@ -107,7 +107,7 @@ export class MultiProfessionalCoordinationService {
       members: input.members || [],
       isActive: true,
       createdAt: new Date().toISOString(),
-    };
+    }
   }
 
   async createProfessionalSupervision(
@@ -127,7 +127,7 @@ export class MultiProfessionalCoordinationService {
       endDate: input.endDate?.toISOString(),
       isActive: true,
       createdAt: new Date().toISOString(),
-    };
+    }
   }
 
   async createCoordinationProtocol(
@@ -148,7 +148,7 @@ export class MultiProfessionalCoordinationService {
       isActive: true,
       version: 1,
       createdAt: new Date().toISOString(),
-    };
+    }
   }
 
   async validateProfessionalScope(
@@ -161,6 +161,6 @@ export class MultiProfessionalCoordinationService {
       isAuthorized: true,
       authorizationLevel: 'full',
       conditions: [],
-    };
+    }
   }
 }

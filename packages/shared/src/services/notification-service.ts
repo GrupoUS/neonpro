@@ -14,11 +14,11 @@
  * @compliance LGPD, ANVISA SaMD, Healthcare Standards
  */
 
-import { nanoid } from 'nanoid';
-import { z } from 'zod';
-import { logHealthcareError } from '../logging/healthcare-logger';
-import healthcareLogger from '../logging/healthcare-logger';
-import { apiRateLimitingService, type RateLimitContext } from './api-rate-limiting.js';
+import { nanoid } from 'nanoid'
+import { z } from 'zod'
+import { logHealthcareError } from '../logging/healthcare-logger'
+import healthcareLogger from '../logging/healthcare-logger'
+import { apiRateLimitingService, type RateLimitContext } from './api-rate-limiting.js'
 
 // ============================================================================
 // SCHEMAS & TYPES
@@ -34,9 +34,9 @@ export const NotificationPrioritySchema = z.enum([
   'urgent', // Time-sensitive healthcare communications
   'critical', // Patient safety concerns, immediate action required
   'emergency', // Life-critical situations, immediate response required
-]);
+])
 
-export type NotificationPriority = z.infer<typeof NotificationPrioritySchema>;
+export type NotificationPriority = z.infer<typeof NotificationPrioritySchema>
 
 /**
  * Healthcare-specific notification categories
@@ -79,9 +79,9 @@ export const NotificationCategorySchema = z.enum([
   'security_incident',
   'backup_notification',
   'integration_failure',
-]);
+])
 
-export type NotificationCategory = z.infer<typeof NotificationCategorySchema>;
+export type NotificationCategory = z.infer<typeof NotificationCategorySchema>
 
 /**
  * Delivery channel types
@@ -95,9 +95,9 @@ export const DeliveryChannelSchema = z.enum([
   'postal', // Physical mail (for legal notices)
   'whatsapp', // WhatsApp Business API
   'telegram', // Telegram Bot API
-]);
+])
 
-export type DeliveryChannel = z.infer<typeof DeliveryChannelSchema>;
+export type DeliveryChannel = z.infer<typeof DeliveryChannelSchema>
 
 /**
  * Notification status tracking
@@ -111,9 +111,9 @@ export const NotificationStatusSchema = z.enum([
   'failed', // Delivery failed
   'expired', // Delivery window expired
   'cancelled', // Cancelled before delivery
-]);
+])
 
-export type NotificationStatus = z.infer<typeof NotificationStatusSchema>;
+export type NotificationStatus = z.infer<typeof NotificationStatusSchema>
 
 /**
  * Healthcare context for notifications
@@ -226,11 +226,11 @@ export const HealthcareNotificationContextSchema = z.object({
     })
     .optional()
     .describe('Clinical context information'),
-});
+})
 
 export type HealthcareNotificationContext = z.infer<
   typeof HealthcareNotificationContextSchema
->;
+>
 
 /**
  * LGPD compliance metadata for notifications
@@ -287,11 +287,11 @@ export const LGPDNotificationComplianceSchema = z.object({
   encryptionRequired: z.boolean().describe('Whether encryption is required'),
   anonymization: z.boolean().describe('Whether data is anonymized'),
   pseudonymization: z.boolean().describe('Whether data is pseudonymized'),
-});
+})
 
 export type LGPDNotificationCompliance = z.infer<
   typeof LGPDNotificationComplianceSchema
->;
+>
 
 /**
  * Notification delivery attempt tracking
@@ -313,9 +313,9 @@ export const DeliveryAttemptSchema = z.object({
     .datetime()
     .optional()
     .describe('Next retry timestamp'),
-});
+})
 
-export type DeliveryAttempt = z.infer<typeof DeliveryAttemptSchema>;
+export type DeliveryAttempt = z.infer<typeof DeliveryAttemptSchema>
 
 /**
  * Core notification schema
@@ -408,9 +408,9 @@ export const NotificationSchema = z.object({
   sentAt: z.string().datetime().optional().describe('Sent timestamp'),
   deliveredAt: z.string().datetime().optional().describe('Delivery timestamp'),
   readAt: z.string().datetime().optional().describe('Read timestamp'),
-});
+})
 
-export type Notification = z.infer<typeof NotificationSchema>;
+export type Notification = z.infer<typeof NotificationSchema>
 
 /**
  * Notification template schema
@@ -507,9 +507,9 @@ export const NotificationTemplateSchema = z.object({
   version: z.string().describe('Template version'),
   createdAt: z.string().datetime().describe('Creation timestamp'),
   updatedAt: z.string().datetime().describe('Last update timestamp'),
-});
+})
 
-export type NotificationTemplate = z.infer<typeof NotificationTemplateSchema>;
+export type NotificationTemplate = z.infer<typeof NotificationTemplateSchema>
 
 /**
  * Notification queue configuration
@@ -586,11 +586,11 @@ export const NotificationQueueConfigSchema = z.object({
         .describe('Validate consent before sending'),
     })
     .describe('Healthcare-specific settings'),
-});
+})
 
 export type NotificationQueueConfig = z.infer<
   typeof NotificationQueueConfigSchema
->;
+>
 
 // ============================================================================
 // NOTIFICATION SERVICE CLASS
@@ -600,20 +600,20 @@ export type NotificationQueueConfig = z.infer<
  * Healthcare-compliant notification service
  */
 export class NotificationService {
-  private config: NotificationQueueConfig;
-  private notificationQueue: Map<NotificationPriority, Notification[]> = new Map();
-  private templates: Map<string, NotificationTemplate> = new Map();
-  private processingTimer?: NodeJS.Timeout;
-  private isInitialized = false;
+  private config: NotificationQueueConfig
+  private notificationQueue: Map<NotificationPriority, Notification[]> = new Map()
+  private templates: Map<string, NotificationTemplate> = new Map()
+  private processingTimer?: NodeJS.Timeout
+  private isInitialized = false
 
   constructor(config: Partial<NotificationQueueConfig> = {}) {
-    this.config = NotificationQueueConfigSchema.parse(config);
+    this.config = NotificationQueueConfigSchema.parse(config)
 
     // Initialize priority queues
-    this.initializePriorityQueues();
+    this.initializePriorityQueues()
 
     if (this.config.enabled) {
-      this.initialize();
+      this.initialize()
     }
   }
 
@@ -626,16 +626,16 @@ export class NotificationService {
    */
   private initialize(): void {
     try {
-      this.setupProcessingTimer();
-      this.loadDefaultTemplates();
-      this.isInitialized = true;
+      this.setupProcessingTimer()
+      this.loadDefaultTemplates()
+      this.isInitialized = true
 
       healthcareLogger.auditLogger.info('NotificationService initialized successfully', {
         component: 'notification-service',
         timestamp: new Date().toISOString(),
-      });
+      })
     } catch (error) {
-      logHealthcareError('notification-service', error as Error, { method: 'initialize' });
+      logHealthcareError('notification-service', error as Error, { method: 'initialize' })
     }
   }
 
@@ -650,10 +650,10 @@ export class NotificationService {
       'high',
       'normal',
       'low',
-    ];
+    ]
     priorities.forEach(priority => {
-      this.notificationQueue.set(priority, []);
-    });
+      this.notificationQueue.set(priority, [])
+    })
   }
 
   /**
@@ -661,12 +661,12 @@ export class NotificationService {
    */
   private setupProcessingTimer(): void {
     if (this.processingTimer) {
-      clearInterval(this.processingTimer);
+      clearInterval(this.processingTimer)
     }
 
     this.processingTimer = setInterval(() => {
-      this.processQueue();
-    }, this.config.processingInterval);
+      this.processQueue()
+    }, this.config.processingInterval)
   }
 
   /**
@@ -677,7 +677,7 @@ export class NotificationService {
     healthcareLogger.auditLogger.info('Loading default notification templates securely', {
       component: 'notification-service',
       timestamp: new Date().toISOString(),
-    });
+    })
   }
 
   // ============================================================================
@@ -688,26 +688,26 @@ export class NotificationService {
    * Create and queue a new notification
    */
   async createNotification(params: {
-    title: string;
-    message: string;
-    category: NotificationCategory;
-    priority: NotificationPriority;
-    recipientId: string;
-    recipientType: 'patient' | 'professional' | 'admin' | 'system';
-    channels: DeliveryChannel[];
-    healthcareContext?: HealthcareNotificationContext;
-    scheduledAt?: Date;
-    expiresAt?: Date;
-    template?: string;
-    templateVariables?: Record<string, unknown>;
-    metadata?: Record<string, unknown>;
+    title: string
+    message: string
+    category: NotificationCategory
+    priority: NotificationPriority
+    recipientId: string
+    recipientType: 'patient' | 'professional' | 'admin' | 'system'
+    channels: DeliveryChannel[]
+    healthcareContext?: HealthcareNotificationContext
+    scheduledAt?: Date
+    expiresAt?: Date
+    template?: string
+    templateVariables?: Record<string, unknown>
+    metadata?: Record<string, unknown>
   }): Promise<Notification> {
     try {
       // Generate notification ID
-      const id = `notif_${nanoid(12)}`;
+      const id = `notif_${nanoid(12)}`
 
       // Determine LGPD compliance
-      const lgpdCompliance = this.determineLGPDCompliance(params);
+      const lgpdCompliance = this.determineLGPDCompliance(params)
 
       // Create notification object
       const notification: Notification = {
@@ -731,26 +731,26 @@ export class NotificationService {
         metadata: params.metadata,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
-      };
+      }
 
       // Validate notification
-      const validatedNotification = NotificationSchema.parse(notification);
+      const validatedNotification = NotificationSchema.parse(notification)
 
       // Add to appropriate priority queue
-      this.addToQueue(validatedNotification);
+      this.addToQueue(validatedNotification)
 
       // Use secure logging for LGPD compliance
-      const { maskSensitiveData } = await import('@neonpro/security');
-      const maskedId = maskSensitiveData(id);
+      const { maskSensitiveData } = await import('@neonpro/security')
+      const maskedId = maskSensitiveData(id)
       healthcareLogger.auditLogger.info(
         'Notification created securely',
         { priority: params.priority, notificationId: maskedId, component: 'notification-service' },
-      );
+      )
 
-      return validatedNotification;
+      return validatedNotification
     } catch (error) {
-      logHealthcareError('notification-service', error as Error, { method: 'createNotification' });
-      throw error;
+      logHealthcareError('notification-service', error as Error, { method: 'createNotification' })
+      throw error
     }
   }
 
@@ -758,13 +758,13 @@ export class NotificationService {
    * Create patient safety alert
    */
   async createPatientSafetyAlert(params: {
-    title: string;
-    message: string;
-    severity: 'low' | 'medium' | 'high' | 'critical';
-    patientId: string;
-    healthcareContext: HealthcareNotificationContext;
-    immediateDelivery?: boolean;
-    metadata?: Record<string, unknown>;
+    title: string
+    message: string
+    severity: 'low' | 'medium' | 'high' | 'critical'
+    patientId: string
+    healthcareContext: HealthcareNotificationContext
+    immediateDelivery?: boolean
+    metadata?: Record<string, unknown>
   }): Promise<Notification> {
     const priority = params.severity === 'critical'
       ? 'emergency'
@@ -772,7 +772,7 @@ export class NotificationService {
       ? 'critical'
       : params.severity === 'medium'
       ? 'urgent'
-      : 'high';
+      : 'high'
 
     const notification = await this.createNotification({
       title: `[PATIENT SAFETY] ${params.title}`,
@@ -788,27 +788,27 @@ export class NotificationService {
         patientSafetyAlert: true,
         severity: params.severity,
       },
-    });
+    })
 
     // Immediate processing for critical alerts
     if (params.immediateDelivery || params.severity === 'critical') {
-      await this.processNotificationImmediately(notification.id);
+      await this.processNotificationImmediately(notification.id)
     }
 
-    return notification;
+    return notification
   }
 
   /**
    * Create emergency notification
    */
   async createEmergencyNotification(params: {
-    title: string;
-    message: string;
-    recipientId: string;
-    recipientType: 'patient' | 'professional' | 'admin';
-    healthcareContext: HealthcareNotificationContext;
-    escalationChain?: string[];
-    metadata?: Record<string, unknown>;
+    title: string
+    message: string
+    recipientId: string
+    recipientType: 'patient' | 'professional' | 'admin'
+    healthcareContext: HealthcareNotificationContext
+    escalationChain?: string[]
+    metadata?: Record<string, unknown>
   }): Promise<Notification> {
     const notification = await this.createNotification({
       title: `[EMERGENCY] ${params.title}`,
@@ -824,24 +824,24 @@ export class NotificationService {
         emergencyNotification: true,
         escalationChain: params.escalationChain,
       },
-    });
+    })
 
     // Immediate processing for emergencies
-    await this.processNotificationImmediately(notification.id);
+    await this.processNotificationImmediately(notification.id)
 
-    return notification;
+    return notification
   }
 
   /**
    * Create medication reminder
    */
   async createMedicationReminder(params: {
-    patientId: string;
-    medicationName: string;
-    dosage: string;
-    scheduleTime: Date;
-    healthcareContext: HealthcareNotificationContext;
-    metadata?: Record<string, unknown>;
+    patientId: string
+    medicationName: string
+    dosage: string
+    scheduleTime: Date
+    healthcareContext: HealthcareNotificationContext
+    metadata?: Record<string, unknown>
   }): Promise<Notification> {
     return this.createNotification({
       title: 'Medication Reminder',
@@ -860,25 +860,25 @@ export class NotificationService {
         scheduleTime: params.scheduleTime.toISOString(),
       },
       metadata: params.metadata,
-    });
+    })
   }
 
   /**
    * Create appointment reminder
    */
   async createAppointmentReminder(params: {
-    patientId: string;
-    appointmentDate: Date;
-    doctorName: string;
-    location: string;
-    reminderType: '24h' | '2h' | '30min';
-    healthcareContext: HealthcareNotificationContext;
-    metadata?: Record<string, unknown>;
+    patientId: string
+    appointmentDate: Date
+    doctorName: string
+    location: string
+    reminderType: '24h' | '2h' | '30min'
+    healthcareContext: HealthcareNotificationContext
+    metadata?: Record<string, unknown>
   }): Promise<Notification> {
     const reminderTime = this.calculateReminderTime(
       params.appointmentDate,
       params.reminderType,
-    );
+    )
 
     return this.createNotification({
       title: 'Appointment Reminder',
@@ -898,7 +898,7 @@ export class NotificationService {
         reminderType: params.reminderType,
       },
       metadata: params.metadata,
-    });
+    })
   }
 
   // ============================================================================
@@ -909,12 +909,12 @@ export class NotificationService {
    * Add notification to appropriate priority queue
    */
   private addToQueue(notification: Notification): void {
-    const queue = this.notificationQueue.get(notification.priority);
+    const queue = this.notificationQueue.get(notification.priority)
     if (!queue) {
-      throw new Error(`Invalid priority: ${notification.priority}`);
+      throw new Error(`Invalid priority: ${notification.priority}`)
     }
 
-    queue.push(notification);
+    queue.push(notification)
 
     // Check queue size limits
     if (queue.length > this.config.maxQueueSize) {
@@ -924,10 +924,10 @@ export class NotificationService {
         maxSize: this.config.maxQueueSize,
         component: 'notification-service',
         timestamp: new Date().toISOString(),
-      });
+      })
       // Remove oldest non-emergency notifications
       if (notification.priority !== 'emergency') {
-        queue.shift();
+        queue.shift()
       }
     }
   }
@@ -945,21 +945,21 @@ export class NotificationService {
         'high',
         'normal',
         'low',
-      ];
+      ]
 
       for (const priority of priorities) {
-        const queue = this.notificationQueue.get(priority);
-        if (!queue || queue.length === 0) continue;
+        const queue = this.notificationQueue.get(priority)
+        if (!queue || queue.length === 0) continue
 
         // Determine batch size based on priority
-        const batchSize = this.getBatchSizeForPriority(priority);
-        const batch = queue.splice(0, batchSize);
+        const batchSize = this.getBatchSizeForPriority(priority)
+        const batch = queue.splice(0, batchSize)
 
         // Process batch
-        await this.processBatch(batch);
+        await this.processBatch(batch)
       }
     } catch (error) {
-      logHealthcareError('notification-service', error as Error, { method: 'processQueue' });
+      logHealthcareError('notification-service', error as Error, { method: 'processQueue' })
     }
   }
 
@@ -967,24 +967,24 @@ export class NotificationService {
    * Get batch size for priority level
    */
   private getBatchSizeForPriority(priority: NotificationPriority): number {
-    const weights = this.config.priorityQueues;
-    const baseBatchSize = this.config.batchSize;
+    const weights = this.config.priorityQueues
+    const baseBatchSize = this.config.batchSize
 
     switch (priority) {
       case 'emergency':
-        return Math.max(1, Math.floor(baseBatchSize / weights.emergency));
+        return Math.max(1, Math.floor(baseBatchSize / weights.emergency))
       case 'critical':
-        return Math.max(1, Math.floor(baseBatchSize / weights.critical));
+        return Math.max(1, Math.floor(baseBatchSize / weights.critical))
       case 'urgent':
-        return Math.max(1, Math.floor(baseBatchSize / weights.urgent));
+        return Math.max(1, Math.floor(baseBatchSize / weights.urgent))
       case 'high':
-        return Math.max(1, Math.floor(baseBatchSize / weights.high));
+        return Math.max(1, Math.floor(baseBatchSize / weights.high))
       case 'normal':
-        return Math.max(1, Math.floor(baseBatchSize / weights.normal));
+        return Math.max(1, Math.floor(baseBatchSize / weights.normal))
       case 'low':
-        return Math.max(1, Math.floor(baseBatchSize / weights.low));
+        return Math.max(1, Math.floor(baseBatchSize / weights.low))
       default:
-        return 1;
+        return 1
     }
   }
 
@@ -992,8 +992,8 @@ export class NotificationService {
    * Process notification batch
    */
   private async processBatch(notifications: Notification[]): Promise<void> {
-    const promises = notifications.map(notification => this.processNotification(notification));
-    await Promise.allSettled(promises);
+    const promises = notifications.map(notification => this.processNotification(notification))
+    await Promise.allSettled(promises)
   }
 
   /**
@@ -1003,45 +1003,45 @@ export class NotificationService {
     try {
       // Check if scheduled for future delivery
       if (
-        notification.scheduledAt
-        && new Date(notification.scheduledAt) > new Date()
+        notification.scheduledAt &&
+        new Date(notification.scheduledAt) > new Date()
       ) {
         // Re-queue for later
-        this.addToQueue(notification);
-        return;
+        this.addToQueue(notification)
+        return
       }
 
       // Check if expired
       if (
-        notification.expiresAt
-        && new Date(notification.expiresAt) < new Date()
+        notification.expiresAt &&
+        new Date(notification.expiresAt) < new Date()
       ) {
-        await this.updateNotificationStatus(notification.id, 'expired');
-        return;
+        await this.updateNotificationStatus(notification.id, 'expired')
+        return
       }
 
       // Validate consent if enabled in config
       if (this.config.healthcareSettings.consentValidation) {
-        const hasConsent = await this.validateConsent(notification);
+        const hasConsent = await this.validateConsent(notification)
         if (!hasConsent) {
-          await this.updateNotificationStatus(notification.id, 'cancelled');
-          return;
+          await this.updateNotificationStatus(notification.id, 'cancelled')
+          return
         }
       }
 
       // Update status to processing
-      await this.updateNotificationStatus(notification.id, 'processing');
+      await this.updateNotificationStatus(notification.id, 'processing')
 
       // Process each delivery channel
       for (const channel of notification.channels) {
-        await this.deliverToChannel(notification, channel);
+        await this.deliverToChannel(notification, channel)
       }
     } catch (error) {
       logHealthcareError('notification-service', error as Error, {
         method: 'processNotification',
         notificationId: notification.id,
-      });
-      await this.updateNotificationStatus(notification.id, 'failed');
+      })
+      await this.updateNotificationStatus(notification.id, 'failed')
     }
   }
 
@@ -1052,18 +1052,18 @@ export class NotificationService {
     notificationId: string,
   ): Promise<void> {
     // Find notification in queues
-    let notification: Notification | undefined;
+    let notification: Notification | undefined
 
     for (const [_priority, queue] of Array.from(this.notificationQueue.entries())) {
-      const index = queue.findIndex(n => n.id === notificationId);
+      const index = queue.findIndex(n => n.id === notificationId)
       if (index !== -1) {
-        notification = queue.splice(index, 1)[0];
-        break;
+        notification = queue.splice(index, 1)[0]
+        break
       }
     }
 
     if (notification) {
-      await this.processNotification(notification);
+      await this.processNotification(notification)
     }
   }
 
@@ -1080,7 +1080,7 @@ export class NotificationService {
   ): Promise<void> {
     try {
       // Check rate limits for this channel
-      const rateLimitCheck = await this.checkChannelRateLimit(notification);
+      const rateLimitCheck = await this.checkChannelRateLimit(notification)
 
       if (!rateLimitCheck.allowed) {
         // Rate limit exceeded - schedule retry if retryAfter is provided
@@ -1089,16 +1089,16 @@ export class NotificationService {
             notification,
             channel,
             rateLimitCheck.retryAfter,
-          );
-          return;
+          )
+          return
         } else {
           // No retry allowed - drop the notification
           await this.updateNotificationStatus(
             notification.id,
             'failed',
             'Rate limit exceeded - no retry allowed',
-          );
-          return;
+          )
+          return
         }
       }
 
@@ -1109,47 +1109,47 @@ export class NotificationService {
         timestamp: new Date().toISOString(),
         status: 'processing',
         retryCount: notification.retryCount || 0,
-      };
+      }
 
       // Attempt delivery based on channel type
       switch (channel) {
         case 'email':
-          await this.deliverEmail(notification, attempt);
-          break;
+          await this.deliverEmail(notification, attempt)
+          break
         case 'sms':
-          await this.deliverSMS(notification, attempt);
-          break;
+          await this.deliverSMS(notification, attempt)
+          break
         case 'push':
-          await this.deliverPush(notification, attempt);
-          break;
+          await this.deliverPush(notification, attempt)
+          break
         case 'in_app':
-          await this.deliverInApp(notification, attempt);
-          break;
+          await this.deliverInApp(notification, attempt)
+          break
         case 'voice':
-          await this.deliverVoice(notification, attempt);
-          break;
+          await this.deliverVoice(notification, attempt)
+          break
         default:
-          throw new Error(`Unsupported delivery channel: ${channel}`);
+          throw new Error(`Unsupported delivery channel: ${channel}`)
       }
 
       // Update status to delivered
-      await this.updateNotificationStatus(notification.id, 'delivered');
+      await this.updateNotificationStatus(notification.id, 'delivered')
     } catch (error) {
       logHealthcareError('notification-service', error as Error, {
         method: 'deliverToChannel',
         notificationId: notification.id,
         channel,
-      });
+      })
 
       // Schedule retry if within retry limits
       if (notification.retryCount < this.config.retrySettings.maxRetries) {
-        await this.scheduleRetry(notification, channel);
+        await this.scheduleRetry(notification, channel)
       } else {
         await this.updateNotificationStatus(
           notification.id,
           'failed',
           error instanceof Error ? error.message : 'Unknown error',
-        );
+        )
       }
     }
   }
@@ -1162,18 +1162,18 @@ export class NotificationService {
     attempt: DeliveryAttempt,
   ): Promise<void> {
     // Use secure logging for LGPD compliance
-    const { maskSensitiveData } = await import('@neonpro/security');
-    const maskedNotificationId = maskSensitiveData(notification.id);
+    const { maskSensitiveData } = await import('@neonpro/security')
+    const maskedNotificationId = maskSensitiveData(notification.id)
 
     healthcareLogger.auditLogger.info('Delivering email notification', {
       notificationId: maskedNotificationId,
       component: 'notification-service',
       timestamp: new Date().toISOString(),
-    });
+    })
 
     // Update attempt status to sent
-    attempt.status = 'sent';
-    attempt.timestamp = new Date().toISOString();
+    attempt.status = 'sent'
+    attempt.timestamp = new Date().toISOString()
 
     // TODO: Implement actual email delivery
   }
@@ -1186,17 +1186,17 @@ export class NotificationService {
     attempt: DeliveryAttempt,
   ): Promise<void> {
     // Use secure logging for LGPD compliance
-    const { maskSensitiveData } = await import('@neonpro/security');
-    const maskedId = maskSensitiveData(notification.id);
+    const { maskSensitiveData } = await import('@neonpro/security')
+    const maskedId = maskSensitiveData(notification.id)
     healthcareLogger.auditLogger.info('Delivering SMS notification', {
       notificationId: maskedId,
       component: 'notification-service',
       timestamp: new Date().toISOString(),
-    });
+    })
 
     // Update attempt status to sent
-    attempt.status = 'sent';
-    attempt.timestamp = new Date().toISOString();
+    attempt.status = 'sent'
+    attempt.timestamp = new Date().toISOString()
 
     // TODO: Implement actual SMS delivery
   }
@@ -1209,17 +1209,17 @@ export class NotificationService {
     attempt: DeliveryAttempt,
   ): Promise<void> {
     // Use secure logging for LGPD compliance
-    const { maskSensitiveData } = await import('@neonpro/security');
-    const maskedId = maskSensitiveData(notification.id);
+    const { maskSensitiveData } = await import('@neonpro/security')
+    const maskedId = maskSensitiveData(notification.id)
     healthcareLogger.auditLogger.info('Delivering push notification', {
       notificationId: maskedId,
       component: 'notification-service',
       timestamp: new Date().toISOString(),
-    });
+    })
 
     // Update attempt status to sent
-    attempt.status = 'sent';
-    attempt.timestamp = new Date().toISOString();
+    attempt.status = 'sent'
+    attempt.timestamp = new Date().toISOString()
 
     // TODO: Implement actual push notification delivery
   }
@@ -1232,17 +1232,17 @@ export class NotificationService {
     attempt: DeliveryAttempt,
   ): Promise<void> {
     // Use secure logging for LGPD compliance
-    const { maskSensitiveData } = await import('@neonpro/security');
-    const maskedId = maskSensitiveData(notification.id);
+    const { maskSensitiveData } = await import('@neonpro/security')
+    const maskedId = maskSensitiveData(notification.id)
     healthcareLogger.auditLogger.info('Delivering in-app notification', {
       notificationId: maskedId,
       component: 'notification-service',
       timestamp: new Date().toISOString(),
-    });
+    })
 
     // Update attempt status to sent
-    attempt.status = 'sent';
-    attempt.timestamp = new Date().toISOString();
+    attempt.status = 'sent'
+    attempt.timestamp = new Date().toISOString()
 
     // TODO: Implement actual in-app notification delivery
   }
@@ -1255,27 +1255,27 @@ export class NotificationService {
     attempt: DeliveryAttempt,
   ): Promise<void> {
     // Use secure logging for LGPD compliance
-    const { maskSensitiveData } = await import('@neonpro/security');
-    const maskedId = maskSensitiveData(notification.id);
+    const { maskSensitiveData } = await import('@neonpro/security')
+    const maskedId = maskSensitiveData(notification.id)
     healthcareLogger.auditLogger.info('Delivering voice notification', {
       notificationId: maskedId,
       component: 'notification-service',
       timestamp: new Date().toISOString(),
-    });
+    })
 
     // For emergency and critical notifications, voice delivery is essential
     if (
-      notification.priority === 'emergency'
-      || notification.priority === 'critical'
+      notification.priority === 'emergency' ||
+      notification.priority === 'critical'
     ) {
       // Use secure logging for LGPD compliance
-      const { maskSensitiveData } = await import('@neonpro/security');
-      const maskedId = maskSensitiveData(notification.id);
+      const { maskSensitiveData } = await import('@neonpro/security')
+      const maskedId = maskSensitiveData(notification.id)
       healthcareLogger.auditLogger.info('High priority voice delivery', {
         notificationId: maskedId,
         component: 'notification-service',
         timestamp: new Date().toISOString(),
-      });
+      })
 
       // TODO: Implement actual voice call delivery
       // - Use healthcare-approved voice service provider
@@ -1284,17 +1284,17 @@ export class NotificationService {
       // - Implement retry logic for failed calls
 
       // Simulate successful delivery for now
-      attempt.status = 'sent';
-      attempt.timestamp = new Date().toISOString();
+      attempt.status = 'sent'
+      attempt.timestamp = new Date().toISOString()
     } else {
       healthcareLogger.auditLogger.info('Voice delivery not implemented', {
         priority: notification.priority,
         component: 'notification-service',
         timestamp: new Date().toISOString(),
-      });
-      attempt.status = 'failed';
-      attempt.errorCode = 'VOICE_NOT_IMPLEMENTED';
-      attempt.errorMessage = 'Voice delivery not implemented for non-critical notifications';
+      })
+      attempt.status = 'failed'
+      attempt.errorCode = 'VOICE_NOT_IMPLEMENTED'
+      attempt.errorMessage = 'Voice delivery not implemented for non-critical notifications'
     }
   }
 
@@ -1328,7 +1328,7 @@ export class NotificationService {
       encryptionRequired: true,
       anonymization: false,
       pseudonymization: true,
-    };
+    }
   }
 
   /**
@@ -1338,21 +1338,21 @@ export class NotificationService {
     appointmentDate: Date,
     reminderType: string,
   ): Date {
-    const reminder = new Date(appointmentDate);
+    const reminder = new Date(appointmentDate)
 
     switch (reminderType) {
       case '24h':
-        reminder.setHours(reminder.getHours() - 24);
-        break;
+        reminder.setHours(reminder.getHours() - 24)
+        break
       case '2h':
-        reminder.setHours(reminder.getHours() - 2);
-        break;
+        reminder.setHours(reminder.getHours() - 2)
+        break
       case '30min':
-        reminder.setMinutes(reminder.getMinutes() - 30);
-        break;
+        reminder.setMinutes(reminder.getMinutes() - 30)
+        break
     }
 
-    return reminder;
+    return reminder
   }
 
   /**
@@ -1363,18 +1363,18 @@ export class NotificationService {
   ): Promise<{ allowed: boolean; retryAfter?: number }> {
     // Emergency notifications bypass all rate limits
     if (
-      notification.priority === 'emergency'
-      && this.config.healthcareSettings.emergencyBypass
+      notification.priority === 'emergency' &&
+      this.config.healthcareSettings.emergencyBypass
     ) {
-      return { allowed: true };
+      return { allowed: true }
     }
 
     // Patient safety notifications bypass rate limits
     if (
-      notification.category === 'patient_safety_alert'
-      && this.config.healthcareSettings.patientSafetyPriority
+      notification.category === 'patient_safety_alert' &&
+      this.config.healthcareSettings.patientSafetyPriority
     ) {
-      return { allowed: true };
+      return { allowed: true }
     }
 
     // Map notification data to RateLimitContext
@@ -1403,18 +1403,18 @@ export class NotificationService {
         legalBasis: notification.lgpdCompliance.legalBasis,
         consentLevel: 'explicit' as const,
       },
-    };
+    }
 
     try {
-      const result = await apiRateLimitingService.checkRateLimit(rateLimitContext);
+      const result = await apiRateLimitingService.checkRateLimit(rateLimitContext)
       return {
         allowed: result.allowed,
         retryAfter: result.retryAfter,
-      };
+      }
     } catch (error) {
-      logHealthcareError('notification-service', error as Error, { method: 'checkRateLimit' });
+      logHealthcareError('notification-service', error as Error, { method: 'checkRateLimit' })
       // Fail open for healthcare notifications to ensure delivery
-      return { allowed: true };
+      return { allowed: true }
     }
   }
 
@@ -1424,35 +1424,35 @@ export class NotificationService {
   private async validateConsent(notification: Notification): Promise<boolean> {
     // Skip consent validation for emergency notifications
     if (
-      notification.priority === 'emergency'
-      || notification.category === 'emergency_notification'
-      || notification.category === 'patient_safety_alert'
+      notification.priority === 'emergency' ||
+      notification.category === 'emergency_notification' ||
+      notification.category === 'patient_safety_alert'
     ) {
       // Use secure logging for LGPD compliance
-      const { maskSensitiveData } = await import('@neonpro/security');
-      const maskedId = maskSensitiveData(notification.id);
+      const { maskSensitiveData } = await import('@neonpro/security')
+      const maskedId = maskSensitiveData(notification.id)
       healthcareLogger.auditLogger.info('Emergency notification - bypassing consent check', {
         notificationId: maskedId,
         component: 'notification-service',
         timestamp: new Date().toISOString(),
-      });
-      return true;
+      })
+      return true
     }
 
     // Check user's consent status for this notification category
-    const consentStatus = notification.healthcareContext?.patientContext?.consentStatus;
+    const consentStatus = notification.healthcareContext?.patientContext?.consentStatus
 
     if (!consentStatus) {
       healthcareLogger.auditLogger.warn('No consent data available', {
         notificationId: notification.id,
         component: 'notification-service',
         timestamp: new Date().toISOString(),
-      });
-      return false;
+      })
+      return false
     }
 
     // Validate based on notification category
-    let hasConsent = false;
+    let hasConsent = false
 
     switch (notification.category) {
       case 'appointment_reminder':
@@ -1461,35 +1461,35 @@ export class NotificationService {
       case 'test_results_available':
       case 'prescription_ready':
       case 'medication_reminder':
-        hasConsent = consentStatus.communicationConsent;
-        break;
+        hasConsent = consentStatus.communicationConsent
+        break
 
       case 'insurance_update':
       case 'payment_reminder':
-        hasConsent = consentStatus.communicationConsent;
-        break;
+        hasConsent = consentStatus.communicationConsent
+        break
 
       case 'policy_update':
       case 'consent_renewal':
       case 'privacy_policy_update':
       case 'lgpd_data_request':
-        hasConsent = consentStatus.dataProcessingConsent;
-        break;
+        hasConsent = consentStatus.dataProcessingConsent
+        break
 
       default:
-        hasConsent = false;
+        hasConsent = false
     }
 
     // Use secure logging for LGPD compliance
-    const { maskSensitiveData } = await import('@neonpro/security');
-    const maskedId = maskSensitiveData(notification.id);
+    const { maskSensitiveData } = await import('@neonpro/security')
+    const maskedId = maskSensitiveData(notification.id)
     healthcareLogger.auditLogger.info('Consent validation performed', {
       notificationId: maskedId,
       consentGranted: hasConsent,
       component: 'notification-service',
       timestamp: new Date().toISOString(),
-    });
-    return hasConsent;
+    })
+    return hasConsent
   }
 
   /**
@@ -1501,16 +1501,16 @@ export class NotificationService {
     errorMessage?: string,
   ): Promise<void> {
     // Use secure logging for LGPD compliance
-    const { maskSensitiveData } = await import('@neonpro/security');
-    const maskedId = maskSensitiveData(notificationId);
-    const maskedError = errorMessage ? maskSensitiveData(errorMessage) : '';
+    const { maskSensitiveData } = await import('@neonpro/security')
+    const maskedId = maskSensitiveData(notificationId)
+    const maskedError = errorMessage ? maskSensitiveData(errorMessage) : ''
     healthcareLogger.auditLogger.info('Notification status updated', {
       notificationId: maskedId,
       status,
       hasError: !!maskedError,
       component: 'notification-service',
       timestamp: new Date().toISOString(),
-    });
+    })
     // TODO: Implement actual status update persistence
   }
 
@@ -1526,18 +1526,18 @@ export class NotificationService {
       .filter(attempt => attempt.channel === channel)
       .sort(
         (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
-      )[0];
+      )[0]
 
-    const retryCount = (lastAttempt?.retryCount ?? 0) + 1;
+    const retryCount = (lastAttempt?.retryCount ?? 0) + 1
 
     // Use override delay if provided (from rate limiting), otherwise calculate normal retry delay
-    const retryDelay = overrideDelay ?? this.calculateRetryDelay(retryCount);
-    const nextRetryAt = new Date(Date.now() + retryDelay * 1000);
+    const retryDelay = overrideDelay ?? this.calculateRetryDelay(retryCount)
+    const nextRetryAt = new Date(Date.now() + retryDelay * 1000)
 
     // TODO: Implement persistence - store retry notification in queue/database
     // Use secure logging for LGPD compliance
-    const { maskSensitiveData } = await import('@neonpro/security');
-    const maskedId = maskSensitiveData(notification.id);
+    const { maskSensitiveData } = await import('@neonpro/security')
+    const maskedId = maskSensitiveData(notification.id)
     healthcareLogger.auditLogger.info('Notification retry scheduled', {
       notificationId: maskedId,
       retryCount,
@@ -1545,7 +1545,7 @@ export class NotificationService {
       scheduledAt: nextRetryAt.toISOString(),
       component: 'notification-service',
       timestamp: new Date().toISOString(),
-    });
+    })
   }
 
   /**
@@ -1553,28 +1553,28 @@ export class NotificationService {
    */
   private calculateRetryDelay(retryCount: number): number {
     if (!this.config.retrySettings.exponentialBackoff) {
-      return this.config.retrySettings.retryDelay;
+      return this.config.retrySettings.retryDelay
     }
 
-    const delay = this.config.retrySettings.retryDelay * Math.pow(2, retryCount);
-    return Math.min(delay, this.config.retrySettings.maxRetryDelay);
+    const delay = this.config.retrySettings.retryDelay * Math.pow(2, retryCount)
+    return Math.min(delay, this.config.retrySettings.maxRetryDelay)
   }
 
   /**
    * Get service statistics
    */
   getStatistics(): {
-    queueSizes: Record<NotificationPriority, number>;
-    totalQueued: number;
-    isInitialized: boolean;
-    config: NotificationQueueConfig;
+    queueSizes: Record<NotificationPriority, number>
+    totalQueued: number
+    isInitialized: boolean
+    config: NotificationQueueConfig
   } {
-    const queueSizes: Record<NotificationPriority, number> = {} as any;
-    let totalQueued = 0;
+    const queueSizes: Record<NotificationPriority, number> = {} as any
+    let totalQueued = 0
 
     for (const [priority, queue] of Array.from(this.notificationQueue.entries())) {
-      queueSizes[priority] = queue.length;
-      totalQueued += queue.length;
+      queueSizes[priority] = queue.length
+      totalQueued += queue.length
     }
 
     return {
@@ -1582,7 +1582,7 @@ export class NotificationService {
       totalQueued,
       isInitialized: this.isInitialized,
       config: this.config,
-    };
+    }
   }
 
   /**
@@ -1591,20 +1591,20 @@ export class NotificationService {
   destroy(): void {
     // Clear processing timer
     if (this.processingTimer) {
-      clearInterval(this.processingTimer);
-      this.processingTimer = undefined;
+      clearInterval(this.processingTimer)
+      this.processingTimer = undefined
     }
 
     // Clear queues
-    this.notificationQueue.clear();
-    this.templates.clear();
+    this.notificationQueue.clear()
+    this.templates.clear()
 
-    this.isInitialized = false;
+    this.isInitialized = false
 
     healthcareLogger.auditLogger.info('Notification service destroyed', {
       component: 'notification-service',
       timestamp: new Date().toISOString(),
-    });
+    })
   }
 }
 
@@ -1650,4 +1650,4 @@ export const notificationService = new NotificationService({
     complianceLogging: true,
     consentValidation: true,
   },
-});
+})

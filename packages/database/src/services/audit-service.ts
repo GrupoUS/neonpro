@@ -1,12 +1,12 @@
-import { SupabaseClient } from '@supabase/supabase-js';
-import { logHealthcareError } from '../../../shared/src/logging/healthcare-logger';
+import { SupabaseClient } from '@supabase/supabase-js'
 import type {
   AuditLogRequest,
   AuditSearchCriteria,
   ComplianceReport,
   MedicalDataClassification,
   RTCAuditLogEntry,
-} from '../types/audit.types';
+} from '../types/audit.types'
+import { logHealthcareError } from '../utils/logging'
 
 // Re-export types for external use
 export type {
@@ -18,31 +18,31 @@ export type {
   MedicalDataClassification,
   ResourceType,
   RTCAuditLogEntry,
-} from '../types/audit.types';
+} from '../types/audit.types'
 
 // Database log entry interface
 interface DatabaseLogEntry {
-  id: string;
-  session_id?: string;
-  user_id: string;
-  action: string;
-  user_role?: 'doctor' | 'patient' | 'nurse' | 'admin' | 'system';
-  data_classification?: MedicalDataClassification;
-  description?: string;
-  created_at: string;
-  ip_address?: string;
-  user_agent?: string;
-  resource_type?: string;
-  clinic_id?: string;
-  status?: string;
-  risk_level?: string;
-  event_type?: string;
-  timestamp?: string;
-  metadata?: Record<string, unknown>;
+  id: string
+  session_id?: string
+  user_id: string
+  action: string
+  user_role?: 'doctor' | 'patient' | 'nurse' | 'admin' | 'system'
+  data_classification?: MedicalDataClassification
+  description?: string
+  created_at: string
+  ip_address?: string
+  user_agent?: string
+  resource_type?: string
+  clinic_id?: string
+  status?: string
+  risk_level?: string
+  event_type?: string
+  timestamp?: string
+  metadata?: Record<string, unknown>
   compliance_check?: {
-    status?: string;
-    risk_level?: string;
-  };
+    status?: string
+    risk_level?: string
+  }
 }
 
 /**
@@ -62,29 +62,29 @@ export class AuditService {
       const { data, error } = await this.supabase
         .from('webrtc_audit_logs')
         .insert({
-          action: request.action || request.eventType || 'UNKNOWN',
-          user_id: request._userId,
-          resource: request.resource || request.description || 'UNKNOWN',
-          resource_type: request.resource || 'session', // Default resource type
-          ip_address: request.ipAddress || 'unknown',
-          user_agent: request.userAgent || 'unknown',
-          clinic_id: request.clinicId,
-          lgpd_basis: request.metadata?.legalBasis || null,
-          old_values: request.metadata?.oldValues || null,
-          new_values: request.metadata?.newValues || null,
+          action: _request.action || _request.eventType || 'UNKNOWN',
+          user_id: _request._userId,
+          resource: _request.resource || _request.description || 'UNKNOWN',
+          resource_type: _request.resource || 'session', // Default resource type
+          ip_address: _request.ipAddress || 'unknown',
+          user_agent: _request.userAgent || 'unknown',
+          clinic_id: _request.clinicId,
+          lgpd_basis: _request.metadata?.legalBasis || null,
+          old_values: _request.metadata?.oldValues || null,
+          new_values: _request.metadata?.newValues || null,
         })
         .select('id')
-        .single();
+        .single()
 
       if (error) {
-        logHealthcareError('database', error, { method: 'createAuditLog', action: request.action });
-        throw new Error(`Failed to create audit log: ${error.message}`);
+        logHealthcareError('database', error, { method: 'createAuditLog', action: _request.action })
+        throw new Error(`Failed to create audit log: ${error.message}`)
       }
 
-      return data.id;
+      return data.id
     } catch (error) {
-      logHealthcareError('database', error, { method: 'createAuditLog', action: request.action });
-      throw error;
+      logHealthcareError('database', error, { method: 'createAuditLog', action: _request.action })
+      throw error
     }
   }
 
@@ -101,10 +101,10 @@ export class AuditService {
     _userId: string,
     userRole: 'doctor' | 'patient' | 'nurse' | 'admin',
     metadata?: {
-      ipAddress?: string;
-      userAgent?: string;
-      clinicId?: string;
-      dataClassification?: MedicalDataClassification;
+      ipAddress?: string
+      userAgent?: string
+      clinicId?: string
+      dataClassification?: MedicalDataClassification
     },
   ): Promise<string> {
     return this.createAuditLog({
@@ -112,14 +112,14 @@ export class AuditService {
       action: 'CREATE',
       resource: 'TELEMEDICINE_SESSION',
       eventType: 'session-start',
-      userId,
+      _userId: _userId,
       userRole,
       dataClassification: metadata?.dataClassification,
       description: `${userRole} started WebRTC session`,
       ipAddress: metadata?.ipAddress,
       userAgent: metadata?.userAgent,
       clinicId: metadata?.clinicId,
-    });
+    })
   }
 
   /**
@@ -137,11 +137,11 @@ export class AuditService {
     userRole: 'doctor' | 'patient' | 'nurse' | 'admin',
     duration: number,
     metadata?: {
-      ipAddress?: string;
-      userAgent?: string;
-      clinicId?: string;
-      dataClassification?: MedicalDataClassification;
-      reason?: string;
+      ipAddress?: string
+      userAgent?: string
+      clinicId?: string
+      dataClassification?: MedicalDataClassification
+      reason?: string
     },
   ): Promise<string> {
     return this.createAuditLog({
@@ -149,7 +149,7 @@ export class AuditService {
       action: 'UPDATE',
       resource: 'TELEMEDICINE_SESSION',
       eventType: 'session-end',
-      userId,
+      _userId: _userId,
       userRole,
       dataClassification: metadata?.dataClassification,
       description: `${userRole} ended WebRTC session (duration: ${duration}s)${
@@ -162,7 +162,7 @@ export class AuditService {
         sessionDuration: duration,
         endReason: metadata?.reason,
       },
-    });
+    })
   }
 
   /**
@@ -180,11 +180,11 @@ export class AuditService {
     dataType: string,
     patientId?: string,
     metadata?: {
-      ipAddress?: string;
-      userAgent?: string;
-      clinicId?: string;
-      dataClassification?: MedicalDataClassification;
-      legalBasis?: string;
+      ipAddress?: string
+      userAgent?: string
+      clinicId?: string
+      dataClassification?: MedicalDataClassification
+      legalBasis?: string
     },
   ): Promise<string> {
     return this.createAuditLog({
@@ -192,7 +192,7 @@ export class AuditService {
       action: 'READ',
       resource: 'PATIENT_DATA',
       eventType: 'data-access',
-      userId,
+      _userId: _userId,
       userRole,
       dataClassification: metadata?.dataClassification,
       description: `${userRole} accessed ${dataType}${
@@ -206,7 +206,7 @@ export class AuditService {
         patientId,
         legalBasis: metadata?.legalBasis,
       },
-    });
+    })
   }
 
   /**
@@ -224,10 +224,10 @@ export class AuditService {
     consentType: string,
     isValid: boolean,
     metadata?: {
-      ipAddress?: string;
-      userAgent?: string;
-      clinicId?: string;
-      sessionId?: string;
+      ipAddress?: string
+      userAgent?: string
+      clinicId?: string
+      sessionId?: string
     },
   ): Promise<string> {
     return this.createAuditLog({
@@ -235,7 +235,7 @@ export class AuditService {
       action: 'READ',
       resource: 'PATIENT_CONSENT',
       eventType: 'consent-verification',
-      userId,
+      _userId: _userId,
       userRole: 'system',
       dataClassification: 'sensitive',
       description: `Consent verification for ${consentType}: ${isValid ? 'VALID' : 'INVALID'}`,
@@ -247,7 +247,7 @@ export class AuditService {
         consentType,
         isValid,
       },
-    });
+    })
   }
 
   /**
@@ -265,11 +265,11 @@ export class AuditService {
     severity: 'low' | 'medium' | 'high' | 'critical',
     description: string,
     metadata?: {
-      ipAddress?: string;
-      userAgent?: string;
-      clinicId?: string;
-      sessionId?: string;
-      additionalData?: Record<string, unknown>;
+      ipAddress?: string
+      userAgent?: string
+      clinicId?: string
+      sessionId?: string
+      additionalData?: Record<string, unknown>
     },
   ): Promise<string> {
     return this.createAuditLog({
@@ -288,7 +288,7 @@ export class AuditService {
         severity,
         ...metadata?.additionalData,
       },
-    });
+    })
   }
 
   /**
@@ -315,21 +315,21 @@ export class AuditService {
         `,
         )
         .eq('session_id', sessionId)
-        .order('timestamp', { ascending: false });
+        .order('timestamp', { ascending: false })
 
       if (error) {
-        logHealthcareError('database', error, { method: 'getSessionAuditLogs', sessionId });
-        return [];
+        logHealthcareError('database', error, { method: 'getSessionAuditLogs', sessionId })
+        return []
       }
 
       if (!logs) {
-        return [];
+        return []
       }
 
-      return logs.map((log: DatabaseLogEntry) => this.mapDatabaseLogToEntry(log));
+      return logs.map((log: DatabaseLogEntry) => this.mapDatabaseLogToEntry(log))
     } catch (error) {
-      logHealthcareError('database', error, { method: 'getSessionAuditLogs', sessionId });
-      return [];
+      logHealthcareError('database', error, { method: 'getSessionAuditLogs', sessionId })
+      return []
     }
   }
 
@@ -348,27 +348,27 @@ export class AuditService {
         .from('webrtc_audit_logs')
         .select('*')
         .eq('user_id', _userId)
-        .order('timestamp', { ascending: false });
+        .order('timestamp', { ascending: false })
 
       if (limit) {
-        query = query.limit(limit);
+        query = query.limit(limit)
       }
 
-      const { data: logs, error } = await query;
+      const { data: logs, error } = await query
 
       if (error) {
-        logHealthcareError('database', error, { method: 'getUserAuditLogs', userId: _userId });
-        return [];
+        logHealthcareError('database', error, { method: 'getUserAuditLogs', userId: _userId })
+        return []
       }
 
       if (!logs) {
-        return [];
+        return []
       }
 
-      return logs.map((log: DatabaseLogEntry) => this.mapDatabaseLogToEntry(log));
+      return logs.map((log: DatabaseLogEntry) => this.mapDatabaseLogToEntry(log))
     } catch (error) {
-      logHealthcareError('database', error, { method: 'getUserAuditLogs', userId: _userId });
-      return [];
+      logHealthcareError('database', error, { method: 'getUserAuditLogs', userId: _userId })
+      return []
     }
   }
 
@@ -391,17 +391,17 @@ export class AuditService {
         .from('webrtc_audit_logs')
         .select('*')
         .gte('timestamp', startDate.toISOString())
-        .lte('timestamp', endDate.toISOString());
+        .lte('timestamp', endDate.toISOString())
 
       if (clinicId) {
-        query = query.eq('clinic_id', clinicId);
+        query = query.eq('clinic_id', clinicId)
       }
 
       if (limit) {
-        query = query.limit(limit);
+        query = query.limit(limit)
       }
 
-      const { data: logs, error } = await query;
+      const { data: logs, error } = await query
 
       if (error) {
         logHealthcareError('database', error, {
@@ -409,23 +409,23 @@ export class AuditService {
           startDate,
           endDate,
           clinicId,
-        });
-        return [];
+        })
+        return []
       }
 
       if (!logs) {
-        return [];
+        return []
       }
 
-      return logs.map((log: any) => this.mapDatabaseLogToEntry(log));
+      return logs.map((log: any) => this.mapDatabaseLogToEntry(log))
     } catch (error) {
       logHealthcareError('database', error, {
         method: 'getAuditLogsByDateRange',
         startDate,
         endDate,
         clinicId,
-      });
-      return [];
+      })
+      return []
     }
   }
 
@@ -446,13 +446,13 @@ export class AuditService {
         .from('webrtc_audit_logs')
         .select('*')
         .gte('timestamp', startDate.toISOString())
-        .lte('timestamp', endDate.toISOString());
+        .lte('timestamp', endDate.toISOString())
 
       if (clinicId) {
-        query = query.eq('clinic_id', clinicId);
+        query = query.eq('clinic_id', clinicId)
       }
 
-      const { data: logs, error } = await query;
+      const { data: logs, error } = await query
 
       if (error) {
         logHealthcareError('database', error, {
@@ -460,25 +460,25 @@ export class AuditService {
           startDate,
           endDate,
           clinicId,
-        });
+        })
         throw new Error(
           `Failed to generate compliance report: ${error.message}`,
-        );
+        )
       }
 
       const auditLogs = logs
         ? logs.map((log: any) => this.mapDatabaseLogToEntry(log))
-        : [];
+        : []
 
-      return this.generateComplianceReport(auditLogs, startDate, endDate);
+      return this.generateComplianceReport(auditLogs, startDate, endDate)
     } catch (error) {
       logHealthcareError('database', error, {
         method: 'getComplianceReport',
         startDate,
         endDate,
         clinicId,
-      });
-      throw error;
+      })
+      throw error
     }
   }
 
@@ -491,68 +491,68 @@ export class AuditService {
     criteria: AuditSearchCriteria,
   ): Promise<RTCAuditLogEntry[]> {
     try {
-      let query = this.supabase.from('webrtc_audit_logs').select('*');
+      let query = this.supabase.from('webrtc_audit_logs').select('*')
 
       if (criteria.sessionIds?.length) {
-        query = query.in('session_id', criteria.sessionIds);
+        query = query.in('session_id', criteria.sessionIds)
       }
 
       if (criteria.userIds?.length) {
-        query = query.in('user_id', criteria.userIds);
+        query = query.in('user_id', criteria.userIds)
       }
 
       if (criteria.eventTypes?.length) {
-        query = query.in('event_type', criteria.eventTypes);
+        query = query.in('event_type', criteria.eventTypes)
       }
 
       if (criteria.dataClassifications?.length) {
-        query = query.in('data_classification', criteria.dataClassifications);
+        query = query.in('data_classification', criteria.dataClassifications)
       }
 
       if (criteria.startDate) {
         const startDate = typeof criteria.startDate === 'string'
           ? new Date(criteria.startDate)
-          : criteria.startDate;
-        query = query.gte('timestamp', startDate.toISOString());
+          : criteria.startDate
+        query = query.gte('timestamp', startDate.toISOString())
       }
 
       if (criteria.endDate) {
         const endDate = typeof criteria.endDate === 'string'
           ? new Date(criteria.endDate)
-          : criteria.endDate;
-        query = query.lte('timestamp', endDate.toISOString());
+          : criteria.endDate
+        query = query.lte('timestamp', endDate.toISOString())
       }
 
       if (criteria.clinicId) {
-        query = query.eq('clinic_id', criteria.clinicId);
+        query = query.eq('clinic_id', criteria.clinicId)
       }
 
       if (criteria.complianceStatus !== undefined) {
-        const statusFilter = criteria.complianceStatus ? 'SUCCESS' : 'FAILED';
-        query = query.eq('status', statusFilter);
+        const statusFilter = criteria.complianceStatus ? 'SUCCESS' : 'FAILED'
+        query = query.eq('status', statusFilter)
       }
 
       if (criteria.limit) {
-        query = query.limit(criteria.limit);
+        query = query.limit(criteria.limit)
       }
 
-      query = query.order('timestamp', { ascending: false });
+      query = query.order('timestamp', { ascending: false })
 
-      const { data: logs, error } = await query;
+      const { data: logs, error } = await query
 
       if (error) {
-        logHealthcareError('database', error, { method: 'searchAuditLogs', criteria });
-        return [];
+        logHealthcareError('database', error, { method: 'searchAuditLogs', criteria })
+        return []
       }
 
       if (!logs) {
-        return [];
+        return []
       }
 
-      return logs.map((log: any) => this.mapDatabaseLogToEntry(log));
+      return logs.map((log: any) => this.mapDatabaseLogToEntry(log))
     } catch (error) {
-      logHealthcareError('database', error, { method: 'searchAuditLogs', criteria });
-      return [];
+      logHealthcareError('database', error, { method: 'searchAuditLogs', criteria })
+      return []
     }
   }
 
@@ -577,14 +577,14 @@ export class AuditService {
       clinicContext: log.clinic_id ? { clinicId: log.clinic_id } : undefined,
       metadata: log.metadata,
       complianceCheck: {
-        isCompliant: log.compliance_check?.status === 'COMPLIANT'
-          || log.status === 'SUCCESS',
+        isCompliant: log.compliance_check?.status === 'COMPLIANT' ||
+          log.status === 'SUCCESS',
         violations: [],
-        riskLevel: (log.compliance_check?.risk_level
-          || log.risk_level
-          || 'LOW') as 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL',
+        riskLevel: (log.compliance_check?.risk_level ||
+          log.risk_level ||
+          'LOW') as 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL',
       },
-    };
+    }
   }
 
   /**
@@ -598,9 +598,9 @@ export class AuditService {
       'data-access': 'data-access',
       'consent-verification': 'consent-verification',
       'security-event': 'security-event',
-    };
+    }
 
-    return actionMap[action] || action;
+    return actionMap[action] || action
   }
 
   /**
@@ -612,40 +612,40 @@ export class AuditService {
     startDate: Date,
     endDate: Date,
   ): ComplianceReport {
-    const totalEvents = logs.length;
+    const totalEvents = logs.length
     const compliantEvents = logs.filter(
       log => log.complianceCheck?.isCompliant === true,
-    ).length;
-    const nonCompliantEvents = totalEvents - compliantEvents;
+    ).length
+    const nonCompliantEvents = totalEvents - compliantEvents
 
     const riskLevels = {
       low: 0,
       medium: 0,
       high: 0,
       critical: 0,
-    };
+    }
 
-    const violations: Record<string, number> = {};
+    const violations: Record<string, number> = {}
 
     logs.forEach(log => {
-      const riskLevel = log.complianceCheck?.riskLevel || 'LOW';
+      const riskLevel = log.complianceCheck?.riskLevel || 'LOW'
       if (riskLevel in riskLevels) {
-        riskLevels[riskLevel.toLowerCase() as keyof typeof riskLevels]++;
+        riskLevels[riskLevel.toLowerCase() as keyof typeof riskLevels]++
       }
-    });
+    })
 
-    const recommendations: string[] = [];
+    const recommendations: string[] = []
 
     if (nonCompliantEvents > 0) {
-      recommendations.push('Review and address non-compliant events');
+      recommendations.push('Review and address non-compliant events')
     }
 
     if (riskLevels.high > 0 || riskLevels.critical > 0) {
-      recommendations.push('Investigate high and critical risk events');
+      recommendations.push('Investigate high and critical risk events')
     }
 
     if (Object.keys(violations).length > 0) {
-      recommendations.push('Address identified compliance violations');
+      recommendations.push('Address identified compliance violations')
     }
 
     return {
@@ -670,18 +670,18 @@ export class AuditService {
       riskLevels,
       violations,
       recommendations,
-    };
+    }
   }
 
   private calculateOverallRiskLevel(riskLevels: {
-    low: number;
-    medium: number;
-    high: number;
-    critical: number;
+    low: number
+    medium: number
+    high: number
+    critical: number
   }): 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL' {
-    if (riskLevels.critical > 0) return 'CRITICAL';
-    if (riskLevels.high > 0) return 'HIGH';
-    if (riskLevels.medium > 0) return 'MEDIUM';
-    return 'LOW';
+    if (riskLevels.critical > 0) return 'CRITICAL'
+    if (riskLevels.high > 0) return 'HIGH'
+    if (riskLevels.medium > 0) return 'MEDIUM'
+    return 'LOW'
   }
 }

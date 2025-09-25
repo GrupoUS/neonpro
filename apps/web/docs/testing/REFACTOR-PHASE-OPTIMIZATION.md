@@ -28,9 +28,9 @@ This document captures the comprehensive REFACTOR phase of the NeonPro frontend 
 
 ```typescript
 // ❌ Before: Scattered test files with inconsistent patterns
-src / __tests__ / integration / ClientRegistrationAgent.test.tsx;
-src / __tests__ / basic.test.tsx;
-src / __tests__ / components / AppointmentForm.test.tsx;
+src / __tests__ / integration / ClientRegistrationAgent.test.tsx
+src / __tests__ / basic.test.tsx
+src / __tests__ / components / AppointmentForm.test.tsx
 ```
 
 #### **✅ Optimized Structure**:
@@ -93,7 +93,7 @@ export default defineConfig({
       dir: './node_modules/.vitest',
     },
   },
-});
+})
 ```
 
 ### 3. **Memory Optimization**
@@ -102,27 +102,27 @@ export default defineConfig({
 
 ```typescript
 // ✅ Optimized mocking with memory cleanup
-import { afterAll, afterEach, beforeAll } from 'vitest';
+import { afterAll, afterEach, beforeAll } from 'vitest'
 
 // Shared mock instances
-const mockInstances = new Map();
+const mockInstances = new Map()
 
 beforeAll(() => {
   // Initialize shared mocks
-  mockInstances.set('api', createAPIMock());
-  mockInstances.set('storage', createStorageMock());
-});
+  mockInstances.set('api', createAPIMock())
+  mockInstances.set('storage', createStorageMock())
+})
 
 afterEach(() => {
   // Reset but don't recreate mocks
-  mockInstances.forEach(mock => mock.reset());
-});
+  mockInstances.forEach(mock => mock.reset())
+})
 
 afterAll(() => {
   // Clean up all instances
-  mockInstances.forEach(mock => mock.destroy());
-  mockInstances.clear();
-});
+  mockInstances.forEach(mock => mock.destroy())
+  mockInstances.clear()
+})
 ```
 
 ---
@@ -135,20 +135,20 @@ afterAll(() => {
 
 ```typescript
 // src/test/utils/enhanced-render.tsx
-import { AuthProvider } from '@/components/auth-provider';
-import { LGPDProvider } from '@/components/lgpd-provider';
-import { ThemeProvider } from '@/components/theme-provider';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { BrowserRouter } from '@tanstack/react-router';
-import { render as rtlRender, RenderOptions } from '@testing-library/react';
-import React from 'react';
+import { AuthProvider } from '@/components/auth-provider'
+import { LGPDProvider } from '@/components/lgpd-provider'
+import { ThemeProvider } from '@/components/theme-provider'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { BrowserRouter } from '@tanstack/react-router'
+import { render as rtlRender, RenderOptions } from '@testing-library/react'
+import React from 'react'
 
 type ProvidersProps = {
-  children: React.ReactNode;
-  theme?: 'light' | 'dark';
-  isAuthenticated?: boolean;
-  hasLGPDConsent?: boolean;
-};
+  children: React.ReactNode
+  theme?: 'light' | 'dark'
+  isAuthenticated?: boolean
+  hasLGPDConsent?: boolean
+}
 
 const AllProviders: React.FC<ProvidersProps> = ({
   children,
@@ -161,7 +161,7 @@ const AllProviders: React.FC<ProvidersProps> = ({
       queries: { retry: false },
       mutations: { retry: false },
     },
-  });
+  })
 
   return React.createElement(
     BrowserRouter,
@@ -183,14 +183,14 @@ const AllProviders: React.FC<ProvidersProps> = ({
         ),
       ),
     ),
-  );
-};
+  )
+}
 
 type EnhancedRenderOptions = Omit<RenderOptions, 'wrapper'> & {
-  theme?: 'light' | 'dark';
-  isAuthenticated?: boolean;
-  hasLGPDConsent?: boolean;
-};
+  theme?: 'light' | 'dark'
+  isAuthenticated?: boolean
+  hasLGPDConsent?: boolean
+}
 
 export const render = (
   ui: React.ReactElement,
@@ -207,7 +207,7 @@ export const render = (
       theme,
       isAuthenticated,
       hasLGPDConsent,
-    });
+    })
 
   return {
     ...rtlRender(ui, { wrapper: Wrapper, ...options }),
@@ -218,11 +218,11 @@ export const render = (
         ...options,
         ...newProps,
       }),
-  };
-};
+  }
+}
 
 // Re-export everything
-export * from '@testing-library/react';
+export * from '@testing-library/react'
 ```
 
 ### 2. **Custom Matchers for Aesthetic Platform**
@@ -231,33 +231,33 @@ export * from '@testing-library/react';
 
 ```typescript
 // src/test/matchers/lgpd-matchers.ts
-import { expect } from 'vitest';
+import { expect } from 'vitest'
 
 expect.extend({
   toBeRedacted(received: string) {
-    const hasRedaction = /\*{3,}/.test(received);
-    const hasVisibleContent = /[^\*\s]/.test(received);
+    const hasRedaction = /\*{3,}/.test(received)
+    const hasVisibleContent = /[^\*\s]/.test(received)
 
     return {
       message: () => `expected ${received} ${hasRedaction ? 'not ' : ''}to be redacted`,
       pass: hasRedaction && hasVisibleContent,
-    };
+    }
   },
 
   toBeLGPDCompliant(received: string) {
-    const issues: string[] = [];
+    const issues: string[] = []
 
     // Check for unredacted PII
     if (/\d{3}\.\d{3}\.\d{3}-\d{2}/.test(received)) {
-      issues.push('Unredacted CPF detected');
+      issues.push('Unredacted CPF detected')
     }
 
     if (/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/.test(received)) {
-      issues.push('Unredacted email detected');
+      issues.push('Unredacted email detected')
     }
 
     if (/\(\d{2}\)\s?\d{4,5}-\d{4}/.test(received)) {
-      issues.push('Unredacted phone detected');
+      issues.push('Unredacted phone detected')
     }
 
     return {
@@ -266,9 +266,9 @@ expect.extend({
           ? `LGPD compliance issues: ${issues.join(', ')}`
           : 'Data is LGPD compliant',
       pass: issues.length === 0,
-    };
+    }
   },
-});
+})
 ```
 
 ### 3. **Enhanced Mock Factories**
@@ -277,8 +277,8 @@ expect.extend({
 
 ```typescript
 // src/test/factories/patient-factory.ts
-import { Patient } from '@/types/patient';
-import { faker } from '@faker-js/faker';
+import { Patient } from '@/types/patient'
+import { faker } from '@faker-js/faker'
 
 export const createMockPatient = (overrides: Partial<Patient> = {}): Patient => ({
   id: faker.string.uuid(),
@@ -305,27 +305,27 @@ export const createMockPatient = (overrides: Partial<Patient> = {}): Patient => 
   createdAt: faker.date.recent().toISOString(),
   updatedAt: faker.date.recent().toISOString(),
   ...overrides,
-});
+})
 
 export const createMockPatientList = (count: number = 10): Patient[] =>
-  Array.from({ length: count }, () => createMockPatient());
+  Array.from({ length: count }, () => createMockPatient())
 
 // Helper functions
 const generateValidCPF = (): string => {
-  const base = Array.from({ length: 9 }, () => Math.floor(Math.random() * 10));
-  const firstDigit = calculateCPFVerifier(base, [10, 9, 8, 7, 6, 5, 4, 3, 2]);
-  const secondDigit = calculateCPFVerifier([...base, firstDigit], [11, 10, 9, 8, 7, 6, 5, 4, 3, 2]);
+  const base = Array.from({ length: 9 }, () => Math.floor(Math.random() * 10))
+  const firstDigit = calculateCPFVerifier(base, [10, 9, 8, 7, 6, 5, 4, 3, 2])
+  const secondDigit = calculateCPFVerifier([...base, firstDigit], [11, 10, 9, 8, 7, 6, 5, 4, 3, 2])
 
   return `${base.slice(0, 3).join('')}.${base.slice(3, 6).join('')}.${
     base.slice(6, 9).join('')
-  }-${firstDigit}${secondDigit}`;
-};
+  }-${firstDigit}${secondDigit}`
+}
 
 const calculateCPFVerifier = (digits: number[], weights: number[]): number => {
-  const sum = digits.reduce((acc, digit, index) => acc + digit * weights[index], 0);
-  const remainder = sum % 11;
-  return remainder < 2 ? 0 : 11 - remainder;
-};
+  const sum = digits.reduce((acc, digit, index) => acc + digit * weights[index], 0)
+  const remainder = sum % 11
+  return remainder < 2 ? 0 : 11 - remainder
+}
 ```
 
 ---
@@ -368,7 +368,7 @@ export default defineConfig({
       ],
     },
   },
-});
+})
 ```
 
 ### 2. **Mock Response Optimization**
@@ -377,17 +377,17 @@ export default defineConfig({
 
 ```typescript
 // src/test/mocks/optimized-handlers.ts
-import { delay, http, HttpResponse } from 'msw';
+import { delay, http, HttpResponse } from 'msw'
 
 // Response cache for consistent performance
-const responseCache = new Map<string, any>();
+const responseCache = new Map<string, any>()
 
 export const optimizedHandlers = [
   // Cached responses for frequently accessed endpoints
   http.get('/api/patients', () => {
-    const cacheKey = 'patients-list';
+    const cacheKey = 'patients-list'
     if (responseCache.has(cacheKey)) {
-      return HttpResponse.json(responseCache.get(cacheKey));
+      return HttpResponse.json(responseCache.get(cacheKey))
     }
 
     const response = {
@@ -398,25 +398,25 @@ export const optimizedHandlers = [
         limit: 20,
         total: 100,
       },
-    };
+    }
 
-    responseCache.set(cacheKey, response);
-    return HttpResponse.json(response);
+    responseCache.set(cacheKey, response)
+    return HttpResponse.json(response)
   }),
 
   // Simulated network delay for realistic testing
   http.post('/api/patients', async ({ request }) => {
-    await delay(100); // Simulate network latency
+    await delay(100) // Simulate network latency
 
-    const patientData = await request.json();
-    const newPatient = createMockPatient(patientData);
+    const patientData = await request.json()
+    const newPatient = createMockPatient(patientData)
 
     return HttpResponse.json({
       success: true,
       data: newPatient,
-    }, { status: 201 });
+    }, { status: 201 })
   }),
-];
+]
 ```
 
 ---

@@ -4,7 +4,7 @@
  * Factory functions for creating mock data for testing.
  */
 
-import { randomDate, randomEmail, randomString } from './index';
+import { randomDate, randomEmail, randomString } from './index'
 
 /**
  * Factory for creating mock API responses
@@ -16,7 +16,7 @@ export class MockAPIResponseFactory {
       data,
       message: message || 'Operation successful',
       timestamp: new Date().toISOString(),
-    };
+    }
   }
 
   static error(message: string, code?: string, statusCode: number = 400) {
@@ -28,7 +28,7 @@ export class MockAPIResponseFactory {
         statusCode,
       },
       timestamp: new Date().toISOString(),
-    };
+    }
   }
 
   static paginated<T>(
@@ -37,11 +37,11 @@ export class MockAPIResponseFactory {
     limit: number = 10,
     total?: number,
   ) {
-    const startIndex = (page - 1) * limit;
-    const endIndex = startIndex + limit;
-    const paginatedItems = items.slice(startIndex, endIndex);
-    const totalItems = total || items.length;
-    const totalPages = Math.ceil(totalItems / limit);
+    const startIndex = (page - 1) * limit
+    const endIndex = startIndex + limit
+    const paginatedItems = items.slice(startIndex, endIndex)
+    const totalItems = total || items.length
+    const totalPages = Math.ceil(totalItems / limit)
 
     return {
       success: true,
@@ -55,7 +55,7 @@ export class MockAPIResponseFactory {
         hasPrev: page > 1,
       },
       timestamp: new Date().toISOString(),
-    };
+    }
   }
 }
 
@@ -73,11 +73,11 @@ export class MockUserFactory {
       createdAt: randomDate(),
       updatedAt: new Date(),
       ...overrides,
-    };
+    }
   }
 
   static createBatch(count: number, overrides: Record<string, any> = {}) {
-    return Array.from({ length: count }, () => this.create(overrides));
+    return Array.from({ length: count }, () => this.create(overrides))
   }
 
   static createAdmin(overrides: Record<string, any> = {}) {
@@ -85,7 +85,7 @@ export class MockUserFactory {
       role: 'admin',
       permissions: ['read', 'write', 'delete'],
       ...overrides,
-    });
+    })
   }
 
   static createPatient(overrides: Record<string, any> = {}) {
@@ -93,7 +93,7 @@ export class MockUserFactory {
       role: 'patient',
       patientId: randomString(10),
       ...overrides,
-    });
+    })
   }
 
   static createProfessional(overrides: Record<string, any> = {}) {
@@ -102,7 +102,7 @@ export class MockUserFactory {
       crm: `CRM/SP ${Math.floor(Math.random() * 999999)}`,
       specialty: 'General Medicine',
       ...overrides,
-    });
+    })
   }
 }
 
@@ -138,7 +138,7 @@ export class MockHealthcareFactory {
       createdAt: randomDate(),
       updatedAt: new Date(),
       ...overrides,
-    };
+    }
   }
 
   static createClinic(overrides: Record<string, any> = {}) {
@@ -168,14 +168,14 @@ export class MockHealthcareFactory {
       createdAt: randomDate(),
       updatedAt: new Date(),
       ...overrides,
-    };
+    }
   }
 
   static createAppointment(overrides: Record<string, any> = {}) {
     const appointmentDate = randomDate(
       new Date(),
       new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-    );
+    )
 
     return {
       id: randomString(12),
@@ -194,73 +194,73 @@ export class MockHealthcareFactory {
       createdAt: randomDate(),
       updatedAt: new Date(),
       ...overrides,
-    };
+    }
   }
 
   private static generateCPF(): string {
-    const digits = Array.from({ length: 9 }, () => Math.floor(Math.random() * 10));
+    const digits = Array.from({ length: 9 }, () => Math.floor(Math.random() * 10))
 
     // Calculate first check digit
     let sum = digits.reduce(
       (acc, digit, index) => acc + digit * (10 - index),
       0,
-    );
-    let checkDigit1 = 11 - (sum % 11);
-    if (checkDigit1 >= 10) checkDigit1 = 0;
+    )
+    let checkDigit1 = 11 - (sum % 11)
+    if (checkDigit1 >= 10) checkDigit1 = 0
 
     // Calculate second check digit
-    sum = digits.reduce((acc, digit, index) => acc + digit * (11 - index), 0)
-      + checkDigit1 * 2;
-    let checkDigit2 = 11 - (sum % 11);
-    if (checkDigit2 >= 10) checkDigit2 = 0;
+    sum = digits.reduce((acc, digit, index) => acc + digit * (11 - index), 0) +
+      checkDigit1 * 2
+    let checkDigit2 = 11 - (sum % 11)
+    if (checkDigit2 >= 10) checkDigit2 = 0
 
-    const allDigits = [...digits, checkDigit1, checkDigit2];
+    const allDigits = [...digits, checkDigit1, checkDigit2]
     return `${allDigits.slice(0, 3).join('')}.${allDigits.slice(3, 6).join('')}.${
       allDigits
         .slice(6, 9)
         .join('')
-    }-${allDigits.slice(9).join('')}`;
+    }-${allDigits.slice(9).join('')}`
   }
 
   private static generateCNPJ(): string {
-    const digits = Array.from({ length: 12 }, () => Math.floor(Math.random() * 10));
+    const digits = Array.from({ length: 12 }, () => Math.floor(Math.random() * 10))
 
     // Calculate first check digit
-    const weights1 = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+    const weights1 = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2]
     let sum = digits.reduce(
       (acc, digit, index) => acc + digit * (weights1[index] || 0),
       0,
-    );
-    let checkDigit1 = sum % 11 < 2 ? 0 : 11 - (sum % 11);
+    )
+    let checkDigit1 = sum % 11 < 2 ? 0 : 11 - (sum % 11)
 
     // Calculate second check digit
-    const weights2 = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+    const weights2 = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2]
     sum = [...digits, checkDigit1].reduce(
       (acc, digit, index) => acc + digit * (weights2[index] || 0),
       0,
-    );
-    let checkDigit2 = sum % 11 < 2 ? 0 : 11 - (sum % 11);
+    )
+    let checkDigit2 = sum % 11 < 2 ? 0 : 11 - (sum % 11)
 
-    const allDigits = [...digits, checkDigit1, checkDigit2];
+    const allDigits = [...digits, checkDigit1, checkDigit2]
     return `${allDigits.slice(0, 2).join('')}.${allDigits.slice(2, 5).join('')}.${
       allDigits
         .slice(5, 8)
         .join(
           '',
         )
-    }/${allDigits.slice(8, 12).join('')}-${allDigits.slice(12).join('')}`;
+    }/${allDigits.slice(8, 12).join('')}-${allDigits.slice(12).join('')}`
   }
 
   private static generatePhone(): string {
-    const areaCode = Math.floor(Math.random() * 89) + 11; // 11-99
-    const firstPart = Math.floor(Math.random() * 9000) + 1000; // 1000-9999
-    const secondPart = Math.floor(Math.random() * 9000) + 1000; // 1000-9999
-    return `(${areaCode}) ${firstPart}-${secondPart}`;
+    const areaCode = Math.floor(Math.random() * 89) + 11 // 11-99
+    const firstPart = Math.floor(Math.random() * 9000) + 1000 // 1000-9999
+    const secondPart = Math.floor(Math.random() * 9000) + 1000 // 1000-9999
+    return `(${areaCode}) ${firstPart}-${secondPart}`
   }
 
   private static generateZipCode(): string {
-    const firstPart = Math.floor(Math.random() * 90000) + 10000; // 10000-99999
-    const secondPart = Math.floor(Math.random() * 900) + 100; // 100-999
-    return `${firstPart}-${secondPart}`;
+    const firstPart = Math.floor(Math.random() * 90000) + 10000 // 10000-99999
+    const secondPart = Math.floor(Math.random() * 900) + 100 // 100-999
+    return `${firstPart}-${secondPart}`
   }
 }

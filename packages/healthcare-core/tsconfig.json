@@ -1,0 +1,36 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "rootDir": "src",
+    "baseUrl": ".",
+    "tsBuildInfoFile": "./.tsbuildinfo-healthcare-core",
+    "paths": {
+      "@/*": ["src/*"],
+      "@/entities/*": ["src/entities/*"],
+      "@/services/*": ["src/services/*"],
+      "@/workflows/*": ["src/workflows/*"],
+      "@/utils/*": ["src/utils/*"]
+    },
+    "composite": true,
+    "module": "Node16",
+    "noEmit": false,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true
+  },
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "dist",
+    "node_modules",
+    "**/*.test.ts",
+    "**/*.spec.ts"
+  ],
+  "references": [
+    { "path": "../types" },
+    { "path": "../shared" },
+    { "path": "../database" }
+  ]
+}

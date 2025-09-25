@@ -1,75 +1,75 @@
-import { SupabaseClient } from '@supabase/supabase-js';
-import { HealthcareLogger } from '../logging/healthcare-logger';
-import { SessionManager } from '../session/session-manager';
+import { SupabaseClient } from '@supabase/supabase-js'
+import { HealthcareLogger } from '../logging/healthcare-logger'
+import { SessionManager } from '../session/session-manager'
 
 export interface ConversationMessage {
-  id: string;
-  _role: 'user' | 'assistant' | 'system';
-  content: string;
-  timestamp: Date;
+  id: string
+  _role: 'user' | 'assistant' | 'system'
+  content: string
+  timestamp: Date
   metadata?: {
-    tool_calls?: any[];
-    citations?: any[];
-    confidence?: number;
-    intent?: string;
-    entities?: any[];
-  };
+    tool_calls?: any[]
+    citations?: any[]
+    confidence?: number
+    intent?: string
+    entities?: any[]
+  }
 }
 
 export interface ConversationContext {
-  id: string;
-  sessionId: string;
-  _userId: string;
-  clinicId: string;
-  patientId?: string;
-  title: string;
-  messages: ConversationMessage[];
+  id: string
+  sessionId: string
+  _userId: string
+  clinicId: string
+  patientId?: string
+  title: string
+  messages: ConversationMessage[]
   _context?: {
-    currentIntent?: string;
-    patientContext?: any;
-    medicalHistory?: any;
-    preferences?: any;
-    lastTopic?: string;
-    followUpQuestions?: string[];
-  };
-  status: 'active' | 'archived' | 'deleted';
-  createdAt: Date;
-  updatedAt: Date;
-  expiresAt?: Date;
+    currentIntent?: string
+    patientContext?: any
+    medicalHistory?: any
+    preferences?: any
+    lastTopic?: string
+    followUpQuestions?: string[]
+  }
+  status: 'active' | 'archived' | 'deleted'
+  createdAt: Date
+  updatedAt: Date
+  expiresAt?: Date
 }
 
 export interface ConversationCreateParams {
-  sessionId: string;
-  _userId: string;
-  clinicId: string;
-  patientId?: string;
-  title?: string;
-  initialContext?: any;
-  expirationHours?: number;
+  sessionId: string
+  _userId: string
+  clinicId: string
+  patientId?: string
+  title?: string
+  initialContext?: any
+  expirationHours?: number
 }
 
 export interface ConversationUpdateParams {
-  patientId?: string;
-  title?: string;
-  status?: 'active' | 'archived' | 'deleted';
-  _context?: any;
-  expiresAt?: Date;
+  patientId?: string
+  title?: string
+  status?: 'active' | 'archived' | 'deleted'
+  _context?: any
+  expiresAt?: Date
 }
 
 export class ConversationContextManager {
-  private supabase: SupabaseClient;
-  private logger: HealthcareLogger;
-  private sessionManager: SessionManager;
-  private activeContexts: Map<string, ConversationContext> = new Map();
+  private supabase: SupabaseClient
+  private logger: HealthcareLogger
+  private sessionManager: SessionManager
+  private activeContexts: Map<string, ConversationContext> = new Map()
 
   constructor(
     supabase: SupabaseClient,
     logger: HealthcareLogger,
     sessionManager: SessionManager,
   ) {
-    this.supabase = supabase;
-    this.logger = logger;
-    this.sessionManager = sessionManager;
+    this.supabase = supabase
+    this.logger = logger
+    this.sessionManager = sessionManager
   }
 
   async createConversation(
@@ -77,16 +77,16 @@ export class ConversationContextManager {
   ): Promise<ConversationContext> {
     try {
       // Validate session
-      const session = await this.sessionManager.getSession(params.sessionId);
+      const session = await this.sessionManager.getSession(params.sessionId)
       if (!session || session.userId !== params._userId) {
-        throw new Error('Invalid session for conversation creation');
+        throw new Error('Invalid session for conversation creation')
       }
 
-      const conversationId = `conv_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-      const _now = new Date();
+      const conversationId = `conv_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+      const _now = new Date()
       const expiresAt = params.expirationHours
         ? new Date(now.getTime() + params.expirationHours * 60 * 60 * 1000)
-        : undefined;
+        : undefined
 
       const conversation: ConversationContext = {
         id: conversationId,
@@ -101,7 +101,7 @@ export class ConversationContextManager {
         createdAt: now,
         updatedAt: now,
         expiresAt,
-      };
+      }
 
       // Store in database
       const { data, error } = await this.supabase
@@ -119,19 +119,19 @@ export class ConversationContextManager {
           expires_at: expiresAt?.toISOString(),
         })
         .select()
-        .single();
+        .single()
 
       if (error) {
         await this.logger.logError('conversation_creation_failed', {
           error: error.message,
           sessionId: params.sessionId,
           _userId: params.userId,
-        });
-        throw new Error(`Failed to create conversation: ${error.message}`);
+        })
+        throw new Error(`Failed to create conversation: ${error.message}`)
       }
 
       // Cache in memory
-      this.activeContexts.set(conversationId, conversation);
+      this.activeContexts.set(conversationId, conversation)
 
       await this.logger.logDataAccess(params.userId, params.clinicId, {
         action: 'create_conversation',
@@ -139,16 +139,16 @@ export class ConversationContextManager {
         conversationId,
         patientId: params.patientId,
         success: true,
-      });
+      })
 
-      return conversation;
+      return conversation
     } catch (error) {
       await this.logger.logError('conversation_creation_error', {
         error: error instanceof Error ? error.message : 'Unknown error',
         params,
         timestamp: new Date().toISOString(),
-      });
-      throw error;
+      })
+      throw error
     }
   }
 
@@ -158,9 +158,9 @@ export class ConversationContextManager {
   ): Promise<ConversationContext | null> {
     try {
       // Check memory cache first
-      const cached = this.activeContexts.get(conversationId);
+      const cached = this.activeContexts.get(conversationId)
       if (cached && cached.userId === _userId) {
-        return cached;
+        return cached
       }
 
       // Fetch from database
@@ -169,13 +169,13 @@ export class ConversationContextManager {
         .select('*')
         .eq('id', conversationId)
         .eq('user_id', _userId)
-        .single();
+        .single()
 
       if (error) {
         if (error.code === 'PGRST116') {
-          return null; // Not found
+          return null // Not found
         }
-        throw new Error(`Database error: ${error.message}`);
+        throw new Error(`Database error: ${error.message}`)
       }
 
       const conversation: ConversationContext = {
@@ -191,11 +191,11 @@ export class ConversationContextManager {
         createdAt: new Date(data.created_at),
         updatedAt: new Date(data.updated_at),
         expiresAt: data.expires_at ? new Date(data.expires_at) : undefined,
-      };
+      }
 
       // Cache in memory
       if (conversation.status === 'active') {
-        this.activeContexts.set(conversationId, conversation);
+        this.activeContexts.set(conversationId, conversation)
       }
 
       await this.logger.logDataAccess(userId, conversation.clinicId, {
@@ -203,17 +203,17 @@ export class ConversationContextManager {
         resource: 'ai_conversation_contexts',
         conversationId,
         success: true,
-      });
+      })
 
-      return conversation;
+      return conversation
     } catch (error) {
       await this.logger.logError('conversation_retrieval_error', {
         error: error instanceof Error ? error.message : 'Unknown error',
         conversationId,
         userId,
         timestamp: new Date().toISOString(),
-      });
-      throw error;
+      })
+      throw error
     }
   }
 
@@ -223,16 +223,16 @@ export class ConversationContextManager {
     updates: ConversationUpdateParams,
   ): Promise<ConversationContext> {
     try {
-      const conversation = await this.getConversation(conversationId, _userId);
+      const conversation = await this.getConversation(conversationId, _userId)
       if (!conversation) {
-        throw new Error('Conversation not found');
+        throw new Error('Conversation not found')
       }
 
       const updatedConversation = {
         ...conversation,
         ...updates,
         updatedAt: new Date(),
-      };
+      }
 
       // Update database
       const { error } = await this.supabase
@@ -246,17 +246,17 @@ export class ConversationContextManager {
           updated_at: new Date().toISOString(),
         })
         .eq('id', conversationId)
-        .eq('user_id', _userId);
+        .eq('user_id', _userId)
 
       if (error) {
-        throw new Error(`Failed to update conversation: ${error.message}`);
+        throw new Error(`Failed to update conversation: ${error.message}`)
       }
 
       // Update cache
       if (updates.status === 'deleted' || updates.status === 'archived') {
-        this.activeContexts.delete(conversationId);
+        this.activeContexts.delete(conversationId)
       } else {
-        this.activeContexts.set(conversationId, updatedConversation);
+        this.activeContexts.set(conversationId, updatedConversation)
       }
 
       await this.logger.logDataAccess(userId, updatedConversation.clinicId, {
@@ -265,9 +265,9 @@ export class ConversationContextManager {
         conversationId,
         updates,
         success: true,
-      });
+      })
 
-      return updatedConversation;
+      return updatedConversation
     } catch (error) {
       await this.logger.logError('conversation_update_error', {
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -275,8 +275,8 @@ export class ConversationContextManager {
         userId,
         updates,
         timestamp: new Date().toISOString(),
-      });
-      throw error;
+      })
+      throw error
     }
   }
 
@@ -286,19 +286,19 @@ export class ConversationContextManager {
     message: Omit<ConversationMessage, 'id' | 'timestamp'>,
   ): Promise<ConversationContext> {
     try {
-      const conversation = await this.getConversation(conversationId, _userId);
+      const conversation = await this.getConversation(conversationId, _userId)
       if (!conversation) {
-        throw new Error('Conversation not found');
+        throw new Error('Conversation not found')
       }
 
       const newMessage: ConversationMessage = {
         ...message,
         id: `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
         timestamp: new Date(),
-      };
+      }
 
-      conversation.messages.push(newMessage);
-      conversation.updatedAt = new Date();
+      conversation.messages.push(newMessage)
+      conversation.updatedAt = new Date()
 
       // Update database
       const { error } = await this.supabase
@@ -308,14 +308,14 @@ export class ConversationContextManager {
           updated_at: conversation.updatedAt.toISOString(),
         })
         .eq('id', conversationId)
-        .eq('user_id', _userId);
+        .eq('user_id', _userId)
 
       if (error) {
-        throw new Error(`Failed to add message: ${error.message}`);
+        throw new Error(`Failed to add message: ${error.message}`)
       }
 
       // Update cache
-      this.activeContexts.set(conversationId, conversation);
+      this.activeContexts.set(conversationId, conversation)
 
       await this.logger.logDataAccess(userId, conversation.clinicId, {
         action: 'add_message',
@@ -324,9 +324,9 @@ export class ConversationContextManager {
         messageId: newMessage.id,
         _role: message.role,
         success: true,
-      });
+      })
 
-      return conversation;
+      return conversation
     } catch (error) {
       await this.logger.logError('message_addition_error', {
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -334,8 +334,8 @@ export class ConversationContextManager {
         userId,
         messageRole: message.role,
         timestamp: new Date().toISOString(),
-      });
-      throw error;
+      })
+      throw error
     }
   }
 
@@ -345,28 +345,28 @@ export class ConversationContextManager {
     _context: any,
   ): Promise<ConversationContext> {
     try {
-      const conversation = await this.getConversation(conversationId, _userId);
+      const conversation = await this.getConversation(conversationId, _userId)
       if (!conversation) {
-        throw new Error('Conversation not found');
+        throw new Error('Conversation not found')
       }
 
       const updatedContext = {
         ...conversation.context,
         ...context,
         lastUpdated: new Date().toISOString(),
-      };
+      }
 
       return await this.updateConversation(conversationId, userId, {
         _context: updatedContext,
-      });
+      })
     } catch (error) {
       await this.logger.logError('context_update_error', {
         error: error instanceof Error ? error.message : 'Unknown error',
         conversationId,
         userId,
         timestamp: new Date().toISOString(),
-      });
-      throw error;
+      })
+      throw error
     }
   }
 
@@ -381,10 +381,10 @@ export class ConversationContextManager {
         .eq('user_id', _userId)
         .eq('clinic_id', clinicId)
         .in('status', ['active', 'archived'])
-        .order('updated_at', { ascending: false });
+        .order('updated_at', { ascending: false })
 
       if (error) {
-        throw new Error(`Failed to fetch conversations: ${error.message}`);
+        throw new Error(`Failed to fetch conversations: ${error.message}`)
       }
 
       const conversations: ConversationContext[] = data.map(conv => ({
@@ -400,31 +400,31 @@ export class ConversationContextManager {
         createdAt: new Date(conv.created_at),
         updatedAt: new Date(conv.updated_at),
         expiresAt: conv.expires_at ? new Date(conv.expires_at) : undefined,
-      }));
+      }))
 
       // Update cache
       conversations.forEach(conv => {
         if (conv.status === 'active') {
-          this.activeContexts.set(conv.id, conv);
+          this.activeContexts.set(conv.id, conv)
         }
-      });
+      })
 
       await this.logger.logDataAccess(userId, clinicId, {
         action: 'list_conversations',
         resource: 'ai_conversation_contexts',
         count: conversations.length,
         success: true,
-      });
+      })
 
-      return conversations;
+      return conversations
     } catch (error) {
       await this.logger.logError('conversation_list_error', {
         error: error instanceof Error ? error.message : 'Unknown error',
         userId,
         clinicId,
         timestamp: new Date().toISOString(),
-      });
-      throw error;
+      })
+      throw error
     }
   }
 
@@ -436,25 +436,25 @@ export class ConversationContextManager {
       // Soft delete by marking as deleted
       await this.updateConversation(conversationId, userId, {
         status: 'deleted',
-      });
+      })
 
       // Remove from cache
-      this.activeContexts.delete(conversationId);
+      this.activeContexts.delete(conversationId)
 
       await this.logger.logDataAccess(userId, 'unknown', {
         action: 'delete_conversation',
         resource: 'ai_conversation_contexts',
         conversationId,
         success: true,
-      });
+      })
     } catch (error) {
       await this.logger.logError('conversation_deletion_error', {
         error: error instanceof Error ? error.message : 'Unknown error',
         conversationId,
         userId,
         timestamp: new Date().toISOString(),
-      });
-      throw error;
+      })
+      throw error
     }
   }
 
@@ -465,36 +465,36 @@ export class ConversationContextManager {
         .update({ status: 'archived' })
         .lt('expires_at', new Date().toISOString())
         .in('status', ['active'])
-        .select();
+        .select()
 
       if (error) {
         throw new Error(
           `Failed to cleanup expired conversations: ${error.message}`,
-        );
+        )
       }
 
       // Remove from cache
       data?.forEach(conv => {
-        this.activeContexts.delete(conv.id);
-      });
+        this.activeContexts.delete(conv.id)
+      })
 
       await this.logger.logSystemEvent('expired_conversations_cleanup', {
         archivedCount: data?.length || 0,
         timestamp: new Date().toISOString(),
-      });
+      })
 
-      return data?.length || 0;
+      return data?.length || 0
     } catch (error) {
       await this.logger.logError('conversation_cleanup_error', {
         error: error instanceof Error ? error.message : 'Unknown error',
         timestamp: new Date().toISOString(),
-      });
-      return 0;
+      })
+      return 0
     }
   }
 
   getActiveContextCount(): number {
-    return this.activeContexts.size;
+    return this.activeContexts.size
   }
 
   getMemoryUsage(): any {
@@ -504,6 +504,6 @@ export class ConversationContextManager {
         (total, conv) => total + JSON.stringify(conv).length,
         0,
       ),
-    };
+    }
   }
 }

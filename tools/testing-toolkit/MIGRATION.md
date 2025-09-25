@@ -75,11 +75,11 @@ pnpm build
 **Before (multiple imports):**
 
 ```typescript
-import { backendUtils } from '@neonpro/backend-tools';
-import { lgpdValidator } from '@neonpro/compliance-tools';
-import { dbUtils } from '@neonpro/database-tools';
-import { frontendUtils } from '@neonpro/frontend-tools';
-import { qualityGates } from '@neonpro/quality-tools';
+import { backendUtils } from '@neonpro/backend-tools'
+import { lgpdValidator } from '@neonpro/compliance-tools'
+import { dbUtils } from '@neonpro/database-tools'
+import { frontendUtils } from '@neonpro/frontend-tools'
+import { qualityGates } from '@neonpro/quality-tools'
 ```
 
 **After (single import):**
@@ -92,7 +92,7 @@ import {
   mockAuthService,
   QualityGateValidator,
   TDDCycle,
-} from '@neonpro/testing-toolkit';
+} from '@neonpro/testing-toolkit'
 ```
 
 ### 3. Update Test Patterns
@@ -103,17 +103,17 @@ import {
 // Different patterns across packages
 describe('Frontend Test', () => {
   // Frontend-specific setup
-});
+})
 
 describe('Backend Test', () => {
   // Backend-specific setup
-});
+})
 ```
 
 **After (unified patterns):**
 
 ```typescript
-import { createLGPDTestSuite, createTDDSuite } from '@neonpro/testing-toolkit';
+import { createLGPDTestSuite, createTDDSuite } from '@neonpro/testing-toolkit'
 
 // Unified TDD pattern
 createTDDSuite('user-registration', {
@@ -126,10 +126,10 @@ createTDDSuite('user-registration', {
   refactorPhase: () => {
     // Improve code quality
   },
-});
+})
 
 // Unified compliance testing
-createLGPDTestSuite('patient-data', mockPatientData);
+createLGPDTestSuite('patient-data', mockPatientData)
 ```
 
 ### 4. Update Configuration Files
@@ -145,14 +145,14 @@ createLGPDTestSuite('patient-data', mockPatientData);
 
 ```typescript
 // Use the toolkit's unified configuration
-import { defineConfig } from 'vitest/config';
+import { defineConfig } from 'vitest/config'
 
 export default defineConfig({
   test: {
     setupFiles: ['@neonpro/testing-toolkit/setup'],
     // Other configuration...
   },
-});
+})
 ```
 
 ### 5. Update Package Dependencies

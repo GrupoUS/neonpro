@@ -10,132 +10,132 @@
  * - Healthcare regulatory compliance (CFM/ANVISA)
  */
 
-import type { SubscriptionTier, UsageCounterData } from '@neonpro/types';
-import { createClient } from '@supabase/supabase-js';
+import type { SubscriptionTier, UsageCounterData } from '@neonpro/types'
+import { createClient } from '@supabase/supabase-js'
 
 /**
  * Extended metadata interface for healthcare usage tracking
  */
 export interface UsageMetadata {
-  _userId: string;
-  planCode: SubscriptionTier;
-  concurrentRequests: number;
-  totalRequests: number;
-  totalCostUsd: number;
-  totalTokensUsed: number;
-  cacheSavingsUsd: number;
-  periodStart: string;
-  lastActivity: string;
-  lastReset: string;
-  patientDataAccessCount?: number;
-  healthcareComplianceScore?: number;
-  dataRetentionDays?: number;
-  auditLogEntries?: number;
-  securityEvents?: number;
+  _userId: string
+  planCode: SubscriptionTier
+  concurrentRequests: number
+  totalRequests: number
+  totalCostUsd: number
+  totalTokensUsed: number
+  cacheSavingsUsd: number
+  periodStart: string
+  lastActivity: string
+  lastReset: string
+  patientDataAccessCount?: number
+  healthcareComplianceScore?: number
+  dataRetentionDays?: number
+  auditLogEntries?: number
+  securityEvents?: number
 }
 
 interface ExtendedUsageCounterData extends UsageCounterData {
-  metadata?: UsageMetadata;
+  metadata?: UsageMetadata
 }
 
 /**
  * Database row interface for type safety
  */
 export interface UsageCounterDatabaseRow {
-  id: string;
-  entity_type: string;
-  entity_id: string;
-  monthly_queries: number;
-  daily_queries: number;
-  current_cost_usd: number;
-  average_latency_ms: number;
-  cache_hit_rate: number;
-  error_rate: number;
-  date: string;
-  month: string;
-  metadata: Record<string, unknown> | null;
-  created_at: string;
-  updated_at: string;
-  concurrent_requests?: number;
-  total_requests?: number;
-  total_cost_usd?: number;
-  total_tokens_used?: number;
-  cache_savings_usd?: number;
-  last_activity?: string;
+  id: string
+  entity_type: string
+  entity_id: string
+  monthly_queries: number
+  daily_queries: number
+  current_cost_usd: number
+  average_latency_ms: number
+  cache_hit_rate: number
+  error_rate: number
+  date: string
+  month: string
+  metadata: Record<string, unknown> | null
+  created_at: string
+  updated_at: string
+  concurrent_requests?: number
+  total_requests?: number
+  total_cost_usd?: number
+  total_tokens_used?: number
+  cache_savings_usd?: number
+  last_activity?: string
 }
 
 /**
  * Interface for database operations
  */
 export interface SupabaseClient {
-  from: (table: string) => any;
+  from: (table: string) => any
 }
 
 export interface UsageCounterCreateData {
-  clinicId: string;
-  _userId: string;
-  planCode: SubscriptionTier;
-  monthlyQueries?: number;
-  dailyQueries?: number;
-  currentCostUsd?: number;
-  totalRequests?: number;
-  totalCostUsd?: number;
-  totalTokensUsed?: number;
-  cacheSavingsUsd?: number;
-  averageLatencyMs?: number;
-  cacheHitRate?: number;
-  errorRate?: number;
+  clinicId: string
+  _userId: string
+  planCode: SubscriptionTier
+  monthlyQueries?: number
+  dailyQueries?: number
+  currentCostUsd?: number
+  totalRequests?: number
+  totalCostUsd?: number
+  totalTokensUsed?: number
+  cacheSavingsUsd?: number
+  averageLatencyMs?: number
+  cacheHitRate?: number
+  errorRate?: number
 }
 
 export interface UsageCounterUpdateData {
-  monthlyQueries?: number;
-  dailyQueries?: number;
-  currentCostUsd?: number;
-  concurrentRequests?: number;
-  totalRequests?: number;
-  totalCostUsd?: number;
-  totalTokensUsed?: number;
-  cacheSavingsUsd?: number;
-  averageLatencyMs?: number;
-  cacheHitRate?: number;
-  errorRate?: number;
-  lastActivity?: Date;
+  monthlyQueries?: number
+  dailyQueries?: number
+  currentCostUsd?: number
+  concurrentRequests?: number
+  totalRequests?: number
+  totalCostUsd?: number
+  totalTokensUsed?: number
+  cacheSavingsUsd?: number
+  averageLatencyMs?: number
+  cacheHitRate?: number
+  errorRate?: number
+  lastActivity?: Date
 }
 
 export interface UsageCounterFilters {
-  clinicId?: string;
-  _userId?: string;
-  planCode?: SubscriptionTier;
-  periodStart?: Date;
-  lastActivityAfter?: Date;
-  lastActivityBefore?: Date;
+  clinicId?: string
+  _userId?: string
+  planCode?: SubscriptionTier
+  periodStart?: Date
+  lastActivityAfter?: Date
+  lastActivityBefore?: Date
 }
 
 export interface DailyUsageUpsertParams {
-  clinicId: string;
-  _userId: string;
-  planCode: SubscriptionTier;
+  clinicId: string
+  _userId: string
+  planCode: SubscriptionTier
   increment?: {
-    monthlyQueries?: number;
-    dailyQueries?: number;
-    costUsd?: number;
-    totalRequests?: number;
-    tokensUsed?: number;
-    cacheSavingsUsd?: number;
-  };
+    monthlyQueries?: number
+    dailyQueries?: number
+    costUsd?: number
+    totalRequests?: number
+    tokensUsed?: number
+    cacheSavingsUsd?: number
+  }
   updateMetrics?: {
-    averageLatencyMs?: number;
-    cacheHitRate?: number;
-    errorRate?: number;
-    concurrentRequests?: number;
-  };
+    averageLatencyMs?: number
+    cacheHitRate?: number
+    errorRate?: number
+    concurrentRequests?: number
+  }
 }
 
 export class UsageCounterRepository {
-  private supabase: SupabaseClient;
+  private supabase: SupabaseClient
 
   constructor(supabaseUrl: string, supabaseKey: string) {
-    this.supabase = createClient(supabaseUrl, supabaseKey) as SupabaseClient;
+    this.supabase = createClient(supabaseUrl, supabaseKey) as SupabaseClient
   }
 
   /**
@@ -144,7 +144,7 @@ export class UsageCounterRepository {
   async create(
     data: UsageCounterCreateData,
   ): Promise<ExtendedUsageCounterData> {
-    const now = new Date();
+    const now = new Date()
 
     const insertData = {
       entity_type: 'clinic',
@@ -169,19 +169,19 @@ export class UsageCounterRepository {
         last_activity: now.toISOString(),
         last_reset: now.toISOString(),
       },
-    };
+    }
 
     const { data: result, error } = await this.supabase
       .from('usage_counters')
       .insert(insertData)
       .select()
-      .single();
+      .single()
 
     if (error) {
-      throw new Error(`Failed to create usage counter: ${error.message}`);
+      throw new Error(`Failed to create usage counter: ${error.message}`)
     }
 
-    return this.mapDatabaseToModel(result!);
+    return this.mapDatabaseToModel(result!)
   }
 
   /**
@@ -191,14 +191,14 @@ export class UsageCounterRepository {
   async dailyUpsert(
     params: DailyUsageUpsertParams,
   ): Promise<ExtendedUsageCounterData> {
-    const now = new Date();
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const now = new Date()
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
 
     // First, try to get existing counter
     const existing = await this.findByUserAndClinic(
       params.clinicId,
       params._userId,
-    );
+    )
 
     if (existing) {
       // Update existing counter
@@ -207,74 +207,74 @@ export class UsageCounterRepository {
           ...existing.metadata,
           last_activity: now.toISOString(),
         },
-      };
+      }
 
       // Apply increments
       if (params.increment) {
-        const inc = params.increment;
+        const inc = params.increment
 
         if (inc.monthlyQueries) {
-          updateData.monthly_queries = (existing.monthlyQueries || 0) + inc.monthlyQueries;
+          updateData.monthly_queries = (existing.monthlyQueries || 0) + inc.monthlyQueries
         }
         if (inc.dailyQueries) {
           // Reset daily queries if it's a new day
-          const lastActivity = new Date(existing.lastActivity);
-          const isNewDay = lastActivity.toDateString() !== today.toDateString();
+          const lastActivity = new Date(existing.lastActivity)
+          const isNewDay = lastActivity.toDateString() !== today.toDateString()
 
           updateData.daily_queries = isNewDay
             ? inc.dailyQueries
-            : (existing.dailyQueries || 0) + inc.dailyQueries;
+            : (existing.dailyQueries || 0) + inc.dailyQueries
         }
         if (inc.costUsd) {
-          updateData.current_cost_usd = (existing.currentCostUsd || 0) + inc.costUsd;
-          const existingMetadata = (existing.metadata as UsageMetadata) || ({} as UsageMetadata);
+          updateData.current_cost_usd = (existing.currentCostUsd || 0) + inc.costUsd
+          const existingMetadata = (existing.metadata as UsageMetadata) || ({} as UsageMetadata)
           updateData.metadata = {
             ...(updateData.metadata || existingMetadata),
             total_cost_usd: (existingMetadata.totalCostUsd || 0) + inc.costUsd,
-          };
+          }
         }
         if (inc.totalRequests) {
-          const existingMetadata = (existing.metadata as UsageMetadata) || ({} as UsageMetadata);
+          const existingMetadata = (existing.metadata as UsageMetadata) || ({} as UsageMetadata)
           updateData.metadata = {
             ...(updateData.metadata || existingMetadata),
             total_requests: (existingMetadata.totalRequests || 0) + inc.totalRequests,
-          };
+          }
         }
         if (inc.tokensUsed) {
-          const existingMetadata = (existing.metadata as UsageMetadata) || ({} as UsageMetadata);
+          const existingMetadata = (existing.metadata as UsageMetadata) || ({} as UsageMetadata)
           updateData.metadata = {
             ...(updateData.metadata || existingMetadata),
             total_tokens_used: (existingMetadata.totalTokensUsed || 0) + inc.tokensUsed,
-          };
+          }
         }
         if (inc.cacheSavingsUsd) {
-          const existingMetadata = (existing.metadata as UsageMetadata) || ({} as UsageMetadata);
+          const existingMetadata = (existing.metadata as UsageMetadata) || ({} as UsageMetadata)
           updateData.metadata = {
             ...(updateData.metadata || existingMetadata),
             cache_savings_usd: (existingMetadata.cacheSavingsUsd || 0) + inc.cacheSavingsUsd,
-          };
+          }
         }
       }
 
       // Apply metric updates
       if (params.updateMetrics) {
-        const metrics = params.updateMetrics;
+        const metrics = params.updateMetrics
 
         if (metrics.averageLatencyMs !== undefined) {
-          updateData.average_latency_ms = metrics.averageLatencyMs;
+          updateData.average_latency_ms = metrics.averageLatencyMs
         }
         if (metrics.cacheHitRate !== undefined) {
-          updateData.cache_hit_rate = metrics.cacheHitRate;
+          updateData.cache_hit_rate = metrics.cacheHitRate
         }
         if (metrics.errorRate !== undefined) {
-          updateData.error_rate = metrics.errorRate;
+          updateData.error_rate = metrics.errorRate
         }
         if (metrics.concurrentRequests !== undefined) {
-          const existingMetadata = (existing.metadata as UsageMetadata) || ({} as UsageMetadata);
+          const existingMetadata = (existing.metadata as UsageMetadata) || ({} as UsageMetadata)
           updateData.metadata = {
             ...(updateData.metadata || existingMetadata),
             concurrent_requests: metrics.concurrentRequests,
-          };
+          }
         }
       }
 
@@ -284,13 +284,13 @@ export class UsageCounterRepository {
         .eq('entity_type', 'clinic')
         .eq('entity_id', params.clinicId)
         .select()
-        .single();
+        .single()
 
       if (error) {
-        throw new Error(`Failed to update usage counter: ${error.message}`);
+        throw new Error(`Failed to update usage counter: ${error.message}`)
       }
 
-      return this.mapDatabaseToModel(result!);
+      return this.mapDatabaseToModel(result!)
     } else {
       // Create new counter
       const createData: UsageCounterCreateData = {
@@ -307,9 +307,9 @@ export class UsageCounterRepository {
         averageLatencyMs: params.updateMetrics?.averageLatencyMs || 0,
         cacheHitRate: params.updateMetrics?.cacheHitRate || 0,
         errorRate: params.updateMetrics?.errorRate || 0,
-      };
+      }
 
-      return await this.create(createData);
+      return await this.create(createData)
     }
   }
 
@@ -325,16 +325,16 @@ export class UsageCounterRepository {
       .select()
       .eq('entity_type', 'clinic')
       .eq('entity_id', clinicId)
-      .single();
+      .single()
 
     if (error) {
       if (error.code === 'PGRST116') {
-        return null; // Not found
+        return null // Not found
       }
-      throw new Error(`Failed to find usage counter: ${error.message}`);
+      throw new Error(`Failed to find usage counter: ${error.message}`)
     }
 
-    return this.mapDatabaseToModel(data);
+    return this.mapDatabaseToModel(data)
   }
 
   /**
@@ -345,16 +345,16 @@ export class UsageCounterRepository {
       .from('usage_counters')
       .select()
       .eq('id', id)
-      .single();
+      .single()
 
     if (error) {
       if (error.code === 'PGRST116') {
-        return null; // Not found
+        return null // Not found
       }
-      throw new Error(`Failed to find usage counter: ${error.message}`);
+      throw new Error(`Failed to find usage counter: ${error.message}`)
     }
 
-    return this.mapDatabaseToModel(data);
+    return this.mapDatabaseToModel(data)
   }
 
   /**
@@ -365,56 +365,56 @@ export class UsageCounterRepository {
     limit: number = 50,
     offset: number = 0,
   ): Promise<{
-    data: UsageCounterData[];
-    total: number;
+    data: UsageCounterData[]
+    total: number
   }> {
     let query = this.supabase
       .from('usage_counters')
-      .select('*', { count: 'exact' });
+      .select('*', { count: 'exact' })
 
     // Apply filters
     if (filters.clinicId) {
       query = query
         .eq('entity_type', 'clinic')
-        .eq('entity_id', filters.clinicId);
+        .eq('entity_id', filters.clinicId)
     }
     if (filters._userId) {
-      query = query.eq('metadata->>user_id', filters._userId);
+      query = query.eq('metadata->>user_id', filters._userId)
     }
     if (filters.planCode) {
-      query = query.eq('plan_code', filters.planCode);
+      query = query.eq('plan_code', filters.planCode)
     }
     if (filters.periodStart) {
-      query = query.gte('period_start', filters.periodStart.toISOString());
+      query = query.gte('period_start', filters.periodStart.toISOString())
     }
     if (filters.lastActivityAfter) {
       query = query.gte(
         'last_activity',
         filters.lastActivityAfter.toISOString(),
-      );
+      )
     }
     if (filters.lastActivityBefore) {
       query = query.lte(
         'last_activity',
         filters.lastActivityBefore.toISOString(),
-      );
+      )
     }
 
     // Apply pagination and ordering
     query = query
       .order('last_activity', { ascending: false })
-      .range(offset, offset + limit - 1);
+      .range(offset, offset + limit - 1)
 
-    const { data, error, count } = await query;
+    const { data, error, count } = await query
 
     if (error) {
-      throw new Error(`Failed to list usage counters: ${error.message}`);
+      throw new Error(`Failed to list usage counters: ${error.message}`)
     }
 
     return {
       data: data.map(this.mapDatabaseToModel),
       total: count || 0,
-    };
+    }
   }
 
   /**
@@ -426,27 +426,27 @@ export class UsageCounterRepository {
   ): Promise<UsageCounterData> {
     const updateData: Partial<UsageCounterDatabaseRow> = {
       updated_at: new Date().toISOString(),
-    };
+    }
 
     // Map model fields to database fields
     if (data.monthlyQueries !== undefined) {
-      updateData.monthly_queries = data.monthlyQueries;
+      updateData.monthly_queries = data.monthlyQueries
     }
     if (data.dailyQueries !== undefined) {
-      updateData.daily_queries = data.dailyQueries;
+      updateData.daily_queries = data.dailyQueries
     }
     if (data.currentCostUsd !== undefined) {
-      updateData.current_cost_usd = data.currentCostUsd;
+      updateData.current_cost_usd = data.currentCostUsd
     }
     if (data.averageLatencyMs !== undefined) {
-      updateData.average_latency_ms = data.averageLatencyMs;
+      updateData.average_latency_ms = data.averageLatencyMs
     }
     if (data.cacheHitRate !== undefined) {
-      updateData.cache_hit_rate = data.cacheHitRate;
+      updateData.cache_hit_rate = data.cacheHitRate
     }
-    if (data.errorRate !== undefined) updateData.error_rate = data.errorRate;
+    if (data.errorRate !== undefined) updateData.error_rate = data.errorRate
     if (data.lastActivity !== undefined) {
-      updateData.last_activity = data.lastActivity.toISOString();
+      updateData.last_activity = data.lastActivity.toISOString()
     }
 
     const { data: result, error } = await this.supabase
@@ -454,13 +454,13 @@ export class UsageCounterRepository {
       .update(updateData)
       .eq('id', id)
       .select()
-      .single();
+      .single()
 
     if (error) {
-      throw new Error(`Failed to update usage counter: ${error.message}`);
+      throw new Error(`Failed to update usage counter: ${error.message}`)
     }
 
-    return this.mapDatabaseToModel(result!);
+    return this.mapDatabaseToModel(result!)
   }
 
   /**
@@ -470,7 +470,7 @@ export class UsageCounterRepository {
     clinicId: string,
     _userId: string,
   ): Promise<UsageCounterData> {
-    const now = new Date();
+    const now = new Date()
 
     const { data: result, error } = await this.supabase
       .from('usage_counters')
@@ -485,13 +485,13 @@ export class UsageCounterRepository {
       .eq('entity_type', 'clinic')
       .eq('entity_id', clinicId)
       .select()
-      .single();
+      .single()
 
     if (error) {
-      throw new Error(`Failed to reset daily counters: ${error.message}`);
+      throw new Error(`Failed to reset daily counters: ${error.message}`)
     }
 
-    return this.mapDatabaseToModel(result!);
+    return this.mapDatabaseToModel(result!)
   }
 
   /**
@@ -501,8 +501,8 @@ export class UsageCounterRepository {
     clinicId: string,
     _userId: string,
   ): Promise<UsageCounterData> {
-    const now = new Date();
-    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+    const now = new Date()
+    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1)
 
     const { data: result, error } = await this.supabase
       .from('usage_counters')
@@ -520,35 +520,35 @@ export class UsageCounterRepository {
       .eq('entity_type', 'clinic')
       .eq('entity_id', clinicId)
       .select()
-      .single();
+      .single()
 
     if (error) {
-      throw new Error(`Failed to reset monthly counters: ${error.message}`);
+      throw new Error(`Failed to reset monthly counters: ${error.message}`)
     }
 
-    return this.mapDatabaseToModel(result!);
+    return this.mapDatabaseToModel(result!)
   }
 
   /**
    * Gets aggregate usage statistics for a clinic
    */
   async getClinicAggregateUsage(clinicId: string): Promise<{
-    totalUsers: number;
-    totalMonthlyQueries: number;
-    totalDailyQueries: number;
-    totalCostUsd: number;
-    averageLatencyMs: number;
-    overallCacheHitRate: number;
-    overallErrorRate: number;
+    totalUsers: number
+    totalMonthlyQueries: number
+    totalDailyQueries: number
+    totalCostUsd: number
+    averageLatencyMs: number
+    overallCacheHitRate: number
+    overallErrorRate: number
   }> {
     const { data, error } = await this.supabase
       .from('usage_counters')
       .select('*')
       .eq('entity_type', 'clinic')
-      .eq('entity_id', clinicId);
+      .eq('entity_id', clinicId)
 
     if (error) {
-      throw new Error(`Failed to get clinic aggregate usage: ${error.message}`);
+      throw new Error(`Failed to get clinic aggregate usage: ${error.message}`)
     }
 
     if (!data || data.length === 0) {
@@ -560,40 +560,40 @@ export class UsageCounterRepository {
         averageLatencyMs: 0,
         overallCacheHitRate: 0,
         overallErrorRate: 0,
-      };
+      }
     }
 
-    const totalUsers = data.length;
+    const totalUsers = data.length
     const totalMonthlyQueries = data.reduce(
       (sum: number, item: UsageCounterDatabaseRow) => sum + (item.monthly_queries || 0),
       0,
-    );
+    )
     const totalDailyQueries = data.reduce(
       (sum: number, item: UsageCounterDatabaseRow) => sum + (item.daily_queries || 0),
       0,
-    );
+    )
     const totalCostUsd = data.reduce(
       (sum: number, item: UsageCounterDatabaseRow) => sum + (item.current_cost_usd || 0),
       0,
-    );
+    )
     const averageLatencyMs = totalUsers > 0
       ? data.reduce(
         (sum: number, item: UsageCounterDatabaseRow) => sum + (item.average_latency_ms || 0),
         0,
       ) / totalUsers
-      : 0;
+      : 0
     const overallCacheHitRate = totalUsers > 0
       ? data.reduce(
         (sum: number, item: UsageCounterDatabaseRow) => sum + (item.cache_hit_rate || 0),
         0,
       ) / totalUsers
-      : 0;
+      : 0
     const overallErrorRate = totalUsers > 0
       ? data.reduce(
         (sum: number, item: UsageCounterDatabaseRow) => sum + (item.error_rate || 0),
         0,
       ) / totalUsers
-      : 0;
+      : 0
 
     return {
       totalUsers,
@@ -603,7 +603,7 @@ export class UsageCounterRepository {
       averageLatencyMs,
       overallCacheHitRate,
       overallErrorRate,
-    };
+    }
   }
 
   /**
@@ -613,10 +613,10 @@ export class UsageCounterRepository {
     const { error } = await this.supabase
       .from('usage_counters')
       .delete()
-      .eq('id', id);
+      .eq('id', id)
 
     if (error) {
-      throw new Error(`Failed to delete usage counter: ${error.message}`);
+      throw new Error(`Failed to delete usage counter: ${error.message}`)
     }
   }
 
@@ -626,7 +626,7 @@ export class UsageCounterRepository {
   private mapDatabaseToModel(
     row: UsageCounterDatabaseRow,
   ): ExtendedUsageCounterData {
-    const metadata = (row.metadata as unknown as UsageMetadata) || ({} as UsageMetadata);
+    const metadata = (row.metadata as unknown as UsageMetadata) || ({} as UsageMetadata)
 
     return {
       clinicId: row.entity_id,
@@ -646,7 +646,7 @@ export class UsageCounterRepository {
       periodStart: new Date(metadata.periodStart || Date.now()),
       lastActivity: new Date(metadata.lastActivity || Date.now()),
       lastReset: new Date(metadata.lastReset || Date.now()),
-    };
+    }
   }
 
   private async getExistingMetadata(
@@ -659,11 +659,11 @@ export class UsageCounterRepository {
         .select('metadata')
         .eq('entity_type', 'clinic')
         .eq('entity_id', clinicId)
-        .single();
+        .single()
 
-      return (data?.metadata as unknown as UsageMetadata) || {};
+      return (data?.metadata as unknown as UsageMetadata) || {}
     } catch {
-      return {};
+      return {}
     }
   }
 }
@@ -675,7 +675,7 @@ export function createUsageCounterRepository(
   supabaseUrl: string,
   supabaseKey: string,
 ): UsageCounterRepository {
-  return new UsageCounterRepository(supabaseUrl, supabaseKey);
+  return new UsageCounterRepository(supabaseUrl, supabaseKey)
 }
 
-export default UsageCounterRepository;
+export default UsageCounterRepository

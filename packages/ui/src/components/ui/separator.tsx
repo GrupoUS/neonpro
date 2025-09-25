@@ -1,9 +1,9 @@
-import * as React from 'react';
-import { cn } from '../../utils';
+import * as React from 'react'
+import { cn } from '../../utils'
 
 export interface SeparatorProps extends React.HTMLAttributes<HTMLDivElement> {
-  orientation?: 'horizontal' | 'vertical';
-  decorative?: boolean;
+  orientation?: 'horizontal' | 'vertical'
+  decorative?: boolean
 }
 
 export const Separator = React.forwardRef<HTMLDivElement, SeparatorProps>(
@@ -24,8 +24,8 @@ export const Separator = React.forwardRef<HTMLDivElement, SeparatorProps>(
         )}
         {...props}
       />
-    );
+    )
   },
-);
+)
 
-Separator.displayName = 'Separator';
+Separator.displayName = 'Separator'

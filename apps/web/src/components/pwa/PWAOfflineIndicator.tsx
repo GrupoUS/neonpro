@@ -1,7 +1,7 @@
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { usePWA } from '@/hooks/usePWA';
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { usePWA } from '@/hooks/usePWA'
 import {
   AlertCircle,
   Bell,
@@ -14,11 +14,11 @@ import {
   Wifi,
   WifiOff,
   X,
-} from 'lucide-react';
-import * as React from 'react';
+} from 'lucide-react'
+import * as React from 'react'
 
 export interface PWAOfflineIndicatorProps {
-  className?: string;
+  className?: string
 }
 
 export const PWAOfflineIndicator: React.FC<PWAOfflineIndicatorProps> = ({ className }) => {
@@ -33,26 +33,26 @@ export const PWAOfflineIndicator: React.FC<PWAOfflineIndicatorProps> = ({ classN
     clearAllData,
     requestNotificationPermission,
     notificationPermission,
-  } = usePWA();
+  } = usePWA()
 
-  const [expanded, setExpanded] = React.useState(false);
-  const [showNotificationPrompt, setShowNotificationPrompt] = React.useState(false);
+  const [expanded, setExpanded] = React.useState(false)
+  const [showNotificationPrompt, setShowNotificationPrompt] = React.useState(false)
 
   React.useEffect(() => {
     // Show notification permission prompt if not granted
     if (notificationPermission === 'default' && isOnline) {
-      const timer = setTimeout(() => setShowNotificationPrompt(true), 5000);
-      return () => clearTimeout(timer);
+      const timer = setTimeout(() => setShowNotificationPrompt(true), 5000)
+      return () => clearTimeout(timer)
     }
-    return undefined;
-  }, [notificationPermission, isOnline]);
+    return undefined
+  }, [notificationPermission, isOnline])
 
   const handleEnableNotifications = async () => {
-    const permission = await requestNotificationPermission();
+    const permission = await requestNotificationPermission()
     if (permission === 'granted') {
-      setShowNotificationPrompt(false);
+      setShowNotificationPrompt(false)
     }
-  };
+  }
 
   const handleClearData = async () => {
     if (
@@ -60,24 +60,24 @@ export const PWAOfflineIndicator: React.FC<PWAOfflineIndicatorProps> = ({ classN
         'Tem certeza que deseja limpar todos os dados offline? Esta ação não pode ser desfeita.',
       )
     ) {
-      await clearAllData();
+      await clearAllData()
     }
-  };
+  }
 
   const formatTime = (date: Date | null) => {
-    if (!date) return 'Nunca';
-    const now = new Date();
-    const diff = now.getTime() - date.getTime();
-    const minutes = Math.floor(diff / 60000);
+    if (!date) return 'Nunca'
+    const now = new Date()
+    const diff = now.getTime() - date.getTime()
+    const minutes = Math.floor(diff / 60000)
 
-    if (minutes < 1) return 'Agora';
-    if (minutes < 60) return `${minutes} min atrás`;
-    if (minutes < 1440) return `${Math.floor(minutes / 60)}h atrás`;
-    return `${Math.floor(minutes / 1440)}d atrás`;
-  };
+    if (minutes < 1) return 'Agora'
+    if (minutes < 60) return `${minutes} min atrás`
+    if (minutes < 1440) return `${Math.floor(minutes / 60)}h atrás`
+    return `${Math.floor(minutes / 1440)}d atrás`
+  }
 
   if (isOnline && !hasOfflineData && !showNotificationPrompt) {
-    return null;
+    return null
   }
 
   return (
@@ -288,7 +288,7 @@ export const PWAOfflineIndicator: React.FC<PWAOfflineIndicatorProps> = ({ classN
         </CardContent>
       </Card>
     </div>
-  );
-};
+  )
+}
 
-export default PWAOfflineIndicator;
+export default PWAOfflineIndicator

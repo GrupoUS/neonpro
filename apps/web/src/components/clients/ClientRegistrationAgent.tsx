@@ -5,24 +5,24 @@
  * document OCR processing, and LGPD compliance for Brazilian healthcare.
  */
 
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Progress } from '@/components/ui/progress';
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Progress } from '@/components/ui/progress'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Textarea } from '@/components/ui/textarea';
-import { createClient } from '@/integrations/supabase/client';
-import { useCoAgent, useCopilotAction } from '@copilotkit/react-core';
+} from '@/components/ui/select'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Textarea } from '@/components/ui/textarea'
+import { createClient } from '@/integrations/supabase/client'
+import { useCoAgent, useCopilotAction } from '@copilotkit/react-core'
 import {
   AlertCircle,
   Brain,
@@ -33,81 +33,81 @@ import {
   Shield,
   Upload,
   User,
-} from 'lucide-react';
-import React, { useCallback, useState } from 'react';
+} from 'lucide-react'
+import React, { useCallback, useState } from 'react'
 
 // Types
 interface ClientRegistrationData {
   personalInfo: {
-    fullName: string;
-    cpf?: string;
-    dateOfBirth: string;
-    email?: string;
-    phone?: string;
-  };
+    fullName: string
+    cpf?: string
+    dateOfBirth: string
+    email?: string
+    phone?: string
+  }
   address: {
-    street: string;
-    number: string;
-    complement?: string;
-    neighborhood: string;
-    city: string;
-    state: string;
-    zipCode: string;
-  };
+    street: string
+    number: string
+    complement?: string
+    neighborhood: string
+    city: string
+    state: string
+    zipCode: string
+  }
   emergencyContact: {
-    name: string;
-    relationship: string;
-    phone: string;
-    email?: string;
-  };
+    name: string
+    relationship: string
+    phone: string
+    email?: string
+  }
   medicalHistory: {
-    allergies?: string[];
-    medications?: string[];
-    conditions?: string[];
-    previousTreatments?: string[];
-    notes?: string;
-  };
+    allergies?: string[]
+    medications?: string[]
+    conditions?: string[]
+    previousTreatments?: string[]
+    notes?: string
+  }
   preferences: {
-    communicationChannel: 'whatsapp' | 'sms' | 'email';
-    language: 'pt-BR' | 'en-US';
-    timezone: string;
+    communicationChannel: 'whatsapp' | 'sms' | 'email'
+    language: 'pt-BR' | 'en-US'
+    timezone: string
     notificationPreferences: {
-      appointments: boolean;
-      promotions: boolean;
-      reminders: boolean;
-    };
-  };
+      appointments: boolean
+      promotions: boolean
+      reminders: boolean
+    }
+  }
   documents: {
-    idCard?: File;
-    medicalRecord?: File;
-    consentForm?: File;
-    insuranceCard?: File;
-  };
+    idCard?: File
+    medicalRecord?: File
+    consentForm?: File
+    insuranceCard?: File
+  }
   consent: {
-    treatmentConsent: boolean;
-    dataSharingConsent: boolean;
-    marketingConsent: boolean;
-    emergencyContactConsent: boolean;
-    consentDate: string;
-  };
+    treatmentConsent: boolean
+    dataSharingConsent: boolean
+    marketingConsent: boolean
+    emergencyContactConsent: boolean
+    consentDate: string
+  }
 }
 
 interface AISuggestion {
-  field: string;
-  value: any;
-  confidence: number;
-  reason: string;
+  field: string
+  value: any
+  confidence: number
+  reason: string
 }
 
 interface ValidationMessage {
-  field: string;
-  message: string;
-  type: 'error' | 'warning' | 'info';
+  field: string
+  message: string
+  type: 'error' | 'warning' | 'info'
 }
 
 interface ClientRegistrationAgentProps {
-  onSuccess?: (clientId: string) => void;
-  onError?: (error: string) => void;
+  onSuccess?: (clientId: string) => void
+  onError?: (error: string) => void
 }
 
 export const ClientRegistrationAgent: React.FC<
@@ -125,7 +125,7 @@ export const ClientRegistrationAgent: React.FC<
       ocrResults: {},
       consentStatus: {},
     },
-  });
+  })
 
   const copilotAction = useCopilotAction({
     name: 'analyzeClientData',
@@ -137,23 +137,23 @@ export const ClientRegistrationAgent: React.FC<
     ],
     handler: async ({ field: _field, value: _value, context: _context }) => {
       // AI-powered analysis will be handled by the backend
-      return { analyzed: true };
+      return { analyzed: true }
     },
-  });
+  })
 
-  const [currentStep, setCurrentStep] = useState(0);
+  const [currentStep, setCurrentStep] = useState(0)
   const [registrationData, setRegistrationData] = useState<
     Partial<ClientRegistrationData>
-  >({});
-  const [aiSuggestions, setAiSuggestions] = useState<AISuggestion[]>([]);
+  >({})
+  const [aiSuggestions, setAiSuggestions] = useState<AISuggestion[]>([])
   const [validationMessages, setValidationMessages] = useState<
     ValidationMessage[]
-  >([]);
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState(0);
-  const [ocrProcessing, setOcrProcessing] = useState(false);
+  >([])
+  const [isProcessing, setIsProcessing] = useState(false)
+  const [uploadProgress, setUploadProgress] = useState(0)
+  const [ocrProcessing, setOcrProcessing] = useState(false)
 
-  const supabase = createClient();
+  const supabase = createClient()
 
   // Form steps
   const formSteps = [
@@ -199,15 +199,15 @@ export const ClientRegistrationAgent: React.FC<
       icon: CheckCircle,
       description: 'Revisão e confirmação',
     },
-  ];
+  ]
 
   // Update CopilotKit state
   const updateAgentState = useCallback(
     (updates: Partial<typeof state>) => {
-      setState(prev => ({ ...prev, ...updates }));
+      setState(prev => ({ ...prev, ...updates }))
     },
     [setState],
-  );
+  )
 
   // Handle field changes with AI analysis
   const handleFieldChange = async (
@@ -215,13 +215,13 @@ export const ClientRegistrationAgent: React.FC<
     value: any,
     context?: any,
   ) => {
-    const newData = { ...registrationData, [field]: value };
-    setRegistrationData(newData);
+    const newData = { ...registrationData, [field]: value }
+    setRegistrationData(newData)
 
     // Update CopilotKit state
     updateAgentState({
       registrationData: newData,
-    });
+    })
 
     // Trigger AI analysis
     try {
@@ -229,68 +229,68 @@ export const ClientRegistrationAgent: React.FC<
         field,
         value,
         context: { ...context, fullData: newData },
-      });
+      })
     } catch (error) {
-      console.warn('AI analysis failed:', error);
+      console.warn('AI analysis failed:', error)
     }
-  };
+  }
 
   // Document upload with OCR processing
   const handleDocumentUpload = async (
     documentType: keyof ClientRegistrationData['documents'],
     _file: File,
   ) => {
-    setIsProcessing(true);
-    setOcrProcessing(true);
+    setIsProcessing(true)
+    setOcrProcessing(true)
 
     try {
       // Upload to Supabase Storage
-      const fileName = `${Date.now()}_${file.name}`;
+      const fileName = `${Date.now()}_${file.name}`
       const { data: _data, error } = await supabase.storage
         .from('client-documents')
         .upload(fileName, file, {
           onUploadProgress: progress => {
-            setUploadProgress((progress.loaded / progress.total) * 100);
+            setUploadProgress((progress.loaded / progress.total) * 100)
           },
-        });
+        })
 
-      if (error) throw error;
+      if (error) throw error
 
       // Get public URL
       const { data: urlData } = supabase.storage
         .from('client-documents')
-        .getPublicUrl(fileName);
+        .getPublicUrl(fileName)
 
       // Process OCR (simulated - would call backend service)
       const ocrResult = await processDocumentOCR(
         documentType,
         urlData.publicUrl,
         file,
-      );
+      )
 
       // Update state with OCR results
       const updatedDocuments = {
         ...registrationData.documents,
         [documentType]: file,
-      };
+      }
 
       setRegistrationData(prev => ({
         ...prev,
         documents: updatedDocuments,
-      }));
+      }))
 
       // Update CopilotKit state
       updateAgentState({
         registrationData: { ...registrationData, documents: updatedDocuments },
         ocrResults: { ...state.ocrResults, [documentType]: ocrResult },
-      });
+      })
 
       // Auto-fill fields based on OCR results
       if (ocrResult.extractedFields) {
-        await autoFillFromOCR(ocrResult.extractedFields);
+        await autoFillFromOCR(ocrResult.extractedFields)
       }
     } catch (error) {
-      console.error('Document upload failed:', error);
+      console.error('Document upload failed:', error)
       setValidationMessages(prev => [
         ...prev,
         {
@@ -298,13 +298,13 @@ export const ClientRegistrationAgent: React.FC<
           message: `Erro no upload do documento: ${error}`,
           type: 'error',
         },
-      ]);
+      ])
     } finally {
-      setIsProcessing(false);
-      setOcrProcessing(false);
-      setUploadProgress(0);
+      setIsProcessing(false)
+      setOcrProcessing(false)
+      setUploadProgress(0)
     }
-  };
+  }
 
   // Simulated OCR processing
   const processDocumentOCR = async (
@@ -313,7 +313,7 @@ export const ClientRegistrationAgent: React.FC<
     _file: File,
   ) => {
     // In real implementation, this would call the backend OCR service
-    await new Promise(resolve => setTimeout(resolve, 2000)); // Simulate processing
+    await new Promise(resolve => setTimeout(resolve, 2000)) // Simulate processing
 
     const mockOCRResult = {
       documentType,
@@ -327,53 +327,53 @@ export const ClientRegistrationAgent: React.FC<
         : {},
       confidence: 0.95,
       processingTime: 2000,
-    };
+    }
 
-    return mockOCRResult;
-  };
+    return mockOCRResult
+  }
 
   // Auto-fill form fields from OCR results
   const autoFillFromOCR = async (extractedFields: Record<string, any>) => {
-    const updates: Partial<ClientRegistrationData> = {};
-    const suggestions: AISuggestion[] = [];
+    const updates: Partial<ClientRegistrationData> = {}
+    const suggestions: AISuggestion[] = []
 
     Object.entries(extractedFields).forEach(([field, value]) => {
       if (value) {
-        const fieldPath = field.split('.');
+        const fieldPath = field.split('.')
         if (fieldPath[0] === 'personalInfo') {
           updates.personalInfo = {
             ...updates.personalInfo,
             [fieldPath[1]]: value,
-          };
+          }
           suggestions.push({
             field: `personalInfo.${fieldPath[1]}`,
             value,
             confidence: 0.9,
             reason: `Extraído automaticamente via OCR do documento`,
-          });
+          })
         }
       }
-    });
+    })
 
     if (Object.keys(updates).length > 0) {
       setRegistrationData(prev => ({
         ...prev,
         ...updates,
-      }));
+      }))
 
-      setAiSuggestions(prev => [...prev, ...suggestions]);
+      setAiSuggestions(prev => [...prev, ...suggestions])
 
       // Update CopilotKit state
       updateAgentState({
         registrationData: { ...registrationData, ...updates },
         aiSuggestions: [...aiSuggestions, ...suggestions],
-      });
+      })
     }
-  };
+  }
 
   // Validate current step
   const validateStep = (step: number): boolean => {
-    const errors: ValidationMessage[] = [];
+    const errors: ValidationMessage[] = []
 
     switch (step) {
       case 0: // Personal Info
@@ -382,16 +382,16 @@ export const ClientRegistrationAgent: React.FC<
             field: 'personalInfo.fullName',
             message: 'Nome completo é obrigatório',
             type: 'error',
-          });
+          })
         }
         if (!registrationData.personalInfo?.dateOfBirth) {
           errors.push({
             field: 'personalInfo.dateOfBirth',
             message: 'Data de nascimento é obrigatória',
             type: 'error',
-          });
+          })
         }
-        break;
+        break
 
       case 1: // Address
         if (!registrationData.address?.street) {
@@ -399,9 +399,9 @@ export const ClientRegistrationAgent: React.FC<
             field: 'address.street',
             message: 'Rua é obrigatória',
             type: 'error',
-          });
+          })
         }
-        break;
+        break
 
       case 2: // Emergency Contact
         if (!registrationData.emergencyContact?.name) {
@@ -409,9 +409,9 @@ export const ClientRegistrationAgent: React.FC<
             field: 'emergencyContact.name',
             message: 'Nome do contato de emergência é obrigatório',
             type: 'error',
-          });
+          })
         }
-        break;
+        break
 
       case 5: // Consent
         if (!registrationData.consent?.treatmentConsent) {
@@ -419,42 +419,42 @@ export const ClientRegistrationAgent: React.FC<
             field: 'consent.treatmentConsent',
             message: 'Consentimento de tratamento é obrigatório',
             type: 'error',
-          });
+          })
         }
         if (!registrationData.consent?.dataSharingConsent) {
           errors.push({
             field: 'consent.dataSharingConsent',
             message: 'Consentimento de compartilhamento de dados é obrigatório',
             type: 'error',
-          });
+          })
         }
-        break;
+        break
     }
 
-    setValidationMessages(errors);
-    updateAgentState({ validationMessages: errors });
+    setValidationMessages(errors)
+    updateAgentState({ validationMessages: errors })
 
-    return errors.length === 0;
-  };
+    return errors.length === 0
+  }
 
   // Handle step navigation
   const nextStep = () => {
     if (validateStep(currentStep)) {
-      const next = currentStep + 1;
-      setCurrentStep(next);
-      updateAgentState({ currentStep: next });
+      const next = currentStep + 1
+      setCurrentStep(next)
+      updateAgentState({ currentStep: next })
     }
-  };
+  }
 
   const prevStep = () => {
-    const prev = Math.max(0, currentStep - 1);
-    setCurrentStep(prev);
-    updateAgentState({ currentStep: prev });
-  };
+    const prev = Math.max(0, currentStep - 1)
+    setCurrentStep(prev)
+    updateAgentState({ currentStep: prev })
+  }
 
   // Submit registration
   const handleSubmit = async () => {
-    setIsProcessing(true);
+    setIsProcessing(true)
 
     try {
       // Prepare data for submission
@@ -466,46 +466,46 @@ export const ClientRegistrationAgent: React.FC<
           ipAddress: '127.0.0.1', // Would get from actual client
           userAgent: navigator.userAgent,
         },
-      };
+      }
 
       // Submit to backend (simulated)
-      const response = await submitClientRegistration(submissionData);
+      const response = await submitClientRegistration(submissionData)
 
       if (response.success) {
-        onSuccess?.(response.clientId);
-        updateAgentState({ processingStatus: 'completed' });
+        onSuccess?.(response.clientId)
+        updateAgentState({ processingStatus: 'completed' })
       } else {
-        onError?.(response.error);
-        updateAgentState({ processingStatus: 'error' });
+        onError?.(response.error)
+        updateAgentState({ processingStatus: 'error' })
       }
     } catch (error) {
-      console.error('Registration failed:', error);
-      onError?.(error instanceof Error ? error.message : 'Erro no registro');
-      updateAgentState({ processingStatus: 'error' });
+      console.error('Registration failed:', error)
+      onError?.(error instanceof Error ? error.message : 'Erro no registro')
+      updateAgentState({ processingStatus: 'error' })
     } finally {
-      setIsProcessing(false);
+      setIsProcessing(false)
     }
-  };
+  }
 
   // Simulated backend submission
   const submitClientRegistration = async (
     _data: Partial<ClientRegistrationData>,
   ) => {
     // In real implementation, this would call the enhanced client agent service
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    await new Promise(resolve => setTimeout(resolve, 2000))
 
     return {
       success: true,
       clientId: 'generated-client-id',
       message: 'Cliente registrado com sucesso',
-    };
-  };
+    }
+  }
 
   // Accept AI suggestion
   const acceptSuggestion = (suggestion: AISuggestion) => {
-    const fieldPath = suggestion.field.split('.');
-    const field = fieldPath[0];
-    const subField = fieldPath[1];
+    const fieldPath = suggestion.field.split('.')
+    const field = fieldPath[0]
+    const subField = fieldPath[1]
 
     if (subField) {
       setRegistrationData(prev => ({
@@ -514,17 +514,17 @@ export const ClientRegistrationAgent: React.FC<
           ...prev[field as keyof ClientRegistrationData],
           [subField]: suggestion.value,
         },
-      }));
+      }))
     } else {
       setRegistrationData(prev => ({
         ...prev,
         [field]: suggestion.value,
-      }));
+      }))
     }
 
     // Remove suggestion
-    setAiSuggestions(prev => prev.filter(s => s.field !== suggestion.field));
-  };
+    setAiSuggestions(prev => prev.filter(s => s.field !== suggestion.field))
+  }
 
   // Render step content
   const renderStepContent = () => {
@@ -591,7 +591,7 @@ export const ClientRegistrationAgent: React.FC<
               </div>
             </div>
           </div>
-        );
+        )
 
       case 1: // Address
         return (
@@ -701,7 +701,7 @@ export const ClientRegistrationAgent: React.FC<
               </div>
             </div>
           </div>
-        );
+        )
 
       case 2: // Emergency Contact
         return (
@@ -755,7 +755,7 @@ export const ClientRegistrationAgent: React.FC<
               </div>
             </div>
           </div>
-        );
+        )
 
       case 3: // Medical History
         return (
@@ -833,7 +833,7 @@ export const ClientRegistrationAgent: React.FC<
               />
             </div>
           </div>
-        );
+        )
 
       case 4: // Documents
         return (
@@ -850,8 +850,8 @@ export const ClientRegistrationAgent: React.FC<
                     type='file'
                     accept='image/*,.pdf'
                     onChange={e => {
-                      const file = e.target.files?.[0];
-                      if (file) handleDocumentUpload('idCard', file);
+                      const file = e.target.files?.[0]
+                      if (file) handleDocumentUpload('idCard', file)
                     }}
                   />
                   {registrationData.documents?.idCard && (
@@ -871,8 +871,8 @@ export const ClientRegistrationAgent: React.FC<
                     type='file'
                     accept='image/*,.pdf'
                     onChange={e => {
-                      const file = e.target.files?.[0];
-                      if (file) handleDocumentUpload('medicalRecord', file);
+                      const file = e.target.files?.[0]
+                      if (file) handleDocumentUpload('medicalRecord', file)
                     }}
                   />
                   {registrationData.documents?.medicalRecord && (
@@ -896,8 +896,8 @@ export const ClientRegistrationAgent: React.FC<
                     type='file'
                     accept='image/*,.pdf'
                     onChange={e => {
-                      const file = e.target.files?.[0];
-                      if (file) handleDocumentUpload('consentForm', file);
+                      const file = e.target.files?.[0]
+                      if (file) handleDocumentUpload('consentForm', file)
                     }}
                   />
                   {registrationData.documents?.consentForm && (
@@ -919,8 +919,8 @@ export const ClientRegistrationAgent: React.FC<
                     type='file'
                     accept='image/*,.pdf'
                     onChange={e => {
-                      const file = e.target.files?.[0];
-                      if (file) handleDocumentUpload('insuranceCard', file);
+                      const file = e.target.files?.[0]
+                      if (file) handleDocumentUpload('insuranceCard', file)
                     }}
                   />
                   {registrationData.documents?.insuranceCard && (
@@ -939,7 +939,7 @@ export const ClientRegistrationAgent: React.FC<
               </div>
             )}
           </div>
-        );
+        )
 
       case 5: // Consent
         return (
@@ -1032,7 +1032,7 @@ export const ClientRegistrationAgent: React.FC<
               </div>
             </div>
           </div>
-        );
+        )
 
       case 6: // Review
         return (
@@ -1103,10 +1103,10 @@ export const ClientRegistrationAgent: React.FC<
                 <Card>
                   <CardContent className='pt-4'>
                     <div className='space-y-2 text-sm'>
-                      {registrationData.medicalHistory?.allergies
-                        && registrationData.medicalHistory.allergies.length
-                          > 0
-                        && (
+                      {registrationData.medicalHistory?.allergies &&
+                        registrationData.medicalHistory.allergies.length >
+                          0 &&
+                        (
                           <div>
                             <strong>Alergias:</strong>{' '}
                             {registrationData.medicalHistory.allergies.join(
@@ -1114,10 +1114,10 @@ export const ClientRegistrationAgent: React.FC<
                             )}
                           </div>
                         )}
-                      {registrationData.medicalHistory?.medications
-                        && registrationData.medicalHistory.medications.length
-                          > 0
-                        && (
+                      {registrationData.medicalHistory?.medications &&
+                        registrationData.medicalHistory.medications.length >
+                          0 &&
+                        (
                           <div>
                             <strong>Medicamentos:</strong>{' '}
                             {registrationData.medicalHistory.medications.join(
@@ -1125,10 +1125,10 @@ export const ClientRegistrationAgent: React.FC<
                             )}
                           </div>
                         )}
-                      {registrationData.medicalHistory?.conditions
-                        && registrationData.medicalHistory.conditions.length
-                          > 0
-                        && (
+                      {registrationData.medicalHistory?.conditions &&
+                        registrationData.medicalHistory.conditions.length >
+                          0 &&
+                        (
                           <div>
                             <strong>Condições:</strong>{' '}
                             {registrationData.medicalHistory.conditions.join(
@@ -1174,16 +1174,16 @@ export const ClientRegistrationAgent: React.FC<
               </TabsContent>
             </Tabs>
           </div>
-        );
+        )
 
       default:
-        return null;
+        return null
     }
-  };
+  }
 
   // AI Suggestions Panel
   const renderAISuggestions = () => {
-    if (aiSuggestions.length === 0) return null;
+    if (aiSuggestions.length === 0) return null
 
     return (
       <Card className='mb-4'>
@@ -1221,12 +1221,12 @@ export const ClientRegistrationAgent: React.FC<
           </div>
         </CardContent>
       </Card>
-    );
-  };
+    )
+  }
 
   // Validation Messages
   const renderValidationMessages = () => {
-    if (validationMessages.length === 0) return null;
+    if (validationMessages.length === 0) return null
 
     return (
       <div className='space-y-2 mb-4'>
@@ -1242,8 +1242,8 @@ export const ClientRegistrationAgent: React.FC<
           </Alert>
         ))}
       </div>
-    );
-  };
+    )
+  }
 
   return (
     <div className='max-w-4xl mx-auto p-6'>
@@ -1339,5 +1339,5 @@ export const ClientRegistrationAgent: React.FC<
         </CardContent>
       </Card>
     </div>
-  );
-};
+  )
+}

@@ -1,26 +1,26 @@
-'use client';
+'use client'
 
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Progress } from '@/components/ui/progress';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Progress } from '@/components/ui/progress'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Textarea } from '@/components/ui/textarea';
-import { api } from '@/lib/api';
-import { ProgressUpdate } from '@/types/ai-clinical-support';
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { format, parseISO } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+} from '@/components/ui/select'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Textarea } from '@/components/ui/textarea'
+import { api } from '@/lib/api'
+import { ProgressUpdate } from '@/types/ai-clinical-support'
+import { useMutation, useQuery } from '@tanstack/react-query'
+import { format, parseISO } from 'date-fns'
+import { ptBR } from 'date-fns/locale'
 import {
   Activity,
   AlertTriangle,
@@ -36,13 +36,13 @@ import {
   TrendingDown,
   TrendingUp,
   X,
-} from 'lucide-react';
-import React, { useState } from 'react';
+} from 'lucide-react'
+import React, { useState } from 'react'
 
 interface ProgressMonitoringProps {
-  patientId: string;
-  treatmentPlanId?: string;
-  onUpdateProgress?: (update: ProgressUpdate) => void;
+  patientId: string
+  treatmentPlanId?: string
+  onUpdateProgress?: (update: ProgressUpdate) => void
 }
 
 export function ProgressMonitoring({
@@ -50,9 +50,9 @@ export function ProgressMonitoring({
   treatmentPlanId,
   onUpdateProgress: _onUpdateProgress,
 }: ProgressMonitoringProps) {
-  const [_selectedSession, _setSelectedSession] = useState<string>('');
-  const [activeTab, setActiveTab] = useState('overview');
-  const [isAddingUpdate, setIsAddingUpdate] = useState(false);
+  const [_selectedSession, _setSelectedSession] = useState<string>('')
+  const [activeTab, setActiveTab] = useState('overview')
+  const [isAddingUpdate, setIsAddingUpdate] = useState(false)
   const [newUpdate, setNewUpdate] = useState({
     sessionId: '',
     progressPercentage: 0,
@@ -60,7 +60,7 @@ export function ProgressMonitoring({
     notes: '',
     sideEffects: '',
     photos: [] as string[],
-  });
+  })
 
   // Fetch treatment progress
   const { data: progress, isLoading, error, refetch } = useQuery({
@@ -70,19 +70,19 @@ export function ProgressMonitoring({
         patientId,
         treatmentPlanId,
         includeDetailedAnalysis: true,
-      });
+      })
     },
     enabled: !!patientId && !!treatmentPlanId,
-  });
+  })
 
   // Add progress update mutation
   const addProgressUpdate = useMutation({
     mutationFn: async (update: ProgressUpdate) => {
-      return await api.aiClinicalSupport.addProgressUpdate(update);
+      return await api.aiClinicalSupport.addProgressUpdate(update)
     },
     onSuccess: () => {
-      refetch();
-      setIsAddingUpdate(false);
+      refetch()
+      setIsAddingUpdate(false)
       setNewUpdate({
         sessionId: '',
         progressPercentage: 0,
@@ -90,54 +90,54 @@ export function ProgressMonitoring({
         notes: '',
         sideEffects: '',
         photos: [],
-      });
+      })
     },
-  });
+  })
 
   const handleAddUpdate = () => {
-    if (!newUpdate.sessionId) return;
+    if (!newUpdate.sessionId) return
 
     addProgressUpdate.mutate({
       ...newUpdate,
       patientId,
       treatmentPlanId: treatmentPlanId!,
       timestamp: new Date().toISOString(),
-    });
-  };
+    })
+  }
 
   const getProgressColor = (progress: number) => {
-    if (progress >= 80) return 'text-green-600';
-    if (progress >= 60) return 'text-yellow-600';
-    return 'text-blue-600';
-  };
+    if (progress >= 80) return 'text-green-600'
+    if (progress >= 60) return 'text-yellow-600'
+    return 'text-blue-600'
+  }
 
   const getSatisfactionColor = (score: number) => {
-    if (score >= 8) return 'text-green-600';
-    if (score >= 6) return 'text-yellow-600';
-    return 'text-red-600';
-  };
+    if (score >= 8) return 'text-green-600'
+    if (score >= 6) return 'text-yellow-600'
+    return 'text-red-600'
+  }
 
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'on_track':
-        return 'bg-green-100 text-green-800';
+        return 'bg-green-100 text-green-800'
       case 'ahead':
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-blue-100 text-blue-800'
       case 'behind':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'bg-yellow-100 text-yellow-800'
       case 'at_risk':
-        return 'bg-orange-100 text-orange-800';
+        return 'bg-orange-100 text-orange-800'
       case 'paused':
-        return 'bg-red-100 text-red-800';
+        return 'bg-red-100 text-red-800'
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-gray-100 text-gray-800'
     }
-  };
+  }
 
   const formatDate = (date: Date | string) => {
-    const dateObj = typeof date === 'string' ? parseISO(date) : date;
-    return format(dateObj, 'dd/MM/yyyy', { locale: ptBR });
-  };
+    const dateObj = typeof date === 'string' ? parseISO(date) : date
+    return format(dateObj, 'dd/MM/yyyy', { locale: ptBR })
+  }
 
   if (isLoading) {
     return (
@@ -147,7 +147,7 @@ export function ProgressMonitoring({
           <div className='h-32 bg-gray-200 rounded'></div>
         </div>
       </div>
-    );
+    )
   }
 
   if (error) {
@@ -159,7 +159,7 @@ export function ProgressMonitoring({
           Não foi possível carregar o progresso do tratamento. Por favor, tente novamente.
         </AlertDescription>
       </Alert>
-    );
+    )
   }
 
   if (!progress) {
@@ -177,7 +177,7 @@ export function ProgressMonitoring({
           </div>
         </CardContent>
       </Card>
-    );
+    )
   }
 
   return (
@@ -367,7 +367,10 @@ export function ProgressMonitoring({
                 max='10'
                 value={newUpdate.satisfaction}
                 onChange={e =>
-                  setNewUpdate(prev => ({ ...prev, satisfaction: parseInt(e.target.value) || 5 }))}
+                  setNewUpdate(prev => ({
+                    ...prev,
+                    satisfaction: parseInt(e.target.value) || 5,
+                  }))}
               />
             </div>
 
@@ -606,28 +609,28 @@ export function ProgressMonitoring({
         </TabsContent>
       </Tabs>
     </div>
-  );
+  )
 }
 
 interface SessionCardProps {
-  session: any;
+  session: any
 }
 
 function SessionCard({ session }: SessionCardProps) {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'completed':
-        return 'bg-green-100 text-green-800';
+        return 'bg-green-100 text-green-800'
       case 'in_progress':
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-blue-100 text-blue-800'
       case 'scheduled':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'bg-yellow-100 text-yellow-800'
       case 'cancelled':
-        return 'bg-red-100 text-red-800';
+        return 'bg-red-100 text-red-800'
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-gray-100 text-gray-800'
     }
-  };
+  }
 
   return (
     <Card>
@@ -691,5 +694,5 @@ function SessionCard({ session }: SessionCardProps) {
         )}
       </CardContent>
     </Card>
-  );
+  )
 }

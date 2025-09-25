@@ -11,8 +11,8 @@ import {
   PatientResponseSchema,
   PatientsListResponseSchema,
   UpdatePatientRequestSchema,
-} from '@neonpro/types/api/contracts';
-import { protectedProcedure, router } from '../trpc';
+} from '@neonpro/types/api/contracts'
+import { protectedProcedure, router } from '../trpc'
 
 export const patientRouter = router({
   /**
@@ -34,24 +34,24 @@ export const patientRouter = router({
           'LGPD consent is required for patient registration',
           'LGPD_CONSENT_REQUIRED',
           { patientData: { cpf: input.cpf } },
-        );
+        )
       }
 
       // Validate CPF format and check digit
-      const cpfValidation = validateCPF(input.cpf);
+      const cpfValidation = validateCPF(input.cpf)
       if (!cpfValidation.isValid) {
         throw new HealthcareTRPCError(
           'BAD_REQUEST',
           'Invalid CPF format or check digit',
           'INVALID_CPF',
           { cpf: input.cpf, reason: cpfValidation.reason },
-        );
+        )
       }
 
       // Check for duplicate CPF
       const existingPatient = await ctx.prisma.patient.findUnique({
         where: { cpf: input.cpf },
-      });
+      })
 
       if (existingPatient) {
         throw new HealthcareTRPCError(
@@ -59,7 +59,7 @@ export const patientRouter = router({
           'Patient with this CPF already exists',
           'PATIENT_ALREADY_EXISTS',
           { existingPatientId: existingPatient.id },
-        );
+        )
       }
 
       // Create patient with audit trail
@@ -71,7 +71,7 @@ export const patientRouter = router({
           consentVersion: '1.0',
           createdBy: ctx.user.id,
         },
-      });
+      })
 
       // Log LGPD consent
       await ctx.prisma.lgpdAuditLog.create({
@@ -85,7 +85,7 @@ export const patientRouter = router({
           },
           _userId: ctx.user.id,
         },
-      });
+      })
 
       return {
         success: true,
@@ -93,7 +93,7 @@ export const patientRouter = router({
         message: 'Patient created successfully with LGPD compliance',
         timestamp: new Date().toISOString(),
         requestId: ctx.requestId,
-      };
+      }
     }),
 
   /**
@@ -109,7 +109,7 @@ export const patientRouter = router({
     .output(PatientResponseSchema)
     .query(async ({ input, _ctx }) => {
       // Check clinic access
-      await validateClinicAccess(ctx.user.id, input.id);
+      await validateClinicAccess(ctx.user.id, input.id)
 
       const patient = await ctx.prisma.patient.findUnique({
         where: {
@@ -120,7 +120,7 @@ export const patientRouter = router({
           appointments: input.includeAppointments,
           medicalHistory: input.includeMedicalHistory,
         },
-      });
+      })
 
       if (!patient) {
         throw new HealthcareTRPCError(
@@ -128,7 +128,7 @@ export const patientRouter = router({
           'Patient not found or access denied',
           'PATIENT_NOT_FOUND',
           { patientId: input.id },
-        );
+        )
       }
 
       // LGPD audit log for data access
@@ -143,14 +143,14 @@ export const patientRouter = router({
           },
           _userId: ctx.user.id,
         },
-      });
+      })
 
       return {
         success: true,
         data: patient,
         timestamp: new Date().toISOString(),
         requestId: ctx.requestId,
-      };
+      }
     }),
 
   /**
@@ -166,7 +166,7 @@ export const patientRouter = router({
     .output(PatientsListResponseSchema)
     .query(async ({ input, _ctx }) => {
       // Validate clinic access
-      await validateClinicAccess(ctx.user.id, input.clinicId);
+      await validateClinicAccess(ctx.user.id, input.clinicId)
 
       const where = {
         clinicId: input.clinicId,
@@ -181,7 +181,7 @@ export const patientRouter = router({
             { email: { contains: input.search, mode: 'insensitive' } },
           ],
         }),
-      };
+      }
 
       const [patients, total] = await Promise.all([
         ctx.prisma.patient.findMany({
@@ -193,7 +193,7 @@ export const patientRouter = router({
           },
         }),
         ctx.prisma.patient.count({ where }),
-      ]);
+      ])
 
       return {
         success: true,
@@ -208,7 +208,7 @@ export const patientRouter = router({
         },
         timestamp: new Date().toISOString(),
         requestId: ctx.requestId,
-      };
+      }
     }),
 
   /**
@@ -226,7 +226,7 @@ export const patientRouter = router({
       // Get current patient data for change tracking
       const currentPatient = await ctx.prisma.patient.findUnique({
         where: { id: input.id },
-      });
+      })
 
       if (!currentPatient) {
         throw new HealthcareTRPCError(
@@ -234,22 +234,22 @@ export const patientRouter = router({
           'Patient not found',
           'PATIENT_NOT_FOUND',
           { patientId: input.id },
-        );
+        )
       }
 
       // Validate clinic access
-      await validateClinicAccess(ctx.user.id, currentPatient.clinicId);
+      await validateClinicAccess(ctx.user.id, currentPatient.clinicId)
 
       // Track changes for audit
-      const changes = {};
+      const changes = {}
       Object.keys(input).forEach(key => {
         if (key !== 'id' && input[key] !== currentPatient[key]) {
           changes[key] = {
             from: currentPatient[key],
             to: input[key],
-          };
+          }
         }
-      });
+      })
 
       // Update patient
       const updatedPatient = await ctx.prisma.patient.update({
@@ -259,7 +259,7 @@ export const patientRouter = router({
           updatedAt: new Date(),
           updatedBy: ctx.user.id,
         },
-      });
+      })
 
       // Log changes for LGPD compliance
       if (Object.keys(changes).length > 0) {
@@ -273,7 +273,7 @@ export const patientRouter = router({
             },
             _userId: ctx.user.id,
           },
-        });
+        })
       }
 
       return {
@@ -282,7 +282,7 @@ export const patientRouter = router({
         message: 'Patient updated successfully',
         timestamp: new Date().toISOString(),
         requestId: ctx.requestId,
-      };
+      }
     }),
 
   /**
@@ -311,7 +311,7 @@ export const patientRouter = router({
     .mutation(async ({ input, _ctx }) => {
       const patient = await ctx.prisma.patient.findUnique({
         where: { id: input.id },
-      });
+      })
 
       if (!patient) {
         throw new HealthcareTRPCError(
@@ -319,11 +319,11 @@ export const patientRouter = router({
           'Patient not found',
           'PATIENT_NOT_FOUND',
           { patientId: input.id },
-        );
+        )
       }
 
       // Validate clinic access
-      await validateClinicAccess(ctx.user.id, patient.clinicId);
+      await validateClinicAccess(ctx.user.id, patient.clinicId)
 
       // Soft delete patient
       await ctx.prisma.patient.update({
@@ -334,7 +334,7 @@ export const patientRouter = router({
           deletedBy: ctx.user.id,
           deletionReason: input.reason,
         },
-      });
+      })
 
       // LGPD audit log
       await ctx.prisma.lgpdAuditLog.create({
@@ -347,63 +347,63 @@ export const patientRouter = router({
           },
           _userId: ctx.user.id,
         },
-      });
+      })
 
       return {
         success: true,
         message: 'Patient deleted successfully',
         timestamp: new Date().toISOString(),
         requestId: ctx.requestId,
-      };
+      }
     }),
-});
+})
 
 // Helper functions
 function validateCPF(cpf: string): { isValid: boolean; reason?: string } {
   // Remove formatting
-  const cleanCPF = cpf.replace(/\D/g, '');
+  const cleanCPF = cpf.replace(/\D/g, '')
 
   // Check length
   if (cleanCPF.length !== 11) {
-    return { isValid: false, reason: 'CPF must have 11 digits' };
+    return { isValid: false, reason: 'CPF must have 11 digits' }
   }
 
   // Check for repeated digits
   if (/^(\d)\1{10}$/.test(cleanCPF)) {
-    return { isValid: false, reason: 'CPF cannot have all identical digits' };
+    return { isValid: false, reason: 'CPF cannot have all identical digits' }
   }
 
   // Validate check digits
-  let sum = 0;
+  let sum = 0
   for (let i = 0; i < 9; i++) {
-    sum += parseInt(cleanCPF[i]) * (10 - i);
+    sum += parseInt(cleanCPF[i]) * (10 - i)
   }
-  let remainder = sum % 11;
-  let digit1 = remainder < 2 ? 0 : 11 - remainder;
+  let remainder = sum % 11
+  let digit1 = remainder < 2 ? 0 : 11 - remainder
 
   if (parseInt(cleanCPF[9]) !== digit1) {
-    return { isValid: false, reason: 'Invalid first check digit' };
+    return { isValid: false, reason: 'Invalid first check digit' }
   }
 
-  sum = 0;
+  sum = 0
   for (let i = 0; i < 10; i++) {
-    sum += parseInt(cleanCPF[i]) * (11 - i);
+    sum += parseInt(cleanCPF[i]) * (11 - i)
   }
-  remainder = sum % 11;
-  let digit2 = remainder < 2 ? 0 : 11 - remainder;
+  remainder = sum % 11
+  let digit2 = remainder < 2 ? 0 : 11 - remainder
 
   if (parseInt(cleanCPF[10]) !== digit2) {
-    return { isValid: false, reason: 'Invalid second check digit' };
+    return { isValid: false, reason: 'Invalid second check digit' }
   }
 
-  return { isValid: true };
+  return { isValid: true }
 }
 
 function calculateDataRetention(): string {
   // LGPD compliance: 5 years retention for healthcare data
-  const retentionDate = new Date();
-  retentionDate.setFullYear(retentionDate.getFullYear() + 5);
-  return retentionDate.toISOString();
+  const retentionDate = new Date()
+  retentionDate.setFullYear(retentionDate.getFullYear() + 5)
+  return retentionDate.toISOString()
 }
 
 async function validateClinicAccess(
@@ -412,5 +412,5 @@ async function validateClinicAccess(
 ): Promise<void> {
   // Implementation depends on your authorization system
   // This is a placeholder for clinic access validation
-  return Promise.resolve();
+  return Promise.resolve()
 }

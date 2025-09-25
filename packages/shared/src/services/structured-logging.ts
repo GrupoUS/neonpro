@@ -14,15 +14,15 @@
  * @compliance LGPD, ANVISA SaMD, Healthcare Standards
  */
 
-import { nanoid } from 'nanoid';
-import { z } from 'zod';
+import { nanoid } from 'nanoid'
+import { z } from 'zod'
 
 // Import enhanced Winston-based logging
 import {
   brazilianPIIRedactionService,
   createHealthcareLogger,
   logger as enhancedLogger,
-} from './winston-logging';
+} from './winston-logging'
 
 // ============================================================================
 // SCHEMAS & TYPES
@@ -40,9 +40,9 @@ export const LogLevelSchema = z.enum([
   'critical', // Critical conditions requiring immediate attention
   'alert', // Action must be taken immediately (patient safety)
   'emergency', // System is unusable (life-critical scenarios)
-]);
+])
 
-export type LogLevel = z.infer<typeof LogLevelSchema>;
+export type LogLevel = z.infer<typeof LogLevelSchema>
 
 /**
  * Healthcare context schema for medical workflow tracking
@@ -132,9 +132,9 @@ export const HealthcareContextSchema = z.object({
     })
     .optional()
     .describe('Clinical environment context'),
-});
+})
 
-export type HealthcareContext = z.infer<typeof HealthcareContextSchema>;
+export type HealthcareContext = z.infer<typeof HealthcareContextSchema>
 
 /**
  * Technical context schema for system and performance tracking
@@ -190,9 +190,9 @@ export const TechnicalContextSchema = z.object({
     })
     .optional()
     .describe('Anonymized user context'),
-});
+})
 
-export type TechnicalContext = z.infer<typeof TechnicalContextSchema>;
+export type TechnicalContext = z.infer<typeof TechnicalContextSchema>
 
 /**
  * LGPD compliance metadata schema
@@ -220,9 +220,9 @@ export const LGPDComplianceSchema = z.object({
   auditRequired: z
     .boolean()
     .describe('Whether this log entry requires audit trail'),
-});
+})
 
-export type LGPDCompliance = z.infer<typeof LGPDComplianceSchema>;
+export type LGPDCompliance = z.infer<typeof LGPDComplianceSchema>
 
 /**
  * Structured log entry schema
@@ -267,9 +267,9 @@ export const LogEntrySchema = z.object({
     })
     .optional()
     .describe('Log processing metadata'),
-});
+})
 
-export type LogEntry = z.infer<typeof LogEntrySchema>;
+export type LogEntry = z.infer<typeof LogEntrySchema>
 
 /**
  * Structured logging configuration schema
@@ -387,11 +387,11 @@ export const StructuredLoggingConfigSchema = z.object({
         .describe('Enable correlation with metrics'),
     })
     .describe('Integration configuration'),
-});
+})
 
 export type StructuredLoggingConfig = z.infer<
   typeof StructuredLoggingConfigSchema
->;
+>
 
 // ============================================================================
 // STRUCTURED LOGGER CLASS
@@ -401,16 +401,16 @@ export type StructuredLoggingConfig = z.infer<
  * Healthcare-compliant structured logging service
  */
 export class StructuredLogger {
-  private config: StructuredLoggingConfig;
-  private logBuffer: LogEntry[] = [];
-  private flushTimer?: NodeJS.Timeout;
-  private isInitialized = false;
+  private config: StructuredLoggingConfig
+  private logBuffer: LogEntry[] = []
+  private flushTimer?: NodeJS.Timeout
+  private isInitialized = false
 
   constructor(config: Partial<StructuredLoggingConfig> & { _service: string }) {
-    this.config = StructuredLoggingConfigSchema.parse(config);
+    this.config = StructuredLoggingConfigSchema.parse(config)
 
     if (this.config.enabled) {
-      this.initialize();
+      this.initialize()
     }
   }
 
@@ -423,18 +423,18 @@ export class StructuredLogger {
    */
   private initialize(): void {
     try {
-      this.setupFlushTimer();
-      this.setupProcessHandlers();
-      this.isInitialized = true;
+      this.setupFlushTimer()
+      this.setupProcessHandlers()
+      this.isInitialized = true
 
       this.info('Structured logging service initialized', {
         _service: this.config._service,
         outputs: this.config.outputs,
         healthcareCompliance: this.config.healthcareCompliance.enablePIIRedaction,
-      });
+      })
     } catch (error) {
       // Use fallback logging since the structured logger failed to initialize
-      enhancedLogger.error('Failed to initialize structured logging', error as Error);
+      enhancedLogger.error('Failed to initialize structured logging', error as Error)
     }
   }
 
@@ -443,12 +443,13 @@ export class StructuredLogger {
    */
   private setupFlushTimer(): void {
     if (this.flushTimer) {
-      clearInterval(this.flushTimer);
+      clearInterval(this.flushTimer)
+      this.flushTimer = undefined
     }
 
     this.flushTimer = setInterval(() => {
-      this.flush();
-    }, this.config.performance.flushInterval);
+      this.flush()
+    }, this.config.performance.flushInterval)
   }
 
   /**
@@ -457,13 +458,13 @@ export class StructuredLogger {
   private setupProcessHandlers(): void {
     // Flush logs on process exit
     const gracefulShutdown = () => {
-      this.flush();
-      process.exit(0);
-    };
+      this.flush()
+      process.exit(0)
+    }
 
-    process.on('SIGINT', gracefulShutdown);
-    process.on('SIGTERM', gracefulShutdown);
-    process.on('beforeExit', () => this.flush());
+    process.on('SIGINT', gracefulShutdown)
+    process.on('SIGTERM', gracefulShutdown)
+    process.on('beforeExit', () => this.flush())
   }
 
   // ============================================================================
@@ -477,11 +478,11 @@ export class StructuredLogger {
     message: string,
     data?: Record<string, unknown>,
     _context?: {
-      healthcare?: HealthcareContext;
-      technical?: Partial<TechnicalContext>;
+      healthcare?: HealthcareContext
+      technical?: Partial<TechnicalContext>
     },
   ): void {
-    this.log('debug', message, data, _context);
+    this.log('debug', message, data, _context)
   }
 
   /**
@@ -491,11 +492,11 @@ export class StructuredLogger {
     message: string,
     data?: Record<string, unknown>,
     _context?: {
-      healthcare?: HealthcareContext;
-      technical?: Partial<TechnicalContext>;
+      healthcare?: HealthcareContext
+      technical?: Partial<TechnicalContext>
     },
   ): void {
-    this.log('info', message, data, _context);
+    this.log('info', message, data, _context)
   }
 
   /**
@@ -505,11 +506,11 @@ export class StructuredLogger {
     message: string,
     data?: Record<string, unknown>,
     _context?: {
-      healthcare?: HealthcareContext;
-      technical?: Partial<TechnicalContext>;
+      healthcare?: HealthcareContext
+      technical?: Partial<TechnicalContext>
     },
   ): void {
-    this.log('notice', message, data, _context);
+    this.log('notice', message, data, _context)
   }
 
   /**
@@ -519,11 +520,11 @@ export class StructuredLogger {
     message: string,
     data?: Record<string, unknown>,
     _context?: {
-      healthcare?: HealthcareContext;
-      technical?: Partial<TechnicalContext>;
+      healthcare?: HealthcareContext
+      technical?: Partial<TechnicalContext>
     },
   ): void {
-    this.log('warn', message, data, _context);
+    this.log('warn', message, data, _context)
   }
 
   /**
@@ -534,8 +535,8 @@ export class StructuredLogger {
     error?: Error,
     data?: Record<string, unknown>,
     _context?: {
-      healthcare?: HealthcareContext;
-      technical?: Partial<TechnicalContext>;
+      healthcare?: HealthcareContext
+      technical?: Partial<TechnicalContext>
     },
   ): void {
     const errorData = error
@@ -545,9 +546,9 @@ export class StructuredLogger {
         stack: error.stack,
         code: (error as any).code,
       }
-      : undefined;
+      : undefined
 
-    this.log('error', message, data, _context, errorData);
+    this.log('error', message, data, _context, errorData)
   }
 
   /**
@@ -557,14 +558,14 @@ export class StructuredLogger {
     message: string,
     data?: Record<string, unknown>,
     _context?: {
-      healthcare?: HealthcareContext;
-      technical?: Partial<TechnicalContext>;
+      healthcare?: HealthcareContext
+      technical?: Partial<TechnicalContext>
     },
   ): void {
-    this.log('critical', message, data, _context);
+    this.log('critical', message, data, _context)
 
     // Immediate flush for critical events
-    this.flush();
+    this.flush()
   }
 
   /**
@@ -574,15 +575,15 @@ export class StructuredLogger {
     message: string,
     data?: Record<string, unknown>,
     _context?: {
-      healthcare?: HealthcareContext;
-      technical?: Partial<TechnicalContext>;
+      healthcare?: HealthcareContext
+      technical?: Partial<TechnicalContext>
     },
   ): void {
-    this.log('alert', message, data, _context);
+    this.log('alert', message, data, _context)
 
     // Immediate flush and alert for patient safety
-    this.flush();
-    this.sendPatientSafetyAlert(message, data, _context);
+    this.flush()
+    this.sendPatientSafetyAlert(message, data, _context)
   }
 
   /**
@@ -592,15 +593,15 @@ export class StructuredLogger {
     message: string,
     data?: Record<string, unknown>,
     _context?: {
-      healthcare?: HealthcareContext;
-      technical?: Partial<TechnicalContext>;
+      healthcare?: HealthcareContext
+      technical?: Partial<TechnicalContext>
     },
   ): void {
-    this.log('emergency', message, data, _context);
+    this.log('emergency', message, data, _context)
 
     // Immediate flush and emergency alert
-    this.flush();
-    this.sendEmergencyAlert(message, data, _context);
+    this.flush()
+    this.sendEmergencyAlert(message, data, _context)
   }
 
   // ============================================================================
@@ -622,7 +623,7 @@ export class StructuredLogger {
       ? 'critical'
       : severity === 'medium'
       ? 'error'
-      : 'warn';
+      : 'warn'
 
     this.log(
       level,
@@ -633,7 +634,7 @@ export class StructuredLogger {
         severity,
       },
       { healthcare: healthcareContext },
-    );
+    )
   }
 
   /**
@@ -645,20 +646,20 @@ export class StructuredLogger {
     message: string,
     data?: Record<string, unknown>,
     _context?: {
-      healthcare?: Partial<HealthcareContext>;
-      technical?: Partial<TechnicalContext>;
+      healthcare?: Partial<HealthcareContext>
+      technical?: Partial<TechnicalContext>
     },
   ): void {
     const healthcareContext: HealthcareContext = {
       workflowType,
       workflowStage: stage,
       ..._context?.healthcare,
-    };
+    }
 
     this.info(`[WORKFLOW:${workflowType?.toUpperCase()}] ${message}`, data, {
       healthcare: healthcareContext,
       technical: _context?.technical,
-    });
+    })
   }
 
   /**
@@ -670,7 +671,7 @@ export class StructuredLogger {
     healthcareContext: HealthcareContext,
     data?: Record<string, unknown>,
   ): void {
-    const level = action === 'adverse_reaction' ? 'alert' : 'info';
+    const level = action === 'adverse_reaction' ? 'alert' : 'info'
 
     this.log(
       level,
@@ -681,7 +682,7 @@ export class StructuredLogger {
         action,
       },
       { healthcare: healthcareContext },
-    );
+    )
   }
 
   /**
@@ -694,7 +695,7 @@ export class StructuredLogger {
     healthcareContext: HealthcareContext,
     data?: Record<string, unknown>,
   ): void {
-    const level = responseTime > 30000 ? 'critical' : 'alert'; // 30 second threshold
+    const level = responseTime > 30000 ? 'critical' : 'alert' // 30 second threshold
 
     this.log(
       level,
@@ -706,7 +707,7 @@ export class StructuredLogger {
         responseTime,
       },
       { healthcare: healthcareContext },
-    );
+    )
   }
 
   // ============================================================================
@@ -721,14 +722,14 @@ export class StructuredLogger {
     message: string,
     data?: Record<string, unknown>,
     _context?: {
-      healthcare?: HealthcareContext;
-      technical?: Partial<TechnicalContext>;
+      healthcare?: HealthcareContext
+      technical?: Partial<TechnicalContext>
     },
     error?: Error,
   ): void {
     // Check if level meets threshold
     if (!this.shouldLog(level)) {
-      return;
+      return
     }
 
     try {
@@ -739,31 +740,31 @@ export class StructuredLogger {
         data,
         _context,
         error,
-      );
+      )
 
       // Apply PII redaction if enabled
       const sanitizedEntry = this.config.healthcareCompliance.enablePIIRedaction
         ? this.redactPII(logEntry)
-        : logEntry;
+        : logEntry
 
       // Add to buffer
-      this.addToBuffer(sanitizedEntry);
+      this.addToBuffer(sanitizedEntry)
 
       // Output to console if enabled and in development
       if (
-        this.config.outputs.console
-        && (process.env.NODE_ENV === 'development' || level === 'emergency')
+        this.config.outputs.console &&
+        (process.env.NODE_ENV === 'development' || level === 'emergency')
       ) {
-        this.outputToConsole(sanitizedEntry);
+        this.outputToConsole(sanitizedEntry)
       }
 
       // Flush immediately for high-priority events
       if (['critical', 'alert', 'emergency'].includes(level)) {
-        this.flush();
+        this.flush()
       }
     } catch (error) {
       // Use fallback logging since the structured logger failed to log
-      enhancedLogger.error('Failed to log message', { message, level: level as string } as any);
+      enhancedLogger.error('Failed to log message', { message, level: level as string } as any)
     }
   }
 
@@ -780,11 +781,11 @@ export class StructuredLogger {
       'critical',
       'alert',
       'emergency',
-    ];
-    const currentLevelIndex = levels.indexOf(this.config.level);
-    const messageLevelIndex = levels.indexOf(level);
+    ]
+    const currentLevelIndex = levels.indexOf(this.config.level)
+    const messageLevelIndex = levels.indexOf(level)
 
-    return messageLevelIndex >= currentLevelIndex;
+    return messageLevelIndex >= currentLevelIndex
   }
 
   /**
@@ -795,13 +796,13 @@ export class StructuredLogger {
     message: string,
     data?: Record<string, unknown>,
     _context?: {
-      healthcare?: HealthcareContext;
-      technical?: Partial<TechnicalContext>;
+      healthcare?: HealthcareContext
+      technical?: Partial<TechnicalContext>
     },
     error?: Error,
   ): LogEntry {
-    const id = `log_${nanoid(12)}`;
-    const timestamp = Date.now();
+    const id = `log_${nanoid(12)}`
+    const timestamp = Date.now()
 
     // Build technical context
     const technicalContext: TechnicalContext = {
@@ -809,10 +810,10 @@ export class StructuredLogger {
       environment: (process.env.NODE_ENV as any) || 'development',
       requestId: this.generateRequestId(),
       ..._context?.technical,
-    };
+    }
 
     // Determine LGPD compliance metadata
-    const lgpdCompliance = this.determineLGPDCompliance(level, data, _context);
+    const lgpdCompliance = this.determineLGPDCompliance(level, data, _context)
 
     return {
       id,
@@ -832,7 +833,7 @@ export class StructuredLogger {
         threadId: this.generateThreadId(),
         loggerName: 'StructuredLogger',
       },
-    };
+    }
   }
 
   /**
@@ -842,26 +843,26 @@ export class StructuredLogger {
     level: LogLevel,
     data?: Record<string, unknown>,
     _context?: {
-      healthcare?: HealthcareContext;
-      technical?: Partial<TechnicalContext>;
+      healthcare?: HealthcareContext
+      technical?: Partial<TechnicalContext>
     },
   ): LGPDCompliance {
     // Determine data classification based on context
-    let dataClassification: LGPDCompliance['dataClassification'] = 'internal';
+    let dataClassification: LGPDCompliance['dataClassification'] = 'internal'
 
     if (
-      _context?.healthcare?.patientContext
-      || _context?.technical?.userContext
+      _context?.healthcare?.patientContext ||
+      _context?.technical?.userContext
     ) {
-      dataClassification = 'confidential';
+      dataClassification = 'confidential'
     }
 
     if (['emergency', 'alert'].includes(level)) {
-      dataClassification = 'restricted';
+      dataClassification = 'restricted'
     }
 
     // Check if contains PII
-    const containsPII = this.detectPII(data, _context);
+    const containsPII = this.detectPII(data, _context)
 
     return {
       dataClassification,
@@ -870,9 +871,9 @@ export class StructuredLogger {
       retentionPeriod: this.config.lgpdCompliance.dataRetentionDays,
       requiresConsent: this.config.lgpdCompliance.requireExplicitConsent && containsPII,
       anonymized: this.config.lgpdCompliance.anonymizeByDefault,
-      auditRequired: ['critical', 'alert', 'emergency'].includes(level)
-        || _context?.healthcare?.patientContext !== undefined,
-    };
+      auditRequired: ['critical', 'alert', 'emergency'].includes(level) ||
+        _context?.healthcare?.patientContext !== undefined,
+    }
   }
 
   /**
@@ -881,44 +882,44 @@ export class StructuredLogger {
   private detectPII(
     data?: Record<string, unknown>,
     _context?: {
-      healthcare?: HealthcareContext;
-      technical?: Partial<TechnicalContext>;
+      healthcare?: HealthcareContext
+      technical?: Partial<TechnicalContext>
     },
   ): boolean {
     // Check for obvious PII fields
-    const piiFields = ['cpf', 'email', 'phone', 'name', 'address', 'birthDate'];
+    const piiFields = ['cpf', 'email', 'phone', 'name', 'address', 'birthDate']
 
     if (data) {
       for (const key of Object.keys(data)) {
         if (piiFields.some(field => key.toLowerCase().includes(field))) {
-          return true;
+          return true
         }
       }
     }
 
     // Check context for PII indicators
     if (
-      _context?.technical?.userContext?.ipAddress
-      || _context?.healthcare?.patientContext
+      _context?.technical?.userContext?.ipAddress ||
+      _context?.healthcare?.patientContext
     ) {
-      return true;
+      return true
     }
 
-    return false;
+    return false
   }
 
   /**
    * Redact PII from log entry
    */
   private redactPII(logEntry: LogEntry): LogEntry {
-    const redactedEntry = { ...logEntry };
+    const redactedEntry = { ...logEntry }
 
     // Redact message
-    redactedEntry.message = this.redactPIIFromText(redactedEntry.message);
+    redactedEntry.message = this.redactPIIFromText(redactedEntry.message)
 
     // Redact data fields
     if (redactedEntry.data) {
-      redactedEntry.data = this.redactPIIFromObject(redactedEntry.data);
+      redactedEntry.data = this.redactPIIFromObject(redactedEntry.data)
     }
 
     // Redact error message and stack
@@ -929,10 +930,10 @@ export class StructuredLogger {
         stack: redactedEntry.error.stack
           ? this.redactPIIFromText(redactedEntry.error.stack)
           : undefined,
-      };
+      }
     }
 
-    return redactedEntry;
+    return redactedEntry
   }
 
   /**
@@ -945,14 +946,14 @@ export class StructuredLogger {
       /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g, // Email
       /\b\(\d{2}\)\s?\d{4,5}-?\d{4}\b/g, // Phone numbers
       /\b(?:password|senha|token)[=:]\s*\S+/gi, // Passwords/tokens
-    ];
+    ]
 
-    let redactedText = text;
+    let redactedText = text
     piiPatterns.forEach(pattern => {
-      redactedText = redactedText.replace(pattern, '[REDACTED]');
-    });
+      redactedText = redactedText.replace(pattern, '[REDACTED]')
+    })
 
-    return redactedText;
+    return redactedText
   }
 
   /**
@@ -961,7 +962,7 @@ export class StructuredLogger {
   private redactPIIFromObject(
     obj: Record<string, unknown>,
   ): Record<string, unknown> {
-    const redactedObj = { ...obj };
+    const redactedObj = { ...obj }
     const piiFields = [
       'cpf',
       'email',
@@ -970,24 +971,24 @@ export class StructuredLogger {
       'address',
       'password',
       'token',
-    ];
+    ]
 
     Object.keys(redactedObj).forEach(key => {
       if (piiFields.some(field => key.toLowerCase().includes(field))) {
-        redactedObj[key] = '[REDACTED]';
+        redactedObj[key] = '[REDACTED]'
       } else if (typeof redactedObj[key] === 'string') {
-        redactedObj[key] = this.redactPIIFromText(redactedObj[key] as string);
+        redactedObj[key] = this.redactPIIFromText(redactedObj[key] as string)
       } else if (
-        typeof redactedObj[key] === 'object'
-        && redactedObj[key] !== null
+        typeof redactedObj[key] === 'object' &&
+        redactedObj[key] !== null
       ) {
         redactedObj[key] = this.redactPIIFromObject(
           redactedObj[key] as Record<string, unknown>,
-        );
+        )
       }
-    });
+    })
 
-    return redactedObj;
+    return redactedObj
   }
 
   /**
@@ -996,38 +997,38 @@ export class StructuredLogger {
   private generateTags(
     level: LogLevel,
     _context?: {
-      healthcare?: HealthcareContext;
-      technical?: Partial<TechnicalContext>;
+      healthcare?: HealthcareContext
+      technical?: Partial<TechnicalContext>
     },
   ): string[] {
-    const tags: string[] = [level];
+    const tags: string[] = [level]
 
     if (_context?.healthcare?.workflowType) {
-      tags.push(`workflow:${_context.healthcare.workflowType}`);
+      tags.push(`workflow:${_context.healthcare.workflowType}`)
     }
 
     if (_context?.healthcare?.patientContext?.criticalityLevel) {
       tags.push(
         `criticality:${_context.healthcare.patientContext.criticalityLevel}`,
-      );
+      )
     }
 
     if (_context?.technical?.environment) {
-      tags.push(`env:${_context.technical.environment}`);
+      tags.push(`env:${_context.technical.environment}`)
     }
 
-    return tags;
+    return tags
   }
 
   /**
    * Add log entry to buffer
    */
   private addToBuffer(logEntry: LogEntry): void {
-    this.logBuffer.push(logEntry);
+    this.logBuffer.push(logEntry)
 
     // Check if buffer needs flushing
     if (this.logBuffer.length >= this.config.performance.batchSize) {
-      this.flush();
+      this.flush()
     }
 
     // Check max buffer size
@@ -1036,8 +1037,8 @@ export class StructuredLogger {
         bufferSize: this.logBuffer.length,
         maxBufferSize: this.config.performance.maxBufferSize,
         batchSize: this.config.performance.batchSize,
-      });
-      this.logBuffer = this.logBuffer.slice(-this.config.performance.batchSize);
+      })
+      this.logBuffer = this.logBuffer.slice(-this.config.performance.batchSize)
     }
   }
 
@@ -1054,10 +1055,10 @@ export class StructuredLogger {
       critical: '\ud83d\udd25',
       alert: '\ud83d\udea8',
       emergency: '\ud83c\udd98',
-    };
+    }
 
-    const emoji = levelEmojis[logEntry.level];
-    const timestamp = new Date(logEntry.timestamp).toLocaleTimeString();
+    const emoji = levelEmojis[logEntry.level]
+    const timestamp = new Date(logEntry.timestamp).toLocaleTimeString()
 
     // Forward to enhanced logger instead of direct console output
     enhancedLogger.info(logEntry.message, {
@@ -1065,43 +1066,43 @@ export class StructuredLogger {
       logLevel: logEntry.level,
       _service: logEntry.technicalContext._service,
       logTimestamp: new Date(logEntry.timestamp).toISOString(),
-    });
+    })
   }
 
   /**
    * Flush log buffer
    */
   private async flush(): Promise<void> {
-    if (this.logBuffer.length === 0) return;
+    if (this.logBuffer.length === 0) return
 
-    const logsToFlush = [...this.logBuffer];
-    this.logBuffer = [];
+    const logsToFlush = [...this.logBuffer]
+    this.logBuffer = []
 
     try {
       // Send to remote endpoint if enabled
       if (this.config.outputs.remote) {
-        await this.sendToRemoteEndpoint(logsToFlush);
+        await this.sendToRemoteEndpoint(logsToFlush)
       }
 
       // Send to observability platform if enabled
       if (this.config.outputs.observability) {
-        await this.sendToObservabilityPlatform(logsToFlush);
+        await this.sendToObservabilityPlatform(logsToFlush)
       }
 
       // Write to file if enabled
       if (this.config.outputs.file) {
-        await this.writeToFile(logsToFlush);
+        await this.writeToFile(logsToFlush)
       }
     } catch (error) {
-      enhancedLogger.error('Failed to flush logs', error as Error);
+      enhancedLogger.error('Failed to flush logs', error as Error)
       enhancedLogger.error('Flush failure details', {
         flushLogCount: logsToFlush.length,
-      } as any);
+      } as any)
       // Re-add logs to buffer for retry (keep only critical ones)
       const criticalLogs = logsToFlush.filter(log =>
         ['critical', 'alert', 'emergency'].includes(log.level)
-      );
-      this.logBuffer.unshift(...criticalLogs);
+      )
+      this.logBuffer.unshift(...criticalLogs)
     }
   }
 
@@ -1110,7 +1111,7 @@ export class StructuredLogger {
    */
   private async sendToRemoteEndpoint(logs: LogEntry[]): Promise<void> {
     // TODO: Implement actual HTTP client
-    enhancedLogger.debug('Sending logs to remote endpoint', { logCount: logs.length });
+    enhancedLogger.debug('Sending logs to remote endpoint', { logCount: logs.length })
   }
 
   /**
@@ -1118,7 +1119,7 @@ export class StructuredLogger {
    */
   private async sendToObservabilityPlatform(logs: LogEntry[]): Promise<void> {
     // TODO: Implement actual observability integration
-    enhancedLogger.debug('Sending logs to observability platform', { logCount: logs.length });
+    enhancedLogger.debug('Sending logs to observability platform', { logCount: logs.length })
   }
 
   /**
@@ -1126,7 +1127,7 @@ export class StructuredLogger {
    */
   private async writeToFile(logs: LogEntry[]): Promise<void> {
     // TODO: Implement actual file writing
-    enhancedLogger.debug('Writing logs to file', { logCount: logs.length });
+    enhancedLogger.debug('Writing logs to file', { logCount: logs.length })
   }
 
   /**
@@ -1136,8 +1137,8 @@ export class StructuredLogger {
     message: string,
     data?: Record<string, unknown>,
     _context?: {
-      healthcare?: HealthcareContext;
-      technical?: Partial<TechnicalContext>;
+      healthcare?: HealthcareContext
+      technical?: Partial<TechnicalContext>
     },
   ): Promise<void> {
     // Log patient safety alert as a critical event
@@ -1152,7 +1153,7 @@ export class StructuredLogger {
           : 'public',
       },
       _context,
-    );
+    )
   }
 
   /**
@@ -1162,8 +1163,8 @@ export class StructuredLogger {
     message: string,
     data?: Record<string, unknown>,
     _context?: {
-      healthcare?: HealthcareContext;
-      technical?: Partial<TechnicalContext>;
+      healthcare?: HealthcareContext
+      technical?: Partial<TechnicalContext>
     },
   ): Promise<void> {
     // Log emergency alert as an emergency event
@@ -1178,7 +1179,7 @@ export class StructuredLogger {
           : 'public',
       },
       _context,
-    );
+    )
   }
 
   // ============================================================================
@@ -1189,25 +1190,25 @@ export class StructuredLogger {
    * Generate request ID
    */
   private generateRequestId(): string {
-    return `req_${nanoid(12)}`;
+    return `req_${nanoid(12)}`
   }
 
   /**
    * Generate thread ID
    */
   private generateThreadId(): string {
-    return `thread_${nanoid(8)}`;
+    return `thread_${nanoid(8)}`
   }
 
   /**
    * Generate correlation ID
    */
   generateCorrelationId(): string {
-    return `corr_${nanoid(16)}`;
+    return `corr_${nanoid(16)}`
   }
 
   private generateEntryId(): string {
-    return `entry_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    return `entry_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
   }
 
   /**
@@ -1215,29 +1216,29 @@ export class StructuredLogger {
    */
   setCorrelationId(correlationId: string): void {
     // Store in a simple property that can be used in log entries
-    (this as any).currentCorrelationId = correlationId;
+    ;(this as any).currentCorrelationId = correlationId
   }
 
   /**
    * Get current correlation ID
    */
   getCorrelationId(): string {
-    return (this as any).currentCorrelationId || this.generateCorrelationId();
+    return (this as any).currentCorrelationId || this.generateCorrelationId()
   }
 
   /**
    * Get logging statistics
    */
   getStatistics(): {
-    bufferSize: number;
-    isInitialized: boolean;
-    config: StructuredLoggingConfig;
+    bufferSize: number
+    isInitialized: boolean
+    config: StructuredLoggingConfig
   } {
     return {
       bufferSize: this.logBuffer.length,
       isInitialized: this.isInitialized,
       config: this.config,
-    };
+    }
   }
 
   /**
@@ -1245,19 +1246,19 @@ export class StructuredLogger {
    */
   destroy(): void {
     // Flush remaining logs
-    this.flush();
+    this.flush()
 
     // Clear timer
     if (this.flushTimer) {
-      clearInterval(this.flushTimer);
-      this.flushTimer = undefined;
+      clearInterval(this.flushTimer)
+      this.flushTimer = undefined
     }
 
     // Clear buffer
-    this.logBuffer = [];
-    this.isInitialized = false;
+    this.logBuffer = []
+    this.isInitialized = false
 
-    enhancedLogger.info('StructuredLogger destroyed and resources cleaned up');
+    enhancedLogger.info('StructuredLogger destroyed and resources cleaned up')
   }
 }
 
@@ -1309,7 +1310,7 @@ export const logger = new StructuredLogger({
     enableDistributedTracing: true,
     enableMetricsCorrelation: true,
   },
-});
+})
 
 // ============================================================================
 // ENHANCED WINSTON-BASED LOGGER
@@ -1324,7 +1325,7 @@ export const logger = new StructuredLogger({
  * - LGPD compliance features
  * - Better performance and reliability
  */
-export const winstonLogger = enhancedLogger;
+export const winstonLogger = enhancedLogger
 
 /**
  * Factory function to create custom healthcare loggers
@@ -1333,24 +1334,24 @@ export function createWinstonHealthcareLogger(serviceName: string) {
   return createHealthcareLogger({
     _service: serviceName,
     environment: (process.env.NODE_ENV as any) || 'development',
-  });
+  })
 }
 
 /**
  * Brazilian PII redaction service for direct usage
  */
-export const piiRedactionService = brazilianPIIRedactionService;
+export const piiRedactionService = brazilianPIIRedactionService
 
 /**
  * Utility function to redact PII from any text or object
  */
 export function redactPII(data: unknown): unknown {
   if (typeof data === 'string') {
-    return piiRedactionService.redactText(data);
+    return piiRedactionService.redactText(data)
   } else if (typeof data === 'object' && data !== null) {
-    return piiRedactionService.redactObject(data);
+    return piiRedactionService.redactObject(data)
   }
-  return data;
+  return data
 }
 
 /**
@@ -1358,18 +1359,18 @@ export function redactPII(data: unknown): unknown {
  */
 export function containsPII(data: unknown): boolean {
   if (typeof data === 'string') {
-    return piiRedactionService.containsPII(data);
+    return piiRedactionService.containsPII(data)
   } else if (typeof data === 'object' && data !== null) {
-    return piiRedactionService.containsPII(JSON.stringify(data));
+    return piiRedactionService.containsPII(JSON.stringify(data))
   }
-  return false;
+  return false
 }
 
 /**
  * Generate correlation ID for request tracing
  */
 export function generateCorrelationId(): string {
-  return winstonLogger.generateCorrelationId();
+  return winstonLogger.generateCorrelationId()
 }
 
 /**
@@ -1378,23 +1379,23 @@ export function generateCorrelationId(): string {
 export function createLoggingMiddleware() {
   return (
     req: {
-      headers?: Record<string, string>;
-      session?: { id?: string };
-      user?: { id?: string };
-      method?: string;
-      url?: string;
+      headers?: Record<string, string>
+      session?: { id?: string }
+      user?: { id?: string }
+      method?: string
+      url?: string
     },
     res: { setHeader: (key: string, value: string) => void },
     next: () => void,
   ) => {
-    const correlationId = req.headers?.['x-correlation-id'] || generateCorrelationId();
+    const correlationId = req.headers?.['x-correlation-id'] || generateCorrelationId()
 
     // Set correlation ID in both loggers
-    logger.setCorrelationId?.(correlationId);
-    winstonLogger.setCorrelationId(correlationId);
+    logger.setCorrelationId?.(correlationId)
+    winstonLogger.setCorrelationId(correlationId)
 
     // Add to response headers
-    res.setHeader('x-correlation-id', correlationId);
+    res.setHeader('x-correlation-id', correlationId)
 
     // Set request context
     winstonLogger.setRequestContext({
@@ -1408,8 +1409,8 @@ export function createLoggingMiddleware() {
         : 'desktop',
       method: req.method,
       url: req.url,
-    });
+    })
 
-    next();
-  };
+    next()
+  }
 }

@@ -326,7 +326,7 @@ Implementing the analytics package in a healthcare application involves several 
 To begin using the analytics system, initialize the core components and configure them for your specific environment. The package exports a default event collector instance that can be used immediately for basic scenarios, or you can create custom instances with specific configurations:
 
 ```typescript
-import { createAnalyticsConfig, defaultEventCollector } from '@neonpro/analytics';
+import { createAnalyticsConfig, defaultEventCollector } from '@neonpro/analytics'
 
 // Configure analytics for your clinic
 const analyticsConfig = createAnalyticsConfig({
@@ -335,13 +335,13 @@ const analyticsConfig = createAnalyticsConfig({
   enableEncryption: true,
   enableAnonymization: true,
   retentionDays: 2555, // 7 years
-});
+})
 
 // Use the default collector or create a custom one
 defaultEventCollector.config.onFlush = async events => {
   // Forward events to your aggregation service
-  await sendToAggregationService(events);
-};
+  await sendToAggregationService(events)
+}
 ```
 
 Instrument your application to collect meaningful events by calling the `collectEvent` method with appropriately structured data. Focus on capturing key operational touchpoints such as patient interactions, clinical workflows, and financial transactions:
@@ -360,7 +360,7 @@ await defaultEventCollector.collectEvent({
     patientId: 'PAT-456',
     sessionId: 'SESS-789',
   },
-});
+})
 
 // Example: Track treatment outcome
 await defaultEventCollector.collectEvent({
@@ -376,13 +376,13 @@ await defaultEventCollector.collectEvent({
     patientId: 'PAT-456',
     providerId: 'DR-123',
   },
-});
+})
 ```
 
 Create custom KPIs using the factory functions provided for clinical and financial metrics. These functions ensure proper formatting, compliance framework assignment, and risk level assessment:
 
 ```typescript
-import { computeKPIs, createPatientSafetyKPI, createRevenueCycleKPI } from '@neonpro/analytics';
+import { computeKPIs, createPatientSafetyKPI, createRevenueCycleKPI } from '@neonpro/analytics'
 
 // Create a patient safety KPI for medication errors
 const medicationErrorKPI = createPatientSafetyKPI({
@@ -391,7 +391,7 @@ const medicationErrorKPI = createPatientSafetyKPI({
   clinicId: 'CLINIC-001',
   eventType: 'medication_error',
   severity: 'moderate',
-});
+})
 
 // Create a revenue cycle KPI for billing efficiency
 const billingEfficiencyKPI = createRevenueCycleKPI({
@@ -400,7 +400,7 @@ const billingEfficiencyKPI = createRevenueCycleKPI({
   currency: 'BRL',
   clinicId: 'CLINIC-001',
   stage: 'charge_capture',
-});
+})
 
 // Compute KPIs from collected events
 const kpis = computeKPIs(events, {
@@ -412,18 +412,18 @@ const kpis = computeKPIs(events, {
     includeClinicalQuality: true,
     includeFinancial: true,
   },
-});
+})
 ```
 
 Consume analytical insights by integrating with the AI-powered predictive analytics service. This enables proactive decision-making based on forecasted outcomes rather than reactive responses to historical data:
 
 ```typescript
-import { HealthcareAIOrchestrator } from '@neonpro/analytics/ai-analytics';
+import { HealthcareAIOrchestrator } from '@neonpro/analytics/ai-analytics'
 
-const aiOrchestrator = new HealthcareAIOrchestrator();
+const aiOrchestrator = new HealthcareAIOrchestrator()
 
 // Get comprehensive dashboard data
-const dashboardData = await aiOrchestrator.getDashboardData('month');
+const dashboardData = await aiOrchestrator.getDashboardData('month')
 
 // Generate specific predictive insights
 const insights = await aiOrchestrator.generateHealthcareInsights({
@@ -433,14 +433,14 @@ const insights = await aiOrchestrator.generateHealthcareInsights({
     gender: 'female',
     medicalHistory: ['diabetes', 'hypertension'],
   },
-});
+})
 
 // Display insights to users
 insights.insights.forEach(insight => {
-  console.log(`${insight.title}: ${insight.prediction}`);
-  console.log(`Confidence: ${insight.confidence}`);
-  console.log(`Recommendation: ${insight.recommendation}`);
-});
+  console.log(`${insight.title}: ${insight.prediction}`)
+  console.log(`Confidence: ${insight.confidence}`)
+  console.log(`Recommendation: ${insight.recommendation}`)
+})
 ```
 
 Best practices for implementation include batching events to reduce overhead, implementing proper error handling for failed collections, monitoring queue sizes to prevent memory issues, and regularly validating data quality through the built-in assessment tools. For production deployments, ensure that audit logging is integrated with your organization's security information and event management (SIEM) system, and establish regular review processes for compliance reports and predictive insights.
@@ -465,7 +465,7 @@ const highVolumeCollector = createEventCollector({
   maxQueueSize: 5000,
   maxBatchSize: 500,
   autoFlushInterval: 60000, // Flush every minute
-});
+})
 ```
 
 Memory usage is a critical consideration when scaling the event collection system. Each event consumes memory for its payload, metadata, and internal tracking information. Monitor the queue size through the `getStats` method and implement alerting when it approaches dangerous levels. Consider implementing a secondary persistence layer for events during peak loads to prevent memory exhaustion:
@@ -475,61 +475,61 @@ const collector = createEventCollector({
   onError: (error, event) => {
     if (error.message.includes('Queue full')) {
       // Persist event to disk/database as backup
-      backupEventToPersistentStorage(event);
+      backupEventToPersistentStorage(event)
     }
   },
-});
+})
 ```
 
 Data quality issues are among the most common problems in healthcare analytics implementations. Invalid or malformed events can cause processing failures and skew KPI calculations. Implement comprehensive validation at the point of event creation and use the built-in `validateMetricCompliance` function to verify data quality before aggregation:
 
 ```typescript
 function isValidEvent(event) {
-  const baseValidation = event.eventType && event.source && event.data;
-  const complianceValidation = validateMetricCompliance(event);
-  return baseValidation && complianceValidation.isValid;
+  const baseValidation = event.eventType && event.source && event.data
+  const complianceValidation = validateMetricCompliance(event)
+  return baseValidation && complianceValidation.isValid
 }
 
 // Filter events before processing
-const validEvents = rawEvents.filter(isValidEvent);
-const kpis = computeKPIs(validEvents);
+const validEvents = rawEvents.filter(isValidEvent)
+const kpis = computeKPIs(validEvents)
 ```
 
 Network connectivity problems can disrupt the ingestion pipeline, particularly when forwarding events to remote aggregation services. Implement robust retry logic with exponential backoff and circuit breaker patterns to handle transient failures:
 
 ```typescript
 collector.config.onFlush = async events => {
-  let attempts = 0;
-  const maxAttempts = 3;
+  let attempts = 0
+  const maxAttempts = 3
 
   while (attempts < maxAttempts) {
     try {
-      await sendToAggregationService(events);
-      return; // Success
+      await sendToAggregationService(events)
+      return // Success
     } catch (error) {
-      attempts++;
-      if (attempts >= maxAttempts) throw error;
+      attempts++
+      if (attempts >= maxAttempts) throw error
 
       // Exponential backoff
-      const delay = Math.pow(2, attempts) * 1000;
-      await new Promise(resolve => setTimeout(resolve, delay));
+      const delay = Math.pow(2, attempts) * 1000
+      await new Promise(resolve => setTimeout(resolve, delay))
     }
   }
-};
+}
 ```
 
 For AI-powered analytics, model initialization and prediction latency can impact user experience. Pre-initialize the predictive analytics service during application startup to avoid delays when generating insights:
 
 ```typescript
 // Initialize during app startup
-const predictiveService = new PredictiveAnalyticsService();
-await predictiveService.initialize();
+const predictiveService = new PredictiveAnalyticsService()
+await predictiveService.initialize()
 
 // Use pre-initialized service for requests
 app.get('/insights', async (req, res) => {
-  const insights = await predictiveService.generateInsights(req.body);
-  res.json(insights);
-});
+  const insights = await predictiveService.generateInsights(req.body)
+  res.json(insights)
+})
 ```
 
 Regular monitoring and alerting are essential for maintaining system health. Track key metrics such as event collection rate, processing latency, error rates, data quality scores, and compliance status. Set up alerts for critical conditions like sustained high error rates, data quality degradation, or compliance violations. Implement automated health checks that verify all components are functioning correctly and can recover from common failure modes.

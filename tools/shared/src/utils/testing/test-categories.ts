@@ -3,16 +3,16 @@
  * Shared utilities for organizing tests by categories
  */
 
-export type TestCategory = 'frontend' | 'backend' | 'database' | 'quality';
+export type TestCategory = 'frontend' | 'backend' | 'database' | 'quality'
 
 export interface TestCategoryConfig {
-  name: TestCategory;
-  description: string;
-  packageName: string;
-  primaryAgent: string;
-  supportAgents: string[];
-  testTypes: string[];
-  healthcareCompliance: boolean;
+  name: TestCategory
+  description: string
+  packageName: string
+  primaryAgent: string
+  supportAgents: string[]
+  testTypes: string[]
+  healthcareCompliance: boolean
 }
 
 export const TEST_CATEGORIES: Record<TestCategory, TestCategoryConfig> = {
@@ -58,41 +58,41 @@ export const TEST_CATEGORIES: Record<TestCategory, TestCategoryConfig> = {
     testTypes: ['coverage', 'performance', 'audit', 'monitoring'],
     healthcareCompliance: true,
   },
-};
+}
 
 export class TestCategoryManager {
   static getCategoryConfig(category: TestCategory): TestCategoryConfig {
-    return TEST_CATEGORIES[category];
+    return TEST_CATEGORIES[category]
   }
 
   static getAllCategories(): TestCategoryConfig[] {
-    return Object.values(TEST_CATEGORIES);
+    return Object.values(TEST_CATEGORIES)
   }
 
   static getCategoriesByAgent(agent: string): TestCategoryConfig[] {
     return Object.values(TEST_CATEGORIES).filter(
       config => config.primaryAgent === agent || config.supportAgents.includes(agent),
-    );
+    )
   }
 
   static getHealthcareComplianceCategories(): TestCategoryConfig[] {
     return Object.values(TEST_CATEGORIES).filter(
       config => config.healthcareCompliance,
-    );
+    )
   }
 
   static generateTestCommand(
     category: TestCategory,
     testType?: string,
   ): string {
-    const config = TEST_CATEGORIES[category];
-    const baseCommand = `pnpm --filter ${config.packageName}`;
+    const config = TEST_CATEGORIES[category]
+    const baseCommand = `pnpm --filter ${config.packageName}`
 
     if (testType && config.testTypes.includes(testType)) {
-      return `${baseCommand} test:${testType}`;
+      return `${baseCommand} test:${testType}`
     }
 
-    return `${baseCommand} test`;
+    return `${baseCommand} test`
   }
 }
 
@@ -122,4 +122,4 @@ export const TEST_PATTERNS = {
     audit: '**/audit/**/*.test.ts',
     monitoring: '**/monitoring/**/*.test.ts',
   },
-};
+}

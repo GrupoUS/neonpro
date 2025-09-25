@@ -3,30 +3,29 @@
  * Brazilian healthcare compliant AI-powered patient assessment interface
  */
 
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Progress } from '@/components/ui/progress';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Progress } from '@/components/ui/progress'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Textarea } from '@/components/ui/textarea';
-import { trpc } from '@/lib/trpc';
+} from '@/components/ui/select'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { trpc } from '@/lib/trpc'
 import {
   type PatientAssessment,
   PatientAssessmentSchema,
   type SkinType,
   type TreatmentRecommendation,
-} from '@/types/ai-clinical-support';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+} from '@/types/ai-clinical-support'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
   Activity,
   AlertTriangle,
@@ -39,20 +38,20 @@ import {
   Target,
   User,
   X,
-} from 'lucide-react';
-import React, { useEffect, useState } from 'react';
+} from 'lucide-react'
+import React, { useEffect, useState } from 'react'
 
 interface PatientAssessmentFormProps {
-  patientId: string;
-  onSuccess?: (recommendations: TreatmentRecommendation[]) => void;
-  onError?: (error: Error) => void;
+  patientId: string
+  onSuccess?: (recommendations: TreatmentRecommendation[]) => void
+  onError?: (error: Error) => void
 }
 
 export function PatientAssessmentForm(
   { patientId, onSuccess, onError }: PatientAssessmentFormProps,
 ) {
-  const queryClient = useQueryClient();
-  const [activeTab, setActiveTab] = useState('basic');
+  const queryClient = useQueryClient()
+  const [activeTab, setActiveTab] = useState('basic')
   const [assessmentData, setAssessmentData] = useState<Partial<PatientAssessment>>({
     id: '',
     patientId,
@@ -75,18 +74,18 @@ export function PatientAssessmentForm(
     },
     riskFactors: [],
     photos: [],
-  });
+  })
 
   // Generate recommendations mutation
   const generateMutation = trpc.aiClinicalSupport.generateTreatmentRecommendations.useMutation({
     onSuccess: data => {
-      queryClient.invalidateQueries(['patients', patientId]);
-      onSuccess?.(data.recommendations);
+      queryClient.invalidateQueries(['patients', patientId])
+      onSuccess?.(data.recommendations)
     },
     onError: error => {
-      onError?.(error as Error);
+      onError?.(error as Error)
     },
-  });
+  })
 
   const skinTypeDescriptions: Record<SkinType, string> = {
     I: 'Pele muito clara - sempre queima, nunca bronzeia',
@@ -95,7 +94,7 @@ export function PatientAssessmentForm(
     IV: 'Pele morena - queima minimamente, bronzeia bem',
     V: 'Pele escura - raramente queima, bronzeia muito bem',
     VI: 'Pele muito escura - nunca queima, profundamente pigmentada',
-  };
+  }
 
   const commonSkinConditions = [
     'Acne',
@@ -113,7 +112,7 @@ export function PatientAssessmentForm(
     'Flacidez',
     'Manchas senis',
     'Cicatrizes de acne',
-  ];
+  ]
 
   const commonAestheticGoals = [
     'Reduzir rugas e linhas finas',
@@ -128,7 +127,7 @@ export function PatientAssessmentForm(
     'Reduzir poros dilatados',
     'Uniformizar tom da pele',
     'Tratar cicatrizes',
-  ];
+  ]
 
   const commonRiskFactors = [
     'Tabagismo',
@@ -143,15 +142,15 @@ export function PatientAssessmentForm(
     'Alergias conhecidas',
     'Uso de anticoagulantes',
     'Gravidez ou amamentação',
-  ];
+  ]
 
   const handleSkinTypeChange = (skinType: SkinType) => {
     setAssessmentData({
       ...assessmentData,
       skinType,
       fitzpatrickScale: parseInt(skinType) as number,
-    });
-  };
+    })
+  }
 
   const handleArrayFieldChange = (
     field:
@@ -169,25 +168,25 @@ export function PatientAssessmentForm(
           ...assessmentData.medicalHistory!,
           [field]: value,
         },
-      });
+      })
     } else {
       setAssessmentData({
         ...assessmentData,
         [field]: value,
-      });
+      })
     }
-  };
+  }
 
   const handleBudgetChange = (field: 'min' | 'max', value: string) => {
-    const numValue = parseFloat(value) || 0;
+    const numValue = parseFloat(value) || 0
     setAssessmentData({
       ...assessmentData,
       budgetRange: {
         ...assessmentData.budgetRange!,
         [field]: numValue,
       },
-    });
-  };
+    })
+  }
 
   const handleAddTag = (
     field: 'skinConditions' | 'aestheticGoals' | 'riskFactors',
@@ -199,11 +198,11 @@ export function PatientAssessmentForm(
       const currentValues = isMedicalHistory
         ? assessmentData
           .medicalHistory![field as keyof typeof assessmentData.medicalHistory] as string[]
-        : assessmentData[field];
+        : assessmentData[field]
 
-      handleArrayFieldChange(field, [...currentValues, value.trim()], isMedicalHistory);
+      handleArrayFieldChange(field, [...currentValues, value.trim()], isMedicalHistory)
     }
-  };
+  }
 
   const handleRemoveTag = (
     field: 'skinConditions' | 'aestheticGoals' | 'riskFactors',
@@ -213,13 +212,13 @@ export function PatientAssessmentForm(
     const currentValues = isMedicalHistory
       ? assessmentData
         .medicalHistory![field as keyof typeof assessmentData.medicalHistory] as string[]
-      : assessmentData[field];
+      : assessmentData[field]
 
-    handleArrayFieldChange(field, currentValues.filter(item => item !== value), isMedicalHistory);
-  };
+    handleArrayFieldChange(field, currentValues.filter(item => item !== value), isMedicalHistory)
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+    e.preventDefault()
 
     try {
       const completeAssessment: PatientAssessment = {
@@ -227,24 +226,24 @@ export function PatientAssessmentForm(
         id: crypto.randomUUID(),
         patientId,
         assessmentDate: new Date(),
-      };
+      }
 
-      await PatientAssessmentSchema.parseAsync(completeAssessment);
+      await PatientAssessmentSchema.parseAsync(completeAssessment)
 
-      generateMutation.mutate(completeAssessment);
+      generateMutation.mutate(completeAssessment)
     } catch (error) {
-      onError?.(error as Error);
+      onError?.(error as Error)
     }
-  };
+  }
 
-  const isSubmitting = generateMutation.isLoading;
+  const isSubmitting = generateMutation.isLoading
   const progress = activeTab === 'basic'
     ? 25
     : activeTab === 'medical'
     ? 50
     : activeTab === 'goals'
     ? 75
-    : 100;
+    : 100
 
   return (
     <div className='max-w-4xl mx-auto space-y-6'>
@@ -343,7 +342,7 @@ export function PatientAssessmentForm(
                     <Select
                       onValueChange={value => {
                         if (value && !assessmentData.skinConditions?.includes(value)) {
-                          handleAddTag('skinConditions', value, commonSkinConditions);
+                          handleAddTag('skinConditions', value, commonSkinConditions)
                         }
                       }}
                     >
@@ -404,7 +403,7 @@ export function PatientAssessmentForm(
                           ...assessmentData.medicalHistory!,
                           pregnancyStatus: value as any,
                         },
-                      });
+                      })
                     }}
                   >
                     <SelectTrigger>
@@ -440,10 +439,10 @@ export function PatientAssessmentForm(
                       placeholder='Adicionar alergia e pressionar Enter'
                       onKeyPress={e => {
                         if (e.key === 'Enter') {
-                          const input = e.target as HTMLInputElement;
+                          const input = e.target as HTMLInputElement
                           if (input.value.trim()) {
-                            handleAddTag('allergies', input.value, [], true);
-                            input.value = '';
+                            handleAddTag('allergies', input.value, [], true)
+                            input.value = ''
                           }
                         }
                       }}
@@ -472,10 +471,10 @@ export function PatientAssessmentForm(
                       placeholder='Adicionar medicamento e pressionar Enter'
                       onKeyPress={e => {
                         if (e.key === 'Enter') {
-                          const input = e.target as HTMLInputElement;
+                          const input = e.target as HTMLInputElement
                           if (input.value.trim()) {
-                            handleAddTag('medications', input.value, [], true);
-                            input.value = '';
+                            handleAddTag('medications', input.value, [], true)
+                            input.value = ''
                           }
                         }
                       }}
@@ -506,10 +505,10 @@ export function PatientAssessmentForm(
                       placeholder='Adicionar tratamento anterior e pressionar Enter'
                       onKeyPress={e => {
                         if (e.key === 'Enter') {
-                          const input = e.target as HTMLInputElement;
+                          const input = e.target as HTMLInputElement
                           if (input.value.trim()) {
-                            handleAddTag('previousTreatments', input.value, [], true);
-                            input.value = '';
+                            handleAddTag('previousTreatments', input.value, [], true)
+                            input.value = ''
                           }
                         }
                       }}
@@ -537,10 +536,10 @@ export function PatientAssessmentForm(
                       placeholder='Adicionar condição crônica e pressionar Enter'
                       onKeyPress={e => {
                         if (e.key === 'Enter') {
-                          const input = e.target as HTMLInputElement;
+                          const input = e.target as HTMLInputElement
                           if (input.value.trim()) {
-                            handleAddTag('chronicConditions', input.value, [], true);
-                            input.value = '';
+                            handleAddTag('chronicConditions', input.value, [], true)
+                            input.value = ''
                           }
                         }
                       }}
@@ -580,7 +579,7 @@ export function PatientAssessmentForm(
                     <Select
                       onValueChange={value => {
                         if (value && !assessmentData.aestheticGoals?.includes(value)) {
-                          handleAddTag('aestheticGoals', value, commonAestheticGoals);
+                          handleAddTag('aestheticGoals', value, commonAestheticGoals)
                         }
                       }}
                     >
@@ -647,7 +646,7 @@ export function PatientAssessmentForm(
                             ...assessmentData.budgetRange!,
                             currency: value as 'BRL' | 'USD' | 'EUR',
                           },
-                        });
+                        })
                       }}
                     >
                       <SelectTrigger>
@@ -691,7 +690,7 @@ export function PatientAssessmentForm(
                   <Select
                     onValueChange={value => {
                       if (value && !assessmentData.riskFactors?.includes(value)) {
-                        handleAddTag('riskFactors', value, commonRiskFactors);
+                        handleAddTag('riskFactors', value, commonRiskFactors)
                       }
                     }}
                   >
@@ -776,32 +775,37 @@ export function PatientAssessmentForm(
                           </span>
                         </div>
                       )}
-                      {assessmentData.medicalHistory.allergies
-                        && assessmentData.medicalHistory.allergies.length > 0 && (
-                        <div>
-                          <span className='text-gray-600'>Alergias:</span>
-                          <div className='flex flex-wrap gap-1 mt-1'>
-                            {assessmentData.medicalHistory.allergies.map((allergy, index) => (
-                              <Badge key={index} variant='destructive' className='text-xs'>
-                                {allergy}
-                              </Badge>
-                            ))}
+                      {assessmentData.medicalHistory.allergies &&
+                        assessmentData.medicalHistory.allergies.length > 0 &&
+                        (
+                          <div>
+                            <span className='text-gray-600'>Alergias:</span>
+                            <div className='flex flex-wrap gap-1 mt-1'>
+                              {assessmentData.medicalHistory.allergies.map((allergy, index) => (
+                                <Badge key={index} variant='destructive' className='text-xs'>
+                                  {allergy}
+                                </Badge>
+                              ))}
+                            </div>
                           </div>
-                        </div>
-                      )}
-                      {assessmentData.medicalHistory.medications
-                        && assessmentData.medicalHistory.medications.length > 0 && (
-                        <div>
-                          <span className='text-gray-600'>Medicamentos:</span>
-                          <div className='flex flex-wrap gap-1 mt-1'>
-                            {assessmentData.medicalHistory.medications.map((medication, index) => (
-                              <Badge key={index} variant='secondary' className='text-xs'>
-                                {medication}
-                              </Badge>
-                            ))}
+                        )}
+                      {assessmentData.medicalHistory.medications &&
+                        assessmentData.medicalHistory.medications.length > 0 &&
+                        (
+                          <div>
+                            <span className='text-gray-600'>Medicamentos:</span>
+                            <div className='flex flex-wrap gap-1 mt-1'>
+                              {assessmentData.medicalHistory.medications.map((
+                                medication,
+                                index,
+                              ) => (
+                                <Badge key={index} variant='secondary' className='text-xs'>
+                                  {medication}
+                                </Badge>
+                              ))}
+                            </div>
                           </div>
-                        </div>
-                      )}
+                        )}
                     </div>
                   </div>
                 )}
@@ -852,10 +856,10 @@ export function PatientAssessmentForm(
               type='button'
               variant='outline'
               onClick={() => {
-                const tabs = ['basic', 'medical', 'goals', 'summary'];
-                const currentIndex = tabs.indexOf(activeTab);
+                const tabs = ['basic', 'medical', 'goals', 'summary']
+                const currentIndex = tabs.indexOf(activeTab)
                 if (currentIndex > 0) {
-                  setActiveTab(tabs[currentIndex - 1]);
+                  setActiveTab(tabs[currentIndex - 1])
                 }
               }}
               disabled={activeTab === 'basic'}
@@ -869,10 +873,10 @@ export function PatientAssessmentForm(
                 <Button
                   type='button'
                   onClick={() => {
-                    const tabs = ['basic', 'medical', 'goals', 'summary'];
-                    const currentIndex = tabs.indexOf(activeTab);
+                    const tabs = ['basic', 'medical', 'goals', 'summary']
+                    const currentIndex = tabs.indexOf(activeTab)
                     if (currentIndex < tabs.length - 1) {
-                      setActiveTab(tabs[currentIndex + 1]);
+                      setActiveTab(tabs[currentIndex + 1])
                     }
                   }}
                 >
@@ -901,5 +905,5 @@ export function PatientAssessmentForm(
         </div>
       </form>
     </div>
-  );
+  )
 }

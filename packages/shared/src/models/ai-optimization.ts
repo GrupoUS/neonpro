@@ -22,12 +22,12 @@
  *
  * For detailed migration steps, see the repository CHANGELOG or MIGRATION.md (if available).
  */
-import { z } from 'zod';
+import { z } from 'zod'
 import {
   DataRetentionClass,
   HealthcareDataClassification,
   LGPDDataCategory,
-} from './healthcare-base';
+} from './healthcare-base'
 
 // AI Provider Types
 export enum AIProviderOpt {
@@ -137,7 +137,7 @@ export const AIPerformanceMetricsSchema = z.object({
       .boolean()
       .describe('CFM professional standards compliance'),
   }),
-});
+})
 
 // AI Model Configuration Schema
 export const AIModelConfigSchema = z.object({
@@ -183,7 +183,7 @@ export const AIModelConfigSchema = z.object({
     patient_data_processing: z.boolean().describe('Approved for patient data'),
     audit_logging_required: z.boolean().describe('Audit logging requirement'),
   }),
-});
+})
 
 // Semantic Cache Entry Schema
 export const SemanticCacheEntrySchema = z.object({
@@ -237,7 +237,7 @@ export const SemanticCacheEntrySchema = z.object({
       .boolean()
       .describe('Healthcare professional context'),
   }),
-});
+})
 
 // AI Optimization Configuration Schema
 export const AIOptimizationConfigSchema = z.object({
@@ -281,7 +281,7 @@ export const AIOptimizationConfigSchema = z.object({
     emergency_bypass_enabled: z.boolean().default(true),
     max_patient_data_retention_days: z.number().min(1).default(30),
   }),
-});
+})
 
 // Main AI Optimization Schema
 export const AIOptimizationSchema = z.object({
@@ -362,18 +362,18 @@ export const AIOptimizationSchema = z.object({
       .default(0)
       .describe('Monthly savings from optimization'),
   }),
-});
+})
 
 // Type exports
-export type AIOptimization = z.infer<typeof AIOptimizationSchema>;
-export type AIModelConfigOpt = z.infer<typeof AIModelConfigSchema>;
+export type AIOptimization = z.infer<typeof AIOptimizationSchema>
+export type AIModelConfigOpt = z.infer<typeof AIModelConfigSchema>
 export type AIPerformanceMetricsOpt = z.infer<
   typeof AIPerformanceMetricsSchema
->;
-export type SemanticCacheEntryOpt = z.infer<typeof SemanticCacheEntrySchema>;
+>
+export type SemanticCacheEntryOpt = z.infer<typeof SemanticCacheEntrySchema>
 export type AIOptimizationConfigOpt = z.infer<
   typeof AIOptimizationConfigSchema
->;
+>
 
 // Utility functions for healthcare AI optimization
 export class HealthcareAIOptimizationUtils {
@@ -384,58 +384,58 @@ export class HealthcareAIOptimizationUtils {
     baseline_cost: number,
     optimized_cost: number,
   ): { savings_amount: number; savings_percentage: number } {
-    const savings_amount = Math.max(0, baseline_cost - optimized_cost);
-    const savings_percentage = baseline_cost > 0 ? (savings_amount / baseline_cost) * 100 : 0;
+    const savings_amount = Math.max(0, baseline_cost - optimized_cost)
+    const savings_percentage = baseline_cost > 0 ? (savings_amount / baseline_cost) * 100 : 0
 
-    return { savings_amount, savings_percentage };
+    return { savings_amount, savings_percentage }
   }
 
   /**
    * Validate healthcare compliance for AI configuration
    */
   static validateHealthcareCompliance(config: AIOptimizationConfigOpt): {
-    compliant: boolean;
-    violations: string[];
-    recommendations: string[];
+    compliant: boolean
+    violations: string[]
+    recommendations: string[]
   } {
-    const violations: string[] = [];
-    const recommendations: string[] = [];
+    const violations: string[] = []
+    const recommendations: string[] = []
 
     // Check mandatory PII redaction
     if (!config.healthcare_safeguards.mandatory_pii_redaction) {
-      violations.push('Mandatory PII redaction is disabled');
+      violations.push('Mandatory PII redaction is disabled')
     }
 
     // Check patient consent validation
     if (!config.healthcare_safeguards.patient_consent_validation) {
-      violations.push('Patient consent validation is disabled');
+      violations.push('Patient consent validation is disabled')
     }
 
     // Check audit logging
     if (!config.healthcare_safeguards.audit_all_requests) {
-      violations.push('Audit logging is disabled');
+      violations.push('Audit logging is disabled')
     }
 
     // Check data retention limits
     if (config.healthcare_safeguards.max_patient_data_retention_days > 90) {
       recommendations.push(
         'Consider reducing patient data retention to ≤30 days for LGPD compliance',
-      );
+      )
     }
 
     // Check semantic caching for sensitive data
     if (
-      config.semantic_caching.enabled
-      && config.semantic_caching.ttl_hours > 24
+      config.semantic_caching.enabled &&
+      config.semantic_caching.ttl_hours > 24
     ) {
-      recommendations.push('Limit cache TTL to ≤24 hours for patient data');
+      recommendations.push('Limit cache TTL to ≤24 hours for patient data')
     }
 
     return {
       compliant: violations.length === 0,
       violations,
       recommendations,
-    };
+    }
   }
 
   /**
@@ -446,8 +446,8 @@ export class HealthcareAIOptimizationUtils {
     _context: HealthcareAIUseCase,
   ): string {
     // Simple hash implementation - in production, use proper semantic hashing
-    const combined = `${prompt}:${_context}`;
-    return Buffer.from(combined).toString('base64url').substring(0, 32);
+    const combined = `${prompt}:${_context}`
+    return Buffer.from(combined).toString('base64url').substring(0, 32)
   }
 
   /**
@@ -458,11 +458,11 @@ export class HealthcareAIOptimizationUtils {
     estimated_output_tokens: number,
     model_config: AIModelConfigOpt,
   ): { estimated_cost: number; breakdown: Record<string, number> } {
-    const config = model_config as any;
-    const input_cost = (input_tokens / 1000) * config.cost_config.input_cost_per_1k_tokens;
-    const output_cost = (estimated_output_tokens / 1000)
-      * config.cost_config.output_cost_per_1k_tokens;
-    const total_cost = input_cost + output_cost;
+    const config = model_config as any
+    const input_cost = (input_tokens / 1000) * config.cost_config.input_cost_per_1k_tokens
+    const output_cost = (estimated_output_tokens / 1000) *
+      config.cost_config.output_cost_per_1k_tokens
+    const total_cost = input_cost + output_cost
 
     return {
       estimated_cost: total_cost,
@@ -471,7 +471,7 @@ export class HealthcareAIOptimizationUtils {
         output_cost,
         total_cost,
       },
-    };
+    }
   }
 }
 
@@ -517,4 +517,4 @@ export const DEFAULT_HEALTHCARE_AI_CONFIGS = {
       max_patient_data_retention_days: 1,
     },
   },
-} as const;
+} as const

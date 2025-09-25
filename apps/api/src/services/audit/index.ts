@@ -4,8 +4,8 @@
  * Exports all audit-related services and utilities
  */
 
-export { AgentAuditService } from './agent-audit-service';
-export type { AuditEvent, AuditQueryOptions } from './agent-audit-service';
+export { AgentAuditService } from './agent-audit-service'
+export type { AuditEvent, AuditQueryOptions } from './agent-audit-service'
 
 // Audit event types
 export const AUDIT_EVENTS = {
@@ -16,7 +16,7 @@ export const AUDIT_EVENTS = {
   SESSION_DELETE: 'session_delete',
   PERMISSION_CHECK: 'permission_check',
   FEEDBACK_SUBMIT: 'feedback_submit',
-} as const;
+} as const
 
 // Sensitivity levels
 export const SENSITIVITY_LEVELS = {
@@ -24,7 +24,7 @@ export const SENSITIVITY_LEVELS = {
   MEDIUM: 'medium',
   HIGH: 'high',
   CRITICAL: 'critical',
-} as const;
+} as const
 
 // Data retention policies
 export const RETENTION_POLICIES = {
@@ -33,7 +33,7 @@ export const RETENTION_POLICIES = {
   AGENT_DATA: '30_days',
   AUDIT_LOGS: '90_days',
   PERMISSION_LOGS: '90_days',
-} as const;
+} as const
 
 // Compliance categories
 export const COMPLIANCE_CATEGORIES = {
@@ -42,28 +42,28 @@ export const COMPLIANCE_CATEGORIES = {
   GDPR: 'gdpr',
   ANVISA: 'anvisa',
   CFM: 'cfm',
-} as const;
+} as const
 
 // Helper functions for audit logging
 export const createAuditContext = (
   _request: any,
 ): {
-  ipAddress: string;
-  userAgent: string;
+  ipAddress: string
+  userAgent: string
 } => {
   return {
-    ipAddress: request.headers?.['x-forwarded-for']
-      || request.headers?.['x-real-ip']
-      || request.connection?.remoteAddress
-      || request.socket?.remoteAddress
-      || 'unknown',
+    ipAddress: request.headers?.['x-forwarded-for'] ||
+      request.headers?.['x-real-ip'] ||
+      request.connection?.remoteAddress ||
+      request.socket?.remoteAddress ||
+      'unknown',
     userAgent: request.headers?.['user-agent'] || 'unknown',
-  };
-};
+  }
+}
 
 export const sanitizeForAudit = (data: any): any => {
   if (typeof data !== 'object' || data === null) {
-    return data;
+    return data
   }
 
   // Remove sensitive fields
@@ -76,23 +76,23 @@ export const sanitizeForAudit = (data: any): any => {
     'credit_card',
     'ssn',
     'social_security',
-  ];
+  ]
 
-  const sanitized = { ...data };
+  const sanitized = { ...data }
 
   for (const field of sensitiveFields) {
     if (field in sanitized) {
-      sanitized[field] = '[REDACTED]';
+      sanitized[field] = '[REDACTED]'
     }
   }
 
-  return sanitized;
-};
+  return sanitized
+}
 
 export const formatAuditMetadata = (metadata: Record<string, any>): string => {
   try {
-    return JSON.stringify(sanitizeForAudit(metadata));
+    return JSON.stringify(sanitizeForAudit(metadata))
   } catch {
-    return '[UNPARSEABLE_METADATA]';
+    return '[UNPARSEABLE_METADATA]'
   }
-};
+}

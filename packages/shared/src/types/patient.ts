@@ -39,116 +39,116 @@ export enum LegalBasis {
 
 // Address interface with Brazilian CEP validation
 export interface Address {
-  street: string;
-  number?: string;
-  complement?: string;
-  neighborhood: string;
-  city: string;
-  state: string;
-  cep: string;
-  country: string;
+  street: string
+  number?: string
+  complement?: string
+  neighborhood: string
+  city: string
+  state: string
+  cep: string
+  country: string
   coordinates?: {
-    latitude: number;
-    longitude: number;
-  };
+    latitude: number
+    longitude: number
+  }
 }
 
 // Emergency contact information
 export interface EmergencyContact {
-  name: string;
-  relationship: string;
-  phone: string;
-  email?: string;
-  address?: Address;
+  name: string
+  relationship: string
+  phone: string
+  email?: string
+  address?: Address
 }
 
 // Healthcare-specific information
 export interface HealthcareInfo {
-  healthInsurance?: string;
-  healthInsuranceNumber?: string;
-  allergies: string[];
-  medications: string[];
-  medicalConditions: string[];
-  bloodType?: string;
-  organDonor: boolean;
-  medicalNotes?: string;
+  healthInsurance?: string
+  healthInsuranceNumber?: string
+  allergies: string[]
+  medications: string[]
+  medicalConditions: string[]
+  bloodType?: string
+  organDonor: boolean
+  medicalNotes?: string
 }
 
 // LGPD consent tracking
 export interface LGPDConsent {
-  dataProcessing: boolean;
-  marketing: boolean;
-  analytics: boolean;
-  consentDate: Date;
-  withdrawalDate?: Date;
-  ipAddress: string;
-  userAgent: string;
-  legalBasis: LegalBasis | string;
-  consentVersion?: string;
-  processingPurposes: string[];
+  dataProcessing: boolean
+  marketing: boolean
+  analytics: boolean
+  consentDate: Date
+  withdrawalDate?: Date
+  ipAddress: string
+  userAgent: string
+  legalBasis: LegalBasis | string
+  consentVersion?: string
+  processingPurposes: string[]
 }
 
 // Audit log entry for LGPD compliance
 export interface AuditLogEntry {
-  _userId: string;
-  action: 'create' | 'read' | 'update' | 'delete' | 'export' | 'anonymize';
-  timestamp: Date;
-  ipAddress: string;
-  userAgent: string;
-  details?: Record<string, any>;
+  _userId: string
+  action: 'create' | 'read' | 'update' | 'delete' | 'export' | 'anonymize'
+  timestamp: Date
+  ipAddress: string
+  userAgent: string
+  details?: Record<string, any>
 }
 
 // Audit trail for LGPD compliance
 export interface AuditTrail {
-  createdBy: string;
-  updatedBy: string;
-  accessLog: AuditLogEntry[];
-  dataRetentionDate?: Date;
-  anonymizationDate?: Date;
+  createdBy: string
+  updatedBy: string
+  accessLog: AuditLogEntry[]
+  dataRetentionDate?: Date
+  anonymizationDate?: Date
 }
 
 // Main Patient interface
 export interface Patient {
-  id: string;
-  name: string;
-  cpf: string;
-  email: string;
-  phone: string;
-  birthDate: Date;
-  gender: Gender | string;
-  status: PatientStatus;
+  id: string
+  name: string
+  cpf: string
+  email: string
+  phone: string
+  birthDate: Date
+  gender: Gender | string
+  status: PatientStatus
 
   // Address information
-  address?: Address;
+  address?: Address
 
   // Emergency contact
-  emergencyContact?: EmergencyContact;
+  emergencyContact?: EmergencyContact
 
   // Healthcare information
-  healthcareInfo?: HealthcareInfo;
+  healthcareInfo?: HealthcareInfo
 
   // LGPD compliance
-  lgpdConsent: LGPDConsent;
-  auditTrail: AuditTrail;
+  lgpdConsent: LGPDConsent
+  auditTrail: AuditTrail
 
   // Metadata
-  createdAt: Date;
-  updatedAt: Date;
-  deletedAt?: Date;
+  createdAt: Date
+  updatedAt: Date
+  deletedAt?: Date
 
   // Additional fields
-  notes?: string;
-  tags?: string[];
-  profilePicture?: string;
+  notes?: string
+  tags?: string[]
+  profilePicture?: string
 }
 
 // Brazilian CPF validation
 export function validateCPF(cpf: string): boolean {
   // Remove formatting
-  const cleanCPF = cpf.replace(/[^\d]/g, '');
+  const cleanCPF = cpf.replace(/[^\d]/g, '')
 
   // Check length
-  if (cleanCPF.length !== 11) return false;
+  if (cleanCPF.length !== 11) return false
 
   // Check for known invalid CPFs
   const invalidCPFs = [
@@ -162,87 +162,87 @@ export function validateCPF(cpf: string): boolean {
     '77777777777',
     '88888888888',
     '99999999999',
-  ];
+  ]
 
-  if (invalidCPFs.includes(cleanCPF)) return false;
+  if (invalidCPFs.includes(cleanCPF)) return false
 
   // Validate check digits
-  let sum = 0;
+  let sum = 0
   for (let i = 0; i < 9; i++) {
-    sum += parseInt(cleanCPF.charAt(i)) * (10 - i);
+    sum += parseInt(cleanCPF.charAt(i)) * (10 - i)
   }
 
-  let remainder = (sum * 10) % 11;
-  if (remainder === 10 || remainder === 11) remainder = 0;
-  if (remainder !== parseInt(cleanCPF.charAt(9))) return false;
+  let remainder = (sum * 10) % 11
+  if (remainder === 10 || remainder === 11) remainder = 0
+  if (remainder !== parseInt(cleanCPF.charAt(9))) return false
 
-  sum = 0;
+  sum = 0
   for (let i = 0; i < 10; i++) {
-    sum += parseInt(cleanCPF.charAt(i)) * (11 - i);
+    sum += parseInt(cleanCPF.charAt(i)) * (11 - i)
   }
 
-  remainder = (sum * 10) % 11;
-  if (remainder === 10 || remainder === 11) remainder = 0;
-  if (remainder !== parseInt(cleanCPF.charAt(10))) return false;
+  remainder = (sum * 10) % 11
+  if (remainder === 10 || remainder === 11) remainder = 0
+  if (remainder !== parseInt(cleanCPF.charAt(10))) return false
 
-  return true;
+  return true
 }
 
 // Brazilian phone validation
 export function validateBrazilianPhone(phone: string): boolean {
   // Remove formatting
-  const cleanPhone = phone.replace(/[^\d]/g, '');
+  const cleanPhone = phone.replace(/[^\d]/g, '')
 
   // Check length (10 or 11 digits)
-  if (cleanPhone.length !== 10 && cleanPhone.length !== 11) return false;
+  if (cleanPhone.length !== 10 && cleanPhone.length !== 11) return false
 
   // Check area code (11-99)
-  const areaCode = parseInt(cleanPhone.substring(0, 2));
-  if (areaCode < 11 || areaCode > 99) return false;
+  const areaCode = parseInt(cleanPhone.substring(0, 2))
+  if (areaCode < 11 || areaCode > 99) return false
 
   // Check mobile number format (9 digits starting with 9)
   if (cleanPhone.length === 11) {
-    const firstDigit = parseInt(cleanPhone.charAt(2));
-    if (firstDigit !== 9) return false;
+    const firstDigit = parseInt(cleanPhone.charAt(2))
+    if (firstDigit !== 9) return false
   }
 
-  return true;
+  return true
 }
 
 // Brazilian CEP validation
 export function validateCEP(cep: string): boolean {
   // Remove formatting
-  const cleanCEP = cep.replace(/[^\d]/g, '');
+  const cleanCEP = cep.replace(/[^\d]/g, '')
 
   // Check length
-  if (cleanCEP.length !== 8) return false;
+  if (cleanCEP.length !== 8) return false
 
   // Check for valid pattern (not all zeros)
-  if (cleanCEP === '00000000') return false;
+  if (cleanCEP === '00000000') return false
 
-  return true;
+  return true
 }
 
 // Data anonymization for LGPD compliance
 export function anonymizePatientData(
   patient: Partial<Patient>,
 ): Partial<Patient> {
-  const anonymized = { ...patient };
+  const anonymized = { ...patient }
 
   if (anonymized.name) {
-    anonymized.name = `ANON_${Date.now()}`;
+    anonymized.name = `ANON_${Date.now()}`
   }
 
   if (anonymized.cpf) {
-    anonymized.cpf = '***.***.***-**';
+    anonymized.cpf = '***.***.***-**'
   }
 
   if (anonymized.email) {
-    anonymized.email = `anon_${Date.now()}@anonymized.com`;
+    anonymized.email = `anon_${Date.now()}@anonymized.com`
   }
 
   if (anonymized.phone) {
-    anonymized.phone = '(**) *****-****';
+    anonymized.phone = '(**) *****-****'
   }
 
   if (anonymized.address) {
@@ -251,7 +251,7 @@ export function anonymizePatientData(
       street: 'ENDEREÇO ANONIMIZADO',
       number: '***',
       complement: undefined,
-    };
+    }
   }
 
   if (anonymized.emergencyContact) {
@@ -260,35 +260,35 @@ export function anonymizePatientData(
       name: 'CONTATO ANONIMIZADO',
       phone: '(**) *****-****',
       email: `anon_contact_${Date.now()}@anonymized.com`,
-    };
+    }
   }
 
-  return anonymized;
+  return anonymized
 }
 
 // Format CPF for display
 export function formatCPF(cpf: string): string {
-  const cleanCPF = cpf.replace(/[^\d]/g, '');
-  return cleanCPF.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+  const cleanCPF = cpf.replace(/[^\d]/g, '')
+  return cleanCPF.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4')
 }
 
 // Format Brazilian phone for display
 export function formatBrazilianPhone(phone: string): string {
-  const cleanPhone = phone.replace(/[^\d]/g, '');
+  const cleanPhone = phone.replace(/[^\d]/g, '')
 
   if (cleanPhone.length === 10) {
-    return cleanPhone.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3');
+    return cleanPhone.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3')
   } else if (cleanPhone.length === 11) {
-    return cleanPhone.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+    return cleanPhone.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3')
   }
 
-  return phone;
+  return phone
 }
 
 // Format CEP for display
 export function formatCEP(cep: string): string {
-  const cleanCEP = cep.replace(/[^\d]/g, '');
-  return cleanCEP.replace(/(\d{5})(\d{3})/, '$1-$2');
+  const cleanCEP = cep.replace(/[^\d]/g, '')
+  return cleanCEP.replace(/(\d{5})(\d{3})/, '$1-$2')
 }
 
 // Create patient with default LGPD compliance
@@ -298,7 +298,7 @@ export function createPatientWithDefaults(
     'id' | 'createdAt' | 'updatedAt' | 'lgpdConsent' | 'auditTrail' | 'status'
   >,
 ): Patient {
-  const now = new Date();
+  const now = new Date()
 
   return {
     ...patientData,
@@ -329,5 +329,5 @@ export function createPatientWithDefaults(
         },
       ],
     },
-  };
+  }
 }

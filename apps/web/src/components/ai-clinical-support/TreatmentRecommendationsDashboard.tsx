@@ -1,18 +1,18 @@
-'use client';
+'use client'
 
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { api } from '@/lib/api';
-import { TreatmentRecommendation } from '@/types/ai-clinical-support';
-import { useQuery } from '@tanstack/react-query';
-import React, { useState } from 'react';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { api } from '@/lib/api'
+import { TreatmentRecommendation } from '@/types/ai-clinical-support'
+import { useQuery } from '@tanstack/react-query'
+import React, { useState } from 'react'
 // import { Progress } from '@/components/ui/progress';
 // import { Separator } from '@/components/ui/separator';
-import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+import { format } from 'date-fns'
+import { ptBR } from 'date-fns/locale'
 import {
   Activity,
   AlertTriangle,
@@ -23,12 +23,12 @@ import {
   Lightbulb,
   Star,
   TrendingUp,
-} from 'lucide-react';
+} from 'lucide-react'
 
 interface TreatmentRecommendationsDashboardProps {
-  patientId: string;
-  assessmentId?: string;
-  onTreatmentPlanCreate?: (recommendations: TreatmentRecommendation[]) => void;
+  patientId: string
+  assessmentId?: string
+  onTreatmentPlanCreate?: (recommendations: TreatmentRecommendation[]) => void
 }
 
 export function TreatmentRecommendationsDashboard({
@@ -36,9 +36,9 @@ export function TreatmentRecommendationsDashboard({
   assessmentId,
   onTreatmentPlanCreate,
 }: TreatmentRecommendationsDashboardProps) {
-  const [selectedRecommendations, setSelectedRecommendations] = useState<string[]>([]);
-  const [activeTab, setActiveTab] = useState('recommended');
-  const [showAlternatives] = useState(false);
+  const [selectedRecommendations, setSelectedRecommendations] = useState<string[]>([])
+  const [activeTab, setActiveTab] = useState('recommended')
+  const [showAlternatives] = useState(false)
 
   // Fetch treatment recommendations
   const { data: recommendations, isLoading, error } = useQuery({
@@ -50,12 +50,12 @@ export function TreatmentRecommendationsDashboard({
           assessmentId,
           includeAlternatives: showAlternatives,
           evidenceThreshold: 'moderate',
-        });
+        })
       }
-      return null;
+      return null
     },
     enabled: !!assessmentId,
-  });
+  })
 
   // Fetch patient treatment history
   const { data: treatmentHistory } = useQuery({
@@ -64,64 +64,64 @@ export function TreatmentRecommendationsDashboard({
       return await api.aiClinicalSupport.getPatientTreatmentHistory({
         patientId,
         limit: 10,
-      });
+      })
     },
     enabled: !!patientId,
-  });
+  })
 
   const handleRecommendationToggle = (recommendationId: string) => {
     setSelectedRecommendations(prev =>
       prev.includes(recommendationId)
         ? prev.filter(id => id !== recommendationId)
         : [...prev, recommendationId]
-    );
-  };
+    )
+  }
 
   const handleCreateTreatmentPlan = async () => {
-    if (selectedRecommendations.length === 0) return;
+    if (selectedRecommendations.length === 0) return
 
     const selectedRecs = recommendations?.recommendations.filter(r =>
       selectedRecommendations.includes(r.id)
-    );
+    )
 
     if (selectedRecs && onTreatmentPlanCreate) {
-      onTreatmentPlanCreate(selectedRecs);
+      onTreatmentPlanCreate(selectedRecs)
     }
-  };
+  }
 
   const getEvidenceColor = (level: string) => {
     switch (level) {
       case 'high':
-        return 'bg-green-100 text-green-800';
+        return 'bg-green-100 text-green-800'
       case 'moderate':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'bg-yellow-100 text-yellow-800'
       case 'low':
-        return 'bg-orange-100 text-orange-800';
+        return 'bg-orange-100 text-orange-800'
       case 'experimental':
-        return 'bg-purple-100 text-purple-800';
+        return 'bg-purple-100 text-purple-800'
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-gray-100 text-gray-800'
     }
-  };
+  }
 
   const getConfidenceColor = (score: number) => {
-    if (score >= 0.8) return 'text-green-600';
-    if (score >= 0.6) return 'text-yellow-600';
-    return 'text-red-600';
-  };
+    if (score >= 0.8) return 'text-green-600'
+    if (score >= 0.6) return 'text-yellow-600'
+    return 'text-red-600'
+  }
 
   const getRiskColor = (level: string) => {
     switch (level) {
       case 'low':
-        return 'text-green-600';
+        return 'text-green-600'
       case 'moderate':
-        return 'text-yellow-600';
+        return 'text-yellow-600'
       case 'high':
-        return 'text-red-600';
+        return 'text-red-600'
       default:
-        return 'text-gray-600';
+        return 'text-gray-600'
     }
-  };
+  }
 
   if (isLoading) {
     return (
@@ -131,7 +131,7 @@ export function TreatmentRecommendationsDashboard({
           <div className='h-32 bg-gray-200 rounded'></div>
         </div>
       </div>
-    );
+    )
   }
 
   if (error) {
@@ -143,7 +143,7 @@ export function TreatmentRecommendationsDashboard({
           Não foi possível gerar recomendações de tratamento. Por favor, tente novamente.
         </AlertDescription>
       </Alert>
-    );
+    )
   }
 
   if (!recommendations) {
@@ -162,7 +162,7 @@ export function TreatmentRecommendationsDashboard({
           </div>
         </CardContent>
       </Card>
-    );
+    )
   }
 
   return (
@@ -365,16 +365,16 @@ export function TreatmentRecommendationsDashboard({
         </TabsContent>
       </Tabs>
     </div>
-  );
+  )
 }
 
 interface RecommendationCardProps {
-  recommendation: TreatmentRecommendation;
-  isSelected: boolean;
-  onToggle: (id: string) => void;
-  getEvidenceColor: (level: string) => string;
-  getConfidenceColor: (score: number) => string;
-  getRiskColor: (level: string) => string;
+  recommendation: TreatmentRecommendation
+  isSelected: boolean
+  onToggle: (id: string) => void
+  getEvidenceColor: (level: string) => string
+  getConfidenceColor: (score: number) => string
+  getRiskColor: (level: string) => string
 }
 
 function RecommendationCard({
@@ -488,5 +488,5 @@ function RecommendationCard({
         </div>
       </CardContent>
     </Card>
-  );
+  )
 }

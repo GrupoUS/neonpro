@@ -16,38 +16,38 @@ export const TEST_CONFIG = {
 
 // Extend global interface for test utilities
 declare global {
-  var simulateDirectAPICall: (
+  const simulateDirectAPICall: (
     endpoint: string,
   ) => Promise<{ status: number; data: any }>
-  var simulateAuditedOperation: (
+  const simulateAuditedOperation: (
     operation: string,
     resourceId: string,
   ) => Promise<{ operation: string; resourceId: string; auditId: string }>
-  var validatePatientConsent: (
+  const validatePatientConsent: (
     patientId: string,
     consentType: string,
   ) => Promise<boolean>
-  var simulateDatabaseQuery: (
+  const simulateDatabaseQuery: (
     queryType: string,
     options: Record<string, unknown>,
   ) => Promise<any>
-  var simulateDatabaseOperation: (
+  const simulateDatabaseOperation: (
     connection: unknown,
     operation: string,
   ) => Promise<boolean>
-  var simulateDBConnectionRelease: (connection: unknown) => Promise<void>
-  var simulateLGPDOperation: (
+  const simulateDBConnectionRelease: (connection: unknown) => Promise<void>
+  const simulateLGPDOperation: (
     operationType: string,
     data: Record<string, unknown>,
   ) => Promise<boolean>
-  var simulateAuditLogCreation: (
+  const simulateAuditLogCreation: (
     logData: Record<string, unknown>,
   ) => Promise<string>
-  var simulateEmergencyScenario: (
+  const simulateEmergencyScenario: (
     scenarioType: string,
     options: Record<string, unknown>,
   ) => Promise<void>
-  var simulateHealthcareOperation: (
+  const simulateHealthcareOperation: (
     operationType: string,
     options: Record<string, unknown>,
   ) => Promise<boolean>
@@ -148,7 +148,7 @@ global.simulateEmergencyScenario = async (
   const maskedOptions = maskSensitiveData(JSON.stringify(options))
 
   // Log emergency scenario without exposing sensitive data
-  console.log(
+  console.error(
     `[EMERGENCY SIMULATION] Scenario type: ${scenarioType}, Data: ${maskedOptions}`,
   )
 }
@@ -164,8 +164,8 @@ global.simulateHealthcareOperation = async (
 
 // Setup function to initialize test environment
 export function setupQualityTests(): void {
-  console.log('🏥 Quality test environment initialized')
-  console.log('   - Healthcare compliance mode enabled')
-  console.log('   - LGPD validation enabled')
-  console.log('   - Audit logging enabled')
+  console.error('🏥 Quality test environment initialized')
+  console.error('   - Healthcare compliance mode enabled')
+  console.error('   - LGPD validation enabled')
+  console.error('   - Audit logging enabled')
 }

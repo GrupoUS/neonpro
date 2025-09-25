@@ -35,60 +35,60 @@ This rule outlines the best practices for subscribing to and handling Supabase R
 
 ```typescript
 // src/components/MyRealtimeComponent.tsx
-'use client';
+'use client'
 
-import { subscribeToChannel } from '@/lib/supabase/realtime';
-import type { RealtimePostgresChangesPayload } from '@supabase/supabase-js';
-import React, { useCallback, useEffect, useState } from 'react';
+import { subscribeToChannel } from '@/lib/supabase/realtime'
+import type { RealtimePostgresChangesPayload } from '@supabase/supabase-js'
+import React, { useCallback, useEffect, useState } from 'react'
 
 interface MyDataItem {
-  id: string;
-  content: string;
-  user_id?: string;
+  id: string
+  content: string
+  user_id?: string
 }
 
 interface MyRealtimeComponentProps {
-  userId: string | undefined;
+  userId: string | undefined
 }
 
 export function MyRealtimeComponent({ userId }: MyRealtimeComponentProps) {
-  const [items, setItems] = useState<MyDataItem[]>([]);
+  const [items, setItems] = useState<MyDataItem[]>([])
 
   const handleRealtimeUpdate = useCallback(
     (payload: RealtimePostgresChangesPayload<Record<string, unknown>>) => {
-      console.log('Realtime Payload:', payload);
-      const newRecord = payload.new as MyDataItem;
-      const oldRecordId = (payload.old as { id: string })?.id;
+      console.log('Realtime Payload:', payload)
+      const newRecord = payload.new as MyDataItem
+      const oldRecordId = (payload.old as { id: string })?.id
 
       setItems(currentItems => {
         switch (payload.eventType) {
           case 'INSERT':
-            return newRecord ? [...currentItems, newRecord] : currentItems;
+            return newRecord ? [...currentItems, newRecord] : currentItems
           case 'UPDATE':
             return newRecord
               ? currentItems.map(item => item.id === newRecord.id ? newRecord : item)
-              : currentItems;
+              : currentItems
           case 'DELETE':
             return oldRecordId
               ? currentItems.filter(item => item.id !== oldRecordId)
-              : currentItems;
+              : currentItems
           default:
-            return currentItems;
+            return currentItems
         }
-      });
+      })
     },
     [],
-  ); // Empty dependency array if setItems is stable and no other dependencies
+  ) // Empty dependency array if setItems is stable and no other dependencies
 
   useEffect(() => {
     if (!userId) {
       // Clear items or handle logged-out state if necessary
-      setItems([]);
-      return;
+      setItems([])
+      return
     }
 
     // console.log(`Setting up realtime subscription for MyRealtimeComponent, user: ${userId}`);
-    const channelName = `my-data-items-${userId}`;
+    const channelName = `my-data-items-${userId}`
 
     const subscription = subscribeToChannel({
       channelName: channelName,
@@ -97,16 +97,16 @@ export function MyRealtimeComponent({ userId }: MyRealtimeComponentProps) {
       event: '*', // Or 'INSERT', 'UPDATE', 'DELETE'
       callback: handleRealtimeUpdate,
       onSubscriptionError: error => {
-        console.error(`Subscription error for ${channelName}:`, error);
+        console.error(`Subscription error for ${channelName}:`, error)
         // Optionally, show a toast or update UI
       },
-    });
+    })
 
     return () => {
       // console.log(`Cleaning up realtime subscription for MyRealtimeComponent, user: ${userId}`);
-      subscription.unsubscribe();
-    };
-  }, [userId, handleRealtimeUpdate]); // Ensure all dependencies are listed
+      subscription.unsubscribe()
+    }
+  }, [userId, handleRealtimeUpdate]) // Ensure all dependencies are listed
 
   return (
     <div>
@@ -116,7 +116,7 @@ export function MyRealtimeComponent({ userId }: MyRealtimeComponentProps) {
       </ul>
       {items.length === 0 && <p>No items yet, or waiting for realtime updates...</p>}
     </div>
-  );
+  )
 }
 
 // ✅ DO: Manage subscription in useEffect and cleanup.

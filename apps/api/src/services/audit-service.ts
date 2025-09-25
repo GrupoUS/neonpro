@@ -18,133 +18,133 @@ export enum AuditSeverity {
 }
 
 export interface AuditEventData {
-  eventType: string;
-  severity: AuditSeverity;
-  category: string;
-  source: string;
-  action: string;
-  result: 'success' | 'failure' | 'blocked' | 'alert';
-  message: string;
-  _userId?: string;
-  sessionId?: string;
-  ipAddress?: string;
-  userAgent?: string;
-  resource?: string;
-  details?: Record<string, any>;
+  eventType: string
+  severity: AuditSeverity
+  category: string
+  source: string
+  action: string
+  result: 'success' | 'failure' | 'blocked' | 'alert'
+  message: string
+  _userId?: string
+  sessionId?: string
+  ipAddress?: string
+  userAgent?: string
+  resource?: string
+  details?: Record<string, any>
   compliance?: {
-    lgpd?: boolean;
-    anvisa?: boolean;
-    cfm?: boolean;
-  };
+    lgpd?: boolean
+    anvisa?: boolean
+    cfm?: boolean
+  }
 }
 
 export interface AuditCompliance {
-  lgpd?: boolean;
-  anvisa?: boolean;
-  cfm?: boolean;
+  lgpd?: boolean
+  anvisa?: boolean
+  cfm?: boolean
 }
 
 export class AuditEvent {
-  id: string;
-  timestamp: Date;
-  eventType: string;
-  severity: AuditSeverity;
-  category: string;
-  source: string;
-  _userId?: string;
-  sessionId?: string;
-  ipAddress?: string;
-  userAgent?: string;
-  resource?: string;
-  action: string;
-  result: 'success' | 'failure' | 'blocked' | 'alert';
-  message: string;
-  details?: Record<string, any>;
-  compliance?: AuditCompliance;
+  id: string
+  timestamp: Date
+  eventType: string
+  severity: AuditSeverity
+  category: string
+  source: string
+  _userId?: string
+  sessionId?: string
+  ipAddress?: string
+  userAgent?: string
+  resource?: string
+  action: string
+  result: 'success' | 'failure' | 'blocked' | 'alert'
+  message: string
+  details?: Record<string, any>
+  compliance?: AuditCompliance
 
   constructor(data: AuditEventData) {
-    this.id = crypto.randomUUID();
-    this.timestamp = new Date();
-    this.eventType = data.eventType;
-    this.severity = data.severity;
-    this.category = data.category;
-    this.source = data.source;
-    this._userId = data._userId;
-    this.sessionId = data.sessionId;
-    this.ipAddress = data.ipAddress;
-    this.userAgent = data.userAgent;
-    this.resource = data.resource;
-    this.action = data.action;
-    this.result = data.result;
-    this.message = data.message;
-    this.details = data.details;
-    this.compliance = data.compliance;
+    this.id = crypto.randomUUID()
+    this.timestamp = new Date()
+    this.eventType = data.eventType
+    this.severity = data.severity
+    this.category = data.category
+    this.source = data.source
+    this._userId = data._userId
+    this.sessionId = data.sessionId
+    this.ipAddress = data.ipAddress
+    this.userAgent = data.userAgent
+    this.resource = data.resource
+    this.action = data.action
+    this.result = data.result
+    this.message = data.message
+    this.details = data.details
+    this.compliance = data.compliance
   }
 }
 
 export interface AuditLogData {
-  id: string;
-  timestamp: string;
-  eventType: string;
-  severity: AuditSeverity;
-  category: string;
-  source: string;
-  _userId?: string;
-  sessionId?: string;
-  ipAddress?: string;
-  userAgent?: string;
-  resource?: string;
-  action: string;
-  result: 'success' | 'failure' | 'blocked' | 'alert';
-  message: string;
-  details?: Record<string, any>;
-  compliance?: AuditCompliance;
-  retentionPeriod?: number;
-  isRedacted?: boolean;
-  redactionReason?: string;
+  id: string
+  timestamp: string
+  eventType: string
+  severity: AuditSeverity
+  category: string
+  source: string
+  _userId?: string
+  sessionId?: string
+  ipAddress?: string
+  userAgent?: string
+  resource?: string
+  action: string
+  result: 'success' | 'failure' | 'blocked' | 'alert'
+  message: string
+  details?: Record<string, any>
+  compliance?: AuditCompliance
+  retentionPeriod?: number
+  isRedacted?: boolean
+  redactionReason?: string
 }
 
 export class AuditLog {
-  id: string;
-  timestamp: string;
-  eventType: string;
-  severity: AuditSeverity;
-  category: string;
-  source: string;
-  _userId?: string;
-  sessionId?: string;
-  ipAddress?: string;
-  userAgent?: string;
-  resource?: string;
-  action: string;
-  result: 'success' | 'failure' | 'blocked' | 'alert';
-  message: string;
-  details?: Record<string, any>;
-  compliance?: AuditCompliance;
-  retentionPeriod?: number;
-  isRedacted?: boolean;
-  redactionReason?: string;
+  id: string
+  timestamp: string
+  eventType: string
+  severity: AuditSeverity
+  category: string
+  source: string
+  _userId?: string
+  sessionId?: string
+  ipAddress?: string
+  userAgent?: string
+  resource?: string
+  action: string
+  result: 'success' | 'failure' | 'blocked' | 'alert'
+  message: string
+  details?: Record<string, any>
+  compliance?: AuditCompliance
+  retentionPeriod?: number
+  isRedacted?: boolean
+  redactionReason?: string
 
   constructor(data: AuditLogData) {
-    this.id = data.id;
-    this.timestamp = data.timestamp;
-    this.eventType = data.eventType;
-    this.severity = data.severity;
-    this.category = data.category;
-    this.source = data.source;
-    this._userId = data._userId;
-    this.sessionId = data.sessionId;
-    this.ipAddress = data.ipAddress;
-    this.userAgent = data.userAgent;
-    this.resource = data.resource;
-    this.action = data.action;
-    this.result = data.result;
-    this.message = data.message;
-    this.details = data.details;
-    this.compliance = data.compliance;
-    this.retentionPeriod = data.retentionPeriod;
-    this.isRedacted = data.isRedacted ?? false;
-    this.redactionReason = data.redactionReason;
+    this.id = data.id
+    this.timestamp = data.timestamp
+    this.eventType = data.eventType
+    this.severity = data.severity
+    this.category = data.category
+    this.source = data.source
+    this._userId = data._userId
+    this.sessionId = data.sessionId
+    this.ipAddress = data.ipAddress
+    this.userAgent = data.userAgent
+    this.resource = data.resource
+    this.action = data.action
+    this.result = data.result
+    this.message = data.message
+    this.details = data.details
+    this.compliance = data.compliance
+    this.retentionPeriod = data.retentionPeriod
+    this.isRedacted = data.isRedacted ?? false
+    this.redactionReason = data.redactionReason
   }
 }
 
@@ -152,18 +152,18 @@ export class AuditLog {
  * Create an audit trail for healthcare operations
  */
 export function createAuditTrail(data: AuditEventData): AuditEvent {
-  return new AuditEvent(data);
+  return new AuditEvent(data)
 }
 
 /**
  * Log a security event with healthcare compliance
  */
 export function logSecurityEvent(data: AuditEventData): AuditEvent {
-  const event = new AuditEvent(data);
+  const event = new AuditEvent(data)
 
   // In a real implementation, this would log to database/file system
   if (event.severity) {
-    console.log(`[AUDIT] ${event.severity.toUpperCase()}: ${event.message}`, {
+    console.warn(`[AUDIT] ${event.severity.toUpperCase()}: ${event.message}`, {
       id: event.id,
       eventType: event.eventType,
       category: event.category,
@@ -171,10 +171,10 @@ export function logSecurityEvent(data: AuditEventData): AuditEvent {
       _userId: event.userId,
       resource: event.resource,
       compliance: event.compliance,
-    });
+    })
   }
 
-  return event;
+  return event
 }
 
 /**
@@ -182,20 +182,20 @@ export function logSecurityEvent(data: AuditEventData): AuditEvent {
  */
 export function getAuditLogs(
   _filters: {
-    _userId?: string;
-    category?: string;
-    severity?: AuditSeverity;
-    startDate?: Date;
-    endDate?: Date;
-    eventType?: string;
-    compliance?: AuditCompliance;
-    ipAddress?: string;
-    result?: string;
+    _userId?: string
+    category?: string
+    severity?: AuditSeverity
+    startDate?: Date
+    endDate?: Date
+    eventType?: string
+    compliance?: AuditCompliance
+    ipAddress?: string
+    result?: string
   } = {},
 ): AuditLog[] {
   // In a real implementation, this would query the database
   // For now, return empty array as this is just the interface
-  return [];
+  return []
 }
 
 /**
@@ -203,11 +203,11 @@ export function getAuditLogs(
  */
 export const HealthcareAuditEvents = {
   patientDataAccess: (data: {
-    _userId: string;
-    patientId: string;
-    action: string;
-    result: 'success' | 'failure' | 'blocked';
-    resource: string;
+    _userId: string
+    patientId: string
+    action: string
+    result: 'success' | 'failure' | 'blocked'
+    resource: string
   }) =>
     createAuditTrail({
       eventType: 'patient_data_access',
@@ -224,10 +224,10 @@ export const HealthcareAuditEvents = {
     }),
 
   medicalRecordUpdate: (data: {
-    _userId: string;
-    patientId: string;
-    recordType: string;
-    changes: string[];
+    _userId: string
+    patientId: string
+    recordType: string
+    changes: string[]
   }) =>
     createAuditTrail({
       eventType: 'medical_record_update',
@@ -248,9 +248,9 @@ export const HealthcareAuditEvents = {
     }),
 
   unauthorizedAccessAttempt: (data: {
-    ipAddress: string;
-    resource: string;
-    userAgent?: string;
+    ipAddress: string
+    resource: string
+    userAgent?: string
   }) =>
     logSecurityEvent({
       eventType: 'unauthorized_access_attempt',
@@ -266,7 +266,7 @@ export const HealthcareAuditEvents = {
       details: { riskScore: 95 },
       compliance: { lgpd: true, anvisa: true, cfm: true },
     }),
-};
+}
 
 // Comprehensive audit service class that provides a unified interface
 export class ComprehensiveAuditService {
@@ -274,12 +274,12 @@ export class ComprehensiveAuditService {
    * Log an activity/event for audit purposes
    */
   async logActivity(data: {
-    _userId: string;
-    action: string;
-    resource?: string;
-    details?: Record<string, any>;
-    result?: 'success' | 'failure' | 'blocked' | 'alert';
-    severity?: AuditSeverity;
+    _userId: string
+    action: string
+    resource?: string
+    details?: Record<string, any>
+    result?: 'success' | 'failure' | 'blocked' | 'alert'
+    severity?: AuditSeverity
   }): Promise<void> {
     await createAuditTrail({
       eventType: data.action,
@@ -293,6 +293,6 @@ export class ComprehensiveAuditService {
       resource: data.resource,
       details: data.details,
       compliance: { lgpd: true, anvisa: true, cfm: true },
-    });
+    })
   }
 }

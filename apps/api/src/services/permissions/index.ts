@@ -4,25 +4,25 @@
  * Exports all permission-related services and utilities
  */
 
-export { AgentPermissionService } from './agent-permissions';
-export type { PermissionContext, PermissionResult, UserRole } from './agent-permissions';
+export { AgentPermissionService } from './agent-permissions'
+export type { PermissionContext, PermissionResult, UserRole } from './agent-permissions'
 
 // Re-export commonly used permission types
-export type PermissionAction = 'read' | 'write' | 'delete' | 'admin';
+export type PermissionAction = 'read' | 'write' | 'delete' | 'admin'
 export type PermissionResource =
   | 'agent_sessions'
   | 'agent_messages'
   | 'agent_context'
   | 'agent_audit'
   | 'patient_data'
-  | 'financial_data';
+  | 'financial_data'
 
 export type UserRoleType =
   | 'admin'
   | 'clinic_admin'
   | 'professional'
   | 'staff'
-  | 'patient';
+  | 'patient'
 
 // Permission constants for easy reference
 export const PERMISSIONS = {
@@ -49,7 +49,7 @@ export const PERMISSIONS = {
     STAFF: 'staff',
     PATIENT: 'patient',
   } as const,
-} as const;
+} as const
 
 // Common permission combinations
 export const PERMISSION_TEMPLATES = {
@@ -84,7 +84,7 @@ export const PERMISSION_TEMPLATES = {
 
   // Patient permissions
   PATIENT: ['read:agent_sessions', 'read:agent_messages'],
-} as const;
+} as const
 
 // Helper functions for permission checking
 export const hasPermission = (
@@ -92,21 +92,21 @@ export const hasPermission = (
   requiredPermission: string,
 ): boolean => {
   return (
-    userPermissions.includes('*:*')
-    || userPermissions.includes(requiredPermission)
-  );
-};
+    userPermissions.includes('*:*') ||
+    userPermissions.includes(requiredPermission)
+  )
+}
 
 export const hasAnyPermission = (
   userPermissions: string[],
   requiredPermissions: string[],
 ): boolean => {
-  return requiredPermissions.some(perm => hasPermission(userPermissions, perm));
-};
+  return requiredPermissions.some(perm => hasPermission(userPermissions, perm))
+}
 
 export const hasAllPermissions = (
   userPermissions: string[],
   requiredPermissions: string[],
 ): boolean => {
-  return requiredPermissions.every(perm => hasPermission(userPermissions, perm));
-};
+  return requiredPermissions.every(perm => hasPermission(userPermissions, perm))
+}

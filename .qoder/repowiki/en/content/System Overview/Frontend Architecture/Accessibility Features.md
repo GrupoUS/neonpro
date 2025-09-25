@@ -249,7 +249,7 @@ When displaying sensitive patient information, the system uses ARIA attributes t
   data-sensitivity='high'
 >
   {/* Patient data content */}
-</div>;
+</div>
 ```
 
 #### Clinical Workflow Indicators
@@ -336,16 +336,16 @@ export class ErrorBoundary extends React.Component<
   ErrorBoundaryState
 > {
   constructor(props: ErrorBoundaryProps) {
-    super(props);
-    this.state = { hasError: false };
+    super(props)
+    this.state = { hasError: false }
   }
 
   static getDerivedStateFromError(error: Error): ErrorBoundaryState {
-    return { hasError: true, error };
+    return { hasError: true, error }
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    console.error('Error caught by boundary:', error, errorInfo);
+    console.error('Error caught by boundary:', error, errorInfo)
   }
 
   render() {
@@ -360,13 +360,13 @@ export class ErrorBoundary extends React.Component<
               Oops! Something went wrong
             </h2>
             <p className='text-gray-600 mb-6'>
-              {this.state.error?.message
-                || 'An unexpected error occurred. Please try again.'}
+              {this.state.error?.message ||
+                'An unexpected error occurred. Please try again.'}
             </p>
             <button
               onClick={() => {
-                this.setState({ hasError: false, error: undefined });
-                window.location.reload();
+                this.setState({ hasError: false, error: undefined })
+                window.location.reload()
               }}
               className='inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2'
             >
@@ -375,10 +375,10 @@ export class ErrorBoundary extends React.Component<
             </button>
           </div>
         </div>
-      );
+      )
     }
 
-    return this.props.children;
+    return this.props.children
   }
 }
 ```
@@ -436,7 +436,7 @@ When new chat messages arrive, the system uses ARIA live regions to announce the
   message='New message received from patient'
   priority='polite'
   timeout={5000}
-/>;
+/>
 ```
 
 The implementation includes several key features:
@@ -515,40 +515,40 @@ Modal dialogs and emergency alerts implement focus trapping to prevent keyboard 
 
 ```tsx
 export function useFocusTrap(isActive: boolean) {
-  const containerRef = useRef<HTMLElement>(null);
+  const containerRef = useRef<HTMLElement>(null)
 
   useEffect(() => {
-    if (!isActive || !containerRef.current) return;
+    if (!isActive || !containerRef.current) return
 
-    const container = containerRef.current;
+    const container = containerRef.current
     const focusableElements = container.querySelectorAll(
       'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
-    );
+    )
 
-    const firstElement = focusableElements[0] as HTMLElement;
+    const firstElement = focusableElements[0] as HTMLElement
     const lastElement = focusableElements[
       focusableElements.length - 1
-    ] as HTMLElement;
+    ] as HTMLElement
 
     function handleTabKey(event: KeyboardEvent) {
-      if (event.key !== 'Tab') return;
+      if (event.key !== 'Tab') return
 
       if (event.shiftKey) {
         if (document.activeElement === firstElement) {
-          event.preventDefault();
-          lastElement?.focus();
+          event.preventDefault()
+          lastElement?.focus()
         }
       } else {
         if (document.activeElement === lastElement) {
-          event.preventDefault();
-          firstElement?.focus();
+          event.preventDefault()
+          firstElement?.focus()
         }
       }
     }
 
-    container.addEventListener('keydown', handleTabKey);
-    return () => container.removeEventListener('keydown', handleTabKey);
-  }, [isActive]);
+    container.addEventListener('keydown', handleTabKey)
+    return () => container.removeEventListener('keydown', handleTabKey)
+  }, [isActive])
 }
 ```
 
@@ -597,7 +597,7 @@ The system adapts animation performance based on device capabilities and user pr
 const generatePerformanceSettings = (
   capabilities: DeviceCapabilities,
 ): PerformanceSettings => {
-  const { isLowEnd, prefersReducedMotion, isMobile, hasGPU, cpuPower } = capabilities;
+  const { isLowEnd, prefersReducedMotion, isMobile, hasGPU, cpuPower } = capabilities
 
   // Disable animations if user prefers reduced motion
   if (prefersReducedMotion) {
@@ -609,7 +609,7 @@ const generatePerformanceSettings = (
       debounceMs: 100,
       useHardwareAcceleration: false,
       maxConcurrentAnimations: 1,
-    };
+    }
   }
 
   // Low-end device settings
@@ -622,9 +622,9 @@ const generatePerformanceSettings = (
       debounceMs: 32, // ~30fps
       useHardwareAcceleration: hasGPU,
       maxConcurrentAnimations: 2,
-    };
+    }
   }
-};
+}
 ```
 
 ### Rendering Optimization
@@ -705,7 +705,7 @@ if (!professionalAccessibility) {
       cost: 'medium',
     },
     detectedAt: new Date(),
-  });
+  })
 }
 ```
 

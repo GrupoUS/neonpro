@@ -79,4 +79,3 @@ logs/
 # Ignore git files
 .git/
 .gitignore
-.gitattributes

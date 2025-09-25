@@ -1,0 +1,78 @@
+{
+  "name": "@neonpro/healthcare-core",
+  "version": "1.0.0",
+  "description": "Healthcare business logic and workflows for NeonPro platform",
+  "main": "dist/src/index.js",
+  "module": "dist/src/index.js",
+  "types": "dist/src/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/src/index.d.ts",
+      "import": "./dist/src/index.js",
+      "require": "./dist/src/index.js"
+    },
+    "./entities/*": {
+      "types": "./dist/src/entities/*.d.ts",
+      "import": "./dist/src/entities/*.js",
+      "require": "./dist/src/entities/*.js"
+    },
+    "./services/*": {
+      "types": "./dist/src/services/*.d.ts",
+      "import": "./dist/src/services/*.js",
+      "require": "./dist/src/services/*.js"
+    },
+    "./workflows/*": {
+      "types": "./dist/src/workflows/*.d.ts",
+      "import": "./dist/src/workflows/*.js",
+      "require": "./dist/src/workflows/*.js"
+    }
+  },
+  "scripts": {
+    "build": "bun x tsc -b",
+    "dev": "tsc -w -p tsconfig.json",
+    "type-check": "tsc -p tsconfig.json --noEmit",
+    "clean": "rimraf dist",
+    "test": "bun test run",
+    "test:watch": "bun test --watch",
+    "test:coverage": "bun test --coverage",
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
+    "validate-workflows": "tsx scripts/validate-workflows.ts"
+  },
+  "dependencies": {
+    "@neonpro/types": "workspace:*",
+    "@neonpro/shared": "workspace:*",
+    "@neonpro/database": "workspace:*",
+    "@neonpro/ai-services": "workspace:*",
+    "zod": "^4.1.11",
+    "date-fns": "^3.6.0",
+    "valibot": "^1.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.13",
+    "typescript": "^5.9.2",
+    "vitest": "^3.2.4",
+    "tsx": "^4.6.2"
+  },
+  "peerDependencies": {
+    "@neonpro/security-compliance": "workspace:*"
+  },
+  "files": [
+    "dist",
+    "src/**/*"
+  ],
+  "keywords": [
+    "healthcare",
+    "business-logic",
+    "workflows",
+    "medical",
+    "entities",
+    "services",
+    "brazilian-healthcare"
+  ],
+  "author": "NeonPro Team",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "restricted"
+  }
+}

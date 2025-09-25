@@ -5,33 +5,33 @@ import type {
   OrchestrationContext,
   TDDCycleResult,
   TDDPhase,
-} from '../types';
-import { TDDAgentRegistry } from './agent-registry';
+} from '../types'
+import { TDDAgentRegistry } from './agent-registry'
 
 /**
  * TDD Orchestrator - Main orchestration engine for TDD workflow
  */
 export class TDDOrchestrator {
-  private agentRegistry: TDDAgentRegistry;
-  private workflowEngine?: any;
+  private agentRegistry: TDDAgentRegistry
+  private workflowEngine?: any
   private metrics: {
-    totalCycles: number;
-    successfulCycles: number;
-    failedCycles: number;
-    averageDuration: number;
-    lastCycleId: string | null;
-  };
+    totalCycles: number
+    successfulCycles: number
+    failedCycles: number
+    averageDuration: number
+    lastCycleId: string | null
+  }
 
   constructor(agentRegistry: TDDAgentRegistry, workflowEngine?: any) {
-    this.agentRegistry = agentRegistry;
-    this.workflowEngine = workflowEngine;
+    this.agentRegistry = agentRegistry
+    this.workflowEngine = workflowEngine
     this.metrics = {
       totalCycles: 0,
       successfulCycles: 0,
       failedCycles: 0,
       averageDuration: 0,
       lastCycleId: null,
-    };
+    }
   }
 
   /**
@@ -58,9 +58,9 @@ export class TDDOrchestrator {
         anvisa: feature.healthcareCompliance || false,
         cfm: feature.healthcareCompliance || false,
       },
-    };
+    }
 
-    return this.executeFullTDDCycleInternal(context);
+    return this.executeFullTDDCycleInternal(context)
   }
 
   /**
@@ -69,33 +69,33 @@ export class TDDOrchestrator {
   async executeFullTDDCycleInternal(
     context: OrchestrationContext,
   ): Promise<TDDCycleResult> {
-    const cycleId = this.generateCycleId();
-    const startTime = Date.now();
+    const cycleId = this.generateCycleId()
+    const startTime = Date.now()
 
     try {
       // Select appropriate workflow using workflow engine
       if (!this.workflowEngine) {
-        throw new Error('Workflow engine not available');
+        throw new Error('Workflow engine not available')
       }
 
-      await this.workflowEngine.selectWorkflow(context);
+      await this.workflowEngine.selectWorkflow(context)
 
       // Execute RED phase
-      const redResult = await this.executeRedPhase(context);
+      const redResult = await this.executeRedPhase(context)
 
       // Execute GREEN phase
-      const greenResult = await this.executeGreenPhase(context);
+      const greenResult = await this.executeGreenPhase(context)
 
       // Execute REFACTOR phase
-      const refactorResult = await this.executeRefactorPhase(context);
+      const refactorResult = await this.executeRefactorPhase(context)
 
       // Aggregate results
-      const success = redResult.success && greenResult.success && refactorResult.success;
-      const duration = Math.max(Date.now() - startTime, 1); // Ensure minimum duration of 1ms for testing
-      const healthcareCompliance = await this.validateHealthcareCompliance(context);
+      const success = redResult.success && greenResult.success && refactorResult.success
+      const duration = Math.max(Date.now() - startTime, 1) // Ensure minimum duration of 1ms for testing
+      const healthcareCompliance = await this.validateHealthcareCompliance(context)
 
       // Update metrics
-      this.updateMetrics(cycleId, duration, success);
+      this.updateMetrics(cycleId, duration, success)
 
       return {
         success,
@@ -108,16 +108,16 @@ export class TDDOrchestrator {
           refactorResult,
         ]),
         complianceScore: healthcareCompliance?.score || 0,
-      };
+      }
     } catch (error) {
-      const duration = Date.now() - startTime;
-      this.updateMetrics(cycleId, duration, false);
+      const duration = Date.now() - startTime
+      this.updateMetrics(cycleId, duration, false)
 
       return this.createFailureResult(
         cycleId,
         'all',
         error instanceof Error ? error.message : 'Unknown error',
-      );
+      )
     }
   }
 
@@ -125,8 +125,8 @@ export class TDDOrchestrator {
    * Execute RED phase
    */
   async executeRedPhase(context: OrchestrationContext): Promise<AgentResult> {
-    const agents = this.agentRegistry.getAgentsForPhase('red', context);
-    this.determineCoordinationPattern(context, 'red');
+    const agents = this.agentRegistry.getAgentsForPhase('red', context)
+    this.determineCoordinationPattern(context, 'red')
 
     // Simplified RED phase execution
     const result = {
@@ -138,17 +138,17 @@ export class TDDOrchestrator {
         score: 85,
         issues: [],
       },
-    };
+    }
 
-    return result;
+    return result
   }
 
   /**
    * Execute GREEN phase
    */
   async executeGreenPhase(context: OrchestrationContext): Promise<AgentResult> {
-    const agents = this.agentRegistry.getAgentsForPhase('green', context);
-    this.determineCoordinationPattern(context, 'green');
+    const agents = this.agentRegistry.getAgentsForPhase('green', context)
+    this.determineCoordinationPattern(context, 'green')
 
     // Simplified GREEN phase execution
     const result = {
@@ -160,9 +160,9 @@ export class TDDOrchestrator {
         score: 90,
         issues: [],
       },
-    };
+    }
 
-    return result;
+    return result
   }
 
   /**
@@ -171,8 +171,8 @@ export class TDDOrchestrator {
   async executeRefactorPhase(
     context: OrchestrationContext,
   ): Promise<AgentResult> {
-    const agents = this.agentRegistry.getAgentsForPhase('refactor', context);
-    this.determineCoordinationPattern(context, 'refactor');
+    const agents = this.agentRegistry.getAgentsForPhase('refactor', context)
+    this.determineCoordinationPattern(context, 'refactor')
 
     // Simplified REFACTOR phase execution
     const result = {
@@ -184,9 +184,9 @@ export class TDDOrchestrator {
         score: 95,
         issues: [],
       },
-    };
+    }
 
-    return result;
+    return result
   }
 
   /**
@@ -197,10 +197,10 @@ export class TDDOrchestrator {
     context: OrchestrationContext,
     phase: TDDPhase,
   ): Promise<Array<{ name: string; passed: boolean; score: number }>> {
-    const qualityGates = [];
+    const qualityGates = []
 
     // Ensure result has quality property
-    const qualityScore = (result as any).quality?.score || 85;
+    const qualityScore = (result as any).quality?.score || 85
 
     // Test structure gate (for RED phase)
     if (phase === 'red') {
@@ -208,15 +208,15 @@ export class TDDOrchestrator {
         name: 'Test Structure',
         passed: qualityScore >= 80,
         score: qualityScore,
-      });
+      })
 
       // Coverage gate based on criticality
-      const requiredCoverage = this.getRequiredCoverage(context);
+      const requiredCoverage = this.getRequiredCoverage(context)
       qualityGates.push({
         name: 'Coverage',
         passed: qualityScore >= requiredCoverage,
         score: qualityScore,
-      });
+      })
     }
 
     // Implementation gate (for GREEN phase)
@@ -225,13 +225,13 @@ export class TDDOrchestrator {
         name: 'Implementation Quality',
         passed: qualityScore >= 85,
         score: qualityScore,
-      });
+      })
 
       qualityGates.push({
         name: 'Tests Passing',
         passed: result.success === true,
         score: result.success ? 100 : 0,
-      });
+      })
     }
 
     // Code quality and performance gates (for REFACTOR phase)
@@ -240,16 +240,16 @@ export class TDDOrchestrator {
         name: 'Code Quality',
         passed: qualityScore >= 90,
         score: qualityScore,
-      });
+      })
 
       qualityGates.push({
         name: 'Performance',
         passed: qualityScore >= 85,
         score: qualityScore,
-      });
+      })
     }
 
-    return qualityGates;
+    return qualityGates
   }
 
   /**
@@ -270,7 +270,7 @@ export class TDDOrchestrator {
         conflicts: 0,
         resolution: 'sequential-execution',
       },
-    };
+    }
   }
 
   /**
@@ -291,7 +291,7 @@ export class TDDOrchestrator {
         conflicts: 0,
         resolution: 'parallel-execution',
       },
-    };
+    }
   }
 
   /**
@@ -312,7 +312,7 @@ export class TDDOrchestrator {
         conflicts: 0,
         resolution: 'hierarchical-execution',
       },
-    };
+    }
   }
 
   /**
@@ -321,13 +321,13 @@ export class TDDOrchestrator {
   getRequiredCoverage(context: OrchestrationContext): number {
     switch (context.criticalityLevel) {
       case 'critical':
-        return 95;
+        return 95
       case 'high':
-        return 85;
+        return 85
       case 'medium':
-        return 75;
+        return 75
       default:
-        return 70;
+        return 70
     }
   }
 
@@ -338,9 +338,9 @@ export class TDDOrchestrator {
     results: AgentResult[],
     success: boolean,
   ): {
-    success: boolean;
-    results: any[];
-    agentResults: AgentResult[];
+    success: boolean
+    results: any[]
+    agentResults: AgentResult[]
   } {
     return {
       success,
@@ -348,7 +348,7 @@ export class TDDOrchestrator {
         .map((r, index) => r.result || `result${index + 1}`)
         .filter(r => r !== null),
       agentResults: results,
-    };
+    }
   }
 
   /**
@@ -388,7 +388,7 @@ export class TDDOrchestrator {
       ],
       qualityScore: 0,
       complianceScore: 0,
-    };
+    }
   }
 
   /**
@@ -397,35 +397,35 @@ export class TDDOrchestrator {
   private calculateQualityScore(results: AgentResult[]): number {
     const scores = results.map(result => {
       if (typeof result.quality === 'number') {
-        return result.quality;
+        return result.quality
       } else if (typeof result.quality === 'object' && result.quality?.score) {
-        return result.quality.score;
+        return result.quality.score
       }
-      return 0;
-    });
+      return 0
+    })
 
     return scores.length > 0
       ? scores.reduce((sum, score) => sum + score, 0) / scores.length
-      : 0;
+      : 0
   }
 
   /**
    * Update metrics
    */
   updateMetrics(cycleId: string, duration: number, success: boolean): void {
-    this.metrics.totalCycles++;
-    this.metrics.lastCycleId = cycleId;
+    this.metrics.totalCycles++
+    this.metrics.lastCycleId = cycleId
 
     if (success) {
-      this.metrics.successfulCycles++;
+      this.metrics.successfulCycles++
     } else {
-      this.metrics.failedCycles++;
+      this.metrics.failedCycles++
     }
 
     // Update average duration
-    this.metrics.averageDuration = (this.metrics.averageDuration * (this.metrics.totalCycles - 1)
-      + duration)
-      / this.metrics.totalCycles;
+    this.metrics.averageDuration = (this.metrics.averageDuration * (this.metrics.totalCycles - 1) +
+      duration) /
+      this.metrics.totalCycles
   }
 
   /**
@@ -437,19 +437,19 @@ export class TDDOrchestrator {
   ): 'parallel' | 'sequential' | 'hierarchical' {
     // Healthcare compliance should always be sequential
     if (context.healthcareCompliance.required) {
-      return 'sequential';
+      return 'sequential'
     }
 
     // Microservice + refactor should always be parallel
     if (context.featureType === 'microservice' && phase === 'refactor') {
-      return 'parallel';
+      return 'parallel'
     }
 
     if (context.complexity === 'high') {
-      return 'hierarchical';
+      return 'hierarchical'
     }
 
-    return 'parallel';
+    return 'parallel'
   }
 
   /**
@@ -463,21 +463,21 @@ export class TDDOrchestrator {
       anvisa: context.healthcareCompliance.anvisa,
       cfm: context.healthcareCompliance.cfm,
       score: 0,
-    };
+    }
 
-    if (context.healthcareCompliance.lgpd) compliance.score += 33;
-    if (context.healthcareCompliance.anvisa) compliance.score += 33;
-    if (context.healthcareCompliance.cfm) compliance.score += 34;
+    if (context.healthcareCompliance.lgpd) compliance.score += 33
+    if (context.healthcareCompliance.anvisa) compliance.score += 33
+    if (context.healthcareCompliance.cfm) compliance.score += 34
 
-    return compliance;
+    return compliance
   }
 
   /**
    * Generate unique cycle ID
    */
   generateCycleId(): string {
-    const timestamp = Date.now();
-    const random = Math.random().toString(36).substring(2, 8);
-    return `tdd-${timestamp}-${random}`;
+    const timestamp = Date.now()
+    const random = Math.random().toString(36).substring(2, 8)
+    return `tdd-${timestamp}-${random}`
   }
 }

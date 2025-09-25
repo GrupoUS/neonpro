@@ -3,25 +3,25 @@
  * Combines all domain routers with healthcare compliance
  */
 
-import { aestheticClinicRouter } from './routers/aesthetic-clinic';
-import { aestheticSchedulingRouter } from './routers/aesthetic-scheduling';
-import { agentRouter } from './routers/agent';
-import { aiRouter } from './routers/ai';
-import { aiClinicalSupportRouter } from './routers/ai-clinical-support';
-import { appointmentsRouter } from './routers/appointments';
-import { crudRouter } from './routers/crud';
-import { enhancedAestheticProfessionalsRouter } from './routers/enhanced-aesthetic-professionals';
-import { enhancedPatientIdentityRouter } from './routers/enhanced-patient-identity';
-import { enhancedTelemedicineRouter } from './routers/enhanced-telemedicine';
-import { financialAgentRouter } from './routers/financial-agent';
-import { healthcareServicesRouter } from './routers/healthcare-services';
-import { patientsRouter } from './routers/patients';
-import { realtimeTelemedicineRouter } from './routers/realtime-telemedicine';
-import { telemedicineRouter } from './routers/telemedicine';
-import { router } from './trpc';
+import { aestheticClinicRouter } from './routers/aesthetic-clinic'
+import { aestheticSchedulingRouter } from './routers/aesthetic-scheduling'
+import { agentRouter } from './routers/agent'
+import { aiRouter } from './routers/ai'
+import { aiClinicalSupportRouter } from './routers/ai-clinical-support'
+import { appointmentsRouter } from './routers/appointments'
+import { crudRouter } from './routers/crud'
+import { enhancedAestheticProfessionalsRouter } from './routers/enhanced-aesthetic-professionals'
+import { enhancedPatientIdentityRouter } from './routers/enhanced-patient-identity'
+import { enhancedTelemedicineRouter } from './routers/enhanced-telemedicine'
+import { financialAgentRouter } from './routers/financial-agent'
+import { healthcareServicesRouter } from './routers/healthcare-services'
+import { patientsRouter } from './routers/patients'
+import { realtimeTelemedicineRouter } from './routers/realtime-telemedicine'
+import { telemedicineRouter } from './routers/telemedicine'
+import { router } from './trpc'
 
 // Import comprehensive API contracts from T016
-import { apiRouter } from './contracts';
+import { apiRouter } from './contracts'
 
 /**
  * App Router - Main tRPC router for the healthcare platform
@@ -108,7 +108,7 @@ export const appRouter = router({
   // Comprehensive API contracts with tRPC v11 (T016)
   // New healthcare-compliant API contracts with enhanced features
   api: apiRouter,
-});
+})
 
 // Export the router type for use in clients
-export type AppRouter = typeof appRouter;
+export type AppRouter = typeof appRouter

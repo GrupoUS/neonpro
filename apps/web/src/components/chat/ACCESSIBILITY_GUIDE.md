@@ -53,7 +53,7 @@ Este guia documenta as características de acessibilidade implementadas nos comp
   message={message}
   isUser={false}
   onAction={action => console.log(action)}
-/>;
+/>
 ```
 
 **Características:**
@@ -67,7 +67,7 @@ Este guia documenta as características de acessibilidade implementadas nos comp
 ### AccessibilitySettingsPanel
 
 ```tsx
-<AccessibilitySettingsPanel />;
+<AccessibilitySettingsPanel />
 ```
 
 **Características:**
@@ -85,7 +85,7 @@ Este guia documenta as características de acessibilidade implementadas nos comp
   message='Nova mensagem recebida'
   priority='polite'
   timeout={5000}
-/>;
+/>
 ```
 
 **Características:**
@@ -130,20 +130,20 @@ Este guia documenta as características de acessibilidade implementadas nos comp
 ```tsx
 // Teste de atributos ARIA
 test('renders with proper ARIA attributes', () => {
-  const { container } = render(<AccessibleChatMessage message={mockMessage} />);
-  const messageElement = container.querySelector('[role="assistant"]');
-  expect(messageElement).toHaveAttribute('aria-labelledby');
-  expect(messageElement).toHaveAttribute('aria-describedby');
-});
+  const { container } = render(<AccessibleChatMessage message={mockMessage} />)
+  const messageElement = container.querySelector('[role="assistant"]')
+  expect(messageElement).toHaveAttribute('aria-labelledby')
+  expect(messageElement).toHaveAttribute('aria-describedby')
+})
 
 // Teste de navegação por teclado
 test('supports keyboard navigation', () => {
-  const { container } = render(<AccessibleChatMessage message={mockMessage} />);
-  const buttons = container.querySelectorAll('button');
+  const { container } = render(<AccessibleChatMessage message={mockMessage} />)
+  const buttons = container.querySelectorAll('button')
   buttons.forEach(button => {
-    expect(button).toHaveAttribute('tabindex', '0');
-  });
-});
+    expect(button).toHaveAttribute('tabindex', '0')
+  })
+})
 ```
 
 ### Lista de Verificação WCAG 2.1 AA+
@@ -246,7 +246,7 @@ const customTheme = {
   success: '#10b981',
   warning: '#f59e0b',
   error: '#ef4444',
-};
+}
 ```
 
 ### Configurações de Usuário
@@ -254,14 +254,14 @@ const customTheme = {
 ```tsx
 // Salvar preferências do usuário
 const saveUserPreferences = (preferences: AccessibilitySettings) => {
-  localStorage.setItem('accessibility-preferences', JSON.stringify(preferences));
-};
+  localStorage.setItem('accessibility-preferences', JSON.stringify(preferences))
+}
 
 // Carregar preferências do usuário
 const loadUserPreferences = (): AccessibilitySettings => {
-  const saved = localStorage.getItem('accessibility-preferences');
-  return saved ? JSON.parse(saved) : defaultSettings;
-};
+  const saved = localStorage.getItem('accessibility-preferences')
+  return saved ? JSON.parse(saved) : defaultSettings
+}
 ```
 
 ## Monitoramento e Manutenção

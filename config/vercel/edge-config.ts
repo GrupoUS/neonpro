@@ -94,6 +94,6 @@ export const edgeConfig = {
     codeSplitting: true,
     lazyLoading: true,
   },
-};
+}
 
-export default edgeConfig;
+export default edgeConfig

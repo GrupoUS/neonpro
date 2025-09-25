@@ -504,10 +504,10 @@ const assessment: PatientAssessment = {
   },
   aestheticGoals: ['reduce acne scars', 'improve skin texture'],
   budgetRange: { min: 1000, max: 3000, currency: 'BRL' },
-};
+}
 
-const aiSupport = AIClinicalDecisionSupport.getInstance();
-const recommendations = await aiSupport.generateTreatmentRecommendations(assessment);
+const aiSupport = AIClinicalDecisionSupport.getInstance()
+const recommendations = await aiSupport.generateTreatmentRecommendations(assessment)
 ```
 
 To analyze contraindications for specific procedures:
@@ -517,7 +517,7 @@ To analyze contraindications for specific procedures:
 const analyses = await aiSupport.analyzeContraindications(
   'pat_123',
   ['botox', 'hyaluronic_fillers'],
-);
+)
 ```
 
 ### Implementing Aesthetic Scheduling
@@ -526,7 +526,7 @@ To schedule aesthetic procedures for a patient:
 
 ```typescript
 // SPEC ENHANCEDAESTHETICSCHEDULINGSERVICE@scheduleAestheticProcedures(file://packages/core-services/src/services/enhanced-aesthetic-scheduling-service.ts#L100-L150)
-const schedulingService = new EnhancedAestheticSchedulingService();
+const schedulingService = new EnhancedAestheticSchedulingService()
 
 const request: AestheticSchedulingRequest = {
   patientId: 'pat_123',
@@ -540,9 +540,9 @@ const request: AestheticSchedulingRequest = {
     contraindications: [],
   },
   urgencyLevel: 'medium',
-};
+}
 
-const result = await schedulingService.scheduleAestheticProcedures(request);
+const result = await schedulingService.scheduleAestheticProcedures(request)
 ```
 
 To validate professional certifications for a procedure:
@@ -552,7 +552,7 @@ To validate professional certifications for a procedure:
 const validation = await schedulingService.validateProfessionalCertifications(
   'prof_456',
   ['botox'],
-);
+)
 ```
 
 ### Managing Financial Operations
@@ -564,7 +564,7 @@ To create a new service price:
 const financialService = new FinancialManagementService({
   supabaseUrl: process.env.SUPABASE_URL!,
   supabaseKey: process.env.SUPABASE_KEY!,
-});
+})
 
 const priceInput: ServicePriceInput = {
   clinicId: 'clinic_789',
@@ -576,9 +576,9 @@ const priceInput: ServicePriceInput = {
   professionalCommissionRate: 40,
   clinicRevenueRate: 60,
   effectiveDate: '2024-03-01',
-};
+}
 
-const servicePrice = await financialService.createServicePrice(priceInput);
+const servicePrice = await financialService.createServicePrice(priceInput)
 ```
 
 To process a payment transaction:
@@ -595,9 +595,9 @@ const paymentInput: PaymentTransactionInput = {
   amount: 800,
   currency: 'BRL',
   installments: 1,
-};
+}
 
-const transaction = await financialService.createPaymentTransaction(paymentInput);
+const transaction = await financialService.createPaymentTransaction(paymentInput)
 ```
 
 ### Engaging Patients
@@ -609,7 +609,7 @@ To send a personalized communication:
 const engagementService = new PatientEngagementService({
   supabaseUrl: process.env.SUPABASE_URL!,
   supabaseKey: process.env.SUPABASE_KEY!,
-});
+})
 
 const communication: CommunicationHistoryInput = {
   patientId: 'pat_123',
@@ -618,9 +618,9 @@ const communication: CommunicationHistoryInput = {
   channel: 'whatsapp',
   messageContent: 'Seu agendamento para tratamento estético está marcado para amanhã às 14h.',
   status: 'pending',
-};
+}
 
-const result = await engagementService.sendCommunication(communication);
+const result = await engagementService.sendCommunication(communication)
 ```
 
 To update a patient's journey stage:
@@ -636,9 +636,9 @@ const journeyUpdate: PatientJourneyStageInput = {
   loyaltyTier: 'gold',
   lastTreatmentDate: new Date(),
   nextRecommendedTreatmentDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-};
+}
 
-await engagementService.updatePatientJourneyStage(journeyUpdate);
+await engagementService.updatePatientJourneyStage(journeyUpdate)
 ```
 
 ## Common Issues and Solutions

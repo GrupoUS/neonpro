@@ -14,9 +14,9 @@
  * - ANVISA compliance for aesthetic procedures
  */
 
-import { AuditAction, AuditStatus, ResourceType, RiskLevel } from '@prisma/client';
-import { TRPCError } from '@trpc/server';
-import { z } from 'zod';
+import { AuditAction, AuditStatus, ResourceType, RiskLevel } from '@prisma/client'
+import { TRPCError } from '@trpc/server'
+import { z } from 'zod'
 
 // Comentando import problemático temporariamente
 // import { EnhancedAestheticSchedulingService } from '@neonpro/core-services/services/enhanced-aesthetic-scheduling-service';
@@ -27,31 +27,31 @@ class SimpleAestheticSchedulingService {
     return {
       isValid: true,
       missingCertifications: [],
-    };
+    }
   }
 
-  async calculateVariableDuration(request: any) {
+  async calculateVariableDuration(_request: any) {
     return {
       duration: 60,
       factors: [],
-    };
+    }
   }
 
-  async checkContraindications(request: any) {
+  async checkContraindications(_request: any) {
     return {
       contraindications: [],
       warnings: [],
-    };
+    }
   }
 
-  async optimizeRoomAllocation(request: any) {
+  async optimizeRoomAllocation(_request: any) {
     return {
       recommendations: [],
       efficiency: 0.8,
-    };
+    }
   }
 
-  async scheduleAestheticProcedures(request: any) {
+  async scheduleAestheticProcedures(_request: any) {
     return {
       success: true,
       appointments: [],
@@ -69,7 +69,7 @@ class SimpleAestheticSchedulingService {
       professionalAssignments: [],
       warnings: [],
       contraindications: [],
-    };
+    }
   }
 
   async scheduleTreatmentPackage(
@@ -93,7 +93,7 @@ class SimpleAestheticSchedulingService {
       professionalAssignments: [],
       warnings: [],
       contraindications: [],
-    };
+    }
   }
 }
 import {
@@ -105,11 +105,11 @@ import {
   ScheduleAestheticProceduresSchema,
   ScheduleTreatmentPackageSchema,
   ValidateProfessionalCertificationsSchema,
-} from '../schemas';
-import { healthcareProcedure, protectedProcedure, router } from '../trpc';
+} from '../schemas'
+import { healthcareProcedure, protectedProcedure, router } from '../trpc'
 
 // Initialize the aesthetic scheduling service
-const aestheticSchedulingService = new SimpleAestheticSchedulingService();
+const aestheticSchedulingService = new SimpleAestheticSchedulingService()
 
 // =====================================
 // BRAZILIAN HEALTHCARE COMPLIANCE HELPERS
@@ -123,18 +123,18 @@ async function _validateANVISACompliance(
   procedureDetails: any,
   ctx: any,
 ): Promise<{
-  compliant: boolean;
-  warnings: string[];
-  restrictions: string[];
+  compliant: boolean
+  warnings: string[]
+  restrictions: string[]
 }> {
-  const warnings: string[] = [];
-  const restrictions: string[] = [];
-  let compliant = true;
+  const warnings: string[] = []
+  const restrictions: string[] = []
+  let compliant = true
 
   // Check for ANVISA-required documentation
   if (
-    procedureDetails.procedureType === 'surgical'
-    || procedureDetails.procedureType === 'laser'
+    procedureDetails.procedureType === 'surgical' ||
+    procedureDetails.procedureType === 'laser'
   ) {
     // Verify procedure has proper ANVISA registration
     const hasAnvisaRegistration = await ctx.prisma.aestheticProcedure.findFirst({
@@ -142,16 +142,16 @@ async function _validateANVISACompliance(
         id: procedureDetails.id,
         anvisaRegistration: { not: null },
       },
-    });
+    })
 
     if (!hasAnvisaRegistration) {
-      warnings.push('Procedure lacks ANVISA registration - verify compliance');
-      compliant = false;
+      warnings.push('Procedure lacks ANVISA registration - verify compliance')
+      compliant = false
     }
   }
 
   // Check for high-risk procedure requirements
-  const highRiskProcedures = ['surgical', 'combination'];
+  const highRiskProcedures = ['surgical', 'combination']
   if (highRiskProcedures.includes(procedureDetails.procedureType)) {
     // Verify emergency equipment availability
     const emergencyEquipment = await ctx.prisma.clinicEquipment.findMany({
@@ -160,33 +160,33 @@ async function _validateANVISACompliance(
         category: 'emergency',
         isOperational: true,
       },
-    });
+    })
 
     if (emergencyEquipment.length < 3) {
-      restrictions.push('Insufficient emergency equipment for high-risk procedure');
-      compliant = false;
+      restrictions.push('Insufficient emergency equipment for high-risk procedure')
+      compliant = false
     }
   }
 
-  return { compliant, warnings, restrictions };
+  return { compliant, warnings, restrictions }
 }
 
 /**
  * Enhanced aesthetic procedure validation with Brazilian standards
  */
 async function validateAestheticProcedureRequest(
-  request: any,
+  _request: any,
   ctx: any,
 ): Promise<{
-  valid: boolean;
-  warnings: string[];
-  contraindications: string[];
-  complianceIssues: string[];
+  valid: boolean
+  warnings: string[]
+  contraindications: string[]
+  complianceIssues: string[]
 }> {
-  const warnings: string[] = [];
-  const contraindications: string[] = [];
-  const complianceIssues: string[] = [];
-  let valid = true;
+  const warnings: string[] = []
+  const contraindications: string[] = []
+  const complianceIssues: string[] = []
+  let valid = true
 
   // Validate patient eligibility for aesthetic procedures
   const patient = await ctx.prisma.patient.findUnique({
@@ -198,27 +198,27 @@ async function validateAestheticProcedureRequest(
       allergies: true,
       contraindications: true,
     },
-  });
+  })
 
   if (!patient) {
-    complianceIssues.push('Patient not found');
-    valid = false;
-    return { valid, warnings, contraindications, complianceIssues };
+    complianceIssues.push('Patient not found')
+    valid = false
+    return { valid, warnings, contraindications, complianceIssues }
   }
 
   // Age validation for aesthetic procedures
   if (patient.age && patient.age < 18) {
-    const adultRequiredProcedures = ['injectable', 'surgical', 'laser'];
+    const adultRequiredProcedures = ['injectable', 'surgical', 'laser']
     const hasAdultProcedure = request.procedures.some((_procId: string) => {
       // This would check against procedure database
-      return adultRequiredProcedures.includes('injectable'); // Simplified check
-    });
+      return adultRequiredProcedures.includes('injectable') // Simplified check
+    })
 
     if (hasAdultProcedure) {
       contraindications.push(
         'Patient under 18 - parental consent required for aesthetic procedures',
-      );
-      valid = false;
+      )
+      valid = false
     }
   }
 
@@ -229,23 +229,23 @@ async function validateAestheticProcedureRequest(
       'laser',
       'body',
       'surgical',
-    ];
+    ]
 
     pregnancyContraindicatedProcedures.forEach(procType => {
-      contraindications.push(`${procType} procedures contraindicated during pregnancy`);
-    });
-    valid = false;
+      contraindications.push(`${procType} procedures contraindicated during pregnancy`)
+    })
+    valid = false
   }
 
   // Brazilian healthcare system compliance
   if (request.urgencyLevel === 'immediate') {
     complianceIssues.push(
       'Aesthetic procedures cannot be scheduled as immediate - requires proper evaluation',
-    );
-    valid = false;
+    )
+    valid = false
   }
 
-  return { valid, warnings, contraindications, complianceIssues };
+  return { valid, warnings, contraindications, complianceIssues }
 }
 
 // =====================================
@@ -262,7 +262,7 @@ export const aestheticSchedulingRouter = router({
     .mutation(async ({ ctx, input }) => {
       try {
         // Step 1: Validate aesthetic procedure request with Brazilian standards
-        const validation = await validateAestheticProcedureRequest(input, ctx);
+        const validation = await validateAestheticProcedureRequest(input, ctx)
         if (!validation.valid) {
           throw new TRPCError({
             code: 'BAD_REQUEST',
@@ -272,7 +272,7 @@ export const aestheticSchedulingRouter = router({
               complianceIssues: validation.complianceIssues,
               warnings: validation.warnings,
             },
-          });
+          })
         }
 
         // Step 2: Validate professional certifications (CFM compliance)
@@ -282,14 +282,14 @@ export const aestheticSchedulingRouter = router({
               .validateProfessionalCertifications(
                 professionalId,
                 input.procedures,
-              );
+              )
 
             if (!certificationValidation.isValid) {
               throw new TRPCError({
                 code: 'FORBIDDEN',
                 message: `Professional ${professionalId} lacks required certifications`,
                 cause: certificationValidation.missingCertifications,
-              });
+              })
             }
           }
         }
@@ -299,7 +299,7 @@ export const aestheticSchedulingRouter = router({
           const schedulingResult = await aestheticSchedulingService.scheduleAestheticProcedures({
             ...input,
             preferredDates: input.preferredDates?.map(date => new Date(date)) || [],
-          });
+          })
 
           if (!schedulingResult.success) {
             throw new TRPCError({
@@ -309,7 +309,7 @@ export const aestheticSchedulingRouter = router({
                 contraindications: schedulingResult.contraindications,
                 warnings: schedulingResult.warnings,
               },
-            });
+            })
           }
 
           // Store appointments in database
@@ -343,15 +343,15 @@ export const aestheticSchedulingRouter = router({
                     postProcedureInstructions: appointment.postProcedureInstructions,
                   },
                 },
-              });
+              })
             }),
-          );
+          )
 
           return {
             ...schedulingResult,
             appointments: storedAppointments,
-          };
-        });
+          }
+        })
 
         // Step 4: Create comprehensive audit trail
         await ctx.prisma.auditTrail.create({
@@ -382,7 +382,7 @@ export const aestheticSchedulingRouter = router({
               lgpdCompliant: true,
             }),
           },
-        });
+        })
 
         return {
           success: true,
@@ -400,7 +400,7 @@ export const aestheticSchedulingRouter = router({
             lgpdCompliance: true,
             patientConsentVerified: true,
           },
-        };
+        }
       } catch {
         // Log failed aesthetic scheduling
         await ctx.prisma.auditTrail.create({
@@ -422,13 +422,13 @@ export const aestheticSchedulingRouter = router({
               input: JSON.stringify(input),
             }),
           },
-        });
+        })
 
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to schedule aesthetic procedures',
           cause: error,
-        });
+        })
       }
     }),
 
@@ -450,13 +450,13 @@ export const aestheticSchedulingRouter = router({
               },
             },
           },
-        });
+        })
 
         if (!treatmentPackage) {
           throw new TRPCError({
             code: 'NOT_FOUND',
             message: 'Treatment package not found',
-          });
+          })
         }
 
         // Validate package availability and pricing
@@ -464,7 +464,7 @@ export const aestheticSchedulingRouter = router({
           throw new TRPCError({
             code: 'BAD_REQUEST',
             message: 'Treatment package is not currently available',
-          });
+          })
         }
 
         // Schedule the treatment package
@@ -473,7 +473,7 @@ export const aestheticSchedulingRouter = router({
           input.patientId,
           input.startDate,
           input.preferences || {},
-        );
+        )
 
         if (!result.success) {
           throw new TRPCError({
@@ -483,7 +483,7 @@ export const aestheticSchedulingRouter = router({
               contraindications: result.contraindications,
               warnings: result.warnings,
             },
-          });
+          })
         }
 
         // Create package booking record
@@ -504,7 +504,7 @@ export const aestheticSchedulingRouter = router({
               recoveryPlan: result.recoveryPlan,
             },
           },
-        });
+        })
 
         // Log treatment package scheduling
         await ctx.prisma.auditTrail.create({
@@ -532,7 +532,7 @@ export const aestheticSchedulingRouter = router({
               recoveryPeriod: result.recoveryPlan.recoveryPeriodDays,
             }),
           },
-        });
+        })
 
         return {
           success: true,
@@ -554,13 +554,13 @@ export const aestheticSchedulingRouter = router({
             lgpdCompliant: true,
             packagePricingTransparent: true,
           },
-        };
+        }
       } catch (error) {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to schedule treatment package',
           cause: error,
-        });
+        })
       }
     }),
 
@@ -579,20 +579,20 @@ export const aestheticSchedulingRouter = router({
             certifications: true,
             specializations: true,
           },
-        });
+        })
 
         if (!professional) {
           throw new TRPCError({
             code: 'NOT_FOUND',
             message: 'Professional not found',
-          });
+          })
         }
 
         // Validate certifications using the enhanced service
         const validation = await aestheticSchedulingService.validateProfessionalCertifications(
           input.professionalId,
           input.procedureIds,
-        );
+        )
 
         // Log certification validation
         await ctx.prisma.auditTrail.create({
@@ -617,7 +617,7 @@ export const aestheticSchedulingRouter = router({
               cfmCompliant: validation.isValid,
             }),
           },
-        });
+        })
 
         return {
           ...validation,
@@ -633,13 +633,13 @@ export const aestheticSchedulingRouter = router({
             anvisaCompliant: validation.isValid,
             lastValidated: new Date(),
           },
-        };
+        }
       } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to validate professional certifications',
           cause: error,
-        });
+        })
       }
     }),
 
@@ -662,12 +662,12 @@ export const aestheticSchedulingRouter = router({
           } as any,
           startTime: apt.startTime,
           endTime: apt.endTime,
-        }));
+        }))
 
         // Optimize room allocation using enhanced service
         const optimization = aestheticSchedulingService.optimizeRoomAllocation(
           aestheticAppointments,
-        );
+        )
 
         // Log room optimization
         await ctx.prisma.auditTrail.create({
@@ -690,7 +690,7 @@ export const aestheticSchedulingRouter = router({
               roomsAssigned: optimization.roomAssignments.size,
             }),
           },
-        });
+        })
 
         return {
           ...optimization,
@@ -704,13 +704,13 @@ export const aestheticSchedulingRouter = router({
             emergencyAccessibility: true, // Aesthetic procedures require emergency access
             anvisaCompliant: true,
           },
-        };
+        }
       } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to optimize room allocation',
           cause: error,
-        });
+        })
       }
     }),
 
@@ -734,13 +734,13 @@ export const aestheticSchedulingRouter = router({
             age: true,
             gender: true,
           },
-        });
+        })
 
         if (!patient) {
           throw new TRPCError({
             code: 'NOT_FOUND',
             message: 'Patient not found',
-          });
+          })
         }
 
         // Get procedure details
@@ -748,16 +748,16 @@ export const aestheticSchedulingRouter = router({
           where: {
             id: { in: input.procedureIds },
           },
-        });
+        })
 
         // Enhanced contraindication checking
-        const contraindications: string[] = [];
-        const warnings: string[] = [];
-        const recommendations: string[] = [];
+        const contraindications: string[] = []
+        const warnings: string[] = []
+        const recommendations: string[] = []
 
         // Pregnancy-related contraindications (Brazilian healthcare priority)
-        const isPregnant = input.medicalHistory?.pregnancyStatus === 'pregnant';
-        const isBreastfeeding = input.medicalHistory?.pregnancyStatus === 'breastfeeding';
+        const isPregnant = input.medicalHistory?.pregnancyStatus === 'pregnant'
+        const isBreastfeeding = input.medicalHistory?.pregnancyStatus === 'breastfeeding'
 
         for (const procedure of procedures) {
           // Check general contraindications
@@ -765,44 +765,44 @@ export const aestheticSchedulingRouter = router({
             const patientContraindications = [
               ...(patient.contraindications || []),
               ...(input.medicalHistory?.contraindications || []),
-            ];
+            ]
 
             for (const contraindication of procedure.contraindications) {
               if (patientContraindications.includes(contraindication)) {
                 contraindications.push(
                   `${procedure.name}: Contraindicated due to ${contraindication}`,
-                );
+                )
               }
             }
           }
 
           // Pregnancy-specific contraindications
           if (isPregnant) {
-            const pregnancyContraindicatedTypes = ['injectable', 'laser', 'body', 'surgical'];
+            const pregnancyContraindicatedTypes = ['injectable', 'laser', 'body', 'surgical']
             if (pregnancyContraindicatedTypes.includes(procedure.procedureType)) {
               contraindications.push(
                 `${procedure.name}: Contraindicated during pregnancy`,
-              );
+              )
             }
           }
 
           // Breastfeeding-specific contraindications
           if (isBreastfeeding) {
-            const breastfeedingContraindicatedTypes = ['injectable', 'laser'];
+            const breastfeedingContraindicatedTypes = ['injectable', 'laser']
             if (breastfeedingContraindicatedTypes.includes(procedure.procedureType)) {
               warnings.push(
                 `${procedure.name}: Caution advised during breastfeeding - consult specialist`,
-              );
+              )
             }
           }
 
           // Age-related contraindications
           if (patient.age && patient.age < 18) {
-            const minorRestrictedTypes = ['surgical', 'injectable'];
+            const minorRestrictedTypes = ['surgical', 'injectable']
             if (minorRestrictedTypes.includes(procedure.procedureType)) {
               contraindications.push(
                 `${procedure.name}: Parental consent required for patients under 18`,
-              );
+              )
             }
           }
 
@@ -810,19 +810,19 @@ export const aestheticSchedulingRouter = router({
           if (patient.allergies && patient.allergies.length > 0) {
             warnings.push(
               `Review patient allergies for ${procedure.name}: ${patient.allergies.join(', ')}`,
-            );
+            )
           }
         }
 
         // Generate Brazilian healthcare recommendations
         if (contraindications.length > 0) {
-          recommendations.push('Consult with Brazilian healthcare specialist before proceeding');
-          recommendations.push('Consider alternative non-invasive procedures');
+          recommendations.push('Consult with Brazilian healthcare specialist before proceeding')
+          recommendations.push('Consider alternative non-invasive procedures')
         }
 
         if (warnings.length > 0) {
-          recommendations.push('Enhanced monitoring recommended during procedure');
-          recommendations.push('Emergency protocols should be reviewed and available');
+          recommendations.push('Enhanced monitoring recommended during procedure')
+          recommendations.push('Emergency protocols should be reviewed and available')
         }
 
         // Log contraindication check
@@ -850,7 +850,7 @@ export const aestheticSchedulingRouter = router({
               anvisaCompliant: contraindications.length === 0,
             }),
           },
-        });
+        })
 
         return {
           safe: contraindications.length === 0,
@@ -863,13 +863,13 @@ export const aestheticSchedulingRouter = router({
             brazilianHealthcareStandards: true,
             patientSafetyPrioritized: true,
           },
-        };
+        }
       } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to check contraindications',
           cause: error,
-        });
+        })
       }
     }),
 
@@ -885,7 +885,7 @@ export const aestheticSchedulingRouter = router({
         const totalDuration = aestheticSchedulingService.calculateVariableDuration(
           input.baseDuration,
           input.factors,
-        );
+        )
 
         // Log duration calculation
         await ctx.prisma.auditTrail.create({
@@ -909,7 +909,7 @@ export const aestheticSchedulingRouter = router({
               percentageIncrease: ((totalDuration - input.baseDuration) / input.baseDuration) * 100,
             }),
           },
-        });
+        })
 
         return {
           baseDuration: input.baseDuration,
@@ -923,13 +923,13 @@ export const aestheticSchedulingRouter = router({
             timeStandardsMet: true,
             safetyBufferIncluded: true,
           },
-        };
+        }
       } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to calculate variable duration',
           cause: error,
-        });
+        })
       }
     }),
 
@@ -941,7 +941,7 @@ export const aestheticSchedulingRouter = router({
     .input(GetAestheticProceduresSchema)
     .query(async ({ ctx, input }) => {
       try {
-        const { limit = 20, offset = 0, category, procedureType, search } = input;
+        const { limit = 20, offset = 0, category, procedureType, search } = input
 
         // Build where clause
         const where: any = {
@@ -955,7 +955,7 @@ export const aestheticSchedulingRouter = router({
               { category: { contains: search, mode: 'insensitive' } },
             ],
           }),
-        };
+        }
 
         const [procedures, total] = await Promise.all([
           ctx.prisma.aestheticProcedure.findMany({
@@ -970,7 +970,7 @@ export const aestheticSchedulingRouter = router({
             },
           }),
           ctx.prisma.aestheticProcedure.count({ where }),
-        ]);
+        ])
 
         // Log procedures access
         await ctx.prisma.auditTrail.create({
@@ -992,7 +992,7 @@ export const aestheticSchedulingRouter = router({
               totalProcedures: total,
             }),
           },
-        });
+        })
 
         return {
           procedures,
@@ -1007,13 +1007,13 @@ export const aestheticSchedulingRouter = router({
             brazilianHealthcareStandards: true,
             cfmRegulated: true,
           },
-        };
+        }
       } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to get aesthetic procedures',
           cause: error,
-        });
+        })
       }
     }),
 
@@ -1025,7 +1025,7 @@ export const aestheticSchedulingRouter = router({
     .input(GetTreatmentPackagesSchema)
     .query(async ({ ctx, input }) => {
       try {
-        const { limit = 20, offset = 0, search, category, minPrice, maxPrice } = input;
+        const { limit = 20, offset = 0, search, category, minPrice, maxPrice } = input
 
         // Build where clause
         const where: any = {
@@ -1040,7 +1040,7 @@ export const aestheticSchedulingRouter = router({
               { category: { contains: search, mode: 'insensitive' } },
             ],
           }),
-        };
+        }
 
         const [packages, total] = await Promise.all([
           ctx.prisma.treatmentPackage.findMany({
@@ -1057,7 +1057,7 @@ export const aestheticSchedulingRouter = router({
             },
           }),
           ctx.prisma.treatmentPackage.count({ where }),
-        ]);
+        ])
 
         // Log packages access
         await ctx.prisma.auditTrail.create({
@@ -1079,7 +1079,7 @@ export const aestheticSchedulingRouter = router({
               totalPackages: total,
             }),
           },
-        });
+        })
 
         return {
           packages,
@@ -1094,13 +1094,13 @@ export const aestheticSchedulingRouter = router({
             pricingTransparent: true,
             brazilianHealthcareStandards: true,
           },
-        };
+        }
       } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to get treatment packages',
           cause: error,
-        });
+        })
       }
     }),
 
@@ -1132,7 +1132,7 @@ export const aestheticSchedulingRouter = router({
               phase: 'immediate' as const,
               phaseNumber: 1,
               startDate: new Date(),
-              endDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000),
+              _endDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000),
               instructions: ['Repouso absoluto', 'Aplicar gelo'],
               restrictions: ['Não se exercitar', 'Evitar exposição solar'],
               warnings: ['Dor intensa', 'Sangramento excessivo'],
@@ -1184,15 +1184,15 @@ export const aestheticSchedulingRouter = router({
           ],
           activityRestrictions: ['Não praticar esportes por 2 semanas'],
           careInstructions: ['Aplicar pomada cicatrizante 2x ao dia'],
-        };
+        }
 
-        return mockRecoveryPlan;
+        return mockRecoveryPlan
       } catch (error) {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to get recovery plan',
           cause: error,
-        });
+        })
       }
     }),
 
@@ -1220,7 +1220,7 @@ export const aestheticSchedulingRouter = router({
           ...input,
           createdAt: new Date(),
           createdBy: ctx.userId,
-        };
+        }
 
         // Log recovery plan creation
         await ctx.prisma.auditTrail.create({
@@ -1244,15 +1244,15 @@ export const aestheticSchedulingRouter = router({
               appointmentId: input.appointmentId,
             }),
           },
-        });
+        })
 
-        return recoveryPlan;
+        return recoveryPlan
       } catch (error) {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to create recovery plan',
           cause: error,
-        });
+        })
       }
     }),
-});
+})

@@ -20,23 +20,23 @@ export type PredictionType =
   | 'no_show_risk'
   | 'resource_utilization'
   | 'clinical_deterioration'
-  | 'medication_adherence';
+  | 'medication_adherence'
 
 /**
  * Model confidence levels
  */
-export type ConfidenceLevel = 'low' | 'medium' | 'high';
+export type ConfidenceLevel = 'low' | 'medium' | 'high'
 
 /**
  * Feature importance for model interpretability
  */
 export interface FeatureImportance {
   /** Feature name */
-  feature: string;
+  feature: string
   /** Importance score (0-1) */
-  importance: number;
+  importance: number
   /** Human-readable description of the feature */
-  description: string;
+  description: string
 }
 
 /**
@@ -44,23 +44,23 @@ export interface FeatureImportance {
  */
 export interface ModelMetadata {
   /** Model identifier */
-  id: string;
+  id: string
   /** Model name */
-  name: string;
+  name: string
   /** Model version */
-  version: string;
+  version: string
   /** Model type/algorithm */
-  type: string;
+  type: string
   /** Model description */
-  description: string;
+  description: string
   /** Training date */
-  trainedAt: Date;
+  trainedAt: Date
   /** Model accuracy metrics */
-  accuracy?: number;
+  accuracy?: number
   /** Supported prediction types */
-  supportedTypes: PredictionType[];
+  supportedTypes: PredictionType[]
   /** Required features for prediction */
-  requiredFeatures: string[];
+  requiredFeatures: string[]
 }
 
 // ============================================================================
@@ -72,15 +72,15 @@ export interface ModelMetadata {
  */
 export interface PredictionInput {
   /** Prediction type */
-  type: PredictionType;
+  type: PredictionType
   /** Input features as key-value pairs */
-  features: Record<string, unknown>;
+  features: Record<string, unknown>
   /** Optional patient ID for context */
-  patientId?: string;
+  patientId?: string
   /** Optional clinic ID for context */
-  clinicId?: string;
+  clinicId?: string
   /** Optional metadata */
-  metadata?: Record<string, unknown>;
+  metadata?: Record<string, unknown>
 }
 
 /**
@@ -88,17 +88,17 @@ export interface PredictionInput {
  */
 export interface PredictionResult {
   /** Predicted value or classification */
-  prediction: unknown;
+  prediction: unknown
   /** Confidence score (0-1) */
-  confidence: number;
+  confidence: number
   /** Confidence level classification */
-  confidenceLevel: ConfidenceLevel;
+  confidenceLevel: ConfidenceLevel
   /** Feature importance for interpretability */
-  featureImportance?: FeatureImportance[];
+  featureImportance?: FeatureImportance[]
   /** Additional metadata about the prediction */
-  metadata?: Record<string, unknown>;
+  metadata?: Record<string, unknown>
   /** Timestamp of prediction */
-  timestamp: Date;
+  timestamp: Date
 }
 
 /**
@@ -106,14 +106,14 @@ export interface PredictionResult {
  */
 export interface BatchPredictionInput {
   /** Array of prediction inputs */
-  inputs: PredictionInput[];
+  inputs: PredictionInput[]
   /** Batch processing options */
   options?: {
     /** Maximum parallel predictions */
-    maxConcurrency?: number;
+    maxConcurrency?: number
     /** Timeout per prediction (ms) */
-    timeoutMs?: number;
-  };
+    timeoutMs?: number
+  }
 }
 
 /**
@@ -121,18 +121,18 @@ export interface BatchPredictionInput {
  */
 export interface BatchPredictionResult {
   /** Array of prediction results */
-  results: PredictionResult[];
+  results: PredictionResult[]
   /** Batch processing statistics */
   stats: {
     /** Total predictions processed */
-    total: number;
+    total: number
     /** Successful predictions */
-    successful: number;
+    successful: number
     /** Failed predictions */
-    failed: number;
+    failed: number
     /** Processing time (ms) */
-    processingTimeMs: number;
-  };
+    processingTimeMs: number
+  }
 }
 
 // ============================================================================
@@ -149,7 +149,7 @@ export interface ModelProvider {
   /**
    * Provider metadata
    */
-  readonly metadata: ModelMetadata;
+  readonly metadata: ModelMetadata
 
   /**
    * Initialize the model provider
@@ -157,7 +157,7 @@ export interface ModelProvider {
    * @param config - Provider-specific configuration
    * @returns Promise that resolves when initialization is complete
    */
-  initialize(config?: Record<string, unknown>): Promise<void>;
+  initialize(config?: Record<string, unknown>): Promise<void>
 
   /**
    * Make a single prediction
@@ -166,7 +166,7 @@ export interface ModelProvider {
    * @returns Promise with prediction result
    * @throws Error if prediction fails or input is invalid
    */
-  predict(input: PredictionInput): Promise<PredictionResult>;
+  predict(input: PredictionInput): Promise<PredictionResult>
 
   /**
    * Make batch predictions
@@ -174,7 +174,7 @@ export interface ModelProvider {
    * @param input - Batch prediction input
    * @returns Promise with batch prediction results
    */
-  batchPredict(input: BatchPredictionInput): Promise<BatchPredictionResult>;
+  batchPredict(input: BatchPredictionInput): Promise<BatchPredictionResult>
 
   /**
    * Validate input features
@@ -182,7 +182,7 @@ export interface ModelProvider {
    * @param input - Input to validate
    * @returns True if input is valid, throws error with details if not
    */
-  validateInput(input: PredictionInput): boolean;
+  validateInput(input: PredictionInput): boolean
 
   /**
    * Get model health status
@@ -190,16 +190,16 @@ export interface ModelProvider {
    * @returns Promise with health check result
    */
   healthCheck(): Promise<{
-    status: 'healthy' | 'degraded' | 'unhealthy';
-    details?: Record<string, unknown>;
-  }>;
+    status: 'healthy' | 'degraded' | 'unhealthy'
+    details?: Record<string, unknown>
+  }>
 
   /**
    * Cleanup resources
    *
    * @returns Promise that resolves when cleanup is complete
    */
-  dispose(): Promise<void>;
+  dispose(): Promise<void>
 }
 
 // ============================================================================
@@ -215,7 +215,7 @@ export interface ModelManager {
    *
    * @param provider - Model provider to register
    */
-  registerProvider(provider: ModelProvider): Promise<void>;
+  registerProvider(provider: ModelProvider): Promise<void>
 
   /**
    * Get a model provider by ID
@@ -223,14 +223,14 @@ export interface ModelManager {
    * @param modelId - Model identifier
    * @returns Model provider or null if not found
    */
-  getProvider(modelId: string): ModelProvider | null;
+  getProvider(modelId: string): ModelProvider | null
 
   /**
    * Get all registered providers
    *
    * @returns Array of registered providers
    */
-  getAllProviders(): ModelProvider[];
+  getAllProviders(): ModelProvider[]
 
   /**
    * Get providers by prediction type
@@ -238,7 +238,7 @@ export interface ModelManager {
    * @param type - Prediction type
    * @returns Array of compatible providers
    */
-  getProvidersByType(type: PredictionType): ModelProvider[];
+  getProvidersByType(type: PredictionType): ModelProvider[]
 
   /**
    * Make prediction using best available model
@@ -246,7 +246,7 @@ export interface ModelManager {
    * @param input - Prediction input
    * @returns Promise with prediction result
    */
-  predict(input: PredictionInput): Promise<PredictionResult>;
+  predict(input: PredictionInput): Promise<PredictionResult>
 
   /**
    * Health check for all registered providers
@@ -257,11 +257,11 @@ export interface ModelManager {
     Record<
       string,
       {
-        status: 'healthy' | 'degraded' | 'unhealthy';
-        details?: Record<string, unknown>;
+        status: 'healthy' | 'degraded' | 'unhealthy'
+        details?: Record<string, unknown>
       }
     >
-  >;
+  >
 }
 
 // ============================================================================
@@ -277,8 +277,8 @@ export class MLError extends Error {
     public readonly code: string,
     public readonly details?: Record<string, unknown>,
   ) {
-    super(message);
-    this.name = 'MLError';
+    super(message)
+    this.name = 'MLError'
   }
 }
 
@@ -287,8 +287,8 @@ export class MLError extends Error {
  */
 export class InvalidInputError extends MLError {
   constructor(message: string, details?: Record<string, unknown>) {
-    super(message, 'INVALID_INPUT', details);
-    this.name = 'InvalidInputError';
+    super(message, 'INVALID_INPUT', details)
+    this.name = 'InvalidInputError'
   }
 }
 
@@ -297,8 +297,8 @@ export class InvalidInputError extends MLError {
  */
 export class ModelInitializationError extends MLError {
   constructor(message: string, details?: Record<string, unknown>) {
-    super(message, 'MODEL_INITIALIZATION_FAILED', details);
-    this.name = 'ModelInitializationError';
+    super(message, 'MODEL_INITIALIZATION_FAILED', details)
+    this.name = 'ModelInitializationError'
   }
 }
 
@@ -307,7 +307,7 @@ export class ModelInitializationError extends MLError {
  */
 export class PredictionError extends MLError {
   constructor(message: string, details?: Record<string, unknown>) {
-    super(message, 'PREDICTION_FAILED', details);
-    this.name = 'PredictionError';
+    super(message, 'PREDICTION_FAILED', details)
+    this.name = 'PredictionError'
   }
 }

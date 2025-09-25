@@ -1,29 +1,29 @@
-import { createFileRoute } from '@tanstack/react-router';
-import { Building2, Eye, EyeOff, Lock, Mail } from 'lucide-react';
-import * as React from 'react';
-import { useState } from 'react';
+import { createFileRoute } from '@tanstack/react-router'
+import { Building2, Eye, EyeOff, Lock, Mail } from 'lucide-react'
+import * as React from 'react'
+import { useState } from 'react'
 
 export const Route = createFileRoute('/auth/login')({
   component: Login,
-});
+})
 
 function Login() {
-  const [showPassword, setShowPassword] = useState(false);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false)
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
+    e.preventDefault()
+    setIsLoading(true)
 
     // Simulate login - replace with actual authentication
     setTimeout(() => {
-      setIsLoading(false);
+      setIsLoading(false)
       // Redirect to dashboard after successful login
-      window.location.href = '/dashboard';
-    }, 1500);
-  };
+      window.location.href = '/dashboard'
+    }, 1500)
+  }
 
   return (
     <div className='min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 py-12 px-4 sm:px-6 lg:px-8'>
@@ -162,5 +162,5 @@ function Login() {
         </form>
       </div>
     </div>
-  );
+  )
 }

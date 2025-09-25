@@ -6,18 +6,18 @@
  * Brazilian healthcare compliance with medical record history requirements
  */
 
-import { Hono } from 'hono';
+import { Hono } from 'hono'
 // Mock middleware for testing - will be replaced with actual middleware
 const requireAuth = async (c: any, next: any) => {
-  c.set('user', { id: 'user-123' });
-  return next();
-};
+  c.set('user', { id: 'user-123' })
+  return next()
+}
 
 const dataProtection = {
   clientView: async (c: any, next: any) => {
-    return next();
+    return next()
   },
-};
+}
 
 // Mock services - will be replaced with actual service imports
 const AuditService = {
@@ -132,36 +132,36 @@ const AuditService = {
           },
         },
       },
-    };
+    }
   },
   async logHistoryAccess(_params: any) {
     return {
       success: true,
       data: { auditId: 'history-audit-123' },
-    };
+    }
   },
-};
+}
 
 const LGPDService = {
   async validateHistoryAccess(_params: any) {
     return {
       success: true,
       data: { canAccess: true, accessLevel: 'full' },
-    };
+    }
   },
   maskHistoryData(data: any) {
-    return data;
+    return data
   },
-};
+}
 
 const PatientService = {
   async validatePatientExists(_params: any) {
     return {
       success: true,
       data: { exists: true, patientId: 'patient-123' },
-    };
+    }
   },
-};
+}
 
 // Validation schemas
 const historyQuerySchema = z.object({
@@ -179,18 +179,18 @@ const historyQuerySchema = z.object({
     .transform(val => (val ? val.split(',') : undefined)),
   category: z.string().optional(),
   actorId: z.string().optional(),
-});
+})
 
-const app = new Hono();
+const app = new Hono()
 
 app.get('/:id/history', requireAuth, dataProtection.clientView, async c => {
-  const startTime = Date.now();
+  const startTime = Date.now()
 
   try {
     // Get user context
-    const user = c.get('user');
-    const userId = user?.id || 'user-123';
-    const patientId = c.req.param('id');
+    const user = c.get('user')
+    const userId = user?.id || 'user-123'
+    const patientId = c.req.param('id')
 
     // Parse and validate query parameters
     const queryParams = historyQuerySchema.parse({
@@ -202,13 +202,13 @@ app.get('/:id/history', requireAuth, dataProtection.clientView, async c => {
       severity: c.req.query('severity'),
       category: c.req.query('category'),
       actorId: c.req.query('actorId'),
-    });
+    })
 
     // Validate patient exists
     const patientValidation = await PatientService.validatePatientExists({
       patientId,
       userId,
-    });
+    })
 
     if (!patientValidation.success) {
       return c.json(
@@ -218,7 +218,7 @@ app.get('/:id/history', requireAuth, dataProtection.clientView, async c => {
           code: patientValidation.code || 'PATIENT_NOT_FOUND',
         },
         404,
-      );
+      )
     }
 
     // Validate LGPD history access permissions
@@ -228,32 +228,32 @@ app.get('/:id/history', requireAuth, dataProtection.clientView, async c => {
       dataType: 'patient_history',
       purpose: 'healthcare_management',
       legalBasis: 'legitimate_interest',
-    });
+    })
 
     if (!lgpdValidation.success) {
       return c.json(
         {
           success: false,
-          error: lgpdValidation.error
-            || 'Acesso ao histórico negado por política LGPD',
+          error: lgpdValidation.error ||
+            'Acesso ao histórico negado por política LGPD',
           code: lgpdValidation.code || 'LGPD_HISTORY_ACCESS_DENIED',
         },
         403,
-      );
+      )
     }
 
     // Get healthcare professional context from headers
-    const healthcareProfessional = c.req.header('X-Healthcare-Professional');
-    const healthcareContext = c.req.header('X-Healthcare-Context');
+    const healthcareProfessional = c.req.header('X-Healthcare-Professional')
+    const healthcareContext = c.req.header('X-Healthcare-Context')
 
     // Build filters object
-    const filters: any = {};
-    if (queryParams.eventTypes) filters.eventTypes = queryParams.eventTypes;
-    if (queryParams.startDate) filters.startDate = queryParams.startDate;
-    if (queryParams.endDate) filters.endDate = queryParams.endDate;
-    if (queryParams.severity) filters.severity = queryParams.severity;
-    if (queryParams.category) filters.category = queryParams.category;
-    if (queryParams.actorId) filters.actorId = queryParams.actorId;
+    const filters: any = {}
+    if (queryParams.eventTypes) filters.eventTypes = queryParams.eventTypes
+    if (queryParams.startDate) filters.startDate = queryParams.startDate
+    if (queryParams.endDate) filters.endDate = queryParams.endDate
+    if (queryParams.severity) filters.severity = queryParams.severity
+    if (queryParams.category) filters.category = queryParams.category
+    if (queryParams.actorId) filters.actorId = queryParams.actorId
 
     // Retrieve patient history
     const historyResult = await AuditService.getPatientHistory({
@@ -266,7 +266,7 @@ app.get('/:id/history', requireAuth, dataProtection.clientView, async c => {
       filters,
       healthcareProfessional,
       healthcareContext,
-    });
+    })
 
     if (!historyResult.success) {
       return c.json(
@@ -275,20 +275,20 @@ app.get('/:id/history', requireAuth, dataProtection.clientView, async c => {
           error: historyResult.error || 'Erro interno do serviço de auditoria',
         },
         500,
-      );
+      )
     }
 
     // Mask sensitive data based on access level
-    const accessLevel = lgpdValidation.data?.accessLevel || 'full';
-    let maskedTimeline = historyResult.data.timeline;
+    const accessLevel = lgpdValidation.data?.accessLevel || 'full'
+    let maskedTimeline = historyResult.data.timeline
 
     if (accessLevel === 'limited') {
-      maskedTimeline = LGPDService.maskHistoryData(historyResult.data.timeline);
+      maskedTimeline = LGPDService.maskHistoryData(historyResult.data.timeline)
     }
 
     // Log history access for audit trail
-    const ipAddress = c.req.header('X-Real-IP') || c.req.header('X-Forwarded-For') || 'unknown';
-    const userAgent = c.req.header('User-Agent') || 'unknown';
+    const ipAddress = c.req.header('X-Real-IP') || c.req.header('X-Forwarded-For') || 'unknown'
+    const userAgent = c.req.header('User-Agent') || 'unknown'
 
     await AuditService.logHistoryAccess({
       userId,
@@ -307,33 +307,33 @@ app.get('/:id/history', requireAuth, dataProtection.clientView, async c => {
       userAgent,
       complianceContext: 'LGPD',
       sensitivityLevel: 'high',
-    });
+    })
 
-    const executionTime = Date.now() - startTime;
+    const executionTime = Date.now() - startTime
 
     // Set response headers
     c.header(
       'X-Total-Events',
       historyResult.data.summary.totalEvents.toString(),
-    );
+    )
     c.header(
       'X-Date-Range-Start',
       historyResult.data.summary.dateRange.earliest,
-    );
-    c.header('X-Date-Range-End', historyResult.data.summary.dateRange.latest);
-    c.header('X-History-Access-Logged', 'true');
-    c.header('X-Response-Time', `${executionTime}ms`);
-    c.header('Cache-Control', 'private, max-age=300');
-    c.header('X-Database-Queries', '3');
-    c.header('X-CFM-Compliant', 'true');
-    c.header('X-Medical-Record-History', 'accessed');
-    c.header('X-LGPD-Compliant', 'true');
-    c.header('X-Audit-Trail-Complete', 'true');
-    c.header('X-Data-Retention-Policy', '7-years-standard-20-years-medical');
-    c.header('X-Legal-Basis', 'legitimate_interest');
+    )
+    c.header('X-Date-Range-End', historyResult.data.summary.dateRange.latest)
+    c.header('X-History-Access-Logged', 'true')
+    c.header('X-Response-Time', `${executionTime}ms`)
+    c.header('Cache-Control', 'private, max-age=300')
+    c.header('X-Database-Queries', '3')
+    c.header('X-CFM-Compliant', 'true')
+    c.header('X-Medical-Record-History', 'accessed')
+    c.header('X-LGPD-Compliant', 'true')
+    c.header('X-Audit-Trail-Complete', 'true')
+    c.header('X-Data-Retention-Policy', '7-years-standard-20-years-medical')
+    c.header('X-Legal-Basis', 'legitimate_interest')
 
     if (accessLevel === 'limited') {
-      c.header('X-Access-Level', 'limited');
+      c.header('X-Access-Level', 'limited')
     }
 
     return c.json({
@@ -344,9 +344,9 @@ app.get('/:id/history', requireAuth, dataProtection.clientView, async c => {
         pagination: historyResult.data.pagination,
         summary: historyResult.data.summary,
       },
-    });
+    })
   } catch {
-    console.error('History endpoint error:', error);
+    console.error('History endpoint error:', error)
 
     // Handle validation errors
     if (error instanceof z.ZodError) {
@@ -360,7 +360,7 @@ app.get('/:id/history', requireAuth, dataProtection.clientView, async c => {
           })),
         },
         400,
-      );
+      )
     }
 
     return c.json(
@@ -369,8 +369,8 @@ app.get('/:id/history', requireAuth, dataProtection.clientView, async c => {
         error: 'Erro interno do servidor',
       },
       500,
-    );
+    )
   }
-});
+})
 
-export default app;
+export default app

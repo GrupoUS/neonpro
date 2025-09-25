@@ -4,5 +4,5 @@ export default async function handler(_req: any, res: any) {
     status: 'ok',
     message: 'NeonPro API - Node.js Prisma example is disabled in this build',
     timestamp: new Date().toISOString(),
-  });
+  })
 }

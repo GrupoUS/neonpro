@@ -1,5 +1,5 @@
-import { validateCEP, validateCNPJ, validateCPF, validatePhone } from '@neonpro/validators';
-import { BasePatientSchema, CompletePatientSchema } from './base-patient.schema';
+import { validateCEP, validateCNPJ, validateCPF, validatePhone } from '@neonpro/validators'
+import { BasePatientSchema, CompletePatientSchema } from './base-patient.schema'
 
 /**
  * Brazilian patient schema (T084 - Code duplication removal)
@@ -9,7 +9,7 @@ import { BasePatientSchema, CompletePatientSchema } from './base-patient.schema'
 /**
  * CPF validation schema
  */
-import { z } from 'zod';
+import { z } from 'zod'
 
 export const CPFSchema = z
   .string()
@@ -22,8 +22,8 @@ export const CPFSchema = z
   .refine(val => validateCPF(val), 'CPF inválido')
   .transform(val => {
     // Format CPF: 123.456.789-09
-    return val.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
-  });
+    return val.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4')
+  })
 
 /**
  * CNPJ validation schema (for legal guardian/company)
@@ -39,8 +39,8 @@ export const CNPJSchema = z
   .refine(val => validateCNPJ(val), 'CNPJ inválido')
   .transform(val => {
     // Format CNPJ: 12.345.678/0001-95
-    return val.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.$2.$3/$4-$5');
-  });
+    return val.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.$2.$3/$4-$5')
+  })
 
 /**
  * Brazilian phone validation schema
@@ -56,10 +56,10 @@ export const BrazilianPhoneSchema = z
   .transform(val => {
     // Format phone: (11) 99999-8888 or (11) 2555-1234
     if (val.length === 11) {
-      return val.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+      return val.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3')
     }
-    return val.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3');
-  });
+    return val.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3')
+  })
 
 /**
  * Brazilian CEP validation schema
@@ -71,8 +71,8 @@ export const BrazilianCEPSchema = z
   .refine(val => validateCEP(val), 'CEP inválido')
   .transform(val => {
     // Format CEP: 01310-100
-    return val.replace(/(\d{5})(\d{3})/, '$1-$2');
-  });
+    return val.replace(/(\d{5})(\d{3})/, '$1-$2')
+  })
 
 /**
  * Brazilian patient schema for registration
@@ -125,12 +125,12 @@ export const BrazilianPatientRegistrationSchema = BasePatientSchema.extend({
     .string()
     .regex(/^\d{4}-\d{2}-\d{2}$/, 'Data deve estar no formato AAAA-MM-DD')
     .refine(val => {
-      const date = new Date(val);
-      const now = new Date();
-      const age = now.getFullYear() - date.getFullYear();
-      return age >= 0 && age <= 120;
+      const date = new Date(val)
+      const now = new Date()
+      const age = now.getFullYear() - date.getFullYear()
+      return age >= 0 && age <= 120
     }, 'Data de nascimento inválida'),
-});
+})
 
 /**
  * Brazilian patient schema for updates (all fields optional)
@@ -151,7 +151,7 @@ export const BrazilianPatientUpdateSchema = CompletePatientSchema.partial()
       })
       .optional(),
   })
-  .omit({ id: true, createdAt: true, updatedAt: true });
+  .omit({ id: true, createdAt: true, updatedAt: true })
 
 /**
  * Patient search schema with Brazilian fields
@@ -178,7 +178,7 @@ export const PatientSearchSchema = z.object({
   limit: z.coerce.number().min(1).max(100).default(20),
   sortBy: z.enum(['name', 'createdAt', 'lastVisit']).default('name'),
   sortOrder: z.enum(['asc', 'desc']).default('asc'),
-});
+})
 
 /**
  * Patient export schema
@@ -205,18 +205,18 @@ export const PatientExportSchema = z.object({
     .default(['name', 'cpf', 'email', 'phone']),
   includeSensitiveData: z.boolean().default(false),
   maskSensitiveData: z.boolean().default(true),
-});
+})
 
 // Export types
-export type CPF = z.infer<typeof CPFSchema>;
-export type CNPJ = z.infer<typeof CNPJSchema>;
-export type BrazilianPhone = z.infer<typeof BrazilianPhoneSchema>;
-export type BrazilianCEP = z.infer<typeof BrazilianCEPSchema>;
+export type CPF = z.infer<typeof CPFSchema>
+export type CNPJ = z.infer<typeof CNPJSchema>
+export type BrazilianPhone = z.infer<typeof BrazilianPhoneSchema>
+export type BrazilianCEP = z.infer<typeof BrazilianCEPSchema>
 export type BrazilianPatientRegistration = z.infer<
   typeof BrazilianPatientRegistrationSchema
->;
+>
 export type BrazilianPatientUpdate = z.infer<
   typeof BrazilianPatientUpdateSchema
->;
-export type PatientSearch = z.infer<typeof PatientSearchSchema>;
-export type PatientExport = z.infer<typeof PatientExportSchema>;
+>
+export type PatientSearch = z.infer<typeof PatientSearchSchema>
+export type PatientExport = z.infer<typeof PatientExportSchema>

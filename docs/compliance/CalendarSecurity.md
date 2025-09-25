@@ -37,19 +37,19 @@ enum DataSensitivity {
 
 // Data minimization principle
 interface MinimalPatientData {
-  id: string; // Required for identification
-  initials: string; // Instead of full name for privacy
-  appointmentTime: Date; // Necessary for scheduling
-  appointmentType: string; // Required for service delivery
+  id: string // Required for identification
+  initials: string // Instead of full name for privacy
+  appointmentTime: Date // Necessary for scheduling
+  appointmentType: string // Required for service delivery
   // Excluded: full name, contact details, medical history
 }
 
 // Data access control
 interface AccessControl {
-  canView: (userId: string, patientId: string) => boolean;
-  canEdit: (userId: string, patientId: string) => boolean;
-  canDelete: (userId: string, patientId: string) => boolean;
-  auditAccess: (userId: string, action: string, data: any) => Promise<void>;
+  canView: (userId: string, patientId: string) => boolean
+  canEdit: (userId: string, patientId: string) => boolean
+  canDelete: (userId: string, patientId: string) => boolean
+  auditAccess: (userId: string, action: string, data: any) => Promise<void>
 }
 ```
 
@@ -58,7 +58,7 @@ interface AccessControl {
 ```typescript
 // Encryption utilities
 class CalendarSecurity {
-  private static readonly encryptionKey = process.env.CALENDAR_ENCRYPTION_KEY;
+  private static readonly encryptionKey = process.env.CALENDAR_ENCRYPTION_KEY
 
   // Encrypt sensitive event data
   static encryptEventData(event: CalendarEvent): string {
@@ -67,23 +67,23 @@ class CalendarSecurity {
       description: event.description,
       location: event.location,
       notes: event.notes,
-    };
+    }
 
     return CryptoJS.AES.encrypt(
       JSON.stringify(sensitiveData),
       this.encryptionKey,
-    ).toString();
+    ).toString()
   }
 
   // Decrypt event data
   static decryptEventData(encryptedData: string): any {
-    const bytes = CryptoJS.AES.decrypt(encryptedData, this.encryptionKey);
-    return JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+    const bytes = CryptoJS.AES.decrypt(encryptedData, this.encryptionKey)
+    return JSON.parse(bytes.toString(CryptoJS.enc.Utf8))
   }
 
   // Hash sensitive identifiers
   static hashPatientId(patientId: string): string {
-    return CryptoJS.SHA256(patientId + this.encryptionKey).toString();
+    return CryptoJS.SHA256(patientId + this.encryptionKey).toString()
   }
 }
 ```
@@ -108,28 +108,28 @@ const retentionPolicies = {
     archivePeriod: 365, // 1 year
     deletionMethod: 'standard',
   },
-};
+}
 
 // Automated data cleanup
 class DataRetentionService {
   async cleanupExpiredData() {
-    const now = new Date();
+    const now = new Date()
 
     // Clean expired appointment data
-    await this.cleanupAppointments(now);
+    await this.cleanupAppointments(now)
 
     // Archive old audit logs
-    await this.archiveAuditLogs(now);
+    await this.archiveAuditLogs(now)
 
     // Clean user activity logs
-    await this.cleanupUserActivity(now);
+    await this.cleanupUserActivity(now)
   }
 
   private async cleanupAppointments(now: Date) {
     const cutoffDate = subDays(
       now,
       retentionPolicies.appointmentData.retentionPeriod,
-    );
+    )
 
     await prisma.calendarEvent.deleteMany({
       where: {
@@ -138,7 +138,7 @@ class DataRetentionService {
         },
         status: 'completed',
       },
-    });
+    })
   }
 }
 ```
@@ -150,12 +150,12 @@ class DataRetentionService {
 ```typescript
 // JWT token validation
 interface CalendarAuthToken {
-  userId: string;
-  clinicId: string;
-  role: UserRole;
-  permissions: Permission[];
-  exp: number;
-  iat: number;
+  userId: string
+  clinicId: string
+  role: UserRole
+  permissions: Permission[]
+  exp: number
+  iat: number
 }
 
 class CalendarAuthService {
@@ -164,24 +164,24 @@ class CalendarAuthService {
       const decoded = jwt.verify(
         token,
         process.env.JWT_SECRET,
-      ) as CalendarAuthToken;
+      ) as CalendarAuthToken
 
       // Check if token is expired
       if (decoded.exp * 1000 < Date.now()) {
-        return null;
+        return null
       }
 
-      return decoded;
+      return decoded
     } catch (error) {
-      return null;
+      return null
     }
   }
 
   static hasPermission(token: string, requiredPermission: Permission): boolean {
-    const user = this.validateToken(token);
-    if (!user) return false;
+    const user = this.validateToken(token)
+    if (!user) return false
 
-    return user.permissions.includes(requiredPermission);
+    return user.permissions.includes(requiredPermission)
   }
 
   static generateSecureToken(
@@ -196,9 +196,9 @@ class CalendarAuthService {
       permissions: this.getRolePermissions(role),
       exp: Math.floor(Date.now() / 1000) + 24 * 60 * 60, // 24 hours
       iat: Math.floor(Date.now() / 1000),
-    };
+    }
 
-    return jwt.sign(payload, process.env.JWT_SECRET);
+    return jwt.sign(payload, process.env.JWT_SECRET)
   }
 }
 ```
@@ -247,53 +247,53 @@ const rolePermissions: Record<UserRole, Permission[]> = {
     Permission.EDIT_APPOINTMENTS,
   ],
   [UserRole.PATIENT]: [Permission.VIEW_APPOINTMENTS],
-};
+}
 
 // Authorization hook
 function useCalendarAuth() {
-  const { token } = useAuth();
+  const { token } = useAuth()
 
   const canViewAppointments = () => {
     return CalendarAuthService.hasPermission(
       token,
       Permission.VIEW_APPOINTMENTS,
-    );
-  };
+    )
+  }
 
   const canCreateAppointments = () => {
     return CalendarAuthService.hasPermission(
       token,
       Permission.CREATE_APPOINTMENTS,
-    );
-  };
+    )
+  }
 
   const canEditAppointment = (appointment: CalendarEvent) => {
-    const user = CalendarAuthService.validateToken(token);
-    if (!user) return false;
+    const user = CalendarAuthService.validateToken(token)
+    if (!user) return false
 
     // Users can edit their own appointments or have general edit permission
     return (
-      CalendarAuthService.hasPermission(token, Permission.EDIT_APPOINTMENTS)
-      || appointment.createdBy === user.userId
-    );
-  };
+      CalendarAuthService.hasPermission(token, Permission.EDIT_APPOINTMENTS) ||
+      appointment.createdBy === user.userId
+    )
+  }
 
   const canDeleteAppointment = (appointment: CalendarEvent) => {
-    const user = CalendarAuthService.validateToken(token);
-    if (!user) return false;
+    const user = CalendarAuthService.validateToken(token)
+    if (!user) return false
 
     return CalendarAuthService.hasPermission(
       token,
       Permission.DELETE_APPOINTMENTS,
-    );
-  };
+    )
+  }
 
   return {
     canViewAppointments,
     canCreateAppointments,
     canEditAppointment,
     canDeleteAppointment,
-  };
+  }
 }
 ```
 
@@ -305,59 +305,59 @@ function useCalendarAuth() {
 // Comprehensive event validation
 class EventValidator {
   static validateEvent(event: Partial<CalendarEvent>): ValidationResult {
-    const errors: string[] = [];
+    const errors: string[] = []
 
     // Required field validation
     if (!event.title || event.title.trim().length === 0) {
-      errors.push('Event title is required');
+      errors.push('Event title is required')
     }
 
     if (!event.start || !(event.start instanceof Date)) {
-      errors.push('Valid start time is required');
+      errors.push('Valid start time is required')
     }
 
     if (!event.end || !(event.end instanceof Date)) {
-      errors.push('Valid end time is required');
+      errors.push('Valid end time is required')
     }
 
     // Business rule validation
     if (event.start && event.end && event.start >= event.end) {
-      errors.push('End time must be after start time');
+      errors.push('End time must be after start time')
     }
 
     // Duration validation
     if (event.start && event.end) {
-      const duration = event.end.getTime() - event.start.getTime();
-      const minDuration = 15 * 60 * 1000; // 15 minutes
-      const maxDuration = 8 * 60 * 60 * 1000; // 8 hours
+      const duration = event.end.getTime() - event.start.getTime()
+      const minDuration = 15 * 60 * 1000 // 15 minutes
+      const maxDuration = 8 * 60 * 60 * 1000 // 8 hours
 
       if (duration < minDuration) {
-        errors.push('Minimum appointment duration is 15 minutes');
+        errors.push('Minimum appointment duration is 15 minutes')
       }
 
       if (duration > maxDuration) {
-        errors.push('Maximum appointment duration is 8 hours');
+        errors.push('Maximum appointment duration is 8 hours')
       }
     }
 
     // Business hours validation
     if (event.start && !isDuringBusinessHours(event.start)) {
-      errors.push('Appointments must be scheduled during business hours');
+      errors.push('Appointments must be scheduled during business hours')
     }
 
     // XSS prevention
     if (event.title && containsXSS(event.title)) {
-      errors.push('Event title contains invalid characters');
+      errors.push('Event title contains invalid characters')
     }
 
     if (event.description && containsXSS(event.description)) {
-      errors.push('Event description contains invalid characters');
+      errors.push('Event description contains invalid characters')
     }
 
     return {
       isValid: errors.length === 0,
       errors,
-    };
+    }
   }
 }
 
@@ -370,9 +370,9 @@ function containsXSS(input: string): boolean {
     /<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi,
     /<object\b[^<]*(?:(?!<\/object>)<[^<]*)*<\/object>/gi,
     /<embed\b[^<]*(?:(?!<\/embed>)<[^<]*)*<\/embed>/gi,
-  ];
+  ]
 
-  return xssPatterns.some(pattern => pattern.test(input));
+  return xssPatterns.some(pattern => pattern.test(input))
 }
 
 // Sanitization utility
@@ -382,7 +382,7 @@ function sanitizeInput(input: string): string {
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#x27;')
-    .replace(/\//g, '&#x2F;');
+    .replace(/\//g, '&#x2F;')
 }
 ```
 
@@ -397,56 +397,56 @@ export const calendarSecurityMiddleware = async (
 ) => {
   try {
     // 1. Rate limiting
-    const clientIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-    const rateLimitKey = `calendar_api:${clientIp}`;
+    const clientIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress
+    const rateLimitKey = `calendar_api:${clientIp}`
 
-    const current = await redis.incr(rateLimitKey);
+    const current = await redis.incr(rateLimitKey)
     if (current === 1) {
-      await redis.expire(rateLimitKey, 60); // 1 minute window
+      await redis.expire(rateLimitKey, 60) // 1 minute window
     }
 
     if (current > 100) {
       // 100 requests per minute
-      return res.status(429).json({ error: 'Rate limit exceeded' });
+      return res.status(429).json({ error: 'Rate limit exceeded' })
     }
 
     // 2. Authentication
-    const token = req.headers.authorization?.replace('Bearer ', '');
+    const token = req.headers.authorization?.replace('Bearer ', '')
     if (!token) {
-      return res.status(401).json({ error: 'Authentication required' });
+      return res.status(401).json({ error: 'Authentication required' })
     }
 
-    const user = CalendarAuthService.validateToken(token);
+    const user = CalendarAuthService.validateToken(token)
     if (!user) {
-      return res.status(401).json({ error: 'Invalid token' });
+      return res.status(401).json({ error: 'Invalid token' })
     }
 
     // 3. Authorization
-    const requiredPermission = getRequiredPermission(req.method, req.path);
+    const requiredPermission = getRequiredPermission(req.method, req.path)
     if (!CalendarAuthService.hasPermission(token, requiredPermission)) {
-      return res.status(403).json({ error: 'Insufficient permissions' });
+      return res.status(403).json({ error: 'Insufficient permissions' })
     }
 
     // 4. Input validation
     if (req.body) {
-      const validation = EventValidator.validateEvent(req.body);
+      const validation = EventValidator.validateEvent(req.body)
       if (!validation.isValid) {
         return res.status(400).json({
           error: 'Invalid event data',
           details: validation.errors,
-        });
+        })
       }
     }
 
     // 5. Attach user context
-    req.user = user;
+    req.user = user
 
-    next();
+    next()
   } catch (error) {
-    console.error('Security middleware error:', error);
-    return res.status(500).json({ error: 'Internal server error' });
+    console.error('Security middleware error:', error)
+    return res.status(500).json({ error: 'Internal server error' })
   }
-};
+}
 ```
 
 ## Audit Logging
@@ -469,21 +469,21 @@ enum AuditEventType {
 
 // Audit log entry
 interface AuditLogEntry {
-  id: string;
-  timestamp: Date;
-  userId: string;
-  userType: UserRole;
-  eventType: AuditEventType;
-  action: string;
-  resourceId?: string;
-  resourceType?: string;
-  oldValues?: any;
-  newValues?: any;
-  ipAddress: string;
-  userAgent: string;
-  sessionId: string;
-  result: 'success' | 'failure';
-  errorMessage?: string;
+  id: string
+  timestamp: Date
+  userId: string
+  userType: UserRole
+  eventType: AuditEventType
+  action: string
+  resourceId?: string
+  resourceType?: string
+  oldValues?: any
+  newValues?: any
+  ipAddress: string
+  userAgent: string
+  sessionId: string
+  result: 'success' | 'failure'
+  errorMessage?: string
 }
 
 // Audit service
@@ -496,9 +496,9 @@ class AuditService {
           timestamp: new Date(),
           id: generateUUID(),
         },
-      });
+      })
     } catch (error) {
-      console.error('Failed to create audit log:', error);
+      console.error('Failed to create audit log:', error)
       // Don't throw - audit failures shouldn't break the main application
     }
   }
@@ -524,9 +524,9 @@ class AuditService {
       sessionId: getCurrentSessionId(),
       result,
       errorMessage,
-    };
+    }
 
-    await this.log(entry);
+    await this.log(entry)
   }
 
   static async logSecurityEvent(
@@ -546,9 +546,9 @@ class AuditService {
       userAgent: navigator.userAgent,
       sessionId: getCurrentSessionId(),
       result,
-    };
+    }
 
-    await this.log(entry);
+    await this.log(entry)
   }
 }
 ```
@@ -558,17 +558,17 @@ class AuditService {
 ```typescript
 // Real-time security monitoring
 class SecurityMonitor {
-  private static alerts: SecurityAlert[] = [];
+  private static alerts: SecurityAlert[] = []
 
   static checkForSuspiciousActivity() {
     // Check for multiple failed logins
-    this.checkFailedLoginAttempts();
+    this.checkFailedLoginAttempts()
 
     // Check for unusual access patterns
-    this.checkUnusualAccessPatterns();
+    this.checkUnusualAccessPatterns()
 
     // Check for data export anomalies
-    this.checkDataExportAnomalies();
+    this.checkDataExportAnomalies()
   }
 
   private static async checkFailedLoginAttempts() {
@@ -586,7 +586,7 @@ class SecurityMonitor {
           gt: 5, // More than 5 failed attempts
         },
       },
-    });
+    })
 
     for (const failure of recentFailures) {
       await this.createSecurityAlert({
@@ -595,7 +595,7 @@ class SecurityMonitor {
         userId: failure.userId,
         ipAddress: failure.ipAddress,
         message: 'Multiple failed login attempts detected',
-      });
+      })
     }
   }
 
@@ -606,12 +606,12 @@ class SecurityMonitor {
       ...alert,
       id: generateUUID(),
       timestamp: new Date(),
-    };
+    }
 
-    this.alerts.push(fullAlert);
+    this.alerts.push(fullAlert)
 
     // Send notification
-    await this.sendSecurityNotification(fullAlert);
+    await this.sendSecurityNotification(fullAlert)
 
     // Log the alert
     await AuditService.logSecurityEvent(
@@ -620,7 +620,7 @@ class SecurityMonitor {
       'security_alert_created',
       fullAlert,
       'success',
-    );
+    )
   }
 }
 ```
@@ -640,15 +640,15 @@ enum ConsentType {
 
 // Consent record
 interface ConsentRecord {
-  id: string;
-  patientId: string;
-  consentType: ConsentType;
-  given: boolean;
-  timestamp: Date;
-  expiryDate?: Date;
-  ipAddress: string;
-  userAgent: string;
-  documentHash?: string; // Hash of consent document
+  id: string
+  patientId: string
+  consentType: ConsentType
+  given: boolean
+  timestamp: Date
+  expiryDate?: Date
+  ipAddress: string
+  userAgent: string
+  documentHash?: string // Hash of consent document
 }
 
 // Consent service
@@ -665,9 +665,9 @@ class ConsentService {
         OR: [{ expiryDate: null }, { expiryDate: { gt: new Date() } }],
       },
       orderBy: { timestamp: 'desc' },
-    });
+    })
 
-    return !!consent;
+    return !!consent
   }
 
   static async recordConsent(
@@ -687,7 +687,7 @@ class ConsentService {
         userAgent: navigator.userAgent,
         documentHash,
       },
-    });
+    })
 
     // Audit the consent action
     await AuditService.logSecurityEvent(
@@ -696,7 +696,7 @@ class ConsentService {
       `consent_${consentType}`,
       { given, documentHash },
       'success',
-    );
+    )
   }
 
   static async validateAppointmentConsent(
@@ -707,23 +707,23 @@ class ConsentService {
     const hasAppointmentConsent = await this.hasConsent(
       patientId,
       ConsentType.APPOINTMENT_SCHEDULING,
-    );
+    )
 
     if (!hasAppointmentConsent) {
-      throw new Error('Patient consent required for appointment scheduling');
+      throw new Error('Patient consent required for appointment scheduling')
     }
 
     // Check data processing consent
     const hasDataProcessingConsent = await this.hasConsent(
       patientId,
       ConsentType.DATA_PROCESSING,
-    );
+    )
 
     if (!hasDataProcessingConsent) {
-      throw new Error('Patient consent required for data processing');
+      throw new Error('Patient consent required for data processing')
     }
 
-    return true;
+    return true
   }
 }
 ```
@@ -742,15 +742,15 @@ enum DataSubjectRequestType {
 
 // Data subject request
 interface DataSubjectRequest {
-  id: string;
-  patientId: string;
-  requestType: DataSubjectRequestType;
-  status: 'pending' | 'processing' | 'completed' | 'rejected';
-  requestedAt: Date;
-  processedAt?: Date;
-  processedBy?: string;
-  details: any;
-  response?: any;
+  id: string
+  patientId: string
+  requestType: DataSubjectRequestType
+  status: 'pending' | 'processing' | 'completed' | 'rejected'
+  requestedAt: Date
+  processedAt?: Date
+  processedBy?: string
+  details: any
+  response?: any
 }
 
 // Data subject rights service
@@ -769,20 +769,20 @@ class DataSubjectRightsService {
         requestedAt: new Date(),
         details,
       },
-    });
+    })
 
     // Notify administrators
-    await this.notifyAdminsOfRequest(request);
+    await this.notifyAdminsOfRequest(request)
 
-    return request;
+    return request
   }
 
   static async processAccessRequest(request: DataSubjectRequest): Promise<any> {
     // Collect all patient data
-    const patientData = await this.collectPatientData(request.patientId);
+    const patientData = await this.collectPatientData(request.patientId)
 
     // Anonymize sensitive data if necessary
-    const processedData = this.anonymizeSensitiveData(patientData);
+    const processedData = this.anonymizeSensitiveData(patientData)
 
     // Update request status
     await prisma.dataSubjectRequest.update({
@@ -792,16 +792,16 @@ class DataSubjectRightsService {
         processedAt: new Date(),
         response: processedData,
       },
-    });
+    })
 
-    return processedData;
+    return processedData
   }
 
   static async processErasureRequest(
     request: DataSubjectRequest,
   ): Promise<void> {
     // Anonymize instead of delete for audit purposes
-    await this.anonymizePatientData(request.patientId);
+    await this.anonymizePatientData(request.patientId)
 
     // Update request status
     await prisma.dataSubjectRequest.update({
@@ -810,7 +810,7 @@ class DataSubjectRightsService {
         status: 'completed',
         processedAt: new Date(),
       },
-    });
+    })
   }
 }
 ```
@@ -841,7 +841,7 @@ export const calendarApiRouter = createRouter()
         throw new TRPCError({
           code: 'FORBIDDEN',
           message: 'Insufficient permissions',
-        });
+        })
       }
 
       // Validate business rules
@@ -849,21 +849,21 @@ export const calendarApiRouter = createRouter()
         throw new TRPCError({
           code: 'BAD_REQUEST',
           message: 'End time must be after start time',
-        });
+        })
       }
 
       // Check for conflicts
-      const conflicts = await checkForConflicts(input);
+      const conflicts = await checkForConflicts(input)
       if (conflicts.length > 0) {
         throw new TRPCError({
           code: 'CONFLICT',
           message: 'Appointment conflicts with existing schedule',
-        });
+        })
       }
 
       // Check LGPD consent if patient data involved
       if (input.patientId) {
-        await ConsentService.validateAppointmentConsent(input.patientId, input);
+        await ConsentService.validateAppointmentConsent(input.patientId, input)
       }
 
       // Create appointment
@@ -873,7 +873,7 @@ export const calendarApiRouter = createRouter()
           createdById: ctx.user.id,
           clinicId: ctx.user.clinicId,
         },
-      });
+      })
 
       // Audit the action
       await AuditService.logAppointmentAction(
@@ -882,9 +882,9 @@ export const calendarApiRouter = createRouter()
         ctx.user.role,
         appointment,
         'success',
-      );
+      )
 
-      return appointment;
+      return appointment
     },
   })
   // Get appointments
@@ -900,7 +900,7 @@ export const calendarApiRouter = createRouter()
         throw new TRPCError({
           code: 'FORBIDDEN',
           message: 'Insufficient permissions',
-        });
+        })
       }
 
       // Validate date range
@@ -908,17 +908,17 @@ export const calendarApiRouter = createRouter()
         throw new TRPCError({
           code: 'BAD_REQUEST',
           message: 'End date must be after start date',
-        });
+        })
       }
 
       // Limit date range to prevent data exfiltration
-      const maxRange = 365; // 1 year
-      const daysDiff = differenceInDays(input.end, input.start);
+      const maxRange = 365 // 1 year
+      const daysDiff = differenceInDays(input.end, input.start)
       if (daysDiff > maxRange) {
         throw new TRPCError({
           code: 'BAD_REQUEST',
           message: 'Date range cannot exceed 1 year',
-        });
+        })
       }
 
       // Get appointments
@@ -937,7 +937,7 @@ export const calendarApiRouter = createRouter()
             : {}),
         },
         orderBy: { start: 'asc' },
-      });
+      })
 
       // Audit access
       await AuditService.logAppointmentAction(
@@ -949,11 +949,11 @@ export const calendarApiRouter = createRouter()
           dateRange: { start: input.start, end: input.end },
         },
         'success',
-      );
+      )
 
-      return appointments;
+      return appointments
     },
-  });
+  })
 ```
 
 ### 2. Secure WebSocket Integration
@@ -961,9 +961,9 @@ export const calendarApiRouter = createRouter()
 ```typescript
 // Secure WebSocket for real-time updates
 class SecureWebSocket {
-  private ws: WebSocket | null = null;
-  private reconnectAttempts = 0;
-  private maxReconnectAttempts = 5;
+  private ws: WebSocket | null = null
+  private reconnectAttempts = 0
+  private maxReconnectAttempts = 5
 
   constructor(
     private url: string,
@@ -972,48 +972,48 @@ class SecureWebSocket {
 
   connect() {
     try {
-      this.ws = new WebSocket(`${this.url}?token=${this.token}`);
+      this.ws = new WebSocket(`${this.url}?token=${this.token}`)
 
       this.ws.onopen = () => {
-        console.log('WebSocket connected');
-        this.reconnectAttempts = 0;
-      };
+        console.log('WebSocket connected')
+        this.reconnectAttempts = 0
+      }
 
       this.ws.onmessage = event => {
         try {
-          const message = JSON.parse(event.data);
+          const message = JSON.parse(event.data)
 
           // Validate message structure
           if (!this.validateMessage(message)) {
-            console.error('Invalid message received:', message);
-            return;
+            console.error('Invalid message received:', message)
+            return
           }
 
           // Handle different message types
-          this.handleMessage(message);
+          this.handleMessage(message)
         } catch (error) {
-          console.error('Error processing WebSocket message:', error);
+          console.error('Error processing WebSocket message:', error)
         }
-      };
+      }
 
       this.ws.onclose = () => {
-        console.log('WebSocket disconnected');
-        this.reconnect();
-      };
+        console.log('WebSocket disconnected')
+        this.reconnect()
+      }
 
       this.ws.onerror = error => {
-        console.error('WebSocket error:', error);
-      };
+        console.error('WebSocket error:', error)
+      }
     } catch (error) {
-      console.error('Failed to connect WebSocket:', error);
-      this.reconnect();
+      console.error('Failed to connect WebSocket:', error)
+      this.reconnect()
     }
   }
 
   private validateMessage(message: any): boolean {
     // Validate message has required fields
     if (!message.type || !message.payload) {
-      return false;
+      return false
     }
 
     // Validate message type
@@ -1021,44 +1021,44 @@ class SecureWebSocket {
       'appointment_update',
       'appointment_created',
       'appointment_deleted',
-    ];
+    ]
     if (!validTypes.includes(message.type)) {
-      return false;
+      return false
     }
 
     // Validate payload based on type
     switch (message.type) {
       case 'appointment_update':
       case 'appointment_created':
-        return this.validateAppointmentPayload(message.payload);
+        return this.validateAppointmentPayload(message.payload)
       case 'appointment_deleted':
-        return typeof message.payload.id === 'string';
+        return typeof message.payload.id === 'string'
       default:
-        return false;
+        return false
     }
   }
 
   private validateAppointmentPayload(payload: any): boolean {
     return (
-      typeof payload.id === 'string'
-      && typeof payload.title === 'string'
-      && payload.start instanceof Date
-      && payload.end instanceof Date
-    );
+      typeof payload.id === 'string' &&
+      typeof payload.title === 'string' &&
+      payload.start instanceof Date &&
+      payload.end instanceof Date
+    )
   }
 
   private reconnect() {
     if (this.reconnectAttempts < this.maxReconnectAttempts) {
-      this.reconnectAttempts++;
+      this.reconnectAttempts++
 
-      const delay = Math.min(1000 * Math.pow(2, this.reconnectAttempts), 30000);
+      const delay = Math.min(1000 * Math.pow(2, this.reconnectAttempts), 30000)
 
       setTimeout(() => {
         console.log(
           `Attempting to reconnect WebSocket (attempt ${this.reconnectAttempts})`,
-        );
-        this.connect();
-      }, delay);
+        )
+        this.connect()
+      }, delay)
     }
   }
 }
@@ -1073,7 +1073,7 @@ class SecureWebSocket {
 describe('Calendar Security', () => {
   describe('Input Validation', () => {
     test('should reject XSS attempts in event titles', () => {
-      const maliciousTitle = '<script>alert("xss")</script>';
+      const maliciousTitle = '<script>alert("xss")</script>'
 
       expect(() =>
         EventValidator.validateEvent({
@@ -1081,45 +1081,45 @@ describe('Calendar Security', () => {
           start: new Date(),
           end: addHours(new Date(), 1),
         })
-      ).toThrow();
-    });
+      ).toThrow()
+    })
 
     test('should validate appointment duration limits', () => {
       const tooShort = {
         title: 'Test',
         start: new Date(),
         end: addMinutes(new Date(), 5), // Less than 15 minutes
-      };
+      }
 
       const tooLong = {
         title: 'Test',
         start: new Date(),
         end: addHours(new Date(), 10), // More than 8 hours
-      };
+      }
 
-      expect(EventValidator.validateEvent(tooShort).isValid).toBe(false);
-      expect(EventValidator.validateEvent(tooLong).isValid).toBe(false);
-    });
-  });
+      expect(EventValidator.validateEvent(tooShort).isValid).toBe(false)
+      expect(EventValidator.validateEvent(tooLong).isValid).toBe(false)
+    })
+  })
 
   describe('Authentication', () => {
     test('should reject invalid tokens', () => {
-      const invalidToken = 'invalid.token.here';
-      const user = CalendarAuthService.validateToken(invalidToken);
+      const invalidToken = 'invalid.token.here'
+      const user = CalendarAuthService.validateToken(invalidToken)
 
-      expect(user).toBeNull();
-    });
+      expect(user).toBeNull()
+    })
 
     test('should reject expired tokens', () => {
       const expiredToken = jwt.sign(
         { userId: 'test', exp: Math.floor(Date.now() / 1000) - 3600 },
         process.env.JWT_SECRET,
-      );
+      )
 
-      const user = CalendarAuthService.validateToken(expiredToken);
-      expect(user).toBeNull();
-    });
-  });
+      const user = CalendarAuthService.validateToken(expiredToken)
+      expect(user).toBeNull()
+    })
+  })
 
   describe('Authorization', () => {
     test('should restrict access based on permissions', () => {
@@ -1127,39 +1127,39 @@ describe('Calendar Security', () => {
         'patient-123',
         'clinic-456',
         UserRole.PATIENT,
-      );
+      )
 
       expect(
         CalendarAuthService.hasPermission(
           patientToken,
           Permission.DELETE_APPOINTMENTS,
         ),
-      ).toBe(false);
-    });
-  });
+      ).toBe(false)
+    })
+  })
 
   describe('Data Protection', () => {
     test('should encrypt sensitive patient data', () => {
       const sensitiveData = {
         patientId: 'patient-123',
         description: 'Sensitive medical information',
-      };
+      }
 
-      const encrypted = CalendarSecurity.encryptEventData(sensitiveData);
-      const decrypted = CalendarSecurity.decryptEventData(encrypted);
+      const encrypted = CalendarSecurity.encryptEventData(sensitiveData)
+      const decrypted = CalendarSecurity.decryptEventData(encrypted)
 
-      expect(decrypted).toEqual(sensitiveData);
-    });
+      expect(decrypted).toEqual(sensitiveData)
+    })
 
     test('should hash patient identifiers for privacy', () => {
-      const patientId = 'patient-123';
-      const hash = CalendarSecurity.hashPatientId(patientId);
+      const patientId = 'patient-123'
+      const hash = CalendarSecurity.hashPatientId(patientId)
 
-      expect(hash).not.toBe(patientId);
-      expect(hash).toMatch(/^[a-f0-9]+$/);
-    });
-  });
-});
+      expect(hash).not.toBe(patientId)
+      expect(hash).toMatch(/^[a-f0-9]+$/)
+    })
+  })
+})
 ```
 
 ### 2. Penetration Testing Checklist
@@ -1171,9 +1171,9 @@ const penTestScenarios = [
     name: 'SQL Injection',
     description: 'Test for SQL injection in API parameters',
     tests: [
-      { payload: '\' OR \'1\'=\'1', expected: 'Should be rejected' },
+      { payload: "' OR '1'='1", expected: 'Should be rejected' },
       {
-        payload: '\'; DROP TABLE appointments; --',
+        payload: "'; DROP TABLE appointments; --",
         expected: 'Should be rejected',
       },
     ],
@@ -1205,7 +1205,7 @@ const penTestScenarios = [
         scenario: 'Patient accessing admin functions',
         expected: '403 Forbidden',
       },
-      { scenario: 'Accessing other patients\' data', expected: '403 Forbidden' },
+      { scenario: "Accessing other patients' data", expected: '403 Forbidden' },
     ],
   },
   {
@@ -1222,7 +1222,7 @@ const penTestScenarios = [
       },
     ],
   },
-];
+]
 ```
 
 ## Security Best Practices Summary

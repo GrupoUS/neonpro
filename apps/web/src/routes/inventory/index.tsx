@@ -1,10 +1,9 @@
-import { api } from '@/lib/api';
-import { createFileRoute, Link } from '@tanstack/react-router';
+import { api } from '@/lib/api'
+import { createFileRoute, Link } from '@tanstack/react-router'
 import {
   AlertTriangle,
   Edit,
   Eye,
-  Filter,
   MoreHorizontal,
   Package,
   Plus,
@@ -13,109 +12,109 @@ import {
   Trash2,
   TrendingUp,
   Truck,
-} from 'lucide-react';
-import * as React from 'react';
-import { useState } from 'react';
+} from 'lucide-react'
+import * as React from 'react'
+import { useState } from 'react'
 
 export const Route = createFileRoute('/inventory/')({
   component: InventoryDashboard,
-});
+})
 
 interface InventoryStats {
-  totalProducts: number;
-  lowStockCount: number;
-  expiringSoonCount: number;
-  pendingOrdersCount: number;
-  totalValue: number;
+  totalProducts: number
+  lowStockCount: number
+  expiringSoonCount: number
+  pendingOrdersCount: number
+  totalValue: number
 }
 
 interface Product {
-  id: string;
-  name: string;
-  sku: string;
-  category_name: string;
-  current_stock: number;
-  min_stock_level: number;
-  unit_of_measure: string;
-  expiry_date?: string;
-  requires_refrigeration: boolean;
-  is_controlled_substance: boolean;
-  status: 'normal' | 'low_stock' | 'expiring_soon' | 'out_of_stock';
+  id: string
+  name: string
+  sku: string
+  category_name: string
+  current_stock: number
+  min_stock_level: number
+  unit_of_measure: string
+  expiry_date?: string
+  requires_refrigeration: boolean
+  is_controlled_substance: boolean
+  status: 'normal' | 'low_stock' | 'expiring_soon' | 'out_of_stock'
 }
 
 function InventoryDashboard() {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [searchTerm, setSearchTerm] = useState('')
+  const [selectedCategory, setSelectedCategory] = useState('all')
   const [stats, setStats] = useState<InventoryStats>({
     totalProducts: 0,
     lowStockCount: 0,
     expiringSoonCount: 0,
     pendingOrdersCount: 0,
     totalValue: 0,
-  });
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
+  })
+  const [products, setProducts] = useState<Product[]>([])
+  const [loading, setLoading] = useState(true)
 
   React.useEffect(() => {
-    loadInventoryData();
-  }, []);
+    loadInventoryData()
+  }, [])
 
   const loadInventoryData = async () => {
     try {
       const [statsResponse, productsResponse] = await Promise.all([
         api.inventory.getInventoryStats.query(),
         api.inventory.getProducts.query(),
-      ]);
+      ])
 
-      setStats(statsResponse);
-      setProducts(productsResponse);
+      setStats(statsResponse)
+      setProducts(productsResponse)
     } catch (error) {
-      console.error('Error loading inventory data:', error);
+      console.error('Error loading inventory data:', error)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   const filteredProducts = products.filter(product => {
-    const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase())
-      || product.sku.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = selectedCategory === 'all'
-      || product.category_name === selectedCategory;
-    return matchesSearch && matchesCategory;
-  });
+    const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      product.sku.toLowerCase().includes(searchTerm.toLowerCase())
+    const matchesCategory = selectedCategory === 'all' ||
+      product.category_name === selectedCategory
+    return matchesSearch && matchesCategory
+  })
 
   const getStatusColor = (status: Product['status']) => {
     switch (status) {
       case 'low_stock':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'bg-yellow-100 text-yellow-800'
       case 'expiring_soon':
-        return 'bg-orange-100 text-orange-800';
+        return 'bg-orange-100 text-orange-800'
       case 'out_of_stock':
-        return 'bg-red-100 text-red-800';
+        return 'bg-red-100 text-red-800'
       default:
-        return 'bg-green-100 text-green-800';
+        return 'bg-green-100 text-green-800'
     }
-  };
+  }
 
   const getStatusText = (status: Product['status']) => {
     switch (status) {
       case 'low_stock':
-        return 'Estoque Baixo';
+        return 'Estoque Baixo'
       case 'expiring_soon':
-        return 'Vencendo em Breve';
+        return 'Vencendo em Breve'
       case 'out_of_stock':
-        return 'Sem Estoque';
+        return 'Sem Estoque'
       default:
-        return 'Normal';
+        return 'Normal'
     }
-  };
+  }
 
   if (loading) {
     return (
       <div className='flex items-center justify-center h-64'>
         <RefreshCw className='h-8 w-8 animate-spin text-blue-600' />
       </div>
-    );
+    )
   }
 
   return (
@@ -334,5 +333,5 @@ function InventoryDashboard() {
         </div>
       </div>
     </div>
-  );
+  )
 }

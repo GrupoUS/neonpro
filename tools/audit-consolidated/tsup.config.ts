@@ -1,4 +1,4 @@
-import { defineConfig } from 'tsup';
+import { defineConfig } from 'tsup'
 
 export default defineConfig({
   entry: {
@@ -18,4 +18,4 @@ export default defineConfig({
   banner: {
     js: '#!/usr/bin/env node',
   },
-});
+})

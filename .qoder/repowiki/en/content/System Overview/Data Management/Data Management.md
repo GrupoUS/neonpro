@@ -266,8 +266,8 @@ const createOptimizedSupabaseClient = (): SupabaseClient => {
         },
       },
     },
-  );
-};
+  )
+}
 ```
 
 **Section sources**

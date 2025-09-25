@@ -1,15 +1,21 @@
-import react from '@vitejs/plugin-react';
-import path from 'path';
-import { defineConfig } from 'vite';
-import { visualizer } from 'rollup-plugin-visualizer';
+import react from '@vitejs/plugin-react'
+import path from 'path'
+import { defineConfig } from 'vite'
+
+let visualizer: any
+try {
+  visualizer = require('rollup-plugin-visualizer')
+} catch {
+  // Plugin not available, will be skipped
+}
 
 export default defineConfig(({ mode }) => {
-  const isProduction = mode === 'production';
-  
+  const isProduction = mode === 'production'
+
   const baseConfig = {
     plugins: [
       react(),
-      isProduction && visualizer({
+      visualizer && visualizer({
         filename: 'bundle-analysis.html',
         open: false,
         gzipSize: true,
@@ -103,22 +109,22 @@ export default defineConfig(({ mode }) => {
         output: {
           manualChunks: (id: string) => {
             if (id.includes('node_modules')) {
-              if (id.includes('react')) return 'react-vendor';
-              if (id.includes('@tanstack/react-router')) return 'router-vendor';
-              if (id.includes('@tanstack/react-query')) return 'query-vendor';
-              if (id.includes('@supabase/supabase-js')) return 'supabase-vendor';
-              if (id.includes('lucide-react')) return 'icons-vendor';
-              if (id.includes('zod') || id.includes('valibot')) return 'validation-vendor';
-              return 'vendor';
+              if (id.includes('react')) return 'react-vendor'
+              if (id.includes('@tanstack/react-router')) return 'router-vendor'
+              if (id.includes('@tanstack/react-query')) return 'query-vendor'
+              if (id.includes('@supabase/supabase-js')) return 'supabase-vendor'
+              if (id.includes('lucide-react')) return 'icons-vendor'
+              if (id.includes('zod') || id.includes('valibot')) return 'validation-vendor'
+              return 'vendor'
             }
-            
-            if (id.includes('src/components')) return 'components';
-            if (id.includes('src/hooks')) return 'hooks';
-            if (id.includes('src/utils')) return 'utils';
-            if (id.includes('src/pages')) return 'pages';
-            if (id.includes('src/routes')) return 'routes';
-            
-            return 'index';
+
+            if (id.includes('src/components')) return 'components'
+            if (id.includes('src/hooks')) return 'hooks'
+            if (id.includes('src/utils')) return 'utils'
+            if (id.includes('src/pages')) return 'pages'
+            if (id.includes('src/routes')) return 'routes'
+
+            return 'index'
           },
           entryFileNames: isProduction ? 'assets/[name].[hash].js' : 'assets/[name].js',
           chunkFileNames: isProduction ? 'assets/[name].[hash].js' : 'assets/[name].js',
@@ -158,10 +164,10 @@ export default defineConfig(({ mode }) => {
       host: true,
     },
     cssCodeSplit: true,
-  };
+  }
 
   if (isProduction) {
-    (baseConfig.build as any).terserOptions = {
+    ;(baseConfig.build as any).terserOptions = {
       compress: {
         drop_console: true,
         drop_debugger: true,
@@ -170,8 +176,8 @@ export default defineConfig(({ mode }) => {
       mangle: {
         safari10: true,
       },
-    };
+    }
   }
 
-  return baseConfig;
-});
+  return baseConfig
+})

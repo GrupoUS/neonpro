@@ -1,12 +1,12 @@
 // Edge Runtime Health Check Example
 // Runtime: Edge (for ultra-fast global responses)
 
-export const runtime = 'edge';
-export const preferredRegion = 'auto';
+export const runtime = 'edge'
+export const preferredRegion = 'auto'
 
 export default async function handler(request: Request) {
-  const url = new URL(request.url);
-  const pathname = url.pathname;
+  const url = new URL(request.url)
+  const pathname = url.pathname
 
   // Basic health check optimized for Edge runtime
   const healthData = {
@@ -25,7 +25,7 @@ export default async function handler(request: Request) {
       coldStart: process.env.EDGE_COLD_START || '<100ms',
       memoryLimit: process.env.EDGE_MEMORY_LIMIT || '128MB',
     },
-  };
+  }
 
   return new Response(JSON.stringify(healthData, null, 2), {
     status: 200,
@@ -36,5 +36,5 @@ export default async function handler(request: Request) {
       'Access-Control-Allow-Methods': 'GET, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type',
     },
-  });
+  })
 }

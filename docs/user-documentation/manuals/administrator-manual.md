@@ -135,32 +135,32 @@ Indicadores financeiros:
 ```typescript
 interface ProfessionalRegistration {
   // Dados básicos
-  fullName: string;
-  professionalType: 'doctor' | 'nurse' | 'aesthetician' | 'assistant';
+  fullName: string
+  professionalType: 'doctor' | 'nurse' | 'aesthetician' | 'assistant'
 
   // Documentação obrigatória
-  cfmCrmNumber: string;
-  cfmCrmState: string;
-  cfmCrmSpecialty: string;
-  professionalLicense: string;
-  licenseExpiration: Date;
+  cfmCrmNumber: string
+  cfmCrmState: string
+  cfmCrmSpecialty: string
+  professionalLicense: string
+  licenseExpiration: Date
 
   // Especializações
-  specializations: string[];
-  certifications: Certification[];
+  specializations: string[]
+  certifications: Certification[]
 
   // Disponibilidade
-  workSchedule: WorkSchedule;
-  appointmentTypes: string[];
+  workSchedule: WorkSchedule
+  appointmentTypes: string[]
 
   // Financeiro
-  commissionRate: number;
-  baseSalary?: number;
-  paymentMethod: 'hourly' | 'commission' | 'fixed' | 'hybrid';
+  commissionRate: number
+  baseSalary?: number
+  paymentMethod: 'hourly' | 'commission' | 'fixed' | 'hybrid'
 
   // Status
-  status: 'active' | 'inactive' | 'suspended' | 'on_leave';
-  startDate: Date;
+  status: 'active' | 'inactive' | 'suspended' | 'on_leave'
+  startDate: Date
 }
 ```
 
@@ -191,21 +191,21 @@ Métricas de desempenho:
 ```typescript
 interface ReceptionStaff {
   // Dados pessoais
-  fullName: string;
-  email: string;
-  phone: string;
+  fullName: string
+  email: string
+  phone: string
 
   // Permissões de acesso
-  permissions: ReceptionPermission[];
-  accessLevel: 'basic' | 'supervisor' | 'manager';
+  permissions: ReceptionPermission[]
+  accessLevel: 'basic' | 'supervisor' | 'manager'
 
   // Responsabilidades
-  responsibilities: string[];
-  departments: string[];
+  responsibilities: string[]
+  departments: string[]
 
   // Horário de trabalho
-  workShift: 'morning' | 'afternoon' | 'evening' | 'full_time';
-  availability: AvailabilitySchedule;
+  workShift: 'morning' | 'afternoon' | 'evening' | 'full_time'
+  availability: AvailabilitySchedule
 }
 ```
 
@@ -231,33 +231,33 @@ Módulos obrigatórios:
 interface AIOptimizationConfig {
   // Fatores de otimização
   factors: {
-    professionalAvailability: boolean;
-    roomAvailability: boolean;
-    equipmentAvailability: boolean;
-    patientPreferences: boolean;
-    noShowRisk: boolean;
-    travelTime: boolean;
-    treatmentDuration: boolean;
-  };
+    professionalAvailability: boolean
+    roomAvailability: boolean
+    equipmentAvailability: boolean
+    patientPreferences: boolean
+    noShowRisk: boolean
+    travelTime: boolean
+    treatmentDuration: boolean
+  }
 
   // Preferências
   preferences: {
-    preferredTimeOfDay: 'morning' | 'afternoon' | 'evening';
-    preferredProfessional?: string;
-    preferredRoom?: string;
-    avoidConflicts: boolean;
-    allowSameDay: boolean;
-    allowWeekend: boolean;
-  };
+    preferredTimeOfDay: 'morning' | 'afternoon' | 'evening'
+    preferredProfessional?: string
+    preferredRoom?: string
+    avoidConflicts: boolean
+    allowSameDay: boolean
+    allowWeekend: boolean
+  }
 
   // Restrições
   constraints: {
-    timeWindows: TimeWindow[];
-    maximumAppointmentsPerDay: number;
-    minimumBreakTime: number;
-    lunchBreak: TimeWindow;
-    requiredPreparationTime: number;
-  };
+    timeWindows: TimeWindow[]
+    maximumAppointmentsPerDay: number
+    minimumBreakTime: number
+    lunchBreak: TimeWindow
+    requiredPreparationTime: number
+  }
 }
 ```
 
@@ -297,19 +297,19 @@ Métricas de otimização:
 ```typescript
 interface ResourceManagement {
   // Salas de tratamento
-  treatmentRooms: TreatmentRoom[];
+  treatmentRooms: TreatmentRoom[]
 
   // Equipamentos
-  equipment: Equipment[];
+  equipment: Equipment[]
 
   // Materiais e insumos
-  supplies: SupplyItem[];
+  supplies: SupplyItem[]
 
   // Disponibilidade
-  availability: ResourceAvailability;
+  availability: ResourceAvailability
 
   // Manutenção
-  maintenanceSchedule: MaintenanceSchedule[];
+  maintenanceSchedule: MaintenanceSchedule[]
 }
 ```
 
@@ -323,26 +323,26 @@ interface ResourceManagement {
 interface RevenueAnalytics {
   // Receita por categoria
   byCategory: {
-    facialTreatments: number;
-    bodyTreatments: number;
-    injectables: number;
-    laserTreatments: number;
-    consultation: number;
-  };
+    facialTreatments: number
+    bodyTreatments: number
+    injectables: number
+    laserTreatments: number
+    consultation: number
+  }
 
   // Tendências
   trends: {
-    monthly: MonthlyRevenue[];
-    quarterly: QuarterlyRevenue[];
-    yearly: YearlyRevenue[];
-  };
+    monthly: MonthlyRevenue[]
+    quarterly: QuarterlyRevenue[]
+    yearly: YearlyRevenue[]
+  }
 
   // Análise de lucratividade
   profitability: {
-    byTreatment: TreatmentProfitability[];
-    byProfessional: ProfessionalProfitability[];
-    byClient: ClientProfitability[];
-  };
+    byTreatment: TreatmentProfitability[]
+    byProfessional: ProfessionalProfitability[]
+    byClient: ClientProfitability[]
+  }
 }
 ```
 
@@ -428,24 +428,24 @@ Métricas financeiras:
 interface LGPDCompliance {
   // Consentimentos
   consents: {
-    dataProcessing: ConsentRecord[];
-    marketing: ConsentRecord[];
-    communication: ConsentRecord[];
-  };
+    dataProcessing: ConsentRecord[]
+    marketing: ConsentRecord[]
+    communication: ConsentRecord[]
+  }
 
   // Direitos do titular
   dataSubjectRights: {
-    accessRequests: DataRequest[];
-    deletionRequests: DataRequest[];
-    correctionRequests: DataRequest[];
-    portabilityRequests: DataRequest[];
-  };
+    accessRequests: DataRequest[]
+    deletionRequests: DataRequest[]
+    correctionRequests: DataRequest[]
+    portabilityRequests: DataRequest[]
+  }
 
   // Incidentes de segurança
-  securityIncidents: SecurityIncident[];
+  securityIncidents: SecurityIncident[]
 
   // Auditoria
-  auditTrail: AuditRecord[];
+  auditTrail: AuditRecord[]
 }
 ```
 
@@ -469,24 +469,24 @@ Procedimentos obrigatórios:
 interface AnvisaCompliance {
   // Cadastro de tratamentos
   treatments: {
-    anvisaRegistration: string;
-    registrationStatus: 'valid' | 'expired' | 'pending' | 'suspended';
-    expirationDate: Date;
-    manufacturer: string;
-    batchTracking: BatchRecord[];
-  };
+    anvisaRegistration: string
+    registrationStatus: 'valid' | 'expired' | 'pending' | 'suspended'
+    expirationDate: Date
+    manufacturer: string
+    batchTracking: BatchRecord[]
+  }
 
   // Rastreamento de produtos
   productTracking: {
-    productId: string;
-    batchNumber: string;
-    expirationDate: Date;
-    storageConditions: string;
-    usageRecords: UsageRecord[];
-  };
+    productId: string
+    batchNumber: string
+    expirationDate: Date
+    storageConditions: string
+    usageRecords: UsageRecord[]
+  }
 
   // Notificações adversas
-  adverseEvents: AdverseEventReport[];
+  adverseEvents: AdverseEventReport[]
 }
 ```
 
@@ -509,27 +509,27 @@ Procedimentos ANVISA:
 interface CFMCompliance {
   // Validação de CRM
   professionalValidation: {
-    crmNumber: string;
-    crmState: string;
-    validationStatus: 'valid' | 'invalid' | 'expired' | 'pending';
-    lastValidation: Date;
-    nextValidation: Date;
-  };
+    crmNumber: string
+    crmState: string
+    validationStatus: 'valid' | 'invalid' | 'expired' | 'pending'
+    lastValidation: Date
+    nextValidation: Date
+  }
 
   // Especializações
   specializations: {
-    specialization: string;
-    certificationNumber: string;
-    issuingBody: string;
-    validUntil: Date;
-  };
+    specialization: string
+    certificationNumber: string
+    issuingBody: string
+    validUntil: Date
+  }
 
   // Responsabilidades éticas
   ethicalCompliance: {
-    professionalConduct: ConductRecord[];
-    patientComplaints: ComplaintRecord[];
-    disciplinaryActions: DisciplinaryRecord[];
-  };
+    professionalConduct: ConductRecord[]
+    patientComplaints: ComplaintRecord[]
+    disciplinaryActions: DisciplinaryRecord[]
+  }
 }
 ```
 
@@ -543,26 +543,26 @@ interface CFMCompliance {
 interface OperationalReports {
   // Diário
   daily: {
-    appointments: DailyAppointmentReport;
-    revenue: DailyRevenueReport;
-    staffPerformance: DailyStaffReport;
-    compliance: DailyComplianceReport;
-  };
+    appointments: DailyAppointmentReport
+    revenue: DailyRevenueReport
+    staffPerformance: DailyStaffReport
+    compliance: DailyComplianceReport
+  }
 
   // Semanal
   weekly: {
-    performance: WeeklyPerformanceReport;
-    financial: WeeklyFinancialReport;
-    marketing: WeeklyMarketingReport;
-  };
+    performance: WeeklyPerformanceReport
+    financial: WeeklyFinancialReport
+    marketing: WeeklyMarketingReport
+  }
 
   // Mensal
   monthly: {
-    comprehensive: MonthlyComprehensiveReport;
-    financial: MonthlyFinancialReport;
-    hr: MonthlyHRReport;
-    compliance: MonthlyComplianceReport;
-  };
+    comprehensive: MonthlyComprehensiveReport
+    financial: MonthlyFinancialReport
+    hr: MonthlyHRReport
+    compliance: MonthlyComplianceReport
+  }
 }
 ```
 
@@ -585,27 +585,27 @@ Análise preditiva:
 interface KPIs {
   // Financeiros
   financial: {
-    monthlyRevenue: { target: 100000; current: 85000; unit: 'BRL' };
-    profitMargin: { target: 30; current: 29; unit: '%' };
-    averageTicket: { target: 500; current: 450; unit: 'BRL' };
-    customerLifetimeValue: { target: 5000; current: 4500; unit: 'BRL' };
-  };
+    monthlyRevenue: { target: 100000; current: 85000; unit: 'BRL' }
+    profitMargin: { target: 30; current: 29; unit: '%' }
+    averageTicket: { target: 500; current: 450; unit: 'BRL' }
+    customerLifetimeValue: { target: 5000; current: 4500; unit: 'BRL' }
+  }
 
   // Operacionais
   operational: {
-    appointmentOccupancy: { target: 85; current: 78; unit: '%' };
-    noShowRate: { target: 5; current: 8; unit: '%' };
-    staffUtilization: { target: 90; current: 82; unit: '%' };
-    resourceUtilization: { target: 80; current: 75; unit: '%' };
-  };
+    appointmentOccupancy: { target: 85; current: 78; unit: '%' }
+    noShowRate: { target: 5; current: 8; unit: '%' }
+    staffUtilization: { target: 90; current: 82; unit: '%' }
+    resourceUtilization: { target: 80; current: 75; unit: '%' }
+  }
 
   // Clientes
   customer: {
-    satisfactionScore: { target: 4.5; current: 4.2; unit: '/5.0' };
-    retentionRate: { target: 85; current: 78; unit: '%' };
-    netPromoterScore: { target: 50; current: 45; unit: '' };
-    complaintRate: { target: 2; current: 3; unit: '%' };
-  };
+    satisfactionScore: { target: 4.5; current: 4.2; unit: '/5.0' }
+    retentionRate: { target: 85; current: 78; unit: '%' }
+    netPromoterScore: { target: 50; current: 45; unit: '' }
+    complaintRate: { target: 2; current: 3; unit: '%' }
+  }
 }
 ```
 
@@ -619,38 +619,38 @@ interface KPIs {
 interface SystemConfiguration {
   // Configurações gerais
   general: {
-    clinicName: string;
-    timezone: string;
-    currency: string;
-    language: string;
-    dateFormat: string;
-    timeFormat: '12h' | '24h';
-  };
+    clinicName: string
+    timezone: string
+    currency: string
+    language: string
+    dateFormat: string
+    timeFormat: '12h' | '24h'
+  }
 
   // Configurações de agendamento
   scheduling: {
-    appointmentDuration: number;
-    preparationTime: number;
-    cleanupTime: number;
-    cancellationPolicy: CancellationPolicy;
-    reminderSettings: ReminderSettings;
-  };
+    appointmentDuration: number
+    preparationTime: number
+    cleanupTime: number
+    cancellationPolicy: CancellationPolicy
+    reminderSettings: ReminderSettings
+  }
 
   // Configurações de pagamento
   payment: {
-    acceptedMethods: PaymentMethod[];
-    installments: number;
-    currency: string;
-    taxSettings: TaxSettings;
-  };
+    acceptedMethods: PaymentMethod[]
+    installments: number
+    currency: string
+    taxSettings: TaxSettings
+  }
 
   // Configurações de conformidade
   compliance: {
-    lgpdEnabled: boolean;
-    anvisaEnabled: boolean;
-    cfmEnabled: boolean;
-    auditLevel: 'basic' | 'detailed' | 'comprehensive';
-  };
+    lgpdEnabled: boolean
+    anvisaEnabled: boolean
+    cfmEnabled: boolean
+    auditLevel: 'basic' | 'detailed' | 'comprehensive'
+  }
 }
 ```
 
@@ -660,27 +660,27 @@ interface SystemConfiguration {
 interface InterfaceCustomization {
   // Branding
   branding: {
-    logo: string;
-    primaryColor: string;
-    secondaryColor: string;
-    accentColor: string;
-    theme: 'light' | 'dark' | 'auto';
-  };
+    logo: string
+    primaryColor: string
+    secondaryColor: string
+    accentColor: string
+    theme: 'light' | 'dark' | 'auto'
+  }
 
   // Layout do dashboard
   dashboard: {
-    layout: 'standard' | 'compact' | 'detailed';
-    widgets: DashboardWidget[];
-    refreshInterval: number;
-  };
+    layout: 'standard' | 'compact' | 'detailed'
+    widgets: DashboardWidget[]
+    refreshInterval: number
+  }
 
   // Notificações
   notifications: {
-    email: EmailNotificationSettings;
-    sms: SmsNotificationSettings;
-    push: PushNotificationSettings;
-    inApp: InAppNotificationSettings;
-  };
+    email: EmailNotificationSettings
+    sms: SmsNotificationSettings
+    push: PushNotificationSettings
+    inApp: InAppNotificationSettings
+  }
 }
 ```
 
@@ -692,31 +692,31 @@ interface InterfaceCustomization {
 interface ThirdPartyIntegrations {
   // Pagamentos
   payments: {
-    provider: 'stripe' | 'pagseguro' | 'mercadopago';
-    apiKey: string;
-    webhookUrl: string;
-  };
+    provider: 'stripe' | 'pagseguro' | 'mercadopago'
+    apiKey: string
+    webhookUrl: string
+  }
 
   // Comunicação
   communication: {
-    emailProvider: 'sendgrid' | 'ses' | 'mailgun';
-    smsProvider: 'twilio' | 'vonage' | 'infobip';
-    whatsappProvider: 'twilio' | 'zenvia' | 'messagebird';
-  };
+    emailProvider: 'sendgrid' | 'ses' | 'mailgun'
+    smsProvider: 'twilio' | 'vonage' | 'infobip'
+    whatsappProvider: 'twilio' | 'zenvia' | 'messagebird'
+  }
 
   // Análise
   analytics: {
-    googleAnalytics: GoogleAnalyticsConfig;
-    mixpanel: MixpanelConfig;
-    hotjar: HotjarConfig;
-  };
+    googleAnalytics: GoogleAnalyticsConfig
+    mixpanel: MixpanelConfig
+    hotjar: HotjarConfig
+  }
 
   // Compliance
   compliance: {
-    anvisaApi: AnvisaApiConfig;
-    cfmApi: CfmApiConfig;
-    lgpdTools: LGPDToolsConfig;
-  };
+    anvisaApi: AnvisaApiConfig
+    cfmApi: CfmApiConfig
+    lgpdTools: LGPDToolsConfig
+  }
 }
 ```
 
@@ -775,31 +775,31 @@ Resposta imediata:
 interface AdminMobileApp {
   // Dashboard em tempo real
   dashboard: {
-    realTimeMetrics: boolean;
-    pushNotifications: boolean;
-    offlineMode: boolean;
-  };
+    realTimeMetrics: boolean
+    pushNotifications: boolean
+    offlineMode: boolean
+  }
 
   // Gestão de equipe
   teamManagement: {
-    staffDirectory: boolean;
-    scheduleManagement: boolean;
-    performanceTracking: boolean;
-  };
+    staffDirectory: boolean
+    scheduleManagement: boolean
+    performanceTracking: boolean
+  }
 
   // Relatórios
   reports: {
-    exportToPDF: boolean;
-    exportToExcel: boolean;
-    scheduledReports: boolean;
-  };
+    exportToPDF: boolean
+    exportToExcel: boolean
+    scheduledReports: boolean
+  }
 
   // Comunicação
   communication: {
-    teamChat: boolean;
-    announcements: boolean;
-    emergencyAlerts: boolean;
-  };
+    teamChat: boolean
+    announcements: boolean
+    emergencyAlerts: boolean
+  }
 }
 ```
 

@@ -3,14 +3,14 @@ import type {
   AgentResult,
   OrchestrationContext,
   TDDPhase,
-} from '../types';
+} from '../types'
 
 /**
  * Security Critical Workflow implementation
  */
 export class SecurityCriticalWorkflow {
-  name = 'security-critical';
-  description = 'Security-focused TDD workflow for critical features';
+  name = 'security-critical'
+  description = 'Security-focused TDD workflow for critical features'
 
   async executeAgent(
     agent: string,
@@ -19,7 +19,7 @@ export class SecurityCriticalWorkflow {
     coordination: AgentCoordinationPattern,
   ): Promise<AgentResult> {
     // Enhanced security validation
-    const securityScore = context.healthcareCompliance.required ? 95 : 90;
+    const securityScore = context.healthcareCompliance.required ? 95 : 90
 
     return {
       agentName: agent,
@@ -37,6 +37,6 @@ export class SecurityCriticalWorkflow {
         score: securityScore,
         issues: [],
       },
-    };
+    }
   }
 }

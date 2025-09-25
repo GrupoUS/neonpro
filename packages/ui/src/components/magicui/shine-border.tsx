@@ -1,51 +1,51 @@
-'use client';
+'use client'
 
-import React from 'react';
-import { cn } from '../../utils';
-import './shine-border.css';
+import React from 'react'
+import { cn } from '../../utils'
+import './shine-border.css'
 
 interface ShineBorderProps extends React.HTMLAttributes<HTMLDivElement> {
   /**
    * The width of the border in pixels
    * @default 1
    */
-  borderWidth?: number;
+  borderWidth?: number
   /**
    * The border radius of the shine border
    * @default 8
    */
-  borderRadius?: number;
+  borderRadius?: number
   /**
    * The duration of the animation in seconds
    * @default 14
    */
-  duration?: number;
+  duration?: number
   /**
    * The color(s) of the shine border
    * Can be a single color or an array of colors
    * @default "#000000"
    */
-  shineColor?: string | string[];
+  shineColor?: string | string[]
   /**
    * Background color of the component
    * @default "white"
    */
-  background?: string;
+  background?: string
   /**
    * Animation pattern
    * @default "linear"
    */
-  pattern?: 'linear' | 'wave' | 'orbital';
+  pattern?: 'linear' | 'wave' | 'orbital'
   /**
    * Animation intensity
    * @default "normal"
    */
-  intensity?: 'subtle' | 'normal' | 'vibrant';
+  intensity?: 'subtle' | 'normal' | 'vibrant'
   /**
    * Animation speed
    * @default "normal"
    */
-  speed?: 'slow' | 'normal' | 'fast';
+  speed?: 'slow' | 'normal' | 'fast'
   /**
    * Color theme
    * @default "gold"
@@ -62,20 +62,20 @@ interface ShineBorderProps extends React.HTMLAttributes<HTMLDivElement> {
     | 'neonpro-secondary'
     | 'neonpro-accent'
     | 'aesthetic-gold'
-    | 'beauty-rainbow';
+    | 'beauty-rainbow'
   /**
    * Additional CSS class names
    */
-  className?: string;
+  className?: string
   /**
    * The content to render inside the border
    */
-  children?: React.ReactNode;
+  children?: React.ReactNode
   /**
    * Disable the shine effect
    * @default false
    */
-  disabled?: boolean;
+  disabled?: boolean
 }
 
 export function ShineBorder({
@@ -103,7 +103,7 @@ export function ShineBorder({
       shineColor ? '' : `shine-border--${theme}`,
     ],
     className,
-  );
+  )
 
   return (
     <div
@@ -132,10 +132,10 @@ export function ShineBorder({
         {children}
       </div>
     </div>
-  );
+  )
 }
 
-ShineBorder.displayName = 'ShineBorder';
+ShineBorder.displayName = 'ShineBorder'
 
-export type { ShineBorderProps };
-export default ShineBorder;
+export type { ShineBorderProps }
+export default ShineBorder

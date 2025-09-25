@@ -4,67 +4,67 @@
 
 // Types for LGPD operations
 export interface MedicalRecord {
-  id: string;
-  patientId: string;
-  recordType: string;
-  data: Record<string, unknown>;
-  createdAt: Date;
-  updatedAt: Date;
+  id: string
+  patientId: string
+  recordType: string
+  data: Record<string, unknown>
+  createdAt: Date
+  updatedAt: Date
 }
 
 export interface Appointment {
-  id: string;
-  patientId: string;
-  dateTime: Date;
-  type: string;
-  status: string;
-  notes?: string;
+  id: string
+  patientId: string
+  dateTime: Date
+  type: string
+  status: string
+  notes?: string
 }
 
 export interface LGPDPatientData {
-  id: string;
-  name?: string;
-  cpf?: string;
-  email?: string;
-  phone?: string;
-  address?: string;
-  medical_records?: MedicalRecord[];
-  appointments?: Appointment[];
-  created_at?: string;
-  updated_at?: string;
+  id: string
+  name?: string
+  cpf?: string
+  email?: string
+  phone?: string
+  address?: string
+  medical_records?: MedicalRecord[]
+  appointments?: Appointment[]
+  created_at?: string
+  updated_at?: string
 }
 
 export interface AnonymizationOptions {
-  preserveId?: boolean;
-  preserveStatistics?: boolean;
-  hashSensitiveData?: boolean;
-  removeDirectIdentifiers?: boolean;
+  preserveId?: boolean
+  preserveStatistics?: boolean
+  hashSensitiveData?: boolean
+  removeDirectIdentifiers?: boolean
 }
 
 export interface DeletionOptions {
-  softDelete?: boolean;
-  retainAuditTrail?: boolean;
-  anonymizeBeforeDelete?: boolean;
-  backupBeforeDelete?: boolean;
+  softDelete?: boolean
+  retainAuditTrail?: boolean
+  anonymizeBeforeDelete?: boolean
+  backupBeforeDelete?: boolean
 }
 
 export interface ExportOptions {
-  format?: 'json' | 'csv' | 'xml';
-  includeMetadata?: boolean;
-  anonymizeData?: boolean;
+  format?: 'json' | 'csv' | 'xml'
+  includeMetadata?: boolean
+  anonymizeData?: boolean
   dateRange?: {
-    start: string;
-    end: string;
-  };
+    start: string
+    end: string
+  }
 }
 
 export interface LGPDOperationResult {
-  success: boolean;
-  recordsProcessed: number;
-  operationId: string;
-  timestamp: string;
-  errors?: string[];
-  warnings?: string[];
+  success: boolean
+  recordsProcessed: number
+  operationId: string
+  timestamp: string
+  errors?: string[]
+  warnings?: string[]
 }
 
 /**
@@ -81,48 +81,48 @@ export async function anonymize_patient_data(
     preserveStatistics = true,
     hashSensitiveData = true,
     removeDirectIdentifiers = true,
-  } = options;
+  } = options
 
-  const patients = Array.isArray(patientData) ? patientData : [patientData];
-  const processedRecords: unknown[] = [];
-  const errors: string[] = [];
+  const patients = Array.isArray(patientData) ? patientData : [patientData]
+  const processedRecords: unknown[] = []
+  const errors: string[] = []
 
   try {
     for (const patient of patients) {
-      const anonymized = { ...patient };
+      const anonymized = { ...patient }
 
       // Remove or hash direct identifiers
       if (removeDirectIdentifiers) {
         if (!preserveId) {
           anonymized.id = hashSensitiveData
             ? `anon_${hashString(patient.id)}`
-            : 'anonymized';
+            : 'anonymized'
         }
 
         if (patient.name) {
           anonymized.name = hashSensitiveData
             ? `Patient_${hashString(patient.name)}`
-            : 'Anonymous Patient';
+            : 'Anonymous Patient'
         }
 
         if (patient.cpf) {
-          anonymized.cpf = hashSensitiveData ? hashString(patient.cpf) : null;
+          anonymized.cpf = hashSensitiveData ? hashString(patient.cpf) : null
         }
 
         if (patient.email) {
           anonymized.email = hashSensitiveData
             ? `${hashString(patient.email)}@anonymized.local`
-            : null;
+            : null
         }
 
         if (patient.phone) {
           anonymized.phone = hashSensitiveData
             ? hashString(patient.phone)
-            : null;
+            : null
         }
 
         if (patient.address) {
-          anonymized.address = hashSensitiveData ? 'Anonymized Address' : null;
+          anonymized.address = hashSensitiveData ? 'Anonymized Address' : null
         }
       }
 
@@ -135,10 +135,10 @@ export async function anonymize_patient_data(
           notes: hashSensitiveData
             ? hashString(record.notes || '')
             : 'Anonymized notes',
-        }));
+        }))
       }
 
-      processedRecords.push(anonymized);
+      processedRecords.push(anonymized)
     }
 
     return {
@@ -147,7 +147,7 @@ export async function anonymize_patient_data(
       operationId: `anon_${Date.now()}`,
       timestamp: new Date().toISOString(),
       errors: errors.length > 0 ? errors : undefined,
-    };
+    }
   } catch {
     return {
       success: false,
@@ -157,7 +157,7 @@ export async function anonymize_patient_data(
       errors: [
         `Anonymization failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
       ],
-    };
+    }
   }
 }
 
@@ -174,47 +174,47 @@ export async function delete_patient_data(
     retainAuditTrail = true,
     anonymizeBeforeDelete = true,
     backupBeforeDelete = true,
-  } = options;
+  } = options
 
-  const patientIds = Array.isArray(patientId) ? patientId : [patientId];
-  const errors: string[] = [];
-  let recordsProcessed = 0;
+  const patientIds = Array.isArray(patientId) ? patientId : [patientId]
+  const errors: string[] = []
+  let recordsProcessed = 0
 
   try {
     for (const id of patientIds) {
       // Validate patient exists
       if (!id || typeof id !== 'string') {
-        errors.push(`Invalid patient ID: ${id}`);
-        continue;
+        errors.push(`Invalid patient ID: ${id}`)
+        continue
       }
 
       // Create backup if requested
       if (backupBeforeDelete) {
         // In a real implementation, this would backup to secure storage
-        console.log(`Backup created for patient ${id}`);
+        console.warn(`Backup created for patient ${id}`)
       }
 
       // Anonymize before deletion if requested
       if (anonymizeBeforeDelete && !softDelete) {
         // In a real implementation, this would anonymize the data first
-        console.log(`Data anonymized for patient ${id} before deletion`);
+        console.warn(`Data anonymized for patient ${id} before deletion`)
       }
 
       // Perform deletion (soft or hard)
       if (softDelete) {
         // Mark as deleted but retain data
-        console.log(`Soft delete performed for patient ${id}`);
+        console.warn(`Soft delete performed for patient ${id}`)
       } else {
         // Permanently remove data
-        console.log(`Hard delete performed for patient ${id}`);
+        console.warn(`Hard delete performed for patient ${id}`)
       }
 
       // Retain audit trail if requested
       if (retainAuditTrail) {
-        console.log(`Audit trail retained for patient ${id} deletion`);
+        console.warn(`Audit trail retained for patient ${id} deletion`)
       }
 
-      recordsProcessed++;
+      recordsProcessed++
     }
 
     return {
@@ -223,7 +223,7 @@ export async function delete_patient_data(
       operationId: `del_${Date.now()}`,
       timestamp: new Date().toISOString(),
       errors: errors.length > 0 ? errors : undefined,
-    };
+    }
   } catch {
     return {
       success: false,
@@ -233,7 +233,7 @@ export async function delete_patient_data(
       errors: [
         `Deletion failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
       ],
-    };
+    }
   }
 }
 
@@ -250,18 +250,18 @@ export async function export_patient_data(
     includeMetadata = true,
     anonymizeData = false,
     dateRange,
-  } = options;
+  } = options
 
-  const patientIds = Array.isArray(patientId) ? patientId : [patientId];
-  const errors: string[] = [];
-  const exportedData: unknown[] = [];
+  const patientIds = Array.isArray(patientId) ? patientId : [patientId]
+  const errors: string[] = []
+  const exportedData: unknown[] = []
 
   try {
     for (const id of patientIds) {
       // Validate patient exists
       if (!id || typeof id !== 'string') {
-        errors.push(`Invalid patient ID: ${id}`);
-        continue;
+        errors.push(`Invalid patient ID: ${id}`)
+        continue
       }
 
       // Mock patient data - in real implementation, this would query the database
@@ -276,27 +276,27 @@ export async function export_patient_data(
         appointments: [],
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
-      };
+      }
 
       // Apply date range filter if specified
       if (dateRange) {
         // Filter records by date range
-        console.log(
+        console.warn(
           `Applying date range filter: ${dateRange.start} to ${dateRange.end}`,
-        );
+        )
       }
 
       // Anonymize data if requested
-      let processedData = patientData;
+      let processedData = patientData
       if (anonymizeData) {
         const anonymizationResult = await anonymize_patient_data(patientData, {
           preserveId: false,
           removeDirectIdentifiers: true,
-        });
+        })
 
         if (!anonymizationResult.success) {
-          errors.push(`Failed to anonymize data for patient ${id}`);
-          continue;
+          errors.push(`Failed to anonymize data for patient ${id}`)
+          continue
         }
       }
 
@@ -310,25 +310,25 @@ export async function export_patient_data(
             anonymized: anonymizeData,
             lgpdCompliant: true,
           },
-        };
+        }
       }
 
-      exportedData.push(processedData);
+      exportedData.push(processedData)
     }
 
     // Format data according to requested format
-    let formattedData: unknown;
+    let formattedData: unknown
     switch (format) {
       case 'csv':
-        formattedData = convertToCSV(exportedData);
-        break;
+        formattedData = convertToCSV(exportedData)
+        break
       case 'xml':
-        formattedData = convertToXML(exportedData);
-        break;
+        formattedData = convertToXML(exportedData)
+        break
       case 'json':
       default:
-        formattedData = exportedData;
-        break;
+        formattedData = exportedData
+        break
     }
 
     return {
@@ -339,7 +339,7 @@ export async function export_patient_data(
       exportData: formattedData,
       exportUrl: `https://api.example.com/exports/exp_${Date.now()}.${format}`,
       errors: errors.length > 0 ? errors : undefined,
-    };
+    }
   } catch {
     return {
       success: false,
@@ -349,12 +349,12 @@ export async function export_patient_data(
       errors: [
         `Export failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
       ],
-    };
+    }
   }
 }
 
 // Utility functions
-import { createHash } from 'crypto';
+import { createHash } from 'crypto'
 
 /**
  * LGPD-compliant cryptographic hash function for patient data anonymization
@@ -363,13 +363,13 @@ import { createHash } from 'crypto';
  */
 function hashString(input: string): string {
   // Get or generate anonymization salt for LGPD compliance
-  const salt = process.env.LGPD_ANONYMIZATION_SALT || generateStaticSalt();
+  const salt = process.env.LGPD_ANONYMIZATION_SALT || generateStaticSalt()
 
   // Create SHA-256 hash with salt for irreversible anonymization
   return createHash('sha256')
     .update(input + salt)
     .digest('hex')
-    .substring(0, 16); // Truncate for consistent length
+    .substring(0, 16) // Truncate for consistent length
 }
 
 /**
@@ -378,41 +378,41 @@ function hashString(input: string): string {
  */
 function generateStaticSalt(): string {
   // Use a static salt for development - in production, use process.env.LGPD_ANONYMIZATION_SALT
-  return 'NEONPRO_LGPD_DEV_SALT_2025';
+  return 'NEONPRO_LGPD_DEV_SALT_2025'
 }
 
 function convertToCSV(data: unknown[]): string {
-  if (data.length === 0) return '';
+  if (data.length === 0) return ''
 
-  const headers = Object.keys(data[0]);
-  const csvRows = [headers.join(',')];
+  const headers = Object.keys(data[0])
+  const csvRows = [headers.join(',')]
 
   for (const row of data) {
     const values = headers.map(header => {
-      const value = row[header];
+      const value = row[header]
       return typeof value === 'string'
         ? `"${value.replace(/"/g, '""')}"`
-        : value;
-    });
-    csvRows.push(values.join(','));
+        : value
+    })
+    csvRows.push(values.join(','))
   }
 
-  return csvRows.join('\n');
+  return csvRows.join('\n')
 }
 
 function convertToXML(data: unknown[]): string {
-  let xml = '<?xml version="1.0" encoding="UTF-8"?>\n<patients>\n';
+  let xml = '<?xml version="1.0" encoding="UTF-8"?>\n<patients>\n'
 
   for (const patient of data) {
-    xml += '  <patient>\n';
+    xml += '  <patient>\n'
     for (const [key, value] of Object.entries(patient)) {
-      xml += `    <${key}>${value}</${key}>\n`;
+      xml += `    <${key}>${value}</${key}>\n`
     }
-    xml += '  </patient>\n';
+    xml += '  </patient>\n'
   }
 
-  xml += '</patients>';
-  return xml;
+  xml += '</patients>'
+  return xml
 }
 
 // Export all functions for use in other modules
@@ -420,4 +420,4 @@ export {
   anonymize_patient_data as anonymizePatientData,
   delete_patient_data as deletePatientData,
   export_patient_data as exportPatientData,
-};
+}

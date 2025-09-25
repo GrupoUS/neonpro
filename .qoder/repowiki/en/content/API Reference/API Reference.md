@@ -492,7 +492,7 @@ For web applications, use the tRPC client with React hooks:
 const { data, isLoading } = trpc.agent.listSessions.useQuery({
   page: 1,
   limit: 10,
-});
+})
 ```
 
 Handle authentication by including JWT tokens in request headers.

@@ -3,14 +3,14 @@
  * Connects CopilotKit frontend to AG-UI protocol backend with UI/UX optimizations
  */
 
-import { Hono } from 'hono';
-import type { Context, Next } from 'hono';
-import { cors } from 'hono/cors';
-import { streamText } from 'hono/streaming';
-import { logger } from '../../lib/logger';
+import { Hono } from 'hono'
+import type { Context, Next } from 'hono'
+import { cors } from 'hono/cors'
+import { streamText } from 'hono/streaming'
+import { logger } from '../../lib/logger'
 
 // Create dedicated router for CopilotKit bridge
-const copilotBridge = new Hono();
+const copilotBridge = new Hono()
 
 // CORS configuration for CopilotKit
 copilotBridge.use(
@@ -34,34 +34,34 @@ copilotBridge.use(
     ],
     credentials: true,
   }),
-);
+)
 
 // Security headers middleware
 copilotBridge.use('*', async (c: Context, next: Next) => {
   // Apply healthcare security headers
-  c.header('X-Healthcare-Platform', 'NeonPro');
-  c.header('X-LGPD-Compliance', 'true');
-  c.header('X-Content-Type-Options', 'nosniff');
-  c.header('X-Frame-Options', 'DENY');
+  c.header('X-Healthcare-Platform', 'NeonPro')
+  c.header('X-LGPD-Compliance', 'true')
+  c.header('X-Content-Type-Options', 'nosniff')
+  c.header('X-Frame-Options', 'DENY')
 
-  await next();
-});
+  await next()
+})
 
 /**
  * CopilotKit Chat Completions Endpoint
  * Handles streaming chat responses from AG-UI backend
  */
 copilotBridge.post('/chat/completions', async c => {
-  const requestId = crypto.randomUUID();
-  const startTime = Date.now();
+  const requestId = crypto.randomUUID()
+  const startTime = Date.now()
 
   try {
     // Parse CopilotKit request
-    const body = await c.req.json();
-    const { messages, stream = true, model } = body;
+    const body = await c.req.json()
+    const { messages, stream = true, model } = body
 
     // Extract the latest user message
-    const latestMessage = messages[messages.length - 1];
+    const latestMessage = messages[messages.length - 1]
     if (!latestMessage || latestMessage.role !== 'user') {
       return c.json(
         {
@@ -71,10 +71,10 @@ copilotBridge.post('/chat/completions', async c => {
           },
         },
         400,
-      );
+      )
     }
 
-    const userQuery = latestMessage.content;
+    const userQuery = latestMessage.content
 
     // Extract user context from headers or default
     const userContext = {
@@ -82,21 +82,21 @@ copilotBridge.post('/chat/completions', async c => {
       domain: c.req.header('X-User-Domain') || 'default',
       _role: c.req.header('X-User-Role') || 'receptionist',
       sessionId: c.req.header('X-Session-ID') || requestId,
-    };
+    }
 
     logger.info('CopilotKit request received', {
       requestId,
       userQuery: userQuery.substring(0, 100) + '...',
       userContext,
       messageCount: messages.length,
-    });
+    })
 
     // Call AG-UI backend agent
     const agentResponse = await callAGUIAgent(
       userQuery,
       userContext,
       requestId,
-    );
+    )
 
     if (stream) {
       // Return streaming response for real-time UI updates
@@ -106,8 +106,8 @@ copilotBridge.post('/chat/completions', async c => {
           agentResponse,
           requestId,
           startTime,
-        );
-        await stream.write(`data: ${JSON.stringify(response)}\n\n`);
+        )
+        await stream.write(`data: ${JSON.stringify(response)}\n\n`)
 
         // If agent response has actions, send them as follow-up
         if (agentResponse.actions && agentResponse.actions.length > 0) {
@@ -127,8 +127,8 @@ copilotBridge.post('/chat/completions', async c => {
                 finish_reason: null,
               },
             ],
-          };
-          await stream.write(`data: ${JSON.stringify(actionsResponse)}\n\n`);
+          }
+          await stream.write(`data: ${JSON.stringify(actionsResponse)}\n\n`)
         }
 
         // Send final completion
@@ -144,25 +144,25 @@ copilotBridge.post('/chat/completions', async c => {
               finish_reason: 'stop',
             },
           ],
-        };
-        await stream.write(`data: ${JSON.stringify(finalResponse)}\n\n`);
-        await stream.write('data: [DONE]\n\n');
-      });
+        }
+        await stream.write(`data: ${JSON.stringify(finalResponse)}\n\n`)
+        await stream.write('data: [DONE]\n\n')
+      })
     } else {
       // Return non-streaming response
       const response = formatCopilotResponse(
         agentResponse,
         requestId,
         startTime,
-      );
-      return c.json(response);
+      )
+      return c.json(response)
     }
   } catch {
     logger.error('CopilotKit bridge error', {
       requestId,
       error: error instanceof Error ? error.message : 'Unknown error',
       stack: error instanceof Error ? error.stack : undefined,
-    });
+    })
 
     return c.json(
       {
@@ -174,9 +174,9 @@ copilotBridge.post('/chat/completions', async c => {
         },
       },
       500,
-    );
+    )
   }
-});
+})
 
 /**
  * Call AG-UI Agent Backend
@@ -186,7 +186,7 @@ async function callAGUIAgent(
   userContext: any,
   requestId: string,
 ) {
-  const agentUrl = process.env.AGUI_AGENT_URL || 'http://127.0.0.1:8000';
+  const agentUrl = process.env.AGUI_AGENT_URL || 'http://127.0.0.1:8000'
 
   try {
     const response = await fetch(`${agentUrl}/agui/http`, {
@@ -214,20 +214,20 @@ async function callAGUIAgent(
           },
         },
       }),
-    });
+    })
 
     if (!response.ok) {
-      throw new Error(`AG-UI Agent responded with status: ${response.status}`);
+      throw new Error(`AG-UI Agent responded with status: ${response.status}`)
     }
 
-    const agentData = await response.json();
-    return agentData;
+    const agentData = await response.json()
+    return agentData
   } catch {
     logger.error('AG-UI Agent call failed', {
       requestId,
       error: error instanceof Error ? error.message : 'Unknown error',
       agentUrl,
-    });
+    })
 
     // Return fallback response
     return {
@@ -239,7 +239,7 @@ async function callAGUIAgent(
         fallback: true,
         agent_error: error instanceof Error ? error.message : 'Unknown error',
       },
-    };
+    }
   }
 }
 
@@ -251,54 +251,54 @@ function formatCopilotResponse(
   requestId: string,
   startTime: number,
 ) {
-  const processingTime = Date.now() - startTime;
+  const processingTime = Date.now() - startTime
 
   // Format content based on response type
-  let content = agentResponse.content || 'Resposta processada com sucesso.';
+  let content = agentResponse.content || 'Resposta processada com sucesso.'
 
   // Add structured data formatting for healthcare responses
   if (agentResponse.data) {
-    const _data = agentResponse.data;
+    const _data = agentResponse.data
 
     if (data.type === 'appointments_list') {
-      content += `\n\n📅 **${data.title}**\n${data.summary}`;
+      content += `\n\n📅 **${data.title}**\n${data.summary}`
 
       if (data.data && data.data.length > 0) {
-        content += '\n\n**Próximos agendamentos:**';
+        content += '\n\n**Próximos agendamentos:**'
         data.data.slice(0, 5).forEach((apt: any) => {
           content +=
-            `\n• ${apt.displayDate} às ${apt.displayTime} - ${apt.clientName} (${apt.statusBadge.label})`;
-        });
+            `\n• ${apt.displayDate} às ${apt.displayTime} - ${apt.clientName} (${apt.statusBadge.label})`
+        })
 
         if (data.data.length > 5) {
-          content += `\n... e mais ${data.data.length - 5} agendamentos.`;
+          content += `\n... e mais ${data.data.length - 5} agendamentos.`
         }
       }
     } else if (data.type === 'clients_list') {
-      content += `\n\n👥 **${data.title}**\n${data.summary}`;
+      content += `\n\n👥 **${data.title}**\n${data.summary}`
 
       if (data.data && data.data.length > 0) {
-        content += '\n\n**Clientes encontrados:**';
+        content += '\n\n**Clientes encontrados:**'
         data.data.slice(0, 5).forEach((client: any) => {
-          content += `\n• ${client.name} - ${client.phone} (membro desde ${client.memberSince})`;
-        });
+          content += `\n• ${client.name} - ${client.phone} (membro desde ${client.memberSince})`
+        })
 
         if (data.data.length > 5) {
-          content += `\n... e mais ${data.data.length - 5} clientes.`;
+          content += `\n... e mais ${data.data.length - 5} clientes.`
         }
       }
     } else if (data.type === 'financial_summary') {
-      const financialData = data.data;
-      content += `\n\n💰 **${data.title}**`;
-      content += `\n📈 Receita Total: **${financialData.totalRevenue.formatted}**`;
-      content += `\n⏱️ Pagamentos Pendentes: ${financialData.pendingPayments.formatted}`;
-      content += `\n✅ Transações Completadas: ${financialData.completedTransactions.formatted}`;
+      const financialData = data.data
+      content += `\n\n💰 **${data.title}**`
+      content += `\n📈 Receita Total: **${financialData.totalRevenue.formatted}**`
+      content += `\n⏱️ Pagamentos Pendentes: ${financialData.pendingPayments.formatted}`
+      content += `\n✅ Transações Completadas: ${financialData.completedTransactions.formatted}`
     }
   }
 
   // Add performance information
   if (processingTime > 1000) {
-    content += `\n\n_Processado em ${(processingTime / 1000).toFixed(1)}s_`;
+    content += `\n\n_Processado em ${(processingTime / 1000).toFixed(1)}s_`
   }
 
   return {
@@ -334,7 +334,7 @@ function formatCopilotResponse(
       lgpd_compliant: true,
       accessibility_features: true,
     },
-  };
+  }
 }
 
 /**
@@ -357,8 +357,8 @@ copilotBridge.get('/health', c => {
       mobile_optimized: true,
     },
     timestamp: new Date().toISOString(),
-  });
-});
+  })
+})
 
 /**
  * Models endpoint for CopilotKit compatibility
@@ -400,7 +400,7 @@ copilotBridge.get('/models', c => {
         },
       },
     ],
-  });
-});
+  })
+})
 
-export default copilotBridge;
+export default copilotBridge

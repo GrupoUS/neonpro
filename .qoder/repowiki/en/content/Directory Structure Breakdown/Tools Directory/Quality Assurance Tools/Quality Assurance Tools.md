@@ -281,7 +281,7 @@ if (context.domain.includes('medical-data') || context.files?.implementation?.in
       context.files.implementation,
       'Ensure all PHI fields are encrypted using approved algorithms and key management practices',
     ),
-  );
+  )
 }
 ```
 

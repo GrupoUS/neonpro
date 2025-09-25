@@ -14,12 +14,12 @@
  * @compliance LGPD, ANVISA SaMD, Healthcare Standards
  */
 
-import type { Context, MiddlewareHandler, Next } from 'hono';
-import { verify } from 'hono/jwt';
-import { nanoid } from 'nanoid';
-import { z } from 'zod';
-import { auditLogger, logHealthcareError } from '../logging/healthcare-logger';
-const authLogger = auditLogger;
+import type { Context, MiddlewareHandler, Next } from 'hono'
+import { verify } from 'hono/jwt'
+import { nanoid } from 'nanoid'
+import { z } from 'zod'
+import { auditLogger, logHealthcareError } from '../logging/healthcare-logger'
+const authLogger = auditLogger
 
 // ============================================================================
 // SCHEMAS & TYPES
@@ -30,25 +30,25 @@ const authLogger = auditLogger;
  */
 export interface JWTPayload {
   /** User identifier */
-  _userId: string;
+  _userId: string
   /** Session identifier (optional) */
-  sessionId?: string;
+  sessionId?: string
   /** Token issuer */
-  iss: string;
+  iss: string
   /** Token audience */
-  aud: string;
+  aud: string
   /** Expiration timestamp */
-  exp: number;
+  exp: number
   /** Issued at timestamp */
-  iat: number;
+  iat: number
   /** Authentication method used */
-  authMethod?: string;
+  authMethod?: string
   /** MFA verification status */
-  mfaVerified?: boolean;
+  mfaVerified?: boolean
   /** Emergency mode flag */
-  emergencyMode?: boolean;
+  emergencyMode?: boolean
   /** Supervisor override flag */
-  supervisorOverride?: boolean;
+  supervisorOverride?: boolean
 }
 
 /**
@@ -56,40 +56,40 @@ export interface JWTPayload {
  */
 export interface UserProfile {
   /** Healthcare role */
-  _role: HealthcareRole;
+  _role: HealthcareRole
   /** Healthcare facility ID */
-  facilityId: string;
+  facilityId: string
   /** Department ID */
-  departmentId: string;
+  departmentId: string
   /** Current shift ID (optional) */
-  shiftId?: string;
+  shiftId?: string
   /** Professional license number */
-  licenseNumber: string;
+  licenseNumber: string
   /** Medical specialization */
-  specialization: string;
+  specialization: string
   /** Preferred language */
-  preferredLanguage: string;
+  preferredLanguage: string
   /** User timezone */
-  timezone: string;
+  timezone: string
   /** LGPD consent status */
   consentStatus: {
-    dataProcessing: boolean;
-    communication: boolean;
-    analytics: boolean;
-    thirdParty: boolean;
-    consentDate: string;
-    consentVersion: string;
-  };
+    dataProcessing: boolean
+    communication: boolean
+    analytics: boolean
+    thirdParty: boolean
+    consentDate: string
+    consentVersion: string
+  }
 }
 
 /**
  * Authorization requirements interface
  */
 export interface AuthorizationRequirements {
-  permission?: HealthcarePermission;
-  accessLevel?: number;
-  resource?: string;
-  operation?: 'read' | 'write' | 'delete';
+  permission?: HealthcarePermission
+  accessLevel?: number
+  resource?: string
+  operation?: 'read' | 'write' | 'delete'
 }
 
 /**
@@ -101,25 +101,25 @@ export type JWTAlgorithm =
   | 'HS512'
   | 'RS256'
   | 'RS384'
-  | 'RS512';
+  | 'RS512'
 
 /**
  * Environment type
  */
-export type Environment = 'development' | 'staging' | 'production';
+export type Environment = 'development' | 'staging' | 'production'
 
 /**
  * Log level type
  */
-export type LogLevel = 'debug' | 'info' | 'warn' | 'error';
+export type LogLevel = 'debug' | 'info' | 'warn' | 'error'
 
 /**
  * Authentication error interface
  */
 export interface AuthenticationError {
-  message: string;
-  code?: string;
-  stack?: string;
+  message: string
+  code?: string
+  stack?: string
 }
 
 /**
@@ -142,9 +142,9 @@ export const HealthcareRoleSchema = z.enum([
   'compliance_officer', // Level 8: Compliance oversight
   'emergency_responder', // Level 9: Emergency access
   'super_admin', // Level 10: Full system access
-]);
+])
 
-export type HealthcareRole = z.infer<typeof HealthcareRoleSchema>;
+export type HealthcareRole = z.infer<typeof HealthcareRoleSchema>
 
 /**
  * Healthcare permissions schema
@@ -197,9 +197,9 @@ export const HealthcarePermissionSchema = z.enum([
   'compliance:write:policies', // Update compliance policies
   'compliance:read:reports', // Generate compliance reports
   'compliance:export:data', // Export data for compliance
-]);
+])
 
-export type HealthcarePermission = z.infer<typeof HealthcarePermissionSchema>;
+export type HealthcarePermission = z.infer<typeof HealthcarePermissionSchema>
 
 /**
  * Authentication session schema
@@ -338,9 +338,9 @@ export const AuthSessionSchema = z.object({
         .describe('Compliance flags'),
     })
     .describe('Compliance tracking'),
-});
+})
 
-export type AuthSession = z.infer<typeof AuthSessionSchema>;
+export type AuthSession = z.infer<typeof AuthSessionSchema>
 
 /**
  * Authentication configuration schema
@@ -526,9 +526,9 @@ export const AuthConfigSchema = z.object({
         .describe('Audit log retention days (7 years)'),
     })
     .describe('Logging settings'),
-});
+})
 
-export type AuthConfig = z.infer<typeof AuthConfigSchema>;
+export type AuthConfig = z.infer<typeof AuthConfigSchema>
 
 /**
  * Authentication result schema
@@ -552,9 +552,9 @@ export const AuthResultSchema = z.object({
     })
     .describe('Compliance status'),
   timestamp: z.string().datetime().describe('Authentication timestamp'),
-});
+})
 
-export type AuthResult = z.infer<typeof AuthResultSchema>;
+export type AuthResult = z.infer<typeof AuthResultSchema>
 
 // ============================================================================
 // HEALTHCARE RBAC SYSTEM
@@ -581,7 +581,7 @@ export class HealthcareRBAC {
     compliance_officer: 8,
     emergency_responder: 9,
     super_admin: 10,
-  };
+  }
 
   private static rolePermissions: Record<
     HealthcareRole,
@@ -764,7 +764,7 @@ export class HealthcareRBAC {
       'compliance:read:reports',
       'compliance:export:data',
     ],
-  };
+  }
 
   /**
    * Check if user has specific permission
@@ -773,8 +773,8 @@ export class HealthcareRBAC {
     userRole: HealthcareRole,
     permission: HealthcarePermission,
   ): boolean {
-    const rolePermissions = this.rolePermissions[userRole] || [];
-    return rolePermissions.includes(permission);
+    const rolePermissions = this.rolePermissions[userRole] || []
+    return rolePermissions.includes(permission)
   }
 
   /**
@@ -784,22 +784,22 @@ export class HealthcareRBAC {
     userRole: HealthcareRole,
     requiredLevel: number,
   ): boolean {
-    const userLevel = this.roleHierarchy[userRole] || 0;
-    return userLevel >= requiredLevel;
+    const userLevel = this.roleHierarchy[userRole] || 0
+    return userLevel >= requiredLevel
   }
 
   /**
    * Get all permissions for a role
    */
   static getRolePermissions(_role: HealthcareRole): HealthcarePermission[] {
-    return this.rolePermissions[_role] || [];
+    return this.rolePermissions[_role] || []
   }
 
   /**
    * Get role access level
    */
   static getRoleLevel(_role: HealthcareRole): number {
-    return this.roleHierarchy[_role] || 0;
+    return this.roleHierarchy[_role] || 0
   }
 
   /**
@@ -812,17 +812,17 @@ export class HealthcareRBAC {
   ): boolean {
     // Emergency responders have override access during emergencies
     if (userRole === 'emergency_responder') {
-      return true;
+      return true
     }
 
     // Build permission string
-    const permission = `${resourceType}:${operation}:basic` as HealthcarePermission;
-    const fullPermission = `${resourceType}:${operation}:full` as HealthcarePermission;
+    const permission = `${resourceType}:${operation}:basic` as HealthcarePermission
+    const fullPermission = `${resourceType}:${operation}:full` as HealthcarePermission
 
     return (
-      this.hasPermission(userRole, permission)
-      || this.hasPermission(userRole, fullPermission)
-    );
+      this.hasPermission(userRole, permission) ||
+      this.hasPermission(userRole, fullPermission)
+    )
   }
 
   /**
@@ -833,13 +833,13 @@ export class HealthcareRBAC {
     action: string,
     config: AuthConfig,
   ): boolean {
-    if (!config.mfa.enabled) return false;
+    if (!config.mfa.enabled) return false
 
     // Check if role requires MFA
-    if (config.mfa.requiredForRoles.includes(userRole)) return true;
+    if (config.mfa.requiredForRoles.includes(userRole)) return true
 
     // Check if action requires MFA
-    if (config.mfa.requiredForActions.includes(action)) return true;
+    if (config.mfa.requiredForActions.includes(action)) return true
 
     // High-privilege roles always require MFA
     const highPrivilegeRoles: HealthcareRole[] = [
@@ -847,9 +847,9 @@ export class HealthcareRBAC {
       'compliance_officer',
       'emergency_responder',
       'super_admin',
-    ];
+    ]
 
-    return highPrivilegeRoles.includes(userRole);
+    return highPrivilegeRoles.includes(userRole)
   }
 }
 
@@ -861,19 +861,19 @@ export class HealthcareRBAC {
  * Healthcare Authentication Middleware Service
  */
 export class HealthcareAuthMiddleware {
-  private config: AuthConfig;
-  private activeSessions: Map<string, AuthSession> = new Map();
-  private sessionActivity: Map<string, number> = new Map();
-  private isInitialized = false;
+  private config: AuthConfig
+  private activeSessions: Map<string, AuthSession> = new Map()
+  private sessionActivity: Map<string, number> = new Map()
+  private isInitialized = false
 
   constructor(config: Partial<AuthConfig> = {}) {
     this.config = AuthConfigSchema.parse({
       ...this.getDefaultConfig(),
       ...config,
-    });
+    })
 
     if (this.config.enabled) {
-      this.initialize();
+      this.initialize()
     }
   }
 
@@ -886,16 +886,16 @@ export class HealthcareAuthMiddleware {
    */
   private initialize(): void {
     try {
-      this.setupSessionManagement();
-      this.setupSecurityMonitoring();
-      this.isInitialized = true;
+      this.setupSessionManagement()
+      this.setupSecurityMonitoring()
+      this.isInitialized = true
 
       authLogger.info(
         'Healthcare authentication middleware initialized',
         { component: 'auth-middleware', timestamp: new Date().toISOString() },
-      );
+      )
     } catch (error) {
-      logHealthcareError('auth-middleware', error as Error, { method: 'initialize' });
+      logHealthcareError('auth-middleware', error as Error, { method: 'initialize' })
     }
   }
 
@@ -905,14 +905,14 @@ export class HealthcareAuthMiddleware {
   private setupSessionManagement(): void {
     // Session cleanup interval
     setInterval(() => {
-      this.cleanupExpiredSessions();
-    }, 60000); // Every minute
+      this.cleanupExpiredSessions()
+    }, 60000) // Every minute
 
     // Session rotation interval
     if (this.config.session.enableSessionRotation) {
       setInterval(() => {
-        this.rotateActiveSessions();
-      }, this.config.session.sessionRotationInterval * 1000);
+        this.rotateActiveSessions()
+      }, this.config.session.sessionRotationInterval * 1000)
     }
   }
 
@@ -922,8 +922,8 @@ export class HealthcareAuthMiddleware {
   private setupSecurityMonitoring(): void {
     if (this.config.security.enableAnomalyDetection) {
       setInterval(() => {
-        this.detectSessionAnomalies();
-      }, 300000); // Every 5 minutes
+        this.detectSessionAnomalies()
+      }, 300000) // Every 5 minutes
     }
   }
 
@@ -1013,7 +1013,7 @@ export class HealthcareAuthMiddleware {
         logLevel: 'info',
         auditRetentionDays: 2555, // 7 years for healthcare
       },
-    };
+    }
   }
 
   // ============================================================================
@@ -1026,42 +1026,42 @@ export class HealthcareAuthMiddleware {
   createAuthMiddleware(): MiddlewareHandler {
     return async (c: Context, next: Next) => {
       if (!this.config.enabled) {
-        return next();
+        return next()
       }
 
       try {
         // Extract and validate authentication
-        const authResult = await this.authenticateRequest(c);
+        const authResult = await this.authenticateRequest(c)
 
         if (!authResult.success) {
-          return this.handleAuthFailure(c, authResult);
+          return this.handleAuthFailure(c, authResult)
         }
 
         // Store session in context
-        c.set('authSession', authResult.session);
-        c.set('authResult', authResult);
+        c.set('authSession', authResult.session)
+        c.set('authResult', authResult)
 
         // Add authentication headers
         if (authResult.session) {
-          c.header('x-session-id', authResult.session.sessionId);
-          c.header('x-user-role', authResult.session.userProfile._role);
+          c.header('x-session-id', authResult.session.sessionId)
+          c.header('x-user-role', authResult.session.userProfile._role)
           c.header(
             'x-access-level',
             authResult.session.userProfile.accessLevel.toString(),
-          );
+          )
         }
 
         // Update session activity
         if (authResult.session) {
-          this.updateSessionActivity(authResult.session.sessionId);
+          this.updateSessionActivity(authResult.session.sessionId)
         }
 
         // Continue to next middleware
-        await next();
+        await next()
 
         // Post-request processing
         if (authResult.session) {
-          await this.logSessionActivity(c, authResult.session);
+          await this.logSessionActivity(c, authResult.session)
         }
       } catch (error) {
         logHealthcareError('auth', error instanceof Error ? error : new Error(String(error)), {
@@ -1069,10 +1069,10 @@ export class HealthcareAuthMiddleware {
           component: 'HealthcareAuthMiddleware',
           severity: 'high',
           path: c.req.path,
-        });
-        return this.handleAuthError(c, error);
+        })
+        return this.handleAuthError(c, error)
       }
-    };
+    }
   }
 
   /**
@@ -1085,7 +1085,7 @@ export class HealthcareAuthMiddleware {
     operation?: 'read' | 'write' | 'delete',
   ): MiddlewareHandler {
     return async (c: Context, next: Next): Promise<void> => {
-      const authSession = c.get('authSession') as AuthSession;
+      const authSession = c.get('authSession') as AuthSession
 
       if (!authSession) {
         c.json(
@@ -1095,8 +1095,8 @@ export class HealthcareAuthMiddleware {
             timestamp: new Date().toISOString(),
           },
           401,
-        );
-        return;
+        )
+        return
       }
 
       // Check specific permission
@@ -1104,14 +1104,14 @@ export class HealthcareAuthMiddleware {
         const hasPermission = HealthcareRBAC.hasPermission(
           (authSession.userProfile as any).role,
           requiredPermission,
-        );
+        )
 
         if (!hasPermission) {
           await this.logAuthorizationFailure(
             c,
             authSession,
             requiredPermission,
-          );
+          )
           c.json(
             {
               error: 'FORBIDDEN',
@@ -1120,8 +1120,8 @@ export class HealthcareAuthMiddleware {
               timestamp: new Date().toISOString(),
             },
             403,
-          );
-          return;
+          )
+          return
         }
       }
 
@@ -1130,14 +1130,14 @@ export class HealthcareAuthMiddleware {
         const hasAccessLevel = HealthcareRBAC.hasAccessLevel(
           (authSession.userProfile as any).role,
           requiredAccessLevel,
-        );
+        )
 
         if (!hasAccessLevel) {
           await this.logAuthorizationFailure(
             c,
             authSession,
             `access_level_${requiredAccessLevel}`,
-          );
+          )
           c.json(
             {
               error: 'FORBIDDEN',
@@ -1147,8 +1147,8 @@ export class HealthcareAuthMiddleware {
               timestamp: new Date().toISOString(),
             },
             403,
-          );
-          return;
+          )
+          return
         }
       }
 
@@ -1158,14 +1158,14 @@ export class HealthcareAuthMiddleware {
           (authSession.userProfile as any).role,
           resourceType,
           operation,
-        );
+        )
 
         if (!canAccess) {
           await this.logAuthorizationFailure(
             c,
             authSession,
             `${resourceType}:${operation}`,
-          );
+          )
           c.json(
             {
               error: 'FORBIDDEN',
@@ -1173,8 +1173,8 @@ export class HealthcareAuthMiddleware {
               timestamp: new Date().toISOString(),
             },
             403,
-          );
-          return;
+          )
+          return
         }
       }
 
@@ -1183,7 +1183,7 @@ export class HealthcareAuthMiddleware {
         authSession.userProfile._role,
         `${resourceType}:${operation}`,
         this.config,
-      );
+      )
 
       if (requiresMfa && !authSession.sessionMetadata.mfaVerified) {
         c.json(
@@ -1193,8 +1193,8 @@ export class HealthcareAuthMiddleware {
             timestamp: new Date().toISOString(),
           },
           403,
-        );
-        return;
+        )
+        return
       }
 
       // Log successful authorization
@@ -1203,10 +1203,10 @@ export class HealthcareAuthMiddleware {
         accessLevel: requiredAccessLevel,
         resource: resourceType,
         operation,
-      });
+      })
 
-      await next();
-    };
+      await next()
+    }
   }
 
   // ============================================================================
@@ -1219,7 +1219,7 @@ export class HealthcareAuthMiddleware {
   private async authenticateRequest(c: Context): Promise<AuthResult> {
     try {
       // Extract authentication token
-      const token = await this.extractAuthToken(c);
+      const token = await this.extractAuthToken(c)
 
       if (!token) {
         return this.createAuthResult(
@@ -1227,11 +1227,11 @@ export class HealthcareAuthMiddleware {
           undefined,
           'NO_TOKEN',
           'Authentication token not provided',
-        );
+        )
       }
 
       // Validate and decode token
-      const decoded = await this.validateToken(token);
+      const decoded = await this.validateToken(token)
 
       if (!decoded) {
         return this.createAuthResult(
@@ -1239,11 +1239,11 @@ export class HealthcareAuthMiddleware {
           undefined,
           'INVALID_TOKEN',
           'Invalid authentication token',
-        );
+        )
       }
 
       // Get or create session
-      const session = await this.getOrCreateSession(decoded, c);
+      const session = await this.getOrCreateSession(decoded, c)
 
       if (!session) {
         return this.createAuthResult(
@@ -1251,11 +1251,11 @@ export class HealthcareAuthMiddleware {
           undefined,
           'SESSION_ERROR',
           'Failed to create or retrieve session',
-        );
+        )
       }
 
       // Validate session
-      const sessionValid = await this.validateSession(session, c);
+      const sessionValid = await this.validateSession(session, c)
 
       if (!sessionValid) {
         return this.createAuthResult(
@@ -1263,17 +1263,17 @@ export class HealthcareAuthMiddleware {
           undefined,
           'SESSION_INVALID',
           'Session is no longer valid',
-        );
+        )
       }
 
       // Perform risk assessment
-      const riskScore = await this.assessRisk(session, c);
+      const riskScore = await this.assessRisk(session, c)
 
       // Check if MFA is required
-      const requiresMfa = this.checkMfaRequirement(session, c);
+      const requiresMfa = this.checkMfaRequirement(session, c)
 
       // Update session with current request
-      await this.updateSession(session, c);
+      await this.updateSession(session, c)
 
       return this.createAuthResult(
         true,
@@ -1283,20 +1283,20 @@ export class HealthcareAuthMiddleware {
         requiresMfa,
         false,
         riskScore,
-      );
+      )
     } catch (error) {
       logHealthcareError('auth', error instanceof Error ? error : new Error(String(error)), {
         method: 'handleAuthentication',
         component: 'HealthcareAuthMiddleware',
         severity: 'high',
         operation: 'authentication',
-      });
+      })
       return this.createAuthResult(
         false,
         undefined,
         'AUTH_ERROR',
         'Authentication failed',
-      );
+      )
     }
   }
 
@@ -1305,9 +1305,9 @@ export class HealthcareAuthMiddleware {
    */
   private async extractAuthToken(c: Context): Promise<string | null> {
     // Check Authorization header
-    const authHeader = c.req.header('authorization');
+    const authHeader = c.req.header('authorization')
     if (authHeader?.startsWith('Bearer ')) {
-      return authHeader.substring(7);
+      return authHeader.substring(7)
     }
 
     // Check cookie (for web sessions)
@@ -1315,19 +1315,19 @@ export class HealthcareAuthMiddleware {
       .header('cookie')
       ?.split(';')
       .find(cookie => cookie.trim().startsWith('auth_token='))
-      ?.split('=')[1];
+      ?.split('=')[1]
 
     if (cookieToken) {
-      return cookieToken;
+      return cookieToken
     }
 
     // Check query parameter (for limited use cases)
-    const queryToken = c.req.query('token');
+    const queryToken = c.req.query('token')
     if (queryToken) {
-      return queryToken;
+      return queryToken
     }
 
-    return null;
+    return null
   }
 
   /**
@@ -1335,31 +1335,31 @@ export class HealthcareAuthMiddleware {
    */
   private async validateToken(token: string): Promise<JWTPayload | null> {
     try {
-      const secret = process.env.JWT_SECRET;
+      const secret = process.env.JWT_SECRET
 
       if (!secret) {
         throw new Error(
           'JWT_SECRET environment variable is required for token validation.',
-        );
+        )
       }
 
       const decoded = await verify(
         token,
         secret,
         this.config.jwt.algorithm as JWTAlgorithm,
-      );
+      )
 
       // Validate token claims
       if (decoded.iss !== this.config.jwt.issuer) {
-        throw new Error('Invalid token issuer');
+        throw new Error('Invalid token issuer')
       }
 
       if (decoded.aud !== this.config.jwt.audience) {
-        throw new Error('Invalid token audience');
+        throw new Error('Invalid token audience')
       }
 
       if (decoded.exp && decoded.exp < Date.now() / 1000) {
-        throw new Error('Token expired');
+        throw new Error('Token expired')
       }
 
       // Cast to our JWTPayload interface
@@ -1374,17 +1374,17 @@ export class HealthcareAuthMiddleware {
         mfaVerified: decoded.mfaVerified as boolean,
         emergencyMode: decoded.emergencyMode as boolean,
         supervisorOverride: decoded.supervisorOverride as boolean,
-      };
+      }
 
-      return jwtPayload;
+      return jwtPayload
     } catch (error) {
       logHealthcareError('auth', error instanceof Error ? error : new Error(String(error)), {
         method: 'validateToken',
         component: 'HealthcareAuthMiddleware',
         severity: 'high',
         operation: 'token_validation',
-      });
-      return null;
+      })
+      return null
     }
   }
 
@@ -1399,28 +1399,28 @@ export class HealthcareAuthMiddleware {
       // Check if session already exists
       const existingSession = decoded.sessionId
         ? this.activeSessions.get(decoded.sessionId)
-        : undefined;
+        : undefined
 
       if (existingSession) {
-        return existingSession;
+        return existingSession
       }
 
       // Create new session
-      const session = await this.createNewSession(decoded, c);
+      const session = await this.createNewSession(decoded, c)
 
       if (session) {
-        this.activeSessions.set(session.sessionId, session);
+        this.activeSessions.set(session.sessionId, session)
       }
 
-      return session;
+      return session
     } catch (error) {
       logHealthcareError('auth', error instanceof Error ? error : new Error(String(error)), {
         method: 'createSession',
         component: 'HealthcareAuthMiddleware',
         severity: 'high',
         operation: 'session_creation',
-      });
-      return null;
+      })
+      return null
     }
   }
 
@@ -1432,14 +1432,14 @@ export class HealthcareAuthMiddleware {
     c: Context,
   ): Promise<AuthSession | null> {
     try {
-      const sessionId = decoded.sessionId || `sess_${nanoid(16)}`;
-      const now = new Date().toISOString();
+      const sessionId = decoded.sessionId || `sess_${nanoid(16)}`
+      const now = new Date().toISOString()
 
       // TODO: Get user profile from database based on decoded.userId
-      const userProfile = await this.getUserProfile(decoded._userId);
+      const userProfile = await this.getUserProfile(decoded._userId)
 
       if (!userProfile) {
-        return null;
+        return null
       }
 
       const session: AuthSession = {
@@ -1478,9 +1478,9 @@ export class HealthcareAuthMiddleware {
             Date.now() + this.config.session.absoluteTimeout * 1000,
           ).toISOString(),
           ipAddress: this.anonymizeIP(
-            c.req.header('x-forwarded-for')?.split(',')[0]?.trim()
-              || c.req.header('x-real-ip')
-              || 'unknown',
+            c.req.header('x-forwarded-for')?.split(',')[0]?.trim() ||
+              c.req.header('x-real-ip') ||
+              'unknown',
           ),
           userAgent: c.req.header('user-agent') || 'unknown',
           deviceType: this.detectDeviceType(c.req.header('user-agent')),
@@ -1508,17 +1508,17 @@ export class HealthcareAuthMiddleware {
             retentionApplied: false,
           },
         },
-      };
+      }
 
-      return session;
+      return session
     } catch (error) {
       logHealthcareError('auth', error instanceof Error ? error : new Error(String(error)), {
         method: 'createNewSession',
         component: 'HealthcareAuthMiddleware',
         severity: 'high',
         operation: 'new_session_creation',
-      });
-      return null;
+      })
+      return null
     }
   }
 
@@ -1544,7 +1544,7 @@ export class HealthcareAuthMiddleware {
         consentDate: new Date().toISOString(),
         consentVersion: '1.0',
       },
-    };
+    }
   }
 
   /**
@@ -1554,59 +1554,59 @@ export class HealthcareAuthMiddleware {
     session: AuthSession,
     c: Context,
   ): Promise<boolean> {
-    const now = Date.now();
+    const now = Date.now()
 
     // Check absolute expiration
     if (new Date(session.sessionMetadata.expiresAt).getTime() < now) {
-      await this.expireSession(session.sessionId, 'ABSOLUTE_TIMEOUT');
-      return false;
+      await this.expireSession(session.sessionId, 'ABSOLUTE_TIMEOUT')
+      return false
     }
 
     // Check idle timeout
     const lastActivity = new Date(
       session.sessionMetadata.lastActivity,
-    ).getTime();
-    const idleTime = now - lastActivity;
+    ).getTime()
+    const idleTime = now - lastActivity
 
     if (idleTime > this.config.session.idleTimeout * 1000) {
-      await this.expireSession(session.sessionId, 'IDLE_TIMEOUT');
-      return false;
+      await this.expireSession(session.sessionId, 'IDLE_TIMEOUT')
+      return false
     }
 
     // Check concurrent session limit
     const userSessions = Array.from(this.activeSessions.values()).filter(
       s => s._userId === session._userId,
-    );
+    )
 
     if (userSessions.length > this.config.session.maxConcurrentSessions) {
       // Remove oldest session
       const oldestSession = userSessions.sort(
         (a, _b) =>
-          new Date(a.sessionMetadata.lastActivity).getTime()
-          - new Date(_b.sessionMetadata.lastActivity).getTime(),
-      )[0];
+          new Date(a.sessionMetadata.lastActivity).getTime() -
+          new Date(_b.sessionMetadata.lastActivity).getTime(),
+      )[0]
 
       if (oldestSession) {
-        await this.expireSession(oldestSession.sessionId, 'CONCURRENT_LIMIT');
+        await this.expireSession(oldestSession.sessionId, 'CONCURRENT_LIMIT')
 
         // If the current session is the one being expired, return false
         if (oldestSession.sessionId === session.sessionId) {
-          return false;
+          return false
         }
       }
     }
 
     // Validate LGPD consent if required
     if (this.config.lgpdCompliance.enableConsentValidation) {
-      const hasValidConsent = session.userProfile.consentStatus.dataProcessing;
+      const hasValidConsent = session.userProfile.consentStatus.dataProcessing
 
       if (!hasValidConsent) {
-        await this.expireSession(session.sessionId, 'CONSENT_REVOKED');
-        return false;
+        await this.expireSession(session.sessionId, 'CONSENT_REVOKED')
+        return false
       }
     }
 
-    return true;
+    return true
   }
 
   /**
@@ -1614,35 +1614,35 @@ export class HealthcareAuthMiddleware {
    */
   private async assessRisk(session: AuthSession, _c: Context): Promise<number> {
     if (!this.config.security.enableRiskAssessment) {
-      return 0;
+      return 0
     }
 
-    let riskScore = 0;
+    let riskScore = 0
 
     // Geographic risk (if enabled)
     if (this.config.security.enableGeoBlocking) {
-      const country = _c.req.header('x-country-code');
+      const country = _c.req.header('x-country-code')
       if (country && !this.isAllowedCountry(country)) {
-        riskScore += 3;
+        riskScore += 3
       }
     }
 
     // Time-based risk
-    const currentHour = new Date().getHours();
+    const currentHour = new Date().getHours()
     if (currentHour < 6 || currentHour > 22) {
-      riskScore += 1; // Unusual hours
+      riskScore += 1 // Unusual hours
     }
 
     // Device fingerprinting
     if (this.config.security.enableDeviceFingerprinting) {
-      const deviceFingerprint = this.generateDeviceFingerprint(_c);
+      const deviceFingerprint = this.generateDeviceFingerprint(_c)
       const knownDevice = await this.isKnownDevice(
         session._userId,
         deviceFingerprint,
-      );
+      )
 
       if (!knownDevice) {
-        riskScore += 2; // Unknown device
+        riskScore += 2 // Unknown device
       }
     }
 
@@ -1652,18 +1652,18 @@ export class HealthcareAuthMiddleware {
       'compliance_officer',
       'emergency_responder',
       'super_admin',
-    ];
+    ]
 
     if (highRiskRoles.includes(session.userProfile._role)) {
-      riskScore += 1;
+      riskScore += 1
     }
 
     // Emergency mode increases risk monitoring
     if (session.sessionMetadata.workflowContext?.emergencyMode) {
-      riskScore += 2;
+      riskScore += 2
     }
 
-    return Math.min(riskScore, 10); // Cap at 10
+    return Math.min(riskScore, 10) // Cap at 10
   }
 
   /**
@@ -1671,49 +1671,49 @@ export class HealthcareAuthMiddleware {
    */
   private checkMfaRequirement(session: AuthSession, _c: Context): boolean {
     if (!this.config.mfa.enabled) {
-      return false;
+      return false
     }
 
     // Skip if already verified and within grace period
     if (session.sessionMetadata.mfaVerified) {
       const lastActivity = new Date(
         session.sessionMetadata.lastActivity,
-      ).getTime();
-      const gracePeriodExpiry = lastActivity + this.config.mfa.gracePeriod * 1000;
+      ).getTime()
+      const gracePeriodExpiry = lastActivity + this.config.mfa.gracePeriod * 1000
 
       if (Date.now() < gracePeriodExpiry) {
-        return false;
+        return false
       }
     }
 
     // Emergency bypass
     if (
-      this.config.mfa.emergencyBypass
-      && session.sessionMetadata.workflowContext?.emergencyMode
+      this.config.mfa.emergencyBypass &&
+      session.sessionMetadata.workflowContext?.emergencyMode
     ) {
-      return false;
+      return false
     }
 
-    const action = `${_c.req.method}:${_c.req.path}`;
+    const action = `${_c.req.method}:${_c.req.path}`
 
     return HealthcareRBAC.requiresMFA(
       session.userProfile._role,
       action,
       this.config,
-    );
+    )
   }
 
   /**
    * Update session with current request information
    */
   private async updateSession(session: AuthSession, _c: Context): Promise<void> {
-    const now = new Date().toISOString();
+    const now = new Date().toISOString()
 
     // Update activity timestamp
-    session.sessionMetadata.lastActivity = now;
+    session.sessionMetadata.lastActivity = now
 
     // Update risk score
-    session.sessionMetadata.riskScore = await this.assessRisk(session, _c);
+    session.sessionMetadata.riskScore = await this.assessRisk(session, _c)
 
     // Add to audit trail
     session.complianceTracking.auditTrail.push({
@@ -1726,16 +1726,16 @@ export class HealthcareAuthMiddleware {
         : session.sessionMetadata.riskScore > 2
         ? 'medium'
         : 'low',
-    });
+    })
 
     // Limit audit trail size
     if (session.complianceTracking.auditTrail.length > 100) {
-      session.complianceTracking.auditTrail = session.complianceTracking.auditTrail.slice(-50);
+      session.complianceTracking.auditTrail = session.complianceTracking.auditTrail.slice(-50)
     }
 
     // Update session in store
-    this.activeSessions.set(session.sessionId, session);
-    this.sessionActivity.set(session.sessionId, Date.now());
+    this.activeSessions.set(session.sessionId, session)
+    this.sessionActivity.set(session.sessionId, Date.now())
   }
 
   // ============================================================================
@@ -1768,7 +1768,7 @@ export class HealthcareAuthMiddleware {
         auditRequired: session?.complianceTracking.complianceFlags.auditRequired || false,
       },
       timestamp: new Date().toISOString(),
-    };
+    }
   }
 
   /**
@@ -1778,7 +1778,7 @@ export class HealthcareAuthMiddleware {
     c: Context,
     authResult: AuthResult,
   ): Promise<Response> {
-    await this.logAuthFailure(c, authResult);
+    await this.logAuthFailure(c, authResult)
 
     const response = {
       error: authResult.errorCode || 'AUTHENTICATION_FAILED',
@@ -1786,10 +1786,10 @@ export class HealthcareAuthMiddleware {
       requiresMfa: authResult.requiresMfa,
       requiresEmergencyApproval: authResult.requiresEmergencyApproval,
       timestamp: authResult.timestamp,
-    };
+    }
 
-    const statusCode = authResult.errorCode === 'NO_TOKEN' ? 401 : 403;
-    return c.json(response, statusCode);
+    const statusCode = authResult.errorCode === 'NO_TOKEN' ? 401 : 403
+    return c.json(response, statusCode)
   }
 
   /**
@@ -1803,16 +1803,16 @@ export class HealthcareAuthMiddleware {
       error: 'AUTHENTICATION_ERROR',
       message: 'Internal authentication error',
       timestamp: new Date().toISOString(),
-    };
+    }
 
-    return c.json(errorResponse, 500);
+    return c.json(errorResponse, 500)
   }
 
   /**
    * Update session activity timestamp
    */
   private updateSessionActivity(sessionId: string): void {
-    this.sessionActivity.set(sessionId, Date.now());
+    this.sessionActivity.set(sessionId, Date.now())
   }
 
   /**
@@ -1822,7 +1822,7 @@ export class HealthcareAuthMiddleware {
     _c: Context,
     session: AuthSession,
   ): Promise<void> {
-    if (!this.config.logging.enableSessionTracking) return;
+    if (!this.config.logging.enableSessionTracking) return
 
     const activityLog = {
       sessionId: session.sessionId,
@@ -1834,12 +1834,12 @@ export class HealthcareAuthMiddleware {
       ipAddress: session.sessionMetadata.ipAddress,
       riskScore: session.sessionMetadata.riskScore,
       timestamp: new Date().toISOString(),
-    };
+    }
 
     authLogger.info('Session activity logged', {
       ...activityLog,
       component: 'auth-middleware',
-    });
+    })
   }
 
   /**
@@ -1859,12 +1859,12 @@ export class HealthcareAuthMiddleware {
       requirement,
       reason: 'INSUFFICIENT_PERMISSIONS',
       timestamp: new Date().toISOString(),
-    };
+    }
 
     authLogger.warn('Authorization failure', {
       ...failureLog,
       component: 'auth-middleware',
-    });
+    })
   }
 
   /**
@@ -1875,7 +1875,7 @@ export class HealthcareAuthMiddleware {
     session: AuthSession,
     requirements: AuthorizationRequirements,
   ): Promise<void> {
-    if (!this.config.logging.enableAuthAudit) return;
+    if (!this.config.logging.enableAuthAudit) return
 
     const authLog = {
       sessionId: session.sessionId,
@@ -1886,12 +1886,12 @@ export class HealthcareAuthMiddleware {
       requirements,
       outcome: 'AUTHORIZED',
       timestamp: new Date().toISOString(),
-    };
+    }
 
     authLogger.info('Authorization success', {
       ...authLog,
       component: 'auth-middleware',
-    });
+    })
   }
 
   /**
@@ -1905,21 +1905,21 @@ export class HealthcareAuthMiddleware {
       endpoint: c.req.path,
       method: c.req.method,
       ipAddress: this.anonymizeIP(
-        c.req.header('x-forwarded-for')?.split(',')[0]?.trim()
-          || c.req.header('x-real-ip')
-          || 'unknown',
+        c.req.header('x-forwarded-for')?.split(',')[0]?.trim() ||
+          c.req.header('x-real-ip') ||
+          'unknown',
       ),
       userAgent: c.req.header('user-agent'),
       errorCode: authResult.errorCode,
       errorMessage: authResult.errorMessage,
       riskScore: authResult.riskScore,
       timestamp: authResult.timestamp,
-    };
+    }
 
     authLogger.warn('Authentication failure', {
       ...failureLog,
       component: 'auth-middleware',
-    });
+    })
   }
 
   /**
@@ -1929,7 +1929,7 @@ export class HealthcareAuthMiddleware {
     sessionId: string,
     reason: string,
   ): Promise<void> {
-    const session = this.activeSessions.get(sessionId);
+    const session = this.activeSessions.get(sessionId)
 
     if (session) {
       authLogger.info('Session expired', {
@@ -1937,7 +1937,7 @@ export class HealthcareAuthMiddleware {
         reason,
         component: 'auth-middleware',
         timestamp: new Date().toISOString(),
-      });
+      })
 
       // Log session expiration
       const expirationLog = {
@@ -1947,44 +1947,44 @@ export class HealthcareAuthMiddleware {
         reason,
         duration: Date.now() - new Date(session.sessionMetadata.createdAt).getTime(),
         timestamp: new Date().toISOString(),
-      };
+      }
 
       authLogger.info('Session expiration processed', {
         ...expirationLog,
         component: 'auth-middleware',
-      });
+      })
     }
 
-    this.activeSessions.delete(sessionId);
-    this.sessionActivity.delete(sessionId);
+    this.activeSessions.delete(sessionId)
+    this.sessionActivity.delete(sessionId)
   }
 
   /**
    * Cleanup expired sessions
    */
   private cleanupExpiredSessions(): void {
-    const now = Date.now();
-    const expiredSessions: string[] = [];
+    const now = Date.now()
+    const expiredSessions: string[] = []
 
     for (const [sessionId, session] of Array.from(this.activeSessions.entries())) {
       const expirationTime = new Date(
         session.sessionMetadata.expiresAt,
-      ).getTime();
+      ).getTime()
       const lastActivity = new Date(
         session.sessionMetadata.lastActivity,
-      ).getTime();
-      const idleTime = now - lastActivity;
+      ).getTime()
+      const idleTime = now - lastActivity
 
       if (
-        expirationTime < now
-        || idleTime > this.config.session.idleTimeout * 1000
+        expirationTime < now ||
+        idleTime > this.config.session.idleTimeout * 1000
       ) {
-        expiredSessions.push(sessionId);
+        expiredSessions.push(sessionId)
       }
     }
 
     for (const sessionId of expiredSessions) {
-      this.expireSession(sessionId, 'CLEANUP');
+      this.expireSession(sessionId, 'CLEANUP')
     }
 
     if (expiredSessions.length > 0) {
@@ -1992,7 +1992,7 @@ export class HealthcareAuthMiddleware {
         cleanedSessions: expiredSessions.length,
         component: 'auth-middleware',
         timestamp: new Date().toISOString(),
-      });
+      })
     }
   }
 
@@ -2004,42 +2004,42 @@ export class HealthcareAuthMiddleware {
     authLogger.info('Session rotation check performed', {
       component: 'auth-middleware',
       timestamp: new Date().toISOString(),
-    });
+    })
   }
 
   /**
    * Detect session anomalies
    */
   private detectSessionAnomalies(): void {
-    if (!this.config.security.enableAnomalyDetection) return;
+    if (!this.config.security.enableAnomalyDetection) return
 
     // TODO: Implement anomaly detection logic
     authLogger.info('Session anomaly detection performed', {
       component: 'auth-middleware',
       timestamp: new Date().toISOString(),
-    });
+    })
   }
 
   /**
    * Anonymize IP address for LGPD compliance
    */
   private anonymizeIP(ip: string): string {
-    if (!ip || ip === 'unknown') return 'unknown';
+    if (!ip || ip === 'unknown') return 'unknown'
 
     try {
       // IPv4 anonymization
       if (ip.includes('.')) {
-        const parts = ip.split('.');
+        const parts = ip.split('.')
         if (parts.length >= 3) {
-          return `${parts[0]}.${parts[1]}.${parts[2]}.0`;
+          return `${parts[0]}.${parts[1]}.${parts[2]}.0`
         }
       }
 
       // IPv6 anonymization
       if (ip.includes(':')) {
-        const parts = ip.split(':');
+        const parts = ip.split(':')
         if (parts.length >= 4) {
-          return parts.slice(0, 4).join(':') + '::';
+          return parts.slice(0, 4).join(':') + '::'
         }
       }
     } catch (error) {
@@ -2047,10 +2047,10 @@ export class HealthcareAuthMiddleware {
         ip: ip,
         component: 'auth-middleware',
         timestamp: new Date().toISOString(),
-      });
+      })
     }
 
-    return 'anonymized';
+    return 'anonymized'
   }
 
   /**
@@ -2059,23 +2059,23 @@ export class HealthcareAuthMiddleware {
   private detectDeviceType(
     userAgent?: string,
   ): 'mobile' | 'tablet' | 'desktop' | 'medical_device' {
-    if (!userAgent) return 'desktop';
+    if (!userAgent) return 'desktop'
 
-    const ua = userAgent.toLowerCase();
+    const ua = userAgent.toLowerCase()
 
     if (ua.includes('medical') || ua.includes('monitor')) {
-      return 'medical_device';
+      return 'medical_device'
     }
     if (
-      ua.includes('mobile')
-      || ua.includes('android')
-      || ua.includes('iphone')
+      ua.includes('mobile') ||
+      ua.includes('android') ||
+      ua.includes('iphone')
     ) {
-      return 'mobile';
+      return 'mobile'
     }
-    if (ua.includes('tablet') || ua.includes('ipad')) return 'tablet';
+    if (ua.includes('tablet') || ua.includes('ipad')) return 'tablet'
 
-    return 'desktop';
+    return 'desktop'
   }
 
   /**
@@ -2083,23 +2083,23 @@ export class HealthcareAuthMiddleware {
    */
   private isAllowedCountry(country: string): boolean {
     // TODO: Implement country allowlist/blocklist
-    const allowedCountries = ['BR', 'US', 'CA', 'EU'];
-    return allowedCountries.includes(country.toUpperCase());
+    const allowedCountries = ['BR', 'US', 'CA', 'EU']
+    return allowedCountries.includes(country.toUpperCase())
   }
 
   /**
    * Generate device fingerprint
    */
   private generateDeviceFingerprint(c: Context): string {
-    const userAgent = c.req.header('user-agent') || '';
-    const acceptLanguage = c.req.header('accept-language') || '';
-    const acceptEncoding = c.req.header('accept-encoding') || '';
+    const userAgent = c.req.header('user-agent') || ''
+    const acceptLanguage = c.req.header('accept-language') || ''
+    const acceptEncoding = c.req.header('accept-encoding') || ''
 
     // Simple fingerprint based on headers
-    const fingerprint = `${userAgent}|${acceptLanguage}|${acceptEncoding}`;
+    const fingerprint = `${userAgent}|${acceptLanguage}|${acceptEncoding}`
 
     // TODO: Implement proper device fingerprinting
-    return Buffer.from(fingerprint).toString('base64').substring(0, 16);
+    return Buffer.from(fingerprint).toString('base64').substring(0, 16)
   }
 
   /**
@@ -2110,36 +2110,36 @@ export class HealthcareAuthMiddleware {
     fingerprint: string,
   ): Promise<boolean> {
     // TODO: Implement device recognition
-    return true; // Mock implementation
+    return true // Mock implementation
   }
 
   /**
    * Get service statistics
    */
   getStatistics(): {
-    isInitialized: boolean;
-    activeSessions: number;
-    config: AuthConfig;
+    isInitialized: boolean
+    activeSessions: number
+    config: AuthConfig
   } {
     return {
       isInitialized: this.isInitialized,
       activeSessions: this.activeSessions.size,
       config: this.config,
-    };
+    }
   }
 
   /**
    * Destroy service and clean up resources
    */
   destroy(): void {
-    this.activeSessions.clear();
-    this.sessionActivity.clear();
-    this.isInitialized = false;
+    this.activeSessions.clear()
+    this.sessionActivity.clear()
+    this.isInitialized = false
 
     authLogger.info('Healthcare authentication middleware destroyed', {
       component: 'auth-middleware',
       timestamp: new Date().toISOString(),
-    });
+    })
   }
 }
 
@@ -2232,7 +2232,7 @@ export const healthcareAuthMiddleware = new HealthcareAuthMiddleware({
     logLevel: (process.env.LOG_LEVEL as LogLevel) || 'info',
     auditRetentionDays: 2555,
   },
-});
+})
 
 /**
  * Export types for external use

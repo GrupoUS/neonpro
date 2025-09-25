@@ -38,44 +38,44 @@ Comprehensive backend testing strategy for Hono.dev APIs, service integration, a
 
 ```typescript
 // apps/api/src/__tests__/patients.get.test.ts
-import { describe, expect, it } from 'vitest';
-import { app } from '../app'; // Your Hono app
-import { createTestContext } from '../test/utils';
+import { describe, expect, it } from 'vitest'
+import { app } from '../app' // Your Hono app
+import { createTestContext } from '../test/utils'
 
 describe('GET /patients', () => {
   it('returns 200 with patients list', async () => {
     const res = await app.request('/patients', {
       method: 'GET',
       headers: { Authorization: 'Bearer valid-token' },
-    });
+    })
 
-    expect(res.status).toBe(200);
-    const data = await res.json();
-    expect(Array.isArray(data.patients)).toBe(true);
-    expect(data).toHaveProperty('total');
-    expect(data).toHaveProperty('page');
-  });
+    expect(res.status).toBe(200)
+    const data = await res.json()
+    expect(Array.isArray(data.patients)).toBe(true)
+    expect(data).toHaveProperty('total')
+    expect(data).toHaveProperty('page')
+  })
 
   it('validates authentication', async () => {
-    const res = await app.request('/patients', { method: 'GET' });
-    expect(res.status).toBe(401);
+    const res = await app.request('/patients', { method: 'GET' })
+    expect(res.status).toBe(401)
 
-    const error = await res.json();
-    expect(error.message).toMatch(/unauthorized|token/i);
-  });
+    const error = await res.json()
+    expect(error.message).toMatch(/unauthorized|token/i)
+  })
 
   it('handles query parameters correctly', async () => {
     const res = await app.request('/patients?search=João&page=2&limit=5', {
       method: 'GET',
       headers: { Authorization: 'Bearer valid-token' },
-    });
+    })
 
-    expect(res.status).toBe(200);
-    const data = await res.json();
-    expect(data.page).toBe(2);
-    expect(data.limit).toBe(5);
-  });
-});
+    expect(res.status).toBe(200)
+    const data = await res.json()
+    expect(data.page).toBe(2)
+    expect(data.limit).toBe(5)
+  })
+})
 ```
 
 ## Hono.dev API Testing Patterns
@@ -84,16 +84,16 @@ describe('GET /patients', () => {
 
 ```typescript
 // Comprehensive route testing patterns
-import { zValidator } from '@hono/zod-validator';
-import { Hono } from 'hono';
-import { z } from 'zod';
+import { zValidator } from '@hono/zod-validator'
+import { Hono } from 'hono'
+import { z } from 'zod'
 
 const patientSchema = z.object({
   name: z.string().min(2),
   cpf: z.string().regex(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/),
   birthDate: z.string().date(),
   condition: z.string().optional(),
-});
+})
 
 describe('POST /patients - Create Patient', () => {
   it('creates patient with valid data', async () => {
@@ -102,7 +102,7 @@ describe('POST /patients - Create Patient', () => {
       cpf: '123.456.789-00',
       birthDate: '1985-03-15',
       condition: 'Diabetes',
-    };
+    }
 
     const res = await app.request('/patients', {
       method: 'POST',
@@ -111,20 +111,20 @@ describe('POST /patients - Create Patient', () => {
         Authorization: 'Bearer valid-token',
       },
       body: JSON.stringify(validPatient),
-    });
+    })
 
-    expect(res.status).toBe(201);
-    const data = await res.json();
-    expect(data.patient).toMatchObject(validPatient);
-    expect(data.patient.id).toBeDefined();
-  });
+    expect(res.status).toBe(201)
+    const data = await res.json()
+    expect(data.patient).toMatchObject(validPatient)
+    expect(data.patient.id).toBeDefined()
+  })
 
   it('validates request body with Zod', async () => {
     const invalidPatient = {
       name: 'A', // Too short
       cpf: '123', // Invalid format
       birthDate: 'not-a-date',
-    };
+    }
 
     const res = await app.request('/patients', {
       method: 'POST',
@@ -133,14 +133,14 @@ describe('POST /patients - Create Patient', () => {
         Authorization: 'Bearer valid-token',
       },
       body: JSON.stringify(invalidPatient),
-    });
+    })
 
-    expect(res.status).toBe(400);
-    const error = await res.json();
-    expect(error.message).toMatch(/validation/i);
-    expect(error.issues).toHaveLength(3);
-  });
-});
+    expect(res.status).toBe(400)
+    const error = await res.json()
+    expect(error.message).toMatch(/validation/i)
+    expect(error.issues).toHaveLength(3)
+  })
+})
 ```
 
 ### 2. Middleware Testing
@@ -149,44 +149,44 @@ describe('POST /patients - Create Patient', () => {
 // Test authentication and logging middleware
 describe('Authentication Middleware', () => {
   it('validates JWT tokens', async () => {
-    const validToken = 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...';
+    const validToken = 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...'
     const res = await app.request('/protected-route', {
       headers: { Authorization: validToken },
-    });
+    })
 
-    expect(res.status).not.toBe(401);
-  });
+    expect(res.status).not.toBe(401)
+  })
 
   it('rejects expired tokens', async () => {
-    const expiredToken = 'Bearer expired.jwt.token';
+    const expiredToken = 'Bearer expired.jwt.token'
     const res = await app.request('/protected-route', {
       headers: { Authorization: expiredToken },
-    });
+    })
 
-    expect(res.status).toBe(401);
-    const error = await res.json();
-    expect(error.code).toBe('TOKEN_EXPIRED');
-  });
+    expect(res.status).toBe(401)
+    const error = await res.json()
+    expect(error.code).toBe('TOKEN_EXPIRED')
+  })
 
   it('handles missing authorization header', async () => {
-    const res = await app.request('/protected-route');
-    expect(res.status).toBe(401);
-  });
-});
+    const res = await app.request('/protected-route')
+    expect(res.status).toBe(401)
+  })
+})
 
 describe('CORS Middleware', () => {
   it('sets correct CORS headers', async () => {
     const res = await app.request('/', {
       method: 'OPTIONS',
       headers: { Origin: 'https://neonpro.app' },
-    });
+    })
 
     expect(res.headers.get('Access-Control-Allow-Origin')).toBe(
       'https://neonpro.app',
-    );
-    expect(res.headers.get('Access-Control-Allow-Methods')).toContain('POST');
-  });
-});
+    )
+    expect(res.headers.get('Access-Control-Allow-Methods')).toContain('POST')
+  })
+})
 ```
 
 ### 3. Error Handling Testing
@@ -295,29 +295,29 @@ describe('Patient-Appointment Integration', () => {
 
 ```typescript
 // Test integration with external services (email, AI, payments)
-import { MockAgent, setGlobalDispatcher } from 'undici';
+import { MockAgent, setGlobalDispatcher } from 'undici'
 
 describe('External Service Integration', () => {
-  let mockAgent: MockAgent;
+  let mockAgent: MockAgent
 
   beforeEach(() => {
-    mockAgent = new MockAgent();
-    setGlobalDispatcher(mockAgent);
-  });
+    mockAgent = new MockAgent()
+    setGlobalDispatcher(mockAgent)
+  })
 
   afterEach(async () => {
-    await mockAgent.close();
-  });
+    await mockAgent.close()
+  })
 
   it('sends email notification on patient registration', async () => {
     // Mock email service
-    const mockPool = mockAgent.get('https://api.emailprovider.com');
+    const mockPool = mockAgent.get('https://api.emailprovider.com')
     mockPool
       .intercept({
         path: '/send',
         method: 'POST',
       })
-      .reply(200, { messageId: 'msg-123', status: 'sent' });
+      .reply(200, { messageId: 'msg-123', status: 'sent' })
 
     // Register patient
     const res = await app.request('/patients', {
@@ -332,23 +332,23 @@ describe('External Service Integration', () => {
         cpf: '123.456.789-00',
         birthDate: '1985-03-15',
       }),
-    });
+    })
 
-    expect(res.status).toBe(201);
+    expect(res.status).toBe(201)
 
     // Verify email was sent (check logs or mock calls)
     // This would depend on your email service implementation
-  });
+  })
 
   it('handles external service failures gracefully', async () => {
     // Mock email service failure
-    const mockPool = mockAgent.get('https://api.emailprovider.com');
+    const mockPool = mockAgent.get('https://api.emailprovider.com')
     mockPool
       .intercept({
         path: '/send',
         method: 'POST',
       })
-      .reply(500, { error: 'Service temporarily unavailable' });
+      .reply(500, { error: 'Service temporarily unavailable' })
 
     // Register patient - should still succeed even if email fails
     const res = await app.request('/patients', {
@@ -363,15 +363,15 @@ describe('External Service Integration', () => {
         cpf: '123.456.789-00',
         birthDate: '1985-03-15',
       }),
-    });
+    })
 
     // Patient creation should succeed
-    expect(res.status).toBe(201);
+    expect(res.status).toBe(201)
 
     // But email failure should be logged
     // Check logs for email failure notification
-  });
-});
+  })
+})
 ```
 
 ### 3. Database Integration Testing
@@ -381,13 +381,13 @@ describe('External Service Integration', () => {
 describe('Database Integration', () => {
   beforeEach(async () => {
     // Setup test database
-    await setupTestDatabase();
-  });
+    await setupTestDatabase()
+  })
 
   afterEach(async () => {
     // Cleanup test data
-    await cleanupTestDatabase();
-  });
+    await cleanupTestDatabase()
+  })
 
   it('handles database transactions correctly', async () => {
     // Test that creates multiple related records in a transaction
@@ -416,13 +416,13 @@ describe('Database Integration', () => {
           },
         ],
       }),
-    });
+    })
 
-    expect(res.status).toBe(201);
-    const data = await res.json();
-    expect(data.patients).toHaveLength(3);
-    expect(data.created).toBe(3);
-  });
+    expect(res.status).toBe(201)
+    const data = await res.json()
+    expect(data.patients).toHaveLength(3)
+    expect(data.created).toBe(3)
+  })
 
   it('rolls back transaction on partial failure', async () => {
     // Include one invalid record that should cause rollback
@@ -451,16 +451,16 @@ describe('Database Integration', () => {
           },
         ],
       }),
-    });
+    })
 
-    expect(res.status).toBe(400);
+    expect(res.status).toBe(400)
 
     // Verify no patients were created (transaction rolled back)
-    const checkRes = await app.request('/patients');
-    const checkData = await checkRes.json();
-    expect(checkData.total).toBe(0);
-  });
-});
+    const checkRes = await app.request('/patients')
+    const checkData = await checkRes.json()
+    expect(checkData.total).toBe(0)
+  })
+})
 ```
 
 ## Monorepo Testing Strategies
@@ -528,12 +528,12 @@ neonpro/
 
 ```typescript
 // packages/test-utils/src/api-testing.ts
-import type { Hono } from 'hono';
+import type { Hono } from 'hono'
 
 export interface TestApiOptions {
-  authToken?: string;
-  baseUrl?: string;
-  timeout?: number;
+  authToken?: string
+  baseUrl?: string
+  timeout?: number
 }
 
 export class TestApiClient {
@@ -543,19 +543,19 @@ export class TestApiClient {
   ) {}
 
   async get(path: string, headers: Record<string, string> = {}) {
-    return this.request('GET', path, undefined, headers);
+    return this.request('GET', path, undefined, headers)
   }
 
   async post(path: string, body?: any, headers: Record<string, string> = {}) {
-    return this.request('POST', path, body, headers);
+    return this.request('POST', path, body, headers)
   }
 
   async put(path: string, body?: any, headers: Record<string, string> = {}) {
-    return this.request('PUT', path, body, headers);
+    return this.request('PUT', path, body, headers)
   }
 
   async delete(path: string, headers: Record<string, string> = {}) {
-    return this.request('DELETE', path, undefined, headers);
+    return this.request('DELETE', path, undefined, headers)
   }
 
   private async request(
@@ -570,30 +570,30 @@ export class TestApiClient {
         Authorization: `Bearer ${this.options.authToken}`,
       }),
       ...headers,
-    };
+    }
 
     const requestOptions = {
       method,
       headers: defaultHeaders,
       ...(body && { body: JSON.stringify(body) }),
-    };
+    }
 
-    return this.app.request(path, requestOptions);
+    return this.app.request(path, requestOptions)
   }
 
   // Helper methods for common patterns
   async expectSuccess(response: Response, expectedStatus = 200) {
-    expect(response.status).toBe(expectedStatus);
-    const data = await response.json();
-    expect(data.error).toBeUndefined();
-    return data;
+    expect(response.status).toBe(expectedStatus)
+    const data = await response.json()
+    expect(data.error).toBeUndefined()
+    return data
   }
 
   async expectError(response: Response, expectedStatus = 400) {
-    expect(response.status).toBe(expectedStatus);
-    const data = await response.json();
-    expect(data.error || data.message).toBeDefined();
-    return data;
+    expect(response.status).toBe(expectedStatus)
+    const data = await response.json()
+    expect(data.error || data.message).toBeDefined()
+    return data
   }
 }
 
@@ -751,32 +751,32 @@ jobs:
 describe('Service Layer Architecture', () => {
   it('maintains proper service separation', async () => {
     // Test that patient service doesn't directly access appointment data
-    const patientService = new PatientService();
-    const appointmentService = new AppointmentService();
+    const patientService = new PatientService()
+    const appointmentService = new AppointmentService()
 
     // Services should communicate through defined interfaces
-    expect(patientService.getAppointments).toBeUndefined();
+    expect(patientService.getAppointments).toBeUndefined()
     expect(() => {
       // This should fail - services shouldn't cross boundaries
-      (patientService as any).directAppointmentAccess();
-    }).toThrow();
-  });
+      ;(patientService as any).directAppointmentAccess()
+    }).toThrow()
+  })
 
   it('enforces dependency injection patterns', () => {
     // Test that services receive dependencies rather than creating them
-    const mockDb = vi.fn();
-    const mockLogger = vi.fn();
+    const mockDb = vi.fn()
+    const mockLogger = vi.fn()
 
     const service = new PatientService({
       database: mockDb,
       logger: mockLogger,
       emailService: vi.fn(),
-    });
+    })
 
-    expect(service.dependencies.database).toBe(mockDb);
-    expect(service.dependencies.logger).toBe(mockLogger);
-  });
-});
+    expect(service.dependencies.database).toBe(mockDb)
+    expect(service.dependencies.logger).toBe(mockLogger)
+  })
+})
 ```
 
 ### 2. API Contract Testing
@@ -786,8 +786,8 @@ describe('Service Layer Architecture', () => {
 describe('API Contract Validation', () => {
   it('maintains backward compatibility', async () => {
     // Test that API responses match expected schema
-    const res = await app.request('/patients/123');
-    const data = await res.json();
+    const res = await app.request('/patients/123')
+    const data = await res.json()
 
     // Use schema validation to ensure contract compliance
     const patientSchema = z.object({
@@ -800,24 +800,24 @@ describe('API Contract Validation', () => {
       // These fields should always be present for backward compatibility
       email: z.string().optional(),
       phone: z.string().optional(),
-    });
+    })
 
-    expect(() => patientSchema.parse(data.patient)).not.toThrow();
-  });
+    expect(() => patientSchema.parse(data.patient)).not.toThrow()
+  })
 
   it('validates request/response schemas', async () => {
     // Test schema evolution and versioning
-    const v1Response = await app.request('/v1/patients/123');
-    const v2Response = await app.request('/v2/patients/123');
+    const v1Response = await app.request('/v1/patients/123')
+    const v2Response = await app.request('/v2/patients/123')
 
-    const v1Data = await v1Response.json();
-    const v2Data = await v2Response.json();
+    const v1Data = await v1Response.json()
+    const v2Data = await v2Response.json()
 
     // V2 should be superset of V1
-    expect(v2Data.patient).toMatchObject(v1Data.patient);
-    expect(v2Data.patient.metadata).toBeDefined(); // New field in v2
-  });
-});
+    expect(v2Data.patient).toMatchObject(v1Data.patient)
+    expect(v2Data.patient.metadata).toBeDefined() // New field in v2
+  })
+})
 ```
 
 ### 3. Performance Testing
@@ -826,32 +826,32 @@ describe('API Contract Validation', () => {
 // Test API performance characteristics
 describe('API Performance', () => {
   it('responds within acceptable time limits', async () => {
-    const start = Date.now();
+    const start = Date.now()
 
-    const res = await app.request('/patients?limit=100');
+    const res = await app.request('/patients?limit=100')
 
-    const duration = Date.now() - start;
-    expect(duration).toBeLessThan(500); // 500ms SLA
-    expect(res.status).toBe(200);
-  });
+    const duration = Date.now() - start
+    expect(duration).toBeLessThan(500) // 500ms SLA
+    expect(res.status).toBe(200)
+  })
 
   it('handles high concurrent load', async () => {
-    const concurrentRequests = 50;
+    const concurrentRequests = 50
     const requests = Array(concurrentRequests)
       .fill(null)
-      .map(() => app.request('/patients/123'));
+      .map(() => app.request('/patients/123'))
 
-    const start = Date.now();
-    const responses = await Promise.all(requests);
-    const duration = Date.now() - start;
+    const start = Date.now()
+    const responses = await Promise.all(requests)
+    const duration = Date.now() - start
 
     // All requests should succeed
-    expect(responses.every(r => r.status === 200)).toBe(true);
+    expect(responses.every(r => r.status === 200)).toBe(true)
 
     // Should handle concurrent load efficiently
-    expect(duration).toBeLessThan(2000); // 2s for 50 concurrent requests
-  });
-});
+    expect(duration).toBeLessThan(2000) // 2s for 50 concurrent requests
+  })
+})
 ```
 
 ## Troubleshooting
@@ -878,55 +878,55 @@ describe.concurrent('Patient API Endpoints', () => {
   // Run independent tests in parallel
   test('GET /patients', async () => {
     /* test implementation */
-  });
+  })
   test('GET /patients/:id', async () => {
     /* test implementation */
-  });
+  })
   test('POST /patients', async () => {
     /* test implementation */
-  });
-});
+  })
+})
 
 // Use test database transactions for isolation
 beforeEach(async () => {
-  await db.beginTransaction();
-});
+  await db.beginTransaction()
+})
 
 afterEach(async () => {
-  await db.rollbackTransaction();
-});
+  await db.rollbackTransaction()
+})
 ```
 
 ### Debugging Integration Tests
 
 ```typescript
 // Debug integration test failures
-import { createLogger } from '@/utils/logger';
+import { createLogger } from '@/utils/logger'
 
-const testLogger = createLogger('integration-test', 'debug');
+const testLogger = createLogger('integration-test', 'debug')
 
 describe('Patient-Appointment Integration', () => {
   it('debugs complex integration flow', async () => {
-    testLogger.info('Starting patient creation');
+    testLogger.info('Starting patient creation')
 
     const patientRes = await app.request('/patients', {
       method: 'POST',
       body: JSON.stringify({
         /* patient data */
       }),
-    });
+    })
 
-    testLogger.info('Patient created', { status: patientRes.status });
+    testLogger.info('Patient created', { status: patientRes.status })
 
     if (patientRes.status !== 201) {
-      const error = await patientRes.json();
-      testLogger.error('Patient creation failed', { error });
-      throw new Error(`Patient creation failed: ${JSON.stringify(error)}`);
+      const error = await patientRes.json()
+      testLogger.error('Patient creation failed', { error })
+      throw new Error(`Patient creation failed: ${JSON.stringify(error)}`)
     }
 
     // Continue with appointment creation...
-  });
-});
+  })
+})
 ```
 
 ## Examples
@@ -935,67 +935,67 @@ describe('Patient-Appointment Integration', () => {
 
 ```typescript
 // Complete example combining all patterns
-import { TestApiClient } from '@neonpro/test-utils';
-import { createMockAppointment, createMockPatient } from './fixtures';
-import { cleanupTestDatabase, setupTestDatabase } from './helpers/database';
+import { TestApiClient } from '@neonpro/test-utils'
+import { createMockAppointment, createMockPatient } from './fixtures'
+import { cleanupTestDatabase, setupTestDatabase } from './helpers/database'
 
 describe('Healthcare API Integration', () => {
-  let client: TestApiClient;
+  let client: TestApiClient
 
   beforeAll(async () => {
-    await setupTestDatabase();
-    client = new TestApiClient(app, { authToken: 'valid-doctor-token' });
-  });
+    await setupTestDatabase()
+    client = new TestApiClient(app, { authToken: 'valid-doctor-token' })
+  })
 
   afterAll(async () => {
-    await cleanupTestDatabase();
-  });
+    await cleanupTestDatabase()
+  })
 
   it('handles complete patient care workflow', async () => {
     // 1. Register new patient
-    const patientData = createMockPatient();
-    const createPatientRes = await client.post('/patients', patientData);
-    const patient = await client.expectSuccess(createPatientRes, 201);
+    const patientData = createMockPatient()
+    const createPatientRes = await client.post('/patients', patientData)
+    const patient = await client.expectSuccess(createPatientRes, 201)
 
     // 2. Schedule appointment
     const appointmentData = createMockAppointment({
       patientId: patient.patient.id,
       doctorId: 'doctor-123',
-    });
+    })
     const createAppointmentRes = await client.post(
       '/appointments',
       appointmentData,
-    );
-    const appointment = await client.expectSuccess(createAppointmentRes, 201);
+    )
+    const appointment = await client.expectSuccess(createAppointmentRes, 201)
 
     // 3. Update patient medical history
     const medicalUpdate = {
       conditions: ['Diabetes Tipo 2'],
       medications: ['Metformina 500mg'],
       allergies: ['Penicilina'],
-    };
+    }
     const updateRes = await client.put(
       `/patients/${patient.patient.id}/medical`,
       medicalUpdate,
-    );
-    const updatedPatient = await client.expectSuccess(updateRes);
+    )
+    const updatedPatient = await client.expectSuccess(updateRes)
 
     // 4. Verify integration
-    expect(updatedPatient.patient.medicalHistory).toMatchObject(medicalUpdate);
-    expect(appointment.appointment.patientId).toBe(patient.patient.id);
+    expect(updatedPatient.patient.medicalHistory).toMatchObject(medicalUpdate)
+    expect(appointment.appointment.patientId).toBe(patient.patient.id)
 
     // 5. Test cascading operations
-    const deleteRes = await client.delete(`/patients/${patient.patient.id}`);
-    await client.expectSuccess(deleteRes);
+    const deleteRes = await client.delete(`/patients/${patient.patient.id}`)
+    await client.expectSuccess(deleteRes)
 
     // Verify appointment was also handled appropriately
     const appointmentCheckRes = await client.get(
       `/appointments/${appointment.appointment.id}`,
-    );
-    const appointmentData = await client.expectError(appointmentCheckRes, 404);
-    expect(appointmentData.message).toMatch(/appointment.*not found/i);
-  });
-});
+    )
+    const appointmentData = await client.expectError(appointmentCheckRes, 404)
+    expect(appointmentData.message).toMatch(/appointment.*not found/i)
+  })
+})
 ```
 
 ## See Also

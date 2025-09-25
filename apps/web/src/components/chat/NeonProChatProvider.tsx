@@ -10,66 +10,66 @@
  * - WCAG 2.1 AA+ accessibility
  */
 
-import { CopilotKit } from '@copilotkit/react-core';
-import { useCoAgent } from '@copilotkit/react-core';
-import React, { createContext, ReactNode, useCallback, useContext, useState } from 'react';
+import { CopilotKit } from '@copilotkit/react-core'
+import { useCoAgent } from '@copilotkit/react-core'
+import React, { createContext, ReactNode, useCallback, useContext, useState } from 'react'
 
 // Types
 export interface ChatAgentState {
-  id: string;
-  type: 'client' | 'financial' | 'appointment';
-  name: string;
-  status: 'idle' | 'thinking' | 'responding' | 'error';
+  id: string
+  type: 'client' | 'financial' | 'appointment'
+  name: string
+  status: 'idle' | 'thinking' | 'responding' | 'error'
   context: {
-    patientId?: string;
-    clinicId: string;
-    sessionData?: Record<string, any>;
-  };
+    patientId?: string
+    clinicId: string
+    sessionData?: Record<string, any>
+  }
   messages: Array<{
-    id: string;
-    content: string;
-    role: 'user' | 'assistant';
-    timestamp: Date;
-    metadata?: Record<string, any>;
-  }>;
+    id: string
+    content: string
+    role: 'user' | 'assistant'
+    timestamp: Date
+    metadata?: Record<string, any>
+  }>
 }
 
 export interface ChatConfig {
-  clinicId: string;
-  userId: string;
-  userRole: 'admin' | 'aesthetician' | 'coordinator' | 'receptionist';
-  language: 'pt-BR' | 'en-US';
+  clinicId: string
+  userId: string
+  userRole: 'admin' | 'aesthetician' | 'coordinator' | 'receptionist'
+  language: 'pt-BR' | 'en-US'
   compliance: {
-    lgpdEnabled: boolean;
-    auditLogging: boolean;
-    dataRetention: number; // days
-  };
+    lgpdEnabled: boolean
+    auditLogging: boolean
+    dataRetention: number // days
+  }
 }
 
 interface ChatContextType {
-  config: ChatConfig | null;
-  activeAgent: ChatAgentState | null;
-  agents: ChatAgentState[];
-  setActiveAgent: (agentType: ChatAgentState['type']) => void;
-  sendMessage: (content: string, agentType: ChatAgentState['type']) => Promise<void>;
-  clearChat: (agentType?: ChatAgentState['type']) => void;
-  exportChat: (agentType: ChatAgentState['type']) => Promise<string>;
+  config: ChatConfig | null
+  activeAgent: ChatAgentState | null
+  agents: ChatAgentState[]
+  setActiveAgent: (agentType: ChatAgentState['type']) => void
+  sendMessage: (content: string, agentType: ChatAgentState['type']) => Promise<void>
+  clearChat: (agentType?: ChatAgentState['type']) => void
+  exportChat: (agentType: ChatAgentState['type']) => Promise<string>
 }
 
-const ChatContext = createContext<ChatContextType | undefined>(undefined);
+const ChatContext = createContext<ChatContextType | undefined>(undefined)
 
 interface NeonProChatProviderProps {
-  children: ReactNode;
-  config?: Partial<ChatConfig>;
+  children: ReactNode
+  config?: Partial<ChatConfig>
 }
 
 export const NeonProChatProvider: React.FC<NeonProChatProviderProps> = ({
   children,
   config: userConfig,
 }) => {
-  const [config, setConfig] = useState<ChatConfig | null>(null);
-  const [agents, setAgents] = useState<ChatAgentState[]>([]);
-  const [activeAgentId, setActiveAgentId] = useState<string | null>(null);
+  const [config, setConfig] = useState<ChatConfig | null>(null)
+  const [agents, setAgents] = useState<ChatAgentState[]>([])
+  const [activeAgentId, setActiveAgentId] = useState<string | null>(null)
 
   // Initialize chat configuration
   const initializeConfig = useCallback((userConfig: Partial<ChatConfig>) => {
@@ -83,10 +83,10 @@ export const NeonProChatProvider: React.FC<NeonProChatProviderProps> = ({
         auditLogging: true,
         dataRetention: 90,
       },
-    };
+    }
 
-    const mergedConfig = { ...defaultConfig, ...userConfig };
-    setConfig(mergedConfig);
+    const mergedConfig = { ...defaultConfig, ...userConfig }
+    setConfig(mergedConfig)
 
     // Initialize agents
     const initialAgents: ChatAgentState[] = [
@@ -120,31 +120,31 @@ export const NeonProChatProvider: React.FC<NeonProChatProviderProps> = ({
         },
         messages: [],
       },
-    ];
+    ]
 
-    setAgents(initialAgents);
-    setActiveAgentId('client-agent');
-  }, []);
+    setAgents(initialAgents)
+    setActiveAgentId('client-agent')
+  }, [])
 
   // Set active agent
   const setActiveAgent = useCallback((agentType: ChatAgentState['type']) => {
-    const agent = agents.find(a => a.type === agentType);
+    const agent = agents.find(a => a.type === agentType)
     if (agent) {
-      setActiveAgentId(agent.id);
+      setActiveAgentId(agent.id)
     }
-  }, [agents]);
+  }, [agents])
 
   // Send message to agent
   const sendMessage = useCallback(async (
     content: string,
     agentType: ChatAgentState['type'],
   ) => {
-    if (!config) return;
+    if (!config) return
 
-    const agentIndex = agents.findIndex(a => a.type === agentType);
-    if (agentIndex === -1) return;
+    const agentIndex = agents.findIndex(a => a.type === agentType)
+    if (agentIndex === -1) return
 
-    const agent = agents[agentIndex];
+    const agent = agents[agentIndex]
     const userMessage = {
       id: `msg-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       content,
@@ -154,26 +154,26 @@ export const NeonProChatProvider: React.FC<NeonProChatProviderProps> = ({
         userId: config.userId,
         userRole: config.userRole,
       },
-    };
+    }
 
     // Update agent state
-    const updatedAgents = [...agents];
+    const updatedAgents = [...agents]
     updatedAgents[agentIndex] = {
       ...agent,
       status: 'thinking',
       messages: [...agent.messages, userMessage],
-    };
-    setAgents(updatedAgents);
+    }
+    setAgents(updatedAgents)
 
     try {
       // LGPD compliance: Log message for audit
       if (config.compliance.auditLogging) {
-        console.log(`[LGPD Audit] Message sent to ${agentType} agent:`, {
+        console.warn(`[LGPD Audit] Message sent to ${agentType} agent:`, {
           messageId: userMessage.id,
           userId: config.userId,
           timestamp: userMessage.timestamp,
           contentLength: content.length,
-        });
+        })
       }
 
       // Simulate agent processing (in real implementation, this would call the backend)
@@ -187,28 +187,28 @@ export const NeonProChatProvider: React.FC<NeonProChatProviderProps> = ({
             agentType,
             processingTime: 1000 + Math.random() * 2000,
           },
-        };
+        }
 
-        const finalAgents = [...updatedAgents];
+        const finalAgents = [...updatedAgents]
         finalAgents[agentIndex] = {
           ...agent,
           status: 'idle',
           messages: [...agent.messages, userMessage, agentResponse],
-        };
-        setAgents(finalAgents);
-      }, 1000 + Math.random() * 2000);
+        }
+        setAgents(finalAgents)
+      }, 1000 + Math.random() * 2000)
     } catch (error) {
-      console.error(`Error sending message to ${agentType} agent:`, error);
+      console.error(`Error sending message to ${agentType} agent:`, error)
 
       // Update agent state to error
-      const errorAgents = [...updatedAgents];
+      const errorAgents = [...updatedAgents]
       errorAgents[agentIndex] = {
         ...agent,
         status: 'error',
-      };
-      setAgents(errorAgents);
+      }
+      setAgents(errorAgents)
     }
-  }, [config, agents]);
+  }, [config, agents])
 
   // Clear chat history
   const clearChat = useCallback((agentType?: ChatAgentState['type']) => {
@@ -219,7 +219,7 @@ export const NeonProChatProvider: React.FC<NeonProChatProviderProps> = ({
             ? { ...agent, messages: [], status: 'idle' }
             : agent
         )
-      );
+      )
     } else {
       setAgents(prev =>
         prev.map(agent => ({
@@ -227,14 +227,14 @@ export const NeonProChatProvider: React.FC<NeonProChatProviderProps> = ({
           messages: [],
           status: 'idle',
         }))
-      );
+      )
     }
-  }, []);
+  }, [])
 
   // Export chat history
   const exportChat = useCallback(async (agentType: ChatAgentState['type']) => {
-    const agent = agents.find(a => a.type === agentType);
-    if (!agent || !config) return '';
+    const agent = agents.find(a => a.type === agentType)
+    if (!agent || !config) return ''
 
     // LGPD compliance: Anonymize sensitive data before export
     const exportData = {
@@ -257,13 +257,13 @@ export const NeonProChatProvider: React.FC<NeonProChatProviderProps> = ({
           }
           : undefined,
       })),
-    };
+    }
 
-    return JSON.stringify(exportData, null, 2);
-  }, [agents, config]);
+    return JSON.stringify(exportData, null, 2)
+  }, [agents, config])
 
   // Get active agent
-  const activeAgent = agents.find(agent => agent.id === activeAgentId) || null;
+  const activeAgent = agents.find(agent => agent.id === activeAgentId) || null
 
   const value: ChatContextType = {
     config,
@@ -273,7 +273,7 @@ export const NeonProChatProvider: React.FC<NeonProChatProviderProps> = ({
     sendMessage,
     clearChat,
     exportChat,
-  };
+  }
 
   return (
     <ChatContext.Provider value={value}>
@@ -281,8 +281,8 @@ export const NeonProChatProvider: React.FC<NeonProChatProviderProps> = ({
         {children}
       </CopilotKit>
     </ChatContext.Provider>
-  );
-};
+  )
+}
 
 // Helper function to generate agent responses (placeholder)
 const generateAgentResponse = (userMessage: string, agentType: ChatAgentState['type']): string => {
@@ -302,19 +302,19 @@ const generateAgentResponse = (userMessage: string, agentType: ChatAgentState['t
       'Posso ajudar a encontrar o melhor horário considerando a agenda e preferências do paciente.',
       'Analisando a agenda e encontrando slots disponíveis...',
     ],
-  };
+  }
 
-  const agentResponses = responses[agentType];
-  return agentResponses[Math.floor(Math.random() * agentResponses.length)];
-};
+  const agentResponses = responses[agentType]
+  return agentResponses[Math.floor(Math.random() * agentResponses.length)]
+}
 
 // Hook to use chat context
 export const useNeonProChat = () => {
-  const context = useContext(ChatContext);
+  const context = useContext(ChatContext)
   if (!context) {
-    throw new Error('useNeonProChat must be used within a NeonProChatProvider');
+    throw new Error('useNeonProChat must be used within a NeonProChatProvider')
   }
-  return context;
-};
+  return context
+}
 
-export default NeonProChatProvider;
+export default NeonProChatProvider

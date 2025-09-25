@@ -41,7 +41,7 @@ export const PERFORMANCE_THRESHOLDS = {
     SUCCESS_RATE: 0.95, // > 95%
     ERROR_RATE: 0.05, // < 5%
   },
-};
+}
 
 /**
  * Performance monitoring configuration
@@ -55,7 +55,7 @@ export const PERFORMANCE_MONITORING = {
   LONG_TASK_THRESHOLD: 100,
   /** Performance observer entry types to monitor */
   OBSERVED_ENTRY_TYPES: ['longtask'] as const,
-};
+}
 
 /**
  * Mobile performance configuration
@@ -70,7 +70,7 @@ export const MOBILE_PERFORMANCE = {
   RENDER_TIME_MULTIPLIER: 1.2,
   /** Mobile memory usage adjustments */
   MEMORY_MULTIPLIER: 1.1,
-};
+}
 
 /**
  * Load testing configuration
@@ -87,7 +87,7 @@ export const LOAD_TESTING = {
     render: 0.6,
     api: 0.4,
   },
-};
+}
 
 /**
  * WebSocket performance configuration
@@ -99,7 +99,7 @@ export const WEBSOCKET_CONFIG = {
   PROCESSING_TIMEOUT: 50,
   /** Message delivery confirmation delay in milliseconds */
   DELIVERY_DELAY: 1000,
-};
+}
 
 /**
  * Performance report configuration
@@ -119,7 +119,7 @@ export const PERFORMANCE_REPORTING = {
   },
   /** Performance trend analysis window */
   TREND_WINDOW: 7, // days
-};
+}
 
 /**
  * Performance optimization flags
@@ -135,7 +135,7 @@ export const PERFORMANCE_OPTIMIZATION = {
   ENABLE_AUTOMATED_TESTING: true,
   /** Enable mobile performance testing */
   ENABLE_MOBILE_TESTING: true,
-};
+}
 
 /**
  * Performance error codes
@@ -146,7 +146,7 @@ export const PERFORMANCE_ERROR_CODES = {
   THRESHOLD_EXCEEDED: 'PERF_THRESH_001',
   MONITORING_DISABLED: 'PERF_MON_001',
   CONFIGURATION_ERROR: 'PERF_CONFIG_001',
-} as const;
+} as const
 
 /**
  * Performance event types
@@ -157,7 +157,7 @@ export const PERFORMANCE_EVENTS = {
   THRESHOLD_EXCEEDED: 'performance:threshold:exceeded',
   TEST_COMPLETED: 'performance:test:completed',
   REPORT_GENERATED: 'performance:report:generated',
-} as const;
+} as const
 
 /**
  * Default performance configuration export
@@ -173,4 +173,4 @@ export const PERFORMANCE_CONFIG = {
   OPTIMIZATION: PERFORMANCE_OPTIMIZATION,
   ERROR_CODES: PERFORMANCE_ERROR_CODES,
   EVENTS: PERFORMANCE_EVENTS,
-} as const;
+} as const

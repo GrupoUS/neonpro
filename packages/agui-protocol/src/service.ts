@@ -5,17 +5,17 @@
  * Provides convenient methods for common operations.
  */
 
-import { AguiProtocol } from './protocol';
+import { AguiProtocol } from './protocol'
 import {
   AguiClientRegistrationMessage,
   AguiClientRegistrationResponse,
   AguiConnectionStatus,
   AguiServiceConfig,
-} from './types';
+} from './types'
 
 export class AguiService {
-  private protocol: AguiProtocol;
-  private config: AguiServiceConfig;
+  private protocol: AguiProtocol
+  private config: AguiServiceConfig
 
   constructor(config?: Partial<AguiServiceConfig>) {
     this.config = {
@@ -23,23 +23,23 @@ export class AguiService {
       timeout: config?.timeout || 30000,
       retries: config?.retries || 3,
       ...config,
-    };
+    }
 
-    this.protocol = new AguiProtocol(this.config);
+    this.protocol = new AguiProtocol(this.config)
   }
 
   /**
    * Initialize the AG-UI service
    */
   async initialize(): Promise<void> {
-    await this.protocol.connect();
+    await this.protocol.connect()
   }
 
   /**
    * Get connection status
    */
   getStatus(): AguiConnectionStatus {
-    return this.protocol.getStatus();
+    return this.protocol.getStatus()
   }
 
   /**
@@ -50,15 +50,15 @@ export class AguiService {
   ): Promise<AguiClientRegistrationResponse> {
     return new Promise((_resolve, reject) => {
       setTimeout(() => {
-        reject(new Error('Client registration timeout'));
-      }, this.config.timeout);
+        reject(new Error('Client registration timeout'))
+      }, this.config.timeout)
 
       // Set up response handler (simplified for demo)
       // In a real implementation, you'd set up event listeners
 
       // Send registration message
-      this.protocol.sendMessage('client_registration', clientData);
-    });
+      this.protocol.sendMessage('client_registration', clientData)
+    })
   }
 
   /**
@@ -70,21 +70,21 @@ export class AguiService {
   ): Promise<AguiClientRegistrationResponse> {
     return new Promise((resolve, reject) => {
       const timeout = setTimeout(() => {
-        reject(new Error('Client profile update timeout'));
-      }, this.config.timeout);
+        reject(new Error('Client profile update timeout'))
+      }, this.config.timeout)
 
       const payload = {
         clientId,
         updates,
         timestamp: new Date().toISOString(),
-      };
+      }
 
       // Send update message
-      this.protocol.sendMessage('client_profile_update', payload);
+      this.protocol.sendMessage('client_profile_update', payload)
 
       // For demo purposes, simulate response
       setTimeout(() => {
-        clearTimeout(timeout);
+        clearTimeout(timeout)
         resolve({
           success: true,
           clientId,
@@ -93,9 +93,9 @@ export class AguiService {
             retentionPrediction: 0.85,
             recommendedActions: ['Send welcome message', 'Schedule follow-up'],
           },
-        });
-      }, 1000);
-    });
+        })
+      }, 1000)
+    })
   }
 
   /**
@@ -104,20 +104,20 @@ export class AguiService {
   async searchClients(query: string): Promise<any[]> {
     return new Promise((resolve, reject) => {
       const timeout = setTimeout(() => {
-        reject(new Error('Client search timeout'));
-      }, this.config.timeout);
+        reject(new Error('Client search timeout'))
+      }, this.config.timeout)
 
       const payload = {
         query,
         timestamp: new Date().toISOString(),
-      };
+      }
 
       // Send search message
-      this.protocol.sendMessage('client_search', payload);
+      this.protocol.sendMessage('client_search', payload)
 
       // For demo purposes, simulate response
       setTimeout(() => {
-        clearTimeout(timeout);
+        clearTimeout(timeout)
         resolve([
           {
             id: '1',
@@ -128,9 +128,9 @@ export class AguiService {
             concerns: ['Acne', 'Poros dilatados'],
             lastVisit: '2024-01-15',
           },
-        ]);
-      }, 1000);
-    });
+        ])
+      }, 1000)
+    })
   }
 
   /**
@@ -139,21 +139,21 @@ export class AguiService {
   async processDocumentOCR(documentUrl: string, documentType: string): Promise<any> {
     return new Promise((resolve, reject) => {
       const timeout = setTimeout(() => {
-        reject(new Error('Document OCR timeout'));
-      }, this.config.timeout);
+        reject(new Error('Document OCR timeout'))
+      }, this.config.timeout)
 
       const payload = {
         documentUrl,
         documentType,
         timestamp: new Date().toISOString(),
-      };
+      }
 
       // Send OCR message
-      this.protocol.sendMessage('document_ocr', payload);
+      this.protocol.sendMessage('document_ocr', payload)
 
       // For demo purposes, simulate response
       setTimeout(() => {
-        clearTimeout(timeout);
+        clearTimeout(timeout)
         resolve({
           success: true,
           extractedData: {
@@ -162,9 +162,9 @@ export class AguiService {
             birthDate: '1990-01-15',
           },
           confidence: 0.95,
-        });
-      }, 2000);
-    });
+        })
+      }, 2000)
+    })
   }
 
   /**
@@ -173,20 +173,20 @@ export class AguiService {
   async getClientAnalytics(clientId: string): Promise<any> {
     return new Promise((resolve, reject) => {
       const timeout = setTimeout(() => {
-        reject(new Error('Client analytics timeout'));
-      }, this.config.timeout);
+        reject(new Error('Client analytics timeout'))
+      }, this.config.timeout)
 
       const payload = {
         clientId,
         timestamp: new Date().toISOString(),
-      };
+      }
 
       // Send analytics message
-      this.protocol.sendMessage('client_analytics', payload);
+      this.protocol.sendMessage('client_analytics', payload)
 
       // For demo purposes, simulate response
       setTimeout(() => {
-        clearTimeout(timeout);
+        clearTimeout(timeout)
         resolve({
           clientId,
           visitFrequency: 'Monthly',
@@ -195,9 +195,9 @@ export class AguiService {
           satisfactionScore: 4.8,
           lastVisit: '2024-01-15',
           nextAppointment: '2024-02-15',
-        });
-      }, 1500);
-    });
+        })
+      }, 1500)
+    })
   }
 
   /**
@@ -206,29 +206,29 @@ export class AguiService {
   async predictClientRetention(clientId: string): Promise<any> {
     return new Promise((resolve, reject) => {
       const timeout = setTimeout(() => {
-        reject(new Error('Client retention prediction timeout'));
-      }, this.config.timeout);
+        reject(new Error('Client retention prediction timeout'))
+      }, this.config.timeout)
 
       const payload = {
         clientId,
         timestamp: new Date().toISOString(),
-      };
+      }
 
       // Send prediction message
-      this.protocol.sendMessage('client_retention_prediction', payload);
+      this.protocol.sendMessage('client_retention_prediction', payload)
 
       // For demo purposes, simulate response
       setTimeout(() => {
-        clearTimeout(timeout);
+        clearTimeout(timeout)
         resolve({
           clientId,
           retentionScore: 0.85,
           riskLevel: 'low',
           factors: ['High satisfaction', 'Regular visits', 'Premium treatments'],
           recommendations: ['Maintain current service level', 'Offer loyalty program'],
-        });
-      }, 1000);
-    });
+        })
+      }, 1000)
+    })
   }
 
   /**
@@ -241,37 +241,37 @@ export class AguiService {
   ): Promise<any> {
     return new Promise((resolve, reject) => {
       const timeout = setTimeout(() => {
-        reject(new Error('Client communication timeout'));
-      }, this.config.timeout);
+        reject(new Error('Client communication timeout'))
+      }, this.config.timeout)
 
       const payload = {
         clientId,
         message,
         channel,
         timestamp: new Date().toISOString(),
-      };
+      }
 
       // Send communication message
-      this.protocol.sendMessage('client_communication', payload);
+      this.protocol.sendMessage('client_communication', payload)
 
       // For demo purposes, simulate response
       setTimeout(() => {
-        clearTimeout(timeout);
+        clearTimeout(timeout)
         resolve({
           success: true,
           messageId: `msg_${Date.now()}`,
           sentAt: new Date().toISOString(),
           channel,
           status: 'sent',
-        });
-      }, 500);
-    });
+        })
+      }, 500)
+    })
   }
 
   /**
    * Disconnect from the AG-UI service
    */
   disconnect(): void {
-    this.protocol.disconnect();
+    this.protocol.disconnect()
   }
 }

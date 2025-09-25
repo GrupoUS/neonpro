@@ -35,11 +35,11 @@ POST /api/aesthetic/treatment/plan      # Create treatment plan
 
 ```typescript
 interface SkinAnalysisRequest {
-  patientId: string;
-  imageUrl: string;
-  analysisType: 'full' | 'acne' | 'aging' | 'pigmentation';
-  bodyArea: 'face' | 'neck' | 'hands' | 'body';
-  lighting: 'natural' | 'studio' | 'clinical';
+  patientId: string
+  imageUrl: string
+  analysisType: 'full' | 'acne' | 'aging' | 'pigmentation'
+  bodyArea: 'face' | 'neck' | 'hands' | 'body'
+  lighting: 'natural' | 'studio' | 'clinical'
 }
 
 const analysis = await fetch('/api/aesthetic/analyze/skin', {
@@ -55,24 +55,24 @@ const analysis = await fetch('/api/aesthetic/analyze/skin', {
     bodyArea: 'face',
     lighting: 'clinical',
   }),
-});
+})
 
 // Response
 interface SkinAnalysisResult {
-  analysisId: string;
+  analysisId: string
   skinMetrics: {
-    hydration: number; // 0-100
-    oiliness: number; // 0-100
-    elasticity: number; // 0-100
-    pigmentation: number; // 0-100
-    wrinkles: number; // 0-100
-    poreSize: number; // 0-100
-    acneScore: number; // 0-100
-    overallHealth: number; // 0-100
-  };
-  concerns: string[];
-  recommendations: TreatmentRecommendation[];
-  confidence: number;
+    hydration: number // 0-100
+    oiliness: number // 0-100
+    elasticity: number // 0-100
+    pigmentation: number // 0-100
+    wrinkles: number // 0-100
+    poreSize: number // 0-100
+    acneScore: number // 0-100
+    overallHealth: number // 0-100
+  }
+  concerns: string[]
+  recommendations: TreatmentRecommendation[]
+  confidence: number
 }
 ```
 
@@ -80,20 +80,20 @@ interface SkinAnalysisResult {
 
 ```typescript
 interface TreatmentRecommendation {
-  treatmentId: string;
-  name: string;
-  type: 'laser' | 'chemical_peel' | 'botox' | 'filler' | 'skincare';
-  priority: 'high' | 'medium' | 'low';
-  expectedResults: string[];
-  duration: string;
-  sessions: number;
-  interval: string;
-  contraindications: string[];
+  treatmentId: string
+  name: string
+  type: 'laser' | 'chemical_peel' | 'botox' | 'filler' | 'skincare'
+  priority: 'high' | 'medium' | 'low'
+  expectedResults: string[]
+  duration: string
+  sessions: number
+  interval: string
+  contraindications: string[]
   cost: {
-    min: number;
-    max: number;
-    currency: 'BRL';
-  };
+    min: number
+    max: number
+    currency: 'BRL'
+  }
 }
 
 const recommendations = await fetch('/api/aesthetic/recommend', {
@@ -105,7 +105,7 @@ const recommendations = await fetch('/api/aesthetic/recommend', {
     concerns: ['wrinkles', 'pigmentation'],
     budget: 'medium',
   }),
-});
+})
 ```
 
 ### Before/After Comparison
@@ -120,19 +120,19 @@ const comparison = await fetch('/api/aesthetic/analyze/compare', {
     treatmentId: 'treatment_456',
     timeInterval: '3_months',
   }),
-});
+})
 
 // Response
 interface ComparisonResult {
-  improvementScore: number; // 0-100
+  improvementScore: number // 0-100
   metrics: {
-    wrinkleReduction: number;
-    pigmentationImprovement: number;
-    skinTextureImprovement: number;
-    overallImprovement: number;
-  };
-  visualChanges: string[];
-  recommendedNextSteps: string[];
+    wrinkleReduction: number
+    pigmentationImprovement: number
+    skinTextureImprovement: number
+    overallImprovement: number
+  }
+  visualChanges: string[]
+  recommendedNextSteps: string[]
 }
 ```
 

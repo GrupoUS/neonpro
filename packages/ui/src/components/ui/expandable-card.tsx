@@ -1,39 +1,39 @@
-'use client';
+'use client'
 
-import { AnimatePresence, motion } from 'framer-motion';
-import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
-import { cn } from '../../utils';
+import { AnimatePresence, motion } from 'framer-motion'
+import React, { createContext, useContext, useEffect, useRef, useState } from 'react'
+import { cn } from '../../utils'
 
 const ExpandableCardContext = createContext<{
-  id: string | null;
-  expandedCard: string | null;
-  setExpandedCard: (id: string | null) => void;
+  id: string | null
+  expandedCard: string | null
+  setExpandedCard: (id: string | null) => void
 }>({
   id: null,
   expandedCard: null,
   setExpandedCard: () => {},
-});
+})
 
 export const useExpandableCard = () => {
-  const context = useContext(ExpandableCardContext);
+  const context = useContext(ExpandableCardContext)
   if (!context) {
     throw new Error(
       'useExpandableCard must be used within ExpandableCardProvider',
-    );
+    )
   }
-  return context;
-};
+  return context
+}
 
 interface ExpandableCardProviderProps {
-  children: React.ReactNode;
-  className?: string;
+  children: React.ReactNode
+  className?: string
 }
 
 export function ExpandableCardProvider({
   children,
   className,
 }: ExpandableCardProviderProps) {
-  const [expandedCard, setExpandedCard] = useState<string | null>(null);
+  const [expandedCard, setExpandedCard] = useState<string | null>(null)
 
   return (
     <ExpandableCardContext.Provider
@@ -48,14 +48,14 @@ export function ExpandableCardProvider({
         {children}
       </div>
     </ExpandableCardContext.Provider>
-  );
+  )
 }
 
 interface ExpandableCardProps {
-  id: string;
-  children: React.ReactNode;
-  className?: string;
-  expandedContent?: React.ReactNode;
+  id: string
+  children: React.ReactNode
+  className?: string
+  expandedContent?: React.ReactNode
 }
 
 export function ExpandableCard({
@@ -64,29 +64,29 @@ export function ExpandableCard({
   className,
   expandedContent,
 }: ExpandableCardProps) {
-  const { expandedCard, setExpandedCard } = useExpandableCard();
-  const cardRef = useRef<HTMLDivElement>(null);
-  const isExpanded = expandedCard === id;
+  const { expandedCard, setExpandedCard } = useExpandableCard()
+  const cardRef = useRef<HTMLDivElement>(null)
+  const isExpanded = expandedCard === id
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (cardRef.current && !cardRef.current.contains(event.target as Node)) {
-        setExpandedCard(null);
+        setExpandedCard(null)
       }
-    };
+    }
 
     if (isExpanded) {
-      document.addEventListener('mousedown', handleClickOutside);
-      return () => document.removeEventListener('mousedown', handleClickOutside);
+      document.addEventListener('mousedown', handleClickOutside)
+      return () => document.removeEventListener('mousedown', handleClickOutside)
     }
     // Return nothing when not expanded
-    return undefined;
-  }, [isExpanded, setExpandedCard]);
+    return undefined
+  }, [isExpanded, setExpandedCard])
 
   const handleCardClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setExpandedCard(isExpanded ? null : id);
-  };
+    e.stopPropagation()
+    setExpandedCard(isExpanded ? null : id)
+  }
 
   return (
     <>
@@ -159,5 +159,5 @@ export function ExpandableCard({
         )}
       </AnimatePresence>
     </>
-  );
+  )
 }

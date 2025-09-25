@@ -7,46 +7,46 @@
  * healthcare platform with comprehensive TDD orchestration integration.
  */
 
-import { execSync } from 'child_process';
-import fs from 'fs/promises';
-import path from 'path';
+import { execSync } from 'child_process'
+import fs from 'fs/promises'
+import path from 'path'
 
 interface QualityGateResult {
-  gate: string;
-  status: 'passed' | 'failed' | 'warning' | 'skipped';
-  score: number;
-  threshold: number;
-  details: string[];
-  recommendations: string[];
+  gate: string
+  status: 'passed' | 'failed' | 'warning' | 'skipped'
+  score: number
+  threshold: number
+  details: string[]
+  recommendations: string[]
 }
 
 interface QualityValidationResult {
-  overall: 'passed' | 'failed' | 'warning';
-  score: number;
-  gates: QualityGateResult[];
+  overall: 'passed' | 'failed' | 'warning'
+  score: number
+  gates: QualityGateResult[]
   summary: {
-    passed: number;
-    failed: number;
-    warnings: number;
-    total: number;
-  };
+    passed: number
+    failed: number
+    warnings: number
+    total: number
+  }
   healthcareCompliance: {
-    lgpd: boolean;
-    security: boolean;
-    dataProtection: boolean;
-  };
+    lgpd: boolean
+    security: boolean
+    dataProtection: boolean
+  }
 }
 
 class QualityGateValidator {
-  private workspaceRoot: string;
+  private workspaceRoot: string
   private config: {
-    thresholds: Record<string, number>;
-    required: string[];
-    healthcare: boolean;
-  };
+    thresholds: Record<string, number>
+    required: string[]
+    healthcare: boolean
+  }
 
   constructor(workspaceRoot: string) {
-    this.workspaceRoot = workspaceRoot;
+    this.workspaceRoot = workspaceRoot
     this.config = {
       thresholds: {
         typescript_compilation: 0, // Zero TypeScript errors
@@ -64,22 +64,22 @@ class QualityGateValidator {
         'healthcare_compliance',
       ],
       healthcare: true,
-    };
+    }
   }
 
   async validateAllGates(): Promise<QualityValidationResult> {
-    console.log('🚀 Executing Automated Quality Gate Validation System...');
-    console.log('🏥 Healthcare compliance mode: ENABLED');
+    console.error('🚀 Executing Automated Quality Gate Validation System...')
+    console.error('🏥 Healthcare compliance mode: ENABLED')
 
-    const gates: QualityGateResult[] = [];
+    const gates: QualityGateResult[] = []
 
     // Core Quality Gates
-    gates.push(await this.validateTypeScriptCompilation());
-    gates.push(await this.validateLintingCompliance());
-    gates.push(await this.validateSecurityCompliance());
-    gates.push(await this.validateTestCoverage());
-    gates.push(await this.validatePerformance());
-    gates.push(await this.validateHealthcareCompliance());
+    gates.push(await this.validateTypeScriptCompilation())
+    gates.push(await this.validateLintingCompliance())
+    gates.push(await this.validateSecurityCompliance())
+    gates.push(await this.validateTestCoverage())
+    gates.push(await this.validatePerformance())
+    gates.push(await this.validateHealthcareCompliance())
 
     // Calculate overall results
     const summary = {
@@ -87,25 +87,25 @@ class QualityGateValidator {
       failed: gates.filter(g => g.status === 'failed').length,
       warnings: gates.filter(g => g.status === 'warning').length,
       total: gates.length,
-    };
+    }
 
-    const requiredGates = gates.filter(g => this.config.required.includes(g.gate));
-    const requiredPassed = requiredGates.every(g => g.status === 'passed');
+    const requiredGates = gates.filter(g => this.config.required.includes(g.gate))
+    const requiredPassed = requiredGates.every(g => g.status === 'passed')
 
-    const overallScore = gates.reduce((sum, g) => sum + g.score, 0) / gates.length;
+    const overallScore = gates.reduce((sum, g) => sum + g.score, 0) / gates.length
 
     const overall: 'passed' | 'failed' | 'warning' = requiredPassed && summary.failed === 0
       ? 'passed'
       : summary.failed > 0
       ? 'failed'
-      : 'warning';
+      : 'warning'
 
     const healthcareCompliance = {
       lgpd: gates.find(g => g.gate === 'healthcare_compliance')?.status === 'passed' || false,
-      security: gates.find(g => g.gate === 'security_vulnerabilities')?.status === 'passed'
-        || false,
+      security: gates.find(g => g.gate === 'security_vulnerabilities')?.status === 'passed' ||
+        false,
       dataProtection: gates.find(g => g.gate === 'healthcare_compliance')?.score >= 90 || false,
-    };
+    }
 
     return {
       overall,
@@ -113,17 +113,17 @@ class QualityGateValidator {
       gates,
       summary,
       healthcareCompliance,
-    };
+    }
   }
 
   private async validateTypeScriptCompilation(): Promise<QualityGateResult> {
-    console.log('🔍 Validating TypeScript Compilation...');
+    console.error('🔍 Validating TypeScript Compilation...')
 
     try {
       execSync('bun run type-check', {
         cwd: this.workspaceRoot,
         stdio: 'pipe',
-      });
+      })
 
       return {
         gate: 'typescript_compilation',
@@ -132,11 +132,11 @@ class QualityGateValidator {
         threshold: this.config.thresholds.typescript_compilation,
         details: ['✅ All packages compile successfully'],
         recommendations: ['Continue maintaining strict TypeScript standards'],
-      };
+      }
     } catch (error: any) {
-      const output = error.stdout || error.stderr || '';
-      const errorMatch = output.match(/Found (\d+) errors?/);
-      const errorCount = errorMatch ? parseInt(errorMatch[1]) : 1;
+      const output = error.stdout || error.stderr || ''
+      const errorMatch = output.match(/Found (\d+) errors?/)
+      const errorCount = errorMatch ? parseInt(errorMatch[1]) : 1
 
       return {
         gate: 'typescript_compilation',
@@ -149,18 +149,18 @@ class QualityGateValidator {
           'Focus on null safety and type definitions',
           'Ensure all API types are properly defined',
         ],
-      };
+      }
     }
   }
 
   private async validateLintingCompliance(): Promise<QualityGateResult> {
-    console.log('🧹 Validating Linting Compliance...');
+    console.error('🧹 Validating Linting Compliance...')
 
     try {
       execSync('bun run lint', {
         cwd: this.workspaceRoot,
         stdio: 'pipe',
-      });
+      })
 
       return {
         gate: 'linting_compliance',
@@ -169,15 +169,15 @@ class QualityGateValidator {
         threshold: this.config.thresholds.linting_compliance,
         details: ['✅ All packages pass linting validation'],
         recommendations: ['Maintain consistent code style standards'],
-      };
+      }
     } catch (error: any) {
-      const output = error.stdout || error.stderr || '';
-      const errorMatch = output.match(/Found (\d+) warnings? and (\d+) errors?/);
-      const errorCount = errorMatch ? parseInt(errorMatch[2]) : 1;
-      const warningCount = errorMatch ? parseInt(errorMatch[1]) : 0;
+      const output = error.stdout || error.stderr || ''
+      const errorMatch = output.match(/Found (\d+) warnings? and (\d+) errors?/)
+      const errorCount = errorMatch ? parseInt(errorMatch[2]) : 1
+      const warningCount = errorMatch ? parseInt(errorMatch[1]) : 0
 
-      const status = errorCount > 0 ? 'failed' : warningCount > 0 ? 'warning' : 'passed';
-      const score = Math.max(0, 100 - (errorCount * 20) - (warningCount * 5));
+      const status = errorCount > 0 ? 'failed' : warningCount > 0 ? 'warning' : 'passed'
+      const score = Math.max(0, 100 - (errorCount * 20) - (warningCount * 5))
 
       return {
         gate: 'linting_compliance',
@@ -192,18 +192,18 @@ class QualityGateValidator {
           'Address linting warnings for improved code quality',
           'Ensure consistent formatting across all packages',
         ],
-      };
+      }
     }
   }
 
   private async validateSecurityCompliance(): Promise<QualityGateResult> {
-    console.log('🔒 Validating Security Compliance...');
+    console.error('🔒 Validating Security Compliance...')
 
     try {
-      execSync('bun run lint --filter=@neonpro/security', {
+      execSync('bun run lint --filter={
         cwd: this.workspaceRoot,
         stdio: 'pipe',
-      });
+      })
 
       return {
         gate: 'security_vulnerabilities',
@@ -212,11 +212,11 @@ class QualityGateValidator {
         threshold: this.config.thresholds.security_vulnerabilities,
         details: ['✅ Security package validation passed'],
         recommendations: ['Continue security-first development practices'],
-      };
+      }
     } catch (error: any) {
-      const output = error.stdout || error.stderr || '';
-      const errorMatch = output.match(/Found (\d+) warnings? and (\d+) errors?/);
-      const errorCount = errorMatch ? parseInt(errorMatch[2]) : 1;
+      const output = error.stdout || error.stderr || ''
+      const errorMatch = output.match(/Found (\d+) warnings? and (\d+) errors?/)
+      const errorCount = errorMatch ? parseInt(errorMatch[2]) : 1
 
       return {
         gate: 'security_vulnerabilities',
@@ -229,12 +229,12 @@ class QualityGateValidator {
           'Review LGPD compliance implementation',
           'Ensure encryption and anonymization functions are properly implemented',
         ],
-      };
+      }
     }
   }
 
   private async validateTestCoverage(): Promise<QualityGateResult> {
-    console.log('🧪 Validating Test Coverage...');
+    console.error('🧪 Validating Test Coverage...')
 
     // Simulated test coverage validation
     // In production, this would integrate with actual test runners
@@ -250,11 +250,11 @@ class QualityGateValidator {
         'Add integration tests for API endpoints',
         'Create end-to-end tests for user workflows',
       ],
-    };
+    }
   }
 
   private async validatePerformance(): Promise<QualityGateResult> {
-    console.log('⚡ Validating Performance...');
+    console.error('⚡ Validating Performance...')
 
     // Simulated performance validation
     // In production, this would run actual performance tests
@@ -270,18 +270,18 @@ class QualityGateValidator {
         'Review and optimize database queries',
         'Add performance monitoring and alerting',
       ],
-    };
+    }
   }
 
   private async validateHealthcareCompliance(): Promise<QualityGateResult> {
-    console.log('🏥 Validating Healthcare Compliance...');
+    console.error('🏥 Validating Healthcare Compliance...')
 
     // Check for LGPD compliance implementation
-    const lgpdFile = path.join(this.workspaceRoot, 'packages/utils/src/lgpd.ts');
-    const securityPackage = path.join(this.workspaceRoot, 'packages/security');
+    const lgpdFile = path.join(this.workspaceRoot, 'packages/utils/src/lgpd.ts')
+    const securityPackage = path.join(this.workspaceRoot, 'packages/security')
 
     try {
-      const lgpdContent = await fs.readFile(lgpdFile, 'utf-8');
+      const lgpdContent = await fs.readFile(lgpdFile, 'utf-8')
       const hasLgpdFunctions = [
         'redactCPF',
         'redactCNPJ',
@@ -289,9 +289,9 @@ class QualityGateValidator {
         'validateCPF',
         'validateCNPJ',
         'anonymizeData',
-      ].every(fn => lgpdContent.includes(fn));
+      ].every(fn => lgpdContent.includes(fn))
 
-      await fs.access(securityPackage);
+      await fs.access(securityPackage)
 
       if (hasLgpdFunctions) {
         return {
@@ -309,7 +309,7 @@ class QualityGateValidator {
             'Regular security audits and updates',
             'Maintain LGPD documentation and procedures',
           ],
-        };
+        }
       } else {
         return {
           gate: 'healthcare_compliance',
@@ -322,9 +322,9 @@ class QualityGateValidator {
             'Ensure all data handling follows healthcare standards',
             'Add comprehensive audit logging',
           ],
-        };
+        }
       }
-    } catch (error) {
+    } catch (_unused_error) {
       return {
         gate: 'healthcare_compliance',
         status: 'failed',
@@ -336,7 +336,7 @@ class QualityGateValidator {
           'Set up security and privacy frameworks',
           'Ensure regulatory compliance validation',
         ],
-      };
+      }
     }
   }
 
@@ -344,13 +344,13 @@ class QualityGateValidator {
     const reportPath = path.join(
       this.workspaceRoot,
       'tools/orchestration/quality-gate-validation-report.md',
-    );
+    )
 
     const statusEmoji = result.overall === 'passed'
       ? '✅'
       : result.overall === 'failed'
       ? '❌'
-      : '⚠️';
+      : '⚠️'
 
     const report = `# Quality Gate Validation Report
 
@@ -370,12 +370,12 @@ class QualityGateValidator {
 |--------------|--------|-------|-----------|---------|
 ${
       result.gates.map(gate => {
-        const statusEmoji = gate.status === 'passed' ? '✅' : gate.status === 'failed' ? '❌' : '⚠️';
+        const statusEmoji = gate.status === 'passed' ? '✅' : gate.status === 'failed' ? '❌' : '⚠️'
         return `| ${
           gate.gate.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())
         } | ${statusEmoji} ${gate.status.toUpperCase()} | ${gate.score}% | ${gate.threshold} | ${
           gate.details[0] || ''
-        } |`;
+        } |`
       }).join('\n')
     }
 
@@ -426,42 +426,42 @@ ${
 ---
 **Generated by**: NeonPro Quality Gate Validation System v2.0.0  
 **Next Validation**: Recommended within 24 hours for failed gates
-    `;
+    `
 
-    await fs.writeFile(reportPath, report, 'utf-8');
-    console.log(`\n📊 Quality Gate Validation Report: ${reportPath}`);
+    await fs.writeFile(reportPath, report, 'utf-8')
+    console.error(`\n📊 Quality Gate Validation Report: ${reportPath}`)
   }
 }
 
 // Main execution
 async function main() {
-  const workspaceRoot = process.cwd();
+  const workspaceRoot = process.cwd()
 
-  const validator = new QualityGateValidator(workspaceRoot);
-  const result = await validator.validateAllGates();
-  await validator.generateValidationReport(result);
+  const validator = new QualityGateValidator(workspaceRoot)
+  const result = await validator.validateAllGates()
+  await validator.generateValidationReport(result)
 
   // Output final summary
-  console.log('\n' + '='.repeat(80));
-  console.log(`🎯 QUALITY GATE VALIDATION COMPLETE`);
-  console.log(`📊 Overall Status: ${result.overall.toUpperCase()}`);
-  console.log(`📈 Quality Score: ${result.score.toFixed(1)}%`);
-  console.log(`✅ Passed: ${result.summary.passed}/${result.summary.total} gates`);
-  console.log(`❌ Failed: ${result.summary.failed}/${result.summary.total} gates`);
-  console.log(
+  console.error('\n' + '='.repeat(80))
+  console.error(`🎯 QUALITY GATE VALIDATION COMPLETE`)
+  console.error(`📊 Overall Status: ${result.overall.toUpperCase()}`)
+  console.error(`📈 Quality Score: ${result.score.toFixed(1)}%`)
+  console.error(`✅ Passed: ${result.summary.passed}/${result.summary.total} gates`)
+  console.error(`❌ Failed: ${result.summary.failed}/${result.summary.total} gates`)
+  console.error(
     `🏥 Healthcare Compliance: ${
       result.healthcareCompliance.lgpd && result.healthcareCompliance.security
         ? 'COMPLIANT'
         : 'NON-COMPLIANT'
     }`,
-  );
-  console.log('='.repeat(80));
+  )
+  console.error('='.repeat(80))
 
-  process.exit(result.overall === 'passed' ? 0 : 1);
+  process.exit(result.overall === 'passed' ? 0 : 1)
 }
 
 if (import.meta.main) {
-  main().catch(console.error);
+  main().catch(async (console.error)
 }
 
-export { QualityGateValidator, type QualityValidationResult };
+export { QualityGateValidator, type QualityValidationResult }

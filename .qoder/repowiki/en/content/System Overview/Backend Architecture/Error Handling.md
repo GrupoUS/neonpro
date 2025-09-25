@@ -254,7 +254,7 @@ export const errorTrackingConfig = {
     tracesSampleRate: isProduction ? 0.01 : 0.1,
     metricsEnabled: true,
   },
-};
+}
 ```
 
 **Diagram sources **
@@ -481,12 +481,12 @@ export function setupGlobalErrorHandlers(): void {
       error: error.message,
       stack: error.stack,
       type: 'uncaughtException',
-    });
+    })
 
     if (process.env.NODE_ENV === 'production') {
-      process.exit(1);
+      process.exit(1)
     }
-  });
+  })
 
   // Handle unhandled promise rejections
   process.on('unhandledRejection', (reason: unknown) => {
@@ -494,12 +494,12 @@ export function setupGlobalErrorHandlers(): void {
       reason: reason instanceof Error ? reason.message : String(reason),
       stack: reason instanceof Error ? reason.stack : undefined,
       type: 'unhandledRejection',
-    });
+    })
 
     if (process.env.NODE_ENV === 'production') {
-      process.exit(1);
+      process.exit(1)
     }
-  });
+  })
 }
 ```
 

@@ -4,20 +4,20 @@
  * Integration with PatientService, AuditService, NotificationService
  */
 
-import { validateBrazilianPhone as validatePhone, validateCEP, validateCPF } from '@neonpro/shared';
-import { Hono } from 'hono';
-import { requireAuth } from '../../middleware/authn';
-import { dataProtection } from '../../middleware/lgpd-middleware';
-import { LGPDService } from '../../services/lgpd-service';
-import { NotificationService } from '../../services/notification-service';
-import { PatientService } from '../../services/patient-service';
+import { validateBrazilianPhone as validatePhone, validateCEP, validateCPF } from '@neonpro/shared'
+import { Hono } from 'hono'
+import { requireAuth } from '../../middleware/authn'
+import { dataProtection } from '../../middleware/lgpd-middleware'
+import { LGPDService } from '../../services/lgpd-service'
+import { NotificationService } from '../../services/notification-service'
+import { PatientService } from '../../services/patient-service'
 
-const app = new Hono();
+const app = new Hono()
 
 // Path parameters validation schema
 const UpdatePatientParamsSchema = z.object({
   id: z.string().uuid('ID do paciente deve ser um UUID válido'),
-});
+})
 
 // Address update validation schema
 const AddressUpdateSchema = z
@@ -28,7 +28,7 @@ const AddressUpdateSchema = z
     zipCode: z.string().refine(validateCEP, 'CEP inválido').optional(),
     complement: z.string().max(100).optional(),
   })
-  .optional();
+  .optional()
 
 // Healthcare info update validation schema
 const HealthcareInfoUpdateSchema = z
@@ -44,7 +44,7 @@ const HealthcareInfoUpdateSchema = z
       })
       .optional(),
   })
-  .optional();
+  .optional()
 
 // LGPD consent update validation schema
 const LGPDConsentUpdateSchema = z
@@ -53,7 +53,7 @@ const LGPDConsentUpdateSchema = z
     dataProcessing: z.boolean().optional(),
     dataSharing: z.boolean().optional(),
   })
-  .optional();
+  .optional()
 
 // Patient update validation schema
 const UpdatePatientSchema = z.object({
@@ -67,16 +67,16 @@ const UpdatePatientSchema = z.object({
   healthcareInfo: HealthcareInfoUpdateSchema,
   lgpdConsent: LGPDConsentUpdateSchema,
   notes: z.string().max(1000).optional(),
-});
+})
 
 app.put('/:id', requireAuth, dataProtection.clientView, async c => {
   try {
-    const userId = c.get('userId');
-    const params = c.req.param();
-    const body = await c.req.json();
+    const userId = c.get('userId')
+    const params = c.req.param()
+    const body = await c.req.json()
 
     // Validate path parameters
-    const paramsValidation = UpdatePatientParamsSchema.safeParse(params);
+    const paramsValidation = UpdatePatientParamsSchema.safeParse(params)
     if (!paramsValidation.success) {
       return c.json(
         {
@@ -88,11 +88,11 @@ app.put('/:id', requireAuth, dataProtection.clientView, async c => {
           })),
         },
         400,
-      );
+      )
     }
 
     // Validate request body
-    const bodyValidation = UpdatePatientSchema.safeParse(body);
+    const bodyValidation = UpdatePatientSchema.safeParse(body)
     if (!bodyValidation.success) {
       return c.json(
         {
@@ -104,31 +104,31 @@ app.put('/:id', requireAuth, dataProtection.clientView, async c => {
           })),
         },
         400,
-      );
+      )
     }
 
-    const { id: patientId } = paramsValidation.data;
-    const updateData = bodyValidation.data;
+    const { id: patientId } = paramsValidation.data
+    const updateData = bodyValidation.data
 
     // Get client IP and User-Agent for audit logging
-    const ipAddress = c.req.header('X-Real-IP') || c.req.header('X-Forwarded-For') || 'unknown';
-    const userAgent = c.req.header('User-Agent') || 'unknown';
-    const healthcareProfessional = c.req.header('X-Healthcare-Professional');
-    const healthcareContext = c.req.header('X-Healthcare-Context');
+    const ipAddress = c.req.header('X-Real-IP') || c.req.header('X-Forwarded-For') || 'unknown'
+    const userAgent = c.req.header('User-Agent') || 'unknown'
+    const healthcareProfessional = c.req.header('X-Healthcare-Professional')
+    const healthcareContext = c.req.header('X-Healthcare-Context')
 
     // Get changed fields for validation and audit
     const changedFields = Object.keys(updateData).filter(
       key => updateData[key] !== undefined,
-    );
+    )
 
     // Validate user access to update specific patient fields
-    const patientService = new PatientService();
+    const patientService = new PatientService()
     const accessValidation = await patientService.validateAccess({
       userId,
       patientId,
       accessType: 'update',
       fields: changedFields,
-    });
+    })
 
     if (!accessValidation.success) {
       return c.json(
@@ -138,20 +138,20 @@ app.put('/:id', requireAuth, dataProtection.clientView, async c => {
           code: accessValidation.code,
         },
         403,
-      );
+      )
     }
 
     // Validate LGPD data update permissions
-    const lgpdService = new LGPDService();
+    const lgpdService = new LGPDService()
     if (
-      updateData.lgpdConsent
-      || changedFields.some(field => ['cpf', 'healthcareInfo'].includes(field))
+      updateData.lgpdConsent ||
+      changedFields.some(field => ['cpf', 'healthcareInfo'].includes(field))
     ) {
       const lgpdValidation = await lgpdService.validateDataUpdate({
         patientId,
         updateData,
         consentChanges: updateData.lgpdConsent,
-      });
+      })
 
       if (!lgpdValidation.success) {
         return c.json(
@@ -161,7 +161,7 @@ app.put('/:id', requireAuth, dataProtection.clientView, async c => {
             code: lgpdValidation.code,
           },
           403,
-        );
+        )
       }
     }
 
@@ -169,7 +169,7 @@ app.put('/:id', requireAuth, dataProtection.clientView, async c => {
     const currentPatientResult = await patientService.getPatientById({
       patientId,
       userId,
-    });
+    })
 
     if (!currentPatientResult.success) {
       if (currentPatientResult.code === 'PATIENT_NOT_FOUND') {
@@ -180,7 +180,7 @@ app.put('/:id', requireAuth, dataProtection.clientView, async c => {
             code: currentPatientResult.code,
           },
           404,
-        );
+        )
       }
 
       return c.json(
@@ -189,10 +189,10 @@ app.put('/:id', requireAuth, dataProtection.clientView, async c => {
           error: currentPatientResult.error || 'Erro interno do serviço',
         },
         500,
-      );
+      )
     }
 
-    const currentPatient = currentPatientResult.data;
+    const currentPatient = currentPatientResult.data
 
     // Update patient using PatientService
     const result = await patientService.updatePatient({
@@ -201,7 +201,7 @@ app.put('/:id', requireAuth, dataProtection.clientView, async c => {
       updateData,
       healthcareProfessional,
       healthcareContext,
-    });
+    })
 
     if (!result.success) {
       return c.json(
@@ -210,28 +210,28 @@ app.put('/:id', requireAuth, dataProtection.clientView, async c => {
           error: result.error || 'Erro interno do serviço',
         },
         500,
-      );
+      )
     }
 
-    const updatedPatient = result.data;
+    const updatedPatient = result.data
 
     // Track changes for audit
-    const oldValues: Record<string, any> = {};
-    const newValues: Record<string, any> = {};
+    const oldValues: Record<string, any> = {}
+    const newValues: Record<string, any> = {}
 
     changedFields.forEach(field => {
-      oldValues[field] = currentPatient[field];
-      newValues[field] = updatedPatient[field];
-    });
+      oldValues[field] = currentPatient[field]
+      newValues[field] = updatedPatient[field]
+    })
 
     // Determine sensitivity level based on changed fields
-    const sensitiveFields = ['cpf', 'healthcareInfo', 'lgpdConsent'];
+    const sensitiveFields = ['cpf', 'healthcareInfo', 'lgpdConsent']
     const sensitivityLevel = changedFields.some(field => sensitiveFields.includes(field))
       ? 'critical'
-      : 'high';
+      : 'high'
 
     // Log patient update activity
-    const auditService = new AuditService();
+    const auditService = new AuditService()
     await auditService
       .logActivity({
         userId,
@@ -252,9 +252,9 @@ app.put('/:id', requireAuth, dataProtection.clientView, async c => {
         complianceContext: 'LGPD',
         sensitivityLevel,
       })
-      .catch(err => {
-        console.error('Audit logging failed:', err);
-      });
+      .catch(async (err => {
+        console.error('Audit logging failed:', err)
+      })
 
     // Update LGPD consent record if consent was changed
     if (updateData.lgpdConsent) {
@@ -265,16 +265,16 @@ app.put('/:id', requireAuth, dataProtection.clientView, async c => {
           reason: 'Patient consent update',
           updatedBy: userId,
         })
-        .catch(err => {
-          console.error('Failed to update consent record:', err);
-        });
+        .catch(async (err => {
+          console.error('Failed to update consent record:', err)
+        })
     }
 
     // Send update notification
-    const notificationService = new NotificationService();
+    const notificationService = new NotificationService()
     if (
-      updatedPatient.email
-      && updatedPatient.lgpdConsent?.marketing !== false
+      updatedPatient.email &&
+      updatedPatient.lgpdConsent?.marketing !== false
     ) {
       await notificationService
         .sendNotification({
@@ -289,31 +289,31 @@ app.put('/:id', requireAuth, dataProtection.clientView, async c => {
           priority: 'medium',
           lgpdConsent: true,
         })
-        .catch(err => {
-          console.error('Update notification failed:', err);
-        });
+        .catch(async (err => {
+          console.error('Update notification failed:', err)
+        })
     }
 
     // Set response headers
-    c.header('Last-Modified', updatedPatient.updatedAt);
-    c.header('X-Updated-Fields', changedFields.join(','));
-    c.header('X-CFM-Compliant', 'true');
-    c.header('X-Medical-Record-Updated', 'true');
-    c.header('X-LGPD-Compliant', 'true');
+    c.header('Last-Modified', updatedPatient.updatedAt)
+    c.header('X-Updated-Fields', changedFields.join(','))
+    c.header('X-CFM-Compliant', 'true')
+    c.header('X-Medical-Record-Updated', 'true')
+    c.header('X-LGPD-Compliant', 'true')
 
     // Handle consent withdrawal
     if (updateData.lgpdConsent?.dataProcessing === false) {
-      c.header('X-Consent-Withdrawn', 'data_processing');
-      c.header('X-Data-Retention-Review', 'required');
+      c.header('X-Consent-Withdrawn', 'data_processing')
+      c.header('X-Data-Retention-Review', 'required')
     }
 
     return c.json({
       success: true,
       data: updatedPatient,
       message: 'Paciente atualizado com sucesso',
-    });
+    })
   } catch {
-    console.error('Error updating patient:', error);
+    console.error('Error updating patient:', error)
 
     return c.json(
       {
@@ -321,8 +321,8 @@ app.put('/:id', requireAuth, dataProtection.clientView, async c => {
         error: 'Erro interno do servidor',
       },
       500,
-    );
+    )
   }
-});
+})
 
-export default app;
+export default app

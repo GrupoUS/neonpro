@@ -7,21 +7,21 @@
  * @fileoverview Healthcare text field with React Aria integration
  */
 
-'use client';
+'use client'
 
-import React, { forwardRef, InputHTMLAttributes, useEffect, useId, useRef, useState } from 'react';
-import { z } from 'zod';
-import { cn } from '../../lib/utils';
-import { useHealthcareForm } from './healthcare-form';
+import React, { forwardRef, InputHTMLAttributes, useEffect, useId, useRef, useState } from 'react'
+import { z } from 'zod'
+import { cn } from '../../lib/utils'
+import { useHealthcareForm } from './healthcare-form'
 // TODO: Implement theme usage
 // import { useHealthcareTheme } from '../healthcare/healthcare-theme-provider';
-import { announceToScreenReader, HealthcarePriority } from '../../utils/accessibility';
+import { announceToScreenReader, HealthcarePriority } from '../../utils/accessibility'
 import {
   classifyHealthcareData,
   DataSensitivity,
   healthcareValidationMessages,
   healthcareValidationSchemas,
-} from '../../utils/healthcare-validation';
+} from '../../utils/healthcare-validation'
 
 // Healthcare field types for automatic validation
 export type HealthcareFieldType =
@@ -33,7 +33,7 @@ export type HealthcareFieldType =
   | 'medical-specialty'
   | 'patient-name'
   | 'email'
-  | 'generic';
+  | 'generic'
 
 // Healthcare text field props
 export interface HealthcareTextFieldProps extends
@@ -43,40 +43,40 @@ export interface HealthcareTextFieldProps extends
   >
 {
   // Basic field properties
-  name: string;
-  label: string;
+  name: string
+  label: string
 
   // Healthcare-specific
-  fieldType?: HealthcareFieldType;
-  dataSensitivity?: DataSensitivity;
-  emergencyField?: boolean;
+  fieldType?: HealthcareFieldType
+  dataSensitivity?: DataSensitivity
+  emergencyField?: boolean
 
   // Validation
-  validationSchema?: z.ZodSchema;
-  customValidation?: (value: string) => string | null;
-  validateOnChange?: boolean;
-  validateOnBlur?: boolean;
+  validationSchema?: z.ZodSchema
+  customValidation?: (value: string) => string | null
+  validateOnChange?: boolean
+  validateOnBlur?: boolean
 
   // UI and UX
-  description?: string;
-  placeholder?: string;
-  helperText?: string;
-  mask?: string; // Input mask (e.g., "000.000.000-00" for CPF)
+  description?: string
+  placeholder?: string
+  helperText?: string
+  mask?: string // Input mask (e.g., "000.000.000-00" for CPF)
 
   // Event handlers
-  onChange?: (value: string, isValid: boolean) => void;
-  onBlur?: (value: string, isValid: boolean) => void;
-  onValidationChange?: (errors: string[]) => void;
+  onChange?: (value: string, isValid: boolean) => void
+  onBlur?: (value: string, isValid: boolean) => void
+  onValidationChange?: (errors: string[]) => void
 
   // Accessibility
-  screenReaderDescription?: string;
-  autoFocusOnError?: boolean;
+  screenReaderDescription?: string
+  autoFocusOnError?: boolean
 
   // Styling
-  variant?: 'default' | 'emergency' | 'sensitive';
-  size?: 'sm' | 'default' | 'lg';
+  variant?: 'default' | 'emergency' | 'sensitive'
+  size?: 'sm' | 'default' | 'lg'
 
-  className?: string;
+  className?: string
 }
 
 /**
@@ -121,181 +121,181 @@ export const HealthcareTextField = forwardRef<
     ref,
   ) => {
     // Context and theme
-    const formContext = useHealthcareForm();
+    const formContext = useHealthcareForm()
     // const { theme, accessibility } = useHealthcareTheme(); // TODO: Implement theme and accessibility features
 
     // Local state
     const [internalValue, setInternalValue] = useState<string>(
       (value ?? defaultValue ?? '') as string,
-    );
-    const [isFocused, setIsFocused] = useState(false);
-    const [hasBeenBlurred, setHasBeenBlurred] = useState(false);
-    const [validationErrors, setValidationErrors] = useState<string[]>([]);
+    )
+    const [isFocused, setIsFocused] = useState(false)
+    const [hasBeenBlurred, setHasBeenBlurred] = useState(false)
+    const [validationErrors, setValidationErrors] = useState<string[]>([])
 
     // Refs
-    const inputRef = useRef<HTMLInputElement>(null);
-    const errorRef = useRef<HTMLDivElement>(null);
+    const inputRef = useRef<HTMLInputElement>(null)
+    const errorRef = useRef<HTMLDivElement>(null)
 
     // Merge refs
     const mergedRef = (node: HTMLInputElement) => {
-      inputRef.current = node;
+      inputRef.current = node
       if (typeof ref === 'function') {
-        ref(node);
+        ref(node)
       } else if (ref) {
-        ref.current = node;
+        ref.current = node
       }
-    };
+    }
 
     // Auto-determine data sensitivity if not provided
-    const effectiveDataSensitivity = dataSensitivity ?? classifyHealthcareData(fieldType);
+    const effectiveDataSensitivity = dataSensitivity ?? classifyHealthcareData(fieldType)
 
     // Generate IDs
-    const fieldId = useId();
-    const descriptionId = description ? `${fieldId}-description` : undefined;
-    const errorId = validationErrors.length > 0 ? `${fieldId}-error` : undefined;
+    const fieldId = useId()
+    const descriptionId = description ? `${fieldId}-description` : undefined
+    const errorId = validationErrors.length > 0 ? `${fieldId}-error` : undefined
 
     // Get validation schema based on field type
     const getValidationSchema = (): z.ZodSchema | null => {
-      if (validationSchema) {return validationSchema;}
+      if (validationSchema) return validationSchema
 
-      const schemas = healthcareValidationSchemas;
+      const schemas = healthcareValidationSchemas
       switch (fieldType) {
         case 'cpf':
-          return schemas.cpf;
+          return schemas.cpf
         case 'crm':
-          return schemas.crm;
+          return schemas.crm
         case 'phone':
-          return schemas.phoneNumber;
+          return schemas.phoneNumber
         case 'medical-record':
-          return schemas.medicalRecordNumber;
+          return schemas.medicalRecordNumber
         case 'date-of-birth':
-          return schemas.dateOfBirth;
+          return schemas.dateOfBirth
         case 'medical-specialty':
-          return schemas.medicalSpecialty;
+          return schemas.medicalSpecialty
         default:
-          return null;
+          return null
       }
-    };
+    }
 
     // Validate field value
     const validateField = (valueToValidate: string): string[] => {
-      const errors: string[] = [];
+      const errors: string[] = []
 
       // Required validation
       if (required && !valueToValidate.trim()) {
-        errors.push(healthcareValidationMessages.required);
+        errors.push(healthcareValidationMessages.required)
       }
 
       // Skip other validations if empty and not required
       if (!valueToValidate.trim() && !required) {
-        return errors;
+        return errors
       }
 
       // Schema validation
-      const schema = getValidationSchema();
+      const schema = getValidationSchema()
       if (schema) {
         try {
-          schema.parse(valueToValidate);
+          schema.parse(valueToValidate)
         } catch (validationError) {
           if (validationError instanceof z.ZodError) {
             errors.push(
               ...validationError.errors.map((err: z.ZodIssue) => err.message),
-            );
+            )
           }
         }
       }
 
       // Custom validation
       if (customValidation) {
-        const customError = customValidation(valueToValidate);
+        const customError = customValidation(valueToValidate)
         if (customError) {
-          errors.push(customError);
+          errors.push(customError)
         }
       }
 
-      return errors;
-    };
+      return errors
+    }
 
     // Handle value change
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-      const newValue = event.target.value;
-      setInternalValue(newValue);
+      const newValue = event.target.value
+      setInternalValue(newValue)
 
       // Apply mask if provided
-      let maskedValue = newValue;
+      let maskedValue = newValue
       if (mask) {
-        maskedValue = applyMask(newValue, mask);
+        maskedValue = applyMask(newValue, mask)
         if (maskedValue !== newValue) {
-          event.target.value = maskedValue;
-          setInternalValue(maskedValue);
+          event.target.value = maskedValue
+          setInternalValue(maskedValue)
         }
       }
 
       // Validate on change if enabled
       if (validateOnChange) {
-        const errors = validateField(maskedValue);
-        setValidationErrors(errors);
+        const errors = validateField(maskedValue)
+        setValidationErrors(errors)
 
         // Update form context
         if (errors.length > 0) {
-          formContext.setFieldError(name, errors);
+          formContext.setFieldError(name, errors)
         } else {
-          formContext.clearFieldError(name);
+          formContext.clearFieldError(name)
         }
 
-        onValidationChange?.(errors);
+        onValidationChange?.(errors)
       }
 
       // Notify parent
-      onChange?.(maskedValue, validationErrors.length === 0);
-    };
+      onChange?.(maskedValue, validationErrors.length === 0)
+    }
 
     // Handle blur
     const handleBlur = (event: React.FocusEvent<HTMLInputElement>) => {
-      const currentValue = event.target.value;
-      setIsFocused(false);
-      setHasBeenBlurred(true);
+      const currentValue = event.target.value
+      setIsFocused(false)
+      setHasBeenBlurred(true)
 
       // Validate on blur if enabled
       if (validateOnBlur) {
-        const errors = validateField(currentValue);
-        setValidationErrors(errors);
+        const errors = validateField(currentValue)
+        setValidationErrors(errors)
 
         // Update form context
         if (errors.length > 0) {
-          formContext.setFieldError(name, errors);
+          formContext.setFieldError(name, errors)
         } else {
-          formContext.clearFieldError(name);
+          formContext.clearFieldError(name)
         }
 
-        onValidationChange?.(errors);
+        onValidationChange?.(errors)
 
         // Announce errors to screen readers
         if (errors.length > 0) {
           const priority = emergencyField
             ? HealthcarePriority.HIGH
-            : HealthcarePriority.MEDIUM;
+            : HealthcarePriority.MEDIUM
           announceToScreenReader(
             `Campo ${label}: ${errors.join('. ')}`,
             priority,
-          );
+          )
         }
       }
 
       // Notify parent
-      onBlur?.(currentValue, validationErrors.length === 0);
-    };
+      onBlur?.(currentValue, validationErrors.length === 0)
+    }
 
     // Handle focus
     const handleFocus = () => {
-      setIsFocused(true);
-    };
+      setIsFocused(true)
+    }
 
     // Apply input mask
     const applyMask = (value: string, maskPattern: string): string => {
-      const cleanValue = value.replace(/\D/g, '');
-      let masked = '';
-      let valueIndex = 0;
+      const cleanValue = value.replace(/\D/g, '')
+      let masked = ''
+      let valueIndex = 0
 
       for (
         let i = 0;
@@ -303,50 +303,50 @@ export const HealthcareTextField = forwardRef<
         i++
       ) {
         if (maskPattern[i] === '0') {
-          masked += cleanValue[valueIndex];
-          valueIndex++;
+          masked += cleanValue[valueIndex]
+          valueIndex++
         } else {
-          masked += maskPattern[i];
+          masked += maskPattern[i]
         }
       }
 
-      return masked;
-    };
+      return masked
+    }
 
     // Focus on error if needed
     useEffect(() => {
       if (autoFocusOnError && validationErrors.length > 0 && hasBeenBlurred) {
-        inputRef.current?.focus();
+        inputRef.current?.focus()
       }
-    }, [validationErrors, autoFocusOnError, hasBeenBlurred]);
+    }, [validationErrors, autoFocusOnError, hasBeenBlurred])
 
     // Validate accessibility on mount (basic label/error checks)
     useEffect(() => {
-      const el = inputRef.current;
-      if (!el) {return;}
-      const violations: string[] = [];
+      const el = inputRef.current
+      if (!el) return
+      const violations: string[] = []
       const hasLabel = !!(
         el.getAttribute('aria-label') || el.getAttribute('aria-labelledby')
-      );
-      if (!hasLabel) {violations.push('Campo sem rótulo acessível');}
-      const isInvalid = el.getAttribute('aria-invalid') === 'true';
+      )
+      if (!hasLabel) violations.push('Campo sem rótulo acessível')
+      const isInvalid = el.getAttribute('aria-invalid') === 'true'
       if (isInvalid && !el.getAttribute('aria-describedby')) {
-        violations.push('Erro sem descrição acessível');
+        violations.push('Erro sem descrição acessível')
       }
       if (el.hasAttribute('required') && !el.getAttribute('aria-required')) {
-        violations.push('Campo obrigatório sem indicação acessível');
+        violations.push('Campo obrigatório sem indicação acessível')
       }
       if (violations.length) {
         console.warn(
           `Accessibility violations in field "${name}":`,
           violations,
-        );
+        )
       }
-    }, [name]);
+    }, [name])
 
     // Determine field styling
-    const hasError = validationErrors.length > 0;
-    const showError = hasError && (hasBeenBlurred || !validateOnBlur);
+    const hasError = validationErrors.length > 0
+    const showError = hasError && (hasBeenBlurred || !validateOnBlur)
 
     const inputClasses = cn(
       // Base classes
@@ -364,8 +364,8 @@ export const HealthcareTextField = forwardRef<
       // Visual state
       {
         'border-destructive focus-visible:ring-destructive': showError,
-        'border-warning': effectiveDataSensitivity === DataSensitivity.CONFIDENTIAL
-          && !showError,
+        'border-warning': effectiveDataSensitivity === DataSensitivity.CONFIDENTIAL &&
+          !showError,
         'border-destructive bg-destructive/5':
           effectiveDataSensitivity === DataSensitivity.RESTRICTED && !showError,
       },
@@ -380,7 +380,7 @@ export const HealthcareTextField = forwardRef<
         'ring-2 ring-info ring-offset-2': isFocused && variant === 'sensitive',
       },
       className,
-    );
+    )
 
     return (
       <div
@@ -467,8 +467,8 @@ export const HealthcareTextField = forwardRef<
         )}
 
         {/* Data sensitivity indicator */}
-        {(effectiveDataSensitivity === DataSensitivity.RESTRICTED
-          || effectiveDataSensitivity === DataSensitivity.CONFIDENTIAL) && (
+        {(effectiveDataSensitivity === DataSensitivity.RESTRICTED ||
+          effectiveDataSensitivity === DataSensitivity.CONFIDENTIAL) && (
           <p className='text-xs text-muted-foreground flex items-center gap-1'>
             <span role='img' aria-label='Dados protegidos'>
               🔒
@@ -477,8 +477,8 @@ export const HealthcareTextField = forwardRef<
           </p>
         )}
       </div>
-    );
+    )
   },
-);
+)
 
-HealthcareTextField.displayName = 'HealthcareTextField';
+HealthcareTextField.displayName = 'HealthcareTextField'

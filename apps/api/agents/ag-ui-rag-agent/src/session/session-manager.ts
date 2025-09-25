@@ -4,40 +4,40 @@
  * T058: Configure session management with expiration handling
  */
 
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import { HealthcareLogger } from '../logging/healthcare-logger';
+import { createClient, SupabaseClient } from '@supabase/supabase-js'
+import { HealthcareLogger } from '../logging/healthcare-logger'
 
 interface SessionData {
-  sessionId: string;
-  _userId: string;
-  clinicId: string;
-  userRole: 'doctor' | 'nurse' | 'admin' | 'receptionist' | 'agent';
+  sessionId: string
+  _userId: string
+  clinicId: string
+  userRole: 'doctor' | 'nurse' | 'admin' | 'receptionist' | 'agent'
   metadata: {
-    userAgent?: string;
-    ipAddress?: string;
-    clientVersion?: string;
-    features?: string[];
-  };
-  isActive: boolean;
-  createdAt: Date;
-  expiresAt: Date;
-  lastActivityAt: Date;
+    userAgent?: string
+    ipAddress?: string
+    clientVersion?: string
+    features?: string[]
+  }
+  isActive: boolean
+  createdAt: Date
+  expiresAt: Date
+  lastActivityAt: Date
 }
 
 interface SessionConfig {
-  defaultExpirationMinutes: number;
-  maxExpirationMinutes: number;
-  inactivityTimeoutMinutes: number;
-  maxSessionsPerUser: number;
-  cleanupIntervalMinutes: number;
+  defaultExpirationMinutes: number
+  maxExpirationMinutes: number
+  inactivityTimeoutMinutes: number
+  maxSessionsPerUser: number
+  cleanupIntervalMinutes: number
 }
 
 export class SessionManager {
-  private supabase: SupabaseClient | null = null;
-  private logger: HealthcareLogger;
-  private sessions = new Map<string, SessionData>();
-  private cleanupInterval: NodeJS.Timeout | null = null;
-  private activityTimeouts = new Map<string, NodeJS.Timeout>();
+  private supabase: SupabaseClient | null = null
+  private logger: HealthcareLogger
+  private sessions = new Map<string, SessionData>()
+  private cleanupInterval: NodeJS.Timeout | null = null
+  private activityTimeouts = new Map<string, NodeJS.Timeout>()
 
   private config: SessionConfig = {
     defaultExpirationMinutes: 480, // 8 hours
@@ -45,24 +45,24 @@ export class SessionManager {
     inactivityTimeoutMinutes: 60, // 1 hour
     maxSessionsPerUser: 5,
     cleanupIntervalMinutes: 15, // Cleanup every 15 minutes
-  };
+  }
 
   constructor(logger?: HealthcareLogger) {
-    this.logger = logger || new HealthcareLogger();
-    this.initializeSupabase();
-    this.startCleanupInterval();
+    this.logger = logger || new HealthcareLogger()
+    this.initializeSupabase()
+    this.startCleanupInterval()
   }
 
   /**
    * Initialize Supabase connection
    */
   private async initializeSupabase(): Promise<void> {
-    const supabaseUrl = process.env.SUPABASE_URL;
-    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    const supabaseUrl = process.env.SUPABASE_URL
+    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 
     if (!supabaseUrl || !supabaseKey) {
-      this.logger.warn('Supabase configuration missing for session manager');
-      return;
+      this.logger.warn('Supabase configuration missing for session manager')
+      return
     }
 
     this.supabase = createClient(supabaseUrl, supabaseKey, {
@@ -76,33 +76,33 @@ export class SessionManager {
           'X-LGPD-Compliance': 'true',
         },
       },
-    });
+    })
 
     // Load active sessions from database
-    await this.loadActiveSessions();
+    await this.loadActiveSessions()
 
     this.logger.info('Session manager initialized', {
       component: 'session-manager',
       active_sessions: this.sessions.size,
-    });
+    })
   }
 
   /**
    * Load active sessions from database
    */
   private async loadActiveSessions(): Promise<void> {
-    if (!this.supabase) return;
+    if (!this.supabase) return
 
     try {
       const { data: activeSessions, error } = await this.supabase
         .from('ai_sessions')
         .select('*')
         .eq('is_active', true)
-        .gt('expires_at', new Date().toISOString());
+        .gt('expires_at', new Date().toISOString())
 
       if (error) {
-        this.logger.error('Failed to load active sessions', error);
-        return;
+        this.logger.error('Failed to load active sessions', error)
+        return
       }
 
       if (activeSessions) {
@@ -117,18 +117,18 @@ export class SessionManager {
             createdAt: new Date(session.created_at),
             expiresAt: new Date(session.expires_at),
             lastActivityAt: new Date(session.last_activity_at),
-          });
+          })
 
           // Set up activity timeout
-          this.setupActivityTimeout(session.session_id);
+          this.setupActivityTimeout(session.session_id)
         }
 
         this.logger.info('Active sessions loaded', {
           count: activeSessions.length,
-        });
+        })
       }
     } catch (error) {
-      this.logger.error('Error loading active sessions', error as Error);
+      this.logger.error('Error loading active sessions', error as Error)
     }
   }
 
@@ -136,22 +136,22 @@ export class SessionManager {
    * Create a new session
    */
   public async createSession(params: {
-    _userId: string;
-    clinicId: string;
-    userRole: string;
-    metadata?: any;
-    expirationMinutes?: number;
+    _userId: string
+    clinicId: string
+    userRole: string
+    metadata?: any
+    expirationMinutes?: number
   }): Promise<string> {
-    const sessionId = this.generateSessionId();
-    const _now = new Date();
+    const sessionId = this.generateSessionId()
+    const _now = new Date()
     const expirationMinutes = Math.min(
       params.expirationMinutes || this.config.defaultExpirationMinutes,
       this.config.maxExpirationMinutes,
-    );
-    const expiresAt = new Date(now.getTime() + expirationMinutes * 60 * 1000);
+    )
+    const expiresAt = new Date(now.getTime() + expirationMinutes * 60 * 1000)
 
     // Check session limits per user
-    await this.enforceSessionLimits(params._userId);
+    await this.enforceSessionLimits(params._userId)
 
     const sessionData: SessionData = {
       sessionId,
@@ -163,10 +163,10 @@ export class SessionManager {
       createdAt: now,
       expiresAt,
       lastActivityAt: now,
-    };
+    }
 
     // Store in memory
-    this.sessions.set(sessionId, sessionData);
+    this.sessions.set(sessionId, sessionData)
 
     // Store in database
     if (this.supabase) {
@@ -180,18 +180,18 @@ export class SessionManager {
           is_active: true,
           expires_at: expiresAt.toISOString(),
           last_activity_at: now.toISOString(),
-        });
+        })
 
         if (error) {
-          this.logger.error('Failed to store session in database', error);
+          this.logger.error('Failed to store session in database', error)
         }
       } catch (error) {
-        this.logger.error('Error storing session', error as Error);
+        this.logger.error('Error storing session', error as Error)
       }
     }
 
     // Setup activity timeout
-    this.setupActivityTimeout(sessionId);
+    this.setupActivityTimeout(sessionId)
 
     // Log session creation
     this.logger.logSessionEvent(
@@ -204,49 +204,49 @@ export class SessionManager {
         expiration_minutes: expirationMinutes,
         metadata: params.metadata,
       },
-    );
+    )
 
     this.logger.info('Session created', {
       sessionId,
       _userId: params.userId,
       clinicId: params.clinicId,
       expiresAt: expiresAt.toISOString(),
-    });
+    })
 
-    return sessionId;
+    return sessionId
   }
 
   /**
    * Get session data
    */
   public getSession(sessionId: string): SessionData | null {
-    const session = this.sessions.get(sessionId);
+    const session = this.sessions.get(sessionId)
 
     if (!session) {
-      return null;
+      return null
     }
 
     // Check if session is expired
     if (!session.isActive || session.expiresAt < new Date()) {
-      this.expireSession(sessionId, 'expired');
-      return null;
+      this.expireSession(sessionId, 'expired')
+      return null
     }
 
-    return session;
+    return session
   }
 
   /**
    * Update session activity
    */
   public async updateActivity(sessionId: string): Promise<boolean> {
-    const session = this.sessions.get(sessionId);
+    const session = this.sessions.get(sessionId)
 
     if (!session || !session.isActive) {
-      return false;
+      return false
     }
 
-    const _now = new Date();
-    session.lastActivityAt = now;
+    const _now = new Date()
+    session.lastActivityAt = now
 
     // Update in database
     if (this.supabase) {
@@ -254,20 +254,20 @@ export class SessionManager {
         const { error } = await this.supabase
           .from('ai_sessions')
           .update({ last_activity_at: now.toISOString() })
-          .eq('session_id', sessionId);
+          .eq('session_id', sessionId)
 
         if (error) {
-          this.logger.error('Failed to update session activity', error);
+          this.logger.error('Failed to update session activity', error)
         }
       } catch (error) {
-        this.logger.error('Error updating session activity', error as Error);
+        this.logger.error('Error updating session activity', error as Error)
       }
     }
 
     // Reset activity timeout
-    this.setupActivityTimeout(sessionId);
+    this.setupActivityTimeout(sessionId)
 
-    return true;
+    return true
   }
 
   /**
@@ -277,19 +277,19 @@ export class SessionManager {
     sessionId: string,
     additionalMinutes: number,
   ): Promise<boolean> {
-    const session = this.sessions.get(sessionId);
+    const session = this.sessions.get(sessionId)
 
     if (!session || !session.isActive) {
-      return false;
+      return false
     }
 
     const newExpiresAt = new Date(
       session.expiresAt.getTime() + additionalMinutes * 60 * 1000,
-    );
+    )
     const maxExpiration = new Date(
-      session.createdAt.getTime()
-        + this.config.maxExpirationMinutes * 60 * 1000,
-    );
+      session.createdAt.getTime() +
+        this.config.maxExpirationMinutes * 60 * 1000,
+    )
 
     // Don't exceed maximum expiration time
     if (newExpiresAt > maxExpiration) {
@@ -300,11 +300,11 @@ export class SessionManager {
           requested: newExpiresAt.toISOString(),
           maximum: maxExpiration.toISOString(),
         },
-      );
-      return false;
+      )
+      return false
     }
 
-    session.expiresAt = newExpiresAt;
+    session.expiresAt = newExpiresAt
 
     // Update in database
     if (this.supabase) {
@@ -312,15 +312,15 @@ export class SessionManager {
         const { error } = await this.supabase
           .from('ai_sessions')
           .update({ expires_at: newExpiresAt.toISOString() })
-          .eq('session_id', sessionId);
+          .eq('session_id', sessionId)
 
         if (error) {
-          this.logger.error('Failed to extend session', error);
-          return false;
+          this.logger.error('Failed to extend session', error)
+          return false
         }
       } catch (error) {
-        this.logger.error('Error extending session', error as Error);
-        return false;
+        this.logger.error('Error extending session', error as Error)
+        return false
       }
     }
 
@@ -328,9 +328,9 @@ export class SessionManager {
       sessionId,
       additionalMinutes,
       newExpiresAt: newExpiresAt.toISOString(),
-    });
+    })
 
-    return true;
+    return true
   }
 
   /**
@@ -340,14 +340,14 @@ export class SessionManager {
     sessionId: string,
     reason: 'expired' | 'timeout' | 'manual' | 'error',
   ): Promise<void> {
-    const session = this.sessions.get(sessionId);
+    const session = this.sessions.get(sessionId)
 
     if (!session) {
-      return;
+      return
     }
 
     // Mark as inactive
-    session.isActive = false;
+    session.isActive = false
 
     // Update in database
     if (this.supabase) {
@@ -355,21 +355,21 @@ export class SessionManager {
         const { error } = await this.supabase
           .from('ai_sessions')
           .update({ is_active: false })
-          .eq('session_id', sessionId);
+          .eq('session_id', sessionId)
 
         if (error) {
-          this.logger.error('Failed to expire session in database', error);
+          this.logger.error('Failed to expire session in database', error)
         }
       } catch (error) {
-        this.logger.error('Error expiring session', error as Error);
+        this.logger.error('Error expiring session', error as Error)
       }
     }
 
     // Clear activity timeout
-    const timeout = this.activityTimeouts.get(sessionId);
+    const timeout = this.activityTimeouts.get(sessionId)
     if (timeout) {
-      clearTimeout(timeout);
-      this.activityTimeouts.delete(sessionId);
+      clearTimeout(timeout)
+      this.activityTimeouts.delete(sessionId)
     }
 
     // Log session end
@@ -379,18 +379,18 @@ export class SessionManager {
       session.clinicId,
       reason === 'timeout' ? 'timeout' : 'end',
       { reason },
-    );
+    )
 
     this.logger.info('Session expired', {
       sessionId,
       reason,
       duration: Date.now() - session.createdAt.getTime(),
-    });
+    })
 
     // Remove from memory after delay to allow cleanup
     setTimeout(() => {
-      this.sessions.delete(sessionId);
-    }, 30000); // 30 seconds
+      this.sessions.delete(sessionId)
+    }, 30000) // 30 seconds
   }
 
   /**
@@ -399,7 +399,7 @@ export class SessionManager {
   public getUserSessions(_userId: string): SessionData[] {
     return Array.from(this.sessions.values()).filter(
       session => session.userId === userId && session.isActive,
-    );
+    )
   }
 
   /**
@@ -408,36 +408,36 @@ export class SessionManager {
   public getClinicSessionCount(clinicId: string): number {
     return Array.from(this.sessions.values()).filter(
       session => session.clinicId === clinicId && session.isActive,
-    ).length;
+    ).length
   }
 
   /**
    * Generate unique session ID
    */
   private generateSessionId(): string {
-    return `sess_${Date.now()}_${Math.random().toString(36).substring(2, 15)}`;
+    return `sess_${Date.now()}_${Math.random().toString(36).substring(2, 15)}`
   }
 
   /**
    * Enforce session limits per user
    */
   private async enforceSessionLimits(_userId: string): Promise<void> {
-    const userSessions = this.getUserSessions(userId);
+    const userSessions = this.getUserSessions(userId)
 
     if (userSessions.length >= this.config.maxSessionsPerUser) {
       // Expire the oldest session
       const oldestSession = userSessions.sort(
         (a, b) => a.createdAt.getTime() - b.createdAt.getTime(),
-      )[0];
+      )[0]
 
       if (oldestSession) {
         this.logger.info('Expiring oldest session due to limit', {
           userId,
           sessionId: oldestSession.sessionId,
           limit: this.config.maxSessionsPerUser,
-        });
+        })
 
-        await this.expireSession(oldestSession.sessionId, 'manual');
+        await this.expireSession(oldestSession.sessionId, 'manual')
       }
     }
   }
@@ -447,20 +447,20 @@ export class SessionManager {
    */
   private setupActivityTimeout(sessionId: string): void {
     // Clear existing timeout
-    const existingTimeout = this.activityTimeouts.get(sessionId);
+    const existingTimeout = this.activityTimeouts.get(sessionId)
     if (existingTimeout) {
-      clearTimeout(existingTimeout);
+      clearTimeout(existingTimeout)
     }
 
     // Set new timeout
     const timeout = setTimeout(
       () => {
-        this.expireSession(sessionId, 'timeout');
+        this.expireSession(sessionId, 'timeout')
       },
       this.config.inactivityTimeoutMinutes * 60 * 1000,
-    );
+    )
 
-    this.activityTimeouts.set(sessionId, timeout);
+    this.activityTimeouts.set(sessionId, timeout)
   }
 
   /**
@@ -469,46 +469,46 @@ export class SessionManager {
   private startCleanupInterval(): void {
     this.cleanupInterval = setInterval(
       () => {
-        this.cleanupExpiredSessions();
+        this.cleanupExpiredSessions()
       },
       this.config.cleanupIntervalMinutes * 60 * 1000,
-    );
+    )
   }
 
   /**
    * Cleanup expired sessions
    */
   private async cleanupExpiredSessions(): Promise<void> {
-    const _now = new Date();
-    const expiredSessions: string[] = [];
+    const _now = new Date()
+    const expiredSessions: string[] = []
 
     // Find expired sessions
     for (const [sessionId, session] of this.sessions.entries()) {
       if (!session.isActive || session.expiresAt < now) {
-        expiredSessions.push(sessionId);
+        expiredSessions.push(sessionId)
       }
     }
 
     // Expire them
     for (const sessionId of expiredSessions) {
-      await this.expireSession(sessionId, 'expired');
+      await this.expireSession(sessionId, 'expired')
     }
 
     // Cleanup database if Supabase is available
     if (this.supabase && expiredSessions.length > 0) {
       try {
         // Call cleanup function
-        const { error } = await this.supabase.rpc('cleanup_expired_ai_data');
+        const { error } = await this.supabase.rpc('cleanup_expired_ai_data')
 
         if (error) {
-          this.logger.error('Failed to cleanup expired data', error);
+          this.logger.error('Failed to cleanup expired data', error)
         } else {
           this.logger.info('Expired sessions cleaned up', {
             count: expiredSessions.length,
-          });
+          })
         }
       } catch (error) {
-        this.logger.error('Error during cleanup', error as Error);
+        this.logger.error('Error during cleanup', error as Error)
       }
     }
   }
@@ -517,8 +517,8 @@ export class SessionManager {
    * Get session statistics
    */
   public getStats(): any {
-    const sessions = Array.from(this.sessions.values());
-    const activeSessions = sessions.filter(s => s.isActive);
+    const sessions = Array.from(this.sessions.values())
+    const activeSessions = sessions.filter(s => s.isActive)
 
     return {
       total_sessions: sessions.length,
@@ -526,8 +526,8 @@ export class SessionManager {
       expired_sessions: sessions.length - activeSessions.length,
       sessions_by_role: activeSessions.reduce(
         (acc, session) => {
-          acc[session.userRole] = (acc[session.userRole] || 0) + 1;
-          return acc;
+          acc[session.userRole] = (acc[session.userRole] || 0) + 1
+          return acc
         },
         {} as Record<string, number>,
       ),
@@ -537,23 +537,23 @@ export class SessionManager {
         sessions_map_size: this.sessions.size,
         activity_timeouts: this.activityTimeouts.size,
       },
-    };
+    }
   }
 
   /**
    * Calculate average session duration
    */
   private calculateAverageSessionDuration(sessions: SessionData[]): number {
-    if (sessions.length === 0) return 0;
+    if (sessions.length === 0) return 0
 
     const totalDuration = sessions.reduce((sum, session) => {
       const duration = session.isActive
         ? Date.now() - session.createdAt.getTime()
-        : session.lastActivityAt.getTime() - session.createdAt.getTime();
-      return sum + duration;
-    }, 0);
+        : session.lastActivityAt.getTime() - session.createdAt.getTime()
+      return sum + duration
+    }, 0)
 
-    return Math.round(totalDuration / sessions.length / 1000 / 60); // minutes
+    return Math.round(totalDuration / sessions.length / 1000 / 60) // minutes
   }
 
   /**
@@ -562,28 +562,28 @@ export class SessionManager {
   public async shutdown(): Promise<void> {
     this.logger.info('Shutting down session manager', {
       active_sessions: this.sessions.size,
-    });
+    })
 
     // Clear cleanup interval
     if (this.cleanupInterval) {
-      clearInterval(this.cleanupInterval);
+      clearInterval(this.cleanupInterval)
     }
 
     // Clear all activity timeouts
     for (const timeout of this.activityTimeouts.values()) {
-      clearTimeout(timeout);
+      clearTimeout(timeout)
     }
-    this.activityTimeouts.clear();
+    this.activityTimeouts.clear()
 
     // Expire all active sessions
-    const activeSessions = Array.from(this.sessions.keys());
+    const activeSessions = Array.from(this.sessions.keys())
     for (const sessionId of activeSessions) {
-      await this.expireSession(sessionId, 'manual');
+      await this.expireSession(sessionId, 'manual')
     }
 
     // Final cleanup
-    await this.cleanupExpiredSessions();
+    await this.cleanupExpiredSessions()
 
-    this.logger.info('Session manager shutdown completed');
+    this.logger.info('Session manager shutdown completed')
   }
 }

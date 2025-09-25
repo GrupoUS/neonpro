@@ -14,14 +14,14 @@
  * - CFM-compliant medical decision support
  */
 
-import { AIClinicalDecisionSupport } from '@neonpro/core-services';
-import { AuditAction, AuditStatus, ResourceType, RiskLevel } from '@prisma/client';
-import { TRPCError } from '@trpc/server';
-import * as z from 'zod';
-import { healthcareProcedure, protectedProcedure, router } from '../trpc';
+import { AIClinicalDecisionSupport } from '@neonpro/core-services'
+import { AuditAction, AuditStatus, ResourceType, RiskLevel } from '@prisma/client'
+import { TRPCError } from '@trpc/server'
+import * as z from 'zod'
+import { healthcareProcedure, protectedProcedure, router } from '../trpc'
 
 // Initialize the AI clinical decision support service
-const aiClinicalService = AIClinicalDecisionSupport.getInstance();
+const aiClinicalService = AIClinicalDecisionSupport.getInstance()
 
 // =====================================
 // INPUT SCHEMAS
@@ -66,7 +66,7 @@ const PatientAssessmentSchema = z.object({
     angle: z.string(),
     date: z.date(),
   })).optional(),
-});
+})
 
 /**
  * Treatment plan creation schema
@@ -83,7 +83,7 @@ const CreateTreatmentPlanSchema = z.object({
     suitability: z.number().min(0).max(1),
   })).min(1, 'Selecione ao menos uma recomendação'),
   goals: z.array(z.string()).min(1, 'É necessário fornecer ao menos um objetivo'),
-});
+})
 
 /**
  * Contraindication analysis schema
@@ -94,7 +94,7 @@ const ContraindicationAnalysisSchema = z.object({
     1,
     'Selecione ao menos um procedimento',
   ),
-});
+})
 
 /**
  * Treatment guidelines schema
@@ -107,7 +107,7 @@ const TreatmentGuidelinesSchema = z.object({
     gender: z.string(),
     concerns: z.array(z.string()).default([]),
   }),
-});
+})
 
 /**
  * Treatment outcome prediction schema
@@ -122,7 +122,7 @@ const OutcomePredictionSchema = z.object({
     }),
     frequency: z.string().min(1, 'Frequência é obrigatória'),
   }),
-});
+})
 
 /**
  * Treatment progress monitoring schema
@@ -144,7 +144,7 @@ const ProgressMonitoringSchema = z.object({
       errorMap: () => ({ message: 'Nível de cicatrização inválido' }),
     }),
   }),
-});
+})
 
 // =====================================
 // OUTPUT SCHEMAS
@@ -180,7 +180,7 @@ const TreatmentRecommendationSchema = z.object({
     activityRestrictions: z.array(z.string()),
   }),
   evidenceLevel: z.enum(['A', 'B', 'C', 'D']),
-});
+})
 
 /**
  * Treatment plan output schema
@@ -214,7 +214,7 @@ const _TreatmentPlanSchema = z.object({
     timing: z.string(),
     purpose: z.string(),
   })),
-});
+})
 
 /**
  * Contraindication analysis output schema
@@ -228,7 +228,7 @@ const _ContraindicationAnalysisOutputSchema = z.object({
   recommendations: z.array(z.string()),
   canProceed: z.boolean(),
   modifiedApproach: z.string().optional(),
-});
+})
 
 /**
  * Treatment guidelines output schema
@@ -269,7 +269,7 @@ const _TreatmentGuidelinesOutputSchema = z.object({
   }),
   personalizedRecommendations: z.array(z.string()),
   precautions: z.array(z.string()),
-});
+})
 
 /**
  * Outcome prediction output schema
@@ -288,7 +288,7 @@ const _OutcomePredictionOutputSchema = z.object({
     maintenance: z.string(),
   }),
   recommendations: z.array(z.string()),
-});
+})
 
 /**
  * Progress monitoring output schema
@@ -303,7 +303,7 @@ const _ProgressMonitoringOutputSchema = z.object({
     reason: z.string(),
   })),
   nextSessionPlan: z.string(),
-});
+})
 
 // =====================================
 // BRAZILIAN HEALTHCARE COMPLIANCE HELPERS
@@ -317,34 +317,34 @@ async function validateCFMCompliance(
   recommendationData: any,
   _ctx: any,
 ): Promise<{
-  compliant: boolean;
-  warnings: string[];
-  restrictions: string[];
+  compliant: boolean
+  warnings: string[]
+  restrictions: string[]
 }> {
-  const warnings: string[] = [];
-  const restrictions: string[] = [];
-  let compliant = true;
+  const warnings: string[] = []
+  const restrictions: string[] = []
+  let compliant = true
 
   // Check for CFM-required medical supervision
   if (recommendationData.safety < 0.7) {
-    warnings.push('Recomendação requer supervisão médica intensiva');
-    restrictions.push('Procedimento só pode ser realizado por médico especialista');
+    warnings.push('Recomendação requer supervisão médica intensiva')
+    restrictions.push('Procedimento só pode ser realizado por médico especialista')
   }
 
   // Check for high-risk procedures
   if (recommendationData.risks?.some((risk: any) => risk.type === 'serious')) {
-    warnings.push('Procedimento de alto risco identificado');
-    restrictions.push('Consentimento informado detalhado obrigatório');
-    restrictions.push('Equipamento de emergência deve estar disponível');
+    warnings.push('Procedimento de alto risco identificado')
+    restrictions.push('Consentimento informado detalhado obrigatório')
+    restrictions.push('Equipamento de emergência deve estar disponível')
   }
 
   // Check evidence level compliance
   if (recommendationData.evidenceLevel === 'C' || recommendationData.evidenceLevel === 'D') {
-    warnings.push('Nível de evidência científica baixo');
-    restrictions.push('Paciente deve ser informado sobre limitações científicas');
+    warnings.push('Nível de evidência científica baixo')
+    restrictions.push('Paciente deve ser informado sobre limitações científicas')
   }
 
-  return { compliant, warnings, restrictions };
+  return { compliant, warnings, restrictions }
 }
 
 /**
@@ -354,18 +354,18 @@ async function validateANVISACompliance(
   procedureData: any,
   ctx: any,
 ): Promise<{
-  compliant: boolean;
-  warnings: string[];
-  restrictions: string[];
+  compliant: boolean
+  warnings: string[]
+  restrictions: string[]
 }> {
-  const warnings: string[] = [];
-  const restrictions: string[] = [];
-  let compliant = true;
+  const warnings: string[] = []
+  const restrictions: string[] = []
+  let compliant = true
 
   // Check if procedure requires ANVISA registration
   const requiresAnvisaRegistration = ['laser', 'surgical', 'injectable'].includes(
     procedureData.procedureType,
-  );
+  )
 
   if (requiresAnvisaRegistration) {
     // Verify procedure has proper registration
@@ -374,15 +374,15 @@ async function validateANVISACompliance(
         id: procedureData.procedureId,
         anvisaRegistration: { not: null },
       },
-    });
+    })
 
     if (!hasRegistration) {
-      warnings.push('Procedimento pode requerer registro ANVISA');
-      compliant = false;
+      warnings.push('Procedimento pode requerer registro ANVISA')
+      compliant = false
     }
   }
 
-  return { compliant, warnings, restrictions };
+  return { compliant, warnings, restrictions }
 }
 
 /**
@@ -390,27 +390,27 @@ async function validateANVISACompliance(
  * Ensures LGPD compliance when sending data to AI models
  */
 function anonymizePatientDataForAI(data: any): any {
-  if (!data) return {};
+  if (!data) return {}
 
-  const anonymized = { ...data };
+  const anonymized = { ...data }
 
   // Remove direct identifiers
-  delete anonymized.fullName;
-  delete anonymized.cpf;
-  delete anonymized.rg;
-  delete anonymized.email;
-  delete anonymized.phonePrimary;
-  delete anonymized.phoneSecondary;
+  delete anonymized.fullName
+  delete anonymized.cpf
+  delete anonymized.rg
+  delete anonymized.email
+  delete anonymized.phonePrimary
+  delete anonymized.phoneSecondary
 
   // Generalize sensitive data
   if (anonymized.birthDate) {
-    const birthYear = new Date(anonymized.birthDate).getFullYear();
-    const currentYear = new Date().getFullYear();
-    anonymized.ageGroup = `${Math.floor((currentYear - birthYear) / 10) * 10}s`;
-    delete anonymized.birthDate;
+    const birthYear = new Date(anonymized.birthDate).getFullYear()
+    const currentYear = new Date().getFullYear()
+    anonymized.ageGroup = `${Math.floor((currentYear - birthYear) / 10) * 10}s`
+    delete anonymized.birthDate
   }
 
-  return anonymized;
+  return anonymized
 }
 
 // =====================================
@@ -432,17 +432,17 @@ export const aiClinicalSupportRouter = router({
             id: input.patientId,
             clinicId: ctx.clinicId,
           },
-        });
+        })
 
         if (!patient) {
           throw new TRPCError({
             code: 'NOT_FOUND',
             message: 'Paciente não encontrado',
-          });
+          })
         }
 
         // Generate recommendations
-        const recommendations = await aiClinicalService.generateTreatmentRecommendations(input);
+        const recommendations = await aiClinicalService.generateTreatmentRecommendations(input)
 
         // Validate compliance for each recommendation
         const complianceResults = await Promise.all(
@@ -450,7 +450,7 @@ export const aiClinicalSupportRouter = router({
             const [cfmCompliance, anvisaCompliance] = await Promise.all([
               validateCFMCompliance(rec, ctx),
               validateANVISACompliance(rec, ctx),
-            ]);
+            ])
 
             return {
               ...rec,
@@ -460,9 +460,9 @@ export const aiClinicalSupportRouter = router({
                 warnings: [...cfmCompliance.warnings, ...anvisaCompliance.warnings],
                 restrictions: [...cfmCompliance.restrictions, ...anvisaCompliance.restrictions],
               },
-            };
+            }
           }),
-        );
+        )
 
         // Create audit trail
         await ctx.prisma.auditTrail.create({
@@ -486,7 +486,7 @@ export const aiClinicalSupportRouter = router({
               goals: input.aestheticGoals,
             }),
           },
-        });
+        })
 
         return {
           recommendations: complianceResults,
@@ -502,7 +502,7 @@ export const aiClinicalSupportRouter = router({
             anvisaChecked: true,
             auditLogged: true,
           },
-        };
+        }
       } catch {
         // Log error
         await ctx.prisma.auditTrail.create({
@@ -523,13 +523,13 @@ export const aiClinicalSupportRouter = router({
               error: error instanceof Error ? error.message : 'Unknown error',
             }),
           },
-        });
+        })
 
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Falha ao gerar recomendações de tratamento',
           cause: error,
-        });
+        })
       }
     }),
 
@@ -547,13 +547,13 @@ export const aiClinicalSupportRouter = router({
             id: input.patientId,
             clinicId: ctx.clinicId,
           },
-        });
+        })
 
         if (!patient) {
           throw new TRPCError({
             code: 'NOT_FOUND',
             message: 'Paciente não encontrado',
-          });
+          })
         }
 
         // Create treatment plan
@@ -561,11 +561,11 @@ export const aiClinicalSupportRouter = router({
           input.patientId,
           input.selectedRecommendations,
           input.goals,
-        );
+        )
 
         // Validate overall compliance
-        const overallRisk = treatmentPlan.riskAssessment.overall;
-        const requiresEnhancedMonitoring = overallRisk === 'high';
+        const overallRisk = treatmentPlan.riskAssessment.overall
+        const requiresEnhancedMonitoring = overallRisk === 'high'
 
         // Note: Store treatment plan in database when schema is available
         // const savedPlan = await ctx.prisma.treatmentPlan.create({
@@ -602,7 +602,7 @@ export const aiClinicalSupportRouter = router({
               totalBudget: treatmentPlan.budgetBreakdown.total,
             }),
           },
-        });
+        })
 
         return {
           treatmentPlan,
@@ -618,13 +618,13 @@ export const aiClinicalSupportRouter = router({
             riskAssessed: true,
             auditLogged: true,
           },
-        };
+        }
       } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Falha ao criar plano de tratamento',
           cause: error,
-        });
+        })
       }
     }),
 
@@ -647,25 +647,25 @@ export const aiClinicalSupportRouter = router({
             allergies: true,
             medications: true,
           },
-        });
+        })
 
         if (!patient) {
           throw new TRPCError({
             code: 'NOT_FOUND',
             message: 'Paciente não encontrado',
-          });
+          })
         }
 
         // Analyze contraindications
         const analyses = await aiClinicalService.analyzeContraindications(
           input.patientId,
           input.procedureIds,
-        );
+        )
 
         // Enhanced compliance validation
         const enhancedAnalyses = await Promise.all(
           analyses.map(async analysis => {
-            const cfmCompliance = await validateCFMCompliance(analysis, ctx);
+            const cfmCompliance = await validateCFMCompliance(analysis, ctx)
 
             return {
               ...analysis,
@@ -674,9 +674,9 @@ export const aiClinicalSupportRouter = router({
                 warnings: cfmCompliance.warnings,
                 restrictions: cfmCompliance.restrictions,
               },
-            };
+            }
           }),
-        );
+        )
 
         // Create audit trail
         await ctx.prisma.auditTrail.create({
@@ -701,7 +701,7 @@ export const aiClinicalSupportRouter = router({
               ),
             }),
           },
-        });
+        })
 
         return {
           analyses: enhancedAnalyses,
@@ -718,13 +718,13 @@ export const aiClinicalSupportRouter = router({
             cfmValidated: true,
             auditLogged: true,
           },
-        };
+        }
       } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Falha ao analisar contraindicações',
           cause: error,
-        });
+        })
       }
     }),
 
@@ -740,7 +740,7 @@ export const aiClinicalSupportRouter = router({
         const guidelines = await aiClinicalService.generateTreatmentGuidelines(
           input.procedureId,
           input.patientFactors,
-        );
+        )
 
         // Verify procedure exists and is compliant
         const procedure = await ctx.prisma.treatmentCatalog.findFirst({
@@ -748,13 +748,13 @@ export const aiClinicalSupportRouter = router({
             id: input.procedureId,
             clinicId: ctx.clinicId,
           },
-        });
+        })
 
         if (!procedure) {
           throw new TRPCError({
             code: 'NOT_FOUND',
             message: 'Procedimento não encontrado',
-          });
+          })
         }
 
         // Create audit trail
@@ -776,7 +776,7 @@ export const aiClinicalSupportRouter = router({
               patientFactors: input.patientFactors,
             }),
           },
-        });
+        })
 
         return {
           guidelines,
@@ -791,13 +791,13 @@ export const aiClinicalSupportRouter = router({
             evidenceBased: true,
             auditLogged: true,
           },
-        };
+        }
       } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Falha ao gerar diretrizes de tratamento',
           cause: error,
-        });
+        })
       }
     }),
 
@@ -815,24 +815,24 @@ export const aiClinicalSupportRouter = router({
             id: input.patientId,
             clinicId: ctx.clinicId,
           },
-        });
+        })
 
         if (!patient) {
           throw new TRPCError({
             code: 'NOT_FOUND',
             message: 'Paciente não encontrado',
-          });
+          })
         }
 
         // Anonymize patient data for AI processing
-        const _anonymizedData = anonymizePatientDataForAI(patient);
+        const _anonymizedData = anonymizePatientDataForAI(patient)
 
         // Predict outcomes
         const prediction = await aiClinicalService.predictTreatmentOutcomes(
           input.patientId,
           input.procedureId,
           input.treatmentPlan,
-        );
+        )
 
         // Create audit trail
         await ctx.prisma.auditTrail.create({
@@ -856,7 +856,7 @@ export const aiClinicalSupportRouter = router({
               dataAnonymized: true,
             }),
           },
-        });
+        })
 
         return {
           prediction,
@@ -872,13 +872,13 @@ export const aiClinicalSupportRouter = router({
             aiGovernance: true,
             auditLogged: true,
           },
-        };
+        }
       } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Falha ao prever resultados do tratamento',
           cause: error,
-        });
+        })
       }
     }),
 
@@ -896,13 +896,13 @@ export const aiClinicalSupportRouter = router({
             id: input.treatmentPlanId,
             clinicId: ctx.clinicId,
           },
-        });
+        })
 
         if (!treatmentPlan) {
           throw new TRPCError({
             code: 'NOT_FOUND',
             message: 'Plano de tratamento não encontrado',
-          });
+          })
         }
 
         // Monitor progress
@@ -911,7 +911,7 @@ export const aiClinicalSupportRouter = router({
           input.currentSession,
           input.patientFeedback,
           input.clinicalAssessment,
-        );
+        )
 
         // Store progress data using TreatmentPlanItem
         // First, get a default treatment catalog or create a monitoring entry
@@ -920,7 +920,7 @@ export const aiClinicalSupportRouter = router({
             clinicId: ctx.clinicId,
             category: 'monitoring',
           },
-        });
+        })
 
         if (monitoringCatalog) {
           await ctx.prisma.treatmentPlanItem.create({
@@ -942,7 +942,7 @@ export const aiClinicalSupportRouter = router({
               createdAt: new Date(),
               updatedAt: new Date(),
             },
-          });
+          })
         }
 
         // Create audit trail
@@ -966,7 +966,7 @@ export const aiClinicalSupportRouter = router({
               adjustmentCount: progress.adjustments.length,
             }),
           },
-        });
+        })
 
         return {
           progress,
@@ -982,13 +982,13 @@ export const aiClinicalSupportRouter = router({
             adaptiveMonitoring: true,
             auditLogged: true,
           },
-        };
+        }
       } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Falha ao monitorar progresso do tratamento',
           cause: error,
-        });
+        })
       }
     }),
 
@@ -1012,13 +1012,13 @@ export const aiClinicalSupportRouter = router({
             id: input.patientId,
             clinicId: ctx.clinicId,
           },
-        });
+        })
 
         if (!patient) {
           throw new TRPCError({
             code: 'NOT_FOUND',
             message: 'Paciente não encontrado',
-          });
+          })
         }
 
         // Get treatment history
@@ -1034,7 +1034,7 @@ export const aiClinicalSupportRouter = router({
             professional: true,
           },
           orderBy: { startTime: 'desc' },
-        });
+        })
 
         // Create audit trail
         await ctx.prisma.auditTrail.create({
@@ -1058,7 +1058,7 @@ export const aiClinicalSupportRouter = router({
               includeCancelled: input.includeCancelled,
             }),
           },
-        });
+        })
 
         return {
           treatments,
@@ -1072,13 +1072,13 @@ export const aiClinicalSupportRouter = router({
             lgpdCompliant: true,
             auditLogged: true,
           },
-        };
+        }
       } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Falha ao recuperar histórico de tratamentos',
           cause: error,
-        });
+        })
       }
     }),
 
@@ -1120,7 +1120,7 @@ export const aiClinicalSupportRouter = router({
             responseTime: '120ms',
             lastHealthCheck: new Date(),
           },
-        };
+        }
 
         // Create audit trail
         await ctx.prisma.auditTrail.create({
@@ -1141,7 +1141,7 @@ export const aiClinicalSupportRouter = router({
               overallHealth: modelStatus.systemHealth.overall,
             }),
           },
-        });
+        })
 
         return {
           modelStatus,
@@ -1150,13 +1150,13 @@ export const aiClinicalSupportRouter = router({
             modelMonitored: true,
             auditLogged: true,
           },
-        };
+        }
       } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Falha ao verificar status do modelo AI',
           cause: error,
-        });
+        })
       }
     }),
-});
+})

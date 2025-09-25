@@ -58,12 +58,12 @@ The Compliance & Audit Module introduces a generic audit framework that:
 ### Basic Event Logging
 
 ```typescript
-import { ComplianceAuditService } from '@neonpro/core-services';
+import { ComplianceAuditService } from '@neonpro/core-services'
 
 const auditService = new ComplianceAuditService({
   autoValidate: true,
   defaultFrameworks: ['LGPD', 'ANVISA', 'CFM'],
-});
+})
 
 // Log a data access event
 const event = await auditService.logEvent({
@@ -78,9 +78,9 @@ const event = await auditService.logEvent({
     status: 'ACTIVE',
     framework: 'LGPD',
   },
-});
+})
 
-console.log(event.complianceStatus); // 'COMPLIANT'
+console.log(event.complianceStatus) // 'COMPLIANT'
 ```
 
 ### Healthcare-Specific Logging
@@ -106,7 +106,7 @@ await auditService.logMedicalAction({
     prescriptionId: 'rx-789',
     telemedicineAuthorized: true,
   },
-});
+})
 
 // Log consent management
 await auditService.logConsentGrant({
@@ -119,7 +119,7 @@ await auditService.logConsentGrant({
     framework: 'CFM',
   },
   clinicId: 'clinic-456',
-});
+})
 ```
 
 ### Compliance Reporting
@@ -131,21 +131,21 @@ const report = await auditService.generateComplianceReport(
   '2024-01-01T00:00:00.000Z',
   '2024-01-31T23:59:59.999Z',
   ['LGPD', 'ANVISA', 'CFM'],
-);
+)
 
-console.log(`Compliance Score: ${report.complianceScore}%`);
-console.log(`Total Events: ${report.totalEvents}`);
-console.log(`Violations Found: ${report.violations.length}`);
+console.log(`Compliance Score: ${report.complianceScore}%`)
+console.log(`Total Events: ${report.totalEvents}`)
+console.log(`Violations Found: ${report.violations.length}`)
 
 // Display violations
 report.violations.forEach(violation => {
   console.log(
     `${violation.framework} ${violation.severity}: ${violation.description}`,
-  );
+  )
   if (violation.remediation) {
-    console.log(`Remediation: ${violation.remediation}`);
+    console.log(`Remediation: ${violation.remediation}`)
   }
-});
+})
 ```
 
 ### Event Search and Filtering
@@ -156,19 +156,19 @@ const highRiskEvents = await auditService.searchEvents('clinic-123', {
   riskLevel: 'HIGH',
   startDate: '2024-01-01T00:00:00.000Z',
   endDate: '2024-01-31T23:59:59.999Z',
-});
+})
 
 // Search by actor
 const doctorActions = await auditService.searchEvents('clinic-123', {
   actorType: 'DOCTOR',
   action: 'PRESCRIBE',
-});
+})
 
 // Search by session
 const sessionEvents = auditService.getSessionEvents(
   'session-123',
   'clinic-123',
-);
+)
 ```
 
 ## Compliance Framework Details
@@ -222,15 +222,15 @@ const sessionEvents = auditService.getSessionEvents(
 ### Complementary to AuditService
 
 ```typescript
-import { ComplianceAuditService } from '@neonpro/core-services';
-import { AuditService } from '@neonpro/database';
+import { ComplianceAuditService } from '@neonpro/core-services'
+import { AuditService } from '@neonpro/database'
 
 // Use existing AuditService for domain-specific logging
-const auditService = new AuditService(supabaseClient);
-await auditService.logSessionStart(sessionId, doctorId, patientId, clinicId);
+const auditService = new AuditService(supabaseClient)
+await auditService.logSessionStart(sessionId, doctorId, patientId, clinicId)
 
 // Use ComplianceAuditService for generic compliance tracking
-const complianceService = new ComplianceAuditService();
+const complianceService = new ComplianceAuditService()
 await complianceService.logDataAccess({
   actorId: doctorId,
   actorType: 'DOCTOR',
@@ -244,7 +244,7 @@ await complianceService.logDataAccess({
     status: 'ACTIVE',
     framework: 'CFM',
   },
-});
+})
 ```
 
 ### With Existing Types
@@ -252,24 +252,24 @@ await complianceService.logDataAccess({
 The module is designed to work with existing type infrastructure:
 
 ```typescript
-import { type AuditAction, ComplianceAuditService } from '@neonpro/core-services';
-import type { MedicalDataClassification } from '@neonpro/types';
+import { type AuditAction, ComplianceAuditService } from '@neonpro/core-services'
+import type { MedicalDataClassification } from '@neonpro/types'
 
 // Map existing classifications to audit actions
 const mapToAuditAction = (operation: string): AuditAction => {
   switch (operation) {
     case 'view':
-      return 'READ';
+      return 'READ'
     case 'edit':
-      return 'UPDATE';
+      return 'UPDATE'
     case 'create':
-      return 'CREATE';
+      return 'CREATE'
     case 'remove':
-      return 'DELETE';
+      return 'DELETE'
     default:
-      return 'ACCESS';
+      return 'ACCESS'
   }
-};
+}
 ```
 
 ## Configuration Options
@@ -287,7 +287,7 @@ const auditService = new ComplianceAuditService({
 
   // Maximum events to keep in memory
   maxMemoryEvents: 1000,
-});
+})
 ```
 
 ## Testing

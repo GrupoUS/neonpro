@@ -2,9 +2,9 @@
  * Event Modal Component
  */
 
-import React from 'react';
-import type { EventModalProps } from '../../types/event-calendar';
-import { formatCalendarDate, formatCalendarTime } from './utils';
+import React from 'react'
+import type { EventModalProps } from '../../types/event-calendar.js'
+import { formatCalendarDate, formatCalendarTime } from './utils.js'
 
 export function EventModal({
   event,
@@ -15,7 +15,7 @@ export function EventModal({
   canEdit,
   canDelete,
 }: EventModalProps) {
-  if (!isOpen || !event) return null;
+  if (!isOpen || !event) return null
 
   const getStatusLabel = (status: string) => {
     const labels: Record<string, string> = {
@@ -25,9 +25,9 @@ export function EventModal({
       completed: 'Concluído',
       cancelled: 'Cancelado',
       no_show: 'Não Compareceu',
-    };
-    return labels[status] || status;
-  };
+    }
+    return labels[status] || status
+  }
 
   const getTypeLabel = (type: string) => {
     const labels: Record<string, string> = {
@@ -36,9 +36,9 @@ export function EventModal({
       procedure: 'Procedimento',
       follow_up: 'Retorno',
       blocker: 'Bloqueio',
-    };
-    return labels[type] || type;
-  };
+    }
+    return labels[type] || type
+  }
 
   return (
     <div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50'>
@@ -62,7 +62,7 @@ export function EventModal({
               <div>
                 <label className='text-sm font-medium text-gray-500'>Data</label>
                 <p className='text-gray-800'>
-                  {formatCalendarDate(event.start, 'dd \'de\' MMMM \'de\' yyyy')}
+                  {formatCalendarDate(event.start, "dd 'de' MMMM 'de' yyyy")}
                 </p>
               </div>
               <div>
@@ -162,7 +162,7 @@ export function EventModal({
         </div>
       </div>
     </div>
-  );
+  )
 }
 
-export default EventModal;
+export default EventModal

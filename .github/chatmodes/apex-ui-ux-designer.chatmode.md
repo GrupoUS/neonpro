@@ -1,59 +1,6 @@
 ---
 description: "Activates the Apex UI/UX Designer agent for NeonPro clínica estética interfaces."
-tools:
-  [
-    "runTasks",
-    "extensions",
-    "usages",
-    "think",
-    "problems",
-    "changes",
-    "testFailure",
-    "openSimpleBrowser",
-    "fetch",
-    "githubRepo",
-    "todos",
-    "sequential-thinking",
-    "tavily",
-    "context7",
-    "create_directory",
-    "edit_block",
-    "interact_with_process",
-    "kill_process",
-    "list_directory",
-    "list_processes",
-    "list_searches",
-    "move_file",
-    "read_file",
-    "read_multiple_files",
-    "read_process_output",
-    "start_process",
-    "start_search",
-    "stop_search",
-    "write_file",
-    "supabase",
-    "find_documents",
-    "find_projects",
-    "find_tasks",
-    "manage_document",
-    "manage_project",
-    "manage_task",
-    "rag_get_available_sources",
-    "rag_search_code_examples",
-    "rag_search_knowledge_base",
-    "delete_memory",
-    "find_file",
-    "find_referencing_symbols",
-    "find_symbol",
-    "get_symbols_overview",
-    "list_memories",
-    "read_memory",
-    "replace_symbol_body",
-    "search_for_pattern",
-    "think_about_collected_information",
-    "think_about_task_adherence",
-    "write_memory",
-  ]
+tools: ['runTasks', 'search', 'extensions', 'usages', 'think', 'problems', 'changes', 'testFailure', 'openSimpleBrowser', 'fetch', 'githubRepo', 'todos', 'sequential-thinking', 'tavily', 'context7', 'create_directory', 'edit_block', 'interact_with_process', 'kill_process', 'list_directory', 'list_processes', 'list_searches', 'move_file', 'read_file', 'read_multiple_files', 'read_process_output', 'start_process', 'start_search', 'stop_search', 'write_file', 'find_documents', 'find_projects', 'find_tasks', 'manage_document', 'manage_project', 'manage_task', 'rag_get_available_sources', 'rag_search_code_examples', 'rag_search_knowledge_base', 'delete_memory', 'find_file', 'find_referencing_symbols', 'find_symbol', 'get_symbols_overview', 'list_memories', 'read_memory', 'search_for_pattern', 'think_about_collected_information', 'think_about_task_adherence', 'write_memory', 'replace_symbol_body']
 ---
 
 # 🎨 APEX UI/UX DESIGNER AGENT
@@ -191,11 +138,11 @@ POST_INSTALLATION_VALIDATION:
 
 ```typescript
 interface NeonProHealthcareComponentProps {
-  readonly clientId?: string;
-  readonly userRole: 'admin' | 'aesthetician' | 'coordinator';
-  readonly lgpdCompliant: boolean;
-  readonly variant?: 'primary' | 'secondary' | 'accent' | 'medical';
-  readonly onAuditLog?: (action: string, details?: Record<string, any>) => void;
+  readonly clientId?: string
+  readonly userRole: 'admin' | 'aesthetician' | 'coordinator'
+  readonly lgpdCompliant: boolean
+  readonly variant?: 'primary' | 'secondary' | 'accent' | 'medical'
+  readonly onAuditLog?: (action: string, details?: Record<string, any>) => void
 }
 
 // Enhanced Component Factory
@@ -204,27 +151,27 @@ function createHealthcareComponent<T extends React.ComponentType>(
   componentName: string,
 ) {
   return function NeonProEnhancedComponent(props: NeonProHealthcareComponentProps) {
-    const { userRole, lgpdCompliant, variant = 'primary', onAuditLog } = props;
+    const { userRole, lgpdCompliant, variant = 'primary', onAuditLog } = props
 
     const handleInteraction = useCallback((action: string, details?: any) => {
       onAuditLog?.(`${componentName}_${action}`, {
         userRole,
         timestamp: new Date().toISOString(),
         ...details,
-      });
-    }, [onAuditLog, userRole]);
+      })
+    }, [onAuditLog, userRole])
 
     return (
       <ShadcnComponent
         {...props}
         className={cn(props.className, getNeonProVariantClasses(variant))}
         onClick={(e: React.MouseEvent) => {
-          handleInteraction('click', { target: e.currentTarget.tagName });
-          props.onClick?.(e);
+          handleInteraction('click', { target: e.currentTarget.tagName })
+          props.onClick?.(e)
         }}
       />
-    );
-  };
+    )
+  }
 }
 ```
 

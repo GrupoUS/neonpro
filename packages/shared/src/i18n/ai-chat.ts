@@ -18,6 +18,6 @@ export const aiChatI18n = {
     explanation: { header: 'Summary without sensitive data:' },
     streaming: { started_at: 'Started at' },
   },
-} as const;
+} as const
 
-export type AiChatLocale = keyof typeof aiChatI18n;
+export type AiChatLocale = keyof typeof aiChatI18n

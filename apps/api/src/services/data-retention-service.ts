@@ -4,8 +4,8 @@
  * Healthcare-specific retention policies and cleanup automation
  */
 
-import { createAdminClient } from '../clients/supabase';
-import { LGPDDataCategory } from '../middleware/lgpd-compliance';
+import { createAdminClient } from '../clients/supabase'
+import { LGPDDataCategory } from '../middleware/lgpd-compliance'
 
 // ============================================================================
 // Data Retention Configuration
@@ -27,74 +27,74 @@ export enum RetentionTrigger {
 }
 
 export interface RetentionPolicy {
-  id: string;
-  name: string;
-  description: string;
-  dataCategory: LGPDDataCategory;
-  retentionPeriod: number; // days
-  archivalPeriod?: number; // days before final deletion
-  action: RetentionAction;
-  trigger: RetentionTrigger[];
-  enabled: boolean;
-  priority: number; // 1-10, higher = more critical
+  id: string
+  name: string
+  description: string
+  dataCategory: LGPDDataCategory
+  retentionPeriod: number // days
+  archivalPeriod?: number // days before final deletion
+  action: RetentionAction
+  trigger: RetentionTrigger[]
+  enabled: boolean
+  priority: number // 1-10, higher = more critical
   conditions?: {
-    dataTypes?: string[];
-    userRoles?: string[];
-    consentRequired?: boolean;
-    legalHoldExempt?: boolean;
-  };
+    dataTypes?: string[]
+    userRoles?: string[]
+    consentRequired?: boolean
+    legalHoldExempt?: boolean
+  }
   notificationConfig?: {
-    beforeCleanupDays: number;
-    notifyRoles: string[];
-    notificationChannels: ('email' | 'system' | 'sms')[];
-  };
-  createdAt: Date;
-  updatedAt: Date;
+    beforeCleanupDays: number
+    notifyRoles: string[]
+    notificationChannels: ('email' | 'system' | 'sms')[]
+  }
+  createdAt: Date
+  updatedAt: Date
 }
 
 export interface CleanupJob {
-  id: string;
-  policyId: string;
-  dataSource: string;
-  dataIdentifier: string;
-  patientId?: string;
-  scheduledDate: Date;
-  executionDate?: Date;
-  status: 'scheduled' | 'running' | 'completed' | 'failed' | 'cancelled';
-  action: RetentionAction;
-  estimatedRecordCount: number;
-  actualRecordCount?: number;
-  executionTime?: number; // milliseconds
-  error?: string;
-  executedBy: string;
-  createdAt: Date;
-  updatedAt: Date;
+  id: string
+  policyId: string
+  dataSource: string
+  dataIdentifier: string
+  patientId?: string
+  scheduledDate: Date
+  executionDate?: Date
+  status: 'scheduled' | 'running' | 'completed' | 'failed' | 'cancelled'
+  action: RetentionAction
+  estimatedRecordCount: number
+  actualRecordCount?: number
+  executionTime?: number // milliseconds
+  error?: string
+  executedBy: string
+  createdAt: Date
+  updatedAt: Date
 }
 
 export interface CleanupExecution {
-  id: string;
-  jobId: string;
-  startTime: Date;
-  endTime?: Date;
-  status: 'running' | 'completed' | 'failed' | 'partial';
-  recordsProcessed: number;
-  recordsAffected: number;
+  id: string
+  jobId: string
+  startTime: Date
+  endTime?: Date
+  status: 'running' | 'completed' | 'failed' | 'partial'
+  recordsProcessed: number
+  recordsAffected: number
   errors: Array<{
-    recordId: string;
-    error: string;
-    timestamp: Date;
-  }>;
+    recordId: string
+    error: string
+    timestamp: Date
+  }>
   performance: {
-    recordsPerSecond: number;
-    memoryUsage: number;
-    cpuUsage?: number;
-  };
+    recordsPerSecond: number
+    memoryUsage: number
+    cpuUsage?: number
+  }
   auditLog: {
-    action: RetentionAction;
-    reason: string;
-    legalBasis: string;
-    complianceReferences: string[];
-  };
+    action: RetentionAction
+    reason: string
+    legalBasis: string
+    complianceReferences: string[]
+  }
 }
 
 // ============================================================================
@@ -232,17 +232,17 @@ const HEALTHCARE_RETENTION_POLICIES: RetentionPolicy[] = [
     createdAt: new Date('2024-01-01'),
     updatedAt: new Date('2024-01-01'),
   },
-];
+]
 
 // ============================================================================
 // Data Retention Service Implementation
 // ============================================================================
 
 export class DataRetentionService {
-  private supabase = createAdminClient();
-  private policies: RetentionPolicy[] = HEALTHCARE_RETENTION_POLICIES;
-  private activeJobs: Map<string, CleanupJob> = new Map();
-  private executionHistory: CleanupExecution[] = [];
+  private supabase = createAdminClient()
+  private policies: RetentionPolicy[] = HEALTHCARE_RETENTION_POLICIES
+  private activeJobs: Map<string, CleanupJob> = new Map()
+  private executionHistory: CleanupExecution[] = []
 
   /**
    * Schedule cleanup job based on retention policy
@@ -255,17 +255,17 @@ export class DataRetentionService {
     customRetentionDate?: Date,
   ): Promise<CleanupJob> {
     try {
-      const policy = this.policies.find(p => p.id === policyId);
+      const policy = this.policies.find(p => p.id === policyId)
       if (!policy) {
-        throw new Error(`Retention policy not found: ${policyId}`);
+        throw new Error(`Retention policy not found: ${policyId}`)
       }
 
       if (!policy.enabled) {
-        throw new Error(`Retention policy is disabled: ${policyId}`);
+        throw new Error(`Retention policy is disabled: ${policyId}`)
       }
 
       // Calculate scheduled date
-      const scheduledDate = customRetentionDate || this.calculateRetentionDate(policy);
+      const scheduledDate = customRetentionDate || this.calculateRetentionDate(policy)
 
       const cleanupJob: CleanupJob = {
         id: crypto.randomUUID(),
@@ -283,31 +283,31 @@ export class DataRetentionService {
         executedBy: 'system',
         createdAt: new Date(),
         updatedAt: new Date(),
-      };
+      }
 
       // Store job in database
       const { data, error } = await this.supabase
         .from('data_retention_jobs')
         .insert(cleanupJob)
         .select()
-        .single();
+        .single()
 
       if (error) {
-        throw new Error('Failed to schedule cleanup job');
+        throw new Error('Failed to schedule cleanup job')
       }
 
       // Track active job
-      this.activeJobs.set(data.id, data);
+      this.activeJobs.set(data.id, data)
 
       // Send notification if configured
       if (policy.notificationConfig) {
-        await this.sendCleanupNotification(data, policy);
+        await this.sendCleanupNotification(data, policy)
       }
 
-      return data;
+      return data
     } catch {
-      console.error('Error scheduling cleanup:', error);
-      throw error;
+      console.error('Error scheduling cleanup:', error)
+      throw error
     }
   }
 
@@ -316,19 +316,19 @@ export class DataRetentionService {
    */
   async executeCleanupJob(jobId: string): Promise<CleanupExecution> {
     try {
-      const job = await this.getCleanupJob(jobId);
-      const policy = this.policies.find(p => p.id === job.policyId);
+      const job = await this.getCleanupJob(jobId)
+      const policy = this.policies.find(p => p.id === job.policyId)
 
       if (!policy) {
-        throw new Error(`Policy not found for job: ${jobId}`);
+        throw new Error(`Policy not found for job: ${jobId}`)
       }
 
       if (job.status !== 'scheduled') {
-        throw new Error(`Job ${jobId} is not in scheduled status`);
+        throw new Error(`Job ${jobId} is not in scheduled status`)
       }
 
       // Update job status to running
-      await this.updateJobStatus(jobId, 'running');
+      await this.updateJobStatus(jobId, 'running')
 
       const execution: CleanupExecution = {
         id: crypto.randomUUID(),
@@ -352,63 +352,63 @@ export class DataRetentionService {
             'Brazilian Healthcare Standards',
           ],
         },
-      };
+      }
 
       try {
         // Execute cleanup action
-        const result = await this.executeCleanupAction(job, policy, execution);
+        const result = await this.executeCleanupAction(job, policy, execution)
 
-        execution.recordsAffected = result.affectedCount;
-        execution.recordsProcessed = result.processedCount;
-        execution.status = result.hasErrors ? 'partial' : 'completed';
+        execution.recordsAffected = result.affectedCount
+        execution.recordsProcessed = result.processedCount
+        execution.status = result.hasErrors ? 'partial' : 'completed'
 
         // Calculate performance metrics
-        const executionTime = Date.now() - execution.startTime.getTime();
-        execution.endTime = new Date();
-        execution.performance.recordsPerSecond = execution.recordsProcessed
-          / (executionTime / 1000);
+        const executionTime = Date.now() - execution.startTime.getTime()
+        execution.endTime = new Date()
+        execution.performance.recordsPerSecond = execution.recordsProcessed /
+          (executionTime / 1000)
 
         // Update job status
         await this.updateJobStatus(jobId, 'completed', {
           executionDate: execution.endTime,
           actualRecordCount: execution.recordsAffected,
           executionTime,
-        });
+        })
 
         // Store execution record
-        await this.storeExecutionRecord(execution);
+        await this.storeExecutionRecord(execution)
 
         // Send completion notification
-        await this.sendCompletionNotification(job, execution, policy);
+        await this.sendCompletionNotification(job, execution, policy)
       } catch {
-        console.error('Error executing cleanup job:', error);
+        console.error('Error executing cleanup job:', error)
 
-        execution.status = 'failed';
-        execution.endTime = new Date();
+        execution.status = 'failed'
+        execution.endTime = new Date()
         execution.errors.push({
           recordId: 'system',
           error: error instanceof Error ? error.message : 'Unknown error',
           timestamp: new Date(),
-        });
+        })
 
         await this.updateJobStatus(jobId, 'failed', {
           executionDate: execution.endTime,
           error: error instanceof Error ? error.message : 'Unknown error',
-        });
+        })
 
-        await this.storeExecutionRecord(execution);
+        await this.storeExecutionRecord(execution)
 
         // Send error notification
-        await this.sendErrorNotification(job, execution, policy);
+        await this.sendErrorNotification(job, execution, policy)
       }
 
       // Remove from active jobs
-      this.activeJobs.delete(jobId);
+      this.activeJobs.delete(jobId)
 
-      return execution;
+      return execution
     } catch {
-      console.error('Error in executeCleanupJob:', error);
-      throw error;
+      console.error('Error in executeCleanupJob:', error)
+      throw error
     }
   }
 
@@ -420,21 +420,21 @@ export class DataRetentionService {
     policy: RetentionPolicy,
     execution: CleanupExecution,
   ): Promise<{
-    processedCount: number;
-    affectedCount: number;
-    hasErrors: boolean;
+    processedCount: number
+    affectedCount: number
+    hasErrors: boolean
   }> {
     switch (job.action) {
       case RetentionAction.DELETE:
-        return this.executeDeletion(job, execution);
+        return this.executeDeletion(job, execution)
       case RetentionAction.ANONYMIZE:
-        return this.executeAnonymization(job, execution);
+        return this.executeAnonymization(job, execution)
       case RetentionAction.ARCHIVE:
-        return this.executeArchival(job, execution);
+        return this.executeArchival(job, execution)
       case RetentionAction.FLAG_FOR_REVIEW:
-        return this.executeFlagging(job, execution);
+        return this.executeFlagging(job, execution)
       default:
-        throw new Error(`Unsupported cleanup action: ${job.action}`);
+        throw new Error(`Unsupported cleanup action: ${job.action}`)
     }
   }
 
@@ -445,36 +445,36 @@ export class DataRetentionService {
     job: CleanupJob,
     execution: CleanupExecution,
   ): Promise<{
-    processedCount: number;
-    affectedCount: number;
-    hasErrors: boolean;
+    processedCount: number
+    affectedCount: number
+    hasErrors: boolean
   }> {
     try {
       // This would integrate with your data deletion service
-      console.log(`Executing deletion for job ${job.id} on ${job.dataSource}`);
+      console.warn(`Executing deletion for job ${job.id} on ${job.dataSource}`)
 
       // Simulate deletion process
       const affectedCount = await this.simulateDataDeletion(
         job.dataSource,
         job.dataIdentifier,
-      );
+      )
 
-      execution.auditLog.action = RetentionAction.DELETE;
-      execution.auditLog.reason += ' - Data permanently deleted per LGPD requirements';
+      execution.auditLog.action = RetentionAction.DELETE
+      execution.auditLog.reason += ' - Data permanently deleted per LGPD requirements'
 
       return {
         processedCount: job.estimatedRecordCount,
         affectedCount,
         hasErrors: affectedCount < job.estimatedRecordCount * 0.95, // 95% success threshold
-      };
+      }
     } catch {
-      console.error('Error in executeDeletion:', error);
+      console.error('Error in executeDeletion:', error)
       execution.errors.push({
         recordId: 'system',
         error: error instanceof Error ? error.message : 'Deletion failed',
         timestamp: new Date(),
-      });
-      return { processedCount: 0, affectedCount: 0, hasErrors: true };
+      })
+      return { processedCount: 0, affectedCount: 0, hasErrors: true }
     }
   }
 
@@ -485,37 +485,37 @@ export class DataRetentionService {
     job: CleanupJob,
     execution: CleanupExecution,
   ): Promise<{
-    processedCount: number;
-    affectedCount: number;
-    hasErrors: boolean;
+    processedCount: number
+    affectedCount: number
+    hasErrors: boolean
   }> {
     try {
-      console.log(
+      console.warn(
         `Executing anonymization for job ${job.id} on ${job.dataSource}`,
-      );
+      )
 
       // Simulate anonymization process
       const affectedCount = await this.simulateDataAnonymization(
         job.dataSource,
         job.dataIdentifier,
-      );
+      )
 
-      execution.auditLog.action = RetentionAction.ANONYMIZE;
-      execution.auditLog.reason += ' - Data anonymized per LGPD requirements';
+      execution.auditLog.action = RetentionAction.ANONYMIZE
+      execution.auditLog.reason += ' - Data anonymized per LGPD requirements'
 
       return {
         processedCount: job.estimatedRecordCount,
         affectedCount,
         hasErrors: false,
-      };
+      }
     } catch {
-      console.error('Error in executeAnonymization:', error);
+      console.error('Error in executeAnonymization:', error)
       execution.errors.push({
         recordId: 'system',
         error: error instanceof Error ? error.message : 'Anonymization failed',
         timestamp: new Date(),
-      });
-      return { processedCount: 0, affectedCount: 0, hasErrors: true };
+      })
+      return { processedCount: 0, affectedCount: 0, hasErrors: true }
     }
   }
 
@@ -526,35 +526,35 @@ export class DataRetentionService {
     job: CleanupJob,
     execution: CleanupExecution,
   ): Promise<{
-    processedCount: number;
-    affectedCount: number;
-    hasErrors: boolean;
+    processedCount: number
+    affectedCount: number
+    hasErrors: boolean
   }> {
     try {
-      console.log(`Executing archival for job ${job.id} on ${job.dataSource}`);
+      console.warn(`Executing archival for job ${job.id} on ${job.dataSource}`)
 
       // Simulate archival process
       const affectedCount = await this.simulateDataArchival(
         job.dataSource,
         job.dataIdentifier,
-      );
+      )
 
-      execution.auditLog.action = RetentionAction.ARCHIVE;
-      execution.auditLog.reason += ' - Data archived for long-term storage';
+      execution.auditLog.action = RetentionAction.ARCHIVE
+      execution.auditLog.reason += ' - Data archived for long-term storage'
 
       return {
         processedCount: job.estimatedRecordCount,
         affectedCount,
         hasErrors: false,
-      };
+      }
     } catch {
-      console.error('Error in executeArchival:', error);
+      console.error('Error in executeArchival:', error)
       execution.errors.push({
         recordId: 'system',
         error: error instanceof Error ? error.message : 'Archival failed',
         timestamp: new Date(),
-      });
-      return { processedCount: 0, affectedCount: 0, hasErrors: true };
+      })
+      return { processedCount: 0, affectedCount: 0, hasErrors: true }
     }
   }
 
@@ -565,35 +565,35 @@ export class DataRetentionService {
     job: CleanupJob,
     execution: CleanupExecution,
   ): Promise<{
-    processedCount: number;
-    affectedCount: number;
-    hasErrors: boolean;
+    processedCount: number
+    affectedCount: number
+    hasErrors: boolean
   }> {
     try {
-      console.log(`Executing flagging for job ${job.id} on ${job.dataSource}`);
+      console.warn(`Executing flagging for job ${job.id} on ${job.dataSource}`)
 
       // Simulate flagging process
       const affectedCount = await this.simulateDataFlagging(
         job.dataSource,
         job.dataIdentifier,
-      );
+      )
 
-      execution.auditLog.action = RetentionAction.FLAG_FOR_REVIEW;
-      execution.auditLog.reason += ' - Data flagged for manual review';
+      execution.auditLog.action = RetentionAction.FLAG_FOR_REVIEW
+      execution.auditLog.reason += ' - Data flagged for manual review'
 
       return {
         processedCount: job.estimatedRecordCount,
         affectedCount,
         hasErrors: false,
-      };
+      }
     } catch {
-      console.error('Error in executeFlagging:', error);
+      console.error('Error in executeFlagging:', error)
       execution.errors.push({
         recordId: 'system',
         error: error instanceof Error ? error.message : 'Flagging failed',
         timestamp: new Date(),
-      });
-      return { processedCount: 0, affectedCount: 0, hasErrors: true };
+      })
+      return { processedCount: 0, affectedCount: 0, hasErrors: true }
     }
   }
 
@@ -601,9 +601,9 @@ export class DataRetentionService {
    * Calculate retention date based on policy
    */
   private calculateRetentionDate(policy: RetentionPolicy): Date {
-    const retentionDate = new Date();
-    retentionDate.setDate(retentionDate.getDate() + policy.retentionPeriod);
-    return retentionDate;
+    const retentionDate = new Date()
+    retentionDate.setDate(retentionDate.getDate() + policy.retentionPeriod)
+    return retentionDate
   }
 
   /**
@@ -615,7 +615,7 @@ export class DataRetentionService {
   ): Promise<number> {
     // This would query your database to estimate record count
     // For now, return a mock estimate
-    return Math.floor(Math.random() * 1000) + 100;
+    return Math.floor(Math.random() * 1000) + 100
   }
 
   /**
@@ -626,10 +626,10 @@ export class DataRetentionService {
     _dataIdentifier: string,
   ): Promise<number> {
     // In production, this would execute actual DELETE operations
-    console.log(
+    console.warn(
       `Deleting data from ${dataSource} with identifier ${dataIdentifier}`,
-    );
-    return Math.floor(Math.random() * 950) + 50; // Simulate 50-1000 records deleted
+    )
+    return Math.floor(Math.random() * 950) + 50 // Simulate 50-1000 records deleted
   }
 
   /**
@@ -640,10 +640,10 @@ export class DataRetentionService {
     _dataIdentifier: string,
   ): Promise<number> {
     // In production, this would execute UPDATE operations to anonymize data
-    console.log(
+    console.warn(
       `Anonymizing data from ${dataSource} with identifier ${dataIdentifier}`,
-    );
-    return Math.floor(Math.random() * 980) + 20; // Simulate 20-1000 records anonymized
+    )
+    return Math.floor(Math.random() * 980) + 20 // Simulate 20-1000 records anonymized
   }
 
   /**
@@ -654,10 +654,10 @@ export class DataRetentionService {
     _dataIdentifier: string,
   ): Promise<number> {
     // In production, this would move data to archival storage
-    console.log(
+    console.warn(
       `Archiving data from ${dataSource} with identifier ${dataIdentifier}`,
-    );
-    return Math.floor(Math.random() * 990) + 10; // Simulate 10-1000 records archived
+    )
+    return Math.floor(Math.random() * 990) + 10 // Simulate 10-1000 records archived
   }
 
   /**
@@ -668,10 +668,10 @@ export class DataRetentionService {
     _dataIdentifier: string,
   ): Promise<number> {
     // In production, this would add flags to records for review
-    console.log(
+    console.warn(
       `Flagging data from ${dataSource} with identifier ${dataIdentifier}`,
-    );
-    return Math.floor(Math.random() * 990) + 10; // Simulate 10-1000 records flagged
+    )
+    return Math.floor(Math.random() * 990) + 10 // Simulate 10-1000 records flagged
   }
 
   /**
@@ -682,13 +682,13 @@ export class DataRetentionService {
       .from('data_retention_jobs')
       .select('*')
       .eq('id', jobId)
-      .single();
+      .single()
 
     if (error || !data) {
-      throw new Error('Cleanup job not found');
+      throw new Error('Cleanup job not found')
     }
 
-    return data;
+    return data
   }
 
   /**
@@ -706,10 +706,10 @@ export class DataRetentionService {
         ...updates,
         updatedAt: new Date(),
       })
-      .eq('id', jobId);
+      .eq('id', jobId)
 
     if (error) {
-      console.error('Error updating job status:', error);
+      console.error('Error updating job status:', error)
     }
   }
 
@@ -721,13 +721,13 @@ export class DataRetentionService {
   ): Promise<void> {
     const { error } = await this.supabase
       .from('data_retention_executions')
-      .insert(execution);
+      .insert(execution)
 
     if (error) {
-      console.error('Error storing execution record:', error);
+      console.error('Error storing execution record:', error)
     }
 
-    this.executionHistory.push(execution);
+    this.executionHistory.push(execution)
   }
 
   /**
@@ -737,13 +737,13 @@ export class DataRetentionService {
     job: CleanupJob,
     policy: RetentionPolicy,
   ): Promise<void> {
-    if (!policy.notificationConfig) return;
+    if (!policy.notificationConfig) return
 
     const message =
-      `Scheduled cleanup job ${job.id} for ${job.dataSource} will execute on ${job.scheduledDate.toISOString()}`;
+      `Scheduled cleanup job ${job.id} for ${job.dataSource} will execute on ${job.scheduledDate.toISOString()}`
 
     // In production, this would integrate with your notification service
-    console.log('[Cleanup Notification]', message);
+    console.warn('[Cleanup Notification]', message)
   }
 
   /**
@@ -755,9 +755,9 @@ export class DataRetentionService {
     _policy: RetentionPolicy,
   ): Promise<void> {
     const message =
-      `Cleanup job ${job.id} completed successfully. Processed ${execution.recordsProcessed} records, affected ${execution.recordsAffected} records.`;
+      `Cleanup job ${job.id} completed successfully. Processed ${execution.recordsProcessed} records, affected ${execution.recordsAffected} records.`
 
-    console.log('[Completion Notification]', message);
+    console.warn('[Completion Notification]', message)
   }
 
   /**
@@ -770,19 +770,19 @@ export class DataRetentionService {
   ): Promise<void> {
     const message = `Cleanup job ${job.id} failed. Error: ${
       execution.errors[0]?.error || 'Unknown error'
-    }`;
+    }`
 
-    console.log('[Error Notification]', message);
+    console.warn('[Error Notification]', message)
   }
 
   /**
    * Run automated cleanup scheduler
    */
   async runScheduledCleanup(): Promise<{
-    jobsProcessed: number;
-    jobsCompleted: number;
-    jobsFailed: number;
-    totalRecordsProcessed: number;
+    jobsProcessed: number
+    jobsCompleted: number
+    jobsFailed: number
+    totalRecordsProcessed: number
   }> {
     try {
       // Get all scheduled jobs that are ready to execute
@@ -790,10 +790,10 @@ export class DataRetentionService {
         .from('data_retention_jobs')
         .select('*')
         .eq('status', 'scheduled')
-        .lte('scheduledDate', new Date().toISOString());
+        .lte('scheduledDate', new Date().toISOString())
 
       if (error) {
-        throw new Error('Failed to fetch scheduled jobs');
+        throw new Error('Failed to fetch scheduled jobs')
       }
 
       const results = {
@@ -801,37 +801,37 @@ export class DataRetentionService {
         jobsCompleted: 0,
         jobsFailed: 0,
         totalRecordsProcessed: 0,
-      };
+      }
 
       // Execute jobs in parallel (with reasonable concurrency limit)
-      const concurrencyLimit = 5;
-      const chunks = [];
+      const concurrencyLimit = 5
+      const chunks = []
 
       for (let i = 0; i < scheduledJobs!.length; i += concurrencyLimit) {
-        chunks.push(scheduledJobs!.slice(i, i + concurrencyLimit));
+        chunks.push(scheduledJobs!.slice(i, i + concurrencyLimit))
       }
 
       for (const chunk of chunks) {
         const promises = chunk.map(async job => {
           try {
-            const execution = await this.executeCleanupJob(job.id);
-            results.jobsProcessed++;
-            results.jobsCompleted++;
-            results.totalRecordsProcessed += execution.recordsProcessed;
+            const execution = await this.executeCleanupJob(job.id)
+            results.jobsProcessed++
+            results.jobsCompleted++
+            results.totalRecordsProcessed += execution.recordsProcessed
           } catch {
-            results.jobsProcessed++;
-            results.jobsFailed++;
-            console.error(`Job ${job.id} failed:`, error);
+            results.jobsProcessed++
+            results.jobsFailed++
+            console.error(`Job ${job.id} failed:`, error)
           }
-        });
+        })
 
-        await Promise.all(promises);
+        await Promise.all(promises)
       }
 
-      return results;
+      return results
     } catch {
-      console.error('Error in runScheduledCleanup:', error);
-      throw error;
+      console.error('Error in runScheduledCleanup:', error)
+      throw error
     }
   }
 
@@ -839,52 +839,52 @@ export class DataRetentionService {
    * Get retention statistics
    */
   async getRetentionStatistics(): Promise<{
-    totalPolicies: number;
-    enabledPolicies: number;
-    scheduledJobs: number;
-    activeJobs: number;
-    completedJobs24h: number;
-    failedJobs24h: number;
-    totalRecordsProcessed24h: number;
-    policiesByCategory: Record<LGPDDataCategory, number>;
+    totalPolicies: number
+    enabledPolicies: number
+    scheduledJobs: number
+    activeJobs: number
+    completedJobs24h: number
+    failedJobs24h: number
+    totalRecordsProcessed24h: number
+    policiesByCategory: Record<LGPDDataCategory, number>
   }> {
     try {
-      const now = new Date();
-      const yesterday = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+      const now = new Date()
+      const yesterday = new Date(now.getTime() - 24 * 60 * 60 * 1000)
 
       // Get job statistics
       const [{ count: scheduledJobs = 0 } = {}] = await this.supabase
         .from('data_retention_jobs')
         .select('count', { count: 'exact' })
-        .eq('status', 'scheduled');
+        .eq('status', 'scheduled')
 
       const [{ count: completedJobs24h = 0 } = {}] = await this.supabase
         .from('data_retention_jobs')
         .select('count', { count: 'exact' })
         .eq('status', 'completed')
-        .gte('executionDate', yesterday.toISOString());
+        .gte('executionDate', yesterday.toISOString())
 
       const [{ count: failedJobs24h = 0 } = {}] = await this.supabase
         .from('data_retention_jobs')
         .select('count', { count: 'exact' })
         .eq('status', 'failed')
-        .gte('executionDate', yesterday.toISOString());
+        .gte('executionDate', yesterday.toISOString())
 
       // Get execution statistics
       const { data: executions } = await this.supabase
         .from('data_retention_executions')
         .select('recordsProcessed')
-        .gte('startTime', yesterday.toISOString());
+        .gte('startTime', yesterday.toISOString())
 
       const totalRecordsProcessed24h = executions?.reduce((sum, _exec) =>
-        sum + exec.recordsProcessed, 0) || 0;
+        sum + exec.recordsProcessed, 0) || 0
 
       // Calculate policies by category
-      const policiesByCategory = {} as Record<LGPDDataCategory, number>;
+      const policiesByCategory = {} as Record<LGPDDataCategory, number>
       this.policies.forEach(policy => {
-        policiesByCategory[policy.dataCategory] = (policiesByCategory[policy.dataCategory] || 0)
-          + 1;
-      });
+        policiesByCategory[policy.dataCategory] = (policiesByCategory[policy.dataCategory] || 0) +
+          1
+      })
 
       return {
         totalPolicies: this.policies.length,
@@ -895,10 +895,10 @@ export class DataRetentionService {
         failedJobs24h: failedJobs24h || 0,
         totalRecordsProcessed24h,
         policiesByCategory,
-      };
+      }
     } catch {
-      console.error('Error getting retention statistics:', error);
-      throw error;
+      console.error('Error getting retention statistics:', error)
+      throw error
     }
   }
 
@@ -906,21 +906,21 @@ export class DataRetentionService {
    * Add custom retention policy
    */
   addCustomPolicy(policy: RetentionPolicy): void {
-    this.policies.push(policy);
+    this.policies.push(policy)
   }
 
   /**
    * Enable/disable retention policy
    */
   togglePolicy(policyId: string, enabled: boolean): boolean {
-    const policy = this.policies.find(p => p.id === policyId);
+    const policy = this.policies.find(p => p.id === policyId)
     if (policy) {
-      policy.enabled = enabled;
-      policy.updatedAt = new Date();
-      return true;
+      policy.enabled = enabled
+      policy.updatedAt = new Date()
+      return true
     }
-    return false;
+    return false
   }
 }
 
-export default DataRetentionService;
+export default DataRetentionService

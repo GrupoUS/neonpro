@@ -5,94 +5,94 @@
 
 // CPF validation
 export const validateCPF = (cpf: string): boolean => {
-  if (!cpf) return false;
+  if (!cpf) return false
 
   // Remove non-digits
-  cpf = cpf.replace(/[^\d]/g, '');
+  cpf = cpf.replace(/[^\d]/g, '')
 
   // Check length
-  if (cpf.length !== 11) return false;
+  if (cpf.length !== 11) return false
 
   // Check if all digits are the same
-  if (/^(\d)\1{10}$/.test(cpf)) return false;
+  if (/^(\d)\1{10}$/.test(cpf)) return false
 
   // Validate first digit
-  let sum = 0;
+  let sum = 0
   for (let i = 0; i < 9; i++) {
-    sum += parseInt(cpf[i]) * (10 - i);
+    sum += parseInt(cpf[i]) * (10 - i)
   }
-  let remainder = 11 - (sum % 11);
-  const digit1 = remainder > 9 ? 0 : remainder;
+  let remainder = 11 - (sum % 11)
+  const digit1 = remainder > 9 ? 0 : remainder
 
-  if (parseInt(cpf[9]) !== digit1) return false;
+  if (parseInt(cpf[9]) !== digit1) return false
 
   // Validate second digit
-  sum = 0;
+  sum = 0
   for (let i = 0; i < 10; i++) {
-    sum += parseInt(cpf[i]) * (11 - i);
+    sum += parseInt(cpf[i]) * (11 - i)
   }
-  remainder = 11 - (sum % 11);
-  const digit2 = remainder > 9 ? 0 : remainder;
+  remainder = 11 - (sum % 11)
+  const digit2 = remainder > 9 ? 0 : remainder
 
-  return parseInt(cpf[10]) === digit2;
-};
+  return parseInt(cpf[10]) === digit2
+}
 
 // Phone number validation (Brazilian format)
 export const validatePhone = (phone: string): boolean => {
-  if (!phone) return false;
+  if (!phone) return false
 
   // Remove non-digits
-  const cleaned = phone.replace(/[^\d]/g, '');
+  const cleaned = phone.replace(/[^\d]/g, '')
 
   // Check length (10 or 11 digits with area code)
-  return cleaned.length === 10 || cleaned.length === 11;
-};
+  return cleaned.length === 10 || cleaned.length === 11
+}
 
 // Medical license validation (CRM, CRO, etc.)
 export const validateMedicalLicense = (license: string): boolean => {
-  if (!license) return false;
+  if (!license) return false
 
   // Basic format validation
   // CRM format: CRM/UF 123456
-  const crmPattern = /^CRM\/[A-Z]{2}\s*\d{4,6}$/i;
-  return crmPattern.test(license);
-};
+  const crmPattern = /^CRM\/[A-Z]{2}\s*\d{4,6}$/i
+  return crmPattern.test(license)
+}
 
 // CNPJ validation
 export const validateCNPJ = (cnpj: string): boolean => {
-  if (!cnpj) return false;
+  if (!cnpj) return false
 
   // Remove non-digits
-  cnpj = cnpj.replace(/[^\d]/g, '');
+  cnpj = cnpj.replace(/[^\d]/g, '')
 
   // Check length
-  if (cnpj.length !== 14) return false;
+  if (cnpj.length !== 14) return false
 
   // Check if all digits are the same
-  if (/^(\d)\1{13}$/.test(cnpj)) return false;
+  if (/^(\d)\1{13}$/.test(cnpj)) return false
 
   // Validate first digit
-  let sum = 0;
-  const weights1 = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+  let sum = 0
+  const weights1 = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2]
   for (let i = 0; i < 12; i++) {
-    sum += parseInt(cnpj[i]) * weights1[i];
+    sum += parseInt(cnpj[i]) * weights1[i]
   }
-  let remainder = sum % 11;
-  const digit1 = remainder < 2 ? 0 : 11 - remainder;
+  let remainder = sum % 11
+  const digit1 = remainder < 2 ? 0 : 11 - remainder
 
-  if (parseInt(cnpj[12]) !== digit1) return false;
+  if (parseInt(cnpj[12]) !== digit1) return false
 
   // Validate second digit
-  sum = 0;
-  const weights2 = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+  sum = 0
+  const weights2 = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2]
   for (let i = 0; i < 13; i++) {
-    sum += parseInt(cnpj[i]) * weights2[i];
+    sum += parseInt(cnpj[i]) * weights2[i]
   }
-  remainder = sum % 11;
-  const digit2 = remainder < 2 ? 0 : 11 - remainder;
+  remainder = sum % 11
+  const digit2 = remainder < 2 ? 0 : 11 - remainder
 
-  return parseInt(cnpj[13]) === digit2;
-};
+  return parseInt(cnpj[13]) === digit2
+}
 
 // Zod schemas for Brazilian healthcare validation
 export const BrazilianHealthcareSchemas = {
@@ -109,8 +109,8 @@ export const BrazilianHealthcareSchemas = {
       .refine(val => val.length === 11, 'CPF deve ter 11 dígitos')
       .refine(validateCPF, 'CPF inválido'),
     birth_date: z.string().refine(val => {
-      const date = new Date(val);
-      return !isNaN(date.getTime()) && date < new Date();
+      const date = new Date(val)
+      return !isNaN(date.getTime()) && date < new Date()
     }, 'Data de nascimento inválida'),
     phone: z
       .string()
@@ -180,8 +180,8 @@ export const BrazilianHealthcareSchemas = {
       'no_show',
     ]),
     scheduled_at: z.string().refine(val => {
-      const date = new Date(val);
-      return !isNaN(date.getTime()) && date > new Date();
+      const date = new Date(val)
+      return !isNaN(date.getTime()) && date > new Date()
     }, 'Data do agendamento deve ser futura'),
     duration_hours: z
       .number()
@@ -222,109 +222,109 @@ export const BrazilianHealthcareSchemas = {
       .max(200, 'Descrição deve ter no máximo 200 caracteres')
       .optional(),
   }),
-};
+}
 
 // Type helpers
 export type ValidatedPatient = z.infer<
   typeof BrazilianHealthcareSchemas.Patient
->;
+>
 export type ValidatedProfessional = z.infer<
   typeof BrazilianHealthcareSchemas.Professional
->;
-export type ValidatedClinic = z.infer<typeof BrazilianHealthcareSchemas.Clinic>;
+>
+export type ValidatedClinic = z.infer<typeof BrazilianHealthcareSchemas.Clinic>
 export type ValidatedAppointment = z.infer<
   typeof BrazilianHealthcareSchemas.Appointment
->;
+>
 export type ValidatedFinancialTransaction = z.infer<
   typeof BrazilianHealthcareSchemas.FinancialTransaction
->;
+>
 
 // Validation functions with Brazilian error messages
 export const validateBrazilianHealthcareData = {
   patient: (data: unknown) => {
-    const result = BrazilianHealthcareSchemas.Patient.safeParse(data);
+    const result = BrazilianHealthcareSchemas.Patient.safeParse(data)
     if (!result.success) {
       const errors = result.error.errors.map(
         err => `${err.path.join('.')}: ${err.message}`,
-      );
-      throw new Error(`Validação de paciente falhou: ${errors.join(', ')}`);
+      )
+      throw new Error(`Validação de paciente falhou: ${errors.join(', ')}`)
     }
-    return result.data;
+    return result.data
   },
 
   professional: (data: unknown) => {
-    const result = BrazilianHealthcareSchemas.Professional.safeParse(data);
+    const result = BrazilianHealthcareSchemas.Professional.safeParse(data)
     if (!result.success) {
       const errors = result.error.errors.map(
         err => `${err.path.join('.')}: ${err.message}`,
-      );
-      throw new Error(`Validação de profissional falhou: ${errors.join(', ')}`);
+      )
+      throw new Error(`Validação de profissional falhou: ${errors.join(', ')}`)
     }
-    return result.data;
+    return result.data
   },
 
   clinic: (data: unknown) => {
-    const result = BrazilianHealthcareSchemas.Clinic.safeParse(data);
+    const result = BrazilianHealthcareSchemas.Clinic.safeParse(data)
     if (!result.success) {
       const errors = result.error.errors.map(
         err => `${err.path.join('.')}: ${err.message}`,
-      );
-      throw new Error(`Validação de clínica falhou: ${errors.join(', ')}`);
+      )
+      throw new Error(`Validação de clínica falhou: ${errors.join(', ')}`)
     }
-    return result.data;
+    return result.data
   },
 
   appointment: (data: unknown) => {
-    const result = BrazilianHealthcareSchemas.Appointment.safeParse(data);
+    const result = BrazilianHealthcareSchemas.Appointment.safeParse(data)
     if (!result.success) {
       const errors = result.error.errors.map(
         err => `${err.path.join('.')}: ${err.message}`,
-      );
-      throw new Error(`Validação de agendamento falhou: ${errors.join(', ')}`);
+      )
+      throw new Error(`Validação de agendamento falhou: ${errors.join(', ')}`)
     }
-    return result.data;
+    return result.data
   },
 
   financialTransaction: (data: unknown) => {
-    const result = BrazilianHealthcareSchemas.FinancialTransaction.safeParse(data);
+    const result = BrazilianHealthcareSchemas.FinancialTransaction.safeParse(data)
     if (!result.success) {
       const errors = result.error.errors.map(
         err => `${err.path.join('.')}: ${err.message}`,
-      );
+      )
       throw new Error(
         `Validação de transação financeira falhou: ${errors.join(', ')}`,
-      );
+      )
     }
-    return result.data;
+    return result.data
   },
-};
+}
 
 // Appointment conflict detection
 export const checkAppointmentConflict = (
   appointments: Array<{
-    professional_id: string;
-    scheduled_at: string;
-    duration_hours: number;
+    professional_id: string
+    scheduled_at: string
+    duration_hours: number
   }>,
   newAppointment: {
-    professional_id: string;
-    scheduled_at: string;
-    duration_hours: number;
+    professional_id: string
+    scheduled_at: string
+    duration_hours: number
   },
 ): boolean => {
-  const newStart = new Date(newAppointment.scheduled_at);
+  const newStart = new Date(newAppointment.scheduled_at)
   const newEnd = new Date(
     newStart.getTime() + newAppointment.duration_hours * 60 * 60 * 1000,
-  );
+  )
 
   return appointments.some(apt => {
-    if (apt.professional_id !== newAppointment.professional_id) return false;
+    if (apt.professional_id !== newAppointment.professional_id) return false
 
-    const aptStart = new Date(apt.scheduled_at);
+    const aptStart = new Date(apt.scheduled_at)
     const aptEnd = new Date(
       aptStart.getTime() + apt.duration_hours * 60 * 60 * 1000,
-    );
+    )
 
-    return newStart < aptEnd && newEnd > aptStart;
-  });
-};
+    return newStart < aptEnd && newEnd > aptStart
+  })
+}

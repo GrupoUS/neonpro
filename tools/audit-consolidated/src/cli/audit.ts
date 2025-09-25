@@ -1,12 +1,12 @@
-import { Command } from 'commander';
-import { promises as fs } from 'fs';
-import path from 'path';
-import { runAudit } from '../auditRunner.js';
-import { formatAuditReport } from '../core/reportGenerator.js';
-import { AuditOptions } from '../types.js';
+import { Command } from 'commander'
+import { promises as fs } from 'fs'
+import path from 'path'
+import { runAudit } from '../auditRunner.js'
+import { formatAuditReport } from '../core/reportGenerator.js'
+import { AuditOptions } from '../types.js'
 
 export function createAuditCommand(): Command {
-  const command = new Command('audit');
+  const command = new Command('audit')
 
   command
     .description('Run a lightweight audit across the repository')
@@ -27,45 +27,45 @@ export function createAuditCommand(): Command {
     )
     .option('-v, --verbose', 'Enable verbose logging', false)
     .action(async rawOptions => {
-      const options = normaliseOptions(rawOptions);
+      const options = normaliseOptions(rawOptions)
 
       if (options.verbose) {
-        console.log(`🏁 Starting audit in ${options.root}`);
+        console.log(`🏁 Starting audit in ${options.root}`)
       }
 
       try {
-        const report = await runAudit(options);
+        const report = await runAudit(options)
         if (options.outputFormat === 'json') {
-          const json = JSON.stringify(report, null, 2);
+          const json = JSON.stringify(report, null, 2)
           if (options.output) {
-            await writeOutput(options.output, json);
+            await writeOutput(options.output, json)
             console.log(
               `✅ Audit complete. JSON report written to ${path.resolve(options.output)}`,
-            );
+            )
           } else {
-            console.log(json);
+            console.log(json)
           }
         } else {
-          const text = formatAuditReport(report);
+          const text = formatAuditReport(report)
           if (options.output) {
-            await writeOutput(options.output, text);
+            await writeOutput(options.output, text)
             console.log(
               `✅ Audit complete. Text report written to ${path.resolve(options.output)}`,
-            );
+            )
           } else {
-            console.log(text);
+            console.log(text)
           }
         }
       } catch (error) {
         console.error(
           '❌ Audit failed:',
           error instanceof Error ? error.message : error,
-        );
-        process.exit(1);
+        )
+        process.exit(1)
       }
-    });
+    })
 
-  return command;
+  return command
 }
 
 function normaliseOptions(raw: any): AuditOptions {
@@ -74,13 +74,13 @@ function normaliseOptions(raw: any): AuditOptions {
       .split(',')
       .map((p: string) => p.trim())
       .filter(Boolean)
-    : undefined;
+    : undefined
   const exclude = typeof raw.exclude === 'string'
     ? raw.exclude
       .split(',')
       .map((p: string) => p.trim())
       .filter(Boolean)
-    : undefined;
+    : undefined
 
   return {
     root: path.resolve(raw.root ?? process.cwd()),
@@ -90,25 +90,25 @@ function normaliseOptions(raw: any): AuditOptions {
     outputFormat: raw.format,
     output: typeof raw.output === 'string' ? raw.output : undefined,
     verbose: Boolean(raw.verbose),
-  };
+  }
 }
 
 function parseNumber(value: string | undefined): number | undefined {
   if (value === undefined) {
-    return undefined;
+    return undefined
   }
-  const parsed = Number(value);
+  const parsed = Number(value)
   if (Number.isNaN(parsed)) {
-    throw new Error(`Invalid number: ${value}`);
+    throw new Error(`Invalid number: ${value}`)
   }
-  return parsed;
+  return parsed
 }
 
 function toOutputFormat(value: string): 'json' | 'text' {
-  return value === 'json' ? 'json' : 'text';
+  return value === 'json' ? 'json' : 'text'
 }
 
 async function writeOutput(filePath: string, content: string): Promise<void> {
-  await fs.mkdir(path.dirname(path.resolve(filePath)), { recursive: true });
-  await fs.writeFile(filePath, content, 'utf-8');
+  await fs.mkdir(path.dirname(path.resolve(filePath)), { recursive: true })
+  await fs.writeFile(filePath, content, 'utf-8')
 }

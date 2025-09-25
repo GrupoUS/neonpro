@@ -3,71 +3,66 @@
  * Coordinates test execution across all test categories with parallel/sequential support
  */
 
-import { createLogger, LogLevel } from './utils/logger';
-import {
-  TDDPhase,
-  TEST_CATEGORIES,
-  TestCategory,
-  TestCategoryManager,
-} from './utils/test-categories';
+import { createLogger, LogLevel } from './utils/logger'
+import { TEST_CATEGORIES, TestCategory } from './utils/test-categories'
 
-const logger = createLogger('TestSuiteCoordinator', LogLevel.INFO);
+const logger = createLogger('TestSuiteCoordinator', LogLevel.INFO)
 
 export interface TestSuiteOptions {
-  categories?: TestCategory[];
-  types?: string[];
-  parallel?: boolean;
-  coverage?: boolean;
-  watch?: boolean;
-  ci?: boolean;
-  healthcareCompliance?: boolean;
-  timeout?: number;
+  categories?: TestCategory[]
+  types?: string[]
+  parallel?: boolean
+  coverage?: boolean
+  watch?: boolean
+  ci?: boolean
+  healthcareCompliance?: boolean
+  timeout?: number
 }
 
 export interface TestCommand {
-  category: TestCategory;
-  command: string;
-  args: string[];
-  workingDir: string;
-  timeout?: number;
-  env?: Record<string, string>;
+  category: TestCategory
+  command: string
+  args: string[]
+  workingDir: string
+  timeout?: number
+  env?: Record<string, string>
 }
 
 export interface TestSuiteResult {
-  success: boolean;
-  duration: number;
-  categoryResults: Record<TestCategory, CategoryTestResult>;
+  success: boolean
+  duration: number
+  categoryResults: Record<TestCategory, CategoryTestResult>
   overallMetrics: {
-    totalTests: number;
-    passedTests: number;
-    failedTests: number;
-    skippedTests: number;
-    coverage: number;
-    categories: number;
-  };
-  commands: TestCommand[];
+    totalTests: number
+    passedTests: number
+    failedTests: number
+    skippedTests: number
+    coverage: number
+    categories: number
+  }
+  commands: TestCommand[]
 }
 
 export interface CategoryTestResult {
-  category: TestCategory;
-  success: boolean;
-  duration: number;
+  category: TestCategory
+  success: boolean
+  duration: number
   metrics: {
-    tests: number;
-    passed: number;
-    failed: number;
-    skipped: number;
-    coverage: number;
-  };
-  output: string;
-  errors: string[];
+    tests: number
+    passed: number
+    failed: number
+    skipped: number
+    coverage: number
+  }
+  output: string
+  errors: string[]
 }
 
 export class TestSuiteCoordinator {
-  private readonly testTools: Record<TestCategory, TestToolConfig>;
+  private readonly testTools: Record<TestCategory, TestToolConfig>
 
   constructor() {
-    this.testTools = this.initializeTestTools();
+    this.testTools = this.initializeTestTools()
   }
 
   /**
@@ -75,7 +70,7 @@ export class TestSuiteCoordinator {
    */
   private initializeTestTools(): Record<TestCategory, TestToolConfig> {
     return {
-      frontend: {
+      [TestCategory.FRONTEND]: {
         packageName: '@neonpro/tools-frontend-tests',
         workingDir: 'tools/frontend',
         commands: {
@@ -92,7 +87,7 @@ export class TestSuiteCoordinator {
         healthcareTests: ['a11y', 'healthcare-ui'],
         frameworks: ['vitest', 'playwright', 'testing-library'],
       },
-      backend: {
+      [TestCategory.BACKEND]: {
         packageName: '@neonpro/tools-backend-tests',
         workingDir: 'tools/backend',
         commands: {
@@ -108,7 +103,7 @@ export class TestSuiteCoordinator {
         healthcareTests: ['api', 'integration'],
         frameworks: ['vitest', 'supertest', 'msw'],
       },
-      database: {
+      [TestCategory.DATABASE]: {
         packageName: '@neonpro/tools-database-tests',
         workingDir: 'tools/database',
         commands: {
@@ -123,7 +118,7 @@ export class TestSuiteCoordinator {
         healthcareTests: ['rls', 'compliance'],
         frameworks: ['vitest', 'supabase'],
       },
-      quality: {
+      [TestCategory.QUALITY]: {
         packageName: '@neonpro/tools-quality-tests',
         workingDir: 'tools/quality',
         commands: {
@@ -138,7 +133,7 @@ export class TestSuiteCoordinator {
         healthcareTests: ['security', 'accessibility'],
         frameworks: ['vitest', 'oxlint', 'lighthouse'],
       },
-    };
+    }
   }
 
   /**
@@ -147,7 +142,7 @@ export class TestSuiteCoordinator {
   async executeTestSuites(
     options: TestSuiteOptions = {},
   ): Promise<TestSuiteResult> {
-    const startTime = performance.now();
+    const startTime = performance.now()
 
     logger.constitutional(
       LogLevel.INFO,
@@ -157,31 +152,31 @@ export class TestSuiteCoordinator {
         requirement: 'Test Suite Coordination',
         standard: 'Testing',
       },
-    );
+    )
 
-    const categories = options.categories || this.getAllCategories();
-    const commands = this.generateTestCommands(categories, options);
+    const categories = options.categories || this.getAllCategories()
+    const commands = this.generateTestCommands(categories, options)
 
     logger.info(
       `Generated ${commands.length} test commands for ${categories.length} categories`,
-    );
+    )
 
     try {
-      let categoryResults: Record<TestCategory, CategoryTestResult>;
+      let categoryResults: Record<TestCategory, CategoryTestResult>
 
       if (options.parallel) {
-        logger.info('Executing test suites in parallel');
-        categoryResults = await this.executeInParallel(commands, options);
+        logger.info('Executing test suites in parallel')
+        categoryResults = await this.executeInParallel(commands, options)
       } else {
-        logger.info('Executing test suites sequentially');
-        categoryResults = await this.executeSequentially(commands, options);
+        logger.info('Executing test suites sequentially')
+        categoryResults = await this.executeSequentially(commands, options)
       }
 
-      const duration = performance.now() - startTime;
-      const overallMetrics = this.calculateOverallMetrics(categoryResults);
+      const duration = performance.now() - startTime
+      const overallMetrics = this.calculateOverallMetrics(categoryResults)
       const success = Object.values(categoryResults).every(
         result => result.success,
-      );
+      )
 
       logger.constitutional(
         success ? LogLevel.INFO : LogLevel.ERROR,
@@ -191,7 +186,7 @@ export class TestSuiteCoordinator {
           requirement: 'Test Suite Completion',
           standard: 'Testing',
         },
-      );
+      )
 
       return {
         success,
@@ -199,10 +194,10 @@ export class TestSuiteCoordinator {
         categoryResults,
         overallMetrics,
         commands,
-      };
+      }
     } catch (error) {
-      const duration = performance.now() - startTime;
-      logger.error('Test suite execution failed', error);
+      const duration = performance.now() - startTime
+      logger.error('Test suite execution failed', error)
 
       return {
         success: false,
@@ -217,7 +212,7 @@ export class TestSuiteCoordinator {
           categories: 0,
         },
         commands,
-      };
+      }
     }
   }
 
@@ -228,14 +223,14 @@ export class TestSuiteCoordinator {
     categories: TestCategory[],
     options: TestSuiteOptions,
   ): TestCommand[] {
-    const commands: TestCommand[] = [];
+    const commands: TestCommand[] = []
 
     for (const category of categories) {
-      const toolConfig = this.testTools[category];
-      const types = options.types || this.getDefaultTypes(category, options);
+      const toolConfig = this.testTools[category]
+      const types = options.types || this.getDefaultTypes(category, options)
 
       for (const type of types) {
-        const command = toolConfig.commands[type];
+        const command = toolConfig.commands[type]
         if (command) {
           commands.push({
             category,
@@ -244,12 +239,12 @@ export class TestSuiteCoordinator {
             workingDir: toolConfig.workingDir,
             timeout: options.timeout || 30000,
             env: this.getEnvironmentVariables(category, options),
-          });
+          })
         }
       }
     }
 
-    return commands;
+    return commands
   }
 
   /**
@@ -259,21 +254,21 @@ export class TestSuiteCoordinator {
     category: TestCategory,
     options: TestSuiteOptions,
   ): string[] {
-    const toolConfig = this.testTools[category];
+    const toolConfig = this.testTools[category]
 
     if (options.healthcareCompliance) {
-      return ['unit', ...toolConfig.healthcareTests];
+      return ['unit', ...toolConfig.healthcareTests]
     }
 
     if (options.coverage) {
-      return ['unit', 'coverage'];
+      return ['unit', 'coverage']
     }
 
     if (options.watch) {
-      return ['watch'];
+      return ['watch']
     }
 
-    return ['unit'];
+    return ['unit']
   }
 
   /**
@@ -286,20 +281,20 @@ export class TestSuiteCoordinator {
     const env: Record<string, string> = {
       NODE_ENV: 'test',
       CI: options.ci ? 'true' : 'false',
-    };
+    }
 
     if (options.healthcareCompliance) {
-      env.HEALTHCARE_COMPLIANCE = 'true';
-      env.LGPD_TESTING = 'true';
-      env.ANVISA_TESTING = 'true';
-      env.CFM_TESTING = 'true';
+      env.HEALTHCARE_COMPLIANCE = 'true'
+      env.LGPD_TESTING = 'true'
+      env.ANVISA_TESTING = 'true'
+      env.CFM_TESTING = 'true'
     }
 
     if (options.coverage) {
-      env.COVERAGE = 'true';
+      env.COVERAGE = 'true'
     }
 
-    return env;
+    return env
   }
 
   /**
@@ -309,22 +304,27 @@ export class TestSuiteCoordinator {
     commands: TestCommand[],
     options: TestSuiteOptions,
   ): Promise<Record<TestCategory, CategoryTestResult>> {
-    const groupedCommands = this.groupCommandsByCategory(commands);
-    const categories = Object.keys(groupedCommands) as TestCategory[];
+    const groupedCommands = this.groupCommandsByCategory(commands)
+    const categories = Object.keys(groupedCommands) as TestCategory[]
 
     // Execute categories in parallel
     const results = await Promise.all(
       categories.map(category =>
         this.executeCategoryTests(category, groupedCommands[category], options)
       ),
-    );
+    )
 
-    const categoryResults: Record<TestCategory, CategoryTestResult> = {};
+    const categoryResults: Record<TestCategory, CategoryTestResult> = {
+      [TestCategory.FRONTEND]: {} as CategoryTestResult,
+      [TestCategory.BACKEND]: {} as CategoryTestResult,
+      [TestCategory.DATABASE]: {} as CategoryTestResult,
+      [TestCategory.QUALITY]: {} as CategoryTestResult,
+    }
     categories.forEach((category, index) => {
-      categoryResults[category] = results[index];
-    });
+      categoryResults[category] = results[index]
+    })
 
-    return categoryResults;
+    return categoryResults
   }
 
   /**
@@ -334,26 +334,31 @@ export class TestSuiteCoordinator {
     commands: TestCommand[],
     options: TestSuiteOptions,
   ): Promise<Record<TestCategory, CategoryTestResult>> {
-    const groupedCommands = this.groupCommandsByCategory(commands);
-    const categoryResults: Record<TestCategory, CategoryTestResult> = {};
+    const groupedCommands = this.groupCommandsByCategory(commands)
+    const categoryResults: Record<TestCategory, CategoryTestResult> = {
+      [TestCategory.FRONTEND]: {} as CategoryTestResult,
+      [TestCategory.BACKEND]: {} as CategoryTestResult,
+      [TestCategory.DATABASE]: {} as CategoryTestResult,
+      [TestCategory.QUALITY]: {} as CategoryTestResult,
+    }
 
     for (const category of Object.keys(groupedCommands) as TestCategory[]) {
       categoryResults[category] = await this.executeCategoryTests(
         category,
         groupedCommands[category],
         options,
-      );
+      )
 
       // Stop on first failure if not in CI mode
       if (!categoryResults[category].success && !options.ci) {
         logger.warn(
           `Category ${category} failed, stopping sequential execution`,
-        );
-        break;
+        )
+        break
       }
     }
 
-    return categoryResults;
+    return categoryResults
   }
 
   /**
@@ -362,16 +367,21 @@ export class TestSuiteCoordinator {
   private groupCommandsByCategory(
     commands: TestCommand[],
   ): Record<TestCategory, TestCommand[]> {
-    const grouped: Record<TestCategory, TestCommand[]> = {} as any;
+    const grouped: Record<TestCategory, TestCommand[]> = {
+      [TestCategory.FRONTEND]: [],
+      [TestCategory.BACKEND]: [],
+      [TestCategory.DATABASE]: [],
+      [TestCategory.QUALITY]: [],
+    }
 
     for (const command of commands) {
       if (!grouped[command.category]) {
-        grouped[command.category] = [];
+        grouped[command.category] = []
       }
-      grouped[command.category].push(command);
+      grouped[command.category].push(command)
     }
 
-    return grouped;
+    return grouped
   }
 
   /**
@@ -382,19 +392,19 @@ export class TestSuiteCoordinator {
     commands: TestCommand[],
     options: TestSuiteOptions,
   ): Promise<CategoryTestResult> {
-    const startTime = performance.now();
+    const startTime = performance.now()
 
-    logger.info(`Executing ${commands.length} test commands for ${category}`);
+    logger.info(`Executing ${commands.length} test commands for ${category}`)
 
     try {
       // Simulate test execution for now
       // In real implementation, this would execute actual test commands
-      await this.simulateTestExecution(category, commands);
+      await this.simulateTestExecution(category, commands)
 
-      const duration = performance.now() - startTime;
+      const duration = performance.now() - startTime
 
       // Generate simulated metrics
-      const metrics = this.generateTestMetrics(category, options);
+      const metrics = this.generateTestMetrics(category, options)
 
       return {
         category,
@@ -405,10 +415,10 @@ export class TestSuiteCoordinator {
         errors: metrics.failed > 0
           ? [`${metrics.failed} tests failed in ${category}`]
           : [],
-      };
+      }
     } catch (error) {
-      const duration = performance.now() - startTime;
-      logger.error(`Test execution failed for ${category}`, error);
+      const duration = performance.now() - startTime
+      logger.error(`Test execution failed for ${category}`, error)
 
       return {
         category,
@@ -423,7 +433,7 @@ export class TestSuiteCoordinator {
         },
         output: '',
         errors: [error instanceof Error ? error.message : 'Unknown error'],
-      };
+      }
     }
   }
 
@@ -435,17 +445,17 @@ export class TestSuiteCoordinator {
     commands: TestCommand[],
   ): Promise<void> {
     const executionTime = {
-      frontend: 3000, // 3s for frontend tests
-      backend: 4000, // 4s for backend tests
-      database: 5000, // 5s for database tests
-      quality: 6000, // 6s for quality tests
-    };
+      [TestCategory.FRONTEND]: 3000, // 3s for frontend tests
+      [TestCategory.BACKEND]: 4000, // 4s for backend tests
+      [TestCategory.DATABASE]: 5000, // 5s for database tests
+      [TestCategory.QUALITY]: 6000, // 6s for quality tests
+    }
 
-    const baseTime = executionTime[category] || 3000;
-    const commandMultiplier = commands.length * 0.5;
-    const totalTime = baseTime + commandMultiplier * 1000;
+    const baseTime = executionTime[category] || 3000
+    const commandMultiplier = commands.length * 0.5
+    const totalTime = baseTime + commandMultiplier * 1000
 
-    await new Promise(resolve => setTimeout(resolve, totalTime));
+    await new Promise(resolve => setTimeout(resolve, totalTime))
   }
 
   /**
@@ -456,20 +466,20 @@ export class TestSuiteCoordinator {
     options: TestSuiteOptions,
   ) {
     const baseTests = {
-      frontend: 25,
-      backend: 35,
-      database: 20,
-      quality: 30,
-    };
+      [TestCategory.FRONTEND]: 25,
+      [TestCategory.BACKEND]: 35,
+      [TestCategory.DATABASE]: 20,
+      [TestCategory.QUALITY]: 30,
+    }
 
-    const testCount = baseTests[category] || 25;
-    const successRate = options.healthcareCompliance ? 0.9 : 0.95; // 90% with healthcare, 95% without
-    const passed = Math.floor(testCount * successRate);
-    const failed = testCount - passed;
+    const testCount = baseTests[category] || 25
+    const successRate = options.healthcareCompliance ? 0.9 : 0.95 // 90% with healthcare, 95% without
+    const passed = Math.floor(testCount * successRate)
+    const failed = testCount - passed
 
     const coverage = options.coverage
       ? Math.floor(Math.random() * 10) + 85 // 85-95% coverage
-      : Math.floor(Math.random() * 15) + 75; // 75-90% coverage
+      : Math.floor(Math.random() * 15) + 75 // 75-90% coverage
 
     return {
       tests: testCount,
@@ -477,7 +487,7 @@ export class TestSuiteCoordinator {
       failed,
       skipped: 0,
       coverage,
-    };
+    }
   }
 
   /**
@@ -488,29 +498,29 @@ export class TestSuiteCoordinator {
   ) {
     const allMetrics = Object.values(categoryResults).map(
       result => result.metrics,
-    );
+    )
 
     const totalTests = allMetrics.reduce(
       (sum, metrics) => sum + metrics.tests,
       0,
-    );
+    )
     const passedTests = allMetrics.reduce(
       (sum, metrics) => sum + metrics.passed,
       0,
-    );
+    )
     const failedTests = allMetrics.reduce(
       (sum, metrics) => sum + metrics.failed,
       0,
-    );
+    )
     const skippedTests = allMetrics.reduce(
       (sum, metrics) => sum + metrics.skipped,
       0,
-    );
+    )
 
     const coverage = allMetrics.length > 0
-      ? allMetrics.reduce((sum, metrics) => sum + metrics.coverage, 0)
-        / allMetrics.length
-      : 0;
+      ? allMetrics.reduce((sum, metrics) => sum + metrics.coverage, 0) /
+        allMetrics.length
+      : 0
 
     return {
       totalTests,
@@ -519,48 +529,53 @@ export class TestSuiteCoordinator {
       skippedTests,
       coverage: Math.round(coverage),
       categories: Object.keys(categoryResults).length,
-    };
+    }
   }
 
   /**
    * Get all available categories
    */
   private getAllCategories(): TestCategory[] {
-    return Object.keys(TEST_CATEGORIES) as TestCategory[];
+    return Object.keys(TEST_CATEGORIES) as TestCategory[]
   }
 
   /**
    * Get available commands for a category
    */
   getAvailableCommands(category: TestCategory): string[] {
-    return Object.keys(this.testTools[category].commands);
+    return Object.keys(this.testTools[category].commands)
   }
 
   /**
    * Get tool configuration for a category
    */
   getToolConfig(category: TestCategory): TestToolConfig {
-    return this.testTools[category];
+    return this.testTools[category]
   }
 
   /**
    * Get healthcare-specific test types
    */
   getHealthcareTestTypes(): Record<TestCategory, string[]> {
-    const healthcareTypes: Record<TestCategory, string[]> = {} as any;
-
-    for (const category of Object.keys(this.testTools) as TestCategory[]) {
-      healthcareTypes[category] = this.testTools[category].healthcareTests;
+    const healthcareTypes: Record<TestCategory, string[]> = {
+      [TestCategory.FRONTEND]: [],
+      [TestCategory.BACKEND]: [],
+      [TestCategory.DATABASE]: [],
+      [TestCategory.QUALITY]: [],
     }
 
-    return healthcareTypes;
+    for (const category of Object.keys(this.testTools) as TestCategory[]) {
+      healthcareTypes[category] = this.testTools[category].healthcareTests
+    }
+
+    return healthcareTypes
   }
 }
 
 interface TestToolConfig {
-  packageName: string;
-  workingDir: string;
-  commands: Record<string, string>;
-  healthcareTests: string[];
-  frameworks: string[];
+  packageName: string
+  workingDir: string
+  commands: Record<string, string>
+  healthcareTests: string[]
+  frameworks: string[]
 }

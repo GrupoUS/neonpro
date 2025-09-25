@@ -6,12 +6,12 @@
  * Follows the 6-layer architecture design for enterprise-grade healthcare operations.
  */
 
-import { createClient } from '@supabase/supabase-js';
-import { EventEmitter } from 'events';
-import { v4 as uuidv4 } from 'uuid';
-import { ConversationContextService } from '../conversation/conversation-context-service';
-import { RealtimeSubscriptionService } from '../realtime/realtime-subscription-service';
-import { AguiService, AguiServiceConfig, QueryContext } from './agui-protocol/service';
+import { createClient } from '@supabase/supabase-js'
+import { EventEmitter } from 'events'
+import { v4 as uuidv4 } from 'uuid'
+import { ConversationContextService } from '../conversation/conversation-context-service'
+import { RealtimeSubscriptionService } from '../realtime/realtime-subscription-service'
+import { AguiService, AguiServiceConfig, QueryContext } from './agui-protocol/service'
 import {
   AguiClientAnalyticsMessage,
   AguiClientAnalyticsResponse,
@@ -38,159 +38,159 @@ import {
   RetentionFeatures,
   ValidationResult,
   ValidationRule,
-} from './agui-protocol/types';
-import { ResponseCacheService } from './cache/response-cache-service';
-import { DataMaskingService } from './data-masking-service';
-import { LGPDService } from './lgpd-service';
-import { AgentPermissionService } from './permissions/agent-permissions';
-import { StructuredLoggingService } from './structured-logging';
+} from './agui-protocol/types'
+import { ResponseCacheService } from './cache/response-cache-service'
+import { DataMaskingService } from './data-masking-service'
+import { LGPDService } from './lgpd-service'
+import { AgentPermissionService } from './permissions/agent-permissions'
+import { StructuredLoggingService } from './structured-logging'
 
 export interface EnhancedClientAgentConfig extends AguiServiceConfig {
-  enableOCR: boolean;
-  ocrEndpoint?: string;
-  enablePredictiveAnalytics: boolean;
-  analyticsEndpoint?: string;
-  enableCommunication: boolean;
+  enableOCR: boolean
+  ocrEndpoint?: string
+  enablePredictiveAnalytics: boolean
+  analyticsEndpoint?: string
+  enableCommunication: boolean
   communicationProviders: {
     whatsapp: {
-      apiKey: string;
-      phoneNumber: string;
-    };
+      apiKey: string
+      phoneNumber: string
+    }
     sms: {
-      apiKey: string;
-      senderId: string;
-    };
+      apiKey: string
+      senderId: string
+    }
     email: {
-      apiKey: string;
-      fromAddress: string;
-    };
-  };
+      apiKey: string
+      fromAddress: string
+    }
+  }
   aiModels: {
-    ocr: string;
-    predictive: string;
-    validation: string;
-    communication: string;
-  };
+    ocr: string
+    predictive: string
+    validation: string
+    communication: string
+  }
 }
 
 export interface ClientAgentContext extends QueryContext {
-  clinicId: string;
+  clinicId: string
   sessionType:
     | 'registration'
     | 'profile_update'
     | 'search'
     | 'analytics'
-    | 'communication';
-  workflowStep?: string;
-  documents?: any[];
-  validationRules?: ValidationRule[];
-  userId: string;
+    | 'communication'
+  workflowStep?: string
+  documents?: any[]
+  validationRules?: ValidationRule[]
+  userId: string
 }
 
 export interface ClientAgentMetrics {
-  totalRegistrations: number;
-  successfulRegistrations: number;
-  averageRegistrationTime: number;
-  ocrProcessingTime: number;
-  predictionAccuracy: number;
-  communicationSuccessRate: number;
-  dataValidationAccuracy: number;
-  consentManagementEvents: number;
-  retentionRiskPredictions: number;
+  totalRegistrations: number
+  successfulRegistrations: number
+  averageRegistrationTime: number
+  ocrProcessingTime: number
+  predictionAccuracy: number
+  communicationSuccessRate: number
+  dataValidationAccuracy: number
+  consentManagementEvents: number
+  retentionRiskPredictions: number
 }
 
 export class EnhancedClientAgentService extends EventEmitter {
-  private aguiService: AguiService;
-  private config: EnhancedClientAgentConfig;
-  private supabase: any;
-  private cacheService: ResponseCacheService;
-  private permissionService: AgentPermissionService;
-  private conversationService: ConversationContextService;
-  private realtimeService: RealtimeSubscriptionService;
-  private dataMaskingService: DataMaskingService;
-  private lgpdService: LGPDService;
-  private loggingService: StructuredLoggingService;
-  private metrics: ClientAgentMetrics;
-  private activeSessions: Map<string, ClientAgentSession> = new Map();
+  private aguiService: AguiService
+  private config: EnhancedClientAgentConfig
+  private supabase: any
+  private cacheService: ResponseCacheService
+  private permissionService: AgentPermissionService
+  private conversationService: ConversationContextService
+  private realtimeService: RealtimeSubscriptionService
+  private dataMaskingService: DataMaskingService
+  private lgpdService: LGPDService
+  private loggingService: StructuredLoggingService
+  private metrics: ClientAgentMetrics
+  private activeSessions: Map<string, ClientAgentSession> = new Map()
 
   constructor(config: EnhancedClientAgentConfig) {
-    super();
-    this.config = config;
-    this.metrics = this.initializeMetrics();
+    super()
+    this.config = config
+    this.metrics = this.initializeMetrics()
 
     // Initialize Supabase client
     this.supabase = createClient(
       config.supabaseUrl!,
       config.supabaseServiceKey!,
-    );
+    )
 
     // Initialize AG-UI service
-    this.aguiService = new AguiService(config);
+    this.aguiService = new AguiService(config)
 
     // Initialize core services
     this.cacheService = new ResponseCacheService({
       ttl: 300, // 5 minutes
       maxSize: 1000,
-    });
+    })
 
     this.permissionService = new AgentPermissionService(
       config.supabaseUrl!,
       config.supabaseServiceKey!,
-    );
+    )
 
     this.conversationService = new ConversationContextService(
       config.supabaseUrl!,
       config.supabaseServiceKey!,
-    );
+    )
 
     this.realtimeService = new RealtimeSubscriptionService(
       config.supabaseUrl!,
       config.supabaseServiceKey!,
-    );
+    )
 
-    this.dataMaskingService = new DataMaskingService();
-    this.lgpdService = new LGPDService(config);
-    this.loggingService = new StructuredLoggingService('EnhancedClientAgent');
+    this.dataMaskingService = new DataMaskingService()
+    this.lgpdService = new LGPDService(config)
+    this.loggingService = new StructuredLoggingService('EnhancedClientAgent')
 
-    this.setupEventHandlers();
+    this.setupEventHandlers()
   }
 
   /**
    * Initialize the service
    */
   async initialize(): Promise<void> {
-    this.emit('initializing');
+    this.emit('initializing')
 
     try {
       // Test database connectivity
-      await this.testDatabaseConnectivity();
+      await this.testDatabaseConnectivity()
 
       // Test AI services connectivity
       if (this.config.enableOCR) {
-        await this.testOCRConnectivity();
+        await this.testOCRConnectivity()
       }
 
       if (this.config.enablePredictiveAnalytics) {
-        await this.testAnalyticsConnectivity();
+        await this.testAnalyticsConnectivity()
       }
 
       // Initialize real-time subscriptions
-      await this.initializeRealtimeSubscriptions();
+      await this.initializeRealtimeSubscriptions()
 
       // Load ML models and configurations
-      await this.initializeModels();
+      await this.initializeModels()
 
-      this.emit('ready');
+      this.emit('ready')
       this.loggingService.info(
         'Enhanced Client Agent service initialized successfully',
-      );
+      )
     } catch {
-      this.emit('error', error);
+      this.emit('error', error)
       this.loggingService.error(
         'Failed to initialize Enhanced Client Agent service',
         { error },
-      );
-      throw error;
+      )
+      throw error
     }
   }
 
@@ -201,8 +201,8 @@ export class EnhancedClientAgentService extends EventEmitter {
     message: AguiClientRegistrationMessage,
     _context: ClientAgentContext,
   ): Promise<AguiClientRegistrationResponse> {
-    const startTime = Date.now();
-    const sessionId = uuidv4();
+    const startTime = Date.now()
+    const sessionId = uuidv4()
     const session: ClientAgentSession = {
       id: sessionId,
       type: 'registration',
@@ -210,56 +210,56 @@ export class EnhancedClientAgentService extends EventEmitter {
       clinicId: context.clinicId,
       startTime,
       status: 'active',
-    };
+    }
 
-    this.activeSessions.set(sessionId, session);
+    this.activeSessions.set(sessionId, session)
 
     try {
       this.loggingService.info('Processing client registration', {
         sessionId,
         userId: context._userId,
         clinicId: context.clinicId,
-      });
+      })
 
       // Step 1: Validate input data
       const validationResults = await this.validateClientData(
         message.clientData,
         context.validationRules || [],
         message.consent,
-      );
+      )
 
       // Step 2: Process OCR if documents provided
-      let ocrResults: OCRResult[] = [];
+      let ocrResults: OCRResult[] = []
       if (
-        message.documents
-        && message.documents.length > 0
-        && this.config.enableOCR
+        message.documents &&
+        message.documents.length > 0 &&
+        this.config.enableOCR
       ) {
         ocrResults = await this.internalProcessDocumentOCR(
           message.documents,
           context,
-        );
+        )
       }
 
       // Step 3: Apply LGPD compliance
       const lgpdProcessedData = await this.applyLGPDCompliance(
         message.clientData,
         message.consent,
-      );
+      )
 
       // Step 4: Generate AI suggestions for data enhancement
       const aiSuggestions = await this.generateRegistrationSuggestions(
         lgpdProcessedData,
         validationResults,
         ocrResults,
-      );
+      )
 
       // Step 5: Create client in database
       const clientId = await this.createClientInDatabase(
         lgpdProcessedData,
         context,
         message.consent,
-      );
+      )
 
       // Step 6: Process and store documents
       const createdDocuments = await this.processClientDocuments(
@@ -267,36 +267,36 @@ export class EnhancedClientAgentService extends EventEmitter {
         message.documents || [],
         ocrResults,
         context,
-      );
+      )
 
       // Step 7: Create consent records
       const consentRecords = await this.createConsentRecords(
         clientId,
         context,
         message.consent,
-      );
+      )
 
       // Step 8: Send welcome communication if enabled
       if (
-        this.config.enableCommunication
-        && message.consent?.marketingConsent
+        this.config.enableCommunication &&
+        message.consent?.marketingConsent
       ) {
         await this.sendWelcomeCommunication(
           clientId,
           lgpdProcessedData,
           context,
-        );
+        )
       }
 
-      const _processingTime = Date.now() - startTime;
+      const _processingTime = Date.now() - startTime
 
       // Update metrics
-      this.metrics.totalRegistrations++;
-      this.metrics.successfulRegistrations++;
-      this.metrics.averageRegistrationTime = (this.metrics.averageRegistrationTime
-          * (this.metrics.totalRegistrations - 1)
-        + processingTime)
-        / this.metrics.totalRegistrations;
+      this.metrics.totalRegistrations++
+      this.metrics.successfulRegistrations++
+      this.metrics.averageRegistrationTime = (this.metrics.averageRegistrationTime *
+          (this.metrics.totalRegistrations - 1) +
+        processingTime) /
+        this.metrics.totalRegistrations
 
       const response: AguiClientRegistrationResponse = {
         clientId,
@@ -308,7 +308,7 @@ export class EnhancedClientAgentService extends EventEmitter {
         consentRecords,
         aiSuggestions,
         processingTime,
-      };
+      }
 
       // Log completion
       this.loggingService.info('Client registration completed', {
@@ -316,27 +316,27 @@ export class EnhancedClientAgentService extends EventEmitter {
         clientId,
         status: response.status,
         processingTime,
-      });
+      })
 
-      session.endTime = Date.now();
-      session.status = 'completed';
-      this.activeSessions.delete(sessionId);
+      session.endTime = Date.now()
+      session.status = 'completed'
+      this.activeSessions.delete(sessionId)
 
-      return response;
+      return response
     } catch {
-      const _processingTime = Date.now() - startTime;
+      const _processingTime = Date.now() - startTime
 
       this.loggingService.error('Client registration failed', {
         sessionId,
         error: error instanceof Error ? error.message : 'Unknown error',
         processingTime,
-      });
+      })
 
-      session.endTime = Date.now();
-      session.status = 'failed';
-      this.activeSessions.delete(sessionId);
+      session.endTime = Date.now()
+      session.status = 'failed'
+      this.activeSessions.delete(sessionId)
 
-      throw error;
+      throw error
     }
   }
 
@@ -347,29 +347,29 @@ export class EnhancedClientAgentService extends EventEmitter {
     message: AguiClientProfileUpdateMessage,
     _context: ClientAgentContext,
   ): Promise<AguiClientProfileUpdateResponse> {
-    const startTime = Date.now();
-    const sessionId = uuidv4();
+    const startTime = Date.now()
+    const sessionId = uuidv4()
 
     try {
       this.loggingService.info('Processing client profile update', {
         sessionId,
         clientId: message.clientId,
         userId: context._userId,
-      });
+      })
 
       // Step 1: Validate update data
       const validationResults = await this.validateClientUpdate(
         message.clientId,
         message.updates,
         context,
-      );
+      )
 
       // Step 2: Apply LGPD compliance to updates
       const compliantUpdates = await this.applyLGPDComplianceForUpdates(
         message.clientId,
         message.updates,
         context,
-      );
+      )
 
       // Step 3: Generate AI recommendations
       const aiRecommendations = await this.generateProfileUpdateRecommendations(
@@ -377,21 +377,21 @@ export class EnhancedClientAgentService extends EventEmitter {
         compliantUpdates,
         validationResults,
         context,
-      );
+      )
 
       // Step 4: Update client in database
       const updateResults = await this.updateClientInDatabase(
         message.clientId,
         compliantUpdates,
         context,
-      );
+      )
 
       // Step 5: Trigger retention prediction if significant changes
       if (this.isSignificantProfileChange(compliantUpdates)) {
-        await this.triggerRetentionPrediction(message.clientId, context);
+        await this.triggerRetentionPrediction(message.clientId, context)
       }
 
-      const _processingTime = Date.now() - startTime;
+      const _processingTime = Date.now() - startTime
 
       const response: AguiClientProfileUpdateResponse = {
         clientId: message.clientId,
@@ -399,23 +399,23 @@ export class EnhancedClientAgentService extends EventEmitter {
         validationResults,
         aiRecommendations,
         processingTime,
-      };
+      }
 
       this.loggingService.info('Client profile update completed', {
         sessionId,
         clientId: message.clientId,
         processingTime,
-      });
+      })
 
-      return response;
+      return response
     } catch {
       this.loggingService.error('Client profile update failed', {
         sessionId,
         clientId: message.clientId,
         error: error instanceof Error ? error.message : 'Unknown error',
-      });
+      })
 
-      throw error;
+      throw error
     }
   }
 
@@ -426,44 +426,44 @@ export class EnhancedClientAgentService extends EventEmitter {
     message: AguiClientSearchMessage,
     _context: ClientAgentContext,
   ): Promise<AguiClientSearchResponse> {
-    const startTime = Date.now();
+    const startTime = Date.now()
 
     try {
       this.loggingService.info('Processing client search', {
         userId: context._userId,
         clinicId: context.clinicId,
         searchCriteria: message.searchCriteria,
-      });
+      })
 
       // Step 1: Build search query
       const searchQuery = this.buildClientSearchQuery(
         message.searchCriteria,
         message.filters,
         context,
-      );
+      )
 
       // Step 2: Execute search with pagination
       const searchResults = await this.executeClientSearch(
         searchQuery,
         message.pagination,
         context,
-      );
+      )
 
       // Step 3: Apply AI-powered ranking and filtering
       const rankedResults = await this.rankSearchResults(
         searchResults.clients,
         message.searchCriteria,
         context,
-      );
+      )
 
       // Step 4: Generate AI insights
       const aiInsights = await this.generateSearchInsights(
         rankedResults,
         message.searchCriteria,
         context,
-      );
+      )
 
-      const searchTime = Date.now() - startTime;
+      const searchTime = Date.now() - startTime
 
       const response: AguiClientSearchResponse = {
         clients: rankedResults,
@@ -472,16 +472,16 @@ export class EnhancedClientAgentService extends EventEmitter {
         filters: message.filters || {},
         searchTime,
         aiInsights,
-      };
+      }
 
-      return response;
+      return response
     } catch {
       this.loggingService.error('Client search failed', {
         userId: context._userId,
         error: error instanceof Error ? error.message : 'Unknown error',
-      });
+      })
 
-      throw error;
+      throw error
     }
   }
 
@@ -492,14 +492,14 @@ export class EnhancedClientAgentService extends EventEmitter {
     message: AguiClientAnalyticsMessage,
     _context: ClientAgentContext,
   ): Promise<AguiClientAnalyticsResponse> {
-    const startTime = Date.now();
+    const startTime = Date.now()
 
     try {
       this.loggingService.info('Processing client analytics', {
         clientId: message.clientId,
         analyticsType: message.analyticsType,
         userId: context._userId,
-      });
+      })
 
       // Step 1: Gather analytics data based on type
       const analyticsData = await this.gatherAnalyticsData(
@@ -508,14 +508,14 @@ export class EnhancedClientAgentService extends EventEmitter {
         message.timeRange,
         message.filters,
         context,
-      );
+      )
 
       // Step 2: Apply AI analysis and generate insights
       const insights = await this.generateAnalyticsInsights(
         analyticsData,
         message.analyticsType,
         context,
-      );
+      )
 
       // Step 3: Generate AI recommendations
       const recommendations = await this.generateAnalyticsRecommendations(
@@ -523,9 +523,9 @@ export class EnhancedClientAgentService extends EventEmitter {
         insights,
         message.analyticsType,
         context,
-      );
+      )
 
-      const _processingTime = Date.now() - startTime;
+      const _processingTime = Date.now() - startTime
 
       const response: AguiClientAnalyticsResponse = {
         analyticsType: message.analyticsType,
@@ -535,17 +535,17 @@ export class EnhancedClientAgentService extends EventEmitter {
         insights,
         recommendations,
         processingTime,
-      };
+      }
 
-      return response;
+      return response
     } catch {
       this.loggingService.error('Client analytics processing failed', {
         clientId: message.clientId,
         analyticsType: message.analyticsType,
         error: error instanceof Error ? error.message : 'Unknown error',
-      });
+      })
 
-      throw error;
+      throw error
     }
   }
 
@@ -556,17 +556,17 @@ export class EnhancedClientAgentService extends EventEmitter {
     message: AguiClientRetentionPredictionMessage,
     _context: ClientAgentContext,
   ): Promise<AguiClientRetentionPredictionResponse> {
-    const startTime = Date.now();
+    const startTime = Date.now()
 
     try {
       this.loggingService.info('Processing client retention prediction', {
         clientId: message.clientId,
         userId: context._userId,
-      });
+      })
 
       // Step 1: Gather retention features
-      const features = message.features
-        || (await this.gatherRetentionFeatures(message.clientId, context));
+      const features = message.features ||
+        (await this.gatherRetentionFeatures(message.clientId, context))
 
       // Step 2: Apply ML prediction model
       const prediction = await this.predictRetentionRisk(
@@ -574,22 +574,22 @@ export class EnhancedClientAgentService extends EventEmitter {
         features,
         message.modelVersion,
         context,
-      );
+      )
 
       // Step 3: Generate retention recommendations
       const recommendations = await this.generateRetentionRecommendations(
         message.clientId,
         prediction,
         context,
-      );
+      )
 
       // Step 4: Schedule next review
-      const nextReviewDate = this.scheduleNextReview(prediction.riskLevel);
+      const nextReviewDate = this.scheduleNextReview(prediction.riskLevel)
 
-      const _processingTime = Date.now() - startTime;
+      const _processingTime = Date.now() - startTime
 
       // Update metrics
-      this.metrics.retentionRiskPredictions++;
+      this.metrics.retentionRiskPredictions++
 
       const response: AguiClientRetentionPredictionResponse = {
         clientId: message.clientId,
@@ -598,19 +598,19 @@ export class EnhancedClientAgentService extends EventEmitter {
         nextReviewDate,
         modelVersion: message.modelVersion || '1.0.0',
         processingTime,
-      };
+      }
 
       // Store prediction result for model improvement
-      await this.storePredictionResult(message.clientId, prediction, context);
+      await this.storePredictionResult(message.clientId, prediction, context)
 
-      return response;
+      return response
     } catch {
       this.loggingService.error('Client retention prediction failed', {
         clientId: message.clientId,
         error: error instanceof Error ? error.message : 'Unknown error',
-      });
+      })
 
-      throw error;
+      throw error
     }
   }
 
@@ -621,7 +621,7 @@ export class EnhancedClientAgentService extends EventEmitter {
     message: AguiClientCommunicationMessage,
     _context: ClientAgentContext,
   ): Promise<AguiClientCommunicationResponse> {
-    const startTime = Date.now();
+    const startTime = Date.now()
 
     try {
       this.loggingService.info('Processing client communication', {
@@ -629,10 +629,10 @@ export class EnhancedClientAgentService extends EventEmitter {
         communicationType: message.communicationType,
         channel: message.channel,
         userId: context._userId,
-      });
+      })
 
       // Step 1: Validate communication permissions
-      await this.validateCommunicationPermissions(message.clientId, context);
+      await this.validateCommunicationPermissions(message.clientId, context)
 
       // Step 2: Personalize content using AI
       const personalizedContent = await this.personalizeCommunicationContent(
@@ -640,7 +640,7 @@ export class EnhancedClientAgentService extends EventEmitter {
         message.personalization,
         message.clientId,
         context,
-      );
+      )
 
       // Step 3: Send communication via appropriate channel
       const communicationResult = await this.sendCommunication(
@@ -649,7 +649,7 @@ export class EnhancedClientAgentService extends EventEmitter {
         message.channel,
         message.scheduledFor,
         context,
-      );
+      )
 
       // Step 4: Track communication for analytics
       await this.trackCommunication(
@@ -657,14 +657,14 @@ export class EnhancedClientAgentService extends EventEmitter {
         communicationResult.communicationId,
         message.communicationType,
         context,
-      );
+      )
 
-      const _processingTime = Date.now() - startTime;
+      const _processingTime = Date.now() - startTime
 
       // Update metrics
-      this.metrics.communicationSuccessRate = (this.metrics.communicationSuccessRate * 99
-        + (communicationResult.status === 'sent' ? 100 : 0))
-        / 100;
+      this.metrics.communicationSuccessRate = (this.metrics.communicationSuccessRate * 99 +
+        (communicationResult.status === 'sent' ? 100 : 0)) /
+        100
 
       const response: AguiClientCommunicationResponse = {
         communicationId: communicationResult.communicationId,
@@ -675,17 +675,17 @@ export class EnhancedClientAgentService extends EventEmitter {
         scheduledFor: message.scheduledFor,
         sentAt: communicationResult.sentAt,
         cost: communicationResult.cost,
-      };
+      }
 
-      return response;
+      return response
     } catch {
       this.loggingService.error('Client communication failed', {
         clientId: message.clientId,
         communicationType: message.communicationType,
         error: error instanceof Error ? error.message : 'Unknown error',
-      });
+      })
 
-      throw error;
+      throw error
     }
   }
 
@@ -696,20 +696,20 @@ export class EnhancedClientAgentService extends EventEmitter {
     message: AguiDocumentOCRMessage,
     _context: ClientAgentContext,
   ): Promise<AguiDocumentOCRResponse> {
-    const startTime = Date.now();
+    const startTime = Date.now()
 
     try {
       this.loggingService.info('Processing document OCR', {
         documentId: message.documentId,
         documentType: message.documentType,
         userId: context._userId,
-      });
+      })
 
       // Step 1: Validate document access permissions
-      await this.validateDocumentAccess(message.documentId, context);
+      await this.validateDocumentAccess(message.documentId, context)
 
       // Step 2: Download and preprocess document
-      const documentData = await this.preprocessDocument(message.documentUrl);
+      const documentData = await this.preprocessDocument(message.documentUrl)
 
       // Step 3: Extract text using OCR
       const ocrResult = await this.extractDocumentText(
@@ -717,26 +717,26 @@ export class EnhancedClientAgentService extends EventEmitter {
         message.documentType,
         context,
         message.extractionFields,
-      );
+      )
 
       // Step 4: Validate extracted data
       const validationResults = await this.validateExtractedData(
         ocrResult,
         message.validationRules || [],
         context,
-      );
+      )
 
       // Step 5: Generate AI suggestions for corrections
       const suggestions = await this.generateOCRSuggestions(
         ocrResult,
         validationResults,
         context,
-      );
+      )
 
-      const _processingTime = Date.now() - startTime;
+      const _processingTime = Date.now() - startTime
 
       // Update metrics
-      this.metrics.ocrProcessingTime = (this.metrics.ocrProcessingTime * 99 + processingTime) / 100;
+      this.metrics.ocrProcessingTime = (this.metrics.ocrProcessingTime * 99 + processingTime) / 100
 
       const response: AguiDocumentOCRResponse = {
         documentId: message.documentId,
@@ -745,17 +745,17 @@ export class EnhancedClientAgentService extends EventEmitter {
         processingTime,
         confidence: ocrResult.confidence,
         suggestions,
-      };
+      }
 
-      return response;
+      return response
     } catch {
       this.loggingService.error('Document OCR processing failed', {
         documentId: message.documentId,
         documentType: message.documentType,
         error: error instanceof Error ? error.message : 'Unknown error',
-      });
+      })
 
-      throw error;
+      throw error
     }
   }
 
@@ -766,7 +766,7 @@ export class EnhancedClientAgentService extends EventEmitter {
     message: AguiConsentManagementMessage,
     _context: ClientAgentContext,
   ): Promise<AguiConsentManagementResponse> {
-    const startTime = Date.now();
+    const startTime = Date.now()
 
     try {
       this.loggingService.info('Processing consent management', {
@@ -774,10 +774,10 @@ export class EnhancedClientAgentService extends EventEmitter {
         consentAction: message.consentAction,
         consentType: message.consentType,
         userId: context._userId,
-      });
+      })
 
       // Step 1: Validate consent action permissions
-      await this.validateConsentPermissions(message.clientId, context);
+      await this.validateConsentPermissions(message.clientId, context)
 
       // Step 2: Apply LGPD compliance rules
       const compliantConsent = await this.applyLGPDConsentRules(
@@ -786,7 +786,7 @@ export class EnhancedClientAgentService extends EventEmitter {
         message.consentAction,
         context,
         message.consentData,
-      );
+      )
 
       // Step 3: Execute consent action
       const consentResult = await this.executeConsentAction(
@@ -795,7 +795,7 @@ export class EnhancedClientAgentService extends EventEmitter {
         message.consentAction,
         compliantConsent,
         context,
-      );
+      )
 
       // Step 4: Create audit trail
       const auditTrail = await this.createConsentAuditTrail(
@@ -804,7 +804,7 @@ export class EnhancedClientAgentService extends EventEmitter {
         message.consentAction,
         message.reason,
         context,
-      );
+      )
 
       // Step 5: Trigger data processing actions if required
       if (message.consentAction === 'revoke') {
@@ -812,13 +812,13 @@ export class EnhancedClientAgentService extends EventEmitter {
           message.clientId,
           message.consentType,
           context,
-        );
+        )
       }
 
-      const _processingTime = Date.now() - startTime;
+      const _processingTime = Date.now() - startTime
 
       // Update metrics
-      this.metrics.consentManagementEvents++;
+      this.metrics.consentManagementEvents++
 
       const response: AguiConsentManagementResponse = {
         consentId: consentResult.consentId,
@@ -830,18 +830,18 @@ export class EnhancedClientAgentService extends EventEmitter {
         expiryDate: consentResult.expiryDate,
         confirmationNumber: consentResult.confirmationNumber,
         auditTrail,
-      };
+      }
 
-      return response;
+      return response
     } catch {
       this.loggingService.error('Consent management failed', {
         clientId: message.clientId,
         consentAction: message.consentAction,
         consentType: message.consentType,
         error: error instanceof Error ? error.message : 'Unknown error',
-      });
+      })
 
-      throw error;
+      throw error
     }
   }
 
@@ -852,50 +852,50 @@ export class EnhancedClientAgentService extends EventEmitter {
     message: AguiClientValidationMessage,
     _context: ClientAgentContext,
   ): Promise<AguiClientValidationResponse> {
-    const startTime = Date.now();
+    const startTime = Date.now()
 
     try {
       this.loggingService.info('Processing client validation', {
         clientId: message.clientId,
         validationType: message.validationType,
         userId: context._userId,
-      });
+      })
 
       // Step 1: Execute validation rules
       const validationResults = await this.executeValidationRules(
         message.data,
         message.validationRules,
         context,
-      );
+      )
 
       // Step 2: Apply AI-powered validation
       const aiValidationResults = await this.applyAIValidation(
         message.data,
         message.validationType,
         context,
-      );
+      )
 
       // Step 3: Combine validation results
-      const combinedResults = [...validationResults, ...aiValidationResults];
+      const combinedResults = [...validationResults, ...aiValidationResults]
 
       // Step 4: Generate AI suggestions for corrections
       const suggestions = await this.generateValidationSuggestions(
         combinedResults,
         message.validationType,
         context,
-      );
+      )
 
       // Step 5: Calculate overall validity
       const overallValidity = combinedResults.every(
         result => result.isValid || result.severity === 'info',
-      );
+      )
 
-      const _processingTime = Date.now() - startTime;
+      const _processingTime = Date.now() - startTime
 
       // Update metrics
-      this.metrics.dataValidationAccuracy = (this.metrics.dataValidationAccuracy * 99
-        + (overallValidity ? 100 : 0))
-        / 100;
+      this.metrics.dataValidationAccuracy = (this.metrics.dataValidationAccuracy * 99 +
+        (overallValidity ? 100 : 0)) /
+        100
 
       const response: AguiClientValidationResponse = {
         validationId: uuidv4(),
@@ -904,17 +904,17 @@ export class EnhancedClientAgentService extends EventEmitter {
         results: combinedResults,
         processingTime,
         suggestions,
-      };
+      }
 
-      return response;
+      return response
     } catch {
       this.loggingService.error('Client validation failed', {
         clientId: message.clientId,
         validationType: message.validationType,
         error: error instanceof Error ? error.message : 'Unknown error',
-      });
+      })
 
-      throw error;
+      throw error
     }
   }
 
@@ -933,50 +933,50 @@ export class EnhancedClientAgentService extends EventEmitter {
       dataValidationAccuracy: 0,
       consentManagementEvents: 0,
       retentionRiskPredictions: 0,
-    };
+    }
   }
 
   private async testDatabaseConnectivity(): Promise<void> {
     const { data: _data, error } = await this.supabase
       .from('clinics')
       .select('count')
-      .limit(1);
+      .limit(1)
 
     if (error) {
-      throw new Error(`Database connectivity failed: ${error.message}`);
+      throw new Error(`Database connectivity failed: ${error.message}`)
     }
   }
 
   private async testOCRConnectivity(): Promise<void> {
     // Implement OCR service connectivity test
-    this.loggingService.info('OCR connectivity test passed');
+    this.loggingService.info('OCR connectivity test passed')
   }
 
   private async testAnalyticsConnectivity(): Promise<void> {
     // Implement analytics service connectivity test
-    this.loggingService.info('Analytics connectivity test passed');
+    this.loggingService.info('Analytics connectivity test passed')
   }
 
   private async initializeRealtimeSubscriptions(): Promise<void> {
     // Subscribe to client-related real-time events
     await this.realtimeService.subscribe('clients', '*', payload => {
-      this.emit('clientUpdate', payload);
-    });
+      this.emit('clientUpdate', payload)
+    })
   }
 
   private async initializeModels(): Promise<void> {
     // Load ML models and configurations
-    this.loggingService.info('ML models initialized');
+    this.loggingService.info('ML models initialized')
   }
 
   private setupEventHandlers(): void {
     this.aguiService.on('error', error => {
-      this.emit('error', error);
-    });
+      this.emit('error', error)
+    })
 
     this.aguiService.on('ready', () => {
-      this.emit('aguiReady');
-    });
+      this.emit('aguiReady')
+    })
   }
 
   // Placeholder methods for core functionality
@@ -986,7 +986,7 @@ export class EnhancedClientAgentService extends EventEmitter {
     _consent?: ClientConsentData,
   ): Promise<ValidationResult[]> {
     // Implement client data validation
-    return [];
+    return []
   }
 
   private async internalProcessDocumentOCR(
@@ -994,7 +994,7 @@ export class EnhancedClientAgentService extends EventEmitter {
     _context: ClientAgentContext,
   ): Promise<OCRResult[]> {
     // Implement document OCR processing
-    return [];
+    return []
   }
 
   private async applyLGPDCompliance(
@@ -1002,7 +1002,7 @@ export class EnhancedClientAgentService extends EventEmitter {
     _consent?: ClientConsentData,
   ): Promise<ClientRegistrationData> {
     // Apply LGPD compliance rules
-    return this.dataMaskingService.maskSensitiveData(clientData);
+    return this.dataMaskingService.maskSensitiveData(clientData)
   }
 
   private async generateRegistrationSuggestions(
@@ -1011,7 +1011,7 @@ export class EnhancedClientAgentService extends EventEmitter {
     _ocrResults: OCRResult[],
   ): Promise<AISuggestion[]> {
     // Generate AI suggestions for registration improvement
-    return [];
+    return []
   }
 
   private async createClientInDatabase(
@@ -1033,13 +1033,13 @@ export class EnhancedClientAgentService extends EventEmitter {
         lgpd_consent_date: _consent?.consentDate,
       })
       .select()
-      .single();
+      .single()
 
     if (error) {
-      throw new Error(`Failed to create client: ${error.message}`);
+      throw new Error(`Failed to create client: ${error.message}`)
     }
 
-    return data.id;
+    return data.id
   }
 
   private async processClientDocuments(
@@ -1049,7 +1049,7 @@ export class EnhancedClientAgentService extends EventEmitter {
     _context: ClientAgentContext,
   ): Promise<any[]> {
     // Process and store client documents
-    return [];
+    return []
   }
 
   private async createConsentRecords(
@@ -1058,7 +1058,7 @@ export class EnhancedClientAgentService extends EventEmitter {
     _consent?: ClientConsentData,
   ): Promise<string[]> {
     // Create consent records in database
-    return [];
+    return []
   }
 
   private async sendWelcomeCommunication(
@@ -1075,7 +1075,7 @@ export class EnhancedClientAgentService extends EventEmitter {
     _context: ClientAgentContext,
   ): Promise<ValidationResult[]> {
     // Validate client update data
-    return [];
+    return []
   }
 
   private async applyLGPDComplianceForUpdates(
@@ -1084,7 +1084,7 @@ export class EnhancedClientAgentService extends EventEmitter {
     _context: ClientAgentContext,
   ): Promise<Partial<ClientRegistrationData>> {
     // Apply LGPD compliance for updates
-    return updates;
+    return updates
   }
 
   private async generateProfileUpdateRecommendations(
@@ -1094,7 +1094,7 @@ export class EnhancedClientAgentService extends EventEmitter {
     _context: ClientAgentContext,
   ): Promise<AISuggestion[]> {
     // Generate AI recommendations for profile updates
-    return [];
+    return []
   }
 
   private async updateClientInDatabase(
@@ -1103,14 +1103,14 @@ export class EnhancedClientAgentService extends EventEmitter {
     _context: ClientAgentContext,
   ): Promise<Record<string, any>> {
     // Update client record in database
-    return {};
+    return {}
   }
 
   private isSignificantProfileChange(
     _updates: Partial<ClientRegistrationData>,
   ): boolean {
     // Determine if profile changes are significant enough to trigger retention prediction
-    return false;
+    return false
   }
 
   private async triggerRetentionPrediction(
@@ -1126,7 +1126,7 @@ export class EnhancedClientAgentService extends EventEmitter {
     _context: ClientAgentContext,
   ): any {
     // Build database search query
-    return {};
+    return {}
   }
 
   private async executeClientSearch(
@@ -1135,7 +1135,7 @@ export class EnhancedClientAgentService extends EventEmitter {
     _context: ClientAgentContext,
   ): Promise<any> {
     // Execute client search
-    return { clients: [], total: 0, pagination: {} };
+    return { clients: [], total: 0, pagination: {} }
   }
 
   private async rankSearchResults(
@@ -1144,7 +1144,7 @@ export class EnhancedClientAgentService extends EventEmitter {
     _context: ClientAgentContext,
   ): Promise<any[]> {
     // Apply AI-powered ranking to search results
-    return clients;
+    return clients
   }
 
   private async generateSearchInsights(
@@ -1153,7 +1153,7 @@ export class EnhancedClientAgentService extends EventEmitter {
     _context: ClientAgentContext,
   ): Promise<string> {
     // Generate AI insights from search results
-    return '';
+    return ''
   }
 
   private async gatherAnalyticsData(
@@ -1164,7 +1164,7 @@ export class EnhancedClientAgentService extends EventEmitter {
     _context?: ClientAgentContext,
   ): Promise<any> {
     // Gather analytics data based on type
-    return { metrics: {}, trends: [] };
+    return { metrics: {}, trends: [] }
   }
 
   private async generateAnalyticsInsights(
@@ -1173,7 +1173,7 @@ export class EnhancedClientAgentService extends EventEmitter {
     _context: ClientAgentContext,
   ): Promise<string[]> {
     // Generate AI insights from analytics data
-    return [];
+    return []
   }
 
   private async generateAnalyticsRecommendations(
@@ -1183,7 +1183,7 @@ export class EnhancedClientAgentService extends EventEmitter {
     _context: ClientAgentContext,
   ): Promise<AISuggestion[]> {
     // Generate AI recommendations from analytics
-    return [];
+    return []
   }
 
   private async gatherRetentionFeatures(
@@ -1197,7 +1197,7 @@ export class EnhancedClientAgentService extends EventEmitter {
       paymentHistory: {} as any,
       treatmentProgress: {} as any,
       demographicData: {} as any,
-    };
+    }
   }
 
   private async predictRetentionRisk(
@@ -1212,7 +1212,7 @@ export class EnhancedClientAgentService extends EventEmitter {
       riskScore: 0.1,
       confidence: 0.9,
       factors: [],
-    };
+    }
   }
 
   private async generateRetentionRecommendations(
@@ -1221,23 +1221,23 @@ export class EnhancedClientAgentService extends EventEmitter {
     _context: ClientAgentContext,
   ): Promise<any[]> {
     // Generate retention recommendations
-    return [];
+    return []
   }
 
   private scheduleNextReview(riskLevel: string): string {
     // Schedule next review date based on risk level
-    const date = new Date();
+    const date = new Date()
     switch (riskLevel) {
       case 'high':
-        date.setDate(date.getDate() + 7);
-        break;
+        date.setDate(date.getDate() + 7)
+        break
       case 'medium':
-        date.setDate(date.getDate() + 30);
-        break;
+        date.setDate(date.getDate() + 30)
+        break
       default:
-        date.setDate(date.getDate() + 90);
+        date.setDate(date.getDate() + 90)
     }
-    return date.toISOString();
+    return date.toISOString()
   }
 
   private async storePredictionResult(
@@ -1262,7 +1262,7 @@ export class EnhancedClientAgentService extends EventEmitter {
     _context: ClientAgentContext,
   ): Promise<string> {
     // Personalize communication content using AI
-    return content;
+    return content
   }
 
   private async sendCommunication(
@@ -1278,7 +1278,7 @@ export class EnhancedClientAgentService extends EventEmitter {
       status: 'sent',
       sentAt: new Date().toISOString(),
       cost: 0,
-    };
+    }
   }
 
   private async trackCommunication(
@@ -1299,7 +1299,7 @@ export class EnhancedClientAgentService extends EventEmitter {
 
   private async preprocessDocument(_documentUrl: string): Promise<any> {
     // Download and preprocess document
-    return {};
+    return {}
   }
 
   private async extractDocumentText(
@@ -1314,7 +1314,7 @@ export class EnhancedClientAgentService extends EventEmitter {
       extractedFields: {},
       confidence: 0.9,
       processingTime: 1000,
-    };
+    }
   }
 
   private async validateExtractedData(
@@ -1323,7 +1323,7 @@ export class EnhancedClientAgentService extends EventEmitter {
     _context: ClientAgentContext,
   ): Promise<ValidationResult[]> {
     // Validate OCR extracted data
-    return [];
+    return []
   }
 
   private async generateOCRSuggestions(
@@ -1332,7 +1332,7 @@ export class EnhancedClientAgentService extends EventEmitter {
     _context: ClientAgentContext,
   ): Promise<AISuggestion[]> {
     // Generate AI suggestions for OCR improvements
-    return [];
+    return []
   }
 
   private async validateConsentPermissions(
@@ -1350,7 +1350,7 @@ export class EnhancedClientAgentService extends EventEmitter {
     consentData?: ClientConsentData,
   ): Promise<ClientConsentData> {
     // Apply LGPD consent rules
-    return consentData || ({} as ClientConsentData);
+    return consentData || ({} as ClientConsentData)
   }
 
   private async executeConsentAction(
@@ -1366,7 +1366,7 @@ export class EnhancedClientAgentService extends EventEmitter {
       status: 'success',
       expiryDate: null,
       confirmationNumber: uuidv4(),
-    };
+    }
   }
 
   private async createConsentAuditTrail(
@@ -1377,7 +1377,7 @@ export class EnhancedClientAgentService extends EventEmitter {
     _context?: ClientAgentContext,
   ): Promise<any[]> {
     // Create consent audit trail
-    return [];
+    return []
   }
 
   private async handleConsentRevocation(
@@ -1394,7 +1394,7 @@ export class EnhancedClientAgentService extends EventEmitter {
     _context: ClientAgentContext,
   ): Promise<ValidationResult[]> {
     // Execute validation rules
-    return [];
+    return []
   }
 
   private async applyAIValidation(
@@ -1403,7 +1403,7 @@ export class EnhancedClientAgentService extends EventEmitter {
     _context: ClientAgentContext,
   ): Promise<ValidationResult[]> {
     // Apply AI-powered validation
-    return [];
+    return []
   }
 
   private async generateValidationSuggestions(
@@ -1412,7 +1412,7 @@ export class EnhancedClientAgentService extends EventEmitter {
     _context: ClientAgentContext,
   ): Promise<AISuggestion[]> {
     // Generate AI suggestions for validation improvements
-    return [];
+    return []
   }
 
   // =====================================
@@ -1423,27 +1423,27 @@ export class EnhancedClientAgentService extends EventEmitter {
    * Get service metrics
    */
   getMetrics(): ClientAgentMetrics {
-    return { ...this.metrics };
+    return { ...this.metrics }
   }
 
   /**
    * Get active sessions
    */
   getActiveSessions(): ClientAgentSession[] {
-    return Array.from(this.activeSessions.values());
+    return Array.from(this.activeSessions.values())
   }
 
   /**
    * Health check
    */
   async healthCheck(): Promise<{
-    status: 'healthy' | 'degraded' | 'unhealthy';
-    components: Record<string, 'healthy' | 'degraded' | 'unhealthy'>;
-    metrics: ClientAgentMetrics;
+    status: 'healthy' | 'degraded' | 'unhealthy'
+    components: Record<string, 'healthy' | 'degraded' | 'unhealthy'>
+    metrics: ClientAgentMetrics
   }> {
     try {
       // Test database connectivity
-      await this.testDatabaseConnectivity();
+      await this.testDatabaseConnectivity()
 
       // Test core services
       const components: Record<string, 'healthy' | 'degraded' | 'unhealthy'> = {
@@ -1457,15 +1457,15 @@ export class EnhancedClientAgentService extends EventEmitter {
           ? 'healthy'
           : 'disabled',
         communication: this.config.enableCommunication ? 'healthy' : 'disabled',
-      };
+      }
 
       return {
         status: 'healthy',
         components,
         metrics: this.metrics,
-      };
+      }
     } catch {
-      void _error;
+      void _error
       return {
         status: 'unhealthy',
         components: {
@@ -1479,7 +1479,7 @@ export class EnhancedClientAgentService extends EventEmitter {
           communication: 'unhealthy',
         },
         metrics: this.metrics,
-      };
+      }
     }
   }
 }
@@ -1489,16 +1489,16 @@ export class EnhancedClientAgentService extends EventEmitter {
 // =====================================
 
 export interface ClientAgentSession {
-  id: string;
+  id: string
   type:
     | 'registration'
     | 'profile_update'
     | 'search'
     | 'analytics'
-    | 'communication';
-  userId: string;
-  clinicId: string;
-  startTime: number;
-  endTime?: number;
-  status: 'active' | 'completed' | 'failed';
+    | 'communication'
+  userId: string
+  clinicId: string
+  startTime: number
+  endTime?: number
+  status: 'active' | 'completed' | 'failed'
 }

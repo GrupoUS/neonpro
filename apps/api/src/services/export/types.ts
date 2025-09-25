@@ -1,7 +1,7 @@
 export interface ExportFormat {
-  format: 'csv' | 'xlsx';
-  mimeType: string;
-  extension: string;
+  format: 'csv' | 'xlsx'
+  mimeType: string
+  extension: string
 }
 
 export const EXPORT_FORMATS: Record<string, ExportFormat> = {
@@ -15,86 +15,86 @@ export const EXPORT_FORMATS: Record<string, ExportFormat> = {
     mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     extension: 'xlsx',
   },
-};
+}
 
 export interface ExportOptions {
-  format: 'csv' | 'xlsx';
-  includeHeaders: boolean;
-  delimiter?: string;
-  encoding?: string;
-  compression?: boolean;
+  format: 'csv' | 'xlsx'
+  includeHeaders: boolean
+  delimiter?: string
+  encoding?: string
+  compression?: boolean
 }
 
 export interface ExportFilter {
-  search?: string;
-  status?: string;
+  search?: string
+  status?: string
   dateRange?: {
-    start: Date;
-    end: Date;
-  };
-  fields?: string[];
+    start: Date
+    end: Date
+  }
+  fields?: string[]
 }
 
 export interface ExportPagination {
-  page: number;
-  limit: number;
-  offset: number;
+  page: number
+  limit: number
+  offset: number
 }
 
 export interface ExportConfig {
-  maxRecords: number;
-  chunkSize: number;
-  timeout: number;
-  rateLimit: number;
+  maxRecords: number
+  chunkSize: number
+  timeout: number
+  rateLimit: number
 }
 
 export interface ExportJob {
-  id: string;
-  _userId: string;
-  format: 'csv' | 'xlsx';
-  filters: ExportFilter;
-  pagination: ExportPagination;
-  status: 'pending' | 'processing' | 'completed' | 'failed' | 'cancelled';
+  id: string
+  _userId: string
+  format: 'csv' | 'xlsx'
+  filters: ExportFilter
+  pagination: ExportPagination
+  status: 'pending' | 'processing' | 'completed' | 'failed' | 'cancelled'
   progress: {
-    processed: number;
-    total: number;
-    percentage: number;
-  };
+    processed: number
+    total: number
+    percentage: number
+  }
   result?: {
-    url: string;
-    size: number;
-    recordCount: number;
-    expiresAt: Date;
-  };
-  error?: string;
-  createdAt: Date;
-  updatedAt: Date;
-  completedAt?: Date;
+    url: string
+    size: number
+    recordCount: number
+    expiresAt: Date
+  }
+  error?: string
+  createdAt: Date
+  updatedAt: Date
+  completedAt?: Date
 }
 
 export interface ExportMetrics {
-  totalRecords: number;
-  exportedRecords: number;
-  processingTime: number;
-  fileSize: number;
-  averageSpeed: number;
+  totalRecords: number
+  exportedRecords: number
+  processingTime: number
+  fileSize: number
+  averageSpeed: number
 }
 
 export interface LGPDComplianceOptions {
-  anonymizeSensitiveFields: boolean;
-  excludeRestrictedFields: boolean;
-  purpose: string;
-  retentionDays: number;
-  consentRequired: boolean;
+  anonymizeSensitiveFields: boolean
+  excludeRestrictedFields: boolean
+  purpose: string
+  retentionDays: number
+  consentRequired: boolean
 }
 
 export interface PatientExportField {
-  field: string;
-  label: string;
-  type: 'string' | 'number' | 'date' | 'boolean' | 'array';
-  sensitive: boolean;
-  required: boolean;
-  formatter?: (value: any) => string;
+  field: string
+  label: string
+  type: 'string' | 'number' | 'date' | 'boolean' | 'array'
+  sensitive: boolean
+  required: boolean
+  formatter?: (value: any) => string
 }
 
 export const DEFAULT_EXPORT_FIELDS: PatientExportField[] = [
@@ -203,4 +203,4 @@ export const DEFAULT_EXPORT_FIELDS: PatientExportField[] = [
     required: true,
     formatter: (value: Date) => value ? new Date(value).toLocaleDateString('pt-BR') : '',
   },
-];
+]

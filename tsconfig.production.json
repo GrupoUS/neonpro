@@ -1,21 +1,24 @@
 {
+  "$schema": "https://json.schemastore.org/tsconfig",
   "extends": "./tsconfig.base.json",
   "compilerOptions": {
     "target": "ES2022",
     "module": "ESNext",
     "moduleResolution": "bundler",
     "lib": ["ES2022"],
-    "allowJs": true,
-    "checkJs": false,
-    "jsx": "react-jsx",
-    "noEmit": true,
-    "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "forceConsistentCasingInFileNames": true,
-    "skipLibCheck": true,
-
+    
+    // Production optimizations
+    "incremental": true,
+    "tsBuildInfoFile": "./.tsbuildinfo/production.tsbuildinfo",
+    "composite": true,
+    
+    // Output optimization
+    "declaration": true,
+    "declarationMap": false, // Disabled in production for performance
+    "sourceMap": false, // Disabled in production for performance
+    "removeComments": true,
+    
+    // Type checking optimizations
     "strict": true,
     "noImplicitAny": true,
     "strictNullChecks": true,
@@ -25,80 +28,64 @@
     "noImplicitThis": true,
     "useUnknownInCatchVariables": true,
     "alwaysStrict": true,
-    "exactOptionalPropertyTypes": false,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedIndexedAccess": true,
     "noImplicitOverride": true,
-    "noPropertyAccessFromIndexSignature": false,
-    "allowUnusedLabels": false,
-    "allowUnreachableCode": false,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-
-    "declaration": false,
-    "declarationMap": false,
-    "sourceMap": false,
-    "removeComments": true,
-    "incremental": true,
-    "tsBuildInfoFile": "./.tsbuildinfo",
-
+    
+    // Performance optimizations
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "isolatedModules": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "allowJs": false, // Disable JS in production
+    "checkJs": false,
+    
+    // Advanced optimizations
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "downlevelIteration": true,
-
+    "useDefineForClassFields": true,
+    
+    // Path resolution optimizations
     "baseUrl": ".",
-    "paths": {
-      "@/*": ["./src/*"],
-      "@neonpro/*": ["./packages/*/src"],
-      "@neonpro/ui": ["./packages/ui/src"],
-      "@neonpro/ui/*": ["./packages/ui/src/*"],
-      "@neonpro/utils": ["./packages/utils/src"],
-      "@neonpro/utils/*": ["./packages/utils/src/*"],
-      "@neonpro/types": ["./packages/types/src"],
-      "@neonpro/types/*": ["./packages/types/src/*"],
-      "@neonpro/shared": ["./packages/shared/src"],
-      "@neonpro/shared/*": ["./packages/shared/src/*"],
-      "@neonpro/security": ["./packages/security/src"],
-      "@neonpro/security/*": ["./packages/security/src/*"],
-      "@neonpro/database": ["./packages/database/src"],
-      "@neonpro/database/*": ["./packages/database/src/*"],
-      "@apps/*": ["./apps/*/src"]
-    },
-    "composite": true,
     "maxNodeModuleJsDepth": 0,
-    "disableSizeLimit": false,
+    "disableSizeLimit": true,
     "disableReferencedProjectLoad": false,
-    "disableSolutionSearching": false,
-    "useDefineForClassFields": true
+    "disableSolutionSearching": false
   },
+  
+  // Include only production files
+  "include": [
+    "src/**/*",
+    "packages/*/src/**/*",
+    "apps/*/src/**/*",
+    "types/**/*"
+  ],
+  
+  // Exclude development and test files
   "exclude": [
     "node_modules",
     "dist",
     "build",
-    "**/*.d.ts",
     "**/*.test.ts",
     "**/*.test.tsx",
+    "**/*.spec.ts",
+    "**/*.spec.tsx",
     "**/__tests__/**",
-    "**/coverage/**",
-    "**/dist/**",
-    "packages/**/*.test.ts",
-    "packages/**/*.test.tsx",
-    "packages/**/*.spec.ts",
-    "apps/**/*.test.ts",
-    "apps/**/*.test.tsx",
-    "apps/**/*.spec.ts"
+    "**/*.d.ts",
+    "coverage",
+    "tools/tests/**/*",
+    "performance-results/**/*"
   ],
-  "references": [
-    { "path": "./packages/database" },
-    { "path": "./packages/core-services" },
-    { "path": "./packages/domain" },
-    { "path": "./packages/types" },
-    { "path": "./packages/shared" },
-    { "path": "./packages/ui" },
-    { "path": "./packages/utils" },
-    { "path": "./packages/security" },
-    { "path": "./apps/api" },
-    { "path": "./apps/web" }
-  ]
+  
+  // Build optimizations for CI/CD
+  "ts-node": {
+    "esm": true,
+    "experimentalSpecifierResolution": "node"
+  }
 }

@@ -5,10 +5,17 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": ["dist/**", ".next/**", "!.next/cache/**"],
+      "outputs": ["dist/**", ".next/**", "!.next/cache/**", "**/.tsbuildinfo/**"],
       "cache": true,
       "persistent": false,
-      "env": ["NODE_ENV", "CI"]
+      "env": ["NODE_ENV", "CI"],
+      "inputs": ["tsconfig*.json", "package.json", "bun.lockb"]
+    },
+    "build:core": {
+      "dependsOn": ["@neonpro/types#build", "@neonpro/shared#build", "@neonpro/security-compliance#build", "@neonpro/database#build", "@neonpro/ai-services#build", "@neonpro/healthcare-core#build", "@neonpro/api-gateway#build", "@neonpro/ui#build"],
+      "outputs": ["dist/**", "**/.tsbuildinfo/**"],
+      "cache": true,
+      "persistent": false
     },
     "dev": {
       "cache": false,
@@ -59,10 +66,11 @@
     },
     "build:production": {
       "dependsOn": ["^build"],
-      "outputs": ["dist/**", ".next/**", "!.next/cache/**", "*.stats.json", "*.stats.html"],
+      "outputs": ["dist/**", ".next/**", "!.next/cache/**", "*.stats.json", "*.stats.html", "**/.tsbuildinfo/**"],
       "cache": true,
       "persistent": false,
-      "env": ["NODE_ENV=production", "CI=1"]
+      "env": ["NODE_ENV=production", "CI=1"],
+      "inputs": ["tsconfig*.json", "tsconfig.production.json", "package.json", "bun.lockb"]
     },
     "build:copilot": {
       "dependsOn": ["^build"],

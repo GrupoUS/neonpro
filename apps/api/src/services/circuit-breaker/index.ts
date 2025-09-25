@@ -23,7 +23,7 @@ export {
   RequestContext,
   STANDARD_CIRCUIT_CONFIG,
   withCircuitBreaker,
-} from './circuit-breaker-service';
+} from './circuit-breaker-service'
 
 // Health checking system
 export {
@@ -38,7 +38,7 @@ export {
   ServiceHealth,
   ServiceMetrics,
   STANDARD_HEALTH_CONFIG,
-} from './health-checker';
+} from './health-checker'
 
 // Integration examples and utilities
 export {
@@ -47,13 +47,13 @@ export {
   GoogleCalendarServiceWithCircuitBreaker,
   setupHealthMonitoring,
   withCircuitBreakerProtection,
-} from './integration-example';
+} from './integration-example'
 
 // Default exports
-export { default as CircuitBreakerService } from './circuit-breaker-service';
-export { default as ExternalServiceHealthChecker } from './health-checker';
+export { default as CircuitBreakerService } from './circuit-breaker-service'
+export { default as ExternalServiceHealthChecker } from './health-checker'
 
 // Package version and info
-export const CIRCUIT_BREAKER_VERSION = '1.0.0';
+export const CIRCUIT_BREAKER_VERSION = '1.0.0'
 export const CIRCUIT_BREAKER_DESCRIPTION =
-  'Healthcare-compliant circuit breaker patterns for external service reliability';
+  'Healthcare-compliant circuit breaker patterns for external service reliability'

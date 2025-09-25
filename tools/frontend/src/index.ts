@@ -1,14 +1,13 @@
 /**
- * @neonpro/tools-frontend-tests
  * Frontend testing utilities for React, E2E, Accessibility & Healthcare UI
  */
 
 // Re-export shared utilities for convenience
-export * from '@neonpro/tools-shared';
+export * from '@neonpro/tools-shared'
 
 // Version information
-export const FRONTEND_TESTING_VERSION = '1.0.0';
-export const FRONTEND_TESTING_PACKAGE = '@neonpro/tools-frontend-tests';
+export const FRONTEND_TESTING_VERSION = '1.0.0'
+export const FRONTEND_TESTING_PACKAGE = '@neonpro/tools-frontend-tests'
 
 // Default configurations
 export const DEFAULT_FRONTEND_CONFIG = {
@@ -31,4 +30,4 @@ export const DEFAULT_FRONTEND_CONFIG = {
       statements: 80,
     },
   },
-};
+}

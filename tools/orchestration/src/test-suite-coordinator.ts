@@ -4,53 +4,53 @@
  */
 
 export interface TestExecutionRequest {
-  featureName: string;
-  testTypes: string[];
-  framework: string;
-  parallel: boolean;
-  timeout: number;
-  batchSize?: number;
-  healthcareMode?: boolean;
+  featureName: string
+  testTypes: string[]
+  framework: string
+  parallel: boolean
+  timeout: number
+  batchSize?: number
+  healthcareMode?: boolean
 }
 
 export interface TestResult {
-  type: string;
-  success: boolean;
-  duration?: number;
-  output: any;
-  coverage?: number;
-  errors?: string[];
-  warnings?: string[];
+  type: string
+  success: boolean
+  duration?: number
+  output: any
+  coverage?: number
+  errors?: string[]
+  warnings?: string[]
 }
 
 export interface ComplianceResults {
-  lgpdCompliant: boolean;
-  anvisaCompliant: boolean;
-  cfmCompliant: boolean;
-  overallCompliant: boolean;
+  lgpdCompliant: boolean
+  anvisaCompliant: boolean
+  cfmCompliant: boolean
+  overallCompliant: boolean
 }
 
 export interface TestSuiteResult {
-  results: TestResult[];
-  overallSuccess: boolean;
-  parallelExecution: boolean;
-  totalDuration: number;
-  complianceResults?: ComplianceResults;
+  results: TestResult[]
+  overallSuccess: boolean
+  parallelExecution: boolean
+  totalDuration: number
+  complianceResults?: ComplianceResults
 }
 
 export class TestSuiteCoordinator {
   async coordinateTestExecution(
     request: TestExecutionRequest,
   ): Promise<TestSuiteResult> {
-    const startTime = Date.now();
-    const results: TestResult[] = [];
+    const startTime = Date.now()
+    const results: TestResult[] = []
 
     // Simulate test execution for each test type
     for (const testType of request.testTypes) {
-      const testStartTime = Date.now();
+      const testStartTime = Date.now()
 
       try {
-        const success = !testType.includes('failing');
+        const success = !testType.includes('failing')
 
         results.push({
           type: testType,
@@ -60,7 +60,7 @@ export class TestSuiteCoordinator {
           coverage: success ? 0.85 : 0.3,
           errors: success ? [] : [`${testType} test failed`],
           warnings: success ? [] : [`Warning in ${testType}`],
-        });
+        })
       } catch (error) {
         results.push({
           type: testType,
@@ -69,7 +69,7 @@ export class TestSuiteCoordinator {
           output: null,
           errors: [error instanceof Error ? error.message : String(error)],
           warnings: [],
-        });
+        })
       }
     }
 
@@ -80,7 +80,7 @@ export class TestSuiteCoordinator {
         cfmCompliant: true,
         overallCompliant: true,
       }
-      : undefined;
+      : undefined
 
     return {
       results,
@@ -88,6 +88,6 @@ export class TestSuiteCoordinator {
       parallelExecution: request.parallel,
       totalDuration: Date.now() - startTime,
       complianceResults,
-    };
+    }
   }
 }

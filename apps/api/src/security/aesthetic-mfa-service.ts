@@ -10,12 +10,12 @@
  * - Compliance with Brazilian healthcare security standards
  */
 
-import crypto from 'crypto';
-import { qrcode } from 'qrcode';
-import { speakeasy } from 'speakeasy';
-import { createAdminClient } from '../clients/supabase';
-import { logger } from '../lib/logger';
-import { EnhancedSessionManager } from './enhanced-session-manager';
+import crypto from 'crypto'
+import { qrcode } from 'qrcode'
+import { speakeasy } from 'speakeasy'
+import { createAdminClient } from '../clients/supabase'
+import { logger } from '../lib/logger'
+import { EnhancedSessionManager } from './enhanced-session-manager'
 
 // TOTP Configuration
 const TOTP_CONFIG = {
@@ -24,7 +24,7 @@ const TOTP_CONFIG = {
   digits: 6, // 6-digit codes
   algorithm: 'sha512', // Strong hashing algorithm
   encoding: 'base32',
-} as const;
+} as const
 
 // Backup Code Configuration
 const BACKUP_CODE_CONFIG = {
@@ -32,7 +32,7 @@ const BACKUP_CODE_CONFIG = {
   length: 8, // Length of each backup code
   prefix: 'AESTHETIC-', // Prefix for backup codes
   validDays: 365, // Backup codes valid for 1 year
-} as const;
+} as const
 
 // MFA Status
 export const MFA_STATUS = {
@@ -41,9 +41,9 @@ export const MFA_STATUS = {
   SETUP_COMPLETE: 'setup_complete',
   MFA_ENFORCED: 'mfa_enforced',
   TEMPORARILY_DISABLED: 'temporarily_disabled',
-} as const;
+} as const
 
-export type MFAStatus = (typeof MFA_STATUS)[keyof typeof MFA_STATUS];
+export type MFAStatus = (typeof MFA_STATUS)[keyof typeof MFA_STATUS]
 
 // MFA Method
 export const MFA_METHOD = {
@@ -51,80 +51,80 @@ export const MFA_METHOD = {
   BACKUP_CODE: 'backup_code',
   SMS: 'sms', // Future implementation
   EMAIL: 'email', // Future implementation
-} as const;
+} as const
 
-export type MFAMethod = (typeof MFA_METHOD)[keyof typeof MFA_METHOD];
+export type MFAMethod = (typeof MFA_METHOD)[keyof typeof MFA_METHOD]
 
 // MFA Setup Data
 export interface MFASetupData {
-  secret: string;
-  qrCodeUrl: string;
-  backupCodes: string[];
-  setupDate: Date;
-  expiresAt: Date;
+  secret: string
+  qrCodeUrl: string
+  backupCodes: string[]
+  setupDate: Date
+  expiresAt: Date
 }
 
 // MFA Verification Result
 export interface MFAVerificationResult {
-  success: boolean;
-  method: MFAMethod;
-  userId: string;
-  timestamp: Date;
-  ipAddress: string;
-  userAgent: string;
-  riskScore: number;
-  backupCodeUsed?: boolean;
+  success: boolean
+  method: MFAMethod
+  userId: string
+  timestamp: Date
+  ipAddress: string
+  userAgent: string
+  riskScore: number
+  backupCodeUsed?: boolean
 }
 
 // MFA Session
 export interface MFASession {
-  userId: string;
-  mfaVerified: boolean;
-  verifiedAt: Date;
-  verifiedMethod: MFAMethod;
-  verifiedIP: string;
-  expiresAt: Date;
+  userId: string
+  mfaVerified: boolean
+  verifiedAt: Date
+  verifiedMethod: MFAMethod
+  verifiedIP: string
+  expiresAt: Date
   riskAssessment: {
-    score: number;
-    factors: string[];
-  };
+    score: number
+    factors: string[]
+  }
 }
 
 // MFA Enforcement Policy
 export interface MFAEnforcementPolicy {
-  enforceForRoles: string[];
-  enforceForSensitiveOperations: string[];
-  gracePeriodHours: number;
-  allowTemporaryDisable: boolean;
-  requiredForNewUsers: boolean;
+  enforceForRoles: string[]
+  enforceForSensitiveOperations: string[]
+  gracePeriodHours: number
+  allowTemporaryDisable: boolean
+  requiredForNewUsers: boolean
 }
 
 // MFA Security Event
 export interface MFASecurityEvent {
-  id: string;
-  userId: string;
-  eventType: 'mfa_setup' | 'mfa_verification' | 'mfa_failure' | 'backup_code_used' | 'mfa_disabled';
-  method: MFAMethod;
-  success: boolean;
-  ipAddress: string;
-  userAgent: string;
-  timestamp: Date;
-  details: Record<string, any>;
-  riskScore: number;
+  id: string
+  userId: string
+  eventType: 'mfa_setup' | 'mfa_verification' | 'mfa_failure' | 'backup_code_used' | 'mfa_disabled'
+  method: MFAMethod
+  success: boolean
+  ipAddress: string
+  userAgent: string
+  timestamp: Date
+  details: Record<string, any>
+  riskScore: number
 }
 
 /**
  * MFA Service for Aesthetic Clinic Professionals
  */
 export class AestheticMFAService {
-  private supabase: SupabaseClient;
-  private sessionManager: EnhancedSessionManager;
-  private auditEvents: MFASecurityEvent[] = [];
-  private activeSessions = new Map<string, MFASession>();
+  private supabase: SupabaseClient
+  private sessionManager: EnhancedSessionManager
+  private auditEvents: MFASecurityEvent[] = []
+  private activeSessions = new Map<string, MFASession>()
 
   constructor() {
-    this.supabase = createAdminClient();
-    this.sessionManager = new EnhancedSessionManager();
+    this.supabase = createAdminClient()
+    this.sessionManager = new EnhancedSessionManager()
   }
 
   /**
@@ -137,9 +137,9 @@ export class AestheticMFAService {
   ): Promise<MFASetupData> {
     try {
       // Check if MFA is already set up
-      const existingMFA = await this.getUserMFAStatus(userId);
+      const existingMFA = await this.getUserMFAStatus(userId)
       if (existingMFA === MFA_STATUS.SETUP_COMPLETE) {
-        throw new Error('MFA already set up for this user');
+        throw new Error('MFA already set up for this user')
       }
 
       // Generate TOTP secret
@@ -148,13 +148,13 @@ export class AestheticMFAService {
         issuer: 'NeonPro Aesthetic Clinic',
         length: 32,
         ...TOTP_CONFIG,
-      });
+      })
 
       // Generate QR code
-      const qrCodeUrl = await qrcode.toDataURL(secret.otpauth_url!);
+      const qrCodeUrl = await qrcode.toDataURL(secret.otpauth_url!)
 
       // Generate backup codes
-      const backupCodes = this.generateBackupCodes();
+      const backupCodes = this.generateBackupCodes()
 
       // Store MFA setup data temporarily
       const setupData: MFASetupData = {
@@ -163,10 +163,10 @@ export class AestheticMFAService {
         backupCodes,
         setupDate: new Date(),
         expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours to complete setup
-      };
+      }
 
       // Store in database (temporary table)
-      await this.storeTempMFAPending(userId, setupData);
+      await this.storeTempMFAPending(userId, setupData)
 
       // Log security event
       await this.logSecurityEvent({
@@ -179,23 +179,23 @@ export class AestheticMFAService {
         timestamp: new Date(),
         details: { setupId: secret.base32 },
         riskScore: 0.2,
-      });
+      })
 
       logger.info('MFA setup initialized', {
         userId,
         ip: userIP,
         userAgent,
         setupId: secret.base32,
-      });
+      })
 
-      return setupData;
+      return setupData
     } catch {
       logger.error('MFA setup initialization failed', {
         userId,
         error: error instanceof Error ? error.message : String(error),
         ip: userIP,
         userAgent,
-      });
+      })
 
       await this.logSecurityEvent({
         userId,
@@ -207,9 +207,9 @@ export class AestheticMFAService {
         timestamp: new Date(),
         details: { error: error instanceof Error ? error.message : String(error) },
         riskScore: 0.8,
-      });
+      })
 
-      throw new Error('Failed to initialize MFA setup');
+      throw new Error('Failed to initialize MFA setup')
     }
   }
 
@@ -226,9 +226,9 @@ export class AestheticMFAService {
   ): Promise<boolean> {
     try {
       // Verify TOTP code
-      const verification = this.verifyTOTP(totpCode, secret);
+      const verification = this.verifyTOTP(totpCode, secret)
       if (!verification) {
-        throw new Error('Invalid TOTP code');
+        throw new Error('Invalid TOTP code')
       }
 
       // Store MFA configuration
@@ -237,13 +237,13 @@ export class AestheticMFAService {
         backupCodes,
         setupDate: new Date(),
         method: MFA_METHOD.TOTP,
-      });
+      })
 
       // Update user MFA status
-      await this.updateUserMFAStatus(userId, MFA_STATUS.SETUP_COMPLETE);
+      await this.updateUserMFAStatus(userId, MFA_STATUS.SETUP_COMPLETE)
 
       // Clear temporary setup data
-      await this.clearTempMFAPending(userId);
+      await this.clearTempMFAPending(userId)
 
       // Log security event
       await this.logSecurityEvent({
@@ -256,22 +256,22 @@ export class AestheticMFAService {
         timestamp: new Date(),
         details: { setupComplete: true },
         riskScore: 0.1,
-      });
+      })
 
       logger.info('MFA setup completed successfully', {
         userId,
         ip: userIP,
         userAgent,
-      });
+      })
 
-      return true;
+      return true
     } catch {
       logger.error('MFA setup completion failed', {
         userId,
         error: error instanceof Error ? error.message : String(error),
         ip: userIP,
         userAgent,
-      });
+      })
 
       await this.logSecurityEvent({
         userId,
@@ -283,9 +283,9 @@ export class AestheticMFAService {
         timestamp: new Date(),
         details: { error: error instanceof Error ? error.message : String(error) },
         riskScore: 0.9,
-      });
+      })
 
-      throw new Error('Failed to complete MFA setup');
+      throw new Error('Failed to complete MFA setup')
     }
   }
 
@@ -300,19 +300,19 @@ export class AestheticMFAService {
   ): Promise<MFAVerificationResult> {
     try {
       // Get user's MFA configuration
-      const mfaConfig = await this.getUserMFAConfiguration(userId);
+      const mfaConfig = await this.getUserMFAConfiguration(userId)
       if (!mfaConfig) {
-        throw new Error('MFA not set up for user');
+        throw new Error('MFA not set up for user')
       }
 
       // Verify TOTP code
-      const isValid = this.verifyTOTP(totpCode, mfaConfig.secret);
+      const isValid = this.verifyTOTP(totpCode, mfaConfig.secret)
       if (!isValid) {
-        throw new Error('Invalid TOTP code');
+        throw new Error('Invalid TOTP code')
       }
 
       // Perform risk assessment
-      const riskAssessment = await this.performRiskAssessment(userId, userIP, userAgent);
+      const riskAssessment = await this.performRiskAssessment(userId, userIP, userAgent)
 
       // Create MFA session
       const mfaSession: MFASession = {
@@ -323,9 +323,9 @@ export class AestheticMFAService {
         verifiedIP: userIP,
         expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours
         riskAssessment,
-      };
+      }
 
-      this.activeSessions.set(userId, mfaSession);
+      this.activeSessions.set(userId, mfaSession)
 
       // Log security event
       await this.logSecurityEvent({
@@ -338,7 +338,7 @@ export class AestheticMFAService {
         timestamp: new Date(),
         details: { riskScore: riskAssessment.score },
         riskScore: riskAssessment.score,
-      });
+      })
 
       logger.info('MFA verification successful', {
         userId,
@@ -346,7 +346,7 @@ export class AestheticMFAService {
         ip: userIP,
         userAgent,
         riskScore: riskAssessment.score,
-      });
+      })
 
       return {
         success: true,
@@ -356,7 +356,7 @@ export class AestheticMFAService {
         ipAddress: userIP,
         userAgent,
         riskScore: riskAssessment.score,
-      };
+      }
     } catch {
       logger.error('MFA verification failed', {
         userId,
@@ -364,7 +364,7 @@ export class AestheticMFAService {
         error: error instanceof Error ? error.message : String(error),
         ip: userIP,
         userAgent,
-      });
+      })
 
       await this.logSecurityEvent({
         userId,
@@ -376,9 +376,9 @@ export class AestheticMFAService {
         timestamp: new Date(),
         details: { error: error instanceof Error ? error.message : String(error) },
         riskScore: 0.9,
-      });
+      })
 
-      throw new Error('MFA verification failed');
+      throw new Error('MFA verification failed')
     }
   }
 
@@ -393,25 +393,25 @@ export class AestheticMFAService {
   ): Promise<MFAVerificationResult> {
     try {
       // Get user's MFA configuration
-      const mfaConfig = await this.getUserMFAConfiguration(userId);
+      const mfaConfig = await this.getUserMFAConfiguration(userId)
       if (!mfaConfig || !mfaConfig.backupCodes) {
-        throw new Error('No backup codes available');
+        throw new Error('No backup codes available')
       }
 
       // Find and validate backup code
-      const codeIndex = mfaConfig.backupCodes.indexOf(backupCode);
+      const codeIndex = mfaConfig.backupCodes.indexOf(backupCode)
       if (codeIndex === -1) {
-        throw new Error('Invalid backup code');
+        throw new Error('Invalid backup code')
       }
 
       // Remove used backup code
-      mfaConfig.backupCodes.splice(codeIndex, 1);
-      await this.updateMFAConfiguration(userId, mfaConfig);
+      mfaConfig.backupCodes.splice(codeIndex, 1)
+      await this.updateMFAConfiguration(userId, mfaConfig)
 
       // Perform risk assessment (higher risk for backup code usage)
-      const riskAssessment = await this.performRiskAssessment(userId, userIP, userAgent);
-      riskAssessment.score = Math.max(riskAssessment.score, 0.6); // Minimum risk score for backup codes
-      riskAssessment.factors.push('backup_code_used');
+      const riskAssessment = await this.performRiskAssessment(userId, userIP, userAgent)
+      riskAssessment.score = Math.max(riskAssessment.score, 0.6) // Minimum risk score for backup codes
+      riskAssessment.factors.push('backup_code_used')
 
       // Create MFA session
       const mfaSession: MFASession = {
@@ -422,9 +422,9 @@ export class AestheticMFAService {
         verifiedIP: userIP,
         expiresAt: new Date(Date.now() + 4 * 60 * 60 * 1000), // 4 hours (shorter for backup codes)
         riskAssessment,
-      };
+      }
 
-      this.activeSessions.set(userId, mfaSession);
+      this.activeSessions.set(userId, mfaSession)
 
       // Log security event
       await this.logSecurityEvent({
@@ -437,14 +437,14 @@ export class AestheticMFAService {
         timestamp: new Date(),
         details: { remainingBackupCodes: mfaConfig.backupCodes.length },
         riskScore: riskAssessment.score,
-      });
+      })
 
       logger.warn('MFA backup code used', {
         userId,
         ip: userIP,
         userAgent,
         remainingCodes: mfaConfig.backupCodes.length,
-      });
+      })
 
       return {
         success: true,
@@ -455,7 +455,7 @@ export class AestheticMFAService {
         userAgent,
         riskScore: riskAssessment.score,
         backupCodeUsed: true,
-      };
+      }
     } catch {
       logger.error('MFA backup code verification failed', {
         userId,
@@ -463,7 +463,7 @@ export class AestheticMFAService {
         error: error instanceof Error ? error.message : String(error),
         ip: userIP,
         userAgent,
-      });
+      })
 
       await this.logSecurityEvent({
         userId,
@@ -475,9 +475,9 @@ export class AestheticMFAService {
         timestamp: new Date(),
         details: { error: error instanceof Error ? error.message : String(error) },
         riskScore: 0.9,
-      });
+      })
 
-      throw new Error('Backup code verification failed');
+      throw new Error('Backup code verification failed')
     }
   }
 
@@ -485,29 +485,29 @@ export class AestheticMFAService {
    * Check if MFA is verified for user session
    */
   isMFAVerified(userId: string): boolean {
-    const session = this.activeSessions.get(userId);
+    const session = this.activeSessions.get(userId)
     if (!session) {
-      return false;
+      return false
     }
 
     // Check if session is expired
     if (session.expiresAt < new Date()) {
-      this.activeSessions.delete(userId);
-      return false;
+      this.activeSessions.delete(userId)
+      return false
     }
 
-    return session.mfaVerified;
+    return session.mfaVerified
   }
 
   /**
    * Get MFA verification status
    */
   getMFAStatus(userId: string): MFASession | null {
-    const session = this.activeSessions.get(userId);
+    const session = this.activeSessions.get(userId)
     if (!session || session.expiresAt < new Date()) {
-      return null;
+      return null
     }
-    return session;
+    return session
   }
 
   /**
@@ -521,17 +521,17 @@ export class AestheticMFAService {
     try {
       // Verify user is already MFA verified
       if (!this.isMFAVerified(userId)) {
-        throw new Error('MFA verification required');
+        throw new Error('MFA verification required')
       }
 
       // Generate new backup codes
-      const newBackupCodes = this.generateBackupCodes();
+      const newBackupCodes = this.generateBackupCodes()
 
       // Update MFA configuration
-      const mfaConfig = await this.getUserMFAConfiguration(userId);
+      const mfaConfig = await this.getUserMFAConfiguration(userId)
       if (mfaConfig) {
-        mfaConfig.backupCodes = newBackupCodes;
-        await this.updateMFAConfiguration(userId, mfaConfig);
+        mfaConfig.backupCodes = newBackupCodes
+        await this.updateMFAConfiguration(userId, mfaConfig)
       }
 
       // Log security event
@@ -545,24 +545,24 @@ export class AestheticMFAService {
         timestamp: new Date(),
         details: { backupCodesRegenerated: true, count: newBackupCodes.length },
         riskScore: 0.3,
-      });
+      })
 
       logger.info('MFA backup codes regenerated', {
         userId,
         ip: userIP,
         userAgent,
-      });
+      })
 
-      return newBackupCodes;
+      return newBackupCodes
     } catch {
       logger.error('Backup code regeneration failed', {
         userId,
         error: error instanceof Error ? error.message : String(error),
         ip: userIP,
         userAgent,
-      });
+      })
 
-      throw new Error('Failed to regenerate backup codes');
+      throw new Error('Failed to regenerate backup codes')
     }
   }
 
@@ -577,13 +577,13 @@ export class AestheticMFAService {
   ): Promise<boolean> {
     try {
       // Remove MFA configuration
-      await this.removeMFAConfiguration(userId);
+      await this.removeMFAConfiguration(userId)
 
       // Update user MFA status
-      await this.updateUserMFAStatus(userId, MFA_STATUS.NOT_SETUP);
+      await this.updateUserMFAStatus(userId, MFA_STATUS.NOT_SETUP)
 
       // Clear active sessions
-      this.activeSessions.delete(userId);
+      this.activeSessions.delete(userId)
 
       // Log security event
       await this.logSecurityEvent({
@@ -596,25 +596,25 @@ export class AestheticMFAService {
         timestamp: new Date(),
         details: { reason, emergency: true },
         riskScore: 0.8,
-      });
+      })
 
       logger.warn('MFA disabled (emergency)', {
         userId,
         reason,
         ip: userIP,
         userAgent,
-      });
+      })
 
-      return true;
+      return true
     } catch {
       logger.error('MFA disable failed', {
         userId,
         error: error instanceof Error ? error.message : String(error),
         ip: userIP,
         userAgent,
-      });
+      })
 
-      throw new Error('Failed to disable MFA');
+      throw new Error('Failed to disable MFA')
     }
   }
 
@@ -634,7 +634,7 @@ export class AestheticMFAService {
       gracePeriodHours: 72, // 3 days
       allowTemporaryDisable: true,
       requiredForNewUsers: true,
-    };
+    }
   }
 
   /**
@@ -646,7 +646,7 @@ export class AestheticMFAService {
     return this.auditEvents
       .filter(event => event.userId === userId)
       .slice(-limit)
-      .reverse();
+      .reverse()
   }
 
   // Private helper methods
@@ -661,21 +661,21 @@ export class AestheticMFAService {
         step: TOTP_CONFIG.step,
         digits: TOTP_CONFIG.digits,
         algorithm: TOTP_CONFIG.algorithm as any,
-      });
+      })
     } catch {
-      logger.error('TOTP verification error', { error });
-      return false;
+      logger.error('TOTP verification error', { error })
+      return false
     }
   }
 
   private generateBackupCodes(): string[] {
-    const codes: string[] = [];
+    const codes: string[] = []
     for (let i = 0; i < BACKUP_CODE_CONFIG.count; i++) {
-      const randomBytes = crypto.randomBytes(BACKUP_CODE_CONFIG.length);
-      const code = randomBytes.toString('hex').toUpperCase();
-      codes.push(`${BACKUP_CODE_CONFIG.prefix}${code}`);
+      const randomBytes = crypto.randomBytes(BACKUP_CODE_CONFIG.length)
+      const code = randomBytes.toString('hex').toUpperCase()
+      codes.push(`${BACKUP_CODE_CONFIG.prefix}${code}`)
     }
-    return codes;
+    return codes
   }
 
   private async performRiskAssessment(
@@ -683,40 +683,40 @@ export class AestheticMFAService {
     userIP: string,
     userAgent: string,
   ): Promise<{ score: number; factors: string[] }> {
-    let riskScore = 0;
-    const riskFactors: string[] = [];
+    let riskScore = 0
+    const riskFactors: string[] = []
 
     // Check for known suspicious IP addresses
     if (await this.isSuspiciousIP(userIP)) {
-      riskScore += 0.4;
-      riskFactors.push('suspicious_ip');
+      riskScore += 0.4
+      riskFactors.push('suspicious_ip')
     }
 
     // Check for unusual user agent
     if (await this.isUnusualUserAgent(userId, userAgent)) {
-      riskScore += 0.3;
-      riskFactors.push('unusual_user_agent');
+      riskScore += 0.3
+      riskFactors.push('unusual_user_agent')
     }
 
     // Check for geolocation anomalies
     if (await this.isGeolocationAnomaly(userId, userIP)) {
-      riskScore += 0.5;
-      riskFactors.push('geolocation_anomaly');
+      riskScore += 0.5
+      riskFactors.push('geolocation_anomaly')
     }
 
     // Check for time-based anomalies
     if (await this.isTimeAnomaly(userId)) {
-      riskScore += 0.2;
-      riskFactors.push('time_anomaly');
+      riskScore += 0.2
+      riskFactors.push('time_anomaly')
     }
 
     // Cap risk score at 1.0
-    riskScore = Math.min(riskScore, 1.0);
+    riskScore = Math.min(riskScore, 1.0)
 
     return {
       score: riskScore,
       factors: riskFactors,
-    };
+    }
   }
 
   private async logSecurityEvent(event: MFASecurityEvent): Promise<void> {
@@ -724,14 +724,14 @@ export class AestheticMFAService {
     const eventWithId: MFASecurityEvent = {
       ...event,
       id: crypto.randomUUID(),
-    };
+    }
 
     // Store in memory (in production, this would be stored in database)
-    this.auditEvents.push(eventWithId);
+    this.auditEvents.push(eventWithId)
 
     // Keep only last 1000 events in memory
     if (this.auditEvents.length > 1000) {
-      this.auditEvents = this.auditEvents.slice(-1000);
+      this.auditEvents = this.auditEvents.slice(-1000)
     }
 
     // In production, this would be stored in the database
@@ -746,16 +746,16 @@ export class AestheticMFAService {
         timestamp: event.timestamp,
         details: event.details,
         risk_score: event.riskScore,
-      });
+      })
     } catch {
-      logger.error('Failed to log MFA security event', { error });
+      logger.error('Failed to log MFA security event', { error })
     }
   }
 
   // Database operations (simplified for this example)
   private async getUserMFAStatus(_userId: string): Promise<MFAStatus> {
     // In production, this would query the database
-    return MFA_STATUS.NOT_SETUP;
+    return MFA_STATUS.NOT_SETUP
   }
 
   private async storeTempMFAPending(userId: string, setupData: MFASetupData): Promise<void> {
@@ -766,7 +766,7 @@ export class AestheticMFAService {
       backup_codes: setupData.backupCodes,
       setup_date: setupData.setupDate,
       expires_at: setupData.expiresAt,
-    });
+    })
   }
 
   private async storeMFAConfiguration(userId: string, config: any): Promise<void> {
@@ -777,7 +777,7 @@ export class AestheticMFAService {
       backup_codes: config.backupCodes,
       setup_date: config.setupDate,
       method: config.method,
-    });
+    })
   }
 
   private async updateUserMFAStatus(userId: string, status: MFAStatus): Promise<void> {
@@ -785,7 +785,7 @@ export class AestheticMFAService {
     await this.supabase
       .from('users')
       .update({ mfa_status: status })
-      .eq('id', userId);
+      .eq('id', userId)
   }
 
   private async clearTempMFAPending(userId: string): Promise<void> {
@@ -793,7 +793,7 @@ export class AestheticMFAService {
     await this.supabase
       .from('mfa_setup_pending')
       .delete()
-      .eq('user_id', userId);
+      .eq('user_id', userId)
   }
 
   private async getUserMFAConfiguration(userId: string): Promise<any> {
@@ -802,13 +802,13 @@ export class AestheticMFAService {
       .from('mfa_configurations')
       .select('*')
       .eq('user_id', userId)
-      .single();
+      .single()
 
     if (error) {
-      return null;
+      return null
     }
 
-    return data;
+    return data
   }
 
   private async updateMFAConfiguration(userId: string, config: any): Promise<void> {
@@ -819,7 +819,7 @@ export class AestheticMFAService {
         backup_codes: config.backupCodes,
         updated_at: new Date(),
       })
-      .eq('user_id', userId);
+      .eq('user_id', userId)
   }
 
   private async removeMFAConfiguration(userId: string): Promise<void> {
@@ -827,32 +827,32 @@ export class AestheticMFAService {
     await this.supabase
       .from('mfa_configurations')
       .delete()
-      .eq('user_id', userId);
+      .eq('user_id', userId)
   }
 
   private async isSuspiciousIP(_ipAddress: string): Promise<boolean> {
     // Check against known malicious IP databases
     // For now, return false
-    return false;
+    return false
   }
 
   private async isUnusualUserAgent(_userId: string, _userAgent: string): Promise<boolean> {
     // Check if user agent is unusual for this user
     // For now, return false
-    return false;
+    return false
   }
 
   private async isGeolocationAnomaly(_userId: string, _ipAddress: string): Promise<boolean> {
     // Check if IP address is from unusual location for this user
     // For now, return false
-    return false;
+    return false
   }
 
   private async isTimeAnomaly(_userId: string): Promise<boolean> {
     // Check if login time is unusual for this user
     // For now, return false
-    return false;
+    return false
   }
 }
 
-export default AestheticMFAService;
+export default AestheticMFAService

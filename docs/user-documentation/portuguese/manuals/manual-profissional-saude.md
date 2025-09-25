@@ -36,31 +36,31 @@ Como profissional de saúde, você é responsável por:
 interface ProfessionalValidation {
   // Dados obrigatórios
   personalInfo: {
-    fullName: string;
-    professionalPhoto: string;
-    contactInfo: ContactInfo;
-  };
+    fullName: string
+    professionalPhoto: string
+    contactInfo: ContactInfo
+  }
 
   // Documentação profissional
   documentation: {
-    cfmCrmNumber: string;
-    cfmCrmState: string;
-    cfmCrmSpecialty: string;
-    professionalLicense: string;
-    licenseExpiration: Date;
-  };
+    cfmCrmNumber: string
+    cfmCrmState: string
+    cfmCrmSpecialty: string
+    professionalLicense: string
+    licenseExpiration: Date
+  }
 
   // Especializações
   specializations: {
-    primary: string;
-    secondary: string[];
-    certifications: Certification[];
-  };
+    primary: string
+    secondary: string[]
+    certifications: Certification[]
+  }
 
   // Status de validação
-  validationStatus: 'pending' | 'approved' | 'rejected' | 'expired';
-  lastValidationDate: Date;
-  nextValidationDate: Date;
+  validationStatus: 'pending' | 'approved' | 'rejected' | 'expired'
+  lastValidationDate: Date
+  nextValidationDate: Date
 }
 ```
 
@@ -114,36 +114,36 @@ O dashboard profissional oferece uma visão completa das suas atividades:
 interface ProfessionalMetrics {
   // Desempenho clínico
   clinical: {
-    totalPatients: number;
-    activeTreatments: number;
-    completedSessions: number;
-    successRate: number;
-    complicationRate: number;
-  };
+    totalPatients: number
+    activeTreatments: number
+    completedSessions: number
+    successRate: number
+    complicationRate: number
+  }
 
   // Satisfação do paciente
   satisfaction: {
-    averageRating: number;
-    totalReviews: number;
-    positiveReviews: number;
-    improvementAreas: string[];
-  };
+    averageRating: number
+    totalReviews: number
+    positiveReviews: number
+    improvementAreas: string[]
+  }
 
   // Financeiro
   financial: {
-    monthlyRevenue: number;
-    averageTicket: number;
-    commissionRate: number;
-    targetAchievement: number;
-  };
+    monthlyRevenue: number
+    averageTicket: number
+    commissionRate: number
+    targetAchievement: number
+  }
 
   // Eficiência
   efficiency: {
-    appointmentUtilization: number;
-    onTimeStart: number;
-    sessionDuration: number;
-    documentationTime: number;
-  };
+    appointmentUtilization: number
+    onTimeStart: number
+    sessionDuration: number
+    documentationTime: number
+  }
 }
 ```
 
@@ -168,38 +168,38 @@ Seu desempenho vs. Metas:
 interface PatientClinicalRecord {
   // Identificação
   patientInfo: {
-    fullName: string;
-    dateOfBirth: Date;
-    gender: 'male' | 'female' | 'other';
-    contactInfo: ContactInfo;
-    emergencyContact: EmergencyContact;
-  };
+    fullName: string
+    dateOfBirth: Date
+    gender: 'male' | 'female' | 'other'
+    contactInfo: ContactInfo
+    emergencyContact: EmergencyContact
+  }
 
   // Histórico médico
   medicalHistory: {
-    chronicConditions: MedicalCondition[];
-    allergies: Allergy[];
-    medications: Medication[];
-    surgeries: Surgery[];
-    familyHistory: FamilyMedicalHistory;
-  };
+    chronicConditions: MedicalCondition[]
+    allergies: Allergy[]
+    medications: Medication[]
+    surgeries: Surgery[]
+    familyHistory: FamilyMedicalHistory
+  }
 
   // Avaliação estética
   aestheticAssessment: {
-    skinType: 'normal' | 'dry' | 'oily' | 'combination' | 'sensitive';
-    skinTone: 'light' | 'medium' | 'dark' | 'deep';
-    concerns: AestheticConcern[];
-    previousTreatments: PreviousTreatment[];
-    expectations: PatientExpectation[];
-  };
+    skinType: 'normal' | 'dry' | 'oily' | 'combination' | 'sensitive'
+    skinTone: 'light' | 'medium' | 'dark' | 'deep'
+    concerns: AestheticConcern[]
+    previousTreatments: PreviousTreatment[]
+    expectations: PatientExpectation[]
+  }
 
   // Consentimentos
   consents: {
-    lgpdConsent: LGPDConsent;
-    treatmentConsent: TreatmentConsent;
-    photoConsent: PhotoConsent;
-    communicationConsent: CommunicationConsent;
-  };
+    lgpdConsent: LGPDConsent
+    treatmentConsent: TreatmentConsent
+    photoConsent: PhotoConsent
+    communicationConsent: CommunicationConsent
+  }
 }
 ```
 
@@ -227,38 +227,38 @@ Estrutura obrigatória:
 interface TreatmentPlanning {
   // Informações do paciente
   patientContext: {
-    skinType: string;
-    skinTone: string;
-    concerns: string[];
-    medicalHistory: MedicalCondition[];
-    previousTreatments: PreviousTreatment[];
-    budget: number;
-    expectations: string[];
-  };
+    skinType: string
+    skinTone: string
+    concerns: string[]
+    medicalHistory: MedicalCondition[]
+    previousTreatments: PreviousTreatment[]
+    budget: number
+    expectations: string[]
+  }
 
   // Recomendações de IA
   aiRecommendations: {
-    recommendedTreatments: AITreatmentRecommendation[];
-    confidenceScores: number[];
-    expectedResults: string[];
-    riskAssessment: RiskAssessment;
-  };
+    recommendedTreatments: AITreatmentRecommendation[]
+    confidenceScores: number[]
+    expectedResults: string[]
+    riskAssessment: RiskAssessment
+  }
 
   // Plano personalizado
   customPlan: {
-    treatments: PlannedTreatment[];
-    timeline: TreatmentTimeline;
-    costs: TreatmentCost[];
-    schedule: TreatmentSchedule;
-  };
+    treatments: PlannedTreatment[]
+    timeline: TreatmentTimeline
+    costs: TreatmentCost[]
+    schedule: TreatmentSchedule
+  }
 
   // Documentação
   documentation: {
-    treatmentPlan: string;
-    informedConsent: InformedConsent;
-    preCareInstructions: string;
-    postCareInstructions: string;
-  };
+    treatmentPlan: string
+    informedConsent: InformedConsent
+    preCareInstructions: string
+    postCareInstructions: string
+  }
 }
 ```
 
@@ -286,29 +286,29 @@ Tipos de recomendações:
 interface SmartScheduling {
   // Configurações de otimização
   optimization: {
-    preferredTimeSlots: TimeSlot[];
-    preparationTime: number;
-    cleanupTime: number;
-    bufferTime: number;
-  };
+    preferredTimeSlots: TimeSlot[]
+    preparationTime: number
+    cleanupTime: number
+    bufferTime: number
+  }
 
   // Fatores considerados
   factors: {
-    professionalAvailability: boolean;
-    roomAvailability: boolean;
-    equipmentAvailability: boolean;
-    patientPreferences: boolean;
-    treatmentDuration: boolean;
-    noShowRisk: boolean;
-  };
+    professionalAvailability: boolean
+    roomAvailability: boolean
+    equipmentAvailability: boolean
+    patientPreferences: boolean
+    treatmentDuration: boolean
+    noShowRisk: boolean
+  }
 
   // Sugestões de IA
   aiSuggestions: {
-    optimalSlots: TimeSlot[];
-    riskAssessment: RiskAssessment[];
-    efficiencyScore: number;
-    patientSatisfaction: number;
-  };
+    optimalSlots: TimeSlot[]
+    riskAssessment: RiskAssessment[]
+    efficiencyScore: number
+    patientSatisfaction: number
+  }
 }
 ```
 
@@ -351,25 +351,25 @@ Antes do atendimento (30 min antes):
 interface PatientWelcomeProtocol {
   // Acolhimento
   greeting: {
-    welcomeMessage: string;
-    offerBeverage: boolean;
-    waitingTimeEstimate: number;
-  };
+    welcomeMessage: string
+    offerBeverage: boolean
+    waitingTimeEstimate: number
+  }
 
   // Preparação emocional
   emotionalPreparation: {
-    anxietyAssessment: boolean;
-    relaxationTechniques: string[];
-    expectationManagement: boolean;
-  };
+    anxietyAssessment: boolean
+    relaxationTechniques: string[]
+    expectationManagement: boolean
+  }
 
   // Informações importantes
   importantInfo: {
-    treatmentOverview: string;
-    duration: number;
-    sensations: string[];
-    aftercare: string;
-  };
+    treatmentOverview: string
+    duration: number
+    sensations: string[]
+    aftercare: string
+  }
 }
 ```
 
@@ -381,48 +381,48 @@ interface PatientWelcomeProtocol {
 interface SessionDocumentation {
   // Informações básicas
   sessionInfo: {
-    sessionId: string;
-    patientId: string;
-    date: Date;
-    duration: number;
-    treatmentType: string;
-    professional: string;
-  };
+    sessionId: string
+    patientId: string
+    date: Date
+    duration: number
+    treatmentType: string
+    professional: string
+  }
 
   // Avaliação pré-tratamento
   preTreatmentAssessment: {
-    skinCondition: SkinAssessment;
-    vitalSigns: VitalSigns;
-    patientConcerns: string[];
-    lastSessionResults: string;
-  };
+    skinCondition: SkinAssessment
+    vitalSigns: VitalSigns
+    patientConcerns: string[]
+    lastSessionResults: string
+  }
 
   // Procedimento realizado
   procedure: {
-    techniqueUsed: string;
-    productsUsed: Product[];
-    equipmentUsed: Equipment[];
-    parameters: TreatmentParameters;
-    complications: Complication[];
-  };
+    techniqueUsed: string
+    productsUsed: Product[]
+    equipmentUsed: Equipment[]
+    parameters: TreatmentParameters
+    complications: Complication[]
+  }
 
   // Resultados e observações
   results: {
-    immediateResults: string;
-    patientFeedback: string;
-    professionalObservations: string;
-    photosTaken: Photo[];
-    recommendations: string[];
-  };
+    immediateResults: string
+    patientFeedback: string
+    professionalObservations: string
+    photosTaken: Photo[]
+    recommendations: string[]
+  }
 
   // Pós-tratamento
   postTreatment: {
-    aftercareInstructions: string;
-    followUpDate: Date;
-    prescribedProducts: Product[];
-    potentialSideEffects: string[];
-    emergencyContacts: string[];
-  };
+    aftercareInstructions: string
+    followUpDate: Date
+    prescribedProducts: Product[]
+    potentialSideEffects: string[]
+    emergencyContacts: string[]
+  }
 }
 ```
 
@@ -449,26 +449,26 @@ Elementos obrigatórios:
 interface TreatmentFollowUp {
   // Agenda de acompanhamento
   followUpSchedule: {
-    immediateFollowUp: Date; // 24h após
-    shortTermFollowUp: Date; // 7 dias após
-    mediumTermFollowUp: Date; // 30 dias após
-    longTermFollowUp: Date; // 90 dias após
-  };
+    immediateFollowUp: Date // 24h após
+    shortTermFollowUp: Date // 7 dias após
+    mediumTermFollowUp: Date // 30 dias após
+    longTermFollowUp: Date // 90 dias após
+  }
 
   // Métricas de evolução
   evolutionMetrics: {
-    patientSatisfaction: number;
-    clinicalResults: ClinicalResult[];
-    sideEffects: SideEffect[];
-    treatmentAdherence: number;
-  };
+    patientSatisfaction: number
+    clinicalResults: ClinicalResult[]
+    sideEffects: SideEffect[]
+    treatmentAdherence: number
+  }
 
   // Ajustes de tratamento
   treatmentAdjustments: {
-    parameterChanges: ParameterChange[];
-    productChanges: ProductChange[];
-    scheduleChanges: ScheduleChange[];
-  };
+    parameterChanges: ParameterChange[]
+    productChanges: ProductChange[]
+    scheduleChanges: ScheduleChange[]
+  }
 }
 ```
 
@@ -493,27 +493,27 @@ Métodos de avaliação:
 interface PatientDataManagement {
   // Consentimentos
   consents: {
-    dataProcessing: LGPDConsent;
-    treatmentConsent: TreatmentConsent;
-    photoConsent: PhotoConsent;
-    communicationConsent: CommunicationConsent;
-  };
+    dataProcessing: LGPDConsent
+    treatmentConsent: TreatmentConsent
+    photoConsent: PhotoConsent
+    communicationConsent: CommunicationConsent
+  }
 
   // Direitos do paciente
   patientRights: {
-    accessData: DataAccessRequest;
-    rectifyData: DataRectificationRequest;
-    deleteData: DataDeletionRequest;
-    dataPortability: DataPortabilityRequest;
-  };
+    accessData: DataAccessRequest
+    rectifyData: DataRectificationRequest
+    deleteData: DataDeletionRequest
+    dataPortability: DataPortabilityRequest
+  }
 
   // Segurança da informação
   security: {
-    dataEncryption: boolean;
-    accessControl: boolean;
-    auditTrail: boolean;
-    breachNotification: boolean;
-  };
+    dataEncryption: boolean
+    accessControl: boolean
+    auditTrail: boolean
+    breachNotification: boolean
+  }
 }
 ```
 
@@ -538,33 +538,33 @@ Procedimentos obrigatórios:
 interface AnvisaCompliance {
   // Cadastro de produtos
   productRegistration: {
-    anvisaRegistration: string;
-    productName: string;
-    manufacturer: string;
-    batchNumber: string;
-    expirationDate: Date;
-    storageConditions: string;
-  };
+    anvisaRegistration: string
+    productName: string
+    manufacturer: string
+    batchNumber: string
+    expirationDate: Date
+    storageConditions: string
+  }
 
   // Equipamentos
   equipmentManagement: {
-    equipmentId: string;
-    model: string;
-    manufacturer: string;
-    maintenanceSchedule: MaintenanceSchedule;
-    calibrationDate: Date;
-    nextCalibration: Date;
-  };
+    equipmentId: string
+    model: string
+    manufacturer: string
+    maintenanceSchedule: MaintenanceSchedule
+    calibrationDate: Date
+    nextCalibration: Date
+  }
 
   // Eventos adversos
   adverseEvents: {
-    eventId: string;
-    patientId: string;
-    productInvolved: string;
-    eventDescription: string;
-    severity: 'mild' | 'moderate' | 'severe';
-    reportDate: Date;
-  };
+    eventId: string
+    patientId: string
+    productInvolved: string
+    eventDescription: string
+    severity: 'mild' | 'moderate' | 'severe'
+    reportDate: Date
+  }
 }
 ```
 
@@ -588,27 +588,27 @@ Procedimentos ANVISA:
 interface ProfessionalEthics {
   // Relação com paciente
   patientRelationship: {
-    informedConsent: boolean;
-    confidentiality: boolean;
-    truthfulness: boolean;
-    respect: boolean;
-  };
+    informedConsent: boolean
+    confidentiality: boolean
+    truthfulness: boolean
+    respect: boolean
+  }
 
   // Prática profissional
   professionalPractice: {
-    competence: boolean;
-    continuousEducation: boolean;
-    evidenceBased: boolean;
-    collaboration: boolean;
-  };
+    competence: boolean
+    continuousEducation: boolean
+    evidenceBased: boolean
+    collaboration: boolean
+  }
 
   // Responsabilidades
   responsibilities: {
-    patientSafety: boolean;
-    qualityCare: boolean;
-    documentation: boolean;
-    reporting: boolean;
-  };
+    patientSafety: boolean
+    qualityCare: boolean
+    documentation: boolean
+    reporting: boolean
+  }
 }
 ```
 
@@ -635,28 +635,28 @@ Princípios fundamentais:
 interface AIRecommendationSystem {
   // Análise do perfil
   profileAnalysis: {
-    skinAnalysis: SkinAnalysisResult;
-    concernsAnalysis: ConcernsAnalysis;
-    medicalHistory: MedicalHistoryAnalysis;
-    budgetAnalysis: BudgetAnalysis;
-    expectationAnalysis: ExpectationAnalysis;
-  };
+    skinAnalysis: SkinAnalysisResult
+    concernsAnalysis: ConcernsAnalysis
+    medicalHistory: MedicalHistoryAnalysis
+    budgetAnalysis: BudgetAnalysis
+    expectationAnalysis: ExpectationAnalysis
+  }
 
   // Base de conhecimento
   knowledgeBase: {
-    treatmentEfficacy: TreatmentEfficacyData[];
-    safetyProfiles: SafetyProfileData[];
-    bestPractices: BestPracticeData[];
-    caseStudies: CaseStudyData[];
-  };
+    treatmentEfficacy: TreatmentEfficacyData[]
+    safetyProfiles: SafetyProfileData[]
+    bestPractices: BestPracticeData[]
+    caseStudies: CaseStudyData[]
+  }
 
   // Recomendações personalizadas
   personalizedRecommendations: {
-    primaryRecommendations: TreatmentRecommendation[];
-    alternativeOptions: TreatmentRecommendation[];
-    combinationTherapies: CombinationTherapy[];
-    expectedTimeline: TimelineEstimate[];
-  };
+    primaryRecommendations: TreatmentRecommendation[]
+    alternativeOptions: TreatmentRecommendation[]
+    combinationTherapies: CombinationTherapy[]
+    expectedTimeline: TimelineEstimate[]
+  }
 }
 ```
 
@@ -679,27 +679,27 @@ Modelos preditivos:
 interface OutcomeAnalysis {
   // Métricas objetivas
   objectiveMetrics: {
-    clinicalResults: ClinicalMeasurement[];
-    improvementPercentage: number;
-    durationOfEffect: number;
-    complicationRate: number;
-  };
+    clinicalResults: ClinicalMeasurement[]
+    improvementPercentage: number
+    durationOfEffect: number
+    complicationRate: number
+  }
 
   // Métricas subjetivas
   subjectiveMetrics: {
-    patientSatisfaction: number;
-    qualityOfLife: number;
-    confidenceImprovement: number;
-    recommendationLikelihood: number;
-  };
+    patientSatisfaction: number
+    qualityOfLife: number
+    confidenceImprovement: number
+    recommendationLikelihood: number
+  }
 
   // Análise comparativa
   comparativeAnalysis: {
-    vsBaseline: ComparisonResult;
-    vsExpected: ComparisonResult;
-    vsIndustry: ComparisonResult;
-    vsPersonalBest: ComparisonResult;
-  };
+    vsBaseline: ComparisonResult
+    vsExpected: ComparisonResult
+    vsIndustry: ComparisonResult
+    vsPersonalBest: ComparisonResult
+  }
 }
 ```
 
@@ -724,34 +724,34 @@ Análise contínua:
 interface ProfessionalMobileApp {
   // Agenda em tempo real
   scheduling: {
-    todayAppointments: Appointment[];
-    weekView: WeekCalendar;
-    availabilityManagement: Availability;
-    reschedulingTools: ReschedulingTools;
-  };
+    todayAppointments: Appointment[]
+    weekView: WeekCalendar
+    availabilityManagement: Availability
+    reschedulingTools: ReschedulingTools
+  }
 
   // Acesso ao paciente
   patientAccess: {
-    patientSearch: PatientSearch;
-    clinicalRecords: ClinicalRecord;
-    treatmentHistory: TreatmentHistory;
-    quickNotes: QuickNotes;
-  };
+    patientSearch: PatientSearch
+    clinicalRecords: ClinicalRecord
+    treatmentHistory: TreatmentHistory
+    quickNotes: QuickNotes
+  }
 
   // Comunicação
   communication: {
-    patientMessages: Message[];
-    teamChat: TeamChat[];
-    emergencyAlerts: EmergencyAlert[];
-  };
+    patientMessages: Message[]
+    teamChat: TeamChat[]
+    emergencyAlerts: EmergencyAlert[]
+  }
 
   // Ferramentas clínicas
   clinicalTools: {
-    treatmentCalculator: TreatmentCalculator;
-    photoDocumentation: PhotoDocumentation;
-    referenceMaterials: ReferenceMaterials;
-    decisionSupport: DecisionSupport;
-  };
+    treatmentCalculator: TreatmentCalculator
+    photoDocumentation: PhotoDocumentation
+    referenceMaterials: ReferenceMaterials
+    decisionSupport: DecisionSupport
+  }
 }
 ```
 
@@ -775,18 +775,18 @@ Medidas de segurança:
 interface LaboratoryIntegration {
   // Exames e análises
   laboratoryTests: {
-    testOrders: TestOrder[];
-    results: TestResult[];
-    referenceRanges: ReferenceRange[];
-    abnormalValues: AbnormalValue[];
-  };
+    testOrders: TestOrder[]
+    results: TestResult[]
+    referenceRanges: ReferenceRange[]
+    abnormalValues: AbnormalValue[]
+  }
 
   // Farmacovigilância
   pharmacovigilance: {
-    adverseReactions: AdverseReaction[];
-    drugInteractions: DrugInteraction[];
-    monitoringRequirements: MonitoringRequirement[];
-  };
+    adverseReactions: AdverseReaction[]
+    drugInteractions: DrugInteraction[]
+    monitoringRequirements: MonitoringRequirement[]
+  }
 }
 ```
 
@@ -821,26 +821,26 @@ interface ImagingIntegration {
 interface KnowledgeLibrary {
   // Conteúdo educacional
   educationalContent: {
-    articles: Article[];
-    videos: Video[];
-    webinars: Webinar[];
-    podcasts: Podcast[];
-  };
+    articles: Article[]
+    videos: Video[]
+    webinars: Webinar[]
+    podcasts: Podcast[]
+  }
 
   // Referências clínicas
   clinicalReferences: {
-    protocols: ClinicalProtocol[];
-    guidelines: ClinicalGuideline[];
-    researchPapers: ResearchPaper[];
-    caseStudies: CaseStudy[];
-  };
+    protocols: ClinicalProtocol[]
+    guidelines: ClinicalGuideline[]
+    researchPapers: ResearchPaper[]
+    caseStudies: CaseStudy[]
+  }
 
   // Atualizações regulatórias
   regulatoryUpdates: {
-    anvisaUpdates: RegulatoryUpdate[];
-    cfmUpdates: RegulatoryUpdate[];
-    lgpdUpdates: RegulatoryUpdate[];
-  };
+    anvisaUpdates: RegulatoryUpdate[]
+    cfmUpdates: RegulatoryUpdate[]
+    lgpdUpdates: RegulatoryUpdate[]
+  }
 }
 ```
 
@@ -863,25 +863,25 @@ Programa de certificação:
 interface MentorshipProgram {
   // Mentoria junior
   juniorMentorship: {
-    mentorMatching: MentorMatch;
-    sessionFrequency: 'weekly' | 'biweekly' | 'monthly';
-    focusAreas: string[];
-    progressTracking: ProgressTracker;
-  };
+    mentorMatching: MentorMatch
+    sessionFrequency: 'weekly' | 'biweekly' | 'monthly'
+    focusAreas: string[]
+    progressTracking: ProgressTracker
+  }
 
   // Colaboração entre pares
   peerCollaboration: {
-    caseDiscussions: CaseDiscussion[];
-    knowledgeSharing: KnowledgeShare[];
-    bestPracticeExchange: BestPracticeExchange[];
-  };
+    caseDiscussions: CaseDiscussion[]
+    knowledgeSharing: KnowledgeShare[]
+    bestPracticeExchange: BestPracticeExchange[]
+  }
 
   // Desenvolvimento de liderança
   leadershipDevelopment: {
-    trainingPrograms: TrainingProgram[];
-    mentorshipOpportunities: MentorshipOpportunity[];
-    communityLeadership: CommunityLeadership[];
-  };
+    trainingPrograms: TrainingProgram[]
+    mentorshipOpportunities: MentorshipOpportunity[]
+    communityLeadership: CommunityLeadership[]
+  }
 }
 ```
 
