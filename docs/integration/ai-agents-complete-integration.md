@@ -71,7 +71,7 @@ Essential database tables for AI operations:
 - Consent validation functions
 - PHI detection and anonymization
 
-### 4. Production Configuration (`/config/ai-agents-production.ts`)
+### 4. Production Configuration (`apps/api/src/config/ai-agents-production.ts`)
 
 Environment-specific configurations:
 
@@ -92,7 +92,7 @@ export const productionConfig: AIAgentsProductionConfig = {
 }
 ```
 
-### 5. Health Monitoring (`/config/ai-agents-health.ts`)
+### 5. Health Monitoring (`apps/api/src/services/monitoring/ai-agent-health-monitor.ts`)
 
 Comprehensive health monitoring and alerting:
 

@@ -9,7 +9,7 @@
     "test:watch": "pnpm exec vitest --watch",
     "test:coverage": "pnpm exec vitest --coverage",
     "test:run": "pnpm exec vitest --run",
-    "lint": "pnpm exec oxlint --config ./.oxlintrc.json",
+    "lint": "pnpm exec oxlint --config ../../.oxlintrc.json",
     "format": "pnpm exec dprint fmt",
     "format:check": "pnpm exec dprint check",
     "clean": "rm -rf coverage reports node_modules/.cache",

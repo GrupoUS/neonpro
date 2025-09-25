@@ -5,7 +5,7 @@
 
 import { Hono } from 'hono'
 import { logger } from '../../../../lib/logger'
-import { aiAgentHealthMonitor } from '../../../../config/ai-agents-health'
+import { aiAgentHealthMonitor } from '@/services/monitoring/ai-agent-health-monitor'
 
 const app = new Hono()
 

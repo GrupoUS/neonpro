@@ -101,13 +101,13 @@ This project successfully implemented a comprehensive AI agents system for the N
    - AI model performance tracking
    - Automated audit trail functions
 
-4. **Production Configuration** (`/config/ai-agents-production.ts`)
+4. **Production Configuration** (`apps/api/src/config/ai-agents-production.ts`)
    - Environment-specific configurations
    - Healthcare-optimized settings
    - Security and compliance parameters
    - Performance tuning parameters
 
-5. **Health Monitoring** (`/config/ai-agents-health.ts`)
+5. **Health Monitoring** (`apps/api/src/services/monitoring/ai-agent-health-monitor.ts`)
    - Multi-component health checks
    - Performance metrics collection
    - Automated alert generation

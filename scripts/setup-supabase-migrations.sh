@@ -18,19 +18,188 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
+# Configuration
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Load centralized configuration
+if [ -f "$SCRIPT_DIR/config.sh" ]; then
+    source "$SCRIPT_DIR/config.sh"
+else
+    echo "WARNING: Configuration file not found, using hardcoded defaults"
+    # Fallback defaults for critical values
+    SUPABASE_PORT=54321
+    SUPABASE_MAX_ROWS=1000
+    SUPABASE_JWT_EXPIRY=3600
+    SUPABASE_STUDIO_PORT=54322
+    SUPABASE_SHADOW_PORT=54320
+    SUPABASE_FILE_SIZE_LIMIT="50MiB"
+    SUPABASE_PG_META_PORT=54323
+fi
+
 # Logging functions
 info() { echo -e "${BLUE}ℹ️ INFO:${NC} $1"; }
 success() { echo -e "${GREEN}✅ SUCCESS:${NC} $1"; }
 warning() { echo -e "${YELLOW}⚠️ WARNING:${NC} $1"; }
 error() { echo -e "${RED}❌ ERROR:${NC} $1"; }
 
-# Check if we're in the project root
-if [ ! -f "package.json" ] || [ ! -f "turbo.json" ]; then
-    error "This script must be run from the NeonPro project root directory"
+info "This script must be run from the NeonPro project root directory"
     exit 1
 fi
 
+# =============================================================================
+# Database Connection Handling
+# =============================================================================
+
+# Database connection configuration
+DB_TIMEOUT=${DB_TIMEOUT:-30}
+DB_MAX_CONNECTIONS=${DB_MAX_CONNECTIONS:-10}
+DB_CONNECTION_ATTEMPTS=${DB_CONNECTION_ATTEMPTS:-3}
+DB_CONNECTION_RETRY_DELAY=${DB_CONNECTION_RETRY_DELAY:-5}
+
+# Validate database URL
+validate_database_url() {
+    if [ -z "$DATABASE_URL" ]; then
+        error "DATABASE_URL environment variable is required"
+        exit 1
+    fi
+    
+    # Validate URL format
+    if [[ ! "$DATABASE_URL" =~ ^postgresql:// ]]; then
+        error "DATABASE_URL must start with 'postgresql://'"
+        exit 1
+    fi
+    
+    # Extract connection parameters for validation
+    local host=$(echo "$DATABASE_URL" | sed -n 's/.*@\([^:]*\).*/\1/p')
+    local port=$(echo "$DATABASE_URL" | sed -n 's/.*:\([0-9]*\)\//\1/p')
+    
+    if [ -z "$host" ]; then
+        error "Invalid DATABASE_URL format: host not found"
+        exit 1
+    fi
+    
+    success "DATABASE_URL format is valid"
+}
+
+# Test database connection with timeout and retry logic
+test_database_connection() {
+    info "Testing database connection..."
+    
+    local attempt=1
+    local connection_success=false
+    
+    while [ $attempt -le $DB_CONNECTION_ATTEMPTS ]; do
+        info "Connection attempt $attempt of $DB_CONNECTION_ATTEMPTS..."
+        
+        # Test connection with timeout
+        if timeout $DB_TIMEOUT psql "$DATABASE_URL" -t -c "SELECT 1;" >/dev/null 2>&1; then
+            connection_success=true
+            break
+        else
+            warning "Connection attempt $attempt failed"
+            if [ $attempt -lt $DB_CONNECTION_ATTEMPTS ]; then
+                info "Waiting $DB_CONNECTION_RETRY_DELAY seconds before retry..."
+                sleep $DB_CONNECTION_RETRY_DELAY
+            fi
+        fi
+        
+        ((attempt++))
+    done
+    
+    if [ "$connection_success" = true ]; then
+        success "Database connection established"
+        
+        # Get connection pool information
+        local active_connections=$(psql "$DATABASE_URL" -t -c "SELECT count(*) FROM pg_stat_activity WHERE state = 'active';" 2>/dev/null || echo "unknown")
+        local max_connections=$(psql "$DATABASE_URL" -t -c "SHOW max_connections;" 2>/dev/null || echo "unknown")
+        
+        info "Database connection pool status:"
+        info "  Active connections: $active_connections"
+        info "  Max connections: $max_connections"
+        info "  Configured timeout: ${DB_TIMEOUT}s"
+        
+        return 0
+    else
+        error "Failed to establish database connection after $DB_CONNECTION_ATTEMPTS attempts"
+        return 1
+    fi
+}
+
+# Execute database command with error handling and timeout
+execute_db_command() {
+    local command="$1"
+    local description="$2"
+    local timeout_duration=${3:-$DB_TIMEOUT}
+    
+    info "Executing: $description"
+    
+    if ! timeout "$timeout_duration" psql "$DATABASE_URL" -t -c "$command" 2>/dev/null; then
+        error "Failed to execute: $description"
+        return 1
+    fi
+    
+    success "Completed: $description"
+    return 0
+}
+
+# Execute database file with error handling
+execute_db_file() {
+    local file_path="$1"
+    local description="$2"
+    local timeout_duration=${3:-$DB_TIMEOUT}
+    
+    info "Executing: $description"
+    
+    if [ ! -f "$file_path" ]; then
+        error "Database file not found: $file_path"
+        return 1
+    fi
+    
+    if ! timeout "$timeout_duration" psql "$DATABASE_URL" < "$file_path" >/dev/null 2>&1; then
+        error "Failed to execute: $description"
+        return 1
+    fi
+    
+    success "Completed: $description"
+    return 0
+}
+
+# Database backup with validation
+backup_database() {
+    local backup_file="$1"
+    local description="$2"
+    
+    info "Creating database backup: $description"
+    
+    # Validate backup directory
+    local backup_dir=$(dirname "$backup_file")
+    mkdir -p "$backup_dir"
+    
+    # Create backup with timeout
+    if ! timeout $((DB_TIMEOUT * 2)) pg_dump "$DATABASE_URL" > "$backup_file" 2>/dev/null; then
+        error "Failed to create database backup: $description"
+        return 1
+    fi
+    
+    # Validate backup file
+    if [ ! -f "$backup_file" ] || [ ! -s "$backup_file" ]; then
+        error "Backup file is invalid or empty: $backup_file"
+        return 1
+    fi
+    
+    local backup_size=$(du -h "$backup_file" | cut -f1)
+    success "Database backup created: $backup_size ($description)"
+    return 0
+}
+
 info "Starting Prisma cleanup and Supabase migration setup..."
+
+# Validate database connection first
+validate_database_url
+if ! test_database_connection; then
+    error "Database connection validation failed. Please check your DATABASE_URL and network connectivity."
+    exit 1
+fi
 
 # =============================================================================
 # Phase 1: Backup Current State
@@ -176,39 +345,39 @@ mkdir -p supabase/functions
 mkdir -p packages/database/src/types
 
 # Create initial Supabase config
-cat > supabase/config.toml << 'EOF'
+cat > supabase/config.toml << EOF
 # A string used to distinguish different Supabase projects on the same machine.
 # Not used by the hosted version of Supabase.
-project_id = "neonpro"
+project_id = "${SUPABASE_PROJECT_ID:-neonpro}"
 
 [api]
 enabled = true
-port = 54321
+port = ${SUPABASE_PORT:-54321}
 schemas = ["public", "graphql_public"]
 extra_search_path = ["public", "extensions"]
-max_rows = 1000
+max_rows = ${SUPABASE_MAX_ROWS:-1000}
 
 [auth]
 enabled = true
-site_url = "http://localhost:3000"
-additional_redirect_urls = ["https://localhost:3000"]
-jwt_expiry = 3600
+site_url = "${LOCAL_DEVELOPMENT_URL:-http://localhost:3000}"
+additional_redirect_urls = ["${LOCAL_DEVELOPMENT_URL_SECURE:-https://localhost:3000}"]
+jwt_expiry = ${SUPABASE_JWT_EXPIRY:-3600}
 enable_signup = true
 enable_confirmations = false
 
 [db]
-port = 54322
-shadow_port = 54320
+port = ${SUPABASE_STUDIO_PORT:-54322}
+shadow_port = ${SUPABASE_SHADOW_PORT:-54320}
 major_version = 15
 
 [storage]
 enabled = true
-file_size_limit = "50MiB"
+file_size_limit = "${SUPABASE_FILE_SIZE_LIMIT:-50MiB}"
 file_transforms = true
 
 [edge_functions]
 enabled = true
-port = 54323
+port = ${SUPABASE_PG_META_PORT:-54323}
 
 [analytics]
 enabled = false

@@ -13,23 +13,35 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # Configuration
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ENVIRONMENT=${1:-"production"}
 REASON=${2:-"Emergency rollback - reason not specified"}
 ROLLBACK_TYPE=${3:-"full"} # full, partial, config-only
 SLACK_WEBHOOK=${4:-""}
 PAGERDUTY_KEY=${5:-""}
 
+# Load centralized configuration
+if [ -f "$SCRIPT_DIR/config.sh" ]; then
+    source "$SCRIPT_DIR/config.sh"
+else
+    echo "WARNING: Configuration file not found, using hardcoded defaults"
+    # Fallback defaults
+    VERCEL_ORG="grupous-projects"
+    VERCEL_PROJECT="neonpro-web"
+    MONITORING_HEALTH_URL="https://neonpro.healthcare"
+fi
+
 # Vercel configuration
-VERCEL_ORG="grupous-projects"
-VERCEL_PROJECT="neonpro-web"
+VERCEL_ORG=${VERCEL_ORG:-"grupous-projects"}
+VERCEL_PROJECT=${VERCEL_PROJECT:-"neonpro-web"}
 VERCEL_TOKEN=${VERCEL_TOKEN:-""}
+HEALTH_URL=${MONITORING_HEALTH_URL:-"https://neonpro.healthcare"}
 
 # Logging
 LOG_FILE="/var/log/neonpro/emergency-rollback-$(date +%Y%m%d-%H%M%S).log"
 ROLLBACK_REPORT="emergency-rollback-$(date +%Y%m%d-%H%M%S).json"
 
-# Health check URL
-HEALTH_URL="https://neonpro.healthcare/api/health"
+
 
 echo -e "${BLUE}🏥 NeonPro Healthcare Platform - Emergency Rollback${NC}"
 echo -e "${BLUE}========================================================${NC}"
@@ -48,6 +60,75 @@ init_logging() {
     echo "[$(date +'%Y-%m-%d %H:%M:%S')] Rollback Type: $ROLLBACK_TYPE" | tee -a "$LOG_FILE"
     echo "[$(date +'%Y-%m-%d %H:%M:%S')] Operator: $(whoami)" | tee -a "$LOG_FILE"
     echo "[$(date +'%Y-%m-%d %H:%M:%S')] Host: $(hostname)" | tee -a "$LOG_FILE"
+}
+
+# Environment validation
+validate_emergency_environment() {
+    echo "[$(date +'%Y-%m-%d %H:%M:%S')] Validating emergency rollback environment" | tee -a "$LOG_FILE"
+    
+    local validation_errors=0
+    
+    # Check required tools
+    if ! command -v git &> /dev/null && [ -z "$VERCEL_TOKEN" ]; then
+        echo "[$(date +'%Y-%m-%d %H:%M:%S')] ERROR: git is required but not installed (or set VERCEL_TOKEN)" | tee -a "$LOG_FILE"
+        ((validation_errors++))
+    fi
+    
+    # Check Vercel authentication
+    if [ -z "$VERCEL_TOKEN" ]; then
+        if ! npx vercel whoami >/dev/null 2>&1; then
+            echo "[$(date +'%Y-%m-%d %H:%M:%S')] ERROR: Not authenticated with Vercel. Run: npx vercel login" | tee -a "$LOG_FILE"
+            ((validation_errors++))
+        else
+            echo "[$(date +'%Y-%m-%d %H:%M:%S')] Vercel authenticated" | tee -a "$LOG_FILE"
+        fi
+    else
+        echo "[$(date +'%Y-%m-%d %H:%M:%S')] Using Vercel token authentication" | tee -a "$LOG_FILE"
+    fi
+    
+    # Check Node.js
+    if ! command -v node >/dev/null 2>&1; then
+        echo "[$(date +'%Y-%m-%d %H:%M:%S')] ERROR: Node.js not found" | tee -a "$LOG_FILE"
+        ((validation_errors++))
+    else
+        local node_version=$(node --version | sed 's/v//' | cut -d'.' -f1)
+        if [ "$node_version" -lt 18 ]; then
+            echo "[$(date +'%Y-%m-%d %H:%M:%S')] ERROR: Node.js version $node_version not supported (require 18+)" | tee -a "$LOG_FILE"
+            ((validation_errors++))
+        else
+            echo "[$(date +'%Y-%m-%d %H:%M:%S')] Node.js version: $(node --version)" | tee -a "$LOG_FILE"
+        fi
+    fi
+    
+    # Check critical environment variables for production
+    if [ "$ENVIRONMENT" = "production" ]; then
+        local critical_vars=("DATABASE_URL" "SUPABASE_SERVICE_ROLE_KEY" "NEXTAUTH_SECRET")
+        
+        for var in "${critical_vars[@]}"; do
+            if [ -z "${!var:-}" ]; then
+                echo "[$(date +'%Y-%m-%d %H:%M:%S')] WARNING: Critical variable $var not set for production" | tee -a "$LOG_FILE"
+            else
+                echo "[$(date +'%Y-%m-%d %H:%M:%S')] ✓ $var is set" | tee -a "$LOG_FILE"
+            fi
+        done
+    fi
+    
+    # Validate webhook formats if provided
+    if [ -n "$SLACK_WEBHOOK" ]; then
+        if [[ ! "$SLACK_WEBHOOK" =~ ^https://hooks\.slack\.com/services/ ]]; then
+            echo "[$(date +'%Y-%m-%d %H:%M:%S')] WARNING: SLACK_WEBHOOK doesn't appear to be a valid Slack webhook URL" | tee -a "$LOG_FILE"
+        else
+            echo "[$(date +'%Y-%m-%d %H:%M:%S')] ✓ SLACK_WEBHOOK format valid" | tee -a "$LOG_FILE"
+        fi
+    fi
+    
+    if [ $validation_errors -gt 0 ]; then
+        echo "[$(date +'%Y-%m-%d %H:%M:%S')] CRITICAL: $validation_errors validation errors found" | tee -a "$LOG_FILE"
+        return 1
+    fi
+    
+    echo "[$(date +'%Y-%m-%d %H:%M:%S')] Environment validation passed" | tee -a "$LOG_FILE"
+    return 0
 }
 
 # Initialize rollback report
@@ -419,6 +500,13 @@ generate_final_report() {
 main() {
     init_logging
     init_report
+    
+    # Validate environment before proceeding
+    if ! validate_emergency_environment; then
+        send_alert "Emergency rollback environment validation failed" "critical"
+        echo -e "${RED}❌ Environment validation failed - cannot proceed with rollback${NC}"
+        exit 1
+    fi
     
     # Send initial alert
     send_alert "Emergency rollback initiated for $ENVIRONMENT environment" "critical"

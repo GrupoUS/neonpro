@@ -55,6 +55,7 @@ describe('Performance Analysis', () => {
     it('should validate indexing hints', () => {
       const indexedQuery = 'SELECT * FROM users WHERE email = ? INDEXED BY email_index'
       const nonIndexedQuery = 'SELECT * FROM users WHERE email = ?'
+      expect(nonIndexedQuery).not.toMatch(/INDEXED BY/i)
       
       expect(indexedQuery).toMatch(/INDEXED BY/i)
     })

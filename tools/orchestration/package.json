@@ -13,7 +13,7 @@
     }
   },
   "scripts": {
-    "build": "bun --filter @neonpro/tools-shared build && tsup",
+    "build": "tsup",
     "dev": "tsup --watch",
     "clean": "rm -rf dist",
     "lint": "bun run oxlint --fix src",
@@ -24,10 +24,7 @@
     "orchestrate": "bun --filter @neonpro/tools-orchestration build && node dist/index.js",
     "orchestrate:parallel": "bun --filter @neonpro/tools-orchestration build && node dist/index.js --parallel"
   },
-  "dependencies": {
-    "@neonpro/tools-shared": "workspace:*",
-    "@neonpro/tests": "workspace:*"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@types/node": "^20.0.0",
     "@vitest/coverage-v8": "^2.0.0",

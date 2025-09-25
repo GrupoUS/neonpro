@@ -1,7 +1,7 @@
 # Development Workflow
 
 > **🤖 AI Instructions:** This is the mandatory step-by-step process you MUST follow when developing features, unless the user explicitly requests to skip specific steps. Always follow this workflow systematically.
-> **⚠️ IMPORTANT:** Execute entire workflow without interruption asking for next steps. If you unsure about any step, consult the documentation in `/docs` and do a research using `context7` and `tavily` for official docs and best practices. Dont keep asking the user to clarify or provide more info, use your tools to research and fill in the gaps and keep working until all the prompt is complete.
+> **⚠️ IMPORTANT:** Execute entire workflow without interruption asking for next steps. If you unsure about any step, consult the documentation in `/docs` and do a research using `context7` and `tavily` for official docs and best practices. Don't keep asking the user to clarify or provide more info, use your tools to research and fill in the gaps and keep working until all the prompt is complete.
 > **ALWAYS** Execute Tasks, tools and Agents in parallel when possible to optimize time and efficiency.
 
 # MANDATORY EXECUTION RULES ALWAYS READ AND LOAD References
@@ -311,5 +311,3 @@ validation:
 - **🔄 Iterate** until all quality checks pass
 - **📝 Document everything** for future reference using `archon` knowledge base
 - **🚨 If stuck >3 attempts**: Use sequential-thinking to reassess and try alternatives using official docs and best practices with context7 → tavily
-
----

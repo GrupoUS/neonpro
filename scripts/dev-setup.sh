@@ -14,13 +14,21 @@ BLUE='\033[0;34m'
 PURPLE='\033[0;35m'
 NC='\033[0m' # No Color
 
-# Healthcare platform constants
-HEALTHCARE_MODE=true
-LGPD_COMPLIANCE=true
-ANVISA_COMPLIANCE=true
-CFM_COMPLIANCE=true
-MINIMUM_NODE_VERSION="20.0.0"
-REQUIRED_MEMORY_GB=8
+# Load centralized configuration
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+if [ -f "$SCRIPT_DIR/config.sh" ]; then
+    source "$SCRIPT_DIR/config.sh"
+else
+    echo "WARNING: Configuration file not found, using defaults"
+    # Fallback defaults
+    HEALTHCARE_MODE=true
+    LGPD_COMPLIANCE=true
+    ANVISA_COMPLIANCE=true
+    CFM_COMPLIANCE=true
+    MINIMUM_NODE_VERSION="20.0.0"
+    REQUIRED_MEMORY_GB=8
+    MINIMUM_DISK_SPACE_GB=10
+fi
 
 # Logging functions
 log_info() {
@@ -93,12 +101,12 @@ check_system_requirements() {
         log_success "Available memory: ${TOTAL_MEM_GB}GB ✓"
     fi
     
-    # Check disk space (minimum 10GB free)
+    # Check disk space (minimum configured)
     AVAILABLE_SPACE_KB=$(df . | tail -1 | awk '{print $4}')
     AVAILABLE_SPACE_GB=$((AVAILABLE_SPACE_KB / 1024 / 1024))
     
-    if [ $AVAILABLE_SPACE_GB -lt 10 ]; then
-        log_error "Insufficient disk space: ${AVAILABLE_SPACE_GB}GB available (minimum: 10GB)"
+    if [ $AVAILABLE_SPACE_GB -lt $MINIMUM_DISK_SPACE_GB ]; then
+        log_error "Insufficient disk space: ${AVAILABLE_SPACE_GB}GB available (minimum: ${MINIMUM_DISK_SPACE_GB}GB)"
         exit 1
     else
         log_success "Available disk space: ${AVAILABLE_SPACE_GB}GB ✓"

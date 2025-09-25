@@ -85,49 +85,113 @@ PRIMARY_TOOLS:
 
 ## 📋 EXECUTION WORKFLOW
 
-### **Mandatory RED Phase Process**
+### **Mandatory RED Phase Process with NeonPro Infrastructure**
 
 ```yaml
 EXECUTION_PHASES:
   phase_1_test_analysis:
     trigger: "Start of RED phase for any feature"
-    primary_tool: "testing_toolkit"
+    primary_tool: "testing_toolkit + MCP integration"
     process:
       - "Analyze feature requirements and identify test scenarios"
       - "Map out all potential error conditions and edge cases"
       - "Define test coverage requirements and quality gates"
-      - "Coordinate with architect-review for design validation"
-    quality_gate: "100% requirement coverage, all edge cases identified"
+      - "Use Serena MCP for codebase analysis and coverage validation"
+      - "Integrate with healthcare compliance validation from agent-utils"
+    quality_gate: "100% requirement coverage, all edge cases identified, healthcare compliance"
 
   phase_2_test_implementation:
     trigger: "Test analysis complete"
-    primary_tool: "desktop_commander + serena"
+    primary_tool: "desktop_commander + serena + MCP tools"
     process:
       - "Create comprehensive test files using established patterns"
       - "Implement failing tests for all identified scenarios"
-      - "Validate test structure and naming conventions"
-      - "Ensure proper test isolation and independence"
-    quality_gate: "Tests must fail initially, follow naming conventions, be isolated"
+      - "Use vitest workspace configuration for unified testing"
+      - "Integrate with playwright for E2E and accessibility testing"
+      - "Apply healthcare-specific validation rules from oxlint"
+      - "Validate test structure using agent-utils MCP integration"
+    quality_gate: "Tests must fail initially, follow healthcare standards, be isolated"
 
   phase_3_validation_auditing:
     trigger: "Test implementation complete"
-    primary_tool: "testing_toolkit + serena"
+    primary_tool: "testing_toolkit + serena + Archon MCP"
     process:
-      - "Execute test suite and verify all tests fail as expected"
-      - "Validate test coverage metrics against requirements"
-      - "Audit test quality and maintainability"
-      - "Generate comprehensive test report"
-    quality_gate: "100% test failure in RED phase, ≥95% coverage potential"
+      - "Execute test suite using vitest workspace configuration"
+      - "Verify all tests fail as expected in RED phase"
+      - "Validate test coverage metrics using multiple vitest configs"
+      - "Audit test quality using MCP-powered analysis tools"
+      - "Generate healthcare compliance validation report"
+      - "Create Archon tasks for any identified issues"
+    quality_gate: "100% test failure in RED phase, ≥95% coverage potential, healthcare compliance"
 
   phase_4_coordination:
     trigger: "Validation complete"
-    primary_tool: "archon"
+    primary_tool: "archon + Sequential Thinking MCP"
     process:
       - "Document test findings and coverage metrics"
+      - "Use Sequential Thinking MCP for complex analysis"
       - "Coordinate with code-reviewer for GREEN phase preparation"
       - "Update task status and provide implementation guidance"
       - "Hand off validated test suite for implementation"
     quality_gate: "Clear documentation, proper handoff, ready for GREEN phase"
+```
+
+### **NeonPro Testing Infrastructure Integration**
+
+```yaml
+TESTING_INFRASTRUCTURE:
+  vitest_workspace:
+    config_files: ["vitest.config.ts", "tools/tests/vitest.config.ts"]
+    specialized_configs: [
+      "tools/tests/configs/vitest.unit.config.ts",
+      "tools/tests/configs/vitest.integration.config.ts", 
+      "tools/tests/vitest.ai.config.ts",
+      "tools/tests/vitest.tdd-only.config.ts"
+    ]
+    coverage_thresholds: "80% global, 85% unit, 90% TDD"
+    healthcare_compliance: "Built-in LGPD, ANVISA, CFM validation"
+
+  playwright_testing:
+    config_files: ["playwright.config.ts", "tools/tests/configs/playwright.e2e.config.ts"]
+    browsers: ["Chromium", "Firefox", "WebKit", "Mobile"]
+    healthcare_focus: "Accessibility (WCAG 2.1 AA+), Brazilian locale testing"
+    specialized_projects: ["API Tests", "Accessibility Tests", "E2E Healthcare Tests"]
+
+  mcp_integration:
+    tools_used: ["Sequential Thinking", "Archon", "Serena", "Context7", "Desktop Commander"]
+    agent_utils: "Integration with tools/tests/agent-utils.ts for healthcare validation"
+    workflow_automation: "Automated test execution and validation"
+    compliance_reporting: "Healthcare compliance validation and reporting"
+
+  healthcare_validation:
+    oxlint_rules: "Healthcare-focused LGPD, ANVISA, CFM compliance rules"
+    security_scanning: "Enhanced security validation for healthcare applications"
+    data_privacy: "Patient data handling and privacy validation"
+    accessibility: "WCAG 2.1 AA+ compliance for healthcare interfaces"
+```
+
+### **Tools/Tests Directory Special Responsibility**
+
+```yaml
+TOOLS_TESTS_COORDINATION:
+  directory_management:
+    path: "/tools/tests/"
+    configurations: ["configs/", "setup/", "fixtures/"]
+    test_types: ["unit", "integration", "e2e", "ai", "tdd"]
+    healthcare_focus: "All tests validate healthcare compliance"
+
+  execution_responsibility:
+    mandate: "Special responsibility for executing all tests in tools/tests directory"
+    validation_process: "Comprehensive testing across all configurations"
+    quality_assurance: "Ensure healthcare compliance in all test executions"
+    reporting: "Generate comprehensive test reports with healthcare validation"
+
+  mcp_tool_usage:
+    serena_integration: "Codebase analysis and test coverage validation"
+    archon_coordination: "Task management and test execution tracking"
+    sequential_thinking: "Complex test scenario analysis and validation"
+    desktop_commander: "File operations and test execution management"
+    context7_research: "Best practices and documentation validation"
 ```
 
 ## 🎯 SPECIALIZED CAPABILITIES

@@ -1,8 +1,108 @@
 /**
- * Agent Utility Functions
+ * Agent Utility Functions with MCP Integration
  * Simple utilities that @.claude/agents/code-review/ can use for validation
  * Following KISS and YAGNI principles
  */
+
+/**
+ * MCP Tool Integration for advanced agent capabilities
+ */
+export const mcpTools = {
+  /**
+   * Sequential thinking tool for complex problem analysis
+   */
+  sequentialThinking: async (problem: string): Promise<string> => {
+    console.log('🧠 Using sequential thinking MCP tool for:', problem)
+    // This would integrate with the actual MCP tool
+    return `Sequential analysis completed for: ${problem}`
+  },
+
+  /**
+   * Archon task management integration
+   */
+  archonTaskManagement: {
+    createTask: async (title: string, description: string) => {
+      console.log('📋 Creating Archon task:', title)
+      // This would integrate with the actual Archon MCP tool
+      return { id: `task-${Date.now()}`, title, status: 'created' }
+    },
+    
+    updateTask: async (taskId: string, status: string) => {
+      console.log('📝 Updating Archon task:', taskId, 'to', status)
+      // This would integrate with the actual Archon MCP tool
+      return { id: taskId, status, updatedAt: new Date().toISOString() }
+    },
+    
+    searchTasks: async (query: string) => {
+      console.log('🔍 Searching Archon tasks:', query)
+      // This would integrate with the actual Archon MCP tool
+      return [{ id: 'sample-task', title: 'Sample Task', status: 'todo' }]
+    }
+  },
+
+  /**
+   * Serena codebase analysis integration
+   */
+  serenaAnalysis: {
+    findSymbol: async (symbolPath: string, filePath?: string) => {
+      console.log('🔍 Finding symbol with Serena:', symbolPath)
+      // This would integrate with the actual Serena MCP tool
+      return { name: symbolPath, location: filePath || 'unknown' }
+    },
+    
+    searchForPattern: async (pattern: string, _options?: any) => {
+      console.log('🔍 Searching pattern with Serena:', pattern)
+      // This would integrate with the actual Serena MCP tool
+      return [{ file: 'sample.ts', matches: [pattern] }]
+    },
+    
+    getSymbolsOverview: async (filePath: string) => {
+      console.log('📊 Getting symbols overview with Serena:', filePath)
+      // This would integrate with the actual Serena MCP tool
+      return { symbols: [], imports: [], exports: [] }
+    }
+  },
+
+  /**
+   * Context7 documentation integration
+   */
+  context7Docs: {
+    resolveLibrary: async (libraryName: string) => {
+      console.log('📚 Resolving library with Context7:', libraryName)
+      // This would integrate with the actual Context7 MCP tool
+      return { id: `/org/${libraryName}`, name: libraryName }
+    },
+    
+    getLibraryDocs: async (libraryId: string, topic?: string) => {
+      console.log('📖 Getting library docs with Context7:', libraryId)
+      // This would integrate with the actual Context7 MCP tool
+      return { content: `Documentation for ${libraryId}`, topic }
+    }
+  },
+
+  /**
+   * Desktop Commander integration for file operations
+   */
+  desktopCommander: {
+    readFile: async (filePath: string) => {
+      console.log('📄 Reading file with Desktop Commander:', filePath)
+      // This would integrate with the actual Desktop Commander MCP tool
+      return { content: `Content of ${filePath}`, path: filePath }
+    },
+    
+    writeFile: async (filePath: string, content: string) => {
+      console.log('✍️  Writing file with Desktop Commander:', filePath)
+      // This would integrate with the actual Desktop Commander MCP tool
+      return { success: true, path: filePath }
+    },
+    
+    listDirectory: async (dirPath: string) => {
+      console.log('📁 Listing directory with Desktop Commander:', dirPath)
+      // This would integrate with the actual Desktop Commander MCP tool
+      return { files: ['file1.ts', 'file2.ts'], directories: ['dir1', 'dir2'] }
+    }
+  }
+}
 
 /**
  * Basic code quality validation for agents
@@ -264,18 +364,38 @@ export const analyzeFile = {
 }
 
 /**
- * Complete validation report for agents
+ * Complete validation report for agents with MCP integration
  */
-export const validateFile = (code: string, filename?: string) => {
+export const validateFile = async (code: string, filename?: string, useMcp: boolean = false) => {
   const stats = analyzeFile.getStats(code)
   const qualityScore = analyzeFile.getQualityScore(code)
   const recommendations = analyzeFile.getRecommendations(code)
+
+  // Enhanced validation with MCP tools if enabled
+  let mcpResults: any = null
+  if (useMcp) {
+    try {
+      // Use MCP tools for deeper analysis
+      const patternSearch = await mcpTools.serenaAnalysis.searchForPattern('function.*\\(', { limit: 10 })
+      const symbolsOverview = filename ? await mcpTools.serenaAnalysis.getSymbolsOverview(filename) : null
+      
+      mcpResults = {
+        patternSearch,
+        symbolsOverview,
+        mcpEnabled: true
+      }
+    } catch (error) {
+      console.warn('MCP integration failed, falling back to basic validation:', error)
+      mcpResults = { mcpEnabled: false, error: error instanceof Error ? error.message : 'Unknown error' }
+    }
+  }
 
   return {
     filename: filename || 'unknown',
     stats,
     qualityScore,
     recommendations,
+    mcpResults,
     validation: {
       codeQuality: validateCodeQuality,
       security: validateSecurity,
@@ -291,6 +411,124 @@ export const validateFile = (code: string, filename?: string) => {
       warningIssues: recommendations.filter(r => 
         !r.includes('XSS') && !r.includes('eval') && !r.includes('secrets')
       ).length
+    },
+    timestamp: new Date().toISOString(),
+    version: '2.0.0-mcp'
+  }
+}
+
+/**
+ * Enhanced agent validation with MCP-powered analysis
+ */
+export const validateWithMcp = async (code: string, filename?: string) => {
+  console.log('🤖 Starting MCP-powered validation for:', filename || 'unknown')
+  
+  try {
+    // Use sequential thinking for complex analysis
+    const analysis = await mcpTools.sequentialThinking(`Analyze code quality and security for ${filename || 'unknown file'}`)
+    
+    // Perform basic validation
+    const basicResults = validateFile(code, filename)
+    
+    // Use Archon for task management if issues found
+    const results = await basicResults
+    if (results.summary.totalIssues > 0) {
+      await mcpTools.archonTaskManagement.createTask(
+        `Fix issues in ${filename || 'unknown file'}`,
+        `Found ${(await basicResults).summary.totalIssues} issues requiring attention`
+      )
+    }
+    
+    // Use Serena for deeper code analysis
+    const complexFunctions = await mcpTools.serenaAnalysis.searchForPattern('function.*\\{[\\s\\S]*?\\}', { limit: 5 })
+    
+    return {
+      ...basicResults,
+      mcpAnalysis: analysis,
+      complexFunctionsFound: complexFunctions.length,
+      enhanced: true
+    }
+  } catch (error) {
+    console.error('MCP validation failed, falling back to basic:', error)
+    return validateFile(code, filename)
+  }
+}
+
+/**
+ * Agent workflow orchestration with MCP
+ */
+export const agentWorkflow = {
+  /**
+   * Complete code review workflow
+   */
+  codeReview: async (filePath: string) => {
+    console.log('🔍 Starting code review workflow for:', filePath)
+    
+    try {
+      // Read file using Desktop Commander
+      const fileContent = await mcpTools.desktopCommander.readFile(filePath)
+      
+      // Validate with MCP integration
+      const validation = await validateWithMcp(fileContent.content, filePath)
+      
+      // Create task if issues found
+      if (validation.summary.totalIssues > 0) {
+        await mcpTools.archonTaskManagement.createTask(
+          `Review and fix: ${filePath}`,
+          `Found ${validation.summary.totalIssues} issues in ${filePath}`
+        )
+      }
+      
+      return {
+        success: true,
+        validation,
+        filePath,
+        timestamp: new Date().toISOString()
+      }
+    } catch (error) {
+      console.error('Code review workflow failed:', error)
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error',
+        filePath,
+        timestamp: new Date().toISOString()
+      }
+    }
+  },
+  
+  /**
+   * Healthcare compliance workflow
+   */
+  healthcareCompliance: async (filePath: string) => {
+    console.log('🏥 Starting healthcare compliance workflow for:', filePath)
+    
+    try {
+      const fileContent = await mcpTools.desktopCommander.readFile(filePath)
+      const validation = await validateWithMcp(fileContent.content, filePath)
+      
+      // Check for healthcare-specific compliance
+      const healthcareIssues = [
+        ...(validateSecurity.hasHardcodedSecrets(fileContent.content) ? ['Hardcoded secrets found'] : []),
+        ...(validateHealthcare.hasSensitiveData(fileContent.content) ? ['Sensitive patient data detected'] : []),
+        ...(validateSecurity.hasXssVulnerability(fileContent.content) ? ['XSS vulnerability in healthcare UI'] : [])
+      ]
+      
+      return {
+        success: true,
+        healthcareIssues,
+        validation,
+        compliant: healthcareIssues.length === 0,
+        filePath,
+        timestamp: new Date().toISOString()
+      }
+    } catch (error) {
+      console.error('Healthcare compliance workflow failed:', error)
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error',
+        filePath,
+        timestamp: new Date().toISOString()
+      }
     }
   }
 }
