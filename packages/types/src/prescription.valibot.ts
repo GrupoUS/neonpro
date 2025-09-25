@@ -5,7 +5,7 @@
  * Supports ANVISA regulation, CFM standards, digital certificate validation
  * Optimized for Edge Runtime with Brazilian medication standards
  *
- * @package @neonpro/types
+ * @package `@neonpro/types`
  * @author Claude AI Agent
  * @version 1.0.0
  * @compliance CFM, ANVISA, Brazilian Pharmaceutical Standards

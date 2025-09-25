@@ -13,7 +13,7 @@ import { aiConnectionManager } from './ai-connection-manager'
  * 
  * @security LGPD compliant with proper input validation and audit logging
  * @performance Optimized with connection pooling and query caching
- * @compliance ANVISA, CFM, and healthcare data protection standards
+ * Compliance: ANVISA, CFM, and healthcare data protection standards
  */
 export class AIDataService {
   private permissionContext: PermissionContext

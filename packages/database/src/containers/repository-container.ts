@@ -2,7 +2,7 @@ import {
   AuditDomainService,
   ConsentDomainService,
   MedicalLicenseDomainService,
-} from '@neonpro/domain'
+} from '@neonpro/healthcare-core'
 import { SupabaseClient } from '@supabase/supabase-js'
 import { AppointmentRepository } from '../repositories/appointment-repository.js'
 import { ConsentRepository } from '../repositories/consent-repository.js'

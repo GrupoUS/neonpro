@@ -7,7 +7,7 @@ import {
   AppointmentStatus,
   type AppointmentTimeline,
   type DailyAppointmentCount,
-} from '@neonpro/domain'
+} from '@neonpro/healthcare-core'
 import { SupabaseClient } from '@supabase/supabase-js'
 import { logHealthcareError } from '../utils/logging'
 

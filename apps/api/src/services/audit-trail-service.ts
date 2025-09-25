@@ -5,7 +5,7 @@
  * data access, security incidents, and compliance monitoring with healthcare-specific features.
  *
  * @security_critical
- * @compliance LGPD, ANVISA, CFM, HIPAA, OWASP Logging
+ * Compliance: LGPD, ANVISA, CFM, HIPAA, OWASP Logging
  * @version 1.0.0
  */
 

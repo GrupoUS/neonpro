@@ -508,6 +508,26 @@ export const healthcareSecurityLogger = new HealthcareSecurityLogger()
 // Core encryption and key management
 export { EncryptionManager, encryptionManager, KeyManager, keyManager } from './encryption'
 
+// Unified security core
+export {
+  SecurityValidator,
+  SecurityRateLimiter,
+  SecurityEventLogger,
+  securityValidator,
+  securityEventLogger,
+  type SecurityResult,
+  type SecurityConfig,
+  type ValidationContext,
+  SECURITY_ERROR_CODES,
+} from './core/security-base'
+
+export {
+  BaseSessionManager,
+  type SessionMetadata,
+  type SessionConfig,
+  type ValidationResult,
+} from './core/session-base'
+
 // Audit logging
 export {
   type AuditLogEntry,

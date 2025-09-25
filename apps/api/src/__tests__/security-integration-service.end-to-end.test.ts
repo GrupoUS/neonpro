@@ -6,7 +6,7 @@
  * 
  * @security_critical
  * @test_coverage Security Integration Service
- * @compliance OWASP Top 10, LGPD, ANVISA, CFM, HIPAA
+ * Compliance: OWASP Top 10, LGPD, ANVISA, CFM, HIPAA
  */
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'

@@ -6,7 +6,7 @@
  *
  * @version 1.0.0
  * @author NeonPro Platform Team
- * @compliance LGPD, ANVISA, CFM
+ * Compliance: LGPD, ANVISA, CFM
  */
 
 import {

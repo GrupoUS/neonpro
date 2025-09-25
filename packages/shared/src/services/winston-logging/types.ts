@@ -3,7 +3,7 @@
  *
  * @version 2.0.0
  * @author NeonPro Development Team
- * @compliance LGPD, ANVISA SaMD, Healthcare Standards
+ * Compliance: LGPD, ANVISA SaMD, Healthcare Standards
  */
 
 import { z } from 'zod'

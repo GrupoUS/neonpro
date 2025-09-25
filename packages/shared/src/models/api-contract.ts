@@ -10,7 +10,7 @@
  *
  * @version 1.0.0
  * @author NeonPro Development Team
- * @compliance LGPD, ANVISA, CFM, OpenAPI 3.1
+ * Compliance: LGPD, ANVISA, CFM, OpenAPI 3.1
  */
 
 import { z } from 'zod'

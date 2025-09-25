@@ -10,7 +10,7 @@
  * - Real-time exposure monitoring
  *
  * @version 1.0.0
- * @compliance LGPD, HIPAA, ANVISA, CFM
+ * Compliance: LGPD, HIPAA, ANVISA, CFM
  * @healthcare-platform NeonPro
  */
 

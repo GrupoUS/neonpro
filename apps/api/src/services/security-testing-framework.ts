@@ -12,7 +12,7 @@
  * - Compliance validation
  *
  * @version 1.0.0
- * @compliance LGPD, HIPAA, ANVISA, CFM, OWASP
+ * Compliance: LGPD, HIPAA, ANVISA, CFM, OWASP
  * @healthcare-platform NeonPro
  */
 

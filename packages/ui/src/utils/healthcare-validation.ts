@@ -4,7 +4,7 @@
  * Provides validation functions specifically designed for healthcare data entry
  * with LGPD compliance and medical data sensitivity considerations.
  *
- * @fileoverview Healthcare-specific validation patterns and utilities
+ * @file Healthcare-specific validation patterns and utilities
  */
 
 import { z } from 'zod'

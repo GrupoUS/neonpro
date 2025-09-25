@@ -11,7 +11,7 @@
  *
  * @version 2.0.0
  * @author NeonPro Development Team
- * @compliance LGPD, ANVISA, Healthcare Standards
+ * Compliance: LGPD, ANVISA, Healthcare Standards
  */
 
 // Core event system

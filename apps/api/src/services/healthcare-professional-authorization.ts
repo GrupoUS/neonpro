@@ -7,7 +7,7 @@
  *
  * @critical SECURITY CVSS: 7.5 - Replaces mock authorization with real RBAC
  * @author AI Development Agent
- * @compliance CFM Resolution 2,314/2022, LGPD, ANVISA, NGS2 Level 2
+ * Compliance: CFM Resolution 2,314/2022, LGPD, ANVISA, NGS2 Level 2
  * @performance <150ms validation target
  */
 

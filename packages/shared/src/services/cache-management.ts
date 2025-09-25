@@ -1,5 +1,5 @@
 /**
- * @fileoverview Cache Management System
+ * @file Cache Management System
  *
  * Comprehensive cache management system for healthcare applications with:
  * - Healthcare data sensitivity awareness and LGPD compliance
@@ -11,7 +11,7 @@
  *
  * @version 1.0.0
  * @author NeonPro Platform Team
- * @compliance LGPD, ANVISA, ISO 27001, NIST Cybersecurity Framework
+ * Compliance: LGPD, ANVISA, ISO 27001, NIST Cybersecurity Framework
  */
 
 import { z } from 'zod'

@@ -1,5 +1,5 @@
 /**
- * @fileoverview Background Jobs Framework
+ * @file Background Jobs Framework
  *
  * Comprehensive background job processing system for healthcare applications with:
  * - Priority-based job queues with healthcare workflow support
@@ -11,7 +11,7 @@
  *
  * @version 1.0.0
  * @author NeonPro Platform Team
- * @compliance LGPD, ANVISA, ISO 27001, NIST Cybersecurity Framework
+ * Compliance: LGPD, ANVISA, ISO 27001, NIST Cybersecurity Framework
  */
 
 import { z } from 'zod'

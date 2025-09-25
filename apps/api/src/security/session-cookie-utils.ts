@@ -5,7 +5,7 @@
  * validation, integrity checking, and secure attribute management.
  *
  * @security_critical
- * @compliance OWASP Session Management Cheat Sheet
+ * Compliance: OWASP Session Management Cheat Sheet
  * @version 1.0.0
  */
 

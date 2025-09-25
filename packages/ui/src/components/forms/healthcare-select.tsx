@@ -4,7 +4,7 @@
  * Enhanced select/dropdown with healthcare-specific validation, accessibility features,
  * medical option handling, and LGPD compliance built-in.
  *
- * @fileoverview Healthcare select with React Aria integration and medical taxonomy support
+ * @file Healthcare select with React Aria integration and medical taxonomy support
  */
 
 'use client'

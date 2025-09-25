@@ -6,8 +6,8 @@
  * for healthcare multi-tenant architecture with fallback policies for edge cases.
  *
  * @author AI Development Agent
- * @compliance Multi-tenant data isolation with Row Level Security
- * @compliance LGPD data protection requirements
+ * Compliance: Multi-tenant data isolation with Row Level Security
+ * Compliance: LGPD data protection requirements
  * @performance <200ms RLS overhead target
  */
 

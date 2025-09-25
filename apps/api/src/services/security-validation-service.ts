@@ -5,7 +5,7 @@
  * input validation, and threat detection with healthcare compliance features.
  *
  * @security_critical
- * @compliance OWASP Top 10, LGPD, ANVISA, CFM
+ * Compliance: OWASP Top 10, LGPD, ANVISA, CFM
  * @version 1.0.0
  */
 

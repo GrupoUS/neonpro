@@ -1,5 +1,5 @@
 /**
- * @fileoverview Background Jobs Framework - Part 2
+ * @file Background Jobs Framework - Part 2
  * Job Manager and Healthcare Handlers
  *
  * This file contains:
@@ -10,7 +10,7 @@
  *
  * @version 1.0.0
  * @author NeonPro Platform Team
- * @compliance LGPD, ANVISA, ISO 27001, NIST Cybersecurity Framework
+ * Compliance: LGPD, ANVISA, ISO 27001, NIST Cybersecurity Framework
  */
 
 import { logHealthcareError } from '../logging/healthcare-logger'

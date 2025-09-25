@@ -4,7 +4,7 @@
  * Provides healthcare-specific theming, accessibility context, and design system
  * foundations for medical applications with LGPD compliance and patient safety considerations.
  *
- * @fileoverview Healthcare theme provider and context
+ * @file Healthcare theme provider and context
  */
 
 'use client'

@@ -1,32 +1,21 @@
 /**
  * Clinical Chat Service
- * @package @neonpro/chat-services
+ * @package `@neonpro/chat-services`
  */
 
-import { 
+import {
   EnhancedChatSession,
   EnhancedChatMessage,
   ChatSessionCreationParams,
   ChatMessageCreationParams,
-  ChatServiceResponse,
-  ChatServiceError,
-  HealthcareContext,
-  HealthcareComplianceInfo
+  ChatServiceError
 } from '../types/chat';
 
 import {
   ClinicalChatSession,
   ClinicalChatMessage,
   MedicalDataType,
-  HealthcareUrgencyLevel,
-  ClinicalData,
-  SymptomReport,
-  VitalSigns,
-  MedicationData,
-  LabResult,
-  MedicalHistory,
-  Diagnosis,
-  TreatmentPlan
+  ClinicalData
 } from '../types/healthcare-chat';
 
 import {
@@ -36,7 +25,6 @@ import {
 } from '../compliance';
 
 import { BaseHealthcareChatService } from './BaseHealthcareChatService';
-import { Logger } from '@neonpro/core-services';
 
 /**
  * Clinical Chat Service for medical consultations and patient care
@@ -303,7 +291,7 @@ export class ClinicalChatService extends BaseHealthcareChatService {
   /**
    * Get clinical session messages
    */
-  protected async getHealthcareSessionMessages(sessionId: string, options?: any): Promise<ClinicalChatMessage[]> {
+  protected async getHealthcareSessionMessages(_sessionId: string, _options?: any): Promise<ClinicalChatMessage[]> {
     // This would typically query the database
     // For now, return empty array as messages would be stored elsewhere
     return [];

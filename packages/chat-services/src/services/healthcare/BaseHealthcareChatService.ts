@@ -1,6 +1,6 @@
 /**
  * Base Healthcare Chat Service
- * @package @neonpro/chat-services
+ * @package `@neonpro/chat-services`
  */
 
 import {

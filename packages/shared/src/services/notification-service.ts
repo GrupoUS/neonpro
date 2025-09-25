@@ -11,7 +11,7 @@
  *
  * @version 1.0.0
  * @author NeonPro Development Team
- * @compliance LGPD, ANVISA SaMD, Healthcare Standards
+ * Compliance: LGPD, ANVISA SaMD, Healthcare Standards
  */
 
 import { nanoid } from 'nanoid'

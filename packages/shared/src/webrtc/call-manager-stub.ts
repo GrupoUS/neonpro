@@ -1,5 +1,5 @@
 /**
- * @fileoverview WebRTC Call Manager Stub Implementation
+ * @file WebRTC Call Manager Stub Implementation
  * @version 1.0.0
  * @description Mock call manager for telemedicine WebRTC infrastructure
  */

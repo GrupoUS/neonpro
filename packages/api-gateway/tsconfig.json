@@ -32,6 +32,6 @@
     { "path": "../database" },
     { "path": "../healthcare-core" },
     { "path": "../ai-services" },
-    { "path": "../security-compliance" }
+    { "path": "../security" }
   ]
 }

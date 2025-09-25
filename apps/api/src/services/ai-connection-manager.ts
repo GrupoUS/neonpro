@@ -6,7 +6,7 @@
  * 
  * @features Dynamic connection pooling
  * @features Circuit breaker patterns
- * @compliance LGPD, ANVISA, CFM
+ * Compliance: LGPD, ANVISA, CFM
  * @performance Auto-scaling and optimization
  */
 

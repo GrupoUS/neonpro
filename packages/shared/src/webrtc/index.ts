@@ -1,5 +1,5 @@
 /**
- * @fileoverview WebRTC Infrastructure Export Module
+ * @file WebRTC Infrastructure Export Module
  * @version 1.0.0
  * @description Entry point for WebRTC telemedicine infrastructure
  */

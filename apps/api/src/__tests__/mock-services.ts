@@ -44,6 +44,14 @@ export class MockSecurityValidationService {
       issues: []
     }
   }
+
+  static async validateRequestSecurity(request: any) {
+    return {
+      isValid: true,
+      securityScore: 95,
+      threats: []
+    }
+  }
 }
 
 // Mock Audit Trail Service
@@ -55,6 +63,11 @@ export class MockAuditTrailService {
 
   static async logSecurityEvent(userId: string, action: string, resource: string, details: any = {}) {
     // Mock implementation
+    return Promise.resolve()
+  }
+
+  static async logSecurityEvent(event: any) {
+    // Mock implementation for test compatibility
     return Promise.resolve()
   }
 }
@@ -81,11 +94,44 @@ export class MockEnhancedSessionManager {
       ...options
     }
   }
+
+  getSession(sessionId: string) {
+    if (sessionId === 'valid-session-id') {
+      return {
+        id: sessionId,
+        userId: 'user-123',
+        role: 'healthcare_professional',
+        permissions: ['read_patient_data'],
+        healthcareProvider: 'test-hospital',
+        patientId: 'patient-123',
+        consentLevel: 'full' as const,
+        mfaVerified: true,
+        expiresAt: new Date(Date.now() + 3600000) // 1 hour from now
+      }
+    }
+    return null
+  }
+
+  destroySession(sessionId: string) {
+    // Mock implementation
+    return true
+  }
 }
 
 // Mock Session Cookie Utils
 export const SessionCookieUtils = {
-  validateSessionCookies: () => ({ isValid: true }),
+  validateSessionCookies: (cookieHeader: string, secretKey: string, sessionManager: any) => {
+    if (cookieHeader && cookieHeader.includes('session-123')) {
+      return {
+        isValid: true,
+        sessionId: 'session-123'
+      }
+    }
+    return {
+      isValid: false,
+      sessionId: null
+    }
+  },
   extractSessionCookie: () => 'valid-session-cookie'
 }
 

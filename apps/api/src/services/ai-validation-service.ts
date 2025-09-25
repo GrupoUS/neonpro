@@ -5,7 +5,7 @@
  * for AI agent queries with healthcare compliance (LGPD, ANVISA, CFM)
  * 
  * @security Input validation and sanitization
- * @compliance LGPD, ANVISA, CFM
+ * Compliance: LGPD, ANVISA, CFM
  * @performance Optimized validation with caching
  */
 

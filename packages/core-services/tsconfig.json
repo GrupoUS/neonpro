@@ -24,7 +24,7 @@
     { "path": "../utils" },
     { "path": "../config" },
     { "path": "../shared" },
-    { "path": "../domain" },
+    { "path": "../healthcare-core" },
     { "path": "../security" }
   ]
 }

@@ -316,35 +316,35 @@ export class Logger {
 
   // Legacy synchronous methods for backward compatibility (deprecated)
   debugSync(message: string, _context?: Record<string, any>): void {
-    this.debug(message, _context).catch(error => {
+    void this.debug(message, _context).catch(error => {
       const logger = getHealthcareLogger()
       logger.error('Failed to log debug message', { error: error?.message })
     })
   }
 
   infoSync(message: string, context?: Record<string, any>): void {
-    this.info(message, context).catch(error => {
+    void this.info(message, context).catch(error => {
       const logger = getHealthcareLogger()
       logger.error('Failed to log info message', { error: error?.message })
     })
   }
 
   warnSync(message: string, context?: Record<string, any>, error?: Error): void {
-    this.warn(message, context, error).catch(err => {
+    void this.warn(message, context, error).catch(err => {
       const logger = getHealthcareLogger()
       logger.error('Failed to log warn message', { error: err?.message })
     })
   }
 
   errorSync(message: string, context?: Record<string, any>, error?: Error): void {
-    this.error(message, context, error).catch(err => {
+    void this.error(message, context, error).catch(err => {
       const logger = getHealthcareLogger()
       logger.error('Failed to log error message', { error: err?.message })
     })
   }
 
   fatalSync(message: string, context?: Record<string, any>, error?: Error): void {
-    this.fatal(message, context, error).catch(err => {
+    void this.fatal(message, context, error).catch(err => {
       const logger = getHealthcareLogger()
       logger.error('Failed to log fatal message', { error: err?.message })
     })

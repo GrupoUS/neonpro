@@ -1,6 +1,6 @@
 /**
  * Unified Chat Services - Healthcare-optimized chat functionality
- * @package @neonpro/chat-services
+ * @package `@neonpro/chat-services`
  */
 
 // Main unified service

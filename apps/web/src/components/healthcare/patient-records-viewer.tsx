@@ -5,7 +5,6 @@ import { ptBR } from 'date-fns/locale'
 import { cn } from '@/lib/utils'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { AccessibilityButton } from '@/components/ui/accessibility-button'
 import { HealthcareFormGroup } from '@/components/ui/healthcare-form-group'
@@ -15,7 +14,6 @@ import type {
   PatientData, 
   TreatmentSession, 
   LGPDConsentRecord,
-  MedicalHistory,
   HealthcareContext 
 } from '@/types/healthcare'
 
@@ -41,11 +39,11 @@ export const PatientRecordsViewer: React.FC<PatientRecordsViewerProps> = ({
   patient,
   treatmentSessions,
   lgpdRecords,
-  onUpdatePatient,
+  _onUpdatePatient,
   onExportData,
   onRequestDataDeletion,
   className,
-  healthcareContext = 'patient'
+  _healthcareContext = 'patient'
 }) => {
   const [selectedTab, setSelectedTab] = React.useState('overview')
   const [showSensitiveData, setShowSensitiveData] = React.useState(false)
@@ -81,7 +79,7 @@ export const PatientRecordsViewer: React.FC<PatientRecordsViewerProps> = ({
   // Calculate patient statistics
   const patientStats = React.useMemo(() => {
     const completedSessions = treatmentSessions.filter(s => s.status === 'completed')
-    const totalSpent = completedSessions.reduce((sum, session) => {
+    const totalSpent = completedSessions.reduce((sum, _session) => {
       // This would need price info from treatment catalog
       return sum + 0 // Placeholder
     }, 0)
@@ -217,20 +215,20 @@ export const PatientRecordsViewer: React.FC<PatientRecordsViewerProps> = ({
               </CardHeader>
               <CardContent className="space-y-3">
                 <div>
-                  <label className="text-sm font-medium text-muted-foreground">Email</label>
-                  <p className={showSensitiveData ? 'text-sm' : 'blur-sm select-none'}>
+                  <label htmlFor="email" className="text-sm font-medium text-muted-foreground">Email</label>
+                  <p id="email" className={showSensitiveData ? 'text-sm' : 'blur-sm select-none'}>
                     {patient.personalInfo.email}
                   </p>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-muted-foreground">Telefone</label>
-                  <p className={showSensitiveData ? 'text-sm' : 'blur-sm select-none'}>
+                  <label htmlFor="phone" className="text-sm font-medium text-muted-foreground">Telefone</label>
+                  <p id="phone" className={showSensitiveData ? 'text-sm' : 'blur-sm select-none'}>
                     {formatPhone(patient.personalInfo.phone)}
                   </p>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-muted-foreground">Endereço</label>
-                  <p className={showSensitiveData ? 'text-sm' : 'blur-sm select-none'}>
+                  <label htmlFor="address" className="text-sm font-medium text-muted-foreground">Endereço</label>
+                  <p id="address" className={showSensitiveData ? 'text-sm' : 'blur-sm select-none'}>
                     {patient.address.street}, {patient.address.number} - {patient.address.neighborhood}
                   </p>
                   <p className={showSensitiveData ? 'text-sm' : 'blur-sm select-none'}>
@@ -246,22 +244,22 @@ export const PatientRecordsViewer: React.FC<PatientRecordsViewerProps> = ({
               </CardHeader>
               <CardContent className="space-y-3">
                 <div>
-                  <label className="text-sm font-medium text-muted-foreground">Data de Nascimento</label>
-                  <p className="text-sm">
+                  <label htmlFor="birthdate" className="text-sm font-medium text-muted-foreground">Data de Nascimento</label>
+                  <p id="birthdate" className="text-sm">
                     {format(parseISO(patient.personalInfo.dateOfBirth), 'dd/MM/yyyy', { locale: ptBR })}
                   </p>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-muted-foreground">Gênero</label>
-                  <p className="text-sm">{patient.personalInfo.gender}</p>
+                  <label htmlFor="gender" className="text-sm font-medium text-muted-foreground">Gênero</label>
+                  <p id="gender" className="text-sm">{patient.personalInfo.gender}</p>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-muted-foreground">Tipo Sanguíneo</label>
-                  <p className="text-sm">{patient.medicalHistory.bloodType || 'Não informado'}</p>
+                  <label htmlFor="bloodtype" className="text-sm font-medium text-muted-foreground">Tipo Sanguíneo</label>
+                  <p id="bloodtype" className="text-sm">{patient.medicalHistory.bloodType || 'Não informado'}</p>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-muted-foreground">Alergias</label>
-                  <p className="text-sm">
+                  <label htmlFor="allergies" className="text-sm font-medium text-muted-foreground">Alergias</label>
+                  <p id="allergies" className="text-sm">
                     {patient.medicalHistory.allergies.length > 0 
                       ? patient.medicalHistory.allergies.join(', ')
                       : 'Nenhuma registrada'
@@ -292,18 +290,18 @@ export const PatientRecordsViewer: React.FC<PatientRecordsViewerProps> = ({
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <div>
-                    <label className="text-sm font-medium text-muted-foreground">Nome Completo</label>
-                    <p className="text-sm">{patient.personalInfo.fullName}</p>
+                    <label htmlFor="fullname" className="text-sm font-medium text-muted-foreground">Nome Completo</label>
+                    <p id="fullname" className="text-sm">{patient.personalInfo.fullName}</p>
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-muted-foreground">CPF</label>
-                    <p className={showSensitiveData ? 'text-sm font-mono' : 'blur-sm select-none font-mono'}>
+                    <label htmlFor="cpf" className="text-sm font-medium text-muted-foreground">CPF</label>
+                    <p id="cpf" className={showSensitiveData ? 'text-sm font-mono' : 'blur-sm select-none font-mono'}>
                       {formatCPF(patient.personalInfo.cpf)}
                     </p>
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-muted-foreground">RG</label>
-                    <p className={showSensitiveData ? 'text-sm font-mono' : 'blur-sm select-none font-mono'}>
+                    <label htmlFor="rg" className="text-sm font-medium text-muted-foreground">RG</label>
+                    <p id="rg" className={showSensitiveData ? 'text-sm font-mono' : 'blur-sm select-none font-mono'}>
                       {patient.personalInfo.rg || 'Não informado'}
                     </p>
                   </div>
@@ -316,22 +314,22 @@ export const PatientRecordsViewer: React.FC<PatientRecordsViewerProps> = ({
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <div>
-                    <label className="text-sm font-medium text-muted-foreground">Data de Nascimento</label>
-                    <p className="text-sm">
+                    <label htmlFor="birthdate2" className="text-sm font-medium text-muted-foreground">Data de Nascimento</label>
+                    <p id="birthdate2" className="text-sm">
                       {format(parseISO(patient.personalInfo.dateOfBirth), 'dd/MM/yyyy', { locale: ptBR })}
                     </p>
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-muted-foreground">Idade</label>
-                    <p className="text-sm">{patient.personalInfo.age} anos</p>
+                    <label htmlFor="age" className="text-sm font-medium text-muted-foreground">Idade</label>
+                    <p id="age" className="text-sm">{patient.personalInfo.age} anos</p>
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-muted-foreground">Gênero</label>
-                    <p className="text-sm">{patient.personalInfo.gender}</p>
+                    <label htmlFor="gender2" className="text-sm font-medium text-muted-foreground">Gênero</label>
+                    <p id="gender2" className="text-sm">{patient.personalInfo.gender}</p>
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-muted-foreground">Estado Civil</label>
-                    <p className="text-sm">{patient.personalInfo.maritalStatus || 'Não informado'}</p>
+                    <label htmlFor="marital" className="text-sm font-medium text-muted-foreground">Estado Civil</label>
+                    <p id="marital" className="text-sm">{patient.personalInfo.maritalStatus || 'Não informado'}</p>
                   </div>
                 </CardContent>
               </Card>
@@ -352,16 +350,16 @@ export const PatientRecordsViewer: React.FC<PatientRecordsViewerProps> = ({
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <div>
-                    <label className="text-sm font-medium text-muted-foreground">Tipo Sanguíneo</label>
-                    <p className="text-sm">{patient.medicalHistory.bloodType || 'Não informado'}</p>
+                    <label htmlFor="bloodtype2" className="text-sm font-medium text-muted-foreground">Tipo Sanguíneo</label>
+                    <p id="bloodtype2" className="text-sm">{patient.medicalHistory.bloodType || 'Não informado'}</p>
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-muted-foreground">Peso</label>
-                    <p className="text-sm">{patient.medicalHistory.weight ? `${patient.medicalHistory.weight} kg` : 'Não informado'}</p>
+                    <label htmlFor="weight" className="text-sm font-medium text-muted-foreground">Peso</label>
+                    <p id="weight" className="text-sm">{patient.medicalHistory.weight ? `${patient.medicalHistory.weight} kg` : 'Não informado'}</p>
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-muted-foreground">Altura</label>
-                    <p className="text-sm">{patient.medicalHistory.height ? `${patient.medicalHistory.height} m` : 'Não informado'}</p>
+                    <label htmlFor="height" className="text-sm font-medium text-muted-foreground">Altura</label>
+                    <p id="height" className="text-sm">{patient.medicalHistory.height ? `${patient.medicalHistory.height} m` : 'Não informado'}</p>
                   </div>
                 </CardContent>
               </Card>
@@ -372,8 +370,8 @@ export const PatientRecordsViewer: React.FC<PatientRecordsViewerProps> = ({
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <div>
-                    <label className="text-sm font-medium text-muted-foreground">Alergias</label>
-                    <p className="text-sm">
+                    <label htmlFor="allergies2" className="text-sm font-medium text-muted-foreground">Alergias</label>
+                    <p id="allergies2" className="text-sm">
                       {patient.medicalHistory.allergies.length > 0 
                         ? patient.medicalHistory.allergies.join(', ')
                         : 'Nenhuma registrada'
@@ -381,8 +379,8 @@ export const PatientRecordsViewer: React.FC<PatientRecordsViewerProps> = ({
                     </p>
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-muted-foreground">Medicamentos em Uso</label>
-                    <p className="text-sm">
+                    <label htmlFor="medications" className="text-sm font-medium text-muted-foreground">Medicamentos em Uso</label>
+                    <p id="medications" className="text-sm">
                       {patient.medicalHistory.medications.length > 0 
                         ? patient.medicalHistory.medications.join(', ')
                         : 'Nenhum registrado'
@@ -390,8 +388,8 @@ export const PatientRecordsViewer: React.FC<PatientRecordsViewerProps> = ({
                     </p>
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-muted-foreground">Condições Crônicas</label>
-                    <p className="text-sm">
+                    <label htmlFor="chronic" className="text-sm font-medium text-muted-foreground">Condições Crônicas</label>
+                    <p id="chronic" className="text-sm">
                       {patient.medicalHistory.chronicConditions.length > 0 
                         ? patient.medicalHistory.chronicConditions.join(', ')
                         : 'Nenhuma registrada'
@@ -482,14 +480,14 @@ export const PatientRecordsViewer: React.FC<PatientRecordsViewerProps> = ({
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <div>
-                    <label className="text-sm font-medium text-muted-foreground">Status do Consentimento</label>
-                    <Badge variant={patient.consent.hasConsented ? 'default' : 'destructive'}>
+                    <label htmlFor="consent-status" className="text-sm font-medium text-muted-foreground">Status do Consentimento</label>
+                    <Badge id="consent-status" variant={patient.consent.hasConsented ? 'default' : 'destructive'}>
                       {patient.consent.hasConsented ? 'Consentido' : 'Pendente'}
                     </Badge>
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-muted-foreground">Data do Consentimento</label>
-                    <p className="text-sm">
+                    <label htmlFor="consent-date" className="text-sm font-medium text-muted-foreground">Data do Consentimento</label>
+                    <p id="consent-date" className="text-sm">
                       {patient.consent.consentDate 
                         ? format(parseISO(patient.consent.consentDate), 'dd/MM/yyyy HH:mm', { locale: ptBR })
                         : 'Não consentido'
@@ -497,8 +495,8 @@ export const PatientRecordsViewer: React.FC<PatientRecordsViewerProps> = ({
                     </p>
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-muted-foreground">Versão do Termo</label>
-                    <p className="text-sm">{patient.consent.version || 'N/A'}</p>
+                    <label htmlFor="consent-version" className="text-sm font-medium text-muted-foreground">Versão do Termo</label>
+                    <p id="consent-version" className="text-sm">{patient.consent.version || 'N/A'}</p>
                   </div>
                 </CardContent>
               </Card>
@@ -552,7 +550,7 @@ export const PatientRecordsViewer: React.FC<PatientRecordsViewerProps> = ({
             <div className="space-y-1 max-h-40 overflow-y-auto text-sm font-mono">
               {auditLog.length > 0 ? (
                 auditLog.map((entry, index) => (
-                  <div key={index} className="text-muted-foreground">
+                  <div key={`audit-${index}`} className="text-muted-foreground">
                     {entry}
                   </div>
                 ))

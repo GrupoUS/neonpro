@@ -1,5 +1,5 @@
 /**
- * @fileoverview Session Management Service
+ * @file Session Management Service
  *
  * Comprehensive session management system for healthcare applications with:
  * - Secure session creation, validation, and lifecycle management
@@ -11,7 +11,7 @@
  *
  * @version 1.0.0
  * @author NeonPro Platform Team
- * @compliance LGPD, ANVISA, ISO 27001, NIST Cybersecurity Framework
+ * LGPD, ANVISA, ISO 27001, NIST Cybersecurity Framework compliant
  */
 
 import { webcrypto } from 'node:crypto'

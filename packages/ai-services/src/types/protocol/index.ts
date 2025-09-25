@@ -1,6 +1,6 @@
 /**
  * Protocol integration types for unified AI services
- * @package @neonpro/ai-services
+ * @package `@neonpro/ai-services`
  */
 
 // AG-UI Protocol integration

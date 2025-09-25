@@ -2,4 +2,4 @@
 // Re-exports sanitizeForAI from and redact from @neonpro/utils
 
 export { sanitizeForAI } from '@neonpro/database'
-export { redact } from '@neonpro/utils'
+export { redact } from '@neonpro/shared'

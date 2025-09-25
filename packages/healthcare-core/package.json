@@ -55,7 +55,7 @@
     "tsx": "^4.6.2"
   },
   "peerDependencies": {
-    "@neonpro/security-compliance": "workspace:*"
+    "@neonpro/security": "workspace:*"
   },
   "files": [
     "dist",

@@ -4,7 +4,7 @@
  * Healthcare platform API key management with LGPD compliance
  *
  * @version 1.0.0
- * @compliance LGPD, ANVISA, CFM
+ * Compliance: LGPD, ANVISA, CFM
  */
 
 import crypto from 'crypto'

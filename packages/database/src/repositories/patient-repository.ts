@@ -1,5 +1,5 @@
-import { Patient, PatientFilters } from '@neonpro/domain'
-import type { PatientRepository as IPatientRepository } from '@neonpro/domain'
+import { Patient, PatientFilters } from '@neonpro/healthcare-core'
+import type { PatientRepository as IPatientRepository } from '@neonpro/healthcare-core'
 import { UpdatePatientRequest } from '@neonpro/types'
 import { SupabaseClient } from '@supabase/supabase-js'
 import { databaseLogger, logHealthcareError } from '../utils/logging'

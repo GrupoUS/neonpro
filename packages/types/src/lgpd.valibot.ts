@@ -4,7 +4,7 @@
  * Comprehensive validation for LGPD (Lei Geral de Proteção de Dados) compliance
  * Optimized for Edge Runtime with cryptographic validation and legal framework support
  *
- * @package @neonpro/types
+ * @package `@neonpro/types`
  * @author Claude AI Agent
  * @version 1.0.0
  * @compliance LGPD Art. 7º, 11º - Brazilian Data Protection Law

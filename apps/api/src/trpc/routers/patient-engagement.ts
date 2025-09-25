@@ -1,4 +1,4 @@
-import { PatientEngagementService } from '@neonpro/core-services'
+import { PatientEngagementService } from '@neonpro/business-services'
 import {
   CommunicationHistorySchema,
   CommunicationPreferencesSchema,
@@ -10,7 +10,7 @@ import {
   PatientSurveySchema,
   ReengagementTriggerSchema,
   SurveyResponseSchema,
-} from '@neonpro/core-services'
+} from '@neonpro/business-services'
 import { createTRPCRouter } from '@trpc/server'
 import { z } from 'zod'
 

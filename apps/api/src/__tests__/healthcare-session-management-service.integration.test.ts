@@ -6,7 +6,7 @@
  * 
  * @security_critical
  * @test_coverage Healthcare Session Management Service
- * @compliance LGPD, ANVISA, CFM, HIPAA
+ * Compliance: LGPD, ANVISA, CFM, HIPAA
  */
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'

@@ -6,7 +6,7 @@
  * 
  * @security_critical
  * @test_coverage Enhanced Authentication Middleware
- * @compliance OWASP, LGPD, ANVISA, CFM
+ * Compliance: OWASP, LGPD, ANVISA, CFM
  */
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'

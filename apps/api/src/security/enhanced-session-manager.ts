@@ -5,7 +5,7 @@
  * concurrent session limits, timeout controls, and anomaly detection.
  *
  * @security_critical
- * @compliance OWASP Session Management Cheat Sheet, LGPD
+ * Compliance: OWASP Session Management Cheat Sheet, LGPD
  * @version 2.0.0
  */
 

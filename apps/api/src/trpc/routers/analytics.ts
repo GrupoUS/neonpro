@@ -8,7 +8,7 @@ import {
   CreateAnalyticsConfigurationInput,
   DeleteAnalyticsConfigurationInput,
   UpdateAnalyticsConfigurationInput,
-} from '@neonpro/core-services'
+} from '@neonpro/observability'
 import { router } from '../trpc'
 import { SuccessResponseSchema } from '../utils/response-schemas'
 

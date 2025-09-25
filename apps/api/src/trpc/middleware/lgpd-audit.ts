@@ -6,7 +6,7 @@
  * with performance targets <200ms overhead.
  *
  * @author AI Development Agent
- * @compliance LGPD Art. 7º, 11º - Data Processing and Sensitive Data
+ * Compliance: LGPD Art. 7º, 11º - Data Processing and Sensitive Data
  * @performance <200ms audit overhead target
  */
 

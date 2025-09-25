@@ -5,7 +5,7 @@
  * patient data access controls, consent management, and audit trails.
  *
  * @security_critical
- * @compliance LGPD, ANVISA, CFM, OWASP Session Management
+ * Compliance: LGPD, ANVISA, CFM, OWASP Session Management
  * @version 1.0.0
  */
 

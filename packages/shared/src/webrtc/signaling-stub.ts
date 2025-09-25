@@ -1,5 +1,5 @@
 /**
- * @fileoverview WebRTC Signaling Server Stub Implementation
+ * @file WebRTC Signaling Server Stub Implementation
  * @version 1.0.0
  * @description Mock signaling server for telemedicine WebRTC infrastructure
  *

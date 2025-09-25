@@ -1,11 +1,11 @@
 /**
- * @fileoverview Authentication Services
+ * @file Authentication Services
  *
  * Central export point for all authentication-related services
  *
  * @version 1.0.0
  * @author NeonPro Platform Team
- * @compliance LGPD, ANVISA, ISO 27001, NIST Cybersecurity Framework
+ * Compliance: LGPD, ANVISA, ISO 27001, NIST Cybersecurity Framework
  */
 
 // Password Migration Service

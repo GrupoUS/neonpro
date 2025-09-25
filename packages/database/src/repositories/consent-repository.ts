@@ -5,7 +5,7 @@ import {
   ConsentRequest,
   ConsentStatus,
   ConsentType,
-} from '@neonpro/domain'
+} from '@neonpro/healthcare-core'
 import { SupabaseClient } from '@supabase/supabase-js'
 import { DatabasePerformanceService } from '../services/database-performance.service.js'
 import { databaseLogger, logHealthcareError } from '../utils/logging'

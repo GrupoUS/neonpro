@@ -1,6 +1,6 @@
 /**
  * WebSocket and Real-time Communication Types
- * @package @neonpro/chat-services
+ * @package `@neonpro/chat-services`
  */
 
 /**

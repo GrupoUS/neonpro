@@ -663,24 +663,17 @@ export async function retry<T>(
 /**
  * Run promises with timeout
  */
-export function withTimeout<T>(
+export async function withTimeout<T>(
   promise: Promise<T>,
   timeoutMs: number,
 ): Promise<T> {
-  return new Promise(async (resolve, reject) => {
-    const timer = setTimeout(() => {
+  const timerPromise = new Promise<never>((_resolve, reject) => {
+    setTimeout(() => {
       reject(new Error(`Operation timed out after ${timeoutMs}ms`))
     }, timeoutMs)
-
-    try {
-      const result = await promise
-      resolve(result)
-    } catch (error) {
-      reject(error)
-    } finally {
-      clearTimeout(timer)
-    }
   })
+
+  return Promise.race([promise, timerPromise])
 }
 
 // ========================================

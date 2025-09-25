@@ -203,6 +203,12 @@ export * from './webrtc'
 // Temporarily excluded due to TypeScript errors
 // export * from './security'
 
+// Utilities (consolidated from utils package)
+export * from './utils'
+
+// Validators (consolidated from validators package)
+export * from './validators/brazilian-document-validators'
+
 // Telemetry and observability
 export type { CFMComplianceLevel as ComplianceLevel } from '@neonpro/types'
 export * from './services/cache-management'

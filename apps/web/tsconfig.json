@@ -37,11 +37,11 @@
       "@neonpro/core-services/*": [
         "../../packages/core-services/src/*"
       ],
-      "@neonpro/domain": [
-        "../../packages/domain/src"
+      "@neonpro/healthcare-core": [
+        "../../packages/healthcare-core/src"
       ],
-      "@neonpro/domain/*": [
-        "../../packages/domain/src/*"
+      "@neonpro/healthcare-core/*": [
+        "../../packages/healthcare-core/src/*"
       ],
       "@neonpro/types": [
         "../../packages/types/src"
@@ -122,7 +122,7 @@
       "path": "../../packages/core-services"
     },
     {
-      "path": "../../packages/domain"
+      "path": "../../packages/healthcare-core"
     },
     {
       "path": "../../packages/types"

@@ -1,14 +1,42 @@
 /**
- * Healthcare services module
- * Placeholder for consolidated healthcare services
+ * Domain Services
+ * @package `@neonpro/healthcare-core`
  */
 
-// Version info
-export const SERVICES_VERSION = '1.0.0';
+// Consent service
+export {
+  ConsentDomainService,
+  ConsentDomainServiceConfig,
+  consentDomainService,
+  type ConsentDomainService as IConsentDomainService,
+} from './consent-service';
 
-// Empty exports for now - will be populated with consolidated services
-export type HealthcareService = {
-  id: string;
-  name: string;
-  version: string;
-};
+// Audit service
+export {
+  AuditDomainService,
+  AuditDomainServiceConfig,
+  AuditEvent,
+  AuditSeverity,
+  auditDomainService,
+  type AuditDomainService as IAuditDomainService,
+} from './audit-service';
+
+// Medical license service
+export {
+  MedicalLicenseDomainService,
+  MedicalLicenseDomainServiceConfig,
+  MedicalLicenseVerificationResult,
+  TelemedicineAuthorization,
+  MedicalLicenseState,
+  LicenseVerificationStatus,
+  TelemedicineAuthorizationStatus,
+  medicalLicenseDomainService,
+  type MedicalLicenseDomainService as IMedicalLicenseDomainService,
+} from './medical-license-service';
+
+// Base domain service
+export {
+  BaseDomainService,
+  BaseDomainServiceConfig,
+  type BaseDomainService as IBaseDomainService,
+} from './base-domain-service';

@@ -1,6 +1,6 @@
 /**
  * AG-UI Protocol Integration Types
- * @package @neonpro/chat-services
+ * @package `@neonpro/chat-services`
  */
 
 /**

@@ -1,5 +1,5 @@
 /**
- * @fileoverview WebRTC Types for Telemedicine Infrastructure
+ * @file WebRTC Types for Telemedicine Infrastructure
  * @version 1.0.0
  * @description TypeScript interfaces for healthcare-compliant WebRTC implementation
  *

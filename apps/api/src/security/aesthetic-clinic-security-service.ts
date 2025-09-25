@@ -11,7 +11,7 @@
  * - Brazilian healthcare compliance (ANVISA, CFM, LGPD)
  *
  * @security_critical
- * @compliance LGPD, ANVISA, CFM, NGS2
+ * Compliance: LGPD, ANVISA, CFM, NGS2
  * @version 1.0.0
  */
 

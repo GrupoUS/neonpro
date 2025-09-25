@@ -4,7 +4,7 @@
  * Optimized for Vercel Edge Runtime with 75% bundle size reduction vs Zod
  * Comprehensive validation for Brazilian healthcare standards (CFM, ANVISA, LGPD)
  *
- * @package @neonpro/types
+ * @package `@neonpro/types`
  * @author Claude AI Agent
  * @version 1.0.0
  */

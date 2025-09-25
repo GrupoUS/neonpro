@@ -5,7 +5,7 @@
  * healthcare compliance and performance optimization
  * 
  * @features Multi-tier cache invalidation
- * @compliance LGPD, ANVISA, CFM
+ * Compliance: LGPD, ANVISA, CFM
  * @performance Real-time invalidation with event-driven architecture
  */
 

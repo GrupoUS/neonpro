@@ -1,13 +1,12 @@
 /**
  * Unified Chat Service - Main Orchestration Class
- * @package @neonpro/chat-services
+ * @package `@neonpro/chat-services`
  */
 
-import { 
+import {
   UnifiedChatServiceConfig,
   EnhancedChatSession,
   EnhancedChatMessage,
-  ChatServiceResponse,
   ChatServiceError,
   ChatSessionCreationParams,
   ChatMessageCreationParams,
@@ -23,9 +22,7 @@ import {
 } from './healthcare';
 
 import {
-  HealthcareComplianceService,
-  ComplianceCheckRequest,
-  ComplianceCheckResult
+  HealthcareComplianceService
 } from './compliance';
 
 import {
@@ -36,28 +33,19 @@ import {
 } from './analytics';
 
 import {
-  AGUIProtocolService,
-  AguiConnectionConfig,
-  AguiSession,
-  AguiMessage
+  AGUIProtocolService
 } from './agui-protocol';
 
 import {
-  WebSocketService,
-  WebSocketConfig,
-  WebSocketConnectionStatus
+  WebSocketService
 } from './websocket';
 
 import {
-  CopilotKitIntegrationService,
-  CopilotKitConfig
+  CopilotKitIntegrationService
 } from './copilotkit';
 
 import {
-  ProviderManagementService,
-  AIProvider,
-  CompletionResponse,
-  CompletionOptions
+  ProviderManagementService
 } from '@neonpro/ai-services';
 
 import { Logger } from '@neonpro/core-services';

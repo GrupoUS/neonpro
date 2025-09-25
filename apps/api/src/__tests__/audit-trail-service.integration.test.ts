@@ -6,7 +6,7 @@
  * 
  * @security_critical
  * @test_coverage Audit Trail Service
- * @compliance LGPD, ANVISA, CFM, HIPAA, GDPR
+ * Compliance: LGPD, ANVISA, CFM, HIPAA, GDPR
  */
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'

@@ -140,8 +140,8 @@ if (!window.crypto?.randomUUID) {
 global.fetch = () =>
   Promise.resolve({
     ok: true,
-    json: () => Promise.resolve({}),
-    text: () => Promise.resolve(''),
+    json: async () => ({}),
+    text: async () => '',
   })
 
 // Mock URL.createObjectURL
@@ -184,8 +184,8 @@ if (typeof dom !== 'undefined') {
   createMockResponse: (data: any, status = 200) => ({
     ok: status >= 200 && status < 300,
     status,
-    json: () => Promise.resolve(data),
-    text: () => Promise.resolve(JSON.stringify(data)),
+    json: async () => data,
+    text: async () => JSON.stringify(data),
   }),
 }
 

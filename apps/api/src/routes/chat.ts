@@ -516,7 +516,7 @@ app.post('/explanation', async c => {
   }
 
   // Minimal LGPD redaction on input prior to model usage/logging
-  const { redact } = await import('@neonpro/utils')
+  const { redact } = await import('@neonpro/shared')
   const redactedInput = redact(String(text))
 
   try {

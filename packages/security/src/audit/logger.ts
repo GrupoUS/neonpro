@@ -108,10 +108,13 @@ export class AuditLogger {
    * Log an audit entry
    */
   async log(entry: AuditLogEntry): Promise<void> {
+    // Validate and sanitize entry
+    const sanitizedEntry = this.validateAndSanitizeEntry(entry)
+    
     const fullEntry: AuditLogEntry = {
-      ...entry,
-      timestamp: entry.timestamp || new Date(),
-      id: entry.id || this.generateId(),
+      ...sanitizedEntry,
+      timestamp: sanitizedEntry.timestamp || new Date(),
+      id: sanitizedEntry.id || this.generateId(),
     }
 
     // Console logging
@@ -269,7 +272,7 @@ export class AuditLogger {
       metadata: entry.metadata
     }
 
-    // Log to console for testing purposes
+    // Log to console for testing purposes - wrap in try-catch to ensure no throws
     try {
       console.log(JSON.stringify(consoleEntry))
     } catch (error) {
@@ -283,7 +286,12 @@ export class AuditLogger {
         success: consoleEntry.success,
         error: 'Circular reference in metadata'
       }
-      console.log(JSON.stringify(safeEntry))
+      try {
+        console.log(JSON.stringify(safeEntry))
+      } catch {
+        // Ultimate fallback - ensure no throw
+        console.log('{"id":"fallback","action":"log_entry"}')
+      }
     }
   }
 
@@ -376,6 +384,80 @@ export class AuditLogger {
     // In a real implementation, this would write to a log file
     void entry
     // File logging disabled for production compliance
+  }
+
+  /**
+   * Validate and sanitize audit entry to prevent errors
+   */
+  private validateAndSanitizeEntry(entry: AuditLogEntry): AuditLogEntry {
+    const sanitized: AuditLogEntry = {
+      _userId: entry._userId || 'unknown',
+      action: entry.action || 'unknown_action',
+      resource: entry.resource || 'unknown_resource',
+      success: entry.success ?? false,
+    }
+
+    // Copy safe fields
+    if (entry.id) sanitized.id = entry.id
+    if (entry.timestamp) sanitized.timestamp = entry.timestamp
+    if (entry.resourceId) sanitized.resourceId = entry.resourceId
+    if (entry.errorMessage) sanitized.errorMessage = entry.errorMessage
+    if (entry.ipAddress) sanitized.ipAddress = entry.ipAddress
+    if (entry.userAgent) sanitized.userAgent = entry.userAgent
+    if (entry.lgpdCompliant !== undefined) sanitized.lgpdCompliant = entry.lgpdCompliant
+    if (entry.dataClassification) sanitized.dataClassification = entry.dataClassification
+
+    // Safely handle metadata
+    if (entry.metadata) {
+      sanitized.metadata = this.sanitizeMetadata(entry.metadata)
+    }
+
+    return sanitized
+  }
+
+  /**
+   * Sanitize metadata to handle circular references and unsafe values
+   */
+  private sanitizeMetadata(metadata?: Record<string, unknown>): Record<string, unknown> | undefined {
+    if (!metadata) return undefined
+
+    const sanitized: Record<string, unknown> = {}
+    const seen = new WeakSet()
+
+    const sanitizeValue = (value: unknown): unknown => {
+      if (value === null || value === undefined) {
+        return null
+      }
+
+      if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
+        return value
+      }
+
+      if (typeof value === 'object') {
+        if (seen.has(value as object)) {
+          return '[Circular Reference]'
+        }
+        seen.add(value as object)
+
+        if (Array.isArray(value)) {
+          return value.map(sanitizeValue)
+        }
+
+        const obj: Record<string, unknown> = {}
+        for (const [key, val] of Object.entries(value as Record<string, unknown>)) {
+          obj[key] = sanitizeValue(val)
+        }
+        return obj
+      }
+
+      return String(value)
+    }
+
+    for (const [key, value] of Object.entries(metadata)) {
+      sanitized[key] = sanitizeValue(value)
+    }
+
+    return sanitized
   }
 
   private generateId(): string {

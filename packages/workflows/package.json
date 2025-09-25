@@ -1,0 +1,44 @@
+{
+  "name": "@neonpro/workflows",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "bun x tsc -p tsconfig.json",
+    "dev": "tsc -w -p tsconfig.json",
+    "type-check": "tsc -p tsconfig.json --noEmit",
+    "clean": "rimraf dist",
+    "test": "bun test run",
+    "test:watch": "bun test --watch",
+    "lint": "echo 'lint placeholder'",
+    "prepare": "echo 'prepare script temporarily disabled for workspace install'"
+  },
+  "dependencies": {
+    "@neonpro/config": "0.1.0",
+    "@neonpro/types": "0.1.0",
+    "@nestjs/common": "^11.1.6",
+    "@supabase/supabase-js": "^2.57.4",
+    "@tanstack/react-query": "^5.87.4",
+    "date-fns": "^3.6.0",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.13",
+    "tsup": "^8.5.0",
+    "typescript": "^5.9.2",
+    "vitest": "^3.2.4"
+  },
+  "publishConfig": {
+    "access": "restricted"
+  }
+}

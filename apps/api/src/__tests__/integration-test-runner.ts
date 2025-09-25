@@ -6,7 +6,7 @@
  * 
  * @security_critical
  * @test_coverage Complete Security System
- * @compliance OWASP Top 10, LGPD, ANVISA, CFM
+ * Compliance: OWASP Top 10, LGPD, ANVISA, CFM
  */
 
 import { describe, it, expect, beforeAll, afterAll } from 'vitest'

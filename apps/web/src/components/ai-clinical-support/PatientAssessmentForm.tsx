@@ -25,7 +25,7 @@ import {
   type SkinType,
   type TreatmentRecommendation,
 } from '@/types/ai-clinical-support'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useQueryClient } from '@tanstack/react-query'
 import {
   Activity,
   AlertTriangle,
@@ -34,12 +34,11 @@ import {
   DollarSign,
   Info,
   Loader2,
-  Plus,
   Target,
   User,
   X,
 } from 'lucide-react'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 
 interface PatientAssessmentFormProps {
   patientId: string
@@ -329,7 +328,7 @@ export function PatientAssessmentForm(
                   <div className='space-y-3'>
                     <div className='flex flex-wrap gap-2'>
                       {assessmentData.skinConditions?.map((condition, index) => (
-                        <Badge key={index} variant='secondary' className='cursor-pointer'>
+                        <Badge key={`skin-condition-${index}`} variant='secondary' className='cursor-pointer'>
                           {condition}
                           <X
                             className='h-3 w-3 ml-1'
@@ -425,7 +424,7 @@ export function PatientAssessmentForm(
                   <div className='space-y-3'>
                     <div className='flex flex-wrap gap-2'>
                       {assessmentData.medicalHistory?.allergies?.map((allergy, index) => (
-                        <Badge key={index} variant='destructive' className='cursor-pointer'>
+                        <Badge key={`allergy-${index}`} variant='destructive' className='cursor-pointer'>
                           {allergy}
                           <X
                             className='h-3 w-3 ml-1'
@@ -457,7 +456,7 @@ export function PatientAssessmentForm(
                   <div className='space-y-3'>
                     <div className='flex flex-wrap gap-2'>
                       {assessmentData.medicalHistory?.medications?.map((medication, index) => (
-                        <Badge key={index} variant='secondary' className='cursor-pointer'>
+                        <Badge key={`medication-${index}`} variant='secondary' className='cursor-pointer'>
                           {medication}
                           <X
                             className='h-3 w-3 ml-1'
@@ -840,7 +839,7 @@ export function PatientAssessmentForm(
                   <Info className='h-4 w-4' />
                   <AlertTitle>Próximo Passo</AlertTitle>
                   <AlertDescription>
-                    Ao clicar em "Gerar Recomendações", nossa IA analisará todas as informações e
+                    Ao clicar em &ldquo;Gerar Recomendações&rdquo;, nossa IA analisará todas as informações e
                     gerará sugestões personalizadas de tratamento com base nas características do
                     paciente, objetivos e orçamento disponível.
                   </AlertDescription>

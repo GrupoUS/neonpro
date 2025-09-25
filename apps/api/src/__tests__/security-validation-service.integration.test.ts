@@ -6,7 +6,7 @@
  * 
  * @security_critical
  * @test_coverage Security Validation Service
- * @compliance OWASP Top 10, LGPD, HIPAA, GDPR
+ * Compliance: OWASP Top 10, LGPD, HIPAA, GDPR
  */
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'

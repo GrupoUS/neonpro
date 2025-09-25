@@ -6,7 +6,7 @@
  * 
  * @security_critical
  * @test_coverage JWT Security Service
- * @compliance OWASP, LGPD, ANVISA, CFM
+ * Compliance: OWASP, LGPD, ANVISA, CFM
  */
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
