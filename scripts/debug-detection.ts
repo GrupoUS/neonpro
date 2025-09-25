@@ -115,4 +115,10 @@ async function debugDetection() {
   })
 }
 
-debugDetection().catch(console.error)
+;(async () => {
+  try {
+    await debugDetection()
+  } catch (error) {
+    console.error(error)
+  }
+})()

@@ -46,18 +46,18 @@ export class SessionCookieUtils {
   /**
    * Generate secure session cookie with signature
    */
-  static generateSecureSessionCookie(
+  static async generateSecureSessionCookie(
     sessionId: string,
     config: Partial<CookieConfig> = {},
     secretKey: string,
-  ): string {
+  ): Promise<string> {
     const cookieConfig = { ...this.DEFAULT_COOKIE_CONFIG, ...config }
 
     // Generate CSRF token for session
     const csrfToken = this.generateCSRFToken()
 
     // Generate session signature for integrity
-    const sessionSignature = this.generateSessionSignature(
+    const sessionSignature = await this.generateSessionSignature(
       sessionId,
       secretKey,
     )
@@ -93,11 +93,11 @@ export class SessionCookieUtils {
   /**
    * Validate session cookies and extract session ID
    */
-  static validateSessionCookies(
+  static async validateSessionCookies(
     cookieHeader: string | undefined,
     secretKey: string,
     sessionManager: EnhancedSessionManager,
-  ): CookieValidationResult {
+  ): Promise<CookieValidationResult> {
     if (!cookieHeader) {
       return {
         isValid: false,
@@ -137,7 +137,7 @@ export class SessionCookieUtils {
         }
       }
 
-      const expectedSignature = this.generateSessionSignature(
+      const expectedSignature = await this.generateSessionSignature(
         sessionId,
         secretKey,
       )
@@ -200,18 +200,17 @@ export class SessionCookieUtils {
   /**
    * Generate session signature for integrity
    */
-  private static generateSessionSignature(
+  private static async generateSessionSignature(
     sessionId: string,
     secretKey: string,
-  ): string {
+  ): Promise<string> {
     const encoder = new TextEncoder()
-    const _data = encoder.encode(sessionId)
+    const data = encoder.encode(sessionId)
     const key = encoder.encode(secretKey)
 
-    return crypto.subtle.sign('HMAC', key, data).then(async (signature => {
-      const signatureArray = new Uint8Array(signature)
-      return Array.from(signatureArray, byte => byte.toString(16).padStart(2, '0')).join('')
-    })
+    const signature = await crypto.subtle.sign('HMAC', key, data)
+    const signatureArray = new Uint8Array(signature)
+    return Array.from(signatureArray, byte => byte.toString(16).padStart(2, '0')).join('')
   }
 
   /**

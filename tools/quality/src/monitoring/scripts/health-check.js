@@ -136,5 +136,11 @@ class HealthChecker {
 }
 
 // Run health checks
-const checker = new HealthChecker()
-checker.runHealthChecks().catch(console.error)
+;(async () => {
+  const checker = new HealthChecker()
+  try {
+    await checker.runHealthChecks()
+  } catch (error) {
+    console.error(error)
+  }
+})()

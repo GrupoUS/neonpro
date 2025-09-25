@@ -1,6 +1,7 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    "module": "Node16",
     "outDir": "dist",
     "rootDir": "src",
     "baseUrl": ".",
@@ -12,6 +13,7 @@
       "@/utils/*": ["src/utils/*"]
     },
     "composite": true,
+    "module": "Node16",
     "noEmit": false,
     "declaration": true,
     "declarationMap": true,

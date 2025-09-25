@@ -172,7 +172,13 @@ async function generateSecurityReport(): Promise<void> {
 
 // Run analysis
 if (import.meta.main) {
-  generateSecurityReport().catch(console.error)
+  ;(async () => {
+    try {
+      await generateSecurityReport()
+    } catch (error) {
+      console.error(error)
+    }
+  })()
 }
 
 export { analyzeTelemedicineService, SecurityIssue }

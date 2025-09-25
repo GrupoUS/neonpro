@@ -31,8 +31,8 @@ export type { MonitoringConfig }
 let sdk: NodeSDK | null = null
 
 export function initializeMonitoring(config: MonitoringConfig): void {
-  const logger = getHealthcareLogger()
-  logger.info(
+  const securityLogger = getHealthcareLogger()
+  securityLogger.info(
     `🔍 Initializing monitoring for ${config.serviceName} v${config.serviceVersion}`,
     {
       serviceName: config.serviceName,
@@ -114,12 +114,14 @@ export function initializeMonitoring(config: MonitoringConfig): void {
   logger.info('Monitoring system initialized successfully')
 }
 
-export function shutdownMonitoring(): void {
+export async function shutdownMonitoring(): Promise<void> {
   const logger = getHealthcareLogger()
   if (sdk) {
-    sdk
-      .shutdown()
-      .then(() => logger.info('📊 Monitoring system shut down successfully', { action: 'shutdown' }))
-      .catch((error) => logger.error('Error shutting down monitoring', { error: error?.message, action: 'shutdown' }))
+    try {
+      await sdk.shutdown()
+      logger.info('📊 Monitoring system shut down successfully', { action: 'shutdown' })
+    } catch (error) {
+      logger.error('Error shutting down monitoring', { error: (error as Error)?.message, action: 'shutdown' })
+    }
   }
 }

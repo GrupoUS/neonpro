@@ -79,7 +79,7 @@ export class PWAIndexedDB {
       const store = transaction.objectStore('offlineData')
       const index = store.index('synced')
 
-      const request = index.getAll(false) // Get only unsynced data
+      const request = index.getAll(IDBKeyRange.only(false)) // Get only unsynced data
 
       request.onsuccess = () => resolve(request.result)
       request.onerror = () => reject(new Error('Failed to get offline data'))
@@ -195,11 +195,10 @@ export class PWAPushManager {
         applicationServerKey: this.urlBase64ToUint8Array(
           process.env.VITE_VAPID_PUBLIC_KEY ||
             'BH2jO8W3j8Z2gF3h6K9L1mN3pQ6rT2yV5bX8cF4j7H1k9L2mN3pQ6rT2yV5bX8cF4j7H',
-        ),
+        ) as BufferSource,
       })
 
       console.warn('Push notification subscription successful')
-      return this.subscription
     } catch (error) {
       console.error('Failed to subscribe to push notifications:', error)
       throw error
@@ -268,7 +267,12 @@ export class PWAOfflineSync {
     if ('serviceWorker' in navigator && 'SyncManager' in window) {
       try {
         const registration = await navigator.serviceWorker.ready
-        await registration.sync.register('neonpro-sync')
+        if ('sync' in registration) {
+          await (registration as any).sync.register('neonpro-sync')
+        } else {
+          console.warn('Background sync not supported, falling back to immediate sync')
+          await this.sync()
+        }
       } catch (error) {
         console.error('Background sync registration failed:', error)
       }

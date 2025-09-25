@@ -489,14 +489,18 @@ export class RedisCacheBackend implements CacheBackend {
       })
 
       // Connect to Redis
-      this.redis.connect().catch(async (error => {
-        logHealthcareError('redis-cache', error as Error, {
-          method: 'initializeRedis',
-          component: 'redis-cache',
-          event: 'connection_failed',
-        })
-        this.isConnected = false
-      })
+      ;(async () => {
+        try {
+          await this.redis.connect()
+        } catch (error) {
+          await logHealthcareError('redis-cache', error as Error, {
+            method: 'initializeRedis',
+            component: 'redis-cache',
+            event: 'connection_failed',
+          })
+          this.isConnected = false
+        }
+      })()
     } catch (error) {
       logHealthcareError('redis-cache', error as Error, {
         method: 'initializeRedis',
@@ -523,14 +527,18 @@ export class RedisCacheBackend implements CacheBackend {
           maxRetries: this.maxRetries,
           event: 'connection_retry',
         })
-        this.redis.connect().catch(async (error => {
-          logHealthcareError('redis-cache', error as Error, {
-            method: 'handleConnectionError',
-            component: 'redis-cache',
-            attempt: this.connectionRetries,
-            event: 'retry_failed',
-          })
-        })
+        ;(async () => {
+          try {
+            await this.redis.connect()
+          } catch (error) {
+            await logHealthcareError('redis-cache', error as Error, {
+              method: 'handleConnectionError',
+              component: 'redis-cache',
+              attempt: this.connectionRetries,
+              event: 'retry_failed',
+            })
+          }
+        })()
       }, delay)
     } else {
       healthcareLogger.cacheLogger.error('Max connection retries reached', {

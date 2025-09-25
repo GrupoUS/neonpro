@@ -37,22 +37,24 @@ import { sensitiveDataExposureMiddleware } from './services/sensitive-field-anal
 // const { getSecurityMiddlewareStack, getProtectedRoutesMiddleware } = security.middleware;
 
 // Initialize monitoring and telemetry
-Promise.all([
-  // Initialize Sentry first for early error capture
-  Promise.resolve(initializeSentry()),
-  initializeErrorTracking(),
-  initializeLogger({
-    level: process.env.NODE_ENV === 'production' ? 1 : 0, // INFO in production, DEBUG in development
-    environment: (process.env.NODE_ENV as any) || 'development',
-    enableConsole: true,
-    enableFile: false,
-    enableStructured: true,
-    sanitizeContext: true,
-  }),
-  // Initialize OpenTelemetry if available
-  // telemetrySDK ? telemetrySDK.start() : Promise.resolve(),
-])
-  .then(async (() => {
+;(async () => {
+  try {
+    await Promise.all([
+      // Initialize Sentry first for early error capture
+      Promise.resolve(initializeSentry()),
+      initializeErrorTracking(),
+      initializeLogger({
+        level: process.env.NODE_ENV === 'production' ? 1 : 0, // INFO in production, DEBUG in development
+        environment: (process.env.NODE_ENV as any) || 'development',
+        enableConsole: true,
+        enableFile: false,
+        enableStructured: true,
+        sanitizeContext: true,
+      }),
+      // Initialize OpenTelemetry if available
+      // telemetrySDK ? telemetrySDK.start() : Promise.resolve(),
+    ])
+    
     logger.info(
       'Application monitoring and telemetry initialized successfully',
       {
@@ -61,12 +63,12 @@ Promise.all([
         structuredLogging: true,
       },
     )
-  })
-  .catch(async (error => {
+  } catch (error) {
     logger.error('Failed to initialize monitoring', error, {
       component: 'initialization',
     })
-  })
+  }
+})()
 
 // Global error tracker instance is now accessed via the bridge
 // const errorTracker = already imported from bridge

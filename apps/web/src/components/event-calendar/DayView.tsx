@@ -3,8 +3,8 @@
  */
 
 import React from 'react'
-import type { DayViewProps } from '../../types/event-calendar'
-import { formatCalendarTime, generateTimeSlots, getEventColor, isTimeSlotAvailable } from './utils'
+import type { DayViewProps } from '../../types/event-calendar.js'
+import { formatCalendarTime, generateTimeSlots, getEventColor, isTimeSlotAvailable } from './utils.js'
 
 export function DayView({
   date,
@@ -22,7 +22,7 @@ export function DayView({
   }
 
   const getEventsForTimeSlot = (slot: any) => {
-    return events.filter(event => {
+    return events.filter((event: any) => {
       const eventStart = new Date(event.start)
       const eventEnd = new Date(event.end)
       const slotStart = new Date(slot.start)
@@ -53,7 +53,7 @@ export function DayView({
                 {formatCalendarTime(slot.start)}
               </div>
               <div className='events flex-1 p-1 relative'>
-                {slotEvents.map((event, eventIndex) => (
+                {slotEvents.map((event: any, eventIndex: number) => (
                   <div
                     key={event.id}
                     className={`event-card absolute left-1 right-1 p-2 rounded text-sm cursor-pointer hover:shadow-md transition-shadow ${
@@ -65,7 +65,7 @@ export function DayView({
                       top: `${eventIndex * 24}px`,
                       height: '20px',
                     }}
-                    onClick={e => {
+                    onClick={(e: React.MouseEvent) => {
                       e.stopPropagation()
                       onEventClick(event)
                     }}

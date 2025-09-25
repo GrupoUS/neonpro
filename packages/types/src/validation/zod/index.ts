@@ -1,2 +1,2 @@
 // Zod validation schemas
-export * from './patient'
+export * from './patient.js'

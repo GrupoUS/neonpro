@@ -1,8 +1,8 @@
 /**
- * @fileoverview LGPD-compliant data anonymization utilities for healthcare
+ * @file LGPD-compliant data anonymization utilities for healthcare
  * @version 1.0.0
  * @author NeonPro Platform Team
- * @compliance LGPD, ANVISA
+ @license LGPD, ANVISA
  */
 
 // ============================================================================
@@ -28,7 +28,7 @@ export interface MaskingOptions {
 /**
  * LGPD compliance levels for anonymization
  */
-export type LGPDComplianceLevel = 'basic' | 'enhanced' | 'full_anonymization' | 'full'
+export type LGPDComplianceLevel = 'basic' | 'enhanced' | 'full_anonymization'
 
 /**
  * Patient data structure for healthcare anonymization
@@ -368,13 +368,12 @@ function maskAddressObject(
  */
 export function maskPatientData(
   patient: PatientData,
-  complianceLevel: LGPDComplianceLevel | 'full' = 'basic',
+  complianceLevel: LGPDComplianceLevel = 'basic',
 ): { data: PatientData; metadata: AnonymizationMetadata } {
   const masked: PatientData = { ...patient }
   const fieldsAnonymized: string[] = []
 
-  // Map 'full' to 'full_anonymization' for compatibility
-  const actualComplianceLevel = complianceLevel === 'full' ? 'full_anonymization' : complianceLevel
+  const actualComplianceLevel = complianceLevel
   const options = DEFAULT_MASKING_OPTIONS[actualComplianceLevel]
 
   if (masked.name) {
@@ -509,7 +508,7 @@ export function maskPatientData(
   const metadata: AnonymizationMetadata = {
     anonymizedAt: new Date().toISOString(),
     method: 'maskPatientData',
-    complianceLevel: complianceLevel === 'full' ? 'full' : actualComplianceLevel,
+    complianceLevel: actualComplianceLevel,
     version: ANONYMIZATION_VERSION,
     fieldsAnonymized,
   }

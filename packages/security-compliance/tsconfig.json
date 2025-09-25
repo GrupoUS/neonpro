@@ -11,6 +11,7 @@
       "@/utils/*": ["src/utils/*"]
     },
     "composite": true,
+    "module": "Node16",
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true

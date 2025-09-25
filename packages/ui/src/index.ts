@@ -1,20 +1,22 @@
 /**
- * @neonpro/ui
- * 
+ * @file NeonPro UI Component Library
+ *
  * React component library with healthcare-specific components for NeonPro platform
+ * @version 1.0.0
  */
 
 // Export core components
-export * from './components';
+export * from './components/ui';
 
 // Export healthcare-specific components
 export * from './components/healthcare';
 
-// Export forms and form components
+// Export form components
 export * from './components/forms';
 
-// Export chart components
-export * from './components/charts';
+// Export enhanced UI components
+export * from './components/aceternity';
+export * from './components/magicui';
 
 // Export custom hooks
 export * from './hooks';
@@ -22,7 +24,7 @@ export * from './hooks';
 // Export utilities
 export * from './utils';
 
-// Export styles and themes
+// Export styles
 export * from './styles';
 
 // Version info

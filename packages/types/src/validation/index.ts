@@ -1,5 +1,5 @@
 // Validation module exports
-export * from './validators'
-export * from './zod/patient'
-export * from './valibot/patient'
-export * from './valibot/appointment'
+export * from './validators.js'
+export * from './zod/patient.js'
+export * from './valibot/appointment.js'
+// Note: valibot/patient does not exist - removed export

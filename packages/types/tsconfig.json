@@ -2,13 +2,14 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "composite": true,
+    "module": "ESNext",
+    "moduleResolution": "bundler",
     "declaration": true,
     "declarationMap": true,
     "outDir": "./dist",
     "rootDir": "./src",
     "types": ["node"],
     "tsBuildInfoFile": "./dist/.tsbuildinfo",
-    "moduleResolution": "node",
     "resolveJsonModule": true,
     "noEmit": false
   },

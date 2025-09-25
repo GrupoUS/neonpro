@@ -119,7 +119,7 @@ async function handleMetricsCollection(req: Request, supabase: any) {
     }))
 
     // Store metrics in database
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from('performance_metrics')
       .insert(validatedMetrics)
 
@@ -176,7 +176,7 @@ async function handleHealthCheck(req: Request, supabase: any) {
   // Check database connectivity
   const dbStart = performance.now()
   try {
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from('clinics')
       .select('id')
       .limit(1)

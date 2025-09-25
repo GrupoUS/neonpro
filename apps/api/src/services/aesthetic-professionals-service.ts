@@ -248,7 +248,7 @@ class AestheticProfessionalsService {
         validated.councilType,
         validated.councilLicense,
       )
-        .catch(async (err => logger.error('License validation failed', { error: err }))
+        .catch(async (err) => logger.error('License validation failed', { error: err }))
 
       return {
         success: true,

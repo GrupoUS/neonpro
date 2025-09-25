@@ -4,7 +4,6 @@
  */
 
 import { createServerClient } from '../clients/supabase.js'
-// import type { RateLimitData } from '../middleware/rate-limiting.js';
 import { SecurityHeadersService } from './security-headers-service.js'
 
 export interface SecurityContext {

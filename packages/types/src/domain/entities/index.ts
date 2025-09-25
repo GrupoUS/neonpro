@@ -1,4 +1,4 @@
 // Domain Entities
-export * from './patient'
-export * from './appointment'
-export * from './consent'
+export * from './patient.js'
+export * from './appointment.js'
+export * from './consent.js'

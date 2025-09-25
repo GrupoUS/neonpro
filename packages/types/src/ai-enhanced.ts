@@ -32,7 +32,7 @@ import type {
   SubscriptionPlan,
   SubscriptionTier,
   UserSubscription,
-} from './enhanced-ai'
+} from './enhanced-ai.js'
 
 // Re-export the imported types
 export type {

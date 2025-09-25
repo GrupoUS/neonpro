@@ -66,7 +66,7 @@ export async function importHealthcareModule<T = any>(
 
   try {
     // Create timeout promise for non-critical modules
-    const timeoutPromise = new Promise<never>((_, reject) => {
+    const timeoutPromise = new Promise<never>((_resolve, reject) => {
       if (!critical) {
         setTimeout(
           () => reject(new Error(`Module ${modulePath} load timeout`)),
@@ -305,7 +305,7 @@ export class HealthcareBundleAnalyzer {
 /**
  * Code splitting utility for healthcare routes
  */
-export function createHealthcareRouteLoader<T>(
+export async function createHealthcareRouteLoader<T>(
   routeImport: () => Promise<T>,
   options: {
     preload?: boolean
@@ -317,9 +317,11 @@ export function createHealthcareRouteLoader<T>(
 
   // Preload if specified (for critical healthcare routes)
   if (preload && typeof window !== 'undefined') {
-    routeImport().catch(async (error => {
+    try {
+      await routeImport()
+    } catch (error) {
       console.error('Failed to preload healthcare route:', error)
-    })
+    }
   }
 
   return {

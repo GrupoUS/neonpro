@@ -79,7 +79,7 @@ export class CertificateMonitor {
         timestamp: new Date().toISOString(),
       })
     } catch {
-      void _error
+      error
       this.logger.logError('certificate_monitor_start_failed', {
         error: error instanceof Error ? error.message : 'Unknown error',
         config: this.config,
@@ -118,7 +118,7 @@ export class CertificateMonitor {
           throw new Error(`Certificate file is empty: ${filePath}`)
         }
       } catch {
-        void _error
+        error
         throw new Error(`Cannot read certificate file: ${filePath}`)
       }
     }
@@ -148,7 +148,7 @@ export class CertificateMonitor {
       // Determine alert level based on expiry
       await this.handleCertificateExpiry(certInfo, daysUntilExpiry)
     } catch {
-      void _error
+      error
       await this.logger.logError('certificate_check_failed', {
         error: error instanceof Error ? error.message : 'Unknown error',
         certificatePath: this.config.certificatePath,
@@ -178,7 +178,7 @@ export class CertificateMonitor {
 
       return await this.parseCertificateOutput(stdout)
     } catch {
-      void _error
+      error
       throw new Error(
         `Failed to get certificate info: ${
           error instanceof Error ? error.message : 'Unknown error'
@@ -236,7 +236,7 @@ export class CertificateMonitor {
         .replace('SHA1 Fingerprint=', '')
         .trim()
     } catch {
-      void _error
+      error
       // Fingerprint is optional
     }
 
@@ -246,7 +246,7 @@ export class CertificateMonitor {
       )
       certInfo.serialNumber = serialOutput.replace('serial=', '').trim()
     } catch {
-      void _error
+      error
       // Serial number is optional
     }
 
@@ -366,7 +366,7 @@ export class CertificateMonitor {
         await this.sendWebhookAlert(alert)
       }
     } catch {
-      void _error
+      error
       await this.logger.logError('certificate_alert_failed', {
         error: error instanceof Error ? error.message : 'Unknown error',
         alert,
@@ -388,22 +388,6 @@ export class CertificateMonitor {
 
   private async sendWebhookAlert(alert: CertificateAlert): Promise<void> {
     try {
-      const _payload = {
-        type: 'certificate_alert',
-        alert: {
-          type: alert.type,
-          message: alert.message,
-          certificate: {
-            subject: alert.certificate.subject,
-            issuer: alert.certificate.issuer,
-            validTo: alert.certificate.validTo,
-            fingerprint: alert.certificate.fingerprint,
-          },
-          daysUntilExpiry: alert.daysUntilExpiry,
-          timestamp: alert.timestamp,
-        },
-      }
-
       // Use fetch or axios to send webhook
       // This is a placeholder implementation
       this.logger.logSystemEvent('webhook_alert_sent', {
@@ -412,7 +396,7 @@ export class CertificateMonitor {
         timestamp: new Date().toISOString(),
       })
     } catch {
-      void _error
+      error
       throw new Error(
         `Failed to send webhook alert: ${error instanceof Error ? error.message : 'Unknown error'}`,
       )
@@ -455,7 +439,7 @@ export class CertificateMonitor {
         timestamp: new Date(),
       })
     } catch {
-      void _error
+      error
       await this.logger.logError('auto_renewal_failed', {
         error: error instanceof Error ? error.message : 'Unknown error',
         certificate: alert.certificate.subject,
@@ -501,7 +485,7 @@ export class CertificateMonitor {
         lastCheck: new Date(),
       }
     } catch {
-      void _error
+      error
       return {
         certificate: null,
         daysUntilExpiry: null,
@@ -521,7 +505,7 @@ export class CertificateMonitor {
 
     // Restart monitoring with new config
     this.stop()
-    this.start().catch(async (async error => {
+    this.start().catch(async (error) => {
       await this.logger.logError('certificate_monitor_restart_failed', {
         error: error instanceof Error ? error.message : 'Unknown error',
         timestamp: new Date().toISOString(),

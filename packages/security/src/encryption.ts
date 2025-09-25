@@ -94,8 +94,9 @@ export class EncryptionManager {
         iv,
       )
 
-      let decrypted = decipher.update(encrypted, 'utf8', 'utf8')
-      decrypted += decipher.final('utf8')
+      let decryptedBuffer = decipher.update(encrypted)
+      decryptedBuffer = Buffer.concat([decryptedBuffer, decipher.final()])
+      const decrypted = decryptedBuffer.toString('utf8')
 
       return decrypted
     } catch (_error) {
@@ -127,8 +128,9 @@ export class EncryptionManager {
         iv,
       )
 
-      let decrypted = decipher.update(encrypted, 'utf8', 'utf8')
-      decrypted += decipher.final('utf8')
+      let decryptedBuffer = decipher.update(encrypted)
+      decryptedBuffer = Buffer.concat([decryptedBuffer, decipher.final()])
+      const decrypted = decryptedBuffer.toString('utf8')
 
       return decrypted
     } catch (_error) {

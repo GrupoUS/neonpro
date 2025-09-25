@@ -1,4 +1,4 @@
-declare module '{
+declare module 'tools-shared' {
   // Export all the utilities from tools-shared
   export const FRONTEND_TESTING_VERSION: string
   export const FRONTEND_TESTING_PACKAGE: string

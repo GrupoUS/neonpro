@@ -201,8 +201,9 @@ async function testParallelExecution() {
 }
 
 // Run the tests
-testParallelExecution()
-  .then((success) => {
+;(async () => {
+  try {
+    const success = await testParallelExecution()
     if (success) {
       console.error('\n✨ Test Suite: PASSED')
       process.exit(0)
@@ -210,8 +211,8 @@ testParallelExecution()
       console.error('\n💥 Test Suite: FAILED')
       process.exit(1)
     }
-  })
-  .catch((error) => {
+  } catch (error) {
     console.error('💥 Test Suite crashed:', error)
     process.exit(1)
-  })
+  }
+})()

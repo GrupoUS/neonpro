@@ -1,9 +1,9 @@
 import { createRouter, RouterProvider } from '@tanstack/react-router'
 import * as React from 'react'
 import { createRoot } from 'react-dom/client'
-import { TanStackQueryProvider } from './components/providers/TanStackQueryProvider'
-import { TRPCProvider } from './components/stubs/TRPCProvider'
-import { routeTree } from './routeTree.gen'
+import { TanStackQueryProvider } from './components/stubs/TanStackQueryProvider.js'
+import { TRPCProvider } from './components/stubs/TRPCProvider.js'
+import { routeTree } from './routeTree.gen.js'
 
 // Import PWA Styles
 import './styles/pwa.css'

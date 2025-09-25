@@ -16,6 +16,9 @@ Goal: Keep apps/web type-check green while preparing a safe path to typed API/va
   - Exposes `{ query(path, input), mutation(path, input) }` without importing router types
   - `trpcClient` singleton for convenience in non-critical places
 - Zod enums previously using deprecated patterns were simplified (errorMap removed). No further changes needed now.
+- Shared API contracts published (initial): `@neonpro/types/api/scheduling`
+  - Exposes `MultiSessionSchedulingRequestSchema`, `AestheticSchedulingResponseSchema`
+  - Purpose: frontends can depend on a narrow, stable contract without importing router types
 
 ## Next Steps
 

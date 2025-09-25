@@ -1,19 +1,36 @@
-import { UserRole } from './ai-agent'
-import { ChatMessage } from './ai-chat'
+import { UserRole } from './ai-agent.js'
+import { ChatMessage } from './ai-chat.js'
 
 // Types Package Index Exports
 // This file exports all types from the packages/types directory
 
 // Enhanced Domain-Driven Design types
-export * from './core/base'
-export * from './core/primitives'
-export * from './domain'
+export * from './core/base.js'
+export * from './core/primitives.js'
+
+// Domain types with conflict resolution
+export type { DomainEvent as BaseDomainEvent } from './core/base.js'
+export type {
+  LGPDConsentStatus,
+  validateCPF as validateHealthcareCPF,
+  validateCEP as validateAddressCEP,
+  Gender,
+  BloodType,
+  ContactMethod,
+  AppointmentStatus,
+  AppointmentPriority,
+  AppointmentType
+} from './domain/index.js'
+export type { DomainEvent } from './domain/events/domain-events.js'
 
 // Validation schemas and utilities
-export * from './validation/validators'
-export * from './validation/zod/patient'
-export * from './validation/valibot/patient'
-export * from './validation/valibot/appointment'
+export * from './validation/validators.js'
+export * from './validation/zod/patient.js'
+export type {
+  AppointmentStatus as ValibotAppointmentStatus,
+  AppointmentPriority as ValibotAppointmentPriority,
+  AppointmentType as ValibotAppointmentType
+} from './validation/valibot/appointment.js'
 
 // Core AI types
 // AI Agent types (avoiding conflicts with ai-chat)
@@ -51,7 +68,7 @@ export type {
   UserPreferences,
   UserQuery,
   UserRole,
-} from './ai-agent'
+} from './ai-agent.js'
 
 // AI Chat types (avoiding conflicts with ai-agent)
 export type {
@@ -63,7 +80,7 @@ export type {
   ChatSessionMetadata,
   ChatSessionStatus,
   ConsentStatus,
-} from './ai-chat'
+} from './ai-chat.js'
 
 // AI Enhanced types (conflicting types handled selectively)
 export type {
@@ -108,32 +125,40 @@ export type {
   UsageCounter,
   UsageCounterData,
   UserSubscription,
-} from './ai-enhanced'
+} from './ai-enhanced.js'
 
 // AI Provider types
-export * from './ai-provider'
+export * from './ai-provider.js'
+
+// Legacy AI provider types for backward compatibility
+export type {
+  AIProviderInterface,
+  GenerateAnswerInput,
+  GenerateAnswerResult,
+  StreamChunk
+} from './ai-provider.js'
 
 // Database and governance types
-export * from './database-records'
-export * from './governance.types'
-export * from './healthcare'
-export * from './healthcare-governance.types'
+export * from './database-records.js'
+export * from './governance.types.js'
+export type { DataSubjectRequest as HealthcareDataSubjectRequest } from './healthcare.js'
+export * from './healthcare-governance.types.js'
 
 // Healthcare validation schemas
-export * from './appointment.valibot'
-export * from './lgpd.valibot'
-export * from './patient.valibot'
-export * from './prescription.valibot'
+export * from './appointment.valibot.js'
+export * from './lgpd.valibot.js'
+export * from './patient.valibot.js'
+export * from './prescription.valibot.js'
 
 // Utility types
-export * from './aesthetic-data'
+export * from './aesthetic-data.js'
 
 // Enhanced AI types (exporting all since ai-enhanced handles the conflicts)
-export * from './enhanced-ai'
-export * from './webrtc'
+export * from './enhanced-ai.js'
+export * from './webrtc.js'
 
 // API contracts
-export * from './api/contracts'
+export * from './api/contracts.js'
 
 // Re-export commonly used types for convenience
 export interface Patient {

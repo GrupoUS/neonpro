@@ -3,8 +3,8 @@
  */
 
 import React from 'react'
-import type { MonthViewProps } from '../../types/event-calendar'
-import { formatCalendarDate, getEventColor } from './utils'
+import type { MonthViewProps } from '../../types/event-calendar.js'
+import { formatCalendarDate, getEventColor } from './utils.js'
 
 export function MonthView({
   date,
@@ -39,7 +39,7 @@ export function MonthView({
   const dayNames = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb']
 
   const getEventsForDay = (day: Date) => {
-    return events.filter(event => {
+    return events.filter((event: any) => {
       const eventDate = new Date(event.start)
       return (
         eventDate.getDate() === day.getDate() &&
@@ -101,7 +101,7 @@ export function MonthView({
                 </div>
 
                 <div className='events space-y-1 max-h-[80px] overflow-y-auto'>
-                  {dayEvents.slice(0, 3).map((event, eventIndex) => (
+                  {dayEvents.slice(0, 3).map((event: any, eventIndex: number) => (
                     <div
                       key={event.id}
                       className={`event-card p-1 rounded text-xs cursor-pointer hover:shadow-md transition-shadow ${
@@ -111,7 +111,7 @@ export function MonthView({
                         backgroundColor: getEventColor(event) + '20',
                         borderLeft: `2px solid ${getEventColor(event)}`,
                       }}
-                      onClick={e => {
+                      onClick={(e: React.MouseEvent) => {
                         e.stopPropagation()
                         onEventClick(event)
                       }}

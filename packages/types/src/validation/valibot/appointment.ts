@@ -3,34 +3,53 @@ import * as v from 'valibot'
 /**
  * Appointment status enum
  */
-const AppointmentStatusSchema = v.enum([
-  'scheduled',
-  'confirmed',
-  'in_progress',
-  'completed',
-  'cancelled',
-  'no_show',
-  'rescheduled',
-])
+const AppointmentStatusSchema = v.enum({
+  scheduled: 'scheduled',
+  confirmed: 'confirmed',
+  in_progress: 'in_progress',
+  completed: 'completed',
+  cancelled: 'cancelled',
+  no_show: 'no_show',
+  rescheduled: 'rescheduled',
+})
 
 /**
  * Appointment priority enum
  */
-const AppointmentPrioritySchema = v.enum([1, 2, 3, 4, 5])
+const AppointmentPrioritySchema = v.enum({
+  1: 1,
+  2: 2,
+  3: 3,
+  4: 4,
+  5: 5,
+})
 
 /**
  * Appointment type enum
  */
-const AppointmentTypeSchema = v.enum([
-  'consultation',
-  'follow_up',
-  'emergency',
-  'procedure',
-  'surgery',
-  'therapy',
-  'vaccination',
-  'check_up',
-])
+const AppointmentTypeSchema = v.enum({
+  consultation: 'consultation',
+  follow_up: 'follow_up',
+  emergency: 'emergency',
+  procedure: 'procedure',
+  surgery: 'surgery',
+  therapy: 'therapy',
+  vaccination: 'vaccination',
+  check_up: 'check_up',
+})
+
+/**
+ * Cancellation reason enum
+ */
+const CancellationReasonSchema = v.enum({
+  patient_cancelled: 'patient_cancelled',
+  professional_cancelled: 'professional_cancelled',
+  clinic_cancelled: 'clinic_cancelled',
+  no_show: 'no_show',
+  medical_reason: 'medical_reason',
+  scheduling_error: 'scheduling_error',
+  other: 'other',
+})
 
 /**
  * Base appointment schema
@@ -62,17 +81,7 @@ export const BaseAppointmentSchema = v.object({
   virtualMeetingLink: v.optional(v.string()),
   cancelledAt: v.optional(v.string()),
   cancelledBy: v.optional(v.string()),
-  cancellationReason: v.optional(
-    v.enum([
-      'patient_cancelled',
-      'professional_cancelled',
-      'clinic_cancelled',
-      'no_show',
-      'medical_reason',
-      'scheduling_error',
-      'other',
-    ])
-  ),
+  cancellationReason: v.optional(CancellationReasonSchema),
   cancellationNotes: v.optional(v.string()),
   rescheduledFrom: v.optional(v.string()),
   rescheduledTo: v.optional(v.string()),
@@ -145,17 +154,7 @@ export const CalendarAppointmentSchema = v.object({
   virtualMeetingLink: v.optional(v.string()),
   cancelledAt: v.optional(v.string()),
   cancelledBy: v.optional(v.string()),
-  cancellationReason: v.optional(
-    v.enum([
-      'patient_cancelled',
-      'professional_cancelled',
-      'clinic_cancelled',
-      'no_show',
-      'medical_reason',
-      'scheduling_error',
-      'other',
-    ])
-  ),
+  cancellationReason: v.optional(CancellationReasonSchema),
   createdAt: v.string(),
   updatedAt: v.string(),
   createdBy: v.string(),

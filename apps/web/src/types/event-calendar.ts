@@ -8,7 +8,7 @@ import {
   CalendarFilters,
   CalendarView,
   TimeSlot,
-} from '../components/event-calendar/utils'
+} from '../components/event-calendar/utils.js'
 
 // Re-export utility types for convenience
 export type { CalendarEvent, CalendarFilters, CalendarView, TimeSlot }

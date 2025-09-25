@@ -1,3 +1,3 @@
 // Core module exports
-export * from './base'
-export * from './primitives'
+export * from './base.js'
+export * from './primitives.js'

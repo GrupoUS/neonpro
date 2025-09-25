@@ -667,15 +667,19 @@ export function withTimeout<T>(
   promise: Promise<T>,
   timeoutMs: number,
 ): Promise<T> {
-  return new Promise((resolve, reject) => {
+  return new Promise(async (resolve, reject) => {
     const timer = setTimeout(() => {
       reject(new Error(`Operation timed out after ${timeoutMs}ms`))
     }, timeoutMs)
 
-    promise
-      .then((result) => resolve(result))
-      .catch((error) => reject(error))
-      .finally(() => clearTimeout(timer))
+    try {
+      const result = await promise
+      resolve(result)
+    } catch (error) {
+      reject(error)
+    } finally {
+      clearTimeout(timer)
+    }
   })
 }
 

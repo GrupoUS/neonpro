@@ -64,6 +64,7 @@
     "type-check": "bun x tsc -p tsconfig.json --noEmit",
     "clean": "rimraf dist",
     "test": "bun test",
+    "build:scheduling": "tsc -p tsconfig.scheduling.json",
     "test:watch": "bun test --watch",
     "lint": "echo 'lint placeholder'",
     "prepare": "echo 'prepare script disabled for workspace install'"

@@ -157,5 +157,11 @@ class PerformanceMonitor {
   }
 }
 
-const monitor = new PerformanceMonitor()
-monitor.runPerformanceTests().catch(console.error)
+;(async () => {
+  const monitor = new PerformanceMonitor()
+  try {
+    await monitor.runPerformanceTests()
+  } catch (error) {
+    console.error(error)
+  }
+})()

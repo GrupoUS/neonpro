@@ -43,7 +43,7 @@ export enum AuditEventType {
   // Security events
   SECURITY_VIOLATION = 'security_violation',
   SECURITY_ALERT = 'security_alert',
-  SECURITY incident = 'security_incident',
+  SECURITY_INCIDENT = 'security_incident',
   SUSPICIOUS_ACTIVITY = 'suspicious_activity',
   RATE_LIMIT_EXCEEDED = 'rate_limit_exceeded',
   BLOCKED_ACCESS = 'blocked_access',
@@ -915,7 +915,7 @@ export class AuditTrailService {
       [AuditEventType.DATA_SHARE]: AuditSeverity.HIGH,
       [AuditEventType.SECURITY_VIOLATION]: AuditSeverity.CRITICAL,
       [AuditEventType.SECURITY_ALERT]: AuditSeverity.HIGH,
-      [AuditEventType.SECURITY incident]: AuditSeverity.CRITICAL,
+      [AuditEventType.SECURITY_INCIDENT]: AuditSeverity.CRITICAL,
       [AuditEventType.SUSPICIOUS_ACTIVITY]: AuditSeverity.HIGH,
       [AuditEventType.RATE_LIMIT_EXCEEDED]: AuditSeverity.MEDIUM,
       [AuditEventType.BLOCKED_ACCESS]: AuditSeverity.MEDIUM,

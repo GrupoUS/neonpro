@@ -82,7 +82,7 @@ export function isEmailString(value: unknown): value is EmailString {
 }
 
 export function isPhoneNumberString(value: unknown): value is PhoneNumberString {
-  return typeof value === 'string' && /^[\d\s\-\+\(\)]+$/.test(value)
+  return typeof value === 'string' && /^[\d\s\-+()]+$/.test(value)
 }
 
 export function isURLString(value: unknown): value is URLString {
@@ -213,8 +213,8 @@ export type Subtract<A extends number, B extends number> =
 
 // Array manipulation types
 export type Head<T extends readonly unknown[]> = T extends readonly [infer H, ...readonly unknown[]] ? H : never
-export type Tail<T extends readonly unknown[]> = T extends readonly [unknown, ...infer Rest] ? Rest : never
-export type Last<T extends readonly unknown[]> = T extends readonly [...infer Rest, infer L] ? L : never
+export type Tail<T extends readonly unknown[]> = T extends readonly [unknown, ...infer _Rest] ? _Rest : never
+export type Last<T extends readonly unknown[]> = T extends readonly [...infer _Rest, infer L] ? L : never
 export type Push<T extends readonly unknown[], U> = [...T, U]
 export type Unshift<T extends readonly unknown[], U> = [U, ...T]
 export type Concat<T extends readonly unknown[], U extends readonly unknown[]> = [...T, ...U]
@@ -229,72 +229,3 @@ export type OmitThisParameter<T> = T extends (this: unknown, ...args: infer P) =
 export type Awaited<T> = T extends PromiseLike<infer U> ? Awaited<U> : T
 export type PromiseValue<T> = T extends Promise<infer U> ? U : T
 
-// Export all primitive types
-export type {
-  NonEmptyString,
-  EmailString,
-  PhoneNumberString,
-  URLString,
-  UUIDString,
-  PositiveNumber,
-  NonNegativeNumber,
-  Percentage,
-  ISODateString,
-  DateTimeString,
-  TimeString,
-  NonEmptyArray,
-  ReadonlyNonEmptyArray,
-  RequiredKeys,
-  OptionalKeys,
-  AsyncFunction,
-  SyncFunction,
-  EventHandler,
-  AsyncEventHandler,
-  Predicate,
-  AsyncPredicate,
-  Mapper,
-  AsyncMapper,
-  Reducer,
-  AsyncReducer,
-  Comparator,
-  AsyncComparator,
-  Validator,
-  AsyncValidator,
-  Transformer,
-  AsyncTransformer,
-  Formatter,
-  AsyncFormatter,
-  Parser,
-  AsyncParser,
-  Serializer,
-  AsyncSerializer,
-  PickRequired,
-  PickOptional,
-  DeepPartial,
-  DeepRequired,
-  DeepReadonly,
-  NonNullable,
-  NonUndefined,
-  NonNullableFields,
-  NonUndefinedFields,
-  If,
-  IsNever,
-  IsAny,
-  IsUnknown,
-  Capitalize,
-  Uncapitalize,
-  Add,
-  Subtract,
-  Head,
-  Tail,
-  Last,
-  Push,
-  Unshift,
-  Concat,
-  Parameters,
-  ReturnType,
-  ThisParameterType,
-  OmitThisParameter,
-  Awaited,
-  PromiseValue,
-}

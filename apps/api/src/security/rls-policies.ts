@@ -4,6 +4,7 @@
  */
 
 import { createServerClient } from '../clients/supabase.js'
+import { healthcareLogger, SECURITY_EVENT_TYPES } from '../logging/healthcare-logger'
 
 export interface RLSContext {
   userId: string
@@ -215,7 +216,13 @@ export class AdvancedRLSPolicies {
         auditRequired: true,
       }
     } catch (error) {
-      console.error('Error evaluating RLS policy:', error)
+      healthcareLogger.error('Error evaluating RLS policy', error, {
+        tableName,
+        operation,
+        userId: context.userId,
+        clinicId: context.clinicId,
+        severity: 'high'
+      })
       return {
         allowed: false,
         reason: 'RLS policy evaluation error',
@@ -329,7 +336,12 @@ export class AdvancedRLSPolicies {
 
       return true
     } catch (error) {
-      console.error('Error validating patient consent:', error)
+      healthcareLogger.error('Error validating patient consent', error, {
+        userId,
+        recordId,
+        tableName,
+        severity: 'medium'
+      })
       return false
     }
   }
@@ -397,7 +409,11 @@ export class AdvancedRLSPolicies {
 
       return true
     } catch (error) {
-      console.error('Error evaluating dynamic conditions:', error)
+      healthcareLogger.error('Error evaluating dynamic conditions', error, {
+        userId: context.userId,
+        conditions,
+        severity: 'medium'
+      })
       return false
     }
   }
@@ -489,7 +505,11 @@ USING (${sqlConditions});
       // Log RLS context setting for audit trail
       await this.logRLSContextSet(context)
     } catch (error) {
-      console.error('Error setting RLS context:', error)
+      healthcareLogger.error('Error setting RLS context', error, {
+        userId: context.userId,
+        clinicId: context.clinicId,
+        severity: 'high'
+      })
       throw new Error('Failed to set RLS context')
     }
   }
@@ -543,7 +563,10 @@ USING (${sqlConditions});
         },
       })
     } catch (error) {
-      console.warn('Failed to log RLS context set:', error)
+      healthcareLogger.warn('Failed to log RLS context set', error, {
+        userId: context.userId,
+        severity: 'low'
+      })
     }
   }
 

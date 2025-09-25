@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "ES2022",
     "module": "ESNext",
-    "moduleResolution": "bundler",
+    "moduleResolution": "node16",
     "lib": ["ES2022"],
     "allowJs": true,
     "checkJs": false,
@@ -42,9 +42,7 @@
     "incremental": true,
     "tsBuildInfoFile": "./.tsbuildinfo",
 
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "downlevelIteration": true,
+    "tsBuildInfoFile": "./.tsbuildinfo",
 
     "baseUrl": ".",
     "paths": {

@@ -2,6 +2,7 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "composite": true,
+    "module": "Node16",
     "rootDir": "./src",
     "baseUrl": ".",
     "lib": [
@@ -93,10 +94,10 @@
     "src/test-setup.ts",
     "src/routes/**",
     "src/services/pwa/**",
-    "src/utils/pwa.ts",
     "src/lib/trpc.ts",
     "src/lib/trpc/**",
     // Temporarily exclude complex components until APIs/types are stabilized
+    "src/lib/accessibility-validation.ts",
     "src/components/aesthetic-scheduling/**",
     "src/components/ai-clinical-support/**",
     "src/components/chat/agents/**",

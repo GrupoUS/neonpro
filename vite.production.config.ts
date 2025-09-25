@@ -5,7 +5,7 @@ import { defineConfig } from 'vite'
 let visualizer: any
 try {
   visualizer = require('rollup-plugin-visualizer')
-} catch (e) {
+} catch {
   // Plugin not available, will be skipped
 }
 

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { logger } from '@neonpro/shared';
+import { healthcareLogger as logger } from '@neonpro/shared';
 
 /**
  * AI provider interface

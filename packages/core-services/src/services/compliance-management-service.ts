@@ -619,12 +619,16 @@ export class ComplianceManagementService {
     }
 
     // Generate the report data asynchronously
-    this.generateReportData(data.id).catch(async (error => {
-      logHealthcareError('compliance', error as Error, {
-        method: 'generateReportDataAsync',
-        reportId: data.id,
-      })
-    })
+    ;(async () => {
+      try {
+        await this.generateReportData(data.id)
+      } catch (error) {
+        await logHealthcareError('compliance', error as Error, {
+          method: 'generateReportDataAsync',
+          reportId: data.id,
+        })
+      }
+    })()
 
     return data
   }

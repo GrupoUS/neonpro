@@ -147,7 +147,7 @@ export const NeonProLGPDCompliance: React.FC<LGPDComplianceProps> = ({
   const [metrics, setMetrics] = useState<ComplianceMetrics>(calculateComplianceMetrics())
 
   // Calculate compliance metrics
-  function calculateComplianceMetrics(): ComplianceMetrics {
+  const calculateComplianceMetrics = useCallback((): ComplianceMetrics => {
     const totalConsents = mockDataSubjects.reduce(
       (sum, subject) => sum + subject.consentRecords.length,
       0,
@@ -188,10 +188,10 @@ export const NeonProLGPDCompliance: React.FC<LGPDComplianceProps> = ({
       accessRequestScore,
       riskLevel,
     }
-  }
+  }, [auditLogs.length])
 
   // Mask sensitive data
-  const maskSensitiveData = (data: string, dataType: string): string => {
+  const maskSensitiveData = useCallback((data: string, dataType: string): string => {
     if (showSensitiveData) return data
 
     switch (dataType) {
@@ -211,7 +211,7 @@ export const NeonProLGPDCompliance: React.FC<LGPDComplianceProps> = ({
       default:
         return data.replace(/./g, '*')
     }
-  }
+  }, [showSensitiveData])
 
   // Log audit event
   const logAuditEvent = useCallback((
@@ -238,7 +238,7 @@ export const NeonProLGPDCompliance: React.FC<LGPDComplianceProps> = ({
     setMetrics(calculateComplianceMetrics())
 
     onComplianceAction?.('audit_log', auditEvent)
-  }, [userId, onComplianceAction])
+  }, [userId, onComplianceAction, calculateComplianceMetrics])
 
   // Handle consent grant
   const handleGrantConsent = useCallback(async () => {
@@ -285,7 +285,7 @@ export const NeonProLGPDCompliance: React.FC<LGPDComplianceProps> = ({
         'medium',
       )
     }
-  }, [selectedSubject, consentForm, userId, logAuditEvent])
+  }, [selectedSubject, consentForm, userId, logAuditEvent, calculateComplianceMetrics])
 
   // Handle data access request
   const handleDataAccessRequest = useCallback(async (subjectId: string, purpose: string) => {
@@ -373,7 +373,7 @@ export const NeonProLGPDCompliance: React.FC<LGPDComplianceProps> = ({
         'high',
       )
     }
-  }, [showSensitiveData, userId, logAuditEvent])
+  }, [userId, logAuditEvent, maskSensitiveData])
 
   // Handle data deletion
   const _handleDataDeletion = useCallback(async (subjectId: string) => {

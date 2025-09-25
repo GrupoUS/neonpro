@@ -69,7 +69,8 @@
       "mcp__serena__think_about_task_adherence",
       "mcp__serena__onboarding",
       "mcp__web-search-prime__webSearchPrime",
-      "mcp__zai-mcp-server__analyze_image"
+      "mcp__zai-mcp-server__analyze_image",
+      "Read(//tmp/**)"
     ],
     "deny": [
       "Edit",
@@ -95,6 +96,7 @@
       "mcp__supabase__get_project_url"
     ]
   },
+  "enableAllProjectMcpServers": true,
   "enabledMcpjsonServers": [
     "archon",
     "desktop-commander",
@@ -102,6 +104,5 @@
     "Sequential Thinking",
     "serena",
     "playwright"
-  ],
-  "enableAllProjectMcpServers": true
+  ]
 }

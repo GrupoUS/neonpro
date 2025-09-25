@@ -99,7 +99,7 @@ class BuildOptimizer {
     );
   }
 
-  analyzeDirectory(dir) {
+  analyzeDirectory(_dir) {
     const stats = { totalSize: 0, files: [] };
     
     // This is a simplified analysis - in real implementation,
@@ -112,14 +112,14 @@ class BuildOptimizer {
     
     // Type checking performance
     const typeCheckStart = Date.now();
-    const typeCheckResult = this.execCommand('bun run type-check', { 
-      timeout: 60000 
+    this.execCommand('bun run type-check', {
+      timeout: 60000
     });
     const typeCheckDuration = Date.now() - typeCheckStart;
     
     // Incremental build performance
     const incrementalStart = Date.now();
-    const incrementalResult = this.execCommand('bun run type-check', { 
+    this.execCommand('bun run type-check', {
       timeout: 30000 
     });
     const incrementalDuration = Date.now() - incrementalStart;
@@ -239,7 +239,13 @@ class BuildOptimizer {
 // Run if called directly
 if (import.meta.url === `file://${process.argv[1]}`) {
   const optimizer = new BuildOptimizer();
-  optimizer.run().catch(console.error);
+  ;(async () => {
+    try {
+      await optimizer.run()
+    } catch (error) {
+      console.error(error)
+    }
+  })()
 }
 
 export default BuildOptimizer;

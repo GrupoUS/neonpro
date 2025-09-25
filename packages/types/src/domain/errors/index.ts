@@ -1,2 +1,2 @@
 // Domain Errors
-export * from './domain-errors'
+export * from './domain-errors.js'

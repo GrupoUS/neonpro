@@ -4,7 +4,7 @@ import type {
   GenerateAnswerInput,
   GenerateAnswerResult,
   StreamChunk,
-} from '@neonpro/types'
+} from '../types/index.js'
 
 interface GoogleConfig {
   model?: string

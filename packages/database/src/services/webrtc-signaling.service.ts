@@ -584,13 +584,17 @@ export class WebRTCSignalingServer {
       const participant = room.participants.get(socket.id)
       if (participant) {
         // Handle graceful leave
-        this.handleLeaveSession(socket, sessionId).catch(async (error => {
-          logHealthcareError('database', error, {
-            method: 'handleDisconnect',
-            sessionId,
-            socketId: socket.id,
-          })
-        })
+        ;(async () => {
+          try {
+            await this.handleLeaveSession(socket, sessionId)
+          } catch (error) {
+            await logHealthcareError('database', error, {
+              method: 'handleDisconnect',
+              sessionId,
+              socketId: socket.id,
+            })
+          }
+        })()
       }
     }
   }
@@ -730,23 +734,25 @@ export class WebRTCSignalingServer {
           room.participants.delete(socketId)
 
           // Log compliance event
-          this.cfmService
-            .logComplianceEvent({
-              sessionId,
-              eventType: 'participant_timeout',
-              description: `Participant ${participant._userId} timed out due to inactivity`,
-              metadata: {
-                inactiveTime,
-                signaling: true,
-              },
-            })
-            .catch(async (error => {
-              logHealthcareError('database', error, {
+          ;(async () => {
+            try {
+              await this.cfmService.logComplianceEvent({
+                sessionId,
+                eventType: 'participant_timeout',
+                description: `Participant ${participant._userId} timed out due to inactivity`,
+                metadata: {
+                  inactiveTime,
+                  signaling: true,
+                },
+              })
+            } catch (error) {
+              await logHealthcareError('database', error, {
                 method: 'cleanupInactiveSessions',
                 sessionId,
                 userId: participant._userId,
               })
-            })
+            }
+          })()
         } else {
           // Reset activity flag for next check
           participant.isActive = false

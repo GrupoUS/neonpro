@@ -107,7 +107,7 @@ export interface Command {
 }
 
 // Query interface for CQRS
-export interface Query<T = unknown> {
+export interface Query {
   id: UUID
   type: string
   payload: unknown
@@ -182,15 +182,3 @@ export interface Notification {
   createdAt: Timestamp
 }
 
-// Export all base types
-export type {
-  UUID,
-  Timestamp,
-  DateString,
-  Email,
-  PhoneNumber,
-  URL,
-  JSONValue,
-  JSONObject,
-  JSONArray,
-}

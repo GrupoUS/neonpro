@@ -1,20 +1,36 @@
 // T042: Enhanced logging and monitoring setup
-import { HealthcareSecurityLogger } from '@neonpro/security'
+// Simple healthcare logger implementation to avoid circular dependencies
+interface SimpleHealthcareLogger {
+  info(message: string, metadata?: Record<string, any>): void
+  warn(message: string, metadata?: Record<string, any>): void
+  error(message: string, metadata?: Record<string, any>): void
+  debug(message: string, metadata?: Record<string, any>): void
+}
+
+class SimpleHealthcareLoggerImpl implements SimpleHealthcareLogger {
+  info(message: string, metadata?: Record<string, any>): void {
+    console.log(`[Healthcare] ${message}`, metadata || '')
+  }
+
+  warn(message: string, metadata?: Record<string, any>): void {
+    console.warn(`[Healthcare] ${message}`, metadata || '')
+  }
+
+  error(message: string, metadata?: Record<string, any>): void {
+    console.error(`[Healthcare] ${message}`, metadata || '')
+  }
+
+  debug(message: string, metadata?: Record<string, any>): void {
+    console.debug(`[Healthcare] ${message}`, metadata || '')
+  }
+}
 
 // Global healthcare security logger instance
-let healthcareLogger: HealthcareSecurityLogger | null = null
+let healthcareLogger: SimpleHealthcareLogger | null = null
 
-export function getHealthcareLogger(): HealthcareSecurityLogger {
+export function getHealthcareLogger(): SimpleHealthcareLogger {
   if (!healthcareLogger) {
-    healthcareLogger = new HealthcareSecurityLogger({
-      enableConsoleLogging: true,
-      enableDatabaseLogging: false,
-      enableFileLogging: false,
-      enableAuditLogging: true,
-      logLevel: 'info',
-      sanitizeSensitiveData: true,
-      complianceLevel: 'standard',
-    })
+    healthcareLogger = new SimpleHealthcareLoggerImpl()
   }
   return healthcareLogger
 }
@@ -89,7 +105,7 @@ export class Logger {
     } catch (error) {
       // Fallback to basic PII redaction if LGPD utils are not available
       const logger = getHealthcareLogger()
-      logger.warn('LGPD utilities not available, using basic PII redaction', { error: error?.message })
+      logger.warn('LGPD utilities not available, using basic PII redaction', { error: error instanceof Error ? error.message : String(error) })
     }
   }
 
@@ -151,7 +167,7 @@ export class Logger {
         await fs.promises.appendFile(this.config.filePath, formattedLog + '\n')
       } catch (error) {
         const logger = getHealthcareLogger()
-        logger.error('Failed to write to log file', { error: error?.message, filePath: this.config.filePath })
+        logger.error('Failed to write to log file', { error: error instanceof Error ? error.message : String(error), filePath: this.config.filePath })
       }
     }
   }
@@ -167,7 +183,7 @@ export class Logger {
       await Promise.all(batch.map(entry => this.writeToLog(entry)))
     } catch (error) {
       const logger = getHealthcareLogger()
-      logger.error('Failed to process log batch', { error: error?.message, batchSize: batch.length })
+      logger.error('Failed to process log batch', { error: error instanceof Error ? error.message : String(error), batchSize: batch.length })
       // Re-add failed entries to the batch for retry
       this.logBatch.unshift(...batch)
     } finally {
@@ -301,31 +317,36 @@ export class Logger {
   // Legacy synchronous methods for backward compatibility (deprecated)
   debugSync(message: string, _context?: Record<string, any>): void {
     this.debug(message, _context).catch(error => {
-      console.error('Failed to log debug message:', error)
+      const logger = getHealthcareLogger()
+      logger.error('Failed to log debug message', { error: error?.message })
     })
   }
 
   infoSync(message: string, context?: Record<string, any>): void {
     this.info(message, context).catch(error => {
-      console.error('Failed to log info message:', error)
+      const logger = getHealthcareLogger()
+      logger.error('Failed to log info message', { error: error?.message })
     })
   }
 
   warnSync(message: string, context?: Record<string, any>, error?: Error): void {
     this.warn(message, context, error).catch(err => {
-      console.error('Failed to log warn message:', err)
+      const logger = getHealthcareLogger()
+      logger.error('Failed to log warn message', { error: err?.message })
     })
   }
 
   errorSync(message: string, context?: Record<string, any>, error?: Error): void {
     this.error(message, context, error).catch(err => {
-      console.error('Failed to log error message:', err)
+      const logger = getHealthcareLogger()
+      logger.error('Failed to log error message', { error: err?.message })
     })
   }
 
   fatalSync(message: string, context?: Record<string, any>, error?: Error): void {
     this.fatal(message, context, error).catch(err => {
-      console.error('Failed to log fatal message:', err)
+      const logger = getHealthcareLogger()
+      logger.error('Failed to log fatal message', { error: err?.message })
     })
   }
 

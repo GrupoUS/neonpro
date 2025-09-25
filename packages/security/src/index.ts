@@ -11,9 +11,9 @@ export const SECURITY_VERSION = '1.0.0'
  * Implements LGPD, ANVISA, and CFM compliance requirements
  */
 
-import { randomUUID } from 'crypto'
-import { AuditLogger, AuditLogEntry, HealthcareAccessMetadata } from './audit/logger'
+import { AuditLogger, HealthcareAccessMetadata } from './audit/logger'
 import { SecurityUtils } from './utils'
+import { consoleManager } from './console-manager'
 
 export interface HealthcareLogEntry {
   id: string
@@ -183,17 +183,21 @@ export class HealthcareSecurityLogger {
 
     // Also log to audit system
     if (this.options.enableAuditLogging && options?.userId) {
-      this.auditLogger.logHealthcareAccess(
-        options.userId,
-        'access',
-        metadata.patientId || '',
-        metadata.dataType,
-        metadata.lgpdConsent,
-        metadata
-      ).catch(error => {
-        // Silent fail for audit logging to prevent disrupting main functionality
-        void error
-      })
+      ;(async () => {
+        try {
+          await this.auditLogger.logHealthcareAccess(
+            options.userId || 'system',
+            'access',
+            metadata.patientId || '',
+            metadata.dataType || 'unknown',
+            metadata.lgpdConsent || false,
+            metadata
+          )
+        } catch (error) {
+          // Silent fail for audit logging to prevent disrupting main functionality
+          void error
+        }
+      })()
     }
   }
 
@@ -215,15 +219,19 @@ export class HealthcareSecurityLogger {
 
     // Also log to audit system
     if (this.options.enableAuditLogging && options?.userId) {
-      this.auditLogger.success(
-        options.userId,
-        'audit_event',
-        'system',
-        { ...metadata, message }
-      ).catch(error => {
-        // Silent fail for audit logging to prevent disrupting main functionality
-        void error
-      })
+      ;(async () => {
+        try {
+          await this.auditLogger.success(
+            options.userId || 'system',
+            'audit_event',
+            'system',
+            { ...metadata, message: message || '' }
+          )
+        } catch (error) {
+          // Silent fail for audit logging to prevent disrupting main functionality
+          void error
+        }
+      })()
     }
   }
 
@@ -261,10 +269,14 @@ export class HealthcareSecurityLogger {
 
     // Database logging (future implementation)
     if (this.options.enableDatabaseLogging) {
-      this.logToDatabase(entry).catch(error => {
-        // Silent fail for database logging
-        void error
-      })
+      ;(async () => {
+        try {
+          await this.logToDatabase(entry)
+        } catch (error) {
+          // Silent fail for database logging
+          void error
+        }
+      })()
     }
 
     // File logging (future implementation)
@@ -306,20 +318,22 @@ export class HealthcareSecurityLogger {
       metadata: entry.metadata,
     }
 
-    // Use appropriate console method based on level
+    // Use structured output to appropriate stream (healthcare compliant)
+    const logOutput = JSON.stringify(logEntry) + '\n'
+
     switch (entry.level) {
       case 'error':
       case 'security':
-        console.error(JSON.stringify(logEntry, null, 2))
+        process.stderr.write(logOutput)
         break
       case 'warn':
-        console.warn(JSON.stringify(logEntry, null, 2))
+        process.stderr.write(logOutput)
         break
       case 'debug':
-        console.debug(JSON.stringify(logEntry, null, 2))
+        process.stdout.write(logOutput)
         break
       default:
-        console.log(JSON.stringify(logEntry, null, 2))
+        process.stdout.write(logOutput)
     }
   }
 
@@ -446,76 +460,27 @@ export class HealthcareSecurityLogger {
    * Replace console methods with healthcare-compliant logging
    */
   static initialize(logger: HealthcareSecurityLogger): void {
-    // Store original console methods
-    const originalConsole = {
-      log: console.log,
-      error: console.error,
-      warn: console.warn,
-      info: console.info,
-      debug: console.debug,
-    }
-
-    // Replace console methods with healthcare logging
-    console.log = (...args: unknown[]) => {
-      const message = args.map(arg => {
-        if (typeof arg === 'object') return JSON.stringify(arg)
-        return String(arg)
-      }).join(' ')
-
-      logger.info(message, { originalArgs: args })
-    }
-
-    console.error = (...args: unknown[]) => {
-      const message = args.map(arg => {
-        if (typeof arg === 'object') return JSON.stringify(arg)
-        return String(arg)
-      }).join(' ')
-
-      logger.error(message, { originalArgs: args })
-    }
-
-    console.warn = (...args: unknown[]) => {
-      const message = args.map(arg => {
-        if (typeof arg === 'object') return JSON.stringify(arg)
-        return String(arg)
-      }).join(' ')
-
-      logger.warn(message, { originalArgs: args })
-    }
-
-    console.info = (...args: unknown[]) => {
-      const message = args.map(arg => {
-        if (typeof arg === 'object') return JSON.stringify(arg)
-        return String(arg)
-      }).join(' ')
-
-      logger.info(message, { originalArgs: args })
-    }
-
-    console.debug = (...args: unknown[]) => {
-      const message = args.map(arg => {
-        if (typeof arg === 'object') return JSON.stringify(arg)
-        return String(arg)
-      }).join(' ')
-
-      logger.debug(message, { originalArgs: args })
-    }
-
+    // Create healthcare-compliant console methods
+    const healthcareMethods = consoleManager.createHealthcareMethods(logger)
+    
+    // Replace console methods
+    consoleManager.replaceMethods(healthcareMethods)
+    
     // Store original console methods for restoration
-    ;(logger as any).originalConsole = originalConsole
+    ;(logger as any).originalConsole = consoleManager.getOriginalMethods()
   }
 
   /**
    * Restore original console methods
    */
   static restore(logger: HealthcareSecurityLogger): void {
+    if (!logger) {
+      throw new Error('HealthcareSecurityLogger instance is required for restoration')
+    }
+    
     const originalConsole = (logger as any).originalConsole
     if (originalConsole) {
-      console.log = originalConsole.log
-      console.error = originalConsole.error
-      console.warn = originalConsole.warn
-      console.info = originalConsole.info
-      console.debug = originalConsole.debug
+      consoleManager.restoreToOriginal()
     }
   }
 }
@@ -524,7 +489,7 @@ export class HealthcareSecurityLogger {
 export const healthcareSecurityLogger = new HealthcareSecurityLogger()
 
 // Export for easy importing
-export default HealthcareSecurityLogger
+// export default HealthcareSecurityLogger // Disabled to avoid multiple default exports
 
 // Core encryption and key management
 export { EncryptionManager, encryptionManager, KeyManager, keyManager } from './encryption'
@@ -582,106 +547,17 @@ export {
   securityLogging,
 } from './middleware'
 
-// Import required classes for default export
-import { EncryptionManager, encryptionManager, KeyManager, keyManager } from './encryption'
-
-import { RateLimiter, rateLimiter, SecurityUtils, securityUtils } from './utils'
-
 // Named facade for common usage
 export function maskSensitiveData(data: string, maskChar: string = '*') {
   return SecurityUtils.maskSensitiveData(data, maskChar)
 }
 
-import {
-  authentication,
-  authorization,
-  csrfProtection,
-  getProtectedRoutesMiddleware,
-  getSecurityMiddlewareStack,
-  healthcareDataProtection,
-  inputValidation,
-  rateLimiting,
-  requestId,
-  securityHeaders,
-  securityLogging,
-} from './middleware'
-
-// Import anonymization utilities
-import {
-  ANONYMIZATION_VERSION,
-  anonymizePersonalData,
-  DEFAULT_MASKING_OPTIONS,
-  generatePrivacyReport,
-  maskPatientData,
-} from './anonymization'
-
 // Default export with all components
-export default {
-  version: SECURITY_VERSION,
-
-  // Core classes
-  EncryptionManager,
-  KeyManager,
-  SecurityUtils,
-  RateLimiter,
-
-  // Singleton instances
-  encryptionManager,
-  keyManager,
-  securityUtils,
-  rateLimiter,
-
-  // Middleware functions
-  securityHeaders,
-  inputValidation,
-  rateLimiting,
-  csrfProtection,
-  authentication,
-  authorization,
-  requestId,
-  securityLogging,
-  healthcareDataProtection,
-  getSecurityMiddlewareStack,
-  getProtectedRoutesMiddleware,
-
-  // Convenience exports
-  utils: {
-    SecurityUtils,
-    RateLimiter,
-    securityUtils,
-    rateLimiter,
-  },
-
-  encryption: {
-    EncryptionManager,
-    KeyManager,
-    encryptionManager,
-    keyManager,
-  },
-
-  middleware: {
-    securityHeaders,
-    inputValidation,
-    rateLimiting,
-    csrfProtection,
-    authentication,
-    authorization,
-    requestId,
-    securityLogging,
-    healthcareDataProtection,
-    getSecurityMiddlewareStack,
-    getProtectedRoutesMiddleware,
-  },
-
-  // LGPD anonymization utilities
-  anonymization: {
-    maskPatientData,
-    anonymizePersonalData,
-    generatePrivacyReport,
-    DEFAULT_MASKING_OPTIONS,
-    ANONYMIZATION_VERSION,
-  },
-}
+// Default export disabled to avoid conflicts
+// export default {
+//   version: SECURITY_VERSION,
+//   // ... all the exports would go here
+// }
 
 // Re-export Hono types for convenience
 export type { Context, Next } from 'hono'

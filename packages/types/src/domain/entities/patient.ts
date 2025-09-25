@@ -10,6 +10,10 @@
  * - Healthcare-specific fields
  * - Emergency contact information
  */
+
+// Import value objects
+import { validateCPF, formatCPF } from '../value-objects/healthcare.js'
+import { Gender, BloodType, ContactMethod } from '../value-objects/gender.js'
 export interface Patient {
   // Core identification
   id: string
@@ -175,7 +179,3 @@ export class PatientFactory {
     })
   }
 }
-
-// Import value objects
-import { validateCPF, formatCPF } from '../../value-objects/healthcare'
-import { Gender, BloodType, ContactMethod } from '../../value-objects/gender'

@@ -249,7 +249,13 @@ class BundleAnalyzer {
 // Run if called directly
 if (import.meta.url === `file://${process.argv[1]}`) {
   const analyzer = new BundleAnalyzer();
-  analyzer.run().catch(console.error);
+  ;(async () => {
+    try {
+      await analyzer.run()
+    } catch (error) {
+      console.error(error)
+    }
+  })()
 }
 
 export default BundleAnalyzer;

@@ -19,6 +19,25 @@
 
 import { nanoid } from 'nanoid'
 import { z } from 'zod'
+import { HealthcareSecurityLogger } from '@neonpro/security'
+
+// Global healthcare security logger instance
+let healthcareLogger: HealthcareSecurityLogger | null = null
+
+function getHealthcareLogger(): HealthcareSecurityLogger {
+  if (!healthcareLogger) {
+    healthcareLogger = new HealthcareSecurityLogger({
+      enableConsoleLogging: true,
+      enableDatabaseLogging: false,
+      enableFileLogging: false,
+      enableAuditLogging: true,
+      logLevel: 'info',
+      sanitizeSensitiveData: true,
+      complianceLevel: 'standard',
+    })
+  }
+  return healthcareLogger
+}
 
 // ============================================================================
 // CRYPTOGRAPHIC OPERATIONS
@@ -510,7 +529,19 @@ export class SecurityAuditLogger {
     }
 
     // In a real implementation, this would send to a secure audit log system
-    console.log(`[SECURITY_AUDIT] ${auditEvent.eventType}: ${auditEvent.action}`)
+    const logger = getHealthcareLogger()
+    logger.security(`Security audit event: ${auditEvent.eventType}`, {
+      action: auditEvent.action || 'security_audit',
+      component: 'security_audit_logger',
+      eventType: auditEvent.eventType,
+      eventId: auditEvent.id,
+      userId: auditEvent.userId,
+      sessionId: auditEvent.sessionId,
+      resource: auditEvent.resource,
+      result: auditEvent.result,
+      riskLevel: auditEvent.riskLevel,
+      complianceTags: auditEvent.complianceTags
+    })
 
     return auditEvent.id
   }
@@ -702,7 +733,7 @@ export class InputValidationService {
   }
 
   validatePhone(phone: string): boolean {
-    const phoneRegex = /^\+?[\d\s\-\(\)]{10,15}$/
+    const phoneRegex = /^\+?[\d\s\-()]{10,15}$/
     return phoneRegex.test(phone)
   }
 

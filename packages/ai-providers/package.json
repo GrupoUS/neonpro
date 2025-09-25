@@ -2,6 +2,7 @@
   "name": "@neonpro/ai-providers",
   "version": "1.0.0",
   "description": "AI provider management and integration services for NeonPro",
+  "type": "module",
   "main": "dist/index.js",
   "module": "dist/index.js",
   "types": "dist/index.d.ts",

@@ -607,23 +607,22 @@ export const aiRouter = router({
               }
               : undefined,
             messages: input.includeContent
-              ? await ctx.prisma.auditTrail
-                .findMany({
-                  where: {
-                    resourceId: conversation.resourceId,
-                    action: 'AI_CHAT',
-                    resource: {
-                      in: ['AI_MESSAGE_USER', 'AI_MESSAGE_ASSISTANT'],
+              ? await (async () => {
+                  const msgs = await ctx.prisma.auditTrail.findMany({
+                    where: {
+                      resourceId: conversation.resourceId,
+                      action: 'AI_CHAT',
+                      resource: {
+                        in: ['AI_MESSAGE_USER', 'AI_MESSAGE_ASSISTANT'],
+                      },
                     },
-                  },
-                  orderBy: { createdAt: 'asc' },
-                  select: {
-                    additionalInfo: true,
-                    createdAt: true,
-                  },
-                })
-                .then(async (msgs =>
-                  msgs.map(msg => {
+                    orderBy: { createdAt: 'asc' },
+                    select: {
+                      additionalInfo: true,
+                      createdAt: true,
+                    },
+                  })
+                  return msgs.map(msg => {
                     const msgInfo = parseMessageInfo(msg.additionalInfo)
                     return {
                       id: msg.id,
@@ -633,7 +632,7 @@ export const aiRouter = router({
                       createdAt: msg.createdAt.toISOString(),
                     }
                   })
-                )
+                })()
               : undefined,
           }
         }),

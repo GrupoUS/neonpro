@@ -10,14 +10,14 @@ import type {
   CalendarState,
   CalendarView,
   TimeSlot,
-} from '../../types/event-calendar'
-import { CalendarHeader } from './CalendarHeader'
-import { DayView } from './DayView'
-import { EventForm } from './EventForm'
-import { EventModal } from './EventModal'
-import { MonthView } from './MonthView'
-import { formatCalendarDate } from './utils'
-import { WeekView } from './WeekView'
+} from '../../types/event-calendar.js'
+import { CalendarHeader } from './CalendarHeader.js'
+import { DayView } from './DayView.js'
+import { EventForm } from './EventForm.js'
+import { EventModal } from './EventModal.js'
+import { MonthView } from './MonthView.js'
+import { formatCalendarDate } from './utils.js'
+import { WeekView } from './WeekView.js'
 
 export function EventCalendar({
   events,
@@ -106,9 +106,10 @@ export function EventCalendar({
   const handleEventSave = useCallback(async (eventData: Omit<CalendarEvent, 'id'>) => {
     try {
       if (state.selectedEvent?.id) {
-        await onEventUpdate?.({ ...(eventData as any), id: state.selectedEvent.id } as any)
+        await onEventUpdate?.({ ...(eventData as CalendarEvent), id: state.selectedEvent.id })
       } else {
-        await onEventCreate?.(eventData as any)
+        // For new events, pass the start date as expected by onEventCreate
+        await onEventCreate?.(eventData.start)
       }
       stopCreatingEvent()
       setSelectedEvent(undefined)
@@ -128,7 +129,7 @@ export function EventCalendar({
 
   // Render current view
   const renderCurrentView = () => {
-    const filteredEvents = events.filter(event => {
+    const filteredEvents = events.filter((event: CalendarEvent) => {
       // Apply filters
       if (state.filters.type && !state.filters.type.includes(event.type)) return false
       if (state.filters.status && !state.filters.status.includes(event.status)) return false

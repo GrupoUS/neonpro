@@ -3,8 +3,8 @@
  */
 
 import React from 'react'
-import type { WeekViewProps } from '../../types/event-calendar'
-import { formatCalendarDate, getEventColor } from './utils'
+import type { WeekViewProps } from '../../types/event-calendar.js'
+import { formatCalendarDate, getEventColor } from './utils.js'
 
 export function WeekView({
   date,
@@ -63,7 +63,7 @@ export function WeekView({
               </div>
 
               {weekDays.map((day, dayIndex) => {
-                const dayEvents = events.filter(event => {
+                const dayEvents = events.filter((event: any) => {
                   const eventDate = new Date(event.start)
                   return (
                     eventDate.getDate() === day.getDate() &&
@@ -83,7 +83,7 @@ export function WeekView({
                       onDateClick(clickDate)
                     }}
                   >
-                    {dayEvents.map((event, eventIndex) => (
+                    {dayEvents.map((event: any, eventIndex: number) => (
                       <div
                         key={event.id}
                         className={`event-card p-1 rounded text-xs mb-1 cursor-pointer hover:shadow-md transition-shadow ${
@@ -93,7 +93,7 @@ export function WeekView({
                           backgroundColor: getEventColor(event) + '20',
                           borderLeft: `3px solid ${getEventColor(event)}`,
                         }}
-                        onClick={e => {
+                        onClick={(e: React.MouseEvent) => {
                           e.stopPropagation()
                           onEventClick(event)
                         }}

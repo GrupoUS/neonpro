@@ -20,37 +20,37 @@ export type {
   JobQueue,
   StreamChunk,
   WorkerConfig,
-} from './types'
+} from './types/index.js'
 
 // Providers
-export { AnthropicProvider } from './providers/anthropic-provider'
-export { GoogleAIProvider } from './providers/google-provider'
-export { OpenAIProvider } from './providers/openai-provider'
+export { AnthropicProvider } from './providers/anthropic-provider.js'
+export { GoogleAIProvider } from './providers/google-provider.js'
+export { OpenAIProvider } from './providers/openai-provider.js'
 
 // Services
-export { AIServiceManagement, aiServiceManagement } from './services/ai-service-management'
-export { AIService } from './services/AIService'
-export { PIIRedactionService } from './services/pii-redaction'
+export { AIServiceManagement, aiServiceManagement } from './services/ai-service-management.js'
+export { AIService } from './services/AIService.js'
+export { PIIRedactionService } from './services/pii-redaction.js'
 
 // Utility functions
 export async function checkAIServiceHealth() {
-  const { checkAIServiceHealth } = await import('./services/ai-service-management')
+  const { checkAIServiceHealth } = await import('./services/ai-service-management.js')
   return checkAIServiceHealth()
 }
 
 export async function checkModelAvailability(provider?: string, model?: string) {
-  const { checkModelAvailability } = await import('./services/ai-service-management')
+  const { checkModelAvailability } = await import('./services/ai-service-management.js')
   return checkModelAvailability(provider, model)
 }
 
 export async function getAIUsageStats(provider?: string, period?: { start: Date; end: Date }) {
-  const { getAIUsageStats } = await import('./services/ai-service-management')
+  const { getAIUsageStats } = await import('./services/ai-service-management.js')
   return getAIUsageStats(provider, period)
 }
 
 // Provider creation helpers
 export function createOpenAIProvider(apiKey: string, options?: any) {
-  const { createOpenAIProvider } = require('./providers/openai-provider')
+  const { createOpenAIProvider } = require('./providers/openai-provider.js')
   return createOpenAIProvider(apiKey, options)
 }
 

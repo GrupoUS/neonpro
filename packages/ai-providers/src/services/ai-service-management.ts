@@ -5,7 +5,7 @@
  * for AI services in the healthcare platform.
  */
 
-import { AIProvider } from '../providers/ai-provider'
+import { AIProvider } from '../providers/ai-provider.js'
 
 // Simple error class for AI service management
 class AIServiceError extends Error {

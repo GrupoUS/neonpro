@@ -95,7 +95,7 @@ export class SecurityValidationService {
       /\.\.\/|\.\.\\/,
       
       // Command injection
-      /[;&|`\$]/,
+      /[;&|`$]/,
       /\b(cmd|command|exec|eval|system)\b/i,
       
       // NoSQL injection

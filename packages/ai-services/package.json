@@ -1,7 +1,8 @@
 {
   "name": "@neonpro/ai-services",
-  "version": "1.0.0",
-  "description": "AI provider management and clinical decision support for NeonPro healthcare platform",
+  "version": "2.3.0",
+  "type": "module",
+  "description": "Unified AI provider management system with healthcare compliance for NeonPro platform",
   "main": "dist/src/index.js",
   "module": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
@@ -10,6 +11,21 @@
       "types": "./dist/src/index.d.ts",
       "import": "./dist/src/index.js",
       "require": "./dist/src/index.js"
+    },
+    "./providers": {
+      "types": "./dist/src/providers/index.d.ts",
+      "import": "./dist/src/providers/index.js",
+      "require": "./dist/src/providers/index.js"
+    },
+    "./services": {
+      "types": "./dist/src/services/index.d.ts",
+      "import": "./dist/src/services/index.js",
+      "require": "./dist/src/services/index.js"
+    },
+    "./types": {
+      "types": "./dist/src/types/index.d.ts",
+      "import": "./dist/src/types/index.js",
+      "require": "./dist/src/types/index.js"
     },
     "./providers/*": {
       "types": "./dist/src/providers/*.d.ts",
@@ -20,6 +36,11 @@
       "types": "./dist/src/services/*.d.ts",
       "import": "./dist/src/services/*.js",
       "require": "./dist/src/services/*.js"
+    },
+    "./types/*": {
+      "types": "./dist/src/types/*.d.ts",
+      "import": "./dist/src/types/*.js",
+      "require": "./dist/src/types/*.js"
     }
   },
   "scripts": {
@@ -33,7 +54,9 @@
     "lint": "oxlint",
     "lint:fix": "oxlint --fix",
     "validate-providers": "tsx scripts/validate-providers.ts",
-    "test-clinical-ai": "bun test src/services/clinical-ai.test.ts"
+    "test-clinical-ai": "bun test src/services/clinical-ai.test.ts",
+    "health-check": "tsx scripts/health-check.ts",
+    "compliance-check": "tsx scripts/compliance-check.ts"
   },
   "dependencies": {
     "@neonpro/types": "workspace:*",
@@ -42,13 +65,16 @@
     "@google/generative-ai": "^0.24.1",
     "openai": "^4.0.0",
     "zod": "^4.1.11",
-    "ai": "^5.0.50"
+    "ai": "^5.0.50",
+    "ioredis": "^5.3.2"
   },
   "devDependencies": {
     "@types/node": "^20.19.13",
+    "@types/ioredis": "^5.0.0",
     "typescript": "^5.9.2",
     "vitest": "^3.2.4",
-    "tsx": "^4.6.2"
+    "tsx": "^4.6.2",
+    "rimraf": "^5.0.1"
   },
   "peerDependencies": {
     "@neonpro/security-compliance": "workspace:*",
@@ -68,7 +94,12 @@
     "providers",
     "anthropic",
     "openai",
-    "google"
+    "google",
+    "unified",
+    "healthcare-compliance",
+    "lgpd",
+    "anvisa",
+    "brazil"
   ],
   "author": "NeonPro Team",
   "license": "MIT",

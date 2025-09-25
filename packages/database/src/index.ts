@@ -4,10 +4,10 @@
  */
 
 // Core database clients - factory functions
-export { createClient, createServiceClient } from './client'
+export { createClient, createServiceClient } from './client.js'
 
 // Database types - only what core-services needs
-export type { SupabaseClient } from './client'
+export type { SupabaseClient } from './client.js'
 
 // Health check utilities
-export { checkDatabaseHealth, closeDatabaseConnections } from './client'
+export { checkDatabaseHealth, closeDatabaseConnections } from './client.js'

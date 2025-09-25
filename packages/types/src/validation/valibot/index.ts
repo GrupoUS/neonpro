@@ -1,3 +1,2 @@
 // Valibot validation schemas
-export * from './patient'
-export * from './appointment'
+export * from './appointment.js'

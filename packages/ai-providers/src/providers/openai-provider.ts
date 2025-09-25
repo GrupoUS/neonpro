@@ -3,7 +3,7 @@ import type {
   GenerateAnswerInput,
   GenerateAnswerResult,
   StreamChunk,
-} from '@neonpro/types'
+} from '../types/index.js'
 import OpenAI from 'openai'
 
 /**

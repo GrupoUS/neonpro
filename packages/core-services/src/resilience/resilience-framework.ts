@@ -324,11 +324,11 @@ export class TimeoutManager {
       }, this.config.overallMs)
 
       operation()
-        .then(async (result => {
+        .then((result) => {
           clearTimeout(timeoutId)
           resolve(result)
         })
-        .catch(async (error => {
+        .catch((error) => {
           clearTimeout(timeoutId)
           _reject(error)
         })

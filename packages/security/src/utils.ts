@@ -450,75 +450,31 @@ export class RateLimiter {
  * Prevents logging of credentials, SQL queries, XSS payloads, and other sensitive data
  */
 export class SecureLogger {
-  private static originalConsole = {
-    log: console.log,
-    error: console.error,
-    warn: console.warn,
-    info: console.info,
-    debug: console.debug,
-  }
-
   /**
    * Initialize secure logging by replacing console methods with sanitized versions
    */
   static initialize(): void {
-    console.log = this.secureLog
-    console.error = this.secureError
-    console.warn = this.secureWarn
-    console.info = this.secureInfo
-    console.debug = this.secureDebug
+    // Import consoleManager dynamically to avoid circular dependencies
+    const { consoleManager } = require('./console-manager')
+    
+    // Create secure console methods
+    const secureMethods = consoleManager.createSecureMethods((args: unknown[]) => {
+      return args.map(arg => this.sanitizeLogArgument(arg as LogArgument))
+    })
+    
+    // Replace console methods
+    consoleManager.replaceMethods(secureMethods)
   }
 
   /**
    * Restore original console methods
    */
   static restore(): void {
-    console.log = this.originalConsole.log
-    console.error = this.originalConsole.error
-    console.warn = this.originalConsole.warn
-    console.info = this.originalConsole.info
-    console.debug = this.originalConsole.debug
+    // Import consoleManager dynamically to avoid circular dependencies
+    const { consoleManager } = require('./console-manager')
+    consoleManager.restoreToOriginal()
   }
 
-  /**
-   * Secure log method that sanitizes sensitive data
-   */
-  private static secureLog = (...args: LogArgument[]): void => {
-    const sanitizedArgs = args.map(arg => this.sanitizeLogArgument(arg))
-    this.originalConsole.log(...sanitizedArgs)
-  }
-
-  /**
-   * Secure error method that sanitizes sensitive data
-   */
-  private static secureError = (...args: LogArgument[]): void => {
-    const sanitizedArgs = args.map(arg => this.sanitizeLogArgument(arg))
-    this.originalConsole.error(...sanitizedArgs)
-  }
-
-  /**
-   * Secure warn method that sanitizes sensitive data
-   */
-  private static secureWarn = (...args: LogArgument[]): void => {
-    const sanitizedArgs = args.map(arg => this.sanitizeLogArgument(arg))
-    this.originalConsole.warn(...sanitizedArgs)
-  }
-
-  /**
-   * Secure info method that sanitizes sensitive data
-   */
-  private static secureInfo = (...args: LogArgument[]): void => {
-    const sanitizedArgs = args.map(arg => this.sanitizeLogArgument(arg))
-    this.originalConsole.info(...sanitizedArgs)
-  }
-
-  /**
-   * Secure debug method that sanitizes sensitive data
-   */
-  private static secureDebug = (...args: LogArgument[]): void => {
-    const sanitizedArgs = args.map(arg => this.sanitizeLogArgument(arg))
-    this.originalConsole.debug(...sanitizedArgs)
-  }
 
   /**
    * Sanitize a single log argument

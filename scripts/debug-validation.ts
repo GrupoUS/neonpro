@@ -102,4 +102,10 @@ async function debugValidation() {
   console.error(`Passes threshold: ${confidence >= minConfidence}`)
 }
 
-debugValidation().catch(console.error)
+;(async () => {
+  try {
+    await debugValidation()
+  } catch (error) {
+    console.error(error)
+  }
+})()

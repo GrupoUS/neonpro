@@ -4,10 +4,10 @@ import type {
   GenerateAnswerInput,
   GenerateAnswerResult,
   StreamChunk,
-} from '../types'
-import { AnthropicProvider } from './anthropic-provider'
-import { GoogleAIProvider } from './google-provider'
-import { OpenAIProvider } from './openai-provider'
+} from '../types/index.js'
+import { AnthropicProvider } from './anthropic-provider.js'
+import { GoogleAIProvider } from './google-provider.js'
+import { OpenAIProvider } from './openai-provider.js'
 
 class MockProvider implements AIProviderInterface {
   async generateAnswer(

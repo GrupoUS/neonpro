@@ -1,4 +1,4 @@
-import { LegalBasis } from '../value-objects/gender'
+import { LegalBasis } from '../value-objects/gender.js'
 
 /**
  * Consent status enum

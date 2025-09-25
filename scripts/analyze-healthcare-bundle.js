@@ -516,10 +516,14 @@ class HealthcareBundleAnalyzer {
 // Run analysis if called directly
 if (require.main === module) {
   const analyzer = new HealthcareBundleAnalyzer()
-  analyzer.analyze().catch(error => {
-    console.error('Healthcare bundle analysis failed:', error)
-    process.exit(1)
-  })
+  ;(async () => {
+    try {
+      await analyzer.analyze()
+    } catch (error) {
+      console.error('Healthcare bundle analysis failed:', error)
+      process.exit(1)
+    }
+  })()
 }
 
 module.exports = HealthcareBundleAnalyzer

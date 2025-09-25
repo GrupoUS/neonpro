@@ -4,6 +4,7 @@
     "outDir": "dist",
     "rootDir": "src",
     "baseUrl": ".",
+    "tsBuildInfoFile": "./.tsbuildinfo-healthcare-core",
     "paths": {
       "@/*": ["src/*"],
       "@/entities/*": ["src/entities/*"],
@@ -12,6 +13,7 @@
       "@/utils/*": ["src/utils/*"]
     },
     "composite": true,
+    "module": "Node16",
     "noEmit": false,
     "declaration": true,
     "declarationMap": true,
@@ -29,7 +31,6 @@
   "references": [
     { "path": "../types" },
     { "path": "../shared" },
-    { "path": "../database" },
-    { "path": "../ai-services" }
+    { "path": "../database" }
   ]
 }

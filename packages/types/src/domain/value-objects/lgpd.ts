@@ -1,4 +1,4 @@
-import { LegalBasis } from './gender'
+import { LegalBasis } from './gender.js'
 
 /**
  * LGPD-specific value objects and utilities

@@ -1,2 +1,2 @@
 // Domain Events
-export * from './domain-events'
+export * from './domain-events.js'

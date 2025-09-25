@@ -181,7 +181,7 @@ export class QueryOptimizerService {
         }
       }
 
-      const executionTime = performance.now() - startTime
+      const executionTime = performance.now() - _startTime
 
       // Get query plan if analysis is enabled
       let indexesUsed: string[] = []
@@ -225,7 +225,7 @@ export class QueryOptimizerService {
 
       return { data: result, metrics }
     } catch {
-      const executionTime = performance.now() - startTime
+      const executionTime = performance.now() - _startTime
       const metrics: QueryMetrics = {
         queryId,
         query: this.sanitizeQuery(query),

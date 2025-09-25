@@ -67,7 +67,7 @@ export class HTTPSMonitoringMiddleware {
           // Record metrics asynchronously
           httpsMonitoringService
             .recordHandshakeMetrics(metrics)
-            .catch(async (error => {
+            .catch(async (error) => {
               logger.error(
                 'https_monitoring_middleware',
                 'Failed to record handshake metrics',
@@ -75,11 +75,11 @@ export class HTTPSMonitoringMiddleware {
                   error: error.message,
                   sessionId: tlsInfo.sessionId,
                   requestId,
-                },
+                }
               )
             })
         }
-      } catch {
+      } catch (error) {
         void _error
         logger.error(
           'https_monitoring_middleware',
@@ -87,7 +87,7 @@ export class HTTPSMonitoringMiddleware {
           {
             error: (error as Error).message,
             requestId,
-          },
+          }
         )
       }
     })
@@ -332,14 +332,14 @@ export class HTTPSMonitoringMiddleware {
 
         httpsMonitoringService
           .recordHandshakeMetrics(metrics)
-          .catch(async (error => {
+          .catch(async (error) => {
             logger.error(
               'https_monitoring_middleware',
               'Failed to record handshake metrics',
               {
                 error: error.message,
                 sessionId,
-              },
+              }
             )
           })
 
@@ -354,7 +354,7 @@ export class HTTPSMonitoringMiddleware {
         {
           error: (error as Error).message,
           sessionId,
-        },
+        }
       )
     }
   }

@@ -16,63 +16,98 @@ import { Progress } from '@/components/ui/progress'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { cn } from '@/lib/utils'
 
-interface PatientData {
-  personalInfo: {
-    fullName: string
-    cpf?: string
-    dateOfBirth: string
-    email?: string
-    phone: string
-  }
-  address: {
-    street: string
-    number: string
-    complement?: string
-    neighborhood: string
-    city: string
-    state: string
-    zipCode: string
-  }
-  emergencyContact: {
-    name: string
-    relationship: string
-    phone: string
-    email?: string
-  }
-  medicalHistory: {
-    allergies?: string[]
-    medications?: string[]
-    conditions?: string[]
-    previousTreatments?: string[]
-    notes?: string
-  }
-  consent: {
-    treatmentConsent: boolean
-    dataSharingConsent: boolean
-    marketingConsent: boolean
-    emergencyContactConsent: boolean
-  }
-}
+// Import new types and validation
+import { 
+  PatientData, 
+  BrazilianPersonalInfo, 
+  BrazilianAddress, 
+  EmergencyContact, 
+  MedicalHistory, 
+  LGPDConsent,
+  HealthcareContext,
+  BrazilianState 
+} from '@/types/healthcare'
+import { HealthcareFormValidator, FormFieldError, FormValidationResult } from '@/types/validation'
 
+// Type-safe form errors
 interface FormErrors {
-  [key: string]: string
+  'personalInfo.fullName'?: string
+  'personalInfo.cpf'?: string
+  'personalInfo.dateOfBirth'?: string
+  'personalInfo.email'?: string
+  'personalInfo.phone'?: string
+  'address.street'?: string
+  'address.number'?: string
+  'address.complement'?: string
+  'address.neighborhood'?: string
+  'address.city'?: string
+  'address.state'?: string
+  'address.zipCode'?: string
+  'emergencyContact.name'?: string
+  'emergencyContact.relationship'?: string
+  'emergencyContact.phone'?: string
+  'emergencyContact.email'?: string
+  'medicalHistory.allergies'?: string
+  'medicalHistory.medications'?: string
+  'medicalHistory.conditions'?: string
+  'medicalHistory.previousTreatments'?: string
+  'consent.treatmentConsent'?: string
+  'consent.dataSharingConsent'?: string
+  'consent.marketingConsent'?: string
+  'consent.emergencyContactConsent'?: string
 }
 
 interface AccessiblePatientRegistrationProps {
   onSubmit: (data: PatientData) => Promise<void>
   onCancel?: () => void
   className?: string
+  validationLevel?: 'basic' | 'strict' | 'healthcare_critical'
 }
+
+// Brazilian state options
+const BRAZILIAN_STATES: Array<{ value: BrazilianState; label: string }> = [
+  { value: 'AC', label: 'Acre' },
+  { value: 'AL', label: 'Alagoas' },
+  { value: 'AP', label: 'Amapá' },
+  { value: 'AM', label: 'Amazonas' },
+  { value: 'BA', label: 'Bahia' },
+  { value: 'CE', label: 'Ceará' },
+  { value: 'DF', label: 'Distrito Federal' },
+  { value: 'ES', label: 'Espírito Santo' },
+  { value: 'GO', label: 'Goiás' },
+  { value: 'MA', label: 'Maranhão' },
+  { value: 'MT', label: 'Mato Grosso' },
+  { value: 'MS', label: 'Mato Grosso do Sul' },
+  { value: 'MG', label: 'Minas Gerais' },
+  { value: 'PA', label: 'Pará' },
+  { value: 'PB', label: 'Paraíba' },
+  { value: 'PR', label: 'Paraná' },
+  { value: 'PE', label: 'Pernambuco' },
+  { value: 'PI', label: 'Piauí' },
+  { value: 'RJ', label: 'Rio de Janeiro' },
+  { value: 'RN', label: 'Rio Grande do Norte' },
+  { value: 'RS', label: 'Rio Grande do Sul' },
+  { value: 'RO', label: 'Rondônia' },
+  { value: 'RR', label: 'Roraima' },
+  { value: 'SC', label: 'Santa Catarina' },
+  { value: 'SP', label: 'São Paulo' },
+  { value: 'SE', label: 'Sergipe' },
+  { value: 'TO', label: 'Tocantins' },
+]
 
 export const AccessiblePatientRegistration: React.FC<AccessiblePatientRegistrationProps> = ({
   onSubmit,
   onCancel,
   className,
+  validationLevel = 'strict',
 }) => {
   const { t, formatDate } = useTranslation()
   const { announce } = useScreenReaderAnnouncer()
   const { setFocus } = useFocusManagement()
   const { registerFocusable } = useKeyboardNavigation()
+
+  // Initialize validator
+  const validator = React.useMemo(() => new HealthcareFormValidator(validationLevel), [validationLevel])
 
   const [currentStep, setCurrentStep] = React.useState(0)
   const [patientData, setPatientData] = React.useState<Partial<PatientData>>({})
@@ -80,42 +115,49 @@ export const AccessiblePatientRegistration: React.FC<AccessiblePatientRegistrati
   const [isSubmitting, setIsSubmitting] = React.useState(false)
   const [submitError, setSubmitError] = React.useState<string | null>(null)
 
+  // Form steps with proper typing
   const formSteps = [
     {
-      id: 'personal',
+      id: 'personal' as const,
       title: t('forms.personalInfo'),
       description: 'Informações básicas do paciente',
       icon: '👤',
+      context: 'patient' as HealthcareContext,
     },
     {
-      id: 'address',
+      id: 'address' as const,
       title: t('forms.address'),
       description: 'Endereço residencial',
       icon: '🏠',
+      context: 'administrative' as HealthcareContext,
     },
     {
-      id: 'emergency',
+      id: 'emergency' as const,
       title: t('healthcare.emergencyContact'),
       description: 'Contato para emergências',
       icon: '🆘',
+      context: 'emergency' as HealthcareContext,
     },
     {
-      id: 'medical',
+      id: 'medical' as const,
       title: t('medicalHistory.title'),
       description: 'Histórico médico importante',
       icon: '🏥',
+      context: 'medical' as HealthcareContext,
     },
     {
-      id: 'consent',
+      id: 'consent' as const,
       title: t('lgpd.consentTitle'),
       description: 'Consentimentos LGPD',
       icon: '📋',
+      context: 'administrative' as HealthcareContext,
     },
     {
-      id: 'review',
+      id: 'review' as const,
       title: 'Revisão',
       description: 'Revisão e confirmação',
       icon: '✅',
+      context: 'administrative' as HealthcareContext,
     },
   ]
 
@@ -132,20 +174,91 @@ export const AccessiblePatientRegistration: React.FC<AccessiblePatientRegistrati
     }
   }, [currentStep, announce, setFocus])
 
-  // Form validation
+  // Type-safe field change handler
+  const handleFieldChange = <T extends keyof PatientData>(
+    field: T, 
+    value: PatientData[T]
+  ) => {
+    setPatientData(prev => {
+      const newData = { ...prev }
+      
+      if (field.includes('.')) {
+        const [section, subField] = field.split('.') as [keyof PatientData, string]
+        if (section && newData[section]) {
+          newData[section] = {
+            ...newData[section],
+            [subField]: value
+          }
+        }
+      } else {
+        newData[field] = value
+      }
+      
+      return newData
+    })
+
+    // Clear error when field is updated
+    const errorKey = field as keyof FormErrors
+    if (errors[errorKey]) {
+      setErrors(prev => {
+        const newErrors = { ...prev }
+        delete newErrors[errorKey]
+        return newErrors
+      })
+    }
+  }
+
+  // Type-safe field-specific change handler
+  const handleNestedFieldChange = <T extends keyof PatientData>(
+    section: T,
+    subField: string,
+    value: any
+  ) => {
+    const fieldKey = `${String(section)}.${subField}` as keyof FormErrors
+    handleFieldChange(fieldKey, value)
+  }
+
+  // Enhanced form validation using the validator
   const validateStep = (step: number): boolean => {
     const newErrors: FormErrors = {}
-
+    
+    // Validate specific step fields
     switch (step) {
       case 0: // Personal Info
         if (!patientData.personalInfo?.fullName?.trim()) {
           newErrors['personalInfo.fullName'] = t('forms.required')
         }
+        
+        if (patientData.personalInfo?.cpf) {
+          const cpfError = validator.validateCPF(patientData.personalInfo.cpf)
+          if (cpfError) {
+            newErrors['personalInfo.cpf'] = cpfError.message
+          }
+        }
+        
         if (!patientData.personalInfo?.dateOfBirth) {
           newErrors['personalInfo.dateOfBirth'] = t('forms.required')
+        } else {
+          const dobError = validator.validateDateOfBirth(patientData.personalInfo.dateOfBirth)
+          if (dobError) {
+            newErrors['personalInfo.dateOfBirth'] = dobError.message
+          }
         }
+        
         if (!patientData.personalInfo?.phone?.trim()) {
           newErrors['personalInfo.phone'] = t('forms.required')
+        } else {
+          const phoneError = validator.validatePhone(patientData.personalInfo.phone)
+          if (phoneError) {
+            newErrors['personalInfo.phone'] = phoneError.message
+          }
+        }
+        
+        if (patientData.personalInfo?.email) {
+          const emailError = validator.validateEmail(patientData.personalInfo.email)
+          if (emailError) {
+            newErrors['personalInfo.email'] = emailError.message
+          }
         }
         break
 
@@ -167,6 +280,11 @@ export const AccessiblePatientRegistration: React.FC<AccessiblePatientRegistrati
         }
         if (!patientData.address?.zipCode?.trim()) {
           newErrors['address.zipCode'] = t('forms.required')
+        } else {
+          const zipCodeError = validator.validateZipCode(patientData.address.zipCode)
+          if (zipCodeError) {
+            newErrors['address.zipCode'] = zipCodeError.message
+          }
         }
         break
 
@@ -179,6 +297,11 @@ export const AccessiblePatientRegistration: React.FC<AccessiblePatientRegistrati
         }
         if (!patientData.emergencyContact?.phone?.trim()) {
           newErrors['emergencyContact.phone'] = t('forms.required')
+        } else {
+          const phoneError = validator.validatePhone(patientData.emergencyContact.phone)
+          if (phoneError) {
+            newErrors['emergencyContact.phone'] = phoneError.message
+          }
         }
         break
 
@@ -203,32 +326,6 @@ export const AccessiblePatientRegistration: React.FC<AccessiblePatientRegistrati
     }
 
     return true
-  }
-
-  const handleFieldChange = (field: string, value: any) => {
-    setPatientData(prev => {
-      const [section, subField] = field.split('.')
-      if (subField) {
-        return {
-          ...prev,
-          [section]: {
-            ...prev[section as keyof PatientData],
-            [subField]: value,
-          },
-        }
-      } else {
-        return { ...prev, [field]: value }
-      }
-    })
-
-    // Clear error when field is updated
-    if (errors[field]) {
-      setErrors(prev => {
-        const newErrors = { ...prev }
-        delete newErrors[field]
-        return newErrors
-      })
-    }
   }
 
   const nextStep = () => {
@@ -258,11 +355,38 @@ export const AccessiblePatientRegistration: React.FC<AccessiblePatientRegistrati
       return
     }
 
+    // Final validation of all data
+    const finalValidation = validator.validatePatientData(patientData)
+    if (!finalValidation.isValid) {
+      const newErrors: FormErrors = {}
+      finalValidation.errors.forEach(error => {
+        const key = error.field as keyof FormErrors
+        newErrors[key] = error.message
+      })
+      setErrors(newErrors)
+      return
+    }
+
     setIsSubmitting(true)
     setSubmitError(null)
 
     try {
-      await onSubmit(patientData as PatientData)
+      // Add timestamps and consent data
+      const completeData: PatientData = {
+        personalInfo: patientData.personalInfo!,
+        address: patientData.address!,
+        emergencyContact: patientData.emergencyContact!,
+        medicalHistory: patientData.medicalHistory || {},
+        consent: {
+          ...patientData.consent!,
+          consentDate: new Date().toISOString(),
+          consentVersion: '1.0'
+        },
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      }
+
+      await onSubmit(completeData)
       announce({
         message: t('announcements.formSubmitted'),
         politeness: 'polite',
@@ -280,6 +404,8 @@ export const AccessiblePatientRegistration: React.FC<AccessiblePatientRegistrati
   }
 
   const renderStepContent = () => {
+    const currentStepData = formSteps[currentStep]
+    
     switch (currentStep) {
       case 0: // Personal Info
         return (
@@ -293,32 +419,43 @@ export const AccessiblePatientRegistration: React.FC<AccessiblePatientRegistrati
                 label={t('forms.fullName')}
                 required
                 value={patientData.personalInfo?.fullName || ''}
-                onChange={(e) => handleFieldChange('personalInfo.fullName', e.target.value)}
+                onChange={(e) => handleNestedFieldChange('personalInfo', 'fullName', e.target.value)}
                 error={errors['personalInfo.fullName']}
                 helperText="Nome completo como aparece no documento"
                 healthcareContext="personal"
+                lgpdSensitive={true}
+                dataPurpose="Identificação do paciente"
+                screenReaderInstructions="Digite seu nome completo, incluindo primeiro nome e sobrenome"
               />
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <AccessibilityInput
                   id="cpf"
                   label={t('forms.cpf')}
+                  brazilianFormat="cpf"
                   value={patientData.personalInfo?.cpf || ''}
-                  onChange={(e) => handleFieldChange('personalInfo.cpf', e.target.value)}
+                  onChange={(e) => handleNestedFieldChange('personalInfo', 'cpf', e.target.value)}
                   error={errors['personalInfo.cpf']}
                   helperText="000.000.000-00"
                   healthcareContext="personal"
+                  lgpdSensitive={true}
+                  dataPurpose="Identificação fiscal do paciente"
+                  screenReaderInstructions="Digite seu CPF com pontos e traço"
                 />
 
                 <AccessibilityInput
                   id="dateOfBirth"
                   label={t('forms.dateOfBirth')}
                   type="date"
+                  brazilianFormat="date"
                   required
                   value={patientData.personalInfo?.dateOfBirth || ''}
-                  onChange={(e) => handleFieldChange('personalInfo.dateOfBirth', e.target.value)}
+                  onChange={(e) => handleNestedFieldChange('personalInfo', 'dateOfBirth', e.target.value)}
                   error={errors['personalInfo.dateOfBirth']}
                   healthcareContext="personal"
+                  lgpdSensitive={true}
+                  dataPurpose="Dados demográficos do paciente"
+                  screenReaderInstructions="Digite sua data de nascimento no formato DD/MM/AAAA"
                 />
               </div>
 
@@ -328,22 +465,29 @@ export const AccessiblePatientRegistration: React.FC<AccessiblePatientRegistrati
                   label={t('forms.email')}
                   type="email"
                   value={patientData.personalInfo?.email || ''}
-                  onChange={(e) => handleFieldChange('personalInfo.email', e.target.value)}
+                  onChange={(e) => handleNestedFieldChange('personalInfo', 'email', e.target.value)}
                   error={errors['personalInfo.email']}
                   helperText="email@exemplo.com"
                   healthcareContext="personal"
+                  lgpdSensitive={true}
+                  dataPurpose="Contato do paciente"
+                  screenReaderInstructions="Digite seu endereço de email"
                 />
 
                 <AccessibilityInput
                   id="phone"
                   label={t('forms.phone')}
+                  brazilianFormat="phone"
                   type="tel"
                   required
                   value={patientData.personalInfo?.phone || ''}
-                  onChange={(e) => handleFieldChange('personalInfo.phone', e.target.value)}
+                  onChange={(e) => handleNestedFieldChange('personalInfo', 'phone', e.target.value)}
                   error={errors['personalInfo.phone']}
                   helperText="(11) 99999-9999"
                   healthcareContext="personal"
+                  lgpdSensitive={true}
+                  dataPurpose="Contato do paciente"
+                  screenReaderInstructions="Digite seu telefone com DDD"
                 />
               </div>
             </div>
@@ -364,9 +508,12 @@ export const AccessiblePatientRegistration: React.FC<AccessiblePatientRegistrati
                     label={t('forms.street')}
                     required
                     value={patientData.address?.street || ''}
-                    onChange={(e) => handleFieldChange('address.street', e.target.value)}
+                    onChange={(e) => handleNestedFieldChange('address', 'street', e.target.value)}
                     error={errors['address.street']}
                     healthcareContext="administrative"
+                    lgpdSensitive={true}
+                    dataPurpose="Endereço residencial do paciente"
+                    screenReaderInstructions="Digite o nome da sua rua"
                   />
                 </div>
                 <div>
@@ -375,9 +522,12 @@ export const AccessiblePatientRegistration: React.FC<AccessiblePatientRegistrati
                     label={t('forms.number')}
                     required
                     value={patientData.address?.number || ''}
-                    onChange={(e) => handleFieldChange('address.number', e.target.value)}
+                    onChange={(e) => handleNestedFieldChange('address', 'number', e.target.value)}
                     error={errors['address.number']}
                     healthcareContext="administrative"
+                    lgpdSensitive={true}
+                    dataPurpose="Número do endereço residencial"
+                    screenReaderInstructions="Digite o número da residência"
                   />
                 </div>
               </div>
@@ -386,9 +536,12 @@ export const AccessiblePatientRegistration: React.FC<AccessiblePatientRegistrati
                 id="complement"
                 label={t('forms.complement')}
                 value={patientData.address?.complement || ''}
-                onChange={(e) => handleFieldChange('address.complement', e.target.value)}
+                onChange={(e) => handleNestedFieldChange('address', 'complement', e.target.value)}
                 helperText="Apto, casa, etc."
                 healthcareContext="administrative"
+                lgpdSensitive={true}
+                dataPurpose="Complemento do endereço residencial"
+                screenReaderInstructions="Digite complemento como apartamento ou casa, se aplicável"
               />
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -397,9 +550,12 @@ export const AccessiblePatientRegistration: React.FC<AccessiblePatientRegistrati
                   label={t('forms.neighborhood')}
                   required
                   value={patientData.address?.neighborhood || ''}
-                  onChange={(e) => handleFieldChange('address.neighborhood', e.target.value)}
+                  onChange={(e) => handleNestedFieldChange('address', 'neighborhood', e.target.value)}
                   error={errors['address.neighborhood']}
                   healthcareContext="administrative"
+                  lgpdSensitive={true}
+                  dataPurpose="Bairro do endereço residencial"
+                  screenReaderInstructions="Digite o nome do seu bairro"
                 />
 
                 <AccessibilityInput
@@ -407,9 +563,12 @@ export const AccessiblePatientRegistration: React.FC<AccessiblePatientRegistrati
                   label={t('forms.city')}
                   required
                   value={patientData.address?.city || ''}
-                  onChange={(e) => handleFieldChange('address.city', e.target.value)}
+                  onChange={(e) => handleNestedFieldChange('address', 'city', e.target.value)}
                   error={errors['address.city']}
                   healthcareContext="administrative"
+                  lgpdSensitive={true}
+                  dataPurpose="Cidade do endereço residencial"
+                  screenReaderInstructions="Digite o nome da sua cidade"
                 />
               </div>
 
@@ -420,39 +579,17 @@ export const AccessiblePatientRegistration: React.FC<AccessiblePatientRegistrati
                   </AccessibilityLabel>
                   <Select
                     value={patientData.address?.state || ''}
-                    onValueChange={(value) => handleFieldChange('address.state', value)}
+                    onValueChange={(value) => handleNestedFieldChange('address', 'state', value)}
                   >
                     <SelectTrigger className="w-full" ref={(el) => el && registerFocusable(el, 1)}>
                       <SelectValue placeholder="Selecione o estado" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="AC">Acre</SelectItem>
-                      <SelectItem value="AL">Alagoas</SelectItem>
-                      <SelectItem value="AP">Amapá</SelectItem>
-                      <SelectItem value="AM">Amazonas</SelectItem>
-                      <SelectItem value="BA">Bahia</SelectItem>
-                      <SelectItem value="CE">Ceará</SelectItem>
-                      <SelectItem value="DF">Distrito Federal</SelectItem>
-                      <SelectItem value="ES">Espírito Santo</SelectItem>
-                      <SelectItem value="GO">Goiás</SelectItem>
-                      <SelectItem value="MA">Maranhão</SelectItem>
-                      <SelectItem value="MT">Mato Grosso</SelectItem>
-                      <SelectItem value="MS">Mato Grosso do Sul</SelectItem>
-                      <SelectItem value="MG">Minas Gerais</SelectItem>
-                      <SelectItem value="PA">Pará</SelectItem>
-                      <SelectItem value="PB">Paraíba</SelectItem>
-                      <SelectItem value="PR">Paraná</SelectItem>
-                      <SelectItem value="PE">Pernambuco</SelectItem>
-                      <SelectItem value="PI">Piauí</SelectItem>
-                      <SelectItem value="RJ">Rio de Janeiro</SelectItem>
-                      <SelectItem value="RN">Rio Grande do Norte</SelectItem>
-                      <SelectItem value="RS">Rio Grande do Sul</SelectItem>
-                      <SelectItem value="RO">Rondônia</SelectItem>
-                      <SelectItem value="RR">Roraima</SelectItem>
-                      <SelectItem value="SC">Santa Catarina</SelectItem>
-                      <SelectItem value="SP">São Paulo</SelectItem>
-                      <SelectItem value="SE">Sergipe</SelectItem>
-                      <SelectItem value="TO">Tocantins</SelectItem>
+                      {BRAZILIAN_STATES.map((state) => (
+                        <SelectItem key={state.value} value={state.value}>
+                          {state.label}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                   {errors['address.state'] && (
@@ -463,20 +600,23 @@ export const AccessiblePatientRegistration: React.FC<AccessiblePatientRegistrati
                 <AccessibilityInput
                   id="zipCode"
                   label={t('forms.zipCode')}
+                  brazilianFormat="cep"
                   required
                   value={patientData.address?.zipCode || ''}
-                  onChange={(e) => handleFieldChange('address.zipCode', e.target.value)}
+                  onChange={(e) => handleNestedFieldChange('address', 'zipCode', e.target.value)}
                   error={errors['address.zipCode']}
                   helperText="00000-000"
                   healthcareContext="administrative"
+                  lgpdSensitive={true}
+                  dataPurpose="CEP do endereço residencial"
+                  screenReaderInstructions="Digite seu CEP com o traço"
                 />
               </div>
             </div>
           </HealthcareFormGroup>
         )
 
-      // ... other steps would follow similar pattern
-
+      // Continue with other steps...
       default:
         return <div>Em desenvolvimento...</div>
     }
@@ -518,6 +658,7 @@ export const AccessiblePatientRegistration: React.FC<AccessiblePatientRegistrati
                 )}
                 aria-current={index === currentStep ? 'step' : undefined}
                 aria-disabled={index > currentStep}
+                disabled={index > currentStep}
               >
                 <span>{step.icon}</span>
                 <span className="hidden sm:inline">{step.title}</span>

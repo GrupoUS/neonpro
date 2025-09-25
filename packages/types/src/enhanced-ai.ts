@@ -18,7 +18,7 @@ import type {
   AIProviderConfig,
   GenerateAnswerInput,
   GenerateAnswerResult,
-} from './ai-provider'
+} from './ai-provider.js'
 
 // ================================================
 // ENHANCED AI MODEL TYPES

@@ -51,7 +51,7 @@ export default defineConfig({
 
   // Web server local para testes
   webServer: {
-    command: 'bun run --filter dev',
+    command: 'bun run --filter @neonpro/web dev',
     url: 'http://localhost:3000',
     reuseExistingServer: !process.env.CI,
     timeout: 120 * 1000,

@@ -1,2 +1,2 @@
 // Domain Repositories
-export * from './patient-repository'
+export * from './patient-repository.js'

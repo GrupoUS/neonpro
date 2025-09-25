@@ -4,6 +4,7 @@
 export class DomainError extends Error {
   protected _code: string
   protected _statusCode: number
+  public override cause?: Error
 
   constructor(message: string, code: string, statusCode: number = 400) {
     super(message)

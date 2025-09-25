@@ -142,7 +142,7 @@ export class OttomatorAgentBridge extends EventEmitter {
       this.activeQueries.set(queryId, { resolve, reject, timeout })
 
       // Send query to Python agent
-      this.sendQueryToAgent(queryId, _query).catch(async (error => {
+      this.sendQueryToAgent(queryId, _query).catch(async (error) => {
         clearTimeout(timeout)
         this.activeQueries.delete(queryId)
         reject(error)

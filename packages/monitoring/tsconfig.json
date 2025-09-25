@@ -2,6 +2,8 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "composite": true,
+    "module": "Node16",
+    "module": "Node16",
     "noEmit": false,
     "outDir": "./dist",
     "rootDir": "./src",
@@ -9,5 +11,5 @@
   },
   "include": ["src/**/*"],
   "exclude": ["dist", "node_modules", "**/*.test.ts", "**/*.spec.ts"],
-  "references": [{ "path": "../types" }, { "path": "../utils" }]
+  "references": [{ "path": "../types" }, { "path": "../utils" }, { "path": "../security" }]
 }

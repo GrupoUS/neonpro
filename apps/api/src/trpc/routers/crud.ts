@@ -120,7 +120,7 @@ const crudConfirmSchema = v.object({
   intentId: v.string([v.uuid('Invalid intent ID')]),
   confirmed: v.boolean(),
   modifications: v.optional(
-    _v.lazy(() =>
+    v.lazy(() =>
       v.object({
         patientData: v.optional(PatientSchema.partial()),
         appointmentData: v.optional(AppointmentSchema.partial()),
@@ -151,7 +151,7 @@ const crudExecuteSchema = v.object({
   intentId: v.string([v.uuid('Invalid intent ID')]),
   confirmationId: v.string([v.uuid('Invalid confirmation ID')]),
   finalData: v.optional(
-    _v.lazy(() =>
+    v.lazy(() =>
       v.object({
         patientData: v.optional(PatientSchema.partial()),
         appointmentData: v.optional(AppointmentSchema.partial()),
@@ -366,7 +366,6 @@ async function validateWithAI(
       transformedData: validationResult.transformedData || data,
     }
   } catch {
-    void _error
     // Use global error handler for consistent sanitization
     const appError = GlobalErrorHandler.createError(
       'VALIDATION_ERROR',
@@ -428,7 +427,6 @@ async function generatePreview(
 
     return preview
   } catch {
-    void _error
     // Use global error handler for consistent sanitization
     const appError = GlobalErrorHandler.createError(
       'INTERNAL_ERROR',
@@ -475,7 +473,6 @@ async function getCurrentData(
         return null
     }
   } catch {
-    void _error
     // Use global error handler for consistent sanitization
     const appError = GlobalErrorHandler.createError(
       'INTERNAL_ERROR',
@@ -525,9 +522,7 @@ export const crudRouter = router({
               message: 'Invalid step specified',
             })
         }
-      } catch {
-        void _error
-        void _error
+      } catch (error) {
         console.error('CRUD operation error:', error)
 
         // Create error audit trail
@@ -598,9 +593,7 @@ export const crudRouter = router({
           error: operationState.errorMessage,
           metadata: operationState.metadata,
         }
-      } catch {
-        void _error
-        void _error
+      } catch (error) {
         if (error instanceof TRPCError) {
           throw error
         }
@@ -650,7 +643,7 @@ async function handleIntentStep(
   ctx: any,
   input: v.InferOutput<typeof crudIntentSchema>,
 ) {
-  const _startTime = Date.now()
+  const startTime = Date.now()
 
   // Generate unique intent ID
   const intentId = `intent-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
@@ -889,7 +882,7 @@ async function handleExecuteStep(
   ctx: any,
   input: v.InferOutput<typeof crudExecuteSchema>,
 ) {
-  const _startTime = Date.now()
+  const startTime = Date.now()
 
   // Generate unique execution ID
   const executionId = `exec-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
@@ -911,7 +904,6 @@ async function handleExecuteStep(
   }
 
   const intentData = intentState.data
-  const _confirmData = confirmState.data
 
   // Get the data to execute (require finalData explicitly)
   const executionData = input.finalData

@@ -2,6 +2,7 @@
  * Hook for managing form submission in MultiSessionScheduler
  * KISS: avoid importing router types; use a minimal TRPC client shim.
  */
+import { toApiSchedulingRequest } from '@/lib/adapters/scheduling'
 import { trpc } from '@/lib/trpc'
 import {
   type AestheticSchedulingResponse,
@@ -38,7 +39,8 @@ export function useSchedulingSubmission(
   const handleSubmit = async (data: MultiSessionSchedulingRequest) => {
     try {
       await MultiSessionSchedulingSchema.parseAsync(data)
-      await scheduleMutation.mutateAsync(data)
+      const apiInput = toApiSchedulingRequest(data)
+      await scheduleMutation.mutateAsync(apiInput as any)
     } catch (error) {
       onError?.(error as Error)
     }

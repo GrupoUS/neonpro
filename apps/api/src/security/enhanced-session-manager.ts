@@ -9,7 +9,8 @@
  * @version 2.0.0
  */
 
-import crypto from 'crypto'
+import { SecurityUtils } from '@neonpro/security'
+import { healthcareLogger } from '../logging/healthcare-logger'
 
 // Security configuration
 export interface SessionSecurityConfig {
@@ -133,21 +134,16 @@ export class EnhancedSessionManager {
    * Generate cryptographically secure session ID
    */
   private generateSecureSessionId(): string {
-    const bytes = Math.ceil(this.config.sessionIdEntropyBits / 8)
-    const randomBytes = crypto.randomBytes(bytes)
-    return randomBytes.toString('hex').substring(0, 32)
+    // Use secure token generation from security utils
+    return SecurityUtils.generateSecureToken(32)
   }
 
   /**
    * Generate secure session ID (async version for better randomness)
    */
   private async generateSecureSessionIdAsync(): Promise<string> {
-    const bytes = Math.ceil(this.config.sessionIdEntropyBits / 8)
-    const randomBytes = new Uint8Array(bytes)
-    crypto.getRandomValues(randomBytes)
-    return Array.from(randomBytes, byte => byte.toString(16).padStart(2, '0'))
-      .join('')
-      .substring(0, 32)
+    // Use secure token generation from security utils for async contexts
+    return SecurityUtils.generateSecureToken(32)
   }
 
   /**
@@ -450,9 +446,12 @@ export class EnhancedSessionManager {
       concurrentResult.action === 'remove_oldest' &&
       concurrentResult.removedSession
     ) {
-      console.warn(
-        `Removed oldest session ${concurrentResult.removedSession} due to concurrent session limit`,
-      )
+      healthcareLogger.warn('Removed oldest session due to concurrent session limit', {
+        removedSession: concurrentResult.removedSession,
+        userId,
+        maxSessions: this.config.maxConcurrentSessions,
+        severity: 'low'
+      })
     }
 
     // Create enhanced session
@@ -770,9 +769,11 @@ export class EnhancedSessionManager {
     this.cleanupInterval = setInterval(() => {
       const cleanedCount = this.cleanExpiredSessions()
       if (cleanedCount > 0) {
-        console.warn(
-          `[EnhancedSessionManager] Cleaned ${cleanedCount} expired sessions`,
-        )
+        healthcareLogger.info('Cleaned expired sessions from session manager', {
+          cleanedCount,
+          totalSessions: this.sessions.size,
+          severity: 'low'
+        })
       }
     }, this.config.cleanupInterval)
   }
