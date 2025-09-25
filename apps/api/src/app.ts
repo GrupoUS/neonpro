@@ -4,12 +4,15 @@ import { errorHandler } from './middleware/error-handler'
 import { errorSanitizationMiddleware } from './middleware/error-sanitization'
 import aiRouter from './routes/ai'
 import financialCopilotRouter from './routes/ai/financial-copilot'
+import copilotBridge from './routes/ai/copilot-bridge'
 import appointmentsRouter from './routes/appointments'
 import { billing } from './routes/billing'
 import chatRouter from './routes/chat'
 import { medicalRecords } from './routes/medical-records'
 import patientsRouter from './routes/patients'
 import v1Router from './routes/v1'
+import aiSessionsCleanup from './routes/api/cleanup/ai-sessions'
+import expiredPredictionsCleanup from './routes/api/cleanup/expired-predictions'
 import { Context } from './trpc/context'
 import { appRouter } from './trpc/router'
 
@@ -262,6 +265,9 @@ app.route('/api/v2/ai', aiRouter)
 // Mount Financial CopilotKit routes under /api/v2/financial-copilot
 app.route('/api/v2/financial-copilot', financialCopilotRouter)
 
+// Mount CopilotKit bridge routes under /api/copilotkit
+app.route('/api/copilotkit', copilotBridge)
+
 // Mount V1 API routes under /api/v1
 app.route('/api/v1', v1Router)
 
@@ -287,6 +293,10 @@ const tRPCHandle = trpcServer({
     } as Context
   },
 })
+
+// Mount AI agents cleanup and monitoring routes
+app.route('/api/cleanup/ai-sessions', aiSessionsCleanup)
+app.route('/api/cleanup/expired-predictions', expiredPredictionsCleanup)
 
 // Mount tRPC router with healthcare compliance
 app.mount('/trpc', tRPCHandle)

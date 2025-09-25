@@ -1,5 +1,4 @@
 import { defineConfig } from 'vitest/config'
-import { resolve } from 'path'
 
 export default defineConfig({
   test: {
@@ -14,7 +13,7 @@ export default defineConfig({
       },
     },
     include: [
-      'tools/tests/**/*.{test,spec}.{js,ts}',
+      './**/*.{test,spec}.{js,ts}',
     ],
     exclude: [
       '**/node_modules/**',

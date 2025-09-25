@@ -1,6 +1,7 @@
 // Export all services for easy importing
 
 // Core Services
+export * from './ai-agent-orchestration'
 export * from './ai-chat-service'
 export * from './patient-service'
 export * from './semantic-cache'
