@@ -533,7 +533,7 @@ export abstract class BaseAIProvider implements IUnifiedAIProvider {
       // Medical record numbers
       /\bMRN\s*\d{6,10}\b/gi,
       // Dates (various formats)
-      /\b\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4}\b/g,
+      /\b\d{1,2}[/-]\d{1,2}[/-]\d{2,4}\b/g,
     ];
     
     let sanitizedContent = content;

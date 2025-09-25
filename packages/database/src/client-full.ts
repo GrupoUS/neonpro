@@ -16,17 +16,17 @@ const createOptimizedSupabaseClient = (): SupabaseClient => {
     // Return a mock client for testing
     return {
       from: (_table: string) => ({
-        select: () => Promise.resolve({ data: [], error: null }),
-        insert: () => Promise.resolve({ data: [], error: null }),
-        update: () => Promise.resolve({ data: [], error: null }),
-        delete: () => Promise.resolve({ data: [], error: null }),
+        select: async () => ({ data: [], error: null }),
+        insert: async () => ({ data: [], error: null }),
+        update: async () => ({ data: [], error: null }),
+        delete: async () => ({ data: [], error: null }),
       }),
       auth: {
-        getUser: () => Promise.resolve({ data: { user: null }, error: null }),
+        getUser: async () => ({ data: { user: null }, error: null }),
       },
       storage: {
         from: () => ({
-          upload: () => Promise.resolve({ data: null, error: null }),
+          upload: async () => ({ data: null, error: null }),
         }),
       },
     } as any
@@ -71,20 +71,19 @@ const createBrowserSupabaseClient = (): SupabaseClient => {
     // Return a mock client for testing
     return {
       from: () => ({
-        select: () => Promise.resolve({ data: [], error: null }),
-        insert: () => Promise.resolve({ data: [], error: null }),
-        update: () => Promise.resolve({ data: [], error: null }),
-        delete: () => Promise.resolve({ data: [], error: null }),
+        select: async () => ({ data: [], error: null }),
+        insert: async () => ({ data: [], error: null }),
+        update: async () => ({ data: [], error: null }),
+        delete: async () => ({ data: [], error: null }),
       }),
       auth: {
-        getUser: () => Promise.resolve({ data: { user: null }, error: null }),
-        signInWithPassword: () =>
-          Promise.resolve({ data: { user: null, session: null }, error: null }),
-        signOut: () => Promise.resolve({ error: null }),
+        getUser: async () => ({ data: { user: null }, error: null }),
+        signInWithPassword: async () => ({ data: { user: null, session: null }, error: null }),
+        signOut: async () => ({ error: null }),
       },
       storage: {
         from: () => ({
-          upload: () => Promise.resolve({ data: null, error: null }),
+          upload: async () => ({ data: null, error: null }),
         }),
       },
     } as any
@@ -125,17 +124,17 @@ export const createNodeSupabaseClient = (): SupabaseClient => {
     // Return a mock client for testing
     return {
       from: () => ({
-        select: () => Promise.resolve({ data: [], error: null }),
-        insert: () => Promise.resolve({ data: [], error: null }),
-        update: () => Promise.resolve({ data: [], error: null }),
-        delete: () => Promise.resolve({ data: [], error: null }),
+        select: async () => ({ data: [], error: null }),
+        insert: async () => ({ data: [], error: null }),
+        update: async () => ({ data: [], error: null }),
+        delete: async () => ({ data: [], error: null }),
       }),
       auth: {
-        getUser: () => Promise.resolve({ data: { user: null }, error: null }),
+        getUser: async () => ({ data: { user: null }, error: null }),
       },
       storage: {
         from: () => ({
-          upload: () => Promise.resolve({ data: null, error: null }),
+          upload: async () => ({ data: null, error: null }),
         }),
       },
     } as any

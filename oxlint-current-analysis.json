@@ -1,0 +1,254 @@
+{
+  "scan_timestamp": "2025-09-25T00:00:00Z",
+  "oxlint_version": "1.17.0",
+  "analysis_summary": {
+    "total_errors_identified": 100,
+    "error_categories": {
+      "no-console": {
+        "count": 45,
+        "severity": "warning",
+        "description": "Unexpected console statements",
+        "files_affected": [
+          "packages/validators/debug-cns.ts",
+          "packages/validators/debug-test.js", 
+          "packages/validators/debug-test-values.js",
+          "packages/validators/debug-tuss.ts",
+          "packages/validators/generate-cns-1.ts",
+          "packages/validators/generate-cns.ts",
+          "packages/validators/generate-cpf.ts",
+          "packages/validators/generate-valid-cns.js",
+          "tools/orchestration/utils/logger.ts",
+          "tools/orchestration/src/orchestration-system.ts",
+          "tools/backend/src/setup.ts",
+          "tools/audit-consolidated/src/cli/audit.ts",
+          "tools/orchestration/src/error-handling-patterns.ts",
+          "packages/validators/debug-cns.js",
+          "packages/ui/src/hooks/use-persisted-dashboard-layout.ts",
+          "packages/utils/src/chat/session-management.ts"
+        ]
+      },
+      "check-tag-names": {
+        "count": 25,
+        "severity": "warning", 
+        "description": "Invalid JSDoc tag names",
+        "files_affected": [
+          "packages/ui/src/utils/healthcare-validation.ts",
+          "packages/ui/src/utils/accessibility.ts",
+          "packages/types/src/webrtc.js",
+          "packages/types/src/patient.valibot.js",
+          "packages/ui/src/components/healthcare/healthcare-theme-provider.tsx",
+          "packages/ui/src/components/healthcare/lgpd-consent-banner.tsx",
+          "packages/types/src/lgpd.valibot.js",
+          "packages/ui/src/components/forms/healthcare-text-field.tsx",
+          "packages/ui/src/components/forms/healthcare-form.tsx",
+          "packages/ui/src/components/forms/healthcare-select.tsx",
+          "packages/types/src/prescription.valibot.js",
+          "packages/types/src/patient.valibot.d.ts",
+          "packages/types/src/webrtc.ts",
+          "packages/types/src/webrtc.d.ts",
+          "packages/types/src/lgpd.valibot.d.ts",
+          "packages/types/src/prescription.valibot.d.ts",
+          "packages/shared/src/webrtc/index.js",
+          "packages/shared/src/webrtc/index.ts"
+        ]
+      },
+      "prefer-await-to-then": {
+        "count": 15,
+        "severity": "error",
+        "description": "Prefer await to then()/catch()/finally()",
+        "files_affected": [
+          "tools/shared/src/utils/index.ts",
+          "tools/orchestration/test-simple.ts",
+          "tools/orchestration/scripts/test-integration.ts",
+          "tools/quality/src/monitoring/scripts/performance-monitor.js",
+          "tools/orchestration/test-parallel.ts",
+          "tools/orchestration/src/orchestrator.ts",
+          "tools/orchestration/performance-optimizer.ts",
+          "tools/orchestration/test-integration.ts",
+          "tools/quality/src/monitoring/scripts/health-check.js"
+        ]
+      },
+      "no-unused-vars": {
+        "count": 10,
+        "severity": "error",
+        "description": "Unused variables and imports",
+        "files_affected": [
+          "packages/utils/src/cli/exitHelper.js",
+          "packages/utils/src/cli/cliWrap.js",
+          "tools/backend/src/setup.ts",
+          "tools/orchestration/quality-gate-validator.ts"
+        ]
+      },
+      "syntax_errors": {
+        "count": 8,
+        "severity": "error",
+        "description": "Syntax errors preventing parsing",
+        "files_affected": [
+          "tools/orchestration/test-integration.ts",
+          "tools/orchestration/src/orchestrator.ts",
+          "tools/orchestration/scripts/test-integration.ts",
+          "tools/orchestration/quality-gate-validator.ts",
+          "tools/orchestration/quality-control-automator.ts",
+          "tools/orchestration/src/config.ts",
+          "tools/orchestration/performance-optimizer.ts"
+        ]
+      },
+      "no-array-index-key": {
+        "count": 2,
+        "severity": "error",
+        "description": "React array index in keys not allowed",
+        "files_affected": [
+          "packages/ui/src/components/forms/healthcare-text-field.tsx",
+          "packages/ui/src/components/forms/healthcare-select.tsx"
+        ]
+      },
+      "duplicate_identifier": {
+        "count": 1,
+        "severity": "error",
+        "description": "Duplicate identifier declaration",
+        "files_affected": [
+          "packages/security/src/encryption.ts"
+        ]
+      },
+      "no-async-promise-executor": {
+        "count": 1,
+        "severity": "warning",
+        "description": "Promise executor functions should not be async",
+        "files_affected": [
+          "tools/shared/src/utils/index.ts"
+        ]
+      },
+      "jsx_a11y_issues": {
+        "count": 2,
+        "severity": "warning",
+        "description": "Accessibility issues",
+        "files_affected": [
+          "packages/ui/src/components/ui/pagination.tsx",
+          "packages/ui/src/components/healthcare/lgpd-consent-banner.tsx"
+        ]
+      },
+      "unicorn_no-new-array": {
+        "count": 1,
+        "severity": "warning",
+        "description": "Do not use new Array(singleArgument)",
+        "files_affected": [
+          "packages/utils/src/chat/session-management.ts"
+        ]
+      }
+    }
+  },
+  "priority_files_for_fixing": [
+    {
+      "file": "packages/security/src/encryption.ts",
+      "error_count": 1,
+      "error_type": "duplicate_identifier",
+      "priority": "critical",
+      "impact": "Security functionality broken"
+    },
+    {
+      "file": "tools/orchestration/test-integration.ts",
+      "error_count": 2,
+      "error_types": ["syntax_error", "prefer-await-to-then"],
+      "priority": "high",
+      "impact": "Testing infrastructure broken"
+    },
+    {
+      "file": "tools/orchestration/src/orchestrator.ts",
+      "error_count": 2,
+      "error_types": ["syntax_error", "prefer-await-to-then"],
+      "priority": "high",
+      "impact": "Core orchestration broken"
+    },
+    {
+      "file": "tools/shared/src/utils/index.ts",
+      "error_count": 3,
+      "error_types": ["prefer-await-to-then", "no-async-promise-executor"],
+      "priority": "high",
+      "impact": "Shared utilities affected"
+    },
+    {
+      "file": "packages/ui/src/components/forms/healthcare-text-field.tsx",
+      "error_count": 2,
+      "error_types": ["check-tag-names", "no-array-index-key"],
+      "priority": "medium",
+      "impact": "UI component functionality"
+    },
+    {
+      "file": "packages/ui/src/components/forms/healthcare-select.tsx",
+      "error_count": 2,
+      "error_types": ["check-tag-names", "no-array-index-key"],
+      "priority": "medium",
+      "impact": "UI component functionality"
+    }
+  ],
+  "error_reduction_strategy": {
+    "phase_1_critical_fixes": {
+      "focus": "Syntax errors and duplicate identifiers",
+      "files": [
+        "packages/security/src/encryption.ts",
+        "tools/orchestration/test-integration.ts",
+        "tools/orchestration/src/orchestrator.ts",
+        "tools/orchestration/scripts/test-integration.ts",
+        "tools/orchestration/quality-gate-validator.ts",
+        "tools/orchestration/quality-control-automator.ts",
+        "tools/orchestration/src/config.ts",
+        "tools/orchestration/performance-optimizer.ts"
+      ],
+      "expected_reduction": "10 errors",
+      "priority": "critical"
+    },
+    "phase_2_high_impact": {
+      "focus": "prefer-await-to-then and no-unused-vars",
+      "files": [
+        "tools/shared/src/utils/index.ts",
+        "tools/orchestration/test-simple.ts",
+        "tools/orchestration/test-parallel.ts",
+        "tools/orchestration/performance-optimizer.ts",
+        "packages/utils/src/cli/exitHelper.js",
+        "packages/utils/src/cli/cliWrap.js",
+        "tools/backend/src/setup.ts",
+        "tools/orchestration/quality-gate-validator.ts"
+      ],
+      "expected_reduction": "20 errors",
+      "priority": "high"
+    },
+    "phase_3_mass_cleanup": {
+      "focus": "no-console warnings (bulk fix)",
+      "files": "packages/validators/*.js, packages/validators/*.ts",
+      "expected_reduction": "25 errors",
+      "priority": "medium"
+    },
+    "phase_4_jdoc_cleanup": {
+      "focus": "check-tag-names warnings",
+      "files": "packages/types/src/*.valibot.*, packages/ui/src/**/*.tsx",
+      "expected_reduction": "20 errors",
+      "priority": "low"
+    },
+    "phase_5_final_polish": {
+      "focus": "React and accessibility issues",
+      "files": "packages/ui/src/components/forms/*.tsx",
+      "expected_reduction": "5 errors",
+      "priority": "low"
+    }
+  },
+  "recommendations": {
+    "immediate_actions": [
+      "Fix duplicate rotateKey function in encryption.ts",
+      "Repair syntax errors in orchestration files",
+      "Convert promise chains to async/await patterns",
+      "Remove unused imports and variables"
+    ],
+    "automation_opportunities": [
+      "Bulk remove console.log statements from validator files",
+      "Mass replace @fileoverview with @file in JSDoc comments",
+      "Automate React key prop fixes",
+      "Standardize JSDoc tag usage across codebase"
+    ],
+    "quality_gates": [
+      "Zero syntax errors in critical infrastructure",
+      "All Promise chains converted to async/await",
+      "No unused variables in production code",
+      "Console statements only in development files"
+    ]
+  }
+}

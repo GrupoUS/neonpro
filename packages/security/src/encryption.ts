@@ -57,11 +57,11 @@ export class EncryptionManager {
         iv,
       )
 
-      let encrypted = cipher.update(data, 'utf8', 'utf8')
-      encrypted += cipher.final('utf8')
+          let encrypted = cipher.update(data, 'utf8')
+      encrypted = Buffer.concat([encrypted, cipher.final()])
 
       // Combine IV + encrypted data and encode as base64
-      const combined = Buffer.concat([iv, Buffer.from(encrypted, 'utf8')])
+      const combined = Buffer.concat([iv, encrypted])
       return combined.toString('base64')
     } catch (error) {
       throw new Error(
@@ -234,6 +234,57 @@ export class KeyManager {
   }
 
   /**
+   * Create a new encryption key and store it
+   * @returns The key ID for the created key
+   */
+  createKey(): string {
+    const encryptionManager = new EncryptionManager()
+    const key = encryptionManager.generateKey()
+    const keyId = `key_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+
+    this.storeKey(keyId, key)
+    return keyId
+  }
+
+  /**
+   * Check if a key exists
+   * @param keyId The key identifier
+   * @returns True if the key exists
+   */
+  hasKey(keyId: string): boolean {
+    return this.keys.has(keyId)
+  }
+
+  /**
+   * Delete a key
+   * @param keyId The key identifier
+   */
+  deleteKey(keyId: string): void {
+    if (!this.keys.has(keyId)) {
+      throw new Error('Key not found')
+    }
+    this.removeKey(keyId)
+  }
+
+  /**
+   * Rotate a key by creating a new one and deleting the old one
+   * @param keyId The key identifier
+   * @returns The new key ID
+   */
+  rotateKeyId(keyId: string): string {
+    if (!this.hasKey(keyId)) {
+      throw new Error('Key not found')
+    }
+
+    const newKeyId = this.createKey()
+
+    // Delete the old key
+    this.removeKey(keyId)
+
+    return newKeyId
+  }
+
+  /**
    * Store a key with optional expiration
    * @param keyId The identifier for the key
    * @param key The key value (base64 encoded)
@@ -250,21 +301,22 @@ export class KeyManager {
   /**
    * Retrieve a key by ID
    * @param keyId The key identifier
-   * @returns The key value or null if not found/expired
+   * @returns The key value
+   * @throws Error if key not found
    */
-  getKey(keyId: string): string | null {
+  getKey(keyId: string): string {
     const key = this.keys.get(keyId)
     const metadata = this.keyMetadata.get(keyId)
 
     if (!key || !metadata) {
-      return null
+      throw new Error('Key not found')
     }
 
     // Check if key has expired
     if (metadata.expiresAt && new Date() > metadata.expiresAt) {
       this.keys.delete(keyId)
       this.keyMetadata.delete(keyId)
-      return null
+      throw new Error('Key not found')
     }
 
     return key
@@ -273,8 +325,12 @@ export class KeyManager {
   /**
    * Remove a key from storage
    * @param keyId The key identifier
+   * @throws Error if key not found
    */
   removeKey(keyId: string): void {
+    if (!this.keys.has(keyId)) {
+      throw new Error('Key not found')
+    }
     this.keys.delete(keyId)
     this.keyMetadata.delete(keyId)
   }
@@ -288,26 +344,18 @@ export class KeyManager {
   }
 
   /**
-   * Rotate a key by creating a new one and marking the old for expiration
+   * Rotate a key by creating a new one and deleting the old one
    * @param keyId The key identifier
-   * @param ttl Time to live for the old key in seconds
-   * @returns The new key value
+   * @returns The new key ID
    */
-  rotateKey(keyId: string, ttl: number = 3600): string {
-    const oldKey = this.getKey(keyId)
-    const encryptionManager = new EncryptionManager()
-    const newKey = encryptionManager.generateKey()
-
-    // Store new key
-    this.storeKey(keyId, newKey)
-
-    // Keep old key for TTL period
-    if (oldKey) {
-      const expiresAt = new Date(Date.now() + ttl * 1000)
-      this.storeKey(`${keyId}_old`, oldKey, expiresAt)
+  rotateKey(keyId: string): string {
+    if (!this.hasKey(keyId)) {
+      throw new Error('Key not found')
     }
-
-    return newKey
+    const newKeyId = this.createKey()
+    // Delete the old key
+    this.removeKey(keyId)
+    return newKeyId
   }
 
   /**

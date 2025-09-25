@@ -5,6 +5,11 @@
 export * from './providers/index.js';
 export * from './services/index.js';
 
+// AI Management (absorbed from ai-providers)
+export * from './services/ai-management/pii-redaction.js';
+export * from './services/ai-management/ai-service-management.js';
+export * from './types/ai-management.js';
+
 // Types and interfaces
 export type {
   // Provider interfaces

@@ -484,7 +484,7 @@ export const HealthcareDashboard: React.FC<HealthcareDashboardProps> = ({
                     <div className="text-3xl font-bold text-green-600">4.8</div>
                     <div className="text-sm text-muted-foreground">Avaliação Média</div>
                     <div className="flex justify-center mt-2">
-                      {'⭐'.repeat(4)}{'☆'}
+                      {'⭐'.repeat(4)}☆
                     </div>
                   </div>
                   <div className="text-center text-sm text-muted-foreground">

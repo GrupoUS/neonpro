@@ -5,8 +5,8 @@ import {
   PatientNotFoundError,
   PatientNotFoundError as PatientEntityValidationError,
   PatientValidationError,
-} from '@neonpro/domain'
-import type { PatientRepository as IPatientRepository } from '@neonpro/domain'
+} from '@neonpro/healthcare-core'
+import type { PatientRepository as IPatientRepository } from '@neonpro/healthcare-core'
 
 /**
  * Application service for patient management

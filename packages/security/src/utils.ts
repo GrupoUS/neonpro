@@ -450,29 +450,66 @@ export class RateLimiter {
  * Prevents logging of credentials, SQL queries, XSS payloads, and other sensitive data
  */
 export class SecureLogger {
+  private static originalConsole: {
+    log: typeof console.log
+    error: typeof console.error
+    warn: typeof console.warn
+    info: typeof console.info
+    debug: typeof console.debug
+  } | null = null
+
   /**
    * Initialize secure logging by replacing console methods with sanitized versions
    */
   static initialize(): void {
-    // Import consoleManager dynamically to avoid circular dependencies
-    const { consoleManager } = require('./console-manager')
-    
-    // Create secure console methods
-    const secureMethods = consoleManager.createSecureMethods((args: unknown[]) => {
-      return args.map(arg => this.sanitizeLogArgument(arg as LogArgument))
-    })
-    
-    // Replace console methods
-    consoleManager.replaceMethods(secureMethods)
+    // Store original console methods before replacement
+    this.originalConsole = {
+      log: console.log,
+      error: console.error,
+      warn: console.warn,
+      info: console.info,
+      debug: console.debug,
+    }
+
+    // Replace console methods with secure versions
+    console.log = (...args: unknown[]) => {
+      const sanitized = args.map(arg => this.sanitizeLogArgument(arg as LogArgument))
+      this.originalConsole?.log(...sanitized)
+    }
+
+    console.error = (...args: unknown[]) => {
+      const sanitized = args.map(arg => this.sanitizeLogArgument(arg as LogArgument))
+      this.originalConsole?.error(...sanitized)
+    }
+
+    console.warn = (...args: unknown[]) => {
+      const sanitized = args.map(arg => this.sanitizeLogArgument(arg as LogArgument))
+      this.originalConsole?.warn(...sanitized)
+    }
+
+    console.info = (...args: unknown[]) => {
+      const sanitized = args.map(arg => this.sanitizeLogArgument(arg as LogArgument))
+      this.originalConsole?.info(...sanitized)
+    }
+
+    console.debug = (...args: unknown[]) => {
+      const sanitized = args.map(arg => this.sanitizeLogArgument(arg as LogArgument))
+      this.originalConsole?.debug(...sanitized)
+    }
   }
 
   /**
    * Restore original console methods
    */
   static restore(): void {
-    // Import consoleManager dynamically to avoid circular dependencies
-    const { consoleManager } = require('./console-manager')
-    consoleManager.restoreToOriginal()
+    if (this.originalConsole) {
+      // Directly restore the stored original methods
+      console.log = this.originalConsole.log
+      console.error = this.originalConsole.error
+      console.warn = this.originalConsole.warn
+      console.info = this.originalConsole.info
+      console.debug = this.originalConsole.debug
+    }
   }
 
 

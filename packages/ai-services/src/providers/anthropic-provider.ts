@@ -466,19 +466,19 @@ Communication Style:
     // Additional healthcare-specific PII patterns
     if (this.compliance.piiRedaction) {
       // Medical record numbers
-      sanitizedContent = sanitizedContent.replace(/\b(?:MRN|Medical Record|Prontuário)\s*[:\-]?\s*\d+/gi, '[MEDICAL_RECORD]');
+      sanitizedContent = sanitizedContent.replace(/\b(?:MRN|Medical Record|Prontuário)\s*[:-]?\s*\d+/gi, '[MEDICAL_RECORD]');
       
       // Healthcare professional licenses (CRM, COREN, etc.)
-      sanitizedContent = sanitizedContent.replace(/\b(?:CRM|COREN|CFF|CREFITO)\s*[:\-]?\s*[A-Z]{0,2}\/\d+/gi, '[LICENSE]');
+      sanitizedContent = sanitizedContent.replace(/\b(?:CRM|COREN|CFF|CREFITO)\s*[:-]?\s*[A-Z]{0,2}\/\d+/gi, '[LICENSE]');
       
       // Brazilian healthcare identifiers
-      sanitizedContent = sanitizedContent.replace(/\b(?:CNS|Cartão SUS)\s*[:\-]?\s*\d{15}\b/g, '[HEALTH_ID]');
+      sanitizedContent = sanitizedContent.replace(/\b(?:CNS|Cartão SUS)\s*[:-]?\s*\d{15}\b/g, '[HEALTH_ID]');
       
       // Procedure codes
-      sanitizedContent = sanitizedContent.replace(/\b(?:CID-10|CBHPM|TUSS)\s*[:\-]?\s*[A-Z]\d{2}(?:\.\d+)?/gi, '[PROCEDURE_CODE]');
+      sanitizedContent = sanitizedContent.replace(/\b(?:CID-10|CBHPM|TUSS)\s*[:-]?\s*[A-Z]\d{2}(?:\.\d+)?/gi, '[PROCEDURE_CODE]');
       
       // Medical device identifiers
-      sanitizedContent = sanitizedContent.replace(/\b(?:Registro ANVISA)\s*[:\-]?\s*\d+/gi, '[DEVICE_ID]');
+      sanitizedContent = sanitizedContent.replace(/\b(?:Registro ANVISA)\s*[:-]?\s*\d+/gi, '[DEVICE_ID]');
     }
 
     // Enhanced ANVISA compliance

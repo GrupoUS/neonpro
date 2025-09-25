@@ -15,8 +15,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const PATTERNS = [
   // Unused parameters - prefix with underscore
   {
-    pattern:
-      /(\w+): [^}]+is declared but never used\. Unused parameters should start with a '_'\./g,
+    pattern: /(w+): [^}]+is declared but never used\. Unused parameters should start with a '_'\./g,
     fix: (content, matches) => {
       matches.forEach((match: RegExpMatchArray) => {
         const paramName = match[1] as string

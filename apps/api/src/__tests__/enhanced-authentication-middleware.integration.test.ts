@@ -13,9 +13,11 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { Context, Next } from 'hono'
 import { EnhancedAuthenticationMiddleware, AuthenticationContext, AuthenticationOptions } from '../middleware/enhanced-authentication-middleware'
 import { JWTSecurityService } from '../services/jwt-security-service'
-import { HealthcareSessionManagementService } from '../services/healthcare-session-management-service'
-import { SecurityValidationService } from '../services/security-validation-service'
-import { AuditTrailService } from '../services/audit-trail-service'
+import {
+  HealthcareSessionManagementService,
+  SecurityValidationService,
+  AuditTrailService
+} from './mock-services'
 
 // Mock Hono context
 const createMockContext = (overrides = {}): Context => {
@@ -63,12 +65,15 @@ describe('Enhanced Authentication Middleware Integration Tests', () => {
     auditService = AuditTrailService
 
     // Mock environment variables
-    vi.stubEnv('JWT_SECRET', 'test-jwt-secret')
-    vi.stubEnv('SESSION_SECRET', 'test-session-secret')
+    process.env.JWT_SECRET = 'test-jwt-secret'
+    process.env.SESSION_SECRET = 'test-session-secret'
   })
 
   afterEach(() => {
     vi.restoreAllMocks()
+    // Clean up environment variables
+    delete process.env.JWT_SECRET
+    delete process.env.SESSION_SECRET
   })
 
   describe('JWT Authentication Flow', () => {

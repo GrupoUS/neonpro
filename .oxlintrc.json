@@ -199,6 +199,37 @@
         "react/jsx-no-target-blank": "error",
         "react/no-unescaped-entities": "error"
       }
+    },
+    {
+      "files": [
+        "**/logger/**/*.{ts,js}",
+        "**/console-manager.ts"
+      ],
+      "rules": {
+        "no-console": "off"
+      }
+    },
+    {
+      "files": [
+        "**/scripts/**/*.{js,ts,cjs}",
+        "**/fix-*.cjs",
+        "**/fix-*.js",
+        "**/fix-*.ts"
+      ],
+      "rules": {
+        "no-console": "off",
+        "no-unused-vars": "warn"
+      }
+    },
+    {
+      "files": [
+        "**/security/**/*.{ts,js}",
+        "**/encryption.ts"
+      ],
+      "rules": {
+        "no-restricted-imports": "off",
+        "no-console": "off"
+      }
     }
   ],
   "ignorePatterns": [

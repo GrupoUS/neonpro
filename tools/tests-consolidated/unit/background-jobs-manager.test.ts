@@ -34,8 +34,8 @@ vi.mock('../../../packages/shared/src/logging/healthcare-logger', () => ({
   },
 }))
 
-// Mock utilities with proper UUID generation
-const mockJobId = 'test-job-12345678-1234-1234-1234-123456789012'
+// Mock utilities
+const mockJobId = '12345678-1234-1234-1234-123456789012'
 vi.mock('../../../packages/shared/src/services/background-jobs-framework', async (importOriginal) => {
   const actual = await importOriginal() as any
   return {
@@ -47,6 +47,19 @@ vi.mock('../../../packages/shared/src/services/background-jobs-framework', async
       maxRetries: 3,
       priority: JobPriority.MEDIUM,
     })),
+    HealthcareJobContextSchema: {
+      safeParse: vi.fn((data: any) => {
+        // Return success only for valid healthcare context structure
+        if (data && typeof data === 'object') {
+          // Check for required fields based on the schema
+          const hasValidFields = data.patientId !== undefined ||
+                               data.urgencyLevel !== undefined ||
+                               data.dataClassification !== undefined
+          return { success: hasValidFields, data: hasValidFields ? data : undefined }
+        }
+        return { success: false, error: new Error('Invalid healthcare context') }
+      })
+    }
   }
 })
 

@@ -460,14 +460,23 @@ export class HealthcareSecurityLogger {
    * Replace console methods with healthcare-compliant logging
    */
   static initialize(logger: HealthcareSecurityLogger): void {
+    // Store original console methods before replacement
+    const originalConsole = {
+      log: console.log,
+      error: console.error,
+      warn: console.warn,
+      info: console.info,
+      debug: console.debug,
+    }
+
     // Create healthcare-compliant console methods
     const healthcareMethods = consoleManager.createHealthcareMethods(logger)
-    
+
     // Replace console methods
     consoleManager.replaceMethods(healthcareMethods)
-    
+
     // Store original console methods for restoration
-    ;(logger as any).originalConsole = consoleManager.getOriginalMethods()
+    ;(logger as any).originalConsole = originalConsole
   }
 
   /**
@@ -477,10 +486,15 @@ export class HealthcareSecurityLogger {
     if (!logger) {
       throw new Error('HealthcareSecurityLogger instance is required for restoration')
     }
-    
+
     const originalConsole = (logger as any).originalConsole
     if (originalConsole) {
-      consoleManager.restoreToOriginal()
+      // Directly restore the stored original methods
+      console.log = originalConsole.log
+      console.error = originalConsole.error
+      console.warn = originalConsole.warn
+      console.info = originalConsole.info
+      console.debug = originalConsole.debug
     }
   }
 }

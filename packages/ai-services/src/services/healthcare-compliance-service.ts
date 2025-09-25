@@ -252,7 +252,7 @@ export class HealthcareComplianceService extends EventEmitter {
     // Medical record numbers
     this.addPIIPattern({
       type: PIIType.MEDICAL_RECORD,
-      pattern: /\b(?:prontuário|medical record|MRN|registro)\s*[:\-]?\s*\d{4,10}\b/gi,
+      pattern: /\b(?:prontuário|medical record|MRN|registro)\s*[:-]?\s*\d{4,10}\b/gi,
       replacement: '[MEDICAL_RECORD]',
       context: ['clinical', 'administrative'],
       confidence: 0.85,
@@ -261,7 +261,7 @@ export class HealthcareComplianceService extends EventEmitter {
     // Professional licenses (CRM, COREN, etc.)
     this.addPIIPattern({
       type: PIIType.PROFESSIONAL_LICENSE,
-      pattern: /\b(?:CRM|COREN|CFF|CREFITO|CRF)\s*[:\-]?\s*[A-Z]{0,2}\/\d{4,10}\b/gi,
+      pattern: /\b(?:CRM|COREN|CFF|CREFITO|CRF)\s*[:-]?\s*[A-Z]{0,2}\/\d{4,10}\b/gi,
       replacement: '[LICENSE]',
       context: ['clinical', 'professional'],
       confidence: 0.9,
@@ -270,7 +270,7 @@ export class HealthcareComplianceService extends EventEmitter {
     // SUS card (Brazilian health system)
     this.addPIIPattern({
       type: PIIType.SUS_CARD,
-      pattern: /\b(?:cartão SUS|SUS card)\s*[:\-]?\s*\d{15}\b/gi,
+      pattern: /\b(?:cartão SUS|SUS card)\s*[:-]?\s*\d{15}\b/gi,
       replacement: '[SUS_CARD]',
       context: ['clinical', 'administrative'],
       confidence: 0.95,
@@ -279,7 +279,7 @@ export class HealthcareComplianceService extends EventEmitter {
     // Dates (birth dates, appointment dates)
     this.addPIIPattern({
       type: PIIType.BIRTH_DATE,
-      pattern: /\b\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4}\b/g,
+      pattern: /\b\d{1,2}[/-]\d{1,2}[/-]\d{2,4}\b/g,
       replacement: '[DATE]',
       context: ['clinical', 'administrative'],
       confidence: 0.7,
@@ -288,7 +288,7 @@ export class HealthcareComplianceService extends EventEmitter {
     // Procedure codes (TUSS, CBHPM)
     this.addPIIPattern({
       type: PIIType.PROCEDURE_CODE,
-      pattern: /\b(?:TUSS|CBHPM)\s*[:\-]?\s*\d{6,8}\b/gi,
+      pattern: /\b(?:TUSS|CBHPM)\s*[:-]?\s*\d{6,8}\b/gi,
       replacement: '[PROCEDURE_CODE]',
       context: ['clinical', 'administrative'],
       confidence: 0.9,
@@ -306,7 +306,7 @@ export class HealthcareComplianceService extends EventEmitter {
     // Health insurance numbers
     this.addPIIPattern({
       type: PIIType.HEALTH_INSURANCE,
-      pattern: /\b(?:plano de saúde|health insurance|operadora)\s*[:\-]?\s*\d{6,12}\b/gi,
+      pattern: /\b(?:plano de saúde|health insurance|operadora)\s*[:-]?\s*\d{6,12}\b/gi,
       replacement: '[HEALTH_INSURANCE]',
       context: ['administrative'],
       confidence: 0.85,

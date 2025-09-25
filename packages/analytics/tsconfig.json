@@ -17,7 +17,8 @@
     "strict": false,
     "noImplicitReturns": false,
     "noUnusedLocals": false,
-    "noUnusedParameters": false
+    "noUnusedParameters": false,
+    "tsBuildInfoFile": "./.tsbuildinfo-analytics"
   },
   "include": ["src/**/*"],
   "exclude": [

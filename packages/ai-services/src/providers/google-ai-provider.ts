@@ -497,16 +497,16 @@ Important:
     // Additional Brazilian-specific PII patterns
     if (this.compliance.piiRedaction) {
       // Brazilian health insurance numbers
-      sanitizedContent = sanitizedContent.replace(/\b(?:Plano de Saúde|Operadora)\s*[:\-]?\s*\d+/gi, '[HEALTH_INSURANCE]');
+      sanitizedContent = sanitizedContent.replace(/\b(?:Plano de Saúde|Operadora)\s*[:-]?\s*\d+/gi, '[HEALTH_INSURANCE]');
       
       // Brazilian medical procedure codes (TUSS/CBHPM)
-      sanitizedContent = sanitizedContent.replace(/\b(?:TUSS|CBHPM)\s*[:\-]?\s*\d{6,8}\b/g, '[PROCEDURE_CODE]');
+      sanitizedContent = sanitizedContent.replace(/\b(?:TUSS|CBHPM)\s*[:-]?\s*\d{6,8}\b/g, '[PROCEDURE_CODE]');
       
       // Brazilian healthcare facility codes (CNES)
-      sanitizedContent = sanitizedContent.replace(/\bCNES\s*[:\-]?\s*\d{7}\b/g, '[FACILITY_CODE]');
+      sanitizedContent = sanitizedContent.replace(/\bCNES\s*[:-]?\s*\d{7}\b/g, '[FACILITY_CODE]');
       
       // Brazilian vaccination records
-      sanitizedContent = sanitizedContent.replace(/\b(?:Cartão de Vacinação|Registro Vacinal)\s*[:\-]?\s*\d+/gi, '[VACCINATION_RECORD]');
+      sanitizedContent = sanitizedContent.replace(/\b(?:Cartão de Vacinação|Registro Vacinal)\s*[:-]?\s*\d+/gi, '[VACCINATION_RECORD]');
     }
 
     // Enhanced ANVISA compliance
